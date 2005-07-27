@@ -4,7 +4,7 @@
 % Section: Smallest Enclosing Sphere
 % =============================================================================
 
-\begin{ccRefClass}{QPE_partial_exact_pricing<Traits>}
+\begin{ccRefClass}{QP_partial_exact_pricing<Traits>}
 \ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
 \ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
 \ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
@@ -47,16 +47,16 @@ deterministically as the first $\min\{m\sqrt{n/2}, n\}$ nonbasic
 variables determined by the initial feasible solution, if the variables are
 considered in the user defined order.   
    
-\ccInclude{CGAL/QPE_partial_exact_pricing.h}
+\ccInclude{CGAL/QP_partial_exact_pricing.h}
 
 \ccInheritsFrom
-\ccc{QPE__partial_base<Traits>}
+\ccc{QP__partial_base<Traits>}
 
 \ccRequirements
 \ccIndexRequirements
 
 The class \ccRefName\ expects a model of the concept
-\ccc{QPESolverTraits} as its template argument. 
+\ccc{QPSolverTraits} as its template argument. 
 
 
 \ccTypes \ccIndexClassTypes

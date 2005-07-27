@@ -1,8 +1,8 @@
-#include <CGAL/QPE_solver.h>
-#include <CGAL/QPE_full_exact_pricing.h>
-#include <CGAL/QPE_partial_exact_pricing.h>
-#include <CGAL/QPE_full_filtered_pricing.h>
-#include <CGAL/QPE_partial_filtered_pricing.h>
+#include <CGAL/QP_solver.h>
+#include <CGAL/QP_full_exact_pricing.h>
+#include <CGAL/QP_partial_exact_pricing.h>
+#include <CGAL/QP_full_filtered_pricing.h>
+#include <CGAL/QP_partial_filtered_pricing.h>
 #include <CGAL/_QP_solver/Double.h>
 #include <iostream>
 
@@ -70,17 +70,17 @@ public:
 };
 
 
-typedef  CGAL::QPE_transform_iterator_1< Matrix::const_iterator>  Vector_iterator;
+typedef  CGAL::QP_transform_iterator_1< Matrix::const_iterator>  Vector_iterator;
 
-struct QPESolverTraits {
+struct QPSolverTraits {
     typedef  GMP::Double                         ET;
     typedef  Vector_iterator                     A_iterator;
-    typedef  CGAL::QPE_const_value_iterator<IT>  B_iterator;
-    typedef  CGAL::QPE_const_value_iterator<IT>  C_iterator;
+    typedef  CGAL::QP_const_value_iterator<IT>  B_iterator;
+    typedef  CGAL::QP_const_value_iterator<IT>  C_iterator;
     typedef  PD_D_iterator<Point>                D_iterator;
 
     enum Row_type { LESS_EQUAL, EQUAL, GREATER_EQUAL};
-    typedef  CGAL::QPE_const_value_iterator<Row_type>  Row_type_iterator;
+    typedef  CGAL::QP_const_value_iterator<Row_type>  Row_type_iterator;
     
     typedef  CGAL::Tag_false  Is_linear;
     typedef  CGAL::Tag_true   Is_symmetric;
@@ -88,7 +88,7 @@ struct QPESolverTraits {
     typedef  CGAL::Tag_false  Use_perturbation;
 };
 
-typedef CGAL::QPE_solver<QPESolverTraits>     Solver;
+typedef CGAL::QP_solver<QPSolverTraits>     Solver;
 
 int main( int argc, char** argv)
 {
@@ -110,14 +110,14 @@ int main( int argc, char** argv)
 
   // configure partial filtered pricing strategy with default template
   // parameters
-  CGAL::QPE_partial_filtered_pricing<QPESolverTraits>  strategy;
+  CGAL::QP_partial_filtered_pricing<QPSolverTraits>  strategy;
   
   // solve qp with (explicit) partial filtered pricing strategy
   Solver       qp( 6, 2, Vector_iterator( A.begin()),
-                   QPESolverTraits::B_iterator(1.0),
-                   QPESolverTraits::C_iterator(0.0),
-                   QPESolverTraits::D_iterator(C.begin()),
-                   QPESolverTraits::Row_type_iterator(QPESolverTraits::EQUAL),
+                   QPSolverTraits::B_iterator(1.0),
+                   QPSolverTraits::C_iterator(0.0),
+                   QPSolverTraits::D_iterator(C.begin()),
+                   QPSolverTraits::Row_type_iterator(QPSolverTraits::EQUAL),
                    strategy);
   
   // query solution, if qp is optimal				     

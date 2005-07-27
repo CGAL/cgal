@@ -4,7 +4,7 @@
 % Section: Smallest Enclosing Sphere
 % =============================================================================
 
-\begin{ccRefClass}{QPE_partial_filtered_pricing<Traits, NT, ET2NT>}
+\begin{ccRefClass}{QP_partial_filtered_pricing<Traits, NT, ET2NT>}
 \ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
 \ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
 \ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
@@ -57,16 +57,16 @@ and a functor type providing conversion from the exact number type \ccc{ET} to
 the floating point type \ccc{NT} can be configured by means of template
 parameters.   
 
-\ccInclude{CGAL/QPE_partial_filtered_pricing.h}
+\ccInclude{CGAL/QP_partial_filtered_pricing.h}
 
 \ccInheritsFrom
-\ccc{QPE__filtered_base<Traits, NT, ET2NT>, QPE__partial_base<Traits>}
+\ccc{QP__filtered_base<Traits, NT, ET2NT>, QP__partial_base<Traits>}
 
 \ccRequirements
 \ccIndexRequirements
 
 The class \ccRefName\ expects a model of the concept
-\ccc{QPESolverTraits} as its template argument for the first template parameter,
+\ccc{QPSolverTraits} as its template argument for the first template parameter,
 a model of the \cgal \ concept \ccc{Ring number type} for the second template
 parameter and a functor type
 providing conversion from the exact number type \ccc{Traits::ET} to \ccc{NT}
@@ -122,8 +122,8 @@ to \ccc{NT}. Currently the number type $NT$ is supported for \ccc{double} only.
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 %
-    \ccRefIdfierPage{CGAL::QPE_full_filtered_pricing<Traits, NT, ET2NT>}\\
-    \ccRefIdfierPage{CGAL::QPE_partial_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_full_filtered_pricing<Traits, NT, ET2NT>}\\
+    \ccRefIdfierPage{CGAL::QP_partial_exact_pricing<Traits>}\\
 % -----------------------------------------------------------------------------
 
 \ccImplementation
@@ -153,7 +153,7 @@ computes their inner product, and returns the result. The example is sketched
 below.
 
 \ccHeading{Polytope Distance (continued)}
-\ccIncludeVerbatim{Optimisation_ref/QPE_partial_filtered_pricing_strategy_example.C}
+\ccIncludeVerbatim{Optimisation_ref/QP_partial_filtered_pricing_strategy_example.C}
 
 \end{ccRefClass}
 

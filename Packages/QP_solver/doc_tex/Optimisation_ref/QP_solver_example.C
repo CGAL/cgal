@@ -1,19 +1,19 @@
 
-#include <CGAL/QPE_solver.h>
-#include <CGAL/QPE_full_exact_pricing.h>
-#include <CGAL/QPE_partial_exact_pricing.h>
-#include <CGAL/QPE_full_filtered_pricing.h>
-#include <CGAL/QPE_partial_filtered_pricing.h>
+#include <CGAL/QP_solver.h>
+#include <CGAL/QP_full_exact_pricing.h>
+#include <CGAL/QP_partial_exact_pricing.h>
+#include <CGAL/QP_full_filtered_pricing.h>
+#include <CGAL/QP_partial_filtered_pricing.h>
 #include <CGAL/_QP_solver/Double.h>
 #include <iostream>
 
 typedef  std::vector<double>  Vector;
 typedef  std::vector<Vector>  Matrix;
 
-typedef CGAL::QPE_transform_iterator_1<Matrix::const_iterator>  Vector_iterator;
+typedef CGAL::QP_transform_iterator_1<Matrix::const_iterator>  Vector_iterator;
 typedef  Vector::const_iterator                                 Entry_iterator;
 
-struct QPESolverTraits {    
+struct QPSolverTraits {    
     typedef  GMP::Double  ET;
     typedef  Vector_iterator  A_iterator;
     typedef   Entry_iterator  B_iterator;
@@ -29,7 +29,7 @@ struct QPESolverTraits {
     typedef  CGAL::Tag_false  Use_perturbation;
 };
 
-typedef CGAL::QPE_solver<QPESolverTraits>   Solver;
+typedef CGAL::QP_solver<QPSolverTraits>   Solver;
 
 int main( int argc, char** argv)
 {
@@ -55,9 +55,9 @@ int main( int argc, char** argv)
   D[ 2].push_back(   0); D[ 2].push_back(  -2); D[ 2].push_back(   0); 
 
   // constraint types
-  QPESolverTraits::Row_type*  row_types = new QPESolverTraits::Row_type[ 2];
-  row_types[ 0] = QPESolverTraits::GREATER_EQUAL;
-  row_types[ 1] = QPESolverTraits::GREATER_EQUAL;
+  QPSolverTraits::Row_type*  row_types = new QPSolverTraits::Row_type[ 2];
+  row_types[ 0] = QPSolverTraits::GREATER_EQUAL;
+  row_types[ 1] = QPSolverTraits::GREATER_EQUAL;
     
   // solve qp with pricing strategy defaulting to full exact pricing strategy
   Solver        qp (3, 2, Vector_iterator(A.begin()), b.begin(), c.begin(),

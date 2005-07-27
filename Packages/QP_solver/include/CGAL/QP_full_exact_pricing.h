@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QPE_full_exact_pricing.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_full_exact_pricing.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,11 +24,11 @@
 // implementation: Pricing Strategy with full exact pricing
 // ============================================================================
 
-#ifndef CGAL_QPE_FULL_EXACT_PRICING_H
-#define CGAL_QPE_FULL_EXACT_PRICING_H
+#ifndef CGAL_QP_FULL_EXACT_PRICING_H
+#define CGAL_QP_FULL_EXACT_PRICING_H
 
 // includes
-#include <CGAL/QPE_pricing_strategy.h>
+#include <CGAL/QP_pricing_strategy.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,18 +36,18 @@ CGAL_BEGIN_NAMESPACE
 // class declaration
 // =================
 template < class Rep_ >
-class QPE_full_exact_pricing;
+class QP_full_exact_pricing;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_ >
-class QPE_full_exact_pricing : public QPE_pricing_strategy<Rep_> {
+class QP_full_exact_pricing : public QP_pricing_strategy<Rep_> {
 
     // self
     typedef  Rep_                         Rep;
-    typedef  QPE_pricing_strategy<Rep>    Base;
-    typedef  QPE_full_exact_pricing<Rep>  Self;
+    typedef  QP_pricing_strategy<Rep>    Base;
+    typedef  QP_full_exact_pricing<Rep>  Self;
 
     // types from the base class
     typedef  typename Base::ET          ET;
@@ -55,13 +55,13 @@ class QPE_full_exact_pricing : public QPE_pricing_strategy<Rep_> {
   public:
 
     // creation
-    QPE_full_exact_pricing( );
+    QP_full_exact_pricing( );
 
     // operations
     int  pricing( );
     
     // cleanup
-    ~QPE_full_exact_pricing() { };
+    ~QP_full_exact_pricing() { };
 };
 
 // ----------------------------------------------------------------------------
@@ -72,14 +72,14 @@ class QPE_full_exact_pricing : public QPE_pricing_strategy<Rep_> {
 
 // construction
 template < class Rep_ >  inline
-QPE_full_exact_pricing<Rep_>::
-QPE_full_exact_pricing( )
-    : QPE_pricing_strategy<Rep_>( "full exact")
+QP_full_exact_pricing<Rep_>::
+QP_full_exact_pricing( )
+    : QP_pricing_strategy<Rep_>( "full exact")
 { }
     
 // operations
 template < class Rep_ >
-int  QPE_full_exact_pricing<Rep_>::
+int  QP_full_exact_pricing<Rep_>::
 pricing( )
 {
     // get properties of quadratic program
@@ -115,6 +115,6 @@ pricing( )
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QPE_FULL_EXACT_PRICING_H
+#endif // CGAL_QP_FULL_EXACT_PRICING_H
 
 // ===== EOF ==================================================================

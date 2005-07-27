@@ -4,7 +4,7 @@
 % Section: Smallest Enclosing Sphere
 % =============================================================================
 
-\begin{ccRefClass}{QPE__filtered_base<Traits, NT, ET2NT>}
+\begin{ccRefClass}{QP__filtered_base<Traits, NT, ET2NT>}
 \ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
 \ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
 \ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
@@ -14,16 +14,16 @@
 \ccDefinition
 Abstract base class for filtered pricing strategies.   
 
-\ccInclude{CGAL/QPE_solver.h}
+\ccInclude{CGAL/QP_solver.h}
 
 \ccInheritsFrom
-\ccc{QPE_pricing_strategy<Traits>}
+\ccc{QP_pricing_strategy<Traits>}
 
 \ccRequirements
 \ccIndexRequirements
 
 The class \ccRefName\ expects a model of the concept
-\ccc{QPESolverTraits} as its template argument for the first template parameter,
+\ccc{QPSolverTraits} as its template argument for the first template parameter,
 a floating point number type for the second parameter and a functor type
 providing conversion from the exact number type \ccc{Traits::ET}. 
 
@@ -37,7 +37,7 @@ providing conversion from the exact number type \ccc{Traits::ET}.
 
 \ccTypes \ccIndexClassTypes
 
-\ccNestedType{Base}{a typedef to \ccc{QPE_pricing_strategy<Traits>}, the virtual
+\ccNestedType{Base}{a typedef to \ccc{QP_pricing_strategy<Traits>}, the virtual
 base class}
 
 \ccNestedType{NT}{inexact number type used to evaluate approximations of

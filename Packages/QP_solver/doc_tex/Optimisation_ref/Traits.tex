@@ -11,12 +11,12 @@
 % $CGAL_Package$
 % =============================================================================
 
-\begin{ccRefConcept}{QPESolverTraits}
+\begin{ccRefConcept}{QPSolverTraits}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-A model of concept \ccc{QPESolverTraits} must provide the
+A model of concept \ccc{QPSolverTraits} must provide the
 following constants, types, predicates and operations.
 
 \ccHasModels
@@ -41,20 +41,20 @@ The \ccc{value_type} of \ccc{A_iterator} is a model of the \stl \ concept
 \ccc{RandomAccessIterator} that refers to the elements of a
 column of the matrix $A$.
 The element type of the matrix $A$ must provide implicit conversions to
-\ccc{QPESolverTraits::ET}
+\ccc{QPSolverTraits::ET}
 }
 
 \ccNestedType{B_iterator}{model of the \stl \ concept
 \ccc{RandomAccessIterator} referring to the entries of the vector $b$.
 The element type of the vector $b$, that is
 \ccc{B_iterator}'s \ccc{value_type},
-must provide implicit conversions to \ccc{QPESolverTraits::ET}.}
+must provide implicit conversions to \ccc{QPSolverTraits::ET}.}
 
 \ccNestedType{C_iterator}{model of the \stl \ concept
 \ccc{RandomAccessIterator} referring to the entries of the vector $c$.
 The element type of the vector $c$, that is
 \ccc{C_iterator}'s \ccc{value_type},
-must provide implicit conversions to \ccc{QPESolverTraits::ET}.}
+must provide implicit conversions to \ccc{QPSolverTraits::ET}.}
 
 \ccNestedType{D_iterator}{model of the \stl \ concept \ccc{RandomAccessIterator}
 referring to an iterator, which in turn refers to the elements
@@ -63,7 +63,7 @@ The \ccc{value_type} of \ccc{D_iterator} is a model of the \stl \ concept
 \ccc{RandomAccessIterator} that refers to the elements of a
 row of the matrix $D$.
 The element type of the matrix $D$ must provide implicit conversions to
-\ccc{QPESolverTraits::ET}
+\ccc{QPSolverTraits::ET}
 }
 
 \ccNestedType{Row_type}{enumeration type providing the three constants
@@ -72,7 +72,7 @@ constraint type.}
 
 \ccNestedType{Row_type_iterator}{model of the STL concept
 \ccc{RandomAccessIterator}. The value type of \ccc{Row_type_iterator} is
-\ccc{QPESolverTraits::Row_type}.}
+\ccc{QPSolverTraits::Row_type}.}
 
 \ccNestedType{Is_linear}{
 Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}, if \ccc{Is_linear}

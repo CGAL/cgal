@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE_basis_inverse.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP_basis_inverse.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,12 +24,12 @@
 // implementation: Basis Inverse for the Quadratic Programming Engine
 // ============================================================================
                                                                                
-#ifndef CGAL_QP_ENGINE_QPE_BASIS_INVERSE_H
-#define CGAL_QP_ENGINE_QPE_BASIS_INVERSE_H
+#ifndef CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
+#define CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 
 // includes
-#ifndef CGAL_QP_ENGINE_BASIC_H
-#  include <CGAL/QP_engine/basic.h>
+#ifndef CGAL_QP_SOLVER_BASIC_H
+#  include <CGAL/QP_solver/basic.h>
 #endif
 #ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #  include <CGAL/IO/Verbose_ostream.h>
@@ -46,18 +46,18 @@ CGAL_BEGIN_NAMESPACE
 // class declaration
 // =================
 template < class ET_, class Is_LP_ >
-class QPE_basis_inverse;
+class QP_basis_inverse;
 
 // ===============
 // class interface
 // ===============
 template < class ET_, class Is_LP_ >
-class QPE_basis_inverse {
+class QP_basis_inverse {
   public:
     // self
     typedef  ET_                        ET;
     typedef  Is_LP_                     Is_LP;
-    typedef  QPE_basis_inverse<ET,Is_LP>
+    typedef  QP_basis_inverse<ET,Is_LP>
                                         Self;
 
   private:
@@ -78,7 +78,7 @@ class QPE_basis_inverse {
 
     // creation and initialization
     // ---------------------------
-    QPE_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream);
+    QP_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream);
 
     // set-up
     void  set( int n, int m, int nr_equalities);
@@ -1066,8 +1066,8 @@ class QPE_basis_inverse {
 
 // creation
 template < class ET_, class Is_LP_ >  inline
-QPE_basis_inverse<ET_,Is_LP_>::
-QPE_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream)
+QP_basis_inverse<ET_,Is_LP_>::
+QP_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream)
     : et0( 0), et1( 1), et2( 2),
       is_LP( check_tag( Is_LP())), is_QP( ! is_LP),
       vout( verbose_ostream)
@@ -1075,7 +1075,7 @@ QPE_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream)
 
 // transition (LP case)
 template < class ET_, class Is_LP_ >  inline
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 transition( )
 {
     is_phaseI  = false;
@@ -1088,7 +1088,7 @@ transition( )
 
 // set-up (QP case)
 template < class ET_, class Is_LP_ >  inline
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 set( Tag_false)
 {
     M.reserve( l);
@@ -1099,7 +1099,7 @@ set( Tag_false)
     
 // set-up (LP case)
 template < class ET_, class Is_LP_ >  inline
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 set( Tag_true)
 {
     M.reserve( l);
@@ -1108,7 +1108,7 @@ set( Tag_true)
 
 // access (QP case)
 template < class ET_, class Is_LP_ >  inline
-const ET_&  QPE_basis_inverse<ET_,Is_LP_>::
+const ET_&  QP_basis_inverse<ET_,Is_LP_>::
 entry( unsigned int r, unsigned int c, Tag_false) const
 {
     CGAL_qpe_precondition( ( r < s) || ( ( r >= l) && ( r < l+b)));
@@ -1118,7 +1118,7 @@ entry( unsigned int r, unsigned int c, Tag_false) const
 
 // access (LP case)
 template < class ET_, class Is_LP_ >  inline
-const ET_&  QPE_basis_inverse<ET_,Is_LP_>::
+const ET_&  QP_basis_inverse<ET_,Is_LP_>::
 entry( unsigned int r, unsigned int c, Tag_true) const
 {
     CGAL_qpe_precondition( r < s);
@@ -1128,7 +1128,7 @@ entry( unsigned int r, unsigned int c, Tag_true) const
 
 // in-place update
 template < class ET_, class Is_LP_ >  inline
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 update_entry( ET& entry, const ET& d_new, const ET& y, const ET& d_old) const
 {
     entry *= d_new;
@@ -1139,9 +1139,9 @@ update_entry( ET& entry, const ET& d_new, const ET& y, const ET& d_old) const
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QP_engine/QPE_basis_inverse.C>
+#  include <CGAL/QP_solver/QP_basis_inverse.C>
 #endif
 
-#endif // CGAL_QP_ENGINE_QPE_BASIS_INVERSE_H
+#endif // CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 
 // ===== EOF ==================================================================

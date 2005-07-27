@@ -24,11 +24,11 @@
 // implementation: test program for the QP solver
 // ============================================================================
 
-#include <CGAL/QPE_solver.h>
-#include <CGAL/QPE_full_exact_pricing.h>
-#include <CGAL/QPE_partial_exact_pricing.h>
-#include <CGAL/QPE_full_filtered_pricing.h>
-#include <CGAL/QPE_partial_filtered_pricing.h>
+#include <CGAL/QP_solver.h>
+#include <CGAL/QP_full_exact_pricing.h>
+#include <CGAL/QP_partial_exact_pricing.h>
+#include <CGAL/QP_full_filtered_pricing.h>
+#include <CGAL/QP_partial_filtered_pricing.h>
 #include <CGAL/_QP_solver/Double.h>
 //#include <CGAL/Quotient.h>
 #include <CGAL/Gmpq.h>
@@ -87,7 +87,7 @@ struct Rep {
 
     enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
     typedef  Row_type*  Row_type_iterator;
-    //    typedef  CGAL::QPE_const_value_iterator<Row_type>  Row_type_iterator;
+    //    typedef  CGAL::QP_const_value_iterator<Row_type>  Row_type_iterator;
     
     //typedef  GMP::Double  ET;
     typedef ET_  ET;
@@ -159,7 +159,7 @@ void init_pricing_strat_abrev_table();
 int map_pricing_strategy_abrev(const std::string& abbrev);
 
 template <typename Rep>
-void set_pricing_strategy(CGAL::QPE_pricing_strategy<Rep>*& strat, int index);
+void set_pricing_strategy(CGAL::QP_pricing_strategy<Rep>*& strat, int index);
 
 
 std::vector<std::string> tag_names_table(0);
@@ -259,9 +259,9 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
 	Vector<Input_type>  c;
 	Matrix<Input_type>  D;
 	std::vector<int> rel;
-	CGAL::QPE_solver< Repr >              solver;
-	CGAL::QPE_pricing_strategy<Repr>*
-		    strat(static_cast<CGAL::QPE_pricing_strategy<Repr>*>(0));
+	CGAL::QP_solver< Repr >              solver;
+	CGAL::QP_pricing_strategy<Repr>*
+		    strat(static_cast<CGAL::QP_pricing_strategy<Repr>*>(0));
 	bool instance_read, sol_solver_valid;	
 
 	instance_read = read_instance<Input_type>(from, A, rel, b, c, D,
@@ -275,7 +275,7 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
 			typename Repr::Vector_iterator( D.begin()),
 			row_types);
 		set_pricing_strategy<Repr>(strat, pricing_strategy_index);	
-		//CGAL::QPE_full_exact_pricing<Repr>  strategy;
+		//CGAL::QP_full_exact_pricing<Repr>  strategy;
 		solver.set_pricing_strategy( *strat);
 		solver.init();
 		solver.solve();
@@ -870,16 +870,16 @@ int map_pricing_strategy_abrev(const std::string& abrev) {
 	return ind;
 }
 template <typename Rep>
-void set_pricing_strategy(CGAL::QPE_pricing_strategy<Rep>*& strat, int index) {
+void set_pricing_strategy(CGAL::QP_pricing_strategy<Rep>*& strat, int index) {
 	switch (index) {
-	case 0	:	strat = new CGAL::QPE_full_exact_pricing<Rep>;
+	case 0	:	strat = new CGAL::QP_full_exact_pricing<Rep>;
 			break;
-	case 1	:	strat = new CGAL::QPE_full_filtered_pricing<Rep,
+	case 1	:	strat = new CGAL::QP_full_filtered_pricing<Rep,
 		typename Rep::Input_type>;
 			break;
-	case 2	:	strat = new CGAL::QPE_partial_exact_pricing<Rep>;
+	case 2	:	strat = new CGAL::QP_partial_exact_pricing<Rep>;
 			break;
-	case 3	:	strat = new CGAL::QPE_partial_filtered_pricing<Rep,
+	case 3	:	strat = new CGAL::QP_partial_filtered_pricing<Rep,
 		typename Rep::Input_type>;
 			break;
 	}

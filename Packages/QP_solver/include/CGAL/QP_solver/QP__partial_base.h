@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE__partial_base.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP__partial_base.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -21,14 +21,14 @@
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: Base Class for Partial Pricing of the QPE Solver
+// implementation: Base Class for Partial Pricing of the QP Solver
 // ============================================================================
 
-#ifndef CGAL_QPE__PARTIAL_BASE_H
-#define CGAL_QPE__PARTIAL_BASE_H
+#ifndef CGAL_QP__PARTIAL_BASE_H
+#define CGAL_QP__PARTIAL_BASE_H
 
 // includes
-#include <CGAL/QPE_pricing_strategy.h>
+#include <CGAL/QP_pricing_strategy.h>
 #include <CGAL/Random.h>
 #include <algorithm>
 #include <vector>
@@ -40,18 +40,18 @@ CGAL_BEGIN_NAMESPACE
 // class declarations
 // ==================
 template < class Rep_ >
-class QPE__partial_base;
+class QP__partial_base;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_ >
-class QPE__partial_base : virtual public QPE_pricing_strategy<Rep_> {
+class QP__partial_base : virtual public QP_pricing_strategy<Rep_> {
 
     // self
     typedef  Rep_                       Rep;
-    typedef  QPE__partial_base<Rep>     Self;
-    typedef  QPE_pricing_strategy<Rep>  Base;
+    typedef  QP__partial_base<Rep>     Self;
+    typedef  QP_pricing_strategy<Rep>  Base;
 
     typedef  typename Base::QP_solver   QP_solver;
   protected:
@@ -62,7 +62,7 @@ class QPE__partial_base : virtual public QPE_pricing_strategy<Rep_> {
     typedef  typename QP_solver::Index_const_iterator  Index_const_iterator;
 
     // construction
-    QPE__partial_base( bool  randomize, Random&  random);
+    QP__partial_base( bool  randomize, Random&  random);
 
     // initialization
     virtual  void  init( );
@@ -99,15 +99,15 @@ class QPE__partial_base : virtual public QPE_pricing_strategy<Rep_> {
 
 // construction
 template < class Rep_ >  inline
-QPE__partial_base<Rep_>::
-QPE__partial_base( bool  randomize, Random&  random)
+QP__partial_base<Rep_>::
+QP__partial_base( bool  randomize, Random&  random)
     : permute( randomize), rand_src( random)
 { }
 
 // initialization
 template < class Rep_ >
 void
-QPE__partial_base<Rep_>::
+QP__partial_base<Rep_>::
 init( )
 {
     // initialize indices of non-basic variables
@@ -132,7 +132,7 @@ init( )
 // operations
 template < class Rep_ >  inline
 void
-QPE__partial_base<Rep_>::
+QP__partial_base<Rep_>::
 entering_basis( Index_const_iterator it)
 {
     CGAL_qpe_precondition( it >= active_set_begin() && it < active_set_end());
@@ -146,7 +146,7 @@ entering_basis( Index_const_iterator it)
 
 template < class Rep_ >  inline
 void
-QPE__partial_base<Rep_>::
+QP__partial_base<Rep_>::
 activating( Index_const_iterator& it)
 {
     CGAL_qpe_precondition(
@@ -160,7 +160,7 @@ activating( Index_const_iterator& it)
 
 template < class Rep_ >
 void
-QPE__partial_base<Rep_>::
+QP__partial_base<Rep_>::
 leaving_basis( int i)
 {
     // all non-basic variables active?
@@ -181,7 +181,7 @@ leaving_basis( int i)
 
 template < class Rep_ >
 void
-QPE__partial_base<Rep_>::
+QP__partial_base<Rep_>::
 transition( )
 {
     // remove artificial variables from non-basis
@@ -200,6 +200,6 @@ transition( )
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QPE__PARTIAL_BASE_H
+#endif // CGAL_QP__PARTIAL_BASE_H
 
 // ===== EOF ==================================================================

@@ -2388,17 +2388,17 @@ has the following signature:
 %In general entities depending only on the constraint matrix $A$ and on the
 %objective function matrix $D$ as well as on the indices $j, i$ of the current
 %entering and leaving variables are considered to be global constants.  
-The QP-solver is represented by the classes \texttt{QPE\_solver} and
-\texttt{QPE\_basis\_inverse} and other classes representing the different
-pricing strategies. An instance of the class \texttt{QPE\_solver} has
+The QP-solver is represented by the classes \texttt{QP\_solver} and
+\texttt{QP\_basis\_inverse} and other classes representing the different
+pricing strategies. An instance of the class \texttt{QP\_solver} has
 members representing the headings $B_{O},B_{S}, C$ and $S_{B}$,
 the constraint matrix $A$, the objective function matrix $D$ as well as a
 reference, \texttt{inv\_M\_B}, referring to an instance of the class
-\texttt{QPE\_basis\_inverse}. An instance of the class
-\texttt{QPE\_basis\_inverse} however does not have a reference
+\texttt{QP\_basis\_inverse}. An instance of the class
+\texttt{QP\_basis\_inverse} however does not have a reference
 referring to its ambient solver. This entails that methods of the basis inverse
 implementing the Updates $U_{Z_{1}} \dots U_{Z_{4}}$ described in previous
-sections can not access these entities kept in the class \texttt{QPE\_solver};
+sections can not access these entities kept in the class \texttt{QP\_solver};
 we therefore adopt the policy that these entities are passed as parameters of
 these methods wherever necessary.   
 
@@ -2491,7 +2491,7 @@ d
 \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
 \end{equation}
-such that the part in the class \texttt{QPE\_basis\_inverse} of 
+such that the part in the class \texttt{QP\_basis\_inverse} of 
 Update $U_{Z_{1}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_original\_by\_original($y, s_{\Delta}, s_{\nu}, k_{i}$) \{}
@@ -2560,7 +2560,7 @@ d
 \end{equation}
 such that, by taking into account that according to
 Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
-the part in the class \texttt{QPE\_basis\_inverse} of
+the part in the class \texttt{QP\_basis\_inverse} of
 Update $U_{Z_{4}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_slack\_by\_slack($u, k_{j}$) \{} \\
@@ -2632,7 +2632,7 @@ d
 \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
 \end{equation}
-such that the part in the class \texttt{QPE\_basis\_inverse} of
+such that the part in the class \texttt{QP\_basis\_inverse} of
 Update $U_{Z_{2}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_original\_by\_slack() \{} \\
@@ -2695,7 +2695,7 @@ d &:=& \left|\det(\hat{\check{M}}_{B})\right|
 \end{equation}
 such that, by taking into account that according to
 Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
-the part in the class \texttt{QPE\_basis\_inverse} of
+the part in the class \texttt{QP\_basis\_inverse} of
 Update $U_{Z_{3}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_slack\_by\_original($y,u,\kappa,\nu$) \{}

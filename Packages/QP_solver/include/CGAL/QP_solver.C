@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QPE_solver.C
+// file          : include/CGAL/QP_solver.C
 // package       : $CGAL_Package: QP_engine $
 // chapter       : Quadratic Programming Engine
 //
@@ -34,8 +34,8 @@ CGAL_BEGIN_NAMESPACE
 // -------------------------
 // creation
 template < class Rep_ >
-QPE_solver<Rep_>::
-QPE_solver( )
+QP_solver<Rep_>::
+QP_solver( )
     : et0( 0), et1( 1), et2( 2),
       strategyP( static_cast< Pricing_strategy*>( 0)),
       inv_M_B( vout4),
@@ -49,13 +49,13 @@ QPE_solver( )
 // set-up of QP
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 set( int n, int m,
-     typename QPE_solver<Rep_>::A_iterator A_it,
-     typename QPE_solver<Rep_>::B_iterator b_it,
-     typename QPE_solver<Rep_>::C_iterator c_it,
-     typename QPE_solver<Rep_>::D_iterator D_it,
-     typename QPE_solver<Rep_>::Row_type_iterator Row_type_it)
+     typename QP_solver<Rep_>::A_iterator A_it,
+     typename QP_solver<Rep_>::B_iterator b_it,
+     typename QP_solver<Rep_>::C_iterator c_it,
+     typename QP_solver<Rep_>::D_iterator D_it,
+     typename QP_solver<Rep_>::Row_type_iterator Row_type_it)
 {
     // store QP
     CGAL_qpe_precondition( n > 0);
@@ -128,7 +128,7 @@ set( int n, int m,
 
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 set_up_auxiliary_problemI(Tag_true)
 {
     // initialize slack and artificial part of `A'
@@ -227,7 +227,7 @@ set_up_auxiliary_problemI(Tag_true)
 
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 set_up_auxiliary_problem(Tag_true)
 {
     // initialize slack and artificial part of `A'
@@ -331,7 +331,7 @@ set_up_auxiliary_problem(Tag_true)
 
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 set_up_auxiliary_problem(Tag_false)
 {
     // initialize slack and artificial part of `A'
@@ -390,7 +390,7 @@ set_up_auxiliary_problem(Tag_false)
 // initialization (phase I)
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 init( )
 {
     CGAL_qpe_debug {
@@ -439,7 +439,7 @@ init( )
 // initial basis and basis inverse
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 init_basis( )
 {
     int  i, s_i = -1;
@@ -486,7 +486,7 @@ init_basis( )
 }
 
 template < class Rep_ >                                        // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 init_basis__slack_variables( int s_i, Tag_false)
 {
     int  s = slack_A.size();
@@ -508,7 +508,7 @@ init_basis__slack_variables( int s_i, Tag_false)
 }
 
 template < class Rep_ >                                        // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 init_basis__constraints( int s_i, Tag_false)
 {
     // reserve memory
@@ -538,7 +538,7 @@ init_basis__constraints( int s_i, Tag_false)
 // initial solution
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 init_solution( )
 {
     // initialize exact version of `qp_b' restricted to basic constraints C
@@ -584,7 +584,7 @@ init_solution( )
 // initialize additional data members
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 init_additional_data_members( )
 {
     if ( ! A_Cj.empty()) A_Cj.clear();
@@ -612,7 +612,7 @@ init_additional_data_members( )
 // 0 otherwise
 template < class Rep_ >
 int
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 signed_leading_exponent(int row)
 {
     A_entry  a0( 0);
@@ -629,7 +629,7 @@ signed_leading_exponent(int row)
 // ------------------------
 template < class Rep >
 void
-QPE_solver<Rep>::
+QP_solver<Rep>::
 transition( )
 {
     CGAL_qpe_debug {
@@ -682,8 +682,8 @@ transition( )
 // ------
 // numerator of current solution
 template < class Rep_ >
-typename QPE_solver<Rep_>::ET
-QPE_solver<Rep_>::
+typename QP_solver<Rep_>::ET
+QP_solver<Rep_>::
 solution_numerator( ) const
 {
     Index_const_iterator  i_it;
@@ -724,7 +724,7 @@ solution_numerator( ) const
 // ----------
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 pivot_step( )
 {
     ++m_pivots;
@@ -907,7 +907,7 @@ pivot_step( )
 // pricing
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 pricing( )
 {
     // diagnostic output
@@ -941,7 +941,7 @@ pricing( )
 // initialization of ratio-test
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 ratio_test_init( )
 {
     // store exact version of `A_Cj' (implicit conversion)
@@ -952,7 +952,7 @@ ratio_test_init( )
 }
 
 template < class Rep_ >                                         // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
 {
     // store exact version of `A_Cj' (implicit conversion)
@@ -970,7 +970,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
 }
 
 template < class Rep_ >                                        // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
 {
     // store exact version of `A_Cj' (implicit conversion)
@@ -1011,7 +1011,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
 // ratio test (step 1)
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 ratio_test_1( )
 {
 
@@ -1133,7 +1133,7 @@ ratio_test_1( )
 
 template < class Rep_ >                                         // QP case
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 ratio_test_2( Tag_false)
 {
     // diagnostic output
@@ -1227,7 +1227,7 @@ ratio_test_2( Tag_false)
 // update (step 1)
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 update_1( )
 {
     CGAL_qpe_debug {
@@ -1258,7 +1258,7 @@ update_1( )
 // update (step 2)
 template < class Rep_ >                                         // QP case
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 update_2( Tag_false)
 {
     CGAL_qpe_debug {
@@ -1278,7 +1278,7 @@ update_2( Tag_false)
 
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 expel_artificial_variables_from_basis( )
 {
     int row_ind;
@@ -1344,7 +1344,7 @@ expel_artificial_variables_from_basis( )
 // replace variable in basis
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 replace_variable( )
 {
     CGAL_qpe_debug {
@@ -1361,7 +1361,7 @@ replace_variable( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 replace_variable_original_original( )
 {
     int  k = in_B[ i];
@@ -1388,7 +1388,7 @@ replace_variable_original_original( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 replace_variable_slack_slack( )
 {
     int  k = in_B[ i];
@@ -1427,7 +1427,7 @@ replace_variable_slack_slack( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 replace_variable_slack_original( )
 {
     int  k = in_B[ i];
@@ -1467,7 +1467,7 @@ replace_variable_slack_original( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 replace_variable_original_slack( )
 {
     int  k = in_B[ i];
@@ -1515,7 +1515,7 @@ replace_variable_original_slack( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 remove_artificial_variable_and_constraint( )
 {
     int  k = in_B[ i];
@@ -1554,7 +1554,7 @@ remove_artificial_variable_and_constraint( )
 // enter variable into basis
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 enter_variable( )
 {
     CGAL_qpe_debug {
@@ -1625,7 +1625,7 @@ enter_variable( )
 // leave variable from basis
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 leave_variable( )
 {
     CGAL_qpe_debug {
@@ -1697,7 +1697,7 @@ leave_variable( )
 
 // replace variable in basis QP-case, transition to Ratio Test Step 2
 template < class Rep_ >
-void QPE_solver<Rep_>::
+void QP_solver<Rep_>::
 z_replace_variable( )
 {
     CGAL_qpe_debug {
@@ -1717,7 +1717,7 @@ z_replace_variable( )
 
 
 template < class Rep_ >  inline                           // no inequalities
-void QPE_solver<Rep_>::
+void QP_solver<Rep_>::
 z_replace_variable( Tag_true)
 {
     z_replace_variable_original_by_original();
@@ -1727,7 +1727,7 @@ z_replace_variable( Tag_true)
 
 
 template < class Rep_ >  inline                          // has inequalities
-void QPE_solver<Rep_>::
+void QP_solver<Rep_>::
 z_replace_variable( Tag_false)
 {
     // determine type of variables
@@ -1754,7 +1754,7 @@ z_replace_variable( Tag_false)
 
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 z_replace_variable_original_by_original( )
 {
     int  k = in_B[ i];
@@ -1785,7 +1785,7 @@ z_replace_variable_original_by_original( )
 
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 z_replace_variable_original_by_slack( )
 {
     int  k = in_B[ i];
@@ -1826,7 +1826,7 @@ z_replace_variable_original_by_slack( )
 
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 z_replace_variable_slack_by_original( )
 {
     int  k = in_B[ i];
@@ -1882,7 +1882,7 @@ z_replace_variable_slack_by_original( )
 
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 z_replace_variable_slack_by_slack( )
 {
     int  k = in_B[ i];
@@ -1924,7 +1924,7 @@ z_replace_variable_slack_by_slack( )
 // compute solution
 template < class Rep_ >
 void
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 compute_solution()
 {
     // compute current solution
@@ -1934,7 +1934,7 @@ compute_solution()
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
 {
     // initialize
@@ -1973,7 +1973,7 @@ multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
 // check basis inverse
 template < class Rep_ >
 bool
-QPE_solver<Rep_>::
+QP_solver<Rep_>::
 check_basis_inverse()
 {
     // diagnostic output
@@ -2001,7 +2001,7 @@ check_basis_inverse()
 }
 
 template < class Rep_ >                                         // LP case
-bool  QPE_solver<Rep_>::
+bool  QP_solver<Rep_>::
 check_basis_inverse( Tag_true)
 {
     CGAL_qpe_debug {
@@ -2047,7 +2047,7 @@ check_basis_inverse( Tag_true)
 }
 
 template < class Rep_ >                                         // QP case
-bool  QPE_solver<Rep_>::
+bool  QP_solver<Rep_>::
 check_basis_inverse( Tag_false)
 {
     bool res = true;
@@ -2185,7 +2185,7 @@ check_basis_inverse( Tag_false)
 
 // setting the pricing strategy
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 set_pricing_strategy( Pricing_strategy& strategy)
 {
     CGAL_qpe_precondition( phase() != 1);
@@ -2198,7 +2198,7 @@ set_pricing_strategy( Pricing_strategy& strategy)
 // diagnostic output
 // -----------------
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 set_verbosity( int verbose, std::ostream& stream)
 {
     vout  = Verbose_ostream( verbose >  0, stream);
@@ -2210,7 +2210,7 @@ set_verbosity( int verbose, std::ostream& stream)
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 print_program( )
 {
     int  row, i;
@@ -2261,7 +2261,7 @@ print_program( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 print_basis( )
 {
     char label;
@@ -2314,7 +2314,7 @@ print_basis( )
 }
 
 template < class Rep_ >
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 print_solution( )
 {
     if ( vout3.verbose()) {
@@ -2353,7 +2353,7 @@ print_solution( )
 }
 
 template < class Rep_ >
-const char*  QPE_solver<Rep_>::
+const char*  QP_solver<Rep_>::
 variable_type( int k) const
 {
     return ( k <        qp_n                 ? "original"  :
@@ -2362,14 +2362,14 @@ variable_type( int k) const
 }
 
 template < class Rep_ > 
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_artificial(int k) const
 {
     return (k >= (int)(qp_n+slack_A.size())); 
 }
 
 template < class Rep_ > 
-int QPE_solver<Rep_>::
+int QP_solver<Rep_>::
 get_l() const
 {
     return l;
@@ -2377,7 +2377,7 @@ get_l() const
 
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_feasible()
 {
     Index_iterator i_it, M_i_it;
@@ -2422,7 +2422,7 @@ is_solution_feasible()
 }
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_feasible_aux()
 {
     Index_iterator i_it, M_i_it;
@@ -2488,7 +2488,7 @@ is_solution_feasible_aux()
 }
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_optimal(Tag_false)		//QP case
 {
     Index_iterator i_it, M_i_it, N_i_it;
@@ -2598,7 +2598,7 @@ is_solution_optimal(Tag_false)		//QP case
 }
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_optimal(Tag_true)		//LP case
 {
     Index_iterator i_it, M_i_it, N_i_it;
@@ -2702,7 +2702,7 @@ is_solution_optimal(Tag_true)		//LP case
 
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_optimal_aux()
 {
     Index_iterator i_it, M_i_it;
@@ -2805,7 +2805,7 @@ is_solution_optimal_aux()
 }
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_unbounded(Tag_false)		//QP case
 {
 
@@ -2937,7 +2937,7 @@ is_solution_unbounded(Tag_false)		//QP case
 
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_unbounded(Tag_true)		//LP case
 {
 
@@ -3038,7 +3038,7 @@ is_solution_unbounded(Tag_true)		//LP case
 
 
 template < class Rep_ >
-bool QPE_solver<Rep_>::
+bool QP_solver<Rep_>::
 is_solution_valid()
 {
     bool f, o, u, aux_positive;

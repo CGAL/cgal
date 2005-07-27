@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE__filtered_base.C
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP__filtered_base.C
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -21,7 +21,7 @@
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: Base Class for Filtered Pricing of the QPE Solver
+// implementation: Base Class for Filtered Pricing of the QP Solver
 // ============================================================================
 
 CGAL_BEGIN_NAMESPACE
@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 // set-up
 template < class Rep_, class NT_, class ET2NT_ >
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 set( )
 {
     // reserve memory for NT versions of current solution
@@ -45,7 +45,7 @@ set( )
 
 // initialization
 template < class Rep_, class NT_, class ET2NT_ >
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 init( )
 {
     // get properties of quadratic program
@@ -82,7 +82,7 @@ init( )
 
 // operations
 template < class Rep_, class NT_, class ET2NT_ >
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 init_NT( )
 {
     // ToDo: scale 'x_B_O', 'lambda', and 'd' if necessary
@@ -100,7 +100,7 @@ init_NT( )
 }
 
 template < class Rep_, class NT_, class ET2NT_ >
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( )
 {
     // get properties of quadratic program
@@ -167,7 +167,7 @@ update_maxima( )
 }
 
 template < class Rep_, class NT_, class ET2NT_ >                // QP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( Tag_false)
 {
     int  n = this->solver().number_of_variables();
@@ -207,7 +207,7 @@ update_maxima( Tag_false)
 }
 
 template < class Rep_, class NT_, class ET2NT_ >                // LP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( Tag_true)
 {
 
@@ -224,7 +224,7 @@ update_maxima( Tag_true)
 }
 
 template < class Rep_, class NT_, class ET2NT_ >
-bool  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+bool  QP__filtered_base<Rep_,NT_,ET2NT_>::
 certify_mu_j_NT( int j) const
 {
     // compute 'mu_j' with inexact arithmetic again
@@ -263,7 +263,7 @@ certify_mu_j_NT( int j) const
 
 // transition
 template < class Rep_, class NT_, class ET2NT_ >
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 transition( )
 {
     // get properties of quadratic program

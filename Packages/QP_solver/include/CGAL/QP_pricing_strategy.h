@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QPE_pricing_strategy.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_pricing_strategy.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -21,14 +21,14 @@
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: Base Class for Pricing Strategies of the QPE Solver
+// implementation: Base Class for Pricing Strategies of the QP Solver
 // ============================================================================
 
-#ifndef CGAL_QPE_PRICING_STRATEGY_H
-#define CGAL_QPE_PRICING_STRATEGY_H
+#ifndef CGAL_QP_PRICING_STRATEGY_H
+#define CGAL_QP_PRICING_STRATEGY_H
 
 // includes
-#include <CGAL/QPE_solver.h>
+#include <CGAL/QP_solver.h>
 #include <CGAL/IO/Verbose_ostream.h>
 
 #include <string>
@@ -39,26 +39,26 @@ CGAL_BEGIN_NAMESPACE
 // class declarations
 // ==================
 template < class Rep_ >
-class QPE_pricing_strategy;
+class QP_pricing_strategy;
 
 template < class Rep_ >
-class QPE_solver;
+class QP_solver;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_ >
-class QPE_pricing_strategy {
+class QP_pricing_strategy {
 
   public:
 
     // self
     typedef  Rep_                       Rep;
-    typedef  QPE_pricing_strategy<Rep>  Self;
+    typedef  QP_pricing_strategy<Rep>  Self;
 
     // types
     typedef  typename Rep::ET           ET;
-    typedef  CGAL::QPE_solver<Rep>      QP_solver;
+    typedef  CGAL::QP_solver<Rep>      QP_solver;
     typedef  CGAL::Verbose_ostream      Verbose_ostream;
 
   public:
@@ -76,11 +76,11 @@ class QPE_pricing_strategy {
   protected:
     
     // construction & destruction
-    QPE_pricing_strategy( const std::string& strategy_name);
+    QP_pricing_strategy( const std::string& strategy_name);
 public:
-    virtual ~QPE_pricing_strategy( ) { }
+    virtual ~QP_pricing_strategy( ) { }
 protected:
-    QPE_pricing_strategy( );            // detects error in virtual inheritance
+    QP_pricing_strategy( );            // detects error in virtual inheritance
         
     // initialization (of derived classes)
     virtual  void  set ( ) { }
@@ -112,24 +112,24 @@ protected:
 
 // construction
 template < class Rep_ >  inline
-QPE_pricing_strategy<Rep_>::
-QPE_pricing_strategy( const std::string& strategy_name)
+QP_pricing_strategy<Rep_>::
+QP_pricing_strategy( const std::string& strategy_name)
     : et0( 0), name( strategy_name)
 { }
 
 // detects error in virtual inheritance
 template < class Rep_ >  inline
-QPE_pricing_strategy<Rep_>::
-QPE_pricing_strategy( )
+QP_pricing_strategy<Rep_>::
+QP_pricing_strategy( )
 {
-    CGAL_qpe_assertion_msg( false, "call to 'QPE_pricing_strategy<Rep>::\n'" \
-	"QPE_pricing_strategy( const std::string&  strategy_name)'\n" \
+    CGAL_qpe_assertion_msg( false, "call to 'QP_pricing_strategy<Rep>::\n'" \
+	"QP_pricing_strategy( const std::string&  strategy_name)'\n" \
 	"is missing in most derived pricing class!");
 }
 
 // initialization
 template < class Rep_ >  inline
-void  QPE_pricing_strategy<Rep_>::
+void  QP_pricing_strategy<Rep_>::
 set( const QP_solver&  solver, Verbose_ostream&  vout)
 {
     solverP = &solver;
@@ -138,7 +138,7 @@ set( const QP_solver&  solver, Verbose_ostream&  vout)
 }
 
 template < class Rep_ >  inline
-void  QPE_pricing_strategy<Rep_>::
+void  QP_pricing_strategy<Rep_>::
 init( int)
 {
     CGAL_qpe_debug {
@@ -149,7 +149,7 @@ init( int)
 
 // operations
 template < class Rep_ >  inline
-typename Rep_::ET  QPE_pricing_strategy<Rep_>::
+typename Rep_::ET  QP_pricing_strategy<Rep_>::
 mu_j( int j) const
 {
     return solver().mu_j( j,
@@ -160,6 +160,6 @@ mu_j( int j) const
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QPE_PRICING_STRATEGY_H
+#endif // CGAL_QP_PRICING_STRATEGY_H
 
 // ===== EOF ==================================================================

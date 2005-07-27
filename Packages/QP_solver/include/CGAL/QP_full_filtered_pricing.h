@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE_full_filtered_pricing.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP_full_filtered_pricing.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,11 +24,11 @@
 // implementation: Pricing Strategy with full filtered pricing
 // ============================================================================
 
-#ifndef CGAL_QPE_FULL_FILTERED_PRICING_H
-#define CGAL_QPE_FULL_FILTERED_PRICING_H
+#ifndef CGAL_QP_FULL_FILTERED_PRICING_H
+#define CGAL_QP_FULL_FILTERED_PRICING_H
 
 // includes
-#include <CGAL/QP_engine/QPE__filtered_base.h>
+#include <CGAL/QP_solver/QP__filtered_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,19 +37,19 @@ CGAL_BEGIN_NAMESPACE
 // =================
 template < class Rep_, class NT_ = double, class ET2NT_ =
     To_double<typename Rep_::ET> >
-class QPE_full_filtered_pricing;
+class QP_full_filtered_pricing;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_, class NT_, class ET2NT_ >
-class QPE_full_filtered_pricing : public QPE__filtered_base<Rep_,NT_,ET2NT_> {
+class QP_full_filtered_pricing : public QP__filtered_base<Rep_,NT_,ET2NT_> {
 
     // self
     typedef  Rep_                            Rep;
-    typedef  QPE_pricing_strategy<Rep>       Base;
-    typedef  QPE__filtered_base<Rep, NT_, ET2NT_>         Filtered_base;
-    typedef  QPE_full_filtered_pricing<Rep, NT_, ET2NT_>  Self;
+    typedef  QP_pricing_strategy<Rep>       Base;
+    typedef  QP__filtered_base<Rep, NT_, ET2NT_>         Filtered_base;
+    typedef  QP_full_filtered_pricing<Rep, NT_, ET2NT_>  Self;
 
     // types from the base class
     typedef  typename Base::ET          ET;
@@ -61,13 +61,13 @@ class QPE_full_filtered_pricing : public QPE__filtered_base<Rep_,NT_,ET2NT_> {
     typedef  ET2NT_                     ET2NT;
 
     // creation
-    QPE_full_filtered_pricing( ET2NT et2nt = ET2NT());
+    QP_full_filtered_pricing( ET2NT et2nt = ET2NT());
 
     // operations
     int  pricing( );
     
     // cleanup
-    ~QPE_full_filtered_pricing() { };
+    ~QP_full_filtered_pricing() { };
 
 };
 
@@ -79,15 +79,15 @@ class QPE_full_filtered_pricing : public QPE__filtered_base<Rep_,NT_,ET2NT_> {
 
 // construction
 template < class Rep_, class NT_, class ET2NT_ >  inline
-QPE_full_filtered_pricing<Rep_,NT_,ET2NT_>::
-QPE_full_filtered_pricing( ET2NT et2nt)
+QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+QP_full_filtered_pricing( ET2NT et2nt)
     : Base( "full filtered"),
       Filtered_base( et2nt)
 { }
     
 // operations
 template < class Rep_, class NT_, class ET2NT_ >
-int  QPE_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
 pricing( )
 {
     // get properties of quadratic program
@@ -169,6 +169,6 @@ pricing( )
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QPE_FULL_FILTERED_PRICING_H
+#endif // CGAL_QP_FULL_FILTERED_PRICING_H
 
 // ===== EOF ==================================================================

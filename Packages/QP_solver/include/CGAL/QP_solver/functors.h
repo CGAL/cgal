@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/functors.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/functors.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,12 +24,12 @@
 // implementation: Quadratic Programming Engine - Functors
 // ============================================================================
 
-#ifndef CGAL_QP_ENGINE_FUNCTORS_H
-#define CGAL_QP_ENGINE_FUNCTORS_H
+#ifndef CGAL_QP_SOLVER_FUNCTORS_H
+#define CGAL_QP_SOLVER_FUNCTORS_H
 
 // includes
-#ifndef CGAL_QP_ENGINE_BASIC_H
-#  include <CGAL/QP_engine/basic.h>
+#ifndef CGAL_QP_SOLVER_BASIC_H
+#  include <CGAL/QP_solver/basic.h>
 #endif
 #ifndef CGAL_FUNCTION_OBJECTS_H
 #  include <CGAL/function_objects.h>
@@ -51,16 +51,16 @@ CGAL_BEGIN_NAMESPACE
 // ==================
 template < class VectorIt,
            bool check_lower = false, bool check_upper = false >
-class QPE_vector_accessor;
+class QP_vector_accessor;
 
 template < class MatrixIt,
            bool check_1st_lower = false, bool check_1st_upper = false,
            bool check_2nd_lower = false, bool check_2nd_upper = false >
-class QPE_matrix_accessor;
+class QP_matrix_accessor;
 
 template < class MatrixIt, class IsSymmetric,
            bool check_lower = false, bool check_upper = false >
-class QPE_matrix_pairwise_accessor;
+class QP_matrix_pairwise_accessor;
 
 
 template < class RndAccIt >
@@ -72,10 +72,10 @@ class Value_by_basic_index;
 // =====================
 
 // -------------------
-// QPE_vector_accessor
+// QP_vector_accessor
 // -------------------
 template < class VectorIt, bool check_lower, bool check_upper >
-class QPE_vector_accessor : public std::unary_function<
+class QP_vector_accessor : public std::unary_function<
     int, typename std::iterator_traits<VectorIt>::value_type > {
 
   public:
@@ -84,7 +84,7 @@ class QPE_vector_accessor : public std::unary_function<
            int, 
            typename std::iterator_traits<VectorIt>::value_type >::result_type
     result_type;
-    QPE_vector_accessor( VectorIt it, int lower = 0, int upper = 0)
+    QP_vector_accessor( VectorIt it, int lower = 0, int upper = 0)
         : z( 0), v( it)
     {
 	if ( check_lower) l = lower;
@@ -108,11 +108,11 @@ class QPE_vector_accessor : public std::unary_function<
 // ----------------------------------------------------------------------------
 
 // -------------------
-// QPE_matrix_accessor
+// QP_matrix_accessor
 // -------------------
 template < class MatrixIt, bool check_1st_lower, bool check_1st_upper,
                            bool check_2nd_lower, bool check_2nd_upper >
-class QPE_matrix_accessor {
+class QP_matrix_accessor {
 
   public:    
     typedef CGAL::Arity_tag<2> Arity;
@@ -122,7 +122,7 @@ class QPE_matrix_accessor {
             typename std::iterator_traits<MatrixIt>::value_type>::value_type  
     result_type;
 
-    QPE_matrix_accessor( MatrixIt it, int lower_1 = 0, int upper_1 = 0,
+    QP_matrix_accessor( MatrixIt it, int lower_1 = 0, int upper_1 = 0,
 			              int lower_2 = 0, int upper_2 = 0)
 	: z( 0), m( it)
     {
@@ -150,10 +150,10 @@ class QPE_matrix_accessor {
 // ----------------------------------------------------------------------------
 
 // ----------------------------
-// QPE_matrix_pairwise_accessor
+// QP_matrix_pairwise_accessor
 // ----------------------------
 template < class MatrixIt,class IsSymmetric,bool check_lower,bool check_upper >
-class QPE_matrix_pairwise_accessor : public std::unary_function<
+class QP_matrix_pairwise_accessor : public std::unary_function<
     int, typename std::iterator_traits<
              typename std::iterator_traits<MatrixIt>::value_type>::value_type>{
 
@@ -168,11 +168,11 @@ class QPE_matrix_pairwise_accessor : public std::unary_function<
     result_type;
 
     // following operator= added by kf. to make Join_input_iterator_1 work
-    QPE_matrix_pairwise_accessor() : z( 0)
+    QP_matrix_pairwise_accessor() : z( 0)
     {
     }
 
-    QPE_matrix_pairwise_accessor( MatrixIt it, int row, int lower = 0,
+    QP_matrix_pairwise_accessor( MatrixIt it, int row, int lower = 0,
 				                        int upper = 0)
 	: z( 0)
     {
@@ -187,8 +187,8 @@ class QPE_matrix_pairwise_accessor : public std::unary_function<
     }
     
     // following operator= added by kf. to make Join_input_iterator_1 work
-    QPE_matrix_pairwise_accessor&
-      operator=(const QPE_matrix_pairwise_accessor& a)
+    QP_matrix_pairwise_accessor&
+      operator=(const QP_matrix_pairwise_accessor& a)
     {
       m = a.m;
       v = a.v;
@@ -266,6 +266,6 @@ class Value_by_basic_index : public std::unary_function<
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QP_ENGINE_FUNCTORS_H
+#endif // CGAL_QP_SOLVER_FUNCTORS_H
 
 // ===== EOF ==================================================================

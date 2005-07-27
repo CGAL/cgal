@@ -26,7 +26,7 @@
 
 
 
-\title{QPE\_solver}
+\title{QP\_solver}
 \author{}
 %
 \begin{document}
@@ -186,7 +186,7 @@ D:=
 \end{note}
 
 \begin{slide}
-QPE\_solver\_talk\_example.C first part
+QP\_solver\_talk\_example.C first part
 \end{slide}
 
 \begin{note}
@@ -202,20 +202,20 @@ RandomAccessIterator referring to the constraint types of the rows of constr.
 matrix $A$.  
 \item element types of $A$, $b$, $c$ and $D$ must provide implicit conversions
 to $ET$.
-\item \emph{QPE\_const\_value\_iterator} convenience class template
+\item \emph{QP\_const\_value\_iterator} convenience class template
 \end{itemize}
 \end{note}
 
 \begin{slide}
-QPE\_solver\_talk\_example.C second part
+QP\_solver\_talk\_example.C second part
 \end{slide}
 
 \begin{note}
 \begin{itemize}
 \item show how columns of $A$ and rows of $D$ are inserted.
-\item \emph{QPE\_solver$<$QPESolverTraits$>$} constructor defaulting to
+\item \emph{QP\_solver$<$QPSolverTraits$>$} constructor defaulting to
 \emph{full exact pricing} strategy
-\item QPE\_solver solution query: qp.status()
+\item QP\_solver solution query: qp.status()
 \item Variable\_value\_iterator: qp.variables\_value\_begin(),
 qp.variables\_value\_end()
 \end{itemize}
@@ -305,7 +305,7 @@ User provided pricing strategies may be specified by means of inheritance.
 \begin{itemize}
 \item User provided pricing strategies inherit from the base class
 \begin{verbatim}
-QPE_pricing_strategy<Traits>
+QP_pricing_strategy<Traits>
 \end{verbatim}
 
 \item issue: should this base class be made public?
@@ -323,7 +323,7 @@ evaluated using the exact number type $ET$.
 
 \emph{Creation:}
 \begin{verbatim}
-QPE_full_exact_pricing<Traits> feps();
+QP_full_exact_pricing<Traits> feps();
 \end{verbatim}
 \end{slide}
 
@@ -377,7 +377,7 @@ using the fast (inexact) number type $NT$.
 
 \emph{Creation:}
 \begin{verbatim}
-QPE_full_filtered_pricing<Traits, NT, ET2NT>
+QP_full_filtered_pricing<Traits, NT, ET2NT>
   ffps( ET2NT et2nt = ET2NT());
 \end{verbatim}
 \end{slide}
@@ -408,7 +408,7 @@ $V:=\{k \in N \setminus S \left|\right. \mu_{k} < 0\}$.
 
 \emph{Creation:}
 \begin{verbatim}
-QPE_partial_exact_pricing<Traits> peps(
+QP_partial_exact_pricing<Traits> peps(
   bool randomize = false, 
   Random& random = default_random);
 \end{verbatim}
@@ -454,7 +454,7 @@ or the exact value $\mu_{j}$ is evaluated.
 
 \emph{Creation:}
 \begin{verbatim}
-QPE_partial_filtered_pricing<Traits, NT, ET2NT>
+QP_partial_filtered_pricing<Traits, NT, ET2NT>
   pfps( ET2NT et2nt = ET2NT());
 \end{verbatim}
 \end{slide}

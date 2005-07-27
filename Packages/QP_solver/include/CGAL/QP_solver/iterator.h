@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/iterator.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/iterator.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,12 +24,12 @@
 // implementation: Quadratic Programming Engine - Iterators
 // ============================================================================
 
-#ifndef CGAL_QP_ENGINE_ITERATOR_H
-#define CGAL_QP_ENGINE_ITERATOR_H
+#ifndef CGAL_QP_SOLVER_ITERATOR_H
+#define CGAL_QP_SOLVER_ITERATOR_H
 
 // includes
-#ifndef CGAL_QP_ENGINE_BASIC_H
-#  include <CGAL/QP_engine/basic.h>
+#ifndef CGAL_QP_SOLVER_BASIC_H
+#  include <CGAL/QP_solver/basic.h>
 #endif
 #ifndef CGAL_ITERATOR
 #  include <CGAL/iterator.h>
@@ -41,20 +41,20 @@ CGAL_BEGIN_NAMESPACE
 // class declarations
 // ==================
 template < class T >
-class QPE_const_value_iterator;
+class QP_const_value_iterator;
 
 template < class T>
-struct QPE_vector_const_iterator;
+struct QP_vector_const_iterator;
 
 // =====================
 // class implementations
 // =====================
 
 // ------------------------
-// QPE_const_value_iterator
+// QP_const_value_iterator
 // ------------------------
 template < class T >
-class QPE_const_value_iterator {
+class QP_const_value_iterator {
 
   public:
 
@@ -65,14 +65,14 @@ class QPE_const_value_iterator {
     typedef  value_type*                        pointer;
     typedef  value_type&                        reference;
 
-    typedef  QPE_const_value_iterator<T>        Self;
+    typedef  QP_const_value_iterator<T>        Self;
     typedef  difference_type                    Diff;
     typedef  value_type                         Val;
     typedef  pointer                            Ptr;
     typedef  reference                          Ref;
 
     // construction
-    QPE_const_value_iterator( const T& t = T(), Diff n = 0)
+    QP_const_value_iterator( const T& t = T(), Diff n = 0)
 	: value( t), index( n)
     { }
 
@@ -122,10 +122,10 @@ class QPE_const_value_iterator {
 };
 
 //--------------------
-// QPE_vector_const_iterator
+// QP_vector_const_iterator
 //--------------------
 template < class T>
-struct QPE_vector_const_iterator {
+struct QP_vector_const_iterator {
   typedef typename T::const_iterator result_type;
   typedef CGAL::Arity_tag<1> Arity;
   result_type operator () (const T& v) const
@@ -137,6 +137,6 @@ struct QPE_vector_const_iterator {
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QP_ENGINE_ITERATOR_H
+#endif // CGAL_QP_SOLVER_ITERATOR_H
 
 // ===== EOF ==================================================================

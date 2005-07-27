@@ -17,8 +17,8 @@ else
     echo "4 the default) sets the verbosity level in the generated output log."
     echo ""
     echo "This program calls Maple to convert the mema-files in Maple/data"
-    echo "to input files for the program test_suite_QPE_solver.  In addition,"
-    echo "the program writes the file test_suite_QPE_solver.cin so that"
+    echo "to input files for the program test_suite_QP_solver.  In addition,"
+    echo "the program writes the file test_suite_QP_solver.cin so that"
     echo "all/some of the tests are run during the CGAL testsuite: If a"
     echo "mema-file constains the string 'is_part_of_CGAL_testsuite:= true'"
     echo "the file is part of the CGAL testsuite; otherwise it is only"
@@ -78,8 +78,8 @@ if [ ! "x$CHECKFILES" == "x" ]; then
     echo ""
 fi
 
-# construct input file for test_suite_QPE_solver:
-echo "Constructing file 'test_suite_QPE_solver.cin'; this may take a while ..."
+# construct input file for test_suite_QP_solver:
+echo "Constructing file 'test_suite_QP_solver.cin'; this may take a while ..."
 if [ "x$1" == "xCGAL" ]; then
     TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*.mema`
 elif [ "x$1" == "xall" ]; then
@@ -101,7 +101,7 @@ for file in $TESTFILES
     fi
   done
 done
-echo $LIST > test_suite_QPE_solver.cin
+echo $LIST > test_suite_QP_solver.cin
 
 # check that all data/*.data_* files that are part of the CGAL
 # testsuite indeed exist in the CVS repository:

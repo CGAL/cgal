@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE__filtered_base.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP__filtered_base.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -21,15 +21,15 @@
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: Base Class for Filtered Pricing of the QPE Solver
+// implementation: Base Class for Filtered Pricing of the QP Solver
 // ============================================================================
 
-#ifndef CGAL_QPE__FILTERED_BASE_H
-#define CGAL_QPE__FILTERED_BASE_H
+#ifndef CGAL_QP__FILTERED_BASE_H
+#define CGAL_QP__FILTERED_BASE_H
 
 // includes
-#include <CGAL/QPE_pricing_strategy.h>
-#include <CGAL/QPE_solver.h>
+#include <CGAL/QP_pricing_strategy.h>
+#include <CGAL/QP_solver.h>
 #include <cmath>
 
 CGAL_BEGIN_NAMESPACE
@@ -39,18 +39,18 @@ CGAL_BEGIN_NAMESPACE
 // ==================
 template < class Rep_, class NT_ = double, class ET2NT_ =
     To_double<typename Rep_::ET> >
-class QPE__filtered_base;
+class QP__filtered_base;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_, class NT_, class ET2NT_ >
-class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
+class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
 
     // self
     typedef  Rep_                       Rep;
-    typedef  QPE__filtered_base<Rep>    Self;
-    typedef  QPE_pricing_strategy<Rep>  Base;
+    typedef  QP__filtered_base<Rep>    Self;
+    typedef  QP_pricing_strategy<Rep>  Base;
 
   public:
 
@@ -62,7 +62,7 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
   protected:
 
     // construction
-    QPE__filtered_base( ET2NT et2nt = ET2NT());
+    QP__filtered_base( ET2NT et2nt = ET2NT());
     
     // initialization
     virtual  void  set ( );
@@ -149,21 +149,21 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
 
 // construction
 template < class Rep_, class NT_, class ET2NT_ >  inline
-QPE__filtered_base<Rep_,NT_,ET2NT_>::
-QPE__filtered_base( ET2NT et2nt)
+QP__filtered_base<Rep_,NT_,ET2NT_>::
+QP__filtered_base( ET2NT et2nt)
     : nt0( 0), nt1( 1), et2nt_obj( et2nt)
 { }
 
 // set-up
 template < class Rep_, class NT_, class ET2NT_ > inline         // QP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 set( int l, Tag_false)
 {
     x_B_O_NT.resize( l, nt0);
 }
 
 template < class Rep_, class NT_, class ET2NT_ > inline         // LP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 set( int l, Tag_true)
 {
      x_B_O_NT.resize( l, nt0);   
@@ -171,7 +171,7 @@ set( int l, Tag_true)
 
 // initialization
 template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 init( Tag_false)
 {
     if ( ! row_max_D.empty()) row_max_D.clear();
@@ -179,7 +179,7 @@ init( Tag_false)
 }
 
 template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 init( Tag_true)
 {
     // nop
@@ -187,7 +187,7 @@ init( Tag_true)
 
 // operations
 template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 init_NT( Tag_false)
 {
     if ( this->solver().number_of_basic_original_variables()
@@ -199,7 +199,7 @@ init_NT( Tag_false)
 }
 
 template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 init_NT( Tag_true)
 {
     // nop
@@ -207,14 +207,14 @@ init_NT( Tag_true)
 
 
 template < class Rep_, class NT_, class ET2NT_ >  inline
-NT_  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
 mu_j_NT( int j) const
 {
     return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
 /*
 template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( Tag_true)
 {
     // nop
@@ -223,7 +223,7 @@ update_maxima( Tag_true)
 
 // transition
 template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 transition( int n, Tag_false)
 {
     handled_D.insert( handled_D.end(), n, false);
@@ -231,7 +231,7 @@ transition( int n, Tag_false)
 }
 
 template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 transition( int, Tag_true)
 {
     // nop
@@ -240,9 +240,9 @@ transition( int, Tag_true)
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QP_engine/QPE__filtered_base.C>
+#  include <CGAL/QP_solver/QP__filtered_base.C>
 #endif
 
-#endif // CGAL_QPE__FILTERED_BASE_H
+#endif // CGAL_QP__FILTERED_BASE_H
 
 // ===== EOF ==================================================================

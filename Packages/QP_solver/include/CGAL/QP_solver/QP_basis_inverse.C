@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE_basis_inverse.C
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP_basis_inverse.C
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 // ---------------------------
 // set-up
 template < class ET_, class Is_LP_ >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 set( int n, int m, int nr_equalities)
 {
     CGAL_qpe_precondition( n > 0);
@@ -63,7 +63,7 @@ set( int n, int m, int nr_equalities)
 // ----------------
 // leaving of original variable (update type U2)
 template < class ET_, class Is_LP_ >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 leave_original( )
 {
     // assert QP case
@@ -90,7 +90,7 @@ leave_original( )
 
 // entering of slack variable (update type U3)
 template < class ET_, class Is_LP_ >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 enter_slack( )
 {
     // assert QP case
@@ -124,7 +124,7 @@ enter_slack( )
 
 // replacing of original by slack variable (update type U8)
 template < class ET_, class Is_LP_ >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 enter_slack_leave_original( )
 {
     // assert LP case or phase I
@@ -169,7 +169,7 @@ enter_slack_leave_original( )
 // for phaseII                               (update type UZ_1)
 template < class ET_, class Is_LP_ >
 template < class ForwardIterator >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 z_replace_original_by_original(ForwardIterator y_l_it,
                                ForwardIterator y_x_it, const ET& s_delta,
                                const ET& s_nu, unsigned int k_i)
@@ -222,7 +222,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
 // replacing of original by slack variable with precondition in QP-case
 // for phaseII                               (update type UZ_2)
 template < class ET_, class Is_LP_ >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 z_replace_original_by_slack( )
 {
 
@@ -266,7 +266,7 @@ z_replace_original_by_slack( )
 // for phaseII                               (update type UZ_3)
 template < class ET_, class Is_LP_ >
 template < class ForwardIterator >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 z_replace_slack_by_original(ForwardIterator y_l_it,
                             ForwardIterator y_x_it,
 			                ForwardIterator u_x_it, const ET& hat_kappa,
@@ -364,7 +364,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
 // for phaseII                               (update type UZ_4)
 template < class ET_, class Is_LP_ >
 template < class ForwardIterator >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
 {
 
@@ -406,7 +406,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
 // copying of reduced basis inverse row in (upper) C-half
 template < class ET_, class Is_LP_ >
 template < class OutIt >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 copy_row_in_C(OutIt y_l_it, OutIt y_x_it, unsigned int r)
 {
     typename Matrix::const_iterator  matrix_it;
@@ -440,7 +440,7 @@ copy_row_in_C(OutIt y_l_it, OutIt y_x_it, unsigned int r)
 // copying of reduced basis inverse row in (lower) B_O-half
 template < class ET_, class Is_LP_ >
 template < class OutIt >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 copy_row_in_B_O(OutIt y_l_it, OutIt y_x_it, unsigned int r)
 {
     typename Matrix::const_iterator  matrix_it;
@@ -473,7 +473,7 @@ copy_row_in_B_O(OutIt y_l_it, OutIt y_x_it, unsigned int r)
 
 template < class ET_, class Is_LP_ >
 template < class ForIt >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
                   ForIt psi2_l_it, ForIt psi2_x_it,
 	             const ET& omega0, const ET& omega1,
@@ -544,7 +544,7 @@ z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
 // --------------
 // swap variable ``to the end'' of R
 template < class ET_, class Is_LP_ >                            // LP case
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 swap_variable( unsigned int j, Tag_true)
 {
     unsigned int  k = b-1;
@@ -565,7 +565,7 @@ swap_variable( unsigned int j, Tag_true)
 }
 
 template < class ET_, class Is_LP_ >                            // QP case
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 swap_variable( unsigned int j, Tag_false)
 {
     unsigned int  i = l+j, k = l+b-1;
@@ -608,7 +608,7 @@ swap_variable( unsigned int j, Tag_false)
 
 // swap constraint ``to the end'' of P
 template < class ET_, class Is_LP_ >                            // LP case
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 swap_constraint( unsigned int i, Tag_true)
 {
     unsigned int  k = s-1;
@@ -628,7 +628,7 @@ swap_constraint( unsigned int i, Tag_true)
 }
 
 template < class ET_, class Is_LP_ >                            // QP case
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 swap_constraint( unsigned int i, Tag_false)
 {
  
@@ -679,7 +679,7 @@ swap_constraint( unsigned int i, Tag_false)
 // diagnostic output
 // -----------------
 template < class ET_, class Is_LP_ >
-void  QPE_basis_inverse<ET_,Is_LP_>::
+void  QP_basis_inverse<ET_,Is_LP_>::
 print( )
 {
     // P

@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QPE_solver.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,23 +24,23 @@
 // implementation: Quadratic Programming Engine - Solver
 // ============================================================================
 
-#ifndef CGAL_QPE_SOLVER_H
-#define CGAL_QPE_SOLVER_H
+#ifndef CGAL_QP_SOLVER_H
+#define CGAL_QP_SOLVER_H
 
-#ifndef CGAL_QP_ENGINE_BASIC_H
-#include <CGAL/QP_engine/basic.h>
+#ifndef CGAL_QP_SOLVER_BASIC_H
+#include <CGAL/QP_solver/basic.h>
 #endif
-#ifndef CGAL_QP_ENGINE_ITERATOR_H
-#include <CGAL/QP_engine/iterator.h>
+#ifndef CGAL_QP_SOLVER_ITERATOR_H
+#include <CGAL/QP_solver/iterator.h>
 #endif
-#ifndef CGAL_QP_ENGINE_FUNCTORS_H
-#include <CGAL/QP_engine/functors.h>
+#ifndef CGAL_QP_SOLVER_FUNCTORS_H
+#include <CGAL/QP_solver/functors.h>
 #endif
-#ifndef CGAL_QP_ENGINE_QPE_BASIS_INVERSE_H
-#include <CGAL/QP_engine/QPE_basis_inverse.h>
+#ifndef CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
+#include <CGAL/QP_solver/QP_basis_inverse.h>
 #endif
-#ifndef CGAL_QPE_PRICING_STRATEGY_H
-#include <CGAL/QPE_pricing_strategy.h>
+#ifndef CGAL_QP_PRICING_STRATEGY_H
+#include <CGAL/QP_pricing_strategy.h>
 #endif
 
 #include <CGAL/functional.h>
@@ -69,19 +69,19 @@ CGAL_BEGIN_NAMESPACE
 // class declaration
 // =================
 template < class Rep_ >
-class QPE_solver;
+class QP_solver;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_ >
-class QPE_solver {
+class QP_solver {
 
   public:
 
     // self
     typedef  Rep_                       Rep;
-    typedef  QPE_solver<Rep>            Self;
+    typedef  QP_solver<Rep>            Self;
 
     // types from the representation class
     typedef  typename Rep::ET           ET;
@@ -128,7 +128,7 @@ class QPE_solver {
 
     // indices (variables and constraints)
 public:
-    // QPE__partial_base.h needs them
+    // QP__partial_base.h needs them
     typedef  std::vector<int>           Indices;
 
     // it seems we need the non-const version here as well
@@ -161,29 +161,29 @@ private:
                                         Value_by_basic_index;
 
     // access to original problem by basic variable/constraint index
-    typedef  QPE_vector_accessor<
+    typedef  QP_vector_accessor<
 		 typename std::iterator_traits<A_iterator>::value_type,
 		 false, false >         A_by_index_accessor;
     typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
                                         A_by_index_iterator;
 
-    typedef  QPE_vector_accessor< B_iterator, false, false >
+    typedef  QP_vector_accessor< B_iterator, false, false >
                                         B_by_index_accessor;
     typedef  Join_input_iterator_1< Index_const_iterator, B_by_index_accessor >
                                         B_by_index_iterator;
 
-    typedef  QPE_vector_accessor< C_iterator, false, false >
+    typedef  QP_vector_accessor< C_iterator, false, false >
                                         C_by_index_accessor;
     typedef  Join_input_iterator_1< Index_const_iterator, C_by_index_accessor >
                                         C_by_index_iterator;
 
-    typedef  QPE_vector_accessor<
+    typedef  QP_vector_accessor<
 		 typename std::iterator_traits<D_iterator>::value_type,
 		 false, false >         D_by_index_accessor;
     typedef  Join_input_iterator_1< Index_const_iterator, D_by_index_accessor >
                                         D_by_index_iterator;
 
-    typedef  QPE_matrix_accessor< A_iterator, false, true, false, false>
+    typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
                                         A_accessor;
     typedef  typename CGAL::Bind< A_accessor,
     	typename A_accessor::argument2_type,2>::Type
@@ -193,13 +193,13 @@ private:
     typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
                                         A_row_by_index_iterator;
 
-    typedef  QPE_matrix_pairwise_accessor< D_iterator, Is_symmetric >
+    typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric >
                                         D_pairwise_accessor;
     typedef  Join_input_iterator_1< Index_const_iterator, D_pairwise_accessor >
                                         D_pairwise_iterator;
 
     // access to special artificial column by basic constraint index
-    typedef  QPE_vector_accessor< typename S_art::const_iterator, false, false>
+    typedef  QP_vector_accessor< typename S_art::const_iterator, false, false>
                                         S_by_index_accessor;
     typedef  Join_input_iterator_1< Index_iterator, S_by_index_accessor >
                                         S_by_index_iterator;
@@ -241,7 +241,7 @@ private:
     typedef  Join_input_iterator_1< Lambda_numerator_iterator, Quotient_maker >
                                         Lambda_value_iterator;
     
-    typedef  QPE_pricing_strategy<Rep>  Pricing_strategy;
+    typedef  QP_pricing_strategy<Rep>  Pricing_strategy;
 
   private:
     Tag_false                is_perturbed;
@@ -290,7 +290,7 @@ private:
     Indices                  C;         //    basic constraints ( C = E+S_N )
     Indices                  S_B;       // nonbasic constraints ( S_B '=' B_S)
     
-    QPE_basis_inverse<ET,Is_linear>
+    QP_basis_inverse<ET,Is_linear>
                              inv_M_B;   // inverse of basis matrix
 
     const ET&                d;         // reference to `inv_M_B.denominator()'
@@ -363,13 +363,13 @@ private:
     // creation & initialization
     // -------------------------
     // creation
-    QPE_solver( );
+    QP_solver( );
 
     // set-up of QP
     void  set( int n, int m,
 	       A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	       Row_type_iterator r
-	           = QPE_const_value_iterator<Row_type>( Rep::EQUAL));
+	           = QP_const_value_iterator<Row_type>( Rep::EQUAL));
 
     // initialization (of phase I)
     void  init( );
@@ -882,14 +882,14 @@ private:
 // initialization
 // --------------
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 init_basis__slack_variables( int, Tag_true)
 {
     // nop
 }
 
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 init_basis__constraints( int, Tag_true)
 {
     // create 'm' dummy entries in 'C'
@@ -898,7 +898,7 @@ init_basis__constraints( int, Tag_true)
 }
 
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 init_solution__b_C( Tag_true)
 {
     b_C.reserve( qp_m);
@@ -906,7 +906,7 @@ init_solution__b_C( Tag_true)
 }
 
 template < class Rep_ >  inline                                 // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 init_solution__b_C( Tag_false)
 { 
     b_C.insert( b_C.end(), l, et0);
@@ -919,7 +919,7 @@ init_solution__b_C( Tag_false)
 // transition
 // ----------
 template < class Rep_ >  inline                                 // QP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 transition( Tag_false)
 {
     typedef  Creator_2< D_iterator, int, 
@@ -942,7 +942,7 @@ transition( Tag_false)
 }
 
 template < class Rep_ >  inline                                 // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 transition( Tag_true)
 {
     inv_M_B.transition();
@@ -951,14 +951,14 @@ transition( Tag_true)
 // ratio test
 // ----------
 template < class Rep_ > inline                                  // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_init__2_D_Bj( Value_iterator, int, Tag_true)
 {
     // nop
 }
 
 template < class Rep_ > inline                                  // QP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false)
 {
     if ( is_phaseII) {
@@ -968,7 +968,7 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false)
 }
 
 template < class Rep_ > inline                                  // QP, no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 			                                     Tag_true )
 {
@@ -980,7 +980,7 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 }
 
 template < class Rep_ > inline                                  // QP, has ineq
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 			                                     Tag_false)
 {
@@ -993,14 +993,14 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 }
 
 template < class Rep_ >  inline                                 // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__q_x_O( Tag_true)
 {
     inv_M_B.multiply_x( A_Cj.begin(), q_x_O.begin());
 }
 
 template < class Rep_ >  inline                                 // QP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__q_x_O( Tag_false)
 {
     if ( is_phaseI) {                                   // phase I
@@ -1012,14 +1012,14 @@ ratio_test_1__q_x_O( Tag_false)
 }
 
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__q_x_S( Tag_true)
 {
     // nop
 }
 
 template < class Rep_ >  inline                                 // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__q_x_S( Tag_false)
 {
     // A_S_BxB_O * q_x_O
@@ -1046,7 +1046,7 @@ ratio_test_1__q_x_S( Tag_false)
 }
 
 template < class Rep_ >  inline                                 // no check
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__t_i( Index_iterator, Index_iterator,
 		   Value_iterator, Value_iterator, Tag_true)
 {
@@ -1054,7 +1054,7 @@ ratio_test_1__t_i( Index_iterator, Index_iterator,
 }
 
 template < class Rep_ >  inline                                 // check
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 		   Value_iterator x_it, Value_iterator   q_it, Tag_false)
 {
@@ -1067,14 +1067,14 @@ ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 }
 
 template < class Rep_ >  inline                                 // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__t_j( Tag_true)
 {
     // nop
 }
 
 template < class Rep_ >  inline                                 // QP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_1__t_j( Tag_false)
 {
     if ( is_phaseII) {
@@ -1098,14 +1098,14 @@ ratio_test_1__t_j( Tag_false)
 }
 
 template < class Rep_ >  inline                                 // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_2( Tag_true)
 {
     // nop
 }
 
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_2__p( Tag_true)
 {
     // get column index of entering variable in basis
@@ -1131,7 +1131,7 @@ ratio_test_2__p( Tag_true)
 }
 
 template < class Rep_ >  inline                                 // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 ratio_test_2__p( Tag_false)
 {
     Value_iterator  v_it;
@@ -1184,7 +1184,7 @@ ratio_test_2__p( Tag_false)
 // update
 // ------
 template < class Rep_ >  inline                                 // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 update_1( Tag_true)
 {
     // replace leaving with entering variable
@@ -1192,7 +1192,7 @@ update_1( Tag_true)
 }
 
 template < class Rep_ >  inline                                 // QP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 update_1( Tag_false)
 {
     if ( is_phaseI) {                                   // phase I
@@ -1225,14 +1225,14 @@ update_1( Tag_false)
 }
 
 template < class Rep_ >  inline                                 // LP case
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 update_2( Tag_true)
 {
     // nop
 }
 
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 replace_variable( Tag_true)
 {
     replace_variable_original_original();
@@ -1240,7 +1240,7 @@ replace_variable( Tag_true)
 }
 
 template < class Rep_ >  inline                                 // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 replace_variable( Tag_false)
 {
     // determine type of variables
@@ -1284,7 +1284,7 @@ replace_variable( Tag_false)
 }
 
 template < class Rep_ >  inline
-bool  QPE_solver<Rep_>::
+bool  QP_solver<Rep_>::
 basis_matrix_stays_regular()
 {
     CGAL_qpe_precondition( is_phaseII);
@@ -1317,14 +1317,14 @@ basis_matrix_stays_regular()
 // current solution
 // ----------------
 template < class Rep_ >  inline                                 // no ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 compute__x_B_S( Tag_true)
 {
     // nop
 }
 
 template < class Rep_ >  inline                                // has ineq.
-void  QPE_solver<Rep_>::
+void  QP_solver<Rep_>::
 compute__x_B_S( Tag_false)
 {
     // A_S_BxB_O * x_B_O
@@ -1353,9 +1353,9 @@ CGAL_END_NAMESPACE
 
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QPE_solver.C>
+#  include <CGAL/QP_solver.C>
 #endif
 
-#endif // CGAL_QPE_SOLVER_H
+#endif // CGAL_QP_SOLVER_H
 
 // ===== EOF ==================================================================

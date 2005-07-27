@@ -4,7 +4,7 @@
 % Section: Smallest Enclosing Sphere
 % =============================================================================
 
-\begin{ccRefClass}{QPE_solver<Traits>}
+\begin{ccRefClass}{QP_solver<Traits>}
 \ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
 \ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
 \ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
@@ -80,14 +80,14 @@ strategy, which combines filtered and partial pricing,
 is the pricing strategy of choice.  
    
 
-\ccInclude{CGAL/QPE_solver.h}
+\ccInclude{CGAL/QP_solver.h}
 
 
 \ccRequirements
 \ccIndexRequirements
 
 The class \ccRefName\ expects a model of the concept
-\ccc{QPESolverTraits} as its template argument.
+\ccc{QPSolverTraits} as its template argument.
 
 \ccTypes \ccIndexClassTypes
 
@@ -117,7 +117,7 @@ The class \ccRefName\ expects a model of the concept
 \ccc{Traits::Use_perturbation}.}
 
 \ccNestedType{Pricing_strategy}{a typedef to
-\ccc{QPE_pricing_strategy<Traits>}. \ccc{Pricing_strategy} is the base class
+\ccc{QP_pricing_strategy<Traits>}. \ccc{Pricing_strategy} is the base class
 of all read-to-use pricing strategies.}
 
 \ccNestedType{Quotient}{a typedef to \ccc{CGAL::Quotient<Traits::ET>}}
@@ -144,17 +144,17 @@ indicate the status of a quadratic program.}
 \ccConstructor{( int n, int m, A_iterator a_it,
 B_iterator b_it, C_iterator c_it, D_iterator d_it,
 Row_type_iterator r_it,
-Pricing_strategy& strategy = QPE_full_exact_pricing<Traits>());}
+Pricing_strategy& strategy = QP_full_exact_pricing<Traits>());}
 {creates a variable of type \ccRefName\ and solves the quadratic program.
 \ccRequire $(m,n)$ is the dimension of the constraint matrix $A$,
 $(n,n)$ is the dimension of $D$ and $D$ is
 positive-semidefinite. Furthermore, $n >0$ is required.
-See also \ccc{QPESolverTraits}.}
+See also \ccc{QPSolverTraits}.}
 
 \ccConstructor{( A_iterator a_it, B_iterator b_f_it,
 B_iterator b_e_it, C_iterator c_f_it, C_iterator c_e_it, D_iterator d_it,
 Row_type_iterator r_it,
-Pricing_strategy& strategy = QPE_full_exact_pricing<Traits>());}
+Pricing_strategy& strategy = QP_full_exact_pricing<Traits>());}
 {creates a variable of type \ccRefName\ and solves the quadratic program.
 \ccRequire $\left|\right.\left[\right.$
 \ccc{b_f_it, b_e_it}$)\left|\right.=m$ and 
@@ -163,7 +163,7 @@ $\left|\right.\left[\right.$
 The dimension of the constraint matrix $A$ is $(m,n)$, the dimension of
 $D$ is $(n,n)$ and $D$ is 
 positive-semidefinite. Furthermore, $n >0$ is required.
-See also \ccc{QPESolverTraits}.}
+See also \ccc{QPSolverTraits}.}
 
 
 \ccUnchecked
@@ -304,10 +304,10 @@ holds.
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 %
-    \ccRefIdfierPage{CGAL::QPE_full_exact_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QPE_full_filtered_pricing<Traits, NT, ET2NT>}\\
-    \ccRefIdfierPage{CGAL::QPE_partial_exact_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QPE_partial_filtered_pricing<Traits, NT, ET2NT>}\\
+    \ccRefIdfierPage{CGAL::QP_full_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_full_filtered_pricing<Traits, NT, ET2NT>}\\
+    \ccRefIdfierPage{CGAL::QP_partial_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_partial_filtered_pricing<Traits, NT, ET2NT>}\\
 % -----------------------------------------------------------------------------
 
 \ccImplementation
@@ -317,7 +317,7 @@ holds.
 
 
 \ccExample
-\ccIncludeVerbatim{Optimisation_ref/QPE_solver_example.C}
+\ccIncludeVerbatim{Optimisation_ref/QP_solver_example.C}
 
 \end{ccRefClass}
 

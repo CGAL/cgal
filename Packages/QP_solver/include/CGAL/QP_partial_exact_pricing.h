@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE_partial_exact_pricing.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP_partial_exact_pricing.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,11 +24,11 @@
 // implementation: Pricing Strategy with partial exact pricing
 // ============================================================================
 
-#ifndef CGAL_QPE_PARTIAL_EXACT_PRICING_H
-#define CGAL_QPE_PARTIAL_EXACT_PRICING_H
+#ifndef CGAL_QP_PARTIAL_EXACT_PRICING_H
+#define CGAL_QP_PARTIAL_EXACT_PRICING_H
 
 // includes
-#include <CGAL/QP_engine/QPE__partial_base.h>
+#include <CGAL/QP_solver/QP__partial_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,19 +36,19 @@ CGAL_BEGIN_NAMESPACE
 // class declaration
 // =================
 template < class Rep_ >
-class QPE_partial_exact_pricing;
+class QP_partial_exact_pricing;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_ >
-class QPE_partial_exact_pricing : public QPE__partial_base<Rep_> {
+class QP_partial_exact_pricing : public QP__partial_base<Rep_> {
 
     // self
     typedef  Rep_                            Rep;
-    typedef  QPE_pricing_strategy<Rep>       Base;
-    typedef  QPE__partial_base<Rep>          Partial_base;
-    typedef  QPE_partial_exact_pricing<Rep>  Self;
+    typedef  QP_pricing_strategy<Rep>       Base;
+    typedef  QP__partial_base<Rep>          Partial_base;
+    typedef  QP_partial_exact_pricing<Rep>  Self;
 
     // types from the pricing base class
     typedef  typename Base::ET                            ET;
@@ -58,14 +58,14 @@ class QPE_partial_exact_pricing : public QPE__partial_base<Rep_> {
   public:
 
     // creation
-    QPE_partial_exact_pricing( bool     randomize = false,
+    QP_partial_exact_pricing( bool     randomize = false,
 			       Random&  random    = default_random);
 
     // operations
     int  pricing( );
     
     // creation
-    ~QPE_partial_exact_pricing(){ };
+    ~QP_partial_exact_pricing(){ };
 };
 
 // ----------------------------------------------------------------------------
@@ -76,15 +76,15 @@ class QPE_partial_exact_pricing : public QPE__partial_base<Rep_> {
 
 // construction
 template < class Rep_ >  inline
-QPE_partial_exact_pricing<Rep_>::
-QPE_partial_exact_pricing( bool  randomize, Random&  random)
+QP_partial_exact_pricing<Rep_>::
+QP_partial_exact_pricing( bool  randomize, Random&  random)
     : Base( "partial exact"),
       Partial_base( randomize, random)
 { }
     
 // operations
 template < class Rep_ >
-int  QPE_partial_exact_pricing<Rep_>::
+int  QP_partial_exact_pricing<Rep_>::
 pricing( )
 {
     Index_const_iterator  it, min_it;
@@ -158,6 +158,6 @@ pricing( )
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QPE_PARTIAL_EXACT_PRICING_H
+#endif // CGAL_QP_PARTIAL_EXACT_PRICING_H
 
 // ===== EOF ==================================================================

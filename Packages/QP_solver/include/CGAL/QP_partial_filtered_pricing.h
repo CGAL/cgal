@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE_partial_filtered_pricing.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/QP_partial_filtered_pricing.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,12 +24,12 @@
 // implementation: Pricing Strategy with partial filtered pricing
 // ============================================================================
 
-#ifndef CGAL_QPE_PARTIAL_FILTERED_PRICING_H
-#define CGAL_QPE_PARTIAL_FILTERED_PRICING_H
+#ifndef CGAL_QP_PARTIAL_FILTERED_PRICING_H
+#define CGAL_QP_PARTIAL_FILTERED_PRICING_H
 
 // includes
-#include <CGAL/QP_engine/QPE__partial_base.h>
-#include <CGAL/QP_engine/QPE__filtered_base.h>
+#include <CGAL/QP_solver/QP__partial_base.h>
+#include <CGAL/QP_solver/QP__filtered_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,22 +38,22 @@ CGAL_BEGIN_NAMESPACE
 // =================
 template < class Rep_, class NT_ = double, class ET2NT_ =
     To_double<typename Rep_::ET> >
-class QPE_partial_filtered_pricing;
+class QP_partial_filtered_pricing;
 
 // ===============
 // class interface
 // ===============
 template < class Rep_, class NT_, class ET2NT_ >
-class QPE_partial_filtered_pricing
-    : public QPE__partial_base <Rep_>,
-      public QPE__filtered_base<Rep_,NT_,ET2NT_> {
+class QP_partial_filtered_pricing
+    : public QP__partial_base <Rep_>,
+      public QP__filtered_base<Rep_,NT_,ET2NT_> {
 
     // self
     typedef  Rep_                               Rep;
-    typedef  QPE_pricing_strategy<Rep>          Base;
-    typedef  QPE__partial_base<Rep>             Partial_base;
-    typedef  QPE__filtered_base<Rep, NT_, ET2NT_>            Filtered_base;
-    typedef  QPE_partial_filtered_pricing<Rep, NT_, ET2NT_>  Self;
+    typedef  QP_pricing_strategy<Rep>          Base;
+    typedef  QP__partial_base<Rep>             Partial_base;
+    typedef  QP__filtered_base<Rep, NT_, ET2NT_>            Filtered_base;
+    typedef  QP_partial_filtered_pricing<Rep, NT_, ET2NT_>  Self;
 
     // types from the base class
     typedef  typename Base::ET                            ET;
@@ -66,7 +66,7 @@ class QPE_partial_filtered_pricing
     typedef  ET2NT_                     ET2NT;
 
     // creation
-    QPE_partial_filtered_pricing( bool     randomize = false,
+    QP_partial_filtered_pricing( bool     randomize = false,
 				  Random&  random    = default_random,
 				  ET2NT    et2nt     = ET2NT());
 
@@ -78,7 +78,7 @@ class QPE_partial_filtered_pricing
     
     
     // cleanup
-    ~QPE_partial_filtered_pricing() {};
+    ~QP_partial_filtered_pricing() {};
 };
 
 // ----------------------------------------------------------------------------
@@ -89,8 +89,8 @@ class QPE_partial_filtered_pricing
 
 // construction
 template < class Rep_, class NT_, class ET2NT_ >  inline
-QPE_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
-QPE_partial_filtered_pricing( bool randomize, Random& random, ET2NT et2nt)
+QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+QP_partial_filtered_pricing( bool randomize, Random& random, ET2NT et2nt)
     : Base( "partial filtered"),
       Partial_base( randomize, random),
       Filtered_base( et2nt)
@@ -98,7 +98,7 @@ QPE_partial_filtered_pricing( bool randomize, Random& random, ET2NT et2nt)
     
 // operations
 template < class Rep_, class NT_, class ET2NT_ >  inline
-void  QPE_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+void  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
 init( )
 {
      Partial_base::init();
@@ -106,7 +106,7 @@ init( )
 }
 
 template < class Rep_, class NT_, class ET2NT_ >  inline
-void  QPE_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+void  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
 transition( )
 {
      Partial_base::transition();
@@ -114,7 +114,7 @@ transition( )
 }
 
 template < class Rep_, class NT_, class ET2NT_ >
-int  QPE_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
 pricing( )
 {
     // initialize filtered computation
@@ -251,6 +251,6 @@ pricing( )
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_QPE_PARTIAL_FILTERED_PRICING_H
+#endif // CGAL_QP_PARTIAL_FILTERED_PRICING_H
 
 // ===== EOF ==================================================================

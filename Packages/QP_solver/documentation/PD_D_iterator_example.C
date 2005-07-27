@@ -16,18 +16,18 @@ public:
   // ...
 };
 
-typedef  CGAL::QPE_transform_iterator_1< Matrix::const_iterator>
+typedef  CGAL::QP_transform_iterator_1< Matrix::const_iterator>
                                                  Vector_iterator;
 
-struct QPESolverTraits {
+struct QPSolverTraits {
     typedef  GMP::Double                         ET;
     typedef  Vector_iterator                     A_iterator;
-    typedef  CGAL::QPE_const_value_iterator<IT>  B_iterator;
-    typedef  CGAL::QPE_const_value_iterator<IT>  C_iterator;
+    typedef  CGAL::QP_const_value_iterator<IT>  B_iterator;
+    typedef  CGAL::QP_const_value_iterator<IT>  C_iterator;
     typedef  PD_D_iterator<Point>                D_iterator;
 
     enum Row_type { LESS_EQUAL, EQUAL, GREATER_EQUAL};
-    typedef  CGAL::QPE_const_value_iterator<Row_type>  Row_type_iterator;
+    typedef  CGAL::QP_const_value_iterator<Row_type>  Row_type_iterator;
     
     typedef  CGAL::Tag_false  Is_linear;
     typedef  CGAL::Tag_true   Is_symmetric;

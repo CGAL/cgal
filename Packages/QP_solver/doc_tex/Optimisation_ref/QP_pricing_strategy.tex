@@ -4,7 +4,7 @@
 % Section: Smallest Enclosing Sphere
 % =============================================================================
 
-\begin{ccRefClass}{QPE_pricing_strategy<Traits>}
+\begin{ccRefClass}{QP_pricing_strategy<Traits>}
 \ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
 \ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
 \ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
@@ -44,18 +44,18 @@ negative.
 %the bounds themselves can be evaluated with floating point arithmetic. 
 
 User provided pricing strategies may use \ccRefName\ as a base class directly
-or inherit from the the class \ccc{QPE__filtered_base} or from the class
-\ccc{QPE__partial_base} or both.   
+or inherit from the the class \ccc{QP__filtered_base} or from the class
+\ccc{QP__partial_base} or both.   
    
 
-\ccInclude{CGAL/QPE_solver.h}
+\ccInclude{CGAL/QP_solver.h}
 
 
 \ccRequirements
 \ccIndexRequirements
 
 The class \ccRefName\ expects a model of the concept
-\ccc{QPESolverTraits} as its template argument.
+\ccc{QPSolverTraits} as its template argument.
 
 
 \ccTypes \ccIndexClassTypes
@@ -64,7 +64,7 @@ The class \ccRefName\ expects a model of the concept
 %CGAL concept \ccc{RingNumberType} and has to support addition, subtraction and
 %multiplication. Division is only required in cases where the remainder is zero.}
 
-%\ccNestedType{QP_solver}{a typedef to \ccc{CGAL::QPE_solver<Traits>}.}
+%\ccNestedType{QP_solver}{a typedef to \ccc{CGAL::QP_solver<Traits>}.}
 
 
 \ccCreation
@@ -87,7 +87,7 @@ The class \ccRefName\ expects a model of the concept
 %entering variable or $-1$ to indicate optimality. Has to be reimplemented by
 %derived pricing strategy classes.}
 
-%\ccMemberFunction{const QPE_solver& solver() const;}{returns a reference to the
+%\ccMemberFunction{const QP_solver& solver() const;}{returns a reference to the
 %ambient solver.}
 
 %\ccMemberFunction{ET mu_j(int j) const;}{returns exact value of $\mu_{j}$.}
@@ -148,10 +148,10 @@ The class \ccRefName\ expects a model of the concept
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 %
-    \ccRefIdfierPage{CGAL::QPE_full_exact_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QPE_full_filtered_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QPE_partial_exact_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QPE_partial_filtered_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_full_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_full_filtered_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_partial_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QP_partial_filtered_pricing<Traits>}\\
 % -----------------------------------------------------------------------------
 
 \ccImplementation

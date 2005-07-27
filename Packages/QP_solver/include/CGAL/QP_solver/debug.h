@@ -11,8 +11,8 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/debug.h
-// package       : $CGAL_Package: QP_engine $
+// file          : include/CGAL/QP_solver/debug.h
+// package       : $CGAL_Package: QP_solver $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
@@ -24,21 +24,21 @@
 // implementation: debug macro for the QP engine
 // ======================================================================
 
-#ifndef CGAL_QPE_DEBUG_H
-#define CGAL_QPE_DEBUG_H
+#ifndef CGAL_QP_DEBUG_H
+#define CGAL_QP_DEBUG_H
 
 // macro definitions
 // =================
 
 // debug
 // -----
-#if (    defined( CGAL_QPE_NO_DEBUG) \
+#if (    defined( CGAL_QP_NO_DEBUG) \
       || defined( CGAL_NO_DEGUG) || defined( NDEBUG))
 #  define  CGAL_qpe_debug  if ( 0)
 #else
 #  define  CGAL_qpe_debug  if ( 1)
 #endif // qpe debug
 
-#endif // CGAL_QPE_DEBUG_H
+#endif // CGAL_QP_DEBUG_H
 
 // ===== EOF ==================================================================

@@ -21,11 +21,11 @@
 \begin{document}
 \Large\vspace*{-2cm}\setlength{\oddsidemargin}{-15mm}\setlength{\evensidemargin}{-15mm}
 \begin{alltt}
-\textbf{\MAGENTA{#include <CGAL/QPE_solver.h>}}
-\textbf{\MAGENTA{#include <CGAL/QPE_full_exact_pricing.h>}}
-\textbf{\MAGENTA{#include <CGAL/QPE_partial_exact_pricing.h>}}
-\textbf{\MAGENTA{#include <CGAL/QPE_full_filtered_pricing.h>}}
-\textbf{\MAGENTA{#include <CGAL/QPE_partial_filtered_pricing.h>}}
+\textbf{\MAGENTA{#include <CGAL/QP_solver.h>}}
+\textbf{\MAGENTA{#include <CGAL/QP_full_exact_pricing.h>}}
+\textbf{\MAGENTA{#include <CGAL/QP_partial_exact_pricing.h>}}
+\textbf{\MAGENTA{#include <CGAL/QP_full_filtered_pricing.h>}}
+\textbf{\MAGENTA{#include <CGAL/QP_partial_filtered_pricing.h>}}
 \textbf{\MAGENTA{#include <CGAL/_QP_solver/Double.h>}}
 \textbf{\MAGENTA{#include <iostream>}}
 
@@ -93,17 +93,17 @@
 \begin{math}\}\end{math};
 
 
-\textbf{\BLUE{typedef}}  CGAL::QPE_transform_iterator_1< Matrix::const_iterator>\textbf{\BROWN{  Vector_iterator;}}
+\textbf{\BLUE{typedef}}  CGAL::QP_transform_iterator_1< Matrix::const_iterator>\textbf{\BROWN{  Vector_iterator;}}
 
-\textbf{\BLUE{struct}}\textbf{\BROWN{ QPESolverTraits}} \begin{math}\{\end{math}
+\textbf{\BLUE{struct}}\textbf{\BROWN{ QPSolverTraits}} \begin{math}\{\end{math}
     \textbf{\BLUE{typedef}}  GMP::Double\textbf{\BROWN{                         ET;}}
     \textbf{\BLUE{typedef}}  Vector_iterator\textbf{\BROWN{                     A_iterator;}}
-    \textbf{\BLUE{typedef}}  CGAL::QPE_const_value_iterator<IT>\textbf{\BROWN{  B_iterator;}}
-    \textbf{\BLUE{typedef}}  CGAL::QPE_const_value_iterator<IT>\textbf{\BROWN{  C_iterator;}}
+    \textbf{\BLUE{typedef}}  CGAL::QP_const_value_iterator<IT>\textbf{\BROWN{  B_iterator;}}
+    \textbf{\BLUE{typedef}}  CGAL::QP_const_value_iterator<IT>\textbf{\BROWN{  C_iterator;}}
     \textbf{\BLUE{typedef}}  PD_D_iterator<Point>\textbf{\BROWN{                D_iterator;}}
 
     \textbf{\BLUE{enum}}\textbf{\BROWN{ Row_type}} \begin{math}\{\end{math} LESS_EQUAL, EQUAL, GREATER_EQUAL\begin{math}\}\end{math};
-    \textbf{\BLUE{typedef}}  CGAL::QPE_const_value_iterator<Row_type>\textbf{\BROWN{  Row_type_iterator;}}
+    \textbf{\BLUE{typedef}}  CGAL::QP_const_value_iterator<Row_type>\textbf{\BROWN{  Row_type_iterator;}}
     
     \textbf{\BLUE{typedef}}  CGAL::Tag_false\textbf{\BROWN{  Is_linear;}}
     \textbf{\BLUE{typedef}}  CGAL::Tag_true\textbf{\BROWN{   Is_symmetric;}}
@@ -111,7 +111,7 @@
     \textbf{\BLUE{typedef}}  CGAL::Tag_false\textbf{\BROWN{  Use_perturbation;}}
 \begin{math}\}\end{math};
 
-\textbf{\BLUE{typedef}} CGAL::QPE_solver<QPESolverTraits>\textbf{\BROWN{     Solver;}}
+\textbf{\BLUE{typedef}} CGAL::QP_solver<QPSolverTraits>\textbf{\BROWN{     Solver;}}
 
 \textbf{\GBLUE{int}} \textbf{\BROWN{main}}( \textbf{\GBLUE{int}} argc, \textbf{\GBLUE{char}}** argv)
 \begin{math}\{\end{math}
@@ -133,14 +133,14 @@
 
   \textsl{\RED{// configure partial filtered pricing strategy with default template}}
   \textsl{\RED{// parameters}}
-  CGAL::QPE_partial_filtered_pricing<QPESolverTraits>  strategy;
+  CGAL::QP_partial_filtered_pricing<QPSolverTraits>  strategy;
   
   \textsl{\RED{// solve qp with (explicit) partial filtered pricing strategy}}
   Solver       qp( 6, 2, Vector_iterator( A.begin()),
-                   QPESolverTraits::B_iterator(1.0),
-                   QPESolverTraits::C_iterator(0.0),
-                   QPESolverTraits::D_iterator(C.begin()),
-                   QPESolverTraits::Row_type_iterator(QPESolverTraits::EQUAL),
+                   QPSolverTraits::B_iterator(1.0),
+                   QPSolverTraits::C_iterator(0.0),
+                   QPSolverTraits::D_iterator(C.begin()),
+                   QPSolverTraits::Row_type_iterator(QPSolverTraits::EQUAL),
                    strategy);
   
   \textsl{\RED{// query solution, if qp is optimal                                     }}
