@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bench name_length="96" header="false" type_mask="0x2">
+  <class name="cls111" key="naive PMWX polylines Cartesian Leda Rat"/>
+  <class name="cls112" key="walk PMWX polylines Cartesian Leda Rat"/>
+  <class name="cls121" key="naive PMWX polylines Leda Leda Rat"/>
+  <class name="cls122" key="walk PMWX polylines Leda Leda Rat"/>
+  <class name="cls131" key="naive PMWX polylines Cartesian Lazy Leda Rat"/>
+  <class name="cls132" key="walk PMWX polylines Cartesian Lazy Leda Rat"/>
+  <class name="cls141" key="naive PMWX polylines Cartesian Quotient"/>
+  <class name="cls142" key="walk PMWX polylines Cartesian Quotient"/>
+  <class name="cls151" key="naive PMWX polylines Cartesian Lazy Quotient MP"/>
+  <class name="cls152" key="walk PMWX polylines Cartesian Lazy Quotient MP"/>
+  <class name="cls161" key="naive PMWX polylines Cartesian Gmpq"/>
+  <class name="cls162" key="walk PMWX polylines Cartesian Gmpq"/>
+  <class name="cls171" key="naive PMWX polylines Cartesian Lazy Gmpq"/>
+  <class name="cls172" key="walk PMWX polylines Cartesian Lazy Gmpq"/>
+
+  <class name="cls211" key="naive PMWX Non Caching polylines Cartesian Leda Rat"/>
+  <class name="cls212" key="walk PMWX Non Caching polylines Cartesian Leda Rat"/>
+  <class name="cls221" key="naive PMWX Non Caching polylines Leda Leda Rat"/>
+  <class name="cls222" key="walk PMWX Non Caching polylines Leda Leda Rat"/>
+  <class name="cls231" key="naive PMWX Non Caching polylines Cartesian Lazy Leda Rat"/>
+  <class name="cls232" key="walk PMWX Non Caching polylines Cartesian Lazy Leda Rat"/>
+  <class name="cls241" key="naive PMWX Non Caching polylines Cartesian Quotient"/>
+  <class name="cls242" key="walk PMWX Non Caching polylines Cartesian Quotient"/>
+  <class name="cls251" key="naive PMWX Non Caching polylines Cartesian Lazy Quotient MP"/>
+  <class name="cls252" key="walk PMWX Non Caching polylines Cartesian Lazy Quotient MP"/>  
+  <class name="cls261" key="naive PMWX Non Caching polylines Cartesian Gmpq"/>
+  <class name="cls262" key="walk PMWX Non Caching polylines Cartesian Gmpq"/>
+  <class name="cls271" key="naive PMWX Non Caching polylines Cartesian Lazy Gmpq"/>
+  <class name="cls272" key="walk PMWX Non Caching polylines Cartesian Lazy Gmpq"/>  
+
+  <clo name="verbose" string="-v"/> 
+  <clo name="format" string="-If="/>
+  <clo name="samples" string="-s"/> 
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
+
+  <file name="sines.dat" format="int" curves="10"
+    vertices="40" halfedges="420" faces="172"></file>
+  <file name="ps_circs.dat" format="int" curves="10"
+    vertices="112" halfedges="408" faces="94"></file>
+
+  <bench samples="10" file="sines.dat" enable="true">
+    <bench>
+      <benchArrCgalGmpqCartesianNonCachingPolyline header="true"/>
+      <benchArrDoubleCartesianNonCachingPolyline enable="false"/>
+      <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchArrLazyQuotientCartesianNonCachingPolyline enable="false"/>
+      <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
+      <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
+      <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
+      <benchArrQuotientCartesianNonCachingPolyline enable="false"/>
+      <benchArrQuotientCgalGmpzCartesianNonCachingPolyline enable="false"/>
+    </bench>
+
+    <bench>
+      <benchArrCgalGmpqCartesianPolyline header="true"/>
+      <benchArrDoubleCartesianPolyline enable="false"/>
+      <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchArrLazyQuotientCartesianPolyline/>
+      <benchArrLazyRatCartesianPolyline/>
+      <benchArrLedaRatCartesianPolyline/>
+      <benchArrLedaRatLedaPolyline/>
+      <benchArrLedaRatSimpleCartesianPolyline/>
+      <benchArrQuotientCartesianPolyline/>
+      <benchArrQuotientCgalGmpzCartesianPolyline/>
+    </bench>
+  </bench>
+
+  <bench samples="10" file="ps_circs.dat" enable="true">
+    <bench>
+      <benchArrCgalGmpqCartesianNonCachingPolyline header="true"/>
+      <benchArrDoubleCartesianNonCachingPolyline enable="false"/>
+      <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchArrLazyQuotientCartesianNonCachingPolyline enable="false"/>
+      <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
+      <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
+      <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
+      <benchArrQuotientCartesianNonCachingPolyline enable="false"/>
+      <benchArrQuotientCgalGmpzCartesianNonCachingPolyline enable="false"/>
+    </bench>
+
+    <bench>
+      <benchArrCgalGmpqCartesianPolyline header="true"/>
+      <benchArrDoubleCartesianPolyline enable="false"/>
+      <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchArrLazyQuotientCartesianPolyline/>
+      <benchArrLazyRatCartesianPolyline/>
+      <benchArrLedaRatCartesianPolyline/>
+      <benchArrLedaRatLedaPolyline/>
+      <benchArrLedaRatSimpleCartesianPolyline/>
+      <benchArrQuotientCartesianPolyline/>
+      <benchArrQuotientCgalGmpzCartesianPolyline/>
+    </bench>
+  </bench>
+</bench>
