@@ -1,3 +1,7 @@
+27 July 2005 Sylvain Pion
+- NT_converter : Add specializations when converting to Interval_nt
+  (calls to_interval()), and when conversion to same type (saves a copy).
+  
 26 July 2005 Sylvain Pion
 - Remove #include <CGAL/_QP_solver/Double.h> from CGAL/number_type_basic.h .
 

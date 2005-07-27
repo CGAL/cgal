@@ -41,7 +41,21 @@ struct NT_converter
     }
 };
 
-// ... and specialized for double to call to_double().
+// Some specializations for :
+// - double to call to_double().
+// - Interval_nt<> to call to_interval().
+// - NT1 == NT2 to return a reference instead of copying.
+
+template < class NT1 >
+struct NT_converter < NT1, NT1 >
+  : public CGAL_STD::unary_function< NT1, NT1 >
+{
+    const NT1 &
+    operator()(const NT1 &a) const
+    {
+        return a;
+    }
+};
 
 template < class NT1 >
 struct NT_converter < NT1, double >
@@ -51,6 +65,17 @@ struct NT_converter < NT1, double >
     operator()(const NT1 &a) const
     {
         return CGAL_NTS to_double(a);
+    }
+};
+
+template < class NT1, bool b >
+struct NT_converter < NT1, Interval_nt<b> >
+  : public CGAL_STD::unary_function< NT1, Interval_nt<b> >
+{
+    Interval_nt<b>
+    operator()(const NT1 &a) const
+    {
+        return CGAL_NTS to_interval(a);
     }
 };
 
