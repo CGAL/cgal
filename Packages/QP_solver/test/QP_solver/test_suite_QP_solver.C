@@ -708,7 +708,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	//			CGAL::Tag_true>
 	//			(verbose, pricing_strategy_index, from);
 	//		break;
-			/* kf        
+
 	case  6:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
@@ -770,7 +770,6 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
-		kf	*/
 
 	case 19:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_true>
