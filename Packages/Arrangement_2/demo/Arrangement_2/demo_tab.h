@@ -55,8 +55,8 @@ public:
 
   /*!
    */
-  Qt_widget_base_tab(TraitsType  t ,  QWidget *parent = 0,
-                     int tab_number = 1 ) :
+  Qt_widget_base_tab(TraitsType  t ,  QWidget *parent ,
+                     int tab_number , QColor color ) :
     CGAL::Qt_widget( parent ),
     current_state(0),
     index(tab_number),
@@ -70,6 +70,7 @@ public:
     bbox(CGAL::Bbox_2(-10, -10, 10, 10)),
     wasrepainted(true), 
     on_first(false),
+    pm_color(color),
     change_pm_color(false),
     snap(false),
     grid(false),
@@ -78,7 +79,6 @@ public:
     ray_shooting_direction(true),
     remove_org_curve(true),
     read_from_file(false),
-   // empty(true),
     first_time_merge(true),
     draw_vertex(true),
     fill_face_color(def_bg_color)
@@ -88,20 +88,6 @@ public:
     set_window(-10, 10, -10, 10);
    
     setMouseTracking(TRUE);
-    
-    colors[1]  =  Qt::blue;
-    colors[2]  =  Qt::gray;
-    colors[3]  =  Qt::green;
-    colors[4]  =  Qt::cyan;
-    colors[5]  =  Qt::magenta;
-    colors[6]  =  Qt::darkRed;
-    colors[7]  =  Qt::darkGreen;
-    colors[8]  =  Qt::darkBlue;
-    colors[9]  =  Qt::darkMagenta;
-    colors[10] =  Qt::darkCyan;
-    colors[11] =  Qt::yellow;
-
-    pm_color = colors[index];
   }
 
   /*! Destructor */
@@ -145,9 +131,6 @@ public:
   int   x2, y2;
   bool    wasrepainted;
   bool    on_first;
-
-  /*! array of colors */
-  QColor colors[20];
 
   /*! planar map color */
   QColor pm_color;
@@ -224,8 +207,6 @@ private:
   typedef typename Tab_traits::Traits                  Traits;
   typedef typename Tab_traits::Curve_2                 Curve_2;
   typedef typename Tab_traits::X_monotone_curve_2      X_monotone_curve_2;
-  typedef typename Tab_traits::Base_curve              Base_curve;
-  typedef typename Tab_traits::Data                    Data;
   typedef typename Tab_traits::Arr_curve_iter          Arr_curve_iter;
   typedef typename Tab_traits::Arr_curve_const_iter    Arr_curve_const_iter;
   typedef typename Tab_traits::Point_2                 Point_2;
@@ -256,6 +237,9 @@ private:
   typedef typename Tab_traits::Lanmarks_point_location Lanmarks_point_location;
 
   typedef My_observer<Arrangement_2>                   Observer;
+  typedef typename Arrangement_2::Origin_curve_iterator Origin_curve_iterator;
+  typedef typename Arrangement_2::Curve_edge_iterator   Curve_edge_iterator;
+  typedef typename Arrangement_2::Curve_handle          Curve_handle;
 
 private:
   // function object - FillFace
@@ -302,10 +286,10 @@ public:
   /*! the first point in the split curve */
   Point_2 split_point;
 
-  /*! list of removable halfedge iterators (created by move event when
+  /*! a removable halfedge iterators (created by move event when
    * DELETE option is on
    */
-  Hafledge_list removable_halfedges;
+  Halfedge_iterator removable_halfedge;
 
  
 
@@ -314,13 +298,13 @@ public:
    *\ param parent - widget parent window
    *\ param tab_number - widget program index
    */
-  Qt_widget_demo_tab(TraitsType t, QWidget * parent = 0, int tab_number = 1):
-    Qt_widget_base_tab(t , parent, tab_number),
+  Qt_widget_demo_tab(TraitsType t, QWidget * parent , int tab_number, QColor c):
+    Qt_widget_base_tab(t , parent, tab_number, c),
     m_curves_arr (new Arrangement_2()),
     m_observer(*m_curves_arr)
   {
     // set the unbounded face initial color
-    m_curves_arr->unbounded_face()->set_info(def_bg_color); 
+    m_curves_arr->unbounded_face()->set_color(def_bg_color); 
     m_point_location = CGAL::make_object(new Walk_point_location(*m_curves_arr));
   }
   
@@ -362,13 +346,7 @@ public:
     for (Edge_iterator ei = m_curves_arr->edges_begin(); 
          ei != m_curves_arr->edges_end(); ++ei) 
     {
-      if (change_pm_color)
-        setColor(pm_color);
-      else
-      {
-        int i = (ei->curve()).get_data().m_index;
-        setColor(colors[i]);
-      }
+      setColor(pm_color);
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
     // Go over all vertices and for each vertex check the 
@@ -383,56 +361,16 @@ public:
     for (vit = m_curves_arr->vertices_begin(); 
          vit != m_curves_arr->vertices_end(); vit++)
     {
-      Halfedge_around_vertex_circulator 
-        eit,eit2, first = (*vit).incident_halfedges();
-      
-      eit = first;
-      setColor(Qt::red);
-      int ind1, ind2;
-      
-      eit2 = first;
-      do
-      { // find (if exist) a different index than the tab index
-        ind2 = (*eit2).curve().get_data().m_index;
-        if (ind2 != index)
-          break;
-        eit2++;
-      } while (eit2 != first);
-
-      do 
-      {
-        ind1 = (*eit).curve().get_data().m_index;
-        
-        // Keep track of IDs we haven't seen before.
-        if (ind1 != ind2 && ind1 != index && ind2 != index)
-        {
-          //const Point_2& p = (*vit).point();
-          Coord_point p(CGAL::to_double((*vit).point().x()) /
-                        m_tab_traits.COORD_SCALE, 
-                        CGAL::to_double((*vit).point().y()) /
-                        m_tab_traits.COORD_SCALE); 
-          static_cast<CGAL::Qt_widget&>(*this) << p;
-          break;
-        }
-        
-        eit++;
-        
         // draw all vertexes of the planar map is 'draw_vertex' is true
         // draw_vertex is a flag that indicates if we draw the vertexes
-        if (eit == first && draw_vertex)
-        {
-          if (change_pm_color)
-            setColor(pm_color);
-          else
-            setColor(colors[ind2]);
-          //const Point_2& p = (*vit).point();
+     
+          setColor(pm_color);
           Coord_point p(CGAL::to_double((*vit).point().x()) /
                         m_tab_traits.COORD_SCALE, 
                         CGAL::to_double((*vit).point().y()) /
                         m_tab_traits.COORD_SCALE); 
           static_cast<CGAL::Qt_widget&>(*this) << p;
-        }
-      } while (eit != first);
+      
     }
     if (mode == POINT_LOCATION)
     {
@@ -611,7 +549,7 @@ public:
    */
   void set_face_color(Face_handle f ,QColor& c)
   {  
-    f->set_info(c);
+    f->set_color(c);
     if( f->is_unbounded())
       set_unbounded_face_color(c); 
   }
@@ -681,49 +619,7 @@ public:
     } while (++cc != fh->outer_ccb());
   }
 
-  /*!
-   */
-  void overlay (Face_handle f , std::vector<QColor> & colors)
-  {
-    f->assign_overlay_info(colors); 
-    if (!f->is_unbounded())  // f is not the unbounded face
-    {
-      /* running  around the outer of the face  */
-      Ccb_halfedge_circulator cc = f->outer_ccb();
-      do {
-        Halfedge he = *cc;  // get the halfedge
-        Data d = he.curve().get_data();  // get the data of the halfedge
-        // get the original halfedge (from the original PM)
-        Halfedge_handle original_he = d.halfedge_handle, temp_he;
-
-        // getting the index of the original PM of the curve 
-        int index = d.m_index;   
-        if(m_tab_traits.curve_has_same_direction(cc))
-          temp_he = original_he;
-        else
-          temp_he=(Halfedge_handle)original_he->twin();
-
-        // the original color of the face        
-        QColor original_face_color = temp_he->face()->info(); 
-        // update the colors vector in the face
-        f->set_overlay_info( index , original_face_color);  
-        // we want to update the colors vector to pass
-        colors[index] = original_face_color; 
-        // the information down the recurtion process.
-        
-      } while (++cc != f->outer_ccb());
-      // blend the colors
-      QColor c = blend_colors(f->OverlayInfoBegin() , f-> OverlayInfoEnd());
-      f->set_info(c);
-    }  
-    else // f is the unbounded face
-    {  
-      // blend the colors
-      QColor c = blend_colors(colors.begin() , colors.end() );
-      f->set_info(c);
-      set_unbounded_face_color(c);
-    }
-  }
+ 
 
   /*! draw_grid - draw the grid
    */
@@ -776,16 +672,18 @@ public:
 
     if (mode == DELETE)
     {
-      Hafledge_list_iterator itr;
-      for (itr = removable_halfedges.begin();
-           itr != removable_halfedges.end() ; ++itr)
-        m_curves_arr->remove_edge(*itr);
+      if(remove_org_curve)
+      {
+        Origin_curve_iterator  ocit = 
+          m_curves_arr->origin_curves_begin (removable_halfedge);
+        m_curves_arr->remove (ocit->handle());
+      }
+      else
+        m_curves_arr->remove_edge(removable_halfedge);
 
-      removable_halfedges.clear(); // clear the list which is now irrelevant
+      removable_halfedge = Halfedge_handle();
       redraw();
 
-      /*if( m_curves_arr->number_of_vertices() == 0 )
-        empty = true;*/
       setCursor(old);
       return;
     }
@@ -807,8 +705,7 @@ public:
       setRasterOp(old_rasterop);
       setColor(old_color);
       unlock();
-      /*if( m_curves_arr->number_of_vertices() > 0 )
-        empty = false;*/
+    
       setCursor(old);
       return;
     }
@@ -1002,24 +899,30 @@ public:
    */
   void find_removable_halfedges(QMouseEvent *e)
   {
-    //  if the PM is empty do nothing
+    //  if the arrangement is empty do nothing
     if( m_curves_arr->number_of_vertices() == 0)
       return;
-   
-    if(!removable_halfedges.empty())
-    {
-      int i = (removable_halfedges.front()->curve()).get_data().m_index;
-      setColor(colors[i]);
-      Hafledge_list_iterator itr;
-      for (itr = removable_halfedges.begin();
-          itr != removable_halfedges.end() ; ++itr)
-        m_tab_traits.draw_xcurve(this,(*itr)->curve());
-
-      // clear the previous list which is now irrelevant
-      removable_halfedges.clear(); 
-    }
 
     // get the point of the mouse
+    if(removable_halfedge != Halfedge_handle())
+    {
+      setColor(pm_color);
+      if (remove_org_curve)
+      {
+        Origin_curve_iterator     ocit =
+        m_curves_arr->origin_curves_begin (removable_halfedge);
+        Curve_handle ch = ocit->handle();
+        for(Curve_edge_iterator itr = ch->edges_begin();
+            itr != ch->edges_end();
+            ++itr)
+        {
+           m_tab_traits.draw_xcurve(this,(*itr)->curve());
+        }
+      }
+      else
+        m_tab_traits.draw_xcurve(this, removable_halfedge->curve());
+    }
+
     Coord_point p(x_real(e->x()) * m_tab_traits.COORD_SCALE ,
                   y_real(e->y()) * m_tab_traits.COORD_SCALE);
     
@@ -1029,7 +932,8 @@ public:
     Halfedge_iterator closest_hei;
     
     for (hei = m_curves_arr->halfedges_begin();
-         hei != m_curves_arr->halfedges_end(); ++hei) 
+         hei != m_curves_arr->halfedges_end();
+         ++hei) 
     {
       X_monotone_curve_2 & xcurve = hei->curve();
       Coord_type dist = m_tab_traits.xcurve_point_distance(p, xcurve , this);
@@ -1042,34 +946,24 @@ public:
     }
     // now 'closest_hei' holds the cloeset halfedge to the point of the mouse
 
-    if (remove_org_curve && !read_from_file)
+    removable_halfedge = closest_hei;
+    if (remove_org_curve)
     {
-      const Base_curve * org_curve =
-        m_tab_traits.get_origin_curve(closest_hei->curve());
-      Hafledge_list li;
-      Hafledge_list_iterator result;
-      for (hei = m_curves_arr->halfedges_begin();
-           hei != m_curves_arr->halfedges_end(); ++hei) 
+      setColor(Qt::red);  // highlight the removable edge with red color
+      Origin_curve_iterator     ocit =
+        m_curves_arr->origin_curves_begin (closest_hei);
+      Curve_handle ch = ocit->handle();
+      for(Curve_edge_iterator itr = ch->edges_begin();
+          itr != ch->edges_end();
+          ++itr)
       {
-        const Base_curve * curve =
-          m_tab_traits.get_origin_curve(hei->curve());
-        result = std::find(li.begin(), li.end(), hei);
-        if (curve == org_curve && result == li.end())
-        {
-          li.push_back(hei->twin());
-          //m_curves_arr->remove_edge(hei);
-          setColor(Qt::red);  // highlight the removable edge with red color
-          m_tab_traits.draw_xcurve(this,hei->curve());
-          removable_halfedges.push_back(hei);
-        }
+         m_tab_traits.draw_xcurve(this,(*itr)->curve());
       }
     }
     else
     {
-      // m_curves_arr->remove_edge(closest_hei);
       setColor(Qt::red);  // highlight the removable edge with red color
       m_tab_traits.draw_xcurve(this,closest_hei->curve());
-      removable_halfedges.push_back(closest_hei);
     }
   }
 
@@ -1091,32 +985,32 @@ public:
     }
     if (mode == MERGE && !first_time_merge)
     {
-      if (second_curve != m_curves_arr->halfedges_end())
-      {
-        int i = (second_curve->curve()).get_data().m_index;
-        setColor(colors[i]);
-        m_tab_traits.draw_xcurve(this,second_curve->curve());
-      }
-      Coord_type x, y;
-      x_real(e->x(), x);
-      y_real(e->y(), y);
-      Coord_point p(x * m_tab_traits.COORD_SCALE,
-                    y * m_tab_traits.COORD_SCALE);
-      second_curve = m_curves_arr->halfedges_end();
-      //m_tab_traits.find_close_curve(closest_curve, second_curve, p, this,
-                                    //true);
-      setColor(Qt::red);
-      m_tab_traits.draw_xcurve(this,closest_curve->curve());
-      if (second_curve != m_curves_arr->halfedges_end())
-      {
-        setColor(Qt::green);
-        m_tab_traits.draw_xcurve(this,second_curve->curve());
-      }
-      else
-      {
-        first_time_merge = true;
-        redraw();
-      }
+      //if (second_curve != m_curves_arr->halfedges_end())
+      //{
+      //  int i = (second_curve->curve()).get_data().m_index;
+      //  setColor(colors[i]);
+      //  m_tab_traits.draw_xcurve(this,second_curve->curve());
+      //}
+      //Coord_type x, y;
+      //x_real(e->x(), x);
+      //y_real(e->y(), y);
+      //Coord_point p(x * m_tab_traits.COORD_SCALE,
+      //              y * m_tab_traits.COORD_SCALE);
+      //second_curve = m_curves_arr->halfedges_end();
+      ////m_tab_traits.find_close_curve(closest_curve, second_curve, p, this,
+      //                              //true);
+      //setColor(Qt::red);
+      //m_tab_traits.draw_xcurve(this,closest_curve->curve());
+      //if (second_curve != m_curves_arr->halfedges_end())
+      //{
+      //  setColor(Qt::green);
+      //  m_tab_traits.draw_xcurve(this,second_curve->curve());
+      //}
+      //else
+      //{
+      //  first_time_merge = true;
+      //  redraw();
+      //}
       return;
     }// merge
 
@@ -1495,7 +1389,6 @@ public:
 
   typedef Arr_seg_iter                              Arr_curve_iter;
   typedef Arr_seg_const_iter                        Arr_curve_const_iter;
-  typedef Arr_base_seg_2                            Base_curve;
 
   typedef Seg_ccb_halfedge_circulator               Ccb_halfedge_circulator;
   typedef Seg_holes_iterator                        Holes_iterator;
@@ -1506,7 +1399,6 @@ public:
   typedef Arrangement_2::Halfedge_around_vertex_circulator
                                           Halfedge_around_vertex_circulator;
   typedef Arrangement_2::Edge_iterator              Edge_iterator;
-  typedef Curve_data                                Data;
   typedef Seg_halfedge                              Halfedge;
   typedef Seg_face_iterator                         Face_iterator;
   
@@ -1575,10 +1467,10 @@ public:
 
       // fill the face according to its color (stored at any of her
       // incidents curves)
-      if (! f->info().isValid())
+      if (! f->color().isValid())
         w->setFillColor(def_bg_color);
       else
-        w->setFillColor(f->info());
+        w->setFillColor(f->color());
 
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
@@ -1595,7 +1487,7 @@ public:
       points[3] = (Coord_point(w->x_max(),w->y_min()));
      
       w->setFilled(true);
-      w->setFillColor(f->info());
+      w->setFillColor(f->color());
       
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
@@ -1608,9 +1500,18 @@ public:
 
   /*! draw_xcurve - use Qt_Widget operator to draw 
    *\ param w - the demo widget
-   *\ c - curve to be drawen
+   *\ c - xcurve to be drawen
    */
   void draw_xcurve(Qt_widget_demo_tab<Segment_tab_traits> * w , X_monotone_curve_2 c )
+  {
+    (*w) << c;
+  }
+
+  /*! draw_curve - use Qt_Widget operator to draw 
+   *\ param w - the demo widget
+   *\ c - curve to be drawen
+   */
+  void draw_curve(Qt_widget_demo_tab<Segment_tab_traits> * w , Curve_2 c )
   {
     (*w) << c;
   }
@@ -1654,14 +1555,9 @@ public:
     const Coord_point & coord_target = coord_seg.target();
     Arr_seg_point_2 source(coord_source.x(), coord_source.y());
     Arr_seg_point_2 target(coord_target.x(), coord_target.y());
-    Arr_base_seg_2* base_seg_p = new Arr_base_seg_2(source, target);
-    Curve_data cd;
-    cd.m_type = Curve_data::LEAF;
-    cd.m_index = w->index;
-    cd.m_ptr.m_curve = base_seg_p;
-    Arr_seg_2* seg = new Arr_seg_2(*base_seg_p, cd );
-    CGAL::insert(*(w->m_curves_arr), *seg);
-    CGAL::Bbox_2 curve_bbox = seg->bbox();
+    Arr_seg_2 seg (source, target);
+    (*(w->m_curves_arr)).insert(seg);
+    CGAL::Bbox_2 curve_bbox = seg.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
   
@@ -1707,19 +1603,19 @@ public:
     return CGAL::squared_distance( p, coord_seg);
   }
   
-  /*! get_origin_curve - return the origin base curve
-   */
-  const Arr_base_seg_2* get_origin_curve(const Arr_xseg_2 & xseg )
-  {
-    const Curve_data & curve_data = xseg.get_data();
-    if (curve_data.m_type == Curve_data::LEAF) 
-      return curve_data.m_ptr.m_curve;
-    else // curve_data.m_type == Curve_data::INTERNAL
-    {
-      const Arr_xseg_2* xseg_p = curve_data.m_ptr.m_x_motonote_curve;      
-      return get_origin_curve( *xseg_p );
-    }
-  }
+  ///*! get_origin_curve - return the origin base curve
+  // */
+  //const Arr_base_seg_2* get_origin_curve(const Arr_xseg_2 & xseg )
+  //{
+  //  const Curve_data & curve_data = xseg.get_data();
+  //  if (curve_data.m_type == Curve_data::LEAF) 
+  //    return curve_data.m_ptr.m_curve;
+  //  else // curve_data.m_type == Curve_data::INTERNAL
+  //  {
+  //    const Arr_xseg_2* xseg_p = curve_data.m_ptr.m_x_motonote_curve;      
+  //    return get_origin_curve( *xseg_p );
+  //  }
+  //}
   
   /*! draw_last_segment - call from mouse move event
    */
@@ -1767,8 +1663,7 @@ public:
    */
   const X_monotone_curve_2 curve_make_x_monotone(Point_2 p1 , Point_2 p2)
   {
-    Data d;
-    const Curve_2 cv(Base_curve(p1 , p2) , d);
+    const Curve_2 cv(p1 , p2);
     X_monotone_curve_2 c;
     CGAL::Object             res;
     CGAL::Oneset_iterator<CGAL::Object> oi(res);
@@ -1916,7 +1811,6 @@ public:
   typedef Pol_halfedge_handle                       Halfedge_handle;
   typedef Arr_pol_2                                 Curve_2;
   typedef Arr_xpol_2                                X_monotone_curve_2;
-  typedef Arr_base_pol_2                            Base_curve;
   typedef Pol_face_handle                           Face_handle;
   typedef Pol_ccb_halfedge_circulator               Ccb_halfedge_circulator;
   typedef Pol_holes_iterator                        Holes_iterator;
@@ -1929,7 +1823,6 @@ public:
   typedef Arrangement_2::Halfedge_around_vertex_circulator
     Halfedge_around_vertex_circulator;
   typedef Arrangement_2::Edge_iterator              Edge_iterator;
-  typedef Curve_pol_data                            Data;
   typedef Pol_halfedge                              Halfedge;
   typedef  Pol_face_iterator                        Face_iterator;
 
@@ -2019,10 +1912,10 @@ public:
 
       // fill the face according to its color (stored at any of her
       // incidents curves)
-      if (! f->info().isValid())
+      if (! f->color().isValid())
         w->setFillColor(def_bg_color);
       else
-        w->setFillColor(f->info());
+        w->setFillColor(f->color());
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
 
@@ -2063,6 +1956,24 @@ public:
       Coord_segment coord_seg = convert(source , target);
       *w << coord_seg;
       ++ps; ++pt;
+    }
+  }
+
+
+  /*! draw_curve -
+   */
+  void draw_curve(Qt_widget_demo_tab<Polyline_tab_traits> * w , Curve_2 pol )
+  {
+    std::list<CGAL::Object> obj_list;
+    m_traits.make_x_monotone_2_object()(pol, std::back_inserter(obj_list));
+    for(std::list<CGAL::Object>::iterator itr = obj_list.begin();
+        itr != obj_list.end();
+        ++itr)
+    {
+      X_monotone_curve_2 cv;
+
+      if(CGAL::assign(cv, *itr))
+        draw_xcurve (w, cv);
     }
   }
   
@@ -2218,19 +2129,19 @@ public:
     return min_dist;
   }
   
-  /*! get_origin_curve - return the origin base curve
-   */
-  const Arr_base_pol_2* get_origin_curve(const Arr_xpol_2 & xseg )
-  {
-    const Curve_pol_data & curve_data = xseg.get_data();
-    if (curve_data.m_type == Curve_pol_data::LEAF) 
-      return curve_data.m_ptr.m_curve;
-    else // curve_data.m_type == Curve_data::INTERNAL
-    {
-      const Arr_xpol_2* xseg_p = curve_data.m_ptr.m_x_motonote_curve;        
-      return get_origin_curve( *xseg_p );
-    }
-  }
+  ///*! get_origin_curve - return the origin base curve
+  // */
+  //const Arr_base_pol_2* get_origin_curve(const Arr_xpol_2 & xseg )
+  //{
+  //  const Curve_pol_data & curve_data = xseg.get_data();
+  //  if (curve_data.m_type == Curve_pol_data::LEAF) 
+  //    return curve_data.m_ptr.m_curve;
+  //  else // curve_data.m_type == Curve_data::INTERNAL
+  //  {
+  //    const Arr_xpol_2* xseg_p = curve_data.m_ptr.m_x_motonote_curve;        
+  //    return get_origin_curve( *xseg_p );
+  //  }
+  //}
 
   /*! curve_make_x_monotone
    */
@@ -2239,9 +2150,7 @@ public:
     std::vector<Arr_pol_point_2> temp_points;
     temp_points.push_back(p1);
     temp_points.push_back(p2);
-    Data d;
-    Curve_2 cv(Base_curve(temp_points.begin(), temp_points.end() ) , d);
-    //std::list<X_monotone_curve_2> xcurve_list;
+    Curve_2 cv(temp_points.begin(), temp_points.end());
     CGAL::Object             res;
     CGAL::Oneset_iterator<CGAL::Object> oi(res);
     m_traits.make_x_monotone_2_object()(cv, oi);
@@ -2413,15 +2322,9 @@ private:
    */
   void get_polyline(Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
-    Arr_base_pol_2 * base_pol_p =
-      new Arr_base_pol_2(points.begin(), points.end());
-    Curve_pol_data cd;
-    cd.m_type = Curve_pol_data::LEAF;
-    cd.m_index = w->index;
-    cd.m_ptr.m_curve = base_pol_p;
-    Curve_2 * pol = new Curve_2( *base_pol_p, cd );
-    CGAL::insert(*(w->m_curves_arr),*pol);
-    CGAL::Bbox_2 curve_bbox = pol->bbox();
+    Arr_pol_2  pol (points.begin(), points.end()); 
+    (*(w->m_curves_arr)).insert(pol);
+    CGAL::Bbox_2 curve_bbox = pol.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
   
@@ -2488,28 +2391,26 @@ public:
   typedef Arr_xconic_const_iter                     Arr_curve_const_iter;
   typedef Arr_conic_point_2                         Point_2;
   typedef Conic_halfedge_handle                     Halfedge_handle;
-  typedef Arr_xconic_2                              Curve_2;
+  typedef Arrangement_2::Curve_2                    Curve_2;
   typedef Arr_xconic_2                              X_monotone_curve_2;
-  typedef Arr_base_conic_2                          Base_curve;
   typedef Conic_face_handle                         Face_handle;
-  typedef Conic_ccb_halfedge_circulator Ccb_halfedge_circulator;
-  typedef Conic_holes_iterator         Holes_iterator;
-  typedef Arrangement_2::Halfedge_iterator  Halfedge_iterator;
-  typedef std::list<Halfedge_iterator> Hafledge_list;
-  typedef Hafledge_list::iterator      Hafledge_list_iterator;
-  typedef Arrangement_2::Vertex_iterator  Vertex_iterator;
+  typedef Conic_ccb_halfedge_circulator             Ccb_halfedge_circulator;
+  typedef Conic_holes_iterator                      Holes_iterator;
+  typedef Arrangement_2::Halfedge_iterator          Halfedge_iterator;
+  typedef std::list<Halfedge_iterator>              Hafledge_list;
+  typedef Hafledge_list::iterator                   Hafledge_list_iterator;
+  typedef Arrangement_2::Vertex_iterator            Vertex_iterator;
   typedef Arrangement_2::Halfedge_around_vertex_circulator
-  Halfedge_around_vertex_circulator;
-  typedef Arrangement_2::Edge_iterator    Edge_iterator;
-  typedef Curve_conic_data             Data;
-  typedef Conic_halfedge               Halfedge;
-  typedef  Conic_face_iterator         Face_iterator;
+    Halfedge_around_vertex_circulator;
+  typedef Arrangement_2::Edge_iterator              Edge_iterator;
+  typedef Conic_halfedge                            Halfedge;
+  typedef Conic_face_iterator                       Face_iterator;
   
   //point location
-  typedef Conic_trap_point_location      Trap_point_location;
-  typedef Conic_naive_point_location     Naive_point_location;
-  typedef Conic_walk_point_location      Walk_point_location;
-  typedef Conic_lanmarks_point_location  Lanmarks_point_location;
+  typedef Conic_trap_point_location                 Trap_point_location;
+  typedef Conic_naive_point_location                Naive_point_location;
+  typedef Conic_walk_point_location                 Walk_point_location;
+  typedef Conic_lanmarks_point_location             Lanmarks_point_location;
  
   /*! coordinate scale - used in conics*/
   int COORD_SCALE;
@@ -2631,10 +2532,10 @@ public:
 
       // fill the face according to its color (stored at any of her incidents
       // curves)
-      if (! f->info().isValid())
+      if (! f->color().isValid())
         w->setFillColor(def_bg_color);
       else
-        w->setFillColor(f->info());
+        w->setFillColor(f->color());
 
       (*w) << pgn ;  // draw the polyong 
       w->get_painter().setPen(old_penstyle);
@@ -2705,17 +2606,20 @@ public:
     return;
   }
   
-  /*! get_origin_curve - return the origin base curve
+  /*! draw_curve -
    */
-  const Arr_base_conic_2* get_origin_curve(const Arr_xconic_2 & xseg )
+  void draw_curve(Qt_widget_demo_tab<Conic_tab_traits> * w , Curve_2 conic )
   {
-    const Curve_conic_data & curve_data = xseg.get_data();
-    if (curve_data.m_type == Curve_conic_data::LEAF) 
-      return curve_data.m_ptr.m_curve;
-    else // curve_data.m_type == Curve_data::INTERNAL
+    std::list<CGAL::Object> obj_list;
+    m_traits.make_x_monotone_2_object()(conic, std::back_inserter(obj_list));
+    for(std::list<CGAL::Object>::iterator itr = obj_list.begin();
+        itr != obj_list.end();
+        ++itr)
     {
-      Arr_xconic_2* xseg_p = curve_data.m_ptr.m_x_motonote_curve;        
-      return get_origin_curve( *xseg_p );
+      X_monotone_curve_2 cv;
+
+      if(CGAL::assign(cv, *itr))
+        draw_xcurve (w, cv);
     }
   }
   
@@ -2746,17 +2650,17 @@ public:
 
     if(x != x1 || y != y1) 
     {      
-      Arr_base_conic_2 *cv = NULL;
+      Arr_conic_2 *cv = NULL;
 
       switch (w->conic_type)
       {
        case CIRCLE:
         sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
-        cv = new Arr_base_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad)); 
+        cv = new Arr_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad)); 
         break;
 
        case SEGMENT:
-        cv = new Arr_base_conic_2(Rat_segment_2 (Rat_point_2(x,y),
+        cv = new Arr_conic_2(Rat_segment_2 (Rat_point_2(x,y),
                                                 Rat_point_2(x1,y1)));
         break;
 
@@ -2782,7 +2686,7 @@ public:
         v = -2*y0*a_sq;
         ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
 
-        cv = new Arr_base_conic_2(r, s, t, u, v, ww);
+        cv = new Arr_conic_2(r, s, t, u, v, ww);
         break;
 
         // RWRW: Do nothing ...
@@ -2809,7 +2713,7 @@ public:
             *w << m_p1 << m_p2 ;
             return; 
           }
-          cv = new Arr_base_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
+          cv = new Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
                                     Rat_point_2(x,y));
         }
         break;
@@ -2846,7 +2750,7 @@ public:
           Rational y3 = Rational(static_cast<int>(1000 * m_p3.y() + 0.5), 1000);
           Rational x4 = Rational(static_cast<int>(1000 * m_p4.x() + 0.5), 1000);
           Rational y4 = Rational(static_cast<int>(1000 * m_p4.y() + 0.5), 1000);
-          cv = new Arr_base_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
+          cv = new Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
                                      Rat_point_2(x3,y3),Rat_point_2(x4,y4),
                                      Rat_point_2(x,y));
           if (! cv->is_valid())
@@ -2860,11 +2764,8 @@ public:
         }
         break;
       }
-      Curve_conic_data cd;
-      cd.m_type = Curve_conic_data::LEAF;
-      cd.m_index = w->index;
-      cd.m_ptr.m_curve = cv;
-      CGAL::insert(*(w->m_curves_arr), Arr_conic_2( *cv , cd));
+  
+      (*(w->m_curves_arr)).insert(*cv);
       CGAL::Bbox_2 curve_bbox = cv->bbox();
       w->bbox = w->bbox + curve_bbox;
       w->active = false;
@@ -2966,66 +2867,66 @@ public:
   Coord_type curve_point_distance(Coord_point p, Curve_2 * c ,
                                   Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
-    // Get the co-ordinates of the curve's source and target.
-    double sx = CGAL::to_double(c->source().x()),
-      sy = CGAL::to_double(c->source().y()),
-      tx = CGAL::to_double(c->target().x()),
-      ty = CGAL::to_double(c->target().y());
-    
-    if (c->orientation() == CGAL::COLLINEAR)
-    {
-      Coord_point coord_source(sx , sy);
-      Coord_point coord_target(tx , ty);
-      Coord_segment coord_seg(coord_source, coord_target);
-      
-      return CGAL::squared_distance( p, coord_seg);
-    }
-    else
-    {
-      // If the curve is monotone, than its source and its target has the
-      // extreme x co-ordinates on this curve.
-        bool     is_source_left = (sx < tx);
-        int      x_min = is_source_left ? (*w).x_pixel(sx) : 
-          (*w).x_pixel(tx);
-        int      x_max = is_source_left ? (*w).x_pixel(tx) :
-          (*w).x_pixel(sx);
-        double   prev_x = is_source_left ? sx : tx;
-        double   prev_y = is_source_left ? sy : ty;
-        double   curr_x, curr_y;
-        int      x;
-        
-        Arr_conic_point_2 ps[2];
-        int nps;
-        
-        bool first = true;
-        Coord_type min_dist = 0;
-        
-        
-        for (x = x_min + 1; x < x_max; x++)
-        {
-          curr_x = (*w).x_real(x);
-          nps = c->get_points_at_x(Arr_conic_point_2(curr_x, 0), ps);
-          if (nps == 1)
-          {
-            curr_y = CGAL::to_double(ps[0].y());
-            
-            Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,
-                                     Coord_point(curr_x, curr_y) );
-            Coord_type dist = CGAL::squared_distance( p, coord_seg);
-            if( dist < min_dist || first)
-            {
-              first = false;
-              min_dist = dist;
-            }
-            
-            
-            prev_x = curr_x;
-            prev_y = curr_y;
-            
-          }
-        }
-        return min_dist;
-    } // else 
+    //// Get the co-ordinates of the curve's source and target.
+    //double sx = CGAL::to_double(c->source().x()),
+    //  sy = CGAL::to_double(c->source().y()),
+    //  tx = CGAL::to_double(c->target().x()),
+    //  ty = CGAL::to_double(c->target().y());
+    //
+    //if (c->orientation() == CGAL::COLLINEAR)
+    //{
+    //  Coord_point coord_source(sx , sy);
+    //  Coord_point coord_target(tx , ty);
+    //  Coord_segment coord_seg(coord_source, coord_target);
+    //  
+    //  return CGAL::squared_distance( p, coord_seg);
+    //}
+    //else
+    //{
+    //  // If the curve is monotone, than its source and its target has the
+    //  // extreme x co-ordinates on this curve.
+    //    bool     is_source_left = (sx < tx);
+    //    int      x_min = is_source_left ? (*w).x_pixel(sx) : 
+    //      (*w).x_pixel(tx);
+    //    int      x_max = is_source_left ? (*w).x_pixel(tx) :
+    //      (*w).x_pixel(sx);
+    //    double   prev_x = is_source_left ? sx : tx;
+    //    double   prev_y = is_source_left ? sy : ty;
+    //    double   curr_x, curr_y;
+    //    int      x;
+    //    
+    //    Arr_conic_point_2 px;
+    //    
+    //    bool first = true;
+    //    Coord_type min_dist = 0;
+    //    Alg_kernel   ker;
+    //     
+    //    for (x = x_min + 1; x < x_max; x++)
+    //    {
+    //      curr_x = (*w).x_real(x);
+    //      Arr_conic_point_2 curr_p(curr_x, 0);
+    //      if(!(ker.compare_x_2_object() (curr_p, c->left()) != CGAL::SMALLER &&
+    //           ker.compare_x_2_object() (curr_p, c->right()) != CGAL::LARGER))
+    //           continue;
+
+    //      px = c->get_point_at_x(Arr_conic_point_2(curr_x, 0));
+    //    
+    //      curr_y = CGAL::to_double(px.y());
+    //        
+    //      Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,
+    //                                 Coord_point(curr_x, curr_y) );
+    //      Coord_type dist = CGAL::squared_distance( p, coord_seg);
+    //      if( dist < min_dist || first)
+    //      {
+    //        first = false;
+    //        min_dist = dist;
+    //      }    
+    //      prev_x = curr_x;
+    //      prev_y = curr_y;
+    //    }
+    //    return min_dist;
+    //} // else 
+    return 0;
   } // 
 
   /*! xcurve_point_distance - return the distance between
@@ -3062,48 +2963,44 @@ public:
         double   curr_x, curr_y;
         int      x;
         
-        Arr_conic_point_2 ps[2];
-        int nps;
+        Arr_conic_point_2 px;
         
         bool first = true;
         Coord_type min_dist = 100000000;
+        Alg_kernel   ker;
         
         
         for (x = x_min + 1; x < x_max; x++)
         {
           curr_x = (*w).x_real(x);
-          nps = c.get_points_at_x(Arr_conic_point_2(curr_x, 0), ps);
-          if (nps == 1)
+          Arr_conic_point_2 curr_p(curr_x, 0);
+          if(!(ker.compare_x_2_object() (curr_p, c.left()) != CGAL::SMALLER &&
+               ker.compare_x_2_object() (curr_p, c.right()) != CGAL::LARGER))
+               continue;
+
+          px = c.get_point_at_x(Arr_conic_point_2(curr_x, 0));
+          curr_y = CGAL::to_double(px.y());
+            
+          Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,
+                                   Coord_point(curr_x, curr_y) );
+          Coord_type dist = CGAL::squared_distance( p, coord_seg);
+          if( dist < min_dist || first)
           {
-            curr_y = CGAL::to_double(ps[0].y());
-            
-            Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,
-                                     Coord_point(curr_x, curr_y) );
-            Coord_type dist = CGAL::squared_distance( p, coord_seg);
-            if( dist < min_dist || first)
-            {
-              first = false;
-              min_dist = dist;
-            }
-            
-            
-            prev_x = curr_x;
-            prev_y = curr_y;
-            
-          }
+            first = false;
+            min_dist = dist;
+          }   
+          prev_x = curr_x;
+          prev_y = curr_y;
         }
         return min_dist;
-    } // else 
-  } // 
+    }
+    
+  }
   
   /*! curve_make_x_monotone
    */
   const X_monotone_curve_2 curve_make_x_monotone(Point_2 p1 , Point_2 p2)
   {
-    /*! */
-    Data d;
-
-    // RWRW:
     Rational x1 (static_cast<int> (1000 * CGAL::to_double(p1.x())+ 0.5), 1000);
     Rational y1 (static_cast<int> (1000 * CGAL::to_double(p1.y())+ 0.5), 1000);
 
@@ -3112,10 +3009,8 @@ public:
 
     Rat_point_2      my_p1 (x1, y1);
     Rat_point_2      my_p2 (x2, y2);
-    Arr_base_conic_2 base (Rat_segment_2 (my_p1, my_p2));
-    // Arr_base_conic_2 base(Arr_conic_segment_2(p1 , p2));
+    Arr_conic_2 cv (Rat_segment_2 (my_p1, my_p2));
 
-    const Arr_conic_2 cv( base , d);
     CGAL::Object             res;
     CGAL::Oneset_iterator<CGAL::Object> oi(res);
     m_traits.make_x_monotone_2_object()(cv, oi);
@@ -3218,33 +3113,33 @@ public:
 
   /*!
    */
-  void split_edge(Halfedge_iterator &hei ,Point_2 & p,
-                  Qt_widget_demo_tab<Conic_tab_traits> * w)
-  {    
-    const X_monotone_curve_2 split_curve = hei->curve();
-    X_monotone_curve_2 sbc1;
-    X_monotone_curve_2 sbc2;
-    
-    m_traits.split_2_object()(split_curve, p , sbc1 , sbc2 );
+  //void split_edge(Halfedge_iterator &hei ,Point_2 & p,
+  //                Qt_widget_demo_tab<Conic_tab_traits> * w)
+  //{    
+  //  const X_monotone_curve_2 split_curve = hei->curve();
+  //  X_monotone_curve_2 sbc1;
+  //  X_monotone_curve_2 sbc2;
+  //  
+  //  m_traits.split_2_object()(split_curve, p , sbc1 , sbc2 );
 
-    Curve_conic_data cd1;
-    cd1.m_type = Curve_conic_data::LEAF;
-    cd1.m_index = hei->curve().get_data().m_index;
-    cd1.m_ptr.m_curve = hei->curve().get_data().m_ptr.m_curve;
+  //  Curve_conic_data cd1;
+  //  cd1.m_type = Curve_conic_data::LEAF;
+  //  cd1.m_index = hei->curve().get_data().m_index;
+  //  cd1.m_ptr.m_curve = hei->curve().get_data().m_ptr.m_curve;
 
-    Arr_conic_2    sub_curve1 (sbc1, cd1);
+  //  Arr_conic_2    sub_curve1 (sbc1, cd1);
 
-    Curve_conic_data cd2;
-    cd2.m_type = Curve_conic_data::LEAF;
-    cd2.m_index = hei->curve().get_data().m_index;
-    cd2.m_ptr.m_curve =hei->curve().get_data().m_ptr.m_curve;
+  //  Curve_conic_data cd2;
+  //  cd2.m_type = Curve_conic_data::LEAF;
+  //  cd2.m_index = hei->curve().get_data().m_index;
+  //  cd2.m_ptr.m_curve =hei->curve().get_data().m_ptr.m_curve;
 
-    Arr_conic_2    sub_curve2 (sbc2, cd2);
-    
-    //  w->m_curves_arr->remove_edge(hei);
-   CGAL::insert(*(w->m_curves_arr), sub_curve1);
-   CGAL::insert(*(w->m_curves_arr), sub_curve2);
-  }
+  //  Arr_conic_2    sub_curve2 (sbc2, cd2);
+  //  
+  //  //  w->m_curves_arr->remove_edge(hei);
+  // /*CGAL::insert(*(w->m_curves_arr), sub_curve1);
+  // CGAL::insert(*(w->m_curves_arr), sub_curve2);*/
+  //}
 
   Traits m_traits;
   /*! temporary points of the created conic */

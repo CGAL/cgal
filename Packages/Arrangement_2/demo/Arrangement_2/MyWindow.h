@@ -87,7 +87,7 @@ private:
     /*! skip_comments in input file */
     void skip_comments( std::ifstream& is, char* one_line );
     /*! read conic curve from input file */
-    void ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv);
+    void ReadCurve(std::ifstream & is, Arr_conic_2 & cv);
     /*! read from file */
     void load( const QString& filename , bool clear_flag = false);
     /*! find the actual widget tab index of a tab */
@@ -264,6 +264,10 @@ private:
     QToolBar *conicTypeTool;
     /*! color dialog action (for filling faces) */
     QAction *color_dialog_bt;
+    /*! number of colors */
+    const unsigned int num_of_colors;
+    /*! array of colors */
+    QColor *colors;
 };
 
 

@@ -267,7 +267,7 @@ void MyWindow::init(Qt_widget_base_tab *widget)
   number_of_tabs++;
   // add the new widget to myBar
   myBar->insertTab( widget, 
-                    QString("Arr " + QString::number( widget->index ) ),
+                    QString("Arr " + QString::number( widget->index + 1 ) ),
                     widget->index );
   myBar->setCurrentPage(myBar->indexOf(widget));
  
@@ -281,7 +281,7 @@ void MyWindow::add_segment_tab()
 {
   Qt_widget_demo_tab<Segment_tab_traits> *widget = 
     new Qt_widget_demo_tab<Segment_tab_traits>
-    (SEGMENT_TRAITS , this, tab_number);
+    (SEGMENT_TRAITS , this, tab_number, colors[tab_number%num_of_colors]);
   init(widget);
   widget->draw();
 }
@@ -291,7 +291,7 @@ void MyWindow::add_polyline_tab()
 {
   Qt_widget_demo_tab<Polyline_tab_traits> *widget = 
     new Qt_widget_demo_tab<Polyline_tab_traits>
-    (POLYLINE_TRAITS , this, tab_number);
+    (POLYLINE_TRAITS , this, tab_number, colors[tab_number%num_of_colors]);
   init(widget);
   widget->draw();
 }
@@ -301,7 +301,7 @@ void MyWindow::add_conic_tab()
 {
   Qt_widget_demo_tab<Conic_tab_traits> *widget = 
     new Qt_widget_demo_tab<Conic_tab_traits>
-    (CONIC_TRAITS , this , tab_number);
+    (CONIC_TRAITS , this , tab_number, colors[tab_number%num_of_colors]);
   init(widget);
   widget->draw();
 
@@ -337,47 +337,46 @@ void MyWindow::updateTraitsType( QAction *action )
   Qt_widget_base_tab *old_widget = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   Qt_widget_base_tab * widget = 0;
+  int old_index = old_widget->index;
   
   if (action == setSegmentTraits)
   {
     if (old_widget->traits_type == SEGMENT_TRAITS) return;
     widget = new Qt_widget_demo_tab<Segment_tab_traits>
-      (SEGMENT_TRAITS , this);
+      (SEGMENT_TRAITS , this, old_index, old_widget->pm_color);
   }
   else if (action == setPolylineTraits)
   {
     if (old_widget->traits_type == POLYLINE_TRAITS) return;
     widget = new Qt_widget_demo_tab<Polyline_tab_traits>
-      (POLYLINE_TRAITS  , this);
+      (POLYLINE_TRAITS , this, old_index, old_widget->pm_color);
   }
   else if (action == setConicTraits)
   {
     if (old_widget->traits_type == CONIC_TRAITS) return;
     widget = new Qt_widget_demo_tab<Conic_tab_traits>
-      (CONIC_TRAITS , this);
+      (CONIC_TRAITS , this, old_index, old_widget->pm_color);
   }
   
-  if(! old_widget->is_empty())
+  if( !old_widget->is_empty() ) // pm is not empty
   {
     switch( QMessageBox::warning( this, "Update Traits Type",
-        "This action will destroy the current arrangement.\n"
+        "This action will destroy the current planar map.\n"
         "Do you want to continue ?",
         "Yes",
-        "No", 0, 0, 1 ) ) 
-    {
+        "No", 0, 0, 1 ) ) {
       case 0: 
           // continue
           break;
       case 1: // The user clicked the Quit or pressed Escape
-          delete widget;
-          update();
+                  update();
           something_changed();
           return;
           break;
     }
   }
 
-  int old_index = old_widget->index;
+  
   int index = myBar->currentPageIndex();
   QString label = myBar->label(index);
   myBar->removePage(myBar->currentPage());
@@ -391,7 +390,6 @@ void MyWindow::updateTraitsType( QAction *action )
   widget->attach(testlayer);
   widget->m_line_width = 2;
   widget->index = old_index;
-  widget->pm_color = widget->colors[old_index];
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
   rayShootingUpMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
   rayShootingDownMode->setIconSet(QPixmap((const char**)demo_rayshoot_down_xpm ));
@@ -403,7 +401,6 @@ void MyWindow::updateTraitsType( QAction *action )
     
   update();
   something_changed();
-  
 }
 
 /*! change the buttons stste according to the traits type */
@@ -472,11 +469,11 @@ void MyWindow::setConicType( ConicType t )
 /*! open color dialog for faces color */
 void MyWindow::openColorDialog()
 {
-        Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-    QColor c = QColorDialog::getColor();
-        if( c.isValid())
-          w_demo_p->fill_face_color = c;
+  QColor c = QColorDialog::getColor();
+  if( c.isValid())
+    w_demo_p->fill_face_color = c;
 }
 
 
@@ -639,20 +636,19 @@ void MyWindow::update()
   //updateSnapMode( w_demo_p->snap );
   setTraits( w_demo_p->traits_type );
   setConicType( w_demo_p->conic_type ); 
-
   if ( w_demo_p->snap )
   {
-        setGridSnapMode->setEnabled( TRUE );
-        setSnapMode->setOn( TRUE );
-        if ( w_demo_p->snap_mode == GRID)
-          setGridSnapMode->setOn( TRUE );
-        else
-          setGridSnapMode->setOn( FALSE );
+    setGridSnapMode->setEnabled( TRUE );
+    setSnapMode->setOn( TRUE );
+    if ( w_demo_p->snap_mode == GRID)
+      setGridSnapMode->setOn( TRUE );
+    else
+      setGridSnapMode->setOn( FALSE );
   }
   else
   {
-        setSnapMode->setOn( FALSE );
-        setGridSnapMode->setOn( FALSE );
+    setSnapMode->setOn( FALSE );
+    setGridSnapMode->setOn( FALSE );
     setGridSnapMode->setEnabled( FALSE );
   }
 }

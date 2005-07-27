@@ -70,13 +70,13 @@
  * \param w - window width
  * \param h - window hight
  */
-MyWindow::MyWindow(int w, int h) 
+MyWindow::MyWindow(int w, int h) : num_of_colors(18)
 {
   myBar = new QTabWidget(this);
   setCentralWidget(myBar);
   m_width = w;
   m_height = h;
-  tab_number = 1;
+  tab_number = 0;
   number_of_tabs = 0;
   testlayer = new Qt_layer( myBar );
   colors_flag = true;
@@ -386,7 +386,27 @@ MyWindow::MyWindow(int w, int h)
   // connect the change of current tab
   connect( myBar, SIGNAL( currentChanged(QWidget * )  ),
            this, SLOT( update() ) );
-  
+    
+  colors = new QColor[num_of_colors];
+  colors[0]  =  Qt::blue;
+  colors[1]  =  Qt::gray;
+  colors[2]  =  Qt::green;
+  colors[3]  =  Qt::cyan;
+  colors[4]  =  Qt::magenta;
+  colors[5]  =  Qt::darkRed;
+  colors[6]  =  Qt::darkGreen;
+  colors[7]  =  Qt::darkBlue;
+  colors[8]  =  Qt::darkMagenta;
+  colors[9]  =  Qt::darkCyan;
+  colors[10] =  Qt::yellow;
+  colors[11] =  Qt::white;
+  colors[12] =  Qt::darkGray;
+  colors[13] =  Qt::gray;
+  colors[14] =  Qt::red;
+  colors[15] =  Qt::cyan;
+  colors[16] =  Qt::darkYellow;
+  colors[17] =  Qt::lightGray;
+ 
   //state flag 
   old_state = 0;
   add_segment_tab(); 
@@ -395,7 +415,9 @@ MyWindow::MyWindow(int w, int h)
 
 /*! distructor */
 MyWindow::~MyWindow()
-{}
+{
+  delete []colors;
+}
 
 #include "MyWindow.moc"
 

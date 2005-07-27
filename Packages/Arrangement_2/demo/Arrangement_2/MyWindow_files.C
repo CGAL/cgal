@@ -242,9 +242,9 @@ void MyWindow::fileOpenPm()
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
+      /*Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
-       (myBar->currentPage());
+       (myBar->currentPage());*/
       //w_demo_p->m_curves_arr->read(inputFile);
 	  /*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
     	w_demo_p->empty = true;
@@ -254,9 +254,9 @@ void MyWindow::fileOpenPm()
     }
    case POLYLINE_TRAITS: // dosen't work !!
     {// because the operator >> in Arr_polyline_traits doesn't work...
-      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+     /* Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
-       (myBar->currentPage());
+       (myBar->currentPage());*/
        //w_demo_p->m_curves_arr->read(inputFile);
 
 	   /*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
@@ -316,22 +316,17 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     if (clear_flag)
         w_demo_p->m_curves_arr->clear();
     char dummy[256];
-    Arr_base_conic_2* cv;
+    Arr_conic_2 cv;
     int count;
     inputFile >> count;
     inputFile.getline(dummy, sizeof(dummy));
     for (int i = 0; i < count; i++) 
     {
-      cv = new Arr_base_conic_2();
-      ReadCurve(inputFile, *cv);
+      ReadCurve(inputFile, cv);
       
-      Curve_conic_data cd;
-      cd.m_type = Curve_conic_data::LEAF;
-      cd.m_index = w_demo_p->index;
-      cd.m_ptr.m_curve = cv;
-      CGAL::insert(*(w_demo_p->m_curves_arr), Arr_conic_2( *cv , cd));
+      (*(w_demo_p->m_curves_arr)).insert(cv);
       
-      CGAL::Bbox_2 curve_bbox = cv->bbox();
+      CGAL::Bbox_2 curve_bbox = cv.bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
       else
@@ -369,31 +364,17 @@ void MyWindow::load( const QString& filename , bool clear_flag )
         points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
       }
 
-      Arr_base_pol_2 *base_polyline = 
-        new Arr_base_pol_2(points.begin(), points.end());
+      Arr_pol_2 curve (points.begin(), points.end());
  	
-      CGAL::Bbox_2 curve_bbox = base_polyline->bbox();
+      CGAL::Bbox_2 curve_bbox = curve.bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
       
-      Curve_pol_data cd;
-      cd.m_type = Curve_pol_data::LEAF;
-      cd.m_index = w_demo_p->index;
-      cd.m_ptr.m_curve = base_polyline;
-      
-	  Arr_pol_2 curve(*base_polyline, cd);
       pol_list.push_back(curve);
-      //w_demo_p->m_curves_arr->insert(Arr_pol_2( *base_polyline , cd));
     }
-    std::cout << "insert polylines fron file\n";
-    CGAL::insert(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
-    std::cout << "finish insert polylines fron file\n";
-   /* if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
-      w_demo_p->empty = true;
-    else 
-      w_demo_p->empty = false;*/
+    (*(w_demo_p->m_curves_arr)).insert(pol_list.begin(), pol_list.end());
   }
   
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -415,26 +396,18 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       Arr_seg_point_2 p1(x0, y0);
       Arr_seg_point_2 p2(x1, y1);
 
-	  Arr_base_seg_2 *base_seg =
-		  new Arr_base_seg_2(p1, p2);
+	  Arr_seg_2 curve(p1, p2);
 	
-      CGAL::Bbox_2 curve_bbox = base_seg->bbox();
+      CGAL::Bbox_2 curve_bbox = curve.bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
       
-      Curve_data cd;
-      cd.m_type = Curve_data::LEAF;
-      cd.m_index = w_demo_p->index;
-      cd.m_ptr.m_curve = base_seg;
-      
-	  Arr_seg_2 curve(*base_seg, cd);
       seg_list.push_back(curve);
-      //w_demo_p->m_curves_arr->insert(Arr_seg_2( *base_seg , cd), &seg_notif);
     }
     
-    CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
+    (*(w_demo_p->m_curves_arr)).insert(seg_list.begin(), seg_list.end());
 
 	/*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
@@ -455,7 +428,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
  * \param is - input file stream
  * \param cv - will hold the reading curve
  */
-void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
+void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
 {
   // Read a line from the input file.
   char one_line[128];
@@ -480,7 +453,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
     Rat_point_2   p1(x1, y1), p2(x2, y2);
     Rat_segment_2 seg (p1, p2);
     
-    cv = Arr_base_conic_2 (seg);
+    cv = Arr_conic_2 (seg);
   }
   else if (type == 'c' || type == 'C')
   {
@@ -495,7 +468,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
     Rat_point_2   p0(x0, y0);
     Rat_circle_2  circ(p0, R_sq);
     
-    cv = Arr_base_conic_2 (circ);
+    cv = Arr_conic_2 (circ);
   }
   else if (type == 't' || type == 'T')
   {
@@ -508,7 +481,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
     
     Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
 
-    cv = Arr_base_conic_2 (p1, p2, p3);
+    cv = Arr_conic_2 (p1, p2, p3);
   }
   else if (type == 'f' || type == 'F')
   {
@@ -519,7 +492,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
 
     str_line >> r >> s >> t >> u >> v >> w;
     
-    cv = Arr_base_conic_2 (r, s, t, u, v, w);
+    cv = Arr_conic_2 (r, s, t, u, v, w);
   }
   else if (type == 'a' || type == 'A')
   {
@@ -562,7 +535,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
     Arr_conic_point_2 ps (x1, y1);
     Arr_conic_point_2 pt (x2, y2);
 
-    cv = Arr_base_conic_2 (r, s, t, u, v, w, orient, ps ,pt);
+    cv = Arr_conic_2 (r, s, t, u, v, w, orient, ps ,pt);
   }
   else if (type == 'l' || type == 'L')
   {
@@ -577,7 +550,6 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
     
     Rat_line_2    line (a, b, c);
 
-    //cv = Arr_base_conic_2 (r, s, t, u, v, w, line);
   }
   else if (type == 'q' || type == 'Q')
   {
@@ -591,7 +563,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
 
     Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
     
-    cv = Arr_base_conic_2 (p1, p2, p3, p4, p5);
+    cv = Arr_conic_2 (p1, p2, p3, p4, p5);
   }
   else
   {
@@ -664,25 +636,25 @@ void MyWindow::fileSave()
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
+    /* Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
-       (myBar->currentPage());
+       (myBar->currentPage());*/
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
    case POLYLINE_TRAITS:
     {
-     Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
+     /*Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
-       (myBar->currentPage());
+       (myBar->currentPage());*/
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
    case CONIC_TRAITS:
     {
-     Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
+    /* Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
-       (myBar->currentPage());
+       (myBar->currentPage());*/
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
