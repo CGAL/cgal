@@ -359,7 +359,7 @@ class QPE_basis_inverse {
             if ( vout.verbose()) print();
         }
     }
-    
+
     // transition to phase II
     template < class InputIterator >                            // QP case
     void  transition( InputIterator twice_D_it)
@@ -383,6 +383,7 @@ class QPE_basis_inverse {
 					// are entered
 	for ( col = 0; col < b; ++col, ++twice_D_it) {
             ++p_begin;
+
 	    // get column of D (D symmetric)
 	    std::copy( *twice_D_it, *twice_D_it+b, x_l.begin());
 

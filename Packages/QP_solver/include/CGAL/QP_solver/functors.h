@@ -167,6 +167,11 @@ class QPE_matrix_pairwise_accessor : public std::unary_function<
                   <MatrixIt>::value_type>::value_type>::result_type
     result_type;
 
+    // following operator= added by kf. to make Join_input_iterator_1 work
+    QPE_matrix_pairwise_accessor() : z( 0)
+    {
+    }
+
     QPE_matrix_pairwise_accessor( MatrixIt it, int row, int lower = 0,
 				                        int upper = 0)
 	: z( 0)
@@ -180,7 +185,19 @@ class QPE_matrix_pairwise_accessor : public std::unary_function<
 	if ( check_lower) l = lower;
 	if ( check_upper) u = upper;
     }
-
+    
+    // following operator= added by kf. to make Join_input_iterator_1 work
+    QPE_matrix_pairwise_accessor&
+      operator=(const QPE_matrix_pairwise_accessor& a)
+    {
+      m = a.m;
+      v = a.v;
+      r = a.r;
+      l = a.l;
+      u = a.u;
+      return *this;
+    }
+    
     result_type  operator () ( int c) const
     {
 	if ( check_lower && ( ( r <  l) || ( c <  l))) return z;

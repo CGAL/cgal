@@ -27,7 +27,6 @@
 #ifndef CGAL_QPE_SOLVER_H
 #define CGAL_QPE_SOLVER_H
 
-// includes
 #ifndef CGAL_QP_ENGINE_BASIC_H
 #include <CGAL/QP_engine/basic.h>
 #endif
@@ -43,7 +42,6 @@
 #ifndef CGAL_QPE_PRICING_STRATEGY_H
 #include <CGAL/QPE_pricing_strategy.h>
 #endif
-
 
 #include <CGAL/functional.h>
 #include <CGAL/algorithm.h>
@@ -166,23 +164,23 @@ private:
     typedef  QPE_vector_accessor<
 		 typename std::iterator_traits<A_iterator>::value_type,
 		 false, false >         A_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_const_iterator, A_by_index_accessor >
+    typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
                                         A_by_index_iterator;
 
     typedef  QPE_vector_accessor< B_iterator, false, false >
                                         B_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_const_iterator, B_by_index_accessor >
+    typedef  Join_input_iterator_1< Index_const_iterator, B_by_index_accessor >
                                         B_by_index_iterator;
 
     typedef  QPE_vector_accessor< C_iterator, false, false >
                                         C_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_const_iterator, C_by_index_accessor >
+    typedef  Join_input_iterator_1< Index_const_iterator, C_by_index_accessor >
                                         C_by_index_iterator;
 
     typedef  QPE_vector_accessor<
 		 typename std::iterator_traits<D_iterator>::value_type,
 		 false, false >         D_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_const_iterator, D_by_index_accessor >
+    typedef  Join_input_iterator_1< Index_const_iterator, D_by_index_accessor >
                                         D_by_index_iterator;
 
     typedef  QPE_matrix_accessor< A_iterator, false, true, false, false>
@@ -192,19 +190,18 @@ private:
                                         A_row_by_index_accessor;
  //   typedef  std::binder2nd< A_accessor >
  //                                       A_row_by_index_accessor;
-    typedef  QPE_transform_iterator_1<
-		 Index_iterator, A_row_by_index_accessor >
+    typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
                                         A_row_by_index_iterator;
 
     typedef  QPE_matrix_pairwise_accessor< D_iterator, Is_symmetric >
                                         D_pairwise_accessor;
-    typedef  QPE_transform_iterator_1< Index_const_iterator, D_pairwise_accessor >
+    typedef  Join_input_iterator_1< Index_const_iterator, D_pairwise_accessor >
                                         D_pairwise_iterator;
 
     // access to special artificial column by basic constraint index
     typedef  QPE_vector_accessor< typename S_art::const_iterator, false, false>
                                         S_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_iterator, S_by_index_accessor >
+    typedef  Join_input_iterator_1< Index_iterator, S_by_index_accessor >
                                         S_by_index_iterator;
 
   public:
@@ -221,11 +218,10 @@ private:
     typedef  typename C_aux::const_iterator
                                         C_auxiliary_iterator;
 
-    typedef  QPE_transform_iterator_1<
-                 Index_const_iterator, Value_by_basic_index >
+    typedef  Join_input_iterator_1< Index_const_iterator,Value_by_basic_index >
                                         Variable_numerator_iterator;
-    typedef  QPE_transform_iterator_1<
-                 Variable_numerator_iterator, Quotient_maker >
+    typedef  Join_input_iterator_1< Variable_numerator_iterator,
+                                        Quotient_maker >
                                         Variable_value_iterator;
     /*
     typedef  Variable_numerator_iterator
@@ -235,15 +231,14 @@ private:
 
     typedef  Index_const_iterator       Basic_variable_index_iterator;
     typedef  Value_const_iterator       Basic_variable_numerator_iterator;
-    typedef  QPE_transform_iterator_1<
-                 Basic_variable_numerator_iterator, Quotient_maker >
+    typedef  Join_input_iterator_1< Basic_variable_numerator_iterator,
+                                        Quotient_maker >
                                         Basic_variable_value_iterator;
     
     typedef  Index_const_iterator       Basic_constraint_index_iterator;
     
     typedef  Value_const_iterator       Lambda_numerator_iterator;
-    typedef  QPE_transform_iterator_1<
-                 Lambda_numerator_iterator, Quotient_maker >
+    typedef  Join_input_iterator_1< Lambda_numerator_iterator, Quotient_maker >
                                         Lambda_value_iterator;
     
     typedef  QPE_pricing_strategy<Rep>  Pricing_strategy;
@@ -933,12 +928,12 @@ transition( Tag_false)
     typedef  Creator_2< Index_iterator, D_pairwise_accessor,
 	         D_pairwise_iterator >  D_transition_creator_iterator;
 
-    typedef  QPE_transform_iterator_1< Index_iterator, typename Bind<
-	         typename Compose< D_transition_creator_iterator,
-	             Identity< Index_iterator >, typename
-	             Bind< D_transition_creator_accessor, D_iterator, 1 >::Type >::Type,
-                            Index_iterator, 1>::Type >
-	                                twice_D_transition_iterator;
+    typedef  Join_input_iterator_1< Index_iterator, typename Bind<
+      typename Compose< D_transition_creator_iterator,
+      Identity< Index_iterator >, typename
+      Bind< D_transition_creator_accessor, D_iterator, 1 >::Type >::Type,
+      Index_iterator, 1>::Type >
+                                        twice_D_transition_iterator;
 
     inv_M_B.transition( twice_D_transition_iterator( B_O.begin(),
 	bind_1( compose( D_transition_creator_iterator(),
