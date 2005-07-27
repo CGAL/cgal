@@ -59,7 +59,7 @@ namespace CGAL {
       const Vertex_handle& v1 = ch->vertex((i+1)&3);
       const Vertex_handle& v2 = ch->vertex((i+2)&3);
       const Vertex_handle& v3 = ch->vertex((i+3)&3);
-      // On regarde alors si la facette est bonne
+      // On regarde alors si la facette a tous ces sommets sur la surface.
       if ( (!v1->info()) || (!v2->info()) || (!v3->info()) )
 	return Quality(0);
       else return Quality(1);

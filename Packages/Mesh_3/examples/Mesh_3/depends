@@ -2,7 +2,6 @@
 
 essai.o: \
   ../../include/CGAL/Constrained_regular_triangulation_3.h \
-  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../include/CGAL/Constrained_triangulation_vertex_base_3.h \
   ../../include/CGAL/Constrained_triangulation_cell_base_3.h \
   ../../include/CGAL/Triangulation_mesher_3.h \
@@ -30,7 +29,6 @@ implicit_surfaces_mesher_3.o: \
   ../../include/CGAL/Mesh_3/Refine_tets.h \
   ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
@@ -40,6 +38,7 @@ implicit_surfaces_mesher_3.o: \
   ../../include/CGAL/Mesh_3/Implicit_surface_mesher_visitor.h \
   ../../include/CGAL/Mesh_3/Refine_tets_visitor.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Criteria/Standard_criteria.h \
+  ../../../Surface_mesher/include/CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h \
   ../../include/CGAL/Mesh_3/Facet_on_surface_criterion.h \
   ../../include/CGAL/Mesh_3/Slivers_exuder.h \
   ../../../Surface_mesher/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
@@ -57,7 +56,6 @@ isosurface_mesher.o: \
   ../../include/CGAL/Mesh_3/Refine_tets.h \
   ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
@@ -87,7 +85,6 @@ polyhedral_surface_mesher.o: \
   ../../include/CGAL/Mesh_3/Refine_tets.h \
   ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \

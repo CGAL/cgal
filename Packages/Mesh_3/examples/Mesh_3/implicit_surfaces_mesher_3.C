@@ -7,7 +7,9 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
+
 #include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
 #include <CGAL/Mesh_3/Facet_on_surface_criterion.h>
 
 #include <CGAL/Mesh_3/Slivers_exuder.h>
@@ -390,38 +392,37 @@ int main(int argc, char **argv) {
 
   // Initial point sample
   std::string read_initial_points = string_options["read_initial_points"];
-  if( read_initial_points != "")
+  if( read_initial_points != "")     
   {
     std::ifstream in( read_initial_points.c_str() );
     int n;
     in >> n;
     CGAL_assertion(in);
     while( !in.eof() )
-    {
-      Point_3 p;
-      if(in >> p)
-	{
-	  T.insert(p);
-	  --n;
-	}
-    }
+      {
+	Point_3 p;
+	if(in >> p)
+	  {
+	    T.insert(p);
+	    --n;
+	  }
+      }
     CGAL_assertion( n == 0 );
   }
   else
   {
     Impl_oracle::Points initial_point_sample = 
       O.random_points (static_cast<int>(
-         double_options["number_of_initial_points"]));
-    
+	 double_options["number_of_initial_points"]));
     {
       std::ofstream out("dump_of_initial_points");
-      
+
       out << initial_point_sample.size() << "\n";
       for(Impl_oracle::Points::const_iterator it = 
 	    initial_point_sample.begin();
 	  it != initial_point_sample.end();
 	  ++it)
-	out << *it << "\n";
+	out << *it <<"\n";
     }
 
     T.insert (initial_point_sample.begin(), initial_point_sample.end());
@@ -430,26 +431,32 @@ int main(int argc, char **argv) {
 
   // Meshing criteria
   CGAL::Surface_mesher::Curvature_size_criterion<Tr> 
-    c_s_crit (double_options["curvature_bound"]);
+    curvature_size_criterion (double_options["curvature_bound"]);
   CGAL::Surface_mesher::Uniform_size_criterion<Tr>
-    u_s_crit (double_options["size_bound"]);
+    uniform_size_criterion (double_options["size_bound"]);
   CGAL::Surface_mesher::Aspect_ratio_criterion<Tr>
-    a_r_crit (double_options["facets_aspect_ratio_bound"]);
-  CGAL::Mesh_3::Facet_on_surface_criterion<Tr>
-    facet_on_surf;
+    aspect_ratio_criterion (double_options["facets_aspect_ratio_bound"]);
+//   CGAL::Mesh_3::Facet_on_surface_criterion<Tr>
+//     facet_on_surface_criterion;
+  CGAL::Surface_mesher::Vertices_on_the_same_surface_criterion<Tr>
+    vertices_on_the_same_surface_criterion;
 
-  std::vector<Criterion*> crit_vect;
-  crit_vect.push_back (&c_s_crit);
-  crit_vect.push_back (&u_s_crit);
-  crit_vect.push_back(&a_r_crit);
-  crit_vect.push_back(&facet_on_surf);
-  Criteria C (crit_vect);
+  std::vector<Criterion*> criterion_vector;
+  criterion_vector.push_back(&vertices_on_the_same_surface_criterion);
+  criterion_vector.push_back(&curvature_size_criterion);
+  criterion_vector.push_back(&uniform_size_criterion);
+  criterion_vector.push_back(&aspect_ratio_criterion);
+  //  criterion_vector.push_back(&facet_on_surface_criterion);
+  Criteria C (criterion_vector);
 
   Tets_criteria tets_criteria(double_options["tets_aspect_ratio_bound"],
 			      double_options["tets_size_bound"]);
 
   std::cerr << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;
+
+
+
   // Surface meshing
   Mesher mesher (T, O, C, tets_criteria);
   mesher.refine_surface();

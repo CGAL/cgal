@@ -596,6 +596,7 @@ public: // methods
 //    if( link.first->is_facet_on_surface(link.second) )
 //       std::cerr << "X";   
     Bare_point p = v->point().point();
+    int index = v->point().surface_index();
     //    tr.remove(v);
     if(best_weight > v->point().weight())
     {
@@ -606,7 +607,7 @@ public: // methods
       
       total_pumping += (worst_radius_ratio - first_radius_ratio);
       
-      Weighted_point wp = Weighted_point(p, best_weight);
+      Weighted_point wp = Weighted_point(p, best_weight, index);
 
       std::vector<Cell_handle> deleted_cells;
       std::vector<Facet> internal_facets;

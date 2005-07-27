@@ -1,3 +1,7 @@
+27 July 2005 LR MY
+- changed some named
+- multi_implicit_oracle added
+
 30 June 2005 Laurent Rineau
 - attempt to merged trunk, sliver_branch and my local modifications...
 - may be correct, or not.
