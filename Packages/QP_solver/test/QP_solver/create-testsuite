@@ -8,10 +8,13 @@ if [ "x$1" == "xCGAL" ]; then
 elif [ "x$1" == "xall" ]; then
     echo "Generating all of the internal testsuite."
 else
-    echo "Usage: $0 CGAL|all"
+    echo "Usage: $0 CGAL|all [verbosity]"
     echo ""
     echo "$0 all:  creates the internal testsuite consisting of all tests"
     echo "$0 CGAL: creates the CGAL testsuite (a subset of all tests)"
+    echo ""
+    echo "The optional parameter verbosity (an integer in {0,1,2,3,4} with"
+    echo "4 the default) sets the verbosity level in the generated output log."
     echo ""
     echo "This program calls Maple to convert the mema-files in Maple/data"
     echo "to input files for the program test_suite_QPE_solver.  In addition,"
@@ -25,6 +28,12 @@ else
     echo "testsuite should be checked into the repository (because Maple"
     echo "may not be present on the client platform)."
     exit 1;
+fi
+
+# set verbosity:
+if [ "x$2" != "x" ]; then
+    level=$2
+    echo "Setting verbosity to $level."
 fi
 
 # create list of all mema's in directory data/:
