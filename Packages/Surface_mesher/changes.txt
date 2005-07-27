@@ -1,3 +1,8 @@
+27 July 2005 LR MY
+- changed some named
+- multi_implicit_oracle added
+
+
 19 July 2005 Laurent Rineau
 Change in examples/Surface_mesher/surface_mesher.C :
 - added a macro SURFACE_MESHER_POLYHEDRAL. If defined, the polyhedral

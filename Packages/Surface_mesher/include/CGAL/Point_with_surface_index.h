@@ -37,14 +37,28 @@ public:
 
   Point_with_surface_index(const Bare_point& bp) : Point(bp), index(0) {}
 
+  Point_with_surface_index(const Bare_point& bp, 
+			   typename Point::Weight weight,
+			   int i) 
+    : Point(bp,weight), index(i) {}
+			   
+
   Point_with_surface_index(const Point_with_surface_index& pi)
     : Point(pi), index(pi.surface_index()) {}
 
-  Point_with_surface_index operator=(const Point& p)
-  {
-    static_cast<Point*>(this)->operator=(p);
-    index = 0;
-  }
+  
+
+//   Point_with_surface_index operator=(const Point& p)
+//   {
+//     static_cast<Point*>(this)->operator=(p);
+//     index = 0;
+//   }
+
+//   Point_with_surface_index operator=(const Bare_point& bp)
+//   {
+//     static_cast<Point*>(this)->operator=(bp);
+//     index = 0;
+//   }
 
   template <typename RT>
   Point_with_surface_index(const RT& x, const RT& y, const RT& z)
@@ -70,6 +84,7 @@ class Point_with_surface_index_geom_traits : public GT
 
 public:
   typedef Point_with_surface_index<Old_Point_3> Point_3;
+  typedef Point_with_surface_index<Old_Point_3> Weighted_point_3;
 
 };  // end Point_with_surface_index_geom_traits
 

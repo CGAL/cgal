@@ -48,7 +48,7 @@ namespace CGAL {
       for (typename Criteria::iterator cit = criteria.begin(); cit !=
 	     criteria.end(); ++cit)
 	if ((*cit)->is_bad (f))
-	  return true;
+	    return true;
       return false;
     }
     
