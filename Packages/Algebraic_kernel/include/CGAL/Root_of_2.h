@@ -890,6 +890,41 @@ operator*(const RT &a, const Root_of_2<RT> &b)
   return b * a;
 }
 
+template < typename RT >
+Root_of_2<RT>
+operator/(const Root_of_2<RT> &a, const RT& b)
+{
+  CGAL_assertion(is_valid(a));
+  CGAL_assertion(b != 0);
+
+  return Root_of_2<RT>(a[2] * square(b), a[1] * b, a[0],
+                         b < 0 ? !a.is_smaller() : a.is_smaller());
+}
+
+template < typename RT >
+Root_of_2<RT>
+operator/(const Root_of_2<RT> &a,
+	  const typename Root_of_traits< RT >::RootOf_1& b)
+{
+  typedef typename Root_of_traits< RT >::RootOf_1  RO1;
+  typedef CGAL::Rational_traits< RO1 >             Rational;
+  //RT should be the same as Rational::RT
+
+  Rational r;
+  CGAL_assertion(is_valid(a) && is_valid(b));
+  CGAL_assertion(b != 0);
+  RT b0 = r.denominator(b);
+  RT b1 = r.numerator(b);
+  if (b1<0)
+    b0 = -b0, b1 = -b1;
+  CGAL_assertion(b1>0);
+
+  return Root_of_2<RT>(a[2] * square(b1), a[1] * b1 * b0,
+                       a[0] * square(b0),
+                       sign(b) < 0 ? !a.is_smaller()
+                                   :  a.is_smaller());
+}
+
 
 template < typename RT >
 double
