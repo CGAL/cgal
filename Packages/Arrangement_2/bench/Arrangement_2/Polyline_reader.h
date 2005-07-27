@@ -11,6 +11,27 @@
 #include "number_type.h"
 #include "Input_traits.h"
 
+/*! Convert WNT to int. Used to calculate the bounding box */
+template <class T_NT>
+class Toint {
+public:
+  int operator()(T_NT & n) { return static_cast<int>(n); }
+};
+
+/*! Convert leda_rational to int. Used to calculate the bounding box */
+#if BENCH_NT == LEDA_RAT_NT
+template <>
+class Toint<leda_rational> {
+public:
+  int operator()(leda_rational & n)
+  {
+    if (n.denominator() == n.numerator()) return 1;
+    leda_integer lint = n.denominator() / n.denominator();
+    return lint.to_long();
+  }
+};
+#endif
+
 template <class Traits>
 class Polyline_reader {
 public:
@@ -25,7 +46,7 @@ public:
   {
     std::ifstream file(filename);
 
-#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
+#if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
     int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
 #endif
 
@@ -57,15 +78,16 @@ public:
         Point_2 p(x, y);
         points.push_back(p);
 
-#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
+#if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
+        Toint<WNT> toint;
         if (j == 0) {
-          xmin = xmax = ix;
-          ymin = ymax = iy;
+          xmin = xmax = toint(x);
+          ymin = ymax = toint(y);
         } else {
-          if (ix < xmin) cmin = ix;
-          if (ix > xmax) xmax = ix;
-          if (iy < ymin) ymin = iy;
-          if (iy > ymax) ymax = iy;
+          if (x < xmin) xmin = toint(x);
+          if (x > xmax) xmax = toint(x);
+          if (y < ymin) ymin = toint(y);
+          if (y > ymax) ymax = toint(y);
         }
 #endif
       }
@@ -73,7 +95,7 @@ public:
       Curve_2 polyline(points.begin(), points.end());
       ++curves_out = polyline;
 
-#if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL
+#if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
       CGAL::Bbox_2 curve_bbox(xmin, ymin, xmax, ymax);
 #else
       CGAL::Bbox_2 curve_bbox = polyline.bbox();

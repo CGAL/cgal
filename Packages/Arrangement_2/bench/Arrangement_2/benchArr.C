@@ -207,7 +207,7 @@ enum MaxFilesNumber {
 #include "Conic_reader.h"
 
 // Polyline reader:
-#elif BENCH_TRAITS == POLYLINE_TRAITS ||
+#elif BENCH_TRAITS == POLYLINE_TRAITS || \
       BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
 #include "Polyline_reader.h"
 
@@ -247,7 +247,7 @@ typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 
 #elif BENCH_TRAITS == NON_CACHING_SEGMENT_TRAITS
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Traits;
-#define TRAITS_TYPE "Cached Segments"
+#define TRAITS_TYPE "Non Caching Segments"
 
 #elif BENCH_TRAITS == POLYLINE_TRAITS
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits;
@@ -257,7 +257,7 @@ typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Traits;
 #elif BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Traits;
-#define TRAITS_TYPE "Cached Polylines"
+#define TRAITS_TYPE "Non Caching Polylines"
 
 #elif BENCH_TRAITS == LEDA_CONIC_TRAITS
 typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
@@ -339,6 +339,19 @@ inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
 }
 
 CGAL_END_NAMESPACE
+
+#if BENCH_TRAITS == POLYLINE_TRAITS || \
+    BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
+/*! Exporter operator for a polyline to a window stream */
+template <class T_SegmentTraits>
+Window_stream & operator<<(Window_stream & ws,
+                           const CGAL::Polyline_2<T_SegmentTraits> & cv)
+{
+  typename CGAL::Polyline_2<T_SegmentTraits>::const_iterator iter = cv.begin();
+  for (; iter != cv.end(); ++iter) ws << *iter;
+  return ws;
+}
+#endif
 
 /*! */
 inline Window_stream & operator<<(Window_stream & os, Arr & arr)
