@@ -85,7 +85,7 @@ enum MaxFilesNumber {
 #endif
 
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
-#include <CORE/BigInt.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #if defined(USE_CGAL_WINDOW)
 
@@ -264,9 +264,13 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #define TRAITS_TYPE "Conics"
 
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
-typedef CORE::BigInt                                    CfNT;
-typedef CGAL::Cartesian<CfNT>                           IKernel;
-typedef CGAL::Arr_conic_traits_2<IKernel,Kernel>        Traits;
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
+                                                        Traits;
 #define TRAITS_TYPE "Conics"
 
 // Exacus Conics:
@@ -353,7 +357,7 @@ Window_stream & operator<<(Window_stream & ws,
 }
 #endif
 
-/*! */
+/*! Exporter of an arrangement to a window stream */
 inline Window_stream & operator<<(Window_stream & os, Arr & arr)
 {
   Arr::Edge_iterator ei;
