@@ -123,7 +123,9 @@ In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
     the comparison functor used.}
 \ccGlue
 \ccMethod{Compare value_comp() const;}{
-    the comparison functor used (same as above).}
+    the comparison functor used (same as above).
+    Both functions have a non-const version that return a reference
+    to the comparison functor.}
 
 \ccMethod{bool empty ());}{
     returns \ccc{true} if the set is empty, \ccc{false} otherwise.}

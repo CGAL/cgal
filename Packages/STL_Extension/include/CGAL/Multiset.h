@@ -307,13 +307,13 @@ public:
     {}
 
     /*! Equality operator. */
-    bool operator== (const iterator& iter)
+    bool operator== (const iterator& iter) const
     {
       return (nodeP == iter.nodeP);
     }
 
     /*! Inequality operator. */
-    bool operator!= (const iterator& iter)
+    bool operator!= (const iterator& iter) const
     {
       return (nodeP != iter.nodeP);
     }
@@ -361,7 +361,7 @@ public:
     /*!
      * Get the object pointed by the iterator.
      */
-    reference operator* ()
+    reference operator* () const
     {
       CGAL_precondition (nodeP != NULL && nodeP->is_valid());
 
@@ -371,7 +371,7 @@ public:
     /*!
      * Get the a pointer object pointed by the iterator.
      */
-    pointer operator-> ()
+    pointer operator-> () const
     {
       CGAL_precondition (nodeP != NULL && nodeP->is_valid());
 
@@ -422,13 +422,13 @@ public:
     {}
 
     /*! Equality operator. */
-    bool operator== (const const_iterator& iter)
+    bool operator== (const const_iterator& iter) const
     {
       return (nodeP == iter.nodeP);
     }
 
     /*! Inequality operator. */
-    bool operator!= (const const_iterator& iter)
+    bool operator!= (const const_iterator& iter) const
     {
       return (nodeP != iter.nodeP);
     }
@@ -476,7 +476,7 @@ public:
     /*!
      * Get the object pointed by the iterator.
      */
-    reference operator* ()
+    reference operator* () const
     {
       CGAL_precondition (nodeP != NULL && nodeP->is_valid());
 
@@ -486,7 +486,7 @@ public:
     /*!
      * Get the a pointer object pointed by the iterator.
      */
-    pointer operator-> ()
+    pointer operator-> () const
     {
       CGAL_precondition (nodeP != NULL && nodeP->is_valid());
 
@@ -578,17 +578,34 @@ public:
   //@{
 
   /*!
-   * Get the comparsion object used by the tree.
+   * Get the comparsion object used by the tree (non-const version).
    */
-  inline Compare key_comp () const
+  inline Compare& key_comp ()
   {
     return (comp_f);
   }
 
   /*!
-   * Get the comparsion object used by the tree.
+   * Get the comparsion object used by the tree (non-const version).
    */
-  inline Compare value_comp () const
+  inline Compare& value_comp ()
+  {
+    return (comp_f);
+  }
+
+
+  /*!
+   * Get the comparsion object used by the tree (const version).
+   */
+  inline const Compare& key_comp () const
+  {
+    return (comp_f);
+  }
+
+  /*!
+   * Get the comparsion object used by the tree (const version).
+   */
+  inline const Compare& value_comp () const
   {
     return (comp_f);
   }
