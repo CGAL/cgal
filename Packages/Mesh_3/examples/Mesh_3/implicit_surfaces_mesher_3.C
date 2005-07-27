@@ -17,7 +17,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
 
-#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
+#include <CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -60,7 +60,8 @@ typedef CGAL::Surface_mesher::Implicit_oracle<My_traits, Func> Impl_oracle;
 typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
-typedef CGAL::Implicit_surfaces_mesher_3<Tr, Impl_oracle,
+typedef CGAL::Implicit_surfaces_mesher_3<Tr, 
+					 Impl_oracle,
                                          Criteria,
                                          Tets_criteria> Mesher;
 

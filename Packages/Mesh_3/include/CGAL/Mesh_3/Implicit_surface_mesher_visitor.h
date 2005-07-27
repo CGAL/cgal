@@ -49,7 +49,7 @@ namespace CGAL {
       void after_insertion(const Vertex_handle& v)
       {
 	v->info()=true;
-	std::cerr << "-"; // DEBUG
+	std::cout << v->point().surface_index();
       }
 
       template <typename E, typename P, typename Z>

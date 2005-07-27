@@ -26,13 +26,6 @@ namespace CGAL {
 
 
 
-    template <class P>
-    struct Is_weighted : public ::boost::mpl::true_ {}
-    {
-    }
-
-  template <class P>
-
   namespace details {
 
     template <class P, typename FT>

@@ -1,5 +1,8 @@
+27 july 2005 LR MY
+- first version of multi-implicit_surface mesher compiles and runs
+
 27 July 2005 LR MY
-- changed some named
+- changed some names
 - multi_implicit_oracle added
 
 30 June 2005 Laurent Rineau
