@@ -125,24 +125,41 @@ public:
     if (delete_generator) 
       delete lm_gen;
   }
-        
-  /*! Attach an arrangement object. */
-  void init (const Arrangement_2& arr, Arr_landmarks_generator *gen = NULL) 
+   
+ /*! Attach an arrangement object (and a generator, if supplied). */
+  void attach (const Arrangement_2& arr, Arr_landmarks_generator *gen = NULL)
   {
     p_arr = &arr;
+    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
 
-    if (gen != NULL)
+    if (gen)
     {
+      CGAL_assertion(lm_gen == NULL);
       lm_gen = gen;
       delete_generator = false;
+    }
+    else if (lm_gen)
+    {
+      lm_gen->attach(p_arr); 
     }
     else
     {
       lm_gen = new Arr_landmarks_generator(arr);
       delete_generator = true;
     }
+  }
 
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+ /*! Detach an arrangement object. */
+  void detach (const Arrangement_2& arr) 
+  {
+    p_arr = NULL;
+    traits = NULL;
+
+    CGAL_assertion(lm_gen != NULL);
+    if (lm_gen)
+    {
+      lm_gen->detach(p_arr);    
+    }
   }
   
   /*!
