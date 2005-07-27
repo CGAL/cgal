@@ -150,7 +150,7 @@ public:
   }
 
  /*! Detach an arrangement object. */
-  void detach (const Arrangement_2& arr) 
+  void detach () 
   {
     p_arr = NULL;
     traits = NULL;
@@ -171,7 +171,45 @@ public:
    */
   Object locate (const Point_2& p) const;
 
+  /*!
+   * Locate the arrangement feature which a upward vertical ray emanating from
+   * the given point hits.
+   * \param p The query point.
+   * \return An object representing the arrangement feature the ray hits.
+   *         This object is either an empty object or a
+   *         Halfedge_const_handle or a Vertex_const_handle.
+   */
+  Object ray_shoot_up (const Point_2& p) const
+  {
+    return (_vertical_ray_shoot (p, true));
+  }
+
+  /*!
+   * Locate the arrangement feature which a downward vertical ray emanating
+   * from the given point hits.
+   * \param p The query point.
+   * \return An object representing the arrangement feature the ray hits.
+   *         This object is either an empty object or a
+   *         Halfedge_const_handle or a Vertex_const_handle.
+   */
+  Object ray_shoot_down (const Point_2& p) const
+  {
+    return (_vertical_ray_shoot (p, false));
+  }
+
 protected:
+
+  /*!
+   * Locate the arrangement feature which a vertical ray emanating from the
+   * given point hits, considering isolated vertices.
+   * \param p The query point.
+   * \param shoot_up Indicates whether the ray is directed upward or downward.
+   * \return An object representing the arrangement feature the ray hits.
+   *         This object is either a Halfedge_const_handle,
+   *         a Vertex_const_handle or an empty object.
+   */
+  Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
+
 
   /*!
    * Walks from the given vertex to the query point.
