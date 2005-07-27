@@ -243,7 +243,7 @@ namespace CircularFunctors {
   // it's (symbolically) on the supporting circle.
   template < class CK >
   bool
-  is_on_arc(const typename CK::Circular_arc_2 &a,
+  has_on(const typename CK::Circular_arc_2 &a,
 	    const typename CK::Circular_arc_endpoint_2 &p)
   {
     CGAL_kernel_precondition(a.is_x_monotone());
@@ -275,7 +275,7 @@ namespace CircularFunctors {
     CGAL_kernel_precondition( point_in_range<CK>( A, p ) );
     CGAL_kernel_precondition( A.on_upper_part() == (p.y() >
 				  A.supporting_circle().center().y()));
-    CGAL_kernel_precondition( is_on_arc<CK>(A, p));
+    CGAL_kernel_precondition( has_on<CK>(A, p));
    
     typedef typename CK::Circular_arc_2  Circular_arc_2;
 
@@ -338,7 +338,6 @@ namespace CircularFunctors {
 	
 	if ( compare_x<CK>(a1.left(), a2.left()) > 0 ) //? a1.left() : a2.left();
 	  { //the left endpoint is a1's
-	    //CGAL_kernel_assertion(a1.left().circle(0) == arctmp.supporting_circle());
 	    if(compare_x<CK>(a1.left(), a2.right()) < 0){
 	      if(a1.on_upper_part()){
 		const Circular_arc_2 & arc =
@@ -361,7 +360,6 @@ namespace CircularFunctors {
 	  }
 	else if( compare_x<CK>(a1.left(), a2.left()) < 0 ) //the left endpoint is a2's
 	  {
-	    //CGAL_kernel_assertion(a2.left().circle(0) == arctmp.supporting_circle());
 	    if(compare_x<CK>(a1.right(), a2.left()) > 0){
 	       if(a1.on_upper_part()){
 		const Circular_arc_2 & arc =
@@ -382,7 +380,6 @@ namespace CircularFunctors {
 	    }
 	  }
 	else {
-	  //CGAL_kernel_assertion(a2.left().circle(0) == arctmp.supporting_circle());
 	    if(compare_x<CK>(a1.right(), a2.right()) >= 0){
 	      
 	      *res++ = make_object(a2);
@@ -418,16 +415,16 @@ namespace CircularFunctors {
       if ( left != right ) // multiplicity 1
 	{
 	  // We also need to check that these intersection points are on the arc.
-	  if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) {
+	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) {
 	    *res++ = make_object(std::make_pair(left,1u));
 	  }
-	  if (is_on_arc<CK>(a1, right) && is_on_arc<CK>(a2, right)) {
+	  if (has_on<CK>(a1, right) && has_on<CK>(a2, right)) {
 	    *res++ = make_object(std::make_pair(right,1u));
 	  }
 	}
       else // multiplicity 2
 	{
-	  if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) 
+	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
 	    { *res++ = make_object
 		(std::make_pair(left,2u)); }
 	}
@@ -563,7 +560,7 @@ namespace CircularFunctors {
 		     = circle_arcs.begin(); 
 		   it2 != circle_arcs.end(); ++it2 )
 		{
-		  if (is_on_arc<CK>(*it2, *it1)) {
+		  if (has_on<CK>(*it2, *it1)) {
 		    other_point = false;
 		    break;
 		  }
@@ -659,14 +656,14 @@ namespace CircularFunctors {
     Circular_arc_endpoint_2 right(a1.supporting_circle(), a2.supporting_circle(), false);
 
     // We also need to check that these intersection points are on the arc.
-    if (is_on_arc<CK>(a1, left) &&
-        is_on_arc<CK>(a2, left) &&
+    if (has_on<CK>(a1, left) &&
+        has_on<CK>(a2, left) &&
         compare_xy<CK>(left, pt) > 0) {
       p1 = p2 = left;
       return true;
     }
-    if (is_on_arc<CK>(a1, right) &&
-        is_on_arc<CK>(a2, right) &&
+    if (has_on<CK>(a1, right) &&
+        has_on<CK>(a2, right) &&
         compare_xy<CK>(right, pt) > 0) {
       p1 = p2 = right;
       return true;
