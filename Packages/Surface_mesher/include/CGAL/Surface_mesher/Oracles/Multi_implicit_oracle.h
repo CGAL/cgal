@@ -33,7 +33,7 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
-  template < class GT, class Function > class Multi_Implicit_oracle
+  template < class GT, class Function > class Multi_implicit_oracle
   {
   public:
     // Public types
@@ -81,7 +81,7 @@ namespace CGAL {
   public:
     
     // Constructors
-    Multi_Implicit_oracle (Function& f, Point emb_center, FT emb_radius,
+    Multi_implicit_oracle (Function& f, Point emb_center, FT emb_radius,
 			   FT precision, 
 			   bool parity = false, bool dbg = false) :
       number_of_functions(1),
@@ -95,7 +95,7 @@ namespace CGAL {
       }
 
     template <class It>
-    Multi_Implicit_oracle (It first, It end, Point emb_center, FT emb_radius,
+    Multi_implicit_oracle (It first, It end, Point emb_center, FT emb_radius,
 			   FT precision, 
 			   bool parity = false, bool dbg = false) :
       center (emb_center),
