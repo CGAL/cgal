@@ -186,7 +186,7 @@ public:
   public:
     /*!
      * Check whether the given point is in the x-range of the given x-monotone
-     * curves.
+     * curve.
      * \param cv The x-monotone curve.
      * \param p The point.
      * \return (true) if x(cv_left) <= x(p) <= x(cv_right); (false) otherwise.
@@ -330,9 +330,9 @@ public:
   {
   public:
     /*!
-     * Check if the given query curve is encountered when rotating the first
-     * curve in a clockwise direction around a given point until reaching the
-     * second curve.
+     * Check whether the given query curve is encountered when rotating the
+     * first curve in a clockwise direction around a given point until reaching
+     * the second curve.
      * \param cv The query curve.
      * \param cv1 The first curve.
      * \param cv2 The second curve.

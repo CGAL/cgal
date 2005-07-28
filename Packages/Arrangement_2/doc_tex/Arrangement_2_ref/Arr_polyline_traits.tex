@@ -4,14 +4,14 @@
 \ccDefinition
 
   The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
-  concept. It handles piecewise linear curves, commonly referred to polylines.
-  Each polyline is a chain of segments, where each two neighboring segments
-  in the chain share a common endpoint. The traits class exploits the
+  concept. It handles piecewise linear curves, commonly referred to as
+  polylines. Each polyline is a chain of segments, where each two neighboring
+  segments in the chain share a common endpoint. The traits class exploits the
   functionality of the \ccc{Segment_traits} template parameter to handle the
   segments that comprise the polyline curve.
 
   The class instantiated for the template parameter \ccc{Segment_traits} must
-  also be a model of the \ccc{ArrangementTraits_2} concept that handles line
+  be a model of the \ccc{ArrangementTraits_2} concept that handles line
   segments (e.g., \ccc{Arr_segment_traits_2<Kernel>} or 
   \ccc{Arr_segment_cached_traits_2<Kernel>}).
 
