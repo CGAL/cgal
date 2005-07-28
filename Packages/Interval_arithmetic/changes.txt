@@ -1,9 +1,14 @@
+28 July 2005 Andreas Fabri
+- Added a functor to Lazy.h that writes the computed result in an OutputIterator 
+  of Object
+
 28 July 2005 Sylvain Pion
 - Interval_nt : Increment number_of_failures for the CGAL::Certified operators.
 
 28 July 2005 Andreas Fabri
 - Added a functor to Lazy.h that has Object as return value as they are needed
   by Kernel::Intersect_2
+
 
 26 July 2005 Sylvain Pion
 - Filtered_kernel : No need to explicitely mention To_interval as argument
