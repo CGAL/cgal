@@ -515,12 +515,12 @@ public:
 
     if(! m_currentEvent->has_left_curves())
     { 
-      m_statusLineCurveLess.set_last_cmp(SMALLER);
+      m_statusLineCurveLess.set_is_equal(false);
       m_status_line_insert_hint =
         m_statusLine.lower_bound (m_currentEvent->get_point(), 
 				                          m_statusLineCurveLess);
-      if(m_statusLineCurveLess.last_cmp() == EQUAL)
-        m_is_event_on_above = true;
+
+      m_is_event_on_above = m_statusLineCurveLess.is_equal();
 
       if(m_is_event_on_above)
       {

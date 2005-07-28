@@ -60,7 +60,7 @@ public:
   
 
   Status_line_curve_less_functor(Traits *t) : m_traits(t),
-                                              m_last_cmp(SMALLER)
+                                              m_is_equal(false)
 
   {}
 
@@ -76,24 +76,24 @@ public:
     Comparison_result temp =
       m_traits->compare_y_at_x_2_object()(pt,c2->get_last_curve());
     if(temp == EQUAL)
-      m_last_cmp = EQUAL;
+      m_is_equal = true;
     return (temp);
   }
 
-  bool last_cmp() const
+  bool is_equal() const
   {
-    return m_last_cmp;
+    return m_is_equal;
   }
 
-  void set_last_cmp(Comparison_result res)
+  void set_is_equal(bool b)
   {
-    m_last_cmp = res;
+    m_is_equal = b;
   }
 
   /*! a pointer to a traits object */
   Traits * m_traits;
 
-  mutable Comparison_result m_last_cmp;
+  mutable bool m_is_equal;
 
   
 };

@@ -199,14 +199,13 @@ public:
       */
       PRINT(" - handling special case " << std::endl;);
              
-      m_statusLineCurveLess.set_last_cmp(SMALLER);
+      m_statusLineCurveLess.set_is_equal(false);
       m_status_line_insert_hint =
         m_statusLine.lower_bound (m_currentEvent->get_point(), 
 				                          m_statusLineCurveLess);
       StatusLineIter temp = m_status_line_insert_hint;
 
-      if(m_statusLineCurveLess.last_cmp() == EQUAL)
-        m_is_event_on_above = true;
+      m_is_event_on_above = m_statusLineCurveLess.is_equal();
 
       if(m_is_event_on_above)
       {
