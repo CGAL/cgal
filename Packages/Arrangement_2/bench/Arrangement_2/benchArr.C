@@ -358,17 +358,17 @@ Window_stream & operator<<(Window_stream & ws,
 #endif
 
 /*! Exporter of an arrangement to a window stream */
-inline Window_stream & operator<<(Window_stream & os, Arr & arr)
+inline Window_stream & operator<<(Window_stream & ws, Arr & arr)
 {
   Arr::Edge_iterator ei;
-  os << CGAL::BLUE;
+  ws << CGAL::BLUE;
   for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei)
-    os << (*ei).curve();
+    ws << (*ei).curve();
   Arr::Vertex_iterator vi;
-  os << CGAL::RED;
+  ws << CGAL::RED;
   for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi)
-    os << (*vi).point();
-  return os;
+    ws << (*vi).point();
+  return ws;
 }
 
 /*! */
