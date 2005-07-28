@@ -788,7 +788,7 @@ public:
 
     for (i = 1; i < n2; ++i)
       c.push_back(cv2[i]);
-      } else if (max_vertex(cv2[n2 - 1]), min_vertex(cv1[0])) {
+      } else if (equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) {
     // cv1 extends cv2 to the right:
     for (i = 0; i < n2 - 1; ++i)
       c.push_back(cv2[i]);
@@ -812,7 +812,7 @@ public:
   };
   
   /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object() const
+  Merge_2 merge_2_object() 
   {
     return Merge_2(&seg_traits);
   }
