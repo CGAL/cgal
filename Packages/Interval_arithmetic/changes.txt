@@ -1,3 +1,6 @@
+28 July 2005 Andreas Fabri
+- Added a functor to Lazy.h that has Object as return value as they are needed by Kernel::Intersect_2
+
 26 July 2005 Sylvain Pion
 - Filtered_kernel : No need to explicitely mention To_interval as argument
   to Cartesian_converter anymore, the default argument handles it.
