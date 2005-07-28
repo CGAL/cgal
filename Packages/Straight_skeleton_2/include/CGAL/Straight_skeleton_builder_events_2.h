@@ -45,15 +45,11 @@ public:
   Straight_skeleton_builder_event_2 (  Halfedge_handle aBorderA
                                      , Halfedge_handle aBorderB
                                      , Halfedge_handle aBorderC
-                                     , Point_2         aP
-                                     , FT              aTime
                                     )
     :
      mBorderA(aBorderA)
     ,mBorderB(aBorderB)
     ,mBorderC(aBorderC)
-    ,mP      (aP)
-    ,mTime   (aTime)
   {}  
   
   virtual ~ Straight_skeleton_builder_event_2() {}
@@ -66,7 +62,12 @@ public:
   Point_2         point   () const { return mP ; }
   FT              time    () const { return mTime ; }
   
-
+  void SetPointAndTime( Point_2 const& aP, FT const& aTime )
+  {
+    mP    = aP    ;
+    mTime = aTime ;
+  }
+  
   friend std::ostream& operator<< ( std::ostream& ss
                                    ,Straight_skeleton_builder_event_2<R> const& e 
                                   )
@@ -114,13 +115,11 @@ public:
   Straight_skeleton_builder_edge_event_2 (  Halfedge_handle aBorderA
                                           , Halfedge_handle aBorderB
                                           , Halfedge_handle aBorderC
-                                          , Point_2         aP
-                                          , FT              aTime
                                           , Vertex_handle   aLSeed
                                           , Vertex_handle   aRSeed
                                           )
     :
-      Base(aBorderA,aBorderB,aBorderC,aP,aTime)
+      Base(aBorderA,aBorderB,aBorderC)
     , mLSeed(aLSeed)
     , mRSeed(aRSeed)
   {}  
@@ -165,13 +164,11 @@ public:
   Straight_skeleton_builder_split_event_2 (  Halfedge_handle aBorderA
                                            , Halfedge_handle aBorderB
                                            , Halfedge_handle aBorderC
-                                           , Point_2         aP
-                                           , FT              aTime
                                            , Vertex_handle   aSeed
                                            , Halfedge_handle aOppositeBorder
                                          )
     :
-      Base(aBorderA,aBorderB,aBorderC,aP,aTime)
+      Base(aBorderA,aBorderB,aBorderC)
     , mSeed(aSeed)
     , mOppositeBorder(aOppositeBorder)
     , mNext(0)

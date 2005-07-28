@@ -39,10 +39,15 @@ class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, PolygonalRegion const& pr, Ssds const& ss);
+  Layers_toolbar(CGAL::Qt_widget *w
+                , QMainWindow *mw
+                , PolygonalRegion const& pr
+                , Ssds const& ss
+                , PolygonalRegion const& off
+                );
   ~Layers_toolbar();
 private:
-  QToolButton         *but[10];
+  QToolButton         *but[3];
   CGAL::Qt_widget     *widget;
   QMainWindow         *window;
   QButtonGroup        *button_group;
@@ -50,6 +55,7 @@ private:
 
   Qt_layer_show_polygon <PolygonalRegion> *showP;
   Qt_layer_show_skeleton<Ssds>   *showSS;
+  Qt_layer_show_polygon <PolygonalRegion> *showO;
 
 };//end class
 

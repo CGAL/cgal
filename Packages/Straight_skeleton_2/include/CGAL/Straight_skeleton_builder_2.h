@@ -50,9 +50,6 @@ private :
   typedef typename Traits::FT      FT ;
   typedef typename Traits::Point_2 Point_2 ;
 
-  typedef typename Traits::EventData         EventData ;
-  typedef typename Traits::OptionalEventData OptionalEventData ;
-
   typedef typename Ssds::Vertex   Vertex ;
   typedef typename Ssds::Halfedge Halfedge ;
   typedef typename Ssds::Face     Face ;
@@ -90,6 +87,9 @@ private :
   typedef typename Vertex::Base     VBase;
   typedef typename Face::Base       FBase;
   typedef typename Ssds::Base       SBase ;
+  
+  typedef Straight_skeleton_builder_2<Traits,Ssds> Self ;
+  
 public:
 
   Straight_skeleton_builder_2 ( Traits const& = Traits() ) ;
@@ -105,27 +105,14 @@ class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
   {
   public:
 
-    Event_compare ( Traits const& aTraits ) : mTraits(aTraits) {}
+    Event_compare ( Self const& aBuilder ) : mBuilder(aBuilder) {}
 
-    bool operator() ( EventPtr const& aA, EventPtr const& aB )
-    {
-      return mTraits.compare_events( GetSegment(aA->border_a())
-                                    ,GetSegment(aA->border_b())
-                                    ,GetSegment(aA->border_c())
-                                    ,GetSegment(aB->border_a())
-                                    ,GetSegment(aB->border_b())
-                                    ,GetSegment(aB->border_c())
-                                   ) != LARGER ;
-    }
+    bool operator() ( EventPtr const& aA, EventPtr const& aB )  { return mBuilder.CompareEvents(aA,aB); }
 
   private:
 
-    static inline std::pair<Point_2,Point_2> GetSegment ( Halfedge_const_handle aH )
-    {
-      return std::make_pair(aH->opposite()->vertex()->point(),aH->vertex()->point());
-    }
     
-    Traits const& mTraits ;
+    Self const& mBuilder ;
   } ;
 
   typedef std::list<EventPtr> PQ ;
@@ -264,15 +251,34 @@ private :
     return rR ;
   }
 
+  bool Exist_event ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 )
+  {
+    return mTraits.exist_event_object()(GetSegment(aE0), GetSegment(aE1), GetSegment(aE2));
+  }
+  
+  bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL     
+                              , Halfedge_const_handle aReflexR
+                              , Halfedge_const_handle aOpposite
+                              , Halfedge_const_handle aOppositePrev
+                              , Halfedge_const_handle aOppositeNext
+  {
+    return mTraits.is_event_inside_offset_zone_object()( GetSegment(aReflexL)
+                                                       , GetSegment(aReflexR)
+                                                       , GetSegment(aOpposite)
+                                                       , GetSegment(aOppositePrev)
+                                                       , GetSegment(aOppositeNext)
+                                                       ) ;
+  }
+  
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB )
   {
-    return mTraits.compare_events( GetSegment(aA->border_a())
-                                 , GetSegment(aA->border_b())
-                                 , GetSegment(aA->border_c())
-                                 , GetSegment(aB->border_a())
-                                 , GetSegment(aB->border_b())
-                                 , GetSegment(aB->border_c())
-                                 ) ;
+    return mTraits.compare_event_times_object()( GetSegment(aA->border_a())
+                                               , GetSegment(aA->border_b())
+                                               , GetSegment(aA->border_c())
+                                               , GetSegment(aB->border_a())
+                                               , GetSegment(aB->border_b())
+                                               , GetSegment(aB->border_c())
+                                               ) ;
   }
   
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
@@ -281,27 +287,35 @@ private :
                                                 )
   {
     if ( aSeed->is_inner() )
-      return mTraits.compare_events_distance_to_seed( GetSegment(GetDefiningBorder0(aSeed))
-                                                    , GetSegment(GetDefiningBorder1(aSeed))
-                                                    , GetSegment(GetDefiningBorder2(aSeed))
-                                                    , GetSegment(aA->border_a())
-                                                    , GetSegment(aA->border_b())
-                                                    , GetSegment(aA->border_c())
-                                                    , GetSegment(aB->border_a())
-                                                    , GetSegment(aB->border_b())
-                                                    , GetSegment(aB->border_c())
-                                                    ) ;
+      return mTraits.compare_event_distance_to_seed_object()( GetSegment(GetDefiningBorder0(aSeed))
+                                                            , GetSegment(GetDefiningBorder1(aSeed))
+                                                            , GetSegment(GetDefiningBorder2(aSeed))
+                                                            , GetSegment(aA->border_a())
+                                                            , GetSegment(aA->border_b())
+                                                            , GetSegment(aA->border_c())
+                                                            , GetSegment(aB->border_a())
+                                                            , GetSegment(aB->border_b())
+                                                            , GetSegment(aB->border_c())
+                                                            ) ;
     else
-      return mTraits.compare_events_distance_to_seed( aSeed->point()
-                                                    , GetSegment(aA->border_a())
-                                                    , GetSegment(aA->border_b())
-                                                    , GetSegment(aA->border_c())
-                                                    , GetSegment(aB->border_a())
-                                                    , GetSegment(aB->border_b())
-                                                    , GetSegment(aB->border_c())
-                                                    ) ;
+      return mTraits.compare_event_distance_to_seed_object()( aSeed->point()
+                                                            , GetSegment(aA->border_a())
+                                                            , GetSegment(aA->border_b())
+                                                            , GetSegment(aA->border_c())
+                                                            , GetSegment(aB->border_a())
+                                                            , GetSegment(aB->border_b())
+                                                            , GetSegment(aB->border_c())
+                                                            ) ;
   }
-  
+
+  std::pair<Point_2,FT> ConstructEventPointAndTime( EventPtr const& aE )
+  {
+    return mTraits.construct_event_object()( GetSegment(aE->border_a())
+                                           , GetSegment(aE->border_b())
+                                           , GetSegment(aE->border_c())
+                                           ); 
+  }
+     
   BorderTriple GetDefiningBorders( Vertex_handle aA, Vertex_handle aB ) ;
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;

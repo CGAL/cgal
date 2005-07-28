@@ -75,13 +75,13 @@ class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
 {
 public:
 
-  Qt_layer_show_polygon(PolygonalRegion const& aRegion) : mRegion(aRegion){};
+  Qt_layer_show_polygon(PolygonalRegion const& aRegion, CGAL::Color aColor ) : mRegion(aRegion),  mColor(aColor) {};
   
   void draw()
   {
     widget->lock();
     
-    *widget << CGAL::RED;
+    *widget << mColor;
 
     for ( typename PolygonalRegion::const_iterator bit = mRegion.begin(), ebit = mRegion.end()
         ; bit != ebit 
@@ -105,6 +105,7 @@ public:
 private:
 
   PolygonalRegion const& mRegion;
+  CGAL::Color mColor ;
 }
 ;//end class
 

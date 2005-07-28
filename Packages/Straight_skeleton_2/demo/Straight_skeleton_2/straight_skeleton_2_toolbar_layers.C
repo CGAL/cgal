@@ -23,8 +23,9 @@
 #include "straight_skeleton_2_layers.h"
 
 // icons
-#include <CGAL/IO/pixmaps/greene_approx.xpm>
+#include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/show_polygon.xpm>
+#include <CGAL/IO/pixmaps/polygon.xpm>
 
 #include <qiconset.h>
 
@@ -32,11 +33,13 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
                               ,QMainWindow *mw
 			      ,PolygonalRegion const& pr
 			      ,Ssds const& ss
+			      ,PolygonalRegion const& off
 			      ) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
-    showP  = new Qt_layer_show_polygon<PolygonalRegion>(pr);
+    showP  = new Qt_layer_show_polygon<PolygonalRegion>(pr,CGAL::RED);
     showSS = new Qt_layer_show_skeleton<Ssds>(ss);
+    showO  = new Qt_layer_show_polygon<PolygonalRegion>(off,CGAL::YELLOW);
 
     //set the widget
     widget = w;
@@ -44,22 +47,27 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
 
     widget->attach(showP);
     widget->attach(showSS);
-
+    widget->attach(showO);
 
 
     QIconSet set0(QPixmap( (const char**)show_polygon_small_xpm ),
                   QPixmap( (const char**)show_polygon_xpm ));
-    QIconSet set1(QPixmap( (const char**)greene_approx_small_xpm ),
-                  QPixmap( (const char**)greene_approx_xpm ));
+    QIconSet set1(QPixmap( (const char**)voronoi_small_xpm ),
+                  QPixmap( (const char**)voronoi_xpm ));
+    QIconSet set2(QPixmap( (const char**)polygon_small_xpm ),
+                  QPixmap( (const char**)polygon_xpm ));
 
-    but[0] = new QToolButton(this, "show_polygon");
+    but[0] = new QToolButton(this, "polygon");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Simple Polygon");
-    but[1] = new QToolButton(this, "straight skeleton");
+    but[1] = new QToolButton(this, "straight_skeleton");
     but[1]->setIconSet(set1);
-    but[1]->setTextLabel("Show Skeleton");
+    but[1]->setTextLabel("Show Straight Skeleton");
+    but[2] = new QToolButton(this, "offset");
+    but[2]->setIconSet(set2);
+    but[2]->setTextLabel("Show Polygon Offset");
     
-    nr_of_buttons = 2;
+    nr_of_buttons = 3;
     button_group = new QButtonGroup(0, "nonexclusive");
     
     for(int i =0; i<nr_of_buttons; i++){
@@ -72,12 +80,15 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
         showP, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
         showSS, SLOT(stateChanged(int)));
+    connect(but[2], SIGNAL(stateChanged(int)),
+        showO, SLOT(stateChanged(int)));
   }	
 
   Layers_toolbar::~Layers_toolbar()
   {
     delete showP;
     delete showSS;
+    delete showO;
     delete button_group;
   };
 

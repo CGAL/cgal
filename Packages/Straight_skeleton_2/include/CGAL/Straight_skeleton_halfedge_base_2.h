@@ -42,6 +42,7 @@ public:
   typedef typename HDSBase::Base_base HBase_base ;
   
   typedef S Segment_2;
+  
   typedef typename Refs::Halfedge_handle       Halfedge_handle ;
   typedef typename Refs::Halfedge_const_handle Halfedge_const_handle ;
 public:
@@ -65,6 +66,8 @@ public:
   Halfedge_handle       defining_border()       { return face()->halfedge() ; }
   
   void  set_opposite( Halfedge_handle h)  { HBase::set_opposite(h);}
+  
+  
 private:
   int mID ;
 };

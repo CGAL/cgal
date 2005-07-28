@@ -82,22 +82,8 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode
 
   if ( lBorderA != lBorderB && lBorderB != lBorderC )
   {
-    OptionalEventData lEventData = mTraits.compute_event( GetSegment(lBorderA)
-                                                         ,GetSegment(lBorderB)
-                                                         ,GetSegment(lBorderC)
-                                                        ) ;
-
-    if ( !!lEventData )
-      rResult = EventPtr( new EdgeEvent( lBorderA
-                                        ,lBorderB
-                                        ,lBorderC
-                                        ,lEventData->first
-                                        ,lEventData->second
-                                        ,aLNode
-                                        ,aRNode
-                                       )
-                        ) ;
-
+    if ( ExistEevent(lBorderA,lBorderB,lBorderC)  )
+      rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, aLNode, aRNode ) ) ;
   }
   
   return rResult ;
@@ -118,29 +104,23 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle    aNo
        && Halfedge_const_handle(aOppositeBorder) != aReflexRBorder
      )
   {
-    OptionalEventData lEventData = mTraits.compute_event( GetSegment(aReflexLBorder )
-                                                         ,GetSegment(aReflexRBorder )
-                                                         ,GetSegment(aOppositeBorder)
-                                                        ) ;
-    if ( !!lEventData )
+    if ( ExistEvent(aReflexLBorder,aReflexRBorder,aOppositeBorder) )
     {
       Halfedge_handle lPrevOppBorder = GetPrevInCCB(aOppositeBorder);
       Halfedge_handle lNextOppBorder = GetNextInCCB(aOppositeBorder);
 
-      if ( mTraits.is_event_inside_bounded_offset_zone( GetSegment(aReflexLBorder )
-                                                       ,GetSegment(aReflexRBorder )
-                                                       ,GetSegment(aOppositeBorder)
-                                                       ,GetSegment(aOppositeBorder)
-                                                       ,GetSegment(lPrevOppBorder )
-                                                       ,GetSegment(lNextOppBorder )
-                                                      )
+      if ( IsEventInsideOffsetZone( aReflexLBorder 
+                                  , aReflexRBorder 
+                                  , aOppositeBorder
+                                  , aOppositeBorder
+                                  , lPrevOppBorder 
+                                  , lNextOppBorder 
+                                  )
          )
        {
          aCandidates.push_back( EventPtr( new SplitEvent( aReflexLBorder
                                                          ,aReflexRBorder
                                                          ,aOppositeBorder
-                                                         ,lEventData->first
-                                                         ,lEventData->second
                                                          ,aNode
                                                          ,aOppositeBorder
                                                         )
@@ -426,11 +406,11 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
   Vertex_handle lLSeed = aEvent.left_seed () ;
   Vertex_handle lRSeed = aEvent.right_seed() ;
 
-  Vertex_handle lNewNode = mSS.SBase::vertices_push_back( Vertex( mVertexID++
-                                                                 ,aEvent.point()
-                                                                 ,aEvent.time()
-                                                                )
-                                                        ) ;         
+  Point_2 lP ; FT lTime ;
+  tie(lP,lTime) = ConstructEventPointAndTime(aEvent);  
+  
+  Vertex_handle lNewNode = mSS.SBase::vertices_push_back( Vertex( mVertexID++, lP, lTime) ) ;
+  
   mWrappedVertices.push_back( VertexWrapper(lNewNode) ) ;
   
   Halfedge_handle lLOBisector = lLSeed->primary_bisector();
@@ -507,14 +487,13 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
       Vertex_handle lPrev = GetPrevInLAV(v);
       Halfedge_handle lPrevBorder = GetDefiningBorder0(lPrev);
       Halfedge_handle lNextBorder = GetDefiningBorder2(v);
-      if ( mTraits.is_event_inside_bounded_offset_zone
-            ( GetSegment(aEvent.border_a())
-             ,GetSegment(aEvent.border_b())
-             ,GetSegment(aEvent.border_c())
-             ,GetSegment(aBorder          )
-             ,GetSegment(lPrevBorder      )
-             ,GetSegment(lNextBorder      )
-            )
+      if ( IsEventInsideOffsetZone( aEvent.border_a()
+                                  , aEvent.border_b()
+                                  , aEvent.border_c()
+                                  , aBorder          
+                                  , lPrevBorder      
+                                  , lNextBorder      
+                                 )
         )
       {
         rResult = v ;
@@ -545,16 +524,11 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent
 
     CGAL_SSBUILDER_TRACE ( "Opposite E" << lOppBorder->id() << " is between N" << lOppL->id() << " and N" << lOppR->id() ) ;
 
-    Vertex_handle lNodeA = mSS.SBase::vertices_push_back( Vertex( mVertexID++
-                                                                ,aEvent.point()
-                                                                ,aEvent.time ()
-                                                               )
-                                                       ) ;
-    Vertex_handle lNodeB = mSS.SBase::vertices_push_back( Vertex( mVertexID++
-                                                                ,aEvent.point()
-                                                                ,aEvent.time ()
-                                                               )
-                                                       ) ;
+    Point_2 lP ; FT lTime ;
+    tie(lP,lTime) = ConstructEventPointAndTime(aEvent);
+    
+    Vertex_handle lNodeA = mSS.SBase::vertices_push_back( Vertex( mVertexID++, lP, lTime ) ) ;
+    Vertex_handle lNodeB = mSS.SBase::vertices_push_back( Vertex( mVertexID++, lP, lTime ) ) ;
 
     mWrappedVertices.push_back( VertexWrapper(lNodeA) ) ;
     mWrappedVertices.push_back( VertexWrapper(lNodeB) ) ;

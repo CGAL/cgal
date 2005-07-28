@@ -18,13 +18,18 @@
 // Author(s)     : Radu Ursu
 
 #include <CGAL/Straight_skeleton_builder_2.h>
+#include <CGAL/Polygon_offset_2.h>
 
 typedef CGAL::Straight_skeleton_2<K>                          Ssds;
 typedef CGAL::Straight_skeleton_builder_traits_2<K>           BuilderTraits;
 typedef CGAL::Straight_skeleton_builder_2<BuilderTraits,Ssds> Builder;
+
+typedef CGAL::Polygon_offset_traits_2<K>                 PolygonOffsetTraits;
+typedef CGAL::Polygon_offset_2<Ssds,PolygonOffsetTraits> PolygonOffset;
 
 typedef Ssds::Halfedge_iterator     Halfedge_iterator;
 typedef Ssds::Vertex_handle         Vertex_handle;
 typedef Ssds::Face_const_iterator   Face_const_iterator;
 typedef Ssds::Halfedge_const_handle Halfedge_const_handle ;
 typedef Ssds::Vertex_const_handle   Vertex_const_handle ;
+

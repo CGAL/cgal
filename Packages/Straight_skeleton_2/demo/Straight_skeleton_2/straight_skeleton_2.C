@@ -251,6 +251,8 @@ const QString my_title_string("Straight_skeleton_2 Demo");
 Ssds ssds;
 PolygonalRegion region ;
 int current_state;
+PolygonalRegion offset_region ;
+double offset_time = 0.1 ;
 
 class MyWindow : public QMainWindow
 {
@@ -286,6 +288,7 @@ public:
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
     draw->insertItem("Generate Skeleton", this, SLOT(create_ss()), CTRL+Key_G );
+    draw->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
     
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -301,7 +304,7 @@ public:
     newtoolbar = new Tools_toolbar(widget, this);
 
     //the new scenes toolbar
-    vtoolbar = new Layers_toolbar(widget, this, region, ssds);
+    vtoolbar = new Layers_toolbar(widget, this, region, ssds, offset_region);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -363,6 +366,20 @@ private slots:
     something_changed();
   }
     
+  void create_offset()
+  {
+    if ( ssds.size_of_halfedges() > 0 )
+    {
+      offset_region.clear();
+      PolygonOffset lOffset(ssds);
+offset_time = 0.1 ;      
+      lOffset.Create(offset_time*offset_time, std::back_inserter(offset_region) );
+std::cout << (int)offset_region.size() << " offset polygons generated\n" ;
+if ( offset_region.size() > 0 )
+  std::cout << (int)offset_region.front()->size() << " vertices in offset polygon # 0\n" ;      
+    }  
+  }
+  
   void about()
   {
     QMessageBox::about( this, my_title_string,
