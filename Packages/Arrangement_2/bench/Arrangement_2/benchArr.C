@@ -71,10 +71,12 @@ enum MaxFilesNumber {
 #elif BENCH_TRAITS == POLYLINE_TRAITS
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/IO/Qt_widget_Polyline_2.h>
 
 #elif BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
+#include <CGAL/IO/Qt_widget_Polyline_2.h>
 
 #elif BENCH_TRAITS == LEDA_CONIC_TRAITS
 #include <CGAL/Arr_conic_traits_2.h>
@@ -343,19 +345,6 @@ inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
 }
 
 CGAL_END_NAMESPACE
-
-#if BENCH_TRAITS == POLYLINE_TRAITS || \
-    BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
-/*! Exporter operator for a polyline to a window stream */
-template <class T_SegmentTraits>
-Window_stream & operator<<(Window_stream & ws,
-                           const CGAL::Polyline_2<T_SegmentTraits> & cv)
-{
-  typename CGAL::Polyline_2<T_SegmentTraits>::const_iterator iter = cv.begin();
-  for (; iter != cv.end(); ++iter) ws << *iter;
-  return ws;
-}
-#endif
 
 /*! Exporter of an arrangement to a window stream */
 inline Window_stream & operator<<(Window_stream & ws, Arr & arr)
