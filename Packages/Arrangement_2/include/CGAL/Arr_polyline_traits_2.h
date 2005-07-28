@@ -61,7 +61,7 @@ public:
   typedef typename Segment_traits_2::Point_2            Point_2;
   typedef typename Segment_traits_2::Curve_2            Segment_2;
 
-  typedef _Polyline_2<Segment_traits_2>                 Curve_2;
+  typedef Polyline_2<Segment_traits_2>                  Curve_2;
   typedef _X_monotone_polyline_2<Segment_traits_2>      X_monotone_curve_2;
 
   /*! Compare the x-coordinates of two points. */
@@ -600,8 +600,8 @@ public:
 
       // The main loop: Go simultaneously over both polylines.
       Comparison_result  right_res;
-      bool               right_coincides;
-      bool               right_overlap;
+      bool               right_coincides = false;
+      bool               right_overlap = false;
 
       while (i1 < n1 && i2 < n2) {
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
