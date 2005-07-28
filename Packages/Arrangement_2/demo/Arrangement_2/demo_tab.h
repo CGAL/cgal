@@ -1022,8 +1022,7 @@ public:
       Coord_point p(x * m_tab_traits.COORD_SCALE,
                     y * m_tab_traits.COORD_SCALE);
       second_curve = m_curves_arr->halfedges_end();
-      m_tab_traits.find_close_curve(closest_curve, second_curve, p, this,
-                                    true);
+      find_close_curve(closest_curve, second_curve, p, true);
       setColor(Qt::red);
       m_tab_traits.draw_xcurve(this,closest_curve->curve());
       if (second_curve != m_curves_arr->halfedges_end())
@@ -1234,8 +1233,7 @@ public:
       else
       {
         first_time_merge = true;
-        m_tab_traits.find_close_curve(closest_curve, second_curve, p, this,
-                                      false);
+        find_close_curve(closest_curve, second_curve, p, false);
         redraw();
       }
     }
@@ -1366,6 +1364,56 @@ public:
   {
     return m_curves_arr->is_empty();
   }
+
+  /*!
+   */
+  void find_close_curve(Halfedge_iterator &closest_curve,
+                        Halfedge_iterator &second_curve,
+                        Coord_point &p,
+                        bool move_event)
+  {
+    Coord_type min_dist = std::numeric_limits<Coord_type>::max();   
+
+    for (Halfedge_iterator hei = m_curves_arr->halfedges_begin();
+         hei != m_curves_arr->halfedges_end();
+         ++hei) 
+    {
+      if(are_mergeable(closest_curve, hei))
+      {
+        X_monotone_curve_2 & xcurve = hei->curve();
+        Coord_type dist = m_tab_traits.xcurve_point_distance(p, xcurve , this);
+        if ( dist < min_dist)
+        {
+          min_dist = dist;
+          second_curve = hei;
+        }    
+      }
+    }
+    if (min_dist == std::numeric_limits<Coord_type>::max()) // didn't find any "good" curve
+      return;
+
+    if (!move_event)
+    {
+      m_curves_arr->merge_edge( closest_curve, second_curve);
+    }
+  }
+
+  bool are_mergeable(Halfedge_handle he1, Halfedge_handle he2)
+  {
+    Vertex_const_handle s1 = he1->source();
+    Vertex_const_handle t1 = he1->target();
+    Vertex_const_handle s2 = he2->source();
+    Vertex_const_handle t2 = he2->target();
+
+    if(!(s1 == s2 && s1->degree() == 2) &&
+       !(t1 == s1 && t1->degree() == 2) &&
+       !(s1 == t1 && s1->degree() == 2) &&
+       !(t1 == t2 && t1->degree() == 2))
+      return false;
+
+    return (m_traits.are_mergeable_2_object()(he1->curve(),  he2->curve()));
+  }
+
 
   private:
 
@@ -1662,42 +1710,7 @@ public:
     return c;
   }
 
-  /*!
-   */
-  void find_close_curve(Halfedge_iterator &closest_curve ,Halfedge_iterator 
-                        &second_curve ,Coord_point &p ,
-                        Qt_widget_demo_tab<Segment_tab_traits> *w,
-                        bool move_event)
-  {
-    Coord_type min_dist = std::numeric_limits<Coord_type>::max();   
-
-    for (Halfedge_iterator hei = w->m_curves_arr->halfedges_begin();
-         hei != w->m_curves_arr->halfedges_end();
-         ++hei) 
-    {
-      if (m_traits.are_mergeable_2_object()(closest_curve->curve(),
-                                            hei->curve()))
-      {
-        X_monotone_curve_2 & xcurve = hei->curve();
-        Coord_type dist = xcurve_point_distance( p, xcurve , w);
-        if ( dist < min_dist)
-        {
-          min_dist = dist;
-          second_curve = hei;
-        }    
-      }
-    }
-    if (min_dist == std::numeric_limits<Coord_type>::max()) // didn't find any "good" curve
-      return;
-
-    if (!move_event)
-    {
-      w->m_curves_arr->merge_edge( closest_curve, second_curve);
-    }
-  }
-
   
-
   /*! temporary points of the created segment */
   Traits m_traits;
   Coord_point m_p1,m_p2;
@@ -2034,43 +2047,6 @@ public:
     return c1;
   }
  
-  /*!
-   */
-  void find_close_curve(Halfedge_iterator & closest_curve,
-                        Halfedge_iterator & second_curve, Coord_point & p,
-                        Qt_widget_demo_tab<Polyline_tab_traits> * w,
-                        bool move_event)
-  {
-    Coord_type min_dist = std::numeric_limits<Coord_type>::max();
-
-    Halfedge_iterator hei;
-   
-    for (hei = w->m_curves_arr->halfedges_begin();
-         hei != w->m_curves_arr->halfedges_end(); ++hei) 
-    {
-      Point_2 s1 = *(hei->curve().begin());
-      Point_2 t1 = *(hei->curve().rbegin());
-
-      if (m_traits.are_mergeable_2_object()(closest_curve->curve(),
-                                            hei->curve()))                                    
-      {
-        X_monotone_curve_2 & xcurve = hei->curve();
-        Coord_type dist = xcurve_point_distance( p, xcurve , w);
-        if (dist < min_dist)
-        {
-          min_dist = dist;
-          second_curve = hei;
-        }    
-      }
-    }
-    if (min_dist == std::numeric_limits<Coord_type>::max()) // didn't find any "good" curve
-      return;
-
-    if (!move_event)
-    {
-      w->m_curves_arr->merge_edge(closest_curve, second_curve); 
-    }
-  }
 
 private:
   
@@ -2706,55 +2682,6 @@ public:
     X_monotone_curve_2 c1;
     CGAL::assign(c1, res);
     return c1;
-  }
-
-  /*!
-   */
-  void find_close_curve(Halfedge_iterator & closest_curve,
-                        Halfedge_iterator & second_curve,
-                        Coord_point & p,
-                        Qt_widget_demo_tab<Conic_tab_traits> * w,
-                        bool move_event)
-  {
-    Coord_type min_dist = std::numeric_limits<Coord_type>::max();
-    const X_monotone_curve_2 first = closest_curve->curve();
-    Halfedge_iterator hei;
-    Point_2 s = closest_curve->curve().source();
-    Point_2 t = closest_curve->curve().target();
-    Vertex_iterator   vis;
-    Vertex_iterator   vit;
-    if ( closest_curve->curve().source() == closest_curve->source()->point())
-    {
-      vis = closest_curve->source();
-      vit = closest_curve->target();
-    } 
-    else
-    {
-      vit = closest_curve->source();
-      vis = closest_curve->target();
-    }
-    for (hei = w->m_curves_arr->halfedges_begin();
-         hei != w->m_curves_arr->halfedges_end(); ++hei) 
-    {
-        if(m_traits.are_mergeable_2_object()(closest_curve->curve(),
-                                             hei->curve()))
-        { 
-          X_monotone_curve_2 & xcurve = hei->curve();
-          Coord_type dist = xcurve_point_distance( p, xcurve , w);
-          if (dist < min_dist)
-          {
-            min_dist = dist;
-            second_curve = hei;
-          }    
-        }
-      
-    }
-    if (min_dist == std::numeric_limits<Coord_type>::max()) // didn't find any "good" curve
-      return;
-    else if (!move_event)
-    {
-      w->m_curves_arr->merge_edge(closest_curve, second_curve); 
-    }
   }
 
  
