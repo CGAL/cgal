@@ -92,6 +92,18 @@ public:
       Rat_circle_2  circ(p0, R_sq);
       cv = Curve_2 (circ);
     }
+    else if (type == 'e' || type == 'E')
+    {
+      CORE::BigInt    a, b, x0, y0;
+      str_line >> a >> b >> x0 >> y0;
+
+      Rational        r = b * b;
+      Rational        s = a * a;
+      Rational        u = -2 * r * x0;
+      Rational        v = -2 * s * y0;
+      Rational        w = r * x0 * x0 + s * y0 * y0 - r * s;
+      cv = Curve_2 (r, s, 0, u, v, w);
+    }
     else if (type == 't' || type == 'T')
     {
       // Construct a circular arc. The line should have the format:
@@ -154,19 +166,6 @@ public:
       Point_2 pt (x2, y2);
       
       cv = Curve_2 (r, s, t, u, v, w, orient, ps ,pt);
-    }
-    else if (type == 'l' || type == 'L')
-    {
-      // Construct a conic arc. The line should have the format:
-      //   c <r> <s> <t> <u> <v> <w> <a> <b> <c>
-      // where r, s, t, u, v, w define the conic equation and a, b, c define
-      // a line that intersects it.
-      CORE::BigInt    r, s, t, u, v, w;
-      CORE::BigInt    a, b, c;
-      
-      str_line >> r >> s >> t >> u >> v >> w >> a >> b >> c;
-      Rat_line_2    line (a, b, c);
-      cv = Curve_2 (r, s, t, u, v, w, line);
     }
     else if (type == 'q' || type == 'Q')
     {
