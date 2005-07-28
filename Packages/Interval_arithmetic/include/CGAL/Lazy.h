@@ -255,7 +255,7 @@ public:
 //____________________________________________________________
 
 template <typename AC, typename EC, typename E2A, typename L1>
-class Lazy_construct_rep_1 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_1 : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
@@ -493,6 +493,52 @@ struct Exact_converter {
   { return t.exact(); }
 };
 
+//____________________________________________________________
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2>
+class Lazy_construct_rep_with_vector_2 : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+{
+  typedef std::vector<Object> AT;
+  typedef std::vector<Object> ET;
+  typedef Lazy_construct_rep<AT, ET, E2A> Base;
+
+  EC ec_;
+  L1 l1_;
+  L2 l2_;
+
+public:
+
+  void
+  update_exact()
+  {
+    this->et = new ET();
+    this->et->reserve(this->at.size());
+    ec_(CGAL::exact(l1_), CGAL::exact(l2_), this->et->begin()); 
+    // Prune lazy tree
+    l1_ = L1();
+    l2_ = L2();
+  }
+
+
+  Lazy_construct_rep_with_vector_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
+    : l1_(l1), l2_(l2)
+  {
+    ac(CGAL::approx(l1), CGAL::approx(l2), std::back_inserter(this->at));
+  }
+
+  void
+  print(std::ostream& os, int level) const
+  {
+    //this->print_at_et(os, level);
+    os << "A Lazy_construct_rep_with_vector_2 of size " <<  this->at.size() << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "Two child nodes:");
+      CGAL::print(l1_, os, level+1);
+      CGAL::print(l2_, os, level+1);
+    }
+  }
+};
+
 
 //____________________________________________________________
 // The handle class
@@ -652,6 +698,73 @@ struct Lazy_construction_nt {
   }
 };
 
+template <typename T2>
+struct Ith {
+  typedef T2 result_type;
+  
+  int i;
+  
+  Ith(int i_)
+    : i(i_)
+  {}
+  
+  const T2&
+  operator()(const std::vector<Object>& v) const
+  {
+    /*
+    T2 t;
+    if(assign(t, v[i])){
+      std::cout << "v[" << i << "]= " << t << std::endl;
+    }
+    */
+    return object_cast<T2>(v[i]);
+  }
+};
+
+
+
+
+
+
+
+template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+struct Lazy_intersect_with_iterators {
+
+  typedef void result_type;
+  typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
+  typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
+  AC ac;
+  EC ec;
+
+public:
+
+  // In the example we intersect two Lazy<Segment>s
+  // and write into a back_inserter(list<Object([Lazy<Point>,Lazy<Segment>]) >)
+  template <typename L1, typename L2, typename OutputIterator>
+  OutputIterator
+  operator()(const L1& l1, const L2& l2, OutputIterator it) const
+  {
+    try {
+      Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
+      // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
+      // that is, when we get here we have constructed all approximate results
+      for(unsigned int i = 0; i < lv.approx().size(); i++){
+	if(object_cast<typename AK::Point_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Point_2(new Lazy_construct_rep_1<Ith<typename AK::Point_2>, Ith<typename EK::Point_2>, E2A, Lazy_vector>(Ith<typename AK::Point_2>(i), Ith<typename EK::Point_2>(i), lv)));
+	} else {
+	  std::cout << "we need  more casts" << std::endl;
+	}
+      }
+      
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      std::cerr << "Catched Interval_nt_advanced::unsafe_comparison" << std::endl;
+    }
+    return it;
+  }
+};
+
+
+
 template <typename T>
 struct Object_cast {
   typedef T result_type;
@@ -659,11 +772,11 @@ struct Object_cast {
   const T&
   operator()(const Object& o) const
   {
-    return object_cast<T>(o);
+    T t = object_cast<T>(o);
+    std::cout << "object_cast: " << t << std::endl;
+      return object_cast<T>(o);
   }
 };
-
-
 
 // The following functor returns an Object with a Lazy<Something> inside
 // As the nested kernels return Objects of AK::Something and EK::Something

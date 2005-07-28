@@ -63,10 +63,13 @@ public:
     // typedef typename CK::Rep_tag                          Rep_tag;
 
     // Types
-  typedef CGAL::Lazy_exact_nt<AK,EK,E2A>  FT;
+  typedef CGAL::Lazy_exact_nt<typename EK::FT>  FT;
   typedef FT RT;
   typedef FT Cartesian_coordinate_type;
   typedef RT Homogeneous_coordinate_type;
+
+  typedef CGAL::Object Object_2;
+  typedef CGAL::Object Object_3;
 
   typedef Lazy<typename AK::Point_2, typename EK::Point_2, typename EK::FT, E2A> Point_2;
   typedef Lazy<typename AK::Vector_2, typename EK::Vector_2, typename EK::FT, E2A> Vector_2;
@@ -106,9 +109,15 @@ public:
 
     // We change the constructions.
 #define CGAL_Kernel_cons(C, Cf) \
-    typedef typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
-                                Lazy_construction_bbox_2<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
-                                Lazy_construction<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type C; \
+    typedef typename boost::mpl::if_<boost::is_same<typename AK::C, AK::Intersect_with_iterators_2>, \
+                                     Lazy_intersect_with_iterators<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
+                                     Lazy_construction_bbox<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Interval_nt<true> >,\
+                                                              Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
+                                                              typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
+                                                                                       Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
+                                                                                       Lazy_construction<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type > ::type C; \
     C Cf() const { return C(); }
 
 #include <CGAL/Kernel/interface_macros.h>
