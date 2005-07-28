@@ -424,7 +424,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
+  Intersect_2 intersect_2_object () 
   {
     return Intersect_2(Traits::intersect_2_object()); 
   }
@@ -452,7 +452,7 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () const
+  Split_2 split_2_object () 
   {
     return Split_2(Traits::split_2_object());
   }
@@ -476,7 +476,7 @@ public:
      * \param cv The curve.
      * \return The left endpoint.
      */
-    Point_2 operator() (const X_monotone_curve_2 & cv) const
+    Point_2 operator() (const X_monotone_curve_2 & cv) 
     {
       Object red, blue;
       if(cv.get_color() == Curve_info::RED)
@@ -548,7 +548,7 @@ public:
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object () const
+  Construct_max_vertex_2 construct_max_vertex_2_object () 
   {
     return Construct_max_vertex_2(Traits::construct_max_vertex_2_object());
   }
