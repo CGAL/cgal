@@ -37,7 +37,7 @@ template <typename ET> class Lazy_exact_nt;
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
-AT
+const AT&
 approx(const Lazy<AT,ET, EFT, E2A>& l)
 {
   return l.approx();
@@ -53,78 +53,78 @@ approx(const Lazy_exact_nt<ET>& l)
 
 
 inline
-double
-approx(double d)
+const double&
+approx(const double& d)
 {
   return d;
 }
 
 inline
-float
-approx(float f)
+const float&
+approx(const float& f)
 {
   return f;
 }
 
 inline
-int
-approx(int i)
+const int&
+approx(const int& i)
 {
   return i;
 }
 
 inline
-unsigned int
-approx(unsigned int i)
+const unsigned int&
+approx(const unsigned int& i)
 {
   return i;
 }
 
 inline
-Null_vector
-approx(const Null_vector nv)
+const Null_vector&
+approx(const Null_vector& nv)
 {
   return nv;
 }
 
 inline
-Null_vector
-exact(const Null_vector nv)
+const Null_vector&
+exact(const Null_vector& nv)
 {
   return nv;
 }
 
 inline
-Origin
-approx(const Origin nv)
+const Origin&
+approx(const Origin& nv)
 {
   return nv;
 }
 
 inline
-Origin
-exact(const Origin nv)
+const Origin&
+exact(const Origin& nv)
 {
   return nv;
 }
 
 inline
-Orientation
-approx(const Orientation nv)
+const Orientation&
+approx(const Orientation& nv)
 {
   return nv;
 }
 
 inline
-Orientation
-exact(const Orientation nv)
+const Orientation&
+exact(const Orientation& nv)
 {
   return nv;
 }
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
-ET
+const ET&
 exact(const Lazy<AT,ET,EFT,E2A>& l)
 {
   return l.exact();
@@ -132,36 +132,36 @@ exact(const Lazy<AT,ET,EFT,E2A>& l)
 
 template <typename ET>
 inline
-ET
+const ET&
 exact(const Lazy_exact_nt<ET>& l)
 {
   return l.exact();
 }
 
 inline
-double
-exact(double d)
+const double&
+exact(const double& d)
 {
   return d;
 }
 
 inline
-float
-exact(float f)
+const float&
+exact(const float& f)
 {
   return f;
 }
 
 inline
-int
-exact(int i)
+const int&
+exact(const int& i)
 {
   return i;
 }
 
 inline
-unsigned int
-exact(unsigned int i)
+const unsigned int&
+exact(const unsigned int& i)
 {
   return i;
 }
@@ -175,15 +175,6 @@ print(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level)
   l.print(os, level);
 }
 
-template <typename ET>
-inline
-void
-print(const Lazy_exact_nt<ET>& l, std::ostream& os, int level)
-{
-  //os << "TBD" << std::endl;
-  l.print(os, level);
-}
-
 inline
 void
 print(double d, std::ostream& os, int level)
@@ -194,16 +185,6 @@ print(double d, std::ostream& os, int level)
   os << d << std::endl;
 }
 
-
-void
-msg(std::ostream& os, int level, char* s)
-  {
-    int i;
-    for(i = 0; i < level; i++){
-      os << "    ";
-    }
-    os << s << std::endl;
-  }
 
 inline
 void
@@ -500,14 +481,14 @@ public:
 
 struct Approx_converter {
   template < typename T >
-  const typename T::AT
+  const typename T::AT&
   operator()(const T&t) const
   { return t.approx(); }
 };
 
 struct Exact_converter {
   template < typename T >
-  const typename T::ET
+  const typename T::ET&
   operator()(const T&t) const
   { return t.exact(); }
 };
@@ -546,11 +527,11 @@ public :
     PTR = r; 
   }
   
-  AT approx() const 
+  const AT& approx() const 
   { return ptr()->approx(); }
 
 
-  ET  exact() const
+  const ET&  exact() const
   { return ptr()->exact(); }
 
   void
@@ -587,7 +568,6 @@ operator==(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
   }
   catch (Interval_nt<false>::unsafe_comparison)
   {
-    // std::cerr << "Interval filter failure (==)" << std::endl;
     return a.exact() == b.exact();
   }
 }
@@ -606,8 +586,6 @@ operator!=(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
 //____________________________________________________________
 // A helper class to select the return type.
 
-// AF: Regarder le tutorial metaprogramming
-
 template <typename AK, typename EK, typename AT, typename ET, typename EFT, typename E2A>
 struct Lazy_construction_return_type {
   typedef Lazy<AT, ET, EFT, E2A> result_type;
@@ -615,13 +593,6 @@ struct Lazy_construction_return_type {
 
 
 
-
-// As people will write bool b = lazy_assign(..) 
-// Or are there cases where we need a lazy bool in the kernel???
-template <typename AK, typename EK, typename ET, typename EFT, typename E2A>
-struct Lazy_construction_return_type<AK,EK,bool, ET,EFT,E2A>  {
-  typedef bool  result_type;
-};
 
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
@@ -641,7 +612,6 @@ struct Lazy_construction_bbox {
   }
 };
 
-
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
 struct Lazy_construction_nt {
 
@@ -660,13 +630,205 @@ struct Lazy_construction_nt {
       return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1)));
     }
   }
+
+  template <typename L1, typename L2>
+  result_type operator()(const L1& l1, const L2& l2) const
+  {
+    try {
+      return new Lazy_construct_rep_2<AC, EC, To_interval<ET>, L1,L2>(ac, ec, l1,l2);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), exact(l2)));
+    }
+  }
+
+  template <typename L1, typename L2, typename L3>
+  result_type operator()(const L1& l1, const L2& l2, const L3& l3) const
+  {
+    try {
+      return new Lazy_construct_rep_3<AC, EC, To_interval<ET>, L1,L2,L3>(ac, ec, l1,l2,l3);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), exact(l2), exact(l3)));
+    }
+  }
+};
+
+template <typename T>
+struct Object_cast {
+  typedef T result_type;
+
+  const T&
+  operator()(const Object& o) const
+  {
+    return object_cast<T>(o);
+  }
 };
 
 
 
+// The following functor returns an Object with a Lazy<Something> inside
+// As the nested kernels return Objects of AK::Something and EK::Something
+// we have to unwrap them from the Object, and wrap them in a Lazy<Something>
+//
+// TODO: write operators for other than two arguments. For the current kernel we only need two for Interscet_2
+
+template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+struct Lazy_construction_object {
+
+
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Object result_type;
+
+  typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
+  AC ac;
+  EC ec;
+
+public:
+
+  template <typename L1, typename L2>
+  result_type
+  operator()(const L1& l1, const L2& l2) const
+  {
+    try {
+      Lazy_object lo(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
+ 
+      if(object_cast<typename AK::Point_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Point_2>, Object_cast<typename EK::Point_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Point_2>(), Object_cast<typename EK::Point_2>(), lo); 
+	return make_object(typename LK::Point_2(lcr));
+      } else if(object_cast<typename AK::Segment_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Segment_2>, Object_cast<typename EK::Segment_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Segment_2>(), Object_cast<typename EK::Segment_2>(), lo); 
+	return make_object(typename LK::Segment_2(lcr));
+      } else if(object_cast<typename AK::Ray_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Ray_2>, Object_cast<typename EK::Ray_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Ray_2>(), Object_cast<typename EK::Ray_2>(), lo); 
+	return make_object(typename LK::Ray_2(lcr));
+      } else if(object_cast<typename AK::Line_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Line_2>, Object_cast<typename EK::Line_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Line_2>(), Object_cast<typename EK::Line_2>(), lo); 
+	return make_object(typename LK::Line_2(lcr));
+      }  else if(object_cast<typename AK::Circle_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Circle_2>, Object_cast<typename EK::Circle_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Circle_2>(), Object_cast<typename EK::Circle_2>(), lo); 
+	return make_object(typename LK::Circle_2(lcr));
+      } else if(object_cast<typename AK::Iso_rectangle_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Iso_rectangle_2>, Object_cast<typename EK::Iso_rectangle_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Iso_rectangle_2>(), Object_cast<typename EK::Iso_rectangle_2>(), lo); 
+	return make_object(typename LK::Iso_rectangle_2(lcr));
+      }  else if(object_cast<typename AK::Triangle_2>(& (lo.approx()))){
+	typedef Lazy_construct_rep_1<Object_cast<typename AK::Triangle_2>, Object_cast<typename EK::Triangle_2>, E2A, Lazy_object> Lcr;
+	Lcr * lcr = new Lcr(Object_cast<typename AK::Triangle_2>(), Object_cast<typename EK::Triangle_2>(), lo); 
+	return make_object(typename LK::Triangle_2(lcr));
+      }   else {
+	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
+      }
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
+
+      if(const typename EK::Point_2* ptr = object_cast<typename EK::Point_2>(&eto)){
+	make_object(typename LK::Point_2(new Lazy_construct_rep_0<typename AK::Point_2, typename EK::Point_2, E2A>(*ptr)));
+      } else if(const typename EK::Segment_2* ptr = object_cast<typename EK::Segment_2>(&eto)){
+	make_object(typename LK::Segment_2(new Lazy_construct_rep_0<typename AK::Segment_2, typename EK::Segment_2, E2A>(*ptr)));
+      } else if(const typename EK::Ray_2* ptr = object_cast<typename EK::Ray_2>(&eto)){
+	make_object(typename LK::Ray_2(new Lazy_construct_rep_0<typename AK::Ray_2, typename EK::Ray_2, E2A>(*ptr)));
+      } else if(const typename EK::Line_2* ptr = object_cast<typename EK::Line_2>(&eto)){
+	make_object(typename LK::Line_2(new Lazy_construct_rep_0<typename AK::Line_2, typename EK::Line_2, E2A>(*ptr)));
+      } else if(const typename EK::Triangle_2* ptr = object_cast<typename EK::Triangle_2>(&eto)){
+	make_object(typename LK::Triangle_2(new Lazy_construct_rep_0<typename AK::Triangle_2, typename EK::Triangle_2, E2A>(*ptr)));
+      } else if(const typename EK::Iso_rectangle_2* ptr = object_cast<typename EK::Iso_rectangle_2>(&eto)){
+	make_object(typename LK::Iso_rectangle_2(new Lazy_construct_rep_0<typename AK::Iso_rectangle_2, typename EK::Iso_rectangle_2, E2A>(*ptr)));
+      } else if(const typename EK::Circle_2* ptr = object_cast<typename EK::Circle_2>(&eto)){
+	make_object(typename LK::Circle_2(new Lazy_construct_rep_0<typename AK::Circle_2, typename EK::Circle_2, E2A>(*ptr)));
+      } else{
+	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
+      }      
+    }
+    return Object();
+  }
+  
+
+};
+
+template <typename T>
+struct First {
+  typedef typename T::first_type result_type;
+
+  const typename T::first_type&
+  operator()(const T& p) const
+  {
+    return p.first;
+  }
+};
+
+template <typename T>
+struct Second {
+  typedef typename T::second_type result_type;
+
+  const typename T::second_type&
+  operator()(const T& p) const
+  {
+    return p.second;
+  }
+};
+
+template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+struct Pair_of_lazy_construction {
+
+
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Lazy<AT, ET, EFT, E2A> Lazy_pair;
+
+  typedef Lazy<typename AT::first_type, typename ET::first_type, EFT, E2A> Lazy_pair_first_type;
+  typedef Lazy<typename AT::second_type, typename ET::second_type, EFT, E2A> Lazy_pair_second_type;
+
+  typedef std::pair<Lazy_pair_first_type, Lazy_pair_second_type > Pair_of_lazy; 
+  typedef Pair_of_lazy result_type;
+  AC ac;
+  EC ec;
+
+public:
+
+  result_type
+  operator()() const
+  {
+    return new Lazy_construct_rep_0<AT,ET,E2A>();
+  }
+
+
+  template <typename L1>
+  result_type
+  operator()(const L1& l1) const
+  {
+    try {
+      return  new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1)));
+    }
+  }
+
+  template <typename L1, typename L2>
+  result_type
+  operator()(const L1& l1, const L2& l2) const
+  {
+    try {
+      Lazy_pair lazy_pair(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
+      Lazy_pair_first_type first(new Lazy_construct_rep_1<First<AT>, First<ET>, E2A, Lazy_pair>(First<AT>(), First<ET>(), lazy_pair)); 
+      Lazy_pair_second_type second(new Lazy_construct_rep_1<Second<AT>, Second<ET>, E2A, Lazy_pair>(Second<AT>(), Second<ET>(), lazy_pair));
+      return std::make_pair(first, second);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      ET et = ec(l1.exact(), l2.exact());
+      return std::make_pair(Lazy_pair_first_type(new Lazy_construct_rep_0<typename AT::first_type, typename ET::first_type, E2A>(et.first)),
+			    Lazy_pair_second_type(new Lazy_construct_rep_0<typename AT::second_type, typename ET::second_type, E2A>(et.second))) ;
+    }
+  }
+
+};
+
 
 //____________________________________________________________
-// The functor that creates all kinds of Lazy<T>
+// The functor that has Lazy<Something> as result type
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction {
