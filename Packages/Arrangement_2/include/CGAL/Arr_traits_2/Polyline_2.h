@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
  * Representation of a polyline.
  */
 template <class SegmentTraits_>
-class _Polyline_2
+class Polyline_2
 {
 public:
 
@@ -56,7 +56,7 @@ protected:
 public:
 
   /*! Default constructor. */
-  _Polyline_2() :
+  Polyline_2() :
     segments()
   {}
 
@@ -69,7 +69,7 @@ public:
    *      In other cases, an empty polyline will be created.
    */
   template <class InputIterator>
-  _Polyline_2 (InputIterator begin, InputIterator end) :
+  Polyline_2 (InputIterator begin, InputIterator end) :
     segments()
   {
     // Check if there are no points in the range:
@@ -138,7 +138,7 @@ public:
 
   private:
     
-    const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
+    const Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
     int   m_num_pts;                            // Its number of points.
     int   m_index;                              // The current point.
 
@@ -147,7 +147,7 @@ public:
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
-    const_iterator (const _Polyline_2<SegmentTraits_>* cvP,
+    const_iterator (const Polyline_2<SegmentTraits_>* cvP,
 		    const unsigned int& index, const bool& _forward) :
       m_cvP(cvP),
       m_index(index)
@@ -241,7 +241,7 @@ public:
       return (m_cvP != it.m_cvP || m_index != it.m_index);
     }
 
-    friend class _Polyline_2<SegmentTraits_>;
+    friend class Polyline_2<SegmentTraits_>;
   };
 
   typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
@@ -317,12 +317,12 @@ public:
  * An x-monotone polyline is always directed from left to right.
  */
 template <class SegmentTraits_>
-class _X_monotone_polyline_2 : public _Polyline_2<SegmentTraits_>
+class _X_monotone_polyline_2 : public Polyline_2<SegmentTraits_>
 {
 public:
 
   typedef SegmentTraits_                        Segment_traits_2;
-  typedef _Polyline_2<SegmentTraits_>           Base;
+  typedef Polyline_2<SegmentTraits_>           Base;
   typedef typename Segment_traits_2::Point_2    Point_2;
   typedef typename Segment_traits_2::Curve_2    Segment_2;
 
@@ -410,9 +410,9 @@ private:
 /*! Output operator for a polyline. */
 template <class SegmentTraits>
 std::ostream& operator<< (std::ostream & os,
-			  const _Polyline_2<SegmentTraits>& cv)
+			  const Polyline_2<SegmentTraits>& cv)
 {
-  typename _Polyline_2<SegmentTraits>::const_iterator  iter = cv.begin();
+  typename Polyline_2<SegmentTraits>::const_iterator  iter = cv.begin();
 
   // Print the number of points:
   os << cv.points();
@@ -428,9 +428,9 @@ std::ostream& operator<< (std::ostream & os,
 /*! Input operator for a polyline. */
 template <class SegmentTraits>
 std::istream operator>> (std::istream& is,
-			 _Polyline_2<SegmentTraits>& pl)
+			 Polyline_2<SegmentTraits>& pl)
 {
-  typedef _Polyline_2<SegmentTraits>  Curve_2;
+  typedef Polyline_2<SegmentTraits>  Curve_2;
   typedef typename Curve_2::Point_2   Point_2;
 
   // Read the number of input points.
