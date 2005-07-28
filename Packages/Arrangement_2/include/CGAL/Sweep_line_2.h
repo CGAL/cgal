@@ -197,14 +197,18 @@ public:
       //          \
       //           \
       */
-      PRINT(" - handling special case " << std::endl;)
-                                                     
-      const std::pair<StatusLineIter, bool>& res =
-        m_statusLine.lower_bound (m_currentEvent->get_point(),
-                                  m_statusLineCurveLess);
-      m_status_line_insert_hint = res.first;
+      PRINT(" - handling special case " << std::endl;);
+             
+      m_statusLineCurveLess.set_last_cmp(SMALLER);
+      m_status_line_insert_hint =
+        m_statusLine.lower_bound (m_currentEvent->get_point(), 
+				                          m_statusLineCurveLess);
+      StatusLineIter temp = m_status_line_insert_hint;
 
-      if(res.second)
+      if(m_statusLineCurveLess.last_cmp() == EQUAL)
+        m_is_event_on_above = true;
+
+      if(m_is_event_on_above)
       {
 	      // The current event point starts at the interior of a curve at the 
 	      // y-structure (can also indicates overlap).
@@ -237,7 +241,7 @@ public:
         
         if(is_overlap)
         {
-          m_statusLine.remove_at (res.first);
+          m_statusLine.erase (temp);
           m_visitor->before_handle_event (m_currentEvent);
           m_visitor->add_subcurve (sub_cv1, sc);
           return;
@@ -336,8 +340,8 @@ public:
 
     PRINT_INSERT(*currentOne);
 
-    StatusLineIter slIter = m_statusLine.insert_predecessor
-      (m_status_line_insert_hint, *currentOne);
+    StatusLineIter slIter = 
+      m_statusLine.insert_before(m_status_line_insert_hint, *currentOne);
     ((Subcurve*)(*currentOne))->set_hint(slIter);
       
     SL_DEBUG(PrintStatusLine(););
@@ -355,7 +359,7 @@ public:
     while ( currentOne != rightCurveEnd )
     {
       PRINT_INSERT(*currentOne);
-      slIter = m_statusLine.insert_predecessor
+      slIter = m_statusLine.insert_before
 	(m_status_line_insert_hint, *currentOne);
       ((Subcurve*)(*currentOne))->set_hint(slIter);
         
@@ -474,13 +478,16 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
 
   if(! remove_for_good)
   {
-    m_statusLine.remove_at(sliter);
+    m_statusLine.erase(sliter);
     PRINT("remove_curve_from_status_line Done\n";)
     return;
   }
 
   CGAL_assertion(sliter!=m_statusLine.end());
-  if (sliter != m_statusLine.begin() && sliter != m_statusLine.maximum()) 
+  StatusLineIter lastOne = m_statusLine.end();
+  --lastOne;
+
+  if (sliter != m_statusLine.begin() && sliter != lastOne) 
   {
     StatusLineIter prev = sliter; --prev;
     StatusLineIter next = sliter; ++next;
@@ -490,7 +497,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
                static_cast<Subcurve*>(*next),
                true);
   }
-  m_statusLine.remove_at(sliter);
+  m_statusLine.erase(sliter);
   PRINT("remove_curve_from_status_line Done\n";)
 } 
 

@@ -30,7 +30,8 @@
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
+#include <CGAL/Multiset.h>
+//#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
 
 
 #ifndef VERBOSE
@@ -124,9 +125,9 @@ public:
   typedef Sweep_line_subcurve<Traits>                    Base_subcurve;
   typedef Status_line_curve_less_functor<Traits,
                                          Base_subcurve>  StatusLineCurveLess;
-  typedef Red_black_tree<Base_subcurve*,
-                         StatusLineCurveLess, 
-			                   Allocator>                      StatusLine;
+  typedef Multiset<Base_subcurve*,
+                   StatusLineCurveLess, 
+			             Allocator>                            StatusLine;
   typedef typename StatusLine::iterator                  StatusLineIter;
 
   typedef typename Allocator::template rebind<Event>     EventAlloc_rebind;
@@ -298,7 +299,7 @@ public:
     {
       this ->deallocate_event(qiter->second);
     }
-    this -> m_statusLine.reset();
+    this -> m_statusLine.clear();
     m_status_line_insert_hint = this -> m_statusLine.begin();
   
     CGAL_assertion(!m_queue->empty());
@@ -513,13 +514,15 @@ public:
     m_is_event_on_above = false;
 
     if(! m_currentEvent->has_left_curves())
-    {                                                 
-      const std::pair<StatusLineIter, bool>& res =
+    { 
+      m_statusLineCurveLess.set_last_cmp(SMALLER);
+      m_status_line_insert_hint =
         m_statusLine.lower_bound (m_currentEvent->get_point(), 
-				  m_statusLineCurveLess);
-      m_status_line_insert_hint = res.first;
+				                          m_statusLineCurveLess);
+      if(m_statusLineCurveLess.last_cmp() == EQUAL)
+        m_is_event_on_above = true;
 
-      if(res.second)
+      if(m_is_event_on_above)
       {
         // current event is on the interior of existing curve at the Y-str,
         // it can allowed only if the event is an isolated query point
@@ -647,7 +650,7 @@ public:
     {
       PRINT_INSERT(*currentOne);
       StatusLineIter slIter = 
-        m_statusLine.insert_predecessor(m_status_line_insert_hint, *currentOne);
+        m_statusLine.insert_before(m_status_line_insert_hint, *currentOne);
       ((Subcurve*)(*currentOne))->set_hint(slIter);
         
       SL_DEBUG(PrintStatusLine(););
@@ -802,7 +805,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve)
   m_status_line_insert_hint = sliter; ++m_status_line_insert_hint; 
 
   CGAL_assertion(sliter!=m_statusLine.end());
-  m_statusLine.remove_at(sliter);
+  m_statusLine.erase(sliter);
   PRINT("remove_curve_from_status_line Done\n";)
 } 
 

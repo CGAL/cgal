@@ -59,7 +59,9 @@ public:
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   
 
-  Status_line_curve_less_functor(Traits *t) : m_traits(t) 
+  Status_line_curve_less_functor(Traits *t) : m_traits(t),
+                                              m_last_cmp(SMALLER)
+
   {}
 
   Comparison_result operator()(const Subcurve * c1, const Subcurve * c2) const
@@ -71,11 +73,29 @@ public:
 
   Comparison_result operator()(const Point_2& pt, const Subcurve * c2) const
   {
-    return m_traits->compare_y_at_x_2_object()(pt,c2->get_last_curve());
+    Comparison_result temp =
+      m_traits->compare_y_at_x_2_object()(pt,c2->get_last_curve());
+    if(temp == EQUAL)
+      m_last_cmp = EQUAL;
+    return (temp);
+  }
+
+  bool last_cmp() const
+  {
+    return m_last_cmp;
+  }
+
+  void set_last_cmp(Comparison_result res)
+  {
+    m_last_cmp = res;
   }
 
   /*! a pointer to a traits object */
   Traits * m_traits;
+
+  mutable Comparison_result m_last_cmp;
+
+  
 };
 
 
