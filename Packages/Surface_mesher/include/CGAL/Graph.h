@@ -32,21 +32,27 @@ class Graph {
   
   void add_node(const E& e, const std::list<E>& loe) {
     ++nb_nodes;
-
-    Node<E>* n = new Node<E>(e);
-    nodes.insert( std::make_pair(e, n) );
-
-    // add all the connected components of e
-    n = ( *( nodes.find(e) ) ).second;
+    typename Nodes_map::iterator nit = nodes.find(e);
+    Node<E>* n;
+    if (  nit == nodes.end()) {
+      n = new Node<E>(e);
+      nodes.insert( std::make_pair(e, n) );
+    }
+    else n = nit->second;
     for (Elements_iterator it = loe.begin();
 	 it != loe.end();
 	 ++it) {
-      Node<E>* succ = new Node<E>(*it);
-      nodes.insert( std::make_pair(*it, succ) );      
-      succ = ( *( nodes.find(*it) ) ).second;
+      Node<E>* succ;
+      nit = nodes.find(*it);
+      if (  nit == nodes.end()) {
+	Node<E>* succ = new Node<E>(*it);
+	nodes.insert( std::make_pair(*it, succ) ); 
+      }
+      else succ = nit->second;
       n->add_succ(succ);
     }
   }
+
 
   void remove_node(const E& e) {
     --nb_nodes;

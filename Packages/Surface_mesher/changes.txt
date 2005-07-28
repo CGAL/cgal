@@ -1,3 +1,7 @@
+28 july 2005 LR MY
+- fixed the add_node() for memory leaks in Graph.h
+- fixed the face_type() for edges in Complex_2_in_triangulation_3.h
+
 27 July 2005 LR MY
 - fixed return type of apply in Multi_implicit_oracle.h 
 - remove the const of const int number_of_functions 

@@ -30,12 +30,15 @@ class Complex_2_in_triangulation_3 {
 
   typedef Const_circulator_from_container<Facets> Facet_circulator;
 
+  typedef std::map <std::pair <Vertex_handle, Vertex_handle>, 
+		    std::pair<int, std::list<Facet> > >
+                                                  Edge_facet_counter;
+
   enum Face_type{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
 
  protected:
   Triangulation_3& tri3;
-  map <pair <Vertex_handle, Vertex_handle>, 
-    pair<int, list<Facet> > > edge_facet_counter;
+  Edge_facet_counter  edge_facet_counter;
 
  private:
   // computes and return an ordered pair of Vertex
@@ -85,15 +88,15 @@ class Complex_2_in_triangulation_3 {
   }
 
   Face_type complex_subface_type (const Edge& e) {
-    switch 
-      ( (edge_facet_counter[make_ordered_pair(e.first->
-					      vertex(e.second), 
-					      e.first->
-					      vertex(e.third))]).first ) {
-    case 0: return NOT_IN_COMPLEX;
-    case 1: return BOUNDARY;
-    case 2: return REGULAR;
-    default: return SINGULAR;
+    typename Edge_facet_counter::iterator it = 
+      edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
+						e.first->vertex(e.third)));
+    if (it == edge_facet_counter.end()) return NOT_IN_COMPLEX;
+    switch (it->second.first){
+    case 0 : return ISOLATED;
+    case 1 : return BOUNDARY;
+    case 2 : return REGULAR;
+    default : return SINGULAR;
     }
   }
 
