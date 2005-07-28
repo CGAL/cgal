@@ -324,7 +324,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     {
       ReadCurve(inputFile, cv);
       
-      (*(w_demo_p->m_curves_arr)).insert(cv);
+      CGAL::insert(*(w_demo_p->m_curves_arr), cv);
       
       CGAL::Bbox_2 curve_bbox = cv.bbox();
       if (i == 0)
@@ -374,7 +374,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
       pol_list.push_back(curve);
     }
-    (*(w_demo_p->m_curves_arr)).insert(pol_list.begin(), pol_list.end());
+    CGAL::insert(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
   }
   
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -407,13 +407,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       seg_list.push_back(curve);
     }
     
-    (*(w_demo_p->m_curves_arr)).insert(seg_list.begin(), seg_list.end());
-
-	/*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
-	  w_demo_p->empty = true;
-    else 
-      w_demo_p->empty = false;*/
-      
+    CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
   }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 
                      w_demo->bbox.ymin() , w_demo->bbox.ymax());
