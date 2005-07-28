@@ -30,19 +30,10 @@ CGAL_BEGIN_NAMESPACE
 /*!
  * Draw an x-monotone conic arc.
  */
-template <class Rat_kernel, class Alg_kernel, class Nt_traits>
-Qt_widget& operator<< 
-  (Qt_widget& ws, 
-   const typename Arr_conic_traits_2<Rat_kernel,
-                                     Alg_kernel,
-                                     Nt_traits>::X_monotone_curve_2& cv)
+template <class ConicArc>
+Qt_widget& operator<< (Qt_widget& ws,
+                       const _Conic_x_monotone_arc_2<ConicArc>& cv)
 {
-  typedef Arr_conic_traits_2<Rat_kernel,
-                             Alg_kernel,
-                             Nt_traits>                Conic_traits_2;
-  typedef typename Conic_traits_2::Algebraic           Algebraic;
-  typedef typename Conic_traits_2::Point_2             Point_2;
-
   // Get the co-ordinates of the curve's source and target.
   const double  sx = CGAL::to_double(cv.source().x());
   const double  sy = CGAL::to_double(cv.source().y());
@@ -62,28 +53,26 @@ Qt_widget& operator<<
   const bool    is_source_left = (sx < tx);
   const int     x_min = is_source_left ? ws.x_pixel(sx) : ws.x_pixel(tx);
   const int     x_max = is_source_left ? ws.x_pixel(tx) : ws.x_pixel(sx);
-  double        prev_y = is_source_left ? sy : ty;
-  const double  end_x = is_source_left ? tx : sx;
-  const double  end_y = is_source_left ? ty : sy;
-  double        curr_x, curr_y;
-  int           x;
+  const int     n = x_max - x_min + 1;
 
-  Point_2       p;
-  Point_2       q;
+  if (n <= 0)
+    return (ws);
   
-  ws.get_painter().moveTo(x_min, ws.y_pixel(prev_y));
+  typedef std::pair<double, double>    App_point_2;
+  int                                  i;
   
-  for (x = x_min + 1; x < x_max; x++)
+  App_point_2  *pts = new App_point_2 [n + 1];
+  cv.polyline_approximation (n, pts);
+
+  ws.get_painter().moveTo (ws.x_pixel(pts[0].first),
+                           ws.y_pixel(pts[0].second));
+  for (i = 1; i <= n; i++)
   {
-    curr_x = ws.x_real(x);
-    q = Point_2 (Algebraic(curr_x), 0);
-    p = cv.get_point_at_x (q);
-    
-    curr_y = CGAL::to_double(p.y());
-    ws.get_painter().lineTo(x, ws.y_pixel(curr_y));
+    ws.get_painter().lineTo (ws.x_pixel(pts[i].first),
+                             ws.y_pixel(pts[i].second));
   }
+  delete[] pts;
   
-  ws.get_painter().lineTo(ws.x_pixel(end_x), ws.y_pixel(end_y));
   return (ws);
 }
 
