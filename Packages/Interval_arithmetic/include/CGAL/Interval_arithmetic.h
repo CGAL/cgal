@@ -746,6 +746,7 @@ operator<(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 {
   if (a.sup()  < b.inf()) return std::make_pair(true, true);
   if (a.inf() >= b.sup()) return std::make_pair(false, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(false, false);
 }
 
@@ -756,6 +757,7 @@ operator<(int a, const Interval_nt<Protected> &b)
 {
   if (a  < b.inf()) return std::make_pair(true, true);
   if (a >= b.sup()) return std::make_pair(false, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(false, false);
 }
 
@@ -766,6 +768,7 @@ operator<(const Interval_nt<Protected> &a, int b)
 {
   if (a.sup()  < b) return std::make_pair(true, true);
   if (a.inf() >= b) return std::make_pair(false, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(false, false);
 }
 
@@ -778,6 +781,7 @@ operator==(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
     return std::make_pair(false, true);
   if (b.inf() == a.sup() && b.sup() == a.inf())
     return std::make_pair(true, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(false, false);
 }
 
@@ -788,6 +792,7 @@ operator==(int a, const Interval_nt<Protected> &b)
 {
   if (b.inf() >  a || b.sup() <  a) return std::make_pair(false, true);
   if (b.inf() == a && b.sup() == a) return std::make_pair(true, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(false, false);
 }
 
@@ -799,6 +804,7 @@ sign (const Interval_nt<Protected> & d)
   if (d.inf() > 0.0) return std::make_pair(POSITIVE, true);
   if (d.sup() < 0.0) return std::make_pair(NEGATIVE, true);
   if (d.inf() == d.sup()) return std::make_pair(ZERO, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(ZERO, false);
 }
 
@@ -811,6 +817,7 @@ compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
   if (e.inf() > d.sup()) return std::make_pair(SMALLER, true);
   if (e.inf() == d.sup() && d.inf() == e.sup())
     return std::make_pair(EQUAL, true);
+  Interval_nt<Protected>::number_of_failures++;
   return std::make_pair(EQUAL, false);
 }
 
