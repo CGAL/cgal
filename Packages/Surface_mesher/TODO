@@ -1,0 +1,275 @@
+
+Complex_2_in_triangulation_3
+
+-Manque la banniere CGAL
+
+-Manque les include  poir list, set, map etc
+-Manque les std:: devant list, set, map, make_pair  ...
+
+
+Facets_iterator n'est par conforme aux specifications.
+Devrait etre Facets_around_edges
+Cells_iterator -> Cells_around_edges
+Facets_iterator et Edges_iterator etaient prevu pour iterer
+sur les aretes du complexes.
+Facet_circulator -> Facets_circulator
+
+Solution
+renommer Facets_iterator et le mettre prive -> List_Facet_Iterator
+Definir le vrai Facets_iterator en filtrant les iterateurs 
+      de la triangulation pour les cellules
+      pour les aretes utiliser la map
+Pour les incident_facet
+iterateur pour tous les sommet du complexes
+template<OutputIterator>
+incident_facets ....
+
+Pour les Boundary ou Regular -> Facets_around_vertex_circulator
+Facet_around_edge_circulator -> filtrer le circulateur de la triangulation
+par contre on veut consever une fonction
+incident_facets qui donne un iterateur sur les facettes incidente
+(dans le desordre et + efficace)
+incident_facets retourne un iterateur sur des facettes
+
+
+ 
+changer le nom pour canonical_facet
+Facet facet_with_smallest_cell_handle(const Facet& f) const
+code trop long
+return ( f.first < tri3.mirror_facet(f).first ? f : tri3.mirror_facet(f));
+
+Avoir une autre foction oriented_facet ?
+Facet oriented_facet(const Facet& f) const;
+qui donne la facette vue de la cellule interieur en cas 
+de facette sur le bord du complexe .
+PB les cellulles ne sont pas marquee dans le cas general
+
+complex_subface_type -> face_type
+
+Face_type complex_subface_type (const Edge& e)
+case 0 doit retourner ISOLATED
+NOT_IN_COMPLEX quand l'arete n'est pas dans la map
+Il ne faut pas utiliser l'operateur[] de map : 
+il insere l'element qu'il ne trouve pas ....
+
+complex_subface_type (const Vertex_handle v)
+il n'y a pas de ISOLATED  (discutable,  mais  ...bon)
+mais les BOUNDARY manquent a l'appel
+
+
+face_type (const Vertex_handle v)
+face_type (const Vertex_handle v, true) pour le cas ou on sait que
+toutes les aretes sont regulieres
+
+
+ Facet_circulator incident_facets (const Edge& e)
+Rem :
+ton implementation ne circule pas dans l'ordre autour des aretes.
+Cette fonction n'etait pas dans les specifications...
+la rendre privee ou protected ?
+
+
+Facets incident_facets(const Vertex_handle v) const 
+La liste est recopiee a la fin ... beurk
+utiliser un output_iterator.
+Pourquoi utiliser un set a l'interieur plutot qu'une liste.
+
+template< class OutputIterator>
+OutputIterator 
+incident_facets(Vertex_handle v, OutputIterator facets)  const {	    
+    Cells loic;
+    tri3.incident_cells(v, back_inserter(loic));
+
+    for (Cells_iterator cit = loic.begin();cit != loic.end(); ++cit) {
+       int i = (*cit)->index(v);
+       Cell_handle c = (*cit);
+       int i = c->index(v); 
+
+       for (int j = 0; j < 4; j++) {
+         if (i != j) {
+	   Facet f = std::make_pair(c, j);
+	   if ( complex_subface_type(f) != NOT_IN_COMPLEX) *facets++ = f;
+           }
+         }
+      }
+     return facets;
+}
+evidemment ca change un peu l'interface.
+De toute facon d'apres les specifs on devrait retourner 
+un circulateur si le vertex est regulier ....on est loin du compte
+En fait cette fonction n'est pas conforme aux specifications :
+on doit retourner un circulateur quoiqu'il arrive
+mais vide si le sommet n'est pas regulier ou boundary....
+(voir doc)
+Est ce qu'on aurait besoin de incident_facets pour des sommets non regulier ?
+
+ Facets adjacent_facets (const Facet& f, const Vertex_handle v)
+commentaire pas clair :
+on veut la liste des facettes qui partagent avec f 
+une des deux aretes incidentes a v.
+code pas efficace : enlever f a une des liste  puis utiliser merge.
+Surtout ne pas recopier la liste a la fin mais utiliser un ouput iterator.
+La liste est initialisee la ou on utilise le resultat,
+en l'occurence par  set_in_complex (const Cell_handle c, const int i)
+add_in_graph pourrait prendre un iterateur range comme argument :
+template class<Iterator>
+add_node( E e, Iterator begin, Iterator end);
+
+Cette fonction devrait etre privee
+
+
+Pourquoi set_in_complex
+s'appele set_visited dans le sommet. ?
+
+set_in_complex (const Cell_handle c, const int i)
+appel inutile
+Facet f = 
+      facet_with_smallest_cell_handle(std::make_pair(c, i));
+
+-----------------------------------------------------------------
+
+Gestion des graphes du graphe d'adjacence des faces incidentes
+a un sommet : 
+C'est quand meme dommage de maintenir tout ce 
+graphe tant qu'on ne teste pas le caractere manifold des sommets
+Il faudrait chercher une approche paresseuse.
+ Par example, le graphe n'est construit et mis a jour que lors
+de  certains appels de function, i e l'iterator
+incident facets ou les query face_type ....
+Les visiteurs ne mettent a jour que les graphes qui ont deja
+ete calcule. Pour savoir si un graphe a deja ete calcule:
+un booleen ou on compare le graph au grap nul Graph().
+ou on lui demande son is_empty.
+
+on doit pouvoir tester si le graphe est un cycle (sommet regulier)
+ou un chemin (sommet boundary)
+si le graphe est non connexe  ou autre chose qu'un cycle ou un chemin
+le sommet est singulier.
+Si toutes les aretes incidentes sont regulieres,
+avec un compteur 2 + graphe connexe
+ -> le sommet est regulier il suffit de tester
+Si toutes les aretes incidentes sont regulieres,sauf deux BOUNDARY
++ un graphe connexe le sommet est boundary.
+
+Implantation du graphe 
+- Pourquoi add_suc et remove_succ prend un Node<E>*
+  Pourquoi on n'aurait pas  aussi une version avec E comme argument
+- Il n'y a pas de new dans la classe Node, le destructeur n'est pas utile.
+  Par contre c'est dans Graph qu'on fait un new pour chaque node
+  et la il faudrait un destructeur.
+  Les new sont tres couteux. il vaudrait mieux utiliser un
+  compact container... ou meme un autre container de noeuds ?
+ 
+- je ne comprends pas le code de add_node : pourquoi un new
+pour chaque voisin d'un nouveau noeud ?
+  certains existe peut etre deja...
+ OK, j'ai compris....
+ Mais il y avait une grosse fuite de memoire ici.
+ Je l'ai fixee.
+- avoir une representation plus compacte du graphe ....
+  par exemple on peut remplacer les map d'incidence
+  par des std::set<E>
+
+ ou une map de set representant les aretes du graphe
+std::map<E, std::set<E>> 
+    quand on parcourt le graphe, si un set n'est pas de taille 2
+ ce n'est pas un graphe
+ si toutes les aretes sont regulieres, tous les set sont de 
+taille 2et il n'y a plus qu'a tester la connexite....
+
+
+Une suggestion le type graphe
+template <class E>
+Graph 
+: public std::map< E, std::set<E> >  Graph
+{
+
+}  
+ 
+------------------------------------------------------------------
+
+void  set_in_complex (const Cell_handle c, const int i)
+void remove_from_complex (const Cell_handle c, const int i)
+Supprimer le if sur la dimension en 
+utilisant  tri3.dimension()+1 comme borne sur les indices ?
+
+void remove_from_complex (const Cell_handle c, const int i)
+Pourquoi on fait un remove des sommets ?
+
+Class Complex_2_in_triangulation_vertex_base_3
+Facet facet_with_smallest_cell_handle(const Facet& f) const
+ne sert a rien ici ?
+
+------------------------------------------------------
+
+Complex_2_in_triangulation_cell_base_3
+bool is_facet_on_surface
+void set_surface_facet -> set_facet_on_surface
+
+----------------------------------------------------
+
+Complex_2_in_triangulation_surface_mesh_cell_base_3
+A quoi servent les compteurs de visit et les statuts 
+Proposal :
+tab_surface_center_facets -> facets_surface_center
+tab_surface_status_facets    facets_surface_status 
+facet_visited                visited_facet
+
+le status est redondant avec le 
+tab_surface_facet de Complex_2_in_triangulation_cell_base_3.h
+
+ce qu'il faudrait :
+- un marqueur visited
+- un marquer center_computed
+on pourrait alors  dans l'interface dissocier le calcul du centre
+du test is_on_restricted_Delaunay.
+get_facet_center calcule le centre si ce n'est deja fait.
+Les oracles pourraient toujours decider de calculer
+le centre lorsqu'ils  testent is_on_restricted_Delaunay
+pour des raisons d'efficacite....
+
+Complex_2_in_triangulation_surface_mesh_cell_base_3 ->
+Pourrait etre remplacee par une
+Surface_mesh_cell_base_3
+a pluguer dans Complex_2_in_triangulation_cell_base_3
+
+-------------------------------------------------------------
+
+ Complex_2_in_triangulation_3_surface_mesh 
+
+ Facet other_side(const Facet& cote)
+-> existe deja dans Triangulation_3 et s'appelle mirror_facet
+
+
+get_surface_status_facet -> get_facet_surface_status
+get_facet_center -> get_facet_surface_center
+set_facet_center -> set_facet_surface_center
+
+incident_vertices -> should be in Complex_2_in_triangulation_3
+
+Facets incident_facets(const Vertex_handle v) ???
+a quoi sert cette function ?????
+
+compute_squared_distance -> compute_distance_to_facet_center
+
+-------------------------------------------------------------------------
+
+Surface_mesher.h
+
+ void scan_triangulation_impl()
+
+il y aurait pas une erreur la  ? 
+for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit != 
+	     tr.finite_facets_end(); ++fit) {
+	if (tr.dimension() == 3) {
+	  Cell_handle c=(*fit).first->neighbor((*fit).second);
+	  Facet other_side (c, c->index((*fit).first)); 
+// il me semble que ohther_side == *fit
+// ce qui n'est visiblement pas le but
+ok ca marche, other_side ici est une variable 
+et pas l'appel a la fonction other_side(Facet ) qui traine
+dans Complex_2_in_triangulation_3_surface_mesh  BEURK
+
+
+- en cas d'encroachement d'une facette du Delaunay restreint pau un centre de tet, n'importe qu'elle facette de Delaunay restreint encrochee est raffinee
+
