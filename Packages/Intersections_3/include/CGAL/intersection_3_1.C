@@ -148,13 +148,11 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1,
     // a line, a plane, or empty.
     Object o12 = CGALi::intersection(plane1, plane2, k);
 
-    Line_3 l;
-    if (assign(l, o12))
-        return CGALi::intersection(plane3, l, k);
+    if (const Line_3 *l = object_cast<Line_3>(&o12))
+        return CGALi::intersection(plane3, *l, k);
 
-    Plane_3 pl;
-    if (assign(pl, o12))
-        return CGALi::intersection(plane3, pl, k);
+    if (const Plane_3 *pl = object_cast<Plane_3>(&o12))
+        return CGALi::intersection(plane3, *pl, k);
 
     return Object();
 }
@@ -207,9 +205,8 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane,
     typedef typename K::Point_3 Point_3;
     const Object line_intersection =
             intersection(plane, ray.supporting_line(), k);
-    Point_3 isp;
-    if (assign(isp, line_intersection)) {
-        if (ray.collinear_has_on(isp))
+    if (const Point_3 *isp = object_cast<Point_3>(&line_intersection)) {
+        if (ray.collinear_has_on(*isp))
             return line_intersection;
         else
             return Object();
@@ -243,13 +240,8 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane,
             intersection(plane, ray.supporting_line(), k);
     if (line_intersection.is_empty())
         return false;
-    Point_3 isp;
-    if (assign(isp, line_intersection)) {
-        if (ray.collinear_has_on(isp))
-            return true;
-        else
-            return false;
-    }
+    if (const Point_3 *isp = object_cast<Point_3>(&line_intersection))
+        return ray.collinear_has_on(*isp);
     return true;
 }
 

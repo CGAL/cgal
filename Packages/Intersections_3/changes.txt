@@ -1,3 +1,6 @@
+29 July 2005 Sylvain Pion
+- Change assign() to object_cast<>().
+
 8 March 2005 Sylvain Pion
 - Add do_intersect(Triangle_3, Tetrahedron_3) by Nico Kruithof.
 
