@@ -1,15 +1,14 @@
-!!! penser a remettre assert(in_range...) dans compare_y_at_x
-(enlevee pour debug)
-et enlever messages de debug
+enlever messages de debug
+regarder traits-tracer (seg fault)
 
 (highest priority is to be able to run at least *something* with 
 the new Arrangement_2...)
 
 construct intersection for *arcs* should use solve or solve in range
-interface of operator() of construct intersection for circles is
-wrong, it should compute circular arc endpoints
 
 add "using..." in all functors that derive from another
 
-implement construct_intersections for general (non monotone) arcs, it
-has a meaning. 
+naming
+circular_arc_endpoint -> _point
+introduce Root_for_circles = roots (x,y) of system of polynomial_for_circles 
+general Root_of_2_2 for case of conic
