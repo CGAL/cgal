@@ -93,6 +93,9 @@ class Quotient
   template <class T>
   explicit Quotient(const T& n) : num(n), den(1) {}
 
+  template <class T>
+  Quotient(const Quotient<T>& n) : num(n.numerator()), den(n.denominator()) {}
+
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }

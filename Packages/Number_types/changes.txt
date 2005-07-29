@@ -1,3 +1,6 @@
+29 July 2005 Sylvain Pion
+- Quotient : Add template ctor from Quotient<NT2>.
+
 27 July 2005 Sylvain Pion
 - NT_converter : Add specializations when converting to Interval_nt
   (calls to_interval()), and when conversion to same type (saves a copy).
