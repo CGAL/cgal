@@ -135,6 +135,13 @@ public:
     CGAL_assertion(is_valid());
   }
 
+  template <typename RT2>
+  Root_of_2(const Root_of_2<RT2>& r)
+    : C0(r[0]), C1(r[1]), C2(r[2]), _smaller(r.is_smaller())
+  {
+    CGAL_assertion(is_valid());
+  }
+
   Root_of_2 operator-() const
   {
     return Root_of_2 (C2, -C1, C0, !_smaller);
