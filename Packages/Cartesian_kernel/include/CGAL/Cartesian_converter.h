@@ -172,6 +172,17 @@ public:
 	
     }
 
+  std::vector<Object>
+  operator()(const std::vector<Object>& v) const
+  {
+    std::vector<Object> res;
+    res.reserve(v.size());
+    for(unsigned int i = 0; i < v.size(); i++){
+      res[i] = operator()(v[i]);
+    }
+    return res;
+  }
+
 
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
