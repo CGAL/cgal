@@ -240,100 +240,440 @@ and
 \right.
 \end{eqnarray}
 \end{lemma}
+For later use we state the KKT conditions for the upper bounded QP with equality constraints only
+\begin{lemma}
+\label{lem:KKT_QP_UB_eq}
+A feasible solution $x^{*}$ to
+\begin{eqnarray}
+  \mbox{($QP^{u}$)} &minimize& c^{T}x +x^{T}Dx
+\nonumber      \\
+\label{eq:QP_UB_eq_feas_cons}
+    & s.t. & Ax = b  \\
+\label{eq:QP_UB_eq_var_feas_cons}
+    & & l \leq x \leq u  
+\end{eqnarray}
+is optimal if there exists an $m$-vector $\lambda$ and an $n$-vector $\mu$ such
+that
+\begin{eqnarray}
+c + Dx^{*} +A^{T}\lambda
+&=&
+\mu  
+\end{eqnarray}
+and
+\begin{equation}
+\label{eq:KKT_QP_UB_eq_mu_cond}
+\mu_{j} \left\{
+\begin{array}{ll}
+\geq 0, & \text{if $x_{j}^{*}=l_{j}$} \\
+= 0,    & \text{if $l_{j} < x_{j}^{*} < u_{j}$} \\
+\leq 0, & \text{if $x_{j}^{*}=u_{j}$}
+\end{array}
+\right.
+\end{equation} 
+\end{lemma}
 
 \section{Pricing}
-Due to the fact that original nonbasic variables may assume several different values and according to Equations~(\ref{def:mu_opt_cond}) the pricing step not only has to deliver an entering variable $x_{j}$, $j \in N$, if the current solution is suboptimal, but a direction $d_{t} \in \{-1,1\}$ indicating whether the entering variable $x_{j}$ is to be increased or decreased. So if $d_{t}=1$ the entering variable is to be increased, otherwise it is to be decreased.
-
-\subsection{Full exact pricing}
-Generalizing the full exact pricing algorithm we introduce the following subsets of the set of nonbasic variables $N$
+Testing whether a nonbasic variable $x_{j}$ can improve the solution by entering the current QP-basis is done as follows.
+Let $\hat{B}:=B \cup \{j\}, \quad \hat{N}:=N \setminus \{j\}$ and consider the subproblem
 \begin{eqnarray}
-N_{l}&:=&\{k \in N\left|\right. b\left(k\right)=-1\} \\
-N_{0}&:=&\{k \in N\left|\right. b\left(k\right)=0\} \\
-N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
+  \mbox{(QP($\hat{B}^{u}$))} &minimize& c_{\hat{B} \cup \hat{N}}^{T}
+    x_{\hat{B} \cup \hat{N}} +
+    x_{\hat{B} \cup \hat{N}}^{T}
+    D_{\hat{B} \cup \hat{N}}x_{\hat{B} \cup \hat{N}}
+\nonumber      \\
+\label{eq:QP_UB_sub_feas_cons}
+    & s.t. & A_{\hat{B}}x_{\hat{B}} = b - A_{\hat{N}}
+    x_{\hat{N}}  \\
+\label{eq:QP_UB_sub_var_feas_cons}
+    & & l_{\hat{B}} \leq x_{\hat{B}} \leq u_{\hat{B}},
+    \quad x_{\hat{N}} \text{ constant}  
 \end{eqnarray}
-\paragraph{Full exact pricing with explicit bounds}
-\begin{tabbing}
-\texttt{FULL\_EXACT\_PRICING$(N)$} \\
-\texttt{IF} \= \kill
-\> \texttt{$j_{l}:=\arg\min_{k \in N_{l} \cup
-                               N_{0}}\mu_{k}$}  \\
-\> \texttt{$j_{u}:=\arg\max_{k \in N_{u} \cup
-                               N_{0}}\mu_{k}$}  \\
-\> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
-\> \texttt{IF $\mu_{j} \neq 0$ THEN} \\
-\texttt{IFIF} \= \kill
-\> \texttt{IF $j = j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
-%\texttt{IFIFIF} \= \kill
-%\> \texttt{dir:=1} \\
-%\texttt{IFIF} \= \kill
-%\> \texttt{ELSE} \\
-%\texttt{IFIFIF} \= \kill
-%\> \texttt{dir=-1} \\
-%\texttt{IFIF} \= \kill
-%\> \texttt{END} \\
-\> \texttt{RETURN $(j, dir)$} \\
-\texttt{IF} \= \kill
-\> \texttt{ELSE} \\
-\texttt{IFIF} \= \kill
-\> \texttt{RETURN \emph{optimal}} \\
-\texttt{IF} \= \kill
-\> \texttt{END} \\
-\texttt{END}
-\end{tabbing}
-
-
-\subsection{Partial exact pricing}
-Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 for explicit bounds we introduce the following subsets of the active set $\mathcal{A}$ 
+By the KKT conditions for the upper bounded QP with equality constraints only (Lemma~\ref{lem:KKT_QP_UB_eq}) $x_{\hat{B}}^{*}$ with
+$x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$
+is an optimal solution to $QP(\hat{B}^{u})$ if and only if there exist vectors
+$\lambda$ and $\mu$ such that
 \begin{eqnarray}
-\mathcal{A}_{l}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=-1\} \\
-\mathcal{A}_{0}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=0\} \\
-\mathcal{A}_{u}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=1\}
+\label{eq:KKT_opt_cond_sub_prob}
+c_{\hat{B}}^{T}+2{x_{\hat{B}}^{*}}^{T}D_{\hat{B}, \hat{B}}
++2{x_{\hat{N}}^{*}}^{T}D_{\hat{N}, \hat{B}}
+& = &
+-\lambda^{T}A_{\hat{B}}+\mu 
+%\\
+%\left(x_{\hat{B}}^{*}-u_{\hat{B}}\right)^{T}\mu
+%&=&
+%0 \\
+%\left(l_{\hat{B}}-x_{\hat{B}}^{*}\right)^{T}\mu
+%&=&
+%0
 \end{eqnarray}
-\paragraph{Partial exact pricing with explicit bounds}
-\begin{tabbing}
-\texttt{PARTIAL\_EXACT\_PRICING$(\mathcal{A})$} \\
-\texttt{IF} \= \kill
-\> \texttt{$j_{l}:=\arg\min_{k \in \mathcal{A}_{l} \cup
-                               \mathcal{A}_{0}}\mu_{k}$}  \\
-\> \texttt{$j_{u}:=\arg\max_{k \in \mathcal{A}_{u} \cup
-                               \mathcal{A}_{0}}\mu_{k}$}  \\
-\> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
-\> \texttt{IF $\left(\mu_{j} < 0 \wedge b\left(j\right) \leq 0 \right)
-   \vee \left(\mu_{j} > 0 \wedge b\left(j\right) \geq 0 \right)$} \\
-\texttt{IFIF} \= \kill
-\> \texttt{IF $j=j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
-\> \texttt{RETURN $(j, dir)$} \\
-\texttt{IF} \= \kill
-\> \texttt{ELSE} \\
-\texttt{IFIF} \= \kill
-\> \texttt{$V:=\{k \in N \setminus \mathcal{A} \left|\right.
-    \mu_{k} < 0 \wedge b\left(k\right) \leq 0 \vee
-    \mu_{k} > 0 \wedge b\left(k\right) \geq 0\}$} \\
-\> \texttt{IF $V=0$ THEN} \\
-\texttt{IFIFIF} \= \kill  
-\> \texttt{RETURN \emph{optimal}} \\
-\texttt{IFIF} \= \kill
-\> \texttt{ELSE} \\
-\texttt{IFIFIF} \= \kill
-\> \texttt{$\mathcal{A}:=\mathcal{A} \cup V$} \\
-\> \texttt{RETURN $\arg\max_{j \in V}\left|\mu_{j}\right|$} \\
-\texttt{IFIF} \= \kill
-\> \texttt{END} \\
-\texttt{IF} \= \kill
-\> \texttt{END}
-\end{tabbing}
-\subsection{Full filtered pricing}
-\subsection{Partial filtered pricing}
+where
+\begin{equation}
+\mu_{i}
+\left\{
+\begin{array}{ll}
+\geq 0,
+&
+\text{if $x_{i}^{*}=l_{i}$} \\
+=0,
+&
+\text{if $l_{i} < x_{i}^{*} < u_{i}$} \\
+\leq 0,
+&
+\text{if $x_{i}^{*}=u_{i}$}
+\end{array}
+\right.
+\end{equation}
+Since $l_{B} < x_{B} < u_{B}$, $\mu_{B}=0$ holds using (\ref{def:mu_opt_cond}).
+Isolating $x_{j}^{*}$ in (\ref{eq:KKT_opt_cond_sub_prob}) and grouping into $B$
+and $j$ components yields
+\begin{eqnarray}
+\label{eq:KKT_lagrange_id_B}
+  c_{B}^{T} + {2x_{B}^{*}}^{T}D_{B,B}
+  + 2x_{\hat{N}}^{T}D_{\hat{N},B}
+  + 2x_{j}^{*}D_{B,j}^{T} & = & -\lambda^{T} A_{B} \\
+\label{eq:KKT_lagrange_id_j}
+  c_{j} + 2{x_{B}^{*}}^{T}D_{B,j}
+  + 2x_{j}^{*}D_{j,j}
+  + 2x_{\hat{N}}^{T}D_{\hat{N},j} & = &
+  -\lambda^{T} A_{j} + \mu_{j}
+\end{eqnarray}
+Equation~(\ref{eq:KKT_lagrange_id_B}) together with the feasibility
+constraints~(\ref{eq:QP_UB_sub_feas_cons}), (\ref{eq:QP_UB_sub_var_feas_cons})
+determine $x_{B}^{*}$ with $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ and $\lambda$ by
+the linear equation system
+\begin{equation}
+M_{B}
+\left(
+\begin{array}{c}
+\lambda(t) \\
+\hline
+x_{B}^{*}(t)
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+b \\
+\hline
+-c_{B}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{N} \\
+\hline
+2D_{B, N}
+\end{array}
+\right)
+x_{N}
+%-d_{t}t
+%\left(
+%\begin{array}{c}
+%A_{j} \\
+%\hline
+%2D_{B, j}
+%\end{array}
+%\right)
+\end{equation}
+with $M_{B}$ defined as
+\begin{equation}
+M_{B}:=
+\left(
+\begin{array}{c|c}
+0 & A_{B} \\
+\hline
+A_{B}^{T} & 2D_{B,B}
+\end{array}
+\right)
+\end{equation}
+
+Using the values of $x_{B}^{*}$ and $\lambda$,
+Equation~(\ref{eq:KKT_lagrange_id_j}) uniquely determines $\mu_{j}$.
+In case $x_{j}^{*}=l_{j}$ and $\mu_{j} < 0$, $x_{\hat{B}}^{*}$ with
+$x_{j}^{*}=l_{j}$ cannot
+be an optimal solution to $(QP(\hat{B}^{u}))$ because
+$\mu_{j}<0 \wedge x_{j}^{*}=l_{j}$ contradicts (\ref{eq:KKT_QP_UB_eq_mu_cond})
+in Lemma~\ref{lem:KKT_QP_UB_eq}, likewise $x_{\hat{B}}^{*}$ with
+$x_{j}^{*}=u_{j}$ cannot be an optimal solution, more generally the current solution $x_{\hat{B}}^{*}$ with $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ can be
+improved if and only if
+\begin{equation}
+\mu_{j}
+\left\{
+\begin{array}{ll}
+< 0    & \text{if $x_{j}^{*}=l_{j}$} \\
+\neq 0 & \text{if $x_{j}^{*}=0 \wedge l_{j} < 0 < u_{j}$} \\
+> 0    & \text{if $x_{j}^{*}=u_{j}$}
+\end{array}
+\right.
+\end{equation}
 
 \section{Ratio Test Step~1}
-According to (\ref{def:mu_opt_cond}) the value of an entering nonbasic variable may be increased or decreased.
-The Ratio Test Step~1 determines the minimum positive increment or decrement for the entering variable $x_{j}$ with respect to the finite upper and lower bounds of the basic variables, the finite upper and lower bounds of the entering variable as well as $\mu_{j}$ becoming zero. We distinguish three events:
+Starting with a QP-basis $B$ and an entering variable $x_{j}$, we want to find a
+new basis $B^{\prime} \subseteq B \cup \{j\}$ with a better objective function
+value. Define $\hat{B}:=B \cup \{j\}$, then $x_{\hat{B}}^{*}$ with
+$x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ is the optimal solution to
+\begin{eqnarray}
+\label{QP:UQP_UB_t}
+(UQP_{j}^{t}(\hat{B}^{u})) & minimize &
+  c_{\hat{B} \cup \hat{N}}^{T}x_{\hat{B} \cup \hat{N}}
+  + x_{\hat{B} \cup \hat{N}}^{T}
+  D_{\hat{B} \cup \hat{N},\hat{B} \cup \hat{N}}
+  x_{\hat{B} \cup \hat{N}}  \nonumber \\
+  & s.t & A_{\hat{B}}x_{\hat{B}} =
+  b - A_{\hat{N}}x_{\hat{N}} \\
+  & & x_{j} = v_{j} \pm t, \quad x_{\hat{N}} \text{ constant}
+  \nonumber
+\end{eqnarray}
+for $t=0$. Furthermore, $(UQP_{j}^{t}(\hat{B}^{u}))$ has a unique optimal
+solution $x_{\hat{B}}^{*}(t)$ for each value of $t$, which is determined by
+\begin{equation}
+M_{B}
+\left(
+\begin{array}{c}
+\lambda(t) \\
+\hline
+x_{B}^{*}(t)
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+b \\
+\hline
+-c_{B}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{N} \\
+\hline
+2D_{B, N}
+\end{array}
+\right)
+x_{N}
+-d_{t}t
+\left(
+\begin{array}{c}
+A_{j} \\
+\hline
+2D_{B, j}
+\end{array}
+\right)
+\end{equation}
+where
+\begin{equation}
+x_{j}^{*}(t)=
+\left\{
+\begin{array}{ll}
+l_{j}+t
+&
+\text{if $b(j)=-1$} \\
+d_{t}t
+&
+\text{if $b(j)=0$} \\
+u_{j}-t
+&
+\text{if $b(j)=1$}
+\end{array}
+\right.
+\end{equation}
+This follows from the KKT conditions for (\ref{QP:UQP_UB_t})
+(Lemma~\ref{lem:KKT_QP_UB_eq}), the regularity of $M_{B}$, and some elementary
+transformations. In the sequel, we use the following equivalent formulation
+\begin{equation}
+\label{eq:Ratio_Test_1_Opt_sol_t}
+\left(
+\begin{array}{c}
+\lambda(t) \\
+\hline
+x_{B}^{*}(t)
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\lambda \\
+\hline
+x_{B}^{*}
+\end{array}
+\right)
+-
+M_{B}^{-1}
+\left(
+\begin{array}{c}
+A_{N} \\
+\hline
+2D_{B,N}
+\end{array}
+\right)
+x_{N}
+-
+d_{t}t
+\left(
+\begin{array}{c}
+q_{\lambda} \\
+\hline
+q_{x}
+\end{array}
+\right)
+\end{equation}
+where
+\begin{equation}
+\left(
+\begin{array}{c}
+q_{\lambda} \\
+\hline
+q_{x}
+\end{array}
+\right)
+:=
+M_{B}^{-1}
+\left(
+\begin{array}{c}
+A_{j} \\
+\hline
+2D_{B,j}
+\end{array}
+\right)
+\end{equation}
+While increasing $t$ starting from zero (which improves the current solution),
+three things may happen. Either the entering variable $x_{j}$ takes its lower or
+upper bound value $l_{j}$ or $u_{j}$, or one of the basic variables $x_{i}$
+takes the value of its lower or upper bound $l_{i}$ or $u_{i}$, or a local
+minimum of the objective function is reached.
+
+The minimum value of $t$ for the first event, $t_{min}^{j}(d_{t})$, is computed
+in the following way
+\begin{equation}
+t_{min}^{j}(d_{t}):=
+\left\{
+\begin{array}{ll}
+u_{j}-l_{j}
+&
+\text{if $b(j)=-1$} \\
+l_{j}
+&
+\text{if $b(j)=0 \wedge d_{t}=-1$} \\
+u_{j}
+&
+\text{if $b(j)=0 \wedge d_{t}=1$} \\
+u_{j}-l_{j}
+&
+\text{if $b(j)=1$}
+\end{array}
+\right.
+\end{equation}
+
+The minimum value of $t$ for the second event, $t_{min}^{B}(d_{t})$, is computed
+in the following way
+\begin{equation}
+t_{min}^{B}(d_{t}):=\min\{t_{min}^{l}(d_{t}), t_{min}^{u}(d_{t})\}
+\end{equation}
+where
+\begin{eqnarray*}
+t_{min}^{l}(d_{t})&:=& \min_{i \in B^{l}}\left(x_{i}-l_{i}\right)/q_{i} \\
+t_{min}^{u}(d_{t})&:=& \min_{i \in B^{u}}\left(u_{i}-x_{i}\right)/q_{i} \\
+B^{u}(d_{t})&:=&\{i \in B \left|\right. f_{i}^{u}=1 \wedge d_{t}q_{i}<0\} \\
+B^{l}(d_{t})&:=&\{i \in B \left|\right. f_{i}^{l}=1 \wedge d_{t}q_{i}>0\} 
+\end{eqnarray*} 
+
+To check the third event, we look at the linear function $\mu_{j}(t,d_{t})$
+derived from Equation~(\ref{eq:KKT_lagrange_id_j}) and
+Equation~(\ref{eq:Ratio_Test_1_Opt_sol_t})
+\begin{eqnarray}
+\label{eq:mu_j_t_dt}
+\mu_{j}(t, d_{t})
+&=&
+c_{j} + A_{j}^{T}\lambda(t)+2D_{B,j}^{T}x_{B}^{*}(t)+2D_{j,j}x_{j}^{*}(t)
++D_{\hat{N},j}^{T}2x_{\hat{N}} \\
+&=&
+\mu_{j}+d_{t}t
+\left(2D_{j,j}-A_{j}^{T}q_{\lambda}-2D_{B,j}^{T}q_{x}\right)
+\end{eqnarray}
+As soon as $\mu_{j}(t, d_{t})$ becomes zero for some $t > 0$,
+$\lambda(t, d_{t})$ and $\mu=0$ fulfill the KKT conditions of
+Lemma~\ref{lem:KKT_QP_UB_eq}, thus $x_{\hat{B}}^{*}$ with $x_{j}^{*}(t)=$ is 
+an optimal solution to ($QP(\hat{B}^{u})$). The following Lemma shows that
+$\hat{B}$ is the new basis in case of the third event.
+For later reference let us denote by $t_{min}^{\mu_{j}}(d_{t})$ 
+the smallest $t$ for which $\mu_{j}(t, d_{t})$
+becomes zero.
+\begin{lemma}
+If $\mu_{j}(t, d_{t})$ in Equation~(\ref{eq:mu_j_t_dt}) becomes zero for some
+$t > 0$ before any of the basic variables or the entering variable take the
+values of a lower or upper bound, then $\hat{B}$ is the new basis.
+\end{lemma}
+
+We distinguish three events:
 \begin{enumerate}
 \item The entering variable $x_{j}$ takes the value of its finite upper,
 $u_{j}$, or lower bound, $l_{j}$.
-\item A basic variable takes the value of its finite upper or lower bound.
+\item A basic variable $x_{i}$ takes the value of its finite upper or lower bound.
 \item $\mu_{j}(x_{j})$ becomes zero.
 \end{enumerate}
+In the first event only the values of the basic variables $x_{B}$ as well as 
+the value of the 'entering' variable $x_{j}$ of the current solution change, whereas the basis matrix remains the same. The basic variables $x_{B}^{\prime}$ of the new solution $x^{\prime}$ are then given by
+\begin{equation}
+x_{B}^{\prime}:=
+\left\{
+\begin{array}{ll}
+x_{B} + b(j)\left(u_{j}-l_{j}\right)q_{x}
+&
+\text{if $b(j) \neq 0$} \\
+x_{B} - l_{j}q_{x}
+&
+\text{if $b(j)=0 \wedge d_{t}=-1$} \\
+x_{B} + u_{j}q_{x}
+&
+\text{if $b(j)=0\wedge d_{t}=1$}
+\end{array}
+\right.
+\end{equation}
+and the nonbasic variables $x_{N}^{\prime}$ by
+\begin{equation}
+x_{N \setminus\{j\}}^{\prime}:=x_{N \setminus \{j\}}
+\quad
+x_{j}^{\prime}:=
+\left\{
+\begin{array}{ll}
+l_{j} 
+&
+\text{if $d_{t}=-1$} \\
+u_{j}
+&
+\text{if $d_{t}=1$} 
+\end{array}
+\right.
+\end{equation}
+
+In the second event both the values of the basic variables as well as the basis matrix change; the new set of basic variables is $B^{\prime}:=B \setminus \{i\}$
+\begin{equation}
+\left(
+\begin{array}{c}
+\lambda_{C}^{\prime} \\
+\hline
+x_{B}^{\prime}
+\end{array}
+\right)
+:=
+\left(
+\begin{array}{c}
+\lambda_{C} \\
+\hline
+x_{B}
+\end{array}
+\right)
+-t_{min}^{B}
+\left(
+\begin{array}{c}
+q_{\lambda} \\
+\hline
+q_{x}
+\end{array}
+\right)
+\end{equation}
 \marginpar{include artificial vars as well}  
 %\begin{algorithm}
 %\caption{Ratio Test Step~1 with upper bounding}
@@ -480,6 +820,91 @@ Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $
 \EndFunction
 \end{algorithmic}
 %\end{algorithm}
+
+\section{Implemetation Issues}
+\subsection{Pricing strategies}
+Due to the fact that original nonbasic variables may assume several different values and according to Equations~(\ref{def:mu_opt_cond}) the pricing step not only has to deliver an entering variable $x_{j}$, $j \in N$, if the current solution is suboptimal, but also a direction $d_{t} \in \{-1,1\}$ indicating whether the entering variable $x_{j}$ is to be increased or decreased. So if $d_{t}=1$ the entering variable is to be increased, otherwise it is to be decreased.
+
+\subsubsection{Full exact pricing}
+Generalizing the full exact pricing algorithm we introduce the following subsets of the set of nonbasic variables $N$
+\begin{eqnarray}
+N_{l}&:=&\{k \in N\left|\right. b\left(k\right)=-1\} \\
+N_{0}&:=&\{k \in N\left|\right. b\left(k\right)=0\} \\
+N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
+\end{eqnarray}
+\paragraph{Full exact pricing with explicit bounds}
+\begin{tabbing}
+\texttt{FULL\_EXACT\_PRICING$(N)$} \\
+\texttt{IF} \= \kill
+\> \texttt{$j_{l}:=\arg\min_{k \in N_{l} \cup
+                               N_{0}}\mu_{k}$}  \\
+\> \texttt{$j_{u}:=\arg\max_{k \in N_{u} \cup
+                               N_{0}}\mu_{k}$}  \\
+\> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
+\> \texttt{IF $\mu_{j} \neq 0$ THEN} \\
+\texttt{IFIF} \= \kill
+\> \texttt{IF $j = j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
+%\texttt{IFIFIF} \= \kill
+%\> \texttt{dir:=1} \\
+%\texttt{IFIF} \= \kill
+%\> \texttt{ELSE} \\
+%\texttt{IFIFIF} \= \kill
+%\> \texttt{dir=-1} \\
+%\texttt{IFIF} \= \kill
+%\> \texttt{END} \\
+\> \texttt{RETURN $(j, dir)$} \\
+\texttt{IF} \= \kill
+\> \texttt{ELSE} \\
+\texttt{IFIF} \= \kill
+\> \texttt{RETURN \emph{optimal}} \\
+\texttt{IF} \= \kill
+\> \texttt{END} \\
+\texttt{END}
+\end{tabbing}
+
+
+\subsubsection{Partial exact pricing}
+Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 for explicit bounds we introduce the following subsets of the active set $\mathcal{A}$ 
+\begin{eqnarray}
+\mathcal{A}_{l}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=-1\} \\
+\mathcal{A}_{0}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=0\} \\
+\mathcal{A}_{u}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=1\}
+\end{eqnarray}
+\paragraph{Partial exact pricing with explicit bounds}
+\begin{tabbing}
+\texttt{PARTIAL\_EXACT\_PRICING$(\mathcal{A})$} \\
+\texttt{IF} \= \kill
+\> \texttt{$j_{l}:=\arg\min_{k \in \mathcal{A}_{l} \cup
+                               \mathcal{A}_{0}}\mu_{k}$}  \\
+\> \texttt{$j_{u}:=\arg\max_{k \in \mathcal{A}_{u} \cup
+                               \mathcal{A}_{0}}\mu_{k}$}  \\
+\> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
+\> \texttt{IF $\left(\mu_{j} < 0 \wedge b\left(j\right) \leq 0 \right)
+   \vee \left(\mu_{j} > 0 \wedge b\left(j\right) \geq 0 \right)$} \\
+\texttt{IFIF} \= \kill
+\> \texttt{IF $j=j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
+\> \texttt{RETURN $(j, dir)$} \\
+\texttt{IF} \= \kill
+\> \texttt{ELSE} \\
+\texttt{IFIF} \= \kill
+\> \texttt{$V:=\{k \in N \setminus \mathcal{A} \left|\right.
+    \mu_{k} < 0 \wedge b\left(k\right) \leq 0 \vee
+    \mu_{k} > 0 \wedge b\left(k\right) \geq 0\}$} \\
+\> \texttt{IF $V=0$ THEN} \\
+\texttt{IFIFIF} \= \kill  
+\> \texttt{RETURN \emph{optimal}} \\
+\texttt{IFIF} \= \kill
+\> \texttt{ELSE} \\
+\texttt{IFIFIF} \= \kill
+\> \texttt{$\mathcal{A}:=\mathcal{A} \cup V$} \\
+\> \texttt{RETURN $\arg\max_{j \in V}\left|\mu_{j}\right|$} \\
+\texttt{IFIF} \= \kill
+\> \texttt{END} \\
+\texttt{IF} \= \kill
+\> \texttt{END}
+\end{tabbing}
+\subsubsection{Full filtered pricing}
+\subsubsection{Partial filtered pricing}
 
 \begin{thebibliography}{99}
 \bibitem{Sven} Sven Sch\"{o}nherr. Quadratic Programming in Geometric Optimization:
