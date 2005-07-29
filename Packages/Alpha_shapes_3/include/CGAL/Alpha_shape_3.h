@@ -1439,13 +1439,15 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
        ++fit) {
     c = fit->first;
     i = fit->second;
-    // the following ensures that regulat facets are output
+    // the following ensures that regular facets are output
     // in ccw order
-    if (A.classify(*fit) == AS::REGULAR && A.classify(c) == AS::EXTERIOR){
+    if (A.classify(*fit) == AS::REGULAR && (A.classify(c) == AS::INTERIOR)){
       c = c->neighbor(i);
       i = c->index(fit->first);
     }
-    int i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
+    int i0 = Triangulation_utils_3::vertex_triple_index(i,0);
+    int i1 = Triangulation_utils_3::vertex_triple_index(i,1);
+    int i2 = Triangulation_utils_3::vertex_triple_index(i,2);
     os << V[c->vertex(i0)] << ' ' 
        << V[c->vertex(i1)] << ' ' 
        << V[c->vertex(i2)] << std::endl;
