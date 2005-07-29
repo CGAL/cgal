@@ -1,3 +1,6 @@
+29 July 2005 Andreas Fabri
+- Added conversion of a vector of Objects in Cartesian_converter.h
+
 26 July 2005 Andreas Fabri
 - Removed debug printout in Cartesian_converter.h
 - Replaced int with unsigned int in a for loop in Cartesian_converter.h
