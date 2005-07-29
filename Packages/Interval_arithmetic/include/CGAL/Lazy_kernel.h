@@ -38,19 +38,19 @@ CGAL_BEGIN_NAMESPACE
 
 // EK = exact kernel that will be made lazy
 // Kernel = lazy kernel
-template < typename EK, typename Kernel >
+template < typename EK_, typename Kernel >
 class Lazy_kernel_base
 //  : public EK::template Base<Kernel>::Type
 {
   //    typedef typename EK::template Base<Kernel>::Type   Kernel_base;
     // Hardcoded for now.
   //    typedef Simple_cartesian<Interval_nt_advanced>   AK; // A optimiser
+public:  
   typedef Simple_cartesian<Interval_nt<> >   AK;
-  //  typedef Cartesian_converter<Kernel_base, AK>     C2A;  // was C2E. which one is correct??
-  public:
-    typedef Cartesian_converter<EK, AK,
+  typedef EK_   EK;
+  typedef Cartesian_converter<EK, AK,
                                 To_interval<typename EK::RT> > E2A;
-public:
+
 
     template < typename Kernel2 >
     struct Base { typedef Lazy_kernel_base<EK, Kernel2>  Type; };
