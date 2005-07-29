@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -84,9 +83,8 @@ intersection(
 template <class K>
 inline
 Object
-intersection(
-    const Iso_rectangle_2<K> &irect1,
-    const Iso_rectangle_2<K> &irect2)
+intersection(const Iso_rectangle_2<K> &irect1,
+             const Iso_rectangle_2<K> &irect2)
 {
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(irect1, irect2);
@@ -95,14 +93,12 @@ intersection(
 
 template <class K>
 inline bool
-do_intersect(
-    const Iso_rectangle_2<K> &irect1,
-    const Iso_rectangle_2<K> &irect2)
+do_intersect(const Iso_rectangle_2<K> &irect1,
+             const Iso_rectangle_2<K> &irect2)
 {
-    Object obj(intersection(irect1, irect2));
-    typename K::Iso_rectangle_2 irect;
-    return (assign(irect, obj));
+    return ! intersection(irect1, irect2).is_empty();
 }
+
 CGAL_END_NAMESPACE
 
 #endif
