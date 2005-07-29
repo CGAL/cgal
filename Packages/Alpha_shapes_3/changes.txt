@@ -1,3 +1,6 @@
+29 July 2005 Andreas Fabri
+- Bugfix in output iterator: Faces of regular alpha shape are now oriented consistently
+
 29 April 2005 Mariette
 -  fix  the functions  get_alpha_shape_cells (facets, edges and cells)
    to make them take  into account their parameter alpha.
