@@ -393,15 +393,13 @@ public:
   template < class Stream> 		
   Stream& draw_dual(Stream & os)
     {
-      Finite_facets_iterator fit = finite_facets_begin();
-      for (; fit != finite_facets_end(); ++fit) {
+      for (Finite_facets_iterator fit = finite_facets_begin(),
+                                  end = finite_facets_end();
+           fit != end; ++fit) {
 	Object o = dual(*fit);
-	Point p;
-	Ray r;
-	Segment s;
-	if (CGAL::assign(p,o)) os << p;
-	if (CGAL::assign(s,o)) os << s;
-	if (CGAL::assign(r,o)) os << r; 
+	if (const Point *p   = object_cast<Point>(&o))   os << *p;
+	if (const Segment *s = object_cast<Segment>(&o)) os << *s;
+	if (const Ray *r     = object_cast<Ray>(&o))     os << *r; 
       }
       return os;
     }

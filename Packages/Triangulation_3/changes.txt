@@ -1,12 +1,15 @@
-8 july 2005 Mariette
+29 July 2005 Sylvain Pion
+- Use object_cast() instead of assign().
+
+8 July 2005 Mariette Yvinec
 - added the doc for is_Gabriel() member functions in
   Delaunay and regular triangulations
 
-7 july 2005 Mariette
+7 July 2005 Mariette Yvinec
 - added  the docs for predicates and constructors on weighted points
   in Regular_triangulation_euclidean_traits
 
-30 June 2005 Mariette
+30 June 2005 Mariette Yvinec
 - added find_conflicts  and dual functions in Regular triangulation,
   documented but not tested
 - added mirror_facet in Triangulation_3 and Triangulation_data_structure_3,
