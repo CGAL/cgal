@@ -618,11 +618,10 @@ insert_segment_on_point(const Storage_site_2& ss,
 
     insert_segment_interior(ss1.site(), ss1, vnear, level);
     return insert_segment_interior(ss2.site(), ss2, vnear, level);
-  } else {
-    Storage_site_2 ss1 = this->split_storage_site(ss, ssv, which, itag);
-
-    return insert_segment_interior(ss1.site(), ss1, vnear, level);
   }
+
+  Storage_site_2 ss1 = this->split_storage_site(ss, ssv, which, itag);
+  return insert_segment_interior(ss1.site(), ss1, vnear, level);
 }
 
 //--------------------------------------------------------------------

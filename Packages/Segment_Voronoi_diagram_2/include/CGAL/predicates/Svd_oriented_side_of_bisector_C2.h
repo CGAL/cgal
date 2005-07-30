@@ -134,16 +134,16 @@ private:
     if ( os_src != ON_NEGATIVE_SIDE ) {
       RT d2_s = compute_squared_distance(qq, ssrc);
       return CGAL::compare(d2_s, d2_p);
-    } else {
-      Oriented_side os_trg = oriented_side_of_line(ltrg, qq);
-      if ( os_trg != ON_POSITIVE_SIDE ) {
-	RT d2_s = compute_squared_distance(qq, strg);
-	return CGAL::compare(d2_s, d2_p);
-      } else {
-	std::pair<RT,RT> d2_s = compute_squared_distance(qq, ls);
-	return CGAL::compare(d2_s.first, d2_p * d2_s.second);
-      }
     }
+
+    Oriented_side os_trg = oriented_side_of_line(ltrg, qq);
+    if ( os_trg != ON_POSITIVE_SIDE ) {
+      RT d2_s = compute_squared_distance(qq, strg);
+      return CGAL::compare(d2_s, d2_p);
+    }
+
+    std::pair<RT,RT> d2_s = compute_squared_distance(qq, ls);
+    return CGAL::compare(d2_s.first, d2_p * d2_s.second);
   }
 
   //-----------------------------------------------------------------
@@ -267,6 +267,8 @@ private:
 			     d2_s2.first * d2_s1.second);
       }
     }
+    // to avoid compiler warning; the flow control never reaches this point
+    return EQUAL;
   }
 
   //-----------------------------------------------------------------

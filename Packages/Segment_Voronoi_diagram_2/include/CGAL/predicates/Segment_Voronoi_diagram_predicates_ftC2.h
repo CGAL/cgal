@@ -532,8 +532,12 @@ bool svd_are_same_points_C2(const typename K::Site_2& p,
   FT v[24];
   char site_types[4];
 
-  for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 2; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 24; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -588,9 +592,12 @@ Orientation svd_orientation_C2(const typename K::Site_2& p,
   FT v[36];
   char site_types[6];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 3; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 36; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -649,9 +656,12 @@ svd_oriented_side_of_bisector_ftC2(const typename K::Site_2& p,
   FT v[36];
   char site_types[6];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 3; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 36; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -719,9 +729,12 @@ svd_vertex_conflict_ftC2(const typename K::Site_2& p,
   FT v[36];
   char site_types[6];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 3; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 36; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -749,9 +762,12 @@ svd_vertex_conflict_ftC2(const typename K::Site_2& p,
   FT v[48];
   char site_types[8];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 4; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 48; ii++) {
+    v[ii] = FT(0);
   }
 
   typedef Svd_vertex_conflict_ftC2<FT,MTag,ITag,4> VC;
@@ -817,9 +833,12 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
   FT v[36];
   char site_types[6];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 3; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 36; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, sgn, site_types);
@@ -849,9 +868,12 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
   FT v[48];
   char site_types[8];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 4; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 48; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, sgn, site_types);
@@ -883,9 +905,12 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
   FT v[60];
   char site_types[10];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 5; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 5; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 60; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, sgn, site_types);
@@ -946,9 +971,12 @@ svd_infinite_edge_conflict_ftC2(const typename K::Site_2& q,
   FT v[48];
   char site_types[8];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 4; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 48; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, sgn, site_types);
@@ -1006,9 +1034,12 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
   FT v[48];
   char site_types[8];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 4; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 4; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 48; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -1066,8 +1097,12 @@ svd_arrangement_type_C2(const typename K::Site_2& p,
   FT v[24];
   char site_types[4];
 
-  for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 2; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 24; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -1122,9 +1157,12 @@ svd_are_parallel_C2(const typename K::Site_2& p,
   FT v[24];
   char site_types[4];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 2; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 2; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 24; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -1187,9 +1225,12 @@ svd_oriented_side_ftC2(const typename K::Site_2& q,
   FT v[36];
   char site_types[6];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 3; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 36; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
@@ -1220,9 +1261,12 @@ svd_oriented_side_ftC2(const typename K::Site_2& s1,
   FT v[60];
   char site_types[10];
 
-
-  for (unsigned int i = 0, k = 0, j = 0; i < 5; i++) {
+  unsigned int i, j, k;
+  for (i = 0, k = 0, j = 0; i < 5; i++) {
     svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+  for (unsigned int ii = k; ii < 60; ii++) {
+    v[ii] = FT(0);
   }
 
   return Predicate_ftC2()(v, site_types);
