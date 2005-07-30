@@ -509,8 +509,12 @@ public:
     Point_handle_pair php = register_input_site(p0, p1);
     Storage_site_2 ss =
       Storage_site_2::construct_storage_site_2(php.first, php.second);
-    return insert_segment(ss, Site_2::construct_site_2(p0, p1),
-			  Vertex_handle());
+    Vertex_handle v = insert_segment(ss, Site_2::construct_site_2(p0, p1),
+				     Vertex_handle());
+    if ( v == Vertex_handle() ) {
+      unregister_input_site(php.first, php.second);
+    }
+    return v;
   }
 
   inline Vertex_handle insert(const Point_2& p0, const Point_2& p1, 
@@ -519,7 +523,12 @@ public:
     Point_handle_pair php = register_input_site(p0, p1);
     Storage_site_2 ss =
       Storage_site_2::construct_storage_site_2(php.first, php.second);
-    return insert_segment(ss, Site_2::construct_site_2(p0, p1), vnear);
+    Vertex_handle v =
+      insert_segment(ss, Site_2::construct_site_2(p0, p1), vnear);
+    if ( v == Vertex_handle() ) {
+      unregister_input_site(php.first, php.second);
+    }
+    return v;
   }
 
   inline Vertex_handle  insert(const Site_2& t) {
@@ -540,7 +549,11 @@ public:
 			     t.target_of_supporting_site() );
       Storage_site_2 ss =
 	Storage_site_2::construct_storage_site_2(php.first, php.second);
-      return insert_segment(ss, t, vnear);
+      Vertex_handle v = insert_segment(ss, t, vnear);
+      if ( v == Vertex_handle() ) {
+	unregister_input_site( php.first, php.second );
+      }
+      return v;
     } else if ( t.is_point() ) {
       Point_handle ph = register_input_site( t.point() );
       Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
@@ -631,11 +644,8 @@ public:
   bool remove(const Vertex_handle& v);
 
 protected:
-  inline void unregister_input_site(const Point_2& p)
+  inline void unregister_input_site(const Point_handle& h)
   {
-    Point_handle h = pc_.find(p);
-    CGAL_assertion( h != pc_.end() );
-
     Site_rep_2 rep(h, h, true);
     typename Input_sites_container::iterator it = isc_.find(rep);
     CGAL_assertion( it != isc_.end() );
@@ -644,22 +654,19 @@ protected:
     isc_.erase(it);
   }
 
-  inline void unregister_input_site(const Point_2& p1, const Point_2& p2)
-  {
-    Point_handle h1 = pc_.find(p1);
-    Point_handle h2 = pc_.find(p2);
-    CGAL_assertion( h1 != pc_.end() );
-    CGAL_assertion( h2 != pc_.end() );
-
+  inline void unregister_input_site(const Point_handle& h1,
+				    const Point_handle& h2)
+  {   
     Site_rep_2 rep(h1, h2, false);
     typename Input_sites_container::iterator it = isc_.find(rep);
-    if ( it != isc_.end() ) { isc_.erase(it); }
     
     Site_rep_2 sym_rep(h2, h1, false);
     typename Input_sites_container::iterator sym_it = isc_.find(sym_rep);
-    if ( sym_it != isc_.end() ) { isc_.erase(sym_it); }
 
     CGAL_assertion( it != isc_.end() || sym_it != isc_.end() );
+
+    if ( it != isc_.end() ) { isc_.erase(it); }
+    if ( sym_it != isc_.end() ) { isc_.erase(sym_it); }
 
     Site_rep_2 r1(h1, h1, true);
     if ( isc_.find(r1) == isc_.end() ) { isc_.insert(r1); }

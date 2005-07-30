@@ -202,7 +202,11 @@ public:
     Point_handle_pair php = this->register_input_site(p0,p1);
     Storage_site_2 ss =
       Storage_site_2::construct_storage_site_2(php.first, php.second);
-    return insert_segment(p0, p1, ss, UNDEFINED_LEVEL);
+    Vertex_handle v = insert_segment(p0, p1, ss, UNDEFINED_LEVEL);
+    if ( v == Vertex_handle() ) {
+      this->unregister_input_site( php.first, php.second );
+    }
+    return v;
   }
 
   Vertex_handle insert(const Point_2& p, Vertex_handle) {
@@ -224,7 +228,12 @@ public:
 	this->register_input_site(t.source(), t.target());
       Storage_site_2 ss =
 	Storage_site_2::construct_storage_site_2(php.first, php.second);
-      return insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+      Vertex_handle v =
+	insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+      if ( v == Vertex_handle() ) {
+	this->unregister_input_site( php.first, php.second );
+      }
+      return v;
     } else if ( t.is_point() ) {
       Point_handle ph = this->register_input_site( t.point() );
       Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);

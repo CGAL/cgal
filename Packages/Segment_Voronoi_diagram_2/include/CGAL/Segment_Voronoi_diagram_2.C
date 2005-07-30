@@ -1454,7 +1454,7 @@ fill_hole(const Segment_Voronoi_diagram_2<Gt,DS,LTag>& small,
 	  const Vertex_handle& v, const List& l,
 	  std::map<Vertex_handle,Vertex_handle>& vmap)
 {
-#if 0
+#if 1
   std::cerr << "size of l  : " << l.size() << std::endl;
   std::cerr << "degree of v: " << degree(v) << std::endl;
 #endif
@@ -1588,7 +1588,6 @@ bool
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 remove_first(const Vertex_handle& v)
 {
-  // unregister site
   Delaunay_graph::remove_first(v);
   return true;
 }
@@ -1598,7 +1597,6 @@ bool
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 remove_second(const Vertex_handle& v)
 {
-  // unregister site
   Delaunay_graph::remove_second(v);
   return true;
 }
@@ -1608,7 +1606,6 @@ bool
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 remove_third(const Vertex_handle& v)
 {
-  // unregister site
   if ( is_degree_2(v) ) {
     CGAL_assertion( v->storage_site().is_point() );
     Face_handle fh( incident_faces(v) );
@@ -1683,10 +1680,29 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
       vh_small = small.infinite_vertex();
       vmap[vh_small] = vh_large;
     } else { 
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
+      vh_small = Vertex_handle();
+#endif
       Site_2 t = vc->site();
-      CGAL_assertion( t.is_input() );
-      if ( t.is_segment() ) {
-	Vertex_handle vv = small.nearest_neighbor( t.source() );
+      if ( t.is_input() ) {
+	if ( t.is_segment() ) {
+	  Vertex_handle vv = small.nearest_neighbor( t.source() );
+	  Vertex_circulator vvc_start = small.incident_vertices(vv);
+	  Vertex_circulator vvc = vvc_start;
+	  do {
+	    if ( small.same_segments(t, vvc) ) {
+	      vh_small = vvc;
+	      break;
+	    }
+	  } while ( ++vvc != vvc_start );
+	  CGAL_assertion( small.same_segments(t, vh_small) );
+	} else {
+	  vh_small = small.nearest_neighbor( t.point() );
+	  CGAL_assertion( small.same_points(t, vh_small->site()) );
+	}
+      } else if ( t.is_segment() ) {
+	Vertex_handle vv =
+	  small.nearest_neighbor( t.source_site(), Vertex_handle() );
 	Vertex_circulator vvc_start = small.incident_vertices(vv);
 	Vertex_circulator vvc = vvc_start;
 	do {
@@ -1697,7 +1713,8 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
 	} while ( ++vvc != vvc_start );
 	CGAL_assertion( small.same_segments(t, vh_small) );
       } else {
-	vh_small = small.nearest_neighbor( t.point() );
+	vh_small = small.nearest_neighbor( t, Vertex_handle() );
+	CGAL_assertion( small.same_points(t, vh_small->site()) );
       }
       CGAL_assertion( vh_small != Vertex_handle() );
       vmap[vh_small] = vh_large;
@@ -1840,18 +1857,27 @@ Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 remove(const Vertex_handle& v)
 {
   CGAL_precondition( !is_infinite(v) );
-  Site_2 t = v->site();
-  if ( !t.is_input() ) { return false; }
+  const Storage_site_2& ss = v->storage_site();
+
+  if ( !ss.is_input() ) { return false; }
+
+  Point_handle h1, h2;
+  if ( ss.is_point() ) {
+    h1 = ss.point();
+  } else {
+    CGAL_assertion( ss.is_segment() );    
+    h1 = ss.source_of_supporting_site();
+    h2 = ss.target_of_supporting_site();
+  }
 
   bool success = remove_base(v);
 
   if ( success ) {
     // unregister the input site
-    if ( t.is_point() ) {
-      unregister_input_site( t.point() );
+    if ( ss.is_point() ) {
+      unregister_input_site( h1 );
     } else {
-      CGAL_assertion( t.is_segment() );
-      unregister_input_site( t.source(), t.target() );
+      unregister_input_site( h1, h2 );
     }
   }
   return success;
@@ -1908,6 +1934,9 @@ nearest_neighbor(const Site_2& p,
   do {
     vclosest = v;
     Site_2 t0 = v->site();
+    //    if ( t0.is_point() && same_points(p, t0) ) {
+    //      return vclosest;
+    //    }
     Vertex_circulator vc_start = incident_vertices(v);
     Vertex_circulator vc = vc_start;
     do {
