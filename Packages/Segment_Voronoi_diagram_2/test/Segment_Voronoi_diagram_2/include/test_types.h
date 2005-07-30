@@ -294,6 +294,41 @@ bool test_svd(InputStream& is, const SVD&, char* fname)
   }
   end_testing("insertion methods");
 
+  start_testing("removal methods");
+  {
+    svd.clear();
+    svd.insert(site_list.begin(), site_list.end());
+    CGAL_assertion( svd.is_valid() );
+
+    unsigned int counter = 0;
+    Finite_vertices_iterator vit = svd.finite_vertices_begin();
+    do {
+      counter++;
+      bool success = svd.remove(vit);
+      if ( success ) {
+	vit = svd.finite_vertices_begin();
+      } else {
+	++vit;
+      }
+    } while ( vit != svd.finite_vertices_end() );
+  }
+  end_testing("removal methods");
+
+  {
+    // recover state of svd after testing removals
+    Vertex_handle v1 = svd.insert(p1);
+    svd.insert(p2, v1);
+    svd.insert(p1, p2);
+    svd.insert(p2, p3, v1);
+    svd.insert(t3);
+    svd.insert(t4, v1);
+
+    svd.insert(s3, v1);
+    svd.insert(s4, v1);
+
+    CGAL_assertion( svd.is_valid() );
+  }
+
   start_testing("nearest neighbor methods");
   {
     Vertex_handle vnearest = svd.nearest_neighbor(p1);
@@ -374,6 +409,10 @@ bool test_svd(InputStream& is, const SVD&, char* fname)
   Site_2 s5 = Site_2::construct_site_2(p5, p6);
 
   svd.insert(s5);
+
+  Site_2 s6 = Site_2::construct_site_2(p1, p4);
+
+  svd.insert(s6);
 
   start_testing("file I/O methods and I/O operators");
   {
