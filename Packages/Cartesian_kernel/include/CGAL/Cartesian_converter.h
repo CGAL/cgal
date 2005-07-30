@@ -232,7 +232,7 @@ public:
         typedef typename K2::Circle_2  Circle_2;
 	return Circle_2(operator()(a.center()),
 		        c(a.squared_radius()),
-			a.orientation());
+			a.rep().orientation());
     }
 
     typename K2::Triangle_2

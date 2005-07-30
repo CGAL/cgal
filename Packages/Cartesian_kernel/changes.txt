@@ -1,4 +1,7 @@
 30 July 2005 Sylvain Pion
+- Fix Cartesian_converter for Circle_2::orientation().
+
+30 July 2005 Sylvain Pion
 - Add some explicit casts to allow Uncertain<>.
 
 29 July 2005 Andreas Fabri
