@@ -42,14 +42,13 @@ struct Static_Filtered_sign_1
     (void) update_epsilon(b,_epsilon_0);
   }
 
-  static Sign epsilon_variant( const Restricted_double &a,
-                                const double & epsilon_0)
+  static Uncertain<Sign> epsilon_variant( const Restricted_double &a,
+                                          const double & epsilon_0)
   {    // return compare_SAF(a,0,epsilon);
     if (to_double(a)> epsilon_0) return POSITIVE;
     if (to_double(a)<-epsilon_0) return NEGATIVE;
     if (to_double(a)==0 && epsilon_0==0) return ZERO;
-    Interval_nt_advanced::number_of_failures++;
-    throw Interval_nt_advanced::unsafe_comparison();
+    return Uncertain<Sign>::indeterminate();
   }
 };
 
@@ -73,7 +72,7 @@ struct Static_Filtered_compare_2
     (void) update_epsilon(b,b,_epsilon_0);
   }
 
-  static Comparison_result epsilon_variant(
+  static Uncertain<Comparison_result> epsilon_variant(
           const Restricted_double &a,
           const Restricted_double &b,
           const double & epsilon_0)
@@ -81,8 +80,7 @@ struct Static_Filtered_compare_2
     if (to_double(a) > to_double(b)+epsilon_0) return LARGER;
     if (to_double(a) < to_double(b)-epsilon_0) return SMALLER;
     if (to_double(a)==to_double(b) && epsilon_0==0) return EQUAL;
-    Interval_nt_advanced::number_of_failures++;
-    throw Interval_nt_advanced::unsafe_comparison();
+    return Uncertain<Comparison_result>::indeterminate();
   }
 };
 

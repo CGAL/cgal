@@ -15,11 +15,12 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+           -I../../../Number_types/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) -W
+           $(LONG_NAME_PROBLEM_CXXFLAGS) # -W
 
 #---------------------------------------------------------------------#
 #                    linker flags

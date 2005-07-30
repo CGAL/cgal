@@ -1,3 +1,8 @@
+30 July 2005 Sylvain Pion
+- Add Uncertain<T>.
+- Use it in comparison operators and sign() and compare() of Interval_nt.
+- Use it instead of Certified::operators in Lazy_exact_nt.
+
 28 July 2005 Andreas Fabri
 - Added a functor to Lazy.h that writes the computed result in an OutputIterator 
   of Object

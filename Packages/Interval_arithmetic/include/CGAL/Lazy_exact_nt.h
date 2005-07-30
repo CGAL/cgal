@@ -395,9 +395,9 @@ operator<(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
   if (identical(a,b))
     return false;
-  std::pair<bool, bool> res = Certified::operator<(a.approx(), b.approx());
-  if (res.second)
-    return res.first;
+  Uncertain<bool> res = a.approx() < b.approx();
+  if (is_singleton(res))
+    return res;
   return a.exact() < b.exact();
 }
 
@@ -407,9 +407,9 @@ operator==(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
   if (identical(a,b))
     return true;
-  std::pair<bool, bool> res = Certified::operator==(a.approx(), b.approx());
-  if (res.second)
-    return res.first;
+  Uncertain<bool> res = a.approx() == b.approx();
+  if (is_singleton(res))
+    return res;
   return a.exact() == b.exact();
 }
 
@@ -419,9 +419,9 @@ template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, int b)
 {
-  std::pair<bool, bool> res = Certified::operator<(a.approx(), b);
-  if (res.second)
-    return res.first;
+  Uncertain<bool> res = a.approx() < b;
+  if (is_singleton(res))
+    return res;
   return a.exact() < b;
 }
 
@@ -429,9 +429,9 @@ template <typename ET>
 bool
 operator>(const Lazy_exact_nt<ET>& a, int b)
 {
-  std::pair<bool, bool> res = Certified::operator<(b, a.approx());
-  if (res.second)
-    return res.first;
+  Uncertain<bool> res = b < a.approx();
+  if (is_singleton(res))
+    return res;
   return b < a.exact();
 }
 
@@ -439,9 +439,9 @@ template <typename ET>
 bool
 operator==(const Lazy_exact_nt<ET>& a, int b)
 {
-  std::pair<bool, bool> res = Certified::operator==(b, a.approx());
-  if (res.second)
-    return res.first;
+  Uncertain<bool> res = b == a.approx();
+  if (is_singleton(res))
+    return res;
   return b == a.exact();
 }
 
@@ -479,9 +479,9 @@ inline
 Sign
 sign(const Lazy_exact_nt<ET> & a)
 {
-  std::pair<Sign, bool> res = Certified::sign(a.approx());
-  if (res.second)
-    return res.first;
+  Uncertain<Sign> res = sign(a.approx());
+  if (is_singleton(res))
+    return res;
   return CGAL_NTS sign(a.exact());
 }
 
@@ -492,10 +492,9 @@ compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 {
   if (identical(a,b))
     return EQUAL;
-  std::pair<Comparison_result, bool> res =
-                                    Certified::compare(a.approx(), b.approx());
-  if (res.second)
-    return res.first;
+  Uncertain<Comparison_result> res = compare(a.approx(), b.approx());
+  if (is_singleton(res))
+    return res;
   return CGAL_NTS compare(a.exact(), b.exact());
 }
 

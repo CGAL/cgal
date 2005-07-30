@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -38,31 +38,28 @@
 #include <CGAL/basic.h>
 #include <iostream>
 #include <CGAL/FPU.h>
+#include <CGAL/Uncertain.h>
 
 CGAL_BEGIN_NAMESPACE
-
-namespace CGALi {
-  struct Unsafe_comparison {};    // Exception class.
-}
 
 template <bool Protected = true>
 class Interval_nt
 {
   typedef Interval_nt<Protected>     IA;
   typedef std::pair<double, double>  Pair;
+
 public:
+
   typedef Tag_false   Has_gcd;
   typedef Tag_true    Has_division;
   typedef Tag_true    Has_sqrt;
 
-  // ??? MK: We may have to look back at these...
+  // We may have to look back at these...
   typedef Tag_false   Has_exact_ring_operations;
   typedef Tag_false   Has_exact_division;
   typedef Tag_false   Has_exact_sqrt;
 
-  typedef CGALi::Unsafe_comparison unsafe_comparison;
-
-  static unsigned number_of_failures;	// Number of filter failures.
+  typedef std::exception unsafe_comparison;
 
   Interval_nt() {}
 
@@ -90,6 +87,9 @@ public:
   Interval_nt(const Pair & p)
     : _inf(p.first), _sup(p.second) {}
 
+  static unsigned number_of_failures()
+  { return Uncertain<bool>::number_of_failures(); }
+
   IA operator-() const { return IA (-sup(), -inf()); }
 
   IA & operator+= (const IA &d) { return *this = *this + d; }
@@ -97,12 +97,6 @@ public:
   IA & operator*= (const IA &d) { return *this = *this * d; }
   IA & operator/= (const IA &d) { return *this = *this / d; }
   
-  static void overlap_action() // throw (unsafe_comparison)
-  {
-    number_of_failures++;
-    throw unsafe_comparison();
-  }
-
   // TODO : Maybe I should suppress these : they are useless and risky.
 
   // The (join, union, ||) operator.
@@ -156,56 +150,50 @@ private:
 };
 
 template <bool Protected>
-unsigned Interval_nt<Protected>::number_of_failures;
-
-template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator<(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 {
   if (a.sup()  < b.inf()) return true;
   if (a.inf() >= b.sup()) return false;
-  a.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator>(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 { return b < a; }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator<=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 {
   if (a.sup() <= b.inf()) return true;
   if (a.inf() >  b.sup()) return false;
-  a.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator>=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 { return b <= a; }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator==(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 {
   if (b.inf() >  a.sup() || b.sup() <  a.inf()) return false;
   if (b.inf() == a.sup() && b.sup() == a.inf()) return true;
-  a.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 { return ! (a == b); }
 
@@ -213,103 +201,97 @@ operator!=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator<(int a, const Interval_nt<Protected> &b)
 {
   if (a < b.inf()) return true;
   if (a >= b.sup()) return false;
-  b.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator>(int a, const Interval_nt<Protected> &b)
 { return b < a; }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator<=(int a, const Interval_nt<Protected> &b)
 {
   if (a <= b.inf()) return true;
   if (a >  b.sup()) return false;
-  b.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator>=(int a, const Interval_nt<Protected> &b)
 { return b <= a; }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator==(int a, const Interval_nt<Protected> &b)
 {
   if (b.inf() >  a || b.sup() <  a) return false;
   if (b.inf() == a && b.sup() == a) return true;
-  b.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator!=(int a, const Interval_nt<Protected> &b)
 { return ! (a == b); }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator<(const Interval_nt<Protected> &a, int b)
 {
   if (a.sup()  < b) return true;
   if (a.inf() >= b) return false;
-  a.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator>(const Interval_nt<Protected> &a, int b)
 { return b < a; }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator<=(const Interval_nt<Protected> &a, int b)
 {
   if (a.sup() <= b) return true;
   if (a.inf() >  b) return false;
-  a.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator>=(const Interval_nt<Protected> &a, int b)
 { return b <= a; }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator==(const Interval_nt<Protected> &a, int b)
 {
   if (b >  a.sup() || b <  a.inf()) return false;
   if (b == a.sup() && b == a.inf()) return true;
-  a.overlap_action();
-  return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
 inline
-bool
+Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, int b)
 { return ! (a == b); }
 
@@ -689,26 +671,24 @@ abs (const Interval_nt<Protected> & d)
 
 template <bool Protected>
 inline
-Sign
+Uncertain<Sign>
 sign (const Interval_nt<Protected> & d)
 {
   if (d.inf() > 0.0) return POSITIVE;
   if (d.sup() < 0.0) return NEGATIVE;
   if (d.inf() == d.sup()) return ZERO;
-  Interval_nt<Protected>::overlap_action();
-  return ZERO;
+  return Uncertain<Sign>::indeterminate();
 }
 
 template <bool Protected>
 inline
-Comparison_result
+Uncertain<Comparison_result>
 compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
   if (d.inf() > e.sup()) return LARGER;
   if (e.inf() > d.sup()) return SMALLER;
   if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
-  Interval_nt<Protected>::overlap_action();
-  return EQUAL;
+  return Uncertain<Comparison_result>::indeterminate();
 }
 
 inline
@@ -729,99 +709,6 @@ to_interval (const long & l)
 #endif
     return std::pair<double,double>(l,l);
 }
-
-
-namespace Certified {
-
-// The following functions are similar to their CGAL:: counterparts, except
-// that they notify the non-guaranteed case by the return value, instead of
-// by throwing an exception which can be costly.
-// They return a pair<X, bool>, where the second member is true if the
-// comparison is guaranteed, and false otherwise.
-
-template <bool Protected>
-inline
-std::pair<bool, bool>
-operator<(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
-{
-  if (a.sup()  < b.inf()) return std::make_pair(true, true);
-  if (a.inf() >= b.sup()) return std::make_pair(false, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(false, false);
-}
-
-template <bool Protected>
-inline
-std::pair<bool, bool>
-operator<(int a, const Interval_nt<Protected> &b)
-{
-  if (a  < b.inf()) return std::make_pair(true, true);
-  if (a >= b.sup()) return std::make_pair(false, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(false, false);
-}
-
-template <bool Protected>
-inline
-std::pair<bool, bool>
-operator<(const Interval_nt<Protected> &a, int b)
-{
-  if (a.sup()  < b) return std::make_pair(true, true);
-  if (a.inf() >= b) return std::make_pair(false, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(false, false);
-}
-
-template <bool Protected>
-inline
-std::pair<bool, bool>
-operator==(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
-{
-  if (b.inf() >  a.sup() || b.sup() <  a.inf())
-    return std::make_pair(false, true);
-  if (b.inf() == a.sup() && b.sup() == a.inf())
-    return std::make_pair(true, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(false, false);
-}
-
-template <bool Protected>
-inline
-std::pair<bool, bool>
-operator==(int a, const Interval_nt<Protected> &b)
-{
-  if (b.inf() >  a || b.sup() <  a) return std::make_pair(false, true);
-  if (b.inf() == a && b.sup() == a) return std::make_pair(true, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(false, false);
-}
-
-template <bool Protected>
-inline
-std::pair<Sign, bool>
-sign (const Interval_nt<Protected> & d)
-{
-  if (d.inf() > 0.0) return std::make_pair(POSITIVE, true);
-  if (d.sup() < 0.0) return std::make_pair(NEGATIVE, true);
-  if (d.inf() == d.sup()) return std::make_pair(ZERO, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(ZERO, false);
-}
-
-template <bool Protected>
-inline
-std::pair<Comparison_result, bool>
-compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
-{
-  if (d.inf() > e.sup()) return std::make_pair(LARGER, true);
-  if (e.inf() > d.sup()) return std::make_pair(SMALLER, true);
-  if (e.inf() == d.sup() && d.inf() == e.sup())
-    return std::make_pair(EQUAL, true);
-  Interval_nt<Protected>::number_of_failures++;
-  return std::make_pair(EQUAL, false);
-}
-
-} // namespace Certified
 
 CGAL_END_NAMESPACE
 
