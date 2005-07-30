@@ -2,6 +2,8 @@
 - Add Uncertain<T>.
 - Use it in comparison operators and sign() and compare() of Interval_nt.
 - Use it instead of Certified::operators in Lazy_exact_nt.
+- Filtered_predicate : use is_indeterminate() on AP's result_type to replace
+  some exceptions by normal control flow.
 
 28 July 2005 Andreas Fabri
 - Added a functor to Lazy.h that writes the computed result in an OutputIterator 
