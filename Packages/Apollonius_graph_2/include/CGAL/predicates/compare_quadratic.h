@@ -517,6 +517,8 @@ ke_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
     if ( s_P4 == NEGATIVE )  { return SMALLER; }
     return EQUAL;
   }
+  // to avoid warning; the control flow never reaches this point
+  return EQUAL;
 }
 
 template < class FT >
@@ -716,6 +718,8 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
     if ( s_G == POSITIVE ) { return LARGER; }
     return EQUAL;
   }
+  // to avoid warning; the control flow never reaches this point
+  return EQUAL;
 }
 
 
