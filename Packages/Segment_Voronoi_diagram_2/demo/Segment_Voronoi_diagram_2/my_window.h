@@ -275,6 +275,35 @@ private:
       SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
 
       std::cerr << "degree: " << svd.data_structure().degree(v) << std::endl;
+
+      if ( svd.dimension() == 2 ) {
+	SVD_2::Face_circulator fc_start = svd.incident_faces(v);
+	SVD_2::Face_circulator fc = fc_start;
+	do {
+	  int id = fc->index(v);
+	  SVD_2::Vertex_handle vopp = svd.tds().mirror_vertex(fc, id);
+	  std::cerr << "Testing incircle: " << std::endl;
+	  if ( !svd.is_infinite(fc->vertex(0)) &&
+	       !svd.is_infinite(fc->vertex(1)) &&
+	       !svd.is_infinite(fc->vertex(2)) &&
+	       !svd.is_infinite(vopp) ) {
+	    SVD_2::Geom_traits::Vertex_conflict_2 incircle = 
+	      svd.geom_traits().vertex_conflict_2_object();
+	    std::cerr << "  vertices of face: " << std::endl;
+	    for (int i = 0; i < 3; i++) {
+	      std::cerr << "     " << fc->vertex(i)->site() << std::endl;
+	    }
+	    std::cerr << "  other vertex: " << vopp->site() << std::endl;
+	    CGAL::Sign s = incircle(fc->vertex(0)->site(),
+				    fc->vertex(1)->site(),
+				    fc->vertex(2)->site(),
+				    vopp->site());
+	    std::cerr << "  incircle: " << int(s) << std::endl;
+	  }
+	} while ( ++fc != fc_start );
+      }
+
+
       if ( v->site().is_segment() &&
 	   !v->site().is_input() ) {
 	std::cerr << "site: " << v->site() << std::endl;
@@ -397,8 +426,8 @@ private slots:
       }
     }
 
-    //    svd.is_valid(true,1);
-    //    std::cerr << std::endl;
+    svd.is_valid(true,1);
+    std::cerr << std::endl;
     widget->redraw();
   }
 

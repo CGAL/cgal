@@ -22,40 +22,31 @@
 
 #include <CGAL/basic.h>
 
-//#include <CGAL/Filtered_exact.h>
-//typedef CGAL::Filtered_exact<double,CGAL::Gmpq> NT;
-
-#define USE_FILTERED_TRAITS 1
+#define USE_FILTERED_TRAITS
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
+#ifdef CGAL_USE_CORE
+#  include <CGAL/CORE_Expr.h>
+#endif
 
 #include <CGAL/Segment_Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
+#include <CGAL/Segment_Voronoi_diagram_traits_2.h>
 #include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
 
-#if USE_FILTERED_TRAITS
+#if defined(USE_FILTERED_TRAITS) || !defined(CGAL_USE_CORE)
 struct Rep : public CGAL::Simple_cartesian<double> {};
 #else
-struct Rep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
-//struct Rep : public CGAL::Simple_cartesian<NT> {};
-
-namespace CGAL {
-
-  CGAL::Gmpq sqrt(const CGAL::Gmpq& x)
-  {
-    return CGAL::Gmpq(  sqrt( CGAL::to_double(x) )  );
-  }
-
-}
+struct Rep : public CGAL::Simple_cartesian<CORE::Expr> {};
 #endif
 
-#if USE_FILTERED_TRAITS
+#ifdef USE_FILTERED_TRAITS
 struct Gt
   : public CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep> {};
 #else
 struct Gt
-  : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Ring_tag> {};
+  : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Field_tag> {};
 #endif
 
 typedef Gt::Point_2            Point_2;
