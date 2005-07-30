@@ -5,20 +5,12 @@
 #include <cassert>
 
 // choose number type
-#ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpq.h>
-#else
-#  include <CGAL/MP_Float.h>
-#endif
+#include <CGAL/MP_Float.h>
 
 #include <CGAL/Filtered_exact.h>
 
 typedef double         inexact_type;
-#ifdef CGAL_USE_GMP
-typedef CGAL::Gmpq     exact_type;
-#else
 typedef CGAL::MP_Float exact_type;
-#endif
 
 typedef CGAL::Filtered_exact<inexact_type,exact_type>  number_t;
 

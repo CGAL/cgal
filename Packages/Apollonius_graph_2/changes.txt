@@ -1,6 +1,7 @@
 30 July 2005:  Menelaos Karavelas
 - fixed "control reaches end of non-void function" warnings in g++ 4.0.0 of
   MacOS X Tiger
+- reverted MP_Float related change in test_ag_hierarchy_2.C
 
 22 July 2005:  Menelaos Karavelas
 - fixed problems created with wrong insertion of copyright headers in demo
