@@ -94,10 +94,13 @@ public:
   Uncertain()
     : _i(CGALi::Minmax_traits<T>::min),
       _s(CGALi::Minmax_traits<T>::max) {}
+
   Uncertain(const T & t)
     : _i(t), _s(t) {}
+
   Uncertain(const T & i, const T & s)
     : _i(i), _s(s) {}
+
 
   const T & inf() const { return _i; }
   const T & sup() const { return _s; }
@@ -151,6 +154,13 @@ Uncertain<T>
 Uncertain<T>::indeterminate()
 {
   return Uncertain<T>();
+}
+
+template < typename T >
+inline
+bool is_indeterminate(T const& a)
+{
+  return false;
 }
 
 template < typename T >
