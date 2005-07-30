@@ -1,3 +1,6 @@
+30 July 2005 Sylvain Pion
+- Change return type of sign() and compare() of Interval_nt to Uncertain<>.
+
 29 July 2005 Sylvain Pion
 - Quotient : Add template ctor from Quotient<NT2>.
 

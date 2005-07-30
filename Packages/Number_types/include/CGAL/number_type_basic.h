@@ -51,6 +51,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
 #include <CGAL/int.h>
+#include <CGAL/Uncertain.h>
 
 // Including all number type files is necessary for compilers implementing
 // two-stage name lookup (like g++ >= 3.4).
@@ -228,10 +229,10 @@ template <bool Protected>
 Interval_nt<Protected> abs (const Interval_nt<Protected> &);
 
 template <bool Protected>
-Sign sign (const Interval_nt<Protected> &);
+Uncertain<Sign> sign (const Interval_nt<Protected> &);
 
 template <bool Protected>
-Comparison_result
+Uncertain<Comparison_result>
 compare (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
 
 // Filtered_exact
