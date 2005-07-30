@@ -60,7 +60,7 @@ public:
   typedef  R_                        R;
 
   Vector_2()
-    :RVector_2(typename R::Construct_vector_2()().rep()) 
+    :RVector_2(typename R::Construct_vector_2()().rep())
   {}
 
   Vector_2(const Point_2& a, const Point_2& b)
@@ -76,12 +76,12 @@ public:
 
   Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v).rep()) {}
 
-  Vector_2(const RT &x, const RT &y) 
-    : RVector_2(typename R::Construct_vector_2()(x,y).rep()) 
+  Vector_2(const RT &x, const RT &y)
+    : RVector_2(typename R::Construct_vector_2()(x,y).rep())
   {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
-    : RVector_2(typename R::Construct_vector_2()(x,y,w).rep()) 
+    : RVector_2(typename R::Construct_vector_2()(x,y,w).rep())
   {}
 
 
@@ -95,13 +95,13 @@ public:
     return R().compute_y_2_object()(*this);
   }
 
-   Cartesian_coordinate_type cartesian(int i) const
+  Cartesian_coordinate_type cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  Cartesian_coordinate_type 
+  Cartesian_coordinate_type
   operator[](int i) const
   {
       return cartesian(i);
@@ -122,7 +122,7 @@ public:
     return R().compute_hw_2_object()(*this);
   }
 
-   Cartesian_coordinate_type homogeneous(int i) const
+  Cartesian_coordinate_type homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
     return (i==0) ?  hx() : (i==1)? hy() : hw();
@@ -137,23 +137,28 @@ public:
   {
     return R().construct_opposite_vector_2_object()(*this);
   }
-  
+
   Vector_2 operator-(const Vector_2& v) const
   {
     return R().construct_difference_of_vectors_2_object()(*this,v);
   }
-  
+
   Vector_2 operator+(const Vector_2& v) const
   {
     return R().construct_sum_of_vectors_2_object()(*this,v);
   }
-  
-  Vector_2 operator/(const RT& c)
+
+  Vector_2 operator/(const RT& c) const
   {
-   return R().construct_divided_vector_2_object()(*this,c); 
+   return R().construct_divided_vector_2_object()(*this,c);
   }
- 
- FT squared_length() const
+
+  Vector_2 operator/(const typename First_if_different<FT,RT>::Type & c) const
+  {
+   return R().construct_divided_vector_2_object()(*this,c);
+  }
+
+  FT squared_length() const
   {
     return R().compute_squared_length_2_object()(*this);
   }

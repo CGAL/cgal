@@ -1,3 +1,6 @@
+30 July 2005 Sylvain Pion
+- Add Vector_2::operator/(FT).
+
 25 July 2005 Andreas Fabri
 - doc : Fix Kernel_traits<T> which mentioned T::Kernel instead of T::R.
 
@@ -6,7 +9,7 @@
 
 22 July 2005 Andreas Fabri
 - Added Qualified_result_of<> for Circle_2.center()
- 
+
 20 July 2005 Andreas Fabri
 - Added qualified_result_type
 
