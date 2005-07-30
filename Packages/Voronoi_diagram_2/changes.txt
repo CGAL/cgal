@@ -1,3 +1,7 @@
+30 July 2005:  Menelaos Karavelas
+- removed duplicate typedef in Virtual_Voronoi_diagram_base_2 class;
+  g++ version 4.x.x was complaining.
+
 20 July 2005:  Menelaos Karavelas
 - demo: added halfedge classes that derive from the halfedge class of the
   adaptor, that are used for drawing to Qt_widget

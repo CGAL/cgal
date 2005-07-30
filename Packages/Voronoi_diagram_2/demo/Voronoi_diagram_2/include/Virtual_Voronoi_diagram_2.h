@@ -64,7 +64,6 @@ class Virtual_Voronoi_diagram_base_2
   typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
   typedef typename Base::Edge_iterator            Edge_iterator;
   typedef typename Base::Generator_iterator       Generator_iterator;
-  typedef typename Base::Locate_result            Locate_result;
 
   typedef Halfedge_with_draw_t                    Halfedge_with_draw;
 
