@@ -387,7 +387,7 @@ compare_lexicographically_xyC2(const FT &px, const FT &py,
                                const FT &qx, const FT &qy)
 {
   Comparison_result c = CGAL_NTS compare(px,qx);
-  return (c != EQUAL) ? c : CGAL_NTS compare(py,qy);
+  return (c != EQUAL) ? c : (Comparison_result) CGAL_NTS compare(py,qy);
 }
 
 template < class FT >
@@ -498,7 +498,8 @@ side_of_bounded_circleC2(const FT &px, const FT &py,
                          const FT &tx, const FT &ty)
 {
   // Returns whether T lies inside or outside the circle which diameter is PQ.
-  return Bounded_side( CGAL_NTS compare((tx-px)*(qx-tx), (ty-py)*(ty-qy)) );
+  return Bounded_side((Comparison_result)
+                      CGAL_NTS compare((tx-px)*(qx-tx), (ty-py)*(ty-qy)) );
 }
 
 template < class FT >

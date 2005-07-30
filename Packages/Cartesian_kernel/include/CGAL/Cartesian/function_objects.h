@@ -156,7 +156,8 @@ namespace CartesianKernelFunctors {
     operator()( const Circle_2& c, const Point_2& p) const
     { 
       typename K::Compute_squared_distance_2 squared_distance;
-      return Bounded_side(CGAL_NTS compare(c.squared_radius(),
+      return Bounded_side((Comparison_result)
+                          CGAL_NTS compare(c.squared_radius(),
 					   squared_distance(c.center(),p)));
     }
 

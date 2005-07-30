@@ -190,8 +190,9 @@ SphereC3<R>::
 bounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
     // FIXME: it's a predicate...
-  return Bounded_side(CGAL_NTS compare(squared_radius(),
-                                       squared_distance(center(),p)));
+  return Bounded_side((Comparison_result)
+                       CGAL_NTS compare(squared_radius(),
+                                        squared_distance(center(),p)));
 }
 
 template < class R >
