@@ -528,7 +528,7 @@ ke_compare_l1_r2(const FT& a1, const FT& b1, const FT& c1,
 		 const FT& a2, const FT& b2, const FT& c2)
 {
   FT J = value_of_J(a1, b1, a2, b2);
-  FT s_J = CGAL::sign(J);
+  Sign s_J = CGAL::sign(J);
 
 #if 0
   if ( s_J == ZERO ) {
@@ -581,7 +581,7 @@ ke_compare_r1_l2(const FT& a1, const FT& b1, const FT& c1,
 		 const FT& a2, const FT& b2, const FT& c2)
 {
   FT J = value_of_J(a1, b1, a2, b2);
-  FT s_J = CGAL::sign(J);
+  Sign s_J = CGAL::sign(J);
 
 #if 0
   if ( s_J == ZERO ) {
