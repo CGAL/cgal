@@ -707,7 +707,7 @@ private:
     FT d2 = CGAL::square(x() - t.x()) +
       CGAL::square(y() - t.y());
 
-    return Sign( CGAL::compare(d2, r2) );
+    return Sign( (Comparison_result) CGAL::compare(d2, r2) );
   }
 
   //--------------------------------------------------------------------------
@@ -784,7 +784,7 @@ private:
 
     FT d2 = CGAL::square(l.a() * x() + l.b() * y() + l.c());
 
-    return Sign( CGAL::compare(d2, r2 * n2) );
+    return Sign( (Comparison_result) CGAL::compare(d2, r2 * n2) );
   }
 
 

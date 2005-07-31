@@ -1454,7 +1454,7 @@ fill_hole(const Segment_Voronoi_diagram_2<Gt,DS,LTag>& small,
 	  const Vertex_handle& v, const List& l,
 	  std::map<Vertex_handle,Vertex_handle>& vmap)
 {
-#if 1
+#if 0
   std::cerr << "size of l  : " << l.size() << std::endl;
   std::cerr << "degree of v: " << degree(v) << std::endl;
 #endif

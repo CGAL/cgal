@@ -1,3 +1,6 @@
+31 July 2005:  Menelaos Karavelas
+- added explicit cast for enums, in order to support Uncertain<T>
+
 30 July 2005:  Menelaos Karavelas
 - fixed bug in computation of predicates when filtered exact was used:
   some values in the arrays used where unitialized
