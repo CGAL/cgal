@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}[Arrangement_2<Traits,Dcel>::]{Halfedge}
+\ccRefLabel{arr_ref:halfedge}
+
+\ccDefinition
+An object $e$ of the class \ccRefName\ represents a halfedge in the
+arrangement. A halfedge is directed from its \emph{source} vertex
+to its \emph{target} vertex, and has an \emph{incident face} lying to
+its right. Each halfedge has a \emph{twin} halfedge directed in the
+opposite direction, where the pair of twin halfedges form together
+an arrangement edge, that is --- a $1$-dimensional cell, associated
+with planar $x$-monotone curve.
+
+Halfedges are sotred in doubly-connected lists and form chains. These
+chains define the inner and outer boundaries of connceted components.
+
+\ccInheritsFrom
+    \ccHtmlNoLinksFrom{\ccc{typename Dcel::Halfedge}}
+
+\ccCreation
+\ccCreationVariable{e}
+%=====================
+
+\ccConstructor{Halfedge();}
+   {default constructor.}    	    
+    
+\ccAccessFunctions
+%=================
+
+All non-const methods listed below also have \ccc{const} counterparts
+that return constant handles, iterators or circulators:
+    
+\ccMethod{Halfedge_handle handle();}
+    {returns a handle for the halfedge \ccVar{}.}
+
+\ccMethod{Vertex_handle source();}
+    {returns a handle for the source vertex of \ccVar{}.}
+\ccGlue
+\ccMethod{Vertex_handle target();}
+    {returns a handle for the the target vertex of \ccVar{}.}
+
+\ccMethod{Face_handle face();}
+    {returns the face that \ccVar{} is incident to (lying to its left).}
+
+\ccMethod{Halfedge_handle twin();}
+    {returns the twin halfedge.}
+
+\ccMethod{Halfedge_handle prev();}
+    {returns \ccVar{}'s predecessor in the connected component it belongs to.}
+\ccGlue
+\ccMethod{Halfedge_handle next();}
+    {returns \ccVar{}'s successor in the connected component it belongs to.}
+
+\ccMethod{Ccb_halfedge_circulator ccb();}
+    {returns a circulator that allows going over the halfedges of the
+     connected component boundary (CCB) that contains \ccVar{}.
+     The circulator is initialized to point to \ccVar{}.}
+
+\ccMethod{const typename Traits::X_monotone_curve_2& curve() const;}
+    {returns the $x$-monotone curve associated with \ccVar{}.}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
