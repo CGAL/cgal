@@ -1,3 +1,6 @@
+31 July 2005 Sylvain Pion
+- Add missing include in last change.
+
 30 July 2005 Sylvain Pion
 - Add Vector_2::operator/(FT).
 
