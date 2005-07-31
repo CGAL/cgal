@@ -1,3 +1,6 @@
+31 July 2005 Sylvain Pion
+- Regular predicates : add casts to support Uncertain<>.
+
 29 July 2005 Sylvain Pion
 - Use object_cast() instead of assign().
 

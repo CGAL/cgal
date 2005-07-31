@@ -152,7 +152,7 @@ template <class FT>
 Oriented_side
 power_testC3(const FT &pwt, const FT &qwt)
 {
-    return Oriented_side(CGAL_NTS compare(qwt, pwt));
+    return Oriented_side((Comparison_result) CGAL_NTS compare(qwt, pwt));
 }
 
 

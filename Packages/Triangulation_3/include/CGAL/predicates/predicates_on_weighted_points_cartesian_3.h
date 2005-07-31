@@ -41,7 +41,7 @@ compare_power_distanceC3(
  FT drx = rx - px;
  FT dry = ry - py;
  FT drz = rz - pz;
-   return Comparison_result(CGAL_NTS sign (
+   return Comparison_result((Sign) CGAL_NTS sign (
       (dqx*dqx + dqy*dqy + dqz*dqz - qw )
     - (drx*drx + dry*dry + drz*drz - rw ) ));
 }
