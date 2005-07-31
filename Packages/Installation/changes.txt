@@ -1,3 +1,8 @@
+31 July 2005 Menelaos Karavelas
+- added additional C++ flag (-frounding-math) for g++ 4 for Darwin 8.x:
+  -frounding-math is required for correct floating point operations
+  necessary for interval arithmetic
+
 11 May 2005 Sylvain Pion
 - Re-fix Intel compiler recognition.
 
