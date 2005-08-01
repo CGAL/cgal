@@ -1,3 +1,7 @@
+1 August 2005 Sylvain Pion
+- Use Rational_traits instead of Kernel::make_FT.
+- Use square() in some places, and some other micro optimizations.
+
 11 May 2005 Sylvain Pion
 - Remove orientation(2 Vector_2) (now in kernel proper).
 
