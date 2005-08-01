@@ -44,13 +44,7 @@ struct Cartesian_base_no_ref_count
     template < typename Kernel2 >
     struct Base { typedef Cartesian_base_no_ref_count<FT_, Kernel2>  Type; };
 
-    // TODO: cleanup (use Rational_traits<> instead)
-    static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}
-    static   FT make_FT(const RT & num)                  { return num;}
-    static   RT FT_numerator(const FT &r)                { return r;}
-    static   RT FT_denominator(const FT &)               { return RT(1);}  
-
-typedef Kernel_ K;
+    typedef Kernel_ K;
 #define CGAL_Kernel_pred(Y,Z) typedef CartesianKernelFunctors::Y<K> Y; \
                               Y Z() const { return Y(); }
 #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)

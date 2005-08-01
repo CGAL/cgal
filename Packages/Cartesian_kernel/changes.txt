@@ -1,3 +1,7 @@
+1 August 2005 Sylvain Pion
+- Remove K::make_FT and K::FT_{numerator|denominator}
+  (replaced by Rational_traits).
+
 30 July 2005 Sylvain Pion
 - Fix Cartesian_converter for Circle_2::orientation().
 

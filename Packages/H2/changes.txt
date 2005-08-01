@@ -1,3 +1,7 @@
+1 August 2005 Sylvain Pion
+- Remove K::make_FT and K::FT_{numerator|denominator}
+  (replaced by Rational_traits).
+
 20 July 2005 Andreas Fabri
 - Added qualified_result_type
 

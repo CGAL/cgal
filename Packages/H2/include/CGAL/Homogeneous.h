@@ -46,19 +46,6 @@ struct Homogeneous_base_ref_count
     struct Base {
         typedef Homogeneous_base_ref_count<RT_,FT_,Kernel2> Type;
     };
-
-    // TODO: cleanup (use Rational_traits<> instead)
-    static FT make_FT(const RT & num, const RT& denom)
-    { return FT(num, denom); }
-
-    static FT make_FT(const RT & num)
-    { return FT(num); }
-
-    static RT FT_numerator(const FT &r)
-    { return r.numerator(); }
-
-    static RT FT_denominator(const FT &r)
-    { return r.denominator(); }
 };
 
 template < typename RT_, typename FT_ = Quotient<RT_> >
