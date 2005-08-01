@@ -6,41 +6,57 @@ Given a set $\mathcal{C}$ of planar curves, the {\em arrangement}
 ${\mathcal A}({\mathcal C})$ is the subdivision of the plane induced
 by the curves in $\mathcal{C}$ into maximally connected cells. The cells
 can be $0$-dimensional ({\em vertices}), $1$-dimensional ({\em edges})
-or $2$-dimensional ({\em faces}). The {\em planar map} of ${\mathcal
-A}({\mathcal C})$ is the embedding of the arrangement as a planar
-graph, such that each arrangement vertex corresponds to a planar
-point, and each edge corresponds to a planar subcurve of one of the
-curves in ${\mathcal C}$.
-The class \ccc{Arrangement_2<Traits,Dcel>} is a data structure that maintains
-arrangements in the plane. In particular, the data structure maintains a
-planar map perhaps with its features exsented with additional information.
+or $2$-dimensional ({\em faces}).
+
+The class \ccc{Arrangement_2<Traits,Dcel>} encapsulates a data structure
+that maintains arrangements of arbitrary bounded planar curves. It comes
+with a variety of algorithms that operate on planar arrangement,
+such as point-location queries and overlay computations, which are
+implemented as peripheral classes or as global functions.
 
 \begin{ccTexOnly}
 
 \subsection*{Concepts}
-\ccRefConceptPage{Arrangement_2}\\
+
+\ccRefConceptPage{ArrangementDcel}\\
+\ccRefConceptPage{ArrangementDcelVertex}\\
+\ccRefConceptPage{ArrangementDcelHalfedge}\\
+\ccRefConceptPage{ArrangementDcelFace}\\
+\ccRefConceptPage{ArrangementBasicTraits_2}\\
+\ccRefConceptPage{ArrangementLandmarkTraits_2}\\
+\ccRefConceptPage{ArrangementXMonotoneTraits_2}\\
 \ccRefConceptPage{ArrangementTraits_2}\\
-\ccRefConceptPage{ArrangementEcel_2}\\
-\ccRefConceptPage{ArrangementEcelVertex_2}\\
-\ccRefConceptPage{ArrangementEcelHalfedge_2}\\
-\ccRefConceptPage{ArrangementEcelFace_2}\\
 \ccRefConceptPage{ArrangementPointLocation_2}\\
-\ccRefConceptPage{ArrangementObserver_2}\\
+\ccRefConceptPage{ArrangementVerticalRayShoot_2}\\
+
 
 \subsection*{Classes}
+
 \ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>}\\
-\ccRefIdfierPage{CGAL::Arr_trapezoid_ric_point_location<Arrangement_2>}\\
-\ccRefIdfierPage{CGAL::Arr_naive_point_location<Arrangement_2>}\\
-\ccRefIdfierPage{CGAL::Arr_walk_along_a_line_point_location<Arrangement_2>}\\
-\ccRefIdfierPage{CGAL::Arr_landmark_point_location<Arrangement_2>}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>::Vertex}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>::Face}\\
 \ccRefIdfierPage{CGAL::Arr_default_dcel<Traits>}\\
 \ccRefIdfierPage{CGAL::Arr_segment_traits_2<Kernel>}\\
 \ccRefIdfierPage{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
 \ccRefIdfierPage{CGAL::Arr_polyline_traits_2<Segment_traits_2>}\\
 \ccRefIdfierPage{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>}\\
 \ccRefIdfierPage{CGAL::Arr_rational_arc_traits_2<Alg_kernel,Nt_traits>}\\
+\ccRefIdfierPage{CGAL::Arr_naive_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_walk_along_a_line_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_landmark_point_location<Arrangement,Generator>}\\
+
 
 \subsection*{Functions}
+
 \ccRefIdfierPage{CGAL::insert}\\
+\ccRefIdfierPage{CGAL::insert_x_monotone}\\
+\ccRefIdfierPage{CGAL::insert_non_intersecting}\\
+\ccRefIdfierPage{CGAL::remove_edge}\\
+\ccRefIdfierPage{CGAL::insert_vertex}\\
+\ccRefIdfierPage{CGAL::remove_vertex}\\
+\ccRefIdfierPage{CGAL::locate}\\
+\ccRefIdfierPage{CGAL::overlay}\\
 
 \end{ccTexOnly}    

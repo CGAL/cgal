@@ -1,0 +1,136 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcel}
+
+A doubly-connected edge-list (\dcel\ for short) data-structure consists
+of three containers of records: vertices $V$, halfedges $E$ and faces $F$
+and maintains the incidence relation among them. The halfedges are ordered
+in pairs, such that each halfedge pair form an edge.
+
+A model for the \ccRefName\ concept must provide the following types and 
+operations. (In addition to the requirements here, the local types 
+\ccHtmlNoLinksFrom{\ccStyle{Vertex},\ccStyle{Halfedge} and \ccStyle{Face}}
+must be models of the concepts 
+\ccc{ArrangementDcelVertex}\lcTex{ 
+(\ccRefPage{ArrangementDcelVertex})},
+\ccc{ArrangementDcelHalfedge}\lcTex{
+(\ccRefPage{ArrangementDcelHalfedge})} and
+\ccc{ArrangementDcelFace}\lcTex{
+(\ccRefPage{ArrangementDcelFace})} respectively.)
+
+\ccTypes
+%=======
+
+\ccNestedType{Vertex}{the vertex type.}
+\ccGlue
+\ccNestedType{Halfedge}{the halfedge type.}
+\ccGlue
+\ccNestedType{Face}{the face type.}
+
+\ccNestedType{Size}{used to represent size values (equivalent to \ccc{size_t}.}
+
+\ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+	       vertices. Its value-type is \ccStyle{Vertex*}.}
+\ccGlue
+\ccNestedType{Halfedge_iterator}{a bidirectional iterator over the
+	      halfedges. Its value-type is \ccStyle{Halfedge*}.}
+\ccGlue
+\ccNestedType{Face_iterator}{a bidirectional iterator over the
+	      faces. Its value-type is \ccStyle{Face*}.}
+
+The non-mutable iterators \ccc{Vertex_const_iterator},
+\ccc{Halfedge_const_iterator} and \ccc{Face_const_iterator} are also
+defined.
+
+\ccCreation
+\ccCreationVariable{dcel}
+%========================
+    
+\ccConstructor{Arr_dcel();}
+   {constructs an empty \dcel\ with one unbouned face.}
+
+\ccMethod{Face* assign (const Self& other, const Face *uf);}
+   {assigns the contents of the \ccc{other} \dcel\, whose unbounded face
+    is given by \ccc{uf}, to \ccVar{}. The function returns a pointer to
+    the unbounded face of \ccVar{} after the assignment.}
+
+
+\ccAccessFunctions
+%=================
+    
+\ccMethod{Size size_of_vertices() const;}{returns the number of vertices.}
+\ccGlue
+\ccMethod{Size  size_of_halfedges() const;}{returns the number of halfedges (always even).}
+\ccGlue
+\ccMethod{Size  size_of_faces() const;}{returns the number of faces.}
+
+The following operations have an equivalent \ccc{const} operations that
+return the corresponding non-mutable iterators:
+
+\ccMethod{Vertex_iterator vertices_begin();}
+   {returns a begin-iterator of the vertices in \ccVar{}.}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end();}
+   {returns a past-the-end iterator of the vertices in \ccVar{}.}
+
+\ccMethod{Halfedge_iterator halfedges_begin();}
+   {returns a begin-iterator of the halfedges in \ccVar{}. }
+\ccGlue
+\ccMethod{Halfedge_iterator halfedges_end();}
+   {returns a past-the-end iterator of the halfedges in \ccVar{}.}
+
+\ccMethod{Vertex_iterator faces_begin();}
+   {returns a begin-iterator of the faces in \ccVar{}.}
+\ccGlue
+\ccMethod{Vertex_iterator faces_end();}
+   {returns a past-the-end iterator of the faces in \ccVar{}. }
+
+\ccModifiers
+
+The following operations allocate a new element of the respective type.
+Halfedges are always allocated in pairs of opposite halfedges. 
+The and their opposite pointers are automatically set.
+
+\ccHtmlNoLinksFrom{ % to avoid linkage of Vertex, etc to HDS::Vertex
+     
+  \ccMethod{Vertex* new_vertex();}{creates a new vertex.}
+  \ccGlue
+  \ccMethod{Halfedge* new_edge();}{creates a new pair of twin halfedges.}
+  \ccGlue
+  \ccMethod{Face* new_face();}{creates a new face.}
+
+  \ccMethod{void delete_vertex(Vertex* v);}{deletes the vertex \ccc{v}.}
+  \ccGlue
+  \ccMethod{void delete_edge(Halfedge* e);}{deletes the halfedge \ccc{e} 
+                                            as well as its twin.}
+  \ccGlue
+  \ccMethod{void delete_face(Face* f);}{deletes the face \ccc{f}.}
+} % ccHtmlNoLinksFrom
+
+\ccHasModels
+
+\ccc{Arr_dcel_base<V,H,F>}\lcTex{
+        (\ccRefPage{CGAL::Arr_dcel_base<V,H,F>})}\\
+\ccc{Arr_default_dcel<Traits>}\lcTex{
+        (\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
+
+\ccSeeAlso
+     \ccc{ArrangementDcelVertex}\lcTex{ 
+     (\ccRefPage{ArrangementDcelVertex})}\\
+     \ccc{ArrangementDcelHalfedge}\lcTex{
+     (\ccRefPage{ArrangementDcelHalfedge})}\\
+     \ccc{ArrangementDcelFace}\lcTex{
+     (\ccRefPage{ArrangementDcelFace})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

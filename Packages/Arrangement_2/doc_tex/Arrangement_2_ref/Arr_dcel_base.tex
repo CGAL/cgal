@@ -1,0 +1,78 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_base.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_dcel_base<V,H,F>}
+\label{arr_ref:arr_dcel_base}
+    
+\ccDefinition
+%============
+
+The base \dcel\ class for instatiating the \ccc{Arrangement_2} template.
+The \ccClassTemplateName\ serves as a basis for extending the basic vertex,
+halfedge or face types and attaching auxiliary data to them.
+
+\ccInclude{CGAL/Arr_dcel_base.h}
+ 
+\ccIsModel
+    \ccc{ArrangementDcel}
+
+\end{ccRefClass}
+
+%--------------------------------------------------------------------------
+
+\begin{ccRefClass}{Arr_vertex_base<Point>}
+\label{arr_ref:arr_vertex_base}
+
+\ccDefinition
+%============
+
+The basic \dcel\ vertex type. Serves as a basis for extending the basic
+vertex record with auxiliary data fields. The \ccc{Point} parameter is used
+to instantiate the type of points associated with the vertices.
+
+\ccIsModel
+    \ccc{ArrangementDcelVertex}
+
+\end{ccRefClass}
+
+%--------------------------------------------------------------------------
+
+\begin{ccRefClass}{Arr_halfedge_base<Curve>}
+\label{arr_ref:arr_halfedge_base}
+
+\ccDefinition
+%============
+
+The basic \dcel\ halfedge type. Serves as a basis for extending the basic
+halfedge record with auxiliary data fields. The \ccc{Curve} parameter is used
+to instantiate the type of $x$-monotone curves associated with the vertices.
+
+\ccIsModel
+    \ccc{ArrangementDcelHalfedge}
+
+\end{ccRefClass}
+
+%--------------------------------------------------------------------------
+
+\begin{ccRefClass}{Arr_face_base}
+\label{arr_ref:arr_face_base}
+
+\ccDefinition
+%============
+
+The basic \dcel\ face type. Serves as a basis for extending the basic
+face record with auxiliary data fields.
+
+\ccIsModel
+    \ccc{ArrangementDcelFace}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

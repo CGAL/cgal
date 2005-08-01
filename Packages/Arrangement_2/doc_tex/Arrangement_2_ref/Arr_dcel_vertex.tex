@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelVertex}
+
+\ccDefinition
+
+A vertex record in a \dcel\ data structure. A vertex is always associated
+with a point. However, the vertex record only sotres a pointer to the
+associated point, and the actual \ccc{Point} object is stored elsewhere.
+
+\ccCreationVariable{v}
+
+\ccTypes
+%=======
+
+\ccNestedType{Halfedge}{the corresponding \dcel\ halfedge type.}
+\ccGlue
+\ccNestedType{Face}{the corresponding \dcel\ face type.}
+
+\ccNestedType{Point}{the point type associated with the vertex.} 
+
+\ccCreation
+%==========
+
+\ccConstructor{Arr_dcel_vertex();}
+   {default constructor.}
+
+\ccMethod{void assign (const Self& other);}
+   {assigns \ccVar{} with the contents of the \ccc{other} vertex.}
+
+\ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+
+\ccAccessFunctions
+%=================
+
+All functions below also have \ccc{const} counterparts, returning non-mutable
+pointers or references:
+
+\ccMethod{Halfedge* halfedge();}
+    {returns an incident halfedge that has \ccVar{} as its target.}
+
+\ccMethod{Point& point();}
+    {returns the associated point.}
+
+\ccModifiers
+%===========
+
+\ccMethod{void set_halfedge (Halfedge* e);}
+    {sets the incident halfedge.}
+
+\ccMethod{void set_point (Point* p);}
+    {sets the associated point.}
+
+} % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+
+\ccc{ArrangementDcel}\lcTex{ 
+     (\ccRefPage{ArrangementDcel})}\\
+\ccc{ArrangementDcelHalfedge}\lcTex{
+     (\ccRefPage{ArrangementDcelHalfedge})}\\
+\ccc{ArrangementDcelFace}\lcTex{
+     (\ccRefPage{ArrangementDcelFace})}
+
+\end{ccRefConcept}  
+
+\ccRefPageEnd
+

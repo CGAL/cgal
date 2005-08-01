@@ -405,16 +405,25 @@ counterparts, returning constant iterators instead of mutable ones:
    two other end-vertices of the two edges are associated with \ccc{c}'s
    endpoints.}}
 
-\ccMethod{Face_handle remove_edge(Halfedge_handle e);}
-  {removes the edge \ccStyle{e} from the arrangement.
+\ccMethod{Face_handle remove_edge(Halfedge_handle e,
+                                  bool remove_source = true,
+                                  bool remove_target = true);}
+  {removes the edge \ccStyle{e} from the arrangement. Since the \ccc{e} may
+   be the only edge incident to its source vertex (or its target vertex),
+   this vertex can be removed as well. The flags \ccc{remove_source} and
+   \ccc{remove_target} indicate whether the endpoints of \ccc{e} should be
+   removed, or whether they should be left as isolated vertices in the
+   arrangement.
    If the operation causes two faces to merge, the merged face is returned.
    Otherwise, the face to which the edge was incident is returned.}
 
-%\ccSeeAlso
-%     \ccc{Topological_map<Dcel>}\lcTex{ 
-%     (\ccRefPage{CGAL::Topological_map<Dcel>})}\\
-%     \ccc{PlanarMapDcel_2}\lcTex{ 
-%     (\ccRefPage{PlanarMapDcel_2})}
+\ccSeeAlso
+    \ccc{ArrangementDcel}\lcTex{ 
+      (\ccRefPage{ArrangementDcel})}\\
+    \ccc{Arr_default_dcel<Triats>}\lcTex{ 
+      (\ccRefPage{CGAL::Arr_default_dcel<Triats>})}\\
+    \ccc{ArrangementBasicTraits_2}\lcTex{ 
+      (\ccRefPage{ArrangementBasicTraits_2})}
 
 \end{ccRefClass}
 

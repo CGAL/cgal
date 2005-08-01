@@ -888,7 +888,7 @@ arrangement instance.
 
 The arrangement package includes several classes (more precisely,
 class templates parameterized by an arrangement class) that model
-the \ccc{ArrangementPointLocation} concept --- namely, they all
+the \ccc{ArrangementPointLocation_2} concept --- namely, they all
 have a member function called \ccc{locate(q)} that accepts a query
 point $q$ and outputs a \cgal\ \ccc{Object} that wraps a handle to
 the arrangement cell containing the query point. This object can
@@ -910,7 +910,7 @@ attached \ccc{Arrangement_2} instance.
 The following function template, which can be found in the example
 file \ccc{point_location_utils.h}, accepts a point-location object
 (whose type can be any of the models to the
-\ccc{ArrangementPointLocation} concept) and a query point, and
+\ccc{ArrangementPointLocation_2} concept) and a query point, and
 prints out the result of the point-location query for the given
 point. The point-location object \ccc{pl} is assumed to be already
 associated with an arrangement:
@@ -1102,7 +1102,7 @@ below) the query point.
 The \ccc{Arr_naive_point_location}, the
 \ccc{Arr_walk_along_a_line_point_location} and the
 \ccc{Arr_trapezoid_ric_point_location} classes are also models of
-the \ccc{ArrangementVerticalRayShoot} concept. That is, they all
+the \ccc{ArrangementVerticalRayShoot_2} concept. That is, they all
 have member functions called \ccc{ray_shoot_up(q)} and
 \ccc{ray_shoot_down(q)} that accept a query point $q$ and output a
 \cgal\ \ccc{Object}. This can be assigned to either a
@@ -1113,7 +1113,7 @@ no edge or vertex lying directly above (or below) $q$.
 The following function template, also located in the example file
 \ccc{point_location_utils.h}, accepts a vertical ray-shooting
 object, whose type can be any of the models to the
-\ccc{ArrangementVerticalRayShoot} concept and prints out the
+\ccc{ArrangementVerticalRayShoot_2} concept and prints out the
 result of the upward vertical ray-shooting operations from a given
 query point. The ray-shooting object \ccc{vrs} is assumed to be
 already associated with an arrangement:
@@ -1255,7 +1255,7 @@ position.\footnote{The \ccc{insert_non_intersecting()} function,
 as all other functions reviewed in this section, is thus a
 function template, parameterized by an arrangement class and a
 point-location class (a model of the
-\ccc{ArrangementPointLocation} concept).} The insertion operation
+\ccc{ArrangementPointLocation_2} concept).} The insertion operation
 thus requires hardly any geometric operations on top on the ones
 needed to answer the point-location queries. Moreover, it is
 sufficient that the arrangement class is instantiated with a

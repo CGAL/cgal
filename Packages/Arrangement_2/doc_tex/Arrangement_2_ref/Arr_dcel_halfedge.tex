@@ -1,0 +1,107 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelHalfedge}
+
+\ccDefinition
+
+A halfedge record in a \dcel\ data structure. Two halfedges with opposite
+directions always form an edge (a halfedge pair). The halfedges form together
+chains, defining the boundaries of connected components, such that all
+halfedges along a chain have the same incident face.
+
+An edge is always associated with a curve, but the halfedge records only
+store a pointer to the associated curve, and the actual curve objects
+are stored elsewhere. Two opposite halfedges are always associated with
+the same curve.
+
+\ccCreationVariable{e}
+
+\ccTypes
+%=======
+
+\ccNestedType{Vertex}{the corresponding \dcel\ halfedge type.}
+\ccGlue
+\ccNestedType{Face}{the corresponding \dcel\ face type.}
+
+\ccNestedType{X_monotone_curve}{the curve type associated with the edge.} 
+
+\ccCreation
+%==========
+
+\ccConstructor{Arr_dcel_halfedge();}
+   {default constructor.}
+
+\ccMethod{void assign (const Self& other);}
+   {assigns \ccVar{} with the contents of the \ccc{other} halfedge.}
+
+\ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+
+\ccAccessFunctions
+%=================
+
+All functions below also have \ccc{const} counterparts, returning non-mutable
+pointers or references:
+
+  \ccMethod{Halfedge* opposite();}
+    {returns the twin halfedge.}
+
+  \ccMethod{Halfedge* prev();}
+    {returns the previous halfedge along the chain.}
+
+  \ccMethod{Halfedge* next();}
+    {returns the next halfedge along the chain.}
+
+  \ccMethod{Vertex* vertex();}
+    {returns the target vertex.}
+
+  \ccMethod{Face* face();}
+    {returns the incident face.}
+
+  \ccMethod{X_monotone_curve& curve();}
+    {returns the associated curve.}
+
+\ccModifiers
+%===========
+
+  \ccMethod{void set_opposite(Halfedge* opp);}
+    {sets the opposite halfedge.}
+
+  \ccMethod{void set_prev(Halfedge* prev);}
+    {sets the previous halfedge of \ccVar{} along the chain,
+     and updates the cross-pointer \ccc{prev->next()}.}
+
+  \ccMethod{void set_next(Halfedge* next);}
+    {sets the next halfedge of \ccVar{} along the chain,
+     and updates the cross-pointer \ccc{next->prev()}.}
+
+  \ccMethod{void set_vertex(Vertex* v);}
+    {sets the target vertex.}
+
+  \ccMethod{void set_face(Face* f);}
+    {sets the incident face.}
+
+  \ccMethod{void set_curve (X_monotone_curve* c);}
+    {sets the associated curve of \ccVar{} and its opposite halfedge.}
+
+} % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+
+     \ccc{ArrangementDcel}\lcTex{ 
+     (\ccRefPage{ArrangementDcel})}\\
+     \ccc{ArrangementDcelVertex}\lcTex{
+     (\ccRefPage{ArrangementDcelVertex})}\\
+     \ccc{ArrangementDcelFace}\lcTex{
+     (\ccRefPage{ArrangementDcelFace})}
+
+\end{ccRefConcept}  
+
+\ccRefPageEnd
