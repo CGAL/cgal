@@ -16,6 +16,7 @@
 #define CGAL_ROOT_OF_ROOT_OF_2_H
 
 #include <iostream>
+#include <CGAL/NT_converter.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
@@ -214,6 +215,31 @@ struct Root_of_traits
   typedef Root_of_3< RT >  RootOf_3;
   typedef Root_of_4< RT >  RootOf_4;
 };
+
+
+template < class NT1,class NT2 >
+struct NT_converter < Root_of_2<NT1> , Root_of_2<NT2> >
+  : public CGAL_STD::unary_function< NT1, NT2 >
+{
+    Root_of_2<NT2>
+    operator()(const Root_of_2<NT1> &a) const
+    {
+        return make_root_of_2(NT_converter<NT1,NT2>()(a[2]),NT_converter<NT1,NT2>()(a[1]),
+                              NT_converter<NT1,NT2>()(a[0]),a.is_smaller());
+    }
+};
+
+template < class NT1,class NT2 >
+struct NT_converter < NT1 , Root_of_2<NT2> >
+  : public CGAL_STD::unary_function< NT1, NT2 >
+{
+    Root_of_2<NT2>
+    operator()(const NT1 &a) const
+    {
+        return Root_of_2<NT2>(NT_converter<NT1,NT2>()(a));
+    }
+};
+
 
   namespace CGALi {
 

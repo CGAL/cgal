@@ -21,6 +21,13 @@
 #if 0
 namespace CGAL {
 
+template < typename T1, typename T2 >
+struct Binary_operator  {
+    typedef T2  result_type;
+};
+
+
+
 // Specializations for Root_of_2.
 // T1 can be different from T2 because of quotient types...
 template < typename T1, typename T2 >
