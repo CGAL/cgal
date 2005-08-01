@@ -29,11 +29,6 @@ Concerning the main code:
 - Have determinant_by_formula() overloading for Lazy_exact_nt<> ?
   And what about for Interval_nt<> too ?
 - Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
-- Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
-  Target convert_from_to (const Target, const Source) is fine ?
-  It could maybe be made better this way:
-    void convert_from_to(Target &, const Source &) ?
-  Suggest that to Stefan for misc.h ?
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
 - Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?

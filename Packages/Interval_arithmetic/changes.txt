@@ -1,3 +1,9 @@
+1 August 2005 Sylvain Pion
+- Replace uses of convert_to() by NT_converter.
+- Add NT_converter<Lazy_exact_nt<ET>, ET> specialization.
+- Change Exact_type_selecter for Lazy_exact_nt<ET> to ET
+  (instead of Lazy_exact_nt<ET>).
+
 30 July 2005 Sylvain Pion
 - Add Uncertain<T>.
 - Use it in comparison operators and sign() and compare() of Interval_nt.

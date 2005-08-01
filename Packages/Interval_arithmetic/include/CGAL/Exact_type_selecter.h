@@ -100,7 +100,13 @@ struct Exact_type_selecter<CORE::Expr>
 
 template < typename ET >
 struct Exact_type_selecter<Lazy_exact_nt<ET> >
-{ typedef Lazy_exact_nt<ET>  Type; };
+{
+  // We have a choice here :
+  // - using ET gets rid of the DAG computation as well as redoing the interval
+  // - using Lazy_exact_nt<ET> might use sharper intervals.
+  typedef ET  Type;
+  // typedef Lazy_exact_nt<ET>  Type;
+};
 
 CGAL_END_NAMESPACE
 

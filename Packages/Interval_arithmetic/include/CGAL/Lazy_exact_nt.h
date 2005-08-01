@@ -31,9 +31,9 @@
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Handle.h>
-#include <CGAL/misc.h>
 #include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
 #include <CGAL/Kernel/mpl.h>
+#include <CGAL/NT_converter.h>
 
 #include <boost/operators.hpp>
 
@@ -575,15 +575,12 @@ io_Operator
 io_tag (const Lazy_exact_nt<ET>&)
 { return io_Operator(); }
 
-template <typename ET>
-struct converter<ET, Lazy_exact_nt<ET> >
+template < typename ET >
+struct NT_converter < Lazy_exact_nt<ET>, ET >
 {
-    static inline ET do_it (const Lazy_exact_nt<ET> & z)
-    {
-        return z.exact();
-    }
+  const ET& operator()(const Lazy_exact_nt<ET> &a) const
+  { return a.exact(); }
 };
-
 
 // Returns true if the value is representable by a double and to_double()
 // would return it.  False means "don't know".
