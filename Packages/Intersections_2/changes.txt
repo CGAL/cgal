@@ -1,3 +1,6 @@
+1 August 2005 Sylvain Pion
+- Use Rational_traits instead of K::FT_{numerator|denominator}.
+
 29 July 2005 Sylvain Pion
 - do_intersect(Iso_rectangle_2) : Remove useless assign().
 
