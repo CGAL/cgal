@@ -50,10 +50,10 @@ struct Number_type_traits<leda_rational> {
 template <> 
 struct Rational_traits<leda_rational> {
   typedef leda_integer RT;
- RT numerator   (const leda_rational & r) const { return r.numerator(); }
- RT denominator (const leda_rational & r) const { return r.denominator(); }
- leda_rational make_rational(const RT & n, const RT & d) const
- { return leda_rational(n, d); } 
+  RT numerator   (const leda_rational & r) const { return r.numerator(); }
+  RT denominator (const leda_rational & r) const { return r.denominator(); }
+  leda_rational make_rational(const RT & n, const RT & d) const
+  { return leda_rational(n, d); } 
 };
 
 #ifndef CGAL_NO_NAMESPACE

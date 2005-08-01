@@ -551,8 +551,8 @@ struct Rational_traits< Quotient<NT> >
 {
   typedef NT RT;
 
-  RT numerator   (const Quotient<NT>& r) const { return r.numerator(); }
-  RT denominator (const Quotient<NT>& r) const { return r.denominator(); }
+  const RT & numerator   (const Quotient<NT>& r) const { return r.numerator(); }
+  const RT & denominator (const Quotient<NT>& r) const { return r.denominator(); }
   
   Quotient<NT> make_rational(const RT & n, const RT & d) const
   { return Quotient<NT>(n, d); } 

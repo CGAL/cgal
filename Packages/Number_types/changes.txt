@@ -1,3 +1,6 @@
+1 August 2005 Sylvain Pion
+- Rational_traits<Quotient> : make numerator/denominator return by reference.
+
 30 July 2005 Sylvain Pion
 - Change return type of sign() and compare() of Interval_nt to Uncertain<>.
 
