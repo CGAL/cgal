@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: insert_non_intersecting.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{insert_non_intersecting}
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccFunction{template<class Traits, class Dcel, class PointLocation>
+            typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+            insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+                         const typename Traits::X_monotone_curve_2& c,
+                         const PointLocation& pl);}
+   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
+    \ccc{arr}, where the interior of \ccc{c} is disjoint from all existing
+    arrangement vertices and edges. Under this assumption, it is possible to
+    locate the endpoints of \ccc{c} in the arrangement and use one of the
+    specialized insertion member-functions of \ccc{arr} according to the
+    results. As no intersection are computed, the \ccc{Traits} parameter
+    should be a model of the restricted \ccc{ArrangementBasicTraits_2} concept.
+    The point-location object \ccc{pl}, which should be a model of the
+    \ccc{ArrangementPointLocation_2} concept, is used for answering
+    the two point-location queries on \ccc{c}'s endpoints. As the insertion
+    operations creates just a single new edge, the function returns a handle
+    for this one of twin halfedges that form this edge.
+    \ccPrecond{\ccc{pl} is attached to the given arrangement \ccc{arr}.}}
+
+\ccFunction{template<class Traits, class Dcel>
+            typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+            insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+                         const typename Traits::X_monotone_curve_2& c);}
+   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
+    \ccc{arr}, where the interior of \ccc{c} is disjoint from all existing
+    arrangement vertices and edges. The function returns a handle for the
+    one of the twin halfedges created by the insertion.
+    The function operates as the function listed above, but it uses the default
+    ``walk along line'' point-location strategy, so users need not provide a
+    point-location object.}
+
+\ccFunction{template<class Traits, class Dcel, InputIterator>
+            void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+                         InputIterator first, InputIterator last);}
+   {Aggregately inserts the given range of $x$-monotone curves
+    \ccc{[first,last)} into the arrangement \ccc{arr}. The input curves should
+    be pairwise disjoint in their interior and pairwise interrior-disjoint
+    from all existing arrangement vertices and edges. 
+    The \ccc{Traits} parameter should be a model of the
+    \ccc{ArrangementBasicTraits_2} concept.
+    \ccPrecond{The value-type of \ccc{InputIterator} is 
+               \ccc{Traits::X_monotone_curve_2}.}}
+
+\end{ccRefFunction}

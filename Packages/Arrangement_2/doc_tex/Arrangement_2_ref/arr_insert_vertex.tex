@@ -1,0 +1,38 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_insert_vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{insert_vertex}
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccFunction{template<class Traits, class Dcel, class PointLocation>
+            typename Arrangement_2<Traits,Dcel>::Vertex_handle
+            insert_vertex (Arrangement_2<Traits,Dcel>& arr,
+                           const typename Traits::Point_2& p,
+                           const PointLocation& pl);}
+   {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
+    The function uses the point-location object \ccc{pl} (a model of the
+    \ccc{ArrangementPointLocation_2} concept) to locate \ccc{p} in \ccc{arr}.
+    If it conincide with an existing vertex, we are done; if it lies on an
+    edge, the edge is split at \ccc{p}; otherwise, \ccc{p} is contained inside
+    a face, and is inserted as an isolated vertex inside this face.
+    At any case, the function returns a handle for the vertex associated
+    with \ccc{p}. The \ccc{Triats} parameter is a model of the refined
+    \ccc{ArrangementXMonotoneTraits_2}, such that it supports split operations.
+    \ccPrecond{\ccc{pl} is attached to the given arrangement \ccc{arr}.}}
+
+\ccFunction{template<class Traits, class Dcel>
+            typename Arrangement_2<Traits,Dcel>::Vertex_handle
+            insert_vertex (Arrangement_2<Traits,Dcel>& arr,
+                           const typename Traits::Point_2& p);}
+   {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
+    This function operated just like the function above, but it uses the
+    default ``walk along line'' point-location strategy, so users need not
+    provide a point-location object.} 
+
+\end{ccRefFunction}
