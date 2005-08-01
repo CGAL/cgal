@@ -129,9 +129,9 @@ public:
 /*! A new dcel builder with CGM features */
 template <class Traits>
 class Cgm_arr_dcel :
-  public CGAL::Arr_dcel<Cgm_arr_vertex<typename Traits::Point_2>,
-                        Cgm_arr_halfedge<typename Traits::X_monotone_curve_2>,
-                        Cgm_arr_face>
+  public CGAL::Arr_dcel_base<Cgm_arr_vertex<typename Traits::Point_2>,
+                             Cgm_arr_halfedge<typename Traits::X_monotone_curve_2>,
+                             Cgm_arr_face>
 {
 public:
   /*! Constructor */

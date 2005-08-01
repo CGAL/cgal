@@ -76,9 +76,9 @@ public:
 /*! A new dcel builder with CGM features */
 template <class Traits>
 class Polyhedral_cgm_arr_dcel :
-  public CGAL::Arr_dcel<Polyhedral_cgm_arr_vertex<typename Traits::Point_2>,
-                        Polyhedral_cgm_arr_halfedge<typename Traits::X_monotone_curve_2>,
-                        Polyhedral_cgm_arr_face<typename Traits::Point_3> >
+  public CGAL::Arr_dcel_base<Polyhedral_cgm_arr_vertex<typename Traits::Point_2>,
+                             Polyhedral_cgm_arr_halfedge<typename Traits::X_monotone_curve_2>,
+                             Polyhedral_cgm_arr_face<typename Traits::Point_3> >
 {
 public:
   /*! Constructor */
