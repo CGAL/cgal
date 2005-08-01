@@ -15,8 +15,7 @@ include $(CGAL_MAKEFILE)
 
 #OTHER_CXXFLAGS?= -D_GLIBCXX_CONCEPT_CHECKS 
 
-CXXFLAGS = -I. \
-	   -I../../../InrImage \
+CXXFLAGS = -I../../../InrImage/include \
 	   -I../../../Data_structure_for_queries_3/include \
            -I ../../../Surface_mesher/include \
 	   -I../../include \

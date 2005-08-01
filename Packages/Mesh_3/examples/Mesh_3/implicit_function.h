@@ -15,7 +15,7 @@
 #define _IMPLICIT_FUNCTION_H
 
 #include <CGAL/basic.h>
-#include "Isosurface.h"
+#include <CGAL/Isosurface.h>
 #include <map>
 
 // type "pointer to implicit function"

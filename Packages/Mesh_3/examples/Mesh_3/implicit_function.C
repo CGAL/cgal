@@ -38,46 +38,6 @@ int generic_inrimage_function(double x, double y, double z)
   return (*isosurface)(x, y, z);
 }
 
-int ventricules_0_function(double x, double y, double z)
-{
-  static CGAL::Inrimage_isosurface image
-    = CGAL::Inrimage_isosurface("./ventricules_0.23.inr.gz", 0.23);
-
-  return image(x, y, z);
-}
-
-int visiblehuman_function(double x, double y, double z)
-{
-  static CGAL::Inrimage_isosurface image
-    = CGAL::Inrimage_isosurface("./visible_human_iso1.inr.gz", 1.5);
-
-  return image(x, y, z);
-}
-
-int skull_function(double x, double y, double z)
-{
-  static CGAL::Inrimage_isosurface image
-    = CGAL::Inrimage_isosurface("./skull_2.9.inr.gz", 2.9);
-
-  return image(x, y, z);
-}
-
-int cortex_function(double x, double y, double z)
-{
-  static CGAL::Inrimage_isosurface image
-    = CGAL::Inrimage_isosurface("./wmfull_iso27.inr.gz", 27);
-
-  return image(x, y, z);
-}
-
-int skin_function(double x, double y, double z)
-{
-  static CGAL::Inrimage_isosurface image
-      = CGAL::Inrimage_isosurface("./skin_4.5.inr.gz", 4.5);
-
-  return image(x, y, z);
-}
-
 ///////////////// Definition of the current surface /////////////////
 int implicit_function (double x, double y, double z) {
   return tanglecube_function(x,y,z);
@@ -508,9 +468,4 @@ void init_functions()
   functions["sphere"] = &sphere_function;
   functions["tanglecube"] = &tanglecube_function;
   functions["torus"] = &torus_function;
-  functions["ventricules_0"] = &ventricules_0_function;
-  functions["visiblehuman"] = &visiblehuman_function;
-  functions["skull"] = &skull_function;
-  functions["skin"] = &skin_function;
-  functions["cortex"] = &cortex_function;
 }
