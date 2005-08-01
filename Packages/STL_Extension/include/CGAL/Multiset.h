@@ -877,6 +877,32 @@ public:
   }
 
   /*!
+   * Get the first element whose key is not less than a given key
+   * (non-const version). [takes O(log n) operations]
+   * \param key The query key.
+   * \param comp_key A comparison functor for comparing keys and objects.
+   * \return The lower bound of the key, along with a flag indicating whether
+   *         the bound equals the given key.
+   */
+  std::pair<iterator, bool> find_lower (const Type& object)
+  {
+    return (find_lower (object, comp_f));
+  }
+
+  template <class Key, class CompareKey>
+  std::pair<iterator, bool> find_lower (const Key& key,
+					const CompareKey& comp_key)
+  {
+    bool    is_equal;
+    Node   *nodeP = _bound (LOWER_BOUND, key, comp_key, is_equal);
+
+    if (_is_valid (nodeP))
+      return (std::make_pair (iterator (nodeP), is_equal));
+    else
+      return (std::make_pair (iterator (&endNode), false));
+  }
+
+  /*!
    * Get the first element whose key is greater than a given key
    * (non-const version). [takes O(log n) operations]
    * \param key The query key.
@@ -929,6 +955,32 @@ public:
   }
 
   /*!
+   * Get the first element whose key is not less than a given key
+   * (const version). [takes O(log n) operations]
+   * \param key The query key.
+   * \param comp_key A comparison functor for comparing keys and objects.
+   * \return The lower bound of the key, along with a flag indicating whether
+   *         the bound equals the given key.
+   */
+  std::pair<const_iterator, bool> find_lower (const Type& object) const
+  {
+    return (find_lower (object, comp_f));
+  }
+
+  template <class Key, class CompareKey>
+  std::pair<const_iterator, bool> find_lower (const Key& key,
+					      const CompareKey& comp_key) const
+  {
+    bool          is_equal;
+    const Node   *nodeP = _bound (LOWER_BOUND, key, comp_key, is_equal);
+
+    if (_is_valid (nodeP))
+      return (std::make_pair (const_iterator (nodeP), is_equal));
+    else
+      return (std::make_pair (const_iterator (&endNode), false));
+  }
+
+  /*!
    * Get the first element whose key is greater than a given key
    * (const version). [takes O(log n) operations]
    * \param object The query object.
@@ -942,7 +994,7 @@ public:
 
   template <class Key, class CompareKey>
   const_iterator upper_bound (const Key& key,
-                              const CompareKey& comp_key = Compare()) const
+                              const CompareKey& comp_key) const
   {
     bool          is_equal;
     const Node   *nodeP = _bound (UPPER_BOUND, key, comp_key, is_equal);
@@ -968,7 +1020,7 @@ public:
   template <class Key, class CompareKey>
   std::pair<iterator, iterator>
   equal_range (const Key& key,
-               const CompareKey& comp_key = Compare())
+               const CompareKey& comp_key)
   {
     // Get the first equivalent object (if any).
     const size_t   max_steps = static_cast<size_t> (1.5 * iBlackHeight);
@@ -1017,7 +1069,7 @@ public:
   template <class Key, class CompareKey>
   std::pair<const_iterator, const_iterator>
   equal_range (const Key& key,
-               const CompareKey& comp_key = Compare()) const
+               const CompareKey& comp_key) const
   {
     // Get the first equivalent object (if any).
     const size_t   max_steps = static_cast<size_t> (1.5 * iBlackHeight);

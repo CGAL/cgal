@@ -273,6 +273,7 @@ void test_lookup ()
   const Set   cset = set;
   Set_iter    lower, upper;
   std::pair<Set_iter, Set_iter> range;
+  std::pair<Set_iter, bool>     res;
 
   for (k = 0; k < n_words; k++)
   {
@@ -286,6 +287,10 @@ void test_lookup ()
       upper = cset.upper_bound (words[k], String_word_index_compare());
       range = cset.equal_range (words[k], String_word_index_compare());
 
+      res = cset.find_lower (words[k], String_word_index_compare());
+      CGAL_assertion ((res.second && lower != upper) ||
+		      (! res.second && lower == upper));
+	
       CGAL_assertion (lower == range.first && upper == range.second);
 
       while (lower != upper)

@@ -230,6 +230,13 @@ functor, as the \ccc{Compare} functor will be used by default.
     \ccc{(lower_bound(key), upper_bound(key))} (a \ccc{const} version is 
     also available).}
 
+\ccMethod{template <class Key, class CompareKey>
+          std::pair<iterator,bool> 
+          find_lower (const Key& key, const CompareKey& comp_key);}{
+    returns a pair comprised of \ccc{lower_bound(key)} and a Boolean flag
+    indicating whether this iterator points to an element equivalent to
+    the given key (a \ccc{const} version is also available).}
+
 \begin{ccAdvanced}
 
 \ccHeading{Special Operations}
