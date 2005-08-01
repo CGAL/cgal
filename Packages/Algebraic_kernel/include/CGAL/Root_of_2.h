@@ -1020,10 +1020,14 @@ is_valid(const Root_of_2<RT> &r)
 
 
 template < class RT >
-struct Number_type_traits < Root_of_2<RT> > {
+struct Number_type_traits < Root_of_2<RT> >
+{
   typedef Tag_false      Has_gcd;
   typedef Tag_false      Has_division;
   typedef Tag_false      Has_sqrt;
+  typedef Tag_false      Has_exact_sqrt;
+  typedef Tag_false      Has_exact_division;
+  typedef Tag_false      Has_exact_ring_operations;
 };
 
 template < typename RT >
@@ -1033,6 +1037,7 @@ io_tag(const Root_of_2<RT>&)
 {
   return io_Operator();
 }
+
 
 } // namespace CGAL
 
