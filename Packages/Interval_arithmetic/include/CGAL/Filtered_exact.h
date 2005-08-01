@@ -128,7 +128,7 @@ public:
   // The access functions.
   const CT & value() const { return _value; }
   IA interval() const { return give_interval(cache()); }
-  ET exact()    const { return NT_converter<CT,ET>(_value); }
+  ET exact()    const { return NT_converter<CT,ET>()(_value); }
 
   double to_double() const { return CGAL::to_double(_value); }
   Restricted_double dbl() const { return Restricted_double(to_double()); }

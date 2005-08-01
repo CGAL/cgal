@@ -1,4 +1,7 @@
 1 August 2005 Sylvain Pion
+- Fix for last change.
+
+1 August 2005 Sylvain Pion
 - Replace uses of convert_to() by NT_converter.
 - Add NT_converter<Lazy_exact_nt<ET>, ET> specialization.
 - Change Exact_type_selecter for Lazy_exact_nt<ET> to ET
