@@ -1044,9 +1044,15 @@ public:
   /*!
    * Remove an edge from the arrangement.
    * \param e The edge to remove (one of the pair of twin halfegdes).
+   * \param remove_source Should the source vertex of e be removed if it
+   *                      becomes isolated (true by default).
+   * \param remove_target Should the target vertex of e be removed if it
+   *                      becomes isolated (true by default).
    * \return A handle for the remaining face.
    */
-  Face_handle remove_edge (Halfedge_handle e);
+  Face_handle remove_edge (Halfedge_handle e,
+                           bool remove_source = true,
+			   bool remove_target = true);
   //@}
 
 protected:
@@ -1241,15 +1247,22 @@ protected:
                    DHoles_iter hole);
 
   /*!
+   * Insert the given vertex as an isolated vertex inside the given face.
+   * \param f The face that should contain the isolated vertex.
+   * \param v The isolated vertex.
+   */
+  void _insert_isolated_vertex (DFace *f,
+				DVertex *v);
+
+  /*!
    * Move a given isolated vertex from one face to another.
    * \param from_face The face currently containing the isolated vertex.
    * \param to_face The face into which we should move the isolated vertex.
    * \param vit A DCEL isolated vertices iterator pointing at the vertex.
    */
-  void _move_isolated_vertex
-                        (DFace *from_face,
-                         DFace *to_face,
-                         DIsolated_vertices_iter vit);
+  void _move_isolated_vertex (DFace *from_face,
+			      DFace *to_face,
+			      DIsolated_vertices_iter vit);
 
   /*!
    * Check whether the given halfedge lies on the outer boundary of the given
@@ -1387,11 +1400,16 @@ protected:
   /*!
    * Remove a pair of twin halfedges from the arrangement.
    * \param e One of the halfedges to be removed.
+   * \param remove_source Should the source vertex of e be removed if it
+   *                      becomes isolated.
+   * \param remove_target Should the target vertex of e be removed if it
+   *                      becomes isolated.
    * \pre In case the removal causes the creation of a new hole, e should 
    *      point at this hole.
    * \return A pointer to the remaining face.
    */
-  DFace *_remove_edge (DHalfedge *e);
+  DFace *_remove_edge (DHalfedge *e,
+		       bool remove_source, bool remove_target);
 
   //@}
 

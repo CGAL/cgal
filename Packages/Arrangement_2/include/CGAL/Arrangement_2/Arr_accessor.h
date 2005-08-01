@@ -287,13 +287,20 @@ public:
   /*!
    * Remove a pair of twin halfedges from the arrangement.
    * \param e A handle for one of the halfedges to be removed.
+   * \param remove_source Should the source vertex of e be removed if it
+   *                      becomes isolated (true by default).
+   * \param remove_target Should the target vertex of e be removed if it
+   *                      becomes isolated (true by default).
    * \pre In case the removal causes the creation of a new hole, e should 
    *      point at this hole.
    * \return A handle for the remaining face.
    */
-  Face_handle remove_edge_ex (Halfedge_handle e)
+  Face_handle remove_edge_ex (Halfedge_handle e,
+			      bool remove_source = true,
+			      bool remove_target = true)
   {
-    DFace*      f = p_arr->_remove_edge (p_arr->_halfedge (e));
+    DFace*      f = p_arr->_remove_edge (p_arr->_halfedge (e),
+					 remove_source, remove_target);
     
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));

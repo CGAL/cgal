@@ -248,19 +248,8 @@ Arrangement_2<Traits,Dcel>::insert_isolated_vertex (const Point_2& p,
   Vertex_handle   vh (v);
   _notify_after_create_vertex (vh);
 
-  // Notify the observers that we are about to insert an isolated vertex
-  // inside f.
-  _notify_before_add_isolated_vertex (f, vh);
-
-  // Associate the incident haldefge of the vertex with a halfedge on the
-  // outer boundary of the face (or NULL if the face is unbounded).
-  v->set_halfedge (p_f->halfedge());
-
-  // Initiate a new hole inside the given face.
-  p_f->add_isolated_vertex (v);
-
-  // Notify the observers that we have formed a new hole.
-  _notify_after_add_isolated_vertex (vh);
+  // Insert v as an isolated vertex inside the given face.
+  _insert_isolated_vertex (p_f, v);
 
   // Return a handle to the new isolated vertex.
   return (vh);
@@ -1141,7 +1130,9 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Face_handle
-Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e)
+Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
+					 bool remove_source,
+					 bool remove_target)
 {
   DHalfedge   *he1 = _halfedge (e);
   DHalfedge   *he2 = he1->opposite();
@@ -1154,7 +1145,7 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e)
     // incident faces to merge, or these two halfedges form an "antenna".
     // In either case, it does not matter which halfedge we send to the
     // auxiliary function _remove_edge().
-    f = _remove_edge (he1);
+    f = _remove_edge (he1, remove_source, remove_target);
   }
   else
   {
@@ -1191,9 +1182,17 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e)
     // Compare the two leftmost points: p_min2 lies to the left of p_min1
     // if and only if he1 points at the hole we are about to create.
     if (traits->compare_x_2_object() (*p_min2, *p_min1) == SMALLER)
-      f = _remove_edge (he1);
+    {
+      // he1 is directed to the new hole to be created.
+      f = _remove_edge (he1, remove_source, remove_target);
+    }
     else
-      f = _remove_edge (he2);
+    {
+      // he2 is directed to the new hole to be created. As its source and
+      // target are swapped with respect to the end-vertices of the given
+      // halfedge e, we swap the roles of the two input flags
+      f = _remove_edge (he2, remove_target, remove_source);
+    }
   }
 
   return (Face_handle (f));
@@ -1531,6 +1530,33 @@ void Arrangement_2<Traits,Dcel>::_move_hole (DFace *from_face,
 
   // Notify the observers that we have moved the hole.
   _notify_after_move_hole (circ);
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Insert the given vertex as an isolated vertex inside the given face.
+//
+template<class Traits, class Dcel>
+void Arrangement_2<Traits,Dcel>::_insert_isolated_vertex (DFace *f,
+							  DVertex *v)
+{
+  Face_handle     fh (f);
+  Vertex_handle   vh (v);
+
+  // Notify the observers that we are about to insert an isolated vertex
+  // inside f.
+  _notify_before_add_isolated_vertex (fh, vh);
+
+  // Associate the incident haldefge of the vertex with a halfedge on the
+  // outer boundary of the face (or NULL if the face is unbounded).
+  v->set_halfedge (f->halfedge());
+
+  // Initiate a new hole inside the given face.
+  f->add_isolated_vertex (v);
+
+  // Notify the observers that we have formed a new isolated vertex.
+  _notify_after_add_isolated_vertex (vh);
 
   return;
 }
@@ -2172,7 +2198,9 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::DFace*
-Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e)
+Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
+					  bool remove_source,
+					  bool remove_target)
 {
   // Get the pair of twin edges to be removed and their incident faces.
   DHalfedge   *he1 = e;
@@ -2209,22 +2237,39 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e)
 
       _notify_after_remove_hole (fh);
 
-      // Delete the first end-vertex and its associated point.
-      _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
+      if (remove_target)
+      {
+	// Delete the he1's target vertex and its associated point.
+	_notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
-      _delete_point (he1->vertex()->point());
-      dcel.delete_vertex (he1->vertex());
+	_delete_point (he1->vertex()->point());
+	dcel.delete_vertex (he1->vertex());
 
-      _notify_after_remove_vertex ();
+	_notify_after_remove_vertex ();
+      }
+      else
+      {
+	// The remaining target vertex now becomes an isolated vertex inside
+	// the containing face:
+	_insert_isolated_vertex (f1, he1->vertex());
+      }
 
-      // Delete the second end-vertex and its associated point.
-      _notify_before_remove_vertex (Vertex_handle (he2->vertex()));
+      if (remove_source)
+      {
+	// Delete the he1's source vertex and its associated point.
+	_notify_before_remove_vertex (Vertex_handle (he2->vertex()));
 
-      _delete_point (he2->vertex()->point());
-      dcel.delete_vertex (he2->vertex());
+	_delete_point (he2->vertex()->point());
+	dcel.delete_vertex (he2->vertex());
 
-      _notify_after_remove_vertex ();
-
+	_notify_after_remove_vertex ();
+      }
+      else
+      {
+	// The remaining source vertex now becomes an isolated vertex inside
+	// the containing face:
+	_insert_isolated_vertex (f1, he2->vertex());
+      }
 
       // Delete the curve associated with the edge to be removed.
       _delete_curve (he1->curve());
@@ -2241,10 +2286,13 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e)
       // In this case the two halfedges form an "antenna".
       // Make he1 point at the tip of this "antenna" (swap the pointer if
       // necessary).
+      bool    remove_tip_vertex = remove_target;
+
       if (he2->next() == he1)
       {
         he1 = he2;
         he2 = he1->opposite();
+	remove_tip_vertex = remove_source;
       }
 
       // Remove the two halfedges from the boundary chain by connecting
@@ -2285,13 +2333,22 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e)
       if (he2->vertex()->halfedge() == he2)
           he2->vertex()->set_halfedge (prev1);
 
-      // Delete the vertex that forms the tip of the "antenna"
-      _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
+      if (remove_tip_vertex)
+      {
+	// Delete the vertex that forms the tip of the "antenna"
+	_notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
-      _delete_point (he1->vertex()->point());
-      dcel.delete_vertex (he1->vertex());
+	_delete_point (he1->vertex()->point());
+	dcel.delete_vertex (he1->vertex());
 
-      _notify_after_remove_vertex();
+	_notify_after_remove_vertex();
+      }
+      else
+      {
+	// The remaining antenna tip now becomes an isolated vertex inside
+	// the containing face:
+	_insert_isolated_vertex (f1, he1->vertex());
+      }
 
       // Delete the curve associated with the edge to be removed.
       _delete_curve (he1->curve());

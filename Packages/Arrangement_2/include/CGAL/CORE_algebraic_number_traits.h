@@ -364,7 +364,7 @@ public:
     CORE::Sturm<Integer>       sturm (poly);
     const unsigned int         n_roots = sturm.numberOfRoots();
     unsigned int               i;
-
+    
     for (i = 1; i <= n_roots; i++)
     {
       // Get the i'th real-valued root.
