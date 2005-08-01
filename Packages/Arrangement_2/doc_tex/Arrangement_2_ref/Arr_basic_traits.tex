@@ -1,0 +1,146 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ArrangementBasicTraits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+ 
+\begin{ccRefConcept}{ArrangementBasicTraits_2}
+
+\ccDefinition
+
+The basic arrangement-traits concept defines the minimal set of geometric
+predicates needed for the constrcution and maintenance of instances of the
+\ccc{Arrangement_2} class, as well as performing simple queries (such as
+point-location queries) on such arrangements.
+
+A model of this concept must define nested \ccc{Point_2} and
+\ccc{X_monotone_curve_2} types, which represent planar points and
+$x$-monotone curves,\footnote{A vertical segment is also considered to be
+{\sl weakly} $x$-monotone.} respectively. The $x$-monotone curves are assumed
+to be pairwise disjoint in their interiors, so they do not intersect, and
+their endpoints are representable as \ccc{Point_2} objects.
+
+\ccTypes
+%=======
+
+\ccNestedType{Point_2}{represents a point on the plane.}
+
+\ccNestedType{X_monotone_curve_2}{represents a planar (weakly) $x$-monotone
+                                  curve.}
+
+\ccHeading{Tags}
+%===============
+
+\ccNestedType{Has_left_category}{indicates whether the nested functor
+                                 \ccc{Compare_at_x_left_2} is provided.}
+
+\ccHeading{Functor Types}
+%========================
+
+\ccNestedType{Compare_x_2}
+{provides the operator~: \\
+ \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
+ which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
+ $x$-ordering of points \ccc{p1} and \ccc{p2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2}
+{provides the operator~: \\
+ \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
+ which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
+ lexicographic $xy$-ordering of points \ccc{p1} and \ccc{p2}.}
+
+\ccNestedType{Construct_min_vertex_2}
+{provides the operator~: \\
+ \ccc{Point_2 operator() (X_monotone_curve_2 c)} \\
+ which returns the left (lexicographically smaller) endpoint of \ccc{c}.}
+\ccGlue
+\ccNestedType{Construct_max_vertex_2}
+{provides the operator~: \\
+ \ccc{Point_2 operator() (X_monotone_curve_2 c)} \\
+ which returns the right (lexicographically larger) endpoint of \ccc{c}.}
+
+\ccNestedType{Is_vertical_2}
+{provides the operator~: \\
+ \ccc{bool operator() (X_monotone_curve_2 c)} \\
+ which determines whether \ccc{c} is a vertical segment.}
+
+\ccNestedType{Compare_y_at_x_2}
+{provides the operator~: \\
+ \ccc{Comparison_result operator() (Point_2 p, X_monotone_curve_2 c)} \\
+ which compares the $y$-coordinates of \ccc{p} and the vertical projection
+ of \ccc{p} on \ccc{c}, and returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
+ according to the result.}
+
+\ccNestedType{Compare_y_at_x_left_2}
+{provides the operator~: \\
+ \ccc{Comparison_result operator() (X_monotone_curve_2 c1,
+                                    X_monotone_curve_2 c2, Point_2 p)} \\
+ which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that have
+ a common right endpoint \ccc{p}, and returns \ccc{SMALLER, EQUAL} or
+ \ccc{LARGER} according to the relative position of the two curves
+ immediately to the left of $p$.}
+\ccGlue
+\ccNestedType{Compare_y_at_x_right_2}
+{provides the operator~: \\
+ \ccc{Comparison_result operator() (X_monotone_curve_2 c1,
+                                    X_monotone_curve_2 c2, Point_2 p)} \\
+ which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that have
+ a common left endpoint \ccc{p}, and returns \ccc{SMALLER, EQUAL} or
+ \ccc{LARGER} according to the relative position of the two curves
+ immediately to the right of $p$.}
+
+\ccNestedType{Equal_2}
+{provides the operators~: \\
+ \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
+ which determines whether \ccc{p1} and \ccc{p2} are geometrically
+ equivalent; and~: \\
+ \ccc{Comparison_result operator() (X_monotone_curve_2 c1,
+                                    X_monotone_curve_2 c2)} \\
+ which determines whether \ccc{c1} and \ccc{c2} are geometrically equivalent
+ (have the same graph).}
+
+\ccCreation
+\ccCreationVariable{traits}
+%==========================
+
+\ccConstructor{ArrangementBasicTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ArrangementBasicTraits_2(ArrangementBasicTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{ArrangementBasicTraits_2  operator=(other);}{assignment operator.}
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Compare_x_2 compare_x_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_xy_2 compare_xy_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_min_vertex_2 construct_min_vertex_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_max_vertex_2 construct_max_vertex_2_object() const;}{}
+\ccGlue
+\ccMethod{Is_vertical_2 is_vertical_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_at_x_2 compare_y_at_x_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;} {}
+\ccGlue
+\ccMethod{Equal_2 equal_2_object() const;} {}
+
+
+\ccHasModels
+%===========
+
+\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<Alg_kernel,Nt_traits>} \\
+
+\end{ccRefConcept}

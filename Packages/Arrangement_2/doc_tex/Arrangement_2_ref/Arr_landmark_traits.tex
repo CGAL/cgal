@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ArrangementLandmarkTraits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+ 
+\begin{ccRefConcept}{ArrangementLandmarkTraits_2}
+
+\ccDefinition
+
+The landmark-traits concept refines the basic traits concept by adding
+operations needed for the landmarks point-location strategy, namely ---
+approximating points and connecting points with a simple $x$-monotone
+curve.
+
+A model of this concept must define the \ccc{Approximate_number_type}, which
+is used to approximate the coordinates of \ccc{Point_2} instances. It is
+recommended to use the built-in \ccc{double} type and the approximated number
+type.
+
+\ccRefines
+\ccc{ArrangementBasicTraits_2}
+
+\ccTypes
+%=======
+
+\ccNestedType{Approximate_number_type}{the number type used
+                                       to approximate point coordinates.}
+
+\ccHeading{Functor Types}
+%========================
+
+\ccNestedType{Approximate_2}
+{provides the operator~: \\
+ \ccc{Approximate_number_type operator() (Point_2 p, int i)} \\
+ which returns an approximation of \ccc{p}'s $x$-coordinate (if \ccc{i == 0}),
+ or of \ccc{p}'s $y$-coordinate (if \ccc{i == 1}).}
+
+\ccNestedType{Construct_x_monotone_curve_2}
+{provides the operator~: \\
+ \ccc{X_monotone_curve_2 operator() (Point_2 p1, Point_2 p2)} \\
+ returns an $x$-monotone curve connecting \ccc{p1} and \ccc{p2} (i.e., the
+ two input points are its endpoints).}
+
+\ccCreation
+\ccCreationVariable{traits}
+%==========================
+
+\ccConstructor{ArrangementLandmarkTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ArrangementLandmarkTraits_2(ArrangementLandmarkTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{ArrangementLandmarkTraits_2  operator=(other);}{assignment operator.}
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Approximate_2 approximate_2_object() const;} {}
+\ccGlue
+\ccMethod{Construct_x_monotone_curve_2 
+          construct_x_monotone_curve_2_object() const;}{}
+
+\ccHasModels
+%===========
+
+\ccc{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
+
+\ccSeeAlso
+%=========
+
+\ccc{ArrangementBasicTraits_2}
+
+\end{ccRefConcept}

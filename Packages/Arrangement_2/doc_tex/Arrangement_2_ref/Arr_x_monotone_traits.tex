@@ -1,0 +1,115 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ArrangementXMonotoneTraits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{ArrangementXMonotoneTraits_2}
+
+\ccDefinition
+
+This refined traits concept refines the basic arrangement-traits concept
+by allowing the $x$-monotone curves to intersect in their interior (and
+allowing points to conincide with curve interiors). This is necessary for
+constructing arrangements of sets of intersecting $x$-monotone curves.
+
+As the resulting structure, represented by the \ccc{Arrangement_2} class
+stores pairwise interior-disjoint curves, the inpur curves are split at
+the intersection points before being inserted into the arrangement. 
+A model of this refined concept therefore needs to compute the intersections
+(and possibly overlaps) between two $x$-monotone curves and to support
+curve splitting. The reverse merge operation is optionally supported.
+
+\ccRefines
+\ccc{ArrangementBasicTraits_2}
+
+\ccHeading{Tags}
+%===============
+
+\ccNestedType{Has_merge_category}{indicates whether the nested functors
+                                  \ccc{Are_mergeable_2} and \ccc{Merge_2}
+                                  are provided.}
+
+\ccHeading{Functor Types}
+%========================
+
+\ccNestedType{Intersect_2}
+{provides the operator (templated by the \ccc{OutputIterator} type)~: \\
+ \ccc{OutputIterator operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
+                                 OutputIterator oi)} \\
+ which computes the intersections of \ccc{c1} and \ccc{c2} and inserts them
+ {\sl in an ascending lexicographical $xy$-order} into the output iterator.
+ The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
+ \ccc{Object} either wraps a \ccc{pair<Point_2,unsigned int>} instance, which
+ represents an intersection point with its multiplicity;\footnote{if the
+ multiplicity is undefined or not known, it can be set to $0$.} or an
+ \ccc{X_monotone_curve_2} instance, representing an overlapping subcurve of
+ \ccc{c1} and \ccc{c2}. The operator returns a past-the-end iterator
+ for the output sequence.}
+
+\ccNestedType{Split_2}
+{provides the operator~: \\
+ \ccc{void operator() (X_monotone_curve_2 c, Point_2& p,
+                       X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
+ which accepts an input curve \ccc{c} and a split point \ccc{p} in its
+ interior. It splits \ccc{c} at the split point into two subcurves \ccc{c1}
+ and \ccc{c2}, such that \ccc{p} is \ccc{c1}'s {\sl right} endpoint and
+ \ccc{c2}'s {\sl left} endpoint.} 
+
+The two following functor types are optional. If they are supported, the
+\ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
+\ccc{Tag_false} otherwise):
+
+\ccNestedType{Are_mergeable_2}
+{provides the operator~: \\
+ \ccc{bool operator() (X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
+ which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that share
+ a common endpoint, and determines whether they can be merged to form a single
+ continuous $x$-monotone curve.}
+
+\ccNestedType{Merge_2}
+{provides the operator~: \\
+ \ccc{void operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
+                       X_monotone_curve_2& c)} \\
+ which accepts two {\sl mergeable} $x$-monotone curves \ccc{c1} and \ccc{c2}
+ (see above), and sets \ccc{c} to be the result of their merger.} 
+
+\ccCreation
+\ccCreationVariable{traits}
+%==========================
+
+\ccConstructor{ArrangementXMonotoneTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ArrangementXMonotoneTraits_2(ArrangementXMonotoneTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{ArrangementXMonotoneTraits_2  operator=(other);}{assignment operator.}
+
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Intersect_2 intersect_2_object();} {}
+\ccGlue
+\ccMethod{Split_2 split_2_object();} {}
+\ccGlue
+\ccMethod{Are_mergeable_2 are_mergeable_2_object() const;} {}
+\ccGlue
+\ccMethod{Merge_2 merge_2_object();} {}
+
+\ccHasModels
+%===========
+
+\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<Alg_kernel,Nt_traits>} \\
+
+\ccSeeAlso
+%=========
+
+\ccc{ArrangementBasicTraits_2}
+
+\end{ccRefConcept}

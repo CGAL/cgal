@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ArrangementTraits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{ArrangementTraits_2}
+
+\ccDefinition
+
+The refined arrangement-traits concept allows the construction of arrangement
+of {\sl general} planar curves. Models of this concept are used
+by the free \ccc{insert()} functions of the arrangement package and
+by the \ccc{Arrangement_with_history_2} class.
+
+A model of this concept must define nested \ccc{Curve_2} types, which
+represents a general planar curve that is not necessarily $x$-monotone
+and not necessarily connected. Such curves are eventually subdivided into
+$x$-monotone subcurves and isolated points (represented by the \ccc{Point_2}
+and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
+
+\ccRefines
+\ccc{ArrangementXMonotoneTraits_2}
+
+\ccTypes
+%=======
+
+\ccNestedType{Curve_2}{represents a general planar curve.}
+
+\ccHeading{Functor Types}
+%========================
+
+\ccNestedType{Make_x_monotone_2}
+{provides the operator (templated by the \ccc{OutputIterator} type)~: \\
+ \ccc{OutputIterator operator() (Curve_2 c, OutputIterator oi)} \\
+ which subdivides the input curve \ccc{c} into $x$-monotone subcurves and
+ isolated points, and outputs the results using the output iterator.
+ The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
+ \ccc{Object} either wraps an \ccc{X_monotone_curve_2} instance or a
+ \ccc{Point_2} instance. The operator returns a past-the-end iterator
+ for the output sequence.}
+
+\ccCreation
+\ccCreationVariable{traits}
+%==========================
+
+\ccConstructor{ArrangementTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ArrangementTraits_2(ArrangementTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{ArrangementTraits_2  operator=(other);}{assignment operator.}
+
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Make_x_monotone_2 make_x_monotone_2_object();} {}
+
+\ccHasModels
+%===========
+
+\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<Alg_kernel,Nt_traits>} \\
+
+\ccSeeAlso
+%=========
+
+\ccc{ArrangementBasicTraits_2} \\
+\ccc{ArrangementXMonotoneTraits_2}
+
+\end{ccRefConcept}
