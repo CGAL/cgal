@@ -1,3 +1,6 @@
+1 August 2005 Sylvain Pion
+- Remove CGAL/misc.h (provided convert(), to be replaced by NT_converter).
+
 31 July 2005 Sylvain Pion
 - Add missing include in last change.
 
