@@ -439,7 +439,7 @@ public:
         red_f = m_red_arr->unbounded_face();
       else
       {
-        if(sc_above->get_color() == Curve_info::RED)
+        if(sc_above->get_color() != Curve_info::BLUE)
           red_f = sc_above->get_red_halfedge_handle()->face();
         else
         {
@@ -468,7 +468,7 @@ public:
       blue_f = m_blue_arr->unbounded_face();
     else
     {
-      if(sc_above->get_color() == Curve_info::BLUE)
+      if(sc_above->get_color() != Curve_info::RED)
         blue_f = sc_above->get_blue_halfedge_handle()->face();
       else
       {
