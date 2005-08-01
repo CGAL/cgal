@@ -1,4 +1,7 @@
 1 August 2005 Sylvain Pion
+- Homogeneous_converter : specialize when same_type<K1, K2>.
+
+1 August 2005 Sylvain Pion
 - Remove K::make_FT and K::FT_{numerator|denominator}
   (replaced by Rational_traits).
 

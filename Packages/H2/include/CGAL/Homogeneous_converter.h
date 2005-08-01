@@ -248,6 +248,15 @@ private:
     K2 k;
 };
 
+// Specialization when converting to the same kernel,
+// to avoid making copies.
+template < class K, class C1, class C2 >
+struct Homogeneous_converter <K, K, C1, C2>
+{
+  template < typename T >
+  const T& operator()(const T&t) const { return t; }
+};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_HOMOGENEOUS_CONVERTER_H
