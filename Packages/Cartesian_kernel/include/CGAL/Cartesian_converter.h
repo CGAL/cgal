@@ -55,7 +55,6 @@ template < class K1, class K2,
            class Converter = typename CGALi::Default_converter<K1, K2>::Type >
 class Cartesian_converter : public Enum_converter
 {
-private:
     typedef Enum_converter   Base;
 
 public:
@@ -345,6 +344,15 @@ public:
 private:
     Converter c;
     K2 k;
+};
+
+// Specialization when converting to the same kernel,
+// to avoid making copies.
+template < class K, class C >
+struct Cartesian_converter <K, K, C>
+{
+  template < typename T >
+  const T& operator()(const T&t) const { return t; }
 };
 
 CGAL_END_NAMESPACE
