@@ -1,18 +1,12 @@
 // examples/Alpha_shapes_3/example_weight.C
 
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
-
-#include <list>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
+#include <list>
 
-typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-struct K : public CGAL::Simple_cartesian<NT> {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<K> Gt;
 
@@ -47,13 +41,13 @@ int main()
   std::list<Cell_handle> cells;
   std::list<Facet>       facets;
   std::list<Edge>        edges;
-  as.get_alpha_shape_cells(std::back_inserter(cells), 
+  as.get_alpha_shape_cells(std::back_inserter(cells),
 			   Alpha_shape_3::INTERIOR);
-  as.get_alpha_shape_facets(std::back_inserter(facets), 
+  as.get_alpha_shape_facets(std::back_inserter(facets),
 			    Alpha_shape_3::REGULAR);
-  as.get_alpha_shape_facets(std::back_inserter(facets), 
+  as.get_alpha_shape_facets(std::back_inserter(facets),
 			    Alpha_shape_3::SINGULAR);
-  as.get_alpha_shape_edges(std::back_inserter(edges), 
+  as.get_alpha_shape_edges(std::back_inserter(edges),
 			   Alpha_shape_3::SINGULAR);
   std::cout << " The 0-shape has : " << std::endl;
   std::cout << cells.size() << " interior tetrahedra" << std::endl;

@@ -18,11 +18,7 @@
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
-#define Simple_cartesian Sc
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
@@ -31,11 +27,7 @@
 
 #include <CGAL/_test_weighted_alpha_shape_3.C>
 
-// Filtered_kernel fails with Regular until weighted points are in the kernel.
-typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-
-// Try to shorten symbol names (for VC++)
-struct K : public CGAL::Simple_cartesian<NT> {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<K> Gt;
 typedef Gt::Weighted_point   Weighted_point;

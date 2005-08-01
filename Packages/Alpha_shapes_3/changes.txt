@@ -1,3 +1,6 @@
+1 August 2005 Sylvain Pion
+- Use Exact_predicates_inexact_constructions_kernel instead of Filtered_exact.
+
 29 July 2005 Andreas Fabri
 - Bugfix in output iterator: Faces of regular alpha shape are now oriented consistently
 
