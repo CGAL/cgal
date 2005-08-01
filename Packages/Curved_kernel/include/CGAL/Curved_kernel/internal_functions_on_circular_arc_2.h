@@ -4,6 +4,7 @@
 //
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//           Julien Hazebrouck
 // 
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473 
@@ -316,12 +317,12 @@ namespace CircularFunctors {
 	  // But they could share the left vertical tangent point.
 	  if (a1.left() == a2.left()) {
 	    *res++ =make_object
-	      ( std::make_pair(a1.left(),0u));
+	      ( std::make_pair(a1.left(),1u));
 	  }
 	  // Or they could share the right vertical tangent point.
 	  if (a1.right() == a2.right()) {
 	    *res++ = make_object
-	      (std::make_pair(a1.right(),0u));
+	      (std::make_pair(a1.right(),1u));
 	  }
 	  
 	  std::cout << "</construct_intersection_monotone>" << std::endl;
@@ -355,7 +356,7 @@ namespace CircularFunctors {
 	    
 	    else{
 	      *res++ = make_object
-		(std::make_pair(arctmp.right(),0u));
+		(std::make_pair(arctmp.right(),1u));
 	    }
 	  }
 	else if( compare_x<CK>(a1.left(), a2.left()) < 0 ) //the left endpoint is a2's
@@ -376,7 +377,7 @@ namespace CircularFunctors {
 	    }
 	    else{
 	      *res++ = make_object
-		(std::make_pair(arctmp.right(),0u));
+		(std::make_pair(arctmp.right(),1u));
 	    }
 	  }
 	else {
@@ -390,7 +391,7 @@ namespace CircularFunctors {
 	    }
 	    else{
 	      *res++ = make_object
-		(std::make_pair(arctmp.right(),0u));
+		(std::make_pair(arctmp.right(),1u));
 	    }
 	}
 	std::cout << "</construct_intersection_monotone>" << std::endl;
@@ -681,7 +682,7 @@ namespace CircularFunctors {
     typedef typename CK::Circle_2                 Circle_2;
     typedef typename CK::FT                       FT;
     typedef typename CK::Linear_kernel::Point_2   Point_2;
-
+    CGAL_kernel_precondition(A.supporting_circle().squared_radius() != 0);
     std::cout << "<make_x_monotone>" << std::endl; 
     int cmp_begin = CGAL::compare(A.source().y(), A.center().y());
     int cmp_end   = CGAL::compare(A.target().y(),   A.center().y());
