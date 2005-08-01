@@ -450,9 +450,12 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 
   // Keep track of the end-vertices of the edge we are about to remove.
   typename Arrangement_2::Vertex_handle  v_ends[2];
+  bool                                   is_removed[2];
 
   v_ends[0] = e->source();
+  is_removed[0] = (v_ends[0]->degree() == 1);
   v_ends[1] = e->target();
+  is_removed[1] = (v_ends[1]->degree() == 1);
 
   // Remove the edge from the arrangement.
   typename Arrangement_2::Face_handle    face = arr.remove_edge (e);
@@ -471,7 +474,7 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 
   for (i = 0; i < 2; i++)
   {
-    if (v_ends[i]->degree() == 2)
+    if (! is_removed[i] && v_ends[i]->degree() == 2)
     {
       // Get the two edges incident to the end-vertex.
       circ = v_ends[i]->incident_halfedges();
