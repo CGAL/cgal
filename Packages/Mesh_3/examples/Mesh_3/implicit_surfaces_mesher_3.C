@@ -56,7 +56,7 @@ typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<My_traits, Cb3> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Regular_triangulation_3<My_traits, Tds> Tr;
 typedef Function <K::FT> Func;
-typedef CGAL::Surface_mesher::Implicit_oracle<My_traits, Func> Impl_oracle;
+typedef CGAL::Surface_mesher::Multi_implicit_oracle<My_traits, Func> Impl_oracle;
 typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
