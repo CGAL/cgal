@@ -1579,9 +1579,9 @@ public:
     CGAL_assertion(0);
   }
 
-  /*! This function initializes the arrangements with the boundary curves. There
-   * are 6 arrangements, one for each face of the axis-parallel unit cube. The 3D
-   * unit cube is defined by the 2 twin corners:
+  /*! This function initializes the arrangements with the boundary curves.
+   * There are 6 arrangements, one for each face of the axis-parallel unit
+   * cube. The 3D unit cube is defined by the 2 twin corners:
    *      (s_extreme[0], s_extreme[0], s_extreme[0]) and
    *      (s_extreme[1], s_extreme[1], s_extreme[1])
    * Each 2D arrangement is initialized to consist of a single axis-parallel
@@ -1666,13 +1666,13 @@ public:
   }
   
   /*! Initialize the incidence relations between the corners. Each boundary
-   * vertex contains a pointer to a vertex handle on an adjacent unit-cube face.
-   * For corner vertices this forms a cyclic chain of 3 vertices. For non-corner
-   * boundary vertices this forms a cyclic chain of 2 vertices. This method
-   * forms the 12 corner cyclic chains. Recall that the corner vertices are
-   * created once (in init_arrangements()) or obtained once (in init_corners()),
-   * and they are retained through out the lifetime of the CGM (along with
-   * their cyclic chains.)
+   * vertex contains a pointer to a vertex handle on an adjacent unit-cube
+   * face. For corner vertices this forms a cyclic chain of 3 vertices. For
+   * non-corner boundary vertices this forms a cyclic chain of 2 vertices.
+   * This method forms the 12 corner cyclic chains. Recall that the corner
+   * vertices are created once (in init_arrangements()) or obtained once (in
+   * init_corners()), and they are retained through out the lifetime of the
+   * CGM (along with their cyclic chains.)
    */
   void init_corner_incidences()
   {

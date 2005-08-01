@@ -584,7 +584,7 @@ private:
     m_dirty_polyhedron = false;
   }
 
-  /*! \brief computes the central projections */
+  /*! Compute the central projections */
   void compute_projections()
   {
     // Initialize the arrangements with the boundary curves:
@@ -706,7 +706,8 @@ public:
     // The m_corner_vertices are set to NULL by their default constructor
   }
 
-  /*! \brief initializes a cubical Gaussian map */
+  /*! Initialize a cubical Gaussian map
+   */
   template <class Point_3_iterator>  
   void init(const Point_3_iterator & points_begin,
             const Point_3_iterator & points_end,
@@ -739,7 +740,8 @@ public:
   /*! Destructor */
   virtual ~Polyhedral_cgm() { clear(); }
 
-  /*! \brief clears the internal representation and auxiliary data structures */
+  /*! \brief clears the internal representation and auxiliary data structures
+   */
   void clear()
   {
     m_polyhedron.clear();
