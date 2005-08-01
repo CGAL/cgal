@@ -1,5 +1,6 @@
 include makefile
 include depends
+include my_makefile
 
 depends: *.C
 	cat /dev/null > depends

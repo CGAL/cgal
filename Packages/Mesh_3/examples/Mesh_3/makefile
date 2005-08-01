@@ -13,7 +13,6 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-
 #OTHER_CXXFLAGS?= -D_GLIBCXX_CONCEPT_CHECKS 
 
 CXXFLAGS = -I. \
@@ -21,6 +20,7 @@ CXXFLAGS = -I. \
 	   -I../../../Data_structure_for_queries_3/include \
            -I ../../../Surface_mesher/include \
 	   -I../../include \
+	   $(OTHER_INCLUDES) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(OTHER_CXXFLAGS)
