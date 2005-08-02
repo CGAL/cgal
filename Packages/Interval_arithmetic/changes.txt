@@ -1,4 +1,8 @@
 2 August 2005 Sylvain Pion
+- Lazy_exact_nt : add prune_dag() to cut it down when the exact is computed.
+- Lazy_exact_nt : recompute interval in update_exact, except when is_point().
+
+2 August 2005 Sylvain Pion
 - Lazy_exact_nt : fix the identical() optimization.
 - Lazy_exact_nt : add mixed operators between Lazy_exact_nt<ET1> and
   Lazy_exact_nt<ET2>

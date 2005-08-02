@@ -109,10 +109,8 @@ public:
 
   const ET & exact()
   {
-      if (et==NULL) {
+      if (et==NULL)
           update_exact();
-	  in = CGAL_NTS to_interval(*et);
-      }
       return *et;
   }
 
@@ -156,15 +154,23 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
 template <typename ET, typename ET1>
-struct Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
+class Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
 {
+  Lazy_exact_nt<ET1> l;
+
+public:
+
   Lazy_lazy_exact_Cst (const Lazy_exact_nt<ET1> &x)
       : Lazy_exact_rep<ET>(x.approx()), l(x) {}
 
-  void update_exact()  { this->et = new ET(l.exact()); }
+  void update_exact()
+  {
+    this->et = new ET(l.exact());
+    this->in = l.approx();
+    prune_dag();
+  }
   int depth() const { return l.depth() + 1; }
-
-  Lazy_exact_nt<ET1> l;
+  void prune_dag() { l = 0; }
 };
 
 
@@ -175,26 +181,28 @@ struct Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
 template <typename ET>
 struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 {
-  const Lazy_exact_nt<ET> op1;
+  Lazy_exact_nt<ET> op1;
 
   Lazy_exact_unary (const Interval_nt<true> &i, const Lazy_exact_nt<ET> &a)
       : Lazy_exact_rep<ET>(i), op1(a) {}
 
   int depth() const { return op1.depth() + 1; }
+  void prune_dag() { op1 = 0; }
 };
 
 // Base binary operation
 template <typename ET, typename ET1 = ET, typename ET2 = ET>
 struct Lazy_exact_binary : public Lazy_exact_rep<ET>
 {
-  const Lazy_exact_nt<ET1> op1;
-  const Lazy_exact_nt<ET2> op2;
+  Lazy_exact_nt<ET1> op1;
+  Lazy_exact_nt<ET2> op2;
 
   Lazy_exact_binary (const Interval_nt<true> &i,
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
       : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
   int depth() const { return std::max(op1.depth(), op2.depth()) + 1; }
+  void prune_dag() { op1 = op2 = 0; }
 };
 
 // Here we could use a template class for all operations (STL provides
@@ -202,14 +210,19 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
 // a template template parameter, and GCC 2.95 seems to crash easily with them.
 
 // Macro for unary operations
-#define CGAL_LAZY_UNARY_OP(OP, NAME)                                 \
-template <typename ET>                                               \
-struct NAME : public Lazy_exact_unary<ET>                            \
-{                                                                    \
-  NAME (const Lazy_exact_nt<ET> &a)                                  \
-      : Lazy_exact_unary<ET>(OP(a.approx()), a) {}                   \
-                                                                     \
-  void update_exact()  { this->et = new ET(OP(this->op1.exact())); } \
+#define CGAL_LAZY_UNARY_OP(OP, NAME)                                     \
+template <typename ET>                                                   \
+struct NAME : public Lazy_exact_unary<ET>                                \
+{                                                                        \
+  NAME (const Lazy_exact_nt<ET> &a)                                      \
+      : Lazy_exact_unary<ET>(OP(a.approx()), a) {}                       \
+                                                                         \
+  void update_exact()                                                    \
+  {                                                                      \
+    this->et = new ET(OP(this->op1.exact()));                            \
+    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et)); \
+    this->prune_dag();                                                   \
+   }                                                                     \
 };
 
 CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
@@ -218,17 +231,19 @@ CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
 CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
 
 // A macro for +, -, * and /
-#define CGAL_LAZY_BINARY_OP(OP, NAME)                                 \
-template <typename ET, typename ET1 = ET, typename ET2 = ET>          \
-struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                  \
-{                                                                     \
-  NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)       \
+#define CGAL_LAZY_BINARY_OP(OP, NAME)                                    \
+template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
+struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
+{                                                                        \
+  NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>(a.approx() OP b.approx(), a, b) {} \
-                                                                      \
-  void update_exact()                                                 \
-  {                                                                   \
-    this->et = new ET(this->op1.exact() OP this->op2.exact());        \
-  }                                                                   \
+                                                                         \
+  void update_exact()                                                    \
+  {                                                                      \
+    this->et = new ET(this->op1.exact() OP this->op2.exact());           \
+    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et)); \
+    this->prune_dag();                                                   \
+   }                                                                     \
 };
 
 CGAL_LAZY_BINARY_OP(+, Lazy_exact_Add)
@@ -246,6 +261,8 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   void update_exact()
   {
     this->et = new ET(min(this->op1.exact(), this->op2.exact()));
+    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et));
+    this->prune_dag();
   }
 };
 
@@ -259,6 +276,8 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   void update_exact()
   {
     this->et = new ET(max(this->op1.exact(), this->op2.exact()));
+    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et));
+    this->prune_dag();
   }
 };
 
