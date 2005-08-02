@@ -1296,6 +1296,126 @@ minimize_degree(const Vertex_handle& v)
   } while ( found || fc != fc_start );
 }
 
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+equalize_degrees(const Vertex_handle& v, Self& small,
+		 std::map<Vertex_handle,Vertex_handle>& vmap,
+		 List& l) const
+{
+  size_type deg = degree(v);
+  CGAL_assertion( l.size() <= deg );
+  if ( l.size() == deg ) { return; }
+#if 0
+  std::cerr << "size of l  : " << l.size() << std::endl;
+  std::cerr << "degree of v: " << deg << std::endl;
+#endif
+
+  //  typedef std::map<Edge,Edge>  Edge_map;
+  // maps edges on the boundary of the conflict region from the small
+  // diagram to edges of the star of v in the small diagram
+  //  Edge_map emap;
+
+  Edge e_small_start = l.front();
+  Edge e_small = e_small_start;
+  bool found;
+  Edge e_small_begin;
+  Edge e_large_begin;
+  do {
+    found = false;
+    Vertex_handle v_sml_src = e_small.first->vertex(cw(e_small.second));
+    Vertex_handle v_sml_trg = e_small.first->vertex(ccw(e_small.second));
+
+    // first we find a first edge in common
+    Face_circulator fc_start = incident_faces(v);
+    Face_circulator fc = fc_start;
+
+    do {
+      int id = fc->index(v);
+      Vertex_handle v_lrg_src = fc->vertex(ccw(id));
+      Vertex_handle v_lrg_trg = fc->vertex(cw(id));
+      if ( vmap[v_sml_src] == v_lrg_src && vmap[v_sml_trg] == v_lrg_trg ) {
+	found = true;
+	e_large_begin = Edge(fc, id);
+	e_small_begin = e_small;
+	break;
+      }
+    } while ( ++fc != fc_start );
+    if ( found ) { break; }
+    e_small = l.next(e_small);
+  } while ( e_small != e_small_start );
+
+  CGAL_assertion( found );
+
+  Face_circulator fc_start = incident_faces(v, e_large_begin.first);
+  Face_circulator fc = fc_start;
+  e_small = e_small_begin;
+  do {
+    int id = fc->index(v);
+    Vertex_handle vsml_src = e_small.first->vertex(cw(e_small.second));
+    Vertex_handle vsml_trg = e_small.first->vertex(ccw(e_small.second));
+    Vertex_handle vlrg_src = fc->vertex(ccw(id));
+    Vertex_handle vlrg_trg = fc->vertex(cw(id));
+    if ( vmap[vsml_src] != vlrg_src || vmap[vsml_trg] != vlrg_trg ) {
+      Edge e_small_prev = l.previous(e_small);
+      std::cerr << "size of l: " << l.size() << std::endl;
+      l.remove(e_small);
+
+      std::cerr << "size of l: " << l.size() << std::endl;
+
+      Edge e_small_new = small.flip(e_small);
+      Edge e_small_new_sym = small.sym_edge(e_small_new);
+      Face_handle f1 = e_small_new.first;
+      Face_handle f2 = e_small_new_sym.first;
+
+      if ( f2->vertex(e_small_new_sym.second) == vsml_src ) {
+	std::swap(f1, f2);
+	std::swap(e_small_new, e_small_new_sym);
+	CGAL_assertion( f1->vertex(e_small_new.second) == vsml_src );
+	CGAL_assertion( f2->vertex(e_small_new_sym.second) == vsml_trg );
+      }
+
+      Edge to_list1(f1, cw(e_small_new.second));
+      Edge to_list2(f2, ccw(e_small_new_sym.second));
+
+      e_small = small.sym_edge(to_list1);
+
+      l.insert_after(e_small_prev, e_small);
+      std::cerr << "size of l: " << l.size() << std::endl;
+      l.insert_after(e_small, small.sym_edge(to_list2));
+      std::cerr << "size of l: " << l.size() << std::endl;
+    } else {
+      e_small = l.next(e_small);
+      ++fc;
+    }
+    CGAL_assertion( l.size() <= deg );
+  } while ( fc != fc_start );
+
+#if 0
+  std::cerr << "size of l  : " << l.size() << std::endl;
+  std::cerr << "degree of v: " << deg << std::endl;
+#endif
+
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)  
+  // we go around the boundary of the conflict region verify that all
+  // edges are there
+  CGAL_assertion( l.size() == degree(v) );
+  e_small = e_small_begin;
+  fc_start = incident_faces(v, e_large_begin.first);
+  fc = fc_start;
+  do {
+    int id = fc->index(v);
+    Vertex_handle vsml_src = e_small.first->vertex(cw(e_small.second));
+    Vertex_handle vsml_trg = e_small.first->vertex(ccw(e_small.second));
+    Vertex_handle vlrg_src = fc->vertex(ccw(id));
+    Vertex_handle vlrg_trg = fc->vertex(cw(id));
+    CGAL_assertion(vmap[vsml_src] == vlrg_src && vmap[vsml_trg] == vlrg_trg );
+
+    // go to next edge
+    e_small = l.next(e_small);
+  } while ( ++fc != fc_start );
+#endif
+}
 
 template<class Gt, class DS, class LTag>
 void
@@ -1450,8 +1570,7 @@ count_faces(const List& l) const
 template<class Gt, class DS, class LTag>
 void
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-fill_hole(const Segment_Voronoi_diagram_2<Gt,DS,LTag>& small,
-	  const Vertex_handle& v, const List& l,
+fill_hole(const Self& small, const Vertex_handle& v, const List& l,
 	  std::map<Vertex_handle,Vertex_handle>& vmap)
 {
 #if 0
@@ -1697,6 +1816,7 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
 	  } while ( ++vvc != vvc_start );
 	  CGAL_assertion( small.same_segments(t, vh_small) );
 	} else {
+	  CGAL_assertion( t.is_point() );
 	  vh_small = small.nearest_neighbor( t.point() );
 	  CGAL_assertion( small.same_points(t, vh_small->site()) );
 	}
@@ -1713,6 +1833,7 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
 	} while ( ++vvc != vvc_start );
 	CGAL_assertion( small.same_segments(t, vh_small) );
       } else {
+	CGAL_assertion( t.is_point() );
 	vh_small = small.nearest_neighbor( t, Vertex_handle() );
 	CGAL_assertion( small.same_points(t, vh_small->site()) );
       }
@@ -1732,6 +1853,42 @@ void
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 remove_degree_d_vertex(const Vertex_handle& v)
 {
+#if 0
+  Self svd_small;
+  compute_small_diagram(v, svd_small);
+  std::map<Vertex_handle,Vertex_handle> vmap;
+  compute_vertex_map(v, svd_small, vmap);
+
+  // find nearest neighbor of v in small diagram
+  Site_2 t = v->site();
+  Vertex_handle vn;
+
+  CGAL_assertion( t.is_input() );
+
+  if ( t.is_point() ) {
+    vn = svd_small.nearest_neighbor( t.point() );
+  } else {
+    vn = svd_small.nearest_neighbor( t.source() );
+  }
+  CGAL_assertion( vn != Vertex_handle() );
+
+  List l;
+  Face_map fm;
+  Sign_map sign_map;
+
+  svd_small.find_conflict_region_remove(v, vn, l, fm, sign_map);
+
+  fm.clear();
+  sign_map.clear();
+
+  equalize_degrees(v, svd_small, vmap, l);
+
+  fill_hole(svd_small, v, l, vmap);
+
+  l.clear();
+  return;
+
+#else
   minimize_degree(v);
   int deg = degree(v);
   if ( deg == 3 ) {
@@ -1743,7 +1900,7 @@ remove_degree_d_vertex(const Vertex_handle& v)
     return;
   }
   
-  Segment_Voronoi_diagram_2<Gt,DS,LTag> svd_small;
+  Self svd_small;
   compute_small_diagram(v, svd_small);
 
   if ( svd_small.number_of_vertices() <= 2 ) {
@@ -1795,6 +1952,7 @@ remove_degree_d_vertex(const Vertex_handle& v)
   l.clear();
   fm.clear();
   sign_map.clear();
+#endif
 }
 
 //--------------------------------------------------------------------
@@ -1862,10 +2020,11 @@ remove(const Vertex_handle& v)
   if ( !ss.is_input() ) { return false; }
 
   Point_handle h1, h2;
-  if ( ss.is_point() ) {
+  bool is_point = ss.is_point();
+  if ( is_point ) {
     h1 = ss.point();
   } else {
-    CGAL_assertion( ss.is_segment() );    
+    CGAL_assertion( ss.is_segment() );   
     h1 = ss.source_of_supporting_site();
     h2 = ss.target_of_supporting_site();
   }
@@ -1874,7 +2033,7 @@ remove(const Vertex_handle& v)
 
   if ( success ) {
     // unregister the input site
-    if ( ss.is_point() ) {
+    if ( is_point ) {
       unregister_input_site( h1 );
     } else {
       unregister_input_site( h1, h2 );
@@ -2326,7 +2485,12 @@ is_valid(bool verbose, int level) const
 {
   if (level < 0) { return true; }
 
-  if (number_of_vertices() <= 1) { return true; }
+  if (number_of_vertices() <= 1) {
+    if ( verbose && number_of_vertices() == 1 ) {
+      std::cerr << "SVDDS is ok... " << std::flush;
+    }
+    return true;
+  }
 
   // level 0 test: check the TDS
   bool result = data_structure().is_valid(verbose, level);

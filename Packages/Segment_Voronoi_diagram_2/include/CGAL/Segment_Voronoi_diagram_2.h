@@ -574,6 +574,11 @@ protected:
 
   void minimize_degree(const Vertex_handle& v);
 
+  // this method does not really do the job as intended, i.e., for removal
+  void equalize_degrees(const Vertex_handle& v, Self& small,
+			std::map<Vertex_handle,Vertex_handle>& vmap,
+			List& l) const;
+
   void expand_conflict_region_remove(const Face_handle& f,
 				     const Site_2& t,
 				     const Storage_site_2& ss,
@@ -625,8 +630,7 @@ protected:
 
   size_type count_faces(const List& l) const;
 
-  void fill_hole(const Segment_Voronoi_diagram_2<Gt,DS,LTag>& small,
-		 const Vertex_handle& v, const List& l,
+  void fill_hole(const Self& small, const Vertex_handle& v, const List& l,
 		 std::map<Vertex_handle,Vertex_handle>& vmap);
 
   bool remove_first(const Vertex_handle& v);
