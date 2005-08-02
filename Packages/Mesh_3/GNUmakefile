@@ -1,10 +1,12 @@
-.PHONY: all test clean dist-clean update diff examples
-
+.PHONY: all test doxygen clean dist-clean update diff examples dep
 
 all: examples
 
 examples:
 	$(MAKE) -C examples/Mesh_3
+
+dep:
+	$(MAKE) -C examples/Mesh_3 dep
 
 test:
 	${MAKE} -C test/Mesh_3 run
