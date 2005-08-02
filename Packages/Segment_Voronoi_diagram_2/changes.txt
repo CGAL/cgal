@@ -1,3 +1,14 @@
+2 August 2005:  Menelaos Karavelas
+- added more testing for removal method
+- fixed bug in removal method of hierarchy: the necessary access to
+  the storage site (and in particular the point handles)
+  was prohibited in higher levels because the vertex was deleted at
+  the lower level first
+- added circulator in edge list: may be buggy and have to check this
+- added a few more print-outs in is_valid of the SVD2 class
+- fixed bug when accessing the storage site during the removal (inside
+  the remove method)
+
 31 July 2005:  Menelaos Karavelas
 - added explicit cast for enums, in order to support Uncertain<T>
 
