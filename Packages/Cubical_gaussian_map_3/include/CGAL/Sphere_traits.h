@@ -17,7 +17,8 @@
 #ifndef CGAL_SPHERE_TRAITS_H
 #define CGAL_SPHERE_TRAITS_H
 
-#include "Sphere_arc.h"
+#include <CGAL/Sphere_arc.h>
+
 #include <ostream>
 
 CGAL_BEGIN_NAMESPACE

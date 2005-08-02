@@ -14,18 +14,15 @@
  * spherical arrangements of none intersecting arcs of great circles on a sphere
  */
 
-#ifndef CGAL_SPHERICAL_MAP_H_
-#define CGAL_SPHERICAL_MAP_H_
+#ifndef CGAL_SPHERICAL_MAP_H
+#define CGAL_SPHERICAL_MAP_H
 
-#include "CGAL/Cubical_gaussian_map_3.h"
-
+#include <CGAL/basic.h>
+#include <CGAL/Cubical_gaussian_map_3.h>
 #include <CGAL/Sphere_dcel.h>
 #include <CGAL/Sphere_traits.h>
 
-#include <CGAL/basic.h>
-
 #include <list>
-
 // bug fix include
 #include <set>
 #include <CGAL/Origin.h>

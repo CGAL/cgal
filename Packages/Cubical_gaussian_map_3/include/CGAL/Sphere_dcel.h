@@ -14,22 +14,19 @@
  * spherical arrangements of none intersecting arcs of great circles on a sphere
  */
 
-#ifndef CGAL_SPHERE_DCEL_H_
-#define CGAL_SPHERE_DCEL_H_
+#ifndef CGAL_SPHERE_DCEL_H
+#define CGAL_SPHERE_DCEL_H
 
-CGAL_BEGIN_NAMESPACE
+#include <CGAL/Spherical_cgm_arr_dcel.h>
+#include <CGAL/Cubical_gaussian_map_3.h>
+#include <CGAL/Sphere_arc.h>
 
+#include <list>
 //temporary:
 #include <iostream>
 // end temporary
 
-#include <CGAL/Spherical_cgm_pm_dcel.h>
-#include <CGAL/Cubical_gaussian_map_3.h>
-
-#include <CGAL/Sphere_arc.h>
-
-#include <list>
-
+CGAL_BEGIN_NAMESPACE
 
 /*
  the class represents the spherical arrangement elements which are
@@ -42,7 +39,7 @@ template <class _Kernel,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   template <class T>
 #endif
-  class _T_Dcel = Spherical_cgm_pm_dcel>
+  class _T_Dcel = Spherical_cgm_arr_dcel>
 class SphereTopologicalMap { 
 public:
   
