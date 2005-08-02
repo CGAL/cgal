@@ -282,6 +282,10 @@ inline
 Uncertain<T> make_uncertain(const T&t)
 { return Uncertain<T>(t); }
 
+template < typename T >
+inline
+const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
+{ return t; }
 
 CGAL_END_NAMESPACE
 
