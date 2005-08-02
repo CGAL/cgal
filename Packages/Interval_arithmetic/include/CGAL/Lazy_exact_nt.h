@@ -35,6 +35,7 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Binary_operator_result.h>
+#include <CGAL/Lazy_exact_nt_fwd.h>
 
 #include <boost/operators.hpp>
 
@@ -85,8 +86,6 @@
  */
 
 CGAL_BEGIN_NAMESPACE
-
-template <typename ET> class Lazy_exact_nt;
 
 // Abstract base representation class
 template <typename ET>
