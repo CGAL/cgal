@@ -46,6 +46,9 @@ CGAL_END_NAMESPACE
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
 #include <CGAL/int.h>
+#ifdef CGAL_USE_LONG_LONG
+#include <CGAL/long_long.h>
+#endif
 
 // Including all number type files is necessary for compilers implementing
 // two-stage name lookup (like g++ >= 3.4).
@@ -64,23 +67,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/Quotient_fwd.h> // must be last : #include MP_Float.h and Gmpz.h
 
 CGAL_BEGIN_NAMESPACE
-
-// long
-
-double to_double(long);
-std::pair<double,double> to_interval(const long &);
-bool is_finite(long);
-bool is_valid(long);
-
-// long long
-
-#ifdef CGAL_USE_LONG_LONG
-double to_double(long long);
-std::pair<double,double> to_interval(const long long &);
-bool is_finite(long long);
-bool is_valid(long long);
-long long int div(long long int, long long int);
-#endif // CGAL_USE_LONG_LONG
 
 // Fixed_precision_nt
 
