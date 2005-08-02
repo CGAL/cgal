@@ -61,6 +61,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Quotient_fwd.h>
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
+#include <CGAL/Filtered_exact_fwd.h>
 #include <CGAL/Gmpzq_fwd.h>
 #include <CGAL/gmpxx_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
@@ -105,69 +106,6 @@ double to_double(Fixed_precision_nt);
 bool is_finite(Fixed_precision_nt);
 bool is_valid(Fixed_precision_nt);
 std::pair<double,double> to_interval(Fixed_precision_nt);
-
-
-// Filtered_exact
-
-template < class, class, class, bool, class > class Filtered_exact;
-struct Dynamic;
-
-#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-template < class CT, class ET, bool Protected, class Cache >
-Filtered_exact<CT,ET,Dynamic,Protected,Cache>
-div (const Filtered_exact<CT,ET,Dynamic, Protected,Cache>&,
-     const Filtered_exact<CT,ET, Dynamic, Protected,Cache>&);
-
-template < class CT, class ET, class Type, bool Protected, class Cache >
-Filtered_exact<CT, ET, Type, Protected, Cache>
-sqrt (const Filtered_exact<CT, ET, Type, Protected, Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Filtered_exact<CT,ET,Dynamic,Protected,Cache>
-gcd (const Filtered_exact<CT,ET,Dynamic, Protected,Cache>&,
-     const Filtered_exact<CT,ET,Dynamic, Protected,Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Filtered_exact<CT,ET,Dynamic,Protected,Cache>
-square (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
-
-#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-
-template < class CT, class ET, class Type, bool Protected, class Cache >
-bool is_valid (const Filtered_exact<CT, ET, Type, Protected, Cache>&);
-
-template < class CT, class ET, class Type, bool Protected, class Cache >
-bool is_finite (const Filtered_exact<CT, ET, Type, Protected, Cache>&);
-
-template < class CT, class ET, class Type, bool Protected, class Cache >
-double to_double (const Filtered_exact<CT, ET, Type, Protected, Cache>&);
-
-template < class CT, class ET, class Type, bool Protected, class Cache >
-std::pair<double, double>
-to_interval (const Filtered_exact<CT, ET, Type, Protected, Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Sign sign (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Comparison_result
-compare (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&,
-         const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Filtered_exact<CT,ET,Dynamic,Protected,Cache>
-abs (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Filtered_exact<CT,ET,Dynamic,Protected,Cache>
-min (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&,
-     const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
-
-template < class CT, class ET, bool Protected, class Cache >
-Filtered_exact<CT,ET,Dynamic,Protected,Cache>
-max (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&,
-     const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
-
 
 // Polynomial
 
