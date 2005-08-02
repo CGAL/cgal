@@ -59,6 +59,8 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
 
+#include <CGAL/Interval_nt_fwd.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // MP_Float
@@ -194,46 +196,6 @@ bool is_finite(const Lazy_exact_nt<ET> &);
 
 template <typename ET>
 bool is_valid(const Lazy_exact_nt<ET> &);
-
-// Interval_nt
-
-template <bool> class Interval_nt;
-
-template <bool Protected>
-double to_double (const Interval_nt<Protected> &);
-
-template <bool Protected>
-std::pair<double, double> to_interval (const Interval_nt<Protected> &);
-
-template <bool Protected>
-bool is_valid (const Interval_nt<Protected> &);
-
-template <bool Protected>
-bool is_finite (const Interval_nt<Protected> &);
-
-template <bool Protected>
-Interval_nt<Protected> sqrt (const Interval_nt<Protected> &);
-
-template <bool Protected>
-Interval_nt<Protected>
-min (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
-
-template <bool Protected>
-Interval_nt<Protected>
-max (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
-
-template <bool Protected>
-Interval_nt<Protected> square (const Interval_nt<Protected> &);
-
-template <bool Protected>
-Interval_nt<Protected> abs (const Interval_nt<Protected> &);
-
-template <bool Protected>
-Uncertain<Sign> sign (const Interval_nt<Protected> &);
-
-template <bool Protected>
-Uncertain<Comparison_result>
-compare (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
 
 // Filtered_exact
 

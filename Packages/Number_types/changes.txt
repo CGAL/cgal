@@ -1,4 +1,8 @@
 2 August 2005 Sylvain Pion
+- number_type_basic.h : #include <CGAL/Interval_nt_fwd.h> instead of declaring
+  things from another package.
+
+2 August 2005 Sylvain Pion
 - number_type_basic.h : update compare(Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>).
 - Move Binary_operator_result.h here.
 - Quotient.h : specialize Binary_operator_result<Quotient<NT>, NT>.
