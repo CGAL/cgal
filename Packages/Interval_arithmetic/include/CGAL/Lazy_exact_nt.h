@@ -34,6 +34,7 @@
 #include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/NT_converter.h>
+#include <CGAL/Binary_operator_result.h>
 
 #include <boost/operators.hpp>
 
@@ -61,7 +62,8 @@
 /*
  * TODO :
  * - Generalize it for constructions at the kernel level.
- * - Interval rafinement functionnality ?
+ * - Add mixed operations with ET too ?
+ * - Interval refinement functionnality ?
  * - Separate the handle and the representation(s) in 2 files (?)
  *   maybe not a good idea, better if everything related to one operation is
  *   close together.
@@ -90,7 +92,7 @@ template <typename ET> class Lazy_exact_nt;
 template <typename ET>
 struct Lazy_exact_rep : public Rep
 {
-  Interval_nt<true> in; // could be const, except for rafinement ? or mutable ?
+  Interval_nt<true> in; // could be const, except for refinement ? or mutable ?
   ET *et; // mutable as well ?
 
   Lazy_exact_rep (const Interval_nt<true> & i)
@@ -182,17 +184,17 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 };
 
 // Base binary operation
-template <typename ET>
-struct Lazy_exact_binary : public Lazy_exact_unary<ET>
+template <typename ET, typename ET1 = ET, typename ET2 = ET>
+struct Lazy_exact_binary : public Lazy_exact_rep<ET>
 {
-  const Lazy_exact_nt<ET> op2;
+  const Lazy_exact_nt<ET1> op1;
+  const Lazy_exact_nt<ET2> op2;
 
   Lazy_exact_binary (const Interval_nt<true> &i,
-		     const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-      : Lazy_exact_unary<ET>(i, a), op2(b) {}
+		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
+      : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
-  int depth() const { return std::max(Lazy_exact_unary<ET>::op1.depth(),
-                                      op2.depth()) + 1; }
+  int depth() const { return std::max(op1.depth(), op2.depth()) + 1; }
 };
 
 // Here we could use a template class for all operations (STL provides
@@ -217,11 +219,11 @@ CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
 
 // A macro for +, -, * and /
 #define CGAL_LAZY_BINARY_OP(OP, NAME)                                 \
-template <typename ET>                                                \
-struct NAME : public Lazy_exact_binary<ET>                            \
+template <typename ET, typename ET1 = ET, typename ET2 = ET>          \
+struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                  \
 {                                                                     \
-  NAME (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)       \
-    : Lazy_exact_binary<ET>(a.approx() OP b.approx(), a, b) {}        \
+  NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)       \
+    : Lazy_exact_binary<ET, ET1, ET2>(a.approx() OP b.approx(), a, b) {} \
                                                                       \
   void update_exact()                                                 \
   {                                                                   \
@@ -263,15 +265,11 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
 
-// TODO : Add mixed operations with ET too ?
-
 // The real number type, handle class
 template <typename ET>
 class Lazy_exact_nt
   : public Handle
-  , boost::ordered_euclidian_ring_operators1< Lazy_exact_nt<ET>
-  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int
-    > >
+  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int >
 {
 public :
   typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
@@ -380,20 +378,32 @@ public :
       relative_precision_of_to_double = d;
   }
 
+  bool identical(const Self& b) const
+  {
+    return CGAL::identical(static_cast<const Handle &>(*this),
+                           static_cast<const Handle &>(b));
+  }
+
+  template < typename T >
+  bool identical(const T&) const
+  { return false; }
+
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 
   static double relative_precision_of_to_double;
 };
 
+
 template <typename ET>
 double Lazy_exact_nt<ET>::relative_precision_of_to_double = 0.00001;
 
-template <typename ET>
+
+template <typename ET1, typename ET2>
 bool
-operator<(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+operator<(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
-  if (identical(a,b))
+  if (a.identical(b))
     return false;
   Uncertain<bool> res = a.approx() < b.approx();
   if (is_singleton(res))
@@ -401,17 +411,49 @@ operator<(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
   return a.exact() < b.exact();
 }
 
-template <typename ET>
+template <typename ET1, typename ET2>
 bool
-operator==(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+operator==(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
-  if (identical(a,b))
+  if (a.identical(b))
     return true;
   Uncertain<bool> res = a.approx() == b.approx();
   if (is_singleton(res))
     return res;
   return a.exact() == b.exact();
 }
+
+template <typename ET1, typename ET2>
+inline
+bool
+operator>(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{ return b < a; }
+
+template <typename ET1, typename ET2>
+inline
+bool
+operator>=(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{ return ! (a < b); }
+
+template <typename ET1, typename ET2>
+inline
+bool
+operator<=(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{ return b >= a; }
+
+template <typename ET1, typename ET2>
+inline
+bool
+operator!=(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{ return ! (a == b); }
+
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
+operator%(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return Lazy_exact_nt<ET>(a) %= b; }
+
 
 
 // Mixed operators with int.
@@ -443,6 +485,39 @@ operator==(const Lazy_exact_nt<ET>& a, int b)
   if (is_singleton(res))
     return res;
   return b == a.exact();
+}
+
+
+template <typename ET1, typename ET2>
+Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+operator+(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{
+  return new Lazy_exact_Add<typename Binary_operator_result<ET1, ET2>::type,
+                            ET1, ET2>(a, b);
+}
+
+template <typename ET1, typename ET2>
+Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+operator-(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{
+  return new Lazy_exact_Sub<typename Binary_operator_result<ET1, ET2>::type,
+                            ET1, ET2>(a, b);
+}
+
+template <typename ET1, typename ET2>
+Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+operator*(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{
+  return new Lazy_exact_Mul<typename Binary_operator_result<ET1, ET2>::type,
+                            ET1, ET2>(a, b);
+}
+
+template <typename ET1, typename ET2>
+Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
+{
+  return new Lazy_exact_Div<typename Binary_operator_result<ET1, ET2>::type,
+                            ET1, ET2>(a, b);
 }
 
 
@@ -485,12 +560,12 @@ sign(const Lazy_exact_nt<ET> & a)
   return CGAL_NTS sign(a.exact());
 }
 
-template <typename ET>
+template <typename ET1, typename ET2>
 inline
 Comparison_result
-compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
+compare(const Lazy_exact_nt<ET1> & a, const Lazy_exact_nt<ET2> & b)
 {
-  if (identical(a,b))
+  if (a.identical(b))
     return EQUAL;
   Uncertain<Comparison_result> res = compare(a.approx(), b.approx());
   if (is_singleton(res))
