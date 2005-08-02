@@ -17,6 +17,7 @@
 \newcommand{\C}{\ensuremath{\mathbb{C}}}
 
 \newtheorem{lemma}{Lemma}
+\newtheorem{cor}{Corollary}
 \newtheorem{assumption}{Assumption}
 \newtheorem{definition}{Definition}
 
@@ -174,7 +175,7 @@ $\lambda$ and an $\left|I\right|+2n$-vector $\mu \geq 0$,
 $\mu=\left({\mu^{\leq}}^{T}\left|\right. {\mu^{\geq}}^{T} \left|\right.
 {\mu^{l}}^{T} \left|\right. {\mu^{u}}^{T}\right)^{T}$, such that
 \begin{eqnarray*}
-c + Dx^{*} +A_{E, \bullet}^{T}\lambda
+c + 2Dx^{*} +A_{E, \bullet}^{T}\lambda
 &=&
 -A_{I^{\leq}, \bullet}^{T}\mu^{\leq} + A_{I^{\geq}, \bullet}^{T}\mu^{\geq}
 +I\mu^{l} -I\mu^{u}  \\
@@ -197,7 +198,7 @@ A feasible solution $x^{*}$ to the QP~(\ref{def:QP_UB}) is optimal if there exis
 $\lambda_{i} \leq 0$ for $i \in I^{\geq}$, and two $n$-vectors $\mu^{l}$ and
 $\mu^{u}$, $\mu^{l} \geq 0$, $\mu^{u} \geq 0$ such that
 \begin{eqnarray*}
-c + Dx^{*} +A^{T}\lambda
+c + 2Dx^{*} +A^{T}\lambda
 &=&
 I\left(\mu^{l} -\mu^{u}\right)  \\
 \lambda^{T}\left(Ax^{*}-b\right)
@@ -214,7 +215,7 @@ Replacing $\mu^{l}-\mu^{u}$ by $\mu$ we finally obtain
 \begin{lemma}
 A feasible solution $x^{*}$ to QP~(\ref{def:QP_UB}) is optimal, if there exists an $m$-vector $\lambda$ and an $n$-vector $\mu$ such that 
 \begin{eqnarray}
-c + Dx^{*} +A^{T}\lambda
+c + 2Dx^{*} +A^{T}\lambda
 &=&
 \mu  \\
 \lambda^{T}\left(Ax^{*}-b\right)
@@ -252,10 +253,10 @@ A feasible solution $x^{*}$ to
 \label{eq:QP_UB_eq_var_feas_cons}
     & & l \leq x \leq u  
 \end{eqnarray}
-is optimal if there exists an $m$-vector $\lambda$ and an $n$-vector $\mu$ such
-that
+is optimal if and only if there exists an $m$-vector $\lambda$ and an $n$-vector
+$\mu$ such that
 \begin{eqnarray}
-c + Dx^{*} +A^{T}\lambda
+c + 2Dx^{*} +A^{T}\lambda
 &=&
 \mu  
 \end{eqnarray}
@@ -264,13 +265,33 @@ and
 \label{eq:KKT_QP_UB_eq_mu_cond}
 \mu_{j} \left\{
 \begin{array}{ll}
-\geq 0, & \text{if $x_{j}^{*}=l_{j}$} \\
+\geq 0, & \text{if $x_{j}^{*}=l_{j} \wedge l_{j}<u_{j}$} \\
 = 0,    & \text{if $l_{j} < x_{j}^{*} < u_{j}$} \\
-\leq 0, & \text{if $x_{j}^{*}=u_{j}$}
+\leq 0, & \text{if $x_{j}^{*}=u_{j} \wedge l_{j}<u_{j}$}
 \end{array}
 \right.
 \end{equation} 
 \end{lemma}
+\begin{lemma}
+A feasible solution $x^{*}$ to
+\begin{eqnarray}
+  \mbox{($UQP^{u}$)} &minimize& c^{T}x +x^{T}Dx
+\nonumber      \\
+\label{eq:UQP_UB_eq_feas_cons}
+    & s.t. & Ax = b
+\end{eqnarray}
+is optimal if and only if there exists an $m$-vector $\lambda$ such that
+\begin{eqnarray}
+c + 2Dx^{*} +A^{T}\lambda
+&=&
+\mu  
+\end{eqnarray}
+\end{lemma}
+\begin{cor}
+\label{cor:int_QP_UQP}
+Any vector $l<x^{*}<u$ satisfying $Ax=b$ is an optimal solution to $(QP^{u})$
+if and only if it is an optimal solution to $(UQP^{u})$.
+\end{cor}
 
 \section{Pricing}
 Testing whether a nonbasic variable $x_{j}$ can improve the solution by entering the current QP-basis is done as follows.
@@ -346,9 +367,9 @@ the linear equation system
 M_{B}
 \left(
 \begin{array}{c}
-\lambda(t) \\
+\lambda \\
 \hline
-x_{B}^{*}(t)
+x_{B}^{*}
 \end{array}
 \right)
 =
@@ -368,7 +389,7 @@ A_{N} \\
 \end{array}
 \right)
 x_{N}
-%-d_{t}t
+%-d_{t}tn
 %\left(
 %\begin{array}{c}
 %A_{j} \\
@@ -396,8 +417,9 @@ $x_{j}^{*}=l_{j}$ cannot
 be an optimal solution to $(QP(\hat{B}^{u}))$ because
 $\mu_{j}<0 \wedge x_{j}^{*}=l_{j}$ contradicts (\ref{eq:KKT_QP_UB_eq_mu_cond})
 in Lemma~\ref{lem:KKT_QP_UB_eq}, likewise $x_{\hat{B}}^{*}$ with
-$x_{j}^{*}=u_{j}$ cannot be an optimal solution, more generally the current solution $x_{\hat{B}}^{*}$ with $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ can be
-improved if and only if
+$x_{j}^{*}=u_{j} \wedge \mu_{j}>0 $ cannot be an optimal solution, more
+generally the current solution $x_{\hat{B}}^{*}$ with
+$x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ can be improved if and only if
 \begin{equation}
 \mu_{j}
 \left\{
@@ -423,9 +445,26 @@ $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ is the optimal solution to
   x_{\hat{B} \cup \hat{N}}  \nonumber \\
   & s.t & A_{\hat{B}}x_{\hat{B}} =
   b - A_{\hat{N}}x_{\hat{N}} \\
-  & & x_{j} = v_{j} \pm t, \quad x_{\hat{N}} \text{ constant}
+  & & x_{j} = x_{j}^{*}(t), \quad x_{\hat{N}} \text{ constant}
   \nonumber
 \end{eqnarray}
+with
+\begin{equation}
+x_{j}^{*}(t)=
+\left\{
+\begin{array}{ll}
+l_{j}+t
+&
+\text{if $b(j)=-1$} \\
+d_{t}t
+&
+\text{if $b(j)=0$} \\
+u_{j}-t
+&
+\text{if $b(j)=1$}
+\end{array}
+\right.
+\end{equation}
 for $t=0$. Furthermore, $(UQP_{j}^{t}(\hat{B}^{u}))$ has a unique optimal
 solution $x_{\hat{B}}^{*}(t)$ for each value of $t$, which is determined by
 \begin{equation}
@@ -463,23 +502,6 @@ A_{j} \\
 \end{array}
 \right)
 \end{equation}
-where
-\begin{equation}
-x_{j}^{*}(t)=
-\left\{
-\begin{array}{ll}
-l_{j}+t
-&
-\text{if $b(j)=-1$} \\
-d_{t}t
-&
-\text{if $b(j)=0$} \\
-u_{j}-t
-&
-\text{if $b(j)=1$}
-\end{array}
-\right.
-\end{equation}
 This follows from the KKT conditions for (\ref{QP:UQP_UB_t})
 (Lemma~\ref{lem:KKT_QP_UB_eq}), the regularity of $M_{B}$, and some elementary
 transformations. In the sequel, we use the following equivalent formulation
@@ -495,21 +517,11 @@ x_{B}^{*}(t, d_{t})
 =
 \left(
 \begin{array}{c}
-\lambda \\
+\lambda(0) \\
 \hline
-x_{B}^{*}
+x_{B}^{*}(0)
 \end{array}
 \right)
--
-M_{B}^{-1}
-\left(
-\begin{array}{c}
-A_{N} \\
-\hline
-2D_{B,N}
-\end{array}
-\right)
-x_{N}
 -
 d_{t}t
 \left(
@@ -521,7 +533,35 @@ q_{x}
 \right)
 \end{equation}
 where
-\begin{equation}
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+\lambda(0) \\
+\hline
+x_{B}^{*}(0)
+\end{array}
+\right)
+&:=&
+M_{B}^{-1}
+\left[
+\left(
+\begin{array}{c}
+b \\
+\hline
+-c_{B}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{N} \\
+\hline
+2D_{B,N}
+\end{array}
+\right)
+x_{N}
+\right]
+\\
 \left(
 \begin{array}{c}
 q_{\lambda} \\
@@ -529,7 +569,7 @@ q_{\lambda} \\
 q_{x}
 \end{array}
 \right)
-:=
+&:=&
 M_{B}^{-1}
 \left(
 \begin{array}{c}
@@ -538,7 +578,7 @@ A_{j} \\
 2D_{B,j}
 \end{array}
 \right)
-\end{equation}
+\end{eqnarray}
 While increasing $t$ starting from zero (which improves the current solution),
 three things may happen. Either the entering variable $x_{j}$ takes its lower or
 upper bound value $l_{j}$ or $u_{j}$, or one of the basic variables $x_{i}$
@@ -589,7 +629,7 @@ Equation~(\ref{eq:Ratio_Test_1_Opt_sol_t})
 &=&
 c_{j} + A_{j}^{T}\lambda(t, d_{t})+2D_{B,j}^{T}x_{B}^{*}(t, d_{t})
 +2D_{j,j}x_{j}^{*}(t, d_{t})
-+D_{\hat{N},j}^{T}2x_{\hat{N}} \nonumber \\
++2D_{\hat{N},j}^{T}x_{\hat{N}} \nonumber \\
 &=&
 \mu_{j}+d_{t}t
 \left(2D_{j,j}-A_{j}^{T}q_{\lambda}-2D_{B,j}^{T}q_{x}\right)
@@ -609,11 +649,12 @@ $t > 0$ before any of the basic variables or the entering variable take the
 values of a lower or upper bound, then $\hat{B}$ is the new basis.
 \end{lemma}
 In case the first event happens, i.e. the entering variable takes the value of
-either the lower or upper bound for some $t>0$, again Lemma~\ref{lem:new_basis}
-applies; since the third event did not occur $\mu_{j}(t, d_{t})$ still has the
-same sign but by (\ref{eq:KKT_opt_cond_sub_prob_mu}) $x_{\hat{B}}(t, d_{t})$ is
-now an optimal solution to $(QP(\hat{B}^{u}))$.
-
+either the lower or upper bound for some $t>0$,
+%again Lemma~\ref{lem:new_basis}
+%applies; since the third event did not occur $\mu_{j}(t, d_{t})$ still has the
+%same sign but by (\ref{eq:KKT_opt_cond_sub_prob_mu}) $x_{\hat{B}}(t, d_{t})$ is
+%now an optimal solution to $(QP(\hat{B}^{u}))$.
+the entering variable $x_{j}$ remains nonbasic and the pivot step is completed. 
 
 In case the second event happens, i.e. some basic variable $x_{i}$ takes the
 value of either its lower or upper bound, we implicitly add the constraint
@@ -631,6 +672,7 @@ $t$ (with $\hat{B}=B \cup \{j\}$). Reconsidering the KKT conditions for
 $QP(\hat{B}^{u})$, i.e. Equations~(\ref{eq:KKT_opt_cond_sub_prob}) and
 (\ref{eq:KKT_opt_cond_sub_prob_mu}), yields
 \begin{equation}
+\label{eq:rat_test_2}
 M_{\hat{B}}
 \left(
 \begin{array}{c}
@@ -651,6 +693,17 @@ b \\
 -c_{j}
 \end{array}
 \right)
+-
+\left(
+\begin{array}{c}
+A_{\hat{N}} \\
+\hline
+2D_{B, \hat{N}} \\
+\hline
+2D_{j, \hat{N}}
+\end{array}
+\right)
+x_{\hat{N}}
 +\mu_{j}
 \left(
 \begin{array}{c}
@@ -662,8 +715,119 @@ b \\
 \end{array}
 \right)
 \end{equation}
-In case $M_{\hat{B}}$ is singular we proceed directly to Step~3.
+In case $M_{\hat{B}}$ is singular we proceed directly to Step~3. Otherwise, the
+system of linear equations~(\ref{eq:rat_test_2}) has a unique solution for each
+value of $\mu_{j}$. The solutions are determined by a linear function in 
+$\mu_{j}$, which can be written as
+\begin{equation}
+\left(
+\begin{array}{c}
+\lambda(\mu_{j}) \\
+\hline
+x_{\hat{B}}^{*}(\mu_{j})
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\lambda(0) \\
+\hline
+x_{\hat{B}}^{*}(0)
+\end{array}
+\right)
++\mu_{j}
+\left(
+\begin{array}{c}
+p_{\lambda} \\
+\hline
+p_{x_{\hat{B}}}
+\end{array}
+\right)
+\end{equation}
+with
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+\lambda(0) \\
+\hline
+x_{\hat{B}}^{*}(0)
+\end{array}
+\right)
+&:=&
+M_{\hat{B}}^{-1}
+\left[
+\left(
+\begin{array}{c}
+b \\
+\hline
+-c_{B} \\
+\hline
+-c_{j}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{\hat{N}} \\
+\hline
+2D_{B, \hat{N}} \\
+\hline
+2D_{j, \hat{N}}
+\end{array}
+\right)
+x_{\hat{N}}
+\right]
+\\
+\left(
+\begin{array}{c}
+p_{\lambda} \\
+\hline
+p_{x_{B}} \\
+\hline
+p_{x_{j}}
+\end{array}
+\right)
+&:=&
+M_{\hat{B}}^{-1}
+\left(
+\begin{array}{c}
+0 \\
+\hline
+0 \\
+\hline
+1
+\end{array}
+\right)
+\end{eqnarray}
+Any solution $x_{\hat{B}}(\mu_{j})$ is feasible for $(UQP(\hat{B}^{u}))$, and is
+optimal if $\mu_{j}=0$. Let $t_{1}$ be the value of $t$ for which the second
+event occured in the last iteration of Ratio Test Step~1, then
+$x_{\hat{B}}^{*}(\mu_{j}(t_{1}))$ is the current feasible solution at the
+beginning of Ratio Test Step~2.
 
+While increasing or decreasing $\mu_{j}$ from $\mu_{j}(t_{1})$ towards zero
+three events may occur. Either the entering variable $x_{j}$ takes its lower or
+upper bound value $l_{j}$ or $u_{j}$, or one of the basic variables $x_{i}$
+takes the value of its lower or upper bound $l_{j}$ or $u_{j}$, or a local
+minimum of the objective function is reached.
+
+In case the last event happens, i.e. $\mu_{j}$ equals zero, we found an optimal
+solution $l_{\hat{B}} < x_{\hat{B}} < u_{\hat{B}}$ to $(UQP(\hat{B}^{u}))$,
+which is at the same time an optimal solution to the constrained problem
+$(QP(\hat{B}^{u}))$ by Corollary~\ref{cor:int_QP_UQP}. The uniqueness of the
+solution follows from the regularity of $M_{\hat{B}}$, which also implies that
+$\hat{B}$ is the new basis in that case.
+
+In case of the first event
+
+In case of the second event, if some basic variable $x_{k}$ takes the value of
+its lower or upper bound, we implicitly add the constraint $x_{k}=l_{i}$ or
+$x_{k}=u_{i}$ to $(UQP(\hat{B}^{u}))$ by removing $k$ from $\hat{B}$. If
+$M_{\hat{B}\setminus \{k\}}$ stays regular, we still det unique solutions
+of~(\ref{eq:rat_test_2})
+for arbitrary values of $\mu_{j}$. In this case Ratio Test Step~2 is iterated,
+otherwise we continue with Step~3.  
+ 
 \section{Implemetation Issues}
 \subsection{Pricing strategies}
 Due to the fact that original nonbasic variables may assume several different values and according to Equations~(\ref{def:mu_opt_cond}) the pricing step not only has to deliver an entering variable $x_{j}$, $j \in N$, if the current solution is suboptimal, but also a direction $d_{t} \in \{-1,1\}$ indicating whether the entering variable $x_{j}$ is to be increased or decreased. So if $d_{t}=1$ the entering variable is to be increased, otherwise it is to be decreased.
