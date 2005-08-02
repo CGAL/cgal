@@ -202,7 +202,11 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
   int depth() const { return std::max(op1.depth(), op2.depth()) + 1; }
-  void prune_dag() { op1 = op2 = Lazy_exact_nt<ET>::zero(); }
+  void prune_dag()
+  {
+    op1 = Lazy_exact_nt<ET1>::zero();
+    op2 = Lazy_exact_nt<ET2>::zero();
+  }
 };
 
 // Here we could use a template class for all operations (STL provides
