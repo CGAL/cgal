@@ -25,6 +25,7 @@
 #define CGAL_NUMBER_TYPE_CHECKER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Number_type_checker_fwd.h>
 
 // A number type class, parameterized by 2 number types NT1 and NT2.
 // It runs all operations on parallel over NT1 and NT2.

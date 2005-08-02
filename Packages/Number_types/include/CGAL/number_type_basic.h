@@ -63,6 +63,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Lazy_exact_nt_fwd.h>
 #include <CGAL/Gmpzq_fwd.h>
 #include <CGAL/gmpxx_fwd.h>
+#include <CGAL/Number_type_checker_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -104,40 +105,6 @@ double to_double(Fixed_precision_nt);
 bool is_finite(Fixed_precision_nt);
 bool is_valid(Fixed_precision_nt);
 std::pair<double,double> to_interval(Fixed_precision_nt);
-
-// Number_type_checker
-
-template < typename NT1, typename NT2, typename Cmp >
-class Number_type_checker;
-
-template < typename NT1, typename NT2, typename Cmp >
-double
-to_double(const Number_type_checker<NT1, NT2, Cmp> &);
-
-template < typename NT1, typename NT2, typename Cmp >
-std::pair<double, double>
-to_interval(const Number_type_checker<NT1, NT2, Cmp> &);
-
-template < typename NT1, typename NT2, typename Cmp >
-Number_type_checker<NT1, NT2, Cmp>
-sqrt(const Number_type_checker<NT1, NT2, Cmp> &);
-
-template < typename NT1, typename NT2, typename Cmp >
-bool
-is_finite(const Number_type_checker<NT1, NT2, Cmp> &);
-
-template < typename NT1, typename NT2, typename Cmp >
-bool
-is_valid(const Number_type_checker<NT1, NT2, Cmp> &);
-
-template < typename NT1, typename NT2, typename Cmp >
-Sign
-sign(const Number_type_checker<NT1, NT2, Cmp> &);
-
-template < typename NT1, typename NT2, typename Cmp >
-Comparison_result
-compare(const Number_type_checker<NT1, NT2, Cmp> &,
-        const Number_type_checker<NT1, NT2, Cmp> &);
 
 
 // Filtered_exact
