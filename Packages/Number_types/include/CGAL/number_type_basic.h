@@ -60,21 +60,9 @@ CGAL_END_NAMESPACE
 #include <CGAL/Gmpzq_fwd.h>
 #include <CGAL/gmpxx_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
+#include <CGAL/MP_Float_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
-
-// MP_Float
-
-class MP_Float;
-
-Comparison_result compare(const MP_Float&, const MP_Float&);
-Sign sign(const MP_Float &);
-MP_Float square(const MP_Float&);
-MP_Float sqrt(const MP_Float&);
-double to_double(const MP_Float&);
-std::pair<double,double> to_interval(const MP_Float &);
-bool is_finite(const MP_Float &);
-bool is_valid(const MP_Float &);
 
 // long
 

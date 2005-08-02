@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2003,2004,2005  Utrecht University (The Netherlands),
+// Copyright (c) 2001-2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,39 +19,28 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
+// Author(s)     : Sylvain Pion
 
-#ifndef CGAL_GMPZQ_FWD_H
-#define CGAL_GMPZQ_FWD_H
+#ifndef CGAL_MP_FLOAT_FWD_H
+#define CGAL_MP_FLOAT_FWD_H
 
-// Forward declarations of functions over Gmpz and Gmpq.
+// Forward declarations
 
 #include <CGAL/Quotient_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
-class Gmpz;
+class MP_Float;
 
-double to_double(const Gmpz&);
-Sign sign(const Gmpz &);
-bool is_valid(const Gmpz &);
-bool is_finite(const Gmpz &);
-Gmpz sqrt(const Gmpz &);
-Gmpz div(const Gmpz &, const Gmpz &);
-Gmpz gcd(const Gmpz &, const Gmpz &);
-Gmpz gcd(const Gmpz &, int);
-std::pair<double, double> to_interval (const Gmpz &);
-
-class Gmpq;
-
-double to_double(const Gmpq&);
-Sign sign(const Gmpq &);
-bool is_valid(const Gmpq &);
-bool is_finite(const Gmpq &);
-std::pair<double, double> to_interval (const Gmpq &);
-
-double to_double(const Quotient<Gmpz>&);
+Comparison_result compare(const MP_Float&, const MP_Float&);
+Sign sign(const MP_Float &);
+MP_Float square(const MP_Float&);
+MP_Float sqrt(const MP_Float&);
+double to_double(const MP_Float&);
+std::pair<double,double> to_interval(const MP_Float &);
+bool is_finite(const MP_Float &);
+bool is_valid(const MP_Float &);
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_GMPZQ_FWD_H
+#endif // CGAL_MP_FLOAT_FWD_H

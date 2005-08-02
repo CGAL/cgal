@@ -26,6 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
+#include <CGAL/MP_Float_fwd.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
