@@ -30,12 +30,7 @@
 #define CGAL_NTS CGAL::
 // #define CGAL_NTS CGAL::NTS::
 
-#if ((__GNUC__ == 2) && (__GNUC_MINOR__ == 95))
-#include <cmath>
-#endif
-
 // CGAL uses std::min and std::max
-
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
