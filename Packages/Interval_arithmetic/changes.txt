@@ -4,6 +4,7 @@
   CGAL/number_type_basic.h.
 - Lazy_exact_nt : Fix for some mixed operators.
 - Forward declarations in Lazy_exact_nt_fwd.h .
+- Forward declarations in Filtered_exact_fwd.h .
 
 2 August 2005 Sylvain Pion
 - Uncertain : add maker function make_uncertain().

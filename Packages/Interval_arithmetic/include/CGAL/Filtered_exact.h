@@ -37,6 +37,7 @@
 #include <CGAL/Static_filter_error.h>
 #include <CGAL/Restricted_double.h>
 #include <CGAL/NT_converter.h>
+#include <CGAL/Filtered_exact_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
