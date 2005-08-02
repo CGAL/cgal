@@ -1,3 +1,6 @@
+2 August 2005 Sylvain Pion
+- number_type_basic.h : update compare(Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>).
+
 1 August 2005 Sylvain Pion
 - Rational_traits<Quotient> : make numerator/denominator return by reference.
 

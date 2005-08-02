@@ -170,9 +170,9 @@ std::pair<double,double> to_interval(const Lazy_exact_nt<ET> &);
 template <typename ET>
 Sign sign(const Lazy_exact_nt<ET> &);
 
-template <typename ET>
+template <typename ET1, typename ET2>
 Comparison_result
-compare(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
+compare(const Lazy_exact_nt<ET1> &, const Lazy_exact_nt<ET2> &);
 
 template <typename ET>
 Lazy_exact_nt<ET> abs(const Lazy_exact_nt<ET> &);
