@@ -170,7 +170,7 @@ public:
     prune_dag();
   }
   int depth() const { return l.depth() + 1; }
-  void prune_dag() { l = 0; }
+  void prune_dag() { l = Lazy_exact_nt<ET1>::zero(); }
 };
 
 
@@ -187,7 +187,7 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(i), op1(a) {}
 
   int depth() const { return op1.depth() + 1; }
-  void prune_dag() { op1 = 0; }
+  void prune_dag() { op1 = Lazy_exact_nt<ET>::zero(); }
 };
 
 // Base binary operation
@@ -202,7 +202,7 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
   int depth() const { return std::max(op1.depth(), op2.depth()) + 1; }
-  void prune_dag() { op1 = op2 = 0; }
+  void prune_dag() { op1 = op2 = Lazy_exact_nt<ET>::zero(); }
 };
 
 // Here we could use a template class for all operations (STL provides
@@ -290,7 +290,17 @@ class Lazy_exact_nt
   : public Handle
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int >
 {
+  typedef Lazy_exact_nt<ET> Self;
+  typedef Lazy_exact_rep<ET> Self_rep;
+
+  // We have a static variable for optimizing zero.
+  static const Self zero_;
+  struct zero_tag {};
+  Lazy_exact_nt(zero_tag)
+  { PTR = new Lazy_exact_Int_Cst<ET>(0); }
+
 public :
+
   typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
   typedef typename Number_type_traits<ET>::Has_division Has_division;
   typedef typename Number_type_traits<ET>::Has_sqrt     Has_sqrt;
@@ -301,15 +311,11 @@ public :
   typedef typename Number_type_traits<ET>::Has_exact_ring_operations
                                                      Has_exact_ring_operations;
 
-
-  typedef Lazy_exact_nt<ET> Self;
-  typedef Lazy_exact_rep<ET> Self_rep;
-
   Lazy_exact_nt (Self_rep *r)
   { PTR = r; }
 
   Lazy_exact_nt ()
-  { PTR = new Lazy_exact_Int_Cst<ET>(0); }
+    : Handle(zero_) {}
 
   Lazy_exact_nt (const CGAL_int(ET) & i)
   { PTR = new Lazy_exact_Int_Cst<ET>(i); }
@@ -407,6 +413,8 @@ public :
   bool identical(const T&) const
   { return false; }
 
+  static const Self & zero() { return zero_; }
+
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 
@@ -416,6 +424,10 @@ private:
 
 template <typename ET>
 double Lazy_exact_nt<ET>::relative_precision_of_to_double = 0.00001;
+
+template <typename ET>
+const Lazy_exact_nt<ET>
+Lazy_exact_nt<ET>::zero_ = Lazy_exact_nt<ET>(zero_tag());
 
 
 template <typename ET1, typename ET2>
