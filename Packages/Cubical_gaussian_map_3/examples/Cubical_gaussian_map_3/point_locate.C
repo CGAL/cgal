@@ -7,28 +7,24 @@
   author: Kapelushnik Lior
 */
 
-#include <CGAL/Sphere_traits.h>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
-
 #include <CGAL/Cubical_gaussian_map_3.h>
-
+#include <CGAL/Sphere_traits.h>
 #include "CGAL/Spherical_map.h"
-
-#include "CGAL/Sphere_point_location.h"
+#include <CGAL/Sphere_point_location.h>
 
 typedef CGAL::Gmpq                                    	Number_type;
 typedef CGAL::Cartesian<Number_type>                  	Kernel;
-typedef Sphere_traits<Kernel>				Traits_2;
+typedef CGAL::Sphere_traits<Kernel>                     Traits_2;
 typedef Kernel::Direction_3			        Direction_3;
-typedef SphereTopologicalMap<Kernel>			SphereType;
-typedef CGAL::Cubical_gaussian_map_3<Kernel,Spherical_cgm_pm_dcel> CGM;
-typedef Spherical_map<SphereType, Traits_2>		SphereMap;
+typedef CGAL::SphereTopologicalMap<Kernel>		SphereType;
+typedef CGAL::Cubical_gaussian_map_3<Kernel,CGAL::Spherical_cgm_arr_dcel> CGM;
+typedef CGAL::Spherical_map<SphereType, Traits_2>	SphereMap;
 
 
 //typedef Sphere_naive_point_location<SphereMap>		PointLocation;
-typedef Sphere_walk_along_line_point_location<SphereMap>	PointLocation;
+typedef CGAL::Sphere_walk_along_line_point_location<SphereMap>	PointLocation;
 
 int main() {
 
