@@ -51,7 +51,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
 #include <CGAL/int.h>
-#include <CGAL/Uncertain.h>
 
 // Including all number type files is necessary for compilers implementing
 // two-stage name lookup (like g++ >= 3.4).
@@ -61,6 +60,8 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
+#include <CGAL/Gmpzq_fwd.h>
+#include <CGAL/gmpxx_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -258,91 +259,6 @@ double to_double(const Nef_polynomial<ET> &);
 template <typename ET>
 Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
 
-
-
-
-#ifdef CGAL_USE_GMP
-// Gmpz
-
-class Gmpz;
-
-double to_double(const Gmpz&);
-Sign sign(const Gmpz &);
-bool is_valid(const Gmpz &);
-bool is_finite(const Gmpz &);
-Gmpz sqrt(const Gmpz &);
-Gmpz div(const Gmpz &, const Gmpz &);
-Gmpz gcd(const Gmpz &, const Gmpz &);
-Gmpz gcd(const Gmpz &, int);
-std::pair<double, double> to_interval (const Gmpz &);
-
-// Gmpq
-
-class Gmpq;
-
-double to_double(const Gmpq&);
-Sign sign(const Gmpq &);
-bool is_valid(const Gmpq &);
-bool is_finite(const Gmpq &);
-std::pair<double, double> to_interval (const Gmpq &);
-#endif // CGAL_USE_GMP
-
-#ifdef CGAL_USE_GMPXX
-// GMPXX
-
-CGAL_END_NAMESPACE
-template <typename, typename> class __gmp_expr;
-class __gmpz_value;
-class __gmpq_value;
-typedef __gmp_expr<__gmpz_value, __gmpz_value> mpz_class;
-typedef __gmp_expr<__gmpq_value, __gmpq_value> mpq_class;
-CGAL_BEGIN_NAMESPACE
-
-template < typename T, typename U >
-::__gmp_expr<T, T> sqrt(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-double to_double(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_finite(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_valid(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-std::pair<double,double> to_interval (const ::__gmp_expr<T, U> &);
-
-std::pair<double, double> to_interval (const mpz_class &);
-
-std::pair<double, double> to_interval (const mpq_class &);
-
-template < typename T, typename U >
-::__gmp_expr<T, T> abs(const ::__gmp_expr<T, U>&);
-
-template < typename T, typename U >
-::__gmp_expr<T, T> square(const ::__gmp_expr<T, U>&);
-
-
-template < typename T, typename U >
-Sign sign(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U1, typename U2 >
-Comparison_result
-compare(const ::__gmp_expr<T, U1> &, const ::__gmp_expr<T, U2> &);
-
-template < typename T, typename U >
-bool is_zero(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_one(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_positive(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_negative(const ::__gmp_expr<T, U> &);
-#endif // CGAL_USE_GMPXX
 
 // CORE::Expr
 #ifdef CGAL_USE_CORE

@@ -1,8 +1,6 @@
 2 August 2005 Sylvain Pion
-- number_type_basic.h : #include <CGAL/Interval_nt_fwd.h> instead of declaring
-  things from another package.
-- number_type_basic.h : #include <CGAL/Lazy_exact_nt_fwd.h> instead of declaring
-  things from another package.
+- number_type_basic.h : Use forward #include <CGAL/*_fwd.h> instead of declaring
+  classes and functions from other packages.
 
 2 August 2005 Sylvain Pion
 - number_type_basic.h : update compare(Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>).
