@@ -53,14 +53,15 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
 
-#include <CGAL/Quotient_fwd.h>
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
 #include <CGAL/Filtered_exact_fwd.h>
+#include <CGAL/MP_Float_fwd.h>
+#include <CGAL/Number_type_checker_fwd.h>
 #include <CGAL/Gmpzq_fwd.h>
 #include <CGAL/gmpxx_fwd.h>
-#include <CGAL/Number_type_checker_fwd.h>
-#include <CGAL/MP_Float_fwd.h>
+#include <CGAL/CORE_Expr_fwd.h>
+#include <CGAL/Quotient_fwd.h> // must be last : #include MP_Float.h and Gmpz.h
 
 CGAL_BEGIN_NAMESPACE
 
@@ -125,26 +126,6 @@ double to_double(const Nef_polynomial<ET> &);
 
 template <typename ET>
 Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-
-
-// CORE::Expr
-#ifdef CGAL_USE_CORE
-CGAL_END_NAMESPACE
-
-namespace CORE {
-  class Expr;
-}
-
-CGAL_BEGIN_NAMESPACE
-
-double to_double(const CORE::Expr &);
-CORE::Expr sqrt(const CORE::Expr &);
-bool is_finite(const CORE::Expr &);
-bool is_valid(const CORE::Expr &);
-Sign sign(const CORE::Expr&);
-Comparison_result compare(const CORE::Expr&, const CORE::Expr&);
-std::pair<double,double> to_interval (const CORE::Expr &);
-#endif // CGAL_USE_CORE
 
 CGAL_END_NAMESPACE
 

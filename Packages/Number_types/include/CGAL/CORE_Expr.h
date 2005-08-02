@@ -27,12 +27,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Interval_arithmetic.h>
+#include <CGAL/CORE_Expr_fwd.h>
 
 #include <utility>
-
-#ifdef CGAL_USE_GMPXX
-#include <CGAL/gmpxx.h>
-#endif
 
 #define CORE_LEVEL 4
 #include <CORE/CORE.h>
