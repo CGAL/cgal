@@ -60,6 +60,7 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
 
 #include <CGAL/Interval_nt_fwd.h>
+#include <CGAL/Lazy_exact_nt_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -158,44 +159,6 @@ Comparison_result
 compare(const Number_type_checker<NT1, NT2, Cmp> &,
         const Number_type_checker<NT1, NT2, Cmp> &);
 
-
-// Lazy_exact_nt
-
-template <typename> class Lazy_exact_nt;
-
-template <typename ET>
-double to_double(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-std::pair<double,double> to_interval(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Sign sign(const Lazy_exact_nt<ET> &);
-
-template <typename ET1, typename ET2>
-Comparison_result
-compare(const Lazy_exact_nt<ET1> &, const Lazy_exact_nt<ET2> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> abs(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> square(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> sqrt(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> min(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> max(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-bool is_finite(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-bool is_valid(const Lazy_exact_nt<ET> &);
 
 // Filtered_exact
 
