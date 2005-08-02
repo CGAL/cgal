@@ -488,6 +488,13 @@ operator==(const Lazy_exact_nt<ET>& a, int b)
 }
 
 
+// Mixed operators
+template < typename ET1, typename ET2 >
+struct Binary_operator_result < Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
+{
+  typedef Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type > type;
+};
+
 template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
 operator+(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)

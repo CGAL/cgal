@@ -5,6 +5,8 @@
 - Binary_operator_result<T1, T2> : new tool to get the type of mixed
   operators.
 - Binary_operator_result.h : move to Number_types.
+- Add specialization of
+  Binary_operator_result< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >.
 
 1 August 2005 Sylvain Pion
 - Fix for last change.
