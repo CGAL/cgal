@@ -793,9 +793,24 @@ bool
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 remove(const Vertex_handle& v)
 {
+  CGAL_precondition( !is_infinite(v) );
+  const Storage_site_2& ss = v->storage_site();
+
+  if ( !ss.is_input() ) { return false; }
+
+  Point_handle h1, h2;
+  bool is_point = ss.is_point();
+  if ( is_point ) {
+    h1 = ss.point();
+  } else {
+    CGAL_assertion( ss.is_segment() );   
+    h1 = ss.source_of_supporting_site();
+    h2 = ss.target_of_supporting_site();
+  }
+
   // remove at level 0
   Vertex_handle u = v->up();
-  bool success = hierarchy[0]->remove(v);
+  bool success = hierarchy[0]->remove_base(v);
   if ( !success ) { return false; }
 
   // remove at higher levels
@@ -807,6 +822,13 @@ remove(const Vertex_handle& v)
     u = vv->up();
     success = hierarchy[l++]->remove_base(vv);
     CGAL_assertion( success );
+  }
+
+  // unregister the input site
+  if ( is_point ) {
+    this->unregister_input_site( h1 );
+  } else {
+    this->unregister_input_site( h1, h2 );
   }
 
   return true;
