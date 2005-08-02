@@ -24,7 +24,7 @@
 
 
 #include <CGAL/Unique_hash_map.h>
-
+#include <CGAL/circulator_bases.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -130,6 +130,77 @@ namespace CGALi {
   };
 
 
+  template<class Edge_list_t>
+  class Edge_list_circulator
+    : public CGAL::Bidirectional_circulator_base<typename Edge_list_t::Edge>
+  {
+  private:
+    typedef Edge_list_t                                 List;
+    typedef typename List::Edge                         Edge;
+    typedef Edge_list_item<Edge>                        List_item;
+    typedef CGAL::Bidirectional_circulator_base<Edge>   Base;
+
+    typedef Edge_list_circulator<List>                  Self;
+
+  public:
+    Edge_list_circulator()
+      : l_(NULL), c_(List_item::sentinel_edge()) {}
+
+    Edge_list_circulator(const List* l, const Edge& c)
+      : l_(l), c_(/*const_cast<Edge&>(*/c/*)*/) {}
+
+    Edge_list_circulator(const Edge_list_circulator& other)
+      : l_(other.l_), c_(other.c_) {}
+
+    Edge_list_circulator& operator=(const Edge_list_circulator& other) {
+      l_ = other.l_;
+      c_ = other.c_;
+      return *this;
+    }
+
+    Self& operator++() {
+      CGAL_precondition( l_ != NULL );
+      //      c_ = const_cast<Edge&>(l_->next(c_));
+      c_ = l_->next(c_);
+      return *this;
+    }
+
+    Self& operator--() {
+      CGAL_precondition( l_ != NULL );
+      //      c_ = const_cast<Edge&>(l_->previous(c_));
+      c_ = l_->previous(c_);
+      return *this;
+    }
+
+    Self operator++(int) {
+      Self tmp(*this);
+      ++tmp;
+      return tmp;
+    }
+
+    Self operator--(int) {
+      Self tmp(*this);
+      --tmp;
+      return tmp;
+    }
+
+    typename Base::pointer   operator->() { return &c_; }
+    typename Base::reference operator*() { return c_; }
+
+    bool operator==(const Self& other) const {
+      return l_ == other.l_ && c_ == other.c_;
+    }
+
+    bool operator!=(const Self& other) const {
+      return l_ != other.l_ || c_ != other.c_;
+    }
+
+  protected:
+    const List* l_;
+    //    Edge& c_;
+    Edge c_;
+  };
+
 
 } // namespace CGALi
 
@@ -153,6 +224,11 @@ private:
   Which_map;
 
   typedef typename Which_map::Edge_map  Edge_map;
+
+  typedef Edge_list<Edge,Use_stl_map_tag>  Self;
+
+public:
+  typedef CGALi::Edge_list_circulator<Self>  circulator;
 
 private:
   // PRIVATE DATA MEMBERS
@@ -379,6 +455,19 @@ public:
 
     decrease_size();
   }
+
+#if 0
+  // ACCESS TO CIRCULATOR
+  //=====================
+  inline circulator start() const {
+    return start(front());
+  }
+
+  inline circulator start(const Edge& start) const {
+    CGAL_precondition( is_in_list(start) );
+    return circulator(this, start);
+  }
+#endif
 
   // MISCELLANEOUS
   //==============
