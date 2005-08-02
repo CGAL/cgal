@@ -46,6 +46,7 @@
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/Binary_operator_result.h>
+#include <CGAL/Quotient_fwd.h>
 
 #include <boost/operators.hpp>
 

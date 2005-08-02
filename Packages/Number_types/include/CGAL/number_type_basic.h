@@ -58,6 +58,7 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
 
+#include <CGAL/Quotient_fwd.h>
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
 #include <CGAL/Gmpzq_fwd.h>
@@ -103,28 +104,6 @@ double to_double(Fixed_precision_nt);
 bool is_finite(Fixed_precision_nt);
 bool is_valid(Fixed_precision_nt);
 std::pair<double,double> to_interval(Fixed_precision_nt);
-
-// Quotient
-
-template <typename> class Quotient;
-
-template <class NT>
-Quotient<NT> sqrt(const Quotient<NT> &);
-
-template <class NT>
-Comparison_result compare(const Quotient<NT>&, const Quotient<NT>&);
-
-template <class NT>
-double to_double(const Quotient<NT>&);
-
-template <class NT>
-std::pair<double,double> to_interval (const Quotient<NT>&);
-
-template <class NT>
-bool is_valid(const Quotient<NT>&);
-
-template <class NT>
-bool is_finite(const Quotient<NT>&);
 
 // Number_type_checker
 
