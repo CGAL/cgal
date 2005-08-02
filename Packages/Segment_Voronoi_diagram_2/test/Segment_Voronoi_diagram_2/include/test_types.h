@@ -12,6 +12,37 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<class SVD>
+struct Level_finder
+{
+  typedef typename SVD::size_type      size_type;
+  typedef typename SVD::Vertex_handle  Vertex_handle;
+
+  size_type operator()(Vertex_handle v) const {
+    CGAL_precondition( v != Vertex_handle() );
+    size_type level = 0;
+    Vertex_handle vertex = v;
+    while ( vertex->up() != Vertex_handle() ) {
+      vertex = vertex->up();
+      level++;
+    }
+
+    return level;
+  }
+};
+
+template<class Gt, class SVDDS, class LTag>
+struct Level_finder< Segment_Voronoi_diagram_2<Gt,SVDDS,LTag> >
+{
+  typedef Segment_Voronoi_diagram_2<Gt,SVDDS,LTag> SVD;
+
+  typedef typename SVD::size_type      size_type;
+  typedef typename SVD::Vertex_handle  Vertex_handle; 
+
+  size_type operator()(Vertex_handle v) const { return 0; }
+};
+
+
 template<class SVD, class InputStream>
 bool test_svd(InputStream& is, const SVD&, char* fname)
 {
@@ -297,13 +328,52 @@ bool test_svd(InputStream& is, const SVD&, char* fname)
   start_testing("removal methods");
   {
     svd.clear();
+
+    std::ifstream ifs("data/bizarre.cin");
+    assert( ifs );
+    Site_2 t;
+    while ( ifs >> t ) {
+      svd.insert(t);
+    }
+    std::cerr << std::endl;
+    CGAL_assertion( svd.is_valid(true, 1) );
+
+    Finite_vertices_iterator vit;
+
+    std::vector<Vertex_handle> vec;
+    for (vit = svd.finite_vertices_begin();
+	 vit != svd.finite_vertices_end(); ++vit) {
+      vec.push_back(vit);
+    }
+    std::random_shuffle(vec.begin(), vec.end());
+
+    typename std::vector<Vertex_handle>::iterator it = vec.begin();
+    std::cerr << std::endl;
+    Level_finder<SVD> level;
+    do {
+      Site_2 tt = (*it)->site();
+      std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
+      if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
+      std::cerr << "  - LEVEL of v: " << level(*it)
+		<< " -  " << std::flush;
+      bool success = svd.remove(*it);
+      std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
+      if ( success ) {
+	vec.erase(it);
+	it = vec.begin();
+      } else {
+	++it;
+      }
+    } while ( it != vec.end() );
+
+    // second test case
+    svd.clear();
+
     svd.insert(site_list.begin(), site_list.end());
     CGAL_assertion( svd.is_valid() );
 
-    unsigned int counter = 0;
-    Finite_vertices_iterator vit = svd.finite_vertices_begin();
+    vit = svd.finite_vertices_begin();
     do {
-      counter++;
       bool success = svd.remove(vit);
       if ( success ) {
 	vit = svd.finite_vertices_begin();
