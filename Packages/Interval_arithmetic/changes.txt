@@ -1,4 +1,9 @@
 2 August 2005 Sylvain Pion
+- Interval_nt : Add overloads for is_zero, is_one, is_positive, is_negative.
+- New file Interval_nt_fwd.h to gather forward declarations to be sourced by
+  CGAL/number_type_basic.h.
+
+2 August 2005 Sylvain Pion
 - Uncertain : add maker function make_uncertain().
 
 2 August 2005 Sylvain Pion

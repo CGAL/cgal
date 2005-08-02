@@ -39,6 +39,7 @@
 #include <iostream>
 #include <CGAL/FPU.h>
 #include <CGAL/Uncertain.h>
+#include <CGAL/Interval_nt_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -689,6 +690,48 @@ compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
   if (e.inf() > d.sup()) return SMALLER;
   if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
   return Uncertain<Comparison_result>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+is_zero (const Interval_nt<Protected> & d)
+{
+  if (d.inf() > 0.0) return false;
+  if (d.sup() < 0.0) return false;
+  if (d.inf() == d.sup()) return true;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+is_one (const Interval_nt<Protected> & d)
+{
+  if (d.inf() > 1) return false;
+  if (d.sup() < 1) return false;
+  if (d.inf() == d.sup()) return true;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+is_positive (const Interval_nt<Protected> & d)
+{
+  if (d.inf() > 0.0) return true;
+  if (d.sup() <= 0.0) return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+is_negative (const Interval_nt<Protected> & d)
+{
+  if (d.inf() >= 0.0) return false;
+  if (d.sup() < 0.0) return true;
+  return Uncertain<bool>::indeterminate();
 }
 
 inline
