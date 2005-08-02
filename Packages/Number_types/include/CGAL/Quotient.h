@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -45,6 +45,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Kernel/mpl.h>
+#include <CGAL/Binary_operator_result.h>
 
 #include <boost/operators.hpp>
 
@@ -129,6 +130,16 @@ class Quotient
   NT   num;
   NT   den;
 };
+
+
+template < typename NT >
+struct Binary_operator_result < Quotient<NT>, NT >
+{ typedef Quotient<NT>  type; };
+
+template < typename NT >
+struct Binary_operator_result < NT, Quotient<NT> >
+{ typedef Quotient<NT>  type; };
+
 
 template <class NT>
 inline
