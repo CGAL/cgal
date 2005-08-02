@@ -1,4 +1,7 @@
 2 August 2005 Sylvain Pion
+- Uncertain : add maker function make_uncertain().
+
+2 August 2005 Sylvain Pion
 - Lazy_exact_nt : add prune_dag() to cut it down when the exact is computed.
 - Lazy_exact_nt : recompute interval in update_exact, except when is_point().
 - Lazy_exact_nt : introduce a static variable for zero since it's often used.

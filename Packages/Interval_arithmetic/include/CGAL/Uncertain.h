@@ -274,6 +274,15 @@ Uncertain<bool> operator!=(const T & a, Uncertain<T> const& b)
   return ! (a == b);
 }
 
+
+// Maker function (a la std::make_pair).
+
+template < typename T >
+inline
+Uncertain<T> make_uncertain(const T&t)
+{ return Uncertain<T>(t); }
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_UNCERTAIN_H
