@@ -146,27 +146,6 @@ Comparison_result compare(const CORE::Expr&, const CORE::Expr&);
 std::pair<double,double> to_interval (const CORE::Expr &);
 #endif // CGAL_USE_CORE
 
-
-// specializations for Quotient
-
-CGAL_END_NAMESPACE
-#include <CGAL/Quotient.h>
-
-#ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#endif // CGAL_USE_GMP
-
-#include <CGAL/MP_Float.h>
-
-CGAL_BEGIN_NAMESPACE
-
-#ifdef CGAL_USE_GMP
-double to_double(const Quotient<Gmpz>&);
-#endif // CGAL_USE_GMP
-
-double to_double(const Quotient<MP_Float>&);
-std::pair<double,double> to_interval(const Quotient<MP_Float>&);
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP

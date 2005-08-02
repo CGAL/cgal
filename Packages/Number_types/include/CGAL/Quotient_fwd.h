@@ -48,4 +48,16 @@ bool is_finite(const Quotient<NT>&);
 
 CGAL_END_NAMESPACE
 
+#include <CGAL/MP_Float.h>
+#include <CGAL/Gmpz.h>
+
+CGAL_BEGIN_NAMESPACE
+
+double to_double(const Quotient<MP_Float>&);
+std::pair<double,double> to_interval(const Quotient<MP_Float>&);
+
+double to_double(const Quotient<Gmpz>&);
+
+CGAL_END_NAMESPACE
+
 #endif  // CGAL_QUOTIENT_FWD_H

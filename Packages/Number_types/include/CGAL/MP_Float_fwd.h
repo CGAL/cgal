@@ -26,8 +26,6 @@
 
 // Forward declarations
 
-#include <CGAL/Quotient_fwd.h>
-
 CGAL_BEGIN_NAMESPACE
 
 class MP_Float;

@@ -26,8 +26,6 @@
 
 // Forward declarations of functions over Gmpz and Gmpq.
 
-#include <CGAL/Quotient_fwd.h>
-
 CGAL_BEGIN_NAMESPACE
 
 class Gmpz;
@@ -49,8 +47,6 @@ Sign sign(const Gmpq &);
 bool is_valid(const Gmpq &);
 bool is_finite(const Gmpq &);
 std::pair<double, double> to_interval (const Gmpq &);
-
-double to_double(const Quotient<Gmpz>&);
 
 CGAL_END_NAMESPACE
 
