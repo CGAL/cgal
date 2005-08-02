@@ -20,7 +20,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-       -I../../include \
+       -I../../../include \
+       -I../../../../Arrangement_2/include \
         $(CGAL_CXXFLAGS) \
         $(LONG_NAME_PROBLEM_CXXFLAGS)
 

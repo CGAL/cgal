@@ -24,38 +24,41 @@
  * a viewer of spherical arrangements
  */
 
-#include "CGAL/Spherical_map.h"
-#include <math.h>
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Spherical_map.h>
 #include <CGAL/Gmpq.h>
-#include "CGAL/Sphere_point_location.h"
+#include <CGAL/Sphere_point_location.h>
+
 #include "ArcLines.h"
 
 #include <iostream>
-#include<GL/glut.h>
-#include<GL/glu.h>
-#include<GL/gl.h>
+#include <math.h>
+#include <GL/glut.h>
+#include <GL/glu.h>
+#include <GL/gl.h>
 
-typedef CGAL::Gmpq                                        Number_type;
-typedef CGAL::Cartesian<Number_type>                      Kernel;
+typedef CGAL::Gmpq                                      Number_type;
+typedef CGAL::Cartesian<Number_type>                    Kernel;
 
-typedef Sphere_traits<Kernel>                Traits_2;
-typedef Kernel::Direction_3                  Direction_3;
-typedef SphereTopologicalMap<Kernel>            SphereType;
-typedef Spherical_map<SphereType, Traits_2>          SphereMap;
-typedef SphereMap::X_monotone_curve_2            X_monotone_curve_2;
-typedef Sphere_walk_along_line_point_location<SphereMap>  PointLocation;
-typedef SphereMap::Halfedge_iterator            Halfedge_iterator;
-typedef SphereMap::Halfedge_const_iterator          Halfedge_const_iterator;
-typedef SphereMap::Halfedge_handle              Halfedge_handle;
-typedef SphereMap::Face_handle                Face_handle;
-typedef SphereMap::Vertex_handle              Vertex_handle;
-typedef SphereMap::CGM                    CGM;
-typedef CGM::Arrangement                  CGM_arrangement;
-typedef CGM_arrangement::Halfedge_iterator          CGM_halfedge_iterator;
-typedef CGM_arrangement::Halfedge_const_iterator      CGM_halfedge_const_iterator;
-typedef CGM::Projected_normal                Projected_normal;
+typedef CGAL::Sphere_traits<Kernel>                     Traits_2;
+typedef Kernel::Direction_3                             Direction_3;
+typedef CGAL::SphereTopologicalMap<Kernel>              SphereType;
+typedef CGAL::Spherical_map<SphereType, Traits_2>       SphereMap;
+typedef SphereMap::X_monotone_curve_2                   X_monotone_curve_2;
+typedef CGAL::Sphere_walk_along_line_point_location<SphereMap>
+                                                        PointLocation;
+typedef SphereMap::Halfedge_iterator                    Halfedge_iterator;
+typedef SphereMap::Halfedge_const_iterator              Halfedge_const_iterator;
+typedef SphereMap::Halfedge_handle                      Halfedge_handle;
+typedef SphereMap::Face_handle                          Face_handle;
+typedef SphereMap::Vertex_handle                        Vertex_handle;
+typedef SphereMap::CGM                                  CGM;
+typedef CGM::Arrangement                                CGM_arrangement;
+typedef CGM_arrangement::Halfedge_iterator              CGM_halfedge_iterator;
+typedef CGM_arrangement::Halfedge_const_iterator
+  CGM_halfedge_const_iterator;
+typedef CGM::Projected_normal                           Projected_normal;
 
 // pi value
 #define PI 3.1415926535897
