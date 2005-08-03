@@ -2,7 +2,7 @@
 %   $Revision$
 %   $Date$
 
-\begin{ccRefClass}{Interval_nt<bool Protected = true>}
+\begin{ccRefClass}{Interval_nt<Protected>}
 \label{interval}
 
 % \ccChapterAuthor{Sylvain Pion}
@@ -43,12 +43,13 @@ an interval that does not contain zero, then you can safely determine its sign.
 
 \ccParameters
 
-The boolean template parameter \ccc{Protected} provides a way to make faster
-computations by avoiding rounding mode switches.  The default value,
-\ccc{true}, is the safe way, and takes of proper rounding mode changes.
-When specifying \ccc{false}, the user has to take care about positionning
-the rounding mode towards plus infinity before doing any computations with
-the interval class.
+The template parameter \ccc{Protected} is a boolean parameter, which defaults
+to \ccc{true}.  It provides a way to select faster computations by avoiding
+rounding mode switches, at the expense of more care to be taken by the user
+(see below).  The default value, \ccc{true}, is the safe way, and takes care of
+proper rounding mode changes.  When specifying \ccc{false}, the user has to
+take care about positionning the rounding mode towards plus infinity before
+doing any computations with the interval class.
 
 \ccIsModel
 SqrtFieldNumberType
