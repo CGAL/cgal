@@ -2982,6 +2982,10 @@ void Multiset<Type, Compare, Allocator>::_remove_at (Node* nodeP)
   {
     // If we are deleting the root, make the child the new tree node.
     rootP = childP;
+
+    // If the deleted root is black, decrement the black height of the tree.
+    if (nodeP->color == Node::BLACK)
+      iBlackHeight--;
   }
   else
   {
