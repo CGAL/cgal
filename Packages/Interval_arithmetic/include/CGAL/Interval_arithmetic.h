@@ -51,6 +51,8 @@ class Interval_nt
 
 public:
 
+  typedef double      value_type;
+
   typedef Tag_false   Has_gcd;
   typedef Tag_true    Has_division;
   typedef Tag_true    Has_sqrt;
@@ -98,20 +100,6 @@ public:
   IA & operator*= (const IA &d) { return *this = *this * d; }
   IA & operator/= (const IA &d) { return *this = *this / d; }
   
-  // TODO : Maybe I should suppress these : they are useless and risky.
-
-  // The (join, union, ||) operator.
-  IA operator|| (const IA & d) const
-  {
-    return IA(std::min(inf(), d.inf()), std::max(sup(), d.sup()));
-  }
-
-  // The (meet, intersection, &&) operator.  Valid if intervals overlap.
-  IA operator&& (const IA & d) const
-  {
-    return IA(std::max(inf(), d.inf()), std::min(sup(), d.sup()));
-  }
-
   bool is_point() const
   {
     return sup() == inf();
