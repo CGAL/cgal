@@ -1,5 +1,6 @@
 3 August 2005 Sylvain Pion
 - Rename CGAL/Interval_arithmetic.h to CGAL/Interval_nt.h.
+- [doc] : update doc of Interval_nt.
 
 2 August 2005 Sylvain Pion
 - number_type_basic.h : Use forward #include <CGAL/*_fwd.h> instead of declaring
