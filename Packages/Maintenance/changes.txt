@@ -1,3 +1,6 @@
+3 August 2005 Sylvain Pion
+- Add link to the "LAST" manual test-suite on the test-results page.
+
 15 July 2005 Sylvain Pion
 - Rename Voronoi_diagram_adaptor_2 to Voronoi_diagram_2.
 

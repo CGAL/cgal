@@ -411,7 +411,9 @@ Look at the output to be sure!</B>
 <LI><A HREF="http://cgal.inria.fr/CGAL/Members/Releases/">
 Downloading internal releases</A></LI>
 <LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}/" style="color: red">
-The documentation of this release</A></LI>
+The documentation of this release</A>
+(and the <a href="http://www.cgal.org/Members/Manual_test/LAST/">last one</a>
+directly)</LI>
 EOF
     if ( -r "announce.html" ) {
 	print OUTPUT<<"EOF";
