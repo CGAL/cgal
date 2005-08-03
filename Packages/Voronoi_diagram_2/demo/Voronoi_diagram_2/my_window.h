@@ -294,6 +294,8 @@ private slots:
     }
 
     if ( is_remove_mode ) {
+#if 0
+      // the true remove mode
       Rep::Point_2 q;
 
       if ( CGAL::assign(q, obj) ) {
@@ -308,6 +310,27 @@ private slots:
       }
       widget->redraw();
       return;
+#else
+      // displaying the conflict region
+      Rep::Point_2 q;
+      Rep::Circle_2 c;
+      CGAL::Object conflicts;
+
+      widget->redraw();
+      
+      if ( CGAL::assign(q, obj) ) {
+	conflicts = vvd->get_conflicts(q);
+	*widget << CGAL::YELLOW;
+	*widget << q;
+	vvd->draw_conflicts(q, conflicts, *widget->get_qt_widget());
+      } else if ( CGAL::assign(c, obj) ) {
+	conflicts = vvd->get_conflicts(c);
+	*widget << CGAL::YELLOW;
+	*widget << c;
+	vvd->draw_conflicts(c, conflicts, *widget->get_qt_widget());
+      }
+      return;
+#endif
     }
 
     CGAL::Timer timer;

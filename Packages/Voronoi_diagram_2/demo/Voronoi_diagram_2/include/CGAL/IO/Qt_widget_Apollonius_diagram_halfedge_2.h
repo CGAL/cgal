@@ -20,13 +20,22 @@ class Apollonius_diagram_halfedge_2
   typedef VDA                                        Voronoi_diagram;
   typedef typename Voronoi_diagram::Delaunay_graph   Apollonius_graph_2;
   typedef typename Voronoi_diagram::Halfedge         Base;
+  typedef typename Base::Delaunay_edge               Delaunay_edge;
+
+  typedef typename Voronoi_diagram::Voronoi_traits::Site_2  Site_2;
 
  public:
   Apollonius_diagram_halfedge_2() : Base() {}
-  Apollonius_diagram_halfedge_2(const Base& e) : Base(e) {}
+  Apollonius_diagram_halfedge_2(const Base& e)
+    : Base(e), is_conflict(false) {}
+  Apollonius_diagram_halfedge_2(const Delaunay_edge& e, bool inf,
+				const Site_2& s)
+    : Base(), is_conflict(true), e_(e), inf_(inf), s_(s) {}
 
   void draw(Qt_widget& qt_w) const
   {
+    if ( is_conflict ) { return; }
+
     typedef typename Apollonius_graph_2::Geom_traits     Geom_traits;
     typedef typename Geom_traits::Assign_2               Assign_2;
     typedef typename Geom_traits::Segment_2              Segment_2;
@@ -76,6 +85,12 @@ class Apollonius_diagram_halfedge_2
     else if ( assign(r, o) )   qt_w << r;
     else if ( assign(l, o) )   qt_w << l;
   }
+
+private:
+  bool is_conflict;
+  Delaunay_edge e_;
+  bool inf_;
+  Site_2 s_;
 };
 
 template<class VDA>

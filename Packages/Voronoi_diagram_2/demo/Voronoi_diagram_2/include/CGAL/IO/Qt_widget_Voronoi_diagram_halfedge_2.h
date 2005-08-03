@@ -15,10 +15,15 @@ class Voronoi_diagram_halfedge_2
   typedef VDA                                        Voronoi_diagram;
   typedef typename Voronoi_diagram::Delaunay_graph   Delaunay_triangulation_2;
   typedef typename Voronoi_diagram::Halfedge         Base;
+  typedef typename Base::Delaunay_edge               Delaunay_edge;
+
+  typedef typename Voronoi_diagram::Voronoi_traits::Site_2  Site_2;
 
  public:
   Voronoi_diagram_halfedge_2() : Base() {}
-  Voronoi_diagram_halfedge_2(const Base& e) : Base(e) {}
+  Voronoi_diagram_halfedge_2(const Base& e) : Base(e), is_conflict(false) {}
+  Voronoi_diagram_halfedge_2(const Delaunay_edge& e, bool inf, const Site_2& s)
+    : Base(), is_conflict(true), e_(e), inf_(inf), s_(s) {}
 
   void draw(Qt_widget& qt_w) const
   {
@@ -26,6 +31,34 @@ class Voronoi_diagram_halfedge_2
     typedef typename Geom_traits::Point_2                    Point_2;
     typedef typename Geom_traits::Segment_2                  Segment_2;
     typedef typename Geom_traits::Line_2                     Line_2;
+
+    if ( is_conflict ) {
+      if ( !inf_ ) {
+	typename Geom_traits::Construct_circumcenter_2 circumcenter;
+	Point_2 c1 = circumcenter(e_.first->vertex(0)->point(),
+				  e_.first->vertex(1)->point(),
+				  e_.first->vertex(2)->point());
+	int ccw_i = (e_.second + 1) % 3;
+	int cw_i  = (e_.second + 2) % 3;
+	Point_2 c2 = circumcenter(e_.first->vertex(ccw_i)->point(),
+				  e_.first->vertex(cw_i)->point(),
+				  s_);
+	qt_w << Segment_2(c1, c2);
+      } else {
+	typename Geom_traits::Construct_circumcenter_2 circumcenter;
+	typename Geom_traits::Construct_bisector_2     c_bis;
+	typename Geom_traits::Construct_ray_2          c_ray;
+	int ccw_i = (e_.second + 1) % 3;
+	int cw_i  = (e_.second + 2) % 3;
+	Point_2 c = circumcenter(e_.first->vertex(ccw_i)->point(),
+				 e_.first->vertex(cw_i)->point(),
+				 s_);
+	Line_2 l = c_bis(e_.first->vertex(ccw_i)->point(),
+			 e_.first->vertex(cw_i)->point());
+	qt_w << c_ray(c, l);
+      }
+      return;
+    }
 
     if ( this->has_source() && this->has_target() ) {
       typename Geom_traits::Construct_circumcenter_2 circumcenter;
@@ -61,6 +94,12 @@ class Voronoi_diagram_halfedge_2
 		    this->down()->point());
     }
   }
+
+private:
+  bool is_conflict;
+  Delaunay_edge e_;
+  bool inf_;
+  Site_2 s_;
 };
 
 template<class VDA>

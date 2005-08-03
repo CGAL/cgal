@@ -1,3 +1,9 @@
+3 August 2005:  Menelaos Karavelas
+- the demo now shows the conflict region for a site. The code is kind
+  of ugly and should be modified; the color of the site should be
+  different from the color of the conflict region. the conflict region
+  is not yet done for the Apollonius diagram
+
 30 July 2005:  Menelaos Karavelas
 - removed duplicate typedef in Virtual_Voronoi_diagram_base_2 class;
   g++ version 4.x.x was complaining.

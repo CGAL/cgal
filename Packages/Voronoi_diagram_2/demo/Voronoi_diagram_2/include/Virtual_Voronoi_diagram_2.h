@@ -33,9 +33,16 @@ struct Virtual_Voronoi_diagram_2
   virtual void draw_feature(const Object&, Qt_widget&) const = 0;
   virtual void draw_diagram(Qt_widget&) const = 0;
   virtual void draw_sites(Qt_widget&) const = 0;
+  virtual void draw_conflicts(const Point_2&, const Object&,
+			      Qt_widget&) const = 0;
+  virtual void draw_conflicts(const Circle_2&, const Object&,
+			      Qt_widget&) const = 0;
 #endif  
 
   virtual Object locate(const Point_2&) const = 0;
+
+  virtual Object get_conflicts(const Point_2&) const = 0;
+  virtual Object get_conflicts(const Circle_2&) const = 0;
 
   virtual Object ptr() = 0;
 
@@ -81,6 +88,85 @@ class Virtual_Voronoi_diagram_base_2
     }
   }
 
+  virtual
+  Object conflicts(const typename Base::Voronoi_traits::Site_2& s) const
+  {
+    typedef std::vector<typename Base::Delaunay_graph::Edge>        Edge_vector;
+    typedef std::vector<typename Base::Delaunay_graph::Face_handle> Face_vector;
+
+    typedef std::back_insert_iterator<Face_vector>   Face_output_iterator;
+    typedef std::back_insert_iterator<Edge_vector>   Edge_output_iterator;
+
+    Edge_vector evec;
+    Face_vector fvec;
+
+    Face_output_iterator fit(fvec);
+    Edge_output_iterator eit(evec);
+
+    Base::dual().get_conflicts_and_boundary(s, fit, eit);
+
+    return CGAL::make_object( std::make_pair(fvec, evec) );
+  }
+
+  typedef typename Base::Halfedge::Delaunay_edge   Delaunay_edge;
+
+  Delaunay_edge opposite(const Delaunay_edge& e) const {
+    int j = Base::dual().tds().mirror_index(e.first, e.second);
+    typename Base::Delaunay_graph::Face_handle n = e.first->neighbor(e.second);
+    return Delaunay_edge(n, j);
+  }
+
+  template<class Iterator>
+  bool is_boundary(const Delaunay_edge& e,
+		   Iterator first, Iterator beyond) const {
+    for (Iterator it = first; it != beyond; ++it) {
+      if ( e == *it || opposite(e) == *it ) { return true; }
+    }
+    return false;
+  }
+
+#ifdef CGAL_USE_QT
+  virtual void draw_conflicts(const typename Base::Voronoi_traits::Site_2& s,
+			      const Object& o, Qt_widget& widget) const {
+    typedef std::vector<typename Base::Delaunay_graph::Edge>        Edge_vector;
+    typedef std::vector<typename Base::Delaunay_graph::Face_handle> Face_vector;
+
+    typedef std::pair<Face_vector,Edge_vector>               result_type;
+
+    result_type res;
+    if ( !CGAL::assign(res, o) ) { return; }
+
+    Face_vector fvec = res.first;
+    Edge_vector evec = res.second;
+
+    widget << CGAL::YELLOW;
+    unsigned int linewidth = widget.lineWidth();
+    widget << CGAL::LineWidth(4);
+    for (unsigned int i = 0; i < evec.size(); i++) {
+      Delaunay_edge opp = opposite(evec[i]);
+      Halfedge_with_draw ee(opp, Base::dual().is_infinite(opp.first), s);
+      widget << ee;
+    }
+
+    typename Base::Voronoi_traits::Edge_degeneracy_tester e_tester =
+      Base::voronoi_traits().edge_degeneracy_tester_object();
+    for (unsigned int i = 0; i < fvec.size(); i++) {
+      for (int j = 0; j < 3; j++) {
+	Delaunay_edge e(fvec[i], j);
+	if ( !is_boundary(e, evec.begin(), evec.end()) ) {
+	  if ( !e_tester(Base::dual(),e) ) {
+	    Halfedge h(static_cast<const Base*>(this), e.first, e.second);
+	    Halfedge_with_draw ee(h);
+	    widget << ee;
+	  }
+	}
+      }
+    }
+
+    widget << CGAL::LineWidth(linewidth);
+  }
+#endif // CGAL_USE_QT
+
  public:
 #ifdef CGAL_USE_QT
   void draw_edge(const Halfedge& e, Qt_widget& widget) const {
@@ -118,6 +204,13 @@ class Virtual_Voronoi_diagram_base_2
       draw_edge(*it, widget);
     }
   }
+
+  virtual void draw_conflicts(const Point_2& p,	const Object& o,
+			      Qt_widget& widget) const {}
+
+  virtual void draw_conflicts(const Circle_2& c, const Object& o,
+			      Qt_widget& widget) const {}
+
 #endif // CGAL_USE_QT
 
   virtual Object locate(const Point_2& q) const {
@@ -127,6 +220,14 @@ class Virtual_Voronoi_diagram_base_2
     typename Base::Voronoi_traits::Point_2 p(q.x(), q.y());
     Locate_result lr = Base::locate(p);
     return CGAL::make_object(lr);
+  }
+
+  virtual Object get_conflicts(const Point_2& q) const {
+    return CGAL::make_object((int)0);
+  }
+
+  virtual Object get_conflicts(const Circle_2& c) const {
+    return CGAL::make_object((int)0);
   }
 
   virtual Object ptr() = 0;
@@ -154,14 +255,30 @@ class Concrete_Voronoi_diagram_2
   typedef VBase::Base     Base;
   typedef VBase::Point_2  Point_2;
 
+  Base::Voronoi_traits::Site_2 to_site(const Point_2& p) const {
+    return Base::Voronoi_traits::Site_2(p.x(), p.y());
+  }
+
  public:
   Concrete_Voronoi_diagram_2() {}
   virtual ~Concrete_Voronoi_diagram_2() {}
 
   virtual void insert(const Point_2& p) {
-    Base::Point_2 pp(p.x(), p.y());
-    Base::insert(pp);
+    Base::insert( to_site(p) );
   }
+
+  virtual Object get_conflicts(const Point_2& q) const {
+    Base::Voronoi_traits::Point_2 p = to_site(q);
+    return conflicts( to_site(q) );
+  }
+
+#ifdef CGAL_USE_QT
+  virtual void draw_conflicts(const Point_2& p, const Object& o,
+  			      Qt_widget& widget) const
+  {
+    VBase::draw_conflicts( to_site(p), o, widget);
+  }
+#endif
 
   virtual Object ptr() { return CGAL::make_object(this); }
 };
@@ -181,21 +298,35 @@ class Concrete_power_diagram_2
   typedef VBase::Point_2   Point_2;
   typedef VBase::Circle_2  Circle_2;
 
+  Base::Geom_traits::Weighted_point_2 to_site(const Point_2& p) const {
+    Base::Point_2 pp(p.x(), p.y());
+    return Base::Geom_traits::Weighted_point_2(pp, 0);
+  }
+
+  Base::Geom_traits::Weighted_point_2 to_site(const Circle_2& c) const {
+    Point_2 center = c.center();
+    Base::Point_2 p(center.x(), center.y());
+    return Base::Geom_traits::Weighted_point_2(p, c.squared_radius());
+  }
+
  public:
   Concrete_power_diagram_2() {}
   virtual ~Concrete_power_diagram_2() {}
 
   virtual void insert(const Point_2& p) {
-    Base::Point_2 pp(p.x(), p.y());
-    Base::Geom_traits::Weighted_point_2 wp(pp, 0);
-    Base::insert(wp);
+    Base::insert( to_site(p) );
   }
 
   virtual void insert(const Circle_2& c) {
-    Point_2 center = c.center();
-    Base::Point_2 p(center.x(), center.y());
-    Base::Geom_traits::Weighted_point_2 wp(p, c.squared_radius());
-    Base::insert(wp);
+    Base::insert( to_site(c) );
+  }
+
+  virtual Object get_conflicts(const Point_2& q) const {
+    return conflicts( to_site(q) );
+  }
+
+  virtual Object get_conflicts(const Circle_2& c) const {
+    return conflicts( to_site(c) );
   }
 
 #ifdef CGAL_USE_QT
@@ -212,6 +343,18 @@ class Concrete_power_diagram_2
       Circle_2 c( center, CGAL::to_double(wp.weight()) );
       widget << c;
     }
+  }
+
+  virtual void draw_conflicts(const Point_2& p, const Object& o,
+  			      Qt_widget& widget) const
+  {
+    VBase::draw_conflicts( to_site(p), o, widget);
+  }
+
+  virtual void draw_conflicts(const Circle_2& c, const Object& o,
+  			      Qt_widget& widget) const
+  {
+    VBase::draw_conflicts( to_site(c), o, widget);
   }
 #endif
 
@@ -233,23 +376,51 @@ class Concrete_Apollonius_diagram_2
   typedef VBase::Point_2   Point_2;
   typedef VBase::Circle_2  Circle_2;
 
+  Base::Geom_traits::Site_2 to_site(const Point_2& p) const {
+    Base::Geom_traits::Point_2 pp(p.x(), p.y());
+    return Base::Geom_traits::Site_2(p, 0);    
+  }
+
+  Base::Geom_traits::Site_2 to_site(const Circle_2& c) const {
+    ::Rep::Point_2 center = c.center();
+    Base::Geom_traits::Point_2 p(center.x(), center.y());
+    Base::Geom_traits::Site_2::Weight w = CGAL::sqrt(c.squared_radius());
+    return Base::Geom_traits::Site_2(p, w);
+  }
+
  public:
   Concrete_Apollonius_diagram_2() {}
   virtual ~Concrete_Apollonius_diagram_2() {}
 
   virtual void insert(const Point_2& p) {
-    Base::Geom_traits::Point_2 pp(p.x(), p.y());
-    Base::Geom_traits::Site_2 s(p, 0);
-    Base::insert(s);
+    Base::insert( to_site(p) );
   }
 
   virtual void insert(const Circle_2& c) {
-    ::Rep::Point_2 center = c.center();
-    Base::Geom_traits::Point_2 p(center.x(), center.y());
-    Base::Geom_traits::Site_2::Weight w = CGAL::sqrt(c.squared_radius());
-    Base::Geom_traits::Site_2 s(p, w);
-    Base::insert(s);
+    Base::insert( to_site(c) );
   }
+
+  virtual Object get_conflicts(const Point_2& p) const {
+    return conflicts( to_site(p) );
+  }
+
+  virtual Object get_conflicts(const Circle_2& c) const {
+    return conflicts( to_site(c) );
+  }
+
+#ifdef CGAL_USE_QT
+  virtual void draw_conflicts(const Point_2& p, const Object& o,
+  			      Qt_widget& widget) const
+  {
+    VBase::draw_conflicts( to_site(p), o, widget);
+  }
+
+  virtual void draw_conflicts(const Circle_2& c, const Object& o,
+  			      Qt_widget& widget) const
+  {
+    VBase::draw_conflicts( to_site(c), o, widget);
+  }
+#endif
 
   virtual Object ptr() { return CGAL::make_object(this); }
 };
