@@ -39,7 +39,7 @@ operator<<(CGAL::Qt_widget & widget, const CGAL::Circular_arc_2<CK> &arc)
     double a2p = std::atan2( to_double(arc.target().y() - circ.center().y()),
 		             to_double(arc.target().x() - circ.center().x()));
 
-    if (a2p < a)
+    if (a2p <= a)
         a2p += 2 * CGAL_PI;
 
     double alen2 = a2p - a;
