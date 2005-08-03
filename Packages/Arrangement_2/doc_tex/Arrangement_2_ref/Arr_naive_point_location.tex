@@ -1,0 +1,31 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_naive_point_location.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_naive_point_location<Arrangement>}
+\label{arr_ref:naive_pl}
+
+\ccDefinition
+%============
+
+The \ccRefName\ class implements a na\"{\i}ve algorithm that goes over
+all the vertices and halfedges in the arrangement in answer queries.
+The query time is therefore linear in the complexity of the arrangement.
+It is thus recommended to use this point-location strategy only for relatively
+small arrangements.
+
+\ccInclude{CGAL/Arr_naive_point_location.h}
+
+\ccIsModel
+  \ccc{ArrangementPointLocation_2} \\
+  \ccc{ArrangementVerticalRayShoot_2}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
