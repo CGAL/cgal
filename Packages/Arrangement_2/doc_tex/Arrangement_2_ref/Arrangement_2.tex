@@ -8,7 +8,7 @@
 
 \ccRefPageBegin
 
-\begin{ccRefClass}{Arrangement_2<Traits, Dcel>}
+\begin{ccRefClass}{Arrangement_2<Traits,Dcel>}
 \label{arr_ref:arr}
     
 \ccDefinition
@@ -50,12 +50,12 @@ The available traits classes and {\sc Dcel} classes are described below.
 
 \ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
   {the point type, as defined by the traits class.}
-\ccGlue
+
 \ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
   {the $x$-monotone curve type, as defined by the traits class.}
-\ccGlue
+
 \ccTypedef{typedef typename Dcel::Size Size;}
-  {the size type (equivalent to \ccc{size_t}.}
+  {the size type (equivalent to \ccc{size_t}).}
 
 \ccNestedType{Vertex}{represents a $0$-dimensional cell in the subdivision.
                       A vertex is always associated with a point.}
@@ -137,7 +137,7 @@ iterators can be used as well.
 \ccHeading{Assignment Methods}
 %=============================
 
-\ccMethod{Self& operator= (const Self& other);}
+\ccMethod{Self& operator= (other);}
     {assignment operator.}
 
 \ccMethod{void assign (const Self& other);}
@@ -421,7 +421,7 @@ counterparts, returning constant iterators instead of mutable ones:
     \ccc{ArrangementDcel}\lcTex{ 
       (\ccRefPage{ArrangementDcel})}\\
     \ccc{Arr_default_dcel<Triats>}\lcTex{ 
-      (\ccRefPage{CGAL::Arr_default_dcel<Triats>})}\\
+      (\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
     \ccc{ArrangementBasicTraits_2}\lcTex{ 
       (\ccRefPage{ArrangementBasicTraits_2})}
 

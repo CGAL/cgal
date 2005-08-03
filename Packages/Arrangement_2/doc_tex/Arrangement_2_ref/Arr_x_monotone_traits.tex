@@ -5,6 +5,9 @@
 % | Package: Arrangement_2
 % | 
 % +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
 \begin{ccRefConcept}{ArrangementXMonotoneTraits_2}
 
 \ccDefinition
@@ -33,6 +36,9 @@ curve splitting. The reverse merge operation is optionally supported.
 
 \ccHeading{Functor Types}
 %========================
+
+\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThreeToTwo
 
 \ccNestedType{Intersect_2}
 {provides the operator (templated by the \ccc{OutputIterator} type)~: \\
@@ -79,6 +85,9 @@ The two following functor types are optional. If they are supported, the
 \ccCreationVariable{traits}
 %==========================
 
+\ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
 \ccConstructor{ArrangementXMonotoneTraits_2();}{default constructor.}
 \ccGlue
 \ccConstructor{ArrangementXMonotoneTraits_2(ArrangementXMonotoneTraits_2 other);}
@@ -104,12 +113,15 @@ The two following functor types are optional. If they are supported, the
 \ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
-\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
-\ccc{CGAL::Arr_rational_arc_traits_2<Alg_kernel,Nt_traits>} \\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>} \\
 
 \ccSeeAlso
 %=========
 
-\ccc{ArrangementBasicTraits_2}
+\ccc{ArrangementBasicTraits_2}\lcTex{ 
+      (\ccRefPage{ArrangementBasicTraits_2})}
 
 \end{ccRefConcept}
+
+\ccRefPageEnd

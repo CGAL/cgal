@@ -1,0 +1,131 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_rational_arc_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_rational_arc_traits_2<AlgKernel,NtTraits>}
+
+\ccDefinition
+%============
+
+The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+concept. It handles bounded segments of rational functions, referred to as
+{\sl rational arcs}, and enables the construction of maintenance of arrangements
+of such arcs. A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two
+polynomials $P$ and $Q$ of arbitrary degrees. In particular, if $Q(x) = 1$
+then the function is a simple polynomial function. A bounded rational arc is
+defined by the graph of a rational function over some internal
+$[x_{\rm min}, x_{\rm max}]$, where $Q$ does not have any real roots in this
+interval (thus the arc does not contain any poles).
+Rational functions, and polynomial functions in particular, are
+not only interesting in their own right, they are also very useful
+for approximating or interpolating more complicated curves.
+
+In our representation, all polynomial coefficients (the coefficients of $P$
+and $Q$) must be rational numbers.\footnote{This guarantees that the
+$x$-coordinates of all arrangement vertices (in particular, those
+representing instersection points) can be represneted as roots of
+polynomials with integer coefficients --- namely, algebraic numbers.
+The $y$-coordinates can be obtained by simple arithmetic operations on
+the $x$-coordinates, hence they are also algebraic numbers.}
+We therefore require separate representations of the curve coefficients and
+the point coordiantes. The \ccc{NtTraits} should be instantiated with a class
+that defines nested \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic} number
+types and supports various operations on them, yielding certified computation
+results (for example, in can convert rational numbers to algebraic numbers
+and can compute roots of polynomials with integer coefficients).
+The \ccc{AlgKernel} template-parameter should be a geometric kernel templated
+with the \ccc{NtTraits::Algebraic} number-type. It is recommended to
+instantiate the \ccc{CORE_algebraic_number_traits} class as the \ccc{NtTraits}
+parameter, with \ccc{Cartesian<NtTraits::Algebraic>} instantiating the kernel.
+The number types in this case are provided by the {\sc core} library, with its
+ability to exactly represent simple algebraic numbers.
+
+The traits class defined its point type to be \ccc{AlgKernel::Point_2},
+and defines a curve type (and an identical $x$-monotone curve type, as 
+a rational arc is always $x$-monotone by definition) as detailed below.
+
+\ccInclude{CGAL/Arr_rational_arc_traits_2.h}
+
+\ccIsModel
+  \ccc{ArrangementTraits_2}
+
+\subsection*{Class
+         Arr\_rational\_arc\_traits\_2$<$AlgKernel,NtTraits$>$::Curve\_2}
+%========================================================================
+
+The \ccc{Curve_2} class nested within the rational-arc traits is used to
+represent (general) piecewise linear curves and support their construction
+from any range of points. The copy and default constructor as well as 
+the assignment operator are provided for polyline curves. In addition, 
+an \ccc{operator<<} for the curves is defined for standard output streams.
+
+\begin{ccClass}{Arr_rational_arc_traits_2<AlgKernel,NtTraits>::Curve_2}
+%======================================================================
+
+\ccTypes
+%-------
+
+\ccNestedType{Rat_vector}{A vector of rational numbers (equivalent to
+                          \ccc{std::vector<typename NtTraits::Rational}).}
+
+\ccNestedType{Polynomial}{the \ccc{NtTraits::Polynomial} type
+                          (a polynomial with integer coefficients).}
+
+\ccCreation
+\ccCreationVariable{a}
+%---------------------
+
+\ccConstructor{Curve_2 ();}
+  {default constructor.}
+
+\ccConstructor{Curve_2 (const Rat_vector& p_coeffs,
+                        const typename NtTraits::Algebraic& x_min,
+                        const typename NtTraits::Algebraic& x_max);}
+  {constructs an arc supported by the polynomial $y = P(x)$, defined over
+   the internal \ccc{[x_min, x_max]}. The vector \ccc{p_coeffs} specifies
+   the coefficients of $P(x)$, where the polynomial degree is
+   \ccc{p_coeffs.size() - 1} and \ccc{p[k]} is the coefficient of $x^k$ in $P$.
+   \ccPrecond{\ccc{x_min < x_max}.}}
+
+\ccConstructor{Curve_2 (const Rat_vector& p_coeffs,
+                        const Rat_vector& q_coeffs,
+                        const typename NtTraits::Algebraic& x_min,
+                        const typename NtTraits::Algebraic& x_max);}
+  {constructs an arc supported by the rational function
+   $y = \frac{P(x)}{Q(x)}$, defined over the internal \ccc{[x_min, x_max]}.
+   The vectors \ccc{p_coeffs} and \ccc{q_coeffs} specify the coefficients
+   of $P(x)$ and $Q(x)$, respectively (see above).
+   \ccPrecond{\ccc{x_min < x_max}.}
+   \ccPrecond{For each \ccc{x_min} $\leq$ \ccc{x} $\leq$ \ccc{x_max},
+              $Q(x) \neq 0$.}}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{bool is_valid() const;}
+  {indicates whether \ccVar{} is a valid rational arc. As the precondition 
+   $Q(x) \neq 0$ to the constructor from two polynomials is quite complicated,
+   its violation does not cause the program to abort. Instead, the constructed
+   arc is invalid (a defaultly constructed arc is also invalid).
+   It is however recommended to check that a constructed arc is valid before
+   inserting it to an arrangement, as this operation {\sl will} cause the
+   program to abort.}
+
+\ccMethod{const Polynomial& numerator () const;}
+  {returns a polynomial with integer coefficients equivalent to $P(x)$.}
+
+\ccMethod{const Polynomial& denominator () const;}
+  {returns a polynomial with integer coefficients equivalent to $Q(x)$.}
+
+%\ccMethod{Bbox_2 bbox() const;}
+%  {return a bounding box of the polyline \ccVar{}.}
+
+\end{ccClass}
+
+\end{ccRefClass}
+\ccRefPageEnd

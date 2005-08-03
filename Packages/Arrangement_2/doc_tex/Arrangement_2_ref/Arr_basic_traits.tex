@@ -5,7 +5,9 @@
 % | Package: Arrangement_2
 % | 
 % +------------------------------------------------------------------------+
- 
+
+\ccRefPageBegin
+
 \begin{ccRefConcept}{ArrangementBasicTraits_2}
 
 \ccDefinition
@@ -39,12 +41,15 @@ their endpoints are representable as \ccc{Point_2} objects.
 \ccHeading{Functor Types}
 %========================
 
+\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThreeToTwo
+
 \ccNestedType{Compare_x_2}
 {provides the operator~: \\
  \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
  which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
  $x$-ordering of points \ccc{p1} and \ccc{p2}.}
-\ccGlue
+
 \ccNestedType{Compare_xy_2}
 {provides the operator~: \\
  \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
@@ -55,7 +60,7 @@ their endpoints are representable as \ccc{Point_2} objects.
 {provides the operator~: \\
  \ccc{Point_2 operator() (X_monotone_curve_2 c)} \\
  which returns the left (lexicographically smaller) endpoint of \ccc{c}.}
-\ccGlue
+
 \ccNestedType{Construct_max_vertex_2}
 {provides the operator~: \\
  \ccc{Point_2 operator() (X_monotone_curve_2 c)} \\
@@ -81,7 +86,7 @@ their endpoints are representable as \ccc{Point_2} objects.
  a common right endpoint \ccc{p}, and returns \ccc{SMALLER, EQUAL} or
  \ccc{LARGER} according to the relative position of the two curves
  immediately to the left of $p$.}
-\ccGlue
+
 \ccNestedType{Compare_y_at_x_right_2}
 {provides the operator~: \\
  \ccc{Comparison_result operator() (X_monotone_curve_2 c1,
@@ -104,6 +109,9 @@ their endpoints are representable as \ccc{Point_2} objects.
 \ccCreation
 \ccCreationVariable{traits}
 %==========================
+
+\ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
 
 \ccConstructor{ArrangementBasicTraits_2();}{default constructor.}
 \ccGlue
@@ -140,7 +148,9 @@ their endpoints are representable as \ccc{Point_2} objects.
 \ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
-\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
-\ccc{CGAL::Arr_rational_arc_traits_2<Alg_kernel,Nt_traits>} \\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>} \\
 
 \end{ccRefConcept}
+
+\ccRefPageEnd

@@ -5,7 +5,9 @@
 % | Package: Arrangement_2
 % | 
 % +------------------------------------------------------------------------+
- 
+
+\ccRefPageBegin
+
 \begin{ccRefConcept}{ArrangementLandmarkTraits_2}
 
 \ccDefinition
@@ -32,6 +34,9 @@ type.
 \ccHeading{Functor Types}
 %========================
 
+\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThreeToTwo
+
 \ccNestedType{Approximate_2}
 {provides the operator~: \\
  \ccc{Approximate_number_type operator() (Point_2 p, int i)} \\
@@ -47,6 +52,9 @@ type.
 \ccCreation
 \ccCreationVariable{traits}
 %==========================
+
+\ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
 
 \ccConstructor{ArrangementLandmarkTraits_2();}{default constructor.}
 \ccGlue
@@ -69,11 +77,14 @@ type.
 \ccc{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
-\ccc{CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>} \\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
 
 \ccSeeAlso
 %=========
 
-\ccc{ArrangementBasicTraits_2}
+\ccc{ArrangementBasicTraits_2}\lcTex{ 
+      (\ccRefPage{ArrangementBasicTraits_2})}
 
 \end{ccRefConcept}
+
+\ccRefPageEnd
