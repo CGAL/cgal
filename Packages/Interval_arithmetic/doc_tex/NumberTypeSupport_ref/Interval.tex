@@ -2,7 +2,7 @@
 %   $Revision$
 %   $Date$
 
-\begin{ccRefClass}{Interval_nt}
+\begin{ccRefClass}{Interval_nt<bool Protected = true>}
 \label{interval}
 
 % \ccChapterAuthor{Sylvain Pion}
@@ -13,14 +13,8 @@ This section describes briefly what interval arithmetic is, its implementation
 in {\cgal}, and its possible use by geometric programs.
 The main reason for having interval arithmetic in {\cgal} is its integration
 into the filtered robust and fast predicates scheme, but we also provide a
-number type so that you can use it separately if you find any use for it
-(such as interval analysis, or to represent data with tolerance).
-
-% This control is
-% provided via the comparison operators.  When there is an unsafe comparison
-% between intervals, either a warning or an exception (see below) is raised.
-% Otherwise, it means that if you do the same computation with doubles, your
-% program will have the correct output (with the exact same input data).
+number type so that you can use it separately if you find any use for it,
+such as interval analysis, or to represent data with tolerance...
 
 The purpose of interval arithmetic is to provide an efficient way to bound
 the roundoff errors made by floating point computations.
@@ -29,7 +23,6 @@ is what is done for the filtered robust predicates (see Section~\ref{filter}).
 You can find more theoretical information on this topic in
 \cite{cgal:bbp-iayed-01}.
 
-%\ccDefinition
 Interval arithmetic is a large concept and we will only consider here a 
 simple arithmetic based on intervals whose bounds are {\it double}s.
 So each variable is an interval representing any value inside the interval.
@@ -46,19 +39,44 @@ $$
 For example, if the final result of a sequence of arithmetic operations is
 an interval that does not contain zero, then you can safely determine its sign.
 
-\ccInclude{CGAL/Interval_arithmetic.h}
+\ccInclude{CGAL/Interval_nt.h}
+
+\ccParameters
+
+The boolean template parameter \ccc{Protected} provides a way to make faster
+computations by avoiding rounding mode switches.  The default value,
+\ccc{true}, is the safe way, and takes of proper rounding mode changes.
+When specifying \ccc{false}, the user has to take care about positionning
+the rounding mode towards plus infinity before doing any computations with
+the interval class.
 
 \ccIsModel
-FieldNumberType
+SqrtFieldNumberType
+
+\ccTypes
+The class \ccc{Interva_nt} defines the following types:
+\ccThree{typedef std::exception unsafe_comparison;}{Tetrahedronxxxxx}{}
+\ccThreeToTwo
+\ccTypedef{typedef double value_type;}{The type of the bounds of the interval.}
+\ccGlue
+\ccTypedef{typedef std::exception unsafe_comparison;}{The type of the
+exceptions raised when uncertain comparisons are performed.}
+
 
 \ccCreationVariable{I}
 \ccCreation
 
+\ccConstructor{Interval_nt(int i);}
+{introduces the interval [\ccc{i};\ccc{i}].}
+\ccGlue
 \ccConstructor{Interval_nt(double d);}
 {introduces the interval [\ccc{d};\ccc{d}].}
-
+\ccGlue
 \ccConstructor{Interval_nt(double i, double s);}
 {introduces the interval [\ccc{i};\ccc{s}].}
+\ccGlue
+\ccConstructor{Interval_nt(std::pair<double, double> p);}
+{introduces the interval [\ccc{p.first};\ccc{p.second}].}
 
 
 \ccOperations
@@ -89,16 +107,6 @@ the same bounds.}
 \ccMethod{bool do_overlap(Interval_nt J);} {returns whether both intervals
 have a non empty intersection.}
 
-The two following operators can be used for interval analysis, they are not
-directly useful for \ccc{Interval_nt} as a number type.
-
-\ccMethod{Interval_nt operator||(Interval_nt J);} {returns the smallest
-interval containing the two intervals.}
-\ccMethod{Interval_nt operator&&(Interval_nt J);} {returns the biggest
-interval contained in the two intervals.  The result is unspecified if
-the two intervals don't intersect.}
-
-
 The comparison operators ($<$, $>$, $<=$, $>=$, $==$, $!=$, \ccc{sign()}
 and \ccc{compare()}) have the following semantic: it is the intuitive
 one when for all couples of values in both intervals, the comparison
@@ -116,60 +124,53 @@ $$
 \Rightarrow (X\ \mathcal{OP}\ Y) =false
 $$
 
-Otherwise, the comparison is not safe, and we first increment the counter
-\ccc{Interval_nt_advanced::number_of_failures}, and then throw the exception
-\ccc{Interval_nt_advanced::unsafe_comparison}.
+Otherwise, the comparison is not safe, and we specify this by returning
+a type encoding this uncertainty, namely using \ccc{Uncertain}, which
+can be probed for uncertainty by hand, and which has a conversion to
+the normal type (e.g. \ccc{bool}) which throws an exception when the
+conversion is not certain.  Note that each failed conversion increments
+the counter \ccc{number_of_failures()}, and then throw the exception of
+type \ccc{unsafe_comparison}.
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}{\hspace*{8cm}}
+\ccFunction{Uncertain<bool> operator<(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<bool> operator>(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<bool> operator<=(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<bool> operator>=(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<bool> operator==(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<bool> operator!=(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<Comparison_result>
+            compare(Interval_nt i, Interval_nt j);}{}
+\ccGlue
+\ccFunction{Uncertain<Sign> sign(Interval_nt i);}{}
+
+\ccFunction{static unsigned number_of_failures();}
+{Returns a global counter incremented at each conversion which thrown an
+exception.}
+
+\ccTypedef{typedef Interval_nt<false>  Interval_nt_advanced;}
+{This typedef (at namespace CGAL scope) exists for backward compatibility,
+ as well as removing the need to remember the boolean value for the template
+ parameter.}
+
+\begin{ccAdvanced}
 
 \ccImplementation
 
-\ccc{Interval_nt} derives from \ccc{Interval_nt_advanced}.
-The operations on \ccc{Interval_nt} are automatically protected against
-rounding modes, and are thus slower than those on \ccc{Interval_nt_advanced},
-but easier to use.
-
-Users that need performance are encouraged to use \ccc{Interval_nt_advanced}
-instead (see Section~\ref{interval-adv}).
-
-\end{ccRefClass}
-
-\renewcommand\ccRefPageBegin{\begin{ccAdvanced}}
-\renewcommand\ccRefPageEnd{\end{ccAdvanced}}
-\begin{ccRefClass} {Interval_nt_advanced}
-\label{interval-adv}
-
-\ccDefinition
-
-The advanced class allows you to make faster computations with interval 
-arithmetic, but you need to set
-the rounding mode of the FPU to 'round to infinity' (see below for how to do
-that) before doing any computation with this number type, and each function
-(arithmetic operators and conversion functions)
-leaves the rounding mode in this state if it needs to modify it internally.
+The operations on \ccc{Interval_nt} with the default parameter \ccc{true},
+are automatically protected against rounding modes, and are thus slower than
+those on \ccc{Interval_nt_advanced}, but easier to use.  Users that need
+performance are encouraged to use \ccc{Interval_nt_advanced} instead.
 
 Changing the rounding mode affects all floating point computations, and might
 cause problems with parts of your code, or external libraries (even \cgal),
 that expect the rounding mode to be the default (round to the nearest).
-
-\ccInclude{CGAL/Interval_arithmetic.h}
-
-\ccIsModel
-FieldNumberType
-
-\ccOperations
-
-\ccSetThreeColumns{Interval_nt_advanced}{}{\hspace*{8.5cm}}
-%\ccFunction{Interval_nt_advanced convert_to<Interval_nt_advanced>(NT);}
-%{Several such functions provide a cast from the following numerical types
-%to an \ccc{Interval_nt_advanced} containing the value.  The following types are
-%supported: \ccc{leda_real}, \ccc{leda_rational}, \ccc{leda_integer},
-%\ccc{leda_bigfloat}, \ccc{Gmpz}, \ccc{Fixed_precision_nt}, all built-in
-%types that fit exactly in a \ccc{double} (which excludes \ccc{long double}
-%and 64 bits integers, which must be treated separately), and all
-%\ccc{Quotient<RT>} where RT is a type listed above.
-%The user can add such functions for his own number types, see the files
-%\ccc{CGAL/Interval_arithmetic/IA_*.h} for examples.}
-
-% FPU rounding modes~:
 
 We provide the following interface to change the rounding mode:
 
@@ -198,8 +199,6 @@ The correct way to protect an area of code that uses operations on the class
   FPU_set_cw(backup);
 \end{verbatim}
 
-\ccImplementation
-
 The basic idea is to use the directed rounding modes specified by the 
 {\it IEEE 754} standard, which are implemented by almost all processors 
 nowadays.
@@ -220,7 +219,6 @@ lower bound itself, which allows us to never change the rounding mode inside
 simple operations.  Therefore, all basic operations, which are in the class 
 \ccc{Interval_nt_advanced} assume that the rounding mode is set to 
 'round to infinity', and everything works with this correctly set.  
-The class \ccc{Interval_nt} takes care of this, but is a bit slower.
 
 So, if the user needs the speed of \ccc{Interval_nt_advanced}, he must
 take care of setting the rounding mode to 'round to infinity' before each
@@ -251,6 +249,6 @@ Notes:\\
       \ccc{CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION}.
 \end{itemize}
 
+\end{ccAdvanced}
+
 \end{ccRefClass}
-\renewcommand\ccRefPageBegin{}
-\renewcommand\ccRefPageEnd{}
