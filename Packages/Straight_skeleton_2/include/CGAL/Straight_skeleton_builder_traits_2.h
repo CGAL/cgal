@@ -44,28 +44,27 @@ struct Exist_event
   typedef typename K::Point_2 Point_2 ;
     
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
+  
+  typedef Threetuple<Point_2_Pair> Line_triple ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<3>    Arity ;
   
-  Uncertain<bool> operator() ( Point_2_Pair const& aM
-                             , Point_2_Pair const& aN
-                             , Point_2_Pair const& aS
-                             ) const
+  Uncertain<bool> operator() ( Line_triple const& aE ) const
   {
     FT  ma, mb, mc
        ,na, nb, nc
        ,sa, sb, sc ;
    
-    line_from_pointsC2(aM.first.x(),aM.first.y(),aM.second.x(),aM.second.y()
+    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
                       ,ma,mb,mc
                       );          
                       
-    line_from_pointsC2(aN.first.x(),aN.first.y(),aN.second.x(),aN.second.y()
+    line_from_pointsC2(aE.e1.first.x(),aE.e1.first.y(),aE.e1.second.x(),aE.e1.second.y()
                       ,na,nb,nc
                       );          
     
-    line_from_pointsC2(aS.first.x(),aS.first.y(),aS.second.x(),aS.second.y()
+    line_from_pointsC2(aE.e2.first.x(),aE.e2.first.y(),aE.e2.second.x(),aE.e3.second.y()
                       ,sa,sb,sc
                       );          
     
@@ -82,16 +81,12 @@ struct Compare_event_times
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
   
+  typedef Threetuple<Point_2_Pair> Line_triple ;
+  
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<6>                 Arity ;
   
-  Uncertain<Comparison_result> operator() ( Point_2_Pair const& aL0
-                                          , Point_2_Pair const& aL1
-                                          , Point_2_Pair const& aL2
-                                          , Point_2_Pair const& aR0
-                                          , Point_2_Pair const& aR1
-                                          , Point_2_Pair const& aR2
-                                          ) const
+  Uncertain<Comparison_result> operator() ( Line_triple const& aL,  Line_triple const& aR ) const
   {
     FT  l0a, l0b, l0c
        ,l1a, l1b, l1c
@@ -100,27 +95,27 @@ struct Compare_event_times
        ,r1a, r1b, r1c
        ,r2a, r2b, r2c ;
    
-    line_from_pointsC2(aL0.first.x(),aL0.first.y(),aL0.second.x(),aL0.second.y()
+    line_from_pointsC2(aL.e0.first.x(),aL.e0.first.y(),aL.e0.second.x(),aL.e0.second.y()
                       ,l0a,l0b,l0c
                       );          
                       
-    line_from_pointsC2(aL1.first.x(),aL1.first.y(),aL1.second.x(),aL1.second.y()
+    line_from_pointsC2(aL.e1.first.x(),aL.e1.first.y(),aL.e1.second.x(),aL.e1.second.y()
                       ,l1a,l1b,l1c
                       );          
     
-    line_from_pointsC2(aL2.first.x(),aL2.first.y(),aL2.second.x(),aL2.second.y()
+    line_from_pointsC2(aL.e2.first.x(),aL.e2.first.y(),aL.e2.second.x(),aL.e2.second.y()
                       ,l2a,l2b,l2c
                       );          
     
-    line_from_pointsC2(aR0.first.x(),aR0.first.y(),aR0.second.x(),aR0.second.y()
+    line_from_pointsC2(aR.e0.first.x(),aR.e0.first.y(),aR.e0.second.x(),aR.e0.second.y()
                       ,r0a,r0b,r0c
                       );          
                       
-    line_from_pointsC2(aR1.first.x(),aR1.first.y(),aR1.second.x(),aR1.second.y()
+    line_from_pointsC2(aR.e1.first.x(),aR.e1.first.y(),aR.e1.second.x(),aR.e1.second.y()
                       ,r1a,r1b,r1c
                       );          
     
-    line_from_pointsC2(aR2.first.x(),aR2.first.y(),aR2.second.x(),aR2.second.y()
+    line_from_pointsC2(aR.e2.first.x(),aR.e2.first.y(),aR.e2.second.x(),aR.e2.second.y()
                       ,r2a,r2b,r2c
                       );        
    
@@ -160,27 +155,27 @@ struct Compare_event_distance_to_seed
        ,r1a, r1b, r1c
        ,r2a, r2b, r2c ;
    
-    line_from_pointsC2(aL0.first.x(),aL0.first.y(),aL0.second.x(),aL0.second.y()
+    line_from_pointsC2(aL.e0.first.x(),aL.e0.first.y(),aL.e0.second.x(),aL.e0.second.y()
                       ,l0a,l0b,l0c
                       );          
                       
-    line_from_pointsC2(aL1.first.x(),aL1.first.y(),aL1.second.x(),aL1.second.y()
+    line_from_pointsC2(aL.e1.first.x(),aL.e1.first.y(),aL.e1.second.x(),aL.e1.second.y()
                       ,l1a,l1b,l1c
                       );          
     
-    line_from_pointsC2(aL2.first.x(),aL2.first.y(),aL2.second.x(),aL2.second.y()
+    line_from_pointsC2(aL.e2.first.x(),aL.e2.first.y(),aL.e2.second.x(),aL.e2.second.y()
                       ,l2a,l2b,l2c
                       );          
     
-    line_from_pointsC2(aR0.first.x(),aR0.first.y(),aR0.second.x(),aR0.second.y()
+    line_from_pointsC2(aR.e0.first.x(),aR.e0.first.y(),aR.e0.second.x(),aR.e0.second.y()
                       ,r0a,r0b,r0c
                       );          
                       
-    line_from_pointsC2(aR1.first.x(),aR1.first.y(),aR1.second.x(),aR1.second.y()
+    line_from_pointsC2(aR.e1.first.x(),aR.e1.first.y(),aR.e1.second.x(),aR.e1.second.y()
                       ,r1a,r1b,r1c
                       );          
     
-    line_from_pointsC2(aR2.first.x(),aR2.first.y(),aR2.second.x(),aR2.second.y()
+    line_from_pointsC2(aR.e2.first.x(),aR.e2.first.y(),aR.e2.second.x(),aR.e2.second.y()
                       ,r2a,r2b,r2c
                       );        
    
@@ -195,15 +190,9 @@ struct Compare_event_distance_to_seed
                                                    ) ;
   }                             
   
-  Uncertain<Comparison_result> operator() ( Point_2_Pair const& aS0
-                                          , Point_2_Pair const& aS1
-                                          , Point_2_Pair const& aS2
-                                          , Point_2_Pair const& aL0
-                                          , Point_2_Pair const& aL1
-                                          , Point_2_Pair const& aL2
-                                          , Point_2_Pair const& aR0
-                                          , Point_2_Pair const& aR1
-                                          , Point_2_Pair const& aR2
+  Uncertain<Comparison_result> operator() ( Line_triple const& aS
+                                          , Line_triple const& aL
+                                          , Line_triple const& aR
                                           ) const
   {
     FT  s0a, s0b, s0c
@@ -216,39 +205,39 @@ struct Compare_event_distance_to_seed
        ,r1a, r1b, r1c
        ,r2a, r2b, r2c ;
    
-    line_from_pointsC2(aS0.first.x(),aS0.first.y(),aS0.second.x(),aS0.second.y()
+    line_from_pointsC2(aS.e0.first.x(),aS.e0.first.y(),aS.e0.second.x(),aS.e0.second.y()
                       ,s0a,s0b,s0c
                       );          
                       
-    line_from_pointsC2(aS1.first.x(),aS1.first.y(),aS1.second.x(),aS1.second.y()
+    line_from_pointsC2(aS.e1.first.x(),aS.e1.first.y(),aS.e1.second.x(),aS.e1.second.y()
                       ,s1a,s1b,s1c
                       );          
                       
-    line_from_pointsC2(aS2.first.x(),aS2.first.y(),aS2.second.x(),aS2.second.y()
+    line_from_pointsC2(aS.e2.first.x(),aS.e2.first.y(),aS.e2.second.x(),aS.e2.second.y()
                       ,s2a,s2b,s2c
                       );          
                       
-    line_from_pointsC2(aL0.first.x(),aL0.first.y(),aL0.second.x(),aL0.second.y()
+    line_from_pointsC2(aL.e0.first.x(),aL.e0.first.y(),aL.e0.second.x(),aL.e0.second.y()
                       ,l0a,l0b,l0c
                       );          
                       
-    line_from_pointsC2(aL1.first.x(),aL1.first.y(),aL1.second.x(),aL1.second.y()
+    line_from_pointsC2(aL.e1.first.x(),aL.e1.first.y(),aL.e1.second.x(),aL.e1.second.y()
                       ,l1a,l1b,l1c
                       );          
     
-    line_from_pointsC2(aL2.first.x(),aL2.first.y(),aL2.second.x(),aL2.second.y()
+    line_from_pointsC2(aL.e2.first.x(),aL.e2.first.y(),aL.e2.second.x(),aL.e2.second.y()
                       ,l2a,l2b,l2c
                       );          
     
-    line_from_pointsC2(aR0.first.x(),aR0.first.y(),aR0.second.x(),aR0.second.y()
+    line_from_pointsC2(aR.e0.first.x(),aR.e0.first.y(),aR.e0.second.x(),aR.e0.second.y()
                       ,r0a,r0b,r0c
                       );          
                       
-    line_from_pointsC2(aR1.first.x(),aR1.first.y(),aR1.second.x(),aR1.second.y()
+    line_from_pointsC2(aR.e1.first.x(),aR.e1.first.y(),aR.e1.second.x(),aR.e1.second.y()
                       ,r1a,r1b,r1c
                       );          
     
-    line_from_pointsC2(aR2.first.x(),aR2.first.y(),aR2.second.x(),aR2.second.y()
+    line_from_pointsC2(aR.e2.first.x(),aR.e2.first.y(),aR.e2.second.x(),aR.e2.second.y()
                       ,r2a,r2b,r2c
                       );        
    
@@ -274,15 +263,12 @@ struct Is_event_inside_offset_zone
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
   
+  typedef Threetuple<Point_2_Pair> Line_triple ;
+  
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<5>    Arity ;
   
-  Uncertain<bool> operator() ( Point_2_Pair const& aL
-                             , Point_2_Pair const& aR
-                             , Point_2_Pair const& aE
-                             , Point_2_Pair const& aE_Prev
-                             , Point_2_Pair const& aE_Next
-                             ) const
+  Uncertain<bool> operator() ( Line_triple const& aE, Line_triple const& aO ) const
   {
     FT  la, lb, lc
        ,ra, rb, rc
@@ -290,23 +276,23 @@ struct Is_event_inside_offset_zone
        ,pa, pb, pc
        ,na, nb, nc ;
    
-    line_from_pointsC2(aL.first.x(),aL.first.y(),aL.second.x(),aL.second.y()
+    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
                       ,la,lb,lc
                       );          
                       
-    line_from_pointsC2(aR.first.x(),aR.first.y(),aR.second.x(),aR.second.y()
+    line_from_pointsC2(aE.e1.first.x(),aE.e1.first.y(),aE.e1.second.x(),aE.e1.second.y()
                       ,ra,rb,rc
                       );          
     
-    line_from_pointsC2(aE.first.x(),aE.first.y(),aE.second.x(),aE.second.y()
+    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
                       ,ea,eb,ec
                       );          
     
-    line_from_pointsC2(aE_Prev.first.x(),aE_Prev.first.y(),aE_Prev.second.x(),aE_Prev.second.y()
+    line_from_pointsC2(aO.e0.first.x(),aO.e0.first.y(),aO.e0.second.x(),aO.e0.second.y()
                       ,pa,pb,pc
                       );          
                       
-    line_from_pointsC2(aE_Next.first.x(),aE_Next.first.y(),aE_Next.second.x(),aE_Next.second.y()
+    line_from_pointsC2(aO.e2.first.x(),aO.e2.first.y(),aO.e2.second.x(),aO.e2.second.y()
                       ,na,nb,nc
                       );          
     
@@ -329,27 +315,26 @@ struct Construct_event
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
   
+  typedef Threetuple<Point_2_Pair> Line_triple ;
+  
   typedef std::pair<Point_2,FT> result_type ;
   typedef Arity_tag<3>          Arity ;
   
-  std::pair<Point_2,FT> operator() ( Point_2_Pair const& aM
-                                   , Point_2_Pair const& aN
-                                   , Point_2_Pair const& aS
-                                   ) const
+  std::pair<Point_2,FT> operator() ( Line_triple const& aE ) const
   {
     FT  ma, mb, mc
        ,na, nb, nc
        ,sa, sb, sc ;
    
-    line_from_pointsC2(aM.first.x(),aM.first.y(),aM.second.x(),aM.second.y()
+    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
                       ,ma,mb,mc
                       );          
                       
-    line_from_pointsC2(aN.first.x(),aN.first.y(),aN.second.x(),aN.second.y()
+    line_from_pointsC2(aE.e1.first.x(),aE.e1.first.y(),aE.e1.second.x(),aE.e1.second.y()
                       ,na,nb,nc
                       );          
     
-    line_from_pointsC2(aS.first.x(),aS.first.y(),aS.second.x(),aS.second.y()
+    line_from_pointsC2(aE.e2.first.x(),aE.e2.first.y(),aE.e2.second.x(),aE.e2.second.y()
                       ,sa,sb,sc
                       );          
     
