@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -45,7 +44,6 @@ public:
     Segment_2_Line_2_pair() ;
     Segment_2_Line_2_pair(typename K::Segment_2 const *seg,
                             typename K::Line_2 const *line);
-    ~Segment_2_Line_2_pair() {}
 
     Intersection_results intersection_type() const;
 
@@ -206,7 +204,7 @@ inline bool
 do_intersect(const Line_2<K> &line, const Segment_2<K> &seg)
 {
   typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect(line, seg);
+  return Do_intersect()(line, seg);
 }
 
 template <class K>

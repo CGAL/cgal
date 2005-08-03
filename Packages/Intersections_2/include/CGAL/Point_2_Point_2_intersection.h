@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -27,7 +26,6 @@
 #define CGAL_POINT_2_POINT_2_INTERSECTION_H
 
 #include <CGAL/Point_2.h>
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -41,6 +39,7 @@ do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt1,
 {
     return pt1 == pt2;
 }
+
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Point_2 &pt1, 
@@ -61,7 +60,7 @@ bool
 do_intersect(const Point_2<K> &pt1, const Point_2<K> &pt2)
 {
   typedef typename K::Do_intersect_2 Do_intersect;
-  return o_intersect(pt1, pt2);
+  return Do_intersect()(pt1, pt2);
 }
 
 
