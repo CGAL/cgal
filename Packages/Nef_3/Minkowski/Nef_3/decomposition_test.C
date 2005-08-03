@@ -44,17 +44,13 @@ int main(int argc, char* argv[]) {
   std::ifstream in(argv[1]);
   Nef_polyhedron N;
   in >> N;
-  //  CGAL_NEF_SETDTHREAD(43*47);
+  std::cerr << N;
+  //  CGAL_NEF_SETDTHREAD(43*47*19*41);
 
   SNC_decorator D(*const_cast<SNC_structure*>(N.sncp()));
 
   Ray_hit rh(Vector_3(-1,0,0));
   N.delegate(rh);
-
-  External_structure_builder esb;
-  //  N.delegate(esb);
-
-  //  std::cerr << N;
 
   int noe = N.number_of_halfedges();
   Halfedge_iterator e = D.halfedges_begin();
@@ -75,6 +71,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  External_structure_builder esb;
   N.delegate(esb);
 
   Ray_hit rh2(Vector_3(1,0,0));
@@ -101,7 +98,7 @@ int main(int argc, char* argv[]) {
 
   N.delegate(esb);
 
-  std::cerr << N;
+  //  std::cerr << N;
 
   SHalfedge_iterator se;
   for(se=D.shalfedges_begin();se!=D.shalfedges_end();++se) {
@@ -111,6 +108,8 @@ int main(int argc, char* argv[]) {
 
       std::cerr << "sedge at " << normalized(se->source()->source()->point()) 
 		<< " in plane " << normalized(se->circle()) << std::endl;
+      std::cerr << "sedge " << se->source()->point()
+		<< "->" << se->twin()->source()->point() << std::endl;      
 
       Plane_3 pl1(se->circle()), pl2(0,0,1,0);
       Line_3 l;
@@ -130,10 +129,11 @@ int main(int argc, char* argv[]) {
       } while(sec!=se && vec != Vector_3(1,0,0) && vec != Vector_3(-1,0,0));
       
       std::cerr << "senkrecht " << vec << std::endl;
+      std::cerr << "sec " << sec->source()->point()
+		<< "->" << sec->twin()->source()->point() << std::endl;
 
       if(s.has_on(ip) && s.source() != ip && s.target() != ip) {
 	std::cerr << "intersection point " << ip << std::endl;
-
 	Single_wall2 W(sec->source(), ip);
 	N.delegate(W);
       }
@@ -141,16 +141,16 @@ int main(int argc, char* argv[]) {
       if(s.has_on(ip.antipode()) && 
 	 s.source() != ip.antipode() && 
 	 s.target() != ip.antipode()) {
-	std::cerr << "antipode intersection point " << ip << std::endl;
+	std::cerr << "antipode intersection point " << ip.antipode() << std::endl;
 	Single_wall2 W(sec->source(), ip.antipode());
 	N.delegate(W);
       }
     }
   }
 
-  CGAL_NEF_SETDTHREAD(43);
+  //  CGAL_NEF_SETDTHREAD(43);
   N.delegate(esb);
-  CGAL_NEF_SETDTHREAD(1);
+  //  CGAL_NEF_SETDTHREAD(1);
 
   QApplication a(argc, argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 

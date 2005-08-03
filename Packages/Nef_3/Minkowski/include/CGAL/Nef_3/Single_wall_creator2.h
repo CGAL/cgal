@@ -57,7 +57,7 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   int need_to_create_wall() const {
 
     int res = 0;
-
+ 
     if((ein->point() - CGAL::ORIGIN) == dir ||
        (ein->twin()->point() - CGAL::ORIGIN) == dir)
       return 3;
@@ -148,6 +148,10 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     SNC_point_locator* pl(sncpl.pl);
     SNC_constructor C(*sncp,pl);
 
+    std::cerr << "Single_wall_creator2: ein " << ein->source()->point() 
+	      << "->" << ein->twin()->source()->point() << std::endl;
+    std::cerr << "Single_wall_creator2: spin " << spin << std::endl;
+
     SM_walls SMW_src(&*ein->source());
     SM_walls SMW_tgt(&*ein->twin()->source());
     Sphere_segment sphere_ray_src(ein->point(), spin);  
@@ -155,23 +159,20 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     SVertex_handle lateral_sv_tgt[2];
     lateral_sv_tgt[0] = SMW_src.add_lateral_svertex(sphere_ray_src);
     lateral_sv_tgt[1] = SMW_tgt.add_lateral_svertex(sphere_ray_tgt);
-    SMW_src.add_sedge_between(ein, lateral_sv_tgt[0]);
-    SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1]);
+    
+    CGAL_assertion(sphere_ray_src.sphere_circle() == sphere_ray_tgt.sphere_circle().opposite());
 
-    Sphere_circle c1(ein->point(), lateral_sv_tgt[0]->point());
-    Sphere_circle c2(ein->twin()->point(), lateral_sv_tgt[1]->point());
-    c1 = normalized(c1); c2 = normalized(c2);
-    std::cerr << "circles " << c1 << " " << c2 << std::endl;
-    CGAL_assertion(c1 == c2.opposite());
+    SMW_src.add_sedge_between(ein, lateral_sv_tgt[0], sphere_ray_src.sphere_circle());
+    SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1], sphere_ray_tgt.sphere_circle());
 
-    Sphere_circle c(ein->point(), spin);
-    c = normalized(c);
+    Sphere_circle c(sphere_ray_src.sphere_circle());
+
     do {
       Ray_3 r(lateral_sv_tgt[0]->source()->point(),lateral_sv_tgt[0]->point()-CGAL::ORIGIN);
 
-      CGAL_NEF_SETDTHREAD(503*509);
+      //      CGAL_NEF_SETDTHREAD(503*509);
       Object_handle o2 = pl->shoot(r);
-      CGAL_NEF_SETDTHREAD(1);
+      //      CGAL_NEF_SETDTHREAD(1);
 
       std::cerr << "nachbehandlung: ray " << r << std::endl;
       std::cerr << "double coords" << CGAL::to_double(r.source().x())

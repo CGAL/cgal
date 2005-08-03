@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /home/hachenb/CGAL
+MY_DIR = /KM/usr/hachenb/CGAL2
 HOME = /KM/guests/granados
 POLY = $(MY_DIR)/Polynomial/include
 LOCAL = $(MY_DIR)/local/include
@@ -24,7 +24,7 @@ WALKER = $(HOME)/projects/SNC_walker
 BBOX = $(MY_DIR)/Box_intersection_d/include
 MINKOWSKI = $(MY_DIR)/Nef_3/Minkowski/include
 
-CUSTOM_CXXFLAGS = -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(MINKOWSKI)
+CUSTOM_CXXFLAGS = -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(MINKOWSKI) -I$(BBOX)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \

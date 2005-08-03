@@ -167,6 +167,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     Object_handle found_object[2];
     Sphere_point found_point[2];
     for(int i=0; i<2; ++i) {
+      std::cerr << "SM_walls " << origin[i]->point() << std::endl;
       SM_walls SMW(&*origin[i]);
       SM_point_locator PL(&*origin[i]);
       Sphere_segment sphere_ray(lateral_sv_tgt[i]->point(), Sphere_point(dir));
@@ -175,13 +176,18 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     SVertex_handle sv0, sv1;
     if(assign(sv0, found_object[0]) && assign(sv1, found_object[1])) {
+      std::cerr << "check " << sv0->point() << "+" << sv1->point() << std::endl;
       SHalfedge_around_svertex_circulator sh0(sv0->out_sedge()), send0(sh0);
       CGAL_For_all(sh0,send0)
 	if(sh0->twin()->source() == ein) {
 	  SHalfedge_around_svertex_circulator sh1(sv1->out_sedge()), send1(sh1);
 	  CGAL_For_all(sh1,send1)
-	    if(sh1->twin()->source() == ein->twin())
+	    if(sh1->twin()->source() == ein->twin()) {
+	      std::cerr << "did not process edge " << std::endl;
+	      std::cerr << "check " << sh0->source()->point() << "->" << sh0->twin()->source()->point() << std::endl;
+	      std::cerr << "check " << sh1->source()->point() << "->" << sh1->twin()->source()->point() << std::endl;
 	      return;
+	    }
 	}
     }
 
@@ -193,6 +199,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     Sphere_circle c(ein->point(), Sphere_point(dir));
     c = normalized(c);
 
+    std::cerr << "SM_walls " << ein->source()->point() << std::endl;
     SM_walls SMW(&*ein->source());
     Sphere_segment sphere_ray(ein->point(), ein->twin()->point(), c);
     SVertex_handle lateral_svertex = SMW.add_lateral_svertex(sphere_ray);
@@ -210,6 +217,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 		<< ", " << CGAL::to_double(v->point().y())
 		<< ", " << CGAL::to_double(v->point().z()) << std::endl;
 
+      std::cerr << "SM_walls " << v->point() << std::endl;
       SM_walls smw(&*v);
       SVertex_handle opp = smw.add_ray_svertex(lateral_svertex->point().antipode());
       opp->twin() = lateral_svertex;
@@ -226,11 +234,14 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       // TODO: make use of existing edges along ray
 
       r = Ray_3(lateral_svertex->source()->point(), lateral_svertex->point()-CGAL::ORIGIN);
+      //      CGAL_NEF_SETDTHREAD(503*509);
       v = rh.create_vertex_on_first_hit(r);
+      //      CGAL_NEF_SETDTHREAD(1);
     }
     
     std::cerr << "last current vertex " << v->point() << std::endl;
 
+      std::cerr << "SM_walls " << v->point() << std::endl;
     SM_walls smw(&*v);
     SVertex_handle opp = smw.add_ray_svertex(lateral_svertex->point().antipode());    
     opp->twin() = lateral_svertex;
@@ -332,9 +343,9 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     do {
       Ray_3 r(lateral_sv_tgt[0]->source()->point(),lateral_sv_tgt[0]->point()-CGAL::ORIGIN);
 
-      CGAL_NEF_SETDTHREAD(503*509);
+//      CGAL_NEF_SETDTHREAD(503*509);
       Object_handle o2 = pl->shoot(r);
-      CGAL_NEF_SETDTHREAD(1);
+//      CGAL_NEF_SETDTHREAD(1);
 
       std::cerr << "nachbehandlung: ray " << r << std::endl;
 	std::cerr << "double coords" << CGAL::to_double(r.source().x())

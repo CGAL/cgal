@@ -142,11 +142,13 @@ class SM_walls : SM_decorator<SMap> {
     se->incident_sface() = sl->incident_sface();
     se->twin()->incident_sface() = sl->twin()->incident_sface();
     se->mark() = se->twin()->mark() = sl->mark();
-    store_sm_boundary_object(se,se->incident_sface());
-    store_sm_boundary_object(se->twin(),se->twin()->incident_sface());
 
     unlink_as_loop(sl);
     unlink_as_loop(sl->twin());
+
+    link_as_face_cycle(se,se->incident_sface());
+    link_as_face_cycle(se->twin(),se->twin()->incident_sface());
+
     delete_loop_only();
   }
 
@@ -191,9 +193,11 @@ class SM_walls : SM_decorator<SMap> {
   }
 
   bool need_to_shoot(Sphere_point sp) {
+    //    CGAL_NEF_SETDTHREAD(47);
     SM_point_locator pl(sphere_map());
     Object_handle o = pl.locate(sp);
-    
+    //        CGAL_NEF_SETDTHREAD(1);
+	
     SVertex_handle sv;
     if(assign(sv, o))
       return false;
@@ -210,6 +214,7 @@ class SM_walls : SM_decorator<SMap> {
       if(sf->mark() == false)
 	return false;
       sv = new_svertex(sp);
+      link_as_isolated_vertex(sv, sf);
       return true;
     }
     
@@ -227,8 +232,8 @@ class SM_walls : SM_decorator<SMap> {
 
     SM_point_locator P(sphere_map());
 
-    SM_decorator SD(sphere_map());
-    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
+    //    SM_decorator SD(sphere_map());
+    //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
 
     //    CGAL_NEF_SETDTHREAD(47);
     Object_handle o = P.locate(sp);
@@ -247,6 +252,7 @@ class SM_walls : SM_decorator<SMap> {
       std::cerr << "  found sface" << std::endl;
       sv = new_svertex(sp);
       sv->incident_sface() = sf;
+      link_as_isolated_vertex(sv,sf);
       return sv;
     }
     
@@ -362,6 +368,16 @@ class SM_walls : SM_decorator<SMap> {
     CGAL_assertion(c == normalized(test) || 
 		   sv1->point().antipode() == sv2->point());
     */
+
+    if(is_isolated(sv1)) {
+      if(!is_sm_boundary_object(sv1))
+	std::cerr << "error " << sv1->point() << "at " << sv1->source()->point() << std::endl;
+      unlink_as_isolated_vertex(sv1);
+    }
+    if(is_isolated(sv2)) {
+      std::cerr << "error " << sv2->point() << "at " << sv2->source()->point() << std::endl;
+      unlink_as_isolated_vertex(sv2);
+    }
 
     if(c == Sphere_circle()) {
       c = Sphere_circle(sv1->point(), sv2->point());

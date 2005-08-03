@@ -106,7 +106,6 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
       ip = normalized(ip);
       v = C.create_from_facet(f,ip);
       pl->add_vertex(v);
-
       std::cerr << "new vertex " << ip << std::endl;
 
       return v;
@@ -123,6 +122,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Vertex_iterator vi;
     for(vi = sncp->vertices_begin(); vi != sncp->vertices_end(); ++vi) {
+      std::cerr << "SM_walls " << vi->point() << std::endl;
       SM_walls smw(&*vi);
       if(smw.need_to_shoot(Sphere_point(dir))) {
 	Ray_3 r(vi->point(), dir);

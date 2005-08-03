@@ -4,6 +4,7 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_walls.h>
+#include <CGAL/Nef_S2/SM_io_parser.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,13 +54,13 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
 
   void operator()(SNC_and_PL& sncpl) {
 
+    std::cerr << "External structure builder" << std::endl;
+
     SNC_structure* sncp(sncpl.sncp);
     SNC_point_locator* pl(sncpl.pl);
 
-    /*
-    CGAL::SNC_io_parser<SNC_structure> O(std::cerr, *sncp, false);
-    O.print();
-    */
+    //    CGAL::SNC_io_parser<SNC_structure> Ox(std::cerr, *sncp, false);
+    //    Ox.print();
 
     Unique_hash_map<SHalfedge_handle, SFace_handle> sedge2sface;
     
@@ -84,6 +85,14 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
 	SM_decorator SD(&*sei->source()->source());
 	SFace_handle sf_new = SD.new_sface();
 	sf_new->mark() = sei->incident_sface()->mark();
+	
+	std::cerr << "new entry sedge " << sei->source()->point() 
+		  << "->" << sei->twin()->source()->point() 
+		  << " at " << sei->source()->source()->point() << std::endl;
+	
+	//	CGAL::SM_io_parser<SM_decorator> SMIO(std::cerr, SD);
+	//	SMIO.print();
+
 	SD.link_as_face_cycle(sei, sf_new);
 	
 	SHalfedge_around_sface_circulator eaf(se), end(eaf);
@@ -96,10 +105,8 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
       }
     }
 
-    /*
-    CGAL::SNC_io_parser<SNC_structure> O0(std::cerr, *sncp, false);
-    O0.print();
-    */
+    //    CGAL::SNC_io_parser<SNC_structure> O0(std::cerr, *sncp, false);
+    //    O0.print();
 
     SNC_point_locator* old_pl = pl;
     pl = pl->clone();
