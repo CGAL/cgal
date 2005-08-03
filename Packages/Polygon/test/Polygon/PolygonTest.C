@@ -286,12 +286,10 @@ void test_update_operations(const ListPolygon& p,
   pgn.push_back(Point(pgn.vertices_begin()->x(), 3));
   pgn.set(pgn.vertices_begin(), Point(pgn.vertices_begin()->x(), 3));
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   q.insert(q.vertices_begin(), pvec.begin() + 3, pvec.begin() + 7);
-#  if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
   q.insert(q.vertices_circulator(), pvec.begin() + 3, pvec.begin() + 7);
-#  endif
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
+#endif
 }
 
 //-----------------------------------------------------------------------//

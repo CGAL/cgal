@@ -26,12 +26,8 @@
 #define CGAL_POLYGON_2_H
 
 #include <CGAL/basic.h>
-
-#ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
 #include <vector>
 #include <list>
-#endif
-
 #include <iterator>
 
 #include <CGAL/circulator.h>
@@ -271,20 +267,18 @@ class Polygon_2 {
       }
 #endif
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
     template <class InputIterator>
     void insert(Vertex_iterator pos,
                 InputIterator first,
                 InputIterator last)
       { d_container.insert(get_container_iterator(pos), first, last); }
 
-#  if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
     template <class InputIterator>
     void insert(Vertex_circulator pos,
                 InputIterator first,
                 InputIterator last)
       { d_container.insert(pos.mod_iterator(), first, last); }
-#  endif
 #endif
 
     void push_back(const Point_2& x)

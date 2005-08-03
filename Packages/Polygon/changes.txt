@@ -1,3 +1,8 @@
+3 August 2005 Sylvain Pion
+- Remove CGAL_CFG_NO_MEMBER_TEMPLATES workarounds.
+
+============================== CGAL 3.1 ========================
+
 19 December 2004 Sylvain Pion
 - Squash warning.
 
