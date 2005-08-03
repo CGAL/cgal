@@ -487,7 +487,6 @@ class Polygon_2 {
     //             Random access methods
     //--------------------------------------------------------
 
-#ifndef CGAL_CFG_NO_LAZY_INSTANTIATION
     const Point_2& vertex(int i) const
       { return *(d_container.begin() + i); }
 
@@ -502,7 +501,6 @@ class Polygon_2 {
 
     Segment_2 edge(int i) const
       { return *(edges_begin() + i); }
-#endif
 
     //--------------------------------------------------------
     //             Miscellaneous

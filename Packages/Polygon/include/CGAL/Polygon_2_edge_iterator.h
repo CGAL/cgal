@@ -52,11 +52,7 @@ private:
 template <class Traits_, class Container_>
 class Polygon_2_edge_iterator {
   public:
-#ifdef CGAL_CFG_NO_LAZY_INSTANTIATION
-    typedef std::forward_iterator_tag iterator_category;
-#else
     typedef std::random_access_iterator_tag iterator_category;
-#endif
     typedef typename Traits_::Segment_2 Segment_2;
     typedef typename Traits_::Segment_2 value_type;
     typedef Container_ Container;
@@ -119,7 +115,6 @@ class Polygon_2_edge_iterator {
       return tmp;
     }
 
-#ifndef CGAL_CFG_NO_LAZY_INSTANTIATION
 // random access iterator requirements
     Polygon_2_edge_iterator<Traits_, Container_>&
     operator+=(difference_type n) {
@@ -173,7 +168,6 @@ class Polygon_2_edge_iterator {
     {
       return first_vertex >= a.first_vertex;
     }
-#endif
 
 };
 

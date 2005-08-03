@@ -127,7 +127,6 @@ class Polygon_2_const_edge_circulator {
       return tmp;
     }
 
-#ifndef CGAL_CFG_NO_LAZY_INSTANTIATION
 // random access iterator requirements
     Polygon_2_const_edge_circulator<_Traits, _Container>&
     operator+=(difference_type n)
@@ -192,8 +191,6 @@ class Polygon_2_const_edge_circulator {
     {
       return first_vertex >= a.first_vertex;
     }
-#endif
-
 
 };
 

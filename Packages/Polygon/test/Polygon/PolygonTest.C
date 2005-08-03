@@ -194,7 +194,6 @@ void test_access_functions(VectorPolygon& p)
   cout << "p.is_empty()           = " << (p.is_empty() ? "true" : "false") << endl;
 
   // test random access methods
-#ifndef CGAL_CFG_NO_LAZY_INSTANTIATION
   for (int i=0; i<p.size(); i++) {
     cout << "vertex " << i << " = " << p.vertex(i) << endl;
     cout << "edge   " << i << " = " << p.edge(i) << endl;
@@ -204,7 +203,6 @@ void test_access_functions(VectorPolygon& p)
   EI edges_begin = p.edges_begin();
   EI edges_end   = p.edges_end();
   assert(edges_begin < edges_end);
-#endif // CGAL_CFG_NO_LAZY_INSTANTIATION
 }
 
 //-----------------------------------------------------------------------//
