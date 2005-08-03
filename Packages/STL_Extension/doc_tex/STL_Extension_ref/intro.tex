@@ -16,7 +16,7 @@
 \RCSdef{\stlExtensionRev}{$Revision$}
 \RCSdefDate{\stlExtensionDate}{$Date$}
 \ccChapterRelease{\stlExtensionRev. \ \stlExtensionDate}
-\ccChapterAuthor{Michael Hoffmann \and Lutz Kettner \and Sylvain Pion}
+\ccChapterAuthor{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
 
 %% +=========================================================================+
 
@@ -27,11 +27,11 @@ to work together with the Standard Template Library (\stl)
 \cite{cgal:ansi-is14882-98,cgal:a-gps-98}. This chapter documents non-geometric
 \stl-like components that are not provided in the \stl\ standard but
 in \cgal: a doubly-connected list managing items in place (where
-inserted items are not copied), a compact container, generic algorithms,
-iterators, functor
-adaptors for binding and swapping arguments and for composition,
-functors for projection and creation and adaptor classes around
-iterators and circulators. See also circulators in
+inserted items are not copied), a compact container, a multi-set class that
+uses three-valued comparisons and offers additional functionality,
+generic algorithms, iterators, functor adaptors for binding and swapping
+arguments and for composition, functors for projection and creation and
+adaptor classes around iterators and circulators. See also circulators in
 Chapter~\ref{chapterCirculators}.
 
 \subsection*{Doubly-Connected List Managing Items in Place.}
@@ -87,7 +87,40 @@ probably be useful for other kinds of graphs as well.
 \ccRefIdfierPage{CGAL::Compact_container<T, Allocator>}\\
 \ccRefIdfierPage{CGAL::Compact_container_traits<T>}\\
 \ccRefIdfierPage{CGAL::Compact_container_base}
- 
+
+\subsection*{Multiset with Extended Functionality.}
+
+The class \ccStyle{Multiset<Type,Compare,Allocator>} represents a
+multi-set of elements of type \ccc{Type}, represented as a red-black tree
+(see~\cite[Chapter~13]{clrs-ia-01} for an excellent introduction to red-black
+trees). It differs from the \stl's \ccc{multiset} class-template mainly due
+to the fact that it is parameterized by a comparison functor \ccc{Compare}
+that returns the three-valued \ccc{Comparison_result} (namely it returns
+either \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}), rather than a {\em less}
+functor returning \ccc{bool}. Thus, it is possible to maintain
+the underlying red-black tree with less invocations of the comparison functor,
+which can considerably decrease running times, especially when comparing
+elements of type \ccc{Type} is an expensive operation.
+
+\ccStyle{Multiset<Type,Compare,Allocator>} also guarantees that the order of
+elements sent to the comparison functor is fixed. For example, if we insert
+a new element \ccc{x} into the set (or erase an element from the set), then
+we always invoke \ccc{Compare() (x, y)} (and never \ccc{Compare() (y, x)}),
+where \ccc{y} is an element already stored in the set. This behavior, not
+supported by \ccc{std::multiset}, is sometimes crucial for designing more
+efficient comparison predicates.
+
+The interface of \ccStyle{Multiset<Type,Compare,Allocator>} is in general
+derived from \ccc{std::multiset}. However, it extends the interface by
+offering some additional operations, such as: inserting of an element into
+the set given its {\em exact} position (and not just using an insertion hint);
+looking up keys whose type may differ from \ccc{Type}, as long as users supply
+a comparison functor \ccc{CompareKey}, between the keys and set elements;
+and catenating and splitting sets.
+
+\ccRefIdfierPage{CGAL::Multiset<Type,Compare,Allocator>}
+
+
 \subsection*{Generic Algorithms.}
 
 \ccRefIdfierPage{CGAL::copy_n}\\
