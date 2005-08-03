@@ -3,7 +3,7 @@
  */
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>

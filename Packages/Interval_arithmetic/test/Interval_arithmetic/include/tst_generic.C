@@ -5,7 +5,7 @@
 // #define TESTED_TYPE Interval_nt_advanced // For tst1.C
 // #define TESTED_TYPE Interval_nt          // For tst2.C
 
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 
 // #define DEBUG(a) a;
 #define DEBUG(a)

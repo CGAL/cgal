@@ -1,7 +1,7 @@
 // This tests the rounding mode functions.
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <iostream>
 
 typedef CGAL::Interval_nt_advanced NT_adv;

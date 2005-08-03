@@ -1,3 +1,7 @@
+3 August 2005 Sylvain Pion
+- Interval_nt : remove operator&& and operator||.  Add value_type == double.
+- Interval_arithmetic.h renamed to Interval_nt.h to follow CGAL's convetions.
+
 2 August 2005 Sylvain Pion
 - Interval_nt : Add overloads for is_zero, is_one, is_positive, is_negative.
 - New file Interval_nt_fwd.h to gather forward declarations to be sourced by

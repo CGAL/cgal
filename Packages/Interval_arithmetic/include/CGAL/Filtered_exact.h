@@ -33,7 +33,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Static_filter_error.h>
 #include <CGAL/Restricted_double.h>
 #include <CGAL/NT_converter.h>

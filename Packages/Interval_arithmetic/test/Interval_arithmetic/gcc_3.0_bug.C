@@ -27,7 +27,7 @@ Matthias
 #endif
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 
 #include <iostream>
 

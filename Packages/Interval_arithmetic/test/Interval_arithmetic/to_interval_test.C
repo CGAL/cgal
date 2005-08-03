@@ -3,7 +3,7 @@
 #include <iostream>
 
 // That one should not be needed in the long term:
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>

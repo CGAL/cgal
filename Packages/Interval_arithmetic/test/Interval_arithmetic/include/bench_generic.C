@@ -7,7 +7,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
 #include <cassert>

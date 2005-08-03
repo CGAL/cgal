@@ -29,7 +29,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Number_type_traits.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
 #include <CGAL/Kernel/mpl.h>
