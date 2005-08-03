@@ -23,32 +23,35 @@
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H 1
 
 #include <algorithm>
-#include <boost/optional.hpp>
 
 #include <CGAL/constructions/kernel_ftC2.h>
-#include <CGAL/constructions/Straight_skeleton_ftc2.h>
-#include <CGAL/predicates/Straight_skeleton_ftc2.h>
+#include <CGAL/constructions/Straight_skeleton_ftC2.h>
+#include <CGAL/predicates/Straight_skeleton_ftC2.h>
 #include <CGAL/certified_numeric_predicates.h>
-#include <CGAL/Unfiltered_predicates_adaptor.h>
-#include <CGAL/Filtered_predicates_adaptor.h>
-
+#include <CGAL/Unfiltered_predicate_adaptor.h>
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Straight_skeleton_aux.h>
+#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace certified {
-
 template<class K>
-class Exist_event
+struct Exist_event
 {
+  typedef typename K::FT FT ;
+  
   typedef typename K::Point_2 Point_2 ;
-  
+    
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
+
+  typedef Uncertain<bool> result_type ;
+  typedef Arity_tag<3>    Arity ;
   
-  optional<bool> operator() ( Point_2_Pair const& aM
-                            , Point_2_Pair const& aN
-                            , Point_2_Pair const& aS
-                            ) const
+  Uncertain<bool> operator() ( Point_2_Pair const& aM
+                             , Point_2_Pair const& aN
+                             , Point_2_Pair const& aS
+                             ) const
   {
     FT  ma, mb, mc
        ,na, nb, nc
@@ -68,22 +71,27 @@ class Exist_event
     
     return exist_single_point_offset_lines_isec(ma,mb,mc,na,nb,nc,sa,sb,sc) ;
   }                             
-}
+};
 
 template<class K>
-class Compare_event_times
+struct Compare_event_times
 {
+  typedef typename K::FT FT ;
+  
   typedef typename K::Point_2 Point_2 ;
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
   
-  optional<Comparison_result> operator() ( Point_2_Pair const& aL0
-                                         , Point_2_Pair const& aL1
-                                         , Point_2_Pair const& aL2
-                                         , Point_2_Pair const& aR0
-                                         , Point_2_Pair const& aR1
-                                         , Point_2_Pair const& aR2
-                                         ) const
+  typedef Uncertain<Comparison_result> result_type ;
+  typedef Arity_tag<6>                 Arity ;
+  
+  Uncertain<Comparison_result> operator() ( Point_2_Pair const& aL0
+                                          , Point_2_Pair const& aL1
+                                          , Point_2_Pair const& aL2
+                                          , Point_2_Pair const& aR0
+                                          , Point_2_Pair const& aR1
+                                          , Point_2_Pair const& aR2
+                                          ) const
   {
     FT  l0a, l0b, l0c
        ,l1a, l1b, l1c
@@ -124,22 +132,25 @@ class Compare_event_times
                                           ,r2a,r2b,r2c
                                           ) ;
   }                             
-}
+};
 
 template<class K>
-class Compare_event_distance_to_seed
+struct Compare_event_distance_to_seed
 {
+  typedef typename K::FT FT ;
+  
   typedef typename K::Point_2 Point_2 ;
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
   
-  optional<Comparison_result> operator() ( Point_2      const& aP
-                                         , Point_2_Pair const& aL0
-                                         , Point_2_Pair const& aL1
-                                         , Point_2_Pair const& aL2
-                                         , Point_2_Pair const& aR0
-                                         , Point_2_Pair const& aR1
-                                         , Point_2_Pair const& aR2
+  typedef Threetuple<Point_2_Pair> Line_triple ;
+  
+  typedef Uncertain<Comparison_result> result_type ;
+  typedef Arity_tag<7>                 Arity ;
+  
+  Uncertain<Comparison_result> operator() ( Point_2     const& aP
+                                          , Line_triple const& aL
+                                          , Line_triple const& aR
                                          ) const
   {
     FT  l0a, l0b, l0c
@@ -184,16 +195,16 @@ class Compare_event_distance_to_seed
                                                    ) ;
   }                             
   
-  optional<Comparison_result> operator() ( Point_2_Pair const& aS0
-                                         , Point_2_Pair const& aS1
-                                         , Point_2_Pair const& aS2
-                                         , Point_2_Pair const& aL0
-                                         , Point_2_Pair const& aL1
-                                         , Point_2_Pair const& aL2
-                                         , Point_2_Pair const& aR0
-                                         , Point_2_Pair const& aR1
-                                         , Point_2_Pair const& aR2
-                                         ) const
+  Uncertain<Comparison_result> operator() ( Point_2_Pair const& aS0
+                                          , Point_2_Pair const& aS1
+                                          , Point_2_Pair const& aS2
+                                          , Point_2_Pair const& aL0
+                                          , Point_2_Pair const& aL1
+                                          , Point_2_Pair const& aL2
+                                          , Point_2_Pair const& aR0
+                                          , Point_2_Pair const& aR1
+                                          , Point_2_Pair const& aR2
+                                          ) const
   {
     FT  s0a, s0b, s0c
        ,s1a, s1b, s1c
@@ -252,21 +263,26 @@ class Compare_event_distance_to_seed
                                                    ,r2a,r2b,r2c
                                                    ) ;
   }                             
-}
+};
 
 template<class K>
-class Is_event_inside_offset_zone
+struct Is_event_inside_offset_zone
 {
+  typedef typename K::FT FT ;
+  
   typedef typename K::Point_2 Point_2 ;
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
   
-  optional<Comparison_result> operator() ( Point_2_Pair const& aL
-                                         , Point_2_Pair const& aR
-                                         , Point_2_Pair const& aE
-                                         , Point_2_Pair const& aE_Prev
-                                         , Point_2_Pair const& aE_Next
-                                         ) const
+  typedef Uncertain<bool> result_type ;
+  typedef Arity_tag<5>    Arity ;
+  
+  Uncertain<bool> operator() ( Point_2_Pair const& aL
+                             , Point_2_Pair const& aR
+                             , Point_2_Pair const& aE
+                             , Point_2_Pair const& aE_Prev
+                             , Point_2_Pair const& aE_Next
+                             ) const
   {
     FT  la, lb, lc
        ,ra, rb, rc
@@ -302,16 +318,19 @@ class Is_event_inside_offset_zone
                                                   ,na,nb
                                                   ) ;
   }                             
-}
-
-} // namespace certified
+};
 
 template<class K>
-class Construct_event
+struct Construct_event
 {
+  typedef typename K::FT FT ;
+  
   typedef typename K::Point_2 Point_2 ;
   
   typedef std::pair<Point_2,Point_2> Point_2_Pair ;
+  
+  typedef std::pair<Point_2,FT> result_type ;
+  typedef Arity_tag<3>          Arity ;
   
   std::pair<Point_2,FT> operator() ( Point_2_Pair const& aM
                                    , Point_2_Pair const& aN
@@ -338,40 +357,43 @@ class Construct_event
                       
     QFT qx,qy ;
       
-    QFT qt = construct_offset_lines_isec(ma,mb,mc,na,nb,nc,sa,sb,sc,x,y) ;
+    QFT qt = construct_offset_lines_isec(ma,mb,mc,na,nb,nc,sa,sb,sc,qx,qy) ;
     
-    qt.normalize();
-    qx.normalize();
-    qy.normalize();
-     
-    x = qx.numerator() / qx.denominator();
-    y = qy.numerator() / qy.denominator();
-    t = qt.numerator() / qt.denominator();
+    FT x = qx.numerator() / qx.denominator();
+    FT y = qy.numerator() / qy.denominator();
+    FT t = qt.numerator() / qt.denominator();
                                                    
     return std::make_pair( Point_2(x,y), t ) ;
   }                             
-}
+};
 
 template<class K>
-class Straight_skeleton_builder_traits_2_types
+struct Straight_skeleton_builder_traits_2_functors
 {
-  typedef Straight_skeleton_builder_traits_2_types<K> Self ;
-  
+  typedef Exist_event                   <K> Exist_event ;
+  typedef Compare_event_times           <K> Compare_event_times ;
+  typedef Compare_event_distance_to_seed<K> Compare_event_distance_to_seed ;
+  typedef Is_event_inside_offset_zone   <K> Is_event_inside_offset_zone ;
+  typedef Construct_event               <K> Construct_event ;
+                                  
+} ;
+template<class K>
+class Straight_skeleton_builder_traits_2_base
+{
 public:
   
-  typedef certified::Exist_event                   <Self> Exist_event ;
-  typedef certified::Compare_event_times           <Self> Compare_event_times ;
-  typedef certified::Compare_event_distance_to_seed<Self> Compare_event_distance_to_seed ;
-  typedef certified::Is_event_inside_offset_zone   <Self> Is_event_inside_offset_zone ;
+  typedef typename K::FT      FT ;
+  typedef typename K::Point_2 Point_2 ;
   
-  typedef Construct_event<Self> Construct_event ;
-                                  
+  typedef typename K::Left_turn_2 Left_turn_2 ;
+  
+  template<class F> F get() const { return F(); }
 } ;
 
 template<class K>
-class Straight_skeleton_builder_traits_2
+class Straight_skeleton_builder_traits_2 : public Straight_skeleton_builder_traits_2_base<K>
 {
-  typedef Straight_skeleton_builder_traits_2_types<K> Unfiltering ;
+  typedef Straight_skeleton_builder_traits_2_functors<K> Unfiltering ;
   
 public:
   
@@ -388,85 +410,51 @@ public:
     Is_event_inside_offset_zone ;
   
   typedef typename Unfiltering::Construct_event Construct_event ;
-    
-  Exist_event exist_event_object() const 
-    { return Exist_event() ; }
   
-  Compare_event_times compare_event_times_object() const 
-    { return Compare_event_times() ; }
-  
-  Compare_event_distance_to_seed compare_event_distance_to_seed_object() const 
-    { return Compare_event_distance_to_seed() ; }
-  
-  Is_event_inside_offset_zone is_event_inside_offset_zone_object() const
-    { return Is_event_inside_offset_zone() ; }
-                                   
-  Construct_event construct_event_object() const 
-    { return Construct_event() ; }
 } ;
 
 template<>
 class Straight_skeleton_builder_traits_2<Exact_predicates_inexact_constructions_kernel>
+  :
+  public Straight_skeleton_builder_traits_2_base<Exact_predicates_inexact_constructions_kernel>
 {
 
   typedef Exact_predicates_inexact_constructions_kernel K ;
   
-  typedef Straight_skeleton_builder_traits_2_types<typename K::EK> Exact ;
-  typedef Straight_skeleton_builder_traits_2_types<typename K::FK> Filtering ;
-  typedef Straight_skeleton_builder_traits_2_types<typename K::CK> Unfiltering ;
+  typedef Straight_skeleton_builder_traits_2_functors<K::EK> Exact ;
+  typedef Straight_skeleton_builder_traits_2_functors<K::FK> Filtering ;
+  typedef Straight_skeleton_builder_traits_2_functors<K>     Unfiltering ;
   
-  typedef typename K::C2E C2E ;
-  typedef typename K::C2F C2F ;
+  typedef K::C2E C2E ;
+  typedef K::C2F C2F ;
   
 public:
   
   
-  typedef Filtered_predicate_adaptor< typename Exact    ::Exist_event
-                                    , typename Filtering::Exist_event
-                                    , C2E
-                                    , C2F
-                                    > 
+  typedef Filtered_predicate<Exact::Exist_event, Filtering::Exist_event, C2E, C2F> 
     Exist_event ;
   
-  typedef Unfiltered_predicate_adaptor< typename Exact    ::Compare_event_times
-                                      , typename Filtering::Compare_event_times
-                                      , C2E
-                                      , C2F
-                                      > 
+  typedef Filtered_predicate< Exact::Compare_event_times, Filtering::Compare_event_times, C2E, C2F> 
     Compare_event_times ;
     
-  typedef Unfiltered_predicate_adaptor< typename Exact    ::Compare_event_distance_to_seed
-                                      , typename Filtering::Compare_event_distance_to_seed
-                                      , C2E
-                                      , C2F
-                                      > 
+  typedef Filtered_predicate< Exact    ::Compare_event_distance_to_seed
+                            , Filtering::Compare_event_distance_to_seed
+                            , C2E
+                            , C2F
+                            > 
     Compare_event_distance_to_seed ;  
     
     
-  typedef Unfiltered_predicate_adaptor< typename Exact    ::Is_event_inside_offset_zone
-                                      , typename Filtering::Is_event_inside_offset_zone 
-                                      , C2E
-                                      , C2F
-                                      > 
+  typedef Filtered_predicate< Exact    ::Is_event_inside_offset_zone
+                            , Filtering::Is_event_inside_offset_zone 
+                            , C2E
+                            , C2F
+                            > 
     Is_event_inside_offset_zone ;
   
-  typedef typename Unfiltering::Construct_event Construct_event ;
+  typedef Unfiltering::Construct_event Construct_event ;
   
-  Exist_event exist_event_object() const 
-    { return Exist_event() ; }
-  
-  Compare_event_times compare_event_times_object() const 
-    { return Compare_event_times() ; }
-  
-  Compare_event_distance_to_seed compare_event_distance_to_seed_object() const 
-    { return Compare_event_distance_to_seed() ; }
-  
-  Is_event_inside_offset_zone is_event_inside_offset_zone_object() const
-    { return Is_event_inside_offset_zone() ; }
-    
-  Construct_event construct_event_object() const 
-    { return Construct_event() ; }
-                                   
+  template<class F> F get() const { return F(); }
 } ;
 
 CGAL_END_NAMESPACE

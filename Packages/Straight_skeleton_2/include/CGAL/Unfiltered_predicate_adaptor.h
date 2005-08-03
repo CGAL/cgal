@@ -35,8 +35,7 @@ class Unfiltered_predicate_adaptor
 
 public:
 
-  typedef typename AP::result_type  result_type;
-  typedef typename AP::Arity        Arity;
+  typedef typename CAP::result_type  result_type;
 
   Unfiltered_predicate_adaptor()
   {}
@@ -61,7 +60,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1);
+    return static_cast<result_type>(Certified_approx_predicate(a1));
   }
 #endif
 
@@ -72,7 +71,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1, a2);
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2));
   }
 #endif
 
@@ -83,7 +82,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1, a2, a3);
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3));
   }
 #endif
 
@@ -94,7 +93,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1, a2, a3,a4);
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3,a4));
   }
 #endif
 
@@ -106,7 +105,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1, a2, a3, a4, a5);
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5));
   }
 #endif
 
@@ -118,7 +117,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1, a2, a3, a4, a5, a6);
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6));
   }
 #endif
 
@@ -131,7 +130,7 @@ public:
   ;
 #else
   {
-    return *Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7);
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7));
   }
 #endif
 
@@ -139,60 +138,60 @@ public:
 };
 
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
-template <class EP, class AP, class C2E, class C2F, bool Protection>
+template <class CAP>
   template <class A1>
-typename Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::result_type
-Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1) const
 {
-  return *Certified_approx_predicate(a1);
+  return static_cast<result_type>(Certified_approx_predicate(a1));
 }
 
-template <class EP, class AP, class C2E, class C2F, bool Protection>
+template <class CAP>
   template <class A1, class A2>
-typename Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::result_type
-Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2) const
 {
-  return *Certified_approx_predicate(a1, a2);
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2));
 }
 
-template <class EP, class AP, class C2E, class C2F, bool Protection>
+template <class CAP>
   template <class A1, class A2, class A3>
-typename Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::result_type
-Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
 {
-  return *Certified_approx_predicate(a1, a2, a3);
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3));
 }
 
-template <class EP, class AP, class C2E, class C2F, bool Protection>
+template <class CAP>
   template <class A1, class A2, class A3, class A4>
-typename Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::result_type
-Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
 {
-  return *Certified_approx_predicate(a1, a2, a3, a4);
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4));
 }
 
-template <class EP, class AP, class C2E, class C2F, bool Protection>
+template <class CAP>
   template <class A1, class A2, class A3, class A4, class A5>
-typename Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::result_type
-Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5) const
 {
-  return *Certified_approx_predicate(a1, a2, a3, a4, a5);
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5));
 }
 
-template <class EP, class AP, class C2E, class C2F, bool Protection>
+template <class CAP>
   template <class A1, class A2, class A3, class A4, class A5, class A6>
-typename Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::result_type
-Unfiltered_predicate_adaptor<EP,AP,C2E,C2F,Protection>::
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6) const
 {
-  return *Certified_approx_predicate(a1, a2, a3, a4, a5, a6);
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6));
 }
 #endif
 

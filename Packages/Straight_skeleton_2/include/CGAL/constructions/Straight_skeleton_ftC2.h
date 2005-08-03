@@ -22,6 +22,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_CONSTRUCTIONS_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_CONSTRUCTIONS_FTC2_H 1
 
+#include <CGAL/Quotient.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // Given 3 oriented lines (a0,b0,c0),(a1,b1,c1) and (a2,b2,c2),
@@ -34,15 +36,9 @@ CGAL_BEGIN_NAMESPACE
 // intersect in a single point.
 //
 template<class FT>
-Quotient<FT> compute_offset_lines_isec_time ( FT const& a0
-                                            , FT const& b0
-                                            , FT const& c0
-                                            , FT const& a1
-                                            , FT const& b1
-                                            , FT const& c1
-                                            , FT const& a2
-                                            , FT const& b2
-                                            , FT const& c2
+Quotient<FT> compute_offset_lines_isec_time ( FT const& a0, FT const& b0, FT const& c0
+                                            , FT const& a1, FT const& b1, FT const& c1
+                                            , FT const& a2, FT const& b2, FT const& c2
                                             )
 {
   // A positive offset line is given by: a*x(t) + b*y(t) + c + t = 0
@@ -54,7 +50,7 @@ Quotient<FT> compute_offset_lines_isec_time ( FT const& a0
   FT num = (a2*b0*c1)-(a2*b1*c0)-(b2*a0*c1)+(b2*a1*c0)+(b1*a0*c2)-(b0*a1*c2);
   FT den = (-a2*b1)+(a2*b0)+(b2*a1)-(b2*a0)+(b1*a0)-(b0*a1);
   
-  CGAL_assertion( ! CGAL_NTS is_zero(den) ) ;
+  CGAL_assertion( ! CGAL_NTS certified_is_zero(den) ) ;
 
   return Quotient<FT>(num,den);
 }
@@ -69,17 +65,10 @@ Quotient<FT> compute_offset_lines_isec_time ( FT const& a0
 // intersect in a single point.
 //
 template<class FT>
-Quotient<FT> construct_offset_lines_isec ( FT const& a0
-                                         , FT const& b0
-                                         , FT const& c0
-                                         , FT const& a1
-                                         , FT const& b1
-                                         , FT const& c1
-                                         , FT const& a2
-                                         , FT const& b2
-                                         , FT const& c2
-                                         , Quotient<FT>& x
-                                         , Quotient<FT>& y
+Quotient<FT> construct_offset_lines_isec ( FT const& a0, FT const& b0, FT const& c0
+                                         , FT const& a1, FT const& b1, FT const& c1
+                                         , FT const& a2, FT const& b2, FT const& c2
+                                         , Quotient<FT>& x, Quotient<FT>& y
                                          )
 {
   typedef Quotient<FT>  QFT ;
@@ -92,14 +81,14 @@ Quotient<FT> construct_offset_lines_isec ( FT const& a0
   
   FT delta = a0 * b1 - b0 * a1 ;
   
-  CGAL_assertion(! CGAL_NTS is_zero(delta) ) ;
+  CGAL_assertion(! CGAL_NTS certified_is_zero(delta) ) ;
   
   QFT x0 = QFT(b0 * c1 - b1 * c0,delta);
-  QFT x1 = qt * QFT(b0 - b1     ,delta);
+  QFT x1 = t * QFT(b0 - b1      ,delta);
   x = x0 + x1 ;
   
   QFT y0 = QFT(a1 * c0 - a0 * c1,delta);
-  QFT y1 = qt * QFT(a1 - a0     ,delta);
+  QFT y1 = t * QFT(a1 - a0      ,delta);
   y = y0 + y1 ;
   
   return t;
@@ -116,17 +105,10 @@ Quotient<FT> construct_offset_lines_isec ( FT const& a0
 // intersect in a single point.
 //
 template<class FT>
-Quotient<FT> compute_offset_lines_isec_sdist_to_point ( FT const& px
-                                                      , FT const& py
-                                                      , FT const& a0
-                                                      , FT const& b0
-                                                      , FT const& c0
-                                                      , FT const& a1
-                                                      , FT const& b1
-                                                      , FT const& c1
-                                                      , FT const& a2
-                                                      , FT const& b2
-                                                      , FT const& c2
+Quotient<FT> compute_offset_lines_isec_sdist_to_point ( FT const& px, FT const& py
+                                                      , FT const& a0, FT const& b0, FT const& c0
+                                                      , FT const& a1, FT const& b1, FT const& c1
+                                                      , FT const& a2, FT const& b2, FT const& c2
                                                       )
 {
   typedef Quotient<FT>  QFT ;
@@ -147,6 +129,6 @@ Quotient<FT> compute_offset_lines_isec_sdist_to_point ( FT const& px
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H //
+#endif // CGAL_STRAIGHT_SKELETON_CONSTRUCTIONS_FTC2_H //
 // EOF //
  

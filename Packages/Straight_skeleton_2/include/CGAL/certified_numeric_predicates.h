@@ -24,103 +24,156 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Interval_arithmetic.h>
-
-#include <boost/optional.hpp>
-#include <boost/none.hpp>
+#include <CGAL/Uncertain.h>
 
 CGAL_BEGIN_NAMESPACE
 
-//
-// NOTE: There is a "Certified" namespace in "Interval_arithmetic.h" which contains
-// certified versions of the interval_nt<> operators and some predicates.
-// We use a slightly different name here "certified" to avoid coallisions.
-//
-namespace certified {
+template <class NT>
+inline
+Uncertain<bool>
+certified_is_zero(const NT& x)
+{ 
+  return make_uncertain( x == 0 ) ; 
+}
 
-// This should really be in optional itself
-template<class T> optional<T> make_optional( T v ) { return optional<T>(v); }
-
-template<class T> optional<T> make_optional( std::pair<T,bool> v ) 
+template <class NT>
+inline
+Uncertain<bool>
+certified_is_one(const NT& x)
 {
-  if ( v.second )
-       return optional<T>(v); 
-  else return boost::none ;  
+  return make_uncertain( x == 1 ) ; 
 }
 
-
-//
-// NOTE: CGAL::Certified defines certified comparison operators for interval_nt<>.
-// In order to allow the certified predicate versions in this header to simply forward 
-// to the non-certified counterparts, a using directive is used to bring about the certified
-// comparison operators for the interval type.
-// This allows the code to not need a specialization for interval_nt<>, except for the
-// cases of sign() and compare().
-// 
 template <class NT>
 inline
-optional<bool>
-is_zero(const NT& x)
+Uncertain<bool>
+certified_is_negative(const NT& x)
 { 
-  using namespace CGAL::Certified ;
-  return make_optional( CGAL::is_zero(x) ; 
+  return make_uncertain( x < 0 ) ; 
 }
 
 template <class NT>
 inline
-optional<bool>
-is_one(const NT& x)
+Uncertain<bool>
+certified_is_positive(const NT& x)
+{ 
+  return make_uncertain( 0 < x ) ; 
+}
+
+template <class NT>
+inline
+Uncertain<Sign>
+certified_sign(const NT& x)
 {
-  using namespace CGAL::Certified ;
-  return make_optional( CGAL::is_one(x) ; 
+  return make_uncertain(CGAL_NTS sign(x)); 
 }
-
-template <class NT>
-inline
-optional<bool>
-is_negative(const NT& x)
-{ 
-  using namespace CGAL::Certified ;
-  return make_optional( CGAL::is_negative(x) ; 
-}
-
-template <class NT>
-inline
-optional<bool>
-is_positive(const NT& x)
-{ 
-  using namespace CGAL::Certified ;
-  return make_optional( CGAL::is_positive(x) ; 
-}
-
-template <class NT>
-inline
-optional<Sign>
-sign(const NT& x)
-{ return make_optional(CGAL::sign(x)); }
 
 template <class NT1, class NT2>
 inline
-optional<Comparison_result>
-compare(const NT1& n1, const NT2& n2)
-{ return make_optional(CGAL::compare(n1,n2)); }
+Uncertain<Comparison_result>
+certified_compare(const NT1& n1, const NT2& n2)
+{ 
+  return make_uncertain(CGAL_NTS compare(n1,n2)); 
+}
 
 
 //
-// Interval_nt<> specializations.
+// Specialization for Quotient<>
 //
-template<bool Protected>
-inline
-optional<Sign>
-sign(const Interval_nt<Protected>& x)
-{ return make_optional(CGAL::Certified::sign(x)); }
+template <class NT1, class NT2>
+CGAL_MEDIUM_INLINE
+Uncertain<Comparison_result>
+certified_quotient_compare(const Quotient<NT1>& x, const Quotient<NT2>& y)
+{ 
+    // No assumptions on the sign of  den  are made
 
-template<bool Protected>
-inline
-optional<Comparison_result>
-compare(const Interval_nt<Protected>& n1, const Interval_nt<Protected>& n2 )
-{ return make_optional(CGAL::Certified::compare(n1,n2)); }
+    // code assumes that SMALLER == - 1;
+    CGAL_precondition( SMALLER == static_cast<Comparison_result>(-1) );
 
-#define CGAL_CERTIFIED_NTS CGAL_NTS :: certified ::
+    Uncertain<Sign> xnumsign = CGAL_NTS certified_sign(x.num) ;
+    Uncertain<Sign> xdensign = CGAL_NTS certified_sign(x.den) ;
+    Uncertain<Sign> ynumsign = CGAL_NTS certified_sign(y.num) ;
+    Uncertain<Sign> ydensign = CGAL_NTS certified_sign(y.den) ;
+    
+    if (  is_indeterminate(xnumsign) 
+       || is_indeterminate(xdensign) 
+       || is_indeterminate(ynumsign) 
+       || is_indeterminate(ydensign) 
+       ) 
+    {
+      return make_uncertain(SMALLER,LARGER);
+    } 
+    else
+    {
+      int xsign = xnumsign * xdensign ;
+      int ysign = ynumsign * ydensign ;
+      if (xsign == 0) return make_uncertain(static_cast<Comparison_result>(-ysign));
+      if (ysign == 0) return make_uncertain(static_cast<Comparison_result>(xsign));
+      // now (x != 0) && (y != 0)
+      int diff = xsign - ysign;
+      if (diff == 0)
+      {
+          int msign = xdensign * ydensign;
+          NT leftop  = x.num * y.den * msign;
+          NT rightop = y.num * x.den * msign;
+          return certified_compare(leftop, rightop);
+      }
+      else
+      {
+          return make_uncertain((xsign < ysign) ? SMALLER : LARGER);
+      }
+    }  
+}
+
+template <class NT1, class NT2>
+inline
+Uncertain<Comparison_result>
+certified_compare(const Quotient<NT1>& n1, const Quotient<NT2>& n2)
+{ 
+  return certified_quotient_compare(n1,n2); 
+}
+
+template <class NT1, class NT2>
+inline
+Uncertain<bool>
+certified_is_smaller(const NT1& n1, const NT2& n2)
+{ 
+  return certified_compare(n1,n2) == SMALLER; 
+}
+
+template <class NT1, class NT2>
+inline
+Uncertain<bool>
+certified_is_equal(const NT1& n1, const NT2& n2)
+{ 
+  return certified_compare(n1,n2) == EQUAL; 
+}
+
+template <class NT1, class NT2>
+inline
+Uncertain<bool>
+certified_is_larger(const NT1& n1, const NT2& n2)
+{ 
+  return certified_compare(n1,n2) == LARGER; 
+}
+
+template <class NT1, class NT2>
+inline
+Uncertain<bool>
+certified_is_smaller_or_equal(const NT1& n1, const NT2& n2)
+{ 
+  Uncertain<Comparison_result> r = certified_compare(n1,n2) ;
+  return r == make_uncertain(SMALLER,EQUAL) || r == LARGER ;
+}
+
+template <class NT1, class NT2>
+inline
+Uncertain<bool>
+certified_is_larger_or_equal(const NT1& n1, const NT2& n2)
+{ 
+  Uncertain<Comparison_result> r = certified_compare(n1,n2) ;
+  return r == make_uncertain(EQUAL,LARGER) || r == SMALLER ;
+}
 
 CGAL_END_NAMESPACE
 

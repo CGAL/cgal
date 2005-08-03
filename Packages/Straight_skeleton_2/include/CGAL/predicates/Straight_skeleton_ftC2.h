@@ -23,18 +23,17 @@
 #define CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 1
 
 #include <CGAL/constructions/Straight_skeleton_ftC2.h>
+#include <CGAL/Uncertain.h>
 #include <CGAL/certified_numeric_predicates.h>
 
 CGAL_BEGIN_NAMESPACE
-
-namespace certified {
 
 // Given 3 oriented lines (a0,b0,c0),(a1,b1,c1) and (a2,b2,c2),
 // returns 'true' if there exist a positive offset distance at which the 
 // leftward-offsetted lines intersect in a single point
 //
 template<class FT>
-optional<bool> 
+Uncertain<bool> 
 exist_single_point_offset_lines_isec ( FT const& a0
                                      , FT const& b0
                                      , FT const& c0
@@ -47,7 +46,7 @@ exist_single_point_offset_lines_isec ( FT const& a0
                                     )
 {
   FT den = (-a2*b1)+(a2*b0)+(b2*a1)-(b2*a0)+(b1*a0)-(b0*a1);
-  return ! CGAL_CERTIFIED_NTS is_zero(den) ;
+  return ! CGAL_NTS certified_is_zero(den) ;
 }
 
 
@@ -60,7 +59,7 @@ exist_single_point_offset_lines_isec ( FT const& a0
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single 
 // point.
 template<class FT>
-optional<Comparison_result>
+Uncertain<Comparison_result>
 compare_offset_lines_isec_times ( FT const& ma0
                                 , FT const& mb0
                                 , FT const& mc0
@@ -86,7 +85,7 @@ compare_offset_lines_isec_times ( FT const& ma0
   QFT mt = compute_offset_lines_isec_time(ma0,mb0,mc0,ma1,mb1,mc1,ma2,mb2,mc2);
   QFT nt = compute_offset_lines_isec_time(na0,nb0,nc0,na1,nb1,nc1,na2,nb2,nc2);
                                                                
-  return CGAL_CERTIFIED_NTS compare(mt,nt);                                                                
+  return CGAL_NTS certified_compare(mt,nt);                                                                
                                                                 
 }
 
@@ -99,7 +98,7 @@ compare_offset_lines_isec_times ( FT const& ma0
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single 
 // point.
 template<class FT>
-optional<Comparison_result>
+Uncertain<Comparison_result>
 compare_offset_lines_isec_dist_to_point ( FT const& px
                                         , FT const& py
                                         , FT const& ma0
@@ -127,7 +126,7 @@ compare_offset_lines_isec_dist_to_point ( FT const& px
   QFT dm = compute_offset_lines_isec_sdist_to_point(px,py,ma0,mb0,mc0,ma1,mb1,mc1,ma2,mb2,mc2);
   QFT dn = compute_offset_lines_isec_sdist_to_point(px,py,na0,nb0,nc0,na1,nb1,nc1,na2,nb2,nc2);
                                                                
-  return CGAL_CERTIFIED_NTS compare(dm,dn);                                                                
+  return CGAL_NTS certified_compare(dm,dn);                                                                
 }
 
 //
@@ -139,7 +138,7 @@ compare_offset_lines_isec_dist_to_point ( FT const& px
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single 
 // point.
 template<class FT>
-optional<Comparison_result>
+Uncertain<Comparison_result>
 compare_offset_lines_isec_dist_to_point ( FT const& sa0
                                         , FT const& sb0
                                         , FT const& sc0
@@ -178,11 +177,11 @@ compare_offset_lines_isec_dist_to_point ( FT const& sa0
   QFT dm = compute_offset_lines_isec_sdist_to_point(sx,sy,ma0,mb0,mc0,ma1,mb1,mc1,ma2,mb2,mc2);
   QFT dn = compute_offset_lines_isec_sdist_to_point(sx,sy,na0,nb0,nc0,na1,nb1,nc1,na2,nb2,nc2);
                                                                
-  return CGAL_CERTIFIED_NTS compare(dm,dn);                                                                
+  return CGAL_NTS certified_compare(dm,dn);                                                                
 }
 
 template<class FT>
-optional<bool>
+Uncertain<bool>
 is_offset_lines_isec_inside_offset_zone ( FT const& a0
                                         , FT const& b0
                                         , FT const& c0
@@ -208,13 +207,11 @@ is_offset_lines_isec_inside_offset_zone ( FT const& a0
                    
   QFT sdl = al * ix + bl * iy ;
   QFT sdc = ac * ix + bc * iy ;
-  QFT sde = ar * ix + br * iy ;
+  QFT sdr = ar * ix + br * iy ;
   
-  return    CGAL_CERTIFIED_NTS compare(sdl, sdc) == SMALLER
-         && CGAL_CERTIFIED_NTS compare(sdr, sdc) == SMALLER ;
+  return    CGAL_NTS certified_is_smaller_or_equal(sdl, sdc)
+         && CGAL_NTS certified_is_smaller_or_equal(sdr, sdc) ;
 }
-
-} // namespace certified
 
 CGAL_END_NAMESPACE
 
