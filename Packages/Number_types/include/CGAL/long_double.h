@@ -34,7 +34,7 @@
 #  include <fp_class.h>
 #endif
 
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 
 CGAL_BEGIN_NAMESPACE
 

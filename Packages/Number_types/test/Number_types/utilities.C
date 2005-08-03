@@ -4,7 +4,7 @@
 #include <CGAL/MP_Float.h> 
 #include <CGAL/Lazy_exact_nt.h> 
 #include <CGAL/Fixed_precision_nt.h> 
-#include <CGAL/Interval_arithmetic.h> 
+#include <CGAL/Interval_nt.h> 
 #include <CGAL/Filtered_exact.h> 
 
 #ifdef CGAL_USE_GMP

@@ -42,7 +42,7 @@
 #  include <cctype>
 #endif
 
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/Binary_operator_result.h>

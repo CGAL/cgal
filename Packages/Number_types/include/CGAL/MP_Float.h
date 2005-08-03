@@ -25,7 +25,7 @@
 #define CGAL_MP_FLOAT_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/MP_Float_fwd.h>
 #include <iostream>
 #include <vector>
