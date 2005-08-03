@@ -1,6 +1,7 @@
 3 August 2005 Sylvain Pion
 - Remove CGAL_CFG_NO_MEMBER_TEMPLATES workarounds.
 - Remove CGAL_CFG_NO_LAZY_INSTANTIATION workarounds.
+- Remove CGAL_POLYGON_2_MOD_ITER, it is probably not needed anymore.
 
 ============================== CGAL 3.1 ========================
 

@@ -33,13 +33,8 @@ scratch.  This behaviour can be changed by defining a macro.
 
 In the future, this caching behavior will be the default. The only reason that
 it is not at the moment is that some compilers have problems when the
-\ccc{CGAL_POLYGON_2_CACHED} flag is set. This can be fixed by setting a second
-preprocessor flag as well:
-\begin{ccExampleCode}
-CGAL_POLYGON_2_MOD_ITER
-\end{ccExampleCode}
-The drawback of setting this flag is that some illegal operations will be
-allowed which can lead to wrong results.
+\ccc{CGAL_POLYGON_2_CACHED} flag is set.
+
 The iterators of the polygon are mutable in this case, but modifying the polygon
 through them will not invalidate the cache.
 

@@ -48,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 //                          Polygon_2
 //-----------------------------------------------------------------------//
 
-#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED)
 
 template <class It>
 inline
@@ -186,7 +186,7 @@ class Polygon_2 {
     typedef typename Container_P::const_iterator const_iterator;
     //-------------------------------------------------------//
 
-#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED)
     typedef Polygon_vertex_iterator_2<typename Container::iterator>
              Vertex_iterator;
     typename Container::iterator get_container_iterator(Vertex_iterator vit)
@@ -248,7 +248,7 @@ class Polygon_2 {
     void set(Vertex_iterator pos, const Point_2& x)
      { invalidate_cache(); *get_container_iterator(pos) = x; }
 
-#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED)
     void set(Polygon_circulator<Container>const &pos, const Point_2& x)
      { invalidate_cache();
        *pos.mod_iterator() = x;
@@ -260,7 +260,7 @@ class Polygon_2 {
         return d_container.insert(get_container_iterator(pos),x);
       }
 
-#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED)
     Vertex_iterator insert(Vertex_circulator pos, const Point_2& x)
       { invalidate_cache();
         return d_container.insert(pos.mod_iterator(),x);
@@ -273,7 +273,7 @@ class Polygon_2 {
                 InputIterator last)
       { d_container.insert(get_container_iterator(pos), first, last); }
 
-#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED)
     template <class InputIterator>
     void insert(Vertex_circulator pos,
                 InputIterator first,
@@ -287,7 +287,7 @@ class Polygon_2 {
     void erase(Vertex_iterator pos)
       { invalidate_cache(); d_container.erase(get_container_iterator(pos)); }
 
-#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+#if defined(CGAL_POLYGON_2_CACHED)
     void erase(Vertex_circulator pos)
       { invalidate_cache(); d_container.erase(pos.mod_iterator()); }
 #endif
