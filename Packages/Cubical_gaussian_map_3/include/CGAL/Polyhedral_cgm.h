@@ -354,12 +354,47 @@ private:
     }
   };
 
+  /*! Add a point */
+  template <class HDS, class T_Point_3_iter>
+  class Add {
+  private:      
+    typedef CGAL::Polyhedron_incremental_builder_3<HDS>         Builder;
+    Builder & m_B;
+
+  public:
+    Add(Builder & B) : m_B(B) {}
+      
+    Polyhedron_vertex_handle operator()(T_Point_3_iter pi)
+    {
+      typedef typename HDS::Vertex      Vertex;
+      typedef typename Vertex::Point    Point;
+      return m_B.add_vertex(Point((*pi)[0], (*pi)[1], (*pi)[2]));
+    }
+  };
+
+  /*! Specialized add a point */
+  template <class HDS>
+  class Add<HDS, Point_3 *> {
+  private:
+    typedef CGAL::Polyhedron_incremental_builder_3<HDS>         Builder;
+    Builder & m_B;
+
+  public:
+    Add(Builder & B) : m_B(B) {}
+      
+    Polyhedron_vertex_handle operator()(Point_3 * pi)
+    {
+      std::cout << "Add: " << *pi << std::endl;
+      return m_B.add_vertex(*pi);
+    }
+  };
+    
   /*! */
   template <class HDS, class Point_3_iter>
   class Build_surface : public CGAL::Modifier_base<HDS> {
   private:
-    typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
-      size_type;
+    typedef CGAL::Polyhedron_incremental_builder_3<HDS>         Builder;
+    typedef typename Builder::size_type                         size_type;
 
     /*! The begin iterator of the points */
     const Point_3_iter & m_points_begin;
@@ -416,20 +451,18 @@ private:
 
     /*! Set the marked-face index */
     void set_marked_facet_index(unsigned int id) {m_marked_facet_index = id;}
-    
+
     /*! builds the polyhedron */
     void operator()(HDS & hds)
     {
       // Postcondition: `hds' is a valid polyhedral surface.
-      CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+      Builder B(hds, true);
       B.begin_surface(m_num_points, m_num_facets);
-      typedef typename HDS::Vertex Vertex;
-      typedef typename Vertex::Point Point;
       // Add the points:
       unsigned int counter = 0;
+      Add<HDS, Point_3_iter> add(B);
       for (Point_3_iter pi = m_points_begin; pi != m_points_end; ++pi) {
-        Polyhedron_vertex_handle vh =
-          B.add_vertex(Point((*pi)[0], (*pi)[1], (*pi)[2]));
+        Polyhedron_vertex_handle vh = add(pi);
         if (counter == m_marked_vertex_index) vh->set_marked(true);
         ++counter;
       }
@@ -568,6 +601,7 @@ private:
       }
       ++counter;
     }
+
 #if 0
     if (!m_polyhedron.normalized_border_is_valid())
       m_polyhedron.normalize_border();
@@ -575,9 +609,11 @@ private:
     m_polyhedron.normalize_border();
 #endif
 
+#if 1
     std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                    m_polyhedron.planes_begin(), Normal_vector());
-
+#endif
+    
     /*! \todo move to Cubical_gaussian_map_geo */
     std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
                   Convert_approximate_point());
