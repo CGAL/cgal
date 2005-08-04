@@ -54,7 +54,6 @@ all:            \
                 Filtered_cartesian$(EXE_EXT) \
                 Filtered_homogeneous$(EXE_EXT) \
                 Homogeneous$(EXE_EXT) \
-                known_bit_size_integers$(EXE_EXT) \
                 Simple_cartesian$(EXE_EXT) \
                 Simple_homogeneous$(EXE_EXT) \
                 test_kernel_archetype_2$(EXE_EXT) \
@@ -75,9 +74,6 @@ Filtered_homogeneous$(EXE_EXT): Filtered_homogeneous$(OBJ_EXT)
 
 Homogeneous$(EXE_EXT): Homogeneous$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Homogeneous Homogeneous$(OBJ_EXT) $(LDFLAGS)
-
-known_bit_size_integers$(EXE_EXT): known_bit_size_integers$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)known_bit_size_integers known_bit_size_integers$(OBJ_EXT) $(LDFLAGS)
 
 Simple_cartesian$(EXE_EXT): Simple_cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Simple_cartesian Simple_cartesian$(OBJ_EXT) $(LDFLAGS)
@@ -100,7 +96,6 @@ clean: \
                    Filtered_cartesian.clean \
                    Filtered_homogeneous.clean \
                    Homogeneous.clean \
-                   known_bit_size_integers.clean \
                    Simple_cartesian.clean \
                    Simple_homogeneous.clean \
                    test_kernel_archetype_2.clean \
