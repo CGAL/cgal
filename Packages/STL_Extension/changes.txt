@@ -2,6 +2,7 @@
 - Move Twotuple, Threetuple, Fourtuple, Sixtuple from Kernel_23, and document.
 - Move memory.h from Kernel_23.
 - Move assertions.[hC] from Kernel_23.
+- Move CGAL/tags.h from Kernel_23.
 
 4 May 2005 Sylvain Pion
 - Remove g++ 2.95 workarounds.
