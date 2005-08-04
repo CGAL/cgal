@@ -66,21 +66,22 @@ elements greater than (or equal to) this key.
 
 \end{ccAdvanced}
 
+\ccParameters
+%------------
+
+The \ccc{Multiset} class-template has three parameters:
+\begin{itemize}
+\item \ccc{Type} --- the type of the stored elements.
+\item \ccc{Compare} --- the comparison-functor type. \\
+    The \ccc{CGAL::Compare<Type>} functor is used by default.
+\item \ccc{Allocator} --- the allocator type. \\
+    \ccc{CGAL_ALLOCATOR} is used by default.
+\end{itemize}
+
 \ccInclude{CGAL/Multiset.h}
 
 \ccTypes
 %-------
-
-\ccNestedType{Type}{the type of the stored elements.}
-
-\ccNestedType{Compare}{the comparison-functor type.
-    If the \ccc{==} and the \ccc{<} operators are defined on two \ccc{Type}
-    elements, it is possible not supply a comparison-functor type when
-    instantiating the template, so a default functor that relies on the above
-    mentioned comparison operators will be used instead.}
-
-\ccNestedType{Allocator}{the allocator type.
-    \ccc{CGAL_ALLOCATOR} is used by default.}
 
 In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
 (both equivalent to \ccc{Type}), \ccc{key_compare} and \ccc{value_compare}
@@ -284,8 +285,9 @@ data-structure. The red-black tree invariants guarantee that the height of a
 tree containing $n$ elements is $O(\log{n})$ (more precisely, it is bounded by 
 $2 \log_{2}{n}$). As a consequence, all methods that accept an element and need
 to locate it in the tree (namely \ccc{insert(x)}, \ccc{erase(x)}, 
-\ccc{find(x)}, \ccc{count(x)}, \ccc{lower_bound(x)} and \ccc{upper_bound(x)}) 
-take $O(\log{n})$ time and perform $O(\log{n})$ comparison operations.
+\ccc{find(x)}, \ccc{count(x)}, \ccc{lower_bound(x)} , \ccc{upper_bound(x)},
+ \ccc{find_lower(x)} and  \ccc{equal_range(x)}) take $O(\log{n})$ time and
+perform $O(\log{n})$ comparison operations.
 
 On the other hand, the set operations that accept a position iterator (namely
 \ccc{insert_before(pos, x)}, \ccc{insert_after(pos, x)} and \ccc{erase(pos)})

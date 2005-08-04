@@ -32,31 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \struct
- * Default comparsion functor. The template parameter Type should be
- * instantiated with a type that supports the operators < (less than)
- * and == (equal).
- */
-template <class Type>
-struct Multiset_default_compare
-{
-  /*!
-   * Compare two objects.
-   * \param obj1 The first object.
-   * \param obj2 The second object.
-   * \return SMALLER if obj1 < obj2; EQUAL if obj1 == obj2; LARGER otherwise.
-   */
-  Comparison_result operator() (const Type& obj1, const Type& obj2) const
-  {
-    if (obj1 == obj2)
-      return (EQUAL);
-    else if (obj1 < obj2)
-      return (SMALLER);
-    else
-      return (LARGER);
-  }
-};
-
 /*!
  * Container class representing a red-black tree, which is a balanced binary
  * tree that has the following invariants:
@@ -84,7 +59,7 @@ struct Multiset_default_compare
  */
 
 template <typename Type_, 
-          class Compare_ = Multiset_default_compare<Type_>, 
+          class Compare_ = CGAL::Compare<Type_>,
           class Allocator_ = CGAL_ALLOCATOR(int)>
 class Multiset
 {
