@@ -19,8 +19,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Andreas Fabri, Stefan Schirra
  
+#include <CGAL/Origin.h>
 #include <CGAL/aff_transformation_tags.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -31,5 +32,7 @@ Scaling                 SCALING;
 Reflection              REFLECTION;
 Identity_transformation IDENTITY;
 
-CGAL_END_NAMESPACE
+const Origin      ORIGIN = Origin();
+const Null_vector NULL_VECTOR = Null_vector();
 
+CGAL_END_NAMESPACE

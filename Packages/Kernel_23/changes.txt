@@ -4,6 +4,7 @@
 - Move CGAL/known_bit_size_integers.h to Number_types.
 - Move CGAL/memory.h to STL_Extension.
 - Remove CGAL/utils.h.
+- Merge src/aff_transformation_tags.C and src/Origin.C into src/kernel.C.
 
 1 August 2005 Sylvain Pion
 - Remove CGAL/misc.h (provided convert(), to be replaced by NT_converter).
