@@ -2020,6 +2020,169 @@
 
 %% +--------------------------------------------------------+
 
+\begin{ccRefClass}{Twotuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type) pair
+  of objects of type \ccc{T}.  A \ccRefName\ is much like a container, in that
+  it "owns" its elements. It is not actually a model of container, though,
+  because it does not support the standard methods (such as iterators) for
+  accessing the elements of a container.
+
+  \ccInclude{CGAL/Twotuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Twotuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Twotuple(T x, T y);}{constructs a \ccRefName\ such
+    that \ccc{e0} is constructed from \ccc{x} and \ccc{e1} is
+    constructed from \ccc{y}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Threetuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type) triple
+  of objects of type \ccc{T}.  A \ccRefName\ is much like a container, in that
+  it "owns" its elements. It is not actually a model of container, though,
+  because it does not support the standard methods (such as iterators) for
+  accessing the elements of a container.
+
+  \ccInclude{CGAL/Threetuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+  \ccGlue
+  \ccVariable{T e2;}{third element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Threetuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Threetuple(T x, T y, T z);}{constructs a \ccRefName\ such
+    that \ccc{e0} is constructed from \ccc{x}, \ccc{e1} is
+    constructed from \ccc{y} and \ccc{e2} is constructed from \ccc{z}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Fourtuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type)
+  fourtuple of objects of type \ccc{T}.  A \ccRefName\ is much like a
+  container, in that it "owns" its elements. It is not actually a model of
+  container, though, because it does not support the standard methods (such as
+  iterators) for accessing the elements of a container.
+
+  \ccInclude{CGAL/Fourtuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+  \ccGlue
+  \ccVariable{T e2;}{third element}
+  \ccGlue
+  \ccVariable{T e3;}{fourth element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Fourtuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Fourtuple(T x, T y, T z, T t);}{constructs a \ccRefName\ such
+    that \ccc{e0} is constructed from \ccc{x}, \ccc{e1} from \ccc{y},
+    \ccc{e2} from \ccc{z} and \ccc{e3} from \ccc{t}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Sixtuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type)
+  sixtuple of objects of type \ccc{T}.  A \ccRefName\ is much like a
+  container, in that it "owns" its elements. It is not actually a model of
+  container, though, because it does not support the standard methods (such as
+  iterators) for accessing the elements of a container.
+
+  \ccInclude{CGAL/Sixtuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+  \ccGlue
+  \ccVariable{T e2;}{third element}
+  \ccGlue
+  \ccVariable{T e3;}{fourth element}
+  \ccGlue
+  \ccVariable{T e4;}{fifth element}
+  \ccGlue
+  \ccVariable{T e5;}{sixth element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Sixtuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Sixtuple(T x, T y, T z, T t, T u, T v);}{constructs a
+    \ccRefName\ such that \ccc{e0} is constructed from \ccc{x}, \ccc{e1} from
+    \ccc{y}, \ccc{e2} from \ccc{z}, \ccc{e3} from \ccc{t}, \ccc{e4} from
+    \ccc{u} and \ccc{e5} from \ccc{v}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
 \begin{ccRefClass}{Triple<T1, T2, T3>}
   
   \ccDefinition The Triple class is an extension of \ccc{std::pair}.
@@ -2032,7 +2195,7 @@
 
   \ccInclude{CGAL/utility.h}
   
-  \ccRequirements \ccc{T1}, \ccc{T2} and \ccc{T3} must be assignable.
+  \ccRequirements \ccc{T1}, \ccc{T2} and \ccc{T3} must be \ccc{Assignable}.
   Additional operations have additional requirements.
 
   %\ccSetThreeColumns{T*}{next_link ;}{}
@@ -2114,7 +2277,7 @@
   \ccInclude{CGAL/utility.h}
   
   \ccRequirements \ccc{T1}, \ccc{T2}, \ccc{T3} and \ccc{T4} must be
-  assignable. Additional operations have additional requirements.
+  \ccc{Assignable}. Additional operations have additional requirements.
 
   %\ccSetThreeColumns{T*}{next_link ;}{}
   \ccThree{result_type;;}{operator()(argument a) ;;}{}
