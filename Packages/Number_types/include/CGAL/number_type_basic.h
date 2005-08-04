@@ -64,7 +64,14 @@ CGAL_END_NAMESPACE
 #include <CGAL/Gmpzq_fwd.h>
 #include <CGAL/gmpxx_fwd.h>
 #include <CGAL/CORE_Expr_fwd.h>
-#include <CGAL/Quotient_fwd.h> // must be last : #include MP_Float.h and Gmpz.h
+#include <CGAL/Quotient_fwd.h>
+
+// We must also include the following two, because of the overloadings
+// for Quotient<MP_Float> and Quotient<Gmpz>, which triggers their
+// instantiation, even if only to_double(double) is called, at least
+// when Quotient is defined...
+#include <CGAL/MP_Float.h>
+#include <CGAL/Gmpz.h>
 
 CGAL_BEGIN_NAMESPACE
 

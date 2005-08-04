@@ -24,6 +24,8 @@
 #ifndef CGAL_MP_FLOAT_FWD_H
 #define CGAL_MP_FLOAT_FWD_H
 
+#include <CGAL/Quotient_fwd.h>
+
 // Forward declarations
 
 CGAL_BEGIN_NAMESPACE
@@ -38,6 +40,9 @@ double to_double(const MP_Float&);
 std::pair<double,double> to_interval(const MP_Float &);
 bool is_finite(const MP_Float &);
 bool is_valid(const MP_Float &);
+
+double to_double(const Quotient<MP_Float>&);
+std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 
 CGAL_END_NAMESPACE
 

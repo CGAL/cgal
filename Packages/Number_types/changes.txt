@@ -1,3 +1,6 @@
+4 August 2005 Sylvain Pion
+- Fix *_fwd.h re-organization for some compilers.
+
 3 August 2005 Sylvain Pion
 - Rename CGAL/Interval_arithmetic.h to CGAL/Interval_nt.h.
 - [doc] : update doc of Interval_nt.

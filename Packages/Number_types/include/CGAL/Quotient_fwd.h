@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename> class Quotient;
+template <class NT> class Quotient;
 
 template <class NT>
 Quotient<NT> sqrt(const Quotient<NT> &);
@@ -45,18 +45,6 @@ bool is_valid(const Quotient<NT>&);
 
 template <class NT>
 bool is_finite(const Quotient<NT>&);
-
-CGAL_END_NAMESPACE
-
-#include <CGAL/MP_Float.h>
-#include <CGAL/Gmpz.h>
-
-CGAL_BEGIN_NAMESPACE
-
-double to_double(const Quotient<MP_Float>&);
-std::pair<double,double> to_interval(const Quotient<MP_Float>&);
-
-double to_double(const Quotient<Gmpz>&);
 
 CGAL_END_NAMESPACE
 
