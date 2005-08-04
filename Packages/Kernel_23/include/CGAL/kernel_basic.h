@@ -40,6 +40,7 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/aff_transformation_tags.h>
+#include <CGAL/Object.h>
 #include <CGAL/Qualified_result_of.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/functional_base.h>

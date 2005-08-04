@@ -31,7 +31,6 @@
 #include <cstdlib>
 
 #include <CGAL/assertions.h>
-#include <CGAL/Object.h>
 #include <CGAL/tags.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/IO/io.h>
