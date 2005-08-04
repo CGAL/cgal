@@ -23,21 +23,6 @@ The \ccRefName\ is parameterised by a traits class and a container class.
 The latter can be any class that fulfills the requirements for an STL container.
 It defaults to the vector class.
 
-\ccHeading{Caching}
-By default, \ccRefName\ does not use caching. That means that every time that
-a member function like \ccc{is_simple} is called, the result is computed from
-scratch.  This behaviour can be changed by defining a macro.
-\begin{ccExampleCode}
-#define CGAL_POLYGON_2_CACHED
-\end{ccExampleCode}
-
-In the future, this caching behavior will be the default. The only reason that
-it is not at the moment is that some compilers have problems when the
-\ccc{CGAL_POLYGON_2_CACHED} flag is set.
-
-The iterators of the polygon are mutable in this case, but modifying the polygon
-through them will not invalidate the cache.
-
 \ccInclude{CGAL/Polygon_2.h}
 
 %\ccIsModel
@@ -322,25 +307,12 @@ were used and what complexity they have.
 %in section \ref{sec:poly_algo}. There you can find information about which
 %algorithms were used and what complexity they have.
 
-If caching is turned on, all functions are cached except those that compute on
-which side of the polygon a point is situated.
-The cache is invalidated after any operation that modifies the polygon.
-
-
-
 \ccExample
 
 The following code fragment creates a polygon and checks if it is convex.
 
 \ccIncludeVerbatim{Polygon/Polygon.C}
 
-
 %% \ccIncludeExampleCode{Polygon/Polygon_2_prog.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

@@ -1,5 +1,6 @@
 4 August 2005 Sylvain Pion
 - Add clear().
+- Remove caching and CGAL_POLYGON_2_CACHED.
 
 3 August 2005 Sylvain Pion
 - Remove CGAL_CFG_NO_MEMBER_TEMPLATES workarounds.
