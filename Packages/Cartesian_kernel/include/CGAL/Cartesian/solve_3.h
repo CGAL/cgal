@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_CARTESIAN_SOLVE_3_H
 #define CGAL_CARTESIAN_CARTESIAN_SOLVE_3_H
 
-#include <CGAL/solve.h>
+#include <CGAL/Kernel/solve.h>
 #include <CGAL/Cartesian/Vector_3.h>
 
 CGAL_BEGIN_NAMESPACE
