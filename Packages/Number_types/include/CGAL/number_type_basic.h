@@ -40,6 +40,7 @@ using std::max;
 
 CGAL_END_NAMESPACE
 
+#include <CGAL/known_bit_size_integers.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/float.h>
