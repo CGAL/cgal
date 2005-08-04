@@ -507,6 +507,8 @@ protected:
 
 public:
   Join_input_iterator_1() {}
+  Join_input_iterator_1(const Join_input_iterator_1& it)
+    : i1(it.i1), op(it.op) {}
   Join_input_iterator_1(I1 i1,const Op& op=Op())
     : i1(i1), op(op) {}
   
