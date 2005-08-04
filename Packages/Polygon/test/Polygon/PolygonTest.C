@@ -288,6 +288,7 @@ void test_update_operations(const ListPolygon& p,
 #if defined(CGAL_POLYGON_2_CACHED)
   q.insert(q.vertices_circulator(), pvec.begin() + 3, pvec.begin() + 7);
 #endif
+  q.clear();
 }
 
 //-----------------------------------------------------------------------//

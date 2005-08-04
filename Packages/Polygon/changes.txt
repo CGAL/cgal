@@ -1,3 +1,6 @@
+4 August 2005 Sylvain Pion
+- Add clear().
+
 3 August 2005 Sylvain Pion
 - Remove CGAL_CFG_NO_MEMBER_TEMPLATES workarounds.
 - Remove CGAL_CFG_NO_LAZY_INSTANTIATION workarounds.

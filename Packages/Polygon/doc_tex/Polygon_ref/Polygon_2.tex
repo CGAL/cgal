@@ -128,6 +128,9 @@ Their value type is \ccStyle{Segment_2}.
   \ccMethod{ void erase(Vertex_iterator first, Vertex_iterator last);}
     { Erases the vertices in the range \ccStyle{[first, last)}.}
 
+  \ccMethod{ void clear();}
+    { Erases all vertices.}
+
   \ccMethod{ void reverse_orientation(); }
     { Reverses the orientation of the polygon. The vertex pointed to by
       \ccStyle{p.vertices_begin()} remains the same. }

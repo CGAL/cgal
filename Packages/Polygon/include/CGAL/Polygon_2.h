@@ -297,6 +297,12 @@ class Polygon_2 {
       d_container.erase(get_container_iterator(first),
                         get_container_iterator(last)); }
 
+    void clear()
+    {
+      invalidate_cache();
+      d_container.clear();
+    }
+
     void reverse_orientation()
     {
       if (size() <= 1)
