@@ -24,8 +24,6 @@
 #ifndef CGAL_TRIANGLE_3_RAY_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_RAY_3_DO_INTERSECT_H
 
-
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -296,33 +294,19 @@ bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Triangle_3 &t,
 }
 
 
-template <class K>
-inline
-bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Ray_3      &r,
-			   const typename CGAL_WRAP(K)::Triangle_3 &t, 
-			   const K & k )
-{
-  return do_intersect_coplanar(t, r, k);
-}
-
-
 } // namespace CGALi
 
 
 template <class K>
 inline bool do_intersect(const Ray_3<K> &r, 
 			 const Triangle_3<K> &t)
-
 {
   return typename K::Do_intersect_3()(t,r);
 }
 
-
-
 template <class K>
 inline bool do_intersect(const Triangle_3<K> &t, 
 			 const Ray_3<K> &r)
-
 {
   return typename K::Do_intersect_3()(t,r);
 }
@@ -338,17 +322,6 @@ inline bool do_intersect(const Ray_3<K> &r,
 }
 */
 
-template <class K>
-inline bool do_intersect_coplanar(const Triangle_3<K> &t, 
-				  const Ray_3<K>      &r)
-{
-  return CGALi::do_intersect_coplanar(t,r,K());
-}
 CGAL_END_NAMESPACE
 
-
-#endif //CGAL_TRIANGLE_3_RAY_3_DO_INTERSECT_H
-
-
-
-
+#endif // CGAL_TRIANGLE_3_RAY_3_DO_INTERSECT_H

@@ -1,3 +1,6 @@
+4 August 2005 Sylvain Pion
+- Code re-arrangement to please g++ 4.1, and cleanups.
+
 29 July 2005 Sylvain Pion
 - Change assign() to object_cast<>().
 

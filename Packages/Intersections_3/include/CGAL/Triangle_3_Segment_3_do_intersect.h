@@ -29,130 +29,10 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-template <class K>
-bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &t, 
-		  const typename CGAL_WRAP(K)::Segment_3  &s,
-		  const K & k)
-{
-  
-  CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
-  CGAL_kernel_precondition( ! k.is_degenerate_3_object()(s) ) ;
-  
-  typedef typename K::Point_3 Point_3;
-  
-
-  typename K::Construct_point_on_3 point_on = 
-    k.construct_point_on_3_object();
-  
-  typename K::Construct_vertex_3 vertex_on =
-    k.construct_vertex_3_object();
-  
-  typename K::Orientation_3 orientation = 
-    k.orientation_3_object();
-
-  const Point_3 & a = vertex_on(t,0);
-  const Point_3 & b = vertex_on(t,1);
-  const Point_3 & c = vertex_on(t,2);
-  const Point_3 & p = point_on(s,0);
-  const Point_3 & q = point_on(s,1);
-
-
-  const Orientation abcp = orientation(a,b,c,p);
-  const Orientation abcq = orientation(a,b,c,q);
-
-
-  switch ( abcp ) {
-  case POSITIVE:
-    switch ( abcq ) {
-    case POSITIVE:
-      // the segment lies in the positive open halfspaces defined by the
-      // triangle's supporting plane
-      return false;
-
-    case NEGATIVE:
-      // p sees the triangle in counterclockwise order
-      return orientation(p,q,a,b) != POSITIVE
-	&& orientation(p,q,b,c) != POSITIVE
-	&& orientation(p,q,c,a) != POSITIVE;
-
-    case COPLANAR:
-      // q belongs to the triangle's supporting plane
-      // p sees the triangle in counterclockwise order
-      return orientation(p,q,a,b) != POSITIVE
-	&& orientation(p,q,b,c) != POSITIVE
-	&& orientation(p,q,c,a) != POSITIVE;
-      
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return false;
-    }
-  case NEGATIVE:
-    switch ( abcq ) {
-    case POSITIVE:
-      // q sees the triangle in counterclockwise order
-      return orientation(q,p,a,b) != POSITIVE
-	&& orientation(q,p,b,c) != POSITIVE
-	&& orientation(q,p,c,a) != POSITIVE;
-
-    case NEGATIVE:
-      // the segment lies in the negative open halfspaces defined by the
-      // triangle's supporting plane
-      return false;
-      
-    case COPLANAR:
-      // q belongs to the triangle's supporting plane
-      // p sees the triangle in clockwise order
-      return orientation(q,p,a,b) != POSITIVE
-	&& orientation(q,p,b,c) != POSITIVE
-	&& orientation(q,p,c,a) != POSITIVE;
-
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return false;
-    }
-  case COPLANAR: // p belongs to the triangle's supporting plane
-    switch ( abcq ) {
-    case POSITIVE:
-      // q sees the triangle in counterclockwise order
-      return orientation(q,p,a,b) != POSITIVE
-	&& orientation(q,p,b,c) != POSITIVE
-	&& orientation(q,p,c,a) != POSITIVE;
-      
-    case NEGATIVE:
-      // q sees the triangle in clockwise order
-      return orientation(p,q,a,b) != POSITIVE
-	&& orientation(p,q,b,c) != POSITIVE
-	&& orientation(p,q,c,a) != POSITIVE;
-    case COPLANAR:
-      // the segment is coplanar with the triangle's supporting plane
-      // we test whether the segment intersects the triangle in the common 
-      // supporting plane
-      return do_intersect_coplanar(t,s,k);
-      
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return false;
-    }
-  default: // should not happen.
-    CGAL_kernel_assertion(false);
-    return false;
-  }
-}
-
 
 template <class K>
-inline
-bool do_intersect(const typename CGAL_WRAP(K)::Segment_3  &s,
-		  const typename CGAL_WRAP(K)::Triangle_3 &t, 
-		  const K & k)
-{
-  return do_intersect(t, s, k);
-}
-
-
-template <class K>
-bool do_intersect_coplanar(const Triangle_3<K> &t, 
-			   const Segment_3<K>  &s,
+bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Triangle_3 &t, 
+			   const typename CGAL_WRAP(K)::Segment_3  &s,
 			   const K & k )
 {
 
@@ -305,22 +185,131 @@ bool do_intersect_coplanar(const Triangle_3<K> &t,
 
 
 template <class K>
-bool do_intersect_coplanar(const Segment_3<K>  &s,
-			   const Triangle_3<K> &t, 
-			   const K & k )
+bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &t, 
+		  const typename CGAL_WRAP(K)::Segment_3  &s,
+		  const K & k)
 {
-  return do_intersect_coplanar(t, s, k);
+  
+  CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
+  CGAL_kernel_precondition( ! k.is_degenerate_3_object()(s) ) ;
+  
+  typedef typename K::Point_3 Point_3;
+  
+
+  typename K::Construct_point_on_3 point_on = 
+    k.construct_point_on_3_object();
+  
+  typename K::Construct_vertex_3 vertex_on =
+    k.construct_vertex_3_object();
+  
+  typename K::Orientation_3 orientation = 
+    k.orientation_3_object();
+
+  const Point_3 & a = vertex_on(t,0);
+  const Point_3 & b = vertex_on(t,1);
+  const Point_3 & c = vertex_on(t,2);
+  const Point_3 & p = point_on(s,0);
+  const Point_3 & q = point_on(s,1);
+
+
+  const Orientation abcp = orientation(a,b,c,p);
+  const Orientation abcq = orientation(a,b,c,q);
+
+
+  switch ( abcp ) {
+  case POSITIVE:
+    switch ( abcq ) {
+    case POSITIVE:
+      // the segment lies in the positive open halfspaces defined by the
+      // triangle's supporting plane
+      return false;
+
+    case NEGATIVE:
+      // p sees the triangle in counterclockwise order
+      return orientation(p,q,a,b) != POSITIVE
+	&& orientation(p,q,b,c) != POSITIVE
+	&& orientation(p,q,c,a) != POSITIVE;
+
+    case COPLANAR:
+      // q belongs to the triangle's supporting plane
+      // p sees the triangle in counterclockwise order
+      return orientation(p,q,a,b) != POSITIVE
+	&& orientation(p,q,b,c) != POSITIVE
+	&& orientation(p,q,c,a) != POSITIVE;
+      
+    default: // should not happen.
+      CGAL_kernel_assertion(false);
+      return false;
+    }
+  case NEGATIVE:
+    switch ( abcq ) {
+    case POSITIVE:
+      // q sees the triangle in counterclockwise order
+      return orientation(q,p,a,b) != POSITIVE
+	&& orientation(q,p,b,c) != POSITIVE
+	&& orientation(q,p,c,a) != POSITIVE;
+
+    case NEGATIVE:
+      // the segment lies in the negative open halfspaces defined by the
+      // triangle's supporting plane
+      return false;
+      
+    case COPLANAR:
+      // q belongs to the triangle's supporting plane
+      // p sees the triangle in clockwise order
+      return orientation(q,p,a,b) != POSITIVE
+	&& orientation(q,p,b,c) != POSITIVE
+	&& orientation(q,p,c,a) != POSITIVE;
+
+    default: // should not happen.
+      CGAL_kernel_assertion(false);
+      return false;
+    }
+  case COPLANAR: // p belongs to the triangle's supporting plane
+    switch ( abcq ) {
+    case POSITIVE:
+      // q sees the triangle in counterclockwise order
+      return orientation(q,p,a,b) != POSITIVE
+	&& orientation(q,p,b,c) != POSITIVE
+	&& orientation(q,p,c,a) != POSITIVE;
+      
+    case NEGATIVE:
+      // q sees the triangle in clockwise order
+      return orientation(p,q,a,b) != POSITIVE
+	&& orientation(p,q,b,c) != POSITIVE
+	&& orientation(p,q,c,a) != POSITIVE;
+    case COPLANAR:
+      // the segment is coplanar with the triangle's supporting plane
+      // we test whether the segment intersects the triangle in the common 
+      // supporting plane
+      return do_intersect_coplanar(t,s,k);
+      
+    default: // should not happen.
+      CGAL_kernel_assertion(false);
+      return false;
+    }
+  default: // should not happen.
+    CGAL_kernel_assertion(false);
+    return false;
+  }
 }
 
 
-} // namespace CGALi
+template <class K>
+inline
+bool do_intersect(const typename CGAL_WRAP(K)::Segment_3  &s,
+		  const typename CGAL_WRAP(K)::Triangle_3 &t, 
+		  const K & k)
+{
+  return do_intersect(t, s, k);
+}
 
+} // namespace CGALi
 
 
 template <class K>
 inline bool do_intersect(const Segment_3<K>  &s, 
 			 const Triangle_3<K> &t)
-
 {
   return typename K::Do_intersect_3()(t,s);
 }
@@ -328,11 +317,9 @@ inline bool do_intersect(const Segment_3<K>  &s,
 template <class K>
 inline bool do_intersect(const Triangle_3<K> &t,
 			 const Segment_3<K>  &s)
-
 {
   return typename K::Do_intersect_3()(t,s);
 }
-
 
 /*
 template <class K>
@@ -344,12 +331,6 @@ inline bool do_intersect(const Segment_3<K>  &s,
 }
 */
 
-
 CGAL_END_NAMESPACE
 
-
 #endif //CGAL_TRIANGLE_3_SEGMENT_3_DO_INTERSECT_H
-
-
-
-
