@@ -59,12 +59,9 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Object.h>
-#include <CGAL/enum.h>
 #include <CGAL/tags.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/Handle.h> // This should be removed ASAP.
 #include <CGAL/kernel_basic.h>
-#include <CGAL/known_bit_size_integers.h>
 
 #endif // CGAL_BASIC_H
