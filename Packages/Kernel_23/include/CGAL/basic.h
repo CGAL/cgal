@@ -22,7 +22,6 @@
 // Author(s)     : Lutz Kettner
 //                 Stefan Schirra
  
-
 #ifndef CGAL_BASIC_H
 #define CGAL_BASIC_H
 
@@ -59,7 +58,6 @@
 #endif
 
 #include <CGAL/assertions.h>
-#include <CGAL/kernel_assertions.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>

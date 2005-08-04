@@ -25,7 +25,6 @@
 #ifndef CGAL_FUNCTIONS_ON_ENUMS_H
 #define CGAL_FUNCTIONS_ON_ENUMS_H
 
-#include <CGAL/config.h>
 #include <CGAL/enum.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -19,12 +19,13 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     :
+// Author(s)     : Sylvain Pion
 
 #ifndef CGAL_HANDLE_H
 #define CGAL_HANDLE_H
 
 #include <CGAL/Handle_for.h>
+#include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,7 +47,7 @@ class Handle
 
     Handle(const Handle& x)
     {
-      CGAL_kernel_precondition( x.PTR != static_cast<Rep*>(0) );
+      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       PTR = x.PTR;
       PTR->count++;
     }
@@ -60,7 +61,7 @@ class Handle
     Handle&
     operator=(const Handle& x)
     {
-      CGAL_kernel_precondition( x.PTR != static_cast<Rep*>(0) );
+      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       x.PTR->count++;
       if ( PTR && (--PTR->count == 0))
 	  delete PTR;

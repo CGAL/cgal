@@ -24,6 +24,8 @@
 #ifndef CGAL_ENUM_H
 #define CGAL_ENUM_H
 
+#include <CGAL/basic.h>
+
 // If you add/change one type here, please update Is_a_predicate.h as well.
 
 CGAL_BEGIN_NAMESPACE

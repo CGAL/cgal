@@ -25,7 +25,7 @@
 #ifndef CGAL_AFF_TRANSFORMATION_TAGS_H
 #define CGAL_AFF_TRANSFORMATION_TAGS_H
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
