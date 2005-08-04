@@ -1,3 +1,6 @@
+4 August 2005 Sylvain Pion
+- Move all config macros post-processing from basic.h to config.h.
+
 4 June 2005 Menelaos Karavelas
 - Add CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG.C for Intel compiler 8.x,
   MSVC 7.1 and pgCC.

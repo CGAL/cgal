@@ -8,6 +8,7 @@
 - Move assertions.[hC] to STL_Extension.
 - Some #includes cleanups.
 - Move CGAL/tags.h to STL_Extension.
+- Move all config macros post-processing from basic.h to config.h.
 
 1 August 2005 Sylvain Pion
 - Remove CGAL/misc.h (provided convert(), to be replaced by NT_converter).

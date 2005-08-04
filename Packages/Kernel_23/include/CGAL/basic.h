@@ -30,33 +30,6 @@
 #include <iostream>
 #include <cstdlib>
 
-
-// Big endian or little endian machine.
-// ====================================
-#ifdef CGAL_CFG_NO_BIG_ENDIAN
-#  define CGAL_LITTLE_ENDIAN 1
-#else
-#  define CGAL_BIG_ENDIAN 1
-#endif
-
-#ifndef CGAL_USE_LEDA
-#  define CGAL_USE_CGAL_WINDOW
-#endif
-
-// Symbolic constants to tailor inlining. Inlining Policy.
-// =======================================================
-#ifndef CGAL_MEDIUM_INLINE
-#  define CGAL_MEDIUM_INLINE inline
-#endif
-
-#ifndef CGAL_LARGE_INLINE
-#  define CGAL_LARGE_INLINE
-#endif
-
-#ifndef CGAL_HUGE_INLINE
-#  define CGAL_HUGE_INLINE
-#endif
-
 #include <CGAL/assertions.h>
 #include <CGAL/Object.h>
 #include <CGAL/tags.h>
