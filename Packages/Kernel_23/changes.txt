@@ -1,5 +1,6 @@
 4 August 2005 Sylvain Pion
 - Move Twotuple, Threetuple, Fourtuple, Sixtuple to STL_Extension.
+- Remove unused New_delete_allocator.h .
 
 1 August 2005 Sylvain Pion
 - Remove CGAL/misc.h (provided convert(), to be replaced by NT_converter).
