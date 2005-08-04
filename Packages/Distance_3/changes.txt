@@ -1,3 +1,6 @@
+4 August 2005 Sylvain Pion
+- Remove/replace #include<CGAL/utils.h>.
+
 23 May 2004 Sylvain Pion
 - Remove useless .cvsignore.
 

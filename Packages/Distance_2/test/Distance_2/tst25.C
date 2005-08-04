@@ -1,5 +1,4 @@
 #include "numrep1.h"
-#include <CGAL/utils.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Ray_2.h>

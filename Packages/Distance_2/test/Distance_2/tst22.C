@@ -2,7 +2,6 @@
 /*
  * Squared distance between two segments.
  */
-#include <CGAL/utils.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/squared_distance_2_1.h>
 #include <CGAL/Segment_2.h>

@@ -27,7 +27,7 @@
 
 #include <CGAL/user_classes.h>
 
-#include <CGAL/utils.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Line_2.h>

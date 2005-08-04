@@ -25,7 +25,7 @@
 #ifndef CGAL_DISTANCE_3_0_H
 #define CGAL_DISTANCE_3_0_H
 
-#include <CGAL/utils.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/wmult.h>
 

@@ -3,7 +3,6 @@
 /*
  * Squared distance between two segments.
  */
-#include <CGAL/utils.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Ray_3.h>
 #include <CGAL/squared_distance_3.h>
