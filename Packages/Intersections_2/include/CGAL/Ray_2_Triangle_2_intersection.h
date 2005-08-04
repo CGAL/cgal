@@ -31,7 +31,7 @@
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/utils.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
 

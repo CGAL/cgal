@@ -29,7 +29,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/utils.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Object.h>
 

@@ -32,7 +32,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Object.h>
 #include <CGAL/Straight_2.h>
-#include <CGAL/utils.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 
 CGAL_BEGIN_NAMESPACE

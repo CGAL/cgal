@@ -29,7 +29,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Ray_2.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/utils.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Object.h>
 #include <CGAL/Line_2_Line_2_intersection.h>
