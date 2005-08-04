@@ -7,6 +7,7 @@
 - Merge src/aff_transformation_tags.C and src/Origin.C into src/kernel.C.
 - Move assertions.[hC] to STL_Extension.
 - Some #includes cleanups.
+- Move CGAL/tags.h to STL_Extension.
 
 1 August 2005 Sylvain Pion
 - Remove CGAL/misc.h (provided convert(), to be replaced by NT_converter).
