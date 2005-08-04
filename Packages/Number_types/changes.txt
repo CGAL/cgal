@@ -1,5 +1,6 @@
 4 August 2005 Sylvain Pion
 - Fix *_fwd.h re-organization for some compilers.
+- Move CGAL/known_bit_size_integers.h from Kernel_23.
 
 3 August 2005 Sylvain Pion
 - Rename CGAL/Interval_arithmetic.h to CGAL/Interval_nt.h.
