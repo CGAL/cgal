@@ -1,3 +1,6 @@
+4 August 2005 Sylvain Pion
+- Updates on memory management.
+
 21 May 2005 Sylvain Pion
 - Update URLs of testsuite and internal releases.
 

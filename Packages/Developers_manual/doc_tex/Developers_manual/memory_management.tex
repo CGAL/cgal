@@ -44,24 +44,14 @@ an allocator:
 \ccIndexSubitemBegin{allocator}{macro}
 
 The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
-is defined in the file \ccc{<CGAL/memory.h>} to be either the \leda\ 
-allocator if \leda\ is present, or the standard allocator from
-\ccc{<memory>} if not:
+is defined in the file \ccc{<CGAL/memory.h>} to be the standard allocator
+from \ccc{<memory>}.
+However, the user can redefine it, for example, if \leda\ is present,
+he can define it (before including any CGAL header file) this way :
 
 \begin{verbatim}
-#ifndef CGAL_MEMORY_H
-#define CGAL_MEMORY_H
-
-#include <memory>
-
-#ifdef CGAL_USE_LEDA
 #include <LEDA/allocator.h>
 #define CGAL_ALLOCATOR(t) leda_allocator<t>
-#else
-#define CGAL_ALLOCATOR(t) std::allocator<t>
-#endif
-
-#endif // CGAL_MEMORY_H
 \end{verbatim}
 \ccIndexSubitemEnd{allocator}{macro}
 

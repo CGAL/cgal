@@ -311,11 +311,11 @@ You get this functionality by
 
 \section{Allocation}
 Class \ccc{Handle_for} has two template parameters. Besides the
-type of the representation class, there is also a parameter specifying an
+type of the stored object, there is also a parameter specifying an
 allocator.\ccIndexMainItem{allocator}
-Any concrete argument must be a model for the concept allocator
+Any concrete argument must be a model for the \ccc{Allocator} concept
 defined in the \CC\ standard. There is a default value for the second
-parameter defined in \ccc{CGAL/memory.h}. But you can also choose your
+parameter defined as \ccc{CGAL_ALLOCATOR(T)}. But you can also choose your
 own, for example
 
 \begin{verbatim}
