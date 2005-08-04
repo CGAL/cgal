@@ -3,6 +3,7 @@
 - Remove unused New_delete_allocator.h .
 - Move CGAL/known_bit_size_integers.h to Number_types.
 - Move CGAL/memory.h to STL_Extension.
+- Remove CGAL/utils.h.
 
 1 August 2005 Sylvain Pion
 - Remove CGAL/misc.h (provided convert(), to be replaced by NT_converter).
