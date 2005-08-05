@@ -146,9 +146,9 @@ angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &qx, const FT &qy, const FT &qz,
         const FT &rx, const FT &ry, const FT &rz)
 {
-  return (Angle) CGAL_NTS sign<FT>((px-qx)*(rx-qx)+
-	                           (py-qy)*(ry-qy)+
-				   (pz-qz)*(rz-qz));
+  return (Angle) CGAL_NTS sign((px-qx)*(rx-qx)+
+	                       (py-qy)*(ry-qy)+
+			       (pz-qz)*(rz-qz));
 }
 
 template < class FT >
@@ -309,7 +309,7 @@ Oriented_side
 side_of_oriented_planeC3(const FT &a,  const FT &b,  const FT &c, const FT &d,
                          const FT &px, const FT &py, const FT &pz)
 {
-  return Oriented_side(CGAL_NTS sign<FT>(a*px + b*py + c*pz +d));
+  return Oriented_side(CGAL_NTS sign(a*px + b*py + c*pz +d));
 }
 
 template <class FT >
@@ -372,9 +372,9 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &tx, const FT &ty, const FT &tz)
 {
   // Returns whether T lies inside or outside the sphere which diameter is PQ.
-  return Bounded_side( CGAL_NTS sign<FT>((tx-px)*(qx-tx)
-	                               + (ty-py)*(qy-ty)
-	                               + (tz-pz)*(qz-tz)) );
+  return Bounded_side( CGAL_NTS sign((tx-px)*(qx-tx)
+	                           + (ty-py)*(qy-ty)
+	                           + (tz-pz)*(qz-tz)) );
 }
 
 template < class FT >
@@ -505,7 +505,7 @@ cmp_signed_dist_to_planeC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return Comparison_result(sign_of_determinant3x3(
+  return Comparison_result(sign_of_determinant3x3<FT>(
 	      pqx-ppx, pqy-ppy, pqz-ppz,
 	      prx-ppx, pry-ppy, prz-ppz,
 	      px-qx,   py-qy,   pz-qz));

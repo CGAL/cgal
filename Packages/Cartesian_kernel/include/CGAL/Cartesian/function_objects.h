@@ -956,9 +956,9 @@ namespace CartesianKernelFunctors {
     operator()(const Point_3& p0, const Point_3& p1,
 	       const Point_3& p2, const Point_3& p3) const
     {
-      return det3x3_by_formula(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
-                               p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
-                               p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
+      return det3x3_by_formula<FT>(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
+                                   p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
+                                   p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
     }
 
     FT

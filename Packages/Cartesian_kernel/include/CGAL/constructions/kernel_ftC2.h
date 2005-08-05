@@ -298,7 +298,7 @@ FT
 squared_distanceC2( const FT &px, const FT &py,
                     const FT &qx, const FT &qy)
 {
-  return CGAL_NTS square<FT>(px-qx) + CGAL_NTS square<FT>(py-qy);
+  return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy);
 }
 
 template < class FT >
