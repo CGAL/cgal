@@ -1,3 +1,6 @@
+5 August 2005 Sylvain Pion
+- Remove traces of CGAL_CFG_NO_NAMESPACE and CGAL_STD.
+
 13 July 2005 Sylvain Pion
 - [doc] Re-include Random.tex and default_random.tex.
 

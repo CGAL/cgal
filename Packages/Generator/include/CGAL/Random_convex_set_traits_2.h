@@ -27,6 +27,7 @@
 #include <CGAL/Point_2.h>
 
 CGAL_BEGIN_NAMESPACE
+
 template < class Kernel >
 struct Random_convex_set_traits_2 {
 
@@ -37,12 +38,12 @@ struct Random_convex_set_traits_2 {
   Random_convex_set_traits_2() : _origin( ORIGIN)
   {}
 
-  Point_2
+  const Point_2 &
   origin() const
   { return _origin; }
 
   struct Max_coordinate
-  : public CGAL_STD::unary_function< Point_2, FT >
+  : public std::unary_function< Point_2, FT >
   {
     FT
     operator()( const Point_2& p) const
@@ -50,7 +51,7 @@ struct Random_convex_set_traits_2 {
   };
 
   struct Sum
-  : public CGAL_STD::binary_function< Point_2, Point_2, Point_2 >
+  : public std::binary_function< Point_2, Point_2, Point_2 >
   {
     Point_2
     operator()( const Point_2& p, const Point_2& q) const
@@ -58,7 +59,7 @@ struct Random_convex_set_traits_2 {
   };
 
   struct Scale
-  : public CGAL_STD::binary_function< Point_2, FT, Point_2 >
+  : public std::binary_function< Point_2, FT, Point_2 >
   {
     Point_2
     operator()( const Point_2& p, const FT& k) const
@@ -66,7 +67,7 @@ struct Random_convex_set_traits_2 {
   };
 
   struct Angle_less
-  : public CGAL_STD::binary_function< Point_2, Point_2, bool >
+  : public std::binary_function< Point_2, Point_2, bool >
   {
     bool
     operator()( const Point_2& p, const Point_2& q) const
@@ -109,8 +110,3 @@ CGAL_random_convex_set_2( int n,
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_RANDOM_CONVEX_SET_TRAITS_2_H)
-
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-

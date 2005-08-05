@@ -43,7 +43,6 @@ random_convex_set_2( int n,
 {
   CGAL_precondition( n >= 3);
 
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::vector;
   using std::back_inserter;
   using std::accumulate;
@@ -54,7 +53,6 @@ random_convex_set_2( int n,
   using std::less;
   using std::max_element;
   using CGAL::copy_n;
-#endif
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
