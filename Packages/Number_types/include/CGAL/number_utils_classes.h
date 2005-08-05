@@ -36,51 +36,44 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class NT >
-struct Is_zero :public std::unary_function< NT, bool > {
-  typedef Arity_tag< 1 > Arity;
+struct Is_zero :public Unary_function< NT, bool > {
   bool operator()( const NT& x) const
   { return CGAL_NTS is_zero( x); }
 };
 
 template < class NT >
-struct Is_one :public std::unary_function< NT, bool > {
-  typedef Arity_tag< 1 > Arity;
+struct Is_one :public Unary_function< NT, bool > {
   bool operator()( const NT& x) const
   { return CGAL_NTS is_one( x); }
 };
 
 template < class NT >
-struct Is_negative :public std::unary_function< NT, bool > {
-  typedef Arity_tag< 1 > Arity;
+struct Is_negative :public Unary_function< NT, bool > {
   bool operator()( const NT& x) const
   { return CGAL_NTS is_negative( x); }
 };
 
 template < class NT >
-struct Is_positive :public std::unary_function< NT, bool > {
-  typedef Arity_tag< 1 > Arity;
+struct Is_positive :public Unary_function< NT, bool > {
   bool operator()( const NT& x) const
   { return CGAL_NTS is_positive( x); }
 };
 
 // Sign would result in a name clash with enum.h
 template < class NT >
-struct Sgn :public std::unary_function< NT, Sign > {
-  typedef Arity_tag< 1 > Arity;
+struct Sgn :public Unary_function< NT, Sign > {
   Sign operator()( const NT& x) const
   { return CGAL_NTS sign( x); }
 };
 
 template < class NT >
-struct Abs :public std::unary_function< NT, NT > {
-  typedef Arity_tag< 1 > Arity;
+struct Abs :public Unary_function< NT, NT > {
   NT operator()( const NT& x) const
   { return CGAL_NTS abs( x); }
 };
 
 template < class NT, class Compare = std::less< NT > >
-struct Min :public std::binary_function< NT, NT, NT > {
-  typedef Arity_tag< 2 > Arity;
+struct Min :public Binary_function< NT, NT, NT > {
   Min() {}
   Min(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
@@ -90,8 +83,7 @@ protected:
 };
 
 template < class NT, class Compare = std::less< NT > >
-struct Max :public std::binary_function< NT, NT, NT > {
-  typedef Arity_tag< 2 > Arity;
+struct Max :public Binary_function< NT, NT, NT > {
   Max() {}
   Max(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
@@ -102,67 +94,46 @@ protected:
 
 template < class NT >
 struct Compare
-  :public std::binary_function< NT, NT, Comparison_result > {
-  typedef Arity_tag< 2 > Arity;
-
-  Comparison_result
-  operator()( const NT& x, const NT& y) const
+  :public Binary_function< NT, NT, Comparison_result > {
+  Comparison_result operator()( const NT& x, const NT& y) const
   { return CGAL_NTS compare( x, y); }
 };
 
 template < class NT >
-struct Square : public std::unary_function< NT, NT > {
-  typedef Arity_tag< 1 > Arity;
-
-  NT
-  operator()( const NT& x) const
+struct Square : public Unary_function< NT, NT > {
+  NT operator()( const NT& x) const
   { return CGAL_NTS square( x ); }
 };
 
 template < class NT >
-struct Sqrt : public std::unary_function< NT, NT > {
-  typedef Arity_tag< 1 > Arity;
-
-  NT
-  operator()( const NT& x) const
+struct Sqrt : public Unary_function< NT, NT > {
+  NT operator()( const NT& x) const
   { return CGAL_NTS sqrt( x ); }
 };
 
 template < class NT >
-struct Div : public std::binary_function< NT, NT, NT > {
-  typedef Arity_tag< 2 > Arity;
-
-  NT
-  operator()( const NT& x, const NT& y) const
+struct Div : public Binary_function< NT, NT, NT > {
+  NT operator()( const NT& x, const NT& y) const
   { return CGAL_NTS div( x, y ); }
 };
 
 template < class NT >
-struct Gcd : public std::binary_function< NT, NT, NT > {
-  typedef Arity_tag< 2 > Arity;
-
-  NT
-  operator()( const NT& x, const NT& y) const
+struct Gcd : public Binary_function< NT, NT, NT > {
+  NT operator()( const NT& x, const NT& y) const
   { return CGAL_NTS gcd( x, y ); }
 };
 
 template < class NT >
-struct To_double : public std::unary_function< NT, double > {
-  typedef Arity_tag< 1 > Arity;
-
-  double
-  operator()( const NT& x) const
+struct To_double : public Unary_function< NT, double > {
+  double operator()( const NT& x) const
   { return CGAL_NTS to_double( x ); }
 };
 
 template < class NT >
 struct To_interval
-  : public std::unary_function< NT, std::pair<double, double> >
+  : public Unary_function< NT, std::pair<double, double> >
 {
-  typedef Arity_tag< 1 > Arity;
-
-  std::pair<double, double>
-  operator()( const NT& x) const
+  std::pair<double, double> operator()( const NT& x) const
   { return CGAL_NTS to_interval( x ); }
 };
 

@@ -1,4 +1,7 @@
 5 August 2005 Sylvain Pion
+- Use Unary_function and Binary_function instead of the std:: counterpart.
+
+5 August 2005 Sylvain Pion
 - Remove traces of CGAL_STD and CGAL_CFG_NO_NAMESPACE.
 - Fix result_type of CGAL::Sgn.
 - Introduce number_utils_fwd.h.
