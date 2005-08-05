@@ -14,6 +14,7 @@
 #endif // CGAL_CH_TIMING_2_H
 
 CGAL_BEGIN_NAMESPACE
+
 template <class ForwardIterator, class OutputIterator, class Traits>
 void
 ch_timing( ForwardIterator first, ForwardIterator last,
@@ -21,10 +22,8 @@ ch_timing( ForwardIterator first, ForwardIterator last,
            int iterations, 
            const Traits& ch_traits)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::cout;
   using std::endl;
-#endif // CGAL_CFG_NO_NAMESPACE
 
   int i;
   CGAL::Timer  Clck;
@@ -116,4 +115,3 @@ ch_timing( ForwardIterator first, ForwardIterator last,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CH_TIMING_2_C
-

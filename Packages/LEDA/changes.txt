@@ -1,3 +1,7 @@
+5 August 2005 Sylvain Pion
+- Remove CGAL_CFG_NO_NAMESPACE.
+
+================================ CGAL 3.1 =========================
 
 1.10 (18 Jan 2004)
 - Renamed CGAL_TEMPLATE_NULL to "template <>".

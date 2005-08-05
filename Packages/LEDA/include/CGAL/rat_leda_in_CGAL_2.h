@@ -33,6 +33,7 @@
 #include <LEDA/rat_line.h>
 
 CGAL_BEGIN_NAMESPACE
+
 inline
 bool
 left_turn( const leda_rat_point & p, 
@@ -48,25 +49,21 @@ right_turn( const leda_rat_point & p,
 { return CGAL_LEDA_SCOPE::right_turn(p,q,r); }
 
 /*
-#ifndef CGAL_CFG_NO_NAMESPACE
 inline
 bool
 collinear( const leda_rat_point & p, 
            const leda_rat_point & q, 
            const leda_rat_point & r)
 { return ::collinear(p,q,r); }
-#endif // CGAL_CFG_NO_NAMESPACE
 */
 
 
-#ifndef CGAL_CFG_NO_NAMESPACE
 inline
 Orientation
 orientation( const leda_rat_point & p, 
              const leda_rat_point & q, 
              const leda_rat_point & r)
 { return (Orientation)CGAL_LEDA_SCOPE::orientation(p,q,r); }
-#endif // CGAL_CFG_NO_NAMESPACE
 
 
 inline

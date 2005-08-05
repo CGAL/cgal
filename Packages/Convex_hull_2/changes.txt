@@ -1,3 +1,6 @@
+5 August 2005 Sylvain Pion
+- Remove CGAL_CFG_NO_NAMESPACE.
+
 30 June 2005 Sylvain Pion
 - prefix macros by CGAL_
 

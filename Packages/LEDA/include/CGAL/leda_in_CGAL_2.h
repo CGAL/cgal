@@ -33,6 +33,7 @@
 #include <LEDA/line.h>
 
 CGAL_BEGIN_NAMESPACE
+
 inline
 bool
 left_turn( const leda_point & p, 
@@ -47,14 +48,12 @@ right_turn( const leda_point & p,
            const leda_point & r)
 { return  CGAL_LEDA_SCOPE::right_turn(p,q,r); }
 
-#ifndef CGAL_CFG_NO_NAMESPACE
 inline
 Orientation
 orientation( const leda_point & p, 
              const leda_point & q, 
              const leda_point & r)
 { return (Orientation)CGAL_LEDA_SCOPE::orientation(p,q,r); }
-#endif // CGAL_CFG_NO_NAMESPACE
 
 inline
 bool
@@ -113,6 +112,7 @@ cmp_signed_dist_to_line( const leda_point & p, const leda_point & q,
   }
 #endif  // __LEDA__ >= 360
 }
+
 CGAL_END_NAMESPACE
 
 #endif // LEDA_IN_CGAL_H
