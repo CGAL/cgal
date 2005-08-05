@@ -1,3 +1,7 @@
+5 August 2005 Sylvain Pion
+- Remove the macros CGAL_CFG_NO_NAMESPACE, CGAL_USING_NAMESPACE_STD, CGAL_STD,
+  CGAL_USE_NAMESPACE.  They have been dead for 5 years.
+
 4 August 2005 Sylvain Pion
 - Move all config macros post-processing from basic.h to config.h.
 

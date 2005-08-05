@@ -42,18 +42,6 @@
 #  error "This compiler does not have a working STL"
 #endif
 
-#ifdef CGAL_CFG_NO_NAMESPACE
-#  define CGAL_USING_NAMESPACE_STD
-#  define CGAL_STD
-#  define CGAL std
-#else
-#  define CGAL_USING_NAMESPACE_STD using namespace std;
-#  define CGAL_STD std
-#  ifndef CGAL_USE_NAMESPACE
-#    define CGAL_USE_NAMESPACE 1
-#  endif
-#endif
-
 #if CGAL_USE_NAMESPACE
 #  define CGAL_BEGIN_NAMESPACE namespace CGAL {
 #  define CGAL_END_NAMESPACE }
