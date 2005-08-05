@@ -910,7 +910,7 @@ for consistency with interfaces of other classes.
     Min_annulus_d<Traits_>::
     is_valid( bool verbose, int level) const
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         CGAL::Verbose_ostream verr( verbose);
         verr << "CGAL::Min_annulus_d<Traits>::" << endl;
@@ -1017,7 +1017,7 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_annulus_d<Traits_>& min_annulus)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         typedef  Min_annulus_d<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
@@ -1084,7 +1084,7 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         switch ( CGAL::get_mode( is)) {
 
@@ -1392,7 +1392,7 @@ error stream.
     test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
                         const Traits& traits, int verbose)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         typedef  CGAL::Min_annulus_d< Traits >  Min_annulus;
         typedef  typename Traits::Point_d      Point;
@@ -1712,7 +1712,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Min_annulus_d test: main>(2) many = @begin
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     @<Min_annulus_d test: command line argument>
     
@@ -1724,7 +1724,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Min_annulus_d test: main (dD)> = @begin
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     @<Min_annulus_d test: command line argument>
     

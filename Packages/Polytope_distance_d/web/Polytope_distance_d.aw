@@ -766,7 +766,7 @@ for consistency with interfaces of other classes.
     Polytope_distance_d<Traits_>::
     is_valid( bool verbose, int level) const
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         CGAL::Verbose_ostream verr( verbose);
         verr << "CGAL::Polytope_distance_d<Traits>::" << endl;
@@ -851,7 +851,7 @@ traits class object.
     operator << ( std::ostream& os,
                   const Polytope_distance_d<Traits_>& poly_dist)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         typedef  Polytope_distance_d<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
@@ -939,7 +939,7 @@ traits class object.
     operator >> ( std::istream& is,
                   CGAL::Polytope_distance_d<Traits_>& poly_dist)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         /*        
         switch ( CGAL::get_mode( is)) {
 
@@ -1421,7 +1421,7 @@ standard error stream.
                               ForwardIterator q_first, ForwardIterator q_last,
                               const Traits& traits, int verbose)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         typedef  CGAL::Polytope_distance_d< Traits >  Poly_dist;
         typedef  typename Traits::Point_d             Point;
@@ -1776,7 +1776,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Poly_dist_d test: main (2D)> = @begin
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
     
     @<Poly_dist_d test: command line argument>
     
@@ -1788,7 +1788,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Poly_dist_d test: main (3D)> = @begin
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
     
     @<Poly_dist_d test: command line argument>
     
@@ -1800,7 +1800,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @end
 
 @macro <Poly_dist_d test: main (dD)> = @begin
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
     
     @<Poly_dist_d test: command line argument>
     

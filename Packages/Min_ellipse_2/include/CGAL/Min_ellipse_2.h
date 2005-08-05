@@ -537,7 +537,7 @@ class Min_ellipse_2 {
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
     
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;

@@ -57,7 +57,7 @@ template < class Traits, class RT >
 void
 cover_Min_circle_2( bool verbose, const Traits&, const RT&)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef  CGAL::Min_circle_2< Traits >  Min_circle;
     typedef  typename Min_circle::Point    Point;

@@ -48,7 +48,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
                           ForwardIterator q_first, ForwardIterator q_last,
                           const Traits& traits, int verbose)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef  CGAL::Polytope_distance_d< Traits >  Poly_dist;
     typedef  typename Traits::Point_d             Point;

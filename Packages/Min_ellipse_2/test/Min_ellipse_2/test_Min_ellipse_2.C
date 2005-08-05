@@ -86,7 +86,7 @@ template < class Traits>
 void
 core_test_Min_ellipse_2( bool verbose, const Traits&)
 {
-    CGAL_USING_NAMESPACE_STD    
+    using namespace std;    
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
@@ -151,7 +151,7 @@ template < class Traits, class Conic >
 void
 double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 {
-    CGAL_USING_NAMESPACE_STD    
+    using namespace std;    
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
@@ -222,7 +222,7 @@ template < class Traits, class RT >
 void
 cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;

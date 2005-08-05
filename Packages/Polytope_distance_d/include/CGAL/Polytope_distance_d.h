@@ -711,7 +711,7 @@ bool
 Polytope_distance_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     CGAL::Verbose_ostream verr( verbose);
     verr << "CGAL::Polytope_distance_d<Traits>::" << endl;
@@ -776,7 +776,7 @@ std::ostream&
 operator << ( std::ostream& os,
               const Polytope_distance_d<Traits_>& poly_dist)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef  typename Polytope_distance_d<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
@@ -864,7 +864,7 @@ std::istream&
 operator >> ( std::istream& is,
               CGAL::Polytope_distance_d<Traits_>& poly_dist)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
     /*
     switch ( CGAL::get_mode( is)) {
 

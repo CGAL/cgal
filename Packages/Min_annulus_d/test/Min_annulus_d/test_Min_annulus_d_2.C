@@ -63,7 +63,7 @@
 int
 main( int argc, char* argv[])
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
     
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);

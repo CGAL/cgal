@@ -30,7 +30,7 @@ std::ostream&
 operator << ( std::ostream& os,
               const Min_ellipse_2<Traits_>& min_ellipse)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef typename Min_ellipse_2<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>        Os_it;
@@ -78,7 +78,7 @@ template < class Traits_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits_>& min_ellipse)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     switch ( CGAL::get_mode( is)) {
 

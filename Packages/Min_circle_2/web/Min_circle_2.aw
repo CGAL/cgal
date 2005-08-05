@@ -746,7 +746,7 @@ of other classes.
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;
@@ -953,7 +953,7 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_circle_2<Traits_>& min_circle)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         typedef  Min_circle_2<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
@@ -1001,7 +1001,7 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
        
         switch ( CGAL::get_mode( is)) {
 
@@ -2349,7 +2349,7 @@ once to ensure code coverage.
     void
     cover_Min_circle_2( bool verbose, const Traits&, const RT&)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         typedef  CGAL::Min_circle_2< Traits >  Min_circle;
         typedef  typename Min_circle::Point    Point;

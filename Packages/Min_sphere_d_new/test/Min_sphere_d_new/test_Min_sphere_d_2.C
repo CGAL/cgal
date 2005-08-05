@@ -78,7 +78,7 @@
 int
 main( int argc, char* argv[])
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     // command line arguments
     int verbose = -1;

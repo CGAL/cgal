@@ -501,7 +501,7 @@ bool
 Min_sphere_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     CGAL::Verbose_ostream verr( verbose);
     verr << "CGAL::Min_sphere_d<Traits>::" << endl;
@@ -556,7 +556,7 @@ std::ostream&
 operator << ( std::ostream& os,
               const Min_sphere_d<Traits_>& min_sphere)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef  typename Min_sphere_d<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
@@ -613,7 +613,7 @@ template < class Traits_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Min_sphere_d<Traits_>& min_sphere)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     switch ( CGAL::get_mode( is)) {
 

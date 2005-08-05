@@ -693,7 +693,7 @@ for consistency with interfaces of other classes.
     Min_sphere_d<Traits_>::
     is_valid( bool verbose, int level) const
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         CGAL::Verbose_ostream verr( verbose);
         verr << "CGAL::Min_sphere_d<Traits>::" << endl;
@@ -793,7 +793,7 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_sphere_d<Traits_>& min_sphere)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         typedef  Min_sphere_d<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
@@ -850,7 +850,7 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_sphere_d<Traits_>& min_sphere)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         switch ( CGAL::get_mode( is)) {
 
@@ -1195,7 +1195,7 @@ error stream.
     test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
                        const Traits& traits, int verbose)
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
         
         typedef  CGAL::Min_sphere_d< Traits >  Min_sphere;
         typedef  typename Traits::Point_d      Point;
@@ -1810,7 +1810,7 @@ Finally we check whether center and squared radius are the same.
     int
     main( int argc, char* argv[])
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         // command line arguments
         @<Min_sphere_d test: command line argument>
@@ -1858,7 +1858,7 @@ Finally we check whether center and squared radius are the same.
     int
     main( int argc, char* argv[])
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
     
         // command line arguments
         @<Min_sphere_d test: command line argument>
@@ -1905,7 +1905,7 @@ Finally we check whether center and squared radius are the same.
     int
     main( int argc, char* argv[])
     {
-        CGAL_USING_NAMESPACE_STD
+        using namespace std;
 
         // command line arguments
         @<Min_sphere_d test: command line argument>

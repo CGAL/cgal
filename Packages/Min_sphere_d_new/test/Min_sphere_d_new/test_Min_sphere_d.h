@@ -47,7 +47,7 @@ void
 test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
                    const Traits& traits, int verbose)
 {
-    CGAL_USING_NAMESPACE_STD
+    using namespace std;
 
     typedef  CGAL::Min_sphere_d< Traits >  Min_sphere;
     typedef  typename Traits::Point_d      Point;
