@@ -165,6 +165,18 @@ struct Arity_traits< std::const_mem_fun1_ref_t< T1, T2, T3 > > {
   typedef Arity_tag< 2 > Arity;
 };
 
+// Versions of std::unary_function and std::binary_function which
+// add the arity.
+template <class Arg, class Result>
+struct Unary_function : public std::unary_function<Arg, Result> {
+  typedef Arity_tag< 1 > Arity;
+};
+
+template <class Arg1, class Arg2, class Result>
+struct Binary_function : public std::binary_function<Arg1, Arg2, Result> {
+  typedef Arity_tag< 2 > Arity;
+};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FUNCTIONAL_BASE_H
