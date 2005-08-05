@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <utility>
 #include <CGAL/functional_base.h>
+#include <CGAL/number_utils_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 

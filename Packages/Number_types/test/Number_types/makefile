@@ -15,6 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+           -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \

@@ -26,7 +26,7 @@
 
 #include <CGAL/config.h>
 #include <CGAL/enum.h>
-#include <algorithm>
+#include <CGAL/number_utils_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 

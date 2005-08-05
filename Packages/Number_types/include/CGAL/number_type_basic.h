@@ -40,9 +40,9 @@ using std::max;
 
 CGAL_END_NAMESPACE
 
+#include <CGAL/number_utils_fwd.h>
 #include <CGAL/known_bit_size_integers.h>
 #include <CGAL/Number_type_traits.h>
-#include <CGAL/number_utils.h>
 #include <CGAL/float.h>
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
@@ -125,6 +125,7 @@ CGAL_END_NAMESPACE
 
 #endif // CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
 
+#include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
 
 #endif // CGAL_NUMBER_TYPE_BASIC_H
