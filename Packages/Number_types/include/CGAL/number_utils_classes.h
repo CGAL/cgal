@@ -35,28 +35,28 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class NT >
-struct Is_zero :public CGAL_STD::unary_function< NT, bool > {
+struct Is_zero :public std::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return CGAL_NTS is_zero( x); }
 };
 
 template < class NT >
-struct Is_one :public CGAL_STD::unary_function< NT, bool > {
+struct Is_one :public std::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return CGAL_NTS is_one( x); }
 };
 
 template < class NT >
-struct Is_negative :public CGAL_STD::unary_function< NT, bool > {
+struct Is_negative :public std::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return CGAL_NTS is_negative( x); }
 };
 
 template < class NT >
-struct Is_positive :public CGAL_STD::unary_function< NT, bool > {
+struct Is_positive :public std::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return CGAL_NTS is_positive( x); }
@@ -64,21 +64,21 @@ struct Is_positive :public CGAL_STD::unary_function< NT, bool > {
 
 // Sign would result in a name clash with enum.h
 template < class NT >
-struct Sgn :public CGAL_STD::unary_function< NT, int > {
+struct Sgn :public std::unary_function< NT, Sign > {
   typedef Arity_tag< 1 > Arity;
   Sign operator()( const NT& x) const
   { return CGAL_NTS sign( x); }
 };
 
 template < class NT >
-struct Abs :public CGAL_STD::unary_function< NT, NT > {
+struct Abs :public std::unary_function< NT, NT > {
   typedef Arity_tag< 1 > Arity;
   NT operator()( const NT& x) const
   { return CGAL_NTS abs( x); }
 };
 
 template < class NT, class Compare = std::less< NT > >
-struct Min :public CGAL_STD::binary_function< NT, NT, NT > {
+struct Min :public std::binary_function< NT, NT, NT > {
   typedef Arity_tag< 2 > Arity;
   Min() {}
   Min(const Compare& c_) : c(c_) {}
@@ -89,7 +89,7 @@ protected:
 };
 
 template < class NT, class Compare = std::less< NT > >
-struct Max :public CGAL_STD::binary_function< NT, NT, NT > {
+struct Max :public std::binary_function< NT, NT, NT > {
   typedef Arity_tag< 2 > Arity;
   Max() {}
   Max(const Compare& c_) : c(c_) {}
@@ -101,7 +101,7 @@ protected:
 
 template < class NT >
 struct Compare
-  :public CGAL_STD::binary_function< NT, NT, Comparison_result > {
+  :public std::binary_function< NT, NT, Comparison_result > {
   typedef Arity_tag< 2 > Arity;
 
   Comparison_result
@@ -110,7 +110,7 @@ struct Compare
 };
 
 template < class NT >
-struct Square : public CGAL_STD::unary_function< NT, NT > {
+struct Square : public std::unary_function< NT, NT > {
   typedef Arity_tag< 1 > Arity;
 
   NT
@@ -119,7 +119,7 @@ struct Square : public CGAL_STD::unary_function< NT, NT > {
 };
 
 template < class NT >
-struct Sqrt : public CGAL_STD::unary_function< NT, NT > {
+struct Sqrt : public std::unary_function< NT, NT > {
   typedef Arity_tag< 1 > Arity;
 
   NT
@@ -128,7 +128,7 @@ struct Sqrt : public CGAL_STD::unary_function< NT, NT > {
 };
 
 template < class NT >
-struct Div : public CGAL_STD::binary_function< NT, NT, NT > {
+struct Div : public std::binary_function< NT, NT, NT > {
   typedef Arity_tag< 2 > Arity;
 
   NT
@@ -137,7 +137,7 @@ struct Div : public CGAL_STD::binary_function< NT, NT, NT > {
 };
 
 template < class NT >
-struct Gcd : public CGAL_STD::binary_function< NT, NT, NT > {
+struct Gcd : public std::binary_function< NT, NT, NT > {
   typedef Arity_tag< 2 > Arity;
 
   NT
@@ -146,7 +146,7 @@ struct Gcd : public CGAL_STD::binary_function< NT, NT, NT > {
 };
 
 template < class NT >
-struct To_double : public CGAL_STD::unary_function< NT, double > {
+struct To_double : public std::unary_function< NT, double > {
   typedef Arity_tag< 1 > Arity;
 
   double
@@ -156,7 +156,7 @@ struct To_double : public CGAL_STD::unary_function< NT, double > {
 
 template < class NT >
 struct To_interval
-  : public CGAL_STD::unary_function< NT, std::pair<double, double> >
+  : public std::unary_function< NT, std::pair<double, double> >
 {
   typedef Arity_tag< 1 > Arity;
 

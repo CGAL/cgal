@@ -46,12 +46,10 @@ template <> struct Number_type_traits<leda_bigfloat> {
   typedef Tag_false Has_exact_sqrt;
 };
 
-#ifndef CGAL_CFG_NO_NAMESPACE
 inline
 double
 to_double(const leda_bigfloat & b)
 { return CGAL_LEDA_SCOPE::to_double(b); }
-#endif // CGAL_CFG_NO_NAMESPACE
 
 inline
 leda_bigfloat

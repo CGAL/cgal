@@ -45,12 +45,10 @@ template <> struct Number_type_traits<leda_real> {
   typedef Tag_true  Has_exact_sqrt;
 };
 
-#ifndef CGAL_NO_NAMESPACE
 inline
 double
 to_double(const leda_real & r)
 { return r.to_double(); }
-#endif // CGAL_NO_NAMESPACE
 
 inline
 leda_real
@@ -72,7 +70,6 @@ io_Operator
 io_tag(const leda_real &)
 { return io_Operator(); }
 
-#ifndef CGAL_CFG_NO_NAMESPACE
 inline
 Sign
 sign(const leda_real& r)
@@ -85,7 +82,6 @@ compare(const leda_real& r1, const leda_real& r2)
   int c = CGAL_LEDA_SCOPE::compare(r1,r2);
   return (c < 0) ? SMALLER : ((0 < c) ?  LARGER : EQUAL);
 }
-#endif // CGAL_CFG_NO_NAMESPACE
 
 inline
 std::pair<double,double>

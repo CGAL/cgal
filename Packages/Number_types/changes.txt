@@ -1,3 +1,7 @@
+5 August 2005 Sylvain Pion
+- Remove traces of CGAL_STD and CGAL_CFG_NO_NAMESPACE.
+- Fix result_type of CGAL::Sgn.
+
 4 August 2005 Sylvain Pion
 - Fix *_fwd.h re-organization for some compilers.
 - Move CGAL/known_bit_size_integers.h from Kernel_23.

@@ -78,12 +78,10 @@ io_Operator
 io_tag(const leda_rational &)
 { return io_Operator(); }
 
-#ifndef CGAL_CFG_NO_NAMESPACE
 inline
 Sign
 sign(const leda_rational& r)
 { return (Sign) CGAL_LEDA_SCOPE::sign(r); }
-#endif // CGAL_CFG_NO_NAMESPACE
 
 inline
 std::pair<double,double>
