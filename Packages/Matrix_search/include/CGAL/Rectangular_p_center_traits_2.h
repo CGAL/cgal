@@ -29,7 +29,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class A, class S >
-struct Select : public CGAL_STD::binary_function< A, A, A > {
+struct Select : public std::binary_function< A, A, A > {
   typedef Arity_tag< 2 > Arity;
 
   Select() {}
@@ -44,7 +44,7 @@ protected:
 
 template < class R >
 struct I_Signed_x_distance_2
-: public CGAL_STD::binary_function<
+: public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typedef Arity_tag< 2 > Arity;
@@ -54,7 +54,7 @@ struct I_Signed_x_distance_2
 };
 template < class R >
 struct I_Signed_y_distance_2
-: public CGAL_STD::binary_function<
+: public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typedef Arity_tag< 2 > Arity;
@@ -64,7 +64,7 @@ struct I_Signed_y_distance_2
 };
 template < class R >
 struct I_Infinity_distance_2
-: public CGAL_STD::binary_function<
+: public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typedef Arity_tag< 2 > Arity;
@@ -76,7 +76,7 @@ struct I_Infinity_distance_2
 };
 template < class R >
 struct I_Signed_infinity_distance_2
-: public CGAL_STD::binary_function<
+: public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typedef Arity_tag< 2 > Arity;

@@ -116,7 +116,7 @@ private:
 };
 template < class Cell >
 struct Cell_min
-: public CGAL_STD::unary_function< Cell, typename Cell::Value >
+: public std::unary_function< Cell, typename Cell::Value >
 {
   typedef Arity_tag< 1 > Arity;
   typename Cell::Value
@@ -126,7 +126,7 @@ struct Cell_min
 
 template < class Cell >
 struct Cell_max
-: public CGAL_STD::unary_function< Cell, typename Cell::Value > {
+: public std::unary_function< Cell, typename Cell::Value > {
   typedef Arity_tag< 1 > Arity;
 
   Cell_max( int offset) : ofs( offset) {}

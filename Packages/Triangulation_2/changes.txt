@@ -1,3 +1,6 @@
+5 August 2005 Sylvain Pion
+- Remove CGAL_STD.
+
 19 June 2005 Menelaos Karavelas
 - fixed typo in predicates/Regular_triangulation_rtH2.h
 

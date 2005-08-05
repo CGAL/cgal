@@ -19,6 +19,7 @@
 
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_SWEEP_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_SWEEP_2_H
+
 #include <utility>
 #include <list>
 #include <map>
@@ -29,6 +30,7 @@
 #include <CGAL/Triangulation_2.h>
 
 CGAL_BEGIN_NAMESPACE
+
 template < class Gt, class Tds>
 class Triangulation_2;
 
@@ -59,7 +61,7 @@ public:
   class Event_less;
   class Status_comp;
     
-  class Event_less : public CGAL_STD::binary_function<Point, Point, bool>
+  class Event_less : public std::binary_function<Point, Point, bool>
   {
   private:
     Geom_traits t;
@@ -75,7 +77,7 @@ public:
   };
     
   class Status_comp : 
-  public CGAL_STD::binary_function<Constraint, Constraint, bool>
+  public std::binary_function<Constraint, Constraint, bool>
   {
   private:
     Geom_traits t;
@@ -145,7 +147,7 @@ public:
       
   };
     
-  class Neighbor_list : public CGAL_STD::list<Neighbor>
+  class Neighbor_list : public std::list<Neighbor>
   {
   private:
      Ctriangulation* _tr;

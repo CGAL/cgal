@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -21,8 +20,6 @@
 // $Name$
 //
 // Author(s)     : Geert-Jan Giezeman
-
-
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
@@ -386,7 +383,7 @@ intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1,
         return make_object(itr);
     }
     case is_t::POLYGON: {
-        typedef CGAL_STD::vector<typename K::Point_2> Container;
+        typedef std::vector<typename K::Point_2> Container;
         Container points(ispair.vertex_count());
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
@@ -398,8 +395,4 @@ intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1,
 
 } // namespace CGALi
 
-
-
-
 CGAL_END_NAMESPACE
-

@@ -1,3 +1,6 @@
+5 August 2005 Sylvain Pion
+- Remove CGAL_STD.
+
 15 January 2005 Sylvain Pion
 - Transform_iterator fix for g++ 4.0
 

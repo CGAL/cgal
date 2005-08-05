@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
 struct Index_operator
-: public CGAL_STD::binary_function< Array, Index, Element >
+: public std::binary_function< Array, Index, Element >
 {
   typedef Arity_tag< 2 > Arity;
 

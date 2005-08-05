@@ -39,11 +39,11 @@ struct Circulator_tag {};                   // any circulator.
 struct Iterator_tag {};                     // any iterator.
 
 struct Forward_circulator_tag
-    : public CGAL_STD::forward_iterator_tag {};
+    : public std::forward_iterator_tag {};
 struct Bidirectional_circulator_tag
-    : public CGAL_STD::bidirectional_iterator_tag {};
+    : public std::bidirectional_iterator_tag {};
 struct Random_access_circulator_tag
-    : public CGAL_STD::random_access_iterator_tag {};
+    : public std::random_access_iterator_tag {};
 template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
 struct Forward_circulator_base {
     typedef T                            value_type;

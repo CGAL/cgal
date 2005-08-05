@@ -1,5 +1,10 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+5 August 2005 Sylvain Pion
+- Remove CGAL_STD.
+
+=========================== CGAL 3.1 ============================
+
 4 August 2004 Sylvain Pion
 - test-suite : remove protect macros, and replace CGAL_assertion by assert
   to prevent warnings in release mode.
