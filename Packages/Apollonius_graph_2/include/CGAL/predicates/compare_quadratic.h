@@ -492,32 +492,31 @@ ke_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
     if ( s_P4 == POSITIVE )  { return SMALLER; }
     if ( s_P4 == NEGATIVE )  { return LARGER; }
     return EQUAL;
-  } else { // J < 0
-    if ( s_K == POSITIVE )  { return LARGER; }
-
-    if ( s_K == ZERO ) {
-      FT D2 = value_of_D(a2, b2, c2);
-      if ( CGAL::is_zero(D2) ) { return EQUAL; }
-
-      return LARGER;
-    }
-    FT G = a1c2 - a2c1;
-    FT P3inf = value_of_P3inf(a1, b1, J, G);
-
-    if ( !(CGAL::is_negative(P3inf)) )  { return LARGER; }
-
-    FT Jp = value_of_Jp(b1, c1, b2, c2);
-
-    if ( CGAL::is_positive(Jp) )  { return SMALLER; }
-
-    FT P4 = value_of_P4(J, Jp, G);
-
-    Sign s_P4 = CGAL::sign(P4);
-    if ( s_P4 == POSITIVE )  { return LARGER; }
-    if ( s_P4 == NEGATIVE )  { return SMALLER; }
-    return EQUAL;
   }
-  // to avoid warning; the control flow never reaches this point
+
+  // J < 0
+  if ( s_K == POSITIVE )  { return LARGER; }
+
+  if ( s_K == ZERO ) {
+    FT D2 = value_of_D(a2, b2, c2);
+    if ( CGAL::is_zero(D2) ) { return EQUAL; }
+
+    return LARGER;
+  }
+  FT G = a1c2 - a2c1;
+  FT P3inf = value_of_P3inf(a1, b1, J, G);
+
+  if ( !(CGAL::is_negative(P3inf)) )  { return LARGER; }
+
+  FT Jp = value_of_Jp(b1, c1, b2, c2);
+
+  if ( CGAL::is_positive(Jp) )  { return SMALLER; }
+
+  FT P4 = value_of_P4(J, Jp, G);
+
+  Sign s_P4 = CGAL::sign(P4);
+  if ( s_P4 == POSITIVE )  { return LARGER; }
+  if ( s_P4 == NEGATIVE )  { return SMALLER; }
   return EQUAL;
 }
 
@@ -712,13 +711,12 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
       return LARGER;
     }
-  } else { // J = 0
-    Sign s_G = CGAL::sign( value_of_G(a1, c1, a2, c2) );
-    if ( s_G == NEGATIVE ) { return SMALLER; }
-    if ( s_G == POSITIVE ) { return LARGER; }
-    return EQUAL;
   }
-  // to avoid warning; the control flow never reaches this point
+
+  // J = 0
+  Sign s_G = CGAL::sign( value_of_G(a1, c1, a2, c2) );
+  if ( s_G == NEGATIVE ) { return SMALLER; }
+  if ( s_G == POSITIVE ) { return LARGER; }
   return EQUAL;
 }
 
