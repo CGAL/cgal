@@ -1,4 +1,7 @@
 5 August 2005 Sylvain Pion
+- Move functional_base.h from Kernel_23.
+
+5 August 2005 Sylvain Pion
 - Replace CGAL_STD by std.
 
 4 August 2005 Sylvain Pion
