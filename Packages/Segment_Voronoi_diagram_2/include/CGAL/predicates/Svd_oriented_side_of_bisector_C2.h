@@ -253,22 +253,22 @@ private:
 	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
 	return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
       }
-    } else {
-      std::pair<RT,RT> d2_s1 = compute_squared_distance(qq, ls1);
-      if ( idx2 == -1 ) {
-	RT d2_s2 = compute_squared_distance(qq, ssrc2);
-	return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
-      } else if ( idx2 == 1 ) {
-	RT d2_s2 = compute_squared_distance(qq, strg2);
-	return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
-      } else {
-	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
-	return CGAL::compare(d2_s1.first * d2_s2.second,
-			     d2_s2.first * d2_s1.second);
-      }
     }
-    // to avoid compiler warning; the flow control never reaches this point
-    return EQUAL;
+
+    CGAL_assertion( idx1 == 0 );
+    std::pair<RT,RT> d2_s1 = compute_squared_distance(qq, ls1);
+    if ( idx2 == -1 ) {
+      RT d2_s2 = compute_squared_distance(qq, ssrc2);
+      return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
+    } else if ( idx2 == 1 ) {
+      RT d2_s2 = compute_squared_distance(qq, strg2);
+      return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
+    }
+
+    CGAL_assertion( idx2 == 0 );
+    std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
+    return CGAL::compare(d2_s1.first * d2_s2.second,
+			 d2_s2.first * d2_s1.second);
   }
 
   //-----------------------------------------------------------------
