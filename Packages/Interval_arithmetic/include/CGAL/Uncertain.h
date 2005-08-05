@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <stdexcept>
+#include <CGAL/enum.h>
 
 CGAL_BEGIN_NAMESPACE
 
