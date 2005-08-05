@@ -219,7 +219,7 @@ struct Root_of_traits
 
 template < class NT1,class NT2 >
 struct NT_converter < Root_of_2<NT1> , Root_of_2<NT2> >
-  : public CGAL_STD::unary_function< NT1, NT2 >
+  : public std::unary_function< NT1, NT2 >
 {
     Root_of_2<NT2>
     operator()(const Root_of_2<NT1> &a) const
@@ -231,7 +231,7 @@ struct NT_converter < Root_of_2<NT1> , Root_of_2<NT2> >
 
 template < class NT1,class NT2 >
 struct NT_converter < NT1 , Root_of_2<NT2> >
-  : public CGAL_STD::unary_function< NT1, NT2 >
+  : public std::unary_function< NT1, NT2 >
 {
     Root_of_2<NT2>
     operator()(const NT1 &a) const
