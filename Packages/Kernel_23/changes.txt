@@ -1,4 +1,7 @@
 5 August 2005 Sylvain Pion
+- Move functional_base.h to STL_Extension.
+
+5 August 2005 Sylvain Pion
 - Fix #include ordering.
 
 4 August 2005 Sylvain Pion
