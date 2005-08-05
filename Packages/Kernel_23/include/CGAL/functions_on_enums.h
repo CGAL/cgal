@@ -60,6 +60,11 @@ Angle
 opposite(Angle a)
 { return static_cast<Angle>( - static_cast<int>(a)); }
 
+template < typename T, typename U >
+inline
+T enum_cast(const U& u)
+{ return static_cast<T>(u); }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FUNCTIONS_ON_ENUMS_H
