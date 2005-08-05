@@ -28,6 +28,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
+#include <CGAL/Kernel/global_functions.h>
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>

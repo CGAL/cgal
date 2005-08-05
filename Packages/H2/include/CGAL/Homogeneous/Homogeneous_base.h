@@ -29,6 +29,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
 
+#include <CGAL/Kernel/global_functions.h>
+
 #include <CGAL/Homogeneous/Aff_transformationH2.h>
 #include <CGAL/Cartesian/Circle_2.h>
 
