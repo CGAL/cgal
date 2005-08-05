@@ -2,6 +2,11 @@
 //	Revision History for package Min_quadrilateral_2
 //=====================================================================
 
+5 August 2005 Sylvain Pion
+- Remove CGAL_STD.
+
+============================== CGAL 3.1 =========================
+
 19 December 2004 Andreas Fabri
 - Updated file headers in the demos
 

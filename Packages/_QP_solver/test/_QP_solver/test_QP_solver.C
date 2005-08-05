@@ -35,7 +35,7 @@ typedef  std::vector<double>  Vector;
 typedef  std::vector<Vector>  Matrix;
 
 struct Begin
-    : public CGAL_STD::unary_function< Vector, Vector::const_iterator > {
+    : public std::unary_function< Vector, Vector::const_iterator > {
     result_type  operator () ( const Vector& v) const { return v.begin(); }
 };
 

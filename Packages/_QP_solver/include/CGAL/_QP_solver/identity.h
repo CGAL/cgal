@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class T >
 class identity
-    : public CGAL_STD::unary_function<T,T> {
+    : public std::unary_function<T,T> {
   public:
     T  operator () ( T t) const { return t; }
 };
@@ -35,5 +35,3 @@ class identity
 CGAL_END_NAMESPACE
   
 #endif // CGAL_IDENTITY_H
-
-// ===== EOF ==================================================================

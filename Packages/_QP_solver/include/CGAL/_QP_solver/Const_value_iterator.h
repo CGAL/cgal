@@ -28,8 +28,7 @@ CGAL_BEGIN_NAMESPACE
 template < class T >
 class Const_value_iterator
 #ifdef __BORLANDC__
-    : public CGAL_STD::
-        iterator<std::random_access_iterator_tag,T,ptrdiff_t,T*,T&>
+    : public std::iterator<std::random_access_iterator_tag,T,ptrdiff_t,T*,T&>
 #endif
                            {
   public:

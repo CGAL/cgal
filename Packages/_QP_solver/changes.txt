@@ -1,3 +1,8 @@
+5 August 2005 Sylvain Pion
+- Remove CGAL_STD.
+
+============================== CGAL 3.1 =============================
+
 21 September 2004 Andreas Fabri
 - Replaced license header of number type related files that get included by CGAL/basic.h
 - Removed a semicolon after the closing bracket of a namespace as g++-3.4 complains

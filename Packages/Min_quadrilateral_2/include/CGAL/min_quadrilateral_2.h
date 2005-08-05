@@ -293,7 +293,7 @@ namespace Optimisation {
     
     template < class Kernel >
     class Rdbmop
-    : public CGAL_STD::binary_function< Direction_2, int, Direction_2 >
+    : public std::binary_function< Direction_2, int, Direction_2 >
     {
       typename Kernel::Construct_perpendicular_vector_2   cperpvec;
       typename Kernel::Construct_vector_from_direction_2  cvec;
