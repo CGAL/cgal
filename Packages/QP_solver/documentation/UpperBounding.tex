@@ -351,12 +351,12 @@ and $j$ components yields
 \begin{eqnarray}
 \label{eq:KKT_lagrange_id_B}
   c_{B}^{T} + {2x_{B}^{*}}^{T}D_{B,B}
-  + 2x_{\hat{N}}^{T}D_{\hat{N},B}
+  + 2{x_{\hat{N}}^{*}}^{T}D_{\hat{N},B}
   + 2x_{j}^{*}D_{B,j}^{T} & = & -\lambda^{T} A_{B} \\
 \label{eq:KKT_lagrange_id_j}
   c_{j} + 2{x_{B}^{*}}^{T}D_{B,j}
   + 2x_{j}^{*}D_{j,j}
-  + 2x_{\hat{N}}^{T}D_{\hat{N},j} & = &
+  + 2{x_{\hat{N}}^{*}}^{T}D_{\hat{N},j} & = &
   -\lambda^{T} A_{j} + \mu_{j}
 \end{eqnarray}
 Equation~(\ref{eq:KKT_lagrange_id_B}) together with the feasibility
@@ -388,7 +388,7 @@ A_{N} \\
 2D_{B, N}
 \end{array}
 \right)
-x_{N}
+x_{N}^{*}
 %-d_{t}tn
 %\left(
 %\begin{array}{c}
@@ -586,8 +586,9 @@ takes the value of its lower or upper bound $l_{i}$ or $u_{i}$, or a local
 minimum of the objective function is reached.
 
 The minimum value of $t$ for the first event, $t_{min}^{j}(d_{t})$, is computed
-in the following way
+in the following way for $j \in O \cap N$
 \begin{equation}
+\label{def:t_min_j}
 t_{min}^{j}(d_{t}):=
 \left\{
 \begin{array}{ll}
@@ -606,10 +607,12 @@ u_{j}-l_{j}
 \end{array}
 \right.
 \end{equation}
+Note that for $j \in S \cup art$ the first event can never occur.
 
 The minimum value of $t$ for the second event, $t_{min}^{B}(d_{t})$, is computed
 in the following way
 \begin{equation}
+\label{def:t_min_B}
 t_{min}^{B}(d_{t}):=\min\{t_{min}^{l}(d_{t}), t_{min}^{u}(d_{t})\}
 \end{equation}
 where
@@ -632,7 +635,9 @@ c_{j} + A_{j}^{T}\lambda(t, d_{t})+2D_{B,j}^{T}x_{B}^{*}(t, d_{t})
 +2D_{\hat{N},j}^{T}x_{\hat{N}} \nonumber \\
 &=&
 \mu_{j}+d_{t}t
-\left(2D_{j,j}-A_{j}^{T}q_{\lambda}-2D_{B,j}^{T}q_{x}\right)
+\left(2D_{j,j}-A_{j}^{T}q_{\lambda}-2D_{B,j}^{T}q_{x}\right) \nonumber \\
+&=&
+\mu_{j}+d_{t}t\nu
 \end{eqnarray}
 As soon as $\mu_{j}(t, d_{t})$ becomes zero for some $t > 0$,
 $\lambda(t, d_{t})$ and $\mu=0$ fulfill the KKT conditions of
@@ -642,6 +647,10 @@ $\hat{B}$ is the new basis in case of the third event.
 For later reference let us denote by $t_{min}^{\mu_{j}}(d_{t})$ 
 the smallest $t$ for which $\mu_{j}(t, d_{t})$
 becomes zero.
+\begin{equation}
+\label{def:t_min_mu_j}
+t_{min}^{\mu_{j}}(d_{t}):=-\mu_{j}(0, d_{t})/\nu
+\end{equation}
 \begin{lemma}
 \label{lem:new_basis}
 If $\mu_{j}(t, d_{t})$ in Equation~(\ref{eq:mu_j_t_dt}) becomes zero for some
@@ -850,7 +859,7 @@ N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
 \> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
 \> \texttt{IF $\mu_{j} \neq 0$ THEN} \\
 \texttt{IFIF} \= \kill
-\> \texttt{IF $j = j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
+\> \texttt{IF $j = j_{l}$ THEN $d_{t}:=1$ ELSE $d_{t}:=-1$ END} \\
 %\texttt{IFIFIF} \= \kill
 %\> \texttt{dir:=1} \\
 %\texttt{IFIF} \= \kill
@@ -859,7 +868,7 @@ N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
 %\> \texttt{dir=-1} \\
 %\texttt{IFIF} \= \kill
 %\> \texttt{END} \\
-\> \texttt{RETURN $(j, dir)$} \\
+\> \texttt{RETURN $(j, d_{t})$} \\
 \texttt{IF} \= \kill
 \> \texttt{ELSE} \\
 \texttt{IFIF} \= \kill
@@ -889,8 +898,8 @@ Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 f
 \> \texttt{IF $\left(\mu_{j} < 0 \wedge b\left(j\right) \leq 0 \right)
    \vee \left(\mu_{j} > 0 \wedge b\left(j\right) \geq 0 \right)$} \\
 \texttt{IFIF} \= \kill
-\> \texttt{IF $j=j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
-\> \texttt{RETURN $(j, dir)$} \\
+\> \texttt{IF $j=j_{l}$ THEN $d_{t}:=1$ ELSE $d_{t}:=-1$ END} \\
+\> \texttt{RETURN $(j, d_{t})$} \\
 \texttt{IF} \= \kill
 \> \texttt{ELSE} \\
 \texttt{IFIF} \= \kill
@@ -921,73 +930,24 @@ $u_{j}$, or lower bound, $l_{j}$.
 \item A basic variable $x_{i}$ takes the value of its finite upper or lower bound.
 \item $\mu_{j}(x_{j})$ becomes zero.
 \end{enumerate}
-In the first event only the values of the basic variables $x_{B}$ as well as 
-the value of the 'entering' variable $x_{j}$ of the current solution change, whereas the basis matrix remains the same. The basic variables $x_{B}^{\prime}$ of the new solution $x^{\prime}$ are then given by
-\begin{equation}
-x_{B}^{\prime}:=
-\left\{
-\begin{array}{ll}
-x_{B} + b(j)\left(u_{j}-l_{j}\right)q_{x}
-&
-\text{if $b(j) \neq 0$} \\
-x_{B} - l_{j}q_{x}
-&
-\text{if $b(j)=0 \wedge d_{t}=-1$} \\
-x_{B} + u_{j}q_{x}
-&
-\text{if $b(j)=0\wedge d_{t}=1$}
-\end{array}
-\right.
-\end{equation}
-and the nonbasic variables $x_{N}^{\prime}$ by
-\begin{equation}
-x_{N \setminus\{j\}}^{\prime}:=x_{N \setminus \{j\}}
-\quad
-x_{j}^{\prime}:=
-\left\{
-\begin{array}{ll}
-l_{j} 
-&
-\text{if $d_{t}=-1$} \\
-u_{j}
-&
-\text{if $d_{t}=1$} 
-\end{array}
-\right.
-\end{equation}
 
-In the second event both the values of the basic variables as well as the basis matrix change; the new set of basic variables is $B^{\prime}:=B \setminus \{i\}$
-\begin{equation}
-\left(
-\begin{array}{c}
-\lambda_{C}^{\prime} \\
-\hline
-x_{B}^{\prime}
-\end{array}
-\right)
-:=
-\left(
-\begin{array}{c}
-\lambda_{C} \\
-\hline
-x_{B}
-\end{array}
-\right)
--t_{min}^{B}
-\left(
-\begin{array}{c}
-q_{\lambda} \\
-\hline
-q_{x}
-\end{array}
-\right)
-\end{equation}
-\marginpar{include artificial vars as well}  
+\paragraph{$\mathbf{t_{min}^{B}(d_{t}):}$}
+Since slack and artificial variables all have the same upper and lower bounds,
+we don't want to keep the vectors $f^{l}$, $f^{u}$ and the function
+$b: O \cup S \cup art \rightarrow \{-1,0,1\}$ explicitly for the artificial and
+slack variables. 
+All of the variables comprising $B_{S}$ have the same bounds, whereas because of
+$art \subseteq O$ the variables of the set $B_{O}$ do not share this property in
+the sense that for $art \subseteq B_{O}$ the bounds are implicitly given and for
+$B_{O} \setminus art$ they are defined by $f^{l}, l$ and $f^{u}, u$, such that
+we cannot use one function for both the ratio test for the set of basic
+original variables $B_{O}$ and the set of basic slack variables $B_{S}$ without
+incurring computational overhead for the latter set.
 %\begin{algorithm}
 %\caption{Ratio Test Step~1 with upper bounding}
 %\label{alg:ratio_test_step_1_0}
 \begin{algorithmic}
-\Function{ratio\_test\_1\_\_t\_i}{$B_{O}, B_{S}, d_{t}$}
+\Function{ratio\_test\_1\_\_t\_i\_B\_O}{$B_{O}, x_{B_{O}}, q_{B_{O}}, d_{t}$}
 \State $i_{min} \gets -1, \quad     d_{min} \gets 1, \quad  q_{min} \gets 0$
 \If{$d_{t}=1$}
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
@@ -1013,15 +973,15 @@ q_{x}
             \EndIf
         \EndIf
     \EndFor
-    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
-        \If{$q_{B_{S}}[i] > 0$}
-            \If{$d_{min}*q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
-                \State $i_{min} \gets B_{S}[i],
-                    \quad d_{min} \gets x_{B_{S}}[i],
-                    \quad q_{min} \gets q_{B_{S}}[i]$
-            \EndIf	
-        \EndIf 
-    \EndFor
+%    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+%        \If{$q_{B_{S}}[i] > 0$}
+%            \If{$d_{min}*q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
+%                \State $i_{min} \gets B_{S}[i],
+%                    \quad d_{min} \gets x_{B_{S}}[i],
+%                    \quad q_{min} \gets q_{B_{S}}[i]$
+%            \EndIf	
+%        \EndIf 
+%    \EndFor
 \Else
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
         \If{$q_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{u}[i]=1$}
@@ -1046,6 +1006,40 @@ q_{x}
             \EndIf
         \EndIf
     \EndFor
+%    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+%        \If{$q_{B_{S}}[i] < 0$}
+%            \If{$d_{min}*-q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
+%                \State $i_{min} \gets B_{S}[i],
+%                    \quad d_{min} \gets x_{B_{S}}[i],
+%                    \quad q_{min} \gets -q_{B_{S}}[i]$
+%            \EndIf	
+%        \EndIf 
+%    \EndFor
+\EndIf
+\State \textbf{return} $(i_{min}, d_{min}, q_{min})$
+\EndFunction
+\end{algorithmic}
+%\end{algorithm}
+Due to the fact that all of the upper and lower bounds for the basic slack
+variables are implicitly given the corresponding function for the basic slack
+variables is somewhat simpler. Since we distinguish between quadratic programs
+that have inequality constraints and ones that have equality constraints only
+by the compile time tag \texttt{Has\_no\_inequalities}, the function
+is statically dispatched. We list the non-void case:
+\begin{algorithmic}
+\Function{ratio\_test\_1\_\_t\_i\_B\_S}{$B_{S}, x_{B_{S}}, q_{B_{S}}, d_{t}$}
+\State $i_{min} \gets -1, \quad     d_{min} \gets 1, \quad  q_{min} \gets 0$
+\If{$d_{t}=1$}
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$q_{B_{S}}[i] > 0$}
+            \If{$d_{min}*q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
+                \State $i_{min} \gets B_{S}[i],
+                    \quad d_{min} \gets x_{B_{S}}[i],
+                    \quad q_{min} \gets q_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\Else
     \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
         \If{$q_{B_{S}}[i] < 0$}
             \If{$d_{min}*-q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
@@ -1059,7 +1053,19 @@ q_{x}
 \State \textbf{return} $(i_{min}, d_{min}, q_{min})$
 \EndFunction
 \end{algorithmic}
-%\end{algorithm}
+\paragraph{$\mathbf{t_{min}^{\mu_{j}}(d_{t}):}$}
+According to Equations~(\ref{def:t_min_mu_j}), (\ref{eq:mu_j_t_dt}) as well
+as~(\ref{eq:KKT_lagrange_id_j}) we compute $\mu_{j}(t, d_{t})$ for $t=0$ 
+\begin{algorithmic}
+\Function{ratio\_test\_1\_\_t\_j}{$Is\_linear()$}
+\If{$j<n$}
+    \State $\mu_{j} \gets c_{j}+A_{C,j}^{T}\lambda_{C}
+        +2D_{B_{O},j}^{T}x_{B_{O}}$
+\Else
+    \State $\mu_{j} \gets A_{C,j}^{T}\lambda_{C}$
+\EndIf 
+\EndFunction
+\end{algorithmic}
 
 \subsection{Ratio Test Step~2}
 Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $d_{t}=-1 \Rightarrow \mu_{j}>0$ for an entering variable, we distinguish these two cases and for each basic variable $x_{i}$ we distinguish whether  
@@ -1128,6 +1134,73 @@ Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $
 \EndFunction
 \end{algorithmic}
 %\end{algorithm}
+
+\subsection{Updates}
+
+\subsubsection{Updates for Ratio Test Step~1}
+In the first event only the values of the basic variables $x_{B}$ as well as 
+the value of the 'entering' variable $x_{j}$ of the current solution change, whereas the basis matrix remains the same. The basic variables $x_{B}^{\prime}$ of the new solution $x^{\prime}$ are then given by
+\begin{equation}
+x_{B}^{\prime}:=
+\left\{
+\begin{array}{ll}
+x_{B} + b(j)\left(u_{j}-l_{j}\right)q_{x}
+&
+\text{if $b(j) \neq 0$} \\
+x_{B} - l_{j}q_{x}
+&
+\text{if $b(j)=0 \wedge d_{t}=-1$} \\
+x_{B} + u_{j}q_{x}
+&
+\text{if $b(j)=0\wedge d_{t}=1$}
+\end{array}
+\right.
+\end{equation}
+and the nonbasic variables $x_{N}^{\prime}$ by
+\begin{equation}
+x_{N \setminus\{j\}}^{\prime}:=x_{N \setminus \{j\}}
+\quad
+x_{j}^{\prime}:=
+\left\{
+\begin{array}{ll}
+l_{j} 
+&
+\text{if $d_{t}=-1$} \\
+u_{j}
+&
+\text{if $d_{t}=1$} 
+\end{array}
+\right.
+\end{equation}
+
+In the second event both the values of the basic variables as well as the basis matrix change; the new set of basic variables is $B^{\prime}:=B \setminus \{i\}$
+\begin{equation}
+\left(
+\begin{array}{c}
+\lambda_{C}^{\prime} \\
+\hline
+x_{B}^{\prime}
+\end{array}
+\right)
+:=
+\left(
+\begin{array}{c}
+\lambda_{C} \\
+\hline
+x_{B}
+\end{array}
+\right)
+-t_{min}^{B}
+\left(
+\begin{array}{c}
+q_{\lambda} \\
+\hline
+q_{x}
+\end{array}
+\right)
+\end{equation}
+
+\subsubsection{Updates for Ratio Test Step~2}
 
 
 \begin{thebibliography}{99}
