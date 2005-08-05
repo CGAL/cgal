@@ -1,3 +1,7 @@
+5 August 2005 Sylvain Pion
+- Specialize functors Sgn, Compare, Is_zero... for Interval_nt so that they
+  return Uncertain<> (and their result_type is also updated).
+
 3 August 2005 Sylvain Pion
 - Interval_nt : remove operator&& and operator||.  Add value_type == double.
 - Interval_arithmetic.h renamed to Interval_nt.h to follow CGAL's convetions.
