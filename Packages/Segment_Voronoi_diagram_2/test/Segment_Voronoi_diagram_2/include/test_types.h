@@ -10,6 +10,24 @@
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
 
+//========================================================================
+
+template<class NT>
+char* get_fname(const NT&) {
+  return "data/bizarre.cin";
+}
+
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>
+
+template<>
+char* get_fname(const CGAL::Gmpq&) {
+  return "data/bizarre.Gmpq.cin";
+}
+#endif
+
+//========================================================================
+
 CGAL_BEGIN_NAMESPACE
 
 template<class SVD>
@@ -42,6 +60,8 @@ struct Level_finder< Segment_Voronoi_diagram_2<Gt,SVDDS,LTag> >
   size_type operator()(Vertex_handle v) const { return 0; }
 };
 
+
+//========================================================================
 
 template<class SVD, class InputStream>
 bool test_svd(InputStream& is, const SVD&, char* fname)
@@ -329,7 +349,7 @@ bool test_svd(InputStream& is, const SVD&, char* fname)
   {
     svd.clear();
 
-    std::ifstream ifs("data/bizarre.cin");
+    std::ifstream ifs( get_fname(typename Geom_traits::FT()) );
     assert( ifs );
     Site_2 t;
     while ( ifs >> t ) {
