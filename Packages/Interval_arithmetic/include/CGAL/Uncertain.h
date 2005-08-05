@@ -288,6 +288,13 @@ inline
 const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
 { return t; }
 
+
+// enum_cast overload
+template < typename T, typename U >
+inline
+Uncertain<T> enum_cast(const Uncertain<U>& u)
+{ return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup())); }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_UNCERTAIN_H
