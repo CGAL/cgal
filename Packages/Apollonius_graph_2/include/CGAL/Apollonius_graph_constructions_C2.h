@@ -220,7 +220,7 @@ public:
     //
     Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
-      Line_2 l1(q, p);
+      Line_2 l1(p.point(), q.point());
       Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
       Ray_2 ray(r, l.direction());
       return make_object(ray);
