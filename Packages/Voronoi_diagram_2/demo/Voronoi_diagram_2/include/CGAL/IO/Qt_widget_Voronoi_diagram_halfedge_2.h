@@ -22,7 +22,7 @@ class Voronoi_diagram_halfedge_2
  public:
   Voronoi_diagram_halfedge_2() : Base() {}
   Voronoi_diagram_halfedge_2(const Base& e) : Base(e), is_conflict(false) {}
-  Voronoi_diagram_halfedge_2(const Delaunay_edge& e, bool inf, const Site_2& s)
+  Voronoi_diagram_halfedge_2(const Delaunay_edge& e, int inf, const Site_2& s)
     : Base(), is_conflict(true), e_(e), inf_(inf), s_(s) {}
 
   void draw(Qt_widget& qt_w) const
@@ -33,7 +33,7 @@ class Voronoi_diagram_halfedge_2
     typedef typename Geom_traits::Line_2                     Line_2;
 
     if ( is_conflict ) {
-      if ( !inf_ ) {
+      if ( inf_ == 0 ) {
 	typename Geom_traits::Construct_circumcenter_2 circumcenter;
 	Point_2 c1 = circumcenter(e_.first->vertex(0)->point(),
 				  e_.first->vertex(1)->point(),
@@ -98,7 +98,7 @@ class Voronoi_diagram_halfedge_2
 private:
   bool is_conflict;
   Delaunay_edge e_;
-  bool inf_;
+  int inf_;
   Site_2 s_;
 };
 

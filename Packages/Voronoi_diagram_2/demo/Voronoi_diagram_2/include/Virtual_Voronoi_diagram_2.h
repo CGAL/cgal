@@ -74,6 +74,15 @@ class Virtual_Voronoi_diagram_base_2
 
   typedef Halfedge_with_draw_t                    Halfedge_with_draw;
 
+  typedef typename Base::Delaunay_graph           Delaunay_graph;
+  typedef typename Delaunay_graph::Edge           Delaunay_edge;
+  typedef typename Delaunay_graph::Vertex_handle  Delaunay_vertex_handle;
+  typedef typename Delaunay_graph::Face_handle    Delaunay_face_handle;
+
+  typedef typename Base::Voronoi_traits::Site_2   Site_2;
+
+  typedef Triangulation_cw_ccw_2                  CW_CCW_2;
+
   Virtual_Voronoi_diagram_base_2() {}
   virtual ~Virtual_Voronoi_diagram_base_2() {}
 
@@ -89,10 +98,14 @@ class Virtual_Voronoi_diagram_base_2
   }
 
   virtual
-  Object conflicts(const typename Base::Voronoi_traits::Site_2& s) const
+  Object conflicts(const Site_2& s) const
   {
-    typedef std::vector<typename Base::Delaunay_graph::Edge>        Edge_vector;
-    typedef std::vector<typename Base::Delaunay_graph::Face_handle> Face_vector;
+    if ( Base::dual().dimension() < 2 ) {
+      return CGAL::make_object( (int)0 );
+    }
+
+    typedef std::vector<Delaunay_edge>          Edge_vector;
+    typedef std::vector<Delaunay_face_handle>   Face_vector;
 
     typedef std::back_insert_iterator<Face_vector>   Face_output_iterator;
     typedef std::back_insert_iterator<Edge_vector>   Edge_output_iterator;
@@ -108,30 +121,26 @@ class Virtual_Voronoi_diagram_base_2
     return CGAL::make_object( std::make_pair(fvec, evec) );
   }
 
-  typedef typename Base::Halfedge::Delaunay_edge   Delaunay_edge;
-
   Delaunay_edge opposite(const Delaunay_edge& e) const {
     int j = Base::dual().tds().mirror_index(e.first, e.second);
-    typename Base::Delaunay_graph::Face_handle n = e.first->neighbor(e.second);
+    Delaunay_face_handle n = e.first->neighbor(e.second);
     return Delaunay_edge(n, j);
   }
 
-  template<class Iterator>
-  bool is_boundary(const Delaunay_edge& e,
-		   Iterator first, Iterator beyond) const {
+  template<class Query, class Iterator>
+  bool find(const Query& q, Iterator first, Iterator beyond) const {
     for (Iterator it = first; it != beyond; ++it) {
-      if ( e == *it || opposite(e) == *it ) { return true; }
+      if ( q == *it ) { return true; }
     }
     return false;
   }
 
 #ifdef CGAL_USE_QT
-  virtual void draw_conflicts(const typename Base::Voronoi_traits::Site_2& s,
-			      const Object& o, Qt_widget& widget) const {
-    typedef std::vector<typename Base::Delaunay_graph::Edge>        Edge_vector;
-    typedef std::vector<typename Base::Delaunay_graph::Face_handle> Face_vector;
-
-    typedef std::pair<Face_vector,Edge_vector>               result_type;
+  virtual void draw_conflicts(const Site_2& s, const Object& o,
+			      Qt_widget& widget) const {
+    typedef std::vector<Delaunay_edge>           Edge_vector;
+    typedef std::vector<Delaunay_face_handle>    Face_vector;
+    typedef std::pair<Face_vector,Edge_vector>   result_type;
 
     result_type res;
     if ( !CGAL::assign(res, o) ) { return; }
@@ -142,10 +151,27 @@ class Virtual_Voronoi_diagram_base_2
     widget << CGAL::YELLOW;
     unsigned int linewidth = widget.lineWidth();
     widget << CGAL::LineWidth(4);
-    for (unsigned int i = 0; i < evec.size(); i++) {
-      Delaunay_edge opp = opposite(evec[i]);
-      Halfedge_with_draw ee(opp, Base::dual().is_infinite(opp.first), s);
-      widget << ee;
+
+    bool do_regular_draw = true;
+    if ( evec.size() == 2 ) {
+      Delaunay_edge e1 = evec[0];
+      Delaunay_edge e2 = evec[1];
+      if ( e1 == opposite(e2) ) {
+	do_regular_draw = false;
+	if ( !Base::dual().is_infinite(e1) ) {
+	  Halfedge_with_draw ee(e1, 2, s);
+	  widget << ee;
+	}
+      }
+    }
+
+    if ( do_regular_draw ) {
+      for (unsigned int i = 0; i < evec.size(); i++) {
+	if ( Base::dual().is_infinite(evec[i]) ) { continue; }
+	Delaunay_edge opp = opposite(evec[i]);
+	Halfedge_with_draw ee(opp, Base::dual().is_infinite(opp.first), s);
+	widget << ee;
+      }
     }
 
     typename Base::Voronoi_traits::Edge_degeneracy_tester e_tester =
@@ -153,8 +179,20 @@ class Virtual_Voronoi_diagram_base_2
     for (unsigned int i = 0; i < fvec.size(); i++) {
       for (int j = 0; j < 3; j++) {
 	Delaunay_edge e(fvec[i], j);
-	if ( !is_boundary(e, evec.begin(), evec.end()) ) {
+	Delaunay_edge opp = opposite(e);
+
+	if ( Base::dual().is_infinite(e) ) { continue; }
+
+	if ( !find(e, evec.begin(), evec.end()) &&
+	     !find(opp, evec.begin(), evec.end()) ) {
 	  if ( !e_tester(Base::dual(),e) ) {
+	    //************************************************************
+	    //************************************************************
+	    //************************************************************
+	    // this constructor is not documented; I should chane the code
+	    //************************************************************
+	    //************************************************************
+	    //************************************************************
 	    Halfedge h(static_cast<const Base*>(this), e.first, e.second);
 	    Halfedge_with_draw ee(h);
 	    widget << ee;

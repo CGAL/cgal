@@ -9,7 +9,6 @@
 #include <CGAL/Hyperbola_ray_2.h>
 #include <CGAL/Hyperbola_2.h>
 
-
 CGAL_BEGIN_NAMESPACE
 
 template<class VDA>
@@ -22,20 +21,18 @@ class Apollonius_diagram_halfedge_2
   typedef typename Voronoi_diagram::Halfedge         Base;
   typedef typename Base::Delaunay_edge               Delaunay_edge;
 
-  typedef typename Voronoi_diagram::Voronoi_traits::Site_2  Site_2;
-
+  typedef typename Voronoi_diagram::Voronoi_traits::Site_2   Site_2;
+  typedef typename Voronoi_diagram::Voronoi_traits::Point_2  Point_2;
  public:
   Apollonius_diagram_halfedge_2() : Base() {}
   Apollonius_diagram_halfedge_2(const Base& e)
     : Base(e), is_conflict(false) {}
-  Apollonius_diagram_halfedge_2(const Delaunay_edge& e, bool inf,
+  Apollonius_diagram_halfedge_2(const Delaunay_edge& e, int inf,
 				const Site_2& s)
     : Base(), is_conflict(true), e_(e), inf_(inf), s_(s) {}
 
   void draw(Qt_widget& qt_w) const
   {
-    if ( is_conflict ) { return; }
-
     typedef typename Apollonius_graph_2::Geom_traits     Geom_traits;
     typedef typename Geom_traits::Assign_2               Assign_2;
     typedef typename Geom_traits::Segment_2              Segment_2;
@@ -54,6 +51,59 @@ class Apollonius_diagram_halfedge_2
     Line_2 l;
 
     Object o;
+    if ( is_conflict ) {
+      int ccw_i = (e_.second + 1) % 3;
+      int cw_i  = (e_.second + 2) % 3;
+      typename Geom_traits::Construct_Apollonius_vertex_2 cvertex = 
+	Geom_traits().construct_Apollonius_vertex_2_object();
+      if ( inf_ == 0 ) {
+	Point_2 c1 = cvertex(e_.first->vertex(ccw_i)->site(),
+			     e_.first->vertex(cw_i)->site(),
+			     s_);
+
+	Point_2 c2 = cvertex(e_.first->vertex(ccw_i)->site(),
+			     e_.first->vertex(cw_i)->site(),
+			     e_.first->vertex(e_.second)->site());
+
+	Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
+	o = c_seg(e_.first->vertex(ccw_i)->site(),
+		  e_.first->vertex(cw_i)->site(),
+		  c1, c2);
+      } else if ( inf_ == 1 ) {
+	Point_2 c = cvertex(e_.first->vertex(ccw_i)->site(),
+			    e_.first->vertex(cw_i)->site(),
+			    s_);
+
+	Construct_Apollonius_bisector_ray_2<Geom_traits> c_ray;
+	o = c_ray(e_.first->vertex(ccw_i)->site(),
+		  e_.first->vertex(cw_i)->site(),
+		  c, POSITIVE);
+      } else {
+	CGAL_assertion( inf_ == 2 );
+	Point_2 c1 = cvertex(e_.first->vertex(ccw_i)->site(),
+			     e_.first->vertex(cw_i)->site(),
+			     s_);
+
+	Point_2 c2 = cvertex(e_.first->vertex(cw_i)->site(),
+			     e_.first->vertex(ccw_i)->site(),
+			     s_);
+
+	Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
+	o = c_seg(e_.first->vertex(ccw_i)->site(),
+		  e_.first->vertex(cw_i)->site(),
+		  c1, c2);
+      }
+
+      // fix this and use the output operators...
+      if      ( assign(hs,o) )   hs.draw(qt_w);
+      else if ( assign(hr,o) )   hr.draw(qt_w);
+      else if ( assign(h, o) )   h.draw(qt_w);
+      else if ( assign(s, o) )   qt_w << s;
+      else if ( assign(r, o) )   qt_w << r;
+      else if ( assign(l, o) )   qt_w << l;
+      return;
+    }
+
     if ( this->has_source() && this->has_target() ) {
       Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
       o = c_seg(this->down()->site(),
@@ -89,7 +139,7 @@ class Apollonius_diagram_halfedge_2
 private:
   bool is_conflict;
   Delaunay_edge e_;
-  bool inf_;
+  int inf_;
   Site_2 s_;
 };
 

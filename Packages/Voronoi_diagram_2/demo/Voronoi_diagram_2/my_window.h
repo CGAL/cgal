@@ -397,7 +397,7 @@ private slots:
   void get_insert_mode(bool b)
   {
     is_remove_mode = b;
-
+#if 0
     if ( is_remove_mode ) {
       get_point.activate();
       get_circle.deactivate();
@@ -407,6 +407,7 @@ private slots:
 	get_circle.activate();
       }
     }
+#endif
   }
 
   void get_input_mode(Input_mode im) {
