@@ -35,10 +35,9 @@ midpointC3( const FT &px, const FT &py, const FT &pz,
             const FT &qx, const FT &qy, const FT &qz,
             FT &x, FT &y, FT &z)
 {
-  FT half = FT(1) / FT(2);
-  x = (px+qx) * half;
-  y = (py+qy) * half;
-  z = (pz+qz) * half;
+  x = (px + qx) / 2;
+  y = (py + qy) / 2;
+  z = (pz + qz) / 2;
 }
 
 template < class FT >
@@ -76,7 +75,7 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
                                rpx,rpy,rpz,
                                spx,spy,spz);
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
-  FT inv = FT(1)/(FT(2) * den);
+  FT inv = 1 / (2 * den);
 
   x = px + num_x*inv;
   y = py - num_y*inv;
@@ -107,13 +106,13 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   //
   // FT num_x = det3x3_by_formula(psy,psz,ps2,
   //                              qsy,qsz,qs2,
-  //                              rsy,rsz,FT(0));
+  //                              rsy,rsz,0);
   // FT num_y = det3x3_by_formula(psx,psz,ps2,
   //                              qsx,qsz,qs2,
-  //                              rsx,rsz,FT(0));
+  //                              rsx,rsz,0);
   // FT num_z = det3x3_by_formula(psx,psy,ps2,
   //                              qsx,qsy,qs2,
-  //                              rsx,rsy,FT(0));
+  //                              rsx,rsy,0);
 
   FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
 	   - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
@@ -126,8 +125,8 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
                                qsx,qsy,qsz,
                                rsx,rsy,rsz);
 
-  CGAL_kernel_assertion( den != FT(0) );
-  FT inv = FT(1)/(FT(2) * den);
+  CGAL_kernel_assertion( den != 0 );
+  FT inv = 1 / (2 * den);
 
   x = sx + num_x*inv;
   y = sy - num_y*inv;
@@ -142,9 +141,9 @@ centroidC3( const FT &px, const FT &py, const FT &pz,
             const FT &sx, const FT &sy, const FT &sz,
             FT &x, FT &y, FT &z)
 {
-   x = (px + qx + rx + sx)/FT(4);
-   y = (py + qy + ry + sy)/FT(4);
-   z = (pz + qz + rz + sz)/FT(4);
+   x = (px + qx + rx + sx) / 4;
+   y = (py + qy + ry + sy) / 4;
+   z = (pz + qz + rz + sz) / 4;
 }
 
 template < class FT >
@@ -154,9 +153,9 @@ centroidC3( const FT &px, const FT &py, const FT &pz,
             const FT &rx, const FT &ry, const FT &rz,
             FT &x, FT &y, FT &z)
 {
-   x = (px + qx + rx)/FT(3);
-   y = (py + qy + ry)/FT(3);
-   z = (pz + qz + rz)/FT(3);
+   x = (px + qx + rx) / 3;
+   y = (py + qy + ry) / 3;
+   z = (pz + qz + rz) / 3;
 }
 
 template < class FT >
@@ -196,7 +195,7 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
 
   return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(FT(2) * den);
+        + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
 }
 
 template < class FT >
@@ -230,10 +229,10 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
                                qsx,qsy,qsz,
                                rsx,rsy,rsz);
 
-  CGAL_kernel_assertion( den != FT(0) );
+  CGAL_kernel_assertion( den != 0 );
 
   return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(FT(2) * den);
+        + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
 }
 
 template <class FT> 
@@ -274,10 +273,10 @@ void
 point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
                  FT &x, FT &y, FT &z)
 {
-  x = y = z = FT(0);
+  x = y = z = 0;
   if (! CGAL_NTS is_zero(pa))      x = -pd/pa;
   else if (! CGAL_NTS is_zero(pb)) y = -pd/pb;
-  else                  z = -pd/pc;
+  else                             z = -pd/pc;
 }
 
 template <class FT>
@@ -317,7 +316,7 @@ FT
 squared_radiusC3( const FT &px, const FT &py, const FT &pz,
                   const FT &qx, const FT &qy, const FT &qz)
 {
-  return squared_distanceC3(px, py, pz, qx, qy, qz)/FT(4);
+  return squared_distanceC3(px, py, pz, qx, qy, qz) / 4;
 }
 
 template < class FT >

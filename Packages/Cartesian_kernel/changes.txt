@@ -1,4 +1,7 @@
 6 August 2005 Sylvain Pion
+- Replace FT(0) by 0, and similar.
+
+6 August 2005 Sylvain Pion
 - Remove <FT> qualification for functions part of the NT interface
   (sign, compare...), for efficiency.
 - Add <FT> qualification for functions which are not part of the

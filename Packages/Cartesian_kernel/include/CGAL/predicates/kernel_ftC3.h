@@ -425,11 +425,9 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
 	   - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
 
-  FT den   = det3x3_by_formula(psx,psy,psz,
-                               qsx,qsy,qsz,
-                               rsx,rsy,rsz);
-
-  FT den2 = FT(2) * den;
+  FT den2  = 2 * det3x3_by_formula(psx,psy,psz,
+                                   qsx,qsy,qsz,
+                                   rsx,rsy,rsz);
 
   // The following could be simplified a bit.
   return Bounded_side(cmp_dist_to_pointC3<FT>(num_x,    - num_y,  num_z,

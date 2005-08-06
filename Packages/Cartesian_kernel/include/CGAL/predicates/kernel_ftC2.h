@@ -277,10 +277,10 @@ compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
 {
   // angles are in [-pi,pi], and the angle between Ox and d1 is compared
   // with the angle between Ox and d2
-  int quadrant_1 = (dx1 >= FT(0)) ? ((dy1 >= FT(0))?1:4)
-                                  : ((dy1 >= FT(0))?2:3);
-  int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
-                                  : ((dy2 >= FT(0))?2:3);
+  int quadrant_1 = (dx1 >= 0) ? (dy1 >= 0 ? 1 : 4)
+                              : (dy1 >= 0 ? 2 : 3);
+  int quadrant_2 = (dx2 >= 0) ? (dy2 >= 0 ? 1 : 4)
+                              : (dy2 >= 0 ? 2 : 3);
   // We can't use CGAL_NTS compare(quadrant_1,quadrant_2) because in case
   // of tie, we need additional computation
   if (quadrant_1 > quadrant_2)
@@ -295,14 +295,14 @@ CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b) 
 {
-   if (l1a == FT(0))  // l1 is horizontal
-    return l2b == FT(0) ? SMALLER
+   if (l1a == 0)  // l1 is horizontal
+    return l2b == 0 ? SMALLER
 	                : Comparison_result(CGAL_NTS sign(l2a*l2b));
-   if (l2a == FT(0)) // l2 is horizontal
-    return l1b == FT(0) ? LARGER
+   if (l2a == 0) // l2 is horizontal
+    return l1b == 0 ? LARGER
 	                : Comparison_result(-CGAL_NTS sign(l1a*l1b));
-   if (l1b == FT(0)) return l2b == FT(0) ? EQUAL : LARGER;
-   if (l2b == FT(0)) return SMALLER;
+   if (l1b == 0) return l2b == 0 ? EQUAL : LARGER;
+   if (l2b == 0) return SMALLER;
    int l1_sign = CGAL_NTS sign(-l1a * l1b);
    int l2_sign = CGAL_NTS sign(-l2a * l2b);
 

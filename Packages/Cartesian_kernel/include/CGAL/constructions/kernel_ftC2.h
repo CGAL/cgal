@@ -35,8 +35,8 @@ midpointC2( const FT &px, const FT &py,
             const FT &qx, const FT &qy,
             FT &x, FT &y )
 {
-  x = (px+qx) / FT(2);
-  y = (py+qy) / FT(2);
+  x = (px+qx) / 2;
+  y = (py+qy) / 2;
 }
 
 template < class FT >
@@ -53,7 +53,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   // What we do is intersect the bisectors.
   FT r2 = CGAL_NTS square(drx) + CGAL_NTS square(dry);
   FT q2 = CGAL_NTS square(dqx) + CGAL_NTS square(dqy);
-  FT den = FT(2) * det2x2_by_formula(dqx, dqy, drx, dry);
+  FT den = 2 * det2x2_by_formula(dqx, dqy, drx, dry);
 
   // The 3 points aren't collinear.
   // Hopefully, this is already checked at the upper level.
@@ -86,8 +86,8 @@ centroidC2( const FT &px, const FT &py,
             const FT &rx, const FT &ry,
             FT &x, FT &y)
 {
-   x = (px + qx + rx)/FT(3);
-   y = (py + qy + ry)/FT(3);
+   x = (px + qx + rx) / 3;
+   y = (py + qy + ry) / 3;
 }
 
 template < class FT >
@@ -99,8 +99,8 @@ centroidC2( const FT &px, const FT &py,
             const FT &sx, const FT &sy,
             FT &x, FT &y)
 {
-   x = (px + qx + rx + sx)/FT(4);
-   y = (py + qy + ry + sy)/FT(4);
+   x = (px + qx + rx + sx) / 4;
+   y = (py + qy + ry + sy) / 4;
 }
 
 template < class FT >
@@ -162,8 +162,8 @@ bisector_of_pointsC2(const FT &px, const FT &py,
 		     const FT &qx, const FT &qy,
 		     FT &a, FT &b, FT& c )
 {
-  a = FT(2)*(px - qx);
-  b = FT(2)*(py - qy);
+  a = 2 * (px - qx);
+  b = 2 * (py - qy);
   c = CGAL_NTS square(qx) + CGAL_NTS square(qy) -
       CGAL_NTS square(px) - CGAL_NTS square(py);
 }
@@ -206,13 +206,13 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      x = (-b-c)/a + FT(i)*b;
-      y = FT(1) - FT(i)*a;
+      x = (-b-c)/a + i * b;
+      y = 1 - i * a;
     }
   else
     {
-      x = FT(1) + FT(i)*b;
-      y = -(a+c)/b - FT(i)*a;
+      x = 1 + i * b;
+      y = -(a+c)/b - i * a;
     }
 }
 
@@ -307,7 +307,7 @@ FT
 squared_radiusC2(const FT &px, const FT &py,
                  const FT &qx, const FT &qy)
 {
-  return squared_distanceC2(px, py,qx, qy)/FT(4);
+  return squared_distanceC2(px, py,qx, qy) / 4;
 }
 
 template < class FT >
