@@ -67,6 +67,7 @@ class Virtual_Voronoi_diagram_base_2
 
   typedef typename Base::Locate_result            Locate_result;
   typedef typename Base::Halfedge                 Halfedge;
+  typedef typename Base::Halfedge_handle          Halfedge_handle;
   typedef typename Base::Face_handle              Face_handle;
   typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
   typedef typename Base::Edge_iterator            Edge_iterator;
@@ -186,15 +187,7 @@ class Virtual_Voronoi_diagram_base_2
 	if ( !find(e, evec.begin(), evec.end()) &&
 	     !find(opp, evec.begin(), evec.end()) ) {
 	  if ( !e_tester(Base::dual(),e) ) {
-	    //************************************************************
-	    //************************************************************
-	    //************************************************************
-	    // this constructor is not documented; I should chane the code
-	    //************************************************************
-	    //************************************************************
-	    //************************************************************
-	    Halfedge h(static_cast<const Base*>(this), e.first, e.second);
-	    Halfedge_with_draw ee(h);
+	    Halfedge_with_draw ee(*Base::dual(e));
 	    widget << ee;
 	  }
 	}

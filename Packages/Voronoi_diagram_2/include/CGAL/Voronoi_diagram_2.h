@@ -433,6 +433,19 @@ public:
   // ACCESS FUNCTIONS
   //------------------
 
+  // VORONOI FEATURES FROM DELAUNAY FEATURES
+  Halfedge_handle dual(typename Halfedge::Delaunay_edge& e) const {
+    return Halfedge_handle( Halfedge(this, e.first, e.second) );
+  }
+
+  Face_handle dual(typename Face::Delaunay_vertex_handle& v) const {
+    return Face_handle( Face(this, v) );
+  }
+
+  Vertex_handle dual(typename Vertex::Delaunay_face_handle& f) const {
+    return Vertex_handle( Vertex(this, f) );
+  }
+
   // DUAL
   const Delaunay_graph& dual() const { return dual_; }
 

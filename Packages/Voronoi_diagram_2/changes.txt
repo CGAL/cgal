@@ -1,6 +1,9 @@
 6 August 2005:  Menelaos Karavelas
 - demo: fixed the display of the conflict region for all three kinds
   of Voronoi diagrams.
+- demo: eliminated use of a non-documented constructor
+- VDA: added dual() methods that go from Delaunay features to Voronoi
+  diagram features
 
 3 August 2005:  Menelaos Karavelas
 - the demo now shows the conflict region for a site. The code is kind
