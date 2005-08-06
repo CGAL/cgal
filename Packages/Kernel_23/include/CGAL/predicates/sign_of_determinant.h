@@ -31,17 +31,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class FT>
 inline
-Sign
+typename Sgn<FT>::result_type
 sign_of_determinant2x2( const FT& a00,  const FT& a01,
                         const FT& a10,  const FT& a11)
 {
-  return
-    static_cast<Sign>(static_cast<int>(CGAL_NTS compare( a00*a11, a10*a01)));
+  return enum_cast<Sign>(CGAL_NTS compare( a00*a11, a10*a01));
 }
 
 template <class FT>
 inline
-Sign
+typename Sgn<FT>::result_type
 sign_of_determinant3x3( const FT& a00,  const FT& a01,  const FT& a02,
                         const FT& a10,  const FT& a11,  const FT& a12,
                         const FT& a20,  const FT& a21,  const FT& a22)
@@ -53,7 +52,7 @@ sign_of_determinant3x3( const FT& a00,  const FT& a01,  const FT& a02,
 
 template <class FT>
 inline
-Sign
+typename Sgn<FT>::result_type
 sign_of_determinant4x4(
  const FT& a00,  const FT& a01,  const FT& a02,  const FT& a03,
  const FT& a10,  const FT& a11,  const FT& a12,  const FT& a13,
@@ -68,7 +67,7 @@ sign_of_determinant4x4(
 
 template <class FT>
 CGAL_KERNEL_LARGE_INLINE
-Sign
+typename Sgn<FT>::result_type
 sign_of_determinant5x5(
  const FT& a00,  const FT& a01,  const FT& a02,  const FT& a03,  const FT& a04,
  const FT& a10,  const FT& a11,  const FT& a12,  const FT& a13,  const FT& a14,
@@ -85,7 +84,7 @@ sign_of_determinant5x5(
 
 template <class FT>
 CGAL_KERNEL_LARGE_INLINE
-Sign
+typename Sgn<FT>::result_type
 sign_of_determinant6x6(
  const FT& a00, const FT& a01, const FT& a02, const FT& a03, const FT& a04,
  const FT& a05,
