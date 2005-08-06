@@ -281,19 +281,53 @@ Uncertain<bool> operator!=(const T & a, Uncertain<T> const& b)
 template < typename T >
 inline
 Uncertain<T> make_uncertain(const T&t)
-{ return Uncertain<T>(t); }
+{
+  return Uncertain<T>(t);
+}
 
 template < typename T >
 inline
 const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
-{ return t; }
+{
+  return t;
+}
 
 
 // enum_cast overload
 template < typename T, typename U >
 inline
 Uncertain<T> enum_cast(const Uncertain<U>& u)
-{ return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup())); }
+{
+  return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
+}
+
+
+// opposite
+template < typename T >
+inline
+Uncertain<T> opposite(const Uncertain<T> &u)
+{
+  return Uncertain<T>(opposite(u.sup()), opposite(u.inf()));
+}
+
+
+// Uncertain<> property propagator.
+template < typename T1, typename T2 >
+struct Same_uncertainty
+{
+  typedef T1 type;
+};
+
+template < typename T1, typename T2 >
+struct Same_uncertainty < T1, Uncertain<T2> >
+{
+  typedef Uncertain<T1> type;
+};
+
+// Short cut to extract uncertainty from a number type directly.
+template < typename T1, typename NT >
+struct Same_uncertainty_nt
+  : Same_uncertainty <T1, typename Sgn<NT>::result_type > {};
 
 CGAL_END_NAMESPACE
 
