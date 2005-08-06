@@ -1,6 +1,8 @@
 6 August 2005:  Menelaos Karavelas
 - fixed unreachable statement warnings produced by pgCC
 - fixed bug in construction of bisector ray
+- fixed bug in computation of conflicts: if the query site destroys
+  everything the edge list is empty, which was not handled correctly.
 
 31 July 2005:  Menelaos Karavelas
 - fixed wrong assignments of signs to FT in compare_quadratic.h

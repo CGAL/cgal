@@ -1172,15 +1172,17 @@ protected:
     fit = find_conflicts(start_f, p, l, fm, vm, fit);
 
     // output the edges on the boundary of the conflict region
-    const Edge& e_front = l.front();
-    // here I should be able to write: const Edge& e = l.front();
-    // instead of what I have; but the compiler complains for the
-    // assignment: e = l.next(e);
-    Edge e = l.front();
-    do {
-      *eit++ = e;
-      e = l.next(e);
-    } while ( !equal(e, e_front) );
+    if ( l.size() > 0 ) {
+      const Edge& e_front = l.front();
+      // here I should be able to write: const Edge& e = l.front();
+      // instead of what I have; but the compiler complains for the
+      // assignment: e = l.next(e);
+      Edge e = l.front();
+      do {
+	*eit++ = e;
+	e = l.next(e);
+      } while ( !equal(e, e_front) );
+    }
 
     // output the hidden vertices
     for (typename Vertex_map::iterator it = vm.begin(); it != vm.end(); ++it) {
