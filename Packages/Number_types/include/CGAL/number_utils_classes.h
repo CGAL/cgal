@@ -35,6 +35,42 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class NT1, class NT2 = NT1 >
+struct Equal_to : public Binary_function< NT1, NT2, bool > {
+  bool operator()( const NT1& x, const NT2& y) const
+  { return x == y; }
+};
+
+template < class NT1, class NT2 = NT1 >
+struct Not_equal_to : public Binary_function< NT1, NT2, bool > {
+  bool operator()( const NT1& x, const NT2& y) const
+  { return x != y; }
+};
+
+template < class NT1, class NT2 = NT1 >
+struct Greater : public Binary_function< NT1, NT2, bool > {
+  bool operator()( const NT1& x, const NT2& y) const
+  { return x > y; }
+};
+
+template < class NT1, class NT2 = NT1 >
+struct Less : public Binary_function< NT1, NT2, bool > {
+  bool operator()( const NT1& x, const NT2& y) const
+  { return x < y; }
+};
+
+template < class NT1, class NT2 = NT1 >
+struct Greater_equal : public Binary_function< NT1, NT2, bool > {
+  bool operator()( const NT1& x, const NT2& y) const
+  { return x >= y; }
+};
+
+template < class NT1, class NT2 = NT1 >
+struct Less_equal : public Binary_function< NT1, NT2, bool > {
+  bool operator()( const NT1& x, const NT2& y) const
+  { return x <= y; }
+};
+
 template < class NT >
 struct Is_zero :public Unary_function< NT, bool > {
   bool operator()( const NT& x) const

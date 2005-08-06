@@ -1,3 +1,7 @@
+6 August 2005 Sylvain Pion
+- Add functors Equal_to Not_equal_to Greater Less Greater_equal Less_equal
+  which take 2 arguments (with a default), and provide the Arity.
+
 5 August 2005 Sylvain Pion
 - Use Unary_function and Binary_function instead of the std:: counterpart.
 

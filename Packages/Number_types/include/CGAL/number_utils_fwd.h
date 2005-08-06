@@ -30,6 +30,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class NT1, class NT2 > struct Equal_to;
+template < class NT1, class NT2 > struct Not_equal_to;
+template < class NT1, class NT2 > struct Greater;
+template < class NT1, class NT2 > struct Less;
+template < class NT1, class NT2 > struct Greater_equal;
+template < class NT1, class NT2 > struct Less_equal;
+
 template < class NT > struct Is_zero;
 template < class NT > struct Is_one;
 template < class NT > struct Is_negative;
