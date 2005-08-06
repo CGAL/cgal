@@ -1,5 +1,6 @@
 6 August 2005 Sylvain Pion
 - Replace FT(0) by 0, and similar.
+- Propagate uncertainty in low level FT predicates.
 
 6 August 2005 Sylvain Pion
 - Remove <FT> qualification for functions part of the NT interface

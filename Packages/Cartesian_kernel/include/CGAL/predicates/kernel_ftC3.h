@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class FT >
 inline
-bool
+typename Equal_to<FT>::result_type
 parallelC3(const FT &v1x, const FT &v1y, const FT &v1z,
            const FT &v2x, const FT &v2y, const FT &v2z)
 {
@@ -42,7 +42,7 @@ parallelC3(const FT &v1x, const FT &v1y, const FT &v1z,
 }
 
 template < class FT >
-bool
+typename Equal_to<FT>::result_type
 parallelC3(const FT &s1sx, const FT &s1sy, const FT &s1sz,
            const FT &s1tx, const FT &s1ty, const FT &s1tz,
            const FT &s2sx, const FT &s2sy, const FT &s2sz,
@@ -62,11 +62,12 @@ parallelC3(const FT &s1sx, const FT &s1sy, const FT &s1sz,
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename Compare<FT>::result_type
 compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
                                 const FT &qx, const FT &qy, const FT &qz)
 {
-  Comparison_result c = CGAL_NTS compare(px, qx);
+  typedef typename Compare<FT>::result_type Cmp;
+  Cmp c = CGAL_NTS compare(px, qx);
   if (c != EQUAL) return c;
   c = CGAL_NTS compare(py, qy);
   if (c != EQUAL) return c;
@@ -75,7 +76,7 @@ compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 strict_dominanceC3(const FT &px, const FT &py, const FT &pz,
 		   const FT &qx, const FT &qy, const FT &qz)
 {
@@ -86,7 +87,7 @@ strict_dominanceC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 dominanceC3(const FT &px, const FT &py, const FT &pz,
 	    const FT &qx, const FT &qy, const FT &qz)
 {
@@ -97,7 +98,7 @@ dominanceC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 collinearC3(const FT &px, const FT &py, const FT &pz,
             const FT &qx, const FT &qy, const FT &qz,
             const FT &rx, const FT &ry, const FT &rz)
@@ -116,76 +117,78 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Orientation
+typename Same_uncertainty_nt<Orientation, FT>::type
 orientationC3(const FT &px, const FT &py, const FT &pz,
               const FT &qx, const FT &qy, const FT &qz,
               const FT &rx, const FT &ry, const FT &rz,
               const FT &sx, const FT &sy, const FT &sz)
 {
-  return Orientation(sign_of_determinant3x3<FT>(qx-px,rx-px,sx-px,
-                                                qy-py,ry-py,sy-py,
-                                                qz-pz,rz-pz,sz-pz));
+  return enum_cast<Orientation>(sign_of_determinant3x3<FT>(qx-px,rx-px,sx-px,
+                                                           qy-py,ry-py,sy-py,
+                                                           qz-pz,rz-pz,sz-pz));
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Orientation
+typename Same_uncertainty_nt<Orientation, FT>::type
 orientationC3(const FT &ux, const FT &uy, const FT &uz,
               const FT &vx, const FT &vy, const FT &vz,
               const FT &wx, const FT &wy, const FT &wz)
 {
-  return Orientation(sign_of_determinant3x3(ux, vx, wx,
-                                            uy, vy, wy,
-                                            uz, vz, wz));
+  return enum_cast<Orientation>(sign_of_determinant3x3(ux, vx, wx,
+                                                       uy, vy, wy,
+                                                       uz, vz, wz));
 }
 
 template < class FT >
 inline
-Angle
+typename Same_uncertainty_nt<Angle, FT>::type
 angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &qx, const FT &qy, const FT &qz,
         const FT &rx, const FT &ry, const FT &rz)
 {
-  return (Angle) CGAL_NTS sign((px-qx)*(rx-qx)+
-	                       (py-qy)*(ry-qy)+
-			       (pz-qz)*(rz-qz));
+  return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-qx)+
+	                                (py-qy)*(ry-qy)+
+				        (pz-qz)*(rz-qz)));
 }
 
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-Orientation
+typename Same_uncertainty_nt<Orientation, FT>::type
 coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
                        const FT &qx, const FT &qy, const FT &qz,
                        const FT &rx, const FT &ry, const FT &rz,
                        const FT &sx, const FT &sy, const FT &sz)
 {
-  Orientation oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
+  typedef typename Same_uncertainty_nt<Orientation, FT>::type  Ori;
+  Ori oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
   if (oxy_pqr != COLLINEAR)
-      return Orientation( oxy_pqr * orientationC2(px,py,qx,qy,sx,sy));
+      return enum_cast<Orientation>( oxy_pqr * orientationC2(px,py,qx,qy,sx,sy));
 
-  Orientation oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
+  Ori oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
   if (oyz_pqr != COLLINEAR)
-      return Orientation( oyz_pqr * orientationC2(py,pz,qy,qz,sy,sz));
+      return enum_cast<Orientation>( oyz_pqr * orientationC2(py,pz,qy,qz,sy,sz));
 
-  Orientation oxz_pqr = orientationC2(px,pz,qx,qz,rx,rz);
+  Ori oxz_pqr = orientationC2(px,pz,qx,qz,rx,rz);
   CGAL_kernel_assertion(oxz_pqr != COLLINEAR);
-  return Orientation( oxz_pqr * orientationC2(px,pz,qx,qz,sx,sz));
+  return enum_cast<Orientation>( oxz_pqr * orientationC2(px,pz,qx,qz,sx,sz));
 }
 
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-Orientation
+typename Same_uncertainty_nt<Orientation, FT>::type
 coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
                        const FT &qx, const FT &qy, const FT &qz,
                        const FT &rx, const FT &ry, const FT &rz)
 {
-  Orientation oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
+  typedef typename Same_uncertainty_nt<Orientation, FT>::type  Ori;
+  Ori oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
   if (oxy_pqr != COLLINEAR)
       return oxy_pqr;
 
-  Orientation oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
+  Ori oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
   if (oyz_pqr != COLLINEAR)
       return oyz_pqr;
 
@@ -194,7 +197,7 @@ coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
-Bounded_side
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 coplanar_side_of_bounded_circleC3(const FT &px, const FT &py, const FT &pz,
                                   const FT &qx, const FT &qy, const FT &qz,
                                   const FT &rx, const FT &ry, const FT &rz,
@@ -226,16 +229,16 @@ coplanar_side_of_bounded_circleC3(const FT &px, const FT &py, const FT &pz,
   FT vy = pqz*prx - pqx*prz;
   FT vz = pqx*pry - pqy*prx;
   FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
-  return Bounded_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
-                                             rtx,rty,rtz,rt2,
-                                             qtx,qty,qtz,qt2,
-                                             vx,vy,vz,v2));
+  return enum_cast<Bounded_side>(sign_of_determinant4x4(ptx,pty,ptz,pt2,
+                                                        rtx,rty,rtz,rt2,
+                                                        qtx,qty,qtz,qt2,
+                                                        vx,vy,vz,v2));
 }
 
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 collinear_are_ordered_along_lineC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz,
@@ -253,7 +256,7 @@ collinear_are_ordered_along_lineC3(
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 collinear_are_strictly_ordered_along_lineC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz,
@@ -270,7 +273,7 @@ collinear_are_strictly_ordered_along_lineC3(
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
                   const FT &dx2, const FT &dy2, const FT &dz2)
 {
@@ -284,18 +287,20 @@ equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
               const FT &pa, const FT &pb, const FT &pc, const FT &pd)
 {
+    typedef typename Sgn<FT>::result_type  Sg;
+
     if (!equal_directionC3(ha, hb, hc, pa, pb, pc))
 	return false; // Not parallel.
 
-    CGAL::Sign s1a = CGAL_NTS sign(ha);
+    Sg s1a = CGAL_NTS sign(ha);
     if (s1a != ZERO)
         return s1a == CGAL_NTS sign(pa)
             && sign_of_determinant2x2(pa, pd, ha, hd) == ZERO;
-    CGAL::Sign s1b = CGAL_NTS sign(hb);
+    Sg s1b = CGAL_NTS sign(hb);
     if (s1b != ZERO)
         return s1b == CGAL_NTS sign(pb)
             && sign_of_determinant2x2(pb, pd, hb, hd) == ZERO;
@@ -305,16 +310,16 @@ equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
 
 template <class FT >
 CGAL_KERNEL_LARGE_INLINE
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 side_of_oriented_planeC3(const FT &a,  const FT &b,  const FT &c, const FT &d,
                          const FT &px, const FT &py, const FT &pz)
 {
-  return Oriented_side(CGAL_NTS sign(a*px + b*py + c*pz +d));
+  return enum_cast<Oriented_side>(CGAL_NTS sign(a*px + b*py + c*pz +d));
 }
 
 template <class FT >
 CGAL_KERNEL_LARGE_INLINE
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 side_of_oriented_sphereC3(const FT &px, const FT &py, const FT &pz,
                           const FT &qx, const FT &qy, const FT &qz,
                           const FT &rx, const FT &ry, const FT &rz,
@@ -337,49 +342,48 @@ side_of_oriented_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT sty = sy - ty;
   FT stz = sz - tz;
   FT st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty) + CGAL_NTS square(stz);
-  return Oriented_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
-                                              rtx,rty,rtz,rt2,
-                                              qtx,qty,qtz,qt2,
-                                              stx,sty,stz,st2));
+  return enum_cast<Oriented_side>(sign_of_determinant4x4(ptx,pty,ptz,pt2,
+                                                         rtx,rty,rtz,rt2,
+                                                         qtx,qty,qtz,qt2,
+                                                         stx,sty,stz,st2));
 }
 
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &qx, const FT &qy, const FT &qz,
                          const FT &rx, const FT &ry, const FT &rz,
                          const FT &sx, const FT &sy, const FT &sz,
                          const FT &tx, const FT &ty, const FT &tz)
 {
-  Oriented_side s = side_of_oriented_sphereC3(px, py, pz,
-                                              qx, qy, qz,
-                                              rx, ry, rz,
-                                              sx, sy, sz,
-                                              tx, ty, tz);
-  Orientation o = orientationC3(px, py, pz,
-                                qx, qy, qz,
-                                rx, ry, rz,
-                                sx, sy, sz);
-  return Bounded_side(s * o);
+  return enum_cast<Bounded_side>( side_of_oriented_sphereC3(px, py, pz,
+                                                            qx, qy, qz,
+                                                            rx, ry, rz,
+                                                            sx, sy, sz,
+                                                            tx, ty, tz)
+                                * orientationC3(px, py, pz,
+                                                qx, qy, qz,
+                                                rx, ry, rz,
+                                                sx, sy, sz) );
 }
 
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &qx, const FT &qy, const FT &qz,
                          const FT &tx, const FT &ty, const FT &tz)
 {
   // Returns whether T lies inside or outside the sphere which diameter is PQ.
-  return Bounded_side( CGAL_NTS sign((tx-px)*(qx-tx)
-	                           + (ty-py)*(qy-ty)
-	                           + (tz-pz)*(qz-tz)) );
+  return enum_cast<Bounded_side>( CGAL_NTS sign((tx-px)*(qx-tx)
+	                                      + (ty-py)*(qy-ty)
+	                                      + (tz-pz)*(qz-tz)) );
 }
 
 template < class FT >
 CGAL_KERNEL_INLINE
-Comparison_result
+typename Compare<FT>::result_type
 cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
                     const FT &qx, const FT &qy, const FT &qz,
                     const FT &rx, const FT &ry, const FT &rz)
@@ -392,7 +396,7 @@ cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 // cmp_dist_to_pointC3() must be defined _before_ ths following one.
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &qx, const FT &qy, const FT &qz,
                          const FT &sx, const FT &sy, const FT &sz,
@@ -430,7 +434,8 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                                    rsx,rsy,rsz);
 
   // The following could be simplified a bit.
-  return Bounded_side(cmp_dist_to_pointC3<FT>(num_x,    - num_y,  num_z,
+  return enum_cast<Bounded_side>(
+                      cmp_dist_to_pointC3<FT>(num_x,    - num_y,  num_z,
 	                                      psx*den2, psy*den2, psz*den2,
 	                                      tsx*den2, tsy*den2, tsz*den2) );
 }
@@ -438,7 +443,7 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 has_larger_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
                            const FT &qx, const FT &qy, const FT &qz,
                            const FT &rx, const FT &ry, const FT &rz)
@@ -449,7 +454,7 @@ has_larger_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 has_smaller_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
                             const FT &qx, const FT &qy, const FT &qz,
                             const FT &rx, const FT &ry, const FT &rz)
@@ -459,11 +464,10 @@ has_smaller_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
-cmp_signed_dist_to_directionC3(
-     const FT &pa, const FT &pb, const FT &pc,
-     const FT &px, const FT &py, const FT &pz,
-     const FT &qx, const FT &qy, const FT &qz)
+typename Compare<FT>::result_type
+cmp_signed_dist_to_directionC3( const FT &pa, const FT &pb, const FT &pc,
+                                const FT &px, const FT &py, const FT &pz,
+                                const FT &qx, const FT &qy, const FT &qz)
 {
   return CGAL_NTS compare(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
                           scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz));
@@ -472,7 +476,7 @@ cmp_signed_dist_to_directionC3(
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 has_larger_signed_dist_to_directionC3(
      const FT &pa, const FT &pb, const FT &pc,
      const FT &px, const FT &py, const FT &pz,
@@ -484,7 +488,7 @@ has_larger_signed_dist_to_directionC3(
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 has_smaller_signed_dist_to_directionC3(
      const FT &pa, const FT &pb, const FT &pc,
      const FT &px, const FT &py, const FT &pz,
@@ -495,7 +499,7 @@ has_smaller_signed_dist_to_directionC3(
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename Compare<FT>::result_type
 cmp_signed_dist_to_planeC3(
      const FT &ppx, const FT &ppy, const FT &ppz,
      const FT &pqx, const FT &pqy, const FT &pqz,
@@ -503,16 +507,16 @@ cmp_signed_dist_to_planeC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return Comparison_result(sign_of_determinant3x3<FT>(
-	      pqx-ppx, pqy-ppy, pqz-ppz,
-	      prx-ppx, pry-ppy, prz-ppz,
-	      px-qx,   py-qy,   pz-qz));
+  return enum_cast<Comparison_result>(sign_of_determinant3x3<FT>(
+	                                   pqx-ppx, pqy-ppy, pqz-ppz,
+	                                   prx-ppx, pry-ppy, prz-ppz,
+	                                   px-qx,   py-qy,   pz-qz));
 }
 
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 has_larger_signed_dist_to_planeC3(
      const FT &ppx, const FT &ppy, const FT &ppz,
      const FT &pqx, const FT &pqy, const FT &pqz,
@@ -527,7 +531,7 @@ has_larger_signed_dist_to_planeC3(
 template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename Equal_to<FT>::result_type
 has_smaller_signed_dist_to_planeC3(
      const FT &ppx, const FT &ppy, const FT &ppz,
      const FT &pqx, const FT &pqy, const FT &pqz,
