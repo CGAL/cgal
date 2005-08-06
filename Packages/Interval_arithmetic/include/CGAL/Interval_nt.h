@@ -41,7 +41,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/number_utils_fwd.h>
-#include <CGAL/functional_base.h> // Arity
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
 
 CGAL_BEGIN_NAMESPACE
 
@@ -747,56 +747,104 @@ to_interval (const long & l)
 // We also specialize some corresponding functors returning Uncertain<>.
 
 template < bool b >
-struct Is_zero < Interval_nt<b> >
-  : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
+struct Equal_to < Interval_nt<b>, Interval_nt<b> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
-  typedef Arity_tag< 1 > Arity;
+  Uncertain<bool> operator()( const Interval_nt<b>& x,
+                              const Interval_nt<b>& y) const
+  { return x == y; }
+};
+
+template < bool b >
+struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+{
+  Uncertain<bool> operator()( const Interval_nt<b>& x,
+                              const Interval_nt<b>& y) const
+  { return x != y; }
+};
+
+template < bool b >
+struct Greater < Interval_nt<b>, Interval_nt<b> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+{
+  Uncertain<bool> operator()( const Interval_nt<b>& x,
+                              const Interval_nt<b>& y) const
+  { return x > y; }
+};
+
+template < bool b >
+struct Less < Interval_nt<b>, Interval_nt<b> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+{
+  Uncertain<bool> operator()( const Interval_nt<b>& x,
+                              const Interval_nt<b>& y) const
+  { return x < y; }
+};
+
+template < bool b >
+struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+{
+  Uncertain<bool> operator()( const Interval_nt<b>& x,
+                              const Interval_nt<b>& y) const
+  { return x >= y; }
+};
+
+template < bool b >
+struct Less_equal < Interval_nt<b>, Interval_nt<b> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+{
+  Uncertain<bool> operator()( const Interval_nt<b>& x,
+                              const Interval_nt<b>& y) const
+  { return x <= y; }
+};
+
+template < bool b >
+struct Is_zero < Interval_nt<b> >
+  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+{
   Uncertain<bool> operator()( const Interval_nt<b>& x) const
   { return CGAL_NTS is_zero(x); }
 };
 
 template < bool b >
 struct Is_one < Interval_nt<b> >
-  : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
+  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
 {
-  typedef Arity_tag< 1 > Arity;
   Uncertain<bool> operator()( const Interval_nt<b>& x) const
   { return CGAL_NTS is_one(x); }
 };
 
 template < bool b >
 struct Is_negative < Interval_nt<b> >
-  : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
+  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
 {
-  typedef Arity_tag< 1 > Arity;
   Uncertain<bool> operator()( const Interval_nt<b>& x) const
   { return CGAL_NTS is_negative(x); }
 };
 
 template < bool b >
 struct Is_positive < Interval_nt<b> >
-  : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
+  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
 {
-  typedef Arity_tag< 1 > Arity;
   Uncertain<bool> operator()( const Interval_nt<b>& x) const
   { return CGAL_NTS is_positive(x); }
 };
 
 template < bool b >
 struct Sgn < Interval_nt<b> >
-  : public std::unary_function< Interval_nt<b>, Uncertain<Sign> >
+  : public Unary_function< Interval_nt<b>, Uncertain<Sign> >
 {
-  typedef Arity_tag< 1 > Arity;
   Uncertain<Sign> operator()( const Interval_nt<b>& x) const
   { return CGAL_NTS sign(x); }
 };
 
 template < bool b >
 struct Compare < Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>,
-                                 Uncertain<Comparison_result> >
+  : public Binary_function< Interval_nt<b>, Interval_nt<b>,
+                            Uncertain<Comparison_result> >
 {
-  typedef Arity_tag< 2 > Arity;
   Uncertain<Comparison_result>
   operator()( const Interval_nt<b>& x, const Interval_nt<b>& y) const
   { return CGAL_NTS compare(x, y); }

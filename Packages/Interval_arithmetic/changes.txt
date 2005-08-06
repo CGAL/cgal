@@ -1,5 +1,6 @@
 6 August 2005 Sylvain Pion
 - Uncertain : add overload for enum_cast.
+- Interval_nt : add specializations for Equal_to, Greater.. returning Uncertain.
 
 5 August 2005 Sylvain Pion
 - Specialize functors Sgn, Compare, Is_zero... for Interval_nt so that they
