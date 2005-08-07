@@ -1,3 +1,6 @@
+7 August 2005 Sylvain Pion
+- Uncertain, enum_cast : workaround for CGAL_CFG_MATCHING_BUG_5.
+
 6 August 2005 Sylvain Pion
 - Uncertain : add overload for enum_cast.
 - Interval_nt : add specializations for Equal_to, Greater.. returning Uncertain.

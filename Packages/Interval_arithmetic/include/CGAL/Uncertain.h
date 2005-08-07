@@ -294,12 +294,26 @@ const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
 
 
 // enum_cast overload
+
+#ifdef CGAL_CFG_MATCHING_BUG_5
+
+template < typename T, typename U >
+inline
+T enum_cast_bug(const Uncertain<U>& u, const T*)
+{
+  return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
+}
+
+#else
+
 template < typename T, typename U >
 inline
 Uncertain<T> enum_cast(const Uncertain<U>& u)
 {
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
+
+#endif
 
 
 // opposite
