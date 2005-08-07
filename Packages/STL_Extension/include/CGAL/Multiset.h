@@ -2286,18 +2286,32 @@ void Multiset<Type, Compare, Allocator>::catenate (Self& tree)
   }
   else
   {
-    // Both trees are of size 1: Assign min2_P as the right child of the
-    // root, and also as the new tree maximum.
-    // We color it red so that the black height of the tree remains 1.
+    // Both nodes are root nodes: Assign min2_P as the right child of the
+    // root and color it red.
     rootP->rightP = min2_P;
     min2_P->parentP = rootP;
     min2_P->color = Node::RED;
     min2_P->leftP = NULL;
-    min2_P->rightP = &endNode;
-    endNode.parentP = min2_P;
 
-    iSize = 2;
-    CGAL_assertion (iBlackHeight == 1);
+    if (! _is_valid (min2_P->rightP))
+    {
+      // The other tree is of size 1 - set min2_P as the tree maximum.
+      min2_P->rightP = &endNode;
+      endNode.parentP = min2_P;
+    }
+    else
+    {
+      // The other tree is of size 2 - fixup from min2_P's right child and set
+      // it as the tree maximum.
+      _insert_fixup (min2_P->rightP);
+      min2_P->rightP->rightP = &endNode;
+      endNode.parentP = min2_P->rightP;
+    }
+
+    if (iSize > 0 && tree.iSize > 0)
+      iSize += tree.iSize;
+    else
+      iSize = 0;
 
     // Clear the other tree (without actually deallocating the nodes).
     tree._shallow_clear();

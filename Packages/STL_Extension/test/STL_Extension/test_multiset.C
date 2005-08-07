@@ -312,12 +312,66 @@ void test_catenate ()
   typedef CGAL::Multiset<int>                Set;
   typedef Set::iterator                      Set_iter;
 
+  // Test catenation of small sets.
+  Set         s1, s1_rev;
+  Set         s2, s2_rev;
+  const int   max_size = 4;
+  int         size1, size2;
+  int         k;
+
+  for (size1 = 1; size1 <= max_size; size1++)
+  {
+    for (size2 = 1; size2 <= max_size; size2++)
+    {
+      s1.clear();
+      s1_rev.clear();
+      for (k = 1; k <= size1; k++)
+      {
+	s1.insert (k);
+	s1_rev.insert (size1 - k + 1);
+      }
+
+      s2.clear();
+      s2_rev.clear();
+      for (k = 1; k <= size2; k++)
+      {
+	s2.insert (size1 + k);
+	s2_rev.insert (size1 + size2 - k + 1);
+      }
+
+      s1.catenate (s2);
+      CGAL_assertion (s1.is_valid());
+      s1_rev.catenate (s2_rev);
+      CGAL_assertion (s1_rev.is_valid());
+
+      s1.clear();
+      s1_rev.clear();
+      for (k = 1; k <= size1; k++)
+      {
+	s1.insert (k);
+	s1_rev.insert (size1 - k + 1);
+      }
+
+      s2.clear();
+      s2_rev.clear();
+      for (k = 1; k <= size2; k++)
+      {
+	s2.insert (size1 + k);
+	s2_rev.insert (size1 + size2 - k + 1);
+      }
+
+      s1.catenate (s2_rev);
+      CGAL_assertion (s1.is_valid());
+      s1_rev.catenate (s2);
+      CGAL_assertion (s1_rev.is_valid());
+    }
+  }
+
   // Construct two random sets.
   const int   n1 = 1000; 
   Set         set1;
   const int   n2 = 100; 
   Set         set2;
-  int         k;
   int         val;
 
   for (k = 0; k < n1; k++)
