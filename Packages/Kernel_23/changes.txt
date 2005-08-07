@@ -1,3 +1,6 @@
+7 August 2005 Sylvain Pion
+- enum_cast : workaround for CGAL_CFG_MATCHING_BUG_5.
+
 6 August 2005 Sylvain Pion
 - Add enum_cast.
 - sign_of_determinant.h : propagate uncertainty using Sgn<FT>::result_type

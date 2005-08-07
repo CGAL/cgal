@@ -60,10 +60,26 @@ Angle
 opposite(Angle a)
 { return static_cast<Angle>( - static_cast<int>(a)); }
 
+#ifdef CGAL_CFG_MATCHING_BUG_5
+
+template < typename T, typename U >
+inline
+T enum_cast_bug(const U& u, const T*)
+{ return static_cast<T>(u); }
+
+template < typename T, typename U >
+inline
+T enum_cast(const U& u)
+{ return enum_cast_bug(u, (const T*)0); }
+
+#else
+
 template < typename T, typename U >
 inline
 T enum_cast(const U& u)
 { return static_cast<T>(u); }
+
+#endif
 
 CGAL_END_NAMESPACE
 
