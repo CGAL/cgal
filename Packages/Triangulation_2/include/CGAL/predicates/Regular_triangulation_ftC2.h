@@ -59,9 +59,9 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
     FT dry = ry - ty;
     FT drz = CGAL_NTS square(drx) + CGAL_NTS square(dry) - rwt + twt;
 
-    return Oriented_side(sign_of_determinant3x3(dpx, dpy, dpz,
-                                                dqx, dqy, dqz,
-                                                drx, dry, drz));
+    return enum_cast<Oriented_side>(sign_of_determinant3x3(dpx, dpy, dpz,
+                                                           dqx, dqy, dqz,
+                                                           drx, dry, drz));
 }
 
 
