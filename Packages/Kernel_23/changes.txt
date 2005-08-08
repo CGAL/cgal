@@ -1,3 +1,6 @@
+8 August 2005 Sylvain Pion
+- functors : allow propagation of uncertainty.
+
 7 August 2005 Sylvain Pion
 - enum_cast : workaround for CGAL_CFG_MATCHING_BUG_5.
 
