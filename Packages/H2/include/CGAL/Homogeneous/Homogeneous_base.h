@@ -79,12 +79,28 @@ template <typename RT_, typename FT_, typename K_ >
 struct Homogeneous_base
 {
     typedef K_                                      Kernel;
+    typedef FT_                                     FT;
 
     typedef Homogeneous_tag                         Rep_tag;
     typedef Homogeneous_tag                         Kernel_tag;
 
     typedef CGAL::Object                            Object_2;
     typedef CGAL::Object                            Object_3;
+
+    // These are currently undocumented.
+    // Should they be part of the Kernel interface ?
+    typedef typename Same_uncertainty_nt<bool, FT>::type
+                                                    Bool;
+    typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
+                                                    Comparison_result;
+    typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
+                                                    Orientation;
+    typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
+                                                    Oriented_side;
+    typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
+                                                    Bounded_side;
+    typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
+                                                    Angle;
 
     typedef PointH2<Kernel>                         Point_2;
     typedef VectorH2<Kernel>                        Vector_2;
@@ -115,7 +131,7 @@ struct Homogeneous_base
     typedef Cartesian_coordinate_iterator_3<Kernel>
                                  Cartesian_const_iterator_3;
 
-    typedef FT_                     Cartesian_coordinate_type;
+    typedef FT_                    Cartesian_coordinate_type;
     typedef const RT_&             Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;

@@ -66,9 +66,9 @@
 
 #include <CGAL/representation_tags.h>
 #include <CGAL/Cartesian/function_objects.h>
+#include <CGAL/Uncertain.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < typename K_, typename FT_>
 struct Cartesian_base
@@ -81,6 +81,21 @@ struct Cartesian_base
 
     typedef CGAL::Object                                Object_2;
     typedef CGAL::Object                                Object_3;
+
+    // These are currently undocumented.
+    // Should they be part of the Kernel interface ?
+    typedef typename Same_uncertainty_nt<bool, FT>::type
+                                                        Bool;
+    typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
+                                                        Comparison_result;
+    typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
+                                                        Orientation;
+    typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
+                                                        Oriented_side;
+    typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
+                                                        Bounded_side;
+    typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
+                                                        Angle;
 
     typedef PointC2<Kernel>                             Point_2;
     typedef VectorC2<Kernel>                            Vector_2;
@@ -114,21 +129,8 @@ struct Cartesian_base
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;
     typedef ConicCPA2<Point_2,Data_accessor_2>          Conic_2;
-
-
-
 };
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_BASE_H
-
-
-
-
-
-
-
-
-
-
