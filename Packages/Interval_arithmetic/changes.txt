@@ -1,3 +1,6 @@
+9 August 2005 Sylvain Pion
+- Fix workaround for enum_cast.
+
 7 August 2005 Sylvain Pion
 - Uncertain, enum_cast : workaround for CGAL_CFG_MATCHING_BUG_5.
 

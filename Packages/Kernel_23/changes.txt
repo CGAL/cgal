@@ -1,3 +1,6 @@
+9 August 2005 Sylvain Pion
+- Fix workaround for enum_cast.
+
 8 August 2005 Sylvain Pion
 - functors : allow propagation of uncertainty.
 

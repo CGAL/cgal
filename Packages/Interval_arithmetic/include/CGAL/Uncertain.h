@@ -299,7 +299,7 @@ const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
 
 template < typename T, typename U >
 inline
-T enum_cast_bug(const Uncertain<U>& u, const T*)
+Uncertain<T> enum_cast_bug(const Uncertain<U>& u, const T*)
 {
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
@@ -313,6 +313,13 @@ Uncertain<T> enum_cast(const Uncertain<U>& u)
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
 
+// Uncertain<> property propagator.
+template < typename T1, typename T2 >
+struct Same_uncertainty
+{
+  typedef T1 type;
+};
+
 #endif
 
 
@@ -324,13 +331,6 @@ Uncertain<T> opposite(const Uncertain<T> &u)
   return Uncertain<T>(opposite(u.sup()), opposite(u.inf()));
 }
 
-
-// Uncertain<> property propagator.
-template < typename T1, typename T2 >
-struct Same_uncertainty
-{
-  typedef T1 type;
-};
 
 template < typename T1, typename T2 >
 struct Same_uncertainty < T1, Uncertain<T2> >
