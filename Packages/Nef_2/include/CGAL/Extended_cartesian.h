@@ -25,7 +25,7 @@
 #include <CGAL/Nef_2/Nef_polynomial.h>
 
 #undef CGAL_NEF_DEBUG
-#define CGAL_NEF_DEBUG 51
+#define CGAL_NEF_DEBUG 5
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/Line_to_epoint.h>
 

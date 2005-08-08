@@ -25,7 +25,7 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/number_utils.h>
 #undef CGAL_NEF_DEBUG
-#define CGAL_NEF_DEBUG 59
+#define CGAL_NEF_DEBUG 5
 #include <CGAL/Nef_2/debug.h>
 
 #define REDUCE_INTERSECTION_POINTS
@@ -1000,8 +1000,9 @@ enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
 
 Standard_RT dx(const Standard_line_2& l) const { return l.b(); }
 Standard_RT dy(const Standard_line_2& l) const { return -l.a(); }
-Standard_FT abscissa_distance(const Standard_line_2& l) const 
-{ return Standard_kernel::make_FT(-l.c(),l.b()); }
+Standard_FT abscissa_distance(const Standard_line_2& l) const {
+  return -l.c() / l.b();
+}
 
 Point_type determine_type(const Standard_line_2& l) const
 {

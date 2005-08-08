@@ -36,8 +36,9 @@ struct Line_to_epoint {
   static RT dx(const Line_2& l) { return l.b(); }
   static RT dy(const Line_2& l) { return -l.a(); }
 
-  static FT ordinate_distance(const Line_2& l)
-  { return Kernel::make_FT(-l.c(),l.b()); }
+  static FT ordinate_distance(const Line_2& l) { 
+    return -l.c() / l.b();
+  }
 
   static Point_type determine_type(const Line_2& l)
   {
