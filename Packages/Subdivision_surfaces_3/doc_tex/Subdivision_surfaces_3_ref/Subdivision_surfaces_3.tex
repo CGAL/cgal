@@ -14,7 +14,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Subdivision_surfaces_3}
+\begin{ccRefClass}{Subdivision_surfaces_3<Poly>}
 
 \ccDefinition
 
@@ -89,7 +89,7 @@ is required to define \ccc{Point_3} as the position holder.
 %% \end{ccAdvanced}
 
 \ccCreation
-%\ccCreationVariable{P}
+\ccCreationVariable{S}
 
 \ccClassTemplateName\ serves as a template namespace, hence no constructor
 is defined. 
@@ -103,12 +103,25 @@ is defined.
 % +-----------------------------------+
 \ccHeading{Refinement hosts}
 
-\ccThree{}{}{}
-\ccMethod{template <template <typename> class Stencil> 
-void PQQ(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
-{refine the mesh \ccc{p} with the PQQ refinement
-\ccc{step} times, and smooth the refined \ccc{p} with the geometry 
-masks \ccc{rule}.}
+All refinement hosts are static template functions in the format of
+\ccc{template <template <typename> class Stencil> void RefHost(...);}.
+
+%\ccThree{void}{S::PQQ(Poly& p, Stencil<Poly> rule, int s);}{}
+%\ccThreeToTwo
+\ccTwo{template <template <typename> class Stencil> void PQQ(Poly& p, Stencil<Poly> rule, int s);}{}
+
+\ccThree{template <template <typename> class Stencil> void}{sub}{}
+\ccThreeToTwo
+
+
+\ccFunction{
+template <template <typename> class Stencil>
+void PQQ(Poly& p, Stencil<Poly> rule, int d);
+}{
+refine the mesh \ccc{p} with the PQQ refinement
+\ccc{d} times, and smooth the refined \ccc{p} with the geometry 
+masks \ccc{rule}.
+}
 %% \begin{ccTexOnly}
 %%     \begin{center}
 %%       \parbox{0.636\textwidth}{%
@@ -123,42 +136,66 @@ masks \ccc{rule}.}
 %%     </CENTER>
 %% \end{ccHtmlOnly}
 
-\ccMethod{template <template <typename> class Stencil> 
-void PTQ(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
-{refine the mesh \ccc{p} with the PTQ refinement 
-\ccc{step} times, and smooth the refined \ccc{p} with the geometry 
-masks \ccc{rule}.}
+\ccFunction{
+template <template <typename> class Stencil>
+void PTQ(Poly& p, Stencil<Poly> rule, int d);
+}{
+refine the mesh \ccc{p} with the PTQ refinement 
+\ccc{d} times, and smooth the refined \ccc{p} with the geometry 
+masks \ccc{rule}.
+}
 
-\ccMethod{template <template <typename> class Stencil> 
-void DQQ(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
-{refine the mesh \ccc{p} with the DQQ refinement 
-\ccc{step} times, and smooth the refined \ccc{p} with the geometry 
-masks \ccc{rule}.}
+\ccFunction{
+template <template <typename> class Stencil>
+void DQQ(Poly& p, Stencil<Poly> rule, int d);
+}{
+refine the mesh \ccc{p} with the DQQ refinement 
+\ccc{d} times, and smooth the refined \ccc{p} with the geometry 
+masks \ccc{rule}.
+}
 
-\ccMethod{template <template <typename> class Stencil> 
-void Sqrt3(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
-{refine the mesh \ccc{p} with the $\sqrt{3}$ triangulation 
-\ccc{step} times, and smooth the refined \ccc{p} with the geometry 
-masks \ccc{rule}.}
+\ccFunction{
+template <template <typename> class Stencil>
+void Sqrt3(Poly& p, Stencil<Poly> rule, int d);
+}{
+refine the mesh \ccc{p} with the $\sqrt{3}$ triangulation 
+\ccc{d} times, and smooth the refined \ccc{p} with the geometry 
+masks \ccc{rule}.
+}
 
 
 % +-----------------------------------+
 \ccHeading{Subdivision Surfaces}
-\ccThree{}{}{}
 
-\ccMethod{void CatmullClark_subdivision(Polyhedron& p, int step);}
-{apply Catmull-Clark subdivision \ccc{step} times on the mesh \ccc{p}.}
+%\ccTwo{void CatmullClark_subdivision(Poly& p, int d);}{}
+\ccThree{void}{sub}{}
+\ccThreeToTwo
 
-\ccMethod{void Loop_subdivision(Polyhedron& p, int step);}
-{apply Loop subdivision \ccc{step} times on the mesh \ccc{p}. 
-The mesh \ccc{p} can only consist of triangle facets.}
+\ccFunction{
+void CatmullClark_subdivision(Poly& p, int d);
+}{
+apply Catmull-Clark subdivision \ccc{d} times on the mesh \ccc{p}.
+}
 
-\ccMethod{void DooSabin_subdivision(Polyhedron& p, int step);}
-{apply Doo-Sabin subdivision \ccc{step} times on the mesh \ccc{p}.}
+\ccFunction{
+void Loop_subdivision(Poly& p, int d);
+}{
+apply Loop subdivision \ccc{d} times on the mesh \ccc{p}. 
+The mesh \ccc{p} can only consist of triangle facets.
+}
 
-\ccMethod{void Sqrt3_subdivision(Polyhedron& p, int step);}
-{apply $\sqrt{3}$ subdivision \ccc{step} times on the mesh \ccc{p}.
-The mesh \ccc{p} can only consist of triangle facets.}
+\ccFunction{
+void DooSabin_subdivision(Poly& p, int d);
+}{
+apply Doo-Sabin subdivision \ccc{d} times on the mesh \ccc{p}.
+}
+
+\ccFunction{
+void Sqrt3_subdivision(Poly& p, int d);
+}{
+apply $\sqrt{3}$ subdivision \ccc{d} times on the mesh \ccc{p}.
+The mesh \ccc{p} can only consist of triangle facets.
+}
 
 \ccExample
 
@@ -169,12 +206,12 @@ read-in polyhedral mesh.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::PQQ_stencil}\\
-\ccRefIdfierPage{CGAL::DQQ_stencil}\\
-\ccRefIdfierPage{CGAL::Linear_stencil}\\
-\ccRefIdfierPage{CGAL::CatmullClark_stencil}\\
-\ccRefIdfierPage{CGAL::Loop_stencil}\\
-\ccRefIdfierPage{CGAL::Sqrt3_stencil}\\
+\ccRefIdfierPage{CGAL::PQQ_stencil<Poly>}\\
+\ccRefIdfierPage{CGAL::DQQ_stencil<Poly>}\\
+\ccRefIdfierPage{CGAL::Linear_stencil<Poly>}\\
+\ccRefIdfierPage{CGAL::CatmullClark_stencil<Poly>}\\
+\ccRefIdfierPage{CGAL::Loop_stencil<Poly>}\\
+\ccRefIdfierPage{CGAL::Sqrt3_stencil<Poly>}\\
 
 \end{ccRefClass}
 

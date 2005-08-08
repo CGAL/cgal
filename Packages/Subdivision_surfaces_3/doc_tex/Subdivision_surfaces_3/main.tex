@@ -9,7 +9,6 @@
 \RCSdefDate{\subdivisionDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\newcommand\CC{Catmull-Clark}
 \newcommand\DS{Doo-Sabin}
 
 % ------------------------------------------------------------------------
@@ -106,7 +105,7 @@ which defines an input facet.
 %while the DQQ scheme has only a corner-node stencil, which 
 %relates the facet of a corner to a target node.
 Stencils with weights are called \emph{geometry masks}.
-Geometry masks of \CC\ subdivision are shown below,
+Geometry masks of Catmull-Clark subdivision are shown below,
 
 \begin{ccTexOnly}
   \begin{center}
@@ -119,7 +118,7 @@ Geometry masks of \CC\ subdivision are shown below,
 %\begin{ccHtmlOnly}
 %  <CENTER>
 %  <A HREF="./FIG/cc_mask.gif">
-%     <img src="./FIG/cc_mask.gif" alt="\CC\ geometry stencil"></A><P>
+%     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"></A><P>
 %  </CENTER>
 %\end{ccHtmlOnly}
 
@@ -143,11 +142,11 @@ and hands the definition of geometry masks
 (the \emph{geometry policies}) to the library user.
 A subdivision scheme is obtained by parameterizing the 
 refinement host with geometry policies. 
-For example, \CC\ subdivision is constructed by 
-parameterizing the PQQ refinement with the \CC\ geometry 
+For example, Catmull-Clark subdivision is constructed by 
+parameterizing the PQQ refinement with the Catmull-Clark geometry 
 policies.
 %, which compute the smoothed points based on the
-%\CC\ geometry masks.
+%Catmull-Clark geometry masks.
 
 %\ccc{Subdivision_surfaces_3} supports 1-ring mesh refinement based on 
 %half-edge data structures.
@@ -159,7 +158,7 @@ policies.
 %averaging rules of the geometry stencils.
 
 % +-------------------------------------------------------------+
-\subsection{Example: \CC\ Subdivision}
+\subsection{Example: Catmull-Clark Subdivision}
 \ccc{CGAL::Subdivision_surfaces_3::PQQ}, the refinement 
 host for the PQQ refinement, realizes the topological 
 refinement, maintains three stencils of the 
@@ -172,8 +171,9 @@ PQQ scheme, and calls policies to smooth the refined points.
 \end{ccExampleCode}
 
 \ccc{Subdivision_surfaces_3} provides \ccc{CGAL::CatmullClark_stencil} 
-realizing the geometry masks of \CC\ subdivision \cite{cgal:cc-rgbss-78}. 
-The \CC\ subdivision is then constructed by parameterizing 
+realizing the geometry masks of Catmull-Clark subdivision 
+\cite{cgal:cc-rgbss-78}. 
+The Catmull-Clark subdivision is then constructed by parameterizing 
 \ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
 \ccc{CGAL::CatmullClark_stencil}.
 
@@ -195,7 +195,7 @@ concept, and \ccc{step} specifies the subdivision depth.
 quadrilateral quadrisection (PQQ), primal triangle 
 quadrisection (PTQ), dual quadrilateral 
 quadrisection (DQQ) and $\sqrt{3}$ triangulation, which 
-are used by \CC, Loop, \DS\ and $\sqrt{3}$ subdivision, 
+are used by Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ subdivision, 
 respectively. 
 
 The refined mesh is shown below the input mesh.
@@ -294,8 +294,8 @@ stencil, an edge-node stencil, and a facet-node stencil.
 %\end{ccHtmlOnly}
 
 Following example shows an implementation of geometry masks 
-of \CC\ subdivision. \ccc{Point} is an alias to \ccc{Point_3}
-in \ccc{_Poly}.
+of Catmull-Clark subdivision. \ccc{Point} is an alias to \ccc{Point_3}
+in \ccc{Poly}.
 
 \begin{ccExampleCode}
 template <class P>
@@ -375,13 +375,13 @@ class CatmullClark_stencil {
 %% \end{ccExampleCode}
 %% since the compiler can derive the template
 %% arguments from the function parameters),
-%% instantiates \CC\ subdivision.    
+%% instantiates Catmull-Clark subdivision.    
 %% \ccc{_M}, the model of the mesh concept,
 %% represents the mesh type (\ccc{Mesh}),
 %% and \ccc{CCstencil} is a class template 
-%% realizing geometry policies of \CC\ subdivision.
+%% realizing geometry policies of Catmull-Clark subdivision.
 
-%The geometry stencils of \CC\ subdivision (border stencils are 
+%The geometry stencils of Catmull-Clark subdivision (border stencils are 
 %not included) are shown below. 
 
 %\begin{ccTexOnly}
@@ -395,7 +395,7 @@ class CatmullClark_stencil {
 %\begin{ccHtmlOnly}
 %  <CENTER>
 %  <A HREF="./FIG/cc_mask.gif">
-%     <img src="./FIG/cc_mask.gif" alt="\CC\ geometry stencil"></A><P>
+%     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"></A><P>
 %  </CENTER>
 %\end{ccHtmlOnly}
 
@@ -403,7 +403,7 @@ class CatmullClark_stencil {
 % +------------------------------------------------------------------------+
 \section{Built-in subdivision schemes}
 % +------------------------------------------------------------------------+
-\CC , Loop, \DS\ and $\sqrt{3}$ subdivisions are directly supported 
+Catmull-Clark , Loop, \DS\ and $\sqrt{3}$ subdivisions are directly supported 
 by \ccc{Subdivision_surfaces_3}. 
 %Each of these subdivision schemes is realized by parameterizing 
 %the corresponding geometry policy to the .
