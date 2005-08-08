@@ -127,6 +127,11 @@ and also automatically with\\
 \ccMethod{const Bbox_3& bbox() const;}{returns the bounding box iff
   $D=3$ and \ccc{NT}$ \equiv $\ccc{double}.}
 
+\ccMethod{void extend(NT p[N]);}{extends \ccVar\ to the smallest
+  box that additionally contains the point represented by coordinates in \ccc{p}.}
+\ccMethod{void extend(std::pair<NT,NT> p[N]);}{extends \ccVar\ to the smallest
+  box that additionally contains the point represented by coordinate intervals in \ccc{p}.}
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::box_intersection_d}\\
