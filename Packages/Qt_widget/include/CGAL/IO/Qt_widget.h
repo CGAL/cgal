@@ -559,13 +559,15 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
     Iso_rectangle_2<RT> r = Iso_rectangle_2<RT>(Point_2<RT>(xr1, yr1),
                                               Point_2<RT>(xr2, yr2));
     CGAL::Object obj = CGAL::intersection(r, sr);  
-    Point_2<R>    p;
+    Point_2<RT>    p;
     if (CGAL::assign(p, obj)){
       w << p;
       return w;
     }
-    else
-      CGAL::assign(sr, obj);
+    else {
+      bool b = CGAL::assign(sr, obj);
+      CGAL_assertion(b);
+    }
   }
   x1 = w.x_pixel(CGAL::to_double(sr.source().x()));
   x2 = w.x_pixel(CGAL::to_double(sr.target().x()));

@@ -1,3 +1,6 @@
+8 August 2005 Sylvain Pion
+- Fix bug (?) in Qt_widget << Segment_2.
+
 28 February 2005 Laurent Rineau
 - Remove one call to redraw() in Qt_widget_layer_get_polygon.h,
 because slots connected to new_cgal_object() should cann it themself.
