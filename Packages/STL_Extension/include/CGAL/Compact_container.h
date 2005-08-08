@@ -32,6 +32,8 @@
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 
+#include <boost/mpl/if.hpp>
+
 // An STL like container with the following properties :
 // - to achieve compactness, it requires access to a pointer stored in T,
 //   specified by a traits.  This pointer is supposed to be 4 bytes aligned
@@ -109,10 +111,16 @@ namespace CGALi {
   class CC_iterator;
 }
 
-template < class T, class Allocator = CGAL_ALLOCATOR(T) >
+struct Default_allocator; // Used to reduce error messages length.
+
+template < class T, class Allocator_ = Default_allocator >
 class Compact_container
 {
-  typedef Compact_container <T, Allocator>          Self;
+  typedef Allocator_                                Al;
+  typedef typename boost::mpl::if_< boost::is_same<Al, Default_allocator>,
+                                    CGAL_ALLOCATOR(T), Al>::type
+                                                    Allocator;
+  typedef Compact_container <T, Al>                 Self;
   typedef Compact_container_traits <T>              Traits;
 public:
   typedef T                                         value_type;
@@ -632,22 +640,6 @@ bool operator>=(const Compact_container<T, Allocator> &lhs,
 
 namespace CGALi {
 
-  // This template metaprogramming bit should move from here.
-  // Select<bool b, T1, T2>::Type is (b?T1:T2).
-  template < bool, typename, typename >
-  struct Select;
-
-  template < typename T1, typename T2 >
-  struct Select<true, T1, T2> {
-    typedef T1    Type;
-  };
-
-  template < typename T1, typename T2 >
-  struct Select<false, T1, T2> {
-    typedef T2    Type;
-  };
-
-
   template < class DSC, bool Const >
   class CC_iterator
   {
@@ -657,10 +649,10 @@ namespace CGALi {
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
-    typedef typename Select<Const, const value_type*,
-                                   value_type*>::Type pointer;
-    typedef typename Select<Const, const value_type&,
-                                   value_type&>::Type reference;
+    typedef typename boost::mpl::if_c< Const, const value_type*,
+                                       value_type*>::type pointer;
+    typedef typename boost::mpl::if_c< Const, const value_type&,
+                                       value_type&>::type reference;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
     // the initialization with NULL is required by our Handle concept.
@@ -690,7 +682,7 @@ namespace CGALi {
     pointer p;
 
     // Only Compact_container should access these constructors.
-    friend class Compact_container<value_type, typename DSC::allocator_type>;
+    friend class Compact_container<value_type, typename DSC::Al>;
 
     // For begin()
     CC_iterator(pointer ptr, int, int)

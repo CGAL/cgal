@@ -1,3 +1,9 @@
+8 August 2005 Sylvain Pion
+- Compact_container : use boost::mpl::if_ instead of own Select
+  meta-programming stuff.
+- Compact_container : use a Default_allocator fixed type to reduce error
+  messages length, instead of CGAL_ALLOCATOR(T).
+
 5 August 2005 Sylvain Pion
 - Move functional_base.h from Kernel_23.
 
