@@ -37,7 +37,8 @@ struct Line_to_epoint {
   static RT dy(const Line_2& l) { return -l.a(); }
 
   static FT ordinate_distance(const Line_2& l) { 
-    return -l.c() / l.b();
+    typename CGAL::Rational_traits<Kernel::FT> rat_traits;
+    return rat_traits.make_rational(-l.c(), l.b());
   }
 
   static Point_type determine_type(const Line_2& l)

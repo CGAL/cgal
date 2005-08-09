@@ -1001,7 +1001,8 @@ enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
 Standard_RT dx(const Standard_line_2& l) const { return l.b(); }
 Standard_RT dy(const Standard_line_2& l) const { return -l.a(); }
 Standard_FT abscissa_distance(const Standard_line_2& l) const {
-  return -l.c() / l.b();
+  typename CGAL::Rational_traits<Standard_kernel::FT> rat_traits;
+  return rat_traits.make_rational(-l.c(), l.b());
 }
 
 Point_type determine_type(const Standard_line_2& l) const
