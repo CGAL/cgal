@@ -24,13 +24,13 @@
 // implementation: test program for the QP solver
 // ============================================================================
 
+#include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_full_exact_pricing.h>
 #include <CGAL/QP_partial_exact_pricing.h>
 #include <CGAL/QP_full_filtered_pricing.h>
 #include <CGAL/QP_partial_filtered_pricing.h>
-#include <CGAL/_QP_solver/Double.h>
-//#include <CGAL/Quotient.h>
+#include <CGAL/QP_solver/Double.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
 #include <cassert>
@@ -62,7 +62,7 @@ class Matrix : public std::vector< Vector<ET_> >
 // Next, we need a functor that
 template<typename T_>
 struct Begin
-  : public CGAL_STD::unary_function< Vector<T_>,
+  : public std::unary_function< Vector<T_>,
 				     typename Vector<T_>::const_iterator > {
   typedef typename Vector<T_>::const_iterator result_type;
   result_type operator () ( const Vector<T_>& v) const { return v.begin(); }
@@ -89,7 +89,7 @@ struct Rep {
     typedef  Row_type*  Row_type_iterator;
     //    typedef  CGAL::QP_const_value_iterator<Row_type>  Row_type_iterator;
     
-    //typedef  GMP::Double  ET;
+    //typedef  CGAL::Double  ET;
     typedef ET_  ET;
     typedef  Is_linear_  Is_linear;
     typedef  Is_symmetric_  Is_symmetric;
@@ -129,13 +129,13 @@ bool read_vector(std::ifstream& from, int length,
 
 bool read_num_entry(std::ifstream& from, CGAL::Gmpq& entry);
 
-bool read_num_entry(std::ifstream& from, GMP::Double& entry);
+bool read_num_entry(std::ifstream& from, CGAL::Double& entry);
 
 bool read_num_entry(std::ifstream& from, CGAL::Gmpz& entry);
 
 bool read_int_vector(std::ifstream& from, int length, std::vector<int>& vec);
 
-void read_ws(std::ifstream& from);
+void read_ws(std::istream& from);
 
 bool read_token(std::ifstream& from, const std::string& block_del);
 	
@@ -176,7 +176,7 @@ struct Input_type_selector<CGAL::Gmpq> {
 };
 
 template<>
-struct Input_type_selector<GMP::Double> {
+struct Input_type_selector<CGAL::Double> {
 	typedef double Input_type;
 };
 
@@ -196,7 +196,8 @@ int main( int argc, char** argv) {
 	init_tag_names_table();
 	init_pricing_strat_abrev_table();
 	int verbose = 0;
-	unsigned int pricing_strategy_index;
+	unsigned int pricing_strategy_index = 0; // to prevent GCC from
+	                                         // outputing a warning
 	std::map<std::string, char> read_names_table;
 
 	const bool readFromStdIn = argc <= 3;
@@ -240,6 +241,8 @@ int main( int argc, char** argv) {
 		     read_names_table);
 	    from.close();
 	  }
+	  if (readFromStdIn)
+	    read_ws(std::cin);
 	}
 	
     return 0;
@@ -708,7 +711,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	//			CGAL::Tag_true>
 	//			(verbose, pricing_strategy_index, from);
 	//		break;
-
+#if 1 // kf
 	case  6:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
@@ -718,40 +721,40 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-	case  8:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_false,
+	case  8:	doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
 	
-	case  9:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_false,
+	case  9:	doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-	case 10:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_true,
+	case 10:	doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
 	
-	case 11:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_true,
+	case 11:	doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
         // next 2 cases can be excluded by assuming is_Symmetric == 1 for
 	// LPs	
-	//case 12:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
+	//case 12:	doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_false,
 	//			CGAL::Tag_false>
 	//			(verbose, pricing_strategy_index, from);
 	//		break;
-	//case 13:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
+	//case 13:	doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_false,
 	//			CGAL::Tag_true>
 	//			(verbose, pricing_strategy_index, from);
 	//		break;
-	case 14:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_true,
+	case 14:	doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
 
-	case 15:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_true,
+	case 15:	doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
@@ -794,6 +797,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
+#endif
 
 	default:	;
 
@@ -819,7 +823,7 @@ bool insert_name(const std::string& name, const char& value,
 }
 
  
-void read_ws(std::ifstream& from) {
+void read_ws(std::istream& from) {
 	char c;
 	while (from.get(c)) {
 		if (!isspace(c)) {
