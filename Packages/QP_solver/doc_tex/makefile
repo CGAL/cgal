@@ -1,5 +1,8 @@
+wrapper.pdf:	wrapper.ps
+		ps2pdf wrapper.ps wrapper.pdf
+
 wrapper.ps:	wrapper.dvi
-		dvips -t a4 wrapper.dvi -o wrapper.ps
+		dvips -P pdf -t a4 wrapper.dvi -o wrapper.ps
 
 wrapper.dvi:	wrapper.tex \
 		Optimisation_ref/main_QP_solver.tex \

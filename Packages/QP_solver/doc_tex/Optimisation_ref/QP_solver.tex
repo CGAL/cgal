@@ -15,13 +15,13 @@
 An object of the class \ccRefName\ is a data structure that
 represents a vector $x$ attaining the minimum of the convex quadratic objective
 function $f(x)=c^{T}x+x^{T}Dx$, $x \in \R^{n}$, on a domain $R \subset \R^{n}$
-given as the intersection of half spaces and hyperplanes,
+given as the intersection of halfspaces and hyperplanes,
 \begin{eqnarray*}
-(QP)&minimize & c^{T}x+x^{T}Dx \\
-&s.t.     & Ax \leq b \\
+(QP)&\mbox{minimize} & c^{T}x+x^{T}Dx \\
+&\mbox{subject to}   & Ax \leq b \\
 && x \geq 0.
 \end{eqnarray*}
-Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$ and
+Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$, and
 $D \in \R^{n \times n}$ is positive-semidefinite.
 A vector $x \in \R^{n}$ is said to be a \emph{feasible solution}
 if $x \in R$; if $R=\emptyset$ the quadratic program is said to be
