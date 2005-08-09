@@ -780,6 +780,100 @@ namespace CircularFunctors {
     return res;
   }
 
+
+template <typename CK>
+Bbox_2 circular_arc_bbox( const typename CK::Circular_arc_2 & a)
+{
+	typedef typename CK::Root_of_2 	   Root_of_2;
+	typedef typename CK::FT 		   FT;
+
+	if(a.is_x_monotone())
+	{
+		// The arc is xy-monotone so we just add the bboxes of the endpoints
+		if(a.is_y_monotone())
+			return a.left().bbox() + a.right().bbox();
+					
+		// Just x-monotone, so we have to find the y-critical point
+
+		bool is_on_upper=a.on_upper_part();
+
+		Bbox_2 left_bb=a.left().bbox(), 
+		       right_bb=a.right().bbox();
+		
+		double ymin= (is_on_upper) ? CGAL::min(left_bb.ymin(),right_bb.ymin()) :
+			   	to_interval( y_critical_points<CK>(a.supporting_circle(),true).y() ).first;
+		double ymax= (is_on_upper) ? 
+		                to_interval( y_critical_points<CK>(a.supporting_circle(),false).y() ).second:
+			   	CGAL::max(left_bb.ymax(),right_bb.ymax()); 
+		
+		return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);
+	}
+		
+	// Else return the bounding box of the circle.
+	return a.supporting_circle().bbox();
+		
+		/*  More precise version for non-x-monotone arcs.
+		double xmin,xmax,ymin,ymax;
+
+		// In this case, we can't avoid doing these heavy comparisons
+
+		Comparison_result cmp_source_x=compare(a.source().x(),a.supporting_circle().center().x()),
+				cmp_target_x=compare(a.target().x(),a.supporting_circle().center().x()),
+				cmp_source_y=compare(a.source().y(),a.supporting_circle().center().y()),	
+				cmp_target_y=compare(a.target().y(),a.supporting_circle().center().y());
+
+		//Since it's not x-monotone, it must include at least one x-critical point
+		
+		if(cmp_source_y==cmp_target_y || cmp_source_y==0 || cmp_target_y==0)
+		{
+			if(cmp_source_x==cmp_target_x || cmp_source_x==0 || cmp_target_x==0)
+				return a.supporting_circle().bbox();					
+
+		        xmin=to_interval( x_critical_points<CK>(a.supporting_circle(),true).x() ).first;
+			xmax=to_interval( x_critical_points<CK>(a.supporting_circle(),false).x() ).second;
+
+			if( cmp_source_y==LARGER || cmp_target_y==LARGER)
+			{
+				ymin=to_interval( y_critical_points<CK>(a.supporting_circle(),true).y() ).first;
+				ymax=CGAL::max(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
+			}
+			else{
+				ymax=to_interval( y_critical_points<CK>(a.supporting_circle(),false).y() ).second;
+				ymin=CGAL::min(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
+			}
+
+			return Bbox_2(xmin,ymin,xmax,ymax);
+		}
+		
+		if(cmp_source_y > EQUAL)
+		{
+			xmin=to_interval(x_critical_points<CK>(a.supporting_circle(),true).x()).first;
+			xmax=CGAL::max(to_interval(a.source().x()).second,to_interval(a.target().x()).second);
+		}
+		else
+		{
+			xmin=CGAL::min(to_interval(a.source().x()).first,to_interval(a.target().x()).first);
+			xmax=to_interval(x_critical_points<CK>(a.supporting_circle(),false).x()).second;
+		}
+
+
+		if( ( cmp_source_y== LARGER && cmp_source_x>= EQUAL) ||		
+		    ( cmp_target_y== LARGER && cmp_target_x<= EQUAL) )
+		    ymax=to_interval(y_critical_points<CK>(a.supporting_circle(),false).y()).second;
+		else
+		    ymax=CGAL::max(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
+
+
+		if( ( cmp_source_y== SMALLER && cmp_source_x<= EQUAL) ||		
+		    ( cmp_target_y== SMALLER && cmp_target_x>= EQUAL) )
+		    ymin=to_interval(y_critical_points<CK>(a.supporting_circle(),true).y()).first;
+		else
+		    ymin=CGAL::min(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
+
+		return Bbox_2(xmin,ymin,xmax,ymax);
+		*/
+}
+
 } // namespace CircularFunctors 
 } // namespace CGAL
 

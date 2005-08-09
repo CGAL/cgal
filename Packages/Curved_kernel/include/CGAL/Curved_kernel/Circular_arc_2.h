@@ -163,18 +163,12 @@ namespace CGALi {
       //C'est pas fini il faut verifier que les point sont sur le cercle
     }
 
-
-
-
-
-
   private:
 
     // The arc goes from _begin to _end in the positive order
     // If _begin == _end, then it's the full circle
     Circular_arc_endpoint_2  _begin, _end;
     Circle_2 _support;
-   
 
   public:
  
@@ -230,7 +224,6 @@ namespace CGALi {
       return cmp_x != 0; // full circle or half circle.
     }
     
-    
     bool is_y_monotone() const
     {
       int cmp_begin = CGAL::compare(_begin.x(), center().x());
@@ -256,10 +249,6 @@ namespace CGALi {
 
       return cmp_y != 0; // full circle or half circle.
     }
-    
-    
-    
-    
 
     bool on_upper_part() const
       // check whether the endpoints are above or below the center
@@ -303,6 +292,12 @@ namespace CGALi {
         return CGAL::to_double(supporting_circle().center().y()) + tmp;
       else
         return CGAL::to_double(supporting_circle().center().y()) - tmp;
+    }
+
+    Bbox_2 bbox() const
+    {
+      // TODO : Needs to call a functor.
+      return CircularFunctors::circular_arc_bbox<CK>(*this);
     }
   };
 
