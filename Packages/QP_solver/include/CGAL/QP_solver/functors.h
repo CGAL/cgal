@@ -58,8 +58,7 @@ template < class MatrixIt,
            bool check_2nd_lower = false, bool check_2nd_upper = false >
 class QP_matrix_accessor;
 
-template < class MatrixIt, class IsSymmetric,
-           bool check_lower = false, bool check_upper = false >
+template < class MatrixIt, class IsSymmetric >
 class QP_matrix_pairwise_accessor;
 
 
@@ -152,72 +151,63 @@ class QP_matrix_accessor {
 // ----------------------------
 // QP_matrix_pairwise_accessor
 // ----------------------------
-template < class MatrixIt,class IsSymmetric,bool check_lower,bool check_upper >
+template < class MatrixIt,class IsSymmetric >
 class QP_matrix_pairwise_accessor : public std::unary_function<
+  int, typename std::iterator_traits<
+  typename std::iterator_traits<MatrixIt>::value_type>::value_type> {
+  
+  typedef  typename std::iterator_traits<MatrixIt>::value_type  VectorIt;
+  
+public:
+  typedef typename
+  std::unary_function<
     int, typename std::iterator_traits<
-             typename std::iterator_traits<MatrixIt>::value_type>::value_type>{
-
-    typedef  typename std::iterator_traits<MatrixIt>::value_type  VectorIt;
-
-  public:
-    typedef typename
-    std::unary_function<
-    int, typename std::iterator_traits<
-             typename std::iterator_traits
-                  <MatrixIt>::value_type>::value_type>::result_type
-    result_type;
-
-    // following operator= added by kf. to make Join_input_iterator_1 work
-    QP_matrix_pairwise_accessor() : z( 0)
-    {
+    typename std::iterator_traits
+  <MatrixIt>::value_type>::value_type>::result_type
+  result_type;
+  
+  // The following default constructor is needed to make it possible
+  // to use QP_matrix_pairwise_accessor with CGAL's Join_input_iterator_1
+  // (more precisely: once Join_input_iterator_1 should not use an internal
+  // mutable variable 'val' anymore, you can remove the following default
+  // constructor).
+  QP_matrix_pairwise_accessor() {}
+  
+  QP_matrix_pairwise_accessor( MatrixIt it, int row)
+  {
+    if ( check_tag( IsSymmetric())) {               // store i-th row
+      v = it[ row];
+      m = it;                                       // (See (*) below.)
+    } else {                                        // matrix and index
+      m = it;
+      v = it[0];                                    // (See (*) below.)
+      r = row;
     }
-
-    QP_matrix_pairwise_accessor( MatrixIt it, int row, int lower = 0,
-				                        int upper = 0)
-	: z( 0)
-    {
-	if ( check_tag( IsSymmetric())) {               // store i-th row
-	    v = it[ row];
-	} else {                                        // matrix and index
-	    m = it;
-	    r = row;
-	}
-	if ( check_lower) l = lower;
-	if ( check_upper) u = upper;
-    }
-    
-    // following operator= added by kf. to make Join_input_iterator_1 work
-    QP_matrix_pairwise_accessor&
-      operator=(const QP_matrix_pairwise_accessor& a)
-    {
-      m = a.m;
-      v = a.v;
-      r = a.r;
-      l = a.l;
-      u = a.u;
-      return *this;
-    }
-    
-    result_type  operator () ( int c) const
-    {
-	if ( check_lower && ( ( r <  l) || ( c <  l))) return z;
-	if ( check_upper && ( ( r >= u) || ( c >= u))) return z;
-	return entry_pair( c, IsSymmetric());
-    }
-
-    result_type  entry_pair( int c, Tag_true ) const           // symmetric
-        { return v[ c] * result_type( 2); }
-
-    result_type  entry_pair( int c, Tag_false) const           // not symmetric
-        { return m[ r][ c] + m[ c][ r];	}
-
-  private:
-    const result_type  z;
-    MatrixIt           m;
-    VectorIt           v;
-    int                r;
-    int                l;
-    int                u;
+    // (*) These two statements are not needed, semantically.  If we
+    // drop them, however, the if-clause will default-construct the
+    // iterator 'm' and the else-clause will default-construct the
+    // iterator 'v'.  In any case we end up with a singular iterator,
+    // and as instances of this class are copied around, this violates
+    // the requirement that singular iterators must not be copied.
+    // (In other words: dropping these statements will cause assertion
+    // violations when compiled with GCC using -D_GLIBCXX_DEBUG.)
+  }
+  
+  result_type  operator () ( int c) const
+  {
+    return entry_pair( c, IsSymmetric());
+  }
+  
+  result_type  entry_pair( int c, Tag_true ) const           // symmetric
+  { return v[ c] * result_type( 2); }
+  
+  result_type  entry_pair( int c, Tag_false) const           // not symmetric
+  { return m[ r][ c] + m[ c][ r];	}
+  
+private:
+  MatrixIt           m;
+  VectorIt           v;
+  int                r;
 };
 
 
