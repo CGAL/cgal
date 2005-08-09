@@ -1,3 +1,7 @@
+9 August 2005 Sylvain Pion
+- Rational_traits : add an overload of make_rational() that takes rational
+  arguments.
+
 6 August 2005 Sylvain Pion
 - Add functors Equal_to Not_equal_to Greater Less Greater_equal Less_equal
   which take 2 arguments (with a default), and provide the Arity.

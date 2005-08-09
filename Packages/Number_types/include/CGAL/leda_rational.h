@@ -20,7 +20,7 @@
 // $Name$
 //
 // Author(s)     : Andreas Fabri
- 
+
 
 #ifndef CGAL_LEDA_RATIONAL_H
 #define CGAL_LEDA_RATIONAL_H
@@ -36,7 +36,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <> 
+template <>
 struct Number_type_traits<leda_rational> {
   typedef Tag_false Has_gcd;
   typedef Tag_true  Has_division;
@@ -47,13 +47,16 @@ struct Number_type_traits<leda_rational> {
   typedef Tag_false Has_exact_sqrt;
 };
 
-template <> 
+template <>
 struct Rational_traits<leda_rational> {
   typedef leda_integer RT;
   RT numerator   (const leda_rational & r) const { return r.numerator(); }
   RT denominator (const leda_rational & r) const { return r.denominator(); }
   leda_rational make_rational(const RT & n, const RT & d) const
-  { return leda_rational(n, d); } 
+  { return leda_rational(n, d); }
+  leda_rational make_rational(const leda_rational & n,
+                              const leda_rational & d) const
+  { return n / d; }
 };
 
 #ifndef CGAL_NO_NAMESPACE

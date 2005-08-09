@@ -568,6 +568,9 @@ struct Rational_traits< Quotient<NT> >
   
   Quotient<NT> make_rational(const RT & n, const RT & d) const
   { return Quotient<NT>(n, d); } 
+  Quotient<NT> make_rational(const Quotient<NT> & n,
+                             const Quotient<NT> & d) const
+  { return n / d; } 
 };
 
 CGAL_END_NAMESPACE

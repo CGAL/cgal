@@ -77,6 +77,8 @@ struct Rational_traits<mpq_class> {
 
   mpq_class make_rational(const RT & n, const RT & d) const
   { return mpq_class(n, d); } 
+  mpq_class make_rational(const mpq_class & n, const mpq_class & d) const
+  { return n / d; } 
 };
 
 template < typename T, typename U >

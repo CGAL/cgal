@@ -315,6 +315,8 @@ struct Rational_traits<Gmpq> {
   RT   denominator   (const Gmpq & r) const { return r.denominator(); }
   Gmpq make_rational (const RT & n, const RT & d) const
   { return Gmpq(n, d); }
+  Gmpq make_rational (const Gmpq & n, const Gmpq & d) const
+  { return n / d; }
 };
 
 CGAL_END_NAMESPACE
