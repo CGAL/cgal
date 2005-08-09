@@ -189,37 +189,37 @@ Uncertain<bool> operator!(Uncertain<bool> const& a)
 }
 
 inline
-Uncertain<bool> operator||(Uncertain<bool> const& a, Uncertain<bool> const& b)
+Uncertain<bool> operator|(Uncertain<bool> const& a, Uncertain<bool> const& b)
 {
   return Uncertain<bool>(a.inf() || b.inf(), a.sup() || b.sup());
 }
 
 inline
-Uncertain<bool> operator||(bool a, Uncertain<bool> const& b)
+Uncertain<bool> operator|(bool a, Uncertain<bool> const& b)
 {
   return Uncertain<bool>(a || b.inf(), a || b.sup());
 }
 
 inline
-Uncertain<bool> operator||(Uncertain<bool> const& a, bool b)
+Uncertain<bool> operator|(Uncertain<bool> const& a, bool b)
 {
   return Uncertain<bool>(a.inf() || b, a.sup() || b);
 }
 
 inline
-Uncertain<bool> operator&&(Uncertain<bool> const& a, Uncertain<bool> const& b)
+Uncertain<bool> operator&(Uncertain<bool> const& a, Uncertain<bool> const& b)
 {
   return Uncertain<bool>(a.inf() && b.inf(), a.sup() && b.sup());
 }
 
 inline
-Uncertain<bool> operator&&(bool a, Uncertain<bool> const& b)
+Uncertain<bool> operator&(bool a, Uncertain<bool> const& b)
 {
   return Uncertain<bool>(a && b.inf(), a && b.sup());
 }
 
 inline
-Uncertain<bool> operator&&(Uncertain<bool> const& a, bool b)
+Uncertain<bool> operator&(Uncertain<bool> const& a, bool b)
 {
   return Uncertain<bool>(a.inf() && b, a.sup() && b);
 }

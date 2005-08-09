@@ -1,4 +1,8 @@
 9 August 2005 Sylvain Pion
+- Uncertain : replace operator&& and || overloads by operator& and |,
+  to keep the lazy evaluation.
+
+9 August 2005 Sylvain Pion
 - Fix workaround for enum_cast.
 
 7 August 2005 Sylvain Pion
