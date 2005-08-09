@@ -594,6 +594,8 @@ protected:
   
 public:
   Join_input_iterator_2() {}
+  Join_input_iterator_2(const Join_input_iterator_2& it)
+    : i1(it.i1), i2(it.i2), op(it.op) {}
   Join_input_iterator_2(I1 i1,I2 i2,const Op& op=Op())
     : i1(i1), i2(i2), op(op) {}
   
@@ -608,6 +610,14 @@ public:
     return i1 < i.i1 && i2 < i.i2;
   }
   
+  Join_input_iterator_2& operator=(const Join_input_iterator_2& it)
+  {
+    i1 = it.i1;
+    i2 = it.i2;
+    op = it.op;
+    return *this;
+  }
+
   const value_type& operator*() const { 
     val = op(*i1,*i2);
     return val;
@@ -678,6 +688,8 @@ protected:
   
 public:
   Join_input_iterator_3() {}
+  Join_input_iterator_3(const Join_input_iterator_3& it)
+    : i1(it.i1), i2(it.i2), i3(it.i3), op(it.op) {}
   Join_input_iterator_3(I1 i1,I2 i2,I3 i3,const Op& op=Op())
     : i1(i1), i2(i2), i3(i3), op(op) {}
   
@@ -693,6 +705,15 @@ public:
     return i1 < i.i1 && i2 < i.i2 && i3 < i.i3;
   }
   
+  Join_input_iterator_3& operator=(const Join_input_iterator_3& it)
+  {
+    i1 = it.i1;
+    i2 = it.i1;
+    i3 = it.i3;
+    op = it.op;
+    return *this;
+  }
+
   const value_type& operator*() const { 
     val = op(*i1,*i2,*i3);
     return val;
