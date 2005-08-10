@@ -1,0 +1,32 @@
+#Example with full row rank and optimal initial basic feasible solution having a
+#ll artificial variables in the basis, thus forcing the expel procedure to pivot
+# the artificial variables out of the basis
+
+#Example with full row rank and optimal initial basic feasible solution having a
+#ll artificial variables in the basis, thus forcing the expel procedure to pivot
+# the artificial variables out of the basis
+
+tags
+input_data_type		i
+is_linear		1
+is_symmetric		1
+has_no_inequalities	1
+
+dimensions
+4 4
+
+A
+-1	0	0	0	
+0	-1	0	0	
+0	0	-1	0	
+0	0	0	-1	
+
+rel
+0	0	0	0	
+
+b
+0	0	0	0	
+
+c
+5	5	5	5	
+

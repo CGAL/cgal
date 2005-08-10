@@ -1,0 +1,33 @@
+#Example not having full row rank and optimal initial basic feasible solution ha
+#ving all artificial variables in the basis, thus forcing the expel procedure to
+# pivot some of the artificial variables out of the basis and remove the remaini
+#ng ones together with their corresponding constraints
+
+#Example not having full row rank and optimal initial basic feasible solution ha
+#ving all artificial variables in the basis, thus forcing the expel procedure to
+# pivot some of the artificial variables out of the basis and remove the remaini
+#ng ones together with their corresponding constraints
+
+tags
+input_data_type		i
+is_linear		1
+is_symmetric		1
+has_no_inequalities	0
+
+dimensions
+3 3
+
+A
+-1	0	0	
+0	-1	0	
+0	-1	0	
+
+rel
+0	0	0	
+
+b
+0	0	0	
+
+c
+-1	-3	4	
+

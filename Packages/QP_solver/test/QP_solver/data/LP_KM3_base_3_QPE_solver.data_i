@@ -1,0 +1,27 @@
+#3-dim KleeMinty example with base=3
+
+#3-dim KleeMinty example with base=3
+
+tags
+input_data_type		i
+is_linear		1
+is_symmetric		1
+has_no_inequalities	0
+
+dimensions
+3 3
+
+A
+1	0	0	
+6	1	0	
+18	6	1	
+
+rel
+-1	-1	-1	
+
+b
+9	81	729	
+
+c
+-9	-3	-1	
+
