@@ -126,6 +126,9 @@ set( int n, int m,
     is_phaseII = false;
 }
 
+
+// This is a variant of set_up_auxiliary_problem for symbolic perturbation
+// for the perturbed case
 template < class Rep_ >
 void
 QP_solver<Rep_>::
@@ -225,6 +228,9 @@ set_up_auxiliary_problemI(Tag_true)
     }
 }
 
+
+// This is the currently used variant of set_up_auxiliary_problem for symbolic
+// perturbation for the perturbed case 
 template < class Rep_ >
 void
 QP_solver<Rep_>::
@@ -328,7 +334,8 @@ set_up_auxiliary_problem(Tag_true)
 }
 
 
-
+// This is the currently used variant of set_up_auxiliary_problem for symbolic
+// perturbation for the unperturbed case 
 template < class Rep_ >
 void
 QP_solver<Rep_>::
