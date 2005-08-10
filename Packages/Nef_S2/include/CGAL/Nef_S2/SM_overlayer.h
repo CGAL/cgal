@@ -541,7 +541,7 @@ public:
   /*{\Mop produces the sphere map which consists of one loop
   and the two halfspheres incident to it.}*/
 
-  void subdivide(const Map* M0, const Map* M1);
+  void subdivide(const Map* M0, const Map* M1, bool with_trivial_segments = false);
   /*{\Mop constructs the overlay of the sphere maps |M0| and |M1| in
   |M|, where all objects (vertices, halfedges, faces) of |M| are
   \emph{enriched} by the marks of the supporting objects of the two
@@ -895,7 +895,7 @@ create(const Sphere_circle& c)
 
 template <typename Map>
 void SM_overlayer<Map>::
-subdivide(const Map* M0, const Map* M1)
+subdivide(const Map* M0, const Map* M1, bool with_trivial_segments)
 {
   PI[0] = SM_const_decorator(M0); 
   PI[1] = SM_const_decorator(M1);
@@ -912,10 +912,16 @@ subdivide(const Map* M0, const Map* M1)
     SHalfedge_const_iterator e;
     CGAL_forall_sedges(e,PI[i]) {
       if ( e->source() == e->target() ) {
-        Seg_pair p = two_segments(PI[i],e);
-        L.push_back(p.first); 
-        L.push_back(p.second);
-        From[--L.end()] = From[--(--L.end())] = Seg_info(e,i);
+       if(with_trivial_segments) {
+          v = e->source();
+          L.push_back(trivial_segment(PI[i],v));
+          From[--L.end()] = Seg_info(v,i);
+        } else {
+          Seg_pair p = two_segments(PI[i],e);
+          L.push_back(p.first);
+          L.push_back(p.second);
+          From[--L.end()] = From[--(--L.end())] = Seg_info(e,i);
+        }
       } else {
         L.push_back(segment(PI[i],e));
         From[--L.end()] = Seg_info(e,i);
