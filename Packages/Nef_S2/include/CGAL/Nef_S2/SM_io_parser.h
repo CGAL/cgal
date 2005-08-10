@@ -52,10 +52,14 @@ class SM_io_parser : public Decorator_
   typedef typename Decorator_traits::SVertex_iterator     SVertex_iterator;
   typedef typename Decorator_traits::SHalfedge_iterator   SHalfedge_iterator;
   typedef typename Decorator_traits::SFace_iterator       SFace_iterator;
-  typedef typename Decorator_traits::SVertex_handle       SVertex_handle;
-  typedef typename Decorator_traits::SHalfedge_handle     SHalfedge_handle;
-  typedef typename Decorator_traits::SFace_handle         SFace_handle;
-  typedef typename Decorator_traits::SHalfloop_handle     SHalfloop_handle;
+  typedef typename Decorator_traits::SVertex_handle             SVertex_handle;
+  typedef typename Decorator_traits::SVertex_const_handle       SVertex_const_handle;
+  typedef typename Decorator_traits::SHalfedge_handle           SHalfedge_handle;
+  typedef typename Decorator_traits::SHalfedge_const_handle     SHalfedge_const_handle;
+  typedef typename Decorator_traits::SFace_const_handle         SFace_const_handle;
+  typedef typename Decorator_traits::SFace_handle               SFace_handle;
+  typedef typename Decorator_traits::SHalfloop_handle           SHalfloop_handle;
+  typedef typename Decorator_traits::SHalfloop_const_handle     SHalfloop_const_handle;
   typedef typename Decorator_traits::SFace_cycle_iterator SFace_cycle_iterator;
   typedef typename Decorator_traits::SHalfedge_around_svertex_circulator
                                      SHalfedge_around_svertex_circulator;
@@ -63,9 +67,9 @@ class SM_io_parser : public Decorator_
   std::istream& in; std::ostream& out;
   bool verbose;
   // a reference to the IO object
-  CGAL::Object_index<SVertex_handle>   VI;
-  CGAL::Object_index<SHalfedge_handle> EI;
-  CGAL::Object_index<SFace_handle>     FI;
+  CGAL::Object_index<SVertex_const_handle>   VI;
+  CGAL::Object_index<SHalfedge_const_handle> EI;
+  CGAL::Object_index<SFace_const_handle>     FI;
   std::vector<SVertex_handle>        SVertex_of;
   std::vector<SHalfedge_handle>      Edge_of;
   std::vector<SFace_handle>          SFace_of;
@@ -77,7 +81,7 @@ class SM_io_parser : public Decorator_
   bool check_sep(char* sep);
   void print_vertex(SVertex_handle) const;
   void print_edge(SHalfedge_handle) const;
-  void print_loop(SHalfloop_handle) const;
+  void print_loop(SHalfloop_const_handle) const;
   void print_face(SFace_handle) const;
 
   bool read_vertex(SVertex_handle);
@@ -87,7 +91,7 @@ class SM_io_parser : public Decorator_
 
   void debug_vertex(SVertex_handle) const;
   void debug_edge(SHalfedge_handle) const;
-  void debug_loop(SHalfloop_handle) const;
+  void debug_loop(SHalfloop_const_handle) const;
 
 public:
 /*{\Mcreation 3}*/
@@ -107,15 +111,15 @@ void read();
 void debug() const;
 void print_faces() const;
 
-std::string index(SVertex_handle v) const 
+std::string index(SVertex_const_handle v) const 
 { return VI(v,verbose); }
-std::string index(SHalfedge_handle e) const 
+std::string index(SHalfedge_const_handle e) const 
 { return EI(e,verbose); }
-std::string index(SHalfloop_handle l) const 
+std::string index(SHalfloop_const_handle l) const 
 { if (verbose)  return (l==this->shalfloop()? "l0" : "l1");
   else return (l==this->shalfloop()? "0" : "1");
 }
-std::string index(SFace_handle f) const 
+std::string index(SFace_const_handle f) const 
 { return FI(f,verbose); }
 
 static void dump(const Decorator_& D, std::ostream& os = std::cerr);
@@ -202,6 +206,8 @@ bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
 template <typename Decorator_>
 void SM_io_parser<Decorator_>::print_edge(SHalfedge_handle e) const
 { // syntax: index { twin, prev, next, source, face, mark, circle }
+
+  Decorator_ D;
   out << index(e) << " { "
       << index(e->twin()) << ", " 
       << index(e->sprev()) << ", " << index(e->snext()) << ", "
@@ -240,7 +246,7 @@ bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::print_loop(SHalfloop_handle l) const
+void SM_io_parser<Decorator_>::print_loop(SHalfloop_const_handle l) const
 { // syntax: index { twin, face, mark, circle }
   out << index(l) << " { "
       << index(l->twin()) << ", " 
@@ -406,7 +412,7 @@ void SM_io_parser<Decorator_>::debug_edge(SHalfedge_handle e) const
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::debug_loop(SHalfloop_handle l) const
+void SM_io_parser<Decorator_>::debug_loop(SHalfloop_const_handle l) const
 { 
   out << index(l) << " "
       << index(l->twin()) << " " << index(l->incident_sface())
