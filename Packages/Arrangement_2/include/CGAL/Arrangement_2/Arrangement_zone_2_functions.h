@@ -172,9 +172,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
     // In case we have just discovered an overlap, compute the overlapping
     // zone as well.
     if (! done && found_overlap)
-    {
       done = _zone_in_overlap();
-    }
   }
 
   // Clear the intersections map and the list of curves for which the
@@ -915,9 +913,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
 
   if (inserted_he != invalid_he)
   {
-    if (found_overlap)
+    if (found_overlap && right_v == invalid_v)
     {
-      // In case of an overlap, we may have split intersect_he, so it refers
+      // In case we have split the overlapping intersect_he, it now refers
       // to the wrong halfedge. However, as inserted_he is directed to the
       // right, the overlapping halfedge is the next one in the chain.
       intersect_he = inserted_he->next();
@@ -1043,11 +1041,6 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   Comparison_result      res = traits->compare_xy_2_object() (cv_right_pt,
                                                               he_right_pt);
-
-  if (res == LARGER)
-    std::cout << "curve: " << overlap_cv << std::endl
-	      << "overlaps: " << intersect_he->curve() << std::endl
-	      <<  cv_right_pt << " <-> " << he_right_pt << std::endl;
 
   CGAL_assertion (res != LARGER);
 
