@@ -244,7 +244,10 @@ private:
     typedef  QP_pricing_strategy<Rep>  Pricing_strategy;
 
   private:
+    // compile time tag for symbolic perturbation, should be moved into traits
+    // class when symbolic perturbation is to be implemented
     Tag_false                is_perturbed;
+    
     // some constants
     const ET                 et0, et1, et2;
 
@@ -590,9 +593,17 @@ private:
     void  init_solution__b_C( Tag_false has_no_inequalities);
 
     void  init_additional_data_members( );
+    
+// function needed for set up of auxiliary problem for symbolic perturbation
     int  signed_leading_exponent( int row);
+// This is a variant of set_up_auxiliary_problem for symbolic perturbation
+// for the perturbed case
     void  set_up_auxiliary_problemI( Tag_true is_perturbed);
+// This is the currently used variant of set_up_auxiliary_problem for symbolic
+// perturbation for the perturbed case 
     void  set_up_auxiliary_problem( Tag_true is_perturbed);
+// This is the currently used variant of set_up_auxiliary_problem for symbolic
+// perturbation for the unperturbed case 
     void  set_up_auxiliary_problem( Tag_false is_perturbed);
 
     // transition (to phase II)
