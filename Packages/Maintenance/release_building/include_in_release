@@ -66,6 +66,7 @@ Polyhedron
 Polyhedron_IO
 Polynomial
 Polytope_distance_d
+QP_solver
 Qt_widget
 Random_numbers
 Robustness

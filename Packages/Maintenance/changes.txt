@@ -1,3 +1,6 @@
+10 August 2005 Sylvain Pion
+- Add QP_solver in internal releases.
+
 3 August 2005 Sylvain Pion
 - Add link to the "LAST" manual test-suite on the test-results page.
 
