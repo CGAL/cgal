@@ -12,72 +12,86 @@
 
 % -----------------------------------------------------------------------------
 \ccDefinition
-An object of the class \ccRefName\ is a data structure that
-represents a vector $x$ attaining the minimum of the convex quadratic objective
-function $f(x)=c^{T}x+x^{T}Dx$, $x \in \R^{n}$, on a domain $R \subset \R^{n}$
-given as the intersection of halfspaces and hyperplanes,
+An object of the class \ccRefName\ is a data structure that represents
+a vector $x$ attaining the minimum of the convex quadratic objective
+function $f(x)=c^{T}x+x^{T}Dx$, $x \in \R^{n}$, on a domain $R \subset
+\R^{n}$ given as the intersection $R=\{ x\in\R^n \mid \mbox{$Ax\leq b,
+x\ge 0$}\}$ of halfspaces and hyperplanes,
 \begin{eqnarray*}
-(QP)&\mbox{minimize} & c^{T}x+x^{T}Dx \\
+\mbox{(QP)}&\mbox{minimize} & c^{T}x+x^{T}Dx \\
 &\mbox{subject to}   & Ax \leq b \\
 && x \geq 0.
 \end{eqnarray*}
-Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$, and
-$D \in \R^{n \times n}$ is positive-semidefinite.
-A vector $x \in \R^{n}$ is said to be a \emph{feasible solution}
-if $x \in R$; if $R=\emptyset$ the quadratic program is said to be
-\emph{infeasible}. If $f(x)$ is bounded from
-below on $R$, the quadratic program is said to be \emph{bounded}, otherwise
-\emph{unbounded}. An object of the class \ccRefName\ has a \emph{status} that
-is either infeasible, unbounded or optimal.  
-A \emph{feasible solution} is characterized by a
-subset $B\subseteq\left[n\right]$, of the variables
-and their values $x_{B}$;
-variables in $B$ are said to be \emph{basic}, \emph{nonbasic} otherwise. 
-Nonbasic variables always have value zero. An optimal feasible solution
-need not be unique.
+Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$, and in
+addition, the matrix $D \in \R^{n \times n}$ is positive-semidefinite.
+A vector $x \in \R^{n}$ is said to be a \emph{feasible solution} if $x
+\in R$; a feasible solution $x$ is called an \emph{optimal feasible
+solution} if $f(x')\geq f(x)$ for all $x'\in R$.  If $R=\emptyset$ the
+quadratic program is said to be \emph{infeasible}; it is
+\emph{feasible} if $\R\not=\emptyset$.  If $f$ is bounded from below
+on $R$, the quadratic program is called \emph{bounded}, otherwise
+\emph{unbounded}.  A quadratic program that is feasible and bounded
+has an optimal feasible solution (which need not be unique), and we
+call the program \emph{optimally solvable} (\emph{optimal} for short).
+Corresponding to this, an object of the class \ccRefName\ has a
+\emph{status} that indicates whether the quadratic program (QP) is
+infeasible, unbounded, or optimal.  A \emph{feasible solution} of (QP)
+can be specified by a subset $B\subseteq\{1,\ldots,n\}$ of the
+variables and their values $x_{B}$ in such a way that all variables
+$\{1,\ldots,n\}\setminus B$ have value zero; in this case, the
+variables in $B$ are said to be \emph{basic} and the variables in
+$\{1,\ldots,n\}\setminus B$ are called \emph{nonbasic}.  (Nonbasic
+variables always have value zero; a basic variable might have value
+zero.)
+%
+%An optimal feasible solution need not be unique.
 
-The algorithm determines the status of the quadratic program; if the status is
-optimal, the optimal value $f(x)$ and a set $B \subseteq \left[n\right]$
-together with the values $x_{B}$ is computed. Except in rare
-cases, the default algorithm terminates. Termination can always be guaranteed
-by using symbolic perturbation. The algorithm can be tailored to specific
-instances of the quadratic program, each associated with a gain in performance.
-These specific
-instances comprise the linear case $D=0$, the symmetric case $D^{T}=D$, as
-well as the case where the constraint matrix $A$ is known to have full row rank.   
+The algorithm determines the status of the quadratic program; if the
+status is solvable, an optimal feasible solution $\tilde{x}$ is
+computed together with the value $f(\tilde{x})$.  The optimal feasible
+solution $\tilde{x}$ is, as described above, characterized by some set
+$B \subseteq \{1,\ldots,n\}$ and the values $\tilde{x}_{B}$.  In order
+to improve performance, the algorithm can be tailored to specific
+instances of the quadratic program.  In particular, if the program is
+known to be linear (i.e., $D=0$) or symmetric (meaning $D^{T}=D$), or
+if the constraint matrix $A$ is known to have full row rank then
+compile-time flags in the traits class \ccc{Traits} can be used to
+specialize the algorithm; the examples below illustrate this.
 
-The algorithm used is an \emph{iterative method}; after having found an initial
-feasible solution the algorithm steps from feasible solution to feasible
-solution, always improving the solution.
-An internal aspect of the algorithm that can be tailored to specific situations
-is the \emph{pricing strategy}.
-The \emph{pricing step} of the solvers algorithm consists of determining 
-whether the current solution is optimal; if the current solution is not optimal
-the pricing step finds a way of improving the current solution. The pricing
-strategy determines which improved solution is taken.
+The solver's underlying algorithm is an \emph{iterative method}; after
+having found an initial feasible solution the algorithm steps from
+feasible solution to feasible solution, always improving the solution.
+An internal aspect of the algorithm that can be tailored to specific
+situations is the \emph{pricing strategy}.  The \emph{pricing step} of
+the solver's algorithm determines whether or not the current solution
+is optimal; if the current solution is not optimal, the pricing step
+finds a way of improving the current solution. The pricing strategy
+determines which improved solution is taken for the next iteration.
 
+Four ready-to-use pricing strategies are provided: \emph{full exact
+pricing}, \emph{full filtered pricing}, \emph{partial exact pricing}
+and \emph{partial filtered pricing}; the first one is the default
+strategy and the last one the most sophisticated one.  This set of
+pricing strategies can be extended by user-provided, customized
+pricing strategies, see the documentation of class
+\ccc{QP_pricing_stratgey<Traits>}.
 
-Four ready-to-use pricing strategies are provided: \emph{full exact pricing},
-\emph{full filtered pricing}, \emph{partial exact pricing} and
-\emph{partial filtered pricing};
-the first one is the default strategy and the last one the most sophisticated
-one.
-This set of pricing strategies can be extended by user provided pricing
-strategies by means of inheritance.
+Technically, the entries $x_i$, $i\in\{1,\ldots,n\}$, of a feasible
+solution $x$ are represented as quotients over the number type
+\ccc{ET}; if the (implicit) conversion from the element types of $A$,
+$b$, $c$ and $D$ to \ccc{ET} is lossless then feasible solutions
+represent exact values (and in particular, the optimal feasible
+solution computed by the solver is an exact optimal feasible solution
+to the original problem).
 
-Every feasible solution to the quadratic program  is represented as a
-quotient over the configurable type \ccc{ET}, such that exact
-solutions are computed, if (implicit)
-conversion from the element types of $A$, $b$, $c$ and $D$ to \ccc{ET}
-is lossless. For the two filtered pricing strategies an inexact (fast) number
-type \ccc{NT} can be specified, such that performance of the pricing step is
-substantially increased and still exact solutions are obtained.
-Partial pricing strategies work best
-for quadratic programs with high \emph{variables-to-constraints} ratio.
-If, in addition, the inexact number type \ccc{NT} is considerably faster
-than the number type \ccc{ET}, then the \emph{partial filtered} pricing
-strategy, which combines filtered and partial pricing,
-is the pricing strategy of choice.  
+For the two filtered pricing strategies, an inexact (fast) number type
+\ccc{NT} can be specified, such that performance of the pricing step
+is substantially increased and still exact solutions are obtained.
+Partial pricing strategies work best for quadratic programs with high
+\emph{variables-to-constraints} ratio.  If, in addition, the inexact
+number type \ccc{NT} is considerably faster than the number type
+\ccc{ET}, the \emph{partial filtered} pricing strategy, which combines
+filtered and partial pricing, is the pricing strategy of choice.
    
 
 \ccInclude{CGAL/QP_solver.h}
@@ -117,8 +131,9 @@ The class \ccRefName\ expects a model of the concept
 \ccc{Traits::Use_perturbation}.}
 
 \ccNestedType{Pricing_strategy}{a typedef to
-\ccc{QP_pricing_strategy<Traits>}. \ccc{Pricing_strategy} is the base class
-of all read-to-use pricing strategies.}
+\ccc{QP_pricing_strategy<Traits>}. \ccc{Pricing_strategy} is a base
+class of all read-to-use pricing strategies, and also of all
+user-provided pricing strategies.}
 
 \ccNestedType{Quotient}{a typedef to \ccc{CGAL::Quotient<Traits::ET>}}
 
@@ -131,7 +146,7 @@ of all read-to-use pricing strategies.}
 \ccNestedType{Lambda_value_iterator}{}
 
 
-The following enum type is provided by the the class \ccRefName\ :
+%The following enum type is provided by the the class \ccRefName\ :
 
 \ccEnum{enum Status { INFEASIBLE, UNBOUNDED, OPTIMAL };}{enumeration used to
 indicate the status of a quadratic program.}
@@ -315,6 +330,10 @@ holds.
 %\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
 %\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
 
+The current implementation does not guarantee termination for all
+instances; in rare cases, the algorithm cycles forever.  (Termination
+can always be guaranteed by using symbolic perturbation, and this
+feature will be added in a future release.)
 
 \ccExample
 \ccIncludeVerbatim{Optimisation_ref/QP_solver_example.C}

@@ -92,10 +92,10 @@ constraint matrix $A$ to have full row rank. If
 no such requirement must be met by the constraint matrix $A$.}
 
 \ccNestedType{Use_perturbation}{
-Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}, if
-\ccc{Use_perturbation} is of type \ccc{CGAL::Tag_true} symbolic perturbation
+Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. If
+\ccc{Use_perturbation} is of type \ccc{CGAL::Tag_true}, symbolic perturbation
 is used and cycling is avoided, such that the algorithm always terminates.
-With symbolic perturbation a small performance penalty is incurred.}
+With symbolic perturbation a small performance penalty is incurred.  Implementation note: \ccc{Use_perturbation} must be \ccc{CGAL::Tag_false}, currently.}
 
 \ccAccessFunctions
 
