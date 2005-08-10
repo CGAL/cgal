@@ -85,7 +85,9 @@ their endpoints are representable as \ccc{Point_2} objects.
  which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that have
  a common right endpoint \ccc{p}, and returns \ccc{SMALLER, EQUAL} or
  \ccc{LARGER} according to the relative position of the two curves
- immediately to the left of $p$.}
+ immediately to the left of $p$. Note that in case one of the $x$-monotone
+ curves is a vertical segment (emanating downward from \ccc{p}), it is always
+ considered to be {\sl below} the other curve.}
 
 \ccNestedType{Compare_y_at_x_right_2}
 {provides the operator~: \\
@@ -94,7 +96,9 @@ their endpoints are representable as \ccc{Point_2} objects.
  which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that have
  a common left endpoint \ccc{p}, and returns \ccc{SMALLER, EQUAL} or
  \ccc{LARGER} according to the relative position of the two curves
- immediately to the right of $p$.}
+ immediately to the right of $p$. Note that in case one of the $x$-monotone
+ curves is a vertical segment emanating upward from \ccc{p}, it is always
+ considered to be {\sl above} the other curve.}
 
 \ccNestedType{Equal_2}
 {provides the operators~: \\
@@ -140,7 +144,6 @@ their endpoints are representable as \ccc{Point_2} objects.
 \ccMethod{Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;} {}
 \ccGlue
 \ccMethod{Equal_2 equal_2_object() const;} {}
-
 
 \ccHasModels
 %===========
