@@ -483,290 +483,283 @@ bool operator!=(const Filter_iterator<I,P>& it1,
                 const Filter_iterator<I,P>& it2)
 { return !(it1 == it2); }
 
-
-template < class I1, class  Creator >
-class Join_input_iterator_1 {
-  // the join of one iterator `i1'. Applies `Creator' with
-  // one argument `*i1'. `value_type' is equal to
-  // `Creator::result_type'.
-public:
-  typedef Join_input_iterator_1<I1,Creator>  Self;
-  typedef std::input_iterator_tag            iterator_category;
-  typedef typename Creator::result_type      value_type;
-  typedef std::iterator_traits<I1>           ITraits;
-  typedef typename ITraits::difference_type  difference_type;
-  typedef  const value_type&                 reference;
-  typedef  const value_type*                 pointer;
-
+template <class I1,class Op>
+class Join_input_iterator_1 : public 
+std::iterator<typename std::iterator_traits<I1>::iterator_category, 
+	      typename Op::result_type, 
+	      typename std::iterator_traits<I1>::difference_type, 
+	      typename Op::result_type*,
+	      typename Op::result_type&>
+{ 
+public: 
+  typedef Join_input_iterator_1<I1,Op> Self;
+  typedef typename Op::result_type value_type;
+  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
+  typedef value_type* pointer;
+  typedef value_type& reference; 
+  
 protected:
-  I1          j1;    // The 1st internal iterator.
-  value_type  val;   // The current (internal) value.
+  I1 i1;
+  Op op;
+  mutable value_type val;  // Note: mutable is needed because we want to
+                           // return a reference in operator*() and
+                           // operator[](int) below.
 
 public:
-  // CREATION
-  // --------
-
   Join_input_iterator_1() {}
-  Join_input_iterator_1( I1 i1) : j1(i1), val(Creator()(*j1)) {}
+  Join_input_iterator_1(const Join_input_iterator_1& it)
+    : i1(it.i1), op(it.op) {}
+  Join_input_iterator_1(I1 i1,const Op& op=Op())
+    : i1(i1), op(op) {}
+  
+  I1 current_iterator1() const { return i1; }
+  
+  bool operator==(const Self& i) const {
+    return i1 == i.i1;
+  }
+  bool operator!=(const Self& i) const { return !(*this == i); }
+  bool operator< (const Self& i) const {
+    return i1 < i.i1;
+  }
 
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-  I1  current_iterator1() const { return j1;}
-
-  bool operator==( const Self& i) const { return ( j1 == i.j1); }
-  bool operator!=( const Self& i) const { return !(*this == i); }
-  reference  operator*()    const { return val; }
-  pointer    operator->()   const { return &val; }
-  Self& operator++() {
-    ++j1;
-    val = Creator()(*j1);
+  Join_input_iterator_1& operator=(const Join_input_iterator_1& it)
+  {
+    i1 = it.i1;
+    op = it.op;
     return *this;
   }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
+  
+  const value_type& operator*() const { 
+    val = op(*i1);
+    return val;
   }
+  
+  Self& operator++(   ) {
+    ++i1;
+    return *this;
+  }
+  Self  operator++(int) { Self tmp = *this; ++(*this); return tmp; }
+  Self& operator--(   ) {
+    --i1;
+    return *this;
+  }
+  Self  operator--(int) { Self tmp = *this; --(*this); return tmp; }
+  
+  const value_type& operator[](difference_type i) const {
+    val = op(i1[i]);
+    return val;
+  }
+  
+  Self& operator+=(difference_type n) {
+    i1 += n;
+    return *this;
+  }
+  Self& operator-=(difference_type n) {
+    i1 -= n;
+    return *this;
+  }
+  Self  operator+ (difference_type n) const {
+    Self tmp = *this;
+    return tmp += n;
+  }
+  Self  operator- (difference_type n) const {
+    Self tmp = *this;
+    return tmp -= n;
+  }
+  difference_type operator-(const Self& i) const { return i1 - i.i1; }
 };
 
-template < class I1, class I2, class  Creator >
-class Join_input_iterator_2 {
-  // the join of two iterators `i1' and `i2'. Applies `Creator' with
-  // two arguments `*i1' and `*i2'. `value_type' is equal to
-  // `Creator::result_type'.
-public:
-  typedef Join_input_iterator_2<I1,I2,Creator> Self;
-
-  typedef std::input_iterator_tag              iterator_category;
-  typedef typename Creator::result_type        value_type;
-  typedef std::iterator_traits<I1>             ITraits;
-  typedef typename ITraits::difference_type    difference_type;
-  typedef const value_type&                    reference;
-  typedef const value_type*                    pointer;
-
+template <class I1,class I2,class Op>
+class Join_input_iterator_2 : public 
+std::iterator<typename std::iterator_traits<I1>::iterator_category, 
+	      typename Op::result_type, 
+	      typename std::iterator_traits<I1>::difference_type, 
+	      typename Op::result_type*,
+	      typename Op::result_type&>
+{ 
+public: 
+  typedef Join_input_iterator_2<I1,I2,Op> Self;
+  typedef typename Op::result_type value_type;
+  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
+  typedef value_type* pointer;
+  typedef value_type& reference; 
+  
 protected:
-  I1          j1;    // The 1st internal iterator.
-  I2          j2;    // The 2nd internal iterator.
-  value_type  val;   // The current (internal) value.
-
+  I1 i1;
+  I2 i2;
+  Op op;
+  mutable value_type val;  // Note: mutable is needed because we want to
+                           // return a reference in operator*() and
+                           // operator[](int) below.
+  
 public:
-  // CREATION
-  // --------
-
   Join_input_iterator_2() {}
-  Join_input_iterator_2( I1 i1, I2 i2)
-  : j1(i1), j2(i2), val(Creator()(*j1,*j2)) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-  I1  current_iterator1() const { return j1;}
-  I2  current_iterator2() const { return j2;}
-
-  bool operator==( const Self& i) const {
-    return ( j1 == i.j1 && j2 == i.j2);
+  Join_input_iterator_2(const Join_input_iterator_2& it)
+    : i1(it.i1), i2(it.i2), op(it.op) {}
+  Join_input_iterator_2(I1 i1,I2 i2,const Op& op=Op())
+    : i1(i1), i2(i2), op(op) {}
+  
+  I1 current_iterator1() const { return i1; }
+  I2 current_iterator2() const { return i2; }
+  
+  bool operator==(const Self& i) const {
+    return i1 == i.i1 && i2 == i.i2;
   }
-  bool operator!=( const Self& i) const { return !(*this == i); }
-  reference operator*() const { return val; }
-  pointer   operator->() const { return &val; }
-  Self& operator++() {
-    ++j1;
-    ++j2;
-    val = Creator()(*j1,*j2);
+  bool operator!=(const Self& i) const { return !(*this == i); }
+  bool operator< (const Self& i) const {
+    return i1 < i.i1 && i2 < i.i2;
+  }
+  
+  Join_input_iterator_2& operator=(const Join_input_iterator_2& it)
+  {
+    i1 = it.i1;
+    i2 = it.i2;
+    op = it.op;
     return *this;
   }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
+
+  const value_type& operator*() const { 
+    val = op(*i1,*i2);
+    return val;
   }
+  
+  Self& operator++(   ) {
+    ++i1;
+    ++i2;
+    return *this;
+  }
+  Self  operator++(int) { Self tmp = *this; ++(*this); return tmp; }
+  Self& operator--(   ) {
+    --i1;
+    --i2;
+    return *this;
+  }
+  Self  operator--(int) { Self tmp = *this; --(*this); return tmp; }
+  
+  const value_type& operator[](difference_type i) const {
+    val = op(i1[i],i2[i]);
+    return val;
+  }
+  
+  Self& operator+=(difference_type n) {
+    i1 += n;
+    i2 += n;
+    return *this;
+  }
+  Self& operator-=(difference_type n) {
+    i1 -= n;
+    i2 -= n;
+    return *this;
+  }
+  Self  operator+ (difference_type n) const {
+    Self tmp = *this;
+    return tmp += n;
+  }
+  Self  operator- (difference_type n) const {
+    Self tmp = *this;
+    return tmp -= n;
+  }
+  difference_type operator-(const Self& i) const { return i1 - i.i1; }
 };
 
-template < class I1, class I2, class I3, class  Creator >
-class Join_input_iterator_3 {
-  // the join of two iterators `i1' up to `i3'. Applies `Creator' with
-  // three arguments `*i1' up to `*i3'. `value_type' is equal to
-  // `Creator::result_type'.
-public:
-  typedef Join_input_iterator_3<I1,I2,I3,Creator> Self;
-
-  typedef std::input_iterator_tag                 iterator_category;
-  typedef typename Creator::result_type           value_type;
-  typedef std::iterator_traits<I1>                ITraits;
-  typedef typename ITraits::difference_type       difference_type;
-  typedef const value_type&                       reference;
-  typedef const value_type*                       pointer;
-
+template <class I1,class I2,class I3,class Op>
+class Join_input_iterator_3 : public 
+std::iterator<typename std::iterator_traits<I1>::iterator_category, 
+	      typename Op::result_type, 
+	      typename std::iterator_traits<I1>::difference_type, 
+	      typename Op::result_type*,
+	      typename Op::result_type&>
+{ 
+public: 
+  typedef Join_input_iterator_3<I1,I2,I3,Op> Self;
+  typedef typename Op::result_type value_type;
+  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
+  typedef value_type* pointer;
+  typedef value_type& reference; 
+  
 protected:
-  I1          j1;    // The 1st internal iterator.
-  I2          j2;    // The 2nd internal iterator.
-  I3          j3;    // The 3rd internal iterator.
-  value_type  val;   // The current (internal) value.
-
+  I1 i1;
+  I2 i2;
+  I3 i3;
+  Op op;
+  mutable value_type val;  // Note: mutable is needed because we want to
+                           // return a reference in operator*() and
+                           // operator[](int) below.
+  
 public:
-  // CREATION
-  // --------
-
   Join_input_iterator_3() {}
-  Join_input_iterator_3( I1 i1, I2 i2, I3 i3)
-  : j1(i1), j2(i2), j3(i3), val(Creator()(*j1,*j2,*j3)) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-  I1  current_iterator1() const { return j1;}
-  I2  current_iterator2() const { return j2;}
-  I3  current_iterator3() const { return j3;}
-
-  bool operator==( const Self& i) const {
-    return ( j1 == i.j1 && j2 == i.j2 && j3 == i.j3);
+  Join_input_iterator_3(const Join_input_iterator_3& it)
+    : i1(it.i1), i2(it.i2), i3(it.i3), op(it.op) {}
+  Join_input_iterator_3(I1 i1,I2 i2,I3 i3,const Op& op=Op())
+    : i1(i1), i2(i2), i3(i3), op(op) {}
+  
+  I1 current_iterator1() const { return i1; }
+  I2 current_iterator2() const { return i2; }
+  I2 current_iterator3() const { return i3; }
+  
+  bool operator==(const Self& i) const {
+    return i1 == i.i1 && i2 == i.i2 && i3 == i.i3;
   }
-  bool operator!=( const Self& i) const { return !(*this == i); }
-  reference operator*() const { return val; }
-  pointer   operator->() const { return &val; }
-  Self& operator++() {
-    ++j1;
-    ++j2;
-    ++j3;
-    val = Creator()(*j1,*j2,*j3);
+  bool operator!=(const Self& i) const { return !(*this == i); }
+  bool operator< (const Self& i) const {
+    return i1 < i.i1 && i2 < i.i2 && i3 < i.i3;
+  }
+  
+  Join_input_iterator_3& operator=(const Join_input_iterator_3& it)
+  {
+    i1 = it.i1;
+    i2 = it.i1;
+    i3 = it.i3;
+    op = it.op;
     return *this;
   }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
+
+  const value_type& operator*() const { 
+    val = op(*i1,*i2,*i3);
+    return val;
   }
-};
-
-template < class I1, class I2, class I3, class I4, class  Creator >
-class Join_input_iterator_4 {
-  // the join of two iterators `i1' up to `i4'. Applies `Creator' with
-  // four arguments `*i1' up to `*i4'. `value_type' is equal to
-  // `Creator::result_type'.
-public:
-  typedef Join_input_iterator_4<I1,I2,I3,I4,Creator> Self;
-
-  typedef std::input_iterator_tag             iterator_category;
-  typedef typename Creator::result_type       value_type;
-  typedef std::iterator_traits<I1>            ITraits;
-  typedef typename ITraits::difference_type   difference_type;
-  typedef const value_type&                   reference;
-  typedef const value_type*                   pointer;
-
-protected:
-  I1          j1;    // The 1st internal iterator.
-  I2          j2;    // The 2nd internal iterator.
-  I3          j3;    // The 3rd internal iterator.
-  I4          j4;    // The 4th internal iterator.
-  value_type  val;   // The current (internal) value.
-
-public:
-  // CREATION
-  // --------
-
-  Join_input_iterator_4() {}
-  Join_input_iterator_4( I1 i1, I2 i2, I3 i3, I4 i4)
-  : j1(i1), j2(i2), j3(i3), j4(i4), val(Creator()(*j1,*j2,*j3,*j4)){}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-  I1  current_iterator1() const { return j1;}
-  I2  current_iterator2() const { return j2;}
-  I3  current_iterator3() const { return j3;}
-  I4  current_iterator4() const { return j4;}
-
-  bool operator==( const Self& i) const {
-    return ( j1 == i.j1 &&
-             j2 == i.j2 &&
-             j3 == i.j3 &&
-             j4 == i.j4);
-  }
-  bool operator!=( const Self& i) const { return !(*this == i); }
-  reference operator*() const { return val; }
-  pointer   operator->() const { return &val; }
-  Self& operator++() {
-    ++j1;
-    ++j2;
-    ++j3;
-    ++j4;
-    val = Creator()(*j1,*j2,*j3,*j4);
+  
+  Self& operator++(   ) {
+    ++i1;
+    ++i2;
+    ++i3;
     return *this;
   }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
+  Self  operator++(int) { Self tmp = *this; ++(*this); return tmp; }
+  Self& operator--(   ) {
+    --i1;
+    --i2;
+    --i3;
+    return *this;
   }
-};
-
-template < class I1, class I2, class I3, class I4, class I5,
-           class  Creator >
-class Join_input_iterator_5 {
-  // the join of two iterators `i1' up to `i5'. Applies `Creator' with
-  // five arguments `*i1' up to `*i5'. `value_type' is equal to
-  // `Creator::result_type'.
-public:
-  typedef Join_input_iterator_5<I1,I2,I3,I4,I5,Creator> Self;
-
-  typedef std::input_iterator_tag             iterator_category;
-  typedef typename Creator::result_type       value_type;
-  typedef std::iterator_traits<I1>            ITraits;
-  typedef typename ITraits::difference_type   difference_type;
-  typedef const value_type&                   reference;
-  typedef const value_type*                   pointer;
-
-protected:
-  I1          j1;    // The 1st internal iterator.
-  I2          j2;    // The 2nd internal iterator.
-  I3          j3;    // The 3rd internal iterator.
-  I4          j4;    // The 4th internal iterator.
-  I5          j5;    // The 5th internal iterator.
-  value_type  val;   // The current (internal) value.
-
-public:
-  // CREATION
-  // --------
-
-  Join_input_iterator_5() {}
-  Join_input_iterator_5( I1 i1, I2 i2, I3 i3, I4 i4, I5 i5)
-  : j1(i1), j2(i2), j3(i3), j4(i4), j5(i5),
-    val(Creator()(*j1,*j2,*j3,*j4,*j5)) {}
-
-    // OPERATIONS Forward Category
-    // ---------------------------
-
-    I1  current_iterator1() const { return j1;}
-    I2  current_iterator2() const { return j2;}
-    I3  current_iterator3() const { return j3;}
-    I4  current_iterator4() const { return j4;}
-    I5  current_iterator5() const { return j5;}
-
-    bool operator==( const Self& i) const {
-      return ( j1 == i.j1 &&
-               j2 == i.j2 &&
-               j3 == i.j3 &&
-               j4 == i.j4 &&
-               j5 == i.j5);
-    }
-    bool operator!=( const Self& i) const { return !(*this == i); }
-    reference operator*() const { return val; }
-    pointer   operator->() const { return &val; }
-    Self& operator++() {
-      ++j1;
-      ++j2;
-      ++j3;
-      ++j4;
-      ++j5;
-      val = Creator()(*j1,*j2,*j3,*j4,*j5);
-      return *this;
-    }
-    Self  operator++(int) {
-      Self tmp = *this;
-      ++*this;
-      return tmp;
-    }
+  Self  operator--(int) { Self tmp = *this; --(*this); return tmp; }
+  
+  const value_type& operator[](difference_type i) const {
+    val = op(i1[i],i2[i],i3[i]);
+    return val;
+  }
+  
+  Self& operator+=(difference_type n) {
+    i1 += n;
+    i2 += n;
+    i3 += n;
+    return *this;
+  }
+  Self& operator-=(difference_type n) {
+    i1 -= n;
+    i2 -= n;
+    i3 -= n;
+    return *this;
+  }
+  Self  operator+ (difference_type n) const {
+    Self tmp = *this;
+    return tmp += n;
+  }
+  Self  operator- (difference_type n) const {
+    Self tmp = *this;
+    return tmp -= n;
+  }
+  difference_type operator-(const Self& i) const { return i1 - i.i1; }
 };
 
 template < class IC>
@@ -1050,3 +1043,4 @@ public:
 CGAL_END_NAMESPACE
 #endif // CGAL_ITERATOR_H //
 // EOF //
+
