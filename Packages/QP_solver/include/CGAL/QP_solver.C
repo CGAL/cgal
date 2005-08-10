@@ -615,6 +615,9 @@ init_additional_data_members( )
     if ( ! tmp_x_2.empty()) tmp_x_2.clear();
     tmp_x_2.insert( tmp_x_2.end(), l, et0);
 }
+
+// function needed for set up of auxiliary problem for symbolic perturbation
+//
 // returns signed * (most significant exponent + 1) if <> 0
 // 0 otherwise
 template < class Rep_ >
