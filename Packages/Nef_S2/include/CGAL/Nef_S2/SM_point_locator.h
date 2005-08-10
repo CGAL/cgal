@@ -396,7 +396,7 @@ public:
   Object_handle ray_shoot(const Sphere_point& p, 
 			  const Sphere_circle& c,
 			  Sphere_point& ip,
-			  bool start_inclusive = false) const { 
+			  bool start_inclusive = false) { 
     Sphere_segment seg(p, p.antipode(), c);
     return ray_shoot(seg, ip, start_inclusive);
   }
@@ -405,7 +405,7 @@ public:
 			  Sphere_point& ip,
 			  bool start_inclusive = false,
 			  bool beyond_end = true,
-			  bool end_inclusive = false) const { 
+			  bool end_inclusive = false) { 
 
     // TODO: end_inclusive=true does not work properly for sedges and sloops
 
@@ -530,7 +530,7 @@ public:
       CGAL_assertion(!testseg.is_long());
       if (start_inclusive || p != p_res) {
 	ip = p_res;
-	return Object_handle(this->shalfloop());
+	return Object_handle(SHalfloop_handle(this->shalfloop()));
       }
     }
 
