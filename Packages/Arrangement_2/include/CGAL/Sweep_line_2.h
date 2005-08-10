@@ -390,7 +390,8 @@ public:
    * \param curve The subcurve to add.
    * \return (true) if an overlap occured; (false) otherwise.
    */
-  bool _add_curve_to_right (Event* event, Subcurve* curve)
+  bool _add_curve_to_right (Event* event, Subcurve* curve,
+                            bool overlap_exist = false)
   {
     std::pair<bool, EventCurveIter> pair_res = 
       event->add_curve_to_right(curve, m_traits);
@@ -399,7 +400,7 @@ public:
       // No overlap occurs:
       return (false);
 
-    _handle_overlap(event, curve, pair_res.second);
+    _handle_overlap(event, curve, pair_res.second, overlap_exist);
 
     // Inidicate that an overlap has occured:
     return (true);
@@ -410,7 +411,7 @@ public:
   void _fix_overlap_subcurves();
 
   /* Handle overlap at right insertion to event */
-  void _handle_overlap(Event* event, Subcurve* curve, EventCurveIter iter);
+  void _handle_overlap(Event* event, Subcurve* curve, EventCurveIter iter, bool overlap_exist);
   
   /*! Compute intersections between the two given curves. */ 
   void _intersect(Subcurve *c1, Subcurve *c2, bool after_remove = false);
@@ -418,6 +419,12 @@ public:
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line (Subcurve *leftCurve,
 				                               bool remove_for_good);
+
+  void _create_intersection_point(const Point_2& xp,
+                                  unsigned int multiplicity,
+                                  Subcurve* &c1,
+                                  Subcurve* &c2,
+                                  bool is_overlap = false);
 
 
 protected:
@@ -604,16 +611,42 @@ void Sweep_line_2<Traits_,
       xp = xp_point->first;
       multiplicity = xp_point->second;
       PRINT("found an intersection point: " << xp << "\n";);
+      _create_intersection_point(xp, multiplicity, c1, c2);
     }
     else
     {
       icv = object_cast<X_monotone_curve_2> (&(*vi));
       CGAL_assertion (icv != NULL);
 
+      Point_2 left_xp = m_traits->construct_min_vertex_2_object()(*icv);
       xp = m_traits->construct_max_vertex_2_object()(*icv);
-    }
-  
-    // insert the event and check if an event at this point already exists.   
+      
+      sub_cv1 = *icv;
+      _create_intersection_point(xp, 0 , c1 , c2);
+      _create_intersection_point(left_xp, 0 , c1 ,c2, true);
+    } 
+  }
+}
+
+
+
+template <class Traits_,
+          class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
+          typename Allocator>
+void Sweep_line_2<Traits_,
+                  SweepVisitor,
+                  CurveWrap,
+                  SweepEvent,
+                  Allocator>::
+_create_intersection_point(const Point_2& xp,
+                           unsigned int multiplicity,
+                           Subcurve* &c1,
+                           Subcurve* &c2,
+                           bool is_overlap)
+{
+   // insert the event and check if an event at this point already exists.   
     const std::pair<Event*, bool>& pair_res = 
       push_event(xp, Base_event::DEFAULT);
     
@@ -634,8 +667,8 @@ void Sweep_line_2<Traits_,
       if (multiplicity == 0)
       {
         // The multiplicity of the intersection point is unkown or undefined:
-        _add_curve_to_right(e, c1);
-        _add_curve_to_right(e, c2);
+        _add_curve_to_right(e, c1, is_overlap);
+        _add_curve_to_right(e, c2, is_overlap);
       }
       else
       {
@@ -661,7 +694,7 @@ void Sweep_line_2<Traits_,
       if( e == m_currentEvent)  //BZBZ
       {
         //it can happen when c1 starts at the interior of c2 (or the opposite)
-        continue;
+        return;
       }
 
       e->add_curve_to_left(c1);
@@ -669,8 +702,8 @@ void Sweep_line_2<Traits_,
 
       if ( !c1->is_end_point(e) && !c2->is_end_point(e))
       {
-        _add_curve_to_right(e, c1);
-        _add_curve_to_right(e, c2);
+        _add_curve_to_right(e, c1, is_overlap);
+        _add_curve_to_right(e, c2, is_overlap);
         e->set_intersection();
         m_visitor ->update_event(e, c1, c2);
       }
@@ -678,14 +711,14 @@ void Sweep_line_2<Traits_,
       {
         if(!c1->is_end_point(e) && c2->is_end_point(e))
         {
-          _add_curve_to_right(e, c1);
+          _add_curve_to_right(e, c1, is_overlap);
           e->set_weak_intersection();
           m_visitor ->update_event(e, c1);
         }
         else 
           if(c1->is_end_point(e) && !c2->is_end_point(e))
           {
-            _add_curve_to_right(e, c2);
+            _add_curve_to_right(e, c2, is_overlap);
             e->set_weak_intersection();
             m_visitor ->update_event(e, c2);
           }
@@ -693,8 +726,10 @@ void Sweep_line_2<Traits_,
    
       SL_DEBUG(e->Print();)
     }
-  }
 }
+
+
+
 
 
 template <class Traits_,
@@ -775,24 +810,34 @@ void Sweep_line_2<Traits_,
                   CurveWrap,
                   SweepEvent,
                   Allocator>::
-_handle_overlap(Event* event, Subcurve* curve, EventCurveIter iter)
+_handle_overlap(Event* event,
+                Subcurve* curve,
+                EventCurveIter iter,
+                bool overlap_exist)
 {
   // An overlap occurs:
     // TODO: take care of polylines in which overlap can happen anywhere
     PRINT("Overlap detected at right insertion...\n";);
     //EventCurveIter iter = pair_res.second;
        
-    vector_inserter vi(m_x_objects);
-    vector_inserter vi_end(m_x_objects);
-    vi_end = m_traits->intersect_2_object()(curve->get_last_curve(),
-					    (*iter)->get_last_curve(),
-					    vi);
+    X_monotone_curve_2 overlap_cv;
+    if(overlap_exist)
+      overlap_cv = sub_cv1;
+    else
+    {
+      std::vector<Object>  obj_vec; 
+      vector_inserter vit(obj_vec);
+      vector_inserter vit_end = vit;
+      vit_end = m_traits->intersect_2_object()(curve->get_last_curve(),
+                                              (*iter)->get_last_curve(),
+                                              vit);
     
-    //BZBZ 06/07/05
-    if(vi == vi_end)
-      return;
-   
-    X_monotone_curve_2 overlap_cv = object_cast<X_monotone_curve_2> (*vi);
+      //BZBZ 06/07/05
+      if(obj_vec.empty())
+        return;
+      
+      overlap_cv = object_cast<X_monotone_curve_2> (obj_vec.front());
+    }
     
     // Get the right end of overlap_cv
     Point_2 end_overlap =
