@@ -140,7 +140,8 @@ public:
     }
     else if (lm_gen)
     {
-      lm_gen->attach(p_arr); 
+      Arrangement_2 &non_const_arr = const_cast<Arrangement_2&>(*p_arr);
+      lm_gen->attach(non_const_arr); 
     }
     else
     {
