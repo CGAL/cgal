@@ -15,10 +15,12 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
+#include<CGAL/Curved_kernel/internal_functions_on_circle_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
   
+
   template < class CK >
   inline
   Comparison_result 
@@ -47,6 +49,69 @@ namespace CircularFunctors {
       return compx;
     return compare_y<CK>(p0, p1);
   }
+
+
+  template < class CK >
+  inline
+  Comparison_result 
+  compare_x(const typename CK::Circular_arc_endpoint_2 &p0,
+            const typename CK::Point_2 &p1)
+  {
+    return CGAL::compare(p0.x(), p1.x());
+  }
+
+  template < class CK >
+  inline
+  Comparison_result 
+  compare_x(const typename CK::Point_2 &p0,
+            const typename CK::Circular_arc_endpoint_2 &p1)
+  {
+    return CGAL::compare(p0.x(), p1.x());
+  }
+
+
+  template < class CK >
+  inline
+  Comparison_result 
+  compare_y(const typename CK::Circular_arc_endpoint_2 &p0,
+            const typename CK::Point_2 &p1)
+  {
+    return CGAL::compare(p0.y(), p1.y());
+  }
+
+  template < class CK >
+  inline
+  Comparison_result 
+  compare_y(const typename CK::Point_2 &p0,
+            const typename CK::Circular_arc_endpoint_2 &p1)
+  {
+    return CGAL::compare(p0.y(), p1.y());
+  }
+
+
+  template < class CK >
+  Comparison_result 
+  compare_xy(const typename CK::Circular_arc_endpoint_2 &p0,
+             const typename CK::Point_2 &p1)
+  {
+    Comparison_result compx = compare_x<CK>(p0, p1);
+    if (compx != 0)
+      return compx;
+    return compare_y<CK>(p0, p1);
+  }
+
+  template < class CK >
+  Comparison_result 
+  compare_xy(const typename CK::Point_2 &p0,
+             const typename CK::Circular_arc_endpoint_2 &p1)
+  {
+    Comparison_result compx = compare_x<CK>(p0, p1);
+    if (compx != 0)
+      return compx;
+    return compare_y<CK>(p0, p1);
+  }
+
+
 
   template < class CK >
   bool
@@ -673,6 +738,7 @@ namespace CircularFunctors {
     return false;
   }
 
+    
   template < class CK, class OutputIterator >
   OutputIterator
   make_x_monotone( const typename CK::Circular_arc_2 &A,
@@ -780,10 +846,223 @@ namespace CircularFunctors {
     return res;
   }
 
+  
+  
+  
+// This is the make_x_monotone function returning extra information: 
+// The ouput iterator refers to pairs, the first part of which is an
+// object containing the x-monotone arc and the second part is a 
+// boolean defining whether the arc is on the upper part of the 
+// circle or not. This extra information returned by make_x_monotone
+// and make_xy_monotone helps us to avoid doing twice the same 
+// comparisons by the functions which call these two in order to define
+// the position of the returned arcs on the circle , like in the 
+// construct_bounding_hexagons function
 
-template <typename CK>
-Bbox_2 circular_arc_bbox( const typename CK::Circular_arc_2 & a)
+template < class CK, class OutputIterator >
+  OutputIterator
+  advanced_make_x_monotone( const typename CK::Circular_arc_2 &A,
+		            OutputIterator res )
 {
+    typedef typename CK::Circular_arc_2           Circular_arc_2;
+    typedef typename CK::Circle_2                 Circle_2;
+    typedef typename CK::FT                       FT;
+    typedef typename CK::Linear_kernel::Point_2   Point_2;
+    typedef std::pair<CGAL::Object,bool >         S_pair;
+
+
+    int cmp_begin_y = CGAL::compare(A.source().y(), A.center().y());
+    int cmp_end_y   = CGAL::compare(A.target().y(), A.center().y());
+    
+    int cmp_x=compare_x(A.source(),A.target());
+    
+
+    // We don't need to split
+    if (cmp_begin_y != opposite(cmp_end_y) &&
+        (((cmp_begin_y > 0 || cmp_end_y > 0) && cmp_x > 0) ||
+          (cmp_begin_y < 0 || cmp_end_y < 0) && cmp_x < 0) ) {
+            
+      *res++ = S_pair(make_object(A),(cmp_begin_y>0 || cmp_end_y>0) );
+      return res; 
+    }
+
+    // Half circles
+    if (cmp_begin_y == 0 && cmp_end_y == 0 && cmp_x != 0) {
+      *res++ = std::make_pair(make_object(A), cmp_x>0 );
+      return res; 
+    }
+
+    // We need to split
+    //assert(!A.is_x_monotone());
+
+
+
+    if (cmp_begin_y > 0) {
+    
+      *res++ = S_pair(make_object(Circular_arc_2 (A.supporting_circle(),A.source(),
+			          x_critical_points<CK>(A.supporting_circle(),true))),
+			          true);
+			       
+      if (cmp_end_y > 0) {
+        // We must cut in 3 parts.
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+			        x_critical_points<CK>(A.supporting_circle(),true),
+			        x_critical_points<CK>(A.supporting_circle(),false))),
+			        false);
+			   
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                x_critical_points<CK>(A.supporting_circle(),false),
+			        A.target())),true);
+      } else {    
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                x_critical_points<CK>(A.supporting_circle(),true),
+			        A.target())) , false);
+      }
+    }
+    else if (cmp_begin_y < 0) {
+      // Very similar to the previous case.
+            
+      *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+			      A.source(),
+			      x_critical_points<CK>(A.supporting_circle(),false))),
+			      false);
+			 
+      if (cmp_end_y < CGAL::EQUAL) {
+      
+        // We must cut in 3 parts.
+	
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+			        x_critical_points<CK>(A.supporting_circle(),false), 
+			        x_critical_points<CK>(A.supporting_circle(),true))) ,
+			        true );
+				     					     
+					     
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                x_critical_points<CK>(A.supporting_circle(),true),
+			        A.target())),false);
+      } else {
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                x_critical_points<CK>(A.supporting_circle(),false),
+			        A.target())) ,true);
+      }
+    }
+    else { // cmp_begin_y == 0
+      if ( compare(A.source().x(),A.center().x())< 0) {
+        assert (cmp_end_y >= 0);
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                A.source(),
+			        x_critical_points<CK>(A.supporting_circle(),false))),
+			        false);
+	
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                x_critical_points<CK>(A.supporting_circle(),false),
+			        A.target())) ,true);
+      }
+      else {
+        assert ( compare(A.source().x(),A.center().x())< 0);
+        assert (cmp_end_y != LARGER);
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+			        A.source(),
+			        x_critical_points<CK>(A.supporting_circle(),true))),
+			        true);		   
+			   
+        *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
+                                x_critical_points<CK>(A.supporting_circle(),true),
+			        A.target())),false);
+      }
+    }
+
+    return res;
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+// In the same as the advanced_make_x_monotone works, this make_xy_function
+// returns extra information, descriptive of the position of the returned 
+// xy-monotone arcs on the circle: The output iterator refers to pairs, the 
+// first part of which is the object containing tha arc and the second part
+// is another pair containing 2 booleans which equavalently describe whether the
+// returned xy-monotone arc is on the upper part and the left side of the circle
+
+template < typename CK , typename Output_iterator>
+Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a, 
+                                           Output_iterator res)
+{
+
+	typedef typename CK::Circular_arc_2            Circular_arc_2;
+	typedef std::pair<bool, bool>                  relat_pos;
+	typedef std::pair< CGAL::Object, bool>         Obj_descr_1;
+	typedef std::pair< CGAL::Object, relat_pos>    Obj_descr_2;
+	typedef std::vector<Obj_descr_1>               Obj_vector_1;
+	typedef std::vector<Obj_descr_2>               Obj_vector_2;
+
+		
+		 
+	Obj_vector_1 vec;
+	Obj_vector_2 vec2;
+	Obj_descr_2  dscr2;
+	
+	advanced_make_x_monotone<CK>(a,std::back_inserter(vec));
+	
+       	for(unsigned int i=0;i<vec.size();i++)
+	{
+	
+		const Circular_arc_2 *tmp_arc =CGAL::object_cast<Circular_arc_2>(&vec.at(i).first);
+		
+    		int cmp_begin_x = CGAL::compare(tmp_arc->source().x(), tmp_arc->center().x());
+    		int cmp_end_x   = CGAL::compare(tmp_arc->target().x(), tmp_arc->center().x());
+		
+		if(cmp_begin_x!=opposite(cmp_end_x) || cmp_begin_x==CGAL::EQUAL)
+		{
+			   dscr2.first=vec.at(i).first;
+			   dscr2.second.first=vec.at(i).second;
+			   dscr2.second.second= (cmp_begin_x==CGAL::SMALLER ||
+			   			 cmp_end_x==CGAL::SMALLER   )? 
+			                         true : false;
+			   *res++=dscr2; // The arc is xy_monotone
+		}	   
+		else{ //We have to split the x_monotone_arc into 2 y_monotone arcs
+		
+		
+		
+		Obj_descr_1 tmp=vec.at(i);
+		Obj_descr_2 tmp1,tmp2;
+		const Circular_arc_2 *tmp_arc =CGAL::object_cast<Circular_arc_2>(&tmp.first);
+				 
+					 			 
+		tmp1.first=make_object(Circular_arc_2(a.supporting_circle(),tmp_arc->source(),
+			               y_critical_points<CK>(a.supporting_circle(),!tmp.second)));
+			    	    
+			    
+		tmp1.second.first=tmp.second;
+		tmp1.second.second= (tmp.second)? false : true ;
+		
+		
+		tmp2.first=make_object(Circular_arc_2(a.supporting_circle(),
+                                       y_critical_points<CK>(a.supporting_circle(),!tmp.second),
+		           			      tmp_arc->target()));
+
+		tmp2.second.first=tmp.second;
+		tmp2.second.second= (tmp.second)? true  : false ;
+
+		*res++=tmp1;
+		*res++=tmp2;
+                   }
+		   
+		   
+	}
+
+	return res;
+	
+}	
+	
+
+
+
+   template <class CK>
+ CGAL::Bbox_2 circular_arc_bbox( const typename CK::Kernel_base::Circular_arc_2 & a)
+{	
 	typedef typename CK::Root_of_2 	   Root_of_2;
 	typedef typename CK::FT 		   FT;
 
@@ -806,8 +1085,10 @@ Bbox_2 circular_arc_bbox( const typename CK::Circular_arc_2 & a)
 		                to_interval( y_critical_points<CK>(a.supporting_circle(),false).y() ).second:
 			   	CGAL::max(left_bb.ymax(),right_bb.ymax()); 
 		
+				
 		return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);
 	}
+	
 		
 	// Else return the bounding box of the circle.
 	return a.supporting_circle().bbox();
@@ -873,6 +1154,8 @@ Bbox_2 circular_arc_bbox( const typename CK::Circular_arc_2 & a)
 		return Bbox_2(xmin,ymin,xmax,ymax);
 		*/
 }
+  
+
 
 } // namespace CircularFunctors 
 } // namespace CGAL

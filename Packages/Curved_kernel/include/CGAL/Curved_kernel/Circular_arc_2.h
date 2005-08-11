@@ -16,6 +16,7 @@
 
 #include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/global_functions_on_circular_arcs_2.h>
+#include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
 #include <CGAL/intersections.h>
 
 namespace CGAL {
@@ -294,11 +295,12 @@ namespace CGALi {
         return CGAL::to_double(supporting_circle().center().y()) - tmp;
     }
 
+
     Bbox_2 bbox() const
     {
-      // TODO : Needs to call a functor.
-      return CircularFunctors::circular_arc_bbox<CK>(*this);
-    }
+      return CGAL::CircularFunctors::circular_arc_bbox<CK>(*this);
+    }    
+    
   };
 
   template < typename CK >

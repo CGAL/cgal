@@ -29,6 +29,7 @@ namespace CircularFunctors {
     : public CK::Linear_kernel::Compare_x_2
   {
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Point_2 Point_2;
 
   public:
     typedef CGAL::Comparison_result result_type;
@@ -37,13 +38,26 @@ namespace CircularFunctors {
     operator() (const Circular_arc_endpoint_2 &p0,
                 const Circular_arc_endpoint_2 &p1) const
     { return compare_x<CK>(p0, p1); }
+
+    result_type
+    operator() (const Circular_arc_endpoint_2 &p0,
+                const Point_2 &p1) const
+    { return compare_x<CK>(p0, p1); }
+
+    result_type
+    operator() (const Point_2 &p0,
+                const Circular_arc_endpoint_2 &p1) const
+    { return compare_x<CK>(p0, p1); }
+
   };
+
 
   template < class CK >
   class Compare_y_2
     : public CK::Linear_kernel::Compare_y_2
   {
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Point_2 Point_2;
 
   public:
     typedef CGAL::Comparison_result result_type;
@@ -53,6 +67,16 @@ namespace CircularFunctors {
                 const Circular_arc_endpoint_2 &p1) const
     { return compare_y<CK>(p0, p1); }
 
+    result_type
+    operator() (const Point_2 &p0,
+                const Circular_arc_endpoint_2 &p1) const
+    { return compare_y<CK>(p0, p1); }
+
+    result_type
+    operator() (const Circular_arc_endpoint_2 &p0,
+                const Point_2 &p1) const
+    { return compare_y<CK>(p0, p1); }
+
   };
 
   template < class CK >
@@ -60,6 +84,7 @@ namespace CircularFunctors {
     : public CK::Linear_kernel::Compare_xy_2
   {
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Point_2 Point_2;
 
   public:
     typedef CGAL::Comparison_result result_type;
@@ -67,6 +92,16 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_endpoint_2 &p0,
                 const Circular_arc_endpoint_2 &p1) const
+    { return compare_xy<CK>(p0, p1); }
+
+    result_type
+    operator() (const Point_2 &p0,
+                const Circular_arc_endpoint_2 &p1) const
+    { return compare_xy<CK>(p0, p1); }
+
+    result_type
+    operator() (const Circular_arc_endpoint_2 &p0,
+                const Point_2 &p1) const
     { return compare_xy<CK>(p0, p1); }
 
   };
