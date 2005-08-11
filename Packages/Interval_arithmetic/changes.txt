@@ -1,5 +1,7 @@
 11 August Andreas Fabri
 - Added a common base class for lazy numbers and lazy kernel classes
+- Added an example for the lazy kernel
+  and a kernel with a functor that writes result to an output iterator
 
 9 August 2005 Sylvain Pion
 - Uncertain : replace operator&& and || overloads by operator& and |,
