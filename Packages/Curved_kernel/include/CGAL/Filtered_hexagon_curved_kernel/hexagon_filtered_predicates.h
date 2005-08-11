@@ -61,12 +61,12 @@ class Compare_y_at_x_2
     typedef typename HK::Circular_arc_2                                      Circular_arc_2;
     typedef typename HK::Circular_arc_endpoint_2                             Circular_arc_endpoint_2;
     typedef typename Circular_arc_2::Hexagon                                 Hexagon;
-    typedef typename CGAL::Simple_cartesian<double>::Point_2		     Point_2; //Attention!!!
-    typedef CGAL::Exact_predicates_inexact_constructions_kernel              EK;
+    typedef typename Simple_cartesian<double>::Point_2		             Point_2; //Attention!!!
+    typedef Exact_predicates_inexact_constructions_kernel                    EK;
 
   public:
 
-    typedef CGAL::Comparison_result result_type;
+    typedef Comparison_result result_type;
 
     result_type
     operator()( const Circular_arc_endpoint_2 &p,const Circular_arc_2 &a ) const
@@ -91,12 +91,12 @@ class Compare_y_at_x_2
 	{
 	  if( !(bb.xmin() > hips->right_vertex()->x() || bb.xmax() < hips->left_vertex()->x())  )
 	    if(bb.ymin() > hips->top_vertex()->y()) 
-	      rel_pos=CGAL::LARGER;
+	      rel_pos=LARGER;
 	    else if(bb.ymax() < hips->bottom_vertex()->y()) 
-	      rel_pos=CGAL::SMALLER;
+	      rel_pos=SMALLER;
 	    else
               {
-		rel_pos=CGAL::EQUAL;
+		rel_pos=EQUAL;
 
 		Hexagon hxgn= *hips;
 
@@ -105,18 +105,18 @@ class Compare_y_at_x_2
 
 		bool pred=(hxgn[0].x()!=hxgn[1].x() && hxgn[0].y()!=hxgn[1].y());
    
-		CGAL::Orientation side;
-		CGAL::Comparison_result temp;
+		Orientation side;
+		Comparison_result temp;
 		 
 		if(hxgn[pred].y()==hxgn.top_vertex()->y() || (pred && hxgn[0].y()==hxgn.top_vertex()->y() )) 
 		  {
-		    side=CGAL::LEFT_TURN;
-		    temp=CGAL::LARGER;
+		    side=LEFT_TURN;
+		    temp=LARGER;
 		  } 
 		  else
 		  {
-		    side=CGAL::RIGHT_TURN;
-		    temp=CGAL::SMALLER;
+		    side=RIGHT_TURN;
+		    temp=SMALLER;
 		  } 
 
 		
@@ -124,7 +124,7 @@ class Compare_y_at_x_2
 			    a2(hxgn[1].x(),hxgn[1].y()),
 			    a3(pnt_vec[0].x(),pnt_vec[0].y());
 		
-		if ( CGAL::orientation(a1,a2,a3)==side)
+		if ( EK().orientation_2_object()(a1,a2,a3)==side)
 		  rel_pos=temp;
 		else 
 		  rel_pos=opposite(temp);
@@ -234,7 +234,7 @@ class Do_overlap_2
     typedef typename HK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
 
   public:
-    typedef CGAL::Comparison_result result_type;
+    typedef Comparison_result result_type;
 
     result_type
     operator()(const Circular_arc_2 &a1,
@@ -262,7 +262,7 @@ class Do_overlap_2
     OutputIterator
     operator()(const Circular_arc_2 &A, OutputIterator res)
       { 
-	std::vector<CGAL::Object> vec;
+	std::vector<Object> vec;
 	
 	CK().make_x_monotone_2_object()(A.arc(), std::back_inserter(vec) );
  
@@ -270,11 +270,11 @@ class Do_overlap_2
 	{
 	  const Rcirc_arc_2 *tmp_arc;
 
-	  tmp_arc=CGAL::object_cast<Rcirc_arc_2>(&vec.at(i));
+	  tmp_arc=object_cast<Rcirc_arc_2>(&vec.at(i));
 		
 	  assert(tmp_arc!=NULL);
 		
-	  *res++ = CGAL::make_object( Circular_arc_2(*tmp_arc) );
+	  *res++ = make_object( Circular_arc_2(*tmp_arc) );
 	}
 	
 	return res;
@@ -304,7 +304,7 @@ class Do_overlap_2
 	       OutputIterator res)
       { 
 
-	std::vector<CGAL::Object> vec;
+	std::vector<Object> vec;
 	
 	CK().construct_intersections_2_object()(c1.arc(),c2.arc(),std::back_inserter(vec)); 
 
@@ -312,7 +312,7 @@ class Do_overlap_2
 	{
 	  const Rcirc_arc_2 *tmp_arc;
 
-	  if ( (tmp_arc=CGAL::object_cast<Rcirc_arc_2>(&vec.at(i)) )!=NULL )
+	  if ( (tmp_arc=object_cast<Rcirc_arc_2>(&vec.at(i)) )!=NULL )
 	    *res++ = make_object( Circular_arc_2(*tmp_arc) );
 	  else
 	    *res++ = vec.at(i);
