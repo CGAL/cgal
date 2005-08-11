@@ -38,22 +38,23 @@ CGAL_BEGIN_NAMESPACE
 
 // EK = exact kernel that will be made lazy
 // Kernel = lazy kernel
-template < typename EK_, typename Kernel >
+template < typename EK_, typename AK_, typename Kernel >
 class Lazy_kernel_base
 //  : public EK::template Base<Kernel>::Type
 {
   //    typedef typename EK::template Base<Kernel>::Type   Kernel_base;
     // Hardcoded for now.
   //    typedef Simple_cartesian<Interval_nt_advanced>   AK; // A optimiser
-public:  
-  typedef Simple_cartesian<Interval_nt<> >   AK;
+public:
+  typedef AK_ AK;
+  //  typedef Simple_cartesian<Interval_nt<> >   AK;
   typedef EK_   EK;
   typedef Cartesian_converter<EK, AK,
                                 To_interval<typename EK::RT> > E2A;
 
 
     template < typename Kernel2 >
-    struct Base { typedef Lazy_kernel_base<EK, Kernel2>  Type; };
+    struct Base { typedef Lazy_kernel_base<EK, AK, Kernel2>  Type; };
 
     // What to do with the tag ?
     // Probably this should not exist, should it ?
@@ -108,8 +109,9 @@ public:
 
 
     // We change the constructions.
+#ifdef CGAL_INTERSECT_WITH_ITERATORS_2
 #define CGAL_Kernel_cons(C, Cf) \
-    typedef typename boost::mpl::if_<boost::is_same<typename AK::C, AK::Intersect_with_iterators_2>, \
+    typedef typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Intersect_with_iterators_2>, \
                                      Lazy_intersect_with_iterators<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
                                      typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
                                      Lazy_construction_bbox<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
@@ -120,27 +122,47 @@ public:
                                                                                        Lazy_construction<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type > ::type C; \
     C Cf() const { return C(); }
 
+  CGAL_Kernel_cons(Intersect_with_iterators_2,
+		   intersect_with_iterators_2_object)
+#else 
+#define CGAL_Kernel_cons(C, Cf) \
+    typedef typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
+                                     Lazy_construction_bbox<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Interval_nt<true> >,\
+                                                              Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
+                                                              typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
+                                                                                       Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
+                                                                                       Lazy_construction<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type C; \
+    C Cf() const { return C(); }
+
+#endif //CGAL_INTERSECT_WITH_ITERATORS_2
+
+
 #include <CGAL/Kernel/interface_macros.h>
 
 };
 
-template <class EK>
+template <class EK, class AK>
 struct Lazy_kernel_adaptor
-  : public Lazy_kernel_base< EK, Lazy_kernel_adaptor<EK> >
+  : public Lazy_kernel_base< EK, AK, Lazy_kernel_adaptor<EK,AK> >
 {};
 
-template <class EK>
+template <class EK, class AK>
 struct Lazy_kernel_without_type_equality
-  : public Lazy_kernel_base< EK, Lazy_kernel_without_type_equality<EK> >
+  : public Lazy_kernel_base< EK, AK, Lazy_kernel_without_type_equality<EK,AK> >
 {};
 
-template <class EK>
+template <class EK, class AK = void>
 struct Lazy_kernel
   : public Type_equality_wrapper< 
-             Lazy_kernel_base< EK, Lazy_kernel<EK> >,
-             Lazy_kernel<EK> >
+             Lazy_kernel_base< EK, AK, Lazy_kernel<EK, AK> >,
+             Lazy_kernel<EK, AK> >
 {};
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LAZY_KERNEL_H
+
+
+
+
