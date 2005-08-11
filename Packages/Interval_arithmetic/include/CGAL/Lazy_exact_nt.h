@@ -86,36 +86,67 @@
  */
 
 CGAL_BEGIN_NAMESPACE
-
-// Abstract base representation class
-template <typename ET>
-struct Lazy_exact_rep : public Rep
+// Abstract base class for lazy numbers and lazy objects
+template <typename AT, typename ET, typename E2A>
+struct Lazy_construct_rep : public Rep
 {
-  Interval_nt<true> in; // could be const, except for refinement ? or mutable ?
-  ET *et; // mutable as well ?
 
-  Lazy_exact_rep (const Interval_nt<true> & i)
-      : in(i), et(NULL) {}
+  AT at;
+  ET *et;
+
+  Lazy_construct_rep ()
+      : at(), et(NULL) {}
+
+  Lazy_construct_rep (const AT& a)
+      : at(a), et(NULL) 
+  {}
+
+  Lazy_construct_rep (const AT& a, const ET& e)
+      : at(a), et(new ET(e)) 
+  {}
+
+
 
 private:
-  Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
+  Lazy_construct_rep (const Lazy_construct_rep&) { abort(); } // cannot be copied.
 public:
 
-  const Interval_nt<true>& approx() const
+  const AT& approx() const
   {
-      return in;
+      return at;
+  }
+
+  AT& approx()
+  {
+      return at;
   }
 
   const ET & exact()
   {
-      if (et==NULL)
-          update_exact();
-      return *et;
+    if (et==NULL)
+      update_exact();
+    return *et;
   }
+
 
   virtual void update_exact() = 0;
   virtual int depth() const  { return 1; }
-  virtual ~Lazy_exact_rep () { delete et; };
+  virtual ~Lazy_construct_rep () { delete et; };
+};
+
+// Abstract base representation class for lazy numbers
+template <typename ET>
+struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<true>, ET, To_interval<ET> >
+{
+typedef Lazy_construct_rep<Interval_nt<true>, ET, To_interval<ET> > Base;
+
+  Lazy_exact_rep (const Interval_nt<true> & i)
+      : Base(i) {}
+
+private:
+  Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
+
+
 };
 
 // int constant
@@ -125,7 +156,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
   Lazy_exact_Int_Cst (int i)
       : Lazy_exact_rep<ET>(double(i)) {}
 
-  void update_exact()  { this->et = new ET((int)this->in.inf()); }
+  void update_exact()  { this->et = new ET((int)this->approx().inf()); }
 };
 
 // double constant
@@ -135,7 +166,7 @@ struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
   Lazy_exact_Cst (double d)
       : Lazy_exact_rep<ET>(d) {}
 
-  void update_exact()  { this->et = new ET(this->in.inf()); }
+  void update_exact()  { this->et = new ET(this->approx().inf()); }
 };
 
 // Exact constant
@@ -244,7 +275,7 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
   void update_exact()                                                    \
   {                                                                      \
     this->et = new ET(this->op1.exact() OP this->op2.exact());           \
-    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et)); \
+    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et)); \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -264,7 +295,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   void update_exact()
   {
     this->et = new ET(min(this->op1.exact(), this->op2.exact()));
-    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et));
+    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et));
     this->prune_dag();
   }
 };
@@ -279,7 +310,7 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   void update_exact()
   {
     this->et = new ET(max(this->op1.exact(), this->op2.exact()));
-    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et));
+    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et));
     this->prune_dag();
   }
 };
@@ -294,7 +325,7 @@ class Lazy_exact_nt
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int >
 {
   typedef Lazy_exact_nt<ET> Self;
-  typedef Lazy_exact_rep<ET> Self_rep;
+  typedef Lazy_construct_rep<Interval_nt<true>, ET, To_interval<ET> > Self_rep;
 
   // We have a static variable for optimizing zero.
   static const Self zero_;

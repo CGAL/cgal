@@ -1,3 +1,6 @@
+11 August Andreas Fabri
+- Added a common base class for lazy numbers and lazy kernel classes
+
 9 August 2005 Sylvain Pion
 - Uncertain : replace operator&& and || overloads by operator& and |,
   to keep the lazy evaluation.
