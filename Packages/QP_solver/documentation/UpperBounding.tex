@@ -41,14 +41,38 @@ with $D$ positive semi definite, where $I:= I^{\leq} \cup I^{\geq}$ and
 $\left| E \right| + \left| I \right| = m$,
 
 The lower and upper bounds, in the finite case,  will be stored in the vectors
-$\mathbf{l}$ and $\mathbf{u}$, $l \leq u$, both of size $\left|O\right|$, where $O$ denotes the set of original variables. The absence or presence of finite bounds will be indicated by means of two 0,1 valued vectors $f^{l}$ and $f^{u}$. Thus if 
-$f_{j}^{l}=0$, for some $j \in O$, then the lower bound for the variable $x_{j}$ is $-\infty$, on the other hand, if $f_{j}^{l}=1$ for some $j \in O$ then the lower bound for variable $x_{j}$ is $l_{j}$. The upper bounds are described 
-likewise. Thus a variable $x_{k}$ is \emph{free}, if $f_{k}^{u}=0$ and
+$l$ and $u$, $l \leq u$, both of size $\left|O\right|$, where
+$O$ denotes the set of original variables. The absence or presence of finite
+bounds will be indicated by means of two 0,1 valued vectors $f^{l}$ and $f^{u}$.
+\begin{equation}
+\label{def: }
+\tilde{l}_{k}:=
+\left\{
+\begin{array}{ll}
+-\infty, & \text{if $f^{l}_{k}=0$} \\
+l_{k},  & \text{if $f^{l}_{k}=1$}
+\end{array}
+\right.,
+\quad
+\tilde{u}_{k}:=
+\left\{
+\begin{array}{ll}
+\infty, & \text{if $f^{u}_{k}=0$} \\
+u_{k},  & \text{if $f^{u}_{k}=1$}
+\end{array}
+\right.
+\end{equation}
+Thus a variable $x_{k}$ is \emph{free}, if $f_{k}^{u}=0$ and
 $f_{k}^{l}=0$, and $x_{k}$ is \emph{fixed}, if $u_{k}=l_{k}$ as well as
-$f_{k}^{l}=1$ and $f_{k}^{u}=1$ hold. The set of unrestricted original variables will be denoted by $U$ and the set of fixed original variables will be denoted by $F$.
+$f_{k}^{l}=1$ and $f_{k}^{u}=1$ hold. The set of unrestricted original variables
+will be denoted by $U$ and the set of fixed original variables will be denoted
+by $F$.
 
-Extending the vectors $f^{l}, f^{u}$ and $l, u$ for the set of slack variables $S$ and artificial variables $art$ comes naturally, such that we can introduce  
-a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of the three possible values a nonbasic variable may take with respect to its bounds,
+Extending the vectors $f^{l}, f^{u}$ and $l, u$ for the set of slack variables
+$S$ and artificial variables $art$ comes naturally, such that we can introduce  
+a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of
+the three possible values a nonbasic variable may take with respect to its
+bounds,
 \begin{equation}
 b(k):= \left\{
 \begin{array}{ll}
@@ -72,7 +96,7 @@ $k \in (S \cup art) \cap N$.
 Since the original variables for the initial feasible solution to the auxiliary problem are all nonbasic we have to assign initial values to them. Since for the free or unrestricted variables there is no finite bound to initialize the variables with we will initialize them with the value zero. Due to the amount of computation involved for the initialization of the auxiliary problem we extend the set of original variables that are initialized with zero, $Z$, in the following sense, 
 \begin{equation}
 \label{def:Z}
-Z:=\{ k \in O \left|\right. 0 \in \left[l_{k}, u_{k}\right]\} 
+Z:=\{ k \in O \left|\right. 0 \in \left[\tilde{l}_{k}, \tilde{u}_{k}\right]\} 
 \end{equation}
 that is all the original variables that contain zero in their feasible intervall are initialized with zero. For the remaining variables $x_{k}$,
 $k \in O \setminus Z$ we initialize the variable with the finite lower bound whenever there is choice,
@@ -607,7 +631,7 @@ u_{j}-l_{j}
 \end{array}
 \right.
 \end{equation}
-Note that for $j \in S \cup art$ the first event can never occur.
+Note that for $j \in (S \cup art) \cap N$ the first event can never occur.
 
 The minimum value of $t$ for the second event, $t_{min}^{B}(d_{t})$, is computed
 in the following way
@@ -713,7 +737,7 @@ A_{\hat{N}} \\
 \end{array}
 \right)
 x_{\hat{N}}
-+\mu_{j}
++d_{\mu_{j}}\mu_{j}
 \left(
 \begin{array}{c}
 0 \\
@@ -744,7 +768,7 @@ x_{\hat{B}}^{*}(\mu_{j})
 x_{\hat{B}}^{*}(0)
 \end{array}
 \right)
-+\mu_{j}
++d_{\mu_{j}}\mu_{j}
 \left(
 \begin{array}{c}
 p_{\lambda} \\
@@ -830,8 +854,8 @@ $\hat{B}$ is the new basis in that case.
 In case of the first event
 
 In case of the second event, if some basic variable $x_{k}$ takes the value of
-its lower or upper bound, we implicitly add the constraint $x_{k}=l_{i}$ or
-$x_{k}=u_{i}$ to $(UQP(\hat{B}^{u}))$ by removing $k$ from $\hat{B}$. If
+its lower or upper bound, we implicitly add the constraint $x_{k}=l_{k}$ or
+$x_{k}=u_{k}$ to $(UQP(\hat{B}^{u}))$ by removing $k$ from $\hat{B}$. If
 $M_{\hat{B}\setminus \{k\}}$ stays regular, we still det unique solutions
 of~(\ref{eq:rat_test_2})
 for arbitrary values of $\mu_{j}$. In this case Ratio Test Step~2 is iterated,
@@ -928,7 +952,7 @@ We distinguish three events:
 \item The entering variable $x_{j}$ takes the value of its finite upper,
 $u_{j}$, or lower bound, $l_{j}$.
 \item A basic variable $x_{i}$ takes the value of its finite upper or lower bound.
-\item $\mu_{j}(x_{j})$ becomes zero.
+\item $\mu_{j}(x_{j}(t))$ becomes zero.
 \end{enumerate}
 
 \paragraph{$\mathbf{t_{min}^{B}(d_{t}):}$}
@@ -952,24 +976,32 @@ incurring computational overhead for the latter set.
 \If{$d_{t}=1$}
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
         \If{$q_{B_{O}}[i] > 0$}
-            \If{$B_{O}[i] < n \wedge f_{B_{O}}^{l}[i]=1$}
-                \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
-                    \State $i_{min} \gets B_{O}[i],
-                        \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
-                        \quad q_{min} \gets q_{B_{O}}[i]$
+            \Comment check for lower bounds
+            \If{$B_{O}[i] < n$}
+                \Comment original variable
+                \If{$f_{B_{O}}^{l}[i]=1$}
+                    \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l[B_{O}[i]])*q_{min}$}
+                        \State $i_{min} \gets B_{O}[i], \quad lower \gets true$
+                        \State $d_{min} \gets x_{B_{O}}[i]-l[B_{O}[i]],
+                            \quad q_{min} \gets q_{B_{O}}[i]$
+                    \EndIf
                 \EndIf
             \Else
+                \Comment auxiliary variable
                 \If{$d_{min}*q_{B_{O}}[i] > x_{B_{O}}[i]*q_{min}$}
-                    \State $i_{min} \gets B_{O}[i],
-                        \quad d_{min} \gets x_{B_{O}}[i],
+                    \State $i_{min} \gets B_{O}[i], \quad lower \gets true$
+                    \State $d_{min} \gets x_{B_{O}}[i],
                         \quad q_{min} \gets q_{B_{O}}[i]$
                 \EndIf
             \EndIf
-        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{u}[i]=1$}
-            \If{$d_{min}*-q_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                        \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+        \ElsIf{$q_{B_{O}}[i] < 0$}
+            \Comment check for upper bounds
+            \If{$B_{O}[i] < n \wedge f_{B_{O}}^{u}[i]=1$}
+                \If{$d_{min}*-q_{B_{O}}[i] > (u[B_{O}[i]]-x_{B_{O}}[i])*q_{min}$}
+                    \State $i_{min} \gets B_{O}[i], \quad lower \gets false$
+                    \State $d_{min} \gets u[B_{O}[i]]-x_{B_{O}}[i],
                         \quad q_{min} \gets -q_{B_{O}}[i]$
+                \EndIf
             \EndIf
         \EndIf
     \EndFor
@@ -983,25 +1015,34 @@ incurring computational overhead for the latter set.
 %        \EndIf 
 %    \EndFor
 \Else
+    \Comment $d_{t}=-1$
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
-        \If{$q_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{u}[i]=1$}
-            \If{$d_{min}*q_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                    \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
-                    \quad q_{min} \gets q_{B_{O}}[i]$
-            \EndIf
-        \ElsIf{$q_{B_{O}}[i] < 0$}
-            \If{$B_{O}[i] < n \wedge f_{B_{O}}^{l}[i]=1$}
-                \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
-                    \State $i_{min} \gets B_{O}[i],
-                        \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
-                        \quad q_{min} \gets -q_{B_{O}}[i]$
+        \If{$q_{B_{O}}[i] < 0$}
+            \Comment check for lower bounds
+            \If{$B_{O}[i] < n$}
+                \Comment original variable
+                \If{$f_{B_{O}}^{l}[i]=1$}
+                    \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l[B_{O}[i]])*q_{min}$}
+                        \State $i_{min} \gets B_{O}[i], \quad lower \gets true$
+                        \State $d_{min} \gets x_{B_{O}}[i]-l[B_{O}[i]],
+                            \quad q_{min} \gets -q_{B_{O}}[i]$
+                    \EndIf
                 \EndIf
             \Else
+                \Comment auxiliary variable
                 \If{$d_{min}*-q_{B_{O}}[i] > x_{B_{O}}[i]*q_{min}$}
-                    \State $i_{min} \gets B_{O}[i],
-                        \quad d_{min} \gets x_{B_{O}}[i],
+                    \State $i_{min} \gets B_{O}[i], \quad lower \gets true$
+                    \State $d_{min} \gets x_{B_{O}}[i],
                         \quad q_{min} \gets -q_{B_{O}}[i]$
+                \EndIf
+            \EndIf
+        \ElsIf{$q_{B_{O}}[i] > 0$}
+            \Comment check for upper bounds
+            \If{$B_{O}[i] < n \wedge f_{B_{O}}^{u}[i]=1$}
+                \If{$d_{min}*q_{B_{O}}[i] > (u[B_{O}[i]]-x_{B_{O}}[i])*q_{min}$}
+                    \State $i_{min} \gets B_{O}[i], \quad lower \gets false$
+                    \State $d_{min} \gets u[B_{O}[i]]-x_{B_{O}}[i],
+                        \quad q_{min} \gets q_{B_{O}}[i]$
                 \EndIf
             \EndIf
         \EndIf
@@ -1079,16 +1120,18 @@ Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $
 \Comment $\mu_{j} \leq 0$
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
         \If{$p_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{l}[i]=1$}
-            \If{$d_{min}*p_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*p_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                            \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+            \Comment check for lower bound
+            \If{$d_{min}*p_{B_{O}}[i] > (x_{B_{O}}[i]-l[B_{O}[i]])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i], \quad lower \gets true$
+                \State $d_{min} \gets x_{B_{O}}[i]-l[B_{O}[i]],
                             \quad p_{min} \gets p_{B_{O}}[i]$
             \EndIf
         \EndIf 
         \If{$p_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{u}[i]=1$}
-            \If{$d_{min}*p_{B_{O}}[i] < (u_{B_{O}}[i]-x_{B_{O}}[i])*p_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                            \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+            \Comment check for upper bound
+            \If{$d_{min}*p_{B_{O}}[i] < (u[B_{O}[i]]-x_{B_{O}}[i])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i], \quad lower \gets false$
+                \State $d_{min} \gets u[B_{O}[i]]-x_{B_{O}}[i],
                             \quad p_{min} \gets -p_{B_{O}}[i]$
             \EndIf
         \EndIf 
@@ -1106,16 +1149,18 @@ Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $
 \Comment $\mu_{j} \geq 0$
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
         \If{$p_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{l}[i]=1$}
-            \If{$d_{min}*p_{B_{O}}[i] < (x_{B_{O}}[i]-l_{B_{O}}[i])*p_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                            \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+            \Comment check for lower bound
+            \If{$d_{min}*p_{B_{O}}[i] < (x_{B_{O}}[i]-l[B_{O}[i]])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i], \quad lower \gets true$
+                \State $d_{min} \gets x_{B_{O}}[i]-l[B_{O}[i]],
                             \quad p_{min} \gets p_{B_{O}}[i]$
             \EndIf
         \EndIf
         \If{$p_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{u}[i]=1$}
-            \If{$d_{min}*p_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*p_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                            \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+            \Comment check for upper bound
+            \If{$d_{min}*p_{B_{O}}[i] > (u[B_{O}[i]]-x_{B_{O}}[i])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i], \quad lower \gets false$
+                \State $d_{min} \gets u[B_{O}[i]]-x_{B_{O}}[i],
                             \quad p_{min} \gets -p_{B_{O}}[i]$
             \EndIf
         \EndIf 
@@ -1124,7 +1169,7 @@ Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $
         \If{$p_{B_{S}}[i] > 0$}
             \If{$d_{min}*p_{B_{S}}[i] < x_{B_{S}}[i]*p_{min}$}
                 \State $i_{min} \gets B_{S}[i],
-                            \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{S}}[i],
+                            \quad d_{min} \gets x_{B_{S}}[i],
                             \quad p_{min} \gets p_{B_{S}}[i]$
             \EndIf	
         \EndIf 
