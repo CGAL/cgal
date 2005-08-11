@@ -15,7 +15,8 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
-#include<CGAL/Curved_kernel/internal_functions_on_circle_2.h>
+#include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
+
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -129,12 +130,6 @@ namespace CircularFunctors {
   compare_y_at_x(const typename CK::Circular_arc_endpoint_2 &p,
                  const typename CK::Circular_arc_2 &A1)
   {
-    // debug !!! 
-    std::cout << "[compare_y_at_x]"
-	      << std::endl << "arc : " << A1 << std::endl ; 
-    std::cout << CGALi::print(std::cout, A1) << std::endl;
-    std::cout << " point : " << p << std::endl;
-
     CGAL_kernel_precondition (A1.is_x_monotone());
     CGAL_kernel_precondition (point_in_range<CK>(A1, p)); 
 
@@ -349,7 +344,7 @@ namespace CircularFunctors {
     ca2 = Circular_arc_2( A.supporting_circle(), p, A.target());
     if ( ca1.right()!=ca2.left() )
 	    {
-	      std::cout << " SWAP " << std::endl;
+	      //std::cout << " SWAP " << std::endl;
 	      std::swap(ca1,ca2);
 	    }
     
@@ -367,14 +362,12 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
 
     if(a1.is_x_monotone() && a2.is_x_monotone()){
-      std::cout << "<construct_intersection_monotone>" << std::endl; 
       // Overlapping curves.
       if (a1.supporting_circle() == a2.supporting_circle()) {
 	
 	// The ranges need to overlap in order for the curves to overlap.
 	if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
 	    compare_x<CK>(a2.left(), a1.right()) > 0){
-	  std::cout << "</construct_intersection_monotone>" << std::endl;
 	  return res;}
 	
 	// They both need to be on the same upper/lower part.
@@ -390,7 +383,6 @@ namespace CircularFunctors {
 	      (std::make_pair(a1.right(),1u));
 	  }
 	  
-	  std::cout << "</construct_intersection_monotone>" << std::endl;
 	  return res;
 	};
 	
@@ -459,7 +451,6 @@ namespace CircularFunctors {
 		(std::make_pair(arctmp.right(),1u));
 	    }
 	}
-	std::cout << "</construct_intersection_monotone>" << std::endl;
 	return res;
       }
      
@@ -494,11 +485,9 @@ namespace CircularFunctors {
 	    { *res++ = make_object
 		(std::make_pair(left,2u)); }
 	}
-      std::cout << "</construct_intersection_monotone>" << std::endl;
       return res;
     }
     else {//a1 or a2 are not x_monotone
-      std::cout << "<construct_intersection_no_monotone>" << std::endl; 
       std::vector< CGAL::Object > arcs_a1_x_monotone;
       make_x_monotone( a1, std::back_inserter(arcs_a1_x_monotone));
       std::vector< CGAL::Object > arcs_a2_x_monotone;
@@ -613,7 +602,6 @@ namespace CircularFunctors {
 			    circle_arcs[j].source(),
 			    circle_arcs[i-1].target()
 			    ));
-	  std::cout << "</construct_intersection_no_monotone>" << std::endl; 
 	  return res;
 	}
 	else{//There are one circle arc and there can be maximum one endpoint
@@ -636,7 +624,6 @@ namespace CircularFunctors {
 		break;
 	      }
 	    }
-	   std::cout << "</construct_intersection_no_monotone>" << std::endl; 
 	  return res;
 	}
       }
@@ -647,7 +634,6 @@ namespace CircularFunctors {
 	}
 	else if (circle_arc_endpoints.size() == 1) 
 	  *res++ = make_object(std::make_pair(circle_arc_endpoints[0],1u));
-	std::cout << "</construct_intersection_no_monotone>" << std::endl;
 	return res;
       }
     }
@@ -749,7 +735,6 @@ namespace CircularFunctors {
     typedef typename CK::FT                       FT;
     typedef typename CK::Linear_kernel::Point_2   Point_2;
     CGAL_kernel_precondition(A.supporting_circle().squared_radius() != 0);
-    std::cout << "<make_x_monotone>" << std::endl; 
     int cmp_begin = CGAL::compare(A.source().y(), A.center().y());
     int cmp_end   = CGAL::compare(A.target().y(),   A.center().y());
 
@@ -759,16 +744,13 @@ namespace CircularFunctors {
     if (cmp_begin != opposite(cmp_end) &&
         (((cmp_begin > 0 || cmp_end > 0) && cmp_x > 0) ||
           (cmp_begin < 0 || cmp_end < 0) && cmp_x < 0) ) {
-      *res++ = make_object(A);
-      
-      std::cout << "</make_x_monotone>" << std::endl; 
+      *res++ = make_object(A); 
       return res; 
     }
 
     // Half circles
     if (cmp_begin == 0 && cmp_end == 0 && cmp_x != 0) {
       *res++ = make_object(A);
-      std::cout << "</make_x_monotone>" << std::endl; 
       return res; 
     }
 
@@ -842,7 +824,6 @@ namespace CircularFunctors {
 					     A.target()));
       }
     }
-    std::cout << "</make_x_monotone>" << std::endl; 
     return res;
   }
 
@@ -977,6 +958,7 @@ template < class CK, class OutputIterator >
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
+
 
 // In the same as the advanced_make_x_monotone works, this make_xy_function
 // returns extra information, descriptive of the position of the returned 

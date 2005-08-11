@@ -16,8 +16,10 @@
 
 #include <CGAL/Curved_kernel/Circular_arc_endpoint_2.h>
 #include <CGAL/Curved_kernel/Circular_arc_2.h>
+#include <CGAL/Curved_kernel/Line_arc_2.h>
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Circular_arc_endpoint_2.h>
+#include <CGAL/Line_arc_2.h>
 
 #include <CGAL/Curved_kernel/function_objects_on_circle_2.h>
 #include <CGAL/global_functions_on_circle_2.h>
@@ -34,6 +36,7 @@ struct Curved_kernel_base
 {
   typedef CGALi::Circular_arc_2<CurvedKernel>               Circular_arc_2;
   typedef CGALi::Circular_arc_endpoint_2<CurvedKernel>      Circular_arc_endpoint_2;
+  typedef CGALi::Line_arc_2<CurvedKernel>                   Line_arc_2;
 };
 
 } // namespace CGALi
@@ -70,6 +73,7 @@ struct Curved_kernel
 
   typedef CGAL::Circular_arc_2<Self>               Circular_arc_2;
   typedef CGAL::Circular_arc_endpoint_2<Self>      Circular_arc_endpoint_2;
+  typedef CGAL::Line_arc_2<Self>                   Line_arc_2;
 
   typedef CircularFunctors::Construct_circle_2<Self>   Construct_circle_2;
   typedef CircularFunctors::Get_equation<Self>         Get_equation;

@@ -34,6 +34,11 @@ namespace CircularFunctors {
     Equation e1 = get_equation<CK>(c1);
     Equation e2 = get_equation<CK>(c2);
     
+     if(e1 == e2){
+      *res++ = make_object(e1);
+      return res;
+    }
+
     typedef std::vector
       < std::pair 
           < std::pair<typename CK::Root_of_2,typename CK::Root_of_2>, 

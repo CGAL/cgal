@@ -70,8 +70,9 @@ public:
   {
     if (secondpoint) {
       *widget << CGAL::GREEN << introduced_circle;
-      if (thirdpoint)
+      if (thirdpoint){
 	*widget << CGAL::BLUE << Segment(Point(x1, y1), first_point);
+      }
     }
     firsttime = true;
   }

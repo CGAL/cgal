@@ -24,7 +24,7 @@ CXXFLAGS = \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            -fmessage-length=0 \
 	   $(DEBUG_OPT) \
-	   -DHAVE_CONFIG_H
+	   -DHAVE_CONFIG_H -g #-DCGAL_CURVED_KERNEL_DEBUG
 #	   -DCGAL_CURVED_KERNEL_DEBUG \
 #           -O2 -DNDEBUG \
            # -I$(HOME)/CGAL/Interval_arithmetic.RootOf_2/include \
@@ -48,7 +48,9 @@ LDFLAGS = \
 
 all:            \
                 demo$(EXE_EXT) \
-                demo_elias$(EXE_EXT) 
+                demo_elias$(EXE_EXT) \
+		demo_line$(EXE_EXT) \
+		demo_line_circle$(EXE_EXT)
 #                demo_conic$(EXE_EXT) 
 
 demo.moc: demo.C
@@ -57,11 +59,17 @@ demo.moc: demo.C
 demo_elias.moc: demo_elias.C
 	${QT_MOC} -o demo_elias.moc $<
 
+demo_line_circle.moc: demo_line_circle.C
+	${QT_MOC} -o demo_line_circle.moc $<
+
 #demo_conic.moc: demo_conic.C
 #	${QT_MOC} -o demo_conic.moc $<
 
 Qt_widget_get_arc.moc: Qt_widget_get_arc.h
 	$(QT_MOC) -o Qt_widget_get_arc.moc $<
+
+Qt_widget_get_segment.moc: Qt_widget_get_segment.h
+	$(QT_MOC) -o Qt_widget_get_segment.moc $<
 
 #Qt_widget_get_conic_2.moc: Qt_widget_get_conic_2.h
 #	$(QT_MOC) -o Qt_widget_get_conic_2.moc $<
@@ -72,6 +80,14 @@ demo$(EXE_EXT): demo.moc demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 demo_elias$(EXE_EXT): demo_elias.moc demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_elias demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
+demo_line$(EXE_EXT): demo.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) $(LDFLAGS)
+
+demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line_circle demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
+
+
+
 #demo_conic$(EXE_EXT): demo_conic.moc demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT)
 #	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_conic demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT) $(LDFLAGS)
 
@@ -81,9 +97,12 @@ demo_elias$(EXE_EXT): demo_elias.moc demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ
 Qt_widget_get_arc$(OBJ_EXT): Qt_widget_get_arc.C Qt_widget_get_arc.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_arc.C
 
+Qt_widget_get_segment$(OBJ_EXT): Qt_widget_get_segment.C Qt_widget_get_segment.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_segment.C
+
 clean: \
-                   demo.clean demo_elias.clean \
-                   Qt_widget_get_arc.clean #\
+                   demo.clean demo_elias.clean demo_line.clean demo_line_circle.clean \
+                   Qt_widget_get_arc.clean Qt_widget_get_segment.clean #\
 #                   Qt_widget_get_conic_2.clean \
 #                   demo_conic.clean
 

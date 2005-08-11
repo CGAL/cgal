@@ -147,7 +147,8 @@ void _test_circle_predicat(CK ck)
     theCompare_y_at_x_2(circ1_arc_end_1_1_1_2,circ1_arc_high);
   assert(theComparison_result_y_at_x_2 == CGAL::EQUAL);
 
-  //Comparison between an inferior arc and a point in top create with 2 others circles (p1) 
+  //Comparison between an inferior arc and a point in top create 
+  //with 2 others circles (p1) 
   Circle_2 circ1_big(center1, circ1_r * circ1_r * 4);
   Circular_arc_2 circ1_big_arc_low(circ1_big,
 			       theLine_2_horizontal,true,
@@ -329,14 +330,28 @@ void _test_circle_predicat(CK ck)
 			theRandom.get_int(random_min, random_max));
   Circle_2 circle_random(center_random, 
 			 theRandom.get_int(1, random_max));
-  Line_2 line_random_1(center_random, Point_2(center_random.x() +
-					      theRandom.get_int(random_min, random_max),
-					      center_random.y() + 
-					      theRandom.get_int(random_min, random_max)));
-  Line_2 line_random_2(center_random, Point_2(center_random.x() +
-					      theRandom.get_int(random_min, random_max),
-					      center_random.y() + 
-					      theRandom.get_int(random_min, random_max)));
+  int x_random1, y_random1;
+  int x_random2, y_random2;
+  do{
+    x_random1 = theRandom.get_int(random_min, random_max);
+    y_random1 = theRandom.get_int(random_min, random_max);
+  }while(x_random1 == 0 && y_random1 ==0);
+    
+  do{
+    x_random2 = theRandom.get_int(random_min, random_max);
+    y_random2 = theRandom.get_int(random_min, random_max);
+  }while(x_random2 == 0 && y_random2 ==0);
+
+  Line_2 line_random_1(center_random,
+		       Point_2(center_random.x() +
+			       x_random1,
+			       center_random.y() + 
+			       y_random1));
+  Line_2 line_random_2(center_random,
+		       Point_2(center_random.x() +
+			       x_random2,
+			       center_random.y() + 
+			       y_random2));
   Circular_arc_2 arc_random(circle_random,
 			    line_random_1, theRandom.get_bool(),
 			    line_random_2, theRandom.get_bool());

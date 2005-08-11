@@ -1,0 +1,84 @@
+#ifndef CGAL_LINE_ARC_2_H
+#define CGAL_LINE_ARC_2_H
+
+namespace CGAL {
+
+template <class CurvedKernel> 
+class Line_arc_2 
+  : public CurvedKernel::Kernel_base::Line_arc_2
+{
+  typedef typename CurvedKernel::FT                        FT;
+  typedef typename CurvedKernel::RT                        RT;
+  typedef typename CurvedKernel::Linear_kernel::Point_2    Point_2;
+  typedef typename CurvedKernel::Line_2                    Line_2;
+  typedef typename CurvedKernel::Circle_2                  Circle_2;
+  typedef typename CurvedKernel::Circular_arc_endpoint_2   Circular_arc_endpoint_2;
+  typedef typename CurvedKernel::Segment_2                 Segment_2;
+
+  typedef typename CurvedKernel::Kernel_base::Line_arc_2 RLine_arc_2;
+public:
+  typedef  CurvedKernel   R; 
+
+   Line_arc_2() {}
+
+   Line_arc_2(const Line_2 &support,
+	      const Circle_2 &c1,const bool b1,
+	      const Circle_2 &c2,const bool b2)
+     : RLine_arc_2(support, c1, b1, c2, b2)
+   {}
+
+   Line_arc_2(const Line_2 &support,
+	       const Line_2 &l1,
+	       const Line_2 &l2)
+     : RLine_arc_2(support, l1, l2)
+   {}
+
+   Line_arc_2(const Line_2 &support,
+	       const Circular_arc_endpoint_2 &p1,
+	       const Circular_arc_endpoint_2 &p2)
+     : RLine_arc_2(support, p1, p2)
+   {}
+
+   Line_arc_2(const Segment_2 &s)
+     : RLine_arc_2(s)
+   {}
+   
+    Line_arc_2(const Point_2 &p1,
+	       const Point_2 &p2)
+      : RLine_arc_2(p1, p2)
+   {}
+
+ };
+
+template < typename CurvedKernel >
+inline
+bool
+operator==(const Line_arc_2<CurvedKernel> &p,
+           const Line_arc_2<CurvedKernel> &q)
+{
+  return CurvedKernel().equal_2_object()(p, q);
+}
+
+template < typename CurvedKernel >
+inline
+bool
+operator!=(const Line_arc_2<CurvedKernel> &p,
+           const Line_arc_2<CurvedKernel> &q)
+{
+  return ! (p == q);
+}
+
+
+
+
+
+
+
+
+
+
+} // namespace CGAL
+
+#endif // CGAL_LINE_ARC_2_H
+
+   

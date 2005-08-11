@@ -188,7 +188,8 @@ namespace CGALi {
     bool b1, b2;
     is >> x1 >> x2 >> x3 >> b1 >> y1 >> y2 >> y3 >> b2 ;
     if (is)
-      p = Circular_arc_endpoint_2<CK>(Numeric_point_2(Root_of_2(x3, x2, x1, b1), Root_of_2(y3, y2, y1, b2)));
+      p = Circular_arc_endpoint_2<CK>(Numeric_point_2(Root_of_2(x3, x2, x1, b1),
+						      Root_of_2(y3, y2, y1, b2)));
     return is;
   }
 

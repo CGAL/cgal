@@ -20,9 +20,12 @@
 #define CGAL_CURVED_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
+#include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
+
 
 namespace CGAL {
 namespace CircularFunctors {
+
 
   template < class CK >
   class Compare_x_2
@@ -111,6 +114,7 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
 
   public:
     typedef bool result_type;
@@ -119,6 +123,10 @@ namespace CircularFunctors {
     operator()(const Circular_arc_2 &a, const Circular_arc_endpoint_2 &p) const
     { return point_in_range<CK>(a, p); }
 
+    result_type
+    operator()(const Line_arc_2 &a, const Circular_arc_endpoint_2 &p) const
+    { return point_in_range<CK>(a, p); }
+    
   };
 
   template < class CK >
@@ -126,6 +134,7 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
     typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
+    typedef typename CK::Line_arc_2               Line_arc_2;
 
   public:
     typedef CGAL::Comparison_result result_type;
@@ -136,15 +145,36 @@ namespace CircularFunctors {
                const Circular_arc_endpoint_2 &p) const
     { return compare_y_to_right<CK>(a1, a2, p); }
 
-  };
+    result_type
+    operator()(const Line_arc_2 &a1,
+               const Line_arc_2 &a2,
+               const Circular_arc_endpoint_2 &p) const
+    { return compare_y_to_right<CK>(a1, a2, p); }
 
+    result_type
+    operator()(const Line_arc_2 &a1,
+               const Circular_arc_2 &a2,
+               const Circular_arc_endpoint_2 &p) const
+    { return compare_y_to_right<CK>(a1, a2, p); }
+
+    result_type
+    operator()(const Circular_arc_2 &a1,
+               const Line_arc_2 &a2,
+               const Circular_arc_endpoint_2 &p) const
+    { if (compare_y_to_right<CK>(a2, a1, p) == CGAL::LARGER)
+	return CGAL::SMALLER;
+      return CGAL::LARGER;
+    }
+  
+  };
+ 
   template < class CK >
   class Equal_2
     : public CK::Linear_kernel::Equal_2
   {
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
-    typedef typename CK::Circular_arc_2  Circular_arc_2;
-
+    typedef typename CK::Circular_arc_2          Circular_arc_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
   public:
     typedef bool result_type;
 
@@ -156,6 +186,18 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_2 &a0, const Circular_arc_2 &a1) const
     { return equal<CK>(a0, a1); }
+
+    result_type
+    operator() (const Line_arc_2 &a0, const Line_arc_2 &a1) const
+    { return equal<CK>(a0, a1); }
+
+    result_type
+      operator() ( const Line_arc_2 &a0, const Circular_arc_2 &a1) const
+    {return false;}
+
+    result_type
+      operator() ( const Circular_arc_2 &a0, const Line_arc_2 &a1) const
+    {return false;}
     
    };
 
@@ -164,6 +206,7 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
 
   public:
     typedef CGAL::Comparison_result result_type;
@@ -173,12 +216,18 @@ namespace CircularFunctors {
                 const Circular_arc_2 &A1) const
     { return compare_y_at_x<CK>(p, A1); }
 
+    result_type
+    operator() (const Circular_arc_endpoint_2 &p,
+                const Line_arc_2 &A1) const
+    { return compare_y_at_x<CK>(p, A1); }
+
   };
 
   template < class CK >
   class Do_overlap_2
   {
     typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Line_arc_2     Line_arc_2;
 
   public:
     typedef bool result_type;
@@ -187,12 +236,25 @@ namespace CircularFunctors {
     operator() (const Circular_arc_2 &A1, const Circular_arc_2 &A2) const
     { return do_overlap<CK>(A1, A2); }
     
+    result_type
+    operator() (const Line_arc_2 &A1, const Line_arc_2 &A2) const
+    { return do_overlap<CK>(A1, A2); }
+
+    result_type
+      operator() (const Line_arc_2 &A1, const Circular_arc_2 &A2) const
+    { return false; }
+
+     result_type
+    operator() (const Circular_arc_2 &A1, const Line_arc_2 &A2) const
+    { return false; }
+
   };
 
   template < class CK >
   class Make_x_monotone_2
   {
     typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Line_arc_2 Line_arc_2;
 
   public:
     // typedef OutputIterator result_type;
@@ -202,8 +264,15 @@ namespace CircularFunctors {
     operator()(const Circular_arc_2 &A, OutputIterator res)
       { return make_x_monotone<CK> (A, res); }
 
-  };
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_2 &A, OutputIterator res)
+    { *res++ = make_object(A);
+      return res;
+    }
 
+  };
+  
   template < class CK >
   class Construct_intersections_2
   {
@@ -211,17 +280,49 @@ namespace CircularFunctors {
 
     typedef typename CK::Circle_2                 Circle;
     typedef typename CK::Circular_arc_2           Circular_arc;
+    typedef typename CK::Line_arc_2               Line_arc;
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle & c1, const Circle & c2, OutputIterator res)
+    operator()(const Circle & c1, const Circle & c2, OutputIterator res) const
       { return construct_intersections_2<CK> (c1,c2,res); }
 
-     template < class OutputIterator >
+    template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc & c1, const Circular_arc & c2, 
-	       OutputIterator res)
-      { return construct_intersections_2<CK> (c1,c2,res); }
+	       OutputIterator res) const
+      { return construct_intersections_2<CK> (c1,c2,res); }  
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc & c1, const Line_arc & c2, 
+	       OutputIterator res) const
+      {	return construct_intersections_2<CK> (c1,c2,res); }  
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc & c1, const Circle & c2, 
+	       OutputIterator res) const
+    { return construct_intersections_2<CK> (c1,c2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle & c1, const Line_arc & c2, 
+	       OutputIterator res) const
+    { return construct_intersections_2<CK> (c2,c1,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc & c1, const Circular_arc & c2, 
+	       OutputIterator res) const
+    { return construct_intersections_2<CK> (c1,c2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc & c1, const Line_arc & c2, 
+	       OutputIterator res) const
+    { return construct_intersections_2<CK> (c2,c1,res); }
+
     
   };
 
@@ -247,6 +348,7 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
 
   public:
     typedef void result_type;
@@ -256,6 +358,14 @@ namespace CircularFunctors {
 	       const Circular_arc_endpoint_2 &p,
 	       Circular_arc_2 &ca1, Circular_arc_2 &ca2) const
     { return split<CK>(A, p, ca1, ca2); }
+
+
+    result_type
+    operator()(const Line_arc_2 &A, 
+	       const Circular_arc_endpoint_2 &p,
+	       Line_arc_2 &ca1, Line_arc_2 &ca2) const
+    { return split<CK>(A, p, ca1, ca2); }
+
   };
 
 } // namespace CircularFunctors
