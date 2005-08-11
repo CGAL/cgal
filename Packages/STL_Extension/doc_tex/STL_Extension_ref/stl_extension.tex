@@ -376,10 +376,11 @@
 \begin{ccRefClass}{Join_input_iterator_1<Iterator, Creator>}
   \label{sectionJoinInputIterator}
   
-  \ccDefinition The class \ccRefName\ joins an input iterator and a
-  creator function object. The result is again an input iterator which
-  reads an object from the stream and applies the creator function
-  object to that object whenever it advances.
+  \ccDefinition The class \ccRefName\ joins an iterator and a creator
+  function object. The result is again an iterator (of the same
+  iterator category type as the original iterator) that reads an object
+  from the stream and applies a creator function object to that
+  object.
 
   \ccInclude{CGAL/iterator.h}
   
@@ -390,9 +391,15 @@
   
   \ccCreation\ccCreationVariable{join}
   
-  \ccConstructor{Join_input_iterator_1( Iterator i);} {the join of a
-    single iterator $i$. Applies \ccc{Creator} to each item read from
-    $i$.}
+  \ccConstructor{Join_input_iterator_1( Iterator i, const Creator&
+    creator);} {creates a join iterator from the given iterator $i$
+    and the functor \ccc{creator}. Applies \ccc{creator} to each item
+    read from $i$.}
+
+  \ccConstructor{Join_input_iterator_1( Iterator i);} {creates a join
+    iterator from the given iterator $i$ and a default constructed
+    instance of \ccc{Creator}. The latter instance is applied to each
+    item read from $i$.}
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}
