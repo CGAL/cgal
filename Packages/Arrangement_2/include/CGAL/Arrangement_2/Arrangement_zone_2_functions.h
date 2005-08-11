@@ -352,8 +352,28 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
   // Check whether the curve lies above of below the edge (we use the curve
   // position predicate, as we know they cruves do not overlap and intersect
   // only at the split point).
-  const Comparison_result  pos_res =
+  Comparison_result        pos_res =
       traits->compare_y_position_2_object() (cv_ins, query_he->curve());
+
+  if (pos_res == EQUAL)
+  {
+    // This can happen only when both endpoints of cv_ins lie on query_he,
+    // for example (the ^-shaped polyline is associated with query_he and
+    // the horizontal segment is cv_ins):
+    //
+    //      /\        .
+    //     /  \       .
+    //    +----+      .
+    //   /      \     .
+    //
+    // In this case, we got a wrong result from compare_y_position(), as we
+    // abused this predicate (since the two curves are not supposed to
+    // intersect), so we now simply have to compare the two curves to the right
+    // of cv_ins' left endpoint.
+    pos_res = traits->compare_y_at_x_right_2_object()
+                  (cv_ins, query_he->curve(),
+		   traits->construct_min_vertex_2_object() (cv_ins));
+  }
 
   if (pos_res == SMALLER)
   {
