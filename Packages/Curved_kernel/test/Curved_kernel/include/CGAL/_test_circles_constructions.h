@@ -263,19 +263,19 @@ void _test_circle_construct(CK ck)
   assert(vector_for_intersection_overlap_2_1.size() == 1);
   assign(the_pair, vector_for_intersection_overlap_2_1[0]);
   std::cout << "x = " << the_pair.first.x() << " the result must be = " <<
-    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2)/2 
+    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2 
 	    << std::endl;
   
   assert(the_pair.first.x() * 
-	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2)/2) >= 0);
+	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
   assert(square(the_pair.first.x() - center_circ_intersection_2_1_x)
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
-    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2)/2 
+    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2 
 	    << std::endl;
 
   assert(the_pair.first.y() * 
-	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2)/2) >= 0);
+	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
   assert(square(the_pair.first.y() - center_circ_intersection_2_1_y)
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
@@ -287,17 +287,17 @@ void _test_circle_construct(CK ck)
   assert(vector_for_intersection_overlap_2_2.size() == 1);
   assign(the_pair, vector_for_intersection_overlap_2_2[0]);
   std::cout << "x = " << the_pair.first.x() << " the result must be = " <<
-    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2)/2 << std::endl;
+    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2 << std::endl;
   
   assert(the_pair.first.x() * 
-	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2)/2) >= 0);
+	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
   assert(square(the_pair.first.x() - center_circ_intersection_2_1_x)
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
-    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2)/2 << std::endl;
+    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2 << std::endl;
   
   assert(the_pair.first.y() * 
-	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2)/2) >= 0);
+	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
   assert(square(the_pair.first.y() - center_circ_intersection_2_1_y)
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
