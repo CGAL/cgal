@@ -241,6 +241,18 @@ struct NT_converter < NT1 , Root_of_2<NT2> >
 };
 
 
+
+template < class NT1 >
+struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
+  : public std::unary_function< NT1, NT1 >
+{
+    const Root_of_2<NT1> &
+    operator()(const Root_of_2<NT1> &a) const
+    {
+        return a;
+    }
+};
+
   namespace CGALi {
 
     // This version is internal and can be re-used for
