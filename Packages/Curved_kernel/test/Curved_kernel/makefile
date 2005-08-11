@@ -15,8 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-	   -I../../../Algebraic_kernel/include \
-           -I../../../synaps \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -41,13 +39,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_Circular_kernel$(EXE_EXT) 
+                test_Circular_kernel$(EXE_EXT) \
+                test_Filtered_hexagon_kernel$(EXE_EXT) 
 
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Circular_kernel test_Circular_kernel$(OBJ_EXT) $(LDFLAGS)
 
+test_Filtered_hexagon_kernel$(EXE_EXT): test_Filtered_hexagon_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Filtered_hexagon_kernel test_Filtered_hexagon_kernel$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   test_Circular_kernel.clean 
+                   test_Circular_kernel.clean \
+                   test_Filtered_hexagon_kernel.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

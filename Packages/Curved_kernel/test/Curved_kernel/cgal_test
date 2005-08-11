@@ -72,5 +72,6 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run test_Circular_kernel
+  compile_and_run test_Filtered_hexagon_kernel
 fi
 

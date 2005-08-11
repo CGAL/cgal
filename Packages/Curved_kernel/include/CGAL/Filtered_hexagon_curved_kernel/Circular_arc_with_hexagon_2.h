@@ -15,7 +15,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class CK, 
 	   class Container = std::vector<Polygon_2<Simple_cartesian<double> > > >
-class Circular_arc_with_hexagon_2 : public Debug_id<> {
+class Circular_arc_with_hexagon_2 : public CGALi::Debug_id<> {
 
     typedef typename CK::FT                                    FT;
     typedef typename CK::RT                                    RT;
@@ -41,51 +41,51 @@ public:
 
     		Circular_arc_with_hexagon_2(const Circle_2 &c)
     		: P_arc(c)
-    		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
     		Circular_arc_with_hexagon_2(const Circle_2 &support, 
                        		   const Line_2 &l1, const bool b_l1,
                        		   const Line_2 &l2, const bool b_l2)
     		: P_arc(support,l1,b_l1,l2,b_l2)
-    		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
     
     		Circular_arc_with_hexagon_2(const Circle_2 &c, 
 		       		   const Circle_2 &c1, const bool b_1,
 		       		   const Circle_2 &c2, const bool b_2)
     		: P_arc(c,c1,b_1,c2,b_2)
-    		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
     
     		Circular_arc_with_hexagon_2(const Circular_arc_2 &A, const bool b,
 		       		   const Circle_2 &ccut, const bool b_cut)
     		: P_arc(A, b, ccut, b_cut)
-    		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
 
     		Circular_arc_with_hexagon_2(const Point_2 &start,
                  		   const Point_2 &middle,
                  		   const Point_2 &end)
     		: P_arc(start, middle, end) 
-    		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
   
     		Circular_arc_with_hexagon_2(const Circle_2 &support,
                  		   const Point_2 &begin,
                  		   const Point_2 &end)
     		: P_arc(support, begin, end) 
-    		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
 
 		Circular_arc_with_hexagon_2(const Circle_2 &support,
                  		   const Circular_arc_endpoint_2 &begin,
                  		   const Circular_arc_endpoint_2 &end)
     		: P_arc(support, begin, end) 
-		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
 		Circular_arc_with_hexagon_2(const Circular_arc_2 &a)
     		: P_arc(a) 
-		{ construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
 
 
 
