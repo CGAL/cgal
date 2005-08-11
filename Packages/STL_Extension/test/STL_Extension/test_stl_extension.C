@@ -8015,7 +8015,7 @@ void test_Oneset_iterator()
   A a;
   B b;
   Oneset_iterator<A> e(a);
-  Assert_output_category(e);
+  Assert_bidirectional_category(e);
   Oneset_iterator<A> f(e);
   Oneset_iterator<A> g = f;
   *g++ = a;

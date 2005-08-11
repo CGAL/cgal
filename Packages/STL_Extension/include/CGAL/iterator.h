@@ -100,16 +100,28 @@ inserter(Container &x)
 
 template < class T >
 class Oneset_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public std::iterator< std::bidirectional_iterator_tag,
+			  void, void, void, void >
 {
   T* t;
+  
 public:
-  Oneset_iterator(T& tt) : t(&tt) {}
+  // types
+  typedef Oneset_iterator<T> Self;
+  
+public:
+  Oneset_iterator(T& t) : t(&t) {}
 
-  Oneset_iterator& operator++()    { return *this; }
-  Oneset_iterator& operator++(int) { return *this; }
+  T&       operator*()        { return *t; }
+  const T& operator*()  const { return *t; }
+  T*       operator->()       { return t; }
+  const T* operator->() const { return t; }
 
-  T& operator*() { return *t; }
+  Self&    operator++()       { return *this; }
+  Self&    operator++(int)    { return *this; }
+
+  Self&    operator--()       { return *this; }
+  Self&    operator--(int)    { return *this; }
 };
 
 // +----------------------------------------------------------------+
