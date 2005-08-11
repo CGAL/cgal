@@ -31,8 +31,8 @@ namespace CircularFunctors {
   {
     typedef typename CK::Polynomial_for_circles_2_2 Equation; 
 
-    Equation e1 = CGAL::get_equation<CK>(c1);
-    Equation e2 = CGAL::get_equation<CK>(c2);
+    Equation e1 = get_equation<CK>(c1);
+    Equation e2 = get_equation<CK>(c2);
     
     typedef std::vector
       < std::pair 
