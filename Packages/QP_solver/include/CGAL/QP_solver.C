@@ -1222,12 +1222,24 @@ ratio_test_2( Tag_false)
     // Below we are thus going to compute this minimum.  Once we have
     // delta_min, we need to check whether we get optimal BEFORE a
     // variable drwops to zero.  As delta = mu_j - mu_j(t_1), the
-    // latter is precisely the case if delta_min >= mu_j(t_1).
+    // latter is precisely the case if delta_min >= -mu_j(t_1).
     //
     // (Note: please forget the crap identitiy between (2.11) and
     // (2.12); the notation is misleading.)
-    x_i = et0;                                          // initialize
-    q_i = et1;                                          // minimum with 0
+    
+    // By definition delta_min >= 0, such that initializing
+    // delta_min with -mu_j(t_1) has the desired effect that a basic variable
+    // is leaving only if 0 <= delta_min < -mu_j(t_1).
+    
+    // The only initialization of delta_min as fraction x_i/q_i that works is
+    // x_i=mu_j(t_1); q_i=-1; (see below). 
+    
+    // Since mu_j(t_1) has been computed in ratio test step 1 we can
+    // reuse it, unfortunately the ratio test step1 computes -mu_j(t)
+    // such that the initialization becomes
+      
+    x_i = -mu;                                     // initialize minimum
+    q_i = -et1;                                        // with -mu_j(t_1) 
 
     Value_iterator  x_it = x_B_O.begin();
     Value_iterator  q_it = q_x_O.begin();
