@@ -28,11 +28,13 @@
 #include <CGAL/Handle.h>
 #include <CGAL/Object.h>
 #include <CGAL/Lazy_exact_nt.h>
-#include <boost/static_assert.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
-template <typename ET> class Lazy_exact_nt;
+
+
+
 
 
 template <typename AT, typename ET, typename EFT, typename E2A>
@@ -167,46 +169,6 @@ exact(const unsigned int& i)
 }
 
 
-template <typename AT, typename ET, typename EFT, typename E2A>
-inline
-void
-print(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level)
-{
-  l.print(os, level);
-}
-
-inline
-void
-print(double d, std::ostream& os, int level)
-{
-  for(int i = 0; i < level; i++){
-    os << "    ";
-  }
-  os << d << std::endl;
-}
-
-
-inline
-void
-print(const Null_vector& nv, std::ostream& os, int level)
-{
-  for(int i = 0; i < level; i++){
-    os << "    ";
-  }
-  os << "Null_vector" << std::endl;
-}
-
-inline
-void
-print(const Origin& nv, std::ostream& os, int level)
-{
-  for(int i = 0; i < level; i++){
-    os << "    ";
-  }
-  os << "Origin" << std::endl;
-}
-
-
 
 
 //____________________________________________________________
@@ -244,11 +206,6 @@ public:
     this->at = e2a(e); 
   }
 
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-  }
 };
 
 
@@ -270,6 +227,7 @@ public:
   update_exact()
   {
     this->et = new ET(ec_(CGAL::exact(l1_)));
+    this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1(); 
   }
@@ -279,15 +237,6 @@ public:
     : Lazy_construct_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), ec_(ec), l1_(l1)
   {}
 
-  void
-  print(std::ostream& os, int level) const 
-  {
-    this->print_at_et(os, level);
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "One child node:");
-      CGAL::print(l1_, os, level+1);
-    }
-  }
 };
 
 
@@ -311,6 +260,7 @@ public:
   update_exact()
   {
     this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_)));
+    this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
@@ -321,16 +271,6 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))), l1_(l1), l2_(l2)
   {}
 
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "Two child nodes:");
-      CGAL::print(l1_, os, level+1);
-      CGAL::print(l2_, os, level+1);
-    }
-  }
 };
 
 
@@ -355,6 +295,7 @@ public:
   update_exact()
   {
     this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_)));
+    this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
@@ -366,17 +307,6 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3))), l1_(l1), l2_(l2), l3_(l3)
   {}
 
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "Three child nodes:");
-      CGAL::print(l1_, os, level+1);
-      CGAL::print(l2_, os, level+1);
-      CGAL::print(l3_, os, level+1);
-    }
-  }
 };
 
 
@@ -401,6 +331,7 @@ public:
   update_exact()
   {
     this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_)));
+    this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
@@ -413,19 +344,6 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))), l1_(l1), l2_(l2), l3_(l3), l4_(l4)
   {}
 
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-    
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "Four child nodes:");
-      CGAL::print(l1_, os, level+1);
-      CGAL::print(l2_, os, level+1);
-      CGAL::print(l3_, os, level+1);
-      CGAL::print(l4_, os, level+1);
-    }
-  }
 };
 
 //____________________________________________________________
@@ -451,6 +369,7 @@ public:
   update_exact()
   {
     this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_)));
+    this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
@@ -463,20 +382,6 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5))), l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
   {}
 
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-    
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "Five child nodes:");
-      CGAL::print(l1_, os, level+1);
-      CGAL::print(l2_, os, level+1);
-      CGAL::print(l3_, os, level+1);
-      CGAL::print(l4_, os, level+1);
-      CGAL::print(l5_, os, level+1);
-    }
-  }
 };
 
 struct Approx_converter {
@@ -514,6 +419,7 @@ public:
     this->et = new ET();
     this->et->reserve(this->at.size());
     ec_(CGAL::exact(l1_), CGAL::exact(l2_), this->et->begin()); 
+    this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
@@ -526,17 +432,6 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), std::back_inserter(this->at));
   }
 
-  void
-  print(std::ostream& os, int level) const
-  {
-    //this->print_at_et(os, level);
-    os << "A Lazy_construct_rep_with_vector_2 of size " <<  this->at.size() << std::endl;
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "Two child nodes:");
-      CGAL::print(l1_, os, level+1);
-      CGAL::print(l2_, os, level+1);
-    }
-  }
 };
 
 
@@ -580,11 +475,6 @@ public :
   const ET&  exact() const
   { return ptr()->exact(); }
 
-  void
-  print(std::ostream& os, int level=1) const
-  {
-    ptr()->print(os, level);
-  }
 
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
@@ -596,12 +486,7 @@ template <typename AT, typename ET, typename EFT, typename E2A>
 std::ostream&
 operator<<(std::ostream& os, const Lazy<AT,ET,EFT, E2A>& lazy)
 {
-  if(is_pretty(os)){
-    lazy.print(os);
-  } else {
-    os << lazy.approx();
-  }
-  return os;
+  return os << lazy.approx();
 } 
 
 template <typename AT, typename ET, typename EFT, typename E2A>
@@ -629,17 +514,7 @@ operator!=(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
 
 
 
-//____________________________________________________________
-// A helper class to select the return type.
-
-template <typename AK, typename EK, typename AT, typename ET, typename EFT, typename E2A>
-struct Lazy_construction_return_type {
-  typedef Lazy<AT, ET, EFT, E2A> result_type;
-};
-
-
-
-
+// The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
 struct Lazy_construction_bbox {
@@ -698,6 +573,39 @@ struct Lazy_construction_nt {
   }
 };
 
+
+template <typename LK>
+Object
+make_lazy(const Object& eto)
+{
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename LK::E2A E2A;
+
+  if(const typename EK::Point_2* ptr = object_cast<typename EK::Point_2>(&eto)){
+    return make_object(typename LK::Point_2(new Lazy_construct_rep_0<typename AK::Point_2, typename EK::Point_2, E2A>(*ptr)));
+  } else if(const typename EK::Segment_2* ptr = object_cast<typename EK::Segment_2>(&eto)){
+    return make_object(typename LK::Segment_2(new Lazy_construct_rep_0<typename AK::Segment_2, typename EK::Segment_2, E2A>(*ptr)));
+  } else if(const typename EK::Ray_2* ptr = object_cast<typename EK::Ray_2>(&eto)){
+    return make_object(typename LK::Ray_2(new Lazy_construct_rep_0<typename AK::Ray_2, typename EK::Ray_2, E2A>(*ptr)));
+  } else if(const typename EK::Line_2* ptr = object_cast<typename EK::Line_2>(&eto)){
+    return make_object(typename LK::Line_2(new Lazy_construct_rep_0<typename AK::Line_2, typename EK::Line_2, E2A>(*ptr)));
+  } else if(const typename EK::Triangle_2* ptr = object_cast<typename EK::Triangle_2>(&eto)){
+    return make_object(typename LK::Triangle_2(new Lazy_construct_rep_0<typename AK::Triangle_2, typename EK::Triangle_2, E2A>(*ptr)));
+  } else if(const typename EK::Iso_rectangle_2* ptr = object_cast<typename EK::Iso_rectangle_2>(&eto)){
+    return make_object(typename LK::Iso_rectangle_2(new Lazy_construct_rep_0<typename AK::Iso_rectangle_2, typename EK::Iso_rectangle_2, E2A>(*ptr)));
+  } else if(const typename EK::Circle_2* ptr = object_cast<typename EK::Circle_2>(&eto)){
+    return make_object(typename LK::Circle_2(new Lazy_construct_rep_0<typename AK::Circle_2, typename EK::Circle_2, E2A>(*ptr)));
+  } else{
+    std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
+  }            
+  return Object();
+}
+
+
+// This functor selects the i'th element in a vector of Object's 
+// and casts it to what is in the Object
+
 template <typename T2>
 struct Ith {
   typedef T2 result_type;
@@ -711,13 +619,7 @@ struct Ith {
   const T2&
   operator()(const std::vector<Object>& v) const
   {
-    /*
-    T2 t;
-    if(assign(t, v[i])){
-      std::cout << "v[" << i << "]= " << t << std::endl;
-    }
-    */
-    return object_cast<T2>(v[i]);
+    return *object_cast<T2>(&v[i]);
   }
 };
 
@@ -726,6 +628,7 @@ struct Ith {
 
 
 
+// This is the magic functor for functors that write their result as Objects into an output iterator
 
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_intersect_with_iterators {
@@ -751,13 +654,40 @@ public:
       for(unsigned int i = 0; i < lv.approx().size(); i++){
 	if(object_cast<typename AK::Point_2>(& (lv.approx()[i]))){
 	  *it = make_object(typename LK::Point_2(new Lazy_construct_rep_1<Ith<typename AK::Point_2>, Ith<typename EK::Point_2>, E2A, Lazy_vector>(Ith<typename AK::Point_2>(i), Ith<typename EK::Point_2>(i), lv)));
-	} else {
+	  ++it;
+	} else if(object_cast<typename AK::Segment_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Segment_2(new Lazy_construct_rep_1<Ith<typename AK::Segment_2>, Ith<typename EK::Segment_2>, E2A, Lazy_vector>(Ith<typename AK::Segment_2>(i), Ith<typename EK::Segment_2>(i), lv)));
+	  ++it;
+	} else if(object_cast<typename AK::Ray_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Ray_2(new Lazy_construct_rep_1<Ith<typename AK::Ray_2>, Ith<typename EK::Ray_2>, E2A, Lazy_vector>(Ith<typename AK::Ray_2>(i), Ith<typename EK::Ray_2>(i), lv)));
+	  ++it;
+	} else if(object_cast<typename AK::Line_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Line_2(new Lazy_construct_rep_1<Ith<typename AK::Line_2>, Ith<typename EK::Line_2>, E2A, Lazy_vector>(Ith<typename AK::Line_2>(i), Ith<typename EK::Line_2>(i), lv)));
+	  ++it;
+	} else if(object_cast<typename AK::Triangle_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Triangle_2(new Lazy_construct_rep_1<Ith<typename AK::Triangle_2>, Ith<typename EK::Triangle_2>, E2A, Lazy_vector>(Ith<typename AK::Triangle_2>(i), Ith<typename EK::Triangle_2>(i), lv)));
+	  ++it;
+	} else if(object_cast<typename AK::Iso_rectangle_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Iso_rectangle_2(new Lazy_construct_rep_1<Ith<typename AK::Iso_rectangle_2>, Ith<typename EK::Iso_rectangle_2>, E2A, Lazy_vector>(Ith<typename AK::Iso_rectangle_2>(i), Ith<typename EK::Iso_rectangle_2>(i), lv)));
+	  ++it;
+	} else if(object_cast<typename AK::Circle_2>(& (lv.approx()[i]))){
+	  *it = make_object(typename LK::Circle_2(new Lazy_construct_rep_1<Ith<typename AK::Circle_2>, Ith<typename EK::Circle_2>, E2A, Lazy_vector>(Ith<typename AK::Circle_2>(i), Ith<typename EK::Circle_2>(i), lv)));
+	  ++it;
+	} else{
 	  std::cout << "we need  more casts" << std::endl;
 	}
       }
       
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      std::cerr << "Catched Interval_nt_advanced::unsafe_comparison" << std::endl;
+      // TODO: Instead of using a vector, write an iterator adapter
+      std::vector<Object> exact_objects;
+      ec(CGAL::exact(l1), CGAL::exact(l2), std::back_inserter(exact_objects));
+      for (std::vector<Object>::iterator oit = exact_objects.begin();
+	   oit != exact_objects.end();
+	   oit++){
+	*it = make_lazy<LK>(*oit);
+	++it;
+      }
     }
     return it;
   }
@@ -772,9 +702,7 @@ struct Object_cast {
   const T&
   operator()(const Object& o) const
   {
-    T t = object_cast<T>(o);
-    std::cout << "object_cast: " << t << std::endl;
-      return object_cast<T>(o);
+    return *object_cast<T>(&o);
   }
 };
 
@@ -838,24 +766,7 @@ public:
       }
     } catch (Interval_nt_advanced::unsafe_comparison) {
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
-
-      if(const typename EK::Point_2* ptr = object_cast<typename EK::Point_2>(&eto)){
-	make_object(typename LK::Point_2(new Lazy_construct_rep_0<typename AK::Point_2, typename EK::Point_2, E2A>(*ptr)));
-      } else if(const typename EK::Segment_2* ptr = object_cast<typename EK::Segment_2>(&eto)){
-	make_object(typename LK::Segment_2(new Lazy_construct_rep_0<typename AK::Segment_2, typename EK::Segment_2, E2A>(*ptr)));
-      } else if(const typename EK::Ray_2* ptr = object_cast<typename EK::Ray_2>(&eto)){
-	make_object(typename LK::Ray_2(new Lazy_construct_rep_0<typename AK::Ray_2, typename EK::Ray_2, E2A>(*ptr)));
-      } else if(const typename EK::Line_2* ptr = object_cast<typename EK::Line_2>(&eto)){
-	make_object(typename LK::Line_2(new Lazy_construct_rep_0<typename AK::Line_2, typename EK::Line_2, E2A>(*ptr)));
-      } else if(const typename EK::Triangle_2* ptr = object_cast<typename EK::Triangle_2>(&eto)){
-	make_object(typename LK::Triangle_2(new Lazy_construct_rep_0<typename AK::Triangle_2, typename EK::Triangle_2, E2A>(*ptr)));
-      } else if(const typename EK::Iso_rectangle_2* ptr = object_cast<typename EK::Iso_rectangle_2>(&eto)){
-	make_object(typename LK::Iso_rectangle_2(new Lazy_construct_rep_0<typename AK::Iso_rectangle_2, typename EK::Iso_rectangle_2, E2A>(*ptr)));
-      } else if(const typename EK::Circle_2* ptr = object_cast<typename EK::Circle_2>(&eto)){
-	make_object(typename LK::Circle_2(new Lazy_construct_rep_0<typename AK::Circle_2, typename EK::Circle_2, E2A>(*ptr)));
-      } else{
-	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
-      }      
+      return make_lazy<LK>(eto);
     }
     return Object();
   }
@@ -863,6 +774,10 @@ public:
 
 };
 
+
+// The following three classes were a warmup for making a functor that returns something other than a lazy object
+// The lazy functor has to return a pair<Lazy>  and not a Lazy<pair>
+/*
 template <typename T>
 struct First {
   typedef typename T::first_type result_type;
@@ -938,10 +853,10 @@ public:
   }
 
 };
-
+*/
 
 //____________________________________________________________
-// The functor that has Lazy<Something> as result type
+// The magic functor that has Lazy<Something> as result type
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction {
@@ -949,7 +864,7 @@ struct Lazy_construction {
 
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
-  typedef typename Lazy_construction_return_type<AK, EK, AT, ET, EFT, E2A>::result_type result_type;
+  typedef Lazy<AT, ET, EFT, E2A> result_type;
 
   AC ac;
   EC ec;
