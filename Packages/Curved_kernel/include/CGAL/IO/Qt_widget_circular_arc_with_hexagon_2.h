@@ -24,15 +24,15 @@ namespace CGAL {
 template < typename CK >
 Qt_widget &
 operator<<(Qt_widget & widget, 
-           const typename Circular_arc_with_hexagon_2<CK> &a)
+           const Circular_arc_with_hexagon_2<CK> &a)
 {    
-  typedef typename Circular_arc_with_hexagon_2<CK>              Circular_arc_2;
+  typedef Circular_arc_with_hexagon_2<CK>                       Circular_arc_2;
   typedef typename Circular_arc_2::Hexagon                      Hexagon;
 
   widget<<CGAL::ORANGE;
   widget<<a.arc();
 
-  typename Circular_arc_2::Hexagon_const_iterator hix1,hix2;
+  typename Circular_arc_2::Hexagon_const_iterator hix1;
 
   for (hix1=a.hexagons_begin(); hix1!= a.hexagons_end(); ++hix1)
     {
