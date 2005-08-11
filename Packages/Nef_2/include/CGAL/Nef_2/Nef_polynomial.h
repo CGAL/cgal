@@ -75,8 +75,6 @@ class Nef_polynomial
   Base & polynomial() { return static_cast<Base&>(*this); }
   const Base & polynomial() const  { return static_cast<const Base&>(*this); }
 
-    //  static NT R_; // for visualization only
-    //  static void set_R(const NT& R) { R_ = R; }
     static NT& infi_maximal_value() {
       static NT R_ = 1;
       return R_;
@@ -125,15 +123,16 @@ bool operator>(const Nef_polynomial<NT> &a, int b)
   return a.polynomial() > b;
 }
 
-
-// template <class NT> NT Nef_polynomial<NT>::R_ = 1;
-// int                    Nef_polynomial<int>::R_ = 1;
-// double                 Nef_polynomial<double>::R_ = 1.0;
-
 template <class NT>
 double to_double(const Nef_polynomial<NT>& p)
 {
   return CGAL::to_double(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
+}
+
+template <class NT>
+std::pair<double,double> to_interval(const Nef_polynomial<NT>& p)
+{
+  return CGAL::to_interval(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
 }
 
 template <class NT>
