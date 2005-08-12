@@ -59,10 +59,10 @@ struct binop_intersection_test_segment_tree {
     Type type;
 
     void extend( const Point_3& p ) {
-      double q[3];
-      q[0] = CGAL::to_double( p.x() );
-      q[1] = CGAL::to_double( p.y() );
-      q[2] = CGAL::to_double( p.z() );
+      std::pair<double, double> q[3];
+      q[0] = CGAL::to_interval( p.x() );
+      q[1] = CGAL::to_interval( p.y() );
+      q[2] = CGAL::to_interval( p.z() );
       Box_intersection_d::Box_d< double, 3 >::extend(q);
     }
 
@@ -217,7 +217,7 @@ struct binop_intersection_test_segment_tree {
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1,
-			CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
+			CGAL_NEF3_BOX_INTERSECTION_CUTOFF,);
 #else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1);
