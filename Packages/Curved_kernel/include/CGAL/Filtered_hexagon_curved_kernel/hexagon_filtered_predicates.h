@@ -27,9 +27,13 @@ class In_range_2
     typedef bool result_type;
 
     result_type
-    operator()( const Circular_arc_2 &a, const Circular_arc_endpoint_2 &p) const
+    operator()( Circular_arc_2 &a, const Circular_arc_endpoint_2 &p) const
     { 
       CGAL_precondition( a.arc().is_x_monotone());
+      
+      if(a.has_no_hexagons())
+        a.construct_hexagons();
+      
       typename Circular_arc_2::Hexagon_const_iterator hips;
 	
       Bbox_2 bb = p.bbox();
@@ -69,11 +73,14 @@ class Compare_y_at_x_2
     typedef Comparison_result result_type;
 
     result_type
-    operator()( const Circular_arc_endpoint_2 &p,const Circular_arc_2 &a ) const
+    operator()( const Circular_arc_endpoint_2 &p, Circular_arc_2 &a ) const
     {
       bool tmp= In_range_2<HK>()(a,p) ;
       CGAL_kernel_precondition( a.arc().is_x_monotone());
       CGAL_kernel_precondition(tmp);
+      
+      if(a.has_no_hexagons())
+        a.construct_hexagons();
 	
       Comparison_result rel_pos;
       Bbox_2 bb = p.bbox();
@@ -163,12 +170,18 @@ class Equal_2
 
 
     result_type
-    operator()( const Circular_arc_2 &a ,const Circular_arc_2 &b ) const
+    operator()( Circular_arc_2 &a , Circular_arc_2 &b ) const
     {
 
       CGAL_precondition( a.arc().is_x_monotone());
       CGAL_precondition( b.arc().is_x_monotone());
+      
+      if(a.has_no_hexagons())
+        a.construct_hexagons();
 
+	if(b.has_no_hexagons())
+        b.construct_hexagons();
+	
       if(a.hexagon_no() != b.hexagon_no())
 	return false;
 
@@ -208,11 +221,17 @@ class Do_overlap_2
     typedef bool result_type;
 
     result_type
-    operator()( const Circular_arc_2 &a ,const Circular_arc_2 &b ) const
+    operator()( Circular_arc_2 &a , Circular_arc_2 &b ) const
     {
 
       CGAL_precondition( a.arc().is_x_monotone());
       CGAL_precondition( b.arc().is_x_monotone());
+      
+      if(a.has_no_hexagons())
+        a.construct_hexagons();
+	
+	if(b.has_no_hexagons())
+        b.construct_hexagons();
 
       if(do_intersect_hexagons_2( a.hexagons_begin(),a.hexagons_end(),b.hexagons_begin(),b.hexagons_end() ) )
 	return CK().do_overlap_2_object()(a.arc(),b.arc());
