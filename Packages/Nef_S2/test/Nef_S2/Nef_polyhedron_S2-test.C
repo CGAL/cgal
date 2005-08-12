@@ -54,6 +54,9 @@ int main(int argc, char **argv)
 
   CGAL_TEST((N1*N1) == N1);
   CGAL_TEST((N1*!N1) == EMPTY);
+  CGAL_NEF_TRACEV(N1);
+  CGAL_NEF_TRACEV(!N1);
+  CGAL_NEF_TRACEV(N1+!N1);
   CGAL_TEST((N1+!N1) == SPHERE);
   CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))); // xor reformulation
 
@@ -79,13 +82,13 @@ int main(int argc, char **argv)
   Object_handle h;
   h = N3.locate(p1); // on y-axis
   CGAL_TEST( CGAL::assign(v,h) );
-  CGAL_TEST( N3.point(v) == p1 && !N3.mark(v) );
+  CGAL_TEST( v->point() == p1 && !v->mark() );
   h = N3.locate(p2);
   CGAL_TEST( CGAL::assign(e,h) );
-  CGAL_TEST( N3.circle(e) == c3 && !N3.mark(e) );
+  CGAL_TEST( e->circle() == c3 && !e->mark() );
   h = N3.locate(p3);
   CGAL_TEST( CGAL::assign(f,h) );
-  CGAL_TEST( N3.mark(f) );
+  CGAL_TEST( f->mark() );
 #endif
   CGAL_TEST_END;     
   return 0;
