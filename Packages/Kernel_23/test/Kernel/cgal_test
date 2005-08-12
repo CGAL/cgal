@@ -76,6 +76,7 @@ else
   compile_and_run Filtered_cartesian
   compile_and_run Filtered_homogeneous
   compile_and_run Homogeneous
+  compile_and_run Kernel_checker
   compile_and_run Simple_cartesian
   compile_and_run Simple_homogeneous
   compile_and_run test_kernel_archetype_2

@@ -54,6 +54,7 @@ all:            \
                 Filtered_cartesian$(EXE_EXT) \
                 Filtered_homogeneous$(EXE_EXT) \
                 Homogeneous$(EXE_EXT) \
+                Kernel_checker$(EXE_EXT) \
                 Simple_cartesian$(EXE_EXT) \
                 Simple_homogeneous$(EXE_EXT) \
                 test_kernel_archetype_2$(EXE_EXT) \
@@ -74,6 +75,9 @@ Filtered_homogeneous$(EXE_EXT): Filtered_homogeneous$(OBJ_EXT)
 
 Homogeneous$(EXE_EXT): Homogeneous$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Homogeneous Homogeneous$(OBJ_EXT) $(LDFLAGS)
+
+Kernel_checker$(EXE_EXT): Kernel_checker$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Kernel_checker Kernel_checker$(OBJ_EXT) $(LDFLAGS)
 
 Simple_cartesian$(EXE_EXT): Simple_cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Simple_cartesian Simple_cartesian$(OBJ_EXT) $(LDFLAGS)
@@ -96,6 +100,7 @@ clean: \
                    Filtered_cartesian.clean \
                    Filtered_homogeneous.clean \
                    Homogeneous.clean \
+                   Kernel_checker.clean \
                    Simple_cartesian.clean \
                    Simple_homogeneous.clean \
                    test_kernel_archetype_2.clean \

@@ -1,4 +1,8 @@
 12 August 2005 Sylvain Pion
+- Moved Kernel_checker from Interval_arithmetic
+  (rewritten version, but still needs more work).
+
+12 August 2005 Sylvain Pion
 - Move Same_certainty from Uncertain.h.
 
 9 August 2005 Sylvain Pion
