@@ -1,3 +1,6 @@
+12 August 2005 Sylvain Pion
+- Move Same_certainty from Uncertain.h.
+
 9 August 2005 Sylvain Pion
 - Fix workaround for enum_cast.
 

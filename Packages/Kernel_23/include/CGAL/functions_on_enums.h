@@ -26,6 +26,7 @@
 #define CGAL_FUNCTIONS_ON_ENUMS_H
 
 #include <CGAL/enum.h>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -66,12 +67,6 @@ template < typename T, typename U >
 inline
 T enum_cast_bug(const U& u, const T*)
 { return static_cast<T>(u); }
-
-template < typename T1, typename T2 >
-struct Same_uncertainty
-{
-  typedef T1 type;
-};
 
 template < typename T, typename U >
 inline
