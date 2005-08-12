@@ -41,51 +41,51 @@ public:
 
     		Circular_arc_with_hexagon_2(const Circle_2 &c)
     		: P_arc(c)
-    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{}
 
     		Circular_arc_with_hexagon_2(const Circle_2 &support, 
                        		   const Line_2 &l1, const bool b_l1,
                        		   const Line_2 &l2, const bool b_l2)
     		: P_arc(support,l1,b_l1,l2,b_l2)
-    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{}
 
     
     		Circular_arc_with_hexagon_2(const Circle_2 &c, 
 		       		   const Circle_2 &c1, const bool b_1,
 		       		   const Circle_2 &c2, const bool b_2)
     		: P_arc(c,c1,b_1,c2,b_2)
-    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{}
 
     
     		Circular_arc_with_hexagon_2(const Circular_arc_2 &A, const bool b,
 		       		   const Circle_2 &ccut, const bool b_cut)
     		: P_arc(A, b, ccut, b_cut)
-    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{}
 
 
     		Circular_arc_with_hexagon_2(const Point_2 &start,
                  		   const Point_2 &middle,
                  		   const Point_2 &end)
     		: P_arc(start, middle, end) 
-    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{}
 
   
     		Circular_arc_with_hexagon_2(const Circle_2 &support,
                  		   const Point_2 &begin,
                  		   const Point_2 &end)
     		: P_arc(support, begin, end) 
-    		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+    		{}
 
 
 		Circular_arc_with_hexagon_2(const Circle_2 &support,
                  		   const Circular_arc_endpoint_2 &begin,
                  		   const Circular_arc_endpoint_2 &end)
     		: P_arc(support, begin, end) 
-		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+		{}
 
 		Circular_arc_with_hexagon_2(const Circular_arc_2 &a)
     		: P_arc(a) 
-		{ CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));}
+		{}
 
 
 
@@ -99,9 +99,8 @@ public:
 
 		bool on_upper_part() const
 		{ return P_arc.on_upper_part();}
-
-
-
+		
+		
 		//////////Accessors///////////
 
 		const Circular_arc_2& arc () const
@@ -150,8 +149,23 @@ public:
 		double approximate_y_at(const Circular_arc_endpoint_2 &p) const 
 			{ return P_arc.approximate_y_at(p);}
 
-		CGAL::Bbox_2 bbox()
+		Bbox_2 bbox()
 			{ return P_arc.bbox();}
+			
+			
+		///Specific check used for hexagon construction///
+		
+		bool has_no_hexagons() const
+		{ return hexagons.empty();}
+		
+		
+		///Hexagon construction///
+		
+		void construct_hexagons() 
+		{
+		  assert(has_no_hexagons());	
+		  CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));
+		}
 
 
 	private:
@@ -199,9 +213,9 @@ public:
               << "right : " << a.arc().right() << " , " << std::endl
 	      << "upper part : " << a.arc().on_upper_part() << std::endl
               << "  [[ approximate circle is (x,y,r) : "
-              << CGAL::to_double(a.arc().supporting_circle().center().x()) << "  "
-              << CGAL::to_double(a.arc().supporting_circle().center().y()) << "  "
-              << std::sqrt(CGAL::to_double(a.arc().supporting_circle()
+              << to_double(a.arc().supporting_circle().center().x()) << "  "
+              << to_double(a.arc().supporting_circle().center().y()) << "  "
+              << std::sqrt(to_double(a.arc().supporting_circle()
                                             .squared_radius()))
               << " ]]" << std::endl;
   }
