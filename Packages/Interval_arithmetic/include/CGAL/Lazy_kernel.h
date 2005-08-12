@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -28,6 +28,7 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Lazy.h>
 #include <boost/mpl/if.hpp>
@@ -115,7 +116,7 @@ public:
                                      Lazy_intersect_with_iterators<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
                                      typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
                                      Lazy_construction_bbox<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
-                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Interval_nt<true> >,\
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
                                                               Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
                                                               typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
                                                                                        Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
@@ -128,7 +129,7 @@ public:
 #define CGAL_Kernel_cons(C, Cf) \
     typedef typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
                                      Lazy_construction_bbox<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
-                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Interval_nt<true> >,\
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
                                                               Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
                                                               typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
                                                                                        Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
@@ -152,7 +153,7 @@ struct Lazy_kernel_without_type_equality
   : public Lazy_kernel_base< EK, AK, Lazy_kernel_without_type_equality<EK,AK> >
 {};
 
-template <class EK, class AK = void>
+template <class EK, class AK = Simple_cartesian<Interval_nt_advanced> >
 struct Lazy_kernel
   : public Type_equality_wrapper< 
              Lazy_kernel_base< EK, AK, Lazy_kernel<EK, AK> >,
@@ -162,7 +163,3 @@ struct Lazy_kernel
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LAZY_KERNEL_H
-
-
-
-

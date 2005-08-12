@@ -1,11 +1,14 @@
-12 August Andreas Fabri
+12 August 2005 Andreas Fabri & Sylvain Pion
+- Lazy_kernel : Protect_FPU optimizations, fix empty Objects.
+
+12 August 2005 Andreas Fabri
 - Bug fix in Lazy_exact_nt.h: replaced access to former data member 'in' 
   with call to member function 'approx()'
 
-12 August Sylvain Pion
+12 August 2005 Sylvain Pion
 - Move Same_certainty to Kernel_23/include/CGAL/Kernel/.
 
-11 August Andreas Fabri
+11 August 2005 Andreas Fabri
 - Added a common base class for lazy numbers and lazy kernel classes
 - Added an example for the lazy kernel
   and a kernel with a functor that writes result to an output iterator
