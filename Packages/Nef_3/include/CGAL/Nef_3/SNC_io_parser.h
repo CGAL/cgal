@@ -885,6 +885,8 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
       CGAL_forall_sface_cycles_of(fc, sfi) {
 	if(fc.is_shalfedge()) {
 	  SHalfedge_handle se(fc);
+	  if(sncp()->is_sm_boundary_object(se))
+	    sncp()->undef_sm_boundary_item(se);
 	  SHalfedge_around_sface_circulator cb(se), ce(cb);
 	  CGAL_For_all(cb,ce) {
 	    if(cb->source() != se->source()) {
@@ -897,6 +899,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
 					       se->twin()->source()->twin()->source()->point()))
 		se = cb;
 	  }
+	  sncp()->store_sm_boundary_item(se,fc);
 	  *fc = se;
 	}
       }
@@ -1529,7 +1532,9 @@ print_sedge(SHalfedge_handle e) const {
     Plane_3 p(e->circle());
     out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
   }
-  out << " } " << e->mark() << "\n";
+  out << " } " << e->mark() 
+    //      << ", " << sncp()->is_sm_boundary_object(e) 
+      << "\n";
 }
 
 /*
@@ -1759,6 +1764,7 @@ read_sface(SFace_handle sfh) {
     in.putback(cc);
     in >> index;
     sfh->boundary_entry_objects().push_back(SEdge_of[index]);
+    sncp()->store_sm_boundary_item(SEdge_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
   
@@ -1767,6 +1773,7 @@ read_sface(SFace_handle sfh) {
     in.putback(cc);
     in >> index;
     sfh->boundary_entry_objects().push_back(Edge_of[index]);
+    sncp()->store_sm_boundary_item(Edge_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
 
@@ -1775,6 +1782,7 @@ read_sface(SFace_handle sfh) {
     in.putback(cc);
     in >> index;
     sfh->boundary_entry_objects().push_back(SLoop_of[index]);
+    sncp()->store_sm_boundary_item(SLoop_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
   
@@ -1959,6 +1967,7 @@ void SNC_io_parser<EW>::add_infi_box() {
     SFace_handle sfh = SFace_of[sfn+i];
     sfh->center_vertex() = Vertex_of[vn+(i/2)];
     sfh->boundary_entry_objects().push_back(SEdge_of[sen+(i/2*6)+(i%2)]);
+    sncp()->store_sm_boundary_item(SEdge_of[sen+(i/2*6)+(i%2)], --(sfh->sface_cycles_end()));
     int cIdx = i%2 ? 1-volIdx[i/2] : volIdx[i/2];
     sfh->volume() = Volume_of[cIdx];
     sfh->mark() = cIdx ? Volume_of[1]->mark() : 0;
