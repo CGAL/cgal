@@ -80,7 +80,7 @@ public:
   { return K.construct_segment(point(source(e)),point(target(e))); }
 
   int orientation(SHalfedge_handle e, const Point& p) const
-  { return K.orientation(point(source(e)),point(target(e)),p); }
+  { return K.orientation(e->source()->point(),e->twin()->source()->point(),p); }
 
   bool operator()(const SHalfedge_handle& e1, const SHalfedge_handle& e2) const
   { // Precondition:
@@ -89,12 +89,15 @@ public:
     if (e2 == e_bottom || e1 == e_top) return false;
     if ( e1 == e2 ) return 0;
     int s = 0;
-    if ( p == point(source(e1)) )      s =   orientation(e2,p);
-    else if ( p == point(source(e2)) ) s = - orientation(e1,p);
+    if ( p == e1->source()->point() )
+      s =   orientation(e2,p);
+    else if ( p == e2->source()->point() ) 
+      s = - orientation(e1,p);
     else CGAL_assertion_msg(0,"compare error in sweep.");
-    if ( s || source(e1) == target(e1) || source(e2) == target(e2) ) 
+    if ( s || e1->source() == e1->twin()->source() || 
+	 e2->source() == e2->twin()->source()) 
       return ( s < 0 );
-    s = orientation(e2,point(target(e1)));
+    s = orientation(e2,e1->twin()->source()->point());
     if (s==0) CGAL_assertion_msg(0,"parallel edges not allowed.");
     return ( s < 0 );
   }
@@ -108,7 +111,7 @@ public:
    lt_pnts_xy(const Decorator_& D, const Kernel_& k) : Decorator_(D), K(k) {}
    lt_pnts_xy(const lt_pnts_xy& lt) : Decorator_(lt), K(lt.K) {}
    int operator()(const SVertex_handle& v1, const SVertex_handle& v2) const
-   { return K.compare_xy(point(v1),point(v2)) < 0; }
+   { return K.compare_xy(v1->point(),v2->point()) < 0; }
   }; // lt_pnts_xy
 
 
@@ -144,8 +147,8 @@ public:
      |*this| */
   void treat_new_edge(SHalfedge_handle e)
   { assoc_info(e);
-    mark(e) = incident_mark(e) = incident_mark(twin(e)) = 
-      incident_mark(next(e));
+    e->mark() = incident_mark(e) = incident_mark(e->twin()) = 
+      incident_mark(e->snext());
     CGAL_NEF_TRACEN(" treat_new_edge "<<PH(e));
   }
 
@@ -172,25 +175,25 @@ public:
   }
 
   Segment segment(SHalfedge_handle e) const
-  { return K.construct_segment(point(source(e)),point(target(e))); }
+  { return K.construct_segment(e->source()->point(),e->twin()->source()->point()); }
 
   bool is_forward(SHalfedge_handle e) const
   { return K.compare_xy(point(source(e)),point(target(e))) < 0; }
 
   bool edge_is_visible_from(SVertex_handle v, SHalfedge_handle e)
   {
-    Point p =  point(v);
-    Point p1 = point(source(e));
-    Point p2 = point(target(e));
+    Point p =  v->point();
+    Point p1 = e->source()->point();
+    Point p2 = e->twin()->source()->point();
     return ( K.orientation(p1,p2,p) > 0 ); // left_turn
   }
 
   void triangulate_up(SHalfedge_handle& e_apex)
   {
     CGAL_NEF_TRACEN("triangulate_up "<<segment(e_apex));
-    SVertex_handle v_apex = source(e_apex);
+    SVertex_handle v_apex = e_apex->source();
     while (true) {
-      SHalfedge_handle e_vis = previous(twin(e_apex));
+      SHalfedge_handle e_vis = e_apex->twin()->sprev();
       bool in_sweep_line = (SLItem[e_vis] != SL.end()); 
       bool not_visible = !edge_is_visible_from(v_apex,e_vis);
         CGAL_NEF_TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
@@ -206,18 +209,18 @@ public:
   void triangulate_down(SHalfedge_handle& e_apex)
   {
     CGAL_NEF_TRACEN("triangulate_down "<<segment(e_apex));
-    SVertex_handle v_apex = source(e_apex);
+    SVertex_handle v_apex = e_apex->source();
     while (true) {
-      SHalfedge_handle e_vis = next(e_apex);
+      SHalfedge_handle e_vis = e_apex->snext();
       bool in_sweep_line = (SLItem[e_vis] != SL.end());
       bool not_visible = !edge_is_visible_from(v_apex,e_vis);
         CGAL_NEF_TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
       if ( in_sweep_line || not_visible) {
           CGAL_NEF_TRACEN("  STOP"); return;
       }
-      SHalfedge_handle e_vis_rev = twin(e_vis);
+      SHalfedge_handle e_vis_rev = e_vis->twin();
       SHalfedge_handle e_forw = new_bi_edge(e_vis_rev,e_apex);
-      e_apex = twin(e_forw);
+      e_apex = e_forw->twin();
       CGAL_NEF_TRACEN(" produced " << segment(e_apex));
     }
   }
@@ -226,17 +229,17 @@ public:
   {
     // we triangulate the interior of the whole chain between
     // target(e_upper) and target(e_lower)
-    assert(source(e_upper)==source(e_lower));
+    assert(e_upper->source()==e_lower->source());
     CGAL_NEF_TRACE("triangulate_between\n   "<<segment(e_upper));
     CGAL_NEF_TRACEN("\n   "<<segment(e_lower));
-    SHalfedge_handle e_end = twin(e_lower);
+    SHalfedge_handle e_end = e_lower->twin();
     while (true) {
-      SHalfedge_handle e_vis =  next(e_upper);
-      SHalfedge_handle en_vis = next(e_vis);
+      SHalfedge_handle e_vis =  e_upper->snext();
+      SHalfedge_handle en_vis = e_vis->snext();
       CGAL_NEF_TRACEN(" working on base e_vis " << segment(e_vis));
       CGAL_NEF_TRACEN(" next is " << segment(en_vis));
       if (en_vis == e_end) return;
-      e_upper = twin(new_bi_edge(twin(e_vis),e_upper));
+      e_upper = new_bi_edge(e_vis->twin(),e_upper)->twin();
       CGAL_NEF_TRACEN(" produced " << segment(e_upper));
     } 
   }
@@ -258,12 +261,12 @@ public:
     eb_low = e;
     CGAL_NEF_TRACEN("determining handle in SL");
     if ( e != SHalfedge_handle() ) {
-      point(target(e_search)) = p_sweep; // degenerate loop edge
+      e_search->twin()->source()->point() = p_sweep; // degenerate loop edge
       sit_pred = SLItem[e];
       if ( sit_pred != SL.end())  sit = --sit_pred;
       else  sit = sit_pred = --SL.upper_bound(e_search);
     } else { // event is isolated vertex
-      point(target(e_search)) = p_sweep; // degenerate loop edge
+      e_search->twin()->source()->point() = p_sweep; // degenerate loop edge
       sit_pred = --SL.upper_bound(e_search);
     }
 
@@ -308,7 +311,7 @@ public:
   { if ( event_it != event_Q.end() ) {
       // event is set at end of loop and in init
       event = *event_it;
-      p_sweep = point(event);
+      p_sweep = event->point();
       return true;
     }
     return false; 
@@ -318,7 +321,7 @@ public:
   { ++event_it; }
 
   void link_bi_edge_to(SHalfedge_handle e, ss_iterator sit) {
-    SLItem[e] = SLItem[twin(e)] = sit; 
+    SLItem[e] = SLItem[e->twin()] = sit; 
   }
 
   void initialize_structures()
@@ -331,7 +334,7 @@ public:
     event_it = event_Q.begin();
     if ( event_Q.empty() ) return;
     event = *event_it;
-    p_sweep = point(event); 
+    p_sweep = event->point(); 
     if ( !is_isolated(event) ) {
       SHalfedge_around_svertex_circulator 
         e(first_out_edge(event)), eend(e);
@@ -368,7 +371,7 @@ public:
   void complete_structures() 
   {
     if (e_low != SHalfedge_handle()) {
-      delete_vertex(target(e_search));
+      delete_vertex(e_search->twin()->source());
     } // removing sentinels and e_search
   }
 

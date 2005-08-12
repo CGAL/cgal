@@ -742,23 +742,23 @@ class NefS2_to_UnitSphere
     SHalfedge_const_iterator e;
     CGAL_forall_sedges(e,E_) {
       if ( e->source() == e->twin()->source() ) {
-	S_.push_back(E_.circle(e), CO_.color(e,E_.mark(e)));} else {
-	S_.push_back(Sphere_segment(E_.point(E_.source(e)),
-				    E_.point(E_.target(e)),
-				    E_.circle(e)),CO_.color(e,E_.mark(e)));
+	S_.push_back(e->circle(), CO_.color(e,e->mark()));} else {
+	S_.push_back(Sphere_segment(e->source()->point(),
+				    e->twin()->source()->point(),
+				    e->circle()),CO_.color(e,e->mark()));
       }
     }
     // draw sphere circles underlying loops of E_:
     
     if ( E_.has_shalfloop() )
       S_.push_back(
-		   Sphere_circle(E_.circle(E_.shalfloop())),
-		   CO_.color(E_.shalfloop(),E_.mark(E_.shalfloop())));
+		   E_.shalfloop()->circle(),
+		   CO_.color(E_.shalfloop(),E_.shalfloop()->mark()));
     
     // draw points underlying vertices of E_:
     SVertex_const_iterator v;
     CGAL_forall_svertices(v,E_)
-      S_.push_back(E_.point(v),CO_.color(v,E_.mark(v)));
+      S_.push_back(v->point(),CO_.color(v,v->mark()));
     
     Unique_hash_map<SHalfedge_const_iterator,bool> Done(false);
     CGAL_forall_shalfedges(e,T_) {
@@ -777,9 +777,9 @@ class NefS2_to_UnitSphere
     Done.clear(false);
     CGAL_forall_shalfedges(e,T_) {
       if ( Done[e] ) continue;
-      S_.push_back_triangle_edge(Sphere_segment(E_.point(E_.source(e)),
-						E_.point(E_.target(e)),
-						E_.circle(e)));
+      S_.push_back_triangle_edge(Sphere_segment(e->source()->point(),
+						e->twin()->source()->point(),
+						e->circle()));
       Done[e]=Done[e->twin()]=true;
     }    
     return S_;
