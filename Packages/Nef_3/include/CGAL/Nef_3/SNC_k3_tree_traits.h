@@ -1,4 +1,4 @@
-#line 1242 "k3_tree.nw"
+#line 1254 "k3_tree.nw"
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -224,8 +224,7 @@ Side_of_plane<SNC_decorator>::operator()
         break;
       default: CGAL_assertion_msg(false, "wrong value");
       }
-     std::cerr << "Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
-	  << OnSideMap[v] << "," << pl.oriented_side(v->point()) << std::endl;  
+
      CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
 	  << OnSideMap[v] << "," << pl.oriented_side(v->point()));  
     CGAL_assertion(OnSideMap[v] == pl.oriented_side(v->point()));

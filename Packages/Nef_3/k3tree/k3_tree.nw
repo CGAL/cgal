@@ -272,11 +272,21 @@ public:
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;
+      CGAL_NEF_TRACEN("bounding box " << b.get_min() << "->" << b.get_max());
       int c = (CGAL::abs(vec[0]) > CGAL::abs(vec[1]) ? 0 : 1); 
       c = (CGAL::abs(vec[2]) > CGAL::abs(vec[c]) ? 2 : c); 
       Point_3 pt_on_minus_x_plane = vec[c] < 0 ? b.get_min() : b.get_max();
-      // We compute the intersection between a plane with normal vector in the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
-      Plane_3 pl_on_minus_x( pt_on_minus_x_plane, Vector_3( 1, 1, 1));
+      // We compute the intersection between a plane with normal vector in 
+      // the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
+      Plane_3 pl_on_minus_x;      
+      if(c==0)
+	pl_on_minus_x = Plane_3(pt_on_minus_x_plane, Vector_3( 1, 0, 0));
+      else if(c==1)
+	pl_on_minus_x = Plane_3(pt_on_minus_x_plane, Vector_3( 0, 1, 0));
+      else {
+	CGAL_assertion_msg(c==2, "wrong value");
+ 	pl_on_minus_x = Plane_3(pt_on_minus_x_plane, Vector_3( 0, 0, 1));
+      }
       Object o = traits.intersect_object()( pl_on_minus_x, r);
       if( !CGAL::assign( q, o) || pl_on_minus_x.has_on(p))
 	q = r.source() + vec;
@@ -975,6 +985,8 @@ else {
       CGAL_NEF_TRACEN("find next intersected cell: segment: "<<r);
       Oriented_side src_side, tgt_side;
       get_side_of( r, n->plane(), src_side, tgt_side);
+      CGAL_NEF_TRACEN("  ray on side of plane " << n->plane ":" 
+	<< src_side << ", " << tgt_side);
       if( src_side == ON_ORIENTED_BOUNDARY && tgt_side == ON_ORIENTED_BOUNDARY)
         src_side = tgt_side = ON_NEGATIVE_SIDE;
       else if( src_side == ON_ORIENTED_BOUNDARY)
