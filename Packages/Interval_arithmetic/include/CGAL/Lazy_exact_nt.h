@@ -196,7 +196,7 @@ public:
   void update_exact()
   {
     this->et = new ET(l.exact());
-    this->in = l.approx();
+    this->approx() = l.approx();
     prune_dag();
   }
   int depth() const { return l.depth() + 1; }
@@ -254,7 +254,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
   void update_exact()                                                    \
   {                                                                      \
     this->et = new ET(OP(this->op1.exact()));                            \
-    if (!this->in.is_point()) this->in = CGAL::to_interval(*(this->et)); \
+    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et)); \
     this->prune_dag();                                                   \
    }                                                                     \
 };

@@ -1,3 +1,7 @@
+12 August Andreas Fabri
+- Bug fix in Lazy_exact_nt.h: replaced access to former data member 'in' 
+  with call to member function 'approx()'
+
 12 August Sylvain Pion
 - Move Same_certainty to Kernel_23/include/CGAL/Kernel/.
 
