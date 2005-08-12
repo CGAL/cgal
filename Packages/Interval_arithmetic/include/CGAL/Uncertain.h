@@ -293,6 +293,15 @@ const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
 }
 
 
+// opposite
+template < typename T >
+inline
+Uncertain<T> opposite(const Uncertain<T> &u)
+{
+  return Uncertain<T>(opposite(u.sup()), opposite(u.inf()));
+}
+
+
 // enum_cast overload
 
 #ifdef CGAL_CFG_MATCHING_BUG_5
@@ -313,35 +322,7 @@ Uncertain<T> enum_cast(const Uncertain<U>& u)
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
 
-// Uncertain<> property propagator.
-template < typename T1, typename T2 >
-struct Same_uncertainty
-{
-  typedef T1 type;
-};
-
 #endif
-
-
-// opposite
-template < typename T >
-inline
-Uncertain<T> opposite(const Uncertain<T> &u)
-{
-  return Uncertain<T>(opposite(u.sup()), opposite(u.inf()));
-}
-
-
-template < typename T1, typename T2 >
-struct Same_uncertainty < T1, Uncertain<T2> >
-{
-  typedef Uncertain<T1> type;
-};
-
-// Short cut to extract uncertainty from a number type directly.
-template < typename T1, typename NT >
-struct Same_uncertainty_nt
-  : Same_uncertainty <T1, typename Sgn<NT>::result_type > {};
 
 CGAL_END_NAMESPACE
 
