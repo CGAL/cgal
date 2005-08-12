@@ -411,7 +411,7 @@ protected:
     build_external_structure();
     simplify();
     set_snc(snc());
-    CGAL_assertion(orientation() == 1);
+    //    CGAL_assertion(orientation() == 1);
   }
   
  protected:  
@@ -1489,6 +1489,7 @@ extract_complement() {
     SM_decorator SM(&*v);
     SM.extract_complement();
   }
+
   Halffacet_iterator f;
   CGAL_forall_halffacets(f,D) f->mark() = !f->mark(); 
  
