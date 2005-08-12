@@ -1,3 +1,6 @@
+12 August 2005 Sylvain Pion
+- Move Kernel_checker to Kernel_23.
+
 12 August 2005 Andreas Fabri & Sylvain Pion
 - Lazy_kernel : Protect_FPU optimizations, fix empty Objects.
 
