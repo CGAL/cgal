@@ -42,9 +42,11 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer NT;
+typedef leda_rational FNT;
 #else
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz NT;
+typedef CGAL::Gmpq FNT;
 #endif
 
 template<typename Kernel>
@@ -968,7 +970,7 @@ private:
     N = load_nef3("donotsimplify.nef3.SH");
     CGAL_assertion(N.is_valid(0,0));
     Nef_polyhedron N1 = load_nef3("openSquare.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(N1.is_valid(0,0));
     N = N.join(N1);
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"donotsimplifyRef.nef3.SH"));
@@ -1206,7 +1208,7 @@ private:
     
 public:
   void run_test() {
-    
+
     loadSave();
     newell();
     transformation();
@@ -1228,28 +1230,30 @@ template<typename Kernel>
 const char* test<Kernel>::datadir="data/";
 
 int main() {
-  typedef CGAL::Cartesian<NT>              C_kernel;
-  typedef CGAL::Simple_cartesian<NT>       SC_kernel;
-  typedef CGAL::Extended_cartesian<NT>     EC_kernel;
-  typedef CGAL::Homogeneous<NT>            H_kernel;
-  typedef CGAL::Simple_homogeneous<NT>     SH_kernel;
-  typedef CGAL::Extended_homogeneous<NT>   EH_kernel;
+  typedef CGAL::Cartesian<FNT>               C_kernel;
+  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
+  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
+  typedef CGAL::Homogeneous<NT>              H_kernel;
+  typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
+  typedef CGAL::Extended_homogeneous<NT>    EH_kernel;
   
   //std::cin>>debugthread;
 
   CGAL::Timer t;
   t.start();
 
-  test<SH_kernel> test_C;
-  test<SH_kernel> test_SC;
-  test<EH_kernel> test_EC;
-  test<SH_kernel> test_H;
+  test<C_kernel>  test_C;
+  test<SC_kernel> test_SC;
+  test<EC_kernel> test_EC;
+  test<H_kernel>  test_H;
   test<SH_kernel> test_SH;
   test<EH_kernel> test_EH;
 
-  test_C.run_test();
-  test_SC.run_test();
-  test_EC.run_test();
+  CGAL_NEF_SETDTHREAD(43);
+
+  //  test_C.run_test();
+  //  test_SC.run_test();
+  //  test_EC.run_test();
   test_H.run_test();
   test_SH.run_test();
   test_EH.run_test();
