@@ -145,6 +145,18 @@ public:
         _split_edge (left_he,
                      traits->construct_min_vertex_2_object() (cv),
                      arr_access);
+
+        // Check if we have just split the halfedge that right_he refers to,
+	// and if this halfedge is directed from left to right.
+        // If so, right_he's target is now the new vertex, and we have to
+        // proceed to the next halfedge (which is going to be split).
+        if (right_he == left_he &&
+	    traits->compare_xy_2_object() 
+	                 (left_he->source()->point(),
+			  left_he->target()->point()) == SMALLER)
+	{
+          right_he = right_he->next();
+	}
       }
     }
 
@@ -169,7 +181,9 @@ public:
         // If so, prev_he_right's target is now the new vertex, and we have to
         // proceed to the next halfedge (whose target is right_v).
         if (right_he == prev_he_left)
+	{
           prev_he_left = prev_he_left->next();
+	}
       }
     }
 
