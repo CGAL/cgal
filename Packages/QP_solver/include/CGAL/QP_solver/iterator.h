@@ -27,113 +27,78 @@
 #ifndef CGAL_QP_SOLVER_ITERATOR_H
 #define CGAL_QP_SOLVER_ITERATOR_H
 
-// includes
-#ifndef CGAL_QP_SOLVER_BASIC_H
-#  include <CGAL/QP_solver/basic.h>
-#endif
 #ifndef CGAL_ITERATOR
 #  include <CGAL/iterator.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
-// ==================
-// class declarations
-// ==================
-template < class T >
-class QP_const_value_iterator;
-
-template < class T>
-struct QP_vector_const_iterator;
-
-// =====================
-// class implementations
-// =====================
-
-// ------------------------
-// QP_const_value_iterator
-// ------------------------
-template < class T >
-class QP_const_value_iterator {
-
-  public:
-
-    // types
-    typedef  std::random_access_iterator_tag    iterator_category;
-    typedef  ptrdiff_t                          difference_type;
-    typedef  T                                  value_type;
-    typedef  value_type*                        pointer;
-    typedef  value_type&                        reference;
-
-    typedef  QP_const_value_iterator<T>        Self;
-    typedef  difference_type                    Diff;
-    typedef  value_type                         Val;
-    typedef  pointer                            Ptr;
-    typedef  reference                          Ref;
-
-    // construction
-    QP_const_value_iterator( const T& t = T(), Diff n = 0)
-	: value( t), index( n)
-    { }
-
-    // access
-    Ref        operator *  ( )       { return  value; }
-    const Ref  operator *  ( ) const { return  value; }
-    Ptr        operator -> ( )       { return &value; }
-    const Ptr  operator -> ( ) const { return &value; }
-
-    // equality operator
-    bool       operator == ( const Self& x) const { return ( index==x.index); }
-    bool       operator != ( const Self& x) const { return ( index!=x.index); }
-
-    // forward operations
-    // ------------------
-    Self&      operator ++ (    ) {                   ++index; return *this; }
-    Self       operator ++ ( int) { Self tmp = *this; ++index; return tmp;   }
-
-    // bidirectional operations
-    // ------------------------
-    Self&      operator -- (    ) {                   --index; return *this; }
-    Self       operator -- ( int) { Self tmp = *this; --index; return tmp;   }
-
-    // random access operations
-    // ------------------------
-    // access
-    Ref        operator [] ( Diff i)       { return value;}
-    const Ref  operator [] ( Diff i) const { return value;}
-
-    // less operator
-    bool       operator <  ( const Self& x) const { return ( index < x.index);}
-
-    // arithmetic operations
-    Self&      operator += ( Diff n) { index += n; return *this; }
-    Self&      operator -= ( Diff n) { index -= n; return *this; }
-
-    Self       operator +  ( Diff n) const { Self tmp = *this; return tmp+=n; }
-    Self       operator -  ( Diff n) const { Self tmp = *this; return tmp-=n; }
-
-    Diff       operator -  ( const Self& x) const { return index - x.index; }
-
-  private:
-
-    // data members
-    Val   value;
-    Diff  index;
+template < typename T >
+class Const_oneset_iterator {
+public:
+  
+  // types
+  typedef  std::random_access_iterator_tag    iterator_category;
+  typedef  ptrdiff_t                          difference_type;
+  typedef  T                                  value_type;
+  typedef  value_type*                        pointer;
+  typedef  value_type&                        reference;
+  
+  typedef  Const_oneset_iterator<T>           Self;
+  typedef  difference_type                    Diff;
+  typedef  value_type                         Val;
+  typedef  pointer                            Ptr;
+  typedef  reference                          Ref;
+  
+  // construction
+  Const_oneset_iterator( const T& t = T(), Diff n = 0)
+    : value( t), index( n)
+  { }
+  
+  // access
+  Ref        operator *  ( )       { return  value; }
+  const Ref  operator *  ( ) const { return  value; }
+  Ptr        operator -> ( )       { return &value; }
+  const Ptr  operator -> ( ) const { return &value; }
+  
+  // equality operator
+  bool       operator == ( const Self& x) const { return ( index==x.index); }
+  bool       operator != ( const Self& x) const { return ( index!=x.index); }
+  
+  // forward operations
+  // ------------------
+  Self&      operator ++ (    ) {                   ++index; return *this; }
+  Self       operator ++ ( int) { Self tmp = *this; ++index; return tmp;   }
+  
+  // bidirectional operations
+  // ------------------------
+  Self&      operator -- (    ) {                   --index; return *this; }
+  Self       operator -- ( int) { Self tmp = *this; --index; return tmp;   }
+  
+  // random access operations
+  // ------------------------
+  // access
+  Ref        operator [] ( Diff i)       { return value;}
+  const Ref  operator [] ( Diff i) const { return value;}
+  
+  // less operator
+  bool       operator <  ( const Self& x) const { return ( index < x.index);}
+  
+  // arithmetic operations
+  Self&      operator += ( Diff n) { index += n; return *this; }
+  Self&      operator -= ( Diff n) { index -= n; return *this; }
+  
+  Self       operator +  ( Diff n) const { Self tmp = *this; return tmp+=n; }
+  Self       operator -  ( Diff n) const { Self tmp = *this; return tmp-=n; }
+  
+  Diff       operator -  ( const Self& x) const { return index - x.index; }
+  
+private:
+  
+  // data members
+  Val   value;
+  Diff  index;
 };
-
-//--------------------
-// QP_vector_const_iterator
-//--------------------
-template < class T>
-struct QP_vector_const_iterator {
-  typedef typename T::const_iterator result_type;
-  typedef CGAL::Arity_tag<1> Arity;
-  result_type operator () (const T& v) const
-  {
-  	return v.begin();
-  } 
-};	
-
 
 CGAL_END_NAMESPACE
 

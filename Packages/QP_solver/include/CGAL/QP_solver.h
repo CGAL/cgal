@@ -27,11 +27,16 @@
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
 
+#include <CGAL/QP_solver/iterator.h> // to be removed soon (kf)
+#ifndef CGAL_QP_SOLVER_BASIC_H
+#  include <CGAL/QP_solver/basic.h>
+#endif
+#ifndef CGAL_ITERATOR
+#  include <CGAL/iterator.h>
+#endif
+
 #ifndef CGAL_QP_SOLVER_BASIC_H
 #include <CGAL/QP_solver/basic.h>
-#endif
-#ifndef CGAL_QP_SOLVER_ITERATOR_H
-#include <CGAL/QP_solver/iterator.h>
 #endif
 #ifndef CGAL_QP_SOLVER_FUNCTORS_H
 #include <CGAL/QP_solver/functors.h>
@@ -371,8 +376,8 @@ private:
     // set-up of QP
     void  set( int n, int m,
 	       A_iterator A, B_iterator b, C_iterator c, D_iterator D,
-	       Row_type_iterator r
-	           = QP_const_value_iterator<Row_type>( Rep::EQUAL));
+	       Row_type_iterator r =
+	         Const_oneset_iterator<Row_type>( Rep::EQUAL));
 
     // initialization (of phase I)
     void  init( );
