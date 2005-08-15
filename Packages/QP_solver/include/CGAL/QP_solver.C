@@ -1235,10 +1235,9 @@ ratio_test_2( Tag_false)
     // x_i=mu_j(t_1); q_i=-1; (see below). 
     
     // Since mu_j(t_1) has been computed in ratio test step 1 we can
-    // reuse it, unfortunately the ratio test step1 computes -mu_j(t)
-    // such that the initialization becomes
+    // reuse it.
       
-    x_i = -mu;                                     // initialize minimum
+    x_i = mu;                                     // initialize minimum
     q_i = -et1;                                        // with -mu_j(t_1) 
 
     Value_iterator  x_it = x_B_O.begin();
