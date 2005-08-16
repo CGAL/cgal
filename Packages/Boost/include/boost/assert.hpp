@@ -32,6 +32,6 @@ void assertion_failed(char const * expr, char const * function, char const * fil
 #define BOOST_ASSERT(expr) ((expr)? ((void)0): ::boost::assertion_failed(#expr, BOOST_CURRENT_FUNCTION, __FILE__, __LINE__))
 
 #else
-# include <assert.h>
+# include <assert.h> // .h to support old libraries w/o <cassert> - effect is the same
 # define BOOST_ASSERT(expr) assert(expr)
 #endif

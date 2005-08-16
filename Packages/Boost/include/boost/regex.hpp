@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -13,7 +13,7 @@
   *   LOCATION:    see http://www.boost.org/libs/regex for documentation.
   *   FILE         regex.cpp
   *   VERSION      see <boost/version.hpp>
-  *   DESCRIPTION: Declares boost::reg_expression<> and associated
+  *   DESCRIPTION: Declares boost::basic_regex<> and associated
   *                functions and classes. This header is the main
   *                entry point for the template regex code.
   */
@@ -28,11 +28,7 @@
 #include <boost/regex/config.hpp>
 #endif
 
-#ifdef BOOST_REGEX_V3
-#include <boost/regex/v3/regex.hpp>
-#else
 #include <boost/regex/v4/regex.hpp>
-#endif
 
 #endif  // include
 

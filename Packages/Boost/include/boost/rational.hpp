@@ -128,10 +128,9 @@ class rational :
     decrementable < rational<IntType>
     > > > > > > > > > > > > > > > >
 {
-    typedef IntType int_type;
     typedef typename boost::call_traits<IntType>::param_type param_type;
-
 public:
+    typedef IntType int_type;
     rational() : num(0), den(1) {}
     rational(param_type n) : num(n), den(1) {}
     rational(param_type n, param_type d) : num(n), den(d) { normalize(); }

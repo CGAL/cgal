@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -13,7 +13,7 @@
   *   LOCATION:    see http://www.boost.org/libs/regex for documentation.
   *   FILE         regex_fwd.cpp
   *   VERSION      see <boost/version.hpp>
-  *   DESCRIPTION: Forward declares boost::reg_expression<> and
+  *   DESCRIPTION: Forward declares boost::basic_regex<> and
   *                associated typedefs.
   */
 
@@ -24,11 +24,7 @@
 #include <boost/regex/config.hpp>
 #endif
 
-#ifdef BOOST_REGEX_V3
-#include <boost/regex/v3/regex_fwd.hpp>
-#else
 #include <boost/regex/v4/regex_fwd.hpp>
-#endif
 
 #endif
 

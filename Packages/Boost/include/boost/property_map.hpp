@@ -397,9 +397,9 @@ namespace boost {
 
     inline safe_iterator_property_map(
       RandomAccessIterator first, 
-      std::size_t n = 0, 
+      std::size_t n_ = 0, 
       const IndexMap& _id = IndexMap() ) 
-      : iter(first), n(n), index(_id) { }
+      : iter(first), n(n_), index(_id) { }
     inline safe_iterator_property_map() { }
     inline R operator[](key_type v) const {
       assert(get(index, v) < n);

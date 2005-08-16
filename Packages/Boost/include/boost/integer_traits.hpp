@@ -21,7 +21,9 @@
 
 // These are an implementation detail and not part of the interface
 #include <limits.h>
-#if !defined(BOOST_NO_INTRINSIC_WCHAR_T) && !defined(BOOST_NO_CWCHAR)
+// we need wchar.h for WCHAR_MAX/MIN but not all platforms provide it, 
+// and some may have <wchar.h> but not <cwchar> ...
+#if !defined(BOOST_NO_INTRINSIC_WCHAR_T) && (!defined(BOOST_NO_CWCHAR) || defined(sun) || defined(__sun))
 #include <wchar.h>
 #endif
 
@@ -86,7 +88,9 @@ class integer_traits<unsigned char>
 template<>
 class integer_traits<wchar_t>
   : public std::numeric_limits<wchar_t>,
-#if defined(WCHAR_MIN) && defined(WCHAR_MAX)
+    // Don't trust WCHAR_MIN and WCHAR_MAX with Mac OS X's native
+    // library: they are wrong!
+#if defined(WCHAR_MIN) && defined(WCHAR_MAX) && !defined(__APPLE__)
     public detail::integer_traits_base<wchar_t, WCHAR_MIN, WCHAR_MAX>
 #elif defined(__BORLANDC__) || defined(__CYGWIN__) || defined(__MINGW32__) || (defined(__BEOS__) && defined(__GNUC__))
     // No WCHAR_MIN and WCHAR_MAX, whar_t is short and unsigned:

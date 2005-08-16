@@ -1,6 +1,6 @@
 /* Multiply indexed container.
  *
- * Copyright 2003-2004 Joaquín M López Muñoz.
+ * Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -10,6 +10,10 @@
 
 #ifndef BOOST_MULTI_INDEX_HPP
 #define BOOST_MULTI_INDEX_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <algorithm>
@@ -37,6 +41,13 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/base_from_member.hpp>
+
+#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+#include <boost/multi_index/detail/archive_constructed.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/throw_exception.hpp> 
+#endif
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
 #include <boost/multi_index/detail/invariant_assert.hpp>
@@ -78,7 +89,7 @@ class multi_index_container:
 #endif
 
 private:
-#if !defined(BOOST_MULTI_INDEX_NO_MEMBER_TEMPLATE_FRIENDS)
+#if !defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
   template <typename,typename,typename> friend class  detail::index_base;
   template <typename,typename>          friend class  detail::header_holder;
   template <typename,typename>          friend class  detail::converter;
@@ -183,7 +194,7 @@ public:
       }
     }
     BOOST_CATCH(...){
-      clean_up();
+      delete_all_nodes_();
       BOOST_RETHROW;
     }
     BOOST_CATCH_END
@@ -212,8 +223,7 @@ public:
 
   ~multi_index_container()
   {
-    BOOST_MULTI_INDEX_CHECK_INVARIANT;
-    clean_up();
+    delete_all_nodes_();
   }
 
   multi_index_container<Value,IndexSpecifierList,Allocator>& operator=(
@@ -469,6 +479,24 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     --node_count;
   }
 
+  void delete_node_(node_type* x)
+  {
+    super::delete_node_(x);
+    deallocate_node(x);
+  }
+
+  void delete_all_nodes_()
+  {
+    super::delete_all_nodes_();
+  }
+
+  void clear_()
+  {
+    delete_all_nodes_();
+    super::clear_();
+    node_count=0;
+  }
+
   void swap_(multi_index_container<Value,IndexSpecifierList,Allocator>& x)
   {
     std::swap(bfm_header::member,x.bfm_header::member);
@@ -502,6 +530,59 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     BOOST_CATCH_END
   }
 
+#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+  /* serialization */
+
+  friend class boost::serialization::access;
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
+
+  typedef typename super::index_saver_type        index_saver_type;
+  typedef typename super::index_loader_type       index_loader_type;
+
+  template<class Archive>
+  void save(Archive& ar,const unsigned int version)const
+  {
+    const std::size_t s=size_();
+    ar<<serialization::make_nvp("count",s);
+    index_saver_type sm(bfm_allocator::member,s);
+
+    for(iterator it=super::begin(),it_end=super::end();it!=it_end;++it){
+      ar<<serialization::make_nvp("item",*it);
+      sm.add(it.get_node(),ar,version);
+    }
+    sm.add_track(header(),ar,version);
+
+    super::save_(ar,version,sm);
+  }
+
+  template<class Archive>
+  void load(Archive& ar,const unsigned int version)
+  {
+    BOOST_MULTI_INDEX_CHECK_INVARIANT;
+
+    clear_(); 
+
+    std::size_t s;
+    ar>>serialization::make_nvp("count",s);
+    index_loader_type lm(bfm_allocator::member,s);
+
+    for(std::size_t n=0;n<s;++n){
+      detail::archive_constructed<Value> value("item",ar,version);
+      std::pair<node_type*,bool> p=insert_(
+        value.get(),super::end().get_node());
+      if(!p.second)throw_exception(
+        archive::archive_exception(
+          archive::archive_exception::other_exception));
+      ar.reset_object_address(&(*p.first),&value.get());
+      lm.add(p.first,ar,version);
+    }
+    lm.add_track(header(),ar,version);
+
+    super::load_(ar,version,lm);
+  }
+#endif
+
 #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
   /* invariant stuff */
 
@@ -517,13 +598,6 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
 #endif
 
 private:
-  void clean_up()
-  {
-    for(iterator it=super::begin(),it_end=super::end();it!=it_end;){
-      erase_(it++.get_node());
-    }
-  }
-
   std::size_t node_count;
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)&&\

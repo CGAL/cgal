@@ -40,6 +40,15 @@
 #   include <inttypes.h>
 # else
 #   include <stdint.h>
+
+// There is a bug in Cygwin two _C macros
+#   if defined(__STDC_CONSTANT_MACROS) && defined(__CYGWIN__)
+#     undef INTMAX_C
+#     undef UINTMAX_C
+#     define INTMAX_C(c) c##LL
+#     define UINTMAX_C(c) c##ULL
+#   endif
+
 # endif
 
 namespace boost

@@ -47,7 +47,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/if.hpp>
@@ -79,10 +78,10 @@ namespace smart_cast_impl {
             };
 
             template<class U>
-             static T cast(U & u){
+            static T cast(U & u){
                 // if we're in debug mode
                 #if ! defined(NDEBUG)                               \
-                || defined(__BORLANDC__) && (__BORLANDC__ <= 0x564) \
+                || defined(__BORLANDC__) && (__BORLANDC__ <= 0x560) \
                 || defined(__MWERKS__)
                     // do a checked dynamic cast
                     return cross::cast(u);
@@ -143,7 +142,8 @@ namespace smart_cast_impl {
 
         struct polymorphic {
             // unfortunately, this below fails to work for virtual base 
-            // classes.  Subject for further study
+            // classes.  need has_virtual_base to do this.
+            // Subject for further study
             #if 0
             struct linear {
                 template<class U>
@@ -166,7 +166,7 @@ namespace smart_cast_impl {
             template<class U>
             static T cast(U * u){
                 // if we're in debug mode
-                #if ! defined(NDEBUG) || defined(__BORLANDC__) && (__BORLANDC__ <= 0x564)
+                #if ! defined(NDEBUG) || defined(__BORLANDC__) && (__BORLANDC__ <= 0x560)
                     // do a checked dynamic cast
                     return cross::cast(u);
                 #else
@@ -194,7 +194,7 @@ namespace smart_cast_impl {
                     return typex::cast(u);
                 #endif
             }
-            #endif
+            #else
             template<class U>
             static T cast(U * u){
                 T tmp = dynamic_cast<T>(u);
@@ -203,7 +203,7 @@ namespace smart_cast_impl {
                 #endif
                 return tmp;
             }
-
+            #endif
         };
 
         struct non_polymorphic {
@@ -261,7 +261,7 @@ namespace smart_cast_impl {
 // note that it will fail with
 // smart_cast<Target &>(s)
 template<class T, class U>
-static T smart_cast(U u) {
+T smart_cast(U u) {
     typedef
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
             BOOST_DEDUCED_TYPENAME mpl::or_<
@@ -289,7 +289,7 @@ static T smart_cast(U u) {
 // this implements:
 // smart_cast_reference<Target &>(Source & s)
 template<class T, class U>
-static T smart_cast_reference(U & u) {
+T smart_cast_reference(U & u) {
     return smart_cast_impl::reference<T>::cast(u);
 }
 

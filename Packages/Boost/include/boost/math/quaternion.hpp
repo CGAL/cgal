@@ -16,6 +16,7 @@
 #include <sstream>                                    // for the "<<" operator
 
 #include <boost/config.hpp> // for BOOST_NO_STD_LOCALE
+#include <boost/detail/workaround.hpp>
 #ifndef    BOOST_NO_STD_LOCALE
     #include <locale>                                    // for the "<<" operator
 #endif /* BOOST_NO_STD_LOCALE */
@@ -32,7 +33,7 @@ namespace boost
 {
     namespace math
     {
-#if defined(__GNUC__) && (__GNUC__ < 3)
+#if     BOOST_WORKAROUND(__GNUC__, < 3)
         // gcc 2.95.x uses expression templates for valarray calculations, but
         // the result is not conforming. We need BOOST_GET_VALARRAY to get an
         // actual valarray result when we need to call a member function
@@ -48,7 +49,7 @@ namespace boost
         using    ::std::sin;
         using    ::std::exp;
         using    ::std::cosh;
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
 
 #define    BOOST_QUATERNION_ACCESSOR_GENERATOR(type)                    \
             type                    real() const                        \
@@ -1218,7 +1219,7 @@ namespace boost
         //            a
         //            (a), (a,b), (a,b,c), (a,b,c,d)
         //            (a,(c)), (a,(c,d)), ((a)), ((a),c), ((a),(c)), ((a),(c,d)), ((a,b)), ((a,b),c), ((a,b),(c)), ((a,b),(c,d))
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
         template<typename T>
         std::istream &                            operator >> (    ::std::istream & is,
                                                                 quaternion<T> & q)
@@ -1226,11 +1227,11 @@ namespace boost
         template<typename T, typename charT, class traits>
         ::std::basic_istream<charT,traits> &    operator >> (    ::std::basic_istream<charT,traits> & is,
                                                                 quaternion<T> & q)
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
         {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
             typedef char    charT;
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
             
 #ifdef    BOOST_NO_STD_LOCALE
 #else
@@ -1318,20 +1319,20 @@ namespace boost
                         }
                         else                            // error
                         {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                             is.setstate(::std::ios::failbit);
 #else
                             is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                         }
                     }
                     else                                // error
                     {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                         is.setstate(::std::ios::failbit);
 #else
                         is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                     }
                 }
                 else                                // read "(a", possible: (a), (a,b), (a,b,c), (a,b,c,d), (a,(c)), (a,(c,d))
@@ -1395,11 +1396,11 @@ namespace boost
                             }
                             else                        // error
                             {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                                 is.setstate(::std::ios::failbit);
 #else
                                 is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                             }
                         }
                         else                        // read "(a,b", possible: (a,b), (a,b,c), (a,b,c,d)
@@ -1466,39 +1467,39 @@ namespace boost
                                     }
                                     else                // error
                                     {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                                         is.setstate(::std::ios::failbit);
 #else
                                         is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                                     }
                                 }
                                 else                    // error
                                 {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                                     is.setstate(::std::ios::failbit);
 #else
                                     is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                                 }
                             }
                             else                        // error
                             {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                                 is.setstate(::std::ios::failbit);
 #else
                                 is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                             }
                         }
                     }
                     else                                // error
                     {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
                         is.setstate(::std::ios::failbit);
 #else
                         is.setstate(::std::ios_base::failbit);
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
                     }
                 }
             }
@@ -1518,7 +1519,7 @@ namespace boost
         }
         
         
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
         template<typename T>
         ::std::ostream &                         operator << (    ::std::ostream & os,
                                                                 quaternion<T> const & q)
@@ -1526,13 +1527,13 @@ namespace boost
         template<typename T, typename charT, class traits>
         ::std::basic_ostream<charT,traits> &    operator << (    ::std::basic_ostream<charT,traits> & os,
                                                                 quaternion<T> const & q)
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
         {
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
             ::std::ostringstream                        s;
 #else
             ::std::basic_ostringstream<charT,traits>    s;
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
             
             s.flags(os.flags());
 #ifdef    BOOST_NO_STD_LOCALE
@@ -1586,11 +1587,11 @@ namespace boost
             
             BOOST_QUATERNION_VALARRAY_LOADER
             
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
             return((BOOST_GET_VALARRAY(T, abs(temp)).max)());
 #else
             return((abs(temp).max)());
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
         }
         
         
@@ -1603,11 +1604,11 @@ namespace boost
             
             BOOST_QUATERNION_VALARRAY_LOADER
             
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
             return(BOOST_GET_VALARRAY(T, abs(temp)).sum());
 #else
             return(abs(temp).sum());
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
         }
         
         
@@ -1622,11 +1623,11 @@ namespace boost
             
             BOOST_QUATERNION_VALARRAY_LOADER
             
-#if defined(__GNUC__) && __GNUC__ < 3
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
             T            maxim = (BOOST_GET_VALARRAY(T, abs(temp)).max)();    // overflow protection
 #else
             T            maxim = (abs(temp).max)();    // overflow protection
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
             
             if    (maxim == static_cast<T>(0))
             {
@@ -1915,9 +1916,9 @@ namespace boost
 }
 
 
-#if defined(__GNUC__) && (__GNUC__ < 3)
+#if    BOOST_WORKAROUND(__GNUC__, < 3)
     #undef    BOOST_GET_VALARRAY
-#endif /* defined(__GNUC__) && (__GNUC__ < 3) */
+#endif /* BOOST_WORKAROUND(__GNUC__, < 3) */
 
 
 #endif /* BOOST_QUATERNION_HPP */

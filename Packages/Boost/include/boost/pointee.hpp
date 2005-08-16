@@ -1,11 +1,17 @@
-// Copyright David Abrahams 2004. Use, modification and distribution is
-// subject to the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #ifndef POINTEE_DWA200415_HPP
 # define POINTEE_DWA200415_HPP
 
-// dereferenceable_traits provides access to the value_type and
-// reference of a Dereferenceable type.
+//
+// Copyright David Abrahams 2004. Use, modification and distribution is
+// subject to the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+// typename pointee<P>::type provides the pointee type of P.
+//
+// For example, it is T for T* and X for shared_ptr<X>.
+//
+// http://www.boost.org/libs/iterator/doc/pointee.html
+//
 
 # include <boost/detail/is_incrementable.hpp>
 # include <boost/iterator/iterator_traits.hpp>

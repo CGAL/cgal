@@ -62,8 +62,7 @@ template<int x> struct static_assert_test{};
 // style casts: too many compilers currently have problems with static_cast
 // when used inside integral constant expressions.
 //
-#if !defined(BOOST_BUGGY_INTEGRAL_CONSTANT_EXPRESSIONS) && \
-    !BOOST_WORKAROUND(__MWERKS__, < 0x3003)
+#if !defined(BOOST_BUGGY_INTEGRAL_CONSTANT_EXPRESSIONS)
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC < 1300)
 // __LINE__ macro broken when -ZI is used see Q199057
@@ -92,6 +91,12 @@ template<int x> struct static_assert_test{};
      sizeof(::boost::STATIC_ASSERTION_FAILURE< \
        BOOST_JOIN(boost_static_assert_test_, __LINE__) >)>\
          BOOST_JOIN(boost_static_assert_typedef_, __LINE__)
+#elif BOOST_WORKAROUND(__MWERKS__, <= 0x3003)
+// special version for CodeWarrior <= 8.x
+#define BOOST_STATIC_ASSERT( B ) \
+   BOOST_STATIC_CONSTANT(int, \
+     BOOST_JOIN(boost_static_assert_test_, __LINE__) = \
+       sizeof(::boost::STATIC_ASSERTION_FAILURE< (bool)( B ) >) )
 #else
 // generic version
 #define BOOST_STATIC_ASSERT( B ) \

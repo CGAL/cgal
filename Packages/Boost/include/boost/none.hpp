@@ -12,7 +12,7 @@
 #ifndef BOOST_NONE_17SEP2003_HPP
 #define BOOST_NONE_17SEP2003_HPP
 
-#include "boost/detail/none_t.hpp"
+#include "boost/none_t.hpp"
 
 // NOTE: Borland users have to include this header outside any precompiled headers
 // (bcc<=5.64 cannot include instance data in a precompiled header)
@@ -21,7 +21,7 @@ namespace boost {
 
 namespace {
 
-detail::none_t const none = ((detail::none_t)0) ;
+none_t const none = ((none_t)0) ;
 
 }
 

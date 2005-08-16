@@ -35,6 +35,7 @@
 # include <boost/python/list.hpp>
 # include <boost/python/long.hpp>
 # include <boost/python/lvalue_from_pytype.hpp>
+# include <boost/python/make_constructor.hpp>
 # include <boost/python/make_function.hpp>
 # include <boost/python/manage_new_object.hpp>
 # include <boost/python/module.hpp>

@@ -207,7 +207,7 @@ public:
   multi_array(const multi_array& rhs) :
   super_type(rhs), allocator_(rhs.allocator_) {
     allocate_space();
-    boost::copy_n(rhs.base_,rhs.num_elements(),base_);
+    boost::detail::multi_array::copy_n(rhs.base_,rhs.num_elements(),base_);
   }
 
 

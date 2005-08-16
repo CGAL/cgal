@@ -65,8 +65,8 @@ namespace boost {
         
         reference operator[](const key_type& v) const {
             typename property_traits<IndexMap>::value_type i = get(index, v);
-            if (i >= store->size()) {
-                store->resize(i + 1);
+            if (static_cast<unsigned>(i) >= store->size()) {
+                store->resize(i + 1, T());
             }
             return (*store)[i];
         }

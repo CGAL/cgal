@@ -14,7 +14,10 @@
 #include <typeinfo>
 
 #include "boost/config.hpp"
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/is_reference.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost
 {
@@ -170,11 +173,41 @@ namespace boost
     template<typename ValueType>
     ValueType any_cast(const any & operand)
     {
-        const ValueType * result = any_cast<ValueType>(&operand);
+        typedef BOOST_DEDUCED_TYPENAME remove_reference<ValueType>::type nonref;
+
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+        // If 'nonref' is still reference type, it means the user has not
+        // specialized 'remove_reference'.
+
+        // Please use BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION macro
+        // to generate specialization of remove_reference for your class
+        // See type traits library documentation for details
+        BOOST_STATIC_ASSERT(!is_reference<nonref>::value);
+#endif
+
+        const nonref * result = any_cast<nonref>(&operand);
         if(!result)
             boost::throw_exception(bad_any_cast());
         return *result;
     }
+
+    template<typename ValueType>
+    ValueType any_cast(any & operand)
+    {
+        typedef BOOST_DEDUCED_TYPENAME remove_reference<ValueType>::type nonref;
+
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+        // The comment in the above version of 'any_cast' explains when this
+        // assert is fired and what to do.
+        BOOST_STATIC_ASSERT(!is_reference<nonref>::value);
+#endif
+
+        nonref * result = any_cast<nonref>(&operand);
+        if(!result)
+            boost::throw_exception(bad_any_cast());
+        return *result;
+    }
+
 
 }
 

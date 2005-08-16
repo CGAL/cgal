@@ -65,7 +65,8 @@ namespace detail
         struct helper
         {
             BOOST_STATIC_CONSTANT( unsigned long, value
-             = static_gcd_helper2_t<Value2>::helper<Value1 % Value2>::value );
+             = static_gcd_helper2_t<Value2>::BOOST_NESTED_TEMPLATE
+             helper<Value1 % Value2>::value );
         };
 
         template <  >

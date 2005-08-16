@@ -674,7 +674,7 @@ struct random_access_iteratable
 // Here's where we put it all together, defining the xxxx forms of the templates
 // in namespace boost. We also define specializations of is_chained_base<> for
 // the xxxx, xxxx1, and xxxx2 templates, importing them into boost:: as
-// neccessary.
+// necessary.
 //
 #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
@@ -699,7 +699,7 @@ template<class T> struct is_chained_base {
 
 } // namespace boost
 
-// Import a 4-type-argument operator template into boost (if neccessary) and
+// Import a 4-type-argument operator template into boost (if necessary) and
 // provide a specialization of 'is_chained_base<>' for it.
 # define BOOST_OPERATOR_TEMPLATE4(template_name4)                     \
   BOOST_IMPORT_TEMPLATE4(template_name4)                              \
@@ -708,7 +708,7 @@ template<class T> struct is_chained_base {
     typedef ::boost::detail::true_t value;                            \
   };
 
-// Import a 3-type-argument operator template into boost (if neccessary) and
+// Import a 3-type-argument operator template into boost (if necessary) and
 // provide a specialization of 'is_chained_base<>' for it.
 # define BOOST_OPERATOR_TEMPLATE3(template_name3)                     \
   BOOST_IMPORT_TEMPLATE3(template_name3)                              \
@@ -717,7 +717,7 @@ template<class T> struct is_chained_base {
     typedef ::boost::detail::true_t value;                            \
   };
 
-// Import a 2-type-argument operator template into boost (if neccessary) and
+// Import a 2-type-argument operator template into boost (if necessary) and
 // provide a specialization of 'is_chained_base<>' for it.
 # define BOOST_OPERATOR_TEMPLATE2(template_name2)                  \
   BOOST_IMPORT_TEMPLATE2(template_name2)                           \
@@ -726,7 +726,7 @@ template<class T> struct is_chained_base {
     typedef ::boost::detail::true_t value;                         \
   };
 
-// Import a 1-type-argument operator template into boost (if neccessary) and
+// Import a 1-type-argument operator template into boost (if necessary) and
 // provide a specialization of 'is_chained_base<>' for it.
 # define BOOST_OPERATOR_TEMPLATE1(template_name1)                  \
   BOOST_IMPORT_TEMPLATE1(template_name1)                           \
