@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_extended_vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_extended_vertex<V,VData>}
+
+\ccDefinition
+%============
+  The \ccRefName\ class-template extends the vertex topological-features of the
+  \dcel\. It is parameterized by a vertex-base type \ccc{V} and a data type
+  \ccc{VData} used to extend the vertex base type.
+
+\ccInclude{CGAL/Arr_extended_vertex.h}
+
+\ccIsModel
+%============
+  \ccc{ArrangementDcelVertex}
+
+\ccInheritsFrom
+%============
+  \ccc{V}
+
+\ccCreation
+%==========
+  \ccMethod{void assign (const Self & other);}
+  {assigns \ccVar{} with the contents of the \ccc{other} vertex.}
+
+\ccAccessFunctions
+%=================
+  \ccMethod{VData & data ();}
+  {obtains the auxiliary data.}
+
+\ccModifiers
+%============
+  \ccMethod{void set_data (VData & data);}
+  {sets the auxiliary data.}
+
+\ccSeeAlso
+%============
+  \ccc{Arr_dcel_base<V,H,F>}\lcTex{
+  (\ccRefPage{Arr_dcel_base<V,H,F>})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

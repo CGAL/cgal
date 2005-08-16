@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_extended_face.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_extended_face<F,FData>}
+
+\ccDefinition
+%============
+  The \ccRefName\ class-template extends the face topological-features of the
+  \dcel\. It is parameterized by a face-base type \ccc{F} and a data type
+  \ccc{FData} used to extend the face base type.
+
+\ccInclude{CGAL/Arr_extended_face.h}
+
+\ccIsModel
+%============
+  \ccc{ArrangementDcelFace}
+
+\ccInheritsFrom
+%============
+  \ccc{F}
+
+\ccCreation
+%==========
+  \ccMethod{void assign (const Self & other);}
+  {assigns \ccVar{} with the contents of the \ccc{other} vertex.}
+
+\ccAccessFunctions
+%=================
+  \ccMethod{FData & data ();}
+  {obtains the auxiliary data.}
+
+\ccModifiers
+%============
+  \ccMethod{void set_data (FData & data);}
+  {sets the auxiliary data.}
+
+\ccSeeAlso
+%============
+  \ccc{Arr_dcel_base<V,H,F>}\lcTex{
+  (\ccRefPage{Arr_dcel_base<V,H,F>})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
