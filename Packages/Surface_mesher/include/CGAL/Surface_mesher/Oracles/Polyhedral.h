@@ -24,11 +24,13 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Data_structure_using_octree_3.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
 
 namespace CGAL {
   namespace Surface_mesher {
 
-template <class DT_3>
+template <class DT_3,
+          class Visitor = Null_oracle_visitor>
 class Polyhedral
 {
 public:
@@ -51,6 +53,7 @@ public:
 private:
   CGAL::Data_structure_using_octree_3<GT_3>  data_struct;
   DT_3 dt;
+  Visitor visitor;
 
 private: // private types
   typedef typename DT_3::Cell_handle Cell_handle;
@@ -65,7 +68,9 @@ public:
     {}
 
   // Surface constructor
-  Polyhedral(std::ifstream& is)
+  Polyhedral(std::ifstream& is,
+             Visitor visitor_ = Visitor() )
+    : visitor(visitor_)
     {
       is.seekg(0,std::ios::beg);
       dt.clear();
@@ -79,6 +84,7 @@ public:
   {
     return dt.finite_vertices_begin();
   }
+
   
   Vertex_iterator finite_vertices_end()
   {
@@ -129,47 +135,60 @@ public:
 
       // debug: for detecting whether Marie's code works
       // (we compare with our basic intersection function)
-      CGAL::Object oun, odeux;
+//       CGAL::Object oun, odeux;
+//       Point p;
+//       oun = data_struct.intersect(s.vertex(0), s.vertex(1));
+//       odeux = intersect_with_surface (s);
+//       odeux = oun;
+
+
+//       if ((assign(p, oun) && !assign(p,odeux)) ||
+// 	  !assign(p, oun) && assign(p,odeux))
+// 	std::cout << "s " << s 
+// 		  << " " << (assign(p, odeux))
+// 		  << std::endl;
+
+      Object o = data_struct.intersect(s.vertex(0), s.vertex(1));
       Point p;
-      oun = data_struct.intersect(s.vertex(0), s.vertex(1));
-      //odeux = intersect_with_surface (s);
-      odeux = oun;
-
-      if ((assign(p, oun) && !assign(p,odeux)) ||
-	  !assign(p, oun) && assign(p,odeux))
-	std::cout << "s " << s 
-		  << " " << (assign(p, odeux))
-		  << std::endl;
-
-      return odeux;
+      if( assign(p, o) )
+      {
+        visitor.new_point(p);
+      }
+      return o;
 
 /*       return  intersect_with_surface (s);  // basic intersection function */
 /*       return data_struct.intersect (s.vertex(0), s.vertex(1));  // Marie */
     }
 
-    
-
-
   CGAL::Object intersect_ray_surface(Ray &r)
-    {      
+    {
       // debug: for detecting whether Marie's code works
       // (we compare with our basic intersection function)
-      CGAL::Object oun, odeux;
+//       CGAL::Object oun, odeux;
+//       Point p;
+//       oun = data_struct.intersect (r);
+//       //      odeux = intersect_with_surface (r);
+//       odeux = oun;
+
+//       if ((assign(p, oun) && !assign(p,odeux)) ||
+// 	  !assign(p, oun) && assign(p,odeux))
+// 	std::cout << "r " << r 
+// 		  << " " << (assign(p, odeux)) 
+// 		  << std::endl;
+
+//       return odeux;
+
+      Object o = data_struct.intersect (r);
       Point p;
-      oun = data_struct.intersect (r);
-      //      odeux = intersect_with_surface (r);
-      odeux = oun;
+      if( assign(p, o) )
+      {
+        visitor.new_point(p);
+      }
+      return o;
+     
 
-      if ((assign(p, oun) && !assign(p,odeux)) ||
-	  !assign(p, oun) && assign(p,odeux))
-	std::cout << "r " << r 
-		  << " " << (assign(p, odeux)) 
-		  << std::endl;
-
-      return odeux;
-
-/*       return intersect_with_surface (r);  // basic intersection function */
-/*       return data_struct.intersect (r);   // Marie's code */
+//       return intersect_with_surface (r);  // basic intersection function
+//       return data_struct.intersect (r);   // Marie's code
     }
 
 

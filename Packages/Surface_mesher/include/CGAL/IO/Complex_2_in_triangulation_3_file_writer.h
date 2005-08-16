@@ -24,6 +24,7 @@
 
 #include <iomanip>
 
+namespace Surface_mesher_io {
 
 template < class Tr>
 int number_of_facets_on_surface(const Tr& T) {
@@ -229,5 +230,13 @@ output_interior_facets_to_off (std::ostream& os, const Tr & T) {
   }
 }
 
+} // end namespace Surface_mesher_io
+
+// backward compatibility: the CGAL namespace was first forgotten
+// TODO: fix this
+namespace CGAL {
+  using namespace Surface_mesher_io;
+}
+using namespace Surface_mesher_io;
 
 #endif  // _COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H

@@ -40,6 +40,7 @@ namespace CGAL {
 
     void new_point(typename Tr::Point& p) const
     {
+      std::cout << i;
       p.set_surface_index(i);
     }
   }; // end class Point_surface_indices_visitor

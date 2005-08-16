@@ -35,12 +35,12 @@ public:
 
   Point_with_surface_index(const Point& p) : Point(p), index(0) {}
 
-  Point_with_surface_index(const Bare_point& bp) : Point(bp), index(0) {}
+//   Point_with_surface_index(const Bare_point& bp) : Point(bp), index(0) {}
 
-  Point_with_surface_index(const Bare_point& bp, 
-			   typename Point::Weight weight,
-			   int i) 
-    : Point(bp,weight), index(i) {}
+//   Point_with_surface_index(const Bare_point& bp, 
+// 			   typename Point::Weight weight,
+// 			   int i) 
+//     : Point(bp,weight), index(i) {}
 			   
 
   Point_with_surface_index(const Point_with_surface_index& pi)

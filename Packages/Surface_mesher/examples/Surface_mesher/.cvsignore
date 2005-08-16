@@ -1,3 +1,8 @@
 surface_mesher
 implicit_surface_mesher
 polyhedral_surface_mesher
+surfaces_union
+depends
+my_makefile
+sphere_union.off
+sphere_union.mesh

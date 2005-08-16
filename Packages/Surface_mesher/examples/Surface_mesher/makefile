@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include \
 	   -I../../../Data_structure_for_queries_3/include \
+           $(OTHER_INCLUDES) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(OTHER_CXXFLAGS)
@@ -44,7 +45,8 @@ SURFACE_MESHER_POLYHEDRAL_OPT = -DSURFACE_MESHER_POLYHEDRAL
 
 all:            \
                 implicit_surface_mesher$(EXE_EXT) \
-		polyhedral_surface_mesher$(EXE_EXT)
+		polyhedral_surface_mesher$(EXE_EXT) \
+                surface_union$(EXE_EXT)
 #		test$(EXE_EXT)	
 #                surface_mesher_ellipsoid$(EXE_EXT) \
 #		surface_mesher_with_hierarchy$(EXE_EXT)
@@ -61,7 +63,10 @@ polyhedral_surface_mesher$(OBJ_EXT): surface_mesher.C
 polyhedral_surface_mesher$(EXE_EXT): polyhedral_surface_mesher$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedral_surface_mesher polyhedral_surface_mesher$(OBJ_EXT) $(LDFLAGS)
 
-clean: implicit_function.clean
+surfaces_union$(EXE_EXT): surfaces_union$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)surfaces_union surfaces_union$(OBJ_EXT) $(LDFLAGS)
+
+clean: implicit_function.clean surfaces_union.clean
 	rm -f polyhedral_surface_mesher$(OBJ_EXT)
 	rm -f polyhedral_surface_mesher$(EXE_EXT)
 	rm -f implicit_surface_mesher$(OBJ_EXT)

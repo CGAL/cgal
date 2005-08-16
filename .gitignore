@@ -202,9 +202,14 @@ Packages/Random_numbers/Makefile
 Packages/Random_numbers/bin
 Packages/Random_numbers/doc_ps
 Packages/Surface_mesher/doxygen
+Packages/Surface_mesher/examples/Surface_mesher/depends
 Packages/Surface_mesher/examples/Surface_mesher/implicit_surface_mesher
+Packages/Surface_mesher/examples/Surface_mesher/my_makefile
 Packages/Surface_mesher/examples/Surface_mesher/polyhedral_surface_mesher
+Packages/Surface_mesher/examples/Surface_mesher/sphere_union.mesh
+Packages/Surface_mesher/examples/Surface_mesher/sphere_union.off
 Packages/Surface_mesher/examples/Surface_mesher/surface_mesher
+Packages/Surface_mesher/examples/Surface_mesher/surfaces_union
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.aux
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.bbl
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.blg

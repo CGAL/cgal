@@ -1,6 +1,8 @@
 #ifndef _COMPLEX_2_IN_TRIANGULATION_3_H
 #define _COMPLEX_2_IN_TRIANGULATION_3_H
 
+#include <CGAL/circulator.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Tr >
