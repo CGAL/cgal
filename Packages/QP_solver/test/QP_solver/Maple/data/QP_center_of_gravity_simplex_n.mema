@@ -10,7 +10,7 @@ my_name:="QP_center_of_gravity_simplex_n":
 
 ### Section: Data 
 
-n := 64:
+n := 16:
 
 A:=Matrix(1, n, 1):
 
