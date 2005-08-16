@@ -14,7 +14,7 @@ typedef CGAL::Arr_segment_traits_2<Kernel>             Traits_2;
 typedef Traits_2::Point_2                              Point_2;
 typedef Traits_2::X_monotone_curve_2                   Segment_2;
 typedef CGAL::Arr_extended_dcel<Traits_2,
-				Color, bool, int>      Dcel;
+                                Color, bool, int>      Dcel;
 typedef CGAL::Arrangement_2<Traits_2, Dcel>            Arrangement_2;
 
 int main ()
@@ -77,8 +77,8 @@ int main ()
       curr = fit->outer_ccb();
       do
       {
-	++boundary_size;
-	++curr;
+        ++boundary_size;
+        ++curr;
       } while (curr != fit->outer_ccb());
     }
     fit->set_data (boundary_size);

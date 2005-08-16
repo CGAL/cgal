@@ -2287,6 +2287,118 @@ and examples.
 \label{arr_sec:ex_dcel}
 %============================
 
+For many applications of the arrangement package it is necessary to
+store additional information (perhaps of non-geometric nature) with
+the arrangement cells. As vertices are associated with \ccc{Point_2}
+objects and edges (halfedge pairs) are associated with
+\ccc{X_monotone_curve_2} objects, both defined by the traits class,
+it is possible to extend the traits-class type by using a meta-traits
+class, as explained in Section~\label{arr_ssec:meta_tr}, which may
+be a sufficient solution for some applications.
+
+However, the \dcel\ faces are not associated with any object, so it
+is impossible to extend them using a meta-traits class. The only
+solution in this case is to extend the \dcel\ face records. We also
+give users the ability to conveniently extend all \dcel\ records
+(namely vertices, halfedges and faces), which can also be advantageous
+for some applications.
+
+So far we have used the default \ccc{Arr_default_dcel<Traits>} class
+in all examples. This was done implicitly, as this class serves as
+a default parameter for the \ccc{Arrabgement_2} template. The default
+\dcel\ class just associates points with vertices and $x$-monotone
+curves with halfedge, but nothing more. In this section we show
+how to use alternative \dcel\ templates to easily extend the desired
+\dcel\ records.
+
+\subsection{Extending the \dcel\ Faces}
+\label{arr_ssec:ex_dcel_face}
+%======================================
+
+The \ccc{Arr_face_extended_dcel<Traits, FaceData>} class-template
+is used to associate auxiliray data field of type \ccc{FaceData} to
+each data record in the \dcel.
+
+When an \ccc{Arrangement_2} object is parameterized by this \dcel\
+class, its nested \ccc{Face} type is extended by the access function
+\ccc{data()} and by the modifier \ccc{set_data()}. Using these extra
+functions it is straightforward to access and maintain the auxiliary
+face-data field.
+
+Note that the extra data fields must be maintained by the application
+programmers. They may choose to may construct their arrangement, and
+only then go over the faces and attach the appropriate data fields to
+the arrangement faces. However, in some cases the face data can only
+by computed when the face is created (split from another face, or merged
+with another face). In such cases one can use an arrangement observer
+tailored for this task, which recieves updates whenever a face is
+modified and sets its data field accordingly. 
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_20.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of six line segments, as constructed in
+\ccc{example20.C} and \ccc{example21.C} (in \ccc{example21.C} we treat
+the segments as directed, so they are drawn as arrows directed from the
+source to the target). The indices associated with the halfegdes in
+\ccc{example20.C} are shown in brackets.}
+\label{arr_fig:ex_20}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_20.gif"  border=0 alt="The segment arrangement constructed in \ccc{example20.C} and \ccc{example21.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+In the next example we construct an arrangement of size line segements
+that contains seven bounded faces (see Figure~\ref{arr_fig:ex_20}). We
+use an observer that gets notified each time a new face is created and
+associates it with a running index (where the index of the unbounded face
+is 0). As a result, the faces are numbered according to their creation
+order, as one can easily verify by examining the order of the inserted
+segments:\footnote{For simplicity, we make a precondition that the
+observer is always attached to an empty arrangement. It is not difficult
+however to modify the program to handle the general case.}
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example20.C}
+
+\subsection{Extending All \dcel\ Records}
+\label{arr_ssec:ex_dcel_all}
+%========================================
+
+The
+\ccc{Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>}
+class-template is used to associate auxiliray data fields for of
+types \ccc{VertexData} \ccc{HalfedgeData} and \ccc{FaceData} to
+each \dcel\ vertex, halfedge and face record, respectively.
+
+When an \ccc{Arrangement_2} object is parameterized by this \dcel\
+class, each one of its nested \ccc{Vertex}, \ccc{Halfedge} and
+\ccc{Face} classes is extended by the access function \ccc{data()}
+and by the modifier \ccc{set_data()}.
+
+The next example shows how to use a \dcel\ with extended vertex,
+halfedge and face records. In this example we associate each vertex
+with a color, which may be blue, red or white, depending whether the
+vertex is isolated, represents a segment endpoint or whether it
+represents an intersection point. Each halfedge is associated with
+Boolean flag inidcating whether its direction is the same as the
+direction of its associated segment (in this example we treat our
+segments as directed objects). We also extend each face to store the
+size of its outer boundary.
+
+We construct the same arrangement as in the previous example,
+depicted in Figure~\ref{arr_fig:ex_20}. Note that here we set values
+to all auxiliary data fields once the arrangement has been constructed.
+Also note that the data fields are properly maintained when the arrangement
+is copied to another arrangement instance:
+ 
+\ccIncludeExampleCode{../examples/Arrangement_2/example21.C}
+
 \section{Overlaying Arrangements}
 \label{arr_sec:overlay}
 %================================
@@ -2294,6 +2406,10 @@ and examples.
 \section{Storing the Curve History}
 \label{arr_sec:arr_with_hist}
 %==================================
+
+\section{Adapting to {\sc Boost} Graphs}
+\label{arr_sec:bgl}
+%=======================================
 
 \section*{Design and Implementation History}
 %===========================================

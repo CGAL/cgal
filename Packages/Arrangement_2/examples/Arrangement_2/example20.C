@@ -35,7 +35,7 @@ public:
   }
 
   virtual void after_split_face (Face_handle old_face,
-				 Face_handle new_face, bool ) 
+                                 Face_handle new_face, bool ) 
   {
     // Assign index to the new face.
     new_face->set_data (n_faces);
@@ -81,8 +81,8 @@ int main ()
       std::cout << curr->source()->point();
       do
       {
-	std::cout << " --> " << curr->target()->point();
-	++curr;
+        std::cout << " --> " << curr->target()->point();
+        ++curr;
       } while (curr != fit->outer_ccb());
       std::cout << std::endl;
     }
