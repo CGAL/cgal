@@ -1,3 +1,8 @@
+16 August 2005 Sylvain Pion
+- Import of Boost 1.33.0.
+
+=============================== CGAL 3.1 ========================
+
 20 November 2004 Sylvain Pion
 - Import of Boost 1.32.0.
 
