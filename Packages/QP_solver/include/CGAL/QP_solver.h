@@ -27,7 +27,6 @@
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
 
-#include <CGAL/QP_solver/iterator.h> // to be removed soon (kf)
 #ifndef CGAL_QP_SOLVER_BASIC_H
 #  include <CGAL/QP_solver/basic.h>
 #endif
