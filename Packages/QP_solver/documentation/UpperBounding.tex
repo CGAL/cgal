@@ -70,7 +70,8 @@ by $F$.
 
 Extending the vectors $f^{l}, f^{u}$ and $l, u$ for the set of slack variables
 $S$ and artificial variables $art$ comes naturally, such that we can introduce  
-a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of
+a function $b: (O \setminus F) \cup S \cup art \rightarrow \{-1, 0, 1\}$
+indicating which of
 the three possible values a nonbasic variable may take with respect to its
 bounds,
 \begin{equation}
@@ -318,8 +319,10 @@ if and only if it is an optimal solution to $(UQP^{u})$.
 \end{cor}
 
 \section{Pricing}
-Testing whether a nonbasic variable $x_{j}$ can improve the solution by entering the current QP-basis is done as follows.
-Let $\hat{B}:=B \cup \{j\}, \quad \hat{N}:=N \setminus \{j\}$ and consider the subproblem
+Testing whether a nonbasic variable $x_{j}$
+can improve the solution by entering the current QP-basis is done as follows.
+Let $\hat{B}:=B \cup \{j\}, \quad \hat{N}:=N \setminus \{j\}$ and consider the
+subproblem
 \begin{eqnarray}
   \mbox{(QP($\hat{B}^{u}$))} &minimize& c_{\hat{B} \cup \hat{N}}^{T}
     x_{\hat{B} \cup \hat{N}} +
@@ -359,13 +362,13 @@ where
 \begin{array}{ll}
 \geq 0,
 &
-\text{if $x_{i}^{*}=l_{i}$} \\
+\text{if $x_{i}^{*}=l_{i} \wedge l_{i} < u_{i}$} \\
 =0,
 &
 \text{if $l_{i} < x_{i}^{*} < u_{i}$} \\
 \leq 0,
 &
-\text{if $x_{i}^{*}=u_{i}$}
+\text{if $x_{i}^{*}=u_{i} \wedge l_{i} < u_{i}$}
 \end{array}
 \right.
 \end{equation}
@@ -441,19 +444,25 @@ $x_{j}^{*}=l_{j}$ cannot
 be an optimal solution to $(QP(\hat{B}^{u}))$ because
 $\mu_{j}<0 \wedge x_{j}^{*}=l_{j}$ contradicts (\ref{eq:KKT_QP_UB_eq_mu_cond})
 in Lemma~\ref{lem:KKT_QP_UB_eq}, likewise $x_{\hat{B}}^{*}$ with
-$x_{j}^{*}=u_{j} \wedge \mu_{j}>0 $ cannot be an optimal solution, more
+$\mu_{j}>0 \wedge x_{j}^{*}=u_{j}$ cannot be an optimal solution, more
 generally the current solution $x_{\hat{B}}^{*}$ with
 $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ can be improved if and only if
 \begin{equation}
 \mu_{j}
 \left\{
 \begin{array}{ll}
-< 0    & \text{if $x_{j}^{*}=l_{j}$} \\
+< 0    & \text{if $x_{j}^{*}=l_{j} \wedge l_{j} < u_{j}$} \\
 \neq 0 & \text{if $x_{j}^{*}=0 \wedge l_{j} < 0 < u_{j}$} \\
-> 0    & \text{if $x_{j}^{*}=u_{j}$}
+> 0    & \text{if $x_{j}^{*}=u_{j} \wedge l_{j} < u_{j}$}
 \end{array}
 \right.
 \end{equation}
+The direction of change of an entering variable, $d_{t} \in \{-1, 1\}$, is
+according to the above given as 
+\begin{equation}
+d_{t}:=-sgn(\mu_{j})
+\end{equation}
+
 
 \section{Ratio Test Step~1}
 Starting with a QP-basis $B$ and an entering variable $x_{j}$, we want to find a
@@ -469,23 +478,23 @@ $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ is the optimal solution to
   x_{\hat{B} \cup \hat{N}}  \nonumber \\
   & s.t & A_{\hat{B}}x_{\hat{B}} =
   b - A_{\hat{N}}x_{\hat{N}} \\
-  & & x_{j} = x_{j}^{*}(t), \quad x_{\hat{N}} \text{ constant}
+  & & x_{j} = x_{j}(t, d_{t}), \quad x_{\hat{N}} \text{ constant}
   \nonumber
 \end{eqnarray}
 with
 \begin{equation}
-x_{j}^{*}(t)=
+x_{j}(t, d_{t})=
 \left\{
 \begin{array}{ll}
-l_{j}+t
+l_{j}+d_{t}t
 &
-\text{if $b(j)=-1$} \\
+\text{if $x_{j}=l_{j} \wedge l_{j}<u_{j}$} \\
 d_{t}t
 &
-\text{if $b(j)=0$} \\
-u_{j}-t
+\text{if $x_{j}=0 \wedge l_{j} < 0 < u_{j}$} \\
+u_{j}+d_{t}t
 &
-\text{if $b(j)=1$}
+\text{if $x_{j}=u_{j} \wedge l_{j}<u_{j}$}
 \end{array}
 \right.
 \end{equation}
@@ -495,9 +504,9 @@ solution $x_{\hat{B}}^{*}(t)$ for each value of $t$, which is determined by
 M_{B}
 \left(
 \begin{array}{c}
-\lambda(t) \\
+\lambda(t, d_{t}) \\
 \hline
-x_{B}^{*}(t)
+x_{B}^{*}(t, d_{t})
 \end{array}
 \right)
 =
@@ -517,7 +526,7 @@ A_{N} \\
 \end{array}
 \right)
 x_{N}
--d_{t}t
++d_{t}t
 \left(
 \begin{array}{c}
 A_{j} \\
@@ -546,7 +555,7 @@ x_{B}^{*}(t, d_{t})
 x_{B}^{*}(0)
 \end{array}
 \right)
--
++
 d_{t}t
 \left(
 \begin{array}{c}
@@ -737,7 +746,7 @@ A_{\hat{N}} \\
 \end{array}
 \right)
 x_{\hat{N}}
-+d_{\mu_{j}}\mu_{j}
++\mu_{j}
 \left(
 \begin{array}{c}
 0 \\
@@ -753,6 +762,7 @@ system of linear equations~(\ref{eq:rat_test_2}) has a unique solution for each
 value of $\mu_{j}$. The solutions are determined by a linear function in 
 $\mu_{j}$, which can be written as
 \begin{equation}
+\label{eq:x_hat_B_mu_j}
 \left(
 \begin{array}{c}
 \lambda(\mu_{j}) \\
@@ -768,7 +778,7 @@ x_{\hat{B}}^{*}(\mu_{j})
 x_{\hat{B}}^{*}(0)
 \end{array}
 \right)
-+d_{\mu_{j}}\mu_{j}
++\mu_{j}
 \left(
 \begin{array}{c}
 p_{\lambda} \\
@@ -851,12 +861,15 @@ $(QP(\hat{B}^{u}))$ by Corollary~\ref{cor:int_QP_UQP}. The uniqueness of the
 solution follows from the regularity of $M_{\hat{B}}$, which also implies that
 $\hat{B}$ is the new basis in that case.
 
-In case of the first event
+In case of the first event, if the entering variable $x_{j}$ takes the value
+of its lower or upper bound, we implicitly add the constraint $x_{j}=l_{j}$ or
+$x_{j}=u_{j}$ to $(UQP(\hat{B}^{u}))$ by removing $j$ from $\hat{B}$. The pivot
+step is then completed.
 
 In case of the second event, if some basic variable $x_{k}$ takes the value of
 its lower or upper bound, we implicitly add the constraint $x_{k}=l_{k}$ or
 $x_{k}=u_{k}$ to $(UQP(\hat{B}^{u}))$ by removing $k$ from $\hat{B}$. If
-$M_{\hat{B}\setminus \{k\}}$ stays regular, we still det unique solutions
+$M_{\hat{B}\setminus \{k\}}$ stays regular, we still get unique solutions
 of~(\ref{eq:rat_test_2})
 for arbitrary values of $\mu_{j}$. In this case Ratio Test Step~2 is iterated,
 otherwise we continue with Step~3.  
@@ -952,8 +965,11 @@ We distinguish three events:
 \item The entering variable $x_{j}$ takes the value of its finite upper,
 $u_{j}$, or lower bound, $l_{j}$.
 \item A basic variable $x_{i}$ takes the value of its finite upper or lower bound.
-\item $\mu_{j}(x_{j}(t))$ becomes zero.
+\item $\mu_{j}(x_{j}(t, d_{t}))$ becomes zero.
 \end{enumerate}
+
+\paragraph{$\mathbf{t_{min}^{j}(d_{t}):}$}
+
 
 \paragraph{$\mathbf{t_{min}^{B}(d_{t}):}$}
 Since slack and artificial variables all have the same upper and lower bounds,
