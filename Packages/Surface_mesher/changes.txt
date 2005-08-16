@@ -1,3 +1,7 @@
+15 august 2005 Laurent Rineau
+- in Surface_mesher: new Combining_oracle, and Oracle_visitor,
+- in Mesh_3: test/Mesh_3/combined_spheres tests that new oracle.
+
 28 july 2005 LR MY
 - fixed the add_node() for memory leaks in Graph.h
 - fixed the face_type() for edges in Complex_2_in_triangulation_3.h

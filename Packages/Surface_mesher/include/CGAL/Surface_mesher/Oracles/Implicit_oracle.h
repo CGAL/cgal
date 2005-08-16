@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,12 +15,13 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Steve OUDOT, Laurent Rineau
 
 
 #ifndef CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 #define CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 
+#include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
 
 // NB: this oracle requires that the user provide a function that can 
 // compute the value of the potential in any point of space
@@ -28,7 +29,10 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
-  template < class GT, class Function > class Implicit_oracle
+  template < class GT,
+             class Function,
+             class Visitor = Null_oracle_visitor >
+  class Implicit_oracle
   {
   public:
     // Public types
@@ -53,20 +57,22 @@ namespace CGAL {
     // detecting intersections with surface
     bool parity_oracle;  // flag that tells whether the surface has no boundary
     bool debug;  // flag for debug mode
-    
-    
+    Visitor visitor;
+
   public:
     
     // Constructors
     Implicit_oracle (Function& f, Point emb_center, FT emb_radius,
 		     FT precision, 
-		     bool parity = false, bool dbg = false) :
+		     bool parity = false, bool dbg = false,
+                     Visitor visitor_ = Visitor() ) :
       func (f),
       center (emb_center),
       radius (emb_radius),
       min_squared_length (precision * precision),
       parity_oracle (parity),
-      debug (dbg)
+      debug (dbg),
+      visitor(visitor_)
       {}
     
     
@@ -255,7 +261,10 @@ namespace CGAL {
       // If the two points are close, then we must decide
       if (ker.compute_squared_distance_3_object()
 	  (p1,p2) < min_squared_length)
-	return make_object(mid);
+        {
+          visitor.new_point(mid);
+          return make_object(mid);
+        }
       
       // Else we must go on
       else {
@@ -267,7 +276,7 @@ namespace CGAL {
     }
     
   private:
-    typename Function::SURFACE_LOCATION surf_equation (Point p) {
+    double surf_equation (Point p) {
       return func(p.x(), p.y(), p.z());
     }
     
