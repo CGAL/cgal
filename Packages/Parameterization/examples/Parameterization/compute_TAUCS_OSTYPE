@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# LS 08/2005:
+# 	Figure out TAUCS OSTYPE and print it
+#	See $TAUCSROOT/configure
+
+# In most cases it is set automatically before
+# the user's shell begins, but sometimes it is
+# not set or set in a way that is inconsistent
+# with our usage.
+
+# On SGI IRIX systems, OSTYPE is not set
+# (at least in Tel-Aviv University)
+
+if [ \( ${OSTYPE:-fail} = "fail" \) -a \( `uname` = "IRIX64" \) ] ; then
+  OSTYPE=irix
+fi
+
+# On Linux OSTYPE is usually set to "linux",
+# but if it is not set (or if the user unsets it),
+# /bin/sh supplies its own politically-correct,
+# string, which we need to normalize.
+
+if [ ${OSTYPE:-fail} = "linux-gnu" ] ; then
+  OSTYPE=linux
+fi
+
+# If OSTYPE is still not set, we try to set it
+# from uname, folding to lower case. This should sometimes
+# work, but sometimes uname returns a value that is
+# inconsistent with the way OSTYPE is set. For example, on
+# Solaris, OSTYPE=solaris but uname returns SunOS.
+
+if [ ${OSTYPE:-fail} = "fail" ] ; then
+  OSTYPE=`uname | tr "A-Z" "a-z"`
+fi
+
+# Print result
+
+if [ ${OSTYPE:-fail} = "fail" ] ; then
+  echo ""
+else
+  echo $OSTYPE
+fi
