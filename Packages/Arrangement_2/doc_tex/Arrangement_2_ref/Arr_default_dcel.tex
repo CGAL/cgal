@@ -27,9 +27,11 @@ and the geometric data attached to vertices and edges.
     \ccc{ArrangementDcel}
 
 \ccInheritsFrom
-    \ccc{Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,} \\
-    ~~~~~~~~~~ \ccc{Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,}\\
-    ~~~~~~~~~~ \ccc{Arr_face_base>}
+  \begin{tabbing}
+    \ccc{Arr_dcel_base<}\=\ccc{Arr_vertex_base<typename Traits_::Point_2>,} \\
+                        \>\ccc{Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,}\\
+                        \>\ccc{Arr_face_base>}
+  \end{tabbing}
 
 \ccTypes
 
