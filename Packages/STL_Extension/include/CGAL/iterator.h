@@ -125,6 +125,80 @@ public:
 };
 
 // +----------------------------------------------------------------+
+// | Const_oneset_iterator
+// +----------------------------------------------------------------+
+// |  stores an object of type T
+// |  which will be affected by operator*().
+// +----------------------------------------------------------------+
+
+template < typename T >
+class Const_oneset_iterator {
+public:
+  
+  // types
+  typedef  std::random_access_iterator_tag    iterator_category;
+  typedef  ptrdiff_t                          difference_type;
+  typedef  T                                  value_type;
+  typedef  value_type*                        pointer;
+  typedef  value_type&                        reference;
+  
+  typedef  Const_oneset_iterator<T>           Self;
+  typedef  difference_type                    Diff;
+  typedef  value_type                         Val;
+  typedef  pointer                            Ptr;
+  typedef  reference                          Ref;
+  
+  // construction
+  Const_oneset_iterator( const T& t = T(), Diff n = 0)
+    : value( t), index( n)
+  { }
+  
+  // access
+  Ref               operator *  ( )       { return  value; }
+  const value_type& operator *  ( ) const { return  value; }
+  Ptr               operator -> ( )       { return &value; }
+  const value_type* operator -> ( ) const { return &value; }
+  
+  // equality operator
+  bool       operator == ( const Self& x) const { return ( index==x.index); }
+  bool       operator != ( const Self& x) const { return ( index!=x.index); }
+  
+  // forward operations
+  // ------------------
+  Self&      operator ++ (    ) {                   ++index; return *this; }
+  Self       operator ++ ( int) { Self tmp = *this; ++index; return tmp;   }
+  
+  // bidirectional operations
+  // ------------------------
+  Self&      operator -- (    ) {                   --index; return *this; }
+  Self       operator -- ( int) { Self tmp = *this; --index; return tmp;   }
+  
+  // random access operations
+  // ------------------------
+  // access
+  Ref               operator [] ( Diff i)       { return value;}
+  const value_type& operator [] ( Diff i) const { return value;}
+  
+  // less operator
+  bool       operator <  ( const Self& x) const { return ( index < x.index);}
+  
+  // arithmetic operations
+  Self&      operator += ( Diff n) { index += n; return *this; }
+  Self&      operator -= ( Diff n) { index -= n; return *this; }
+  
+  Self       operator +  ( Diff n) const { Self tmp = *this; return tmp+=n; }
+  Self       operator -  ( Diff n) const { Self tmp = *this; return tmp-=n; }
+  
+  Diff       operator -  ( const Self& x) const { return index - x.index; }
+  
+private:
+  
+  // data members
+  Val   value;
+  Diff  index;
+};
+
+// +----------------------------------------------------------------+
 // | Counting_output_iterator
 // +----------------------------------------------------------------+
 // |  stores a pointer to an int,

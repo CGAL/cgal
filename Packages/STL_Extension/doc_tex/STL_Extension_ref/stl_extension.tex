@@ -219,7 +219,8 @@
   \ccConstructor{Emptyset_iterator();}{default constructor.}
   
   \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Oneset_iterator}
+  \ccRefIdfierPage{CGAL::Oneset_iterator}\\
+  \ccRefIdfierPage{CGAL::Const_oneset_iterator}
 
 \end{ccRefClass}
 
@@ -229,8 +230,9 @@
   \ccCreationVariable{i}
   
   \ccDefinition The class \ccClassTemplateName\ defines an
-  \ccc{BidirectionalIterator} that always refers to one specific object of
-  type \ccc{T}.
+  \ccc{BidirectionalIterator} that always refers to one specific
+  object of type \ccc{T}.  Internally, \ccClassTemplateName\ stores a
+  pointer to the referred object.
   
   \ccInclude{CGAL/iterator.h}
 
@@ -245,7 +247,38 @@
     an iterator referring to \ccc{t}.}\ccTagDefaults
   
   \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Emptyset_iterator}
+  \ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+  \ccRefIdfierPage{CGAL::Const_oneset_iterator}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Const_oneset_iterator<T>}
+  \label{sectionConst_onesetIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{RandomAccessIterator} that always refers to a copy of a
+  specific object of type \ccc{T}.
+  
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{RandomAccessIterator}
+  
+  \ccCreation
+
+  \ccTwo{Const_oneset_iterator(const T& t);}{}
+  
+  \ccTagFullDeclarations\ccConstructor{Const_oneset_iterator(T&
+    t);}{creates an iterator that always refers to some copy of
+    \ccc{t}.  The copy is constructed by invoking \ccc{T}'s copy
+    constructor and remains constant during $i$'s
+    lifetime.}\ccTagDefaults
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+  \ccRefIdfierPage{CGAL::Oneset_iterator}
 
 \end{ccRefClass}
 
