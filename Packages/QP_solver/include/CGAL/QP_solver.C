@@ -2343,7 +2343,7 @@ print_basis( )
 		       std::ostream_iterator<int>( vout2.out(), " "));
 	}
 	if ( is_phaseI) {
-	    vout2.out() << " (artificial: " << art_basic << ')';
+	    vout2.out() << " (# of artificials: " << art_basic << ')';
 	}
 	if ( has_ineq) {
 	    vout2.out() << std::endl
@@ -2411,6 +2411,8 @@ print_solution( )
 		       std::ostream_iterator<ET>( vout2.out()," "));
 	    vout2.out() << std::endl;
 	}
+	const ET denom = inv_M_B.denominator();
+	vout2.out() << "   denominator: " << denom << std::endl;
 	vout2.out() << std::endl;
     }
     Quotient<ET>  s = solution();
