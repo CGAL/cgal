@@ -792,7 +792,7 @@ public:
   void process_boundary_faces(Arr_face_handle fh, Op op)
   {
     op(fh);
-    fh->set_is_set(True);
+    fh->set_is_set(true);
     Arr_ccb_halfedge_circulator hec = fh->outer_ccb();
     Arr_ccb_halfedge_circulator hec_begin = hec;
     do {
