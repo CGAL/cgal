@@ -6,8 +6,6 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE=$(CGAL)/CGAL-3.2-I-161/make/makefile_i686_Linux-2.6.10-1.766-FC3_g++-3.4.3
-#/proj/geometrica/home/CGAL/CGAL-3.2-I-164/make/makefile_i686_Linux-2.4.28-pre3_g++-3.4.4
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
