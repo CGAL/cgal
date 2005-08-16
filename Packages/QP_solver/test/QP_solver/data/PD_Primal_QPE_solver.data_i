@@ -6,7 +6,8 @@ tags
 input_data_type		i
 is_linear		0
 is_symmetric		1
-has_no_inequalities	1
+has_equalities_only_and_full_rank	1
+is_in_standard_form	0
 
 dimensions
 2 6

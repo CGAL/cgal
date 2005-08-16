@@ -28,19 +28,13 @@
 #define CGAL_QP_SOLVER_H
 
 #include <CGAL/iterator.h>
-
-#ifndef CGAL_QP_SOLVER_BASIC_H
 #include <CGAL/QP_solver/basic.h>
-#endif
-#ifndef CGAL_QP_SOLVER_FUNCTORS_H
 #include <CGAL/QP_solver/functors.h>
-#endif
-#ifndef CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 #include <CGAL/QP_solver/QP_basis_inverse.h>
-#endif
-#ifndef CGAL_QP_PRICING_STRATEGY_H
 #include <CGAL/QP_pricing_strategy.h>
-#endif
+
+#include <CGAL/QP_full_exact_pricing.h>
+#include <CGAL/QP_partial_exact_pricing.h>
 
 #include <CGAL/functional.h>
 #include <CGAL/algorithm.h>
@@ -96,8 +90,8 @@ class QP_solver {
 
     typedef  typename Rep::Is_linear    Is_linear;
     typedef  typename Rep::Is_symmetric Is_symmetric;
-    typedef  typename Rep::Has_no_inequalities
-                                        Has_no_inequalities;
+    typedef  typename Rep::Has_equalities_only_and_full_rank
+                                        Has_equalities_only_and_full_rank;
 
   private:
 
@@ -143,13 +137,10 @@ private:
                                         Value_const_iterator;
 
     // quotient functor
-    
     typedef  Creator_2< ET, ET, Quotient<ET> >
                                         Quotient_creator;
     
     
- //   typedef  std::binder2nd< Quotient_creator >
- //                                       Quotient_maker;
     typedef  typename CGAL::Bind<Quotient_creator,
                  typename Quotient_creator::argument2_type,2>::Type
                                         Quotient_maker;
@@ -187,8 +178,6 @@ private:
     typedef  typename CGAL::Bind< A_accessor,
     	typename A_accessor::argument2_type,2>::Type
                                         A_row_by_index_accessor;
- //   typedef  std::binder2nd< A_accessor >
- //                                       A_row_by_index_accessor;
     typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
                                         A_row_by_index_iterator;
 
@@ -365,8 +354,14 @@ private:
     // creation & initialization
     // -------------------------
     // creation
-    QP_solver( );
+    QP_solver(int n, int m,
+	      A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	      Row_type_iterator r =
+	        Const_oneset_iterator<Row_type>( Rep::EQUAL),
+	      Pricing_strategy& strategy = 
+	        QP_full_exact_pricing<Rep_>() );
 
+ private:
     // set-up of QP
     void  set( int n, int m,
 	       A_iterator A, B_iterator b, C_iterator c, D_iterator D,
@@ -397,6 +392,8 @@ private:
         { CGAL_qpe_precondition( phase() > 0);
           while ( phase() < 3) { pivot_step(); }
           return status(); }
+
+public:
 
     // access
     // ------
@@ -516,17 +513,22 @@ private:
                      basic_slack_variables_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
 
-    // access to working variables
-    int  number_of_working_variables( ) const { return in_B.size(); }
+public: // only the pricing strategies (including user-defined ones
+        // need access to this) -- make them friends?
 
-    bool  is_basic( int j) const
-        { CGAL_qpe_precondition( j >= 0);
-          CGAL_qpe_precondition( j < number_of_working_variables());
-          return ( in_B[ j] >= 0); }
-	  
-    bool is_artificial(int k) const;
-    
-    int get_l() const;
+  // access to working variables
+  int  number_of_working_variables( ) const { return in_B.size(); }
+  
+  bool  is_basic( int j) const
+  { 
+    CGAL_qpe_precondition( j >= 0);
+    CGAL_qpe_precondition( j < number_of_working_variables());
+    return ( in_B[ j] >= 0);
+  }
+  
+  bool is_artificial(int k) const;
+
+  int get_l() const;
 
     // access to lambda
     Lambda_numerator_iterator
@@ -770,7 +772,7 @@ private:
 
 	    // [c_j +] A_Cj^T * lambda_C
 	    mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
-	    mu_j__linear_part( mu_j, j, lambda_it, Has_no_inequalities());
+	    mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
 
 	    // ... + 2 D_Bj^T * x_B
 	    mu_j__quadratic_part( mu_j, j, x_it, Is_linear());
@@ -778,7 +780,7 @@ private:
 	} else {                                        // slack or artificial
 
 	    mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
-				       Has_no_inequalities());
+				       Has_equalities_only_and_full_rank());
 
 	}
 
@@ -973,7 +975,7 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false)
 {
     if ( is_phaseII) {
 	ratio_test_init__2_D_Bj( two_D_Bj_it, j_,
-				 Tag_false(), Has_no_inequalities());
+				 Tag_false(), Has_equalities_only_and_full_rank());
     }
 }
 

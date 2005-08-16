@@ -72,7 +72,8 @@ template<typename ET_,
 	 typename IT_,
 	 typename Is_linear_,
 	 typename Is_symmetric_,
-	 typename Has_no_inequalities_>
+	 typename Has_equalities_only_and_full_rank_,
+	 typename Is_in_standard_form_>
 struct Rep {
   typedef typename CGAL::Join_input_iterator_1< 
     typename Matrix<IT_>::const_iterator, Begin<IT_> > Vector_iterator;
@@ -91,9 +92,10 @@ struct Rep {
     
   //typedef  CGAL::Double  ET;
   typedef ET_  ET;
-  typedef  Is_linear_  Is_linear;
-  typedef  Is_symmetric_  Is_symmetric;
-  typedef  Has_no_inequalities_  Has_no_inequalities;
+  typedef Is_linear_  Is_linear;
+  typedef Is_symmetric_  Is_symmetric;
+  typedef Has_equalities_only_and_full_rank_  Has_equalities_only_and_full_rank;
+  typedef Is_in_standard_form_ Is_in_standard_form;
 };
 
 template<typename Rep>
@@ -186,9 +188,10 @@ struct Input_type_selector<CGAL::Gmpz> {
 };
 
 template<typename ET,
+	 typename Is_in_standard_form,
 	 typename Is_linear,
 	 typename Is_symmetric,
-	 typename Has_no_inequalities>
+	 typename Has_equalities_only_and_full_rank>
 bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from);  
  
 
@@ -248,40 +251,48 @@ int main( int argc, char** argv) {
   return 0;
 }
 
+void not_implemented_yet(CGAL::Tag_true)
+{
+  std::cerr << "Is_in_standard_form: not implemented yet" << std::endl;
+  exit(1);
+}
+
+void not_implemented_yet(CGAL::Tag_false)
+{
+}
 
 template<typename ET,
+	 typename Is_in_standard_form,
 	 typename Is_linear,
 	 typename Is_symmetric,
-	 typename Has_no_inequalities>
+	 typename Has_equalities_only_and_full_rank>
 bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
   typedef typename Input_type_selector<ET>::Input_type Input_type;
-  typedef Rep<ET, Input_type, Is_linear, Is_symmetric, Has_no_inequalities> Repr;
+  typedef Rep<ET, Input_type, Is_linear, Is_symmetric,
+    Has_equalities_only_and_full_rank, Is_in_standard_form> Repr;
   Matrix<Input_type>  A;
   typename Repr::Row_type* row_types;
   Vector<Input_type>  b;
   Vector<Input_type>  c;
   Matrix<Input_type>  D;
   std::vector<int> rel;
-  CGAL::QP_solver< Repr >              solver;
   CGAL::QP_pricing_strategy<Repr>*
     strat(static_cast<CGAL::QP_pricing_strategy<Repr>*>(0));
   bool instance_read, sol_solver_valid;	
+
+  not_implemented_yet(Is_in_standard_form());
 
   instance_read = read_instance<Input_type>(from, A, rel, b, c, D,
 					    Is_linear());
   if (instance_read) {
     init_row_types<Repr>(rel, row_types);
-    solver.set_verbosity( verbose);
-    solver.set( A.size(), rel.size(),
+    set_pricing_strategy<Repr>(strat, pricing_strategy_index);	
+    CGAL::QP_solver< Repr > solver( A.size(), rel.size(),
 		typename Repr::Vector_iterator( A.begin()),
 		b.begin(), c.begin(),
 		typename Repr::Vector_iterator( D.begin()),
-		row_types);
-    set_pricing_strategy<Repr>(strat, pricing_strategy_index);	
-    //CGAL::QP_full_exact_pricing<Repr>  strategy;
-    solver.set_pricing_strategy( *strat);
-    solver.init();
-    solver.solve();
+		row_types,*strat);
+    solver.set_verbosity( verbose);
     sol_solver_valid = solver.is_solution_valid();
     std::cout << "valid: " << sol_solver_valid << std::endl;
     delete strat;
@@ -651,7 +662,8 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
   int offset;
   std::map<std::string, char>::const_iterator p;
   int index = 0;
-  offset = tag_names_table.size() - 1;
+  offset = tag_names_table.size() - 2; // we handle is_in_standard_form 
+                                       // seperately
   for (unsigned int i = 0; i < tag_names_table.size(); ++i) {
     p = read_names_table.find(tag_names_table[i]);
     if (p != read_names_table.end()) {
@@ -677,148 +689,299 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
       }
     } else {
       error("unspecified tags");
-      index = 24;
+      index = 48;
     }
   }
+  p = read_names_table.find(tag_names_table[offset+1]); // is_in_standard_form
+  if (p == read_names_table.end()) {
+      error("unspecified tags");
+      index = 48;
+  } else
+    if (p->second == '1')
+      index += 24;
+
+  using CGAL::Tag_false;
+  using CGAL::Tag_true;
+
   bool success;
   switch (index) {
   case  0: 	
-    success = doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_false,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Gmpq,Tag_false,Tag_false,Tag_false,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case  1:
-    success = doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_false,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Gmpq,Tag_false,Tag_false,Tag_false,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     
   case  2:	
-    success = doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Gmpq,Tag_false,Tag_false,Tag_true,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case  3:	
-    success = doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Gmpq,Tag_false,Tag_false,Tag_true,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     
     // next 2 cases can be excluded by assuming is_Symmetric == 1 for
     // LPs
     //case  4:	
-    // success = doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
-    //			CGAL::Tag_false>
+    // success = doIt<CGAL::Gmpq,Tag_false,Tag_true,Tag_false,
+    //			Tag_false>
     //			(verbose, pricing_strategy_index, from);
     //		break;
     //case  5:	
-    //  success = doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
-    //			CGAL::Tag_true>
+    //  success = doIt<CGAL::Gmpq,Tag_false,Tag_true,Tag_false,
+    //			Tag_true>
     //			(verbose, pricing_strategy_index, from);
     //		break;
   case  6:	
-    success = doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Gmpq,Tag_false,Tag_true,Tag_true,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case  7:	
-    success = doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Gmpq,Tag_false,Tag_true,Tag_true,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
   case  8:	
-    success = doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_false,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Double,Tag_false,Tag_false,Tag_false,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case  9:	
-    success = doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_false,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Double,Tag_false,Tag_false,Tag_false,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
   case 10:	
-    success = doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_true,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Double,Tag_false,Tag_false,Tag_true,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 11:	
-    success = doIt<CGAL::Double,CGAL::Tag_false,CGAL::Tag_true,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Double,Tag_false,Tag_false,Tag_true,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     // next 2 cases can be excluded by assuming is_Symmetric == 1 for
     // LPs	
     //case 12:	
-    //  success = doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_false,
-    //			CGAL::Tag_false>
+    //  success = doIt<CGAL::Double,Tag_false,Tag_true,Tag_false,
+    //			Tag_false>
     //			(verbose, pricing_strategy_index, from);
     //		break;
     //case 13:	
-    //  success = doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_false,
-    //			CGAL::Tag_true>
+    //  success = doIt<CGAL::Double,Tag_false,Tag_true,Tag_false,
+    //			Tag_true>
     //			(verbose, pricing_strategy_index, from);
     //		break;
   case 14:	
-    success = doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_true,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Double,Tag_false,Tag_true,Tag_true,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 15:	
-    success = doIt<CGAL::Double,CGAL::Tag_true,CGAL::Tag_true,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Double,Tag_false,Tag_true,Tag_true,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 16:	
-    success = doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_false,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Gmpz,Tag_false,Tag_false,Tag_false,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 17:	
-    success = doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_false,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Gmpz,Tag_false,Tag_false,Tag_false,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 18:	
-    success = doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Gmpz,Tag_false,Tag_false,Tag_true,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 19:	
-    success = doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Gmpz,Tag_false,Tag_false,Tag_true,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     // next 2 cases can be excluded by assuming is_Symmetric == 1 for
     // LPs
     //case 20:	
-    // success = doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
-    //			CGAL::Tag_false>
+    // success = doIt<CGAL::Gmpz,Tag_false,Tag_true,Tag_false,
+    //			Tag_false>
     //			(verbose, pricing_strategy_index, from);
     //		break;
     //case 21:	
-    //  success = doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
-    //			CGAL::Tag_true>
+    //  success = doIt<CGAL::Gmpz,Tag_false,Tag_true,Tag_false,
+    //			Tag_true>
     //			(verbose, pricing_strategy_index, from);
     //		break;
   case 22:	
-    success = doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_true,
-      CGAL::Tag_false>
+    success = doIt<CGAL::Gmpz,Tag_false,Tag_true,Tag_true,
+      Tag_false>
       (verbose, pricing_strategy_index, from);
     break;
     
   case 23:	
-    success = doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_true,
-      CGAL::Tag_true>
+    success = doIt<CGAL::Gmpz,Tag_false,Tag_true,Tag_true,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case  0+24: 	
+    success = doIt<CGAL::Gmpq,Tag_true,Tag_false,Tag_false,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case  1+24:
+    success = doIt<CGAL::Gmpq,Tag_true,Tag_false,Tag_false,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case  2+24:	
+    success = doIt<CGAL::Gmpq,Tag_true,Tag_false,Tag_true,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case  3+24:	
+    success = doIt<CGAL::Gmpq,Tag_true,Tag_false,Tag_true,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+    // next 2 cases can be excluded by assuming is_Symmetric == 1 for
+    // LPs
+    //case  4+24:	
+    // success = doIt<CGAL::Gmpq,Tag_true,Tag_true,Tag_false,
+    //			Tag_false>
+    //			(verbose, pricing_strategy_index, from);
+    //		break;
+    //case  5+24:	
+    //  success = doIt<CGAL::Gmpq,Tag_true,Tag_true,Tag_false,
+    //			Tag_true>
+    //			(verbose, pricing_strategy_index, from);
+    //		break;
+  case  6+24:	
+    success = doIt<CGAL::Gmpq,Tag_true,Tag_true,Tag_true,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case  7+24:	
+    success = doIt<CGAL::Gmpq,Tag_true,Tag_true,Tag_true,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+  case  8+24:	
+    success = doIt<CGAL::Double,Tag_true,Tag_false,Tag_false,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case  9+24:	
+    success = doIt<CGAL::Double,Tag_true,Tag_false,Tag_false,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+  case 10+24:	
+    success = doIt<CGAL::Double,Tag_true,Tag_false,Tag_true,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 11+24:	
+    success = doIt<CGAL::Double,Tag_true,Tag_false,Tag_true,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    // next 2 cases can be excluded by assuming is_Symmetric == 1 for
+    // LPs	
+    //case 12+24:	
+    //  success = doIt<CGAL::Double,Tag_true,Tag_true,Tag_false,
+    //			Tag_false>
+    //			(verbose, pricing_strategy_index, from);
+    //		break;
+    //case 13+24:	
+    //  success = doIt<CGAL::Double,Tag_true,Tag_true,Tag_false,
+    //			Tag_true>
+    //			(verbose, pricing_strategy_index, from);
+    //		break;
+  case 14+24:	
+    success = doIt<CGAL::Double,Tag_true,Tag_true,Tag_true,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 15+24:	
+    success = doIt<CGAL::Double,Tag_true,Tag_true,Tag_true,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 16+24:	
+    success = doIt<CGAL::Gmpz,Tag_true,Tag_false,Tag_false,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 17+24:	
+    success = doIt<CGAL::Gmpz,Tag_true,Tag_false,Tag_false,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 18+24:	
+    success = doIt<CGAL::Gmpz,Tag_true,Tag_false,Tag_true,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 19+24:	
+    success = doIt<CGAL::Gmpz,Tag_true,Tag_false,Tag_true,
+      Tag_true>
+      (verbose, pricing_strategy_index, from);
+    break;
+    // next 2 cases can be excluded by assuming is_Symmetric == 1 for
+    // LPs
+    //case 20+24:	
+    // success = doIt<CGAL::Gmpz,Tag_true,Tag_true,Tag_false,
+    //			Tag_false>
+    //			(verbose, pricing_strategy_index, from);
+    //		break;
+    //case 21+24:	
+    //  success = doIt<CGAL::Gmpz,Tag_true,Tag_true,Tag_false,
+    //			Tag_true>
+    //			(verbose, pricing_strategy_index, from);
+    //		break;
+  case 22+24:	
+    success = doIt<CGAL::Gmpz,Tag_true,Tag_true,Tag_true,
+      Tag_false>
+      (verbose, pricing_strategy_index, from);
+    break;
+    
+  case 23+24:	
+    success = doIt<CGAL::Gmpz,Tag_true,Tag_true,Tag_true,
+      Tag_true>
       (verbose, pricing_strategy_index, from);
     break;
     
@@ -834,7 +997,8 @@ void init_tag_names_table() {
   tag_names_table.push_back("input_data_type");
   tag_names_table.push_back("is_linear");
   tag_names_table.push_back("is_symmetric");
-  tag_names_table.push_back("has_no_inequalities");	
+  tag_names_table.push_back("has_equalities_only_and_full_rank");	
+  tag_names_table.push_back("is_in_standard_form");	
 }
 
 

@@ -35,16 +35,24 @@ CGAL_BEGIN_NAMESPACE
 // creation
 template < class Rep_ >
 QP_solver<Rep_>::
-QP_solver( )
-    : et0( 0), et1( 1), et2( 2),
-      strategyP( static_cast< Pricing_strategy*>( 0)),
-      inv_M_B( vout4),
-      d( inv_M_B.denominator()),
-      m_phase( -1), is_phaseI( false), is_phaseII( false),
-      is_RTS_transition(false),
-      is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
-      no_ineq( check_tag( Has_no_inequalities())), has_ineq( ! no_ineq)
-{ }
+QP_solver(int n, int m,
+	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	  Row_type_iterator r,
+	  Pricing_strategy& strategy)
+  : et0( 0), et1( 1), et2( 2),
+    strategyP( static_cast< Pricing_strategy*>( 0)),
+    inv_M_B( vout4),
+    d( inv_M_B.denominator()),
+    m_phase( -1), is_phaseI( false), is_phaseII( false),
+    is_RTS_transition(false),
+    is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
+    no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( ! no_ineq)
+{ 
+  set(n,m,A,b,c,D,r);
+  set_pricing_strategy(strategy);
+  init();
+  solve();
+}
 
 // set-up of QP
 template < class Rep_ >
@@ -469,7 +477,7 @@ init_basis( )
     in_B.reserve( qp_n+s+art_A.size());
     in_B.insert( in_B.end(), qp_n, -1);        // no original variable is basic
 
-    init_basis__slack_variables( s_i, Has_no_inequalities());
+    init_basis__slack_variables( s_i, Has_equalities_only_and_full_rank());
 
     if ( ! B_O.empty()) B_O.clear();
     B_O.reserve( qp_n);                         // all artificial variables are
@@ -481,7 +489,7 @@ init_basis( )
 
     // initialize indices of 'basic' and 'nonbasic' constraints
     if ( ! C.empty()) C.clear();
-    init_basis__constraints( s_i, Has_no_inequalities());
+    init_basis__constraints( s_i, Has_equalities_only_and_full_rank());
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -551,7 +559,7 @@ init_solution( )
     // initialize exact version of `qp_b' restricted to basic constraints C
     // (implicit conversion to ET)
     if ( ! b_C.empty()) b_C.clear();
-    init_solution__b_C( Has_no_inequalities());
+    init_solution__b_C( Has_equalities_only_and_full_rank());
 
     // initialize exact version of `aux_c' and 'minus_c_B', the
     // latter restricted to basic variables B_O
@@ -955,7 +963,7 @@ QP_solver<Rep_>::
 ratio_test_init( )
 {
     // store exact version of `A_Cj' (implicit conversion)
-    ratio_test_init__A_Cj( A_Cj.begin(), j, Has_no_inequalities());
+    ratio_test_init__A_Cj( A_Cj.begin(), j, Has_equalities_only_and_full_rank());
 
     // store exact version of `2 D_{B_O,j}'
     ratio_test_init__2_D_Bj( two_D_Bj.begin(), j, Is_linear());
@@ -1055,7 +1063,7 @@ ratio_test_1( )
     
     // compute `q_lambda' and `q_x'
     ratio_test_1__q_x_O( Is_linear());
-    ratio_test_1__q_x_S( Has_no_inequalities());
+    ratio_test_1__q_x_S( Has_equalities_only_and_full_rank());
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -1090,7 +1098,7 @@ ratio_test_1( )
     ratio_test_1__t_i(   B_O.begin(),   B_O.end(),
 		       x_B_O.begin(), q_x_O.begin(), Tag_false());
     ratio_test_1__t_i(   B_S.begin(),   B_S.end(),
-		       x_B_S.begin(), q_x_S.begin(), Has_no_inequalities());
+		       x_B_S.begin(), q_x_S.begin(), Has_equalities_only_and_full_rank());
 
     // check `t_j'
     ratio_test_1__t_j( Is_linear());
@@ -1156,7 +1164,7 @@ ratio_test_2( Tag_false)
     }
 
     // compute `p_lambda' and `p_x' (Note: `p_...' is stored in `q_...')
-    ratio_test_2__p( Has_no_inequalities());
+    ratio_test_2__p( Has_equalities_only_and_full_rank());
  
     // diagnostic output
     CGAL_qpe_debug {
@@ -1372,7 +1380,7 @@ expel_artificial_variables_from_basis( )
 	    for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
 	        if (!is_basic(j_)) {  				// is nonbasic 
 		    ratio_test_init__A_Cj( A_Cj.begin(), j_, 
-		        Has_no_inequalities());
+		        Has_equalities_only_and_full_rank());
 		    r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
 		    if (r_A_Cj != 0) {
 		        ratio_test_1__q_x_O(Is_linear());
@@ -1421,7 +1429,7 @@ replace_variable( )
     }
 
     // replace variable
-    replace_variable( Has_no_inequalities());
+    replace_variable( Has_equalities_only_and_full_rank());
 
     // pivot step done
     i = j = -1;
@@ -1774,7 +1782,7 @@ z_replace_variable( )
     }
 
     // replace variable
-    z_replace_variable( Has_no_inequalities());
+    z_replace_variable( Has_equalities_only_and_full_rank());
 
     // pivot step not yet completely done
     i = -1;
@@ -1997,7 +2005,7 @@ compute_solution()
     // compute current solution
     inv_M_B.multiply( b_C.begin(), minus_c_B.begin(),
                       lambda.begin(), x_B_O.begin());
-    compute__x_B_S( Has_no_inequalities());
+    compute__x_B_S( Has_equalities_only_and_full_rank());
 }
 
 template < class Rep_ >
@@ -2083,7 +2091,8 @@ check_basis_inverse( Tag_true)
     
 
     for ( col = 0; col < cols; ++col, ++i_it) {
-	ratio_test_init__A_Cj( tmp_l.begin(), *i_it, Has_no_inequalities());
+	ratio_test_init__A_Cj( tmp_l.begin(), *i_it,
+			       Has_equalities_only_and_full_rank());
 	inv_M_B.multiply_x( tmp_l.begin(), q_x_O.begin());
 
 	CGAL_qpe_debug {
@@ -2201,7 +2210,8 @@ check_basis_inverse( Tag_false)
     if ( is_phaseI) std::fill_n( tmp_x.begin(), B_O.size(), et0);
     i_it = B_O.begin();
     for ( col = 0; col < cols; ++col, ++i_it) {
-	ratio_test_init__A_Cj  ( tmp_l.begin(), *i_it, Has_no_inequalities());
+	ratio_test_init__A_Cj  ( tmp_l.begin(), *i_it, 
+				 Has_equalities_only_and_full_rank());
 	ratio_test_init__2_D_Bj( tmp_x.begin(), *i_it, Tag_false());
 	inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
 			  q_lambda.begin(), q_x_O.begin());

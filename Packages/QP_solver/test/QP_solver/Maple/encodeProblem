@@ -14,7 +14,7 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
    
 	writeTags(fd, "r", 0, isSymmetric(d),
-		hasNoInequalities(a, rel, m));
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
 
 	fprintf(fd, "%s", "dimensions\n");
 	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
@@ -73,7 +73,7 @@ encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "r", 1, 1,
-		hasNoInequalities(a, rel, m));
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
 		
 	fprintf(fd, "%s", "dimensions\n");
 	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
@@ -125,7 +125,7 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "f", 0, isSymmetric(d),
-		hasNoInequalities(a, rel, m));
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -182,7 +182,7 @@ encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	    
 	writeTags(fd, "f", 1, 1,
-		hasNoInequalities(a, rel, m));
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -234,7 +234,7 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "i", 0, isSymmetric(d),
-		hasNoInequalities(a, rel, m));
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -292,7 +292,7 @@ encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, desc);
 	    
 	writeTags(fd, "i", 1, 1,
-		hasNoInequalities(a, rel, m));
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -435,12 +435,13 @@ writeIntMatrixTransposed:=proc(fileDesc, matrix, m, n)
 	fprintf(fileDesc, "%s", "\n");
 end proc;
 
-writeTags:=proc(fileDesc, inputDataType, isLinear, isSymmetric, hasNoInequalities) 
+writeTags:=proc(fileDesc, inputDataType, isLinear, isSymmetric, hasEqualitiesOnlyAndFullRank, isInStandardForm) 
 	fprintf(fileDesc, "%s", "tags\n");
 	fprintf(fileDesc, "%s\t\t%s\n", "input_data_type", inputDataType);
 	fprintf(fileDesc, "%s\t\t%d\n", "is_linear", isLinear);
 	fprintf(fileDesc, "%s\t\t%d\n", "is_symmetric", isSymmetric);
-	fprintf(fileDesc, "%s\t%d\n", "has_no_inequalities", hasNoInequalities);
+	fprintf(fileDesc, "%s\t%d\n", "has_equalities_only_and_full_rank", hasEqualitiesOnlyAndFullRank);
+	fprintf(fileDesc, "%s\t%d\n", "is_in_standard_form", isInStandardForm);
 	fprintf(fileDesc, "\n");
 end proc;
 
@@ -471,7 +472,7 @@ isLinear:=proc(D, n)
 	return ret;
 end proc;
 
-hasNoInequalities:=proc(a, relop, m)
+hasEqualitiesOnlyAndFullRank:=proc(a, relop, m)
 	local zero, ret;
 	
 	zero:=LinearAlgebra[ZeroMatrix](m,1);
