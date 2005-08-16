@@ -44,6 +44,15 @@ public:
 
   typedef Point_       Point;
 
+  /*! \struct
+   * An auxiliary structure for rebinding the vertex with a new point class.
+   */
+  template<typename PNT>
+  struct rebind
+  {
+    typedef Arr_vertex_base<PNT>             other;
+  };
+
 protected:
 
   void       *p_he;   // An incident halfedge pointing at the vertex.
@@ -93,6 +102,15 @@ template <class X_monotone_curve_> class Arr_halfedge_base
 public:
 
   typedef X_monotone_curve_  X_monotone_curve;
+
+  /*! \struct
+   * An auxiliary structure for rebinding the halfedge with a new curve class.
+   */
+  template<typename XCV>
+  struct rebind
+  {
+    typedef Arr_halfedge_base<XCV>           other;
+  };
 
 protected:
 

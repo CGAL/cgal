@@ -170,9 +170,22 @@ public:
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
   template<typename T>
-  struct rebind
+  class rebind
   {
-    typedef Arr_default_dcel<T> other;
+    typedef typename VertexBase_::template rebind
+                        <typename T::Point_2>              Rebind_vertex;
+    typedef typename Rebind_vertex::other                  Vertex_base;
+    typedef typename HalfedgeBase_::template rebind
+                        <typename T::X_monotone_curve_2>   Rebind_halfedge;
+    typedef typename Rebind_halfedge::other                Halfedge_base;
+   
+  public:
+
+    typedef Arr_face_extended_dcel<T,
+				   Face_data,
+				   Vertex_base,
+				   Halfedge_base,
+				   FaceBase_>              other;
   };
 
   /*! Default constructor. */
@@ -212,9 +225,24 @@ public:
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
   template<typename T>
-  struct rebind
+  class rebind
   {
-    typedef Arr_default_dcel<T> other;
+    typedef typename VertexBase_::template rebind
+                        <typename T::Point_2>              Rebind_vertex;
+    typedef typename Rebind_vertex::other                  Vertex_base;
+    typedef typename HalfedgeBase_::template rebind
+                        <typename T::X_monotone_curve_2>   Rebind_halfedge;
+    typedef typename Rebind_halfedge::other                Halfedge_base;
+   
+  public:
+
+    typedef Arr_extended_dcel<T,
+			      Vertex_data,
+			      Halfedge_data,
+			      Face_data,
+			      Vertex_base,
+			      Halfedge_base,
+			      FaceBase_>                   other;
   };
 
   /*! Default constructor. */
