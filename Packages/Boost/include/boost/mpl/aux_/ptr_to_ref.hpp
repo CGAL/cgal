@@ -20,7 +20,9 @@
 
 
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400)) \
-    || BOOST_WORKAROUND(__EDG_VERSION__, <= 245)
+    ||  ( BOOST_WORKAROUND(__EDG_VERSION__, <= 245) \
+        && !(defined(__STD_STRICT_ANSI) \
+            || defined(__STD_STRICT_ANSI_ERRORS)) )
 
 #   define BOOST_MPL_AUX_PTR_TO_REF(X) \
     *BOOST_MPL_AUX_STATIC_CAST(X*, 0) \

@@ -1,7 +1,7 @@
 #ifndef _DATE_TIME_DATE_PARSING_HPP___
 #define _DATE_TIME_DATE_PARSING_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -81,14 +81,15 @@ namespace date_time {
      * greg_weekday::max() or date_time::NumSpecialValues */
     template<class charT>
     short find_match(const charT* const* short_names, 
-                     const charT* const* long_names, const int limit,
+                     const charT* const* long_names, 
+                     short limit,
                      const std::basic_string<charT>& s) {
-      for(int i = 0; i <= limit; ++i){
+      for(short i = 0; i <= limit; ++i){
         if(short_names[i] == s || long_names[i] == s){
           return i;
         }
       }
-      return limit+1; // not-found, return a value out of range
+      return static_cast<short>(limit + 1); // not-found, return a value out of range
     }
     
     //! Generic function to parse a delimited date (eg: 2002-02-10)
@@ -114,31 +115,40 @@ namespace date_time {
       typedef typename date_type::year_type year_type;
       typedef typename date_type::month_type month_type;
       unsigned pos = 0;
-      typename date_type::ymd_type ymd((year_type::min)(),1,1);
-      boost::tokenizer<boost::char_delimiters_separator<char> > tok(s);
-      for(boost::tokenizer<>::iterator beg=tok.begin(); beg!=tok.end(), pos < spec_str.size(); ++beg, ++pos) {
-        unsigned short i =0;
+      unsigned short year(0), month(0), day(0);
+      
+      typedef boost::tokenizer<boost::char_separator<char>,
+                               std::basic_string<char>::const_iterator,
+                               std::basic_string<char> > tokenizer;
+      typedef boost::tokenizer<boost::char_separator<char>,
+                               std::basic_string<char>::const_iterator,
+                               std::basic_string<char> >::iterator tokenizer_iterator;
+      // may need more delimiters, these work for the regression tests
+      const char sep_char[] = {',','-','.',' ','/','\0'};
+      boost::char_separator<char> sep(sep_char);
+      tokenizer tok(s,sep);
+      for(tokenizer_iterator beg=tok.begin(); 
+          beg!=tok.end() && pos < spec_str.size(); 
+          ++beg, ++pos) {
         switch(spec_str.at(pos)) {
           case 'y': 
           {
-            i = boost::lexical_cast<unsigned short>(*beg);
-            ymd.year = i;
+            year = boost::lexical_cast<unsigned short>(*beg);
             break;
           }
           case 'm': 
           {
-            ymd.month = month_str_to_ushort<month_type>(*beg);
+            month = month_str_to_ushort<month_type>(*beg);
             break;
           }
           case 'd': 
           {
-            i = boost::lexical_cast<unsigned short>(*beg);
-            ymd.day = i;
+            day = boost::lexical_cast<unsigned short>(*beg);
             break;
           }
         } //switch
       }
-      return date_type(ymd);
+      return date_type(year, month, day);
     }
     
     //! Generic function to parse undelimited date (eg: 20020201)
@@ -208,7 +218,11 @@ namespace date_time {
     {
       std::stringstream ss("");
       while(beg != end) {
-        ss << ss.narrow(*beg++, 'X'); // 'X' will cause exception to be thrown
+#if !defined(BOOST_DATE_TIME_NO_LOCALE)
+        ss << std::use_facet<std::ctype<wchar_t> >(std::locale()).narrow(*beg++, 'X'); // 'X' will cause exception to be thrown
+#else
+        ss << ss.narrow(*beg++, 'X');
+#endif
       }
       return parse_date<date_type>(ss.str());
     }
@@ -226,7 +240,11 @@ namespace date_time {
       std::stringstream ss("");
       std::wstring::iterator wsb = ws.begin(), wse = ws.end();
       while(wsb != wse) {
+#if !defined(BOOST_DATE_TIME_NO_LOCALE)
+        ss << std::use_facet<std::ctype<wchar_t> >(std::locale()).narrow(*wsb++, 'X'); // 'X' will cause exception to be thrown
+#else
         ss << ss.narrow(*wsb++, 'X'); // 'X' will cause exception to be thrown
+#endif
       }
       return parse_date<date_type>(ss.str());
     }
@@ -241,7 +259,7 @@ namespace date_time {
       typedef typename boost::char_separator<charT> char_separator;
       typedef typename boost::tokenizer<char_separator, typename std::basic_string<charT>::const_iterator, 
                                           std::basic_string<charT> > tokenizer;
-      const charT sep_list[] = {'[','/',']','\0'};
+      const charT sep_list[4] = {'[','/',']','\0'};
       char_separator sep(sep_list);
       tokenizer tokens(s, sep);
       typename tokenizer::iterator tok_it = tokens.begin(); 

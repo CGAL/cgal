@@ -55,47 +55,6 @@
 #  pragma warning (disable : 4786) // too long name, harmless warning
 #endif
 
-#if 0
-// failed attempt address an issue with msvc w stlport that shows up in spirit
-#if defined(BOOST_NO_STDC_NAMESPACE)
-
-#include <cctype>
-namespace std{ 
-    using ::isalnum;
-    using ::isalpha;
-    using ::iscntrl;
-    using ::isdigit;
-    using ::isgraph;
-    using ::islower;
-    using ::isprint;
-    using ::ispunct;
-    using ::isspace;
-    using ::isupper;
-    using ::isxdigit;
-    using ::tolower;
-}
-
-#if !defined(BOOST_NO_CWCTYPE)
-#include <cwctype>
-namespace std{ 
-    using ::iswalnum;
-    using ::iswalpha;
-    using ::iswcntrl;
-    using ::iswdigit;
-    using ::iswgraph;
-    using ::iswlower;
-    using ::iswprint;
-    using ::iswpunct;
-    using ::iswspace;
-    using ::iswupper;
-    using ::iswxdigit;
-    using ::towlower;
-}
-#endif
-
-#endif
-#endif
-
 //#define BOOST_SPIRIT_DEBUG
 //#include <boost/spirit/core.hpp>
 #include <boost/spirit/core/non_terminal/rule.hpp>
@@ -126,6 +85,12 @@ namespace archive {
 template<class CharType>
 class basic_xml_grammar : public boost::spirit::grammar<basic_xml_grammar<CharType> >
 {
+public:
+    // The following is not necessary according to DR45, but at least
+    // one compiler (Compaq C++ 6.5 in strict_ansi mode) chokes otherwise.
+    struct return_values;
+    friend struct return_values;
+    
 private:
     typedef BOOST_DEDUCED_TYPENAME std::basic_istream<CharType> IStream;
     typedef BOOST_DEDUCED_TYPENAME std::basic_string<CharType> StringType;
@@ -141,6 +106,7 @@ private:
         Eq, 
         STag,
         ETag,
+        LetterOrUnderscoreOrColon,
         AttValue, 
         CharRef1, 
         CharRef2, 
@@ -151,10 +117,18 @@ private:
         AposRef,
         QuoteRef,
         CharData,
+        CharDataChars,
         content,
+        AmpName,
+        LTName,
+        GTName,
+        ClassNameChar,
+        ClassName,
         Name,
         XMLDecl,
+        XMLDeclChars,
         DocTypeDecl,
+        DocTypeDeclChars,
         ClassIDAttribute,
         ObjectIDAttribute,
         ClassNameAttribute,
@@ -164,6 +138,9 @@ private:
         Attribute,
         SignatureAttribute,
         SerializationWrapper,
+        NameHead,
+        NameTail,
+        AttributeList,
         S;
 
     // XML Character classes

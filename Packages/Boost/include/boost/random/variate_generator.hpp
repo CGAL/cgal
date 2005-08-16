@@ -87,9 +87,9 @@ class variate_generator
 {
 private:
   typedef random::detail::pass_through_engine<Engine> decorated_engine;
-  typedef typename decorated_engine::base_type engine_value_type;
 
 public:
+  typedef typename decorated_engine::base_type engine_value_type;
   typedef Engine engine_type;
   typedef Distribution distribution_type;
   typedef typename Distribution::result_type result_type;

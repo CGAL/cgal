@@ -1,7 +1,7 @@
 #ifndef DATE_TIME_C_LOCAL_TIME_ADJUSTOR_HPP__
 #define DATE_TIME_C_LOCAL_TIME_ADJUSTOR_HPP__
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -40,13 +40,15 @@ namespace date_time {
       date_duration_type dd = t.date() - time_t_start_day;
       time_duration_type td = t.time_of_day();
       std::time_t t2 = dd.days()*86400 + td.hours()*3600 + td.minutes()*60 + td.seconds();
-      std::tm* tms = std::localtime(&t2);
-      date_type d(static_cast<unsigned short>(tms->tm_year + 1900),
-                  static_cast<unsigned short>(tms->tm_mon + 1),
-                  static_cast<unsigned short>(tms->tm_mday));
-      time_duration_type td2(tms->tm_hour,
-                             tms->tm_min,
-                             tms->tm_sec,
+      std::tm tms, *tms_ptr;
+      tms_ptr = c_time::localtime(&t2, &tms);
+      //tms_ptr = std::localtime(&t2);
+      date_type d(static_cast<unsigned short>(tms_ptr->tm_year + 1900),
+                  static_cast<unsigned short>(tms_ptr->tm_mon + 1),
+                  static_cast<unsigned short>(tms_ptr->tm_mday));
+      time_duration_type td2(tms_ptr->tm_hour,
+                             tms_ptr->tm_min,
+                             tms_ptr->tm_sec,
                              t.time_of_day().fractional_seconds());
       
       return time_type(d,td2);

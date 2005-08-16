@@ -16,19 +16,22 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 #include <string>
-#include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/mpl/bool.hpp>
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/archive/detail/iserializer.hpp>
+#include <boost/archive/detail/auto_link_archive.hpp>
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
-namespace boost { 
+namespace boost {
+template<class T>
+class shared_ptr;
+namespace serialization {
+    class extended_type_info;
+} // namespace serialization
 namespace archive {
 namespace detail {
 
-class basic_iserializer;
-class basic_pointer_iserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_iserializer;
 
 template<class Archive>
 class interface_iarchive 
@@ -63,23 +66,21 @@ public:
         return & bpis;
     }
 
-    // default processing - invoke serialization library
-    template<class T>
-    void load_override(T & t, /*BOOST_PFTO*/ int){
-        archive::load(* this->This(), t);
+    void lookup_helper(
+        const boost::serialization::extended_type_info * const eti,
+        shared_ptr<void> & sph
+    ){
+        this->This()->basic_iarchive::lookup_basic_helper(eti, sph);
     }
 
-    // define operators for non-const arguments.  Don't depend one the const
-    // ones below because the compiler MAY make a temporary copy to
-    // create the const parameter (Though I havn't seen this happen). 
-    // the >> operator
+    void insert_helper(
+        const boost::serialization::extended_type_info * const eti,
+        shared_ptr<void> & sph
+    ){
+        this->This()->basic_iarchive::insert_basic_helper(eti, sph);
+    }
     template<class T>
     Archive & operator>>(T & t){
-        // if this assertion trips. It means we're trying to load a
-        // const object with a compiler that doesn't have correct
-        // funtion template ordering.  On other compilers, this is
-        // handled below.
-        BOOST_STATIC_ASSERT(! boost::is_const<T>::value);
         this->This()->load_override(t, 0);
         return * this->This();
     }
@@ -87,34 +88,14 @@ public:
     // the & operator 
     template<class T>
     Archive & operator&(T & t){
-        // see above
-        BOOST_STATIC_ASSERT(! boost::is_const<T>::value);
-        this->This()->load_override(t, 0);
-        return * this->This();
+        return *(this->This()) >> t;
     }
-
-    // define the following pair in order to permit passing of const and non_const
-    // temporary objects. These are needed to properly implement serialization
-    // wrappers.
-
-    #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-    // the >> operator
-    template<class T>
-    Archive & operator>>(const T & t){
-        // this should only be used for wrappers.  Check that here
-        This()->load_override(const_cast<T &>(t), 0);
-        return * this->This();
-    }
-    // the & operator 
-    template<class T>
-    Archive & operator&(const T & t){
-        return * this >> t;
-    }
-    #endif
 };
 
 } // namespace detail
 } // namespace archive
 } // namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_DETAIL_INTERFACE_IARCHIVE_HPP

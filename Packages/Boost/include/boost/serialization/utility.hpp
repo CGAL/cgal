@@ -30,11 +30,8 @@
 #define STD std
 #endif
 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-namespace boost { namespace serialization {
-#else
-namespace STD {
-#endif
+namespace boost { 
+namespace serialization {
 
 // pair
 template<class Archive, class F, class S>
@@ -47,11 +44,8 @@ inline void serialize(
     ar & boost::serialization::make_nvp("second", p.second);
 }
 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-}} // namespace boost::serialization
-#else
-} // namespace std
-#endif
+} // serialization
+} // namespace boost
 #undef STD
 
 #endif // BOOST_SERIALIZATION_UTILITY_HPP

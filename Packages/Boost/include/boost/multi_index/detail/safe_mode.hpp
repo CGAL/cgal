@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,10 @@
 
 #ifndef BOOST_MULTI_INDEX_DETAIL_SAFE_MODE_HPP
 #define BOOST_MULTI_INDEX_DETAIL_SAFE_MODE_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
@@ -32,7 +36,14 @@ namespace multi_index{
  * kept by the container. More elaborate data structures would yield better
  * performance, but I decided to keep complexity to a minimum since
  * speed is not an issue here.
- * This is not a full-fledged safe mode framework, and is only inteded
+ * Iterators can also be unchecked, i.e. they do not have info about
+ * which container they belong in. This situation arises when the iterator
+ * is restored from a serialization archive: only information on the node
+ * is available, and it is not possible to determine to which container
+ * the iterator is associated to. The only sensible policy is to assume
+ * unchecked iterators are valid, though this can certainly generate false
+ * positive safe mode checks.
+ * This is not a full-fledged safe mode framework, and is only intended
  * for use within the limits of Boost.MultiIndex.
  */
 
@@ -71,15 +82,34 @@ class safe_iterator_base
 {
 public:
   bool valid()const{return cont!=0;}
+  bool unchecked()const{return unchecked_;}
+
   inline void detach();
 
+  void uncheck()
+  {
+    detach();
+    unchecked_=true;
+  }
+
 protected:
-  safe_iterator_base():cont(0),next(0){}
-  explicit safe_iterator_base(safe_container_base* cont_){attach(cont_);}
-  safe_iterator_base(const safe_iterator_base& it){attach(it.cont);}
+  safe_iterator_base():cont(0),next(0),unchecked_(false){}
+
+  explicit safe_iterator_base(safe_container_base* cont_):
+    unchecked_(false)
+  {
+    attach(cont_);
+  }
+
+  safe_iterator_base(const safe_iterator_base& it):
+    unchecked_(it.unchecked_)
+  {
+    attach(it.cont);
+  }
 
   safe_iterator_base& operator=(const safe_iterator_base& it)
   {
+    unchecked_=it.unchecked_;
     safe_container_base* new_cont=it.cont;
     if(cont!=new_cont){
       detach();
@@ -98,7 +128,7 @@ protected:
 BOOST_MULTI_INDEX_PRIVATE_IF_MEMBER_TEMPLATE_FRIENDS:
   friend class safe_container_base;
 
-#if !defined(BOOST_MULTI_INDEX_NO_MEMBER_TEMPLATE_FRIENDS)
+#if !defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
   template<typename Iterator> friend
     void safe_mode::detach_equivalent_iterators(Iterator&);
 #endif
@@ -107,6 +137,7 @@ BOOST_MULTI_INDEX_PRIVATE_IF_MEMBER_TEMPLATE_FRIENDS:
 
   safe_container_base* cont;
   safe_iterator_base*  next;
+  bool                 unchecked_;
 };
 
 class safe_container_base:private noncopyable
@@ -115,6 +146,11 @@ public:
   safe_container_base(){}
 
   ~safe_container_base()
+  {
+    detach_all_iterators();
+  }
+
+  void detach_all_iterators()
   {
     for(safe_iterator_base* it=header.next;it;it=it->next)it->cont=0;
   }
@@ -130,7 +166,7 @@ public:
 BOOST_MULTI_INDEX_PRIVATE_IF_MEMBER_TEMPLATE_FRIENDS:
   friend class safe_iterator_base;
 
-#if !defined(BOOST_MULTI_INDEX_NO_MEMBER_TEMPLATE_FRIENDS)
+#if !defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
   template<typename Iterator> friend
     void safe_mode::detach_equivalent_iterators(Iterator&);
 #endif
@@ -190,78 +226,88 @@ public:
 
 namespace safe_mode{
 
-/* checking routines */
+/* Checking routines. Assume the best for unchecked iterators
+ * (i.e. they pass the checking when there is not enough info
+ * to know.)
+ */
 
 template<typename Iterator>
 inline bool check_valid_iterator(const Iterator& it)
 {
-  return it.valid();
+  return it.valid()||it.unchecked();
 }
 
 template<typename Iterator>
 inline bool check_dereferenceable_iterator(const Iterator& it)
 {
-  return it.valid()&&it!=it.owner()->end();
+  return it.valid()&&it!=it.owner()->end()||it.unchecked();
 }
 
 template<typename Iterator>
 inline bool check_incrementable_iterator(const Iterator& it)
 {
-  return it.valid()&&it!=it.owner()->end();
+  return it.valid()&&it!=it.owner()->end()||it.unchecked();
 }
 
 template<typename Iterator>
 inline bool check_decrementable_iterator(const Iterator& it)
 {
-  return it.valid()&&it!=it.owner()->begin();
+  return it.valid()&&it!=it.owner()->begin()||it.unchecked();
 }
 
 template<typename Iterator>
 inline bool check_is_owner(
   const Iterator& it,const typename Iterator::container_type& cont)
 {
-  return it.valid()&&it.owner()==&cont;
+  return it.valid()&&it.owner()==&cont||it.unchecked();
 }
 
 template<typename Iterator>
 inline bool check_same_owner(const Iterator& it0,const Iterator& it1)
 {
-  return it0.valid()&&it1.valid()&&it0.owner()==it1.owner();
+  return it0.valid()&&it1.valid()&&it0.owner()==it1.owner()||
+         it0.unchecked()||it1.unchecked();
 }
 
 template<typename Iterator>
 inline bool check_valid_range(const Iterator& it0,const Iterator& it1)
 {
-  if(!it0.valid()||!it1.valid()||it0.owner()!=it1.owner())return false;
+  if(!check_same_owner(it0,it1))return false;
 
-  Iterator last=it0.owner()->end();
-  if(it1==last)return true;
+  if(it0.valid()){
+    Iterator last=it0.owner()->end();
+    if(it1==last)return true;
 
-  for(Iterator first=it0;first!=last;++first){
-    if(first==it1)return true;
+    for(Iterator first=it0;first!=last;++first){
+      if(first==it1)return true;
+    }
+    return false;
   }
-  return false;
+  return true;
 }
 
 template<typename Iterator>
 inline bool check_outside_range(
   const Iterator& it,const Iterator& it0,const Iterator& it1)
 {
-  if(!it0.valid()||!it1.valid()||it0.owner()!=it1.owner())return false;
+  if(!check_same_owner(it0,it1))return false;
 
-  Iterator last=it0.owner()->end();
-  bool found=false;
+  if(it0.valid()){
+    Iterator last=it0.owner()->end();
+    bool found=false;
 
-  Iterator first=it0;
-  for(;first!=last;++first){
-    if(first==it1)break;
+    Iterator first=it0;
+    for(;first!=last;++first){
+      if(first==it1)break;
     
-    /* crucial that this check goes after previous break */
+      /* crucial that this check goes after previous break */
     
-    if(first==it)found=true;
+      if(first==it)found=true;
+    }
+    if(first!=it1)return false;
+    return !found;
   }
-  if(first!=it1)return false;
-  return !found;
+  return true;
 }
 
 template<typename Container>

@@ -30,7 +30,7 @@ namespace boost
             template< typename C >
             struct pts
             {
-                typedef BOOST_DEDUCED_TYPENAME C::size_type type;
+                typedef BOOST_RANGE_DEDUCED_TYPENAME C::size_type type;
             };
         };
 
@@ -108,9 +108,9 @@ namespace boost
     template< typename C >
     class range_size
     {
-        typedef BOOST_DEDUCED_TYPENAME range_detail::range<C>::type c_type;
+        typedef typename range_detail::range<C>::type c_type;
     public:
-        typedef BOOST_DEDUCED_TYPENAME range_detail::range_size_type_<c_type>::BOOST_NESTED_TEMPLATE pts<C>::type type; 
+        typedef typename range_detail::range_size_type_<c_type>::BOOST_NESTED_TEMPLATE pts<C>::type type; 
     };
 }
 

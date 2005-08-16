@@ -8,6 +8,19 @@
  * $Date$
  */
 
+
+// With boost release 1.33, date_time will be using a different,
+// more flexible, IO system. This new system is not compatible with
+// old compilers. The original date_time IO system remains for those 
+// compilers. They must define this macro to use the legacy IO.
+#if ((defined(__GNUC__) && (__GNUC__ < 3))                    || \
+     (defined(_MSC_VER) && (_MSC_VER <= 1300) )               || \
+     (defined(__BORLANDC__) && (__BORLANDC__ <= 0x0564) ) )   && \
+    !defined(USE_DATE_TIME_PRE_1_33_FACET_IO)
+#define USE_DATE_TIME_PRE_1_33_FACET_IO
+#endif
+
+
 // This file performs some local compiler configurations
 
 #include "boost/date_time/locale_config.hpp" //set up locale configurations
@@ -120,5 +133,14 @@ namespace std {
 //
 #include <boost/config/auto_link.hpp>
 #endif  // auto-linking disabled
+
+#if defined(BOOST_HAS_THREADS) 
+#  if defined(_MSC_VER) || defined(__MWERKS__) || defined(__MINGW32__) ||  defined(__BORLANDC__)
+     //no reentrant posix functions (eg: localtime_r)
+#  else
+#   define BOOST_DATE_TIME_HAS_REENTRANT_STD_FUNCTIONS
+#  endif
+#endif
+
 
 #endif

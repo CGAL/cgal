@@ -363,7 +363,7 @@ namespace detail
           , char const* doc
           , detail::keyword_range keywords)
       {
-          detail::def_init_aux(cl, args, NArgs(), policies, doc, keywords);
+          detail::def_init_aux(cl, args, NArgs(), policies, 0, keywords);
 
           if (keywords.second > keywords.first)
               --keywords.second;

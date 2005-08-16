@@ -2,25 +2,9 @@
 // Copyright 2001 University of Notre Dame.
 // Authors: Jeremy G. Siek and Lie-Quan Lee
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_SUBGRAPH_HPP
@@ -243,6 +227,25 @@ namespace boost {
 
     std::size_t num_children() const { return m_children.size(); }
 
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+    // Bundled properties support
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<Graph, Descriptor>::type&
+    operator[](Descriptor x)
+    { 
+      if (m_parent == 0) return m_graph[x];
+      else return root().m_graph[local_to_global(x)];
+    }
+
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<Graph, Descriptor>::type const&
+    operator[](Descriptor x) const
+    { 
+      if (m_parent == 0) return m_graph[x];
+      else return root().m_graph[local_to_global(x)];
+    }
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+
     //  private:
     typedef typename property_map<Graph, edge_index_t>::type EdgeIndexMap;
     typedef typename property_traits<EdgeIndexMap>::value_type edge_index_type;
@@ -272,6 +275,14 @@ namespace boost {
     }
 
   };
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  template<typename Graph>
+  struct vertex_bundle_type<subgraph<Graph> > : vertex_bundle_type<Graph> { };
+
+  template<typename Graph>
+  struct edge_bundle_type<subgraph<Graph> > : edge_bundle_type<Graph> { };
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
   //===========================================================================
   // Functions special to the Subgraph Class
@@ -836,14 +847,14 @@ namespace boost {
   inline
   typename graph_property<G, Tag>::type&
   get_property(subgraph<G>& g, Tag tag) {
-    return get_property(g.root().m_graph, tag);
+    return get_property(g.m_graph, tag);
   }
 
   template <typename G, typename Tag>
   inline
   const typename graph_property<G, Tag>::type&
   get_property(const subgraph<G>& g, Tag tag) {
-    return get_property(g.root().m_graph, tag);
+    return get_property(g.m_graph, tag);
   }
 
   //===========================================================================

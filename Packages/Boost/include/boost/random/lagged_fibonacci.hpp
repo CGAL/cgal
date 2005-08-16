@@ -20,6 +20,7 @@
 #include <iostream>
 #include <algorithm>     // std::max
 #include <iterator>
+#include <cmath>         // std::pow
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
 #include <boost/cstdint.hpp>
@@ -31,7 +32,15 @@
 namespace boost {
 namespace random {
 
-#  if BOOST_WORKAROUND(_MSC_FULL_VER, BOOST_TESTED_AT(13102292) && BOOST_MSVC > 1300)
+#if BOOST_WORKAROUND(_MSC_FULL_VER, BOOST_TESTED_AT(13102292)) && BOOST_MSVC > 1300
+#  define BOOST_RANDOM_EXTRACT_LF
+#endif
+
+#if defined(__APPLE_CC__) && defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ <= 3)
+#  define BOOST_RANDOM_EXTRACT_LF
+#endif
+
+#  ifdef BOOST_RANDOM_EXTRACT_LF
 namespace detail
 {
   template<class IStream, class F, class RealType>
@@ -147,7 +156,7 @@ public:
   friend std::basic_istream<CharT, Traits>&
   operator>>(std::basic_istream<CharT, Traits>& is, lagged_fibonacci& f)
   {
-# if BOOST_WORKAROUND(_MSC_FULL_VER, BOOST_TESTED_AT(13102292)) && BOOST_MSVC > 1300
+# ifdef BOOST_RANDOM_EXTRACT_LF
       return detail::extract_lagged_fibonacci(is, f, f.i, f.x);
 # else
       is >> f.i >> std::ws;
@@ -364,7 +373,7 @@ public:
   friend std::basic_istream<CharT, Traits>&
   operator>>(std::basic_istream<CharT, Traits>& is, lagged_fibonacci_01& f)
     {
-# if BOOST_WORKAROUND(_MSC_FULL_VER, BOOST_TESTED_AT(13102292)) && BOOST_MSVC > 1300
+# ifdef BOOST_RANDOM_EXTRACT_LF
         return detail::extract_lagged_fibonacci_01(is, f, f.i, f.x, f._modulus);
 # else
         is >> f.i >> std::ws;

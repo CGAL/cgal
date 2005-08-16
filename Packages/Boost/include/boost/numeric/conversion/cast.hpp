@@ -6,7 +6,7 @@
 //  See library home page at http://www.boost.org/libs/numeric/conversion
 //
 // Contact the author at: fernando_cacciola@hotmail.com
-// 
+//
 //
 //  Revision History
 //
@@ -20,28 +20,32 @@
 #ifndef BOOST_NUMERIC_CONVERSION_CAST_25OCT2001_HPP
 #define BOOST_NUMERIC_CONVERSION_CAST_25OCT2001_HPP
 
+#include <boost/detail/workaround.hpp>
+
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300) || BOOST_WORKAROUND(__BORLANDC__, == 0x564)
+
+#  include<boost/numeric/conversion/detail/old_numeric_cast.hpp>
+
+#else
+
 #include <boost/type.hpp>
 #include <boost/numeric/conversion/converter.hpp>
-
-#ifndef BOOST_EXPLICIT_DEFAULT_TARGET
-# if defined(BOOST_MSVC) && BOOST_MSVC <= 1200 // 1200 = VC6
-#  define BOOST_EXPLICIT_DEFAULT_TARGET , ::boost::type<Target>* = 0
-# else
-#  define BOOST_EXPLICIT_DEFAULT_TARGET
-# endif
-#endif
 
 namespace boost
 {
   template<typename Target, typename Source>
   inline
-  typename boost::numeric::converter<Target,Source>::result_type
-    numeric_cast ( Source arg BOOST_EXPLICIT_DEFAULT_TARGET )
+  Target numeric_cast ( Source arg )
   {
     typedef boost::numeric::converter<Target,Source> Converter ;
     return Converter::convert(arg);
   }
 
+  using numeric::bad_numeric_cast;
+
 } // namespace boost
+
+#endif
+
 
 #endif

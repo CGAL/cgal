@@ -84,7 +84,7 @@ namespace boost {
 #if !defined( BOOST_NO_MEMBER_TEMPLATE_FRIENDS )  \
     && !BOOST_WORKAROUND(__BORLANDC__, <= 0x570) \
     && !BOOST_WORKAROUND( _CRAYC, != 0) \
-    && !BOOST_WORKAROUND(__DECCXX_VER, <= 60590041)
+    && !BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590042))
         // use friend templates and private members only if supported
 
 #ifndef  BOOST_NO_TEMPLATE_STD_STREAM

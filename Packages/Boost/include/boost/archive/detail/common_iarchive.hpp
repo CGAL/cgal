@@ -16,11 +16,6 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
-#include <boost/throw_exception.hpp>
-
-#include <boost/config.hpp>
-
-#include <boost/archive/archive_exception.hpp>
 #include <boost/archive/detail/basic_iarchive.hpp>
 #include <boost/archive/detail/interface_iarchive.hpp>
 
@@ -59,29 +54,8 @@ protected:
     void load_start(const char *name){}
     void load_end(const char *name){}
     // default archive initialization
-    void init(){
-        // read signature in an archive version independent manner
-        std::string file_signature;
-        * this->This() >> file_signature;
-        if(file_signature != ARCHIVE_SIGNATURE)
-            boost::throw_exception(
-                archive_exception(archive_exception::invalid_signature)
-           );
-
-        // make sure the version of the reading archive library can
-        // support the format of the archive being read
-        version_type input_library_version;
-        * this->This() >> input_library_version;
-        basic_iarchive::init(input_library_version);
-        const unsigned int current_library_version = ARCHIVE_VERSION;
-        // extra little .t is to get around borland quirk
-        if(current_library_version < input_library_version.t)
-            boost::throw_exception(
-                archive_exception(archive_exception::unsupported_version)
-            );
-    }
-    common_iarchive() : 
-        basic_iarchive(),
+    common_iarchive(unsigned int flags) : 
+        basic_iarchive(flags),
         interface_iarchive<Archive>()
     {}
 };

@@ -178,6 +178,7 @@ namespace boost { namespace spirit {
                     length += then_result.length();
                     return scan.create_match(std::size_t(length), nil_t(), save, scan.first);
                 }
+                return scan.no_match();
             }
             return scan.empty_match();
         }

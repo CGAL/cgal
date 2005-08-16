@@ -16,6 +16,7 @@
 
 #ifdef PHOENIX_THREADSAFE
 #include <boost/thread/tss.hpp>
+#include <boost/thread/once.hpp>
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -397,11 +398,28 @@ private:
 
     typedef impl::closure_frame_holder<closure_frame_t> holder_t;
 
+#ifdef PHOENIX_THREADSAFE
+    static boost::thread_specific_ptr<holder_t*> &
+    tsp_frame_instance()
+    {
+        static boost::thread_specific_ptr<holder_t*> the_instance;
+        return the_instance;
+    }
+
+    static void
+    tsp_frame_instance_init()
+    {
+        tsp_frame_instance();
+    }
+#endif
+
     static holder_t &
     closure_frame_holder_ref(holder_t* holder_ = 0)
     {
 #ifdef PHOENIX_THREADSAFE
-        static boost::thread_specific_ptr<holder_t*> tsp_frame;
+        static boost::once_flag been_here = BOOST_ONCE_INIT;
+        boost::call_once(tsp_frame_instance_init, been_here);
+        boost::thread_specific_ptr<holder_t*> &tsp_frame = tsp_frame_instance();
         if (!tsp_frame.get())
             tsp_frame.reset(new holder_t *(0));
         holder_t *& holder = *tsp_frame;

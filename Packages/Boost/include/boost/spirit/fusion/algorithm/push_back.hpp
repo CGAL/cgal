@@ -9,7 +9,7 @@
 #define FUSION_ALGORITHM_PUSH_BACK_HPP
 
 #include <boost/spirit/fusion/sequence/single_view.hpp>
-#include <boost/spirit/fusion/sequence/joint_view.hpp>
+#include <boost/spirit/fusion/sequence/append_view.hpp>
 
 namespace boost { namespace fusion
 {
@@ -18,7 +18,7 @@ namespace boost { namespace fusion
         template <typename Sequence, typename T>
         struct push_back
         {
-            typedef joint_view<Sequence, single_view<T> > type;
+            typedef append_view<Sequence, T> type;
         };
     }
 
@@ -33,18 +33,16 @@ namespace boost { namespace fusion
             inline typename apply<Sequence const, T>::type
             operator()(Sequence const& seq, T const& x) const
             {
-                typedef joint_view<Sequence const, single_view<T> > result;
-                single_view<T> val(x);
-                return result(seq, val);
+                typedef append_view<Sequence const, T> result;
+                return result(seq, x);
             }
 
             template <typename Sequence, typename T>
             inline typename apply<Sequence, T>::type
             operator()(Sequence& seq, T const& x) const
             {
-                typedef joint_view<Sequence, single_view<T> > result;
-                single_view<T> val(x);
-                return result(seq, val);
+                typedef append_view<Sequence, T> result;
+                return result(seq, x);
             }
         };
     }

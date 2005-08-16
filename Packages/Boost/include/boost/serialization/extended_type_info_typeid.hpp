@@ -19,9 +19,6 @@
 
 #include <typeinfo>
 
-#include <boost/config.hpp>
-#include <boost/detail/workaround.hpp>
-
 //#include <boost/static_warning.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_polymorphic.hpp>
@@ -30,74 +27,46 @@
 
 #include <boost/serialization/extended_type_info.hpp>
 
+#include <boost/config/abi_prefix.hpp> // must be the last header
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable : 4251 4231 4660 4275)
+#endif
+
 namespace boost {
 namespace serialization {
 
 namespace detail {
 
-class extended_type_info_typeid_0 : public extended_type_info
+class BOOST_SERIALIZATION_DECL(BOOST_PP_EMPTY()) extended_type_info_typeid_0 : 
+    public extended_type_info
 {
 private:
-    static const char * type_info_key;
     virtual bool
-    less_than(const extended_type_info &rhs) const
-    {
-        return 0 != get_type().before(
-            static_cast<const extended_type_info_typeid_0 &>(rhs).get_type()
-        );
-    }
-    virtual bool
-    equal_to(const extended_type_info &rhs) const
-    {
-        return 0 != get_type().operator==(
-            static_cast<const extended_type_info_typeid_0 &>(rhs).get_type()
-        );
-    }
-    virtual bool
-    not_equal_to(const extended_type_info &rhs) const
-    {
-        return 0 != get_type().operator!=(
-            static_cast<const extended_type_info_typeid_0 &>(rhs).get_type()
-        );
-    }
+    less_than(const extended_type_info &rhs) const;
 protected:
-    extended_type_info_typeid_0() :
-        extended_type_info(type_info_key)
-    {}
+    static const extended_type_info *
+    get_derived_extended_type_info(const std::type_info & ti);
+    extended_type_info_typeid_0();
+    ~extended_type_info_typeid_0();
 public:
-    virtual const std::type_info & get_type() const = 0;
+    virtual const std::type_info & get_eti() const = 0;
 };
-
-// this derivation is used for creating search arguments
-class extended_type_info_typeid_arg : public extended_type_info_typeid_0
-{
-private:
-    const std::type_info & ti;
-    virtual const std::type_info &get_type() const
-    {
-        return ti;
-    }
-public:
-    extended_type_info_typeid_arg(const std::type_info & ti_)
-        : ti(ti_)
-    { 
-        // note absense of self register and key as this is used only as
-        // search argument given a type_info reference and is not to 
-        // be added to the map.
-    }
-};
-
-} // namespace detail
 
 ///////////////////////////////////////////////////////////////////////////////
+// layer to fold T and const T into the same table entry.
 template<class T>
-class extended_type_info_typeid : public detail::extended_type_info_typeid_0
+class extended_type_info_typeid_1 : 
+    public detail::extended_type_info_typeid_0
 {
 private:
-    virtual const std::type_info & get_type() const {
+    virtual const std::type_info & get_eti() const {
         return typeid(T);
     }
-    extended_type_info_typeid() :
+protected:
+    // private constructor to inhibit any existence other than the 
+    // static one
+    extended_type_info_typeid_1() :
         detail::extended_type_info_typeid_0()
     {
         self_register();    // add type to type table
@@ -115,15 +84,26 @@ public:
 //      BOOST_STATIC_WARNING(
 //          static_cast<bool>(is_polymorphic::value)
 //      );
-        detail::extended_type_info_typeid_arg etia(typeid(t));
-        return extended_type_info::find(& etia);
+        return detail::extended_type_info_typeid_0::get_derived_extended_type_info(typeid(t));
     }
     static extended_type_info *
     get_instance(){
-        static extended_type_info_typeid<T> instance;
+        static extended_type_info_typeid_1<T> instance;
         return & instance;
     }
+    static void
+    export_register(const char * key){
+        get_instance()->key_register(key);
+    }
 };
+
+} // namespace detail
+
+///////////////////////////////////////////////////////////////////////////////
+template<class T>
+class extended_type_info_typeid : 
+    public detail::extended_type_info_typeid_1<const T>
+{};
 
 } // namespace serialization
 } // namespace boost
@@ -138,5 +118,10 @@ public:
     extended_type_info_typeid<const T>
 /**/
 #endif
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+#include <boost/config/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_SERIALIZATION_EXTENDED_TYPE_INFO_TYPEID_HPP

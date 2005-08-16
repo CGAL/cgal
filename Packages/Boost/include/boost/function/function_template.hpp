@@ -61,6 +61,14 @@
 #define BOOST_FUNCTION_GET_STATELESS_FUNCTION_OBJ_INVOKER \
   BOOST_JOIN(get_stateless_function_obj_invoker,BOOST_FUNCTION_NUM_ARGS)
 
+#ifndef BOOST_NO_VOID_RETURNS
+#  define BOOST_FUNCTION_VOID_RETURN_TYPE void
+#  define BOOST_FUNCTION_RETURN(X) X
+#else
+#  define BOOST_FUNCTION_VOID_RETURN_TYPE ::boost::detail::function::unusable
+#  define BOOST_FUNCTION_RETURN(X) X; return BOOST_FUNCTION_VOID_RETURN_TYPE ()
+#endif
+
 namespace boost {
   namespace detail {
     namespace function {
@@ -86,13 +94,13 @@ namespace boost {
         >
       struct BOOST_FUNCTION_VOID_FUNCTION_INVOKER
       {
-        static unusable invoke(any_pointer function_ptr BOOST_FUNCTION_COMMA
-                               BOOST_FUNCTION_PARMS)
+        static BOOST_FUNCTION_VOID_RETURN_TYPE
+        invoke(any_pointer function_ptr BOOST_FUNCTION_COMMA
+               BOOST_FUNCTION_PARMS)
 
         {
           FunctionPtr f = reinterpret_cast<FunctionPtr>(function_ptr.func_ptr);
-          f(BOOST_FUNCTION_ARGS);
-          return unusable();
+          BOOST_FUNCTION_RETURN(f(BOOST_FUNCTION_ARGS));
         }
       };
 
@@ -119,14 +127,13 @@ namespace boost {
       >
       struct BOOST_FUNCTION_VOID_FUNCTION_OBJ_INVOKER
       {
-        static unusable invoke(any_pointer function_obj_ptr
-                               BOOST_FUNCTION_COMMA
-                               BOOST_FUNCTION_PARMS)
+        static BOOST_FUNCTION_VOID_RETURN_TYPE
+        invoke(any_pointer function_obj_ptr BOOST_FUNCTION_COMMA
+               BOOST_FUNCTION_PARMS)
 
         {
           FunctionObj* f = (FunctionObj*)(function_obj_ptr.obj_ptr);
-          (*f)(BOOST_FUNCTION_ARGS);
-          return unusable();
+          BOOST_FUNCTION_RETURN((*f)(BOOST_FUNCTION_ARGS));
         }
       };
 
@@ -151,13 +158,12 @@ namespace boost {
       >
       struct BOOST_FUNCTION_STATELESS_VOID_FUNCTION_OBJ_INVOKER
       {
-        static unusable invoke(any_pointer BOOST_FUNCTION_COMMA
-                               BOOST_FUNCTION_PARMS)
+        static BOOST_FUNCTION_VOID_RETURN_TYPE
+        invoke(any_pointer BOOST_FUNCTION_COMMA BOOST_FUNCTION_PARMS)
 
         {
           FunctionObj f = FunctionObj();
-          f(BOOST_FUNCTION_ARGS);
-          return unusable();
+          BOOST_FUNCTION_RETURN(f(BOOST_FUNCTION_ARGS));
         }
       };
 
@@ -235,8 +241,12 @@ namespace boost {
   class BOOST_FUNCTION_FUNCTION : public function_base
   {
   public:
-    typedef typename detail::function::function_return_type<R>::type
-      internal_result_type;
+#ifndef BOOST_NO_VOID_RETURNS
+    typedef R         result_type;
+#else
+    typedef  typename detail::function::function_return_type<R>::type
+      result_type;
+#endif // BOOST_NO_VOID_RETURNS
 
   private:
     struct clear_type {};
@@ -248,7 +258,7 @@ namespace boost {
     template<typename Args>
     struct sig
     {
-      typedef internal_result_type type;
+      typedef result_type type;
     };
 
 #if BOOST_FUNCTION_NUM_ARGS == 1
@@ -261,11 +271,6 @@ namespace boost {
     BOOST_STATIC_CONSTANT(int, arity = BOOST_FUNCTION_NUM_ARGS);
     BOOST_FUNCTION_ARG_TYPES
 
-#ifndef BOOST_NO_VOID_RETURNS
-    typedef R         result_type;
-#else
-    typedef internal_result_type result_type;
-#endif // BOOST_NO_VOID_RETURNS
     typedef Allocator allocator_type;
     typedef BOOST_FUNCTION_FUNCTION self_type;
 
@@ -315,15 +320,7 @@ namespace boost {
       if (this->empty())
         boost::throw_exception(bad_function_call());
 
-      internal_result_type result = invoker(this->functor
-                                            BOOST_FUNCTION_COMMA
-                                            BOOST_FUNCTION_ARGS);
-
-#ifndef BOOST_NO_VOID_RETURNS
-      return static_cast<result_type>(result);
-#else
-      return result;
-#endif // BOOST_NO_VOID_RETURNS
+      return invoker(this->functor BOOST_FUNCTION_COMMA BOOST_FUNCTION_ARGS);
     }
 #else
     result_type operator()(BOOST_FUNCTION_PARMS) const;
@@ -470,7 +467,7 @@ namespace boost {
     template<typename FunctionObj>
     void assign_to(FunctionObj f, detail::function::function_obj_tag)
     {
-      if (!detail::function::has_empty_target(addressof(f))) {
+      if (!detail::function::has_empty_target(boost::addressof(f))) {
         typedef
           typename detail::function::BOOST_FUNCTION_GET_FUNCTION_OBJ_INVOKER<
                                        FunctionObj,
@@ -539,9 +536,9 @@ namespace boost {
       this->functor = detail::function::make_any_pointer(this);
     }
 
-    typedef internal_result_type (*invoker_type)(detail::function::any_pointer
-                                                 BOOST_FUNCTION_COMMA
-                                                 BOOST_FUNCTION_TEMPLATE_ARGS);
+    typedef result_type (*invoker_type)(detail::function::any_pointer
+                                        BOOST_FUNCTION_COMMA
+                                        BOOST_FUNCTION_TEMPLATE_ARGS);
 
     invoker_type invoker;
   };
@@ -573,19 +570,11 @@ namespace boost {
                            Allocator>
   ::operator()(BOOST_FUNCTION_PARMS) const
   {
-      if (this->empty())
-        boost::throw_exception(bad_function_call());
-
-      internal_result_type result = invoker(this->functor
-                                            BOOST_FUNCTION_COMMA
-                                            BOOST_FUNCTION_ARGS);
-
-#  ifndef BOOST_NO_VOID_RETURNS
-      return static_cast<result_type>(result);
-#  else
-      return result;
-#  endif // BOOST_NO_VOID_RETURNS
-    }
+    if (this->empty())
+      boost::throw_exception(bad_function_call());
+    
+    return invoker(this->functor BOOST_FUNCTION_COMMA BOOST_FUNCTION_ARGS);
+  }
 #endif
 
 // Poison comparisons between boost::function objects of the same type.
@@ -719,3 +708,5 @@ public:
 #undef BOOST_FUNCTION_ARGS
 #undef BOOST_FUNCTION_ARG_TYPE
 #undef BOOST_FUNCTION_ARG_TYPES
+#undef BOOST_FUNCTION_VOID_RETURN_TYPE
+#undef BOOST_FUNCTION_RETURN

@@ -18,13 +18,15 @@
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/ostream_iterator.hpp>
+#include <boost/detail/no_exceptions_support.hpp>
 
 namespace boost {
 namespace archive {
 
 // translate to base64 and copy in to buffer.
 template<class OStream>
-void basic_text_oprimitive<OStream>::save_binary(
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+basic_text_oprimitive<OStream>::save_binary(
     const void *address, 
     std::size_t count
 ){
@@ -60,7 +62,7 @@ void basic_text_oprimitive<OStream>::save_binary(
         ),
         oi
     );
-    unsigned int padding = 2 - count % 3;
+    std::size_t padding = 2 - count % 3;
     if(padding > 1)
         *oi = '=';
         if(padding > 2)
@@ -69,6 +71,7 @@ void basic_text_oprimitive<OStream>::save_binary(
 }
 
 template<class OStream>
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 basic_text_oprimitive<OStream>::basic_text_oprimitive(
     OStream & os_,
     bool no_codecvt
@@ -92,8 +95,13 @@ basic_text_oprimitive<OStream>::basic_text_oprimitive(
 }
 
 template<class OStream>
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 basic_text_oprimitive<OStream>::~basic_text_oprimitive(){
-    os.flush();
+        BOOST_TRY{
+                os.flush();
+        }
+        BOOST_CATCH(...){}
+        BOOST_CATCH_END
 }
 
 } //namespace boost 

@@ -33,7 +33,7 @@ struct rvalue_from_python_chain
 struct BOOST_PYTHON_DECL registration
 {
  public: // member functions
-    explicit registration(type_info);
+    explicit registration(type_info target, bool is_shared_ptr = false);
     
     // Convert the appropriately-typed data to Python
     PyObject* to_python(void const volatile*) const;
@@ -56,7 +56,11 @@ struct BOOST_PYTHON_DECL registration
 
     // The unique to_python converter for the associated C++ type.
     to_python_function_t m_to_python;
-    
+
+    // True iff this type is a shared_ptr.  Needed for special rvalue
+    // from_python handling.
+    const bool is_shared_ptr;
+
 # if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
  private:
     void operator=(registration); // This is not defined, and just keeps MWCW happy.
@@ -66,12 +70,13 @@ struct BOOST_PYTHON_DECL registration
 //
 // implementations
 //
-inline registration::registration(type_info target_type)
+inline registration::registration(type_info target_type, bool is_shared_ptr)
     : target_type(target_type)
       , lvalue_chain(0)
       , rvalue_chain(0)
       , m_class_object(0)
       , m_to_python(0)
+      , is_shared_ptr(is_shared_ptr)
 {}
 
 inline bool operator<(registration const& lhs, registration const& rhs)

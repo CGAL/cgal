@@ -1,6 +1,7 @@
 /*=============================================================================
     Copyright (c) 1999-2003 Jaakko Järvi
     Copyright (c) 2001-2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -39,7 +40,7 @@ namespace boost { namespace fusion
         template <typename Sequence, typename N>
         struct at : at_c<Sequence, N::value> {};
     }
-
+#if! BOOST_WORKAROUND(BOOST_MSVC,<=1200)
     template <int N, typename Sequence>
     inline typename meta::at_c<Sequence const, N>::type
     at(sequence_base<Sequence> const& seq FUSION_GET_MSVC_WORKAROUND)
@@ -59,6 +60,7 @@ namespace boost { namespace fusion
             template apply<typename at_meta::seq, N>::call(
                 at_meta::seq_converter::convert(seq.cast()));
     }
+#endif
 }}
 
 #endif

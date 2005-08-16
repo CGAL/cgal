@@ -29,13 +29,13 @@ namespace std{
 #endif
 
 #include <boost/io/ios_state.hpp>
-#include <boost/utf8_codecvt_facet.hpp>
-#include <boost/throw_exception.hpp>
+#include <boost/detail/no_exceptions_support.hpp>
 #include <boost/pfto.hpp>
 
 #include <boost/serialization/string.hpp>
 #include <boost/archive/add_facet.hpp>
 #include <boost/archive/archive_exception.hpp>
+#include <boost/archive/detail/utf8_codecvt_facet.hpp>
 
 #include <boost/archive/iterators/mb_from_wchar.hpp>
 
@@ -68,7 +68,8 @@ void copy_to_ptr(char * s, const std::wstring & ws){
 } // anonymous
 
 template<class Archive>
-void xml_wiarchive_impl<Archive>::load(std::string & s){
+BOOST_WARCHIVE_DECL(void)
+xml_wiarchive_impl<Archive>::load(std::string & s){
     std::wstring ws;
     bool result = gimpl->parse_string(is, ws);
     if(! result)
@@ -93,7 +94,8 @@ void xml_wiarchive_impl<Archive>::load(std::string & s){
 
 #ifndef BOOST_NO_STD_WSTRING
 template<class Archive>
-void xml_wiarchive_impl<Archive>::load(std::wstring & ws){
+BOOST_WARCHIVE_DECL(void)
+xml_wiarchive_impl<Archive>::load(std::wstring & ws){
     bool result = gimpl->parse_string(is, ws);
     if(! result)
         boost::throw_exception(
@@ -103,7 +105,8 @@ void xml_wiarchive_impl<Archive>::load(std::wstring & ws){
 #endif
 
 template<class Archive>
-void xml_wiarchive_impl<Archive>::load(char * s){
+BOOST_WARCHIVE_DECL(void)
+xml_wiarchive_impl<Archive>::load(char * s){
     std::wstring ws;
     bool result = gimpl->parse_string(is, ws);
     if(! result)
@@ -115,7 +118,8 @@ void xml_wiarchive_impl<Archive>::load(char * s){
 
 #ifndef BOOST_NO_INTRINSIC_WCHAR_T
 template<class Archive>
-void xml_wiarchive_impl<Archive>::load(wchar_t * ws){
+BOOST_WARCHIVE_DECL(void)
+xml_wiarchive_impl<Archive>::load(wchar_t * ws){
     std::wstring twstring;
     bool result = gimpl->parse_string(is, twstring);
     if(! result)
@@ -128,7 +132,8 @@ void xml_wiarchive_impl<Archive>::load(wchar_t * ws){
 #endif
 
 template<class Archive>
-void xml_wiarchive_impl<Archive>::load_override(class_name_type & t, int){
+BOOST_WARCHIVE_DECL(void)
+xml_wiarchive_impl<Archive>::load_override(class_name_type & t, int){
     const std::wstring & ws = gimpl->rv.class_name;
     if(ws.size() > BOOST_SERIALIZATION_MAX_KEY_SIZE - 1)
         boost::throw_exception(archive_exception::invalid_class_name);
@@ -136,11 +141,13 @@ void xml_wiarchive_impl<Archive>::load_override(class_name_type & t, int){
 }
 
 template<class Archive>
-void xml_wiarchive_impl<Archive>::init(){
+BOOST_WARCHIVE_DECL(void)
+xml_wiarchive_impl<Archive>::init(){
     gimpl->init(is);
 }
 
 template<class Archive>
+BOOST_WARCHIVE_DECL(BOOST_PP_EMPTY())
 xml_wiarchive_impl<Archive>::xml_wiarchive_impl(
     std::wistream &is_,
     unsigned int flags
@@ -149,13 +156,14 @@ xml_wiarchive_impl<Archive>::xml_wiarchive_impl(
         is_, 
         true // don't change the codecvt - use the one below
     ),
+    basic_xml_iarchive<Archive>(flags),
     gimpl(new xml_wgrammar())
 {
     if(0 == (flags & no_codecvt)){
         archive_locale.reset(
             add_facet(
                 std::locale::classic(),
-                new utf8_codecvt_facet<std::wistream::char_type, char>
+                new detail::utf8_codecvt_facet
             )
         );
         is.imbue(* archive_locale);
@@ -165,9 +173,15 @@ xml_wiarchive_impl<Archive>::xml_wiarchive_impl(
 }
 
 template<class Archive>
+BOOST_WARCHIVE_DECL(BOOST_PP_EMPTY())
 xml_wiarchive_impl<Archive>::~xml_wiarchive_impl(){
-    if(this->header)
-        gimpl->windup(is);
+    if(0 == (this->get_flags() & no_header)){
+                BOOST_TRY{
+                        gimpl->windup(is);
+                }
+                BOOST_CATCH(...){}
+            BOOST_CATCH_END
+        }
     delete gimpl;
 }
 

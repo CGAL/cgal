@@ -44,6 +44,9 @@ public:
   typedef T base_type;
   typedef Policies traits_type;
 
+  T const &lower() const;
+  T const &upper() const;
+
   interval();
   interval(T const &v);
   template<class T1> interval(T1 const &v);
@@ -64,9 +67,6 @@ public:
   static interval empty();
   static interval whole();
   static interval hull(const T& x, const T& y);
-
-  const T& lower() const;
-  const T& upper() const;
 
   interval& operator+= (const T& r);
   interval& operator+= (const interval& r);
@@ -287,8 +287,8 @@ interval<T, Policies> interval<T, Policies>::hull(const T& x, const T& y)
     else       return interval(y, y, true);
   else
     if (bad_y) return interval(x, x, true);
-  if (x < y) return interval(x, y, true);
-  else       return interval(y, x, true);
+  if (x <= y) return interval(x, y, true);
+  else        return interval(y, x, true);
 }
 
 template<class T, class Policies> inline

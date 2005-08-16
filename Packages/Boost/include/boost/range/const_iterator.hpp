@@ -96,6 +96,30 @@ namespace boost
         typedef const wchar_t* type;
     };
 
+    template<>
+    struct range_const_iterator< char* const >
+    {
+        typedef const char* type;
+    };
+
+    template<>
+    struct range_const_iterator< wchar_t* const >
+    {
+        typedef const wchar_t* type;
+    };
+
+    template<>
+    struct range_const_iterator< const char* const >
+    {
+        typedef const char* type;
+    };
+
+    template<>
+    struct range_const_iterator< const wchar_t* const >
+    {
+        typedef const wchar_t* type;
+    };
+
 } // namespace boost
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION

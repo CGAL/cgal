@@ -1,7 +1,7 @@
 #ifndef GREGORIAN_PARSERS_HPP___
 #define GREGORIAN_PARSERS_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -18,6 +18,12 @@
 
 namespace boost {
 namespace gregorian {
+
+  //! Return special_value from string argument
+  /*! Return special_value from string argument. If argument is 
+   * not one of the special value names (defined in src/gregorian/names.hpp), 
+   * return 'not_special' */
+  special_values special_value_from_string(const std::string& s);
 
   //! Deprecated: Use from_simple_string
   inline date from_string(std::string s) {

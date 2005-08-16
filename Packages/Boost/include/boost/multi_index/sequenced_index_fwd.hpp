@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -9,6 +9,10 @@
 #ifndef BOOST_MULTI_INDEX_SEQUENCED_INDEX_FWD_HPP
 #define BOOST_MULTI_INDEX_SEQUENCED_INDEX_FWD_HPP
 
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
+
 #include <boost/multi_index/tag.hpp>
 
 namespace boost{
@@ -17,61 +21,61 @@ namespace multi_index{
 
 namespace detail{
 
-template<typename Super,typename TagList>
+template<typename SuperMeta,typename TagList>
 class sequenced_index;
 
 template<
-  typename Super1,typename TagList1,
-  typename Super2,typename TagList2
+  typename SuperMeta1,typename TagList1,
+  typename SuperMeta2,typename TagList2
 >
 bool operator==(
-  const sequenced_index<Super1,TagList1>& x,
-  const sequenced_index<Super2,TagList2>& y);
+  const sequenced_index<SuperMeta1,TagList1>& x,
+  const sequenced_index<SuperMeta2,TagList2>& y);
 
 template<
-  typename Super1,typename TagList1,
-  typename Super2,typename TagList2
+  typename SuperMeta1,typename TagList1,
+  typename SuperMeta2,typename TagList2
 >
 bool operator<(
-  const sequenced_index<Super1,TagList1>& x,
-  const sequenced_index<Super2,TagList2>& y);
+  const sequenced_index<SuperMeta1,TagList1>& x,
+  const sequenced_index<SuperMeta2,TagList2>& y);
 
 template<
-  typename Super1,typename TagList1,
-  typename Super2,typename TagList2
+  typename SuperMeta1,typename TagList1,
+  typename SuperMeta2,typename TagList2
 >
 bool operator!=(
-  const sequenced_index<Super1,TagList1>& x,
-  const sequenced_index<Super2,TagList2>& y);
+  const sequenced_index<SuperMeta1,TagList1>& x,
+  const sequenced_index<SuperMeta2,TagList2>& y);
 
 template<
-  typename Super1,typename TagList1,
-  typename Super2,typename TagList2
+  typename SuperMeta1,typename TagList1,
+  typename SuperMeta2,typename TagList2
 >
 bool operator>(
-  const sequenced_index<Super1,TagList1>& x,
-  const sequenced_index<Super2,TagList2>& y);
+  const sequenced_index<SuperMeta1,TagList1>& x,
+  const sequenced_index<SuperMeta2,TagList2>& y);
 
 template<
-  typename Super1,typename TagList1,
-  typename Super2,typename TagList2
+  typename SuperMeta1,typename TagList1,
+  typename SuperMeta2,typename TagList2
 >
 bool operator>=(
-  const sequenced_index<Super1,TagList1>& x,
-  const sequenced_index<Super2,TagList2>& y);
+  const sequenced_index<SuperMeta1,TagList1>& x,
+  const sequenced_index<SuperMeta2,TagList2>& y);
 
 template<
-  typename Super1,typename TagList1,
-  typename Super2,typename TagList2
+  typename SuperMeta1,typename TagList1,
+  typename SuperMeta2,typename TagList2
 >
 bool operator<=(
-  const sequenced_index<Super1,TagList1>& x,
-  const sequenced_index<Super2,TagList2>& y);
+  const sequenced_index<SuperMeta1,TagList1>& x,
+  const sequenced_index<SuperMeta2,TagList2>& y);
 
-template<typename Super,typename TagList>
+template<typename SuperMeta,typename TagList>
 void swap(
-  sequenced_index<Super,TagList>& x,
-  sequenced_index<Super,TagList>& y);
+  sequenced_index<SuperMeta,TagList>& x,
+  sequenced_index<SuperMeta,TagList>& y);
 
 } /* namespace multi_index::detail */
 

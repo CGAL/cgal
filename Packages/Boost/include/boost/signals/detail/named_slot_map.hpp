@@ -13,11 +13,11 @@
 #include <boost/signals/detail/config.hpp>
 #include <boost/signals/detail/signals_common.hpp>
 #include <boost/signals/connection.hpp>
-#include <boost/smart_ptr.hpp>
 #include <boost/any.hpp>
 #include <boost/utility.hpp>
 #include <boost/function/function2.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <map>
 #include <memory>
 #include <utility>
 
@@ -71,34 +71,51 @@ class BOOST_SIGNALS_DECL named_slot_map_iterator :
                          connection_slot_pair,
                          forward_traversal_tag>
 {
-  class impl;
-
+  typedef std::list<connection_slot_pair> group_list;
+  typedef group_list::iterator slot_pair_iterator;
+  typedef std::map<any, group_list, compare_type> slot_container_type;
+  typedef slot_container_type::iterator group_iterator;
+  typedef slot_container_type::const_iterator const_group_iterator;
+  
   typedef iterator_facade<named_slot_map_iterator,
                           connection_slot_pair,
                           forward_traversal_tag> inherited;
 public:
   named_slot_map_iterator();
-  named_slot_map_iterator(const named_slot_map_iterator& other);
-  ~named_slot_map_iterator();
-  named_slot_map_iterator& operator=(const named_slot_map_iterator& other);
+  named_slot_map_iterator(const named_slot_map_iterator&);
+  named_slot_map_iterator& operator=(const named_slot_map_iterator&);
 
   connection_slot_pair& dereference() const;
   void increment();
   bool equal(const named_slot_map_iterator& other) const;
 
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 0x1701)
+#if BOOST_WORKAROUND(_MSC_VER, <= 0x1701)
   void decrement();
   void advance(difference_type);
 #endif
 
 private:
-  named_slot_map_iterator(std::auto_ptr<impl>);
+  named_slot_map_iterator(group_iterator group, group_iterator last) :
+    group(group), last_group(last), slot_assigned(false)
+  { init_next_group(); }
+  named_slot_map_iterator(group_iterator group, group_iterator last,
+                          slot_pair_iterator slot) :
+    group(group), last_group(last), slot_(slot), slot_assigned(true)
+  { }
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-  shared_ptr<impl> impl_;
-#else
-  scoped_ptr<impl> impl_;
-#endif
+  void init_next_group()
+  {
+    while (group != last_group && group->second.empty()) ++group;
+    if (group != last_group) {
+      slot_ = group->second.begin();
+      slot_assigned = true;
+    }
+  }
+
+  group_iterator group;
+  group_iterator last_group;
+  slot_pair_iterator slot_;
+  bool slot_assigned;
 
   friend class named_slot_map;
 };
@@ -109,7 +126,6 @@ public:
   typedef named_slot_map_iterator iterator;
 
   named_slot_map(const compare_type& compare);
-  ~named_slot_map();
 
   void clear();
   iterator begin();
@@ -121,13 +137,17 @@ public:
   void remove_disconnected_slots();
 
 private:
-  class impl;
+  typedef std::list<connection_slot_pair> group_list;
+  typedef std::map<any, group_list, compare_type> slot_container_type;
+  typedef slot_container_type::iterator group_iterator;
+  typedef slot_container_type::const_iterator const_group_iterator;
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-  shared_ptr<impl> impl_;
-#else
-  scoped_ptr<impl> impl_;
-#endif
+  bool empty(const_group_iterator group) const
+  {
+    return (group->second.empty() && group != groups.begin() && group != back);
+  }
+  slot_container_type groups;
+  group_iterator back;
 };
 
 } } }

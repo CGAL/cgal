@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -24,6 +24,7 @@
 #ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/regex/config.hpp>
 #endif
+#include <boost/assert.hpp>
 
 #ifndef BOOST_REGEX_NO_FILEITER
 
@@ -239,8 +240,8 @@ public:
    mapfile_iterator& operator = (const mapfile_iterator& i);
    char operator* ()const
    {
-      assert(node >= file->_first);
-      assert(node < file->_last);
+      BOOST_ASSERT(node >= file->_first);
+      BOOST_ASSERT(node < file->_last);
       return file ? *(*node + sizeof(int) + offset) : char(0);
    }
    char operator[] (long off)const

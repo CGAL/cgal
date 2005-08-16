@@ -53,7 +53,7 @@ BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC1_2(typename T,typename U,is_member_pointer,
 namespace detail {
 
 template <typename R, typename T>
-::boost::type_traits::yes_type BOOST_TT_DECL is_member_pointer_tester(R T::*);
+::boost::type_traits::yes_type BOOST_TT_DECL is_member_pointer_tester(R T::*const volatile*);
 ::boost::type_traits::no_type BOOST_TT_DECL is_member_pointer_tester(...);
 
 template <bool>
@@ -67,7 +67,7 @@ struct is_member_pointer_select<false>
 {
     template <typename T> struct result_
     {
-        static T& make_t();
+        static T* make_t();
         BOOST_STATIC_CONSTANT(
             bool, value =
             (::boost::type_traits::ice_or<

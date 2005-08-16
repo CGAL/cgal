@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -24,6 +24,8 @@
 #ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/regex/config.hpp>
 #endif
+
+#include <algorithm>
 
 namespace boost{
    namespace re_detail{
@@ -93,43 +95,33 @@ enum{
 //
 // class raw_storage
 // basically this is a simplified vector<unsigned char>
-// this is used by reg_expression for expression storage
+// this is used by basic_regex for expression storage
 //
 
-template <class Allocator>
-class raw_storage
+class BOOST_REGEX_DECL raw_storage
 {
 public:
-   typedef Allocator allocator_type;
-   typedef typename boost::detail::rebind_allocator<unsigned char, allocator_type>::type alloc_inst_type;
-   typedef typename alloc_inst_type::size_type                                size_type;
-   typedef typename alloc_inst_type::pointer                                  pointer;
+   typedef std::size_t           size_type;
+   typedef unsigned char*        pointer;
 private:
-   //
-   // empty member optimisation:
-   struct alloc_data : public alloc_inst_type
-   {
-      typename alloc_inst_type::pointer last;
-      alloc_data(const Allocator& a) : alloc_inst_type(a){}
-   } alloc_inst;
-   pointer start, end;
+   pointer last, start, end;
 public:
 
-   raw_storage(const Allocator& a = Allocator());
-   raw_storage(size_type n, const Allocator& a = Allocator());
+   raw_storage();
+   raw_storage(size_type n);
 
    ~raw_storage()
    {
-      alloc_inst.deallocate(start, (alloc_inst.last - start));
+      ::operator delete(start);
    }
 
    void BOOST_REGEX_CALL resize(size_type n);
    
    void* BOOST_REGEX_CALL extend(size_type n)
    {
-      if(size_type(alloc_inst.last - end) < n)
+      if(size_type(last - end) < n)
          resize(n + (end - start));
-      register void* result = end;
+      register pointer result = end;
       end += n;
       return result;
    }
@@ -143,7 +135,7 @@ public:
 
    size_type BOOST_REGEX_CALL capacity()
    {
-      return alloc_inst.last - start;
+      return last - start;
    }
 
    void* BOOST_REGEX_CALL data()const
@@ -153,7 +145,7 @@ public:
 
    size_type BOOST_REGEX_CALL index(void* ptr)
    {
-      return reinterpret_cast<unsigned char*>(ptr) - reinterpret_cast<unsigned char*>(data());
+      return static_cast<pointer>(ptr) - static_cast<pointer>(data());
    }
 
    void BOOST_REGEX_CALL clear()
@@ -164,78 +156,28 @@ public:
    void BOOST_REGEX_CALL align()
    {
       // move end up to a boundary:
-      end = reinterpret_cast<unsigned char*>(start) + (((reinterpret_cast<unsigned char*>(end) - reinterpret_cast<unsigned char*>(start)) + padding_mask) & ~padding_mask);
+      end = start + (((end - start) + padding_mask) & ~padding_mask);
    }
-
-   Allocator BOOST_REGEX_CALL allocator()const;
    void swap(raw_storage& that)
    {
       std::swap(start, that.start);
       std::swap(end, that.end);
-      std::swap(alloc_inst.last, that.alloc_inst.last);
-      std::swap(static_cast<alloc_inst_type&>(alloc_inst), static_cast<alloc_inst_type&>(that.alloc_inst));
+      std::swap(last, that.last);
   }
 };
 
-template <class Allocator>
-raw_storage<Allocator>::raw_storage(const Allocator& a)
-  : alloc_inst(a)
+inline raw_storage::raw_storage()
 {
-  start = end = alloc_inst.allocate(1024);
-  BOOST_REGEX_NOEH_ASSERT(start)
-  alloc_inst.last = start + 1024;
+   last = start = end = 0;
 }
 
-template <class Allocator>
-raw_storage<Allocator>::raw_storage(size_type n, const Allocator& a)
-  : alloc_inst(a)
+inline raw_storage::raw_storage(size_type n)
 {
-  start = end = alloc_inst.allocate(n);
-  BOOST_REGEX_NOEH_ASSERT(start)
-  alloc_inst.last = start + n;
+   start = end = static_cast<pointer>(::operator new(n));
+   BOOST_REGEX_NOEH_ASSERT(start)
+   last = start + n;
 }
 
-template <class Allocator>
-Allocator BOOST_REGEX_CALL raw_storage<Allocator>::allocator()const
-{
-  return alloc_inst;
-}
-
-template <class Allocator>
-void BOOST_REGEX_CALL raw_storage<Allocator>::resize(size_type n)
-{
-   register size_type newsize = (alloc_inst.last - start) * 2;
-   register size_type datasize = end - start;
-   if(newsize < n)
-      newsize = n;
-   // extend newsize to WORD/DWORD boundary:
-   newsize = (newsize + padding_mask) & ~(padding_mask);
-
-   // allocate and copy data:
-   register unsigned char* ptr = alloc_inst.allocate(newsize);
-   BOOST_REGEX_NOEH_ASSERT(ptr)
-   std::memcpy(ptr, start, datasize);
-
-   // get rid of old buffer:
-   alloc_inst.deallocate(start, (alloc_inst.last - start));
-
-   // and set up pointers:
-   start = ptr;
-   end = ptr + datasize;
-   alloc_inst.last = ptr + newsize;
-}
-
-template <class Allocator>
-void* BOOST_REGEX_CALL raw_storage<Allocator>::insert(size_type pos, size_type n)
-{
-   jm_assert(pos <= size_type(end - start));
-   if(size_type(alloc_inst.last - end) < n)
-      resize(n + (end - start));
-   register void* result = start + pos;
-   std::memmove(start + pos + n, start + pos, (end - start) - pos);
-   end += n;
-   return result;
-}
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX

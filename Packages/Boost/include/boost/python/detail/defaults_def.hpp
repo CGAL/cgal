@@ -168,7 +168,7 @@ namespace detail
           char const* doc)
       {
           //  define the NTH stub function of stubs
-          define_stub_function<N>::define(name, stubs, kw, policies, name_space, doc);
+          define_stub_function<N>::define(name, stubs, kw, policies, name_space, 0);
 
           if (kw.second > kw.first)
               --kw.second;

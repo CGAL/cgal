@@ -17,7 +17,11 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <cassert>
+#include <cstdlib> // NULL
+#include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/detail/basic_serializer.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
 
@@ -29,30 +33,28 @@ namespace serialization {
 namespace archive {
 namespace detail {
 
-class basic_iarchive;
-class basic_pointer_iserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_iarchive;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_iserializer;
 
-class basic_iserializer : public basic_serializer
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_iserializer : 
+    public basic_serializer
 {
 private:
-    basic_pointer_iserializer *bpis_ptr;
+    basic_pointer_iserializer *bpis;
 protected:
     explicit basic_iserializer(
-            const boost::serialization::extended_type_info & type_
-    ) :
-        basic_serializer(type_), 
-        bpis_ptr(NULL)
-    {}
-    virtual ~basic_iserializer(){}
+        const boost::serialization::extended_type_info & type_
+    );
+    virtual ~basic_iserializer();
 public:
     bool serialized_as_pointer() const {
-        return bpis_ptr != NULL;
+        return bpis != NULL;
     }
-    void set_bpis(basic_pointer_iserializer *bpis_ptr_){
-        bpis_ptr = bpis_ptr_;
+    void set_bpis(basic_pointer_iserializer *bpis_){
+        bpis = bpis_;
     }
     const basic_pointer_iserializer * get_bpis_ptr() const {
-        return bpis_ptr;
+        return bpis;
     }
 #if 0
     virtual void load_object_data(
@@ -71,7 +73,7 @@ public:
     // returns true if class_info should be saved
     virtual bool class_info() const = 0 ;
     // returns true if objects should be tracked
-    virtual bool tracking() const = 0 ;
+    virtual bool tracking(const unsigned int) const = 0 ;
     // returns class version
     virtual unsigned int version() const = 0 ;
     // returns true if this class is polymorphic
@@ -82,5 +84,7 @@ public:
 } // namespae detail
 } // namespace archive
 } // namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_DETAIL_BASIC_ISERIALIZER_HPP

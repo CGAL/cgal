@@ -58,7 +58,7 @@ namespace boost
             template< typename T, std::size_t sz >
             static bool fun( T BOOST_ARRAY_REF[sz] )
             {
-                if( array == 0 )
+                if( boost_range_array == 0 )
                     return true;
                 return false;
             }

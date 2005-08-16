@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -18,6 +19,26 @@ namespace boost { namespace fusion
     template <typename Iterator>
     struct type_sequence_iterator;
 
+    namespace type_sequence_detail {
+        template <typename Iterator>
+        struct next_traits_impl
+        {
+            typedef type_sequence_iterator<
+                typename mpl::next<typename Iterator::iterator_type>::type
+            > type;
+
+            static type
+            call(Iterator);
+        };
+
+        template <typename Iterator>
+        typename next_traits_impl<Iterator>::type
+        next_traits_impl<Iterator>::call(Iterator)
+        {
+            FUSION_RETURN_DEFAULT_CONSTRUCTED;
+        }
+    }
+
     namespace meta
     {
         template <typename Tag>
@@ -27,18 +48,8 @@ namespace boost { namespace fusion
         struct next_impl<type_sequence_iterator_tag>
         {
             template <typename Iterator>
-            struct apply
-            {
-                typedef type_sequence_iterator<
-                    typename mpl::next<typename Iterator::iterator_type>::type
-                > type;
-
-                static type
-                call(Iterator)
-                {
-                    FUSION_RETURN_DEFAULT_CONSTRUCTED;
-                };
-            };
+            struct apply : type_sequence_detail::next_traits_impl<Iterator>
+            {};
         };
     }
 }}

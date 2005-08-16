@@ -20,87 +20,84 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/assert.hpp>
+#include <boost/serialization/collections_load_imp.hpp>
 
 // function specializations must be defined in the appropriate
 // namespace - boost::serialization
 namespace boost { 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
 namespace serialization {
+
+template<class Archive, class T>
+void save(
+    Archive & ar, 
+    const boost::optional<T> & t, 
+    const unsigned int /*version*/
+){
+    const bool tflag = t;
+    ar << boost::serialization::make_nvp("initialized", tflag);
+    if (tflag)
+        ar << boost::serialization::make_nvp("value", *t);
+}
+
+template<class Archive, class T>
+void load(
+    Archive & ar, 
+    boost::optional<T> & t, 
+    const unsigned int /*version*/
+){
+    bool tflag;
+    ar >> boost::serialization::make_nvp("initialized", tflag);
+    if (tflag){
+        stack_construct<Archive, T> aux(ar);
+        ar >> boost::serialization::make_nvp("value", aux.reference());
+        t.reset(aux.reference());
+    }
+    else {
+        t.reset();
+    }
+}
+
+template<class Archive, class T>
+void serialize(
+    Archive & ar, 
+    boost::optional<T> & t, 
+    const unsigned int version
+){
+    boost::serialization::split_free(ar, t, version);
+}
+
+// the following would be slightly more efficient.  But it
+// would mean that archives created with programs that support
+// TPS wouldn't be readable by programs that don't support TPS.
+// Hence we decline to support this otherwise convenient optimization.
+//#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#if 0
+
+template <class T>
+struct implementation_level<optional<T> >
+{
+    typedef mpl::integral_c_tag tag;
+    typedef mpl::int_<boost::serialization::object_serializable> type;
+    BOOST_STATIC_CONSTANT(
+        int , 
+        value = boost::serialization::implementation_level::type::value
+    );
+};
+
+template<class T>
+struct tracking_level<optional<T> >
+{
+    typedef mpl::integral_c_tag tag;
+    typedef mpl::int_<boost::serialization::track_never> type;
+    BOOST_STATIC_CONSTANT(
+        int , 
+        value = boost::serialization::tracking_level::type::value
+    );
+};
+
 #endif
-    
-    template<class Archive, class T>
-    void save(
-        Archive & ar, 
-        const boost::optional<T> & t, 
-        const unsigned int /*version*/
-    ){
-        bool tflag = t;
-        ar << boost::serialization::make_nvp("initialized", tflag);
-        if (tflag)
-           ar << boost::serialization::make_nvp("value", *t);
-    }
 
-    template<class Archive, class T>
-    void load(
-        Archive & ar, 
-        boost::optional<T> & t, 
-        const unsigned int /*version*/
-    ){
-        bool tflag;
-        ar >> boost::serialization::make_nvp("initialized", tflag);
-        if (tflag){
-            T aux;
-            ar >> boost::serialization::make_nvp("value", aux);
-            t.reset(aux);
-        }
-        else {
-            t.reset();
-        }
-    }
-
-    template<class Archive, class T>
-    void serialize(
-        Archive & ar, 
-        boost::optional<T> & t, 
-        const unsigned int version
-    ){
-        boost::serialization::split_free(ar, t, version);
-    }
-
-    // the following would be slightly more efficient.  But it
-    // would mean that archives created with programs that support
-    // TPS wouldn't be readable by programs that don't support TPS.
-    // Hence we decline to support this otherwise convenient optimization.
-    //#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-    #if 0
-
-    template <class T>
-    struct implementation_level<optional<T> >
-    {
-        typedef mpl::integral_c_tag tag;
-        typedef mpl::int_<boost::serialization::object_serializable> type;
-        BOOST_STATIC_CONSTANT(
-            int , 
-            value = boost::serialization::implementation_level::type::value
-        );
-    };
-
-    template<class T>
-    struct tracking_level<optional<T> >
-    {
-        typedef mpl::integral_c_tag tag;
-        typedef mpl::int_<boost::serialization::track_never> type;
-        BOOST_STATIC_CONSTANT(
-            int , 
-            value = boost::serialization::tracking_level::type::value
-        );
-    };
-
-    #endif
-
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
 } // serialization
-#endif
 } // namespace boost
-#endif
+
+#endif // BOOST_SERIALIZATION_OPTIONAL_HPP_

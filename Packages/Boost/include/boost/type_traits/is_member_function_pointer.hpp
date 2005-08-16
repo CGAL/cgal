@@ -14,15 +14,21 @@
 #include "boost/type_traits/config.hpp"
 #include "boost/detail/workaround.hpp"
 
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) \
+   && !BOOST_WORKAROUND(__BORLANDC__, < 0x600) && !defined(BOOST_TT_TEST_MS_FUNC_SIGS)
+   //
+   // Note: we use the "workaround" version for MSVC because it works for 
+   // __stdcall etc function types, where as the partial specialisation
+   // version does not do so.
+   //
 #   include "boost/type_traits/detail/is_mem_fun_pointer_impl.hpp"
 #else
 #   include "boost/type_traits/is_reference.hpp"
 #   include "boost/type_traits/is_array.hpp"
-#   include "boost/type_traits/detail/is_mem_fun_pointer_tester.hpp"
 #   include "boost/type_traits/detail/yes_no_type.hpp"
 #   include "boost/type_traits/detail/false_result.hpp"
 #   include "boost/type_traits/detail/ice_or.hpp"
+#   include "boost/type_traits/detail/is_mem_fun_pointer_tester.hpp"
 #endif
 
 // should be the last #include
@@ -30,7 +36,7 @@
 
 namespace boost {
 
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !BOOST_WORKAROUND(__BORLANDC__, < 0x600) && !defined(BOOST_TT_TEST_MS_FUNC_SIGS)
 
 BOOST_TT_AUX_BOOL_TRAIT_DEF1(
       is_member_function_pointer
@@ -55,7 +61,7 @@ struct is_mem_fun_pointer_select<false>
 {
     template <typename T> struct result_
     {
-        static T& make_t;
+        static T* make_t;
         typedef result_<T> self_type;
 
         BOOST_STATIC_CONSTANT(
@@ -76,12 +82,17 @@ struct is_member_function_pointer_impl
 {
 };
 
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+template <typename T>
+struct is_member_function_pointer_impl<T&> : public false_type{};
+#endif
+
 #else // Borland C++
 
 template <typename T>
 struct is_member_function_pointer_impl
 {
-   static T& m_t;
+   static T* m_t;
    BOOST_STATIC_CONSTANT(
               bool, value =
                (1 == sizeof(type_traits::is_mem_fun_pointer_tester(m_t))) );

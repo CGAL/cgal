@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -33,32 +33,59 @@ class BOOST_REGEX_DECL regbase
 public:
    enum flag_type_
    {
-      escape_in_lists = 1,                     // '\' special inside [...]
-      char_classes = escape_in_lists << 1,     // [[:CLASS:]] allowed
-      intervals = char_classes << 1,           // {x,y} allowed
-      limited_ops = intervals << 1,            // all of + ? and | are normal characters
-      newline_alt = limited_ops << 1,          // \n is the same as |
-      bk_plus_qm = newline_alt << 1,           // uses \+ and \?
-      bk_braces = bk_plus_qm << 1,             // uses \{ and \}
-      bk_parens = bk_braces << 1,              // uses \( and \)
-      bk_refs = bk_parens << 1,                // \d allowed
-      bk_vbar = bk_refs << 1,                  // uses \|
+      //
+      // Divide the flags up into logical groups:
+      // bits 0-7 indicate main synatx type.
+      // bits 8-15 indicate syntax subtype.
+      // bits 16-31 indicate options that are common to all
+      // regex syntaxes.
+      // In all cases the default is 0.
+      //
+      // Main synatx group:
+      //
+      perl_syntax_group = 0,                      // default
+      basic_syntax_group = 1,                     // POSIX basic
+      literal = 2,                                // all characters are literals
+      main_option_type = literal | basic_syntax_group | perl_syntax_group, // everything!
+      //
+      // options specific to perl group:
+      //
+      no_bk_refs = 1 << 8,                        // \d not allowed
+      no_perl_ex = 1 << 9,                        // disable perl extensions
+      no_mod_m = 1 << 10,                         // disable Perl m modifier
+      mod_x = 1 << 11,                            // Perl x modifier
+      mod_s = 1 << 12,                            // force s modifier on (overrides match_not_dot_newline)
+      no_mod_s = 1 << 13,                         // force s modifier off (overrides match_not_dot_newline)
 
-      use_except = bk_vbar << 1,               // exception on error
-      failbit = use_except << 1,               // error flag
-      literal = failbit << 1,                  // all characters are literals
-      icase = literal << 1,                    // characters are matched regardless of case
-      nocollate = 0,                           // don't use locale specific collation (deprecated)
-      collate = icase << 1,                    // use locale specific collation
-      perlex = collate << 1,                 // perl extensions
-      nosubs = perlex << 1,                    // don't mark sub-expressions
-      optimize = 0,                            // not really supported
+      //
+      // options specific to basic group:
+      //
+      no_char_classes = 1 << 8,                   // [[:CLASS:]] not allowed
+      no_intervals = 1 << 9,                      // {x,y} not allowed
+      bk_plus_qm = 1 << 10,                       // uses \+ and \?
+      bk_vbar = 1 << 11,                          // use \| for alternatives
+      emacs_ex = 1 << 12,                         // enables emacs extensions
 
-      basic = char_classes | intervals | limited_ops | bk_braces | bk_parens | bk_refs | collate,
-      extended = char_classes | intervals | bk_refs | collate,
-      normal = perlex | escape_in_lists | char_classes | intervals | bk_refs | nocollate,
-      emacs = bk_braces | bk_parens | bk_refs | bk_vbar,
-      awk = extended | escape_in_lists,
+      //
+      // options common to all groups:
+      //
+      no_escape_in_lists = 1 << 16,                     // '\' not special inside [...]
+      newline_alt = 1 << 17,                            // \n is the same as |
+      no_except = 1 << 18,                              // no exception on error
+      failbit = 1 << 19,                                // error flag
+      icase = 1 << 20,                                  // characters are matched regardless of case
+      nocollate = 0,                                    // don't use locale specific collation (deprecated)
+      collate = 1 << 21,                                // use locale specific collation
+      nosubs = 1 << 22,                                 // don't mark sub-expressions
+      optimize = 0,                                     // not really supported
+      
+
+
+      basic = basic_syntax_group | collate | no_escape_in_lists,
+      extended = no_bk_refs | collate | no_perl_ex | no_escape_in_lists,
+      normal = 0,
+      emacs = basic_syntax_group | collate | emacs_ex | bk_vbar,
+      awk = no_bk_refs | collate | no_perl_ex,
       grep = basic | newline_alt,
       egrep = extended | newline_alt,
       sed = basic,
@@ -80,18 +107,6 @@ public:
       restart_fixed_lit = 6, 
       restart_count = 7
    };
-
-   flag_type BOOST_REGEX_CALL flags()const
-   {
-      return _flags;
-   }
-
-   regbase();
-   regbase(const regbase& b);
-   void swap(regbase& that)
-   { std::swap(_flags, that._flags); }
-protected:
-   flag_type _flags;
 };
 
 //
@@ -101,26 +116,24 @@ namespace regex_constants{
 
    enum flag_type_
    {
-      escape_in_lists = ::boost::regbase::escape_in_lists,
-      char_classes = ::boost::regbase::char_classes,
-      intervals = ::boost::regbase::intervals,
-      limited_ops = ::boost::regbase::limited_ops,
-      newline_alt = ::boost::regbase::newline_alt,
-      bk_plus_qm = ::boost::regbase::bk_plus_qm,
-      bk_braces = ::boost::regbase::bk_braces,
-      bk_parens = ::boost::regbase::bk_parens,
-      bk_refs = ::boost::regbase::bk_refs,
-      bk_vbar = ::boost::regbase::bk_vbar,
 
-      use_except = ::boost::regbase::use_except,
+      no_except = ::boost::regbase::no_except,
       failbit = ::boost::regbase::failbit,
       literal = ::boost::regbase::literal,
       icase = ::boost::regbase::icase,
       nocollate = ::boost::regbase::nocollate,
       collate = ::boost::regbase::collate,
-      perlex = ::boost::regbase::perlex,
       nosubs = ::boost::regbase::nosubs,
       optimize = ::boost::regbase::optimize,
+      bk_plus_qm = ::boost::regbase::bk_plus_qm,
+      bk_vbar = ::boost::regbase::bk_vbar,
+      no_intervals = ::boost::regbase::no_intervals,
+      no_char_classes = ::boost::regbase::no_char_classes,
+      no_escape_in_lists = ::boost::regbase::no_escape_in_lists,
+      no_mod_m = ::boost::regbase::no_mod_m,
+      mod_x = ::boost::regbase::mod_x,
+      mod_s = ::boost::regbase::mod_s,
+      no_mod_s = ::boost::regbase::no_mod_s,
 
       basic = ::boost::regbase::basic,
       extended = ::boost::regbase::extended,

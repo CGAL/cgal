@@ -2,30 +2,16 @@
 // Copyright 2002 Indiana University.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_GRAPH_TEST_HPP
 #define BOOST_GRAPH_TEST_HPP
 
 #include <vector>
-#include <boost/test/test_tools.hpp>
+#include <boost/test/minimal.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/isomorphism.hpp>
@@ -93,13 +79,13 @@ namespace boost {
             adj.push_back(e->second);
         
         std::pair<out_edge_iter, out_edge_iter> p = out_edges(u, g);
-        BOOST_TEST(out_degree(u, g) == adj.size());
-        BOOST_TEST(deg_size_t(std::distance(p.first, p.second))
+        BOOST_CHECK(out_degree(u, g) == adj.size());
+        BOOST_CHECK(deg_size_t(std::distance(p.first, p.second))
                    == out_degree(u, g));
         for (; p.first != p.second; ++p.first) {
           edge_t e = *p.first;
-          BOOST_TEST(source(e, g) == u);
-          BOOST_TEST(contains(adj, target(e, g)) == true);
+          BOOST_CHECK(source(e, g) == u);
+          BOOST_CHECK(contains(adj, target(e, g)) == true);
         }
       }
     }
@@ -122,13 +108,13 @@ namespace boost {
             inv_adj.push_back(e->first);
 
         std::pair<in_edge_iter, in_edge_iter> p = in_edges(v, g);
-        BOOST_TEST(in_degree(v, g) == inv_adj.size());
-        BOOST_TEST(deg_size_t(std::distance(p.first, p.second))
+        BOOST_CHECK(in_degree(v, g) == inv_adj.size());
+        BOOST_CHECK(deg_size_t(std::distance(p.first, p.second))
                    == in_degree(v, g));
         for (; p.first != p.second; ++p.first) {
           edge_t e = *p.first;
-          BOOST_TEST(target(e, g) == v);
-          BOOST_TEST(contains(inv_adj, source(e, g)) == true);
+          BOOST_CHECK(target(e, g) == v);
+          BOOST_CHECK(contains(inv_adj, source(e, g)) == true);
         }
       }
     }
@@ -151,10 +137,10 @@ namespace boost {
             adj.push_back(e->second);
 
         std::pair<adj_iter, adj_iter> p = adjacent_vertices(u, g);
-        BOOST_TEST(deg_size_t(std::distance(p.first, p.second)) == adj.size());
+        BOOST_CHECK(deg_size_t(std::distance(p.first, p.second)) == adj.size());
         for (; p.first != p.second; ++p.first) {
           vertex_t v = *p.first;
-          BOOST_TEST(contains(adj, v) == true);
+          BOOST_CHECK(contains(adj, v) == true);
         }
       }
     }      
@@ -164,12 +150,12 @@ namespace boost {
     {
       typedef typename graph_traits<Graph>::vertex_iterator v_iter;
       std::pair<v_iter, v_iter> p = vertices(g);
-      BOOST_TEST(num_vertices(g) == vertex_set.size());
+      BOOST_CHECK(num_vertices(g) == vertex_set.size());
       v_size_t n = std::distance(p.first, p.second);
-      BOOST_TEST(n == num_vertices(g));
+      BOOST_CHECK(n == num_vertices(g));
       for (; p.first != p.second; ++p.first) {
         vertex_t v = *p.first;
-        BOOST_TEST(contains(vertex_set, v) == true);
+        BOOST_CHECK(contains(vertex_set, v) == true);
       }
     }
 
@@ -180,14 +166,14 @@ namespace boost {
     {
       typedef typename graph_traits<Graph>::edge_iterator e_iter;
       std::pair<e_iter, e_iter> p = edges(g);
-      BOOST_TEST(num_edges(g) == edge_set.size());
+      BOOST_CHECK(num_edges(g) == edge_set.size());
       e_size_t m = std::distance(p.first, p.second);
-      BOOST_TEST(m == num_edges(g));
+      BOOST_CHECK(m == num_edges(g));
       for (; p.first != p.second; ++p.first) {
         edge_t e = *p.first;
-        BOOST_TEST(any_if(edge_set, connects(source(e, g), target(e, g), g)));
-        BOOST_TEST(contains(vertex_set, source(e, g)) == true);
-        BOOST_TEST(contains(vertex_set, target(e, g)) == true);
+        BOOST_CHECK(any_if(edge_set, connects(source(e, g), target(e, g), g)));
+        BOOST_CHECK(contains(vertex_set, source(e, g)) == true);
+        BOOST_CHECK(contains(vertex_set, target(e, g)) == true);
       }
     }
 
@@ -201,16 +187,16 @@ namespace boost {
              ::const_iterator i = edge_set.begin();
            i != edge_set.end(); ++i) {
         p = edge(i->first, i->second, g);
-        BOOST_TEST(p.second == true);
-        BOOST_TEST(source(p.first, g) == i->first);
-        BOOST_TEST(target(p.first, g) == i->second);
+        BOOST_CHECK(p.second == true);
+        BOOST_CHECK(source(p.first, g) == i->first);
+        BOOST_CHECK(target(p.first, g) == i->second);
       }
       typename std::vector<vertex_t>::const_iterator j, k;
       for (j = vertex_set.begin(); j != vertex_set.end(); ++j)
         for (k = vertex_set.begin(); k != vertex_set.end(); ++k) {
           p = edge(*j, *k, g);
           if (p.second == true)
-            BOOST_TEST(any_if(edge_set, 
+            BOOST_CHECK(any_if(edge_set, 
               connects(source(p.first, g), target(p.first, g), g)) == true);
         }
     }
@@ -229,12 +215,12 @@ namespace boost {
 
       vertex_t v = add_vertex(g);
       
-      BOOST_TEST(num_vertices(g) == num_vertices(cpy) + 1);
+      BOOST_CHECK(num_vertices(g) == num_vertices(cpy) + 1);
 
-      BOOST_TEST(out_degree(v, g) == 0);
+      BOOST_CHECK(out_degree(v, g) == 0);
 
       // Make sure the rest of the graph stayed the same
-      BOOST_TEST((verify_isomorphism
+      BOOST_CHECK((verify_isomorphism
                   (make_filtered_graph(g, keep_all(), ignore_vertex(v)), cpy,
                    iso_map)));
     }
@@ -253,29 +239,29 @@ namespace boost {
       bool added = p.second;
 
       if (is_undirected(g) && u == v) // self edge
-        BOOST_TEST(added == false);
+        BOOST_CHECK(added == false);
       else if (parallel_edge_exists)
-        BOOST_TEST(allows_parallel_edges(g) && added == true
+        BOOST_CHECK(allows_parallel_edges(g) && added == true
                    || !allows_parallel_edges(g) && added == false);
       else
-        BOOST_TEST(added == true);
+        BOOST_CHECK(added == true);
 
       if (p.second == true) { // edge added
-        BOOST_TEST(num_edges(g) == num_edges(cpy) + 1);
+        BOOST_CHECK(num_edges(g) == num_edges(cpy) + 1);
         
-        BOOST_TEST(contains(out_edges(u, g), e) == true);
+        BOOST_CHECK(contains(out_edges(u, g), e) == true);
         
-        BOOST_TEST((verify_isomorphism
+        BOOST_CHECK((verify_isomorphism
                     (make_filtered_graph(g, ignore_edge(e)), cpy, iso_map)));
       }
       else { // edge not added
         if (! (is_undirected(g) && u == v)) {
           // e should be a parallel edge
-          BOOST_TEST(source(e, g) == u);
-          BOOST_TEST(target(e, g) == v);
+          BOOST_CHECK(source(e, g) == u);
+          BOOST_CHECK(target(e, g) == v);
         }
         // The graph should not be changed.
-        BOOST_TEST((verify_isomorphism(g, cpy, iso_map)));
+        BOOST_CHECK((verify_isomorphism(g, cpy, iso_map)));
       }
     } // test_add_edge()
 
@@ -291,8 +277,8 @@ namespace boost {
 
       remove_edge(u, v, g);
       
-      BOOST_TEST(num_edges(g) + occurances == num_edges(cpy));
-      BOOST_TEST((verify_isomorphism
+      BOOST_CHECK(num_edges(g) + occurances == num_edges(cpy));
+      BOOST_CHECK((verify_isomorphism
                   (g, make_filtered_graph(cpy, ignore_edges(u,v,cpy)),
                    iso_map)));
     }
@@ -309,9 +295,9 @@ namespace boost {
       
       remove_edge(e, g);
 
-      BOOST_TEST(num_edges(g) + 1 == num_edges(cpy));
-      BOOST_TEST(count(adjacent_vertices(u, g), v) + 1 == occurances);
-      BOOST_TEST((verify_isomorphism
+      BOOST_CHECK(num_edges(g) + 1 == num_edges(cpy));
+      BOOST_CHECK(count(adjacent_vertices(u, g), v) + 1 == occurances);
+      BOOST_CHECK((verify_isomorphism
                   (g, make_filtered_graph(cpy, ignore_edge(e)),
                    iso_map)));
     }
@@ -325,9 +311,9 @@ namespace boost {
 
       clear_vertex(v, g);
 
-      BOOST_TEST(out_degree(v, g) == 0);
-      BOOST_TEST(num_vertices(g) == num_vertices(cpy));
-      BOOST_TEST((verify_isomorphism
+      BOOST_CHECK(out_degree(v, g) == 0);
+      BOOST_CHECK(num_vertices(g) == num_vertices(cpy));
+      BOOST_CHECK((verify_isomorphism
                   (g, make_filtered_graph(cpy, keep_all(), ignore_vertex(v)),
                    iso_map)));
     }
@@ -352,8 +338,8 @@ namespace boost {
       //BGL_FORALL_VERTICES_T(v, g, Graph) {
         typename property_traits<const_Map>::value_type 
           pval1 = get(pmap, v), pval2 = get(PropertyTag(), g, v);
-        BOOST_TEST(pval1 == pval2);
-        BOOST_TEST(pval1 == *i++);
+        BOOST_CHECK(pval1 == pval2);
+        BOOST_CHECK(pval1 == *i++);
       }
     }
 

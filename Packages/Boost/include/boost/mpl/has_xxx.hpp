@@ -148,25 +148,36 @@ template<> struct trait<T> \
 
 // MSVC 7.1+
 
+// agurt, 15/jun/05: replace overload-based SFINAE implementation with SFINAE
+// applied to partial specialization to fix some apparently random failures 
+// (thanks to Daniel Wallin for researching this!)
+
+namespace boost { namespace mpl { namespace aux {
+template< typename T > struct msvc71_sfinae_helper { typedef void type; };
+}}}
+
 #   define BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(trait, name, default_) \
-template< typename T > struct BOOST_PP_CAT(trait,_wrapper_); \
-template< typename T > \
-boost::mpl::aux::yes_tag BOOST_PP_CAT(trait,_helper_)( \
-      BOOST_PP_CAT(trait,_wrapper_)<T> const volatile* \
-    , BOOST_PP_CAT(trait,_wrapper_)<BOOST_MSVC_TYPENAME T::name>* = 0 \
-    ); \
+template< typename T, typename U = void > \
+struct BOOST_PP_CAT(trait,_impl_) \
+{ \
+    BOOST_STATIC_CONSTANT(bool, value = false); \
+    typedef boost::mpl::bool_<value> type; \
+}; \
 \
-boost::mpl::aux::no_tag BOOST_PP_CAT(trait,_helper_)(...); \
+template< typename T > \
+struct BOOST_PP_CAT(trait,_impl_)< \
+      T \
+    , typename boost::mpl::aux::msvc71_sfinae_helper< typename T::name >::type \
+    > \
+{ \
+    BOOST_STATIC_CONSTANT(bool, value = true); \
+    typedef boost::mpl::bool_<value> type; \
+}; \
 \
 template< typename T, typename fallback_ = boost::mpl::bool_<default_> > \
 struct trait \
+    : BOOST_PP_CAT(trait,_impl_)<T> \
 { \
-    typedef BOOST_PP_CAT(trait,_wrapper_)<T> t_; \
-    BOOST_STATIC_CONSTANT(bool, value = \
-          sizeof((BOOST_PP_CAT(trait,_helper_))(static_cast<t_*>(0))) \
-            == sizeof(boost::mpl::aux::yes_tag) \
-        ); \
-    typedef boost::mpl::bool_<value> type; \
 }; \
 /**/
 

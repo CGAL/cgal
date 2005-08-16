@@ -4,7 +4,10 @@
 #ifndef IS_INCREMENTABLE_DWA200415_HPP
 # define IS_INCREMENTABLE_DWA200415_HPP
 
+# include <boost/type_traits/detail/bool_trait_def.hpp>
+# include <boost/type_traits/detail/template_arity_spec.hpp>
 # include <boost/type_traits/remove_cv.hpp>
+# include <boost/mpl/aux_/lambda_support.hpp>
 # include <boost/mpl/bool.hpp>
 # include <boost/detail/workaround.hpp>
 
@@ -51,7 +54,7 @@ namespace is_incrementable_
   template <class T>
   struct impl
   {
-      static typename remove_cv<T>::type& x;
+      static typename boost::remove_cv<T>::type& x;
 
       BOOST_STATIC_CONSTANT(
           bool
@@ -62,7 +65,7 @@ namespace is_incrementable_
   template <class T>
   struct postfix_impl
   {
-      static typename remove_cv<T>::type& x;
+      static typename boost::remove_cv<T>::type& x;
 
       BOOST_STATIC_CONSTANT(
           bool
@@ -73,18 +76,28 @@ namespace is_incrementable_
 
 # undef BOOST_comma
 
-template <class T>
-struct is_incrementable
-  : mpl::bool_< ::boost::detail::is_incrementable_::impl<T>::value>
-{
+template<typename T> 
+struct is_incrementable 
+   BOOST_TT_AUX_BOOL_C_BASE(::boost::detail::is_incrementable_::impl<T>::value)
+{ 
+    BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(::boost::detail::is_incrementable_::impl<T>::value)
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(1,is_incrementable,(T))
 };
 
-template <class T>
-struct is_postfix_incrementable
-  : mpl::bool_< ::boost::detail::is_incrementable_::postfix_impl<T>::value>
-{
+template<typename T> 
+struct is_postfix_incrementable 
+    BOOST_TT_AUX_BOOL_C_BASE(::boost::detail::is_incrementable_::impl<T>::value)
+{ 
+    BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(::boost::detail::is_incrementable_::postfix_impl<T>::value)
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(1,is_postfix_incrementable,(T))
 };
 
-}} // namespace boost::detail
+} // namespace detail
+
+BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(1, ::boost::detail::is_incrementable)
+BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(1, ::boost::detail::is_postfix_incrementable)
+
+} // namespace boost
+
 
 #endif // IS_INCREMENTABLE_DWA200415_HPP

@@ -15,6 +15,7 @@
 #include "boost/date_time/dst_rules.hpp"
 #include "boost/date_time/time_zone_base.hpp"
 #include "boost/date_time/special_defs.hpp"
+#include <string>
 #include <sstream>
 
 namespace boost {
@@ -26,15 +27,15 @@ namespace local_time {
     ambiguous_result (std::string _msg="") :
       std::logic_error(std::string("Daylight Savings Results are ambiguous: " + _msg)) {}
   };
-  // 
-  struct InvalidTimeLabel : public std::logic_error
+  //! simple exception for when time label given cannot exist
+  struct time_label_invalid : public std::logic_error
   {
-    InvalidTimeLabel(std::string _msg="") :
+    time_label_invalid (std::string _msg="") :
       std::logic_error(std::string("Time label given is invalid: " + _msg)) {}
   };
-  struct DSTNotValid: public std::logic_error
+  struct dst_not_valid: public std::logic_error
   {
-    DSTNotValid(std::string _msg="") :
+    dst_not_valid(std::string _msg="") :
       std::logic_error(std::string("is_dst flag does not match resulting dst for time label given: " + _msg)) {}
   };
 
@@ -45,10 +46,19 @@ namespace local_time {
   using date_time::is_not_in_dst;
   using date_time::ambiguous;
   using date_time::invalid_time_label;
- 
+
+  //! Representation of "wall-clock" time in a particular time zone
+  /*! Representation of "wall-clock" time in a particular time zone
+   * Local_date_time_base holds a time value (date and time offset from 00:00) 
+   * along with a time zone. The time value is stored as UTC and conversions 
+   * to wall clock time are made as needed. This approach allows for 
+   * operations between wall-clock times in different time zones, and 
+   * daylight savings time considerations, to be made. Time zones are 
+   * required to be in the form of a boost::shared_ptr<time_zone_base>.
+   */
   template<class utc_time_=posix_time::ptime, 
-    class tz_type=date_time::time_zone_base<typename posix_time::ptime> >
-  class local_date_time_base :  public date_time::base_time<boost::posix_time::ptime, 
+           class tz_type=date_time::time_zone_base<utc_time_> >
+  class local_date_time_base :  public date_time::base_time<utc_time_, 
                                                             boost::posix_time::posix_time_system> { 
   public:
     typedef utc_time_ utc_time_type;
@@ -56,7 +66,7 @@ namespace local_time {
     typedef typename utc_time_type::date_type date_type;
     typedef typename date_type::duration_type date_duration_type;
     typedef typename utc_time_type::time_system_type time_system_type;
-    /** This constructor interprets the passed time as a UTC time.
+    /*! This constructor interprets the passed time as a UTC time.
      *  So, for example, if the passed timezone is UTC-5 then the
      *  time will be adjusted back 5 hours.  The time zone allows for 
      *  automatic calculation of whether the particular time is adjusted for
@@ -73,15 +83,15 @@ namespace local_time {
       // param was already utc so nothing more to do
     } 
 
-    /** This constructs a local time -- the passed time information 
+    /*! This constructs a local time -- the passed time information 
      * understood to be in the passed tz. The DST flag must be passed 
      * to indicate whether the time is in daylight savings or not.  
-     *  @throws -- InvalidTimeLabel if the time passed does not exist in 
-     *             the given locale. The non-existant case occurs typically 
+     *  @throws -- time_label_invalid if the time passed does not exist in 
+     *             the given locale. The non-existent case occurs typically 
      *             during the shift-back from daylight savings time.  When 
      *             the clock is shifted forward a range of times 
      *             (2 am to 3 am in the US) is skipped and hence is invalid.
-     *  @throws -- DSTNotValid if the DST flag is passed for a period 
+     *  @throws -- dst_not_valid if the DST flag is passed for a period 
      *             where DST is not active.
      */
     local_date_time_base(date_type d, 
@@ -91,7 +101,7 @@ namespace local_time {
       date_time::base_time<utc_time_type,time_system_type>(construction_adjustment(utc_time_type(d, td), tz, dst_flag)),
       zone_(tz)
     {
-      if(tz != NULL && tz->has_dst()){
+      if(tz != boost::shared_ptr<tz_type>() && tz->has_dst()){
         
         // d & td are already local so we use them
         time_is_dst_result result = check_dst(d, td, tz);
@@ -100,17 +110,17 @@ namespace local_time {
         // ambig occurs at end, invalid at start
         if(result == invalid_time_label){
           // Ex: 2:15am local on trans-in day in nyc, dst_flag irrelevant
-          std:: stringstream ss;
+          std::stringstream ss;
           ss << "time given: " << d << ' ' << td;
-          throw InvalidTimeLabel(ss.str());
+          throw time_label_invalid(ss.str());
         }
         else if(result != ambiguous && in_dst != dst_flag){
           // is dst_flag accurate?
           // Ex: false flag in NYC in June
-          std:: stringstream ss;
+          std::stringstream ss;
           ss << "flag given: " << (dst_flag ? "dst=true" : "dst=false")
             << ", dst calculated: " << (in_dst ? "dst=true" : "dst=false");
-          throw DSTNotValid(ss.str());
+          throw dst_not_valid(ss.str());
         }
         
         // everything checks out and conversion to utc already done
@@ -121,7 +131,7 @@ namespace local_time {
     enum DST_CALC_OPTIONS { EXCEPTION_ON_ERROR, NOT_DATE_TIME_ON_ERROR }; 
                             //ASSUME_DST_ON_ERROR, ASSUME_NOT_DST_ON_ERROR };
 
-    /** This constructs a local time -- the passed time information 
+    /*! This constructs a local time -- the passed time information 
      * understood to be in the passed tz.  The DST flag is calculated 
      * according to the specified rule. 
      */
@@ -136,48 +146,49 @@ namespace local_time {
       time_is_dst_result result = check_dst(d, td, tz);
       if(result == ambiguous) {
         if(calc_option == EXCEPTION_ON_ERROR){
-          std:: stringstream ss;
+          std::stringstream ss;
           ss << "time given: " << d << ' ' << td;
           throw ambiguous_result(ss.str());
         }
         else{ // NADT on error
-          time_ = posix_time::posix_time_system::get_time_rep(date_type(date_time::not_a_date_time), time_duration_type(date_time::not_a_date_time));
+          this->time_ = posix_time::posix_time_system::get_time_rep(date_type(date_time::not_a_date_time), time_duration_type(date_time::not_a_date_time));
         }
       }
       else if(result == invalid_time_label){
         if(calc_option == EXCEPTION_ON_ERROR){
-          std:: stringstream ss;
+          std::stringstream ss;
           ss << "time given: " << d << ' ' << td;
-          throw InvalidTimeLabel(ss.str());
+          throw time_label_invalid(ss.str());
         }
         else{ // NADT on error
-          time_ = posix_time::posix_time_system::get_time_rep(date_type(date_time::not_a_date_time), time_duration_type(date_time::not_a_date_time));
+          this->time_ = posix_time::posix_time_system::get_time_rep(date_type(date_time::not_a_date_time), time_duration_type(date_time::not_a_date_time));
         }
       }
       else if(result == is_in_dst){
         utc_time_type t = 
           construction_adjustment(utc_time_type(d, td), tz, true);
-        time_ = posix_time::posix_time_system::get_time_rep(t.date(), 
+        this->time_ = posix_time::posix_time_system::get_time_rep(t.date(), 
                                                             t.time_of_day());
       }
       else{
         utc_time_type t = 
           construction_adjustment(utc_time_type(d, td), tz, false);
-        time_ = posix_time::posix_time_system::get_time_rep(t.date(), 
+        this->time_ = posix_time::posix_time_system::get_time_rep(t.date(), 
                                                             t.time_of_day());
       }
     }
 
 
-    //! takes a date and time_duration representing a local time
-    /*! 
-     * returns TODO: ... 
+    //! Determines if given time label is in daylight savings for given zone
+    /*! Determines if given time label is in daylight savings for given zone. 
+     * Takes a date and time_duration representing a local time, along 
+     * with time zone, and returns a time_is_dst_result object as result.
      */
     static time_is_dst_result check_dst(date_type d, 
                                         time_duration_type td,
                                         boost::shared_ptr<tz_type> tz) 
     {
-      if(tz != NULL && tz->has_dst()) {
+      if(tz != boost::shared_ptr<tz_type>() && tz->has_dst()) {
         typedef typename date_time::dst_calculator<date_type, time_duration_type> dst_calculator;
         return dst_calculator::local_is_dst(
             d, td, 
@@ -193,7 +204,7 @@ namespace local_time {
       }
     }
 
-    //! Simple destructor, releases time zone if last referer
+    //! Simple destructor, releases time zone if last referrer
     ~local_date_time_base() {};
 
     //! Copy constructor
@@ -209,6 +220,7 @@ namespace local_time {
       zone_(tz)
     {}
 
+    //! returns time zone associated with calling instance
     boost::shared_ptr<tz_type> zone() const 
     {
       return zone_;
@@ -216,9 +228,9 @@ namespace local_time {
     //! returns false is time_zone is NULL and if time value is a special_value
     bool is_dst() const
     {
-      if(zone_ != NULL && zone_->has_dst() && !is_special()) {
+      if(zone_ != boost::shared_ptr<tz_type>() && zone_->has_dst() && !this->is_special()) {
         // check_dst takes a local time, *this is utc
-        utc_time_type lt(time_);
+        utc_time_type lt(this->time_);
         lt += zone_->base_utc_offset();
         // dst_offset only needs to be considered with ambiguous time labels
         // make that adjustment there
@@ -226,10 +238,8 @@ namespace local_time {
         switch(check_dst(lt.date(), lt.time_of_day(), zone_)){
           case is_not_in_dst:
             return false;
-            break;
           case is_in_dst:
             return true;
-            break;
           case ambiguous: 
             if(lt + zone_->dst_offset() < zone_->dst_local_end_time(lt.date().year())) {
               return true;
@@ -247,19 +257,19 @@ namespace local_time {
     //! Returns object's time value as a utc representation
     utc_time_type utc_time() const 
     {
-      return utc_time_type(time_);
+      return utc_time_type(this->time_);
     }
     //! Returns object's time value as a local representation
     utc_time_type local_time() const 
     {
-      if(zone_ != NULL){
+      if(zone_ != boost::shared_ptr<tz_type>()){
         utc_time_type lt = this->utc_time() + zone_->base_utc_offset();
         if (is_dst()) {
           lt += zone_->dst_offset();
         }
         return lt;
       }
-      return utc_time_type(time_);
+      return utc_time_type(this->time_);
     }
     //! Returns string in the form "2003-Aug-20 05:00:00 EDT"
     /*! Returns string in the form "2003-Aug-20 05:00:00 EDT". If
@@ -267,12 +277,13 @@ namespace local_time {
      * zone abbrev will not be included if calling object is a special_value*/
     std::string to_string() const
     {
+      //TODO is this a temporary function ???
       std::stringstream ss;
-      if(is_special()){
+      if(this->is_special()){
         ss << utc_time();
         return ss.str();
       }
-      if(zone_ == NULL) {
+      if(zone_ == boost::shared_ptr<tz_type>()) {
         ss << utc_time() << " UTC";
         return ss.str();
       }
@@ -280,10 +291,6 @@ namespace local_time {
       utc_time_type lt = this->utc_time() + zone_->base_utc_offset();
       if (is_dst_) {
         lt += zone_->dst_offset();
-      }
-      if(zone_ == NULL) {
-        ss << utc_time() << " UTC";
-        return ss.str();
       }
       ss << local_time() << " ";
       if (is_dst()) {
@@ -299,9 +306,86 @@ namespace local_time {
     local_date_time_base local_time_in(boost::shared_ptr<tz_type> new_tz, 
                                        time_duration_type td=time_duration_type(0,0,0)) const 
     {
-      return local_date_time_base(utc_time_type(time_) + td, new_tz);
+      return local_date_time_base(utc_time_type(this->time_) + td, new_tz);
     }
- 
+    
+    //! Returns name of associated time zone or "Coordinated Universal Time".
+    /*! Optional bool parameter will return time zone as an offset 
+     * (ie "+07:00" extended iso format). Empty string is returned for 
+     * classes that do not use a time_zone */
+    std::string zone_name(bool as_offset=false) const
+    {
+      if(zone_ == boost::shared_ptr<tz_type>()) {
+        if(as_offset) {
+          return std::string("Z");
+        }
+        else {
+          return std::string("Coordinated Universal Time");
+        }
+      }
+      if (is_dst()) {
+        if(as_offset) {
+          time_duration_type td = zone_->base_utc_offset();
+          td += zone_->dst_offset();
+          return zone_as_offset(td, ":");
+        }
+        else {
+          return zone_->dst_zone_name();
+        }
+      }
+      else {
+        if(as_offset) {
+          time_duration_type td = zone_->base_utc_offset();
+          return zone_as_offset(td, ":");
+        }
+        else {
+          return zone_->std_zone_name();
+        }
+      }
+    }
+    //! Returns abbreviation of associated time zone or "UTC".
+    /*! Optional bool parameter will return time zone as an offset 
+     * (ie "+0700" iso format). Empty string is returned for classes 
+     * that do not use a time_zone */
+    std::string zone_abbrev(bool as_offset=false) const
+    {
+      if(zone_ == boost::shared_ptr<tz_type>()) {
+        if(as_offset) {
+          return std::string("Z");
+        }
+        else {
+          return std::string("UTC");
+        }
+      }
+      if (is_dst()) {
+        if(as_offset) {
+          time_duration_type td = zone_->base_utc_offset();
+          td += zone_->dst_offset();
+          return zone_as_offset(td, "");
+        }
+        else {
+          return zone_->dst_zone_abbrev();
+        }
+      }
+      else {
+        if(as_offset) {
+          time_duration_type td = zone_->base_utc_offset();
+          return zone_as_offset(td, "");
+        }
+        else {
+          return zone_->std_zone_abbrev();
+        }
+      }
+    }
+
+    //! returns a posix_time_zone string for the associated time_zone. If no time_zone, "UTC+00" is returned.
+    std::string zone_as_posix_string() const
+    {
+      if(zone_ == shared_ptr<tz_type>()) {
+        return std::string("UTC+00");
+      }
+      return zone_->to_posix_string();
+    }
       
     //! Equality comparison operator
     /*bool operator==(const date_time::base_time<boost::posix_time::ptime,boost::posix_time::posix_time_system>& rhs) const
@@ -340,29 +424,54 @@ namespace local_time {
       return (*this > rhs || *this == rhs);
     }
 
-    /* Math operators. local_date_time_base inherits it's math operators 
-     * from base_time. The shortcut operators (-= & +=) work but the 
-     * others don't (they return a time_type which in local_date_time 
-     * is a ptime). */
     //! Local_date_time + date_duration 
     local_date_time_base operator+(const date_duration_type& dd) const
     {
-      return local_date_time_base(time_system_type::add_days(time_,dd), zone_);
+      return local_date_time_base(time_system_type::add_days(this->time_,dd), zone_);
+    }
+    //! Local_date_time += date_duration 
+    local_date_time_base operator+=(const date_duration_type& dd)
+    {
+      this->time_ = time_system_type::add_days(this->time_,dd);
+      return *this;
     }
     //! Local_date_time - date_duration 
     local_date_time_base operator-(const date_duration_type& dd) const
     {
-      return local_date_time_base(time_system_type::subtract_days(time_,dd), zone_);
+      return local_date_time_base(time_system_type::subtract_days(this->time_,dd), zone_);
+    }
+    //! Local_date_time -= date_duration 
+    local_date_time_base operator-=(const date_duration_type& dd)
+    {
+      this->time_ = time_system_type::subtract_days(this->time_,dd);
+      return *this;
     }
     //! Local_date_time + time_duration 
     local_date_time_base operator+(const time_duration_type& td) const
     {
-      return local_date_time_base(time_system_type::add_time_duration(time_,td), zone_);
+      return local_date_time_base(time_system_type::add_time_duration(this->time_,td), zone_);
+    }
+    //! Local_date_time += time_duration 
+    local_date_time_base operator+=(const time_duration_type& td) 
+    {
+      this->time_ = time_system_type::add_time_duration(this->time_,td);
+      return *this;
     }
     //! Local_date_time - time_duration 
     local_date_time_base operator-(const time_duration_type& td) const
     {
-      return local_date_time_base(time_system_type::subtract_time_duration(time_,td), zone_);
+      return local_date_time_base(time_system_type::subtract_time_duration(this->time_,td), zone_);
+    }
+    //! Local_date_time -= time_duration 
+    local_date_time_base operator-=(const time_duration_type& td)
+    {
+      this->time_ = time_system_type::subtract_time_duration(this->time_,td);
+      return *this;
+    }
+    //! local_date_time -= local_date_time --> time_duration_type
+    time_duration_type operator-(const local_date_time_base& rhs) const
+    {
+      return utc_time_type(this->time_) - utc_time_type(rhs.time_);
     }
   private:
     boost::shared_ptr<tz_type> zone_;
@@ -374,13 +483,36 @@ namespace local_time {
                                           boost::shared_ptr<tz_type> zone,
                                           bool is_dst)
     {
-      if(zone != NULL) {
+      if(zone != boost::shared_ptr<tz_type>()) {
         if(is_dst && zone->has_dst()) {
           t -= zone->dst_offset();
         } // else no adjust
         t -= zone->base_utc_offset();
       }
       return t;
+    }
+
+    /*! Simple formatting code -- todo remove this?
+     */
+    std::string zone_as_offset(const time_duration_type& td, 
+                               const std::string& separator) const
+    {
+      std::stringstream ss;
+      if(td.is_negative()) {
+        // a negative duration is represented as "-[h]h:mm"
+        // we require two digits for the hour. A positive duration 
+        // with the %H flag will always give two digits
+        ss << "-";
+      }
+      else {
+        ss << "+";
+      }
+      ss  << std::setw(2) << std::setfill('0') 
+          << date_time::absolute_value(td.hours()) 
+          << separator
+          << std::setw(2) << std::setfill('0')
+          << date_time::absolute_value(td.minutes());
+      return ss.str();
     }
   };
 

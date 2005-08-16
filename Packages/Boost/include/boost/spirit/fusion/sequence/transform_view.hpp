@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -30,16 +31,19 @@ namespace boost { namespace fusion
         typedef typename meta::end<seq>::type last_type;
         typedef F transform_type;
 
-        transform_view(Sequence& seq, F f)
-            : first(fusion::begin(seq))
-            , last(fusion::end(seq))
-            , f(f)
-        {}
+        transform_view(Sequence& seq, F f);
 
         first_type first;
         last_type last;
         transform_type f;
     };
+
+    template <typename Sequence, typename F>
+    transform_view<Sequence,F>::transform_view(Sequence& seq, F f)
+        : first(fusion::begin(seq))
+        , last(fusion::end(seq))
+        , f(f)
+    {}
 }}
 
 #endif

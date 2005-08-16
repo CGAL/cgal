@@ -65,6 +65,7 @@ template<
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
 struct modulus
+
     : modulus_impl<
           typename modulus_tag<N1>::type
         , typename modulus_tag<N2>::type

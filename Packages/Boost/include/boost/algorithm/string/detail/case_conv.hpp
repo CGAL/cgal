@@ -20,7 +20,7 @@ namespace boost {
 
 //  case conversion functors -----------------------------------------------//
 
-            // a tolower functor 
+            // a tolower functor
             template<typename CharT>
             struct to_lowerF : public std::unary_function<CharT, CharT>
             {
@@ -30,13 +30,17 @@ namespace boost {
                 // Operation
                 CharT operator ()( CharT Ch ) const
                 {
-                    return std::tolower( Ch, m_Loc );
+                    #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x564) && !defined(_USE_OLD_RW_STL)
+                        return std::tolower( Ch);
+                    #else
+                        return std::tolower( Ch, m_Loc );
+                    #endif
                 }
             private:
                 const std::locale& m_Loc;
             };
 
-            // a toupper functor 
+            // a toupper functor
             template<typename CharT>
             struct to_upperF : public std::unary_function<CharT, CharT>
             {
@@ -46,7 +50,11 @@ namespace boost {
                 // Operation
                 CharT operator ()( CharT Ch ) const
                 {
-                    return std::toupper( Ch, m_Loc );
+                    #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x564) && !defined(_USE_OLD_RW_STL)
+                        return std::toupper( Ch);
+                    #else
+                        return std::toupper( Ch, m_Loc );
+                    #endif
                 }
             private:
                 const std::locale& m_Loc;

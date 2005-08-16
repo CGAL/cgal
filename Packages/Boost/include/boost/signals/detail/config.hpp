@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Copyright (c) 2003-2004
  * Douglas Gregor

@@ -21,6 +21,10 @@
 #include <boost/program_options/detail/convert.hpp>
 #endif
 
+#if BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590042))
+#include <istream> // std::getline
+#endif
+
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/shared_ptr.hpp>
@@ -160,7 +164,8 @@ namespace boost { namespace program_options { namespace detail {
     }
 
     // Specialization is needed to workaround getline bug on Comeau.
-#if BOOST_WORKAROUND(__COMO_VERSION__, BOOST_TESTED_AT(4303))
+#if BOOST_WORKAROUND(__COMO_VERSION__, BOOST_TESTED_AT(4303)) || \
+        (defined(__sgi) && BOOST_WORKAROUND(_COMPILER_VERSION, BOOST_TESTED_AT(741)))
     template<>
     bool
     basic_config_file_iterator<wchar_t>::getline(std::string& s);

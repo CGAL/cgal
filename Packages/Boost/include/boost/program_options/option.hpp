@@ -23,10 +23,10 @@ namespace boost { namespace program_options {
     template<class charT>
     class basic_option {
     public:
-        basic_option() : position_key(-1) {}
+        basic_option() : position_key(-1), unregistered(false) {}
         basic_option(const std::string& string_key, 
                const std::vector< std::string> &value) 
-        : string_key(string_key), value(value)
+        : string_key(string_key), value(value), unregistered(false)
         {}
 
         /** String key of this option. Intentionally independent of the template
@@ -41,6 +41,10 @@ namespace boost { namespace program_options {
         int position_key;
         /** Option's value */
         std::vector< std::basic_string<charT> > value;
+        /** True if option was not recognized. In that case,
+            'string_key' and 'value' are results of purely
+            syntactic parsing of source. */
+        bool unregistered;
     };
     typedef basic_option<char> option;
     typedef basic_option<wchar_t> woption;

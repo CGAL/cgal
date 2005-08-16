@@ -3,25 +3,9 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_GRAPH_DETAIL_ADJACENCY_LIST_HPP
@@ -369,6 +353,20 @@ namespace boost {
 
     namespace detail {
 
+      // O(E/V)
+      template <class edge_descriptor, class EdgeList, class StoredProperty>
+      inline void
+      remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
+                                    StoredProperty& p)
+      {
+        for (typename EdgeList::iterator i = el.begin();
+             i != el.end(); ++i)
+          if (&(*i).get_property() == &p) {
+            el.erase(i);
+            return;
+          }
+      }
+
       template <class incidence_iterator, class EdgeList, class Predicate>
       inline void
       remove_directed_edge_if_dispatch(incidence_iterator first,
@@ -404,18 +402,77 @@ namespace boost {
         }
       }
 
-      // O(E/V)
-      template <class edge_descriptor, class EdgeList, class StoredProperty>
+      template <class PropT, class Graph, class incidence_iterator, 
+                class EdgeList, class Predicate>
       inline void
-      remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
-                                    StoredProperty& p)
+      undirected_remove_out_edge_if_dispatch(Graph& g, 
+                                             incidence_iterator first,
+                                             incidence_iterator last, 
+                                             EdgeList& el, Predicate pred,
+                                             boost::allow_parallel_edge_tag)
       {
-        for (typename EdgeList::iterator i = el.begin();
-             i != el.end(); ++i)
-          if (&(*i).get_property() == &p) {
-            el.erase(i);
-            return;
+        // remove_if
+        while (first != last && !pred(*first))
+          ++first;
+        incidence_iterator i = first;
+        bool self_loop_removed = false;
+        if (first != last)
+          for (; i != last; ++i) {
+            if (self_loop_removed) {
+              /* With self loops, the descriptor will show up
+               * twice. The first time it will be removed, and now it
+               * will be skipped.
+               */
+              self_loop_removed = false;
+            }
+            else if (!pred(*i)) {
+              *first.base() = *i.base();
+              ++first;
+            } else {
+              if (source(*i, g) == target(*i, g)) self_loop_removed = true;
+              else {
+                // Remove the edge from the target
+                detail::remove_directed_edge_dispatch
+                  (*i, 
+                   g.out_edge_list(target(*i, g)), 
+                   *(PropT*)(*i).get_property());
+              }
+
+              // Erase the edge property
+              g.m_edges.erase( (*i.base()).get_iter() );
+            }
           }
+        el.erase(first.base(), el.end());
+      }
+      template <class PropT, class Graph, class incidence_iterator, 
+                class EdgeList, class Predicate>
+      inline void
+      undirected_remove_out_edge_if_dispatch(Graph& g, 
+                                             incidence_iterator first,
+                                             incidence_iterator last, 
+                                             EdgeList& el, 
+                                             Predicate pred,
+                                             boost::disallow_parallel_edge_tag)
+      {
+        for (incidence_iterator next = first;
+             first != last; first = next) {
+          ++next;
+          if (pred(*first)) {
+            if (source(*first, g) != target(*first, g)) {
+              // Remove the edge from the target
+              detail::remove_directed_edge_dispatch
+                (*first, 
+                 g.out_edge_list(target(*first, g)), 
+                 *(PropT*)(*first).get_property());
+            }
+
+            // Erase the edge property
+            g.m_edges.erase( (*first.base()).get_iter() );
+
+            // Erase the edge in the source
+            el.erase( first.base() );
+          }
+        }
       }
 
       // O(E/V)
@@ -816,23 +873,11 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::OutEdgeList::value_type::property_type PropT;
       graph_type& g = static_cast<graph_type&>(g_);
-
-      // First remove the edges from the targets' lists and
-      // from the graph's edge set list.
-      typename Config::out_edge_iterator out_i, out_end;
-      for (tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
-        if (pred(*out_i)) {
-          typename Config::vertex_descriptor v = target(*out_i, g);
-          detail::remove_directed_edge_dispatch
-            (*out_i, g.out_edge_list(v), *(PropT*)(*out_i).get_property());
-          g.m_edges.erase( (*out_i.base()).get_iter() );
-        }
-      // Now remove the edges from this out-edge list.
       typename Config::out_edge_iterator first, last;
       tie(first, last) = out_edges(u, g);
       typedef typename Config::edge_parallel_category Cat;
-      detail::remove_directed_edge_if_dispatch
-        (first, last, g.out_edge_list(u), pred, Cat());
+      detail::undirected_remove_out_edge_if_dispatch<PropT>
+        (g, first, last, g.out_edge_list(u), pred, Cat());
     }
     template <class Config, class Predicate>
     void
@@ -967,6 +1012,12 @@ namespace boost {
                        in_edge_iterator(g.out_edge_list(u).end(), u));
     }
 
+    template <class Config>
+    inline typename Config::degree_size_type
+    in_degree(typename Config::vertex_descriptor u,
+              const undirected_graph_helper<Config>& g_)
+    { return degree(u, g_); }
+
     //=========================================================================
     // Bidirectional Graph Helper Class
 
@@ -1053,6 +1104,35 @@ namespace boost {
     struct bidirectional_graph_helper_with_property
       : public bidirectional_graph_helper<Config>
     {
+      typedef typename Config::graph_type graph_type;
+      typedef typename Config::out_edge_iterator out_edge_iterator;
+      
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+                                const graph_type& g,
+                                void*)
+      { return out_edges(source(e, g), g); }
+
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+                                const graph_type& g,
+                                setS*)
+      { return edge_range(source(e, g), target(e, g), g); }
+
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+                                const graph_type& g,
+                                multisetS*)
+      { return edge_range(source(e, g), target(e, g), g); }
+
+#if !defined BOOST_NO_HASH
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+                                const graph_type& g,
+                                hash_setS*)
+      { return edge_range(source(e, g), target(e, g), g); }
+#endif
+
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
 
@@ -1060,14 +1140,15 @@ namespace boost {
       void
       remove_edge(typename Config::edge_descriptor e)
       {
-        typedef typename Config::graph_type graph_type;
-        typedef typename Config::out_edge_iterator out_edge_iterator;
         graph_type& g = static_cast<graph_type&>(*this);
+
+        typedef typename Config::edgelist_selector OutEdgeListS;
+
         std::pair<out_edge_iterator, out_edge_iterator> rng = 
-          edge_range(source(e, g), target(e, g), g);
+          get_parallel_edge_sublist(e, g, (OutEdgeListS*)(0));
         rng.first = std::find(rng.first, rng.second, e);
-        if (rng.first != rng.second)
-          remove_edge(rng.first);
+        assert(rng.first != rng.second);
+        remove_edge(rng.first);
       }
 
       inline void
@@ -1490,10 +1571,10 @@ namespace boost {
                             out_edge_iterator(last, u));
     }
 
-    template <class Config, class Base>
+    template <class Config>
     inline typename Config::degree_size_type
     in_degree(typename Config::vertex_descriptor u, 
-              const adj_list_helper<Config,Base>& g_)
+              const directed_edges_helper<Config>& g_)
     {
       typedef typename Config::graph_type Graph;
       const Graph& cg = static_cast<const Graph&>(g_);
@@ -1785,8 +1866,10 @@ namespace boost {
         typedef typename Graph::edge_parallel_category edge_parallel_category;
         g.m_vertices.erase(g.m_vertices.begin() + u);
         vertex_descriptor V = num_vertices(g);
-        for (vertex_descriptor v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
+        if (u != V) {
+          for (vertex_descriptor v = 0; v < V; ++v)
+            reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
+        }
       }
 
       template <class Graph, class vertex_descriptor>
@@ -1819,21 +1902,23 @@ namespace boost {
         g.m_vertices.erase(g.m_vertices.begin() + u);
         vertex_descriptor V = num_vertices(g);
         vertex_descriptor v;
-        for (v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, 
-                            edge_parallel_category());
-        for (v = 0; v < V; ++v)
-          reindex_edge_list(in_edge_list(g, v), u, 
-                            edge_parallel_category());
+        if (u != V) {
+          for (v = 0; v < V; ++v)
+            reindex_edge_list(g.out_edge_list(v), u, 
+                              edge_parallel_category());
+          for (v = 0; v < V; ++v)
+            reindex_edge_list(in_edge_list(g, v), u, 
+                              edge_parallel_category());
 
-        typedef typename Graph::EdgeContainer Container;
-        typedef typename Container::iterator Iter;
-        Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
-        for (; ei != ei_end; ++ei) {
-          if (ei->m_source > u)
-            --ei->m_source;
-          if (ei->m_target > u)
-            --ei->m_target;
+          typedef typename Graph::EdgeContainer Container;
+          typedef typename Container::iterator Iter;
+          Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
+          for (; ei != ei_end; ++ei) {
+            if (ei->m_source > u)
+              --ei->m_source;
+            if (ei->m_target > u)
+              --ei->m_target;
+          }
         }
       }
 
@@ -1906,13 +1991,8 @@ namespace boost {
       }
       inline void clear() {
         m_vertices.clear();
-        clear_dispatch(edge_property_type());
-      }
-      template <typename Property>
-      inline void clear_dispatch(const Property&) {
         m_edges.clear();
       }
-      inline void clear_dispatch(const no_property&) { }
 
       inline vec_adj_list_impl(vertices_size_type _num_vertices)
         : m_vertices(_num_vertices) { }
@@ -2369,7 +2449,7 @@ namespace boost {
       typedef Vertex value_type;
       typedef Vertex key_type;
       typedef Vertex reference;
-      typedef boost::read_write_property_map_tag category;
+      typedef boost::readable_property_map_tag category;
       inline vec_adj_list_vertex_id_map() { }
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }

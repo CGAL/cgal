@@ -1,6 +1,7 @@
 /*=============================================================================
     Copyright (c) 1999-2003 Jaakko Järvi
     Copyright (c) 2001-2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -58,6 +59,12 @@ namespace boost { namespace fusion
             base() = other;
             return *this;
         }
+
+        typedef detail::tuple_builder<BOOST_PP_ENUM_PARAMS(FUSION_MAX_TUPLE_SIZE, T)> builder;
+        
+        typedef typename builder::begin begin;
+        typedef typename builder::end end;
+        typedef typename builder::size size;
 
         base_type& base() { return *this; }
         base_type const& base() const { return *this; }

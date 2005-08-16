@@ -20,7 +20,7 @@ template<
 struct set11
     : s_item<
           T10
-        , set10< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9 >
+        , typename set10< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9 >::item_
         >
 {
     typedef set11 type;
@@ -34,7 +34,7 @@ template<
 struct set12
     : s_item<
           T11
-        , set11< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10 >
+        , typename set11< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10 >::item_
         >
 {
     typedef set12 type;
@@ -48,7 +48,8 @@ template<
 struct set13
     : s_item<
           T12
-        , set12< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11 >
+        , typename set12< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10
+        , T11 >::item_
         >
 {
     typedef set13 type;
@@ -62,7 +63,8 @@ template<
 struct set14
     : s_item<
           T13
-        , set13< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12 >
+        , typename set13< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12 >::item_
         >
 {
     typedef set14 type;
@@ -76,7 +78,8 @@ template<
 struct set15
     : s_item<
           T14
-        , set14< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13 >
+        , typename set14< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12, T13 >::item_
         >
 {
     typedef set15 type;
@@ -91,7 +94,8 @@ template<
 struct set16
     : s_item<
           T15
-        , set15< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14 >
+        , typename set15< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12, T13, T14 >::item_
         >
 {
     typedef set16 type;
@@ -106,7 +110,8 @@ template<
 struct set17
     : s_item<
           T16
-        , set16< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15 >
+        , typename set16< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12, T13, T14, T15 >::item_
         >
 {
     typedef set17 type;
@@ -121,7 +126,8 @@ template<
 struct set18
     : s_item<
           T17
-        , set17< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16 >
+        , typename set17< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12, T13, T14, T15, T16 >::item_
         >
 {
     typedef set18 type;
@@ -136,7 +142,8 @@ template<
 struct set19
     : s_item<
           T18
-        , set18< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17 >
+        , typename set18< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12, T13, T14, T15, T16, T17 >::item_
         >
 {
     typedef set19 type;
@@ -151,7 +158,8 @@ template<
 struct set20
     : s_item<
           T19
-        , set19< T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18 >
+        , typename set19< T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
+        , T12, T13, T14, T15, T16, T17, T18 >::item_
         >
 {
     typedef set20 type;

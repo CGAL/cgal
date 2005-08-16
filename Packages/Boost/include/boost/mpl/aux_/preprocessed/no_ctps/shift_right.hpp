@@ -66,6 +66,7 @@ template<
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
 struct shift_right
+
     : shift_right_impl<
           typename shift_right_tag<N1>::type
         , typename shift_right_tag<N2>::type

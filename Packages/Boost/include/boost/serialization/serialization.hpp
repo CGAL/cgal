@@ -18,6 +18,7 @@ namespace std{
 } // namespace std
 #endif
 
+#include <boost/strong_typedef.hpp>
 #include <boost/pfto.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -70,6 +71,8 @@ namespace std{
 namespace boost {
 namespace serialization {
 
+BOOST_STRONG_TYPEDEF(unsigned int, version_type)
+
 // default implemenation - call the member function "serialize"
 template<class Archive, class T>
 inline void serialize(
@@ -103,13 +106,19 @@ inline void load_construct_data(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// layer 3 - default implementation of non-intrusive serialization.
+// layer 3 - move call into serialization namespace so that ADL will function
+// in the manner we desire.
 //
-// trick to call serialize from within boost::serialization namspace
-// thus permitting serialize override to be in either of 3 namespace
+// on compilers which don't implement ADL. only the current namespace
+// i.e. boost::serialization will be searched.
+// 
+// on compilers which DO implement ADL
+// serialize overrides can be in any of the following
+// 
 // 1) same namepace as Archive
 // 2) same namespace as T
 // 3) boost::serialization
+//
 // Due to Martin Ecker
 
 template<class Archive, class T>
@@ -118,7 +127,20 @@ inline void serialize_adl(
     T & t, 
     const unsigned int file_version
 ){
-    serialize(ar, t, file_version);
+    // note usage of function overloading to delay final resolution
+    // until the point of instantiation.  This works around the two-phase
+    // lookup "feature" which inhibits redefintion of a default function
+    // template implementation. Due to Robert Ramey
+    //
+    // Note that this trick generates problems for compiles which don't support
+    // PFTO, suppress it here.  As far as we know, there are no compilers
+    // which fail to support PFTO while supporting two-phase lookup.
+    #if ! defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING)
+        const version_type v(file_version);
+        serialize(ar, t, v);
+    #else
+        serialize(ar, t, file_version);
+    #endif
 }
 
 template<class Archive, class T>
@@ -127,7 +149,13 @@ inline void save_construct_data_adl(
     const T * t, 
     const unsigned int file_version
 ){
-    save_construct_data(ar, t, file_version);
+    // see above
+    #if ! defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING)
+        const version_type v(file_version);
+        save_construct_data(ar, t, v);
+    #else
+        save_construct_data(ar, t, file_version);
+    #endif
 }
 
 template<class Archive, class T>
@@ -136,7 +164,13 @@ inline void load_construct_data_adl(
     T * t, 
     const unsigned int file_version
 ){
-    load_construct_data(ar, t, file_version);
+    // see above comment
+    #if ! defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING)
+        const version_type v(file_version);
+        load_construct_data(ar, t, v);
+    #else
+        load_construct_data(ar, t, file_version);
+    #endif
 }
 
 } // namespace serialization

@@ -56,8 +56,8 @@ struct pt_tree_policy :
             std::back_insert_iterator<typename match_t::container_t>(a.trees));
     }
 
-    template <typename Iterator1T, typename Iterator2T>
-    static void group_match(match_t& m, parser_id const& id,
+    template <typename MatchT, typename Iterator1T, typename Iterator2T>
+    static void group_match(MatchT& m, parser_id const& id,
             Iterator1T const& first, Iterator2T const& last)
     {
         if (!m)
@@ -180,7 +180,7 @@ pt_parse(
     IteratorT const&        last,
     parser<ParserT> const&  p,
     SkipT const&            skip,
-    NodeFactoryT const &    /*dummy_*/ = NodeFactoryT())
+    NodeFactoryT const&   /*dummy_*/ = NodeFactoryT())
 {
     typedef skip_parser_iteration_policy<SkipT> iter_policy_t;
     typedef pt_match_policy<IteratorT, NodeFactoryT> pt_match_policy_t;
@@ -219,14 +219,15 @@ pt_parse(
     IteratorT const&        last,
     parser<ParserT> const&  parser)
 {
+    typedef pt_match_policy<IteratorT> pt_match_policy_t;
     IteratorT first = first_;
     scanner<
         IteratorT,
-        scanner_policies<iteration_policy, pt_match_policy<IteratorT> >
+        scanner_policies<iteration_policy, pt_match_policy_t>
     > scan(first, last);
     tree_match<IteratorT> hit = parser.derived().parse(scan);
-    return tree_parse_info<IteratorT>(first, hit, hit && (first == last),
-        hit.length(), hit.trees);
+    return tree_parse_info<IteratorT>(
+        first, hit, hit && (first == last), hit.length(), hit.trees);
 }
 
 //////////////////////////////////

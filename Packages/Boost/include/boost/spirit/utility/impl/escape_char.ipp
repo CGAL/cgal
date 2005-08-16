@@ -10,6 +10,11 @@
 #ifndef BOOST_SPIRIT_ESCAPE_CHAR_IPP
 #define BOOST_SPIRIT_ESCAPE_CHAR_IPP
 
+#include <boost/spirit/core/parser.hpp>
+#include <boost/spirit/core/primitives/numerics.hpp>
+#include <boost/spirit/core/composite/difference.hpp>
+#include <boost/spirit/core/composite/sequence.hpp>
+
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost { namespace spirit {
 

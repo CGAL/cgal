@@ -204,51 +204,6 @@ namespace posix_time {
   }
 
 
-  /* ATTENTION: The following operator<< functions are exactly duplicated
-   * in time_formatters.hpp. Any changes here must also be made there
-   */
-
-//The following code is removed for configurations with good std::locale support (eg: MSVC6, gcc 2.9x)
-#ifndef BOOST_DATE_TIME_NO_LOCALE
-
-  //! ostream operator for posix_time::time_duration
-  template <class charT, class traits>
-  inline
-  std::basic_ostream<charT, traits>&
-  operator<<(std::basic_ostream<charT, traits>& os, const time_duration& td)
-  {
-    typedef boost::date_time::ostream_time_duration_formatter<time_duration, charT> duration_formatter;
-    duration_formatter::duration_put(td, os);
-    return os;
-  }
-
-  //! ostream operator for posix_time::ptime
-  template <class charT, class traits>
-  inline
-  std::basic_ostream<charT, traits>&
-  operator<<(std::basic_ostream<charT, traits>& os, const ptime& t)
-  {
-    typedef boost::date_time::ostream_time_formatter<ptime, charT> time_formatter;
-    time_formatter::time_put(t, os);
-    return os;
-  }
-
-  //! ostream operator for posix_time::time_period
-  template <class charT, class traits>
-  inline
-  std::basic_ostream<charT, traits>&
-  operator<<(std::basic_ostream<charT, traits>& os, const time_period& tp)
-  {
-    typedef boost::date_time::ostream_time_period_formatter<time_period, charT> period_formatter;
-    period_formatter::period_put(tp, os);
-    return os;
-  }
-
-
-
-#endif //BOOST_DATE_TIME_NO_LOCALE
-
-
 } } //namespace posix_time
 
 

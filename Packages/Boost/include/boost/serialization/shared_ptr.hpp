@@ -9,135 +9,218 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // shared_ptr.hpp: serialization for boost shared pointer
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2004 Robert Ramey and Martin Ecker
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
-// note: totally unadvised hack to gain access to private variables
-// in shared_ptr and shared_count. Unfortunately its the only way to
-// do this without changing shared_ptr and shared_count
-// the best we can do is to detect a conflict here
+#include <map>
+
 #include <boost/config.hpp>
+#include <boost/mpl/integral_c.hpp>
+#include <boost/mpl/integral_c_tag.hpp>
 
-#ifdef BOOST_SHARED_PTR_HPP_INCLUDED
-#error "include <boost/serialization/shared_ptr> first"
-#endif
-
-#define private public
+#include <boost/detail/workaround.hpp>
 #include <boost/shared_ptr.hpp>
-#undef private
+#include <boost/throw_exception.hpp>
 
-#include <boost/serialization/is_abstract.hpp>
+#include <boost/archive/archive_exception.hpp>
+
 #include <boost/serialization/split_free.hpp>
-#include <boost/serialization/void_cast.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/version.hpp>
 #include <boost/serialization/tracking.hpp>
+#include <boost/static_assert.hpp>
 
-// mark base class as an (uncreatable) base class
-BOOST_IS_ABSTRACT(boost::detail::sp_counted_base)
+#include <boost/serialization/extended_type_info.hpp>
+#include <boost/serialization/type_info_implementation.hpp>
+#include <boost/serialization/void_cast.hpp>
 
-// function specializations must be defined in the appropriate
-// namespace - boost::serialization
-namespace boost { 
-#if defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
-namespace serialization {
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+// shared_ptr serialization traits
+// version 1 to distinguish from boost 1.32 version. Note: we can only do this
+// for a template when the compiler supports partial template specialization
+
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+    namespace boost {
+    namespace serialization{
+        template<class T>
+        struct version< ::boost::shared_ptr<T> > {                                                                      \
+            typedef mpl::integral_c_tag tag;
+            typedef mpl::int_<1> type;
+            BOOST_STATIC_CONSTANT(unsigned int, value = type::value);
+        };
+        // don't track shared pointers
+        template<class T>
+        struct tracking_level< ::boost::shared_ptr<T> > { 
+            typedef mpl::integral_c_tag tag;
+            typedef mpl::int_< ::boost::serialization::track_never> type;
+            BOOST_STATIC_CONSTANT(int, value = type::value);
+        };
+    }}
+    #define BOOST_SERIALIZATION_SHARED_PTR(T)
 #else
-namespace detail {
+    // define macro to let users of these compilers do this
+    #define BOOST_SERIALIZATION_SHARED_PTR(T)                         \
+    BOOST_CLASS_VERSION(                                              \
+        ::boost::shared_ptr< T >,                                     \
+        1                                                             \
+    )                                                                 \
+    BOOST_CLASS_TRACKING(                                             \
+        ::boost::shared_ptr< T >,                                     \
+        ::boost::serialization::track_never                           \
+    )                                                                 \
+    /**/
 #endif
 
-/////////////////////////////////////////////////////////////
-// sp_counted_base_impl serialization
+namespace boost {
+namespace serialization{
+namespace detail {
 
-template<class Archive, class P, class D>
-inline void serialize(
-    Archive & /* ar */,
-    boost::detail::sp_counted_base_impl<P, D> & /* t */,
-    const unsigned int /*file_version*/
-){
-    // register the relationship between each derived class
-    // its polymorphic base
-    boost::serialization::void_cast_register<
-        boost::detail::sp_counted_base_impl<P, D>,
-        boost::detail::sp_counted_base 
-    >(
-        static_cast<boost::detail::sp_counted_base_impl<P, D> *>(NULL),
-        static_cast<boost::detail::sp_counted_base *>(NULL)
-    );
+struct null_deleter {
+    void operator()(void const *) const {}
+};
+
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+// a common class for holding various types of shared pointers
+
+class shared_ptr_helper {
+    typedef std::map<void*, shared_ptr<void> > collection_type;
+    typedef collection_type::const_iterator iterator_type;
+    // list of shared_pointers create accessable by raw pointer. This
+    // is used to "match up" shared pointers loaded at diferent
+    // points in the archive
+    collection_type m_pointers;
+    // return a void pointer to the most derived type
+    template<class T>
+    void * object_identifier(T * t) const {
+        const extended_type_info * true_type 
+            = type_info_implementation<T>::type::get_derived_extended_type_info(*t);
+        // note:if this exception is thrown, be sure that derived pointer
+        // is either regsitered or exported.
+        if(NULL == true_type)
+            boost::throw_exception(
+                boost::archive::archive_exception(
+                    boost::archive::archive_exception::unregistered_class
+                )
+            );
+        const boost::serialization::extended_type_info * this_type
+            = boost::serialization::type_info_implementation<T>::type::get_instance();
+        void * vp = void_downcast(*true_type, *this_type, t);
+        return vp;
+    }
+public:
+    template<class T>
+    void reset(shared_ptr<T> & s, T * r){
+        if(NULL == r){
+            s.reset();
+            return;
+        }
+        // get pointer to the most derived object.  This is effectively
+        // the object identifer
+        void * od = object_identifier(r);
+
+        iterator_type it = m_pointers.find(od);
+
+        if(it == m_pointers.end()){
+            s.reset(r);
+            m_pointers.insert(collection_type::value_type(od,s));
+        }
+        else{
+            s = static_pointer_cast<T>((*it).second);
+        }
+    }
+    virtual ~shared_ptr_helper(){}
+};
+
+} // namespace detail
+
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+// utility function for creating/getting a helper - could be useful in general
+// but shared_ptr is the only class (so far that needs it) and I don't have a
+// convenient header to place it into.
+template<class Archive, class T>
+T &
+get_helper(Archive & ar){
+    extended_type_info * eti = type_info_implementation<T>::type::get_instance();
+    shared_ptr<void> sph;
+    ar.lookup_helper(eti, sph);
+    if(NULL == sph.get()){
+        sph = shared_ptr<T>(new T);
+        ar.insert_helper(eti, sph);
+    }
+    return * static_cast<T *>(sph.get());
 }
 
-template<class Archive, class P, class D>
-inline void save_construct_data(
-    Archive & ar,
-    const boost::detail::sp_counted_base_impl<P, D> *t, 
-    const unsigned int /* file_version */
-){
-    // variables used for construction
-    ar << boost::serialization::make_nvp("ptr", t->ptr);
+#if 0
+template<class Archive, class H>
+H &
+get_helper(Archive & ar){
+    shared_ptr<H> sph;
+    ar.lookup_helper(sph);
+    if(NULL == sph.get()){
+        sph = shared_ptr<H>(new H);
+        ar.insert_helper(sph);
+    }
+    return * static_cast<T *>(sph.get());
 }
+#endif
 
-template<class Archive, class P, class D>
-inline void load_construct_data(
-    Archive & ar,
-    boost::detail::sp_counted_base_impl<P, D> * t, 
-    const unsigned int /* file_version */
-){
-    P ptr_;
-    ar >> boost::serialization::make_nvp("ptr", ptr_);
-    ::new(t)boost::detail::sp_counted_base_impl<P, D>(ptr_,  D()); // placement
-    // compensate for that fact that a new shared count always is 
-    // initialized with one. the add_ref_copy below will increment it
-    // every time its serialized so without this adjustment
-    // the use and weak counts will be off by one.
-    t->use_count_ = 0;
-}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+// serialization for shared_ptr
 
-/////////////////////////////////////////////////////////////
-// shared_count serialization
-
-template<class Archive>
+template<class Archive, class T>
 inline void save(
     Archive & ar,
-    const boost::detail::shared_count &t,
+    const boost::shared_ptr<T> &t,
     const unsigned int /* file_version */
 ){
-    ar << boost::serialization::make_nvp("pi", t.pi_);
+    // The most common cause of trapping here would be serializing
+    // something like shared_ptr<int>.  This occurs because int
+    // is never tracked by default.  Wrap int in a trackable type
+    BOOST_STATIC_ASSERT((tracking_level<T>::value != track_never));
+    const T * t_ptr = t.get();
+    ar << boost::serialization::make_nvp("px", t_ptr);
 }
 
-template<class Archive>
+template<class Archive, class T>
 inline void load(
     Archive & ar,
-    boost::detail::shared_count &t,
-    const unsigned int /* file_version */
-){
-    ar >> boost::serialization::make_nvp("pi", t.pi_);
-    if(NULL != t.pi_)
-        t.pi_->add_ref_copy();
-}
-
-template<class Archive>
-inline void serialize(
-    Archive & ar,
-    boost::detail::shared_count &t,
+    boost::shared_ptr<T> &t,
     const unsigned int file_version
 ){
-    boost::serialization::split_free(ar, t, file_version);
+    // The most common cause of trapping here would be serializing
+    // something like shared_ptr<int>.  This occurs because int
+    // is never tracked by default.  Wrap int in a trackable type
+    BOOST_STATIC_ASSERT((tracking_level<T>::value != track_never));
+    T* r;
+    #ifdef BOOST_SERIALIZATION_SHARED_PTR_132_HPP
+    if(file_version < 1){
+        ar.register_type(static_cast<
+            boost_132::detail::sp_counted_base_impl<T *, boost::checked_deleter<T> > *
+        >(NULL));
+        boost_132::shared_ptr<T> sp;
+        ar >> boost::serialization::make_nvp("px", sp.px);
+        ar >> boost::serialization::make_nvp("pn", sp.pn);
+        // got to keep the sps around so the sp.pns don't disappear
+        get_helper<Archive, boost_132::serialization::detail::shared_ptr_helper>(ar).append(sp);
+        r = sp.get();
+    }
+    else    
+    #endif
+    {
+            ar >> boost::serialization::make_nvp("px", r);
+    }
+    get_helper<Archive, detail::shared_ptr_helper >(ar).reset(t,r);
 }
-
-#if ! defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
-} // detail
-#endif
-
-/////////////////////////////////////////////////////////////
-// implement serialization for shared_ptr<T>
 
 template<class Archive, class T>
 inline void serialize(
     Archive & ar,
     boost::shared_ptr<T> &t,
-    const unsigned int /* file_version */
+    const unsigned int file_version
 ){
     // correct shared_ptr serialization depends upon object tracking
     // being used.
@@ -145,36 +228,10 @@ inline void serialize(
         boost::serialization::tracking_level<T>::value
         != boost::serialization::track_never
     );
-    // only the raw pointer has to be saved
-    // the ref count is maintained automatically as shared pointers are loaded
-    ar.register_type(static_cast<
-        boost::detail::sp_counted_base_impl<T *, boost::checked_deleter<T> > *
-    >(NULL));
-    ar & boost::serialization::make_nvp("px", t.px);
-    ar & boost::serialization::make_nvp("pn", t.pn);
+    boost::serialization::split_free(ar, t, file_version);
 }
 
-#if defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
-} // serialization
-#endif
+} // namespace serialization
 } // namespace boost
-
-// This macro is used to export GUIDS for shared pointers to allow
-// the serialization system to export them properly. David Tonge
-#define BOOST_SHARED_POINTER_EXPORT_GUID(T, K)    \
-    typedef boost::detail::sp_counted_base_impl<  \
-        T *,                                      \
-        boost::checked_deleter< T >               \
-    > __shared_ptr_ ## T;                         \
-    BOOST_CLASS_EXPORT_GUID(__shared_ptr_ ## T, "__shared_ptr_" K)\
-    BOOST_CLASS_EXPORT_GUID(T, K)                 \
-    /**/
-
-#define BOOST_SHARED_POINTER_EXPORT(T)            \
-    BOOST_SHARED_POINTER_EXPORT_GUID(             \
-        T,                                        \
-        BOOST_PP_STRINGIZE(T)                     \
-    )                                             \
-    /**/
 
 #endif // BOOST_SERIALIZATION_SHARED_PTR_HPP

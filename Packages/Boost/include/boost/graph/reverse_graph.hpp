@@ -77,6 +77,21 @@ class reverse_graph {
       vertex_property_type;
     typedef reverse_graph_tag graph_tag;
 
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+    // Bundled properties support
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<BidirectionalGraph, 
+                                           Descriptor>::type&
+    operator[](Descriptor x)
+    { return m_g[x]; }
+
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<BidirectionalGraph, 
+                                           Descriptor>::type const&
+    operator[](Descriptor x) const
+    { return m_g[x]; }
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+
     static vertex_descriptor null_vertex()
     { return Traits::null_vertex(); }
 
@@ -84,6 +99,16 @@ class reverse_graph {
  // private:
     GraphRef m_g;
 };
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  template<typename Graph, typename GraphRef>
+  struct vertex_bundle_type<reverse_graph<Graph, GraphRef> > 
+    : vertex_bundle_type<Graph> { };
+
+  template<typename Graph, typename GraphRef>
+  struct edge_bundle_type<reverse_graph<Graph, GraphRef> > 
+    : edge_bundle_type<Graph> { };
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
 template <class BidirectionalGraph>
 inline reverse_graph<BidirectionalGraph>
@@ -152,7 +177,7 @@ edge(const typename BidirectionalGraph::vertex_descriptor u,
      const typename BidirectionalGraph::vertex_descriptor v,
      const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return edge(v, u, g);
+    return edge(v, u, g.m_g);
 }
 
 template <class BidirectionalGraph, class GRef>
@@ -267,6 +292,22 @@ put(Property p, const reverse_graph<BidirectionalGraph,GRef>& g, const Key& k,
   put(p, g.m_g, k, val);
 }
 
+template<typename BidirectionalGraph, typename GRef, typename Tag,
+         typename Value>
+inline void
+set_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag, 
+             const Value& value)
+{
+  set_property(g.m_g, tag, value);
+}
+
+template<typename BidirectionalGraph, typename GRef, typename Tag>
+inline
+typename graph_property<BidirectionalGraph, Tag>::type
+get_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag)
+{
+  return get_property(g.m_g, tag);
+}
 
 } // namespace boost
 

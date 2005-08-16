@@ -1,5 +1,5 @@
-#ifndef BOOST_ARCHIVE_BASIC_IARCHIVE_HPP
-#define BOOST_ARCHIVE_BASIC_IARCHIVE_HPP
+#ifndef BOOST_ARCHIVE_DETAIL_BASIC_IARCHIVE_HPP
+#define BOOST_ARCHIVE_DETAIL_BASIC_IARCHIVE_HPP
 
 // MS compatible compilers support #pragma once
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
@@ -16,15 +16,17 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
-#include <boost/config.hpp>
 // can't use this - much as I'd like to as borland doesn't support it
 // #include <boost/scoped_ptr.hpp>
 
-#include <boost/serialization/tracking.hpp>
-
 #include <boost/archive/basic_archive.hpp>
+#include <boost/serialization/tracking_enum.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
+template<class T>
+class shared_ptr;
 
 namespace serialization {
     class extended_type_info;
@@ -34,11 +36,11 @@ namespace archive {
 namespace detail {
 
 class basic_iarchive_impl;
-class basic_iserializer;
-class basic_pointer_iserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_iserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_iserializer;
 //////////////////////////////////////////////////////////////////////
 // class basic_iarchive - read serialized objects from a input stream
-class basic_iarchive 
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_iarchive 
 {
     friend class basic_iarchive_impl;
     // hide implementation of this class to minimize header conclusion
@@ -52,33 +54,46 @@ class basic_iarchive
     virtual void vload(class_id_optional_type &t) = 0;
     virtual void vload(class_name_type &t) = 0;
     virtual void vload(tracking_type &t) = 0;
-    version_type archive_library_version;
-public: // note: not part of the public API.
-    void
-    next_object_pointer(void *t);
 protected:
-    void init(unsigned int archive_library_version_){
-        archive_library_version = archive_library_version_;
-    }
-    basic_iarchive();
+    basic_iarchive(unsigned int flags);
     virtual ~basic_iarchive();
 public:
-    unsigned int library_version() const{
-        return archive_library_version;
-    }
+    // note: NOT part of the public API.
+    void next_object_pointer(void *t);
+    void register_basic_serializer(const basic_iserializer & bis);
+    void
+    lookup_basic_helper(
+        const boost::serialization::extended_type_info * const eti,
+        shared_ptr<void> & sph
+    );
+    void 
+    insert_basic_helper(
+        const boost::serialization::extended_type_info * const eti,
+        shared_ptr<void> & sph
+    );
     void load_object(
         void *t, 
         const basic_iserializer & bis
     );
-    const basic_pointer_iserializer * load_pointer(
+    const basic_pointer_iserializer * 
+    load_pointer(
         void * & t, 
         const basic_pointer_iserializer * bpis_ptr,
         const basic_pointer_iserializer * (*finder)(
-            const boost::serialization::extended_type_info & type
+            const boost::serialization::extended_type_info & eti
         )
     );
-    void register_basic_serializer(const basic_iserializer & bis);
-    void delete_created_pointers();
+    // real public API starts here
+    void 
+    set_library_version(unsigned int archive_library_version);
+    unsigned int 
+    get_library_version() const;
+    unsigned int
+    get_flags() const;
+    void 
+    reset_object_address(const void * new_address, const void * old_address);
+    void 
+    delete_created_pointers();
 };
 
 } // namespace detail
@@ -91,4 +106,6 @@ BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(
     boost::archive::detail::basic_iarchive
 )
 
-#endif //BOOST_ARCHIVE_BASIC_IARCHIVE_HPP
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
+
+#endif //BOOST_ARCHIVE_DETAIL_BASIC_IARCHIVE_HPP

@@ -24,7 +24,13 @@
 #else
 #include "boost/date_time/gregorian/formatters.hpp"
 #endif
+
+#if defined(USE_DATE_TIME_PRE_1_33_FACET_IO)
 #include "boost/date_time/gregorian/greg_facet.hpp"
+#else
+#include "boost/date_time/gregorian/gregorian_io.hpp"
+#endif // USE_DATE_TIME_PRE_1_33_FACET_IO
+
 #include "boost/date_time/gregorian/parsers.hpp"
 
 

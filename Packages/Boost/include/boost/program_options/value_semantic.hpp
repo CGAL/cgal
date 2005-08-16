@@ -30,24 +30,19 @@ namespace boost { namespace program_options {
          */
         virtual std::string name() const = 0;
 
-        /** Returns true if value cannot be specified in source at all.
-            Other methods can still set the value somehow, but
-            user can't affect it.
-        */
-        virtual bool is_zero_tokens() const = 0;
+        /** The minimum number of tokens for this option that
+            should be present on the command line. */
+        virtual unsigned min_tokens() const = 0;
+
+        /** The maximum number of tokens for this option that
+            should be present on the command line. */
+        virtual unsigned max_tokens() const = 0;
 
         /** Returns true if values from different sources should be composed.
             Otherwise, value from the first source is used and values from
             other sources are discarded.
         */
         virtual bool is_composing() const = 0;
-
-        /** Returns true if explicit value of an option can be omitted. 
-        */
-        virtual bool is_implicit() const = 0;
-
-        /** Returns true if value can span several token in input source. */
-        virtual bool is_multitoken() const = 0;
         
         /** Parses a group of tokens that specify a value of option.
             Stores the result in 'value_store', using whatever representation
@@ -117,10 +112,10 @@ namespace boost { namespace program_options {
 
         std::string name() const;
 
-        bool is_zero_tokens() const { return m_zero_tokens; }
+        unsigned min_tokens() const;
+        unsigned max_tokens() const;
+
         bool is_composing() const { return false; }
-        bool is_implicit() const { return false; }
-        bool is_multitoken() const { return false; }
         
         /** If 'value_store' is already initialized, or new_tokens
             has more than one elements, throws. Otherwise, assigns
@@ -147,7 +142,7 @@ namespace boost { namespace program_options {
             the value when it's known. The parameter can be NULL. */
         typed_value(T* store_to) 
         : m_store_to(store_to), m_composing(false),
-          m_implicit(false), m_multitoken(false), m_zero_tokens(false)
+          m_multitoken(false), m_zero_tokens(false)
         {} 
 
         /** Specifies default value, which will be used
@@ -191,13 +186,6 @@ namespace boost { namespace program_options {
             return this;
         }
 
-        /** Specifies that the value is implicit. */
-        typed_value* implicit()
-        {
-            m_implicit =  true;
-            return this;
-        }
-
         /** Specifies that the value can span multiple tokens. */
         typed_value* multitoken()
         {
@@ -216,10 +204,26 @@ namespace boost { namespace program_options {
 
         std::string name() const;
 
-        bool is_zero_tokens() const { return m_zero_tokens; }
         bool is_composing() const { return m_composing; }
-        bool is_implicit() const { return m_implicit; }        
-        bool is_multitoken() const { return m_multitoken; }
+
+        unsigned min_tokens() const
+        {
+            if (m_zero_tokens) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+
+        unsigned max_tokens() const {
+            if (m_multitoken) {
+                return 32000;
+            } else if (m_zero_tokens) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
 
 
         /** Creates an instance of the 'validator' class and calls
@@ -304,7 +308,7 @@ namespace boost { namespace program_options {
 
 }}
 
-#include "detail/value_semantic.hpp"
+#include "boost/program_options/detail/value_semantic.hpp"
 
 #endif
 

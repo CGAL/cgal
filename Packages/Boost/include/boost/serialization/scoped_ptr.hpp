@@ -19,12 +19,8 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/split_free.hpp>
 
-// function specializations must be defined in the appropriate
-// namespace - boost::serialization
 namespace boost { 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
 namespace serialization {
-#endif
     
     template<class Archive, class T>
     void save(
@@ -56,9 +52,7 @@ namespace serialization {
         boost::serialization::split_free(ar, t, version);
     }
 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
 } // namespace serialization
-#endif
 } // namespace boost
 
-#endif
+#endif // BOOST_SERIALIZATION_SCOPED_PTR_HPP_VP_2003_10_30

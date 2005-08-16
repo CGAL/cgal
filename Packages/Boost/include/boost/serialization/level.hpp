@@ -24,9 +24,11 @@
 #include <boost/type_traits/is_array.hpp>
 #include <boost/type_traits/is_class.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
+
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/integral_c.hpp>
+#include <boost/mpl/integral_c_tag.hpp>
 
 #include <boost/serialization/level_enum.hpp>
 #include <boost/serialization/traits.hpp>
@@ -43,52 +45,42 @@ struct implementation_level {
     };
 
     typedef mpl::integral_c_tag tag;
-
-//    #if BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600))
-//        typedef
-//            BOOST_DEDUCED_TYPENAME mpl::eval_if<
-//                is_base_and_derived<basic_traits, T>,
-//                traits_class_level<T>,
-//                mpl::int_<object_serializable>
-//            >::type type;
-//    #else
-        typedef
-            BOOST_DEDUCED_TYPENAME mpl::eval_if<
-                is_base_and_derived<basic_traits, T>,
-                traits_class_level<T>,
-            //else
-            BOOST_DEDUCED_TYPENAME mpl::eval_if<
-                is_fundamental<T>,
+    typedef
+        BOOST_DEDUCED_TYPENAME mpl::eval_if<
+            is_base_and_derived<basic_traits, T>,
+            traits_class_level<T>,
+        //else
+        BOOST_DEDUCED_TYPENAME mpl::eval_if<
+            is_fundamental<T>,
+            mpl::int_<primitive_type>,
+        //else
+        BOOST_DEDUCED_TYPENAME mpl::eval_if<
+            is_class<T>,
+            mpl::int_<object_class_info>,
+        //else
+        BOOST_DEDUCED_TYPENAME mpl::eval_if<
+            is_array<T>,
+            #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x560))
+                mpl::int_<not_serializable>,
+            #else
+                mpl::int_<object_serializable>,
+            #endif
+        //else
+        BOOST_DEDUCED_TYPENAME mpl::eval_if<
+            is_enum<T>,
+            //#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x560))
+            //    mpl::int_<not_serializable>,
+            //#else
                 mpl::int_<primitive_type>,
-            //else
-            BOOST_DEDUCED_TYPENAME mpl::eval_if<
-                is_class<T>,
-                mpl::int_<object_class_info>,
-            //else
-            BOOST_DEDUCED_TYPENAME mpl::eval_if<
-                is_array<T>,
-                #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-                    mpl::int_<not_serializable>,
-                #else
-                    mpl::int_<object_serializable>,
-                #endif
-            //else
-            BOOST_DEDUCED_TYPENAME mpl::eval_if<
-                is_enum<T>,
-                #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-                    mpl::int_<not_serializable>,
-                #else
-                    mpl::int_<object_serializable>,
-                #endif
-            //else
-                mpl::int_<not_serializable>
-            >
-            >
-            >
-            >
-            >::type type;
-            // vc 7.1 doesn't like enums here
-//    #endif
+            //#endif
+        //else
+            mpl::int_<not_serializable>
+        >
+        >
+        >
+        >
+        >::type type;
+        // vc 7.1 doesn't like enums here
     BOOST_STATIC_CONSTANT(int, value = implementation_level::type::value);
 };
 
@@ -108,7 +100,7 @@ inline bool operator>=(implementation_level<T> t, enum level_type l)
     namespace boost {                                    \
     namespace serialization {                            \
     template <>                                          \
-    struct implementation_level<T>                       \
+    struct implementation_level< T >                     \
     {                                                    \
         typedef mpl::integral_c_tag tag;                 \
         typedef mpl::int_< E > type;                     \

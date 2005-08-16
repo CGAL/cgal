@@ -19,27 +19,25 @@ namespace boost { namespace fusion
 {
     struct single_view_iterator_tag;
 
-    template <typename T>
+    template <typename SingleView>
     struct single_view_iterator_end
-        : iterator_base<single_view_iterator_end<T> >
+        : iterator_base<single_view_iterator_end<SingleView> >
     {
         typedef single_view_iterator_tag tag;
     };
 
-    template <typename T>
+    template <typename SingleView>
     struct single_view_iterator
-        : iterator_base<single_view_iterator<T> >
+        : iterator_base<single_view_iterator<SingleView> >
     {
         typedef single_view_iterator_tag tag;
-        typedef typename detail::as_tuple_element<T>::type value_type;
+        typedef SingleView single_view_type;
+        typedef typename add_reference<SingleView>::type reference_type;
 
-        single_view_iterator()
-            : val() {}
+        explicit single_view_iterator(reference_type view)
+            : view(view) {}
 
-        explicit single_view_iterator(typename detail::call_param<T>::type val)
-            : val(val) {}
-
-        value_type val;
+        reference_type view;
     };
 }}
 

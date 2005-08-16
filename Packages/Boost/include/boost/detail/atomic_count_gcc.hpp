@@ -10,6 +10,7 @@
 //
 //  Copyright (c) 2001, 2002 Peter Dimov and Multi Media Ltd.
 //  Copyright (c) 2002 Lars Gullik Bjønnes <larsbj@lyx.org>
+//  Copyright 2003-2005 Peter Dimov
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
@@ -23,6 +24,13 @@ namespace boost
 
 namespace detail
 {
+
+#if defined(__GLIBCXX__) // g++ 3.4+
+
+using __gnu_cxx::__atomic_add;
+using __gnu_cxx::__exchange_and_add;
+
+#endif
 
 class atomic_count
 {

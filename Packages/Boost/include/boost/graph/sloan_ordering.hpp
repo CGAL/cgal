@@ -124,7 +124,7 @@ namespace boost {
                            ColorMap color, 
                            DegreeMap degree)
   {
-    typedef typename property_traits<DegreeMap>::value_type DS;
+    typedef typename property_traits<DegreeMap>::value_type Degree;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename std::vector< typename graph_traits<Graph>::vertices_size_type>::iterator vec_iter;
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
@@ -149,7 +149,7 @@ namespace boost {
     typename property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, G);
     
     //Creating a priority queue
-    typedef indirect_cmp<DegreeMap, std::greater<DS> > Compare;
+    typedef indirect_cmp<DegreeMap, std::greater<Degree> > Compare;
     Compare comp(degree);
     std::priority_queue<Vertex, std::vector<Vertex>, Compare> degree_queue(comp);
     
@@ -279,8 +279,8 @@ namespace boost {
                  Weight W1, 
                  Weight W2)
   {
-    //typedef typename property_traits<DegreeMap>::value_type DS;
-    typedef typename property_traits<PriorityMap>::value_type DS;
+    //typedef typename property_traits<DegreeMap>::value_type Degree;
+    typedef typename property_traits<PriorityMap>::value_type Degree;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -317,7 +317,7 @@ namespace boost {
     }
     
     //Priority list
-    typedef indirect_cmp<PriorityMap, std::greater<DS> > Compare;
+    typedef indirect_cmp<PriorityMap, std::greater<Degree> > Compare;
     Compare comp(priority);
     std::list<Vertex> priority_list;
 

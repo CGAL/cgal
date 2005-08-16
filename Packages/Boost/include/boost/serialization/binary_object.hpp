@@ -43,11 +43,11 @@ struct binary_object {
         ar.save_binary(m_t, m_size);
     }
     template<class Archive>
-    void load(Archive & ar, const unsigned int /* file_version */){
+    void load(Archive & ar, const unsigned int /* file_version */) const {
         ar.load_binary(const_cast<void *>(m_t), m_size);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
-        binary_object(/* const */ void * const t, std::size_t size) :
+    binary_object(/* const */ void * const t, std::size_t size) :
         m_t(t),
         m_size(size)
     {}
@@ -60,49 +60,12 @@ struct binary_object {
 // just a little helper to support the convention that all serialization
 // wrappers follow the naming convention make_xxxxx
 inline 
-binary_object make_binary_object(/* const */ void * t, std::size_t size){
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+const
+#endif
+binary_object 
+make_binary_object(/* const */ void * t, std::size_t size){
     return binary_object(t, size);
-}
-
-// make special version of nvp which for binary object wrapper rather than
-// a pointer to them.  This permits a better composition of nvp(binary_object)
-// than would otherwise be possible.
-
-template<>
-struct nvp<binary_object> : 
-    public std::pair<const char *, binary_object>,
-    public traits<nvp<binary_object>, object_serializable, track_never>
-{
-    explicit nvp(const char * name, binary_object & t) : 
-        std::pair<const char *, binary_object>(name, t)
-    {}
-    nvp(const nvp<binary_object> & rhs) : 
-        std::pair<const char *, binary_object>(rhs.first, rhs.second)
-    {}
-
-    const char * name() const {
-        return this->first;
-    }
-    binary_object & value() {
-        return this->second;
-    }
-    const binary_object & value() const {
-        return this->second;
-    }
-    // default treatment for name-value pairs. The name is
-    // just discarded and only the value is serialized.  Note the unusual
-    // fact that his is "const".  This is because wrappers themselves are
-    // in fact "const" - even though the things they wrap may not be.
-    // note: removed "const" because it confuses MSVC 6.0
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int /* file_version */) /*const*/
-    {
-        ar & value();
-    }
-};
-
-inline nvp<binary_object> make_nvp(const char * name, binary_object t){
-    return nvp<binary_object>(name, t);
 }
 
 } // namespace serialization

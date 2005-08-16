@@ -858,9 +858,13 @@ struct return_type_2<other_action<subscript_action>, A, B> {
 } // namespace boost
 
 
-namespace std {
- template <class Char, class Traits, class Allocator> class basic_string;
-}
+// Forward declarations are incompatible with the libstdc++ debug mode.
+#if BOOST_WORKAROUND(__GNUC__, >= 3) && _GLIBCXX_DEBUG
+#include <string>
+#include <vector>
+#include <map>
+#include <deque>
+#else
 
 // The GCC 2.95.x uses a non-conformant deque
 #if BOOST_WORKAROUND(__GNUC__, == 2) && __GNUC_MINOR__ <= 96
@@ -873,12 +877,8 @@ namespace std {
 
 #endif
 
-#if BOOST_WORKAROUND(__GNUC__, == 3) && __GNUC_MINOR__ >=4
-#include <vector>
-#include <map>
-#else
-
 namespace std {
+ template <class Char, class Traits, class Allocator> class basic_string;
  template <class T, class Allocator> class vector;
  template <class Key, class T, class Cmp, class Allocator> class map;
  template <class Key, class T, class Cmp, class Allocator> class multimap;

@@ -14,12 +14,13 @@
 //  GeNeSys mbH & Co. KG in producing this work.
 //
 
-#ifndef BOOST_UBLAS_STORAGE_SPARSE_H
-#define BOOST_UBLAS_STORAGE_SPARSE_H
+#ifndef _BOOST_UBLAS_STORAGE_SPARSE_
+#define _BOOST_UBLAS_STORAGE_SPARSE_
 
 #include <map>
 
 #include <boost/numeric/ublas/storage.hpp>
+
 
 namespace boost { namespace numeric { namespace ublas {
 
@@ -178,12 +179,10 @@ namespace boost { namespace numeric { namespace ublas {
                 std::swap (d_, p.d_);
             }
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap (sparse_storage_element p1, sparse_storage_element p2) {
             p1.swap (p2);
         }
-#endif
 
     private:
         pointer it_;
@@ -195,7 +194,7 @@ namespace boost { namespace numeric { namespace ublas {
 
 
     // Default map type is simply forwarded to std::map
-    // FIXME should use ALLOC for map but std::pair<const I, T> and std::pair<I,T> fail
+    // FIXME should use ALLOC for map but std::allocator of std::pair<const I, T> and std::pair<I,T> fail to compile
     template<class I, class T, class ALLOC>
     class map_std : public std::map<I, T /*, ALLOC */> {
     };
@@ -216,6 +215,10 @@ namespace boost { namespace numeric { namespace ublas {
         typedef value_type &reference;
         typedef const value_type *const_pointer;
         typedef value_type *pointer;
+        // Iterators simply are pointers.
+        typedef const_pointer const_iterator;
+        typedef pointer iterator;
+
         typedef const T &data_const_reference;
 #ifndef BOOST_UBLAS_STRICT_MAP_ARRAY
         typedef T &data_reference;
@@ -233,7 +236,7 @@ namespace boost { namespace numeric { namespace ublas {
         map_array (const map_array &c):
             alloc_ (c.alloc_), capacity_ (c.size_), size_ (c.size_) {
             if (capacity_) {
-                data_ = alloc_.allocate (capacity_ BOOST_UBLAS_ALLOCATOR_HINT);
+                data_ = alloc_.allocate (capacity_);
                 std::uninitialized_copy (data_, data_ + capacity_, c.data_);
                 // capacity != size_ requires uninitialized_fill (size_ to capacity_)
             }
@@ -256,7 +259,7 @@ namespace boost { namespace numeric { namespace ublas {
             if (size > capacity_) {
                 const size_type capacity = size << 1;
                 BOOST_UBLAS_CHECK (capacity, internal_logic ());
-                pointer data = alloc_.allocate (capacity BOOST_UBLAS_ALLOCATOR_HINT);
+                pointer data = alloc_.allocate (capacity);
                 std::uninitialized_copy (data_, data_ + (std::min) (size, size_), data);
                 std::uninitialized_fill (data + (std::min) (size, size_), data + capacity, value_type ());
 
@@ -280,7 +283,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (capacity >= size_, bad_size ());
             pointer data;
             if (capacity) {
-                data = alloc_.allocate (capacity BOOST_UBLAS_ALLOCATOR_HINT);
+                data = alloc_.allocate (capacity);
                 std::uninitialized_copy (data_, data_ + size_, data);
                 std::uninitialized_fill (data + size_, data + capacity, value_type ());
             }
@@ -343,17 +346,16 @@ namespace boost { namespace numeric { namespace ublas {
                 std::swap (size_, a.size_);
             }
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap (map_array &a1, map_array &a2) {
             a1.swap (a2);
         }
-#endif
 
         // Element insertion and deletion
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer push_back (pointer it, const value_type &p) {
+        
+        // From Back Insertion Sequence concept
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        iterator push_back (iterator it, const value_type &p) {
             if (size () == 0 || (it = end () - 1)->first < p.first) {
                 resize (size () + 1);
                 *(it = end () - 1) = p;
@@ -362,77 +364,65 @@ namespace boost { namespace numeric { namespace ublas {
             external_logic ().raise ();
             return it;
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer insert (pointer it, const value_type &p) {
-            it = detail::lower_bound (begin (), end (), p, detail::less_pair<value_type> ());
+        // Form Unique Associative Container concept
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        std::pair<iterator,bool> insert (const value_type &p) {
+            iterator it = detail::lower_bound (begin (), end (), p, detail::less_pair<value_type> ());
+            if (it->first == p.first)
+                return std::make_pair (it, false);
             difference_type n = it - begin ();
-            BOOST_UBLAS_CHECK (size () == 0 || size () == size_type (n) || it->first != p.first, external_logic ());
+            BOOST_UBLAS_CHECK (size () == 0 || size () == size_type (n), external_logic ());
             resize (size () + 1);
-            it = begin () + n;
+            it = begin () + n;    // allow for invalidation
             std::copy_backward (it, end () - 1, end ());
             *it = p;
-            return it;
+            return std::make_pair (it, true);
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        void erase (pointer it) {
+        // Form Sorted Associative Container concept
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        iterator insert (iterator hint, const value_type &p) {
+            return insert (p).first;
+        }
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        void erase (iterator it) {
             BOOST_UBLAS_CHECK (begin () <= it && it < end (), bad_index ());
-            // Fixed by George Katsirelos.
-            // (*it).second = mapped_type (0);
             std::copy (it + 1, end (), it);
             resize (size () - 1);
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        void erase (pointer it1, pointer it2) {
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        void erase (iterator it1, iterator it2) {
             BOOST_UBLAS_CHECK (begin () <= it1 && it1 < it2 && it2 <= end (), bad_index ());
-            // Fixed by George Katsirelos.
-            // while (it1 != it2) {
-            //     BOOST_UBLAS_CHECK (begin () <= it1 && it1 < end (), bad_index ());
-            //     (*it1).second = mapped_type (0);
-            //     ++ it1;
-            // }
             std::copy (it2, end (), it1);
             resize (size () - (it2 - it1));
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
         void clear () {
             resize (0);
         }
 
         // Element lookup
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        const_pointer find (key_type i) const {
-            const_pointer it (detail::lower_bound (begin (), end (), value_type (i, mapped_type (0)), detail::less_pair<value_type> ()));
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        const_iterator find (key_type i) const {
+            const_iterator it (detail::lower_bound (begin (), end (), value_type (i, mapped_type (0)), detail::less_pair<value_type> ()));
             if (it == end () || it->first != i)
                 it = end ();
             return it;
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer find (key_type i) {
-            pointer it (detail::lower_bound (begin (), end (), value_type (i, mapped_type (0)), detail::less_pair<value_type> ()));
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        iterator find (key_type i) {
+            iterator it (detail::lower_bound (begin (), end (), value_type (i, mapped_type (0)), detail::less_pair<value_type> ()));
             if (it == end () || it->first != i)
                 it = end ();
             return it;
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        const_pointer lower_bound (key_type i) const {
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        const_iterator lower_bound (key_type i) const {
             return detail::lower_bound (begin (), end (), value_type (i, mapped_type (0)), detail::less_pair<value_type> ());
         }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer lower_bound (key_type i) {
+        // BOOST_UBLAS_INLINE This function seems to be big. So we do not let the compiler inline it.    
+        iterator lower_bound (key_type i) {
             return detail::lower_bound (begin (), end (), value_type (i, mapped_type (0)), detail::less_pair<value_type> ());
         }
-
-        // Iterators simply are pointers.
-
-        typedef const_pointer const_iterator;
 
         BOOST_UBLAS_INLINE
         const_iterator begin () const {
@@ -442,8 +432,6 @@ namespace boost { namespace numeric { namespace ublas {
         const_iterator end () const {
             return data_ + size_;
         }
-
-        typedef pointer iterator;
 
         BOOST_UBLAS_INLINE
         iterator begin () {
@@ -455,12 +443,8 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterators
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
+        typedef std::reverse_iterator<iterator> reverse_iterator;
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -470,13 +454,6 @@ namespace boost { namespace numeric { namespace ublas {
         const_reverse_iterator rend () const {
             return const_reverse_iterator (begin ());
         }
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<iterator, value_type, reference> reverse_iterator;
-#else
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-#endif
-
         BOOST_UBLAS_INLINE
         reverse_iterator rbegin () {
             return reverse_iterator (end ());
@@ -505,25 +482,14 @@ namespace boost { namespace numeric { namespace ublas {
 
 
     namespace detail {
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
         template<class A, class T>
         struct map_traits {
-            typedef BOOST_UBLAS_TYPENAME A::mapped_type &reference;
+            typedef typename A::mapped_type &reference;
         };
         template<class I, class T, class ALLOC>
         struct map_traits<map_array<I, T, ALLOC>, T > {
             typedef typename map_array<I, T, ALLOC>::data_reference reference;
         };
-#else
-#if defined (BOOST_UBLAS_STRICT_MAP_ARRAY)
-#error BOOST_UBLAS_STRICT_MAP_ARRAY require partial template speciazation
-#endif
-        // ISSUE: T is actually only required for VC6 as it can't find mapped_type
-        template<class A, class T>
-        struct map_traits {
-            typedef T &reference;
-        };
-#endif
 
         // reserve helpers for map_array and generic maps
         // ISSUE should be in map_traits but want to use on all compilers
@@ -539,284 +505,27 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         template<class M>
-        BOOST_UBLAS_INLINE
-        typename M::size_type map_capacity (M &m) {
-            return m.size ();
-        }
+        struct map_capacity_traits {
+            typedef typename M::size_type type ;
+            type operator() ( M const& m ) const {
+               return m.size ();
+            }
+        } ;
+
         template<class I, class T, class ALLOC>
+        struct map_capacity_traits< map_array<I, T, ALLOC> > {
+            typedef typename map_array<I, T, ALLOC>::size_type type ;
+            type operator() ( map_array<I, T, ALLOC> const& m ) const {
+               return m.capacity ();
+            }
+        } ;
+
+        template<class M>
         BOOST_UBLAS_INLINE
-        typename map_array<I, T, ALLOC>::size_type map_capacity (map_array<I, T, ALLOC> &m) {
-            return m.capacity ();
+        typename map_capacity_traits<M>::type map_capacity (M const& m) {
+            return map_capacity_traits<M>() ( m );
         }
     }
-
-    // This specialization is missing in Dinkumware's STL?!
-    template<class I, class T, class F, class ALLOC>
-    BOOST_UBLAS_INLINE
-    void swap (std::map<I, T, F, ALLOC> &a1, std::map<I, T, F, ALLOC> &a2) {
-        if (&a1 != &a2)
-            a1.swap (a2);
-    }
-
-
-#ifdef BOOST_UBLAS_DEPRACATED
-// Depracated due to:
-//  no allocator implementation
-//  inconsitent value_type zero init
-//  non STL typedefs
-
-    // Set array
-    template<class I, class ALLOC>
-    class set_array {
-    public:
-        typedef ALLOC allocator_type;
-        typedef std::size_t size_type;
-        typedef std::ptrdiff_t difference_type;
-        typedef I index_type;
-        typedef I value_type;
-        typedef const I &const_reference;
-        typedef I &reference;
-        typedef const I *const_pointer;
-        typedef I *pointer;
-
-        // Construction and destruction
-        BOOST_UBLAS_INLINE
-        set_array ():
-            capacity_ (0), data_ (new value_type [0]), size_ (0) {
-        }
-        BOOST_UBLAS_INLINE
-        set_array (const set_array &a):
-            capacity_ (a.size_), data_ (new value_type [a.size_]), size_ (a.size_) {
-            *this = a;
-        }
-        BOOST_UBLAS_INLINE
-        ~set_array () {
-            delete [] data_;
-        }
-
-        // Resizing
-        BOOST_UBLAS_INLINE
-        void resize (size_type size) {
-            BOOST_UBLAS_CHECK (size_ <= capacity_, internal_logic ());
-            if (size > capacity_) {
-                pointer data = new value_type [size << 1];
-                std::copy (data_, data_ + (std::min) (size, size_), data);
-                std::fill (data + (std::min) (size, size_), data + size, value_type (0));
-                delete [] data_;
-                capacity_ = size << 1;
-                data_ = data;
-            }
-            size_ = size;
-            BOOST_UBLAS_CHECK (size_ <= capacity_, internal_logic ());
-        }
-
-        // Reserving
-        BOOST_UBLAS_INLINE
-        void reserve (size_type capacity) {
-            BOOST_UBLAS_CHECK (size_ <= capacity_, internal_logic ());
-            if (capacity > capacity_) {
-                pointer data = new value_type [capacity];
-                std::copy (data_, data_ + size_, data);
-                delete [] data_;
-                capacity_ = capacity;
-                data_ = data;
-            }
-            BOOST_UBLAS_CHECK (size_ <= capacity_, internal_logic ());
-        }
-
-        BOOST_UBLAS_INLINE
-        size_type size () const {
-            return size_;
-        }
-
-        // Element access
-        BOOST_UBLAS_INLINE
-        const_reference operator [] (index_type i) {
-            pointer it = find (i);
-            if (it == end ())
-                it = insert (end (), i);
-            BOOST_UBLAS_CHECK (it != end (), internal_logic ());
-            return *it;
-        }
-
-        // Assignment
-        BOOST_UBLAS_INLINE
-        set_array &operator = (const set_array &a) {
-            if (this != &a) {
-                resize (a.size_);
-                std::copy (a.data_, a.data_ + a.size_, data_);
-            }
-            return *this;
-        }
-        BOOST_UBLAS_INLINE
-        set_array &assign_temporary (set_array &a) {
-            swap (a);
-            return *this;
-        }
-
-        // Swapping
-        BOOST_UBLAS_INLINE
-        void swap (set_array &a) {
-            if (this != &a) {
-                std::swap (capacity_, a.capacity_);
-                std::swap (data_, a.data_);
-                std::swap (size_, a.size_);
-            }
-        }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
-        BOOST_UBLAS_INLINE
-        friend void swap (set_array &a1, set_array &a2) {
-            a1.swap (a2);
-        }
-#endif
-
-        // Element insertion and deletion
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer push_back (pointer it, const value_type &p) {
-            if (size () == 0 || (*(it = end () - 1)) < p) {
-                resize (size () + 1);
-                *(it = end () - 1) = p;
-                return it;
-            }
-            external_logic ().raise ();
-            return it;
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer insert (pointer it, const value_type &p) {
-            it = detail::lower_bound (begin (), end (), p, std::less<value_type> ());
-            difference_type n = it - begin ();
-            BOOST_UBLAS_CHECK (size () == 0 || size () == size_type (n) || *it != p, external_logic ());
-            resize (size () + 1);
-            it = begin () + n;
-            std::copy_backward (it, end () - 1, end ());
-            *it = p;
-            return it;
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        void erase (pointer it) {
-            BOOST_UBLAS_CHECK (begin () <= it && it < end (), bad_index ());
-            std::copy (it + 1, end (), it);
-            resize (size () - 1);
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        void erase (pointer it1, pointer it2) {
-            BOOST_UBLAS_CHECK (begin () <= it1 && it1 < it2 && it2 <= end (), bad_index ());
-            std::copy (it2, end (), it1);
-            resize (size () - (it2 - it1));
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        void clear () {
-            resize (0);
-        }
-
-        // Element lookup
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        const_pointer find (index_type i) const {
-            const_pointer it (detail::lower_bound (begin (), end (), i, std::less<value_type> ()));
-            if (it == end () || *it != i)
-                it = end ();
-            return it;
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer find (index_type i) {
-            pointer it (detail::lower_bound (begin (), end (), i, std::less<value_type> ()));
-            if (it == end () || *it != i)
-                it = end ();
-            return it;
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        const_pointer lower_bound (index_type i) const {
-            return detail::lower_bound (begin (), end (), i, std::less<value_type> ());
-        }
-        // This function seems to be big. So we do not let the compiler inline it.
-        // BOOST_UBLAS_INLINE
-        pointer lower_bound (index_type i) {
-            return detail::lower_bound (begin (), end (), i, std::less<value_type> ());
-        }
-
-        // Iterators simply are pointers.
-
-        typedef const_pointer const_iterator;
-
-        BOOST_UBLAS_INLINE
-        const_iterator begin () const {
-            return data_;
-        }
-        BOOST_UBLAS_INLINE
-        const_iterator end () const {
-            return data_ + size_;
-        }
-
-        typedef pointer iterator;
-
-        BOOST_UBLAS_INLINE
-        iterator begin () {
-            return data_;
-        }
-        BOOST_UBLAS_INLINE
-        iterator end () {
-            return data_ + size_;
-        }
-
-        // Reverse iterators
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
-        typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
-
-        BOOST_UBLAS_INLINE
-        const_reverse_iterator rbegin () const {
-            return const_reverse_iterator (end ());
-        }
-        BOOST_UBLAS_INLINE
-        const_reverse_iterator rend () const {
-            return const_reverse_iterator (begin ());
-        }
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<iterator, value_type, reference> reverse_iterator;
-#else
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-#endif
-
-        BOOST_UBLAS_INLINE
-        reverse_iterator rbegin () {
-            return reverse_iterator (end ());
-        }
-        BOOST_UBLAS_INLINE
-        reverse_iterator rend () {
-            return reverse_iterator (begin ());
-        }
-
-        // Allocator
-        allocator_type get_allocator () {
-            return alloc_;
-        }
-
-    private:
-        size_type capacity_;
-        pointer data_;
-        size_type size_;
-    };
-
-    // This specialization is missing in Dinkumware's STL?!
-    template<class I, class F, class ALLOC>
-    BOOST_UBLAS_INLINE
-    void swap (std::set<I, F, ALLOC> &a1, std::set<I, F> &a2) {
-        if (&a1 != &a2)
-            a1.swap (a2);
-    }
-#endif
 
 }}}
 

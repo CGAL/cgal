@@ -1,7 +1,7 @@
 #ifndef GREGORIAN_SERIALIZE_HPP___
 #define GREGORIAN_SERIALIZE_HPP___
 
-/* Copyright (c) 2004 CrystalClear Software, Inc.
+/* Copyright (c) 2004-2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -13,13 +13,11 @@
 #include "boost/date_time/gregorian/parsers.hpp"
 #include "boost/serialization/split_free.hpp"
 
-
-
-namespace boost {
-namespace serialization {
-
+  
 // macros to split serialize functions into save & load functions
 // An expanded version is below for gregorian::date
+// NOTE: these macros define template functions in the boost::serialization namespace.
+// They must be expanded *outside* of any namespace
 BOOST_SERIALIZATION_SPLIT_FREE(::boost::gregorian::date_duration)
 BOOST_SERIALIZATION_SPLIT_FREE(::boost::gregorian::date_duration::duration_rep)
 BOOST_SERIALIZATION_SPLIT_FREE(::boost::gregorian::date_period)
@@ -33,6 +31,8 @@ BOOST_SERIALIZATION_SPLIT_FREE(::boost::gregorian::last_kday_of_month)
 BOOST_SERIALIZATION_SPLIT_FREE(::boost::gregorian::first_kday_before)
 BOOST_SERIALIZATION_SPLIT_FREE(::boost::gregorian::first_kday_after)
 
+namespace boost {
+namespace serialization {
 
 /*! Method that does serialization for gregorian::date -- splits to load/save
  */
@@ -70,7 +70,17 @@ void load(Archive & ar,
 {
   std::string ds;
   ar & make_nvp("date", ds);
-  d = ::boost::gregorian::from_undelimited_string(ds);
+  try{
+    d = ::boost::gregorian::from_undelimited_string(ds);
+  }catch(bad_lexical_cast be) {
+    gregorian::special_values sv = gregorian::special_value_from_string(ds);
+    if(sv == gregorian::not_special) {
+      throw(be); // no match found, rethrow original exception
+    }
+    else {
+      d = gregorian::date(sv);
+    }
+  }
 }
 
 
@@ -147,8 +157,8 @@ template<class Archive>
 void save(Archive & ar, const gregorian::date_period& dp, 
           unsigned int version)
 {
-  typename gregorian::date d1 = dp.begin();
-  typename gregorian::date d2 = dp.end();
+  gregorian::date d1 = dp.begin();
+  gregorian::date d2 = dp.end();
   ar & make_nvp("date_period_begin_date", d1);
   ar & make_nvp("date_period_end_date", d2);
 }
@@ -159,8 +169,8 @@ void save(Archive & ar, const gregorian::date_period& dp,
 template<class Archive>
 void load(Archive & ar, gregorian::date_period& dp, unsigned int version)
 {
-  typename gregorian::date d1(gregorian::not_a_date_time);
-  typename gregorian::date d2(gregorian::not_a_date_time);
+  gregorian::date d1(gregorian::not_a_date_time);
+  gregorian::date d2(gregorian::not_a_date_time);
   ar & make_nvp("date_period_begin_date", d1);
   ar & make_nvp("date_period_end_date", d2);
   dp = gregorian::date_period(d1,d2);
@@ -170,8 +180,8 @@ template<class Archive>
 inline void load_construct_data(Archive & ar, gregorian::date_period* dp, 
                                 const unsigned int file_version)
 {
-  typename gregorian::date d(gregorian::not_a_date_time);
-  typename gregorian::date_duration dd(1);
+  gregorian::date d(gregorian::not_a_date_time);
+  gregorian::date_duration dd(1);
   ::new(dp) gregorian::date_period(d,dd);
 }
 
@@ -333,7 +343,7 @@ inline void load_construct_data(Archive & ar,
                                 const unsigned int file_version)
 {
   // values used are not significant
-  ::new(pd) gregorian::nth_kday_of_month(gregorian::nth_kday_of_month::first,
+  ::new(nkd) gregorian::nth_kday_of_month(gregorian::nth_kday_of_month::first,
                                          gregorian::Monday,gregorian::Jan);
 }
 
@@ -373,7 +383,7 @@ inline void load_construct_data(Archive & ar,
                                 const unsigned int file_version)
 {
   // values used are not significant
-  ::new(pd) gregorian::first_kday_of_month(gregorian::Monday,gregorian::Jan);
+  ::new(fkd) gregorian::first_kday_of_month(gregorian::Monday,gregorian::Jan);
 }
 
 /**** last_kday_of_month ****/
@@ -412,7 +422,7 @@ inline void load_construct_data(Archive & ar,
                                 const unsigned int file_version)
 {
   // values used are not significant
-  ::new(pd) gregorian::last_kday_of_month(gregorian::Monday,gregorian::Jan);
+  ::new(lkd) gregorian::last_kday_of_month(gregorian::Monday,gregorian::Jan);
 }
 
 /**** first_kday_before ****/
@@ -441,7 +451,7 @@ inline void load_construct_data(Archive & ar,
                                 const unsigned int file_version)
 {
   // values used are not significant
-  ::new(pd) gregorian::first_kday_before(gregorian::Monday);
+  ::new(fkdb) gregorian::first_kday_before(gregorian::Monday);
 }
 
 /**** first_kday_after ****/
@@ -470,7 +480,7 @@ inline void load_construct_data(Archive & ar,
                                 const unsigned int file_version)
 {
   // values used are not significant
-  ::new(pd) gregorian::first_kday_after(gregorian::Monday);
+  ::new(fkda) gregorian::first_kday_after(gregorian::Monday);
 }
 
 } // namespace serialization

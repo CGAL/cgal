@@ -142,7 +142,7 @@ public:
   }
 
   const_iterator end() const {
-    return const_iterator(*index_bases()+*shape(),origin(),
+    return const_iterator(*index_bases()+(index)*shape(),origin(),
                           shape(),strides(),index_bases());
   }
 
@@ -295,7 +295,7 @@ public:
   }
 
   iterator end() {
-    return iterator(*this->index_bases()+*this->shape(),origin(),
+    return iterator(*this->index_bases()+(index)*this->shape(),origin(),
                     this->shape(),this->strides(),this->index_bases());
   }
 

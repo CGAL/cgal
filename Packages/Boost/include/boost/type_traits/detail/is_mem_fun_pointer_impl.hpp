@@ -32,292 +32,736 @@ struct is_mem_fun_pointer_impl
 };
 
 #if !defined(BOOST_TT_PREPROCESSING_MODE)
-// preprocessor-generated part, don't edit by hand!
+// pre-processed code, don't edit, try GNU cpp with 
+// cpp -I../../../ -DBOOST_TT_PREPROCESSING_MODE -x c++ -P filename
 
-template <class R, class T  >
+template <class R, class T >
 struct is_mem_fun_pointer_impl<R (T::*)() > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T  >
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T >
+struct is_mem_fun_pointer_impl<R (T::*)( ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T >
 struct is_mem_fun_pointer_impl<R (T::*)() const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T  >
+
+template <class R, class T >
 struct is_mem_fun_pointer_impl<R (T::*)() volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T  >
+
+template <class R, class T >
 struct is_mem_fun_pointer_impl<R (T::*)() const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T >
+struct is_mem_fun_pointer_impl<R (T::*)( ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T >
+struct is_mem_fun_pointer_impl<R (T::*)( ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T >
+struct is_mem_fun_pointer_impl<R (T::*)( ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0>
 struct is_mem_fun_pointer_impl<R (T::*)( T0) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0>
 struct is_mem_fun_pointer_impl<R (T::*)( T0) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0>
+
+template <class R, class T , class T0>
 struct is_mem_fun_pointer_impl<R (T::*)( T0) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0>
+
+template <class R, class T , class T0>
 struct is_mem_fun_pointer_impl<R (T::*)( T0) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1>
+
+template <class R, class T , class T0 , class T1>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1>
+
+template <class R, class T , class T0 , class T1>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2>
+
+template <class R, class T , class T0 , class T1 , class T2>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2>
+
+template <class R, class T , class T0 , class T1 , class T2>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
-struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
-struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
-struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
 #endif
 
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+#endif
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24) > { BOOST_STATIC_CONSTANT(bool, value = true); };
-#if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24 ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
+
+#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-template <class R, class T ,  class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
 struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24 ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24 ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T , class T0 , class T1 , class T2 , class T3 , class T4 , class T5 , class T6 , class T7 , class T8 , class T9 , class T10 , class T11 , class T12 , class T13 , class T14 , class T15 , class T16 , class T17 , class T18 , class T19 , class T20 , class T21 , class T22 , class T23 , class T24>
+struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 , T9 , T10 , T11 , T12 , T13 , T14 , T15 , T16 , T17 , T18 , T19 , T20 , T21 , T22 , T23 , T24 ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+#endif
 #endif
 
 #else
@@ -337,23 +781,37 @@ struct is_mem_fun_pointer_impl<R (T::*)( T0 , T1 , T2 , T3 , T4 , T5 , T6 , T7 ,
 ///// iteration
 
 #else
-#define i BOOST_PP_FRAME_ITERATION(1)
+#define BOOST_PP_COUNTER BOOST_PP_FRAME_ITERATION(1)
 
-template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
-struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T)) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+@#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T) ...) > { BOOST_STATIC_CONSTANT(bool, value = true); };
+@#endif
 
-// Metrowerks and Visual Age think this creates ambiguities
-/// #if !((defined(__MWERKS__) && __MWERKS__ < 0x3000) || (defined(__IBMCPP__) && __IBMCPP__ <= 600))
-template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
-struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
+@#if !defined(BOOST_TT_NO_CV_FUNC_TEST)
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T)) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
 
-template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
-struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T)) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
 
-template <class R, class T BOOST_PP_COMMA_IF(i) BOOST_PP_ENUM_PARAMS(i,class T)>
-struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(i,T)) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
-/// #endif
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T)) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
 
+@#ifndef BOOST_TT_NO_ELLIPSIS_IN_FUNC_TESTING
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T) ...) const > { BOOST_STATIC_CONSTANT(bool, value = true); };
 
-#undef i
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T) ...) volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+
+template <class R, class T BOOST_PP_COMMA_IF(BOOST_PP_COUNTER) BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,class T)>
+struct is_mem_fun_pointer_impl<R (T::*)(BOOST_PP_ENUM_PARAMS(BOOST_PP_COUNTER,T) ...) const volatile > { BOOST_STATIC_CONSTANT(bool, value = true); };
+@#endif
+@#endif
+
+#undef BOOST_PP_COUNTER
 #endif // BOOST_PP_IS_ITERATING
+

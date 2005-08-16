@@ -240,8 +240,7 @@ namespace detail
   {
       template<class Derived, class Value>
       struct archetype
-        : public partially_ordered<traversal_archetype_<Derived, Value, random_access_traversal_tag> >,
-          public traversal_archetype_<Derived, Value, bidirectional_traversal_tag> 
+        : public traversal_archetype_<Derived, Value, bidirectional_traversal_tag> 
       {
           Derived& operator+=(std::ptrdiff_t) { return static_object<Derived>::get(); }
           Derived& operator-=(std::ptrdiff_t) { return static_object<Derived>::get(); }
@@ -269,6 +268,21 @@ namespace detail
 
   template <class Derived, class Value>
   bool operator<(traversal_archetype_<Derived, Value, random_access_traversal_tag> const&,
+                 traversal_archetype_<Derived, Value, random_access_traversal_tag> const&)
+      { return true; }
+
+  template <class Derived, class Value>
+  bool operator>(traversal_archetype_<Derived, Value, random_access_traversal_tag> const&,
+                 traversal_archetype_<Derived, Value, random_access_traversal_tag> const&)
+      { return true; }
+
+  template <class Derived, class Value>
+  bool operator<=(traversal_archetype_<Derived, Value, random_access_traversal_tag> const&,
+                 traversal_archetype_<Derived, Value, random_access_traversal_tag> const&)
+      { return true; }
+
+  template <class Derived, class Value>
+  bool operator>=(traversal_archetype_<Derived, Value, random_access_traversal_tag> const&,
                  traversal_archetype_<Derived, Value, random_access_traversal_tag> const&)
       { return true; }
 

@@ -14,8 +14,8 @@
 //  GeNeSys mbH & Co. KG in producing this work.
 //
 
-#ifndef BOOST_UBLAS_EXCEPTION_H
-#define BOOST_UBLAS_EXCEPTION_H
+#ifndef _BOOST_UBLAS_EXCEPTION_
+#define _BOOST_UBLAS_EXCEPTION_
 
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
 #include <stdexcept>
@@ -26,7 +26,7 @@
 #include <iostream>
 #endif
 
-#include <boost/numeric/ublas/config.hpp>
+#include <boost/numeric/ublas/detail/config.hpp>
 
 namespace boost { namespace numeric { namespace ublas {
 
@@ -46,11 +46,7 @@ namespace boost { namespace numeric { namespace ublas {
         divide_by_zero (const char *s = 0)
             {}
         void raise () {
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -71,11 +67,7 @@ namespace boost { namespace numeric { namespace ublas {
         internal_logic (const char *s = 0)
             {}
         void raise () {
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -99,11 +91,7 @@ namespace boost { namespace numeric { namespace ublas {
         external_logic (const char *s = 0)
             {}
         void raise () {
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -125,11 +113,7 @@ namespace boost { namespace numeric { namespace ublas {
             {}
         void raise () {
             throw *this;
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -175,11 +159,7 @@ namespace boost { namespace numeric { namespace ublas {
         bad_index (const char *s = 0)
             {}
         void raise () {
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -201,11 +181,7 @@ namespace boost { namespace numeric { namespace ublas {
             {}
         void raise () {
             throw *this;
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -226,17 +202,13 @@ namespace boost { namespace numeric { namespace ublas {
         non_real (const char *s = 0)
             {}
         void raise () {
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
 
 #if BOOST_UBLAS_CHECK_ENABLE
-// FIXME: for performance reasons we better use macros
+// FIXME for performance reasons we better use macros
 //    template<class E>
 //    BOOST_UBLAS_INLINE
 //    void check (bool expression, const E &e) {
@@ -275,15 +247,48 @@ namespace boost { namespace numeric { namespace ublas {
     }
 #endif
 #else
-// FIXME: for performance reasons we better use macros
+// FIXME for performance reasons we better use macros
 //    template<class E>
 //    BOOST_UBLAS_INLINE
 //    void check (bool expression, const E &e) {}
 //    template<class E>
 //    BOOST_UBLAS_INLINE
 //    void check_ex (bool expression, const char *file, int line, const E &e) {}
-#define BOOST_UBLAS_CHECK(expression, e)
-#define BOOST_UBLAS_CHECK_EX(expression, file, line, e)
+#define BOOST_UBLAS_CHECK(expression, e) \
+    if (! (expression) );
+#define BOOST_UBLAS_CHECK_EX(expression, file, line, e) \
+    if (! (expression) );
+#endif
+
+
+#ifndef BOOST_UBLAS_USE_FAST_SAME
+// FIXME for performance reasons we better use macros
+//    template<class T>
+//    BOOST_UBLAS_INLINE
+//    const T &same_impl (const T &size1, const T &size2) {
+//        BOOST_UBLAS_CHECK (size1 == size2, bad_argument ());
+//        return (std::min) (size1, size2);
+//    }
+// #define BOOST_UBLAS_SAME(size1, size2) same_impl ((size1), (size2))
+    template<class T>
+    BOOST_UBLAS_INLINE
+    // Kresimir Fresl and Dan Muller reported problems with COMO.
+    // We better change the signature instead of libcomo ;-)
+    // const T &same_impl_ex (const T &size1, const T &size2, const char *file, int line) {
+    T same_impl_ex (const T &size1, const T &size2, const char *file, int line) {
+        BOOST_UBLAS_CHECK_EX (size1 == size2, file, line, bad_argument ());
+        return (std::min) (size1, size2);
+    }
+#define BOOST_UBLAS_SAME(size1, size2) same_impl_ex ((size1), (size2), __FILE__, __LINE__)
+#else
+// FIXME for performance reasons we better use macros
+//    template<class T>
+//    BOOST_UBLAS_INLINE
+//    const T &same_impl (const T &size1, const T &size2) {
+//        return size1;
+//    }
+// #define BOOST_UBLAS_SAME(size1, size2) same_impl ((size1), (size2))
+#define BOOST_UBLAS_SAME(size1, size2) (size1)
 #endif
 
 }}}

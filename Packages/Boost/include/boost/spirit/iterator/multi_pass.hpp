@@ -262,7 +262,7 @@ class inner
         // will be called from the destructor of the last iterator.
         void destroy()
         {
-            BOOST_SPIRIT_ASSERT(queuedElements);
+            BOOST_SPIRIT_ASSERT(NULL != queuedElements);
             delete queuedElements;
             queuedElements = 0;
         }
@@ -401,7 +401,7 @@ class inner
         // will be called from the destructor of the last iterator.
         void destroy()
         {
-            BOOST_SPIRIT_ASSERT(queuedElements);
+            BOOST_SPIRIT_ASSERT(NULL != queuedElements);
             delete queuedElements;
             queuedElements = 0;
         }
@@ -500,6 +500,12 @@ class inner
             bool was_initialized;
         };
 
+       // Needed by compilers not implementing the resolution to DR45. For
+       // reference, see
+       // http://www.open-std.org/JTC1/SC22/WG21/docs/cwg_defects.html#45.
+
+       friend struct Data;
+
     public:
         typedef result_type value_type;
         typedef
@@ -555,14 +561,14 @@ class inner
     public:
         reference get_input() const
         {
-            BOOST_SPIRIT_ASSERT(0 != data);
+            BOOST_SPIRIT_ASSERT(NULL != data);
             ensure_initialized();
             return data->curtok;
         }
 
         void advance_input()
         {
-            BOOST_SPIRIT_ASSERT(0 != data);
+            BOOST_SPIRIT_ASSERT(NULL != data);
             data->was_initialized = false;        // should get the next token
             ++data->input;
         }

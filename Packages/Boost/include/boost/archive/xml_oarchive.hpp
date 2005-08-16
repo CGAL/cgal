@@ -26,8 +26,11 @@ namespace std{
 } // namespace std
 #endif
 
+#include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/basic_text_oprimitive.hpp>
 #include <boost/archive/basic_xml_oarchive.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
 namespace archive {
@@ -52,15 +55,21 @@ protected:
     void save(const T & t){
         basic_text_oprimitive<std::ostream>::save(t);
     }
-    void save(const char * t);
+    BOOST_ARCHIVE_DECL(void) 
+    save(const char * t);
     #ifndef BOOST_NO_INTRINSIC_WCHAR_T
-    void save(const wchar_t * t);
+    BOOST_ARCHIVE_DECL(void)
+    save(const wchar_t * t);
     #endif
-    void save(const std::string &s);
+    BOOST_ARCHIVE_DECL(void)
+    save(const std::string &s);
     #ifndef BOOST_NO_STD_WSTRING
-    void save(const std::wstring &ws);
+    BOOST_ARCHIVE_DECL(void)
+    save(const std::wstring &ws);
     #endif
-    xml_oarchive_impl(std::ostream & os, unsigned int flags = 0);
+    BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    xml_oarchive_impl(std::ostream & os, unsigned int flags);
+    ~xml_oarchive_impl(){}
 public:
     void save_binary(const void *address, std::size_t count){
         this->end_preamble();
@@ -89,6 +98,7 @@ public:
     xml_oarchive(std::ostream & os, unsigned int flags = 0) :
         xml_oarchive_impl<xml_oarchive>(os, flags)
     {}
+    ~xml_oarchive(){}
 };
 
 } // namespace archive
@@ -97,5 +107,7 @@ public:
 // required by smart_cast for compilers not implementing 
 // partial template specialization
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(boost::archive::xml_oarchive)
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_XML_OARCHIVE_HPP

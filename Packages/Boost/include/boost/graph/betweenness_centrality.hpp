@@ -583,7 +583,7 @@ central_point_dominance(const Graph& g, CentralityMap centrality)
   centrality_type max_centrality(0);
   vertex_iterator v, v_end;
   for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
-    max_centrality = max(max_centrality, get(centrality, *v));
+    max_centrality = (max)(max_centrality, get(centrality, *v));
   }
 
   // Compute central point dominance

@@ -19,10 +19,19 @@
 #include <utility>
 
 #include <boost/config.hpp>
+#include <boost/detail/workaround.hpp>
+// supress noise
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+# pragma warning (disable : 4786) // too long name, harmless warning
+#endif
+
+#include <boost/mpl/integral_c.hpp>
+#include <boost/mpl/integral_c_tag.hpp>
+
 #include <boost/serialization/traits.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/tracking.hpp>
-
+#include <boost/serialization/split_member.hpp>
 #include <boost/serialization/base_object.hpp>
 
 namespace boost {
@@ -34,11 +43,11 @@ struct nvp :
     public traits<nvp<T>, object_serializable, track_never>
 {
     explicit nvp(const char * name, T & t) :
-        // note: rudundant cast works around borland issue
+        // note: redundant cast works around borland issue
         std::pair<const char *, T *>(name, (T*)(& t))
     {}
     nvp(const nvp & rhs) : 
-        // note: rudundant cast works around borland issue
+        // note: redundant cast works around borland issue
         std::pair<const char *, T *>(rhs.first, (T*)rhs.second)
     {}
 
@@ -48,19 +57,42 @@ struct nvp :
     T & value() const {
         return *(this->second);
     }
-    // default treatment for name-value pairs. The name is
-    // just discarded and only the value is serialized.  Note the unusual
-    // fact that his is "const".  This is because wrappers themselves are
-    // in fact "const" - even though the things they wrap may not be.
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int /* file_version */) const
-    {
-        ar & value();
+
+    const T & const_value() const {
+        return *(this->second);
     }
+
+    // True64 compiler complains with a warning about the use of
+    // the name "Archive" hiding some higher level usage.  I'm sure this
+    // is an error but I want to accomodated as it generates a long warning
+    // listing and might be related to a lot of test failures.
+    // default treatment for name-value pairs. The name is
+    // just discarded and only the value is serialized. 
+    template<class Archivex>
+    void save(
+        Archivex & ar, 
+        const unsigned int /* file_version */
+    ) const {
+        // CodeWarrior 8.x can't seem to resolve the << op for a rhs of "const T *"
+        ar.operator<<(const_value());
+    }
+    template<class Archivex>
+    void load(
+        Archivex & ar, 
+        const unsigned int /* file_version */
+    ){
+        // CodeWarrior 8.x can't seem to resolve the >> op for a rhs of "const T *"
+        ar.operator>>(value());
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 template<class T>
-inline nvp<T> make_nvp(const char * name, T & t){
+inline
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+const
+#endif
+nvp<T> make_nvp(const char * name, T & t){
     return nvp<T>(name, t);
 }
 

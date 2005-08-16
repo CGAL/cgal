@@ -34,8 +34,10 @@ struct BOOST_PYTHON_DECL class_base : python::api::object
     void enable_pickling_(bool getstate_manages_dict);
 
  protected:
-    void add_property(char const* name, object const& fget);
-    void add_property(char const* name, object const& fget, object const& fset);
+    void add_property(
+        char const* name, object const& fget, char const* docstr);
+    void add_property(char const* name, 
+        object const& fget, object const& fset, char const* docstr);
 
     void add_static_property(char const* name, object const& fget);
     void add_static_property(char const* name, object const& fget, object const& fset);

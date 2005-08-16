@@ -1,33 +1,11 @@
 //=======================================================================
-// (C) Copyright Jeremy Siek 2003.
-// Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
-//=======================================================================
 // Copyright 2001 University of Notre Dame.
-// Author: Lie-Quan Lee
+// Copyright 2003 Jeremy Siek
+// Authors: Lie-Quan Lee and Jeremy Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 #ifndef BOOST_GRAPHVIZ_HPP
 #define BOOST_GRAPHVIZ_HPP
@@ -44,6 +22,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/dynamic_property_map.hpp>
 
 namespace boost {
 
@@ -80,7 +59,7 @@ namespace boost {
     label_writer(Name _name) : name(_name) {}
     template <class VertexOrEdge>
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
-      out << "[label=\"" << name[v] << "\"]";
+      out << "[label=\"" << get(name, v) << "\"]";
     }
   private:
     Name name;
@@ -241,15 +220,14 @@ namespace boost {
   }
 
   template <typename Graph, typename VertexPropertiesWriter,
-            typename EdgePropertiesWriter, typename GraphPropertiesWriter>
-
+            typename EdgePropertiesWriter, typename GraphPropertiesWriter,
+            typename VertexID>
   inline void write_graphviz(std::ostream& out, const Graph& g,
                              VertexPropertiesWriter vpw,
                              EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw)
+                             GraphPropertiesWriter gpw,
+                             VertexID vertex_id)
   {
-    typedef typename property_map<Graph, vertex_index_t>::const_type vimap_t;
-    vimap_t vertex_index = get(vertex_index_t(), g);
     typedef typename graph_traits<Graph>::directed_category cat_type;
     typedef graphviz_io_traits<cat_type> Traits;
     std::string name = "G";
@@ -260,18 +238,26 @@ namespace boost {
     typename graph_traits<Graph>::vertex_iterator i, end;
 
     for(tie(i,end) = vertices(g); i != end; ++i) {
-      out << get(vertex_index, *i);
+      out << get(vertex_id, *i);
       vpw(out, *i); //print vertex attributes
       out << ";" << std::endl;
     }
     typename graph_traits<Graph>::edge_iterator ei, edge_end;
     for(tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
-      out << get(vertex_index, source(*ei, g)) << Traits::delimiter() << get(vertex_index, target(*ei, g)) << " ";
+      out << get(vertex_id, source(*ei, g)) << Traits::delimiter() << get(vertex_id, target(*ei, g)) << " ";
       epw(out, *ei); //print edge attributes
       out << ";" << std::endl;
     }
     out << "}" << std::endl;
   }
+
+  template <typename Graph, typename VertexPropertiesWriter,
+            typename EdgePropertiesWriter, typename GraphPropertiesWriter>
+  inline void write_graphviz(std::ostream& out, const Graph& g,
+                             VertexPropertiesWriter vpw,
+                             EdgePropertiesWriter epw,
+                             GraphPropertiesWriter gpw)
+  { write_graphviz(out, g, vpw, epw, gpw, get(vertex_index, g)); }
 
 #if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
   // ambiguous overload problem with VC++
@@ -302,11 +288,12 @@ namespace boost {
 
   namespace detail {
 
-    template <class Graph_, class RandomAccessIterator>
+    template <class Graph_, class RandomAccessIterator, class VertexID>
     void write_graphviz_subgraph (std::ostream& out,
                                   const subgraph<Graph_>& g,
                                   RandomAccessIterator vertex_marker,
-                                  RandomAccessIterator edge_marker)
+                                  RandomAccessIterator edge_marker,
+                                  VertexID vertex_id)
     {
       typedef subgraph<Graph_> Graph;
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -345,19 +332,17 @@ namespace boost {
       //print subgraph
       for ( tie(i_child,j_child) = g.children();
             i_child != j_child; ++i_child )
-        write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker);
+        write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker,
+                                vertex_id);
 
       // Print out vertices and edges not in the subgraphs.
 
       typename graph_traits<Graph>::vertex_iterator i, end;
       typename graph_traits<Graph>::edge_iterator ei, edge_end;
 
-      typename property_map<Graph, vertex_index_t>::const_type
-        indexmap = get(vertex_index, g.root());
-
       for(tie(i,end) = vertices(g); i != end; ++i) {
         Vertex v = g.local_to_global(*i);
-        int pos = get(indexmap, v);
+        int pos = get(vertex_id, v);
         if ( vertex_marker[pos] ) {
           vertex_marker[pos] = false;
           out << pos;
@@ -380,8 +365,8 @@ namespace boost {
         int pos = get(get(edge_index, g.root()), g.local_to_global(*ei));
         if ( edge_marker[pos] ) {
           edge_marker[pos] = false;
-          out << get(indexmap, u) << " " << Traits::delimiter()
-              << " " << get(indexmap, v);
+          out << get(vertex_id, u) << " " << Traits::delimiter()
+              << " " << get(vertex_id, v);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
           typedef typename property_map<Graph, edge_attribute_t>::const_type
             EdgeAttributeMap;
@@ -405,7 +390,8 @@ namespace boost {
 
     detail::write_graphviz_subgraph(out, g,
                                     vertex_marker.begin(),
-                                    edge_marker.begin());
+                                    edge_marker.begin(), 
+                                    get(vertex_index, g));
   }
 
   template <typename Graph>
@@ -416,7 +402,35 @@ namespace boost {
 
     detail::write_graphviz_subgraph(out, g,
                                     vertex_marker.begin(),
-                                    edge_marker.begin());
+                                    edge_marker.begin(),
+                                    get(vertex_index, g));
+  }
+
+  template <typename Graph, typename VertexID>
+  void write_graphviz(std::ostream& out, const subgraph<Graph>& g,
+                      VertexID vertex_id) 
+  {
+    std::vector<bool> edge_marker(num_edges(g), true);
+    std::vector<bool> vertex_marker(num_vertices(g), true);
+
+    detail::write_graphviz_subgraph(out, g,
+                                    vertex_marker.begin(),
+                                    edge_marker.begin(), 
+                                    vertex_id);
+  }
+
+  template <typename Graph, typename VertexID>
+  void write_graphviz(const std::string& filename, const subgraph<Graph>& g,
+                      VertexID vertex_id) 
+  {
+    std::ofstream out(filename.c_str());
+    std::vector<bool> edge_marker(num_edges(g), true);
+    std::vector<bool> vertex_marker(num_vertices(g), true);
+
+    detail::write_graphviz_subgraph(out, g,
+                                    vertex_marker.begin(),
+                                    edge_marker.begin(),
+                                    vertex_id);
   }
 
   typedef std::map<std::string, std::string> GraphvizAttrList;
@@ -457,6 +471,287 @@ namespace boost {
   extern void read_graphviz(const std::string& file, GraphvizGraph& g);
   extern void read_graphviz(FILE* file, GraphvizGraph& g);
 
+  class dynamic_properties_writer
+  {
+  public:
+    dynamic_properties_writer(const dynamic_properties& dp) : dp(&dp) { }
+
+    template<typename Descriptor>
+    void operator()(std::ostream& out, Descriptor key) const
+    {
+      bool first = true;
+      for (dynamic_properties::const_iterator i = dp->begin(); 
+           i != dp->end(); ++i) {
+        if (typeid(key) == i->second->key()) {
+          if (first) out << " [";
+          else out << ", ";
+          first = false;
+
+          out << i->first << "=\"" << i->second->get_string(key) << "\"";
+        }
+      }
+
+      if (!first) out << "]";
+    }
+
+  private:
+    const dynamic_properties* dp;
+  };
+
+  class dynamic_vertex_properties_writer
+  {
+  public:
+    dynamic_vertex_properties_writer(const dynamic_properties& dp,
+                                     const std::string& node_id) 
+      : dp(&dp), node_id(&node_id) { }
+
+    template<typename Descriptor>
+    void operator()(std::ostream& out, Descriptor key) const
+    {
+      bool first = true;
+      for (dynamic_properties::const_iterator i = dp->begin(); 
+           i != dp->end(); ++i) {
+        if (typeid(key) == i->second->key()
+            && i->first != *node_id) {
+          if (first) out << " [";
+          else out << ", ";
+          first = false;
+
+          out << i->first << "=\"" << i->second->get_string(key) << "\"";
+        }
+      }
+
+      if (!first) out << "]";
+    }
+
+  private:
+    const dynamic_properties* dp;
+    const std::string* node_id;
+  };
+
+  namespace graph { namespace detail {
+
+    template<typename Vertex>
+    struct node_id_property_map
+    {
+      typedef std::string value_type;
+      typedef value_type reference;
+      typedef Vertex key_type;
+      typedef readable_property_map_tag category;
+
+      node_id_property_map() {}
+
+      node_id_property_map(const dynamic_properties& dp,
+                           const std::string& node_id)
+        : dp(&dp), node_id(&node_id) { }
+
+      const dynamic_properties* dp;
+      const std::string* node_id;
+    };
+
+    template<typename Vertex>
+    inline std::string 
+    get(node_id_property_map<Vertex> pm, 
+        typename node_id_property_map<Vertex>::key_type v)
+    { return get(*pm.node_id, *pm.dp, v); }
+
+  } } // end namespace graph::detail
+
+  template<typename Graph>
+  inline void
+  write_graphviz(std::ostream& out, const Graph& g,
+                 const dynamic_properties& dp, 
+                 const std::string& node_id = "node_id")
+  {
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    write_graphviz(out, g, dp, node_id,
+                   graph::detail::node_id_property_map<Vertex>(dp, node_id));
+  }
+
+  template<typename Graph, typename VertexID>
+  void
+  write_graphviz(std::ostream& out, const Graph& g,
+                 const dynamic_properties& dp, const std::string& node_id,
+                 VertexID id)
+  {
+    write_graphviz
+      (out, g,
+       /*vertex_writer=*/dynamic_vertex_properties_writer(dp, node_id),
+       /*edge_writer=*/dynamic_properties_writer(dp),
+       /*graph_writer=*/default_writer(),
+       id);
+  }
+
+/////////////////////////////////////////////////////////////////////////////
+// Graph reader exceptions
+/////////////////////////////////////////////////////////////////////////////
+struct graph_exception : public std::exception {
+  virtual ~graph_exception() throw() {}
+  virtual const char* what() const throw() = 0;
+};
+
+struct bad_parallel_edge : public graph_exception {
+  std::string from;
+  std::string to;
+  mutable std::string statement;
+  bad_parallel_edge(const std::string& i, const std::string& j) :
+    from(i), to(j) {}
+
+  virtual ~bad_parallel_edge() throw() {}
+  const char* what() const throw() {
+    if(statement.empty())
+      statement =
+        std::string("Failed to add parallel edge: (")
+        + from +  "," + to + ")\n";
+
+    return statement.c_str();
+  }
+};
+
+struct directed_graph_error : public graph_exception {
+  virtual ~directed_graph_error() throw() {}
+  virtual const char* what() const throw() {
+    return
+      "read_graphviz: "
+      "Tried to read a directed graph into an undirected graph.";
+  }
+};
+
+struct undirected_graph_error : public graph_exception {
+  virtual ~undirected_graph_error() throw() {}
+  virtual const char* what() const throw() {
+    return
+      "read_graphviz: "
+      "Tried to read an undirected graph into a directed graph.";
+  }
+};
+
+namespace detail { namespace graph {
+
+typedef std::string id_t;
+typedef id_t node_t;
+
+// edges are not uniquely determined by adjacent nodes
+class edge_t {
+  int idx_;
+  explicit edge_t(int i) : idx_(i) {}
+public:
+  static edge_t new_edge() {
+    static int idx = 0;
+    return edge_t(idx++);
+  };
+  
+  bool operator==(const edge_t& rhs) const {
+    return idx_ == rhs.idx_;
+  }
+  bool operator<(const edge_t& rhs) const {
+    return idx_ < rhs.idx_;
+  }
+};
+
+class mutate_graph
+{
+ public:
+  virtual ~mutate_graph() {}
+  virtual bool is_directed() const = 0;
+  virtual void do_add_vertex(const node_t& node) = 0;
+
+  virtual void 
+  do_add_edge(const edge_t& edge, const node_t& source, const node_t& target)
+    = 0;
+
+  virtual void 
+  set_node_property(const id_t& key, const node_t& node, const id_t& value) = 0;
+
+  virtual void 
+  set_edge_property(const id_t& key, const edge_t& edge, const id_t& value) = 0;
+};
+
+template<typename MutableGraph>
+class mutate_graph_impl : public mutate_graph
+{
+  typedef typename graph_traits<MutableGraph>::vertex_descriptor bgl_vertex_t;
+  typedef typename graph_traits<MutableGraph>::edge_descriptor   bgl_edge_t;
+
+ public:
+  mutate_graph_impl(MutableGraph& graph, dynamic_properties& dp,
+                    std::string node_id_prop)
+    : graph_(graph), dp_(dp), node_id_prop_(node_id_prop) { }
+
+  ~mutate_graph_impl() {}
+
+  bool is_directed() const
+  {
+    return 
+      boost::is_convertible<
+        typename boost::graph_traits<MutableGraph>::directed_category,
+        boost::directed_tag>::value;
+  }
+
+  virtual void do_add_vertex(const node_t& node)
+  {
+    // Add the node to the graph.
+    bgl_vertex_t v = add_vertex(graph_);
+
+    // Set up a mapping from name to BGL vertex.
+    bgl_nodes.insert(std::make_pair(node, v));
+    
+    // node_id_prop_ allows the caller to see the real id names for nodes.
+    put(node_id_prop_, dp_, v, node);
+  }
+
+  void 
+  do_add_edge(const edge_t& edge, const node_t& source, const node_t& target)
+  {
+    std::pair<bgl_edge_t, bool> result =
+     add_edge(bgl_nodes[source], bgl_nodes[target], graph_);
+    
+    if(!result.second) {
+      // In the case of no parallel edges allowed
+      throw bad_parallel_edge(source, target);
+    } else {
+      bgl_edges.insert(std::make_pair(edge, result.first));
+    }
+  }
+
+  void
+  set_node_property(const id_t& key, const node_t& node, const id_t& value)
+  {
+    put(key, dp_, bgl_nodes[node], value);
+  }
+
+  void
+  set_edge_property(const id_t& key, const edge_t& edge, const id_t& value)
+  {
+    put(key, dp_, bgl_edges[edge], value);
+  }
+
+ protected:
+  MutableGraph& graph_;
+  dynamic_properties& dp_;
+  std::string node_id_prop_;
+  std::map<node_t, bgl_vertex_t> bgl_nodes;
+  std::map<edge_t, bgl_edge_t> bgl_edges;
+};
+
+bool read_graphviz(std::istream& in, mutate_graph& graph);
+
+} } // end namespace detail::graph
+
+// Parse the passed stream as a GraphViz dot file.
+template <typename MutableGraph>
+bool read_graphviz(std::istream& in, MutableGraph& graph,
+                   dynamic_properties& dp,
+                   std::string const& node_id = "node_id") 
+{
+  detail::graph::mutate_graph_impl<MutableGraph> m_graph(graph, dp, node_id);
+  return detail::graph::read_graphviz(in, m_graph);
+}
+
 } // namespace boost
+
+#ifdef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#  include <boost/graph/detail/read_graphviz_spirit.hpp>
+#endif // BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
 
 #endif // BOOST_GRAPHVIZ_HPP

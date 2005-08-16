@@ -44,7 +44,7 @@ template<
     int Level, 
     int Tracking,
     unsigned int Version = 0,
-    class ETII = BOOST_SERIALIZATION_DEFAULT_TYPE_INFO(T)
+    class ETII = BOOST_SERIALIZATION_EXTENDED_TYPE_INFO_STUB(T)
 >
 struct traits : public basic_traits {
     BOOST_STATIC_ASSERT(Version == 0 || Level >= object_class_info);

@@ -61,21 +61,54 @@ template< typename T > struct bitor_tag
     typedef typename T::tag type;
 };
 
+/// forward declaration
+
 template<
       typename BOOST_MPL_AUX_NA_PARAM(N1)
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
+struct bitor_2;
+
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    , typename N3 = na, typename N4 = na, typename N5 = na
+    >
 struct bitor_
+
+    : if_<
+
+          is_na<N3>
+        , bitor_2< N1,N2 >
+        , bitor_<
+              bitor_2< N1,N2 >
+            , N3, N4, N5
+            >
+        >::type
+
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(
+          5
+        , bitor_
+        , ( N1, N2, N3, N4, N5 )
+        )
+};
+
+template<
+      typename N1
+    , typename N2
+    >
+struct bitor_2
     : bitor_impl<
           typename bitor_tag<N1>::type
         , typename bitor_tag<N2>::type
         >::template apply< N1,N2 >::type
 {
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, bitor_, (N1, N2))
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, bitor_2, (N1, N2))
 
 };
 
-BOOST_MPL_AUX_NA_SPEC2(2, 2, bitor_)
+BOOST_MPL_AUX_NA_SPEC2(2, 5, bitor_)
 
 }}
 

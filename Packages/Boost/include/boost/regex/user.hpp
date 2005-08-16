@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -55,10 +55,6 @@
 // cause more problems than they are worth:
 // #define BOOST_REGEX_NO_FWD
 
-// define this if your compiler can't cope with the new 
-// version 4 regex code.
-// #define BOOST_REGEX_V3
-
 // define this if your compiler supports MS Windows structured
 // exception handling.
 // #define BOOST_REGEX_HAS_MS_STACK_GUARD
@@ -90,3 +86,5 @@
 // down quite a bit).
 // #define BOOST_REGEX_MATCH_EXTRA
 
+// define this if you want to enable support for Unicode via ICU.
+// #define BOOST_HAS_ICU

@@ -23,7 +23,13 @@ struct BOOST_PYTHON_DECL instance_holder : private noncopyable
     // return the next holder in a chain
     instance_holder* next() const;
 
-    virtual void* holds(type_info) = 0;
+    // When the derived holder actually holds by [smart] pointer and
+    // null_ptr_only is set, only report that the type is held when
+    // the pointer is null.  This is needed for proper shared_ptr
+    // support, to prevent holding shared_ptrs from being found when
+    // converting from python so that we can use the conversion method
+    // that always holds the Python object.
+    virtual void* holds(type_info, bool null_ptr_only) = 0;
 
     void install(PyObject* inst) throw();
 

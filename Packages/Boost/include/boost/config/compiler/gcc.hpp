@@ -13,11 +13,12 @@
 
 //  GNU C++ compiler setup:
 
-#   if __GNUC__ == 2 && __GNUC_MINOR__ == 91
+#if __GNUC__ < 3
+#   if __GNUC_MINOR__ == 91
        // egcs 1.1 won't parse shared_ptr.hpp without this:
 #      define BOOST_NO_AUTO_PTR
 #   endif
-#   if __GNUC__ == 2 && __GNUC_MINOR__ < 95
+#   if __GNUC_MINOR__ < 95
       //
       // Prior to gcc 2.95 member templates only partly
       // work - define BOOST_MSVC6_MEMBER_TEMPLATES
@@ -29,30 +30,36 @@
 #     endif
 #   endif
 
-#   if __GNUC__ == 2 && __GNUC_MINOR__ < 96
+#   if __GNUC_MINOR__ < 96
 #     define BOOST_NO_SFINAE
 #   endif
 
-#   if __GNUC__ == 2 && __GNUC_MINOR__ <= 97
+#   if __GNUC_MINOR__ <= 97
 #     define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 #     define BOOST_NO_OPERATORS_IN_NAMESPACE
 #   endif
 
-#   if __GNUC__ < 3
-#      define BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
-#      define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
-#   endif
+#   define BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
+#   define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
+#   define BOOST_NO_IS_ABSTRACT
+#elif __GNUC__ == 3
+   //
+   // gcc-3.x problems:
+   //
+   // Bug specific to gcc 3.1 and 3.2:
+   //
+#  if ((__GNUC_MINOR__ == 1) || (__GNUC_MINOR__ == 2))
+#     define BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
+#  endif
+#  if __GNUC_MINOR__ < 4
+#     define BOOST_NO_IS_ABSTRACT
+#  endif
+#endif
 
 #ifndef __EXCEPTIONS
 # define BOOST_NO_EXCEPTIONS
 #endif
 
-//
-// Bug specific to gcc 3.1 and 3.2:
-//
-#if (__GNUC__ == 3) && ((__GNUC_MINOR__ == 1) || (__GNUC_MINOR__ == 2))
-#  define BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
-#endif
 
 //
 // Threading support: Turn this on unconditionally here (except for
@@ -84,12 +91,14 @@
 #  error "Compiler not configured - please reconfigure"
 #endif
 //
-// last known and checked version is 3.4:
-#if (__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ > 4))
+// last known and checked version is 4.0 (Pre-release):
+#if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ > 0))
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  else
-#     warning "Unknown compiler version - please run the configure tests and report the results"
+// we don't emit warnings here anymore since there are no defect macros defined for
+// gcc post 3.4, so any failures are gcc regressions...
+//#     warning "Unknown compiler version - please run the configure tests and report the results"
 #  endif
 #endif
 

@@ -30,7 +30,7 @@ namespace std{
 #include <boost/archive/dinkumware.hpp>
 #endif
 
-#include <boost/throw_exception.hpp>
+#include <boost/detail/no_exceptions_support.hpp>
 
 #include <boost/archive/archive_exception.hpp>
 #include <boost/archive/iterators/dataflow_exception.hpp>
@@ -50,7 +50,8 @@ namespace archive {
 #ifndef BOOST_NO_CWCHAR
 #ifndef BOOST_NO_STD_WSTRING
 template<class Archive>
-void xml_iarchive_impl<Archive>::load(std::wstring &ws){
+BOOST_ARCHIVE_DECL(void)
+xml_iarchive_impl<Archive>::load(std::wstring &ws){
     std::string s;
     bool result = gimpl->parse_string(is, s);
     if(! result)
@@ -83,7 +84,8 @@ void xml_iarchive_impl<Archive>::load(std::wstring &ws){
 
 #ifndef BOOST_NO_INTRINSIC_WCHAR_T
 template<class Archive>
-void xml_iarchive_impl<Archive>::load(wchar_t * ws){
+BOOST_ARCHIVE_DECL(void)
+xml_iarchive_impl<Archive>::load(wchar_t * ws){
     std::string s;
     bool result = gimpl->parse_string(is, s);
     if(! result)
@@ -114,7 +116,8 @@ void xml_iarchive_impl<Archive>::load(wchar_t * ws){
 #endif // BOOST_NO_CWCHAR
 
 template<class Archive>
-void xml_iarchive_impl<Archive>::load(std::string &s){
+BOOST_ARCHIVE_DECL(void)
+xml_iarchive_impl<Archive>::load(std::string &s){
     bool result = gimpl->parse_string(is, s);
     if(! result)
         boost::throw_exception(
@@ -123,7 +126,8 @@ void xml_iarchive_impl<Archive>::load(std::string &s){
 }
 
 template<class Archive>
-void xml_iarchive_impl<Archive>::load(char * s){
+BOOST_ARCHIVE_DECL(void)
+xml_iarchive_impl<Archive>::load(char * s){
     std::string tstring;
     bool result = gimpl->parse_string(is, tstring);
     if(! result)
@@ -135,7 +139,8 @@ void xml_iarchive_impl<Archive>::load(char * s){
 }
 
 template<class Archive>
-void xml_iarchive_impl<Archive>::load_override(class_name_type & t, int){
+BOOST_ARCHIVE_DECL(void)
+xml_iarchive_impl<Archive>::load_override(class_name_type & t, int){
     const std::string & s = gimpl->rv.class_name;
     if(s.size() > BOOST_SERIALIZATION_MAX_KEY_SIZE - 1)
         boost::throw_exception(archive_exception::invalid_class_name);
@@ -145,12 +150,13 @@ void xml_iarchive_impl<Archive>::load_override(class_name_type & t, int){
 }
 
 template<class Archive>
-void xml_iarchive_impl<Archive>::init(){
+BOOST_ARCHIVE_DECL(void)
+xml_iarchive_impl<Archive>::init(){
     gimpl->init(is);
-    header = true;
 }
 
 template<class Archive>
+BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY())
 xml_iarchive_impl<Archive>::xml_iarchive_impl(
     std::istream &is_,
     unsigned int flags
@@ -164,14 +170,18 @@ xml_iarchive_impl<Archive>::xml_iarchive_impl(
 {
     if(0 == (flags & no_header))
         init();
-    if(0 != (flags & no_xml_tag_checking))
-        this->no_checking = true;
 }
 
 template<class Archive>
+BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY())
 xml_iarchive_impl<Archive>::~xml_iarchive_impl(){
-    if(header)
-        gimpl->windup(is);
+    if(0 == (this->get_flags() & no_header)){
+                BOOST_TRY{
+                        gimpl->windup(is);
+                }
+                BOOST_CATCH(...){}
+            BOOST_CATCH_END
+        }
     delete gimpl;
 }
 } // namespace archive

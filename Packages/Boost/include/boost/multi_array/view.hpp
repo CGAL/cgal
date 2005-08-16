@@ -73,7 +73,8 @@ public:
 
   template <class BaseList>
   void reindex(const BaseList& values) {
-    boost::copy_n(values.begin(),num_dimensions(),index_base_list_.begin());
+    boost::detail::multi_array::
+      copy_n(values.begin(),num_dimensions(),index_base_list_.begin());
     origin_offset_ =
       this->calculate_indexing_offset(stride_list_,index_base_list_);
   }
@@ -146,7 +147,7 @@ public:
   }
 
   const_iterator end() const {
-    return const_iterator(*index_bases()+*shape(),origin(),
+    return const_iterator(*index_bases()+(index)*shape(),origin(),
                           shape(),strides(),index_bases());
   }
   
@@ -225,8 +226,10 @@ public: // should be protected
     index_base_list_.assign(0);
 
     // Get the extents and strides
-    boost::copy_n(extents.begin(),NumDims,extent_list_.begin());
-    boost::copy_n(strides.begin(),NumDims,stride_list_.begin());
+    boost::detail::multi_array::
+      copy_n(extents.begin(),NumDims,extent_list_.begin());
+    boost::detail::multi_array::
+      copy_n(strides.begin(),NumDims,stride_list_.begin());
 
     // Calculate the array size
     num_elements_ = std::accumulate(extent_list_.begin(),extent_list_.end(),
@@ -356,7 +359,7 @@ public:
   }
 
   iterator end() {
-    return iterator(*this->index_bases()+*this->shape(),origin(),
+    return iterator(*this->index_bases()+(index)*this->shape(),origin(),
                     this->shape(),this->strides(),
                     this->index_bases());
   }

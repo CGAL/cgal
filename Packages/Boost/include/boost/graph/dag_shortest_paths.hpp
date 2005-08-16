@@ -2,23 +2,9 @@
 // Copyright 2002 Indiana University.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_GRAPH_DAG_SHORTEST_PATHS_HPP
@@ -49,7 +35,15 @@ namespace boost {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     std::vector<Vertex> rev_topo_order;
     rev_topo_order.reserve(num_vertices(g));
-    topological_sort(g, std::back_inserter(rev_topo_order));
+
+    // Call 'depth_first_visit', not 'topological_sort', because we don't
+    // want to traverse the entire graph, only vertices reachable from 's',
+    // and 'topological_sort' will traverse everything. The logic below
+    // is the same as for 'topological_sort', only we call 'depth_first_visit'
+    // and 'topological_sort' calls 'depth_first_search'.
+    topo_sort_visitor<std::back_insert_iterator<std::vector<Vertex> > >
+        topo_visitor(std::back_inserter(rev_topo_order));
+    depth_first_visit(g, s, topo_visitor, color);
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {

@@ -17,24 +17,28 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <boost/noncopyable.hpp>
+#include <boost/config.hpp>
 #include <boost/serialization/extended_type_info.hpp>
+namespace boost {
 
-namespace boost { 
 namespace archive {
 namespace detail {
 
 class basic_serializer : private boost::noncopyable
 {
+    const boost::serialization::extended_type_info & m_eti;
 protected:
     explicit basic_serializer(
-        const boost::serialization::extended_type_info & type_
+        const boost::serialization::extended_type_info & eti
     ) : 
-        type(type_)
+        m_eti(eti)
     {}
 public:
-    const boost::serialization::extended_type_info & type;
+    const boost::serialization::extended_type_info & get_eti() const {
+        return m_eti;
+    }
     bool operator<(const basic_serializer & rhs) const {
-        return type < rhs.type;
+        return m_eti < rhs.get_eti();
     }
 };
 

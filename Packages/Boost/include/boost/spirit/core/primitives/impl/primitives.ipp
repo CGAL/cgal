@@ -178,76 +178,77 @@ namespace boost { namespace spirit {
         isalnum_(char c)
         { 
             using namespace std; 
-            return isalnum(to_int_type(c)); 
+            return isalnum(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         isalpha_(char c)
         { 
             using namespace std; 
-            return isalpha(to_int_type(c)); 
+            return isalpha(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         iscntrl_(char c)
         { 
             using namespace std; 
-            return iscntrl(to_int_type(c)); 
+            return iscntrl(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         isdigit_(char c)
         { 
             using namespace std; 
-            return isdigit(to_int_type(c)); 
+            return isdigit(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         isgraph_(char c)
         { 
             using namespace std; 
-            return isgraph(to_int_type(c)); 
+            return isgraph(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         islower_(char c)
         { 
             using namespace std; 
-            return islower(to_int_type(c)); 
+            return islower(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         isprint_(char c)
         { 
             using namespace std; 
-            return isprint(to_int_type(c)); 
+            return isprint(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         ispunct_(char c)
         { 
             using namespace std; 
-            return ispunct(to_int_type(c)); 
+            return ispunct(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         isspace_(char c)
         { 
             using namespace std; 
-            return isspace(to_int_type(c)); 
+            return isspace(to_int_type(c)) ? true : false; 
         }
     
         inline bool 
         isupper_(char c)
         { 
             using namespace std; 
-            return isupper(to_int_type(c)); }
+            return isupper(to_int_type(c)) ? true : false;  
+        }
     
         inline bool 
         isxdigit_(char c)
         { 
             using namespace std; 
-            return isxdigit(to_int_type(c)); 
+            return isxdigit(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
@@ -276,77 +277,77 @@ namespace boost { namespace spirit {
         isalnum_(wchar_t c)
         { 
             using namespace std; 
-            return iswalnum(to_int_type(c)); 
+            return iswalnum(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isalpha_(wchar_t c)
         { 
             using namespace std; 
-            return iswalpha(to_int_type(c)); 
+            return iswalpha(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         iscntrl_(wchar_t c)
         { 
             using namespace std; 
-            return iswcntrl(to_int_type(c)); 
+            return iswcntrl(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isdigit_(wchar_t c)
         { 
             using namespace std; 
-            return iswdigit(to_int_type(c)); 
+            return iswdigit(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isgraph_(wchar_t c)
         { 
             using namespace std; 
-            return iswgraph(to_int_type(c)); 
+            return iswgraph(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         islower_(wchar_t c)
         { 
             using namespace std; 
-            return iswlower(to_int_type(c)); 
+            return iswlower(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isprint_(wchar_t c)
         { 
             using namespace std; 
-            return iswprint(to_int_type(c)); 
+            return iswprint(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         ispunct_(wchar_t c)
         { 
             using namespace std; 
-            return iswpunct(to_int_type(c)); 
+            return iswpunct(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isspace_(wchar_t c)
         { 
             using namespace std; 
-            return iswspace(to_int_type(c)); 
+            return iswspace(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isupper_(wchar_t c)
         { 
             using namespace std; 
-            return iswupper(to_int_type(c)); 
+            return iswupper(to_int_type(c)) ? true : false;  
         }
     
         inline bool 
         isxdigit_(wchar_t c)
         { 
             using namespace std; 
-            return iswxdigit(to_int_type(c)); 
+            return iswxdigit(to_int_type(c)) ? true : false;  
         }
     
         inline bool 

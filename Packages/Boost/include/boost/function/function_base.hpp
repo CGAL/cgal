@@ -63,11 +63,19 @@ namespace boost { namespace python { namespace objects {
 #  define BOOST_FUNCTION_NO_FUNCTION_TYPE_SYNTAX
 #endif
 
-#define BOOST_FUNCTION_ENABLE_IF_NOT_INTEGRAL(Functor,Type)              \
-  typename ::boost::enable_if_c<(::boost::type_traits::ice_not<          \
-                        (::boost::is_integral<Functor>::value)>::value), \
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+#  define BOOST_FUNCTION_ENABLE_IF_NOT_INTEGRAL(Functor,Type)              \
+      typename ::boost::enable_if_c<(::boost::type_traits::ice_not<          \
+                            (::boost::is_integral<Functor>::value)>::value), \
+                           Type>::type
+#else
+// BCC doesn't recognize this depends on a template argument and complains
+// about the use of 'typename'
+#  define BOOST_FUNCTION_ENABLE_IF_NOT_INTEGRAL(Functor,Type)     \
+      ::boost::enable_if_c<(::boost::type_traits::ice_not<          \
+                   (::boost::is_integral<Functor>::value)>::value), \
                        Type>::type
-
+#endif
 
 #if !defined(BOOST_FUNCTION_NO_FUNCTION_TYPE_SYNTAX)
 namespace boost {
@@ -414,7 +422,12 @@ public:
     }
 
   template<typename Functor>
+
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+    const Functor* target( Functor * = 0 ) const
+#else
     const Functor* target() const
+#endif
     {
       if (!manager) return 0;
 
@@ -424,14 +437,23 @@ public:
       if (!result.obj_ptr) return 0;
       else {
         typedef typename detail::function::get_function_tag<Functor>::type tag;
+
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+        return get_functor_pointer(tag(), 0, (Functor*)0);
+#else
         return get_functor_pointer<Functor>(tag(), 0);
+#endif
       }
     }
 
   template<typename F>
     bool contains(const F& f) const
     {
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+      if (const F* fp = this->target( (F*)0 )) {
+#else
       if (const F* fp = this->template target<F>()) {
+#endif
         return function_equal(*fp, f);
       } else {
         return false;
@@ -469,20 +491,36 @@ public: // should be protected, but GCC 2.95.3 will fail to allow access
 
 private:
   template<typename Functor>
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+    Functor* get_functor_pointer(detail::function::function_ptr_tag, int, Functor * = 0)
+#else
     Functor* get_functor_pointer(detail::function::function_ptr_tag, int)
+#endif
     { return reinterpret_cast<Functor*>(&functor.func_ptr); }
 
   template<typename Functor, typename Tag>
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+    Functor* get_functor_pointer(Tag, long, Functor * = 0)
+#else
     Functor* get_functor_pointer(Tag, long)
+#endif
     { return static_cast<Functor*>(functor.obj_ptr); }
 
   template<typename Functor>
     const Functor*
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+    get_functor_pointer(detail::function::function_ptr_tag, int, Functor * = 0) const
+#else
     get_functor_pointer(detail::function::function_ptr_tag, int) const
+#endif
     { return reinterpret_cast<const Functor*>(&functor.func_ptr); }
 
   template<typename Functor, typename Tag>
+#if defined(BOOST_MSVC) && BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+    const Functor* get_functor_pointer(Tag, long, Functor * = 0) const
+#else
     const Functor* get_functor_pointer(Tag, long) const
+#endif
     { return static_cast<const Functor*>(functor.const_obj_ptr); }
 };
 

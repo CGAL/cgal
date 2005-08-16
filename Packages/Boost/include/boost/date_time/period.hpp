@@ -28,22 +28,21 @@ namespace date_time {
     not appropriate for use when the number and duration representation 
     are the same (eg: in the regular number domain).
     
-    A period can be specified by providing either the starting point and 
-    a duration or the starting point and the end point( end is NOT part 
+    A period can be specified by providing either the begining point and 
+    a duration or the begining point and the end point( end is NOT part 
     of the period but 1 unit past it. A period will be "invalid" if either
-    start_point >= end_point or the given duration is < 0. Any valid period 
+    end_point <= begin_point or the given duration is <= 0. Any valid period 
     will return false for is_null().
     
-    Zero length periods are considered valid. In this case the start point
-    is exactly 1 unit less than the end point, in other words start is equal
-    to last.
+    Zero length periods are also considered invalid. Zero length periods are
+    periods where the begining and end points are the same, or, the given 
+    duration is zero. For a zero length period, the last point will be one 
+    unit less than the begining point.
 
     In the case that the begin and last are the same, the period has a 
-    length of zero units.  For example, suppose this is a period of days.
-    That is, each time-point represents a single day.  If the start and the
-    last is the same day then the period is zero length.  
+    length of one unit.
     
-    The best way to handle periods is usually to provide a start point and
+    The best way to handle periods is usually to provide a begining point and
     a duration.  So, day1 + 7 days is a week period which includes all of the
     first day and 6 more days (eg: Sun to Sat).
 
@@ -94,24 +93,14 @@ namespace date_time {
   {}
 
   //! create a period as [begin, begin+len)
-  /*! If len is < 0 then the period will be invalid
+  /*! If len is <= 0 then the period will be invalid
    */
   template<class point_rep, class duration_rep>
   inline
   period<point_rep,duration_rep>::period(point_rep first_point, duration_rep len) :
     begin_(first_point), 
     last_(first_point + len-duration_rep::unit())
-  {
-    if(len.get_rep() > 0){
-      // stick with initializer list
-    }
-    else if(len.get_rep() == 0){
-      last_ = first_point;
-    }
-    else if(len.get_rep() < 0){
-      last_ = begin_ + len;
-    }
-  }
+  { }
 
 
   //! Return the first element in the period
@@ -138,7 +127,7 @@ namespace date_time {
     return last_;
   }
 
-  //! True if period is ill formed (length less than zero)
+  //! True if period is ill formed (length is zero or less)
   template<class point_rep, class duration_rep>
   inline
   bool period<point_rep,duration_rep>::is_null() const 
@@ -151,11 +140,8 @@ namespace date_time {
   inline
   duration_rep period<point_rep,duration_rep>::length() const
   {
-    if(begin_ == last_){ // zero_length
-      return begin_ - last_;
-    }
-    else if(is_null()){ // invalid period
-      return last_ - begin_;
+    if(last_ < begin_){ // invalid period
+      return last_+duration_rep::unit() - begin_;
     }
     else{
       return end() - begin_; // normal case
@@ -189,7 +175,7 @@ namespace date_time {
     last_  = last_  + d;
   }
 
-  //! True if the point is inside the period
+  //! True if the point is inside the period, zero length periods contain no points
   template<class point_rep, class duration_rep>
   inline
   bool period<point_rep,duration_rep>::contains(const point_rep& point) const 

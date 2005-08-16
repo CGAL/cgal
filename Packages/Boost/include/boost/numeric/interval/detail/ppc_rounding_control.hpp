@@ -2,6 +2,7 @@
  *
  * Copyright 2000 Jens Maurer
  * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
+ * Copyright 2005 Guillaume Melquiond
  *
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or
@@ -11,13 +12,11 @@
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_PPC_ROUNDING_CONTROL_HPP
 #define BOOST_NUMERIC_INTERVAL_DETAIL_PPC_ROUNDING_CONTROL_HPP
 
-#ifndef __GNUC__
-#error This header only works with GNU CC.
-#endif
-
 #if !defined(powerpc) && !defined(__powerpc__) && !defined(__ppc__)
 #error This header only works on PPC CPUs.
 #endif
+
+#if defined(__GNUC__ ) || (__IBMCPP__ >= 700)
 
 namespace boost {
 namespace numeric {
@@ -89,5 +88,8 @@ struct rounding_control<long double>:
 } // namespace interval_lib
 } // namespace numeric
 } // namespace boost
+
+#undef BOOST_NUMERIC_INTERVAL_NO_HARDWARE
+#endif
 
 #endif /* BOOST_NUMERIC_INTERVAL_DETAIL_PPC_ROUNDING_CONTROL_HPP */

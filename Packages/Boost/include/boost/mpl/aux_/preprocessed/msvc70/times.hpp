@@ -60,11 +60,46 @@ template< typename T > struct times_tag
 {
 };
 
+/// forward declaration
+
 template<
       typename BOOST_MPL_AUX_NA_PARAM(N1)
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
+struct times2;
+
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    , typename N3 = na, typename N4 = na, typename N5 = na
+    >
 struct times
+
+    : aux::msvc_eti_base< typename if_<
+
+          is_na<N3>
+        , times2< N1,N2 >
+        , times<
+              times2< N1,N2 >
+            , N3, N4, N5
+            >
+        >::type
+
+    >
+
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(
+          5
+        , times
+        , ( N1, N2, N3, N4, N5 )
+        )
+};
+
+template<
+      typename N1
+    , typename N2
+    >
+struct times2
     : aux::msvc_eti_base< typename apply_wrap2<
           times_impl<
               typename times_tag<N1>::type
@@ -75,11 +110,11 @@ struct times
         >::type >::type
 
 {
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, times, (N1, N2))
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, times2, (N1, N2))
 
 };
 
-BOOST_MPL_AUX_NA_SPEC2(2, 2, times)
+BOOST_MPL_AUX_NA_SPEC2(2, 5, times)
 
 }}
 

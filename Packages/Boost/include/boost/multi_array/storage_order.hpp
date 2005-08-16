@@ -36,8 +36,8 @@ namespace boost {
     template <typename OrderingIter, typename AscendingIter>
     general_storage_order(OrderingIter ordering,
                           AscendingIter ascending) {
-      boost::copy_n(ordering,NumDims,ordering_.begin());
-      boost::copy_n(ascending,NumDims,ascending_.begin());
+      boost::detail::multi_array::copy_n(ordering,NumDims,ordering_.begin());
+      boost::detail::multi_array::copy_n(ascending,NumDims,ascending_.begin());
     }
 
     // RG - ideally these would not be necessary, but some compilers

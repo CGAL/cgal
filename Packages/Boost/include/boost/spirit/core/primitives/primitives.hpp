@@ -123,6 +123,17 @@ namespace boost { namespace spirit {
         return chlit<CharT>(ch); 
     }
 
+    // This should take care of ch_p("a") "bugs"
+    template <typename CharT, std::size_t N>
+    inline chlit<CharT>
+    ch_p(CharT const (& str)[N])
+    {
+        //  ch_p's argument should be a single character or a null-terminated
+        //  string with a single character
+        BOOST_STATIC_ASSERT(N < 3);
+        return chlit<CharT>(str[0]);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     //
     //  range class
@@ -243,11 +254,26 @@ namespace boost { namespace spirit {
         return strlit<CharT const*>(str); 
     }
 
+    template <typename CharT>
+    inline strlit<CharT *>
+    str_p(CharT * str)
+    { 
+        return strlit<CharT *>(str); 
+    }
+
     template <typename IteratorT>
     inline strlit<IteratorT>
     str_p(IteratorT first, IteratorT last)
     { 
         return strlit<IteratorT>(first, last); 
+    }
+
+    // This should take care of str_p('a') "bugs"
+    template <typename CharT>
+    inline chlit<CharT>
+    str_p(CharT ch)
+    {
+        return chlit<CharT>(ch);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -561,7 +587,8 @@ namespace boost { namespace spirit {
                 ++len;
             }
 
-            if (!scan.at_end() && *scan == '\n')    // LF
+            // Don't call skipper here
+            if (scan.first != scan.last && *scan == '\n')    // LF
             {
                 ++scan.first;
                 ++len;

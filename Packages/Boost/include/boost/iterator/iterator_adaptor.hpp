@@ -278,6 +278,8 @@ namespace boost
       {
       }
 
+      typedef Base base_type;
+
       Base const& base() const
         { return m_iterator; }
 

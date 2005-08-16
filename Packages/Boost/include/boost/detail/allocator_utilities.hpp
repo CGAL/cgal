@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -41,6 +41,11 @@ public:
 
   template<typename Other>
   partial_std_allocator_wrapper(const partial_std_allocator_wrapper<Other>&){}
+
+  partial_std_allocator_wrapper(const std::allocator<Type>& x):
+    std::allocator<Type>(x)
+  {
+  };
 
 #if defined(BOOST_DINKUMWARE_STDLIB)
   /* Dinkumware guys didn't provide a means to call allocate() without
@@ -130,8 +135,10 @@ template<typename Allocator>
 struct rebinder
 {
   template<typename Type>
-  struct result:Allocator::BOOST_NESTED_TEMPLATE rebind<Type>
+  struct result
   {
+      typedef typename Allocator::BOOST_NESTED_TEMPLATE 
+          rebind<Type>::other other;
   };
 };
 #endif

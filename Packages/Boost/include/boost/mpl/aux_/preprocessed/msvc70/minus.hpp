@@ -60,11 +60,46 @@ template< typename T > struct minus_tag
 {
 };
 
+/// forward declaration
+
 template<
       typename BOOST_MPL_AUX_NA_PARAM(N1)
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
+struct minus2;
+
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    , typename N3 = na, typename N4 = na, typename N5 = na
+    >
 struct minus
+
+    : aux::msvc_eti_base< typename if_<
+
+          is_na<N3>
+        , minus2< N1,N2 >
+        , minus<
+              minus2< N1,N2 >
+            , N3, N4, N5
+            >
+        >::type
+
+    >
+
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(
+          5
+        , minus
+        , ( N1, N2, N3, N4, N5 )
+        )
+};
+
+template<
+      typename N1
+    , typename N2
+    >
+struct minus2
     : aux::msvc_eti_base< typename apply_wrap2<
           minus_impl<
               typename minus_tag<N1>::type
@@ -75,11 +110,11 @@ struct minus
         >::type >::type
 
 {
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, minus, (N1, N2))
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, minus2, (N1, N2))
 
 };
 
-BOOST_MPL_AUX_NA_SPEC2(2, 2, minus)
+BOOST_MPL_AUX_NA_SPEC2(2, 5, minus)
 
 }}
 

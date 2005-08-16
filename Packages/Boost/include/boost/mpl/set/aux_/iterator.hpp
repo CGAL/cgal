@@ -31,9 +31,9 @@ template< typename Set, typename Tail > struct s_iter;
 
 template< typename Set, typename Tail > struct s_iter_impl
 {
-    typedef Tail                    tail_;
-    typedef forward_iterator_tag    category;
-    typedef typename Tail::type     type;
+    typedef Tail                        tail_;
+    typedef forward_iterator_tag        category;
+    typedef typename Tail::item_::type  type;
 
 #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
     typedef typename eval_if< 

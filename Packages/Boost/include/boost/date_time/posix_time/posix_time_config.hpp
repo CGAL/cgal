@@ -1,7 +1,7 @@
 #ifndef POSIX_TIME_CONFIG_HPP___
 #define POSIX_TIME_CONFIG_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -97,7 +97,23 @@ namespace posix_time {
     simple_time_rep(date_type d, time_duration_type tod) :
       day(d),
       time_of_day(tod)
-    {}
+    {
+      // make sure we have sane values for date & time
+      if(!day.is_special() && !time_of_day.is_special()){
+        if(time_of_day >= time_duration_type(24,0,0)) {
+          while(time_of_day >= time_duration_type(24,0,0)) {
+            day += date_type::duration_type(1);
+            time_of_day -= time_duration_type(24,0,0);
+          }
+        }
+        else if(time_of_day.is_negative()) {
+          while(time_of_day.is_negative()) {
+            day -= date_type::duration_type(1);
+            time_of_day += time_duration_type(24,0,0);
+          }
+        }
+      }
+    }
     date_type day;
     time_duration_type time_of_day;
     bool is_special()const

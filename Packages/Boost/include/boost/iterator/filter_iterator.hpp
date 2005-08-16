@@ -31,9 +31,9 @@ namespace boost
           , typename mpl::if_<
                 is_convertible<
                     typename iterator_traversal<Iterator>::type
-                  , bidirectional_traversal_tag
+                  , random_access_traversal_tag
                 >
-              , forward_traversal_tag
+              , bidirectional_traversal_tag
               , use_default
             >::type
         > type;

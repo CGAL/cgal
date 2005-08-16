@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -30,21 +30,20 @@ namespace boost{
 // regex_grep:
 // find all non-overlapping matches within the sequence first last:
 //
-template <class Predicate, class BidiIterator, class charT, class traits, class Allocator>
+template <class Predicate, class BidiIterator, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, 
                                BidiIterator first, 
                                BidiIterator last, 
-                               const reg_expression<charT, traits, Allocator>& e, 
+                               const basic_regex<charT, traits>& e, 
                                match_flag_type flags = match_default)
 {
    if(e.flags() & regex_constants::failbit)
       return false;
-   typedef          detail::rebind_allocator<sub_match<BidiIterator>, Allocator>  binder;
-   typedef typename binder::type                                                  match_allocator_type;
-   //typedef Allocator match_allocator_type;
 
-   match_results<BidiIterator, match_allocator_type> m;
-   re_detail::perl_matcher<BidiIterator, match_allocator_type, traits, Allocator> matcher(first, last, m, e, flags);
+   typedef typename match_results<BidiIterator>::allocator_type match_allocator_type;
+
+   match_results<BidiIterator> m;
+   re_detail::perl_matcher<BidiIterator, match_allocator_type, traits> matcher(first, last, m, e, flags);
    unsigned int count = 0;
    while(matcher.find())
    {
@@ -85,17 +84,17 @@ inline unsigned int regex_grep(Predicate foo,
 // this isn't really a partial specialisation, but template function
 // overloading - if the compiler doesn't support partial specialisation
 // then it really won't support this either:
-template <class Predicate, class charT, class Allocator, class traits>
+template <class Predicate, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, const charT* str, 
-                        const reg_expression<charT, traits, Allocator>& e, 
+                        const basic_regex<charT, traits>& e, 
                         match_flag_type flags = match_default)
 {
    return regex_grep(foo, str, str + traits::length(str), e, flags);
 }
 
-template <class Predicate, class ST, class SA, class Allocator, class charT, class traits>
+template <class Predicate, class ST, class SA, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, const std::basic_string<charT, ST, SA>& s, 
-                 const reg_expression<charT, traits, Allocator>& e, 
+                 const basic_regex<charT, traits>& e, 
                  match_flag_type flags = match_default)
 {
    return regex_grep(foo, s.begin(), s.end(), e, flags);

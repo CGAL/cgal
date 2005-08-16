@@ -33,7 +33,6 @@ namespace iterators {
 
 namespace detail {
 
-// note: replace this with a faster simpler table look up
 template<class CharType>
 struct from_6_bit {
     typedef CharType result_type;

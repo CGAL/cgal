@@ -2,25 +2,9 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
@@ -333,9 +317,6 @@ namespace boost {
       maybe_edge_bundled;
 #endif
 
-     struct no_vertex_bundle {};
-     struct no_edge_bundle {};
-
   public:
 #if !defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
     typedef typename detail::retag_property_list<vertex_bundle_t,
@@ -373,6 +354,10 @@ namespace boost {
     typedef typename Base::degree_size_type degree_size_type;
     typedef typename Base::vertex_descriptor vertex_descriptor;
     typedef typename Base::edge_descriptor edge_descriptor;
+    typedef OutEdgeListS out_edge_list_selector;
+    typedef VertexListS vertex_list_selector;
+    typedef DirectedS directed_selector;
+    typedef EdgeListS edge_list_selector;
 
     typedef GraphProperty graph_property_type;
 
@@ -440,28 +425,28 @@ namespace boost {
     GraphProperty m_property;
   };
 
-  template <class OEL, class VL, class DS, class VP,class EP, class GP,
+  template <class OEL, class VL, class DirS, class VP,class EP, class GP,
             class EL, class Tag, class Value>
   inline void
-  set_property(adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag,
+  set_property(adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>& g, Tag,
                const Value& value) {
     get_property_value(g.m_property, Tag()) = value;;
   }
 
-  template <class OEL, class VL, class DS, class VP, class EP, class GP,
+  template <class OEL, class VL, class DirS, class VP, class EP, class GP,
             class Tag, class EL>
   inline
-  typename graph_property<adjacency_list<OEL,VL,DS,VP,EP,GP,EL>, Tag>::type&
-  get_property(adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag) {
+  typename graph_property<adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>, Tag>::type&
+  get_property(adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>& g, Tag) {
     return get_property_value(g.m_property, Tag());
   }
 
-  template <class OEL, class VL, class DS, class VP, class EP, class GP,
+  template <class OEL, class VL, class DirS, class VP, class EP, class GP,
             class Tag, class EL>
   inline
   const
-  typename graph_property<adjacency_list<OEL,VL,DS,VP,EP,GP,EL>, Tag>::type&
-  get_property(const adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag) {
+  typename graph_property<adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>, Tag>::type&
+  get_property(const adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>& g, Tag) {
     return get_property_value(g.m_property, Tag());
   }
 

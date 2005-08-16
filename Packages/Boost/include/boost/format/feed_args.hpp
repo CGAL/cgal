@@ -29,7 +29,7 @@ namespace detail {
     template<class Ch, class Tr, class Alloc>
     void mk_str( std::basic_string<Ch,Tr, Alloc> & res, 
                  const Ch * beg,
-                 std::streamsize size,
+                 typename std::basic_string<Ch,Tr,Alloc>::size_type size,
                  std::streamsize w, 
                  const Ch fill_char,
                  std::ios_base::fmtflags f, 
@@ -38,14 +38,18 @@ namespace detail {
     // applies centered/left/right  padding  to the string  [beg, beg+size[
     // Effects : the result is placed in res.
     {
+        typedef typename std::basic_string<Ch,Tr,Alloc>::size_type size_type;
         res.resize(0);
-        std::streamsize n=w-size-!!prefix_space;
-        std::streamsize n_after = 0, n_before = 0; 
-
-        if(n<=0) { // no need to pad.
+        if(w<=0 || static_cast<size_type>(w) <=size) {
+            // no need to pad.
             res.reserve(size + !!prefix_space);
+            if(prefix_space) 
+              res.append(1, prefix_space);
+            res.append(beg, size);
         }
         else { 
+            std::streamsize n=static_cast<std::streamsize>(w-size-!!prefix_space);
+            std::streamsize n_after = 0, n_before = 0; 
             res.reserve(w); // allocate once for the 2 inserts
             if(center) 
                 n_after = n/2, n_before = n - n_after; 
@@ -54,17 +58,18 @@ namespace detail {
                     n_after = n;
                 else
                     n_before = n;
+            // now make the res string :
+            if(n_before) res.append(n_before, fill_char);
+            if(prefix_space) 
+              res.append(1, prefix_space);
+            res.append(beg, size);
+            if(n_after) res.append(n_after, fill_char);
         }
-        // now make the res string :
-        if(n_before) res.append(n_before, fill_char);
-        if(prefix_space) 
-            res.append(1, prefix_space);
-        res.append(beg, size);
-        if(n_after) res.append(n_after, fill_char);
     } // -mk_str(..) 
 
 
-#if BOOST_WORKAROUND( BOOST_MSVC, <= 1300) 
+#if BOOST_WORKAROUND( BOOST_MSVC, <= 1300) || \
+    BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590042))
 // MSVC needs to be tricked to disambiguate this simple overload..
 // the trick is in "boost/format/msvc_disambiguater.hpp"
   
@@ -149,8 +154,8 @@ namespace detail {
                 if(buf.pcount()== 0 || 
                    (res_beg[0] !=oss.widen('+') && res_beg[0] !=oss.widen('-')  ))
                     prefix_space = oss.widen(' ');
-            std::streamsize res_size = (std::min)(
-                static_cast<std::streamsize>(specs.truncate_ - !!prefix_space), 
+            size_type res_size = (std::min)(
+                static_cast<size_type>(specs.truncate_ - !!prefix_space), 
                 buf.pcount() );
             mk_str(res, res_beg, res_size, w, oss.fill(), fl, 
                    prefix_space, (specs.pad_scheme_ & format_item_t::centered) !=0 );
@@ -161,13 +166,13 @@ namespace detail {
             // but spacepad or truncate might be mixed with internal (using manipulator)
             put_last( oss, x); // may pad
             const Ch * res_beg = buf.pbase();
-            std::streamsize res_size = buf.pcount();
+            size_type res_size = buf.pcount();
             bool prefix_space=false;
             if(specs.pad_scheme_ & format_item_t::spacepad)
                 if(buf.pcount()== 0 || 
                    (res_beg[0] !=oss.widen('+') && res_beg[0] !=oss.widen('-')  ))
                     prefix_space = true;
-            if(res_size == w && w<=specs.truncate_ && !prefix_space) {
+            if(res_size == static_cast<size_type>(w) && w<=specs.truncate_ && !prefix_space) {
                 // okay, only one thing was printed and padded, so res is fine
                 res.assign(res_beg, res_size);
             }
@@ -194,25 +199,28 @@ namespace detail {
                 }
                 // we now have the minimal-length output
                 const Ch * tmp_beg = buf.pbase();
-                std::streamsize tmp_size = (std::min)(static_cast<std::streamsize>(specs.truncate_),
-                                                    buf.pcount() );
+                size_type tmp_size = (std::min)(static_cast<size_type>(specs.truncate_),
+                                                buf.pcount() );
                                                     
-                std::streamsize d;
-                if( (d=w - tmp_size) <=0 ) { 
+                
+                if(static_cast<size_type>(w) <= tmp_size) { 
                     // minimal length is already >= w, so no padding (cool!)
                         res.assign(tmp_beg, tmp_size);
                 }
                 else { // hum..  we need to pad (multi_output, or spacepad present)
-                    std::streamsize i = prefix_space;
                     //find where we should pad
-                    std::streamsize sz = (std::min)(res_size+prefix_space, tmp_size);
+                    size_type sz = (std::min)(res_size+prefix_space, tmp_size);
+                    size_type i = prefix_space;
                     for(; i<sz && tmp_beg[i] == res[i-prefix_space]; ++i) {}
                     if(i>=tmp_size) i=prefix_space;
                     res.assign(tmp_beg, i);
-                    if(d>0) res.append(static_cast<size_type>( d ), oss2.fill());
+                                        std::streamsize d = w - static_cast<std::streamsize>(tmp_size);
+                                        BOOST_ASSERT(d>0);
+                    res.append(static_cast<size_type>( d ), oss2.fill());
                     res.append(tmp_beg+i, tmp_size-i);
-                    BOOST_ASSERT(i+(tmp_size-i)+(std::max)(d,(std::streamsize)0) == w);
-                    BOOST_ASSERT(res.size() == (std::size_t)w);
+                    BOOST_ASSERT(i+(tmp_size-i)+(std::max)(d,(std::streamsize)0) 
+                                 == static_cast<size_type>(w));
+                    BOOST_ASSERT(res.size() == static_cast<size_type>(w));
                 }
             }
         }

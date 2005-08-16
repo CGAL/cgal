@@ -109,7 +109,7 @@ struct iterator_range
 namespace detail
 {
   // Get a Python class which contains the given iterator and
-  // policies, creating it if neccessary. Requires: NextPolicies is
+  // policies, creating it if necessary. Requires: NextPolicies is
   // default-constructible.
   template <class Iterator, class NextPolicies>
   object demand_iterator_class(char const* name, Iterator* = 0, NextPolicies const& policies = NextPolicies())

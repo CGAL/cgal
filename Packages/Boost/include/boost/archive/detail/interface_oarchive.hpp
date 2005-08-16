@@ -16,22 +16,22 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 #include <string>
-#include <boost/config.hpp>
-#include <boost/detail/workaround.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/static_warning.hpp>
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/level.hpp>
-#include <boost/archive/detail/oserializer.hpp>
+#include <boost/archive/detail/auto_link_archive.hpp>
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
+template<class T>
+class shared_ptr;
+namespace serialization {
+    class extended_type_info;
+} // namespace serialization
 namespace archive {
 namespace detail {
 
-class basic_oserializer;
-class basic_pointer_oserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_oserializer;
 
 template<class Archive>
 class interface_oarchive 
@@ -57,7 +57,7 @@ public:
     }
 
     template<class T>
-    const basic_pointer_oserializer * register_type(T * t = NULL){
+    const basic_pointer_oserializer * register_type(const T * t = NULL){
         const basic_pointer_oserializer & bpos =
             instantiate_pointer_oserializer(
                 static_cast<Archive *>(NULL),
@@ -67,53 +67,40 @@ public:
         return & bpos;
     }
 
-    // default processing - invoke serialization library
-    template<class T>
-    void save_override(T & t, /*BOOST_PFTO*/ int){
-        archive::save(* this->This(), t);
+    void lookup_helper(
+        const boost::serialization::extended_type_info * const eti,
+        shared_ptr<void> & sph
+    ){
+        this->This()->basic_oarchive::lookup_basic_helper(eti, sph);
     }
 
-    // note: we presume that older compilers will never create a const
-    // argument from a non-const by copyiing
+    void insert_helper(
+        const boost::serialization::extended_type_info * const eti,
+        shared_ptr<void> & sph
+    ){
+        this->This()->basic_oarchive::insert_basic_helper(eti, sph);
+    }
     template<class T>
-    Archive & operator<<(const T & t){
+    Archive & operator<<(T & t){
         this->This()->save_override(t, 0);
         return * this->This();
     }
-
+    
     // the & operator 
     template<class T>
-    Archive & operator&(const T & t){
-        this->This()->save_override(t, 0);
-        return * this->This();
+    Archive & operator&(T & t){
+        #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+            return * this->This() << const_cast<const T &>(t);
+        #else
+            return * this->This() << t;
+        #endif
     }
-
-    // define operators for non-const arguments.  Don't depend one the const
-    // ones below because the compiler MAY make a temporary copy to
-    // create the const parameter (Though I havn't seen this happen). 
-    #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-        // the << operator
-        template<class T>
-        Archive & operator<<(T & t){
-            // if trap here, we're saving a tracted non-const
-            // value - this could be a stack variable with the same
-            // address for multiple items. This would be the source of very
-            // subtle errors and should be double checked
-            // BOOST_STATIC_WARNING(
-            //     serialization::tracking_level == serialization::track_never
-            // );
-            return *this << const_cast<const T &>(t);
-        }
-        // the & operator
-        template<class T>
-        Archive & operator&(T & t){
-            return *this << const_cast<const T &>(t);
-        }
-    #endif
 };
 
 } // namespace detail
 } // namespace archive
 } // namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_DETAIL_INTERFACE_IARCHIVE_HPP

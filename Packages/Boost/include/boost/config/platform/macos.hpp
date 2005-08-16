@@ -18,10 +18,14 @@
 #  ifndef BOOST_HAS_UNISTD_H
 #    define BOOST_HAS_UNISTD_H
 #  endif
-// boilerplate code:
-#  ifndef TARGET_CARBON
-#     include <boost/config/posix_features.hpp>
-#  endif
+//
+// Begin by including our boilerplate code for POSIX
+// feature detection, this is safe even when using
+// the MSL as Metrowerks supply their own <unistd.h>
+// to replace the platform-native BSD one. G++ users
+// should also always be able to do this on MaxOS X.
+//
+#  include <boost/config/posix_features.hpp>
 #  ifndef BOOST_HAS_STDINT_H
 #     define BOOST_HAS_STDINT_H
 #  endif
@@ -49,9 +53,15 @@
 
 // We will eventually support threads in non-Carbon builds, but we do
 // not support this yet.
-#  if TARGET_CARBON
+#  if ( defined(TARGET_API_MAC_CARBON) && TARGET_API_MAC_CARBON ) || ( defined(TARGET_CARBON) && TARGET_CARBON )
 
+#  if !defined(BOOST_HAS_PTHREADS)
 #    define BOOST_HAS_MPTASKS
+#  elif ( __dest_os == __mac_os_x )
+// We are doing a Carbon/Mach-O/MSL build which has pthreads, but only the
+// gettimeofday and no posix.
+#  define BOOST_HAS_GETTIMEOFDAY
+#  endif
 
 // The MP task implementation of Boost Threads aims to replace MP-unsafe
 // parts of the MSL, so we turn on threads unconditionally.

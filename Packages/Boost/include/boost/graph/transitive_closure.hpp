@@ -147,7 +147,7 @@ namespace boost
             tie(adj_first, adj_last) = adjacent_vertices(v, CG);
             typename graph_traits<CG_t>::adjacency_iterator next
               = std::find_if(adj_first, adj_last,
-                             not1(detail::subscript(in_a_chain)));
+                             std::not1(detail::subscript(in_a_chain)));
             if (next != adj_last)
               v = *next;
             else

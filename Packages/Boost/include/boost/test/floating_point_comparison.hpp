@@ -1,4 +1,4 @@
-//  (C) Copyright Gennadiy Rozental 2001-2004.
+//  (C) Copyright Gennadiy Rozental 2001-2005.
 //  Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file LICENSE_1_0.txt or copy at 
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -12,12 +12,16 @@
 //  Description : defines algoirthms for comparing 2 floating point values
 // ***************************************************************************
 
-#ifndef BOOST_FLOATING_POINT_COMPARISON_HPP_071894GER
-#define BOOST_FLOATING_POINT_COMPARISON_HPP_071894GER
+#ifndef BOOST_TEST_FLOATING_POINT_COMPARISON_HPP_071894GER
+#define BOOST_TEST_FLOATING_POINT_COMPARISON_HPP_071894GER
 
 #include <boost/limits.hpp>  // for std::numeric_limits
 
-#include <boost/test/detail/class_properties.hpp>
+#include <boost/test/utils/class_properties.hpp>
+
+#include <boost/test/detail/suppress_warnings.hpp>
+
+//____________________________________________________________________________//
 
 namespace boost {
 
@@ -67,6 +71,10 @@ safe_fpt_division( FPT f1, FPT f2 )
 template<typename FPT, typename PersentType = FPT >
 class close_at_tolerance {
 public:
+    // Public typedefs
+    typedef bool result_type;
+
+    // Constructor
     explicit    close_at_tolerance( PersentType percentage_tolerance, floating_point_comparison_type fpc_type = FPC_STRONG ) 
     : p_fraction_tolerance( static_cast<FPT>(0.01)*percentage_tolerance ), p_strong_or_weak( fpc_type ==  FPC_STRONG ) {}
 
@@ -91,57 +99,81 @@ public:
 // **************               check_is_close                 ************** //
 // ************************************************************************** //
 
-template<typename FPT, typename PersentType>
-inline bool
-check_is_close( FPT left, FPT right, PersentType percentage_tolerance, floating_point_comparison_type fpc_type = FPC_STRONG )
-{
-    close_at_tolerance<FPT,PersentType> pred( percentage_tolerance, fpc_type );
+struct check_is_close_t {
+    // Public typedefs
+    typedef bool result_type;
 
-    return pred( left, right );
+    template<typename FPT, typename PersentType>
+    bool
+    operator()( FPT left, FPT right, PersentType percentage_tolerance, floating_point_comparison_type fpc_type = FPC_STRONG )
+    {
+        close_at_tolerance<FPT,PersentType> pred( percentage_tolerance, fpc_type );
+
+        return pred( left, right );
+    }
+};
+
+namespace {
+check_is_close_t check_is_close;
 }
 
 //____________________________________________________________________________//
 
-template<typename FPT>
-inline FPT
-compute_tolerance( FPT percentage_tolerance )
-{
-    close_at_tolerance<FPT> pred( percentage_tolerance );
+// ************************************************************************** //
+// **************               check_is_small                 ************** //
+// ************************************************************************** //
 
-    return pred.p_fraction_tolerance.get();
+struct check_is_small_t {
+    // Public typedefs
+    typedef bool result_type;
+
+    template<typename FPT>
+    bool
+    operator()( FPT fpv, FPT tolerance )
+    {
+        return tt_detail::fpt_abs( fpv ) < tolerance;
+    }
+};
+
+namespace {
+check_is_small_t check_is_small;
 }
 
 //____________________________________________________________________________//
 
 } // namespace test_tools
+
 } // namespace boost
+
+//____________________________________________________________________________//
+
+#include <boost/test/detail/enable_warnings.hpp>
 
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1.1.2  2004/11/20 10:52:13  spion
-//  Import of Boost v. 1.32.0
+//  Revision 1.1.1.3  2005/08/16 11:24:10  spion
+//  Import of Boost v. 1.33.0
 //
-//  Revision 1.18  2004/07/19 12:14:09  rogeeff
-//  guard rename
-//  tolerance parameter renamed for clarity
+//  Revision 1.23  2005/05/29 08:54:57  rogeeff
+//  allow bind usage
 //
-//  Revision 1.17  2004/06/07 07:33:49  rogeeff
-//  detail namespace renamed
+//  Revision 1.22  2005/02/21 10:21:40  rogeeff
+//  check_is_small implemented
+//  check functions implemented as function objects
 //
-//  Revision 1.16  2004/05/21 06:19:35  rogeeff
-//  licence update
+//  Revision 1.21  2005/02/20 08:27:05  rogeeff
+//  This a major update for Boost.Test framework. See release docs for complete list of fixes/updates
 //
-//  Revision 1.15  2004/05/11 11:00:34  rogeeff
-//  basic_cstring introduced and used everywhere
-//  class properties reworked
+//  Revision 1.20  2005/02/01 06:40:06  rogeeff
+//  copyright update
+//  old log entries removed
+//  minor stilistic changes
+//  depricated tools removed
 //
-//  Revision 1.14  2004/02/26 18:26:57  eric_niebler
-//  remove minmax hack from win32.hpp and fix all places that could be affected by the minmax macros
-//
-//  Revision 1.13  2003/12/01 00:41:56  rogeeff
-//  prerelease cleaning
+//  Revision 1.19  2005/01/22 19:22:12  rogeeff
+//  implementation moved into headers section to eliminate dependency of included/minimal component on src directory
 //
 // ***************************************************************************
 

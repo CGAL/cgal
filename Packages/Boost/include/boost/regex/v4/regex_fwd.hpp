@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -13,7 +13,7 @@
   *   LOCATION:    see http://www.boost.org for most recent version.
   *   FILE         regex_fwd.cpp
   *   VERSION      see <boost/version.hpp>
-  *   DESCRIPTION: Forward declares boost::reg_expression<> and
+  *   DESCRIPTION: Forward declares boost::basic_regex<> and
   *                associated typedefs.
   */
 
@@ -21,9 +21,8 @@
 #define BOOST_REGEX_FWD_HPP_INCLUDED
 
 #ifndef BOOST_REGEX_CONFIG_HPP
-#include <boost/config.hpp>
+#include <boost/regex/config.hpp>
 #endif
-#include <boost/regex/config/allocator.hpp>
 
 //
 // define BOOST_REGEX_NO_FWD if this
@@ -35,27 +34,32 @@
 #  endif
 #else
 
-//
-// If there isn't good enough wide character support then there will
-// be no wide character regular expressions:
-//
-#if (defined(BOOST_NO_CWCHAR) || defined(BOOST_NO_CWCTYPE) || defined(BOOST_NO_STD_WSTRING)) && !defined(BOOST_NO_WREGEX)
-#  define BOOST_NO_WREGEX
-#endif
-
 namespace boost{
 
 template <class charT>
-class regex_traits;
+class cpp_regex_traits;
+template <class charT>
+struct c_regex_traits;
+template <class charT>
+class w32_regex_traits;
 
-template <class charT, class traits = regex_traits<charT>, class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
-class reg_expression;
-template <class charT, class traits = regex_traits<charT>, class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
+#ifdef BOOST_REGEX_USE_WIN32_LOCALE
+template <class charT, class implementationT = w32_regex_traits<charT> >
+struct regex_traits;
+#elif defined(BOOST_REGEX_USE_CPP_LOCALE)
+template <class charT, class implementationT = cpp_regex_traits<charT> >
+struct regex_traits;
+#else
+template <class charT, class implementationT = c_regex_traits<charT> >
+struct regex_traits;
+#endif
+
+template <class charT, class traits = regex_traits<charT> >
 class basic_regex;
 
-typedef basic_regex<char, regex_traits<char>, BOOST_DEFAULT_ALLOCATOR(char) > regex;
+typedef basic_regex<char, regex_traits<char> > regex;
 #ifndef BOOST_NO_WREGEX
-typedef basic_regex<wchar_t, regex_traits<wchar_t>, BOOST_DEFAULT_ALLOCATOR(wchar_t) > wregex;
+typedef basic_regex<wchar_t, regex_traits<wchar_t> > wregex;
 #endif
 
 } // namespace boost

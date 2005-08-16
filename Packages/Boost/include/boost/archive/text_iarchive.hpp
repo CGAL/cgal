@@ -18,9 +18,11 @@
 
 #include <istream>
 
-#include <boost/config.hpp>
-#include <boost/archive/basic_text_iarchive.hpp>
+#include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/basic_text_iprimitive.hpp>
+#include <boost/archive/basic_text_iarchive.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
 namespace archive {
@@ -30,7 +32,6 @@ class text_iarchive_impl :
     public basic_text_iprimitive<std::istream>,
     public basic_text_iarchive<Archive>
 {
-protected:
 #ifdef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 public:
 #else
@@ -43,13 +44,17 @@ protected:
     void load(T & t){
         basic_text_iprimitive<std::istream>::load(t);
     }
-    void load(char * t);
+    BOOST_ARCHIVE_DECL(void) 
+    load(char * t);
     #ifndef BOOST_NO_INTRINSIC_WCHAR_T
-    void load(wchar_t * t);
+    BOOST_ARCHIVE_DECL(void) 
+    load(wchar_t * t);
     #endif
-    void load(std::string &s);
+    BOOST_ARCHIVE_DECL(void) 
+    load(std::string &s);
     #ifndef BOOST_NO_STD_WSTRING
-    void load(std::wstring &ws);
+    BOOST_ARCHIVE_DECL(void) 
+    load(std::wstring &ws);
     #endif
     // note: the following should not needed - but one compiler (vc 7.1)
     // fails to compile one test (test_shared_ptr) without it !!!
@@ -58,16 +63,10 @@ protected:
     void load_override(T & t, BOOST_PFTO int){
         basic_text_iarchive<Archive>::load_override(t, 0);
     }
-    text_iarchive_impl(std::istream & is, unsigned int flags = 0) :
-        basic_text_iprimitive<std::istream>(
-            is, 
-            0 != (flags & no_codecvt)
-        ),
-        basic_text_iarchive<Archive>()
-    {
-        if(0 == (flags & no_header))
-            basic_text_iarchive<Archive>::init();
-    }
+    BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    text_iarchive_impl(std::istream & is, unsigned int flags);
+    BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    ~text_iarchive_impl(){};
 };
 
 // do not derive from this class.  If you want to extend this functionality
@@ -77,10 +76,11 @@ class text_iarchive :
     public text_iarchive_impl<text_iarchive>
 {
 public:
+     
     text_iarchive(std::istream & is, unsigned int flags = 0) :
         text_iarchive_impl<text_iarchive>(is, flags)
-    {
-    }
+    {}
+    ~text_iarchive(){}
 };
 
 } // namespace archive
@@ -89,5 +89,7 @@ public:
 // required by smart_cast for compilers not implementing 
 // partial template specialization
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(boost::archive::text_iarchive)
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_TEXT_IARCHIVE_HPP

@@ -19,6 +19,7 @@
 #include <cstdlib> // getenv
 #include <cassert>
 
+#include <boost/config.hpp>
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std {
     using ::getenv;

@@ -30,6 +30,7 @@ namespace std{ using ::wcslen; }
 #endif
 #include <boost/archive/codecvt_null.hpp>
 #include <boost/archive/add_facet.hpp>
+#include <boost/detail/no_exceptions_support.hpp>
 
 namespace boost {
 namespace archive {
@@ -38,7 +39,8 @@ namespace archive {
 // implementation of basic_binary_oprimitive
 
 template<class Archive, class OStream>
-void basic_binary_oprimitive<Archive, OStream>::init()
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+basic_binary_oprimitive<Archive, OStream>::init()
 {
     // record native sizes of fundamental types
     // this is to permit detection of attempts to pass
@@ -53,7 +55,8 @@ void basic_binary_oprimitive<Archive, OStream>::init()
 }
 
 template<class Archive, class OStream>
-void basic_binary_oprimitive<Archive, OStream>::save(const char * s)
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+basic_binary_oprimitive<Archive, OStream>::save(const char * s)
 {
     std::size_t l = std::strlen(s);
     this->This()->save(l);
@@ -61,7 +64,8 @@ void basic_binary_oprimitive<Archive, OStream>::save(const char * s)
 }
 
 template<class Archive, class OStream>
-void basic_binary_oprimitive<Archive, OStream>::save(const std::string &s)
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+basic_binary_oprimitive<Archive, OStream>::save(const std::string &s)
 {
     std::size_t l = static_cast<unsigned int>(s.size());
     this->This()->save(l);
@@ -70,7 +74,8 @@ void basic_binary_oprimitive<Archive, OStream>::save(const std::string &s)
 
 #ifndef BOOST_NO_CWCHAR
 template<class Archive, class OStream>
-void basic_binary_oprimitive<Archive, OStream>::save(const wchar_t * ws)
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+basic_binary_oprimitive<Archive, OStream>::save(const wchar_t * ws)
 {
     std::size_t l = std::wcslen(ws);
     this->This()->save(l);
@@ -79,7 +84,8 @@ void basic_binary_oprimitive<Archive, OStream>::save(const wchar_t * ws)
 
 #ifndef BOOST_NO_STD_WSTRING
 template<class Archive, class OStream>
-void basic_binary_oprimitive<Archive, OStream>::save(const std::wstring &ws)
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+basic_binary_oprimitive<Archive, OStream>::save(const std::wstring &ws)
 {
     std::size_t l = ws.size();
     this->This()->save(l);
@@ -89,6 +95,7 @@ void basic_binary_oprimitive<Archive, OStream>::save(const std::wstring &ws)
 #endif
 
 template<class Archive, class OStream>
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 basic_binary_oprimitive<Archive, OStream>::basic_binary_oprimitive(
     OStream &os_, 
     bool no_codecvt
@@ -111,8 +118,13 @@ basic_binary_oprimitive<Archive, OStream>::basic_binary_oprimitive(
 // scoped_ptr requires that g be a complete type at time of
 // destruction so define destructor here rather than in the header
 template<class Archive, class OStream>
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 basic_binary_oprimitive<Archive, OStream>::~basic_binary_oprimitive(){
-    os.flush();
+    BOOST_TRY {
+        os.flush();
+        }
+    BOOST_CATCH(...){}
+        BOOST_CATCH_END
 }
 
 } // namespace archive

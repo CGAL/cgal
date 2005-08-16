@@ -65,6 +65,7 @@ template<
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
 struct greater_equal
+
     : greater_equal_impl<
           typename greater_equal_tag<N1>::type
         , typename greater_equal_tag<N2>::type

@@ -25,15 +25,15 @@
 
 #include <iosfwd>
 #include <cassert>
-
+#include <cstring> // std::memcpy
 #include <cstddef> // std::size_t
-#include <cstring>
+
+#include <string>
 
 #include <boost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ 
     using ::memcpy; 
-    using ::strcpy;
     using ::size_t;
 } // namespace std
 #endif
@@ -45,7 +45,8 @@ namespace std{
 #include <boost/scoped_ptr.hpp>
 
 #include <boost/archive/archive_exception.hpp>
-#include <boost/archive/codecvt_null.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
 namespace archive {
@@ -68,9 +69,6 @@ public:
     // native streams are always handled as bytes
     IStream &is;
     boost::scoped_ptr<std::locale> archive_locale;
-//    boost::scoped_ptr<
-//        codecvt_null<BOOST_DEDUCED_TYPENAME IStream::char_type> 
-//    > archive_codecvt;
     io::basic_ios_locale_saver<
         BOOST_DEDUCED_TYPENAME IStream::char_type, BOOST_DEDUCED_TYPENAME IStream::traits_type
     > locale_saver;
@@ -81,27 +79,36 @@ public:
         load_binary(& t, sizeof(T));
     }
 
-    void load(char * t);
-    void load(wchar_t * t);
-    void load(std::string &s);
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    load(std::string &s);
     #ifndef BOOST_NO_STD_WSTRING
-    void load(std::wstring &ws);
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    load(std::wstring &ws);
     #endif
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    load(char * t);
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    load(wchar_t * t);
 
-    void init();
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    init();
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
     basic_binary_iprimitive(IStream  &is_, bool no_codecvt);
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
     ~basic_binary_iprimitive();
 public:
-    void load_binary(void *address, std::size_t count);
+    void
+    load_binary(void *address, std::size_t count);
 };
 
 template<class Archive, class IStream>
-inline void basic_binary_iprimitive<Archive, IStream>::load_binary(
+inline void
+basic_binary_iprimitive<Archive, IStream>::load_binary(
     void *address, 
     std::size_t count
 ){
     assert(
-        static_cast<std::size_t>(std::numeric_limits<std::streamsize>::max()) >= count
+        static_cast<std::size_t>((std::numeric_limits<std::streamsize>::max)()) >= count
     );
     if(is.fail())
         boost::throw_exception(archive_exception(archive_exception::stream_error));
@@ -124,5 +131,7 @@ inline void basic_binary_iprimitive<Archive, IStream>::load_binary(
 
 } // namespace archive
 } // namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pop pragams
 
 #endif // BOOST_ARCHIVE_BINARY_IPRIMITIVE_HPP

@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -32,8 +33,7 @@ namespace boost { namespace fusion
                 value_type;
 
                 typedef typename Iterator::transform_type transform_type;
-                typedef typename transform_type::
-                    template apply<value_type>::type type;
+                typedef typename fusion_apply1<transform_type,value_type>::type type;
             };
         };
     }

@@ -2,24 +2,29 @@
 #define DATE_TIME_STRINGS_FROM_FACET__HPP___
 
 /* Copyright (c) 2004 CrystalClear Software, Inc.
- * Use, modification and distribution is subject to the 
+ * Use, modification and distribution is subject to the
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland
  * $Date$
  */
 
+#include <sstream>
+#include <string>
+#include <vector>
+#include <locale>
+
 namespace boost { namespace date_time {
 
 //! This function gathers up all the month strings from a std::locale
-/*! Using the time_put facet, this function creates a collection of 
+/*! Using the time_put facet, this function creates a collection of
  *  all the month strings from a locale.  This is handy when building
  *  custom date parsers or formatters that need to be localized.
  *
- *@param charT The type of char to use when gathering typically char 
+ *@param charT The type of char to use when gathering typically char
  *             or wchar_t.
  *@param locale The locale to use when gathering the strings
- *@param short_strings True(default) to gather short strings, 
+ *@param short_strings True(default) to gather short strings,
  *                     false for long strings.
  *@return A vector of strings containing the strings in order. eg:
  *        Jan, Feb, Mar, etc.
@@ -42,17 +47,17 @@ gather_month_strings(const std::locale& locale, bool short_strings=true)
     outfmt = long_fmt;
   }
   {
-    //grab the needed strings by using the locale to 
-    //output each month 
+    //grab the needed strings by using the locale to
+    //output each month
     for (int m=0; m < 12; m++) {
       tm tm_value;
       tm_value.tm_mon = m;
       stringstream_type ss;
       ostream_iter_type oitr(ss);
-      std::use_facet<time_put_facet_type>(locale).put(oitr, ss, ss.fill(), 
-                                                      &tm_value, 
+      std::use_facet<time_put_facet_type>(locale).put(oitr, ss, ss.fill(),
+                                                      &tm_value,
                                                       &*outfmt.begin(),
-                                                      &*outfmt.end());
+                                                      &*outfmt.begin()+outfmt.size());
       months.push_back(ss.str());
     }
   }
@@ -60,15 +65,15 @@ gather_month_strings(const std::locale& locale, bool short_strings=true)
 }
 
 //! This function gathers up all the weekday strings from a std::locale
-/*! Using the time_put facet, this function creates a collection of 
+/*! Using the time_put facet, this function creates a collection of
  *  all the weekday strings from a locale starting with the string for
- *  'Sunday'.  This is handy when building custom date parsers or 
+ *  'Sunday'.  This is handy when building custom date parsers or
  *  formatters that need to be localized.
  *
- *@param charT The type of char to use when gathering typically char 
+ *@param charT The type of char to use when gathering typically char
  *             or wchar_t.
  *@param locale The locale to use when gathering the strings
- *@param short_strings True(default) to gather short strings, 
+ *@param short_strings True(default) to gather short strings,
  *                     false for long strings.
  *@return A vector of strings containing the weekdays in order. eg:
  *        Sun, Mon, Tue, Wed, Thu, Fri, Sat
@@ -94,17 +99,17 @@ gather_weekday_strings(const std::locale& locale, bool short_strings=true)
     outfmt = long_fmt;
   }
   {
-    //grab the needed strings by using the locale to 
+    //grab the needed strings by using the locale to
     //output each month / weekday
     for (int i=0; i < 7; i++) {
       tm tm_value;
       tm_value.tm_wday = i;
       stringstream_type ss;
       ostream_iter_type oitr(ss);
-      std::use_facet<time_put_facet_type>(locale).put(oitr, ss, ss.fill(), 
-                                                      &tm_value, 
+      std::use_facet<time_put_facet_type>(locale).put(oitr, ss, ss.fill(),
+                                                      &tm_value,
                                                       &*outfmt.begin(),
-                                                      &*outfmt.end());
+                                                      &*outfmt.begin()+outfmt.size());
 
       weekdays.push_back(ss.str());
     }

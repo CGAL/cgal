@@ -19,12 +19,11 @@
   problem.
 */
 
+#include <boost/type_traits/integral_constant.hpp> // true_type and false_type
+
 namespace boost {
 
   struct ct_if_error { };
-
-  struct true_type { enum { value = true }; };
-  struct false_type { enum { value = false }; };
 
   template <class A, class B>
   struct ct_and { typedef false_type type; };

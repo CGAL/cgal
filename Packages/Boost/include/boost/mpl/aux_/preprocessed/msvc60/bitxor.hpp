@@ -61,11 +61,44 @@ template< typename T > struct bitxor_tag
     typedef typename T::tag type;
 };
 
+/// forward declaration
+
 template<
       typename BOOST_MPL_AUX_NA_PARAM(N1)
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
+struct bitxor_2;
+
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    , typename N3 = na, typename N4 = na, typename N5 = na
+    >
 struct bitxor_
+
+    : if_<
+
+          is_na<N3>
+        , bitxor_2< N1,N2 >
+        , bitxor_<
+              bitxor_2< N1,N2 >
+            , N3, N4, N5
+            >
+        >::type
+
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(
+          5
+        , bitxor_
+        , ( N1, N2, N3, N4, N5 )
+        )
+};
+
+template<
+      typename N1
+    , typename N2
+    >
+struct bitxor_2
     : aux::msvc_eti_base< typename apply_wrap2<
           bitxor_impl<
               typename bitxor_tag<N1>::type
@@ -76,11 +109,11 @@ struct bitxor_
         >::type >::type
 
 {
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, bitxor_, (N1, N2))
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, bitxor_2, (N1, N2))
 
 };
 
-BOOST_MPL_AUX_NA_SPEC2(2, 2, bitxor_)
+BOOST_MPL_AUX_NA_SPEC2(2, 5, bitxor_)
 
 }}
 

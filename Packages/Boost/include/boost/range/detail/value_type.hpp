@@ -12,7 +12,7 @@
 #define BOOST_RANGE_DETAIL_VALUE_TYPE_HPP
 
 #include <boost/range/detail/common.hpp>
-#include <boost/type_traits/remove_bounds.hpp>
+#include <boost/range/detail/remove_extent.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ namespace boost
             template< typename C >
             struct pts
             {
-                typedef BOOST_DEDUCED_TYPENAME C::value_type type;
+                typedef BOOST_RANGE_DEDUCED_TYPENAME C::value_type type;
             };
         };
 
@@ -42,7 +42,7 @@ namespace boost
             template< typename P >
             struct pts
             {
-                typedef BOOST_DEDUCED_TYPENAME boost::iterator_value< BOOST_RANGE_DEDUCED_TYPENAME P::first_type >::type type;
+                typedef BOOST_RANGE_DEDUCED_TYPENAME boost::iterator_value< BOOST_RANGE_DEDUCED_TYPENAME P::first_type >::type type;
             };
         };
 
@@ -52,7 +52,7 @@ namespace boost
             template< typename T >
             struct pts
             {
-                typedef BOOST_DEDUCED_TYPENAME boost::remove_bounds<T>::type type;
+                typedef BOOST_DEDUCED_TYPENAME remove_extent<T>::type type;
             };
         };
         

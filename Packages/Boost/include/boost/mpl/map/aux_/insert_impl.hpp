@@ -16,6 +16,7 @@
 // $Revision$
 
 #include <boost/mpl/insert_fwd.hpp>
+#include <boost/mpl/next_prior.hpp>
 #include <boost/mpl/map/aux_/contains_impl.hpp>
 #include <boost/mpl/map/aux_/item.hpp>
 #include <boost/mpl/map/aux_/tag.hpp>
@@ -38,7 +39,7 @@ struct map_insert_impl
             >
 #else
         , m_item<
-              ( Map::size::value + 1 )
+              next< typename Map::size >::type::value
             , typename Pair::first
             , typename Pair::second
             , Map

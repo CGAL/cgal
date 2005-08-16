@@ -23,12 +23,15 @@
 // exists for archives to be non-portable if class information for primitive
 // types is included.  This is addressed by the following macros.
 #include <boost/config.hpp>
+#include <boost/mpl/integral_c.hpp>
+#include <boost/mpl/integral_c_tag.hpp>
+
 #include <boost/cstdint.hpp>
 #include <boost/serialization/level.hpp>
 
 #define BOOST_SERIALIZATION_COLLECTION_TRAITS_HELPER(T, C)          \
 template<>                                                          \
-struct implementation_level<C<T> > {                                \
+struct implementation_level< C < T > > {                            \
     typedef mpl::integral_c_tag tag;                                \
     typedef mpl::int_<object_serializable> type;                    \
     BOOST_STATIC_CONSTANT(int, value = object_serializable);        \

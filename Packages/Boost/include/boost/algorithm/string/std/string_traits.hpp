@@ -38,7 +38,7 @@ namespace boost {
             BOOST_STATIC_CONSTANT(bool, value=true);
 #endif // BOOST_WORKAROUND( __IBMCPP__, <= 600 )
 
-        typedef mpl::bool_<value> type;     
+        typedef mpl::bool_<has_native_replace<T>::value> type;
         };
 
 

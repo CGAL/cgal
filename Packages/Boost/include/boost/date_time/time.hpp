@@ -1,7 +1,7 @@
 #ifndef DATE_TIME_TIME_HPP___
 #define DATE_TIME_TIME_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -74,9 +74,24 @@ namespace date_time {
     {
       return time_system::get_time_of_day(time_);
     }
-    std::string zone_name() const
+    /*! Optional bool parameter will return time zone as an offset 
+     * (ie "+07:00"). Empty string is returned for classes that do 
+     * not use a time_zone */
+    std::string zone_name(bool as_offset=false) const
     {
       return time_system::zone_name(time_);
+    }
+    /*! Optional bool parameter will return time zone as an offset 
+     * (ie "+07:00"). Empty string is returned for classes that do 
+     * not use a time_zone */
+    std::string zone_abbrev(bool as_offset=false) const
+    {
+      return time_system::zone_name(time_);
+    }
+    //! An empty string is returned for classes that do not use a time_zone
+    std::string zone_as_posix_string() const
+    {
+      return std::string("");
     }
 
     //! check to see if date is not a value

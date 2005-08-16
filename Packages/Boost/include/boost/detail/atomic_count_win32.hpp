@@ -10,16 +10,14 @@
 //
 //  boost/detail/atomic_count_win32.hpp
 //
-//  Copyright (c) 2001, 2002, 2003 Peter Dimov
+//  Copyright (c) 2001-2005 Peter Dimov
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifdef BOOST_USE_WINDOWS_H
-#  include <windows.h>
-#endif
+#include <boost/detail/interlocked.hpp>
 
 namespace boost
 {
@@ -27,67 +25,35 @@ namespace boost
 namespace detail
 {
 
-#ifndef BOOST_USE_WINDOWS_H
-
-#ifdef _WIN64
-
-// Intel 6.0 on Win64 version, posted by Tim Fenders to [boost-users]
-
-extern "C" long_type __cdecl _InterlockedIncrement(long volatile *);
-extern "C" long_type __cdecl _InterlockedDecrement(long volatile *);
-
-#pragma intrinsic(_InterlockedIncrement)
-#pragma intrinsic(_InterlockedDecrement)
-
-inline long InterlockedIncrement(long volatile * lp)
-{ 
-    return _InterlockedIncrement(lp);
-}
-
-inline long InterlockedDecrement(long volatile* lp)
-{ 
-    return _InterlockedDecrement(lp);
-}
-
-#else  // _WIN64
-
-extern "C" __declspec(dllimport) long __stdcall InterlockedIncrement(long volatile *);
-extern "C" __declspec(dllimport) long __stdcall InterlockedDecrement(long volatile *);
-
-#endif // _WIN64
-
-#endif // #ifndef BOOST_USE_WINDOWS_H
-
 class atomic_count
 {
 public:
 
-    explicit atomic_count(long v): value_(v)
+    explicit atomic_count( long v ): value_( v )
     {
     }
 
     long operator++()
     {
-        // Some older <windows.h> versions do not accept volatile
-        return InterlockedIncrement(const_cast<long*>(&value_));
+        return BOOST_INTERLOCKED_INCREMENT( &value_ );
     }
 
     long operator--()
     {
-        return InterlockedDecrement(const_cast<long*>(&value_));
+        return BOOST_INTERLOCKED_DECREMENT( &value_ );
     }
 
     operator long() const
     {
-        return value_;
+        return static_cast<long const volatile &>( value_ );
     }
 
 private:
 
-    atomic_count(atomic_count const &);
-    atomic_count & operator=(atomic_count const &);
+    atomic_count( atomic_count const & );
+    atomic_count & operator=( atomic_count const & );
 
-    volatile long value_;
+    long value_;
 };
 
 } // namespace detail

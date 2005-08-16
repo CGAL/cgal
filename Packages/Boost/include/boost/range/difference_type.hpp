@@ -100,6 +100,30 @@ namespace boost
         typedef std::ptrdiff_t type;
     };
 
+    template<>
+    struct range_difference< char* const >
+    {
+        typedef std::ptrdiff_t type;
+    };
+
+    template<>
+    struct range_difference< wchar_t* const >
+    {
+        typedef std::ptrdiff_t type;
+    };
+
+    template<>
+    struct range_difference< const char* const >
+    {
+        typedef std::ptrdiff_t type;
+    };
+
+    template<>
+    struct range_difference< const wchar_t* const >
+    {
+        typedef std::ptrdiff_t type;
+    };
+
 } // namespace boost
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION

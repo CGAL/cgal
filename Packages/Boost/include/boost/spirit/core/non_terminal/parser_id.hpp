@@ -10,6 +10,10 @@
 #if !defined(BOOST_SPIRIT_PARSER_ID_HPP)
 #define BOOST_SPIRIT_PARSER_ID_HPP
 
+#if defined(BOOST_SPIRIT_DEBUG)
+#   include <ostream>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost { namespace spirit {
 

@@ -27,11 +27,10 @@ namespace std{
 #endif
 
 #include <boost/cstdint.hpp>
-
 #include <boost/pfto.hpp>
-#include <boost/serialization/nvp.hpp>
 #include <boost/archive/detail/oserializer.hpp>
 #include <boost/archive/detail/interface_oarchive.hpp>
+#include <boost/serialization/nvp.hpp>
 
 // determine if its necessary to handle (u)int64_t specifically
 // i.e. that its not a synonym for (unsigned) long
@@ -46,6 +45,7 @@ namespace boost {
 namespace archive {
 namespace detail {
     class basic_oarchive;
+    class basic_oserializer;
 }
 
 class polymorphic_oarchive :
@@ -93,27 +93,33 @@ public:
     virtual void save_end(const char * name) = 0;
     virtual void register_basic_serializer(const detail::basic_oserializer & bos) = 0;
 
-    virtual unsigned int library_version() const = 0;
+    virtual unsigned int get_library_version() const = 0;
     virtual void end_preamble() = 0;
-    // utility function implemented by all legal archives
-    virtual void save_binary(const void * t, std::size_t size) = 0;
 
     // msvc and borland won't automatically pass these to the base class so
     // make it explicit here
     template<class T>
-    void save_override(const T & t, BOOST_PFTO int)
+    void save_override(T & t, BOOST_PFTO int)
     {
         archive::save(* this, t);
     }
     // special treatment for name-value pairs.
     template<class T>
-    void save_override(const ::boost::serialization::nvp<T> & t, int)
-    {
+    void save_override(
+                #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+                const
+                #endif
+                ::boost::serialization::nvp<T> & t, int
+        ){
         save_start(t.name());
-        archive::save(* this, t.value());
+        archive::save(* this, t.const_value());
         save_end(t.name());
     }
 public:
+    virtual unsigned int get_flags() const = 0;
+    // utility function implemented by all legal archives
+    virtual void save_binary(const void * t, std::size_t size) = 0;
+
     virtual void save_object(
         const void *x, 
         const detail::basic_oserializer & bos

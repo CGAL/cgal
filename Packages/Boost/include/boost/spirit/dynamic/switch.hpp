@@ -114,7 +114,7 @@ struct switch_parser
             impl::make_cond_functor<CondT>::do_(cond));
     }
 
-    CondT const &cond;
+    CondT cond;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

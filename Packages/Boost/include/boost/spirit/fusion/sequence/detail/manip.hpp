@@ -2,6 +2,7 @@
     Copyright (c) 1999-2003 Jeremiah Willcock
     Copyright (c) 1999-2003 Jaakko Järvi
     Copyright (c) 2001-2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -71,18 +72,23 @@ namespace boost { namespace fusion
                 std::vector<T*> data;
             };
 
-            static void attach(Stream& stream, T const& data)
-            {
-                static arena ar; // our arena
-                ar.data.push_back(new T(data));
-                stream.pword(get_xalloc_index<Tag>()) = ar.data.back();
-            }
-
-            static T const* get(Stream& stream)
-            {
-                return (T const*)stream.pword(get_xalloc_index<Tag>());
-            }
+            static void attach(Stream& stream, T const& data);
+            static T const* get(Stream& stream);
         };
+
+        template <typename Stream, typename Tag, typename T>
+        void stream_data<Stream,Tag,T>::attach(Stream& stream, T const& data)
+        {
+            static arena ar; // our arena
+            ar.data.push_back(new T(data));
+            stream.pword(get_xalloc_index<Tag>()) = ar.data.back();
+        }
+
+        template <typename Stream, typename Tag, typename T>
+        T const* stream_data<Stream,Tag,T>::get(Stream& stream)
+        {
+            return (T const*)stream.pword(get_xalloc_index<Tag>());
+        }
 
         template <class Tag, class Stream>
         class string_ios_manip
@@ -93,48 +99,10 @@ namespace boost { namespace fusion
 
             typedef stream_data<Stream, Tag, string_type> stream_data_t;
 
-            string_ios_manip(Stream& str_)
-                : stream(str_)
-            {}
-
-            void
-            set(string_type const& s)
-            {
-                stream_data_t::attach(stream, s);
-            }
-
-            void
-            print(char const* default_) const
-            {
-                // print a delimiter
-                string_type const* p = stream_data_t::get(stream);
-                if (p)
-                    stream << *p;
-                else
-                    stream << default_;
-            }
-
-            void
-            read(char const* default_) const
-            {
-                // read a delimiter
-                string_type const* p = stream_data_t::get(stream);
-                using namespace std;
-                ws(stream);
-
-                if (p)
-                {
-                    typedef typename string_type::const_iterator iterator;
-                    for (iterator i = p->begin(); i != p->end(); ++i)
-                        check_delim(*i);
-                }
-                else
-                {
-                    while (*default_)
-                        check_delim(*default_++);
-                }
-            }
-
+            string_ios_manip(Stream& str_);
+            void set(string_type const& s);
+            void print(char const* default_) const;
+            void read(char const* default_) const;
         private:
 
             template <typename Char>
@@ -153,6 +121,52 @@ namespace boost { namespace fusion
 
             Stream& stream;
         };
+
+        template <class Tag, class Stream>
+        string_ios_manip<Tag,Stream>::string_ios_manip(Stream& str_)
+            : stream(str_)
+        {}
+
+        template <class Tag, class Stream>
+        void 
+        string_ios_manip<Tag,Stream>::set(string_type const& s)
+        {
+            stream_data_t::attach(stream, s);
+        }
+
+        template <class Tag, class Stream>
+        void 
+        string_ios_manip<Tag,Stream>::print(char const* default_) const
+        {
+            // print a delimiter
+            string_type const* p = stream_data_t::get(stream);
+            if (p)
+                stream << *p;
+            else
+                stream << default_;
+        }
+
+        template <class Tag, class Stream>
+        void 
+        string_ios_manip<Tag,Stream>::read(char const* default_) const
+        {
+            // read a delimiter
+            string_type const* p = stream_data_t::get(stream);
+            using namespace std;
+            ws(stream);
+
+            if (p)
+            {
+                typedef typename string_type::const_iterator iterator;
+                for (iterator i = p->begin(); i != p->end(); ++i)
+                    check_delim(*i);
+            }
+            else
+            {
+                while (*default_)
+                    check_delim(*default_++);
+            }
+        }
 
     } // detail
 

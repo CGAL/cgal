@@ -105,7 +105,7 @@ wchar_t wchar_from_mb<Base>::drain(){
     char buffer[9];
     char * bptr = buffer;
     char val;
-    for(std::size_t i = 0; i++ < MB_CUR_MAX;){
+    for(std::size_t i = 0; i++ < (unsigned)MB_CUR_MAX;){
         val = * this->base_reference();
         *bptr++ = val;
         int result = std::mblen(buffer, i);

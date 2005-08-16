@@ -107,4 +107,6 @@ struct rounding_control<long double>:
 } // namespace numeric
 } // namespace boost
 
+#undef BOOST_NUMERIC_INTERVAL_NO_HARDWARE
+
 #endif /* BOOST_NUMERIC_INTERVAL_DETAIL_SPARC_ROUNDING_CONTROL_HPP */

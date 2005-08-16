@@ -19,7 +19,7 @@
 #include <boost/mpl/reverse_fold.hpp>
 #include <boost/mpl/pair_view.hpp>
 #include <boost/mpl/is_sequence.hpp>
-#include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/lambda.hpp>
 #include <boost/mpl/bind.hpp>
 #include <boost/mpl/or.hpp>
@@ -121,7 +121,8 @@ template<                                                               \
     , typename BOOST_MPL_AUX_NA_PARAM(Inserter)                         \
     >                                                                   \
 struct name                                                             \
-    : if_<                                                              \
+{                                                                       \
+    typedef typename eval_if<                                           \
           or_<                                                          \
               is_na<OperationOrInserter>                                \
             , is_lambda_expression< Seq2OrOperation >                   \
@@ -129,8 +130,7 @@ struct name                                                             \
             >                                                           \
         , name##1<Seq1,Seq2OrOperation,OperationOrInserter>             \
         , name##2<Seq1,Seq2OrOperation,OperationOrInserter,Inserter>    \
-        >::type                                                         \
-{                                                                       \
+        >::type type;                                                   \
 };                                                                      \
 BOOST_MPL_AUX_NA_SPEC(4, name)                                          \
 /**/

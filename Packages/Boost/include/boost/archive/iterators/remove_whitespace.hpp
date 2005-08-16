@@ -25,40 +25,14 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
-#include <boost/detail/workaround.hpp>
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+//#include <boost/detail/workaround.hpp>
+//#if ! BOOST_WORKAROUND(BOOST_MSVC, <=1300)
+
 // here is the default standard implementation of the functor used
 // by the filter iterator to remove spaces.  Unfortunately usage
 // of this implementation in combination with spirit trips a bug
 // VC 6.5.  The only way I can find to work around it is to 
 // implement a special non-standard version for this platform
-
-namespace { // anonymous
-
-template<class CharType>
-struct remove_whitespace_predicate;
-
-template<>
-struct remove_whitespace_predicate<char>
-{
-    char operator()(char t){
-        return ! ::isspace(t);
-    }
-};
-
-#ifndef BOOST_NO_CWCHAR 
-template<>
-struct remove_whitespace_predicate<wchar_t>
-{
-    wchar_t operator()(wchar_t t){
-        return ! ::iswspace(t);
-    }
-};
-#endif
-
-} // namespace anonymous
-
-#else // BOOST_WORKAROUND
 
 #ifndef BOOST_NO_CWCTYPE
 #include <cwctype> // iswspace
@@ -71,6 +45,14 @@ namespace std{ using ::iswspace; }
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ using ::isspace; }
 #endif
+
+#if defined(__STD_RWCOMPILER_H__) || defined(_RWSTD_VER)
+// this is required for the RW STL on Linux and Tru64.
+#undef isspace
+#undef iswspace
+#endif
+
+//#endif // BOOST_WORKAROUND
 
 namespace { // anonymous
 
@@ -96,7 +78,6 @@ struct remove_whitespace_predicate<wchar_t>
 #endif
 
 } // namespace anonymous
-#endif // BOOST_WORKAROUND
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // convert base64 file data (including whitespace and padding) to binary

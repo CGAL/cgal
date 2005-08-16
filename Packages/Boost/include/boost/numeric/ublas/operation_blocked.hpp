@@ -14,8 +14,11 @@
 //  GeNeSys mbH & Co. KG in producing this work.
 //
 
-#ifndef BOOST_UBLAS_OPERATION_BLOCKED_H
-#define BOOST_UBLAS_OPERATION_BLOCKED_H
+#ifndef _BOOST_UBLAS_OPERATION_BLOCKED_
+#define _BOOST_UBLAS_OPERATION_BLOCKED_
+
+#include <boost/numeric/ublas/traits.hpp>
+
 
 namespace boost { namespace numeric { namespace ublas {
 
@@ -36,7 +39,7 @@ namespace boost { namespace numeric { namespace ublas {
         vector<value_type> cv (v.size ());
         typedef typename type_traits<value_type>::real_type real_type;
         real_type verrorbound (norm_1 (v) + norm_1 (e1) * norm_1 (e2));
-        indexing_vector_assign (scalar_assign<typename vector<value_type>::reference, value_type> (), cv, prod (e1, e2));
+        indexing_vector_assign<scalar_assign> (cv, prod (e1, e2));
 #endif
         size_type i_size = e1 ().size1 ();
         size_type j_size = BOOST_UBLAS_SAME (e1 ().size2 (), e2 ().size ());
@@ -91,7 +94,7 @@ namespace boost { namespace numeric { namespace ublas {
         vector<value_type> cv (v.size ());
         typedef typename type_traits<value_type>::real_type real_type;
         real_type verrorbound (norm_1 (v) + norm_1 (e1) * norm_1 (e2));
-        indexing_vector_assign (scalar_assign<typename vector<value_type>::reference, value_type> (), cv, prod (e1, e2));
+        indexing_vector_assign<scalar_assign> (cv, prod (e1, e2));
 #endif
         size_type i_size = BOOST_UBLAS_SAME (e1 ().size (), e2 ().size1 ());
         size_type j_size = e2 ().size2 ();
@@ -146,7 +149,7 @@ namespace boost { namespace numeric { namespace ublas {
         matrix<value_type, row_major> cm (m.size1 (), m.size2 ());
         typedef typename type_traits<value_type>::real_type real_type;
         real_type merrorbound (norm_1 (m) + norm_1 (e1) * norm_1 (e2));
-        indexing_matrix_assign (scalar_assign<typename matrix<value_type, row_major>::reference, value_type> (), cm, prod (e1, e2), row_major_tag ());
+        indexing_matrix_assign<scalar_assign> (cm, prod (e1, e2), row_major_tag ());
         disable_type_check<bool>::value = true;
 #endif
         size_type i_size = e1 ().size1 ();
@@ -207,7 +210,7 @@ namespace boost { namespace numeric { namespace ublas {
         matrix<value_type, column_major> cm (m.size1 (), m.size2 ());
         typedef typename type_traits<value_type>::real_type real_type;
         real_type merrorbound (norm_1 (m) + norm_1 (e1) * norm_1 (e2));
-        indexing_matrix_assign (scalar_assign<typename matrix<value_type, column_major>::reference, value_type> (), cm, prod (e1, e2), column_major_tag ());
+        indexing_matrix_assign<scalar_assign> (cm, prod (e1, e2), column_major_tag ());
         disable_type_check<bool>::value = true;
 #endif
         size_type i_size = e1 ().size1 ();

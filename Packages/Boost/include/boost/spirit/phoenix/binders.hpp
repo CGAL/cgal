@@ -12,6 +12,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/spirit/phoenix/functions.hpp>
 #include <boost/type_traits/is_const.hpp>
+#include <boost/mpl/if.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace phoenix {
@@ -440,9 +441,8 @@ struct member_var_ptr_action {
 
     template <typename CT>
     struct result {
-
-        typedef char is_const[boost::is_const<CT>::value ? 1 : 2];
-        typedef typename impl::if_t<is_const, T const&, T&>::type type;
+        typedef typename boost::mpl::if_<boost::is_const<CT>, T const&, T&
+            >::type type;
     };
 
     typedef T ClassT::*mem_var_ptr_t;
@@ -1517,8 +1517,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)();
     typedef RT(ClassT::*cmf)() const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT>
     struct result { typedef result_type type; };
@@ -1574,8 +1574,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A);
     typedef RT(ClassT::*cmf)(A) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT, typename A_>
     struct result { typedef result_type type; };
@@ -1632,8 +1632,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B);
     typedef RT(ClassT::*cmf)(A, B) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT, typename A_, typename B_>
     struct result { typedef result_type type; };
@@ -1688,8 +1688,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C);
     typedef RT(ClassT::*cmf)(A, B, C) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT, typename A_, typename B_, typename C_>
     struct result { typedef result_type type; };
@@ -1745,8 +1745,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D);
     typedef RT(ClassT::*cmf)(A, B, C, D) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_
@@ -1813,8 +1813,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E);
     typedef RT(ClassT::*cmf)(A, B, C, D, E) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -1882,8 +1882,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -1950,8 +1950,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2018,8 +2018,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2084,8 +2084,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2150,8 +2150,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2222,8 +2222,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2290,8 +2290,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2357,8 +2357,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L, M);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L, M) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2424,8 +2424,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2492,8 +2492,8 @@ struct member_function_ptr_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT,
         typename A_, typename B_, typename C_, typename D_,
@@ -2696,8 +2696,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)();
     typedef RT(ClassT::*cmf)() const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename CT>
     struct result { typedef result_type type; };
@@ -2777,8 +2777,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A);
     typedef RT(ClassT::*cmf)(A) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename A_>
     struct result { typedef result_type type; };
@@ -2850,8 +2850,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B);
     typedef RT(ClassT::*cmf)(A, B) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename A_, typename B_>
     struct result { typedef result_type type; };
@@ -2920,8 +2920,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C);
     typedef RT(ClassT::*cmf)(A, B, C) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename A_, typename B_, typename C_>
     struct result { typedef result_type type; };
@@ -2991,8 +2991,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D);
     typedef RT(ClassT::*cmf)(A, B, C, D) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename A_, typename B_, typename C_, typename D_>
     struct result { typedef result_type type; };
@@ -3075,8 +3075,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E);
     typedef RT(ClassT::*cmf)(A, B, C, D, E) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <typename A_, typename B_, typename C_, typename D_,
         typename E_
@@ -3165,8 +3165,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3255,8 +3255,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3345,8 +3345,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3433,8 +3433,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3521,8 +3521,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3616,8 +3616,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3707,8 +3707,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3797,8 +3797,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L, M);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L, M) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3887,8 +3887,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,
@@ -3978,8 +3978,8 @@ struct bound_member_action<RT, ClassT,
     typedef RT result_type;
     typedef RT(ClassT::*mf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
     typedef RT(ClassT::*cmf)(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) const;
-    typedef char is_const[boost::is_const<ClassT>::value ? 1 : 2];
-    typedef typename impl::if_t<is_const, cmf, mf>::type mem_func_ptr_t;
+    typedef typename boost::mpl::if_<boost::is_const<ClassT>, cmf, mf>::type
+        mem_func_ptr_t;
 
     template <
         typename A_, typename B_, typename C_, typename D_,

@@ -50,9 +50,9 @@ namespace boost { namespace mpl {
 
 #endif
 
-
 template< typename Dummy = na > struct set0
 {
+    typedef set0<>          item_;
     typedef aux::set_tag    tag;
     typedef void_           last_masked_;
     typedef void_           item_type_;

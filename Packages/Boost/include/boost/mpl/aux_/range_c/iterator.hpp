@@ -64,9 +64,13 @@ template<> struct advance_impl<aux::r_iter_tag>
 {
     template< typename Iter, typename Dist > struct apply
     {
-        typedef typename Iter::type n_;
+        typedef typename deref<Iter>::type n_;
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+        typedef typename plus_impl<integral_c_tag,integral_c_tag>
+            ::template apply<n_,Dist>::type m_;
+#else
         typedef typename plus<n_,Dist>::type m_;
-        
+#endif
         // agurt, 10/nov/04: to be generic, the code have to do something along
         // the lines below...
         //
@@ -78,7 +82,7 @@ template<> struct advance_impl<aux::r_iter_tag>
         // ... meanwhile:
         
         typedef integral_c< 
-              typename n_::value_type
+              typename aux::value_type_wknd<n_>::type
             , BOOST_MPL_AUX_VALUE_WKND(m_)::value 
             > result_;
         

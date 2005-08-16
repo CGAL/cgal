@@ -18,54 +18,15 @@
 #define BOOST_UBLAS_STORAGE_H
 
 #include <algorithm>
-
 #ifdef BOOST_UBLAS_SHALLOW_ARRAY_ADAPTOR
 #include <boost/shared_array.hpp>
 #endif
 
-#include <boost/numeric/ublas/config.hpp>
 #include <boost/numeric/ublas/exception.hpp>
-#include <boost/numeric/ublas/iterator.hpp>
-#include <boost/numeric/ublas/traits.hpp>
+#include <boost/numeric/ublas/detail/iterator.hpp>
+
 
 namespace boost { namespace numeric { namespace ublas {
-
-#ifndef BOOST_UBLAS_USE_FAST_SAME
-// FIXME: for performance reasons we better use macros
-//    template<class T>
-//    BOOST_UBLAS_INLINE
-//    const T &same_impl (const T &size1, const T &size2) {
-//        BOOST_UBLAS_CHECK (size1 == size2, bad_argument ());
-//        return (std::min) (size1, size2);
-//    }
-// #define BOOST_UBLAS_SAME(size1, size2) same_impl ((size1), (size2))
-    template<class T>
-    BOOST_UBLAS_INLINE
-    // Kresimir Fresl and Dan Muller reported problems with COMO.
-    // We better change the signature instead of libcomo ;-)
-    // const T &same_impl_ex (const T &size1, const T &size2, const char *file, int line) {
-    T same_impl_ex (const T &size1, const T &size2, const char *file, int line) {
-        BOOST_UBLAS_CHECK_EX (size1 == size2, file, line, bad_argument ());
-        return (std::min) (size1, size2);
-    }
-#define BOOST_UBLAS_SAME(size1, size2) same_impl_ex ((size1), (size2), __FILE__, __LINE__)
-#else
-// FIXME: for performance reasons we better use macros
-//    template<class T>
-//    BOOST_UBLAS_INLINE
-//    const T &same_impl (const T &size1, const T &size2) {
-//        return size1;
-//    }
-// #define BOOST_UBLAS_SAME(size1, size2) same_impl ((size1), (size2))
-#define BOOST_UBLAS_SAME(size1, size2) (size1)
-#endif
-
-// If no standard allocator assume it is because hint must be specified. This fixes VC6
-#ifdef BOOST_NO_STD_ALLOCATOR
-#define BOOST_UBLAS_ALLOCATOR_HINT , 0
-#else
-#define BOOST_UBLAS_ALLOCATOR_HINT
-#endif
 
 
     // Base class for Storage Arrays - see the Barton Nackman trick
@@ -79,6 +40,8 @@ namespace boost { namespace numeric { namespace ublas {
     template<class T, class ALLOC>
     class unbounded_array:
         public storage_array<unbounded_array<T, ALLOC> > {
+
+        typedef unbounded_array<T, ALLOC> self_type;
     public:
         typedef ALLOC allocator_type;
         typedef typename ALLOC::size_type size_type;
@@ -90,10 +53,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T *pointer;
         typedef const_pointer const_iterator;
         typedef pointer iterator;
-    private:
-        typedef unbounded_array<T, ALLOC> self_type;
 
-    public:
         // Construction and destruction
         explicit BOOST_UBLAS_INLINE
         unbounded_array (const ALLOC &a = ALLOC()):
@@ -103,7 +63,7 @@ namespace boost { namespace numeric { namespace ublas {
         unbounded_array (size_type size, const ALLOC &a = ALLOC()):
             alloc_(a), size_ (size) {
             if (size_) {
-                data_ = alloc_.allocate (size_ BOOST_UBLAS_ALLOCATOR_HINT);
+                data_ = alloc_.allocate (size_);
                 // ISSUE some compilers may zero POD here
 #ifdef BOOST_UBLAS_USEFUL_ARRAY_PLACEMENT_NEW
                 // array form fails on some compilers due to size cookie, is it standard conforming?
@@ -119,7 +79,7 @@ namespace boost { namespace numeric { namespace ublas {
         unbounded_array (size_type size, const value_type &init, const ALLOC &a = ALLOC()):
             alloc_ (a), size_ (size) {
             if (size_) {
-                data_ = alloc_.allocate (size_ BOOST_UBLAS_ALLOCATOR_HINT);
+                data_ = alloc_.allocate (size_);
                 std::uninitialized_fill (begin(), end(), init);
             }
         }
@@ -128,7 +88,7 @@ namespace boost { namespace numeric { namespace ublas {
             storage_array<self_type> (),
             alloc_ (c.alloc_), size_ (c.size_) {
             if (size_) {
-                data_ = alloc_.allocate (size_ BOOST_UBLAS_ALLOCATOR_HINT);
+                data_ = alloc_.allocate (size_);
                 std::uninitialized_copy (c.begin(), c.end(), begin());
             }
             else
@@ -152,7 +112,7 @@ namespace boost { namespace numeric { namespace ublas {
             if (size != size_) {
                 pointer data;
                 if  (size) {
-                    data = alloc_.allocate (size BOOST_UBLAS_ALLOCATOR_HINT);
+                    data = alloc_.allocate (size);
                     if (preserve) {
                         const_iterator si = begin ();
                         pointer di = data;
@@ -246,12 +206,10 @@ namespace boost { namespace numeric { namespace ublas {
                 std::swap (data_, a.data_);
             }
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap (unbounded_array &a1, unbounded_array &a2) {
             a1.swap (a2);
         }
-#endif
 
         BOOST_UBLAS_INLINE
         const_iterator begin () const {
@@ -272,12 +230,8 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterators
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
+        typedef std::reverse_iterator<iterator> reverse_iterator;
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -287,13 +241,6 @@ namespace boost { namespace numeric { namespace ublas {
         const_reverse_iterator rend () const {
             return const_reverse_iterator (begin ());
         }
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<iterator, value_type, reference> reverse_iterator;
-#else
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-#endif
-
         BOOST_UBLAS_INLINE
         reverse_iterator rbegin () {
             return reverse_iterator (end ());
@@ -323,6 +270,8 @@ namespace boost { namespace numeric { namespace ublas {
     template<class T, std::size_t N, class ALLOC>
     class bounded_array:
         public storage_array<bounded_array<T, N, ALLOC> > {
+
+        typedef bounded_array<T, N, ALLOC> self_type;
     public:
         // No allocator_type as ALLOC is not used for allocation
         typedef typename ALLOC::size_type size_type;
@@ -334,10 +283,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T *pointer;
         typedef const_pointer const_iterator;
         typedef pointer iterator;
-    private:
-        typedef bounded_array<T, N, ALLOC> self_type;
 
-    public:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         bounded_array ():
@@ -422,12 +368,10 @@ namespace boost { namespace numeric { namespace ublas {
                 std::swap_ranges (data_, data_ + (std::max) (size_, a.size_), a.data_);
             }
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap (bounded_array &a1, bounded_array &a2) {
             a1.swap (a2);
         }
-#endif
 
         BOOST_UBLAS_INLINE
         const_iterator begin () const {
@@ -448,12 +392,8 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterators
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
+        typedef std::reverse_iterator<iterator> reverse_iterator;
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -463,13 +403,6 @@ namespace boost { namespace numeric { namespace ublas {
         const_reverse_iterator rend () const {
             return const_reverse_iterator (begin ());
         }
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<iterator, value_type, reference> reverse_iterator;
-#else
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-#endif
-
         BOOST_UBLAS_INLINE
         reverse_iterator rbegin () {
             return reverse_iterator (end ());
@@ -489,6 +422,8 @@ namespace boost { namespace numeric { namespace ublas {
     template<class T>
     class array_adaptor:
         public storage_array<array_adaptor<T> > {
+
+        typedef array_adaptor<T> self_type;
     public:
         typedef std::size_t size_type;
         typedef std::ptrdiff_t difference_type;
@@ -497,10 +432,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T &reference;
         typedef const T *const_pointer;
         typedef T *pointer;
-    private:
-        typedef array_adaptor<T> self_type;
 
-    public:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         array_adaptor ():
@@ -553,7 +485,7 @@ namespace boost { namespace numeric { namespace ublas {
             if (data != data_) {
                 if (preserve) {
                     std::copy (data_, data_ + (std::min) (size, size_), data);
-                    std::fill (data + (std::min) (size, size_), data + size, value_type (0));
+                    std::fill (data + (std::min) (size, size_), data + size, init);
                 }
                 if (own_)
                     delete [] data_;
@@ -561,7 +493,7 @@ namespace boost { namespace numeric { namespace ublas {
                 data_ = data;
             }
             else {
-                std::fill (data + (std::min) (size, size_), data + size, value_type (0));
+                std::fill (data + (std::min) (size, size_), data + size, init);
             }
             size_ = size;
         }
@@ -627,12 +559,10 @@ namespace boost { namespace numeric { namespace ublas {
                 std::swap (data_, a.data_);
             }
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap (array_adaptor &a1, array_adaptor &a2) {
             a1.swap (a2);
         }
-#endif
 
         // Iterators simply are pointers.
 
@@ -659,12 +589,8 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterators
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
+        typedef std::reverse_iterator<iterator> reverse_iterator;
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -674,13 +600,6 @@ namespace boost { namespace numeric { namespace ublas {
         const_reverse_iterator rend () const {
             return const_reverse_iterator (begin ());
         }
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<iterator, value_type, reference> reverse_iterator;
-#else
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-#endif
-
         BOOST_UBLAS_INLINE
         reverse_iterator rbegin () {
             return reverse_iterator (end ());
@@ -698,11 +617,13 @@ namespace boost { namespace numeric { namespace ublas {
 
 #ifdef BOOST_UBLAS_SHALLOW_ARRAY_ADAPTOR
     // Array adaptor with shallow (reference) copy semantics of elements.
-    // shared_array are used maitain reference counting.
+    // shared_array is used to maintain reference counts.
     // This class breaks the normal copy semantics for a storage container and is very dangerous!
     template<class T>
     class shallow_array_adaptor:
         public storage_array<shallow_array_adaptor<T> > {
+
+        typedef shallow_array_adaptor<T> self_type;
 
         template<class T>
         struct leaker {
@@ -712,6 +633,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             result_type operator () (argument_type x) {}
         };
+
     public:
         typedef std::size_t size_type;
         typedef std::ptrdiff_t difference_type;
@@ -720,10 +642,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T &reference;
         typedef const T *const_pointer;
         typedef T *pointer;
-    private:
-        typedef shallow_array_adaptor<T> self_type;
 
-    public:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         shallow_array_adaptor ():
@@ -836,12 +755,10 @@ namespace boost { namespace numeric { namespace ublas {
                 std::swap (data_, a.data_);
             }
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap (shallow_array_adaptor &a1, shallow_array_adaptor &a2) {
             a1.swap (a2);
         }
-#endif
 
         // Iterators simply are pointers.
 
@@ -868,12 +785,8 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterators
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
+        typedef std::reverse_iterator<iterator> reverse_iterator;
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -883,13 +796,6 @@ namespace boost { namespace numeric { namespace ublas {
         const_reverse_iterator rend () const {
             return const_reverse_iterator (begin ());
         }
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<iterator, value_type, reference> reverse_iterator;
-#else
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-#endif
-
         BOOST_UBLAS_INLINE
         reverse_iterator rbegin () {
             return reverse_iterator (end ());
@@ -908,20 +814,18 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
 
     // Range class
-    template <class I, class D>
+    template <class Z, class D>
     class basic_range {
+        typedef basic_range<Z, D> self_type;
     public:
-        typedef I size_type;
+        typedef Z size_type;
         typedef D difference_type;
         typedef size_type value_type;
         typedef value_type const_reference;
         typedef const_reference reference;
         typedef const value_type *const_pointer;
         typedef value_type *pointer;
-    private:
-        typedef basic_range<I, D> self_type;
 
-    public:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         basic_range ():
@@ -939,6 +843,13 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         size_type size () const {
             return size_;
+        }
+
+        // Assignment
+        basic_range operator=( basic_range const& r ) {
+           start_ = r.start_ ;
+           size_ = r.size_ ;
+           return *this ;
         }
 
         // Element access
@@ -967,7 +878,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Iterator types
     private:
         // Use and index
-        typedef size_type const_iterator_type;
+        typedef size_type const_subiterator_type;
 
     public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
@@ -978,21 +889,17 @@ namespace boost { namespace numeric { namespace ublas {
             public random_access_iterator_base<std::random_access_iterator_tag,
                                                const_iterator, value_type> {
         public:
-#ifdef BOOST_MSVC_STD_ITERATOR
-            typedef const_reference reference;
-#else
             typedef typename basic_range::value_type value_type;
             typedef typename basic_range::difference_type difference_type;
             typedef typename basic_range::const_reference reference;
             typedef typename basic_range::const_pointer pointer;
-#endif
 
             // Construction and destruction
             BOOST_UBLAS_INLINE
             const_iterator ():
                 container_const_reference<basic_range> (), it_ () {}
             BOOST_UBLAS_INLINE
-            const_iterator (const basic_range &r, const const_iterator_type &it):
+            const_iterator (const basic_range &r, const const_subiterator_type &it):
                 container_const_reference<basic_range> (r), it_ (it) {}
 
             // Arithmetic
@@ -1062,7 +969,7 @@ namespace boost { namespace numeric { namespace ublas {
             }
 
         private:
-            const_iterator_type it_;
+            const_subiterator_type it_;
         };
 #endif
 
@@ -1076,12 +983,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterator
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -1094,36 +996,39 @@ namespace boost { namespace numeric { namespace ublas {
 
         BOOST_UBLAS_INLINE
         basic_range preprocess (size_type size) const {
-            if (*this != all ())
+            if (this != &all_)
                 return *this;
             return basic_range (0, size);
         }
         static
         BOOST_UBLAS_INLINE
-        basic_range all () {
-            return basic_range (0, size_type (-1));
+        const basic_range &all () {
+            return all_;
         }
 
     private:
         size_type start_;
         size_type size_;
+        static const basic_range all_;
     };
 
+    template <class Z, class D>
+    const basic_range<Z,D> basic_range<Z,D>::all_  (0, size_type (-1));
+
+
     // Slice class
-    template <class I, class D>
+    template <class Z, class D>
     class basic_slice {
+        typedef basic_slice<Z, D> self_type;
     public:
-        typedef I size_type;
+        typedef Z size_type;
         typedef D difference_type;
         typedef size_type value_type;
         typedef value_type const_reference;
         typedef const_reference reference;
         typedef const value_type *const_pointer;
         typedef value_type *pointer;
-    private:
-        typedef basic_slice<I, D> self_type;
 
-    public:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         basic_slice ():
@@ -1178,7 +1083,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Iterator types
     private:
         // Use and index
-        typedef size_type const_iterator_type;
+        typedef size_type const_subiterator_type;
 
     public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
@@ -1189,21 +1094,17 @@ namespace boost { namespace numeric { namespace ublas {
             public random_access_iterator_base<std::random_access_iterator_tag,
                                                const_iterator, value_type> {
         public:
-#ifdef BOOST_MSVC_STD_ITERATOR
-            typedef const_reference reference;
-#else
             typedef typename basic_slice::value_type value_type;
             typedef typename basic_slice::difference_type difference_type;
             typedef typename basic_slice::const_reference reference;
             typedef typename basic_slice::const_pointer pointer;
-#endif
 
             // Construction and destruction
             BOOST_UBLAS_INLINE
             const_iterator ():
                 container_const_reference<basic_slice> (), it_ () {}
             BOOST_UBLAS_INLINE
-            const_iterator (const basic_slice &s, const const_iterator_type &it):
+            const_iterator (const basic_slice &s, const const_subiterator_type &it):
                 container_const_reference<basic_slice> (s), it_ (it) {}
 
             // Arithmetic
@@ -1271,7 +1172,7 @@ namespace boost { namespace numeric { namespace ublas {
             }
 
         private:
-            const_iterator_type it_;
+            const_subiterator_type it_;
         };
 #endif
 
@@ -1285,12 +1186,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterator
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -1303,25 +1199,31 @@ namespace boost { namespace numeric { namespace ublas {
 
         BOOST_UBLAS_INLINE
         basic_slice preprocess (size_type size) const {
-            if (*this != all ())
+            if (this != &all_)
                 return *this;
             return basic_slice (0, 1, size);
         }
         static
         BOOST_UBLAS_INLINE
-        basic_slice all () {
-            return basic_slice (0, 1, size_type (-1));
+        const basic_slice &all () {
+            return all_;
         }
 
     private:
         size_type start_;
         difference_type stride_;
         size_type size_;
+        static const basic_slice all_;
     };
+
+    template <class Z, class D>
+    const basic_slice<Z,D> basic_slice<Z,D>::all_  (0, 1, size_type (-1));
+
 
     // Indirect array class
     template<class A>
     class indirect_array {
+        typedef indirect_array<A> self_type;
     public:
         typedef A array_type;
         typedef const A const_array_type;
@@ -1332,10 +1234,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename A::reference reference;
         typedef typename A::const_pointer const_pointer;
         typedef typename A::pointer pointer;
-    private:
-        typedef indirect_array<A> self_type;
 
-    public:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         indirect_array ():
@@ -1433,7 +1332,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Iterator types
     private:
         // Use a index difference
-        typedef difference_type const_iterator_type;
+        typedef difference_type const_subiterator_type;
 
     public:
 #ifdef BOOST_UBLAS_USE_INDEXED_ITERATOR
@@ -1444,21 +1343,17 @@ namespace boost { namespace numeric { namespace ublas {
             public random_access_iterator_base<std::random_access_iterator_tag,
                                                const_iterator, value_type> {
         public:
-#ifdef BOOST_MSVC_STD_ITERATOR
-            typedef const_reference reference;
-#else
             typedef typename indirect_array::value_type value_type;
             typedef typename indirect_array::difference_type difference_type;
             typedef typename indirect_array::const_reference reference;
             typedef typename indirect_array::const_pointer pointer;
-#endif
 
             // Construction and destruction
             BOOST_UBLAS_INLINE
             const_iterator ():
                 container_const_reference<indirect_array> (), it_ () {}
             BOOST_UBLAS_INLINE
-            const_iterator (const indirect_array &ia, const const_iterator_type &it):
+            const_iterator (const indirect_array &ia, const const_subiterator_type &it):
                 container_const_reference<indirect_array> (ia), it_ (it) {}
 
             // Arithmetic
@@ -1521,7 +1416,7 @@ namespace boost { namespace numeric { namespace ublas {
             }
 
         private:
-            const_iterator_type it_;
+            const_subiterator_type it_;
         };
 #endif
 
@@ -1535,12 +1430,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         // Reverse iterator
-
-#ifdef BOOST_MSVC_STD_ITERATOR
-        typedef std::reverse_iterator<const_iterator, value_type, const_reference> const_reverse_iterator;
-#else
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
 
         BOOST_UBLAS_INLINE
         const_reverse_iterator rbegin () const {
@@ -1553,7 +1443,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         BOOST_UBLAS_INLINE
         indirect_array preprocess (size_type size) const {
-            if (*this != all ())
+            if (this != &all_)
                 return *this;
             indirect_array ia (size);
             for (size_type i = 0; i < size; ++ i)
@@ -1584,21 +1474,24 @@ namespace boost { namespace numeric { namespace ublas {
     class index_pair :
         private boost::noncopyable,
         public container_reference<V> {
-    public:
+
         typedef index_pair<V> self_type;
+    public:
         typedef typename V::size_type size_type;
 
         BOOST_UBLAS_INLINE
         index_pair(V& v, size_type i) :
             container_reference<V>(v), i_(i),
-            v1_(v.data1_[i]), v2_(v.data2_[i]), dirty_(false) {}
-        BOOST_UBLAS_INLINE
+            v1_(v.data1_[i]), v2_(v.data2_[i]),
+            dirty_(false), is_copy_(false) {}
+         BOOST_UBLAS_INLINE
         index_pair(const self_type& rhs) :
-            container_reference<V>(rhs()), i_(rhs.i_),
-            v1_(rhs.v1_), v2_(rhs.v2_), dirty_(false) {}
-        BOOST_UBLAS_INLINE
+            container_reference<V>(rhs()), i_(0),
+            v1_(rhs.v1_), v2_(rhs.v2_),
+            dirty_(false), is_copy_(true) {}
+         BOOST_UBLAS_INLINE
         ~index_pair() {
-            if (dirty_) {
+            if (dirty_ && (!is_copy_) ) {
                 (*this)().data1_[i_] = v1_;
                 (*this)().data2_[i_] = v2_;
             }
@@ -1618,12 +1511,10 @@ namespace boost { namespace numeric { namespace ublas {
             rhs = *this;
             *this = tmp;
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap(self_type lhs, self_type rhs) {
             lhs.swap(rhs);
         }
-#endif
 
         BOOST_UBLAS_INLINE
         bool equal(const self_type& rhs) const {
@@ -1632,7 +1523,6 @@ namespace boost { namespace numeric { namespace ublas {
         bool less(const self_type& rhs) const {
             return (v1_ < rhs.v1_);
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend bool operator == (const self_type& lhs, const self_type& rhs) {
             return lhs.equal(rhs);
@@ -1645,44 +1535,21 @@ namespace boost { namespace numeric { namespace ublas {
         friend bool operator < (const self_type& lhs, const self_type& rhs) {
             return lhs.less(rhs);
         }
-#endif
 
     private:
         size_type i_;
         typename V::value1_type v1_;
         typename V::value2_type v2_;
         bool dirty_;
-    };
-
-#ifdef BOOST_UBLAS_NO_MEMBER_FRIENDS
-    template<class V>
-    BOOST_UBLAS_INLINE
-    void swap(index_pair<V> lhs, index_pair<V> rhs) {
-        lhs.swap(rhs);
-    }
-
-    template<class V>
-    BOOST_UBLAS_INLINE
-    bool operator == (const index_pair<V>& lhs, const index_pair<V>& rhs) {
-        return lhs.equal(rhs);
-    }
-    template<class V>
-    BOOST_UBLAS_INLINE
-    bool operator != (const index_pair<V>& lhs, const index_pair<V>& rhs) {
-        return !lhs.equal(rhs);
-    }
-    template<class V>
-    BOOST_UBLAS_INLINE
-    bool operator < (const index_pair<V>& lhs, const index_pair<V>& rhs) {
-        return lhs.less(rhs);
-    }
-#endif
+        bool is_copy_;
+     };
 
     template <class V1, class V2>
     class index_pair_array:
         private boost::noncopyable {
-    public:
+
         typedef index_pair_array<V1, V2> self_type;
+    public:
         typedef typename V1::value_type value1_type;
         typedef typename V2::value_type value2_type;
 
@@ -1764,21 +1631,24 @@ namespace boost { namespace numeric { namespace ublas {
     class index_triple :
         private boost::noncopyable,
         public container_reference<M> {
-    public:
+
         typedef index_triple<M> self_type;
+    public:
         typedef typename M::size_type size_type;
 
         BOOST_UBLAS_INLINE
         index_triple(M& m, size_type i) :
             container_reference<M>(m), i_(i),
-            v1_(m.data1_[i]), v2_(m.data2_[i]), v3_(m.data3_[i]), dirty_(false) {}
+            v1_(m.data1_[i]), v2_(m.data2_[i]), v3_(m.data3_[i]),
+            dirty_(false), is_copy_(false) {}
         BOOST_UBLAS_INLINE
         index_triple(const self_type& rhs) :
-            container_reference<M>(rhs()), i_(rhs.i_),
-            v1_(rhs.v1_), v2_(rhs.v2_), v3_(rhs.v3_), dirty_(false) {}
+            container_reference<M>(rhs()), i_(0),
+            v1_(rhs.v1_), v2_(rhs.v2_), v3_(rhs.v3_),
+            dirty_(false), is_copy_(true) {}
         BOOST_UBLAS_INLINE
         ~index_triple() {
-            if (dirty_) {
+            if (dirty_ && (!is_copy_) ) {
                 (*this)().data1_[i_] = v1_;
                 (*this)().data2_[i_] = v2_;
                 (*this)().data3_[i_] = v3_;
@@ -1800,12 +1670,10 @@ namespace boost { namespace numeric { namespace ublas {
             rhs = *this;
             *this = tmp;
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend void swap(self_type lhs, self_type rhs) {
             lhs.swap(rhs);
         }
-#endif
 
         BOOST_UBLAS_INLINE
         bool equal(const self_type& rhs) const {
@@ -1816,7 +1684,6 @@ namespace boost { namespace numeric { namespace ublas {
             return ((v1_ < rhs.v1_) ||
                     (v1_ == rhs.v1_ && v2_ < rhs.v2_));
         }
-#ifndef BOOST_UBLAS_NO_MEMBER_FRIENDS
         BOOST_UBLAS_INLINE
         friend bool operator == (const self_type& lhs, const self_type& rhs) {
             return lhs.equal(rhs);
@@ -1829,7 +1696,6 @@ namespace boost { namespace numeric { namespace ublas {
         friend bool operator < (const self_type& lhs, const self_type& rhs) {
             return lhs.less(rhs);
         }
-#endif
 
     private:
         size_type i_;
@@ -1837,37 +1703,15 @@ namespace boost { namespace numeric { namespace ublas {
         typename M::value2_type v2_;
         typename M::value3_type v3_;
         bool dirty_;
+        bool is_copy_;
     };
-
-#ifdef BOOST_UBLAS_NO_MEMBER_FRIENDS
-    template<class M>
-    BOOST_UBLAS_INLINE
-    void swap(index_triple<M> lhs, index_triple<M> rhs) {
-        lhs.swap(rhs);
-    }
-
-    template<class M>
-    BOOST_UBLAS_INLINE
-    bool operator == (const index_triple<M>& lhs, const index_triple<M>& rhs) {
-        return lhs.equal(rhs);
-    }
-    template<class M>
-    BOOST_UBLAS_INLINE
-    bool operator != (const index_triple<M>& lhs, const index_triple<M>& rhs) {
-        return !lhs.equal(rhs);
-    }
-    template<class M>
-    BOOST_UBLAS_INLINE
-    bool operator < (const index_triple<M>& lhs, const index_triple<M>& rhs) {
-        return lhs.less(rhs);
-    }
-#endif
 
     template <class V1, class V2, class V3>
     class index_triple_array:
         private boost::noncopyable {
-    public:
+
         typedef index_triple_array<V1, V2, V3> self_type;
+    public:
         typedef typename V1::value_type value1_type;
         typedef typename V2::value_type value2_type;
         typedef typename V3::value_type value3_type;

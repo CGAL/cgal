@@ -128,7 +128,6 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
                                    edge_centrality_map(edge_centrality)
                                    .vertex_index_map(vertex_index));
     edge_descriptor e = *max_element(edges(g).first, edges(g).second, cmp);
-    centrality_type max_centrality = get(edge_centrality, e);
     is_done = done(get(edge_centrality, e), e, g);
     if (!is_done) remove_edge(e, g);
   } while (!is_done && edges(g).first != edges(g).second);

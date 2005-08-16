@@ -35,19 +35,19 @@ namespace boost {
         template<class Ch, class Tr, class Alloc>
         void basic_altstringbuf<Ch, Tr, Alloc>:: 
         str (const string_type& s) {
-            std::size_t sz=s.size();
+            size_type sz=s.size();
             if(sz != 0 && mode_ & (::std::ios_base::in | ::std::ios_base::out) ) {
                 Ch *new_ptr = alloc_.allocate(sz, is_allocated_? eback() : 0);
                 // if this didnt throw, we're safe, update the buffer
                 dealloc();
-                sz = s.copy(new_ptr);
+                sz = s.copy(new_ptr, sz);
                 putend_ = new_ptr + sz;
                 if(mode_ & ::std::ios_base::in)
                     streambuf_t::setg(new_ptr, new_ptr, new_ptr + sz);
                 if(mode_ & ::std::ios_base::out) {
                     streambuf_t::setp(new_ptr, new_ptr + sz);
                     if(mode_ & (::std::ios_base::app | ::std::ios_base::ate))
-                        streambuf_t::pbump(sz);
+                        streambuf_t::pbump(static_cast<int>(sz));
                     if(gptr() == NULL)
                         streambuf_t::setg(new_ptr, NULL, new_ptr);
                 }
@@ -67,18 +67,20 @@ namespace boost {
         }
 
         template<class Ch, class Tr, class Alloc>
-        std::streamsize  basic_altstringbuf<Ch, Tr, Alloc>:: 
+        typename std::basic_string<Ch,Tr,Alloc>::size_type
+        basic_altstringbuf<Ch, Tr, Alloc>:: 
         size () const { 
             if(mode_ & ::std::ios_base::out && pptr())
-                return static_cast<streamsize>( pend() - pbase());
+                return static_cast<size_type>(pend() - pbase());
             else if(mode_ & ::std::ios_base::in && gptr())
-                return static_cast<streamsize>( egptr() - eback());
+                return static_cast<size_type>(egptr() - eback());
             else 
                 return 0;
         }
 
         template<class Ch, class Tr, class Alloc>
-        std::streamsize  basic_altstringbuf<Ch, Tr, Alloc>:: 
+        typename std::basic_string<Ch,Tr,Alloc>::size_type
+        basic_altstringbuf<Ch, Tr, Alloc>:: 
         cur_size () const { 
             if(mode_ & ::std::ios_base::out && pptr())
                 return static_cast<streamsize>( pptr() - pbase());
@@ -97,17 +99,18 @@ namespace boost {
             if(which & ::std::ios_base::in && gptr() != NULL) {
                 // get area
                 if(way == ::std::ios_base::end)
-                    off += putend_ - eback();
-                else if(way == ::std::ios_base::cur && (which & ::std::ios_base::out) == 0)
-                    off += gptr() - eback();
-                else if(way != ::std::ios_base::beg)
-                    off = off_type(-1);
-                if(0 <= off && off <= putend_ - eback()) {
+                    off += static_cast<off_type>(putend_ - gptr());
+                else if(way == ::std::ios_base::beg)
+                    off += static_cast<off_type>(eback() - gptr());
+                else if(way != ::std::ios_base::cur || (which & ::std::ios_base::out) )
+                    // (altering in&out is only supported if way is beg or end, not cur)
+                    return pos_type(off_type(-1));
+                if(eback() <= off+gptr() && off+gptr() <= putend_ ) {
                     // set gptr
-                    streambuf_t::gbump(off + (eback() - gptr()));
+                    streambuf_t::gbump(off);
                     if(which & ::std::ios_base::out && pptr() != NULL)
                         // update pptr to match gptr
-                        streambuf_t::pbump(gptr()-pptr());
+                        streambuf_t::pbump(static_cast<int>(gptr()-pptr()));
                 }
                 else
                     off = off_type(-1);
@@ -115,15 +118,14 @@ namespace boost {
             else if(which & ::std::ios_base::out && pptr() != NULL) {
                 // put area
                 if(way == ::std::ios_base::end)
-                    off += putend_ - eback();
-                else if(way == ::std::ios_base::cur)
-                    off += pptr() - eback();
+                    off += static_cast<off_type>(putend_ - pptr());
+                else if(way == ::std::ios_base::beg)
+                    off += static_cast<off_type>(pbase() - pptr());
                 else if(way != ::std::ios_base::beg)
-                    off = off_type(-1);
-
-                if(0 <= off && off <= putend_ - eback())
+                    return pos_type(off_type(-1));                    
+                if(pbase() <= off+pptr() && off+pptr() <= putend_)
                     // set pptr
-                    streambuf_t::pbump((int)(eback() - pptr() + off)); 
+                    streambuf_t::pbump(off); 
                 else
                     off = off_type(-1);
             }
@@ -145,10 +147,10 @@ namespace boost {
                 if(which & ::std::ios_base::in && gptr() != NULL) {
                     // get area
                     if(0 <= off && off <= putend_ - eback()) {
-                        streambuf_t::gbump((int)(eback() - gptr() + off));
+                        streambuf_t::gbump(static_cast<int>(eback() - gptr() + off));
                         if(which & ::std::ios_base::out && pptr() != NULL) {
                             // update pptr to match gptr
-                            streambuf_t::pbump(gptr()-pptr());
+                            streambuf_t::pbump(static_cast<int>(gptr()-pptr()));
                         }
                     }
                     else
@@ -157,7 +159,7 @@ namespace boost {
                 else if(which & ::std::ios_base::out && pptr() != NULL) {
                     // put area
                     if(0 <= off && off <= putend_ - eback())
-                        streambuf_t::pbump(eback() - pptr() + off);
+                        streambuf_t::pbump(static_cast<int>(eback() - pptr() + off));
                     else
                         off = off_type(-1);
                 }
@@ -262,8 +264,8 @@ namespace boost {
                 }
                 else { // update pointers
                     putend_ = putend_ - oldptr + newptr;
-                    int pptr_count = pptr()-pbase();
-                    int gptr_count = gptr()-eback();
+                    int pptr_count = static_cast<int>(pptr()-pbase());
+                    int gptr_count = static_cast<int>(gptr()-eback());
                     streambuf_t::setp(pbase() - oldptr + newptr, newptr + new_size);
                     streambuf_t::pbump(pptr_count);
                     if(mode_ & ::std::ios_base::in)

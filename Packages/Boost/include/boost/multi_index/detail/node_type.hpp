@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,10 @@
 
 #ifndef BOOST_MULTI_INDEX_DETAIL_NODE_TYPE_HPP
 #define BOOST_MULTI_INDEX_DETAIL_NODE_TYPE_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <boost/detail/workaround.hpp>
@@ -19,7 +23,6 @@
 #include <boost/multi_index/detail/index_node_base.hpp>
 #include <boost/multi_index/detail/is_index_list.hpp>
 #include <boost/multi_index/detail/msvc_index_specifier.hpp>
-#include <boost/multi_index/detail/prevent_eti.hpp>
 #include <boost/static_assert.hpp>
 
 namespace boost{

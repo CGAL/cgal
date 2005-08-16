@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -28,8 +29,9 @@ namespace boost { namespace fusion
             typedef FUSION_GET_INDEX(Iterator) index;
             typedef FUSION_GET_TUPLE(Iterator) tuple_;
             typedef FUSION_GET_SIZE(tuple_) size;
+#if !BOOST_WORKAROUND(BOOST_MSVC,<=1300)
             BOOST_STATIC_ASSERT((::boost::mpl::less<index, size>::value));
-
+#endif
             typedef typename mpl::next<index>::type next;
             typedef tuple_iterator<FUSION_GET_VALUE(next), tuple_> type;
 

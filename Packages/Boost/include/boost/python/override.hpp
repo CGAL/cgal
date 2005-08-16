@@ -46,6 +46,15 @@ namespace detail
           return converter(m_obj.release());
       }
 
+#  if BOOST_WORKAROUND(_MSC_FULL_VER, BOOST_TESTED_AT(140050215))
+      template <class T>
+      operator T*()
+      {
+          converter::return_from_python<T*> converter;
+          return converter(m_obj.release());
+      }
+#  endif 
+      
 #  if !defined(BOOST_MSVC) || BOOST_WORKAROUND(_MSC_FULL_VER, > 140040607)
       template <class T>
       operator T&() const

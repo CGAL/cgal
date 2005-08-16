@@ -69,4 +69,21 @@ template<> struct value_wknd<int>
 /**/
 #endif
 
+
+namespace boost { namespace mpl { namespace aux {
+
+template< typename T > struct value_type_wknd
+{
+    typedef typename T::value_type type;
+};
+
+#if defined(BOOST_MPL_CFG_MSVC_ETI_BUG)
+template<> struct value_type_wknd<int>
+{
+    typedef int type;
+};
+#endif
+
+}}}
+
 #endif // BOOST_MPL_AUX_VALUE_WKND_HPP_INCLUDED

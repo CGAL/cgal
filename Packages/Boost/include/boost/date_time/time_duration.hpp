@@ -12,6 +12,7 @@
 #include "boost/operators.hpp"
 #include "boost/date_time/time_defs.hpp"
 #include "boost/date_time/special_defs.hpp"
+#include "boost/date_time/compiler_config.hpp"
 
 namespace boost {
 namespace date_time {
@@ -92,7 +93,7 @@ namespace date_time {
     //! Returns normalized number of seconds (0..60)
     sec_type seconds() const
     {
-      return static_cast<sec_type>(ticks()/ticks_per_second()) % 60;
+      return static_cast<sec_type>((ticks()/ticks_per_second()) % 60);
     }
     //! Returns total number of seconds truncating any fractional seconds
     sec_type total_seconds() const
@@ -103,7 +104,7 @@ namespace date_time {
     tick_type total_milliseconds() const
     {
       if (ticks_per_second() < 1000) {
-        return ticks() * (1000 / ticks_per_second());
+        return ticks() * (static_cast<tick_type>(1000) / ticks_per_second());
       }
       return ticks() / (ticks_per_second() / static_cast<tick_type>(1000)) ;
     }
@@ -162,7 +163,7 @@ namespace date_time {
     {
       return duration_type(ticks_ + d.ticks_);
     }
-    duration_type operator/(int divisor) 
+    duration_type operator/(int divisor) const
     {
       return duration_type(ticks_ / divisor);
     }
@@ -259,12 +260,12 @@ namespace date_time {
   /* These templates are designed to work with multiples of
    * 10 for frac_of_second and resoultion adjustment 
    */
-  template<class base_duration, long frac_of_second>
+   template<class base_duration, boost::int64_t frac_of_second>
   class subsecond_duration : public base_duration
   {
   public:
     typedef typename base_duration::traits_type traits_type;
-    explicit subsecond_duration(long ss) :
+    explicit subsecond_duration(boost::int64_t ss) :
       base_duration(0,0,0,ss*traits_type::res_adjust()/frac_of_second)
     {}
   };

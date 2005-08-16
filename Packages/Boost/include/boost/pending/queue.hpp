@@ -7,6 +7,7 @@
 #define BOOST_QUEUE_HPP
 
 #include <deque>
+#include <algorithm>
 
 namespace boost {
 
@@ -57,6 +58,12 @@ public:
   const_reference back() const { return c.back(); }
   void push(const value_type& __x) { c.push_back(__x); }
   void pop() { c.pop_front(); }
+
+  void swap(queue& other)
+  {
+    using std::swap;
+    swap(c, other.c);
+  }
 };
 
 template <class _Tp, class _Sequence>
@@ -101,6 +108,10 @@ operator>=(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
   return !(__x < __y);
 }
 
+template <class _Tp, class _Sequence>
+inline void
+swap(queue<_Tp, _Sequence>& __x, queue<_Tp, _Sequence>& __y)
+{ __x.swap(__y); }
 
 } /* namespace boost */
 

@@ -343,11 +343,13 @@ namespace boost {
 #endif // BOOST_SIGNALS_NUM_ARGS > 0
     call_bound_slot f(&args);
 
+    typedef typename call_bound_slot::result_type result_type;
+    optional<result_type> cache;
     // Let the combiner call the slots via a pair of input iterators
     return combiner()(slot_call_iterator(notification.impl->slots_.begin(),
-                                         impl->slots_.end(), f),
+                                         impl->slots_.end(), f, cache),
                       slot_call_iterator(notification.impl->slots_.end(),
-                                         impl->slots_.end(), f));
+                                         impl->slots_.end(), f, cache));
   }
 
   template<
@@ -382,11 +384,14 @@ namespace boost {
 
     call_bound_slot f(&args);
 
+    typedef typename call_bound_slot::result_type result_type;
+    optional<result_type> cache;
+
     // Let the combiner call the slots via a pair of input iterators
     return combiner()(slot_call_iterator(notification.impl->slots_.begin(),
-                                         impl->slots_.end(), f),
+                                         impl->slots_.end(), f, cache),
                       slot_call_iterator(notification.impl->slots_.end(),
-                                         impl->slots_.end(), f));
+                                         impl->slots_.end(), f, cache));
   }
 } // namespace boost
 

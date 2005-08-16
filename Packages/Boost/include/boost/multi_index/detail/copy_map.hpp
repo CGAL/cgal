@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,10 @@
 
 #ifndef BOOST_MULTI_INDEX_DETAIL_COPY_MAP_HPP
 #define BOOST_MULTI_INDEX_DETAIL_COPY_MAP_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <algorithm>
@@ -71,8 +75,8 @@ public:
     }
   }
 
-  const_iterator begin()const{return &spc.data()[0];}
-  const_iterator end()const{return &spc.data()[n];}
+  const_iterator begin()const{return spc.data();}
+  const_iterator end()const{return spc.data()+n;}
 
   void clone(Node* node)
   {
@@ -89,15 +93,15 @@ public:
     BOOST_CATCH_END
     ++n;
 
-    if(n==size_)std::sort(&spc.data()[0],&spc.data()[size_]);
+    if(n==size_)std::sort(spc.data(),spc.data()+size_);
   }
 
   Node* find(Node* node)const
   {
     if(node==header_org_)return header_cpy_;
     return std::lower_bound(
-      &spc.data()[0],&spc.data()[n],copy_map_entry<Node>(node,0))->second;
-  };
+      begin(),end(),copy_map_entry<Node>(node,0))->second;
+  }
 
   void release()
   {

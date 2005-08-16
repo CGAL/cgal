@@ -1,4 +1,5 @@
 // Copyright Vladimir Prus 2002-2004.
+// Copyright Bertolt Mildner 2004.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -77,11 +78,23 @@ namespace program_options {
 
         virtual ~option_description();
 
-        /// Name to be used with short-style option ("-w").
-        const std::string& short_name() const;
+        /** Given 'option', specified in the input source,
+            return 'true' is 'option' specifies *this.
+        */
+        bool match(const std::string& option, bool approx) const;
 
-        /// Name to be used with long-style option ("--whatever").
+        /** Return the key that should identify the option, in
+            particular in the variables_map class.
+            The 'option' parameter is the option spelling from the
+            input source.
+            If option name contains '*', returns 'option'.
+            If long name was specified, it's the long name, otherwise
+            it's a short name with prepended '-'.
+        */
+        const std::string& key(const std::string& option) const;
+
         const std::string& long_name() const;
+
         /// Explanation of this option
         const std::string& description() const;
 
@@ -96,11 +109,10 @@ namespace program_options {
         std::string format_parameter() const;
 
     private:
-
-        option_description& name(const char* name);
+    
+        option_description& set_name(const char* name);
 
         std::string m_short_name, m_long_name, m_description;
-        std::string m_default_value, m_default_parameter;
         // shared_ptr is needed to simplify memory management in
         // copy ctor and destructor.
         shared_ptr<const value_semantic> m_value_semantic;
@@ -141,13 +153,15 @@ namespace program_options {
     */
     class BOOST_PROGRAM_OPTIONS_DECL options_description {
     public:
-
+        static const unsigned m_default_line_length = 80;
+        
         /** Creates the instance. */
-        options_description();
+        options_description(unsigned line_length = m_default_line_length);
         /** Creates the instance. The 'caption' parameter gives the name of
             this 'options_description' instance. Primarily useful for output.
         */
-        options_description(const std::string& caption);
+        options_description(const std::string& caption,
+                            unsigned line_length = m_default_line_length);
         /** Adds new variable description. Throws duplicate_variable_error if
             either short or long name matches that of already present one. 
         */
@@ -169,32 +183,14 @@ namespace program_options {
         */
         options_description_easy_init add_options();
 
-        /** Count the number of option descriptions with given name. 
-            Returns 0 or 1.
-            The 'name' parameter can be either name of long option, and short
-            option prefixed by '-'.
-        */
-        unsigned count(const std::string& name) const;
-        /** Count the number of descriptions having the given string as
-            prefix. This makes sense only for long options.
-        */
-        unsigned count_approx(const std::string& prefix) const;
-        /** Returns description given a name. 
-            @pre count(name) == 1
-        */
-        const option_description& find(const std::string& name) const;
-        /** Returns description given a prefix. Throws
-            @pre count_approx(name) == 1 
-        */
-        const option_description& find_approx(const std::string& prefix) const;
-        /// Returns all such strings x for which count(x) == 1
-        std::set<std::string> keys() const;
-        /** For each option description stored, contains long name if not empty,
-            if it is empty, short name is returned.
-        */
-        std::set<std::string> primary_keys() const;
-        /// Returns all such long options for which 'prefix' is prefix
-        std::set<std::string> approximations(const std::string& prefix) const;
+        const option_description& find(const std::string& name, bool approx) 
+            const;
+
+        const option_description* find_nothrow(const std::string& name, 
+                                               bool approx) const;
+
+
+        const std::vector< shared_ptr<option_description> >& options() const;
 
         /** Produces a human readable output of 'desc', listing options,
             their descriptions and allowed parameters. Other options_description
@@ -211,15 +207,15 @@ namespace program_options {
         typedef std::pair<name2index_iterator, name2index_iterator> 
             approximation_range;
 
-
-        approximation_range find_approximation(const std::string& prefix) const;
+        //approximation_range find_approximation(const std::string& prefix) const;
 
         std::string m_caption;
+        const unsigned m_line_length;
         // Data organization is chosen because:
         // - there could be two names for one option
         // - option_add_proxy needs to know the last added option
-        std::vector< shared_ptr<option_description> > options;
-        std::map<std::string, int> name2index;
+        std::vector< shared_ptr<option_description> > m_options;
+
         // Whether the option comes from one of declared groups.
 #if BOOST_WORKAROUND(BOOST_DINKUMWARE_STDLIB, BOOST_TESTED_AT(313))
         // vector<bool> is buggy there, see

@@ -19,6 +19,7 @@
 // Borland 5.5.1 (broken due to lack of support from Boost.Tuples)
 
 #ifndef BOOST_ZIP_ITERATOR_TMB_07_13_2003_HPP_
+# define BOOST_ZIP_ITERATOR_TMB_07_13_2003_HPP_
 
 #include <stddef.h>
 #include <boost/iterator.hpp>

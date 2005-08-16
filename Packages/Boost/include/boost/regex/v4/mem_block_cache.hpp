@@ -1,6 +1,6 @@
  /*
  * Copyright (c) 2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -19,7 +19,9 @@
 #define BOOST_REGEX_V4_MEM_BLOCK_CACHE_HPP
 
 #include <new>
-#include <boost/regex/v4/regex_synch.hpp>
+#ifdef BOOST_HAS_THREADS
+#include <boost/regex/pending/static_mutex.hpp>
+#endif
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
@@ -38,6 +40,9 @@ struct mem_block_cache
    // this member has to be statically initialsed:
    mem_block_node* next;
    unsigned cached_blocks;
+#ifdef BOOST_HAS_THREADS
+   boost::static_mutex mut;
+#endif
 
    ~mem_block_cache()
    {
@@ -51,7 +56,7 @@ struct mem_block_cache
    void* get()
    {
 #ifdef BOOST_HAS_THREADS
-      re_detail::cs_guard g(*re_detail::p_re_lock);
+      boost::static_mutex::scoped_lock g(mut);
 #endif
      if(next)
       {
@@ -65,7 +70,7 @@ struct mem_block_cache
    void put(void* p)
    {
 #ifdef BOOST_HAS_THREADS
-      re_detail::cs_guard g(*re_detail::p_re_lock);
+      boost::static_mutex::scoped_lock g(mut);
 #endif
       if(cached_blocks >= BOOST_REGEX_MAX_CACHE_BLOCKS)
       {

@@ -108,11 +108,6 @@ template<> struct assert_intrinsic_wchar_t<wchar_t> {};
 template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 #endif
 
-
-#if (BOOST_INTEL_CXX_VERSION <= 800) || !defined(BOOST_STRICT_CONFIG)
-#  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
-#endif
-
 #if _MSC_VER+0 >= 1000
 #  if _MSC_VER >= 1200
 #     define BOOST_HAS_MS_INT64
@@ -137,7 +132,7 @@ template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 #endif
 //
 // last known and checked version:
-#if (BOOST_INTEL_CXX_VERSION > 810)
+#if (BOOST_INTEL_CXX_VERSION > 900)
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  elif defined(_MSC_VER)

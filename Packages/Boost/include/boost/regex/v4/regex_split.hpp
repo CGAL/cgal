@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -30,14 +30,14 @@ namespace boost{
 namespace re_detail{
 
 template <class charT>
-const reg_expression<charT>& get_default_expression(charT)
+const basic_regex<charT>& get_default_expression(charT)
 {
    static const charT expression_text[4] = { '\\', 's', '+', '\00', };
-   static const reg_expression<charT> e(expression_text);
+   static const basic_regex<charT> e(expression_text);
    return e;
 }
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1, class Alloc2>
+template <class OutputIterator, class charT, class Traits1, class Alloc1>
 class split_pred
 {
    typedef std::basic_string<charT, Traits1, Alloc1> string_type;
@@ -50,12 +50,12 @@ public:
    split_pred(iterator_type* a, OutputIterator* b, std::size_t* c)
       : p_last(a), p_out(b), p_max(c), initial_max(*c) {}
 
-   bool operator()(const match_results<iterator_type, Alloc2>& what);
+   bool operator()(const match_results<iterator_type>& what);
 };
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1, class Alloc2>
-bool split_pred<OutputIterator, charT, Traits1, Alloc1, Alloc2>::operator()
-   (const match_results<iterator_type, Alloc2>& what)
+template <class OutputIterator, class charT, class Traits1, class Alloc1>
+bool split_pred<OutputIterator, charT, Traits1, Alloc1>::operator()
+   (const match_results<iterator_type>& what)
 {
    *p_last = what[0].second;
    if(what.size() > 1)
@@ -63,7 +63,7 @@ bool split_pred<OutputIterator, charT, Traits1, Alloc1, Alloc2>::operator()
       // output sub-expressions only:
       for(unsigned i = 1; i < what.size(); ++i)
       {
-         *(*p_out) = static_cast<string_type>(what[i]);
+         *(*p_out) = what.str(i);
          ++(*p_out);
          if(0 == --*p_max) return false;
       }
@@ -75,7 +75,7 @@ bool split_pred<OutputIterator, charT, Traits1, Alloc1, Alloc2>::operator()
       const sub_match<iterator_type>& sub = what[-1];
       if((sub.first != sub.second) || (*p_max != initial_max))
       {
-         *(*p_out) = static_cast<string_type>(sub);
+         *(*p_out) = sub.str();
          ++(*p_out);
          return --*p_max;
       }
@@ -87,18 +87,18 @@ bool split_pred<OutputIterator, charT, Traits1, Alloc1, Alloc2>::operator()
 
 } // namespace re_detail
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2, class Alloc2>
+template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2>
 std::size_t regex_split(OutputIterator out,
                    std::basic_string<charT, Traits1, Alloc1>& s, 
-                   const reg_expression<charT, Traits2, Alloc2>& e,
+                   const basic_regex<charT, Traits2>& e,
                    match_flag_type flags,
                    std::size_t max_split)
 {
-   typedef typename std::basic_string<charT, Traits1, Alloc1>::const_iterator ci_t;
-   typedef typename detail::rebind_allocator<sub_match<ci_t>, Alloc2>::type match_allocator;
+   typedef typename std::basic_string<charT, Traits1, Alloc1>::const_iterator  ci_t;
+   typedef typename match_results<ci_t>::allocator_type                        match_allocator;
    ci_t last = s.begin();
    std::size_t init_size = max_split;
-   re_detail::split_pred<OutputIterator, charT, Traits1, Alloc1, match_allocator> pred(&last, &out, &max_split);
+   re_detail::split_pred<OutputIterator, charT, Traits1, Alloc1> pred(&last, &out, &max_split);
    ci_t i, j;
    i = s.begin();
    j = s.end();
@@ -122,10 +122,10 @@ std::size_t regex_split(OutputIterator out,
    return init_size - max_split;
 }
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2, class Alloc2>
+template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2>
 inline std::size_t regex_split(OutputIterator out,
                    std::basic_string<charT, Traits1, Alloc1>& s, 
-                   const reg_expression<charT, Traits2, Alloc2>& e,
+                   const basic_regex<charT, Traits2>& e,
                    match_flag_type flags = match_default)
 {
    return regex_split(out, s, e, flags, UINT_MAX);

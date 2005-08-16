@@ -118,7 +118,7 @@ public:
    * The actual stored value in this 3-state boolean, which may be false, true,
    * or indeterminate.
    */
-  enum { false_value, true_value, indeterminate_value } value;
+  enum value_t { false_value, true_value, indeterminate_value } value;
 };
 
 // Check if the given tribool has an indeterminate value. Also doubles as a

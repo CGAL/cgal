@@ -2,25 +2,9 @@
 // Copyright 2000 University of Notre Dame.
 // Authors: Jeremy G. Siek, Andrew Lumsdaine, Lie-Quan Lee
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_PUSH_RELABEL_MAX_FLOW_HPP
@@ -137,13 +121,14 @@ namespace boost {
         : g(g_), n(num_vertices(g_)), capacity(cap), src(src_), sink(sink_), 
           index(idx),
           excess_flow(num_vertices(g_)),
-          layer_list_ptr(num_vertices(g_)),
-          current(num_vertices(g_)),
+          current(num_vertices(g_), out_edges(*vertices(g_).first, g_).second),
           distance(num_vertices(g_)),
           color(num_vertices(g_)),
           reverse_edge(rev),
           residual_capacity(res),
           layers(num_vertices(g_)),
+          layer_list_ptr(num_vertices(g_), 
+                         layers.front().inactive_vertices.end()),
           push_count(0), update_count(0), relabel_count(0), 
           gap_count(0), gap_node_count(0),
           work_since_last_update(0)
@@ -647,7 +632,6 @@ namespace boost {
 
       // will need to use random_access_property_map with these
       std::vector< FlowValue > excess_flow;
-      std::vector< list_iterator > layer_list_ptr;
       std::vector< out_edge_iterator > current;
       std::vector< distance_size_type > distance;
       std::vector< default_color_type > color;
@@ -657,6 +641,7 @@ namespace boost {
       ResidualCapacityEdgeMap residual_capacity;
 
       LayerArray layers;
+      std::vector< list_iterator > layer_list_ptr;
       distance_size_type max_distance;  // maximal distance
       distance_size_type max_active;    // maximal distance with active node
       distance_size_type min_active;    // minimal distance with active node

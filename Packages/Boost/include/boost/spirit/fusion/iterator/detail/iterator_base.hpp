@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -16,17 +17,25 @@ namespace boost { namespace fusion
     struct iterator_base : iterator_root
     {
         Iterator const&
-        cast() const
-        {
-            return static_cast<Iterator const&>(*this);
-        }
+        cast() const;
 
         Iterator&
-        cast()
-        {
-            return static_cast<Iterator&>(*this);
-        }
+        cast();
     };
+
+    template <typename Iterator>
+    Iterator const&
+    iterator_base<Iterator>::cast() const
+    {
+        return static_cast<Iterator const&>(*this);
+    }
+
+    template <typename Iterator>
+    Iterator&
+    iterator_base<Iterator>::cast()
+    {
+        return static_cast<Iterator&>(*this);
+    }
 }}
 
 #endif

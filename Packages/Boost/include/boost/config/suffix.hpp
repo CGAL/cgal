@@ -1,15 +1,15 @@
 //  Boost config.hpp configuration header file  ------------------------------//
 
-//  (C) Copyright John Maddock 2001 - 2003. 
-//  (C) Copyright Darin Adler 2001. 
-//  (C) Copyright Peter Dimov 2001. 
-//  (C) Copyright Bill Kempf 2002. 
-//  (C) Copyright Jens Maurer 2002. 
-//  (C) Copyright David Abrahams 2002 - 2003. 
-//  (C) Copyright Gennaro Prota 2003. 
-//  (C) Copyright Eric Friedman 2003. 
-//  Use, modification and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
+//  (C) Copyright John Maddock 2001 - 2003.
+//  (C) Copyright Darin Adler 2001.
+//  (C) Copyright Peter Dimov 2001.
+//  (C) Copyright Bill Kempf 2002.
+//  (C) Copyright Jens Maurer 2002.
+//  (C) Copyright David Abrahams 2002 - 2003.
+//  (C) Copyright Gennaro Prota 2003.
+//  (C) Copyright Eric Friedman 2003.
+//  Use, modification and distribution are subject to the
+//  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org for most recent version.
@@ -32,11 +32,15 @@
 //
 #include <limits.h>
 # if !defined(BOOST_HAS_LONG_LONG)                                              \
-   && !(defined(BOOST_MSVC) && BOOST_MSVC <=1300) && !defined(__BORLANDC__)     \
+   && !defined(BOOST_MSVC) && !defined(__BORLANDC__)     \
    && (defined(ULLONG_MAX) || defined(ULONG_LONG_MAX) || defined(ULONGLONG_MAX))
 #  define BOOST_HAS_LONG_LONG
 #endif
-#if !defined(BOOST_HAS_LONG_LONG) && !defined(BOOST_NO_INTEGRAL_INT64_T)
+
+// TODO: Remove the following lines after the 1.33 release because the presence
+// of an integral 64 bit type has nothing to do with support for long long.
+
+#if !defined(BOOST_HAS_LONG_LONG) && !defined(BOOST_NO_INTEGRAL_INT64_T) && !defined(__DECCXX_VER)
 #  define BOOST_NO_INTEGRAL_INT64_T
 #endif
 
@@ -275,7 +279,7 @@
 //  Because std::size_t usage is so common, even in boost headers which do not
 //  otherwise use the C library, the <cstddef> workaround is included here so
 //  that ugly workaround code need not appear in many other boost headers.
-//  NOTE WELL: This is a workaround for non-conforming compilers; <cstddef> 
+//  NOTE WELL: This is a workaround for non-conforming compilers; <cstddef>
 //  must still be #included in the usual places so that <cstddef> inclusion
 //  works as expected with standard conforming compilers.  The resulting
 //  double inclusion of <cstddef> is harmless.
@@ -395,7 +399,7 @@ namespace std {
 
 #ifndef BOOST_NO_DEDUCED_TYPENAME
 #  define BOOST_DEDUCED_TYPENAME typename
-#else 
+#else
 #  define BOOST_DEDUCED_TYPENAME
 #endif
 
@@ -508,7 +512,7 @@ namespace boost{
 
 //
 // Helper macro BOOST_JOIN:
-// The following piece of macro magic joins the two 
+// The following piece of macro magic joins the two
 // arguments together, even when one of the arguments is
 // itself a macro (see 16.3.1 in C++ standard).  The key
 // is that macro expansion of macro arguments does not

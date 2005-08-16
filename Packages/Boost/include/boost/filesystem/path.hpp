@@ -91,8 +91,8 @@ namespace boost
         reference dereference() const { return m_name; }
         bool equal( const iterator & rhs ) const
           { return m_path_ptr == rhs.m_path_ptr && m_pos == rhs.m_pos; }
-        void increment();
-        void decrement();
+        BOOST_FILESYSTEM_DECL void increment();
+        BOOST_FILESYSTEM_DECL void decrement();
 
         std::string             m_name;     // cache current element.
         const path *            m_path_ptr; // path being iterated over.

@@ -3,25 +3,9 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Generic Graph Component Library
-//
-// You should have received a copy of the License Agreement for the
-// Generic Graph Component Library along with the software;  see the
-// file LICENSE.  If not, contact Office of Research, University of Notre
-// Dame, Notre Dame, IN  46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
 #ifndef BOOST_MUTABLE_QUEUE_HPP
@@ -34,6 +18,7 @@
 #include <boost/pending/mutable_heap.hpp>
 #include <boost/pending/is_heap.hpp>
 #include <boost/graph/detail/array_binary_tree.hpp>
+#include <iterator>
 
 namespace boost {
 
@@ -75,10 +60,10 @@ namespace boost {
       : index_array(n), comp(x), id(_id) {
       c.reserve(n); 
     }
-    template <class InputIterator>
-    mutable_queue(InputIterator first, InputIterator last, 
+    template <class ForwardIterator>
+    mutable_queue(ForwardIterator first, ForwardIterator last, 
                   const Comp& x, const ID& _id) 
-      : index_array(last-first), comp(x), id(_id)
+      : index_array(std::distance(first, last)), comp(x), id(_id)
     {
       while( first != last ) {
         push(*first);
@@ -126,6 +111,8 @@ namespace boost {
     const value_type& top() const { return c.front(); }
 
     size_type size() const { return c.size(); }
+
+    void clear() { c.clear(); }
 
 #if 0
         // dwa 2003/7/11 - I don't know what compiler is supposed to

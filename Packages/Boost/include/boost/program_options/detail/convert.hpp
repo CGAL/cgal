@@ -19,7 +19,7 @@
 #include <cwchar>
 #include <stdexcept>
 
-#if BOOST_WORKAROUND(__ICL, <= 700) || BOOST_WORKAROUND(_MSC_VER, <= 1200)
+#if defined(BOOST_NO_STDC_NAMESPACE)
 #include <wchar.h>
 namespace std
 {

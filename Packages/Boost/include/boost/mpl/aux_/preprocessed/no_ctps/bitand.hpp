@@ -61,21 +61,54 @@ template< typename T > struct bitand_tag
     typedef typename T::tag type;
 };
 
+/// forward declaration
+
 template<
       typename BOOST_MPL_AUX_NA_PARAM(N1)
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
+struct bitand_2;
+
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    , typename N3 = na, typename N4 = na, typename N5 = na
+    >
 struct bitand_
+
+    : if_<
+
+          is_na<N3>
+        , bitand_2< N1,N2 >
+        , bitand_<
+              bitand_2< N1,N2 >
+            , N3, N4, N5
+            >
+        >::type
+
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(
+          5
+        , bitand_
+        , ( N1, N2, N3, N4, N5 )
+        )
+};
+
+template<
+      typename N1
+    , typename N2
+    >
+struct bitand_2
     : bitand_impl<
           typename bitand_tag<N1>::type
         , typename bitand_tag<N2>::type
         >::template apply< N1,N2 >::type
 {
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, bitand_, (N1, N2))
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, bitand_2, (N1, N2))
 
 };
 
-BOOST_MPL_AUX_NA_SPEC2(2, 2, bitand_)
+BOOST_MPL_AUX_NA_SPEC2(2, 5, bitand_)
 
 }}
 

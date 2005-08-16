@@ -277,43 +277,86 @@ class class_ : public objects::class_base
     // Data member access
     //
     template <class D>
-    self& def_readonly(char const* name, D const& d)
+    self& def_readonly(char const* name, D const& d, char const* doc=0)
     {
-        return this->def_readonly_impl(name, d BOOST_PYTHON_DATA_MEMBER_HELPER(D));
+        return this->def_readonly_impl(name, d, doc BOOST_PYTHON_DATA_MEMBER_HELPER(D));
     }
 
     template <class D>
-    self& def_readwrite(char const* name, D const& d)
+    self& def_readwrite(char const* name, D const& d, char const* doc=0)
     {
-        return this->def_readwrite_impl(name, d BOOST_PYTHON_DATA_MEMBER_HELPER(D));
+        return this->def_readwrite_impl(name, d, doc BOOST_PYTHON_DATA_MEMBER_HELPER(D));
     }
     
     template <class D>
-    self& def_readonly(char const* name, D& d)
+    self& def_readonly(char const* name, D& d, char const* doc=0)
     {
-        return this->def_readonly_impl(name, d BOOST_PYTHON_DATA_MEMBER_HELPER(D));
+        return this->def_readonly_impl(name, d, doc BOOST_PYTHON_DATA_MEMBER_HELPER(D));
     }
 
     template <class D>
-    self& def_readwrite(char const* name, D& d)
+    self& def_readwrite(char const* name, D& d, char const* doc=0)
     {
-        return this->def_readwrite_impl(name, d BOOST_PYTHON_DATA_MEMBER_HELPER(D));
+        return this->def_readwrite_impl(name, d, doc BOOST_PYTHON_DATA_MEMBER_HELPER(D));
     }
 
     // Property creation
+# if !BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
     template <class Get>
-    self& add_property(char const* name, Get fget)
+    self& add_property(char const* name, Get fget, char const* docstr = 0)
     {
-        base::add_property(name, this->make_getter(fget));
+        base::add_property(name, this->make_getter(fget), docstr);
         return *this;
     }
 
     template <class Get, class Set>
-    self& add_property(char const* name, Get fget, Set fset)
+    self& add_property(char const* name, Get fget, Set fset, char const* docstr = 0)
     {
-        base::add_property(name, this->make_getter(fget), this->make_setter(fset));
+        base::add_property(
+            name, this->make_getter(fget), this->make_setter(fset), docstr);
         return *this;
     }
+# else
+ private:
+    template <class Get>
+    self& add_property_impl(char const* name, Get fget, char const* docstr, int)
+    {
+        base::add_property(name, this->make_getter(fget), docstr);
+        return *this;
+    }
+
+    template <class Get, class Set>
+    self& add_property_impl(char const* name, Get fget, Set fset, ...)
+    {
+        base::add_property(
+            name, this->make_getter(fget), this->make_setter(fset), 0);
+        return *this;
+    }
+
+ public:    
+    template <class Get>
+    self& add_property(char const* name, Get fget)
+    {
+        base::add_property(name, this->make_getter(fget), 0);
+        return *this;
+    }
+
+    template <class Get, class DocStrOrSet>
+    self& add_property(char const* name, Get fget, DocStrOrSet docstr_or_set)
+    {
+        this->add_property_impl(name, this->make_getter(fget), docstr_or_set, 0);
+        return *this;
+    }
+
+    template <class Get, class Set>
+    self&
+    add_property(char const* name, Get fget, Set fset, char const* docstr)
+    {
+        base::add_property(
+            name, this->make_getter(fget), this->make_setter(fset), docstr);
+        return *this;
+    }
+# endif
         
     template <class Get>
     self& add_static_property(char const* name, Get fget)
@@ -421,28 +464,28 @@ class class_ : public objects::class_base
     
     template <class D, class B>
     self& def_readonly_impl(
-        char const* name, D B::*pm_ BOOST_PYTHON_YES_DATA_MEMBER)
+        char const* name, D B::*pm_, char const* doc BOOST_PYTHON_YES_DATA_MEMBER)
     {
-        return this->add_property(name, pm_);
+        return this->add_property(name, pm_, doc);
     }
 
     template <class D, class B>
     self& def_readwrite_impl(
-        char const* name, D B::*pm_ BOOST_PYTHON_YES_DATA_MEMBER)
+        char const* name, D B::*pm_, char const* doc BOOST_PYTHON_YES_DATA_MEMBER)
     {
-        return this->add_property(name, pm_, pm_);
+        return this->add_property(name, pm_, pm_, doc);
     }
 
     template <class D>
     self& def_readonly_impl(
-        char const* name, D& d BOOST_PYTHON_NO_DATA_MEMBER)
+        char const* name, D& d, char const* BOOST_PYTHON_NO_DATA_MEMBER)
     {
         return this->add_static_property(name, python::make_getter(d));
     }
 
     template <class D>
     self& def_readwrite_impl(
-        char const* name, D& d  BOOST_PYTHON_NO_DATA_MEMBER)
+        char const* name, D& d, char const* BOOST_PYTHON_NO_DATA_MEMBER)
     {
         return this->add_static_property(name, python::make_getter(d), python::make_setter(d));
     }

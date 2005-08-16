@@ -48,7 +48,7 @@ struct try_catch_action {};
 struct throw_new_action {};
 struct rethrow_action {};
 
-template<class ThrowType> class throw_action;
+template<class ThrowType> struct throw_action;
 
 template<>
 struct throw_action<rethrow_action> {

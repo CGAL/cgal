@@ -14,7 +14,7 @@
 #include <locale>
 
 /*! \file
-    Defines element comparison predicates. Many algorithms in this library can 
+    Defines element comparison predicates. Many algorithms in this library can
     take an additional argument with a predicate used to compare elements.
     This makes it possible, for instance, to have case insensitive versions
     of the algorithms.
@@ -22,7 +22,7 @@
 
 namespace boost {
     namespace algorithm {
-    
+
         //  is_equal functor  -----------------------------------------------//
 
         //! is_equal functor
@@ -54,24 +54,28 @@ namespace boost {
             /*!
                 \param Loc locales used for comparison
             */
-            is_iequal( const std::locale& Loc=std::locale() ) : 
+            is_iequal( const std::locale& Loc=std::locale() ) :
                 m_Loc( Loc ) {}
 
-            //! Function operator 
+            //! Function operator
             /*!
                 Compare two operands. Case is ignored.
             */
             template< typename T1, typename T2 >
                 bool operator ()( const T1& Arg1, const T2& Arg2 ) const
             {
-                return std::toupper(Arg1,m_Loc)==std::toupper(Arg2,m_Loc);
+                #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x564) && !defined(_USE_OLD_RW_STL)
+                    return std::toupper(Arg1)==std::toupper(Arg2);
+                #else
+                    return std::toupper(Arg1,m_Loc)==std::toupper(Arg2,m_Loc);
+                #endif
             }
 
         private:
             std::locale m_Loc;
         };
 
-    } // namespace algorithm 
+    } // namespace algorithm
 
     // pull names to the boost namespace
     using algorithm::is_equal;

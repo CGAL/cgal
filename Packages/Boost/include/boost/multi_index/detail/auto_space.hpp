@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -9,6 +9,12 @@
 #ifndef BOOST_MULTI_INDEX_DETAIL_AUTO_SPACE_HPP
 #define BOOST_MULTI_INDEX_DETAIL_AUTO_SPACE_HPP
 
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
+
+#include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
+#include <algorithm>
 #include <boost/detail/allocator_utilities.hpp>
 #include <boost/noncopyable.hpp>
 #include <memory>
@@ -48,6 +54,12 @@ struct auto_space:private noncopyable
   }
 
   T* data()const{return data_;}
+
+  void swap(auto_space& x)
+  {
+    std::swap(n_,x.n_);
+    std::swap(data_,x.data_);
+  }
     
 private:
   typename boost::detail::allocator::rebind_to<
@@ -55,6 +67,12 @@ private:
   std::size_t                                   n_;
   T*                                            data_;
 };
+
+template<typename T,typename Allocator>
+void swap(auto_space<T,Allocator>& x,auto_space<T,Allocator>& y)
+{
+  x.swap(y);
+}
 
 } /* namespace multi_index::detail */
 

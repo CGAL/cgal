@@ -9,7 +9,7 @@
  */
 
 #include <string>
-#include "boost/date_time/local_time/time_zone.hpp"
+#include "boost/date_time/local_time/custom_time_zone.hpp"
 #include "boost/date_time/local_time/dst_transition_day_rules.hpp"
 #include "boost/date_time/tz_db_base.hpp"
 
@@ -19,8 +19,12 @@ namespace local_time {
 
   using date_time::data_not_accessible; 
   using date_time::bad_field_count; 
-  
-  typedef date_time::tz_db_base<time_zone, nth_kday_dst_rule> tz_database;
+
+  //! Object populated with boost::shared_ptr<time_zone_base> objects
+  /*! Object populated with boost::shared_ptr<time_zone_base> objects
+   * Database is populated from specs stored in external csv file. See
+   * date_time::tz_db_base for greater detail */
+  typedef date_time::tz_db_base<custom_time_zone, nth_kday_dst_rule> tz_database;
 
 }} // namespace
 

@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,10 @@
 
 #ifndef BOOST_MULTI_INDEX_INDEXED_BY_HPP
 #define BOOST_MULTI_INDEX_INDEXED_BY_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <boost/mpl/vector.hpp>

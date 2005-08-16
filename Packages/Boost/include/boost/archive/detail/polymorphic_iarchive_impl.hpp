@@ -30,13 +30,14 @@ namespace std{
 #endif
 
 #include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
 namespace archive {
 namespace detail{
 
-class basic_iserializer;
-class basic_pointer_iserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_iserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_iserializer;
 
 template<class ArchiveImplementation>
 class polymorphic_iarchive_impl : 
@@ -63,11 +64,23 @@ private:
     ){
         return ArchiveImplementation::load_pointer(t, bpis_ptr, finder);
     }
+    virtual void set_library_version(unsigned int archive_library_version){
+        ArchiveImplementation::set_library_version(archive_library_version);
+    }
+    virtual unsigned int get_library_version() const{
+        return ArchiveImplementation::get_library_version();
+    }
+    virtual unsigned int get_flags() const {
+        return ArchiveImplementation::get_flags();
+    }
+    virtual void reset_object_address(const void * new_address, const void * old_address){
+        ArchiveImplementation::reset_object_address(new_address, old_address);
+    }
     virtual void delete_created_pointers(){
         ArchiveImplementation::delete_created_pointers();
     }
-    virtual unsigned int library_version() const{
-        return ArchiveImplementation::library_version();
+    virtual void load_binary(void * t, std::size_t size){
+        ArchiveImplementation::load_binary(t, size);
     }
     // primitive types the only ones permitted by polymorphic archives
     virtual void load(bool & t){
@@ -129,10 +142,6 @@ private:
         ArchiveImplementation::load(t);
     }
     #endif
-    virtual void load_binary(void * t, std::size_t size){
-        ArchiveImplementation::load(t);
-    }
-
     // used for xml and other tagged formats default does nothing
     virtual void load_start(const char * name){
         ArchiveImplementation::load_start(name);
@@ -141,21 +150,13 @@ private:
         ArchiveImplementation::load_end(name);
     }
 
-    virtual void register_basic_serializer(const detail::basic_iserializer & bis){
+    virtual void register_basic_serializer(const basic_iserializer & bis){
         ArchiveImplementation::register_basic_serializer(bis);
     }
 public:
-    // define operators for non-const arguments.  Don't depend one the const
-    // ones below because the compiler MAY make a temporary copy to
-    // create the const parameter (Though I havn't seen this happen). 
-    // the >> operator
+    // the >> operator 
     template<class T>
     polymorphic_iarchive & operator>>(T & t){
-        // if this assertion trips. It means we're trying to load a
-        // const object with a compiler that doesn't have correct
-        // funtion template ordering.  On other compilers, this is
-        // handled below.
-        BOOST_STATIC_ASSERT(! boost::is_const<T>::value);
         return polymorphic_iarchive::operator>>(t);
     }
 
@@ -165,39 +166,20 @@ public:
         return polymorphic_iarchive::operator&(t);
     }
 
-    // define the following pair in order to permit passing of const and non_const
-    // temporary objects. These are needed to properly implement serialization
-    // wrappers.
-
-    #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-    // the >> operator
-    template<class T>
-    polymorphic_iarchive & operator>>(const T & t){
-        // this should only be used for wrappers.  Check that here
-        return polymorphic_iarchive::operator>>(t);
-    }
-    // the & operator 
-    template<class T>
-    polymorphic_iarchive & operator&(const T & t){
-        return polymorphic_iarchive::operator&(t);
-    }
-    #endif
     // all current archives take a stream as constructor argument
     template <class _Elem, class _Tr>
     polymorphic_iarchive_impl(
         std::basic_istream<_Elem, _Tr> & is, 
         unsigned int flags = 0
     ) :
-        ArchiveImplementation(is, flags | boost::archive::no_header)
-    {
-        // postpone archive initialization until build is complete
-        if(0 == flags & no_header)
-            ArchiveImplementation::init();
-    }
+        ArchiveImplementation(is, flags)
+    {}
 };
 
 } // namespace detail
 } // namespace archive
 } // namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_DETAIL_POLYMORPHIC_IARCHIVE_IMPL_HPP

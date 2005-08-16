@@ -16,8 +16,17 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
+#if defined(BOOST_SERIALIZATION_TYPE_INFO_IMPLEMENTATION_HPP) \
+||  defined(BOOST_SERIALIZATION_TRAITS_HPP)
+#error "no serialization headers my precede any archive headers"
+#endif
+
+#include <boost/config.hpp>
 #include <boost/strong_typedef.hpp>
 #include <boost/noncopyable.hpp>
+
+#include <boost/archive/detail/auto_link_archive.hpp>
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
 namespace archive {
@@ -81,16 +90,23 @@ struct class_name_type : private boost::noncopyable {
 enum archive_flags {
     no_header = 1,  // suppress archive header info
     no_codecvt = 2,  // suppress alteration of codecvt facet
-    no_xml_tag_checking = 4 // suppress checking of xml tags
+    no_xml_tag_checking = 4,   // suppress checking of xml tags
+    no_tracking = 8           // suppress ALL tracking
+//    no_object_creation = 16    // don't create any new objects
 };
 
-extern const class_id_type null_pointer_tag;
+#define NULL_POINTER_TAG class_id_type(-1)
 
-extern const char * ARCHIVE_SIGNATURE;
-extern const version_type ARCHIVE_VERSION;
+BOOST_ARCHIVE_DECL(const char *)
+ARCHIVE_SIGNATURE();
+
+BOOST_ARCHIVE_DECL(unsigned char)
+ARCHIVE_VERSION();
 
 }// namespace archive
 }// namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #include <boost/serialization/level.hpp>
 
@@ -115,5 +131,6 @@ BOOST_CLASS_IMPLEMENTATION(boost::archive::tracking_type, primitive_type)
 #ifdef BOOST_SERIALIZATION_EXPORT_HPP
 #error "export.hpp must not be included before any archive header"
 #endif
+
 
 #endif //BOOST_ARCHIVE_BASIC_ARCHIVE_HPP

@@ -12,7 +12,7 @@
 #define BOOST_RANGE_DETAIL_CONST_ITERATOR_HPP
 
 #include <boost/range/detail/common.hpp>
-#include <boost/type_traits/remove_bounds.hpp>
+#include <boost/range/detail/remove_extent.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // missing partial specialization  workaround.
@@ -31,7 +31,7 @@ namespace boost
             template< typename C >
             struct pts
             {
-                typedef BOOST_DEDUCED_TYPENAME C::const_iterator type;
+                typedef BOOST_RANGE_DEDUCED_TYPENAME C::const_iterator type;
             };
         };
 
@@ -41,7 +41,7 @@ namespace boost
             template< typename P >
             struct pts
             {
-                typedef BOOST_DEDUCED_TYPENAME P::first_type type;
+                typedef BOOST_RANGE_DEDUCED_TYPENAME P::first_type type;
             };
         };
 
@@ -53,7 +53,7 @@ namespace boost
             struct pts
             {
                 typedef const BOOST_RANGE_DEDUCED_TYPENAME 
-                    remove_bounds<T>::type* type;
+                    remove_extent<T>::type* type;
             };
         };
         
@@ -64,7 +64,7 @@ namespace boost
             struct pts
             {
                 typedef const BOOST_RANGE_DEDUCED_TYPENAME 
-                    remove_bounds<T>::type* type;
+                    remove_extent<T>::type* type;
             };
         };
 

@@ -36,12 +36,9 @@
 #endif
 #endif
 
-#if (__BORLANDC__ <= 0x564)
-#  define BOOST_NO_SFINAE
-#endif
-
 // Version 7.0 (Kylix) and below:
 #if (__BORLANDC__ <= 0x570)
+#  define BOOST_NO_SFINAE
 #  define BOOST_NO_INTEGRAL_INT64_T
 #  define BOOST_NO_DEPENDENT_NESTED_DERIVATIONS
 #  define BOOST_NO_PRIVATE_IN_AGGREGATE
@@ -54,6 +51,7 @@
    // without it, this needs more investigation:
 #  define BOOST_NO_LIMITS_COMPILE_TIME_CONSTANTS
 #  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
+#  define BOOST_NO_IS_ABSTRACT
 #  ifdef NDEBUG
       // fix broken <cstring> so that Boost.test works:
 #     include <cstring>

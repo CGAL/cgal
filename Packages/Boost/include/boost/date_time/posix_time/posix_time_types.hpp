@@ -31,7 +31,7 @@ namespace posix_time {
   //! A time clock that has a resolution of one second
   /*! \ingroup time_basics
    */
-  typedef date_time::second_clock<ptime::date_type, ptime> second_clock;
+  typedef date_time::second_clock<ptime> second_clock;
 
 #ifdef BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
   //! A time clock that has a resolution of one microsecond

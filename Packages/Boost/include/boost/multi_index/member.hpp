@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,10 @@
 
 #ifndef BOOST_MULTI_INDEX_MEMBER_HPP
 #define BOOST_MULTI_INDEX_MEMBER_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <boost/mpl/if.hpp>
@@ -211,16 +215,9 @@ struct member_offset:
 /* BOOST_MULTI_INDEX_MEMBER resolves to member in the normal cases,
  * and to member_offset as a workaround in those defective compilers for
  * which BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS is defined.
- * This latter defect macro was included in Boost.Config starting from
- * Boost 1.32, but we keep some additional checking of our own to
- * remain compatible with Boost 1.31.
  */
 
-#if defined(BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS) ||\
-    defined(BOOST_MSVC)&&(BOOST_MSVC<1310) ||\
-    defined(BOOST_INTEL_CXX_VERSION)&&defined(_MSC_VER)&&\
-           (BOOST_INTEL_CXX_VERSION<=700) ||\
-    defined(__IBMCPP__)&&(__IBMCPP__<=600)
+#if defined(BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS)
 #define BOOST_MULTI_INDEX_MEMBER(Class,Type,MemberName) \
 ::boost::multi_index::member_offset<Class,Type,offsetof(Class,MemberName)>
 #else

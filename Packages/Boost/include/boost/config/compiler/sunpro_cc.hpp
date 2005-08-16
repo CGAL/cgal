@@ -34,7 +34,7 @@
 #      define BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 #    endif
 
-#    if (__SUNPRO_CC <= 0x530) || !defined(BOOST_STRICT_CONFIG)
+#    if (__SUNPRO_CC <= 0x530) 
        // Requesting debug info (-g) with Boost.Python results
        // in an internal compiler error for "static const"
        // initialized in-class.
@@ -57,13 +57,14 @@
 #      define BOOST_NO_INTEGRAL_INT64_T
 #    endif
 
-#    if (__SUNPRO_CC <= 0x540) || !defined(BOOST_STRICT_CONFIG)
+#    if (__SUNPRO_CC < 0x570) 
 #      define BOOST_NO_TEMPLATE_TEMPLATES
        // see http://lists.boost.org/MailArchives/boost/msg47184.php
        // and http://lists.boost.org/MailArchives/boost/msg47220.php
 #      define BOOST_NO_INCLASS_MEMBER_INITIALIZATION
 #      define BOOST_NO_SFINAE
 #      define BOOST_NO_ARRAY_TYPE_SPECIALIZATIONS
+#      define BOOST_NO_IS_ABSTRACT
 #    endif
 
 #define BOOST_COMPILER "Sun compiler version " BOOST_STRINGIZE(__SUNPRO_CC)
@@ -75,8 +76,8 @@
 #error "Compiler not supported or configured - please reconfigure"
 #endif
 //
-// last known and checked version is 0x530:
-#if (__SUNPRO_CC > 0x530)
+// last known and checked version is 0x570:
+#if (__SUNPRO_CC > 0x570)
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  endif

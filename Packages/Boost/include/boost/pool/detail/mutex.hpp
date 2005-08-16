@@ -19,6 +19,10 @@
 #define BOOST_MUTEX_HELPER_WIN32        1
 #define BOOST_MUTEX_HELPER_PTHREAD      2
 
+#if !defined(BOOST_HAS_THREADS) && !defined(BOOST_NO_MT)
+# define BOOST_NO_MT
+#endif
+
 #ifdef BOOST_NO_MT
   // No multithreading -> make locks into no-ops
   #define BOOST_MUTEX_HELPER BOOST_MUTEX_HELPER_NONE
@@ -37,18 +41,21 @@
   #error Unable to determine platform mutex type; define BOOST_NO_MT to assume single-threaded
 #endif
 
-
-#ifdef BOOST_WINDOWS
-  #include <windows.h>
-#endif
-#ifdef _POSIX_THREADS
-  #include <pthread.h>
+#ifndef BOOST_NO_MT
+# ifdef BOOST_WINDOWS
+#  include <windows.h>
+# endif
+# ifdef _POSIX_THREADS
+#  include <pthread.h>
+# endif
 #endif
 
 namespace boost {
 
 namespace details {
 namespace pool {
+
+#ifndef BOOST_NO_MT
 
 #ifdef BOOST_WINDOWS
 
@@ -101,6 +108,8 @@ class pthread_mutex
 };
 
 #endif // defined(_POSIX_THREADS)
+
+#endif // !defined(BOOST_NO_MT)
 
 class null_mutex
 {

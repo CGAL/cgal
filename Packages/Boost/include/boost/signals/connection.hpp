@@ -53,6 +53,7 @@ namespace boost {
         void* signal;
         void* signal_data;
         void (*signal_disconnect)(void*, void*);
+        bool blocked_;
 
         std::list<bound_object> bound_objects;
       };
@@ -68,6 +69,12 @@ namespace boost {
       connection() : con(), controlling_connection(false) {}
       connection(const connection&);
       ~connection();
+
+      // Block he connection: if the connection is still active, there
+      // will be no notification
+      void block(bool should_block = true) { con->blocked_ = should_block; }
+      void unblock() { con->blocked_ = false; }
+      bool blocked() const { return !connected() || con->blocked_; }
 
       // Disconnect the signal and slot, if they are connected
       void disconnect() const;
@@ -87,11 +94,11 @@ namespace boost {
 
     public: // TBD: CHANGE THIS
       // Set whether this connection object is controlling or not
-      void set_controlling(bool control = true) 
+      void set_controlling(bool control = true)
       { controlling_connection = control; }
 
       shared_ptr<BOOST_SIGNALS_NAMESPACE::detail::basic_connection>
-      get_connection() const 
+      get_connection() const
       { return con; }
 
     private:
@@ -159,6 +166,18 @@ namespace boost {
         inline bool operator()(const argument_type& c) const
         {
           return !c.first.connected();
+        }
+      };
+
+      // Determines if the underlying connection is callable, ie if
+      // it is connected and not blocked
+      struct is_callable {
+        typedef connection_slot_pair argument_type;
+        typedef bool result_type;
+
+        inline bool operator()(const argument_type& c) const
+        {
+          return c.first.connected() && !c.first.blocked() ;
         }
       };
 

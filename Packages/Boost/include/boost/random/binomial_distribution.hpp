@@ -30,7 +30,7 @@ public:
 
   explicit binomial_distribution(IntType t = 1,
                                  const RealType& p = RealType(0.5))
-    : _t(t)
+    : _bernoulli(p), _t(t)
   {
     assert(t >= 0);
     assert(RealType(0) <= 0 && p <= RealType(1));

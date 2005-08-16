@@ -96,7 +96,7 @@ namespace fileiter_impl {
 template <
     typename CharT = char,
     typename BaseIterator =
-#ifndef BOOST_SPIRIT_FILEITERATOR_WINDOWS
+#ifdef BOOST_SPIRIT_FILEITERATOR_STD
         fileiter_impl::std_file_iterator<CharT>
 #else
         fileiter_impl::mmap_file_iterator<CharT>

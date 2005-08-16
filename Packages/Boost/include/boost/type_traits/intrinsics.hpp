@@ -27,6 +27,10 @@
 // BOOST_HAS_TRIVIAL_COPY(T) should evaluate to true if T(t) <==> memcpy
 // BOOST_HAS_TRIVIAL_ASSIGN(T) should evaluate to true if t = u <==> memcpy
 // BOOST_HAS_TRIVIAL_DESTRUCTOR(T) should evaluate to true if ~T() has no effect
+// BOOST_HAS_NOTHROW_CONSTRUCTOR(T) should evaluate to true if "T x;" can not throw
+// BOOST_HAS_NOTHROW_COPY(T) should evaluate to true if T(t) can not throw
+// BOOST_HAS_NOTHROW_ASSIGN(T) should evaluate to true if t = u can not throw
+// BOOST_HAS_VIRTUAL_DESTRUCTOR(T) should evaluate to true T has a virtual destructor
 
 #ifdef BOOST_HAS_SGI_TYPE_TRAITS
     // Hook into SGI's __type_traits class, this will pick up user supplied
@@ -59,6 +63,22 @@
 #   define BOOST_HAS_TYPE_TRAITS_INTRINSICS
 #endif
 
+#if defined(BOOST_MSVC) && defined(_MSC_FULL_VER) && (_MSC_FULL_VER >=140050215)
+#   define BOOST_IS_UNION(T) __is_union(T)
+#   define BOOST_IS_POD(T) __is_pod(T)
+#   define BOOST_IS_EMPTY(T) __is_empty(T)
+#   define BOOST_HAS_TRIVIAL_CONSTRUCTOR(T) __has_trivial_constructor(T)
+#   define BOOST_HAS_TRIVIAL_COPY(T) __has_trivial_copy(T)
+#   define BOOST_HAS_TRIVIAL_ASSIGN(T) __has_trivial_assign(T)
+#   define BOOST_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)
+#   define BOOST_HAS_NOTHROW_CONSTRUCTOR(T) __has_nothrow_constructor(T)
+#   define BOOST_HAS_NOTHROW_COPY(T) __has_nothrow_copy(T)
+#   define BOOST_HAS_NOTHROW_ASSIGN(T) __has_nothrow_assign(T)
+#   define BOOST_HAS_VIRTUAL_DESTRUCTOR(T) __has_virtual_destructor(T)
+#   define BOOST_HAS_TYPE_TRAITS_INTRINSICS
+#endif
+
+
 #ifndef BOOST_IS_UNION
 #   define BOOST_IS_UNION(T) false
 #endif
@@ -85,6 +105,22 @@
 
 #ifndef BOOST_HAS_TRIVIAL_DESTRUCTOR
 #   define BOOST_HAS_TRIVIAL_DESTRUCTOR(T) false
+#endif
+
+#ifndef BOOST_HAS_NOTHROW_CONSTRUCTOR
+#   define BOOST_HAS_NOTHROW_CONSTRUCTOR(T) false
+#endif
+
+#ifndef BOOST_HAS_NOTHROW_COPY
+#   define BOOST_HAS_NOTHROW_COPY(T) false
+#endif
+
+#ifndef BOOST_HAS_NOTHROW_ASSIGN
+#   define BOOST_HAS_NOTHROW_ASSIGN(T) false
+#endif
+
+#ifndef BOOST_HAS_VIRTUAL_DESTRUCTOR
+#   define BOOST_HAS_VIRTUAL_DESTRUCTOR(T) false
 #endif
 
 #endif // BOOST_TT_INTRINSICS_HPP_INCLUDED

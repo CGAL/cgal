@@ -11,7 +11,9 @@
 #define BOOST_STRING_FIND_FORMAT_DETAIL_HPP
 
 #include <boost/algorithm/string/config.hpp>
-#include <boost/algorithm/string/iterator_range.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/range/const_iterator.hpp>
+#include <boost/range/iterator.hpp>
 #include <boost/algorithm/string/detail/find_format_store.hpp>
 #include <boost/algorithm/string/detail/replace_storage.hpp>
 
@@ -60,7 +62,7 @@ namespace boost {
             {       
                 typedef find_format_store<
                     BOOST_STRING_TYPENAME 
-                        const_iterator_of<InputT>::type, 
+                        range_const_iterator<InputT>::type, 
                         FormatterT,
                         FormatResultT > store_type;
 
@@ -121,7 +123,7 @@ namespace boost {
             {
                 typedef find_format_store<
                     BOOST_STRING_TYPENAME 
-                        const_iterator_of<InputT>::type, 
+                        range_const_iterator<InputT>::type, 
                         FormatterT,
                         FormatResultT > store_type;
 
@@ -181,7 +183,7 @@ namespace boost {
             {
                 typedef find_format_store<
                     BOOST_STRING_TYPENAME 
-                        iterator_of<InputT>::type, 
+                        range_iterator<InputT>::type, 
                         FormatterT,
                         FormatResultT > store_type;
 

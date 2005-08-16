@@ -23,8 +23,10 @@
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/greater.hpp>
+#include <boost/mpl/integral_c_tag.hpp>
 
 #include <boost/type_traits/is_base_and_derived.hpp>
+#include <boost/type_traits/is_pointer.hpp>
 #include <boost/serialization/traits.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/tracking_enum.hpp>
@@ -39,12 +41,16 @@ struct tracking_level {
     struct traits_class_tracking {
         typedef BOOST_DEDUCED_TYPENAME U::tracking type;
     };
-    
     typedef mpl::integral_c_tag tag;
     typedef
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
             is_base_and_derived<basic_traits, T>,
             traits_class_tracking<T>,
+        //else
+        BOOST_DEDUCED_TYPENAME mpl::eval_if<
+            is_pointer<T>,
+            // pointers are not tracked by default
+            mpl::int_<track_never>,
         //else
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
             // for primitives
@@ -56,8 +62,7 @@ struct tracking_level {
             mpl::int_<track_never>,
             // otherwise its selective
             mpl::int_<track_selectivly>
-            >
-        >::type type;
+    >  > >::type type;
     BOOST_STATIC_CONSTANT(int, value = tracking_level::type::value);
 };
 
@@ -71,12 +76,18 @@ inline bool operator>=(tracking_level<T> t, enum tracking_type l)
 } // namespace serialization
 } // namespace boost
 
-// specify the current tracking behavior for the class
+
+// The STATIC_ASSERT is prevents one from setting tracking for a primitive type.  
+// This almost HAS to be an error.  Doing this will effect serialization of all 
+// char's in your program which is almost certainly what you don't want to do.  
+// If you want to track all instances of a given primitive type, You'll have to 
+// wrap it in your own type so its not a primitive anymore.  Then it will compile
+// without problem.
 #define BOOST_CLASS_TRACKING(T, E)           \
 namespace boost {                            \
 namespace serialization {                    \
 template<>                                   \
-struct tracking_level<T >                    \
+struct tracking_level< T >                   \
 {                                            \
     typedef mpl::integral_c_tag tag;         \
     typedef mpl::int_< E> type;              \
@@ -88,7 +99,7 @@ struct tracking_level<T >                    \
     BOOST_STATIC_ASSERT((                    \
         mpl::greater<                        \
             /* that is a prmitive */         \
-            implementation_level<T >,        \
+            implementation_level< T >,       \
             mpl::int_<primitive_type>        \
         >::value                             \
     ));                                      \

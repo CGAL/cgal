@@ -11,8 +11,7 @@
 #define BOOST_STRING_FIND_FORMAT_STORE_DETAIL_HPP
 
 #include <boost/algorithm/string/config.hpp>
-#include <boost/algorithm/string/collection_traits.hpp>
-#include <boost/algorithm/string/iterator_range.hpp>
+#include <boost/range/iterator_range.hpp>
 
 namespace boost {
     namespace algorithm {
@@ -36,7 +35,7 @@ namespace boost {
             public:
                 // Construction
                 find_format_store( 
-                        const base_type FindResult,
+                        const base_type& FindResult,
                         const format_result_type& FormatResult,
                         const formatter_type& Formatter ) :
                     base_type(FindResult),

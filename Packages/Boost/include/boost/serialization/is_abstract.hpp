@@ -17,40 +17,36 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <boost/config.hpp>
-#include <boost/type_traits/detail/yes_no_type.hpp>
-#include <boost/type_traits/is_class.hpp>
-#include <boost/mpl/bool_fwd.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/type_traits/is_abstract.hpp>
 
-#ifndef BOOST_TT_IS_ABSTRACT_CLASS_HPP
-#if    defined(__GNUC__) && (34 <= _GNUC__ * 10 + __GNU_MINOR)  \
-    || defined(_MSC_VER) && (1310 <= _MSC_VER)                  \
-    || defined(__EDG_VERSION__)                                 \
-    /**/
-    #include <boost/type_traits/is_abstract.hpp>
-#else
-// default to false if not supported
-
-// supplant boost/type_traits/is_abstract.hpp
-#   define BOOST_TT_IS_ABSTRACT_CLASS_HPP
-
-    namespace boost {
+namespace boost {
+namespace serialization {
     template<class T>
     struct is_abstract {
-        typedef mpl::bool_<false> type;
-        BOOST_STATIC_CONSTANT(bool, value = is_abstract::type::value); 
+        // default to false if not supported
+        #ifdef BOOST_NO_IS_ABSTRACT
+            typedef BOOST_DEDUCED_TYPENAME mpl::bool_<false> type;
+            BOOST_STATIC_CONSTANT(bool, value = false); 
+        #else
+            typedef BOOST_DEDUCED_TYPENAME boost::is_abstract<T>::type type;
+            BOOST_STATIC_CONSTANT(bool, value = type::value); 
+        #endif
     };
-    } // namespace boost
-#endif
-#endif // BOOST_TT_IS_ABSTRACT_CLASS_HPP
+} // namespace serialization
+} // namespace boost
 
 // define a macro to make explicit designation of this more transparent
-#define BOOST_IS_ABSTRACT(T)                   \
-namespace boost {                              \
-template<>                                     \
-struct is_abstract<T> {                        \
-    BOOST_STATIC_CONSTANT(bool, value = true); \
-};                                             \
-} // namespace boost
+#define BOOST_IS_ABSTRACT(T)                          \
+namespace boost {                                     \
+namespace serialization {                             \
+template<>                                            \
+struct is_abstract< T > {                             \
+    typedef mpl::bool_<true> type;                    \
+    BOOST_STATIC_CONSTANT(bool, value = true);        \
+};                                                    \
+}                                                     \
+}                                                     \
 /**/
 
 #endif //BOOST_SERIALIZATION_IS_ABSTRACT_CLASS_HPP

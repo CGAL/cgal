@@ -14,27 +14,10 @@
 //  GeNeSys mbH & Co. KG in producing this work.
 //
 
-#ifndef BOOST_UBLAS_CONCEPTS_H
-#define BOOST_UBLAS_CONCEPTS_H
+#ifndef _BOOST_UBLAS_CONCEPTS_
+#define _BOOST_UBLAS_CONCEPTS_
 
 #include <boost/concept_check.hpp>
-
-// #define INTERNAL_STORAGE
-// #define INTERNAL_STORAGE_SPARSE
-// #define INTERNAL_VECTOR
-// #define INTERNAL_VECTOR_PROXY
-// #define INTERNAL_VECTOR_SPARSE
-// #define INTERNAL_MATRIX
-// #define INTERNAL_MATRIX_PROXY
-// #define INTERNAL_BANDED
-// #define INTERNAL_TRIANGULAR
-// #define INTERNAL_SYMMETRIC
-// #define INTERNAL_HERMITIAN
-// #define INTERNAL_MATRIX_SPARSE
-// #define INTERNAL_VECTOR_EXPRESSION
-// #define INTERNAL_MATRIX_EXPRESSION
-
-// #define EXTERNAL
 
 // Concept checks based on ideas of Jeremy Siek
 
@@ -285,53 +268,53 @@ namespace boost { namespace numeric { namespace ublas {
 
     template<class I1, class I2>
     struct IndexedBidirectional2DIteratorConcept {
-        typedef I1 iterator1_type;
-        typedef I2 iterator2_type;
+        typedef I1 subiterator1_type;
+        typedef I2 subiterator2_type;
 
         static void constraints () {
-            BidirectionalIteratorConcept<iterator1_type>::constraints ();
-            BidirectionalIteratorConcept<iterator2_type>::constraints ();
-            Indexed2DIteratorConcept<iterator1_type>::constraints ();
-            Indexed2DIteratorConcept<iterator2_type>::constraints ();
+            BidirectionalIteratorConcept<subiterator1_type>::constraints ();
+            BidirectionalIteratorConcept<subiterator2_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator1_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator2_type>::constraints ();
         }
     };
 
     template<class I1, class I2>
     struct MutableIndexedBidirectional2DIteratorConcept {
-        typedef I1 iterator1_type;
-        typedef I2 iterator2_type;
+        typedef I1 subiterator1_type;
+        typedef I2 subiterator2_type;
 
         static void constraints () {
-            MutableBidirectionalIteratorConcept<iterator1_type>::constraints ();
-            MutableBidirectionalIteratorConcept<iterator2_type>::constraints ();
-            Indexed2DIteratorConcept<iterator1_type>::constraints ();
-            Indexed2DIteratorConcept<iterator2_type>::constraints ();
+            MutableBidirectionalIteratorConcept<subiterator1_type>::constraints ();
+            MutableBidirectionalIteratorConcept<subiterator2_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator1_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator2_type>::constraints ();
         }
     };
 
     template<class I1, class I2>
     struct IndexedRandomAccess2DIteratorConcept {
-        typedef I1 iterator1_type;
-        typedef I2 iterator2_type;
+        typedef I1 subiterator1_type;
+        typedef I2 subiterator2_type;
 
         static void constraints () {
-            RandomAccessIteratorConcept<iterator1_type>::constraints ();
-            RandomAccessIteratorConcept<iterator2_type>::constraints ();
-            Indexed2DIteratorConcept<iterator1_type>::constraints ();
-            Indexed2DIteratorConcept<iterator2_type>::constraints ();
+            RandomAccessIteratorConcept<subiterator1_type>::constraints ();
+            RandomAccessIteratorConcept<subiterator2_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator1_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator2_type>::constraints ();
         }
     };
 
     template<class I1, class I2>
     struct MutableIndexedRandomAccess2DIteratorConcept {
-        typedef I1 iterator1_type;
-        typedef I2 iterator2_type;
+        typedef I1 subiterator1_type;
+        typedef I2 subiterator2_type;
 
         static void constraints () {
-            MutableRandomAccessIteratorConcept<iterator1_type>::constraints ();
-            MutableRandomAccessIteratorConcept<iterator2_type>::constraints ();
-            Indexed2DIteratorConcept<iterator1_type>::constraints ();
-            Indexed2DIteratorConcept<iterator2_type>::constraints ();
+            MutableRandomAccessIteratorConcept<subiterator1_type>::constraints ();
+            MutableRandomAccessIteratorConcept<subiterator2_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator1_type>::constraints ();
+            Indexed2DIteratorConcept<subiterator2_type>::constraints ();
         }
     };
 
@@ -524,7 +507,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename G::value_type value_type;
 
         static void constraints () {
-            DefaultConstructibleConcept<generator_type>::constraints ();
+            AssignableConcept<generator_type>::constraints (generator_type ());
             ReversibleContainerConcept<generator_type>::constraints ();
             generator_type g = generator_type ();
             size_type n (0);
@@ -535,14 +518,14 @@ namespace boost { namespace numeric { namespace ublas {
         }
     };
 
-    template<class S>
+    template<class SE>
     struct ScalarExpressionConcept {
-        typedef S scalar_type;
-        typedef typename S::value_type value_type;
+        typedef SE scalar_expression_type;
+        typedef typename SE::value_type value_type;
 
         static void constraints () {
-            DefaultConstructibleConcept<scalar_type>::constraints ();
-            scalar_type s = scalar_type ();
+                scalar_expression_type *sp;
+            scalar_expression_type s = *sp;
             value_type t;
             // Conversion
             t = s;
@@ -550,18 +533,20 @@ namespace boost { namespace numeric { namespace ublas {
         }
     };
 
-    template<class V>
+    template<class VE>
     struct VectorExpressionConcept {
-        typedef V vector_type;
-        typedef typename V::type_category type_category;
-        typedef typename V::size_type size_type;
-        typedef typename V::value_type value_type;
-        typedef typename V::const_iterator const_iterator_type;
-        typedef typename V::const_reverse_iterator const_reverse_iterator_type;
+        typedef VE vector_expression_type;
+        typedef typename VE::type_category type_category;
+        typedef typename VE::size_type size_type;
+        typedef typename VE::value_type value_type;
+        typedef typename VE::const_iterator const_iterator_type;
+        typedef typename VE::const_reverse_iterator const_reverse_iterator_type;
 
         static void constraints () {
-            DefaultConstructibleConcept<vector_type>::constraints ();
-            vector_type v = vector_type ();
+                vector_expression_type *vp;
+                const vector_expression_type *cvp;
+            vector_expression_type v = *vp;
+            const vector_expression_type cv = *cvp;
             size_type n (0), i (0);
             value_type t;
             // Find (internal?)
@@ -573,7 +558,6 @@ namespace boost { namespace numeric { namespace ublas {
             // Size
             n = v.size ();
             // Beginning of reverse range
-            const vector_type cv = vector_type ();
             const_reverse_iterator_type crit_begin (cv.rbegin ());
             // End of reverse range
             const_reverse_iterator_type crit_end (cv.rend ());
@@ -589,18 +573,19 @@ namespace boost { namespace numeric { namespace ublas {
         }
     };
 
-    template<class V>
+    template<class VE>
     struct MutableVectorExpressionConcept {
-        typedef V vector_type;
-        typedef typename V::size_type size_type;
-        typedef typename V::value_type value_type;
-        typedef typename V::iterator iterator_type;
-        typedef typename V::reverse_iterator reverse_iterator_type;
+        typedef VE vector_expression_type;
+        typedef typename VE::size_type size_type;
+        typedef typename VE::value_type value_type;
+        typedef typename VE::iterator iterator_type;
+        typedef typename VE::reverse_iterator reverse_iterator_type;
 
         static void constraints () {
-            AssignableConcept<vector_type>::constraints (vector_type ());
-            VectorExpressionConcept<vector_type>::constraints ();
-            vector_type v = vector_type (), v1 = vector_type (), v2 = vector_type ();
+                vector_expression_type *vp;
+            AssignableConcept<vector_expression_type>::constraints (*vp);
+            VectorExpressionConcept<vector_expression_type>::constraints ();
+            vector_expression_type v = *vp, v1 = *vp, v2 = *vp;
             size_type i (0);
             value_type t = value_type ();
             // Find (internal?)
@@ -631,41 +616,42 @@ namespace boost { namespace numeric { namespace ublas {
         }
     };
 
-    template<class M>
+    template<class ME>
     struct MatrixExpressionConcept {
-        typedef M matrix_type;
-        typedef typename M::type_category type_category;
-        typedef typename M::size_type size_type;
-        typedef typename M::value_type value_type;
-        typedef typename M::const_iterator1 const_iterator1_type;
-        typedef typename M::const_iterator2 const_iterator2_type;
-        typedef typename M::const_reverse_iterator1 const_reverse_iterator1_type;
-        typedef typename M::const_reverse_iterator2 const_reverse_iterator2_type;
+        typedef ME matrix_expression_type;
+        typedef typename ME::type_category type_category;
+        typedef typename ME::size_type size_type;
+        typedef typename ME::value_type value_type;
+        typedef typename ME::const_iterator1 const_subiterator1_type;
+        typedef typename ME::const_iterator2 const_subiterator2_type;
+        typedef typename ME::const_reverse_iterator1 const_reverse_subiterator1_type;
+        typedef typename ME::const_reverse_iterator2 const_reverse_subiterator2_type;
 
         static void constraints () {
-            DefaultConstructibleConcept<matrix_type>::constraints ();
-            matrix_type m = matrix_type ();
+                matrix_expression_type *mp;
+                const matrix_expression_type *cmp;
+            matrix_expression_type m = *mp;
+            const matrix_expression_type cm = *cmp;
             size_type n (0), i (0), j (0);
             value_type t;
             // Find (internal?)
-            const_iterator1_type cit1 (m.find1 (0, i, j));
-            const_iterator2_type cit2 (m.find2 (0, i, j));
+            const_subiterator1_type cit1 (m.find1 (0, i, j));
+            const_subiterator2_type cit2 (m.find2 (0, i, j));
             // Beginning of range
-            const_iterator1_type cit1_begin (m.begin1 ());
-            const_iterator2_type cit2_begin (m.begin2 ());
+            const_subiterator1_type cit1_begin (m.begin1 ());
+            const_subiterator2_type cit2_begin (m.begin2 ());
             // End of range
-            const_iterator1_type cit1_end (m.end1 ());
-            const_iterator2_type cit2_end (m.end2 ());
+            const_subiterator1_type cit1_end (m.end1 ());
+            const_subiterator2_type cit2_end (m.end2 ());
             // Size
             n = m.size1 ();
             n = m.size2 ();
             // Beginning of reverse range
-            const matrix_type cm = matrix_type ();
-            const_reverse_iterator1_type crit1_begin (cm.rbegin1 ());
-            const_reverse_iterator2_type crit2_begin (cm.rbegin2 ());
+            const_reverse_subiterator1_type crit1_begin (cm.rbegin1 ());
+            const_reverse_subiterator2_type crit2_begin (cm.rbegin2 ());
             // End of reverse range
-            const_reverse_iterator1_type crit1_end (cm.rend1 ());
-            const_reverse_iterator2_type crit2_end (cm.rend2 ());
+            const_reverse_subiterator1_type crit1_end (cm.rend1 ());
+            const_reverse_subiterator2_type crit2_end (cm.rend2 ());
             // Element access
             t = m (i, j);
             ignore_unused_variable_warning (n);
@@ -683,39 +669,40 @@ namespace boost { namespace numeric { namespace ublas {
         }
     };
 
-    template<class M>
+    template<class ME>
     struct MutableMatrixExpressionConcept {
-        typedef M matrix_type;
-        typedef typename M::size_type size_type;
-        typedef typename M::value_type value_type;
-        typedef typename M::iterator1 iterator1_type;
-        typedef typename M::iterator2 iterator2_type;
-        typedef typename M::reverse_iterator1 reverse_iterator1_type;
-        typedef typename M::reverse_iterator2 reverse_iterator2_type;
+        typedef ME matrix_expression_type;
+        typedef typename ME::size_type size_type;
+        typedef typename ME::value_type value_type;
+        typedef typename ME::iterator1 subiterator1_type;
+        typedef typename ME::iterator2 subiterator2_type;
+        typedef typename ME::reverse_iterator1 reverse_subiterator1_type;
+        typedef typename ME::reverse_iterator2 reverse_subiterator2_type;
 
         static void constraints () {
-            AssignableConcept<matrix_type>::constraints (matrix_type ());
-            MatrixExpressionConcept<matrix_type>::constraints ();
-            matrix_type m = matrix_type (), m1 = matrix_type (), m2 = matrix_type ();
+                matrix_expression_type *mp;
+            AssignableConcept<matrix_expression_type>::constraints (*mp);
+            MatrixExpressionConcept<matrix_expression_type>::constraints ();
+            matrix_expression_type m = *mp, m1 = *mp, m2 = *mp;
             size_type i (0), j (0);
             value_type t = value_type ();
             // Find (internal?)
-            iterator1_type it1 (m.find1 (0, i, j));
-            iterator2_type it2 (m.find2 (0, i, j));
+            subiterator1_type it1 (m.find1 (0, i, j));
+            subiterator2_type it2 (m.find2 (0, i, j));
             // Beginning of range
-            iterator1_type it1_begin (m.begin1 ());
-            iterator2_type it2_begin (m.begin2 ());
+            subiterator1_type it1_begin (m.begin1 ());
+            subiterator2_type it2_begin (m.begin2 ());
             // End of range
-            iterator1_type it1_end (m.end1 ());
-            iterator2_type it2_end (m.end2 ());
+            subiterator1_type it1_end (m.end1 ());
+            subiterator2_type it2_end (m.end2 ());
             // Swap
             m1.swap (m2);
             // Beginning of reverse range
-            reverse_iterator1_type rit1_begin (m.rbegin1 ());
-            reverse_iterator2_type rit2_begin (m.rbegin2 ());
+            reverse_subiterator1_type rit1_begin (m.rbegin1 ());
+            reverse_subiterator2_type rit2_begin (m.rbegin2 ());
             // End of reverse range
-            reverse_iterator1_type rit1_end (m.rend1 ());
-            reverse_iterator2_type rit2_end (m.rend2 ());
+            reverse_subiterator1_type rit1_end (m.rend1 ());
+            reverse_subiterator2_type rit2_end (m.rend2 ());
             // Assignments
             m2 = m1;
             m2.assign (m1);
@@ -741,12 +728,19 @@ namespace boost { namespace numeric { namespace ublas {
     struct VectorConcept {
         typedef V vector_type;
         typedef typename V::size_type size_type;
+        typedef typename V::value_type value_type;
+        typedef const value_type *const_pointer;
 
         static void constraints () {
             VectorExpressionConcept<vector_type>::constraints ();
             size_type n (0);
+            size_type i (0);
             // Sizing constructor
             vector_type v (n);
+            // Element support
+            const_pointer p = v.find_element (i);
+
+            ignore_unused_variable_warning (p);
         }
     };
 
@@ -755,6 +749,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef V vector_type;
         typedef typename V::size_type size_type;
         typedef typename V::value_type value_type;
+        typedef value_type *pointer;
 
         static void constraints () {
             VectorConcept<vector_type>::constraints ();
@@ -764,14 +759,46 @@ namespace boost { namespace numeric { namespace ublas {
             size_type i (0);
             // Sizing constructor
             vector_type v (n);
-            // Insert
-            v.insert (i, t);
-            // Erase
-            v.erase (i);
-            // Clear
+            // Element support
+            pointer p = v.find_element (i);
+            // Element assignment
+            value_type r = v.insert_element (i, t);
+            v.insert_element (i, t) = r;
+            // Zeroing
             v.clear ();
             // Resize
             v.resize (n);
+
+            ignore_unused_variable_warning (p);
+            ignore_unused_variable_warning (r);
+        }
+    };
+
+    template<class V>
+    struct SparseVectorConcept {
+        typedef V vector_type;
+        typedef typename V::size_type size_type;
+
+        static void constraints () {
+            VectorConcept<vector_type>::constraints ();
+        }
+    };
+
+    template<class V>
+    struct MutableSparseVectorConcept {
+        typedef V vector_type;
+        typedef typename V::size_type size_type;
+        typedef typename V::value_type value_type;
+
+        static void constraints () {
+            SparseVectorConcept<vector_type>::constraints ();
+            MutableVectorConcept<vector_type>::constraints ();
+            size_type n (0);
+            size_type i (0);
+            // Sizing constructor
+            vector_type v (n);
+            // Element erasure
+            v.erase_element (i);
         }
     };
 
@@ -779,12 +806,24 @@ namespace boost { namespace numeric { namespace ublas {
     struct MatrixConcept {
         typedef M matrix_type;
         typedef typename M::size_type size_type;
+        typedef typename M::value_type value_type;
+        typedef const value_type *const_pointer;
 
         static void constraints () {
             MatrixExpressionConcept<matrix_type>::constraints ();
             size_type n (0);
+            size_type i (0), j (0);
             // Sizing constructor
             matrix_type m (n, n);
+            // Element support
+#ifndef SKIP_BAD
+            const_pointer p = m.find_element (i, j);
+#else
+            const_pointer p;
+            ignore_unused_variable_warning (i);
+            ignore_unused_variable_warning (j);
+#endif
+            ignore_unused_variable_warning (p);
         }
     };
 
@@ -793,6 +832,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef M matrix_type;
         typedef typename M::size_type size_type;
         typedef typename M::value_type value_type;
+        typedef value_type *pointer;
 
         static void constraints () {
             MatrixConcept<matrix_type>::constraints ();
@@ -802,15 +842,53 @@ namespace boost { namespace numeric { namespace ublas {
             size_type i (0), j (0);
             // Sizing constructor
             matrix_type m (n, n);
-            // Insert
-            m.insert (i, j, t);
-            // Erase
-            m.erase (i, j);
-            // Clear
+            // Element support
+#ifndef SKIP_BAD
+            pointer p = m.find_element (i, j);
+            ignore_unused_variable_warning (i);
+            ignore_unused_variable_warning (j);
+#else
+            pointer p;
+#endif
+            // Element assigment
+            value_type r = m.insert_element (i, j, t);
+            m.insert_element (i, j, t) = r;
+            // Zeroing
             m.clear ();
             // Resize
             m.resize (n, n);
             m.resize (n, n, false);
+
+            ignore_unused_variable_warning (p);
+            ignore_unused_variable_warning (r);
+        }
+    };
+
+    template<class M>
+    struct SparseMatrixConcept {
+        typedef M matrix_type;
+        typedef typename M::size_type size_type;
+
+        static void constraints () {
+            MatrixConcept<matrix_type>::constraints ();
+        }
+    };
+
+    template<class M>
+    struct MutableSparseMatrixConcept {
+        typedef M matrix_type;
+        typedef typename M::size_type size_type;
+        typedef typename M::value_type value_type;
+
+        static void constraints () {
+            SparseMatrixConcept<matrix_type>::constraints ();
+            MutableMatrixConcept<matrix_type>::constraints ();
+            size_type n (0);
+            size_type i (0), j (0);
+            // Sizing constructor
+            matrix_type m (n, n);
+            // Elemnent erasure
+            m.erase_element (i, j);
         }
     };
 
@@ -847,7 +925,6 @@ namespace boost { namespace numeric { namespace ublas {
     ZeroElement (matrix<double>) {
         return zero_matrix<double> ();
     }
-#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
     template<>
     std::complex<float>
     ZeroElement (std::complex<float>) {
@@ -878,7 +955,6 @@ namespace boost { namespace numeric { namespace ublas {
     ZeroElement (matrix<std::complex<double> >) {
         return zero_matrix<std::complex<double> > ();
     }
-#endif
 
     template<class T>
     T
@@ -903,7 +979,6 @@ namespace boost { namespace numeric { namespace ublas {
     OneElement (matrix<double>) {
         return identity_matrix<double> ();
     }
-#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
     template<>
     std::complex<float>
     OneElement (std::complex<float>) {
@@ -924,23 +999,22 @@ namespace boost { namespace numeric { namespace ublas {
     OneElement (matrix<std::complex<double> >) {
         return identity_matrix<std::complex<double> > ();
     }
-#endif
 
     template<class E1, class E2>
     bool
     operator == (const vector_expression<E1> &e1, const vector_expression<E2> &e2) {
-        typedef BOOST_UBLAS_TYPENAME promote_traits<BOOST_UBLAS_TYPENAME E1::value_type,
-                                                    BOOST_UBLAS_TYPENAME E2::value_type>::promote_type value_type;
-        typedef BOOST_UBLAS_TYPENAME type_traits<value_type>::real_type real_type;
-        return norm_inf (e1 - e2) == real_type (0);
+        typedef typename promote_traits<typename E1::value_type,
+                                                    typename E2::value_type>::promote_type value_type;
+        typedef typename type_traits<value_type>::real_type real_type;
+        return norm_inf (e1 - e2) == real_type/*zero*/();
     }
     template<class E1, class E2>
     bool
     operator == (const matrix_expression<E1> &e1, const matrix_expression<E2> &e2) {
-        typedef BOOST_UBLAS_TYPENAME promote_traits<BOOST_UBLAS_TYPENAME E1::value_type,
-                                                    BOOST_UBLAS_TYPENAME E2::value_type>::promote_type value_type;
-        typedef BOOST_UBLAS_TYPENAME type_traits<value_type>::real_type real_type;
-        return norm_inf (e1 - e2) == real_type (0);
+        typedef typename promote_traits<typename E1::value_type,
+                                                    typename E2::value_type>::promote_type value_type;
+        typedef typename type_traits<value_type>::real_type real_type;
+        return norm_inf (e1 - e2) == real_type/*zero*/();
     }
 
     template<class T>
@@ -1068,27 +1142,40 @@ namespace boost { namespace numeric { namespace ublas {
 
     void concept_checks () {
 
+        // Allow tests to be group to keep down compiler storage requirement
+#ifdef INTERAL
+#define INTERNAL_STORAGE
+#define INTERNAL_VECTOR
+#define INTERNAL_MATRIX
+#define INTERNAL_SPECIAL
+#define INTERNAL_SPARSE
+#define INTERNAL_EXPRESSION
+#endif
+
+        // Element value type for tests
+        typedef float T;
+
         // Storage Array
-#if defined (INTERNAL) || defined (INTERNAL_STORAGE)
-        StorageArrayConcept<const std::vector<double> >::constraints ();
-        MutableStorageArrayConcept<std::vector<double> >::constraints ();
-        RandomAccessIteratorConcept<std::vector<double>::const_iterator>::constraints ();
-        MutableRandomAccessIteratorConcept<std::vector<double>::iterator>::constraints ();
+#if defined (INTERNAL_STORAGE) || defined (INTERNAL_STORAGE_DENSE)
+        StorageArrayConcept<const std::vector<T> >::constraints ();
+        MutableStorageArrayConcept<std::vector<T> >::constraints ();
+        RandomAccessIteratorConcept<std::vector<T>::const_iterator>::constraints ();
+        MutableRandomAccessIteratorConcept<std::vector<T>::iterator>::constraints ();
 
-        StorageArrayConcept<const bounded_array<double, 1> >::constraints ();
-        MutableStorageArrayConcept<bounded_array<double, 1> >::constraints ();
-        RandomAccessIteratorConcept<bounded_array<double, 1>::const_iterator>::constraints ();
-        MutableRandomAccessIteratorConcept<bounded_array<double, 1>::iterator>::constraints ();
+        StorageArrayConcept<const bounded_array<T, 1> >::constraints ();
+        MutableStorageArrayConcept<bounded_array<T, 1> >::constraints ();
+        RandomAccessIteratorConcept<bounded_array<T, 1>::const_iterator>::constraints ();
+        MutableRandomAccessIteratorConcept<bounded_array<T, 1>::iterator>::constraints ();
 
-        StorageArrayConcept<const unbounded_array<double> >::constraints ();
-        MutableStorageArrayConcept<unbounded_array<double> >::constraints ();
-        RandomAccessIteratorConcept<unbounded_array<double>::const_iterator>::constraints ();
-        MutableRandomAccessIteratorConcept<unbounded_array<double>::iterator>::constraints ();
+        StorageArrayConcept<const unbounded_array<T> >::constraints ();
+        MutableStorageArrayConcept<unbounded_array<T> >::constraints ();
+        RandomAccessIteratorConcept<unbounded_array<T>::const_iterator>::constraints ();
+        MutableRandomAccessIteratorConcept<unbounded_array<T>::iterator>::constraints ();
 
-        StorageArrayConcept<const array_adaptor<double> >::constraints ();
-        MutableStorageArrayConcept<array_adaptor<double> >::constraints ();
-        RandomAccessIteratorConcept<array_adaptor<double>::const_iterator>::constraints ();
-        MutableRandomAccessIteratorConcept<array_adaptor<double>::iterator>::constraints ();
+        StorageArrayConcept<const array_adaptor<T> >::constraints ();
+        MutableStorageArrayConcept<array_adaptor<T> >::constraints ();
+        RandomAccessIteratorConcept<array_adaptor<T>::const_iterator>::constraints ();
+        MutableRandomAccessIteratorConcept<array_adaptor<T>::iterator>::constraints ();
 
         IndexSetConcept<range>::constraints ();
         RandomAccessIteratorConcept<range::const_iterator>::constraints ();
@@ -1101,516 +1188,500 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
 
         // Storage Sparse
-#if defined (INTERNAL) || defined (INTERNAL_STORAGE_SPARSE)
-        StorageSparseConcept<const map_array<std::size_t, double> >::constraints ();
-        MutableStorageSparseConcept<map_array<std::size_t, double> >::constraints ();
-        RandomAccessIteratorConcept<map_array<std::size_t, double>::const_iterator>::constraints ();
-        MutableRandomAccessIteratorConcept<map_array<std::size_t, double>::iterator>::constraints ();
+#if defined (INTERNAL_STORAGE) || defined (INTERNAL_STORAGE_SPARSE)
+        StorageSparseConcept<const map_array<std::size_t, T> >::constraints ();
+        MutableStorageSparseConcept<map_array<std::size_t, T> >::constraints ();
+        RandomAccessIteratorConcept<map_array<std::size_t, T>::const_iterator>::constraints ();
+        MutableRandomAccessIteratorConcept<map_array<std::size_t, T>::iterator>::constraints ();
 
-        StorageSparseConcept<const std::map<std::size_t, double> >::constraints ();
-        MutableStorageSparseConcept<std::map<std::size_t, double> >::constraints ();
-        BidirectionalIteratorConcept<std::map<std::size_t, double>::const_iterator>::constraints ();
+        StorageSparseConcept<const std::map<std::size_t, T> >::constraints ();
+        MutableStorageSparseConcept<std::map<std::size_t, T> >::constraints ();
+        BidirectionalIteratorConcept<std::map<std::size_t, T>::const_iterator>::constraints ();
                 // Not value_type mutable
-        BidirectionalIteratorConcept<std::map<std::size_t, double>::iterator>::constraints ();
-
-#ifdef BOOST_UBLAS_DEPRACATED
-        StorageSparseConcept<const set_array<std::size_t> >::constraints ();
-        MutableStorageSparseConcept<set_array<std::size_t> >::constraints ();
-        RandomAccessIteratorConcept<set_array<std::size_t>::const_iterator>::constraints ();
-        MutableRandomAccessIteratorConcept<set_array<std::size_t>::iterator>::constraints ();
-
-        StorageSparseConcept<const std::set<std::size_t> >::constraints ();
-        MutableStorageSparseConcept<std::set<std::size_t> >::constraints ();
-        BidirectionalIteratorConcept<std::set<std::size_t>::const_iterator>::constraints ();
-        MutableBidirectionalIteratorConcept<std::set<std::size_t>::iterator>::constraints ();
-#endif
-
+        BidirectionalIteratorConcept<std::map<std::size_t, T>::iterator>::constraints ();
 #endif
 
         // Vector
-#if defined (INTERNAL) || defined (INTERNAL_VECTOR)
-        VectorConcept<const vector<double> >::constraints ();
-        MutableVectorConcept<vector<double> >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector<double>::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector<double>::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector<double>::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector<double>::reverse_iterator>::constraints ();
+#if defined (INTERNAL_VECTOR) || defined (INTERNAL_VECTOR_DENSE)
+        VectorConcept<const vector<T> >::constraints ();
+        MutableVectorConcept<vector<T> >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector<T>::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector<T>::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector<T>::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector<T>::reverse_iterator>::constraints ();
 
-        VectorConcept<unit_vector<double> >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<unit_vector<double>::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<unit_vector<double>::const_reverse_iterator>::constraints ();
+        VectorConcept<zero_vector<T> >::constraints ();
+        IndexedBidirectional1DIteratorConcept<zero_vector<T>::const_iterator>::constraints ();
+        IndexedBidirectional1DIteratorConcept<zero_vector<T>::const_reverse_iterator>::constraints ();
 
-        VectorConcept<zero_vector<double> >::constraints ();
-        IndexedBidirectional1DIteratorConcept<zero_vector<double>::const_iterator>::constraints ();
-        IndexedBidirectional1DIteratorConcept<zero_vector<double>::const_reverse_iterator>::constraints ();
+        VectorConcept<unit_vector<T> >::constraints ();
+        IndexedBidirectional1DIteratorConcept<unit_vector<T>::const_iterator>::constraints ();
+        IndexedBidirectional1DIteratorConcept<unit_vector<T>::const_reverse_iterator>::constraints ();
 
-        VectorConcept<scalar_vector<double> >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<scalar_vector<double>::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<scalar_vector<double>::const_reverse_iterator>::constraints ();
+        VectorConcept<scalar_vector<T> >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<scalar_vector<T>::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<scalar_vector<T>::const_reverse_iterator>::constraints ();
 
-        VectorConcept<const c_vector<double, 1> >::constraints ();
-        MutableVectorConcept<c_vector<double, 1> >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<c_vector<double, 1>::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<c_vector<double, 1>::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<c_vector<double, 1>::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<c_vector<double, 1>::reverse_iterator>::constraints ();
+        VectorConcept<const c_vector<T, 1> >::constraints ();
+        MutableVectorConcept<c_vector<T, 1> >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<c_vector<T, 1>::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<c_vector<T, 1>::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<c_vector<T, 1>::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<c_vector<T, 1>::reverse_iterator>::constraints ();
 #endif
 
         // Vector Proxies
-#if defined (INTERNAL) || defined (INTERNAL_VECTOR_PROXY)
-        VectorExpressionConcept<const vector_range<const vector<double> > >::constraints ();
-        MutableVectorExpressionConcept<vector_range<vector<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_range<vector<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_range<vector<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_range<vector<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_range<vector<double> >::reverse_iterator>::constraints ();
+#if defined (INTERNAL_VECTOR) || defined (INTERNAL_VECTOR_PROXY)
+        VectorExpressionConcept<const vector_range<const vector<T> > >::constraints ();
+        MutableVectorExpressionConcept<vector_range<vector<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_range<vector<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_range<vector<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_range<vector<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_range<vector<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<const vector_slice<const vector<double> > >::constraints ();
-        MutableVectorExpressionConcept<vector_slice<vector<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_slice<vector<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_slice<vector<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_slice<vector<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_slice<vector<double> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<const vector_slice<const vector<T> > >::constraints ();
+        MutableVectorExpressionConcept<vector_slice<vector<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_slice<vector<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_slice<vector<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_slice<vector<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_slice<vector<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<const vector_indirect<const vector<double> > >::constraints ();
-        MutableVectorExpressionConcept<vector_indirect<vector<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_indirect<vector<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_indirect<vector<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_indirect<vector<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_indirect<vector<double> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<const vector_indirect<const vector<T> > >::constraints ();
+        MutableVectorExpressionConcept<vector_indirect<vector<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_indirect<vector<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_indirect<vector<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_indirect<vector<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_indirect<vector<T> >::reverse_iterator>::constraints ();
 #endif
 
         // Sparse Vector
-#if defined (INTERNAL) || defined (INTERNAL_VECTOR_SPARSE)
-        VectorConcept<const sparse_vector<double> >::constraints ();
-        MutableVectorConcept<sparse_vector<double> >::constraints ();
-        IndexedBidirectional1DIteratorConcept<sparse_vector<double>::const_iterator>::constraints ();
-        MutableIndexedBidirectional1DIteratorConcept<sparse_vector<double>::iterator>::constraints ();
-        IndexedBidirectional1DIteratorConcept<sparse_vector<double>::const_reverse_iterator>::constraints ();
-        MutableIndexedBidirectional1DIteratorConcept<sparse_vector<double>::reverse_iterator>::constraints ();
+#if defined (INTERNAL_SPARSE) || defined (INTERNAL_VECTOR_SPARSE)
+        SparseVectorConcept<const mapped_vector<T> >::constraints ();
+        MutableSparseVectorConcept<mapped_vector<T> >::constraints ();
+        IndexedBidirectional1DIteratorConcept<mapped_vector<T>::const_iterator>::constraints ();
+        MutableIndexedBidirectional1DIteratorConcept<mapped_vector<T>::iterator>::constraints ();
+        IndexedBidirectional1DIteratorConcept<mapped_vector<T>::const_reverse_iterator>::constraints ();
+        MutableIndexedBidirectional1DIteratorConcept<mapped_vector<T>::reverse_iterator>::constraints ();
 
-        VectorConcept<const compressed_vector<double> >::constraints ();
-        MutableVectorConcept<compressed_vector<double> >::constraints ();
-        IndexedBidirectional1DIteratorConcept<compressed_vector<double>::const_iterator>::constraints ();
-        MutableIndexedBidirectional1DIteratorConcept<compressed_vector<double>::iterator>::constraints ();
-        IndexedBidirectional1DIteratorConcept<compressed_vector<double>::const_reverse_iterator>::constraints ();
-        MutableIndexedBidirectional1DIteratorConcept<compressed_vector<double>::reverse_iterator>::constraints ();
+        SparseVectorConcept<const compressed_vector<T> >::constraints ();
+        MutableSparseVectorConcept<compressed_vector<T> >::constraints ();
+        IndexedBidirectional1DIteratorConcept<compressed_vector<T>::const_iterator>::constraints ();
+        MutableIndexedBidirectional1DIteratorConcept<compressed_vector<T>::iterator>::constraints ();
+        IndexedBidirectional1DIteratorConcept<compressed_vector<T>::const_reverse_iterator>::constraints ();
+        MutableIndexedBidirectional1DIteratorConcept<compressed_vector<T>::reverse_iterator>::constraints ();
 
-        VectorConcept<const coordinate_vector<double> >::constraints ();
-        MutableVectorConcept<coordinate_vector<double> >::constraints ();
-        IndexedBidirectional1DIteratorConcept<coordinate_vector<double>::const_iterator>::constraints ();
-        MutableIndexedBidirectional1DIteratorConcept<coordinate_vector<double>::iterator>::constraints ();
-        IndexedBidirectional1DIteratorConcept<coordinate_vector<double>::const_reverse_iterator>::constraints ();
-        MutableIndexedBidirectional1DIteratorConcept<coordinate_vector<double>::reverse_iterator>::constraints ();
+        SparseVectorConcept<const coordinate_vector<T> >::constraints ();
+        MutableSparseVectorConcept<coordinate_vector<T> >::constraints ();
+        IndexedBidirectional1DIteratorConcept<coordinate_vector<T>::const_iterator>::constraints ();
+        MutableIndexedBidirectional1DIteratorConcept<coordinate_vector<T>::iterator>::constraints ();
+        IndexedBidirectional1DIteratorConcept<coordinate_vector<T>::const_reverse_iterator>::constraints ();
+        MutableIndexedBidirectional1DIteratorConcept<coordinate_vector<T>::reverse_iterator>::constraints ();
 #endif
 
         // Matrix
-#if defined (INTERNAL) || defined (INTERNAL_MATRIX)
-        MatrixConcept<const matrix<double> >::constraints ();
-        MutableMatrixConcept<matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix<double>::const_iterator1,
-                                             matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix<double>::iterator1,
-                                                    matrix<double>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix<double>::const_reverse_iterator1,
-                                             matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix<double>::reverse_iterator1,
-                                                    matrix<double>::reverse_iterator2>::constraints ();
+#if defined (INTERNAL_MATRIX) || defined (INTERNAL_MATRIX_DENSE)
+        MatrixConcept<const matrix<T> >::constraints ();
+        MutableMatrixConcept<matrix<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix<T>::const_iterator1,
+                                             matrix<T>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix<T>::iterator1,
+                                                    matrix<T>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix<T>::const_reverse_iterator1,
+                                             matrix<T>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix<T>::reverse_iterator1,
+                                                    matrix<T>::reverse_iterator2>::constraints ();
 
-        MatrixConcept<const vector_of_vector<double> >::constraints ();
-        MutableMatrixConcept<vector_of_vector<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<vector_of_vector<double>::const_iterator1,
-                                             vector_of_vector<double>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<vector_of_vector<double>::iterator1,
-                                                    vector_of_vector<double>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<vector_of_vector<double>::const_reverse_iterator1,
-                                             vector_of_vector<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<vector_of_vector<double>::reverse_iterator1,
-                                                    vector_of_vector<double>::reverse_iterator2>::constraints ();
+        MatrixConcept<const vector_of_vector<T> >::constraints ();
+        MutableMatrixConcept<vector_of_vector<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<vector_of_vector<T>::const_iterator1,
+                                             vector_of_vector<T>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<vector_of_vector<T>::iterator1,
+                                                    vector_of_vector<T>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<vector_of_vector<T>::const_reverse_iterator1,
+                                             vector_of_vector<T>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<vector_of_vector<T>::reverse_iterator1,
+                                                    vector_of_vector<T>::reverse_iterator2>::constraints ();
 
-        MatrixConcept<identity_matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<identity_matrix<double>::const_iterator1,
-                                             identity_matrix<double>::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<identity_matrix<double>::const_reverse_iterator1,
-                                             identity_matrix<double>::const_reverse_iterator2>::constraints ();
+        MatrixConcept<zero_matrix<T> >::constraints ();
+        IndexedBidirectional2DIteratorConcept<zero_matrix<T>::const_iterator1,
+                                              zero_matrix<T>::const_iterator2>::constraints ();
+        IndexedBidirectional2DIteratorConcept<zero_matrix<T>::const_reverse_iterator1,
+                                              zero_matrix<T>::const_reverse_iterator2>::constraints ();
 
-        MatrixConcept<zero_matrix<double> >::constraints ();
-        IndexedBidirectional2DIteratorConcept<zero_matrix<double>::const_iterator1,
-                                              zero_matrix<double>::const_iterator2>::constraints ();
-        IndexedBidirectional2DIteratorConcept<zero_matrix<double>::const_reverse_iterator1,
-                                              zero_matrix<double>::const_reverse_iterator2>::constraints ();
+        MatrixConcept<identity_matrix<T> >::constraints ();
+        IndexedBidirectional2DIteratorConcept<identity_matrix<T>::const_iterator1,
+                                             identity_matrix<T>::const_iterator2>::constraints ();
+        IndexedBidirectional2DIteratorConcept<identity_matrix<T>::const_reverse_iterator1,
+                                             identity_matrix<T>::const_reverse_iterator2>::constraints ();
 
-        MatrixConcept<scalar_matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<scalar_matrix<double>::const_iterator1,
-                                             scalar_matrix<double>::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<scalar_matrix<double>::const_reverse_iterator1,
-                                             scalar_matrix<double>::const_reverse_iterator2>::constraints ();
+        MatrixConcept<scalar_matrix<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<scalar_matrix<T>::const_iterator1,
+                                             scalar_matrix<T>::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<scalar_matrix<T>::const_reverse_iterator1,
+                                             scalar_matrix<T>::const_reverse_iterator2>::constraints ();
 
-        MatrixConcept<const c_matrix<double, 1, 1> >::constraints ();
-        MutableMatrixConcept<c_matrix<double, 1, 1> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<c_matrix<double, 1, 1>::const_iterator1,
-                                             c_matrix<double, 1, 1>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<c_matrix<double, 1, 1>::iterator1,
-                                                    c_matrix<double, 1, 1>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<c_matrix<double, 1, 1>::const_reverse_iterator1,
-                                             c_matrix<double, 1, 1>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<c_matrix<double, 1, 1>::reverse_iterator1,
-                                                    c_matrix<double, 1, 1>::reverse_iterator2>::constraints ();
+        MatrixConcept<const c_matrix<T, 1, 1> >::constraints ();
+        MutableMatrixConcept<c_matrix<T, 1, 1> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<c_matrix<T, 1, 1>::const_iterator1,
+                                             c_matrix<T, 1, 1>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<c_matrix<T, 1, 1>::iterator1,
+                                                    c_matrix<T, 1, 1>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<c_matrix<T, 1, 1>::const_reverse_iterator1,
+                                             c_matrix<T, 1, 1>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<c_matrix<T, 1, 1>::reverse_iterator1,
+                                                    c_matrix<T, 1, 1>::reverse_iterator2>::constraints ();
 #endif
 
         // Matrix Proxies
-#if defined (INTERNAL) || defined (INTERNAL_MATRIX_PROXY)
-        VectorExpressionConcept<const matrix_row<const matrix<double> > >::constraints ();
-        MutableVectorExpressionConcept<matrix_row<matrix<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_row<matrix<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_row<matrix<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_row<matrix<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_row<matrix<double> >::reverse_iterator>::constraints ();
+#if defined (INTERNAL_MATRIX) || defined (INTERNAL_MATRIX_PROXY)
+        VectorExpressionConcept<const matrix_row<const matrix<T> > >::constraints ();
+        MutableVectorExpressionConcept<matrix_row<matrix<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_row<matrix<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_row<matrix<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_row<matrix<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_row<matrix<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<const matrix_column<const matrix<double> > >::constraints ();
-        MutableVectorExpressionConcept<matrix_column<matrix<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_column<matrix<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_column<matrix<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_column<matrix<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_column<matrix<double> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<const matrix_column<const matrix<T> > >::constraints ();
+        MutableVectorExpressionConcept<matrix_column<matrix<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_column<matrix<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_column<matrix<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_column<matrix<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_column<matrix<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<const matrix_vector_range<const matrix<double> > >::constraints ();
-        MutableVectorExpressionConcept<matrix_vector_range<matrix<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<double> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<const matrix_vector_range<const matrix<T> > >::constraints ();
+        MutableVectorExpressionConcept<matrix_vector_range<matrix<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_range<matrix<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<const matrix_vector_slice<const matrix<double> > >::constraints ();
-        MutableVectorExpressionConcept<matrix_vector_slice<matrix<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<double> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<const matrix_vector_slice<const matrix<T> > >::constraints ();
+        MutableVectorExpressionConcept<matrix_vector_slice<matrix<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_slice<matrix<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<const matrix_vector_indirect<const matrix<double>, vector<unsigned> > >::constraints ();
-        MutableVectorExpressionConcept<matrix_vector_indirect<matrix<double>, vector<unsigned> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<double>, vector<unsigned> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<double>, vector<unsigned> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<double>, vector<unsigned> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<double>, vector<unsigned> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<const matrix_vector_indirect<const matrix<T>, vector<unsigned> > >::constraints ();
+        MutableVectorExpressionConcept<matrix_vector_indirect<matrix<T>, vector<unsigned> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<T>, vector<unsigned> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<T>, vector<unsigned> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<T>, vector<unsigned> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<matrix_vector_indirect<matrix<T>, vector<unsigned> >::reverse_iterator>::constraints ();
 
-        MatrixExpressionConcept<const matrix_range<const matrix<double> > >::constraints ();
-        MutableMatrixExpressionConcept<matrix_range<matrix<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_range<matrix<double> >::const_iterator1,
-                                             matrix_range<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_range<matrix<double> >::iterator1,
-                                                    matrix_range<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_range<matrix<double> >::const_reverse_iterator1,
-                                             matrix_range<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_range<matrix<double> >::reverse_iterator1,
-                                                    matrix_range<matrix<double> >::reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<const matrix_range<const matrix<T> > >::constraints ();
+        MutableMatrixExpressionConcept<matrix_range<matrix<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_range<matrix<T> >::const_iterator1,
+                                             matrix_range<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_range<matrix<T> >::iterator1,
+                                                    matrix_range<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_range<matrix<T> >::const_reverse_iterator1,
+                                             matrix_range<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_range<matrix<T> >::reverse_iterator1,
+                                                    matrix_range<matrix<T> >::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<const matrix_slice<const matrix<double> > >::constraints ();
-        MutableMatrixExpressionConcept<matrix_slice<matrix<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<double> >::const_iterator1,
-                                             matrix_slice<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<double> >::iterator1,
-                                                    matrix_slice<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<double> >::const_reverse_iterator1,
-                                             matrix_slice<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<double> >::reverse_iterator1,
-                                                    matrix_slice<matrix<double> >::reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<const matrix_slice<const matrix<T> > >::constraints ();
+        MutableMatrixExpressionConcept<matrix_slice<matrix<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<T> >::const_iterator1,
+                                             matrix_slice<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<T> >::iterator1,
+                                                    matrix_slice<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<T> >::const_reverse_iterator1,
+                                             matrix_slice<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_slice<matrix<T> >::reverse_iterator1,
+                                                    matrix_slice<matrix<T> >::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<const matrix_indirect<const matrix<double> > >::constraints ();
-        MutableMatrixExpressionConcept<matrix_indirect<matrix<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<double> >::const_iterator1,
-                                             matrix_indirect<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<double> >::iterator1,
-                                                    matrix_indirect<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<double> >::const_reverse_iterator1,
-                                             matrix_indirect<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<double> >::reverse_iterator1,
-                                                    matrix_indirect<matrix<double> >::reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<const matrix_indirect<const matrix<T> > >::constraints ();
+        MutableMatrixExpressionConcept<matrix_indirect<matrix<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<T> >::const_iterator1,
+                                             matrix_indirect<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<T> >::iterator1,
+                                                    matrix_indirect<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<T> >::const_reverse_iterator1,
+                                             matrix_indirect<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_indirect<matrix<T> >::reverse_iterator1,
+                                                    matrix_indirect<matrix<T> >::reverse_iterator2>::constraints ();
 #endif
 
         // Banded Matrix
-#if defined (INTERNAL) || defined (INTERNAL_BANDED)
-        MatrixConcept<const banded_matrix<double> >::constraints ();
-        MutableMatrixConcept<banded_matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<banded_matrix<double>::const_iterator1,
-                                             banded_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<banded_matrix<double>::iterator1,
-                                                    banded_matrix<double>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<banded_matrix<double>::const_reverse_iterator1,
-                                             banded_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<banded_matrix<double>::reverse_iterator1,
-                                                    banded_matrix<double>::reverse_iterator2>::constraints ();
+#if defined (INTERNAL_SPECIAL) || defined (INTERNAL_BANDED)
+        MatrixConcept<const banded_matrix<T> >::constraints ();
+        MutableMatrixConcept<banded_matrix<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<banded_matrix<T>::const_iterator1,
+                                             banded_matrix<T>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<banded_matrix<T>::iterator1,
+                                                    banded_matrix<T>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<banded_matrix<T>::const_reverse_iterator1,
+                                             banded_matrix<T>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<banded_matrix<T>::reverse_iterator1,
+                                                    banded_matrix<T>::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<const banded_adaptor<const matrix<double> > >::constraints ();
-        MutableMatrixExpressionConcept<banded_adaptor<matrix<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<double> >::const_iterator1,
-                                             banded_adaptor<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<double> >::iterator1,
-                                                    banded_adaptor<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<double> >::const_reverse_iterator1,
-                                             banded_adaptor<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<double> >::reverse_iterator1,
-                                                    banded_adaptor<matrix<double> >::reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<const banded_adaptor<const matrix<T> > >::constraints ();
+        MutableMatrixExpressionConcept<banded_adaptor<matrix<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<T> >::const_iterator1,
+                                             banded_adaptor<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<T> >::iterator1,
+                                                    banded_adaptor<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<T> >::const_reverse_iterator1,
+                                             banded_adaptor<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<banded_adaptor<matrix<T> >::reverse_iterator1,
+                                                    banded_adaptor<matrix<T> >::reverse_iterator2>::constraints ();
 #endif
 
         // Triangular Matrix
-#if defined (INTERNAL) || defined (INTERNAL_TRIANGULAR)
-        MatrixConcept<const triangular_matrix<double> >::constraints ();
-        MutableMatrixConcept<triangular_matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<triangular_matrix<double>::const_iterator1,
-                                             triangular_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<triangular_matrix<double>::iterator1,
-                                                    triangular_matrix<double>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<triangular_matrix<double>::const_reverse_iterator1,
-                                             triangular_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<triangular_matrix<double>::reverse_iterator1,
-                                                    triangular_matrix<double>::reverse_iterator2>::constraints ();
+#if defined (INTERNAL_SPECIAL) || defined (INTERNAL_TRIANGULAR)
+        MatrixConcept<const triangular_matrix<T> >::constraints ();
+        MutableMatrixConcept<triangular_matrix<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<triangular_matrix<T>::const_iterator1,
+                                             triangular_matrix<T>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<triangular_matrix<T>::iterator1,
+                                                    triangular_matrix<T>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<triangular_matrix<T>::const_reverse_iterator1,
+                                             triangular_matrix<T>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<triangular_matrix<T>::reverse_iterator1,
+                                                    triangular_matrix<T>::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<const triangular_adaptor<const matrix<double> > >::constraints ();
-        MutableMatrixExpressionConcept<triangular_adaptor<matrix<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<double> >::const_iterator1,
-                                             triangular_adaptor<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<double> >::iterator1,
-                                                    triangular_adaptor<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<double> >::const_reverse_iterator1,
-                                             triangular_adaptor<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<double> >::reverse_iterator1,
-                                                    triangular_adaptor<matrix<double> >::reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<const triangular_adaptor<const matrix<T> > >::constraints ();
+        MutableMatrixExpressionConcept<triangular_adaptor<matrix<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<T> >::const_iterator1,
+                                             triangular_adaptor<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<T> >::iterator1,
+                                                    triangular_adaptor<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<T> >::const_reverse_iterator1,
+                                             triangular_adaptor<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<triangular_adaptor<matrix<T> >::reverse_iterator1,
+                                                    triangular_adaptor<matrix<T> >::reverse_iterator2>::constraints ();
 #endif
 
         // Symmetric Matrix
-#if defined (INTERNAL) || defined (INTERNAL_SYMMETRIC)
-        MatrixConcept<const symmetric_matrix<double> >::constraints ();
-        MutableMatrixConcept<symmetric_matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<symmetric_matrix<double>::const_iterator1,
-                                             symmetric_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<symmetric_matrix<double>::iterator1,
-                                                    symmetric_matrix<double>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<symmetric_matrix<double>::const_reverse_iterator1,
-                                             symmetric_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<symmetric_matrix<double>::reverse_iterator1,
-                                                    symmetric_matrix<double>::reverse_iterator2>::constraints ();
+#if defined (INTERNA_SPECIAL) || defined (INTERNAL_SYMMETRIC)
+        MatrixConcept<const symmetric_matrix<T> >::constraints ();
+        MutableMatrixConcept<symmetric_matrix<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<symmetric_matrix<T>::const_iterator1,
+                                             symmetric_matrix<T>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<symmetric_matrix<T>::iterator1,
+                                                    symmetric_matrix<T>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<symmetric_matrix<T>::const_reverse_iterator1,
+                                             symmetric_matrix<T>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<symmetric_matrix<T>::reverse_iterator1,
+                                                    symmetric_matrix<T>::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<const symmetric_adaptor<const matrix<double> > >::constraints ();
+        MatrixExpressionConcept<const symmetric_adaptor<const matrix<T> > >::constraints ();
 #ifndef SKIP_BAD
         // const_iterator (iterator) constructor is bad
-        MutableMatrixExpressionConcept<symmetric_adaptor<matrix<double> > >::constraints ();
+        MutableMatrixExpressionConcept<symmetric_adaptor<matrix<T> > >::constraints ();
 #endif
-        IndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<double> >::const_iterator1,
-                                             symmetric_adaptor<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<double> >::iterator1,
-                                                    symmetric_adaptor<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<double> >::const_reverse_iterator1,
-                                             symmetric_adaptor<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<double> >::reverse_iterator1,
-                                                    symmetric_adaptor<matrix<double> >::reverse_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<T> >::const_iterator1,
+                                             symmetric_adaptor<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<T> >::iterator1,
+                                                    symmetric_adaptor<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<T> >::const_reverse_iterator1,
+                                             symmetric_adaptor<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<symmetric_adaptor<matrix<T> >::reverse_iterator1,
+                                                    symmetric_adaptor<matrix<T> >::reverse_iterator2>::constraints ();
 #endif
 
         // Hermitian Matrix
-#if defined (INTERNAL) || defined (INTERNAL_HERMITIAN)
-        MatrixConcept<const hermitian_matrix<double> >::constraints ();
-        MutableMatrixConcept<hermitian_matrix<double> >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<hermitian_matrix<double>::const_iterator1,
-                                             hermitian_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<hermitian_matrix<double>::iterator1,
-                                                    hermitian_matrix<double>::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<hermitian_matrix<double>::const_reverse_iterator1,
-                                             hermitian_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<hermitian_matrix<double>::reverse_iterator1,
-                                                    hermitian_matrix<double>::reverse_iterator2>::constraints ();
+#if defined (INTERNAL_SPECIAL) || defined (INTERNAL_HERMITIAN)
+        MatrixConcept<const hermitian_matrix<T> >::constraints ();
+        MutableMatrixConcept<hermitian_matrix<T> >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<hermitian_matrix<T>::const_iterator1,
+                                             hermitian_matrix<T>::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<hermitian_matrix<T>::iterator1,
+                                                    hermitian_matrix<T>::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<hermitian_matrix<T>::const_reverse_iterator1,
+                                             hermitian_matrix<T>::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<hermitian_matrix<T>::reverse_iterator1,
+                                                    hermitian_matrix<T>::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<const hermitian_adaptor<const matrix<double> > >::constraints ();
+        MatrixExpressionConcept<const hermitian_adaptor<const matrix<T> > >::constraints ();
 #ifndef SKIP_BAD
         // const_iterator (iterator) constructor is bad
-        MutableMatrixExpressionConcept<hermitian_adaptor<matrix<double> > >::constraints ();
+        MutableMatrixExpressionConcept<hermitian_adaptor<matrix<T> > >::constraints ();
 #endif
-        IndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<double> >::const_iterator1,
-                                             hermitian_adaptor<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<double> >::iterator1,
-                                                    hermitian_adaptor<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<double> >::const_reverse_iterator1,
-                                             hermitian_adaptor<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<double> >::reverse_iterator1,
-                                                    hermitian_adaptor<matrix<double> >::reverse_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<T> >::const_iterator1,
+                                             hermitian_adaptor<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<T> >::iterator1,
+                                                    hermitian_adaptor<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<T> >::const_reverse_iterator1,
+                                             hermitian_adaptor<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<hermitian_adaptor<matrix<T> >::reverse_iterator1,
+                                                    hermitian_adaptor<matrix<T> >::reverse_iterator2>::constraints ();
 #endif
 
         // Sparse Matrix
-#if defined (INTERNAL) || defined (INTERNAL_MATRIX_SPARSE)
-        MatrixConcept<const sparse_matrix<double> >::constraints ();
-        MutableMatrixConcept<sparse_matrix<double> >::constraints ();
-        IndexedBidirectional2DIteratorConcept<sparse_matrix<double>::const_iterator1,
-                                              sparse_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<sparse_matrix<double>::iterator1,
-                                                     sparse_matrix<double>::iterator2>::constraints ();
-        IndexedBidirectional2DIteratorConcept<sparse_matrix<double>::const_reverse_iterator1,
-                                              sparse_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<sparse_matrix<double>::reverse_iterator1,
-                                                     sparse_matrix<double>::reverse_iterator2>::constraints ();
+#if defined (INTERNAL_SPARSE) || defined (INTERNAL_MATRIX_SPARSE)
+        {
+            typedef mapped_matrix<T> container_model;
+            SparseMatrixConcept<const container_model>::constraints ();
+            MutableSparseMatrixConcept<container_model>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_iterator1, container_model::const_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::iterator1, container_model::iterator2>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_reverse_iterator1, container_model::const_reverse_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::reverse_iterator1, container_model::reverse_iterator2>::constraints ();
+        }
+        {
+            typedef mapped_vector_of_mapped_vector<T> container_model;
+            SparseMatrixConcept<const container_model>::constraints ();
+            MutableSparseMatrixConcept<container_model>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_iterator1, container_model::const_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::iterator1, container_model::iterator2>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_reverse_iterator1, container_model::const_reverse_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::reverse_iterator1, container_model::reverse_iterator2>::constraints ();
+        }
+        {
+            typedef compressed_matrix<T> container_model;
+            SparseMatrixConcept<const container_model>::constraints ();
+            MutableSparseMatrixConcept<container_model>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_iterator1, container_model::const_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::iterator1, container_model::iterator2>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_reverse_iterator1, container_model::const_reverse_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::reverse_iterator1, container_model::reverse_iterator2>::constraints ();
+        }
+        {
+            typedef coordinate_matrix<T> container_model;
+            SparseMatrixConcept<const container_model>::constraints ();
+            MutableSparseMatrixConcept<container_model>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_iterator1, container_model::const_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::iterator1, container_model::iterator2>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_reverse_iterator1, container_model::const_reverse_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::reverse_iterator1, container_model::reverse_iterator2>::constraints ();
+        }
+        {
+            typedef generalized_vector_of_vector<T, row_major, vector< coordinate_vector<T> > > container_model;
+            SparseMatrixConcept<const container_model>::constraints ();
+            MutableSparseMatrixConcept<container_model>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_iterator1, container_model::const_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::iterator1, container_model::iterator2>::constraints ();
+            IndexedBidirectional2DIteratorConcept<container_model::const_reverse_iterator1, container_model::const_reverse_iterator2>::constraints ();
+            MutableIndexedBidirectional2DIteratorConcept<container_model::reverse_iterator1, container_model::reverse_iterator2>::constraints ();
+        }
 
-        MatrixConcept<const sparse_vector_of_sparse_vector<double> >::constraints ();
-        MutableMatrixConcept<sparse_vector_of_sparse_vector<double> >::constraints ();
-        IndexedBidirectional2DIteratorConcept<sparse_vector_of_sparse_vector<double>::const_iterator1,
-                                              sparse_vector_of_sparse_vector<double>::const_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<sparse_vector_of_sparse_vector<double>::iterator1,
-                                                     sparse_vector_of_sparse_vector<double>::iterator2>::constraints ();
-        IndexedBidirectional2DIteratorConcept<sparse_vector_of_sparse_vector<double>::const_reverse_iterator1,
-                                              sparse_vector_of_sparse_vector<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<sparse_vector_of_sparse_vector<double>::reverse_iterator1,
-                                                     sparse_vector_of_sparse_vector<double>::reverse_iterator2>::constraints ();
-
-        MatrixConcept<const compressed_matrix<double> >::constraints ();
-        MutableMatrixConcept<compressed_matrix<double> >::constraints ();
-        IndexedBidirectional2DIteratorConcept<compressed_matrix<double>::const_iterator1,
-                                              compressed_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<compressed_matrix<double>::iterator1,
-                                                     compressed_matrix<double>::iterator2>::constraints ();
-        IndexedBidirectional2DIteratorConcept<compressed_matrix<double>::const_reverse_iterator1,
-                                              compressed_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<compressed_matrix<double>::reverse_iterator1,
-                                                     compressed_matrix<double>::reverse_iterator2>::constraints ();
-
-        MatrixConcept<const coordinate_matrix<double> >::constraints ();
-        MutableMatrixConcept<coordinate_matrix<double> >::constraints ();
-        IndexedBidirectional2DIteratorConcept<coordinate_matrix<double>::const_iterator1,
-                                              coordinate_matrix<double>::const_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<coordinate_matrix<double>::iterator1,
-                                                     coordinate_matrix<double>::iterator2>::constraints ();
-        IndexedBidirectional2DIteratorConcept<coordinate_matrix<double>::const_reverse_iterator1,
-                                              coordinate_matrix<double>::const_reverse_iterator2>::constraints ();
-        MutableIndexedBidirectional2DIteratorConcept<coordinate_matrix<double>::reverse_iterator1,
-                                                     coordinate_matrix<double>::reverse_iterator2>::constraints ();
 #endif
 
         // Scalar Expressions
-#if defined (INTERNAL) || defined (INTERNAL_VECTOR_EXPRESSION)
-        ScalarExpressionConcept<scalar_value<double > >::constraints ();
-        ScalarExpressionConcept<scalar_reference<double > >::constraints ();
+#if defined (INTERNAL_EXPRESSION) || defined (INTERNAL_VECTOR_EXPRESSION)
+        ScalarExpressionConcept<scalar_value<T > >::constraints ();
+        ScalarExpressionConcept<scalar_reference<T > >::constraints ();
 
         // Vector Expressions
-#ifndef BOOST_UBLAS_CT_REFERENCE_BASE_TYPEDEFS
-        VectorExpressionConcept<vector_const_reference<vector<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_const_reference<vector<double> >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_const_reference<vector<double> >::const_reverse_iterator>::constraints ();
-#endif
+        VectorExpressionConcept<vector_reference<vector<T> > >::constraints ();
+        MutableVectorExpressionConcept<vector_reference<vector<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_reference<vector<T> >::const_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_reference<vector<T> >::iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_reference<vector<T> >::const_reverse_iterator>::constraints ();
+        MutableIndexedRandomAccess1DIteratorConcept<vector_reference<vector<T> >::reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_reference<vector<double> > >::constraints ();
-        MutableVectorExpressionConcept<vector_reference<vector<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_reference<vector<double> >::const_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_reference<vector<double> >::iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_reference<vector<double> >::const_reverse_iterator>::constraints ();
-        MutableIndexedRandomAccess1DIteratorConcept<vector_reference<vector<double> >::reverse_iterator>::constraints ();
+        VectorExpressionConcept<vector_unary<vector<T>, scalar_identity<T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_unary<vector<T>, scalar_identity<T>  >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_unary<vector<T>, scalar_identity<T>  >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_unary<vector<double>, scalar_identity<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_unary<vector<double>, scalar_identity<double>  >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_unary<vector<double>, scalar_identity<double>  >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<vector_binary<vector<T>, vector<T>, scalar_plus<T, T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary<vector<T>, vector<T>, scalar_plus<T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary<vector<T>, vector<T>, scalar_plus<T, T> >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_binary<vector<double>, vector<double>, scalar_plus<double, double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary<vector<double>, vector<double>, scalar_plus<double, double> >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary<vector<double>, vector<double>, scalar_plus<double, double> >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<vector_binary_scalar1<T, vector<T>, scalar_multiplies<T, T>  > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<T, vector<T>, scalar_multiplies<T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<T, vector<T>, scalar_multiplies<T, T> >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_binary_scalar1<double, vector<double>, scalar_multiplies<double, double>, scalar_reference<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<double, vector<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<double, vector<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<vector_binary_scalar2<vector<T>, scalar_value<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_binary_scalar2<vector<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<vector_binary_scalar1<scalar_value<T>, vector<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<scalar_value<T>, vector<T>, scalar_multiplies<T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<scalar_value<T>, vector<T>, scalar_multiplies<T, T> >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_binary_scalar1<scalar_value<double>, vector<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<scalar_value<double>, vector<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar1<scalar_value<double>, vector<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<vector_binary_scalar2<vector<T>, scalar_value<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<vector_binary_scalar2<vector<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<vector_binary_scalar2<vector<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_reverse_iterator>::constraints ();
+        ScalarExpressionConcept<vector_scalar_unary<vector<T>, vector_sum<T> > >::constraints ();
+        ScalarExpressionConcept<vector_scalar_unary<vector<T>, vector_norm_1<T> > >::constraints ();
+        ScalarExpressionConcept<vector_scalar_unary<vector<T>, vector_norm_2<T> > >::constraints ();
+        ScalarExpressionConcept<vector_scalar_unary<vector<T>, vector_norm_inf<T> > >::constraints ();
 
-        ScalarExpressionConcept<vector_scalar_unary<vector<double>, vector_sum<double> > >::constraints ();
-        ScalarExpressionConcept<vector_scalar_unary<vector<double>, vector_norm_1<double> > >::constraints ();
-        ScalarExpressionConcept<vector_scalar_unary<vector<double>, vector_norm_2<double> > >::constraints ();
-        ScalarExpressionConcept<vector_scalar_unary<vector<double>, vector_norm_inf<double> > >::constraints ();
-
-        ScalarExpressionConcept<vector_scalar_binary<vector<double>, vector<double>, vector_inner_prod<double, double, double> > >::constraints ();
+        ScalarExpressionConcept<vector_scalar_binary<vector<T>, vector<T>, vector_inner_prod<T, T, T> > >::constraints ();
 #endif
 
         // Matrix Expressions
-#if defined (INTERNAL) || defined (INTERNAL_MATRIX_EXPRESSION)
-        MatrixExpressionConcept<matrix_reference<matrix<double> > >::constraints ();
-        MutableMatrixExpressionConcept<matrix_reference<matrix<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<double> >::const_iterator1,
-                                             matrix_reference<matrix<double> >::const_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<double> >::iterator1,
-                                                    matrix_reference<matrix<double> >::iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<double> >::const_reverse_iterator1,
-                                             matrix_reference<matrix<double> >::const_reverse_iterator2>::constraints ();
-        MutableIndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<double> >::reverse_iterator1,
-                                                    matrix_reference<matrix<double> >::reverse_iterator2>::constraints ();
+#if defined (INTERNAL_EXPRESSION) || defined (INTERNAL_MATRIX_EXPRESSION)
+        MatrixExpressionConcept<matrix_reference<matrix<T> > >::constraints ();
+        MutableMatrixExpressionConcept<matrix_reference<matrix<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<T> >::const_iterator1,
+                                             matrix_reference<matrix<T> >::const_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<T> >::iterator1,
+                                                    matrix_reference<matrix<T> >::iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<T> >::const_reverse_iterator1,
+                                             matrix_reference<matrix<T> >::const_reverse_iterator2>::constraints ();
+        MutableIndexedRandomAccess2DIteratorConcept<matrix_reference<matrix<T> >::reverse_iterator1,
+                                                    matrix_reference<matrix<T> >::reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<vector_matrix_binary<vector<double>, vector<double>, scalar_multiplies<double, double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<vector_matrix_binary<vector<double>, vector<double>, scalar_multiplies<double, double> >::const_iterator1,
-                                             vector_matrix_binary<vector<double>, vector<double>, scalar_multiplies<double, double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<vector_matrix_binary<vector<double>, vector<double>, scalar_multiplies<double, double> >::const_reverse_iterator1,
-                                             vector_matrix_binary<vector<double>, vector<double>, scalar_multiplies<double, double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<vector_matrix_binary<vector<T>, vector<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<vector_matrix_binary<vector<T>, vector<T>, scalar_multiplies<T, T> >::const_iterator1,
+                                             vector_matrix_binary<vector<T>, vector<T>, scalar_multiplies<T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<vector_matrix_binary<vector<T>, vector<T>, scalar_multiplies<T, T> >::const_reverse_iterator1,
+                                             vector_matrix_binary<vector<T>, vector<T>, scalar_multiplies<T, T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_unary1<matrix<double>, scalar_identity<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_unary1<matrix<double>, scalar_identity<double> >::const_iterator1,
-                                             matrix_unary1<matrix<double>, scalar_identity<double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_unary1<matrix<double>, scalar_identity<double> >::const_reverse_iterator1,
-                                             matrix_unary1<matrix<double>, scalar_identity<double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_unary1<matrix<T>, scalar_identity<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_unary1<matrix<T>, scalar_identity<T> >::const_iterator1,
+                                             matrix_unary1<matrix<T>, scalar_identity<T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_unary1<matrix<T>, scalar_identity<T> >::const_reverse_iterator1,
+                                             matrix_unary1<matrix<T>, scalar_identity<T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_unary2<matrix<double>, scalar_identity<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_unary2<matrix<double>, scalar_identity<double> >::const_iterator1,
-                                             matrix_unary2<matrix<double>, scalar_identity<double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_unary2<matrix<double>, scalar_identity<double> >::const_reverse_iterator1,
-                                             matrix_unary2<matrix<double>, scalar_identity<double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_unary2<matrix<T>, scalar_identity<T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_unary2<matrix<T>, scalar_identity<T> >::const_iterator1,
+                                             matrix_unary2<matrix<T>, scalar_identity<T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_unary2<matrix<T>, scalar_identity<T> >::const_reverse_iterator1,
+                                             matrix_unary2<matrix<T>, scalar_identity<T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_binary<matrix<double>, matrix<double>, scalar_plus<double, double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary<matrix<double>, matrix<double>, scalar_plus<double, double> >::const_iterator1,
-                                             matrix_binary<matrix<double>, matrix<double>, scalar_plus<double, double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary<matrix<double>, matrix<double>, scalar_plus<double, double> >::const_reverse_iterator1,
-                                             matrix_binary<matrix<double>, matrix<double>, scalar_plus<double, double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_binary<matrix<T>, matrix<T>, scalar_plus<T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary<matrix<T>, matrix<T>, scalar_plus<T, T> >::const_iterator1,
+                                             matrix_binary<matrix<T>, matrix<T>, scalar_plus<T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary<matrix<T>, matrix<T>, scalar_plus<T, T> >::const_reverse_iterator1,
+                                             matrix_binary<matrix<T>, matrix<T>, scalar_plus<T, T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_binary_scalar1<double, matrix<double>, scalar_multiplies<double, double>, scalar_reference<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<double, matrix<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_iterator1,
-                                             matrix_binary_scalar1<double, matrix<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<double, matrix<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_reverse_iterator1,
-                                             matrix_binary_scalar1<double, matrix<double>, scalar_multiplies<double, double>, scalar_reference<double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_binary_scalar1<T, matrix<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<T, matrix<T>, scalar_multiplies<T, T> >::const_iterator1,
+                                             matrix_binary_scalar1<T, matrix<T>, scalar_multiplies<T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<T, matrix<T>, scalar_multiplies<T, T> >::const_reverse_iterator1,
+                                             matrix_binary_scalar1<T, matrix<T>, scalar_multiplies<T, T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_binary_scalar2<matrix<double>, double, scalar_multiplies<double, double>, scalar_reference<double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<double>, double, scalar_multiplies<double, double>, scalar_reference<double> >::const_iterator1,
-                                             matrix_binary_scalar2<matrix<double>, double, scalar_multiplies<double, double>, scalar_reference<double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<double>, double, scalar_multiplies<double, double>, scalar_reference<double> >::const_reverse_iterator1,
-                                             matrix_binary_scalar2<matrix<double>, double, scalar_multiplies<double, double>, scalar_reference<double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_binary_scalar2<matrix<T>, T, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<T>, T, scalar_multiplies<T, T> >::const_iterator1,
+                                             matrix_binary_scalar2<matrix<T>, T, scalar_multiplies<T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<T>, T, scalar_multiplies<T, T> >::const_reverse_iterator1,
+                                             matrix_binary_scalar2<matrix<T>, T, scalar_multiplies<T, T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_binary_scalar1<scalar_value<double>, matrix<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<scalar_value<double>, matrix<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_iterator1,
-                                             matrix_binary_scalar1<scalar_value<double>, matrix<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<scalar_value<double>, matrix<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_reverse_iterator1,
-                                             matrix_binary_scalar1<scalar_value<double>, matrix<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_binary_scalar1<scalar_value<T>, matrix<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<scalar_value<T>, matrix<T>, scalar_multiplies<T, T> >::const_iterator1,
+                                             matrix_binary_scalar1<scalar_value<T>, matrix<T>, scalar_multiplies<T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar1<scalar_value<T>, matrix<T>, scalar_multiplies<T, T> >::const_reverse_iterator1,
+                                             matrix_binary_scalar1<scalar_value<T>, matrix<T>, scalar_multiplies<T, T> >::const_reverse_iterator2>::constraints ();
 
-        MatrixExpressionConcept<matrix_binary_scalar2<matrix<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_iterator1,
-                                             matrix_binary_scalar2<matrix<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_reverse_iterator1,
-                                             matrix_binary_scalar2<matrix<double>, scalar_value<double>, scalar_multiplies<double, double>, scalar_reference<scalar_value<double> > >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_binary_scalar2<matrix<T>, scalar_value<T>, scalar_multiplies<T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_iterator1,
+                                             matrix_binary_scalar2<matrix<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_binary_scalar2<matrix<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_reverse_iterator1,
+                                             matrix_binary_scalar2<matrix<T>, scalar_value<T>, scalar_multiplies<T, T> >::const_reverse_iterator2>::constraints ();
 
-        VectorExpressionConcept<matrix_vector_binary1<matrix<double>, vector<double>, matrix_vector_prod1<double, double, double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary1<matrix<double>, vector<double>, matrix_vector_prod1<double, double, double> >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary1<matrix<double>, vector<double>, matrix_vector_prod1<double, double, double> >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<matrix_vector_binary1<matrix<T>, vector<T>, matrix_vector_prod1<T, T, T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary1<matrix<T>, vector<T>, matrix_vector_prod1<T, T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary1<matrix<T>, vector<T>, matrix_vector_prod1<T, T, T> >::const_reverse_iterator>::constraints ();
 
-        VectorExpressionConcept<matrix_vector_binary2<vector<double>, matrix<double>, matrix_vector_prod2<double, double, double> > >::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary2<vector<double>, matrix<double>, matrix_vector_prod2<double, double, double> >::const_iterator>::constraints ();
-        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary2<vector<double>, matrix<double>, matrix_vector_prod2<double, double, double> >::const_reverse_iterator>::constraints ();
+        VectorExpressionConcept<matrix_vector_binary2<vector<T>, matrix<T>, matrix_vector_prod2<T, T, T> > >::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary2<vector<T>, matrix<T>, matrix_vector_prod2<T, T, T> >::const_iterator>::constraints ();
+        IndexedRandomAccess1DIteratorConcept<matrix_vector_binary2<vector<T>, matrix<T>, matrix_vector_prod2<T, T, T> >::const_reverse_iterator>::constraints ();
 
-        MatrixExpressionConcept<matrix_matrix_binary<matrix<double>, matrix<double>, matrix_matrix_prod<double, double, double> > >::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_matrix_binary<matrix<double>, matrix<double>, matrix_matrix_prod<double, double, double> >::const_iterator1,
-                                             matrix_matrix_binary<matrix<double>, matrix<double>, matrix_matrix_prod<double, double, double> >::const_iterator2>::constraints ();
-        IndexedRandomAccess2DIteratorConcept<matrix_matrix_binary<matrix<double>, matrix<double>, matrix_matrix_prod<double, double, double> >::const_reverse_iterator1,
-                                             matrix_matrix_binary<matrix<double>, matrix<double>, matrix_matrix_prod<double, double, double> >::const_reverse_iterator2>::constraints ();
+        MatrixExpressionConcept<matrix_matrix_binary<matrix<T>, matrix<T>, matrix_matrix_prod<T, T, T> > >::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_matrix_binary<matrix<T>, matrix<T>, matrix_matrix_prod<T, T, T> >::const_iterator1,
+                                             matrix_matrix_binary<matrix<T>, matrix<T>, matrix_matrix_prod<T, T, T> >::const_iterator2>::constraints ();
+        IndexedRandomAccess2DIteratorConcept<matrix_matrix_binary<matrix<T>, matrix<T>, matrix_matrix_prod<T, T, T> >::const_reverse_iterator1,
+                                             matrix_matrix_binary<matrix<T>, matrix<T>, matrix_matrix_prod<T, T, T> >::const_reverse_iterator2>::constraints ();
 
-        ScalarExpressionConcept<matrix_scalar_unary<matrix<double>, matrix_norm_1<double> > >::constraints ();
-        ScalarExpressionConcept<matrix_scalar_unary<matrix<double>, matrix_norm_frobenius<double> > >::constraints ();
-        ScalarExpressionConcept<matrix_scalar_unary<matrix<double>, matrix_norm_inf<double> > >::constraints ();
+        ScalarExpressionConcept<matrix_scalar_unary<matrix<T>, matrix_norm_1<T> > >::constraints ();
+        ScalarExpressionConcept<matrix_scalar_unary<matrix<T>, matrix_norm_frobenius<T> > >::constraints ();
+        ScalarExpressionConcept<matrix_scalar_unary<matrix<T>, matrix_norm_inf<T> > >::constraints ();
 #endif
 
 #ifdef EXTERNAL
@@ -1630,7 +1701,6 @@ namespace boost { namespace numeric { namespace ublas {
         VectorSpaceConcept<double, matrix<double> >::constraints ();
         LinearOperatorConcept<double, vector<double>, matrix<double> >::constraints ();
 
-#if !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
         AdditiveAbelianGroupConcept<std::complex<float> >::constraints ();
         CommutativeRingWithIdentityConcept<std::complex<float> >::constraints ();
         FieldConcept<std::complex<float> >::constraints ();
@@ -1646,7 +1716,6 @@ namespace boost { namespace numeric { namespace ublas {
         RingWithIdentityConcept<matrix<std::complex<double> > >::constraints (0);
         VectorSpaceConcept<std::complex<double>, matrix<std::complex<double> > >::constraints ();
         LinearOperatorConcept<std::complex<double>, vector<std::complex<double> >, matrix<std::complex<double> > >::constraints ();
-#endif
 #endif
     }
 

@@ -7,7 +7,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-// Preprocessed version of "boost/mpl/set/Attic/set20_c.hpp" header
+// Preprocessed version of "boost/mpl/set/set20_c.hpp" header
 // -- DO NOT modify by hand!
 
 namespace boost { namespace mpl {

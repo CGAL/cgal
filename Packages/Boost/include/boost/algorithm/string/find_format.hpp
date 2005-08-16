@@ -12,8 +12,11 @@
 
 #include <deque>
 #include <boost/detail/iterator.hpp>
-#include <boost/algorithm/string/collection_traits.hpp>
-#include <boost/algorithm/string/iterator_range.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/const_iterator.hpp>
+
 #include <boost/algorithm/string/concept.hpp>
 #include <boost/algorithm/string/detail/find_format.hpp>
 #include <boost/algorithm/string/detail/find_format_all.hpp>
@@ -47,23 +50,23 @@ namespace boost {
         */
         template< 
             typename OutputIteratorT,
-            typename CollectionT,
+            typename RangeT,
             typename FinderT,
             typename FormatterT>
         inline OutputIteratorT find_format_copy(
             OutputIteratorT Output,
-            const CollectionT& Input,
+            const RangeT& Input,
             FinderT Finder,
             FormatterT Formatter )
         {
             // Concept check
             function_requires< 
                 FinderConcept<FinderT,
-                BOOST_STRING_TYPENAME const_iterator_of<CollectionT>::type> >();
+                BOOST_STRING_TYPENAME range_const_iterator<RangeT>::type> >();
             function_requires< 
                 FormatterConcept<
                     FormatterT,
-                    FinderT,BOOST_STRING_TYPENAME const_iterator_of<CollectionT>::type> >();
+                    FinderT,BOOST_STRING_TYPENAME range_const_iterator<RangeT>::type> >();
 
             return detail::find_format_copy_impl(
                 Output,
@@ -89,11 +92,11 @@ namespace boost {
             // Concept check
             function_requires< 
                 FinderConcept<FinderT,
-                BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
             function_requires< 
                 FormatterConcept<
                     FormatterT,
-                    FinderT,BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                    FinderT,BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
 
             return detail::find_format_copy_impl(
                 Input,
@@ -123,11 +126,11 @@ namespace boost {
             // Concept check
             function_requires< 
                 FinderConcept<FinderT,
-                BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
             function_requires< 
                 FormatterConcept<
                     FormatterT,
-                    FinderT,BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                    FinderT,BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
 
             detail::find_format_impl(
                 Input,
@@ -158,23 +161,23 @@ namespace boost {
         */
         template< 
             typename OutputIteratorT,
-            typename CollectionT,
+            typename RangeT,
             typename FinderT,
             typename FormatterT>
         inline OutputIteratorT find_format_all_copy(
             OutputIteratorT Output,
-            const CollectionT& Input,
+            const RangeT& Input,
             FinderT Finder,
             FormatterT Formatter)
         {
             // Concept check
             function_requires< 
                 FinderConcept<FinderT,
-                BOOST_STRING_TYPENAME const_iterator_of<CollectionT>::type> >();
+                BOOST_STRING_TYPENAME range_const_iterator<RangeT>::type> >();
             function_requires< 
                 FormatterConcept<
                     FormatterT,
-                    FinderT,BOOST_STRING_TYPENAME const_iterator_of<CollectionT>::type> >();
+                    FinderT,BOOST_STRING_TYPENAME range_const_iterator<RangeT>::type> >();
 
             return detail::find_format_all_copy_impl(
                 Output,
@@ -200,11 +203,11 @@ namespace boost {
             // Concept check
             function_requires< 
                 FinderConcept<FinderT,
-                BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
             function_requires< 
                 FormatterConcept<
                     FormatterT,
-                    FinderT,BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                    FinderT,BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
 
             return detail::find_format_all_copy_impl(
                 Input,
@@ -235,11 +238,11 @@ namespace boost {
             // Concept check
             function_requires< 
                 FinderConcept<FinderT,
-                BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
             function_requires< 
                 FormatterConcept<
                     FormatterT,
-                    FinderT,BOOST_STRING_TYPENAME const_iterator_of<SequenceT>::type> >();
+                    FinderT,BOOST_STRING_TYPENAME range_const_iterator<SequenceT>::type> >();
 
             detail::find_format_all_impl(
                 Input,

@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -32,16 +33,21 @@ namespace boost { namespace fusion
         typedef typename concat_converter::type concat_type;
 
         typedef joint_view_iterator_tag tag;
+#if! BOOST_WORKAROUND(BOOST_MSVC,<=1300)
         BOOST_STATIC_ASSERT((!meta::equal_to<first_type, last_type>::value));
-
-        joint_view_iterator(First const& first, Concat const& concat)
-            : first(first_converter::convert(first))
-            , concat(concat_converter::convert(concat))
-        {}
+#endif
+        joint_view_iterator(First const& first, Concat const& concat);
 
         first_type first;
         concat_type concat;
     };
+    template <typename First, typename Last, typename Concat>
+    joint_view_iterator<First,Last,Concat>::joint_view_iterator(First const& first, Concat const& concat)
+    : first(first_converter::convert(first))
+    , concat(concat_converter::convert(concat))
+    {}
+
+
 }}
 
 #endif

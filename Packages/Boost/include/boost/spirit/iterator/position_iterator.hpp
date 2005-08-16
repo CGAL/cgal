@@ -94,7 +94,7 @@ class position_iterator;
 
 
 // This must be included here for full compatibility with old MSVC
-#include "impl/position_iterator.ipp"
+#include "boost/spirit/iterator/impl/position_iterator.ipp"
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost { namespace spirit {

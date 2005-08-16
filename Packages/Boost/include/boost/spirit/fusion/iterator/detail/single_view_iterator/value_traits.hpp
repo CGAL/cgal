@@ -25,7 +25,8 @@ namespace boost { namespace fusion
             template <typename Iterator>
             struct apply
             {
-                typedef FUSION_GET_VALUE_TYPE(Iterator) type;
+                typedef typename Iterator::single_view_type single_view_type;
+                typedef FUSION_GET_VALUE_TYPE(single_view_type) type;
             };
         };
     }

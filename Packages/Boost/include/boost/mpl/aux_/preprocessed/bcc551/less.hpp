@@ -65,6 +65,7 @@ template<
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
 struct less
+
     : less_impl<
           typename less_tag<N1>::type
         , typename less_tag<N2>::type

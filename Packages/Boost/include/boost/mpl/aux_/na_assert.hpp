@@ -18,7 +18,8 @@
 #include <boost/mpl/aux_/config/msvc.hpp>
 #include <boost/mpl/aux_/config/workaround.hpp>
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+#if !BOOST_WORKAROUND(_MSC_FULL_VER, <= 140050601)    \
+    && !BOOST_WORKAROUND(__EDG_VERSION__, <= 243)
 #   include <boost/mpl/assert.hpp>
 #   define BOOST_MPL_AUX_ASSERT_NOT_NA(x) \
     BOOST_MPL_ASSERT_NOT((boost::mpl::is_na<type>)) \

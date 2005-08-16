@@ -2,25 +2,9 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #ifndef BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
@@ -45,6 +29,14 @@ namespace boost {
   struct vertex_max_invariant_t { };
   struct orig_to_copy_t { };
   struct root_vertex_t { };
+  struct attractive_force_t { };
+  struct repulsive_force_t { };
+  struct force_pairs_t { };
+  struct cooling_t { };
+  struct vertex_displacement_t { };
+  struct iterations_t { };
+  struct diameter_range_t { };
+  struct learning_constant_range_t { };
 
   namespace detail {
     template <class T>
@@ -284,6 +276,62 @@ namespace boost {
       return Params(c, *this);
     }
 
+    template <typename VertexDisplacement>
+    bgl_named_params<VertexDisplacement, vertex_displacement_t, self>
+    displacement_map(const VertexDisplacement& c) const {
+      typedef bgl_named_params<VertexDisplacement, vertex_displacement_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename AttractiveForce>
+    bgl_named_params<AttractiveForce, attractive_force_t, self>
+    attractive_force(const AttractiveForce& c) {
+      typedef bgl_named_params<AttractiveForce, attractive_force_t, self> Params;
+      return Params(c, *this);
+    }
+    
+    template <typename RepulsiveForce>
+    bgl_named_params<RepulsiveForce, repulsive_force_t, self>
+    repulsive_force(const RepulsiveForce& c) {
+      typedef bgl_named_params<RepulsiveForce, repulsive_force_t, self> Params;
+      return Params(c, *this);
+    }
+    
+    template <typename ForcePairs>
+    bgl_named_params<ForcePairs, force_pairs_t, self>
+    force_pairs(const ForcePairs& c) {
+      typedef bgl_named_params<ForcePairs, force_pairs_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename Cooling>
+    bgl_named_params<Cooling, cooling_t, self>
+    cooling(const Cooling& c) {
+      typedef bgl_named_params<Cooling, cooling_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename TP>
+    bgl_named_params<TP, iterations_t, self>
+    iterations(const TP& c) {
+      typedef bgl_named_params<TP, iterations_t, self> Params;
+      return Params(c, *this);
+    }    
+
+    template<typename TP>
+    bgl_named_params<std::pair<TP, TP>, diameter_range_t, self>
+    diameter_range(const std::pair<TP, TP>& c) {
+      typedef bgl_named_params<std::pair<TP, TP>, diameter_range_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template<typename TP>
+    bgl_named_params<std::pair<TP, TP>, learning_constant_range_t, self>
+    learning_constant_range(const std::pair<TP, TP>& c) {
+      typedef bgl_named_params<std::pair<TP, TP>, learning_constant_range_t, self>
+        Params;
+      return Params(c, *this);
+    }
   };
 
   template <typename WeightMap>
@@ -481,6 +529,63 @@ namespace boost {
   bgl_named_params<VertexInvar, vertex_invariant_t>
   vertex_invariant(const VertexInvar& c) {
     typedef bgl_named_params<VertexInvar, vertex_invariant_t> Params;
+    return Params(c);
+  }
+
+  template <typename VertexDisplacement>
+  bgl_named_params<VertexDisplacement, vertex_displacement_t>
+  displacement_map(const VertexDisplacement& c) {
+    typedef bgl_named_params<VertexDisplacement, vertex_displacement_t> Params;
+    return Params(c);
+  }
+
+  template <typename AttractiveForce>
+  bgl_named_params<AttractiveForce, attractive_force_t>
+  attractive_force(const AttractiveForce& c) {
+    typedef bgl_named_params<AttractiveForce, attractive_force_t> Params;
+    return Params(c);
+  }
+
+  template <typename RepulsiveForce>
+  bgl_named_params<RepulsiveForce, repulsive_force_t>
+  repulsive_force(const RepulsiveForce& c) {
+    typedef bgl_named_params<RepulsiveForce, repulsive_force_t> Params;
+    return Params(c);
+  }
+
+  template <typename ForcePairs>
+  bgl_named_params<ForcePairs, force_pairs_t>
+  force_pairs(const ForcePairs& c) {
+    typedef bgl_named_params<ForcePairs, force_pairs_t> Params;
+    return Params(c);
+  }
+
+  template <typename Cooling>
+  bgl_named_params<Cooling, cooling_t>
+  cooling(const Cooling& c) {
+    typedef bgl_named_params<Cooling, cooling_t> Params;
+    return Params(c);
+  }
+
+  template <typename T>
+  bgl_named_params<T, iterations_t>
+  iterations(const T& c) {
+    typedef bgl_named_params<T, iterations_t> Params;
+    return Params(c);
+  }    
+  
+  template<typename T>
+  bgl_named_params<std::pair<T, T>, diameter_range_t>
+  diameter_range(const std::pair<T, T>& c) {
+    typedef bgl_named_params<std::pair<T, T>, diameter_range_t> Params;
+    return Params(c);
+  }
+  
+  template<typename T>
+  bgl_named_params<std::pair<T, T>, learning_constant_range_t>
+  learning_constant_range(const std::pair<T, T>& c) {
+    typedef bgl_named_params<std::pair<T, T>, learning_constant_range_t>
+      Params;
     return Params(c);
   }
 

@@ -30,23 +30,6 @@ namespace impl {
     struct make_binary1;
 }
 
-namespace impl {
-
-    ///////////////////////////////////////////////////////////////////////////
-    //
-    //      if_t selects type A or B depending on the condition C If C is of
-    //      type char[2], B is selected, otherwise A
-    //
-    //      TODO: This should be part of a common meta-library
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    template <typename C, typename A, typename B>
-    struct if_t { typedef A type; };
-
-    template <typename A, typename B>
-    struct if_t<char[2], A, B> { typedef B type; };
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  unpack_tuple class
@@ -86,7 +69,7 @@ struct unpack_tuple : public TupleT {
 //
 //          arg0 ---------|
 //          arg1 ---------|
-//          arg3 ---------|---> tupled_args ---> base.eval
+//          arg2 ---------|---> tupled_args ---> base.eval
 //          ...           |
 //          argN ---------|
 //

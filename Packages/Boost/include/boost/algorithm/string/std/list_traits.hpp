@@ -33,9 +33,9 @@ namespace boost {
         template<typename T, typename AllocT>
         yes_type has_const_time_erase_tester( const ::std::list<T,AllocT>* );
 
-        
+
 #else // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-        
+
         // stable iterators trait
         template<typename T, typename AllocT>
         class has_stable_iterators< ::std::list<T,AllocT> >
@@ -46,7 +46,7 @@ namespace boost {
 #else
             BOOST_STATIC_CONSTANT(bool, value=true);
 #endif // BOOST_WORKAROUND( __IBMCPP__, <= 600 )
-            typedef mpl::bool_<value> type;     
+            typedef mpl::bool_<has_stable_iterators<T>::value> type;
         };
 
         // const time insert trait
@@ -59,7 +59,7 @@ namespace boost {
 #else
             BOOST_STATIC_CONSTANT(bool, value=true);
 #endif // BOOST_WORKAROUND( __IBMCPP__, <= 600 )
-            typedef mpl::bool_<value> type;     
+            typedef mpl::bool_<has_const_time_insert<T>::value> type;
         };
 
         // const time erase trait
@@ -72,11 +72,11 @@ namespace boost {
 #else
             BOOST_STATIC_CONSTANT(bool, value=true);
 #endif // BOOST_WORKAROUND( __IBMCPP__, <= 600 )
-            typedef mpl::bool_<value> type;     
+            typedef mpl::bool_<has_const_time_erase<T>::value> type;
         };
 #endif
 
-        
+
     } // namespace algorithm
 } // namespace boost
 

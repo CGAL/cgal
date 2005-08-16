@@ -30,13 +30,14 @@ namespace std{
 #endif
 
 #include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
 namespace archive {
 namespace detail{
 
-class basic_oserializer;
-class basic_pointer_oserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_oserializer;
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_oserializer;
 
 template<class ArchiveImplementation>
 class polymorphic_oarchive_impl : 
@@ -123,13 +124,15 @@ private:
         ArchiveImplementation::save(t);
     }
     #endif
-    virtual unsigned int library_version() const{
-        return ArchiveImplementation::library_version();
+    virtual unsigned int get_library_version() const{
+        return ArchiveImplementation::get_library_version();
+    }
+    virtual unsigned int get_flags() const {
+        return ArchiveImplementation::get_flags();
     }
     virtual void save_binary(const void * t, std::size_t size){
-        ArchiveImplementation::save(t);
+        ArchiveImplementation::save_binary(t, size);
     }
-
     // used for xml and other tagged formats default does nothing
     virtual void save_start(const char * name){
         ArchiveImplementation::save_start(name);
@@ -144,60 +147,30 @@ private:
         ArchiveImplementation::register_basic_serializer(bos);
     }
 public:
-    // to avoie ambiguities when using this class directly, trap an pass one
-    // to the implemenation these operations.
-    // note: we presume that older compilers will never create a const
-    // argument from a non-const by copyiing
+    // the << operator
     template<class T>
-    polymorphic_oarchive & operator<<(const T & t){
+    polymorphic_oarchive & operator<<(T & t){
         return polymorphic_oarchive::operator<<(t);
     }
-
     // the & operator 
     template<class T>
-    polymorphic_oarchive & operator&(const T & t){
+    polymorphic_oarchive & operator&(T & t){
         return polymorphic_oarchive::operator&(t);
     }
-
-    // define operators for non-const arguments.  Don't depend one the const
-    // ones below because the compiler MAY make a temporary copy to
-    // create the const parameter (Though I havn't seen this happen). 
-    #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-        // the << operator
-        template<class T>
-        polymorphic_oarchive & operator<<(T & t){
-            // if trap here, we're saving a tracted non-const
-            // value - this could be a stack variable with the same
-            // address for multiple items. This would be the source of very 
-            // subtle errors and should be double checked
-            // BOOST_STATIC_WARNING(
-            //     serialization::tracking_level == serialization::track_never
-            // );
-            return polymorphic_oarchive::operator<<(t);
-        }
-        // the & operator 
-        template<class T>
-        polymorphic_oarchive & operator&(T & t){
-            return polymorphic_oarchive::operator&(t);
-        }
-    #endif
-
     // all current archives take a stream as constructor argument
     template <class _Elem, class _Tr>
     polymorphic_oarchive_impl(
         std::basic_ostream<_Elem, _Tr> & os, 
         unsigned int flags = 0
     ) :
-        ArchiveImplementation(os, flags | no_header)
-    {
-        // postpone archive initialization until build is complete
-        if(0 == (flags & no_header))
-            ArchiveImplementation::init();
-    }
+        ArchiveImplementation(os, flags)
+    {}
 };
 
 } // namespace detail
 } // namespace archive
 } // namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_DETAIL_POLYMORPHIC_OARCHIVE_IMPL_HPP

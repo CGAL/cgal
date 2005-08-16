@@ -11,8 +11,9 @@
 #define BOOST_STRING_FORMATTER_HPP
 
 #include <boost/detail/iterator.hpp>
-#include <boost/algorithm/string/collection_traits.hpp>
-#include <boost/algorithm/string/iterator_range.hpp>
+#include <boost/range/value_type.hpp>
+#include <boost/range/iterator_range.hpp>
+
 #include <boost/algorithm/string/detail/formatter.hpp>
 
 /*! \file
@@ -29,7 +30,7 @@
 namespace boost {
     namespace algorithm {
 
-// generic formaters  ---------------------------------------------------------------//
+// generic formatters  ---------------------------------------------------------------//
 
         //! Constant formatter
         /*!
@@ -39,11 +40,11 @@ namespace boost {
             \param Format A predefined value used as a result for formating
             \return An instance of the \c const_formatter object.
         */
-        template<typename CollectionT>
-        inline detail::const_formatF<CollectionT>
-        const_formatter(const CollectionT& Format)
+        template<typename RangeT>
+        inline detail::const_formatF<RangeT>
+        const_formatter(const RangeT& Format)
         {
-            return detail::const_formatF<CollectionT>(Format);
+            return detail::const_formatF<RangeT>(Format);
         }
 
         //! Identity formatter
@@ -53,29 +54,29 @@ namespace boost {
 
             \return An instance of the \c identity_formatter object.
         */
-        template<typename CollectionT>
-        inline detail::identity_formatF<CollectionT>
+        template<typename RangeT>
+        inline detail::identity_formatF<RangeT>
         identity_formatter()
         {
-            return detail::identity_formatF<CollectionT>();
+            return detail::identity_formatF<RangeT>();
         }
 
         //! Empty formatter
         /*!
-            Construct the \c empty_formatter. Empty formater always returns an empty
+            Construct the \c empty_formatter. Empty formatter always returns an empty
             sequence. 
 
             \param Input container used to select a correct value_type for the
                          resulting empty_container<>.
             \return An instance of the \c empty_formatter object.
         */
-        template<typename CollectionT>
+        template<typename RangeT>
         inline detail::empty_formatF< 
-            BOOST_STRING_TYPENAME value_type_of<CollectionT>::type>
-        empty_formatter(const CollectionT&)
+            BOOST_STRING_TYPENAME range_value<RangeT>::type>
+        empty_formatter(const RangeT&)
         {
             return detail::empty_formatF<
-                BOOST_STRING_TYPENAME value_type_of<CollectionT>::type>();
+                BOOST_STRING_TYPENAME range_value<RangeT>::type>();
         }
 
 

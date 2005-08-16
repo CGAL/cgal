@@ -22,7 +22,11 @@
 # define BOOST_ITERATOR_CONFIG_DEF
 #endif 
 
-#if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)           \
+// We enable this always now.  Otherwise, the simple case in
+// libs/iterator/test/constant_iterator_arrow.cpp fails to compile
+// because the operator-> return is improperly deduced as a non-const
+// pointer.
+#if 1 || defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)           \
     || BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x531))
 
 // Recall that in general, compilers without partial specialization
@@ -36,7 +40,7 @@
 // end up using a proxy for operator[] when we otherwise shouldn't.
 // Using reference constness gives it an extra hint that it can
 // return the value_type from operator[] directly, but is not
-// strictly neccessary.  Not sure how best to resolve this one.
+// strictly necessary.  Not sure how best to resolve this one.
 
 # define BOOST_ITERATOR_REF_CONSTNESS_KILLS_WRITABILITY 1
 
@@ -44,7 +48,8 @@
 
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)                                       \
     || BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x531))                   \
-    || (BOOST_WORKAROUND(BOOST_INTEL_CXX_VERSION, <= 700) && defined(_MSC_VER))
+    || (BOOST_WORKAROUND(BOOST_INTEL_CXX_VERSION, <= 700) && defined(_MSC_VER)) \
+    || BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590042))
 # define BOOST_NO_LVALUE_RETURN_DETECTION
 
 # if 0 // test code

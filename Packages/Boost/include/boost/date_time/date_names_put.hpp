@@ -1,7 +1,7 @@
 #ifndef DATE_TIME_DATE_NAMES_PUT_HPP___
 #define DATE_TIME_DATE_NAMES_PUT_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002-2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -50,8 +50,16 @@ namespace date_time {
       typedef typename Config::special_value_enum special_value_enum;
       //typedef typename Config::format_type format_type;
       typedef std::basic_string<charT> string_type;
+      typedef charT char_type;
+      static const char_type default_special_value_names[3][17];
+      static const char_type separator[2];
 
       static std::locale::id id;
+
+#if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
+      std::locale::id& __get_id (void) const { return id; }
+#endif
+
       void put_special_value(iter_type& oitr, special_value_enum sv) const
       {
         do_put_special_value(oitr, sv);
@@ -120,26 +128,9 @@ namespace date_time {
       //! Default facet implementation for special value types
       virtual void do_put_special_value(iter_type& oitr, special_value_enum sv) const
       {
-        switch (sv) {
-          case not_a_date_time: 
-          { 
-            string_type s(boost::lexical_cast<string_type>("not-a-date-time"));
-            put_string(oitr, s);
-            break;
-          }
-          case pos_infin: 
-          { 
-            string_type s(boost::lexical_cast<string_type>("+infinity"));
-            put_string(oitr, s);
-            break;
-          }
-          case neg_infin: 
-          { 
-            string_type s(boost::lexical_cast<string_type>("-infinity"));
-            put_string(oitr, s);
-            break;
-          }
-          default: {} //quiet compilers that want all cases covered here (eg: gcc 3.1)
+        if(sv <= 2) { // only output not_a_date_time, neg_infin, or pos_infin
+          string_type s(default_special_value_names[sv]);
+          put_string(oitr, s);
         }
       }
       virtual void do_put_weekday_short(iter_type&, weekday_enum) const
@@ -154,19 +145,19 @@ namespace date_time {
       }
       virtual void do_year_sep_char(iter_type& oitr) const
       {
-        string_type s(boost::lexical_cast<string_type>("-"));
+        string_type s(separator);
         put_string(oitr, s);
       }
       //! char between year-month
       virtual void do_month_sep_char(iter_type& oitr) const
       {
-        string_type s(boost::lexical_cast<string_type>("-"));
+        string_type s(separator);
         put_string(oitr, s);
       }
       //! Char to separate month-day
       virtual void do_day_sep_char(iter_type& oitr) const
       {
-        string_type s(boost::lexical_cast<string_type>("-"));
+        string_type s(separator); //put in '-'
         put_string(oitr, s);
       }
       //! Default for date order 
@@ -196,11 +187,24 @@ namespace date_time {
       }
     };
     
+    template<class Config, class charT, class OutputIterator>
+    const typename date_names_put<Config, charT, OutputIterator>::char_type 
+    date_names_put<Config, charT, OutputIterator>::default_special_value_names[3][17] = { 
+      {'n','o','t','-','a','-','d','a','t','e','-','t','i','m','e'},
+      {'-','i','n','f','i','n','i','t','y'},
+      {'+','i','n','f','i','n','i','t','y'} };
+
+    template<class Config, class charT, class OutputIterator>
+    const typename date_names_put<Config, charT, OutputIterator>::char_type 
+    date_names_put<Config, charT, OutputIterator>::separator[2] = 
+      {'-', '\0'} ;
+    
+
     //! Generate storage location for a std::locale::id 
     template<class Config, class charT, class OutputIterator>
     std::locale::id date_names_put<Config, charT, OutputIterator>::id;
 
-    //! An date name output facet that takes an array of char* to define strings
+    //! A date name output facet that takes an array of char* to define strings
     template<class Config,
              class charT = char, 
              class OutputIterator = std::ostreambuf_iterator<charT> >

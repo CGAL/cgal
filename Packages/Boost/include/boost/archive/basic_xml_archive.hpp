@@ -16,7 +16,10 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
+#include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/archive_exception.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
 namespace archive {
@@ -24,12 +27,14 @@ namespace archive {
 //////////////////////////////////////////////////////////////////////
 // exceptions thrown by xml archives
 //
-class xml_archive_exception : public virtual archive_exception
+class xml_archive_exception : 
+    public virtual archive_exception
 {
 public:
     typedef enum {
         xml_archive_parsing_error,    // see save_register
-        xml_archive_tag_mismatch
+        xml_archive_tag_mismatch,
+        xml_archive_tag_name_error
     } exception_code;
     xml_archive_exception(exception_code c)
     {}
@@ -43,6 +48,9 @@ public:
         case xml_archive_tag_mismatch:
             msg = "XML start/end tag mismatch";
             break;
+        case xml_archive_tag_name_error:
+            msg = "Invalid XML tag name";
+            break;
         default:
             msg = archive_exception::what();
             break;
@@ -52,17 +60,43 @@ public:
 };
 
 // constant strings used in xml i/o
-extern const char * OBJECT_ID;
-extern const char * OBJECT_REFERENCE;
-extern const char * CLASS_ID;
-extern const char * CLASS_ID_REFERENCE;
-extern const char * CLASS_NAME;
-extern const char * TRACKING;
-extern const char * VERSION;
-extern const char * SIGNATURE;
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+OBJECT_ID();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+OBJECT_REFERENCE();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+CLASS_ID();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+CLASS_ID_REFERENCE();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+CLASS_NAME();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+TRACKING();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+VERSION();
+
+extern 
+BOOST_ARCHIVE_DECL(const char *)
+SIGNATURE();
 
 }// namespace archive
 }// namespace boost
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_BASIC_XML_TEXT_ARCHIVE_HPP
 

@@ -11,6 +11,9 @@
 
 #include <boost/optional.hpp>
 #include <boost/mpl/bool.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace boost { namespace spirit { namespace impl
 {
@@ -22,14 +25,33 @@ namespace boost { namespace spirit { namespace impl
         const_reference;
 
         //  case where src *IS* convertible to T (dest)
+        template <typename T2>
         static void
-        convert(boost::optional<T>& dest, const_reference src)
-        { dest.reset(src); }
+        convert(boost::optional<T>& dest, T2 const& src, mpl::true_)
+        { 
+            dest.reset(src); 
+        }
 
         //  case where src *IS NOT* convertible to T (dest)
+        template <typename T2>
         static void
-        convert(boost::optional<T>& dest, .../*src*/)
-        { dest.reset(); }
+        convert(boost::optional<T>& dest, T2 const& /*src*/, mpl::false_)
+        { 
+            dest.reset(); 
+        }
+
+        static void
+        convert(boost::optional<T>& dest, nil_t/*src*/)
+        { 
+            dest.reset(); 
+        }
+        
+        template <typename T2>
+        static void
+        convert(boost::optional<T>& dest, T2 const& src)
+        { 
+            convert(dest, src, is_convertible<T2, T>());
+        }
 
         template <typename OtherMatchT>
         static void

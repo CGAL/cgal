@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,6 +18,26 @@ namespace boost { namespace fusion
 
     template <typename First, typename F>
     struct transform_view_iterator;
+    
+    namespace transform_view_detail {
+        template <typename Iterator>
+        struct next_traits_impl
+        {
+            typedef typename Iterator::first_type first_type;
+            typedef typename meta::next<first_type>::type next_type;
+            typedef typename Iterator::transform_type transform_type;
+            typedef transform_view_iterator<next_type, transform_type> type;
+
+            static type
+            call(Iterator const& i);
+        };
+        template <typename Iterator>
+        typename next_traits_impl<Iterator>::type
+        next_traits_impl<Iterator>::call(Iterator const& i)
+        {
+            return type(fusion::next(i.first), i.f);
+        }
+    }
 
     namespace meta
     {
@@ -27,19 +48,8 @@ namespace boost { namespace fusion
         struct next_impl<transform_view_iterator_tag>
         {
             template <typename Iterator>
-            struct apply
-            {
-                typedef typename Iterator::first_type first_type;
-                typedef typename meta::next<first_type>::type next_type;
-                typedef typename Iterator::transform_type transform_type;
-                typedef transform_view_iterator<next_type, transform_type> type;
-
-                static type
-                call(Iterator const& i)
-                {
-                    return type(fusion::next(i.first), i.f);
-                }
-            };
+            struct apply : transform_view_detail::next_traits_impl<Iterator>
+            {};
         };
     }
 }}

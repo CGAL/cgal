@@ -7,14 +7,15 @@
 #ifndef BOOST_ITERATOR_FACADE_23022003THW_HPP
 #define BOOST_ITERATOR_FACADE_23022003THW_HPP
 
-#include <boost/static_assert.hpp>
-
 #include <boost/iterator.hpp>
 #include <boost/iterator/interoperable.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 
 #include <boost/iterator/detail/facade_iterator_category.hpp>
 #include <boost/iterator/detail/enable_if.hpp>
+
+#include <boost/implicit_cast.hpp>
+#include <boost/static_assert.hpp>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/add_const.hpp>
@@ -106,7 +107,7 @@ namespace boost
         
         typedef typename mpl::eval_if<
             detail::iterator_writability_disabled<ValueParam,Reference>
-          , add_pointer<typename add_const<value_type>::type>
+          , add_pointer<const value_type>
           , add_pointer<value_type>
         >::type pointer;
       
@@ -269,8 +270,8 @@ namespace boost
     struct postfix_increment_result
       : mpl::eval_if<
             mpl::and_<
-            // A proxy is only needed for readable iterators
-            is_convertible<Reference,Value>
+                // A proxy is only needed for readable iterators
+                is_convertible<Reference,Value const&>
                 
                 // No multipass iterator can have values that disappear
                 // before positions can be re-visited
@@ -322,7 +323,7 @@ namespace boost
 
         static type make(Reference x)
         {
-            return type(&x);
+            return implicit_cast<type>(&x);
         }
     };
 

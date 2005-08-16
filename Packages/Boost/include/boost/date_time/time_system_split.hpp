@@ -1,7 +1,7 @@
 #ifndef DATE_TIME_TIME_SYSTEM_SPLIT_HPP
 #define DATE_TIME_TIME_SYSTEM_SPLIT_HPP
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -164,7 +164,7 @@ namespace date_time {
 
       //std::cout << td.ticks() << std::endl;
       wrap_int_type  day_offset(base.time_of_day.ticks());
-      date_duration_type day_overflow(static_cast<int_type>(day_offset.subtract(td.ticks())));
+      date_duration_type day_overflow(static_cast<typename date_duration_type::duration_rep_type>(day_offset.subtract(td.ticks())));
 //       std::cout << "sub: " << base.time_of_day.ticks() << "|"
 //                 << day_offset.as_int() << "|"
 //                 << day_overflow.days() << std::endl;
@@ -182,10 +182,10 @@ namespace date_time {
         return subtract_time_duration(base,td1);
       }
       wrap_int_type day_offset(base.time_of_day.ticks());      
-      int_type doff = day_offset.add(td.ticks());
+      typename date_duration_type::duration_rep_type doff = day_offset.add(td.ticks());
 //       std::cout << "day overflow: " << doff << std::endl;
 //       std::cout << "ticks: "         << td.ticks() << std::endl;
-      date_duration_type day_overflow(static_cast<int_type>(doff));
+      date_duration_type day_overflow(doff);
 //       std::cout << "base: " << to_simple_string(base.day) << std::endl;
 //       std::cout << "overflow " << day_overflow.days() << std::endl;
       return time_rep_type(base.day+day_overflow,

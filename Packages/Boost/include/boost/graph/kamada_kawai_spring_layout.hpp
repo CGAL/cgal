@@ -168,7 +168,7 @@ namespace boost {
           vertex_iterator vi = ui;
           for (++vi; vi != end; ++vi) {
             weight_type dij = distance[get(index, *ui)][get(index, *vi)];
-            if (dij == std::numeric_limits<weight_type>::max())
+            if (dij == (std::numeric_limits<weight_type>::max)())
               return false;
             distance[get(index, *ui)][get(index, *vi)] = edge_length * dij;
             distance[get(index, *vi)][get(index, *ui)] = edge_length * dij;
@@ -307,8 +307,8 @@ namespace boost {
   struct layout_tolerance
   {
     layout_tolerance(const T& tolerance = T(0.001))
-      : tolerance(tolerance), last_energy(std::numeric_limits<T>::max()),
-        last_local_energy(std::numeric_limits<T>::max()) { }
+      : tolerance(tolerance), last_energy((std::numeric_limits<T>::max)()),
+        last_local_energy((std::numeric_limits<T>::max)()) { }
 
     template<typename Graph>
     bool 
@@ -318,7 +318,7 @@ namespace boost {
                bool global)
     {
       if (global) {
-        if (last_energy == std::numeric_limits<T>::max()) {
+        if (last_energy == (std::numeric_limits<T>::max)()) {
           last_energy = delta_p;
           return false;
         }
@@ -329,13 +329,13 @@ namespace boost {
         last_energy = delta_p;
         return done;
       } else {
-        if (last_local_energy == std::numeric_limits<T>::max()) {
+        if (last_local_energy == (std::numeric_limits<T>::max)()) {
           last_local_energy = delta_p;
-          return false;
+          return delta_p == T(0);
         }
           
         T diff = last_local_energy - delta_p;
-        bool done = (delta_p == T(0) || diff / last_local_energy < tolerance);
+        bool done = (delta_p == T(0) || (diff / last_local_energy) < tolerance);
         last_local_energy = delta_p;
         return done;
       }

@@ -96,6 +96,30 @@ namespace boost
         typedef std::size_t type;
     };
 
+    template<>
+    struct range_size< char* const >
+    {
+        typedef std::size_t type;
+    };
+
+    template<>
+    struct range_size< wchar_t* const >
+    {
+        typedef std::size_t type;
+    };
+
+    template<>
+    struct range_size< const char* const >
+    {
+        typedef std::size_t type;
+    };
+
+    template<>
+    struct range_size< const wchar_t* const >
+    {
+        typedef std::size_t type;
+    };
+
 } // namespace boost
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION

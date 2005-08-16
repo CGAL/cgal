@@ -1,5 +1,5 @@
 // Copyright (C)  2002-2003
-// David Moore
+// David Moore, Michael Glassford
 //
 // Original scoped_lock implementation
 // Copyright (C) 2001
@@ -174,7 +174,7 @@ public:
         m_state = read_write_lock_state::write_locked;
     }
 
-    //If allow_unlock = true, set_lock always succeedes and
+    //If allow_unlock = true, set_lock always succeeds and
     //the function result indicates whether an unlock was required.
     //If allow_unlock = false, set_lock may fail;
     //the function result indicates whether it succeeded.
@@ -448,7 +448,7 @@ public:
         return read_write_lock_ops<TryReadWriteMutex>::try_promote(m_mutex) ? (m_state = read_write_lock_state::write_locked, true) : false;
     }
 
-    //If allow_unlock = true, set_lock always succeedes and
+    //If allow_unlock = true, set_lock always succeeds and
     //the function result indicates whether an unlock was required.
     //If allow_unlock = false, set_lock may fail;
     //the function result indicates whether it succeeded.
@@ -806,7 +806,7 @@ public:
         return read_write_lock_ops<TimedReadWriteMutex>::timed_promote(m_mutex, xt) ? (m_state = read_write_lock_state::write_locked, true) : false;
     }
 
-    //If allow_unlock = true, set_lock always succeedes and
+    //If allow_unlock = true, set_lock always succeeds and
     //the function result indicates whether an unlock was required.
     //If allow_unlock = false, set_lock may fail;
     //the function result indicates whether it succeeded.

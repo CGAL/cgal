@@ -142,7 +142,7 @@ CharType transform_width<Base, BitsOut, BitsIn, CharType>::fill(){
         }
         else
             bcount = BitsIn - m_displacement;
-        unsigned int i = std::min(bcount, missing_bits);
+        unsigned int i = (std::min)(bcount, missing_bits);
         // shift interesting bits to least significant position
         unsigned int j = m_buffer >> (bcount - i);
         // strip off uninteresting bits

@@ -21,7 +21,7 @@ namespace boost { namespace date_time {
    *   - period_open_start_delimeter -- default '['
    *   - period_open_range_end_delimeter -- default ')' 
    *   - period_closed_range_end_delimeter -- default ']' 
-   *   - display_as_open_range, display_as_closed_range -- default open_range
+   *   - display_as_open_range, display_as_closed_range -- default closed_range
    *
    *  Thus the default formatting for a period is as follows:
    *@code
@@ -39,6 +39,8 @@ namespace boost { namespace date_time {
     typedef std::basic_string<CharT> string_type;
     typedef CharT                    char_type;
     typedef typename std::basic_string<char_type>::const_iterator const_itr_type;
+    typedef std::vector<std::basic_string<CharT> > collection_type;
+    
     static const char_type default_period_separator[2];
     static const char_type default_period_start_delimeter[2];
     static const char_type default_period_open_range_end_delimeter[2];
@@ -52,8 +54,8 @@ namespace boost { namespace date_time {
                      const char_type* const period_start_delimeter = default_period_start_delimeter,
                      const char_type* const period_open_range_end_delimeter = default_period_open_range_end_delimeter,
                      const char_type* const period_closed_range_end_delimeter = default_period_closed_range_end_delimeter) :
-      m_period_separator(period_separator),
       m_range_option(range_option),
+      m_period_separator(period_separator),
       m_period_start_delimeter(period_start_delimeter),
       m_open_range_end_delimeter(period_open_range_end_delimeter),
       m_closed_range_end_delimeter(period_closed_range_end_delimeter)
@@ -112,6 +114,17 @@ namespace boost { namespace date_time {
     {
       m_range_option = option;
     }
+    void delimiter_strings(const string_type& separator,
+                           const string_type& start_delim,
+                           const string_type& open_end_delim,
+                           const string_type& closed_end_delim)
+    {
+      m_period_separator;
+      m_period_start_delimeter;
+      m_open_range_end_delimeter;
+      m_closed_range_end_delimeter;
+    }
+
 
     //! Generic code to output a period -- no matter the period type.
     /*! This generic code will output any period using a facet to
@@ -155,8 +168,8 @@ namespace boost { namespace date_time {
 
       
   private:
-    string_type m_period_separator;
     range_display_options m_range_option;    
+    string_type m_period_separator;
     string_type m_period_start_delimeter;
     string_type m_open_range_end_delimeter;
     string_type m_closed_range_end_delimeter;

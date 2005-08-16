@@ -2,25 +2,9 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 /*
@@ -89,20 +73,20 @@ namespace boost {
       int i = 1;
       for (tie(v, v_end) = vertices(g1); v != v_end; ++v, ++i) {
         typename Traits2::edge_descriptor e; bool z;
-        tie(e, z) = add_edge(s, id1[*v] + 1, g2);
-        w[e] = zero;
+        tie(e, z) = add_edge(s, get(id1, *v) + 1, g2);
+        put(w, e, zero);
         verts1[i] = *v;
       }
       typename Traits1::edge_iterator e, e_end;
       for (tie(e, e_end) = edges(g1); e != e_end; ++e) {
         typename Traits2::edge_descriptor e2; bool z;
-        tie(e2, z) = add_edge(id1[source(*e, g1)] + 1, 
-                             id1[target(*e, g1)] + 1, g2);
-        w[e2] = get(w1, *e);
+        tie(e2, z) = add_edge(get(id1, source(*e, g1)) + 1, 
+                              get(id1, target(*e, g1)) + 1, g2);
+        put(w, e2, get(w1, *e));
         if (is_undirected) {
-          tie(e2, z) = add_edge(id1[target(*e, g1)] + 1, 
-                                id1[source(*e, g1)] + 1, g2);
-          w[e2] = get(w1, *e);
+          tie(e2, z) = add_edge(get(id1, target(*e, g1)) + 1, 
+                                get(id1, source(*e, g1)) + 1, g2);
+          put(w, e2, get(w1, *e));
         }
       }
     }

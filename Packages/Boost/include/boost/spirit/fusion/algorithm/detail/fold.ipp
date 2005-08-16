@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -20,7 +21,7 @@ namespace boost { namespace fusion { namespace detail
     template <typename Iterator, typename State, typename F>
     struct fold_apply
     {
-        typedef typename F::template apply<
+        typedef typename fusion_apply2<F,
             typename meta::value_of<Iterator>::type, State
         >::type type;
     };
@@ -78,7 +79,7 @@ namespace boost { namespace fusion { namespace detail
           , last
           , f(*first, state)
           , f
-          , is_same<typename meta::next<First>::type, Last>()
+          , is_same<BOOST_DEDUCED_TYPENAME meta::next<First>::type, Last>()
         );
     }
 }}}

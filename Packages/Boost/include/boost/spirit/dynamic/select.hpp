@@ -37,6 +37,9 @@
 //          BOOST_SPIRIT_SELECT_LIMIT > 0
 //          BOOST_SPIRIT_SELECT_LIMIT <= 15
 //
+//  [Pushed this down a little to make CW happy with BOOST_STATIC_ASSERT]
+//  [Otherwise, it complains: 'boost_static_assert_test_42' redefined]
+//
 ///////////////////////////////////////////////////////////////////////////////
 BOOST_STATIC_ASSERT(BOOST_SPIRIT_SELECT_LIMIT <= PHOENIX_LIMIT);
 BOOST_STATIC_ASSERT(BOOST_SPIRIT_SELECT_LIMIT > 0);

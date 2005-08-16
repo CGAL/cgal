@@ -132,7 +132,7 @@ namespace details
 
    template <class T1, class T2>
    class compressed_pair_imp<T1, T2, 1>
-      : private T1
+      : private ::boost::remove_cv<T1>::type
    {
    public:
       typedef T1                                                 first_type;
@@ -174,7 +174,7 @@ namespace details
 
    template <class T1, class T2>
    class compressed_pair_imp<T1, T2, 2>
-      : private T2
+      : private ::boost::remove_cv<T2>::type
    {
    public:
       typedef T1                                                 first_type;
@@ -217,8 +217,8 @@ namespace details
 
    template <class T1, class T2>
    class compressed_pair_imp<T1, T2, 3>
-      : private T1,
-        private T2
+      : private ::boost::remove_cv<T1>::type,
+        private ::boost::remove_cv<T2>::type
    {
    public:
       typedef T1                                                 first_type;
@@ -257,7 +257,7 @@ namespace details
    //      but reuses T1 base class for both first() and second().
    template <class T1, class T2>
    class compressed_pair_imp<T1, T2, 4>
-      : private T1
+      : private ::boost::remove_cv<T1>::type
    {
    public:
       typedef T1                                                 first_type;
@@ -429,6 +429,4 @@ swap(compressed_pair<T1, T2>& x, compressed_pair<T1, T2>& y)
 } // boost
 
 #endif // BOOST_DETAIL_COMPRESSED_PAIR_HPP
-
-
 

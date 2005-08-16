@@ -35,7 +35,7 @@ namespace local_time {
       typedef gregorian::last_kday_of_month end_rule;
     };
 
-    //! Provides rule of the form last Sunday in April, last Saturday in Oct
+    //! Provides rule of the form first Sunday in April, last Saturday in Oct
     typedef date_time::day_calc_dst_rule<first_last_rule_spec> first_last_dst_rule;
 
     struct last_last_rule_spec 
@@ -45,6 +45,7 @@ namespace local_time {
       typedef gregorian::last_kday_of_month end_rule;
     };
 
+    //! Provides rule of the form last Sunday in April, last Saturday in Oct
     typedef date_time::day_calc_dst_rule<last_last_rule_spec> last_last_dst_rule;
 
     struct nth_last_rule_spec
@@ -66,6 +67,8 @@ namespace local_time {
 
     //! Provides rule in form of [1st|2nd|3rd|4th] Sunday in April/October
     typedef date_time::day_calc_dst_rule<nth_kday_rule_spec> nth_kday_dst_rule;
+    //! Provides rule in form of [1st|2nd|3rd|4th] Sunday in April/October
+    typedef date_time::day_calc_dst_rule<nth_kday_rule_spec> nth_day_of_the_week_in_month_dst_rule;
 
 
 } }//namespace

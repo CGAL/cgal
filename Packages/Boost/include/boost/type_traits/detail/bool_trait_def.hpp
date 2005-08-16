@@ -12,13 +12,14 @@
 // $Revision$
 
 #include <boost/type_traits/detail/template_arity_spec.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/aux_/lambda_support.hpp>
 #include <boost/config.hpp>
 
-#if defined(__SUNPRO_CC)
+#if defined(__SUNPRO_CC) && (__SUNPRO_CC < 0x570)
 #   define BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(C) \
-    typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C > type; \
+    typedef ::boost::integral_constant<bool,C> type; \
     enum { value = type::value }; \
     /**/
 #   define BOOST_TT_AUX_BOOL_C_BASE(C)
@@ -26,7 +27,7 @@
 #elif defined(BOOST_MSVC) && BOOST_MSVC <= 1200
 
 #   define BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(C) \
-    typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C > base_; \
+    typedef ::boost::integral_constant<bool,C> base_; \
     using base_::value; \
     /**/
 
@@ -37,7 +38,7 @@
 #endif
 
 #ifndef BOOST_TT_AUX_BOOL_C_BASE
-#   define BOOST_TT_AUX_BOOL_C_BASE(C) : BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C >
+#   define BOOST_TT_AUX_BOOL_C_BASE(C) : ::boost::integral_constant<bool,C>
 #endif 
 
 
@@ -147,47 +148,4 @@ template< param > struct trait##_impl< sp1,sp2 > \
 #   define BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(trait,sp,value) \
     BOOST_TT_AUX_BOOL_TRAIT_SPEC1(trait,sp,value) \
     /**/
-#endif
-
-#if 0  // there are true_type and false_type already in boost::
-       // This also induces dependencies which may be undesirable
-       // Let's wait until sometime not just before a release and clean
-       // the whole ct_if mess up.
-# ifndef BOOST_TT_INTEGRAL_CONSTANT
-#  define BOOST_TT_INTEGRAL_CONSTANT
-#  include <boost/mpl/integral_c.hpp>
-
-//
-// this is not a TR1 conforming integral_constant,
-// but it is a first start:
-//
-
-namespace boost{
-
-template <class T, T val>
-struct integral_constant
-: public BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::integral_c<T,val> {};
-
-
-template<> struct integral_constant< bool, true > \
-    BOOST_TT_AUX_BOOL_C_BASE(true) \
-{ \
-    BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(true) \
-    BOOST_MPL_AUX_LAMBDA_SUPPORT_SPEC(1,integral_constant,(bool)) \
-};
-template<> struct integral_constant< bool, false > \
-    BOOST_TT_AUX_BOOL_C_BASE(false) \
-{ \
-    BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(false) \
-    BOOST_MPL_AUX_LAMBDA_SUPPORT_SPEC(1,integral_constant,(bool)) \
-};
-
-namespace pending {
-typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::true_ true_type;
-typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::false_ false_type;
-}
-
-}
-
-# endif
 #endif

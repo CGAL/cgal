@@ -22,9 +22,9 @@
 #define i_ BOOST_PP_FRAME_ITERATION(1)
 
 #   define AUX778076_SET_TAIL(set, i_, T) \
-    BOOST_PP_CAT(set,i_)< \
+    typename BOOST_PP_CAT(set,i_)< \
           BOOST_PP_ENUM_PARAMS(i_, T) \
-        > \
+        >::item_                           \
     /**/
 
 #if i_ > 0

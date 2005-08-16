@@ -16,8 +16,6 @@
 
 #if (__COMO_VERSION__ <= 4245)
 
-#  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
-
 #  if defined(_MSC_VER) && _MSC_VER <= 1300
 #     if _MSC_VER > 100
          // only set this in non-strict mode:

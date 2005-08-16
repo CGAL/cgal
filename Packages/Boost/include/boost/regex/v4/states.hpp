@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -36,6 +36,7 @@ enum mask_type
 {
    mask_take = 1,
    mask_skip = 2,
+   mask_init = 4,
    mask_any = mask_skip | mask_take,
    mask_all = mask_any
 };
@@ -105,7 +106,12 @@ enum syntax_element_type
    syntax_element_dot_rep = syntax_element_restart_continue + 1,
    syntax_element_char_rep = syntax_element_dot_rep + 1,
    syntax_element_short_set_rep = syntax_element_char_rep + 1,
-   syntax_element_long_set_rep = syntax_element_short_set_rep + 1
+   syntax_element_long_set_rep = syntax_element_short_set_rep + 1,
+   // a backstep for lookbehind repeats:
+   syntax_element_backstep = syntax_element_long_set_rep + 1,
+   // an assertion that a mark was matched:
+   syntax_element_assert_backref = syntax_element_backstep + 1,
+   syntax_element_toggle_case = syntax_element_assert_backref + 1
 };
 
 #ifdef BOOST_REGEX_DEBUG
@@ -123,7 +129,7 @@ execution of the machine.
 union offset_type
 {
    re_syntax_base*   p;
-   std::size_t       i;
+   std::ptrdiff_t    i;
 };
 
 /*** struct re_syntax_base ********************************************
@@ -133,17 +139,33 @@ struct re_syntax_base
 {
    syntax_element_type   type;         // what kind of state this is
    offset_type           next;         // next state in the machine
-   unsigned int          can_be_null;  // true if we match a NULL string
 };
 
 /*** struct re_brace **************************************************
-Base class for all states in the machine.
+A marked parenthesis.
 ***********************************************************************/
 struct re_brace : public re_syntax_base
 {
    // The index to match, can be zero (don't mark the sub-expression)
    // or negative (for perl style (?...) extentions):
    int index;
+};
+
+/*** struct re_dot **************************************************
+Match anything.
+***********************************************************************/
+enum
+{
+   dont_care = 1,
+   force_not_newline = 0,
+   force_newline = 2,
+
+   test_not_newline = 2,
+   test_newline = 3
+};
+struct re_dot : public re_syntax_base
+{
+   unsigned char mask;
 };
 
 /*** struct re_literal ************************************************
@@ -155,6 +177,14 @@ struct re_literal : public re_syntax_base
    unsigned int length;
 };
 
+/*** struct re_case ************************************************
+Indicates whether we are moving to a case insensive block or not
+***********************************************************************/
+struct re_case : public re_syntax_base
+{
+   bool icase;
+};
+
 /*** struct re_set_long ***********************************************
 A wide character set of characters, following this structure will be
 an array of type charT:
@@ -162,10 +192,11 @@ First csingles null-terminated strings
 Then 2 * cranges NULL terminated strings
 Then cequivalents NULL terminated strings
 ***********************************************************************/
+template <class mask_type>
 struct re_set_long : public re_syntax_base
 {
    unsigned int            csingles, cranges, cequivalents;
-   boost::uint_fast32_t    cclasses;
+   mask_type               cclasses;
    bool                    isnot;
    bool                    singleton;
 };
@@ -175,7 +206,7 @@ A set of narrow-characters, matches any of _map which is none-zero
 ***********************************************************************/
 struct re_set : public re_syntax_base
 {
-   unsigned char _map[256];
+   unsigned char _map[1 << CHAR_BIT];
 };
 
 /*** struct re_jump ***************************************************
@@ -183,19 +214,27 @@ Jump to a new location in the machine (not next).
 ***********************************************************************/
 struct re_jump : public re_syntax_base
 {
-   offset_type     alt;           // location to jump to
-   unsigned char   _map[256];     // which characters can take the jump
+   offset_type     alt;                 // location to jump to
+};
+
+/*** struct re_alt ***************************************************
+Jump to a new location in the machine (possibly next).
+***********************************************************************/
+struct re_alt : public re_jump
+{
+   unsigned char   _map[1 << CHAR_BIT]; // which characters can take the jump
+   unsigned int    can_be_null;         // true if we match a NULL string
 };
 
 /*** struct re_repeat *************************************************
 Repeat a section of the machine
 ***********************************************************************/
-struct re_repeat : public re_jump
+struct re_repeat : public re_alt
 {
-   unsigned   min, max;  // min and max allowable repeats
-   int        id;        // Unique identifier for this repeat
-   bool       leading;   // True if this repeat is at the start of the machine (lets us optimize some searches)
-   bool       greedy;    // True if this is a greedy repeat
+   std::size_t   min, max;  // min and max allowable repeats
+   int           id;        // Unique identifier for this repeat
+   bool          leading;   // True if this repeat is at the start of the machine (lets us optimize some searches)
+   bool          greedy;    // True if this is a greedy repeat
 };
 
 /*** enum re_jump_size_type *******************************************
@@ -206,17 +245,22 @@ We provide this so we know how manybytes to insert when constructing the machine
 enum re_jump_size_type
 {
    re_jump_size = (sizeof(re_jump) + padding_mask) & ~(padding_mask),
-   re_repeater_size = (sizeof(re_repeat) + padding_mask) & ~(padding_mask)
+   re_repeater_size = (sizeof(re_repeat) + padding_mask) & ~(padding_mask),
+   re_alt_size = (sizeof(re_alt) + padding_mask) & ~(padding_mask)
 };
 
 /*** proc re_is_set_member *********************************************
 Forward declaration: we'll need this one later...
 ***********************************************************************/
-template <class iterator, class charT, class traits_type, class Allocator>
+
+template<class charT, class traits>
+struct regex_data;
+
+template <class iterator, class charT, class traits_type, class char_classT>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
-                          const re_set_long* set_, 
-                          const reg_expression<charT, traits_type, Allocator>& e);
+                          const re_set_long<char_classT>* set_, 
+                          const regex_data<charT, traits_type>& e, bool icase);
 
 } // namespace re_detail
 

@@ -20,6 +20,7 @@
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/mpl/integral_c_tag.hpp>
 
 #include <boost/serialization/traits.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
@@ -57,8 +58,8 @@ namespace serialization {                                              \
 template<>                                                             \
 struct version<T >                                                     \
 {                                                                      \
-    typedef mpl::integral_c_tag tag;                                   \
     typedef mpl::int_<N> type;                                         \
+    typedef mpl::integral_c_tag tag;                                   \
     BOOST_STATIC_CONSTANT(unsigned int, value = version::type::value); \
     /* require that class info saved when versioning is used */        \
     /*                                                                 \

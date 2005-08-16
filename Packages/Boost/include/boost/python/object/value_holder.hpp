@@ -48,7 +48,7 @@ struct value_holder : instance_holder
 #  include BOOST_PP_ITERATE()
 
  private: // required holder implementation
-    void* holds(type_info);
+    void* holds(type_info, bool null_ptr_only);
     
     template <class T>
     inline void* holds_wrapped(type_info dst_t, wrapper<T>*,T* p)
@@ -75,7 +75,7 @@ struct value_holder_back_reference : instance_holder
 #  include BOOST_PP_ITERATE()
 
 private: // required holder implementation
-    void* holds(type_info);
+    void* holds(type_info, bool null_ptr_only);
 
  private: // data members
     Held m_held;
@@ -84,7 +84,7 @@ private: // required holder implementation
 #  undef BOOST_PYTHON_UNFORWARD_LOCAL
 
 template <class Value>
-void* value_holder<Value>::holds(type_info dst_t)
+void* value_holder<Value>::holds(type_info dst_t, bool null_ptr_only)
 {
     if (void* wrapped = holds_wrapped(dst_t, &m_held, &m_held))
         return wrapped;
@@ -96,7 +96,7 @@ void* value_holder<Value>::holds(type_info dst_t)
 
 template <class Value, class Held>
 void* value_holder_back_reference<Value,Held>::holds(
-    type_info dst_t)
+    type_info dst_t, bool null_ptr_only)
 {
     type_info src_t = python::type_id<Value>();
     Value* x = &m_held;

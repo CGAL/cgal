@@ -18,27 +18,29 @@ namespace archive {
 namespace detail {
 
 template<class Archive>
-basic_serializer_map & oserializer_map(){
+basic_serializer_map & 
+oserializer_map(){
     static basic_serializer_map map;
     return map;
 }
 
 template<class Archive>
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 archive_pointer_oserializer<Archive>::archive_pointer_oserializer(
-    const boost::serialization::extended_type_info & type
+    const boost::serialization::extended_type_info & eti
 ) :
-        basic_pointer_oserializer(type)
+        basic_pointer_oserializer(eti)
 {
     oserializer_map<Archive>().insert(this);
 }
 
 template<class Archive>
-const basic_pointer_oserializer * 
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(const basic_pointer_oserializer *) 
 archive_pointer_oserializer<Archive>::find(
-    const boost::serialization::extended_type_info & type
+    const boost::serialization::extended_type_info & eti
 ){
     return static_cast<const basic_pointer_oserializer *>(
-        oserializer_map<Archive>().tfind(type)
+        oserializer_map<Archive>().tfind(eti)
     );
 }
 

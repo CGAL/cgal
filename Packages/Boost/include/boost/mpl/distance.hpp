@@ -37,7 +37,7 @@ template< typename Tag > struct distance_impl
 #if !defined(BOOST_MPL_CFG_NO_NESTED_FORWARDING)
         : aux::msvc_eti_base< typename iter_fold<
               iterator_range<First,Last>
-            , long_<0>
+            , mpl::long_<0>
             , next<>
             >::type >
     {
@@ -45,14 +45,14 @@ template< typename Tag > struct distance_impl
     {
         typedef typename iter_fold<
               iterator_range<First,Last>
-            , long_<0>
+            , mpl::long_<0>
             , next<>
             >::type type;
         
         BOOST_STATIC_CONSTANT(long, value =
               (iter_fold<
                   iterator_range<First,Last>
-                , long_<0>
+                , mpl::long_<0>
                 , next<>
                 >::type::value)
             );

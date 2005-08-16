@@ -202,6 +202,26 @@ operator<<(std::basic_ostream<CharT, Traits>& out, tribool x)
 }
 
 /**
+ * \brief Writes the indeterminate tribool value to a stream.
+ *
+ * This routine outputs either the integer
+ * value 2 (if <tt>(out.flags() & std::ios_base::boolalpha) == 0</tt>)
+ * or the name of the indeterminate value. The name of the
+ * indeterminate value comes from the indeterminate_name facet (if it
+ * is defined in the output stream's locale), or from the
+ * get_default_indeterminate_name function (if it is not defined in the
+ * locale or if the C++ standard library implementation does not
+ * support locales).
+ *
+ * \returns @p out
+ */
+template<typename CharT, typename Traits>
+inline std::basic_ostream<CharT, Traits>&
+operator<<(std::basic_ostream<CharT, Traits>& out, 
+           bool (*)(tribool, detail::indeterminate_t))
+{ return out << tribool(indeterminate); } 
+
+/**
  * \brief Reads a tribool value from a stream.
  *
  * When <tt>(out.flags() & std::ios_base::boolalpha) == 0</tt>, this

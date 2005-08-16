@@ -1,11 +1,11 @@
 #ifndef DATE_CLOCK_DEVICE_HPP___
 #define DATE_CLOCK_DEVICE_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
- * Author: Jeff Garland 
+ * Author: Jeff Garland, Bart Garst
  * $Date$
  */
 
@@ -34,7 +34,8 @@ namespace date_time {
     //! Get the local day as a ymd_type
     static typename date_type::ymd_type local_day_ymd() 
     {
-      ::std::tm* curr = get_local_time();
+      ::std::tm result;
+      ::std::tm* curr = get_local_time(result);
       return ymd_type(curr->tm_year + 1900, 
                       curr->tm_mon + 1, 
                       curr->tm_mday);
@@ -42,7 +43,8 @@ namespace date_time {
     //! Get the current day in universal date as a ymd_type
     static typename date_type::ymd_type universal_day_ymd() 
     {
-      ::std::tm* curr = get_universal_time();
+      ::std::tm result;
+      ::std::tm* curr = get_universal_time(result);
       return ymd_type(curr->tm_year + 1900, 
                       curr->tm_mon + 1, 
                       curr->tm_mday);
@@ -54,17 +56,17 @@ namespace date_time {
     }
 
   private:
-    static ::std::tm* get_local_time() 
+    static ::std::tm* get_local_time(std::tm& result) 
     {
       ::std::time_t t;
       ::std::time(&t);
-      return ::std::localtime(&t);
+      return c_time::localtime(&t, &result);
     }
-    static ::std::tm* get_universal_time() 
+    static ::std::tm* get_universal_time(std::tm& result) 
     {
       ::std::time_t t;
       ::std::time(&t);
-      return ::std::gmtime(&t);
+      return c_time::gmtime(&t, &result);
     }
 
   };

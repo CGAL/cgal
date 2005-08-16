@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -38,7 +39,7 @@ namespace boost { namespace fusion
             {
                 return filter_view<
                     Sequence const
-                  , mpl::not_<is_same<mpl::_, typename T::type>
+                  , mpl::not_<is_same<mpl::_, BOOST_DEDUCED_TYPENAME T::type>
                 > >(seq);
             }
 
@@ -50,7 +51,7 @@ namespace boost { namespace fusion
             {
                 return filter_view<
                     Sequence
-                  , mpl::not_<is_same<mpl::_, typename T::type>
+                  , mpl::not_<is_same<mpl::_, BOOST_DEDUCED_TYPENAME T::type>
                 > >(seq);
             }
         };

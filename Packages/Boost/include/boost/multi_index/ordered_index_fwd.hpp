@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,10 @@
 
 #ifndef BOOST_MULTI_INDEX_ORDERED_INDEX_FWD_HPP
 #define BOOST_MULTI_INDEX_ORDERED_INDEX_FWD_HPP
+
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
 
 #include <boost/multi_index/detail/ord_index_args.hpp>
 
@@ -19,90 +23,98 @@ namespace detail{
 
 template<
   typename KeyFromValue,typename Compare,
-  typename Super,typename TagList,typename Category
+  typename SuperMeta,typename TagList,typename Category
 >
-class index;
+class ordered_index;
 
 template<
   typename KeyFromValue1,typename Compare1,
-  typename Super1,typename TagList1,typename Category1,
+  typename SuperMeta1,typename TagList1,typename Category1,
   typename KeyFromValue2,typename Compare2,
-  typename Super2,typename TagList2,typename Category2
+  typename SuperMeta2,typename TagList2,typename Category2
 >
 bool operator==(
-  const index<KeyFromValue1,Compare1,Super1,TagList1,Category1>& x,
-  const index<KeyFromValue2,Compare2,Super2,TagList2,Category2>& y);
+  const ordered_index<
+    KeyFromValue1,Compare1,SuperMeta1,TagList1,Category1>& x,
+  const ordered_index<
+    KeyFromValue2,Compare2,SuperMeta2,TagList2,Category2>& y);
 
 template<
   typename KeyFromValue1,typename Compare1,
-  typename Super1,typename TagList1,typename Category1,
+  typename SuperMeta1,typename TagList1,typename Category1,
   typename KeyFromValue2,typename Compare2,
-  typename Super2,typename TagList2,typename Category2
+  typename SuperMeta2,typename TagList2,typename Category2
 >
 bool operator<(
-  const index<KeyFromValue1,Compare1,Super1,TagList1,Category1>& x,
-  const index<KeyFromValue2,Compare2,Super2,TagList2,Category2>& y);
+  const ordered_index<
+    KeyFromValue1,Compare1,SuperMeta1,TagList1,Category1>& x,
+  const ordered_index<
+    KeyFromValue2,Compare2,SuperMeta2,TagList2,Category2>& y);
 
 template<
   typename KeyFromValue1,typename Compare1,
-  typename Super1,typename TagList1,typename Category1,
+  typename SuperMeta1,typename TagList1,typename Category1,
   typename KeyFromValue2,typename Compare2,
-  typename Super2,typename TagList2,typename Category2
+  typename SuperMeta2,typename TagList2,typename Category2
 >
 bool operator!=(
-  const index<KeyFromValue1,Compare1,Super1,TagList1,Category1>& x,
-  const index<KeyFromValue2,Compare2,Super2,TagList2,Category2>& y);
+  const ordered_index<
+    KeyFromValue1,Compare1,SuperMeta1,TagList1,Category1>& x,
+  const ordered_index<
+    KeyFromValue2,Compare2,SuperMeta2,TagList2,Category2>& y);
 
 template<
   typename KeyFromValue1,typename Compare1,
-  typename Super1,typename TagList1,typename Category1,
+  typename SuperMeta1,typename TagList1,typename Category1,
   typename KeyFromValue2,typename Compare2,
-  typename Super2,typename TagList2,typename Category2
+  typename SuperMeta2,typename TagList2,typename Category2
 >
 bool operator>(
-  const index<KeyFromValue1,Compare1,Super1,TagList1,Category1>& x,
-  const index<KeyFromValue2,Compare2,Super2,TagList2,Category2>& y);
+  const ordered_index<
+    KeyFromValue1,Compare1,SuperMeta1,TagList1,Category1>& x,
+  const ordered_index<
+    KeyFromValue2,Compare2,SuperMeta2,TagList2,Category2>& y);
 
 template<
   typename KeyFromValue1,typename Compare1,
-  typename Super1,typename TagList1,typename Category1,
+  typename SuperMeta1,typename TagList1,typename Category1,
   typename KeyFromValue2,typename Compare2,
-  typename Super2,typename TagList2,typename Category2
+  typename SuperMeta2,typename TagList2,typename Category2
 >
 bool operator>=(
-  const index<KeyFromValue1,Compare1,Super1,TagList1,Category1>& x,
-  const index<KeyFromValue2,Compare2,Super2,TagList2,Category2>& y);
+  const ordered_index<
+    KeyFromValue1,Compare1,SuperMeta1,TagList1,Category1>& x,
+  const ordered_index<
+    KeyFromValue2,Compare2,SuperMeta2,TagList2,Category2>& y);
 
 template<
   typename KeyFromValue1,typename Compare1,
-  typename Super1,typename TagList1,typename Category1,
+  typename SuperMeta1,typename TagList1,typename Category1,
   typename KeyFromValue2,typename Compare2,
-  typename Super2,typename TagList2,typename Category2
+  typename SuperMeta2,typename TagList2,typename Category2
 >
 bool operator<=(
-  const index<KeyFromValue1,Compare1,Super1,TagList1,Category1>& x,
-  const index<KeyFromValue2,Compare2,Super2,TagList2,Category2>& y);
+  const ordered_index<
+    KeyFromValue1,Compare1,SuperMeta1,TagList1,Category1>& x,
+  const ordered_index<
+    KeyFromValue2,Compare2,SuperMeta2,TagList2,Category2>& y);
 
 template<
   typename KeyFromValue,typename Compare,
-  typename Super,typename TagList,typename Category
+  typename SuperMeta,typename TagList,typename Category
 >
 void swap(
-  index<KeyFromValue,Compare,Super,TagList,Category>& x,
-  index<KeyFromValue,Compare,Super,TagList,Category>& y);
+  ordered_index<KeyFromValue,Compare,SuperMeta,TagList,Category>& x,
+  ordered_index<KeyFromValue,Compare,SuperMeta,TagList,Category>& y);
 
 } /* namespace multi_index::detail */
 
-/* index specifiers */
+/* ordered_index specifiers */
 
-template<
-  typename Arg1,typename Arg2=detail::null_arg,typename Arg3=detail::null_arg
->
+template<typename Arg1,typename Arg2=mpl::na,typename Arg3=mpl::na>
 struct ordered_unique;
 
-template<
-  typename Arg1,typename Arg2=detail::null_arg,typename Arg3=detail::null_arg
->
+template<typename Arg1,typename Arg2=mpl::na,typename Arg3=mpl::na>
 struct ordered_non_unique;
 
 } /* namespace multi_index */

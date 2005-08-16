@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -9,7 +9,12 @@
 #ifndef BOOST_MULTI_INDEX_DETAIL_ORD_INDEX_ARGS_HPP
 #define BOOST_MULTI_INDEX_DETAIL_ORD_INDEX_ARGS_HPP
 
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
+
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
+#include <boost/mpl/aux_/na.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
@@ -35,14 +40,6 @@ namespace detail{
  * polymorphism.
  */
 
-struct null_arg{};
-
-template<typename T>
-struct not_is_null_arg
-{
-  BOOST_STATIC_CONSTANT(bool,value=!(is_same<null_arg,T>::value));
-};
-
 template<typename KeyFromValue>
 struct index_args_default_compare
 {
@@ -67,14 +64,14 @@ struct ordered_index_args
     Arg3,
     Arg2>::type                                      supplied_compare_type;
   typedef typename mpl::eval_if<
-    is_same<supplied_compare_type,null_arg>,
+    mpl::is_na<supplied_compare_type>,
     index_args_default_compare<key_from_value_type>,
     mpl::identity<supplied_compare_type>
   >::type                                            compare_type;
 
   BOOST_STATIC_ASSERT(is_tag<tag_list_type>::value);
-  BOOST_STATIC_ASSERT(not_is_null_arg<key_from_value_type>::value);
-  BOOST_STATIC_ASSERT(not_is_null_arg<compare_type>::value);
+  BOOST_STATIC_ASSERT(!mpl::is_na<key_from_value_type>::value);
+  BOOST_STATIC_ASSERT(!mpl::is_na<compare_type>::value);
 };
 
 } /* namespace multi_index::detail */

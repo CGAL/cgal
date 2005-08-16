@@ -19,6 +19,10 @@
 
 //  enable dynamic linking on Windows  ---------------------------------------//
 
+#  if (defined(BOOST_ALL_DYN_LINK) || defined(BOOST_FILESYSTEM_DYN_LINK)) && defined(__BORLANDC__) && defined(__WIN32__)
+#    error Dynamic linking Boost.Filesystem does not work for Borland; use static linking instead
+#  endif
+
 #ifdef BOOST_HAS_DECLSPEC // defined in config system
 // we need to import/export our code only if the user has specifically
 // asked for it by defining either BOOST_ALL_DYN_LINK if they want all boost

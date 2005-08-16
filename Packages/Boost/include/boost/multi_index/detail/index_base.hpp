@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2005 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -9,6 +9,10 @@
 #ifndef BOOST_MULTI_INDEX_DETAIL_INDEX_BASE_HPP
 #define BOOST_MULTI_INDEX_DETAIL_INDEX_BASE_HPP
 
+#if defined(_MSC_VER)&&(_MSC_VER>=1200)
+#pragma once
+#endif
+
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <boost/call_traits.hpp>
 #include <boost/detail/workaround.hpp>
@@ -18,6 +22,11 @@
 #include <boost/multi_index_container_fwd.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <utility>
+
+#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+#include <boost/multi_index/detail/index_loader.hpp>
+#include <boost/multi_index/detail/index_saver.hpp>
+#endif
 
 namespace boost{
 
@@ -54,6 +63,16 @@ protected:
     final_node_type,
     final_allocator_type>                     copy_map_type;
 
+#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+  typedef index_saver<
+    node_type,
+    final_allocator_type>                     index_saver_type;
+  typedef index_loader<
+    node_type,
+    final_node_type,
+    final_allocator_type>                     index_loader_type;
+#endif
+
 private:
   typedef typename call_traits<Value>::param_type value_param_type;
 
@@ -81,6 +100,13 @@ protected:
     boost::detail::allocator::destroy(&x->value);
   }
 
+  void delete_node_(node_type* x)
+  {
+    boost::detail::allocator::destroy(&x->value);
+  }
+
+  void clear_(){}
+
   void swap_(index_base<Value,IndexSpecifierList,Allocator>&){}
 
   bool replace_(value_param_type v,node_type* x)
@@ -90,6 +116,16 @@ protected:
   }
 
   bool modify_(node_type*){return true;}
+
+#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+  /* serialization */
+
+  template<typename Archive>
+  void save_(Archive&,const unsigned int,const index_saver_type&)const{}
+
+  template<typename Archive>
+  void load_(Archive&,const unsigned int,const index_loader_type&){}
+#endif
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
   /* invariant stuff */
@@ -115,6 +151,11 @@ protected:
     {return final().insert_(x,position);}
 
   void final_erase_(final_node_type* x){final().erase_(x);}
+
+  void final_delete_node_(final_node_type* x){final().delete_node_(x);}
+  void final_delete_all_nodes_(){final().delete_all_nodes_();}
+  void final_clear_(){final().clear_();}
+
   void final_swap_(final_type& x){final().swap_(x);}
   bool final_replace_(
     value_param_type k,final_node_type* x)

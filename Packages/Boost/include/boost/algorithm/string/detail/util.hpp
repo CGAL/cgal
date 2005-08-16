@@ -12,6 +12,7 @@
 
 #include <boost/algorithm/string/config.hpp>
 #include <functional>
+#include <boost/range/iterator_range.hpp>
 
 namespace boost {
     namespace algorithm {
@@ -22,7 +23,7 @@ namespace boost {
             //  empty_container 
             /*
                 This class represents always empty container,
-                containing elemets of type CharT.
+                containing elements of type CharT.
 
                 It is supposed to be used in a const version only
             */
@@ -92,7 +93,7 @@ namespace boost {
             {
                 SeqT operator()( const iterator_range<IteratorT>& Range ) const
                 {
-                    return copy_iterator_range<SeqT>(Range);
+                    return copy_range<SeqT>(Range);
                 }
             };
 

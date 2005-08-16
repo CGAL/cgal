@@ -65,6 +65,7 @@ template<
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
 struct not_equal_to
+
     : not_equal_to_impl<
           typename not_equal_to_tag<N1>::type
         , typename not_equal_to_tag<N2>::type

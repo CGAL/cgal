@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -132,10 +133,8 @@ namespace boost { namespace mpl
         template <typename Tuple, typename T>
         struct apply
         {
-            typedef typename
-                fusion::meta::generate<
-                    typename fusion::meta::push_front<Tuple, T>::type
-                >::type
+            typedef typename fusion::meta::push_front<Tuple, T> func1_;
+            typedef typename fusion::meta::generate<FUSION_GET_TYPE(func1_)>::type
             type;
         };
     };

@@ -10,7 +10,6 @@
  */
 
 #include "boost/date_time/gregorian/gregorian_types.hpp"
-#include "boost/date_time/gregorian/greg_facet.hpp"
 #include "boost/date_time/date_formatting_limited.hpp"
 #include "boost/date_time/iso_format.hpp"
 #include "boost/date_time/date_format_simple.hpp"

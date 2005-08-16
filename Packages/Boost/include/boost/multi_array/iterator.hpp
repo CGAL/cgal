@@ -98,7 +98,7 @@ public:
 
   array_iterator() {}
 
-  array_iterator(int idx, TPtr base, const size_type* extents,
+  array_iterator(index idx, TPtr base, const size_type* extents,
                 const index* strides,
                 const index* index_base) :
     idx_(idx), base_(base), extents_(extents),

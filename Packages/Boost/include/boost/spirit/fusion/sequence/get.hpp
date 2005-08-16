@@ -1,6 +1,7 @@
 /*=============================================================================
     Copyright (c) 1999-2003 Jaakko Järvi
     Copyright (c) 2001-2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -31,14 +32,23 @@ namespace boost { namespace fusion
     inline typename meta::at_c<Sequence const, N>::type
     get(sequence_base<Sequence> const& seq FUSION_GET_MSVC_WORKAROUND)
     {
-        return at<N>(seq.cast());
+        typedef meta::at_c<Sequence const, N> at_meta;
+        return meta::at_impl<BOOST_DEDUCED_TYPENAME at_meta::seq::tag>::
+            template apply<BOOST_DEDUCED_TYPENAME at_meta::seq const, N>::call(
+                at_meta::seq_converter::convert_const(seq.cast()));
+
+//        return at<N>(seq.cast());
     }
 
     template <int N, typename Sequence>
     inline typename meta::at_c<Sequence, N>::type
     get(sequence_base<Sequence>& seq FUSION_GET_MSVC_WORKAROUND)
     {
-        return at<N>(seq.cast());
+        typedef meta::at_c<Sequence, N> at_meta;
+        return meta::at_impl<BOOST_DEDUCED_TYPENAME at_meta::seq::tag>::
+            template apply<BOOST_DEDUCED_TYPENAME at_meta::seq, N>::call(
+                at_meta::seq_converter::convert(seq.cast()));
+//        return at<N>(seq.cast());
     }
 }}
 

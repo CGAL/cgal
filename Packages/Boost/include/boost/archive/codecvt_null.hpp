@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // codecvt_null.hpp:
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2004 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -84,5 +84,45 @@ class codecvt_null<wchar_t> : public std::codecvt<wchar_t, char, std::mbstate_t>
 
 } // namespace archive
 } // namespace boost
+
+// this befuddles the msvc 6 compiler so we can't use it
+#if ! ((defined _MSC_VER) && (_MSC_VER <= 1300)) \
+&&  ! defined(__BORLANDC__)
+
+#if defined(__SGI_STL_PORT) 
+#if defined(_STLPORT_VERSION) && (_STLPORT_VERSION < 0x500)
+namespace std {
+
+#if 0
+template <> 
+locale::locale(
+    const locale& __loc, 
+    boost::archive::codecvt_null<char> * __f
+){
+     _M_impl = 0;
+    //      _M_impl = this->_S_copy_impl(__loc._M_impl, __f != 0);
+    new(this) locale(__loc._M_impl, __f != 0);
+    if (__f != 0)
+        this->_M_insert(__f, boost::archive::codecvt_null<char> ::id);
+}
+
+template <> 
+locale::locale(
+    const locale& __loc, 
+    boost::archive::codecvt_null<wchar_t> * __f
+){
+     _M_impl = 0;
+    //      _M_impl = this->_S_copy_impl(__loc._M_impl, __f != 0);
+    new(this) locale(__loc._M_impl, __f != 0);
+    if (__f != 0)
+        this->_M_insert(__f, boost::archive::codecvt_null<wchar_t> ::id);
+}
+#endif
+
+} // namespace std
+#endif
+#endif
+
+#endif
 
 #endif //BOOST_ARCHIVE_CODECVT_NULL_HPP

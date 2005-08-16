@@ -1,17 +1,17 @@
 #ifndef BOOST_DATE_TIME_STRING_PARSE_TREE___HPP__
 #define BOOST_DATE_TIME_STRING_PARSE_TREE___HPP__
 
-/* Copyright (c) 2004 CrystalClear Software, Inc.
+/* Copyright (c) 2004-2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
- * Author: Jeff Garland
+ * Author: Jeff Garland, Bart Garst
  * $Date$
  */
 
 
 #include "boost/lexical_cast.hpp" //error without?
-#include "boost/algorithm/string.hpp" //todo narrow this
+#include "boost/algorithm/string/case_conv.hpp" 
 #include <map>
 #include <string>
 #include <vector>
@@ -25,7 +25,7 @@ struct parse_match_result
 {
   parse_match_result() :
     match_depth(0),
-    current_match(0)
+    current_match(-1)// -1 is match_not-found value
   {}
   typedef std::basic_string<charT> string_type;
   string_type remaining() const
@@ -33,7 +33,7 @@ struct parse_match_result
     if (match_depth == cache.size()) {
       return string_type();
     }
-    if (current_match == 0) {
+    if (current_match == -1) {
       return cache;
     }
     //some of the cache was used return the rest
@@ -43,14 +43,22 @@ struct parse_match_result
   {
     return cache[cache.size()-1];
   }
+  //! Returns true if more characters were parsed than was necessary
+  /*! Should be used in conjunction with last_char() 
+   * to get the remaining character. */
   bool has_remaining() const
   {
     return (cache.size() > match_depth);
   }
+  
+  // cache will hold characters that have been read from the stream
   string_type cache;
   unsigned short match_depth;
-  unsigned short current_match;
+  short current_match;
+  static const short PARSE_ERROR;
 };
+template<typename charT>
+const short parse_match_result<charT>::PARSE_ERROR = -1;
 
   //for debug -- really only char streams...
 template<typename charT>
@@ -82,14 +90,19 @@ struct string_parse_tree
   typedef std::basic_string<charT> string_type;
   typedef std::vector<std::basic_string<charT> > collection_type;
   typedef parse_match_result<charT> parse_match_result_type;
-
-  string_parse_tree(collection_type names)
+ 
+  /*! Parameter "starting_point" desingates where the numbering begins. 
+   * A starting_point of zero will start the numbering at zero 
+   * (Sun=0, Mon=1, ...) were a starting_point of one starts the 
+   * numbering at one (Jan=1, Feb=2, ...). The default is zero, 
+   * negative vaules are not allowed */
+  string_parse_tree(collection_type names, unsigned int starting_point=0)
   {
     // iterate thru all the elements and build the tree
     unsigned short index = 0;
     while (index != names.size() ) {
       string_type s = boost::algorithm::to_lower_copy(names[index]);
-      insert(s, index+1);
+      insert(s, static_cast<unsigned short>(index + starting_point));
       index++;
     }
     //set the last tree node = index+1  indicating a value
@@ -97,15 +110,15 @@ struct string_parse_tree
   }
 
 
-  string_parse_tree(unsigned short value = 0) :
+  string_parse_tree(short value = -1) :
     m_value(value)
   {}
   ptree_coll m_next_chars;
-  unsigned short m_value;
+  short m_value;
 
   void insert(const string_type& s, unsigned short value)
   {
-    int i = 0;
+    unsigned int i = 0;
     iterator ti;
     while(i < s.size()) {
       if (i==0) {
@@ -133,77 +146,80 @@ struct string_parse_tree
       i++;
     }
   }
+ 
   
-  unsigned short
+  //! Recursive function that finds a matching string in the tree.
+  /*! Must check match_results::has_remaining() after match() is 
+   * called. This is required so the user can determine if 
+   * stream iterator is already pointing to the expected 
+   * character or not (match() might advance sitr to next char in stream).
+   *
+   * A parse_match_result that has been returned from a failed match 
+   * attempt can be sent in to the match function of a different 
+   * string_parse_tree to attempt a match there. Use the iterators 
+   * for the partially consumed stream, the parse_match_result object, 
+   * and '0' for the level parameter. */
+  short
   match(std::istreambuf_iterator<charT>& sitr, 
         std::istreambuf_iterator<charT>& stream_end,
         parse_match_result_type& result,
         unsigned int& level)  const
   {
-    
-    unsigned int found = 0;
+
     level++;
     charT c;
+    // if we conditionally advance sitr, we won't have 
+    // to consume the next character past the input
+    bool adv_itr = true;
     if (level > result.cache.size()) {
-      if (sitr == stream_end) return 0; //bail stream exhausted
-      c = std::tolower(*sitr);
-      result.cache += c;
-      sitr++;
+      if (sitr == stream_end) return 0; //bail - input exhausted
+      c = static_cast<charT>(std::tolower(*sitr));
+      //result.cache += c;
+      //sitr++;
     }
     else {
-      c = result.cache[level-1];
+      // if we're looking for characters from the cache, 
+      // we don't want to increment sitr
+      adv_itr = false; 
+      c = static_cast<charT>(std::tolower(result.cache[level-1]));
     }
-//     std::cout << "Level: " << level 
-//               << " char: " << c 
-//               << " result.cache: " << result.cache << std::endl;
     const_iterator litr = m_next_chars.lower_bound(c);
     const_iterator uitr = m_next_chars.upper_bound(c);
-    while (litr != uitr) {
-//       std::cout << "Level: " << level 
-//                 << " char: " << c 
-//                 << " result.cache: " << result.cache 
-//                 << " value: " << litr->second.m_value 
-//                 << " cm   : " << result.current_match 
-//                 << " " << result.match_depth
-//                 << std::endl;
-      if (litr->second.m_value != 0) {
+    while (litr != uitr) { // equal if not found
+      if(adv_itr) {
+        sitr++; 
+        result.cache += c;
+      }
+      if (litr->second.m_value != -1) { // -1 is default value
         if (result.match_depth < level) {
           result.current_match = litr->second.m_value;
-          result.match_depth = level;
-//           std::cout << " ....reset cm: " << result.current_match << std::endl;
+          result.match_depth = static_cast<unsigned short>(level);
         }
-        found = litr->second.match(sitr, stream_end, 
-                                   result, level);
+        litr->second.match(sitr, stream_end, 
+                           result, level);
         level--;
-        //        found = result.current_match;
-        //return litr->second.m_value; //found match
       }
       else {
-        found = litr->second.match(sitr, stream_end, 
-                                   result, level);
+        litr->second.match(sitr, stream_end, 
+                           result, level);
         level--;
       }
-//       std::cout << "Level: " << level 
-//                 << " char: " << c 
-//                 << " result.cache: " << result.cache 
-//                 << " found: " << found 
-//                 << std::endl;
-//       if (found != 0) {
-//         std::cout << "Found bailing Level: " << level 
-//                   << " char: " << c 
-//                   << " result.cache: " << result.cache 
-//                   << " found: " << found
-//                   << std::endl;
-//         return found; //bail we matched
-//       }
+    
+      if(level <= result.cache.size()) {
+        adv_itr = false;
+      }
+
       litr++;
     }
     return result.current_match;
 
-
   }
 
-
+  /*! Must check match_results::has_remaining() after match() is 
+   * called. This is required so the user can determine if 
+   * stream iterator is already pointing to the expected 
+   * character or not (match() might advance sitr to next char in stream).
+   */
   parse_match_result_type
   match(std::istreambuf_iterator<charT>& sitr, 
         std::istreambuf_iterator<charT>& stream_end) const

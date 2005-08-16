@@ -1,7 +1,7 @@
 #ifndef _DATE_TIME_TIME_PARSING_HPP___
 #define _DATE_TIME_TIME_PARSING_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -34,9 +34,14 @@ namespace date_time {
   
   //! Creates a time_duration object from a delimited string
   /*! Expected format for string is "[-]h[h][:mm][:ss][.fff]".
+   * If the number of fractional digits provided is greater than the 
+   * precision of the time duration type then the extra digits are 
+   * truncated.
+   *
    * A negative duration will be created if the first character in
    * string is a '-', all other '-' will be treated as delimiters.
-   * Accepted delimiters are "-:,.". */
+   * Accepted delimiters are "-:,.". 
+   */
   template<class time_duration>
   inline
   time_duration
@@ -65,22 +70,35 @@ namespace date_time {
         break;
       };
       case 3: {
+        int digits = static_cast<int>(beg->length());
         //Works around a bug in MSVC 6 library that does not support
         //operator>> thus meaning lexical_cast will fail to compile.
 #if (defined(BOOST_MSVC) && (_MSC_VER <= 1200))  // 1200 == VC++ 6.0
-        fs = _atoi64(beg->c_str());
         // msvc wouldn't compile 'time_duration::num_fractional_digits()' 
         // (required template argument list) as a workaround a temp 
         // time_duration object was used
         time_duration td(hour,min,sec,fs);
         int precision = td.num_fractional_digits();
+        // _atoi64 is an MS specific function
+        if(digits >= precision) {
+          // drop excess digits
+          fs = _atoi64(beg->substr(0, precision).c_str());
+        }
+        else {
+          fs = _atoi64(beg->c_str());
+        }
 #else
-        fs = boost::lexical_cast<boost::int64_t>(*beg);
         int precision = time_duration::num_fractional_digits();
+        if(digits >= precision) {
+          // drop excess digits
+          fs = boost::lexical_cast<boost::int64_t>(beg->substr(0, precision));
+        }
+        else {
+          fs = boost::lexical_cast<boost::int64_t>(*beg);
+        }
 #endif
-        int digits = beg->length();
         if(digits < precision){
-          // leading zeros get dropped from the string, 
+          // trailing zeros get dropped from the string, 
           // "1:01:01.1" would yield .000001 instead of .100000
           // the power() compensates for the missing decimal places
           fs *= power(10, precision - digits); 
@@ -134,16 +152,26 @@ namespace date_time {
 
   }
 
-  //! Parse time duration part of an iso time of form: [-]hhmmss (eg: 120259 is 12 hours 2 min 59 seconds)
+  //! Parse time duration part of an iso time of form: [-]hhmmss[.fff...] (eg: 120259.123 is 12 hours, 2 min, 59 seconds, 123000 microseconds)
   template<class time_duration>
   inline
   time_duration
   parse_undelimited_time_duration(const std::string& s)
   {
-    int offsets[] = {2,2,2};
+    int precision = 0;
+    {
+      // msvc wouldn't compile 'time_duration::num_fractional_digits()' 
+      // (required template argument list) as a workaround, a temp 
+      // time_duration object was used
+      time_duration tmp(0,0,0,1);
+      precision = tmp.num_fractional_digits();
+    }
+    // 'precision+1' is so we grab all digits, plus the decimal
+    int offsets[] = {2,2,2, precision+1};
     int pos = 0, sign = 0;
     int hours = 0;
     short min=0, sec=0;
+    boost::int64_t fs=0;
     // increment one position if the string was "signed"
     if(s.at(sign) == '-')
     {
@@ -152,33 +180,80 @@ namespace date_time {
     // stlport choked when passing s.substr() to tokenizer
     // using a new string fixed the error
     std::string remain = s.substr(sign);
-    boost::offset_separator osf(offsets, offsets+3); 
+    /* We do not want the offset_separator to wrap the offsets, we 
+     * will never want to  process more than: 
+     * 2 char, 2 char, 2 char, frac_sec length.
+     * We *do* want the offset_separator to give us a partial for the
+     * last characters if there were not enough provided in the input string. */
+    bool wrap_off = false;
+    bool ret_part = true;
+    boost::offset_separator osf(offsets, offsets+4, wrap_off, ret_part); 
     boost::tokenizer<boost::offset_separator> tok(remain, osf);
     for(boost::tokenizer<boost::offset_separator>::iterator ti=tok.begin(); ti!=tok.end();++ti){
       switch(pos) {
-      case 0: 
-        {
-          hours = boost::lexical_cast<int>(*ti); 
-          break;
-        }
-      case 1: 
-        {
-          min = boost::lexical_cast<short>(*ti); 
-          break;
-        }
-      case 2: 
-       {
-         sec = boost::lexical_cast<short>(*ti); 
-         break;
-        }
+        case 0: 
+          {
+            hours = boost::lexical_cast<int>(*ti); 
+            break;
+          }
+        case 1: 
+          {
+            min = boost::lexical_cast<short>(*ti); 
+            break;
+          }
+        case 2: 
+          {
+            sec = boost::lexical_cast<short>(*ti); 
+            break;
+          }
+        case 3:
+          {
+            std::string char_digits(ti->substr(1)); // digits w/no decimal
+            int digits = static_cast<int>(char_digits.length());
+            
+            //Works around a bug in MSVC 6 library that does not support
+            //operator>> thus meaning lexical_cast will fail to compile.
+#if (defined(BOOST_MSVC) && (_MSC_VER <= 1200))  // 1200 == VC++ 6.0
+            // _atoi64 is an MS specific function
+            if(digits >= precision) {
+              // drop excess digits
+              fs = _atoi64(char_digits.substr(0, precision).c_str());
+            }
+            else if(digits == 0) {
+              fs = 0; // just in case _atoi64 doesn't like an empty string
+            }
+            else {
+              fs = _atoi64(char_digits.c_str());
+            }
+#else
+            if(digits >= precision) {
+              // drop excess digits
+              fs = boost::lexical_cast<boost::int64_t>(char_digits.substr(0, precision));
+            }
+            else if(digits == 0) {
+              fs = 0; // lexical_cast doesn't like empty strings
+            }
+            else {
+              fs = boost::lexical_cast<boost::int64_t>(char_digits);
+            }
+#endif
+            if(digits < precision){
+              // trailing zeros get dropped from the string, 
+              // "1:01:01.1" would yield .000001 instead of .100000
+              // the power() compensates for the missing decimal places
+              fs *= power(10, precision - digits); 
+            }
+            
+            break;
+          }
       };
       pos++;
     }
     if(sign) {
-      return -time_duration(hours, min, sec);
+      return -time_duration(hours, min, sec, fs);
     }
     else {
-      return time_duration(hours, min, sec);
+      return time_duration(hours, min, sec, fs);
     }
   }
 

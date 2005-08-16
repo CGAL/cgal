@@ -14,8 +14,10 @@
 //  GeNeSys mbH & Co. KG in producing this work.
 //
 
-#ifndef BOOST_UBLAS_BLAS_H
-#define BOOST_UBLAS_BLAS_H
+#ifndef _BOOST_UBLAS_BLAS_
+#define _BOOST_UBLAS_BLAS_
+
+#include <boost/numeric/ublas/traits.hpp>
 
 namespace boost { namespace numeric { namespace ublas {
 
@@ -101,7 +103,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class T1, class V1, class T2, class V2>
         void
         rot (const T1 &t1, V1 &v1, const T2 &t2, V2 &v2) {
-            typedef typename promote_traits<BOOST_UBLAS_TYPENAME V1::value_type, BOOST_UBLAS_TYPENAME V2::value_type>::promote_type promote_type;
+            typedef typename promote_traits<typename V1::value_type, typename V2::value_type>::promote_type promote_type;
             vector<promote_type> vt (t1 * v1 + t2 * v2);
             v2.assign (- t2 * v1 + t1 * v2);
             v1.assign (vt);

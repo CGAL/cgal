@@ -17,6 +17,7 @@
 #include <boost/mpl/at_fwd.hpp>
 #include <boost/mpl/vector/aux_/tag.hpp>
 #include <boost/mpl/long.hpp>
+#include <boost/mpl/void.hpp>
 #include <boost/mpl/aux_/nttp_decl.hpp>
 #include <boost/mpl/aux_/type_wrapper.hpp>
 #include <boost/mpl/aux_/value_wknd.hpp>
@@ -87,6 +88,15 @@ namespace aux {
 template< BOOST_MPL_AUX_NTTP_DECL(long, n_) > struct v_at_impl
 {
     template< typename V > struct result_;
+};
+
+// to work around ETI, etc.
+template<> struct v_at_impl<-1>
+{
+    template< typename V > struct result_
+    {
+        typedef void_ type;
+    };
 };
 
 } // namespace aux

@@ -18,67 +18,52 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 #include <cassert>
 
-#include <boost/config.hpp>
-#include <cstring>
-#if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ using ::strcmp; }
-#endif
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_const.hpp>
 
 #include <boost/serialization/extended_type_info.hpp>
 #include <boost/mpl/bool.hpp>
 
+#include <boost/config/abi_prefix.hpp> // must be the last header
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable : 4251 4231 4660 4275)
+#endif
+
 namespace boost {
 namespace serialization {
-
+namespace detail {
 ///////////////////////////////////////////////////////////////////////
 // define a special type_info that doesn't depend on rtti which is not
 // available in all situations.
 
 // common base class to share type_info_key.  This is used to 
 // identify the method used to keep track of the extended type
-class extended_type_info_no_rtti_base : public extended_type_info
+class BOOST_SERIALIZATION_DECL(BOOST_PP_EMPTY()) extended_type_info_no_rtti_0 : 
+    public extended_type_info
 {
 protected:
     virtual bool
-    less_than(const boost::serialization::extended_type_info &rhs) const {
-        return std::strcmp(key, rhs.key) < 0;
-    }
-    virtual bool
-    equal_to(const boost::serialization::extended_type_info &rhs) const{
-        return std::strcmp(key, rhs.key) == 0;
-    }
-    virtual bool
-    not_equal_to(const boost::serialization::extended_type_info &rhs) const {
-        return std::strcmp(key, rhs.key) != 0;
-    }
+    less_than(const boost::serialization::extended_type_info &rhs) const ;
+    extended_type_info_no_rtti_0();
+    ~extended_type_info_no_rtti_0();
 public:
-    static const char * type_info_key;
     struct is_polymorphic
     {
         typedef boost::mpl::bool_<true> type;
         BOOST_STATIC_CONSTANT(bool, value = is_polymorphic::type::value);
     };
-    extended_type_info_no_rtti_base() :
-        boost::serialization::extended_type_info(type_info_key)
-    {}
 };
 
 template<class T>
-class extended_type_info_no_rtti : public extended_type_info_no_rtti_base
+class extended_type_info_no_rtti_1 : 
+    public extended_type_info_no_rtti_0
 {
+private:
+    // private constructor to inhibit any existence other than the 
+    // static one
+    extended_type_info_no_rtti_1(){}
 public:
-    // Note: this version of extended_type_info
-    // relies on the key used for exporting data.  
-    // So we have to have the key when the instance is created and
-    // can't wait for it be exported as in other cases.
-    static const char * type_key;
-
-    extended_type_info_no_rtti(){
-        key_register(type_key);
-        self_register();    // add type to type table
-   }
     static const boost::serialization::extended_type_info *
     get_derived_extended_type_info(const T & t){
         // find the type that corresponds to the most derived type.
@@ -90,13 +75,25 @@ public:
         assert(NULL != derived_key);
         return boost::serialization::extended_type_info::find(derived_key);
     }
-
     static boost::serialization::extended_type_info *
     get_instance(){
-        static extended_type_info_no_rtti<const T> instance;
+        static extended_type_info_no_rtti_1<T> instance;
         return & instance;
     }
+    static void
+    export_register(const char * key){
+        boost::serialization::extended_type_info * eti;
+        eti = get_instance();
+        eti->key_register(key);  // initialize key and add to table
+        eti->self_register();    // add type to type table
+    }
 };
+} // namespace detail
+
+template<class T>
+class extended_type_info_no_rtti : 
+    public detail::extended_type_info_no_rtti_1<const T>
+{};
 
 } // namespace serialization
 } // namespace boost
@@ -111,5 +108,10 @@ public:
     extended_type_info_no_rtti<const T>
 /**/
 #endif
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+#include <boost/config/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_EXTENDED_TYPE_INFO_NO_RTTI_HPP

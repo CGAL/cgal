@@ -1,4 +1,4 @@
-//  (C) Copyright Gennadiy Rozental 2001-2004.
+//  (C) Copyright Gennadiy Rozental 2001-2005.
 //  (C) Copyright Beman Dawes 2001.
 //  Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file LICENSE_1_0.txt or copy at 
@@ -10,7 +10,7 @@
 //
 //  Version     : $Revision$
 //
-//  Description : defines abstract monitor interfaces and implements execution excepiton
+//  Description : defines abstract monitor interfaces and implements execution exception
 //  The original Boost Test Library included an implementation detail function
 //  named catch_exceptions() which caught otherwise uncaught C++ exceptions.
 //  It was derived from an existing test framework by Beman Dawes.  The
@@ -29,20 +29,24 @@
 //  design presented here.
 // ***************************************************************************
 
-#ifndef BOOST_EXECUTION_MONITOR_HPP_071894GER
-#define BOOST_EXECUTION_MONITOR_HPP_071894GER
+#ifndef BOOST_TEST_EXECUTION_MONITOR_HPP_071894GER
+#define BOOST_TEST_EXECUTION_MONITOR_HPP_071894GER
 
-// BOOST TEST
-#include <boost/test/detail/unit_test_config.hpp>
+// Boost.Test
+#include <boost/test/detail/global_typedef.hpp>
+#include <boost/test/detail/fwd_decl.hpp>
+#include <boost/test/utils/callback.hpp>
 
-// BOOST
+// Boost
 #include <boost/scoped_ptr.hpp>
 #include <boost/type.hpp>
 #include <boost/cstdlib.hpp>
 
-namespace boost {
+#include <boost/test/detail/suppress_warnings.hpp>
 
-class execution_monitor;
+//____________________________________________________________________________//
+
+namespace boost {
 
 namespace detail {
 
@@ -61,7 +65,7 @@ public:
     // Destructor
     virtual     ~translate_exception_base() {}
 
-    virtual int operator()( boost::execution_monitor& mon ) = 0;
+    virtual int operator()( unit_test::callback0<int> const& F ) = 0;
 
 protected:
     // Data members
@@ -81,7 +85,7 @@ class execution_exception {
 public:
     enum error_code {
         //  These values are sometimes used as program return codes.
-        //  The particular values have been choosen to avoid conflicts with
+        //  The particular values have been chosen to avoid conflicts with
         //  commonly used program return codes: values < 100 are often user
         //  assigned, values > 255 are sometimes used to report system errors.
         //  Gaps in values allow for orderly expansion.
@@ -101,7 +105,7 @@ public:
         //  Note 2: These errors include Unix signals and Windows structured
         //  exceptions.  They are often initiated by hardware traps.
         //
-        //  The implementation decides what's a fatal_system_exception and what's
+        //  The implementation decides what is a fatal_system_exception and what is
         //  just a system_exception.  Fatal errors are so likely to have corrupted
         //  machine state (like a stack overflow or addressing exception) that it
         //  is unreasonable to continue execution.
@@ -127,40 +131,33 @@ private:
 
 class execution_monitor {
 public:
-    // Destructor
-    virtual ~execution_monitor()    {}
-    
-    int execute( bool catch_system_errors = true, int timeout_ = 0 );  // timeout is in seconds
+    int execute( unit_test::callback0<int> const& F, bool catch_system_errors = true, int timeout = 0 ); 
     //  The catch_system_errors parameter specifies whether the monitor should 
-    //  try to catch system errors/exeptions that would cause program to crash 
+    //  try to catch system errors/exceptions that would cause program to crash 
     //  in regular case
     //  The timeout argument specifies the seconds that elapse before
     //  a timer_error occurs.  May be ignored on some platforms.
     //
     //  Returns:  Value returned by function().
     //
-    //  Effects:  Calls run_function() inside a try/catch block which also may
+    //  Effects:  Calls executes supplied function F inside a try/catch block which also may
     //  include other unspecified platform dependent error detection code.
     //
     //  Throws: execution_exception on an uncaught C++ exception,
     //  a hardware or software signal, trap, or other exception.
     //
-    //  Note: execute() doesn't consider it an error for function() to
-    //  return a non-zero value.
+    //  Note: execute() doesn't consider it an error for F to return a non-zero value.
     
-    virtual int function() = 0;
-    //  user supplied function called by run_function()
-    
-    int         run_function();
-    // call function() and translate user exceptions with translators registered
-
+    // register custom (user supplied) exception translator
     template<typename Exception, typename ExceptionTranslator>
     void        register_exception_translator( ExceptionTranslator const& tr, boost::type<Exception>* = 0 );
 
 private:
+    // implementation helpers
+    int         catch_signals( unit_test::callback0<int> const& F, bool catch_system_errors, int timeout );
+
     // Data members
     boost::scoped_ptr<detail::translate_exception_base> m_custom_translators;
-
 }; // execution_monitor
 
 namespace detail {
@@ -177,13 +174,11 @@ public:
     explicit    translate_exception( ExceptionTranslator const& tr, base_ptr& next )
     : translate_exception_base( next ), m_translator( tr ) {}
 
-    virtual int operator()( boost::execution_monitor& mon )
+    int operator()( unit_test::callback0<int> const& F )
     {
         try {
-            return m_next ? (*m_next)( mon ) : mon.function();
-        }
-        catch( Exception const& e )
-        {
+            return m_next ? (*m_next)( F ) : F();
+        } catch( Exception const& e ) {
             m_translator( e );
             return boost::exit_exception_failure;
         }
@@ -204,30 +199,50 @@ execution_monitor::register_exception_translator( ExceptionTranslator const& tr,
         new detail::translate_exception<Exception,ExceptionTranslator>( tr,m_custom_translators ) );
 }
 
+// ************************************************************************** //
+// **************              detect_memory_leak              ************** //
+// ************************************************************************** //
+
+// turn on system memory leak detection
+void    detect_memory_leak( long mem_leak_alloc_num = 0 );
+
+// ************************************************************************** //
+// **************               execution_aborted              ************** //
+// ************************************************************************** //
+
+struct execution_aborted {};
+
 }  // namespace boost
+
+//____________________________________________________________________________//
+
+#include <boost/test/detail/enable_warnings.hpp>
 
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log$
-//  Revision 1.1.1.2  2004/11/20 10:52:13  spion
-//  Import of Boost v. 1.32.0
+//  Revision 1.1.1.3  2005/08/16 11:24:10  spion
+//  Import of Boost v. 1.33.0
 //
-//  Revision 1.18  2004/07/19 12:13:25  rogeeff
-//  guard rename
+//  Revision 1.23  2005/04/05 06:11:37  rogeeff
+//  memory leak allocation point detection\nextra help with _WIN32_WINNT
 //
-//  Revision 1.17  2004/06/07 07:33:49  rogeeff
-//  detail namespace renamed
+//  Revision 1.22  2005/02/20 08:27:05  rogeeff
+//  This a major update for Boost.Test framework. See release docs for complete list of fixes/updates
 //
-//  Revision 1.16  2004/05/21 06:19:35  rogeeff
-//  licence update
+//  Revision 1.21  2005/02/01 08:59:28  rogeeff
+//  supplied_log_formatters split
+//  change formatters interface to simplify result interface
 //
-//  Revision 1.15  2004/05/11 11:00:34  rogeeff
-//  basic_cstring introduced and used everywhere
-//  class properties reworked
+//  Revision 1.20  2005/02/01 06:40:06  rogeeff
+//  copyright update
+//  old log entries removed
+//  minor stilistic changes
+//  depricated tools removed
 //
-//  Revision 1.14  2003/12/01 00:41:56  rogeeff
-//  prerelease cleaning
+//  Revision 1.19  2005/01/31 05:59:18  rogeeff
+//  detect_memory_leak feature added
 //
 // ***************************************************************************
 

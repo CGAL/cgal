@@ -17,9 +17,11 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <ostream>
-#include <boost/config.hpp>
+#include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/basic_binary_oprimitive.hpp>
 #include <boost/archive/basic_binary_oarchive.hpp>
+
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 
 namespace archive {
@@ -37,24 +39,31 @@ public:
     friend class save_access;
 protected:
 #endif
-    void init(){
-        basic_binary_oarchive<Archive>::init();
-        basic_binary_oprimitive<Archive, std::ostream>::init();
+    // note: the following should not needed - but one compiler (vc 7.1)
+    // fails to compile one test (test_shared_ptr) without it !!!
+    // make this protected so it can be called from a derived archive
+    template<class T>
+    void save_override(T & t, BOOST_PFTO int){
+        basic_binary_oarchive<Archive>::save_override(t, 0);
     }
-    binary_oarchive_impl(std::ostream & os, unsigned int flags = 0) :
+    void init() {
+        #if ! defined(__MWERKS__)
+            this->basic_binary_oarchive<Archive>::init();
+            this->basic_binary_oprimitive<Archive, std::ostream>::init();
+        #else
+            basic_binary_oarchive<Archive>::init();
+            basic_binary_oprimitive<Archive, std::ostream>::init();
+        #endif
+    }
+    binary_oarchive_impl(std::ostream & os, unsigned int flags) :
         basic_binary_oprimitive<Archive, std::ostream>(
             os, 
-            0 != (flags & no_codecvt))
+            0 != (flags & no_codecvt)
+        ),
+        basic_binary_oarchive<Archive>(flags)
     {
-        if(0 == (flags & no_header)){
-            #if ! defined(__MWERKS__)
-                this->basic_binary_oarchive<Archive>::init();
-                this->basic_binary_oprimitive<Archive, std::ostream>::init();
-            #else
-                basic_binary_oarchive<Archive>::init();
-                basic_binary_oprimitive<Archive, std::ostream>::init();
-            #endif
-        }
+        if(0 == (flags & no_header))
+            init();
     }
 };
 
@@ -67,8 +76,7 @@ class binary_oarchive :
 public:
     binary_oarchive(std::ostream & os, unsigned int flags = 0) :
         binary_oarchive_impl<binary_oarchive>(os, flags)
-    {
-    }
+    {}
 };
 
 } // namespace archive
@@ -77,5 +85,7 @@ public:
 // required by smart_cast for compilers not implementing 
 // partial template specialization
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(boost::archive::binary_oarchive)
+
+#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_BINARY_OARCHIVE_HPP

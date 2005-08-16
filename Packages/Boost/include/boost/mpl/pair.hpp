@@ -61,7 +61,7 @@ struct second
 };
 
 
-BOOST_MPL_AUX_NA_SPEC(2, pair)
+BOOST_MPL_AUX_NA_SPEC_NO_ETI(2, pair)
 BOOST_MPL_AUX_NA_SPEC(1, first)
 BOOST_MPL_AUX_NA_SPEC(1, second)
 

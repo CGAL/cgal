@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -177,7 +177,7 @@ void BOOST_REGEX_CALL jstack<T, Allocator>::pop_aux()const
 {
    // make sure that we have a valid item
    // on TOS:
-   jm_assert(m_stack->next);
+   BOOST_ASSERT(m_stack->next);
    register node* p = m_stack;
    m_stack = p->next;
    p->next = unused;

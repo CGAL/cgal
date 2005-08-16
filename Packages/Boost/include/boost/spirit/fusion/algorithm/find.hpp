@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2003 Joel de Guzman
+    Copyright (c) 2004 Peder Holt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -43,9 +44,9 @@ namespace boost { namespace fusion
             {
                 typedef
                     detail::static_find_if<
-                        typename meta::begin<Sequence const>::type
-                      , typename meta::end<Sequence const>::type
-                      , is_same<mpl::_, typename T::type>
+                        BOOST_DEDUCED_TYPENAME meta::begin<Sequence const>::type
+                      , BOOST_DEDUCED_TYPENAME meta::end<Sequence const>::type
+                      , is_same<mpl::_, BOOST_DEDUCED_TYPENAME T::type>
                     >
                 filter;
 
@@ -58,9 +59,9 @@ namespace boost { namespace fusion
             {
                 typedef
                     detail::static_find_if<
-                        typename meta::begin<Sequence>::type
-                      , typename meta::end<Sequence>::type
-                      , is_same<mpl::_, typename T::type>
+                        BOOST_DEDUCED_TYPENAME meta::begin<Sequence>::type
+                      , BOOST_DEDUCED_TYPENAME meta::end<Sequence>::type
+                      , is_same<mpl::_, BOOST_DEDUCED_TYPENAME T::type>
                     >
                 filter;
 

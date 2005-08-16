@@ -41,8 +41,9 @@
 //
 // No wide character support in the BSD header files:
 //
-#define BOOST_NO_CWCHAR
-
+#if !(defined(__FreeBSD__) && (__FreeBSD__ >= 5))
+#  define BOOST_NO_CWCHAR
+#endif
 //
 // The BSD <ctype.h> has macros only, no functions:
 //

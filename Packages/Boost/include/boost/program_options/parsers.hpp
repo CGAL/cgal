@@ -9,6 +9,7 @@
 
 #include <boost/program_options/config.hpp>
 #include <boost/program_options/option.hpp>
+#include <boost/program_options/detail/cmdline.hpp>
 
 #include <boost/function/function1.hpp>
 
@@ -69,24 +70,6 @@ namespace boost { namespace program_options {
 
     typedef function1<std::pair<std::string, std::string>, const std::string&> ext_parser;
 
-    /** Character-type independent command line parser. */
-    class BOOST_PROGRAM_OPTIONS_DECL common_command_line_parser {
-    public:
-        /// Creates the parsers. The arguments must be in internal encoding.
-        common_command_line_parser(const std::vector<std::string>& args);
-        /// Parses the command line and returns parsed options in internal
-        /// encoding.
-        parsed_options run() const;
-    protected:
-        int m_style;
-        const options_description* m_desc;
-        const positional_options_description* m_positional;
-        function1<std::pair<std::string, std::string>, const std::string&> m_ext;
-
-        // Intentionally independent from charT
-        std::vector<std::string> m_args;
-    };
-
     /** Command line parser.
 
         The class allows one to specify all the information needed for parsing
@@ -99,7 +82,7 @@ namespace boost { namespace program_options {
         alternative.        
     */
     template<class charT>
-    class basic_command_line_parser : private common_command_line_parser {
+    class basic_command_line_parser : private detail::cmdline {
     public:
         /** Creates a command line parser for the specified arguments
             list. The 'args' parameter should not include program name.
@@ -122,8 +105,9 @@ namespace boost { namespace program_options {
         /** Sets the extra parsers. */
         basic_command_line_parser& extra_parser(ext_parser);
         
-        basic_parsed_options<charT> run() const;
+        basic_parsed_options<charT> run();
     private:
+        const options_description* m_desc;
     };
 
     typedef basic_command_line_parser<char> command_line_parser;
@@ -201,6 +185,6 @@ namespace boost { namespace program_options {
 
 #undef DECL
 
-#include "detail/parsers.hpp"
+#include "boost/program_options/detail/parsers.hpp"
 
 #endif

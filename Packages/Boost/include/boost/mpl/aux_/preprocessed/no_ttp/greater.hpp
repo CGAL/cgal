@@ -65,6 +65,7 @@ template<
     , typename BOOST_MPL_AUX_NA_PARAM(N2)
     >
 struct greater
+
     : greater_impl<
           typename greater_tag<N1>::type
         , typename greater_tag<N2>::type

@@ -42,7 +42,7 @@
    || BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT( 0x570 ) )  )
 // some future __BORLANDC__ >0x564  versions might not need this
 // 0x570 is Borland's kylix branch
-#define BOOST_NO_LOCALE_ISIDIGIT
+#define BOOST_NO_LOCALE_ISDIGIT
 #endif
 
 #if  BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570) ) || BOOST_WORKAROUND( BOOST_MSVC, BOOST_TESTED_AT(1300))

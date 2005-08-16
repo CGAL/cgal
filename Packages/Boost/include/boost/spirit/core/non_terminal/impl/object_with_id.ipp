@@ -15,6 +15,7 @@
 
 #ifdef BOOST_SPIRIT_THREADSAFE
 #include <boost/thread/mutex.hpp>
+#include <boost/thread/once.hpp>
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,6 +55,10 @@ namespace boost { namespace spirit {
             void                release_object_id(object_id);
 
         private:
+#ifdef BOOST_SPIRIT_THREADSAFE
+            static boost::mutex &mutex_instance();
+            static void mutex_init();
+#endif
 
             boost::shared_ptr<object_with_id_base_supply<IdT> > id_supply;
         };
@@ -127,7 +132,9 @@ namespace boost { namespace spirit {
         {
             {
 #ifdef BOOST_SPIRIT_THREADSAFE
-                static boost::mutex mutex;
+                static boost::once_flag been_here = BOOST_ONCE_INIT;
+                boost::call_once(mutex_init, been_here);
+                boost::mutex &mutex = mutex_instance();
                 boost::mutex::scoped_lock lock(mutex);
 #endif
                 static boost::shared_ptr<object_with_id_base_supply<IdT> >
@@ -148,6 +155,27 @@ namespace boost { namespace spirit {
         {
             id_supply->release(id);
         }
+
+        //////////////////////////////////
+#ifdef BOOST_SPIRIT_THREADSAFE
+        template <typename TagT, typename IdT>
+        inline boost::mutex &
+        object_with_id_base<TagT, IdT>::mutex_instance()
+        {
+            static boost::mutex mutex;
+            return mutex;
+        }
+#endif
+
+        //////////////////////////////////
+#ifdef BOOST_SPIRIT_THREADSAFE
+        template <typename TagT, typename IdT>
+        inline void 
+        object_with_id_base<TagT, IdT>::mutex_init()
+        {
+            mutex_instance();
+        }
+#endif
 
     } // namespace impl
 

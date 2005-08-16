@@ -13,9 +13,7 @@
 #include <boost/algorithm/string/config.hpp>
 #include <algorithm>
 #include <boost/mpl/bool.hpp>
-#include <boost/algorithm/string/collection_traits.hpp>
 #include <boost/algorithm/string/sequence_traits.hpp>
-#include <boost/algorithm/string/iterator_range.hpp>
 #include <boost/algorithm/string/detail/sequence.hpp>
 
 namespace boost {

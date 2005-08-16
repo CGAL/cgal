@@ -29,9 +29,9 @@ namespace std{
 #include <boost/cstdint.hpp>
 
 #include <boost/pfto.hpp>
-#include <boost/serialization/nvp.hpp>
 #include <boost/archive/detail/iserializer.hpp>
 #include <boost/archive/detail/interface_iarchive.hpp>
+#include <boost/serialization/nvp.hpp>
 
 // determine if its necessary to handle (u)int64_t specifically
 // i.e. that its not a synonym for (unsigned) long
@@ -46,6 +46,7 @@ namespace boost {
 namespace archive {
 namespace detail {
     class basic_iarchive;
+    class basic_iserializer;
 }
 
 class polymorphic_iarchive :
@@ -93,12 +94,6 @@ public:
     virtual void load_end(const char * name) = 0;
     virtual void register_basic_serializer(const detail::basic_iserializer & bis) = 0;
 
-    // utility function implemented by all legal archives
-    virtual unsigned int library_version() const = 0;
-    virtual void load_binary(void * t, std::size_t size) = 0;
-
-    virtual void delete_created_pointers() = 0;
-
     // msvc and borland won't automatically pass these to the base class so
     // make it explicit here
     template<class T>
@@ -106,16 +101,29 @@ public:
     {
         archive::load(* this, t);
     }
-
     // special treatment for name-value pairs.
     template<class T>
-    void load_override(boost::serialization::nvp<T> & t, int)
-    {
+    void load_override(
+                #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+                const
+                #endif
+                boost::serialization::nvp<T> & t, 
+                int
+        ){
         load_start(t.name());
         archive::load(* this, t.value());
         load_end(t.name());
     }
 public:
+    // utility function implemented by all legal archives
+    virtual void set_library_version(unsigned int archive_library_version) = 0;
+    virtual unsigned int get_library_version() const = 0;
+    virtual unsigned int get_flags() const = 0;
+    virtual void reset_object_address(const void * new_address, const void * old_address) = 0;
+    virtual void delete_created_pointers() = 0;
+
+    virtual void load_binary(void * t, std::size_t size) = 0;
+
     // these are used by the serialization library implementation.
     virtual void load_object(
         void *t, 

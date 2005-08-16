@@ -1,5 +1,5 @@
 // Copyright (C)  2002-2003
-// David Moore, William E. Kempf
+// David Moore, William E. Kempf, Michael Glassford
 //
 // Permission to use, copy, modify, distribute and sell this software
 // and its documentation for any purpose is hereby granted without fee,
@@ -19,6 +19,7 @@
 #include <boost/thread/detail/config.hpp>
 
 #include <boost/utility.hpp>
+#include <boost/detail/workaround.hpp>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/detail/lock.hpp>
@@ -33,7 +34,7 @@ namespace read_write_scheduling_policy {
         writer_priority,               //Prefer writers; can starve readers
         reader_priority,               //Prefer readers; can starve writers
         alternating_many_reads,        //Alternate readers and writers; before a writer, release all queued readers 
-        alternating_single_read        //Alternate readers and writers; before a writer, release only on queued reader
+        alternating_single_read        //Alternate readers and writers; before a writer, release only one queued reader
     };
 } // namespace read_write_scheduling_policy
 
@@ -51,27 +52,28 @@ struct read_write_mutex_impl
     typedef detail::thread::scoped_try_lock<Mutex> scoped_try_lock;
     typedef detail::thread::scoped_timed_lock<Mutex> scoped_timed_lock;
 
-    read_write_mutex_impl(read_write_scheduling_policy::read_write_scheduling_policy_enum sp)
-        : m_num_waiting_writers(0),
-          m_num_waiting_readers(0),
-          m_num_readers_to_wake(0),
-          m_state_waiting_promotion(false),
-          m_state(0),
-          m_sp(sp),
-          m_readers_next(true) { }
+    read_write_mutex_impl(read_write_scheduling_policy::read_write_scheduling_policy_enum sp);
+#if !BOOST_WORKAROUND(__BORLANDC__,<= 0x564)
+    ~read_write_mutex_impl();
+#endif
 
     Mutex m_prot;
+
+    const read_write_scheduling_policy::read_write_scheduling_policy_enum m_sp;
+    int m_state; //-1 = write lock; 0 = unlocked; >0 = read locked
+
     boost::condition m_waiting_writers;
     boost::condition m_waiting_readers;
+    boost::condition m_waiting_promotion;
     int m_num_waiting_writers;
     int m_num_waiting_readers;
-    int m_num_readers_to_wake;
-    boost::condition m_waiting_promotion;
     bool m_state_waiting_promotion;
-    int m_state;    // -1 = excl locked
-                    // 0 = unlocked
-                    // 1-> INT_MAX - shared locked
-    const read_write_scheduling_policy::read_write_scheduling_policy_enum m_sp;
+
+    int m_num_waking_writers;
+    int m_num_waking_readers;
+    int m_num_max_waking_writers; //Debug only
+    int m_num_max_waking_readers; //Debug only
+
     bool m_readers_next;
 
     void do_read_lock();
@@ -96,12 +98,20 @@ struct read_write_mutex_impl
 
 private:
 
-    void do_unlock_scheduling_impl();
-    void do_timeout_scheduling_impl();
-    void do_demote_scheduling_impl();
-    void do_scheduling_impl();
-
     bool do_demote_to_read_lock_impl();
+
+    enum scheduling_reason
+    {
+        scheduling_reason_unlock,
+        scheduling_reason_timeout,
+        scheduling_reason_demote
+    };
+
+    void do_scheduling_impl(const scheduling_reason reason);
+    bool do_wake_one_reader(void);
+    bool do_wake_all_readers(void);
+    bool do_wake_writer(void);
+    bool waker_exists(void);
 };
 
 } // namespace detail
@@ -112,8 +122,8 @@ class BOOST_THREAD_DECL read_write_mutex : private noncopyable
 {
 public:
 
-    read_write_mutex(read_write_scheduling_policy::read_write_scheduling_policy_enum sp) : m_impl(sp) { }
-    ~read_write_mutex() { }
+    read_write_mutex(read_write_scheduling_policy::read_write_scheduling_policy_enum sp);
+    ~read_write_mutex();
 
     read_write_scheduling_policy::read_write_scheduling_policy_enum policy() const { return m_impl.m_sp; }
 
@@ -151,8 +161,8 @@ class BOOST_THREAD_DECL try_read_write_mutex : private noncopyable
 {
 public:
 
-    try_read_write_mutex(read_write_scheduling_policy::read_write_scheduling_policy_enum sp) : m_impl(sp) { }
-    ~try_read_write_mutex() { }
+    try_read_write_mutex(read_write_scheduling_policy::read_write_scheduling_policy_enum sp);
+    ~try_read_write_mutex();
 
     read_write_scheduling_policy::read_write_scheduling_policy_enum policy() const { return m_impl.m_sp; }
 
@@ -201,8 +211,8 @@ class BOOST_THREAD_DECL timed_read_write_mutex : private noncopyable
 {
 public:
 
-    timed_read_write_mutex(read_write_scheduling_policy::read_write_scheduling_policy_enum sp) : m_impl(sp) { }
-    ~timed_read_write_mutex() { }
+    timed_read_write_mutex(read_write_scheduling_policy::read_write_scheduling_policy_enum sp);
+    ~timed_read_write_mutex();
 
     read_write_scheduling_policy::read_write_scheduling_policy_enum policy() const { return m_impl.m_sp; }
 

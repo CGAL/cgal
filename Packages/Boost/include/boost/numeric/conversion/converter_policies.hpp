@@ -6,7 +6,7 @@
 //  See library home page at http://www.boost.org/libs/numeric/conversion
 //
 // Contact the author at: fernando_cacciola@hotmail.com
-// 
+//
 #ifndef BOOST_NUMERIC_CONVERSION_CONVERTER_POLICIES_FLC_12NOV2002_HPP
 #define BOOST_NUMERIC_CONVERSION_CONVERTER_POLICIES_FLC_12NOV2002_HPP
 
@@ -14,12 +14,14 @@
 
 #include <cmath> // for std::floor and std::ceil
 
+#include <functional>
+
 #include "boost/type_traits/is_arithmetic.hpp"
 
 #include "boost/mpl/if.hpp"
 #include "boost/mpl/integral_c.hpp"
 
-namespace boost { namespace numeric 
+namespace boost { namespace numeric
 {
 
 template<class S>
@@ -42,8 +44,10 @@ struct Trunc
   typedef mpl::integral_c< std::float_round_style, std::round_toward_zero> round_style ;
 } ;
 
+
+
 template<class S>
-struct RoundEven
+struct Floor
 {
   typedef S source_type ;
 
@@ -51,28 +55,14 @@ struct RoundEven
 
   static source_type nearbyint ( argument_type s )
   {
-    // Algorithm contributed by Guillaume Melquiond
-    
 #if !defined(BOOST_NO_STDC_NAMESPACE)
     using std::floor ;
-    using std::ceil  ;
-#endif    
+#endif
 
-    // only works inside the range not at the boundaries
-    S a = floor(s); 
-    S b = ceil(s);  
-    
-    S c = (s - a) - (b - s); // the "good" subtraction
-    
-    if ( c < static_cast<S>(0.0) ) 
-      return a;
-    else if ( c >  static_cast<S>(0.0) )
-      return b;
-    else 
-      return 2 * floor(b / static_cast<S>(2.0)); // needs to behave sanely
+    return floor(s) ;
   }
 
-  typedef mpl::integral_c< std::float_round_style, std::round_to_nearest> round_style ;
+  typedef mpl::integral_c< std::float_round_style, std::round_toward_neg_infinity> round_style ;
 } ;
 
 template<class S>
@@ -95,7 +85,7 @@ struct Ceil
 } ;
 
 template<class S>
-struct Floor
+struct RoundEven
 {
   typedef S source_type ;
 
@@ -103,20 +93,35 @@ struct Floor
 
   static source_type nearbyint ( argument_type s )
   {
+    // Algorithm contributed by Guillaume Melquiond
+
 #if !defined(BOOST_NO_STDC_NAMESPACE)
     using std::floor ;
+    using std::ceil  ;
 #endif
 
-    return floor(s) ;
+    // only works inside the range not at the boundaries
+    S prev = floor(s);
+    S next = ceil(s);
+
+    S rt = (s - prev) - (next - s); // remainder type
+
+    S const zero(0.0);
+    S const two(2.0);
+
+    if ( rt < zero )
+      return prev;
+    else if ( rt > zero )
+      return next;
+    else
+    {
+      bool is_prev_even = two * floor(prev / two) == prev ;
+      return ( is_prev_even ? prev : next ) ;
+    }
   }
 
-  typedef mpl::integral_c< std::float_round_style, std::round_toward_neg_infinity> round_style ;
+  typedef mpl::integral_c< std::float_round_style, std::round_to_nearest> round_style ;
 } ;
-
-
-
-
-
 
 
 enum range_check_result
@@ -126,7 +131,7 @@ enum range_check_result
   cPosOverflow = 2
 } ;
 
-class bad_numeric_conversion : public std::bad_cast
+class bad_numeric_cast : public std::bad_cast
 {
   public:
 
@@ -134,14 +139,14 @@ class bad_numeric_conversion : public std::bad_cast
       {  return "bad numeric conversion: overflow"; }
 };
 
-class negative_overflow : public bad_numeric_conversion
+class negative_overflow : public bad_numeric_cast
 {
   public:
 
     virtual const char * what() const throw()
       {  return "bad numeric conversion: negative overflow"; }
 };
-class positive_overflow : public bad_numeric_conversion
+class positive_overflow : public bad_numeric_cast
 {
   public:
 
@@ -165,11 +170,6 @@ struct silent_overflow_handler
   void operator() ( range_check_result ) {} // throw()
 } ;
 
-
-
-
-
-
 template<class Traits>
 struct raw_converter
 {
@@ -184,4 +184,3 @@ struct UseInternalRangeChecker {} ;
 } } // namespace boost::numeric
 
 #endif
-

@@ -60,25 +60,25 @@ namespace boost
         template< class T, std::size_t sz >
         inline T* array_end( T BOOST_RANGE_ARRAY_REF()[sz], int )
         {
-            return array + sz;
+            return boost_range_array + sz;
         }
         
         template< class T, std::size_t sz >
         inline const T* array_end( const T BOOST_RANGE_ARRAY_REF()[sz], int )
         {
-            return array + sz;
+            return boost_range_array + sz;
         }
 
         template< class T, std::size_t sz >
         inline T* array_end( T BOOST_RANGE_ARRAY_REF()[sz], char_or_wchar_t_array_tag )
         {
-            return array + sz - 1;
+            return boost_range_array + sz - 1;
         }
         
         template< class T, std::size_t sz >
         inline const T* array_end( const T BOOST_RANGE_ARRAY_REF()[sz], char_or_wchar_t_array_tag )
         {
-            return array + sz - 1;
+            return boost_range_array + sz - 1;
         }
 
         template< class T, std::size_t sz >
@@ -88,7 +88,7 @@ namespace boost
                                                                 char_or_wchar_t_array_tag,
                                                                 int >::type tag;
 
-            return array_end<T,sz>( array, tag() );
+            return array_end<T,sz>( boost_range_array, tag() );
         }
         
         template< class T, std::size_t sz >
@@ -98,7 +98,7 @@ namespace boost
                                                                 char_or_wchar_t_array_tag,
                                                                 int >::type tag;
         
-            return array_end<T,sz>( array, tag() );
+            return array_end<T,sz>( boost_range_array, tag() );
         }
 
         /////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ namespace boost
                                                                    is_same<char,T>::value       || is_same<wchar_t,T>::value,
                                                                 char_or_wchar_t_array_tag,
                                                                 int >::type tag;
-            return array_size<T,sz>( array, tag() );
+            return array_size<T,sz>( boost_range_array, tag() );
         }
 
         template< class T, std::size_t sz >
@@ -151,7 +151,7 @@ namespace boost
             typedef BOOST_RANGE_DEDUCED_TYPENAME boost::mpl::if_c< is_same<char,T>::value || is_same<wchar_t,T>::value,
                                                                 char_or_wchar_t_array_tag,
                                                                 int >::type tag;
-            return array_size<T,sz>( array, tag() );
+            return array_size<T,sz>( boost_range_array, tag() );
         }
 
     } // namespace 'range_detail'

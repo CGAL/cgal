@@ -119,5 +119,9 @@
 #  define BOOST_NO_STD_OUTPUT_ITERATOR_ASSIGN
 #endif
 
-
-
+//
+// Disable BOOST_HAS_LONG_LONG when the library has no support for it.
+//
+#if !defined(_RWSTD_LONG_LONG) && defined(BOOST_HAS_LONG_LONG)
+#  undef BOOST_HAS_LONG_LONG
+#endif

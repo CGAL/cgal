@@ -1,7 +1,7 @@
 #ifndef _DATE_TIME_TIME_ZONE_BASE__
 #define _DATE_TIME_TIME_ZONE_BASE__
 
-/* Copyright (c) 2003-2004 CrystalClear Software, Inc.
+/* Copyright (c) 2003-2005 CrystalClear Software, Inc.
  * Subject to the Boost Software License, Version 1.0. 
  * (See accompanying file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
@@ -32,7 +32,8 @@ namespace date_time {
   template<typename time_type, typename CharT = char>
   class time_zone_base  {
   public:
-    typedef std::basic_string<char> string_type;
+    typedef std::basic_string<CharT> string_type;
+    typedef std::basic_stringstream<CharT> stringstream_type;
     typedef typename time_type::date_type::year_type year_type;
     typedef typename time_type::time_duration_type time_duration_type;
 
@@ -56,16 +57,14 @@ namespace date_time {
     virtual time_duration_type base_utc_offset() const=0;
     //! Adjustment forward or back made while DST is in effect
     virtual time_duration_type dst_offset() const=0;
+    //! Returns a POSIX time_zone string for this object
+    virtual string_type to_posix_string() const =0;
     
-    //TODO what about these?
-    //       virtual time_type to_utc(const time_type& p, bool dst_flag);
-    //       virtual time_type from_utc(const time_type& p);
   private:
     
   };
 
 
-  // TODO, this should move elsewhere
   //! Structure which holds the time offsets associated with daylight savings time
   /*!
    *@param time_duration_type A type used to represent the offset
