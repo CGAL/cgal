@@ -8007,6 +8007,8 @@ void test_Emptyset_iterator()
 }
 struct A {};
 struct B {
+  B() {}
+  B(int) {}
   operator A() { return A(); }
 };
 
@@ -8021,6 +8023,19 @@ void test_Oneset_iterator()
   *g++ = a;
   *g = b;
   ++g;
+  --g;
+  *g-- = a;
+}
+void test_Const_oneset_iterator()
+{
+  Const_oneset_iterator<B> e(B(1));
+  Assert_random_access_category(e);
+  Const_oneset_iterator<B> f(e);
+  Const_oneset_iterator<B> g = f;
+  A a = *g++;
+  ++g;
+  a = *g--;
+  --g;
 }
 struct My_to_int    { operator int() const { return 2; } };
 struct My_to_float  { operator float() const { return 3.25; } };
@@ -8125,6 +8140,7 @@ int main() {
   test_Random_access_adaptor();
   test_Emptyset_iterator();
   test_Oneset_iterator();
+  test_Const_oneset_iterator();
   test_Triple();
   test_Quadruple();
   test_predecessor_successor();

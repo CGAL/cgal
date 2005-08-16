@@ -20,7 +20,7 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(DEBUG_OPT) -U_GLIBCXX_DEBUG
 
 #---------------------------------------------------------------------#
 #                    linker flags
