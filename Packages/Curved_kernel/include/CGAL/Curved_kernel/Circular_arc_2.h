@@ -123,7 +123,7 @@ namespace CGALi {
                    const Point_2 &middle,
                    const Point_2 &end)
     {
-      CGAL_kernel_precondition(!collinear(begin, middle, end));
+      CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
 
       Circle_2 c  (begin, middle, end);
       Line_2   l1 (begin, middle);
