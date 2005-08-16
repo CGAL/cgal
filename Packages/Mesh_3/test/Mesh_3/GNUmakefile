@@ -9,6 +9,12 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
+
+
+ifneq ($(wildcard my_makefile), )
+  include my_makefile
+endif
+
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
@@ -19,6 +25,7 @@ CXXFLAGS = \
            -I../../include \
 	   -I../../../Data_structure_for_queries_3/include \
            -I ../../../Surface_mesher/include \
+	   $(OTHER_INCLUDES) \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -48,8 +55,12 @@ all:            \
 multi_spheres$(EXE_EXT): multi_spheres$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)multi_spheres multi_spheres$(OBJ_EXT) $(LDFLAGS)
 
+combined_spheres$(EXE_EXT): combined_spheres$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)combined_spheres combined_spheres$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   multi_spheres.clean 
+                   multi_spheres.clean \
+                   combined_spheres.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
