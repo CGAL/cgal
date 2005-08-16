@@ -14,7 +14,7 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
    
 	writeTags(fd, "r", 0, isSymmetric(d),
-		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 1);
 
 	fprintf(fd, "%s", "dimensions\n");
 	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
@@ -73,7 +73,7 @@ encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "r", 1, 1,
-		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 1);
 		
 	fprintf(fd, "%s", "dimensions\n");
 	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
@@ -125,7 +125,7 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "f", 0, isSymmetric(d),
-		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 1);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -182,7 +182,7 @@ encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	    
 	writeTags(fd, "f", 1, 1,
-		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 1);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -234,7 +234,7 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "i", 0, isSymmetric(d),
-		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 1);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");
@@ -292,7 +292,7 @@ encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	writeDescription(fd, desc);
 	    
 	writeTags(fd, "i", 1, 1,
-		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 1);
 	    
 	    
 	fprintf(fd, "%s", "dimensions\n");

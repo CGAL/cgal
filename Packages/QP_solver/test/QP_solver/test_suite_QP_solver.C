@@ -251,13 +251,13 @@ int main( int argc, char** argv) {
   return 0;
 }
 
-void not_implemented_yet(CGAL::Tag_true)
+void not_implemented_yet(CGAL::Tag_false)
 {
   std::cerr << "Is_in_standard_form: not implemented yet" << std::endl;
   exit(1);
 }
 
-void not_implemented_yet(CGAL::Tag_false)
+void not_implemented_yet(CGAL::Tag_true)
 {
 }
 
