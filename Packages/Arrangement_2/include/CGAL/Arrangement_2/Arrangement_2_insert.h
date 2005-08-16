@@ -209,7 +209,7 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 // Overloaded version with no point location object - the walk point-location
 // strategy is used as default.
 //
-template <class Traits, class Dcel, class PointLocation>
+template <class Traits, class Dcel>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
                         const typename Traits::X_monotone_curve_2& c)
 {
