@@ -1,10 +1,3 @@
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main() {
-  std::cout << "Sorry, this demo needs QT..." << std::endl;
-  return 0;
-}
-#else
 
 //#include <fstream>
 
@@ -101,17 +94,14 @@ int main(){
 
 
   
-  std::cout << "top" << std::endl;
   Pmwx _pm;
   Point_location _pl(_pm);
   for (ArcContainer::const_iterator it=ac.begin();
        it != ac.end(); ++it) {
-    std::cout << " et un de plus" << std::endl;
     //insert(_pm,_pl,*it);
     insert(_pm,*it,_pl);
-    std::cout << " c est fait" << std::endl;
       };
   
   return 0;
 };
-#endif // CGAL_USE_QT
+

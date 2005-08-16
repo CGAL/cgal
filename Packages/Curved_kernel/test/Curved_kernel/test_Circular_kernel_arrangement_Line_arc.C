@@ -1,11 +1,3 @@
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main() {
-  std::cout << "Sorry, this demo needs QT..." << std::endl;
-  return 0;
-}
-#else
-
 //#include <fstream>
 
 #include <CGAL/basic.h>
@@ -70,7 +62,7 @@ int main(){
   CGAL::Random theRandom(random_seed);
   int random_max = 5;
   int random_min = -5;
-  for(int j = 0; j < 50 ; j++){
+  for(int j = 0; j < 10 ; j++){
   
   ArcContainer ac;
   int x1;
@@ -90,7 +82,7 @@ int main(){
       std::cout << x1 << " "
    		<< y1 << " "
    		<< x2 << " "
-   		<< y2 << "<br/>" <<  std::endl;
+   		<< y2 << std::endl;
       ac.push_back( Line_arc_2(Point_2(x1,y1), Point_2(x2,y2)));
     }
   
@@ -111,4 +103,4 @@ int main(){
   }
   return 0;
 };
-#endif // CGAL_USE_QT
+

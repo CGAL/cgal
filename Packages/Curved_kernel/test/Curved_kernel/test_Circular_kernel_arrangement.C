@@ -1,11 +1,3 @@
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main() {
-  std::cout << "Sorry, this demo needs QT..." << std::endl;
-  return 0;
-}
-#else
-
 //#include <fstream>
 
 #include <CGAL/basic.h>
@@ -101,4 +93,4 @@ int main(){
   
   return 0;
 };
-#endif // CGAL_USE_QT
+
