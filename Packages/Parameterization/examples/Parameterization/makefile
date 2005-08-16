@@ -14,8 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -O3 \
-           -DCGAL_PARAMETERIZATION_CHECK_EXPENSIVE \
            -I../../include \
            -I../../../OpenNL/include \
            $(CGAL_CXXFLAGS) \
@@ -29,6 +27,8 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
+# General linker flags:
+
 LIBPATH = \
           $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
@@ -37,6 +37,8 @@ LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
+
+# TAUCS linker flags:
 
 LIBPATH_TAUCS = \
           -L$(TAUCSROOT)/lib/$(TAUCS_OSTYPE) \
@@ -49,6 +51,8 @@ LDFLAGS_TAUCS = \
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
+
+# General targets:
 
 all:      polyhedron_ex_parameterization$(EXE_EXT) \
           Polyhedron_parameterization1$(EXE_EXT) \
@@ -67,17 +71,27 @@ clean:    polyhedron_ex_parameterization.clean \
           Polyhedron_parameterization6.clean
 
 
+# Set $TAUCS_OSTYPE
+
+configure_taucs:
+	. taucs_config
+
+
+# polyhedron_ex_parameterization:
+
 polyhedron_ex_parameterization_objs = 	\
           Mesh_cutter$(OBJ_EXT) \
           options$(OBJ_EXT) \
           polyhedron_ex_parameterization$(OBJ_EXT)
 
-polyhedron_ex_parameterization$(EXE_EXT): $(polyhedron_ex_parameterization_objs)
+polyhedron_ex_parameterization$(EXE_EXT): configure_taucs $(polyhedron_ex_parameterization_objs)
 	$(CGAL_CXX) $(LIBPATH) $(LIBPATH_TAUCS) $(EXE_OPT)polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs) $(LDFLAGS) $(LDFLAGS_TAUCS)
 
 polyhedron_ex_parameterization.clean:
 	rm polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs)
 
+
+# Polyhedron_parameterization1:
 
 Polyhedron_parameterization1_objs = 	\
           Polyhedron_parameterization1$(OBJ_EXT)
@@ -89,6 +103,8 @@ Polyhedron_parameterization1.clean:
 	rm Polyhedron_parameterization1$(EXE_EXT) $(Polyhedron_parameterization1_objs)
 
 
+# Polyhedron_parameterization2:
+
 Polyhedron_parameterization2_objs = 	\
           Polyhedron_parameterization2$(OBJ_EXT)
 
@@ -98,6 +114,8 @@ Polyhedron_parameterization2$(EXE_EXT): $(Polyhedron_parameterization2_objs)
 Polyhedron_parameterization2.clean:
 	rm Polyhedron_parameterization2$(EXE_EXT) $(Polyhedron_parameterization2_objs)
 
+
+# Polyhedron_parameterization3:
 
 Polyhedron_parameterization3_objs = 	\
           Polyhedron_parameterization3$(OBJ_EXT)
@@ -109,15 +127,19 @@ Polyhedron_parameterization3.clean:
 	rm Polyhedron_parameterization3$(EXE_EXT) $(Polyhedron_parameterization3_objs)
 
 
+# Polyhedron_parameterization4:
+
 Polyhedron_parameterization4_objs = 	\
           Polyhedron_parameterization4$(OBJ_EXT)
 
-Polyhedron_parameterization4$(EXE_EXT): $(Polyhedron_parameterization4_objs)
+Polyhedron_parameterization4$(EXE_EXT): configure_taucs $(Polyhedron_parameterization4_objs)
 	$(CGAL_CXX) $(LIBPATH) $(LIBPATH_TAUCS) $(EXE_OPT)Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs) $(LDFLAGS) $(LDFLAGS_TAUCS)
 
 Polyhedron_parameterization4.clean:
 	rm Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs)
 
+
+# Polyhedron_parameterization5:
 
 Polyhedron_parameterization5_objs = 	\
           Polyhedron_parameterization5$(OBJ_EXT)
@@ -129,10 +151,12 @@ Polyhedron_parameterization5.clean:
 	rm Polyhedron_parameterization5$(EXE_EXT) $(Polyhedron_parameterization5_objs)
 
 
+# Polyhedron_parameterization6:
+
 Polyhedron_parameterization6_objs = 	\
           Polyhedron_parameterization6$(OBJ_EXT)
 
-Polyhedron_parameterization6$(EXE_EXT): $(Polyhedron_parameterization6_objs)
+Polyhedron_parameterization6$(EXE_EXT): configure_taucs $(Polyhedron_parameterization6_objs)
 	$(CGAL_CXX) $(LIBPATH) $(LIBPATH_TAUCS) $(EXE_OPT)Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs) $(LDFLAGS) $(LDFLAGS_TAUCS)
 
 Polyhedron_parameterization6.clean:
