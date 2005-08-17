@@ -704,6 +704,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
   using CGAL::Tag_true;
 
   bool success;
+  std::cout << "index is " << index << std::endl; // TEMPORARILY
   switch (index) {
   case  0: 	
     success = doIt<CGAL::Gmpq,Tag_false,Tag_false,Tag_false,
@@ -985,8 +986,9 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
       (verbose, pricing_strategy_index, from);
     break;
     
-  default:	;
-    
+  default:	
+    std::cout << "map_tags: unidentified case" << std::endl;
+    success = false;
   }
   if (!success)
     exit(-1);

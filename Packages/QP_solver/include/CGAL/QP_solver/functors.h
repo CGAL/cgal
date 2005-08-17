@@ -202,7 +202,11 @@ public:
   { return v[ c] * result_type( 2); }
   
   result_type  entry_pair( int c, Tag_false) const           // not symmetric
-  { return m[ r][ c] + m[ c][ r];	}
+  { 
+    // TEMPORARILY:
+    std::cout << "m[r][c]=" << m[r][c] << ", m[c][r]=" << m[c][r]
+	      << ", " << "sum=" << (m[ r][ c] + m[ c][ r]) << std::endl;
+    return m[ r][ c] + m[ c][ r];	}
   
 private:
   MatrixIt           m;
