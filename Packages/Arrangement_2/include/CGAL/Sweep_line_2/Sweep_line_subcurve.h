@@ -234,6 +234,24 @@ public:
   }
 
 
+  template <class Output>
+  void get_all_leaves(Output out)
+  {
+    if(!m_orig_subcurve1)
+    {
+      *out++ = this;
+      return;
+    }
+
+    m_orig_subcurve1->get_all_leaves(out);
+    m_orig_subcurve2->get_all_leaves(out);
+  }
+
+
+    
+
+
+
 
   bool is_parent(Self* parent)
   {

@@ -184,7 +184,7 @@ public:
         iter!= m_leftCurves.end();
         ++iter)
     {
-      if((*iter)== curve)
+      if((*iter)== curve || curve->is_parent(*iter))
       {
         m_leftCurves.erase(iter);
         return;
@@ -197,7 +197,7 @@ public:
 
   void replace_right_curve(SubCurve* sc1, SubCurve* sc2)
   {
-    for(SubCurveIter iter = m_rightCurves.begin();
+    for(SubCurveIter iter = m_rightCurves.begin(); 
         iter!= m_rightCurves.end();
         ++iter)
     {
