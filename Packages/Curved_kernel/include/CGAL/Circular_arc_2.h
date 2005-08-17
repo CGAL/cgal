@@ -70,6 +70,16 @@ public:
                  const Circular_arc_endpoint_2 &begin,
                  const Circular_arc_endpoint_2 &end)
     : RCircular_arc_2(support, begin, end) {}
+
+  const Point_2 & center() const
+  {
+    return this->supporting_circle().center();
+  }
+
+  const FT & squared_radius() const
+  {
+    return this->supporting_circle().squared_radius();
+  }
 };
 
 } // namespace CGAL
