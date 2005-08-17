@@ -49,8 +49,14 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                multi_spheres$(EXE_EXT) 
+RUN_PROGRAMS=   multi_spheres$(EXE_EXT) \
+		combined_spheres$(EXE_EXT)
+
+
+all: $(RUN_PROGRAMS)
+
+run: $(RUN_PROGRAMS)
+	for p in $(RUN_PROGRAMS); do ./$p; done
 
 multi_spheres$(EXE_EXT): multi_spheres$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)multi_spheres multi_spheres$(OBJ_EXT) $(LDFLAGS)
