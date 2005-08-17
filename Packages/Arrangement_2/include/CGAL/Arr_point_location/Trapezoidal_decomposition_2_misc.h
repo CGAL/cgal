@@ -21,6 +21,7 @@
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_MISC_H
 
 #ifndef CGAL_TD_TENTUPLE_H
+#include <CGAL/Handle.h>
 #include <CGAL/Arr_point_location/Td_ninetuple.h>
 #endif
 #ifndef CGAL_TWOTUPLE_H
