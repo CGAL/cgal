@@ -131,37 +131,19 @@ namespace CGALi {
       *this = Circular_arc_2(c, l1, compare_xy(begin, middle) < 0,
                                 l2, compare_xy(end,   middle) < 0);
     }
-    
-    // Constructs an arc supported by Circle_2,
-    // with _begin == begin, _end == end.
-    Circular_arc_2(const Circle_2 &support,
-                   const Point_2 &source,
-                   const Point_2 &target)
-    {
-      
-      CGAL_kernel_precondition(support.has_on_boundary(source));
-      CGAL_kernel_precondition(support.has_on_boundary(target));
-        
-      Line_2   l (source, target);
-      bool source_is_left =  (compare_xy(source, target) < 0) ;
-      *this = Circular_arc_2(support, l, source_is_left ,l, !source_is_left);
-    }
 
     Circular_arc_2(const Circle_2 &support,
 		   const Circular_arc_endpoint_2 &source,
 		   const Circular_arc_endpoint_2 &target)
+      : _begin(source), _end(target), _support(support)
     {
+      // This should be moved to some separate function.
       typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
       Polynomial_for_circles_2_2 equation = get_equation<CK>(support);
       CGAL_kernel_precondition(square(source.x() - equation.a()) ==
 			       equation.r_sq() - square(source.y() - equation.b()));
       CGAL_kernel_precondition(square(target.x() - equation.a()) ==
 			       equation.r_sq() - square(target.y() - equation.b()));
-      
-      _support = support;
-      _begin = source;
-      _end = target;
-      //C'est pas fini il faut verifier que les point sont sur le cercle
     }
 
   private:
