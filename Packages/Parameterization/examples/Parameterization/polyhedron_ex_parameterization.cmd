@@ -1,1 +1,1 @@
--t floater -b square -s opennl -o obj data/nefertiti.off nefertiti_floater_square_opennl_parameterized.obj
+-t floater -b square -s opennl -o obj data/rotor.off rotor_floater_square_opennl_parameterized.obj
