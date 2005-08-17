@@ -85,7 +85,7 @@ polyhedron_ex_parameterization_objs = 	\
           polyhedron_ex_parameterization$(OBJ_EXT)
 
 polyhedron_ex_parameterization$(EXE_EXT): $(polyhedron_ex_parameterization_objs)
-	$(CGAL_CXX) $(LIBPATH) $(LIBPATH_TAUCS) $(EXE_OPT)polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs) $(LDFLAGS) $(LDFLAGS_TAUCS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs) $(LDFLAGS) $(LIBPATH_TAUCS) $(LDFLAGS_TAUCS)
 
 polyhedron_ex_parameterization.clean:
 	rm polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs)
@@ -133,7 +133,7 @@ Polyhedron_parameterization4_objs = 	\
           Polyhedron_parameterization4$(OBJ_EXT)
 
 Polyhedron_parameterization4$(EXE_EXT): $(Polyhedron_parameterization4_objs)
-	$(CGAL_CXX) $(LIBPATH) $(LIBPATH_TAUCS) $(EXE_OPT)Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs) $(LDFLAGS) $(LDFLAGS_TAUCS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs) $(LDFLAGS) $(LIBPATH_TAUCS) $(LDFLAGS_TAUCS)
 
 Polyhedron_parameterization4.clean:
 	rm Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs)
@@ -157,7 +157,7 @@ Polyhedron_parameterization6_objs = 	\
           Polyhedron_parameterization6$(OBJ_EXT)
 
 Polyhedron_parameterization6$(EXE_EXT): $(Polyhedron_parameterization6_objs)
-	$(CGAL_CXX) $(LIBPATH) $(LIBPATH_TAUCS) $(EXE_OPT)Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs) $(LDFLAGS) $(LDFLAGS_TAUCS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs) $(LDFLAGS) $(LIBPATH_TAUCS) $(LDFLAGS_TAUCS)
 
 Polyhedron_parameterization6.clean:
 	rm Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs)

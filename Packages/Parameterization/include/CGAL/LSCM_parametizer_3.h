@@ -57,13 +57,18 @@ template
 class LSCM_parametizer_3
     : public Parametizer_3<MeshAdaptor_3>
 {
+// Private types
+private:
+
+    // Superclass
+    typedef Parametizer_3<MeshAdaptor_3>    Base;
+
 // Public types
 public:
     // Export Mesh_Adaptor_3, BorderParametizer_3
     // and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::Error_code
-                                            Error_code;
+    typedef typename Base::Error_code       Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
@@ -211,7 +216,7 @@ parameterize(Adaptor* mesh)
 
     // Check preconditions
     Error_code status = check_parameterize_preconditions(mesh);
-    if (status != OK)
+    if (status != Base::OK)
         return status;
 
     // Count vertices
@@ -236,7 +241,7 @@ parameterize(Adaptor* mesh)
     // Compute (u,v) for (at least 2) border vertices
     // and mark them as "parameterized"
     status = m_borderParametizer.parameterize_border(mesh);
-    if (status != OK)
+    if (status != Base::OK)
         return status;
 
     // Initialize the "A*X = B" linear system after
@@ -254,7 +259,7 @@ parameterize(Adaptor* mesh)
     {
         // Create 2 lines in the linear system per triangle (1 for u, 1 for v)
         status = setup_triangle_relations(&solver, *mesh, facetIt);
-        if (status != OK)
+            if (status != Base::OK)
             return status;
     }
     solver.end_system() ;
@@ -265,7 +270,7 @@ parameterize(Adaptor* mesh)
     if ( ! solver.solve() )
     {
         std::cerr << "  error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
-        return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
+        return Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
     std::cerr << "    solver ok" << std::endl;
 
@@ -274,7 +279,7 @@ parameterize(Adaptor* mesh)
 
     // Check postconditions
     status = check_parameterize_postconditions(*mesh, solver);
-    if (status != OK)
+    if (status != Base::OK)
         return status;
 
     return status;
@@ -290,7 +295,7 @@ typename Parametizer_3<Adaptor>::Error_code
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(Adaptor* mesh)
 {
-    Error_code status = OK;                 // returned value
+    Error_code status = Base::OK;			// returned value
 
     typedef Mesh_adaptor_feature_extractor<Adaptor> 
                                             Mesh_feature_extractor;
@@ -298,17 +303,18 @@ check_parameterize_preconditions(Adaptor* mesh)
 
     // Allways check that mesh is not empty
     if (mesh->mesh_vertices_begin() == mesh->mesh_vertices_end())
-        status = ERROR_EMPTY_MESH;
-    if (status != OK) {
+        status = Base::ERROR_EMPTY_MESH;
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_EMPTY_MESH!" << std::endl;
         return status;
     }
 
     // The whole surface parameterization package is restricted to triangular meshes
     CGAL_parameterization_expensive_precondition_code(                        \
-        status = mesh->is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH; \
+        status = mesh->is_mesh_triangular() ? Base::OK                         \
+                                            : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
-    if (status != OK) {
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return status;
     }
@@ -316,17 +322,19 @@ check_parameterize_preconditions(Adaptor* mesh)
     // The whole package is restricted to surfaces
     CGAL_parameterization_expensive_precondition_code(          \
         int genus = feature_extractor.get_genus();              \
-        status = (genus == 0) ? OK : ERROR_NO_SURFACE_MESH;     \
+        status = (genus == 0) ? Base::OK                      \
+                              : Base::ERROR_NO_SURFACE_MESH;  \
     );
-    if (status != OK) {
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
     }
     CGAL_parameterization_expensive_precondition_code(              \
         int nb_boundaries = feature_extractor.get_nb_boundaries();  \
-        status = (nb_boundaries >= 1) ? OK : ERROR_NO_SURFACE_MESH; \
+        status = (nb_boundaries >= 1) ? Base::OK                      \
+                                      : Base::ERROR_NO_SURFACE_MESH;  \
     );
-    if (status != OK) {
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
     }
@@ -451,7 +459,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     if (vertexIndex != 3)
     {
         std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
-        return ERROR_NON_TRIANGULAR_MESH;
+        return Base::ERROR_NON_TRIANGULAR_MESH;
     }
 
     // Get the vertices index
@@ -523,7 +531,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     fprintf(stderr,"      ok\n");
 #endif
 
-    return OK;
+    return Base::OK;
 }
 
 // Copy X coordinates into the (u,v) pair of each vertex
@@ -564,7 +572,7 @@ LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_postconditions(const Adaptor& mesh,
                                   const LeastSquaresSolver& solver)
 {
-    Error_code status = OK;
+    Error_code status = Base::OK;
 
     /* LS 02/2005: commented out this section because OpenNL::LinearSolver
      *             does not provide a is_solvable() method
@@ -573,22 +581,20 @@ check_parameterize_postconditions(const Adaptor& mesh,
     // are solvable with a good conditioning
     CGAL_parameterization_expensive_postcondition_code(         \
         status = get_linear_algebra_traits().is_solvable(A, Bu) \
-               ? OK                                             \
-               : ERROR_BAD_MATRIX_CONDITIONING;                 \
+               ? Base::OK                                       \
+               : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
     );
-    if (status != OK) {
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
-        //CGAL_parameterization_postcondition(false);
         return status;
     }
     CGAL_parameterization_expensive_postcondition_code(         \
         status = get_linear_algebra_traits().is_solvable(A, Bv) \
-               ? OK                                             \
-               : ERROR_BAD_MATRIX_CONDITIONING;                 \
+               ? Base::OK                                       \
+               : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
     );
-    if (status != OK) {
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
-        //CGAL_parameterization_postcondition(false);
         return status;
     }
      */
@@ -596,10 +602,10 @@ check_parameterize_postconditions(const Adaptor& mesh,
     // Check if 3D -> 2D mapping is 1 to 1
     CGAL_parameterization_expensive_postcondition_code( \
         status = is_one_to_one_mapping(mesh, solver) 	\
-               ? OK                                     \
-               : ERROR_NO_1_TO_1_MAPPING;               \
+               ? Base::OK                               \
+               : Base::ERROR_NO_1_TO_1_MAPPING;         \
     );
-    if (status != OK) {
+    if (status != Base::OK) {
         std::cerr << "  error ERROR_NO_1_TO_1_MAPPING!" << std::endl;
         //CGAL_parameterization_postcondition(false);
         return status;
@@ -633,8 +639,8 @@ is_one_to_one_mapping(const Adaptor& mesh,
                 v0 = cir;
             else if (vertexIndex == 1)
                 v1 = cir;
-            else if (vertexIndex == 2)    //// Check if "A*Xu = Bu" and "A*Xv = Bv" systems
-    //// are solvable with a good conditioning
+            else if (vertexIndex == 2)    	//// Check if "A*Xu = Bu" and "A*Xv = Bv" systems
+        									//// are solvable with a good conditioning
 
                 v2 = cir;
 

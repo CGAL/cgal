@@ -46,6 +46,15 @@ class Mean_value_coordinates_parametizer_3
                                         BorderParametizer_3,
                                         SparseLinearAlgebraTraits_d>
 {
+// Private types
+private:
+
+    // Superclass
+    typedef Fixed_border_parametizer_3<MeshAdaptor_3,
+                                        BorderParametizer_3,
+                                        SparseLinearAlgebraTraits_d>
+                                            Base;
+
 // Public types
 public:
     // Export Mesh_Adaptor_3, BorderParametizer_3
@@ -56,7 +65,7 @@ public:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
+                                              Facet_const_handle;
     typedef typename Adaptor::Vertex_handle Vertex_handle;
     typedef typename Adaptor::Vertex_const_handle
                                             Vertex_const_handle;
@@ -104,7 +113,7 @@ public:
 // Protected types
 protected:
     typedef typename OpenNL::LinearSolver<Sparse_LA>
-                                            Solver ;
+                                            Solver;
 
 // Protected operations
 protected:
@@ -145,8 +154,8 @@ protected:
 
     // Check if 3D -> 2D mapping is 1 to 1
     virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
-                                         const Matrix& A, 
-                                         const Vector& Bu, 
+                                         const Matrix& A,
+                                         const Vector& Bu,
                                          const Vector& Bv)
     {
         // Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients
@@ -155,7 +164,7 @@ protected:
         // Floater formula above implies that Wij > 0 (for j vertex neighbor
         // of i), thus mapping is guaranteed if the surface boundary is mapped
         // onto a 2D convex polygon
-        return get_border_parametizer().is_border_convex ();
+        return Base::get_border_parametizer().is_border_convex ();
     }
 };
 

@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// This class inherits from Filter_iterator<> + 
+// This class inherits from Filter_iterator<> +
 // adds a conversion to handle/const handle.
 // See Filter_iterator<> documentation.
 
@@ -35,7 +35,7 @@ template<class Iterator,        // internal iterator
          class ConstHandle,     // const-handle type to convert to
          class Handle = void*>  // non-const-handle type to convert to
                                 // (void* means none)
-class Convertible_filter_iterator 
+class Convertible_filter_iterator
     : public Filter_iterator<Iterator, Predicate>
 {
     typedef Filter_iterator<Iterator, Predicate>    Base;
@@ -47,11 +47,11 @@ public:
   // --------
 
     Convertible_filter_iterator() {}
-    Convertible_filter_iterator(Base base) 
+    Convertible_filter_iterator(Base base)
         : Base(base) {}
-    Convertible_filter_iterator(Iterator e, const Predicate& p) 
+    Convertible_filter_iterator(Iterator e, const Predicate& p)
         : Base(e,p) {}
-    Convertible_filter_iterator(Iterator e, const Predicate& p, Iterator c) 
+    Convertible_filter_iterator(Iterator e, const Predicate& p, Iterator c)
         : Base(e,p,c) {}
 
     Convertible_filter_iterator(const Self& it) : Base(it) {}
@@ -77,8 +77,8 @@ public:
   // EXTRA CASTS
   // ---------------------------
 
-    operator Handle()               { return operator->(); }
-    operator ConstHandle() const    { return operator->(); }
+    operator Handle()               { return Base::operator->(); }
+    operator ConstHandle() const    { return Base::operator->(); }
 };
 
 

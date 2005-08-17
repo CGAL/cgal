@@ -21,6 +21,7 @@
 #ifndef CGAL_PARAMETIZER_3_H
 #define CGAL_PARAMETIZER_3_H
 
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -89,7 +90,7 @@ public:
     // The result is the (u,v) pair image of each vertex of the 3D surface.
     //
     // Preconditions:
-    // * 'mesh' must be a surface with 1 connected component 
+    // * 'mesh' must be a surface with 1 connected component
     // * 'mesh' must be a triangular mesh
     virtual Error_code  parameterize (Adaptor* mesh) = 0;
 

@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// This class inherits from Iterator_project<> + 
+// This class inherits from Iterator_project<> +
 // adds a conversion to handle/const handle.
 // See Iterator_project<> documentation.
 
@@ -35,7 +35,7 @@ template<class I,               // internal iterator
          class ConstHandle,     // const-handle type to convert to
          class Handle = void*>  // non-const-handle type to convert to
                                 // (void* means none)
-class Convertible_iterator_project 
+class Convertible_iterator_project
     : public Iterator_project<I, Fct>
 {
     typedef Iterator_project<I, Fct>        Base;
@@ -72,8 +72,8 @@ public:
   // EXTRA CASTS
   // ---------------------------
 
-    operator Handle()               { return operator->(); }
-    operator ConstHandle() const    { return operator->(); }
+    operator Handle()               { return Base::operator->(); }
+    operator ConstHandle() const    { return Base::operator->(); }
 };
 
 

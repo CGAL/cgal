@@ -127,15 +127,25 @@ public:
     // Seaming flag
     enum Seaming_status  { OUTER, INNER, BORDER };
 
-    friend class Vertex;
-    friend class Vertex_handle;
-    friend class Vertex_const_handle;
-    friend class Vertex_iterator;
-    friend class Vertex_const_iterator;
-    friend class Vertex_around_facet_circulator;
-    friend class Vertex_around_facet_const_circulator;
-    friend class Vertex_around_vertex_circulator;
-    friend class Vertex_around_vertex_const_circulator;
+    friend class Mesh_adaptor_patch_vertex<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_handle<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_const_handle<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_list_iterator<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_list_const_iterator<Adaptor>;
+    friend class Mesh_patch_vertex_around_facet_cir<Mesh_adaptor_patch_3*,
+                                                    Vertex_handle,
+                                                    typename Adaptor::Vertex_around_facet_circulator>;
+    friend class Mesh_patch_vertex_around_facet_cir<const Mesh_adaptor_patch_3*,
+                                                    Vertex_const_handle,
+                                                    typename Adaptor::Vertex_around_facet_const_circulator>;
+    friend class Mesh_patch_vertex_around_vertex_cir<Mesh_adaptor_patch_3*,
+                                                     Vertex_handle,
+                                                     typename Adaptor::Vertex_around_vertex_circulator,
+                                                     typename Adaptor::Vertex_handle>;
+    friend class Mesh_patch_vertex_around_vertex_cir<const Mesh_adaptor_patch_3*,
+                                                     Vertex_const_handle,
+                                                     typename Adaptor::Vertex_around_vertex_const_circulator,
+                                                     typename Adaptor::Vertex_const_handle>;
 
 // Public operations
 public:

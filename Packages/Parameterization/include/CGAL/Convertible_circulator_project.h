@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// This class inherits from Circulator_project<> + 
+// This class inherits from Circulator_project<> +
 // adds a conversion to handle/const handle.
 // See Circulator_project<> documentation.
 
@@ -37,7 +37,7 @@ template<class C,               // internal circulator
          class ConstHandle,     // const-handle type to convert to
          class Handle = void*>  // non-const-handle type to convert to
                                 // (void* means none)
-class Convertible_circulator_project 
+class Convertible_circulator_project
     : public Circulator_project<C, Fct, Ref, Ptr>
 {
     typedef Circulator_project<C, Fct, Ref, Ptr>    Base;
@@ -74,8 +74,8 @@ public:
   // EXTRA CASTS
   // ---------------------------
 
-    operator Handle()               { return operator->(); }
-    operator ConstHandle() const    { return operator->(); }
+    operator Handle()               { return Base::operator->(); }
+    operator ConstHandle() const    { return Base::operator->(); }
 };
 
 

@@ -59,9 +59,9 @@ public:
                     const char*  options[]   = NULL,  // must be persistent
 		    const void*  arguments[] = NULL)  // must be persistent
     {
-        static char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
-                                           "taucs.factor.mf=true",
-                                           NULL};
+        static const char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
+                                                 "taucs.factor.mf=true",
+                                                 NULL};
         m_options   = (options == NULL) ? MULTIFRONTAL_LLT : options;
         m_arguments = arguments;
     }
