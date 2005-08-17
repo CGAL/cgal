@@ -367,24 +367,19 @@ namespace CircularFunctors {
 	
 	// The ranges need to overlap in order for the curves to overlap.
 	if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
-	    compare_x<CK>(a2.left(), a1.right()) > 0){
-	  return res;}
+	    compare_x<CK>(a2.left(), a1.right()) > 0)
+	  return res;
 	
 	// They both need to be on the same upper/lower part.
 	if (a1.on_upper_part() != a2.on_upper_part()) {
 	  // But they could share the left vertical tangent point.
-	  if (a1.left() == a2.left()) {
-	    *res++ =make_object
-	      ( std::make_pair(a1.left(),1u));
-	  }
+	  if (a1.left() == a2.left())
+	    *res++ = make_object(std::make_pair(a1.left(),1u));
 	  // Or they could share the right vertical tangent point.
-	  if (a1.right() == a2.right()) {
-	    *res++ = make_object
-	      (std::make_pair(a1.right(),1u));
-	  }
-	  
+	  if (a1.right() == a2.right())
+	    *res++ = make_object(std::make_pair(a1.right(),1u));
 	  return res;
-	};
+	}
 	
 	// We know they overlap, determine the extremities of the common subcurve
 	// TODO : We should use std::max and std::min, but they require less_x_2.
@@ -410,11 +405,8 @@ namespace CircularFunctors {
 		*res++ = make_object(arc);
 	      }
 	    }
-	    
-	    else{
-	      *res++ = make_object
-		(std::make_pair(arctmp.right(),1u));
-	    }
+	    else
+	      *res++ = make_object(std::make_pair(arctmp.right(),1u));
 	  }
 	else if( compare_x<CK>(a1.left(), a2.left()) < 0 ) //the left endpoint is a2's
 	  {
@@ -432,24 +424,16 @@ namespace CircularFunctors {
 		*res++ = make_object(arc);
 	      }
 	    }
-	    else{
-	      *res++ = make_object
-		(std::make_pair(arctmp.right(),1u));
-	    }
+	    else
+	      *res++ = make_object(std::make_pair(arctmp.right(),1u));
 	  }
 	else {
-	    if(compare_x<CK>(a1.right(), a2.right()) >= 0){
-	      
+	    if(compare_x<CK>(a1.right(), a2.right()) >= 0)
 	      *res++ = make_object(a2);
-	    }
-	    else if(compare_x<CK>(a1.right(), a2.right()) < 0){
-	      
+	    else if(compare_x<CK>(a1.right(), a2.right()) < 0)
 	      *res++ = make_object(a1);
-	    }
-	    else{
-	      *res++ = make_object
-		(std::make_pair(arctmp.right(),1u));
-	    }
+	    else
+	      *res++ = make_object(std::make_pair(arctmp.right(),1u));
 	}
 	return res;
       }
@@ -474,18 +458,15 @@ namespace CircularFunctors {
       if ( left != right ) // multiplicity 1
 	{
 	  // We also need to check that these intersection points are on the arc.
-	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) {
+	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left))
 	    *res++ = make_object(std::make_pair(left,1u));
-	  }
-	  if (has_on<CK>(a1, right) && has_on<CK>(a2, right)) {
+	  if (has_on<CK>(a1, right) && has_on<CK>(a2, right))
 	    *res++ = make_object(std::make_pair(right,1u));
-	  }
 	}
       else // multiplicity 2
 	{
 	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
-	    { *res++ = make_object
-		(std::make_pair(left,2u)); }
+	    *res++ = make_object(std::make_pair(left,2u));
 	}
       return res;
     }
@@ -542,16 +523,14 @@ namespace CircularFunctors {
 		      break;
 		    }
 		  }
-		if (!exist) {
+		if (!exist)
 		  circle_arc_endpoints.push_back(arc_end2);
-		}
 	      }
 	      else if( res_aux.size() == 1){
 		//it can be a Circular_arc_endpoint_2 or a Circular_arc_2
 		if(const Circular_arc_2 *arc = CGAL::object_cast<Circular_arc_2>(&res_aux[0])){
 		//if(assign(arc,res_aux[0])){
 		  circle_arcs.push_back(*arc);
-		  
 		}
 		else{
 		  //CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
@@ -572,9 +551,8 @@ namespace CircularFunctors {
 			break;
 		      }
 		    }
-		  if (!exist) {
+		  if (!exist)
 		    circle_arc_endpoints.push_back(arc_end);
-		  }
 		}
 	      }
 	    }
@@ -587,7 +565,6 @@ namespace CircularFunctors {
 	      (circle_arcs[i-1].target().y() == circle_arcs[i].source().y())
 	      ) {i++;}
 
-	
 	*res++ = make_object
 	  (Circular_arc_2(circle_arcs[0].supporting_circle(),
 			  circle_arcs[0].source(),
