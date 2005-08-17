@@ -216,10 +216,10 @@ public:
     std::cerr << "  INSERTED." << std::endl;
 #endif
     v->info()=false; // BEURK
-    scan_star(v);
+    update_star(v);
   }
 
-  void scan_star(const Vertex_handle& v)
+  void update_star(const Vertex_handle& v)
   {
     // scan tets
     typedef std::list<Cell_handle> Cells;
@@ -277,24 +277,10 @@ public:
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
+
   Refine_tets(Tr& t, Criteria crit, Oracle& oracle, Facets_level& facets_level)
     : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
   {}
-
-/** BEURK \todo Put those functions into a visitor class. */
-void before_insertion_impl(const typename Base::Cell_handle& c,
-			   const typename Base::Point& p,
-			   typename Base::Zone& zone)
-{
-  //  f_level.before_insertion_impl(typename Tr::Facet (), p, zone);
-  Base::before_insertion_impl(c, p, zone);
-}
-
-void after_insertion_impl(const typename Base::Vertex_handle& v)
-{
-  //  f_level.restore_restricted_Delaunay(v);
-  Base::after_insertion_impl(v);
-}
 
 }; // end class Refine_tets
 

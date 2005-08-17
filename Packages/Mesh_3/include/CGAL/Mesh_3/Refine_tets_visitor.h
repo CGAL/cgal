@@ -62,7 +62,7 @@ namespace Mesh_3 {
 
       void after_insertion(const Vertex_handle& v)
       {
-	refine_tets->scan_star(v);
+	refine_tets->update_star(v);
       }
 
       template <typename E, typename P, typename Z>
