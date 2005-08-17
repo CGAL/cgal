@@ -1299,14 +1299,14 @@ Alpha_shape_2<Dt>::traverse(const Face_handle& pFace,
   typedef typename Marked_face_set::Data Data;
   std::list<Face_handle> faces;
   faces.push_back(pFace);
-  Face_handle pNeighbor;
+  Face_handle pNeighbor, fh;
 
   while(! faces.empty()){
-    pFace = faces.back();
-    faces.pop_back();
-    for (int i=0; i<=3; i++)
+    fh = faces.front();
+    faces.pop_front();
+    for (int i=0; i<3; i++)
       {
-	pNeighbor = pFace->neighbor(i);
+	pNeighbor = fh->neighbor(i);
 	 CGAL_triangulation_assertion(pNeighbor != NULL);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_face_set[pNeighbor];

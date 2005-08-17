@@ -56,20 +56,11 @@ typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 
 //---------------------------------------------------------------------
 
-template <class InputIterator, class OutputIterator>
+template <class OutputIterator>
 void
-alpha_edges(InputIterator begin, InputIterator end,
-	    const coord_type &Alpha,
-	    bool mode,
-	    OutputIterator out)
+alpha_edges( const Alpha_shape_2&  A,
+	     OutputIterator out)
 { 
-  Alpha_shape_2 A(begin,end);
-  
-  if (mode) 
-    { A.set_mode(Alpha_shape_2::GENERAL); } 
-  else 
-    { A.set_mode(Alpha_shape_2::REGULARIZED); };
-  A.set_alpha(Alpha);
 
   for(Alpha_shape_edges_iterator it =  A.alpha_shape_edges_begin();
       it != A.alpha_shape_edges_end();
@@ -105,12 +96,17 @@ int main()
   if(! file_input(std::back_inserter(points))){
     return -1;
   }
-  std::vector<Segment> segments;
-  alpha_edges(points.begin(), points.end(),
-	      coord_type(10000),Alpha_shape_2::GENERAL, 
-	      std::back_inserter(segments));
 
-  std::cout << segments.size() << " alpha shape edges" << std::endl;
+  Alpha_shape_2 A(points.begin(), points.end(),
+		  coord_type(10000),
+		  Alpha_shape_2::GENERAL);
+ 
+  std::vector<Segment> segments;
+  alpha_edges( A, std::back_inserter(segments));
+
   std::cout << "Alpha Shape computed" << std::endl;
+  std::cout << segments.size() << " alpha shape edges" << std::endl;
+  std::cout << "Optimal alpha: " << *A.find_optimal_alpha(1)<<std::endl; 
+
   return 0;
 }

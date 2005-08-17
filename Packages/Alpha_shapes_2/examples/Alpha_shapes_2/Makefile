@@ -27,8 +27,12 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS =  -I ../../include \
-            -I../../../Triangulation_2/include \
-	    $(CGAL_CXXFLAGS) 
+	     $(CGAL_CXXFLAGS) -g 
+
+
+#-I ../../include \
+#            -I../../../Triangulation_2/include \
+#	    $(CGAL_CXXFLAGS) 
 
 
 
