@@ -76,7 +76,7 @@ typedef CGAL::Implicit_surfaces_mesher_3<Tr,
 
 #include <vector>
 
-int main(int argc, char** argv)
+int main(int , char** )
 {
   /*** Spheres radiuss ***/
   const FT r1 = 93.; // 93 milimeters
