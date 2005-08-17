@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 // Class Circular_border_parametizer_3
 //
 
-// Base class of strategies that parameterize the border 
+// Base class of strategies that parameterize the border
 // of a 3D surface onto a circle.
 // This class is a model of BorderParametizer_3 concept.
 //
@@ -85,6 +85,9 @@ public:
 
 // Public operations
 public:
+    // Destructor of base class should be virtual
+    virtual ~Circular_border_parametizer_3() {}
+
     // Default constructor, copy constructor and operator =() are fine
 
     // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
@@ -98,7 +101,7 @@ public:
 protected:
     // compute length of an edge
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source, 
+                                       Vertex_const_handle source,
                                        Vertex_const_handle target) = 0;
 
 // Private operations
@@ -250,7 +253,7 @@ public:
 protected:
     // compute length of an edge
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source, 
+                                       Vertex_const_handle source,
                                        Vertex_const_handle target)
     {
         // uniform boundary parameterization: points are equally spaced
@@ -316,7 +319,7 @@ public:
 protected:
     // compute length of an edge
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source, 
+                                       Vertex_const_handle source,
                                        Vertex_const_handle target)
     {
         // arc-length boundary parameterization: (u,v) values are

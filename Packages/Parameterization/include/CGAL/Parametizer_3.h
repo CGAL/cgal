@@ -82,6 +82,9 @@ public:
 
 // Public operations
 public:
+    // Destructor of base class should be virtual
+    virtual ~Parametizer_3() {}
+
     // Default constructor, copy constructor and operator =() are fine
 
     // Compute a 1 to 1 mapping from a 3D surface 'mesh'

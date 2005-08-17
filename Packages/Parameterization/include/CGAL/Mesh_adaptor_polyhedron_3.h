@@ -55,12 +55,8 @@ class Mesh_adaptor_polyhedron_3
 {
 // Forward references
 public:
-
-    typedef Polyhedron_3_                   Polyhedron;
-    struct                                  Halfedge_info;
-    struct                                  Vertex_info;
-    typedef typename Polyhedron::Traits::Point_2
-                                            Point_2;
+    class                                   Halfedge_info;
+    class                                   Vertex_info;
 
 private:
     struct                                  Less;
@@ -72,22 +68,22 @@ private:
 private:
 
     // Halfedge
-    typedef typename Polyhedron::Halfedge   Halfedge;
-    typedef typename Polyhedron::Halfedge_handle
+    typedef typename Polyhedron_3_::Halfedge Halfedge;
+    typedef typename Polyhedron_3_::Halfedge_handle
                                             Halfedge_handle;
-    typedef typename Polyhedron::Halfedge_const_handle
+    typedef typename Polyhedron_3_::Halfedge_const_handle
                                             Halfedge_const_handle;
-    typedef typename Polyhedron::Halfedge_iterator
+    typedef typename Polyhedron_3_::Halfedge_iterator
                                             Halfedge_iterator;
-    typedef typename Polyhedron::Halfedge_const_iterator
+    typedef typename Polyhedron_3_::Halfedge_const_iterator
                                             Halfedge_const_iterator;
-    typedef typename Polyhedron::Halfedge_around_vertex_circulator
+    typedef typename Polyhedron_3_::Halfedge_around_vertex_circulator
                                             Halfedge_around_vertex_circulator;
-    typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
+    typedef typename Polyhedron_3_::Halfedge_around_vertex_const_circulator
                                             Halfedge_around_vertex_const_circulator;
-    typedef typename Polyhedron::Halfedge_around_facet_circulator
+    typedef typename Polyhedron_3_::Halfedge_around_facet_circulator
                                             Halfedge_around_facet_circulator;
-    typedef typename Polyhedron::Halfedge_around_facet_const_circulator
+    typedef typename Polyhedron_3_::Halfedge_around_facet_const_circulator
                                             Halfedge_around_facet_const_circulator;
 
     // Additional info attached to halfedges
@@ -95,7 +91,7 @@ private:
                               Halfedge_info,
                               Less>         Halfedge_info_map;
     // Additional info attached to vertices
-    typedef typename std::map<typename Polyhedron::Vertex_const_handle,
+    typedef typename std::map<typename Polyhedron_3_::Vertex_const_handle,
                               Vertex_info,
                               Less>         Vertex_info_map;
 
@@ -113,6 +109,10 @@ public:
     // Additional info attached to halfedges
     class Halfedge_info
     {
+    public:
+        typedef typename Polyhedron_3_::Traits::Point_2
+                                            Point_2;
+
     private:
         int m_tag;                  // general purpose tag
         bool m_is_parameterized;    // is parameterized?
