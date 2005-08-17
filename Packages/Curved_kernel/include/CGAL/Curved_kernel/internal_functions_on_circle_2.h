@@ -2,6 +2,37 @@
 #define CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 
 namespace CGAL {
+
+// temporary function : where to put it, if we want to keep it ?
+
+template< class CK>
+typename CK::Circular_arc_endpoint_2
+circle_intersect( const typename CK::Circle_2 & c1,
+		  const typename CK::Circle_2 & c2,
+		  bool b )
+{
+  typedef std::vector<CGAL::Object > solutions_container;
+
+  solutions_container solutions;
+  CGAL::construct_intersections_2<CK>
+	( c1, c2, std::back_inserter(solutions) );
+  typename solutions_container::iterator it = solutions.begin();
+
+  CGAL_kernel_precondition( it != solutions.end() ); 
+  // the circles intersect
+
+  const std::pair<typename CK::Circular_arc_endpoint_2, uint> *result;
+  result = CGAL::object_cast< 
+    std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+  if ( result->second == 2 ) // double solution
+    return result->first;
+  if (b) return result->first;
+  ++it;
+  result = CGAL::object_cast< 
+        std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+  return result->first;
+}
+
 namespace CircularFunctors {
 
   template < class CK >
@@ -22,7 +53,7 @@ namespace CircularFunctors {
   {
     return typename CK::Circle_2( typename CK::Point_2(eq.a(), eq.b()), eq.r_sq() ); 
   }
-  
+
   template< class CK, class OutputIterator>
   OutputIterator
   construct_intersections_2( const typename CK::Circle_2 & c1,

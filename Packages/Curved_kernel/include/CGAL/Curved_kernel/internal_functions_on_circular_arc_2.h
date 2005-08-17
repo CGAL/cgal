@@ -465,9 +465,11 @@ namespace CircularFunctors {
       
       // Get the two intersection points of the supporting circles.
       Circular_arc_endpoint_2 
-	left (a1.supporting_circle(), a2.supporting_circle(), true);
+	left = CGAL::circle_intersect<CK>(a1.supporting_circle(),
+                                          a2.supporting_circle(), true);
       Circular_arc_endpoint_2 
-	right(a1.supporting_circle(), a2.supporting_circle(), false);
+	right = CGAL::circle_intersect<CK>(a1.supporting_circle(),
+                                           a2.supporting_circle(), false);
       
       if ( left != right ) // multiplicity 1
 	{

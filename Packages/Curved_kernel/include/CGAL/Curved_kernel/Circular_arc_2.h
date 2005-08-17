@@ -18,6 +18,7 @@
 #include <CGAL/global_functions_on_circular_arcs_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
 #include <CGAL/intersections.h>
+#include <CGAL/Simple_cartesian.h>
 
 namespace CGAL {
 namespace CGALi {
@@ -34,21 +35,19 @@ namespace CGALi {
     typedef typename CK::Circular_arc_endpoint_2   Circular_arc_endpoint_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 
-  public:
+public:
 
     Circular_arc_2() {}
 
-    // Full circle
     Circular_arc_2(const Circle_2 &c)
+      : _support(c)
     {
        // Define a circle intersecting c in the 2 vertical tangent
        // points.
        Circle_2 c1 (Point_2(c.center().x(), c.center().y()-1),
                     c.squared_radius()+1);
 
-       _begin = Circular_arc_endpoint_2(c, c1, true);
-       _end   = Circular_arc_endpoint_2(c, c1, true);
-       _support = c;
+       _begin = _end = CGAL::circle_intersect<CK>(c, c1, true);
     }
 
     Circular_arc_2(const Circle_2 &support,
@@ -86,7 +85,9 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &c, 
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _begin(c, c1, b_1), _end(c, c2, b_2), _support(c) {}
+      : _begin(CGAL::circle_intersect<CK>(c, c1, b_1)),
+        _end(CGAL::circle_intersect<CK>(c, c2, b_2)),
+        _support(c) {}
 
 
     // constructs a circular arc that is the arc included in A

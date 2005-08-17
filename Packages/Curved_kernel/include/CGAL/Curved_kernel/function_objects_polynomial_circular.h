@@ -280,6 +280,7 @@ namespace CircularFunctors {
 
     typedef typename CK::Circle_2                 Circle;
     typedef typename CK::Circular_arc_2           Circular_arc;
+    typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint;
     typedef typename CK::Line_arc_2               Line_arc;
 
     template < class OutputIterator >
