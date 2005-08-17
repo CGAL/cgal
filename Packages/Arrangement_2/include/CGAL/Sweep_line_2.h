@@ -343,7 +343,7 @@ public:
     StatusLineIter slIter = 
       m_statusLine.insert_before(m_status_line_insert_hint, *currentOne);
     ((Subcurve*)(*currentOne))->set_hint(slIter);
-      
+  
     SL_DEBUG(PrintStatusLine(););
     if ( slIter != m_statusLine.begin() )
     { 
@@ -783,47 +783,20 @@ _fix_overlap_subcurves()
             if((void*)sc->get_right_event() != (void*)m_currentEvent && 
                 m_traits->compare_xy_2_object()
                   (m_traits->construct_min_vertex_2_object()(sc->get_last_curve()),
-                   m_currentEvent->get_point()))
+                   m_currentEvent->get_point()) == SMALLER)
             {
               m_traits->split_2_object() (sc->get_last_curve(),
                                 				   m_currentEvent->get_point(),
                                            sub_cv1, sub_cv2);
               sc->set_last_curve(sub_cv2);
-              _add_curve_to_right(m_currentEvent, (Subcurve*)sc);
+              bool is_ovlp = _add_curve_to_right(m_currentEvent, (Subcurve*)sc);
+              if(!is_ovlp)
+                sc->set_overlap_subcurve(NULL);
+
               m_currentEvent->set_weak_intersection();
               m_visitor ->update_event(m_currentEvent,(Subcurve*) sc);
             }
           }
-
-          //// clip the two subcurves according to end_overlap point
-          //Subcurve* res;
-          //if(( res = (Subcurve*) (leftCurve->get_orig_subcurve1() -> 
-          //     clip(m_currentEvent))) != NULL)
-          //{
-          //  m_traits->split_2_object() (res->get_last_curve(),
-          //                  				   m_currentEvent->get_point(),
-          //                             sub_cv1, sub_cv2);
-          //  res->set_last_curve(sub_cv2);
-          //  res->set_overlap_subcurve(NULL); //BZBZ
-
-          //  _add_curve_to_right(m_currentEvent, res);
-          //  m_currentEvent->set_weak_intersection();
-          //  m_visitor ->update_event(m_currentEvent, res);
-
-          //}
-  
-          //if(( res = (Subcurve*)(leftCurve->get_orig_subcurve2() -> 
-          //     clip(m_currentEvent))) != NULL)
-          //{
-          //   m_traits->split_2_object() (res->get_last_curve(),
-          //                  				   m_currentEvent->get_point(),
-          //                             sub_cv1, sub_cv2);
-          //  res->set_last_curve(sub_cv2);
-          //  res->set_overlap_subcurve(NULL); //BZBZ
-          //  _add_curve_to_right(m_currentEvent, res);
-          //  m_currentEvent->set_weak_intersection();
-          //  m_visitor ->update_event(m_currentEvent, res);
-          //}         
         }
       }     
       ++leftCurveIter;
@@ -885,7 +858,7 @@ _handle_overlap(Event* event,
     m_subCurveAlloc.construct(overlap_sc,m_masterSubcurve);
     overlap_sc->init(overlap_cv, event, right_end );
     m_overlap_subCurves.push_back(overlap_sc);
-      
+
     // Set the two events' attribute to intersection
     event -> set_overlap();
     right_end -> set_overlap();
