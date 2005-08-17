@@ -16,9 +16,9 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-	   -I$(HOME)/CGAL/Arrangement_2/include \
-	   -I$(HOME)/CGAL/Curved_kernel/include \
-           -I$(HOME)/CGAL/Algebraic_kernel/include \
+	   -I../../../Arrangement_2/include \
+	   -I../../../Curved_kernel/include \
+           -I../../../Algebraic_kernel/include \
            -I$(HOME)/synaps/include \
 	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

@@ -146,9 +146,6 @@ public:
 		const FT & squared_radius() const
 			{ return P_arc.squared_radius();}
 		
-		double approximate_y_at(const Circular_arc_endpoint_2 &p) const 
-			{ return P_arc.approximate_y_at(p);}
-
 		Bbox_2 bbox()
 			{ return P_arc.bbox();}
 			

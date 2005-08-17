@@ -262,22 +262,6 @@ namespace CGALi {
        return supporting_circle().squared_radius();
     }
 
-    // Until curves_compare_y_at_x() is fixed in PM.
-    double approximate_y_at(const Circular_arc_endpoint_2 &p) const
-    {
-      CGAL_kernel_precondition(is_x_monotone());
-      double x = CGAL::to_double(p.x());
-      double tmp = std::sqrt(CGAL::to_double(supporting_circle()
-                                                .squared_radius())
-                   - CGAL::square(x -
-                         CGAL::to_double(supporting_circle().center().x())));
-      if (on_upper_part())
-        return CGAL::to_double(supporting_circle().center().y()) + tmp;
-      else
-        return CGAL::to_double(supporting_circle().center().y()) - tmp;
-    }
-
-
     Bbox_2 bbox() const
     {
       return CGAL::CircularFunctors::circular_arc_bbox<CK>(*this);
