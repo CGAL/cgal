@@ -606,7 +606,7 @@ public:
       while (i1 < n1 && i2 < n2) {
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
 
-        right_coincides =(right_res == EQUAL);
+        right_coincides = (right_res == EQUAL);
         if (right_res == SMALLER)
           right_coincides = (compare_y_at_x(max_vertex(cv1[i1]),
                                             cv2[i2]) == EQUAL);
@@ -687,8 +687,13 @@ public:
       if (ocv.size() > 0) {
         *oi++ = make_object(ocv);
       } else if (right_coincides) {
-        std::pair<Point_2, unsigned int> ip(max_vertex(cv1[n1 - 1]), 0);
-        *oi++ = make_object(ip);
+        if (right_res == SMALLER) {
+          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[n1 - 1]), 0);
+          *oi++ = make_object(ip);
+        } else {
+          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[n2 - 1]), 0);
+          *oi++ = make_object(ip);
+        }
       }
        
       return oi;
