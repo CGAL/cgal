@@ -2403,6 +2403,48 @@ is copied to another arrangement instance:
 \label{arr_sec:overlay}
 %================================
 
+RWRW: MORE WORK HERE ...
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_22.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{Overlaying two simple arrangements of line segments, as done
+in \ccc{example22.C} and \ccc{example23.C}. In \ccc{example23.C} we 
+the two bounded faces as {\em marked}, were the intersection of the two
+marked faces is denoted as $\hat{f}$.}
+\label{arr_fig:ex_22}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_22.gif"  border=0 alt="The arrangement overlay computed in \ccc{example22.C} and \ccc{example23.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+The next program constructs two simple arrangements, as illustrated in
+Figure~\ref{arr_fig:ex_22} and computes their overlay:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example22.C}
+
+The following example shows how to compute the intersection of two polygons
+using the \ccc{overlay()} function. We use a face-extended \dcel\ class
+extended with a Boolean flag to instantiate our arrangement class,
+where a polygon is represented as a {\sl marked} arrangement face (whose
+flag is set). We use an face-overlay traits class, templated with a functor
+that simply performs a logical {\em and} operations on Boolean flags.
+As a result, a face in the overlaid arrangement is marked only when it
+corresponds to an overlapping region between two marked cells in the input
+arrangements (namely it is part of the intersection of the two polygon).
+
+In this example we intersect a square and a rhombus (which actually also
+a square), so the resulting polygon is an octagon, represented by the shape
+$\hat{f}$ in Figure~\ref{arr_fig:ex_22}:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example23.C}
+
 \section{Storing the Curve History}
 \label{arr_sec:arr_with_hist}
 %==================================
