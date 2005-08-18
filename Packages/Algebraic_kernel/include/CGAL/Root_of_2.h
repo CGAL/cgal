@@ -977,24 +977,9 @@ to_double(const Root_of_2<RT> &x)
 {
   CGAL_assertion(is_valid(x));
 
-  typedef typename Root_of_2<RT>::FT FT;
-
-  FT max = CGAL::max(CGAL::abs(x[0]), CGAL::max(CGAL::abs(x[1]), CGAL::abs(x[2])));
-  max = max/RT(1<<30)/RT(1<<30);
-
-  double a = CGAL::to_double(x[2]/max);
-  double b = CGAL::to_double(x[1]/max);
-  double c = CGAL::to_double(x[0]/max);
-
-  //double a = CGAL::to_double(x[2]);
-  //double b = CGAL::to_double(x[1]);
-  //double c = CGAL::to_double(x[0]);
-  // protect against overflows :
-  //b /= a;
-  //c /= a;
-
-  //double d = std::sqrt(CGAL_NTS to_double(x.discriminant()));
-  double d = std::sqrt(b*b-4*a*c);
+  double a = CGAL::to_double(x[2]);
+  double b = CGAL::to_double(x[1]);
+  double d = std::sqrt(CGAL_NTS to_double(x.discriminant()));
 
   CGAL_assertion(a > 0);
   if (x.is_smaller())
