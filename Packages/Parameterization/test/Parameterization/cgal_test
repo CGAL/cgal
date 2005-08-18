@@ -63,6 +63,26 @@ rm -f $ERRORFILE
 touch $ERRORFILE
 
 #---------------------------------------------------------------------#
+#                    set extra compilation options
+#---------------------------------------------------------------------#
+
+# if TAUCS is installed
+if [ -n "$TAUCSROOT" ] ; then
+    # Evaluate dynamically TAUCS OSTYPE
+    TAUCS_OSTYPE=`../../examples/Parameterization/compute_TAUCS_OSTYPE`
+
+    # add TAUCS compilation options
+    export TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS \
+            -DCGAL_USE_TAUCS \
+            -I$TAUCSROOT/src \
+            -I$TAUCSROOT/build/$TAUCS_OSTYPE"
+    export TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS \
+            -L$TAUCSROOT/lib/$TAUCS_OSTYPE \
+            -L$TAUCSROOT/external/lib/$TAUCS_OSTYPE \
+            -ltaucs -llapack -lf77blas -lcblas -latlas -lmetis -lg2c"
+fi
+
+#---------------------------------------------------------------------#
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 

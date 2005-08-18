@@ -71,18 +71,28 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-        if [ -n "$TAUCSROOT" ] ; then
-            compile_and_run polyhedron_ex_parameterization
-        fi
-        compile_and_run Polyhedron_parameterization1
-        compile_and_run Polyhedron_parameterization2
-        compile_and_run Polyhedron_parameterization3
-        if [ -n "$TAUCSROOT" ] ; then
-            compile_and_run Polyhedron_parameterization4
-        fi
-        compile_and_run Polyhedron_parameterization5
-        if [ -n "$TAUCSROOT" ] ; then
-            compile_and_run Polyhedron_parameterization6
-        fi
+  # if TAUCS is installed
+  if [ -n "$TAUCSROOT" ] ; then
+    # Evaluate dynamically TAUCS OSTYPE
+    TAUCS_OSTYPE = `../../examples/Parameterization/compute_TAUCS_OSTYPE`
+
+    # add TAUCS compilation options
+    export TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS \
+            -DCGAL_USE_TAUCS \
+            -I$TAUCSROOT/src \
+            -I$TAUCSROOT/build/$TAUCS_OSTYPE"
+    export TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS \
+            -L$TAUCSROOT/lib/$TAUCS_OSTYPE \
+            -L$TAUCSROOT/external/lib/$TAUCS_OSTYPE \
+            -ltaucs -llapack -lf77blas -lcblas -latlas -lmetis -lg2c"
+  fi
+
+  compile_and_run polyhedron_ex_parameterization
+  compile_and_run Polyhedron_parameterization1
+  compile_and_run Polyhedron_parameterization2
+  compile_and_run Polyhedron_parameterization3
+  compile_and_run Polyhedron_parameterization4
+  compile_and_run Polyhedron_parameterization5
+  compile_and_run Polyhedron_parameterization6
 fi
 

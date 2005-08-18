@@ -24,7 +24,7 @@
 
 //----------------------------------------------------------
 // Test all parameterization methods and all solvers
-// No output 
+// No output
 // Input files are .off
 //----------------------------------------------------------
 // extensive_parameterization_test mesh1.off mesh2.off
@@ -47,7 +47,9 @@
 #include <CGAL/Mesh_adaptor_feature_extractor.h>
 
 #include <OpenNL/linear_solver.h>
-#include <CGAL/Taucs_solver_traits.h>
+#ifdef CGAL_USE_TAUCS
+    #include <CGAL/Taucs_solver_traits.h>
+#endif
 
 #include "Polyhedron_ex.h"
 #include "Mesh_cutter.h"
@@ -61,7 +63,7 @@
 #include <fstream>
 #include <cassert>
 #ifdef WIN32
-#include <Windows.h>
+    #include <Windows.h>
 #endif
 
 
@@ -80,6 +82,19 @@ typedef CGAL::Parametizer_3<Mesh_patch_polyhedron>          Parametizer;
 // Type describing a border or seam as a vertex list
 typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
 
+// Sparse matrix solver 1 to test: OpenNL
+typedef OpenNL::DefaultLinearSolverTraits<double>           Solver1;
+const char*                                                 Solver1_name = "OpenNL";
+
+// Sparse matrix solver 2 to test: TAUCS (falls back to OpenNL if not installed)
+#ifdef CGAL_USE_TAUCS
+    typedef CGAL::Taucs_solver_traits<double>               Solver2;
+    const char*                                             Solver2_name = "TAUCS";
+#else
+    typedef OpenNL::DefaultLinearSolverTraits<double>       Solver2;
+    const char*                                             Solver2_name = "OpenNL";
+#endif
+
 
 // ----------------------------------------------------------------------------
 // Private functions
@@ -95,7 +110,7 @@ typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
 static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 {
     // Type describing a border or seam as an halfedge list
-    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex> 
+    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex>
                                             Mesh_feature_extractor;
     typedef Mesh_feature_extractor::Boundary Boundary;
     typedef Mesh_cutter::Backbone           Backbone;
@@ -160,7 +175,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
             return seam;                    // return empty list
         //
         // 2) Check that seamingBackbone is a loop and
-        //    count occurences of seam halfedges 
+        //    count occurences of seam halfedges
         mesh->tag_halfedges(0);             // Reset counters
         for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
         {
@@ -170,12 +185,12 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
             if (next_he == seamingBackbone.end())
                 next_he = seamingBackbone.begin();
 
-            // Check that seamingBackbone is a loop: check that 
+            // Check that seamingBackbone is a loop: check that
             // end of current HE == start of next one
             if ((*he)->vertex() != (*next_he)->opposite()->vertex())
                 return seam;                // return empty list
 
-            // Increment counter (in "tag" field) of seam halfedges 
+            // Increment counter (in "tag" field) of seam halfedges
             (*he)->tag( (*he)->tag()+1 );
         }
         //
@@ -282,46 +297,46 @@ int main(int argc,char * argv[])
         std::cerr << std::endl;
 
         //***************************************
-        // Tutte uniform parameterization 
+        // Tutte uniform parameterization
         // with square uniform boundary parameterization
         // OpenNL solver
         //***************************************
 
         Parametizer::Error_code err;
-        
+
         std::cerr << "Tutte uniform parameterization" << std::endl;
         std::cerr << "with square uniform boundary parameterization" << std::endl;
-        std::cerr << "OpenNL solver" << std::endl;
-    
+        std::cerr << Solver1_name << " solver" << std::endl;
+
         err = CGAL::parameterize(
             &mesh_patch,
             CGAL::Barycentric_mapping_parametizer_3<
                 Mesh_patch_polyhedron,
                 CGAL::Square_border_uniform_parametizer_3<Mesh_patch_polyhedron>,
-                OpenNL::DefaultLinearSolverTraits<double>
+                Solver1
             >());
-        
+
         if (err == Parametizer::OK)
             fprintf(stderr, "  Parameterization success\n\n");
         else
             fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
 
         //***************************************
-        // Floater's mean value coordinates parameterization 
+        // Floater's mean value coordinates parameterization
         // with circular arc length boundary parameterization
-        // TAUCS solver
+        // TAUCS solver (if installed)
         //***************************************
 
         std::cerr << "Floater's mean value coordinates parameterization" << std::endl;
         std::cerr << "with circular arc length boundary parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-    
+        std::cerr << Solver2_name << " solver" << std::endl;
+
         err = CGAL::parameterize(
             &mesh_patch,
             CGAL::Mean_value_coordinates_parametizer_3<
                 Mesh_patch_polyhedron,
                 CGAL::Circular_border_arc_length_parametizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_solver_traits<double>
+                Solver2
             >());
 
         if (err == Parametizer::OK)
@@ -330,21 +345,21 @@ int main(int argc,char * argv[])
             fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
 
         //***************************************
-        // Discrete Conformal Map parameterization 
+        // Discrete Conformal Map parameterization
         // with circular arc length boundary parameterization
-        // TAUCS solver
+        // TAUCS solver (if installed)
         //***************************************
 
         std::cerr << "Discrete Conformal Map parameterization" << std::endl;
         std::cerr << "with circular arc length boundary parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-    
+        std::cerr << Solver2_name << " solver" << std::endl;
+
         err = CGAL::parameterize(
             &mesh_patch,
             CGAL::Discrete_conformal_map_parametizer_3<
                 Mesh_patch_polyhedron,
                 CGAL::Circular_border_arc_length_parametizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_solver_traits<double>
+                Solver2
             >());
 
         if (err == Parametizer::OK)
@@ -353,21 +368,21 @@ int main(int argc,char * argv[])
             fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
 
         //***************************************
-        // Authalic parameterization 
+        // Authalic parameterization
         // with square arc length boundary parameterization
-        // TAUCS solver
+        // TAUCS solver (if installed)
         //***************************************
 
         std::cerr << "Authalic parameterization" << std::endl;
         std::cerr << "with square arc length boundary parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-    
+        std::cerr << Solver2_name << " solver" << std::endl;
+
         err = CGAL::parameterize(
             &mesh_patch,
             CGAL::Discrete_authalic_parametizer_3<
                 Mesh_patch_polyhedron,
                 CGAL::Square_border_arc_length_parametizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_solver_traits<double>
+                Solver2
             >());
 
         if (err == Parametizer::OK)
@@ -376,19 +391,19 @@ int main(int argc,char * argv[])
             fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
 
         //***************************************
-        // LSCM parameterization 
-        // TAUCS solver
+        // LSCM parameterization
+        // TAUCS solver (if installed)
         //***************************************
 
         std::cerr << "LSCM parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-    
+        std::cerr << Solver2_name << " solver" << std::endl;
+
         err = CGAL::parameterize(
             &mesh_patch,
             CGAL::LSCM_parametizer_3<
                 Mesh_patch_polyhedron,
                 CGAL::Two_vertices_parametizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_solver_traits<double>
+                Solver2
             >());
 
         if (err == Parametizer::OK)

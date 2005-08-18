@@ -14,11 +14,14 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -Iinclude \
+           -I../../examples/Parameterization \
+           -I../../examples/Parameterization/include \
            -I../../include \
+           -I../../../OpenNL/include \
+           $(CGAL_CXXFLAGS) \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS) \
-           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
@@ -38,14 +41,28 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                extensive_parameterization_test$(EXE_EXT) 
+# General targets:
 
-extensive_parameterization_test$(EXE_EXT): extensive_parameterization_test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extensive_parameterization_test extensive_parameterization_test$(OBJ_EXT) $(LDFLAGS)
+all:      \
+          extensive_parameterization_test$(EXE_EXT)
 
-clean: \
-                   extensive_parameterization_test.clean 
+clean:    \
+          extensive_parameterization_test.clean
+
+# extensive_parameterization_test:
+
+extensive_parameterization_test_objs = 	\
+          Mesh_cutter$(OBJ_EXT) \
+          extensive_parameterization_test$(OBJ_EXT)
+
+Mesh_cutter$(OBJ_EXT) : ../../examples/Parameterization/Mesh_cutter.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) ../../examples/Parameterization/Mesh_cutter.C
+
+extensive_parameterization_test$(EXE_EXT): $(extensive_parameterization_test_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extensive_parameterization_test$(EXE_EXT) $(extensive_parameterization_test_objs) $(LDFLAGS)
+
+extensive_parameterization_test.clean:
+	rm extensive_parameterization_test$(EXE_EXT) $(extensive_parameterization_test_objs)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
