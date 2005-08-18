@@ -16,7 +16,7 @@
 #define CGAL_ROOT_OF_CGAL_INTERVAL_NT_H
 
 #include <CGAL/Interval_arithmetic.h>
-//#include <CGAL/Root_of/Root_of_traits.h>
+#include <CGAL/Root_of_2.h>
 
 namespace CGAL {
 
