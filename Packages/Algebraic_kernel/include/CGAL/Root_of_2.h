@@ -792,6 +792,21 @@ square(const Root_of_2<RT> &a)
                         (a.is_smaller() ^ (a[1]>0)));
 }
 
+
+// Mixed operators with Root_of_2 and RT/FT.
+// Specializations of Binary_operator_result.
+// Note : T1 can be different from T2 because of quotient types...
+template < typename T1, typename T2 >
+struct Binary_operator_result <T1, Root_of_2<T2> > {
+    typedef Root_of_2<T2>  type;
+};
+
+template < typename T1, typename T2 >
+struct Binary_operator_result <Root_of_2<T1>, T2> {
+    typedef Root_of_2<T1>  type;
+};
+
+
 template < typename RT >
 Root_of_2<RT>
 operator-(const Root_of_2<RT> &a,
