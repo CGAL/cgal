@@ -297,7 +297,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 {
     Error_code status = Base::OK;			// returned value
 
-    typedef Mesh_adaptor_feature_extractor<Adaptor> 
+    typedef Mesh_adaptor_feature_extractor<Adaptor>
                                             Mesh_feature_extractor;
     Mesh_feature_extractor feature_extractor(mesh);
 
@@ -310,7 +310,7 @@ check_parameterize_preconditions(Adaptor* mesh)
     }
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_parameterization_expensive_precondition_code(                        \
+    CGAL_parameterization_expensive_precondition_code(                         \
         status = mesh->is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
@@ -319,20 +319,15 @@ check_parameterize_preconditions(Adaptor* mesh)
         return status;
     }
 
-    // The whole package is restricted to surfaces
-    CGAL_parameterization_expensive_precondition_code(          \
-        int genus = feature_extractor.get_genus();              \
-        status = (genus == 0) ? Base::OK                      \
-                              : Base::ERROR_NO_SURFACE_MESH;  \
-    );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
-        return status;
-    }
-    CGAL_parameterization_expensive_precondition_code(              \
-        int nb_boundaries = feature_extractor.get_nb_boundaries();  \
-        status = (nb_boundaries >= 1) ? Base::OK                      \
-                                      : Base::ERROR_NO_SURFACE_MESH;  \
+    // The whole package is restricted to surfaces: genus = 0, 
+    // 1 connected component and at least 1 boundary
+    CGAL_parameterization_expensive_precondition_code(                      \
+        int genus = feature_extractor.get_genus();                          \
+        int nb_boundaries = feature_extractor.get_nb_boundaries();          \
+        int nb_components = feature_extractor.get_nb_connex_components();   \
+        status = (genus == 0 && nb_boundaries >= 1 && nb_components == 1)   \
+               ? Base::OK                                                   \
+               : Base::ERROR_NO_SURFACE_MESH;                               \
     );
     if (status != Base::OK) {
         std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
@@ -632,16 +627,14 @@ is_one_to_one_mapping(const Adaptor& mesh,
         Vertex_const_handle v0, v1, v2;
         int vertexIndex = 0;
         Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facetIt),
-                                            end = cir;
+                                             end = cir;
         CGAL_For_all(cir, end)
         {
             if (vertexIndex == 0)
                 v0 = cir;
             else if (vertexIndex == 1)
                 v1 = cir;
-            else if (vertexIndex == 2)    	//// Check if "A*Xu = Bu" and "A*Xv = Bv" systems
-        									//// are solvable with a good conditioning
-
+            else if (vertexIndex == 2)
                 v2 = cir;
 
             vertexIndex++;

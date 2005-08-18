@@ -345,20 +345,15 @@ check_parameterize_preconditions(Adaptor* mesh)
         return status;
     }
 
-    // The whole package is restricted to surfaces
-    CGAL_parameterization_expensive_precondition_code(        \
-        int genus = feature_extractor.get_genus();            \
-        status = (genus == 0) ? Base::OK                      \
-                              : Base::ERROR_NO_SURFACE_MESH;  \
-    );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
-        return status;
-    }
-    CGAL_parameterization_expensive_precondition_code(                \
-        int nb_boundaries = feature_extractor.get_nb_boundaries();    \
-        status = (nb_boundaries >= 1) ? Base::OK                      \
-                                      : Base::ERROR_NO_SURFACE_MESH;  \
+    // The whole package is restricted to surfaces: genus = 0, 
+    // 1 connected component and at least 1 boundary
+    CGAL_parameterization_expensive_precondition_code(                      \
+        int genus = feature_extractor.get_genus();                          \
+        int nb_boundaries = feature_extractor.get_nb_boundaries();          \
+        int nb_components = feature_extractor.get_nb_connex_components();   \
+        status = (genus == 0 && nb_boundaries >= 1 && nb_components == 1)   \
+               ? Base::OK                                                   \
+               : Base::ERROR_NO_SURFACE_MESH;                               \
     );
     if (status != Base::OK) {
         std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
@@ -572,8 +567,8 @@ is_one_to_one_mapping(const Adaptor& mesh,
     Vector_3    first_triangle_normal;
 
     for (Facet_const_iterator facetIt = mesh.mesh_facets_begin();
-        facetIt != mesh.mesh_facets_end();
-        facetIt++)
+         facetIt != mesh.mesh_facets_end();
+         facetIt++)
     {
         // Get 3 vertices of the facet
         Vertex_const_handle v0, v1, v2;
