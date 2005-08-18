@@ -22,8 +22,9 @@ TAUCS_OSTYPE = `./compute_TAUCS_OSTYPE`
 CXXFLAGS = \
            -I../../include \
            -I../../../OpenNL/include \
-           $(CGAL_CXXFLAGS) \
            $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
+           $(CGAL_CXXFLAGS) \
            -I$(TAUCSROOT)/src \
            -I$(TAUCSROOT)/build/$(TAUCS_OSTYPE) \
            -Iinclude \

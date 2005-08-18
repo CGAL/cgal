@@ -66,17 +66,23 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
-if [ -n "$TAUCSROOT" ] ; then
-    compile_and_run polyhedron_ex_parameterization
-fi
-compile_and_run Polyhedron_parameterization1
-compile_and_run Polyhedron_parameterization2
-compile_and_run Polyhedron_parameterization3
-if [ -n "$TAUCSROOT" ] ; then
-    compile_and_run Polyhedron_parameterization4
-fi
-compile_and_run Polyhedron_parameterization5
-if [ -n "$TAUCSROOT" ] ; then
-    compile_and_run Polyhedron_parameterization6
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+        if [ -n "$TAUCSROOT" ] ; then
+            compile_and_run polyhedron_ex_parameterization
+        fi
+        compile_and_run Polyhedron_parameterization1
+        compile_and_run Polyhedron_parameterization2
+        compile_and_run Polyhedron_parameterization3
+        if [ -n "$TAUCSROOT" ] ; then
+            compile_and_run Polyhedron_parameterization4
+        fi
+        compile_and_run Polyhedron_parameterization5
+        if [ -n "$TAUCSROOT" ] ; then
+            compile_and_run Polyhedron_parameterization6
+        fi
 fi
 
