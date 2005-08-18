@@ -218,12 +218,13 @@ private:
         if (nb_max_elements <= 0)
         {
             // Pick a number larger than the average valence in a triangular mesh (6)
-            int average_nb_elements_per_column = 16;    // 10 is not enough for LSCM
+            int average_nb_elements_per_row_or_column = 16;    
+                                            // 16 is fine for parameterization package
 
             if (!is_symmetric)
-                nb_max_elements = average_nb_elements_per_column * std::max(rows,columns);
+                nb_max_elements = average_nb_elements_per_row_or_column * std::max(rows,columns);
             else
-                nb_max_elements = (average_nb_elements_per_column/2+1) * std::max(rows,columns);
+                nb_max_elements = (average_nb_elements_per_row_or_column/2+1) * std::max(rows,columns);
         }
 
         // Create TAUCS matrix wrapped by this object
