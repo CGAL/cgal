@@ -1552,6 +1552,10 @@ Packages/Parameterization/temporary-doc/uml_diagrams/Fixed[!!-~]border[!!-~]para
 Packages/Parameterization/temporary-doc/uml_diagrams/Fixed[!!-~]border[!!-~]param.[!!-~]-[!!-~]sequence[!!-~]diagram.png -text svneol=unset#unset
 Packages/Parameterization/temporary-doc/uml_diagrams/Parametizers[!!-~]class[!!-~]hierarchy.png -text svneol=unset#unset
 Packages/Parameterization/temporary-doc/uml_diagrams/use[!!-~]case[!!-~]diagram.png -text svneol=unset#unset
+Packages/Parameterization/test/Parameterization/data/aircraft.off -text
+Packages/Parameterization/test/Parameterization/data/cube.off -text
+Packages/Parameterization/test/Parameterization/data/knot2.off -text
+Packages/Parameterization/test/Parameterization/data/torus_tri.off -text
 Packages/Partition_2/demo/Partition_2/partition_2.vcproj -text
 Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#unset
 Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#unset
