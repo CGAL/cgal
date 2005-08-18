@@ -136,7 +136,7 @@ public:
 	return typename R::Construct_supporting_circle_2()(*this).squared_radius();
   }
 
- const Bbox_2 bbox(void)
+ Bbox_2 bbox(void) const
  {
        return typename R::Construct_bbox_2()(*this);
  }

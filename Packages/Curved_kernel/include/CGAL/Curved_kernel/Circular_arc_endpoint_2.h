@@ -50,7 +50,7 @@ namespace CGALi {
     const Root_of_2 & x() const { return _p.x(); }
     const Root_of_2 & y() const { return _p.y(); }
 
-    const Bbox_2 bbox() const
+    Bbox_2 bbox() const
     {
        std::pair<double,double> ix=to_interval(x()),
                                 iy=to_interval(y());

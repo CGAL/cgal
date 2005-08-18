@@ -64,7 +64,7 @@ public:
   const Root_of_2 & y() const
     { return typename R::Compute_y_2()(*this);}
 
- const Bbox_2  bbox() const
+  Bbox_2  bbox() const
     { return typename R::Construct_bbox_2()(*this);}
 
 

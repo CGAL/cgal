@@ -155,7 +155,7 @@ namespace CGALi {
       return _end;
     } 
     
-    const CGAL::Bbox_2 bbox()
+    CGAL::Bbox_2 bbox() const
     {
       return _begin.bbox() + _end.bbox();
     }

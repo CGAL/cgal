@@ -93,7 +93,7 @@ public:
   
  
   
-  const Bbox_2  bbox() const
+  Bbox_2  bbox() const
   {
         return typename R::Construct_bbox_2()(*this);
   }
