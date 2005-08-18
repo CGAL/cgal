@@ -62,7 +62,7 @@ extensive_parameterization_test$(EXE_EXT): $(extensive_parameterization_test_obj
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extensive_parameterization_test$(EXE_EXT) $(extensive_parameterization_test_objs) $(LDFLAGS)
 
 extensive_parameterization_test.clean:
-	rm extensive_parameterization_test$(EXE_EXT) $(extensive_parameterization_test_objs)
+	rm -f extensive_parameterization_test$(EXE_EXT) $(extensive_parameterization_test_objs)
 
 #---------------------------------------------------------------------#
 #                    suffix rules

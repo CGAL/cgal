@@ -18,6 +18,9 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
+#ifdef CGAL_USE_TAUCS
+
+
 // ----------------------------------------------------------------------------
 // USAGE EXAMPLES
 // ----------------------------------------------------------------------------
@@ -54,7 +57,7 @@
 #include <fstream>
 #include <cassert>
 #ifdef WIN32
-#include <Windows.h>
+    #include <Windows.h>
 #endif
 
 
@@ -309,9 +312,9 @@ int main(int argc,char * argv[])
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 
 
-    ////***************************************
-    //// output
-    ////***************************************
+    //***************************************
+    // output
+    //***************************************
 
     // Write Wavefront OBJ file
     if (err == Parametizer::OK)
@@ -322,4 +325,23 @@ int main(int argc,char * argv[])
     return (err == Parametizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
+
+#else // CGAL_USE_TAUCS
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// ----------------------------------------------------------------------------
+// Empty main() if TAUCS is not installed
+// ----------------------------------------------------------------------------
+
+int main(int argc,char * argv[])
+{
+    fprintf(stderr, "\nSkip test as TAUCS is not installed\n\n");
+    return EXIT_SUCCESS;
+}
+
+
+#endif // CGAL_USE_TAUCS
 

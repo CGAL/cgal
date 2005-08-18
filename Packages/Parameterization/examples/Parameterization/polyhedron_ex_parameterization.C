@@ -76,7 +76,9 @@
 #include <CGAL/Mesh_adaptor_feature_extractor.h>
 
 #include <OpenNL/linear_solver.h>
-#include <CGAL/Taucs_solver_traits.h>
+#ifdef CGAL_USE_TAUCS
+    #include <CGAL/Taucs_solver_traits.h>
+#endif
 
 #include "options.h"
 #include "Polyhedron_ex.h"
@@ -91,7 +93,7 @@
 #include <fstream>
 #include <cassert>
 #ifdef WIN32
-#include <Windows.h>
+    #include <Windows.h>
 #endif
 
 
@@ -125,7 +127,7 @@ typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
 static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 {
     // Type describing a border or seam as an halfedge list
-    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex> 
+    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex>
                                             Mesh_feature_extractor;
     typedef Mesh_feature_extractor::Boundary Boundary;
     typedef Mesh_cutter::Backbone           Backbone;
@@ -190,7 +192,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
             return seam;                    // return empty list
         //
         // 2) Check that seamingBackbone is a loop and
-        //    count occurences of seam halfedges 
+        //    count occurences of seam halfedges
         mesh->tag_halfedges(0);             // Reset counters
         for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
         {
@@ -200,12 +202,12 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
             if (next_he == seamingBackbone.end())
                 next_he = seamingBackbone.begin();
 
-            // Check that seamingBackbone is a loop: check that 
+            // Check that seamingBackbone is a loop: check that
             // end of current HE == start of next one
             if ((*he)->vertex() != (*next_he)->opposite()->vertex())
                 return seam;                // return empty list
 
-            // Increment counter (in "tag" field) of seam halfedges 
+            // Increment counter (in "tag" field) of seam halfedges
             (*he)->tag( (*he)->tag()+1 );
         }
         //
@@ -539,10 +541,15 @@ int main(int argc,char * argv[])
     }
     else if (strcmp(solver,"taucs") == 0)
     {
+#ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
                            CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, boundary);
         if (err != Parametizer::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
+#else
+        fprintf(stderr, "\nFATAL ERROR: TAUCS is not installed\n");
+        err = Parametizer::ERROR_WRONG_PARAMETER;
+#endif
     }
     else
     {

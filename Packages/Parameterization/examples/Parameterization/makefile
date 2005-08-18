@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-XXFLAGS = \
+CXXFLAGS = \
            -Iinclude \
            -I../../include \
            -I../../../OpenNL/include \
@@ -71,79 +71,29 @@ polyhedron_ex_parameterization$(EXE_EXT): $(polyhedron_ex_parameterization_objs)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs) $(LDFLAGS)
 
 polyhedron_ex_parameterization.clean:
-	rm polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs)
+	rm -f polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs)
 
 
-# Polyhedron_parameterization1:
+# Tutorial:
 
-Polyhedron_parameterization1_objs = 	\
-          Polyhedron_parameterization1$(OBJ_EXT)
+Polyhedron_parameterization1$(EXE_EXT): Polyhedron_parameterization1$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization1 Polyhedron_parameterization1$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization1$(EXE_EXT): $(Polyhedron_parameterization1_objs)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization1$(EXE_EXT) $(Polyhedron_parameterization1_objs) $(LDFLAGS)
+Polyhedron_parameterization2$(EXE_EXT): Polyhedron_parameterization2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization2 Polyhedron_parameterization2$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization1.clean:
-	rm Polyhedron_parameterization1$(EXE_EXT) $(Polyhedron_parameterization1_objs)
+Polyhedron_parameterization3$(EXE_EXT): Polyhedron_parameterization3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization3 Polyhedron_parameterization3$(OBJ_EXT) $(LDFLAGS)
 
+Polyhedron_parameterization4$(EXE_EXT): Polyhedron_parameterization4$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization4 Polyhedron_parameterization4$(OBJ_EXT) $(LDFLAGS)
 
-# Polyhedron_parameterization2:
+Polyhedron_parameterization5$(EXE_EXT): Polyhedron_parameterization5$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization5 Polyhedron_parameterization5$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization2_objs = 	\
-          Polyhedron_parameterization2$(OBJ_EXT)
+Polyhedron_parameterization6$(EXE_EXT): Polyhedron_parameterization6$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization6 Polyhedron_parameterization6$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization2$(EXE_EXT): $(Polyhedron_parameterization2_objs)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization2$(EXE_EXT) $(Polyhedron_parameterization2_objs) $(LDFLAGS)
-
-Polyhedron_parameterization2.clean:
-	rm Polyhedron_parameterization2$(EXE_EXT) $(Polyhedron_parameterization2_objs)
-
-
-# Polyhedron_parameterization3:
-
-Polyhedron_parameterization3_objs = 	\
-          Polyhedron_parameterization3$(OBJ_EXT)
-
-Polyhedron_parameterization3$(EXE_EXT): $(Polyhedron_parameterization3_objs)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization3$(EXE_EXT) $(Polyhedron_parameterization3_objs) $(LDFLAGS)
-
-Polyhedron_parameterization3.clean:
-	rm Polyhedron_parameterization3$(EXE_EXT) $(Polyhedron_parameterization3_objs)
-
-
-# Polyhedron_parameterization4:
-
-Polyhedron_parameterization4_objs = 	\
-          Polyhedron_parameterization4$(OBJ_EXT)
-
-Polyhedron_parameterization4$(EXE_EXT): $(Polyhedron_parameterization4_objs)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs) $(LDFLAGS)
-
-Polyhedron_parameterization4.clean:
-	rm Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs)
-
-
-# Polyhedron_parameterization5:
-
-Polyhedron_parameterization5_objs = 	\
-          Polyhedron_parameterization5$(OBJ_EXT)
-
-Polyhedron_parameterization5$(EXE_EXT): $(Polyhedron_parameterization5_objs)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization5$(EXE_EXT) $(Polyhedron_parameterization5_objs) $(LDFLAGS)
-
-Polyhedron_parameterization5.clean:
-	rm Polyhedron_parameterization5$(EXE_EXT) $(Polyhedron_parameterization5_objs)
-
-
-# Polyhedron_parameterization6:
-
-Polyhedron_parameterization6_objs = 	\
-          Polyhedron_parameterization6$(OBJ_EXT)
-
-Polyhedron_parameterization6$(EXE_EXT): $(Polyhedron_parameterization6_objs)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs) $(LDFLAGS)
-
-Polyhedron_parameterization6.clean:
-	rm Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs)
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -69,7 +69,7 @@ touch $ERRORFILE
 # if TAUCS is installed
 if [ -n "$TAUCSROOT" ] ; then
     # Evaluate dynamically TAUCS OSTYPE
-    TAUCS_OSTYPE=`../../examples/Parameterization/compute_TAUCS_OSTYPE`
+    TAUCS_OSTYPE=`../../scripts/compute_TAUCS_OSTYPE`
 
     # add TAUCS compilation options
     export TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS \

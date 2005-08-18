@@ -212,9 +212,9 @@ int main(int argc,char * argv[])
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 
 
-    ////***************************************
-    //// output
-    ////***************************************
+    //***************************************
+    // output
+    //***************************************
 
     // Write Postscript file
     if (err == Parametizer::OK)
