@@ -970,19 +970,6 @@ operator/(const Root_of_2<RT> &a,
                                    :  a.is_smaller());
 }
 
-template < typename NT >
-inline void
-simplify_quotient(NT &, NT &, NT &) {}
-
-inline
-void
-simplify_quotient(MP_Float & a, MP_Float & b, MP_Float & c)
-{
-  // Currently only simplifies the two exponents.
-  c.exp -= a.exp;
-  b.exp -= a.exp;
-  a.exp = 0;
-}
 
 template < typename RT >
 double
@@ -992,19 +979,12 @@ to_double(const Root_of_2<RT> &x)
 
   typedef typename Root_of_2<RT>::FT FT;
 
-  RT ra = x[2], rb = x[1], rc = x[0];
-  simplify_quotient(ra, rb, rc);
+  FT max = CGAL::max(CGAL::abs(x[0]), CGAL::max(CGAL::abs(x[1]), CGAL::abs(x[2])));
+  max = max/RT(1<<30)/RT(1<<30);
 
-  double a = CGAL::to_double(ra);
-  double b = CGAL::to_double(rb);
-  double c = CGAL::to_double(rc);
-
-  //FT max = CGAL::max(CGAL::abs(x[0]), CGAL::max(CGAL::abs(x[1]), CGAL::abs(x[2])));
-  //max = max/RT(1<<30)/RT(1<<30);
-
-  //double a = CGAL::to_double(x[2]/max);
-  //double b = CGAL::to_double(x[1]/max);
-  //double c = CGAL::to_double(x[0]/max);
+  double a = CGAL::to_double(x[2]/max);
+  double b = CGAL::to_double(x[1]/max);
+  double c = CGAL::to_double(x[0]/max);
 
   //double a = CGAL::to_double(x[2]);
   //double b = CGAL::to_double(x[1]);
