@@ -90,6 +90,7 @@ public:
         _support(c) {}
 
 
+    // IS THIS CONSTRUCTOR USED ?
     // constructs a circular arc that is the arc included in A
     // having same (b) endpoint as A (true == _begin, false == _end)
     // but whose (!b) endpoint is the intersection of A with ccut given 
@@ -101,7 +102,8 @@ public:
         CGAL_kernel_precondition(A.is_x_monotone());
         CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
 
-        Circular_arc_endpoint_2 new_p (A.supporting_circle(), ccut, b_cut);
+        Circular_arc_endpoint_2 new_p =
+             CGAL::circle_intersect<CK>(A.supporting_circle(), ccut, b_cut);
 
         // CGAL_kernel_assertion(point_in_range(A, new_p));
         CGAL_kernel_assertion(A.on_upper_part() ==
