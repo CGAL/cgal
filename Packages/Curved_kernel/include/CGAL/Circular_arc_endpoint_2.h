@@ -29,11 +29,45 @@ public:
  typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
                                                  Numeric_point_2;
   typedef CurvedKernel   R; 
+  typedef RCircular_arc_endpoint_2 Rep;
   
-  Circular_arc_endpoint_2() {}
+
+ const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
+  Circular_arc_endpoint_2()
+    : RCircular_arc_endpoint_2(
+      typename R::Construct_circular_arc_endpoint_2()())
+      {}
+
 
   Circular_arc_endpoint_2(const Numeric_point_2 & np)
-    : RCircular_arc_endpoint_2( np){}
+    : RCircular_arc_endpoint_2(
+      typename R::Construct_circular_arc_endpoint_2()(np))
+      {}
+
+  Circular_arc_endpoint_2(const RCircular_arc_endpoint_2 & p)
+    : RCircular_arc_endpoint_2(p)
+      {}
+      
+      
+  const Root_of_2 & x() const
+    { return typename R::Compute_x_2()(*this);}
+
+  const Root_of_2 & y() const
+    { return typename R::Compute_y_2()(*this);}
+
+ const Bbox_2  bbox() const
+    { return typename R::Construct_bbox_2()(*this);}
+
+
 };
 
 template < typename CurvedKernel >

@@ -9,6 +9,7 @@
 #include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
+#include <CGAL/Bbox_2.h>
 
 namespace CGAL {
 namespace CGALi {
@@ -153,6 +154,11 @@ namespace CGALi {
     {
       return _end;
     } 
+    
+    const CGAL::Bbox_2 bbox()
+    {
+      return _begin.bbox() + _end.bbox();
+    }
 
   };
   

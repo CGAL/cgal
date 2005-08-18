@@ -42,39 +42,17 @@ public:
   Circular_arc_traits(const CurvedKernel &k = CurvedKernel())
     : ck(k) {}
 
-  typedef typename CurvedKernel::Compare_x_2           Compare_x_2;
-  typedef typename CurvedKernel::Compare_xy_2          Compare_xy_2;
-  typedef typename CurvedKernel::Compare_y_at_x_2      Compare_y_at_x_2;
-  typedef typename CurvedKernel::Compare_y_to_right_2  Compare_y_at_x_right_2; 
-  typedef typename CurvedKernel::Equal_2               Equal_2;
-  typedef typename CurvedKernel::Make_x_monotone_2     Make_x_monotone_2;
-  typedef typename CurvedKernel::Split_2               Split_2;
+  typedef typename CurvedKernel::Compare_x_2            Compare_x_2;
+  typedef typename CurvedKernel::Compare_xy_2           Compare_xy_2;
+  typedef typename CurvedKernel::Compare_y_at_x_2       Compare_y_at_x_2;
+  typedef typename CurvedKernel::Compare_y_to_right_2   Compare_y_at_x_right_2;
+  typedef typename CurvedKernel::Construct_max_vertex_2 Construct_max_vertex_2;
+  typedef typename CurvedKernel::Construct_min_vertex_2 Construct_min_vertex_2;     
+  typedef typename CurvedKernel::Equal_2                Equal_2;
+  typedef typename CurvedKernel::Make_x_monotone_2      Make_x_monotone_2;
+  typedef typename CurvedKernel::Split_2                Split_2;
   typedef typename CurvedKernel::Construct_intersections_2 Intersect_2;
 
-  class Construct_min_vertex_2
-  {
-  public:
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    {
-      CGAL_kernel_precondition( CurvedKernel().compare_xy_2_object()(cv.left(),cv.right())==CGAL::SMALLER);
-      return (cv.left());
-    }
-  };
-
-  class Construct_max_vertex_2
-  {
-  public:
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
-     * \param cv The curve.
-     * \return The right endpoint.
-     */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    {
-      CGAL_kernel_precondition( CurvedKernel().compare_xy_2_object()(cv.left(),cv.right())==CGAL::SMALLER);
-      return (cv.right());
-    }
-  };
 
   class Is_vertical_2
   {
@@ -112,13 +90,13 @@ public:
 
   Intersect_2 intersect_2_object() const
     { return ck.construct_intersections_2_object(); }
-
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-    { return Construct_min_vertex_2(); }
-
+    
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-    { return Construct_max_vertex_2(); }
-
+    { return ck.construct_max_vertex_2_object(); }
+       
+  Construct_min_vertex_2 construct_min_vertex_2_object() const
+    { return ck.construct_min_vertex_2_object(); }
+       
   Is_vertical_2 is_vertical_2_object() const
     { return Is_vertical_2();}
 

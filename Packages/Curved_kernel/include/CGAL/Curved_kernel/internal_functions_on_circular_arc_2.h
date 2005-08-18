@@ -1022,7 +1022,7 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 
 
    template <class CK>
- CGAL::Bbox_2 circular_arc_bbox( const typename CK::Kernel_base::Circular_arc_2 & a)
+ const CGAL::Bbox_2 circular_arc_bbox( const typename CK::Kernel_base::Circular_arc_2 & a)
 {	
 	typedef typename CK::Root_of_2 	   Root_of_2;
 	typedef typename CK::FT 		   FT;
