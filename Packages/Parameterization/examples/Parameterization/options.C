@@ -278,7 +278,7 @@ inline static int
 isNullOpt(char optchar) {
    return  ((! optchar) || isspace(optchar) || (! isprint(optchar)));
 }
-   
+
    // Check for explicit "end-of-options"
 inline static int
 isEndOpts(const char * token) {
@@ -595,8 +595,8 @@ OptionSpec::Format(char * buf, unsigned optctrls) const {
 #endif
 
 Options::Options(const char * name, const char * const optv[])
-   : cmdname(name), optvec(optv), explicit_end(0), optctrls(DEFAULT),
-     nextchar(NULLSTR), listopt(NULLSTR)
+   : explicit_end(0), optctrls(DEFAULT), optvec(optv),
+     nextchar(NULLSTR), listopt(NULLSTR), cmdname(name)
 {
    const char * basename = ::strrchr(cmdname, DIR_SEP_CHAR);
    if (basename)  cmdname = basename + 1;
