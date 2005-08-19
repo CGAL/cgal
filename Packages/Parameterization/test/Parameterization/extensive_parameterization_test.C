@@ -284,8 +284,7 @@ int main(int argc,char * argv[])
         Seam seam = cut_mesh(&mesh_adaptor);
         if (seam.empty())
         {
-            fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
-            accumulated_err = EXIT_FAILURE;
+            fprintf(stderr, "\nMINOR ERROR: an unexpected error occurred while cutting the shape!\n\n");
             continue;
         }
         //
