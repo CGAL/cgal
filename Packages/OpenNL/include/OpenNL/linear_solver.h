@@ -227,7 +227,7 @@ public:
         current_row_ = 0 ;
         transition(INITIAL, IN_SYSTEM) ;
         // Enumerate free variables.
-        int index = 0 ;
+        unsigned int index = 0 ;
         for(int ii=0; ii < nb_variables() ; ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
@@ -235,7 +235,7 @@ public:
                 index++ ;
             }
         }
-        int n = index ;
+        unsigned int n = index ;
         A_ = new Matrix(n) ;
         x_ = new Vector(n) ;
         b_ = new Vector(n) ;
@@ -367,7 +367,7 @@ protected:
     // ----------- Converting between user representation and the internal representation -----
 
     void vector_to_variables() {
-        for(unsigned int ii=0; ii < nb_variables(); ii++) {
+        for(int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
                 v.set_value( (*x_)[v.index()] ) ;
@@ -376,7 +376,7 @@ protected:
     }
 
     void variables_to_vector() {
-        for(unsigned int ii=0; ii < nb_variables(); ii++) {
+        for(int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
                 (*x_)[v.index()] = v.value() ;
