@@ -22,8 +22,8 @@
 #define CGAL_TAUCS_MATRIX
 
 // Include TAUCS main header
-#ifndef TAUCS_H_INCLUDED
-    #define TAUCS_H_INCLUDED
+#ifndef CGAL_INCLUDED_TAUCS_H
+    #define CGAL_INCLUDED_TAUCS_H
 
     // GCC 3.3 complains if we include <complex.h> within "extern C {}"
     #if defined(__GNUC__)
