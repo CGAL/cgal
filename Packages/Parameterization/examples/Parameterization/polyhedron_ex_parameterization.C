@@ -238,7 +238,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
 {
     typename CGAL::Parametizer_3<MeshAdaptor_3>::Error_code err;
 
-    if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
+    if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -248,7 +248,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -258,7 +258,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"uniform") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -268,7 +268,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"uniform") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -278,7 +278,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -288,7 +288,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -298,7 +298,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -308,7 +308,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -318,7 +318,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (strcmp(type,"lscm") == 0) && (strcmp(boundary,"2pts") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"lscm") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"2pts") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -471,7 +471,7 @@ int main(int argc,char * argv[])
     assert(nb_filename_arguments >= 0);
 
     // check options
-    int nb_filenames_needed = 1 /* input*/ + (strlen(output) > 0) /* output? */;
+    int nb_filenames_needed = 1 /* input*/ + (CGAL_CLIB_STD::strlen(output) > 0) /* output? */;
     if (errors || nb_filename_arguments != nb_filenames_needed)
     {
         opts.usage(cerr, usage);
@@ -480,8 +480,8 @@ int main(int argc,char * argv[])
 
     // File names are:
     const char* input_filename  = argv[first_file_arg];
-    const char* output_filename = (strlen(output) > 0) ? argv[first_file_arg+1]
-                                                       : NULL;
+    const char* output_filename = (CGAL_CLIB_STD::strlen(output) > 0) ? argv[first_file_arg+1]
+                                                                      : NULL;
 
     //***************************************
     // read the mesh
@@ -532,14 +532,14 @@ int main(int argc,char * argv[])
     //***************************************
 
     Parametizer::Error_code err;
-    if (strcmp(solver,"opennl") == 0)
+    if (CGAL_CLIB_STD::strcmp(solver,"opennl") == 0)
     {
         err = parameterize<Mesh_patch_polyhedron,
                            OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, boundary);
         if (err != Parametizer::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
-    else if (strcmp(solver,"taucs") == 0)
+    else if (CGAL_CLIB_STD::strcmp(solver,"taucs") == 0)
     {
 #ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
@@ -564,15 +564,15 @@ int main(int argc,char * argv[])
     // Save mesh
     if (err == Parametizer::OK)
     {
-        if(strcmp(output,"") == 0)
+        if(CGAL_CLIB_STD::strcmp(output,"") == 0)
         {
             // no output file
         }
-        else if(strcmp(output,"eps") == 0)
+        else if(CGAL_CLIB_STD::strcmp(output,"eps") == 0)
         {
             mesh.write_file_eps(output_filename);   // write Postscript file
         }
-        else if(strcmp(output,"obj") == 0)
+        else if(CGAL_CLIB_STD::strcmp(output,"obj") == 0)
         {
             mesh.write_file_obj(output_filename);   // write Wavefront obj file
         }

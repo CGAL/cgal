@@ -155,7 +155,7 @@ private:
     // Test if a floating point number is (close to) 0.0
     static inline bool IsZero(NT a)
     {
-        return (fabs(a) < 10.0 * std::numeric_limits<NT>::min());
+        return (CGAL_CLIB_STD::fabs(a) < 10.0 * std::numeric_limits<NT>::min());
     }
 
 // Fields
@@ -312,7 +312,7 @@ private:
     // Test if a floating point number is (close to) 0.0
     static inline bool IsZero(NT a)
     {
-        return (fabs(a) < 10.0 * std::numeric_limits<NT>::min());
+        return (CGAL_CLIB_STD::fabs(a) < 10.0 * std::numeric_limits<NT>::min());
     }
 };
 

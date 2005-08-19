@@ -141,9 +141,9 @@ protected:
     // return angle (in radians) of of (P,Q,R) corner (ie QP,QR angle)
     //
     // Implementation note: we use this formula
-    // uv = |u||v| cos(u,v)
+    // uv = |u||v| CGAL_CLIB_STD::cos(u,v)
     // u  ^ v  = w
-    // |w| = |u||v| |sin(u,v)|
+    // |w| = |u||v| |CGAL_CLIB_STD::sin(u,v)|
     //**************************************************
     static double compute_angle_rad(const Point_3& P,
                                     const Point_3& Q,

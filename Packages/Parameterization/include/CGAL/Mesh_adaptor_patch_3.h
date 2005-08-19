@@ -945,7 +945,7 @@ private:
             return std::string("-");
         } else {
             char index_as_string[64];
-            sprintf(index_as_string, "%d", (int)m_mesh_adaptor->get_vertex_index(vertex));
+            CGAL_CLIB_STD::sprintf(index_as_string, "%d", (int)m_mesh_adaptor->get_vertex_index(vertex));
             return std::string(index_as_string);
         }
     }
