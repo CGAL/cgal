@@ -173,16 +173,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\include\Mesh_adaptor_polyhedron_ex.h">
+				RelativePath="..\..\examples\Parameterization\include\Mesh_adaptor_polyhedron_ex.h">
 			</File>
 			<File
-				RelativePath=".\include\Mesh_cutter.h">
+				RelativePath="..\..\examples\Parameterization\include\Mesh_cutter.h">
 			</File>
 			<File
-				RelativePath=".\include\options.h">
-			</File>
-			<File
-				RelativePath=".\include\Polyhedron_ex.h">
+				RelativePath="..\..\examples\Parameterization\include\Polyhedron_ex.h">
 			</File>
 			<File
 				RelativePath=".\include\short_names.h">

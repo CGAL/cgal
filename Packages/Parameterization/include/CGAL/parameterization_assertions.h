@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Geert-Jan Giezeman, Sven Schönherr
+// Author(s)     : Geert-Jan Giezeman, Sven Schönherr, Laurent Saboret
 
 // Generated from script create_assertions.sh
 
