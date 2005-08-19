@@ -18,9 +18,10 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="$(TESTSUITE_CXXFLAGS)"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\examples\Parameterization;..\..\examples\Parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(TAUCSROOT)\build\win32&quot;;&quot;$(TAUCSROOT)\src&quot;"
+				AdditionalIncludeDirectories=".\include;..\..\examples\Parameterization;..\..\examples\Parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
@@ -39,10 +40,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib /NODEFAULTLIB:LIBCMT"
+				AdditionalOptions="CGAL.lib gmp.lib /NODEFAULTLIB:LIBCMT $(TESTSUITE_LDFLAGS)"
 				OutputFile="$(OutDir)/extensive_parameterization_test.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;;&quot;$(TAUCSROOT)\lib\win32&quot;;&quot;$(TAUCSROOT)\external\lib\win32&quot;"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="1"
@@ -76,7 +77,7 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Og-"
+				AdditionalOptions="/Og- $(TESTSUITE_CXXFLAGS)"
 				Optimization="2"
 				GlobalOptimizations="TRUE"
 				EnableIntrinsicFunctions="TRUE"
@@ -84,7 +85,7 @@
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\examples\Parameterization;..\..\examples\Parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(TAUCSROOT)\build\win32&quot;;&quot;$(TAUCSROOT)\src&quot;"
+				AdditionalIncludeDirectories=".\include;..\..\examples\Parameterization;..\..\examples\Parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP"
 				RuntimeLibrary="4"
 				DisableLanguageExtensions="FALSE"
@@ -98,10 +99,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib /NODEFAULTLIB:LIBCMT"
+				AdditionalOptions="CGAL.lib gmp.lib /NODEFAULTLIB:LIBCMT $(TESTSUITE_LDFLAGS)"
 				OutputFile="$(OutDir)/extensive_parameterization_test.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;;&quot;$(TAUCSROOT)\lib\win32&quot;;&quot;$(TAUCSROOT)\external\lib\win32&quot;"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
