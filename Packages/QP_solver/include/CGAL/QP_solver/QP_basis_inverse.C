@@ -644,7 +644,7 @@ swap_constraint( unsigned int i, Tag_false)
     if ( is_phaseI) {
 
 	// skip empty P
-	matrix_it += l;
+	matrix_it =M.begin() + l;
 
     } else {
 
