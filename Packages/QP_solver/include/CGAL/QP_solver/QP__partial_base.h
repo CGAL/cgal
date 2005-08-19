@@ -42,6 +42,27 @@ CGAL_BEGIN_NAMESPACE
 template < class Rep_ >
 class QP__partial_base;
 
+template < class Solver >
+struct transition_sync_functor {
+
+    // Note that we rely here on working_vars being the number of
+    // variables without artificials and the solvers in_B variable
+    // being up to date. Furthermore the operator() below relies on short
+    // circuit evaluation   
+
+    transition_sync_functor( const Solver& s, int w) : amb_solver(s),
+        working_vars(w) { } 
+         
+    bool operator() (int i) {
+        return (i < working_vars) && !amb_solver.is_basic(i);
+    }
+    
+private:    
+    const Solver& amb_solver;
+    int working_vars;
+};
+
+
 // ===============
 // class interface
 // ===============
@@ -82,13 +103,15 @@ class QP__partial_base : virtual public QP_pricing_strategy<Rep_> {
     virtual  void  transition( );
 
   private:
-
+  
     // data members
     Indices                  N;         // non-basis;
     int                      s;         // size of active set
 
     bool                     permute;   // flag: permute initial non-basis
     Random&                  rand_src;  // random source
+    
+    //basic_functor<QP_solver> is_non_basic;
 };
 
 // ----------------------------------------------------------------------------
@@ -127,6 +150,8 @@ init( )
 
     s = std::min( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
 		  static_cast< unsigned int>(N.size()));
+
+    //is_non_basic.init(this->solver());
 }
 
 // operations
@@ -184,12 +209,23 @@ void
 QP__partial_base<Rep_>::
 transition( )
 {
-    // remove artificial variables from non-basis
-    int  w = this->solver().number_of_working_variables();
+    // Remove from N nonbasic slack and original variables that have become
+    // basic during the expelling of artificial variables out of the basis
+    // (between phaseI and phaseII), since these formerly nonbasic variables
+    // have not entered the basis through pricing the set N has not accordingly
+    // been updated.
+    // Remove from N the artificial variables as well.
+    // Note that we rely on the number of working variables including only
+    // original and slack variables, the solvers in_B variable must be 
+    // up to date.
+    // Furthermore we rely on std::partition not destroying the randomness
+    // of the order of the nonbasic variables in N.
+    
+    int  w = this->solver().number_of_working_variables();    
+    transition_sync_functor<QP_solver> is_non_basic(this->solver(), w);
     N.erase( std::partition( N.begin(), N.end(),
-			     std::bind2nd( std::less<int>(), w)),
-	     N.end());
-
+			     is_non_basic), N.end());
+    
     // initialize size of active set
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
