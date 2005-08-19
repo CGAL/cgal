@@ -18,8 +18,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-#ifndef CGAL_MESHADAPTORPOLYHEDRONEX_H
-#define CGAL_MESHADAPTORPOLYHEDRONEX_H
+#ifndef MESHADAPTORPOLYHEDRONEX_H
+#define MESHADAPTORPOLYHEDRONEX_H
 
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
@@ -908,5 +908,5 @@ private:
 }; // Mesh_adaptor_polyhedron_ex
 
 
-#endif //CGAL_MESHADAPTORPOLYHEDRONEX_H
+#endif //MESHADAPTORPOLYHEDRONEX_H
 
