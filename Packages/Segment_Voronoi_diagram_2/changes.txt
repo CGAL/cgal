@@ -1,3 +1,7 @@
+20 August 2005:  Menelaos Karavelas
+- added proper #ifdef's for the various number types (concerning
+  whether or not they are defined in CGAL) in the test suite of traits
+
 6 August 2005:  Menelaos Karavelas
 - fixed unreachable statement warning produced by pgCC
 

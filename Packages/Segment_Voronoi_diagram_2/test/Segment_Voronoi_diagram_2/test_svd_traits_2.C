@@ -12,26 +12,39 @@
 #include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
 #include <CGAL/Number_type_traits.h>
 
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
+#endif
+
+#ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
+#endif
 
 typedef CGAL::Simple_cartesian<double>      Double_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<true> >   IT_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> >  IF_Kernel;
 typedef CGAL::Simple_cartesian<double>      Double_Kernel;
+#ifdef CGAL_USE_CORE
 typedef CGAL::Simple_cartesian<CORE::Expr>  CORE_Kernel;
+#endif
+#ifdef CGAL_USE_GMP
 typedef CGAL::Simple_cartesian<CGAL::Gmpq>  Gmpq_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Gmpz>  Gmpz_Kernel;
+#endif
 
 template<class ET>
 struct FE_Kernel
   : public CGAL::Simple_cartesian< CGAL::Filtered_exact<double,ET> >
 {};
 
+#ifdef CGAL_USE_CORE
 typedef FE_Kernel<CORE::Expr> FE_CORE_Kernel;
+#endif
+#ifdef CGAL_USE_GMP
 typedef FE_Kernel<CGAL::Gmpz> FE_Gmpz_Kernel;
 typedef FE_Kernel<CGAL::Gmpq> FE_Gmpq_Kernel;
+#endif
 
 typedef CGAL::Ring_tag        Ring;
 typedef CGAL::Field_tag       Field;
@@ -92,6 +105,7 @@ IF_Sqrt_Gt;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
+#ifdef CGAL_USE_CORE
 typedef CGAL::Segment_Voronoi_diagram_traits_without_intersections_2
 <CORE_Kernel,Ring>
 CORE_Ring_Gtwi;
@@ -105,9 +119,11 @@ CORE_Field_Gt;
 
 typedef CGAL::Segment_Voronoi_diagram_traits_2<CORE_Kernel,Sqrt>
 CORE_Sqrt_Gt;
+#endif
 
 //----------------------------------------------------------------------
 
+#ifdef CGAL_USE_GMP
 typedef CGAL::Segment_Voronoi_diagram_traits_without_intersections_2
 <Gmpz_Kernel,Ring>
 Gmpz_Ring_Gtwi;
@@ -120,10 +136,12 @@ Gmpq_Ring_Gtwi;
 
 typedef CGAL::Segment_Voronoi_diagram_traits_2<Gmpq_Kernel,Field>
 Gmpq_Field_Gt;
+#endif
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
+#ifdef CGAL_USE_CORE
 typedef CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2
 <Double_Kernel,Sqrt,CORE_Kernel,Ring>
 F_CORE_Ring_Gtwi;
@@ -139,9 +157,11 @@ F_CORE_Field_Gt;
 typedef CGAL::Segment_Voronoi_diagram_filtered_traits_2
 <Double_Kernel,Sqrt,CORE_Kernel,Sqrt>
 F_CORE_Sqrt_Gt;
+#endif
 
 //----------------------------------------------------------------------
 
+#ifdef CGAL_USE_GMP
 typedef CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2
 <Double_Kernel,Sqrt,Gmpz_Kernel,Ring>
 F_Gmpz_Ring_Gtwi;
@@ -155,11 +175,12 @@ F_Gmpq_Ring_Gtwi;
 typedef CGAL::Segment_Voronoi_diagram_filtered_traits_2
 <Double_Kernel,Sqrt,Gmpq_Kernel,Field>
 F_Gmpq_Field_Gt;
+#endif
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-
+#ifdef CGAL_USE_CORE
 typedef CGAL::Segment_Voronoi_diagram_traits_without_intersections_2
 <FE_CORE_Kernel,Ring>
 FE_CORE_Ring_Gtwi;
@@ -173,9 +194,11 @@ FE_CORE_Field_Gt;
 
 typedef CGAL::Segment_Voronoi_diagram_traits_2<FE_CORE_Kernel,Sqrt>
 FE_CORE_Sqrt_Gt;
+#endif
 
 //----------------------------------------------------------------------
 
+#ifdef CGAL_USE_GMP
 typedef CGAL::Segment_Voronoi_diagram_traits_without_intersections_2
 <FE_Gmpz_Kernel,Ring>
 FE_Gmpz_Ring_Gtwi;
@@ -188,7 +211,7 @@ FE_Gmpq_Ring_Gtwi;
 
 typedef CGAL::Segment_Voronoi_diagram_traits_2<FE_Gmpq_Kernel,Field>
 FE_Gmpq_Field_Gt;
-
+#endif
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
@@ -299,48 +322,61 @@ int main(int argc, char* argv[])
 	    << "************************************" << std::endl;
   std::cout << std::endl;
 #endif
+
+#ifdef CGAL_USE_CORE
   test_traits<CORE_Ring_Gtwi>("CORE Ring WI");
   test_traits<CORE_Sqrt_Gtwi>("CORE Sqrt WI");
 
   test_traits<CORE_Field_Gt>("CORE Field");
   test_traits<CORE_Sqrt_Gt>("CORE Sqrt");
+#endif
 
+#ifdef CGAL_USE_GMP
   test_traits<Gmpz_Ring_Gtwi>("Gmpz Ring WI");
 
   test_traits<Gmpq_Ring_Gtwi>("Gmpq Ring WI");
   test_traits<Gmpq_Field_Gt>("Gmpq Field");
+#endif
 
   std::cout << std::endl;
   std::cout << "************************************"
 	    << "************************************" << std::endl;
   std::cout << std::endl;
 
+#ifdef CGAL_USE_CORE
   test_traits<F_CORE_Ring_Gtwi>("F CORE Ring WI");
   test_traits<F_CORE_Sqrt_Gtwi>("F CORE Sqrt WI");
 
   test_traits<F_CORE_Field_Gt>("F CORE Field");
   test_traits<F_CORE_Sqrt_Gt>("F CORE Sqrt");
+#endif
 
+#ifdef CGAL_USE_GMP
   test_traits<F_Gmpz_Ring_Gtwi>("F Gmpz Ring WI");
 
   test_traits<F_Gmpq_Ring_Gtwi>("F Gmpq Ring WI");
   test_traits<F_Gmpq_Field_Gt>("F Gmpq Field");
+#endif
 
   std::cout << std::endl;
   std::cout << "************************************"
 	    << "************************************" << std::endl;
   std::cout << std::endl;
 
+#ifdef CGAL_USE_CORE
   test_traits<FE_CORE_Ring_Gtwi>("FE CORE Ring WI");
   test_traits<FE_CORE_Sqrt_Gtwi>("FE CORE Sqrt WI");
 
   test_traits<FE_CORE_Field_Gt>("FE CORE Field");
   test_traits<FE_CORE_Sqrt_Gt>("FE CORE Sqrt");
+#endif
 
+#ifdef CGAL_USE_GMP
   test_traits<FE_Gmpz_Ring_Gtwi>("FE Gmpz Ring WI");
 
   test_traits<FE_Gmpq_Ring_Gtwi>("FE Gmpq Ring WI");
   test_traits<FE_Gmpq_Field_Gt>("FE Gmpq Field");
+#endif
 
   return 0;
 }
