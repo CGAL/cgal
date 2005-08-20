@@ -26,14 +26,15 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_Expr.h>
-#endif
 
 #include <CGAL/Segment_Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
 #include <CGAL/Segment_Voronoi_diagram_traits_2.h>
 #include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
+
+#ifdef CGAL_USE_CORE
+#  include <CGAL/CORE_Expr.h>
+#endif
 
 #if defined(USE_FILTERED_TRAITS) || !defined(CGAL_USE_CORE)
 struct Rep : public CGAL::Simple_cartesian<double> {};
