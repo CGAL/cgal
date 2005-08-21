@@ -610,11 +610,11 @@ public:
     {
       // Get the integer coefficients of the k'th auxiliary conic curve.
       aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
-      aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;;
-      aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;;
-      aux_rat_coeffs[3] = (k == 1) ? u_1 : u_2;;
-      aux_rat_coeffs[4] = (k == 1) ? v_1 : v_2;;
-      aux_rat_coeffs[5] = (k == 1) ? w_1 : w_2;;
+      aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;
+      aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;
+      aux_rat_coeffs[3] = (k == 1) ? u_1 : u_2;
+      aux_rat_coeffs[4] = (k == 1) ? v_1 : v_2;
+      aux_rat_coeffs[5] = (k == 1) ? w_1 : w_2;
 
       nt_traits.convert_coefficients (aux_rat_coeffs, aux_rat_coeffs + 6,
 				      aux_coeffs);
@@ -718,7 +718,7 @@ public:
 
       if (! found)
       {
-	_info = 0;           // Invalis arc.
+	_info = 0;           // Invalid arc.
 	return;
       }
     }
@@ -727,7 +727,7 @@ public:
     if (Alg_kernel().compare_xy_2_object() (_source,
 					    _target) == EQUAL)
     {
-      _info = 0;      // Invalis arc.
+      _info = 0;      // Invalid arc.
       return;
     }
 
@@ -1002,6 +1002,7 @@ public:
     }
 
     // Return the number of vertical tangency points found.
+    CGAL_assertion (m <= 2);
     return (m);
   }
 
@@ -1036,6 +1037,7 @@ public:
     }
 
     // Return the number of horizontal tangency points found.
+    CGAL_assertion (m <= 2);
     return (m);
   }
 
@@ -1067,6 +1069,7 @@ public:
     }
 
     // Return the number of points on the arc.
+    CGAL_assertion (m <= 2);
     return (m);
   }
 
@@ -1098,6 +1101,7 @@ public:
     }
 
     // Return the number of points on the arc.
+    CGAL_assertion (m <= 2);
     return (m);
   }
   //@}
@@ -1570,6 +1574,7 @@ protected:
       }
     }
 
+    CGAL_assertion (n <= 2);
     return (n);
   }
 
@@ -1620,6 +1625,7 @@ protected:
       ps[i] = Point_2 (x, ys[i]);
     }
       
+    CGAL_assertion (n <= 2);
     return (n);
   }
 

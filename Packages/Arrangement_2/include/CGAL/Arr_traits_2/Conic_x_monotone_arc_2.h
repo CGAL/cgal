@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
  */
 
 template <class Conic_arc_>
-class _Conic_x_monotone_arc_2 : public Conic_arc_
+class _Conic_x_monotone_arc_2 : private Conic_arc_
 {
 public:
 
@@ -1685,6 +1685,7 @@ private:
                                      arc._u, arc._v, arc._w,
                                      deg2,
                                      xs);
+    CGAL_assertion (n_xs <= 4);
 
     // Compute the y-coordinates of the intersection points.
     Algebraic   ys[4];
@@ -1697,6 +1698,7 @@ private:
                                      arc._v, arc._u, arc._w,
                                      deg2,
                                      ys);
+    CGAL_assertion (n_ys <= 4);
 
     // Pair the coordinates of the intersection points. As the vectors of
     // x and y-coordinates are sorted in ascending order, we output the
