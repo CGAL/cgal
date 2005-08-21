@@ -699,11 +699,11 @@ namespace CommonKernelFunctors {
     typedef Point_2           result_type;
     typedef Arity_tag< 1 >    Arity;
 
-    const Point_2&
+    Point_2
     operator()(const Iso_rectangle_2& r) const
     { return r.rep().max(); }
 
-    Point_2
+    const Point_2&
     operator()(const Segment_2& s) const
     { return s.max(); }
   };
@@ -718,11 +718,11 @@ namespace CommonKernelFunctors {
     typedef Point_2           result_type;
     typedef Arity_tag< 1 >    Arity;
 
-    const Point_2&
+    Point_2
     operator()(const Iso_rectangle_2& r) const
     { return r.rep().min(); }
 
-    Point_2
+    const Point_2&
     operator()(const Segment_2& s) const
     { return s.min(); }
   };
@@ -742,7 +742,7 @@ namespace CommonKernelFunctors {
     operator()(const Iso_cuboid_3& r) const
     { return r.max(); }
 
-    Point_3
+    const Point_3&
     operator()(const Segment_3& s) const
     { return s.max(); }
   };
@@ -761,7 +761,7 @@ namespace CommonKernelFunctors {
     operator()(const Iso_cuboid_3& r) const
     { return r.min(); }
 
-    Point_3
+    const Point_3&
     operator()(const Segment_3& s) const
     { return s.min(); }
   };
