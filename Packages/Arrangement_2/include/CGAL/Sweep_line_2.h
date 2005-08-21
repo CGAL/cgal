@@ -670,6 +670,11 @@ _create_intersection_point(const Point_2& xp,
         // The multiplicity of the intersection point is unkown or undefined:
         _add_curve_to_right(e, c1, is_overlap);
         _add_curve_to_right(e, c2, is_overlap);
+        if(! is_overlap)
+        {
+          if(e->is_right_curve_bigger(c1, c2))
+            std::swap(c1, c2);
+        }
       }
       else
       {
@@ -724,6 +729,11 @@ _create_intersection_point(const Point_2& xp,
             m_visitor ->update_event(e, c2);
           }
       }
+     if(! is_overlap)
+     {
+       if(e->is_right_curve_bigger(c1, c2))
+         std::swap(c1, c2);
+     }
    
       SL_DEBUG(e->Print();)
     }

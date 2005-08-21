@@ -248,11 +248,6 @@ public:
   }
 
 
-    
-
-
-
-
   bool is_parent(Self* parent)
   {
     Self* ptr = m_overlap_subcurve;
@@ -300,14 +295,6 @@ protected:
   Self *m_orig_subcurve1;
 
   Self *m_orig_subcurve2;
-
- 
-//protected:
-//
-//  Traits* traits() const
-//  {
-//    return Sweep_line_traits<Traits>::get_traits();
-//  }
 
 };
 

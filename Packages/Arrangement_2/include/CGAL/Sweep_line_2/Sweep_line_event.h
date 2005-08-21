@@ -399,9 +399,13 @@ public:
         iter != m_rightCurves.end();
         ++iter)
     {
-      if(*iter == c1)
+      if(*iter == c1 ||
+         static_cast<SubCurve*>((*iter)->get_orig_subcurve1()) == c1 ||
+         static_cast<SubCurve*>((*iter)->get_orig_subcurve2()) == c1)
         return false;
-      if(*iter == c2)
+      if(*iter == c2 ||
+         static_cast<SubCurve*>((*iter)->get_orig_subcurve1()) == c2 ||
+         static_cast<SubCurve*>((*iter)->get_orig_subcurve2()) == c2)
         return true;
     }
     CGAL_assertion(false);
@@ -434,14 +438,6 @@ public:
   /*! */
   char m_type;
 
- 
-  /*protected:
-
-
-  Traits* traits() const
-  {
-    return Sweep_line_traits<Traits>::get_traits();
-  }*/
 };
 
 
