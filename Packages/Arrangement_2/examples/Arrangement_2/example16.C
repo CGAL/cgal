@@ -44,22 +44,21 @@ int main ()
   Rational_arc_2    a3 (P3, Algebraic(-2), Algebraic(3));
 
   // Create an arc supported by the line y = -2x,
-  // defined over the interval [-2, 0]:
+  // defined over the interval [-3, 0]:
   Rat_vector        P4(2);  
   P4[1] = -2; P4[0] = 0;
 
-  Rational_arc_2    a4 (P4, Algebraic(-2), Algebraic(0));
+  Rational_arc_2    a4 (P4, Algebraic(-3), Algebraic(0));
 
   // Construct the arrangement of the four arcs.
   Arrangement_2              arr;
   std::list<Rational_arc_2>  arcs;
-  
+
   arcs.push_back (a1);
   arcs.push_back (a2);
-  //arcs.push_back (a3);
+  arcs.push_back (a3);
   arcs.push_back (a4);
   insert (arr, arcs.begin(), arcs.end());
-
 
   // Print the arrangement size.
   std::cout << "V = " << arr.number_of_vertices()

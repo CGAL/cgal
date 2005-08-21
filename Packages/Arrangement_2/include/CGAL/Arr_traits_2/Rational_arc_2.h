@@ -100,17 +100,20 @@ public:
     
     // Set the numerator polynomial.
     Nt_traits    nt_traits;
-    Integer      denom_coeffs[1];
+    Integer      p_factor;
 
-    if (! nt_traits.construct_polynomial (&(pcoeffs[0]),
-					  pcoeffs.size() - 1,
-					  pnum,
-					  denom_coeffs[0]))
+    if (nt_traits.construct_polynomial (&(pcoeffs[0]),
+					pcoeffs.size() - 1,
+					pnum,
+					p_factor))
     {
-      denom_coeffs [0] = 1;
+      nt_traits.scale (pnum, p_factor);
     }
 
     // Define the denominator to be a constant polynomial.
+    Integer      denom_coeffs[1];
+
+    denom_coeffs [0] = 1;
     pden = nt_traits.construct_polynomial (denom_coeffs, 0);
     
     // Set the endpoints.
@@ -141,18 +144,22 @@ public:
     Nt_traits    nt_traits;
     Integer      p_factor, q_factor;
 
-    if (! nt_traits.construct_polynomial (&(pcoeffs[0]),
-					  pcoeffs.size() - 1,
-					  pnum,
-					  p_factor))
+    if (nt_traits.construct_polynomial (&(pcoeffs[0]),
+					pcoeffs.size() - 1,
+					pnum,
+					p_factor))
     {
-      p_factor = 1;
+      nt_traits.scale (pnum, p_factor);
     }
 
-    if (! nt_traits.construct_polynomial (&(qcoeffs[0]),
-					  qcoeffs.size() - 1,
-					  pden,
-					  q_factor))
+    if (nt_traits.construct_polynomial (&(qcoeffs[0]),
+					qcoeffs.size() - 1,
+					pden,
+					q_factor))
+    {
+      nt_traits.scale (pden, q_factor);
+    }
+    else
     {
       // q cannot be a zero polynomial:
       CGAL_assertion_msg (false, 
@@ -187,11 +194,6 @@ public:
       if (! q_has_no_roots_in_the_interval)
 	return;
     }
-
-    // Normalize the numerator and denominator polynomials by the computed
-    // factors.
-    nt_traits.scale (pnum, q_factor);
-    nt_traits.scale (pden, p_factor);
 
     // Set the endpoints.
     left_pt = Point_2 (x_min, nt_traits.evaluate_at (pnum, x_min) /
@@ -297,8 +299,10 @@ public:
     Nt_traits         nt_traits;
     Polynomial        pnum1 = this->pnum;
     Polynomial        pden1 = this->pden;
+    const bool        simple_poly1 = nt_traits.degree (pden1);
     Polynomial        pnum2 = arc.pnum;
     Polynomial        pden2 = arc.pden;
+    const bool        simple_poly2 = nt_traits.degree (pden2);
     int               max_mult;
     Algebraic         d1, d2;
     Comparison_result res;
@@ -313,17 +317,32 @@ public:
       // Compute the current derivative. Use the equation:
       //
       // (p(x) / q(x))' = (p'(x)*q(x) - p(x)*q'(x)) / q^2(x)
-      pnum1 = nt_traits.derive(pnum1)*pden1 - pnum1*nt_traits.derive(pden1);
-      pden1 *= pden1;
+      if (simple_poly1)
+      {
+	pnum1 = nt_traits.derive(pnum1);
+      }
+      else
+      {
+	pnum1 = nt_traits.derive(pnum1)*pden1 - pnum1*nt_traits.derive(pden1);
+	pden1 *= pden1;
+      }
 
-      pnum2 = nt_traits.derive(pnum2)*pden2 - pnum2*nt_traits.derive(pden2);
-      pden2 *= pden2;
-      
+      if (simple_poly2)
+      {
+	pnum2 = nt_traits.derive(pnum2);
+      }
+      else
+      {
+	pnum2 = nt_traits.derive(pnum2)*pden2 - pnum2*nt_traits.derive(pden2);
+	pden2 *= pden2;
+      }
+
       // Compute the two derivative values and compare them. 
       d1 = nt_traits.evaluate_at (pnum1, _x) / 
 	   nt_traits.evaluate_at (pden1, _x);
       d2 = nt_traits.evaluate_at (pnum2, _x) / 
 	   nt_traits.evaluate_at (pden2, _x);
+
       res = CGAL::compare (d1, d2);
 
       // Stop here in case the derivatives are not equal.
@@ -459,9 +478,8 @@ public:
 	Point_2    p (*x_iter, nt_traits.evaluate_at (pnum, *x_iter) /
                                nt_traits.evaluate_at (pden, *x_iter));
 
-
 	this->compare_slopes (arc, p, mult);
-
+    
 	// Output the intersection point:
 	Intersection_point_2  ip (p, mult);
 	

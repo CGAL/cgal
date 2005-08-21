@@ -284,7 +284,7 @@ public:
 
     // Set the output.
     poly = Polynomial (degree, z_coeffs);
-    poly_denom = denom_lcm;
+    poly_denom = numer_gcd;
 
     delete[] z_coeffs;
     return (true);
