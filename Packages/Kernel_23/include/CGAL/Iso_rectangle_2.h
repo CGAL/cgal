@@ -75,12 +75,12 @@ public:
     : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw).rep()) {}
 
 
-  const Point_2 & min() const
+  Point_2 min() const
   {
     return R().construct_min_vertex_2_object()(*this);
   }
 
-  const Point_2 & max() const
+  Point_2 max() const
   {
     return R().construct_max_vertex_2_object()(*this);
   }
