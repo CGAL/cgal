@@ -666,36 +666,46 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
                                        // seperately
   for (unsigned int i = 0; i < tag_names_table.size(); ++i) {
     p = read_names_table.find(tag_names_table[i]);
+    std::cout << "loop begin: index is " << index << std::endl;
     if (p != read_names_table.end()) {
       if (i==0) { // r,f,i
 	switch (p->second) {
 	case 'r':	index = index + 0;
+	  std::cout << "  i=0,r: index is " << index << std::endl;
 	  break;
 	case 'f':	index = index + 8;
+	  std::cout << "  i=0,f: index is " << index << std::endl;
 	  break;
 	case 'i':	index = index + 16;
+	  std::cout << "  i=0,i: index is " << index << std::endl;
 	  break;
-	default :	error("impossible tag value");
+	default : 
+	  error("impossible tag value");
+	  exit(-1);
 	}
 	
       } else { // 0,1
 	switch (p->second) {
 	case '0':	;
+	  std::cout << "  i>0,0: index is " << index << std::endl;
 	  break;
 	case '1':	index += (1 << (offset - i));
+	  std::cout << "  i>0,1: index is " << index << std::endl;
 	  break;
-	default :	error("impossible tag value");
+	default :
+	  error("impossible tag value");
+	  exit(-1);
 	}
       }
     } else {
       error("unspecified tags");
-      index = 48;
+      exit(-1);
     }
   }
   p = read_names_table.find(tag_names_table[offset+1]); // is_in_standard_form
   if (p == read_names_table.end()) {
       error("unspecified tags");
-      index = 48;
+      exit(-1);
   } else
     if (p->second == '1')
       index += 24;
