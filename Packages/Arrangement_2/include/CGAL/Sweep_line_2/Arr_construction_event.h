@@ -81,7 +81,7 @@ public:
 
 
   std::pair<bool, SubCurveIter> add_curve_to_right(SubCurve *curve,
-                                                   const Traits* tr)
+                                                   Traits* tr)
   {
     std::pair<bool,SubCurveIter> res = Base::add_curve_to_right(curve, tr);
     if(res.second != m_rightCurves.end() && res.first == false )

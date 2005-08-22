@@ -33,7 +33,7 @@ public:
   typedef SweepLineTraits_2           Traits;
   typedef typename Traits::Point_2    Point_2;
   
-  Point_less_functor(const Traits * t) : m_traits(t)
+  Point_less_functor(Traits * t) : m_traits(t)
   {}
   
   bool operator()(const Point_2& p1,const Point_2& p2) const  
@@ -44,7 +44,7 @@ public:
 private:
 
   /*! a pointer to a traits object */
-  const Traits * m_traits;
+  Traits * m_traits;
 };
 
 

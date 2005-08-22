@@ -122,7 +122,7 @@ public:
 
 
 
-  std::pair<bool, SubCurveIter>  add_curve_to_right(SubCurve *curve,const Traits* tr) 
+  std::pair<bool, SubCurveIter>  add_curve_to_right(SubCurve *curve, Traits* tr) 
   {
     if (m_rightCurves.empty()) {
       m_rightCurves.push_back(curve);
