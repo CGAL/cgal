@@ -448,26 +448,29 @@ namespace CircularFunctors {
 	{ return res; }
       
       // Get the two intersection points of the supporting circles.
-      Circular_arc_endpoint_2 
-	left = CGAL::circle_intersect<CK>(a1.supporting_circle(),
-                                          a2.supporting_circle(), true);
-      Circular_arc_endpoint_2 
-	right = CGAL::circle_intersect<CK>(a1.supporting_circle(),
-                                           a2.supporting_circle(), false);
       
-      if ( left != right ) // multiplicity 1
-	{
-	  // We also need to check that these intersection points are on the arc.
+      std::vector<CGAL::Object > intersection_points;
+      CGAL::construct_intersections_2<CK>
+	( a1.supporting_circle(), a2.supporting_circle(),
+	  std::back_inserter(intersection_points) );
+      
+      Circular_arc_endpoint_2 left =
+	(CGAL::object_cast< std::pair<Circular_arc_endpoint_2, uint> >
+	 (&(intersection_points[0])))->first;
+      if (intersection_points.size() < 2){// multiplicity 2
+	if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
+	  *res++ = make_object(std::make_pair(left,2u));
+      }
+      else {// multiplicity 1
+	Circular_arc_endpoint_2 right = 
+	  (CGAL::object_cast< std::pair<Circular_arc_endpoint_2, uint> >
+	   (&(intersection_points[1])))->first;
+	// We also need to check that these intersection points are on the arc.
 	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left))
 	    *res++ = make_object(std::make_pair(left,1u));
 	  if (has_on<CK>(a1, right) && has_on<CK>(a2, right))
 	    *res++ = make_object(std::make_pair(right,1u));
-	}
-      else // multiplicity 2
-	{
-	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
-	    *res++ = make_object(std::make_pair(left,2u));
-	}
+      }
       return res;
     }
     else {//a1 or a2 are not x_monotone
@@ -478,27 +481,33 @@ namespace CircularFunctors {
       std::vector< Circular_arc_2 > circle_arcs;
       std::vector< Circular_arc_endpoint_2 > circle_arc_endpoints;
 
-      for ( std::vector< CGAL::Object >::iterator it1 = arcs_a1_x_monotone.begin(); 
+      for ( std::vector< CGAL::Object >::iterator it1 = 
+	      arcs_a1_x_monotone.begin(); 
 	    it1 != arcs_a1_x_monotone.end(); ++it1 )
 	{
 	    //CGAL_kernel_assertion(assign( a1_aux, *it1));
-	  const Circular_arc_2 *a1_aux = CGAL::object_cast< Circular_arc_2 >(&*it1);
-	  for ( std::vector< CGAL::Object >::iterator it2 = arcs_a2_x_monotone.begin(); 
+	  const Circular_arc_2 *a1_aux = 
+	    CGAL::object_cast< Circular_arc_2 >(&*it1);
+	  for ( std::vector< CGAL::Object >::iterator it2 = 
+		  arcs_a2_x_monotone.begin(); 
 	    it2 != arcs_a2_x_monotone.end(); ++it2 )
 	    {
 	      //CGAL_kernel_assertion(assign( a2_aux, *it2));
 	      //assign( a2_aux, *it2);
-	      const Circular_arc_2 *a2_aux = CGAL::object_cast<Circular_arc_2>(&*it2);
+	      const Circular_arc_2 *a2_aux = 
+		CGAL::object_cast<Circular_arc_2>(&*it2);
 	      std::vector< CGAL::Object > res_aux;
 	      construct_intersections_2<CK>( *a1_aux, *a2_aux,
 					     std::back_inserter(res_aux));
 	      if(res_aux.size() == 2){
 		//it can't be a circular_arc_2
 		//CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
-		const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair1 = CGAL::object_cast<std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[0]);
+		const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair1 = 
+		  CGAL::object_cast<std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[0]);
 		Circular_arc_endpoint_2 arc_end1 = the_pair1->first;
 		//assign(the_pair, res_aux[1]);
-		const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair2 = CGAL::object_cast<std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[1]);
+		const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair2 = 
+		  CGAL::object_cast<std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[1]);
 		Circular_arc_endpoint_2 arc_end2 = the_pair2->first;
 		bool exist = false;
 		for (typename std::vector< Circular_arc_endpoint_2 >::iterator it 
@@ -528,14 +537,16 @@ namespace CircularFunctors {
 	      }
 	      else if( res_aux.size() == 1){
 		//it can be a Circular_arc_endpoint_2 or a Circular_arc_2
-		if(const Circular_arc_2 *arc = CGAL::object_cast<Circular_arc_2>(&res_aux[0])){
+		if(const Circular_arc_2 *arc = 
+		   CGAL::object_cast<Circular_arc_2>(&res_aux[0])){
 		//if(assign(arc,res_aux[0])){
 		  circle_arcs.push_back(*arc);
 		}
 		else{
 		  //CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
 		  //assign(the_pair, res_aux[0]);
-		   const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair = CGAL::object_cast< std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[0]);
+		   const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair = 
+		     CGAL::object_cast< std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[0]);
 		  Circular_arc_endpoint_2 arc_end = the_pair->first;
 		  if (the_pair->second == 2u) {//there are only one tangent point
 		    *res++ = res_aux[0];
@@ -702,6 +713,14 @@ namespace CircularFunctors {
     // no intersection.
     return false;
   }
+
+  template < class CK >
+    bool
+    is_vertical(const typename CK::Circular_arc_2 a)
+  {
+    return false; 
+  }
+
 
     
   template < class CK, class OutputIterator >
