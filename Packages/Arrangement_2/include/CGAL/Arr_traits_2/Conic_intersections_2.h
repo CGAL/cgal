@@ -49,13 +49,15 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
 			      const typename Nt_traits::Integer& r2,
 			      const typename Nt_traits::Integer& s2,
 			      const typename Nt_traits::Integer& t2,
+
+
 			      const typename Nt_traits::Integer& u2,
 			      const typename Nt_traits::Integer& v2,
 			      const typename Nt_traits::Integer& w2,
 			      const int& deg2,
 			      typename Nt_traits::Algebraic *xs)
-{
-  if (deg1 == 2 && deg1 == 1)
+{ 
+  if (deg1 == 2 && deg2 == 1)
   {
     // If necessary, swap roles between the two curves, so that the first
     // curve always has the minimal degree.
