@@ -29,44 +29,27 @@
 #ifndef CGAL_FUNCTION_OBJECTS_H
 #  include <CGAL/function_objects.h>
 #endif
-#ifndef CGAL_IDENTITY_H
-#  include <CGAL/_QP_solver/identity.h>
-#endif
 
-#ifndef CGAL_FUNCTION_OBJECTS_ACCESS_BY_INDEX_H
-#  include <CGAL/_QP_solver/Access_by_index.h>
-#endif
-#ifndef CGAL_JOIN_RANDOM_ACCESS_ITERATOR_H
-#  include <CGAL/_QP_solver/Join_random_access_iterator.h>
-#endif
-#ifndef CGAL_QP_SOLVER_H
-#  include <CGAL/_QP_solver/QP_solver.h>
-#endif
-#ifndef CGAL_JOIN_RANDOM_ACCESS_ITERATOR_H
-#  include <CGAL/_QP_solver/Join_random_access_iterator.h>
-#endif
-#ifndef CGAL_PARTIAL_EXACT_PRICING_H
-#  include <CGAL/_QP_solver/Partial_exact_pricing.h>
-#endif
-#ifndef CGAL_PARTIAL_FILTERED_PRICING_H
-#  include <CGAL/_QP_solver/Partial_filtered_pricing.h>
-#endif
-
-#ifndef CGAL_PROTECT_VECTOR
-#  include <vector>
-#  define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
-#  include <iostream>
-#  define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_PROTECT_FUNCTIONAL_H
-#  include <functional>
-#  define CGAL_PROTECT_FUNCTIONAL_H
-#endif
-
+#include <CGAL/QP_solver.h>
+#include <CGAL/QP_partial_filtered_pricing.h>
+#include <CGAL/QP_partial_exact_pricing.h>
 
 CGAL_BEGIN_NAMESPACE
+
+// A functor whose operator(int i) provides access to the i-th element
+// of a random access iterator.
+template < typename RndAccIt, typename ArgType >
+class Access_by_index {
+public:
+  typedef  typename std::iterator_traits<RndAccIt>::value_type result_type;
+
+  Access_by_index(RndAccIt it = RndAccIt()) : a(it) {}
+
+  result_type operator () (ArgType i) const { return a[i]; }
+
+private:
+  RndAccIt     a;
+};
 
 // Class declarations
 // ==================
@@ -86,6 +69,35 @@ struct LP_rep_row_of_a {
     operator ( ) ( const argument_type& v) const { return v.begin(); }
 };
 
+
+template < class ET_, class NT_, class Point, class PointIterator,
+           class Access_coord, class Access_dim >
+struct LP_rep_min_annulus_d {
+  // (possibly inexact) number type for the pricing:
+  typedef  NT_                    NT;
+
+  // helper types:
+  typedef  std::vector<NT>                             NT_vector;
+  typedef  std::vector<NT_vector>                      NT_matrix;
+  typedef  typename NT_matrix::const_iterator          NTMCI;
+
+  // stuff required by concept QPSolverTraits:
+  typedef  ET_                                         ET;
+  typedef  CGAL::Join_input_iterator_1<NTMCI, LP_rep_row_of_a<NT> > 
+                                                       A_iterator;
+  typedef  typename NT_vector::const_iterator          B_iterator;
+  typedef  typename NT_vector::const_iterator          C_iterator;
+  typedef  Const_oneset_iterator< Const_oneset_iterator<NT> >
+                                                       D_iterator; // dummy
+
+  enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
+  typedef Const_oneset_iterator<Row_type>    Row_type_iterator;
+
+  typedef Tag_true                           Is_linear;
+  typedef Tag_false                          Is_symmetric; // dummy
+  typedef Tag_false                          Has_equalities_only_and_full_rank;
+  typedef Tag_true                           Is_in_standard_form;
+};
 
 // Class interfaces
 // ================
@@ -132,7 +144,8 @@ class Min_annulus_d {
     typedef  std::vector<Point>         Point_vector;
     typedef  std::vector<ET>            ET_vector;
     
-    typedef  CGAL::Access_by_index<typename std::vector<Point>::const_iterator>
+    typedef  CGAL::Access_by_index<typename std::vector<Point>::const_iterator,
+				   int>
                                         Point_by_index;
     
     typedef  std::binder2nd< std::divides<int> >
@@ -149,17 +162,17 @@ class Min_annulus_d {
     typedef  typename Point_vector::const_iterator
                                         Point_iterator;
     
-    typedef  CGAL::Join_random_access_iterator_1<
+    typedef  CGAL::Join_input_iterator_1<
                  Basic_variable_index_iterator,
                  CGAL::Unary_compose_1<Point_by_index,Divide> >
                                         Support_point_iterator;
     
     
     typedef  typename Index_vector::const_iterator IVCI;
-    typedef  CGAL::Join_random_access_iterator_1<
+    typedef  CGAL::Join_input_iterator_1<
                  IVCI, Point_by_index >
                                         Inner_support_point_iterator;
-    typedef  CGAL::Join_random_access_iterator_1<
+    typedef  CGAL::Join_input_iterator_1<
                  IVCI, Point_by_index >
                                         Outer_support_point_iterator;
     
@@ -168,25 +181,23 @@ class Min_annulus_d {
     
 
     // creation
-    Min_annulus_d( const Traits&  traits  = Traits(),
-                   int            verbose = 0,
-                   std::ostream&  stream  = std::cout)
-      : tco( traits), d( -1), solver( verbose, stream)
-        {
-            set_pricing_strategy( NT());
-        }
+    Min_annulus_d( const Traits&  traits  = Traits())
+      : tco( traits), d( -1), solver(0), strategy(0) {}
     
     template < class InputIterator >
     Min_annulus_d( InputIterator  first,
                    InputIterator  last,
-                   const Traits&  traits = Traits(),
-                   int            verbose = 0,
-                   std::ostream&  stream  = std::cout)
-      : tco( traits), solver( verbose, stream)
-        {
-            set_pricing_strategy( NT());
-            set( first, last);
-        }
+                   const Traits&  traits = Traits())
+      : tco( traits), solver(0), strategy(0) {
+      set( first, last);
+    }
+
+    ~Min_annulus_d() {
+      if (solver)
+	delete solver;
+      if (strategy)
+	delete strategy;
+    }
     
     // access to point set
     int  ambient_dimension( ) const { return d; }
@@ -199,25 +210,31 @@ class Min_annulus_d {
     // access to support points
     int
     number_of_support_points( ) const
-        { return number_of_points() < 2 ? number_of_points()
-                                        : solver.number_of_basic_variables(); }
+        { return number_of_points() < 2 ?
+	    number_of_points() :
+	  solver->number_of_basic_variables(); }
     
-    Support_point_iterator
-    support_points_begin() const
-        { return Support_point_iterator(
-                     solver.basic_variables_index_begin(),
+  Support_point_iterator
+  support_points_begin() const {
+    CGAL_optimisation_assertion_msg(number_of_points() >= 2,
+	    "support_points_begin: not enough points");
+    return Support_point_iterator(
+                     solver->basic_original_variables_index_begin(),
                      CGAL::compose1_1(
                          Point_by_index( points.begin()),
-                         std::bind2nd( std::divides<int>(), 2)));}
+                         std::bind2nd( std::divides<int>(), 2)));
+  }
     
     Support_point_iterator
-    support_points_end() const
-        { return Support_point_iterator( number_of_points() < 2
-                     ? solver.basic_variables_index_begin()
-                     : solver.basic_variables_index_end(),
+    support_points_end() const {
+      CGAL_optimisation_assertion_msg(number_of_points() >= 2,
+  	    "support_points_begin: not enough points");
+      return Support_point_iterator(
+		     solver->basic_original_variables_index_end(),
                      CGAL::compose1_1(
                          Point_by_index( points.begin()),
-                         std::bind2nd( std::divides<int>(), 2)));}
+                         std::bind2nd( std::divides<int>(), 2)));
+    }
     
     int  number_of_inner_support_points() const { return inner_indices.size();}
     int  number_of_outer_support_points() const { return outer_indices.size();}
@@ -368,7 +385,8 @@ class Min_annulus_d {
     ET                       sqr_o_rad_numer;   // ---"--- outer ----"----
     ET                       sqr_rad_denom;     // smallest enclosing annulus
     
-    Solver                   solver;    // linear programming solver
+    Solver                   *solver;    // linear programming solver
+    Pricing_strategy         *strategy; // ...and its pricing strategy
     
     Index_vector             inner_indices;
     Index_vector             outer_indices;
@@ -377,11 +395,7 @@ class Min_annulus_d {
     NT_vector                b_vector;  // vector `b' of dual LP
     NT_vector                c_vector;  // vector `c' of dual LP
     
-    typename Solver::Pricing_strategy*  // pricing strategy
-                             strategyP; // of the QP solver
-    
-
-    
+private:
     // squared distance to center
     ET
     sqr_dist( const Point& p) const
@@ -391,9 +405,9 @@ class Min_annulus_d {
               std::plus<ET>(),
               CGAL::compose1_2(
                   CGAL::compose2_1( std::multiplies<ET>(),
-                      CGAL::identity<ET>(), CGAL::identity<ET>()),
+                      CGAL::Identity<ET>(), CGAL::Identity<ET>()),
                   CGAL::compose2_2( std::minus<ET>(),
-                      CGAL::identity<ET>(),
+                      CGAL::Identity<ET>(),
                       std::bind2nd( std::multiplies<ET>(),
                                     center_coords.back())))); }
     
@@ -474,29 +488,33 @@ class Min_annulus_d {
         }
         typedef  typename LP_rep::A_iterator  A_it;
         typedef  typename LP_rep::D_iterator  D_it;
-        solver.set( 2*points.size(), d+2, d+2,
-                    A_it( a_matrix.begin()), b_vector.begin(),
-                    c_vector.begin(), D_it());
-        solver.init();
-        solver.solve();
+	typedef  typename LP_rep::Row_type_iterator Row_it;
+	Const_oneset_iterator<NT> dummy;
+    
+	strategy = pricing_strategy(NT());
+	solver = new Solver(2*points.size(), d+2,
+			    A_it( a_matrix.begin()), b_vector.begin(),
+			    c_vector.begin(), D_it(dummy),
+			    Row_it(LP_rep::EQUAL),
+			    *strategy);
     
         // compute center and squared radius
         ET sqr_sum = 0;
         center_coords.resize( ambient_dimension()+1);
         for ( i = 0; i < d; ++i) {
-            center_coords[ i] = -solver.dual_variable( i);
+            center_coords[ i] = -solver->dual_variable( i);
             sqr_sum += center_coords[ i] * center_coords[ i];
         }
-        center_coords[ d] = solver.variables_common_denominator();
+        center_coords[ d] = solver->variables_common_denominator();
         sqr_i_rad_numer = sqr_sum
-                          - solver.dual_variable( d  )*center_coords[ d];
+                          - solver->dual_variable( d  )*center_coords[ d];
         sqr_o_rad_numer = sqr_sum
-                          - solver.dual_variable( d+1)*center_coords[ d];
+                          - solver->dual_variable( d+1)*center_coords[ d];
         sqr_rad_denom   = center_coords[ d] * center_coords[ d];
         
         // split up support points
-        for ( i = 0; i < solver.number_of_basic_variables(); ++i) {
-            int index = solver.basic_variables_index_begin()[ i];
+        for ( i = 0; i < solver->number_of_basic_variables(); ++i) {
+            int index = solver->basic_original_variables_index_begin()[ i];
             if ( index % 2 == 0) {
                 inner_indices.push_back( index/2);
             } else {
@@ -505,40 +523,15 @@ class Min_annulus_d {
         }
     }
     
-    template < class NT >
-    void  set_pricing_strategy( NT)
-        { strategyP = new CGAL::Partial_filtered_pricing<LP_rep>;
-          solver.set_pricing_strategy( *strategyP); }
+  template < class NT >
+  Pricing_strategy *pricing_strategy( NT) {
+    return new QP_partial_filtered_pricing<LP_rep>;
+  }
+  
+  Pricing_strategy *pricing_strategy( ET) {
+    return new QP_partial_exact_pricing<LP_rep>;
+  }
     
-    #ifndef _MSC_VER
-    void  set_pricing_strategy( ET)
-        { strategyP = new CGAL::Partial_exact_pricing<LP_rep>;
-          solver.set_pricing_strategy( *strategyP); }
-    #endif
-    
-};
-
-template < class ET_, class NT_, class Point, class PointIterator,
-           class Access_coord, class Access_dim >
-struct LP_rep_min_annulus_d {
-    typedef  ET_                    ET;
-    typedef  NT_                    NT;
-
-    typedef  std::vector<NT>            NT_vector;
-    typedef  std::vector<NT_vector>     NT_matrix;
-    
-    typedef  typename NT_matrix::const_iterator NTMCI;
-    typedef  CGAL::Join_random_access_iterator_1<
-                 NTMCI, LP_rep_row_of_a<NT> >  A_iterator;
-    typedef  typename NT_vector::const_iterator
-                                        B_iterator;
-    typedef  typename NT_vector::const_iterator
-                                        C_iterator;
-    
-    typedef  A_iterator                 D_iterator;     // dummy
-    
-
-    typedef  CGAL::Tag_true         Is_lp;
 };
 
 // Function declarations

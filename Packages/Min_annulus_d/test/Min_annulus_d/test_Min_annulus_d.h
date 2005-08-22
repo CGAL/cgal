@@ -61,13 +61,13 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
 
     // constructors
     COVER( "default constructor",
-        Min_annulus  ms( traits, verbose, verr.out());
+        Min_annulus  ms( traits);
         assert( ms.is_valid( is_valid_verbose));
         assert( ms.is_empty());
     )
 
     COVER( "point set constructor",
-        Min_annulus  ms( first, last, traits, verbose, verr.out());
+        Min_annulus  ms( first, last, traits);
         assert( ms.is_valid( is_valid_verbose));
     )
 
