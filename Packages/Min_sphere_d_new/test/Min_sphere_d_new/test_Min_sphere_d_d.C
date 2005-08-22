@@ -27,6 +27,8 @@
 
 // includes
 // --------
+#include <CGAL/QP_solver/gmp_double.h> // temporarily, can be removed
+                                       // once gmp_double is in CGAL
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Min_sphere_d_new.h>
@@ -36,13 +38,6 @@
 #include <vector>
 
 #include "test_Min_sphere_d.h"
-
-#define  Min_sphere_d               OTHER_Min_sphere_d
-#undef  CGAL_MIN_SPHERE_D_H
-#undef  CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#define CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Min_sphere_d.h>
-#undef  Min_sphere_d
 
 // typedefs
 // --------
@@ -57,11 +52,11 @@
 
 // test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
-# include <CGAL/_QP_solver/Double.h>
+# include <CGAL/QP_solver/Double.h>
   typedef  CGAL::Cartesian_d< int >                               K_2;
-  typedef  CGAL::Optimisation_d_traits_d<K_2,GMP::Double,double>  Traits_2;
+  typedef  CGAL::Optimisation_d_traits_d<K_2,CGAL::Double,double> Traits_2;
 # define TEST_VARIANT_2 \
-    "Optimisation_d_traits_d< Cartesian_d<int>, GMP::Double, double >"
+    "Optimisation_d_traits_d< Cartesian_d<int>, CGAL::Double, double >"
 #endif
 
 

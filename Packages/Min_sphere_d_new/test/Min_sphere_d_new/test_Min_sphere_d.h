@@ -61,13 +61,13 @@ test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
 
     // constructors
     COVER( "default constructor",
-        Min_sphere  ms( traits, verbose, verr.out());
+        Min_sphere  ms( traits);
         assert( ms.is_valid( is_valid_verbose));
         assert( ms.is_empty());
     )
 
     COVER( "point set constructor",
-        Min_sphere  ms( first, last, traits, verbose, verr.out());
+        Min_sphere  ms( first, last, traits);
         verrX << endl;
         assert( ms.is_valid( is_valid_verbose));
     )

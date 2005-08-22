@@ -27,6 +27,8 @@
 
 // includes
 // --------
+#include <CGAL/QP_solver/gmp_double.h> // temporarily, can be removed
+                                       // once gmp_double is in CGAL
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_sphere_d_new.h>
@@ -57,11 +59,11 @@
 
 // test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
-# include <CGAL/_QP_solver/Double.h>
+#include <CGAL/QP_solver/Double.h>
   typedef  CGAL::Cartesian< int >                                 K_2;
-  typedef  CGAL::Optimisation_d_traits_2<K_2,GMP::Double,double>  Traits_2;
+  typedef  CGAL::Optimisation_d_traits_2<K_2,CGAL::Double,double> Traits_2;
 # define TEST_VARIANT_2 \
-    "Optimisation_d_traits_2< Cartesian<int>, GMP::Double, double >"
+    "Optimisation_d_traits_2< Cartesian<int>, CGAL::Double, double >"
 #endif
 
 
