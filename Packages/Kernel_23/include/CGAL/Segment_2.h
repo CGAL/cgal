@@ -71,20 +71,39 @@ public:
     return R_().construct_source_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
+  typename Qualified_result_of<typename R::Construct_target_2, Segment_2>::type
   target() const
   {
     return R_().construct_target_2_object()(*this);
   }
 
-  const Point_2 &    start() const;
-  const Point_2 &    end() const;
+  typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
+  start() const
+  {
+    return source();
+  }
 
-  const Point_2 &   min() const;
-  const Point_2 &   max() const;
-  const Point_2 &   vertex(int i) const;
-  const Point_2 &   point(int i) const;
-  const Point_2 &   operator[](int i) const;
+  typename Qualified_result_of<typename R::Construct_target_2, Segment_2>::type
+  end() const
+  {
+    return target();
+  }
+
+  
+  typename Qualified_result_of<typename R::Construct_min_vertex_2, Segment_2>::type
+  min() const;
+
+  typename Qualified_result_of<typename R::Construct_max_vertex_2, Segment_2>::type
+  max() const;
+
+  typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  vertex(int i) const;
+
+  typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  point(int i) const;
+
+  typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  operator[](int i) const;
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
@@ -146,24 +165,8 @@ public:
 };
 
 template < class R_ >
-inline
-const typename Segment_2<R_>::Point_2 &
-Segment_2<R_>::start() const
-{
-  return source();
-}
-
-template < class R_ >
-inline
-const typename Segment_2<R_>::Point_2 &
-Segment_2<R_>::end() const
-{
-  return target();
-}
-
-template < class R_ >
 CGAL_KERNEL_INLINE
-const typename Segment_2<R_>::Point_2 &
+typename Qualified_result_of<typename R_::Construct_min_vertex_2, Segment_2<R_> >::type
 Segment_2<R_>::min() const
 {
   typename R_::Less_xy_2 less_xy; 
@@ -172,7 +175,7 @@ Segment_2<R_>::min() const
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-const typename Segment_2<R_>::Point_2 &
+typename Qualified_result_of<typename R_::Construct_max_vertex_2, Segment_2<R_> >::type
 Segment_2<R_>::max() const
 {
   typename R_::Less_xy_2 less_xy; 
@@ -181,7 +184,7 @@ Segment_2<R_>::max() const
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-const typename Segment_2<R_>::Point_2 &
+typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
 Segment_2<R_>::vertex(int i) const
 {
   return (i%2 == 0) ? source() : target();
@@ -189,7 +192,7 @@ Segment_2<R_>::vertex(int i) const
 
 template < class R_ >
 inline
-const typename Segment_2<R_>::Point_2 &
+typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
 Segment_2<R_>::point(int i) const
 {
   return vertex(i);
@@ -197,7 +200,7 @@ Segment_2<R_>::point(int i) const
 
 template < class R_ >
 inline
-const typename Segment_2<R_>::Point_2 &
+typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
 Segment_2<R_>::operator[](int i) const
 {
   return vertex(i);
