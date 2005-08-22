@@ -124,18 +124,20 @@ template < class CK >
     if(A1.right().x() < A2.right().x()){
       equation = CGAL::LinearFunctors::get_equation<CK>(A2.supporting_line());
       Root_of_2 y((-A1.right().x()*equation.a() - equation.c())/equation.b());
-      if (y == A1.right().y())
+      Root_of_2 A1_right_y = A1.right().y();
+      if (y == A1_right_y)
 	return CGAL::EQUAL;
-      if (y < A1.right().y())
+      if (y < A1_right_y)
 	return CGAL::LARGER;
       return CGAL::SMALLER;
     }
     else{
       equation = CGAL::LinearFunctors::get_equation<CK>(A1.supporting_line());
       Root_of_2 y((-A2.right().x()*equation.a() - equation.c())/equation.b());
-      if (y == A2.right().y())
+      Root_of_2 A2_right_y = A2.right().y();
+      if (y == A2_right_y)
 	return CGAL::EQUAL;
-      if (y < A2.right().y())
+      if (y < A2_right_y)
 	return CGAL::SMALLER;
       return CGAL::LARGER;
     }
@@ -212,6 +214,17 @@ template < class CK >
     }
   }
    
+     template < class CK >
+  Comparison_result 
+  compare_y_to_right(const typename CK::Circular_arc_2 &A1,
+		     const typename CK::Line_arc_2 &A2, 
+		     const typename CK::Circular_arc_endpoint_2 &p)
+  {
+    if (compare_y_to_right<CK>(A2, A1, p) == CGAL::LARGER)
+      return CGAL::SMALLER;
+    return CGAL::LARGER;
+  }
+
    
  template < class CK >
    void
@@ -229,7 +242,6 @@ template < class CK >
 
    if ( ca1.right()!=ca2.left() )
 	    {
-	      std::cout << " SWAP " << std::endl;
 	      std::swap(ca1,ca2);
 	    }
     
@@ -341,6 +353,15 @@ template < class CK >
     return res;
   }
 
+  template< class CK, class OutputIterator>
+   OutputIterator
+   construct_intersections_2( const typename CK::Circle_2 &c,
+			      const typename CK::Line_arc_2 &l,
+			      OutputIterator res )
+  { 
+    return construct_intersections_2<CK>(l,c,res);
+  }
+
 
  template< class CK, class OutputIterator>
    OutputIterator
@@ -384,7 +405,31 @@ template < class CK >
     return res;
   }
 
+  template< class CK, class OutputIterator>
+   OutputIterator
+   construct_intersections_2( const typename CK::Circular_arc_2 &c,
+			      const typename CK::Line_arc_2 &l,
+			      OutputIterator res )
+  {
+    return construct_intersections_2<CK>(l,c,res);
+  }
    
+  template< class CK>
+    bool
+    is_vertical(const typename CK::Line_arc_2 &l)
+  {
+    return l.supporting_line().is_vertical();
+  }
+
+   template < class CK, class OutputIterator >
+  OutputIterator
+  make_x_monotone( const typename CK::Line_arc_2 &A,
+		   OutputIterator res )
+  {
+    *res++ = make_object(A);
+    return res;
+  }
+
  } // namespace CircularFunctors 
 } // namespace CGAL
 
