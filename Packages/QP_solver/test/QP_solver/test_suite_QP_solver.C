@@ -146,7 +146,7 @@ void init_tag_names_table();
 bool read_tags(std::ifstream& from, 
 	       std::map<std::string, char>& read_names_table);	
 
-void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
+bool map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	      const std::map<std::string, char>& read_names_table);
 	
 bool insert_name(const std::string& name, const char& value,
@@ -215,6 +215,7 @@ int main( int argc, char** argv) {
     }
   }
 	
+  bool success = true;
   for(int i=3; i<argc || (readFromStdIn && !std::cin.eof()); ++i) {
 
     // read verbosity and pricing-strategy
@@ -240,15 +241,16 @@ int main( int argc, char** argv) {
     } else {
       std::cout << "processing file: " << fileName << "\n";
       read_tags(from, read_names_table);
-      map_tags(from, verbose, pricing_strategy_index,
-	       read_names_table);
+      if (!map_tags(from, verbose, pricing_strategy_index,
+		    read_names_table))
+	success = false;
       from.close();
     }
     if (readFromStdIn)
       read_ws(std::cin);
   }
 	
-  return 0;
+  return success? 0 : 2;
 }
 
 void not_implemented_yet(CGAL::Tag_false)
@@ -657,7 +659,7 @@ bool read_tags(std::ifstream& from,
   }
 }
 
-void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
+bool map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	      const std::map<std::string, char>& read_names_table) {
   int offset;
   std::map<std::string, char>::const_iterator p;
@@ -988,8 +990,8 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
     std::cout << "map_tags: unidentified case" << std::endl;
     success = false;
   }
-  if (!success)
-    exit(-1);
+
+  return success;
 }
 
 void init_tag_names_table() {
