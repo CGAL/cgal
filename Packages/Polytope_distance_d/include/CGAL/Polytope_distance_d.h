@@ -22,47 +22,29 @@
 
 // includes
 // --------
-#ifndef CGAL_OPTIMISATION_BASIC_H
-#  include <CGAL/Optimisation/basic.h>
-#endif
+#include <CGAL/Optimisation/basic.h>
+#include <CGAL/function_objects.h>
 
-#ifndef CGAL_FUNCTION_OBJECTS_H
-#  include <CGAL/function_objects.h>
-#endif
-
-#ifndef CGAL_FUNCTION_OBJECTS_ACCESS_BY_INDEX_H
-#  include <CGAL/_QP_solver/Access_by_index.h>
-#endif
-#ifndef CGAL_JOIN_RANDOM_ACCESS_ITERATOR_H
-#  include <CGAL/_QP_solver/Join_random_access_iterator.h>
-#endif
-#ifndef CGAL_QP_SOLVER_H
-#  include <CGAL/_QP_solver/QP_solver.h>
-#endif
-#ifndef CGAL_JOIN_RANDOM_ACCESS_ITERATOR_H
-#  include <CGAL/_QP_solver/Join_random_access_iterator.h>
-#endif
-#ifndef CGAL_CONST_VALUE_ITERATOR_H
-#  include <CGAL/_QP_solver/Const_value_iterator.h>
-#endif
-#ifndef CGAL_PARTIAL_EXACT_PRICING_H
-#  include <CGAL/_QP_solver/Partial_exact_pricing.h>
-#endif
-#ifndef CGAL_PARTIAL_FILTERED_PRICING_H
-#  include <CGAL/_QP_solver/Partial_filtered_pricing.h>
-#endif
-
-#ifndef CGAL_PROTECT_VECTOR
-#  include <vector>
-#  define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
-#  include <iostream>
-#  define CGAL_PROTECT_IOSTREAM
-#endif
-
+#include <CGAL/QP_solver.h>
+#include <CGAL/QP_partial_filtered_pricing.h>
+#include <CGAL/QP_partial_exact_pricing.h>
 
 CGAL_BEGIN_NAMESPACE
+
+// A functor whose operator(int i) provides access to the i-th element
+// of a random access iterator.
+template < typename RndAccIt, typename ArgType >
+class Access_by_index {
+public:
+  typedef  typename std::iterator_traits<RndAccIt>::value_type result_type;
+
+  Access_by_index(RndAccIt it = RndAccIt()) : a(it) {}
+
+  result_type operator () (ArgType i) const { return a[i]; }
+
+private:
+  RndAccIt     a;
+};
 
 // Class declarations
 // ==================
@@ -138,8 +120,8 @@ class Polytope_distance_d {
     
     typedef  std::vector<int>           Index_vector;
     
-    typedef  CGAL::Access_by_index<typename std::vector<Point>::const_iterator>
-                                        Point_by_index;
+    typedef  CGAL::Access_by_index<typename std::vector<Point>::const_iterator,
+				   int> Point_by_index;
     
     typedef  std::vector<NT>            NT_vector;
     typedef  std::vector<NT_vector>     NT_matrix;
@@ -151,7 +133,7 @@ class Polytope_distance_d {
                                         Point_iterator;
     
     typedef typename Index_vector::const_iterator IVCI;
-    typedef CGAL::Join_random_access_iterator_1< IVCI, Point_by_index >
+    typedef CGAL::Join_input_iterator_1< IVCI, Point_by_index >
                                         Support_point_iterator;
     
     typedef  typename ET_vector::const_iterator
@@ -159,28 +141,27 @@ class Polytope_distance_d {
     
 
     // creation
-    Polytope_distance_d( const Traits&  traits  = Traits(),
-                         int            verbose = 0,
-                         std::ostream&  stream  = std::cout)
-      : tco( traits), d( -1), solver( verbose, stream)
-        {
-            set_pricing_strategy( NT());
-        }
+    Polytope_distance_d( const Traits&  traits  = Traits())
+      : tco( traits), d( -1), solver(0), strategy(0) {}
     
     template < class InputIterator1, class InputIterator2 >
     Polytope_distance_d( InputIterator1 p_first,
                          InputIterator1 p_last,
                          InputIterator2 q_first,
                          InputIterator2 q_last,
-                         const Traits&  traits = Traits(),
-                         int            verbose = 0,
-                         std::ostream&  stream  = std::cout)
-      : tco( traits), solver( verbose, stream)
+                         const Traits&  traits = Traits())
+      : tco( traits), solver(0), strategy(0)
         {
-            set_pricing_strategy( NT());
             set( p_first, p_last, q_first, q_last);
         }
-    
+
+  ~Polytope_distance_d() {    
+    if (solver)
+      delete solver;
+    if (strategy)
+      delete strategy;
+  }
+
     // access to point sets
     int  ambient_dimension( ) const { return d; }
     
@@ -198,7 +179,7 @@ class Polytope_distance_d {
     // access to support points
     int
     number_of_support_points( ) const
-        { return is_finite() ? solver.number_of_basic_variables() : 0; }
+        { return is_finite() ? solver->number_of_basic_variables() : 0; }
     
     int  number_of_support_points_p() const { return p_support_indices.size();}
     int  number_of_support_points_q() const { return q_support_indices.size();}
@@ -244,10 +225,10 @@ class Polytope_distance_d {
     
     // access to squared distance (rational representation)
     ET  squared_distance_numerator  ( ) const
-        { return solver.solution_numerator(); }
+        { return solver->solution_numerator(); }
     
     ET  squared_distance_denominator( ) const
-        { return solver.solution_denominator(); }
+        { return solver->solution_denominator(); }
     
     // access to realizing points and squared distance
     // NOTE: an implicit conversion from ET to RT must be available!
@@ -385,8 +366,7 @@ class Polytope_distance_d {
     const Traits&  traits( ) const { return tco; }
     
 
-  private:
-    
+private:
     Traits                   tco;       // traits class object
     
     Point_vector             p_points;  // points of P
@@ -396,18 +376,15 @@ class Polytope_distance_d {
     ET_vector                p_coords;          // realizing point of P
     ET_vector                q_coords;          // realizing point of Q
     
-    Solver                   solver;    // quadratic programming solver
+    Solver                   *solver;    // quadratic programming solver
+    Pricing_strategy         *strategy;  // ...and its pricing strategy
     
     Index_vector             p_support_indices;
     Index_vector             q_support_indices;
     
     NT_matrix                a_matrix;  // matrix `A' of QP
     
-    typename Solver::Pricing_strategy*  // pricing strategy
-                             strategyP; // of the QP solver
-    
-
-    
+ private:    
     // set dimension of input points
     void
     set_dimension( )
@@ -463,16 +440,16 @@ class Polytope_distance_d {
         typedef  typename QP_rep::A_iterator A_it;
         typedef  typename QP_rep::B_iterator B_it;
         typedef  typename QP_rep::C_iterator C_it;
-        typedef  typename QP_rep::D_iterator D_it;
-        
-        solver.set( number_of_points(), 2, d+2,
-                    A_it( a_matrix.begin()), B_it( 1), C_it( 0),
-                    D_it( signed_pts_it, row_of_d));
-        
-        // solve
-        solver.init();
-        solver.solve();
-    
+        typedef  typename QP_rep::D_iterator D_it; 
+	typedef  typename QP_rep::Row_type_iterator Row_it;
+
+	strategy = pricing_strategy(NT());
+	solver = new Solver(number_of_points(), 2,
+			    A_it( a_matrix.begin()), B_it( 1), C_it( 0),
+			    D_it( signed_pts_it, row_of_d),
+			    Row_it(QP_rep::EQUAL),
+			    *strategy);
+
         // compute support and realizing points
         ET  et_0 = 0;
         int r    = number_of_points_p();
@@ -480,9 +457,9 @@ class Polytope_distance_d {
         q_coords.resize( ambient_dimension()+1);
         std::fill( p_coords.begin(), p_coords.end(), et_0);
         std::fill( q_coords.begin(), q_coords.end(), et_0);
-        for ( i = 0; i < solver.number_of_basic_variables(); ++i) {
-            ET  value = solver.basic_variables_numerator_begin()[ i];
-            int index = solver.basic_variables_index_begin()[ i];
+        for ( i = 0; i < solver->number_of_basic_variables(); ++i) {
+            ET  value = solver->basic_original_variables_numerator_begin()[ i];
+            int index = solver->basic_original_variables_index_begin()[ i];
             if ( index < r) {
                 for ( int j = 0; j < d; ++j) {
                     p_coords[ j]
@@ -499,19 +476,17 @@ class Polytope_distance_d {
                 q_support_indices.push_back( index-r);
             }
         }
-        p_coords[ d] = q_coords[ d] = solver.variables_common_denominator();
+        p_coords[ d] = q_coords[ d] = solver->variables_common_denominator();
     }
     
-    template < class NT >
-    void  set_pricing_strategy( NT)
-        { strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
-          solver.set_pricing_strategy( *strategyP); }
-    
-    #ifndef _MSC_VER
-    void  set_pricing_strategy( ET)
-        { strategyP = new CGAL::Partial_exact_pricing<QP_rep>;
-          solver.set_pricing_strategy( *strategyP); }
-    #endif
+  template < class NT >
+  Pricing_strategy *pricing_strategy( NT) {
+    return new QP_partial_filtered_pricing<QP_rep>;
+  }
+  
+  Pricing_strategy *pricing_strategy( ET) {
+    return new QP_partial_exact_pricing<QP_rep>;
+  }
     
 };
 
@@ -530,9 +505,9 @@ struct QP_rep_signed_point_iterator {
     typedef  pointer                                            Ptr;
 
     // forward operations
-    QP_rep_signed_point_iterator(
-        const PointIterator& it_p = PointIterator(), Dist n_p = 0,
-        const PointIterator& it_q = PointIterator())
+    QP_rep_signed_point_iterator() {}
+    QP_rep_signed_point_iterator(const PointIterator& it_p, Dist n_p,
+				 const PointIterator& it_q)
         : p_it( it_p), q_it( it_q), n( n_p), curr( 0) { }
 
     bool   operator == ( const Self& it) const { return (curr == it.curr);}
@@ -540,7 +515,7 @@ struct QP_rep_signed_point_iterator {
 
     Val    operator *  ( ) const
         { return ( curr < n) ? std::make_pair( *p_it, CGAL::POSITIVE)
-                             : std__make_pair( *q_it, CGAL::NEGATIVE); }
+                             : std::make_pair( *q_it, CGAL::NEGATIVE); }
 
     Self&  operator ++ (    )
                { if ( ++curr <= n) ++p_it; else ++q_it; return *this; }
@@ -639,7 +614,7 @@ public:
     typedef  CGAL::QP_rep_signed_inner_product<
                  NT, Point, Access_coord, Access_dim >
                                     Signed_inner_product;
-    typedef  CGAL::Join_random_access_iterator_1<
+    typedef  CGAL::Join_input_iterator_1<
                  Signed_point_iterator, Signed_inner_product >
                                     Row_of_d;
 
@@ -660,31 +635,34 @@ public:
 
 template < class ET_, class NT_, class Point, class Point_iterator,
            class Access_coord, class Access_dim >
-struct QP_rep_poly_dist_d {
-    typedef  ET_                    ET;
-    typedef  NT_                    NT;
+struct QP_rep_poly_dist_d { 
+  // (possibly inexact) number type for the pricing:
+  typedef  NT_                    NT;
+  
+  // helper types:
+  typedef  std::vector< std::vector<NT> >              NT_matrix;
+  typedef  CGAL::QP_rep_signed_point_iterator< Point, Point_iterator>
+                                                       Signed_point_iterator;
 
-    typedef  std::vector< std::vector<NT> >
-                                        NT_matrix;
-    
-    typedef  CGAL::Join_random_access_iterator_1<
-                 typename NT_matrix::const_iterator,
-                 QP_rep_row_of_a<NT> >  A_iterator;
-    typedef  CGAL::Const_value_iterator<NT>
-                                        B_iterator;
-    typedef  CGAL::Const_value_iterator<NT>
-                                        C_iterator;
-    
-    typedef  CGAL::QP_rep_signed_point_iterator< Point, Point_iterator>
-                                        Signed_point_iterator;
-    typedef  CGAL::Join_random_access_iterator_1<
-                 Signed_point_iterator,
-                 QP_rep_row_of_d< NT, Point, Signed_point_iterator,
-                                  Access_coord, Access_dim > >
-                                        D_iterator;
-    
+  // stuff required by concept QPSolverTraits:
+  typedef  ET_                                         ET;
+  typedef  CGAL::Join_input_iterator_1<
+    typename NT_matrix::const_iterator,
+    QP_rep_row_of_a<NT> >                              A_iterator;
+  typedef  CGAL::Const_oneset_iterator<NT>             B_iterator;
+  typedef  CGAL::Const_oneset_iterator<NT>             C_iterator;
+  typedef  CGAL::Join_input_iterator_1<
+    Signed_point_iterator,
+    QP_rep_row_of_d< NT, Point, Signed_point_iterator,
+		     Access_coord, Access_dim > >      D_iterator;
 
-    typedef  CGAL::Tag_false        Is_lp;
+  enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
+  typedef Const_oneset_iterator<Row_type>    Row_type_iterator;
+
+  typedef Tag_false                          Is_linear;
+  typedef Tag_true                           Is_symmetric;
+  typedef Tag_true                           Has_equalities_only_and_full_rank;
+  typedef Tag_true                           Is_in_standard_form;
 };
 
 // Function declarations
@@ -725,7 +703,7 @@ is_valid( bool verbose, int level) const
 
         // compute normal vector
         ET_vector  normal( d), diff( d);
-        ET  et_0 = 0, den = solver.variables_common_denominator();
+        ET  et_0 = 0, den = solver->variables_common_denominator();
         int i, j;
         for ( j = 0; j < d; ++j) normal[ j] = p_coords[ j] - q_coords[ j];
 

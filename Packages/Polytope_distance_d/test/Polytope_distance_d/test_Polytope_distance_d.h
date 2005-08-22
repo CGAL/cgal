@@ -62,14 +62,14 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
 
     // constructors
     COVER( "default constructor",
-        Poly_dist  pd( traits, verbose, verr.out());
+        Poly_dist  pd( traits);
         assert( pd.is_valid( is_valid_verbose));
         assert( ! pd.is_finite());
     )
 
     COVER( "point set constructor",
         Poly_dist  pd( p_first, p_last, q_first, q_last,
-                       traits, verbose, verr.out());
+                       traits);
         assert( pd.is_valid( is_valid_verbose));
     )
 
