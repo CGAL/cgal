@@ -1014,6 +1014,15 @@ public:
     // Check that the arc endpoints are the same.
     Alg_kernel   ker;
 
+    if(_orient == COLLINEAR)
+    {
+      CGAL_assertion(arc._orient == COLLINEAR);
+      return((ker.equal_2_object() (_source, arc._source) &&
+              ker.equal_2_object() (_target, arc._target)) ||
+              (ker.equal_2_object() (_source, arc._target) &&
+               ker.equal_2_object() (_target, arc._source)));
+    }
+
     if (_orient == arc._orient)
     {
       // Same orientation - the source and target points must be the same.
