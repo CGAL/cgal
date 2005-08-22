@@ -1366,7 +1366,12 @@ expel_artificial_variables_from_basis( )
 	      << "---------------------------------------------" << std::endl;
     }
     
-    //try to pivot the artificials out of the basis 
+    // try to pivot the artificials out of the basis
+    // Note that we do not notify the pricing strategy about variables
+    // leaving the basis, furthermore the pricing strategy does not
+    // know about variables entering the basis.
+    // The partial pricing strategies that keep the set of nonbasic vars
+    // explicitly are synchronized during transition from phaseI to phaseII 
     for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
         if (is_basic(i_)) { 					// is basic
 	    if (has_ineq) {
@@ -1376,7 +1381,7 @@ expel_artificial_variables_from_basis( )
 	    }
 	    
 	    // determine first possible entering variable,
-	    //if there is any
+	    // if there is any
 	    for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
 	        if (!is_basic(j_)) {  				// is nonbasic 
 		    ratio_test_init__A_Cj( A_Cj.begin(), j_, 
