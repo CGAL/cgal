@@ -57,6 +57,69 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	
 end proc;
 
+encodeUbQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+	local m, n, i, j, fd, Dimensions;
+
+	Dimensions := LinearAlgebra[Dimensions];
+	
+	fd:= fopen(cat(fpath, ".data_r"), WRITE);
+	
+
+	m := Dimensions(a)[1]; 
+	n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
+   
+	writeTags(fd, "r", 0, isSymmetric(d),
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+
+
+	fprintf(fd, "%s", "dimensions\n");
+	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
+	fprintf(fd, "%s", "\n");
+	fprintf(fd, "%s", "A\n");
+	writeRatMatrix(fd, a, m, n);
+ 
+
+	if (Dimensions(rel)[1] = m) and (Dimensions(rel)[2] = 1) then
+		fprintf(fd, "%s", "rel\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, rel, m, 1);
+	else
+	        printf("%s", "wrong dimensions in rel\n");
+	end if;
+
+	if (Dimensions(b)[1] = m) and (Dimensions(b)[2] = 1) then
+	        fprintf(fd, "%s", "b\n");
+		#write as row vector
+		writeRatMatrixTransposed(fd, b, m, 1);
+	else
+	        printf("%s", "wrong dimensions in b\n");
+	end if;
+
+	if (Dimensions(c)[1] = 1) and (Dimensions(c)[2] = n) then
+	        fprintf(fd, "%s", "c\n");
+	        writeRatMatrix(fd, c, 1, n);
+	else
+	        printf("%s", "wrong dimensions in c\n");
+	end if;
+
+	if (Dimensions(d)[1] = n) and (Dimensions(d)[2] = n) then
+	        fprintf(fd, "%s", "D\n");
+		writeRatMatrix(fd, d, n, n);
+	else
+	        printf("%s", "wrong dimensions in D\n");
+	end if;
+	
+	writeExplicitBounds(fd, n, fl, l, fu, u);
+	
+	fclose(fd);
+	
+end proc;
+
 encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix, 
 				desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
@@ -104,6 +167,61 @@ encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	else
 	        printf("%s", "wrong dimensions in c\n");
 	end if;
+
+	fclose(fd);
+	
+end proc;
+
+encodeUbLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+                fl::Matrix, l::Matrix, fu::Matrix, u::Matrix, 
+				desc::string, gen_desc::string, fpath::string)
+	local m, n, i, j, fd, Dimensions;
+
+	Dimensions := LinearAlgebra[Dimensions];
+	
+	fd:= fopen(cat(fpath, ".data_r"), WRITE);
+	
+
+	m := Dimensions(a)[1]; 
+	n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
+	    
+	writeTags(fd, "r", 1, 1,
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+		
+	fprintf(fd, "%s", "dimensions\n");
+	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
+	fprintf(fd, "%s", "\n");
+	fprintf(fd, "%s", "A\n");
+	writeRatMatrix(fd, a, m, n);
+ 
+
+	if (Dimensions(rel)[1] = m) and (Dimensions(rel)[2] = 1) then
+		fprintf(fd, "%s", "rel\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, rel, m, 1);
+	else
+	        printf("%s", "wrong dimensions in rel\n");
+	end if;
+
+	if (Dimensions(b)[1] = m) and (Dimensions(b)[2] = 1) then
+	        fprintf(fd, "%s", "b\n");
+		#write as row vector
+		writeRatMatrixTransposed(fd, b, m, 1);
+	else
+	        printf("%s", "wrong dimensions in b\n");
+	end if;
+
+	if (Dimensions(c)[1] = 1) and (Dimensions(c)[2] = n) then
+	        fprintf(fd, "%s", "c\n");
+	        writeRatMatrix(fd, c, 1, n);
+	else
+	        printf("%s", "wrong dimensions in c\n");
+	end if;
+	
+	writeExplicitBounds(fd, n, fl, l, fu, u);
 
 	fclose(fd);
 	
@@ -168,6 +286,68 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	
 end proc;
 
+encodeUbQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+	local m, n, i, j, fd, Dimensions;
+
+	Dimensions := LinearAlgebra[Dimensions];
+	 
+	fd:= fopen(cat(fpath, ".data_f"), WRITE);
+	
+
+	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
+	    
+	writeTags(fd, "f", 0, isSymmetric(d),
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+	    
+	    
+	fprintf(fd, "%s", "dimensions\n");
+	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
+	fprintf(fd, "%s", "\n");
+	fprintf(fd, "%s", "A\n");
+	writeFloatMatrix(fd, a, m, n);
+ 
+	if (Dimensions(rel)[1] = m) and (Dimensions(rel)[2] = 1) then
+	        fprintf(fd, "%s", "rel\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, rel, m, 1);
+	else
+	        printf("%s", "wrong dimensions in rel\n");
+	end if;
+	
+	if (Dimensions(b)[1] = m) and (Dimensions(b)[2] = 1) then
+	        fprintf(fd, "%s", "b\n");
+		#write as row vector
+		writeFloatMatrixTransposed(fd, b, m, 1);
+	else
+	        printf("%s", "wrong dimensions in b\n");
+	end if;
+
+	if (Dimensions(c)[1] = 1) and (Dimensions(c)[2] = n) then
+	        fprintf(fd, "%s", "c\n");
+		writeFloatMatrix(fd, c, 1, n);
+	else
+	        printf("%s", "wrong dimensions in c\n");
+	end if;
+	
+	if (Dimensions(d)[1] = n) and (Dimensions(d)[2] = n) then
+	        fprintf(fd, "%s", "D\n");
+		writeFloatMatrix(fd, d, n, n);
+	else
+	        printf("%s", "wrong dimensions in D\n");
+	end if;
+	
+	writeExplicitBounds(fd, n, fl, l, fu, u);
+	
+	fclose(fd);
+	
+end proc;
+
+
 encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 				desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
@@ -217,6 +397,61 @@ encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	fclose(fd);
 	
 end proc;
+
+
+encodeUbLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+                fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+	local m, n, i, j, fd, Dimensions;
+
+	Dimensions := LinearAlgebra[Dimensions];
+	 
+	fd:= fopen(cat(fpath, ".data_f"), WRITE);
+	
+	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
+
+	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	    
+	writeTags(fd, "f", 1, 1,
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+	    
+	    
+	fprintf(fd, "%s", "dimensions\n");
+	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
+	fprintf(fd, "%s", "\n");
+	fprintf(fd, "%s", "A\n");
+	writeFloatMatrix(fd, a, m, n);
+ 
+	if (Dimensions(rel)[1] = m) and (Dimensions(rel)[2] = 1) then
+	        fprintf(fd, "%s", "rel\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, rel, m, 1);
+	else
+	        printf("%s", "wrong dimensions in rel\n");
+	end if;
+	
+	if (Dimensions(b)[1] = m) and (Dimensions(b)[2] = 1) then
+	        fprintf(fd, "%s", "b\n");
+		#write as row vector
+		writeFloatMatrixTransposed(fd, b, m, 1);
+	else
+	        printf("%s", "wrong dimensions in b\n");
+	end if;
+
+	if (Dimensions(c)[1] = 1) and (Dimensions(c)[2] = n) then
+	        fprintf(fd, "%s", "c\n");
+		writeFloatMatrix(fd, c, 1, n);
+	else
+	        printf("%s", "wrong dimensions in c\n");
+	end if;
+	
+	writeExplicitBounds(fd, n, fl, l, fu, u);
+
+	fclose(fd);
+	
+end proc;
+
 
 
 encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
@@ -277,6 +512,70 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	
 end proc;
 
+
+encodeUbQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+	local m, n, i, j, fd, Dimensions;
+
+	Dimensions := LinearAlgebra[Dimensions];
+	 
+	fd:= fopen(cat(fpath, ".data_i"), WRITE);
+	
+
+	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
+	    
+	writeTags(fd, "i", 0, isSymmetric(d),
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+	    
+	    
+	fprintf(fd, "%s", "dimensions\n");
+	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
+	fprintf(fd, "%s", "\n");
+	fprintf(fd, "%s", "A\n");
+	writeFloatMatrix(fd, a, m, n);
+ 
+	if (Dimensions(rel)[1] = m) and (Dimensions(rel)[2] = 1) then
+	        fprintf(fd, "%s", "rel\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, rel, m, 1);
+	else
+	        printf("%s", "wrong dimensions in rel\n");
+	end if;
+	
+	if (Dimensions(b)[1] = m) and (Dimensions(b)[2] = 1) then
+	        fprintf(fd, "%s", "b\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, b, m, 1);
+	else
+	        printf("%s", "wrong dimensions in b\n");
+	end if;
+
+	if (Dimensions(c)[1] = 1) and (Dimensions(c)[2] = n) then
+	        fprintf(fd, "%s", "c\n");
+		writeIntMatrix(fd, c, 1, n);
+	else
+	        printf("%s", "wrong dimensions in c\n");
+	end if;
+	
+	if (Dimensions(d)[1] = n) and (Dimensions(d)[2] = n) then
+	        fprintf(fd, "%s", "D\n");
+		writeIntMatrix(fd, d, n, n);
+	else
+	        printf("%s", "wrong dimensions in D\n");
+	end if;
+	
+	writeExplicitBounds(fd, n, fl, l, fu, u);
+	
+	fclose(fd);
+	
+end proc;
+
+
+
 encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 				desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
@@ -327,6 +626,62 @@ encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	fclose(fd);
 	
 end proc;
+
+
+encodeUbLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+                fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+	local m, n, i, j, fd, Dimensions;
+
+	Dimensions := LinearAlgebra[Dimensions];
+	 
+	fd:= fopen(cat(fpath, ".data_i"), WRITE);
+	
+
+	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
+	writeDescription(fd, desc);
+	    
+	writeTags(fd, "i", 1, 1,
+		hasEqualitiesOnlyAndFullRank(a, rel, m), 0);
+	    
+	    
+	fprintf(fd, "%s", "dimensions\n");
+	fprintf(fd, "%d%s%d%s", m, " ", n, "\n");
+	fprintf(fd, "%s", "\n");
+	fprintf(fd, "%s", "A\n");
+	writeFloatMatrix(fd, a, m, n);
+ 
+	if (Dimensions(rel)[1] = m) and (Dimensions(rel)[2] = 1) then
+	        fprintf(fd, "%s", "rel\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, rel, m, 1);
+	else
+	        printf("%s", "wrong dimensions in rel\n");
+	end if;
+	
+	if (Dimensions(b)[1] = m) and (Dimensions(b)[2] = 1) then
+	        fprintf(fd, "%s", "b\n");
+		#write as row vector
+		writeIntMatrixTransposed(fd, b, m, 1);
+	else
+	        printf("%s", "wrong dimensions in b\n");
+	end if;
+
+	if (Dimensions(c)[1] = 1) and (Dimensions(c)[2] = n) then
+	        fprintf(fd, "%s", "c\n");
+		writeIntMatrix(fd, c, 1, n);
+	else
+	        printf("%s", "wrong dimensions in c\n");
+	end if;
+	
+	writeExplicitBounds(fd, n, fl, l, fu, u);
+		
+	fclose(fd);
+	
+end proc;
+
 
 
 writeRatMatrix:=proc(fileDesc, matrix, m, n)
@@ -435,15 +790,18 @@ writeIntMatrixTransposed:=proc(fileDesc, matrix, m, n)
 	fprintf(fileDesc, "%s", "\n");
 end proc;
 
-writeTags:=proc(fileDesc, inputDataType, isLinear, isSymmetric, hasEqualitiesOnlyAndFullRank, isInStandardForm) 
+writeTags:=proc(fileDesc, inputDataType, isLinear, isSymmetric,
+        hasEqualitiesOnlyAndFullRank, isInStandardForm) 
 	fprintf(fileDesc, "%s", "tags\n");
 	fprintf(fileDesc, "%s\t\t%s\n", "input_data_type", inputDataType);
 	fprintf(fileDesc, "%s\t\t%d\n", "is_linear", isLinear);
 	fprintf(fileDesc, "%s\t\t%d\n", "is_symmetric", isSymmetric);
-	fprintf(fileDesc, "%s\t%d\n", "has_equalities_only_and_full_rank", hasEqualitiesOnlyAndFullRank);
+	fprintf(fileDesc, "%s\t%d\n", "has_equalities_only_and_full_rank",
+        hasEqualitiesOnlyAndFullRank);
 	fprintf(fileDesc, "%s\t%d\n", "is_in_standard_form", isInStandardForm);
 	fprintf(fileDesc, "\n");
 end proc;
+
 
 writeDescription:=proc(fileDesc, desc)
 	local q, r, i, line;
@@ -458,6 +816,37 @@ writeDescription:=proc(fileDesc, desc)
 	        "\n");
 	fi;
 	fprintf(fileDesc, "%s", "\n");
+end proc;
+
+writeExplicitBounds:=proc(fd, n, fl, l, fu, u)
+
+	if (Dimensions(fl)[1] = 1) and (Dimensions(fl)[2] = n) then
+	        fprintf(fd, "%s", "fl\n");
+		writeIntMatrix(fd, fl, 1, n);
+	else
+	        printf("%s", "wrong dimensions in fl\n");
+	end if;
+
+	if (Dimensions(l)[1] = 1) and (Dimensions(l)[2] = n) then
+	        fprintf(fd, "%s", "l\n");
+		writeIntMatrix(fd, l, 1, n);
+	else
+	        printf("%s", "wrong dimensions in l\n");
+	end if;
+
+	if (Dimensions(fu)[1] = 1) and (Dimensions(fu)[2] = n) then
+	        fprintf(fd, "%s", "fu\n");
+		writeIntMatrix(fd, fu, 1, n);
+	else
+	        printf("%s", "wrong dimensions in fu\n");
+	end if;
+
+	if (Dimensions(u)[1] = 1) and (Dimensions(u)[2] = n) then
+	        fprintf(fd, "%s", "u\n");
+		writeIntMatrix(fd, u, 1, n);
+	else
+	        printf("%s", "wrong dimensions in u\n");
+	end if;
 end proc;
 
 isLinear:=proc(D, n)
