@@ -57,9 +57,18 @@ extensive_parameterization_test_objs = 	\
 
 #Mesh_cutter$(OBJ_EXT) : ../../examples/Parameterization/Mesh_cutter.C
 Mesh_cutter$(OBJ_EXT) :
-	echo Variable CGAL = $(CGAL)
-	echo Variable Package = $(Package)
-	echo Variable Package_Examples = $(Package_Examples)
+	echo '*****'
+	pwd
+	echo '*****'
+	ls -l ..
+	echo '*****'
+	ls -l ../..
+	echo '*****'
+	echo Content of CGAL_INCL_DIR/../examples is:
+	ls $(CGAL_INCL_DIR)/../examples
+	echo '*****'
+	env | sort
+	echo '*****'
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) ../../examples/Parameterization/Mesh_cutter.C
 
 extensive_parameterization_test$(EXE_EXT): $(extensive_parameterization_test_objs)
