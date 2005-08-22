@@ -38,7 +38,7 @@ int main() {
 
 #include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
 #include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
+//#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -68,6 +68,7 @@ int main() {
 #include "trash.xpm"
 #include "get_arc.xpm"
 #include "planar_map_icon.xpm"
+#include "lines_icon.xpm"
 
 #include <CGAL/intersections.h>
 
@@ -80,9 +81,11 @@ int main() {
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
+//#include "variant_reader.h"
 
-
-typedef CGAL::Gmpq                                          NT;
+typedef CGAL::Gmpq                                          NT; 
+//typedef CGAL::Quotient<CGAL::MP_Float> NT;
+//typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>  NT;
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
@@ -96,9 +99,9 @@ typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Curved_k>                  Traits;
+typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits;
 #else
-typedef CGAL::Variant_traits<Curved_k>                  Traits0;
+typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -144,14 +147,16 @@ public:
      for (Pmwx::Halfedge_const_iterator ei = pm().halfedges_begin();
           ei != pm().halfedges_end (); ++ei){
        if(const Line_arc_2* line = boost::get<Line_arc_2>( &(ei->curve()))){
-	 std::cout << " je dessine une ligne verte " << std::endl;
 	 *widget << Segment(Curved_k::Point_2(to_double(line->source().x()),
 					      to_double(line->source().y())),
 			    Curved_k::Point_2(to_double(line->target().x()),
 					      to_double(line->target().y())));
        }
        else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(ei->curve()))){
-	 std::cout << " je dessine un arc vert " << std::endl;
+	// std::cout << arc->source().x() << std::endl
+	//	  << arc->source().y() << std::endl
+	//	  << arc->target().x() << std::endl
+	//	  << arc->target().y() << std::endl;
 	 *widget << *arc;
        }
      }
@@ -191,14 +196,16 @@ public:
     for (ArcContainer::const_iterator cit = arc_container().begin();
          cit != arc_container().end(); ++cit){
       if(const Line_arc_2* line = boost::get<Line_arc_2>( &(*cit))){
-	std::cout << " je dessine une ligne bleu " << std::endl;
 	*widget << Segment(Curved_k::Point_2(to_double(line->source().x()),
 					     to_double(line->source().y())),
 			   Curved_k::Point_2(to_double(line->target().x()),
 					     to_double(line->target().y())));
       }
       else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(*cit))){
-	std::cout << " je dessine un arc bleu " << std::endl;
+//	std::cout << arc->source().x() << std::endl
+//		  << arc->source().y() << std::endl
+//		  << arc->target().x() << std::endl
+//		  << arc->target().y() << std::endl;
 	*widget << *arc;
       }
     }
@@ -299,10 +306,9 @@ public:
             &testlayer, SLOT(stateChanged(int)));
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // the button controlling if we show the planar map
+    // the button controlling if we use circular arcs or line
     QToolButton * line_circle_button =
-                       new QToolButton(QPixmap((const char**)::planar_map_icon),
+                       new QToolButton(QPixmap((const char**)::lines_icon),
                                        "Use Line",
                                        0,
                                        this,
@@ -312,12 +318,7 @@ public:
 
     line_circle_button->setToggleButton(true);
     arc_circle = true;
-    line_circle_button->toggle();
-    connect(line_circle_button, SIGNAL(stateChanged(int)),
-            &testlayer, SLOT(stateChanged(int)));
 
-
-    /////////////////////////////////////////////////////////////////////////////////////
 
 
     // this button clears the content of the arc container and the PMWX.
@@ -345,7 +346,6 @@ public:
     get_arc_layer = new CGAL::Qt_widget_get_arc<Curved_k>;
     get_segment_layer =  new CGAL::Qt_widget_get_segment<Curved_k>;
     widget->attach(get_arc_layer);
-    //widget->attach(get_segment_layer);
     connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
     connect(get_segment_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
   }
@@ -367,14 +367,11 @@ public slots:
     X_monotone_curve_2 v;
     if (arc_circle){
       v = get_arc_layer->get_circular_arc();
-      std::cout << "add arc" << std::endl;
     }
     else{
       v = get_segment_layer->get_line_arc();
-      std::cout << "add line" << std::endl;
     }
     arc_container().push_back(v);
-    //insert(pm(),pl(),arc_container().back());
     insert(pm(),arc_container().back(),pl());
     something_changed = true;
     widget->redraw();
@@ -387,10 +384,8 @@ public slots:
       pm().clear();
       for (ArcContainer::const_iterator it=arc_container().begin();
 	   it != arc_container().end(); ++it) {
-	//insert(pm(),pl(),*it);
 	insert(pm(),*it,pl());
       };
-      //      pm().arr_insert(arc_container().begin(), arc_container().end());
     }
     something_changed = true;
     widget->redraw();
@@ -411,10 +406,7 @@ public slots:
   }
 
   void change_line_circle(){
-    std::cout << "il est passe par ici" << std::endl;
-    std::cout << arc_circle << std::endl;
     arc_circle = ! arc_circle;
-    std::cout << arc_circle << std::endl;
     if(arc_circle){
       widget->detach(get_segment_layer);
       widget->attach(get_arc_layer);
@@ -484,6 +476,7 @@ private slots:
 
     //std::ifstream in(s);
     //CGAL::set_ascii_mode(in);
+    
     //std::istream_iterator<Arc> begin(in), end;
     //ArcContainer arcs(begin, end);
     //arc_container().swap(arcs);
