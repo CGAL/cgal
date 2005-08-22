@@ -35,15 +35,13 @@ typedef Curved_k::Circle_2                          Circle_2;
 typedef Curved_k::Circular_arc_2                    Circular_arc_2;
 typedef Curved_k::Line_arc_2                        Line_arc_2;
 
-//typedef Curved_k::Circular_arc_2                            Arc;
-//typedef Curved_k::Line_arc_2                                Arc;
-typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
+typedef boost::variant< Circular_arc_2, Line_arc_2>        Arc;
 typedef std::vector< Arc> ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Curved_k>                  Traits;
+typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits;
 #else
-typedef CGAL::Variant_traits<Curved_k>                  Traits0;
+typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits0;
 typedef CGAL::Variant_traits_tracer<Traits0>            Traits;
 #endif
 
