@@ -122,11 +122,11 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
         \ccPrecond  All points have the same dimension.}
 
-\begin{ccAdvanced}
-  If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
-  verbose output of the underlying solver for linear programs is
-  written to \ccc{stream}, resp.
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%  If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
+%  verbose output of the underlying solver for linear programs is
+%  written to \ccc{stream}, resp.
+%\end{ccAdvanced}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
@@ -164,10 +164,15 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 \medskip
 \ccGlueBegin
 \ccMemberFunction{ Support_point_iterator  support_points_begin( ) const;}{
-        returns an iterator referring to the first support point of \ccVar.}
+        returns an iterator referring to the first support point of \ccVar.
+\ccPrecond{$ma(P)$ is not degenerate, i.e., \ccc{number_of_support_points()}
+  is at least one.}}
 %
 \ccMemberFunction{ Support_point_iterator  support_points_end( ) const;}{
-        returns the corresponding past-the-end iterator.}
+        returns the corresponding past-the-end iterator.
+\ccPrecond{$ma(P)$ is not degenerate, i.e., \ccc{number_of_support_points()}
+  is at least one.}}
+
 \ccGlueEnd
 
 \medskip
