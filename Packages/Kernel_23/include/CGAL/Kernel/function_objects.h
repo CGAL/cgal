@@ -707,6 +707,17 @@ namespace CommonKernelFunctors {
     operator()(const Segment_2& s) const
     { return s.max(); }
   };
+} //namespace CommonKernelFunctors
+
+
+template < typename K>
+struct Qualified_result_of<CommonKernelFunctors::Construct_max_vertex_2<K>, typename K::Segment_2>
+{
+  typedef typename K::Point_2 const &   type;
+};
+
+
+namespace CommonKernelFunctors {
 
   template <typename K>
   class Construct_min_vertex_2
@@ -727,6 +738,17 @@ namespace CommonKernelFunctors {
     { return s.min(); }
   };
 
+} //namespace CommonKernelFunctors
+
+
+template < typename K>
+struct Qualified_result_of<CommonKernelFunctors::Construct_min_vertex_2<K>, typename K::Segment_2>
+{
+  typedef typename K::Point_2 const &   type;
+};
+
+
+namespace CommonKernelFunctors {
 
   template <typename K>
   class Construct_max_vertex_3
