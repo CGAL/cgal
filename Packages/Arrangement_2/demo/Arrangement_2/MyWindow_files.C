@@ -26,6 +26,7 @@
 #include "forms.h"
 #include "qt_layer.h"
 #include "demo_tab.h"
+#include "Conic_reader.h"
 
 
 
@@ -315,7 +316,12 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       (myBar->currentPage());
     if (clear_flag)
         w_demo_p->m_curves_arr->clear();
-    char dummy[256];
+    typedef Conic_tab_traits::Traits    Conic_traits;
+    Conic_reader<Conic_traits>  reader;
+    std::list<Arr_conic_2>               curve_list;
+    reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
+    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
+    /*char dummy[256];
     Arr_conic_2 cv;
     int count;
     inputFile >> count;
@@ -331,11 +337,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
         w_demo->bbox = curve_bbox;
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
-	}
-	/*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
-	  w_demo_p->empty = true;
-    else 
-      w_demo_p->empty = false;    */
+    }	*/
   }
   
   else if (w_demo->traits_type == POLYLINE_TRAITS)

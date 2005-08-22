@@ -237,7 +237,7 @@ private:
   typedef typename Tab_traits::Walk_point_location     Walk_point_location;
   typedef typename Tab_traits::Lanmarks_point_location Lanmarks_point_location;
 
-  typedef My_observer<Arrangement_2>                   Observer;
+  typedef My_observer<Arrangement_2>                    Observer;
   typedef typename Arrangement_2::Origin_curve_iterator Origin_curve_iterator;
   typedef typename Arrangement_2::Curve_edge_iterator   Curve_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;

@@ -34,7 +34,6 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
-//#include <CGAL/Arrangement_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/IO/Arr_iostream.h>
@@ -106,9 +105,9 @@ public:
 
 template <class Traits>
 class Dcel : 
-  public CGAL::Arr_dcel<CGAL::Arr_vertex_base<typename Traits::Point_2>,
-                        CGAL::Arr_halfedge_base<typename Traits::X_monotone_curve_2>,
-                        Face_with_color> 
+  public CGAL::Arr_dcel_base<CGAL::Arr_vertex_base<typename Traits::Point_2>,
+                             CGAL::Arr_halfedge_base<typename Traits::X_monotone_curve_2>,
+                             Face_with_color> 
 {
 
 public:  
@@ -126,8 +125,6 @@ public:
   Dcel() {}
 };
 
-// forward decleration 
-//class Curve_data;
 
 // Segments: 
 typedef CGAL::Arr_segment_traits_2<Kernel>              Seg_traits; 
@@ -161,28 +158,8 @@ typedef CGAL::Arr_landmarks_point_location<Seg_arr>
 
 
 
-//class Curve_data
-//{ 
-//public:
-//  enum Type {LEAF, INTERNAL}; 
-//  int m_index; 
-//  Type m_type; 
-//  union Pointer
-//  { 
-//    Arr_base_seg_2    *m_curve; 
-//    Arr_xseg_2        *m_x_motonote_curve; 
-//  }m_ptr; 
-//
-//  bool operator== (const Curve_data& ccd) const
-//  {
-//    return (m_index == ccd.m_index && m_type == ccd.m_type);
-//  }
-//}; 
 
 // Polyline
-
-//forward decleration
-//class Curve_pol_data;
 
 typedef CGAL::Arr_polyline_traits_2<Seg_traits>         Pol_traits;
 
@@ -216,29 +193,7 @@ typedef CGAL::Arr_landmarks_point_location<Pol_arr>
   Pol_lanmarks_point_location;
 
 
-//class Curve_pol_data 
-//{ 
-//public:
-//  enum Type {LEAF, INTERNAL}; 
-//  int m_index; 
-//  Type m_type; 
-//  Pol_halfedge_handle halfedge_handle;
-//  union Pointer { 
-//    Arr_base_pol_2 * m_curve; 
-//    Arr_xpol_2* m_x_motonote_curve; 
-//  } m_ptr;
-//
-//   bool operator== (const Curve_pol_data& ccd) const
-//  {
-//    return (m_index == ccd.m_index && m_type == ccd.m_type &&
-//            halfedge_handle == ccd.halfedge_handle);
-//  }
-//};
-
 // Conics
-
-//forward decleration
-//class Curve_conic_data;
 
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
 typedef Nt_traits::Rational                           Rational;
@@ -284,25 +239,7 @@ typedef CGAL::Arr_landmarks_point_location<Conic_arr>
  Conic_lanmarks_point_location;
 
 
-//class Curve_conic_data
-//{ 
-//public:
-//  enum Type {LEAF, INTERNAL}; 
-//  int m_index; 
-//  Type m_type; 
-//  ConicType m_ct; 
-//  Conic_halfedge_handle halfedge_handle;
-//  union Pointer { 
-//    Arr_base_conic_2 * m_curve; 
-//    Arr_xconic_2 * m_x_motonote_curve; 
-//  } m_ptr; 
-//
-//  bool operator== (const Curve_conic_data& ccd) const
-//  {
-//    return (m_index == ccd.m_index && m_type == ccd.m_type &&
-//            m_ct == ccd.m_ct && halfedge_handle == ccd.halfedge_handle);
-//  }
-//};
+
 
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>
