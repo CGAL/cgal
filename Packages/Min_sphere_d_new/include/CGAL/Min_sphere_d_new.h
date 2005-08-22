@@ -442,8 +442,6 @@ private:
     typedef  typename QP_rep::Row_type_iterator Row_it;
     B_it  const_one( 1);
 
-    Row_it a(QP_rep::EQUAL);
-
     strategy = pricing_strategy(NT());
     solver = new Solver(points.size(), 1,
 			A_it( const_one),
