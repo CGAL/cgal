@@ -450,7 +450,7 @@ int main(int argc,char * argv[])
         case 'H' :
             opts.usage(cerr, usage);
             return(EXIT_SUCCESS);
-            break;
+            //break;
 
         default :
             ++errors;
