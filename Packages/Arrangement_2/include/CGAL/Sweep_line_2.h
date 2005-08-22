@@ -849,7 +849,7 @@ _handle_overlap(Event* event,
       //BZBZ 06/07/05
       if(obj_vec.empty())
         return;
-      
+
       overlap_cv = object_cast<X_monotone_curve_2> (obj_vec.front());
     }
     
