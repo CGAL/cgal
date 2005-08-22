@@ -31,15 +31,6 @@
 #include <CGAL/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_partial_exact_pricing.h>
 
-#ifndef CGAL_PROTECT_VECTOR
-#  include <vector>
-#  define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
-#  include <iostream>
-#  define CGAL_PROTECT_IOSTREAM
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 // Class declarations
