@@ -182,8 +182,13 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
 
 
 
+  // clear the result arrangement
+  res.clear();
+
+  //perform the sweep whith overlay visitor
   Visitor visitor(arr1, arr2, res, traits);
-  Sweep_line sweep_object(&visitor);
+  Traits     meta_traits(res.get_traits());
+  Sweep_line sweep_object(&meta_traits, &visitor);
   sweep_object.sweep(arr_curves.begin(),
                      arr_curves.end(),
                      iso_points.begin(),

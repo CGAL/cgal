@@ -190,6 +190,9 @@ public:
   typedef typename Traits::Split_2                  Base_Split_2;
   typedef typename Traits::Construct_min_vertex_2   Base_Construct_min_vertex_2;
   typedef typename Traits::Construct_max_vertex_2   Base_Construct_max_vertex_2;
+  typedef typename Traits::Compare_xy_2             Base_Compare_xy_2;
+  typedef typename Traits::Compare_y_at_x_2         Base_Compare_y_at_x_2;
+  typedef typename Traits::Compare_y_at_x_right_2   Base_Compare_y_at_x_right_2;
   
   typedef Curve_info<Halfedge_handle_red,
                      Halfedge_handle_blue>          Curve_info;
@@ -199,6 +202,16 @@ public:
 
   typedef typename Curve_info::Color                Color;
 
+private:
+
+  Traits*    m_base_traits;
+
+
+
+public:
+
+  Overlay_meta_traits(Traits* base_tr) : m_base_traits(base_tr)
+  {}
 
   // nested class My_X_monotone_curve_2
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
@@ -426,7 +439,7 @@ public:
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object () 
   {
-    return Intersect_2(Traits::intersect_2_object()); 
+    return Intersect_2(m_base_traits->intersect_2_object()); 
   }
 
 
@@ -454,7 +467,7 @@ public:
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object () 
   {
-    return Split_2(Traits::split_2_object());
+    return Split_2(m_base_traits->split_2_object());
   }
 
 
@@ -502,7 +515,7 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
-    return Construct_min_vertex_2(Traits::construct_min_vertex_2_object());
+    return Construct_min_vertex_2(m_base_traits->construct_min_vertex_2_object());
   }
 
 
@@ -550,7 +563,104 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () 
   {
-    return Construct_max_vertex_2(Traits::construct_max_vertex_2_object());
+    return Construct_max_vertex_2(m_base_traits->construct_max_vertex_2_object());
+  }
+
+
+  class Compare_xy_2
+  {
+  private:
+    Base_Compare_xy_2 m_base_cmp_xy;
+
+  public:
+
+    Compare_xy_2(const Base_Compare_xy_2& base):
+        m_base_cmp_xy(base)
+    {}
+
+
+
+    /*!
+     * Get the left endpoint of the x-monotone curve (segment).
+     * \param cv The curve.
+     * \return The left endpoint.
+     */
+    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    {
+      return (m_base_cmp_xy(p1, p2));
+    }
+  };
+
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_xy_2 compare_xy_2_object () 
+  {
+    return Compare_xy_2(m_base_traits->compare_xy_2_object());
+  }
+
+
+  class Compare_y_at_x_2
+  {
+  private:
+    Base_Compare_y_at_x_2 m_base_cmp_y_at_x;
+
+  public:
+
+    Compare_y_at_x_2(const Base_Compare_y_at_x_2& base):
+        m_base_cmp_y_at_x(base)
+    {}
+
+
+
+    /*!
+     * Get the left endpoint of the x-monotone curve (segment).
+     * \param cv The curve.
+     * \return The left endpoint.
+     */
+    Comparison_result operator() (const Point_2 & p,
+                                  const X_monotone_curve_2 & cv) const
+    {
+      return (m_base_cmp_y_at_x(p, cv));
+    }
+  };
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_y_at_x_2 compare_y_at_x_2_object () 
+  {
+    return Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object());
+  }
+
+
+  class Compare_y_at_x_right_2
+  {
+  private:
+    Base_Compare_y_at_x_right_2    m_base_cmp_y_at_x_right;
+
+  public:
+
+    Compare_y_at_x_right_2(const Base_Compare_y_at_x_right_2& base):
+        m_base_cmp_y_at_x_right(base)
+    {}
+
+
+
+    /*!
+     * Get the left endpoint of the x-monotone curve (segment).
+     * \param cv The curve.
+     * \return The left endpoint.
+     */
+     Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2,
+                                  const Point_2& p) const
+    {
+      return (m_base_cmp_y_at_x_right(cv1, cv2, p));
+    }
+  };
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () 
+  {
+    return Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object());
   }
 
   bool  are_same_color(const X_monotone_curve_2& cv1,
