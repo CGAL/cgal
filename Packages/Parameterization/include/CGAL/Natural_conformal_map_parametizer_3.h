@@ -21,13 +21,13 @@
 #ifndef CGAL_NATURAL_CONFORMAL_MAP_PARAMETIZER_3_H
 #define CGAL_NATURAL_CONFORMAL_MAP_PARAMETIZER_3_H
 
-#include <CGAL/Parametizer_3.h>
+#include <CGAL/Parametizer_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 // Class Natural_conformal_map_parametizer_3
-// Model of the Parametizer_3 concept
+// Model of the ParametizerTraits_3 concept
 // Implement Natural Conformal Map parameterization algorithm (Alliez et al)
 // No need to map the surface's border onto a convex polygon
 // but 1 to 1 mapping not guaranteed.
@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <...>
 class Natural_conformal_map_parametizer_3
-    : public Parametizer_3<...>
+    : public Parametizer_traits_3<...>
 {
 // Public stuff
 public:

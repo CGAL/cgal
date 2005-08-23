@@ -107,7 +107,7 @@ typedef Mesh_adaptor_polyhedron_ex                          Mesh_adaptor_polyhed
 typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
 
 // Parametizer for this kind of mesh
-typedef CGAL::Parametizer_3<Mesh_patch_polyhedron>          Parametizer;
+typedef CGAL::Parametizer_traits_3<Mesh_patch_polyhedron>   Parametizer;
 
 // Type describing a border or seam as a vertex list
 typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
@@ -231,12 +231,12 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 template<class MeshAdaptor_3,       // 3D surface
          class SparseLinearAlgebraTraits_d>
                                     // Traits class to solve a sparse linear system
-typename CGAL::Parametizer_3<MeshAdaptor_3>::Error_code
+typename CGAL::Parametizer_traits_3<MeshAdaptor_3>::Error_code
 parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
              const char *type,      // type of parameterization (see usage)
              const char *boundary)  // type of boundary parameterization (see usage)
 {
-    typename CGAL::Parametizer_3<MeshAdaptor_3>::Error_code err;
+    typename CGAL::Parametizer_traits_3<MeshAdaptor_3>::Error_code err;
 
     if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
     {
@@ -331,7 +331,7 @@ parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
     else
     {
         fprintf(stderr, "\nFATAL ERROR: invalid parameters combination %s + %s\n", type, boundary);
-        err = CGAL::Parametizer_3<MeshAdaptor_3>::ERROR_WRONG_PARAMETER;
+        err = CGAL::Parametizer_traits_3<MeshAdaptor_3>::ERROR_WRONG_PARAMETER;
     }
 
     return err;

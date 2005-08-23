@@ -36,7 +36,7 @@ class BorderParametizer_3
 // Public types
 public:
     typedef ... Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
+    typedef typename Parametizer_traits_3<Adaptor>::ErrorCode
                                             ErrorCode;
 
 // Public operations

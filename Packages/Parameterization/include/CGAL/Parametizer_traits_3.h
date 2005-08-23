@@ -27,10 +27,11 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Parametizer_3
-// Base class and concept for parameterization methods
+// Class Parametizer_traits_3
+// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class)
+// Base class of all parameterization methods
 template<class MeshAdaptor_3>       // 3D surface
-class Parametizer_3
+class Parametizer_traits_3
 {
 // Public types
 public:
@@ -83,7 +84,7 @@ public:
 // Public operations
 public:
     // Destructor of base class should be virtual
-    virtual ~Parametizer_3() {}
+    virtual ~Parametizer_traits_3() {}
 
     // Default constructor, copy constructor and operator =() are fine
 

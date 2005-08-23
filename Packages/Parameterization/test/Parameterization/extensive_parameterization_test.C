@@ -77,7 +77,7 @@ typedef Mesh_adaptor_polyhedron_ex                          Mesh_adaptor_polyhed
 typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
 
 // Parametizer for this kind of mesh
-typedef CGAL::Parametizer_3<Mesh_patch_polyhedron>          Parametizer;
+typedef CGAL::Parametizer_traits_3<Mesh_patch_polyhedron>   Parametizer;
 
 // Type describing a border or seam as a vertex list
 typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;

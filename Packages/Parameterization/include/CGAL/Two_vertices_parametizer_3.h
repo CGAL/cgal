@@ -22,7 +22,7 @@
 #define CGAL_TWO_VERTICES_PARAMETIZER_3_H_INCLUDED
 
 #include <CGAL/parameterization_assertions.h>
-#include <CGAL/Parametizer_3.h>
+#include <CGAL/Parametizer_traits_3.h>
 
 #include <cfloat>
 #include <climits>
@@ -55,7 +55,7 @@ class Two_vertices_parametizer_3
 public:
     // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::Error_code
+    typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
@@ -108,7 +108,7 @@ public:
 // Return false on error
 template<class Adaptor>
 inline
-typename Parametizer_3<Adaptor>::Error_code
+typename Parametizer_traits_3<Adaptor>::Error_code
 Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     Vertex_iterator it;
@@ -119,7 +119,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
     {
         std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
-        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+        return Parametizer_traits_3<Adaptor>::ERROR_INVALID_BOUNDARY;
     }
 
     std::cerr << "  map 2 vertices..." << std::endl;
@@ -258,7 +258,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 
     std::cerr << "    done" << std::endl;
 
-    return Parametizer_3<Adaptor>::OK;
+    return Parametizer_traits_3<Adaptor>::OK;
 }
 
 

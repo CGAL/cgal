@@ -24,7 +24,7 @@
 #include <CGAL/circulator.h>
 #include <OpenNL/linear_solver.h>
 
-#include <CGAL/Parametizer_3.h>
+#include <CGAL/Parametizer_traits_3.h>
 #include <CGAL/Circular_border_parametizer_3.h>
 #include <CGAL/Mesh_adaptor_feature_extractor.h>
 #include <CGAL/parameterization_assertions.h>
@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 // ------------------------------------------------------------------------------------
 
 // Class Fixed_border_parametizer_3
-// Model of the Parametizer_3 concept.
+// Model of the ParametizerTraits_3 concept.
 //
 // Base class of fixed border parameterization methods (Tutte, Floater, ...)
 // 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
@@ -54,13 +54,14 @@ template
                 = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
 >
 class Fixed_border_parametizer_3
-    : public Parametizer_3<MeshAdaptor_3>
+    : public Parametizer_traits_3<MeshAdaptor_3>
 {
 // Private types
 private:
 
     // Superclass
-    typedef Parametizer_3<MeshAdaptor_3>    Base;
+    typedef Parametizer_traits_3<MeshAdaptor_3>    
+                                            Base;
 
 // Public types
 public:
@@ -218,7 +219,7 @@ private:
 // * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::Error_code
+typename Parametizer_traits_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor* mesh)
 {
@@ -317,7 +318,7 @@ parameterize(Adaptor* mesh)
 // * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::Error_code
+typename Parametizer_traits_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(Adaptor* mesh)
 {
@@ -421,7 +422,7 @@ initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
 // * line i of A must contain only zeros
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::Error_code
+typename Parametizer_traits_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix* A,
                              Vector* Bu,
@@ -509,7 +510,7 @@ set_mesh_uv_from_system(Adaptor* mesh,
 // * 3D -> 2D mapping is 1 to 1
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::Error_code
+typename Parametizer_traits_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_postconditions(const Adaptor& mesh,
                                   const Matrix& A,

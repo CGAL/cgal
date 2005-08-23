@@ -54,14 +54,14 @@
 // ----------------------------------------------------------------------------
 
 // CGAL kernel
-typedef CGAL::Cartesian<double>                         Kernel;
+typedef CGAL::Cartesian<double>                             Kernel;
 
 // Mesh true type and parameterization adaptors
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+typedef CGAL::Polyhedron_3<Kernel>                          Polyhedron;
+typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>         Mesh_adaptor_polyhedron;
 
 // Parametizers base class for this kind of mesh
-typedef CGAL::Parametizer_3<Mesh_adaptor_polyhedron>    Parametizer;
+typedef CGAL::Parametizer_traits_3<Mesh_adaptor_polyhedron> Parametizer;
 
 
 // ----------------------------------------------------------------------------

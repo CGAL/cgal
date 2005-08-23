@@ -197,7 +197,7 @@
 				RelativePath="..\..\include\Cgal\parameterization_assertions.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Parametizer_traits_3.h">
 			</File>
 		</Filter>
 		<Filter

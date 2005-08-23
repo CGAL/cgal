@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Barycentric_mapping_parametizer_3
-// Model of the Parametizer_3 concept
+// Model of the ParametizerTraits_3 concept
 // Implement Tutte's barycentric mapping
 // 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon
 
@@ -61,7 +61,7 @@ public:
     // Export Mesh_Adaptor_3, BorderParametizer_3
     // and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::Error_code
+    typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
