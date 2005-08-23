@@ -11,7 +11,7 @@
 
 #include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
 #include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
+//#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
 
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel.h>
