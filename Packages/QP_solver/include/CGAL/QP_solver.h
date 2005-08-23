@@ -181,10 +181,17 @@ private:
     typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
                                         A_row_by_index_iterator;
 
-    typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric >
+    typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, ET >
                                         D_pairwise_accessor;
-    typedef  Join_input_iterator_1< Index_const_iterator, D_pairwise_accessor >
+    typedef  Join_input_iterator_1< Index_const_iterator,
+                                        D_pairwise_accessor >
                                         D_pairwise_iterator;
+
+    typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, D_entry >
+                                        D_pairwise_accessor_inexact;
+    typedef  Join_input_iterator_1< Index_const_iterator, 
+                                        D_pairwise_accessor_inexact >
+                                        D_pairwise_iterator_inexact;
 
     // access to special artificial column by basic constraint index
     typedef  QP_vector_accessor< typename S_art::const_iterator, false, false>
@@ -426,6 +433,9 @@ public:
 
     // access to current solution
     ET  solution_numerator( ) const;
+
+    // access to current solution
+    ET  solution_denominator( ) const { return d*d; }
     
     Quotient<ET>  solution( ) const
         { return Quotient<ET>( solution_numerator(), d*d); }
@@ -840,8 +850,8 @@ public: // only the pricing strategies (including user-defined ones
     {
 	// ( D_Bj^T + D_jB) * x_B
 	mu_j += inv_M_B.inner_product_x( x_it,
-					 D_pairwise_iterator( B_O.begin(),
-					     D_pairwise_accessor( qp_D, j)));
+				 D_pairwise_iterator_inexact( B_O.begin(),
+				     D_pairwise_accessor_inexact( qp_D, j)));
     }
 
     template < class NT, class It >  inline                     // no ineq.

@@ -58,7 +58,7 @@ template < class MatrixIt,
            bool check_2nd_lower = false, bool check_2nd_upper = false >
 class QP_matrix_accessor;
 
-template < class MatrixIt, class IsSymmetric >
+template < class MatrixIt, class IsSymmetric, typename ET >
 class QP_matrix_pairwise_accessor;
 
 
@@ -151,20 +151,13 @@ class QP_matrix_accessor {
 // ----------------------------
 // QP_matrix_pairwise_accessor
 // ----------------------------
-template < class MatrixIt,class IsSymmetric >
-class QP_matrix_pairwise_accessor : public std::unary_function<
-  int, typename std::iterator_traits<
-  typename std::iterator_traits<MatrixIt>::value_type>::value_type> {
-  
+template < class MatrixIt,class IsSymmetric, typename ResultType >
+class QP_matrix_pairwise_accessor {
   typedef  typename std::iterator_traits<MatrixIt>::value_type  VectorIt;
   
 public:
-  typedef typename
-  std::unary_function<
-    int, typename std::iterator_traits<
-    typename std::iterator_traits
-  <MatrixIt>::value_type>::value_type>::result_type
-  result_type;
+  typedef int        argument_type;
+  typedef ResultType result_type;
   
   // The following default constructor is needed to make it possible
   // to use QP_matrix_pairwise_accessor with CGAL's Join_input_iterator_1
@@ -193,20 +186,27 @@ public:
     // violations when compiled with GCC using -D_GLIBCXX_DEBUG.)
   }
   
-  result_type  operator () ( int c) const
+  ResultType operator () ( int c) const
   {
     return entry_pair( c, IsSymmetric());
   }
   
-  result_type  entry_pair( int c, Tag_true ) const           // symmetric
-  { return v[ c] * result_type( 2); }
+  ResultType entry_pair( int c, Tag_true ) const           // symmetric
+  { return ResultType(v[ c]) * 2; }
   
-  result_type  entry_pair( int c, Tag_false) const           // not symmetric
+  ResultType entry_pair( int c, Tag_false) const           // not symmetric
   { 
     // TEMPORARILY:
-    std::cout << "m[r][c]=" << m[r][c] << ", m[c][r]=" << m[c][r]
+    typedef typename std::iterator_traits<
+      typename std::iterator_traits<MatrixIt>::value_type>::value_type IT;
+    const IT first = m[r][c];
+    const IT second = m[c][r];
+    std::cout << "first=" << first << ", second=" << second
+	      << ", sum=" <<  (first + second)
+	      << ", m[r][c]=" << m[r][c] << ", m[c][r]=" << m[c][r]
 	      << ", " << "sum=" << (m[ r][ c] + m[ c][ r]) << std::endl;
-    return m[ r][ c] + m[ c][ r];	}
+    return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
+  }
   
 private:
   MatrixIt           m;
