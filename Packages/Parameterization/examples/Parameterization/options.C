@@ -41,7 +41,7 @@ extern "C" {
 }
 
 // LS 08/2005: removed unused variable ident
-static const char ident[] = "@(#)Options  1.05" ;
+//static const char ident[] = "@(#)Options  1.05" ;
 
    // I need a portable version of "tolower" that does NOT modify
    // non-uppercase characters.
