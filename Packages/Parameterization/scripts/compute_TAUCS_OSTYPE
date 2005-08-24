@@ -1,8 +1,13 @@
 #!/bin/sh
 #
-# LS 08/2005:
-# 	Figure out TAUCS OSTYPE and print it
-#	See $TAUCSROOT/configure
+# ============================================================================
+# $Source$
+# $Revision$
+# $Name$
+#
+# Author(s): Laurent Saboret and Pierre Alliez, from $TAUCSROOT/configure
+# Purpose: Figure out TAUCS OSTYPE and print it
+# ============================================================================
 
 # In most cases it is set automatically before
 # the user's shell begins, but sometimes it is
