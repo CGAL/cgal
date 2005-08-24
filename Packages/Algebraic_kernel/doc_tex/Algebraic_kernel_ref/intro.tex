@@ -1,0 +1,83 @@
+\chapter{Algebraic Kernel}
+
+\textbf{Submission - Monique - with Sylvain's help...}
+
+\begin{ccAdvanced}
+As in Curved-kernel, I use the ``Advanced'' environment in this
+document to distinguish between my current submission to the CGAL
+editorial board and plans for the future, related to ACS. The
+``Advanced'' parts will disappear if/when this is released.
+\end{ccAdvanced}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Concepts}
+
+\footnote{Same big question as for curved-kernel. Should the kernel here
+be described as a concept or a class?}
+
+\ccRefConceptPage{AlgebraicKernel_2_2}\\
+\ccRefConceptPage{AlgebraicKernel_2_2::RootOf_2}\\
+\ccRefConceptPage{Algebraic_kernel_2_2::PolynomialCircle_2_2}
+
+\begin{ccAdvanced}
+\ccRefConceptPage{AlgebraicKernel_4_2}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::RootOf_4}\\
+\ccRefConceptPage{Algebraic_kernel_4_2::Polynomial_2_2}
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+Remark about the suffix \ccc{_d_v}: \ccc{_d} stands 
+for the degree of the polynomials and the algebraic numbers, and
+\ccc{_v} stands for the number of variables, which is analogous to the
+dimension for CGAL geometric objects. I had already mentioned this in an
+earlier version of this document (presented at the CGAL meeting at
+INRIA in march 05), and it is consistent with what Menelaos proposed
+later (CGAL meeting in Pisa in june 05) for a hierarchy of algebraic kernels.
+\end{ccAdvanced}
+
+	\subsubsection*{Functors} 
+
+\ccRefConceptPage{AlgebraicKernel_2_2::ConstructPolynomialCircle_2_2}\\
+
+\ccRefConceptPage{AlgebraicKernel_2_2::Solve}\\
+
+\begin{ccAdvanced}
+\ccRefConceptPage{AlgebraicKernel_4_2::ConstructPolynomial_2_2}
+
+\ccRefConceptPage{AlgebraicKernel_4_2::Solve}
+\end{ccAdvanced}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Classes}
+
+\footnote{how does the linking work when concepts and classes have the same name...? example \ccc{Polynomial_2_2}}
+
+\ccRefIdfierPage{CGAL::Polynomial_for_circles_2_2<FT>}
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}
+
+\begin{ccAdvanced}
+\ccRefIdfierPage{CGAL::Root_of_4<RT>}
+
+\ccRefIdfierPage{CGAL::Root_of_traits_4<RT>}
+\end{ccAdvanced}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Functions}
+
+	\subsubsection*{Predicates}
+\ccRefIdfierPage{CGAL::compare_x}\\
+\ccRefIdfierPage{CGAL::compare_y}\\
+\ccRefIdfierPage{CGAL::compare_xy}
+
+	\subsubsection*{Constructions}
+
+\ccRefIdfierPage{CGAL::make_root_of_2}
+
+\ccRefIdfierPage{CGAL::solve}
+
+\begin{ccAdvanced}
+\ccRefIdfierPage{CGAL::make_root_of_4}
+\end{ccAdvanced}
