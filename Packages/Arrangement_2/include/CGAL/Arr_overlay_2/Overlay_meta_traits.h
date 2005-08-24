@@ -357,7 +357,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi) const
+                               OutputIterator oi)
     {
       if (cv1.get_color() == cv2.get_color())
         return (oi); // the curves are disjoint-interior because they
