@@ -14,7 +14,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   typedef std::vector<CGAL::Object > solutions_container;
 
   solutions_container solutions;
-  CGAL::construct_intersections_2<CK>
+  CGAL::intersect_2<CK>
 	( c1, c2, std::back_inserter(solutions) );
   typename solutions_container::iterator it = solutions.begin();
 
@@ -56,7 +56,7 @@ namespace CircularFunctors {
 
   template< class CK, class OutputIterator>
   OutputIterator
-  construct_intersections_2( const typename CK::Circle_2 & c1,
+  intersect_2( const typename CK::Circle_2 & c1,
 			     const typename CK::Circle_2 & c2,
 			     OutputIterator res )
   {

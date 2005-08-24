@@ -303,7 +303,7 @@ class Do_overlap_2
 
 
   template < class HK >
-  class Construct_intersections_2
+  class Intersect_2
   {
     public:
 
@@ -315,7 +315,7 @@ class Do_overlap_2
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle & c1, const Circle & c2, OutputIterator res)
-      { return CK().construct_intersections_2_object()(c1,c2,res); }
+      { return CK().intersect_2_object()(c1,c2,res); }
 
      template < class OutputIterator >
     OutputIterator
@@ -325,7 +325,7 @@ class Do_overlap_2
 
 	std::vector<Object> vec;
 	
-	CK().construct_intersections_2_object()(c1.arc(),c2.arc(),std::back_inserter(vec)); 
+	CK().intersect_2_object()(c1.arc(),c2.arc(),std::back_inserter(vec)); 
 
  	for(unsigned i=0; i<vec.size() ; i++)
 	{

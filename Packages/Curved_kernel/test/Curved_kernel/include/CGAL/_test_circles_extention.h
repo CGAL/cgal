@@ -22,9 +22,9 @@ void _test_circle_bbox(CK ck)
   typedef typename CK::Circular_arc_2              Circular_arc_2;
   typedef typename CK::Point_2                     Point_2;
   typedef typename CK::Line_2                      Line_2;
-  typedef typename CK::Circular_arc_endpoint_2     Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
   typedef typename CK::Construct_circle_2          Construct_circle_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+  typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
   typedef typename CK::Split_2                     Split_2;  
   typedef typename CK::Get_equation                Get_equation;
@@ -59,8 +59,8 @@ void _test_circle_bbox(CK ck)
     CGAL::Bbox_2 box2 = arc2.bbox();
     bool box_overlap = do_overlap(box1, box2);
     
-    Construct_intersections_2 theConstruct_intersect_2 
-      = ck.construct_intersections_2_object();
+    Intersect_2 theConstruct_intersect_2 
+      = ck.intersect_2_object();
     std::vector< CGAL::Object > 
       vector_for_intersection_1;
     theConstruct_intersect_2(arc1, 
@@ -83,9 +83,9 @@ void _test_circle_bbox(CK ck)
     typedef typename CK::Circular_arc_2              Circular_arc_2;
     typedef typename CK::Point_2                     Point_2;
     typedef typename CK::Line_2                      Line_2;
-    typedef typename CK::Circular_arc_endpoint_2     Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename CK::Construct_circle_2          Construct_circle_2;
-    typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+    typedef typename CK::Intersect_2   Intersect_2;
     typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
     typedef typename CK::Split_2                     Split_2;  
     typedef typename CK::Get_equation                Get_equation;

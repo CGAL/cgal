@@ -22,11 +22,11 @@ construct_circle_2(const typename CK::Polynomial_for_circles_2_2 & eq)
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-construct_intersections_2( const typename CK::Circle_2 & c1,
+intersect_2( const typename CK::Circle_2 & c1,
 			   const typename CK::Circle_2 & c2,
 			   OutputIterator res )
 {
-  return CK().construct_intersections_2_object()(c1,c2,res);
+  return CK().intersect_2_object()(c1,c2,res);
 }
 
 } // namespace CGAL

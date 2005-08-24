@@ -97,8 +97,8 @@ struct Curved_kernel
                               In_range_2;
   typedef CircularFunctors::Make_x_monotone_2<Self>
                               Make_x_monotone_2;
-  typedef CircularFunctors::Construct_intersections_2<Self>
-                              Construct_intersections_2;
+  typedef CircularFunctors::Intersect_2<Self>
+                              Intersect_2;
   typedef CircularFunctors::Split_2<Self>
                               Split_2;
   typedef CircularFunctors::Construct_circular_arc_2<Self>
@@ -178,9 +178,9 @@ struct Curved_kernel
   make_x_monotone_2_object() const
   { return Make_x_monotone_2(); }
 
-  Construct_intersections_2
-  construct_intersections_2_object() const
-    { return Construct_intersections_2(); }
+  Intersect_2
+  intersect_2_object() const
+    { return Intersect_2(); }
 
 
   Split_2

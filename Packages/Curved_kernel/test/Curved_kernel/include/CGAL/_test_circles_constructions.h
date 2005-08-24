@@ -22,9 +22,9 @@ void _test_circle_construct(CK ck)
   typedef typename CK::Circular_arc_2              Circular_arc_2;
   typedef typename CK::Point_2                     Point_2;
   typedef typename CK::Line_2                      Line_2;
-  typedef typename CK::Circular_arc_endpoint_2     Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
   typedef typename CK::Construct_circle_2          Construct_circle_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+  typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
   typedef typename CK::Split_2                     Split_2;  
   typedef typename CK::Get_equation                Get_equation;
@@ -69,8 +69,8 @@ void _test_circle_construct(CK ck)
 
   //Constuct_intersections_2 with 2 intersection's points
   std::cout << std::endl << "construct_intersection_2" << std::endl;
-  Construct_intersections_2 theConstruct_intersect_2 
-    = ck.construct_intersections_2_object();
+  Intersect_2 theConstruct_intersect_2 
+    = ck.intersect_2_object();
   int center_circ_intersection_2_1_x = theRandom.get_int(random_min, random_max);
   int center_circ_intersection_2_1_y = theRandom.get_int(random_min, random_max);
   int circ_intersection_2_1_r = theRandom.get_int(1, random_max);
@@ -92,12 +92,12 @@ void _test_circle_construct(CK ck)
 			   circ_intersections_2_2,
 			   std::back_inserter(vector_for_intersection_1));
   // there are 2 intersection's points
-  std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+  std::pair<Circular_arc_point_2, std::size_t> the_pair;
   assign(the_pair, vector_for_intersection_1[0]);
-  Circular_arc_endpoint_2 first = the_pair.first;
+  Circular_arc_point_2 first = the_pair.first;
   std::cout << first << std::endl;
   assign(the_pair, vector_for_intersection_1[1]);
-  Circular_arc_endpoint_2 second = the_pair.first;
+  Circular_arc_point_2 second = the_pair.first;
   std::cout << second << std::endl;
  // assert((first.is_left() && !second.is_left()) 
 //	 || (!first.is_left() && second.is_left()));
@@ -111,11 +111,11 @@ void _test_circle_construct(CK ck)
   Circle_2 circ_intersections_2_3(center_circ_intersections_2_3,
 				  circ_intersection_2_1_r 
 				  * circ_intersection_2_1_r);
-  Circular_arc_endpoint_2 the_intersection_point_1 =
+  Circular_arc_point_2 the_intersection_point_1 =
           CGAL::circle_intersect<CK>(circ_intersections_2_1,
 				     circ_intersections_2_3,
 				     true);
-  Circular_arc_endpoint_2 the_intersection_point_2 =
+  Circular_arc_point_2 the_intersection_point_2 =
           CGAL::circle_intersect<CK>(circ_intersections_2_1,
 				     circ_intersections_2_3,
 				     false); 
@@ -733,7 +733,7 @@ void _test_circle_construct(CK ck)
 			       theLine_2_horizontal,true,
 			       theLine_2_horizontal, false);
   //p1 is lefter and lower than p2
-  Circular_arc_endpoint_2 circ1_arc_end_p1 =
+  Circular_arc_point_2 circ1_arc_end_p1 =
            CGAL::circle_intersect<CK>(circ1, circ1_low_right, true);
   Split_2 theSplit_2 = ck.split_2_object();
   Circular_arc_2 circ_arc_split_1;
@@ -746,7 +746,7 @@ void _test_circle_construct(CK ck)
   assert(circ1_arc_low.target() == circ_arc_split_2.target());
 
   //We used a point created without the support circle
-  Circular_arc_endpoint_2 circ1_arc_end_p2 =
+  Circular_arc_point_2 circ1_arc_end_p2 =
              CGAL::circle_intersect<CK>(circ1_low_left, circ1_low_right, true);
   theSplit_2(circ1_arc_low, circ1_arc_end_p2,
 	     circ_arc_split_1, circ_arc_split_2);

@@ -180,7 +180,7 @@ public:
       CGAL_PROFILER(__FUNCTION__);
       CGAL_DEBUG(2, c1.id() << ", " << c2.id());
       std::vector<CGAL::Object> ret;
-      t->traits().construct_intersections_2_object()(c1, c2,
+      t->traits().intersect_2_object()(c1, c2,
                                                    std::back_inserter(ret));
       
       if (2 <= debug_level)

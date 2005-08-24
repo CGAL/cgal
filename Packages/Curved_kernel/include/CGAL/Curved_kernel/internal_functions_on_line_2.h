@@ -24,7 +24,7 @@ namespace LinearFunctors {
 
   template< class CK, class OutputIterator>
     OutputIterator
-    construct_intersections_2( const typename CK::Line_2 & l,
+    intersect_2( const typename CK::Line_2 & l,
 			       const typename CK::Circle_2 & c,
 			       OutputIterator res )
   {

@@ -52,7 +52,7 @@ public:
   typedef typename CurvedKernel::Equal_2               Equal_2;
   typedef typename CurvedKernel::Make_x_monotone_2     Make_x_monotone_2;
   typedef typename CurvedKernel::Split_2               Split_2;
-  typedef typename CurvedKernel::Construct_intersections_2 Intersect_2;
+  typedef typename CurvedKernel::Intersect_2 Intersect_2;
 
   class Construct_min_vertex_2
   {
@@ -114,7 +114,7 @@ public:
   { return ck.split_2_object(); }
 
   Intersect_2 intersect_2_object() const
-    { return ck.construct_intersections_2_object(); }
+    { return ck.intersect_2_object(); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
     { return Construct_min_vertex_2(); }

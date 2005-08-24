@@ -238,7 +238,7 @@ namespace CGAL {
 
     
     template <class CurvedKernel, class Arc1, class Arc2>
-    class Construct_intersections_2
+    class Intersect_2
     {
     public:
     typedef typename CurvedKernel::Circular_arc_point_2      Circular_arc_point_2;
@@ -252,13 +252,13 @@ namespace CGAL {
 	if ( const Arc1* arc1 = boost::get<Arc1>( &c1 ) ){
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CGAL::CircularFunctors::construct_intersections_2<CurvedKernel>(*arc1,*arc2,  std::back_inserter(container));
+	    CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1,*arc2,  std::back_inserter(container));
 	    object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	    return res;
 	  }
 	  else if ( const Arc2* arc2 = boost::get<Arc2>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CGAL::CircularFunctors::construct_intersections_2<CurvedKernel>(*arc1, *arc2, std::back_inserter(container));
+	    CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1, *arc2, std::back_inserter(container));
 	    object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	    return res;
 	  }
@@ -267,13 +267,13 @@ namespace CGAL {
 	  const Arc2* arc1 = boost::get<Arc2>( &c1 );
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CGAL::CircularFunctors::construct_intersections_2<CurvedKernel>(*arc1, *arc2,  std::back_inserter(container));
+	    CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1, *arc2,  std::back_inserter(container));
 	    object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	    return res;
 	  }
 	  const Arc2* arc2 = boost::get<Arc2>( &c2 );
 	  std::vector<CGAL::Object> container;
-	  CGAL::CircularFunctors::construct_intersections_2<CurvedKernel>(*arc1, *arc2,  std::back_inserter(container));
+	  CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1, *arc2,  std::back_inserter(container));
 	  object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	  return res;
 	}
@@ -449,7 +449,7 @@ namespace CGAL {
     typedef VariantFunctors::Equal_2<CurvedKernel, Arc1, Arc2>               Equal_2;
     typedef VariantFunctors::Make_x_monotone_2<CurvedKernel, Arc1, Arc2>     Make_x_monotone_2;
     typedef VariantFunctors::Split_2<CurvedKernel, Arc1, Arc2>               Split_2;
-    typedef VariantFunctors::Construct_intersections_2<CurvedKernel, Arc1, Arc2> Intersect_2;
+    typedef VariantFunctors::Intersect_2<CurvedKernel, Arc1, Arc2> Intersect_2;
 
   
  Compare_x_2 compare_x_2_object() const

@@ -26,7 +26,7 @@ void _test_circle_predicat(CK ck)
   typedef typename CK::Compare_x_2             Compare_x_2;
   typedef typename CK::Compare_y_2             Compare_y_2;
   typedef typename CK::Compare_xy_2            Compare_xy_2;
-  typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Compare_y_to_right_2    Compare_y_to_right_2;
   typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
   typedef typename CK::Equal_2                 Equal_2;
@@ -60,9 +60,9 @@ void _test_circle_predicat(CK ck)
   Circle_2 circ1_low_right(center1_low_right, circ1_r * circ1_r);
 
   //p1 is lefter and lower than que p2
-  Circular_arc_endpoint_2 circ1_arc_end_p1 =
+  Circular_arc_point_2 circ1_arc_end_p1 =
            CGAL::circle_intersect<CK>(circ1, circ1_low_right, true);
-  Circular_arc_endpoint_2 circ1_arc_end_p2 =
+  Circular_arc_point_2 circ1_arc_end_p2 =
            CGAL::circle_intersect<CK>(circ1, circ1_low_right, false);
 
   assert(theCompare_x_2(circ1_arc_end_p1,circ1_arc_end_p2 )== CGAL::SMALLER);
@@ -82,7 +82,7 @@ void _test_circle_predicat(CK ck)
   Circle_2 circ1_high(center1_high, circ1_r * circ1_r);
 
   //p3 is in the quarter superior left
-  Circular_arc_endpoint_2 circ1_arc_end_p3 =
+  Circular_arc_point_2 circ1_arc_end_p3 =
            CGAL::circle_intersect<CK>(circ1, circ1_high, true);
   
   assert(theCompare_x_2(circ1_arc_end_p3, circ1_arc_end_p1 )== CGAL::SMALLER);
@@ -127,7 +127,7 @@ void _test_circle_predicat(CK ck)
   Point_2 center1_left(center1_x - (2 * circ1_r), center1_y);
   Circle_2 circ1_left(center1_left, circ1_r * circ1_r);
   //P4 is the leftest point of the circle1
-  Circular_arc_endpoint_2 circ1_arc_end_p4 =
+  Circular_arc_point_2 circ1_arc_end_p4 =
         CGAL::circle_intersect<CK>(circ1, circ1_left, true);
 
   //Comparison between the superior arc and the point p4 
@@ -146,7 +146,7 @@ void _test_circle_predicat(CK ck)
   Circle_2 circ1_1(center1_1, circ1_r * circ1_r);
   Point_2 center1_2(center1_x + circ1_r, center1_y + circ1_r); 
   Circle_2 circ1_2(center1_2, circ1_r * circ1_r);
-  Circular_arc_endpoint_2 circ1_arc_end_1_1_1_2 =
+  Circular_arc_point_2 circ1_arc_end_1_1_1_2 =
          CGAL::circle_intersect<CK>(circ1_1, circ1_2, true);
   theComparison_result_y_at_x_2 = 
     theCompare_y_at_x_2(circ1_arc_end_1_1_1_2,circ1_arc_high);
@@ -195,7 +195,7 @@ void _test_circle_predicat(CK ck)
 			    circ1_arc_end_p3);
   assert(theComparison_result_y_to_right_2 == CGAL::EQUAL);
 
-  Circular_arc_endpoint_2 circ1_big_arc_end =
+  Circular_arc_point_2 circ1_big_arc_end =
         CGAL::circle_intersect<CK>(circ1_big, circ1_high, true);
   Circular_arc_2 circ1_big_arc_high(circ1_big,
 				   theLine_2_horizontal,false,
@@ -218,7 +218,7 @@ void _test_circle_predicat(CK ck)
   Circular_arc_2 circ_very_high_arc_low (circ1_very_high,
 				   theLine_2_horizontal_circ_very_high, true,
 				   theLine_2_horizontal_circ_very_high, false);
-  Circular_arc_endpoint_2 circ1_arc_end_tangent =
+  Circular_arc_point_2 circ1_arc_end_tangent =
           CGAL::circle_intersect<CK>(circ1, circ1_very_high, true);
   theComparison_result_y_to_right_2 = 
     theCompare_y_to_right_2(circ1_arc_high, 
@@ -231,11 +231,11 @@ void _test_circle_predicat(CK ck)
     
   //P3 is the leftest point of circle1
   //P3, P4 and P5 are the same
-  Circular_arc_endpoint_2 circ1_arc_end_p5 =
+  Circular_arc_point_2 circ1_arc_end_p5 =
          CGAL::circle_intersect<CK>(circ1, circ1_left, true);
-  Circular_arc_endpoint_2 circ1_arc_end_p6 =
+  Circular_arc_point_2 circ1_arc_end_p6 =
          CGAL::circle_intersect<CK>(circ1, circ1_left, false);
-  Circular_arc_endpoint_2 circ1_arc_end_p7 =
+  Circular_arc_point_2 circ1_arc_end_p7 =
          CGAL::circle_intersect<CK>(circ1_left, circ1, true);
   
   ///////////////////////EQUAL///////////////////////////////
@@ -262,13 +262,13 @@ void _test_circle_predicat(CK ck)
   Point_2 center2_left(center1_x - circ2_r, center1_y);
   Circle_2 circ2_left(center2_left, circ2_r * circ2_r);
   //Point on top
-  Circular_arc_endpoint_2 circ2_arc_end_p1 =
+  Circular_arc_point_2 circ2_arc_end_p1 =
           CGAL::circle_intersect<CK>(circ2, circ2_left, false);
   //We create a circle lefter than circ1_left but it cuts it
   Point_2 center1_very_left(center1_x - (3 * circ1_r), center1_y);
   Circle_2 circ1_very_left(center1_very_left, circ1_r * circ1_r);
   //Point on top
-  Circular_arc_endpoint_2 circ1_left_arc_end_p1 =
+  Circular_arc_point_2 circ1_left_arc_end_p1 =
          CGAL::circle_intersect<CK>(circ1_left, circ1_very_left, false);
   std::cout << "In range" << std::endl;
   In_range_2 theIn_range_2 = ck.in_range_2_object();

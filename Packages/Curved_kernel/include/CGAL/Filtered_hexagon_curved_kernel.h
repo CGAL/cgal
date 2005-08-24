@@ -44,7 +44,7 @@ template <class CK>
     typedef CGALi::Equal_2<Self>		     Equal_2;
     typedef CGALi::In_range_2<Self>		     In_range_2;
     typedef CGALi::Make_x_monotone_2<Self>	     Make_x_monotone_2;
-    typedef CGALi::Construct_intersections_2<Self>   Construct_intersections_2;
+    typedef CGALi::Intersect_2<Self>   Intersect_2;
     typedef CGALi::Split_2<Self>		     Split_2;
 
   // Construct_min_vertex_2 and Construct_max_vertex_2 should be added
@@ -97,9 +97,9 @@ template <class CK>
   	make_x_monotone_2_object() const
   	{ return Make_x_monotone_2(); }
 
-  	Construct_intersections_2
-  	construct_intersections_2_object() const
-    	{ return Construct_intersections_2(); }
+  	Intersect_2
+  	intersect_2_object() const
+    	{ return Intersect_2(); }
 
 
   	Split_2

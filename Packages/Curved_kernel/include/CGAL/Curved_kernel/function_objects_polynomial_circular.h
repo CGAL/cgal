@@ -276,7 +276,7 @@ namespace CircularFunctors {
   };
   
   template < class CK >
-  class Construct_intersections_2
+  class Intersect_2
   {
     public:
 
@@ -287,43 +287,43 @@ namespace CircularFunctors {
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle & c1, const Circle & c2, OutputIterator res) const
-      { return construct_intersections_2<CK> (c1,c2,res); }
+      { return intersect_2<CK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc & c1, const Circular_arc & c2, 
 	       OutputIterator res) const
-      { return construct_intersections_2<CK> (c1,c2,res); }  
+      { return intersect_2<CK> (c1,c2,res); }  
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc & c1, const Line_arc & c2, 
 	       OutputIterator res) const
-      {	return construct_intersections_2<CK> (c1,c2,res); }  
+      {	return intersect_2<CK> (c1,c2,res); }  
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc & c1, const Circle & c2, 
 	       OutputIterator res) const
-    { return construct_intersections_2<CK> (c1,c2,res); }
+    { return intersect_2<CK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle & c1, const Line_arc & c2, 
 	       OutputIterator res) const
-    { return construct_intersections_2<CK> (c2,c1,res); }
+    { return intersect_2<CK> (c2,c1,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc & c1, const Circular_arc & c2, 
 	       OutputIterator res) const
-    { return construct_intersections_2<CK> (c1,c2,res); }
+    { return intersect_2<CK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc & c1, const Line_arc & c2, 
 	       OutputIterator res) const
-    { return construct_intersections_2<CK> (c2,c1,res); }
+    { return intersect_2<CK> (c2,c1,res); }
 
     
   };

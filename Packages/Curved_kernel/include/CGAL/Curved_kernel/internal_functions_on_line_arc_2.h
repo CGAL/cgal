@@ -248,7 +248,7 @@ template < class CK >
 
  template< class CK, class OutputIterator>
    OutputIterator
-   construct_intersections_2( const typename CK::Line_arc_2 &a1,
+   intersect_2( const typename CK::Line_arc_2 &a1,
 			      const typename CK::Line_arc_2 &a2,
 			      OutputIterator res )
   {
@@ -330,7 +330,7 @@ template < class CK >
 
  template< class CK, class OutputIterator>
    OutputIterator
-   construct_intersections_2( const typename CK::Line_arc_2 &l,
+   intersect_2( const typename CK::Line_arc_2 &l,
 			      const typename CK::Circle_2 &c,
 			      OutputIterator res )
   { 
@@ -338,7 +338,7 @@ template < class CK >
       solutions_container;
     
     solutions_container solutions;
-    CGAL::LinearFunctors::construct_intersections_2<CK>
+    CGAL::LinearFunctors::intersect_2<CK>
       ( l.supporting_line(), c, std::back_inserter(solutions) );
     
     for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
@@ -353,17 +353,17 @@ template < class CK >
 
   template< class CK, class OutputIterator>
    OutputIterator
-   construct_intersections_2( const typename CK::Circle_2 &c,
+   intersect_2( const typename CK::Circle_2 &c,
 			      const typename CK::Line_arc_2 &l,
 			      OutputIterator res )
   { 
-    return construct_intersections_2<CK>(l,c,res);
+    return intersect_2<CK>(l,c,res);
   }
 
 
  template< class CK, class OutputIterator>
    OutputIterator
-   construct_intersections_2( const typename CK::Line_arc_2 &l,
+   intersect_2( const typename CK::Line_arc_2 &l,
 			      const typename CK::Circular_arc_2 &c,
 			      OutputIterator res )
   {
@@ -372,7 +372,7 @@ template < class CK >
       solutions_container;
     
     solutions_container solutions;
-    CGAL::LinearFunctors::construct_intersections_2<CK>
+    CGAL::LinearFunctors::intersect_2<CK>
       ( l.supporting_line(), c.supporting_circle(), std::back_inserter(solutions) );
     
     solutions_container objects_monotone;
@@ -405,11 +405,11 @@ template < class CK >
 
   template< class CK, class OutputIterator>
    OutputIterator
-   construct_intersections_2( const typename CK::Circular_arc_2 &c,
+   intersect_2( const typename CK::Circular_arc_2 &c,
 			      const typename CK::Line_arc_2 &l,
 			      OutputIterator res )
   {
-    return construct_intersections_2<CK>(l,c,res);
+    return intersect_2<CK>(l,c,res);
   }
    
   template< class CK>

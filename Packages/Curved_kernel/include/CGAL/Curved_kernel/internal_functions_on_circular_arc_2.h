@@ -351,7 +351,7 @@ namespace CircularFunctors {
   // !!!! a lot of useless assertions for debug
   template< class CK, class OutputIterator>
   OutputIterator
-  construct_intersections_2( const typename CK::Circular_arc_2 &a1,
+  intersect_2( const typename CK::Circular_arc_2 &a1,
 			     const typename CK::Circular_arc_2 &a2,
 			     OutputIterator res )
   {
@@ -443,7 +443,7 @@ namespace CircularFunctors {
       // Get the two intersection points of the supporting circles.
       
       std::vector<CGAL::Object > intersection_points;
-      CGAL::construct_intersections_2<CK>
+      CGAL::intersect_2<CK>
 	( a1.supporting_circle(), a2.supporting_circle(),
 	  std::back_inserter(intersection_points) );
       
@@ -490,7 +490,7 @@ namespace CircularFunctors {
 	      const Circular_arc_2 *a2_aux = 
 		CGAL::object_cast<Circular_arc_2>(&*it2);
 	      std::vector< CGAL::Object > res_aux;
-	      construct_intersections_2<CK>( *a1_aux, *a2_aux,
+	      intersect_2<CK>( *a1_aux, *a2_aux,
 					     std::back_inserter(res_aux));
 	      if(res_aux.size() == 2){
 		//it can't be a circular_arc_2

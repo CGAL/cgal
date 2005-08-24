@@ -23,9 +23,9 @@ void _test_Line_arc(CK ck)
   typedef typename CK::Circular_arc_2          Circular_arc_2;
   typedef typename CK::Point_2                 Point_2;
   typedef typename CK::Line_2                  Line_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+  typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Split_2                 Split_2;
-  typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Line_arc_2              Line_arc_2;
   typedef typename CK::Do_overlap_2            Do_overlap_2;
   CGAL::Random generatorOfgenerator;
@@ -74,16 +74,16 @@ void _test_Line_arc(CK ck)
 
   //////////////Intersection Line_arc Line_arc//////////////////
      
-   Construct_intersections_2 theConstruct_intersect_2 = ck.construct_intersections_2_object();
+   Intersect_2 theConstruct_intersect_2 = ck.intersect_2_object();
    
    std::vector< CGAL::Object > 
      vector_for_intersection_1;
    theConstruct_intersect_2(line_arc_horizontal,
 			    line_arc_vertical,
 			    std::back_inserter(vector_for_intersection_1));
-   std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+   std::pair<Circular_arc_point_2, std::size_t> the_pair;
    assert(assign(the_pair, vector_for_intersection_1[0]));
-   Circular_arc_endpoint_2 first = the_pair.first;
+   Circular_arc_point_2 first = the_pair.first;
    assert(first.x() == 0);
    assert(first.y() == 0);
   
@@ -248,7 +248,7 @@ void _test_Line_arc(CK ck)
 			    line_arc_3,
 			    std::back_inserter(vector_for_intersection_split_1));
    assert(assign(the_pair, vector_for_intersection_split_1[0]));
-   Circular_arc_endpoint_2 point_of_split = the_pair.first;
+   Circular_arc_point_2 point_of_split = the_pair.first;
    Split_2 theSplit_2 = ck.split_2_object();
    Line_arc_2 first_part_line_arc_horizontal;
    Line_arc_2 second_part_line_arc_horizontal;
@@ -276,15 +276,15 @@ void _test_intersection_Line_arc_Circle(CK ck)
   typedef typename CK::Circular_arc_2          Circular_arc_2;
   typedef typename CK::Point_2                 Point_2;
   typedef typename CK::Line_2                  Line_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
-  typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+  typedef typename CK::Intersect_2   Intersect_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Line_arc_2              Line_arc_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
   CGAL::Random theRandom(random_seed);
   
-  Construct_intersections_2 theConstruct_intersect_2 = ck.construct_intersections_2_object();
+  Intersect_2 theConstruct_intersect_2 = ck.intersect_2_object();
   Point_2 center_circle1(0, 0);
   int circle1_r = 5;
   Circle_2 circle1(center_circle1, circle1_r * circle1_r);
@@ -361,10 +361,10 @@ void _test_intersection_Line_arc_Circle(CK ck)
   theConstruct_intersect_2(line_arc_horizontal,
 			   circle1,
 			   std::back_inserter(vector_for_intersection_1));
-  std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+  std::pair<Circular_arc_point_2, std::size_t> the_pair;
   assert(vector_for_intersection_1.size() == 2);
   assert(assign(the_pair, vector_for_intersection_1[0]));
-  Circular_arc_endpoint_2 first = the_pair.first;
+  Circular_arc_point_2 first = the_pair.first;
   assert(first == line_arc_horizontal.source());
   assert(the_pair.second == 1);
   assert(assign(the_pair, vector_for_intersection_1[1]));
@@ -623,16 +623,16 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
   typedef typename CK::Circular_arc_2          Circular_arc_2;
   typedef typename CK::Point_2                 Point_2;
   typedef typename CK::Line_2                  Line_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+  typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Line_arc_2              Line_arc_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
   CGAL::Random theRandom(random_seed);
   
-  Construct_intersections_2 theConstruct_intersect_2 = ck.construct_intersections_2_object();
+  Intersect_2 theConstruct_intersect_2 = ck.intersect_2_object();
   Point_2 center_circle1(0, 0);
   int circle1_r = 5;
   Circle_2 circle1(center_circle1, circle1_r * circle1_r);
@@ -692,10 +692,10 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
    theConstruct_intersect_2(line_arc_horizontal3,
 			    arc_1,
 			    std::back_inserter(vector_for_intersection_1));
-   std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+   std::pair<Circular_arc_point_2, std::size_t> the_pair;
    assert(vector_for_intersection_1.size() == 2);
    assert(assign(the_pair, vector_for_intersection_1[0]));
-   Circular_arc_endpoint_2 first = the_pair.first;
+   Circular_arc_point_2 first = the_pair.first;
    assert(first == line_arc_horizontal3.source());
    assert(the_pair.second == 1);
    assert(assign(the_pair, vector_for_intersection_1[1]));
@@ -765,7 +765,7 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
 				      p_random2),
 			       false);
 
-   Circular_arc_endpoint_2 first2;
+   Circular_arc_point_2 first2;
    std::vector< CGAL::Object > 
      vector_for_intersection_random1;
    theConstruct_intersect_2(Line_arc_2(Point_2(-p_random1.x(),-p_random1.y()),
@@ -845,16 +845,16 @@ void _test_compare_y_to_right(CK ck)
   typedef typename CK::Circular_arc_2          Circular_arc_2;
   typedef typename CK::Point_2                 Point_2;
   typedef typename CK::Line_2                  Line_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+  typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Line_arc_2              Line_arc_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
   CGAL::Random theRandom(random_seed);
   
-  Construct_intersections_2 theConstruct_intersect_2 = ck.construct_intersections_2_object();
+  Intersect_2 theConstruct_intersect_2 = ck.intersect_2_object();
   Point_2 center_circle1(0, 0);
   int circle1_r = 5;
   Circle_2 circle1(center_circle1, circle1_r * circle1_r);
@@ -876,9 +876,9 @@ void _test_compare_y_to_right(CK ck)
    theConstruct_intersect_2(line_arc_horizontal,
 			    line_arc_diagonal,
 			    std::back_inserter(vector_for_intersection_1));
-   std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+   std::pair<Circular_arc_point_2, std::size_t> the_pair;
    assert(assign(the_pair, vector_for_intersection_1[0]));
-   Circular_arc_endpoint_2 first = the_pair.first;
+   Circular_arc_point_2 first = the_pair.first;
    
    assert(CGAL::CircularFunctors::compare_y_to_right<CK>(line_arc_horizontal,
 					       line_arc_diagonal,
@@ -977,9 +977,9 @@ void _test_compare_y_at_x(CK ck)
   typedef typename CK::Circular_arc_2          Circular_arc_2;
   typedef typename CK::Point_2                 Point_2;
   typedef typename CK::Line_2                  Line_2;
-  typedef typename CK::Construct_intersections_2   Construct_intersections_2;
+  typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Line_arc_2              Line_arc_2;
   typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
   
