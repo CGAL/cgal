@@ -44,14 +44,14 @@ namespace LinearFunctors {
     CGAL::AlgebraicFunctors::solve<typename CK::Algebraic_kernel>
       ( e1,e2, std::back_inserter(solutions) ); // to be optimized
     
-    typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
 
     for ( typename solutions_container::iterator it = solutions.begin(); 
 	  it != solutions.end(); ++it )
       {
 	*res++ = make_object
 	  (std::make_pair
-	   (Circular_arc_endpoint_2(it->first), it->second ));
+	   (Circular_arc_point_2(it->first), it->second ));
       }
 
     return res;

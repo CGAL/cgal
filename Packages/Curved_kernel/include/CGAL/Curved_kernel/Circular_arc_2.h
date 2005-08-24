@@ -32,7 +32,7 @@ namespace CGALi {
     typedef typename CK::Linear_kernel::Point_2    Point_2;
     typedef typename CK::Line_2                    Line_2;
     typedef typename CK::Circle_2                  Circle_2;
-    typedef typename CK::Circular_arc_endpoint_2   Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 
 public:
@@ -102,7 +102,7 @@ public:
         CGAL_kernel_precondition(A.is_x_monotone());
         CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
 
-        Circular_arc_endpoint_2 new_p =
+        Circular_arc_point_2 new_p =
              CGAL::circle_intersect<CK>(A.supporting_circle(), ccut, b_cut);
 
         // CGAL_kernel_assertion(point_in_range(A, new_p));
@@ -136,8 +136,8 @@ public:
     }
 
     Circular_arc_2(const Circle_2 &support,
-		   const Circular_arc_endpoint_2 &source,
-		   const Circular_arc_endpoint_2 &target)
+		   const Circular_arc_point_2 &source,
+		   const Circular_arc_point_2 &target)
       : _begin(source), _end(target), _support(support)
     {
       // This should be moved to some separate function.
@@ -153,12 +153,12 @@ public:
 
     // The arc goes from _begin to _end in the positive order
     // If _begin == _end, then it's the full circle
-    Circular_arc_endpoint_2  _begin, _end;
+    Circular_arc_point_2  _begin, _end;
     Circle_2 _support;
 
   public:
  
-    const Circular_arc_endpoint_2 & left() const
+    const Circular_arc_point_2 & left() const
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
@@ -166,7 +166,7 @@ public:
       return on_upper_part() ? _end : _begin;
     }
 
-    const Circular_arc_endpoint_2 & right() const
+    const Circular_arc_point_2 & right() const
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
@@ -174,12 +174,12 @@ public:
       return on_upper_part() ? _begin : _end;
     }
 
-    const Circular_arc_endpoint_2 & source() const
+    const Circular_arc_point_2 & source() const
     {
       return _begin;
     }
 
-    const Circular_arc_endpoint_2 & target() const
+    const Circular_arc_point_2 & target() const
     {
       return _end;
     }
@@ -292,8 +292,8 @@ public:
   operator>>(std::istream & is, Circular_arc_2<CK> &a)
   {
     typename CK::Circle_2 s;
-    typename CK::Circular_arc_endpoint_2 p1;
-    typename CK::Circular_arc_endpoint_2 p2;
+    typename CK::Circular_arc_point_2 p1;
+    typename CK::Circular_arc_point_2 p2;
     is >> s >> p1 >> p2 ;
     if (is)
       a = Circular_arc_2<CK>(s, p1, p2);

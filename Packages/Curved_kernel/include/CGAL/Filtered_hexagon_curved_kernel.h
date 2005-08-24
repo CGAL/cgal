@@ -29,7 +29,7 @@ template <class CK>
     typedef typename CK::Conic_2                     Conic_2;
     typedef typename CK::Point_2                     Point_2;
     typedef typename CK::Circular_arc_2              Rcirc_arc_2;
-    typedef typename CK::Circular_arc_endpoint_2     Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename CK::Construct_circle_2          Construct_circle_2;
     typedef typename CK::Get_equation                Get_equation;
 

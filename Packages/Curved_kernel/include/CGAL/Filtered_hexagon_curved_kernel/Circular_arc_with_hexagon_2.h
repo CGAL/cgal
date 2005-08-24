@@ -22,7 +22,7 @@ class Circular_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Linear_kernel::Point_2                Point_2;
     typedef typename CK::Line_2                                Line_2;
     typedef typename CK::Circle_2                              Circle_2;
-    typedef typename CK::Circular_arc_endpoint_2               Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2               Circular_arc_point_2;
     typedef typename CK::Circular_arc_2                        Circular_arc_2;
     typedef typename CK::Root_of_2                             Root_of_2;
 
@@ -78,8 +78,8 @@ public:
 
 
 		Circular_arc_with_hexagon_2(const Circle_2 &support,
-                 		   const Circular_arc_endpoint_2 &begin,
-                 		   const Circular_arc_endpoint_2 &end)
+                 		   const Circular_arc_point_2 &begin,
+                 		   const Circular_arc_point_2 &end)
     		: P_arc(support, begin, end) 
 		{}
 
@@ -125,16 +125,16 @@ public:
 		
 		///Interface of the inner arc/// 
 
-		const Circular_arc_endpoint_2 & left() const
+		const Circular_arc_point_2 & left() const
 			{ return P_arc.left();}
 
-		const Circular_arc_endpoint_2 & right() const
+		const Circular_arc_point_2 & right() const
 			{ return P_arc.right();}
 
-		const Circular_arc_endpoint_2 & source() const
+		const Circular_arc_point_2 & source() const
 			{ return P_arc.source();}
 
-		const Circular_arc_endpoint_2 & target() const
+		const Circular_arc_point_2 & target() const
 			{ return P_arc.target();}
 		
 		const Circle_2 & supporting_circle() const
@@ -193,8 +193,8 @@ public:
   operator>>(std::istream & is, Circular_arc_with_hexagon_2<CK> &a)
   {
     typename CK::Circle_2 s;
-    typename CK::Circular_arc_endpoint_2 p1;
-    typename CK::Circular_arc_endpoint_2 p2;
+    typename CK::Circular_arc_point_2 p1;
+    typename CK::Circular_arc_point_2 p2;
     is >> s >> p1 >> p2 ;
     if (is)
       a = Circular_arc_with_hexagon_2<CK>(s, p1, p2);

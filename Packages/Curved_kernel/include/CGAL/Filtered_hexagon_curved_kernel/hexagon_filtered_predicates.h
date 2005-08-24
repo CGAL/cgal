@@ -19,7 +19,7 @@ template <class HK>
 class In_range_2
   {
     typedef typename HK::Curved_kernel                           CK;
-    typedef typename HK::Circular_arc_endpoint_2                 Circular_arc_endpoint_2;
+    typedef typename HK::Circular_arc_point_2                 Circular_arc_point_2;
     typedef typename HK::Circular_arc_2                          Circular_arc_2;
 
    public:
@@ -27,7 +27,7 @@ class In_range_2
     typedef bool result_type;
 
     result_type
-    operator()( Circular_arc_2 &a, const Circular_arc_endpoint_2 &p) const
+    operator()( Circular_arc_2 &a, const Circular_arc_point_2 &p) const
     { 
       CGAL_precondition( a.arc().is_x_monotone());
       
@@ -63,7 +63,7 @@ class Compare_y_at_x_2
   {
     typedef typename HK::Curved_kernel                                       CK;
     typedef typename HK::Circular_arc_2                                      Circular_arc_2;
-    typedef typename HK::Circular_arc_endpoint_2                             Circular_arc_endpoint_2;
+    typedef typename HK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename Circular_arc_2::Hexagon                                 Hexagon;
     typedef typename Simple_cartesian<double>::Point_2		             Point_2; //Attention!!!
     typedef Exact_predicates_inexact_constructions_kernel                    EK;
@@ -73,7 +73,7 @@ class Compare_y_at_x_2
     typedef Comparison_result result_type;
 
     result_type
-    operator()( const Circular_arc_endpoint_2 &p, Circular_arc_2 &a ) const
+    operator()( const Circular_arc_point_2 &p, Circular_arc_2 &a ) const
     {
       bool tmp= In_range_2<HK>()(a,p) ;
       CGAL_kernel_precondition( a.arc().is_x_monotone());
@@ -155,7 +155,7 @@ class Equal_2
   {
     typedef typename HK::Curved_kernel                                       CK;
     typedef typename HK::Circular_arc_2                                      Circular_arc_2;
-    typedef typename HK::Circular_arc_endpoint_2                             Circular_arc_endpoint_2;
+    typedef typename HK::Circular_arc_point_2                             Circular_arc_point_2;
 
   public:
 
@@ -164,8 +164,8 @@ class Equal_2
 
 
     result_type
-    operator()( const Circular_arc_endpoint_2 &a ,
-                const Circular_arc_endpoint_2 &b ) const
+    operator()( const Circular_arc_point_2 &a ,
+                const Circular_arc_point_2 &b ) const
 	 {  return CK().equal_2_object()(a,b);}
 
 
@@ -250,7 +250,7 @@ class Do_overlap_2
   {
     typedef typename HK::Curved_kernel            CK;
     typedef typename HK::Circular_arc_2           Circular_arc_2;
-    typedef typename HK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
+    typedef typename HK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
     typedef Comparison_result result_type;
@@ -258,7 +258,7 @@ class Do_overlap_2
     result_type
     operator()(const Circular_arc_2 &a1,
                const Circular_arc_2 &a2,
-               const Circular_arc_endpoint_2 &p) const
+               const Circular_arc_point_2 &p) const
     { return CK().compare_y_to_right_2_object()(a1.arc(), a2.arc(), p); }
 
   };
@@ -352,14 +352,14 @@ class Do_overlap_2
     typedef typename HK::Curved_kernel            CK;
     typedef typename HK::Rcirc_arc_2              Rcirc_arc_2;
     typedef typename HK::Circular_arc_2           Circular_arc_2;
-    typedef typename HK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
+    typedef typename HK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
     typedef void result_type;
 
     result_type
     operator()(const Circular_arc_2 &A, 
-	       const Circular_arc_endpoint_2 &p,
+	       const Circular_arc_point_2 &p,
 	       Circular_arc_2 &ha1, Circular_arc_2 &ha2) const
     {  
 

@@ -25,8 +25,8 @@ namespace CircularFunctors {
   template < class CK >
   inline
   Comparison_result 
-  compare_x(const typename CK::Circular_arc_endpoint_2 &p0,
-            const typename CK::Circular_arc_endpoint_2 &p1)
+  compare_x(const typename CK::Circular_arc_point_2 &p0,
+            const typename CK::Circular_arc_point_2 &p1)
   {
     return CGAL::compare_x(p0.coordinates(), p1.coordinates());
   }
@@ -34,16 +34,16 @@ namespace CircularFunctors {
   template < class CK >
   inline
   Comparison_result 
-  compare_y(const typename CK::Circular_arc_endpoint_2 &p0,
-            const typename CK::Circular_arc_endpoint_2 &p1)
+  compare_y(const typename CK::Circular_arc_point_2 &p0,
+            const typename CK::Circular_arc_point_2 &p1)
   {
     return CGAL::compare_y(p0.coordinates(), p1.coordinates());
   }
 
   template < class CK >
   Comparison_result 
-  compare_xy(const typename CK::Circular_arc_endpoint_2 &p0,
-             const typename CK::Circular_arc_endpoint_2 &p1)
+  compare_xy(const typename CK::Circular_arc_point_2 &p0,
+             const typename CK::Circular_arc_point_2 &p1)
   {
     return compare_xy(p0.coordinates(), p1.coordinates());
   }
@@ -52,7 +52,7 @@ namespace CircularFunctors {
   template < class CK >
   inline
   Comparison_result 
-  compare_x(const typename CK::Circular_arc_endpoint_2 &p0,
+  compare_x(const typename CK::Circular_arc_point_2 &p0,
             const typename CK::Point_2 &p1)
   {
     return CGAL::compare(p0.x(), p1.x());
@@ -62,7 +62,7 @@ namespace CircularFunctors {
   inline
   Comparison_result 
   compare_x(const typename CK::Point_2 &p0,
-            const typename CK::Circular_arc_endpoint_2 &p1)
+            const typename CK::Circular_arc_point_2 &p1)
   {
     return CGAL::compare(p0.x(), p1.x());
   }
@@ -71,7 +71,7 @@ namespace CircularFunctors {
   template < class CK >
   inline
   Comparison_result 
-  compare_y(const typename CK::Circular_arc_endpoint_2 &p0,
+  compare_y(const typename CK::Circular_arc_point_2 &p0,
             const typename CK::Point_2 &p1)
   {
     return CGAL::compare(p0.y(), p1.y());
@@ -81,7 +81,7 @@ namespace CircularFunctors {
   inline
   Comparison_result 
   compare_y(const typename CK::Point_2 &p0,
-            const typename CK::Circular_arc_endpoint_2 &p1)
+            const typename CK::Circular_arc_point_2 &p1)
   {
     return CGAL::compare(p0.y(), p1.y());
   }
@@ -89,7 +89,7 @@ namespace CircularFunctors {
 
   template < class CK >
   Comparison_result 
-  compare_xy(const typename CK::Circular_arc_endpoint_2 &p0,
+  compare_xy(const typename CK::Circular_arc_point_2 &p0,
              const typename CK::Point_2 &p1)
   {
     Comparison_result compx = compare_x<CK>(p0, p1);
@@ -101,7 +101,7 @@ namespace CircularFunctors {
   template < class CK >
   Comparison_result 
   compare_xy(const typename CK::Point_2 &p0,
-             const typename CK::Circular_arc_endpoint_2 &p1)
+             const typename CK::Circular_arc_point_2 &p1)
   {
     Comparison_result compx = compare_x<CK>(p0, p1);
     if (compx != 0)
@@ -114,7 +114,7 @@ namespace CircularFunctors {
   template < class CK >
   bool
   point_in_range(const typename CK::Circular_arc_2 &A,
-                 const typename CK::Circular_arc_endpoint_2 &p) 
+                 const typename CK::Circular_arc_point_2 &p) 
   {
     CGAL_kernel_precondition (A.is_x_monotone());
     // range includes endpoints here
@@ -124,7 +124,7 @@ namespace CircularFunctors {
 
   template < class CK >
   Comparison_result
-  compare_y_at_x(const typename CK::Circular_arc_endpoint_2 &p,
+  compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
                  const typename CK::Circular_arc_2 &A1)
   {
     CGAL_kernel_precondition (A1.is_x_monotone());
@@ -162,7 +162,7 @@ namespace CircularFunctors {
   Comparison_result 
   compare_y_to_right(const typename CK::Circular_arc_2 &A1,
 		     const typename CK::Circular_arc_2 &A2, 
-		     const typename CK::Circular_arc_endpoint_2 &p)
+		     const typename CK::Circular_arc_point_2 &p)
   {
     // FIXME : add preconditions to check that the 2 arcs are defined at
     // the right of the intersection.
@@ -260,8 +260,8 @@ namespace CircularFunctors {
   template < class CK >
   inline
   bool
-  equal(const typename CK::Circular_arc_endpoint_2 &p0,
-        const typename CK::Circular_arc_endpoint_2 &p1)
+  equal(const typename CK::Circular_arc_point_2 &p0,
+        const typename CK::Circular_arc_point_2 &p1)
   {
     return compare_xy<CK>(p0, p1) == 0;
   }
@@ -302,7 +302,7 @@ namespace CircularFunctors {
   template < class CK >
   bool
   has_on(const typename CK::Circular_arc_2 &a,
-	    const typename CK::Circular_arc_endpoint_2 &p)
+	    const typename CK::Circular_arc_point_2 &p)
   {
     CGAL_kernel_precondition(a.is_x_monotone());
    // CGAL_kernel_precondition(a.supporting_circle() == p.circle(0) ||
@@ -325,7 +325,7 @@ namespace CircularFunctors {
   template < class CK >
   void
   split(const typename CK::Circular_arc_2 &A,
-	const typename CK::Circular_arc_endpoint_2 &p,
+	const typename CK::Circular_arc_point_2 &p,
 	typename CK::Circular_arc_2 &ca1,
 	typename CK::Circular_arc_2 &ca2)
   {
@@ -355,7 +355,7 @@ namespace CircularFunctors {
 			     const typename CK::Circular_arc_2 &a2,
 			     OutputIterator res )
   {
-    typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Circular_arc_2           Circular_arc_2;
 
     if(a1.is_x_monotone() && a2.is_x_monotone()){
@@ -447,16 +447,16 @@ namespace CircularFunctors {
 	( a1.supporting_circle(), a2.supporting_circle(),
 	  std::back_inserter(intersection_points) );
       
-      Circular_arc_endpoint_2 left =
-	(CGAL::object_cast< std::pair<Circular_arc_endpoint_2, uint> >
+      Circular_arc_point_2 left =
+	(CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
 	 (&(intersection_points[0])))->first;
       if (intersection_points.size() < 2){// multiplicity 2
 	if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
 	  *res++ = make_object(std::make_pair(left,2u));
       }
       else {// multiplicity 1
-	Circular_arc_endpoint_2 right = 
-	  (CGAL::object_cast< std::pair<Circular_arc_endpoint_2, uint> >
+	Circular_arc_point_2 right = 
+	  (CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
 	   (&(intersection_points[1])))->first;
 	// We also need to check that these intersection points are on the arc.
 	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left))
@@ -472,7 +472,7 @@ namespace CircularFunctors {
       std::vector< CGAL::Object > arcs_a2_x_monotone;
       make_x_monotone( a2, std::back_inserter(arcs_a2_x_monotone));
       std::vector< Circular_arc_2 > circle_arcs;
-      std::vector< Circular_arc_endpoint_2 > circle_arc_endpoints;
+      std::vector< Circular_arc_point_2 > circle_arc_endpoints;
 
       for ( std::vector< CGAL::Object >::iterator it1 = 
 	      arcs_a1_x_monotone.begin(); 
@@ -495,15 +495,15 @@ namespace CircularFunctors {
 	      if(res_aux.size() == 2){
 		//it can't be a circular_arc_2
 		//CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
-		const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair1 = 
-		  CGAL::object_cast<std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[0]);
-		Circular_arc_endpoint_2 arc_end1 = the_pair1->first;
+		const std::pair<Circular_arc_point_2, std::size_t> *the_pair1 = 
+		  CGAL::object_cast<std::pair<Circular_arc_point_2, std::size_t> >(&res_aux[0]);
+		Circular_arc_point_2 arc_end1 = the_pair1->first;
 		//assign(the_pair, res_aux[1]);
-		const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair2 = 
-		  CGAL::object_cast<std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[1]);
-		Circular_arc_endpoint_2 arc_end2 = the_pair2->first;
+		const std::pair<Circular_arc_point_2, std::size_t> *the_pair2 = 
+		  CGAL::object_cast<std::pair<Circular_arc_point_2, std::size_t> >(&res_aux[1]);
+		Circular_arc_point_2 arc_end2 = the_pair2->first;
 		bool exist = false;
-		for (typename std::vector< Circular_arc_endpoint_2 >::iterator it 
+		for (typename std::vector< Circular_arc_point_2 >::iterator it 
 		       = circle_arc_endpoints.begin(); 
 		      it != circle_arc_endpoints.end(); ++it )
 		  {
@@ -516,7 +516,7 @@ namespace CircularFunctors {
 		  circle_arc_endpoints.push_back(arc_end1);
 		}
 		else exist = false;
-		for ( typename std::vector< Circular_arc_endpoint_2 >::iterator it
+		for ( typename std::vector< Circular_arc_point_2 >::iterator it
 			= circle_arc_endpoints.begin(); 
 		      it != circle_arc_endpoints.end(); ++it )
 		  {
@@ -529,7 +529,7 @@ namespace CircularFunctors {
 		  circle_arc_endpoints.push_back(arc_end2);
 	      }
 	      else if( res_aux.size() == 1){
-		//it can be a Circular_arc_endpoint_2 or a Circular_arc_2
+		//it can be a Circular_arc_point_2 or a Circular_arc_2
 		if(const Circular_arc_2 *arc = 
 		   CGAL::object_cast<Circular_arc_2>(&res_aux[0])){
 		//if(assign(arc,res_aux[0])){
@@ -538,15 +538,15 @@ namespace CircularFunctors {
 		else{
 		  //CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
 		  //assign(the_pair, res_aux[0]);
-		   const std::pair<Circular_arc_endpoint_2, std::size_t> *the_pair = 
-		     CGAL::object_cast< std::pair<Circular_arc_endpoint_2, std::size_t> >(&res_aux[0]);
-		  Circular_arc_endpoint_2 arc_end = the_pair->first;
+		   const std::pair<Circular_arc_point_2, std::size_t> *the_pair = 
+		     CGAL::object_cast< std::pair<Circular_arc_point_2, std::size_t> >(&res_aux[0]);
+		  Circular_arc_point_2 arc_end = the_pair->first;
 		  if (the_pair->second == 2u) {//there are only one tangent point
 		    *res++ = res_aux[0];
 		    return res;
 		  }
 		  bool exist = false;
-		  for (typename std::vector< Circular_arc_endpoint_2 >::iterator it 
+		  for (typename std::vector< Circular_arc_point_2 >::iterator it 
 			 = circle_arc_endpoints.begin(); 
 		       it != circle_arc_endpoints.end(); ++it )
 		    {
@@ -588,7 +588,7 @@ namespace CircularFunctors {
 	  return res;
 	}
 	else{//There are one circle arc and there can be maximum one endpoint
-	   for (typename std::vector< Circular_arc_endpoint_2 >::iterator it1 
+	   for (typename std::vector< Circular_arc_point_2 >::iterator it1 
 		 = circle_arc_endpoints.begin(); 
 	       it1 != circle_arc_endpoints.end(); ++it1 )
 	    {

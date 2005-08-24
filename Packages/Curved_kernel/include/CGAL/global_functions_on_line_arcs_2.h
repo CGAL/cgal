@@ -44,7 +44,7 @@ namespace CGAL {
 //template< class CK >
 //inline
 //CGAL::Comparison_result 
-//compare_x(const Circular_arc_endpoint_2<CK> &p, const Circular_arc_endpoint_2<CK> &q)
+//compare_x(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 //{
 //  return CK().compare_x_2_object()(p, q);
 //}
@@ -52,7 +52,7 @@ namespace CGAL {
 //template< class CK >
 //inline
 //CGAL::Comparison_result 
-//compare_y(const Circular_arc_endpoint_2<CK> &p, const Circular_arc_endpoint_2<CK> &q)
+//compare_y(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 //{
 //  return CK().compare_y_2_object()(p, q);
 //}
@@ -60,7 +60,7 @@ namespace CGAL {
 //template< class CK >
 //inline
 //CGAL::Comparison_result 
-//compare_xy(const Circular_arc_endpoint_2<CK> &p, const Circular_arc_endpoint_2<CK> &q)
+//compare_xy(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 //{
 //  return CK().compare_xy_2_object()(p, q);
 //}
@@ -78,14 +78,14 @@ compare_y_to_right(const Line_arc_2<CK> &A1,
 template < class CK >
 inline
 bool
-point_in_range(const Line_arc_2<CK> &A, const Circular_arc_endpoint_2<CK> &p) 
+point_in_range(const Line_arc_2<CK> &A, const Circular_arc_point_2<CK> &p) 
 {
   return CK().in_range_2_object()(A, p);
 }
 
 template < class CK >
 CGAL::Comparison_result       
-compare_y_at_x(const Circular_arc_endpoint_2<CK> &p, const Line_arc_2<CK> &a)
+compare_y_at_x(const Circular_arc_point_2<CK> &p, const Line_arc_2<CK> &a)
 {
   return CK().compare_y_at_x_2_object()(p, a);
 }

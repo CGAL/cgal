@@ -25,8 +25,8 @@ class Circular_arc_2
   typedef typename CurvedKernel::Point_2        Point_2;
   typedef typename CurvedKernel::Line_2         Line_2;
   typedef typename CurvedKernel::Circle_2       Circle_2;
-  typedef typename CurvedKernel::Circular_arc_endpoint_2
-                                                Circular_arc_endpoint_2;
+  typedef typename CurvedKernel::Circular_arc_point_2
+                                                Circular_arc_point_2;
 
   typedef typename CurvedKernel::Kernel_base::Circular_arc_2 RCircular_arc_2; 
   // RCircular_arc_2 to avoid clash with self 
@@ -82,8 +82,8 @@ public:
     : RCircular_arc_2(typename R::Construct_circular_arc_2()(support, begin, end)) {}
   
   Circular_arc_2(const Circle_2 &support,
-                 const Circular_arc_endpoint_2 &begin,
-                 const Circular_arc_endpoint_2 &end)
+                 const Circular_arc_point_2 &begin,
+                 const Circular_arc_point_2 &end)
     : RCircular_arc_2(typename R::Construct_circular_arc_2()(support, begin, end)) {}
  
  Circular_arc_2(const RCircular_arc_2 & a)
@@ -91,22 +91,22 @@ public:
   {}
 
 
-  const Circular_arc_endpoint_2 & source() const
+  const Circular_arc_point_2 & source() const
   {
 	return typename R::Construct_source_vertex_2()(*this);
   }
 
-  const Circular_arc_endpoint_2 & target() const
+  const Circular_arc_point_2 & target() const
   {
 	return typename R::Construct_target_vertex_2()(*this);
   }
 
-  const Circular_arc_endpoint_2 & left() const
+  const Circular_arc_point_2 & left() const
   {
 	return typename R::Construct_min_vertex_2()(*this);
   }
 
-  const Circular_arc_endpoint_2 & right() const
+  const Circular_arc_point_2 & right() const
   {
 	return typename R::Construct_max_vertex_2()(*this);
   }

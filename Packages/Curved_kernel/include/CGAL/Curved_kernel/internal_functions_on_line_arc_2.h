@@ -21,7 +21,7 @@ namespace CircularFunctors {
 template < class CK >
   bool
   point_in_range(const typename CK::Line_arc_2 &A,
-                 const typename CK::Circular_arc_endpoint_2 &p) 
+                 const typename CK::Circular_arc_point_2 &p) 
   {
     // range includes endpoints here
     return ((compare_x<CK>(p, A.source()) !=
@@ -62,7 +62,7 @@ template < class CK >
  template < class CK >
   bool
   has_on(const typename CK::Line_arc_2 &a,
-	    const typename CK::Circular_arc_endpoint_2 &p)
+	    const typename CK::Circular_arc_point_2 &p)
   {
     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(a.supporting_line());
@@ -75,7 +75,7 @@ template < class CK >
 
  template < class CK >
   Comparison_result
-  compare_y_at_x(const typename CK::Circular_arc_endpoint_2 &p,
+  compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
                  const typename CK::Line_arc_2 &A1)
   {
     CGAL_kernel_precondition (point_in_range<CK>(A1, p));
@@ -105,7 +105,7 @@ template < class CK >
   Comparison_result 
   compare_y_to_right(const typename CK::Line_arc_2 &A1,
 		     const typename CK::Line_arc_2 &A2, 
-		     const typename CK::Circular_arc_endpoint_2 &p)
+		     const typename CK::Circular_arc_point_2 &p)
   {
     if(A1.supporting_line().is_vertical()){
       if(A2.supporting_line().is_vertical())
@@ -115,7 +115,7 @@ template < class CK >
     if(A2.supporting_line().is_vertical())
       return CGAL::SMALLER;
     
-    typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Polynomial_1_2          Polynomial_1_2;
     typedef typename CK::Root_of_2               Root_of_2;
     Polynomial_1_2 equation;
@@ -146,7 +146,7 @@ template < class CK >
   Comparison_result 
   compare_y_to_right(const typename CK::Line_arc_2 &A1,
 		     const typename CK::Circular_arc_2 &A2, 
-		     const typename CK::Circular_arc_endpoint_2 &p)
+		     const typename CK::Circular_arc_point_2 &p)
   {
     CGAL_kernel_precondition (A2.is_x_monotone());
     if(A1.supporting_line().is_vertical())
@@ -216,7 +216,7 @@ template < class CK >
   Comparison_result 
   compare_y_to_right(const typename CK::Circular_arc_2 &A1,
 		     const typename CK::Line_arc_2 &A2, 
-		     const typename CK::Circular_arc_endpoint_2 &p)
+		     const typename CK::Circular_arc_point_2 &p)
   {
     if (compare_y_to_right<CK>(A2, A1, p) == CGAL::LARGER)
       return CGAL::SMALLER;
@@ -227,7 +227,7 @@ template < class CK >
  template < class CK >
    void
   split(const typename CK::Line_arc_2 &A,
-	const typename CK::Circular_arc_endpoint_2 &p,
+	const typename CK::Circular_arc_point_2 &p,
 	typename CK::Line_arc_2 &ca1,
 	typename CK::Line_arc_2 &ca2)
   {   
@@ -252,7 +252,7 @@ template < class CK >
 			      const typename CK::Line_arc_2 &a2,
 			      OutputIterator res )
   {
-    typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Linear_kernel::Point_2   Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
@@ -314,7 +314,7 @@ template < class CK >
       return res;
     Object obj = intersection(a1.supporting_line(), a2.supporting_line());
     const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
-    Circular_arc_endpoint_2 intersect_point = Circular_arc_endpoint_2(
+    Circular_arc_point_2 intersect_point = Circular_arc_point_2(
 					       Root_for_circles_2_2(
 							       Root_of_2(pt->x()),
 							       Root_of_2(pt->y())
@@ -342,9 +342,9 @@ template < class CK >
       ( l.supporting_line(), c, std::back_inserter(solutions) );
     
     for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
-      const std::pair<typename CK::Circular_arc_endpoint_2, uint> *result;
+      const std::pair<typename CK::Circular_arc_point_2, uint> *result;
       result = CGAL::object_cast< 
-	std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+	std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
       if ( has_on<CK>(l,result->first ))
 	*res++ = *it;
     }
@@ -384,9 +384,9 @@ template < class CK >
     }
       
     for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
-      const std::pair<typename CK::Circular_arc_endpoint_2, uint> *result;
+      const std::pair<typename CK::Circular_arc_point_2, uint> *result;
       result = CGAL::object_cast< 
-	std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+	std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
       if ( has_on<CK>(l,result->first)){
 	bool is_on_arc = false;
 	for(typename std::vector<const Circular_arc_2*>::iterator it2 = arcs_x_monotone.begin();

@@ -21,7 +21,7 @@ namespace CGAL {
 
 template < typename CK >
 CGAL::Qt_widget &
-operator<<(CGAL::Qt_widget & widget, const CGAL::Circular_arc_endpoint_2<CK> &p)
+operator<<(CGAL::Qt_widget & widget, const CGAL::Circular_arc_point_2<CK> &p)
 {
   typedef typename CK::Linear_kernel::Point_2   Point_2;
   return widget << Point_2(to_double(p.x()), to_double(p.y()));

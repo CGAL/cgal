@@ -36,8 +36,8 @@ public:
   typedef typename CurvedKernel::Line_arc_2  Curve_2;
   typedef typename CurvedKernel::Line_arc_2  X_monotone_curve_2;
 
-  typedef typename CurvedKernel::Circular_arc_endpoint_2      Point;
-  typedef typename CurvedKernel::Circular_arc_endpoint_2      Point_2;
+  typedef typename CurvedKernel::Circular_arc_point_2      Point;
+  typedef typename CurvedKernel::Circular_arc_point_2      Point_2;
 
   typedef CGAL::Tag_false                        Has_left_category;
   typedef CGAL::Tag_false 			 Has_merge_category;

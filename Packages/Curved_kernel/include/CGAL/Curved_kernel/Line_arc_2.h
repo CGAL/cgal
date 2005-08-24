@@ -24,7 +24,7 @@ namespace CGALi {
     typedef typename CK::Line_2                    Line_2;
     typedef typename CK::Circle_2                  Circle_2;
     typedef typename CK::Circular_arc_2            Circular_arc_2;
-    typedef typename CK::Circular_arc_endpoint_2   Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
     typedef typename CK::Segment_2                 Segment_2;
 
@@ -35,7 +35,7 @@ namespace CGALi {
       Root_for_circles_2_2;
     
     static
-      Circular_arc_endpoint_2
+      Circular_arc_point_2
       intersect(const Line_2 & l, const Circle_2 & c, const bool b)
     {
       
@@ -50,15 +50,15 @@ namespace CGALi {
       CGAL_kernel_precondition( it != solutions.end() ); 
       // the circles intersect
       
-      const std::pair<typename CK::Circular_arc_endpoint_2, uint> *result;
+      const std::pair<typename CK::Circular_arc_point_2, uint> *result;
       result = CGAL::object_cast< 
-        std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+        std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
       if ( result->second == 2 ) // double solution
 	return result->first;
       if (b) return result->first;
       ++it;
       result = CGAL::object_cast< 
-        std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+        std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
       return result->first;
     }
 
@@ -89,17 +89,17 @@ namespace CGALi {
       //Voir pour mettre une assertion au assign
       Object obj = intersection(support, l1);
       const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
-      _begin = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(pt->x()),
+      _begin = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(pt->x()),
 						       Root_of_2(pt->y())));
       obj = intersection(support, l2);
       const Point_2 *pt2 = CGAL::object_cast<Point_2>(&obj);
-      _end = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(pt2->x()),
+      _end = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(pt2->x()),
 						     Root_of_2(pt2->y())));
     }
     
     Line_arc_2(const Line_2 &support,
-	       const Circular_arc_endpoint_2 &p1,
-	       const Circular_arc_endpoint_2 &p2)
+	       const Circular_arc_point_2 &p1,
+	       const Circular_arc_point_2 &p2)
       :_support(support)
     {
       //Verifier si p1 et p2 sont sur la line
@@ -118,16 +118,16 @@ namespace CGALi {
 	       const Point_2 &p2)
     {
       _support = Line_2(p1, p2);
-      _begin = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(p1.x()),
+      _begin = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(p1.x()),
 						       Root_of_2(p1.y())));
-      _end = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(p2.x()),
+      _end = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(p2.x()),
 						     Root_of_2(p2.y())));
     }
 
   private:
     
     Line_2 _support;
-    Circular_arc_endpoint_2 _begin, _end;
+    Circular_arc_point_2 _begin, _end;
 
 
   public :
@@ -137,22 +137,22 @@ namespace CGALi {
       return _support;
     }
     
-    const Circular_arc_endpoint_2 & left() const
+    const Circular_arc_point_2 & left() const
     {
       return compare_xy(_begin, _end) < 0 ? _begin : _end;
     }
 
-    const Circular_arc_endpoint_2 & right() const
+    const Circular_arc_point_2 & right() const
     {
       return compare_xy(_begin, _end) < 0 ? _end : _begin;
     }
 
-    const Circular_arc_endpoint_2 & source() const
+    const Circular_arc_point_2 & source() const
     {
       return _begin;
     }
 
-    const Circular_arc_endpoint_2 & target() const
+    const Circular_arc_point_2 & target() const
     {
       return _end;
     } 
@@ -179,8 +179,8 @@ namespace CGALi {
   operator>>(std::istream & is, Line_arc_2<CK> &a)
   {
     typename CK::Line_2 l;
-    typename CK::Circular_arc_endpoint_2 p1;
-    typename CK::Circular_arc_endpoint_2 p2;
+    typename CK::Circular_arc_point_2 p1;
+    typename CK::Circular_arc_point_2 p2;
     is >> l >> p1 >> p2 ;
     if (is)
       a = Line_arc_2<CK>(l, p1, p2);

@@ -5,14 +5,14 @@ namespace CGAL {
 
   // Should we have an iterator based interface, or both ?
   template <class CK>
-  typename CK::Circular_arc_endpoint_2
+  typename CK::Circular_arc_point_2
   x_critical_points(const Circle_2<CK> & c, bool i)
   {
   	return CircularFunctors::x_critical_points<CK>(c,i);
   }
 
   template <class CK>
-  typename CK::Circular_arc_endpoint_2
+  typename CK::Circular_arc_point_2
   y_critical_points(const Circle_2<CK> & c, bool i)
   {
   	return CircularFunctors::y_critical_points<CK>(c,i);

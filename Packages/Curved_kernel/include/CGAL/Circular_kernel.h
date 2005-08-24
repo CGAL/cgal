@@ -35,7 +35,7 @@ struct Curved_kernel_base
 // takes classes in internal sub-namespace
 {
   typedef CGALi::Circular_arc_2<CurvedKernel>               Circular_arc_2;
-  typedef CGALi::Circular_arc_endpoint_2<CurvedKernel>      Circular_arc_endpoint_2;
+  typedef CGALi::Circular_arc_point_2<CurvedKernel>      Circular_arc_point_2;
   typedef CGALi::Line_arc_2<CurvedKernel>                   Line_arc_2;
 };
 
@@ -72,7 +72,7 @@ struct Curved_kernel
   typedef typename Linear_kernel::Point_2                 Point_2;
 
   typedef CGAL::Circular_arc_2<Self>               Circular_arc_2;
-  typedef CGAL::Circular_arc_endpoint_2<Self>      Circular_arc_endpoint_2;
+  typedef CGAL::Circular_arc_point_2<Self>      Circular_arc_point_2;
   typedef CGAL::Line_arc_2<Self>                   Line_arc_2;
 
   typedef CircularFunctors::Construct_circle_2<Self>   Construct_circle_2;

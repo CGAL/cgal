@@ -11,16 +11,16 @@
 
 // file : include/CGAL/Circular_arc_endpoint_2.h
 
-#ifndef CGAL_CIRCULAR_ARC_ENDPOINT_2_H
-#define CGAL_CIRCULAR_ARC_ENDPOINT_2_H
+#ifndef CGAL_CIRCULAR_ARC_POINT_2_H
+#define CGAL_CIRCULAR_ARC_POINT_2_H
 namespace CGAL {
 
 template < typename CurvedKernel >
-class Circular_arc_endpoint_2
-  : public CurvedKernel::Kernel_base::Circular_arc_endpoint_2
+class Circular_arc_point_2
+  : public CurvedKernel::Kernel_base::Circular_arc_point_2
 {
-  typedef typename CurvedKernel::Kernel_base::Circular_arc_endpoint_2 
-                                           RCircular_arc_endpoint_2;
+  typedef typename CurvedKernel::Kernel_base::Circular_arc_point_2 
+                                           RCircular_arc_point_2;
   typedef typename CurvedKernel::Circle_2                  Circle_2;
 
   typedef typename CurvedKernel::Root_of_2               Root_of_2;
@@ -29,7 +29,7 @@ public:
   typedef typename CurvedKernel::Algebraic_kernel::Root_for_circles_2_2 
     Root_for_circles_2_2;
   typedef CurvedKernel   R; 
-  typedef RCircular_arc_endpoint_2 Rep;
+  typedef RCircular_arc_point_2 Rep;
   
 
  const Rep& rep() const
@@ -42,19 +42,19 @@ public:
     return *this;
   }
 
-  Circular_arc_endpoint_2()
-    : RCircular_arc_endpoint_2(
+  Circular_arc_point_2()
+    : RCircular_arc_point_2(
       typename R::Construct_circular_arc_endpoint_2()())
       {}
 
 
-  Circular_arc_endpoint_2(const Root_for_circles_2_2 & np)
-    : RCircular_arc_endpoint_2(
+  Circular_arc_point_2(const Root_for_circles_2_2 & np)
+    : RCircular_arc_point_2(
       typename R::Construct_circular_arc_endpoint_2()(np))
       {}
 
-  Circular_arc_endpoint_2(const RCircular_arc_endpoint_2 & p)
-    : RCircular_arc_endpoint_2(p)
+  Circular_arc_point_2(const RCircular_arc_point_2 & p)
+    : RCircular_arc_point_2(p)
       {}
       
       
@@ -73,8 +73,8 @@ public:
 template < typename CurvedKernel >
 inline
 bool
-operator==(const Circular_arc_endpoint_2<CurvedKernel> &p,
-           const Circular_arc_endpoint_2<CurvedKernel> &q)
+operator==(const Circular_arc_point_2<CurvedKernel> &p,
+           const Circular_arc_point_2<CurvedKernel> &q)
 {
   return CurvedKernel().equal_2_object()(p, q);
 }
@@ -82,12 +82,12 @@ operator==(const Circular_arc_endpoint_2<CurvedKernel> &p,
 template < typename CurvedKernel >
 inline
 bool
-operator!=(const Circular_arc_endpoint_2<CurvedKernel> &p,
-           const Circular_arc_endpoint_2<CurvedKernel> &q)
+operator!=(const Circular_arc_point_2<CurvedKernel> &p,
+           const Circular_arc_point_2<CurvedKernel> &q)
 {
   return ! (p == q);
 }
 
 } // namespace CGAL
 
-#endif // CGAL_CIRCULAR_ARC_ENDPOINT_2_H
+#endif // CGAL_CIRCULAR_ARC_POINT_2_H
