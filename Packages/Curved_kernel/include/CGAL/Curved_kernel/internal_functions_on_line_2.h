@@ -30,22 +30,20 @@ namespace LinearFunctors {
   {
     typedef typename CK::Polynomial_1_2 Equation_line;
     typedef typename CK::Polynomial_for_circles_2_2 Equation_circle; 
+    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
 
     Equation_line e1 = get_equation<CK>(l);
     Equation_circle e2 = CGAL::get_equation<CK>(c);
     
     typedef std::vector
       < std::pair 
-      < std::pair<typename CK::Root_of_2,typename CK::Root_of_2>, 
+      < Root_for_circles_2_2, 
       unsigned > > 
       solutions_container;
     solutions_container solutions;
     CGAL::AlgebraicFunctors::solve<typename CK::Algebraic_kernel>
       ( e1,e2, std::back_inserter(solutions) ); // to be optimized
     
-    typedef typename CK::Circular_arc_endpoint_2::Numeric_point_2
-      Numeric_point_2;
-
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
 
     for ( typename solutions_container::iterator it = solutions.begin(); 
@@ -53,9 +51,7 @@ namespace LinearFunctors {
       {
 	*res++ = make_object
 	  (std::make_pair
-	   (Circular_arc_endpoint_2(Numeric_point_2( it->first.first,
-						     it->first.second ))
-	    , it->second ));
+	   (Circular_arc_endpoint_2(it->first), it->second ));
       }
 
     return res;

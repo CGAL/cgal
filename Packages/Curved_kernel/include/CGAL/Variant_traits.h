@@ -331,7 +331,6 @@ namespace CGAL {
       {
 	bool precondition = typename CurvedKernel::Compare_xy_2()(a.left(),a.right())==CGAL::SMALLER;
 	CGAL_kernel_precondition(precondition);
-	//CGAL_kernel_precondition((CurvedKernel_Compare_xy_2()(a.left(),a.right()) == CGAL::SMALLER ));
 	return (a.left());
       }
     };

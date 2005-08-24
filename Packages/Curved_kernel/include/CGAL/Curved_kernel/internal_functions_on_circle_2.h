@@ -61,7 +61,7 @@ namespace CircularFunctors {
 			     OutputIterator res )
   {
     typedef typename CK::Polynomial_for_circles_2_2 Equation; 
-
+    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
     Equation e1 = get_equation<CK>(c1);
     Equation e2 = get_equation<CK>(c2);
     
@@ -71,17 +71,13 @@ namespace CircularFunctors {
     }
 
     typedef std::vector
-      < std::pair 
-          < std::pair<typename CK::Root_of_2,typename CK::Root_of_2>, 
-          unsigned > > 
+      < std::pair < Root_for_circles_2_2, unsigned > > 
       solutions_container;
     solutions_container solutions;
     
     CGAL::solve<typename CK::Algebraic_kernel>
       ( e1,e2, std::back_inserter(solutions) ); // to be optimized
-    
-    typedef typename CK::Circular_arc_endpoint_2::Numeric_point_2
-                                                    Numeric_point_2;
+
 
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
 
@@ -89,7 +85,7 @@ namespace CircularFunctors {
 	    it != solutions.end(); ++it )
       {
 	*res++ = make_object
-	  (std::make_pair(Circular_arc_endpoint_2(Numeric_point_2( it->first.first, it->first.second ))
+	  (std::make_pair(Circular_arc_endpoint_2(it->first)
 			  , it->second ));
       }
 
@@ -99,33 +95,33 @@ namespace CircularFunctors {
 
   // TODO: Will go to AK, once there is a Root_for_circles_2_1.
   template <class CK>
-  typename CK::Circular_arc_endpoint_2::Numeric_point_2
+  typename CK::Circular_arc_endpoint_2::Root_for_circles_2_2
   _x_critical_points(const typename CK::Polynomial_for_circles_2_2 & c, bool i)
   {
             typedef typename CK::Root_of_2 Root_of_2;
             typedef typename CK::FT        FT;
-            typedef typename CK::Circular_arc_endpoint_2::Numeric_point_2
-                                           Numeric_point_2;
+            typedef typename CK::Circular_arc_endpoint_2::Root_for_circles_2_2
+                                           Root_for_circles_2_2;
 
 	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
 
-            return Numeric_point_2(a1, make_root_of_2(FT(1), FT(0),
+            return Root_for_circles_2_2(a1, make_root_of_2(FT(1), FT(0),
                                    -square(c.b()), c.b()<0));
   }
 
   // TODO: Will go to AK, once there is a Root_for_circles_2_1.
   template <class CK>
-  typename CK::Circular_arc_endpoint_2::Numeric_point_2
+  typename CK::Circular_arc_endpoint_2::Root_for_circles_2_2
   _y_critical_points(const typename CK::Polynomial_for_circles_2_2 &c, bool i)
   {
             typedef typename CK::Root_of_2 Root_of_2;
             typedef typename CK::FT        FT;
-            typedef typename CK::Circular_arc_endpoint_2::Numeric_point_2
-                                           Numeric_point_2;
+            typedef typename CK::Circular_arc_endpoint_2::Root_for_circles_2_2
+                                           Root_for_circles_2_2;
 
             Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
 
-            return Numeric_point_2(make_root_of_2(FT(1),FT(0),
+            return Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
                                    -square(c.a()),c.a()<0),b1);
   }
 

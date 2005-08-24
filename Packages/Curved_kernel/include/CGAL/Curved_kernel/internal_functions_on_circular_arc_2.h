@@ -28,7 +28,7 @@ namespace CircularFunctors {
   compare_x(const typename CK::Circular_arc_endpoint_2 &p0,
             const typename CK::Circular_arc_endpoint_2 &p1)
   {
-    return CGAL::compare(p0.x(), p1.x());
+    return CGAL::compare_x(p0.coordinates(), p1.coordinates());
   }
 
   template < class CK >
@@ -37,7 +37,7 @@ namespace CircularFunctors {
   compare_y(const typename CK::Circular_arc_endpoint_2 &p0,
             const typename CK::Circular_arc_endpoint_2 &p1)
   {
-    return CGAL::compare(p0.y(), p1.y());
+    return CGAL::compare_y(p0.coordinates(), p1.coordinates());
   }
 
   template < class CK >
@@ -45,10 +45,7 @@ namespace CircularFunctors {
   compare_xy(const typename CK::Circular_arc_endpoint_2 &p0,
              const typename CK::Circular_arc_endpoint_2 &p1)
   {
-    Comparison_result compx = compare_x<CK>(p0, p1);
-    if (compx != 0)
-      return compx;
-    return compare_y<CK>(p0, p1);
+    return compare_xy(p0.coordinates(), p1.coordinates());
   }
 
 
@@ -437,11 +434,7 @@ namespace CircularFunctors {
 	}
 	return res;
       }
-     
 
-      // SHOULD USE INTERSECTIONS ON CIRCLES INSTEAD
-      // OR AT LEAST SOLVE...
-      
       // We need to check that the supporting circles
       // do intersect before going further.
       if (! do_intersect(a1.supporting_circle(), a2.supporting_circle())) 

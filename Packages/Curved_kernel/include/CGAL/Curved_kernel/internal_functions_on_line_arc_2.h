@@ -107,8 +107,6 @@ template < class CK >
 		     const typename CK::Line_arc_2 &A2, 
 		     const typename CK::Circular_arc_endpoint_2 &p)
   {
-    //CGAL_kernel_precondition (A1.source().x() != A1.target().x());
-    //CGAL_kernel_precondition (A2.source().x() != A2.target().x());
     if(A1.supporting_line().is_vertical()){
       if(A2.supporting_line().is_vertical())
 	return CGAL::EQUAL;
@@ -258,8 +256,8 @@ template < class CK >
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Linear_kernel::Point_2   Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
-    typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
-      Numeric_point_2;
+    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 
+      Root_for_circles_2_2;
     if ((a1.supporting_line() == a2.supporting_line())
 	|| (a1.supporting_line() == a2.supporting_line().opposite())){
       if(compare_xy(a1.left(),a2.left()) < 0){
@@ -317,7 +315,7 @@ template < class CK >
     Object obj = intersection(a1.supporting_line(), a2.supporting_line());
     const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
     Circular_arc_endpoint_2 intersect_point = Circular_arc_endpoint_2(
-					       Numeric_point_2(
+					       Root_for_circles_2_2(
 							       Root_of_2(pt->x()),
 							       Root_of_2(pt->y())
 							       )

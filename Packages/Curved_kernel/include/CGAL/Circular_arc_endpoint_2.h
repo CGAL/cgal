@@ -26,8 +26,8 @@ class Circular_arc_endpoint_2
   typedef typename CurvedKernel::Root_of_2               Root_of_2;
 
 public:
- typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
-                                                 Numeric_point_2;
+  typedef typename CurvedKernel::Algebraic_kernel::Root_for_circles_2_2 
+    Root_for_circles_2_2;
   typedef CurvedKernel   R; 
   typedef RCircular_arc_endpoint_2 Rep;
   
@@ -48,7 +48,7 @@ public:
       {}
 
 
-  Circular_arc_endpoint_2(const Numeric_point_2 & np)
+  Circular_arc_endpoint_2(const Root_for_circles_2_2 & np)
     : RCircular_arc_endpoint_2(
       typename R::Construct_circular_arc_endpoint_2()(np))
       {}

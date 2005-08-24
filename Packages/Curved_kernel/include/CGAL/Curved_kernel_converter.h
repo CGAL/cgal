@@ -39,7 +39,7 @@ public:
 	typename C2::Circular_arc_endpoint_2
 	operator()(const typename C1::Circular_arc_endpoint_2 &a) const
 	{
-		return typename C2::Circular_arc_endpoint_2( typename C2::Circular_arc_endpoint_2::Numeric_point_2(
+		return typename C2::Circular_arc_endpoint_2( typename C2::Circular_arc_endpoint_2::Root_for_circles_2_2(
 							     Root_of_type_converter()( a.x() ),
 							     Root_of_type_converter()( a.y() )
 	   	  )

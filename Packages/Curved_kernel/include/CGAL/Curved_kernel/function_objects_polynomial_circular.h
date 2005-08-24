@@ -493,7 +493,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_endpoint_2               Circular_arc_endpoint_2;
     typedef typename CK::Kernel_base::Circular_arc_endpoint_2  RCircular_arc_endpoint_2;
     typedef typename Circular_arc_endpoint_2::Rep              Rep;
-    typedef typename Circular_arc_endpoint_2::Numeric_point_2  Numeric_point_2;
+    typedef typename Circular_arc_endpoint_2::Root_for_circles_2_2  Root_for_circles_2_2;
 
   public:
     typedef  Circular_arc_endpoint_2 result_type;
@@ -503,7 +503,7 @@ namespace CircularFunctors {
     { return Rep(); }
 
     result_type
-    operator()(const Numeric_point_2 & np) const
+    operator()(const Root_for_circles_2_2 & np) const
     { return Rep(np); }
 
   };

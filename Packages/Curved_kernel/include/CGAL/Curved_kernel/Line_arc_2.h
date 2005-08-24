@@ -29,9 +29,11 @@ namespace CGALi {
     typedef typename CK::Segment_2                 Segment_2;
 
   public:
-    typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
-                                                 Numeric_point_2;
-
+    //typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
+    //                                             Numeric_point_2;
+    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 
+      Root_for_circles_2_2;
+    
     static
       Circular_arc_endpoint_2
       intersect(const Line_2 & l, const Circle_2 & c, const bool b)
@@ -87,11 +89,11 @@ namespace CGALi {
       //Voir pour mettre une assertion au assign
       Object obj = intersection(support, l1);
       const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
-      _begin = Circular_arc_endpoint_2(Numeric_point_2(Root_of_2(pt->x()),
+      _begin = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(pt->x()),
 						       Root_of_2(pt->y())));
       obj = intersection(support, l2);
       const Point_2 *pt2 = CGAL::object_cast<Point_2>(&obj);
-      _end = Circular_arc_endpoint_2(Numeric_point_2(Root_of_2(pt2->x()),
+      _end = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(pt2->x()),
 						     Root_of_2(pt2->y())));
     }
     
@@ -116,9 +118,9 @@ namespace CGALi {
 	       const Point_2 &p2)
     {
       _support = Line_2(p1, p2);
-      _begin = Circular_arc_endpoint_2(Numeric_point_2(Root_of_2(p1.x()),
+      _begin = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(p1.x()),
 						       Root_of_2(p1.y())));
-      _end = Circular_arc_endpoint_2(Numeric_point_2(Root_of_2(p2.x()),
+      _end = Circular_arc_endpoint_2(Root_for_circles_2_2(Root_of_2(p2.x()),
 						     Root_of_2(p2.y())));
     }
 
