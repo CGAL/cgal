@@ -1,92 +1,102 @@
 \chapter{Curved Kernel}
 
-\textbf{DRAFT - Monique - with Sylvain's help...}
+\textbf{Submission - Monique - with Sylvain's help...}
 
 The main class is: 
 
 \ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
 
+\begin{ccAdvanced}
+I use the ``Advanced'' environment in this document to distinguish
+between my current submission to the CGAL editorial board and plans
+for the future, related to ACS. The ``Advanced'' parts will disappear
+if/when this is released. 
+\end{ccAdvanced}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Concepts}
 
-\ccRefConceptPage{CircularKernel_2}\\
-\ccRefConceptPage{ConicKernel_2}
+\footnote{Note that I have a big question here. Should the kernel here
+be described as a concept, as is done currently in CGAL? formally, it
+must be, since the CK appears as a template parameter of geometric
+object classes. However, it is hard for a user to browse the manual
+written that way.}
+
+\ccRefConceptPage{CircularKernel_2}
 
 \ccRefConceptPage{BasicGeometricKernel}
 
-\ccRefConceptPage{AlgebraicKernel_2_2}\\
-\ccRefConceptPage{AlgebraicKernel_4_2}\\
-\ccRefConceptPage{AlgebraicKernel_2_2::RootOf_2}\\
-\ccRefConceptPage{AlgebraicKernel_4_2::RootOf_4}\\
-\ccRefConceptPage{Algebraic_kernel_2_2::PolynomialCircle_2_2}\\
-\ccRefConceptPage{Algebraic_kernel_4_2::Polynomial_2_2}
-
-\textit{Remark about the suffix \ccc{_x_y}: \ccc{_x} stands 
-for the degree of the polynomials and the algebraic numbers, and
-\ccc{_y} stands for the number of variables, which is analogous to the
-dimension for geometric objects.}
+\begin{ccAdvanced}
+\ccRefConceptPage{ConicKernel_2}
+\end{ccAdvanced}
 
 	\subsubsection*{Functors} 
+
 \ccRefConceptPage{CircularKernel::CompareX_2}\\
-\ccRefConceptPage{ConicKernel::CompareX_2}\\
 \ccRefConceptPage{CircularKernel::CompareY_2}\\
-\ccRefConceptPage{ConicKernel::CompareY_2}\\
-\ccRefConceptPage{CircularKernel::CompareXY_2}\\
-\ccRefConceptPage{ConicKernel::CompareXY_2}
+\ccRefConceptPage{CircularKernel::CompareXY_2}
 
 \ccRefConceptPage{CircularKernel::ConstructCircle_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularArc_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularArcEndpoint_2}\\
+
+\ccRefConceptPage{CircularKernel::IsXMonotone_2}\\
+\ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
+\ccRefConceptPage{CircularKernel::ConstructIntersections_2}\\
+
+\ccRefConceptPage{CircularKernel::GetEquation}\\
+
+\begin{ccAdvanced}
+\ccRefConceptPage{ConicKernel::CompareX_2}\\
+\ccRefConceptPage{ConicKernel::CompareY_2}\\
+\ccRefConceptPage{ConicKernel::CompareXY_2}
+
 \ccRefConceptPage{ConicKernel::ConstructConic_2}\\
 \ccRefConceptPage{ConicKernel::ConstructConicArc_2}\\
 \ccRefConceptPage{ConicKernel::ConstructConicArcEndpoint_2}
 
-\ccRefConceptPage{CircularKernel::IsXMonotone_2}\\
-\ccRefConceptPage{ConicKernel::IsXMonotone_2}
-
-\ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
+\ccRefConceptPage{ConicKernel::IsXMonotone_2}\\
 \ccRefConceptPage{ConicKernel::MakeXMonotone_2}\\
-\ccRefConceptPage{CircularKernel::ConstructIntersections_2}\\
 \ccRefConceptPage{ConicKernel::ConstructIntersections_2}
 
-\ccRefConceptPage{CircularKernel::GetEquation}\\
 \ccRefConceptPage{ConicKernel::GetEquation}
+\end{ccAdvanced}
 
-\ccRefConceptPage{AlgebraicKernel_2_2::ConstructPolynomialCircle_2_2}\\
-\ccRefConceptPage{AlgebraicKernel_4_2::ConstructPolynomial_2_2}
-
-\ccRefConceptPage{AlgebraicKernel_2_2::Solve}\\
-\ccRefConceptPage{AlgebraicKernel_4_2::Solve}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Classes}
 
-\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
+\footnote{same big question here about concept/class for the
+kernel. the lazy stuff is a good reason to document the kernel as a
+concept. But again this does not help the reader...}
+
+\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}\\
+\ccRefIdfierPage{!!!!!!!!!!!!!!! LAZY STUFF !!!!!!!!!!!!!}
 
 	\subsubsection*{Curves and Surfaces}
 \ccRefIdfierPage{CGAL::Circle_2<CircularKernel>}\\
+
+\begin{ccAdvanced}
 \ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
-\ccRefIdfierPage{CGAL::Ellipsis_2<ConicKernel>}\footnote{for ETH?}\\
+\ccRefIdfierPage{CGAL::Ellipse_2<ConicKernel>}\footnote{useful for ETH?}\\
 \ccRefIdfierPage{CGAL::Sphere_3<SphericalKernel>}\\
 \ccRefIdfierPage{CGAL::Quadric_3<Quadr...Kernel>}
+\end{ccAdvanced}
 
 	\subsubsection*{Arcs}
-\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}
+
+\begin{ccAdvanced}
 \ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}\\
 \ccRefIdfierPage{CGAL::Sphere_patch_3<SphericalKernel>}\\
 \ccRefIdfierPage{CGAL::Quadric_patch_3<SphericalKernel>}
+\end{ccAdvanced}
 
 	\subsubsection*{Points}
-\ccRefIdfierPage{CGAL::Circular_arc_endpoint_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_endpoint_2<CircularKernel>}
+
+\begin{ccAdvanced}
 \ccRefIdfierPage{CGAL::Conic_arc_endpoint_2<ConicKernel>}
-
-	\subsubsection*{Polynomials and algebraic numbers} 
-\footnote{how does the linking work when concepts and classes have the same name...? example \ccc{Polynomial_2_2}}
-
-\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
-\ccRefIdfierPage{CGAL::Root_of_4<RT>}
-
-\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}\\
-\ccRefIdfierPage{CGAL::Root_of_traits_4<RT>}
+\end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Functions}
@@ -98,22 +108,21 @@ dimension for geometric objects.}
 
 	\subsubsection*{Constructions}
 
-\ccRefIdfierPage{CGAL::make_root_of_2}\\
-\ccRefIdfierPage{CGAL::make_root_of_4}
-
 \ccRefIdfierPage{CGAL::make_x_monotone}\\
 \ccRefIdfierPage{CGAL::construct_intersections}
-
-\ccRefIdfierPage{CGAL::solve}
 
 	\subsubsection*{others?} 
 
 \ccRefIdfierPage{CGAL::get_equation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Traits class}
+\section*{Traits class for CGAL Arrangements}
 
-\ccRefIdfierPage{CGAL::Circular_arc_traits}\\
+\ccRefIdfierPage{CGAL::Circular_arc_traits}
+
+\begin{ccAdvanced}
 \ccRefIdfierPage{CGAL::Conic_arc_traits}
+\end{ccAdvanced}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section*{Enums}
