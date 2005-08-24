@@ -56,7 +56,7 @@ parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 // The result is the (u,v) pair image of each vertex of the 3D surface.
 //
 // 1 to 1 mapping may be guaranteed or not, depending of
-// Parametizer_3_ algorithm chosen
+// ParametizerTraits_3 algorithm chosen
 //
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component
@@ -64,10 +64,10 @@ parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 // * the mesh border must be mapped onto a convex polygon
 // (for fixed border parameterizations)
 //
-template <class MeshAdaptor_3, class Parametizer_3_>
+template <class MeshAdaptor_3, class ParametizerTraits_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
-parameterize(MeshAdaptor_3* mesh,       // 3D mesh, model of MeshAdaptor_3 concept
-             Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
+parameterize(MeshAdaptor_3* mesh,               // 3D mesh, model of MeshAdaptor_3 
+             ParametizerTraits_3 parametizer)   // Parameterization method for 'mesh'
 {
     return parametizer.parameterize(mesh);
 }
