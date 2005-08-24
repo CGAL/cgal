@@ -53,6 +53,7 @@
 // test variant 1 (needs LEDA)
 #ifdef CGAL_USE_LEDA
 # include <CGAL/leda_integer.h>
+# include <CGAL/Min_sphere_d.h>
   typedef  CGAL::Cartesian<leda_integer>       K_1;
   typedef  CGAL::Optimisation_d_traits_3<K_1>  Traits_1;
 # define TEST_VARIANT_1 \
@@ -160,7 +161,7 @@ main( int argc, char* argv[])
     
         // compute smallest enclosing spheres
         Min_sphere_d  ms( points_1.begin(), points_1.end(),
-                          Traits_1(), verbose);
+                          Traits_1());
         verrX << endl << ms << endl;
         assert( ms.is_valid( verbose > 0));
         

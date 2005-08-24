@@ -176,7 +176,7 @@ main( int argc, char* argv[])
     
         // compute smallest enclosing spheres
         Min_sphere_d  ms( points_1.begin(), points_1.end(),
-                          Traits_1(), verbose);
+                          Traits_1());
         verrX << endl << ms << endl;
         assert( ms.is_valid( verbose > 0));
         
