@@ -21,7 +21,7 @@ typedef CGAL::Cartesian<Number_type>                     Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>               Traits_2;
 typedef Traits_2::Point_2                                Point_2;
 typedef Traits_2::X_monotone_curve_2                     Segment_2;
-typedef CGAL::Arr_face_extended_dcel<Traits_2, int>      Dcel;
+typedef CGAL::Arr_face_extended_dcel<Traits_2, bool>     Dcel;
 typedef CGAL::Arrangement_2<Traits_2, Dcel>              Arrangement_2;
 typedef CGAL::Arr_face_overlay_traits<Arrangement_2,
                                       Arrangement_2,
