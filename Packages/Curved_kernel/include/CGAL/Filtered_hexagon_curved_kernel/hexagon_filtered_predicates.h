@@ -345,27 +345,6 @@ class Do_overlap_2
   };
 
 
- template < class HK >
-  class Nearest_intersection_to_right_2
-  {
-
-    typedef typename HK::Curved_kernel            CK;
-    typedef typename HK::Circular_arc_2           Circular_arc_2;
-    typedef typename HK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
-
-  public:
-    typedef bool result_type;
-
-    result_type
-    operator()(const Circular_arc_2 &A1, const Circular_arc_2 &A2,
-               const Circular_arc_endpoint_2 &pt,
-               Circular_arc_endpoint_2 &p1, Circular_arc_endpoint_2 &p2) const
-    { return CK().nearest_intersection_to_right_2_object()(A1.arc(), A2.arc(), pt, p1, p2); }
-
-  };
-
-
-
   template < class HK >
   class Split_2
   {

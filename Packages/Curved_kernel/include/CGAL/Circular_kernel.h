@@ -134,10 +134,6 @@ struct Curved_kernel
 
   // Construct_min_vertex_2 and Construct_max_vertex_2 should be added
 
-  // to be removed
-  typedef CircularFunctors::Nearest_intersection_to_right_2<Self>
-                              Nearest_intersection_to_right_2;
-
   Get_equation
   get_equation_object() const
     { return Get_equation(); }
@@ -186,9 +182,6 @@ struct Curved_kernel
   construct_intersections_2_object() const
     { return Construct_intersections_2(); }
 
-  Nearest_intersection_to_right_2
-  nearest_intersection_to_right_2_object() const
-  { return Nearest_intersection_to_right_2(); }
 
   Split_2
   split_2_object() const

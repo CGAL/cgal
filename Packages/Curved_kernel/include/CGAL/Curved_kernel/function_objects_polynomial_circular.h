@@ -328,22 +328,6 @@ namespace CircularFunctors {
     
   };
 
-  template < class CK >
-  class Nearest_intersection_to_right_2
-  {
-    typedef typename CK::Circular_arc_2          Circular_arc_2;
-    typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
-
-  public:
-    typedef bool result_type;
-
-    result_type
-    operator()(const Circular_arc_2 &A1, const Circular_arc_2 &A2,
-               const Circular_arc_endpoint_2 &pt,
-               Circular_arc_endpoint_2 &p1, Circular_arc_endpoint_2 &p2) const
-    { return nearest_intersection_to_right<CK>(A1, A2, pt, p1, p2); }
-
-  };
 
   template < class CK >
   class Split_2
