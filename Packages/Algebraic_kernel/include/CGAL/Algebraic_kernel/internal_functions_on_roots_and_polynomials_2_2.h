@@ -15,7 +15,7 @@ namespace CGAL {
     // of one another if they are not equal
 
     typedef typename AK::FT FT;
-
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
     FT dx = e2.a() - e1.a();
     FT dy = e2.b() - e1.b();
 
@@ -42,7 +42,7 @@ namespace CGAL {
       // one double root, 
       // no need to care about the boolean of the Root_of
       *res++ = std::make_pair
-	( std::make_pair
+	( Root_for_circles_2_2
 	  (make_root_of_2(4*dist2,
 			  4*(dx*drx-px*dy2),
 			  CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2),
@@ -62,7 +62,7 @@ namespace CGAL {
     // fixme : use more clever manipulation of booleans...
     bool low_y = slope ? true : false;
     * res++ = std::make_pair
-	( std::make_pair
+	( Root_for_circles_2_2
 	  (make_root_of_2(4*dist2,
 			  4*(dx*drx-px*dy2),
 			  CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2),
@@ -75,7 +75,7 @@ namespace CGAL {
     
     low_y = slope ? false : true;
     * res++ = std::make_pair
-	( std::make_pair
+	( Root_for_circles_2_2
 	  (make_root_of_2(4*dist2,
 			  4*(dx*drx-px*dy2),
 			  CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2),

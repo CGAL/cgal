@@ -4,6 +4,7 @@
 #include <CGAL/Root_of_2.h>
 #include <CGAL/Polynomials_2_2.h>
 #include <CGAL/Polynomials_1_2.h>
+#include <CGAL/Root_for_circles_2_2.h>
 
 #include <CGAL/Algebraic_kernel/function_objects_on_roots_and_polynomials_2_2.h> 
 #include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
@@ -19,6 +20,7 @@ namespace CGAL {
 
     typedef typename Root_of_traits< RT >::RootOf_2         Root_of_2;
     typedef typename Root_of_traits< RT >::RootOf_1         FT;
+    typedef Root_for_circles_2_2< RT >             Root_for_circles_2_2;
 
     typedef Polynomial_for_circles_2_2<RT>
     Polynomial_for_circles_2_2; // probleme RT / FT

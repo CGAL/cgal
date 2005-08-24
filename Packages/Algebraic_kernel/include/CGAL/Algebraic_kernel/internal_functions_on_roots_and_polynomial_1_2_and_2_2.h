@@ -17,6 +17,7 @@ namespace CGAL {
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
     if (e1.a() == 0){//horizontal line
       
       FT a = 1;
@@ -32,19 +33,16 @@ namespace CGAL {
 	Root_of_2 x_res = make_root_of_2(a, b, c, true);
 	Root_of_2 y_res = Root_of_2(-e1.c()/e1.b()); 
 	*res++ = std::make_pair
-	  ( std::make_pair(x_res,y_res),
-	    2u);
+	  ( Root_for_circles_2_2(x_res, y_res), 2u);
 	return res;
       }
       Root_of_2 x_res1 = make_root_of_2(a, b, c, true);
       Root_of_2 x_res2 = make_root_of_2(a, b, c, false);
       Root_of_2 y_res = Root_of_2(-e1.c()/e1.b()); 
       *res++ = std::make_pair
-	( std::make_pair(x_res1,y_res),
-	  1u);
+	( Root_for_circles_2_2(x_res1, y_res), 1u);
       *res++ = std::make_pair
-	( std::make_pair(x_res2,y_res),
-	  1u);
+	( Root_for_circles_2_2(x_res2,y_res), 1u);
       return res;
     }
     else if(e1.b() == 0){//vertical line
@@ -62,19 +60,16 @@ namespace CGAL {
 	Root_of_2 y_res = make_root_of_2(a, b, c, true);
 	Root_of_2 x_res = Root_of_2(-e1.c()/e1.a()); 
 	*res++ = std::make_pair
-	  ( std::make_pair(x_res,y_res),
-	    2u);
+	  ( Root_for_circles_2_2(x_res, y_res), 2u);
 	return res;
       }
       Root_of_2 y_res1 = make_root_of_2(a, b, c, true);
       Root_of_2 y_res2 = make_root_of_2(a, b, c, false);
       Root_of_2 x_res = Root_of_2(-e1.c()/e1.a()); 
       *res++ = std::make_pair
-	( std::make_pair(x_res,y_res1),
-	  1u);
+	( Root_for_circles_2_2(x_res, y_res1), 1u);
       *res++ = std::make_pair
-	( std::make_pair(x_res,y_res2),
-	  1u);
+	( Root_for_circles_2_2(x_res,y_res2), 1u);
       return res;
     }
     else{
@@ -98,8 +93,7 @@ namespace CGAL {
 	Root_of_2 y_res = make_root_of_2(a, b, c, true);
 	Root_of_2 x_res = (e1.b()*y_res + e1.c()) / -e1.a();
 	*res++ = std::make_pair
-	  ( std::make_pair(x_res,y_res),
-	    2u);
+	  ( Root_for_circles_2_2(x_res,y_res), 2u);
 	return res;
       }
     
@@ -110,20 +104,16 @@ namespace CGAL {
 
       if(x_res2 < x_res1){
 	*res++ = std::make_pair
-	  ( std::make_pair(x_res2,y_res2),
-	    1u);
+	  ( Root_for_circles_2_2(x_res2, y_res2), 1u);
 	*res++ = std::make_pair
-	  ( std::make_pair(x_res1,y_res1),
-	    1u);
+	  ( Root_for_circles_2_2(x_res1,y_res1), 1u);
 	return res;
       }
       else{
         *res++ = std::make_pair
-	  ( std::make_pair(x_res1,y_res1),
-	    1u);
+	  ( Root_for_circles_2_2(x_res1, y_res1), 1u);
 	*res++ = std::make_pair
-	  ( std::make_pair(x_res2,y_res2),
-	    1u);
+	  ( Root_for_circles_2_2(x_res2,y_res2), 1u);
 	return res;
       }     
     }
