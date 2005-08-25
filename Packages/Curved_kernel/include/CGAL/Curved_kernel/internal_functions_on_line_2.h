@@ -30,7 +30,7 @@ namespace LinearFunctors {
   {
     typedef typename CK::Polynomial_1_2 Equation_line;
     typedef typename CK::Polynomial_for_circles_2_2 Equation_circle; 
-    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
 
     Equation_line e1 = get_equation<CK>(l);
     Equation_circle e2 = CGAL::get_equation<CK>(c);

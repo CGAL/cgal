@@ -26,7 +26,7 @@ class Circular_arc_point_2
   typedef typename CurvedKernel::Root_of_2               Root_of_2;
 
 public:
-  typedef typename CurvedKernel::Algebraic_kernel::Root_for_circles_2_2 
+  typedef typename CurvedKernel::Root_for_circles_2_2 
     Root_for_circles_2_2;
   typedef CurvedKernel   R; 
   typedef RCircular_arc_point_2 Rep;

@@ -31,7 +31,7 @@ namespace CGALi {
   public:
     //typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
     //                                             Numeric_point_2;
-    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 
+    typedef typename CK::Root_for_circles_2_2 
       Root_for_circles_2_2;
     
     static

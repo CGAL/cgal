@@ -59,6 +59,7 @@ struct Curved_kernel
   typedef typename LinearKernel::FT                       FT;
 
   typedef typename Algebraic_kernel::Root_of_2            Root_of_2;
+  typedef typename Algebraic_kernel::Root_for_circles_2_2  Root_for_circles_2_2;
   typedef typename Algebraic_kernel::Polynomial_for_circles_2_2
                                                   Polynomial_for_circles_2_2;
   typedef typename Algebraic_kernel::Polynomial_1_2

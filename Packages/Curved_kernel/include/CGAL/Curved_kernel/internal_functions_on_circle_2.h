@@ -61,7 +61,7 @@ namespace CircularFunctors {
 			     OutputIterator res )
   {
     typedef typename CK::Polynomial_for_circles_2_2 Equation; 
-    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
     Equation e1 = get_equation<CK>(c1);
     Equation e2 = get_equation<CK>(c2);
     

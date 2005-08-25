@@ -257,8 +257,7 @@ template < class CK >
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Linear_kernel::Point_2   Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
-    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 
-      Root_for_circles_2_2;
+    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
     if ((a1.supporting_line() == a2.supporting_line())
 	|| (a1.supporting_line() == a2.supporting_line().opposite())){
       if(compare_xy(a1.left(),a2.left()) < 0){

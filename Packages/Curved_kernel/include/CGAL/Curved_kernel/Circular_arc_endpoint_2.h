@@ -40,7 +40,7 @@ namespace CGALi {
 
   public: // fixme ?
 
-    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
     
     Circular_arc_point_2() {}
 
@@ -84,7 +84,7 @@ namespace CGALi {
   operator>>(std::istream & is, Circular_arc_point_2<CK> &p)
   {
     typedef typename CK::Root_of_2               Root_of_2;
-    typedef typename CK::Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
 
     typename Root_of_2::RT x1, x2, x3;
     typename Root_of_2::RT y1, y2, y3;
