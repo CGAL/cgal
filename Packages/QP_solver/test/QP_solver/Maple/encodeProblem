@@ -114,7 +114,7 @@ encodeUbQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	        printf("%s", "wrong dimensions in D\n");
 	end if;
 	
-	writeExplicitBounds(fd, n, fl, l, fu, u);
+	writeRatExplicitBounds(fd, n, fl, l, fu, u);
 	
 	fclose(fd);
 	
@@ -221,7 +221,7 @@ encodeUbLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	        printf("%s", "wrong dimensions in c\n");
 	end if;
 	
-	writeExplicitBounds(fd, n, fl, l, fu, u);
+	writeRatExplicitBounds(fd, n, fl, l, fu, u);
 
 	fclose(fd);
 	
@@ -341,7 +341,7 @@ encodeUbQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	        printf("%s", "wrong dimensions in D\n");
 	end if;
 	
-	writeExplicitBounds(fd, n, fl, l, fu, u);
+	writeFloatExplicitBounds(fd, n, fl, l, fu, u);
 	
 	fclose(fd);
 	
@@ -446,12 +446,11 @@ encodeUbLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	        printf("%s", "wrong dimensions in c\n");
 	end if;
 	
-	writeExplicitBounds(fd, n, fl, l, fu, u);
+	writeFloatExplicitBounds(fd, n, fl, l, fu, u);
 
 	fclose(fd);
 	
 end proc;
-
 
 
 encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
@@ -568,7 +567,7 @@ encodeUbQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	        printf("%s", "wrong dimensions in D\n");
 	end if;
 	
-	writeExplicitBounds(fd, n, fl, l, fu, u);
+	writeIntExplicitBounds(fd, n, fl, l, fu, u);
 	
 	fclose(fd);
 	
@@ -676,7 +675,7 @@ encodeUbLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	        printf("%s", "wrong dimensions in c\n");
 	end if;
 	
-	writeExplicitBounds(fd, n, fl, l, fu, u);
+	writeIntExplicitBounds(fd, n, fl, l, fu, u);
 		
 	fclose(fd);
 	
@@ -818,7 +817,7 @@ writeDescription:=proc(fileDesc, desc)
 	fprintf(fileDesc, "%s", "\n");
 end proc;
 
-writeExplicitBounds:=proc(fd, n, fl, l, fu, u)
+writeIntExplicitBounds:=proc(fd, n, fl, l, fu, u)
 
 	if (Dimensions(fl)[1] = 1) and (Dimensions(fl)[2] = n) then
 	        fprintf(fd, "%s", "fl\n");
@@ -844,6 +843,68 @@ writeExplicitBounds:=proc(fd, n, fl, l, fu, u)
 	if (Dimensions(u)[1] = 1) and (Dimensions(u)[2] = n) then
 	        fprintf(fd, "%s", "u\n");
 		writeIntMatrix(fd, u, 1, n);
+	else
+	        printf("%s", "wrong dimensions in u\n");
+	end if;
+end proc;
+
+writeFloatExplicitBounds:=proc(fd, n, fl, l, fu, u)
+
+	if (Dimensions(fl)[1] = 1) and (Dimensions(fl)[2] = n) then
+	        fprintf(fd, "%s", "fl\n");
+		writeIntMatrix(fd, fl, 1, n);
+	else
+	        printf("%s", "wrong dimensions in fl\n");
+	end if;
+
+	if (Dimensions(l)[1] = 1) and (Dimensions(l)[2] = n) then
+	        fprintf(fd, "%s", "l\n");
+		writeFloatMatrix(fd, l, 1, n);
+	else
+	        printf("%s", "wrong dimensions in l\n");
+	end if;
+
+	if (Dimensions(fu)[1] = 1) and (Dimensions(fu)[2] = n) then
+	        fprintf(fd, "%s", "fu\n");
+		writeIntMatrix(fd, fu, 1, n);
+	else
+	        printf("%s", "wrong dimensions in fu\n");
+	end if;
+
+	if (Dimensions(u)[1] = 1) and (Dimensions(u)[2] = n) then
+	        fprintf(fd, "%s", "u\n");
+		writeFloatMatrix(fd, u, 1, n);
+	else
+	        printf("%s", "wrong dimensions in u\n");
+	end if;
+end proc;
+
+writeRatExplicitBounds:=proc(fd, n, fl, l, fu, u)
+
+	if (Dimensions(fl)[1] = 1) and (Dimensions(fl)[2] = n) then
+	        fprintf(fd, "%s", "fl\n");
+		writeIntMatrix(fd, fl, 1, n);
+	else
+	        printf("%s", "wrong dimensions in fl\n");
+	end if;
+
+	if (Dimensions(l)[1] = 1) and (Dimensions(l)[2] = n) then
+	        fprintf(fd, "%s", "l\n");
+		writeRatMatrix(fd, l, 1, n);
+	else
+	        printf("%s", "wrong dimensions in l\n");
+	end if;
+
+	if (Dimensions(fu)[1] = 1) and (Dimensions(fu)[2] = n) then
+	        fprintf(fd, "%s", "fu\n");
+		writeIntMatrix(fd, fu, 1, n);
+	else
+	        printf("%s", "wrong dimensions in fu\n");
+	end if;
+
+	if (Dimensions(u)[1] = 1) and (Dimensions(u)[2] = n) then
+	        fprintf(fd, "%s", "u\n");
+		writeRatMatrix(fd, u, 1, n);
 	else
 	        printf("%s", "wrong dimensions in u\n");
 	end if;
