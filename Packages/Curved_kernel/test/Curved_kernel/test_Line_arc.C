@@ -1019,6 +1019,45 @@ void _test_compare_y_at_x(CK ck)
   
 }
 
+
+
+template <class CK>
+void _test_has_on(CK ck)
+{
+  typedef typename CK::FT                      FT;
+  typedef typename CK::Circle_2                Circle_2;
+  typedef typename CK::Circular_arc_2          Circular_arc_2;
+  typedef typename CK::Point_2                 Point_2;
+  typedef typename CK::Line_2                  Line_2;
+  typedef typename CK::Intersect_2   Intersect_2;
+  typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
+  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
+  typedef typename CK::Line_arc_2              Line_arc_2;
+  typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
+  
+  Line_arc_2 line_arc_horizontal(Point_2(-1, 0), Point_2(1, 0));
+  Line_arc_2 line_arc_vertical(Point_2(0, 0), Point_2(0, 1));
+  Line_arc_2 line_arc_vertical2(Point_2(0, -1), Point_2(0, 1));
+  Line_arc_2 line_arc_diagonal(Point_2(-1, -1), Point_2(1, 1));
+  Line_arc_2 line_arc_diagonal2(Point_2(-1, 1), Point_2(1, -1));
+  Line_arc_2 line_arc_vertical3(Point_2(0, -1), Point_2(0, 2));
+  assert(CGAL::CircularFunctors::has_on<CK>(line_arc_horizontal,
+					    line_arc_vertical.source()));
+  assert(!CGAL::CircularFunctors::has_on<CK>(line_arc_horizontal,
+					     line_arc_vertical.target()));
+  assert(!CGAL::CircularFunctors::has_on<CK>(line_arc_vertical,
+					     line_arc_vertical2.source()));
+  assert(CGAL::CircularFunctors::has_on<CK>(line_arc_vertical,
+					     line_arc_vertical2.target()));
+  assert(CGAL::CircularFunctors::has_on<CK>(line_arc_diagonal,
+					    line_arc_vertical.source()));
+
+}
+
+
+
+
+
 int main()
 {
   typedef CGAL::Gmpq                                           NT1;
@@ -1031,6 +1070,7 @@ int main()
   _test_intersection_Line_arc_Circular_arc(ck1);
   _test_compare_y_to_right(ck1);
   _test_compare_y_at_x(ck1);
+  _test_has_on(ck1);
 
 
 }

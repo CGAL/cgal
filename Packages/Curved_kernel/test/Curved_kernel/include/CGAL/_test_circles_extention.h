@@ -144,7 +144,59 @@ void _test_circle_bbox(CK ck)
 //	     <= arc_random.supporting_circle().squared_radius());
       
     }
+  }
     
+template <class CK>
+    void _test_has_on(CK ck)
+  {
+    typedef typename CK::Circle_2                    Circle_2;
+    typedef typename CK::Circular_arc_2              Circular_arc_2;
+    typedef typename CK::Point_2                     Point_2;
+    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
+    typedef typename CK::Intersect_2   Intersect_2;
+    typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
     
-}
+    Point_2 center_circ(0,0);
+    Circle_2 circ(center_circ, 100);
+    Circular_arc_2 arc(circ);
+    Line_arc_2 line_vertical(Point_2(0, 15),
+			     Point_2(0, -15));
+    Intersect_2 theConstruct_intersect_2 
+      = ck.intersect_2_object();
+    std::vector< CGAL::Object > 
+      vector_for_intersection_1;
+    theConstruct_intersect_2(arc, 
+			     line_vertical,
+			     std::back_inserter(vector_for_intersection_1));
+    Circular_arc_point_2 point_top;
+    Circular_arc_point_2 point_down;
+    std::pair< Circular_arc_point_2, std::size_t > aux;
+    assign(aux, vector_for_intersection_1[0]);
+    point_down = aux.first;
+    assign(aux, vector_for_intersection_1[1]);
+    point_top = aux.first;
+    Make_x_monotone_2 theMake_x_monotone = ck.make_x_monotone_2_object();
+    std::vector< CGAL::Object > outputIterator1;
+    theMake_x_monotone(arc,
+		       std::back_inserter(outputIterator1));
+    Circular_arc_2 arc_top;
+    Circular_arc_2 arc_down;
+    assign(arc_top,outputIterator1[1]);
+    assign(arc_down, outputIterator1[0]);
+    assert(!CGAL::CircularFunctors::has_on<CK>(arc_top,
+					    line_vertical.source()));
+    assert(CGAL::CircularFunctors::has_on<CK>(arc_top,
+					      arc_top.source()));
+    assert(CGAL::CircularFunctors::has_on<CK>(arc_top,
+					      arc_top.target()));
+    assert(CGAL::CircularFunctors::has_on<CK>(arc_top,
+					      point_top));
+    assert(!CGAL::CircularFunctors::has_on<CK>(arc_top,
+					      point_down));
+    assert(CGAL::CircularFunctors::has_on<CK>(arc_down,
+					      point_down));
+    assert(!CGAL::CircularFunctors::has_on<CK>(arc_down,
+					      point_top));
+  }
   
