@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 // creation & initialization
 // -------------------------
-// creation
+// creation standard form
 template < class Rep_ >
 QP_solver<Rep_>::
 QP_solver(int n, int m,
@@ -46,13 +46,49 @@ QP_solver(int n, int m,
     m_phase( -1), is_phaseI( false), is_phaseII( false),
     is_RTS_transition(false),
     is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
-    no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( ! no_ineq)
+    no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( !
+    no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
 { 
   set(n,m,A,b,c,D,r);
   set_pricing_strategy(strategy);
   init();
   solve();
 }
+
+// creation upper bounded case
+template < class Rep_ >
+QP_solver<Rep_>::
+QP_solver(int n, int m,
+	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	  Row_type_iterator r,
+	  FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
+	  Pricing_strategy& strategy)
+  : et0( 0), et1( 1), et2( 2),
+    strategyP( static_cast< Pricing_strategy*>( 0)),
+    inv_M_B( vout4),
+    d( inv_M_B.denominator()),
+    m_phase( -1), is_phaseI( false), is_phaseII( false),
+    is_RTS_transition(false),
+    is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
+    no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( !
+    no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
+{ 
+  set(n,m,A,b,c,D,r);
+  set_pricing_strategy(strategy);
+  init();
+  solve();
+  for (FL_iterator it = fl; it != (fl+qp_n); ++it)
+    std::cout << *it << std::endl;
+  for (L_iterator it = lb; it != (lb+qp_n); ++it)
+    std::cout << *it << std::endl;
+  for (FU_iterator it = fu; it != (fu+qp_n); ++it)
+    std::cout << *it << std::endl;
+  for (U_iterator it = ub; it != (ub+qp_n); ++it)
+    std::cout << *it << std::endl;
+
+}
+
+
 
 // set-up of QP
 template < class Rep_ >
