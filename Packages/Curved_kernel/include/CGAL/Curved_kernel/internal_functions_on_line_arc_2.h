@@ -66,8 +66,9 @@ template < class CK >
   {
     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(a.supporting_line());
-    CGAL_kernel_precondition(p.x()*equation.a() ==
-			     -equation.c() - p.y()*equation.b());
+    if(CGAL::AlgebraicFunctors::sign_at<typename CK::Algebraic_kernel>
+       (equation,p.coordinates())!= ZERO)
+      return false;
     
     return (compare_xy<CK>(p, a.source()) !=
 	    compare_xy<CK>(p, a.target()));

@@ -16,7 +16,7 @@
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
-
+#include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -305,13 +305,12 @@ namespace CircularFunctors {
 	    const typename CK::Circular_arc_point_2 &p)
   {
     CGAL_kernel_precondition(a.is_x_monotone());
-   // CGAL_kernel_precondition(a.supporting_circle() == p.circle(0) ||
-   //        a.supporting_circle() == p.circle(1) );
 
     typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
     Polynomial_for_circles_2_2 equation = get_equation<CK>(a.supporting_circle());
-    CGAL_kernel_precondition(square(p.x() - equation.a()) ==
-			     equation.r_sq() - square(p.y() - equation.b()));
+    if(CGAL::AlgebraicFunctors::sign_at<typename CK::Algebraic_kernel>
+       (equation,p.coordinates())!= ZERO)
+      return false;
     
     if (! point_in_range<CK>(a, p) )
       return false;
@@ -665,16 +664,12 @@ namespace CircularFunctors {
     // We need to split
     CGAL_kernel_assertion(!A.is_x_monotone());
 
-    // Define a circle intersecting the supporting circle of A
-    // in the 2 vertical tangent points.
-    Circle_2 c (Point_2(A.center().x(), A.center().y()-1),
-                A.squared_radius()+1);
-
     // Define the 2 Circular_arc_endpoints 
     // in the 2 vertical tangent points
     Circular_arc_2 half_circle( A.supporting_circle(),
-				c, true,
-				c, false);
+				x_critical_points<CK>(A.supporting_circle(),true),
+				x_critical_points<CK>(A.supporting_circle(),false));
+
     
     if (cmp_begin > 0) {
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
