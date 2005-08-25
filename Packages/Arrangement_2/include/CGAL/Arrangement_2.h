@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -67,7 +67,7 @@ protected:
 
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
-
+  
   typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
   // Internal DCEL types:
@@ -76,6 +76,7 @@ protected:
   typedef typename Dcel::Face                        DFace;
 
   typedef typename Dcel::difference_type             DDifference;  
+
   typedef typename Dcel::iterator_category           DIterator_category;
 
   typedef typename Dcel::Vertex_iterator             DVertex_iter;
@@ -99,6 +100,7 @@ protected:
                                                DIsolated_vertices_const_iter;
 
 public:
+
 
   // Forward declerations:
   class Vertex;
@@ -366,6 +368,7 @@ public:
     { 
       return (DHalfedge_const_iter (Base::next()));
     }
+
     
     /*! Get the connected component of the halfedge (non-const version). */
     Ccb_halfedge_circulator ccb ()
@@ -555,6 +558,7 @@ protected:
   typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
   typedef typename Observers_container::iterator  Observers_iterator;
+
   typedef typename Observers_container::reverse_iterator  
                                                   Observers_rev_iterator;
 
@@ -564,6 +568,7 @@ protected:
   Points_container    points;       // Container for the points that
                                     // correspond to the vertices.
   Points_alloc        points_alloc; // Allocator for the points.
+
   X_curves_container  curves;       // Container for the x-monotone curves
                                     // that correspond to the edges.
   Curves_alloc        curves_alloc; // Allocator for the curves.
@@ -776,6 +781,7 @@ public:
 
     // Get the fictitious incident halfedge of the vertex.
     DVertex    *p_v = _vertex (v);
+
     DHalfedge  *p_he = p_v->halfedge();
 
     // If this halfedge is vald, return it incident face. Otherwise, return
@@ -807,6 +813,7 @@ public:
     else
       return (Face_const_handle (un_face));
   }
+
 
   /*! Get an iterator for the first face in the arrangement. */
   Face_iterator faces_begin() 
@@ -943,6 +950,7 @@ public:
    * Insert an x-monotone curve into the arrangement, such that its right
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex.
+
    * \param cv The given x-monotone curve.
    * \param prev The reference halfedge. We should represent cv as a pair
    *             of edges, one of them should become prev's successor.
@@ -1019,6 +1027,7 @@ public:
    * \param e The edge to split (one of the pair of twin halfegdes).
    * \param cv1 The curve that should be associated with the first split edge.
    * \param cv2 The curve that should be associated with the second split edge.
+
    * \pre cv1's source and cv2's target equal the endpoints of the curve
    *      currently assoicated with e (respectively), and cv1's target equals
    *      cv2's target, and this is the split point (ot vice versa).
@@ -1048,6 +1057,7 @@ public:
    *                      becomes isolated (true by default).
    * \param remove_target Should the target vertex of e be removed if it
    *                      becomes isolated (true by default).
+
    * \return A handle for the remaining face.
    */
   Face_handle remove_edge (Halfedge_handle e,
@@ -1145,6 +1155,7 @@ protected:
   /// \name Converting pointers to handles (for the arrangement accessor).
   //@{
 
+
   /*! Convert a pointer to a DCEL vertex to a vertex handle. */
   Vertex_handle _handle_for (DVertex *v)
   {
@@ -1185,7 +1196,7 @@ protected:
 
   /// \name Auxiliary (protected) functions.
   //@{
-
+   
   /*!
    * Locate the place for the given curve around the given vertex.
    * \param v The given arrangement vertex.
@@ -1303,6 +1314,13 @@ protected:
   bool _find_and_erase_isolated_vertex (DFace *f, DVertex* v);
 
   /*!
+   * Create a new vertex and associate it with the given point.
+   * \param p The point.
+   * \return A pointer to the newly created vertex.
+   */
+  DVertex* _create_vertex (const Point_2& p);
+  
+  /*!
    * Insert an x-monotone curve into the arrangement, such that both its
    * endpoints correspond to free arrangement vertices (newly created vertices
    * or existing isolated vertices), so a new hole is formed in the face
@@ -1347,7 +1365,6 @@ protected:
    * \param new_face Output - whether a new face has been created.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
-
    *         In case a new face has been created, it is given as the incident
    *         face of this halfedge.
    */
@@ -1395,6 +1412,23 @@ protected:
   DHalfedge* _split_edge (DHalfedge *e,
                           const Point_2& p,
                           const X_monotone_curve_2& cv1, 
+                          const X_monotone_curve_2& cv2);
+
+  /*!
+   * Split a given edge into two at a given vertex, and associate the given
+   * x-monotone curves with the split edges.
+   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param v The split vertex.
+   * \param cv1 The curve that should be associated with the first split edge,
+   *            whose source equals e's source and its target is v.
+   * \param cv2 The curve that should be associated with the second split edge,
+   *            whose source is v and its target equals e's target.
+   * \return A pointer to the first split halfedge, whose source equals the
+   *         source of e, and whose target is v.
+   */
+  DHalfedge* _split_edge (DHalfedge *e,
+                          DVertex *v,
+                          const X_monotone_curve_2& cv1,
                           const X_monotone_curve_2& cv2);
 
   /*!
@@ -1499,6 +1533,7 @@ private:
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_global_change();
+
   }
 
   void _notify_after_global_change ()
@@ -1588,6 +1623,7 @@ private:
   }
 
   void _notify_before_split_edge (Halfedge_handle e,
+                                  Vertex_handle v,
                                   const X_monotone_curve_2& c1,
                                   const X_monotone_curve_2& c2)
   {
@@ -1595,7 +1631,7 @@ private:
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_split_edge (e, c1, c2);
+      (*iter)->before_split_edge (e, v, c1, c2);
   }
 
   void _notify_after_split_edge (Halfedge_handle e1,
@@ -1953,6 +1989,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
  * \param arr The arrangement.
  * \param c The x-monotone curve to be inserted.
  * \pre The interior of c does not intersect any existing edge or vertex.
+
  * \return A handle for one of the new halfedges corresponding to the inserted
  *         curve, directed (lexicographically) from left to right.
  */
