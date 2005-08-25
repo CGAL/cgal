@@ -202,6 +202,7 @@ public:
    * Notification after the observer has been detached to the arrangement.
    */
   virtual void after_detach ()
+
   {}
   //@}
 
@@ -229,8 +230,8 @@ public:
    * \param v2 A handle to the second end-vertex of the edge.
    */
   virtual void before_create_edge (const X_monotone_curve_2& /* c */,
-				   Vertex_handle /* v1 */,
-				   Vertex_handle /* v2 */)
+                                   Vertex_handle /* v1 */,
+                                   Vertex_handle /* v2 */)
   {}
 
   /*!
@@ -246,7 +247,7 @@ public:
    * \param p The point to be associated with the vertex.
    */
   virtual void before_modify_vertex (Vertex_handle /* v */,
-				     const Point_2& /* p */)
+                                     const Point_2& /* p */)
   {}
 
   /*!
@@ -275,10 +276,12 @@ public:
   /*!
    * Notification before the splitting of an edge into two.
    * \param e A handle to one of the existing halfedges.
+   * \param v A vertex representing the split point.
    * \param c1 The x-monotone curve to be associated with the first edge.
    * \param c2 The x-monotone curve to be associated with the second edge.
    */
   virtual void before_split_edge (Halfedge_handle /* e */,
+                                  Vertex_handle /* v */,
                                   const X_monotone_curve_2& /* c1 */,
                                   const X_monotone_curve_2& /* c2 */)
   {}
@@ -319,7 +322,7 @@ public:
    * \param e The new edge whose removal causes the hole to split.
    */
   virtual void before_split_hole (Face_handle /* f */,
-				  Ccb_halfedge_circulator /* h */,
+                                  Ccb_halfedge_circulator /* h */,
                                   Halfedge_handle /* e */)
   {}
 
@@ -356,7 +359,7 @@ public:
    * \param v The isolated vertex.
    */
   virtual void before_add_isolated_vertex (Face_handle /* f */,
-					   Vertex_handle /* v */)
+                                           Vertex_handle /* v */)
   {}
 
   /*!
@@ -410,7 +413,7 @@ public:
    * \param e The edge whose insertion causes the holes to merge.
    */
   virtual void before_merge_hole (Face_handle /* f */,
-				  Ccb_halfedge_circulator /* h1 */,
+                                  Ccb_halfedge_circulator /* h1 */,
                                   Ccb_halfedge_circulator /* h2 */,
                                   Halfedge_handle /* e */)
   {}
@@ -421,7 +424,7 @@ public:
    * \param h A circulator representing the boundary of the merged hole.
    */
   virtual void after_merge_hole (Face_handle /* f */,
-				 Ccb_halfedge_circulator /* h */)
+                                 Ccb_halfedge_circulator /* h */)
   {}
 
   /*!
@@ -449,8 +452,8 @@ public:
    * \param v The isolated vertex.
    */
   virtual void before_move_isolated_vertex (Face_handle /* from_f */,
-					    Face_handle /* to_f */,
-					    Vertex_handle /* v */)
+                                            Face_handle /* to_f */,
+                                            Vertex_handle /* v */)
   {}
 
   /*!
@@ -492,7 +495,7 @@ public:
    * \param h A circulator representing the boundary of the hole.
    */
   virtual void before_remove_hole (Face_handle /* f */,
-				   Ccb_halfedge_circulator /* h */)
+                                   Ccb_halfedge_circulator /* h */)
   {}
 
   /*!
