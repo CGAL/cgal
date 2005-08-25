@@ -49,6 +49,8 @@ public:
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  typedef typename Arrangement_2::Ccb_halfedge_circulator
+                                                        Ccb_halfedge_circulator;
 
 private:
 
@@ -184,6 +186,19 @@ public:
   }
 
   /*!
+   * Create a new vertex and associate it with the given point.
+   * \param p The point.
+   * \return A handle to the newly created vertex.
+   */
+  Vertex_handle create_vertex (const Point_2& p)
+  {
+    DVertex* v = p_arr->_create_vertex (p);
+    
+    CGAL_assertion (v != NULL);
+    return (p_arr->_handle_for (v));    
+  }
+  
+  /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
    * are given by the target points of two given halfedges.
    * The two halfedges should be given such that in case a new face is formed,
@@ -212,6 +227,68 @@ public:
     return (p_arr->_handle_for (he));
   }
 
+   /*!
+   * Insert an x-monotone curve into the arrangement, such that one of its
+   * endpoints corresponds to a given arrangement vertex, given the exact
+   * place for the curve in the circular list around this vertex. The other
+   * endpoint corrsponds to a free vertex (a newly created vertex or an
+   * isolated vertex).
+   * \param cv The given x-monotone curve.
+   * \param prev The reference halfedge. We should represent cv as a pair
+   *             of edges, one of them should become prev's successor.
+   * \param v The free vertex that corresponds to the other endpoint.
+   * \return A handle to one of the halfedges corresponding to the inserted
+   *         curve, whose target is the vertex v.
+   */
+  Halfedge_handle insert_from_vertex_ex (const X_monotone_curve_2& cv,
+                                         Halfedge_handle prev,
+                                         Vertex_handle v)
+  {
+    DHalfedge*  he = p_arr->_insert_from_vertex (cv,
+                                                 p_arr->_halfedge (prev),
+                                                 p_arr->_vertex (v));
+
+    CGAL_assertion (he != NULL);
+    return (p_arr->_handle_for (he));
+  }
+
+  /*!
+   * Insert an x-monotone curve into the arrangement, such that both its
+   * endpoints correspond to free arrangement vertices (newly created vertices
+   * or existing isolated vertices), so a new hole is formed in the face
+   * that contains the two vertices.
+   * \param cv The given x-monotone curve.
+   * \param f The face containing the two end vertices.
+   * \param v1 The free vertex that corresponds to the left endpoint of cv.
+   * \param v2 The free vertex that corresponds to the right endpoint of cv.
+   * \return A handle to one of the halfedges corresponding to the inserted
+   *         curve, directed from v1 to v2.
+   */
+  Halfedge_handle insert_in_face_interior_ex (const X_monotone_curve_2& cv,
+                                              Face_handle f,
+                                              Vertex_handle v1,
+                                              Vertex_handle v2)
+  {
+    DHalfedge*  he = p_arr->_insert_in_face_interior (cv,
+                                                      p_arr->_face (f),
+                                                      p_arr->_vertex (v1),
+                                                      p_arr->_vertex (v2));
+
+    CGAL_assertion (he != NULL);
+    return (p_arr->_handle_for (he));
+  
+  }
+
+  /*!
+   * Insert the given vertex as an isolated vertex inside the given face.
+   * \param f The face that should contain the isolated vertex.
+   * \param v The isolated vertex.
+   */
+  void insert_isolated_vertex_ex (Face_handle f, Vertex_handle v)
+  {
+    p_arr->_insert_isolated_vertex (p_arr->_face (f), p_arr->_vertex(v));
+  }
+  
   /*!
    * Relocate all holes and isolated vertices to their proper position,
    * immediately after a face has split due to the insertion of a new halfedge.
@@ -228,6 +305,87 @@ public:
   }
 
   /*!
+   * Move a hole from one face to another.
+   * \param from_face The source face.
+   * \param to_face The destination face.
+   * \param hole A CCB circulator that corresponds to the outer boundary
+   *             of the hole to move.
+   * \return Whether the hole was successfully moved.
+   */
+  bool move_hole (Face_handle from_face, Face_handle to_face,
+                  Ccb_halfedge_circulator hole)
+  {
+    typename Arrangement_2::DHoles_iter   it;
+    DFace            *from_f =  p_arr->_face (from_face);
+    DHalfedge        *he = p_arr->_halfedge (hole->handle());
+    DHalfedge        *he_first;
+    DHalfedge        *he_curr;
+    
+    for (it = from_f->holes_begin(); it != from_f->holes_end(); ++it)
+    {
+      // Go around the boundary of the current hole and check whether he
+      // is on this boundary.
+      he_first = he_curr = *it;
+      do
+      {
+        if (he_curr == he)
+        {
+          // Move the current holes which contains he.
+          p_arr->_move_hole (from_f, p_arr->_face (to_face), it);
+          return (true);
+        }
+        
+        he_curr = he_curr->next();
+      } while (he_curr != he_first);
+    }
+
+    // If we reached here, the vertex is not contained in from_face.
+    return (false);
+  }
+  
+  /*!
+   * Move an isolated vertex from one face to another.
+   * \param from_face The source face.
+   * \param to_face The destination face.
+   * \param v The isolated vertex to move.
+   * \return Whether the vertex was successfully moved.
+   */
+  bool move_isolated_vertex (Face_handle from_face, Face_handle to_face,
+                              Vertex_handle v)
+  {
+    typename Arrangement_2::DIsolated_vertices_iter   it;
+    DFace            *from_f =  p_arr->_face (from_face);
+    DVertex          *iso_v = p_arr->_vertex (v);
+     
+    for (it = from_f->isolated_vertices_begin();
+         it != from_f->isolated_vertices_end(); ++it)
+    {
+      if (&(*it) == iso_v)
+      {
+        p_arr->_move_isolated_vertex (from_f, p_arr->_face (to_face), it);
+        return (true);
+      }
+    }
+
+    // If we reached here, the vertex is not contained in from_face.
+    return (false);
+  }
+
+  /*!
+   * Find the vertex in the isolated vertices container of a given face and
+   * earse this vertex once it is found.
+   * \param f The given face.
+   * \param v The isolated vertex.
+   * \return Whether the vertex was found and erased or not.
+   */
+  bool find_and_erase_isolated_vertex (Face_handle f, Vertex_handle v)
+  {
+    return p_arr->_find_and_erase_isolated_vertex (p_arr->_face (f),
+                                                   p_arr->_vertex (v));                                            
+
+  }
+ 
+  /*!
    * Modify the point associated with a given vertex. The point may be
    * geometrically different than the one currently associated with the vertex.
    * \param v The vertex to modify.
@@ -239,6 +397,7 @@ public:
   {
     p_arr->_modify_vertex (p_arr->_vertex (v),
                            p);
+
 
     return (v);
   }
@@ -285,6 +444,32 @@ public:
   }
 
   /*!
+   * Split a given edge into two at the given vertex, and associate the given
+   * x-monotone curves with the split edges.
+   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param v The split vertex.
+   * \param cv1 The curve that should be associated with the first split edge,
+
+   *            whose source equals e's source and its target is v's point.
+   * \param cv2 The curve that should be associated with the second split edge,
+   *            whose source is v's point and its target equals e's target.
+   * \return A handle for the first split halfedge, whose source equals the
+   *         source of e, and whose target is the split vertex v.
+   */
+  Halfedge_handle split_edge_ex (Halfedge_handle e,
+                                 Vertex_handle v,
+                                 const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2)
+  {
+    DHalfedge*  he = p_arr->_split_edge (p_arr->_halfedge (e),
+                                         p_arr->_vertex (v),
+                                         cv1, cv2);
+
+    CGAL_assertion (he != NULL);
+    return (p_arr->_handle_for (he));
+  }
+
+  /*!
    * Remove a pair of twin halfedges from the arrangement.
    * \param e A handle for one of the halfedges to be removed.
    * \param remove_source Should the source vertex of e be removed if it
@@ -296,6 +481,7 @@ public:
    * \return A handle for the remaining face.
    */
   Face_handle remove_edge_ex (Halfedge_handle e,
+
 			      bool remove_source = true,
 			      bool remove_target = true)
   {
