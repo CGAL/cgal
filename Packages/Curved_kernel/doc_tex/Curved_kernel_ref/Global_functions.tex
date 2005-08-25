@@ -86,45 +86,45 @@
 \ccRefConceptPage{ConicKernel::MakeXMonotone_2}
 
 \end{ccRefFunction}
-\begin{ccRefFunction}{construct_intersections}
+\begin{ccRefFunction}{intersect}
 
 \ccDefinition
 
 \ccFunction{template < class CircularKernel, class OutputIterator >
-    OutputIterator construct_intersections
+    OutputIterator intersect
 	(const Circle_2<CircularKernel> &ca1,
 	const Circle_2<CircularKernel> &ca2, 
 	OutputIterator res);}
-        {Calls the operator() of \ccc{CircularKernel::ConstructIntersections_2}.}
+        {Calls the operator() of \ccc{CircularKernel::Intersect_2}.}
 
 \ccFunction{template < class CircularKernel, class OutputIterator >
-    OutputIterator construct_intersections
+    OutputIterator intersect
 	(const Circle_2<CircularKernel> &ca1,
 	const Circle_2<CircularKernel> &ca2, 
 	OutputIterator res, int foo);}
-        {Calls the operator(int foo) of \ccc{CircularKernel::ConstructIntersections_2}.}
+        {Calls the operator(int foo) of \ccc{CircularKernel::Intersect_2}.}
 \footnote{difference between multiplicity and parity...?}
 
 \ccFunction{template < class CircularKernel, class OutputIterator >
-    OutputIterator construct_intersections
+    OutputIterator intersect
 	(const Circular_arc_2<CircularKernel> &ca1,
 	const Circular_arc_2<CircularKernel> &ca2, 
 	OutputIterator res);}
-        {Calls the operator() of \ccc{CircularKernel::ConstructIntersections_2}.}
+        {Calls the operator() of \ccc{CircularKernel::Intersect_2}.}
 
 \ccFunction{template < class CircularKernel, class OutputIterator >
-    OutputIterator construct_intersections
+    OutputIterator intersect
 	(const Circular_arc_2<CircularKernel> &ca1,
 	const Circular_arc_2<CircularKernel> &ca2, 
 	OutputIterator res, int foo);}
-        {Calls the operator(int foo) of \ccc{CircularKernel::ConstructIntersections_2}.}
+        {Calls the operator(int foo) of \ccc{CircularKernel::Intersect_2}.}
 
 Idem for conics...
 
 \ccSeeAlso
 
-\ccRefConceptPage{CircularKernel::ConstructIntersections_2}\\
-\ccRefConceptPage{ConicKernel::ConstructIntersections_2}
+\ccRefConceptPage{CircularKernel::Intersect_2}\\
+\ccRefConceptPage{ConicKernel::Intersect_2}
 
 \end{ccRefFunction}
 
