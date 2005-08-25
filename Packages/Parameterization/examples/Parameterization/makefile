@@ -59,7 +59,6 @@ clean:    \
           Polyhedron_parameterization5.clean \
           Polyhedron_parameterization6.clean
 
-
 # polyhedron_ex_parameterization:
 
 polyhedron_ex_parameterization_objs = 	\
@@ -72,7 +71,6 @@ polyhedron_ex_parameterization$(EXE_EXT): $(polyhedron_ex_parameterization_objs)
 
 polyhedron_ex_parameterization.clean:
 	rm -f polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs)
-
 
 # Tutorial:
 
@@ -93,7 +91,6 @@ Polyhedron_parameterization5$(EXE_EXT): Polyhedron_parameterization5$(OBJ_EXT)
 
 Polyhedron_parameterization6$(EXE_EXT): Polyhedron_parameterization6$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization6 Polyhedron_parameterization6$(OBJ_EXT) $(LDFLAGS)
-
 
 #---------------------------------------------------------------------#
 #                    suffix rules

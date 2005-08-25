@@ -10,13 +10,22 @@
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
+#                    location of other Parameterization subfolders
+#                    (non standard when running the test suite)
+#---------------------------------------------------------------------#
+
+CGAL = $(CGAL_INCL_DIR)/..
+
+EXAMPLES = `$(CGAL)/scripts/find_first ../../examples/Parameterization $(CGAL)/examples/Parameterization`
+
+#---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
            -Iinclude \
-           -I../../examples/Parameterization \
-           -I../../examples/Parameterization/include \
+           -I$(EXAMPLES) \
+           -I$(EXAMPLES)/include \
            -I../../include \
            -I../../../OpenNL/include \
            $(CGAL_CXXFLAGS) \
@@ -36,13 +45,6 @@ LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
-
-#---------------------------------------------------------------------#
-#                    location of examples/Parameterization folder
-#                    (non standard when running the test suite)
-#---------------------------------------------------------------------#
-
-EXAMPLES = `../../scripts/find_first ../../examples/Parameterization ../Parameterization_Examples`
 
 #---------------------------------------------------------------------#
 #                    target entries

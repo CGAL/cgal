@@ -63,13 +63,14 @@ rm -f $ERRORFILE
 touch $ERRORFILE
 
 #---------------------------------------------------------------------#
-#                    set extra compilation options
+#                    set TAUCS compilation options
+#                    (temporary, until set by CGAL installer)
 #---------------------------------------------------------------------#
 
 # if TAUCS is installed
 if [ -n "$TAUCSROOT" ] ; then
     # Evaluate dynamically TAUCS OSTYPE
-    TAUCS_OSTYPE=`../../scripts/compute_TAUCS_OSTYPE`
+    TAUCS_OSTYPE=`$CGAL/scripts/compute_TAUCS_OSTYPE`
 
     # add TAUCS compilation options
     export TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS \
