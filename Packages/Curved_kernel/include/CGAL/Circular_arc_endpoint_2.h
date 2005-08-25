@@ -44,13 +44,13 @@ public:
 
   Circular_arc_point_2()
     : RCircular_arc_point_2(
-      typename R::Construct_circular_arc_endpoint_2()())
+      typename R::Construct_circular_arc_point_2()())
       {}
 
 
   Circular_arc_point_2(const Root_for_circles_2_2 & np)
     : RCircular_arc_point_2(
-      typename R::Construct_circular_arc_endpoint_2()(np))
+      typename R::Construct_circular_arc_point_2()(np))
       {}
 
   Circular_arc_point_2(const RCircular_arc_point_2 & p)

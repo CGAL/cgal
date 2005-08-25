@@ -105,8 +105,8 @@ struct Curved_kernel
                               Construct_circular_arc_2;
   typedef CircularFunctors::Construct_line_arc_2<Self>
                               Construct_line_arc_2;
-  typedef CircularFunctors::Construct_circular_arc_endpoint_2<Self>
-                              Construct_circular_arc_endpoint_2;
+  typedef CircularFunctors::Construct_circular_arc_point_2<Self>
+                              Construct_circular_arc_point_2;
   typedef CircularFunctors::Compute_x_2<Self>
                               Compute_x_2;
   typedef CircularFunctors::Compute_y_2<Self>
@@ -197,9 +197,9 @@ struct Curved_kernel
   construct_line_arc_2_object() const
   { return Construct_line_arc_2 (); }
 
-  Construct_circular_arc_endpoint_2
-  construct_circular_arc_endpoint_2_object() const
-  { return Construct_circular_arc_endpoint_2(); }
+  Construct_circular_arc_point_2
+  construct_circular_arc_point_2_object() const
+  { return Construct_circular_arc_point_2(); }
 
 
   Compute_x_2

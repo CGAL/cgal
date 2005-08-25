@@ -471,7 +471,7 @@ namespace CircularFunctors {
 
 
   template < class CK >
-  class Construct_circular_arc_endpoint_2
+  class Construct_circular_arc_point_2
   {
 
     typedef typename CK::Circular_arc_point_2               Circular_arc_point_2;
