@@ -83,6 +83,10 @@ class QP_solver {
     typedef  typename Rep::B_iterator   B_iterator;
     typedef  typename Rep::C_iterator   C_iterator;
     typedef  typename Rep::D_iterator   D_iterator;
+    typedef  typename Rep::L_iterator   L_iterator;
+    typedef  typename Rep::U_iterator   U_iterator;
+    typedef  typename Rep::FL_iterator  FL_iterator;
+    typedef  typename Rep::FU_iterator  FU_iterator;
 
     typedef  typename Rep::Row_type     Row_type;
     typedef  typename Rep::Row_type_iterator
@@ -92,6 +96,8 @@ class QP_solver {
     typedef  typename Rep::Is_symmetric Is_symmetric;
     typedef  typename Rep::Has_equalities_only_and_full_rank
                                         Has_equalities_only_and_full_rank;
+    typedef  typename Rep::Is_in_standard_form
+                                        Is_in_standard_form;
 
   private:
 
@@ -252,7 +258,7 @@ private:
     Verbose_ostream          vout2;     // used for more diagnostic output
     Verbose_ostream          vout3;     // used for full diagnostic output
     Verbose_ostream          vout4;     // used for output of basis inverse
-    Verbose_ostream	     vout5; 	// used for output of validity tests
+    Verbose_ostream	         vout5; 	// used for output of validity tests
     
     // pricing strategy
     Pricing_strategy*        strategyP;
@@ -310,6 +316,8 @@ private:
     const bool               is_QP;     // flag indicating a quadratic program
     const bool                no_ineq;  // flag indicating no ineq. constraits
     const bool               has_ineq;  // flag indicating    ineq. constraits
+    const bool               is_in_standard_form; // flag indicating standard
+                                        // form ..
 
     // additional variables
     int                      l;         // minimum of 'qp_n+e+1' and 'qp_m'
@@ -367,7 +375,13 @@ private:
 	        Const_oneset_iterator<Row_type>( Rep::EQUAL),
 	      Pricing_strategy& strategy = 
 	        QP_full_exact_pricing<Rep_>() );
-
+	        
+    QP_solver(int n, int m,
+          A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+          Row_type_iterator r,
+          FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
+	      Pricing_strategy& strategy);
+	      
  private:
     // set-up of QP
     void  set( int n, int m,
