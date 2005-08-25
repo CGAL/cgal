@@ -1,3 +1,7 @@
+18 august 2005 Laurent Rineau
+- Complex_2_in_triangulation_3 now has an accessor:
+    Triangulation_3& triangulation()
+
 15 august 2005 Laurent Rineau
 - in Surface_mesher: new Combining_oracle, and Oracle_visitor,
 - in Mesh_3: test/Mesh_3/combined_spheres tests that new oracle.

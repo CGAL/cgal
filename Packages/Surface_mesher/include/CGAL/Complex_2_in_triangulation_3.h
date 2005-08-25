@@ -2,6 +2,7 @@
 #define _COMPLEX_2_IN_TRIANGULATION_3_H
 
 #include <CGAL/circulator.h>
+#include <set>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -80,6 +81,16 @@ class Complex_2_in_triangulation_3 {
   }
 
   // Access functions
+
+  Triangulation_3& triangulation()
+  {
+    return tri3;
+  }
+
+  const Triangulation_3& triangulation() const
+  {
+    return tri3;
+  }
 
   Face_type complex_subface_type (const Facet& f) const {
     return complex_subface_type (f.first, f.second);
