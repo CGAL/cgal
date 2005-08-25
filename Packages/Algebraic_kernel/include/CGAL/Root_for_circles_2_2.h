@@ -56,8 +56,8 @@ class Root_for_circles_2_2 {
     operator<<(std::ostream & os, const Root_for_circles_2_2<RT> &r)
     {
       
-      return os << a.x() << " "
-		<< a.y() << " ";
+      return os << r.x() << " "
+		<< r.y() << " ";
     }
 
 }// CGAL  
