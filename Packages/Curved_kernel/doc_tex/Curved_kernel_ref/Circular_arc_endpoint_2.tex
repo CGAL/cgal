@@ -1,6 +1,4 @@
-\begin{ccRefClass}{Circular_arc_endpoint_2<CircularKernel>}
-
-\footnote{To be renamed into \ccc{Circular_arc_point}? would be ok for both intersections and endpoints (not specifying at all the implementation of endpoints)}
+\begin{ccRefClass}{Circular_arc_point_2<CircularKernel>}
 
 \ccDefinition
 
@@ -17,16 +15,16 @@
 \ccCreation
 \ccCreationVariable{cae}
 
-\ccThree{Circular_arc_endpoint_2}{ca.is_x_monotone()}{}
+\ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
 \footnote{quid of a constructor from a Point\_2 ?}
 
-\ccConstructor{Circular_arc_endpoint_2(
+\ccConstructor{Circular_arc_point_2(
 		const CircularKernel::Circle_2 & c1, 
 		const CircularKernel::Circle_2 & c2, 
 		const int i)}
-{Constructs an endpoint defined as the $i^{th}$ intersection (for the 
+{Constructs an point defined as the $i^{th}$ intersection (for the 
 order given by the $x$-coordinates) of the two circles \ccc{c1} and \ccc{c2}.} 
 \footnote{more intrinsecail indexing possible...}
 
@@ -35,9 +33,9 @@ order given by the $x$-coordinates) of the two circles \ccc{c1} and \ccc{c2}.}
 \ccThree{CircularKernel::Root_of_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccMethod{const CircularKernel::Root_of_2 & x();}{$x$-coordinate of the endpoint.}
+\ccMethod{const CircularKernel::Root_of_2 & x();}{$x$-coordinate of the point.}
 \ccGlue
-\ccMethod{const CircularKernel::Root_of_2 & y();}{$y$-coordinate of the endpoint.}
+\ccMethod{const CircularKernel::Root_of_2 & y();}{$y$-coordinate of the point.}
 
 \ccMethod{Bbox_2 bbox() const;}
 {Returns a bounding box around the point.}
@@ -47,14 +45,14 @@ in the prototype because corresponding methods were not available in
 the arrangements (?) to access edges from vertices. To be discussed.}
 
 \ccMethod{const CircularKernel::Circle_2 & circle(int i);}
-{\ccPrecond{\ccc{i}==0 or \ccc{i}==1}. Returns one of the two circles defining the endpoint.}
+{\ccPrecond{\ccc{i}==0 or \ccc{i}==1}. Returns one of the two circles defining the point.}
 \ccGlue
 \ccMethod{int index();}{Returns the index (in lexicographic order)
-of the endpoint among the intersections between the two circles
+of the point among the intersections between the two circles
 defining it.}
 
 \ccHeading{I/O}
 
-\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_endpoint_2 &ce);}{}
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_point_2 &ce);}{}
 
 \end{ccRefClass}

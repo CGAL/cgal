@@ -13,7 +13,7 @@
 
 Default constructible, copy constructible.
 
-\ccThree{Circular_arc_endpoint_2}{ca.is_x_monotone()}{}
+\ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
 \ccConstructor{Circular_arc_2(const CircularKernel::Circle_2 &c)}
@@ -33,7 +33,7 @@ defined by the intersections has non-zero length.}}
 
 \ccAccessFunctions
 
-\ccThree{CircularKernel::Circular_arc_endpoint_2}{ca.is_x_monotone()}{}
+\ccThree{CircularKernel::Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
 \ccMethod{CircularKernel::Circle_2 supporting_circle();}{}
@@ -41,20 +41,20 @@ defined by the intersections has non-zero length.}}
 A circular arc is supposed to be oriented counterclockwise, from 
 \ccc{begin} to \ccc{end}. 
 
-\ccMethod{CircularKernel::Circular_arc_endpoint_2 begin();}{}
+\ccMethod{CircularKernel::Circular_arc_point_2 begin();}{}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_endpoint_2 end();}{}
+\ccMethod{CircularKernel::Circular_arc_point_2 end();}{}
 
 When the methods \ccc{begin} and \ccc{end} return the same point, then 
 the arc is in fact a full circle. \footnote{arcs of zero length are
 points, not arcs}
 
-When an arc is x-monotone, its left and right endpoints can be accessed
+When an arc is x-monotone, its left and right points can be accessed
 directly:
 
-\ccMethod{CircularKernel::Circular_arc_endpoint_2 left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+\ccMethod{CircularKernel::Circular_arc_point_2 left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_endpoint_2 right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+\ccMethod{CircularKernel::Circular_arc_point_2 right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 \footnote{names for associated functors in CK...? similar to
 \textit{ConstructVertex\_2} in kernel, whose name is not perfect...}
 

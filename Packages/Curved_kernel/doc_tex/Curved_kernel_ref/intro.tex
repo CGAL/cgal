@@ -2,10 +2,6 @@
 
 \textbf{Submission - Monique - with Sylvain's help...}
 
-The main class is: 
-
-\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
-
 \begin{ccAdvanced}
 I use the ``Advanced'' environment in this document to distinguish
 between my current submission to the CGAL editorial board and plans
@@ -38,7 +34,7 @@ written that way.}
 
 \ccRefConceptPage{CircularKernel::ConstructCircle_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularArc_2}\\
-\ccRefConceptPage{CircularKernel::ConstructCircularArcEndpoint_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircularArcPoint_2}\\
 
 \ccRefConceptPage{CircularKernel::IsXMonotone_2}\\
 \ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
@@ -53,7 +49,7 @@ written that way.}
 
 \ccRefConceptPage{ConicKernel::ConstructConic_2}\\
 \ccRefConceptPage{ConicKernel::ConstructConicArc_2}\\
-\ccRefConceptPage{ConicKernel::ConstructConicArcEndpoint_2}
+\ccRefConceptPage{ConicKernel::ConstructConicArcPoint_2}
 
 \ccRefConceptPage{ConicKernel::IsXMonotone_2}\\
 \ccRefConceptPage{ConicKernel::MakeXMonotone_2}\\
@@ -70,16 +66,17 @@ kernel. the lazy stuff is a good reason to document the kernel as a
 concept. But again this does not help the reader...}
 
 \ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}\\
-\ccRefIdfierPage{!!!!!!!!!!!!!!! LAZY STUFF !!!!!!!!!!!!!}
+\ccRefIdfierPage{!!!!!!!!!!!!!!! LAZY STUFF !!!!!!!!!!!!!}\\
+????????????? Circular\_kernel or Curved\_kernel ???????????????
 
 	\subsubsection*{Curves and Surfaces}
 \ccRefIdfierPage{CGAL::Circle_2<CircularKernel>}\\
 
 \begin{ccAdvanced}
 \ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
-\ccRefIdfierPage{CGAL::Ellipse_2<ConicKernel>}\footnote{useful for ETH?}\\
+\ccRefIdfierPage{CGAL::Ellipse_2<ConicKernel>}\footnote{useful for ETH? and for visibility package?}\\
 \ccRefIdfierPage{CGAL::Sphere_3<SphericalKernel>}\\
-\ccRefIdfierPage{CGAL::Quadric_3<Quadr...Kernel>}
+\ccRefIdfierPage{CGAL::Quadric_3<QuadricKernel>}
 \end{ccAdvanced}
 
 	\subsubsection*{Arcs}
@@ -92,10 +89,10 @@ concept. But again this does not help the reader...}
 \end{ccAdvanced}
 
 	\subsubsection*{Points}
-\ccRefIdfierPage{CGAL::Circular_arc_endpoint_2<CircularKernel>}
+\ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}
 
 \begin{ccAdvanced}
-\ccRefIdfierPage{CGAL::Conic_arc_endpoint_2<ConicKernel>}
+\ccRefIdfierPage{CGAL::Conic_arc_point_2<ConicKernel>}
 \end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

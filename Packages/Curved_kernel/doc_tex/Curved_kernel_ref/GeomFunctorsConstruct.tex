@@ -59,7 +59,7 @@ A model \ccVar\ of this type must provide:
 	const CircularKernel::Circle_2 &c2, 
 	OutputIterator points);}
 {Copies in the output iterators the intersections between the two circles. 
-More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
 \ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
 
 \ccMethod{template < class OutputIterator >
@@ -76,10 +76,10 @@ with the parity of their multiplicity only.}
 	const CircularKernel::Circular_arc_2 &ca2, 
 	OutputIteratorPoints points, OutputIteratorArcs arcs);}
 {Copies in the output iterators the intersections between the two arcs. 
-More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CircularKernel::Circular_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CircularKernel::Circular_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
 
 \footnote{sorted or not ?}
-\footnote{not that the multiplicity is not defined for the case of a point that is the common endpoints of the two arcs. Does it make sense to decide a convention: multiplicity=0...? to be discussed}
+\footnote{not that the multiplicity is not defined for the case of a point that is the common points of the two arcs. Does it make sense to decide a convention: multiplicity=0...? to be discussed}
 
 \ccMethod{template < class OutputIteratorPoints, class OutputIteratorArcs >
     std::pair< OutputIteratorPoints, OutputIteratorArcs >
@@ -114,7 +114,7 @@ A model \ccVar\ of this type must provide:
 	const ConicKernel::Conic_2 &c2, 
 	OutputIterator points);}
 {Copies in the output iterators the intersections between the two circles. 
-More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<ConicKernel::Conic_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<ConicKernel::Conic_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
 \ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
 
 \ccMethod{template < class OutputIterator >
@@ -131,7 +131,7 @@ with the parity of their multiplicity only.}
 	const ConicKernel::Conic_arc_2 &ca2, 
 	OutputIteratorPoints points, OutputIteratorArcs arcs);}
 {Copies in the output iterators the intersections between the two arcs. 
-More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<ConicKernel::Conic_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{ConicKernel::Conic_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<ConicKernel::Conic_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{ConicKernel::Conic_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
 
 \footnote{sorted or not ?}
 
