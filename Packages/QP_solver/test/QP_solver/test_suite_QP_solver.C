@@ -85,6 +85,10 @@ struct Rep {
   typedef   Entry_iterator  B_iterator;
   typedef   Entry_iterator  C_iterator;
   typedef  Vector_iterator  D_iterator;
+  typedef   Entry_iterator  L_iterator;
+  typedef   Entry_iterator  U_iterator;
+  typedef   std::vector<bool>::const_iterator  FL_iterator;
+  typedef   std::vector<bool>::const_iterator  FU_iterator;
 
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
   typedef  Row_type*  Row_type_iterator;
@@ -102,14 +106,24 @@ template<typename Rep>
 void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types);
 
 template<typename T>
-bool read_instance(std::ifstream& from, Matrix<T>& a,
-		   std::vector<int>& rel, Vector<T>& b,
-		   Vector<T>& c, Matrix<T>& d, CGAL::Tag_true Is_linear);
+bool read_explicit_bounds(std::ifstream& from, std::vector<bool>& fl,
+            Vector<T>& l, std::vector<bool>& fu, Vector<T>& u, int n,
+            CGAL::Tag_true Is_in_standard_form);
+
+template<typename T>
+bool read_explicit_bounds(std::ifstream& from, std::vector<bool>& fl,
+            Vector<T>& l, std::vector<bool>& fu, Vector<T>& u, int n,
+            CGAL::Tag_false Is_in_standard_form);
 
 template<typename T>
 bool read_instance(std::ifstream& from, Matrix<T>& a,
 		   std::vector<int>& rel, Vector<T>& b,
-		   Vector<T>& c, Matrix<T>& d, CGAL::Tag_false Is_linear);
+		   Vector<T>& c, Matrix<T>& d, int& n, CGAL::Tag_true Is_linear);
+
+template<typename T>
+bool read_instance(std::ifstream& from, Matrix<T>& a,
+		   std::vector<int>& rel, Vector<T>& b,
+		   Vector<T>& c, Matrix<T>& d, int& n, CGAL::Tag_false Is_linear);
 	
 template<typename T>
 bool read_matrix(std::ifstream& from, int m, int n,
@@ -136,6 +150,8 @@ bool read_num_entry(std::ifstream& from, CGAL::Double& entry);
 bool read_num_entry(std::ifstream& from, CGAL::Gmpz& entry);
 
 bool read_int_vector(std::ifstream& from, int length, std::vector<int>& vec);
+
+bool read_bool_vector(std::ifstream& from, int length, std::vector<bool>& vec);
 
 void read_ws(std::istream& from);
 
@@ -253,15 +269,6 @@ int main( int argc, char** argv) {
   return success? 0 : 2;
 }
 
-void not_implemented_yet(CGAL::Tag_false)
-{
-  std::cerr << "Is_in_standard_form: not implemented yet" << std::endl;
-  exit(1);
-}
-
-void not_implemented_yet(CGAL::Tag_true)
-{
-}
 
 template<typename ET,
 	 typename Is_in_standard_form,
@@ -272,20 +279,28 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
   typedef typename Input_type_selector<ET>::Input_type Input_type;
   typedef Rep<ET, Input_type, Is_linear, Is_symmetric,
     Has_equalities_only_and_full_rank, Is_in_standard_form> Repr;
+    
   Matrix<Input_type>  A;
   typename Repr::Row_type* row_types;
   Vector<Input_type>  b;
   Vector<Input_type>  c;
   Matrix<Input_type>  D;
   std::vector<int> rel;
+  std::vector<bool> fl, fu;
+  Vector<Input_type> l,u;
+  int n;
+  
   CGAL::QP_pricing_strategy<Repr>*
     strat(static_cast<CGAL::QP_pricing_strategy<Repr>*>(0));
   bool instance_read, sol_solver_valid;	
 
-  not_implemented_yet(Is_in_standard_form());
 
-  instance_read = read_instance<Input_type>(from, A, rel, b, c, D,
+  instance_read = read_instance<Input_type>(from, A, rel, b, c, D, n,
 					    Is_linear());
+				
+  instance_read = instance_read && read_explicit_bounds(from, fl, l, fu, u, n,
+                        Is_in_standard_form());
+
   if (instance_read) {
     init_row_types<Repr>(rel, row_types);
     set_pricing_strategy<Repr>(strat, pricing_strategy_index);	
@@ -293,7 +308,7 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
 		typename Repr::Vector_iterator( A.begin()),
 		b.begin(), c.begin(),
 		typename Repr::Vector_iterator( D.begin()),
-		row_types,*strat);
+		row_types, fl.begin(), l.begin(), fu.begin(), u.begin(), *strat);
     solver.set_verbosity( verbose);
     sol_solver_valid = solver.is_solution_valid();
     std::cout << "valid: " << sol_solver_valid << std::endl;
@@ -321,11 +336,90 @@ void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types) {
 }
 
 template<typename T>
+bool read_explicit_bounds(std::ifstream& from, std::vector<bool>& fl,
+            Vector<T>& l, std::vector<bool>& fu, Vector<T>& u, int n,
+            CGAL::Tag_true Is_in_standard_form) {
+  return true;
+}
+
+template<typename T>
+bool read_explicit_bounds(std::ifstream& from, std::vector<bool>& fl,
+            Vector<T>& l, std::vector<bool>& fu, Vector<T>& u, int n,
+            CGAL::Tag_false Is_in_standard_form) {
+
+  bool token_read, matrix_read;
+  
+  // read lower bound finiteness vector fl
+  token_read = read_token(from, "fl");
+  if (token_read) {
+    message("fl token matched", debug);
+    matrix_read = read_bool_vector(from, n, fl);
+    if (!matrix_read) {
+      error("could not read matrix fl");
+      return false;
+    }
+
+  } else {
+    error("could not match token fl");
+    return false;
+  }
+
+  // read finite lower bounds l
+  token_read = read_token(from, "l");
+  if (token_read) {
+    message("l token matched", debug);
+    matrix_read = read_vector<T>(from, n, l);
+    if (!matrix_read) {
+      error("could not read matrix l");
+      return false;
+    }
+
+  } else {
+    error("could not match token l");
+    return false;
+  }
+
+  // read upper bound finiteness vector fu 
+  token_read = read_token(from, "fu");
+  if (token_read) {
+    message("fu token matched", debug);
+    matrix_read = read_bool_vector(from, n, fu);
+    if (!matrix_read) {
+      error("could not read matrix fu");
+      return false;
+    }
+
+  } else {
+    error("could not match token fu");
+    return false;
+  }
+
+  // read finite upper bounds u
+  token_read = read_token(from, "u");
+  if (token_read) {
+    message("u token matched", debug);
+    matrix_read = read_vector<T>(from, n, u);
+    if (!matrix_read) {
+      error("could not read matrix u");
+      return false;
+    }
+
+  } else {
+    error("could not match token u");
+    return false;
+  }
+  return true;
+}
+          
+    
+
+
+template<typename T>
 bool read_instance(std::ifstream& from, Matrix<T>& a,
 		   std::vector<int>& rel, Vector<T>& b,
-		   Vector<T>& c, Matrix<T>& d, CGAL::Tag_false) {		//QP case
+		   Vector<T>& c, Matrix<T>& d, int& n, CGAL::Tag_false) {	//QP case
 	
-  int m, n;
+  int m;
   bool token_read, matrix_read;
 		
   // read dimensions
@@ -419,9 +513,9 @@ bool read_instance(std::ifstream& from, Matrix<T>& a,
 template<typename T>
 bool read_instance(std::ifstream& from, Matrix<T>& a,
 		   std::vector<int>& rel, Vector<T>& b,
-		   Vector<T>& c, Matrix<T>& d, CGAL::Tag_true) {		//LP case
+		   Vector<T>& c, Matrix<T>& d, int& n, CGAL::Tag_true) { //LP case
 	
-  int m, n;
+  int m;
   bool token_read, matrix_read;
 		
   // read dimensions
@@ -603,6 +697,24 @@ bool read_int_vector(std::ifstream& from, int length, std::vector<int>& vec) {
   vec.assign(length, 0);
   while ((i < length) && from.good()) {
     from >> vec[i];
+    msgstr.str("");
+    msgstr << "row/col: " << i << " entry: " << vec[i];
+    message(msgstr.str(), debug);
+    i = i + 1;
+  }
+  return from.good();
+}
+
+bool read_bool_vector(std::ifstream& from, int length, std::vector<bool>& vec) {
+  std::ostringstream msgstr;
+   bool b;
+  int i = 0;
+  vec.assign(length, 0);
+  while ((i < length) && from.good()) {
+    // the following two statements are a workaround due to implicit C++
+    // optimization crap
+    from >> b;
+    vec[i] = b;
     msgstr.str("");
     msgstr << "row/col: " << i << " entry: " << vec[i];
     message(msgstr.str(), debug);
