@@ -261,6 +261,7 @@ protected:
   public:
 
     typedef typename Base_arr_2::Halfedge_handle     Halfedge_handle;
+    typedef typename Base_arr_2::Vertex_handle       Vertex_handle;
     typedef typename Base_arr_2::X_monotone_curve_2  X_monotone_curve_2;
 
     /*!
@@ -299,6 +300,7 @@ protected:
      * \param c2 The x-monotone curve to be associated with the second edge.
      */
     virtual void before_split_edge (Halfedge_handle e,
+				    Vertex_handle /* v */,
                                     const X_monotone_curve_2& /* c1 */,
                                     const X_monotone_curve_2& /* c2 */)
     {

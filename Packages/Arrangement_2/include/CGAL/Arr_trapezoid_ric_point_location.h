@@ -286,8 +286,9 @@ public:
   //curve it lies on, which is the curve that was split, and then remove 
   //this curve.
   virtual void before_split_edge (Halfedge_handle e,
-                                  const X_monotone_curve_2& c1,
-                                  const X_monotone_curve_2& c2)
+				  Vertex_handle /* v */,
+                                  const X_monotone_curve_2& /* c1 */,
+                                  const X_monotone_curve_2& /* c2 */)
   {
     //save this curve for the "after" function.
     m_curve_before_split = e->curve();
@@ -306,7 +307,7 @@ public:
   // think ...
   virtual void before_merge_edge (Halfedge_handle e1,
                                   Halfedge_handle e2,
-                                  const X_monotone_curve_2& c)
+                                  const X_monotone_curve_2& /* c */)
   {
     //save the curves for the "after" function.
     m_curve_before_merge1 = e1->curve();
