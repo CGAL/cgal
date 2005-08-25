@@ -82,13 +82,50 @@ public:
       CGAL_kernel_assertion(do_intersect(support, c2));
     }
 
-    Circular_arc_2(const Circle_2 &c, 
+
+    Circular_arc_2(const Circle_2 &c,
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _begin(CGAL::circle_intersect<CK>(c, c1, b_1)),
-        _end(CGAL::circle_intersect<CK>(c, c2, b_2)),
-        _support(c) {}
+      : _support(c) {
+	  if (c1 != c2){
+	    _begin = CGAL::circle_intersect<CK>(c, c1, b_1);
+	    _end = CGAL::circle_intersect<CK>(c, c2, b_2);
+	  }
+	  else{
+	    typedef std::vector<CGAL::Object > solutions_container;
 
+	    solutions_container solutions;
+	    CGAL::intersect_2<CK>
+	      ( c, c1, std::back_inserter(solutions) );
+	    typename solutions_container::iterator it = solutions.begin();
+
+	    CGAL_kernel_precondition( it != solutions.end() );
+	    // the circles intersect
+
+	    const std::pair<typename CK::Circular_arc_point_2, uint> *result;
+	    result = CGAL::object_cast<
+	      std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+	    if ( result->second == 2 ){ // double solution
+	      _begin =  result->first;
+	      _end = result->first;
+	    }
+	    else{
+	      if (b_1)
+		_begin = result->first;
+	      if (b_2)
+		_end = result->first;
+	      if (!(b_1 & b_2)){
+		++it;
+		result = CGAL::object_cast<
+		  std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+		if (!b_1)
+		  _begin = result->first;
+		if (!b_2)
+		  _end = result->first;
+	      }
+	    }
+	  }
+	}
 
     // IS THIS CONSTRUCTOR USED ?
     // constructs a circular arc that is the arc included in A
