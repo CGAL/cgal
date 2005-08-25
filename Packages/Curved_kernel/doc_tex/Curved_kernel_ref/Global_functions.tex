@@ -8,16 +8,20 @@
 	const Circular_arc_point_2<CircularKernel> &q);}
         {Calls the operator() of \ccc{CircularKernel::CompareX_2}.}
 
+\begin{ccAdvanced}
 \ccFunction{template < class ConicKernel > 
 	Comparison_result compare_x
 	(const Conic_arc_point_2<ConicKernel> &p,
 	const Conic_arc_point_2<ConicKernel> &q);}
         {Calls the operator() of \ccc{ConicKernel::CompareX_2}.}
+\end{ccAdvanced}
 
 \ccSeeAlso
 
 \ccRefConceptPage{CircularKernel::CompareX_2}\\
+\begin{ccAdvanced}
 \ccRefConceptPage{ConicKernel::CompareX_2}
+\end{ccAdvanced}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{compare_y}
@@ -30,16 +34,20 @@
 	const Circular_arc_point_2<CircularKernel> &q);}
         {Calls the operator() of \ccc{CircularKernel::CompareY_2}.}
 
+\begin{ccAdvanced}
 \ccFunction{template < class ConicKernel > 
 	Comparison_result compare_y
 	(const Conic_arc_point_2<ConicKernel> &p,
 	const Conic_arc_point_2<ConicKernel> &q);}
         {Calls the operator() of \ccc{ConicKernel::CompareY_2}.}
+\end{ccAdvanced}
 
 \ccSeeAlso
 
 \ccRefConceptPage{CircularKernel::CompareY_2}\\
+\begin{ccAdvanced}
 \ccRefConceptPage{ConicKernel::CompareY_2}
+\end{ccAdvanced}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{compare_xy}
@@ -52,16 +60,20 @@
 	const Circular_arc_point_2<CircularKernel> &q);}
         {Calls the operator() of \ccc{CircularKernel::CompareXY_2}.}
 
+\begin{ccAdvanced}
 \ccFunction{template < class ConicKernel > 
 	Comparison_result compare_xy
 	(const Conic_arc_point_2<ConicKernel> &p,
 	const Conic_arc_point_2<ConicKernel> &q);}
         {Calls the operator() of \ccc{ConicKernel::CompareXY_2}.}
+\end{ccAdvanced}
 
 \ccSeeAlso
 
 \ccRefConceptPage{CircularKernel::CompareXY_2}\\
+\begin{ccAdvanced}
 \ccRefConceptPage{ConicKernel::CompareXY_2}
+\end{ccAdvanced}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{make_x_monotone}
@@ -74,16 +86,20 @@
 	OutputIterator res);}
         {Calls the operator() of \ccc{CircularKernel::MakeXMonotone_2}.}
 
+\begin{ccAdvanced}
 \ccFunction{template < class ConicKernel, class OutputIterator >
     OutputIterator make_x_monotone
 	(const Conic_arc_2<ConicKernel> &ca,
 	OutputIterator res);}
         {Calls the operator() of \ccc{ConicKernel::MakeXMonotone_2}.}
+\end{ccAdvanced}
 
 \ccSeeAlso
 
 \ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
+\begin{ccAdvanced}
 \ccRefConceptPage{ConicKernel::MakeXMonotone_2}
+\end{ccAdvanced}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{intersect}
@@ -99,32 +115,21 @@
 
 \ccFunction{template < class CircularKernel, class OutputIterator >
     OutputIterator intersect
-	(const Circle_2<CircularKernel> &ca1,
-	const Circle_2<CircularKernel> &ca2, 
-	OutputIterator res, int foo);}
-        {Calls the operator(int foo) of \ccc{CircularKernel::Intersect_2}.}
-\footnote{difference between multiplicity and parity...?}
-
-\ccFunction{template < class CircularKernel, class OutputIterator >
-    OutputIterator intersect
 	(const Circular_arc_2<CircularKernel> &ca1,
 	const Circular_arc_2<CircularKernel> &ca2, 
 	OutputIterator res);}
         {Calls the operator() of \ccc{CircularKernel::Intersect_2}.}
 
-\ccFunction{template < class CircularKernel, class OutputIterator >
-    OutputIterator intersect
-	(const Circular_arc_2<CircularKernel> &ca1,
-	const Circular_arc_2<CircularKernel> &ca2, 
-	OutputIterator res, int foo);}
-        {Calls the operator(int foo) of \ccc{CircularKernel::Intersect_2}.}
-
+\begin{ccAdvanced}
 Idem for conics...
+\end{ccAdvanced}
 
 \ccSeeAlso
 
 \ccRefConceptPage{CircularKernel::Intersect_2}\\
+\begin{ccAdvanced}
 \ccRefConceptPage{ConicKernel::Intersect_2}
+\end{ccAdvanced}
 
 \end{ccRefFunction}
 
@@ -135,14 +140,18 @@ Idem for conics...
 	get_equation(const CircularKernel::Circle_2 & c);}
 	{Calls the operator() of \ccc{CircularKernel::GetEquation}.}
 
+\begin{ccAdvanced}
 \ccFunction{template < class ConicKernel >
 	ConicKernel::AlgebraicKernel_4_2::Polynomial_2_2
 	get_equation(const ConicKernel::Conic_2 & c);}
 	{Calls the operator() of \ccc{ConicKernel::GetEquation}.}
+\end{ccAdvanced}
 
 \ccSeeAlso
 
 \ccRefConceptPage{CircularKernel::GetEquation}\\
+\begin{ccAdvanced}
 \ccRefConceptPage{ConicKernel::GetEquation}
+\end{ccAdvanced}
 
 \end{ccRefFunction}

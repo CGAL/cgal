@@ -1,0 +1,59 @@
+\begin{ccRefConcept}{CircularKernel}
+
+\ccDefinition
+
+The \ccc{CircularKernel} concept is ............
+
+\ccHasModels
+........................................
+
+\ccTypes
+
+A model of \ccc{CircularKernel} is supposed to provide some basic types
+
+\ccNestedType{Linear_kernel}{Model of \ccc{BasicGeometricKernel}.}
+\ccGlue
+\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernel_2_2}.}
+
+\ccNestedType{RT}{Model of \ccc{RingNumberType}.}
+\ccGlue
+\ccNestedType{FT}{Model of \ccc{FieldNumberType}.}
+
+\ccNestedType{Root_of_2}{Model of \ccc{RootOf_2}.}
+\ccGlue
+\ccNestedType{Root_for_circles_2_2}{Model of \ccc{RootCircles_2_2}.}
+\ccGlue
+\ccNestedType{Polynomial_1_2}{Model of \ccc{Polynomial_1_2}.}
+\ccGlue
+\ccNestedType{Polynomial_for_circles_2_2}{Model of \ccc{PolynomialCircles_2_2}.}
+
+and to define the following geometric objects
+
+\ccNestedType{Line_arc_2}{Model of \ccc{CircularKernel::LineArc_2}.}
+\ccGlue
+\ccNestedType{Circle_2}{Model of \ccc{CircularKernel::Circle_2}.}
+\ccGlue
+\ccNestedType{Circular_arc_2}{Model of \ccc{CircularKernel::CircularArc_2}.}
+\ccGlue
+\ccNestedType{Circular_arc_point_2}{Model of \ccc{CircularKernel::CircularArcPoint_2}.}
+
+Moreover, a model of \ccc{CircularKernel} must provide predicates, 
+constructions and other functionalities. 
+
+\ccPredicates
+
+\ccNestedType{Compare_x_2}{Model of \ccc{CircularKernel::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{Model of \ccc{CircularKernel::CompareY_2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2}{Model of \ccc{CircularKernel::CompareXY_2}.}
+
+\ccHeading{Constructions}
+
+\ccNestedType{Construct_circle_2;}{Model of ...}
+
+\ccHeading{Link with the algebraic kernel}
+
+\ccNestedType{Get_equation}{Model of \ccc{CircularKernel::GetEquation}.}
+
+\end{ccRefConcept}

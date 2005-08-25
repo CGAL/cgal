@@ -2,10 +2,10 @@
 
 \ccDefinition
 
-\ccInclude{CGAL/Curved_kernel.h}
+\ccInclude{CGAL/Circular_kernel.h}
 
-\ccIsModel{CircularKernel, ConicKernel}\footnote{macro ``ccIsmodel'' is apparently assuming that there is only one concept...}
-
+\ccIsModel{CircularKernel}\footnote{for Lutz: macro ``ccIsmodel'' is
+apparently assuming that there is only one possible concept...}
 
 \ccParameters
 
@@ -28,18 +28,14 @@ manipulation of algebraic curves.
 \ccThree{typedef Circular_arc_point_2<Curved-Kernel>}{Root_of_4xxx}{}
 \ccThreeToTwo
 
-The curved kernel takes its basic number type from either the basic geometric kernel or the algebraic kernel. 
+The curved kernel takes its basic number types from the algebraic kernel. 
 \ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type RT.}
-or\footnote{specify which one}\\
-\ccTypedef{typedef BasicGeometricKernel::RT RT;}{Ring number type RT.}
-Therefore, these two number types must coincide\footnote{how to avoid
-inconsistencies? a user might take an AK and a BGK with different
-RTs...}. In the same way,\\ 
 \ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type FT.}
-and\\
-\ccTypedef{typedef BasicGeometricKernel::FT FT;}{Field number type FT.}
-must coincide. 
-
+In fact, the two number types \ccc{AlgebraicKernel::RT} and
+\ccc{BasicGeometricKernel::RT} must coincide, as well as
+\ccc{AlgebraicKernel::FT} and \ccc{BasicGeometricKernel::FT}.
+\footnote{how to avoid inconsistencies? a user might take an AK and a
+BGK with different RTs...}. 
 
 The types of \ccc{BasicGeometricKernel} are inherited by the curved kernel.
 Some types are taken from the \ccc{AlgebraicKernel} parameter, and
@@ -47,15 +43,30 @@ some types are defined by the \ccc{Curved_kernel} itself.
 
 \ccc{Curved_kernel} will be a model of \ccc{CircularKernel} if the 
 \ccc{AlgebraicKernel} parameter follows the requirements of the 
-concept \ccc{AlgebraicKernel_2_2}. The following types will then be usable. 
+concept \ccc{AlgebraicKernel_2_2}. The following types will then be
+usable, as well as all the functioanlity on them described in the
+\ccc{CircularKernel} concept. 
 
+\ccTypedef{typedef Line_arc_2<Curved_kernel> Line_arc_2;}{}
+\ccGlue
 \ccTypedef{typedef Circle_2<Curved_kernel> Circle_2;}{} 
 \ccGlue
 \ccTypedef{typedef Circular_arc_2<Curved_kernel> Circular_arc_2;}{}
 \ccGlue
 \ccTypedef{typedef Circular_arc_point_2<Curved_kernel> Circular_arc_point_2;}{}
 
-\footnote{I assume here that Circle\_2 will be moved to Curved kernel}
+\footnote{Here I do as if that Circle\_2 would be moved to Curved
+kernel (it is a curve...), which would in fact raise several issues:
+backwards compatibility of the code, and also of the license if CK is
+not released as the CGAL kernel. I guess it won't be moved...}
+
+\begin{ccAdvanced}
+what about the future...? shall we have a different class for each
+type of curve (circles, conics, and so on...) or everything in the
+same kernel (then how would it work...? several solutions are
+posssible)
+
+Do we want to go in the following direction?
 
 \ccc{Curved_kernel} will be a model of \ccc{ConicKernel} if the 
 \ccc{AlgebraicKernel} parameter follows the requirements of the 
@@ -66,24 +77,9 @@ concept \ccc{AlgebraicKernel_4_2}. The following types will then be usable.
 \ccTypedef{typedef Conic_arc_2<Curved_kernel> Conic_arc_2;}{}
 \ccGlue
 \ccTypedef{typedef Conic_arc_point_2<Curved_kernel> Conic_arc_point_2;}{}
+\end{ccAdvanced}
 
-\ccc{Curved_kernel} provides predicates and constructions on the types 
-it defines. 
-
-\ccNestedType{Compare_x_2;}{Model of \ccc{CircularKernel::CompareX_2} and of\ccc{ConicKernel::CompareX_2} .}
-\ccGlue
-\ccNestedType{Compare_y_2;}{Model of \ccc{CircularKernel::CompareY_2} and of \ccc{ConicKernel::CompareY_2}.}
-\ccGlue
-\ccNestedType{Compare_xy_2;}{Model of \ccc{CircularKernel::CompareXY_2} and of \ccc{ConicKernel::CompareXY_2}.}
-
-\ccNestedType{Construct_circle_2;}{Model of ...}
-
-!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!
-
-\ccCreation
-\ccCreationVariable{CK}
-
-\ccConstructor{Curved_kernel()}{}
+\ccCreationVariable{ck}
 
 \ccPredicates
 
@@ -93,32 +89,31 @@ it defines.
 \ccGlue
 \ccMethod{Compare_xy_2 compare_xy_2_object() const;}{}
 
-\ccHeading{title?}
-
-\ccMethod{Get_equation get_equation_object() const;}{}
-
 \ccHeading{Constructions}
 
 \ccMethod{Construct_circle_2 construct_circle_2_object() const;}{}
 \ccGlue
 \ccMethod{Construct_circular_arc_2 construct_circular_arc_2_object() const;}{}
 \ccGlue
-\ccMethod{Construct_circular_arc_point_2 construct_circular_arc_point_2_object() const;}{}
+\ccMethod{Construct_circular_arc_endpoint_2 construct_circular_arc_endpoint_2_object() const;}{}
 
 \ccMethod{Construct_conic_2 construct_conic_2_object() const;}{}
 \ccGlue
 \ccMethod{Construct_conic_arc_2 construct_conic_arc_2_object() const;}{}
 \ccGlue
-\ccMethod{Construct_conic_arc_point_2 construct_conic_arc_point_2_object() const;}{}
+\ccMethod{Construct_conic_arc_endpoint_2 construct_conic_arc_endpoint_2_object() const;}{}
 
 \ccMethod{Make_x_monotone_2 make_x_monotone_2_object() const;}{}
 \ccGlue
-\ccMethod{Intersect_2 intersect_2_object() const;}{}
+\ccMethod{Construct_intersections_2 construct_intersections_2_object() const;}{}
+
+\ccHeading{Link with the algebraic kernel}
+
+\ccMethod{Get_equation get_equation_object() const;}{}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{BasicGeometricKernel}\\
-\ccRefIdfierPage{AlgebraicKernel_2_2}\\
-\ccRefIdfierPage{AlgebraicKernel_4_2}
+\ccRefIdfierPage{AlgebraicKernel_2_2}
 
 \end{ccRefClass}
