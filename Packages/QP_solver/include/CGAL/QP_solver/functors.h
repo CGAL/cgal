@@ -204,7 +204,8 @@ public:
     std::cout << "first=" << first << ", second=" << second
 	      << ", sum=" <<  (first + second)
 	      << ", m[r][c]=" << m[r][c] << ", m[c][r]=" << m[c][r]
-	      << ", " << "sum=" << (m[ r][ c] + m[ c][ r]) << std::endl;
+	      << ", " << "sum=" << (m[ r][ c] + m[ c][ r]) 
+	      << ", " << "(sum)=" << ((m[ r][ c]) + (m[ c][ r])) << std::endl;
     return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
   }
   
