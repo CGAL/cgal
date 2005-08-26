@@ -1,0 +1,268 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{epsfig}
+\usepackage{pst-all}
+\usepackage{amstext,amsmath,amssymb}
+\usepackage{alltt,url}
+\usepackage{colordvi}
+\usepackage{fancybox}
+\usepackage{tabularx}
+%
+\setlength{\evensidemargin}{.0in}
+\setlength{\oddsidemargin}{-0.3in}
+\setlength{\textwidth}{6.8in}
+\setlength{\textheight}{8.7in}
+%
+\newcommand{\cgal}{\textsc{Cgal}}
+\newcommand{\dcel}{{\sc Dcel}}
+\newcommand{\boost}{{\sc Boost}}
+%
+\title{\cgal\ Arrangement Test Plan}
+\author{Efi Fogel}
+\begin{document}
+\maketitle
+%
+\section{Introduction}
+The Test Plan for the \cgal\ Arrangement\_2 package described in this
+document identifies the software components that should be tested,
+describes the strategies that should be employed, and lists the set of
+actual tests that should be implemented or ported from the set of the
+tests that tested the old version of the package.
+\subsection{Terms and Definitions}
+Abbreviations
+\begin{description}
+  \item[arr] --- Arrangement.
+  \item[cv] --- A general curve (of type {\tt Traits::Curve\_2}).
+  \item[xcv] --- An $x$-monotone curve (of type
+    {\tt Traits::X\_monotone\_curve\_2}).
+  \item[pl] --- Point location.
+  \item[sl] --- Sweep line.
+  \item[ta] --- Traits adapter.
+\end{description}
+%
+
+\section{Software Components}
+%
+The set of tests should consist of regression tests, stress tests,
+and resource consumption tests. The regression tests should test the
+Data Integrity, Functionality, and User Interface. The functionality
+tests should cover the following areas:
+Traits, Traits Adapter, Arrangement assignments, Arrangement
+accessors, Arrangement modifiers, Arrangement casting, Arrangement
+vertex, Arrangement halfedge, Arrangement face, Observers,
+Point-location strategies, Insertions and removals, Overlay,
+Sweep-line algorithms, \dcel\ adapters, and \boost\ adapters.
+
+%
+\section{Strategies}
+Each test is implemented as a separate independent executable. A test can
+either pass or fail. The executable returns either 0 upon success, or
+a negative number upon failure. When a test fails, the executable may
+print some error message providing additional information regarding
+the failure.
+
+The test script executes all tests. For each test, the script compiles the
+test and then executes it. Some of the tests (but not all) are compiled (and
+then executed) with different command-line options. This way the same test is
+applied to different components. This is utilised to tests the various traits
+classes, that is, all the models of the traits concepts, and the various point
+location strategies, that is, all the models of the point-location and
+ray-shoot concepts.
+%
+\section{Tests}
+This section lists and describes all the tests, which are planed to be
+implemented. Each highlighted test is implemented as a separate
+executable.
+\begin{itemize}
+\item Traits
+  \begin{description}
+  \item[traits\_compare\_x] --- tests {\tt Compare\_x\_2}
+  \item[traits\_compare\_xy] --- tests {\tt Compare\_xy\_2}
+  \item[traits\_vertex] {\tt --- tests Construct\_min\_vertex\_2} and
+    {\tt Construct\_max\_vertex\_2}. Degenerate case: vertical curve.
+  \item[traits\_is\_vertical] --- tests {\tt Is\_vertical\_2}.
+  \item[traits\_compare\_y\_at\_x] --- tests {\tt Compare\_y\_at\_x\_2}.
+    Return the location of the given point with respect to the input curve.
+    Degenerate cases: The point is an endpoint of the curve. The curve
+    is vertical.
+  \item[traits\_compare\_y\_at\_x\_left] --- tests
+    {\tt Compare\_y\_at\_x\_left\_2}. Compare the $y$ value of two
+    $x$-monotone curves immediately to the left of their intersection
+    point. Degenerate cases: The curves coincide. The curves coincide
+    and vertical. One of the curves is vertical.
+  \item[traits\_compare\_y\_at\_x\_right] --- tests
+    {\tt Compare\_y\_at\_x\_right\_2}. Compare the $y$ value of two
+    $x$-monotone curves immediately to the right of their intersection
+    point. Degenerate cases: The curves coincide. The curves coincide
+    and vertical. One of the curves is vertical.
+  \item[traits\_equal] --- tests {\tt Equal\_2}. Check whether the two
+  points are the same. Check whether two x-monotone curves are the same.
+  \end{description}
+
+  \begin{description}
+  \item[traits\_make\_x\_monotone] --- tests {\tt Make\_x\_monotone\_2}. Cut
+  the given curve into $x$-monotone subcurves and insert them into the
+  given output iterator. Degenerate cases for polylines: The first
+  segment is vertical. The last segment is vertical. Both firt and
+  last are vertical. An internal segment is vertical.
+  \item[traits\_intersect] --- tests {\tt Intersect\_2}. Find the
+    intersections of the two given curves and insert them into the 
+    given output iterator. Degenerate cases for polylines: The most
+    right (resp. left) endpoints of the two curves coincide. Both
+    endpoints coincide. The most right (resp. left) endpoint of one 
+    curve and the first (resp. last) segment of the other coincide.
+  \item[traits\_split] --- tests {\tt Split\_2}. Split a given $x$-monotone
+   curve at a given point into two sub-curves. Degenerate cases for
+   polylines: the point and a polyline internal point coincides.
+  \item[traits\_mergeable] --- tests {\tt Are\_mergeable\_2}. Check whether
+    it is possible to merge two given $x$-monotone curves.
+  \item[traits\_merge] --- tests {\tt Merge\_2}. Merge two given x-monotone
+    curves into a single curve.
+  \item[traits\_approximate] --- tests {\tt Approximate\_2}. Return an
+    approximation of a point coordinate.
+  \item[traits\_construct\_x\_monotone\_curve] --- tests
+    {\tt Construct\_x\_monotone\_curve\_2}. Return an x-monotone
+    curve connecting the two given endpoints.
+  \end{description}
+\item Traits adapter
+  \begin{description}
+  \item[ta\_compare\_y\_at\_x\_left] ---
+  \item[ta\_is\_in\_x\_range] ---
+  \item[ta\_compare\_y\_position] ---
+  \item[ta\_is\_between\_cw] ---
+  \item[ta\_compare\_cw\_around\_point] ---
+  \end{description}  
+
+  \begin{description}
+  \item[ta\_are\_mergeable] ---
+  \item[ta\_merge] ---
+  \end{description}  
+\item Arrangement
+  \begin{itemize}
+  \item Assignments
+    \begin{description}
+    \item[arr\_operator\_assign] --- test the {\tt Arrangement\_2::operator=}
+      operator.
+    \item[arr\_assign] --- test the method {\tt Arrangement\_2::asign()}.
+    \item[arr\_clear] --- test the method {\tt Arrangement\_2::clear()}.
+    \end{description}  
+  \item Accessors
+    \begin{description}
+    \item[arr\_get\_traits] --- tests the {\tt get\_traits()} method.
+    \item[arr\_is\_empty] --- tests the {\tt is\_empty()} method.
+    \item[arr\_incident\_face] --- tests {\tt incident\_face(v)} method.
+    \item[arr\_vertices\_range] --- tests the {\tt vertices\_begin()} and
+      {\tt vertices\_end()} methods.
+    \item[arr\_halfedges\_range] --- tests the {\tt halfedges\_begin()} and
+      {\tt halfedges\_end()} methods.
+    \item[arr\_edges\_range] --- tests the {\tt edges\_begin()} and
+      {\tt edges\_end()} methods.
+    \item[arr\_faces\_range] --- tests the {\tt faces\_begin()} and
+      {\tt faces\_end()} methods.
+    \item[arr\_counting] --- tests the {\tt number\_of\_vertices()},
+      {\tt number\_of\_halfedges()}, {\tt number\_of\_edges()}, and
+      {\tt number\_of\_faces()} methods.
+    \item[arr\_is\_valid] --- tests the (not implemented yet) {\tt is\_valid()}
+      method.
+    \end{description}  
+  \item Modifiers
+    \begin{description}
+    \item[arr\_modify\_vertex] --- tests {\tt modify\_vertex()}
+    \item[arr\_modify\_edge] --- tests {\tt modify\_edge()}
+    \item[arr\_insert\_isolated\_vertex] --- tests
+      {\tt insert\_isolated\_vertex()} and {\tt remove\_isolated\_vertex()}
+    \item[arr\_insert\_in\_face] --- tests {\tt insert\_in\_face\_interior()}
+    \item[arr\_insert\_from\_vertex] --- tests
+      {\tt insert\_from\_left\_vertex(v)} and
+      {\tt insert\_from\_right\_vertex(v)}
+    \item[arr\_insert\_from\_halfedge\_vertex] --- tests
+      {\tt insert\_from\_left\_vertex(he)} and
+      {\tt insert\_from\_right\_vertex(he)}
+    \item[arr\_insert\_at\_vertices] --- tests
+      {\tt insert\_at\_vertices(cv, v1, v2)}
+    \item[arr\_insert\_at\_halfedge\_vertice] --- tests
+      {\tt insert\_at\_vertices(cv, he1, v2)} and
+      {\tt insert\_at\_vertices(cv, he1, he2)}
+    \item[arr\_split\_edge] -- tests {\tt split\_edge()} and {\tt merge\_edge()}
+    \item[arr\_remove\_edge] --- tests {\tt remove\_edge()}
+    \end{description}  
+  \item Casting away Constness
+    \begin{description}
+    \item[arr\_constness] --- tests {\tt non\_const\_handle(v)},
+      {\tt non\_const\_handle(he)}, and {\tt non\_const\_handle(f)}.
+    \end{description}
+  \item Vertex
+    \begin{description}
+    \item[vertex\_is\_isolated] --- tests {\tt is\_solated()}
+    \item[vertex\_degree] --- tests {\tt degree()}
+    \item[vertex\_incident\_halfedges] --- tests {\tt incident\_halfedges()}
+    \item[vertex\_point] --- tests {\tt point()}
+    \end{description}
+  \item Halfedge
+    \begin{description}
+    \item[halfedge\_endpoints] --- tests {\tt source()}, {\tt target()}
+    \item[halfedge\_face] --- tests {\tt face()}
+    \item[halfedge\_twin] --- tests {\tt twin()}
+    \item[halfedge\_adjacent] --- tests {\tt prev()} and {\tt next()}
+    \item[halfedge\_ccb] --- tests {\tt ccb()}
+    \item[halfedge\_curve] --- tests {\tt curve()}
+    \end{description}
+  \item Face
+    \begin{description}
+    \item[face\_is\_unbounded] --- tests {\tt is\_unbounded()}
+    \item[face\_outer\_ccb] --- tests {\tt outer\_ccb()}
+    \item[face\_holes] --- tests {\tt holes\_begin()}, {\tt holes\_end()}
+    \item[face\_isolated\_vertices\_range] --- tests
+      {\tt isolated\_vertices\_begin()} and {\tt isolated\_vertices\_end()}
+    \end{description}
+    \end{itemize}
+\item Observers
+  \begin{description}
+  \item[observer] --- 
+  \end{description}
+\item Point location queries
+  \begin{description}
+  \item[pl\_locate] --- tests {\tt locate()}
+  \item[pl\_ray\_shoot] --- tests {\tt ray\_shoot\_up()} and
+    {\tt ray\_shoot\_down()}
+  \end{description}  
+\item Insertions and removals
+  \begin{description}
+  \item[insert\_incremental] --- tests {\tt insert(cv, pl)} and
+    {\tt insert(cv)}. The former should be repeated for all
+    point-location strategies.
+  \item[insert\_aggregate] --- tests {\tt insert(first, beyond)}
+  \item[insert\_incremental\_x\_monotone] --- tests
+    {\tt insert\_x\_monotone(xcv, pl)} and
+    {\tt insert\_x\_monotone(xcv)}. The former should be repeated for
+    all point-location strategies.
+  \item[insert\_aggregate\_x\_monotone] --- tests
+    {\tt insert\_x\_monotone(first, beyond)}
+  \item[insert\_incremental\_non\_intersecting] --- tests
+    {\tt insert\_non\_intersecting(xcv, pl)} and
+    {\tt insert\_non\_intersecting(xcv)}. The former should be
+    repeated for all point-location strategies.
+  \item[insert\_aggregate\_non\_intersecting] --- tests
+    {\tt insert\_non\_intersecting(first, beyond)}
+  \item[insert\_vertex] --- tests {\tt insert\_vertex(p, pl)} and
+    {\tt insert\_vertex(p)}. The former should be repeated for all
+    point-location strategies.
+  \item[remove\_vertex] --- tests {\tt remove\_vertex()}
+  \item[remove\_edge] --- tests {\tt remove\_edge()}
+  \end{description}
+\item Overlay
+  \begin{description}
+  \item[overlay] --- 
+  \end{description}
+\item Sweep line
+  \begin{description}
+  \item[sl\_get\_intersection\_points] ---
+  \item[sl\_get\_subcurves] ---
+  \item[sl\_do\_curves\_intersect] ---
+  \item[sl\_locate] -- tests the batched point-location operation on
+    an arrangement.
+  \end{description}
+\item \dcel\ Addpters
+\item \boost\ Addpters
+\end{itemize}
+
+\end{document}
