@@ -16,7 +16,7 @@
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
-#include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
+#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -308,7 +308,7 @@ namespace CircularFunctors {
 
     typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
     Polynomial_for_circles_2_2 equation = get_equation<CK>(a.supporting_circle());
-    if(CGAL::AlgebraicFunctors::sign_at<typename CK::Algebraic_kernel>
+    if(CGAL::sign_at<typename CK::Algebraic_kernel>
        (equation,p.coordinates())!= ZERO)
       return false;
     

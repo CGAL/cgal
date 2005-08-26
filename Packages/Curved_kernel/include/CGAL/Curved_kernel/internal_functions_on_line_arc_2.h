@@ -13,7 +13,7 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -66,7 +66,7 @@ template < class CK >
   {
     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(a.supporting_line());
-    if(CGAL::AlgebraicFunctors::sign_at<typename CK::Algebraic_kernel>
+    if(CGAL::sign_at<typename CK::Algebraic_kernel>
        (equation,p.coordinates())!= ZERO)
       return false;
     

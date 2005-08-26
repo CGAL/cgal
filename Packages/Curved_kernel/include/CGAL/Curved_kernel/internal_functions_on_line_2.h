@@ -1,6 +1,5 @@
 #ifndef CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
 #define CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
-#include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 
 namespace CGAL {
 namespace LinearFunctors {
@@ -41,7 +40,7 @@ namespace LinearFunctors {
       unsigned > > 
       solutions_container;
     solutions_container solutions;
-    CGAL::AlgebraicFunctors::solve<typename CK::Algebraic_kernel>
+    CGAL::solve<typename CK::Algebraic_kernel>
       ( e1,e2, std::back_inserter(solutions) ); // to be optimized
     
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
