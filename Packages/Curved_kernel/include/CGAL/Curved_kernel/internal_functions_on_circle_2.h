@@ -95,12 +95,12 @@ namespace CircularFunctors {
 
   // TODO: Will go to AK, once there is a Root_for_circles_2_1.
   template <class CK>
-  typename CK::Circular_arc_point_2::Root_for_circles_2_2
+  typename CK::Root_for_circles_2_2
   _x_critical_points(const typename CK::Polynomial_for_circles_2_2 & c, bool i)
   {
             typedef typename CK::Root_of_2 Root_of_2;
             typedef typename CK::FT        FT;
-            typedef typename CK::Circular_arc_point_2::Root_for_circles_2_2
+            typedef typename CK::Root_for_circles_2_2
                                            Root_for_circles_2_2;
 
 	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
@@ -111,12 +111,12 @@ namespace CircularFunctors {
 
   // TODO: Will go to AK, once there is a Root_for_circles_2_1.
   template <class CK>
-  typename CK::Circular_arc_point_2::Root_for_circles_2_2
+  typename CK::Root_for_circles_2_2
   _y_critical_points(const typename CK::Polynomial_for_circles_2_2 &c, bool i)
   {
             typedef typename CK::Root_of_2 Root_of_2;
             typedef typename CK::FT        FT;
-            typedef typename CK::Circular_arc_point_2::Root_for_circles_2_2
+            typedef typename CK::Root_for_circles_2_2
                                            Root_for_circles_2_2;
 
             Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
