@@ -90,6 +90,11 @@ struct LP_rep_min_annulus_d {
   typedef  Const_oneset_iterator< Const_oneset_iterator<NT> >
                                                        D_iterator; // dummy
 
+  typedef Const_oneset_iterator<bool> FU_iterator;
+  typedef Const_oneset_iterator<bool> FL_iterator;
+  typedef Const_oneset_iterator<NT>   U_iterator;
+  typedef Const_oneset_iterator<NT>   L_iterator;
+
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
   typedef Const_oneset_iterator<Row_type>    Row_type_iterator;
 
@@ -496,6 +501,10 @@ private:
 			    A_it( a_matrix.begin()), b_vector.begin(),
 			    c_vector.begin(), D_it(dummy),
 			    Row_it(LP_rep::EQUAL),
+			    typename LP_rep::FL_iterator(true),  // dummy
+			    typename LP_rep::L_iterator(NT()),   // dummy
+			    typename LP_rep::FU_iterator(false), // dummy
+			    typename LP_rep::U_iterator(NT()),   // dummy
 			    *strategy);
     
         // compute center and squared radius
