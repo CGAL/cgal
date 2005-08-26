@@ -77,18 +77,7 @@ QP_solver(int n, int m,
   set_pricing_strategy(strategy);
   init();
   solve();
-  for (FL_iterator it = fl; it != (fl+qp_n); ++it)
-    std::cout << *it << std::endl;
-  for (L_iterator it = lb; it != (lb+qp_n); ++it)
-    std::cout << *it << std::endl;
-  for (FU_iterator it = fu; it != (fu+qp_n); ++it)
-    std::cout << *it << std::endl;
-  for (U_iterator it = ub; it != (ub+qp_n); ++it)
-    std::cout << *it << std::endl;
-
 }
-
-
 
 // set-up of QP
 template < class Rep_ >
