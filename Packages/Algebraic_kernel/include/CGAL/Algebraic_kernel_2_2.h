@@ -8,6 +8,7 @@
 
 #include <CGAL/Algebraic_kernel/function_objects_on_roots_and_polynomials_2_2.h> 
 #include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
+#include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 
 namespace CGAL {
 
@@ -29,6 +30,7 @@ namespace CGAL {
     Polynomial_1_2; // probleme RT / FT
 
     typedef AlgebraicFunctors::Solve<Self>  Solve;
+    typedef AlgebraicFunctors::Sign_at<Self> Sign_at;
 
     typedef AlgebraicFunctors::Construct_polynomial_circle_2_2<Self>
     Construct_polynomial_circle_2_2;
@@ -42,6 +44,10 @@ namespace CGAL {
     {
       return Construct_polynomial_circle_2_2();
     }
+
+    Sign_at
+    sign_at_object() const
+    { return Sign_at();}
 
   };
 
