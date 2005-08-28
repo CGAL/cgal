@@ -1,3 +1,7 @@
+28 August 2005:  Menelaos Karavelas
+- attempt to remove warning produced by ICL.EXE for the
+Concrete_Voronoi_diagram_2 class.
+
 6 August 2005:  Menelaos Karavelas
 - demo: fixed the display of the conflict region for all three kinds
   of Voronoi diagrams.

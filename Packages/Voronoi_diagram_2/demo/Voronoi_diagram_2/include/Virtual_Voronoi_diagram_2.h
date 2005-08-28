@@ -309,6 +309,14 @@ class Concrete_Voronoi_diagram_2
   {
     VBase::draw_conflicts( to_site(p), o, widget);
   }
+
+  virtual void draw_conflicts(const Circle_2& c, const Object& o,
+			      Qt_widget& widget) const {
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
+    bool THIS_METHOD_SHOULD_NEVER_BE_CALLED = false;
+    CGAL_assertion( THIS_METHOD_SHOULD_NEVER_BE_CALLED );
+#endif
+  }
 #endif
 
   virtual Object ptr() { return CGAL::make_object(this); }
