@@ -376,7 +376,7 @@ public:
       // the extenede X_monotone_curve_2 
       for(; oi != oi_end; ++oi)
       {
-	base_pt = object_cast<std::pair<Base_Point_2, unsigned int> >(&(*oi));
+        base_pt = object_cast<std::pair<Base_Point_2, unsigned int> >(&(*oi));
 
         if (base_pt != NULL)
         {
@@ -396,9 +396,9 @@ public:
           }
 
           Point_2 point_plus (base_pt->first,
-			      red_obj, blue_obj); // the extended point
+                              red_obj, blue_obj); // the extended point
           *oi = CGAL::make_object(std::make_pair(point_plus, 
-						 base_pt->second));
+                                                 base_pt->second));
         }
         else
         {
@@ -427,7 +427,7 @@ public:
             }
 
             *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_cv,
-							 red_he, blue_he));
+                                                         red_he, blue_he));
           }
         }
       }
