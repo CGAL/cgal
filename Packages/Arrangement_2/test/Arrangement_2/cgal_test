@@ -40,51 +40,55 @@ LEDA_REAL_NT=10
 CORE_EXPR_NT=11
 LAZY_GMPZ_NT=12
 
-test_traits()
+compile_test()
 {
   local name=$1;
   local nt=$2;
   local kernel=$3;
   local traits=$4;
-  local datafile=$5;
 
   TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS -DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits";
   echo $TESTSUITE_CXXFLAGS;
   
   echo "Compiling $name ... "
-  SUCCES="y"
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name'; then
-    echo "   succesful compilation of $name" >> $ERRORFILE
+    echo "   succesful compilation of $name" >> $ERRORFILE;
+    res=1;
   else
-    echo "   ERROR:    compilation of $name" >> $ERRORFILE
-    SUCCES=""
+    echo "   ERROR:    compilation of $name" >> $ERRORFILE;
+    res=0;
   fi
+}
 
-  if [ -n "${SUCCES}" ] ; then
-     OUTPUTFILE=ProgramOutput.$name.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./$name"
-    if [ -f $name.cmd ] ; then
-      COMMAND="$COMMAND `cat $name.cmd`"
-    fi
-    if [ -f $name.cin ] ; then
-      COMMAND="cat $name.cin | $COMMAND"
-    fi
-    echo "Executing $name $datafile ... "
-    echo
-    ulimit -t 1200
-    if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
-      echo "   succesful execution   of $name" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution   of $name" >> $ERRORFILE
-    fi
+run_test()
+{
+  local name=$1;
+  local datafile=$2;
+  
+  OUTPUTFILE=ProgramOutput.$name.$PLATFORM
+  rm -f $OUTPUTFILE
+  COMMAND="./$name"
+  if [ -f $name.cmd ] ; then
+    COMMAND="$COMMAND `cat $name.cmd`"
+  fi
+  if [ -f $name.cin ] ; then
+    COMMAND="cat $name.cin | $COMMAND"
+  fi
+  echo "Executing $name $datafile ... "
+  echo
+  ulimit -t 1200
+  if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
+    echo "   succesful execution   of $name" >> $ERRORFILE
   else
-    echo   "   ERROR:    not executed   $name" >> $ERRORFILE
+    echo "   ERROR:    execution   of $name" >> $ERRORFILE
   fi
+}
 
-#  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+clean_tests()
+{
+  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
 }
 
 compile_and_run()
@@ -123,8 +127,6 @@ compile_and_run()
   else
     echo   "   ERROR:    not executed   $name" >> $ERRORFILE
   fi
-
-  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
 }
 
 #---------------------------------------------------------------------#
@@ -143,8 +145,15 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-# function    executable  number type   kernel            traits
-  test_traits test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS data/compare
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_test test_traits data/compare
+  fi
+
 #  compile_and_run point_location
+  clean_tests
 fi
 
