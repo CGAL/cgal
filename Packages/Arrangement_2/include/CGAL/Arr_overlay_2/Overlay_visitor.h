@@ -309,6 +309,9 @@ public:
                                                    new_face_created);
     //TODO: add an assertion that res is directed from right to left
 
+     //update the result edge
+    this ->create_edge(sc, res);
+
     map_halfedge_and_twin(res, false, cv.get_curve_info());
 
     // new face was created, need to update the new face's data
@@ -398,8 +401,6 @@ public:
       }
     }
 
-    //update the result edge
-    this ->create_edge(sc, res);
     return res;
   }
 
