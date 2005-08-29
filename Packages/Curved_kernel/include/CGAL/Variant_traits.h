@@ -63,11 +63,11 @@ namespace CGAL {
 		   const Circular_arc_point_2 &p) const
       { 
 	if ( const Arc1* arc1 = boost::get<Arc1>( &a ) ){
-	  return CGAL::CircularFunctors::point_in_range<CurvedKernel>(*arc1, p);
+	  return CurvedKernel().in_range_2_object()(*arc1, p);
 	}
 	else {
 	  const Arc2* arc2 = boost::get<Arc2>( &a );
-	  return CGAL::CircularFunctors::point_in_range<CurvedKernel>(*arc2, p);
+	  return CurvedKernel().in_range_2_object()(*arc2, p);
 	}
       }
     };
@@ -87,21 +87,20 @@ namespace CGAL {
       { 
 	if ( const Arc1* arc1 = boost::get<Arc1>( &a1 ) ){
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &a2 ) ){
-	    return CGAL::CircularFunctors::compare_y_to_right<CurvedKernel>(*arc1, *arc2, p);
+	    return CurvedKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
 	  }
 	  else {
 	    const Arc2* arc2 = boost::get<Arc2>( &a2 );
-	    return CGAL::CircularFunctors::compare_y_to_right<CurvedKernel>(*arc1, *arc2, p);
+	    return CurvedKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
 	  }
 	}
 	const Arc2* arc1 = boost::get<Arc2>( &a1 );
 	if ( const Arc1* arc2 = boost::get<Arc1>( &a2 ) ){
-	  return CGAL::CircularFunctors::compare_y_to_right<CurvedKernel>(*arc1, *arc2, p);
+	  return CurvedKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
 	}
-	//else {
 	const Arc2* arc2 = boost::get<Arc2>( &a2 );
-	return CGAL::CircularFunctors::compare_y_to_right<CurvedKernel>(*arc1, *arc2, p);
-	//}
+	return CurvedKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
+	
       }  
     };
 
@@ -116,7 +115,7 @@ namespace CGAL {
       bool
       operator()(const T &a0, const T &a1) const
       {
-	return typename CurvedKernel::Equal_2()(a0, a1);
+	return CurvedKernel().equal_2_object()(a0,a1);
       }
 
       template < typename T1, typename T2 >      
@@ -163,11 +162,11 @@ namespace CGAL {
 		    const boost::variant< Arc1, Arc2 > &A1) const
       { 
 	if ( const Arc1* arc1 = boost::get<Arc1>( &A1 ) ){
-	  return CGAL::CircularFunctors::compare_y_at_x<CurvedKernel>(p, *arc1); 
+	  return CurvedKernel().compare_y_at_x_2_object()(p, *arc1);
 	}
 	else {
 	  const Arc2* arc2 = boost::get<Arc2>( &A1 );
-	  return CGAL::CircularFunctors::compare_y_at_x<CurvedKernel>(p, *arc2);
+	  return CurvedKernel().compare_y_at_x_2_object()(p, *arc2);
 	}
       }
     };
@@ -182,7 +181,7 @@ namespace CGAL {
       bool
       operator()(const T &a0, const T &a1) const
       {
-	return typename CurvedKernel::Do_overlap_2()(a0, a1);
+	return CurvedKernel().do_overlap_2_object()(a0, a1);
       }
 
       template < typename T1, typename T2 >      
@@ -221,14 +220,14 @@ namespace CGAL {
 	operator()(const boost::variant< Arc1, Arc2 > &A, OutputIterator res)
       { if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ){
 	  std::vector<CGAL::Object> container;
-	  CGAL::CircularFunctors::make_x_monotone<CurvedKernel>(*arc1,  std::back_inserter(container));
+	  CurvedKernel().make_x_monotone_2_object()(*arc1,  std::back_inserter(container));
 	  object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	  return res;
 	}
 	else {
 	  const Arc2* arc2 = boost::get<Arc2>( &A );
 	  std::vector<CGAL::Object> container;
-	  CGAL::CircularFunctors::make_x_monotone<CurvedKernel>(*arc2,  std::back_inserter(container));
+	  CurvedKernel().make_x_monotone_2_object()(*arc2,  std::back_inserter(container));
 	  object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	  return res;
 	}
@@ -252,13 +251,13 @@ namespace CGAL {
 	if ( const Arc1* arc1 = boost::get<Arc1>( &c1 ) ){
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1,*arc2,  std::back_inserter(container));
+	    CurvedKernel().intersect_2_object()(*arc1,*arc2,  std::back_inserter(container));
 	    object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	    return res;
 	  }
 	  else if ( const Arc2* arc2 = boost::get<Arc2>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1, *arc2, std::back_inserter(container));
+	    CurvedKernel().intersect_2_object()(*arc1,*arc2,  std::back_inserter(container));
 	    object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	    return res;
 	  }
@@ -267,13 +266,13 @@ namespace CGAL {
 	  const Arc2* arc1 = boost::get<Arc2>( &c1 );
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1, *arc2,  std::back_inserter(container));
+	    CurvedKernel().intersect_2_object()(*arc1,*arc2,  std::back_inserter(container));
 	    object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	    return res;
 	  }
 	  const Arc2* arc2 = boost::get<Arc2>( &c2 );
 	  std::vector<CGAL::Object> container;
-	  CGAL::CircularFunctors::intersect_2<CurvedKernel>(*arc1, *arc2,  std::back_inserter(container));
+	  CurvedKernel().intersect_2_object()(*arc1,*arc2,  std::back_inserter(container));
 	  object_to_object_variant<CurvedKernel, Arc1, Arc2>(container, res);
 	  return res;
 	}
@@ -299,7 +298,7 @@ namespace CGAL {
 	if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ){
 	  Arc1 carc1;
 	  Arc1 carc2;
-	  CGAL::CircularFunctors::split<CurvedKernel>(*arc1, p, carc1, carc2); 
+	  CurvedKernel().split_2_object()(*arc1, p, carc1, carc2);
 	  ca1 = carc1;
 	  ca2 = carc2;
 	  return ;
@@ -309,7 +308,7 @@ namespace CGAL {
 	  const Arc2* arc2 = boost::get<Arc2>( &A );
 	  Arc2 cline1;
 	  Arc2 cline2;
-	  CGAL::CircularFunctors::split<CurvedKernel>(*arc2, p, cline1, cline2); 
+	  CurvedKernel().split_2_object()(*arc2, p, cline1, cline2); 
 	  ca1 = cline1;
 	  ca2 = cline2;
 	  return ;
@@ -329,8 +328,7 @@ namespace CGAL {
       const typename CurvedKernel::Circular_arc_point_2&
       operator()(const T &a) const
       {
-	bool precondition = typename CurvedKernel::Compare_xy_2()(a.left(),a.right())==CGAL::SMALLER;
-	CGAL_kernel_precondition(precondition);
+	CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
 	return (a.left());
       }
     };
@@ -360,8 +358,7 @@ namespace CGAL {
       const typename CurvedKernel::Circular_arc_point_2&
       operator()(const T &a) const
       {
-	bool precondition = typename CurvedKernel::Compare_xy_2()(a.left(),a.right())==CGAL::SMALLER;
-	CGAL_kernel_precondition(precondition); 
+	CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
 	return (a.right());
       }
     };
@@ -394,7 +391,7 @@ namespace CGAL {
       bool
       operator()(const T &a) const
       {
-	return CGAL::CircularFunctors::is_vertical<CurvedKernel>(a);
+	return CurvedKernel().is_vertical_2_object()(a);
       }
     };
 
