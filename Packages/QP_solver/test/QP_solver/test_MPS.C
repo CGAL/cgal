@@ -57,10 +57,8 @@ int main(const int argNr,const char **args) {
   using CGAL::Tag_true;
   using CGAL::Tag_false;
 
-  // check arguments:
-  if (argNr < 2) 
-    bailout("not enough arguments (verbosity missing)");
-  const int verbosity = string_to<int>(args[1]);
+  // get desired level of additional logging output:
+  const int verbosity = argNr < 2? 1 : string_to<int>(args[1]);
 
   // construct QP instance:
   typedef double IT;
@@ -80,13 +78,15 @@ int main(const int argNr,const char **args) {
     exit(2);
   }
 
-  if (verbosity > 0)
+  if (verbosity > 0) {
     cout << endl << qp << endl;
+  }
 
   CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
 				 qp.number_of_constraints(),
 				 qp.A(),qp.b(),qp.c(),qp.D(),
 				 qp.row_types(),
 				 qp.default_pricing_strategy());
+
   return 0;
 }

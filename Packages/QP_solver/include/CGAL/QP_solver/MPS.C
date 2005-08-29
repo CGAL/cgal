@@ -24,6 +24,7 @@
 // implementation: MPS Format Reader for the QP-Solver
 // ============================================================================
 
+#include <iomanip>
 #include <CGAL/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_partial_exact_pricing.h>
 
@@ -40,6 +41,9 @@ QP_MPS_instance<Traits>::QP_MPS_instance(std::istream& in,
     var_nr(0),
     constr_nr(0),
     strategy(strategy),
+    is_symmetric_cached(false),
+    has_equalities_only_and_full_rank_cached(false),
+    is_in_standard_form_cached(false),
     use_put_back_token(false)
 {
   // read NAME section:
@@ -107,26 +111,123 @@ bool QP_MPS_instance<Traits>::is_valid()
     return err("loaded instance is not an LP (D is nonzero) but Is_linear is Tag_true");
   if (check_tag(Is_in_standard_form()) && !is_in_standard_form())
     return err("loaded instance is not in standard form but Is_in_standard_form is Tag_true");
+
   return true;
 }
 
 template<class Traits>
-const std::string QP_MPS_instance<Traits>::error()
+const std::string& QP_MPS_instance<Traits>::error()
 {
   CGAL_qpe_assertion(!is_valid());
   return error_msg;
 }
 
 template<class Traits>
+const std::string& QP_MPS_instance<Traits>::comment()
+{
+  CGAL_qpe_assertion(is_valid());
+  return comment_;
+}
+
+template<class Traits>
 bool QP_MPS_instance<Traits>::is_symmetric()
 {
-  for (unsigned int i=0; i<var_nr; ++i)
-    for (unsigned int j=i+1; j<var_nr; ++j)
-      if (D_[i][j] != D_[j][i])
-	return false;
-  return true;
+  if (!is_symmetric_cached) {
+    is_symmetric_ = true;
+    for (unsigned int i=0; i<var_nr; ++i)
+      for (unsigned int j=i+1; j<var_nr; ++j)
+	if (D_[i][j] != D_[j][i]) {
+	  is_symmetric_ = false; 
+	  return is_symmetric_;
+	}
+  }
+  return is_symmetric_;
 }
   
+template<class Traits>
+bool QP_MPS_instance<Traits>::has_equalities_only_and_full_rank()
+{
+  if (has_equalities_only_and_full_rank_cached)
+    return has_equalities_only_and_full_rank_;
+
+  // check if we have inequalities:
+  for (typename Row_type_vector::const_iterator it = row_types_.begin();
+       it != row_types_.end(); ++it)
+    if (*it != Traits::EQUAL) {
+      has_equalities_only_and_full_rank_ = false;
+      return has_equalities_only_and_full_rank_;
+    }
+
+  // perform exact (!) Gaussian Elemination to determine the rank:
+  // todo: this could be made much more efficient...
+  typedef Quotient<ET> QET;
+  typedef std::vector<QET> V;
+  typedef std::vector<V>  M;
+  M A; // copy of the matrix A to work on
+       // Note: A[i][j] is the element in the i-th row and j-th column.
+  const int n = number_of_variables();
+  const int m = number_of_constraints();
+  const ET one(1);
+  for (int i=0; i<m; ++i) {
+    A.push_back(V());
+    V &row = A.back();
+    for (int j=0; j<n; ++j)
+      row.push_back(QET(A_[j][i],one));
+  }
+
+  int k = 0;
+  for (int j=0; j<n; ++j) {
+    // Invariant: The columns 0..(j-1) of A are in echelon form and
+    // column j-1 has a nonzero entry at row-index k-1.
+    //
+    // In this iteration of the loop we zero the entries k+1..m of
+    // column j of A.  In order to do this, it might be necessary to
+    // first exchange two rows.
+
+    #if 0 // debugging code
+    std::cout << "Iteration (j,k) = (" << j << "," << k << ")" << std::endl;
+    for (int ii=0; ii<m; ++ii) {
+      for (int jj=0; jj<n; ++jj) {
+	std::cout << std::setw(15) << A[ii][jj];
+      }
+      std::cout << std::endl;
+    }
+    #endif
+
+    // search for a suitable place k:
+    bool found = false;
+    int l = k;
+    for (; l<m; ++l)
+      if (!CGAL_NTS is_zero(A[l][j])) {
+	found = true;
+	break;
+      }
+    if (!found)
+      // Here, all elements k..m of column j of A are zero, so we
+      // have an echelon form (without a "step") and continue:
+      continue;
+
+    // swap rows, if necessary:
+    if (k != l)
+      std::swap(A[k],A[l]);
+    CGAL_qpe_assertion(!CGAL_NTS is_zero(A[k][j]));
+
+    // zero out the entries below entry k:
+    for (int i=k+1; i<m; ++i) {
+      // we add l times row k to row i:
+      const QET l = -A[i][j]/A[k][j];
+      for (int jj=0; jj<n; ++jj) // for (int jj=j+1; jj<n; ++jj)
+	A[i][jj] += l*A[k][jj];
+    }
+
+    // increase echelon height:
+    ++k;
+  }
+
+  has_equalities_only_and_full_rank_ = k == m;
+  return has_equalities_only_and_full_rank_;
+}
+
 template<class Traits>
 unsigned int QP_MPS_instance<Traits>::number_of_variables()
 {
@@ -304,7 +405,8 @@ bool QP_MPS_instance<Traits>::rhs_section()
 
   t = token();
   std::string rhs_id;
-  while (t != "RANGES" && t != "BOUNDS" && t != "ENDATA") {
+  while (t != "RANGES" && t != "BOUNDS" &&
+	 t != "DMATRIX" && t != "QMATRIX" && t != "ENDATA") {
     // read rhs identifier and if it is different from the one
     // from the previous iteration, ignore the whole row:
     bool ignore;
@@ -360,7 +462,7 @@ bool QP_MPS_instance<Traits>::bounds_section()
 
   t = token();
   std::string bound_id;
-  while (t != "QMATRIX" && t != "ENDATA") {
+  while (t != "QMATRIX" && t != "DMATRIX" && t != "ENDATA") {
     // process type of bound:
     enum Bound_type { LO, UP, FX, FR, MI, PL};
     Bound_type type;
@@ -444,35 +546,45 @@ template<class Traits>
 bool QP_MPS_instance<Traits>::qmatrix_section()
 {
   std::string t = token();
-  if (t != "QMATRIX") { // (Note: QMATRIX section is optional.)
+  if (t!="QMATRIX" && t!="DMATRIX") { // (Note: *MATRIX section is optional.)
     put_token_back(t);
     is_linear_ = true;
     return true;
   }
+
+  // remember section name:
+  D_section = t;
+  const bool divide_by_two = t!="DMATRIX";
 
   // initialize matrix D:
   initialize_D(var_names.size(),Use_sparse_representation_for_D());
 
   t = token();
   std::string bound_id;
-  while (t != "ENDDATA") {
+  while (t != "ENDATA") {
     // find first variable name;
     const Index_map::const_iterator var1_name = var_names.find(t);
     if (var1_name == var_names.end()) // unknown variable?
-      return err1("unknown first variable '%' in QMATRIX section",t);
+      return err1("unknown first variable '%' in D/QMATRIX section",t);
     const unsigned int var1_index = var1_name->second;;
+    //std::cout << "qvar1 " << t << std::endl;
       
     // find second variable name;
     t = token();
     const Index_map::const_iterator var2_name = var_names.find(t);
     if (var2_name == var_names.end()) // unknown variable?
-      return err1("unknown second variable '%' in QMATRIX section",t);
+      return err1("unknown second variable '%' in D/QMATRIX section",t);
     const unsigned int var2_index = var2_name->second;;
+    //std::cout << "qvar2 " << t << std::endl;
       
-    // read value of bound, if appropriate:
+    // read value:
     IT val;
     if (!number(val))
       return err1("expected number after '%' in section QMATRIX",t);
+
+    // divide by two if approriate:
+    if (divide_by_two)
+      val /= 2;
 
     // set entry in D:
     set_entry_in_D(var1_index,var2_index,val,
@@ -489,6 +601,77 @@ bool QP_MPS_instance<Traits>::qmatrix_section()
 template<class Traits>
 std::ostream& operator<<(std::ostream& o,QP_MPS_instance<Traits>& qp)
 {
+  const unsigned int n = qp.number_of_variables();
+  const unsigned int m = qp.number_of_constraints();
+  const int width = 10;
+  
+  // output general information:
+  using std::endl;
+  const char *yes = "yes", *no = "no";
+  o << "QP is linear (i.e., an LP):            "
+    << (qp.is_linear()? yes : no) << endl
+    << "QP is in standard form:                "
+    << (qp.is_in_standard_form()? yes : no) << endl
+    << "QP has equalities only and full rank:  "
+    << (qp.has_equalities_only_and_full_rank()? yes : no) << endl;
+  if (!qp.is_linear())
+    o << "QP has symmetric D matrix:             "
+      << (qp.is_symmetric()? yes : no) << endl
+      << "D matrix storage format in MPS stream: "
+      << qp.D_format_type() << endl;
+
+  // output c:
+  o << "Number of variables:    n = " << qp.number_of_variables() << endl
+    << "Number of constraints:  m = " << qp.number_of_constraints() << endl
+    << "c: " << endl;
+  typename Traits::C_iterator c = qp.c();
+  for (unsigned int i=0; i<n; ++i, ++c)
+    o << std::setw(width) << *c;
+  o << endl;
+  
+  // output A and b:
+  o << "A|b: " << endl;
+  typename Traits::B_iterator b = qp.b();
+  typename Traits::A_iterator A = qp.A();
+  for (unsigned int i=0; i<m; ++i) {
+    for (unsigned int j=0; j<n; ++j)
+      o << std::setw(width) << A[j][i];
+    o << " | " << std::setw(width) << b[i] << endl;
+  }
+
+  // output D:
+  if (!qp.is_linear()) {
+    o << "D: " << endl;;
+    typename Traits::D_iterator D = qp.D();
+    for (unsigned int i=0; i<n; ++i, ++D) {
+      typename Traits::D_iterator::value_type entry = *D;
+      for (unsigned int j=0; j<n; ++j, ++entry)
+	o << std::setw(width) << *entry;
+      o << endl;
+    }
+  }
+
+  // output bounds:
+  if (!qp.is_in_standard_form()) {
+    o << "Bounds:" << endl;
+    typename Traits::FU_iterator fu = qp.fu();
+    typename Traits::FL_iterator fl = qp.fl();
+    typename Traits::U_iterator u = qp.u();
+    typename Traits::L_iterator l = qp.l();
+    for (unsigned int i=0; i<n; ++i, ++fu, ++fl, ++u, ++l) {
+      o << "x" << std::left << std::setw(width) << i << "in ";
+      if (*fl)
+	o << '[' << *l;
+      else
+	o << "(-infty";
+      o << ',';
+      if (*fu)
+	o << *u << ']';
+      else
+	o << "+infty)";
+      o << endl;
+    }
+  }
   return o;
 }
 

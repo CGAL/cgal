@@ -48,11 +48,16 @@ namespace QP_MPS_detail {
 template<class Traits>
 class QP_MPS_instance;
 
-template<typename IT_,  // Warning: IT_ must support EXACT multiplication
-                        // by 2 (so x*2 must be exactly representable in IT_).
-	                // The reason is that the MPS format stores the matrix
-	                // D/2 and the QP-solver needs D, so we need to
-                        // multiply by 2.
+template<typename IT_,  // Warning: IT_ must support EXACT division by
+	                // 2 (so x/2 must be exactly representable in
+	                // IT_).  The reason is that the QMATRIX
+	                // section of the MPS format stores the matrix
+	                // 2*D and the QP-solver needs D, so we need
+	                // to divide by 2.  Note: If the MPS stream is
+	                // known to only contain a DMATRIX section,
+	                // this warning can be neglected because in a
+	                // DMATRIX section, D is stored (and not 2*D).
+	                // (See also method D_format_type().)
 	 typename ET_,
 	 typename Is_linear_,
 	 typename Is_symmetric_,
@@ -98,8 +103,8 @@ public:
   typedef Vector_iterator   D_iterator;
   typedef F_vector_iterator FU_iterator;
   typedef F_vector_iterator FL_iterator;
-  typedef Vector_iterator   U_iterator;
-  typedef Vector_iterator   L_iterator;
+  typedef Entry_iterator    U_iterator;
+  typedef Entry_iterator    L_iterator;
 
   typedef typename Row_type_vector::const_iterator Row_type_iterator;
   typedef Is_linear_                         Is_linear;
@@ -154,14 +159,22 @@ private:
   unsigned int var_nr, constr_nr;
   Vector b_, c_;              // vectors b and c
   Matrix A_, D_;              // matrices A and D
+  std::string D_section;      // name of the section from which D was read
   Row_type_vector row_types_; // equality type for each row
   Vector u_, l_;              // upper and lower bounds
   F_vector fu_, fl_;          // whether the lower/upper bound is finite or not
   QP_pricing_strategy<Traits> *strategy;
 
+  // cached data:
+  bool is_symmetric_cached, is_symmetric_;
+  bool has_equalities_only_and_full_rank_cached,
+    has_equalities_only_and_full_rank_;
+  bool is_in_standard_form_cached, is_in_standard_form_;
+
   // data from MPS file:
-  std::string name;  // from the NAME section
-  std::string obj;   // name of the objective "constraint"
+  std::string name;     // from the NAME section
+  std::string comment_; // first comment in the file, if any
+  std::string obj;      // name of the objective "constraint"
   Index_map row_names;
   Index_map var_names;
 
@@ -237,24 +250,34 @@ private: // parsing routines:
   // (Note: returns true iff a line-break was eaten.)
   bool whitespace()
   {
+    // support for put_token_back():
     if (use_put_back_token)
       return false;
     bool lineBreakFound = false;
+
     char c;
-    while (from.get(c)) {
-      if (!isspace(c)) {
-	if (c!='$' && c!='*')
-	  from.putback(c);
-	else { // comment?
-	  while (from.get(c) && c!='\r' && c!='\n')
-	    ; // nop
+    bool in_comment = false; // true iff we are within a comment
+    const bool remember_comment = comment_.size() == 0;
+    while (from.get(c))
+      if (in_comment) {
+	if (c!='\r' && c!='\n') {
+	  if (remember_comment)
+	    comment_.push_back(c);
+	} else
+	  in_comment = false;
+      } else { // not in comment?
+	if (!isspace(c)) {
+	  if (c!='$' && c!='*') {
+	    from.putback(c);
+	    break;
+	  }
+	  in_comment = true;
 	  lineBreakFound = true;
+	} else {
+	  if (c=='\r' || c=='\n')
+	    lineBreakFound = true;
 	}
-	break;
       }
-      if (c=='\r' || c=='\n')
-	lineBreakFound = true;
-    }
     return lineBreakFound;
   }
     
@@ -265,7 +288,14 @@ private: // parsing routines:
     }
     whitespace();
     std::string token;
-    from >> token;
+    char c;
+    while (from.get(c)) {
+      if (isspace(c)) {
+	from.putback(c);
+	break;
+      }
+      token.push_back(c);
+    }
     return token;
   }
 
@@ -337,7 +367,12 @@ public: // methods:
   // string describing the problem that was encountered.
   //
   // Precondition: !is_valid()
-  const std::string error();
+  const std::string& error();
+
+  // Returns the first comment that was read from the MPS stream.
+  //
+  // Precondition: is_valid()
+  const std::string& comment();
   
   // Returns the number of variables in the QP.
   //
@@ -348,6 +383,30 @@ public: // methods:
   //
   // Precondition: is_valid()
   unsigned int number_of_constraints();
+
+  // Returns the section name of the MPS stream in which the D matrix
+  // (if any present) was read.
+  //
+  // Note: The MPS file was originally defined for LP's only, and so
+  // there was no way to store the D matrix of a QP. Several
+  // extensions exists, including:
+  //
+  // - CPLEX extension: here, not D but the matrix 2*D is stored in a
+  //   so-called "QMATRIX" section.  When the parser encounters such a
+  //   section it has to divide the read entries by 2 in order to be
+  //   able to return (see D_iterator) the matrix D.  For this, IT
+  //   must support division by 2.
+  // - QP-solver extension: we also support reading D from a section
+  //   called "DMATRIX" which is defined exactly like CPLEX's QMATRIX
+  //   section with the only difference that we do in fact store D and
+  //   not 2*D.
+  //
+  // Precondition: !is_linear
+  const std::string& D_format_type()
+  {
+    CGAL_qpe_assertion(!is_linear());
+    return D_section;
+  }
 
   // Returns an iterator over the matrix A (as needs to be
   // passed to the constructor of class QP_solver).
@@ -386,7 +445,7 @@ public: // methods:
   //
   // Precondition: is_valid()
   FL_iterator fl() {
-    CGAL_qpe_assertion(!is_valid());
+    CGAL_qpe_assertion(is_valid());
     return fl_.begin();
   }
 
@@ -396,7 +455,7 @@ public: // methods:
   //
   // Precondition: is_valid()
   FU_iterator fu() {
-    CGAL_qpe_assertion(!is_valid());
+    CGAL_qpe_assertion(is_valid());
     return fu_.begin();
   }
 
@@ -405,8 +464,8 @@ public: // methods:
   // be passed to the constructor of class QP_solver.
   //
   // Precondition: is_valid()
-  FU_iterator u() {
-    CGAL_qpe_assertion(!is_valid());
+  U_iterator u() {
+    CGAL_qpe_assertion(is_valid());
     return u_.begin();
   }
 
@@ -415,8 +474,8 @@ public: // methods:
   // be passed to the constructor of class QP_solver.
   //
   // Precondition: is_valid()
-  FU_iterator l() {
-    CGAL_qpe_assertion(!is_valid());
+  L_iterator l() {
+    CGAL_qpe_assertion(is_valid());
     return l_.begin();
   }
 
@@ -425,10 +484,12 @@ public: // methods:
   // Precondition: is_valid()
   QP_pricing_strategy<Traits>& default_pricing_strategy() {
     if (strategy == 0)
-      strategy = new QP_partial_filtered_pricing<Traits>;
+      strategy = new QP_partial_filtered_pricing<Traits>; // todo: is this
+                                                          // a good choice
+                                                          // for a default
+                                                          // strategy?
     return *strategy;
   }
-  
 
   // Returns true iff the loaded QP instance has a symmetric D matrix.
   //
@@ -449,12 +510,28 @@ public: // methods:
   // Precondition: is_valid()
   bool is_in_standard_form()
   {
-    for (unsigned int i=0; i<var_names.size(); ++i)
-      if (fl_[i] == false || l_[i] != 0 ||
-	  fu_[i] == true)
-	return false;
-    return true;
+    if (!is_in_standard_form_cached) {
+      for (unsigned int i=0; i<var_names.size(); ++i)
+	if (fl_[i] == false || l_[i] != 0 ||
+	    fu_[i] == true) {
+	  is_in_standard_form_ = false;
+	  return is_in_standard_form_;
+	}
+      is_in_standard_form_ = true;
+    }
+    return is_in_standard_form_;
   }
+
+  // Returns true iff the QP has only equality constraints and the
+  // coefficients (from the matrix A) corresponding to these equality
+  // constraints have full row rank.
+  //
+  // Note: This routine is expensive, more precisely O(k^3)
+  // where k is the number of variables (see number_of_variables()) or
+  // the number of equality constraints, whichever is larger.
+  //
+  // Precondition: is_valid()
+  bool has_equalities_only_and_full_rank();
 };
 
 template<class Traits>
