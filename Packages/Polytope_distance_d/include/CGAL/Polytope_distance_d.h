@@ -448,6 +448,10 @@ private:
 			    A_it( a_matrix.begin()), B_it( 1), C_it( 0),
 			    D_it( signed_pts_it, row_of_d),
 			    Row_it(QP_rep::EQUAL),
+			    typename QP_rep::FL_iterator(true),  // dummy
+			    typename QP_rep::L_iterator(NT()),   // dummy
+			    typename QP_rep::FU_iterator(false), // dummy
+			    typename QP_rep::U_iterator(NT()),   // dummy
 			    *strategy);
 
         // compute support and realizing points
@@ -655,6 +659,11 @@ struct QP_rep_poly_dist_d {
     Signed_point_iterator,
     QP_rep_row_of_d< NT, Point, Signed_point_iterator,
 		     Access_coord, Access_dim > >      D_iterator;
+
+  typedef Const_oneset_iterator<bool> FU_iterator;
+  typedef Const_oneset_iterator<bool> FL_iterator;
+  typedef Const_oneset_iterator<NT>   U_iterator;
+  typedef Const_oneset_iterator<NT>   L_iterator;
 
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
   typedef Const_oneset_iterator<Row_type>    Row_type_iterator;
