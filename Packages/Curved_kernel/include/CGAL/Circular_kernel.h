@@ -102,6 +102,8 @@ struct Curved_kernel
                               Intersect_2;
   typedef CircularFunctors::Split_2<Self>
                               Split_2;
+  typedef CircularFunctors::Is_vertical_2<Self>
+                              Is_vertical_2;
   typedef CircularFunctors::Construct_circular_arc_2<Self>
                               Construct_circular_arc_2;
   typedef CircularFunctors::Construct_line_arc_2<Self>
@@ -188,6 +190,9 @@ struct Curved_kernel
   split_2_object() const
   { return Split_2(); }
 
+  Is_vertical_2
+  is_vertical_2_object() const
+  { return Is_vertical_2(); }
 
   Construct_circular_arc_2
   construct_circular_arc_2_object() const

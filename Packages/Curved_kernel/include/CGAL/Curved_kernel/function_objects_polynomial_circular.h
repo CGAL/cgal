@@ -354,6 +354,25 @@ namespace CircularFunctors {
 
   };
 
+  template < class CK >
+  class Is_vertical_2
+  {
+    typedef typename CK::Circular_arc_2          Circular_arc_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
+
+  public:
+    typedef bool result_type;
+
+    result_type
+    operator()(const Circular_arc_2 &A) const
+    { return is_vertical<CK>(A); }
+
+
+    result_type
+    operator()(const Line_arc_2 &A) const
+    { return is_vertical<CK>(A); }
+
+  };
 
 
   template < class CK >
