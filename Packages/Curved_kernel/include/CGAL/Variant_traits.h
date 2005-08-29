@@ -17,11 +17,6 @@
 #include <CGAL/basic.h>
 #include <cassert>
 #include <boost/variant.hpp>
-#include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
-
 
 namespace CGAL {
   namespace VariantFunctors{
