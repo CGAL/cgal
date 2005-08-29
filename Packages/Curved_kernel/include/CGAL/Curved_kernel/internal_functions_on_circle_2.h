@@ -92,52 +92,21 @@ namespace CircularFunctors {
     return res;
   }
 
-
-  // TODO: Will go to AK, once there is a Root_for_circles_2_1.
-  template <class CK>
-  typename CK::Root_for_circles_2_2
-  _x_critical_points(const typename CK::Polynomial_for_circles_2_2 & c, bool i)
-  {
-            typedef typename CK::Root_of_2 Root_of_2;
-            typedef typename CK::FT        FT;
-            typedef typename CK::Root_for_circles_2_2
-                                           Root_for_circles_2_2;
-
-	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
-
-            return Root_for_circles_2_2(a1, make_root_of_2(FT(1), FT(0),
-                                   -square(c.b()), c.b()<0));
-  }
-
-  // TODO: Will go to AK, once there is a Root_for_circles_2_1.
-  template <class CK>
-  typename CK::Root_for_circles_2_2
-  _y_critical_points(const typename CK::Polynomial_for_circles_2_2 &c, bool i)
-  {
-            typedef typename CK::Root_of_2 Root_of_2;
-            typedef typename CK::FT        FT;
-            typedef typename CK::Root_for_circles_2_2
-                                           Root_for_circles_2_2;
-
-            Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
-
-            return Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
-                                   -square(c.a()),c.a()<0),b1);
-  }
-
   // Should we have an iterator based interface, or both ?
   template <class CK>
   typename CK::Circular_arc_point_2
   x_critical_points(const typename CK::Circle_2 & c, bool i)
   {
-  	return _x_critical_points<CK>(typename CK::Get_equation()(c),i);
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().x_critical_points_object()(typename CK::Get_equation()(c),i);
   }
 
   template <class CK>
   typename CK::Circular_arc_point_2
   y_critical_points(const typename CK::Circle_2 & c, bool i)
   {
-  	return _y_critical_points<CK>(typename CK::Get_equation()(c),i);
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().y_critical_points_object()(typename CK::Get_equation()(c),i);
   }
 
 } // namespace CircularFunctors

@@ -28,7 +28,8 @@ namespace CircularFunctors {
   compare_x(const typename CK::Circular_arc_point_2 &p0,
             const typename CK::Circular_arc_point_2 &p1)
   {
-    return CGAL::compare_x(p0.coordinates(), p1.coordinates());
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().compare_x_object()(p0.coordinates(), p1.coordinates());
   }
 
   template < class CK >
@@ -37,7 +38,8 @@ namespace CircularFunctors {
   compare_y(const typename CK::Circular_arc_point_2 &p0,
             const typename CK::Circular_arc_point_2 &p1)
   {
-    return CGAL::compare_y(p0.coordinates(), p1.coordinates());
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().compare_y_object()(p0.coordinates(), p1.coordinates());
   }
 
   template < class CK >
@@ -45,7 +47,8 @@ namespace CircularFunctors {
   compare_xy(const typename CK::Circular_arc_point_2 &p0,
              const typename CK::Circular_arc_point_2 &p1)
   {
-    return compare_xy(p0.coordinates(), p1.coordinates());
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().compare_xy_object()(p0.coordinates(), p1.coordinates());
   }
 
 
