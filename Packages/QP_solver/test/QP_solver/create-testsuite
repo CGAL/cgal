@@ -1,6 +1,116 @@
 #!/bin/bash
-maple="/Applications/Maple 9.5/Maple 9.5.app/Contents/MacOS/bin/maple"
+maplewhere=`which maple`
+if [ "x$maplewhere" == "x" ]; then
+    maple="/Applications/Maple 9.5/Maple 9.5.app/Contents/MacOS/bin/maple"
+fi
 level=4 # verbosity level for the solver
+
+function bailout()
+{
+    echo "$1"
+    exit 1;
+}
+
+function createTestsuite()
+{
+    dataDir=$1
+    dataFile=$2
+    extension=$3
+    cgalOrNot=$4
+    oldFormat=$5
+
+    # create list of all mema's in directory data/:
+    cd Maple
+    FILES=`find data -name '*.mema'`
+    
+    # process each file:
+    for file in $FILES
+      do
+        # check that all memas contain 'is_part_of_CGAL_testsuite':
+      if grep -q "is_part_of_CGAL_testsuite:= true" "$file"; then
+	  echo -n ""
+      else
+	  if grep -q "is_part_of_CGAL_testsuite:= false" "$file"; then
+	      echo -n ""
+	  else
+	      echo ""
+	      echo "WARNING: File '$file' should either contain"
+	      echo "  'is_part_of_CGAL_testsuite:= true'"
+	      echo "or"
+	      echo "  'is_part_of_CGAL_testsuite:= false'."
+	      echo ""
+	      warnUser=1
+	  fi
+      fi
+
+      tmp=`basename "$file"`
+      mfile=${tmp%.*}
+      DATAFILES=`find ../$dataDir/ -name ${mfile}*$extension`
+      doit=0
+      if [ "x$DATAFILES" == "x" ]; then
+	  doit=1
+      fi
+      for f in $DATAFILES
+	do
+	if [ $f -ot $file ]; then
+	    doit=1
+	fi
+      done
+
+      if [ $doit == 1 ]; then
+	  echo "Converting '$mfile' ..."
+	  "${maple}" -c "QPSOLVERTESTSUITE:=true" -c "QPSOLVEROLDFORMAT:=$oldFormat" $file \
+	      || bailout "Maple failed!"
+      else
+	  echo "File '$mfile' is up-to-date."
+      fi
+    done
+
+    # construct input file for test_suite_QP_solver:
+    echo "Constructing file '${dataFile}'; this may take a while ..."
+    cd ..
+    if [ "x$cgalOrNot" == "xCGAL" ]; then
+	TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*.mema`
+    elif [ "x$cgalOrNot" == "xall" ]; then
+	TESTFILES=`grep -l 'is_part_of_CGAL_testsuite' Maple/data/*.mema`
+    else
+	bailout "Internal error."
+    fi
+    LIST=""
+    MISSINGFILES=""
+    for file in $TESTFILES
+      do
+      tmp=`basename "$file"`
+      mfile=${tmp%.*}
+      DATAFILES=`find $dataDir -name ${mfile}*$extension`
+      for f in $DATAFILES
+	do
+	LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+	tmp=`basename "$f"`
+	if grep -q "/$tmp/" $dataDir/CVS/Entries; then
+	    echo -n "";
+	else
+	    MISSINGFILES="$f $MISSINGFILES"
+	fi
+      done
+    done
+    echo $LIST > ${dataFile}
+
+    # check that all $dataDir/*.data_* files that are part of the CGAL
+    # testsuite indeed exist in the CVS repository:
+    if [ "x$MISSINGFILES" != "x" ]; then
+	if [ "x$1" == "xCGAL" ]; then
+	    echo ""
+	    echo "WARNING: Some files in $dataDir/*.data_* that are part of the CGAL"
+	    echo "testsuite do not exist in the repository. Please check them in."
+	    echo "Here is the list of these files:"
+	    echo ""
+	    echo $MISSINGFILES
+	    echo ""
+	    warnUser=1
+	fi
+    fi
+}
 
 # check arguments
 if [ "x$1" == "xCGAL" ]; then
@@ -37,89 +147,13 @@ if [ "x$2" != "x" ]; then
     echo "Setting verbosity to $level."
 fi
 
-# create list of all mema's in directory data/:
-cd Maple
-FILES=`find data -name '*.mema'`
-
-# process each file:
-for file in $FILES
-do
-	tmp=`basename "$file"`
-	mfile=${tmp%.*}
-	DATAFILES=`find ../data/ -name ${mfile}*.data_*`
-	doit=0
-	if [ "x$DATAFILES" == "x" ]; then
-	    doit=1
-	fi
-	for f in $DATAFILES
-	do
-	  if [ $f -ot $file ]; then
-	      doit=1
-	  fi
-	done
-	if [ $doit == 1 ]; then
-	    echo "Converting '$mfile' ..."
-	    "${maple}" $file
-	else
-	    echo "File '$mfile' is up-to-date."
-	fi
-done
-
-# check that all memas contain 'is_part_of_CGAL_testsuite':
-cd ..
-CHECKFILES=`grep -L 'is_part_of_CGAL_testsuite' Maple/data/*.mema`
-if [ ! "x$CHECKFILES" == "x" ]; then
-    echo ""
-    echo "WARNING: Some mema-files do not contain the string"
-    echo "'is_part_of_CGAL_testsuite'. Every mema-file should either contain"
-    echo "  'is_part_of_CGAL_testsuite:= true'"
-    echo "or"
-    echo "  'is_part_of_CGAL_testsuite:= false'."
-    echo "The following files are corrupt in this sense: $CHECKFILES"
-    echo ""
-fi
-
-# construct input file for test_suite_QP_solver:
-echo "Constructing file 'test_suite_QP_solver.cin'; this may take a while ..."
-if [ "x$1" == "xCGAL" ]; then
-    TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*.mema`
-elif [ "x$1" == "xall" ]; then
-    TESTFILES=`grep -l 'is_part_of_CGAL_testsuite' Maple/data/*.mema`
-fi
-LIST=""
-MISSINGFILES=""
-for file in $TESTFILES
-  do
-  tmp=`basename "$file"`
-  mfile=${tmp%.*}
-  DATAFILES=`find data -name ${mfile}*.data_*`
-  for f in $DATAFILES
-    do
-    LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
-    tmp=`basename "$f"`
-    if grep -q "/$tmp/" data/CVS/Entries; then
-	echo -n "";
-    else
-	MISSINGFILES="$f $MISSINGFILES"
-    fi
-  done
-done
-echo $LIST > test_suite_QP_solver.cin
-
-# check that all data/*.data_* files that are part of the CGAL
-# testsuite indeed exist in the CVS repository:
-if [ "x$MISSINGFILES" != "x" ]; then
-    if [ "x$1" == "xCGAL" ]; then
-	echo ""
-	echo "WARNING: Some files in data/*.data_* that are part of the CGAL"
-	echo "testsuite do not exist in the repository. Please check them in."
-	echo "Here is the list of these files:"
-	echo ""
-	echo $MISSINGFILES
-	echo ""
-    fi
-fi
+warnUser=0
+createTestsuite "data" "test_suite_QP_solver.cin" ".data_*" $1 "true"
+#createTestsuite "testsuite-data" "test_solver.cin" ".mps" $1 "false"
 
 # finish:
 echo "Done."
+if [ $warnUser == 1 ]; then
+    echo "There were warnings. Please check them carefully before going on."
+fi
 exit 0

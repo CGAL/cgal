@@ -1,3 +1,227 @@
+# This file will be read by a .mema-File and provides a Maple routine
+# encodeProblemToMPS (see below for description).
+
+bailout:= proc(msg::string)
+  printf("An error occurred: %s\n",msg);
+  if type(QPSOLVERTESTSUITE,boolean) then
+    `quit`(1);
+  fi;
+end:
+
+encodeNumber:= proc(numberType,value)
+  if numberType = 1 then # integer?
+    sprintf("%a",value)
+  elif numberType = 2 then # rational?
+    sprintf("%a/%a",numer(value),denom(value))
+  else
+    sprintf("%.17f",evalf(value,20))
+  fi;
+end:
+
+numberFormat:= proc(numberType)
+  if numberType = 1 then "integer"
+  elif numberType = 2 then "rational"
+  else "floating-point"
+  fi;
+end:
+
+determineNumerType:= proc(currentNumberType,m::Matrix)
+local i,j,numberType;
+  numberType:= currentNumberType;
+  for i from 1 to RowDimension(m) do
+    for j from 1 to ColumnDimension(m) do
+      if numberType = 1 and not type(m[i,j],integer) then
+         numberType:= 2; # rational
+      fi;
+      if numberType = 2 and not type(m[i,j],rational) then
+         numberType:= 3; # double
+      fi;
+    od
+  od;
+  numberType;
+end:
+
+# Encode the problem to file fpath in MPS-format.
+# You can pass the Boolean false for D, fl, l, fu, or/and u
+# in case you are dealing with an LP or with no bounds, respectively.
+# Note: In rel, a -1 means "<=", a zero means "=", and a 1 means ">=".
+# Note: fpath should simply be the filename (e.g. "PD_Dual_Eq_QPE_solver"
+# for "PD_Dual_Eq_QPE_solver.mema"); if fpath contains a path (e.g.
+# "../data/PD_Dual_Eq_QPE_solver") then this path will be ignored.
+encodeProblemToMPS:= proc(A::Matrix, rel::Matrix, b::Matrix, c::Matrix, D,
+  fl, l, fu, u,
+  desc::string, gen_desc::string, fpath::string)
+local i, j, dim, m, n, fd, rowType, numberType, dummy, filename;
+  # get problem dimensions:
+  dim := LinearAlgebra[Dimensions];
+  m := dim(A)[1]; 
+  n := dim(A)[2];
+
+  # do some sanity checks:
+  if RowDimension(rel) <> m then
+    bailout("Number of row-types is different from number of constraints.");
+  fi;
+
+  # determine number-type:
+  numberType:= 1; # integer (see procedure encodeNumber above)
+  numberType:= determineNumerType(numberType,A);
+  numberType:= determineNumerType(numberType,b);
+  numberType:= determineNumerType(numberType,c);
+  if not type(D,boolean) then
+    numberType:= determineNumerType(numberType,c);
+  fi;
+  if not type(l,boolean) then
+    numberType:= determineNumerType(numberType,c);
+  fi;
+  if not type(u,boolean) then
+    numberType:= determineNumerType(numberType,c);
+  fi;
+  printf("Will output file in %s format.\n",numberFormat(numberType));
+
+  # open output file:
+  if StringTools[FirstFromRight]("/",fpath) <> 0 then
+    StringTools[RegMatch]("^.*/([^/]*)$",fpath,'dummy','filename');
+  else
+    filename:= fpath;
+  fi;
+  filename:= cat("../testsuite-data/",filename);
+  #printf("fpath is %s\n",filename);
+  fd:= fopen(cat(filename, ".mps"), WRITE);
+  #printf("fd is %d.\n",fd);
+
+  # write header:
+  fprintf(fd,"* Number-type: %s\n",numberFormat(numberType));
+  fprintf(fd,"* Description: %s\n",desc);
+  fprintf(fd,"* Generated-by: %s\n",gen_desc);
+  fprintf(fd,"NAME %s\n",my_name);
+
+  # write ROWS section:
+  fprintf(fd,"ROWS\n");
+  fprintf(fd," N obj\n");  # a "row" for the objective function
+  for i from 1 to m do
+    if rel[i,1] = -1 then rowType:= "L" elif rel[i,1] = 0 then rowType:= "E" else rowType:= "G" fi;
+    fprintf(fd," %s c%d\n",rowType, i);
+  od;
+
+  # write COLUMNS section:
+  # (a) ouput objective function:
+  fprintf(fd,"COLUMNS\n");
+  for i from 1 to n do
+    fprintf(fd,"  x%d  obj  %s\n",i,encodeNumber(numberType,c[1,1]));
+  od:
+  # (b) ouput A matrix function:
+  for i from 1 to m do
+    for j from 1 to n do
+      fprintf(fd,"  x%d  c%d  %s\n",j,i,encodeNumber(numberType,A[i,j]));
+    od
+  od;
+
+  # write RHS section:
+  fprintf(fd,"RHS\n");
+  for i from 1 to m do
+    fprintf(fd,"  rhs  c%d  %s\n",i,encodeNumber(numberType,b[i,1]));
+  od;
+
+  # write BOUNDS section:
+  if not type(fl,boolean) then
+    fprintf(fd,"BOUNDS\n");
+    for i from 1 to n do
+      if (not is(fl[1,i],1) and not is(fl[1,i],0)) or 
+         (not is(fu[1,i],1) and not is(fu[1,i],0)) then
+        fclose(fd);
+        bailout("fl or fu do not contain values from {0,1}");
+      fi;
+      if not (fl[1,i]=1 and is(l[1,i],0)) then
+        if fl[1,i]=1 then
+          fprintf(fd,"  LO  BND  x%d  %s\n",i,encodeNumber(numberType,l[1,i])); 
+        else
+          fprintf(fd,"  MI  BND  x%d\n",i);
+        fi;
+      fi;
+      if fu[1,i]=1 then
+        fprintf(fd,"  UP  BND  x%d  %s\n",i,encodeNumber(numberType,u[1,i]));
+      fi;
+    od;
+  fi;
+
+  # write DMATRIX section:
+  # Note: CPLEX only understands QMATRIX sections and not
+  # our proprietary DMATRIX section.
+  if not type(D,boolean) then
+    fprintf(fd,"DMATRIX\n");
+    for i from 1 to n do
+      for j from 1 to n do
+        fprintf(fd,"  x%d  x%d  %s\n",i,j,encodeNumber(numberType,D[i,j]));
+      od
+    od;
+  fi;
+
+  # write footer:
+  fprintf(fd,"ENDATA\n");
+
+  # close output file:
+  fclose(fd);
+end:
+
+# for compatiblity with Frans' original output format:
+encodeUbLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+                fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,false,fl,l,fu,u,desc,gen_desc,fpath);
+end:
+encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,false,false,false,false,false,desc,gen_desc,fpath);
+end:
+encodeUbQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,d,fl,l,fu,u,desc,gen_desc,fpath);
+end:
+encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,d,false,false,false,false,desc,gen_desc,fpath);
+end:
+encodeUbLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+                fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,false,fl,l,fu,u,desc,gen_desc,fpath);
+end:
+encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,false,false,false,false,false,desc,gen_desc,fpath);
+end:
+encodeUbQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,d,fl,l,fu,u,desc,gen_desc,fpath);
+end:
+encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,d,false,false,false,false,desc,gen_desc,fpath);
+end:
+encodeUbLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+                fl::Matrix, l::Matrix, fu::Matrix, u::Matrix, 
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,false,fl,l,fu,u,desc,gen_desc,fpath);
+end:
+encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix, 
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,false,false,false,false,false,desc,gen_desc,fpath);
+end:
+encodeUbQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, fl::Matrix, l::Matrix, fu::Matrix, u::Matrix,
+				desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,d,fl,l,fu,u,desc,gen_desc,fpath);
+end:
+encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
+				d::Matrix, desc::string, gen_desc::string, fpath::string)
+  encodeProblemToMPS(a,rel,b,c,d,false,false,false,false,desc,gen_desc,fpath);
+end:
+
+# the rest of this file is for compatibility with Frans' old (i.e., pre-MPS) format:
+if type(QPSOLVEROLDFORMAT,boolean) and QPSOLVEROLDFORMAT then
+
 encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 				d::Matrix, desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
@@ -944,3 +1168,5 @@ isSymmetric:=proc(D)
 	fi;
 	return ret;
 end proc;
+
+fi; # compatibility
