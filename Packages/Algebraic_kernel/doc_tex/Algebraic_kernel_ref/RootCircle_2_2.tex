@@ -1,0 +1,30 @@
+\begin{ccRefConcept}{AlgebraicKernel_2_2::RootCircle_2_2}
+
+\ccDefinition
+
+The \ccc{RootCircle_2_2} concept represents algebraic numbers that can
+store the result of systems of two \ccc{PolynomialCircle_2_2}
+equations of degree 2 in two variables \ccc{x} and \ccc{y}. 
+
+\ccAccessFunctions
+
+\ccFunction{const RootOf_2 & x();}{}
+\ccGlue
+\ccFunction{const RootOf_2 & y();}{}
+
+\ccOperations
+
+Comparison operations must be provided
+
+\ccFunction{Comparison_result 
+	compare_x(const RootCircle_2_2 & r1, const RootCircle_2_2 &r2);}{}
+\ccGlue
+\ccFunction{Comparison_result 
+	compare_y(const RootCircle_2_2 & r1, const RootCircle_2_2&r2);}{}
+\ccGlue
+\ccFunction{Comparison_result 
+	compare_xy(const RootCircle_2_2 & r1, const RootCircle_2_2
+&r2);}{}
+
+\end{ccRefConcept}
+
