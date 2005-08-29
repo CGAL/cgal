@@ -8,21 +8,14 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const AlgebraicKernel_2_2::Polynomial_circle_2_2 &p1,
-	const AlgebraicKernel_2_2::Polynomial_circle_2_2 &p2,
+    operator()(const AlgebraicKernel_2_2::PolynomialCircle_2_2 &p1,
+	const AlgebraicKernel_2_2::PolynomialCircle_2_2 &p2,
 	OutputIterator res);}
-{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< std::pair<AlgebraicKernel_2_2::Root_of_2,AlgebraicKernel_2_2::Root_of_2>, int>}.} 
-
-\ccMethod{template < class OutputIterator >
-    OutputIterator
-    operator()(const AlgebraicKernel_2_2::Polynomial_circle_2_2 &p1,
-	const AlgebraicKernel_2_2::Polynomial_circle_2_2 &p2,
-	OutputIterator res, int foo);}
-{Same as the previous one, except that it gives the roots with the parity of their multiplicity only.}
+{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< AlgebraicKernel_2_2::RootCircle_2_2, int>}.} 
 
 \ccHasModels
 
-\ccc{Algebraic_kernel::Solve;}
+\ccc{Algebraic_kernel_2_2::Solve;}
 
 \ccSeeAlso
 
@@ -42,21 +35,63 @@ A model \ccVar\ of this type must provide:
     operator()(const AlgebraicKernel_4_2::Polynomial_2_2 &p1,
 	const AlgebraicKernel_4_2::Polynomial_2_2 &p2,
 	OutputIterator res);}
-{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< std::pair<AlgebraicKernel_4_2::Root_of_4,AlgebraicKernel_4_2::Root_of_4>, int>}.} 
-
-\ccMethod{template < class OutputIterator >
-    OutputIterator
-    operator()(const AlgebraicKernel_4_2::Polynomial_2_2 &p1,
-	const AlgebraicKernel_4_2::Polynomial_2_2 &p2,
-	OutputIterator res, int foo);}
-{Same as the previous one, except that it gives the roots with the parity of their multiplicity only.}
+{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< AlgebraicKernel_4_2::RootOf_4, int>}.} 
 
 \ccHasModels
 
-\ccc{Algebraic_kernel::Solve;}
+\ccc{Algebraic_kernel_2_2::Solve;}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::solve}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernel_2_2::XCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{xcrit}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernel_2_2::PolynomialCircle_2_2 &p,
+	OutputIterator res);}
+{Copies in the output iterator the \ccc{x}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernel_2_2::RootCircle_2_2}.} 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_2_2::X_critical_points;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::x_critical_points}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernel_2_2::YCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{ycrit}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernel_2_2::PolynomialCircle_2_2 &p,
+	OutputIterator res);}
+{Copies in the output iterator the \ccc{y}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernel_2_2::RootCircle_2_2}.} 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_2_2::Y_critical_points;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::y_critical_points}
 
 \end{ccRefConcept}
