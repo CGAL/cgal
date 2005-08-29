@@ -265,7 +265,9 @@ int main( int argc, char** argv) {
     if (readFromStdIn)
       read_ws(std::cin);
   }
-	
+
+  if (!success)
+    std::cout << "Warning: some test cases were not handled successfully." << std::endl;
   return success? 0 : 2;
 }
 
