@@ -30,8 +30,19 @@ solve( const typename AK::Polynomial_for_circles_2_2 & e1,
     return AK().sign_at_object()(equation, r);
  }
 
+template <class AK>
+  typename AK::Root_for_circles_2_2
+  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
+  {
+    return AK().x_critical_points_object()(c,i);
+  }
 
-
+template <class AK>
+  typename AK::Root_for_circles_2_2
+  y_critical_points(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
+  {
+    return AK().y_critical_points_object()(c,i);
+  }
 
 
 } // namespace CGAL

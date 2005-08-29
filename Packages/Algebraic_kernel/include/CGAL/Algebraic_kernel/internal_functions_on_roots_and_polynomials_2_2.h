@@ -103,6 +103,36 @@ namespace CGAL {
   }
 
 
+  template <class AK>
+  typename AK::Root_for_circles_2_2
+  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
+  {
+            typedef typename AK::Root_of_2 Root_of_2;
+            typedef typename AK::FT        FT;
+            typedef typename AK::Root_for_circles_2_2
+                                           Root_for_circles_2_2;
+
+	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
+
+            return Root_for_circles_2_2(a1, make_root_of_2(FT(1), FT(0),
+                                   -square(c.b()), c.b()<0));
+  }
+
+  
+  template <class AK>
+  typename AK::Root_for_circles_2_2
+  y_critical_points(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
+  {
+            typedef typename AK::Root_of_2 Root_of_2;
+            typedef typename AK::FT        FT;
+            typedef typename AK::Root_for_circles_2_2
+                                           Root_for_circles_2_2;
+
+            Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
+
+            return Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
+                                   -square(c.a()),c.a()<0),b1);
+  }
 
   } // namespace AlgebraicFunctors
 } // namespace CGAL

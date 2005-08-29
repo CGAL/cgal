@@ -3,6 +3,7 @@
 
 #include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomials_2_2.h>
 #include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
+#include <CGAL/Algebraic_kernel/internal_functions_comparison_root_for_circles_2_2.h>
 namespace CGAL {
   namespace AlgebraicFunctors {
 
@@ -63,7 +64,64 @@ namespace CGAL {
     }
   };
     
+template < class AK >
+    class X_critical_points
+  {    
+  public:
+    
+    typename AK::Root_for_circles_2_2
+      operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
+    {
+      return x_critical_points<AK>(c,i);
+    }
 
+  };
+
+template < class AK >
+    class Y_critical_points
+  {    
+  public:
+    
+    typename AK::Root_for_circles_2_2
+      operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
+    {
+      return y_critical_points<AK>(c,i);
+    }
+
+  };
+
+template <typename RT>
+  class Compare_x
+ {
+ public:
+   Comparison_result 
+     operator()(const Root_for_circles_2_2<RT>& r1, const Root_for_circles_2_2<RT>& r2){
+     return compare_x<RT>(r1, r2);
+   }
+
+ };
+
+template <typename RT>
+  class Compare_y
+ {
+ public:
+   Comparison_result 
+     operator()(const Root_for_circles_2_2<RT>& r1, const Root_for_circles_2_2<RT>& r2){
+     return compare_y<RT>(r1, r2);
+   }
+
+ };
+
+template <typename RT>
+  class Compare_xy
+ {
+ public:
+   Comparison_result 
+     operator()(const Root_for_circles_2_2<RT>& r1, const Root_for_circles_2_2<RT>& r2){
+     return compare_xy<RT>(r1, r2);
+   }
+
+ };
 
 
   } // namespace AlgebraicFunctors

@@ -6,9 +6,10 @@
 #include <CGAL/Polynomials_1_2.h>
 #include <CGAL/Root_for_circles_2_2.h>
 
-#include <CGAL/Algebraic_kernel/function_objects_on_roots_and_polynomials_2_2.h> 
+#include <CGAL/Algebraic_kernel/function_objects_on_roots_and_polynomials_2_2.h>
 #include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 #include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
+#include <CGAL/global_functions_on_root_for_circle_2_2.h>
 
 namespace CGAL {
 
@@ -31,6 +32,11 @@ namespace CGAL {
 
     typedef AlgebraicFunctors::Solve<Self>  Solve;
     typedef AlgebraicFunctors::Sign_at<Self> Sign_at;
+    typedef AlgebraicFunctors::X_critical_points<Self> X_critical_points;
+    typedef AlgebraicFunctors::Y_critical_points<Self> Y_critical_points;
+    typedef AlgebraicFunctors::Compare_x<RT>   Compare_x;
+    typedef AlgebraicFunctors::Compare_y<RT>   Compare_y;
+    typedef AlgebraicFunctors::Compare_xy<RT>  Compare_xy;
 
     typedef AlgebraicFunctors::Construct_polynomial_circle_2_2<Self>
     Construct_polynomial_circle_2_2;
@@ -48,6 +54,26 @@ namespace CGAL {
     Sign_at
     sign_at_object() const
     { return Sign_at();}
+
+    X_critical_points
+    x_critical_points_object() const
+    { return X_critical_points();}
+
+    Y_critical_points
+    y_critical_points_object() const
+    { return Y_critical_points();}
+
+    Compare_x
+    compare_x_object() const
+    { return Compare_x(); }
+    
+    Compare_y
+    compare_y_object() const
+    { return Compare_y(); }
+    
+    Compare_xy
+    compare_xy_object() const
+    { return Compare_xy(); }
 
   };
 
