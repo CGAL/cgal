@@ -31,6 +31,13 @@ class Root_for_circles_2_2 {
   };
   
   template < typename RT >
+  bool 
+  operator == ( const Root_for_circles_2_2<RT>& r1,
+		const Root_for_circles_2_2<RT>& r2 ){
+    return (r1.x() == r2.x()) && (r1.y() == r2.y());
+ }
+
+  template < typename RT >
     std::ostream &
     operator<<(std::ostream & os, const Root_for_circles_2_2<RT> &r)
     {
