@@ -26,7 +26,7 @@ CXXFLAGS = \
 	   $(DEBUG_OPT) \
 	   -DHAVE_CONFIG_H -g #-DCGAL_CURVED_KERNEL_DEBUG
 #	   -DCGAL_CURVED_KERNEL_DEBUG \
-#           -O2 -DNDEBUG \
+           -O2 -DNDEBUG \
            # -I$(HOME)/CGAL/Interval_arithmetic.RootOf_2/include \
 
 
@@ -50,6 +50,7 @@ all:            \
                 demo$(EXE_EXT) \
                 demo_elias$(EXE_EXT) \
 		demo_line$(EXE_EXT) \
+		demo_viewer$(EXE_EXT)\
 		demo_line_circle$(EXE_EXT)
 #                demo_conic$(EXE_EXT) 
 
@@ -61,6 +62,9 @@ demo_elias.moc: demo_elias.C
 
 demo_line_circle.moc: demo_line_circle.C
 	${QT_MOC} -o demo_line_circle.moc $<
+
+demo_viewer.moc: demo_viewer.C
+	${QT_MOC} -o demo_viewer.moc $<
 
 #demo_conic.moc: demo_conic.C
 #	${QT_MOC} -o demo_conic.moc $<
@@ -86,7 +90,8 @@ demo_line$(EXE_EXT): demo.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT
 demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line_circle demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
-
+demo_viewer$(EXE_EXT): demo_viewer.moc demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_viewer demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
 #demo_conic$(EXE_EXT): demo_conic.moc demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT)
 #	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_conic demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT) $(LDFLAGS)
@@ -101,7 +106,7 @@ Qt_widget_get_segment$(OBJ_EXT): Qt_widget_get_segment.C Qt_widget_get_segment.m
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_segment.C
 
 clean: \
-                   demo.clean demo_elias.clean demo_line.clean demo_line_circle.clean \
+                   demo.clean demo_elias.clean demo_line.clean demo_line_circle.clean demo_viewer.clean\
                    Qt_widget_get_arc.clean Qt_widget_get_segment.clean #\
 #                   Qt_widget_get_conic_2.clean \
 #                   demo_conic.clean
