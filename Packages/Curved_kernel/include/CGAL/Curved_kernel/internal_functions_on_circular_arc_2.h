@@ -347,7 +347,7 @@ namespace CircularFunctors {
 	      std::swap(ca1,ca2);
 	    }
     
-    return;
+    return ;
   }
 
   // !!!! a lot of useless assertions for debug
@@ -949,7 +949,7 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 
 
    template <class CK>
- const CGAL::Bbox_2 circular_arc_bbox( const typename CK::Kernel_base::Circular_arc_2 & a)
+  CGAL::Bbox_2 circular_arc_bbox( const typename CK::Kernel_base::Circular_arc_2 & a)
 {	
 	typedef typename CK::Root_of_2 	   Root_of_2;
 	typedef typename CK::FT 		   FT;
