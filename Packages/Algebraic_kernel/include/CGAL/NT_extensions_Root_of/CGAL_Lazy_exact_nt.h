@@ -18,33 +18,25 @@
 #include <CGAL/Binary_operator_result.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
+#include <CGAL/Binary_operator_result.h>
+
 
 #if 1
 
 CGAL_BEGIN_NAMESPACE
 
-// Specializations for Root_of_2.
-// T1 can be different from T2 because of quotient types...
-template < typename T1, typename T2 >
-struct Binary_operator_result <T1, Root_of_2<T2> > {
-    typedef Root_of_2<T2>  type;
-};
-
-template < typename T1, typename T2 >
-struct Binary_operator_result <Root_of_2<T1>, T2> {
-    typedef Root_of_2<T1>  type;
-};
 
 
 // We create a type of new node in Lazy_exact_nt's DAG
 // for the make_root_of_2() operation.
 
-template <typename ET>
+template <typename ET >
 struct Lazy_exact_ro2
-  : public CGAL::Lazy_exact_rep< typename Root_of_traits<ET>::RootOf_2 >
+  : public Lazy_exact_rep< typename Root_of_traits<ET>::RootOf_2 >
 {
     typedef typename Root_of_traits<ET>::RootOf_2   RO2;
     typedef Lazy_exact_rep<RO2>                     Base;
+
 
     mutable Lazy_exact_nt<ET> op1, op2, op3;
     bool smaller;
@@ -55,13 +47,15 @@ struct Lazy_exact_ro2
       : Base(make_root_of_2(a.approx(), b.approx(), c.approx(), s)),
         op1(a), op2(b), op3(c), smaller(s) {}
 
-    void update_exact() const
+    void update_exact()
     {
 	this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
 					  op3.exact(), smaller));
+
 	if (!this->approx().is_point())
             this->in = CGAL::to_interval(*(this->et));
 	this->prune_dag();
+
     }
 
     void prune_dag() const
