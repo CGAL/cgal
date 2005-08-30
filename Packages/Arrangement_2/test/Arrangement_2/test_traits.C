@@ -21,22 +21,47 @@ int main (int argc, char * argv[])
 }
 
 template <>
+template <class stream>
 bool
 Traits_test<CGAL::Arr_segment_traits_2<Kernel> >::
-read_curve(std::ifstream & is,
-           CGAL::Arr_segment_traits_2<Kernel>::Curve_2 & cv)
+read_point(stream & is,
+           CGAL::Arr_segment_traits_2<Kernel>::Point_2 & p)
 {
-  return false;
+  Basic_number_type x, y;
+  is >> x >> y;
+  p = CGAL::Arr_segment_traits_2<Kernel>::Point_2(x, y);
+  return true;
 }
 
 template <>
+template <class stream>
 bool
 Traits_test<CGAL::Arr_segment_traits_2<Kernel> >::
-read_point(std::ifstream & is,
-           CGAL::Arr_segment_traits_2<Kernel>::Point_2 & p)
+read_xcurve(stream & is,
+            CGAL::Arr_segment_traits_2<Kernel>::X_monotone_curve_2 & cv)
 {
-  Number_type x, y;
-  is >> x >> y;
-  p = Point_2(x, y);
+  Basic_number_type x1, y1, x2, y2;
+  is >> x1 >> y1 >> x2 >> y2;
+  Point_2 p1(x1, y1);
+  Point_2 p2(x2, y2);
+  CGAL_assertion(p1 != p2);
+  cv = CGAL::Arr_segment_traits_2<Kernel>::X_monotone_curve_2(p1, p2);
   return true;
 }
+
+template <>
+template <class stream>
+bool
+Traits_test<CGAL::Arr_segment_traits_2<Kernel> >::
+read_curve(stream & is,
+           CGAL::Arr_segment_traits_2<Kernel>::Curve_2 & cv)
+{
+  Basic_number_type x1, y1, x2, y2;
+  is >> x1 >> y1 >> x2 >> y2;
+  Point_2 p1(x1, y1);
+  Point_2 p2(x2, y2);
+  CGAL_assertion(p1 != p2);
+  cv = CGAL::Arr_segment_traits_2<Kernel>::Curve_2(p1, p2);
+  return true;
+}
+

@@ -5,22 +5,22 @@
 3
 0/1 0/1 
 0/1 1/1 
-1/1 0/1 
+1/1 1/1 
 # -----------------------------------------------------------
 # Number of xcurves
-0
+3
+0/1 0/1 1/1 1/1 
+0/1 0/1 0/1 1/1 
+0/1 1/1 0/1 0/1 
 # -----------------------------------------------------------
 # Number of curves
 0
 # -----------------------------------------------------------
 # Execution block
 # -----------------------------------------------------------
-compare_x    0 0 EQUAL
-compare_x    0 1 EQUAL
-compare_x    0 2 SMALLER
-compare_x    2 0 LARGER
-# 
-compare_xy   0 0 EQUAL
-compare_xy   0 1 SMALLER
-compare_xy   1 2 SMALLER
-compare_xy   2 1 LARGER
+min_vertex   0 0
+max_vertex   0 2
+min_vertex   1 0
+max_vertex   1 1
+min_vertex   2 0
+max_vertex   2 1

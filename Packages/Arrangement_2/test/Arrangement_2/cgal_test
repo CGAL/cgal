@@ -66,8 +66,10 @@ run_test()
 {
   local name=$1;
   local datafile=$2;
-  
-  OUTPUTFILE=ProgramOutput.$name.$PLATFORM
+
+  basedata=`basename "$datafile"`
+  OUTPUTFILE=ProgramOutput.$basedata.$name.$PLATFORM
+#  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$name"
   if [ -f $name.cmd ] ; then
@@ -151,9 +153,11 @@ else
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
     run_test test_traits data/compare
+    run_test test_traits data/vertex
+    run_test test_traits data/vertical
+    run_test test_traits data/x_monotone
   fi
 
 #  compile_and_run point_location
-  clean_tests
+#  clean_tests
 fi
-
