@@ -15,6 +15,10 @@
 #ifndef CGAL_ROOT_OF_DOUBLE_H
 #define CGAL_ROOT_OF_DOUBLE_H
 
+
+#include <CGAL/Root_of_2.h>
+
+
 namespace CGAL {
 
     inline
