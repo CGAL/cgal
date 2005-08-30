@@ -18,12 +18,23 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-// MeshAdaptor_3 is a concept for a 3D mesh interface.
+// MeshAdaptor_3 is a concept for a 3D surface mesh.
 //
-// Its main purpose is to allow
-// the parameterization package to access meshes on an uniform manner.
+// MeshAdaptor_3 meshes can have any genus, aridity or number of components.
+// In the other hand, this concept's main purpose is to allow
+// the parameterization methods to access meshes on an uniform manner.
+// As parameterization methods deal with topological disks only, MeshAdaptor_3
+// defines an interface oriented towards topological disks:
+// * MeshAdaptor_3 defines the types, data and methods that a mesh must implement
+//   to allow surface parameterization.
+// * MeshAdaptor_3 meshes are composed of faces, vertices and incidence relationships.
+//   No notion of edge is requested.
+// * MeshAdaptor_3 meshes have the notion of an "outer" boundary.
 //
-// Adaptators for Polyhedron _3 and TDS_2 with 3D points are provided.
+// Models:
+// * Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
+// * Mesh_adaptor_patch_3<M> is a model of MeshAdaptor_3 if
+//   M is a model of MeshAdaptorWithStream_3.
 //
 // Design pattern:
 // MeshAdaptor_3 is an Adaptor (see [GOF95]): it changes the
@@ -33,12 +44,6 @@ class MeshAdaptor_3
 {
 // Public types
 public:
-
-    //******************************************************************
-    // LEVEL 1 INTERFACE:
-    // for "normal" classes that do not deal with virtual seams
-    // Example: all parameterization methods
-    //******************************************************************
 
     // Number type
     typedef ... NT;
@@ -77,12 +82,6 @@ public:
 // Public operations
 public:
 
-    //******************************************************************
-    // LEVEL 1 INTERFACE:
-    // for "normal" classes that do not deal with virtual seams
-    // Example: all parameterization methods
-    //******************************************************************
-
     // MESH INTERFACE
 
     // Get iterator over first vertex of mesh
@@ -111,12 +110,6 @@ public:
     // Return the boundary containing seed_vertex
     // Return an empty list if not found
     std::list<Vertex_handle> get_boundary(Vertex_handle seed_vertex);
-
-    //// Compute the genus of the mesh
-    //int  get_mesh_genus () const;
-
-    //// Count the number of boundaries of the mesh
-    //int  count_mesh_boundaries () const;
 
     // Get iterator over first facet of mesh
     Facet_iterator  mesh_facets_begin ();
@@ -167,85 +160,18 @@ public:
 
     // Return true if a vertex belongs to ANY mesh's boundary
     bool  is_vertex_on_border(Vertex_const_handle vertex) const;
-    
+
     // Return true if a vertex belongs to the UNIQUE mesh's main boundary
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;
 
     // Get circulator over the vertices incident to 'vertex'
     // 'start_position' defines the optional initial position of the circulator
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
-                            Vertex_handle vertex, 
+                            Vertex_handle vertex,
                             Vertex_handle start_position = NULL);
     Vertex_around_vertex_const_circulator vertices_around_vertex_begin(
-                            Vertex_const_handle vertex, 
+                            Vertex_const_handle vertex,
                             Vertex_const_handle start_position = NULL) const;
-
-    //******************************************************************
-    // LEVEL 2 INTERFACE:
-    // for classes that deal with virtual seams
-    // Example: Mesh_adaptor_patch_3
-    //******************************************************************
-
-    // VERTEX INTERFACE
-
-    // Get/set vertex seaming flag. Default value is undefined.
-    int  get_vertex_seaming(Vertex_const_handle vertex) const;
-    void set_vertex_seaming(Vertex_handle vertex, int seaming);
-
-
-    // EDGE INTERFACE
-
-    // Get/set oriented edge's seaming flag, ie position of the oriented edge 
-    // wrt to the UNIQUE main boundary
-    int  get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;
-    void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming);
-
-
-    // CORNER INTERFACE
-
-    // Get/set the 2D position (= (u,v) pair) of corners at the "right"
-    // of the prev_vertex -> vertex -> next_vertex line.
-    // Default value is undefined.
-    Point_2 get_corners_uv(Vertex_const_handle vertex, 
-                           Vertex_const_handle prev_vertex,
-                           Vertex_const_handle next_vertex) const;
-    void  set_corners_uv(Vertex_handle vertex, 
-                        Vertex_const_handle prev_vertex,
-                        Vertex_const_handle next_vertex,
-                        const Point_2& uv);
-
-    // Get/set "is parameterized" field of corners at the "right"
-    // of the prev_vertex -> vertex -> next_vertex line.
-    // Default value is undefined.
-    bool are_corners_parameterized(Vertex_const_handle vertex,
-                                   Vertex_const_handle prev_vertex,
-                                   Vertex_const_handle next_vertex) const;
-    void set_corners_parameterized(Vertex_handle vertex,
-                                   Vertex_const_handle prev_vertex,
-                                   Vertex_const_handle next_vertex,
-                                   bool parameterized);
-
-    // Get/set index of corners at the "right"
-    // of the prev_vertex -> vertex -> next_vertex line.
-    // Default value is undefined.
-    int get_corners_index(Vertex_const_handle vertex, 
-                          Vertex_const_handle prev_vertex,
-                          Vertex_const_handle next_vertex) const;
-    void set_corners_index(Vertex_handle vertex, 
-                           Vertex_const_handle prev_vertex,
-                           Vertex_const_handle next_vertex,
-                           int index);
-
-    // Get/set all purpose tag of corners at the "right"
-    // of the prev_vertex -> vertex -> next_vertex line.
-    // Default value is undefined.
-    int get_corners_tag(Vertex_const_handle vertex,
-                        Vertex_const_handle prev_vertex,
-                        Vertex_const_handle next_vertex) const;
-    void set_corners_tag(Vertex_handle vertex,
-                         Vertex_const_handle prev_vertex,
-                         Vertex_const_handle next_vertex,
-                         int tag);
 
 }; // MeshAdaptor_3
 

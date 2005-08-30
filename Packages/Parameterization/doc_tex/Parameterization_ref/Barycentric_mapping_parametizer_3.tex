@@ -1,0 +1,103 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Barycentric_mapping_parametizer_3.tex
+% +------------------------------------------------------------------------+
+% | 23.08.2005   Laurent Saboret, Pierre Alliez
+% | Package: Parameterization
+% | 
+\RCSdef{\RCSBarycentricmappingparametizerRev}{$Revision$}
+\RCSdefDate{\RCSBarycentricmappingparametizerDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Barycentric_mapping_parametizer_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a traits class for all the two-dimensional
+convex hull and extreme point calculation function.   This class can be
+used to compute the convex hull of a set of 3D points projected onto the
+$xy$ plane (\textit{i.e.}, by ignoring the $z$ coordinate).
+
+\ccInclude{CGAL/Barycentric_mapping_parametizer_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{MeshAdaptor_3}%
+\ccIndexSubitem[c]{MeshAdaptor_3}{model} \\
+
+\ccTypes
+
+\ccAutoIndexingOff
+\ccSetThreeColumns{typedef R::Less_dist_to_line_plane_xy_2<Point_3>}{Less_signed_distance_to_line_2}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef Point_3                        Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_xy_plane_xy_2<Point_3>    Less_xy_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_yx_plane_xy_2<Point_3>    Less_yx_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_dist_to_line_plane_xy_2<Point_3> 
+                                      Less_signed_distance_to_line_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_rotate_ccw_plane_xy_2<Point_3> Less_rotate_ccw_2;}{}
+\ccGlue
+\ccTypedef{typedef Left_turn_plane_xy_2<Point_3>        Left_turn_2;}{}
+\ccGlue
+\ccTypedef{typedef Equal_xy_plane_xy_2<Point_3>         Equal_2;}{}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Barycentric_mapping_parametizer_3();}{default constructor.}
+
+\ccOperations
+
+\ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_yx_2 less_yx_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_signed_distance_to_line_2 
+                  less_signed_distance_to_line_2_object();}{}
+\ccGlue
+\ccMemberFunction{Less_rotate_ccw_2 
+                  less_rotate_ccw_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Left_turn_2 left_turn_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Equal_2 equal_2_object(); }{}
+
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Parameterization/Barycentric_mapping_parametizer_3.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Parameterization/Barycentric_mapping_parametizer_3.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

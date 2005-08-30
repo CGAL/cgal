@@ -1,0 +1,151 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PatchableMeshAdaptor_3.tex
+% +------------------------------------------------------------------------+
+% | 29.08.2005   Laurent Saboret, Pierre Alliez
+% | Package: Parameterization
+% |
+\RCSdef{\RCSPatchableMeshAdaptorRev}{$Revision$}
+\RCSdefDate{\RCSPatchableMeshAdaptorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PatchableMeshAdaptor_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+\ccRefName\ inherits from concept MeshAdaptor\_3, thus is a concept
+for a 3D surface mesh.
+
+\ccRefName\ adds the ability to support patches and virtual seams.
+Patches are a subset of a 3D mesh.
+Virtual seams are the ability to behave exactly as if the surface was "cut"
+following a certain path.
+
+Its main purpose is to allow
+the parameterization package to parameterize any 3D surface by decomposing it
+in a list of topological disks.
+
+
+\ccHeading{Design pattern}
+
+\ccRefName\ is an Adaptor (see [GOF95]): it changes the
+interface of a 3D mesh to match the interface expected by Mesh\_adaptor\_patch\_3.
+
+
+\ccGeneralizes
+
+MeshAdaptor\_3 \\
+
+In addition to the requirements described in the concept MeshAdaptor\_3,
+\ccRefName\ provides the following.
+
+
+\ccTypes
+
+Same sub-types as MeshAdaptor\_3.
+
+
+\ccCreation
+\ccCreationVariable{m}  %% define variable name used by \ccMethod below
+
+No constructor is required.
+
+
+\ccOperations
+
+\textbf{VERTEX INTERFACE:}
+
+\ccMethod{int  get_vertex_seaming(Vertex_const_handle vertex) const;}
+	{Get/set vertex seaming flag. Default value is undefined.}
+\ccGlue
+\ccMethod{void set_vertex_seaming(Vertex_handle vertex, int seaming);}{}
+
+\textbf{EDGE INTERFACE:}
+
+\ccMethod{int  get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;}
+	{Get/set oriented edge's seaming flag, ie position of the oriented edge
+	 wrt to the \emph{main boundary}}
+\ccGlue
+\ccMethod{void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming);}{}
+
+
+\textbf{CORNER INTERFACE:}
+
+\ccMethod{Point_2 get_corners_uv(Vertex_const_handle vertex,
+                           Vertex_const_handle prev_vertex,
+                           Vertex_const_handle next_vertex) const;}
+	{Get/set the 2D position (= (u,v) pair) of corners at the "right"
+	 of the prev\_vertex -> vertex -> next\_vertex line.
+	 Default value is undefined.}
+\ccGlue
+\ccMethod{void  set_corners_uv(Vertex_handle vertex,
+                        Vertex_const_handle prev_vertex,
+                        Vertex_const_handle next_vertex,
+                        const Point_2& uv);}{}
+\ccGlue
+\ccMethod{bool are_corners_parameterized(Vertex_const_handle vertex,
+                                   Vertex_const_handle prev_vertex,
+                                   Vertex_const_handle next_vertex) const;}
+	{Get/set "is parameterized" field of corners at the "right"
+	 of the prev\_vertex -> vertex -> next\_vertex line.
+	 Default value is undefined.}
+\ccGlue
+\ccMethod{void set_corners_parameterized(Vertex_handle vertex,
+                                   Vertex_const_handle prev_vertex,
+                                   Vertex_const_handle next_vertex,
+                                   bool parameterized);}{}
+\ccGlue
+\ccMethod{int get_corners_index(Vertex_const_handle vertex,
+                          Vertex_const_handle prev_vertex,
+                          Vertex_const_handle next_vertex) const;}
+	{Get/set index of corners at the "right"
+	 of the prev\_vertex -> vertex -> next\_vertex line.
+	 Default value is undefined.}
+\ccGlue
+\ccMethod{void set_corners_index(Vertex_handle vertex,
+                           Vertex_const_handle prev_vertex,
+                           Vertex_const_handle next_vertex,
+                           int index);}{}
+\ccGlue
+\ccMethod{int get_corners_tag(Vertex_const_handle vertex,
+                        Vertex_const_handle prev_vertex,
+                        Vertex_const_handle next_vertex) const;}
+	{Get/set all purpose tag of corners at the "right"
+	 of the prev\_vertex -> vertex -> next\_vertex line.
+	 Default value is undefined.}
+\ccGlue
+\ccMethod{void set_corners_tag(Vertex_handle vertex,
+                         Vertex_const_handle prev_vertex,
+                         Vertex_const_handle next_vertex,
+                         int tag);}{}
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshAdaptor_3}
+
+
+\ccExample
+
+This example program instantiates a polyhedron and a polyhedron adaptor using the default
+traits class and parameterizes the polyhedron.
+
+\ccIncludeExampleCode{Parameterization/Polyhedron_parameterization5.C}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

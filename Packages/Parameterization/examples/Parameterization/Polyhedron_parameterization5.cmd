@@ -1,1 +1,1 @@
-data/mask_cone.off mask_cone_floater_circle_opennl_parameterized.eps
+data/mask_cone.off

@@ -1,0 +1,238 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Parameterization/intro.tex
+% +------------------------------------------------------------------------+
+% | 08.22.2005   Laurent Saboret, Pierre Alliez
+% | Package: Parameterization
+% |
+% |
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference Pages for Planar Parameterization of Triangulated Surface Meshes}
+\chapter{Planar Parameterization of Triangulated Surface Meshes}
+\label{chap:parameterization_ref}
+\ccChapterAuthor{Laurent Saboret \and Pierre Alliez}
+
+
+Parameterizing a surface amounts to finding a one-to-one mapping from
+a suitable domain to the surface. A good mapping is the one which
+minimizes either angle or area distortions in some sense. In this
+package, we focus on triangulated surfaces that are homeomorphic to a
+disk and on piecewise linear mappings into a planar domain.
+
+\ccHeading{Parameterization methods}
+
+This \cgal\ package implements some of
+the state-of-the-art parameterization methods:
+\begin{itemize}
+
+\item Fixed boundary:
+
+    \begin{itemize}
+
+    \item Tutte uniform weights (guaranteed one-to-one mapping for
+    convex boundary).
+
+    \item Mean coordinate values (ditto).
+
+    \item Discrete conformal maps (conditionally guaranteed if all
+    weights positive and convex boundary).
+
+    \item Authalic (ditto).
+
+    \end{itemize}
+
+\item Free boundary:
+
+    \begin{itemize}
+
+    \item Least squares conformal maps.
+
+    \item Discrete conformal maps.
+
+    \end{itemize}
+
+\end{itemize}
+
+
+\ccHeading{Boundary parameterization methods}
+
+Boundary parameterization methods define a
+set of constraints (a constraint specifies two u,v coordinates for
+each instance of a vertex along the boundary).
+
+This package implements classic boundary parameterization methods:
+\begin{itemize}
+
+\item For free boundary methods: only two constraints (the pinned
+vertices). They have to be on the specified boundary.
+
+\item For fixed boundary methods:
+
+    \begin{itemize}
+
+    \item the user can select a boundary
+        parameterization among two common methods: uniform or
+        arc-length parameterization.
+
+    \item one convex shape specified by:
+
+        \begin{itemize}
+
+        \item one shape among a set of standard ones (circle, square).
+
+        \item a convex polygon.
+
+        \end{itemize}
+
+    \end{itemize}
+
+\end{itemize}
+
+
+\ccHeading{Mesh}
+
+The general definition of input meshes handled by the package is:
+
+\begin{itemize}
+
+\item Triangulated
+
+\item 2-manifold
+
+\item Oriented
+
+\item One connected component. The input mesh can be of any genus,
+-but- it has to come with a description of a boundary (a list of
+vertices) which is the boundary of
+a topological disc. If no boundary is given, we assume that it
+coincides with the longest boundary already in the input mesh.  Note
+that this way the user is responsible for cutting a closed mesh of
+arbitrary genus (even a topological disc with an intricate seam
+cut), as long as this condition is verified.
+
+\end{itemize}
+
+The package proposes
+an interface with both the 2D Triangulation Data Structure enriched
+with 3D points (not yet implemented) and the Polyhedron.
+
+The \cgal\ parameterization package is loosely linked to the
+mesh data structure. Replacing it is relatively easy.
+
+
+\ccHeading{Output}
+
+One uv coordinate for each interior vertex, and one uv coordinate for
+each instance of a vertex along the input boundary.
+
+
+\ccHeading{Sparse Linear Algebra}
+
+Since parameterizing meshes requires
+efficient representation of sparse matrices and efficient iterative or
+direct linear solvers, we provide an interface to several state-of-the-art
+sparse linear solvers:
+\begin{itemize}
+\item OpenNL (Bruno L{\'e}vy) is shipped with \cgal. This is the default solver.
+\item TAUCS is a reference direct solver for sparse symmetric matrices.
+\item SuperLU is a reference direct solver for sparse unsymmetric matrices (not yet implemented).
+\end{itemize}
+
+The \cgal\ parameterization package is loosely linked to the
+solver. Replacing it is easy.
+
+
+\ccHeading{Assertions}
+
+The assertion flags for the package
+use \ccc{PARAMETERIZATION} in their names (\textit{e.g.},
+\ccc{CGAL_PARAMETERIZATION_NO_ASSERTIONS}).
+
+For \emph{fixed} boundary parameterizations:
+\begin{itemize}
+\item Preconditions:
+    \begin{itemize}
+    \item check that the boundary is mapped onto a convex polygon.
+    \item check that the input mesh is triangular (expensive check).
+    \item check that the input mesh is a surface with 1 connected component (expensive check).
+    \end{itemize}
+\item Postconditions:
+    \begin{itemize}
+    \item check one-to-one mapping.
+    \item check if the linear system was solved with a good conditioning (expensive check).
+    \end{itemize}
+\end{itemize}
+
+For \emph{free} boundary parameterizations:
+\begin{itemize}
+\item Preconditions:
+    \begin{itemize}
+    \item check that the input mesh is triangular (expensive check).
+    \item check that the input mesh is a surface with 1 connected component (expensive check).
+    \end{itemize}
+\item Postconditions:
+    \begin{itemize}
+    \item check one-to-one mapping.
+    \item check if the linear system was solved with a good conditioning (expensive check, not yet implemented).
+    \end{itemize}
+\end{itemize}
+
+Expensive checking is off by default. It can be enabled by
+defining \ccc{CGAL_PARAMETERIZATION_CHECK_EXPENSIVE}.
+
+
+\ccHeading{Concepts}
+
+\ccRefConceptPage{ParametizerTraits_3}  \\
+\ccRefConceptPage{BorderParametizer_3}  \\
+\ccRefConceptPage{MeshAdaptor_3}  \\
+\ccRefConceptPage{PatchableMeshAdaptor_3}  \\
+\ccRefConceptPage{SparseLinearAlgebraTraits_d}  \\
+
+
+\ccHeading{Parameterization Methods Traits Classes}
+
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::LSCM_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parametizer_3<Traits>}  \\
+
+
+\ccHeading{Boundary Parameterization Methods Traits Classes}
+
+\ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Square_border_arc_length_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Square_border_uniform_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Two_vertices_parametizer_3<Traits>}  \\
+
+
+\ccHeading{MeshAdaptor\_3 and PatchableMeshAdaptor\_3 Traits Classes}
+
+\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Mesh_adaptor_patch_3<Traits>}  \\
+
+
+\ccHeading{Sparse Linear Algebra Traits Classes}
+
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<Traits>}  \\
+\ccRefIdfierPage{OpenNL::DefaultLinearSolverTraits<Traits>}  \\
+\ccRefIdfierPage{OpenNL::SymmetricLinearSolverTraits<Traits>}  \\
+
+
+\ccHeading{Helper Classes}
+
+\ccRefIdfierPage{CGAL::Mesh_adaptor_feature_extractor<Traits>}  \\
+
+
+\ccHeading{Functions}
+
+\ccRefIdfierPage{CGAL::parameterize<Traits>}  \\
+
+
+\clearpage
+
+\lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}

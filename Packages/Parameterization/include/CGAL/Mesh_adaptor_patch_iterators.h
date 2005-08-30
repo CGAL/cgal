@@ -30,41 +30,41 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Mesh_adaptor_patch_vertex_list
-// Type of the list of all vertices of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
-template<class MeshAdaptor_3>
+// Type of the list of all vertices of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_list 
-    : public std::list< Mesh_adaptor_patch_vertex<MeshAdaptor_3> >
+    : public std::list< Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3> >
 {
 // Public types
 public:
 
     // Export template parameter type
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
 };
 
 
 // Class Mesh_adaptor_patch_vertex_list_iterator
-// Same behavior as Mesh_adaptor_patch_vertex_list<MeshAdaptor_3>::iterator 
+// Same behavior as Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::iterator 
 // + conversion to Mesh_adaptor_patch_vertex_handle
-template<class MeshAdaptor_3>
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_list_iterator 
-    : public Mesh_adaptor_patch_vertex_list<MeshAdaptor_3>::iterator
+    : public Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::iterator
 {
 // Private types
 private:
 
-    typedef typename Mesh_adaptor_patch_vertex_list<MeshAdaptor_3>::iterator    
+    typedef typename Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::iterator    
                                             Base;
     typedef Mesh_adaptor_patch_vertex_list_iterator 
                                             Self;
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3> 
+    typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3> 
                                             Vertex;
 
 // Public types
 public:
 
     // Export template parameter type
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
 
 // Public operations
 public:
@@ -101,27 +101,27 @@ public:
 
 
 // Class Mesh_adaptor_patch_vertex_list_const_iterator
-// Same behavior as Mesh_adaptor_patch_vertex_list<MeshAdaptor_3>::const_iterator 
+// Same behavior as Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::const_iterator 
 // + conversion to Mesh_adaptor_patch_vertex_const_handle
-template<class MeshAdaptor_3>
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_list_const_iterator 
-    : public Mesh_adaptor_patch_vertex_list<MeshAdaptor_3>::const_iterator
+    : public Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::const_iterator
 {
 // Private types
 private:
 
-    typedef typename Mesh_adaptor_patch_vertex_list<MeshAdaptor_3>::const_iterator    
+    typedef typename Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::const_iterator    
                                             Base;
     typedef Mesh_adaptor_patch_vertex_list_const_iterator 
                                             Self;
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3> 
+    typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3> 
                                             Vertex;
 
 // Public types
 public:
 
     // Export template parameter type
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
 
 // Public operations
 public:

@@ -1,0 +1,85 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_adaptor_polyhedron_3.tex
+% +------------------------------------------------------------------------+
+% | 23.08.2005   Author
+% | Package: Parameterization
+% | 
+\RCSdef{\RCSMeshadaptorpolyhedronRev}{$Revision$}
+\RCSdefDate{\RCSMeshadaptorpolyhedronDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_adaptor_polyhedron_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a traits class for all the two-dimensional
+convex hull and extreme point calculation function.   This class corresponds
+to the default traits class for these functions.
+
+\ccInclude{CGAL/Mesh_adaptor_polyhedron_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{PatchableMeshAdaptor_3}%
+\ccIndexSubitem[c]{PatchableMeshAdaptor_3}{model} \\
+
+\ccTypes
+
+\ccTypedef{typedef R::Point_2                        Point_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_xy                        Less_xy_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_yx                        Less_yx_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_signed_distance_to_line_2 
+                                      Less_signed_distance_to_line_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_rotate_ccw_2              Less_rotate_ccw_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Left_turn_2                     Left_turn_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Equal_2                        Equal_2;}{}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Mesh_adaptor_polyhedron_3();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_polyhedron_3.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Parameterization/Mesh_adaptor_polyhedron_3.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

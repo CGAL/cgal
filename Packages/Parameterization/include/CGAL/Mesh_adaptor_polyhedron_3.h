@@ -36,11 +36,11 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Mesh_adaptor_polyhedron_3
-// Model of MeshAdaptor_3 concept, whose purpose is to allow
+// Model of PatchableMeshAdaptor_3 concept, whose purpose is to allow
 // the parameterization package to access meshes on an uniform manner.
 //
 // Mesh_adaptor_polyhedron_3 is an adaptor class to access to a Polyhedron
-// 3D mesh using the MeshAdaptor_3 interface.
+// 3D mesh using the PatchableMeshAdaptor_3 interface.
 //
 // The input mesh can be of any genus.
 // It can have have any number of boundaries. Its "main border"
@@ -48,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 //
 // Design pattern:
 // Mesh_adaptor_polyhedron_3 is an Adaptor (see [GOF95]): it changes the
-// Polyhedron interface to match the MeshAdaptor_3 concept.
+// Polyhedron interface to match the PatchableMeshAdaptor_3 concept.
 //
 template<class Polyhedron_3_>
 class Mesh_adaptor_polyhedron_3

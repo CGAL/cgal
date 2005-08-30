@@ -26,10 +26,9 @@
 // Floater parameterization
 // circle boundary
 // OpenNL solver
-// output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
-// Polyhedron_parameterization1 mesh.off mesh.eps
+// Polyhedron_parameterization1 mesh.off
 
 
 #include "short_names.h"                    // must be included first
@@ -65,88 +64,6 @@ typedef CGAL::Parametizer_traits_3<Mesh_adaptor_polyhedron> Parametizer;
 
 
 // ----------------------------------------------------------------------------
-// Private functions
-// ----------------------------------------------------------------------------
-
-// Dump parameterized mesh to an eps file
-static bool write_file_eps(const Mesh_adaptor_polyhedron& mesh_adaptor, 
-                           const char *pFilename, 
-                           double scale = 500.0)
-{
-    const Polyhedron* mesh = mesh_adaptor.get_adapted_mesh();
-    assert(mesh != NULL);
-    assert(pFilename != NULL);
-
-    std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
-    {
-        std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
-        return false;
-    }
-
-    // compute bounding box
-    double xmin,xmax,ymin,ymax;
-    xmin = ymin = xmax = ymax = 0;
-    Polyhedron::Halfedge_const_iterator pHalfedge;
-    for (pHalfedge = mesh->halfedges_begin();
-         pHalfedge != mesh->halfedges_end();
-         pHalfedge++)
-    {
-        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
-        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
-        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
-        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
-        xmin = std::min(xmin,x1);
-        xmin = std::min(xmin,x2);
-        xmax = std::max(xmax,x1);
-        xmax = std::max(xmax,x2);
-        ymax = std::max(ymax,y1);
-        ymax = std::max(ymax,y2);
-        ymin = std::min(ymin,y1);
-        ymin = std::min(ymin,y2);
-    }
-
-    fprintf(pFile,"%%!PS-Adobe-2.0 EPSF-2.0\n");
-    fprintf(pFile,"%%%%BoundingBox: %d %d %d %d\n", int(xmin+0.5), int(ymin+0.5), int(xmax+0.5), int(ymax+0.5));
-    fprintf(pFile,"%%%%HiResBoundingBox: %g %g %g %g\n",xmin,ymin,xmax,ymax);
-    fprintf(pFile,"%%%%EndComments\n");
-    fprintf(pFile,"gsave\n");
-    fprintf(pFile,"0.1 setlinewidth\n");
-
-    // color macros
-    fprintf(pFile,"\n%% RGB color command - r g b C\n");
-    fprintf(pFile,"/C { setrgbcolor } bind def\n");
-    fprintf(pFile,"/white { 1 1 1 C } bind def\n");
-    fprintf(pFile,"/black { 0 0 0 C } bind def\n");
-
-    // edge macro -> E
-    fprintf(pFile,"\n%% Black stroke - x1 y1 x2 y2 E\n");
-    fprintf(pFile,"/E {moveto lineto stroke} bind def\n");
-    fprintf(pFile,"black\n\n");
-
-    // for each halfedge
-    for (pHalfedge = mesh->halfedges_begin();
-         pHalfedge != mesh->halfedges_end();
-         pHalfedge++)
-    {
-        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
-        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
-        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
-        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
-        fprintf(pFile,"%g %g %g %g E\n",x1,y1,x2,y2);
-    }
-
-    /* Emit EPS trailer. */
-    fputs("grestore\n\n",pFile);
-    fputs("showpage\n",pFile);
-
-    fclose(pFile);
-    return true;
-}
-
-
-// ----------------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------------
 
@@ -156,22 +73,20 @@ int main(int argc,char * argv[])
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  circle boundary" << std::endl;
     std::cerr << "  OpenNL solver" << std::endl;
-    std::cerr << "  output: EPS" << std::endl;
 
 
     //***************************************
     // decode parameters
     //***************************************
 
-    if (argc-1 != 2)
+    if (argc-1 != 1)
     {
-        std::cerr << "Usage: " << argv[0] << " input_file.off output_file.eps" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input_file.off" << std::endl;
         return(EXIT_FAILURE);
     }
 
     // File names are:
     const char* input_filename  = argv[1];
-    const char* output_filename = argv[2];
 
 
     //***************************************
@@ -193,7 +108,7 @@ int main(int argc,char * argv[])
 
     //***************************************
     // Create mesh adaptor
-    // Note: parameterization methods support only 
+    // Note: parameterization methods support only
     // meshes that are toplogical disks
     //***************************************
 
@@ -209,14 +124,6 @@ int main(int argc,char * argv[])
     if (err != Parametizer::OK)
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 
-
-    //***************************************
-    // output
-    //***************************************
-
-    // Write Postscript file
-    if (err == Parametizer::OK)
-        write_file_eps(mesh_adaptor, output_filename);       
 
     fprintf(stderr, "\n");
 

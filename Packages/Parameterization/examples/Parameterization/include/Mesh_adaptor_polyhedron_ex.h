@@ -33,11 +33,11 @@
 
 
 // Class Mesh_adaptor_polyhedron_ex
-// Model of MeshAdaptor_3 concept, whose purpose is to allow
+// Model of PatchableMeshAdaptor_3 concept, whose purpose is to allow
 // the parameterization package to access meshes on an uniform manner.
 //
 // Mesh_adaptor_polyhedron_ex is an adaptor class to access to a Polyhedron_ex
-// 3D mesh using MeshAdaptor_3 interface.
+// 3D mesh using PatchableMeshAdaptor_3 interface.
 //
 // The input mesh can be of any genus.
 // It can have have any number of boundaries. Its "main border"
@@ -45,7 +45,7 @@
 //
 // Design pattern:
 // Mesh_adaptor_polyhedron_ex is an Adaptor (see [GOF95]): it changes the
-// Polyhedron_ex interface to match the MeshAdaptor_3 concept
+// Polyhedron_ex interface to match the PatchableMeshAdaptor_3 concept
 
 class Mesh_adaptor_polyhedron_ex
 {

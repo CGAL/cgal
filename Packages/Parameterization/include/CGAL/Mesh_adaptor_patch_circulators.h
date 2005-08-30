@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 // Class Mesh_patch_vertex_around_vertex_cir
 // represents a (clockwise) circulator around a vertex
-// of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
+// of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
 template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
          class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
          class AdaptorVertexAroundVertexCirculatorType,
@@ -456,7 +456,7 @@ private:
 
 // Class Mesh_patch_vertex_around_facet_cir
 // represents a (clockwise) circulator around a facet
-// of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
+// of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
 
 template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
          class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle

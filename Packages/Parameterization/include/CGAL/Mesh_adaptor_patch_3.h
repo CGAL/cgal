@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 // the parameterization package to access meshes on an uniform manner.
 //
 // Mesh_adaptor_patch_3 is an decorator class to virtually "cut" a patch
-// in a MeshAdaptor_3 3D surface. Only the patch is exported,
+// in a PatchableMeshAdaptor_3 3D surface. Only the patch is exported,
 // making the 3D surface look like a topological disk.
 //
 // The input mesh can be of any genus, but it has to come with a "seam" that
@@ -48,10 +48,10 @@ CGAL_BEGIN_NAMESPACE
 // border of the mesh or a virtual border.
 //
 // Design pattern:
-// Mesh_adaptor_patch_3 is an Decorator (see [GOF95]): it changes the
-// behavior of a MeshAdaptor_3 3D surface without changing its interface.
+// Mesh_adaptor_patch_3 is a Decorator (see [GOF95]): it changes the behavior 
+// of a PatchableMeshAdaptor_3 3D surface while keeping its MeshAdaptor_3 interface.
 
-template<class MeshAdaptor_3>
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_3
 {
 // Private types
@@ -67,7 +67,7 @@ public:
     //******************************************************************
 
     // Export template parameter
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
     // Number type
     typedef typename Adaptor::NT            NT;
     // Points and vectors
@@ -154,7 +154,7 @@ public:
     // LIFE CYCLE
     //******************************************************************
 
-    // Create an decorator for an existing MeshAdaptor_3 mesh
+    // Create an decorator for an existing PatchableMeshAdaptor_3 mesh
     // The input mesh can be of any genus, but it has to come with a "seam" that
     // describes the boundary of a topological disc. This boundary may be an actual
     // border of the mesh or a virtual border.

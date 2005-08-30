@@ -126,7 +126,7 @@ typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
 // Developers using this package should implement a more robust cut algorithm!
 static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 {
-    // Type describing a border or seam as an halfedge list
+    // Helper class to compute genus or extract boundaries
     typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex>
                                             Mesh_feature_extractor;
     typedef Mesh_feature_extractor::Boundary Boundary;

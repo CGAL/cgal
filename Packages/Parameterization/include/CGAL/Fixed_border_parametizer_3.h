@@ -60,7 +60,7 @@ class Fixed_border_parametizer_3
 private:
 
     // Superclass
-    typedef Parametizer_traits_3<MeshAdaptor_3>    
+    typedef Parametizer_traits_3<MeshAdaptor_3>
                                             Base;
 
 // Public types
@@ -121,7 +121,7 @@ public:
     // The result is the (u,v) pair image of each vertex of the 3D surface.
     //
     // Preconditions:
-    // * 'mesh' must be a surface with 1 connected component and no hole
+    // * 'mesh' must be a surface with 1 connected component
     // * 'mesh' must be a triangular mesh
     // * the mesh border must be mapped onto a convex polygon
     virtual Error_code  parameterize(Adaptor* mesh);
@@ -129,7 +129,7 @@ public:
 // Protected operations
 protected:
     // Check parameterize() preconditions:
-    // * 'mesh' must be a surface with 1 connected component and no hole
+    // * 'mesh' must be a surface with 1 connected component
     // * 'mesh' must be a triangular mesh
     // * the mesh border must be mapped onto a convex polygon
     virtual Error_code  check_parameterize_preconditions(Adaptor* mesh);
@@ -214,7 +214,7 @@ private:
 // The result is the (u,v) pair image of each vertex of the 3D surface.
 //
 // Preconditions:
-// * 'mesh' must be a surface with 1 connected component and no hole
+// * 'mesh' must be a surface with 1 connected component
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
@@ -313,7 +313,7 @@ parameterize(Adaptor* mesh)
 
 
 // Check parameterize() preconditions:
-// * 'mesh' must be a surface with 1 connected component and no hole
+// * 'mesh' must be a surface with 1 connected component
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
@@ -324,6 +324,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 {
     Error_code status = Base::OK;			// returned value
 
+    // Helper class to compute genus or count boundaries, vertices, ...
     typedef Mesh_adaptor_feature_extractor<Adaptor>
                                             Mesh_feature_extractor;
     Mesh_feature_extractor feature_extractor(mesh);
@@ -346,7 +347,7 @@ check_parameterize_preconditions(Adaptor* mesh)
         return status;
     }
 
-    // The whole package is restricted to surfaces: genus = 0, 
+    // The whole package is restricted to surfaces: genus = 0,
     // 1 connected component and at least 1 boundary
     CGAL_parameterization_expensive_precondition_code(                      \
         int genus = feature_extractor.get_genus();                          \
@@ -363,7 +364,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 
     // 1 to 1 mapping is guaranteed if all Wij coefficients are > 0 (for j vertex neighbor of i)
     // and if the surface boundary is mapped onto a 2D convex polygon
-    CGAL_parameterization_expensive_precondition_code(          \
+    CGAL_parameterization_precondition_code(          \
         status = get_border_parametizer().is_border_convex()    \
                ? Base::OK                                       \
                : Base::ERROR_INVALID_BOUNDARY;                  \
@@ -541,14 +542,13 @@ check_parameterize_postconditions(const Adaptor& mesh,
     }
 
     // Check if 3D -> 2D mapping is 1 to 1
-    CGAL_parameterization_expensive_postcondition_code( \
+    CGAL_parameterization_postcondition_code( 		\
         status = is_one_to_one_mapping(mesh, A, Bu, Bv) \
                ? Base::OK                               \
                : Base::ERROR_NO_1_TO_1_MAPPING;         \
     );
     if (status != Base::OK) {
         std::cerr << "  error ERROR_NO_1_TO_1_MAPPING!" << std::endl;
-        //CGAL_parameterization_postcondition(false);
         return status;
     }
 

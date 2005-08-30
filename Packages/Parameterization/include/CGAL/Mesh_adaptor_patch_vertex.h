@@ -29,18 +29,18 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Forward reference
-template<class MeshAdaptor_3> class Mesh_adaptor_patch_vertex_const_handle;
+template<class PatchableMeshAdaptor_3> class Mesh_adaptor_patch_vertex_const_handle;
 
 
 // Class Mesh_adaptor_patch_vertex
-// Represents a vertex of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
+// Represents a vertex of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
 //
 // Implementation note:
 // A Mesh_adaptor_patch_vertex object is basically a handle to a
-// MeshAdaptor_3::Vertex + its position / seam.
+// PatchableMeshAdaptor_3::Vertex + its position / seam.
 // Mesh_adaptor_patch_vertex comparison methods compare the pointers.
 //
-template<class MeshAdaptor_3>
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex
 {
 // Private types
@@ -52,7 +52,7 @@ private:
 public:
 
     // Export template parameter type
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
 
 // Public operations
 public:
@@ -156,11 +156,11 @@ private:
 //
 // Implementation note:
 // A Mesh_adaptor_patch_vertex_handle contains in fact a Mesh_adaptor_patch_vertex
-// object, which is basically a handle to a MeshAdaptor_3::Vertex.
+// object, which is basically a handle to a PatchableMeshAdaptor_3::Vertex.
 // Mesh_adaptor_patch_vertex_handle comparison methods basically compare
-// the address of the MeshAdaptor_3::Vertex pointed by the handles.
+// the address of the PatchableMeshAdaptor_3::Vertex pointed by the handles.
 //
-template<class MeshAdaptor_3>
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_handle
 {
 // Private types
@@ -172,10 +172,10 @@ private:
 public:
 
     // Export template parameter types
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
 
     // Iterator types
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
+    typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3>
                                             Vertex;
     typedef Vertex                          value_type;
     typedef std::ptrdiff_t                  difference_type;
@@ -186,7 +186,7 @@ public:
 // Public operations
 public:
 
-    // Constructor from MeshAdaptor_3::Vertex pointer
+    // Constructor from PatchableMeshAdaptor_3::Vertex pointer
     Mesh_adaptor_patch_vertex_handle(Vertex* ptr = NULL)
     {
         if (ptr == NULL)
@@ -203,7 +203,7 @@ public:
         assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
-    // Extra constructor that will create the MeshAdaptor_3::Vertex on the fly
+    // Extra constructor that will create the Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>::Vertex on the fly
     // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
     //   must be NULL
     // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
@@ -283,7 +283,8 @@ private:
     // The actual pointer
     pointer m_ptr;
 
-    // Internal MeshAdaptor_3 vertex pointed to by m_ptr (except if NULL)
+    // Internal Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> vertex 
+    // pointed to by m_ptr (except if NULL)
     Vertex m_vertex;
 
 }; // Mesh_adaptor_patch_vertex_handle
@@ -299,11 +300,11 @@ private:
 //
 // Implementation note:
 // A Mesh_adaptor_patch_vertex_const_handle contains in fact a Mesh_adaptor_patch_vertex
-// object, which is basically a handle to a MeshAdaptor_3::Vertex.
+// object, which is basically a handle to a PatchableMeshAdaptor_3::Vertex.
 // Mesh_adaptor_patch_vertex_const_handle comparison methods basically compare
-// the address of the MeshAdaptor_3::Vertex pointed by the handles.
+// the address of the PatchableMeshAdaptor_3::Vertex pointed by the handles.
 //
-template<class MeshAdaptor_3>
+template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_const_handle
 {
 // Private types
@@ -316,10 +317,10 @@ private:
 public:
 
     // Export template parameter types
-    typedef MeshAdaptor_3                   Adaptor;
+    typedef PatchableMeshAdaptor_3           Adaptor;
 
     // Iterator types
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
+    typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3>
                                             Vertex;
     typedef Vertex                          value_type;
     typedef std::ptrdiff_t                  difference_type;
@@ -330,7 +331,7 @@ public:
 // Public operations
 public:
 
-    // Constructor from MeshAdaptor_3::Vertex pointer
+    // Constructor from PatchableMeshAdaptor_3::Vertex pointer
     Mesh_adaptor_patch_vertex_const_handle(const Vertex* ptr = NULL)
     {
         if (ptr == NULL)
@@ -347,7 +348,7 @@ public:
         assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
-    // Extra constructor that will create the MeshAdaptor_3::Vertex on the fly
+    // Extra constructor that will create the Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>::Vertex on the fly
     // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
     //   must be NULL
     // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
@@ -426,7 +427,8 @@ private:
     // The actual pointer
     pointer m_ptr;
 
-    // Internal MeshAdaptor_3 vertex pointed to by m_ptr (except if NULL)
+    // Internal Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> vertex 
+    // pointed to by m_ptr (except if NULL)
     Vertex m_vertex;
 
 }; // Mesh_adaptor_patch_vertex_const_handle

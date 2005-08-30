@@ -73,8 +73,8 @@ typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
 typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
 typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
 
-// Border parametizer 
-typedef CGAL::Square_border_arc_length_parametizer_3<Mesh_patch_polyhedron>    
+// Border parametizer
+typedef CGAL::Square_border_arc_length_parametizer_3<Mesh_patch_polyhedron>
                                                         Border_parametizer;
 // TAUCS solver
 typedef CGAL::Taucs_solver_traits<double>               Solver;
@@ -82,7 +82,7 @@ typedef CGAL::Taucs_solver_traits<double>               Solver;
 // Discrete Authalic parametizer with square border
 typedef CGAL::Discrete_authalic_parametizer_3<Mesh_patch_polyhedron,
                                               Border_parametizer,
-                                              Solver>    
+                                              Solver>
                                                         Parametizer;
 
 // Type describing a border or seam as a vertex list
@@ -98,8 +98,8 @@ typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle> Seam;
 // Return the border/seam (empty on error)
 static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 {
-    // Type describing a border or seam as an halfedge list
-    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron> 
+    // Helper class to compute genus or extract boundaries
+    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron>
                                             Mesh_feature_extractor;
 
     Seam seam;              // returned list
@@ -124,7 +124,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
     else // if mesh is NOT a topological disk, create a virtual cut
     {
         const int CUT_LENGTH = 6;
-       
+
         // Build consecutive halfedges array
         Polyhedron::Halfedge_handle seam_halfedges[CUT_LENGTH];
         seam_halfedges[0] = mesh->halfedges_begin();
@@ -137,7 +137,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
             if (seam_halfedges[i] == NULL)
                 return seam;                // return empty list
         }
-        
+
         // Convert halfedges array to 2-ways vertices list
         for (i=0; i<CUT_LENGTH; i++)
             seam.push_back(seam_halfedges[i]->vertex());
@@ -151,7 +151,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 // Dump parameterized mesh to a Wavefront OBJ file
 // v x y z
 // f 1 2 3 4 (1-based)
-static bool write_file_obj(Mesh_adaptor_polyhedron* mesh_adaptor, 
+static bool write_file_obj(Mesh_adaptor_polyhedron* mesh_adaptor,
                            const char *pFilename)
 {
     Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
@@ -166,13 +166,13 @@ static bool write_file_obj(Mesh_adaptor_polyhedron* mesh_adaptor,
         return false;
     }
 
-    // Index all mesh vertices 
+    // Index all mesh vertices
     Polyhedron::Vertex_const_iterator pVertex;
     unsigned int i = 0;
     for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
         mesh_adaptor->info(pVertex)->index(i++);
 
-    // Index all mesh halfedges 
+    // Index all mesh halfedges
     Polyhedron::Halfedge_const_iterator pHalfedge;
     i = 0;
     for(pHalfedge = mesh->halfedges_begin(); pHalfedge != mesh->halfedges_end(); pHalfedge++)
@@ -184,9 +184,9 @@ static bool write_file_obj(Mesh_adaptor_polyhedron* mesh_adaptor,
     // output coordinates
     fprintf(pFile, "# vertices\n") ;
     for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
-        fprintf(pFile,"v %g %g %g\n", 
-                (double)pVertex->point().x(), 
-                (double)pVertex->point().y(), 
+        fprintf(pFile,"v %g %g %g\n",
+                (double)pVertex->point().x(),
+                (double)pVertex->point().y(),
                 (double)pVertex->point().z());
 
     // Write UVs (1 UV / halfedge)
@@ -318,7 +318,7 @@ int main(int argc,char * argv[])
 
     // Write Wavefront OBJ file
     if (err == Parametizer::OK)
-        write_file_obj(&mesh_adaptor, output_filename);       
+        write_file_obj(&mesh_adaptor, output_filename);
 
     fprintf(stderr, "\n");
 
