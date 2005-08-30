@@ -129,7 +129,7 @@ a= \left\{
 \begin{array}{ll}
 -e_{i}
 &
-\mbox{if $b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}$} \\
+\mbox{if $b_{i}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)}$} \\
 e_{i}
 &
 \mbox{otherwise}
@@ -139,11 +139,12 @@ e_{i}
 where $e_{i}$ denotes the $i$-th column of the $m \times m$ identity matrix. If the set of inequality constraints with infeasible origin, 
 \begin{equation}
 I_{inf}:=\left\{
-  i \in I^{\leq}\left|\right. b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}
+  i \in I^{\leq}\left|\right. b_{i}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)}
   \right\}
   \cup
   \left\{
-    i \in I^{\geq} \left|\right. b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}
+    i \in I^{\geq} \left|\right. b_{i}-\sum_{k \in O \setminus Z}a_{ik}
+    x_{k}^{(0)}
   \right\}
 \end{equation}
 is nonempty, the original constraint matrix $A$ is augmented by a special artificial column $a_{i}^{s}$
@@ -152,10 +153,12 @@ a_{i}^{s}= \left\{
 \begin{array}{ll}
 -1
 &
-\mbox{if $i \in I^{\leq}, b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}<0$} \\
+\mbox{if $i \in I^{\leq}, b_{i}-\sum_{k \in O \setminus Z}a_{ik}
+    x_{k}^{(0)}<0$} \\
 1
 &
-\mbox{if $i \in I^{\geq}, b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}>0$} \\
+\mbox{if $i \in I^{\geq}, b_{i}-\sum_{k \in O \setminus Z}a_{ik}
+   x_{k}^{(0)}>0$} \\
 0
 &
 \mbox{otherwise}
@@ -168,9 +171,10 @@ a_{i}^{s}= \left\{
 Let $i_{0} \in I_{inf}$ be the index of a constraint that has a most infeasible
 origin, that is 
 \begin{equation}
-  \left| b_{i_{0}}-\sum_{k \in O \setminus Z}x_{k}^{(0)} \right|
+  \left| b_{i_{0}}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)} \right|
   \geq 
-  \left|b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}\right|, \quad i \in I_{inf}
+  \left|b_{i}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)}\right|,
+    \quad i \in I_{inf}
 \end{equation}
 then $B_{O}$, $B_{S}$ and the initial set of basic and nonbasic constraints
 $S_{B}$ and $S_{N}$are initialized as
@@ -391,6 +395,7 @@ constraints~(\ref{eq:QP_UB_sub_feas_cons}), (\ref{eq:QP_UB_sub_var_feas_cons})
 determine $x_{B}^{*}$ with $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ and $\lambda$ by
 the linear equation system
 \begin{equation}
+\label{def:sol_system}
 M_{B}
 \left(
 \begin{array}{c}
@@ -460,6 +465,7 @@ $x_{j}^{*} \in \{l_{j}, 0, u_{j}\}$ can be improved if and only if
 The direction of change of an entering variable, $d_{t} \in \{-1, 1\}$, is
 according to the above given as 
 \begin{equation}
+\label{def:direction}
 d_{t}:=-sgn(\mu_{j})
 \end{equation}
 
@@ -849,41 +855,966 @@ $x_{\hat{B}}^{*}(\mu_{j}(t_{1}))$ is the current feasible solution at the
 beginning of Ratio Test Step~2.
 
 While increasing or decreasing $\mu_{j}$ from $\mu_{j}(t_{1})$ towards zero
-three events may occur. Either the entering variable $x_{j}$ takes its lower or
-upper bound value $l_{j}$ or $u_{j}$, or one of the basic variables $x_{i}$
-takes the value of its lower or upper bound $l_{j}$ or $u_{j}$, or a local
-minimum of the objective function is reached.
+two events may occur. Either one of the basic variables $x_{i}$
+takes the value of its finite lower or upper bound $l_{i}$ or $u_{i}$, or a
+local minimum of the objective function is reached.
 
-In case the last event happens, i.e. $\mu_{j}$ equals zero, we found an optimal
-solution $l_{\hat{B}} < x_{\hat{B}} < u_{\hat{B}}$ to $(UQP(\hat{B}^{u}))$,
-which is at the same time an optimal solution to the constrained problem
-$(QP(\hat{B}^{u}))$ by Corollary~\ref{cor:int_QP_UQP}. The uniqueness of the
-solution follows from the regularity of $M_{\hat{B}}$, which also implies that
-$\hat{B}$ is the new basis in that case.
-
-In case of the first event, if the entering variable $x_{j}$ takes the value
-of its lower or upper bound, we implicitly add the constraint $x_{j}=l_{j}$ or
-$x_{j}=u_{j}$ to $(UQP(\hat{B}^{u}))$ by removing $j$ from $\hat{B}$. The pivot
-step is then completed.
-
-In case of the second event, if some basic variable $x_{k}$ takes the value of
+In case of the first event, if some basic variable $x_{k}$ takes the value of
 its lower or upper bound, we implicitly add the constraint $x_{k}=l_{k}$ or
 $x_{k}=u_{k}$ to $(UQP(\hat{B}^{u}))$ by removing $k$ from $\hat{B}$. If
 $M_{\hat{B}\setminus \{k\}}$ stays regular, we still get unique solutions
 of~(\ref{eq:rat_test_2})
 for arbitrary values of $\mu_{j}$. In this case Ratio Test Step~2 is iterated,
 otherwise we continue with Step~3.  
- 
-\section{Implemetation Issues}
-\subsection{Pricing strategies}
-Due to the fact that original nonbasic variables may assume several different values and according to Equations~(\ref{def:mu_opt_cond}) the pricing step not only has to deliver an entering variable $x_{j}$, $j \in N$, if the current solution is suboptimal, but also a direction $d_{t} \in \{-1,1\}$ indicating whether the entering variable $x_{j}$ is to be increased or decreased. So if $d_{t}=1$ the entering variable is to be increased, otherwise it is to be decreased.
 
-\subsubsection{Full exact pricing}
+In case the second event happens, i.e. $\mu_{j}$ equals zero, we found an
+optimal solution $l_{\hat{B}} < x_{\hat{B}} < u_{\hat{B}}$
+to $(UQP(\hat{B}^{u}))$,
+which is at the same time an optimal solution to the constrained problem
+$(QP(\hat{B}^{u}))$ by Corollary~\ref{cor:int_QP_UQP}. The uniqueness of the
+solution follows from the regularity of $M_{\hat{B}}$, which also implies that
+$\hat{B}$ is the new basis in that case.
+
+\section{Implementation issues: $w,r$}
+Since we want to compute solutions to $UQP_{j}^{t}(\hat{B}^{u})$
+according to Equation~(\ref{def:sol_system}),
+we have to evaluate 
+\begin{equation}
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{S_{B}} \\
+\hline
+r_{B_{O}} \\
+\hline
+r_{B_{S}}
+\end{array}
+\right)
+:=
+\left(
+\begin{array}{c}
+A_{C, N} \\
+\hline
+A_{S_{B}, N} \\
+\hline
+2D_{B_{O}, N} \\
+\hline
+2D_{B_{S}, N}
+\end{array}
+\right)
+x_{N}
+\end{equation}
+furthermore, for the pricing step according to
+Equation~(\ref{eq:KKT_lagrange_id_j}) we have to evaluate the components of
+\begin{equation}
+w_{N}:=2D_{N, N}x_{N}
+\end{equation}
+among other summands.
+Instead of evaluating these two expressions from scratch we shall update
+the vectors $r$ and $w$ each time the entities they depend on change.
+Since slack and artficial variables have by definition
+value zero if they are nonbasic,
+only the nonbasic original variables in $N$ contribute to the above
+inner products, regardless of the phase, such that by introducing
+\begin{eqnarray}
+N_{O}:=N \cap O && N_{S}:=N \cap S
+\end{eqnarray} 
+we may write
+\begin{equation}
+w_{N_{O}}:=2D_{N_{O} , N_{O}}x_{N_{O}}
+\end{equation}
+\begin{equation}
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{B}
+\end{array}
+\right)
+:=
+\left(
+\begin{array}{c}
+A_{C, N_{O}} \\
+\hline
+2D_{B, N_{O}}
+\end{array}
+\right)
+x_{N_{O}}
+\end{equation}
+
+\marginpar{computation of $B_{S}$}
+
+
+\subsection{The QP-Updates $\mathbf{U_{Z_{1}}}, \mathbf{U_{Z_{2}}},
+  \mathbf{U_{Z_{3}}}, \mathbf{U_{Z_{4}}}$ and $\mathbf{U_{1}}, \mathbf{U_{2}},
+  \mathbf{U_{3}}, \mathbf{U_{4}}$}
+
+\subsubsection{$\mathbf{U_{Z_{1}}}$:$\quad j \in N_{O}$ replaces $i \in B_{O}$:}
+\begin{equation}
+\label{update:o_z_rep_o}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B}  \\
+B_{O}^{\prime}  &:=&  B_{O} \setminus \{i\} \cup \{j\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \\
+N_{O}^{\prime}  &:=&  N_{O} \setminus\{j\} \cup \{i\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S}
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+\left(
+\begin{array}{c}
+2D_{N_{O} \setminus\{j\}, N_{O} \setminus\{j\} \cup \{i\}} \\
+\hline
+2D_{i, N_{O} \setminus\{j\} \cup \{i\}}
+\end{array}
+\right)
+x_{N_{O} \setminus\{j\} \cup \{i\}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+w_{N_{O} \setminus\{j\}} \\
+\hline
+2D_{i, N_{O}}x_{N_{O}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+2D_{N_{O} \setminus\{j\}, j} \\
+\hline
+2D_{i, j}
+\end{array}
+\right)
+x_{j}
++
+\left(
+\begin{array}{c}
+2D_{N_{O} \setminus\{j\}, i} \\
+\hline
+2D_{i, i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O} \setminus\{j\} \cup \{i\}} \\
+\hline
+2D_{B_{O} \setminus \{i\}, N_{O} \setminus\{j\} \cup \{i\}} \\
+\hline
+2D_{j, N_{O} \setminus\{j\} \cup \{i\}}
+\end{array}
+\right)
+x_{N_{O} \setminus\{j\} \cup \{i\}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{B_{O} \setminus \{i\}} \\
+\hline
+2D_{j, N_{O}}x_{N_{O}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+2D_{B_{O} \setminus \{i\}, j} \\
+\hline
+2D_{j, j}
+\end{array}
+\right)
+x_{j}
++
+\left(
+\begin{array}{c}
+A_{C, i} \\
+\hline
+2D_{B_{O} \setminus \{i\}, i} \\
+\hline
+2D_{j,i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{Z_{2}}}$:$\quad j \in N_{S}$ replaces $i \in B_{O}$:}
+\begin{equation}
+\label{update:s_z_rep_o}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \setminus \{\sigma(j)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \cup  \{\sigma(j)\}   \\
+B_{O}^{\prime}  &:=&  B_{O} \setminus \{i\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \cup \{j\} \\
+N_{O}^{\prime}  &:=&  N_{O} \cup \{i\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\}
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+\left(
+\begin{array}{c}
+2D_{N_{O}, N_{O} \cup \{i\}} \\
+\hline
+2D_{i, N_{O} \cup \{i\}}
+\end{array}
+\right)
+x_{N_{O} \cup \{i\}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+w_{N_{O}} \\
+\hline
+2D_{i, N_{O}}x_{N_{O}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+2D_{N_{O}, i} \\
+\hline
+2D_{i,i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, N_{O} \cup \{i\}} \\
+\hline
+2D_{B_{O} \setminus \{i\}, N_{O} \cup \{i\}} 
+\end{array}
+\right)
+x_{N_{O} \cup \{i\}}^{\prime} 
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{B_{O} \setminus \{i\}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, i} \\
+\hline
+2D_{B_{O} \setminus \{i\}, i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{Z_{3}}}$:$\quad j \in N_{O}$ replaces $i \in B_{S}$:}
+\begin{equation}
+\label{update:o_z_rep_s}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \cup \{\sigma(i)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \setminus  \{\sigma(i)\}   \\
+B_{O}^{\prime}  &:=&  B_{O} \cup \{j\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \setminus \{i\} \\
+N_{O}^{\prime}  &:=&  N_{O} \setminus \{j\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \cup \{i\}  
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+2D_{N_{O} \setminus \{j\}, N_{O} \setminus \{j\}}
+x_{N_{O} \setminus \{j\}}^{\prime}
+\nonumber \\
+&=&
+w_{N_{O} \setminus \{j\}}
+-
+2D_{N_{O} \setminus \{j\}, j}x_{j}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O} \setminus \{j\}} \\
+\hline
+A_{\sigma(i), N_{O} \setminus \{j\}} \\
+\hline
+2D_{B_{O}, N_{O} \setminus \{j\}} \\
+\hline
+2D_{j, N_{O} \setminus \{j\}} 
+\end{array}
+\right)
+x_{N_{O} \setminus \{j\}}^{\prime} 
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+A_{\sigma(i), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}} \\
+\hline
+2D_{j, N_{O}}x_{N_{O}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{\sigma(i), j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+2D_{j, j}
+\end{array}
+\right)
+x_{j}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{Z_{4}}}$:$\quad j \in N_{S}$ replaces $i \in B_{S}$:}
+\begin{equation}
+\label{update:s_z_rep_s}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \setminus \{\sigma(j)\} \cup \{\sigma(i)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \setminus  \{\sigma(i)\} \cup \{\sigma(j)\}   \\
+B_{O}^{\prime}  &:=&  B_{O}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \setminus \{i\} \cup \{j\} \\
+N_{O}^{\prime}  &:=&  N_{O}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\} \cup \{i\} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+2D_{N_{O}, N_{O}}x_{N_{O}}^{\prime}
+\nonumber \\
+&=&
+w_{N_{O}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, N_{O}} \\
+\hline
+A_{\sigma(i), N_{O}} \\
+\hline
+2D_{B_{O}, N_{O}}
+\end{array}
+\right)
+x_{N_{O}}^{\prime} 
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+A_{\sigma(i), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{1}}$:$\quad j \in N_{O}$ enters the basis:}
+\begin{equation}
+\label{update:original_enters_basis}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B}   \\
+B_{O}^{\prime}  &:=&  B_{O} \cup \{j\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S}   \\
+N_{O}^{\prime}  &:=&  N_{O} \setminus \{j\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+2D_{N_{O} \setminus \{j\}, N_{O} \setminus \{j\}}
+x_{N_{O} \setminus \{j\}}^{\prime}
+\nonumber \\
+&=&
+w_{N_{O} \setminus \{j\}} - 2D_{N_{O} \setminus \{j\}, j}x_{j}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O} \setminus \{j\}} \\
+\hline
+2D_{B_{O}, N_{O} \setminus \{j\}} \\
+\hline
+2D_{j, N_{O} \setminus \{j\}} 
+\end{array}
+\right)
+x_{N_{O} \setminus \{j\}}^{\prime} 
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{B_{O}} \\
+\hline
+2D_{j, N_{O}}x_{N_{O}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+2D_{j, j}
+\end{array}
+\right)
+x_{j}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{2}}$:$\quad i \in B_{O}$ leaves the basis:}
+\begin{equation}
+\label{update:original_leaves_basis}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B}   \\
+B_{O}^{\prime}  &:=&  B_{O} \setminus \{i\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S}   \\
+N_{O}^{\prime}  &:=&  N_{O} \cup \{i\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+\left(
+\begin{array}{c}
+2D_{N_{O}, N_{O} \cup \{i\}} \\
+\hline
+2D_{i, N_{O} \cup \{i\}}
+\end{array}
+\right)
+x_{N_{O} \cup \{i\}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+w_{N_{O}} \\
+\hline
+2D_{i, N_{O}}x_{N_{O}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+2D_{N_{O}, i} \\
+\hline
+2D_{i, i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O} \cup \{i\}} \\
+\hline
+2D_{B_{O} \setminus \{i\}, N_{O} \cup \{i\}} 
+\end{array}
+\right)
+x_{N_{O} \cup \{i\}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{B_{O} \setminus \{i\}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, i} \\
+\hline
+2D_{B_{O} \setminus \{i\}, i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{3}}$:$\quad j \in N_{S}$ enters the basis:}
+\begin{equation}
+\label{update:slack_enters_basis}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \setminus \{\sigma(j)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \cup \{\sigma(j)\}  \\
+B_{O}^{\prime}  &:=&  B_{O}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \cup \{j\}  \\
+N_{O}^{\prime}  &:=&  N_{O}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+2D_{N_{O}, N_{O}}x_{N_{O}}^{\prime}
+\nonumber \\
+&=&
+w_{N_{O}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, N_{O}} \\
+\hline
+2D_{B_{O}, N_{O}}
+\end{array}
+\right)
+x_{N_{O}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{4}}$:$\quad j \in B_{S}$ leaves the basis:}
+\begin{equation}
+\label{update:slack_leaves_basis}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \cup \{\sigma(j)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \setminus \{\sigma(j)\}  \\
+B_{O}^{\prime}  &:=&  B_{O}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \setminus \{j\}  \\
+N_{O}^{\prime}  &:=&  N_{O}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \cup \{j\} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+w_{N_{O}^{\prime}}^{\prime}
+&:=&
+2D_{N_{O}, N_{O}}x_{N_{O}}^{\prime}
+\nonumber \\
+&=&
+w_{N_{O}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O}} \\
+\hline
+A_{\sigma(j), N_{O}} \\
+\hline
+2D_{B_{O}, N_{O}} 
+\end{array}
+\right)
+x_{N_{O}}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+A_{\sigma(j), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\end{eqnarray}
+
+
+\subsection{The LP-Updates $\mathbf{U_{5}}, \mathbf{U_{6}}, 
+  \mathbf{U_{7}}, \mathbf{U_{8}}$}
+The LP-updates of the basis inverse occur during phaseI and phaseII of an LP
+problem and during phaseI of a QP-problem. We therefore have $D=0$ and 
+$r_{B_{O}}=0$ throughout.  
+
+\subsubsection{$\mathbf{U_{5}}$:$\quad j \in N_{O}$ replaces $i \in B_{O}$:}
+\begin{equation}
+\label{update:o_rep_o}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B}  \\
+B_{O}^{\prime}  &:=&  B_{O} \setminus \{i\} \cup \{j\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S}   \\
+N_{O}^{\prime}  &:=&  N_{O}  \setminus \{j\} \cup \{i\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O}  \setminus \{j\} \cup \{i\}} \\
+\hline
+0_{B_{O} \setminus \{i\}, N_{O}  \setminus \{j\} \cup \{i\}} \\
+\hline
+0_{j, N_{O}  \setminus \{j\} \cup \{i\}} 
+\end{array}
+\right)
+x_{N_{O}  \setminus \{j\} \cup \{i\}}^{\prime} \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{B_{O} \setminus \{i\}} \\
+\hline
+0_{j, N_{O}}x_{N_{O}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+0_{B_{O} \setminus \{i\}, j} \\
+\hline
+0_{j, j}
+\end{array}
+\right)
+x_{j}
++
+\left(
+\begin{array}{c}
+A_{C, i} \\
+\hline
+0_{B_{O} \setminus \{i\}, i} \\
+\hline
+0_{j,i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{6}}$:$\quad j \in N_{S}$ replaces $i \in B_{S}$:}
+\begin{equation}
+\label{update:s_rep_s}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \setminus \{\sigma(j)\} \cup \{\sigma(i)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \setminus \{\sigma(i)\} \cup \{\sigma(j)\} \\
+B_{O}^{\prime}  &:=&  B_{O}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \setminus \{i\} \cup \{j\}  \\
+N_{O}^{\prime}  &:=&  N_{O}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\} \cup \{i\} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, N_{O}} \\
+\hline
+A_{\sigma(i), N_{O}} \\
+\hline
+2D_{B_{O}, N_{O}}
+\end{array}
+\right)
+x_{N_{O}}^{\prime} \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+A_{\sigma(i), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\end{eqnarray}
+
+
+\subsubsection{$\mathbf{U_{7}}$:$\quad j \in N_{O}$ replaces $i \in B_{S}$:}
+\begin{equation}
+\label{update:o_rep_s}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \cup \{\sigma(i)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \setminus \{\sigma(i)\} \\
+B_{O}^{\prime}  &:=&  B_{O} \cup \{j\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \setminus \{i\}  \\
+N_{O}^{\prime}  &:=&  N_{O} \setminus \{j\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \cup \{i\} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C, N_{O} \setminus \{j\}} \\
+\hline
+A_{\sigma(i), N_{O} \setminus \{j\}} \\
+\hline
+2D_{B_{O}, N_{O} \setminus \{j\}} \\
+\hline
+2D_{j, N_{O} \setminus \{j\}}
+\end{array}
+\right)
+x_{N_{O} \setminus \{j\}}^{\prime} \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+A_{\sigma(i), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}} \\
+\hline
+0_{j, N_{O}}x_{N_{O}}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{\sigma(i), j} \\
+\hline
+0_{B_{O}, j} \\
+\hline
+0_{j,j}
+\end{array}
+\right)
+x_{j}
+\end{eqnarray}
+
+\subsubsection{$\mathbf{U_{8}}$:$\quad j \in N_{S}$ replaces $i \in B_{O}$:}
+\begin{equation}
+\label{update:s_rep_o}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C \setminus \{\sigma(j)\}
+&\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B} \cup \{\sigma(j)\} \\
+B_{O}^{\prime}  &:=&  B_{O} \setminus \{i\}
+&\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S} \cup \{j\}  \\
+N_{O}^{\prime}  &:=&  N_{O} \cup \{i\}
+&\quad\quad&
+N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\} 
+\end{array}
+\end{equation}
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+r_{C^{\prime}}^{\prime} \\
+\hline
+r_{B_{O}^{\prime}}^{\prime}
+\end{array}
+\right)
+&:=&
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, N_{O} \cup \{i\}} \\
+\hline
+2D_{B_{O} \setminus \{i\}, N_{O} \cup \{i\}}
+\end{array}
+\right)
+x_{N_{O} \cup \{i\}}^{\prime} \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{B_{O} \setminus \{i\}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, i} \\
+\hline
+0_{B_{O} \setminus \{i\}, i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\end{eqnarray}
+
+
+\section{Pricing strategies implementation issues}
+The $\mu_{j}$, $j \in N$, for the pricing step are computed according to
+Equation~(\ref{eq:KKT_lagrange_id_j}),
+that is
+\begin{equation}
+\mu_{j}=
+  c_{j} + 2{x_{B}^{*}}^{T}D_{B,j}
+  +\lambda^{T} A_{j}
+  + 2x_{j}^{*}D_{j,j}
+  + 2{x_{\hat{N}}^{*}}^{T}D_{\hat{N},j}
+\end{equation}
+The sum of the last two summands of the right hand side remains constant
+during pricing for a given basis and changes only during the Ratio Test steps.
+For reasons of efficiency we compute $2x_{N}^{T}D_{N,j}$ once at the
+beginning of phaseI and update it incrementally afterwards with each change
+of the basis heading.
+
+Due to the fact that with upper bounding a nonbasic variable selected 
+as entering variable by the 
+pricing step may have to be increased or decreased, 
+the pricing step not
+only has to deliver an entering variable $x_{j}$, $j \in N$, if the current
+solution is suboptimal, but according to Definition~(\ref{def:direction}), a
+direction $d_{t}=-sign(\mu_{j})$, indicating whether the entering variable
+$x_{j}$ is to be increased or decreased as well. So if $d_{t}=1$ the entering
+variable is to be increased, otherwise it is to be decreased.
+
+\subsection{Full exact pricing}
 Generalizing the full exact pricing algorithm we introduce the following subsets of the set of nonbasic variables $N$
 \begin{eqnarray}
-N_{l}&:=&\{k \in N\left|\right. b\left(k\right)=-1\} \\
-N_{0}&:=&\{k \in N\left|\right. b\left(k\right)=0\} \\
-N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
+N_{l}&:=&\{k \in N \setminus F\left|\right. b\left(k\right)=-1\} \\
+N_{0}&:=&\{k \in N \setminus F\left|\right. b\left(k\right)=0\} \\
+N_{u}&:=&\{k \in N \setminus F\left|\right. b\left(k\right)=1\}
 \end{eqnarray}
 \paragraph{Full exact pricing with explicit bounds}
 \begin{tabbing}
@@ -916,8 +1847,8 @@ N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
 \end{tabbing}
 
 
-\subsubsection{Partial exact pricing}
-Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 for explicit bounds we introduce the following subsets of the active set $\mathcal{A}$ 
+\subsection{Partial exact pricing}
+Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 for explicit bounds we introduce the following subsets of the active set $\mathcal{A} \subseteq N \setminus F$ 
 \begin{eqnarray}
 \mathcal{A}_{l}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=-1\} \\
 \mathcal{A}_{0}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=0\} \\
@@ -940,7 +1871,7 @@ Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 f
 \texttt{IF} \= \kill
 \> \texttt{ELSE} \\
 \texttt{IFIF} \= \kill
-\> \texttt{$V:=\{k \in N \setminus \mathcal{A} \left|\right.
+\> \texttt{$V:=\{k \in N \setminus F \setminus \mathcal{A} \left|\right.
     \mu_{k} < 0 \wedge b\left(k\right) \leq 0 \vee
     \mu_{k} > 0 \wedge b\left(k\right) \geq 0\}$} \\
 \> \texttt{IF $V=0$ THEN} \\
@@ -956,10 +1887,12 @@ Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 f
 \texttt{IF} \= \kill
 \> \texttt{END}
 \end{tabbing}
-\subsubsection{Full filtered pricing}
-\subsubsection{Partial filtered pricing}
+\subsection{Full filtered pricing}
+\subsection{Partial filtered pricing}
 
-\subsection{Ratio Test Step~1}
+\section{Ratio Test Step implementation issues}
+
+\subsection{Ratio Test Step~1 implementation issues}
 We distinguish three events:
 \begin{enumerate}
 \item The entering variable $x_{j}$ takes the value of its finite upper,
@@ -1124,7 +2057,7 @@ as~(\ref{eq:KKT_lagrange_id_j}) we compute $\mu_{j}(t, d_{t})$ for $t=0$
 \EndFunction
 \end{algorithmic}
 
-\subsection{Ratio Test Step~2}
+\subsection{Ratio Test Step~2 implementation issues}
 Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $d_{t}=-1 \Rightarrow \mu_{j}>0$ for an entering variable, we distinguish these two cases and for each basic variable $x_{i}$ we distinguish whether  
 %\begin{algorithm}
 %\caption{Ratio Test Step~2 with upper bounding}
@@ -1196,73 +2129,132 @@ Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $
 \end{algorithmic}
 %\end{algorithm}
 
-\subsection{Updates}
 
-\subsubsection{Updates for Ratio Test Step~1}
-In the first event only the values of the basic variables $x_{B}$ as well as 
-the value of the 'entering' variable $x_{j}$ of the current solution change, whereas the basis matrix remains the same. The basic variables $x_{B}^{\prime}$ of the new solution $x^{\prime}$ are then given by
-\begin{equation}
-x_{B}^{\prime}:=
-\left\{
-\begin{array}{ll}
-x_{B} + b(j)\left(u_{j}-l_{j}\right)q_{x}
-&
-\text{if $b(j) \neq 0$} \\
-x_{B} - l_{j}q_{x}
-&
-\text{if $b(j)=0 \wedge d_{t}=-1$} \\
-x_{B} + u_{j}q_{x}
-&
-\text{if $b(j)=0\wedge d_{t}=1$}
-\end{array}
-\right.
-\end{equation}
-and the nonbasic variables $x_{N}^{\prime}$ by
-\begin{equation}
-x_{N \setminus\{j\}}^{\prime}:=x_{N \setminus \{j\}}
-\quad
-x_{j}^{\prime}:=
-\left\{
-\begin{array}{ll}
-l_{j} 
-&
-\text{if $d_{t}=-1$} \\
-u_{j}
-&
-\text{if $d_{t}=1$} 
-\end{array}
-\right.
-\end{equation}
+%\section{Updates implementation issues}
+%Computing the new current solution in Ratio Test Step~1 according to
+%Equation~(\ref{eq:Ratio_Test_1_Opt_sol_t}) and similarly for Ratio Test Step~2
+%according to Equation~(\ref{eq:x_hat_B_mu_j}) directly with upper bounding is
+%prohibitively expensive, since it involves at least a matrix vector
+%multiplication plus an inner product. We therefore update the new solutions
+%incrementally which is  
 
-In the second event both the values of the basic variables as well as the basis matrix change; the new set of basic variables is $B^{\prime}:=B \setminus \{i\}$
-\begin{equation}
-\left(
-\begin{array}{c}
-\lambda_{C}^{\prime} \\
-\hline
-x_{B}^{\prime}
-\end{array}
-\right)
-:=
-\left(
-\begin{array}{c}
-\lambda_{C} \\
-\hline
-x_{B}
-\end{array}
-\right)
--t_{min}^{B}
-\left(
-\begin{array}{c}
-q_{\lambda} \\
-\hline
-q_{x}
-\end{array}
-\right)
-\end{equation}
+%\subsection{Updates for Ratio Test Step~1}
+%In the first event only the values of the basic variables $x_{B}$ as well as 
+%the value of the 'entering' variable $x_{j}$ of the current solution change,
+%whereas the basis matrix remains the same. The basic variables $x_{B}^{\prime}$
+%of the new solution $x^{\prime}$ are then according to
+%Equations~(\ref{eq:Ratio_Test_1_Opt_sol_t}) and (\ref{def:t_min_j})
+%given by
+%\begin{equation}
+%\left(
+%\begin{array}{c}
+%\lambda^{\prime} \\
+%\hline
+%x_{B}^{\prime}
+%\end{array}
+%\right)
+%:=
+%\left\{
+%\begin{array}{ll}
+%\left(
+%\begin{array}{c}
+%\lambda \\
+%\hline
+%x_{B} 
+%\end{array}
+%\right)
+%+ b(j)\left(u_{j}-l_{j}\right)
+%\left(
+%\begin{array}{c}
+%q_{\lambda} \\
+%\hline
+%q_{x}
+%\end{array}
+%\right)
+%&
+%\text{if $b(j) \neq 0$} \\
+%\left(
+%\begin{array}{c}
+%\lambda \\
+%\hline
+%x_{B} 
+%\end{array}
+%\right)
+%- l_{j}
+%\left(
+%\begin{array}{c}
+%q_{\lambda} \\
+%\hline
+%q_{x}
+%\end{array}
+%\right)
+%&
+%\text{if $b(j)=0 \wedge d_{t}=-1$} \\
+%\left(
+%\begin{array}{c}
+%\lambda \\
+%\hline
+%x_{B}
+%\end{array}
+%\right)
+%+ u_{j}
+%\left(
+%\begin{array}{c}
+%q_{\lambda} \\
+%\hline
+%q_{x}
+%\end{array}
+%\right)
+%&
+%\text{if $b(j)=0\wedge d_{t}=1$}
+%\end{array}
+%\right.
+%\end{equation}
+%and the nonbasic variables $x_{N}^{\prime}$ by
+%\begin{equation}
+%x_{N \setminus\{j\}}^{\prime}:=x_{N \setminus \{j\}}
+%\quad
+%x_{j}^{\prime}:=
+%\left\{
+%\begin{array}{ll}
+%l_{j} 
+%&
+%\text{if $d_{t}=-1$} \\
+%u_{j}
+%&
+%\text{if $d_{t}=1$} 
+%\end{array}
+%\right.
+%\end{equation}
 
-\subsubsection{Updates for Ratio Test Step~2}
-
+%In the second event both the values of the basic variables as well as the basis
+%matrix change; the new set of basic variables is
+%$B^{\prime}:=B \setminus \{i\}$
+%\begin{equation}
+%\left(
+%\begin{array}{c}
+%\lambda_{C}^{\prime} \\
+%\hline
+%x_{B}^{\prime}
+%\end{array}
+%\right)
+%:=
+%\left(
+%\begin{array}{c}
+%\lambda_{C} \\
+%\hline
+%x_{B}
+%\end{array}
+%\right)
+%-t_{min}^{B}
+%\left(
+%\begin{array}{c}
+%q_{\lambda} \\
+%\hline
+%q_{x}
+%\end{array}
+%\right)
+%\end{equation}
 
 \begin{thebibliography}{99}
 \bibitem{Sven} Sven Sch\"{o}nherr. Quadratic Programming in Geometric Optimization:
