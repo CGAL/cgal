@@ -87,7 +87,7 @@ function createTestsuite()
 	do
 	LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
 	tmp=`basename "$f"`
-	if grep -q "/$tmp/" $dataDir/CVS/Entries; then
+	if grep -q "/$tmp/" "$dataDir/CVS/Entries"; then
 	    echo -n "";
 	else
 	    MISSINGFILES="$f $MISSINGFILES"
@@ -99,7 +99,7 @@ function createTestsuite()
     # check that all $dataDir/*.data_* files that are part of the CGAL
     # testsuite indeed exist in the CVS repository:
     if [ "x$MISSINGFILES" != "x" ]; then
-	if [ "x$1" == "xCGAL" ]; then
+	if [ "x$cgalOrNot" == "xCGAL" ]; then
 	    echo ""
 	    echo "WARNING: Some files in $dataDir/*.data_* that are part of the CGAL"
 	    echo "testsuite do not exist in the repository. Please check them in."
@@ -149,7 +149,7 @@ fi
 
 warnUser=0
 createTestsuite "data" "test_suite_QP_solver.cin" ".data_*" $1 "true"
-#createTestsuite "testsuite-data" "test_solver.cin" ".mps" $1 "false"
+createTestsuite "testsuite-data" "test_solver.cin" ".mps" $1 "false"
 
 # finish:
 echo "Done."
