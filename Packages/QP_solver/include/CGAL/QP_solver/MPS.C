@@ -314,14 +314,16 @@ bool QP_MPS_instance<Traits>::rows_section()
     case 'G':
     case 'L':
     case 'E':
-      // register name of >=, <=, or = constraint:
-      const unsigned int index = row_types_.size();
-      row_types_.push_back(type == 'G'? Traits::GREATER_EQUAL :
-			   (type == 'E'? Traits::EQUAL : Traits::LESS_EQUAL));
-      if (row_names.find(t) != row_names.end())
-	return err1("duplicate row name '%' in section ROWS",t);
-      row_names.insert(String_int_pair(t,index));
-      b_.push_back(IT(0));
+      {
+	// register name of >=, <=, or = constraint:
+	const unsigned int index = row_types_.size();
+	row_types_.push_back(type == 'G'? Traits::GREATER_EQUAL :
+		     (type == 'E'? Traits::EQUAL : Traits::LESS_EQUAL));
+	if (row_names.find(t) != row_names.end())
+	  return err1("duplicate row name '%' in section ROWS",t);
+	row_names.insert(String_int_pair(t,index));
+	b_.push_back(IT(0));
+      }
       break;
     default:
       return err1(
