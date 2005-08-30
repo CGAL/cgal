@@ -1,4 +1,4 @@
-Author: Constantinos Tsirogiannis
+//Author: Constantinos Tsirogiannis
 
 #ifndef CGAL_CURVED_KERNEL_TYPE_EQUALITY_WRAPPER_H
 #define CGAL_CURVED_KERNEL_TYPE_EQUALITY_WRAPPER_H
@@ -21,27 +21,18 @@ template < typename K_base, typename Kernel >
 struct Curved_kernel_type_equality_wrapper
   : public K_base
 {
-
     typedef K_base                                  Kernel_base;
 
- 
     typedef CGAL::Circular_arc_2<Kernel>               Circular_arc_2;     
     typedef CGAL::Line_arc_2<Kernel>                   Line_arc_2;
     typedef CGAL::Circular_arc_point_2<Kernel>         Circular_arc_endpoint_2;
     typedef CGAL::Root_of_2<typename Kernel_base::FT>  Root_of_2;
-    
-    
     
 	//Something has to be done with these 3, maybe a lazy Algebraic kernel?
 	   
     //typedef Polynomial_for_circles_2_2<Kernel>   Polynomial_for_circles_2_2;
     //typedef Polynomial_1_2<Kernel>               Polynomial_1_2;
     //typedef Root_of_2<Kernel>                    Root_of_2;   
-
-    
-
-
-
 };
 
 CGAL_END_NAMESPACE
