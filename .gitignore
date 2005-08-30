@@ -212,6 +212,7 @@ Packages/Surface_mesher/examples/Surface_mesher/sphere_union.mesh
 Packages/Surface_mesher/examples/Surface_mesher/sphere_union.off
 Packages/Surface_mesher/examples/Surface_mesher/surface_mesher
 Packages/Surface_mesher/examples/Surface_mesher/surfaces_union
+Packages/Surface_mesher/test/Surface_mesher/test_robust_circumcenter
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.aux
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.bbl
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.blg
