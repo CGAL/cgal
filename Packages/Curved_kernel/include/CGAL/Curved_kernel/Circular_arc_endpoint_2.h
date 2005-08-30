@@ -50,12 +50,12 @@ namespace CGALi {
     const Root_of_2 & x() const { return _p.x(); }
     const Root_of_2 & y() const { return _p.y(); }
 
-    Bbox_2 bbox() const
+    CGAL::Bbox_2 bbox() const
     {
        std::pair<double,double> ix=to_interval(x()),
                                 iy=to_interval(y());
 
-        return Bbox_2(ix.first,iy.first,
+        return CGAL::Bbox_2(ix.first,iy.first,
                       ix.second,iy.second);
     }
 
