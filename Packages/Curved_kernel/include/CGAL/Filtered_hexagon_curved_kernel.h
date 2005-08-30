@@ -29,7 +29,7 @@ template <class CK>
     typedef typename CK::Conic_2                     Conic_2;
     typedef typename CK::Point_2                     Point_2;
     typedef typename CK::Circular_arc_2              Rcirc_arc_2;
-    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2        Circular_arc_point_2;
     typedef typename CK::Construct_circle_2          Construct_circle_2;
     typedef typename CK::Get_equation                Get_equation;
 
@@ -38,6 +38,8 @@ template <class CK>
     typedef typename CK::Compare_x_2                 Compare_x_2;
     typedef typename CK::Compare_y_2		     Compare_y_2;
     typedef typename CK::Compare_xy_2		     Compare_xy_2;
+    typedef typename CK::Construct_min_vertex_2      Construct_min_vertex_2;
+    typedef typename CK::Construct_max_vertex_2      Construct_max_vertex_2;
     typedef CGALi::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
     typedef CGALi::Compare_y_to_right_2<Self>	     Compare_y_to_right_2;
     typedef CGALi::Do_overlap_2<Self>		     Do_overlap_2;
@@ -47,7 +49,6 @@ template <class CK>
     typedef CGALi::Intersect_2<Self>   Intersect_2;
     typedef CGALi::Split_2<Self>		     Split_2;
 
-  // Construct_min_vertex_2 and Construct_max_vertex_2 should be added
 
 
 
@@ -72,6 +73,14 @@ template <class CK>
 	Compare_xy_2
   	compare_xy_2_object() const
     	{ return CK().compare_xy_2_object(); }
+
+	Construct_min_vertex_2
+	construct_min_vertex_2_object() const
+  	{ return CK().construct_min_vertex_2_object(); }
+
+	Construct_max_vertex_2
+	construct_max_vertex_2_object() const
+  	{ return CK().construct_max_vertex_2_object(); }
 
   	Compare_y_at_x_2
   	compare_y_at_x_2_object() const 
