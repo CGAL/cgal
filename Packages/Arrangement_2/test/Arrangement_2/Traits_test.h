@@ -1,6 +1,8 @@
 #ifndef CGAL_TRAITS_TEST_H
 #define CGAL_TRAITS_TEST_H
 
+#include <CGAL/Object.h>
+
 #include <string>
 #include <vector>
 #include <map>
@@ -637,34 +639,88 @@ template <class T_Traits>
 bool
 Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
 {
+  typedef T_Traits                              Traits;
+  typedef typename Traits::Point_2              Point_2;
+  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef typename Traits::Curve_2              Curve_2;
+  typedef typename Traits::Equal_2              Equal_2;
+  
   unsigned int id;
   str_stream >> id;
-  std::vector<typename T_Traits::X_monotone_curve_2> real_xcurves;
+  std::vector<CGAL::Object> object_vec;
   m_traits.make_x_monotone_2_object()(m_curves[id],
-                                      std::back_inserter(real_xcurves));
+                                      std::back_inserter(object_vec));
 
   unsigned int num;
   str_stream >> num;
-  if (num != real_xcurves.size()) {
+  if (num != object_vec.size()) {
     std::cerr << "Failed" << std::endl
               << "Expected size: " << num << std::endl
-              << "Obtained size: " << real_xcurves.size() << std::endl;
+              << "Obtained size: " << object_vec.size() << std::endl;
     return false;
   }
+  
+  Equal_2 equal = m_traits.equal_2_object();
   for (unsigned int i = 0; i < num; ++i) {
-    unsigned int id;
-    str_stream >> id;
-    typename T_Traits::Equal_2 equal = m_traits.equal_2_object();
-    if (!equal(m_xcurves[id], real_xcurves[i])) {
-      std::cerr << "Failed" << std::endl
-                << "Expected x-monotone curve[" << i << "]: "
-                << m_xcurves[id] << std::endl
-                << "Obtained x-monotone curve[" << i << "]: "
-                << real_xcurves[i] << std::endl;
-      return false;
+    int type;                           // 0 - point, 1 - x-monotone curve
+    str_stream >> type;
+    
+    unsigned int id;                    // The id of the point or x-monotone
+    str_stream >> id;                   // ... curve respectively
+
+#if 0
+    const X_monotone_curve_2 * xcv_ptr;
+    xcv_ptr = object_cast<X_monotone_curve_2> (&(object_vec[i]));
+    if (xcv_ptr != NULL)
+#else
+    X_monotone_curve_2 xcv;
+    X_monotone_curve_2 * xcv_ptr = &xcv;
+    bool rc = CGAL::assign(xcv, object_vec[i]);
+    if (rc)
+#endif
+    {
+      if (type != 1) {
+        std::cerr << "Failed" << std::endl
+                  << "Expected a point" << std::endl
+                  << "Obtained an x-monotone curve" << std::endl; 
+        return false;
+      }
+      if (!equal(m_xcurves[id], *xcv_ptr)) {
+        std::cerr << "Failed" << std::endl
+                  << "Expected x-monotone curve [" << i << "]: "
+                  << m_xcurves[id] << std::endl
+                  << "Obtained x-monotone curve: "
+                  << *xcv_ptr << std::endl;
+        return false;
+      }
+    } else {
+#if 0
+      const Point_2 * pt_ptr;
+      pt_ptr = object_cast<Point_2> (&(object_vec[i]));
+      CGAL_assertion (pt_ptr != NULL);
+#else
+      Point_2 pt;
+      const Point_2 * pt_ptr = &pt;
+      bool rc = CGAL::assign(pt, object_vec[i]);
+      CGAL_assertion (rc != false);
+#endif
+      if (type != 0) {
+        std::cerr << "Failed" << std::endl
+                  << "Expected an x-monotone curve" << std::endl
+                  << "Obtained a point" << std::endl; 
+        return false;
+      }
+      if (!equal(m_points[id], *pt_ptr)) {
+        std::cerr << "Failed" << std::endl
+                  << "Expected point [" << i << "]: "
+                  << m_points[id] << std::endl
+                  << "Obtained point: "
+                  << *pt_ptr << std::endl;
+        return false;
+      }
     }
   }
-  real_xcurves.clear();
+  object_vec.clear();
   return true;
 }
 
