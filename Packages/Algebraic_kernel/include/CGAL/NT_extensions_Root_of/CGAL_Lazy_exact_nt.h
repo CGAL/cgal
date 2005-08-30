@@ -53,7 +53,7 @@ struct Lazy_exact_ro2
 					  op3.exact(), smaller));
 
 	if (!this->approx().is_point())
-            this->in = CGAL::to_interval(*(this->et));
+            this->at = CGAL::to_interval(*(this->et));
 	this->prune_dag();
 
     }
