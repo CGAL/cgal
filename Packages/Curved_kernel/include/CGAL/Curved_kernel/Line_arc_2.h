@@ -157,6 +157,11 @@ namespace CGALi {
       return _end;
     } 
     
+    bool is_vertical() const
+    {
+      return supporting_line().is_vertical();
+    }
+    
     CGAL::Bbox_2 bbox() const
     {
       return _begin.bbox() + _end.bbox();
