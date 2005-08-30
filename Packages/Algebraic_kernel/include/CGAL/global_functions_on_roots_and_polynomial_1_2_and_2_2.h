@@ -21,7 +21,15 @@ solve( const typename AK::Polynomial_1_2 & e1,
  }
 
 
-
+template < class AK >
+  inline 
+  typename AK::Polynomial_1_2
+  construct_polynomial_1_2( const typename AK::RT& a,
+			    const typename AK::RT& b,
+			    const typename AK::RT& c)
+  {
+    return AK().construct_polynomial_1_2_object()(a, b, c);
+  }
 
 
 } // namespace CGAL
