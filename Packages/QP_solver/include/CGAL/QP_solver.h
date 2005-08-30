@@ -136,6 +136,16 @@ public:
     //typedef  Indices::const_iterator    Index_iterator;
 
 private:
+    // used for upper  bounding, indicates the value of a nonbasic original
+    // variable, a variable that is fixed will never be priced and therefore
+    // remains nonbasic forever
+    enum  Bound_kind  { LOWER, ZERO, UPPER, FIXED };
+    typedef  std::vector<Bound_kind>    Bound_kind_values;
+    typedef  typename Bound_kind_values::iterator
+                                        Bound_kind_value_iterator;
+    typedef  typename Bound_kind_values::const_iterator
+                                        Bound_kind_value_const_iterator;
+
     // values (variables' numerators)
     typedef  std::vector<ET>            Values;
     typedef  typename Values::iterator  Value_iterator;
@@ -272,6 +282,10 @@ private:
     C_iterator               qp_c;      // objective vector
     D_iterator               qp_D;      // objective matrix
     Row_type_iterator        qp_r;      // row-types of constraints
+    FL_iterator              qp_fl;     // lower bound finiteness vector
+    L_iterator               qp_l;      // lower bound vector
+    FU_iterator              qp_fu;     // upper bound finiteness vector
+    U_iterator               qp_u;      // upper bound vector
 
     A_slack                  slack_A;   // slack part of constraint matrix
 
@@ -302,6 +316,7 @@ private:
     Values                   x_B_O;     // basic variables (original)
     Values                   x_B_S;     // basic variables (slack)
     Values                   lambda;    // lambda (from KKT conditions)
+    Bound_kind_values        x_N_bv;     // 
     
     int                      m_phase;   // phase of the Simplex method
     Status                   m_status;  // status of last pivot step
@@ -374,13 +389,13 @@ private:
 	      Row_type_iterator r =
 	        Const_oneset_iterator<Row_type>( Rep::EQUAL),
 	      Pricing_strategy& strategy = 
-	        QP_full_exact_pricing<Rep_>() );
+	        QP_full_exact_pricing<Rep_>(), int verbosity = 0 );
 	        
     QP_solver(int n, int m,
           A_iterator A, B_iterator b, C_iterator c, D_iterator D,
           Row_type_iterator r,
           FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
-	      Pricing_strategy& strategy);
+	      Pricing_strategy& strategy, int verbosity = 0 );
 	      
  private:
     // set-up of QP
@@ -388,6 +403,10 @@ private:
 	       A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	       Row_type_iterator r =
 	         Const_oneset_iterator<Row_type>( Rep::EQUAL));
+	         
+    // set-up of explicit bounds
+    void set_explicit_bounds(int n, FL_iterator fl, L_iterator lb,
+            FU_iterator fu, U_iterator ub); 
 
     // initialization (of phase I)
     void  init( );
@@ -572,7 +591,7 @@ public: // only the pricing strategies (including user-defined ones
         { return Lambda_value_iterator(
                      lambda_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
-
+private:
     // miscellaneous
     // -------------
     // altering the pricing strategy
@@ -581,6 +600,7 @@ public: // only the pricing strategies (including user-defined ones
     // diagnostic output
     void  set_verbosity( int verbose = 0, std::ostream& stream = std::cout);
 
+public:
     // access to indices of basic constraints
     int  number_of_basic_constraints( ) const { return C.size(); }
 
@@ -612,6 +632,8 @@ public: // only the pricing strategies (including user-defined ones
     void  init_basis__slack_variables( int s_i, Tag_false has_no_inequalities);
     void  init_basis__constraints    ( int s_i, Tag_true  has_no_inequalities);
     void  init_basis__constraints    ( int s_i, Tag_false has_no_inequalities);
+    void  init_nonbasic_original_variables(Tag_true  is_in_standard_form);
+    void  init_nonbasic_original_variables(Tag_false is_in_standard_form);
 
     void  init_solution( );
     void  init_solution__b_C( Tag_true  has_no_inequalities);
