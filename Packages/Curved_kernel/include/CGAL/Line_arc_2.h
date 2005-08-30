@@ -91,8 +91,12 @@ public:
         return typename R::Construct_supporting_line_2()(*this);
   }
   
- 
-  
+
+  bool is_vertical() const
+  {
+      return typename R::Is_vertical_2()(*this);
+  }
+    
   Bbox_2  bbox() const
   {
         return typename R::Construct_bbox_2()(*this);
