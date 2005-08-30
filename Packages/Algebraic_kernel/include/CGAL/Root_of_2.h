@@ -26,6 +26,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Binary_operator_result.h>
 
 namespace CGAL {
 
@@ -239,6 +240,8 @@ struct NT_converter < NT1 , Root_of_2<NT2> >
         return Root_of_2<NT2>(NT_converter<NT1,NT2>()(a));
     }
 };
+
+
 
 
 
@@ -792,7 +795,6 @@ square(const Root_of_2<RT> &a)
                         (a.is_smaller() ^ (a[1]>0)));
 }
 
-
 // Mixed operators with Root_of_2 and RT/FT.
 // Specializations of Binary_operator_result.
 // Note : T1 can be different from T2 because of quotient types...
@@ -805,6 +807,22 @@ template < typename T1, typename T2 >
 struct Binary_operator_result <Root_of_2<T1>, T2> {
     typedef Root_of_2<T1>  type;
 };
+
+template < typename RT >
+struct Binary_operator_result <Root_of_2<RT>, typename Root_of_traits<RT>::RootOf_1 > {
+    typedef Root_of_2<RT>  type;
+};
+
+template < typename RT >
+struct Binary_operator_result <typename Root_of_traits<RT>::RootOf_1, Root_of_2<RT> > {
+    typedef Root_of_2<RT>  type;
+};
+
+
+
+
+
+
 
 
 template < typename RT >
