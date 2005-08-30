@@ -52,44 +52,13 @@ public:
   typedef typename CurvedKernel::Equal_2               Equal_2;
   typedef typename CurvedKernel::Make_x_monotone_2     Make_x_monotone_2;
   typedef typename CurvedKernel::Split_2               Split_2;
+  typedef typename CurvedKernel::Construct_min_vertex_2  Construct_min_vertex_2; 
+  typedef typename CurvedKernel::Construct_max_vertex_2  Construct_max_vertex_2;
+  typedef typename CurvedKernel::Is_vertical_2           Is_vertical_2;
   typedef typename CurvedKernel::Intersect_2 Intersect_2;
 
-  class Construct_min_vertex_2
-  {
-  public:
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    {
-      CGAL_kernel_precondition( CurvedKernel().compare_xy_2_object()(cv.left(),cv.right())==CGAL::SMALLER);
-      return (cv.left());
-    }
-  };
 
-  class Construct_max_vertex_2
-  {
-  public:
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
-     * \param cv The curve.
-     * \return The right endpoint.
-     */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    {
-      CGAL_kernel_precondition( CurvedKernel().compare_xy_2_object()(cv.left(),cv.right())==CGAL::SMALLER);
-      return (cv.right());
-    }
-  };
-
-  class Is_vertical_2
-  {
-  public:
-    typedef bool result_type;
-
-    // TO BE IMPLEMENTED !!!!!!!
-    bool operator() (const X_monotone_curve_2& cv) const
-    {
-      return cv.supporting_line().is_vertical();
-    }
-  };
+ 
 
   
   Compare_x_2 compare_x_2_object() const
