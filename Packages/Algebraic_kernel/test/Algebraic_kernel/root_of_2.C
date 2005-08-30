@@ -386,6 +386,22 @@ test_root_of()
     Root r1 = my_rand_root<Root>();
     Root r2 = r1 * r;
     Root r3 = r * r1;
+    int n = rnd.get_int(0, 63);
+    typename Root::FT rn(n);
+    if (r != 0){
+      Root r4 = r2 / r;
+      assert(r4 == r4);
+      assert(test_to_interval(r4));
+      assert(r4 == r1);
+    }
+    if (n != 0){
+      Root r5 = my_rand_root<Root>();
+      Root r6 = r5 * rn;
+      Root r4 = r6 / rn;
+      assert(r4 == r4);
+      assert(test_to_interval(r4));
+      assert(r4 == r5);
+    }
     assert(r1 == r1);
     assert(r2 == r2);
     assert(r3 == r3);
@@ -408,6 +424,21 @@ test_root_of()
     }
   }
 
+  std::cout << "  Testing Root_of_2<FT>" << std::endl;
+  for (int i = 0; i < test_loops; ++i) {
+    int n = rnd.get_int(0, 63);
+    typename Root::FT r(n);
+    Root r1(r);
+    Root r2(n);
+    Root r3(r.denominator(),- r.numerator());
+    assert(r1 == r1);
+    assert(r2 == r2);
+    assert(r3 == r3);
+    assert(r1 == r2);
+    assert(r2 == r3);
+    assert(r1 == r3);
+
+  }
   return true;
 }
 

@@ -15,6 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+	   -Iinclude \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -38,13 +39,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                root_of_2$(EXE_EXT) 
+                root_of_2$(EXE_EXT) \
+		test_Algebraic_kernel$(EXE_EXT)
 
 root_of_2$(EXE_EXT): root_of_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)root_of_2 root_of_2$(OBJ_EXT) $(LDFLAGS)
 
+test_Algebraic_kernel$(EXE_EXT): test_Algebraic_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Algebraic_kernel test_Algebraic_kernel$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   root_of_2.clean 
+                   root_of_2.clean \
+		   test_Algebraic_kernel.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
