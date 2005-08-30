@@ -41,6 +41,9 @@ namespace CGAL {
     typedef AlgebraicFunctors::Construct_polynomial_circle_2_2<Self>
     Construct_polynomial_circle_2_2;
 
+    typedef AlgebraicFunctors::Construct_polynomial_1_2<Self>
+    Construct_polynomial_1_2;
+
     Solve 
     solve_object() const
       { return Solve(); }
@@ -49,6 +52,12 @@ namespace CGAL {
     construct_polynomial_circle_2_2_object() const
     {
       return Construct_polynomial_circle_2_2();
+    }
+
+    Construct_polynomial_1_2
+    construct_polynomial_1_2_object() const
+    {
+      return Construct_polynomial_1_2();
     }
 
     Sign_at

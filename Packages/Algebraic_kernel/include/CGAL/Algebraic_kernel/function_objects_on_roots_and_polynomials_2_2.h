@@ -45,6 +45,21 @@ namespace CGAL {
       }
   };
 
+   template < class AK >
+  class Construct_polynomial_1_2
+  {
+    typedef typename AK::RT    RT;
+    typedef typename AK::Polynomial_1_2
+    Polynomial_1_2;
+    
+  public:
+    Polynomial_1_2
+    operator()( const RT& a, const RT& b, const RT& c)
+      {
+	return Polynomial_1_2(a, b, c);
+      }
+  };
+
 
   template < class AK >
     class Sign_at
