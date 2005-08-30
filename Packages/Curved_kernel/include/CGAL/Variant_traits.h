@@ -314,26 +314,36 @@ namespace CGAL {
 
 
      template <class CurvedKernel>
-    class Variant_Construct_min_vertex_2
-      : public boost::static_visitor<const typename CurvedKernel::Circular_arc_point_2&>
+    class Variant_Construct_min_vertex_2 
+      : public Has_qrt,boost::static_visitor<const typename CurvedKernel::Circular_arc_point_2&>
     {
+      typedef typename CurvedKernel::Circular_arc_point_2 Circular_arc_point_2; 
+    
     public :
-
+    
+      typedef Circular_arc_point_2  result_type;
+      typedef const result_type&       qualified_result_type;
+      
       template < typename T >
-      const typename CurvedKernel::Circular_arc_point_2&
+      typename boost::remove_reference<qualified_result_type>::type
       operator()(const T &a) const
       {
-	CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
-	return (a.left());
+	//CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
+	return CurvedKernel().construct_min_vertex_2_object()(a);
       }
     };
 
     template <class CurvedKernel, class Arc1, class Arc2>
-    class Construct_min_vertex_2
+    class Construct_min_vertex_2: public Has_qrt
     {
       typedef typename CurvedKernel::Circular_arc_point_2      Point_2;
     public:
-      const Point_2& operator() (const boost::variant< Arc1, Arc2 > & cv) const
+      
+      typedef Point_2                  result_type;
+      typedef const result_type&       qualified_result_type;
+      
+      typename boost::remove_reference<qualified_result_type>::type 
+      operator() (const boost::variant< Arc1, Arc2 > & cv) const
       {
 	return boost::apply_visitor( Variant_Construct_min_vertex_2<CurvedKernel>(), cv );
       }
@@ -345,23 +355,28 @@ namespace CGAL {
 
      template <class CurvedKernel>
     class Variant_Construct_max_vertex_2
-       : public boost::static_visitor<const typename CurvedKernel::Circular_arc_point_2&>
+       : public Has_qrt,boost::static_visitor<const typename CurvedKernel::Circular_arc_point_2&>
     {
+      typedef typename CurvedKernel::Circular_arc_point_2 Circular_arc_point_2;
+    
     public :
-
+    
+      typedef Circular_arc_point_2  result_type;
+      typedef const result_type&       qualified_result_type;
+    
       template < typename T >
-      const typename CurvedKernel::Circular_arc_point_2&
+      typename boost::remove_reference<qualified_result_type>::type
       operator()(const T &a) const
       {
-	CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
-	return (a.right());
+	//CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
+	return (CurvedKernel().construct_max_vertex_2_object()(a));
       }
     };
 
 
     
     template <class CurvedKernel, class Arc1, class Arc2>
-    class Construct_max_vertex_2
+    class Construct_max_vertex_2: public Has_qrt
     {
       typedef typename CurvedKernel::Circular_arc_point_2      Point_2;
     public:
@@ -370,7 +385,11 @@ namespace CGAL {
        * \param cv The curve.
        * \return The right endpoint.
        */
-      const Point_2& operator() (const boost::variant< Arc1, Arc2 > & cv) const
+      typedef Point_2                  result_type;
+      typedef const result_type&       qualified_result_type; 
+       
+       typename boost::remove_reference<qualified_result_type>::type
+       operator() (const boost::variant< Arc1, Arc2 > & cv) const
       {
 	return boost::apply_visitor( Variant_Construct_max_vertex_2<CurvedKernel>(), cv );
       }
@@ -433,7 +452,7 @@ namespace CGAL {
 
     typedef typename CurvedKernel::Compare_x_2           Compare_x_2;
     typedef typename CurvedKernel::Compare_xy_2          Compare_xy_2;
-    typedef VariantFunctors::Construct_min_vertex_2<CurvedKernel, Arc1, Arc2>  Construct_min_vertex_2;
+    typedef typename VariantFunctors::Construct_min_vertex_2<CurvedKernel, Arc1, Arc2>  Construct_min_vertex_2;
     typedef VariantFunctors::Construct_max_vertex_2<CurvedKernel, Arc1, Arc2>  Construct_max_vertex_2;
     typedef VariantFunctors::Is_vertical_2<CurvedKernel, Arc1, Arc2>           Is_vertical_2;
     typedef VariantFunctors::Compare_y_at_x_2<CurvedKernel, Arc1, Arc2>      Compare_y_at_x_2;
