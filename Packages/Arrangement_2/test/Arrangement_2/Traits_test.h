@@ -54,21 +54,32 @@ private:
   bool translate_boolean(std::string & str_value);
   unsigned int translate_enumerator(std::string & str_value);
 
-  template <class T>  
-  bool print_was_successful_or_not(T & exp_answer, T & real_answer)
+  void print_result(bool result)
   {
-    bool ret_value = true;
-    if (exp_answer == real_answer) {
-      std::cout << "Passed"     << std::endl;
-    } else{
-      std::cout << "Failed" << std::endl
-                << "Expected result: " << exp_answer << std::endl
-                << "Obtained result: " << real_answer << std::endl;
-      ret_value = false;
+    std::cout << ((result) ? "Passed" : "Failed") << std::endl;
+  }
+  
+  template <class T>  
+  bool compare(const T & exp_answer, const T & real_answer,
+               const char * str = "result")
+  {
+    if (exp_answer != real_answer) {
+      std::cout << "Expected " << str << ": " << exp_answer << std::endl
+                << "Obtained " << str << ": " << real_answer << std::endl;
+      return false;
     } 
-    return ret_value;      
+    return true;
   }
 
+  template <class T>  
+  bool compare_and_print(const T & exp_answer, const T & real_answer,
+                         const char * str = "result")
+  {
+    bool result = compare(exp_answer, real_answer, str);
+    print_result(result);
+    return result;
+  }
+  
   template <class stream>
   bool read_point(stream & is, Point_2 & p);
 
@@ -265,7 +276,7 @@ bool Traits_test<T_Traits>::start()
 {
   std::ifstream is(m_filename.c_str());
   if (!is.is_open()) {
-    std::cerr << "Error opening file " << m_filename.c_str();
+    std::cerr << "Error opening file " << m_filename.c_str() << std::endl;
     return false;
   }
   if (!collect_data(is)) {
@@ -465,7 +476,7 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
     m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
   std::cout << "Test: compare_x( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Test Compare_xy_2
@@ -480,7 +491,7 @@ bool Traits_test<T_Traits>::compare_xy_wrapper(std::istringstream & str_stream)
     m_traits.compare_xy_2_object()(m_points[id1], m_points[id2]);
   std::cout << "Test: compare_xy( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Construct_min_vertex_2.
@@ -496,7 +507,7 @@ bool Traits_test<T_Traits>::min_vertex_wrapper(std::istringstream & str_stream)
     m_traits.construct_min_vertex_2_object()(m_xcurves[id1]);
   std::cout << "Test: min_vertex( " << m_xcurves[id1] << " ) ? "
             << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Construct_max_vertex_2.
@@ -512,7 +523,7 @@ bool Traits_test<T_Traits>::max_vertex_wrapper(std::istringstream & str_stream)
     m_traits.construct_max_vertex_2_object()(m_xcurves[id1]);
   std::cout << "Test: max_vertex( " << m_xcurves[id1] << " ) ? "
             << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -525,7 +536,7 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream & str_stream)
   bool real_answer = m_traits.is_vertical_2_object()(m_xcurves[id]);
   std::cout << "Test: is_vertical( " << m_xcurves[id]
             << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Compare_y_at_x_2.
@@ -545,7 +556,7 @@ Traits_test<T_Traits>::compare_y_at_x_wrapper(std::istringstream & str_stream)
   std::cout << "Test: compare_y_at_x( " << m_points[id1] << ","
             << m_xcurves[id2]
             << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Compare_y_at_x_left_2.
@@ -569,7 +580,7 @@ compare_y_at_x_left_wrapper(std::istringstream & str_stream)
   std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
             << m_xcurves[id2] << ", " << m_points[id3]
             << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }  
 
 /*! Tests Compare_y_at_x_right_2.
@@ -593,7 +604,7 @@ compare_y_at_x_right_wrapper(std::istringstream & str_stream)
   std::cout << "Test: compare_y_at_x_right( " << m_xcurves[id1] << ","
             << m_xcurves[id2] << ", " << m_points[id3]
             << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }  
 
 /*! Tests Equal_2::operator()(Point_2, Point_2).
@@ -609,7 +620,7 @@ Traits_test<T_Traits>::equal_points_wrapper(std::istringstream & str_stream)
   bool real_answer = m_traits.equal_2_object()(m_points[id1], m_points[id2]);
   std::cout << "Test: equal( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Equal_2::operator()(X_monotone_curve_2, X_monotone_curve_2).
@@ -625,7 +636,7 @@ Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream & str_stream)
   bool real_answer = m_traits.equal_2_object()(m_xcurves[id1], m_xcurves[id2]);
   std::cout << "Test: equal( " << m_xcurves[id1] << ", "
             << m_xcurves[id2] << " ) ? " << exp_answer << std::endl;
-  return print_was_successful_or_not(exp_answer, real_answer);
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Make_x_monotone_2.
@@ -650,77 +661,62 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
   std::vector<CGAL::Object> object_vec;
   m_traits.make_x_monotone_2_object()(m_curves[id],
                                       std::back_inserter(object_vec));
+  std::cout << "Test: max_x_monotone( " << m_curves[id]
+            << " ) ? " << std::endl;
 
   unsigned int num;
   str_stream >> num;
-  if (num != object_vec.size()) {
-    std::cerr << "Failed" << std::endl
-              << "Expected size: " << num << std::endl
-              << "Obtained size: " << object_vec.size() << std::endl;
+  if (!compare(num, object_vec.size(), "size")) {
+    print_result(false);
     return false;
   }
   
   Equal_2 equal = m_traits.equal_2_object();
   for (unsigned int i = 0; i < num; ++i) {
-    int type;                           // 0 - point, 1 - x-monotone curve
+    unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
     
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
 
-#if 0
+    unsigned int exp_type = 1;
     const X_monotone_curve_2 * xcv_ptr;
-    xcv_ptr = object_cast<X_monotone_curve_2> (&(object_vec[i]));
-    if (xcv_ptr != NULL)
-#else
-    X_monotone_curve_2 xcv;
-    X_monotone_curve_2 * xcv_ptr = &xcv;
-    bool rc = CGAL::assign(xcv, object_vec[i]);
-    if (rc)
-#endif
-    {
-      if (type != 1) {
-        std::cerr << "Failed" << std::endl
-                  << "Expected a point" << std::endl
-                  << "Obtained an x-monotone curve" << std::endl; 
+    xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
+    if (xcv_ptr != NULL) {
+      if (!compare(type, exp_type, "type")) {
+        print_result(false);
         return false;
       }
       if (!equal(m_xcurves[id], *xcv_ptr)) {
-        std::cerr << "Failed" << std::endl
-                  << "Expected x-monotone curve [" << i << "]: "
+        std::cerr << "Expected x-monotone curve [" << i << "]: "
                   << m_xcurves[id] << std::endl
                   << "Obtained x-monotone curve: "
                   << *xcv_ptr << std::endl;
+        print_result(false);
         return false;
       }
-    } else {
-#if 0
-      const Point_2 * pt_ptr;
-      pt_ptr = object_cast<Point_2> (&(object_vec[i]));
-      CGAL_assertion (pt_ptr != NULL);
-#else
-      Point_2 pt;
-      const Point_2 * pt_ptr = &pt;
-      bool rc = CGAL::assign(pt, object_vec[i]);
-      CGAL_assertion (rc != false);
-#endif
-      if (type != 0) {
-        std::cerr << "Failed" << std::endl
-                  << "Expected an x-monotone curve" << std::endl
-                  << "Obtained a point" << std::endl; 
-        return false;
-      }
-      if (!equal(m_points[id], *pt_ptr)) {
-        std::cerr << "Failed" << std::endl
-                  << "Expected point [" << i << "]: "
-                  << m_points[id] << std::endl
-                  << "Obtained point: "
-                  << *pt_ptr << std::endl;
-        return false;
-      }
+      continue;
+    }
+
+    exp_type = 0;
+    const Point_2 * pt_ptr;
+    pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
+    CGAL_assertion (pt_ptr != NULL);
+    if (!compare(type, exp_type, "type")) {
+      print_result(false);
+      return false;
+    }
+    if (!equal(m_points[id], *pt_ptr)) {
+      std::cerr << "Expected point [" << i << "]: "
+                << m_points[id] << std::endl
+                << "Obtained point: "
+                << *pt_ptr << std::endl;
+      print_result(false);
+      return false;
     }
   }
   object_vec.clear();
+  print_result(true);
   return true;
 }
 
@@ -735,7 +731,83 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
 {
-  return false;
+  typedef T_Traits                              Traits;
+  typedef typename Traits::Point_2              Point_2;
+  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef typename Traits::Curve_2              Curve_2;
+  typedef typename Traits::Equal_2              Equal_2;
+  
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  std::vector<CGAL::Object> object_vec;
+  m_traits.intersect_2_object()(m_xcurves[id1], m_xcurves[id2],
+                                std::back_inserter(object_vec));
+  std::cout << "Test: intersect( " << m_xcurves[id1] << "," << m_xcurves[id2]
+            << " ) ? " << std::endl;
+
+  unsigned int num;
+  str_stream >> num;
+  if (!compare(num, object_vec.size(), "size")) {
+    print_result(false);
+    return false;
+  }
+  Equal_2 equal = m_traits.equal_2_object();
+  for (unsigned int i = 0; i < num; ++i) {
+    unsigned int type;                  // 0 - point, 1 - x-monotone curve
+    str_stream >> type;
+    
+    unsigned int id;                    // The id of the point or x-monotone
+    str_stream >> id;                   // ... curve respectively
+
+    unsigned int monotonicity;
+    if (type == 0) {
+      str_stream >> monotonicity;
+    }
+
+    unsigned int exp_type = 1;
+    const X_monotone_curve_2 * xcv_ptr;
+    xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
+    if (xcv_ptr != NULL) {
+      if (!compare(type, exp_type, "type")) {
+        print_result(false);
+        return false;
+      }
+      if (!equal(m_xcurves[id], *xcv_ptr)) {
+        std::cerr << "Expected x-monotone curve [" << i << "]: "
+                  << m_xcurves[id] << std::endl
+                  << "Obtained x-monotone curve: "
+                  << *xcv_ptr << std::endl;
+        print_result(false);
+        return false;
+      }
+      continue;
+    }
+
+    exp_type = 0;
+    typedef std::pair<Point_2,unsigned int> Point_2_pair;
+    const Point_2_pair * pt_pair_ptr;
+    pt_pair_ptr = CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
+    CGAL_assertion (pt_pair_ptr != NULL);
+    if (!compare(type, exp_type, "type")) {
+      print_result(false);
+      return false;
+    }
+    if (!equal(m_points[id], (*pt_pair_ptr).first)) {
+      std::cerr << "Expected point [" << i << "]: "
+                << m_points[id] << std::endl
+                << "Obtained point: "
+                << (*pt_pair_ptr).first << std::endl;
+      print_result(false);
+      return false;
+    }
+    if (!compare(monotonicity, (*pt_pair_ptr).second, "monotonicity")) {
+      print_result(false);
+      return false;
+    }
+  }
+  object_vec.clear();
+  print_result(true);
+  return true;
 }
 
 /*! Tests Split_2.
@@ -746,7 +818,32 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool Traits_test<T_Traits>::split_wrapper(std::istringstream & str_stream)
 {
-  return false;
+  typedef T_Traits                              Traits;
+  typedef typename Traits::Point_2              Point_2;
+  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef typename Traits::Curve_2              Curve_2;
+  typedef typename Traits::Equal_2              Equal_2;
+  
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  X_monotone_curve_2 cv1, cv2;
+  m_traits.split_2_object()(m_xcurves[id1], m_points[id2], cv1, cv2);
+  std::cout << "Test: split( " << m_xcurves[id1] << "," << m_points[id2]
+            << " ) ? " << std::endl;
+
+  Equal_2 equal = m_traits.equal_2_object();
+  str_stream >> id1 >> id2;                   // ... curve respectively
+
+  if (!equal(m_xcurves[id1], cv1) || !equal(m_xcurves[id2], cv2)) {
+    std::cerr << "Expected x-monotone curves: "
+              << m_xcurves[id1] << ", " << m_xcurves[id2] << std::endl
+              << "Obtained x-monotone curve: "
+              << cv1 << "," << cv2 << std::endl;
+    print_result(false);
+    return false;
+  }
+  print_result(true);
+  return true;
 }
 
 /*! Tests Are_mergeable_2.
@@ -756,7 +853,14 @@ template <class T_Traits>
 bool
 Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
 {
-  return false;
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  bool exp_answer = get_expected_boolean(str_stream);
+  bool real_answer = m_traits.are_mergeable_2_object()(m_xcurves[id1],
+                                                       m_xcurves[id2]);
+  std::cout << "Test: are_mergeable( " << m_xcurves[id1] << ", "
+            << m_xcurves[id2] << " ) ? " << exp_answer << std::endl;
+  return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Tests Merge_2.
@@ -765,7 +869,24 @@ Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool Traits_test<T_Traits>::merge_wrapper(std::istringstream & str_stream)
 {
-  return false;
+  typedef T_Traits                              Traits;
+  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef typename Traits::Equal_2              Equal_2;
+
+  unsigned int id1, id2, id;
+  str_stream >> id1 >> id2 >> id;
+  X_monotone_curve_2 cv;
+  m_traits.merge_2_object()(m_xcurves[id1], m_xcurves[id2], cv);
+  std::cout << "Test: merge( " << m_xcurves[id1] << ", "
+            << m_xcurves[id2] << " ) ? " << m_xcurves[id] << std::endl;
+  Equal_2 equal = m_traits.equal_2_object();
+  if (!equal(m_xcurves[id], cv)) {
+    std::cerr << "Expected x-monotone curve: " << m_xcurves[id] << std::endl
+              << "Obtained x-monotone curve: " << cv << std::endl;
+    return false;
+  }
+  print_result(true);
+  return true;
 }
 
 /*! Tests Approximate_2.
@@ -794,8 +915,10 @@ bool
 Traits_test<T_Traits>::read_point(stream & is,
                                   typename T_Traits::Point_2 & p)
 {
-  CGAL_assertion_msg(0, "Not specialized!!!");
-  return false;
+  Basic_number_type x, y;
+  is >> x >> y;
+  p = typename T_Traits::Point_2(x, y);
+  return true;
 }
 
 template <class T_Traits>
@@ -804,8 +927,13 @@ bool
 Traits_test<T_Traits>::read_xcurve(stream & is,
                                   typename T_Traits::X_monotone_curve_2 & cv)
 {
-  CGAL_assertion_msg(0, "Not specialized!!!");
-  return false;
+  Basic_number_type x1, y1, x2, y2;
+  is >> x1 >> y1 >> x2 >> y2;
+  Point_2 p1(x1, y1);
+  Point_2 p2(x2, y2);
+  CGAL_assertion(p1 != p2);
+  cv = typename T_Traits::X_monotone_curve_2(p1, p2);
+  return true;
 }
 
 template <class T_Traits>
@@ -814,8 +942,13 @@ bool
 Traits_test<T_Traits>::read_curve(stream & is,
                                   typename T_Traits::Curve_2 & cv)
 {
-  CGAL_assertion_msg(0, "Not specialized!!!");
-  return false;
+  Basic_number_type x1, y1, x2, y2;
+  is >> x1 >> y1 >> x2 >> y2;
+  Point_2 p1(x1, y1);
+  Point_2 p2(x2, y2);
+  CGAL_assertion(p1 != p2);
+  cv = typename T_Traits::Curve_2(p1, p2);
+  return true;
 }
 
 #endif

@@ -47,7 +47,7 @@ compile_test()
   local kernel=$3;
   local traits=$4;
 
-  TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS -DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits";
+  TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits";
   echo $TESTSUITE_CXXFLAGS;
   
   echo "Compiling $name ... "
@@ -72,19 +72,13 @@ run_test()
 #  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$name"
-  if [ -f $name.cmd ] ; then
-    COMMAND="$COMMAND `cat $name.cmd`"
-  fi
-  if [ -f $name.cin ] ; then
-    COMMAND="cat $name.cin | $COMMAND"
-  fi
   echo "Executing $name $datafile ... "
   echo
   ulimit -t 1200
   if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
-    echo "   succesful execution   of $name" >> $ERRORFILE
+    echo "   succesful execution of $name $datafile" >> $ERRORFILE
   else
-    echo "   ERROR:    execution   of $name" >> $ERRORFILE
+    echo "   ERROR:    execution of $name $datafile" >> $ERRORFILE
   fi
 }
 
@@ -129,6 +123,117 @@ compile_and_run()
   else
     echo   "   ERROR:    not executed   $name" >> $ERRORFILE
   fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# segment traits
+#---------------------------------------------------------------------#
+test_segment_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_test test_traits data/compare
+    run_test test_traits data/segments/vertex
+    run_test test_traits data/segments/is_vertical
+    run_test test_traits data/segments/compare_y_at_x
+    run_test test_traits data/segments/make_x_monotone
+    run_test test_traits data/segments/intersect
+    run_test test_traits data/segments/split
+    run_test test_traits data/segments/merge
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# non-caching segment traits
+#---------------------------------------------------------------------#
+test_non_caching_segment_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_test test_traits data/compare
+    run_test test_traits data/segments/vertex
+    run_test test_traits data/segments/is_vertical
+    run_test test_traits data/segments/compare_y_at_x
+    run_test test_traits data/segments/make_x_monotone
+    run_test test_traits data/segments/intersect
+    run_test test_traits data/segments/split
+    run_test test_traits data/segments/merge
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# polyline traits
+#---------------------------------------------------------------------#
+test_polyline_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_test test_traits data/compare
+    run_test test_traits data/polylines/vertex
+    run_test test_traits data/polylines/is_vertical
+    run_test test_traits data/polylines/compare_y_at_x
+    run_test test_traits data/polylines/make_x_monotone
+    run_test test_traits data/polylines/intersect
+    run_test test_traits data/polylines/split
+    run_test test_traits data/polylines/merge
+  fi
+#  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# non-caching polyline traits
+#---------------------------------------------------------------------#
+test_non_caching_polyline_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_test test_traits data/compare
+    run_test test_traits data/polylines/vertex
+    run_test test_traits data/polylines/is_vertical
+    run_test test_traits data/polylines/compare_y_at_x
+    run_test test_traits data/polylines/make_x_monotone
+    run_test test_traits data/polylines/intersect
+    run_test test_traits data/polylines/split
+    run_test test_traits data/polylines/merge
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# conic traits
+#---------------------------------------------------------------------#
+test_conic_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_test test_traits data/conics/compare
+    run_test test_traits data/conics/vertex
+    run_test test_traits data/conics/is_vertical
+    run_test test_traits data/conics/compare_y_at_x
+    run_test test_traits data/conics/make_x_monotone
+    run_test test_traits data/conics/intersect
+    run_test test_traits data/conics/split
+    run_test test_traits data/conics/merge
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -147,17 +252,11 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-# function     executable  number type   kernel            traits
-  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
-  else
-    run_test test_traits data/compare
-    run_test test_traits data/vertex
-    run_test test_traits data/vertical
-    run_test test_traits data/x_monotone
-  fi
+  test_segment_traits
+  test_non_caching_segment_traits
+#  test_polyline_traits
+#  test_non_caching_polyline_traits
+#  test_conic_traits
 
 #  compile_and_run point_location
-#  clean_tests
 fi
