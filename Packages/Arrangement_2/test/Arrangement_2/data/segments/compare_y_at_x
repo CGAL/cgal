@@ -1,0 +1,50 @@
+# -----------------------------------------------------------
+# Data block
+# -----------------------------------------------------------
+# Number of points
+7
+1/1 0/1 
+1/1 1/1 
+1/1 2/1 
+0/1 0/1 
+0/1 1/1 
+0/1 2/1 
+2/1 2/1 
+# -----------------------------------------------------------
+# Number of xcurves
+4
+0/1 0/1 2/1 2/1 
+2/1 0/1 0/1 2/1 
+0/1 0/1 0/1 2/1 
+2/1 0/1 2/1 2/1 
+# -----------------------------------------------------------
+# Number of curves
+0
+# -----------------------------------------------------------
+# Execution block
+# -----------------------------------------------------------
+compare_y_at_x       0 0 SMALLER
+compare_y_at_x       1 0 EQUAL
+compare_y_at_x       2 0 LARGER
+# Vertical x-monotone curve:
+compare_y_at_x       3 2 EQUAL
+compare_y_at_x       4 2 EQUAL
+compare_y_at_x       5 2 EQUAL
+#
+compare_y_at_x_left  0 1 1 SMALLER
+compare_y_at_x_left  1 0 1 LARGER
+compare_y_at_x_left  0 0 1 EQUAL
+compare_y_at_x_left  1 1 1 EQUAL
+# Vertical curves:
+compare_y_at_x_left  0 3 6 LARGER
+compare_y_at_x_left  3 0 6 SMALLER
+compare_y_at_x_left  3 3 6 EQUAL
+#
+compare_y_at_x_right 0 1 1 LARGER
+compare_y_at_x_right 1 0 1 SMALLER
+compare_y_at_x_right 0 0 1 EQUAL
+compare_y_at_x_right 1 1 1 EQUAL
+# Vertical curves:
+compare_y_at_x_right 0 2 3 SMALLER
+compare_y_at_x_right 2 0 3 LARGER
+compare_y_at_x_right 2 2 3 EQUAL
