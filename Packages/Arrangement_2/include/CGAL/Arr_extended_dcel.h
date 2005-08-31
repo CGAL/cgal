@@ -48,8 +48,14 @@ private:
 
 public:
 
-  /*! Get the auxiliary data. */
+  /*! Get the auxiliary data (const version). */
   const Data& data () const
+  {
+    return (m_data);
+  }
+
+  /*! Get the auxiliary data (non-const version). */
+  Data& data ()
   {
     return (m_data);
   }
@@ -87,8 +93,14 @@ private:
 
 public:
 
-  /*! Get the auxiliary data. */
+  /*! Get the auxiliary data (const version). */
   const Data& data () const
+  {
+    return (m_data);
+  }
+
+  /*! Get the auxiliary data (non-const version). */
+  Data& data ()
   {
     return (m_data);
   }
@@ -126,8 +138,14 @@ private:
 
 public:
 
-  /*! Get the auxiliary data. */
+  /*! Get the auxiliary data (const version). */
   const Data& data () const
+  {
+    return (m_data);
+  }
+
+  /*! Get the auxiliary data (non-const version). */
+  Data& data ()
   {
     return (m_data);
   }
