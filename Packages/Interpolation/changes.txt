@@ -1,3 +1,10 @@
+31 August 2005 Raphaelle Chaine
+add files 
+include/CGAL/natural_neighbor_coordinates_3.h
+examples/Interpolation/nn_coordinates_3.C
+with its data points examples/Interpolation/data/points3
+The example will be changed to use linear combinations abilities offered by the package.
+
 1 July 2005 Sylvain Pion
 - doc : remove explicit, buggy (because containing underscores)
   and useless indexing commands. 
@@ -79,3 +86,5 @@ Ver 1.1 (28/11/03)  includes first version of surface neighbor coordinates
 
 Ver 1.0 (20/11/03)  first version of two dimensional natural- and regular-
 		    neighbor coordinate computation + interpolation functions
+
+

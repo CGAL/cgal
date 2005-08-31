@@ -37,6 +37,7 @@ all:            \
                 interpolation_2$(EXE_EXT) \
                 linear_interpolation_2$(EXE_EXT) \
                 nn_coordinates_2$(EXE_EXT) \
+                nn_coordinates_3$(EXE_EXT) \
                 rn_coordinates_2$(EXE_EXT) \
                 sibson_interpolation_2$(EXE_EXT) \
                 surface_neighbor_coordinates_3$(EXE_EXT) 
@@ -49,6 +50,9 @@ linear_interpolation_2$(EXE_EXT): linear_interpolation_2$(OBJ_EXT)
 
 nn_coordinates_2$(EXE_EXT): nn_coordinates_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nn_coordinates_2 nn_coordinates_2$(OBJ_EXT) $(LDFLAGS)
+
+nn_coordinates_3$(EXE_EXT): nn_coordinates_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nn_coordinates_3 nn_coordinates_3$(OBJ_EXT) $(LDFLAGS)
 
 rn_coordinates_2$(EXE_EXT): rn_coordinates_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rn_coordinates_2 rn_coordinates_2$(OBJ_EXT) $(LDFLAGS)
@@ -63,6 +67,7 @@ clean: \
                    interpolation_2.clean \
                    linear_interpolation_2.clean \
                    nn_coordinates_2.clean \
+                   nn_coordinates_3.clean \
                    rn_coordinates_2.clean \
                    sibson_interpolation_2.clean \
                    surface_neighbor_coordinates_3.clean 
