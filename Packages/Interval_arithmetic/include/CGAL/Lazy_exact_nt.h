@@ -92,7 +92,7 @@ struct Lazy_construct_rep : public Rep
 {
 
   AT at;
-  ET *et;
+  mutable ET *et;
 
   Lazy_construct_rep ()
       : at(), et(NULL) {}
@@ -121,7 +121,14 @@ public:
       return at;
   }
 
-  const ET & exact()
+  const ET & exact() const
+  {
+    if (et==NULL)
+      update_exact();
+    return *et;
+  }
+  
+   ET & exact()
   {
     if (et==NULL)
       update_exact();
@@ -363,7 +370,6 @@ public :
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x)
   { PTR = new Lazy_lazy_exact_Cst<ET, ET1>(x); }
-
 
   Self operator- () const
   { return new Lazy_exact_Opp<ET>(*this); }
