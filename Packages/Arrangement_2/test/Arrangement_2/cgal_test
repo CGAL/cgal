@@ -183,13 +183,13 @@ test_polyline_traits()
     run_test test_traits data/compare
     run_test test_traits data/polylines/vertex
     run_test test_traits data/polylines/is_vertical
-    run_test test_traits data/polylines/compare_y_at_x
-    run_test test_traits data/polylines/make_x_monotone
-    run_test test_traits data/polylines/intersect
-    run_test test_traits data/polylines/split
-    run_test test_traits data/polylines/merge
+#    run_test test_traits data/polylines/compare_y_at_x
+#    run_test test_traits data/polylines/make_x_monotone
+#    run_test test_traits data/polylines/intersect
+#    run_test test_traits data/polylines/split
+#    run_test test_traits data/polylines/merge
   fi
-#  clean_tests
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -205,11 +205,11 @@ test_non_caching_polyline_traits()
     run_test test_traits data/compare
     run_test test_traits data/polylines/vertex
     run_test test_traits data/polylines/is_vertical
-    run_test test_traits data/polylines/compare_y_at_x
-    run_test test_traits data/polylines/make_x_monotone
-    run_test test_traits data/polylines/intersect
-    run_test test_traits data/polylines/split
-    run_test test_traits data/polylines/merge
+#    run_test test_traits data/polylines/compare_y_at_x
+#    run_test test_traits data/polylines/make_x_monotone
+#    run_test test_traits data/polylines/intersect
+#    run_test test_traits data/polylines/split
+#    run_test test_traits data/polylines/merge
   fi
   clean_tests
 }
@@ -254,8 +254,8 @@ if [ $# -ne 0 ] ; then
 else
   test_segment_traits
   test_non_caching_segment_traits
-#  test_polyline_traits
-#  test_non_caching_polyline_traits
+  test_polyline_traits
+  test_non_caching_polyline_traits
 #  test_conic_traits
 
 #  compile_and_run point_location
