@@ -109,9 +109,12 @@ namespace CGALi {
 
     Line_arc_2(const Segment_2 &s)
       :_support(s.supporting_line())
-      ,_begin(s.source())
-      ,_end(s.target())
-    {}
+    {
+      _begin = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(s.source().x()),
+							 Root_of_2(s.source().y())));
+      _end = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(s.target().x()),
+						       Root_of_2(s.target().y())));
+    }
     
 
     Line_arc_2(const Point_2 &p1,
