@@ -17,6 +17,83 @@ namespace CGAL{
 using CGAL::CircularFunctors::advanced_make_xy_monotone;
 
 
+
+CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
+  construct_polygon_from_bbox(const CGAL::Bbox_2& bb )
+  {
+    typedef CGAL::Simple_cartesian< double > dK;
+    typedef dK::Point_2                      Point_2;
+    
+    CGAL::Polygon_2 < dK > pgn;
+  
+    
+    pgn.insert(pgn.vertices_end(),Point_2(bb.xmin(), bb.ymin()));
+    pgn.insert(pgn.vertices_end(),Point_2(bb.xmax(), bb.ymin()));
+    pgn.insert(pgn.vertices_end(),Point_2(bb.xmax(), bb.ymax()));
+    pgn.insert(pgn.vertices_end(),Point_2(bb.xmin(), bb.ymax()));
+    
+    return pgn;    
+  }
+
+
+template <typename CK>
+CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
+ construct_bounding_hexagon_for_line_arc_2( const typename CK::Line_arc_2 &a) 
+   {
+	typedef  typename CK::Line_arc_2             Line_arc_2;
+	typedef  CGAL::Simple_cartesian<double>      dK;
+	typedef  dK::Point_2                         Point_2;
+	typedef  CGAL::Polygon_2<dK>                 Polygon_2;
+	   
+	CGAL::Bbox_2 src_bb= a.source().bbox(),
+   		     trgt_bb= a.target().bbox();
+		     	  
+	if( (src_bb.xmin()<=trgt_bb.xmin() && src_bb.xmax()>=trgt_bb.xmax()) ||
+	    (src_bb.ymin()<=trgt_bb.ymin() && src_bb.ymax()>=trgt_bb.ymax()) ||
+	    (src_bb.xmin()>=trgt_bb.xmin() && src_bb.xmax()<=trgt_bb.xmax()) ||	  
+	    (src_bb.ymin()>=trgt_bb.ymin() && src_bb.ymax()<=trgt_bb.ymax())  )
+	    
+	    return construct_polygon_from_bbox(src_bb+trgt_bb);
+	    	
+	Polygon_2 pgn;
+	
+	bool tmp;
+	
+	if( (tmp=(src_bb.xmin()<trgt_bb.xmin() && src_bb.ymax()>trgt_bb.ymax())) ||
+	              (trgt_bb.xmin()<src_bb.xmin() && trgt_bb.ymax()>src_bb.ymax()))
+	{
+	  CGAL::Bbox_2 bb1=(tmp)? src_bb : trgt_bb,
+	               bb2=(tmp)? trgt_bb : src_bb;
+	
+	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymin()));
+	  pgn.push_back(Point_2(bb2.xmin(),bb2.ymin()));
+	  pgn.push_back(Point_2(bb2.xmax(),bb2.ymin()));
+	  pgn.push_back(Point_2(bb2.xmax(),bb2.ymax()));
+	  pgn.push_back(Point_2(bb1.xmax(),bb1.ymax()));
+	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymax()));
+	  std::cout<<"MPHKA"<<std::endl;
+	}
+	else if( ( tmp=(src_bb.xmin()<trgt_bb.xmin() && src_bb.ymin()<trgt_bb.ymin())) ||
+	              (trgt_bb.xmin()<src_bb.xmin() && trgt_bb.ymin()<src_bb.ymin()))
+	{
+	  CGAL::Bbox_2 bb1=(tmp)? src_bb : trgt_bb,
+	               bb2=(tmp)? trgt_bb : src_bb;
+	
+	  pgn.push_back(Point_2(bb1.xmax(),bb1.ymin()));
+	  pgn.push_back(Point_2(bb2.xmax(),bb2.ymin()));
+	  pgn.push_back(Point_2(bb2.xmax(),bb2.ymax()));
+	  pgn.push_back(Point_2(bb2.xmin(),bb2.ymax()));
+	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymax()));
+	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymin()));	       
+	  std::cout<<"MPHKA"<<std::endl;	       	       
+	}
+	
+	
+	return pgn;
+   }
+
+
+
 template <typename CK, typename Nested_pair>
 CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
  construct_bounding_hexagon_2( const Nested_pair &n) 
@@ -209,27 +286,6 @@ Output_iterator construct_bounding_hexagons_2(const typename CK::Circular_arc_2 
     return res;
 
   }	
-	
-	
-// Special orientation predicate used in to check to which side of a diagonal line ,of 
-// degree 45 or 135 passing through the point a ,lies point b. The slope of the line
-// (45 or 135) is indicated by the boolean argument. For now,is supposed only to serve
-// the do_intersect predicate for the exagons, thus it serves a kernel encapsulating
-// a lazy nt. 
-
-CGAL::Comparison_result diagonal_orientation(Simple_cartesian<double>::Point_2 a, 
-				             Simple_cartesian<double>::Point_2 b, bool dir)
-  {	
-    int i= ((dir)? -1 :1 );
-    return CGAL::compare( to_interval(b.y()+i*b.x()),to_interval(a.y()+i*a.x()));
-  }	
-	
-
-
-
-
-
-
 
 bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > &p1,
 			     const CGAL::Polygon_2<Simple_cartesian<double> > &p2)
@@ -241,7 +297,7 @@ bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > 
     typedef CGAL::Polygon_2<CK> Polygon_2;
 		
     Polygon_2 a,b;
-    bool pred,direction,tmp;
+    bool pred,tmp;
     CGAL::Comparison_result side;
     Point_2 frst,scnd;
     CGAL::Bbox_2 bb;
@@ -293,38 +349,46 @@ bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > 
       }
 
       pred=(a[0].x()!=a[1].x() && a[0].y()!=a[1].y());
-	
+      
+      	 if(a[pred].y()==bb.ymax() || (pred && a[0].y()==bb.ymax()))
+	   side=SMALLER;
+         else 
+	   side=LARGER;
+      
+    	
       if(pred)
         {
-	  bool temp;
-
-          direction=(a[0].y()<a[1].y());
-				
-	  // Condition implied : is_on_upper_part
-	  side= ( (  (a[1].y()==a[2].y())==direction )? LARGER : SMALLER);
+	  int i;
+	  Line_2 tmp_ln(a[0],a[1]);
 	
-	  for(int i=0;i<b.size();i++)
+	  for(i=0;i<b.size();i++)
 	    {
-	      bool res=(diagonal_orientation(a[0],b[i],direction)==side);
-	      if(temp=(!res && i==0))
-	      break;
-	      else if(!res)
-	      return true;
+	      
+	     
+	      std::pair<double,double> app_y=to_interval(tmp_ln.y_at_x(b[i].x()));
+		
+              if((side==SMALLER && b[i].y()<=app_y.second) ||(side==LARGER && b[i].y()>=app_y.first))
+	        if(i==0)
+	          break;
+	        else 
+	          return true;
 	    }
 	
-	  if(!temp)
+	  if(i!=0)
 	    return false;
 
 	 }
 	
-	 if(a[pred].y()==bb.ymax() || (pred && a[0].y()==bb.ymax()))
-	   side=LARGER;
-         else 
-	   side=SMALLER;
-
+	 
+	  //Condition implied: the segment used for testing is vertical
+	 if(a[2+pred].x()==a[3+pred].x())
+	   return true;
+	 
+	 side=opposite(side);
+	 Line_2 tmp_ln(a[2+pred],a[3+pred]);
+	 
 	 for(int i=0;i<b.size();i++) 
 	 {
-	   Line_2 tmp_ln(a[2+pred],a[3+pred]);
 	   std::pair<double,double> app_y=to_interval(tmp_ln.y_at_x(b[i].x()));
 		
            if((side==SMALLER && b[i].y()<=app_y.second) ||(side==LARGER && b[i].y()>=app_y.first))
@@ -338,12 +402,12 @@ bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > 
 
 
 // This is meant for x_monotone and for non-x_monotone cases
-template < typename Hex_iterator>
-bool do_intersect_hexagons_2(Hex_iterator a_begin, Hex_iterator a_end, Hex_iterator b_begin, Hex_iterator b_end)
+template < typename Hex_iterator1, typename Hex_iterator2 >
+bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_iterator2 b_begin, Hex_iterator2 b_end)
   {
 
-    for(Hex_iterator it1=a_begin;it1!=a_end;it1++)
-      for(Hex_iterator it2=b_begin;it2!=b_end;it2++) 
+    for(Hex_iterator1 it1=a_begin;it1!=a_end;it1++)
+      for(Hex_iterator2 it2=b_begin;it2!=b_end;it2++) 
 	if( !(it2->top_vertex()->y() < it1->bottom_vertex()->y() || 
 	      it2->bottom_vertex()->y() > it1->top_vertex()->y() ||     
 	      it2->right_vertex()->x() < it1->left_vertex()->x() || 
