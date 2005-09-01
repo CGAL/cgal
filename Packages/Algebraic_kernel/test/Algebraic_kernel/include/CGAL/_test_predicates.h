@@ -108,6 +108,131 @@ void _test_solve(AK ak)
   assert(res11.size() == 1);
   assert(res11[0].second == 2u);
   assert(res11[0].first == Root_for_circles_2_2(5, -5));
+
+
+  // only Polynomial_1_2
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res12;
+  theSolve(theConstruct_1_2(1, 1, -5),
+	   theConstruct_1_2(1, -1, 5),
+	   std::back_inserter(res12));
+  assert(res12.size() == 1);
+  assert(res12[0].second == 1u);
+  assert(res12[0].first == Root_for_circles_2_2(0, 5));
+  
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res13;
+  theSolve(theConstruct_1_2(0, 1, -5),
+	   theConstruct_1_2(1, -1, 5),
+	   std::back_inserter(res13));
+  assert(res13.size() == 1);
+  assert(res13[0].second == 1u);
+  assert(res13[0].first == Root_for_circles_2_2(0, 5));
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res14;
+  theSolve(theConstruct_1_2(1, -1, 5),
+	   theConstruct_1_2(0, 1, -5),
+	   std::back_inserter(res14));
+  assert(res14.size() == 1);
+  assert(res14[0].second == 1u);
+  assert(res14[0].first == Root_for_circles_2_2(0, 5));
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res15;
+  theSolve(theConstruct_1_2(1, 0, 0),
+	   theConstruct_1_2(1, -1, 5),
+	   std::back_inserter(res15));
+  assert(res15.size() == 1);
+  assert(res15[0].second == 1u);
+  assert(res15[0].first == Root_for_circles_2_2(0, 5));
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res16;
+  theSolve(theConstruct_1_2(1, -1, 5),
+	   theConstruct_1_2(1, 0, 0),
+	   std::back_inserter(res16));
+  assert(res16.size() == 1);
+  assert(res16[0].second == 1u);
+  assert(res16[0].first == Root_for_circles_2_2(0, 5));
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res17;
+  theSolve(theConstruct_1_2(0, 1, -5),
+	   theConstruct_1_2(1, 0, 0),
+	   std::back_inserter(res17));
+  assert(res17.size() == 1);
+  assert(res17[0].second == 1u);
+  assert(res17[0].first == Root_for_circles_2_2(0, 5));
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res18;
+  theSolve(theConstruct_1_2(1, 0, 0),
+	   theConstruct_1_2(0, 1, -5),
+	   std::back_inserter(res18));
+  assert(res18.size() == 1);
+  assert(res18[0].second == 1u);
+  assert(res18[0].first == Root_for_circles_2_2(0, 5));
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res19;
+  theSolve(theConstruct_1_2(1, 0, 0),
+	   theConstruct_1_2(1, 0, 0),
+	   std::back_inserter(res19));
+  assert(res19.size() == 0);
+
+   std::vector< std::pair<Root_for_circles_2_2, size_t> > res20;
+  theSolve(theConstruct_1_2(1, 0, 0),
+	   theConstruct_1_2(1, 0, 5),
+	   std::back_inserter(res20));
+  assert(res20.size() == 0);
+  
+ 
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res21;
+  theSolve(theConstruct_1_2(0, 1, -5),
+	   theConstruct_1_2(0, 1, -5),
+	   std::back_inserter(res21));
+  assert(res21.size() == 0);
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res22;
+  theSolve(theConstruct_1_2(0, 1, -5),
+	   theConstruct_1_2(0, 1, 0),
+	   std::back_inserter(res22));
+  assert(res22.size() == 0);
+	   
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res23;
+  theSolve(theConstruct_1_2(1, -1, 5),
+	   theConstruct_1_2(1, -1, 5),
+	   std::back_inserter(res23));
+  assert(res23.size() == 0);
+
+  std::vector< std::pair<Root_for_circles_2_2, size_t> > res24;
+  theSolve(theConstruct_1_2(1, -1, 5),
+	   theConstruct_1_2(2, -2, 15),
+	   std::back_inserter(res24));
+  assert(res24.size() == 0);
+
+  CGAL::Random generatorOfgenerator;
+  int random_seed = generatorOfgenerator.get_int(0, 123456);
+  std::cout << "random_seed = " << random_seed << std::endl;
+  CGAL::Random theRandom(random_seed);
+  int random_max = 5;
+  int random_min = -5;
+
+  typename AK::Sign_at theSigh_at =
+    ak.sign_at_object();
+  
+  for(std::size_t i = 0; i < 500; i++){
+    int a1 = theRandom.get_int(random_min,random_max);
+    int b1 = theRandom.get_int(random_min,random_max);
+    int c1 = theRandom.get_int(random_min,random_max);
+    int a2 = theRandom.get_int(random_min,random_max);
+    int b2 = theRandom.get_int(random_min,random_max);
+    int c2 = theRandom.get_int(random_min,random_max);
+    std::vector< std::pair<Root_for_circles_2_2, size_t> > res;
+    theSolve(theConstruct_1_2(a1, b1, c1),
+	     theConstruct_1_2(a2, b2, c2),
+	     std::back_inserter(res));
+    for (std::size_t j = 0 ; j < res.size() ; j++){
+      assert(res[j].second == 1u);
+      assert(theSigh_at(theConstruct_1_2(a1, b1, c1),
+			res[j].first) == CGAL::ZERO);
+      assert(theSigh_at(theConstruct_1_2(a2, b2, c2),
+			res[j].first) == CGAL::ZERO);
+    }
+  }
   
 }
 
