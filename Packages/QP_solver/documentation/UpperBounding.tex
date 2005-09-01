@@ -911,7 +911,7 @@ Equation~(\ref{eq:KKT_lagrange_id_j}) we have to evaluate the components of
 w_{N}:=2D_{N, N}x_{N}
 \end{equation}
 among other summands.
-Instead of evaluating these two expressions from scratch we shall update
+Instead of evaluating these two vectors from scratch we shall update
 the vectors $r$ and $w$ each time the entities they depend on change.
 Since slack and artficial variables have by definition
 value zero if they are nonbasic,
@@ -920,14 +920,18 @@ inner products, regardless of the phase, such that by introducing
 \begin{eqnarray}
 N_{O}:=N \cap O && N_{S}:=N \cap S
 \end{eqnarray} 
-we may write
+we may write for $w$
 \begin{equation}
 w_{N_{O}}:=2D_{N_{O} , N_{O}}x_{N_{O}}
 \end{equation}
+and for $r$, since we work with the reduced basis matrix
+$\check{M}_{B}$,
 \begin{equation}
 \left(
 \begin{array}{c}
 r_{C} \\
+\hline
+r_{S_{B}} \\
 \hline
 r_{B}
 \end{array}
@@ -937,18 +941,32 @@ r_{B}
 \begin{array}{c}
 A_{C, N_{O}} \\
 \hline
+A_{S_{B}, N_{O}} \\
+\hline
 2D_{B, N_{O}}
 \end{array}
 \right)
-x_{N_{O}}
+x_{N_{O}},
+\end{equation}
+the part $r_{S_{B}}$ of the vector $r$ is needed for the computation of the
+basic slack variables; we use the feasibility
+constraints~(\ref{eq:QP_UB_sub_feas_cons}), sucht that we can express
+$x_{B_{S}}$ as
+\begin{equation}
+x_{B_{S}}
+=
+A_{S_{B}, B_{S}}^{-1}\left(b_{S_{B}}-r_{S_{B}}-A_{S_{B}, B_{O}}x_{B_{O}}\right)
 \end{equation}
 
 \marginpar{computation of $B_{S}$}
+\marginpar{type issues for vector $w$, choose right D accessor}
 
 
 \subsection{The QP-Updates $\mathbf{U_{Z_{1}}}, \mathbf{U_{Z_{2}}},
   \mathbf{U_{Z_{3}}}, \mathbf{U_{Z_{4}}}$ and $\mathbf{U_{1}}, \mathbf{U_{2}},
   \mathbf{U_{3}}, \mathbf{U_{4}}$}
+The QP-updates occur only during phaseII for an LP-problem which implies that
+we don't have to consider artificial variables in these updates.
 
 \subsubsection{$\mathbf{U_{Z_{1}}}$:$\quad j \in N_{O}$ replaces $i \in B_{O}$:}
 \begin{equation}
@@ -1011,6 +1029,8 @@ x_{i}^{\prime}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1018,6 +1038,8 @@ r_{B_{O}^{\prime}}^{\prime}
 \left(
 \begin{array}{c}
 A_{C, N_{O} \setminus\{j\} \cup \{i\}} \\
+\hline
+A_{S_{B}, N_{O} \setminus\{j\} \cup \{i\}} \\
 \hline
 2D_{B_{O} \setminus \{i\}, N_{O} \setminus\{j\} \cup \{i\}} \\
 \hline
@@ -1031,6 +1053,8 @@ x_{N_{O} \setminus\{j\} \cup \{i\}}^{\prime}
 \begin{array}{c}
 r_{C} \\
 \hline
+r_{S_{B}} \\
+\hline
 r_{B_{O} \setminus \{i\}} \\
 \hline
 2D_{j, N_{O}}x_{N_{O}}
@@ -1040,6 +1064,8 @@ r_{B_{O} \setminus \{i\}} \\
 \left(
 \begin{array}{c}
 A_{C, j} \\
+\hline
+A_{S_{B}, j} \\
 \hline
 2D_{B_{O} \setminus \{i\}, j} \\
 \hline
@@ -1052,6 +1078,47 @@ x_{j}
 \begin{array}{c}
 A_{C, i} \\
 \hline
+A_{S_{B}, i} \\
+\hline
+2D_{B_{O} \setminus \{i\}, i} \\
+\hline
+2D_{j,i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{S_{B}} \\
+\hline
+r_{B_{O} \setminus \{i\}} \\
+\hline
+w_{j}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O} \setminus \{i\}, j} \\
+\hline
+2D_{j, j}
+\end{array}
+\right)
+x_{j}
++
+\left(
+\begin{array}{c}
+A_{C, i} \\
+\hline
+A_{S_{B}, i} \\
+\hline
 2D_{B_{O} \setminus \{i\}, i} \\
 \hline
 2D_{j,i}
@@ -1059,6 +1126,9 @@ A_{C, i} \\
 \right)
 x_{i}^{\prime}
 \end{eqnarray}
+where in the last equality for $r_{B_{O}^{\prime}}^{\prime}$ we use $w_{j}$,
+such that the only dot product to be computed is for the update
+$w_{i}^{\prime}$.
 
 \subsubsection{$\mathbf{U_{Z_{2}}}$:$\quad j \in N_{S}$ replaces $i \in B_{O}$:}
 \begin{equation}
@@ -1112,6 +1182,8 @@ x_{i}^{\prime}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1119,6 +1191,10 @@ r_{B_{O}^{\prime}}^{\prime}
 \left(
 \begin{array}{c}
 A_{C \setminus \{\sigma(j)\}, N_{O} \cup \{i\}} \\
+\hline
+A_{S_{B}, N_{O} \cup \{i\}} \\
+\hline
+A_{\sigma(j), N_{O} \cup \{i\}} \\
 \hline
 2D_{B_{O} \setminus \{i\}, N_{O} \cup \{i\}} 
 \end{array}
@@ -1130,6 +1206,10 @@ x_{N_{O} \cup \{i\}}^{\prime}
 \begin{array}{c}
 r_{C \setminus \{\sigma(j)\}} \\
 \hline
+r_{S_{B}} \\
+\hline
+A_{\sigma(j), N_{O}}x_{N_{O}} \\
+\hline
 r_{B_{O} \setminus \{i\}}
 \end{array}
 \right)
@@ -1138,11 +1218,44 @@ r_{B_{O} \setminus \{i\}}
 \begin{array}{c}
 A_{C \setminus \{\sigma(j)\}, i} \\
 \hline
+A_{S_{B}, i} \\
+\hline
+A_{\sigma(j), i} \\
+\hline
+2D_{B_{O} \setminus \{i\}, i}
+\end{array}
+\right)
+x_{i}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{S_{B}} \\
+\hline
+r_{\gamma_{C}(\sigma(j))} \\
+\hline
+r_{B_{O} \setminus \{i\}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, i} \\
+\hline
+A_{S_{B}, i} \\
+\hline
+A_{\gamma_{C}(\sigma(j)), i} \\
+\hline
 2D_{B_{O} \setminus \{i\}, i}
 \end{array}
 \right)
 x_{i}^{\prime}
 \end{eqnarray}
+where in the last equality for $r_{\sigma(j)}^{\prime}$ we use
+$r_{\gamma_{C}(\sigma(j))}$, such that the only dot product to be computed
+is for the update $w_{i}^{\prime}$. 
 
 \subsubsection{$\mathbf{U_{Z_{3}}}$:$\quad j \in N_{O}$ replaces $i \in B_{S}$:}
 \begin{equation}
@@ -1176,6 +1289,8 @@ w_{N_{O} \setminus \{j\}}
 \left(
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
+\hline
+r_{S_{B}^{\prime}}^{\prime} \\
 \hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
@@ -1219,7 +1334,35 @@ A_{\sigma(i), j} \\
 \end{array}
 \right)
 x_{j}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{\gamma_{S_{B}}(\sigma(i))} \\
+\hline
+r_{B_{O}} \\
+\hline
+w_{j}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{\sigma(i), j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+2D_{j, j}
+\end{array}
+\right)
+x_{j}
 \end{eqnarray}
+where in the last equality for $r_{\sigma(i)}^{\prime}$ and $r_{j}^{\prime}$ we
+use $r_{\gamma_{S_{B}}(\sigma(i))}$ and $w_{j}$ respectively.
 
 \subsubsection{$\mathbf{U_{Z_{4}}}$:$\quad j \in N_{S}$ replaces $i \in B_{S}$:}
 \begin{equation}
@@ -1251,6 +1394,8 @@ w_{N_{O}}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1260,6 +1405,10 @@ r_{B_{O}^{\prime}}^{\prime}
 A_{C \setminus \{\sigma(j)\}, N_{O}} \\
 \hline
 A_{\sigma(i), N_{O}} \\
+\hline
+A_{S_{B} \setminus \{\sigma(i)\}, N_{O}} \\
+\hline
+A_{\sigma(j), N_{O}} \\
 \hline
 2D_{B_{O}, N_{O}}
 \end{array}
@@ -1273,10 +1422,32 @@ r_{C \setminus \{\sigma(j)\}} \\
 \hline
 A_{\sigma(i), N_{O}}x_{N_{O}} \\
 \hline
+r_{S_{B} \setminus \{\sigma(i)\}} \\
+\hline
+A_{\sigma(j), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{\gamma_{S_{B}}(\sigma(i))} \\
+\hline
+r_{S_{B} \setminus \{\sigma(i)\}} \\
+\hline
+r_{\gamma_{C}(\sigma(j))} \\
+\hline
 r_{B_{O}}
 \end{array}
 \right)
 \end{eqnarray}
+where in the last equality for $r_{\sigma(i)}^{\prime}$ and
+$r_{\sigma(i)}^{\prime}$ we use $r_{\gamma_{S_{B}}(\sigma(i))}$ and
+$r_{\gamma_{C}(\sigma(j))}$ respectively.
 
 \subsubsection{$\mathbf{U_{1}}$:$\quad j \in N_{O}$ enters the basis:}
 \begin{equation}
@@ -1309,6 +1480,8 @@ w_{N_{O} \setminus \{j\}} - 2D_{N_{O} \setminus \{j\}, j}x_{j}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1316,6 +1489,8 @@ r_{B_{O}^{\prime}}^{\prime}
 \left(
 \begin{array}{c}
 A_{C, N_{O} \setminus \{j\}} \\
+\hline
+A_{S_{B}, N_{O} \setminus \{j\}} \\
 \hline
 2D_{B_{O}, N_{O} \setminus \{j\}} \\
 \hline
@@ -1329,6 +1504,8 @@ x_{N_{O} \setminus \{j\}}^{\prime}
 \begin{array}{c}
 r_{C} \\
 \hline
+r_{S_{B}} \\
+\hline
 r_{B_{O}} \\
 \hline
 2D_{j, N_{O}}x_{N_{O}}
@@ -1339,6 +1516,34 @@ r_{B_{O}} \\
 \begin{array}{c}
 A_{C, j} \\
 \hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+2D_{j, j}
+\end{array}
+\right)
+x_{j}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{S_{B}} \\
+\hline
+r_{B_{O}} \\
+\hline
+w_{j}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
 2D_{B_{O}, j} \\
 \hline
 2D_{j, j}
@@ -1346,6 +1551,7 @@ A_{C, j} \\
 \right)
 x_{j}
 \end{eqnarray}
+where in the last equality for $r_{j}^{\prime}$ we use $w_{j}$. 
 
 \subsubsection{$\mathbf{U_{2}}$:$\quad i \in B_{O}$ leaves the basis:}
 \begin{equation}
@@ -1399,6 +1605,8 @@ x_{i}^{\prime}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1406,6 +1614,8 @@ r_{B_{O}^{\prime}}^{\prime}
 \left(
 \begin{array}{c}
 A_{C, N_{O} \cup \{i\}} \\
+\hline
+A_{S_{B}, N_{O} \cup \{i\}} \\
 \hline
 2D_{B_{O} \setminus \{i\}, N_{O} \cup \{i\}} 
 \end{array}
@@ -1417,6 +1627,8 @@ x_{N_{O} \cup \{i\}}^{\prime}
 \begin{array}{c}
 r_{C} \\
 \hline
+r_{S_{B}} \\
+\hline
 r_{B_{O} \setminus \{i\}}
 \end{array}
 \right)
@@ -1425,11 +1637,14 @@ r_{B_{O} \setminus \{i\}}
 \begin{array}{c}
 A_{C, i} \\
 \hline
+A_{S_{B}, i} \\
+\hline
 2D_{B_{O} \setminus \{i\}, i}
 \end{array}
 \right)
 x_{i}^{\prime}
 \end{eqnarray}
+The only dot product to be computed is for the update of $w_{i}^{\prime}$.
 
 \subsubsection{$\mathbf{U_{3}}$:$\quad j \in N_{S}$ enters the basis:}
 \begin{equation}
@@ -1461,6 +1676,8 @@ w_{N_{O}}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1468,6 +1685,10 @@ r_{B_{O}^{\prime}}^{\prime}
 \left(
 \begin{array}{c}
 A_{C \setminus \{\sigma(j)\}, N_{O}} \\
+\hline
+A_{S_{B}, N_{O}} \\
+\hline
+A_{\sigma(j), N_{O}} \\
 \hline
 2D_{B_{O}, N_{O}}
 \end{array}
@@ -1479,24 +1700,43 @@ x_{N_{O}}^{\prime}
 \begin{array}{c}
 r_{C \setminus \{\sigma(j)\}} \\
 \hline
+r_{S_{B}} \\
+\hline
+A_{\sigma(j), N_{O}}x_{N_{O}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{S_{B}} \\
+\hline
+r_{\gamma_{C}(\sigma(j))} \\
+\hline
 r_{B_{O}}
 \end{array}
 \right)
 \end{eqnarray}
+where in the last equality for $r_{\sigma(j)}^{\prime}$ we used
+$r_{\gamma_{C}(\sigma(j))}$.
 
-\subsubsection{$\mathbf{U_{4}}$:$\quad j \in B_{S}$ leaves the basis:}
+\subsubsection{$\mathbf{U_{4}}$:$\quad i \in B_{S}$ leaves the basis:}
 \begin{equation}
 \label{update:slack_leaves_basis}
 \begin{array}{ccccccc}
-C^{\prime}      &:=&  C \cup \{\sigma(j)\}
+C^{\prime}      &:=&  C \cup \{\sigma(i)\}
 &\quad\quad&
-S_{B}^{\prime}  &:=&  S_{B} \setminus \{\sigma(j)\}  \\
+S_{B}^{\prime}  &:=&  S_{B} \setminus \{\sigma(i)\}  \\
 B_{O}^{\prime}  &:=&  B_{O}
 &\quad\quad&
-B_{S}^{\prime}  &:=&  B_{S} \setminus \{j\}  \\
+B_{S}^{\prime}  &:=&  B_{S} \setminus \{i\}  \\
 N_{O}^{\prime}  &:=&  N_{O}
 &\quad\quad&
-N_{S}^{\prime}  &:=&  N_{S} \cup \{j\} 
+N_{S}^{\prime}  &:=&  N_{S} \cup \{i\} 
 \end{array}
 \end{equation}
 
@@ -1514,6 +1754,8 @@ w_{N_{O}}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1522,7 +1764,9 @@ r_{B_{O}^{\prime}}^{\prime}
 \begin{array}{c}
 A_{C, N_{O}} \\
 \hline
-A_{\sigma(j), N_{O}} \\
+A_{\sigma(i), N_{O}} \\
+\hline
+A_{S_{B} \setminus \{\sigma(i)\}, N_{O}} \\
 \hline
 2D_{B_{O}, N_{O}} 
 \end{array}
@@ -1534,12 +1778,29 @@ x_{N_{O}}^{\prime}
 \begin{array}{c}
 r_{C} \\
 \hline
-A_{\sigma(j), N_{O}}x_{N_{O}} \\
+A_{\sigma(i), N_{O}}x_{N_{O}} \\
+\hline
+r_{S_{B} \setminus \{\sigma(i)\}} \\
+\hline
+r_{B_{O}}
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{\gamma_{S_{B}}(\sigma(i))} \\
+\hline
+r_{S_{B} \setminus \{\sigma(i)\}} \\
 \hline
 r_{B_{O}}
 \end{array}
 \right)
 \end{eqnarray}
+where in the last equatlity for $r_{\sigma(i)}^{\prime}$ we used
+$r_{\gamma_{S_{B}}(\sigma(i))}$.
 
 
 \subsection{The LP-Updates $\mathbf{U_{5}}, \mathbf{U_{6}}, 
@@ -1569,6 +1830,8 @@ N_{S}^{\prime}  &:=&  N_{S}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1577,20 +1840,21 @@ r_{B_{O}^{\prime}}^{\prime}
 \begin{array}{c}
 A_{C, N_{O}  \setminus \{j\} \cup \{i\}} \\
 \hline
-0_{B_{O} \setminus \{i\}, N_{O}  \setminus \{j\} \cup \{i\}} \\
+A_{S_{B}, N_{O} \setminus \{j\} \cup \{i\}} \\
 \hline
-0_{j, N_{O}  \setminus \{j\} \cup \{i\}} 
+0
 \end{array}
 \right)
-x_{N_{O}  \setminus \{j\} \cup \{i\}}^{\prime} \\
+x_{N_{O}  \setminus \{j\} \cup \{i\}}^{\prime}
+\nonumber \\
 &=&
 \left(
 \begin{array}{c}
 r_{C} \\
 \hline
-r_{B_{O} \setminus \{i\}} \\
+r_{S_{B}} \\
 \hline
-0_{j, N_{O}}x_{N_{O}}
+0
 \end{array}
 \right)
 -
@@ -1598,9 +1862,9 @@ r_{B_{O} \setminus \{i\}} \\
 \begin{array}{c}
 A_{C, j} \\
 \hline
-0_{B_{O} \setminus \{i\}, j} \\
+A_{S_{B}, j} \\
 \hline
-0_{j, j}
+0
 \end{array}
 \right)
 x_{j}
@@ -1609,13 +1873,16 @@ x_{j}
 \begin{array}{c}
 A_{C, i} \\
 \hline
-0_{B_{O} \setminus \{i\}, i} \\
+A_{S_{B}, i} \\
 \hline
-0_{j,i}
+0
 \end{array}
 \right)
 x_{i}^{\prime}
 \end{eqnarray}
+
+Note that this update of $w$ and $r$ comes in phaseI in 4 varieties,
+depending on whether $j \in art$ or $i \in art$ or not.
 
 \subsubsection{$\mathbf{U_{6}}$:$\quad j \in N_{S}$ replaces $i \in B_{S}$:}
 \begin{equation}
@@ -1638,6 +1905,8 @@ N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\} \cup \{i\}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1648,10 +1917,15 @@ A_{C \setminus \{\sigma(j)\}, N_{O}} \\
 \hline
 A_{\sigma(i), N_{O}} \\
 \hline
-2D_{B_{O}, N_{O}}
+A_{S_{B} \setminus \{\sigma(i)\}, N_{O}} \\
+\hline
+A_{\sigma(j), N_{O}} \\
+\hline
+0
 \end{array}
 \right)
-x_{N_{O}}^{\prime} \\
+x_{N_{O}}^{\prime}
+\nonumber \\
 &=&
 \left(
 \begin{array}{c}
@@ -1659,10 +1933,32 @@ r_{C \setminus \{\sigma(j)\}} \\
 \hline
 A_{\sigma(i), N_{O}}x_{N_{O}} \\
 \hline
-r_{B_{O}}
+r_{S_{B} \setminus \{\sigma(i)\}} \\
+\hline
+A_{\sigma(j), N_{O}}x_{N_{O}} \\
+\hline
+0
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{\gamma_{S_{B}}(\sigma(i))} \\
+\hline
+r_{S_{B} \setminus \{\sigma(i)\}} \\
+\hline
+r_{\gamma_{C}(\sigma(j))} \\
+\hline
+0
 \end{array}
 \right)
 \end{eqnarray}
+where in the last equality for $r_{\sigma(i)}^{\prime}$ and
+$r_{\sigma(i)}^{\prime}$ we use $r_{\gamma_{S_{B}}(\sigma(i))}$ and
+$r_{\gamma_{C}(\sigma(j))}$ respectively.
 
 
 \subsubsection{$\mathbf{U_{7}}$:$\quad j \in N_{O}$ replaces $i \in B_{S}$:}
@@ -1686,6 +1982,8 @@ N_{S}^{\prime}  &:=&  N_{S} \cup \{i\}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1696,12 +1994,13 @@ A_{C, N_{O} \setminus \{j\}} \\
 \hline
 A_{\sigma(i), N_{O} \setminus \{j\}} \\
 \hline
-2D_{B_{O}, N_{O} \setminus \{j\}} \\
+A_{S_{B} \setminus \{\sigma(i)\}, N_{O} \setminus \{j\}} \\
 \hline
-2D_{j, N_{O} \setminus \{j\}}
+0
 \end{array}
 \right)
-x_{N_{O} \setminus \{j\}}^{\prime} \\
+x_{N_{O} \setminus \{j\}}^{\prime}
+\nonumber \\
 &=&
 \left(
 \begin{array}{c}
@@ -1709,9 +2008,9 @@ r_{C} \\
 \hline
 A_{\sigma(i), N_{O}}x_{N_{O}} \\
 \hline
-r_{B_{O}} \\
+r_{S_{B} \setminus \{\sigma(i)\}} \\
 \hline
-0_{j, N_{O}}x_{N_{O}}
+0
 \end{array}
 \right)
 -
@@ -1721,13 +2020,42 @@ A_{C, j} \\
 \hline
 A_{\sigma(i), j} \\
 \hline
-0_{B_{O}, j} \\
+A_{S_{B} \setminus \{\sigma(i)\}, j} \\
 \hline
-0_{j,j}
+0
+\end{array}
+\right)
+x_{j}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C} \\
+\hline
+r_{\gamma_{S_{B}}(\sigma(i))} \\
+\hline
+r_{S_{B} \setminus \{\sigma(i)\}} \\
+\hline
+0
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{\sigma(i), j} \\
+\hline
+A_{S_{B} \setminus \{\sigma(i)\}, j} \\
+\hline
+0
 \end{array}
 \right)
 x_{j}
 \end{eqnarray}
+where in the last equality for $r_{\sigma(i)}^{\prime}$ we used
+$r_{\gamma_{S_{B}}(\sigma(i))}$. Note that this update of $w$ and $r$ comes
+in phaseI in 2 varieties, depending on whether $j \in art$ or not.
 
 \subsubsection{$\mathbf{U_{8}}$:$\quad j \in N_{S}$ replaces $i \in B_{O}$:}
 \begin{equation}
@@ -1750,6 +2078,8 @@ N_{S}^{\prime}  &:=&  N_{S} \setminus \{j\}
 \begin{array}{c}
 r_{C^{\prime}}^{\prime} \\
 \hline
+r_{S_{B}^{\prime}}^{\prime} \\
+\hline
 r_{B_{O}^{\prime}}^{\prime}
 \end{array}
 \right)
@@ -1758,16 +2088,25 @@ r_{B_{O}^{\prime}}^{\prime}
 \begin{array}{c}
 A_{C \setminus \{\sigma(j)\}, N_{O} \cup \{i\}} \\
 \hline
-2D_{B_{O} \setminus \{i\}, N_{O} \cup \{i\}}
+A_{S_{B}, N_{O} \cup \{i\}} \\
+\hline
+A_{\sigma(j), N_{O} \cup \{i\}} \\
+\hline
+0
 \end{array}
 \right)
-x_{N_{O} \cup \{i\}}^{\prime} \\
+x_{N_{O} \cup \{i\}}^{\prime}
+\nonumber \\
 &=&
 \left(
 \begin{array}{c}
 r_{C \setminus \{\sigma(j)\}} \\
 \hline
-r_{B_{O} \setminus \{i\}}
+r_{S_{B}} \\
+\hline
+A_{\sigma(j), N_{O}} \\
+\hline
+0
 \end{array}
 \right)
 +
@@ -1775,12 +2114,44 @@ r_{B_{O} \setminus \{i\}}
 \begin{array}{c}
 A_{C \setminus \{\sigma(j)\}, i} \\
 \hline
-0_{B_{O} \setminus \{i\}, i}
+A_{S_{B}, i} \\
+\hline
+A_{\sigma(j), i} \\
+\hline
+0
+\end{array}
+\right)
+x_{i}^{\prime}
+\nonumber \\
+&=&
+\left(
+\begin{array}{c}
+r_{C \setminus \{\sigma(j)\}} \\
+\hline
+r_{S_{B}} \\
+\hline
+r_{\gamma_{C}((\sigma(j))} \\
+\hline
+0
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+A_{C \setminus \{\sigma(j)\}, i} \\
+\hline
+A_{S_{B}, i} \\
+\hline
+A_{\sigma(j), i} \\
+\hline
+0
 \end{array}
 \right)
 x_{i}^{\prime}
 \end{eqnarray}
-
+where in the last equality for $r_{\sigma(j)}^{\prime}$ we used
+$r_{\gamma_{C}((\sigma(j))}$. Note that this update of $w$ and $r$ comes in
+phaseI in 2 varieties, depending on $i \in art$ or not.
 
 \section{Pricing strategies implementation issues}
 The $\mu_{j}$, $j \in N$, for the pricing step are computed according to
