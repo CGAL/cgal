@@ -45,55 +45,53 @@ namespace QP_MPS_detail {
 
 } // QP_MPS_detail
 
-template<class Traits>
-class QP_MPS_instance;
-
-template<typename IT_,  // Warning: IT_ must support EXACT division by
-	                // 2 (so x/2 must be exactly representable in
-	                // IT_).  The reason is that the QMATRIX
-	                // section of the MPS format stores the matrix
-	                // 2*D and the QP-solver needs D, so we need
-	                // to divide by 2.  Note: If the MPS stream is
-	                // known to only contain a DMATRIX section,
-	                // this warning can be neglected because in a
-	                // DMATRIX section, D is stored (and not 2*D).
-	                // (See also method D_format_type().)
-	 typename ET_,
-	 typename Is_linear_,
-	 typename Is_symmetric_,
-	 typename Has_equalities_only_and_full_rank_,
-	 typename Is_in_standard_form_,
-	 typename Use_sparse_representation_for_D_=Tag_false> // todo: maybe
-                                                    // add optional sparse
-                                                    // representation for A
-                                                    // as well?
-                                                    // Note: must be Tag_false
-                                                    // currently (Tag_true
-                                                    // not yet implemented).
-class QP_solver_MPS_traits_d {
- template<class Traits> friend class QP_MPS_instance;
-
+template<typename IT_,  // The input number type: the numbers in the
+			// MPS stream are expected to be of this type
+			// and are read using IT_'s operator>>.
+			// Warning: IT_ must support EXACT division by
+			// 2 (so x/2 must be exactly representable in
+			// IT_).  The reason is that the QMATRIX
+			// section of the MPS format stores the matrix
+			// 2*D and the QP-solver needs D, so we need
+			// to divide by 2.  Note: If the MPS stream is
+			// known to only contain a DMATRIX section,
+			// this warning can be neglected because in a
+			// DMATRIX section, D is stored (and not 2*D).
+			// (See also method D_format_type().)
+	 typename ET_,  // The exact number type: this number type is
+			// used to compute the rank of the matrix A,
+			// if need be (see method
+			// has_equalities_only_and_full_rank()).
+			// Also, if you are going to invoke the
+			// QP_solver using the traits
+			// QP_solver_MPS_traits_d<Traits,...> then ET_
+			// will be the number type the QP_solver uses
+			// for its exact computations.  Requirements:
+			// IT_ must be losslessly convertible to ET_.
+	 typename Use_sparse_representation_for_D_=Tag_false,
+                        // Use a sparse representation for D. Note:
+                        // must be Tag_false currently (Tag_true not
+                        // yet implemented).
+	 typename Use_sparse_representation_for_A_=Tag_false>
+                        // Use a sparse representation for A. Note:
+                        // must be Tag_false currently (Tag_true not
+                        // yet implemented).
+class QP_MPS_instance {
 public:
-  typedef IT_ IT;                       // input type (i.e., type of the
-                                        // numbers in the MPS stream)
-  typedef ET_ ET;                       // exact number type
-
-private:
-  typedef std::vector<IT>     Vector;
-  typedef std::vector<Vector> Matrix;
-  typedef QP_MPS_detail::Begin<Vector> Beginner;
-  typedef CGAL::Join_input_iterator_1<typename Matrix::const_iterator,
-			      Beginner >
-                                          Vector_iterator;
-  typedef typename Vector::const_iterator Entry_iterator;
-  typedef std::vector<bool> F_vector;
-  typedef F_vector::const_iterator F_vector_iterator;
-
-public:
+  typedef IT_ IT;
+  typedef ET_ ET;
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
 
 private:
-  typedef std::vector<Row_type> Row_type_vector;
+  typedef std::vector<IT>                 Vector;
+  typedef std::vector<Vector>             Matrix;
+  typedef QP_MPS_detail::Begin<Vector>    Beginner;
+  typedef CGAL::Join_input_iterator_1<typename Matrix::const_iterator,
+			      Beginner >  Vector_iterator;
+  typedef typename Vector::const_iterator Entry_iterator;
+  typedef std::vector<bool>               F_vector;
+  typedef F_vector::const_iterator        F_vector_iterator;
+  typedef std::vector<Row_type>           Row_type_vector;
 
 public:
   // iterators over the input matrices and vectors:
@@ -101,56 +99,23 @@ public:
   typedef Entry_iterator    B_iterator;
   typedef Entry_iterator    C_iterator;
   typedef Vector_iterator   D_iterator;
+  typedef Const_oneset_iterator< Const_oneset_iterator<IT> >
+                            Zero_D_iterator;
   typedef F_vector_iterator FU_iterator;
   typedef F_vector_iterator FL_iterator;
   typedef Entry_iterator    U_iterator;
   typedef Entry_iterator    L_iterator;
 
   typedef typename Row_type_vector::const_iterator Row_type_iterator;
-  typedef Is_linear_                         Is_linear;
-  typedef Is_symmetric_                      Is_symmetric;
-  typedef Has_equalities_only_and_full_rank_ Has_equalities_only_and_full_rank;
-  typedef Is_in_standard_form_               Is_in_standard_form;
-
   typedef Use_sparse_representation_for_D_   Use_sparse_representation_for_D;
-};
+  typedef Use_sparse_representation_for_A_   Use_sparse_representation_for_A;
 
-template<class Traits>
-class QP_MPS_instance {
 private:
-  typedef typename Traits::IT IT;
-  typedef typename Traits::ET ET;
-  typedef typename Traits::Vector Vector;
-  typedef typename Traits::F_vector F_vector;
-  typedef typename Traits::Matrix Matrix;
-  typedef typename Traits::Entry_iterator Entry_iterator;
-  typedef typename Traits::Vector_iterator Vector_iterator;
-  typedef typename Traits::Beginner Beginner;
-  typedef typename Traits::Row_type Row_type;
-  typedef typename Traits::Row_type_vector Row_type_vector;
-  typedef typename Traits::Row_type_iterator Row_type_iterator;
-  typedef typename Traits::Is_linear Is_linear;
-  typedef typename Traits::Is_symmetric Is_symmetric;
-  typedef typename Traits::Has_equalities_only_and_full_rank 
-                           Has_equalities_only_and_full_rank;
-  typedef typename Traits::Is_in_standard_form Is_in_standard_form;
-
-  typedef typename Traits::Use_sparse_representation_for_D
-                           Use_sparse_representation_for_D;
-
-  typedef typename Traits::A_iterator  A_iterator;
-  typedef typename Traits::B_iterator  B_iterator;
-  typedef typename Traits::C_iterator  C_iterator;
-  typedef typename Traits::D_iterator  D_iterator;
-  typedef typename Traits::FU_iterator FU_iterator;
-  typedef typename Traits::FL_iterator FL_iterator;
-  typedef typename Traits::U_iterator  U_iterator;
-  typedef typename Traits::L_iterator  L_iterator;
-
   typedef std::pair<std::string,unsigned int> String_int_pair;
   typedef std::map<std::string,unsigned int> Index_map;
 
 private:
+  const int verbosity_;
   std::istream& from;
   std::string error_msg;
   bool is_format_okay_;
@@ -163,7 +128,6 @@ private:
   Row_type_vector row_types_; // equality type for each row
   Vector u_, l_;              // upper and lower bounds
   F_vector fu_, fl_;          // whether the lower/upper bound is finite or not
-  QP_pricing_strategy<Traits> *strategy;
 
   // cached data:
   bool is_symmetric_cached, is_symmetric_;
@@ -196,13 +160,13 @@ private: // helpers to deal with sparse/dense representation:
   }
 
   void set_entry_in_D(unsigned int i,unsigned int j,const IT& val,
-		      const Tag_true) // sparse case
+		      const Tag_true)                       // sparse case
   {
     CGAL_qpe_assertion_msg(false, "not implemented yet");
   }
 
   void set_entry_in_D(unsigned int i,unsigned int j,const IT& val,
-		      const Tag_false) // dense case
+		      const Tag_false)                      // dense case
   {
     D_[i][j] = val;
   }
@@ -339,6 +303,10 @@ private: // parsing routines:
   bool bounds_section();
   bool qmatrix_section();
 
+private:
+  D_iterator D(const Tag_true);
+  D_iterator D(const Tag_false);
+
 public: // methods:
   // Create a quadratic program instance from a stream.
   //
@@ -353,15 +321,19 @@ public: // methods:
   // via operator new).  When QP_MPS_instance's destructor gets called,
   // it will call delete strategy.
   QP_MPS_instance(std::istream& in,bool use_CPLEX_convention=true,
-		  QP_pricing_strategy<Traits> *strategy = 0);
-
-  // Destructor.
-  ~QP_MPS_instance();
+		  int verbosity=0);
 
   // Returns true if and only if the instance has been properly
   // constructed (i.e., if the QP could be loaded from the MPS
   // stream).
   bool is_valid();
+
+  // Returns the verbosity level with which the instance was
+  // constructed.
+  int verbosity() const
+  {
+    return verbosity_;
+  }
 
   // If is_valid() returns false, this routine returns an error
   // string describing the problem that was encountered.
@@ -377,12 +349,20 @@ public: // methods:
   // Returns the number of variables in the QP.
   //
   // Precondition: is_valid()
-  unsigned int number_of_variables();
+  unsigned int number_of_variables()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return var_names.size();
+  }
 
   // Returns the number of constraints in the QP.
   //
   // Precondition: is_valid()
-  unsigned int number_of_constraints();
+  unsigned int number_of_constraints()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return row_names.size();
+  }
 
   // Returns the section name of the MPS stream in which the D matrix
   // (if any present) was read.
@@ -412,32 +392,64 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  A_iterator A();
+  A_iterator A()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return Vector_iterator(A_.begin(),Beginner());
+  }
 
   // Returns an iterator over the vector b (as needs to be
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  B_iterator b();
+  B_iterator b()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return b_.begin();
+  }
 
   // Returns an iterator over the vector c (as needs to be
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  C_iterator c();
+  C_iterator c()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return c_.begin();
+  }
 
   // Returns an iterator over the matrix D (as needs to be
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  D_iterator D();
+  D_iterator D()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return Vector_iterator(D_.begin(),Beginner());
+  }
+
+  // Returns an iterator over a matrix D that is zero (as needs to be
+  // passed to the constructor of class QP_solver if you for instance
+  // want to solve an LP as a QP with a zero D-matrix for test
+  // purposes).
+  //
+  // Precondition: is_valid()
+  Zero_D_iterator zero_D()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return Zero_D_iterator(Const_oneset_iterator<IT>(0));
+  }
 
   // Returns an iterator (of value-type Row_type) over the constraint
   // types (as needs to be passed to the constructor of class
   // QP_solver).
   //
   // Precondition: is_valid()
-  Row_type_iterator row_types();
+  Row_type_iterator row_types()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return row_types_.begin();
+  }
 
   // Returns an iterator of Booleans specifying for each variable
   // whether it has a finite lower bound or not (such an iterator
@@ -479,18 +491,6 @@ public: // methods:
     return l_.begin();
   }
 
-  // Returns the default pricing strategy for solving this QP.
-  //
-  // Precondition: is_valid()
-  QP_pricing_strategy<Traits>& default_pricing_strategy() {
-    if (strategy == 0)
-      strategy = new QP_partial_filtered_pricing<Traits>; // todo: is this
-                                                          // a good choice
-                                                          // for a default
-                                                          // strategy?
-    return *strategy;
-  }
-
   // Returns true iff the loaded QP instance has a symmetric D matrix.
   //
   // Precondition: is_valid()
@@ -502,6 +502,7 @@ public: // methods:
   // Precondition: is_valid()
   bool is_linear()
   {
+    CGAL_qpe_assertion(is_valid());
     return is_linear_;
   }
 
@@ -510,6 +511,7 @@ public: // methods:
   // Precondition: is_valid()
   bool is_in_standard_form()
   {
+    CGAL_qpe_assertion(is_valid());
     if (!is_in_standard_form_cached) {
       for (unsigned int i=0; i<var_names.size(); ++i)
 	if (fl_[i] == false || l_[i] != 0 ||
@@ -534,8 +536,49 @@ public: // methods:
   bool has_equalities_only_and_full_rank();
 };
 
-template<class Traits>
-std::ostream& operator<<(std::ostream& o,QP_MPS_instance<Traits>& qp);
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+std::ostream& operator<<(std::ostream& o,
+			 QP_MPS_instance<IT_, ET_,
+			 Use_sparse_representation_for_D_,
+			 Use_sparse_representation_for_A_>& qp);
+
+template<class MPS,
+	 typename Is_linear_,
+	 typename Is_symmetric_,
+	 typename Has_equalities_only_and_full_rank_,
+	 typename Is_in_standard_form_,
+	 typename IT_=typename MPS::IT,
+	 typename ET_=typename MPS::ET,
+	 typename D_iterator_=typename MPS::D_iterator>
+class QP_solver_MPS_traits_d {
+public:
+  typedef IT_ IT;
+  typedef ET_ ET;
+
+public:
+  typedef typename MPS::Row_type     Row_type;
+  static const Row_type EQUAL =         MPS::EQUAL;
+  static const Row_type LESS_EQUAL =    MPS::LESS_EQUAL;
+  static const Row_type GREATER_EQUAL = MPS::GREATER_EQUAL;
+
+  typedef typename MPS::A_iterator   A_iterator;
+  typedef typename MPS::B_iterator   B_iterator;
+  typedef typename MPS::C_iterator   C_iterator;
+  typedef          D_iterator_       D_iterator;
+  typedef typename MPS::FU_iterator  FU_iterator;
+  typedef typename MPS::FL_iterator  FL_iterator;
+  typedef typename MPS::U_iterator   U_iterator;
+  typedef typename MPS::L_iterator   L_iterator;
+  typedef typename MPS::Row_type_iterator Row_type_iterator;
+
+  typedef Is_linear_                         Is_linear;
+  typedef Is_symmetric_                      Is_symmetric;
+  typedef Has_equalities_only_and_full_rank_ Has_equalities_only_and_full_rank;
+  typedef Is_in_standard_form_               Is_in_standard_form;
+};
 
 CGAL_END_NAMESPACE
 

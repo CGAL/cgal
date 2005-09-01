@@ -30,17 +30,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Traits>
-QP_MPS_instance<Traits>::QP_MPS_instance(std::istream& in,
-					 bool use_CPLEX_convention,
-					 QP_pricing_strategy<Traits> *strategy)
-  : from(in),
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::
+QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
+		int verbosity)
+  : verbosity_(verbosity), from(in),
     is_format_okay_(false),
     is_linear_(false),
     use_CPLEX_convention(use_CPLEX_convention),
     var_nr(0),
     constr_nr(0),
-    strategy(strategy),
     is_symmetric_cached(false),
     has_equalities_only_and_full_rank_cached(false),
     is_in_standard_form_cached(false),
@@ -85,23 +89,22 @@ QP_MPS_instance<Traits>::QP_MPS_instance(std::istream& in,
     return;
   }
 
-  std::cout << "MPS stream successfully read." << std::endl;
+  //std::cout << "MPS stream successfully read." << std::endl;
   is_format_okay_ = true;
 }
 
-template<class Traits>
-QP_MPS_instance<Traits>::~QP_MPS_instance()
-{
-  if (strategy != 0)
-    delete strategy;
-}
-
-template<class Traits>
-bool QP_MPS_instance<Traits>::is_valid()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::is_valid()
 {
   if (!is_format_okay_)
     return false;
-
+  
+  #if 0 // These tests should go into the QP-solver itself.
   // additional safety checks:
   // (Note: we do not check Has_equalities_only_and_full_rank currently,
   // as it is too expensive -- maybe add it for debugging purposes?)
@@ -111,27 +114,43 @@ bool QP_MPS_instance<Traits>::is_valid()
     return err("loaded instance is not an LP (D is nonzero) but Is_linear is Tag_true");
   if (check_tag(Is_in_standard_form()) && !is_in_standard_form())
     return err("loaded instance is not in standard form but Is_in_standard_form is Tag_true");
+  #endif
 
   return true;
 }
 
-template<class Traits>
-const std::string& QP_MPS_instance<Traits>::error()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+const std::string& QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::error()
 {
   CGAL_qpe_assertion(!is_valid());
   return error_msg;
 }
 
-template<class Traits>
-const std::string& QP_MPS_instance<Traits>::comment()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+const std::string& QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::comment()
 {
-  CGAL_qpe_assertion(is_valid());
   return comment_;
 }
 
-template<class Traits>
-bool QP_MPS_instance<Traits>::is_symmetric()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::is_symmetric()
 {
+  CGAL_qpe_assertion(is_valid());
   if (!is_symmetric_cached) {
     is_symmetric_ = true;
     for (unsigned int i=0; i<var_nr; ++i)
@@ -144,16 +163,23 @@ bool QP_MPS_instance<Traits>::is_symmetric()
   return is_symmetric_;
 }
   
-template<class Traits>
-bool QP_MPS_instance<Traits>::has_equalities_only_and_full_rank()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::has_equalities_only_and_full_rank()
 {
+  CGAL_qpe_assertion(is_valid());
+
   if (has_equalities_only_and_full_rank_cached)
     return has_equalities_only_and_full_rank_;
 
   // check if we have inequalities:
   for (typename Row_type_vector::const_iterator it = row_types_.begin();
        it != row_types_.end(); ++it)
-    if (*it != Traits::EQUAL) {
+    if (*it != EQUAL) {
       has_equalities_only_and_full_rank_ = false;
       return has_equalities_only_and_full_rank_;
     }
@@ -228,62 +254,13 @@ bool QP_MPS_instance<Traits>::has_equalities_only_and_full_rank()
   return has_equalities_only_and_full_rank_;
 }
 
-template<class Traits>
-unsigned int QP_MPS_instance<Traits>::number_of_variables()
-{
-  CGAL_qpe_assertion(is_valid());
-  return var_names.size();
-}
-
-template<class Traits>
-unsigned int  QP_MPS_instance<Traits>::number_of_constraints()
-{
-  CGAL_qpe_assertion(is_valid());
-  return row_names.size();
-}
-
-template<class Traits>
-typename QP_MPS_instance<Traits>::A_iterator 
-QP_MPS_instance<Traits>::A()
-{
-  CGAL_qpe_assertion(is_valid());
-  return Vector_iterator(A_.begin(),Beginner());
-}
-
-template<class Traits>
-typename QP_MPS_instance<Traits>::B_iterator
-QP_MPS_instance<Traits>::b()
-{
-  CGAL_qpe_assertion(is_valid());
-  return b_.begin();
-}
-
-template<class Traits>
-typename QP_MPS_instance<Traits>::C_iterator
-QP_MPS_instance<Traits>::c()
-{
-  CGAL_qpe_assertion(is_valid());
-  return c_.begin();
-}
-
-template<class Traits>
-typename QP_MPS_instance<Traits>::D_iterator
-QP_MPS_instance<Traits>::D()
-{
-  CGAL_qpe_assertion(is_valid());
-  return Vector_iterator(D_.begin(),Beginner());
-}
-
-template<class Traits>
-typename QP_MPS_instance<Traits>::Row_type_iterator
-QP_MPS_instance<Traits>::row_types()
-{
-  CGAL_qpe_assertion(is_valid());
-  return row_types_.begin();
-}
-
-template<class Traits>
-bool QP_MPS_instance<Traits>::name_section()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::name_section()
 {
   const std::string t = token();
   if (t != "NAME")
@@ -292,8 +269,13 @@ bool QP_MPS_instance<Traits>::name_section()
   return true;
 }
 
-template<class Traits>
-bool QP_MPS_instance<Traits>::rows_section()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::rows_section()
 {
   std::string t = token();
   if (t != "ROWS")
@@ -317,8 +299,8 @@ bool QP_MPS_instance<Traits>::rows_section()
       {
 	// register name of >=, <=, or = constraint:
 	const unsigned int index = row_types_.size();
-	row_types_.push_back(type == 'G'? Traits::GREATER_EQUAL :
-		     (type == 'E'? Traits::EQUAL : Traits::LESS_EQUAL));
+	row_types_.push_back(type == 'G'? GREATER_EQUAL :
+		     (type == 'E'? EQUAL : LESS_EQUAL));
 	if (row_names.find(t) != row_names.end())
 	  return err1("duplicate row name '%' in section ROWS",t);
 	row_names.insert(String_int_pair(t,index));
@@ -339,8 +321,13 @@ bool QP_MPS_instance<Traits>::rows_section()
   return true;
 }
 
-template<class Traits>
-bool QP_MPS_instance<Traits>::columns_section()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::columns_section()
 {
   std::string t = token();
   if (t != "COLUMNS")
@@ -398,8 +385,13 @@ bool QP_MPS_instance<Traits>::columns_section()
   return true;
 }
 
-template<class Traits>
-bool QP_MPS_instance<Traits>::rhs_section()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::rhs_section()
 {
   std::string t = token();
   if (t != "RHS")
@@ -453,8 +445,13 @@ bool QP_MPS_instance<Traits>::rhs_section()
   return true;
 }
 
-template<class Traits>
-bool QP_MPS_instance<Traits>::bounds_section()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::bounds_section()
 {
   std::string t = token();
   if (t != "BOUNDS") { // (Note: BOUNDS section is optional.)
@@ -544,8 +541,13 @@ bool QP_MPS_instance<Traits>::bounds_section()
   return true;
 }
 
-template<class Traits>
-bool QP_MPS_instance<Traits>::qmatrix_section()
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::qmatrix_section()
 {
   std::string t = token();
   if (t!="QMATRIX" && t!="DMATRIX") { // (Note: *MATRIX section is optional.)
@@ -600,9 +602,18 @@ bool QP_MPS_instance<Traits>::qmatrix_section()
   return true;
 }
 
-template<class Traits>
-std::ostream& operator<<(std::ostream& o,QP_MPS_instance<Traits>& qp)
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+std::ostream& operator<<(std::ostream& o,
+			 QP_MPS_instance<IT_, ET_,
+			 Use_sparse_representation_for_D_,
+			 Use_sparse_representation_for_A_>& qp)
 {
+  typedef QP_MPS_instance<IT_, ET_,
+    Use_sparse_representation_for_D_,
+    Use_sparse_representation_for_A_> MPS;
   const unsigned int n = qp.number_of_variables();
   const unsigned int m = qp.number_of_constraints();
   const int width = 10;
@@ -622,59 +633,103 @@ std::ostream& operator<<(std::ostream& o,QP_MPS_instance<Traits>& qp)
       << "D matrix storage format in MPS stream: "
       << qp.D_format_type() << endl;
 
-  // output c:
-  o << "Number of variables:    n = " << qp.number_of_variables() << endl
-    << "Number of constraints:  m = " << qp.number_of_constraints() << endl
-    << "c: " << endl;
-  typename Traits::C_iterator c = qp.c();
-  for (unsigned int i=0; i<n; ++i, ++c)
-    o << std::setw(width) << *c;
-  o << endl;
+  if (qp.verbosity() > 1) {
+    // output c:
+    o << "Number of variables (n):               "
+      << qp.number_of_variables() << endl
+      << "Number of constraints (m):             "
+      << qp.number_of_constraints() << endl
+      << "c: " << endl;
+    typename MPS::C_iterator c = qp.c();
+    for (unsigned int i=0; i<n; ++i, ++c)
+      o << std::setw(width) << *c;
+    o << endl;
   
-  // output A and b:
-  o << "A|b: " << endl;
-  typename Traits::B_iterator b = qp.b();
-  typename Traits::A_iterator A = qp.A();
-  for (unsigned int i=0; i<m; ++i) {
-    for (unsigned int j=0; j<n; ++j)
-      o << std::setw(width) << A[j][i];
-    o << " | " << std::setw(width) << b[i] << endl;
-  }
-
-  // output D:
-  if (!qp.is_linear()) {
-    o << "D: " << endl;;
-    typename Traits::D_iterator D = qp.D();
-    for (unsigned int i=0; i<n; ++i, ++D) {
-      typename Traits::D_iterator::value_type entry = *D;
-      for (unsigned int j=0; j<n; ++j, ++entry)
-	o << std::setw(width) << *entry;
-      o << endl;
+    // output A and b:
+    o << "A|b: " << endl;
+    typename MPS::B_iterator b = qp.b();
+    typename MPS::A_iterator A = qp.A();
+    for (unsigned int i=0; i<m; ++i) {
+      for (unsigned int j=0; j<n; ++j)
+	o << std::setw(width) << A[j][i];
+      o << " | " << std::setw(width) << b[i] << endl;
     }
-  }
 
-  // output bounds:
-  if (!qp.is_in_standard_form()) {
-    o << "Bounds:" << endl;
-    typename Traits::FU_iterator fu = qp.fu();
-    typename Traits::FL_iterator fl = qp.fl();
-    typename Traits::U_iterator u = qp.u();
-    typename Traits::L_iterator l = qp.l();
-    for (unsigned int i=0; i<n; ++i, ++fu, ++fl, ++u, ++l) {
-      o << "x" << std::left << std::setw(width) << i << "in ";
-      if (*fl)
-	o << '[' << *l;
-      else
-	o << "(-infty";
-      o << ',';
-      if (*fu)
-	o << *u << ']';
-      else
-	o << "+infty)";
-      o << endl;
+    // output D:
+    if (!qp.is_linear()) {
+      o << "D: " << endl;;
+      typename MPS::D_iterator D = qp.D();
+      for (unsigned int i=0; i<n; ++i, ++D) {
+	typename MPS::D_iterator::value_type entry = *D;
+	for (unsigned int j=0; j<n; ++j, ++entry)
+	  o << std::setw(width) << *entry;
+	o << endl;
+      }
+    }
+
+    // output bounds:
+    if (!qp.is_in_standard_form()) {
+      o << "Bounds:" << endl;
+      typename MPS::FU_iterator fu = qp.fu();
+      typename MPS::FL_iterator fl = qp.fl();
+      typename MPS::U_iterator u = qp.u();
+      typename MPS::L_iterator l = qp.l();
+      for (unsigned int i=0; i<n; ++i, ++fu, ++fl, ++u, ++l) {
+	o << "x" << std::left << std::setw(width) << i << "in ";
+	if (*fl)
+	  o << '[' << *l;
+	else
+	  o << "(-infty";
+	o << ',';
+	if (*fu)
+	  o << *u << ']';
+	else
+	  o << "+infty)";
+	o << endl;
+      }
     }
   }
   return o;
 }
+
+template<class MPS,
+	 typename Is_linear_,
+	 typename Is_symmetric_,
+	 typename Has_equalities_only_and_full_rank_,
+	 typename Is_in_standard_form_,
+	 typename IT_,
+	 typename ET_,
+	 typename D_iterator_>
+const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
+  Is_linear_,Is_symmetric_,
+  Has_equalities_only_and_full_rank_,
+  Is_in_standard_form_,IT_,ET_,D_iterator_>::EQUAL;
+
+template<class MPS,
+	 typename Is_linear_,
+	 typename Is_symmetric_,
+	 typename Has_equalities_only_and_full_rank_,
+	 typename Is_in_standard_form_,
+	 typename IT_,
+	 typename ET_,
+	 typename D_iterator_>
+const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
+  Is_linear_,Is_symmetric_,
+  Has_equalities_only_and_full_rank_,
+  Is_in_standard_form_,IT_,ET_,D_iterator_>::LESS_EQUAL;
+
+template<class MPS,
+	 typename Is_linear_,
+	 typename Is_symmetric_,
+	 typename Has_equalities_only_and_full_rank_,
+	 typename Is_in_standard_form_,
+	 typename IT_,
+	 typename ET_,
+	 typename D_iterator_>
+const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
+  Is_linear_,Is_symmetric_,
+  Has_equalities_only_and_full_rank_,
+  Is_in_standard_form_,IT_,ET_,D_iterator_>::GREATER_EQUAL;
+
 
 CGAL_END_NAMESPACE

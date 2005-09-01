@@ -51,7 +51,7 @@ end:
 encodeProblemToMPS:= proc(A::Matrix, rel::Matrix, b::Matrix, c::Matrix, D,
   fl, l, fu, u,
   desc::string, gen_desc::string, fpath::string)
-local i, j, dim, m, n, fd, rowType, numberType, dummy, filename;
+local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
   # get problem dimensions:
   dim := LinearAlgebra[Dimensions];
   m := dim(A)[1]; 
@@ -93,6 +93,10 @@ local i, j, dim, m, n, fd, rowType, numberType, dummy, filename;
   fprintf(fd,"* Number-type: %s\n",numberFormat(numberType));
   fprintf(fd,"* Description: %s\n",desc);
   fprintf(fd,"* Generated-by: %s\n",gen_desc);
+  if type(Flags,string) then
+    printf("Adding flags '%s'.",Flags);
+    fprintf(fd,"* Flags: %s\n",Flags);
+  fi;
   fprintf(fd,"NAME %s\n",my_name);
 
   # write ROWS section:

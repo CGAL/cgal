@@ -199,6 +199,7 @@ public:
     // TEMPORARILY:
     typedef typename std::iterator_traits<
       typename std::iterator_traits<MatrixIt>::value_type>::value_type IT;
+    #if 0 // for debugging only, see log
     const IT first = m[r][c];
     const IT second = m[c][r];
     std::cout << "first=" << first << ", second=" << second
@@ -206,6 +207,7 @@ public:
 	      << ", m[r][c]=" << m[r][c] << ", m[c][r]=" << m[c][r]
 	      << ", " << "sum=" << (m[ r][ c] + m[ c][ r]) 
 	      << ", " << "(sum)=" << ((m[ r][ c]) + (m[ c][ r])) << std::endl;
+    #endif
     return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
   }
   

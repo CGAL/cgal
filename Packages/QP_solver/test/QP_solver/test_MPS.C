@@ -20,7 +20,7 @@
 // author(s)     : Kaspar Fischer (fischerk@inf.ethz.ch)
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: test program for the QP solver
+// implementation: example QP solver for QP's in MPS format
 // ============================================================================
 
 #include <iostream>
@@ -37,20 +37,6 @@
 
 #include <CGAL/QP_solver/MPS.h> // should to into QP_solver.h (?)
 
-template <typename T>
-T string_to(const std::string& s) {
-  std::stringstream strm(s);
-  T t;
-  strm >> t;
-  return t;
-}
-
-void bailout(const char *msg)
-{
-  std::cout << "Error: " << msg << '.' << std::endl;
-  exit(1);
-}
-
 int main(const int argNr,const char **args) {
   using std::cout;
   using std::endl;
@@ -58,18 +44,13 @@ int main(const int argNr,const char **args) {
   using CGAL::Tag_false;
 
   // get desired level of additional logging output:
-  const int verbosity = argNr < 2? 1 : string_to<int>(args[1]);
+  const int verbosity = argNr < 2? 1 : std::atoi(args[1]);
 
   // construct QP instance:
   typedef double IT;
   typedef CGAL::Double ET;
-  typedef CGAL::QP_solver_MPS_traits_d<IT,ET,
-    Tag_false, // is the instance known in advance to be an LP?
-    Tag_false, // is the instance's D matrix known to be symmetric?
-    Tag_false, // Has_equalities_only_and_full_rank (see manual)?
-    Tag_true>  // Is_in_standard_form (see manual)?
-    Traits;
-  CGAL::QP_MPS_instance<Traits> qp(std::cin);
+  typedef CGAL::QP_MPS_instance<IT,ET> QP;
+  QP qp(std::cin);
 
   // check for format errors in MPS file:
   if (!qp.is_valid()) {
@@ -82,11 +63,26 @@ int main(const int argNr,const char **args) {
     cout << endl << qp << endl;
   }
 
+  typedef CGAL::QP_solver_MPS_traits_d<QP,
+    Tag_false, // is the instance known in advance to be an LP?
+    Tag_false, // is the instance's D matrix known to be symmetric?
+    Tag_false, // Has_equalities_only_and_full_rank (see manual)?
+    Tag_true>  // Is_in_standard_form (see manual)? // todo: should be false
+    Traits;
+
   CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
 				 qp.number_of_constraints(),
 				 qp.A(),qp.b(),qp.c(),qp.D(),
 				 qp.row_types(),
-				 qp.default_pricing_strategy());
+				 qp.fl(),qp.l(),qp.fu(),qp.u(),
+				 0, // 0 for default pricing strategy
+				 verbosity);
 
-  return 0;
+  if (solver.is_solution_valid()) {
+    cout << "Solution is valid." << endl;
+    return 0;
+  } else {
+    cout << "Solution is not valid!." << endl;
+    return 1;
+  }
 }
