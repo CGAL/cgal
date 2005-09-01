@@ -81,7 +81,7 @@ int main() {
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-//#include "variant_reader.h"
+#include <CGAL/IO/Dxf_variant_reader.h>
 
 typedef CGAL::Gmpq                                          NT; 
 //typedef CGAL::Quotient<CGAL::MP_Float> NT;
@@ -470,7 +470,7 @@ private slots:
   void load_arcs()
   {
     QString s( QFileDialog::getOpenFileName( QString::null,
-                            "CGAL files (*.cgal)", this ) );
+                            "DXF files (*.dxf)", this ) );
     if ( s.isEmpty() )
         return;
 
@@ -480,6 +480,14 @@ private slots:
     //std::istream_iterator<Arc> begin(in), end;
     //ArcContainer arcs(begin, end);
     //arc_container().swap(arcs);
+
+    //to read dxf files
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
+    ArcContainer arcs;
+    CGAL::variant_load<Curved_k, Circular_arc_2, Line_arc_2>(in, std::back_inserter(arcs));
+    arc_container().swap(arcs);
+
 
     update_pmwx();
     stoolbar->clear_history();
