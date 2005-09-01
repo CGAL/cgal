@@ -51,7 +51,6 @@ QP_solver(int n, int m,
 { 
   set_pricing_strategy(strategy);
   set(n,m,A,b,c,D,r);
-  set_up_auxiliary_problem(is_perturbed);
   set_verbosity(verbosity);
   init();
   solve();
@@ -79,7 +78,6 @@ QP_solver(int n, int m,
   set(n,m,A,b,c,D,r);
   set_explicit_bounds(n, fl, lb, fu, ub);
   init_nonbasic_original_variables(Is_in_standard_form());
-  set_up_auxiliary_problem(is_perturbed);
   set_verbosity(verbosity);
   init();
   solve();
