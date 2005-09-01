@@ -311,7 +311,7 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
 		b.begin(), c.begin(),
 		typename Repr::Vector_iterator( D.begin()),
 		row_types, fl.begin(), l.begin(), fu.begin(), u.begin(),
-		strat);
+		strat, verbose);
     sol_solver_valid = solver.is_solution_valid();
     std::cout << "valid: " << sol_solver_valid << std::endl;
     delete strat;
