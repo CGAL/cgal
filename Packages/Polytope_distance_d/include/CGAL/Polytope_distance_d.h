@@ -447,12 +447,7 @@ private:
 	solver = new Solver(number_of_points(), 2,
 			    A_it( a_matrix.begin()), B_it( 1), C_it( 0),
 			    D_it( signed_pts_it, row_of_d),
-			    Row_it(QP_rep::EQUAL),
-			    typename QP_rep::FL_iterator(true),  // dummy
-			    typename QP_rep::L_iterator(NT()),   // dummy
-			    typename QP_rep::FU_iterator(false), // dummy
-			    typename QP_rep::U_iterator(NT()),   // dummy
-			    *strategy);
+			    Row_it(QP_rep::EQUAL), strategy);
 
         // compute support and realizing points
         ET  et_0 = 0;

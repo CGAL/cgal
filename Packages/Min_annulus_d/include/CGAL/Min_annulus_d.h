@@ -501,11 +501,7 @@ private:
 			    A_it( a_matrix.begin()), b_vector.begin(),
 			    c_vector.begin(), D_it(dummy),
 			    Row_it(LP_rep::EQUAL),
-			    typename LP_rep::FL_iterator(true),  // dummy
-			    typename LP_rep::L_iterator(NT()),   // dummy
-			    typename LP_rep::FU_iterator(false), // dummy
-			    typename LP_rep::U_iterator(NT()),   // dummy
-			    *strategy);
+			    strategy);
     
         // compute center and squared radius
         ET sqr_sum = 0;

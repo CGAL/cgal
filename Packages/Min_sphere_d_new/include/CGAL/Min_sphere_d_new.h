@@ -141,7 +141,7 @@ struct QP_rep_min_sphere_d {
   
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
   typedef Const_oneset_iterator<Row_type>    Row_type_iterator;
-
+  
   typedef Const_oneset_iterator<bool> FU_iterator;
   typedef Const_oneset_iterator<bool> FL_iterator;
   typedef Const_oneset_iterator<NT>   U_iterator;
@@ -461,11 +461,7 @@ private:
 				   tco.access_coordinates_begin_d_object(),
 				   tco.access_dimension_d_object())),
 			Row_it(QP_rep::EQUAL),
-			typename QP_rep::FL_iterator(true),  // dummy
-			typename QP_rep::L_iterator(NT()),   // dummy
-			typename QP_rep::FU_iterator(false), // dummy
-			typename QP_rep::U_iterator(NT()),   // dummy
-			*strategy);
+			strategy);
     
     // compute center and squared radius
     center_coords.resize( ambient_dimension()+1);
