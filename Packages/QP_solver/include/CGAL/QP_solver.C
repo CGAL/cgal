@@ -38,7 +38,7 @@ QP_solver<Rep_>::
 QP_solver(int n, int m,
 	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	  Row_type_iterator r,
-	  Pricing_strategy& strategy)
+	  Pricing_strategy& strategy, int verbosity)
   : et0( 0), et1( 1), et2( 2),
     strategyP( static_cast< Pricing_strategy*>( 0)),
     inv_M_B( vout4),
@@ -50,7 +50,9 @@ QP_solver(int n, int m,
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
 { 
   set(n,m,A,b,c,D,r);
+  set_up_auxiliary_problem(is_perturbed);
   set_pricing_strategy(strategy);
+  set_verbosity(verbosity);
   init();
   solve();
 }
@@ -62,7 +64,7 @@ QP_solver(int n, int m,
 	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	  Row_type_iterator r,
 	  FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
-	  Pricing_strategy& strategy)
+	  Pricing_strategy& strategy, int verbosity)
   : et0( 0), et1( 1), et2( 2),
     strategyP( static_cast< Pricing_strategy*>( 0)),
     inv_M_B( vout4),
@@ -74,7 +76,11 @@ QP_solver(int n, int m,
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
 { 
   set(n,m,A,b,c,D,r);
+  set_explicit_bounds(n, fl, lb, fu, ub);
+  init_nonbasic_original_variables(Is_in_standard_form());
+  set_up_auxiliary_problem(is_perturbed);
   set_pricing_strategy(strategy);
+  set_verbosity(verbosity);
   init();
   solve();
 }
@@ -157,6 +163,20 @@ set( int n, int m,
     m_phase    = 0;
     is_phaseI  = false;
     is_phaseII = false;
+}
+
+template < class Rep_ >
+void
+QP_solver<Rep_>::
+set_explicit_bounds(int n, FL_iterator fl, L_iterator lb, FU_iterator fu,
+        U_iterator ub)
+{
+    qp_fl = fl;
+    qp_l = lb;
+    qp_fu = fu;
+    qp_u = ub;
+    x_N_bv.reserve(n);
+    x_N_bv.insert(x_N_bv.end(), n, LOWER);
 }
 
 
@@ -574,6 +594,56 @@ init_basis__constraints( int s_i, Tag_false)
 	in_C[ s_i] = j;
     }
 }
+
+
+// initial solution
+template < class Rep_ >
+void
+QP_solver<Rep_>::
+init_nonbasic_original_variables(Tag_true)
+{
+}
+
+// initial solution
+template < class Rep_ >
+void
+QP_solver<Rep_>::
+init_nonbasic_original_variables(Tag_false)
+{
+
+    for (int i = 0; i < qp_n; ++i)             {
+        // this is some C++ fun, see vector<bool>
+        if (*(qp_fl+i)) {                                 // finite lower bound
+            if (*(qp_fu+i)) {                             // finite upper bound
+                CGAL_qpe_assertion(qp_l[i] <= qp_u[i]);
+                if (qp_l[i] == qp_u[i]) {                 // fixed variable
+                    x_N_bv[i] = FIXED;
+                } else {                                  // lower < upper   
+                    if ((et0 >= qp_l[i]) && (et0 <= qp_u[i])) {
+                        x_N_bv[i] = ZERO;
+                    } else {
+                        x_N_bv[i] = LOWER;
+                    } 
+                }   
+            } else {                                     // upper bound infinity
+                if (et0 >= qp_l[i]) {
+                    x_N_bv[i] = ZERO;
+                } else {
+                    x_N_bv[i] = LOWER;
+                }
+            }
+        } else {                                        // lower bound -infinity
+            if (et0 <= qp_u[i]) {
+                x_N_bv[i] = ZERO; 
+            } else {
+                x_N_bv[i] = UPPER;
+            }
+        }
+std::cout << "x_N_bv[" << i << "] " << x_N_bv[i] << std::endl;   
+    }   
+}
+
+
 
 // initial solution
 template < class Rep_ >
