@@ -13,6 +13,17 @@ solve( const typename AK::Polynomial_1_2 & e1,
   return AK().solve_object()(e1,e2,res);
 }
 
+template< class AK, class OutputIterator>
+inline
+OutputIterator
+solve( const typename AK::Polynomial_1_2 & e1,
+       const typename AK::Polynomial_1_2 & e2,
+       OutputIterator res )
+{
+  return AK().solve_object()(e1,e2,res);
+}
+
+
   template < class AK >
     inline 
     Sign sign_at( const typename AK::Polynomial_1_2 & equation,

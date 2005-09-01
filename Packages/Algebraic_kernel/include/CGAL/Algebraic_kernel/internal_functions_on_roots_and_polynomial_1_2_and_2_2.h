@@ -119,6 +119,36 @@ namespace CGAL {
     }
   }
 
+
+  template < class AK, class OutputIterator >
+  inline 
+  OutputIterator
+  solve( const typename AK::Polynomial_1_2 & e1,
+	 const typename AK::Polynomial_1_2 & e2,
+	 OutputIterator res )
+  {
+    typedef typename AK::FT FT;
+    typedef typename AK::Root_of_2 Root_of_2;
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
+    //parallele case
+    if(e1.a()*e2.b() == e2.a()*e1.b())
+      return res;
+    //case : e2 horizontal
+    if(e2.a() == 0){
+      Root_of_2 y = -e2.c()/e2.b();
+      Root_of_2 x = -(e1.b()*y + e1.c())/e1.a();
+      *res++ = std::make_pair
+	  ( Root_for_circles_2_2(x, y), 1u);
+    return res;
+    }
+    //general case
+    Root_of_2 y = (e2.a()*e1.c() - e2.c()*e1.a())/(e1.a()*e2.b() - e2.a()*e1.b());
+    Root_of_2 x = (e2.b()*y + e2.c())/(-e2.a());
+    *res++ = std::make_pair
+	  ( Root_for_circles_2_2(x, y), 1u);
+    return res;
+  }
+
   template < class AK >
     inline 
     Sign sign_at( const typename AK::Polynomial_1_2 & equation,

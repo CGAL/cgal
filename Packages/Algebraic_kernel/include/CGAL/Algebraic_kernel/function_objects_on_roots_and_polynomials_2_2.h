@@ -28,6 +28,13 @@ namespace CGAL {
 	       OutputIterator res)
       { return solve<AK> ( e1, e2, res); }
 
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Equation_Line & e1, 
+	       const Equation_Line & e2,
+	       OutputIterator res)
+      { return solve<AK> ( e1, e2, res); }
+
   };
 
   template < class AK >
