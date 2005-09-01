@@ -272,6 +272,7 @@ private:
     
     // pricing strategy
     Pricing_strategy*        strategyP;
+    Pricing_strategy*        defaultStrategy;
     
     // given QP
     int                      qp_n;      // number of variables
@@ -388,14 +389,22 @@ private:
 	      A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	      Row_type_iterator r =
 	        Const_oneset_iterator<Row_type>( Rep::EQUAL),
-	      Pricing_strategy& strategy = 
-	        QP_full_exact_pricing<Rep_>(), int verbosity = 0 );
+	      Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
+	      int verbosity = 0 );
 	        
     QP_solver(int n, int m,
           A_iterator A, B_iterator b, C_iterator c, D_iterator D,
           Row_type_iterator r,
           FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
-	      Pricing_strategy& strategy, int verbosity = 0 );
+	  Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
+	  int verbosity = 0 );
+
+  ~QP_solver()
+  {
+    if (defaultStrategy != 0)
+      delete defaultStrategy;
+  }
+
 	      
  private:
     // set-up of QP
@@ -595,7 +604,7 @@ private:
     // miscellaneous
     // -------------
     // altering the pricing strategy
-    void  set_pricing_strategy( Pricing_strategy& strategy);
+    void  set_pricing_strategy( Pricing_strategy *strategy);
 
     // diagnostic output
     void  set_verbosity( int verbose = 0, std::ostream& stream = std::cout);

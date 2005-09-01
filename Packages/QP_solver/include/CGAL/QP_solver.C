@@ -38,9 +38,9 @@ QP_solver<Rep_>::
 QP_solver(int n, int m,
 	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	  Row_type_iterator r,
-	  Pricing_strategy& strategy, int verbosity)
+	  Pricing_strategy *strategy, int verbosity)
   : et0( 0), et1( 1), et2( 2),
-    strategyP( static_cast< Pricing_strategy*>( 0)),
+    defaultStrategy(0),
     inv_M_B( vout4),
     d( inv_M_B.denominator()),
     m_phase( -1), is_phaseI( false), is_phaseII( false),
@@ -49,9 +49,9 @@ QP_solver(int n, int m,
     no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( !
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
 { 
+  set_pricing_strategy(strategy);
   set(n,m,A,b,c,D,r);
   set_up_auxiliary_problem(is_perturbed);
-  set_pricing_strategy(strategy);
   set_verbosity(verbosity);
   init();
   solve();
@@ -64,9 +64,9 @@ QP_solver(int n, int m,
 	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
 	  Row_type_iterator r,
 	  FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
-	  Pricing_strategy& strategy, int verbosity)
+	  Pricing_strategy *strategy, int verbosity)
   : et0( 0), et1( 1), et2( 2),
-    strategyP( static_cast< Pricing_strategy*>( 0)),
+    defaultStrategy(0),
     inv_M_B( vout4),
     d( inv_M_B.denominator()),
     m_phase( -1), is_phaseI( false), is_phaseII( false),
@@ -75,11 +75,11 @@ QP_solver(int n, int m,
     no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( !
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
 { 
+  set_pricing_strategy(strategy);
   set(n,m,A,b,c,D,r);
   set_explicit_bounds(n, fl, lb, fu, ub);
   init_nonbasic_original_variables(Is_in_standard_form());
   set_up_auxiliary_problem(is_perturbed);
-  set_pricing_strategy(strategy);
   set_verbosity(verbosity);
   init();
   solve();
@@ -152,9 +152,8 @@ set( int n, int m,
     }
 
     // set up pricing strategy
-    if ( strategyP != static_cast< Pricing_strategy*>( 0)) {
-	strategyP->set( *this, vout2);
-    }
+    if ( strategyP != static_cast< Pricing_strategy*>( 0))
+      strategyP->set( *this, vout2);
 
     // set up basis inverse
     inv_M_B.set( qp_n, qp_m, e);
@@ -2363,12 +2362,18 @@ check_basis_inverse( Tag_false)
 // setting the pricing strategy
 template < class Rep_ >
 void  QP_solver<Rep_>::
-set_pricing_strategy( Pricing_strategy& strategy)
+set_pricing_strategy( Pricing_strategy *strategy)
 {
     CGAL_qpe_precondition( phase() != 1);
     CGAL_qpe_precondition( phase() != 2);
 
-    strategyP = &strategy;
+    if (defaultStrategy != static_cast< Pricing_strategy*>( 0))
+      delete defaultStrategy;
+
+    if (strategy == 0) // use default strategy:
+      strategy = defaultStrategy = new QP_full_exact_pricing<Rep_>();
+
+    strategyP = strategy;
     if ( phase() != -1) strategyP->set( *this, vout2);
 }
 
