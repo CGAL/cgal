@@ -636,7 +636,6 @@ init_nonbasic_original_variables(Tag_false)
                 x_N_bv[i] = UPPER;
             }
         }
-std::cout << "x_N_bv[" << i << "] " << x_N_bv[i] << std::endl;   
     }   
 }
 

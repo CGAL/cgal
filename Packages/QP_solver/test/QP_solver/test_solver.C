@@ -352,6 +352,7 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
   using std::endl;
 
   // read QP instance:
+  in.clear();
   in.seekg(0, std::ios_base::beg);
   typedef CGAL::QP_MPS_instance<IT,ET> QP_instance;
   QP_instance qp(in);
@@ -418,35 +419,25 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
     Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
     Is_in_standard_form,IT,ET,
     typename QP_instance::D_iterator> Traits;
-  typedef CGAL::QP_solver_MPS_traits_d<QP_instance,
-    Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
-    Is_in_standard_form,IT,ET,
-    typename QP_instance::Zero_D_iterator> ZeroTraits;
 
-  bool is_valid;
-  if (qp.is_linear() && !check_tag(Is_linear())) {
-    CGAL::QP_pricing_strategy<ZeroTraits> *s =
-      create_strategy<ZeroTraits>(options);
-    CGAL::QP_solver<ZeroTraits> solver(qp.number_of_variables(),
-				       qp.number_of_constraints(),
-				       qp.A(),qp.b(),qp.c(),qp.zero_D(),
-				       qp.row_types(),
-				       qp.fl(),qp.l(),qp.fu(),qp.u(),
-				       s,verbosity);
-    is_valid = solver.is_solution_valid();
-    delete s;
-  } else {
-    CGAL::QP_pricing_strategy<Traits> *s =
-      create_strategy<Traits>(options);
-    CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
-				   qp.number_of_constraints(),
-				   qp.A(),qp.b(),qp.c(),qp.D(),
-				   qp.row_types(),
-				   qp.fl(),qp.l(),qp.fu(),qp.u(),
-				   s,verbosity);
-    is_valid = solver.is_solution_valid();
-    delete s;
-  }
+  // construct a zero D matrix if needed:
+  if (qp.is_linear() && !check_tag(Is_linear()))
+    // Note: Revision 1.1 of this file uses qp's zero_D() routine and
+    // a special traits class for the solver for this case.  But as
+    // this more than doubles the compilation time, I removed it
+    // again...
+    qp.make_zero_D(); 
+
+  // solve:
+  CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
+  CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
+				 qp.number_of_constraints(),
+				 qp.A(),qp.b(),qp.c(),qp.D(),
+				 qp.row_types(),
+				 qp.fl(),qp.l(),qp.fu(),qp.u(),
+				 s,verbosity);
+  const bool is_valid = solver.is_solution_valid();
+  delete s;
 
   if (verbosity > 0)
     cout << "  Solution is valid: " << is_valid << endl;
