@@ -150,7 +150,9 @@ bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::is_symmetric()
 {
-  CGAL_qpe_assertion(is_valid());
+  if (!is_format_okay_)
+    return false;
+
   if (!is_symmetric_cached) {
     is_symmetric_ = true;
     for (unsigned int i=0; i<var_nr; ++i)
@@ -171,7 +173,8 @@ bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::has_equalities_only_and_full_rank()
 {
-  CGAL_qpe_assertion(is_valid());
+  if (!is_format_okay_)
+    return false;
 
   if (has_equalities_only_and_full_rank_cached)
     return has_equalities_only_and_full_rank_;

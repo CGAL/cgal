@@ -342,8 +342,6 @@ public: // methods:
   const std::string& error();
 
   // Returns the first comment that was read from the MPS stream.
-  //
-  // Precondition: is_valid()
   const std::string& comment();
   
   // Returns the number of variables in the QP.
@@ -386,6 +384,24 @@ public: // methods:
   {
     CGAL_qpe_assertion(!is_linear());
     return D_section;
+  }
+
+  // Initializes the internal D matrix to the zero matrix so that D()
+  // will return an iterator over a zero matrix.  Normally, there
+  // should not be any need to call this routine; it is used by the
+  // QP_solver testsuite to solve an LP as a QP, and for this we need
+  // a zero D matrix.
+  //
+  // Note: If Use_sparse_representation_for_D_ is Tag_false, this
+  // routine allocates a zero (n x n)-matrix (where n is
+  // number_of_variables()).  If you known in advance that you need a
+  // zero D matrix, you might want to use zero_D() (see below).
+  //
+  // Precondition: is_linear()
+  void make_zero_D() 
+  {
+    CGAL_qpe_assertion(is_linear());
+    initialize_D(var_names.size(),Use_sparse_representation_for_D());
   }
 
   // Returns an iterator over the matrix A (as needs to be
@@ -491,27 +507,25 @@ public: // methods:
     return l_.begin();
   }
 
-  // Returns true iff the loaded QP instance has a symmetric D matrix.
-  //
-  // Precondition: is_valid()
+  // Returns true iff the MPS stream could be successfully parsed and
+  // the loaded QP instance has a symmetric D matrix.
   bool is_symmetric();
 
-  // Returns true iff the loaded QP instance has a D matrix that is zero
-  // (i.e., iff the QP is actually an LP).
-  //
-  // Precondition: is_valid()
+  // Returns true iff the MPS stream could be successfully parsed and
+  // the loaded QP instance has a D matrix that is zero (i.e., iff the
+  // QP is actually an LP).
   bool is_linear()
   {
-    CGAL_qpe_assertion(is_valid());
-    return is_linear_;
+    return is_format_okay_ && is_linear_;
   }
 
-  // Returns true iff the loaded QP instance is in standard form.
-  //
-  // Precondition: is_valid()
+  // Returns true iff the MPS stream could be successfully parsed and
+  // the loaded QP instance is in standard form.
   bool is_in_standard_form()
   {
-    CGAL_qpe_assertion(is_valid());
+    if (!is_format_okay_)
+      return false;
+
     if (!is_in_standard_form_cached) {
       for (unsigned int i=0; i<var_names.size(); ++i)
 	if (fl_[i] == false || l_[i] != 0 ||
@@ -524,15 +538,14 @@ public: // methods:
     return is_in_standard_form_;
   }
 
-  // Returns true iff the QP has only equality constraints and the
-  // coefficients (from the matrix A) corresponding to these equality
-  // constraints have full row rank.
+  // Returns true iff the MPS stream could be successfully parsed and
+  // the QP has only equality constraints and the coefficients (from
+  // the matrix A) corresponding to these equality constraints have
+  // full row rank.
   //
   // Note: This routine is expensive, more precisely O(k^3)
   // where k is the number of variables (see number_of_variables()) or
   // the number of equality constraints, whichever is larger.
-  //
-  // Precondition: is_valid()
   bool has_equalities_only_and_full_rank();
 };
 
