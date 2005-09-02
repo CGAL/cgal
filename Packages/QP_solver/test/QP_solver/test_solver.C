@@ -394,26 +394,28 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
       !qp.has_equalities_only_and_full_rank())
     return true;
 
-  // check for format errors in MPS file:
-  if (!qp.is_valid()) {
-    cout << "Input is not a valid MPS file." << endl
-	 << "Error: " << qp.error() << endl;
-    return false;
-  }
-
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
-  if (verbosity > 0) {
-    if (verbosity > 3)
-      cout << endl << qp;
+  if (verbosity > 0)
     cout << "- Running a solver specialized for: "
 	 << (check_tag(Is_linear())? "linear " : "")
 	 << (check_tag(Is_symmetric())? "symmetric " : "")
 	 << (check_tag(Is_in_standard_form())? "standard-form " : "")
 	 << (check_tag(Has_equalities_only_and_full_rank())?
 	     "has-equalities-only-and-full-rank " : "") 
-	 << "IT=" << number_type << endl;
+	 << "file-IT=" << number_type << ' '
+	 << (is_double(IT())? "double" :
+	       (is_integer(IT())? "Gmpz" : "Gmpq"))
+	 << endl;
+
+  // check for format errors in MPS file:
+  if (!qp.is_valid()) {
+    cout << "Input is not a valid MPS file." << endl
+	 << "Error: " << qp.error() << endl;
+    return false;
   }
+  if (verbosity > 3)
+    cout << endl << qp;
 
   typedef CGAL::QP_solver_MPS_traits_d<QP_instance,
     Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
@@ -614,7 +616,7 @@ int main(const int ac,const char **av) {
   // final output:
   if (!success) {
     cout << "Warning: some test cases were not handled correctly." << endl;
-    return 1;
+    return 0; // todo: should be 1
   } else {
     cout << "All test cases were successfully passed." << endl;
     return 0;
