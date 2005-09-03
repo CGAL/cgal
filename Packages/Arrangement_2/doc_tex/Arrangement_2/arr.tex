@@ -11,41 +11,40 @@
 \section{Introduction}
 \label{arr_sec:intro}
 % ===================
-
-Given a set $\calC$ of planar curves, their {\em arrangement}
-$\calA(\calC)$ is the subdivision they induce on the plane into
-zero-dimensional, one-dimensional and two-dimensional cells,
-called {\em vertices}, {\em edges} and {\em faces}, respectively.
+%
+Given a set $\calC$ of planar curves, the {\em arrangement}
+$\calA(\calC)$ is the subdivision of the plane into zero-dimensional,
+one-dimensional and two-dimensional cells, called {\em vertices}, {\em
+edges} and {\em faces}, respectively induced by the curves in $\calC$.
 Arrangements are ubiquitous in the computational-geometry
-literature and have many applications in a range of fields ---
+literature and have many applications in a range of fields;
 see, e.g.,~\cite{as-aa-00,h-a-04}.
 
-As the curves in $\calC$ can intersect and are not necessarily
-$x$-monotone, we construct a collection $\calC''$ in two steps. We
-first decompose each curve in $\calC$ into maximal $x$-monotone
-curves (and possibly isolated points), thus obtaining the
-collection $\calC'$. Then we decompose each curve in $\calC'$ into
-maximal connected pieces not intersecting any other curve (or
-point) in $\calC'$. This way we obtain the collection $\calC''$ of
-$x$-monotone subcurves that are pairwise disjoint in their
-interiors. This collection may also contain isolated points, if
-the curves of $\calC$ contain such points. The arrangement induced
-by the collection $\calC''$ can be conveniently embedded as a
-planar graph, whose vertices are associated with curve endpoints
-or with isolated points and whose edges are associated with
-subcurves, and it is easy to see that $\calA(\calC) =
-\calA(\calC'')$. This graph can be represented using a {\em
-doubly-connected edge list} data-structure (\dcel\ for short),
+The curves in $\calC$ can intersect each other, and are not
+necessarily $x$-monotone. We construct a collection $\calC''$ of
+$x$-monotone subcurves that are pairwise disjoint in their interiors
+in two steps as follows. First, we decompose each curve in $\calC$
+into maximal $x$-monotone subcurves (and possibly isolated points),
+obtaining the collection $\calC'$. Then, we decompose each curve in
+$\calC'$ into maximal connected subcurves not intersecting any other
+curve (or point) in $\calC'$. The collection $\calC''$ may also
+contain isolated points, if the curves of $\calC$ contain such
+points. The arrangement induced by the collection $\calC''$ can be
+conveniently embedded as a planar graph, whose vertices are associated
+with curve endpoints or with isolated points, and whose edges are
+associated with subcurves. It is easy to see that
+$\calA(\calC) = \calA(\calC'')$. This graph can be represented using a
+{\em doubly-connected edge list} data-structure (\dcel\ for short),
 which consists of containers of vertices, edges and faces and
 maintains the incidence relations among these objects.
 
 The main idea behind the \dcel\ data-structure is to represent
 each edge using a pair of directed {\em halfedges}, one going from
-the (lexicographically) left endpoint of the curve to its right
-endpoint, and the other --- known as its {\em twin} halfedge ---
-going in the opposite direction. Halfedges are used to separate
-faces and to connect vertices (with the exception of {\em isolated
-vertices}, which are not connected).
+the (lexicographically) left endpoint of the curve toward its right
+endpoint, and the other, known as its {\em twin} halfedge, going in
+the opposite direction. Halfedges are used to separate faces, and to
+connect vertices (with the exception of {\em isolated vertices}, which
+are unconnected).
 
 If a vertex $v$ is the target of a halfedge $e$, we say that $v$
 and $e$ are {\em incident} to each other. The halfedges incident
@@ -58,27 +57,26 @@ which is the face lying to its left. Moreover, every halfedge is
 followed by another halfedge sharing the same incident face, such
 that the target vertex of the halfedge is the same as the source
 vertex of the next halfedge. The halfedges are therefore connected
-in circular lists and form chains, such that all edges of a chain
+in circular lists, and form chains, such that all edges of a chain
 are incident to the same face and wind along its boundary. We call
-such chains a {\em connected component of the boundary} (or {\em
+such a chain a {\em connected component of the boundary} (or {\em
 CCB} for short).
 
-A bounded face has a unique CCB of halfedges winding in a
-counterclockwise orientation along its boundary, which is defined
-to be its {\em outer CCB}. As the arrangement module supports only
-bounded curves, we always have exactly one unbounded face in the
-every arrangement, and this unbounded face does not have an outer
-boundary. Any other connected component of the boundary of the
-face is called a {\em hole} (or {\em inner CCB}), and can be
-represented as a circular chain of halfedges winding in a
-clockwise orientation around its outer boundary. Note that a hole
-is not necessarily a single face --- it may have no area, or
-alternatively it may consist of several connected faces.  Every
-face can have several holes contained in its interior (or there
-may be no holes). In addition, every face may contain isolated
-vertices in its interior. See Figure~\ref{arr_fig:seg_dcel} for an
-illustration of the various \dcel\ features. For more details on
-the \dcel\ data structure see~\cite[Chapter~2]{bkos-cgaa-00}.
+The unique CCB of halfedges winding in a counterclockwise orientation
+along a face boundary is referred to as the {\em outer CCB} of the
+face. Exactly one unbounded face exists in every arrangement, as the
+arrangement module supports only bounded curves at this point. The
+unbounded face does not have an outer boundary. Any other connected
+component of the boundary of the face is called a {\em hole} (or {\em
+inner CCB}), and can be represented as a circular chain of halfedges
+winding in a clockwise orientation around its outer boundary. Note
+that a hole is not necessarily a single face, as it may have no area,
+or alternatively it may consist of several connected faces.  Every
+face can have several holes contained in its interior (or no holes at
+all). In addition, every face may contain isolated vertices in its
+interior. See Figure~\ref{arr_fig:seg_dcel} for an illustration of the
+various \dcel\ features. For more details on the \dcel\ data structure
+see~\cite[Chapter~2]{bkos-cgaa-00}.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -111,8 +109,8 @@ The rest of this chapter is organized as follows: In
 Section~\ref{arr_sec:arr_class} we review in detail the interface
 of the \ccc{Arrangement_2} class-template, which is the central
 component in the arrangement package. In
-Section~\ref{arr_sec:queries} we show how to efficiently issue
-queries on an arrangement. In Section~\ref{arr_sec:gl_funcs} we
+Section~\ref{arr_sec:queries} we show how queries on an arrangement
+can be issued. In Section~\ref{arr_sec:gl_funcs} we
 review some important global functions that operate on
 arrangements, the most important ones being the global insertion
 functions. Section~\ref{arr_sec:traits} contains detailed
@@ -123,179 +121,204 @@ Section~\ref{arr_sec:notif} we review the notification mechanism
 that allows external classes to keep track of the changes that an
 arrangement instance goes through. Section~\ref{arr_sec:ex_dcel}
 explains how to extend the \dcel\ records, to store extra data
-with them and to efficiently update this data. In
+with them, and to efficiently update this data. In
 Section~\ref{arr_sec:overlay} we introduce the fundamental
 operation of overlaying two arrangements. Finally,
-Section~\ref{arr_sec:arr_with_hist} described the
+Section~\ref{arr_sec:arr_with_hist} describes the
 \ccc{Arrangement_with_history_2} class-template that extends the
 arrangement by storing additional history records with its curves.
 
 \section{The Main Arrangement Class}
 \label{arr_sec:arr_class}
 %===================================
-
-The main guideline behind the design of the arrangement package is
-the separation of the representation of the planar arrangement
-from the various algorithms that operate on it. Another important
-guideline is the separation between geometry an topology in the
-arrangement representation.
-
-The class \ccc{Arrangement_2<Traits,Dcel>} is a the main class in
+%
+The class \ccc{Arrangement_2<Traits,Dcel>} is the main class in
 the arrangement package. It is used to represent planar
-arrangements and provides the interface needed to traverse them
-and to maintain them. The arrangement is represented using the
-\dcel\ class, which captures the {\em topological structure} of
-the planar subdivision, and a geometric {\em traits} class that
-defines the family of planar curves that form the arrangement and
-supplies a range of geometric predicates (and constructions)
-needed to construct and maintain the arrangement.
+arrangements and provides the interface needed to traverse them,
+and to maintain them. An arrangement is defined by the \dcel\ class,
+which represents the {\em topological structure} of the planar
+subdivision, and a geometric {\em traits} class that determines the
+family of planar curves that form the arrangement. It supplies a
+minimal set of geometric operations (predicates and constructions)
+required to construct and maintain the arrangement and to operate on
+it.
 
-The separation between topology and geometry is defined by the two
-template parameters of the \ccc{Arrangement_2} template:
+The design of the arrangement package is guided by the need to
+separate between topological and geometric aspects of the planar
+subdivision. The separation is exhibited by the two template
+parameters of the \ccc{Arrangement_2} template:
 \begin{itemize}
 \item The \ccc{Traits} template-parameter should be instantiated with
 a model of the \ccc{ArrangementBasicTraits_2} concept. The traits
 class defines the types of $x$-monotone curves and two-dimensional
-points --- \ccc{X_monotone_curve_2} and \ccc{Point_2},
-respectively --- and supports basic geometric predicates on them.
+points, \ccc{X_monotone_curve_2} and \ccc{Point_2} respectively, and
+supports basic geometric predicates on them.
 
-In the first sections of this chapter we will always use
-\ccc{Arr_segment_traits_2}, which enables the construction of
-arrangements of line segments, as our traits class. However, the
-arrangement package is shipped with several other traits classes
-that can handle also polylines (continuous piecewise-linear
-curves), conic arcs and arcs of rational functions. We will
-exemplify the usage of these traits classes in
-Section~\ref{arr_sec:traits}.
-
+In the first sections of this chapter we always use
+\ccc{Arr_segment_traits_2} as our traits class, to construct
+arrangements of line segments. However, the arrangement package is
+shipped with several other traits classes that can handle also
+polylines (continuous piecewise-linear curves), conic arcs, and arcs
+of rational functions. We exemplify the usage of these traits classes
+in Section~\ref{arr_sec:traits}.
 \item The \ccc{Dcel} template-parameter should be instantiated with
 a class that is a model of the \ccc{ArranagementDcel} concept. The
 value of this parameter is by default
-\ccc{Arr_default_dcel<Traits>}, and it is recommended for most
-users to stick to this default implementation of a \dcel\ class.
-However, in some applications it is necessary to extend the
-\dcel\ features --- see Section~\ref{arr_sec:ex_dcel} for further
-explanations and examples.
+\ccc{Arr_default_dcel<Traits>}. In many applications it is necessary
+to extend the \dcel\ features; see Section~\ref{arr_sec:ex_dcel} for
+further explanations and examples.
 \end{itemize}
+
+\subsection{A simple Program}
+%--------------------------------------
+%
+The simple program listed below constructs a planar map of three segments
+
+\begin{alltt}
+#include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_default_dcel.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::Quotient<CGAL::MP_Float>     Number_type;
+typedef CGAL::Cartesian<Number_type>       Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel> Traits;
+typedef Traits::Point_2                    Point_2;
+typedef Traits::X_monotone_curve_2         X_monotone_curve_2;
+typedef CGAL::Arr_default_dcel<Traits>     Dcel;
+typedef CGAL::Arrangement_2<Traits,Dcel>   Arrangement_2;
+
+int main()
+\{
+  Arrangement_2 arr;
+  X_monotone_curve_2 cv[3];
+  Point_2 a1(0,0), a2(0,4), a3(4,0);
+ 
+  cv[0] = X_monotone_curve_2(a1,a2);
+  cv[1] = X_monotone_curve_2(a2,a3);
+  cv[2] = X_monotone_curve_2(a3,a1);
+  insert(arr, &cv[0], &cv[3]);
+
+  return 0;
+\}
+\end{alltt}
+
+The constructed arrangement is instantiated with the
+\ccc{Pm_segment_traits_2} traits class to handle segments only. It
+consists of two faces, a triangular face and the unbounded face.
+This program is not very useful, as it ends immediately after the
+arrangement is constructed. We will enhance it in the following
+sections to demonstrate various features.
 
 \subsection{Traversing the Arrangement}
 \label{arr_ssec:traverse}
 %--------------------------------------
-
+%
 The simplest and most fundamental arrangement operations are the
-various traversal methods, that allow users to systematically go
+various traversal methods, which allow users to systematically go
 over the relevant features of the arrangement at hand.
 
-As mentioned before, the arrangement is represented as a \dcel,
-and therefore stores three containers of vertices, halfedges and
-faces. The \ccc{Arrangement_2} class therefore supplies iterators
-for these containers. For example, the methods
-\ccc{vertices_begin()} and \ccc{vertices_end()} return
-\ccc{Arrangement_2::Vertex_iterator} objects that define the valid
-range of arrangement vertices. The value type of this iterator is
-\ccc{Arrangement_2::Vertex}. Moreover, the vertex-iterator type is
-equivalent to \ccc{Arrangement_2::Vertex_handle}, which serves as
-a pointer to a vertex. As we see next, all function related to
-arrangement features accept handle types as input parameters and
-return handle types as their output. Each of the three nested
-classes (namely \ccc{Arrangement_2::Vertex},
-\ccc{Arrangement_2::Halfedge} and \ccc{Arrangement_2::Face})
-support a \ccc{handle()} method that returns a handle to the
-object at hand.
+As mentioned above, the arrangement is represented as a \dcel,
+that stores three containers of vertices, halfedges and faces. Thus,
+the \ccc{Arrangement_2} class supplies iterators for these
+containers. For example, the methods \ccc{vertices_begin()} and
+\ccc{vertices_end()} return \ccc{Arrangement_2::Vertex_iterator}
+objects that define the valid range of arrangement vertices. The value
+type of this iterator is \ccc{Arrangement_2::Vertex}. Moreover, the
+vertex-iterator type is equivalent to
+\ccc{Arrangement_2::Vertex_handle}, which serves as a pointer to a
+vertex. As we show next, all functions related to arrangement features
+accept handle types as input parameters and return handle types as
+their output. Each of the three nested classes (namely
+\ccc{Arrangement_2::Vertex}, \ccc{Arrangement_2::Halfedge} and
+\ccc{Arrangement_2::Face}) support a \ccc{handle()} method that
+returns a handle to the object at hand.
 
 In addition to the iterators for arrangement vertices, halfedges
-and faces, the arrangement class also support \ccc{edges_begin()}
+and faces, the arrangement class also provides \ccc{edges_begin()}
 and \ccc{edges_end()} that return
 \ccc{Arrangement_2::Edge_iterator} objects for traversing the
 arrangement edges. Note that the value type of this iterator is
 \ccc{Arrangement_2::Halfedge}, representing one of the twin
-halfedges that form the edge.
+halfedges that represent the edge.
 %In fact, as twin halfedges always are always contiguous in the
 %halfedge container, using this iterator is equivalent to going
 %over all halfedges and taking every second halfedge.
 
 All iterator, circulator and handle types also have non-mutable
-(a.k.a. {\em const}) counterparts. For example, the arrangement
-has a non-constant member function called \ccc{vertices_begin()}
-that returns a \ccc{Vertex_iterator} object and another const
-member function that returns a a \ccc{Vertex_const_iterator}
-object. In fact, all methods listed in this section that return an
-iterator, a circulator or a handle have non-mutable counterparts.
-It should be noted that, for example, \ccc{Vertex_handle} can be
-readily converted to a \ccc{Vertex_const_handle}, but not
-vice-versa.
+({\em const}) counterparts. For example, the arrangement has a
+non-constant member function called \ccc{vertices_begin()} that
+returns a \ccc{Vertex_iterator} object and another const member
+function that returns a \ccc{Vertex_const_iterator} object. In fact,
+all methods listed in this section that return an iterator, a
+circulator or a handle have non-mutable counterparts. It should be
+noted that, for example, \ccc{Vertex_handle} can be readily converted
+to a \ccc{Vertex_const_handle}, but not vice-versa.
 
 Conversion of a non-mutable handle to a corresponding mutable
-handle are however possible, and can be performed using the static
-function \ccc{Arrangement_2::non_const_handle()}. This function
-has three overloads, one for each type of handle.
+handle are nevertheless possible, and can be performed using the
+static function \ccc{Arrangement_2::non_const_handle()}. There are
+three variant of this function, one for each type of handle.
 
 \subsubsection{Traversal Methods for an Arrangement Vertex}
 \label{arr_sssec:tr_vertex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 A vertex is always associated with a geometric entity, namely with
-a \ccc{Point_2} object, which can be retrieved by calling the
-\ccc{point()} method of the nested \ccc{Vertex} class.
+a \ccc{Point_2} object, which can be obtained by the \ccc{point()}
+method of the nested \ccc{Vertex} class.
 
-The \ccc{is_isolated()} method is used to determine whether a
-vertex is isolated or not. Recall that the incident halfedges
-incident to a regular (non-isolated) vertex form a circular list
-around this vertex. The \ccc{incident_halfedges()} method returns
-a circulator of type
+The \ccc{is_isolated()} method determines whether a vertex is isolated
+or not. Recall that the halfedges incident to a non-isolated vertex
+form a circular list around this vertex. The
+\ccc{incident_halfedges()} method returns a circulator of type
 \ccc{Arrangement_2::Halfedge_around_vertex_circulator} that
 enables the traversal of this circular list in a clockwise
 direction. The value type of this circulator is \ccc{Halfedge}.
 
 The following function prints all the neighbors of a given
 arrangement vertex (assuming the \ccc{Point_2} type can be
-exported to the standard output using the \ccc{<<} operator). For
-simplicity, we assume that the arrangement type and its nested
-type are properly defined (see next for more complete examples):
+exported to the standard output using the \ccc{<<} operator). The
+arrangement type is borrowed from the simple example above.
 \begin{alltt}
-void print_neighboring_vertices (Vertex_const_handle v)
+void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
 \{
-  if (v->is_isolated())
-  \{
+  if (v->is_isolated()) \{
     std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
     return;
   \}
 
-  Halfedge_around_vertex_const_circulator  first, curr;
-  Vertex_const_handle                      u;
+  Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+  first = curr = v->incident_halfedges();
 
   std::cout << "The neighbors of the vertex (" << v->point() << ") are:";
-  first = curr = v->incident_halfedges();
-  do
-  \{
+  do \{
     // Note that the current halfedge is (u -> v):
-    u = curr->source();
+    Arrangement_2::Vertex_const_handle u = curr->source();
     std::cout << " (" << u->point() << ")";
-
-    ++curr;
-  \} while (curr != first);
+  \} while (++curr != first);
   std::cout << std::endl;
-
-  return;
 \}
 \end{alltt}
 
 In case of an isolated vertex, it is possible to obtain the face
 that contains this vertex. However, this is done via a method of
 the \ccc{Arrangement_2} class, called \ccc{incident_face
-(Vertex_handle v)}, and not using one of the methods of the nested
-\ccc{Vertex} class.
+(Vertex_handle v)}, and not by using a method of the nested class
+\ccc{Vertex}.
 
 \subsubsection{Traversal Methods for an Arrangement Halfedge}
 \label{arr_sssec:tr_halfedge}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 Each pair of twin halfedge is associated with an
-\ccc{X_monotone_curve_2} object, which can be retrieved by calling
+\ccc{X_monotone_curve_2} object, which can be obtained by
 the \ccc{curve()} method of the nested \ccc{Halfedge} class.
 
 The \ccc{source()} and \ccc{target()} methods return handles to
-the halfedge source and target vertices, respectively. One can
+the halfedge source and target vertices respectively. You can
 obtain a handle to the twin halfedge using the \ccc{twin()}
 method. From the definition of halfedges, it follows that if
 \ccc{he} is a halfedge handle, then:
@@ -306,41 +329,34 @@ method. From the definition of halfedges, it follows that if
 \end{itemize}
 
 Every halfedge has an incident face that lies to its left, which
-can be obtained by using the \ccc{face()} method. Recall that a
+can be obtained by the \ccc{face()} method. Recall that a
 halfedge is always one link in a connected chain of halfedges that
 share the same incident face, known as a {\em CCB}. The
 \ccc{prev()} and \ccc{next()} methods return handles to the
-previous and next halfedges in the CCB, respectively (note that
+previous and next halfedges in the CCB respectively (note that
 \ccc{he->prev()} is not necessarily equivalent to
 \ccc{he->twin()->next()}).
 
-As the CCB is actually a circular list, it is natural to traverse
-it using a circulator. The \ccc{ccb()} method returns a
+It is natural to traverse the CCB using a circulator, as it is
+actually a circular list. The \ccc{ccb()} method returns a 
 \ccc{Arrangement_2::Ccb_halfedge_circulator} object for the
 halfedges along the CCB.
 
-The following function prints all $x$-monotone curves and points
-along a CCB (assuming that the \ccc{Point_2} and the
-\ccc{X_monotone_curve_2} types can be exported to the standard
-output using the \ccc{<<} operator):
+The function listed below prints all $x$-monotone curves along a CCB
+(assuming that the \ccc{Point_2} and the \ccc{X_monotone_curve_2}
+types can be exported to the standard output using the \ccc{<<}
+operator).
 \begin{alltt}
-void print_ccb (Ccb_halfedge_const_circulator circ)
+void print_ccb (Arrangement_2::Ccb_halfedge_const_circulator circ)
 \{
-  Ccb_halfedge_const_circulator  curr = circ;
-  Halfedge_const_handle          he;
-
+  Ccb_halfedge_const_circulator curr = circ;
   std::cout << "(" << curr->source()->point() << ")";
-  do
-  \{
-    he = curr->handle();
+  do \{
+    Arrangement_2::Halfedge_const_handle he = curr->handle();
     std::cout << "   [" << he->curve() << "]   "
               << "(" << he->target()->point() << ")";
-
-    ++curr;
-  \} while (curr != circ);
+  \} while (++curr != circ);
   std::cout << std::endl;
-
-  return;
 \}
 \end{alltt}
 
@@ -348,15 +364,14 @@ void print_ccb (Ccb_halfedge_const_circulator circ)
 \subsubsection{Traversal Methods for an Arrangement Face}
 \label{arr_sssec:tr_face}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-As the \ccc{Arrangement_2} class supports only finite curves, the
-arrangement always has a single unbounded face, where all other
+%
+An arrangement has a single unbounded face, where all other
 arrangement features form holes (or isolated vertices) inside this
-face. (Note that an empty arrangement contains no other feature
-{\em but} the unbounded face.) The function \ccc{unbounded_face()}
-returns a handle to this face.
+face. The function \ccc{unbounded_face()} returns a handle to this
+face. (Note that an empty arrangement contains nothing 
+{\em but} the unbounded face.)
 
-Given a \ccc{Face} object, we can use the \ccc{is_unbounded()}
+Given a \ccc{Face} object, you can use the \ccc{is_unbounded()}
 method to determine whether it is unbounded. Bounded faces have an
 outer CCB, and the \ccc{outer_ccb()} method returns a circulator
 for the halfedges along this CCB. Note that the halfedges along
@@ -367,84 +382,70 @@ A face can also contain disconnected components in its interior,
 namely holes and isolated vertices:
 \begin{itemize}
 \item The \ccc{holes_begin()} and \ccc{holes_end()} methods return
-\ccc{Arrangement_2::Holes_iterator} objects that define the range
+\ccc{Arrangement_2::Holes_iterator} iterators that define the range
 of holes inside the face. The value type of this iterator is
 \ccc{Ccb_halfedge_circulator}, defining the CCB that winds in a
 clockwise orientation around a hole.
-
 \item The \ccc{isolated_vertices_begin()} and
 \ccc{isolated_vertices_end()} methods return
-\ccc{Arrangement_2::Isolated_vertices_iterator} objects that
+\ccc{Arrangement_2::Isolated_vertices_iterator} iterators that
 define the range of isolated vertices inside the face. The value
 type of this iterator is \ccc{Vertex}.
 \end{itemize}
 
-The following function prints the outer and inner boundaries of a
+The function listed below prints the outer and inner boundaries of a
 given face, using the function \ccc{print_ccb()} that was
-introduced in the previous subsection:
+introduced in the previous subsection.
 \begin{alltt}
-void print_face (Face_const_handle f)
+void print_face (Arrangement_2::Face_const_handle f)
 \{
   // Print the outer boundary.
   if (f->is_unbounded())
-  \{
     std::cout << "Unbounded face. " << std::endl;
-  \}
-  else
-  \{
+  else \{
     std::cout << "Outer boundary: ";
     print_ccb (f->outer_ccb());
   \}
 
   // Print the boundary of each of the holes.
-  Holes_const_iterator              hole;
-  int                               index = 1;
-
-  for (hole = f->holes_begin(); hole != f->holes_end(); ++hole, ++index)
-  \{
+  Arrangement_2::Holes_const_iterator hi;
+  int                                 index = 1;
+  for (hi = f->holes_begin(); hi != f->holes_end(); ++hi, ++index) \{
     std::cout << "    Hole #" << index << ": ";
-    print_ccb (*hole);
+    print_ccb (*hi);
   \}
 
   // Print the isolated vertices.
-  Isolated_vertices_const_iterator  iv;
-
+  Arrangement_2::Isolated_vertices_const_iterator iv;
   for (iv = f->isolated_vertices_begin(), index = 1;
        iv != f->isolated_vertices_end(); ++iv, ++index)
   \{
     std::cout << "    Isolated vertex #" << index << ": "
               << "(" << iv->point() << ")" << std::endl;
   \}
-
-  return;
 \}
 \end{alltt}
 
 \subsubsection{Additional Example}
 \label{arr_sssec:tr_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To conclude the review of the various traversal methods, we bring
-the following function that prints the current setting of the
-arrangement:\footnote{To simplify the code, we assume that the
-\ccc{Arrangement_2} type is defined as a proper instantiation of
-the \ccc{Arrangement_2<Traits,Dcel>} template and all its nested
-types are also defined. The file \ccc{arr_print.h}, which can be
+%
+The function listed below prints the current setting of a given
+arrangement. This concludes the preview of the various traversal
+methods\footnote{The file \ccc{arr_print.h}, which can be
 found under the examples folder, includes this function and the
 rest of the functions listed in this section. Over there they are
 written in a more generic fashion, where the arrangement type
 serves as a template parameter for these functions, so different
 instantiations of the \ccc{Arrangement_2<Traits,Dcel>} template
-can be provided to the same function templates.}
+can be provided to the same function templates.}.
 \begin{alltt}
 void print_arrangement (const Arrangement_2& arr)
 \{
   // Print the arrangement vertices.
-  Vertex_const_iterator      vit;
-
+  Vertex_const_iterator vit;
   std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-  \{
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) \{
     std::cout << "(" << vit->point() << ")";
     if (vit->is_isolated())
       std::cout << " - Isolated." << std::endl;
@@ -453,67 +454,59 @@ void print_arrangement (const Arrangement_2& arr)
   \}
 
   // Print the arrangement edges.
-  Edge_const_iterator        eit;
-
+  Edge_const_iterator eit;
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
     std::cout << "[" << eit->curve() << "]" << std::endl;
 
   // Print the arrangement faces.
-  Face_const_iterator        fit;
-
+  Face_const_iterator fit;
   std::cout << arr.number_of_faces() << " faces:" << std::endl;
   for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     print_face (fit);
-
-  return;
 \}
 \end{alltt}
 
 \subsection{Modifying the Arrangement}
 \label{arr_ssec:modify}
 %-------------------------------------
-
+%
 In this section we review the various member functions of the
 \ccc{Arrangement_2} class that allows users to modify the
 topological structure of the arrangement by introducing new edges
-and vertices, modifying them and removing them.
+and vertices, modifying them, and removing them.
 
 Please note that the arrangement member-functions that insert new
 curves into the arrangement, thus enabling the construction of
-planar subdivision, are rather specialized, in the sense that the
-user has to have a large amount of a-priori knowledge on the
-location of the inserted curve. Indeed, for most purposes it is
-more convenient to construct an arrangement using the global
-insertion functions. Readers may therefore skip to
-Section~\ref{arr_sec:gl_funcs} and go over it before reading the
-rest of this section.
+planar subdivision, are rather specialized, as they require the
+a-priori knowledge on the location of the inserted curve. Indeed, for
+most purposes it is more convenient to construct an arrangement using
+the global insertion-functions. You may skip to
+Section~\ref{arr_sec:gl_funcs}, and return to this subsection at a
+later point in time.
 
 \subsubsection{Inserting Non-Intersecting Curves}
 \label{arr_sssec:mf_insert_cv}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 The most important functions that allow users to modify the
 arrangement, and the most frequently used ones, are the
 specialized insertion functions of $x$-monotone curves whose
 interior is disjoint from any other curve in the existing
-arrangement and does not contain any vertex of the arrangement. We
-will also assume that the location of the curve in the arrangement
-is known.
+arrangement and does not contain any vertex of the arrangement. In
+addition the location of the curve in the arrangement must be known.
 
-The reason for these rather harsh restrictions on the nature of
-the inserted curves is the decoupling of the topological
-arrangement representation from the various algorithms that
-operate on it. While the insertion of an $x$-monotone curve whose
-interior is disjoint from all existing arrangement features is
-quite straightforward (as we see next), inserting curves that
-intersect with the arrangement is much more complicated and
-requires the application of non-trivial algorithms. These
-insertion operations are therefore implemented as global functions
-that operate on the arrangement and the inserted curve(s) --- see
-Section~\ref{arr_sec:gl_funcs} for more details and ample
-examples.
-
+The motivation behind these rather harsh restrictions on the nature of
+the inserted curves is the decoupling of the topological arrangement
+representation from the various algorithms that operate on it. While
+the insertion of an $x$-monotone curve whose interior is disjoint from
+all existing arrangement features is quite straightforward (as we show
+next), inserting curves that intersect with the arrangement is much
+more complicated and requires the application of non-trivial
+geometric algorithms. These insertion operations are therefore
+implemented as global functions that operate on the arrangement and
+the inserted curve(s); see Section~\ref{arr_sec:gl_funcs} for more
+details and examples.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -634,8 +627,8 @@ depicted in Figure~\ref{arr_fig:ex_1}. As the arrangement is very
 simple, we use the simple Cartesian kernel of \cgal\ with integer
 coordinates for the segment endpoints. We used the built-in
 \ccc{Arr_segment_traits_2} class that enables the efficient
-maintenance of arrangements of line segments
---- see more details on this traits class in Section~\ref{arr_sec:traits}:
+maintenance of arrangements of line segments (see more details on
+this traits class in Section~\ref{arr_sec:traits}):
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example1.C}
 
@@ -648,7 +641,7 @@ bounded faces form together a hole in the unbounded face.
 \subsubsection{Manipulating Isolated Vertices}
 \label{arr_sssec:mf_iso_verts}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 Isolated points are in general simpler geometric entities than
 curves and indeed the member functions that manipulate them are
 easier to understand.
@@ -702,7 +695,7 @@ isolated vertices that are still contained in the unbounded face
 \subsubsection{Manipulating Halfedges}
 \label{arr_sssec:mf_halfedges}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 In the previous subsection we showed how to introduce new isolated
 vertices in the arrangement. But how do we create a vertex that
 lies on an existing arrangement edge (more precisely, on an
@@ -794,7 +787,7 @@ respectively. It therefore seems that these two functions are of
 little use. However, we should keep in mind that there may be
 extraneous data (probably non-geometric) associated with the point
 objects or with the curve objects, as defined by the traits class,
-so we are thus able to modify this data --- see more details in
+so we are thus able to modify this data; see more details in
 Section~\ref{arr_sec:traits}.
 
 In addition, we can use these functions to replace a geometric
@@ -868,7 +861,7 @@ insertion functions that accept predecessor halfedges:
 \section{Issuing Queries on an Arrangement}
 \label{arr_sec:queries}
 %==========================================
-
+%
 One of the most important query types defined on arrangements is
 the {\em point-location} query: Given a point, find the
 arrangement cell that contains it. Typically, the result of a
@@ -885,7 +878,7 @@ arrangement instance.
 \subsection{Point-Location Queries}
 \label{arr_ssec:pl}
 %----------------------------------
-
+%
 The arrangement package includes several classes (more precisely,
 class templates parameterized by an arrangement class) that model
 the \ccc{ArrangementPointLocation_2} concept --- namely, they all
@@ -922,7 +915,7 @@ void point_location_query
          const typename PointLocation::Arrangement_2::Point_2& q)
 \{
   // Perform the point-location query.
-  CGAL::Object    obj = pl.locate (q);
+  CGAL::Object obj = pl.locate (q);
 
   // Print the result.
   typedef typename PointLocation::Arrangement_2  Arrangement_2;
@@ -931,40 +924,34 @@ void point_location_query
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
 
-  if (CGAL::assign (f, obj))
-  \{
+  if (CGAL::assign (f, obj)) \{
     // q is located inside a face:
     if (f->is_unbounded())
       std::cout << "Inside the unbounded face." << std::endl;
     else
       std::cout << "Inside a bounded face." << std::endl;
   \}
-  else if (CGAL::assign (e, obj))
-  \{
+  else if (CGAL::assign (e, obj)) \{
     // q is located on an edge:
     std::cout << "On an edge: " << e->curve() << std::endl;
   \}
-  else if (CGAL::assign (v, obj))
-  \{
+  else if (CGAL::assign (v, obj)) \{
     // q is located on a vertex:
     if (v->is_isolated())
       std::cout << "On an isolated vertex: " << v->point() << std::endl;
     else
       std::cout << "On a vertex: " << v->point() << std::endl;
   \}
-  else
-  \{
+  else \{
     CGAL_assertion_msg (false, "Invalid object.");
   \}
-
-  return;
 \}
 \end{alltt}
 
 \subsubsection{Choosing a Point-Location Strategy}
 \label{arr_sssec:pl_strat}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 Each of the various point-location classes employs a different
 algorithm or {\em strategy} for answering queries:
 \begin{itemize}
@@ -989,7 +976,7 @@ arrangement, where the strategy is determined by the
 class \ccc{Arr_landmarks_vertices_generator} is used and the
 arrangement vertices are the selected landmarks, but other
 landmark-generating strategies, such as sampling random points or
-choosing points on a grid, are also available --- see the
+choosing points on a grid, are also available; see the
 reference manual for more details.
 
 \item \ccc{Arr_trapezoid_ric_point_location<Arrangement>} implements
@@ -1038,7 +1025,7 @@ the \kdtree\ maintained by the landmarks algorithm needs to be
 frequently rebuilt as the arrangement changes. In addition, using
 the landmarks point-location class adds some extra requirement
 from the traits class (that is, the traits class should be a model
-of a refined concept \ccc{ArrangementLandmarkTraits_2} --- see
+of a refined concept \ccc{ArrangementLandmarkTraits_2}; see
 Section~\ref{arr_sec:traits} for the details). However, most
 built-in traits classes that come with the \cgal\ public release
 support these extra operations.
@@ -1054,7 +1041,7 @@ selected point-location strategy.
 \subsubsection{An Example}
 \label{arr_sssec:pl_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 \begin{figure}[t]
 \begin{ccTexOnly}
 \begin{center}
@@ -1134,35 +1121,29 @@ void vertical_ray_shooting_query
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
 
-  if (CGAL::assign (e, obj))
-  \{
+  if (CGAL::assign (e, obj)) \{
     // We hit an edge:
     std::cout << "Hit an edge: " << e->curve() << std::endl;
   \}
-  else if (CGAL::assign (v, obj))
-  \{
+  else if (CGAL::assign (v, obj)) \{
     // We hit a vertex:
     if (v->is_isolated())
       std::cout << "Hit an isolated vertex: " << v->point() << std::endl;
     else
       std::cout << "Hit a vertex: " << v->point() << std::endl;
   \}
-  else
-  \{
+  else \{
     // We did not hit anything:
     CGAL_assertion_msg (obj.is_empty(), "Invalid object.");
-
     std::cout << "Hit nothing." << std::endl;
   \}
-
-  return;
 \}
 \end{alltt}
 
 The following program uses the auxiliary function listed above to
 perform vertical ray-shooting queries on an arrangement. Note that
 the arrangement and the query points are exactly the same as in
-\ccc{example5.C} --- see Figure~\ref{arr_fig:ex_5}:
+\ccc{example5.C} (see Figure~\ref{arr_fig:ex_5}):
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example6.C}
 
@@ -1175,7 +1156,7 @@ subtractions and multiplications in an exact number.
 \subsection{Batched Point-Location}
 \label{arr_ssec:batched_pl}
 %----------------------------------
-
+%
 Suppose that at a given moment our application has to issue a
 relatively large number $m$ of point-location queries on a
 specific arrangement instance. It is possible of course to define
@@ -1229,11 +1210,11 @@ traits class.
 \subsection{Incremental Insertion Functions}
 \label{arr_ssec:inc_insert}
 %-------------------------------------------
-
+%
 \subsubsection{Inserting Non-Intersecting Curves}
 \label{arr_sssec:insert_non_x}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 In Section~\ref{arr_sec:arr_class} we explained how to construct
 arrangements of $x$-monotone curves that are pairwise disjoint in
 their interior, when the location of the segment endpoints in the
@@ -1273,7 +1254,7 @@ class and uses it to insert the curve.
 \subsubsection{Inserting $x$-Monotone Curves}
 \label{arr_sssec:insert_x_mon}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 The \ccc{insert_non_intersecting()} function is indeed very
 efficient, but its preconditions on the input curves are still
 rather restricting. Let us assume that the arrangement is
@@ -1302,7 +1283,7 @@ complexity of the inserted curve's zone.
 \subsubsection{Inserting General Curves}
 \label{arr_sssec:insert_gen}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 So far all our examples were of arrangements of line segments,
 where the \ccc{Arrangement_2} template was instantiated with the
 \ccc{Arr_segment_traits_2} class. In this case, the fact that
@@ -1363,7 +1344,7 @@ that models the \ccc{ArrangementXMonotoneTraits_2} concept.
 \subsubsection{An Example}
 \label{arr_sssec:insert_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 \begin{figure}[t]
 \begin{ccTexOnly}
 \begin{center}
@@ -1407,7 +1388,7 @@ coordinates:
 \subsection{Aggregated Insertion Functions}
 \label{arr_ssec:agg_insert}
 %------------------------------------------
-
+%
 Let us assume we have to insert a set of $m$ input curves into an
 arrangement. It is possible of course to do this incrementally,
 inserting the curves one by one, as shown in the previous section.
@@ -1506,7 +1487,7 @@ floating-point numbers.
 \subsection{Removing Vertices and Edges}
 \label{arr_ssec:gl_remove}
 %---------------------------------------
-
+%
 The two following global functions handle the removal of vertices
 and edges from an arrangement. The difference between them and the
 member functions of the \ccc{Arrangement_2} template is that they
@@ -1542,7 +1523,7 @@ vertical line segments:
 \section{Traits Classes}
 \label{arr_sec:traits}
 %=======================
-
+%
 As mentioned in the introduction of this chapter, the traits class
 encapsulates the definitions of the geometric entities and
 implements the geometric predicates and constructions needed by
@@ -1692,7 +1673,7 @@ contains hardly any intersection points.
 \subsection{The Polyline Traits Class}
 \label{arr_ssec:tr_polylines}
 %-----------------------------------
-
+%
 The \ccc{Arr_polyline_traits_2<SegmentTraits>} class can be used
 to maintain arrangements of polylines (a.k.a. poly-segments),
 which are continuous piecewise linear curves. A polyline can be
@@ -1755,7 +1736,7 @@ vertices:
 \subsection{The Conic Traits Class}
 \label{arr_ssec:tr_conic}
 %-------------------------------
-
+%
 A {\em conic curve} is an algebraic curve of degree 2, namely it
 is the locus of all points $(x,y)$ satisfying the equation $C:\ r
 x^2 + s y^2 + t xy + u x + v y + w = 0$, where the six
@@ -1866,7 +1847,7 @@ also support basic accessor functions such as \ccc{source()},
 
 \subsubsection{Examples}
 %~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 \begin{figure}[t]
 \begin{ccTexOnly}
 \begin{center}
@@ -1945,7 +1926,7 @@ multiplicity $1$:
 \subsection{Traits Class for Arcs of Rational Functions}
 \label{arr_ssec:tr_ratfunc}
 %-------------------------------------------------------
-
+%
 A {\em rational function} is given by the equation $y =
 \frac{P(x)}{Q(x)}$, where $P$ and $Q$ are polynomials of arbitrary
 degrees. In particular, if $Q(x) = 1$ then the function is a
@@ -1955,8 +1936,8 @@ $[x_{\rm min}, x_{\rm max}]$, where $Q$ does not have any real
 roots in this interval (thus the arc does not contain any poles).
 Rational functions, and polynomial functions in particular, are
 not only interesting in their own right, they are also very useful
-for approximating or interpolating more complicated curves ---
-see, e.g.,~\cite[Chapeter~3]{ptvf-nrcpp-02}.
+for approximating or interpolating more complicated curves; see,
+e.g.,~\cite[Chapeter~3]{ptvf-nrcpp-02}.
 
 In order to allow robust and exact computations with rational
 arcs, we require that the coefficient of the polynomials $P$ and
@@ -1967,7 +1948,7 @@ algebraic numbers.
 Using the \ccc{Arr_rational_traits_2<AlgKernel, NtTraits>} class
 template it is possible to construct and maintain arrangement of
 rational arcs. The template parameters are very similar to the
-ones used by the \ccc{Arr_conic_traits_2} class template --- see
+ones used by the \ccc{Arr_conic_traits_2} class template; see
 the previous section. However, no rational kernel is needed. Also
 in this case it is recommended to use the
 \ccc{CORE_algebraic_number_traits} class, with a kernel templated
@@ -2015,14 +1996,14 @@ constructors, for polynomial arcs and for rational arcs:
 \subsection{Meta-Traits Classes}
 \label{arr_ssec:meta_tr}
 %-------------------------------
-
+%
 Meta-traits classes serve as {\em decorators} of other geometric
 traits classes. They allow attaching user-defined data to curves
 (and to points), and automatically manipulate this data,
 distributing it to the geometric entities that are constructed. We
 note that additional information can also be maintained by
 extending the vertex, halfedge, or face types provided of the
-\dcel\ class used by the arrangement --- see the details in
+\dcel\ class used by the arrangement; see the details in
 Section~\ref{arr_sec:ex_dcel}.
 
 The two meta-traits classes
@@ -2092,7 +2073,7 @@ them) and store the same data field(s).
 
 \subsubsection{Examples}
 %~~~~~~~~~~~~~~~~~~~~~~~
-
+%
 \begin{figure}[t]
 \begin{ccTexOnly}
 \begin{center}
@@ -2154,7 +2135,7 @@ geometrically equivalent curves, but with a different data fields:
 \section{The Notification Mechanism}
 \label{arr_sec:notif}
 %===================================
-
+%
 It is highly important for some applications to know exactly what
 happens inside a specific arrangement instance. For example, when
 we insert a new curve into an arrangement we may want to keep
@@ -2286,7 +2267,7 @@ and examples.
 \section{Extending the \dcel}
 \label{arr_sec:ex_dcel}
 %============================
-
+%
 For many applications of the arrangement package it is necessary to
 store additional information (perhaps of non-geometric nature) with
 the arrangement cells. As vertices are associated with \ccc{Point_2}
@@ -2369,7 +2350,7 @@ however to modify the program to handle the general case.}
 \subsection{Extending All \dcel\ Records}
 \label{arr_ssec:ex_dcel_all}
 %----------------------------------------
-
+%
 The
 \ccc{Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>}
 class-template is used to associate auxiliray data fields for of
@@ -2402,7 +2383,7 @@ is copied to another arrangement instance:
 \section{Overlaying Arrangements}
 \label{arr_sec:overlay}
 %================================
-
+%
 Assume that we are given two geographic maps, represented as
 arrangements with some data objects attached to their faces,
 representing some geographic information --- for example, a map of
@@ -2481,7 +2462,7 @@ concept. The details of this concept are given in the reference manual.
 \subsection{Example for a Simple Overlay}
 \label{arr_ssec:simp_ovl}
 %----------------------------------------
-
+%
 \begin{figure}[t]
 \begin{ccTexOnly}
 \begin{center}
@@ -2509,7 +2490,7 @@ Figure~\ref{arr_fig:ex_22} and computes their overlay:
 \subsection{Example for a Face Overlay}
 \label{arr_ssec:face_ovl}
 %--------------------------------------
-
+%
 The following example shows how to compute the intersection of two polygons
 using the \ccc{overlay()} function. We use a face-extended \dcel\ class
 extended with a Boolean flag to instantiate our arrangement class,
@@ -2529,14 +2510,16 @@ $\hat{f}$ in Figure~\ref{arr_fig:ex_22}:
 \section{Storing the Curve History}
 \label{arr_sec:arr_with_hist}
 %==================================
+%
 
 \section{Adapting to {\sc Boost} Graphs}
 \label{arr_sec:bgl}
 %=======================================
+%
 
 \section*{Design and Implementation History}
 %===========================================
-
+%
 The code of this package is the result of a long development process.
 Initially (and until version~3.1), the code was spread among several
 packages, namely \ccc{Topological_map}, \ccc{Planar_map_2},
