@@ -11,8 +11,15 @@
         *is* broken.
       - File_medit.h should not require systematicaly surface_index()
       - provide .cin files for tests (read Dev'Manual)
+      - remove info()s everywhere
+          Mesh_3/include/CGAL/Implicit_surfaces_mesher_3.h
+          Mesh_3/include/CGAL/Mesh_3/Facet_on_surface_criterion.h
+          Mesh_3/include/CGAL/Mesh_3/Implicit_surface_mesher_visitor.h
+          Mesh_3/include/CGAL/Mesh_3/Refine_tets.h
+          Mesh_3/include/CGAL/Mesh_3/Slivers_exuder.h
 
   -- Laurent Rineau, 2005/10/02
+
 
 Sliver_exuder.h should contain only functions, I think.
   -- Laurent Rineau, 2005/04/06
