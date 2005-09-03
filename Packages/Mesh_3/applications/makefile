@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS =            -I../../../Triangulation_3/include \
+CXXFLAGS = -I../../Triangulation_3/include \
            -I../../Mesh_2/include \
            -I../include \
 	   -I../../Data_structure_for_queries_3/include \
@@ -40,6 +40,7 @@ LDFLAGS = \
 all:            \
                 lanteri$(EXE_EXT) \
                 read_mesh$(EXE_EXT) \
+                slivers_exuder$(EXE_EXT) \
                 stat_mesh$(EXE_EXT) 
 
 lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
@@ -58,6 +59,11 @@ lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
 read_mesh$(EXE_EXT): read_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)read_mesh read_mesh$(OBJ_EXT) $(LDFLAGS)
 
+slivers_exuder$(OBJ_EXT): ../include/CGAL/Mesh_3/Slivers_exuder.h
+
+slivers_exuder$(EXE_EXT): slivers_exuder$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)slivers_exuder slivers_exuder$(OBJ_EXT) $(LDFLAGS)
+
 stat_mesh$(EXE_EXT): stat_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)stat_mesh stat_mesh$(OBJ_EXT) $(LDFLAGS)
 
@@ -68,6 +74,7 @@ clean: \
                    lanteri_process_results.clean \
                    Qt_widget_displayer.clean \
                    read_mesh.clean \
+                   slivers_exuder.clean \
                    stat_mesh.clean 
 
 #---------------------------------------------------------------------#

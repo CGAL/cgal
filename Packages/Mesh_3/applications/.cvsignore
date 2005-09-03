@@ -1,4 +1,6 @@
 lanteri
 stat_mesh
 read_mesh
+slivers_exuder
+*.mesh
 *.png
