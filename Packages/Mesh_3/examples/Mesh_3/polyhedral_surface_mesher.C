@@ -389,17 +389,7 @@ int main(int argc, char **argv) {
       usage(argv[0], ("Error: cannot create " + dump_initial_surface_filename).c_str());
   }
   mesher.refine_mesh();
-//   int i = 100;
-//   while(!mesher.done())
-//     {
-//       std::stringstream s;
-//       s << "out." << i++ << ".mesh";
-//       std::cerr << s.str() << std::endl;
-//       std::ofstream os3(s.str().c_str());
-//       output_pslg_to_medit(os3, tr);
-//       mesher.step_by_step();
-//     }
-//   exit(0);
+
   std::cerr << "Final number of points: " << tr.number_of_vertices() 
             << std::endl;
 
@@ -424,7 +414,7 @@ int main(int argc, char **argv) {
       }
     
       // Output
-      output_pslg_to_medit(*out, tr);
+      output_pslg_to_medit(*out, mesher.complex_2_in_triangulation_3());
     }
     
   if( dump_distribution )
@@ -448,7 +438,7 @@ int main(int argc, char **argv) {
     std::ofstream file(mesh_after_filename.c_str());
     if( file ) {
       std::cerr << "Writing to file " << mesh_after_filename << "..." << std::endl;
-      output_pslg_to_medit(file, tr);
+      output_pslg_to_medit(file, mesher.complex_2_in_triangulation_3());
     }
     else
       usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());

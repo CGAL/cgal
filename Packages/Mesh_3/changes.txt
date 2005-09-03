@@ -1,3 +1,115 @@
+2 september 2005 Laurent Rineau
+- in Surface_mesher:
+    - new file include/CGAL/Point_with_surface_index_geom_traits.h to have
+      one class per file.
+    - new files:
+        include/CGAL/Weighted_point_with_surface_index.h
+        include/CGAL/Point_with_surface_index_geom_traits.h
+      so that CGAL::Weighted_point_with_surface_index<Weighted_point> can
+      have several additional constructors with Bare_point parameters.
+    - two important hacks in files:
+        include/CGAL/Surface_mesher/Oracles/Polyhedral.h
+        include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+      1/ Use of a new typedef Kernel_point, obtained by Kernel_traits, so
+      these two classes work with Point_with_surface_index<Point> and
+      Weighted_point_with_surface_index<Weighted_point>. Some assign
+      statement has to be used with a Kernel_point, so that they do not
+      fail systematicaly (assign sucks!).
+
+      2/ Use of CGAL::Random_points_in_sphere_3<Point, Point_creator> in
+      include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h in function
+      random_points(), so that this function does not use the contructor
+      Point(double x, double y, double z). This implied that the tenmplate
+      Implicit_oracle had a new template parameter, Point_creator, which I
+      gave default
+            Creator_uniform_3<typename GT::RT, typename GT::Point_3>.
+      With Point_with_surface_index<Point> and
+      Weighted_point_with_surface_index<Weighted_point> this creator should
+      be defined. See ../Mesh_3/test/Mesh_3/combined_spheres.C and   
+      ../Surface_mesher/examples/Surface_mesher/surfaces_union.C
+    - same problem, file
+        include/CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h
+      has been changed: Point_surface_indices_visitor<Tr> now has a
+      templated new_point() function, so that is can take Kernel_point or
+      Point as argument.
+    - minor changes:
+        - include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h now has
+          correct copyright and #ifdef sentinel
+        - include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h now
+          has correct copyright
+        - rename DT_3 into Tr, and GT_3 into Geom_traits in file
+          include/CGAL/Surface_mesher/Oracles/Polyhedral.h
+    - updated examples/Surface_mesher/surfaces_union.C so that it works.
+
+TODO: - fix include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h as
+        regards Kernel_point stuff
+      - merge it with include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+- in Mesh_3:
+    - include/CGAL/IO/File_medit.h :
+        - fix namespace !!
+        - some functions now takes a C2T3 as argument, now that C2T3 has a
+        triangulation() getter.
+        - new function input_pslg_from_medit() !! It reads indices.
+        - output_pslg_to_medit() now uses surface_index() too 
+    - new implementation of CGAL::Point_traits.h
+    - tests:
+        - test/Mesh_3/combined_spheres.C
+          Now uses a class Point_with_surface_index_creator that is passed
+          to Implicit_oracle.
+          Now reads r1..r5 from std::cin, as well as the output medit file.
+        - test/Mesh_3/multi_spheres.C 
+          Updated: compiles but is still broken, because of
+          Multi_implicit_oracle (see TODO below)
+        - new shell script test/Mesh_3/spheres_create_input.sh (not
+          submitted to CGAL) that helps to create .cin files for
+          combined_sphere.C
+    - examples:
+        - examples/Mesh_3/implicit_surfaces_mesher_3.C
+          Updated (use Weighted_point_with_surface_index_geom_traits and
+          new API for output_pslg_to_medit())
+          Compiles and should run correctly (I will see this week-end).
+    - new directory applications/ (not submitted)
+        - read_mesh.C reads medit files and display faces
+          counts. Uses "utils.h" and "types.h"
+        - stat_mesh.C does the same and displays vertices and facets counts
+          by surfaces.
+        - lanteri.C ad hoc application for fives spheres having same
+          center. It uses:
+            - lanteri_utils.h scans edges and cells
+            - distribution.[Ch] computes and display distributions 
+            - Distribution_displayer.h is an abstract base class used by 
+            distribution.C
+            - Gd_displayer.h and Qt_widget_displayer.h are two
+            Distribution_displayer subclasses, with there
+            implementations. Qt_widget_displayer is not currently used.
+          Only lanteri.C (and lanteri_utils.h) needs CGAL. The other files can
+          be compiled very quickly.
+    - minor changes:
+        - include/CGAL/IO/File_medit.h :
+            - now has correct #ifdef sentinel
+            - added missing includes
+        - examples/Mesh_3/implicit_surfaces_mesher_3.C: rename T to tr
+        - examples/Mesh_3/makefile is cleaned.
+
+TODO: - examples/Mesh_3/polyhedral_surface_mesher.C is broken because:
+        - output_pslg_to_medit() in include/CGAL/IO/File_medit.h need
+          surface_index() in points. :-(
+        - Weighted_point wp = Weighted_point(p, best_weight, index);
+          in include/CGAL/Mesh_3/Slivers_exuder.h
+        - add_in_graph() & o in vertices (this sucks!)
+        - should use Weighted_point_with_surface_index_geom_traits
+      - test/Mesh_3/multi_spheres.C is broken because 
+          ../../../Surface_mesher/ \
+                  include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h
+        *is* broken.
+      - File_medit.h should not require systematicaly surface_index()
+      - provide .cin files for tests (read Dev'Manual)
+
+25 august 2005 Laurent Rineau
+- new implementation of CGAL::Point_traits
+
 15 august 2005 Laurent Rineau
 - in Surface_mesher: new Combining_oracle, and Oracle_visitor
 - in Mesh_3 test/Mesh_3/combined_spheres tests that new oracle.

@@ -17,6 +17,8 @@ doxygen:
 # clean all object files
 clean: 
 	${MAKE} -C examples/Mesh_3 clean
+	${MAKE} -C applications clean
+	${MAKE} -C test/Mesh_3 clean
 
 dist-clean: clean
 	find . -name '.#*' -exec rm \{\} \;

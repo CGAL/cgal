@@ -21,20 +21,34 @@
 #define CGAL_POINT_TRAITS_H
 
 #include <CGAL/Weighted_point.h>
+#include <boost/config.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/static_assert.hpp>
 
 namespace CGAL {
 
-
-
+  template <class P>
+  struct Is_weighted : public ::boost::mpl::false_ {} ;
+  
+  template <class P, typename FT>
+  struct Is_weighted< ::CGAL::Weighted_point<P, FT> > :
+    public ::boost::mpl::true_ {} ;
+  
   namespace details {
 
+    template <class P, typename FT, bool>
+    struct Point_traits_aux 
+    {
+      // should give errors
+    };
+
     template <class P, typename FT>
-    struct Point_traits_aux
+    struct Point_traits_aux<P, FT, false>
     {
       typedef P Point;
       typedef P Bare_point;
       typedef typename ::CGAL::Weighted_point<Bare_point, FT> Weighted_point;
-      typedef Tag_false Has_weithed_point;
+      typedef Tag_false Is_weighted;
      
       const Bare_point& bare_point(const Point& bp)
       {
@@ -58,12 +72,12 @@ namespace CGAL {
     }; // end class Point_traits_aux<P>
 
     template <class P, typename FT>
-    struct Point_traits_aux< ::CGAL::Weighted_point<P, FT>, FT >
+    struct Point_traits_aux<P, FT, true>
     {
-      typedef ::CGAL::Weighted_point<P, FT> Point;
-      typedef Point Weighted_point;
+      typedef P Point;
+      typedef P Weighted_point;
       typedef typename Point::Point Bare_point;
-      typedef Tag_true Has_weithed_point;
+      typedef Tag_true Is_weighted;
      
       const Bare_point& bare_point(const Point& wp)
       {
@@ -84,14 +98,23 @@ namespace CGAL {
       {
         return wp;
       }
-    }; // end class Point_traits_aux<P>
+    }; // end class Point_traits_aux<P, FT, true>
+
+    template <class Point>
+    struct FT_of_point 
+    {
+      typedef typename CGAL::Kernel_traits<Point>::Kernel::FT type;
+    };
 
   } // end namespace details
 
 template <class Point>
-class Point_traits : 
-    public details::Point_traits_aux<Point,
-       typename CGAL::Kernel_traits<Point>::Kernel::FT >
+class Point_traits
+  : public details::Point_traits_aux<
+      Point,
+      typename details::FT_of_point<Point>::type,
+      Is_weighted<Point>::value
+    >
 {
 }; // end class Point_traits<T>
 

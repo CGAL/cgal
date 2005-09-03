@@ -138,6 +138,11 @@ public:
     initialized = true;
   }
 
+  C2t3& complex_2_in_triangulation_3()
+  {
+    return c2t3;
+  }
+
   void refine_mesh()
   {
     if(!initialized)

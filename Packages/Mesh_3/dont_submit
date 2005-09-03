@@ -3,4 +3,5 @@ depends
 GNUmakefile
 Doxyfile
 TODO
-tools
+applications
+spheres_create_input.sh

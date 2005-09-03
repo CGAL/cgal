@@ -17,7 +17,7 @@
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 
 #include <CGAL/Point_traits.h>
-#include <CGAL/Point_with_surface_index.h>
+#include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
 
 #include <iostream>
 #include <fstream>
@@ -26,7 +26,7 @@
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-typedef CGAL::Point_with_surface_index_geom_traits<Regular_traits> My_traits;
+typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 // Multi_surface_traits<Regular_traits> ?
 typedef CGAL::Triangulation_vertex_base_with_info_3<bool, My_traits> Vb1;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
@@ -79,8 +79,8 @@ typedef CGAL::Implicit_surfaces_mesher_3<Tr,
 int main(int , char** )
 {
   /*** Spheres radiuss ***/
-  const FT r1 = 93.; // 93 milimeters
-  const FT r2 = 94.;
+  const FT r1 = 73.; // 93 milimeters
+  const FT r2 = 84.;
   const FT r3 = 97.;
   const FT r4 = 100.;
   const FT r5 = 267.;
@@ -186,5 +186,5 @@ int main(int , char** )
   mesher.refine_mesh();
 
   std::ofstream out("multi_spheres.mesh");
-  CGAL::output_pslg_to_medit(out, tr);
+  CGAL::output_pslg_to_medit(out, mesher.complex_2_in_triangulation_3());
 }

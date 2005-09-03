@@ -1,3 +1,19 @@
+      - examples/Mesh_3/polyhedral_surface_mesher.C is broken because:
+        - output_pslg_to_medit() in include/CGAL/IO/File_medit.h need
+          surface_index() in points. :-(
+        - Weighted_point wp = Weighted_point(p, best_weight, index);
+          in include/CGAL/Mesh_3/Slivers_exuder.h
+        - add_in_graph() & o in vertices (this sucks!)
+        - should use Weighted_point_with_surface_index_geom_traits
+      - test/Mesh_3/multi_spheres.C is broken because 
+          ../../../Surface_mesher/ \
+                  include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h
+        *is* broken.
+      - File_medit.h should not require systematicaly surface_index()
+      - provide .cin files for tests (read Dev'Manual)
+
+  -- Laurent Rineau, 2005/10/02
+
 Sliver_exuder.h should contain only functions, I think.
   -- Laurent Rineau, 2005/04/06
 

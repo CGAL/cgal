@@ -22,7 +22,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Point_traits.h>
-#include <CGAL/Point_with_surface_index.h>
+#include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
 
 #include "implicit_function.h"
 #include "parameters.h"
@@ -46,7 +46,7 @@
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-typedef CGAL::Point_with_surface_index_geom_traits<Regular_traits> My_traits;
+typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 typedef CGAL::Triangulation_vertex_base_with_info_3<bool, My_traits> Vb1;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
@@ -389,7 +389,7 @@ int main(int argc, char **argv) {
 		 bipolar_oracle);
 
   // 2D-complex in 3D-Delaunay triangulation
-  Tr T;
+  Tr tr;
 
   // Initial point sample
   std::string read_initial_points = string_options["read_initial_points"];
@@ -404,7 +404,7 @@ int main(int argc, char **argv) {
 	Point_3 p;
 	if(in >> p)
 	  {
-	    T.insert(p);
+	    tr.insert(p);
 	    --n;
 	  }
       }
@@ -426,7 +426,7 @@ int main(int argc, char **argv) {
 	out << *it <<"\n";
     }
 
-    T.insert (initial_point_sample.begin(), initial_point_sample.end());
+    tr.insert (initial_point_sample.begin(), initial_point_sample.end());
   }
 
 
@@ -453,13 +453,13 @@ int main(int argc, char **argv) {
   Tets_criteria tets_criteria(double_options["tets_aspect_ratio_bound"],
 			      double_options["tets_size_bound"]);
 
-  std::cerr << "Initial number of points: " << T.number_of_vertices() 
+  std::cerr << "Initial number of points: " << tr.number_of_vertices() 
             << std::endl;
 
 
 
   // Surface meshing
-  Mesher mesher (T, O, C, tets_criteria);
+  Mesher mesher (tr, O, C, tets_criteria);
   mesher.refine_surface();
   {
     std::string dump_initial_surface_filename = 
@@ -471,7 +471,7 @@ int main(int argc, char **argv) {
 	  {
 	    std::cerr << "Writing initial surface to off file "
 		      << dump_initial_surface_filename << "..." << std::endl;
-	    output_oriented_surface_facets_to_off(dump, T);
+	    output_oriented_surface_facets_to_off(dump, tr);
 	  }
 	else
 	  usage(argv[0], ("Error: cannot create " + 
@@ -491,7 +491,7 @@ int main(int argc, char **argv) {
 	  {
 	    std::cerr << "Writing initial surface to ghs file "
 		      << dump_initial_surface_filename << "..." << std::endl;
-	    output_surface_facets_to_ghs(dump_points, dump_faces, T);
+	    output_surface_facets_to_ghs(dump_points, dump_faces, tr);
 	  }
 	else
 	  usage(argv[0], ("Error: cannot create " + 
@@ -499,18 +499,8 @@ int main(int argc, char **argv) {
       }
   }
   mesher.refine_mesh();
-//   int i = 100;
-//   while(!mesher.done())
-//     {
-//       std::stringstream s;
-//       s << "out." << i++ << ".mesh";
-//       std::cerr << s.str() << std::endl;
-//       std::ofstream os3(s.str().c_str());
-//       output_pslg_to_medit(os3, T);
-//       mesher.step_by_step();
-//     }
-//   exit(0);
-  std::cerr << "Final number of points: " << T.number_of_vertices() 
+
+  std::cerr << "Final number of points: " << tr.number_of_vertices() 
             << std::endl;
 
   if( output_to_file )
@@ -534,16 +524,16 @@ int main(int argc, char **argv) {
       }
     
       // Output
-      output_pslg_to_medit(*out, T);
+      output_pslg_to_medit(*out, mesher.complex_2_in_triangulation_3());
     }
 
 #ifdef CGAL_USE_QT
   if( dump_distribution )
-    output_distribution_to_png(T, distribution_size, 
+    output_distribution_to_png(tr, distribution_size, 
 			       distribution_filename, distribution_type);
 #endif
   
-  CGAL::Mesh_3::Slivers_exuder<Tr> exuder(T, double_options["pumping_bound"]);
+  CGAL::Mesh_3::Slivers_exuder<Tr> exuder(tr, double_options["pumping_bound"]);
   int number_of_pump = static_cast<int>(double_options["number_of_pump"]);
   for(int i = 0; i < number_of_pump; ++i)
   {
@@ -555,7 +545,7 @@ int main(int argc, char **argv) {
   std::string distribution_after_filename = 
     string_options["distribution_after_filename"];
   if( distribution_after_filename != "" )
-    output_distribution_to_png(T, distribution_size,
+    output_distribution_to_png(tr, distribution_size,
 			       distribution_after_filename, distribution_type);
 #endif
 
@@ -566,7 +556,7 @@ int main(int argc, char **argv) {
     if( file ) {
       std::cerr << "Writing to file " << mesh_after_filename
 		<< "..." << std::endl;
-      output_pslg_to_medit(file, T);
+      output_pslg_to_medit(file, mesher.complex_2_in_triangulation_3());
     }
     else
       usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());
@@ -580,7 +570,7 @@ int main(int argc, char **argv) {
 	if( dump ) {
 	  std::cerr << "Writing final surface to off file "
 		    << dump_final_surface_filename << "..." << std::endl;
-	  output_oriented_surface_facets_to_off(dump, T);
+	  output_oriented_surface_facets_to_off(dump, tr);
 	}
 	else
 	  usage(argv[0], ("Error: cannot create " + 
@@ -598,7 +588,7 @@ int main(int argc, char **argv) {
 	if( dump_points && dump_faces ) {
 	  std::cerr << "Writing final surface to ghs file "
 		    << dump_final_surface_filename << "..." << std::endl;
-	  output_surface_facets_to_ghs(dump_points, dump_faces, T);
+	  output_surface_facets_to_ghs(dump_points, dump_faces, tr);
 	}
 	else
 	  usage(argv[0], ("Error: cannot create " + 
@@ -613,7 +603,7 @@ int main(int argc, char **argv) {
     if( dump ) {
       std::cerr << "Writing slivers to off file "
 		<< dump_slivers_filename << "..." << std::endl;
-      output_slivers_to_off(dump, T, double_options["sliver_test"]);
+      output_slivers_to_off(dump, tr, double_options["sliver_test"]);
     }
     else
       usage(argv[0], ("Error: cannot create " + 

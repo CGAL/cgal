@@ -13,13 +13,11 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-#OTHER_CXXFLAGS?= -D_GLIBCXX_CONCEPT_CHECKS 
-
-CXXFLAGS = -I../../../InrImage/include \
-	   -I../../../Data_structure_for_queries_3/include \
-           -I ../../../Surface_mesher/include \
-	   -I../../include \
-	   $(OTHER_INCLUDES) \
+CXXFLAGS =            -I../../../Triangulation_3/include \
+           -I../../Mesh_2/include \
+           -I../include \
+	   -I../../Data_structure_for_queries_3/include \
+           -I../../Surface_mesher/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(OTHER_CXXFLAGS)
@@ -35,33 +33,42 @@ LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)
 
-INRIMAGE_LDFLAGS = -L../../../InrImage -limageio
-
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-		implicit_surfaces_mesher_3$(EXE_EXT) \
-		polyhedral_surface_mesher$(EXE_EXT)
+                lanteri$(EXE_EXT) \
+                read_mesh$(EXE_EXT) \
+                stat_mesh$(EXE_EXT) 
 
-implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C
+lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
+                   distribution$(OBJ_EXT) \
+                   Qt_widget_displayer$(OBJ_EXT) \
+                   Gd_displayer$(OBJ_EXT) \
+                   lanteri_process_results$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri \
+	lanteri$(OBJ_EXT) \
+	distribution$(OBJ_EXT) \
+	Qt_widget_displayer$(OBJ_EXT) \
+	Gd_displayer$(OBJ_EXT) \
+	lanteri_process_results$(OBJ_EXT) \
+	 $(LDFLAGS) -lgd
 
-implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS) $(INRIMAGE_LDFLAGS)
+read_mesh$(EXE_EXT): read_mesh$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)read_mesh read_mesh$(OBJ_EXT) $(LDFLAGS)
 
-polyhedral_surface_mesher$(OBJ_EXT): polyhedral_surface_mesher.C
-
-polyhedral_surface_mesher$(EXE_EXT): polyhedral_surface_mesher$(OBJ_EXT) parameters$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedral_surface_mesher polyhedral_surface_mesher$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS)
-
+stat_mesh$(EXE_EXT): stat_mesh$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)stat_mesh stat_mesh$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   essai.clean \
-                   implicit_surfaces_mesher_3.clean \
-                   polyhedral_surface_mesher.clean \
-                   parameters.clean \
-                   implicit_function.clean
+                   distribution.clean \
+                   Gd_displayer.clean \
+                   lanteri.clean \
+                   lanteri_process_results.clean \
+                   Qt_widget_displayer.clean \
+                   read_mesh.clean \
+                   stat_mesh.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -69,3 +76,4 @@ clean: \
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+

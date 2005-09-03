@@ -18,17 +18,18 @@
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 
 #include <CGAL/Point_traits.h>
-#include <CGAL/Point_with_surface_index.h>
+#include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
 #include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
 
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-typedef CGAL::Point_with_surface_index_geom_traits<Regular_traits> My_traits;
+typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 // Multi_surface_traits<Regular_traits> ?
 typedef CGAL::Triangulation_vertex_base_with_info_3<bool, My_traits> Vb1;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
@@ -69,7 +70,25 @@ public:
   }
 };
 
-typedef Implicit_oracle<My_traits, Sphere, Set_indices> Single_oracle;
+struct Point_with_surface_index_creator
+{
+  typedef FT    argument_type;
+  typedef FT    argument1_type;
+  typedef FT    argument2_type;
+  typedef FT    argument3_type;
+  typedef My_traits::Point result_type;
+  typedef CGAL::Arity_tag<3> Arity;
+
+  result_type operator()(const FT& x, const FT& y, const FT& z) const
+  {
+    return result_type(result_type::Point(x, y, z));
+  }
+};
+
+typedef Implicit_oracle<My_traits,
+                        Sphere,
+                        Set_indices,
+                        Point_with_surface_index_creator> Single_oracle;
 typedef Combining_oracle<Single_oracle, Single_oracle> Oracle_2;
 typedef Combining_oracle<Oracle_2, Single_oracle> Oracle_3;
 typedef Combining_oracle<Oracle_3, Single_oracle> Oracle_4;
@@ -89,11 +108,16 @@ typedef CGAL::Implicit_surfaces_mesher_3<Tr,
 int main(int, char**)
 {
   /*** Spheres radiuss ***/
-  const FT r1 = 93.; // 93 milimeters
-  const FT r2 = 94.;
-  const FT r3 = 97.;
-  const FT r4 = 100.;
-  const FT r5 = 267.;
+  FT r1; // 93 milimeters
+  FT r2;
+  FT r3;
+  FT r4;
+  FT r5;
+
+  std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
+  std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
+  if(!cin)
+    return EXIT_FAILURE;
 
   const FT precision = 0.1; // mm
   const int number_of_initial_points = 10;
@@ -152,7 +176,7 @@ int main(int, char**)
                      precision,
                      use_bipolar_oracle,
                      false,
-                     Set_indices(4));
+                     Set_indices(5));
 
   Oracle_2 oracle_2(single_oracle_1, single_oracle_2);
   Oracle_3 oracle_3(oracle_2, single_oracle_3);
@@ -188,6 +212,13 @@ int main(int, char**)
   Mesher mesher (tr, oracle, multi_criterion, tets_criteria);
   mesher.refine_mesh();
 
-  std::ofstream out("combined_spheres.mesh");
-  CGAL::output_pslg_to_medit(out, tr);
+  std::string filename;
+  std::cout << "Input filename (default: combined_spheres.mesh):" << std::endl;
+  std::cin >> filename;
+
+  if(filename.empty())
+    filename = "combined_spheres.mesh";
+
+  std::ofstream out(filename.c_str());
+  CGAL::output_pslg_to_medit(out, mesher.complex_2_in_triangulation_3());
 }
