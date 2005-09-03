@@ -347,8 +347,9 @@ public: // methods
   }
 
 
-  void pump_vertices()
+  void pump_vertices(double radius_ratio_limit = 1.)
   {
+    stop_limit_on_radius_ratio = radius_ratio_limit;
     int failure_count = 0;
 
     //     while(  front.first < 0.5 && !cell_queue.empty() )
@@ -363,7 +364,9 @@ public: // methods
 	int i;
 	for( i = 0; i < 4; ++i )
 	  {
-	    if( pump_vertex(c->vertex(i)) )
+            // do not pump surface vertices
+	    if( c->vertex(i)->point().surface_index() > 0 
+                && pump_vertex(c->vertex(i)) )
 	      {
 		std::cout << "P";
 		break;
@@ -498,7 +501,7 @@ public: // methods
         CGAL_assertion( ! opposite_cell->
                             is_facet_on_surface(opposite_index) );
 	CGAL_assertion( !tr.is_infinite(opposite_cell) );
-	CGAL_assertion(	opposite_cell->is_in_domain() );
+        //	CGAL_assertion(	opposite_cell->is_in_domain() );
  
 	
 	int number_of_erased_facets = 0;
@@ -668,7 +671,7 @@ public: // methods
 	  }
 	}
       }
-      CGAL_assertion( v->info() || umbrella.empty());
+      CGAL_assertion( index > 0 || umbrella.empty());
       //DEBUG
 //       std::cerr << umbrella.size();
 
@@ -791,8 +794,12 @@ public: // methods
     c->set_in_domain(in_domain_marker);
 
     // ** re-inserts cells of the star in cell_queue **
-    if (in_domain_marker) 
-      cell_queue.insert(c, radius_ratio(tr.tetrahedron(c)));
+    if (in_domain_marker)
+    {
+      const double ratio = radius_ratio(tr.tetrahedron(c));
+      if( ratio < stop_limit_on_radius_ratio )
+        cell_queue.insert(c, ratio);
+    }
 
     for (int i=0; i<4; ++i) {
       if (i == index) {
@@ -843,6 +850,7 @@ public: // methods
 private: // data
   Tr& tr;
   double sq_delta;
+  double stop_limit_on_radius_ratio;
 
   int num_of_pumped_vertices;
   int num_of_ignored_vertices;
@@ -987,8 +995,10 @@ output_slivers_to_off (std::ostream& os, const Tr & T,
   std::map<Vertex_handle, int> V;
   
   int inum = 0;
-  for( Finite_vertices_iterator
-       vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
+  for(Finite_vertices_iterator vit = T.finite_vertices_begin();
+      vit != T.finite_vertices_end();
+      ++vit)
+  {
     V[vit] = inum++;
     Point p = static_cast<Point>(vit->point());
     os << p.x() << " " << p.y() << " " << p.z() << "\n";
