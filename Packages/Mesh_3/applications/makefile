@@ -77,3 +77,19 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+
+#---------#
+# Depends #
+#---------#
+
+Gd_displayer$(OBJ_EXT): Gd_displayer.h
+
+distribution$(OBJ_EXT): distribution.h
+
+lanteri$(OBJ_EXT): utils.h distribution.h lanteri_utils.h
+
+lanteri_process_results$(OBJ_EXT): distribution.h Gd_displayer.h
+
+read_mesh$(OBJ_EXT): types.h utils.h
+
+stat_mesh$(OBJ_EXT): types.h utils.h
