@@ -98,10 +98,124 @@ typedef Oracle_5 Oracle;
 /*** criteria for Mesh_3 ***/
 typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
 
+class Special_tets_criteria
+{
+  double size_bound;
+  double shape_bound;
+  double special_size;
+  double r;
+
+public:
+  Special_tets_criteria(const double special_size, const double r1,
+                        const double radius_edge_bound = 2,
+                        const double squared_radius_bound = 0)
+    : size_bound(squared_radius_bound),
+      shape_bound(radius_edge_bound),
+      special_size(special_size),
+      r(r1) {}
+
+  typedef Tr::Cell_handle Cell_handle;
+  typedef Tets_criteria::Quality Quality;
+
+  class Is_bad
+  {
+  protected:
+    const double shape_bound;
+    const double size_bound;
+    const double r1;
+    const double squared_special_size;
+  public:
+    typedef Tr::Point Point_3;
+      
+    Is_bad(const double radius_edge_bound, 
+	   const double squared_radius_bound,
+           const double r1,
+           const double size)
+      : shape_bound(radius_edge_bound),
+	size_bound(squared_radius_bound),
+        r1(r1),
+        squared_special_size(size*size){};
+      
+    bool operator()(const Cell_handle& c,
+                    Quality& qual) const
+    {
+      const Point_3& p = c->vertex(0)->point();
+      const Point_3& q = c->vertex(1)->point();
+      const Point_3& r = c->vertex(2)->point();
+      const Point_3& s = c->vertex(3)->point();
+
+      typedef Tr::Geom_traits Geom_traits;
+      typedef Geom_traits::Compute_squared_radius_3 Radius;
+      typedef Geom_traits::Compute_squared_distance_3 Distance;
+      typedef Geom_traits::Construct_circumcenter_3 Circumcenter;
+      typedef Geom_traits::FT FT;
+
+      Radius radius = Geom_traits().compute_squared_radius_3_object();
+      Distance distance = Geom_traits().compute_squared_distance_3_object();
+      Circumcenter circumcenter = 
+        Geom_traits().construct_circumcenter_3_object();
+
+      const double size = CGAL::to_double(radius(p, q, r, s));
+      const double sq_distance_from_origin = 
+        CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
+
+      double min_size_bound = size_bound;
+      if( squared_special_size != 0 && 
+          sq_distance_from_origin < r1*r1 )
+      {
+        if( min_size_bound == 0 )
+          min_size_bound = squared_special_size;
+        else
+          if( squared_special_size < min_size_bound )
+            min_size_bound = squared_special_size;
+      }
+
+      if( min_size_bound != 0)
+      {
+        qual.second = size / min_size_bound;
+        // normalized by size bound to deal
+        // with size field
+        if( qual.sq_size() > 1 )
+        {
+          qual.first = 1; // (do not compute aspect)
+          return true;
+        }
+      }
+      if( shape_bound == 0 )
+      {
+        qual = Quality(0,1);
+        return false;
+      }
+
+      double min_sq_length = CGAL::to_double(distance(p, q));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(p, r)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(p, s)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(q, r)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(q, s)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(r, s)));
+
+      qual.first = size / min_sq_length;
+
+      return (qual.first > shape_bound);
+    }
+
+  }; // end Is_bad
+
+
+  Is_bad is_bad_object() const
+  { return Is_bad(shape_bound, size_bound, r, special_size); }
+
+}; // end Special_tets_criteria
+
 typedef CGAL::Implicit_surfaces_mesher_3<Tr,
 					 Oracle,
                                          Multi_criterion,
-                                         Tets_criteria> Mesher;
+                                         Special_tets_criteria> Mesher;
 
 #include <vector>
 
@@ -113,9 +227,12 @@ int main(int, char**)
   FT r3;
   FT r4;
   FT r5;
+  double special_size_bound;
 
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
+  std::cout << "Input size bound for sphere <= r1:" << std::endl;
+  std::cin >> special_size_bound;
   if(!cin)
     return EXIT_FAILURE;
 
@@ -206,8 +323,10 @@ int main(int, char**)
   criterion_vector.push_back(&aspect_ratio_criterion);
   Multi_criterion multi_criterion (criterion_vector);
 
-  Tets_criteria tets_criteria(tets_radius_radius_ratio_bound,
-			      tets_squared_size_bound);
+  Special_tets_criteria tets_criteria(tets_radius_radius_ratio_bound,
+                                      tets_squared_size_bound,
+                                      r1,
+                                      special_size_bound);
 
   Mesher mesher (tr, oracle, multi_criterion, tets_criteria);
   mesher.refine_mesh();

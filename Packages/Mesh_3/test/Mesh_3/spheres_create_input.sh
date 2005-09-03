@@ -1,9 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Input r1 r2 r3 r4 r5 (on same line):"
 read r1 r2 r3 r4 r5
+echo "Input size_bound (for r<r1):"
+read size
 
-echo "$r1 $r2 $r3 $r4 $r5 spheres-$r1-$r2-$r3-$r4-$r5.mesh" \
-  > spheres-$r1-$r2-$r3-$r4-$r5.cin
+filename_base="spheres-$r1-$r2-$r3-$r4-$r5-$size"
 
-echo "./spheres-$r1-$r2-$r3-$r4-$r5.cin created."
+echo "$r1 $r2 $r3 $r4 $r5 $size ${filename_base}.mesh" \
+  > ${filename_base}.cin
+
+echo "./${filename_base}.cin created."
