@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Laurent Rineau
 
 
 #ifndef CGAL_SURFACE_MESHER_MULTI_IMPLICIT_ORACLE_H
@@ -236,11 +236,9 @@ namespace CGAL {
 			  (center,p1))) /
 		ker.compute_squared_distance_3_object()(p1,p2)));
       
-      
+      Object result_temp = intersect_segment_surface(Segment(p1,p3));
+
       Point result;
-      Object result_temp;
-      
-      result_temp=intersect_segment_surface(Segment(p1,p3));
       if (assign(result,result_temp))
 	return result_temp;
       else

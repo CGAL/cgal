@@ -38,7 +38,8 @@ namespace CGAL {
     {
     }
 
-    void new_point(typename Tr::Point& p) const
+    template <class P>
+    void new_point(P& p) const
     {
       std::cout << i;
       p.set_surface_index(i);

@@ -6,3 +6,4 @@ depends
 my_makefile
 sphere_union.off
 sphere_union.mesh
+sphere_union-before.mesh

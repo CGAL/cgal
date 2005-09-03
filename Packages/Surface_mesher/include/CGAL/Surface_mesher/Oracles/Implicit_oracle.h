@@ -15,13 +15,14 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Steve OUDOT, Laurent Rineau
+// Author(s)     : Steve OUDOT, Laurent RINEAU
 
 
 #ifndef CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 #define CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 
 #include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
+#include <CGAL/point_generators_3.h>
 
 // NB: this oracle requires that the user provide a function that can 
 // compute the value of the potential in any point of space
@@ -31,13 +32,17 @@ namespace CGAL {
 
   template < class GT,
              class Function,
-             class Visitor = Null_oracle_visitor >
+             class Visitor = Null_oracle_visitor,
+             class Point_creator = 
+               Creator_uniform_3<typename GT::RT,
+                                 typename GT::Point_3> >
   class Implicit_oracle
   {
   public:
     // Public types
-    
+    typedef GT Geom_traits;
     typedef typename GT::Point_3 Point;
+    typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
     typedef typename GT::Segment_3 Segment;
     typedef typename GT::Ray_3 Ray;
     typedef typename GT::Line_3 Line;
@@ -88,7 +93,7 @@ namespace CGAL {
     }
     
     FT get_precision() {
-      return std::sqrt (min_squared_length);
+      return CGAL::sqrt (min_squared_length);
     }
     
     
@@ -202,11 +207,9 @@ namespace CGAL {
 			  (center,p1))) /
 		ker.compute_squared_distance_3_object()(p1,p2)));
       
-      
+      Object result_temp = intersect_segment_surface(Segment(p1,p3));
+
       Point result;
-      Object result_temp;
-      
-      result_temp=intersect_segment_surface(Segment(p1,p3));
       if (assign(result,result_temp))
 	return result_temp;
       else
@@ -217,22 +220,30 @@ namespace CGAL {
     
     // Random points
     Points random_points (int n) {
+      typename CGAL::Random_points_in_sphere_3<Point,
+        Point_creator> random_point_in_sphere(radius);
+
+      typename GT::Construct_line_3 line_3 = GT().construct_line_3_object();
       CGAL_precondition (n > 0);
+
+      typename GT::Construct_vector_3 vector_3 = 
+        GT().construct_vector_3_object();
+
+      typename GT::Construct_translated_point_3 translate =
+        GT().construct_translated_point_3_object();
 
       // the exhaustive oracle is used
       bool save_parity = parity_oracle;
-//       parity_oracle = false;
+      //      parity_oracle = false; // !! WHY??
 
       Points result;
       while (n>0) {
-	Point p1(2*radius*rand()/INT_MAX-radius+center.x(),
-		 2*radius*rand()/INT_MAX-radius+center.y(),
-		 2*radius*rand()/INT_MAX-radius+center.z());
-	Point p2(2*radius*rand()/INT_MAX-radius+center.x(),
-		 2*radius*rand()/INT_MAX-radius+center.y(),
-		 2*radius*rand()/INT_MAX-radius+center.z());
+        Point p1 = translate(*random_point_in_sphere++,
+                             vector_3(CGAL::ORIGIN, center));
+        Point p2 = translate(*random_point_in_sphere++,
+                             vector_3(CGAL::ORIGIN, center));
 	
-	Object o = intersect_line_surface (Line (p1,p2));
+	Object o = intersect_line_surface (line_3 (p1,p2));
 	Point p;
 	if (assign(p,o)) {
 	  result.push_back(p);
@@ -323,7 +334,7 @@ namespace CGAL {
 		Object obj = intersect_segment_sphere(p1, p2);
 		
 		// If no point is found, then return
-		Point mid;
+		Kernel_point mid;
 		if (!assign(mid,obj))
 		  return Object();
 		

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -18,8 +18,8 @@
 // Author(s)     : Steve OUDOT
 
 
-#ifndef _COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
-#define _COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
+#ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
+#define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 
 
 #include <iomanip>
@@ -239,4 +239,4 @@ namespace CGAL {
 }
 using namespace Surface_mesher_io;
 
-#endif  // _COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
+#endif  // CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H

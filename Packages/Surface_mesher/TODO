@@ -1,3 +1,7 @@
+Laurent Rineau, 2005/10/02:
+      - fix include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h as
+        regards Kernel_point stuff
+      - merge it with include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
 
 Complex_2_in_triangulation_3
 

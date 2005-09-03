@@ -1,3 +1,60 @@
+2 september 2005 Laurent Rineau
+- in Surface_mesher:
+    - new file include/CGAL/Point_with_surface_index_geom_traits.h to have
+      one class per file.
+    - new files:
+        include/CGAL/Weighted_point_with_surface_index.h
+        include/CGAL/Point_with_surface_index_geom_traits.h
+      so that CGAL::Weighted_point_with_surface_index<Weighted_point> can
+      have several additional constructors with Bare_point parameters.
+    - two important hacks in files:
+        include/CGAL/Surface_mesher/Oracles/Polyhedral.h
+        include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+      1/ Use of a new typedef Kernel_point, obtained by Kernel_traits, so
+      these two classes work with Point_with_surface_index<Point> and
+      Weighted_point_with_surface_index<Weighted_point>. Some assign
+      statement has to be used with a Kernel_point, so that they do not
+      fail systematicaly (assign sucks!).
+
+      2/ Use of CGAL::Random_points_in_sphere_3<Point, Point_creator> in
+      include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h in function
+      random_points(), so that this function does not use the contructor
+      Point(double x, double y, double z). This implied that the tenmplate
+      Implicit_oracle had a new template parameter, Point_creator, which I
+      gave default
+            Creator_uniform_3<typename GT::RT, typename GT::Point_3>.
+      With Point_with_surface_index<Point> and
+      Weighted_point_with_surface_index<Weighted_point> this creator should
+      be defined. See ../Mesh_3/test/Mesh_3/combined_spheres.C and   
+      ../Surface_mesher/examples/Surface_mesher/surfaces_union.C
+    - same problem, file
+        include/CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h
+      has been changed: Point_surface_indices_visitor<Tr> now has a
+      templated new_point() function, so that is can take Kernel_point or
+      Point as argument.
+    - minor changes:
+        - include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h now has
+          correct copyright and #ifdef sentinel
+        - include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h now
+          has correct copyright
+        - rename DT_3 into Tr, and GT_3 into Geom_traits in file
+          include/CGAL/Surface_mesher/Oracles/Polyhedral.h
+    - updated examples/Surface_mesher/surfaces_union.C so that it works.
+
+TODO: - fix include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h as
+        regards Kernel_point stuff
+      - merge it with include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+- in Mesh_3:
+    - include/CGAL/IO/File_medit.h :
+        - fix namespace !!
+        - some functions now takes a C2T3 as argument, now that C2T3 has a
+        triangulation() getter.
+        - new function input_pslg_from_medit() !! It reads indices.
+        - output_pslg_to_medit() now uses surface_index() too 
+    - new implementation of CGAL::Point_traits.h
+
 18 august 2005 Laurent Rineau
 - Complex_2_in_triangulation_3 now has an accessor:
     Triangulation_3& triangulation()

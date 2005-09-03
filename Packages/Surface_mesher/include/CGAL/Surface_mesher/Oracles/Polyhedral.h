@@ -29,34 +29,34 @@
 namespace CGAL {
   namespace Surface_mesher {
 
-template <class DT_3,
-          class Visitor = Null_oracle_visitor>
+template <class Tr,
+          class Visitor = Null_oracle_visitor
+         >
 class Polyhedral
 {
 public:
+  typedef typename Tr::Geom_traits Geom_traits;
 
-  typedef typename DT_3::Geom_traits GT_3;
-  typedef GT_3 Kernel_GT_3;
+  typedef typename Geom_traits::Point_3 Point;
+  typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
+  typedef typename Geom_traits::Segment_3 Segment;
+  typedef typename Geom_traits::Ray_3 Ray;
+  typedef typename Geom_traits::Line_3 Line;
+  typedef typename Geom_traits::Triangle_3 Triangle;
 
-  typedef typename GT_3::Point_3 Point;
-  typedef typename GT_3::Segment_3 Segment;
-  typedef typename GT_3::Ray_3 Ray;
-  typedef typename GT_3::Line_3 Line;
-  typedef typename GT_3::Triangle_3 Triangle;
-
-  typedef typename DT_3::Vertex_iterator Vertex_iterator;
+  typedef typename Tr::Vertex_iterator Vertex_iterator;
 
   typedef std::list<Point> Points;
 
   // Private members
 
 private:
-  CGAL::Data_structure_using_octree_3<GT_3>  data_struct;
-  DT_3 dt;
+  CGAL::Data_structure_using_octree_3<Geom_traits>  data_struct;
+  Tr tr;
   Visitor visitor;
 
 private: // private types
-  typedef typename DT_3::Cell_handle Cell_handle;
+  typedef typename Tr::Cell_handle Cell_handle;
   
 
 public:
@@ -73,22 +73,22 @@ public:
     : visitor(visitor_)
     {
       is.seekg(0,std::ios::beg);
-      dt.clear();
+      tr.clear();
       // The data structure for testing intersections is set
       std::cerr << "Creating data structure for intersections detection... ";
-      data_struct.input(is, CGAL::Insert_iterator<DT_3>(dt));
+      data_struct.input(is, CGAL::Insert_iterator<Tr>(tr));
       std::cerr << "done\n\n";
     }
 
   Vertex_iterator finite_vertices_begin()
   {
-    return dt.finite_vertices_begin();
+    return tr.finite_vertices_begin();
   }
 
   
   Vertex_iterator finite_vertices_end()
   {
-    return dt.finite_vertices_end();
+    return tr.finite_vertices_end();
   }
 
 
@@ -106,7 +106,7 @@ public:
 
   bool is_in_volume(const Point& p)
   {
-    Cell_handle c = dt.locate(p);
+    Cell_handle c = tr.locate(p);
     return c->is_in_domain();
   }
 
@@ -114,7 +114,7 @@ public:
   // Basic intersection function for segments/rays/lines with the polyhedron 
   template <class Elt>
   CGAL::Object intersect_with_surface (Elt e) {
-    typedef CGAL::Data_structure_using_octree_3<GT_3> Octree;
+    typedef CGAL::Data_structure_using_octree_3<Geom_traits> Octree;
     for ( typename Octree::Constraint_map_iterator cit = data_struct.c_m.begin();
 	  cit != data_struct.c_m.end(); ++cit ) {
       if (cit->second->does_intersect (e))
@@ -149,12 +149,15 @@ public:
 // 		  << std::endl;
 
       Object o = data_struct.intersect(s.vertex(0), s.vertex(1));
-      Point p;
-      if( assign(p, o) )
+      Kernel_point kp;
+      if( assign(kp, o) )
       {
+        Point p = kp;
         visitor.new_point(p);
+        return make_object(p);
       }
-      return o;
+      else
+        return Object();
 
 /*       return  intersect_with_surface (s);  // basic intersection function */
 /*       return data_struct.intersect (s.vertex(0), s.vertex(1));  // Marie */
@@ -179,13 +182,16 @@ public:
 //       return odeux;
 
       Object o = data_struct.intersect (r);
-      Point p;
-      if( assign(p, o) )
+      Kernel_point kp;
+      if( assign(kp, o) )
       {
+        Point p = kp;
         visitor.new_point(p);
+        return make_object(p);
       }
-      return o;
-     
+      else
+        return Object();
+    
 
 //       return intersect_with_surface (r);  // basic intersection function
 //       return data_struct.intersect (r);   // Marie's code

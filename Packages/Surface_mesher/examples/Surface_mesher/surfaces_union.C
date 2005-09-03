@@ -13,9 +13,10 @@
 
 #include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
 #include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
+#include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Surface_mesher/Oracles/Combining_oracle.h>
 
-#include <CGAL/Point_with_surface_index.h>
+#include <CGAL/Point_with_surface_index_geom_traits.h>
 #include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
 
 #include <iostream>
@@ -24,7 +25,8 @@
 #include <CGAL/IO/File_medit.h>
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Point_with_surface_index_geom_traits<K> My_traits;
+typedef CGAL::Robust_circumcenter_traits_3<K>  K2;
+typedef CGAL::Point_with_surface_index_geom_traits<K2> My_traits;
 typedef CGAL::Triangulation_vertex_base_3<My_traits> Vb1;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
 typedef CGAL::Triangulation_cell_base_3<My_traits> Cb1;
@@ -64,7 +66,17 @@ public:
   }
 };
 
-typedef Implicit_oracle<My_traits, Sphere, Set_indices> Implicite_sphere;
+typedef CGAL::Creator_uniform_3<
+  FT,
+  K::Point_3> Point_creator_for_implicit_oracle;
+
+typedef Implicit_oracle<My_traits,
+                        Sphere,
+                        Set_indices, // visitor that sets indices of points
+                        Point_creator_for_implicit_oracle // to create
+                                                          // points from
+                                                          // three FT
+                        > Implicite_sphere;
 typedef Polyhedral<Tr, Set_indices> Polyhedron;
 typedef Combining_oracle<Implicite_sphere, Polyhedron> Union_oracle;
 
@@ -76,7 +88,7 @@ int main(int, char**)
   /*** Sphere radius ***/
   const FT r = 0.6;
   const FT precision = 0.1; // mm
-  const int number_of_initial_points = 8;
+  const int number_of_initial_points = 50;
   const FT bounding_sphere_radius = 5.;
   const bool use_bipolar_oracle = true;
 
@@ -110,7 +122,8 @@ int main(int, char**)
   {
     tr.insert(*pit);
   }
-  std::cerr << tr.number_of_vertices() << std::endl;
+  std::cerr << "Number of initial points, before refinement: "
+            << tr.number_of_vertices() << std::endl;
 
   CGAL::Surface_mesher::Uniform_size_criterion<Tr>
     uniform_size_criterion (facets_uniform_size_bound); 
@@ -127,6 +140,11 @@ int main(int, char**)
 
   C2t3 c2t3(tr);
 
+  {
+    std::ofstream medit_before("sphere_union-before.mesh");
+    CGAL::output_pslg_to_medit(medit_before, c2t3);
+  }
+
   Surface_mesher_t mesher(tr, c2t3, union_oracle, multi_criterion);
 
   mesher.refine_mesh(true);
@@ -135,5 +153,5 @@ int main(int, char**)
   CGAL::output_surface_facets_to_off(ofs, tr);
 
   std::ofstream medit("sphere_union.mesh");
-  CGAL::output_pslg_to_medit(medit, tr);
+  CGAL::output_pslg_to_medit(medit, c2t3);
 }

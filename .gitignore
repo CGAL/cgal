@@ -208,6 +208,7 @@ Packages/Surface_mesher/examples/Surface_mesher/depends
 Packages/Surface_mesher/examples/Surface_mesher/implicit_surface_mesher
 Packages/Surface_mesher/examples/Surface_mesher/my_makefile
 Packages/Surface_mesher/examples/Surface_mesher/polyhedral_surface_mesher
+Packages/Surface_mesher/examples/Surface_mesher/sphere_union-before.mesh
 Packages/Surface_mesher/examples/Surface_mesher/sphere_union.mesh
 Packages/Surface_mesher/examples/Surface_mesher/sphere_union.off
 Packages/Surface_mesher/examples/Surface_mesher/surface_mesher
