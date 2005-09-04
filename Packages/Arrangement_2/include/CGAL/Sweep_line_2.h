@@ -756,61 +756,61 @@ void Sweep_line_2<Traits_,
 _fix_overlap_subcurves()
 {
   CGAL_assertion(m_currentEvent->has_left_curves());
-    EventCurveIter leftCurveIter = m_currentEvent->left_curves_begin();
+  EventCurveIter leftCurveIter = m_currentEvent->left_curves_begin();
 
-    //special treatment for Subcuves that store overlaps
-    while ( leftCurveIter != m_currentEvent->left_curves_end() )  
+  //special treatment for Subcuves that store overlaps
+  while ( leftCurveIter != m_currentEvent->left_curves_end() )  
+  {
+    Subcurve *leftCurve = *leftCurveIter;
+    if( (*leftCurveIter)->get_overlap_subcurve() != NULL &&
+            m_traits->compare_xy_2_object()(
+            get_left_end((*leftCurveIter)->get_overlap_subcurve()),
+            m_currentEvent->get_point()) == SMALLER)
     {
-      Subcurve *leftCurve = *leftCurveIter;
-      if( (*leftCurveIter)->get_overlap_subcurve() != NULL &&
-             m_traits->compare_xy_2_object()(
-             get_left_end((*leftCurveIter)->get_overlap_subcurve()),
-             m_currentEvent->get_point()) == SMALLER)
+      leftCurve = (Subcurve*)((*leftCurveIter)->getSubcurve());
+      while(leftCurve->get_overlap_subcurve() != NULL)
       {
-        leftCurve = (Subcurve*)((*leftCurveIter)->getSubcurve());
-        while(leftCurve->get_overlap_subcurve() != NULL)
-        {
-          leftCurve = (Subcurve*)(leftCurve->getSubcurve());
-        }
-
-        m_currentEvent->replace_right_curve((*leftCurveIter), leftCurve);
-        *leftCurveIter = leftCurve;
+        leftCurve = (Subcurve*)(leftCurve->getSubcurve());
       }
-      if((Event*)leftCurve->get_right_event() == m_currentEvent)
+
+      m_currentEvent->replace_right_curve((*leftCurveIter), leftCurve);
+      *leftCurveIter = leftCurve;
+    }
+    if((Event*)leftCurve->get_right_event() == m_currentEvent)
+    {
+      if(leftCurve->get_orig_subcurve1() != NULL)
       {
-        if(leftCurve->get_orig_subcurve1() != NULL)
+        leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);
+        leftCurve->get_orig_subcurve2()->set_overlap_subcurve(NULL);
+
+        std::list<Base_subcurve*> list_of_sc;
+        leftCurve->get_all_leaves(std::back_inserter(list_of_sc));
+        for(typename std::list<Base_subcurve*>::iterator itr = list_of_sc.begin();
+            itr != list_of_sc.end();
+            ++itr)
         {
-          leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);
-          leftCurve->get_orig_subcurve2()->set_overlap_subcurve(NULL);
-
-          std::list<Base_subcurve*> list_of_sc;
-          leftCurve->get_all_leaves(std::back_inserter(list_of_sc));
-          for(typename std::list<Base_subcurve*>::iterator itr = list_of_sc.begin();
-              itr != list_of_sc.end();
-              ++itr)
+          Base_subcurve *sc = *itr;
+          if((void*)sc->get_right_event() != (void*)m_currentEvent && 
+              m_traits->compare_xy_2_object()
+                (m_traits->construct_min_vertex_2_object()(sc->get_last_curve()),
+                 m_currentEvent->get_point()) == SMALLER)
           {
-            Base_subcurve *sc = *itr;
-            if((void*)sc->get_right_event() != (void*)m_currentEvent && 
-                m_traits->compare_xy_2_object()
-                  (m_traits->construct_min_vertex_2_object()(sc->get_last_curve()),
-                   m_currentEvent->get_point()) == SMALLER)
-            {
-              m_traits->split_2_object() (sc->get_last_curve(),
-                                				   m_currentEvent->get_point(),
-                                           sub_cv1, sub_cv2);
-              sc->set_last_curve(sub_cv2);
-              bool is_ovlp = _add_curve_to_right(m_currentEvent, (Subcurve*)sc);
-              if(!is_ovlp)
-                sc->set_overlap_subcurve(NULL);
+            m_traits->split_2_object() (sc->get_last_curve(),
+                                				m_currentEvent->get_point(),
+                                        sub_cv1, sub_cv2);
+            sc->set_last_curve(sub_cv2);
+            bool is_ovlp = _add_curve_to_right(m_currentEvent, (Subcurve*)sc);
+            if(!is_ovlp)
+              sc->set_overlap_subcurve(NULL);
 
-              m_currentEvent->set_weak_intersection();
-              m_visitor ->update_event(m_currentEvent,(Subcurve*) sc);
-            }
+            m_currentEvent->set_weak_intersection();
+            m_visitor ->update_event(m_currentEvent,(Subcurve*) sc);
           }
         }
-      }     
-      ++leftCurveIter;
-    }
+      }
+    }     
+    ++leftCurveIter;
+  }
 }
 
 

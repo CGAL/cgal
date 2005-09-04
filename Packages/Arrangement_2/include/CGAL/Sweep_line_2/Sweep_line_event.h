@@ -184,7 +184,7 @@ public:
         iter!= m_leftCurves.end();
         ++iter)
     {
-      if((*iter)== curve || curve->is_parent(*iter))
+      if((*iter)== curve || curve->is_parent(*iter) || (*iter)->is_leaf(curve))
       {
         m_leftCurves.erase(iter);
         return;

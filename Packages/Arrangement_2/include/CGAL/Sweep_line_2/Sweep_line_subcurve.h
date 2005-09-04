@@ -260,6 +260,16 @@ public:
     return false;
   }
 
+
+  bool is_leaf(Self* s)
+  {
+    std::list<Self*> leafs;
+    this ->get_all_leaves(std::back_inserter(leafs));
+
+    return (std::find(leafs.begin(), leafs.end(), s)
+            != leafs.end());
+  }
+
   unsigned int overlap_depth()
   {
     if (! m_orig_subcurve1)
