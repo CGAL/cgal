@@ -160,8 +160,9 @@ public:
     bool operator()(const X_monotone_curve_2 & cv) const
     {
       // An x-monotone polyline can represent a vertical segment only if it
-      // is comprised of a single vertical segment.
-      return (cv.size() == 1 && seg_traits->is_vertical_2_object()(cv[0]));
+      // is comprised of vertical segments. If the first segment is vertical,
+      // all segments are vertical in an x-monotone polyline
+      return (seg_traits->is_vertical_2_object()(cv[0]));
     }
   };
   
@@ -556,17 +557,16 @@ public:
       const unsigned int n2 = cv2.size();
       unsigned int       i1 = 0;
       unsigned int       i2 = 0;
-      X_monotone_curve_2  ocv;           // Used to represent overlaps.
+      X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
-      Comparison_result   left_res = compare_xy(min_vertex(cv1[i1]),
-                                                min_vertex(cv2[i2]));
+      Comparison_result left_res = compare_xy(min_vertex(cv1[i1]),
+                                              min_vertex(cv2[i2]));
       
       if (left_res == SMALLER) {
         // cv1's left endpoint is to the left of cv2's left endpoint:
         // Locate the index i1 of the segment in cv1 which contains cv2's
         // left endpoint.
         i1 = Self::_locate(seg_traits, cv1, min_vertex(cv2[i2]));
-
         if (i1 == INVALID_INDEX)
           return oi;
 
@@ -590,8 +590,8 @@ public:
       }
 
       // Check if the the left endpoint lies on the other polyline.
-      bool               left_coincides =(left_res == EQUAL);
-      bool               left_overlap = false;
+      bool left_coincides = (left_res == EQUAL);
+      bool left_overlap = false;
 
       if (left_res == SMALLER)
         left_coincides =(compare_y_at_x(min_vertex(cv2[i2]), cv1[i1]) == EQUAL);
@@ -599,9 +599,9 @@ public:
         left_coincides =(compare_y_at_x(min_vertex(cv1[i1]), cv2[i2]) == EQUAL);
 
       // The main loop: Go simultaneously over both polylines.
-      Comparison_result  right_res;
-      bool               right_coincides = false;
-      bool               right_overlap = false;
+      Comparison_result right_res = left_res;
+      bool right_coincides = left_coincides;
+      bool right_overlap = false;
 
       while (i1 < n1 && i2 < n2) {
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
@@ -674,28 +674,39 @@ public:
         if (right_res != LARGER)
           ++i1;
 
-        if (right_res == SMALLER)
-          left_res = LARGER;
-        else if (right_res == LARGER)
-          left_res = SMALLER;
-
+        left_res = (right_res == SMALLER) ? LARGER :
+          (right_res == LARGER) ? SMALLER : EQUAL;
+        
         left_coincides = right_coincides;
         left_overlap = right_overlap;
       }
 
+#if 0
+      std::cout << "left coincides: " << left_coincides << std::endl;
+      std::cout << "right coincides: " << right_coincides << std::endl;
+      std::cout << "right res: " << right_res << std::endl;
+      std::cout << "left res: " << left_res << std::endl;
+#endif
+      
       // Output the remaining overlapping polyline, if necessary.
       if (ocv.size() > 0) {
         *oi++ = make_object(ocv);
       } else if (right_coincides) {
         if (right_res == SMALLER) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[n1 - 1]), 0);
+          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[i1 - 1]), 0);
+          *oi++ = make_object(ip);
+        } else if (right_res == LARGER) {
+          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[i2 - 1]), 0);
+          *oi++ = make_object(ip);
+        } else if (i1 > 0) {
+          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[i1 - 1]), 0);
           *oi++ = make_object(ip);
         } else {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[n2 - 1]), 0);
+          CGAL_assertion(i2 > 0);
+          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[i2 - 1]), 0);
           *oi++ = make_object(ip);
         }
       }
-       
       return oi;
     }
   };
@@ -730,12 +741,19 @@ public:
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
         seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal = seg_traits->equal_2_object();
+
+      typename Segment_traits_2::Is_vertical_2 is_vertical =
+        seg_traits->is_vertical_2_object();
       
       const unsigned int n1 = cv1.size();
       const unsigned int n2 = cv2.size();
-      
-      return (equal(max_vertex(cv1[n1 - 1]), min_vertex(cv2[0])) ||
-              equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0])));
+
+      bool ver1 = is_vertical(cv1[0]);
+      bool ver2 = is_vertical(cv2[0]);
+
+      return ((equal(max_vertex(cv1[n1 - 1]), min_vertex(cv2[0])) ||
+              equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) &&
+              ((ver1 && ver2) || (!ver1 && !ver2)));
     }
   };
   
@@ -876,64 +894,85 @@ private:
    * \return An index i such that q is in the x-range of cv[i].
    *         If q is not in the x-range of cv, returns INVALID_INDEX.
    */
-  static unsigned int _locate(const Segment_traits_2 * p_seg_traits,
+  static unsigned int _locate(const Segment_traits_2 * seg_traits,
                               const X_monotone_curve_2 & cv,
                               const Point_2 & q)
   {
-    // First check whether the polyline curve really contains q in its x-range.
-    unsigned int from = 0;
-    Comparison_result res_from;
-    unsigned int to = cv.size() - 1;
-    Comparison_result res_to;
-
-    typename Segment_traits_2::Compare_x_2            compare_x =
-      p_seg_traits->compare_x_2_object();
     typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-      p_seg_traits->construct_min_vertex_2_object();
+      seg_traits->construct_min_vertex_2_object();
     typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-      p_seg_traits->construct_max_vertex_2_object();
+      seg_traits->construct_max_vertex_2_object();
 
-    res_from = compare_x(min_vertex(cv[from]), q);
-    if (res_from == EQUAL)
-      return from;
+    unsigned int from = 0;
+    unsigned int to = cv.size() - 1;
+
+    if (seg_traits->is_vertical_2_object()(cv[0])) {
+      typename Segment_traits_2::Compare_xy_2 compare_xy =
+        seg_traits->compare_xy_2_object();
+
+      // First check whether the polyline curve really contains q in its
+      // xy-range:
+
+      Comparison_result res_from = compare_xy(min_vertex(cv[from]), q);    
+      if (res_from == EQUAL) return from;
     
-    res_to = compare_x(max_vertex(cv[to]), q);
-    if (res_to == EQUAL)
-      return to;
+      Comparison_result res_to = compare_xy(max_vertex(cv[to]), q);
+      if (res_to == EQUAL) return to;
     
-    if (res_from == res_to)
       // q is not in the x-range of cv:
-      return INVALID_INDEX;
+      if (res_from == res_to) return INVALID_INDEX;
+      
+      // Perform a binary search to locate the segment that contains q in its
+      // xy-range:
+      while (to > from) {
+        unsigned int mid = (from + to) / 2;
+        if (mid > from) {
+          Comparison_result res_mid = compare_xy(min_vertex(cv[mid]), q);
+          if (res_mid == EQUAL) return mid;
+          if (res_mid == res_from) from = mid;
+          else to = mid - 1;
+        } else {
+          CGAL_assertion(mid < to);
+          Comparison_result res_mid = compare_xy(max_vertex(cv[mid]), q);
+          if (res_mid == EQUAL) return mid;
+          if (res_mid == res_to) to = mid;
+          else from = mid + 1;
+        }
+      }
+      // In case (from == to), and we know that the polyline contains the q:
+      CGAL_assertion(from == to);
+      return from;
+    }
+    
+    typename Segment_traits_2::Compare_x_2 compare_x =
+      seg_traits->compare_x_2_object();
+
+    // First check whether the polyline curve really contains q in its x-range.
+    Comparison_result res_from = compare_x(min_vertex(cv[from]), q);    
+    if (res_from == EQUAL) return from;
+    
+    Comparison_result res_to = compare_x(max_vertex(cv[to]), q);
+    if (res_to == EQUAL) return to;
+    
+    // q is not in the x-range of cv:
+    if (res_from == res_to) return INVALID_INDEX;
 
     // Perform a binary search and locate the segment that contains q in its
-    // x-range.
-    unsigned int      mid;
-    Comparison_result res_mid_s, res_mid_t;
-
+    // x-range:
     while (to > from) {
-      mid =(from + to) / 2;
+      unsigned int mid = (from + to) / 2;
 
       if (mid > from) {
-        res_mid_s = compare_x(min_vertex(cv[mid]), q);
-
-        if (res_mid_s == EQUAL)
-          return mid;
-    
-        if (res_mid_s == res_from)
-          from = mid;
-        else
-          to = mid - 1;
+        Comparison_result res_mid = compare_x(min_vertex(cv[mid]), q);
+        if (res_mid == EQUAL) return mid;
+        if (res_mid == res_from) from = mid;
+        else to = mid - 1;
       } else {
         CGAL_assertion(mid < to);
-        res_mid_t = compare_x(max_vertex(cv[mid]), q);
-
-        if (res_mid_t == EQUAL)
-          return mid;
-    
-        if (res_mid_t == res_to)
-          to = mid;
-        else
-          from = mid + 1;
+        Comparison_result res_mid = compare_x(max_vertex(cv[mid]), q);
+        if (res_mid == EQUAL) return mid;
+        if (res_mid == res_to) to = mid;
+        else from = mid + 1;
       }
     }
 
@@ -952,18 +991,18 @@ private:
    * \return An index i such that segments[i] is defined to the left(or to the
    *         right) of q, or INVALID_INDEX if no such segment exists.
    */
-  static unsigned int _locate_side(const Segment_traits_2 *p_seg_traits,
-                                   const X_monotone_curve_2& cv,
-                                   const Point_2& q, const bool& to_right)
+  static unsigned int _locate_side(const Segment_traits_2 * seg_traits,
+                                   const X_monotone_curve_2 & cv,
+                                   const Point_2 & q, const bool & to_right)
   {
     // First locate a segment segments[i] that contains q in its x-range.
-    unsigned int i = _locate(p_seg_traits, cv, q);
+    unsigned int i = _locate(seg_traits, cv, q);
     if (i == INVALID_INDEX)
       return INVALID_INDEX;
    
-    typename Segment_traits_2::Equal_2 equal = p_seg_traits->equal_2_object();
+    typename Segment_traits_2::Equal_2 equal = seg_traits->equal_2_object();
 
-    if (equal(p_seg_traits->construct_min_vertex_2_object()(cv[i]), q)) {
+    if (equal(seg_traits->construct_min_vertex_2_object()(cv[i]), q)) {
       // q is the left endpoint of the i'th segment:
       if (to_right)
         return i;
@@ -973,7 +1012,7 @@ private:
         return i - 1;
     }
 
-    if (equal(p_seg_traits->construct_max_vertex_2_object()(cv[i]), q)) {
+    if (equal(seg_traits->construct_max_vertex_2_object()(cv[i]), q)) {
       // q is the right endpoint of the i'th segment:
       if (!to_right)
         return i;
