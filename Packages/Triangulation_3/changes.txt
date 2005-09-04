@@ -1,3 +1,7 @@
+4 September 2005 Sylvain Pion
+- Regular : fix several CGAL_assertion to CGAL_triangulation_assertion.
+- Regular : add some missing this-> spotted by g++ 4.1.
+
 31 July 2005 Sylvain Pion
 - Regular predicates : add casts to support Uncertain<>.
 

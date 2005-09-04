@@ -394,7 +394,7 @@ private:
   Oriented_side
   power_test(const Weighted_point &p, const Weighted_point &q) const
   {
-      CGAL_precondition(equal(p, q));
+      CGAL_triangulation_precondition(this->equal(p, q));
       return geom_traits().power_test_3_object()(p, q);
   }
 
@@ -402,7 +402,7 @@ private:
   power_test(const Weighted_point &p, const Weighted_point &q,
 	     const Weighted_point &r) const
   {
-      CGAL_precondition(collinear(p, q, r));
+      CGAL_triangulation_precondition(this->collinear(p, q, r));
       return geom_traits().power_test_3_object()(p, q, r);
   }
 
@@ -410,7 +410,7 @@ private:
   power_test(const Weighted_point &p, const Weighted_point &q,
 	     const Weighted_point &r, const Weighted_point &s) const
   {
-      CGAL_precondition(coplanar(p, q, r, s));
+      CGAL_triangulation_precondition(this->coplanar(p, q, r, s));
       return geom_traits().power_test_3_object()(p, q, r, s);
   }
 
@@ -456,7 +456,7 @@ private:
 
       bool operator()(const Cell_handle c) const
       {
-	return (t->in_conflict_3(p, c));
+	return t->in_conflict_3(p, c);
       }
   };
 
@@ -471,7 +471,7 @@ private:
 
       bool operator()(const Cell_handle c) const
       {
-	return (t->in_conflict_2(p, c, 3));
+	return t->in_conflict_2(p, c, 3);
       }
   };
 
@@ -750,9 +750,9 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition( coplanar ( c->vertex(i0)->point(),
-						c->vertex(i1)->point(),
-						c->vertex(i2)->point(), p) );
+    CGAL_triangulation_precondition(this->coplanar(c->vertex(i0)->point(),
+						   c->vertex(i1)->point(),
+						   c->vertex(i2)->point(), p));
     return Bounded_side( power_test(c->vertex(i0)->point(),
 				    c->vertex(i1)->point(),
 				    c->vertex(i2)->point(), p) );
@@ -790,7 +790,7 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
     return soe;
   // Either we compare weights, or we use the finite neighboring edge
   Cell_handle finite_neighbor = c->neighbor(c->index(infinite_vertex()));
-  CGAL_assertion(!is_infinite(finite_neighbor,0,1));
+  CGAL_triangulation_assertion(!is_infinite(finite_neighbor,0,1));
   return Bounded_side( power_test( finite_neighbor->vertex(0)->point(),
 			           finite_neighbor->vertex(1)->point(), p ) );
 }
@@ -1037,7 +1037,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       case Tr_Base::FACET:
       case Tr_Base::CELL:
 	// impossible in dimension 1
-        CGAL_assertion(false);
+        CGAL_triangulation_assertion(false);
 	return Vertex_handle();
       }
     }
@@ -1045,7 +1045,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
     {
         // We need to compare the weights when the points are equal.
         if (lt == Tr_Base::VERTEX) {
-	  CGAL_assertion(li == 0);
+	  CGAL_triangulation_assertion(li == 0);
 	  if (in_conflict_0(p, c)) {
 	    c->hide_point (c->vertex(li)->point());
             c->vertex(li)->set_point(p); // replace by heavier point
