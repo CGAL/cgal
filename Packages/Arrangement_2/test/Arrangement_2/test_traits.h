@@ -57,6 +57,9 @@ typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
                                                         Traits;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::Rat_circle_2                            Rat_circle;
+
 #define TRAITS_TYPE "Conics"
 
 #else

@@ -32,6 +32,9 @@ private:
 
   /*! The container of x-monotone curves */
   std::vector<X_monotone_curve_2>  m_xcurves;
+
+  /*! Indicates whether the end-of-line has been printed */
+  bool m_end_of_line_printed;
   
   /*! A map between (strings) commands and (member functions) operations */
   typedef bool (Traits_test::* Wrapper)(std::istringstream &);
@@ -54,9 +57,17 @@ private:
   bool translate_boolean(std::string & str_value);
   unsigned int translate_enumerator(std::string & str_value);
 
+  void print_end_of_line()
+  {
+    std::cout << std::endl;
+    m_end_of_line_printed = true;
+  }
+  
   void print_result(bool result)
   {
-    std::cout << ((result) ? "Passed" : "Failed") << std::endl;
+    if (!result && !m_end_of_line_printed) print_end_of_line();
+    std::cout << ((result) ? "Passed" : "Failed");
+    print_end_of_line();
   }
   
   template <class T>  
@@ -64,8 +75,10 @@ private:
                const char * str = "result")
   {
     if (exp_answer != real_answer) {
+      if (!m_end_of_line_printed) print_end_of_line();
       std::cout << "Expected " << str << ": " << exp_answer << std::endl
                 << "Obtained " << str << ": " << real_answer << std::endl;
+      m_end_of_line_printed = true;
       return false;
     } 
     return true;
@@ -210,13 +223,15 @@ public:
  * Accepts test data file name.
  */
 template <class T_Traits>
-Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
+Traits_test<T_Traits>::Traits_test(int argc, char * argv[]) :
+  m_end_of_line_printed(true)
 {
   typedef T_Traits Traits;
   
-  if (argc < 2 || argc >= 3)
-    std::cout << "Usage: " << argv[0] << " test_data_file" << std::endl;  
-  else
+  if (argc < 2 || argc >= 3) {
+    std::cout << "Usage: " << argv[0] << " test_data_file" << std::endl;
+    m_end_of_line_printed = true;
+  } else
     m_filename = argv[1];
 
   m_wrappers[std::string("compare_x")] =
@@ -277,6 +292,7 @@ bool Traits_test<T_Traits>::start()
   std::ifstream is(m_filename.c_str());
   if (!is.is_open()) {
     std::cerr << "Error opening file " << m_filename.c_str() << std::endl;
+    m_end_of_line_printed = true;
     return false;
   }
   if (!collect_data(is)) {
@@ -312,6 +328,7 @@ bool Traits_test<T_Traits>::collect_data(std::ifstream & is)
       str_stream.str(one_line);
       if (!read_point(str_stream, m_points[i])) {
         std::cerr << "Error reading point!" << std::endl;
+        m_end_of_line_printed = true;
         return false;
       }
       str_stream.clear();
@@ -331,6 +348,7 @@ bool Traits_test<T_Traits>::collect_data(std::ifstream & is)
       str_stream.str(one_line);
       if (!read_xcurve(str_stream, m_xcurves[i])) {
         std::cerr << "Error reading x-monotone curve!" << std::endl;
+        m_end_of_line_printed = true;
         return false;
       }
       str_stream.clear();
@@ -350,6 +368,7 @@ bool Traits_test<T_Traits>::collect_data(std::ifstream & is)
       str_stream.str(one_line);
       if (!read_curve(str_stream, m_curves[i])) {
         std::cerr << "Error reading curve!" << std::endl;
+        m_end_of_line_printed = true;
         return false;
       }
       str_stream.clear();
@@ -369,6 +388,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
 {
   bool test_result = true;
   std::cout << "Performing test ..." << std::endl;  
+  m_end_of_line_printed = true;
   char one_line[128];
   char buff[128];
   while (!is.eof()) {
@@ -395,7 +415,6 @@ template <class T_Traits>
 void Traits_test<T_Traits>::skip_comments(std::ifstream & is, char * one_line)
 {
   while (!is.eof()) {
-    // std::cerr << std::endl; // SUNPRO likes this...      
     is.getline(one_line, 128);
     if (one_line[0] != '#') break;
   }  
@@ -475,7 +494,7 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
   unsigned int real_answer =
     m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
   std::cout << "Test: compare_x( " << m_points[id1] << ", "
-            << m_points[id2] << " ) ? " << exp_answer << std::endl;
+            << m_points[id2] << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -490,7 +509,7 @@ bool Traits_test<T_Traits>::compare_xy_wrapper(std::istringstream & str_stream)
   unsigned int real_answer =
     m_traits.compare_xy_2_object()(m_points[id1], m_points[id2]);
   std::cout << "Test: compare_xy( " << m_points[id1] << ", "
-            << m_points[id2] << " ) ? " << exp_answer << std::endl;
+            << m_points[id2] << " ) ? " << exp_answer << "  ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -506,7 +525,7 @@ bool Traits_test<T_Traits>::min_vertex_wrapper(std::istringstream & str_stream)
   Point_2 real_answer =
     m_traits.construct_min_vertex_2_object()(m_xcurves[id1]);
   std::cout << "Test: min_vertex( " << m_xcurves[id1] << " ) ? "
-            << exp_answer << std::endl;
+            << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -522,7 +541,7 @@ bool Traits_test<T_Traits>::max_vertex_wrapper(std::istringstream & str_stream)
   Point_2 real_answer =
     m_traits.construct_max_vertex_2_object()(m_xcurves[id1]);
   std::cout << "Test: max_vertex( " << m_xcurves[id1] << " ) ? "
-            << exp_answer << std::endl;
+            << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -535,7 +554,7 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream & str_stream)
   bool exp_answer = get_expected_boolean(str_stream);
   bool real_answer = m_traits.is_vertical_2_object()(m_xcurves[id]);
   std::cout << "Test: is_vertical( " << m_xcurves[id]
-            << " ) ? " << exp_answer << std::endl;
+            << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -555,7 +574,7 @@ Traits_test<T_Traits>::compare_y_at_x_wrapper(std::istringstream & str_stream)
     m_traits.compare_y_at_x_2_object()(m_points[id1], m_xcurves[id2]);
   std::cout << "Test: compare_y_at_x( " << m_points[id1] << ","
             << m_xcurves[id2]
-            << " ) ? " << exp_answer << std::endl;
+            << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -574,12 +593,13 @@ compare_y_at_x_left_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = get_expected_enum(str_stream);
+  std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
+            << m_xcurves[id2] << ", " << m_points[id3]
+            << " ) ? "; 
   unsigned int real_answer =
     m_traits.compare_y_at_x_left_2_object()(m_xcurves[id1], m_xcurves[id2],
                                             m_points[id3]);
-  std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
-            << m_xcurves[id2] << ", " << m_points[id3]
-            << " ) ? " << exp_answer << std::endl;
+  std::cout << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }  
 
@@ -603,7 +623,7 @@ compare_y_at_x_right_wrapper(std::istringstream & str_stream)
                                              m_points[id3]);
   std::cout << "Test: compare_y_at_x_right( " << m_xcurves[id1] << ","
             << m_xcurves[id2] << ", " << m_points[id3]
-            << " ) ? " << exp_answer << std::endl;
+            << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }  
 
@@ -619,7 +639,7 @@ Traits_test<T_Traits>::equal_points_wrapper(std::istringstream & str_stream)
   bool exp_answer = get_expected_boolean(str_stream);
   bool real_answer = m_traits.equal_2_object()(m_points[id1], m_points[id2]);
   std::cout << "Test: equal( " << m_points[id1] << ", "
-            << m_points[id2] << " ) ? " << exp_answer << std::endl;
+            << m_points[id2] << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -635,7 +655,7 @@ Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream & str_stream)
   bool exp_answer = get_expected_boolean(str_stream);
   bool real_answer = m_traits.equal_2_object()(m_xcurves[id1], m_xcurves[id2]);
   std::cout << "Test: equal( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? " << exp_answer << std::endl;
+            << m_xcurves[id2] << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -661,8 +681,8 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
   std::vector<CGAL::Object> object_vec;
   m_traits.make_x_monotone_2_object()(m_curves[id],
                                       std::back_inserter(object_vec));
-  std::cout << "Test: max_x_monotone( " << m_curves[id]
-            << " ) ? " << std::endl;
+  std::cout << "Test: make_x_monotone( " << m_curves[id]
+            << " ) ? " << " ";
 
   unsigned int num;
   str_stream >> num;
@@ -692,6 +712,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
                   << m_xcurves[id] << std::endl
                   << "Obtained x-monotone curve: "
                   << *xcv_ptr << std::endl;
+        m_end_of_line_printed = true;
         print_result(false);
         return false;
       }
@@ -711,6 +732,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
                 << m_points[id] << std::endl
                 << "Obtained point: "
                 << *pt_ptr << std::endl;
+      m_end_of_line_printed = true;
       print_result(false);
       return false;
     }
@@ -740,10 +762,10 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   std::vector<CGAL::Object> object_vec;
-  m_traits.intersect_2_object()(m_xcurves[id1], m_xcurves[id2],
+  (void) m_traits.intersect_2_object()(m_xcurves[id1], m_xcurves[id2],
                                 std::back_inserter(object_vec));
   std::cout << "Test: intersect( " << m_xcurves[id1] << "," << m_xcurves[id2]
-            << " ) ? " << std::endl;
+            << " ) ? ";
 
   unsigned int num;
   str_stream >> num;
@@ -777,6 +799,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
                   << m_xcurves[id] << std::endl
                   << "Obtained x-monotone curve: "
                   << *xcv_ptr << std::endl;
+        m_end_of_line_printed = true;
         print_result(false);
         return false;
       }
@@ -797,6 +820,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
                 << m_points[id] << std::endl
                 << "Obtained point: "
                 << (*pt_pair_ptr).first << std::endl;
+      m_end_of_line_printed = true;
       print_result(false);
       return false;
     }
@@ -829,7 +853,7 @@ bool Traits_test<T_Traits>::split_wrapper(std::istringstream & str_stream)
   X_monotone_curve_2 cv1, cv2;
   m_traits.split_2_object()(m_xcurves[id1], m_points[id2], cv1, cv2);
   std::cout << "Test: split( " << m_xcurves[id1] << "," << m_points[id2]
-            << " ) ? " << std::endl;
+            << " ) ? " << " ";
 
   Equal_2 equal = m_traits.equal_2_object();
   str_stream >> id1 >> id2;                   // ... curve respectively
@@ -839,6 +863,7 @@ bool Traits_test<T_Traits>::split_wrapper(std::istringstream & str_stream)
               << m_xcurves[id1] << ", " << m_xcurves[id2] << std::endl
               << "Obtained x-monotone curve: "
               << cv1 << "," << cv2 << std::endl;
+    m_end_of_line_printed = true;
     print_result(false);
     return false;
   }
@@ -859,7 +884,7 @@ Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
   bool real_answer = m_traits.are_mergeable_2_object()(m_xcurves[id1],
                                                        m_xcurves[id2]);
   std::cout << "Test: are_mergeable( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? " << exp_answer << std::endl;
+            << m_xcurves[id2] << " ) ? " << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -878,11 +903,13 @@ bool Traits_test<T_Traits>::merge_wrapper(std::istringstream & str_stream)
   X_monotone_curve_2 cv;
   m_traits.merge_2_object()(m_xcurves[id1], m_xcurves[id2], cv);
   std::cout << "Test: merge( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? " << m_xcurves[id] << std::endl;
+            << m_xcurves[id2] << " ) ? " << m_xcurves[id] << " ";
   Equal_2 equal = m_traits.equal_2_object();
   if (!equal(m_xcurves[id], cv)) {
     std::cerr << "Expected x-monotone curve: " << m_xcurves[id] << std::endl
               << "Obtained x-monotone curve: " << cv << std::endl;
+    m_end_of_line_printed = true;
+    print_result(false);
     return false;
   }
   print_result(true);
