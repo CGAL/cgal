@@ -6,7 +6,6 @@
 \newcommand{\naive}{na\"{\i}ve}
 \newcommand{\kdtree}{{\sc Kd}-tree}
 
-
 % ===============================================================
 \section{Introduction}
 \label{arr_sec:intro}
@@ -134,17 +133,19 @@ arrangement by storing additional history records with its curves.
 %
 The class \ccc{Arrangement_2<Traits,Dcel>} is the main class in
 the arrangement package. It is used to represent planar
-arrangements and provides the interface needed to traverse them,
-and to maintain them. An arrangement is defined by the \dcel\ class,
-which represents the {\em topological structure} of the planar
-subdivision, and a geometric {\em traits} class that determines the
-family of planar curves that form the arrangement. It supplies a
+arrangements and provides the interface needed to construct them,
+traverse them, and maintain them. An arrangement is defined by the
+\dcel\ class, which represents the {\em topological structure} of the
+planar subdivision, and a geometric {\em traits} class that determines
+the family of planar curves that form the arrangement. It supplies a
 minimal set of geometric operations (predicates and constructions)
 required to construct and maintain the arrangement and to operate on
 it.
 
 The design of the arrangement package is guided by the need to
-separate between topological and geometric aspects of the planar
+separate between the representation of the arrangements and the
+various geometric algorithms that operate on them, and be the need to
+separate between the topological and geometric aspects of the planar
 subdivision. The separation is exhibited by the two template
 parameters of the \ccc{Arrangement_2} template:
 \begin{itemize}

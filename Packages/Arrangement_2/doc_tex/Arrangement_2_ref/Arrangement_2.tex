@@ -23,13 +23,13 @@ edge is always comprised of a pair of twin {\sc Dcel} halfedges.} is
 associated with an $x$-monotone curve whose interior is disjoint from all
 other edges and vertices.
 
-The arrangement template has two parameters:
+The \ccClassTemplateName\ template has two parameters:
 \begin{itemize}
 \item The \ccc{Traits} template-parameter should be instantiated with
 a model of the \ccc{ArrangementBasicTraits_2} concept. The traits
 class defines the types of $x$-monotone curves and two-dimensional
-points --- \ccc{X_monotone_curve_2} and \ccc{Point_2},
-respectively --- and supports basic geometric predicates on them.
+points, namely \ccc{X_monotone_curve_2} and \ccc{Point_2},
+respectively, and supports basic geometric predicates on them.
 \item The \ccc{Dcel} template-parameter should be instantiated with
 a class that is a model of the \ccc{ArranagementDcel} concept. The
 value of this parameter is by default
