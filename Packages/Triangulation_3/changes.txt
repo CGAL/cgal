@@ -1,3 +1,6 @@
+5 September 2005 Sylvain Pion
+- test-suite : fix for g++ 4.1 pickyness.
+
 4 September 2005 Sylvain Pion
 - Regular : fix several CGAL_assertion to CGAL_triangulation_assertion.
 - Regular : add some missing this-> spotted by g++ 4.1.

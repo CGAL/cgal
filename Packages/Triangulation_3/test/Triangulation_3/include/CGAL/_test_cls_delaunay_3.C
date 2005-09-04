@@ -98,11 +98,6 @@ struct If <CGAL::Tag_false, Then, Else>
 // test_conflicts() has to be distingushed between Delaunay and Regular,
 // since Regular does not have it at the moment, and it will probably
 // have a different interface once it will be implemented anyway.
-template < typename T, typename P >
-void test_conflicts(T&t, const P *q)
-{
-  test_conflicts(t, q, typename T::Weighted_tag());
-}
 
 template < typename T, typename P >
 void test_conflicts(T&t, const P *q, CGAL::Tag_true)
@@ -154,6 +149,12 @@ void test_conflicts(T& T3_13, const P *q, CGAL::Tag_false)
                            F.begin()->first, F.begin()->second);
     }
   }
+}
+
+template < typename T, typename P >
+void test_conflicts(T&t, const P *q)
+{
+  test_conflicts(t, q, typename T::Weighted_tag());
 }
 
 template <class Triangulation>
