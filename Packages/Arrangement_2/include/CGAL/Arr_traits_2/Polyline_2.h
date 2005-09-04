@@ -340,25 +340,36 @@ public:
     Base (begin, end)
   {
     // Make sure the range of points contains at least two points.
-    Segment_traits_2        seg_traits;
-    InputIterator           ps = begin;
+    Segment_traits_2 seg_traits;
+    InputIterator ps = begin;
     CGAL_precondition (ps != end);
-    InputIterator           pt = ps;
+    InputIterator pt = ps;
     ++pt;
     CGAL_precondition (pt != end);
 
+    CGAL_precondition_code(
+      typename Segment_traits_2::Compare_x_2 compare_x =
+        seg_traits.compare_x_2_object();
+      );
+    CGAL_precondition_code(
+      typename Segment_traits_2::Compare_xy_2 compare_xy =
+        seg_traits.compare_xy_2_object();
+      );
+    
+    
     // Make sure there is no change of directions as we traverse the polyline.
-    const Comparison_result res = seg_traits.compare_xy_2_object() (*ps, *pt);
-    CGAL_precondition (res != EQUAL);
+    const Comparison_result cmp_x_res = compare_x(*ps, *pt);
+    const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
+    CGAL_precondition (cmp_xy_res != EQUAL);
     ++ps; ++pt;
-    while (pt != end)
-    {
-      CGAL_precondition (seg_traits.compare_xy_2_object() (*ps, *pt) == res);
+    while (pt != end) {
+      CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
+      CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
       ++ps; ++pt;
     }
 
     // Reverse the polyline so it always directed from left to right.
-    if (res == LARGER)
+    if (cmp_xy_res == LARGER)
       _reverse();
   }
 
