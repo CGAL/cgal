@@ -44,39 +44,39 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_Circular_kernel_arrangement$(EXE_EXT) \
-                test_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
-                test_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
-                test_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
-                test_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
-                test_Lazy_Circular_kernel_arrangement$(EXE_EXT)
+                example_Circular_kernel_arrangement$(EXE_EXT) \
+                example_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
+                example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+                example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+                example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
+                example_Lazy_Circular_kernel_arrangement$(EXE_EXT)
 
 
-test_Circular_kernel_arrangement$(EXE_EXT): test_Circular_kernel_arrangement$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel_arrangement test_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
+example_Circular_kernel_arrangement$(EXE_EXT): example_Circular_kernel_arrangement$(OBJ_EXT)
+	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement example_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
 
-test_Circular_kernel_arrangement_Line_arc$(EXE_EXT): test_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel_arrangement_Line_arc test_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
+example_Circular_kernel_arrangement_Line_arc$(EXE_EXT): example_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
+	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement_Line_arc example_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
-test_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): test_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel_arrangement_Line_Circular test_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
+example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
+	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement_Line_Circular example_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
-test_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): test_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Circular_kernel_arrangement_Line_Circular test_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
+example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_Circular example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
-test_Lazy_Circular_kernel_arrangement$(EXE_EXT): test_Lazy_Circular_kernel_arrangement$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Circular_kernel_arrangement test_Lazy_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
+example_Lazy_Circular_kernel_arrangement$(EXE_EXT): example_Lazy_Circular_kernel_arrangement$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement example_Lazy_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
 
-test_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT): test_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Circular_kernel_arrangement_Line_arc test_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
+example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT): example_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_arc example_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   test_Circular_kernel_arrangement.clean \
-                   test_Circular_kernel_arrangement_Line_arc.clean \
-                   test_Circular_kernel_arrangement_Line_Circular.clean \
-                   test_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
-                   test_Lazy_Circular_kernel_arrangement_Line_arc.clean \
-                   test_Lazy_Circular_kernel_arrangement.clean
+                   example_Circular_kernel_arrangement.clean \
+                   example_Circular_kernel_arrangement_Line_arc.clean \
+                   example_Circular_kernel_arrangement_Line_Circular.clean \
+                   example_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
+                   example_Lazy_Circular_kernel_arrangement_Line_arc.clean \
+                   example_Lazy_Circular_kernel_arrangement.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
