@@ -108,9 +108,17 @@ public:
   void add_curve_to_left(SubCurve *curve)
   {
     // look for the curve, and if exists, nothing to do
-    if(std::find(m_leftCurves.begin(), m_leftCurves.end(), curve) ==
-      m_leftCurves.end())
-      m_leftCurves.push_back(curve);
+    for(SubCurveIter iter = m_leftCurves.begin();
+        iter != m_leftCurves.end();
+        ++iter)
+    {
+      if(curve == *iter  || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
+      {
+        *iter = curve;
+        return;
+      }
+    }
+    m_leftCurves.push_back(curve);
   }
 
 
@@ -133,10 +141,19 @@ public:
     SubCurveIter iter = m_rightCurves.begin();
     while ( iter != m_rightCurves.end() ) 
     {
+      if (curve == *iter || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
+      {
+        *iter = curve;
+        return Pair(false, m_rightCurves.end());
+      }
+      ++iter;
+    }
+    /*while ( iter != m_rightCurves.end() ) 
+    {
       if ( (*iter) ==  curve)
         return Pair(false, m_rightCurves.end());
       ++iter;
-    }
+    }*/
 
     iter = m_rightCurves.begin();
     Comparison_result res;
@@ -408,7 +425,6 @@ public:
          static_cast<SubCurve*>((*iter)->get_orig_subcurve2()) == c2)
         return true;
     }
-    CGAL_assertion(false);
     return true;
   }
 

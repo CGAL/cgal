@@ -216,11 +216,6 @@ public:
   {
     if(get_right_event() != (Event*)e)
     {
-      /*X_monotone_curve_2 dummy;
-      traits()->split_2_object() (m_lastCurve,
-				  e->get_point(),
-				  dummy, m_lastCurve);*/
-
       return this;
     }
     if(m_orig_subcurve1)
@@ -247,6 +242,19 @@ public:
     m_orig_subcurve2->get_all_leaves(out);
   }
 
+  template <class Output>
+  void get_all_inner_noes(Output out)
+  {
+    if(!m_orig_subcurve1)
+    {
+      *out++ = this;
+      return;
+    }
+    *out++ = this;
+    m_orig_subcurve1->get_all_inner_noes(out);
+    m_orig_subcurve2->get_all_inner_noes(out);
+  }
+
 
   bool is_parent(Self* parent)
   {
@@ -268,6 +276,30 @@ public:
 
     return (std::find(leafs.begin(), leafs.end(), s)
             != leafs.end());
+  }
+
+  bool has_same_leaf(Self *s)
+  {
+    std::list<Self*> my_leafs;
+    std::list<Self*> other_leafs;
+    this ->get_all_leaves(std::back_inserter(my_leafs));
+    s->get_all_leaves(std::back_inserter(other_leafs));
+
+    typedef typename std::list<Self*>::iterator Itr;
+    Itr itr;
+    for(itr = my_leafs.begin(); itr != my_leafs.end(); ++itr)
+    {
+      if(std::find(other_leafs.begin(), other_leafs.end(), *itr) ==
+         other_leafs.end())
+         return false;
+    }
+    for(itr = other_leafs.begin(); itr != other_leafs.end(); ++itr)
+    {
+      if(std::find(my_leafs.begin(), my_leafs.end(), *itr) ==
+         my_leafs.end())
+         return false;
+    }
+    return true;
   }
 
   unsigned int overlap_depth()
