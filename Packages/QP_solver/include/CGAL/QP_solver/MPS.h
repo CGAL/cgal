@@ -507,7 +507,8 @@ public: // methods:
   }
 
   // Returns true iff the MPS stream could be successfully parsed and
-  // the loaded QP instance has a symmetric D matrix.
+  // the loaded QP instance has a symmetric D matrix (if it has a D
+  // matrix at all).
   bool is_symmetric();
 
   // Returns true iff the MPS stream could be successfully parsed and

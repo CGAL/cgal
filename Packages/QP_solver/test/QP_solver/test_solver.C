@@ -106,6 +106,17 @@ bool is_double(const double&)
 }
 
 template<typename T>
+bool is_int(const T&)
+{
+  return false;
+}
+
+bool is_int(const int&)
+{
+  return true;
+}
+
+template<typename T>
 bool is_integer(const T&)
 {
   return false;
@@ -253,6 +264,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
     bailout("no filename specified");
 
   // read additional options:
+  std::ws(in);
   bool eof = in.eof();
   t = Token::token(in);
   while (!eof && !std::isdigit(t[0])) {
@@ -346,7 +358,8 @@ template<typename Is_linear,
 	 typename Is_in_standard_form,
 	 typename IT,
 	 typename ET>
-bool process(std::ifstream& in,const std::map<std::string,int>& options)
+bool process(const std::string& filename,
+	     const std::map<std::string,int>& options)
 {
   using std::cout;
   using std::endl;
@@ -355,10 +368,12 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
   const int verbosity = options.find("Verbosity")->second;
 
   // read QP instance:
-  in.clear();
-  in.seekg(0, std::ios_base::beg);
+  std::ifstream in(filename.c_str());
+  if (!in)
+    bailout1("could not open file '%'",filename);
   typedef CGAL::QP_MPS_instance<IT,ET> QP_instance;
   QP_instance qp(in,true,verbosity);
+  in.close();
 
   // check whether we should compute the rank of the coefficient
   // matrix:
@@ -380,11 +395,9 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
     number_type = "Gmpq";
   } else
     bailout("file does not specify a number-type");
-  if (type==Double_type && (is_integer(IT()) || is_rational(IT())))
-    return true;
-  if (type==Int_type && is_rational(IT()))
-    return true;
-  if (type==Rational_type && (is_double(IT()) || is_integer(IT())))
+  if (type==Double_type && (is_int(IT()) || is_rational(IT())) ||
+      type==Int_type && is_rational(IT()) ||
+      type==Rational_type && (is_double(IT()) || is_int(IT())))
     return true;
 
   // construct a zero D matrix if needed:
@@ -413,8 +426,10 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
 	 << (check_tag(Has_equalities_only_and_full_rank())?
 	     "has-equalities-only-and-full-rank " : "") 
 	 << "file-IT=" << number_type << ' '
-	 << (is_double(IT())? "double" :
-	       (is_integer(IT())? "Gmpz" : "Gmpq"))
+	 << "IT=" << (is_double(IT())? "double" :
+		      (is_rational(IT())? "Gmpq" : "int")) << ' '
+	 << "ET=" << (is_integer(ET())? "Gmpz" :
+		      (is_rational(ET())? "Gmpq" : "Double"))
 	 << endl;
 
   // check for format errors in MPS file:
@@ -451,7 +466,7 @@ template<typename Is_linear,
 	 typename Is_symmetric,
 	 typename Has_equalities_only_and_full_rank,
 	 typename Is_in_standard_form>
-bool processType(std::ifstream& in,
+bool processType(const std::string& filename,
 		 const std::map<std::string,int>& options)
 {
   // look up value:
@@ -467,21 +482,21 @@ bool processType(std::ifstream& in,
   if (!processOnlyOneValue || value==Int_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	int,CGAL::Gmpz>(in,options))
+	int,CGAL::Gmpz>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	double,CGAL::Double>(in,options))
+	double,CGAL::Double>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	CGAL::Gmpq,CGAL::Gmpq>(in,options))
+	CGAL::Gmpq,CGAL::Gmpq>(filename,options))
       success = false;
 #endif
   return success;
@@ -490,7 +505,7 @@ bool processType(std::ifstream& in,
 template<typename Is_linear,
 	 typename Is_symmetric,
 	 typename Has_equalities_only_and_full_rank>
-bool processFType(std::ifstream& in,
+bool processFType(const std::string& filename,
 		  const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Is in standard form");
@@ -502,13 +517,13 @@ bool processFType(std::ifstream& in,
 #ifdef QP_F
   if (!processOnlyOneValue || value==true)
     if (!processType<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Tag_true>(in,options))
+	Has_equalities_only_and_full_rank,Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_F
   if (!processOnlyOneValue || value==false)
     if (!processType<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Tag_false>(in,options))
+	Has_equalities_only_and_full_rank,Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
@@ -516,7 +531,7 @@ bool processFType(std::ifstream& in,
 
 template<typename Is_linear,
 	 typename Is_symmetric>
-bool processRFType(std::ifstream& in,
+bool processRFType(const std::string& filename,
 		   const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Has equalities and full rank");
@@ -527,19 +542,19 @@ bool processRFType(std::ifstream& in,
   bool success = true;
 #ifdef QP_R
   if (!processOnlyOneValue || value==true)
-    if (!processFType<Is_linear,Is_symmetric,Tag_true>(in,options))
+    if (!processFType<Is_linear,Is_symmetric,Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_R
   if (!processOnlyOneValue || value==false)
-    if (!processFType<Is_linear,Is_symmetric,Tag_false>(in,options))
+    if (!processFType<Is_linear,Is_symmetric,Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
 }
 
 template<typename Is_linear>
-bool processSRFType(std::ifstream& in,
+bool processSRFType(const std::string& filename,
 		    const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Is symmetric");
@@ -550,18 +565,18 @@ bool processSRFType(std::ifstream& in,
   bool success = true;
 #ifdef QP_S
   if (!processOnlyOneValue || value==true)
-    if (!processRFType<Is_linear,Tag_true>(in,options))
+    if (!processRFType<Is_linear,Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_S
   if (!processOnlyOneValue || value==false)
-    if (!processRFType<Is_linear,Tag_false>(in,options))
+    if (!processRFType<Is_linear,Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
 }
 
-bool processLSRFType(std::ifstream& in,
+bool processLSRFType(const std::string& filename,
 		     const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Is linear");
@@ -572,12 +587,12 @@ bool processLSRFType(std::ifstream& in,
   bool success = true;
 #ifdef QP_L
   if (!processOnlyOneValue || value==true)
-    if (!processSRFType<Tag_true>(in,options))
+    if (!processSRFType<Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_L
   if (!processOnlyOneValue || value==false)
-    if (!processSRFType<Tag_false>(in,options))
+    if (!processSRFType<Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
@@ -606,13 +621,9 @@ int main(const int ac,const char **av) {
   std::map<std::string,int> options;
   std::string filename;
   bool success = true;
-  while (parse_options(in,options,filename)) {
-    std::ifstream from(filename.c_str());
-    if (!from)
-      bailout1("could not open file '%'",filename);
-    if (!processLSRFType(from,options))
+  while (parse_options(in,options,filename))
+    if (!processLSRFType(filename,options))
       success = false;
-  }
 
   // final output:
   if (!success) {

@@ -153,13 +153,15 @@ bool QP_MPS_instance<IT_,ET_,
 
   if (!is_symmetric_cached) {
     is_symmetric_ = true;
-    const unsigned int var_nr = var_names.size();
-    for (unsigned int i=0; i<var_nr; ++i)
-      for (unsigned int j=i+1; j<var_nr; ++j)
-	if (D_[i][j] != D_[j][i]) {
-	  is_symmetric_ = false; 
-	  return is_symmetric_;
-	}
+    if (!is_linear()) {
+      const unsigned int var_nr = var_names.size();
+      for (unsigned int i=0; i<var_nr; ++i)
+	for (unsigned int j=i+1; j<var_nr; ++j)
+	  if (D_[i][j] != D_[j][i]) {
+	    is_symmetric_ = false; 
+	    return is_symmetric_;
+	  }
+    }
   }
   return is_symmetric_;
 }
