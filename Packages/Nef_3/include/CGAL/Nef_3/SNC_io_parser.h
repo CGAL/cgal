@@ -1763,8 +1763,9 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
-    sncp()->store_sm_boundary_item(SEdge_of[index], --(sfh->sface_cycles_end()));
+    //    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
+    SM_decorator SD(&*sfh->center_vertex());
+    SD.link_as_face_cycle(SEdge_of[index],sfh);
     in >> cc;
   }
   
