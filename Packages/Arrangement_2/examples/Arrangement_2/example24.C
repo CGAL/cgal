@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/ex_arr_hist_1.C
+// file: examples/Arrangement_2/example24.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -22,30 +22,33 @@ int main ()
 {
   Arr_with_hist_2   arr;
 
+  // Insert s1, s2 and s3 incrementally:
   Segment_2         s1 (Point_2 (0, 3), Point_2 (4, 3));
   Curve_handle      c1 = insert (arr, s1);
-  Segment_2         s2 (Point_2 (3, 1), Point_2 (3, 5));
+  Segment_2         s2 (Point_2 (3, 2), Point_2 (3, 5));
   Curve_handle      c2 = insert (arr, s2);
   Segment_2         s3 (Point_2 (2, 3), Point_2 (5, 3));
   Curve_handle      c3 = insert (arr, s3);
-  Segment_2         segs[3];
 
+  // Insert three additional segments aggregately:
+  Segment_2         segs[3];
   segs[0] = Segment_2 (Point_2 (2, 6), Point_2 (7, 1));
   segs[1] = Segment_2 (Point_2 (0, 0), Point_2 (2, 6));
-  segs[2] = Segment_2 (Point_2 (3, 4), Point_2 (3, 6));
+  segs[2] = Segment_2 (Point_2 (3, 4), Point_2 (6, 4));
   insert (arr, segs, segs + 3);
 
-  std::cout << "Removing [" << s1 << "] : ";
-  std::cout << remove (arr, c1) << " edges have been removed." << std::endl;
+  // Print out the curves and the number edges each one induces.
+  Arr_with_hist_2::Curve_iterator            cit;
 
-  // Print the arrangement.
-  Arr_with_hist_2::Vertex_iterator  vit;
+  std::cout << arr.number_of_curves() << " curves:" << std::endl;
+  for (cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
+  {
+    std::cout << "Curve [" << *cit << "] induces "
+              << cit->number_of_edges() << " edges." << std::endl;    
+  }
 
-  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-    std::cout << "(" << vit->point() << ")" << std::endl;
-
-  // Print the arrangement edges.
+  // Print the arrangement edges, along with the list of curves that
+  // induce each edge.
   Arr_with_hist_2::Edge_iterator             eit;
   Arr_with_hist_2::Origin_curve_iterator     ocit;
 
@@ -54,33 +57,22 @@ int main ()
   {
     std::cout << "[" << eit->curve() << "]. Origin: ";
     for (ocit = arr.origin_curves_begin (eit->handle());
-	 ocit != arr.origin_curves_end (eit->handle()); ++ocit)
+         ocit != arr.origin_curves_end (eit->handle()); ++ocit)
     {
       std::cout << " [" << *ocit << "]" << std::flush;
     }
     std::cout << std::endl;
   }
 
-  // Test the split and merge functions:
-  Point_location    pl (arr);
-  Segment_2         s4 (Point_2 (5, 6), Point_2 (7, 4));
-  Curve_handle      c4 = insert (arr, s4, pl);
-  Arr_with_hist_2::Halfedge_handle   h = arr.split_edge (*(c4->edges_begin()), 
-							 Point_2 (6, 5));
-
-  std::cout << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() << std::endl;
-
-  arr.merge_edge (h, h->next());
-  std::cout << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() << std::endl;
-
   // Perform some point-location queries:
-  point_location_query (pl, Point_2 (Number_type (7, 2), 4));
-  point_location_query (pl, Point_2 (6, 2));
-  point_location_query (pl, Point_2 (2, 4));
+  Point_location   pl (arr);
+
+  Point_2          p1 (4, 6);
+  std::cout << "(" << p1 << "): "; point_location_query (pl, p1);
+  Point_2          p2 (6, 2);
+  std::cout << "(" << p1 << "): "; point_location_query (pl, p2);
+  Point_2          p3 (2, 4);
+  std::cout << "(" << p1 << "): "; point_location_query (pl, p3);
 
   return (0);
 }
