@@ -351,11 +351,14 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
   using std::cout;
   using std::endl;
 
+  // extract verbosity:
+  const int verbosity = options.find("Verbosity")->second;
+
   // read QP instance:
   in.clear();
   in.seekg(0, std::ios_base::beg);
   typedef CGAL::QP_MPS_instance<IT,ET> QP_instance;
-  QP_instance qp(in);
+  QP_instance qp(in,true,verbosity);
 
   // check whether we should compute the rank of the coefficient
   // matrix:
@@ -394,8 +397,6 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
       !qp.has_equalities_only_and_full_rank())
     return true;
 
-  // extract verbosity:
-  const int verbosity = options.find("Verbosity")->second;
   if (verbosity > 0)
     cout << "- Running a solver specialized for: "
 	 << (check_tag(Is_linear())? "linear " : "")
