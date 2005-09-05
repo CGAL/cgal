@@ -121,7 +121,6 @@ private:
   bool is_format_okay_;
   bool is_linear_;
   const bool use_CPLEX_convention;
-  unsigned int var_nr, constr_nr;
   Vector b_, c_;              // vectors b and c
   Matrix A_, D_;              // matrices A and D
   std::string D_section;      // name of the section from which D was read

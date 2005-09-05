@@ -43,8 +43,6 @@ QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
     is_format_okay_(false),
     is_linear_(false),
     use_CPLEX_convention(use_CPLEX_convention),
-    var_nr(0),
-    constr_nr(0),
     is_symmetric_cached(false),
     has_equalities_only_and_full_rank_cached(false),
     is_in_standard_form_cached(false),
@@ -155,6 +153,7 @@ bool QP_MPS_instance<IT_,ET_,
 
   if (!is_symmetric_cached) {
     is_symmetric_ = true;
+    const unsigned int var_nr = var_names.size();
     for (unsigned int i=0; i<var_nr; ++i)
       for (unsigned int j=i+1; j<var_nr; ++j)
 	if (D_[i][j] != D_[j][i]) {
@@ -319,8 +318,6 @@ bool QP_MPS_instance<IT_,ET_,
   }
   put_token_back(t);
 
-  // remember number of constraints:
-  constr_nr = row_names.size();
   return true;
 }
 
@@ -344,7 +341,7 @@ bool QP_MPS_instance<IT_,ET_,
     if (var_name == var_names.end()) { // new variable?
       var_index = var_names.size();
       var_names.insert(String_int_pair(t,var_index));
-      A_.push_back(Vector(constr_nr,IT(0)));
+      A_.push_back(Vector(row_names.size(),IT(0)));
       c_.push_back(IT(0));
       fl_.push_back(true);  // default lower bound is finite...
       l_.push_back(IT(0));  // ...namely zero
