@@ -154,7 +154,7 @@ static Comparison_result cmp(
 }
 
 bool operator==(const PointCd<FT,LA>& q) const
-{ if (identical(q)) return true;
+{ if (this->identical(q)) return true;
   if (dimension()!=q.dimension()) return false;
   return vector_rep()==q.vector_rep();
 }

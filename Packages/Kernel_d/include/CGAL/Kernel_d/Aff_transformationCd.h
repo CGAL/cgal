@@ -189,7 +189,7 @@ operator*(const Aff_transformationCd<RT,LA>& s) const
 }
 
 bool operator==(const Aff_transformationCd<RT,LA>& a1) const
-{ if ( identical(a1) ) return true;
+{ if ( this->identical(a1) ) return true;
   return ( matrix() == a1.matrix() );
 }
 bool operator!=(const Aff_transformationCd<RT,LA>& a1) const

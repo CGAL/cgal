@@ -319,7 +319,7 @@ static Comparison_result strong_cmp(
   const HyperplaneHd<RT,LA>&, const HyperplaneHd<RT,LA>&);
 
 bool operator==(const HyperplaneHd<RT,LA>& h2) const
-{ if (identical(h2)) return true;
+{ if (this->identical(h2)) return true;
   if (dimension()!=h2.dimension()) return false;
   return HyperplaneHd<RT,LA>::strong_cmp(*this,h2) == EQUAL; 
 }

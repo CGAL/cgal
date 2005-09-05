@@ -118,7 +118,7 @@ static Comparison_result cmp(
   const DirectionCd<FT,LA>& h1, const DirectionCd<FT,LA>& h2);
 
 bool operator==(const DirectionCd<FT,LA>& w) const
-{ if ( identical(w) ) return true;
+{ if ( this->identical(w) ) return true;
   if ( dimension()!=w.dimension() ) return false;
   return (DirectionCd<RT,LA>::cmp(*this,w) == EQUAL); 
 }

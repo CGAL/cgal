@@ -154,7 +154,7 @@ bool has_on(const Point_d<R>& p) const
   return pos(p,point(0),point(1),dummy); }
 
 bool operator==(const Line_d<R>& l1) const
-{ if ( identical(l1) ) return true;
+{ if ( this->identical(l1) ) return true;
   if ( dimension() != l1.dimension() ) return false;
   return has_on(l1.point(0)) && 
          direction() == l1.direction(); 

@@ -188,7 +188,7 @@ DirectionHd<RT,LA>  operator- () const
 static Comparison_result cmp(
   const DirectionHd<RT,LA>& h1, const DirectionHd<RT,LA>& h2); 
 bool operator==(const DirectionHd<RT,LA>& w) const
-{ if ( identical(w) ) return true;
+{ if ( this->identical(w) ) return true;
   if ( dimension()!=w.dimension() ) return false;
   return (DirectionHd<RT,LA>::cmp(*this,w) == EQUAL); 
 }

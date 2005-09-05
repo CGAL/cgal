@@ -212,7 +212,7 @@ static Comparison_result cmp(
 }
 
 bool operator==(const VectorCd<FT,LA>& w) const
-{ if ( identical(w) ) return true;
+{ if ( this->identical(w) ) return true;
   if ( dimension() != w.dimension() ) return false;
   return vector_rep()==w.vector_rep();
 }

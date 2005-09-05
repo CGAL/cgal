@@ -218,7 +218,7 @@ which transforms first by |t| and then by |s|.}*/
 }
 
 bool operator==(const Aff_transformationHd<RT,LA>& a1) const
-{ if ( identical(a1) ) return true;
+{ if ( this->identical(a1) ) return true;
   return ( matrix() == a1.matrix() );
 }
 bool operator!=(const Aff_transformationHd<RT,LA>& a1) const

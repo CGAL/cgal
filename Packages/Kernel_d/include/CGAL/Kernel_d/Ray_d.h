@@ -150,7 +150,7 @@ in the interior of |r|.}*/
 /*{\Mtext \headerline{Non-Member Functions}}*/
 
 bool operator==(const Ray_d<R>& r1) const
-{ if ( identical(r1) ) return true;
+{ if ( this->identical(r1) ) return true;
   if ( dimension() != r1.dimension() ) return false;
   return source() == r1.source() && 
          direction() == r1.direction(); 

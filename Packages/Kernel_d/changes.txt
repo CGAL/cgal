@@ -1,3 +1,6 @@
+6 September 2005 Sylvain Pion
+- Add missing this-> required by g++ 4.1.
+
 30 June 2005 Sylvain Pion
 - Cartesian_d.h : prefix macro with CGAL_.
 

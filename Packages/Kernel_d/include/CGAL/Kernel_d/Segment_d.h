@@ -173,7 +173,7 @@ bool is_degenerate() const
 { return ptr()->is_degenerate(); } 
 
 bool operator==(const Segment_d<R>& t) const
-{ if (identical(t)) return true;
+{ if (this->identical(t)) return true;
   return ((source() == t.source() && 
            target() == t.target())); } 
 

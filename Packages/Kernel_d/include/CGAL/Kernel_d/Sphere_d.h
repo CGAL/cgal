@@ -256,7 +256,7 @@ Sphere_d<R> operator+(const Vector_d<R>& v) const
 }
 
 bool operator==(const Sphere_d<R>& D) const
-{ if (identical(D)) return true;
+{ if (this->identical(D)) return true;
   if (dimension() != D.dimension()) return false;
   return (center()==D.center() &&
           squared_radius() == D.squared_radius() &&
