@@ -21,6 +21,8 @@
 #define CGAL_POINT_WITH_SURFACE_INDEX_H
 
 #include <CGAL/Point_traits.h>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 
 namespace CGAL {
 
