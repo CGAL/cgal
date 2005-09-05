@@ -145,7 +145,7 @@ void _test_Line_arc(CK ck)
    assert(line_arc_tmp.target() == line_arc_horizontal2.target());
 
 
-   //Ajout
+   
    std::vector< CGAL::Object > 
      vector_for_intersection_6_reverse;
    theConstruct_intersect_2(line_arc_horizontal2,
@@ -156,7 +156,7 @@ void _test_Line_arc(CK ck)
    assert(line_arc_tmp.source() == line_arc_horizontal.source());
    assert(line_arc_tmp.target() == line_arc_horizontal2.target());
   
-   //Fin ajout
+   
 
    Line_arc_2 line_arc_horizontal3(Line_2(center_circle1, p2_line_horizontal),
 			circle2,

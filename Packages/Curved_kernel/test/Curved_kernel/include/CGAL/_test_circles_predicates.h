@@ -12,7 +12,6 @@
 #include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
 #include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
 
-
 #include <CGAL/Random.h>
 
 template <class CK>
