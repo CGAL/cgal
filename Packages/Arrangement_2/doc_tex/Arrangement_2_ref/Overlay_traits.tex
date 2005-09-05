@@ -1,0 +1,128 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Overlay_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{OverlayTraits}
+
+A model for the \ccRefName\ should be able to operate on records (namely,
+vertices, halfedges and faces) of two input \dcel\ classes, named
+\ccc{Dcel1} and \ccc{Dcel2}, and construct the records of an output \dcel\
+class, referred to as \ccc{ResDcel}.
+
+Models for the concept are used by the global \ccc{overlay()} function to
+maintain the auxiliary data stored with the \dcel\ records of the resulting
+overlaid arrangement, based on the contents of the input records.
+
+\ccTypes
+%=======
+
+\ccNestedType{Vertex_handle1}
+{a constant handle a vertex in \ccc{Dcel1}.}
+\ccGlue
+\ccNestedType{Halfedge_handle1}
+{a constant handle to a halfedge in \ccc{Dcel1}.}
+\ccGlue
+\ccNestedType{Face_handle1}
+{a constant handle to a face \ccc{Dcel1}.}
+
+\ccNestedType{Vertex_handle2}
+{a constant handle to a vertex in \ccc{Dcel2}.}
+\ccGlue
+\ccNestedType{Halfedge_handle2}
+{a constant handle to a halfedge in \ccc{Dcel2}.}
+\ccGlue
+\ccNestedType{Face_handle2}
+{a constant handle to a face in \ccc{Dcel2}.}
+
+\ccNestedType{Res_vertex_handle}{a handle to a vertex in \ccc{ResDcel}.}
+\ccGlue
+\ccNestedType{Res_halfedge_handle}{a handle to a halfedge in \ccc{ResDcel}.}
+\ccGlue
+\ccNestedType{Res_face_handle}{a handle to a faces in \ccc{ResDcel}.}
+
+\ccCreationVariable{ovl_tr}
+
+\ccHeading{Functions}
+%====================
+    
+\ccMethod{void create_vertex (Vertex_handle1 v1,
+                              Vertex_handle2 v2,
+                              Res_vertex_handle v)) const;}
+    {constructs \ccc{v}, which is induced by the coinciding vertices 
+     \ccc{v1} and \ccc{v2}.}
+
+\ccMethod{void create_vertex (Vertex_handle1 v1,
+                              Halfedge_handle2 e2,
+                              Res_vertex_handle v)) const;}
+    {constructs \ccc{v}, which is induced by the vertex \ccc{v1} that lies on
+     the edge \ccc{e2}.}
+
+\ccMethod{void create_vertex (Vertex_handle1 v1,
+                              Face_handle2 f2,
+                              Res_vertex_handle v)) const;}
+    {constructs \ccc{v}, which is induced by the vertex \ccc{v1} that lies
+     inside the face \ccc{f2}.}
+
+\ccMethod{void create_vertex (Halfedge_handle1 e1,
+                              Vertex_handle2 v2,
+                              Res_vertex_handle v)) const;}
+    {constructs \ccc{v}, which is induced by the vertex \ccc{v2} that lies on
+     the edge \ccc{e1}.}
+
+\ccMethod{void create_vertex (Face_handle1 f1,
+                              Vertex_handle2 v2,
+                              Res_vertex_handle v)) const;}
+    {constructs \ccc{v}, which is induced by the vertex \ccc{v2} that lies
+     inside the face \ccc{f1}.}
+
+\ccMethod{void create_vertex (Halfedge_handle1 e1,
+                              Halfedge_handle2 e2,
+                              Res_vertex_handle v)) const;}
+    {constructs \ccc{v}, which is induced by the intersection of the edges 
+     \ccc{e1} and \ccc{e2}.}
+
+\ccMethod{void create_edge (Halfedge_handle1 e1,
+                            Halfedge_handle2 e2,
+                            Res_vertex_handle e)) const;}
+    {constructs \ccc{e}, which is induced by an overlap between the edges 
+     \ccc{e1} and \ccc{e2}.}
+
+\ccMethod{void create_edge (Halfedge_handle1 e1,
+                            Face_handle2 f2,
+                            Res_vertex_handle e)) const;}
+    {constructs \ccc{e}, which is induced by the edge \ccc{e1} that lies
+     inside the face \ccc{f2}.}
+
+\ccMethod{void create_edge (Face_handle1 f1,
+                            Halfedge_handle2 e2,
+                            Res_vertex_handle e)) const;}
+    {constructs \ccc{e}, which is induced by the edge \ccc{e2} that lies
+     inside the face \ccc{f1}.}
+
+\ccMethod{void create_face (Face_handle1 f1,
+                            Face_handle2 f2,
+                            Res_face_handle f)) const;}
+    {constructs \ccc{f}, which is induced by the an overlap between the
+     faces \ccc{f1} and \ccc{f2}.}
+
+\ccHasModels
+
+\ccc{Arr_default_overlay_traits<Arrangement>}\lcTex{
+  (\ccRefPage{CGAL::Arr_default_overlay_traits<Arrangement>})}\\
+\ccc{Arr_face_overlay_traits<Arr1,Arr2,ResArr,OvlFaceData>}\lcTex{
+  (\ccRefPage{CGAL::Arr_face_overlay_traits<Arr1,Arr2,ResArr,OvlFaceData>})}\\
+
+\ccSeeAlso
+     \ccc{overlay}\lcTex{
+     (\ccRefPage{CGAL::overlay})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

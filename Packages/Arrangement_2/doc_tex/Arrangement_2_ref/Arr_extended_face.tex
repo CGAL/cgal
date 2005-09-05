@@ -8,12 +8,12 @@
 
 \ccRefPageBegin
 
-\begin{ccRefClass}{Arr_extended_face<F,FData>}
+\begin{ccRefClass}{Arr_extended_face<FaceBase,FData>}
 
 \ccDefinition
 %============
   The \ccRefName\ class-template extends the face topological-features of the
-  \dcel. It is parameterized by a face-base type \ccc{F} and a data type
+  \dcel. It is parameterized by a face-base type \ccc{FaceBase} and a data type
   \ccc{FData} used to extend the face base type.
 
 \ccInclude{CGAL/Arr_extended_face.h}
@@ -24,7 +24,7 @@
 
 \ccInheritsFrom
 %============
-  \ccc{F}
+  \ccc{FaceBase}
 
 \ccCreation
 \ccCreationVariable{f}
@@ -34,12 +34,16 @@
 
 \ccAccessFunctions
 %=================
-  \ccMethod{FData & data ();}
-  {obtains the auxiliary data.}
+
+\def\ccLongFuncLayout{\ccTrue}
+  \ccMethod{const FData & data () const;}
+  {obtains the auxiliary data (a non-const version, returning a reference
+   to a mutable data object is also available).}
+\def\ccLongParamLayout{\ccFalse}
 
 \ccModifiers
 %============
-  \ccMethod{void set_data (FData & data);}
+  \ccMethod{void set_data (const FData & data);}
   {sets the auxiliary data.}
 
 \ccSeeAlso

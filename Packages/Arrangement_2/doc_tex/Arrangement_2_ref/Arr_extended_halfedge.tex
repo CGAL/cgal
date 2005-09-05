@@ -8,13 +8,13 @@
 
 \ccRefPageBegin
 
-\begin{ccRefClass}{Arr_extended_halfedge<H,HData>}
+\begin{ccRefClass}{Arr_extended_halfedge<HalfedgeBase,HData>}
 
 \ccDefinition
 %============
   The \ccRefName\ class-template extends the halfedge topological-features of
-  the \dcel. It is parameterized by a halfedge-base type \ccc{H} and a data
-  type \ccc{HData} used to extend the halfedge base type.
+  the \dcel. It is parameterized by a halfedge-base type \ccc{HalfedgeBase}
+  and a data type \ccc{HData} used to extend the halfedge base type.
 
 \ccInclude{CGAL/Arr_extended_halfedge.h}
 
@@ -24,7 +24,7 @@
 
 \ccInheritsFrom
 %============
-  \ccc{H}
+  \ccc{HalfedgeBase}
 
 \ccCreation
 \ccCreationVariable{he}
@@ -34,12 +34,16 @@
 
 \ccAccessFunctions
 %=================
-  \ccMethod{HData & data ();}
-  {obtains the auxiliary data.}
+
+\def\ccLongParamLayout{\ccTrue}
+  \ccMethod{const HData & data () const;}
+  {obtains the auxiliary data (a non-const version, returning a reference
+   to a mutable data object is also available).}
+\def\ccLongParamLayout{\ccFalse}
 
 \ccModifiers
 %============
-  \ccMethod{void set_data (HData & data);}
+  \ccMethod{void set_data (const HData & data);}
   {sets the auxiliary data.}
 
 \ccSeeAlso
