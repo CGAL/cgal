@@ -111,7 +111,7 @@ local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
   # (a) ouput objective function:
   fprintf(fd,"COLUMNS\n");
   for i from 1 to n do
-    fprintf(fd,"  x%d  obj  %s\n",i,encodeNumber(numberType,c[1,1]));
+    fprintf(fd,"  x%d  obj  %s\n",i,encodeNumber(numberType,c[1,i]));
   od:
   # (b) ouput A matrix function:
   for i from 1 to m do

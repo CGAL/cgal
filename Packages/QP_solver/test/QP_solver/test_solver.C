@@ -616,7 +616,7 @@ int main(const int ac,const char **av) {
   // final output:
   if (!success) {
     cout << "Warning: some test cases were not handled correctly." << endl;
-    return 0; // todo: should be 1
+    return 1;
   } else {
     cout << "All test cases were successfully passed." << endl;
     return 0;

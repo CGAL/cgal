@@ -5,7 +5,7 @@
 tags
 input_data_type		i
 is_linear		0
-is_symmetric		0
+is_symmetric		1
 has_equalities_only_and_full_rank	0
 is_in_standard_form	1
 

@@ -7,7 +7,7 @@ ROWS
  G c1
 COLUMNS
   x1  obj  0
-  x2  obj  0
+  x2  obj  -1
   x1  c1  1
   x2  c1  -1
 RHS

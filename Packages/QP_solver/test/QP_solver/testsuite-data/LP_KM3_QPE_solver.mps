@@ -9,8 +9,8 @@ ROWS
  L c3
 COLUMNS
   x1  obj  -100
-  x2  obj  -100
-  x3  obj  -100
+  x2  obj  -10
+  x3  obj  -1
   x1  c1  1
   x2  c1  0
   x3  c1  0

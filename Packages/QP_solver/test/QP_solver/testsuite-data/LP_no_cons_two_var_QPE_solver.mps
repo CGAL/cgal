@@ -6,6 +6,6 @@ ROWS
  N obj
 COLUMNS
   x1  obj  -1
-  x2  obj  -1
+  x2  obj  1
 RHS
 ENDATA

@@ -9,8 +9,8 @@ ROWS
  E c3
 COLUMNS
   x1  obj  -1
-  x2  obj  -1
-  x3  obj  -1
+  x2  obj  -3
+  x3  obj  4
   x1  c1  0
   x2  c1  0
   x3  c1  0

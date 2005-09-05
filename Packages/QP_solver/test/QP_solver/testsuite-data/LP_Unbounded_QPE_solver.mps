@@ -14,7 +14,7 @@ COLUMNS
   x4  obj  1
   x5  obj  1
   x6  obj  1
-  x7  obj  1
+  x7  obj  -1
   x1  c1  1
   x2  c1  1
   x3  c1  1

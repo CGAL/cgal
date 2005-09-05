@@ -10,9 +10,9 @@ ROWS
  L c4
 COLUMNS
   x1  obj  -1000
-  x2  obj  -1000
-  x3  obj  -1000
-  x4  obj  -1000
+  x2  obj  -100
+  x3  obj  -10
+  x4  obj  -1
   x1  c1  1
   x2  c1  0
   x3  c1  0

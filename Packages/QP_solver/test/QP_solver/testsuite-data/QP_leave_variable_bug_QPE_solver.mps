@@ -8,7 +8,7 @@ ROWS
  G c2
 COLUMNS
   x1  obj  0
-  x2  obj  0
+  x2  obj  5
   x3  obj  0
   x1  c1  -4
   x2  c1  2
