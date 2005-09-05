@@ -387,6 +387,14 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
   if (type==Rational_type && (is_double(IT()) || is_integer(IT())))
     return true;
 
+  // construct a zero D matrix if needed:
+  if (qp.is_linear() && !check_tag(Is_linear()))
+    // Note: Revision 1.1 of this file uses qp's zero_D() routine and
+    // a special traits class for the solver for this case.  But as
+    // this more than doubles the compilation time, I removed it
+    // again...
+    qp.make_zero_D(); 
+
   // check which properties the loaded QP has, and break if they are
   // in contradiction to the routine's compile-time flags: 
   if (check_tag(Is_linear()) && !qp.is_linear() ||
@@ -422,14 +430,6 @@ bool process(std::ifstream& in,const std::map<std::string,int>& options)
     Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
     Is_in_standard_form,IT,ET,
     typename QP_instance::D_iterator> Traits;
-
-  // construct a zero D matrix if needed:
-  if (qp.is_linear() && !check_tag(Is_linear()))
-    // Note: Revision 1.1 of this file uses qp's zero_D() routine and
-    // a special traits class for the solver for this case.  But as
-    // this more than doubles the compilation time, I removed it
-    // again...
-    qp.make_zero_D(); 
 
   // solve:
   CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
