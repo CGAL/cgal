@@ -14,21 +14,28 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I$(HOME)/CGAL/Arrangement_2/include \
-	   -I$(HOME)/CGAL/Curved_kernel/include \
-	   -I$(HOME)/CGAL/Algebraic_kernel/include \
+           -I../../include \
+           -I../../../Algebraic_kernel/include \
+           -I../../../synaps \
+           -I../../../Arrangement_2/include \
+	   -I../../../Interval_arithmetic/include \
+           -DNDEBUG \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   $(DEBUG_OPT)
+           -Iinclude \
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -37,38 +44,39 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-		ex_arr$(EXE_EXT) \
-                example1$(EXE_EXT) \
-                example2$(EXE_EXT) \
-                example3$(EXE_EXT) \
-                example4$(EXE_EXT) \
-                example5$(EXE_EXT) 
+                test_Circular_kernel_arrangement$(EXE_EXT) \
+                test_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
+                test_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+                test_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+                test_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
+                test_Lazy_Circular_kernel_arrangement$(EXE_EXT)
 
-ex_arr$(EXE_EXT): ex_arr$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ex_arr ex_arr$(OBJ_EXT) $(LDFLAGS)
 
-example1$(EXE_EXT): example1$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example1 example1$(OBJ_EXT) $(LDFLAGS)
+test_Circular_kernel_arrangement$(EXE_EXT): test_Circular_kernel_arrangement$(OBJ_EXT)
+	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel_arrangement test_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
 
-example2$(EXE_EXT): example2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example2 example2$(OBJ_EXT) $(LDFLAGS)
+test_Circular_kernel_arrangement_Line_arc$(EXE_EXT): test_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
+	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel_arrangement_Line_arc test_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
-example3$(EXE_EXT): example3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example3 example3$(OBJ_EXT) $(LDFLAGS)
+test_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): test_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
+	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel_arrangement_Line_Circular test_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
-example4$(EXE_EXT): example4$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example4 example4$(OBJ_EXT) $(LDFLAGS)
+test_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): test_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Circular_kernel_arrangement_Line_Circular test_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
-example5$(EXE_EXT): example5$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example5 example5$(OBJ_EXT) $(LDFLAGS)
+test_Lazy_Circular_kernel_arrangement$(EXE_EXT): test_Lazy_Circular_kernel_arrangement$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Circular_kernel_arrangement test_Lazy_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
+
+test_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT): test_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Circular_kernel_arrangement_Line_arc test_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   example1.clean \
-                   example2.clean \
-                   example3.clean \
-                   example4.clean \
-                   example5.clean \
-		   ex_arr.clean
+                   test_Circular_kernel_arrangement.clean \
+                   test_Circular_kernel_arrangement_Line_arc.clean \
+                   test_Circular_kernel_arrangement_Line_Circular.clean \
+                   test_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
+                   test_Lazy_Circular_kernel_arrangement_Line_arc.clean \
+                   test_Lazy_Circular_kernel_arrangement.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
