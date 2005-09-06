@@ -2,7 +2,7 @@ Algebraic_kernel
 Alpha_shapes_2
 Alpha_shapes_3
 Apollonius_graph_2
-Arrangement
+Arrangement_2
 Auxiliary
 Boost
 Box_intersection_d
@@ -59,7 +59,6 @@ Optimisation_doc
 Parameterization
 Partition_2
 Persistent_homology_d
-Planar_map
 Point_set_2
 Polygon
 Polyhedron
@@ -77,7 +76,6 @@ Segment_Voronoi_diagram_2
 Snap_rounding_2
 Spatial_searching
 Stream_support
-Sweep_line_2
 Timer
 Trapezoidal_decomposition
 Triangulation_2
