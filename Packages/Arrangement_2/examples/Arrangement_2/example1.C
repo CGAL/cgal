@@ -3,8 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-
-#include "arr_print.h"
+#include <CGAL/IO/Arr_iostream.h>
 
 typedef int                                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
@@ -35,7 +34,8 @@ int main ()
   Halfedge_handle e4 = arr.insert_at_vertices (s4, v4, v1);
   Halfedge_handle e5 = arr.insert_at_vertices (s5, v1, v3);
 
-  print_arrangement (arr);
+  std::cout << arr;
+  
   return (0);
 }
 
