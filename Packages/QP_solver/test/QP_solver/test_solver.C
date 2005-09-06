@@ -95,48 +95,17 @@ struct NT_selector<CGAL::Gmpz> {
 };
 
 template<typename T>
-bool is_double(const T&)
-{
-  return false;
-}
-
-bool is_double(const double&)
-{
-  return true;
-}
-
+bool is_double(const T&)            { return false; }
+bool is_double(const double&)       { return true; }
 template<typename T>
-bool is_int(const T&)
-{
-  return false;
-}
-
-bool is_int(const int&)
-{
-  return true;
-}
-
+bool is_int(const T&)               { return false; }
+bool is_int(const int&)             { return true; }
 template<typename T>
-bool is_integer(const T&)
-{
-  return false;
-}
-
-bool is_integer(const CGAL::Gmpz&)
-{
-  return true;
-}
-
+bool is_integer(const T&)           { return false; }
+bool is_integer(const CGAL::Gmpz&)  { return true; }
 template<typename T>
-bool is_rational(const T&)
-{
-  return false;
-}
-
-bool is_rational(const CGAL::Gmpq&)
-{
-  return true;
-}
+bool is_rational(const T&)          { return false; }
+bool is_rational(const CGAL::Gmpq&) { return true; }
 
 template <typename T>
 T string_to(const std::string& s) {
@@ -179,7 +148,7 @@ void usage()
        << "{fe,ff,pe,pf}, and file is a path to a MPS file. In addition,\n"
        << "you can specify any of the following additional options:\n"
        << "  +l       use the dedicated LP-solver on this instance\n"
-       << "  +s        use the dedicated solver for instances whose\n"
+       << "  +s       use the dedicated solver for instances whose\n"
        << "           D matrix is symmetric\n"
        << "  +r       use the dedicated solver for instances that only\n"
        << "           have equality constraints and whose coefficient\n"
