@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example4.C
+//! \file examples/Arrangement_2/example4.C
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>

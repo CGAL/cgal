@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example9.C
+//! \file examples/Arrangement_2/example9.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>

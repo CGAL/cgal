@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example7.C
+//! \file examples/Arrangement_2/example7.C
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>

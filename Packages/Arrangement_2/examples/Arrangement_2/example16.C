@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example16.C
+//! \file examples/Arrangement_2/example16.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>

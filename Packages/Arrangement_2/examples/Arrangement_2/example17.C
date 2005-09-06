@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example17.C
+//! \file examples/Arrangement_2/example17.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
