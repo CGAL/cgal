@@ -457,7 +457,7 @@ bool process(const std::string& filename,
   const bool is_valid = solver.is_solution_valid();
   delete s;
 
-  if (verbosity > 0)
+  if (verbosity > 0 || !is_valid)
     cout << "  Solution is valid: " << is_valid << endl;
   return is_valid;
 }
