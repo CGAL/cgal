@@ -22,6 +22,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/IO/Arrangement_2_writer.h>
+#include <CGAL/IO/Arrangement_2_reader.h>
 #include <iostream>
 
 CGAL_BEGIN_NAMESPACE
@@ -31,7 +33,14 @@ template <class Traits, class Dcel> inline
 std::ostream & operator << (std::ostream & os, 
                             const Arrangement_2<Traits,Dcel> & arr)
 {
-  typedef Arrangement_2<Traits,Dcel>            Arrangement_2;
+  typedef Arrangement_2<Traits,Dcel>                   Arrangement_2;
+  typedef Arrangement_2_writer<Arrangement_2>          Arr_writer;
+  typedef Arrangement_2_ascii_formatter<Arrangement_2> Ascii_formatter;
+
+  Ascii_formatter ascii(os);
+  Arr_writer writer(arr);
+  writer(ascii);
+    
   return os;
 }
 
@@ -40,7 +49,14 @@ template <class Traits, class Dcel> inline
 std::istream & operator >> (std::istream & is, 
                             Arrangement_2<Traits,Dcel> & arr)
 {
-  typedef Arrangement_2<Traits,Dcel>            Arrangement_2;
+  typedef Arrangement_2<Traits,Dcel>                   Arrangement_2;
+  typedef Arrangement_2_reader<Arrangement_2>          Arr_reader;
+  typedef Arrangement_2_ascii_formatter<Arrangement_2> Ascii_formatter;
+
+  Ascii_formatter ascii(is);
+  Arr_reader reader(arr);
+  reader(ascii);
+  
   return is;
 }
 
