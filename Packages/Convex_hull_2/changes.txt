@@ -1,3 +1,6 @@
+6 September 2005 Sylvain Pion
+- Fix graham scan example documentation.
+
 5 August 2005 Sylvain Pion
 - Remove CGAL_CFG_NO_NAMESPACE.
 
