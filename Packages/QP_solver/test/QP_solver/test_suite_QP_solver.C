@@ -145,7 +145,7 @@ bool read_vector(std::ifstream& from, int length,
 
 bool read_num_entry(std::ifstream& from, CGAL::Gmpq& entry);
 
-bool read_num_entry(std::ifstream& from, CGAL::Double& entry);
+bool read_num_entry(std::ifstream& from, double& entry);
 
 bool read_num_entry(std::ifstream& from, CGAL::Gmpz& entry);
 
