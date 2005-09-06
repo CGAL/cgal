@@ -941,7 +941,7 @@ _replace_right_curve(Subcurve* sc1, Subcurve* sc2)
     }
     else
     {
-      if((*iter)->is_leaf(sc1))
+      if((*iter)->is_inner_node(sc1))
       {
         std::list<Base_subcurve*> list_of_sc;
         sc2->get_all_leaves(std::back_inserter(list_of_sc));
@@ -949,7 +949,7 @@ _replace_right_curve(Subcurve* sc1, Subcurve* sc2)
             itr != list_of_sc.end();
             ++itr)
         {
-          if(reinterpret_cast<Subcurve*>(*itr) == sc1)
+          if(sc1->is_parent((reinterpret_cast<Subcurve*>(*itr))))
             continue;
 
           this ->_add_curve_to_right(m_currentEvent,

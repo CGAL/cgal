@@ -268,6 +268,15 @@ public:
     return false;
   }
 
+  bool is_inner_node(Self *s)
+  {
+    std::list<Self*> nodes;
+    this ->get_all_inner_noes(std::back_inserter(nodes));
+
+    return (std::find(nodes.begin(), nodes.end(), s)
+            != nodes.end());
+  }
+
 
   bool is_leaf(Self* s)
   {
