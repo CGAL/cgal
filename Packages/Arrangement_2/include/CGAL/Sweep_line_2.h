@@ -427,6 +427,8 @@ public:
                                   Subcurve* &c2,
                                   bool is_overlap = false);
 
+  void _replace_right_curve(Subcurve* sc1, Subcurve* sc2);
+
 
 protected:
 
@@ -795,7 +797,10 @@ _fix_overlap_subcurves()
         leftCurve = (Subcurve*)(leftCurve->getSubcurve());
       }
 
-      m_currentEvent->replace_right_curve((*leftCurveIter), leftCurve);
+      if((Event*)leftCurve->get_right_event() != m_currentEvent)
+      {
+        _replace_right_curve((*leftCurveIter), leftCurve);
+      }
       *leftCurveIter = leftCurve;
     }
     if((Event*)leftCurve->get_right_event() == m_currentEvent)
@@ -912,6 +917,48 @@ _handle_overlap(Event* event,
     (*iter) = overlap_sc;
   }
 
+
+template <class Traits_,
+          class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
+          typename Allocator>
+void Sweep_line_2<Traits_,
+                  SweepVisitor,
+                  CurveWrap,
+                  SweepEvent,
+                  Allocator>::
+_replace_right_curve(Subcurve* sc1, Subcurve* sc2)
+{
+  for(EventCurveIter iter = m_currentEvent->right_curves_begin(); 
+      iter!= m_currentEvent->right_curves_end();
+      ++iter)
+  {
+    if(*iter == sc1)
+    {
+      *iter = sc2;
+      return;
+    }
+    else
+    {
+      if((*iter)->is_leaf(sc1))
+      {
+        std::list<Base_subcurve*> list_of_sc;
+        sc2->get_all_leaves(std::back_inserter(list_of_sc));
+        for(typename std::list<Base_subcurve*>::iterator itr = list_of_sc.begin();
+            itr != list_of_sc.end();
+            ++itr)
+        {
+          if(reinterpret_cast<Subcurve*>(*itr) == sc1)
+            continue;
+
+          this ->_add_curve_to_right(m_currentEvent,
+                                     reinterpret_cast<Subcurve*>(*itr));
+        }
+      }
+    }
+  }
+}
 
 
 

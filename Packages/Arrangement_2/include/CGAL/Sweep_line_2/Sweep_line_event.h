@@ -114,7 +114,7 @@ public:
     {
       if(curve == *iter  || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
       {
-        *iter = curve;
+        //*iter = curve;
         return;
       }
     }
@@ -141,9 +141,9 @@ public:
     SubCurveIter iter = m_rightCurves.begin();
     while ( iter != m_rightCurves.end() ) 
     {
-      if (curve == *iter || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
+      if (curve == *iter || (*iter)->is_leaf(curve) || (curve)->has_same_leaf(*iter))
       {
-        *iter = curve;
+        //*iter = curve;
         return Pair(false, m_rightCurves.end());
       }
       ++iter;
@@ -212,8 +212,9 @@ public:
 
 
 
-  void replace_right_curve(SubCurve* sc1, SubCurve* sc2)
+  /*void replace_right_curve(SubCurve* sc1, SubCurve* sc2)
   {
+    std::cout<<"replace_right_curve!!!\n";
     for(SubCurveIter iter = m_rightCurves.begin(); 
         iter!= m_rightCurves.end();
         ++iter)
@@ -221,10 +222,27 @@ public:
       if(*iter == sc1)
       {
         *iter = sc2;
+        std::cout<<"replaced !!!!!!\n";
         return;
       }
+      else
+      {
+        if((*iter)->is_leaf(sc2))
+        {
+          std::list<Base_Subcurve*> list_of_sc;
+          sc1->get_all_leaves(std::back_inserter(list_of_sc));
+          for(std::list<Base_Subcurve*>::iterator itr = list_of_sc.begin();
+              itr != list_of_sc.end();
+              ++itr)
+          {
+            if(reinterpret_cast<SubCurve*>(*itr) == sc2)
+              continue;
+
+            this ->add_
+          }
     }
-  }
+    std::cout<<"wasn't replaced !!!!!!\n";
+  }*/
 
 
   /*! Returns an iterator to the first curve to the left of the event */
