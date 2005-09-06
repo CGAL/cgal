@@ -109,7 +109,9 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
                        Event>                          Sweep_line;
 
 
-                            
+    
+  //the res arrangement can't be the same one as one of the input arrangement
+  CGAL_precondition((&res != &arr1) && (&res != &arr2));
 
   std::vector<X_monotone_curve_2>   arr_curves;
   std::list<Point_2>                iso_points;
