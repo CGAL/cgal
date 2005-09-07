@@ -1,5 +1,6 @@
 7 September 2005 Andreas Fabri
 - Added nested type Lazy_kernel::Kernel_tag
+- The magic functor now returns Lazy_kernel::Class instead of Lazy<Class>
 
 7 September 2005 Sylvain Pion
 - Introduce nested type Protector in Interval_nt to access

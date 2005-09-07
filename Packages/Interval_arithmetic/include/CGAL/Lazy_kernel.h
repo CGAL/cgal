@@ -120,7 +120,7 @@ public:
                                                               Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
                                                               typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
                                                                                        Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
-                                                                                       Lazy_construction<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type > ::type C; \
+                                                                                       Lazy_construction<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type > ::type C; \
     C Cf() const { return C(); }
 
   CGAL_Kernel_cons(Intersect_with_iterators_2,
@@ -133,7 +133,7 @@ public:
                                                               Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
                                                               typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
                                                                                        Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
-                                                                                       Lazy_construction<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type C; \
+                                                                                       Lazy_construction<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type C; \
     C Cf() const { return C(); }
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2
