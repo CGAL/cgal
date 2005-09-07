@@ -13,8 +13,8 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
-#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
-
+//#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
+#include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 namespace CGAL {
 namespace CircularFunctors {
 

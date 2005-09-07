@@ -1,6 +1,8 @@
 #ifndef CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
 #define CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
 
+#include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
+
 namespace CGAL {
 namespace LinearFunctors {
 

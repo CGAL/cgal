@@ -1,5 +1,6 @@
 #ifndef CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 #define CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
+#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 
 namespace CGAL {
 
