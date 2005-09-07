@@ -1,3 +1,6 @@
+7 September 2005 Andreas Fabri
+- Moved implementation of insert/extract operator to Point_2, Line_2, Circle_2
+
 12 August 2005 Sylvain Pion
 - Moved Kernel_checker from Interval_arithmetic
   (rewritten version, but still needs more work).

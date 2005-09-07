@@ -226,20 +226,65 @@ public:
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_2
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Line_2<R>& l,const Cartesian_tag&) 
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << l.a() << ' ' << l.b() << ' ' << l.c();
+    case IO::BINARY :
+        write(os, l.a());
+        write(os, l.b());
+        write(os, l.c());
+        return os;
+    default:
+        return os << "LineC2(" << l.a() 
+		  << ", " << l.b() << ", " << l.c() <<')';
+    }
+}
+
+
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_2<R> &l)
 {
-  return os << l.rep();
+  return insert(os, l, typename R::Kernel_tag());
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINE_2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_2
+
+template <class R >
+std::istream&
+extract(std::istream& is, Line_2<R>& l, const Cartesian_tag&) 
+{
+    typename R::FT a, b, c;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> a >> b >> c;
+        break;
+    case IO::BINARY :
+        read(is, a);
+        read(is, b);
+        read(is, c);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+	l = Line_2<R>(a, b, c);
+    return is;
+}
+
+
 template < class R >
 std::istream &
 operator>>(std::istream &is, Line_2<R> &l)
 {
-  return is >> l.rep();
+  return extract(is, l, typename R::Kernel_tag());
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2
 

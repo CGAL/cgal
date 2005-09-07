@@ -93,56 +93,6 @@ LineC2<R>::operator!=(const LineC2<R> &l) const
 }
 
 
-
-
-
-
-#ifndef CGAL_NO_OSTREAM_INSERT_LINEC2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const LineC2<R> &l)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << l.a() << ' ' << l.b() << ' ' << l.c();
-    case IO::BINARY :
-        write(os, l.a());
-        write(os, l.b());
-        write(os, l.c());
-        return os;
-    default:
-        return os << "LineC2(" << l.a() 
-		  << ", " << l.b() << ", " << l.c() <<')';
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_LINEC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_LINEC2
-template < class R >
-std::istream &
-operator>>(std::istream &is, LineC2<R> &l)
-{
-    typename R::FT a, b, c;
-    switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-        is >> a >> b >> c;
-        break;
-    case IO::BINARY :
-        read(is, a);
-        read(is, b);
-        read(is, c);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    if (is)
-	l = LineC2<R>(a, b, c);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_LINEC2
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_LINE_2_H

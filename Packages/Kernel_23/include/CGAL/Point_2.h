@@ -151,20 +151,63 @@ public:
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_POINT_2
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Point_2<R>& p,const Cartesian_tag&) 
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << p.x() << ' ' << p.y();
+    case IO::BINARY :
+        write(os, p.x());
+        write(os, p.y());
+        return os;
+    default:
+        return os << "PointC2(" << p.x() << ", " << p.y() << ')';
+    }
+}
+
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_2<R>& p)
 {
-  return os << p.rep();
+  return insert(os, p, typename R::Kernel_tag() );
 }
+
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_2
+
+template <class R >
+std::istream&
+extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&) 
+{
+  
+    typename R::FT x, y;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> x >> y;
+        break;
+    case IO::BINARY :
+        read(is, x);
+        read(is, y);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+	p = Point_2<R>(x, y);
+    return is;
+}
+
 template < class R >
 std::istream&
 operator>>(std::istream& is, Point_2<R>& p)
 {
-  return is >> p.rep();
+  return extract(is, p, typename R::Kernel_tag() );
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINT_2
 

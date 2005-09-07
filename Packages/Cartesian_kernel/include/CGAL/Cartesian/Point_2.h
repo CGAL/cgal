@@ -127,49 +127,6 @@ typename R::FT PointC2<R>::one = 1;
 
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_POINTC2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const PointC2<R> &p)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << p.x() << ' ' << p.y();
-    case IO::BINARY :
-        write(os, p.x());
-        write(os, p.y());
-        return os;
-    default:
-        return os << "PointC2(" << p.x() << ", " << p.y() << ')';
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_POINTC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTC2
-template < class R >
-std::istream &
-operator>>(std::istream &is, PointC2<R> &p)
-{
-    typename R::FT x, y;
-    switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-        is >> x >> y;
-        break;
-    case IO::BINARY :
-        read(is, x);
-        read(is, y);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    if (is)
-	p = PointC2<R>(x, y);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_POINTC2
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_POINT_2_H

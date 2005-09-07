@@ -1,3 +1,6 @@
+7 September 2005 Andreas Fabri
+- Moved implementation of insert/extract operator to Point_2, Line_2, Circle_2
+
 6 August 2005 Sylvain Pion
 - Replace FT(0) by 0, and similar.
 - Propagate uncertainty in low level FT predicates.
