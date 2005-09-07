@@ -65,51 +65,7 @@ public:
 
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_LINEH2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const LineH2<R> &l)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        return os << l.a() << ' ' << l.b() << ' ' << l.c();
-    case IO::BINARY :
-        write(os, l.a());
-        write(os, l.b());
-        write(os, l.c());
-        return os;
-    default:
-       return os << "LineH2(" << l.a() << ", " << l.b() << ", " << l.c() <<')';
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_LINEH2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_LINEH2
-template < class R >
-std::istream &
-operator>>(std::istream &is, LineH2<R> &p)
-{
-  typename R::RT a, b, c;
-  switch(is.iword(IO::mode))
-  {
-    case IO::ASCII :
-        is >> a >> b >> c;
-        break;
-    case IO::BINARY :
-        read(is, a);
-        read(is, b);
-        read(is, c);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-  }
-  p = LineH2<R>(a, b, c);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_LINEH2
 
 
 template < class R >

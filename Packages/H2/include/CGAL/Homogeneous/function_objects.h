@@ -2791,6 +2791,25 @@ template <typename K>
       
   };
 
+} //namespace HomogeneousKernelFunctors
+
+
+template < typename K>
+struct Qualified_result_of<HomogeneousKernelFunctors::Construct_vertex_2<K>, typename K::Segment_2, int >
+{
+  typedef typename K::Point_2 const &   type;
+};
+
+template < typename K>
+struct Qualified_result_of<HomogeneousKernelFunctors::Construct_vertex_2<K>, typename K::Triangle_2, int >
+{
+  typedef typename K::Point_2 const &   type;
+};
+
+// For Iso_rectangle the non specialized template will do the right thing, namely return a copy of a point
+
+namespace HomogeneousKernelFunctors {
+
   template <typename K>
   class Coplanar_orientation_3
   {
