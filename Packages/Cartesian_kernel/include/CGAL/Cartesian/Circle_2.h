@@ -99,70 +99,7 @@ CircleC2<R>::orthogonal_transform
                                            : CGAL::opposite(orientation()));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLEC2
-template < class R >
-CGAL_KERNEL_INLINE
-std::ostream &
-operator<<(std::ostream &os, const CircleC2<R> &c)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        os << c.center() << ' ' << c.squared_radius() << ' '
-           << static_cast<int>(c.orientation());
-        break;
-    case IO::BINARY :
-        os << c.center();
-        write(os, c.squared_radius());
-        write(os, static_cast<int>(c.orientation()));
-        break;
-    default:
-        os << "CircleC2(" << c.center() <<  ", " << c.squared_radius() ;
-        switch (c.orientation()) {
-        case CLOCKWISE:
-            os << ", clockwise)";
-            break;
-        case COUNTERCLOCKWISE:
-            os << ", counterclockwise)";
-            break;
-        default:
-            os << ", collinear)";
-            break;
-        }
-        break;
-    }
-    return os;
-}
-#endif // CGAL_NO_OSTREAM_INSERT_CIRCLEC2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLEC2
-template < class R >
-CGAL_KERNEL_INLINE
-std::istream&
-operator>>(std::istream &is, CircleC2<R> &c)
-{
-    typename R::Point_2 center;
-    typename R::FT squared_radius;
-    int o;
-    switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-        is >> center >> squared_radius >> o;
-        break;
-    case IO::BINARY :
-        is >> center;
-        read(is, squared_radius);
-        is >> o;
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    if (is)
-	c = CircleC2<R>(center, squared_radius,
-		                  static_cast<Orientation>(o));
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEC2
 
 CGAL_END_NAMESPACE
 
