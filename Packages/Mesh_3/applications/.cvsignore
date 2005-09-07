@@ -4,3 +4,5 @@ read_mesh
 slivers_exuder
 *.mesh
 *.png
+display_distribution
+off_to_ghs

@@ -38,10 +38,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                display_distribution$(EXE_EXT) \
+                off_to_ghs$(EXE_EXT) \
                 lanteri$(EXE_EXT) \
                 read_mesh$(EXE_EXT) \
                 slivers_exuder$(EXE_EXT) \
                 stat_mesh$(EXE_EXT) 
+
+display_distribution$(EXE_EXT): display_distribution$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)display_distribution display_distribution$(OBJ_EXT) $(LDFLAGS)
+
+off_to_ghs$(EXE_EXT): off_to_ghs$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)off_to_ghs off_to_ghs$(OBJ_EXT) $(LDFLAGS)
 
 lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
                    distribution$(OBJ_EXT) \

@@ -61,7 +61,9 @@ Packages/Mesh_2/test/Mesh_2/test_double_map
 Packages/Mesh_2/test/Mesh_2/test_filtred_container
 Packages/Mesh_3/applications/*.mesh
 Packages/Mesh_3/applications/*.png
+Packages/Mesh_3/applications/display_distribution
 Packages/Mesh_3/applications/lanteri
+Packages/Mesh_3/applications/off_to_ghs
 Packages/Mesh_3/applications/read_mesh
 Packages/Mesh_3/applications/slivers_exuder
 Packages/Mesh_3/applications/stat_mesh
