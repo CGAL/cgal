@@ -121,15 +121,15 @@ iterators can be used as well.
 \ccCreationVariable{arr}
 %=======================
     
-\ccConstructor{Arrangement<Traits, Dcel>();} 
+\ccConstructor{Arrangement_2<Traits, Dcel>();} 
     {constructs an empty arrangement containing one unbounded face,
      which corresponds to the
      whole plane.}
     
-\ccConstructor{Arrangement<Traits, Dcel>(const Self& other);}
+\ccConstructor{Arrangement_2<Traits, Dcel>(const Self& other);}
     {copy constructor.}
         
-\ccConstructor{Arrangement<Traits, Dcel>(Traits_2 *traits);}
+\ccConstructor{Arrangement_2<Traits, Dcel>(Traits_2 *traits);}
     {constructs an empty arrangement that uses the given \ccc{traits}
      instance for performing the geometric predicates.}
 
@@ -420,7 +420,7 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccSeeAlso
     \ccc{ArrangementDcel}\lcTex{ 
       (\ccRefPage{ArrangementDcel})}\\
-    \ccc{Arr_default_dcel<Triats>}\lcTex{ 
+    \ccc{Arr_default_dcel<Traits>}\lcTex{ 
       (\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
     \ccc{ArrangementBasicTraits_2}\lcTex{ 
       (\ccRefPage{ArrangementBasicTraits_2})}
