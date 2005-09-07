@@ -55,13 +55,18 @@ doing any computations with the interval class.
 SqrtFieldNumberType
 
 \ccTypes
-The class \ccc{Interva_nt} defines the following types:
+The class \ccc{Interval_nt} defines the following types:
 \ccThree{typedef std::exception unsafe_comparison;}{Tetrahedronxxxxx}{}
 \ccThreeToTwo
 \ccTypedef{typedef double value_type;}{The type of the bounds of the interval.}
 \ccGlue
 \ccTypedef{typedef std::exception unsafe_comparison;}{The type of the
 exceptions raised when uncertain comparisons are performed.}
+\ccGlue
+\ccNestedType{Protector}{A type whose default constructor and destructor allow
+to protect a block of code from FPU rounding modes necessary for the
+computations with \ccc{Interval_nt<false>}.  It does nothing for
+\ccc{Interval_nt<true>}.}
 
 
 \ccCreationVariable{I}
@@ -173,7 +178,11 @@ Changing the rounding mode affects all floating point computations, and might
 cause problems with parts of your code, or external libraries (even \cgal),
 that expect the rounding mode to be the default (round to the nearest).
 
-We provide the following interface to change the rounding mode:
+We provide two interfaces to change the rounding mode.  The first one is to
+use a protector object whose default constructor and destructor will take care
+of changing the rounding mode.
+
+The second one is the following detailed set of functions :
 
 \ccTypedef{typedef int FPU_CW_t;}
        {The type used by the following functions to deal with rounding modes.
@@ -191,13 +200,14 @@ to the rounding modes.
 
 \ccExample
 
-The correct way to protect an area of code that uses operations on the class
-\ccc{Interval_nt_advanced} is the following:
+Protecting an area of code that uses operations on the class
+\ccc{Interval_nt_advanced} can be done in the following way:
 
 \begin{verbatim}
-  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
+{
+  Interval_nt_advanced::Protector P;
   ... // The code to be protected.
-  FPU_set_cw(backup);
+}
 \end{verbatim}
 
 The basic idea is to use the directed rounding modes specified by the 

@@ -64,7 +64,9 @@ public:
   typedef Tag_false   Has_exact_division;
   typedef Tag_false   Has_exact_sqrt;
 
-  typedef std::exception unsafe_comparison;
+  typedef std::exception                    unsafe_comparison;
+  typedef Protect_FPU_rounding<Protected>   Internal_protector;
+  typedef Protect_FPU_rounding<!Protected>  Protector;
 
   Interval_nt() {}
 
@@ -365,7 +367,7 @@ inline
 Interval_nt<Protected>
 operator+ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
-  Protect_FPU_rounding<Protected> P;
+  typename Interval_nt<Protected>::Internal_protector P;
   return Interval_nt<Protected> (-CGAL_IA_SUB(-a.inf(), b.inf()),
                                   CGAL_IA_ADD(a.sup(), b.sup()));
 }
@@ -407,7 +409,7 @@ inline
 Interval_nt<Protected>
 operator- (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
-  Protect_FPU_rounding<Protected> P;
+  typename Interval_nt<Protected>::Internal_protector P;
   return Interval_nt<Protected>(-CGAL_IA_SUB(b.sup(), a.inf()),
                                  CGAL_IA_SUB(a.sup(), b.inf()));
 }
@@ -450,7 +452,7 @@ Interval_nt<Protected>
 operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typedef Interval_nt<Protected> IA;
-  Protect_FPU_rounding<Protected> P;
+  typename Interval_nt<Protected>::Internal_protector P;
   if (a.inf() >= 0.0)					// e>=0
   {
     // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
@@ -534,7 +536,7 @@ Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typedef Interval_nt<Protected> IA;
-  Protect_FPU_rounding<Protected> P;
+  typename Interval_nt<Protected>::Internal_protector P;
   if (b.inf() > 0.0)				// b>0
   {
     // e>=0	[a.inf()/b.sup(); a.sup()/b.inf()]
@@ -606,7 +608,7 @@ inline
 Interval_nt<Protected>
 sqrt (const Interval_nt<Protected> & d)
 {
-  Protect_FPU_rounding<Protected> P;  // not optimal here.
+  typename Interval_nt<Protected>::Internal_protector P;  // not optimal here.
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
@@ -639,7 +641,7 @@ inline
 Interval_nt<Protected>
 square (const Interval_nt<Protected> & d)
 {
-  Protect_FPU_rounding<Protected> P;
+  typename Interval_nt<Protected>::Internal_protector P;
   if (d.inf()>=0.0)
       return Interval_nt<Protected>(-CGAL_IA_MUL(d.inf(), -d.inf()),
 	                             CGAL_IA_MUL(d.sup(), d.sup()));

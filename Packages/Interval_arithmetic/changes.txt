@@ -1,3 +1,7 @@
+7 September 2005 Sylvain Pion
+- Introduce nested type Protector in Interval_nt to access
+  Protect_FPU_rounding easily.
+
 12 August 2005 Sylvain Pion
 - Move Kernel_checker to Kernel_23.
 
