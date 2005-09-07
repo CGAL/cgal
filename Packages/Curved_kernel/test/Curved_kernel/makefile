@@ -19,7 +19,6 @@ CXXFLAGS = \
            -I../../../synaps \
            -I../../../Arrangement_2/include \
 	   -I../../../Interval_arithmetic/include \
-           -DNDEBUG \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -47,7 +46,7 @@ all:            \
                 test_Circular_kernel$(EXE_EXT) \
                 test_Line_arc$(EXE_EXT) \
 		test_Filtered_hexagon_kernel$(EXE_EXT) #\
-	#	test_Lazy_curved_kernel$(EXE_EXT)
+#		test_Lazy_curved_kernel$(EXE_EXT)
 
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
 	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel test_Circular_kernel$(OBJ_EXT) $(LDFLAGS)
@@ -56,7 +55,7 @@ test_Filtered_hexagon_kernel$(EXE_EXT): test_Filtered_hexagon_kernel$(OBJ_EXT)
 	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Filtered_hexagon_kernel test_Filtered_hexagon_kernel$(OBJ_EXT) $(LDFLAGS)
 
 #test_Lazy_curved_kernel$(EXE_EXT): test_Lazy_curved_kernel$(OBJ_EXT)
-	#$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Lazy_curved_kernel test_Lazy_curved_kernel$(OBJ_EXT) $(LDFLAGS)
+#	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Lazy_curved_kernel test_Lazy_curved_kernel$(OBJ_EXT) $(LDFLAGS)
 
 test_Line_arc$(EXE_EXT): test_Line_arc$(OBJ_EXT)
 	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Line_arc test_Line_arc$(OBJ_EXT) $(LDFLAGS)
@@ -64,8 +63,8 @@ test_Line_arc$(EXE_EXT): test_Line_arc$(OBJ_EXT)
 clean: \
                    test_Circular_kernel.clean \
 		   test_Filtered_hexagon_kernel.clean \
-		  # test_Lazy_curved_kernel.clean \
                    test_Line_arc.clean 
+#		   test_Lazy_curved_kernel.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
