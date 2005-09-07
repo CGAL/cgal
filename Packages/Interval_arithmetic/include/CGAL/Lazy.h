@@ -29,6 +29,7 @@
 #include <CGAL/Handle.h>
 #include <CGAL/Object.h>
 #include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Kernel/Type_mapper.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -625,14 +626,14 @@ private:
 
 };
 
-
+/*
 template <typename AT, typename ET, typename EFT, typename E2A>
 std::ostream&
 operator<<(std::ostream& os, const Lazy<AT,ET,EFT, E2A>& lazy)
 {
   return os << lazy.approx();
 } 
-
+*/
 template <typename AT, typename ET, typename EFT, typename E2A>
 bool
 operator==(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
@@ -1142,13 +1143,14 @@ public:
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type
 
-template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction {
 
 
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
-  typedef Lazy<AT, ET, EFT, E2A> result_type;
+  typedef Lazy<AT, ET, EFT, E2A> Handle;
+  typedef typename Type_mapper<AT,AK,LK>::type result_type;
 
   AC ac;
   EC ec;
@@ -1158,7 +1160,7 @@ public:
   result_type
   operator()() const
   {
-    return new Lazy_construct_rep_0<AT,ET,E2A>();
+    return Handle(new Lazy_construct_rep_0<AT,ET,E2A>());
   }
 
 
@@ -1167,9 +1169,9 @@ public:
   operator()(const L1& l1) const
   {
     try {
-      return  new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1);
+      return  Handle(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1)));
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1))));
     }
   }
 
@@ -1178,9 +1180,9 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
-      return new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2);
+      return Handle(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2)));
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2))));
     }
   }
   
@@ -1190,9 +1192,9 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     try {
-      return new Lazy_construct_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3);
+      return Handle(new Lazy_construct_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3));
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3)));
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3))));
     }
   }
 
@@ -1201,9 +1203,9 @@ public:
   operator()(const L1& l1, const L2& l2, L3& l3, L4& l4) const
   {
     try {
-    return new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4);
+    return Handle(new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4));
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4)));
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4))));
     }
   }
 
@@ -1212,9 +1214,9 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
   {
     try {
-    return new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5);
+    return Handle(new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5));
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5)));
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5))));
     }
   }
 };
