@@ -4,9 +4,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
-// Contains the weighted converter:
+
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+// Contains the weighted converter:
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+
+#include <CGAL/Skin_surface_simplicial_complex_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -24,30 +28,48 @@ CGAL_BEGIN_NAMESPACE
 // - RegToMeshConverter 
 // - SimplToMeshConverter 
 // - MeshToSimplConverter 
+
 template <
-  class RegularTriangulationTraits = Exact_predicates_inexact_constructions_kernel,
-  class SimplicialComplexTraits = Exact_predicates_exact_constructions_kernel,
-  class MeshTraits = Simple_cartesian<double>,
-  class RegToSimplConverter = Weighted_converter_3 < Cartesian_converter<
-    RegularTriangulationTraits, SimplicialComplexTraits > >,
-  class SimplToMeshConverter = Weighted_converter_3 < Cartesian_converter<
-    SimplicialComplexTraits, MeshTraits,
-    To_double<typename SimplicialComplexTraits::FT> > >,
-  class MeshToSimplConverter = Weighted_converter_3 < Cartesian_converter<
-    MeshTraits, SimplicialComplexTraits > > >
+  class Regular_K_ = Exact_predicates_inexact_constructions_kernel,
+  class Simplicial_K_ = Exact_predicates_exact_constructions_kernel,
+  class Mesh_K_ = Simple_cartesian<double> >  
 class Skin_surface_traits_3 {
 public:
-  typedef RegularTriangulationTraits Regular_K;
-  typedef SimplicialComplexTraits    Simplicial_K;
-  typedef MeshTraits                 Mesh_K;
+  typedef Skin_surface_traits_3<Regular_K_, Simplicial_K_, Mesh_K_> Self;
+  // Kernel definitions and converters
+  typedef Regular_K_                                       Regular_K;
+  typedef Simplicial_K_                                    Simplicial_K;
+  typedef Mesh_K_                                          Mesh_K;
 	
-  typedef RegToSimplConverter   R2S_converter;
-  typedef SimplToMeshConverter  S2M_converter; 
-  typedef MeshToSimplConverter  M2S_converter; 
+  typedef Weighted_converter_3 <Cartesian_converter<Regular_K, Simplicial_K> >
+                                                           R2S_converter;
+  typedef Weighted_converter_3 <Cartesian_converter<Simplicial_K,Mesh_K,
+    To_double<typename Simplicial_K::FT> > >               S2M_converter; 
+  typedef Weighted_converter_3 <Cartesian_converter<Mesh_K,Simplicial_K > >
+                                                           M2S_converter; 
 
-  // Do you want to store the centers into the simplicial complex, such that
-  // you can update the simplicial complex for another the shrink factor.
-  typedef Tag_true              Store_centers_in_simplicial_complex;
+  // Regular triangulation
+  typedef CGAL::Regular_triangulation_euclidean_traits_3<Regular_K>
+                                                           Regular_traits;
+  typedef CGAL::Regular_triangulation_3<Regular_traits>    Regular;
+
+  // Simplicial complex
+  typedef Skin_surface_simplicial_vertex_base_3<Self>      Simplicial_vertex;
+  typedef Skin_surface_simplicial_cell_base_3<Self>        Simplicial_cell;
+  typedef Triangulation_data_structure_3 <Simplicial_vertex,Simplicial_cell>
+                                                           Simplicial_TDS;
+  typedef Skin_surface_simplicial_complex_3<Simplicial_K, Simplicial_TDS>
+                                                           Simplicial;
+
+  // Polyhedral mesh
+
+  
+  // Tags
+  typedef Tag_false                                        Cache_anchor;
+
+  // Function objects:
+  R2S_converter r2s_converter_object() const
+  { return R2S_converter(); }
 };
 
 CGAL_END_NAMESPACE
