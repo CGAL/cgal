@@ -61,7 +61,7 @@ public:
     // Probably this should not exist, should it ?
     // struct filter_tag{};
     // typedef filter_tag                                     Kernel_tag;
-   typedef typename CK::Kernel_tag                       Kernel_tag;
+   typedef typename EK::Kernel_tag                       Kernel_tag;
     // typedef typename CK::Rep_tag                          Rep_tag;
 
     // Types
