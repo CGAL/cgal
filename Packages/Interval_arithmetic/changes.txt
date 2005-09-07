@@ -1,3 +1,6 @@
+7 September 2005 Andreas Fabri
+- Added nested type Lazy_kernel::Kernel_tag
+
 7 September 2005 Sylvain Pion
 - Introduce nested type Protector in Interval_nt to access
   Protect_FPU_rounding easily.
