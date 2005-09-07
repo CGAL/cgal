@@ -168,6 +168,26 @@ insert(std::ostream& os, const Point_2<R>& p,const Cartesian_tag&)
     }
 }
 
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Point_2<R>& p,const Homogeneous_tag&)
+{
+  switch(os.iword(IO::mode))
+  {
+    case IO::ASCII :
+        return os << p.hx() << ' ' << p.hy() << ' ' << p.hw();
+    case IO::BINARY :
+        write(os, p.hx());
+        write(os, p.hy());
+        write(os, p.hw());
+        return os;
+    default:
+        return os << "PointH2(" << p.hx() << ", "
+                                << p.hy() << ", "
+                                << p.hw() << ')';
+  }
+}
+
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_2<R>& p)
@@ -183,7 +203,6 @@ template <class R >
 std::istream&
 extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&) 
 {
-  
     typename R::FT x, y;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
@@ -201,6 +220,31 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
     if (is)
 	p = Point_2<R>(x, y);
     return is;
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Point_2<R>& p, const Homogeneous_tag&) 
+{
+  typename R::RT hx, hy, hw;
+  switch(is.iword(IO::mode))
+  {
+    case IO::ASCII :
+        is >> hx >> hy >> hw;
+        break;
+    case IO::BINARY :
+        read(is, hx);
+        read(is, hy);
+        read(is, hw);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+  }
+  p = Point_2<R>(hx, hy, hw);
+  return is;
 }
 
 template < class R >

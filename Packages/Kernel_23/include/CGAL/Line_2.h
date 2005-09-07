@@ -228,7 +228,7 @@ public:
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_2
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Line_2<R>& l,const Cartesian_tag&) 
+insert(std::ostream& os, const Line_2<R>& l) 
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -239,7 +239,7 @@ insert(std::ostream& os, const Line_2<R>& l,const Cartesian_tag&)
         write(os, l.c());
         return os;
     default:
-        return os << "LineC2(" << l.a() 
+        return os << "Line_2(" << l.a() 
 		  << ", " << l.b() << ", " << l.c() <<')';
     }
 }
@@ -249,7 +249,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_2<R> &l)
 {
-  return insert(os, l, typename R::Kernel_tag());
+  return insert(os, l);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINE_2
 
@@ -257,9 +257,9 @@ operator<<(std::ostream &os, const Line_2<R> &l)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Line_2<R>& l, const Cartesian_tag&) 
+extract(std::istream& is, Line_2<R>& l) 
 {
-    typename R::FT a, b, c;
+    typename R::RT a, b, c;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> a >> b >> c;
@@ -284,7 +284,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Line_2<R> &l)
 {
-  return extract(is, l, typename R::Kernel_tag());
+  return extract(is, l);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2
 

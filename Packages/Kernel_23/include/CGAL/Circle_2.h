@@ -246,6 +246,9 @@ extract(std::istream& is, Circle_2<R>& c)
     return is;
 }
 
+
+
+
 template < class R >
 std::istream &
 operator>>(std::istream &is, Circle_2<R> &c)
