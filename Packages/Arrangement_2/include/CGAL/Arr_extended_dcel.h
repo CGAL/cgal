@@ -67,10 +67,12 @@ public:
   }
 
   /*! Assign from another vertex. */
-  virtual void assign (const Self& v)
+  virtual void assign (const Base& v)
   {
     Base::assign (v);
-    m_data = v.m_data;
+
+    const Self&  ex_v = static_cast<const Self&>(v);
+    m_data = ex_v.m_data;
   }
 };
 
@@ -112,10 +114,12 @@ public:
   }
 
   /*! Assign from another vertex. */
-  virtual void assign (const Self& he)
+  virtual void assign (const Base& he)
   {
     Base::assign (he);
-    m_data = he.m_data;
+
+    const Self&  ex_he = static_cast<const Self&>(he);
+    m_data = ex_he.m_data;
   }
 };
 
@@ -157,10 +161,12 @@ public:
   }
 
   /*! Assign from another vertex. */
-  virtual void assign (const Self& f)
+  virtual void assign (const Base& f)
   {
     Base::assign (f);
-    m_data = f.m_data;
+
+    const Self&  ex_f = static_cast<const Self&>(f);
+    m_data = ex_f.m_data;
   }
 };
 

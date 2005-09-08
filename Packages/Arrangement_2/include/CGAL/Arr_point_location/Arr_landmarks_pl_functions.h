@@ -168,14 +168,8 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         ", nearest_vertex = "<<nearest_vertex->point() );
   
   //inits
-  bool new_vertex = false;
-  Vertex_const_handle vh = nearest_vertex;
-  Object obj;
+  Vertex_const_handle       vh = nearest_vertex;
   
-  const Vertex_const_handle     *p_vh;
-  const Halfedge_const_handle   *p_hh;
-  const Face_const_handle       *p_fh;
-
   if (vh->is_isolated())
   {
     Face_const_handle f = p_arr->incident_face(vh);
@@ -183,6 +177,10 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   }
 
   //find face
+  bool                      new_vertex = false;
+  Object                    obj;
+  const Face_const_handle  *p_fh;
+
   do
   {
     //find the edge out_edge which is the best possibly 
@@ -212,19 +210,21 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       CGAL_assertion (false);
       return obj;
     }
-    else if ((p_hh = object_cast<Halfedge_const_handle>(&obj)) != NULL)
+    else if (object_cast<Halfedge_const_handle>(&obj) != NULL)
     {
-      PRINT_DEBUG( "_find_face found a halfedge: "<< (*p_hh)->curve());
+      PRINT_DEBUG ("_find_face found a halfedge: " << 
+		   (object_cast<Halfedge_const_handle>(&obj))->curve());
       return (obj);
     }
-    else if ((p_vh = object_cast<Vertex_const_handle>(&obj)) != NULL)
+    else if (object_cast<Vertex_const_handle>(&obj) != NULL)
     {
-      PRINT_DEBUG( "_find_face found a vertex: "<< (*p_vh)->point());
+      PRINT_DEBUG ("_find_face found a vertex: " << 
+		   (object_cast<Vertex_const_handle>(&obj))->point());
       return (obj);
     }
     else if ((p_fh = object_cast<Face_const_handle>(&obj)) != NULL)
     {
-      PRINT_DEBUG("face that was a face ");
+      PRINT_DEBUG ("_find_face found a face.");
       return _walk_from_face (*p_fh, p, vh->point());
     }
     
@@ -1386,12 +1386,6 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       }
     }
   }
-
-
-  PRINT_ERROR("ERROR 11: not existing option in "\
-              <<"check_approximate_intersection ");
-  LM_DEBUG(getchar());
-  return (false); //V
 }
 
 CGAL_END_NAMESPACE

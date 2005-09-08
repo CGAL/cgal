@@ -442,7 +442,8 @@ public:
     return Make_x_monotone_2(&seg_traits);
   }
 
-  class Split_2 {
+  class Split_2 
+  {
   private:
     Segment_traits_2        * seg_traits;
 
@@ -509,7 +510,6 @@ public:
         c2.push_back(cv[j]);
     }
   };
-
   friend class Split_2;
 
   /*! Get a Split_2 functor object. */

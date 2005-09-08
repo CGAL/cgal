@@ -45,8 +45,6 @@ public:
   typedef _Conic_x_monotone_arc_2<Conic_arc_2>    Self;
   
   typedef typename Conic_arc_2::Alg_kernel        Alg_kernel;
-
-  typedef typename Conic_arc_2::Alg_kernel        Alg_kernel;
   typedef typename Conic_arc_2::Algebraic         Algebraic;
 
   typedef typename Conic_arc_2::Point_2           Point_2;
@@ -681,10 +679,6 @@ public:
         return (slope_res);
       }
     }
-
-    // We should never reach here:
-    CGAL_assertion(false);
-    return (EQUAL);
   }
 
   /*!
@@ -824,10 +818,6 @@ public:
         return (slope_res);
       }
     }
-
-    // We should never reach here:
-    CGAL_assertion(false);
-    return (EQUAL);
   }
 
   /*!

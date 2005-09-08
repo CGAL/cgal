@@ -147,8 +147,7 @@ public:
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
-    const_iterator (const Polyline_2<SegmentTraits_>* cvP,
-		    const unsigned int& index, const bool& _forward) :
+    const_iterator (const Polyline_2<SegmentTraits_>* cvP, int index) :
       m_cvP(cvP),
       m_index(index)
     {
@@ -250,18 +249,18 @@ public:
   const_iterator begin() const
   {
     if (size() == 0)
-      return (const_iterator (NULL, -1, true));
+      return (const_iterator (NULL, -1));
     else
-      return (const_iterator (this, 0, true));
+      return (const_iterator (this, 0));
   }
 
   /*! Get a past-the-end iterator for the polyline points. */
   const_iterator end() const
   {
     if (size() == 0)
-      return (const_iterator (NULL, -1, true));
+      return (const_iterator (NULL, -1));
     else
-      return (const_iterator (this, size() + 1, true));
+      return (const_iterator (this, size() + 1));
   }
 
   /*! Get an reverse iterator for the polyline points. */

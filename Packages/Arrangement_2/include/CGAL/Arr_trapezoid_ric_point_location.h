@@ -36,14 +36,14 @@ CGAL_BEGIN_NAMESPACE
  * Mapping of an x-monotone curve to the halfedge associated with it.
  */
 template <class Arrangement_>
-class PL_X_curve_plus: public Arrangement_::Traits_2::X_monotone_curve_2
+class PL_X_curve_plus: public Arrangement_::X_monotone_curve_2
 {
 public:
 
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
 protected:
   //Data members
