@@ -139,12 +139,12 @@ private:
     // used for upper  bounding, indicates the value of a nonbasic original
     // variable, a variable that is fixed will never be priced and therefore
     // remains nonbasic forever
-    enum  Bound_kind  { LOWER, ZERO, UPPER, FIXED };
-    typedef  std::vector<Bound_kind>    Bound_kind_values;
-    typedef  typename Bound_kind_values::iterator
-                                        Bound_kind_value_iterator;
-    typedef  typename Bound_kind_values::const_iterator
-                                        Bound_kind_value_const_iterator;
+    enum  Bound_index  { LOWER, ZERO, UPPER, FIXED, BASIC };
+    typedef  std::vector<Bound_index>    Bound_index_values;
+    typedef  typename Bound_index_values::iterator
+                                        Bound_index_value_iterator;
+    typedef  typename Bound_index_values::const_iterator
+                                        Bound_index_value_const_iterator;
 
     // values (variables' numerators)
     typedef  std::vector<ET>            Values;
@@ -317,7 +317,15 @@ private:
     Values                   x_B_O;     // basic variables (original)
     Values                   x_B_S;     // basic variables (slack)
     Values                   lambda;    // lambda (from KKT conditions)
-    Bound_kind_values        x_N_bv;     // 
+    Bound_index_values       x_O_v_i;   // bounds value index vector
+                                        // the following vectors are updated
+                                        // with each update in order to avoid
+                                        // evaluating a matrix vector
+                                        // multiplication
+    Values                   w;         // w = 2D_{O, N_O}x_{N_O}
+    Values                   r_C;       // r_C = A_{C,N_O}x_{N_O}
+    Values                   r_S_B;     // r_S_B = A_{S_B,N_O}x_{N_O}
+    Values                   r_B_O;     // r_B_O = 2D_{B_O,N_O}x_{N_O}
     
     int                      m_phase;   // phase of the Simplex method
     Status                   m_status;  // status of last pivot step
@@ -330,7 +338,7 @@ private:
                                         // Test Step2                                           
     const bool               is_LP;     // flag indicating a linear    program
     const bool               is_QP;     // flag indicating a quadratic program
-    const bool                no_ineq;  // flag indicating no ineq. constraits
+    const bool               no_ineq;   // flag indicating no ineq. constraits
     const bool               has_ineq;  // flag indicating    ineq. constraits
     const bool               is_in_standard_form; // flag indicating standard
                                         // form ..
@@ -358,6 +366,9 @@ private:
     int                      i;         // index of leaving variable `x_i'
     ET                       x_i;       // numerator of leaving variable `x_i'
     ET                       q_i;       // corresponding `q_i'
+    Bound_index              ratio_test_bound_index;  // indicates for leaving
+                                        // original variables which bound
+                                        // was hit with upper bounding
 
     ET                       mu;        //   numerator of `t_j'
     ET                       nu;        // denominator of `t_j'
@@ -609,6 +620,7 @@ private:
     // diagnostic output
     void  set_verbosity( int verbose = 0, std::ostream& stream = std::cout);
 
+
 public:
     // access to indices of basic constraints
     int  number_of_basic_constraints( ) const { return C.size(); }
@@ -641,8 +653,17 @@ public:
     void  init_basis__slack_variables( int s_i, Tag_false has_no_inequalities);
     void  init_basis__constraints    ( int s_i, Tag_true  has_no_inequalities);
     void  init_basis__constraints    ( int s_i, Tag_false has_no_inequalities);
-    void  init_nonbasic_original_variables(Tag_true  is_in_standard_form);
-    void  init_nonbasic_original_variables(Tag_false is_in_standard_form);
+    void  init_x_O_v_i(Tag_true  is_in_standard_form);
+    void  init_x_O_v_i(Tag_false is_in_standard_form);
+    void  init_r_C(Tag_true  is_in_standard_form);
+    void  init_r_C(Tag_false is_in_standard_form);
+    void  init_r_S_B(Tag_true  is_in_standard_form);
+    void  init_r_S_B(Tag_false is_in_standard_form);
+    void  init_r_B_O(Tag_true  is_in_standard_form);
+    void  init_r_B_O(Tag_false is_in_standard_form);
+    void  init_w(Tag_true  is_in_standard_form);
+    void  init_w(Tag_false is_in_standard_form);
+
 
     void  init_solution( );
     void  init_solution__b_C( Tag_true  has_no_inequalities);
@@ -750,22 +771,93 @@ public:
     void  replace_variable( Tag_true  is_linear);
     void  replace_variable( Tag_false is_linear);
     void  replace_variable_original_original( );
+    // update of the vector r
+    void  replace_variable_original_original_upd_r(Tag_true
+                                                    is_in_standard_form);
+    void  replace_variable_original_original_upd_r(Tag_false
+                                                    is_in_standard_form);
+
     void  replace_variable_original_slack( );
+    // update of the vector r
+    void  replace_variable_original_slack_upd_r(Tag_true is_in_standard_form);
+    void  replace_variable_original_slack_upd_r(Tag_false is_in_standard_form);
+
     void  replace_variable_slack_original( );
+    // update of the vector r
+    void  replace_variable_slack_original_upd_r(Tag_true is_in_standard_form);
+    void  replace_variable_slack_original_upd_r(Tag_false is_in_standard_form);
+    
     void  replace_variable_slack_slack( );
+    // update of the vector r
+    void  replace_variable_slack_slack_upd_r(Tag_true is_in_standard_form);
+    void  replace_variable_slack_slack_upd_r(Tag_false is_in_standard_form);
+    
     void  remove_artificial_variable_and_constraint( );
+    // update of the vector r
+    void  remove_artificial_variable_and_constraint_upd_r(Tag_true
+                                                    is_in_standard_form);
+    void  remove_artificial_variable_and_constraint_upd_r(Tag_false
+                                                    is_in_standard_form);    
+    
     void  expel_artificial_variables_from_basis( );
 
     void  enter_variable( );
+    // update of the vectors w and r
+    void  enter_variable_original_upd_w_r(Tag_true is_in_standard_form);
+    void  enter_variable_original_upd_w_r(Tag_false is_in_standard_form);
+    void  enter_variable_slack_upd_w_r(Tag_true is_in_standard_form);
+    void  enter_variable_slack_upd_w_r(Tag_false is_in_standard_form);
+    
     void  leave_variable( );
+    // update of the vectors w and r
+    void  leave_variable_original_upd_w_r(Tag_true is_in_standard_form);    
+    void  leave_variable_original_upd_w_r(Tag_false is_in_standard_form);
+    void  leave_variable_slack_upd_w_r(Tag_true is_in_standard_form);
+    void  leave_variable_slack_upd_w_r(Tag_false is_in_standard_form);
+    
     void  z_replace_variable( );
     void  z_replace_variable( Tag_true is_linear);
     void  z_replace_variable( Tag_false is_linear);
+    
     void  z_replace_variable_original_by_original( );
+    // update of the vectors w and r
+    void  z_replace_variable_original_by_original_upd_w_r(Tag_true 
+                                                        is_in_standard_form);
+    void  z_replace_variable_original_by_original_upd_w_r(Tag_false 
+                                                        is_in_standard_form);
+    
     void  z_replace_variable_original_by_slack( );
+    // update of the vectors w and r    
+    void  z_replace_variable_original_by_slack_upd_w_r(Tag_true 
+                                                        is_in_standard_form);
+    void  z_replace_variable_original_by_slack_upd_w_r(Tag_false
+                                                        is_in_standard_form);
+    
     void  z_replace_variable_slack_by_original( );
+    // update of the vectors w and r
+    void  z_replace_variable_slack_by_original_upd_w_r(Tag_true
+                                                        is_in_standard_form);
+    void  z_replace_variable_slack_by_original_upd_w_r(Tag_false
+                                                        is_in_standard_form);
+    
     void  z_replace_variable_slack_by_slack( );
-
+    // update of the vectors w and r
+    void  z_replace_variable_slack_by_slack_upd_w_r(Tag_true
+                                                        is_in_standard_form);
+    void  z_replace_variable_slack_by_slack_upd_w_r(Tag_false
+                                                        is_in_standard_form);
+    
+    // update of the parts r_C and r_S_B
+    void  update_r_C_r_S_B__j(ET& x_j);
+    void  update_r_C_r_S_B__j_i(ET& x_j, ET& x_i);
+    void  update_r_C_r_S_B__i(ET& x_i);
+    
+    // update of w and r_B_O 
+    void  update_w_r_B_O__j(ET& x_j);
+    void  update_w_r_B_O__j_i(ET& x_j, ET& x_i);
+    void  update_w_r_B_O__i(ET& x_i);
+    
+    
     bool  basis_matrix_stays_regular( );
 
     // current solution
@@ -774,6 +866,29 @@ public:
     void  compute__x_B_S( Tag_true  has_no_inequalities);
     void  compute__x_B_S( Tag_false has_no_inequalities);
     void  multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const;
+    void  multiply__A_CxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const;
+    bool  check_r_C(Tag_true  is_in_standard_form) const;
+    bool  check_r_C(Tag_false is_in_standard_form) const;
+    
+    void  multiply__A_S_BxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const;
+    bool  check_r_S_B(Tag_true  is_in_standard_form) const;
+    bool  check_r_S_B(Tag_false is_in_standard_form) const;
+    
+    void  multiply__2D_B_OxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const;
+    bool  check_r_B_O(Tag_true  is_in_standard_form) const;
+    bool  check_r_B_O(Tag_false is_in_standard_form) const;
+        
+    void  multiply__2D_OxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const;
+    bool  check_w(Tag_true  is_in_standard_form) const;
+    bool  check_w(Tag_false is_in_standard_form) const;
+                            
+    // returns the current value of a nonbasic original variable
+    // with upper bounding
+    ET  nonbasic_original_variable_value(int i) const;
 
     // check basis inverse
     bool  check_basis_inverse( );
@@ -1001,6 +1116,12 @@ transition( Tag_false)
       Bind< D_transition_creator_accessor, D_iterator, 1 >::Type >::Type,
       Index_iterator, 1>::Type >
                                         twice_D_transition_iterator;
+    
+    // initialization of vector w
+    init_w(Is_in_standard_form());                                    
+    
+    // initialization of vector r_B_O
+    init_r_B_O(Is_in_standard_form());
 
     inv_M_B.transition( twice_D_transition_iterator( B_O.begin(),
 	bind_1( compose( D_transition_creator_iterator(),
