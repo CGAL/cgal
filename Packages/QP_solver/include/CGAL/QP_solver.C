@@ -77,7 +77,6 @@ QP_solver(int n, int m,
   set_pricing_strategy(strategy);
   set(n,m,A,b,c,D,r);
   set_explicit_bounds(n, fl, lb, fu, ub);
-  init_nonbasic_original_variables(Is_in_standard_form());
   set_verbosity(verbosity);
   init();
   solve();
@@ -117,6 +116,7 @@ set( int n, int m,
     } else {
 	  art_A.reserve( qp_m);
     }
+
     set_up_auxiliary_problem(is_perturbed);
     
     e = qp_m-slack_A.size(); // number of equalities
@@ -172,8 +172,8 @@ set_explicit_bounds(int n, FL_iterator fl, L_iterator lb, FU_iterator fu,
     qp_l = lb;
     qp_fu = fu;
     qp_u = ub;
-    x_N_bv.reserve(n);
-    x_N_bv.insert(x_N_bv.end(), n, LOWER);
+    x_O_v_i.reserve(n);
+    x_O_v_i.insert(x_O_v_i.end(), n, LOWER);
 }
 
 
@@ -466,7 +466,10 @@ init( )
 
     // initial basis and basis inverse
     init_basis();
-
+    
+    // initialize non-basic original variables
+    init_x_O_v_i(Is_in_standard_form());
+        
     // initial solution
     init_solution();
 
@@ -593,52 +596,116 @@ init_basis__constraints( int s_i, Tag_false)
 }
 
 
-// initial solution
-template < class Rep_ >
+// initialize the vector x_O_v_i
+template < class Rep_ >                         // Standard form
 void
 QP_solver<Rep_>::
-init_nonbasic_original_variables(Tag_true)
+init_x_O_v_i(Tag_true)
 {
 }
 
-// initial solution
-template < class Rep_ >
+// initialize the vector x_O_v_i
+template < class Rep_ >                         // Upper bounded
 void
 QP_solver<Rep_>::
-init_nonbasic_original_variables(Tag_false)
+init_x_O_v_i(Tag_false)
 {
-
+    // all originals are assumed to be nonbasic
     for (int i = 0; i < qp_n; ++i)             {
-        // this is some C++ fun, see vector<bool>
+        // this is some C++ fun, see vector<bool>, we cannot random access
+        // the vectors pointed to by qp_fl and qp_fu
         if (*(qp_fl+i)) {                                 // finite lower bound
             if (*(qp_fu+i)) {                             // finite upper bound
                 CGAL_qpe_assertion(qp_l[i] <= qp_u[i]);
                 if (qp_l[i] == qp_u[i]) {                 // fixed variable
-                    x_N_bv[i] = FIXED;
+                    x_O_v_i[i] = FIXED;
                 } else {                                  // lower < upper   
                     if ((et0 >= qp_l[i]) && (et0 <= qp_u[i])) {
-                        x_N_bv[i] = ZERO;
+                        x_O_v_i[i] = ZERO;
                     } else {
-                        x_N_bv[i] = LOWER;
+                        x_O_v_i[i] = LOWER;
                     } 
                 }   
             } else {                                     // upper bound infinity
                 if (et0 >= qp_l[i]) {
-                    x_N_bv[i] = ZERO;
+                    x_O_v_i[i] = ZERO;
                 } else {
-                    x_N_bv[i] = LOWER;
+                    x_O_v_i[i] = LOWER;
                 }
             }
         } else {                                        // lower bound -infinity
             if (et0 <= qp_u[i]) {
-                x_N_bv[i] = ZERO; 
+                x_O_v_i[i] = ZERO; 
             } else {
-                x_N_bv[i] = UPPER;
+                x_O_v_i[i] = UPPER;
             }
         }
     }   
 }
 
+// initialize r_C
+template < class Rep_ >                 // Standard form
+void  QP_solver<Rep_>::
+init_r_C(Tag_true)
+{
+}
+
+// initialize r_C
+template < class Rep_ >                 // Upper bounded
+void  QP_solver<Rep_>::
+init_r_C(Tag_false)
+{
+    r_C.insert(r_C.end(), C.size(), et0);
+    multiply__A_CxN_O(x_O_v_i.begin(), r_C.begin());  
+}
+
+// initialize r_S_B
+template < class Rep_ >                 // Standard form
+void  QP_solver<Rep_>::
+init_r_S_B(Tag_true)
+{
+}
+
+// initialize r_S_B
+template < class Rep_ >                 // Upper bounded
+void  QP_solver<Rep_>::
+init_r_S_B(Tag_false)
+{
+    r_S_B.insert(r_S_B.end(), S_B.size(), et0);
+    multiply__A_S_BxN_O(x_O_v_i.begin(), r_S_B.begin()); 
+}
+
+// initialize r_B_O
+template < class Rep_ >                 // Standard form
+void  QP_solver<Rep_>::
+init_r_B_O(Tag_true)
+{
+}
+
+// initialize r_B_O
+template < class Rep_ >                 // Upper bounded
+void  QP_solver<Rep_>::
+init_r_B_O(Tag_false)
+{
+    r_B_O.insert(r_B_O.end(), B_O.size(), et0);
+    multiply__2D_B_OxN_O(x_O_v_i.begin(), r_B_O.begin());
+}
+
+// initialize w
+template < class Rep_ >                 // Standard form
+void  QP_solver<Rep_>::
+init_w(Tag_true)
+{
+}
+
+// initialize w
+template < class Rep_ >                 // Upper bounded
+void  QP_solver<Rep_>::
+init_w(Tag_false)
+{
+    w.insert(w.end(), qp_n, et0);
+    multiply__2D_OxN_O(x_O_v_i.begin(), w.begin());
+}
 
 
 // initial solution
@@ -677,6 +744,13 @@ init_solution( )
     lambda.insert( lambda.end(), l, et0);
     x_B_O .insert( x_B_O .end(), l, et0);
     x_B_S .insert( x_B_S .end(), slack_A.size(), et0);
+
+//TESTING the updates of r_C, r_S_B, r_B_O, w
+    ratio_test_bound_index = LOWER;
+    
+    // initialization of vectors r_C, r_S_B   
+    init_r_C(Is_in_standard_form());
+    init_r_S_B(Is_in_standard_form());
 
     // compute initial solution
     compute_solution();
@@ -720,8 +794,7 @@ init_additional_data_members( )
 // returns signed * (most significant exponent + 1) if <> 0
 // 0 otherwise
 template < class Rep_ >
-int
-QP_solver<Rep_>::
+int  QP_solver<Rep_>::
 signed_leading_exponent(int row)
 {
     A_entry  a0( 0);
@@ -774,7 +847,7 @@ transition( )
     std::transform( C_by_index_iterator( B_O.begin(), c_accessor),
                     C_by_index_iterator( B_O.end  (), c_accessor),
                     minus_c_B.begin(), std::negate<ET>());
-
+    
     // compute initial solution of phase II
     compute_solution();
 
@@ -845,8 +918,9 @@ pivot_step( )
               << "Pivot Step" << std::endl
               << "==========" << std::endl;
         vout  << "[ phase " << ( is_phaseI ? "I" : "II")
-              << ", iteration " << m_pivots << " ]" << std::endl;
+              << ", iteration " << m_pivots << " ]" << std::endl; 
     }
+    
 	    
     // pricing
     // -------
@@ -1415,6 +1489,16 @@ update_1( )
     CGAL_qpe_debug {
         check_basis_inverse();
     }
+    
+    // check the updated vectors r_C and r_S_B
+    CGAL_expensive_assertion(check_r_C(Is_in_standard_form()));
+    CGAL_expensive_assertion(check_r_S_B(Is_in_standard_form()));
+    
+    // check the vectors r_B_O and w in phaseII for QPs
+    if (is_phaseII && is_QP) {
+        CGAL_expensive_assertion(check_r_B_O(Is_in_standard_form()));
+        CGAL_expensive_assertion(check_w(Is_in_standard_form()));
+    }
 
     // compute current solution
     compute_solution();
@@ -1438,6 +1522,13 @@ update_2( Tag_false)
     CGAL_qpe_debug {
         check_basis_inverse();
     }
+    
+    // check the updated vectors r_C, r_S_B, r_B_O and w
+    CGAL_expensive_assertion(check_r_C(Is_in_standard_form()));
+    CGAL_expensive_assertion(check_r_S_B(Is_in_standard_form()));
+    CGAL_expensive_assertion(check_r_B_O(Is_in_standard_form()));
+    CGAL_expensive_assertion(check_w(Is_in_standard_form()));
+
     // compute current solution
     compute_solution();
 }
@@ -1535,6 +1626,9 @@ template < class Rep_ >
 void  QP_solver<Rep_>::
 replace_variable_original_original( )
 {
+    // updates for the upper bounded case
+    replace_variable_original_original_upd_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // replace original variable [ in: j | out: i ]
@@ -1558,10 +1652,53 @@ replace_variable_original_original( )
     inv_M_B.enter_original_leave_original( q_x_O.begin(), k);
 }
 
+// update of the vector r for U_5 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+replace_variable_original_original_upd_r(Tag_true )
+{
+}
+
+// update of the vector r for U_5 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Upper bounded      
+void  QP_solver<Rep_>::
+replace_variable_original_original_upd_r(Tag_false )
+{
+    ET      x_j, x_i;
+    
+    if (is_artificial(j)) {
+        if (!is_artificial(i)) {
+            x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+            update_r_C_r_S_B__i(x_i);
+            // update x_O_v_i
+            x_O_v_i[i] = ratio_test_bound_index;
+        }
+    } else {
+        x_j = nonbasic_original_variable_value(j);
+        if (is_artificial(i)) {
+            update_r_C_r_S_B__j(x_j);
+        } else {
+            x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+            update_r_C_r_S_B__j_i(x_j, x_i);
+            // update x_O_v_i
+            x_O_v_i[i] = ratio_test_bound_index;
+        }
+        // update x_O_v_i
+        x_O_v_i[j] = BASIC;
+    }
+}
+
+
 template < class Rep_ >
 void  QP_solver<Rep_>::
 replace_variable_slack_slack( )
 {
+    
+    // updates for the upper bounded case
+    replace_variable_slack_slack_upd_r(Is_in_standard_form()); 
+    
     int  k = in_B[ i];
 
     // replace slack variable [ in: j | out: i ]
@@ -1597,10 +1734,34 @@ replace_variable_slack_slack( )
     inv_M_B.enter_slack_leave_slack( tmp_x.begin(), k);
 }
 
+// update of the vector r for U_6 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+replace_variable_slack_slack_upd_r(Tag_true )
+{
+}
+
+// update of the vector r for U_6 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Upper bounded      
+void  QP_solver<Rep_>::
+replace_variable_slack_slack_upd_r(Tag_false )
+{
+    int     sigma_j = slack_A[ j-qp_n].first;
+    
+    // swap r_gamma_C(sigma_j) in r_C with r_gamma_S_B(sigma_i) in r_S_B
+    std::swap(r_C[in_C[sigma_j]], r_S_B[in_B[i]]); 
+}
+
+
 template < class Rep_ >
 void  QP_solver<Rep_>::
 replace_variable_slack_original( )
 {
+    // updates for the upper bounded case
+    replace_variable_slack_original_upd_r(Is_in_standard_form()); 
+     
     int  k = in_B[ i];
 
     // leave original variable [ out: i ]
@@ -1637,10 +1798,46 @@ replace_variable_slack_original( )
     inv_M_B.enter_slack_leave_original();
 }
 
+// update of the vector r for U_8 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+replace_variable_slack_original_upd_r(Tag_true )
+{
+}
+
+// update of the vector r for U_8 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Upper bounded      
+void  QP_solver<Rep_>::
+replace_variable_slack_original_upd_r(Tag_false )
+{
+    if (!is_artificial(i)) {
+        ET  x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+        update_r_C_r_S_B__i(x_i);
+    }
+    
+    int     sigma_j = slack_A[ j-qp_n].first;
+    
+    // append r_gamma_C(sigma_j) from r_C to r_S_B
+    r_S_B.push_back(r_C[in_C[sigma_j]]);
+    
+    // remove r_gamma_C(sigma_j) from r_C
+    r_C[in_C[sigma_j]] = r_C.back();
+    r_C.pop_back();
+    
+    // update x_O_v_i
+    x_O_v_i[i] = ratio_test_bound_index;
+}
+
+
 template < class Rep_ >
 void  QP_solver<Rep_>::
 replace_variable_original_slack( )
 {
+    // updates for the upper bounded case
+    replace_variable_original_slack_upd_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // enter original variable [ in: j ]
@@ -1685,10 +1882,46 @@ replace_variable_original_slack( )
     
 }
 
+// update of the vector r for U_7 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+replace_variable_original_slack_upd_r(Tag_true )
+{
+}
+
+// update of the vector r for U_7 with upper bounding, note that we 
+// need the headings C, and S_{B} before they are updated
+template < class Rep_ >                            // Upper bounded      
+void  QP_solver<Rep_>::
+replace_variable_original_slack_upd_r(Tag_false )
+{
+    if (!is_artificial(j)) {
+        ET x_j = nonbasic_original_variable_value(j);
+        update_r_C_r_S_B__j(x_j);
+    }
+    
+    // append r_gamma_S_B(sigma_i) from r_S_B to r_C
+    r_C.push_back(r_S_B[in_B[i]]);
+    
+    // remove r_gamma_S_B(sigma_i) from r_S_B
+    r_S_B[in_B[i]] = r_S_B.back();
+    r_S_B.pop_back();
+    
+    // update x_O_v_i
+    if (!is_artificial(j)) {
+        x_O_v_i[j] = BASIC;
+    }
+}
+
+
 template < class Rep_ >
 void  QP_solver<Rep_>::
 remove_artificial_variable_and_constraint( )
 {
+    // updates for the upper bounded case
+    remove_artificial_variable_and_constraint_upd_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // leave artificial (original) variable [ out: i ]
@@ -1721,6 +1954,29 @@ remove_artificial_variable_and_constraint( )
     inv_M_B.enter_slack_leave_original();
 }
 
+// update of the vector r with upper bounding for the removal of an
+// artificial variable with its equality constraint, note that we 
+// need the headings C before it is updated
+template < class Rep_ >                                 // Standard form
+void  QP_solver<Rep_>::
+remove_artificial_variable_and_constraint_upd_r(Tag_true )
+{
+}
+
+// update of the vector r with upper bounding for the removal of an
+// artificial variable with its equality constraint, note that we 
+// need the headings C before it is updated
+template < class Rep_ >                                 // Upper bounded
+void  QP_solver<Rep_>::
+remove_artificial_variable_and_constraint_upd_r(Tag_false )
+{
+    int sigma_i = art_A[i - qp_n - slack_A.size()].first;
+    
+    // remove r_gamma_C(sigma_i) from r_C
+    r_C[in_C[sigma_i]] = r_C.back();
+    r_C.pop_back();
+}
+
 
 // enter variable into basis
 template < class Rep_ >
@@ -1735,6 +1991,9 @@ enter_variable( )
 
     // update basis & basis inverse
     if ( no_ineq || ( j < qp_n)) {                      // original variable
+    
+        // updates for the upper bounded case
+        enter_variable_original_upd_w_r(Is_in_standard_form());
 
 	// enter original variable [ in: j ]
 	if ( minus_c_B.size() == B_O.size()) {
@@ -1757,10 +2016,13 @@ enter_variable( )
 	}
 	    
 	// update basis inverse
-	// note: (-1)/hat{\nu} is stored instead of \hat{\nu}
+	// note: (-1)\hat{\nu} is stored instead of \hat{\nu}
 	inv_M_B.enter_original( q_lambda.begin(), q_x_O.begin(), -nu);
 	
     } else {                                            // slack variable
+        
+        // updates for the upper bounded case
+        enter_variable_slack_upd_w_r(Is_in_standard_form());
 
 	// enter slack variable [ in: j ]
 	in_B  [ j] = B_S.size();
@@ -1793,6 +2055,61 @@ enter_variable( )
     j -= in_B.size();
 }
 
+// update of the vectors w and r for U_1 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+enter_variable_original_upd_w_r(Tag_true )
+{
+}
+
+// update of the vectors w and r for U_1 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Upper bounded     
+void  QP_solver<Rep_>::
+enter_variable_original_upd_w_r(Tag_false )
+{
+
+    ET      x_j = nonbasic_original_variable_value(j);
+
+    // Note: w needs to be updated before r_C, r_S_B
+    update_w_r_B_O__j(x_j);
+    update_r_C_r_S_B__j(x_j);
+    
+    // append w_j to r_B_O   
+    r_B_O.push_back(w[j]);
+    
+    // update x_O_v_i
+    x_O_v_i[j] = BASIC;
+}
+
+// update of the vectors w and r for U_3 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+enter_variable_slack_upd_w_r(Tag_true )
+{
+}
+
+// update of the vectors w and r for U_3 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Upper bounded     
+void  QP_solver<Rep_>::
+enter_variable_slack_upd_w_r(Tag_false )
+{
+    
+    int     sigma_j = slack_A[ j-qp_n].first;       
+    
+    // append r_gamma_C(sigma_j) to r_S_B
+    r_S_B.push_back(r_C[in_C[sigma_j]]);
+    
+    // remove r_gamma_C(sigma_j) from r_C   
+    r_C[in_C[sigma_j]] = r_C.back();
+    r_C.pop_back();
+}
+
+
+
 // leave variable from basis
 template < class Rep_ >
 void
@@ -1807,6 +2124,9 @@ leave_variable( )
     // update basis & basis inverse
     int  k = in_B[ i];
     if ( no_ineq || ( i < qp_n)) {                      // original variable
+        
+        // updates for the upper bounded case
+        leave_variable_original_upd_w_r(Is_in_standard_form());
 
 	// leave original variable [ out: i ]
 	in_B  [ B_O.back()] = k;
@@ -1828,6 +2148,9 @@ leave_variable( )
 	inv_M_B.leave_original();
 
     } else {                                            // slack variable
+        
+        // updates for the upper bounded case
+        leave_variable_slack_upd_w_r(Is_in_standard_form());
 
 	// leave slack variable [ out: i ]
 	in_B  [ i         ] = -1; 
@@ -1863,6 +2186,58 @@ leave_variable( )
 
     // variable left
     i = -1;
+}
+
+// update of the vectors w and r for U_2 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+leave_variable_original_upd_w_r(Tag_true )
+{
+}
+
+// update of the vectors w and r for U_2 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Upper bounded      
+void  QP_solver<Rep_>::
+leave_variable_original_upd_w_r(Tag_false )
+{
+
+    ET      x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+    
+    // Note: w needs to be updated before r_C, r_S_B
+    update_w_r_B_O__i(x_i);
+    update_r_C_r_S_B__i(x_i);    
+    
+    // remove r_beta_O(i) from r_B_O
+    r_B_O[in_B[i]] = r_B_O.back();
+    r_B_O.pop_back();
+    
+    // update x_O_v_i
+    x_O_v_i[i] = ratio_test_bound_index;
+}
+
+// update of the vectors w and r for U_4 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+leave_variable_slack_upd_w_r(Tag_true )
+{
+}
+
+// update of the vectors w and r for U_4 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Upper bounded      
+void  QP_solver<Rep_>::
+leave_variable_slack_upd_w_r(Tag_false )
+{
+    
+    // append r_gamma_S_B(sigma_i) to r_C
+    r_C.push_back(r_S_B[in_B[i]]);
+    
+    // remove r_gamma_S_B(sigma_i) from r_S_B
+    r_S_B[in_B[i]] = r_S_B.back();
+    r_S_B.pop_back();
 }
 
 
@@ -1928,6 +2303,9 @@ template < class Rep_ >
 void  QP_solver<Rep_>::
 z_replace_variable_original_by_original( )
 {
+    // updates for the upper bounded case
+    z_replace_variable_original_by_original_upd_w_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // replace original variable [ in: j | out: i ]
@@ -1947,10 +2325,40 @@ z_replace_variable_original_by_original( )
     ET                   s_delta =d_accessor(j)-d_accessor(i); 
     	    
     // update basis inverse
-    // note: (-1)/hat{\nu} is stored instead of \hat{\nu}
+    // note: (-1)\hat{\nu} is stored instead of \hat{\nu}
     inv_M_B.z_replace_original_by_original( q_lambda.begin(), q_x_O.begin(), 
         s_delta, -nu, k);
 
+}
+
+// update of the vectors w and r for U_Z_1 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Standard form      
+void  QP_solver<Rep_>::
+z_replace_variable_original_by_original_upd_w_r(Tag_true )
+{
+}
+
+// update of the vectors w and r for U_Z_1 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                           // Upper bounded      
+void  QP_solver<Rep_>::
+z_replace_variable_original_by_original_upd_w_r(Tag_false )
+{
+
+    ET      x_j = nonbasic_original_variable_value(j);
+    ET      x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+    
+    // Note: w needs to be updated before r_C, r_S_B
+    update_w_r_B_O__j_i(x_j, x_i);
+    update_r_C_r_S_B__j_i(x_j, x_i);
+    
+    // replace r_beta_O(i) with w_j    
+    r_B_O[in_B[i]] = w[j];
+    
+    // update x_O_v_i
+    x_O_v_i[j] = BASIC;
+    x_O_v_i[i] = ratio_test_bound_index;    
 }
 
 
@@ -1959,6 +2367,9 @@ template < class Rep_ >
 void  QP_solver<Rep_>::
 z_replace_variable_original_by_slack( )
 {
+    // updates for the upper bounded case
+    z_replace_variable_original_by_slack_upd_w_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // leave original variable [ out: i ]
@@ -1995,11 +2406,54 @@ z_replace_variable_original_by_slack( )
 
 }
 
+// update of the vectors w and r for U_Z_2 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                         // Standard form
+void  QP_solver<Rep_>::
+z_replace_variable_original_by_slack_upd_w_r(Tag_true )
+{
+}
+
+
+// update of the vectors w and r for U_Z_2 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                         // Upper bounded
+void  QP_solver<Rep_>::
+z_replace_variable_original_by_slack_upd_w_r(Tag_false )
+{
+
+    ET      x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+    
+    // Note: w needs to be updated before r_C, r_S_B
+    update_w_r_B_O__i(x_i);
+    update_r_C_r_S_B__i(x_i);
+    
+    int     sigma_j = slack_A[ j-qp_n].first;
+    
+    // append r_gamma_C(sigma_j) to r_S_B
+    r_S_B.push_back(r_C[in_C[sigma_j]]);
+    
+    // remove r_gamma_C(sigma_j) from r_C
+    r_C[in_C[sigma_j]] = r_C.back();
+    r_C.pop_back();
+    
+    // remove r_beta_O(i) from r_B_O    
+    r_B_O[in_B[i]] = r_B_O.back();
+    r_B_O.pop_back();
+    
+    // update x_O_v_i
+    x_O_v_i[i] = ratio_test_bound_index;
+}
+
+
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
 void  QP_solver<Rep_>::
 z_replace_variable_slack_by_original( )
 {
+    // updates for the upper bounded case
+    z_replace_variable_slack_by_original_upd_w_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // enter original variable [ in: j ]
@@ -2050,12 +2504,50 @@ z_replace_variable_slack_by_original( )
                                           tmp_x.begin(), kappa, -nu);    
 }
 
+// update of the vectors w and r for U_Z_3 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                            // Standard form
+void  QP_solver<Rep_>::
+z_replace_variable_slack_by_original_upd_w_r(Tag_true )
+{
+}
+
+// update of the vectors w and r for U_Z_3 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                             // Upper bounded
+void  QP_solver<Rep_>::
+z_replace_variable_slack_by_original_upd_w_r(Tag_false )
+{
+
+    ET      x_j = nonbasic_original_variable_value(j);
+
+    // Note: w needs to be updated before r_C, r_S_B    
+    update_w_r_B_O__j(x_j);
+    update_r_C_r_S_B__j(x_j);
+        
+    // append r_gamma_S_B(sigma_i) to r_C
+    r_C.push_back(r_S_B[in_B[i]]);
+    
+    // remove r_gamma_S_B(sigma_i) from r_S_B
+    r_S_B[in_B[i]] = r_S_B.back();
+    r_S_B.pop_back();
+    
+    // append w_j to r_B_O    
+    r_B_O.push_back(w[j]);
+    
+    // update x_O_v_i
+    x_O_v_i[j] = BASIC;
+}
+
 
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
 void  QP_solver<Rep_>::
 z_replace_variable_slack_by_slack( )
 {
+    // updates for the upper bounded case
+    z_replace_variable_slack_by_slack_upd_w_r(Is_in_standard_form());
+    
     int  k = in_B[ i];
 
     // replace slack variable [ in: j | out: i ]
@@ -2089,6 +2581,170 @@ z_replace_variable_slack_by_slack( )
 
 
     inv_M_B.z_replace_slack_by_slack( tmp_x.begin(), k);
+}
+
+// update of the vectors w and r for U_Z_4 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                             // Standard form
+void  QP_solver<Rep_>::
+z_replace_variable_slack_by_slack_upd_w_r(Tag_true )
+{
+}
+
+
+// update of the vectors w and r for U_Z_4 with upper bounding, note that we 
+// need the headings C, S_{B}, B_{O} before they are updated
+template < class Rep_ >                             // Upper bounded
+void  QP_solver<Rep_>::
+z_replace_variable_slack_by_slack_upd_w_r(Tag_false )
+{
+    
+    int     sigma_j = slack_A[ j-qp_n].first;
+    
+    // swap r_sigma_j in r_C with r_sigma_i in r_S_B
+    std::swap(r_C[in_C[sigma_j]], r_S_B[in_B[i]]);           
+}
+
+// update of the vectors r_C and r_S_B with "x_j" column
+template < class Rep_ >
+void  QP_solver<Rep_>::
+update_r_C_r_S_B__j(ET& x_j)
+{
+    // update of vector r_{C}
+    A_by_index_accessor     a_accessor_j(qp_A[j]);
+    
+    A_by_index_iterator     A_C_j_it(C.begin(), a_accessor_j);
+    
+    for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end();
+                                                    ++r_C_it, ++A_C_j_it) {
+        *r_C_it -= x_j * (*A_C_j_it); 
+    }
+    
+    // update of r_{S_{B}}
+    A_by_index_iterator     A_S_B_j_it(S_B.begin(), a_accessor_j);
+        
+    for (Value_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
+                                                ++r_S_B_it, ++A_S_B_j_it) {
+        *r_S_B_it -= x_j * (*A_S_B_j_it);
+    }   
+}
+
+// update of the vectors r_C and r_S_B with "x_j" and "x_i" column
+template < class Rep_ >
+void  QP_solver<Rep_>::
+update_r_C_r_S_B__j_i(ET& x_j, ET& x_i)
+{
+    // update of vector r_{C}
+    A_by_index_accessor     a_accessor_j(qp_A[j]);
+    A_by_index_accessor     a_accessor_i(qp_A[i]);
+    
+    A_by_index_iterator     A_C_j_it(C.begin(), a_accessor_j);
+    A_by_index_iterator     A_C_i_it(C.begin(), a_accessor_i);
+    
+    for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end();
+                                        ++r_C_it, ++A_C_j_it, ++A_C_i_it) {
+        *r_C_it += (x_i * *A_C_i_it) - (x_j * *A_C_j_it); 
+    }
+    
+    // update of vector r_{S_{B}}
+    A_by_index_iterator     A_S_B_j_it(S_B.begin(), a_accessor_j);
+    A_by_index_iterator     A_S_B_i_it(S_B.begin(), a_accessor_i);
+
+    for (Value_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
+                                    ++r_S_B_it, ++A_S_B_j_it, ++A_S_B_i_it) {
+        *r_S_B_it += (x_i * *A_S_B_i_it) - (x_j * *A_S_B_j_it); 
+    }
+}
+
+// update of the vectors r_C and r_S_B with "x_i'" column
+template < class Rep_ >
+void  QP_solver<Rep_>::
+update_r_C_r_S_B__i(ET& x_i)
+{
+    // update of vector r_{C}
+    A_by_index_accessor     a_accessor_i(qp_A[i]);
+    A_by_index_iterator     A_C_i_it(C.begin(), a_accessor_i);
+    
+    for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end(); 
+                                                    ++r_C_it, ++A_C_i_it) {
+        *r_C_it += x_i * (*A_C_i_it); 
+    }
+    
+    // update of r_{S_{B}}
+    A_by_index_iterator     A_S_B_i_it(S_B.begin(), a_accessor_i);
+    
+    for (Value_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
+                                                ++r_S_B_it, ++A_S_B_i_it) {
+        *r_S_B_it += x_i * (*A_S_B_i_it);
+    }   
+}
+
+
+// update of w and r_B_O with "x_j" column
+template < class Rep_ >
+void  QP_solver<Rep_>::
+update_w_r_B_O__j(ET& x_j)
+{
+    // update of vector w
+    D_pairwise_accessor     d_accessor_j(qp_D, j);
+    
+    for (int it = 0; it < qp_n; ++it) {
+        w[it] -= d_accessor_j(it) * x_j;
+    }
+    
+    // update of r_B_O
+    D_pairwise_iterator D_B_O_j_it(B_O.begin(), d_accessor_j);
+    
+    for (Value_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
+                                                ++r_B_O_it, ++D_B_O_j_it) {
+        *r_B_O_it -= *D_B_O_j_it * x_j;
+    }
+}
+
+
+// update of w and r_B_O with "x_j" and "x_i" column
+template < class Rep_ >
+void  QP_solver<Rep_>::
+update_w_r_B_O__j_i(ET& x_j, ET& x_i)
+{
+    // update of vector w
+    D_pairwise_accessor     d_accessor_i(qp_D, i);
+    D_pairwise_accessor     d_accessor_j(qp_D, j);
+    
+    for (int it = 0; it < qp_n; ++it) {
+        w[it] += (d_accessor_i(it) * x_i) - (d_accessor_j(it) * x_j);
+    }
+    
+    // update of r_B_O
+    D_pairwise_iterator D_B_O_j_it(B_O.begin(), d_accessor_j);
+    D_pairwise_iterator D_B_O_i_it(B_O.begin(), d_accessor_i);
+    
+    for (Value_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
+                                    ++r_B_O_it, ++D_B_O_j_it, ++D_B_O_i_it) {
+        *r_B_O_it += (*D_B_O_i_it * x_i) - (*D_B_O_j_it * x_j);
+    }
+}
+
+
+// update of w and r_B_O with "x_i" column
+template < class Rep_ >
+void  QP_solver<Rep_>::
+update_w_r_B_O__i(ET& x_i)
+{
+    // update of vector w
+    D_pairwise_accessor     d_accessor_i(qp_D, i);
+    
+    for (int it = 0; it < qp_n; ++it) {
+        w[it] += d_accessor_i(it) * x_i;
+    }
+    
+    // update of r_B_O    
+    D_pairwise_iterator D_B_O_i_it(B_O.begin(), d_accessor_i);
+    
+    for (Value_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
+                                                ++r_B_O_it, ++D_B_O_i_it) {
+        *r_B_O_it += *D_B_O_i_it * x_i;
+    }
 }
 
 
@@ -2140,6 +2796,273 @@ multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
 	}
     }
 }
+
+// computes r_{C}:=A_{C, N_O}x_{N_O} with upper bounding
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__A_CxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const
+{
+    //initialize
+    std::fill_n( out, C.size(), et0);
+
+    Index_const_iterator    row_it;
+    Value_iterator          out_it;
+    A_column                a_col;
+    ET                      value;
+    
+    // for each original nonartificial nonbasic variable
+    for (int i = 0; i < qp_n; ++i) {
+        if (!is_basic(i)) {
+            value = nonbasic_original_variable_value(i);
+            out_it = out;
+            a_col = qp_A[i];
+            for ( row_it = C.begin(); row_it != C.end(); ++row_it, ++out_it) {
+                *out_it += ET(a_col[*row_it]) * value;
+            } 
+        }
+    }
+}
+
+// compare the updated vector r_{C} with t_r_C=A_{C, N_O}x_{N_O}
+template < class Rep_ >                         // Standard form
+bool  QP_solver<Rep_>::
+check_r_C(Tag_true) const
+{
+    return true;
+}
+
+// compare the updated vector r_{C} with t_r_C=A_{C, N_O}x_{N_O}
+template < class Rep_ >                         // Upper bounded
+bool  QP_solver<Rep_>::
+check_r_C(Tag_false) const
+{
+    Values                  t_r_C;
+    // compute t_r_C from scratch
+    t_r_C.insert(t_r_C.end(), C.size(), et0);
+    multiply__A_CxN_O(x_O_v_i.begin(), t_r_C.begin());
+    
+    // compare r_C and the from scratch computed t_r_C
+    bool failed = false;
+    int count = 0;
+    Value_const_iterator t_r_C_it = r_C.begin();
+    for (Value_const_iterator r_C_it = r_C.begin(); r_C_it != r_C.end();
+                                    ++r_C_it, ++t_r_C_it, ++count) {
+        if (*r_C_it != *t_r_C_it) {
+            failed = true;
+        }
+    }
+    return (!failed);
+}
+
+
+// computes r_{S_B}:=A_{S_B, N_O}x_{N_O} with upper bounding
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__A_S_BxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const
+{
+    //initialize
+    std::fill_n( out, S_B.size(), et0);
+
+    Index_const_iterator    row_it;
+    Value_iterator          out_it;
+    A_column                a_col;
+    ET                      value;
+    
+    // for each original nonartificial nonbasic variable
+    for (int i = 0; i < qp_n; ++i) {
+        if (!is_basic(i)) {
+            value = nonbasic_original_variable_value(i);
+            out_it = out;
+            a_col = qp_A[i];
+            for (row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
+                                                                ++out_it)  {
+                *out_it += ET(a_col[*row_it]) * value;
+            } 
+        }
+    }
+}
+
+// compare the updated vector r_{S_B} with t_r_S_B=A_{S_B, N_O}x_{N_O}
+template < class Rep_ >                             // Standard form
+bool  QP_solver<Rep_>::
+check_r_S_B(Tag_true) const
+{
+    return true;
+}
+
+// compare the updated vector r_{S_B} with t_r_S_B=A_{S_B, N_O}x_{N_O}
+template < class Rep_ >                             // Upper bounded
+bool  QP_solver<Rep_>::
+check_r_S_B(Tag_false) const
+{
+    Values                  t_r_S_B;
+    // compute t_r_S_B from scratch
+    t_r_S_B.insert(t_r_S_B.end(), S_B.size(), et0);
+    multiply__A_S_BxN_O(x_O_v_i.begin(), t_r_S_B.begin());
+    
+    // compare r_S_B and the from scratch computed t_r_S_B
+    bool failed = false;
+    int count = 0;
+    Value_const_iterator    t_r_S_B_it = t_r_S_B.begin();
+    for (Value_const_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
+                                    ++r_S_B_it, ++t_r_S_B_it, ++count) {
+        if (*r_S_B_it != *t_r_S_B_it) {
+            failed = true;
+        }
+    }
+    return (!failed);
+}
+
+
+// computes r_{B_{O}}:=2D_{B_O, N_O}x_{N_O} with upper bounding
+// OPTIMIZATION: If D is symmetric we can multiply by two at the end of the
+// computation of entry of r_B_O instead of each access to D
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__2D_B_OxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const
+{
+    //initialize
+    std::fill_n( out, B_O.size(), et0);
+
+    Index_const_iterator    row_it;
+    Value_iterator          out_it;
+    ET                      value;
+    
+    // foreach entry in r_B_O
+    out_it = out;
+    for (Index_const_iterator row_it = B_O.begin(); row_it != B_O.end();
+                                                        ++row_it, ++out_it) {
+        D_pairwise_accessor d_accessor_i(qp_D, *row_it);
+        for (int i = 0; i < qp_n; ++i) {
+            if (!is_basic(i)) {
+                value = nonbasic_original_variable_value(i);
+                *out_it += d_accessor_i(i) * value;
+            }
+        }    
+    }
+}
+
+// compares the updated vector r_{B_O} with t_r_B_O=2D_{B_O, N_O}x_{N_O}
+template < class Rep_ >                                // Standard form
+bool  QP_solver<Rep_>::
+check_r_B_O(Tag_true) const
+{
+    return true;
+}
+
+// compares the updated vector r_{B_O} with t_r_B_O=2D_{B_O, N_O}x_{N_O}
+template < class Rep_ >                                 // Upper bounded
+bool  QP_solver<Rep_>::
+check_r_B_O(Tag_false) const
+{
+    Values                  t_r_B_O;
+    // compute t_r_B_O from scratch
+    t_r_B_O.insert(t_r_B_O.end(), B_O.size(), et0);
+    multiply__2D_B_OxN_O(x_O_v_i.begin(), t_r_B_O.begin());
+    
+    // compare r_B_O and the from scratch computed t_r_B_O
+    bool failed = false;
+    int count = 0;
+    Value_const_iterator    t_r_B_O_it = t_r_B_O.begin();
+    for (Value_const_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
+                                    ++r_B_O_it, ++t_r_B_O_it, ++count) {
+        if (*r_B_O_it != *t_r_B_O_it) {
+            failed = true;
+        }
+    }
+    return (!failed);   
+}
+
+// computes w:=2D_{O, N_O}x_{N_O} with upper bounding
+// OPTIMIZATION: If D is symmetric we can multiply by two at the end of the
+// computation of entry of r_B_O instead of each access to D
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__2D_OxN_O(Bound_index_value_const_iterator in,
+                            Value_iterator out) const
+{
+    //initialize
+    std::fill_n( out, B_O.size(), et0);
+
+    Value_iterator          out_it;
+    ET                      value;
+    
+    // foreach entry in w
+    out_it = out;
+    for (int row_it = 0; row_it < qp_n; ++row_it, ++out_it) {
+        D_pairwise_accessor d_accessor_i(qp_D, row_it);
+        for (int i = 0; i < qp_n; ++i) {
+            if (!is_basic(i)) {
+                value = nonbasic_original_variable_value(i);
+                *out_it += d_accessor_i(i) * value;
+            }
+        }    
+    }
+}
+
+// compares the updated vector w with t_w=2D_{O,N_O}*x_N_O
+template < class Rep_ >                             // Standard form
+bool  QP_solver<Rep_>::
+check_w(Tag_true) const
+{
+    return true;
+}
+
+// compares the updated vector w with t_w=2D_O_N_O*x_N_O
+template < class Rep_ >                             // Upper bounded
+bool  QP_solver<Rep_>::
+check_w(Tag_false) const
+{
+    Values              t_w;
+    // compute t_w from scratch
+    t_w.insert(t_w.end(), qp_n, et0);
+    multiply__2D_OxN_O(x_O_v_i.begin(), t_w.begin());
+    
+    // compare w and the from scratch computed t_w
+    bool  failed = false;
+    Value_const_iterator    t_w_it = t_w.begin();
+    for (int i = 0; i < qp_n; ++i, ++t_w_it) {
+        if (w[i] != *t_w_it) {
+            failed = true;
+        }
+    }
+    return (!failed);
+}
+
+
+
+// returns the current value of a nonbasic original variable
+// with upper bounding
+template < class Rep_ >
+typename QP_solver<Rep_>::ET
+QP_solver<Rep_>::
+nonbasic_original_variable_value(int i) const
+{
+    CGAL_assertion_msg(!is_basic(i) && i < qp_n, "wrong argument");
+    ET      value;
+    switch (x_O_v_i[i]) {
+        case UPPER:
+            value = qp_u[i];
+            break;
+        case ZERO:
+            value = et0;
+            break;
+        case LOWER:
+            value = qp_l[i];
+            break;
+        case FIXED:
+            value = qp_l[i];
+            break;
+        case BASIC:
+            assert(false);
+            break;
+    }
+    return value;
+}
+
 
 // check basis inverse
 template < class Rep_ >
