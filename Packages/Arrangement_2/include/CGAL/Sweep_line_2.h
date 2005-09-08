@@ -287,10 +287,6 @@ public:
       {  
         remove_for_good = true;
         this->m_visitor->add_subcurve(leftCurve->get_last_curve(), leftCurve);
-        //if(leftCurve->get_orig_subcurve1() != NULL)
-        //  leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);//XXX
-        //if(leftCurve->get_orig_subcurve2() != NULL)
-        //  leftCurve->get_orig_subcurve2()->set_overlap_subcurve(NULL);//XXX
       }
       else
       {
@@ -456,9 +452,7 @@ public:
                                   Subcurve* &c2,
                                   bool is_overlap = false);
 
-  void _fix_finished_overlap_subcurves(Subcurve* sc);
-
-  void _replace_right_curve(Subcurve* sc1, Subcurve* sc2);
+  void _fix_finished_overlap_subcurve(Subcurve* sc);
 
 
 protected:
@@ -575,28 +569,6 @@ void Sweep_line_2<Traits_,
 
   CGAL_assertion(c1 != c2);
   
-  //// special treatment for overlap subcurves
-  //if(c1->get_orig_subcurve1() != NULL || c2->get_orig_subcurve1() != NULL)
-  //{
-  //  std::list<Base_subcurve*> c1_origs;
-  //  std::list<Base_subcurve*> c2_origs;
-
-  //  c1->get_all_inner_noes(std::back_inserter(c1_origs));
-  //  c2->get_all_inner_noes(std::back_inserter(c2_origs));
-  //  typedef typename std::list<Base_subcurve*>::iterator  Itr;
-  //  for(Itr iter1 = c1_origs.begin(); iter1 != c1_origs.end(); ++iter1)
-  //  {
-  //    for(Itr iter2 = c2_origs.begin(); iter2 != c2_origs.end(); ++iter2)
-  //    {
-  //      CurvesPair curves_pair(static_cast<Subcurve*>(*iter1),
-  //                             static_cast<Subcurve*>(*iter2));
-  //      if(m_curves_pair_set.find(curves_pair) !=
-  //         m_curves_pair_set.end())
-  //        return;
-  //    }
-  //  }
-  //}
-
   // look up for (c1,c2) in the table and insert if doesnt exist
   CurvesPair curves_pair(c1,c2);
   if(! (m_curves_pair_set.insert(curves_pair)).second )
@@ -801,8 +773,6 @@ _create_intersection_point(const Point_2& xp,
 
 
 
-
-
 template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
@@ -830,8 +800,8 @@ _fix_overlap_subcurves()
         Subcurve* orig_sc_1 = (Subcurve*)leftCurve->get_orig_subcurve1();
         Subcurve* orig_sc_2 = (Subcurve*)leftCurve->get_orig_subcurve2();
 
-        _fix_finished_overlap_subcurves(orig_sc_1);
-        _fix_finished_overlap_subcurves(orig_sc_2);
+        _fix_finished_overlap_subcurve(orig_sc_1);
+        _fix_finished_overlap_subcurve(orig_sc_2);
       }
     }     
     ++leftCurveIter;
@@ -920,9 +890,6 @@ _handle_overlap(Event* event,
     // Add overlap_sc to the left curves
     right_end->add_curve_to_left(overlap_sc);
 
-    curve  -> set_overlap_subcurve(overlap_sc);
-    (*iter)-> set_overlap_subcurve(overlap_sc);
-
     overlap_sc -> set_orig_subcurve1(*iter);
     overlap_sc -> set_orig_subcurve2(curve);  
 
@@ -938,48 +905,6 @@ _handle_overlap(Event* event,
   }
 
 
-template <class Traits_,
-          class SweepVisitor,
-          class CurveWrap,
-          class SweepEvent,
-          typename Allocator>
-void Sweep_line_2<Traits_,
-                  SweepVisitor,
-                  CurveWrap,
-                  SweepEvent,
-                  Allocator>::
-_replace_right_curve(Subcurve* sc1, Subcurve* sc2)
-{
-  for(EventCurveIter iter = this->m_currentEvent->right_curves_begin(); 
-      iter!= this->m_currentEvent->right_curves_end();
-      ++iter)
-  {
-    if(*iter == sc1)
-    {
-      *iter = sc2;
-      return;
-    }
-    else
-    {
-      if((*iter)->is_inner_node(sc1) /*|| (*iter)->has_common_leaf(sc1)*/)
-      {
-        std::list<Base_subcurve*> list_of_sc;
-        sc2->get_all_leaves(std::back_inserter(list_of_sc));
-        for(typename std::list<Base_subcurve*>::iterator itr = list_of_sc.begin();
-            itr != list_of_sc.end();
-            ++itr)
-        {
-          if(sc1->is_parent((reinterpret_cast<Subcurve*>(*itr))))
-            continue;
-
-          this ->_add_curve_to_right(this->m_currentEvent,
-                                     reinterpret_cast<Subcurve*>(*itr));
-        }
-      }
-      return;
-    }
-  }
-}
 
 template <class Traits_,
           class SweepVisitor,
@@ -990,7 +915,7 @@ void Sweep_line_2<Traits_,
                   SweepVisitor,
                   CurveWrap,
                   SweepEvent,
-                  Allocator>::_fix_finished_overlap_subcurves(Subcurve* sc)
+                  Allocator>::_fix_finished_overlap_subcurve(Subcurve* sc)
 {
   CGAL_assertion(sc != NULL);
 
@@ -1012,8 +937,8 @@ void Sweep_line_2<Traits_,
   Subcurve* orig_sc_1 = (Subcurve*)sc->get_orig_subcurve1();
   Subcurve* orig_sc_2 = (Subcurve*)sc->get_orig_subcurve2();
 
-  _fix_finished_overlap_subcurves(orig_sc_1);
-  _fix_finished_overlap_subcurves(orig_sc_2);
+  _fix_finished_overlap_subcurve(orig_sc_1);
+  _fix_finished_overlap_subcurve(orig_sc_2);
 }
 
 
