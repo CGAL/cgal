@@ -73,7 +73,7 @@ SCRIPT_FILES  = 	cc_check			\
 # Files that will be copied into LATEX_CONV_CONFIG upon installation:
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
 		 	latex_converter_config/html/*.css	\
-			latex_converter_config/html/cc_*        \
+			latex_converter_config/html/cc_*.stage_?  \
 			latex_converter_config/html/*.mst
 GIF_CONFIG_FILES  =	latex_converter_config/gif/*.gif
 REF_CONFIG_FILES  =	latex_converter_config/ref_pages/*.tex
