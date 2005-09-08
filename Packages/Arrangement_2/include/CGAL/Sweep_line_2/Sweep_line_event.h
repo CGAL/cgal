@@ -22,6 +22,7 @@
 #define CGAL_SWEEP_LINE_EVENT_H
 
 #include <list>
+#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
  
 CGAL_BEGIN_NAMESPACE
@@ -60,7 +61,6 @@ public:
   typedef std::list<SubCurve*>                             SubcurveContainer; 
   typedef typename SubcurveContainer::iterator             SubCurveIter;
   typedef typename SubcurveContainer::reverse_iterator     SubCurveRevIter;
-
  
   typedef std::pair<bool, SubCurveIter>                    Pair;
 
@@ -112,9 +112,14 @@ public:
         iter != m_leftCurves.end();
         ++iter)
     {
-      if(curve == *iter  || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
+      if((curve == *iter) || (*iter)->is_inner_node(curve))// || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
       {
         //*iter = curve;
+        return;
+      }
+      if((curve)->is_inner_node(*iter))
+      {
+        *iter = curve;
         return;
       }
     }
@@ -139,23 +144,7 @@ public:
 
 
     SubCurveIter iter = m_rightCurves.begin();
-    while ( iter != m_rightCurves.end() ) 
-    {
-      if (curve == *iter || (*iter)->is_leaf(curve) || (curve)->has_same_leaf(*iter))
-      {
-        //*iter = curve;
-        return Pair(false, m_rightCurves.end());
-      }
-      ++iter;
-    }
-    /*while ( iter != m_rightCurves.end() ) 
-    {
-      if ( (*iter) ==  curve)
-        return Pair(false, m_rightCurves.end());
-      ++iter;
-    }*/
-
-    iter = m_rightCurves.begin();
+    
     Comparison_result res;
     while ((res = tr->compare_y_at_x_right_2_object()
                     (curve->get_last_curve(),
@@ -201,48 +190,19 @@ public:
         iter!= m_leftCurves.end();
         ++iter)
     {
-      if((*iter)== curve || curve->is_parent(*iter) || (*iter)->is_leaf(curve))
+      /*if((*iter)== curve || curve->is_parent(*iter) || (*iter)->is_leaf(curve))
       {
         m_leftCurves.erase(iter);
+        return;
+      }*/
+      if(curve->has_common_leaf(*iter))
+      {
+         m_leftCurves.erase(iter);
         return;
       }
     }
   }
 
-
-
-
-  /*void replace_right_curve(SubCurve* sc1, SubCurve* sc2)
-  {
-    std::cout<<"replace_right_curve!!!\n";
-    for(SubCurveIter iter = m_rightCurves.begin(); 
-        iter!= m_rightCurves.end();
-        ++iter)
-    {
-      if(*iter == sc1)
-      {
-        *iter = sc2;
-        std::cout<<"replaced !!!!!!\n";
-        return;
-      }
-      else
-      {
-        if((*iter)->is_leaf(sc2))
-        {
-          std::list<Base_Subcurve*> list_of_sc;
-          sc1->get_all_leaves(std::back_inserter(list_of_sc));
-          for(std::list<Base_Subcurve*>::iterator itr = list_of_sc.begin();
-              itr != list_of_sc.end();
-              ++itr)
-          {
-            if(reinterpret_cast<SubCurve*>(*itr) == sc2)
-              continue;
-
-            this ->add_
-          }
-    }
-    std::cout<<"wasn't replaced !!!!!!\n";
-  }*/
 
 
   /*! Returns an iterator to the first curve to the left of the event */

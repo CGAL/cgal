@@ -311,6 +311,46 @@ public:
     return true;
   }
 
+  bool has_common_leaf(Self *s)
+  {
+    std::list<Self*> my_leafs;
+    std::list<Self*> other_leafs;
+    this ->get_all_leaves(std::back_inserter(my_leafs));
+    s->get_all_leaves(std::back_inserter(other_leafs));
+
+    typedef typename std::list<Self*>::iterator Itr;
+    Itr itr;
+    for(itr = my_leafs.begin(); itr != my_leafs.end(); ++itr)
+    {
+      if(std::find(other_leafs.begin(), other_leafs.end(), *itr) !=
+         other_leafs.end())
+         return true;
+    }
+    return false;
+  }
+
+  template <class Output>
+  void get_distinct_nodes(Self *s, Output out)
+  {
+    if(!m_orig_subcurve1)
+    {
+      if(s->is_leaf(this))
+        *out++ = this;
+      return;
+    }
+
+    if(!s->is_inner_node(m_orig_subcurve1))
+      *out++ = m_orig_subcurve1;
+    else
+      m_orig_subcurve1->get_distinct_nodes(s, out);
+
+    if(!s->is_inner_node(m_orig_subcurve2))
+      *out++ = m_orig_subcurve2;
+    else
+      m_orig_subcurve2->get_distinct_nodes(s, out);
+  }
+
+
   unsigned int overlap_depth()
   {
     if (! m_orig_subcurve1)
