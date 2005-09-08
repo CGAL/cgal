@@ -80,8 +80,7 @@ public:
 
 
 
-  Sweep_line_subcurve() : m_overlap_subcurve(NULL),
-                          m_orig_subcurve1(NULL),
+  Sweep_line_subcurve() : m_orig_subcurve1(NULL),
                           m_orig_subcurve2(NULL)
   {}
 
@@ -168,17 +167,6 @@ public:
     return m_hint;
   }
 
-  
-  void set_overlap_subcurve(Self* overlap_sc)
-  {
-    m_overlap_subcurve = overlap_sc;
-  }
-
-  Self* get_overlap_subcurve()
-  {
-    return m_overlap_subcurve;
-  }
-
   void set_orig_subcurve1(Self* orig_subcurve1)
   {
     m_orig_subcurve1 = orig_subcurve1;
@@ -198,36 +186,6 @@ public:
   {
     return m_orig_subcurve2;
   }
-
-  Self* getSubcurve()
-  {
-    Self* ptr  = m_overlap_subcurve;
-    Self* prev = ptr;
-    while(ptr != NULL)
-    {
-      prev = ptr;
-      ptr = ptr->m_overlap_subcurve;
-    }
-    return prev;
-  }
-
-  template<class SweepEvent>
-  Self* clip(const SweepEvent* e) 
-  {
-    if(get_right_event() != (Event*)e)
-    {
-      return this;
-    }
-    if(m_orig_subcurve1)
-    {
-      Self* res;
-      if((res = m_orig_subcurve1->clip(e)) == NULL)
-        return m_orig_subcurve2->clip(e);
-      return res;
-    }
-    return NULL;  
-  }
-
 
   template <class Output>
   void get_all_leaves(Output out)
@@ -253,19 +211,6 @@ public:
     *out++ = this;
     m_orig_subcurve1->get_all_inner_noes(out);
     m_orig_subcurve2->get_all_inner_noes(out);
-  }
-
-
-  bool is_parent(Self* parent)
-  {
-    Self* ptr = m_overlap_subcurve;
-    while(ptr != NULL)
-    {
-      if(ptr == parent)
-        return true;
-      ptr = ptr->m_overlap_subcurve;
-    }
-    return false;
   }
 
   bool is_inner_node(Self *s)
@@ -379,9 +324,7 @@ protected:
   /*! iterator at the Y-structure for the Subcurve */
   StatusLineIter m_hint;
 
-  //the three below memvers relevant only with overlaps
-
-  Self *m_overlap_subcurve;
+  //the  below memvers relevant only with overlaps
 
   Self *m_orig_subcurve1;
 
@@ -392,7 +335,6 @@ protected:
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
 Sweep_line_subcurve(const X_monotone_curve_2 &curve): 
-  m_overlap_subcurve(NULL),
   m_orig_subcurve1(NULL),
   m_orig_subcurve2(NULL)
 { 

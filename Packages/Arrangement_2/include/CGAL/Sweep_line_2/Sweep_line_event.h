@@ -112,9 +112,8 @@ public:
         iter != m_leftCurves.end();
         ++iter)
     {
-      if((curve == *iter) || (*iter)->is_inner_node(curve))// || (curve)->is_leaf(*iter) || (curve)->has_same_leaf(*iter))
+      if((curve == *iter) || (*iter)->is_inner_node(curve))
       {
-        //*iter = curve;
         return;
       }
       if((curve)->is_inner_node(*iter))
@@ -161,8 +160,6 @@ public:
     
     if ( res == EQUAL ) //overlap !!
     {
-      if((*iter)->is_parent(curve))
-        return Pair(false,m_rightCurves.end());
       return Pair(true, iter);
      }
      m_rightCurves.insert(iter, curve);
@@ -190,11 +187,6 @@ public:
         iter!= m_leftCurves.end();
         ++iter)
     {
-      /*if((*iter)== curve || curve->is_parent(*iter) || (*iter)->is_leaf(curve))
-      {
-        m_leftCurves.erase(iter);
-        return;
-      }*/
       if(curve->has_common_leaf(*iter))
       {
          m_leftCurves.erase(iter);
