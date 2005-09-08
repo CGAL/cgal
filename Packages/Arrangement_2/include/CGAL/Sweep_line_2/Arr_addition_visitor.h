@@ -195,6 +195,7 @@ public:
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
                                      Halfedge_handle hhandle,
                                      Halfedge_handle prev,
+                                     Subcurve* sc,
                                      bool &new_face_created)
   {
     return (m_arr->insert_at_vertices(cv,hhandle,prev));
