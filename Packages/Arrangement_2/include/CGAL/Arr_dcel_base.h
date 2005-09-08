@@ -238,19 +238,19 @@ public:
   /*! Get an incident halfedge (const version). */
   const Halfedge* halfedge () const
   {
-    return (reinterpret_cast<const Halfedge*>(p_he));
+    return (reinterpret_cast<const Halfedge*>(this->p_he));
   }
 
   /*! Get an incident halfedge (non-const version). */
   Halfedge* halfedge ()
   {
-    return (reinterpret_cast<Halfedge*>(p_he));
+    return (reinterpret_cast<Halfedge*>(this->p_he));
   }
 
   /*! Set an incident halfedge. */
   void set_halfedge (Halfedge* he)
   { 
-    p_he = he;
+    this->p_he = he;
   }
 };
 
@@ -275,93 +275,93 @@ public:
   /*! Get the opposite halfedge (const version). */
   const Halfedge* opposite () const
   { 
-    return (reinterpret_cast<const Halfedge*>(p_opp));
+    return (reinterpret_cast<const Halfedge*>(this->p_opp));
   }
   
   /*! Get the opposite halfedge (non-const version). */
   Halfedge* opposite ()
   { 
-    return (reinterpret_cast<Halfedge*>(p_opp));
+    return (reinterpret_cast<Halfedge*>(this->p_opp));
   }
 
   /*! Sets the opposite halfedge. */
   void set_opposite (Halfedge* he) 
   { 
-    p_opp = he;
+    this->p_opp = he;
   }
 
   /*! Get the previous halfedge along the chain (const version). */
   const Halfedge* prev () const
   {
-    return (reinterpret_cast<const Halfedge*>(p_prev));
+    return (reinterpret_cast<const Halfedge*>(this->p_prev));
   }
 
   /*! Get the previous halfedge along the chain (const version). */
   Halfedge* prev ()
   {
-    return (reinterpret_cast<Halfedge*>(p_prev));
+    return (reinterpret_cast<Halfedge*>(this->p_prev));
   }
 
   /*! Set the previous halfedge along the chain. */
   void set_prev (Halfedge* he)
   {
-    p_prev = he;
+    this->p_prev = he;
     he->p_next = this;
   }
 
   /*! Get the next halfedge along the chain (const version). */
   const Halfedge* next () const
   {
-    return (reinterpret_cast<const Halfedge*>(p_next));
+    return (reinterpret_cast<const Halfedge*>(this->p_next));
   }
 
   /*! Get the next halfedge along the chain (const version). */
   Halfedge* next ()
   {
-    return (reinterpret_cast<Halfedge*>(p_next));
+    return (reinterpret_cast<Halfedge*>(this->p_next));
   }
 
   /*! Set the next halfedge along the chain. */
   void set_next (Halfedge* he)
   {
-    p_next = he;
+    this->p_next = he;
     he->p_prev = this;
   }
 
   /*! Get the target vertex (const version). */
   const Vertex* vertex () const 
   { 
-    return (reinterpret_cast<const Vertex*>(p_v));
+    return (reinterpret_cast<const Vertex*>(this->p_v));
   }
 
   /*! Get the target vertex (non-const version). */
   Vertex* vertex ()
   { 
-    return (reinterpret_cast<Vertex*>(p_v));
+    return (reinterpret_cast<Vertex*>(this->p_v));
   }
 
   /*! Set the target vertex. */
   void set_vertex (Vertex* v)
   {
-    p_v = v;
+    this->p_v = v;
   }
 
   /*! Get the incident face (const version). */
   const Face* face () const 
   {     
-    return (reinterpret_cast<const Face*>(p_f));
+    return (reinterpret_cast<const Face*>(this->p_f));
   }
 
   /*! Get the incident face (non-const version). */
   Face* face () 
   {
-    return (reinterpret_cast<Face*>(p_f));
+    return (reinterpret_cast<Face*>(this->p_f));
   }
 
   /*! Set the incident face. */
   void set_face (Face* f)
   { 
-    p_f = f;
+    this->p_f = f;
   }
 };
 
@@ -386,19 +386,19 @@ public:
   /*! Get an incident halfedge (const version). */
   const Halfedge * halfedge() const
   {
-    return (reinterpret_cast<const Halfedge*>(p_he));
+    return (reinterpret_cast<const Halfedge*>(this->p_he));
   }
 
   /*! Get an incident halfedge (non-const version). */
   Halfedge * halfedge()
   {
-    return (reinterpret_cast<Halfedge*>(p_he));
+    return (reinterpret_cast<Halfedge*>(this->p_he));
   }
 
   /*! Set an incident halfedge. */
   void set_halfedge (Halfedge* he)
   {
-    p_he = he;
+    this->p_he = he;
   }
 
   // Define the hole iterators:
@@ -418,43 +418,43 @@ public:
   /*! Get the number of holes inside the face. */
   unsigned int number_of_holes() const
   {
-    return (holes.size());
+    return (this->holes.size());
   }
 
   /*! Add a hole inside the face. */
   void add_hole (Halfedge* h)
   {
-    holes.push_back (h);
+    this->holes.push_back (h);
   }
 
   /*! Erase a hole from the face. */
   void erase_hole (Holes_iterator hit)
   {
-    holes.erase (hit.current_iterator());
+    this->holes.erase (hit.current_iterator());
   }
 
   /*! Get an iterator for the first hole inside the face. */
   Holes_iterator holes_begin()
   {
-    return holes.begin();
+    return (this->holes.begin());
   }
 
   /*! Get a past-the-end iterator for the holes inside the face. */
   Holes_iterator holes_end()
   {
-    return holes.end();
+    return (this->holes.end());
   }
 
   /*! Get an const iterator for the first hole inside the face. */
   Holes_const_iterator holes_begin() const
   {
-    return holes.begin();
+    return (this->holes.begin());
   }
 
   /*! Get a const past-the-end iterator for the holes inside the face. */
   Holes_const_iterator holes_end() const
   {
-    return holes.end();
+    return (this->holes.end());
   }
 
   // Define the isloated vertices iterators:
@@ -476,44 +476,44 @@ public:
   /*! Get the number of isloated vertices inside the face. */
   unsigned int number_of_isolated_vertices() const
   {
-    return (iso_verts.size());
+    return (this->iso_verts.size());
   }
 
   /*! Add an isloated vertex inside the face. */
   void add_isolated_vertex (Vertex* v)
   {
-    iso_verts.push_back (v);
+    this->iso_verts.push_back (v);
   }
 
   /*! Erase an isloated vertex from the face. */
   void erase_isolated_vertex (Isolated_vertices_iterator ivit)
   {
-    iso_verts.erase (ivit.current_iterator());
+    this->iso_verts.erase (ivit.current_iterator());
   }
 
   /*! Get an iterator for the first isloated vertex inside the face. */
   Isolated_vertices_iterator isolated_vertices_begin()
   {
-    return iso_verts.begin();
+    return (this->iso_verts.begin());
   }
 
   /*! Get a past-the-end iterator for the isloated vertices inside the face. */
   Isolated_vertices_iterator isolated_vertices_end()
   {
-    return iso_verts.end();
+    return (this->iso_verts.end());
   }
 
   /*! Get an const iterator for the first isloated vertex inside the face. */
   Isolated_vertices_const_iterator isolated_vertices_begin() const
   {
-    return iso_verts.begin();
+    return (this->iso_verts.begin());
   }
 
   /*! Get a const past-the-end iterator for the isloated vertices inside the
    * face. */
   Isolated_vertices_const_iterator isolated_vertices_end() const
   {
-    return iso_verts.end();
+    return (this->iso_verts.end());
   }
 };
 
@@ -775,7 +775,7 @@ public:
     {
       dup_v = new_vertex();
       dup_v->assign (*vit);
-      v_map.insert (Vertex_map::value_type (&(*vit), dup_v));
+      v_map.insert (typename Vertex_map::value_type (&(*vit), dup_v));
     }
 
     Halfedge_map              he_map;
@@ -786,7 +786,7 @@ public:
     {
       dup_h = _new_halfedge();
       dup_h->assign (*hit);
-      he_map.insert (Halfedge_map::value_type(&(*hit), dup_h));
+      he_map.insert (typename Halfedge_map::value_type(&(*hit), dup_h));
     }
 
     Face_map                  f_map;
@@ -797,7 +797,7 @@ public:
     {
       dup_f = new_face();
       dup_f->assign (*fit);
-      f_map.insert (Face_map::value_type(&(*fit), dup_f));
+      f_map.insert (typename Face_map::value_type(&(*fit), dup_f));
     }
 
     // Update the vertex records.

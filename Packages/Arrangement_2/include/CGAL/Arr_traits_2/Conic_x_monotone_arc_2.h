@@ -131,7 +131,7 @@ public:
     if (_id.is_valid())
       _set();
     else
-      _info = 0;
+      this->_info = 0;
   }
 
   /*!
@@ -165,8 +165,8 @@ public:
     CGAL_precondition (arc.is_valid() && id.is_valid());
 
     // Set the two endpoints.
-    _source = source;
-    _target = target;
+    this->_source = source;
+    this->_target = target;
 
     _set();
   }
@@ -180,24 +180,24 @@ public:
     Base()
   {
     // Set the basic properties and clear the _info bits.
-    _source = source;
-    _target = target;
-    _orient = COLLINEAR;
-    _info = 0;
+    this->_source = source;
+    this->_target = target;
+    this->_orient = COLLINEAR;
+    this->_info = 0;
  
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.
     Alg_kernel         ker;
-    Comparison_result  dir_res = ker.compare_xy_2_object() (_source, _target);
+    Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source, this->_target);
 
     CGAL_precondition (dir_res != EQUAL);
     if (dir_res == EQUAL)
       // Invalid arc:
       return;
 
-    _info = (IS_VALID | DEGREE_1);
+    this->_info = (Conic_arc_2::IS_VALID | DEGREE_1);
     if (dir_res == SMALLER)
-      _info = (_info | IS_DIRECTED_RIGHT);
+      this->_info = (this->_info | IS_DIRECTED_RIGHT);
 
     // Compose the equation of the underlying line.
     const Algebraic        x1 = source.x(), y1 = source.y();
@@ -208,15 +208,15 @@ public:
     //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2 
     //
     // We use the extra dat field to store the equation of this line.
-    _extra_data_P = new typename Base::Extra_data;
-    _extra_data_P->a = y2 - y1;
-    _extra_data_P->b = x1 - x2;
-    _extra_data_P->c = x2*y1 - x1*y2;
-    _extra_data_P->side = ZERO;
+    this->_extra_data_P = new typename Base::Extra_data;
+    this->_extra_data_P->a = y2 - y1;
+    this->_extra_data_P->b = x1 - x2;
+    this->_extra_data_P->c = x2*y1 - x1*y2;
+    this->_extra_data_P->side = ZERO;
 
     // Check if the segment is vertical.
-    if (CGAL::sign (_extra_data_P->b) == ZERO)
-      _info = (_info | IS_VERTICAL_SEGMENT);
+    if (CGAL::sign (this->_extra_data_P->b) == ZERO)
+      this->_info = (this->_info | IS_VERTICAL_SEGMENT);
 
     return;
   }
@@ -242,7 +242,7 @@ public:
     if (_id.is_valid())
       _set();
     else
-      _info = 0;
+      this->_info = 0;
 
     return (*this);
   }
@@ -254,12 +254,12 @@ public:
   /*! 
    * Get the coefficients of the underlying conic.
    */
-  const Integer& r () const {return (_r);}
-  const Integer& s () const {return (_s);}
-  const Integer& t () const {return (_t);}
-  const Integer& u () const {return (_u);}
-  const Integer& v () const {return (_v);}
-  const Integer& w () const {return (_w);}
+  const Integer& r () const {return (this->_r);}
+  const Integer& s () const {return (this->_s);}
+  const Integer& t () const {return (this->_t);}
+  const Integer& u () const {return (this->_u);}
+  const Integer& v () const {return (this->_v);}
+  const Integer& w () const {return (this->_w);}
 
   /*!
    * Get the arc's source.
@@ -267,7 +267,7 @@ public:
    */
   const Conic_point_2& source () const
   {
-    return (_source);
+    return (this->_source);
   }
 
   /*!
@@ -276,7 +276,7 @@ public:
    */
   const Conic_point_2& target () const
   {
-    return (_target);
+    return (this->_target);
   }
 
   /*!
@@ -285,7 +285,7 @@ public:
    */
   Orientation orientation () const
   {
-    return (_orient);
+    return (this->_orient);
   }
 
   /*!
@@ -293,10 +293,10 @@ public:
    */
   const Conic_point_2& left () const
   {
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-      return (_source);
+    if ((this->_info & IS_DIRECTED_RIGHT) != 0)
+      return (this->_source);
     else
-      return (_target);
+      return (this->_target);
   }
 
   /*!
@@ -304,10 +304,10 @@ public:
    */
   const Conic_point_2& right () const
   {
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-      return (_target);
+    if ((this->_info & IS_DIRECTED_RIGHT) != 0)
+      return (this->_target);
     else
-      return (_source);
+      return (this->_source);
   }
 
   /*!
@@ -328,7 +328,7 @@ public:
    */
   bool is_vertical () const
   {
-    return ((_info & IS_VERTICAL_SEGMENT) != 0);
+    return ((this->_info & IS_VERTICAL_SEGMENT) != 0);
   }
 
   /*!
@@ -380,7 +380,7 @@ public:
   Point_2 get_point_at_x (const Point_2& p) const
   {
     // Make sure that p is in the x-range of the arc.
-    CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0);
+    CGAL_precondition ((this->_info & IS_VERTICAL_SEGMENT) == 0);
 
     CGAL_precondition_code (
       Alg_kernel   ker;
@@ -394,8 +394,9 @@ public:
       // In case of a special segment, the equation of the supported line
       // (a*x + b*y + c) = 0 is stored with the extra data field, and we
       // simply have:
-      Algebraic        _y = -(_extra_data_P->a*p.x() + _extra_data_P->c) /
-	                    _extra_data_P->b;
+      Algebraic        _y = -(this->_extra_data_P->a*p.x() + 
+                              this->_extra_data_P->c) /
+                            this->_extra_data_P->b;
 
       // Return the computed point.
       return (Point_2 (p.x(), _y));
@@ -406,7 +407,7 @@ public:
     Nt_traits        nt_traits;
     Algebraic        y;
 
-    if ((_info & DEGREE_MASK) == DEGREE_1)
+    if ((this->_info & DEGREE_MASK) == DEGREE_1)
     {
       // In case of a linear curve, the y-coordinate is a simple linear
       // expression of x(p) (note that v is not 0 as the arc is not vertical):
@@ -415,7 +416,7 @@ public:
     }
     else
     {
-      CGAL_assertion ((_info & DEGREE_MASK) == DEGREE_2);
+      CGAL_assertion ((this->_info & DEGREE_MASK) == DEGREE_2);
 
       // In this case the y-coordinate is one of solutions to the quadratic
       // equation:
@@ -424,7 +425,7 @@ public:
       Algebraic  B = alg_t*p.x() + alg_v;
       Algebraic  C = (alg_r*p.x() + alg_u)*p.x() + alg_w;
 
-      if (CGAL::sign(_s) == ZERO)
+      if (CGAL::sign(this->_s) == ZERO)
       {
         // In this case A is 0 and we have a linear equation.
         CGAL_assertion (CGAL::sign (B) != ZERO);
@@ -440,7 +441,7 @@ public:
 
         // We take either the root involving -sqrt(disc) or +sqrt(disc)
         // based on the information flags.
-        if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
+        if ((this->_info & PLUS_SQRT_DISC_ROOT) != 0)
         {
           y = (nt_traits.sqrt (disc) - B) / (2*A);
         }
@@ -468,7 +469,7 @@ public:
    */
   template <class OutputIterator>
   OutputIterator polyline_approximation (size_t n,
-					 OutputIterator oi) const
+                                         OutputIterator oi) const
   {
     CGAL_precondition (n != 0);
 
@@ -477,7 +478,7 @@ public:
     const double  x_right = CGAL::to_double (right().x());
     const double  y_right = CGAL::to_double (right().y());
 
-    if (_orient == COLLINEAR)
+    if (this->_orient == COLLINEAR)
     {
       // In case of a line segment, return the two endpoints.
       *oi = std::pair<double, double> (x_left, y_left);
@@ -488,15 +489,15 @@ public:
     }
     
     // Otherwise, sample (n - 1) equally-spaced points in between.
-    const double  app_r = CGAL::to_double (_r);
-    const double  app_s = CGAL::to_double (_s);
-    const double  app_t = CGAL::to_double (_t);
-    const double  app_u = CGAL::to_double (_u);
-    const double  app_v = CGAL::to_double (_v);
-    const double  app_w = CGAL::to_double (_w);
+    const double  app_r = CGAL::to_double (this->_r);
+    const double  app_s = CGAL::to_double (this->_s);
+    const double  app_t = CGAL::to_double (this->_t);
+    const double  app_u = CGAL::to_double (this->_u);
+    const double  app_v = CGAL::to_double (this->_v);
+    const double  app_w = CGAL::to_double (this->_w);
     const double  x_jump = (x_right - x_left) / n;
     double        x, y;
-    const bool    A_is_zero = (CGAL::sign(_s) == ZERO);
+    const bool    A_is_zero = (CGAL::sign(this->_s) == ZERO);
     double        A = app_s, B, C;
     double        disc;
     size_t        i;
@@ -517,21 +518,21 @@ public:
       }
       else
       {
-	disc = B*B - 4*A*C;
+        disc = B*B - 4*A*C;
 
-	if (disc < 0)
-	  disc = 0;
+        if (disc < 0)
+          disc = 0;
 
-	// We take either the root involving -sqrt(disc) or +sqrt(disc)
-	// based on the information flags.
-	if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
-	{
-	  y = (::sqrt(disc) - B) / (2*A);
-	}
-	else
-	{
-	  y = -(B + ::sqrt (disc)) / (2*A);
-	}
+        // We take either the root involving -sqrt(disc) or +sqrt(disc)
+        // based on the information flags.
+        if ((this->_info & PLUS_SQRT_DISC_ROOT) != 0)
+        {
+          y = (::sqrt(disc) - B) / (2*A);
+        }
+        else
+        {
+          y = -(B + ::sqrt (disc)) / (2*A);
+        }
       }
 
       *oi = std::pair<double, double> (x, y);
@@ -553,20 +554,21 @@ public:
   Comparison_result compare_to_right (const Self& arc,
                                       const Conic_point_2& p) const
   {
-    CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0 &&
+    CGAL_precondition ((this->_info & IS_VERTICAL_SEGMENT) == 0 &&
                        (arc._info & IS_VERTICAL_SEGMENT) == 0);
 
     // In case one arc is facing upwards and another facing downwards, it is
     // clear that the one facing upward is above the one facing downwards.
     if (_has_same_supporting_conic (arc))
     {
-      if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return (LARGER);
-      else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
+      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP) != 0)
         return (SMALLER);
 
       // In this case the two arcs overlap.
-      CGAL_assertion ((_info & FACING_MASK) == (arc._info & FACING_MASK));
+      CGAL_assertion ((this->_info & FACING_MASK) == 
+                      (arc._info & FACING_MASK));
 
       return (EQUAL);
     }
@@ -608,7 +610,7 @@ public:
       arc._derive_by_x_at (p, 3, slope2_numer, slope2_denom);
       
       slope_res = CGAL::compare (slope1_numer*slope2_denom,
-				 slope2_numer*slope1_denom);
+                                 slope2_numer*slope1_denom);
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion (slope_res != EQUAL);
@@ -619,9 +621,9 @@ public:
     {
       // The first arc has a vertical slope at p: check whether it is
       // facing upwards or downwards and decide accordingly.
-      CGAL_assertion ((_info & FACING_MASK) != 0);
+      CGAL_assertion ((this->_info & FACING_MASK) != 0);
 
-      if ((_info & FACING_UP) != 0)
+      if ((this->_info & FACING_UP) != 0)
         return (LARGER);
       else
         return (SMALLER);
@@ -642,9 +644,9 @@ public:
       // The two arcs have vertical slopes at p_int:
       // First check whether one is facing up and one down. In this case the
       // comparison result is trivial.
-      if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return (LARGER);
-      else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
+      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
         return (SMALLER);
 
       // Compute the second-order derivative by y and act according to it.
@@ -657,18 +659,18 @@ public:
       // If necessary, use the third-order derivative by y.
       if (slope_res == EQUAL)
       {
-	// \todo Check this!
-	_derive_by_y_at (p, 3, slope1_numer, slope1_denom);
-	arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
+        // \todo Check this!
+        _derive_by_y_at (p, 3, slope1_numer, slope1_denom);
+        arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
 
-	slope_res = CGAL::compare (slope2_numer*slope1_denom,
-				   slope1_numer*slope2_denom);
+        slope_res = CGAL::compare (slope2_numer*slope1_denom,
+                                   slope1_numer*slope2_denom);
       }
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
 
-      if ((_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
+      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
       {
         // Both are facing up.
         return ((slope_res == LARGER) ? SMALLER : LARGER);
@@ -691,20 +693,21 @@ public:
   Comparison_result compare_to_left (const Self& arc,
                                      const Conic_point_2& p) const
   {
-    CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0 &&
+    CGAL_precondition ((this->_info & IS_VERTICAL_SEGMENT) == 0 &&
                        (arc._info & IS_VERTICAL_SEGMENT) == 0);
 
     // In case one arc is facing upwards and another facing downwards, it is
     // clear that the one facing upward is above the one facing downwards.
     if (_has_same_supporting_conic (arc))
     {
-      if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return (LARGER);
-      else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
+      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
         return (SMALLER);
 
       // In this case the two arcs overlap.
-      CGAL_assertion ((_info & FACING_MASK) == (arc._info & FACING_MASK));
+      CGAL_assertion ((this->_info & FACING_MASK) == 
+                      (arc._info & FACING_MASK));
 
       return (EQUAL);
     }
@@ -747,7 +750,7 @@ public:
       arc._derive_by_x_at (p, 3, slope2_numer, slope2_denom);
       
       slope_res = CGAL::compare (slope2_numer*slope1_denom,
-				 slope1_numer*slope2_denom);
+                                 slope1_numer*slope2_denom);
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion (slope_res != EQUAL);
@@ -758,9 +761,9 @@ public:
     {
       // The first arc has a vertical slope at p: check whether it is
       // facing upwards or downwards and decide accordingly.
-      CGAL_assertion ((_info & FACING_MASK) != 0);
+      CGAL_assertion ((this->_info & FACING_MASK) != 0);
 
-      if ((_info & FACING_UP) != 0)
+      if ((this->_info & FACING_UP) != 0)
         return (LARGER);
       else
         return (SMALLER);
@@ -781,9 +784,9 @@ public:
       // The two arcs have vertical slopes at p_int:
       // First check whether one is facing up and one down. In this case the
       // comparison result is trivial.
-      if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return (LARGER);
-      else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
+      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
         return (SMALLER);
 
       // Compute the second-order derivative by y and act according to it.
@@ -796,18 +799,18 @@ public:
       // If necessary, use the third-order derivative by y.
       if (slope_res == EQUAL)
       {
-	// \todo Check this!
-	_derive_by_y_at (p, 3, slope1_numer, slope1_denom);
-	arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
+        // \todo Check this!
+        _derive_by_y_at (p, 3, slope1_numer, slope1_denom);
+        arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
 
-	slope_res = CGAL::compare (slope2_numer*slope1_denom,
-				   slope1_numer*slope2_denom);
+        slope_res = CGAL::compare (slope2_numer*slope1_denom,
+                                   slope1_numer*slope2_denom);
       }
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
 
-      if ((_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
+      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
       {
         // Both are facing up.
         return ((slope_res == LARGER) ? SMALLER : LARGER);
@@ -833,7 +836,7 @@ public:
                             OutputIterator oi) const
   {
     CGAL_precondition (! _is_special_segment() &&
-		       ! arc._is_special_segment());
+                       ! arc._is_special_segment());
 
     if (_has_same_supporting_conic (arc))
     {
@@ -885,9 +888,9 @@ public:
     if (_id.is_valid() && arc._id.is_valid())
     {
       if (_id < arc._id)
-	conic_pair = Conic_pair (_id, arc._id);
+        conic_pair = Conic_pair (_id, arc._id);
       else
-	conic_pair = Conic_pair (arc._id, _id);
+        conic_pair = Conic_pair (arc._id, _id);
       
       map_iter = inter_map.find (conic_pair);
     }
@@ -906,7 +909,7 @@ public:
       _intersect_supporting_conics (arc, inter_list);
 
       if (! invalid_ids)
-	inter_map[conic_pair] = inter_list;
+        inter_map[conic_pair] = inter_list;
     }
     else
     {
@@ -952,15 +955,15 @@ public:
       Alg_kernel   ker;
     );
     CGAL_precondition (this->contains_point (p) &&
-                       ! ker.equal_2_object() (p, _source) &&
-                       ! ker.equal_2_object() (p, _target));
+                       ! ker.equal_2_object() (p, this->_source) &&
+                       ! ker.equal_2_object() (p, this->_target));
 
     // Make copies of the current arc.
     c1 = *this;
     c2 = *this;
 
     // Assign the endpoints of the arc.
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
+    if ((this->_info & IS_DIRECTED_RIGHT) != 0)
     {
       // The arc is directed from left to right, so p becomes c1's target
       // and c2's source.
@@ -1004,26 +1007,26 @@ public:
     // Check that the arc endpoints are the same.
     Alg_kernel   ker;
 
-    if(_orient == COLLINEAR)
+    if(this->_orient == COLLINEAR)
     {
       CGAL_assertion(arc._orient == COLLINEAR);
-      return((ker.equal_2_object() (_source, arc._source) &&
-              ker.equal_2_object() (_target, arc._target)) ||
-              (ker.equal_2_object() (_source, arc._target) &&
-               ker.equal_2_object() (_target, arc._source)));
+      return((ker.equal_2_object() (this->_source, arc._source) &&
+              ker.equal_2_object() (this->_target, arc._target)) ||
+              (ker.equal_2_object() (this->_source, arc._target) &&
+               ker.equal_2_object() (this->_target, arc._source)));
     }
 
-    if (_orient == arc._orient)
+    if (this->_orient == arc._orient)
     {
       // Same orientation - the source and target points must be the same.
-      return (ker.equal_2_object() (_source, arc._source) &&
-              ker.equal_2_object() (_target, arc._target));
+      return (ker.equal_2_object() (this->_source, arc._source) &&
+              ker.equal_2_object() (this->_target, arc._target));
     }
     else
     {
       // Reverse orientation - the source and target points must be swapped.
-      return (ker.equal_2_object() (_source, arc._target) &&
-              ker.equal_2_object() (_target, arc._source));
+      return (ker.equal_2_object() (this->_source, arc._target) &&
+              ker.equal_2_object() (this->_target, arc._source));
     }
   }
 
@@ -1059,7 +1062,7 @@ public:
   void merge (const Self& arc)
   {
     CGAL_precondition (! _is_special_segment() &&
-		       ! arc._is_special_segment());
+                       ! arc._is_special_segment());
     CGAL_precondition (this->can_merge_with (arc));
 
     // Check if we should extend the arc to the left or to the right.
@@ -1068,20 +1071,20 @@ public:
     if (ker.equal_2_object() (right(), arc.left()))
     {
       // Extend the arc to the right.
-      if ((_info & IS_DIRECTED_RIGHT) != 0)
-        _target = arc.right();
+      if ((this->_info & IS_DIRECTED_RIGHT) != 0)
+        this->_target = arc.right();
       else
-        _source = arc.right();
+        this->_source = arc.right();
     }
     else
     {
       CGAL_precondition (ker.equal_2_object() (left(), arc.right()));
 
       // Extend the arc to the left.
-      if ((_info & IS_DIRECTED_RIGHT) != 0)
-        _source = arc.left();
+      if ((this->_info & IS_DIRECTED_RIGHT) != 0)
+        this->_source = arc.left();
       else
-        _target = arc.left();
+        this->_target = arc.left();
 
     }
 
@@ -1103,65 +1106,65 @@ private:
     // Convert the coefficients of the supporting conic to algebraic numbers.
     Nt_traits        nt_traits;
 
-    alg_r = nt_traits.convert (_r);
-    alg_s = nt_traits.convert (_s);
-    alg_t = nt_traits.convert (_t);
-    alg_u = nt_traits.convert (_u);
-    alg_v = nt_traits.convert (_v);
-    alg_w = nt_traits.convert (_w);
+    alg_r = nt_traits.convert (this->_r);
+    alg_s = nt_traits.convert (this->_s);
+    alg_t = nt_traits.convert (this->_t);
+    alg_u = nt_traits.convert (this->_u);
+    alg_v = nt_traits.convert (this->_v);
+    alg_w = nt_traits.convert (this->_w);
 
     // Set the generating conic ID for the source and target points.
-    _source.set_generating_conic (_id);
-    _target.set_generating_conic (_id);
+    this->_source.set_generating_conic (_id);
+    this->_target.set_generating_conic (_id);
 
     // Clear the _info bits.
-    _info = IS_VALID;
+    this->_info = IS_VALID;
 
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.
     Alg_kernel         ker;
-    Comparison_result  dir_res = ker.compare_xy_2_object() (_source, _target);
+    Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source, this->_target);
 
     CGAL_assertion (dir_res != EQUAL);
 
     if (dir_res == SMALLER)
-      _info = (_info | IS_DIRECTED_RIGHT);
+      this->_info = (this->_info | IS_DIRECTED_RIGHT);
 
     // Compute the degree of the underlying conic.
-    if (CGAL::sign (_r) != ZERO ||
-        CGAL::sign (_s) != ZERO ||
-        CGAL::sign (_t) != ZERO)
+    if (CGAL::sign (this->_r) != ZERO ||
+        CGAL::sign (this->_s) != ZERO ||
+        CGAL::sign (this->_t) != ZERO)
     {
-      if (_orient == COLLINEAR &&
-          ker.compare_x_2_object() (_source, _target) == EQUAL)
+      if (this->_orient == COLLINEAR &&
+          ker.compare_x_2_object() (this->_source, this->_target) == EQUAL)
       {
         // The arc is a vertical segment:
-        _info = (_info | IS_VERTICAL_SEGMENT);
+        this->_info = (this->_info | IS_VERTICAL_SEGMENT);
       }
 
-      _info = (_info | DEGREE_2);
+      this->_info = (this->_info | DEGREE_2);
     }
     else
     {
-      CGAL_assertion (CGAL::sign (_u) != ZERO ||
-                      CGAL::sign (_v) != ZERO);
+      CGAL_assertion (CGAL::sign (this->_u) != ZERO ||
+                      CGAL::sign (this->_v) != ZERO);
 
-      if (CGAL::sign (_v) == ZERO)
+      if (CGAL::sign (this->_v) == ZERO)
       {
 
         // The supporting curve is of the form: _u*x + _w = 0
-        _info = (_info | IS_VERTICAL_SEGMENT);
+        this->_info = (this->_info | IS_VERTICAL_SEGMENT);
       }
 
-      _info = (_info | DEGREE_1);
+      this->_info = (this->_info | DEGREE_1);
 
       return;
     }
 
     // Compute a midpoint between the source and the target and get the y-value
     // of the arc at its x-coordiante.
-    Point_2          p_mid = ker.construct_midpoint_2_object() (_source,
-                                                                _target);
+    Point_2          p_mid = ker.construct_midpoint_2_object() (this->_source,
+                                                                this->_target);
     Algebraic        ys[2];
     int              n_ys;
 
@@ -1177,7 +1180,7 @@ private:
     {
       // Mark that we should use the -sqrt(disc) root for points on this
       // x-monotone arc.
-      _info = (_info & ~PLUS_SQRT_DISC_ROOT);
+      this->_info = (this->_info & ~PLUS_SQRT_DISC_ROOT);
     }
     else
     {
@@ -1187,10 +1190,10 @@ private:
 
       // Mark that we should use the +sqrt(disc) root for points on this
       // x-monotone arc.
-      _info = (_info | PLUS_SQRT_DISC_ROOT);
+      this->_info = (this->_info | PLUS_SQRT_DISC_ROOT);
     }
 
-    if (_orient == COLLINEAR)
+    if (this->_orient == COLLINEAR)
       return;
 
     // Check whether the conic is facing up or facing down:
@@ -1203,12 +1206,12 @@ private:
     if (res == LARGER)
     {
       // The arc is above the connecting segment, so it is facing upwards.
-      _info = (_info | FACING_UP);
+      this->_info = (this->_info | FACING_UP);
     }
     else if (res == SMALLER)
     {
       // The arc is below the connecting segment, so it is facing downwards.
-      _info = (_info | FACING_DOWN);
+      this->_info = (this->_info | FACING_DOWN);
     }
 
     return;
@@ -1220,7 +1223,7 @@ private:
    */
   bool _is_special_segment () const
   {
-    return (_extra_data_P != NULL && _extra_data_P->side == ZERO);
+    return (this->_extra_data_P != NULL && this->_extra_data_P->side == ZERO);
   }
 
   /*!
@@ -1239,8 +1242,8 @@ private:
       // Check whether p satisfies the conic equation.
       // The point must satisfy: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0.
       _sign = CGAL::sign ((alg_r*px + alg_t*py + alg_u) * px +
-			  (alg_s*py + alg_v) * py +
-			  alg_w);
+                          (alg_s*py + alg_v) * py +
+                          alg_w);
     }
     else
     {
@@ -1265,17 +1268,17 @@ private:
 
     // In case both arcs are collinear, check if they have the same
     // supporting lines.
-    if (_orient == COLLINEAR && arc._orient == COLLINEAR)
+    if (this->_orient == COLLINEAR && arc._orient == COLLINEAR)
     {
       // Construct the two supporting lines and compare them.
       Alg_kernel                             ker;
       typename Alg_kernel::Construct_line_2  construct_line =
-	                                         ker.construct_line_2_object();
-      typename Alg_kernel::Line_2            l1 = construct_line (_source,
-								  _target);
-      typename Alg_kernel::Line_2            l2 = construct_line (arc._source,
-								  arc._target);
-      typename Alg_kernel::Equal_2           equal = ker.equal_2_object();
+                                                 ker.construct_line_2_object();
+      typename Alg_kernel::Line_2          l1 = construct_line (this->_source,
+                                                                this->_target);
+      typename Alg_kernel::Line_2          l2 = construct_line (arc._source,
+                                                                arc._target);
+      typename Alg_kernel::Equal_2         equal = ker.equal_2_object();
 
       if (equal (l1, l2))
         return (true);
@@ -1285,7 +1288,7 @@ private:
 
       return (equal (l1, l2));
     }
-    else if (_orient == COLLINEAR || arc._orient == COLLINEAR)
+    else if (this->_orient == COLLINEAR || arc._orient == COLLINEAR)
     {
       // Only one arc is collinear, so the supporting curves cannot be the
       // same:
@@ -1297,18 +1300,18 @@ private:
     Integer        factor1 = 1;
     Integer        factor2 = 1;
 
-    if (CGAL::sign (_r) != ZERO)
-      factor1 = _r;
-    else if (CGAL::sign (_s) != ZERO)
-      factor1 = _s;
-    else if (CGAL::sign (_t) != ZERO)
-      factor1 = _t;
-    else if (CGAL::sign (_u) != ZERO)
-      factor1 = _u;
-    else if (CGAL::sign (_v) != ZERO)
-      factor1 = _v;
-    else if (CGAL::sign (_w) != ZERO)
-      factor1 = _w;
+    if (CGAL::sign (this->_r) != ZERO)
+      factor1 = this->_r;
+    else if (CGAL::sign (this->_s) != ZERO)
+      factor1 = this->_s;
+    else if (CGAL::sign (this->_t) != ZERO)
+      factor1 = this->_t;
+    else if (CGAL::sign (this->_u) != ZERO)
+      factor1 = this->_u;
+    else if (CGAL::sign (this->_v) != ZERO)
+      factor1 = this->_v;
+    else if (CGAL::sign (this->_w) != ZERO)
+      factor1 = this->_w;
 
     if (CGAL::sign (arc._r) != ZERO)
       factor2 = arc._r;
@@ -1324,12 +1327,12 @@ private:
     else if (CGAL::sign (arc._w) != ZERO)
       factor2 = arc._w;
 
-    return (CGAL::compare  (_r * factor2, arc._r * factor1) == EQUAL &&
-            CGAL::compare  (_s * factor2, arc._s * factor1) == EQUAL &&
-            CGAL::compare  (_t * factor2, arc._t * factor1) == EQUAL &&
-            CGAL::compare  (_u * factor2, arc._u * factor1) == EQUAL &&
-            CGAL::compare  (_v * factor2, arc._v * factor1) == EQUAL &&
-            CGAL::compare  (_w * factor2, arc._w * factor1) == EQUAL);
+    return (CGAL::compare  (this->_r * factor2, arc._r * factor1) == EQUAL &&
+            CGAL::compare  (this->_s * factor2, arc._s * factor1) == EQUAL &&
+            CGAL::compare  (this->_t * factor2, arc._t * factor1) == EQUAL &&
+            CGAL::compare  (this->_u * factor2, arc._u * factor1) == EQUAL &&
+            CGAL::compare  (this->_v * factor2, arc._v * factor1) == EQUAL &&
+            CGAL::compare  (this->_w * factor2, arc._w * factor1) == EQUAL);
   }
 
   /*!
@@ -1350,16 +1353,16 @@ private:
       // derivatives are all 0.
       if (i == 1)
       {
-	if (CGAL::sign (_extra_data_P->b) != NEGATIVE)
-	{          
-	  slope_numer = - _extra_data_P->a;
-	  slope_denom = _extra_data_P->b;
-	}
-	else
-	{
-	  slope_numer = _extra_data_P->a;
-	  slope_denom = - _extra_data_P->b;
-	}
+        if (CGAL::sign (this->_extra_data_P->b) != NEGATIVE)
+        {          
+          slope_numer = - this->_extra_data_P->a;
+          slope_denom = this->_extra_data_P->b;
+        }
+        else
+        {
+          slope_numer = this->_extra_data_P->a;
+          slope_denom = - this->_extra_data_P->b;
+        }
       }
       else
       {
@@ -1477,16 +1480,16 @@ private:
       // derivatives are all 0.
       if (i == 1)
       {
-	if (CGAL::sign (_extra_data_P->a) != NEGATIVE)
-	{          
-	  slope_numer = - _extra_data_P->b;
-	  slope_denom = _extra_data_P->a;
-	}
-	else
-	{
-	  slope_numer = _extra_data_P->b;
-	  slope_denom = - _extra_data_P->a;
-	}
+        if (CGAL::sign (this->_extra_data_P->a) != NEGATIVE)
+        {          
+          slope_numer = - this->_extra_data_P->b;
+          slope_denom = this->_extra_data_P->a;
+        }
+        else
+        {
+          slope_numer = this->_extra_data_P->b;
+          slope_denom = - this->_extra_data_P->a;
+        }
       }
       else
       {
@@ -1598,7 +1601,7 @@ private:
   bool _compute_overlap (const Self& arc, Self& overlap) const
   {
     CGAL_assertion (! _is_special_segment() &&
-		    ! arc._is_special_segment());
+                    ! arc._is_special_segment());
 
     // Check if the two arcs are identical.
     if (equals (arc))
@@ -1643,10 +1646,10 @@ private:
 
       return (true);
     }
-    else if (arc._is_between_endpoints (_source) &&
-             arc._is_between_endpoints (_target) &&
-             (arc._is_strictly_between_endpoints(_source) ||
-              arc._is_strictly_between_endpoints(_target)))
+    else if (arc._is_between_endpoints (this->_source) &&
+             arc._is_between_endpoints (this->_target) &&
+             (arc._is_strictly_between_endpoints(this->_source) ||
+              arc._is_strictly_between_endpoints(this->_target)))
     {
       // Case 4 - *this:     +----------->
       //            arc:   +================>
@@ -1667,9 +1670,9 @@ private:
                                      Intersection_list& inter_list) const
   {
     CGAL_assertion (! _is_special_segment() &&
-		    ! arc._is_special_segment());
+                    ! arc._is_special_segment());
 
-    const int   deg1 = ((_info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
+    const int   deg1 = ((this->_info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
     const int   deg2 = ((arc._info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
     Nt_traits   nt_traits;
 
@@ -1678,7 +1681,8 @@ private:
     int         n_xs;
 
     n_xs = _compute_resultant_roots (nt_traits,
-                                     _r, _s, _t, _u, _v, _w,
+                                     this->_r, this->_s, this->_t,
+                                     this->_u, this->_v, this->_w,
                                      deg1,
                                      arc._r, arc._s, arc._t,
                                      arc._u, arc._v, arc._w,
@@ -1691,7 +1695,8 @@ private:
     int         n_ys;
 
     n_ys = _compute_resultant_roots (nt_traits,
-                                     _s, _r, _t, _v, _u, _w,
+                                     this->_s, this->_r, this->_t,
+                                     this->_v, this->_u, this->_w,
                                      deg1,
                                      arc._s, arc._r, arc._t,
                                      arc._v, arc._u, arc._w,
@@ -1740,7 +1745,7 @@ private:
                                                     const Point_2& p) const
   {
     CGAL_assertion (! _is_special_segment() &&
-		    ! arc._is_special_segment());
+                    ! arc._is_special_segment());
 
     // Compare the slopes of the two arcs at p, using their first-order
     // partial derivatives.

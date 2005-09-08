@@ -211,7 +211,7 @@ public:
       (he->source()->point(), he->target()->point()) == LARGER);
 
     this->traits()->split_2_object()(he->curve(), pt, sub_cv2, sub_cv1);
-    return (m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));
+    return (this->m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));
   }
 
   // check if the halfedge associated with 'sc' will be splitted at the given
@@ -220,10 +220,12 @@ public:
   bool is_split_event(Subcurve* sc, Event* event)
   {
     if(sc->get_last_curve().get_halfedge_handle() == Halfedge_handle(NULL))
-      return false;
+      return (false);
+
     if(! sc->get_orig_subcurve1())
     {
-      return (reinterpret_cast<Event*>(sc->get_left_event())!= this->current_event());
+      return (reinterpret_cast<Event*>(sc->get_left_event())!= 
+	      this->current_event());
     }
     return
       (is_split_event(reinterpret_cast<Subcurve*>(sc->get_orig_subcurve1()),

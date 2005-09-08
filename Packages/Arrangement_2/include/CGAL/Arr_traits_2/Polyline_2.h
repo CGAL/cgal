@@ -105,7 +105,7 @@ public:
   Bbox_2 bbox() const
   {
     // Compute the union of the bounding boxes of all segments.
-    unsigned int  n = size();
+    unsigned int  n = this->size();
     Bbox_2        bbox;
     unsigned int  i;
     
@@ -382,14 +382,14 @@ public:
   inline void push_back (const Segment_2& seg)
   {
     CGAL_precondition_code (Segment_traits_2   seg_tr);
-    CGAL_precondition_code (const unsigned int n = size());
+    CGAL_precondition_code (const unsigned int n = this->size());
     CGAL_precondition (seg_tr.compare_xy_2_object() (seg.source(),
 						     seg.target()) == SMALLER);
     CGAL_precondition (n == 0 ||
-		       seg_tr.equal_2_object() (segments[n - 1].target(),
+		       seg_tr.equal_2_object() (this->segments[n - 1].target(),
 						seg.source()));
 
-    segments.push_back (seg);
+    this->segments.push_back (seg);
   }
 
 private:
@@ -397,11 +397,11 @@ private:
   /*! Reverse the polyline. */
   void _reverse()
   {
-    typename Base::const_reverse_iterator  ps = rbegin();
+    typename Base::const_reverse_iterator  ps = this->rbegin();
     typename Base::const_reverse_iterator  pt = ps;
     ++pt;
 
-    std::vector<Segment_2>  rev_segs (size());
+    std::vector<Segment_2>  rev_segs (this->size());
     unsigned int            i = 0;
 
     while (pt != rend())
@@ -411,7 +411,7 @@ private:
       i++;
     }
 
-    segments = rev_segs;
+    this->segments = rev_segs;
     return;
   }
 

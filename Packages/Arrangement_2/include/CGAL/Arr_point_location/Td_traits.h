@@ -76,52 +76,64 @@ public:
     return cv.identical(CURVE_AT_INFINITY);
   }
 
-inline bool trapezoid_bottom_curve_equal(X_trapezoid_const_ref left,
+  inline bool trapezoid_bottom_curve_equal(X_trapezoid_const_ref left,
 					   X_trapezoid_const_ref right) const
-/* returns true if bottom curves of input are the same */
-{
-  if (left.is_bottom_unbounded()) return right.is_bottom_unbounded();
-  if (right.is_bottom_unbounded()) return false;
-  return equal_2_object()(left.bottom(),right.bottom());
-}
+  /* returns true if bottom curves of input are the same */
+  {
+    if (left.is_bottom_unbounded())
+      return (right.is_bottom_unbounded());
+  
+    if (right.is_bottom_unbounded()) 
+      return (false);
+    
+    return (this->equal_2_object()(left.bottom(),right.bottom()));
+  }
 
-inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
+  inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
 					X_trapezoid_const_ref right) const
-/* returns true if top curves of input are the same */
-{
-  if (left.is_top_unbounded()) return right.is_top_unbounded();
-  if (right.is_top_unbounded()) return false;
-  return equal_2_object()(left.top(),right.top());
-}
+  /* returns true if top curves of input are the same */
+  {
+    if (left.is_top_unbounded()) 
+      return (right.is_top_unbounded());
+    
+    if (right.is_top_unbounded()) 
+      return (false);
+    
+    return (this->equal_2_object()(left.top(),right.top()));
+  }
 
-//returns true if the trapezoid is a point or a curve
-  bool is_degenerate(const_ref tr) const {
-    return is_degenerate_point(tr) || 
-      !tr.is_top_unbounded() && 
-      !tr.is_bottom_unbounded() && 
-      equal_2_object()(tr.bottom(),tr.top());
+  //returns true if the trapezoid is a point or a curve
+  bool is_degenerate(const_ref tr) const
+  {
+    return (is_degenerate_point(tr) || 
+	    (!tr.is_top_unbounded() && 
+	     !tr.is_bottom_unbounded() && 
+	     this->equal_2_object()(tr.bottom(),tr.top())));
   }		
   
   //returns true if the trapezoid is a point 
   bool is_degenerate_point(const_ref tr) const
   {
-    return !tr.is_left_unbounded() && !tr.is_right_unbounded() && 
-      equal_2_object()(tr.left(),tr.right());
+    return (!tr.is_left_unbounded() && 
+	    !tr.is_right_unbounded() && 
+	    this->equal_2_object()(tr.left(),tr.right()));
   }
 
   //returns true if the trapezoid is a curve 
   bool is_degenerate_curve(const_ref tr) const
   {
-    return !tr.is_top_unbounded() && !tr.is_bottom_unbounded() && 
-      equal_2_object()(tr.bottom(), tr.top()) && !is_degenerate_point(tr);
+    return (!tr.is_top_unbounded() && 
+	    !tr.is_bottom_unbounded() && 
+	    this->equal_2_object()(tr.bottom(), tr.top()) && 
+	    !is_degenerate_point(tr));
   }
 
   //returns true if the trapezoid is vertical 
   bool is_vertical(const_ref tr) const
   {
-    return !tr.is_left_unbounded() && 
-      !tr.is_right_unbounded() && 
-      (compare_x_2_object()(tr.left(),tr.right())== EQUAL);
+    return (!tr.is_left_unbounded() && 
+	    !tr.is_right_unbounded() && 
+	    (this->compare_x_2_object()(tr.left(),tr.right())== EQUAL));
   }
   
   /* Description:
@@ -129,41 +141,38 @@ inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
     bool is_inside(const_ref tr,const Point& p) const
   {
     return	
-      (tr.is_left_unbounded()||
-      (compare_xy_2_object()(tr.left(),p)==SMALLER)
-       )&&
-      (tr.is_right_unbounded()||
-      (compare_xy_2_object()(tr.right(),p)==LARGER)
-       )&&
-      (tr.is_bottom_unbounded()||
-       compare_y_at_x_2_object()(p, tr.bottom()) == LARGER)&&
+      (tr.is_left_unbounded() ||
+       (this->compare_xy_2_object()(tr.left(),p)==SMALLER)) &&
+      (tr.is_right_unbounded() ||
+       (this->compare_xy_2_object()(tr.right(),p)==LARGER)) &&
+      (tr.is_bottom_unbounded() ||
+       this->compare_y_at_x_2_object()(p, tr.bottom()) == LARGER) &&
       (tr.is_top_unbounded()||
-       compare_y_at_x_2_object()(p, tr.top()) == SMALLER);
+       this->compare_y_at_x_2_object()(p, tr.top()) == SMALLER);
   }
 
-  //returns true if the point is inside the closure of the trapezoid (inlcude all boundaries)
+  // returns true if the point is inside the closure of the trapezoid 
+  // (inlcude all boundaries)
   bool is_in_closure(const_ref tr,const Point& p) const
   {
     // test left and right sides
     if ((tr.is_left_unbounded()||
-         !(compare_xy_2_object()(p,tr.left())==SMALLER)
-         )&&
+         !(this->compare_xy_2_object()(p,tr.left())==SMALLER)) &&
         (tr.is_right_unbounded()||
-         !(compare_xy_2_object()(p,tr.right())==LARGER)
-         ))
+         !(this->compare_xy_2_object()(p,tr.right())==LARGER)))
       {
         // test bottom side
         if (!tr.is_bottom_unbounded()) 
-          {
-            if (compare_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
-              return false;
-          }
+	{
+	  if (this->compare_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
+	    return false;
+	}
         // test top side
         if (!tr.is_top_unbounded())
-          {
-            if (compare_y_at_x_2_object()(p, tr.top()) == LARGER)
-              return false;
-          }
+	{
+	  if (this->compare_y_at_x_2_object()(p, tr.top()) == LARGER)
+	    return false;
+	}
         return true;
       }
     return false;

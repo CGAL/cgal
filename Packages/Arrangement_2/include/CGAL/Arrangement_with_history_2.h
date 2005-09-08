@@ -160,7 +160,7 @@ protected:
                           public In_place_list_base<Curve_halfedges>
   {
     friend class Curve_halfedges_observer;
-    friend class Self;
+    friend class Arrangement_with_history_2<Traits_, Dcel_>;
 
   private:
 
@@ -479,7 +479,7 @@ public:
     Halfedge_handle                         e;
     const Curve_halfedges                  *org_c;
 
-    for (eit = edges_begin(); eit != edges_end(); ++eit)
+    for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
     {
       e = eit->handle();
       for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
@@ -533,13 +533,13 @@ public:
   /*! Access the traits object (non-const version). */
   Traits_2* get_traits ()
   {
-    return (traits);
+    return (this->traits);
   }
   
   /*! Access the traits object (const version). */
   const Traits_2* get_traits () const
   {
-    return (traits);
+    return (this->traits);
   }
 
   /// \name Traversal of the arrangement curves.
@@ -648,15 +648,15 @@ public:
     // Split the curve associated with the halfedge e at the given point p.
     Data_x_curve_2       cv1, cv2;
 
-    traits->split_2_object() (e->curve(), p,
-                              cv1, cv2);
+    this->traits->split_2_object() (e->curve(), p,
+				    cv1, cv2);
 
     // cv1 always lies to the left of cv2. If e is directed from left to right,
     // we should split and return the halfedge associated with cv1, and
     // otherwise we should return the halfedge associated with cv2 after the
     // split.
-    if (traits->compare_xy_2_object() (e->source()->point(),
-                                       e->target()->point()) == SMALLER)
+    if (this->traits->compare_xy_2_object() (e->source()->point(),
+					     e->target()->point()) == SMALLER)
     {
       return (Base_arr_2::split_edge (e, cv1, cv2));
     }
@@ -695,15 +695,15 @@ public:
     CGAL_precondition_msg (degree == 2,
                            "Cannot remove the common end-vertex.");
 
-    CGAL_precondition_msg (traits->are_mergeable_2_object() (e1->curve(),
-                                                             e2->curve()),
+    CGAL_precondition_msg (this->traits->are_mergeable_2_object()(e1->curve(),
+								  e2->curve()),
                            "Curves are not mergeable.");
 
     // Merge the two curves.
     Data_x_curve_2       cv;
     
-    traits->merge_2_object() (e1->curve(), e2->curve(),
-                              cv);
+    this->traits->merge_2_object() (e1->curve(), e2->curve(),
+				    cv);
 
     return (Base_arr_2::merge_edge (e1, e2, cv));
   }
@@ -957,7 +957,7 @@ public:
     Halfedge_handle                         e;
     const Curve_halfedges                  *org_c;
 
-    for (eit = edges_begin(); eit != edges_end(); ++eit)
+    for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
     {
       e = eit->handle();
       for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)

@@ -995,7 +995,7 @@ public:
    */
   operator Segment_2 () const
   {
-    return (Segment_2(ps, pt));
+    return (Segment_2 (this->ps, this->pt));
   }
 
   /*!
@@ -1003,7 +1003,7 @@ public:
    */
   Bbox_2 bbox() const
   {
-    Segment_2 seg(ps, pt);
+    Segment_2 seg (this->ps, this->pt);
     return (seg.bbox());
   }
 
@@ -1012,7 +1012,7 @@ public:
    */
   const Point_2& source() const
   { 
-    return (ps);
+    return (this->ps);
   }
 
   /*!
@@ -1020,7 +1020,7 @@ public:
    */
   const Point_2& target() const
   {
-    return (pt);
+    return (this->pt);
   }
 };
 
