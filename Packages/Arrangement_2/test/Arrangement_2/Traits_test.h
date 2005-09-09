@@ -84,8 +84,8 @@ private:
     return true;
   }
 
-  template <class T>  
-  bool compare_and_print(const T & exp_answer, const T & real_answer,
+  template <class T1, class T2>  
+  bool compare_and_print(const T1 & exp_answer, const T2 & real_answer,
                          const char * str = "result")
   {
     bool result = compare(exp_answer, real_answer, str);
