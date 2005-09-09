@@ -1,3 +1,7 @@
+9 September 2005 Sylvain Pion
+- Add NT_converter<double, double> specialization to disambiguate (spotted by
+  Nico).
+
 9 August 2005 Sylvain Pion
 - Rational_traits : add an overload of make_rational() that takes rational
   arguments.

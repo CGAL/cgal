@@ -68,6 +68,17 @@ struct NT_converter < NT1, double >
     }
 };
 
+template <>
+struct NT_converter < double, double >
+  : public std::unary_function< double, double >
+{
+    const double &
+    operator()(const double &a) const
+    {
+        return a;
+    }
+};
+
 template < class NT1, bool b >
 struct NT_converter < NT1, Interval_nt<b> >
   : public std::unary_function< NT1, Interval_nt<b> >
