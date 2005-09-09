@@ -404,7 +404,7 @@ private:
     std::vector<Segment_2>  rev_segs (this->size());
     unsigned int            i = 0;
 
-    while (pt != rend())
+    while (pt != this->rend())
     {
       rev_segs[i] = Segment_2 (*ps, *pt);
       ++ps; ++pt;

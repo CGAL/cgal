@@ -1118,7 +1118,7 @@ private:
     this->_target.set_generating_conic (_id);
 
     // Clear the _info bits.
-    this->_info = IS_VALID;
+    this->_info = Conic_arc_2::IS_VALID;
 
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.

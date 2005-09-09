@@ -265,7 +265,7 @@ public:
                this->m_currentEvent->Print();
              });
     _fix_overlap_subcurves();
-    _sort_left_curves();
+    this->_sort_left_curves();
     this->m_visitor->before_handle_event(this->m_currentEvent);
 
     PRINT("left curves after sorting: "<<"\n";);
