@@ -3057,7 +3057,7 @@ nonbasic_original_variable_value(int i) const
             value = qp_l[i];
             break;
         case BASIC:
-            assert(false);
+            CGAL_qpe_assertion(false);
             break;
     }
     return value;
