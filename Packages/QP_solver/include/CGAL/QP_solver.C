@@ -3527,72 +3527,6 @@ is_solution_feasible()
 
 template < class Rep_ >
 bool QP_solver<Rep_>::
-is_solution_feasible_aux()
-{
-    Index_iterator i_it, M_i_it;
-    Value_iterator v_it;
-    Values     lhs_col;
-    bool           feasible, original_vars_nonneg,
-                   slack_vars_nonneg;
-    Indices M;
-    int k;
-    
-    //check nonnegativity constraints of original vars and artificial vars
-    original_vars_nonneg = true;
-    for (v_it = x_B_O.begin(); v_it != x_B_O.end(); ++v_it) {
-        original_vars_nonneg = original_vars_nonneg && ((*v_it) >= et0);
-    }
-    //check nonegativity constraints of slack vars
-    slack_vars_nonneg = true;
-    for (v_it = x_B_S.begin(); v_it != x_B_S.end(); ++v_it) {
-        slack_vars_nonneg = slack_vars_nonneg && ((*v_it) >= et0);
-    }
-
-    feasible = original_vars_nonneg && slack_vars_nonneg;
-    
-    //check feasibility against auxiliary problem
-    lhs_col.insert(lhs_col.end(), qp_m, et0);
-    for (int i = 0; i < qp_m; ++i) {
-        M.push_back(i);
-    }
-    v_it = x_B_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        if ((*i_it) < qp_n) {                  // ordinary original variable
-	    A_by_index_accessor  a_accessor( qp_A[*i_it]);
-	    for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-		lhs_col[*M_i_it] += (*v_it)
-		    * (*A_by_index_iterator( M_i_it, a_accessor));
-	    }
-	} else {                               // artificial variable
-	    if ((*i_it) != art_s_i) {          //normal artificial variable
-	        k = (*i_it) - qp_n - slack_A.size();
-	        lhs_col[ art_A[k].first] += ( art_A[ k].second ? -et1 :  et1)
-		    * (*v_it);
-	    } else {                           // special artificial variable
-	        S_by_index_accessor  s_accessor( art_s.begin());
-		for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-		    lhs_col[*M_i_it] += (*v_it)
-		        * (*S_by_index_iterator(M_i_it,s_accessor));
-		}
-	    }
-	}
-    }
-    
-    v_it = x_B_S.begin();
-    for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
-    	k = (*i_it) - qp_n;
-	lhs_col[ slack_A[ k].first] += ( slack_A[ k].second ? -et1 :  et1)
-	    * (*v_it);
-    }
-    
-    for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-        feasible = feasible && (lhs_col[*M_i_it] == ET(qp_b[*M_i_it]) * d);
-    }    
-    return feasible;
-}
-
-template < class Rep_ >
-bool QP_solver<Rep_>::
 is_solution_optimal(Tag_false)		//QP case
 {
     Index_iterator i_it, M_i_it, N_i_it;
@@ -3821,7 +3755,7 @@ is_solution_optimal_aux()
     if (art_s_i == -2) ++no_of_wo_vars;
     
     
-    CGAL_expensive_precondition(is_solution_feasible_aux());
+    CGAL_expensive_precondition(is_auxiliary_problem_feasible());
 
     // solution vector of auxiliary problem
     Values x_aux(no_of_wo_vars, et0);
@@ -4155,7 +4089,7 @@ is_solution_valid()
 			    vout << "optimal: " << o << std::endl;
 			}
 			return (f && o);
-    case INFEASIBLE: 	f = this->is_solution_feasible_aux();
+    case INFEASIBLE: 	f = this->is_auxiliary_problem_feasible();
     			o = this->is_solution_optimal_aux();
 			aux_positive = this->solution() > et0;
 			CGAL_qpe_debug {
@@ -4174,6 +4108,119 @@ is_solution_valid()
     			return (f && u);
     default: 		return false;
     }
+}
+
+template < class Rep_ >
+bool QP_solver<Rep_>::is_valid()
+{
+    switch(this->m_status) {
+    case UPDATE:
+      return false;
+    case OPTIMAL:
+      {
+	const bool f = this->is_solution_feasible();
+	const bool o = this->is_solution_optimal(Is_linear());
+	CGAL_qpe_debug {
+	  vout << "feasible: " << f << std::endl;
+	  vout << "optimal: " << o << std::endl;
+	}
+	return f && o;
+      }
+    case INFEASIBLE:
+      {
+	const bool f = this->is_auxiliary_problem_feasible();
+	const bool o = this->is_solution_optimal_aux();
+	const bool aux_positive = this->solution() > et0;
+	CGAL_qpe_debug {
+	  vout << "feasible_aux: " << f << std::endl;
+	  vout << "optimal_aux: " << o << std::endl;
+	  vout << "objective value positive: " <<
+	    aux_positive << std::endl;
+	}
+	return f && o && aux_positive;
+      }
+    case UNBOUNDED:    
+      {
+	const bool f = this->is_solution_feasible();
+	const bool u = this->is_solution_unbounded(Is_linear());
+	CGAL_qpe_debug {
+	  vout << "feasible: " << f << std::endl;
+	  vout << "unbounded: " << u << std::endl;
+	}
+	return f && u;
+      }
+    default: 	      
+      return false;
+    }
+}
+
+template < class Rep_ >
+bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
+{
+  // some simple consistency checks:
+  CGAL_qpe_assertion(is_phaseI);
+
+  // check nonnegativity of original- and artificial variables:
+  for (Value_const_iterator v_it = x_B_O.begin(); v_it != x_B_O.end(); ++v_it)
+    if (*v_it < et0)
+      return false;
+  
+  // check nonegativity of slack variables:
+  for (Value_const_iterator v_it = x_B_S.begin(); v_it != x_B_S.end(); ++v_it)
+    if (*v_it < et0)
+      return false;
+  
+  // check whether the current solution is feasible for the auxiliary
+  // problem: for this, we use the fact that the auxiliary problem
+  // looks as follows:
+  //
+  //                          [  x_original  ]
+  //    [ A A_art a_spec A_s] [ x_artificial ] = b * d           (L1)
+  //                          [   x_special  ]
+  //                          [    x_slack   ]
+  //
+  // Here, every column i of A_art corresponds to an equality
+  // constraint of the original problem and contains either e_i or
+  // -e_i, a_spec is the special artificial column (which only
+  // contains zeros, ones, or minus ones), and A_s contains a column
+  // (e_i or -e_i) for every slack variable.  Observe that the
+  // right-hand size is multiplied by d because we maintain the
+  // denominator of the solution (which is d) separately.
+
+  // compute left-hand side of (L1):
+  Values lhs_col(qp_m, et0);
+  Value_const_iterator x_it = x_B_O.begin();
+  for (Index_const_iterator i_it = B_O.begin();
+       i_it != B_O.end();
+       ++i_it, ++x_it)                    // iterate over all nonzero vars
+    if (*i_it < qp_n) {                   // ordinary original variable?
+      A_by_index_accessor  a_accessor(qp_A[*i_it]);
+      for (int i=0; i<qp_m; ++i)
+	lhs_col[i] += (*x_it) * a_accessor(i);
+    } else {                              // artificial variable?
+      if (*i_it != art_s_i)   {           // normal artificial variable?
+	const int k = *i_it - qp_n - slack_A.size();
+	lhs_col[art_A[k].first] += (art_A[ k].second ? -et1 :  et1) * (*x_it);
+      } else {                           // special artificial variable
+	S_by_index_accessor  s_accessor(art_s.begin());
+	for (int i=0; i<qp_m; ++i)
+	  lhs_col[i] += (*x_it) * s_accessor(i);
+      }
+    }
+  x_it = x_B_S.begin();
+  for (Index_const_iterator i_it = B_S.begin();
+       i_it != B_S.end();
+       ++i_it, ++x_it) {
+    const int k = *i_it - qp_n;
+    lhs_col[slack_A[k].first] += (slack_A[ k].second ? -et1 : et1) * (*x_it);
+  }
+  
+  // check equality (L1);
+  for (int i=0; i<qp_m; ++i)
+    if (lhs_col[i] != ET(qp_b[i]) * d)
+      return false;
+
+  return true;
 }
 
 CGAL_END_NAMESPACE

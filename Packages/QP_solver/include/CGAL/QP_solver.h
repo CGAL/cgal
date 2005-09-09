@@ -914,13 +914,20 @@ public:
     // 
     public:
     bool is_solution_feasible();
-    bool is_solution_feasible_aux();
     bool is_solution_optimal(Tag_false is_linear);
     bool is_solution_optimal(Tag_true is_linear);
     bool is_solution_optimal_aux();
     bool is_solution_valid();
     bool is_solution_unbounded(Tag_false is_linear);
     bool is_solution_unbounded(Tag_true is_linear);
+
+private:
+  // validity checks:
+    bool is_auxiliary_problem_feasible();
+
+public:
+  // validity checks:
+  bool is_valid();
 
 // ----------------------------------------------------------------------------
 
