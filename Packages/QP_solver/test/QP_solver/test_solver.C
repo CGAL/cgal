@@ -489,7 +489,8 @@ bool processFType(const std::string& filename,
 	Has_equalities_only_and_full_rank,Tag_true>(filename,options))
       success = false;
 #endif
-#ifdef QP_NOT_F
+#if 0 // todo: once solver works for explicit bounds, we change this
+      // back to: #ifdef QP_NOT_F
   if (!processOnlyOneValue || value==false)
     if (!processType<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Tag_false>(filename,options))
@@ -585,6 +586,11 @@ int main(const int ac,const char **av) {
   } else 
     cout << "Reading from standard in..." << endl;
   std::istream &in = (readFromStdIn? std::cin : args);
+
+  // temporarily until upper bounding works:
+  cout << "Warning: test_solver currently does not run" << endl
+       << "the general solver for non-standard-form problems" << endl
+       << "(because it is not yet fully functional)." << endl;
 
   // process input file(s):
   std::map<std::string,int> options;
