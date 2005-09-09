@@ -70,8 +70,8 @@ private:
     print_end_of_line();
   }
   
-  template <class T>  
-  bool compare(const T & exp_answer, const T & real_answer,
+  template <class T1, class T2>  
+  bool compare(const T1 & exp_answer, const T2 & real_answer,
                const char * str = "result")
   {
     if (exp_answer != real_answer) {
