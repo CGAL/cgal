@@ -358,7 +358,7 @@ compare(const Root_of_2<RT> &a,
 
   RootOf_1 d_a(-a[1],2*a[2]);
 
-  int cmp = compare(b,d_a);
+  int cmp = CGAL_NTS compare(b,d_a);
 
   if (cmp > 0)
     return (a.is_smaller() ?
@@ -380,7 +380,7 @@ Comparison_result
 compare(const typename Root_of_traits< RT >::RootOf_1 &a,
 	const Root_of_2<RT> &b)
 {
-   return opposite(compare(b, a));
+   return opposite(CGAL_NTS compare(b, a));
 }
 
 template < typename RT >
@@ -390,7 +390,7 @@ compare(const Root_of_2<RT> &a, const RT &b)
   CGAL_assertion(is_valid(a));
 
   // First, we compare b to the root of the derivative of a.
-  int cmp = compare(2*a[2]*b, -a[1]);
+  int cmp = CGAL_NTS compare(2*a[2]*b, -a[1]);
 
   if (cmp > 0)
     return a.is_smaller() ? SMALLER
@@ -408,21 +408,21 @@ template < typename RT >  inline
 Comparison_result
 compare(const RT &a, const Root_of_2<RT> &b)
 {
-   return opposite(compare(b, a));
+   return opposite(CGAL_NTS compare(b, a));
 }
 
 template < typename RT >  inline
 Comparison_result
 compare(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
 {
-   return compare(a, RT(b));
+   return CGAL_NTS compare(a, RT(b));
 }
 
 template < typename RT >  inline
 Comparison_result
 compare(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 {
-   return opposite(compare(b, RT(a)));
+   return opposite(CGAL_NTS compare(b, RT(a)));
 }
 
 
@@ -431,7 +431,7 @@ inline
 bool
 operator<(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT >
@@ -440,7 +440,7 @@ bool
 operator<(const typename Root_of_traits< RT >::RootOf_1 &a,
 	  const Root_of_2<RT> &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT >
@@ -449,7 +449,7 @@ bool
 operator<(const Root_of_2<RT> &a,
 	  const typename Root_of_traits< RT >::RootOf_1 &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT >
@@ -457,7 +457,7 @@ inline
 bool
 operator<(const RT &a, const Root_of_2<RT> &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT >
@@ -465,7 +465,7 @@ inline
 bool
 operator<(const Root_of_2<RT> &a, const RT &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT >
@@ -473,7 +473,7 @@ inline
 bool
 operator<(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT >
@@ -481,7 +481,7 @@ inline
 bool
 operator<(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
 {
-  return compare(a, b) < 0;
+  return CGAL_NTS compare(a, b) < 0;
 }
 
 
@@ -667,7 +667,7 @@ inline
 bool
 operator==(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT >
@@ -676,7 +676,7 @@ bool
 operator==(const typename Root_of_traits< RT >::RootOf_1 &a,
 	   const Root_of_2<RT> &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT >
@@ -685,7 +685,7 @@ bool
 operator==(const Root_of_2<RT> &a,
 	   const typename Root_of_traits< RT >::RootOf_1 &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT >
@@ -693,7 +693,7 @@ inline
 bool
 operator==(const RT &a, const Root_of_2<RT> &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT >
@@ -701,7 +701,7 @@ inline
 bool
 operator==(const Root_of_2<RT> &a, const RT &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT >
@@ -709,7 +709,7 @@ inline
 bool
 operator==(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT >
@@ -717,7 +717,7 @@ inline
 bool
 operator==(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
 {
-  return compare(a, b) == 0;
+  return CGAL_NTS compare(a, b) == 0;
 }
 
 
