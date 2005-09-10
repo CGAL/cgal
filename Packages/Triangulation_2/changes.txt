@@ -1,3 +1,6 @@
+10 September 2005 Sylvain Pion
+- Add missing this-> for g++ 4.1.
+
 7 August 2005 Sylvain Pion
 - Add enum_cast.
 

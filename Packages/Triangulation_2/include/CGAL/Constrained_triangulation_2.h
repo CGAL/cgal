@@ -531,7 +531,7 @@ find_intersected_faces(Vertex_handle vaa,
   // loop over triangles intersected by ab
   bool done = false;
   while (current_vertex != vbb && !done)  { 
-    orient = orientation(aa,bb,current_vertex->point());
+    orient = this->orientation(aa,bb,current_vertex->point());
     int i1, i2;
     switch (orient) {
     case COLLINEAR :  
@@ -1034,7 +1034,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
       Vertex_handle v0=n1->vertex(ccw(ind1));
       Vertex_handle v1=n1->vertex(cw(ind1));
       Vertex_handle v2=n2->vertex(cw(ind2));
-      orient= orientation(v0->point(),v1->point(),v2->point());
+      orient = this->orientation(v0->point(),v1->point(),v2->point());
       switch (orient) {
       case RIGHT_TURN : 	  		
 	// creates the new triangle v0v1v2
