@@ -1,3 +1,6 @@
+10 September 2005 Sylvain Pion
+- missing forward declaration of io_tag(CORE::Expr) required by g++ 4.1.
+
 9 September 2005 Sylvain Pion
 - Add NT_converter<double, double> specialization to disambiguate (spotted by
   Nico).
