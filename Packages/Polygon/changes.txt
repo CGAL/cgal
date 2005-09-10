@@ -1,3 +1,6 @@
+10 September 2005 Sylvain Pion
+- Add missing this-> for g++ 4.1.
+
 4 August 2005 Sylvain Pion
 - Add clear().
 - Remove caching and CGAL_POLYGON_2_CACHED.
