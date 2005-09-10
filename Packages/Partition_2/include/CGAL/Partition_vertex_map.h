@@ -339,12 +339,12 @@ public:
       {
         vtx_begin = (*poly_first).vertices_begin();
         vtx_end = (*poly_first).vertices_end();
-        begin_v_loc_pair = insert(P_Vertex(vtx_begin, Pvm_edge_list()));
+        begin_v_loc_pair = this->insert(P_Vertex(vtx_begin, Pvm_edge_list()));
         prev_v_loc_pair = begin_v_loc_pair;
         v_it = vtx_begin;
         for (v_it++; v_it != vtx_end; v_it++)
         {
-           v_loc_pair = insert(P_Vertex(v_it, Pvm_edge_list()));
+           v_loc_pair = this->insert(P_Vertex(v_it, Pvm_edge_list()));
            insert_next_edge(prev_v_loc_pair.first, 
 			    v_loc_pair.first, 
 			    poly_num);
