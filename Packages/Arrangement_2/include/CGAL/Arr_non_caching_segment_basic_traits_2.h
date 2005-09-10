@@ -253,7 +253,7 @@ public:
   /*! Get a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
   {
-    return construct_segment_2_object();
+    return this->construct_segment_2_object();
   }
   //@}
 };
