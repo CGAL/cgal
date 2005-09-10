@@ -96,13 +96,13 @@ public:
   }
 
   Root_of_2(const RT& c0)
-    : C0(- square(c0)), C1(0), C2(1), _smaller(c0<0)
+    : C0(- CGAL_NTS square(c0)), C1(0), C2(1), _smaller(c0<0)
   {
     CGAL_assertion(is_valid());
   }
 
   Root_of_2(const typename First_if_different<int, RT>::Type & c0)
-    : C0(- square(RT(c0))), C1(0), C2(1), _smaller(c0<0)
+    : C0(- CGAL_NTS square(RT(c0))), C1(0), C2(1), _smaller(c0<0)
   {
     CGAL_assertion(is_valid());
   }
@@ -119,8 +119,8 @@ public:
   }
 
   Root_of_2(const RT& c1, const RT& c0)
-    : C0( - square(c0)), C1(0), C2(square(c1)),
-      _smaller( sign(c1) == sign(c0) )
+    : C0( - CGAL_NTS square(c0)), C1(0), C2(CGAL_NTS square(c1)),
+      _smaller( CGAL_NTS sign(c1) == CGAL_NTS sign(c0) )
   {
     CGAL_assertion(is_valid());
   }
@@ -170,7 +170,7 @@ public:
 
   RT discriminant() const
   {
-    return square(C1) - 4*C0*C2;
+    return CGAL_NTS square(C1) - 4*C0*C2;
   }
 
   template < typename T > 
@@ -183,7 +183,7 @@ public:
   Sign sign_at(const T &x) const
   {
     // Maybe there is slightly more efficient.
-    return sign(eval_at(x));
+    return CGAL_NTS sign(eval_at(x));
   }
 
   Root_of_2 conjugate() const
@@ -789,9 +789,9 @@ square(const Root_of_2<RT> &a)
   // It's easy to get the explicit formulas for the square of the two roots.
   // Then it's easy to compute their sum and their product, which gives the
   // coefficients of the polynomial (X^2 - Sum X + Product).
- return Root_of_2<RT> ( square(a[2]),
-                        2 * a[2] * a[0] - square(a[1]),
-                        square(a[0]),
+ return Root_of_2<RT> ( CGAL_NTS square(a[2]),
+                        2 * a[2] * a[0] - CGAL_NTS square(a[1]),
+                        CGAL_NTS square(a[0]),
                         (a.is_smaller() ^ (a[1]>0)));
 }
 
@@ -840,8 +840,8 @@ operator-(const Root_of_2<RT> &a,
   const RT &b0 = r.numerator(b);
   //CGAL_assertion(b1>0);
 
-  RT sqb1 = square(b1);
-  RT sqb0 = square(b0);
+  RT sqb1 = CGAL_NTS square(b1);
+  RT sqb0 = CGAL_NTS square(b0);
   RT b0b1 = b0 * b1;
 
   return Root_of_2<RT>(a[2] * sqb1,
@@ -867,7 +867,7 @@ operator-(const Root_of_2<RT> &a, const RT& b)
 
   // It's easy to see it using the formula (X^2 - sum X + prod).
 
-  //RT p = a[0] + b * a[1] + a[2] * square(b);
+  //RT p = a[0] + b * a[1] + a[2] * CGAL_NTS square(b);
   //RT s = a[1] + b * a[2] * 2;
 
   RT tmp = a[2] * b;
@@ -935,10 +935,10 @@ operator*(const Root_of_2<RT> &a,
   const RT &b0 = r.numerator(b);
   CGAL_assertion(b1>0);
 
-  return Root_of_2<RT>(a[2] * square(b1), a[1] * b1 * b0,
-                       a[0] * square(b0),
-                       sign(b) < 0 ? !a.is_smaller()
-                                   :  a.is_smaller());
+  return Root_of_2<RT>(a[2] * CGAL_NTS square(b1), a[1] * b1 * b0,
+                       a[0] * CGAL_NTS square(b0),
+                       CGAL_NTS sign(b) < 0 ? !a.is_smaller()
+                                            :  a.is_smaller());
 }
 
 template < typename RT >
@@ -956,7 +956,7 @@ operator*(const Root_of_2<RT> &a, const RT& b)
 {
   CGAL_assertion(is_valid(a));
 
-  return Root_of_2<RT>(a[2], a[1] * b, a[0] * square(b),
+  return Root_of_2<RT>(a[2], a[1] * b, a[0] * CGAL_NTS square(b),
                          b < 0 ? !a.is_smaller() : a.is_smaller());
 }
 
@@ -975,7 +975,7 @@ operator/(const Root_of_2<RT> &a, const RT& b)
   CGAL_assertion(is_valid(a));
   CGAL_assertion(b != 0);
 
-  return Root_of_2<RT>(a[2] * square(b), a[1] * b, a[0],
+  return Root_of_2<RT>(a[2] * CGAL_NTS square(b), a[1] * b, a[0],
                          b < 0 ? !a.is_smaller() : a.is_smaller());
 }
 
@@ -997,10 +997,10 @@ operator/(const Root_of_2<RT> &a,
     b0 = -b0, b1 = -b1;
   CGAL_assertion(b1>0);
 
-  return Root_of_2<RT>(a[2] * square(b1), a[1] * b1 * b0,
-                       a[0] * square(b0),
-                       sign(b) < 0 ? !a.is_smaller()
-                                   :  a.is_smaller());
+  return Root_of_2<RT>(a[2] * CGAL_NTS square(b1), a[1] * b1 * b0,
+                       a[0] * CGAL_NTS square(b0),
+                       CGAL_NTS sign(b) < 0 ? !a.is_smaller()
+                                            :  a.is_smaller());
 }
 
 
