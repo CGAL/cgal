@@ -163,25 +163,25 @@ public:
         overlap_cv = object_cast<Base_X_monotone_curve_2> (&(*oi));
         if (overlap_cv != NULL)
         {
-	  // Add halfedge handles to the resulting curve.
+          // Add halfedge handles to the resulting curve.
           Halfedge_handle  he;
 
           if (cv1.get_halfedge_handle() != Halfedge_handle())
             he = cv1.get_halfedge_handle();
           else if (cv2.get_halfedge_handle() != Halfedge_handle())
-	    he = cv2.get_halfedge_handle();
+            he = cv2.get_halfedge_handle();
 
           *oi = make_object (X_monotone_curve_2 (*overlap_cv, he));
         }
         else
         {
-	  intersect_p = 
-	    object_cast<std::pair<Base_Point_2, unsigned int> > (&(*oi));
+          intersect_p = 
+            object_cast<std::pair<Base_Point_2, unsigned int> > (&(*oi));
 
           CGAL_assertion (intersect_p != NULL);
 
           *oi = make_object (std::make_pair (Point_2(intersect_p->first),
-					     intersect_p->second));
+                                             intersect_p->second));
         }
       }
       //return past-end iterator
@@ -255,12 +255,12 @@ public:
         }
         else
         {
-	  pt = object_cast<Base_Point_2> (&(*iter));
+          pt = object_cast<Base_Point_2> (&(*iter));
           CGAL_assertion (pt != NULL);
 
           *oi = make_object (Point_2 (*pt));
         }
-	++oi;
+        ++oi;
       }
       m_objects.clear();
       return oi;
