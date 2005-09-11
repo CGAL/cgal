@@ -24,7 +24,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/intersection_2.h>
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Sweep_line_2_algorithms.h>
 #include <list>
 #include <set>
 #include <CGAL/Snap_rounding_kd_2.h>
@@ -549,9 +549,8 @@ find_hot_pixels_and_create_kd_trees(NT pixel_size,
   // get intersection points (with endpoints)
   Point_list mypointlist;
 
-  Sweep_line_2<Segment_iter, Traits> sl;
-  sl.get_intersection_points(segments.begin(), segments.end(),
-                             std::back_inserter(mypointlist));
+  CGAL::get_intersection_points(segments.begin(), segments.end(),
+                             std::back_inserter(mypointlist), m_gt, true);
 
   for (Point_const_iter v_iter = mypointlist.begin();
        v_iter != mypointlist.end(); ++v_iter)
@@ -740,7 +739,7 @@ template<class Traits, class InputIterator, class OutputContainer>
 void snap_rounding_2(InputIterator begin,
                      InputIterator end,
                      OutputContainer & output_container,
-                     typename Traits::FT pixel_size,
+                     typename Traits::NT pixel_size,
                      bool do_isr = true,
                      bool int_output = true,
                      unsigned int number_of_kd_trees = 1)

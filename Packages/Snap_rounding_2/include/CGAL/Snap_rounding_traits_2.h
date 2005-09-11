@@ -23,26 +23,34 @@
 #include <map>
 #include <list>
 
-#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class Base_kernel>
 class Snap_rounding_traits_2 :
-  public CGAL::Arr_segment_cached_traits_2<Base_kernel> {
+  public CGAL::Arr_segment_traits_2<Base_kernel> {
 
 public: // otherwise Segment_data cannot access the types
   typedef typename Base_kernel::FT                      NT;
+  typedef typename Base_kernel::FT                      FT;
   typedef typename Base_kernel::Point_2                 Point_2;
   typedef typename Base_kernel::Segment_2               Segment_2;
   typedef typename Base_kernel::Iso_rectangle_2         Iso_rectangle_2;
-
-  typedef typename Base_kernel::Compare_y_2             Compare_y_2;
-  typedef typename Base_kernel::Compare_x_2             Compare_x_2;
-  typedef typename Base_kernel::Construct_vertex_2      Construct_vertex_2;
-  typedef typename Base_kernel::Construct_segment_2     Construct_segment_2;
+  typedef typename Base_kernel::Vector_2                Vector_2;
+  typedef typename Base_kernel::Line_2                  Line_2;
+  typedef typename Base_kernel::Aff_transformation_2    Aff_transformation_2;
+  typedef typename Base_kernel::Direction_2             Direction_2;
+  typedef typename Base_kernel::Construct_vertex_2      Construct_vertex_2 ;
+  typedef typename Base_kernel::Construct_segment_2     Construct_segment_2 ;
   typedef typename Base_kernel::Construct_iso_rectangle_2
-  Construct_iso_rectangle_2;
+    Construct_iso_rectangle_2;
+  typedef typename Base_kernel::Compare_y_2             Compare_y_2;
+
+  typedef CGAL::Arr_segment_traits_2<Base_kernel>       Base_traits;
+
+  typedef typename Base_traits::Compare_x_2             Compare_x_2;
+  
 
   typedef CGAL::To_double<NT>                           To_double;
   
@@ -89,10 +97,7 @@ public:
     typedef Snap_rounding_traits_2<Base_kernel>         Traits;
     typedef std::list<Point_2>                          Point_list;
 
-    typedef typename Base_kernel::Compare_y_2           Compare_y_2;
-    typedef typename Base_kernel::Compare_x_2           Compare_x_2;
-    typedef typename Base_kernel::Construct_vertex_2    Construct_vertex_2;
-    
+
     const Traits * m_gt;
 
     Minkowski_sum_with_pixel_2(const Traits * gt) : m_gt(gt) {}
@@ -166,6 +171,32 @@ public:
   {
     return Minkowski_sum_with_pixel_2(this);
   }
+
+  Construct_segment_2  construct_segment_2_object() const
+  {
+    Base_kernel k;
+    return k.construct_segment_2_object();
+  }
+
+  Construct_vertex_2 construct_vertex_2_object() const
+  {
+    Base_kernel k;
+    return k.construct_vertex_2_object();
+  }
+
+  Compare_y_2 compare_y_2_object() const
+  {
+    Base_kernel k;
+    return k.compare_y_2_object();
+  }
+
+  Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
+  {
+    Base_kernel k;
+    return k.construct_iso_rectangle_2_object();
+  }
+
+
 };
 
 CGAL_END_NAMESPACE
