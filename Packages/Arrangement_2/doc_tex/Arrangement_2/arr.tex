@@ -473,28 +473,27 @@ void print_arrangement (const Arrangement_2& arr)
 %-------------------------------------
 %
 In this section we review the various member functions of the
-\ccc{Arrangement_2} class that allows users to modify the
+\ccc{Arrangement_2} class that allow users to modify the
 topological structure of the arrangement by introducing new edges
 and vertices, modifying them, and removing them.
 
-Please note that the arrangement member-functions that insert new
-curves into the arrangement, thus enabling the construction of
-planar subdivision, are rather specialized, as they require the
-a-priori knowledge on the location of the inserted curve. Indeed, for
-most purposes it is more convenient to construct an arrangement using
-the global insertion-functions. You may skip to
-Section~\ref{arr_sec:gl_funcs}, and return to this subsection at a
-later point in time.
+The arrangement member-functions that insert new curves into the
+arrangement, thus enabling the construction of planar subdivision, are
+rather specialized, as they require a-priori knowledge on the location of
+the inserted curve. Indeed, for most purposes it is more convenient to
+construct an arrangement using the global insertion-functions. You may
+skip to Section~\ref{arr_sec:gl_funcs}, and return to this subsection at
+a later point in time.
 
 \subsubsection{Inserting Non-Intersecting Curves}
 \label{arr_sssec:mf_insert_cv}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
 The most important functions that allow users to modify the
-arrangement, and the most frequently used ones, are the
+arrangement, and perhaps the most frequently used ones, are the
 specialized insertion functions of $x$-monotone curves whose
 interior is disjoint from any other curve in the existing
-arrangement and does not contain any vertex of the arrangement. In
+arrangement and do not contain any vertex of the arrangement. In
 addition the location of the curve in the arrangement must be known.
 
 The motivation behind these rather harsh restrictions on the nature of
@@ -541,19 +540,18 @@ now becomes an enclave in this new face.} \label{arr_fig:insert}
 %\end{ccHtmlOnly}
 \end{figure}
 
-It is not difficult to see that when we insert an $x$-monotone
-curve into an existing arrangement, such that the interior of this
-curve is disjoint from any arrangement feature, only the following
-three scenarios are possible, depending on the status of the
-endpoints of the inserted subcurve:
+When an $x$-monotone curve is inserted into an existing arrangement, such
+that the interior of this curve is disjoint from any arrangement feature,
+only the following three scenarios are possible, depending on the status
+of the endpoints of the inserted subcurve:
 \begin{enumerate}
-
+%
 \item In case both curve endpoints do not correspond to any existing
 arrangement vertex we have to create two new vertices
 corresponding to the curve endpoints and connect them using a pair
 of twin halfedges. This halfedge pair initiates a new hole inside
 the face that contains the curve in its interior.
-
+%
 \item If exactly one endpoint corresponds to an existing arrangement
 vertex (we distinguish between a vertex that corresponds to the left
 endpoint of the inserted curve and a vertex corresponding to its right
@@ -563,16 +561,16 @@ twin halfedges that form an ``antenna'' emanating from the boundary
 of an existing connected component (note that if the existing vertex
 used to be isolated, this operation is actually equivalent to forming
 a new hole inside the face that contains this vertex).
-
-\item Otherwise, if both endpoints correspond to existing arrangement
-vertices we connect these vertices using a pair of twin halfedges.
-Let us assume the two vertices are not isolated (otherwise the
-operation is equivalent to one of the two previous cases). The two
-following cases may occur:
+%
+\item If both endpoints correspond to existing arrangement
+vertices, we connect these vertices using a pair of twin halfedges.
+(If one or both vertices are isolated this case reduces to one of
+the two previous cases respectively.) The two following sub cases may
+occur:
 \begin{itemize}
 \item Two disconnected components are merged into a single connected
 component.
-
+%
 \item A new face is created --- actually, it is split from an existing
 arrangement face. In this case we also have to examine the holes and
 isolated vertices in the existing face and move the relevant ones
@@ -586,7 +584,7 @@ The \ccc{Arrangement_2} class offers insertion functions named
 that perform the special insertion procedures listed above. The
 first function accepts an $x$-monotone curve and an arrangement
 face that contains this curve in its interior, while the other
-function accept an $x$-monotone and handles to the existing
+function accept an $x$-monotone curve and handles to the existing
 vertices that correspond to the curve endpoints. Each of the four
 functions return a handle to one of the twin halfedges that have
 been created, where:
@@ -594,12 +592,12 @@ been created, where:
 \item \ccc{insert_in_face_interior(c, f)} returns a halfedge directed
 from the vertex corresponding to the left endpoint of \ccc{c}
 toward the vertex corresponding to its right endpoint.
-
+%
 \item \ccc{insert_from_left_vertex(c, v)} and
-\ccc{insert_from_right_vertex(c, v)} return a halfedge whose
+\ccc{insert_from_right_vertex(c, v)} returns a halfedge whose
 source is the vertex $v$ that and whose target is the new vertex
 that has just been created.
-
+%
 \item \ccc{insert_at_vertices(c, v1, v2)} returns a halfedge directed
 from $v_1$ to $v_2$.
 \end{itemize}
@@ -626,10 +624,10 @@ The following program demonstrates the usage of the four insertion
 functions. It creates an arrangement of five line segments, as
 depicted in Figure~\ref{arr_fig:ex_1}. As the arrangement is very
 simple, we use the simple Cartesian kernel of \cgal\ with integer
-coordinates for the segment endpoints. We used the built-in
+coordinates for the segment endpoints. We used the 
 \ccc{Arr_segment_traits_2} class that enables the efficient
-maintenance of arrangements of line segments (see more details on
-this traits class in Section~\ref{arr_sec:traits}):
+maintenance of arrangements of line segments; see more details on
+this traits class in Section~\ref{arr_sec:traits}:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example1.C}
 
@@ -655,8 +653,8 @@ function has a precondition that $p$ is really an isolated point,
 namely it does not coincide with any existing arrangement vertex
 and does not lie on any edge.
 
-As we have already mentioned in Section~\ref{arr_ssec:traverse},
-it is possible to obtain the face surrounding an isolated vertex
+As mentioned in Section~\ref{arr_ssec:traverse},
+it is possible to obtain the face containing an isolated vertex
 by calling \ccc{incident_face(v)} (with the precondition that $v$
 is an isolated vertex --- other vertices may not necessarily have
 a unique incident face).
@@ -684,10 +682,10 @@ and $u_3$ are eventually deleted from the arrangement.}
 
 The following program demonstrates the usage of the arrangement
 member-functions for manipulating isolated vertices. It first
-inserts three isolated vertices inside the unbounded face, then
-inserts four line segments that form a rectangular hole inside the
+inserts three isolated vertices located inside the unbounded face, then
+it inserts four line segments that form a rectangular hole inside the
 unbounded face (see Figure~\ref{arr_fig:ex_2} for an
-illustration). It finally goes over the vertices and removes those
+illustration). Finally, it traverses the vertices and removes those
 isolated vertices that are still contained in the unbounded face
 ($u_2$ and $u_3$ in this case):
 
@@ -697,8 +695,8 @@ isolated vertices that are still contained in the unbounded face
 \label{arr_sssec:mf_halfedges}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-In the previous subsection we showed how to introduce new isolated
-vertices in the arrangement. But how do we create a vertex that
+In the previous subsection we showed how you can introduce new isolated
+vertices in the arrangement. But how do you create a vertex that
 lies on an existing arrangement edge (more precisely, on an
 $x$-monotone curve that is associated with an arrangement edge)?
 
@@ -715,19 +713,18 @@ pairs, both incident to a new vertex $v$ associated with $p$, and
 returns a handle to a halfedge whose source equals $e$'s source
 vertex and whose target is the new vertex $v$.
 
-The reverse operation is also possible. Suppose that we have a
+The reverse operation is also possible. Suppose that you have a
 vertex $v$ of degree $2$, whose two incident halfedges, $e_1$ and
 $e_2$, are associated with the curves $c_1$ and $c_2$. Suppose
-further that we know how to merge these two curves into a single
-continuous $x$-monotone curve $c$ --- then calling
-\ccc{merge_edge(e1, e2, c)} will merge the two edges into a single
-edge associated with the curve $c$, resulting in the removal of
-the vertex $v$ from the arrangement.
+further that you know how to merge these two curves into a single
+continuous $x$-monotone curve $c$. Calling \ccc{merge_edge(e1, e2, c)}
+will merge the two edges into a single edge associated with the curve
+$c$, essentially removing the vertex $v$ from the arrangement.
 
 Finally, the function \ccc{remove_edge(e)} removes the edge $e$
 from the arrangement. Note that this operation is the reverse of
-the various insertion functions, so it may cause a connected
-component two split into two, or two face to merge into one, or a
+the any insertion operation, so it may cause a connected
+component to split into two, or two faces to merge into one, or a
 hole to disappear.
 
 \begin{figure}[t]
@@ -760,38 +757,38 @@ steps, as demonstrated in Figure~\ref{arr_fig:ex_3}. Note that
 here we still stick to integer coordinates, but as we work on a
 larger scale we use an unbounded integer number-type (in this
 case, the \ccc{Gmpz} type taken from the {\sc Gmp} library)
-instead of the built-in \ccc{int} type.\footnote{As a rule of
+instead of the built-in \ccc{int} type\footnote{As a rule of
 thumb, one can use a bounded integer type for representing line
 segments whose coordinates are bounded by
 $\lfloor\sqrt[3]{M}\rfloor$, where $M$ is the maximal
-representable integer value.} We also use the standard Cartesian
-kernel of \cgal\ as our kernel --- this is recommended when the
+representable integer value.}. We also use the standard Cartesian
+kernel of \cgal\ as our kernel. This is recommended when the
 kernel is instantiated with a more complex number type:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example3.C}
 
 Note how we use the halfedge handles returned from
 \ccc{split_edge()} and \ccc{merge_edge()}. Also note the insertion
-of the isolated vertex $v_6$ inside the triangular face (the
-incident face of $e_7$). This vertex is eventually connected to
-other vertices, so it stops being isolated.
+of the isolated vertex $v_6$ located inside the triangular face (the
+incident face of $e_7$). This vertex seizes from being isolated, as it
+is gets connected to other vertices.
 
 In this context, we should mention the two member functions
 \ccc{modify_vertex(v, p)}, which sets $p$ to be the point
 associated with the vertex $v$, and \ccc{modify_edge(e, c)}, which
 sets $c$ to be the $x$-monotone curve associated with the halfedge
-$e$. To avoid the invalidation of the geometric structure of the
-arrangement, these functions have preconditions that $p$ is
+$e$. These functions have preconditions that $p$ is
 geometrically equivalent to \ccc{v->point()} and $c$ is equivalent
 to \ccc{e->curve()} (i.e., the two curves have the same graph),
-respectively. It therefore seems that these two functions are of
-little use. However, we should keep in mind that there may be
+respectively, to avoid the invalidation of the geometric structure of
+the arrangement. At a first glance it may seen as these two functions
+are of little use. However, you should keep in mind that there may be
 extraneous data (probably non-geometric) associated with the point
-objects or with the curve objects, as defined by the traits class,
-so we are thus able to modify this data; see more details in
+objects or with the curve objects, as defined by the traits class. With
+these two functions you can modify this data; see more details in
 Section~\ref{arr_sec:traits}.
 
-In addition, we can use these functions to replace a geometric
+In addition, you can use these functions to replace a geometric
 object (a point or a curve) with an equivalent object that has a
 more compact representation. For example, we can replace the point
 $(\frac{20}{40}, \frac{99}{33})$ associated with some vertex $v$,
@@ -803,14 +800,15 @@ by $(\frac{1}{2}, 3)$.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assume that the specialized insertion function
-\ccc{insert_from_left_vertex(c,v)} is invoked for a curve $c$
+\ccc{insert_from_left_vertex(c,v)} is invoked for a curve $c$,
 whose right endpoint is already associated with a non-isolated
-vertex $v$, namely it has already several edges incident to it. It
-is necessary in this case to locate the right place for the
-inserted curve $c$ around $v$. In fact, it is sufficient to locate
-one of the halfedges \ccc{pred} directed toward $v$ such that $c$
-is located between \ccc{pred} and \ccc{pred->next()} in a
-clockwise direction around $v$, in order to perform the insertion
+vertex $v$.  Namely, $v$ has already several incident halfedges. It
+is necessary in this case to locate the exact place for the
+new halfedge mapped to the inserted new curve $c$ in the circular
+list of halfedges incident to $v$. More precisely, it is sufficient
+to locate one of the halfedges \ccc{pred} directed toward $v$ such
+that $c$ is located between \ccc{pred} and \ccc{pred->next()} in
+clockwise order around $v$, in order to complete the insertion
 (see Figure~\ref{arr_fig:insert} for an illustration). This may
 take $O(d)$ time where $d$ is the degree of the vertex. However,
 if the halfedge \ccc{pred} is known in advance, the insertion can
@@ -821,7 +819,7 @@ The \ccc{Arrangement_2} class provides the advanced versions of
 \ccc{insert_from_right_vertex()} that accept a halfedge \ccc{pred}
 as specified above, instead of a vertex $v$. These functions are
 more efficient, as they take constant time and do not perform any
-geometric operations, thus they should be used when the halfedge
+geometric operations. Thus, they should be used when the halfedge
 \ccc{pred} is known. In case that the vertex $v$ is isolated or
 that the predecessor halfedge for the new inserted curve is not
 known, the simpler versions of these insertion functions should be
@@ -872,8 +870,8 @@ coincide with a vertex.
 
 Point-location queries are not only common in many applications,
 they also play an important role in the global insertion functions
-(see Section~\ref{arr_sec:gl_funcs}). It is therefore crucial to
-have the ability of effectively answering such queries for any
+(see Section~\ref{arr_sec:gl_funcs}). Therefore, it is crucial to
+have the ability to answer such queries effectively for any
 arrangement instance.
 
 \subsection{Point-Location Queries}
@@ -882,10 +880,10 @@ arrangement instance.
 %
 The arrangement package includes several classes (more precisely,
 class templates parameterized by an arrangement class) that model
-the \ccc{ArrangementPointLocation_2} concept --- namely, they all
+the \ccc{ArrangementPointLocation_2} concept. Namely, they all
 have a member function called \ccc{locate(q)} that accepts a query
-point $q$ and outputs a \cgal\ \ccc{Object} that wraps a handle to
-the arrangement cell containing the query point. This object can
+point $q$ and result with a \cgal\ \ccc{Object} that wraps a handle
+to the arrangement cell containing the query point. This object can
 be assigned to either a \ccc{Face_const_handle},
 \ccc{Halfedge_const_handle} or a \ccc{Vertex_const_handle}.
 
