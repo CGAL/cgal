@@ -627,14 +627,16 @@ public:
         // cv2 if it is below cv2:
         return (tr.compare_y_at_x_left_2_object() (cv1, cv2, p));
       }
-      else if (!cv1_left && !cv2_left)
+      
+      if (!cv1_left && !cv2_left)
       {
         // Both are defined to the right of p, and we encounter cv1 before
         // cv2 if it is above cv2. We therefore reverse the order of the
         // curves when we invoke compare_y_at_x_right:
         return (tr.compare_y_at_x_right_2_object() (cv2, cv1, p));
       }
-      else if (cv1_left && !cv2_left)
+      
+      if (cv1_left && !cv2_left)
       {
         // If we start from the top, we encounter the right curve (which
         // is cv2) first. If we start from the bottom, we encounter cv1 first.

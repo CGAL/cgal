@@ -88,9 +88,7 @@ public:
       m_he_handle = he;
     }
 
-
-
-    protected:
+  protected:
      Halfedge_handle m_he_handle;
   }; // nested class My_X_monotone_curve_2 - END
 
@@ -168,10 +166,10 @@ public:
 	  // Add halfedge handles to the resulting curve.
           Halfedge_handle  he;
 
-          if(cv1.m_he_handle != Halfedge_handle())
-            he = cv1.m_he_handle;
-          else if(cv2.m_he_handle != Halfedge_handle())
-              he = cv2.m_he_handle;
+          if (cv1.get_halfedge_handle() != Halfedge_handle())
+            he = cv1.get_halfedge_handle();
+          else if (cv2.get_halfedge_handle() != Halfedge_handle())
+	    he = cv2.get_halfedge_handle();
 
           *oi = make_object (X_monotone_curve_2 (*overlap_cv, he));
         }

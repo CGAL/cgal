@@ -406,43 +406,48 @@ read_curve(stream & is,
   char type;
   is >> type;
 
-  if (type == 'f' || type == 'F') {
+  if (type == 'f' || type == 'F') 
+  {
     return read_full_ellipse(is, cv);
   }
-  else if (type == 's' || type == 'S') {
+  else if (type == 's' || type == 'S') 
+  {
     return read_segment(is, cv);
   }
-  else if (type == 'i' || type == 'I') {
+  else if (type == 'i' || type == 'I') 
+  {
     return read_general_arc(is, cv);
   }
-  else if (type == 'c' || type == 'C') {
+  else if (type == 'c' || type == 'C') 
+  {
     // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
     Rational r, s, t, u, v, w;
     is >> r >> s >> t >> u >> v >> w;
     // Create a full conic (should work only for ellipses).
     cv = Curve_2(r, s, t, u, v, w);
-    return true;
+    return (true);
   }
-
-  else if (type == 'e' || type == 'E') {
+  else if (type == 'e' || type == 'E') 
+  {
     return read_partial_ellipse(is, cv);
   }
-  else if (type == 'h' || type == 'H') {
+  else if (type == 'h' || type == 'H') 
+  {
     return read_hyperbola(is, cv);
   }
-  else if (type == 'p' || type == 'P') {
+  else if (type == 'p' || type == 'P') 
+  {
     return read_parabola(is, cv);
   }
-  else if (type == 'a' || type == 'A') {
+  else if (type == 'a' || type == 'A') 
+  {
     return read_general_curve(is, cv);
   }
-  else {
-    std::cerr << "Illegal conic type specification: " << type << "."
-              << std::endl;
-    return false;
-  }
 
-  return true;
+  // If we reached here, we have an unknown conic type:
+  std::cerr << "Illegal conic type specification: " << type << "."
+	    << std::endl;
+  return (false);
 }
 
 #endif

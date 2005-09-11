@@ -928,7 +928,7 @@ public:
       m_curves.push_back (*dup_c);
 
       // Assign a map entry.
-      cv_map.insert (typename Curve_map::value_type (&(*ocit1), dup_c));
+      cv_map.insert (Curve_map::value_type (&(*ocit1), dup_c));
     }
 
     // Duplicate the curves from the second arrangement.
@@ -944,7 +944,7 @@ public:
       m_curves.push_back (*dup_c);
 
       // Assign a map entry.
-      cv_map.insert (typename Curve_map::value_type (&(*ocit2), dup_c));
+      cv_map.insert (Curve_map::value_type (&(*ocit2), dup_c));
     }
 
     // Go over the list of halfedges in our arrangement. The curves associated
