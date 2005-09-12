@@ -1,3 +1,6 @@
+12 September 2005 Sylvain Pion
+- New config macro CGAL_CFG_COMMA_BUG for g++ 3.3.
+
 7 August 2005 Sylvain Pion
 - New config macro CGAL_CFG_MATCHING_BUG_5 for g++ 3.3 and 3.4.
 
