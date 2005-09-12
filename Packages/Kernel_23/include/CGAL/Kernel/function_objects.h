@@ -577,10 +577,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >   Arity;
 
     Circle_2
-    operator()() const
-    { return Rep(); }
-
-    Circle_2
     operator()( const Point_2& center, const FT& squared_radius,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     { return Rep(center, squared_radius, orientation); }
@@ -638,10 +634,6 @@ namespace CommonKernelFunctors {
     typedef Direction_3       result_type;
     typedef Arity_tag< 1 >    Arity;
 
-    Direction_3
-    operator()() const
-    { return Direction_3(); }
-
 #ifndef CGAL_NO_DEPRECATED_CODE
     Direction_3
     operator()(const RT& x, const RT& y, const RT& z) const
@@ -673,10 +665,6 @@ namespace CommonKernelFunctors {
   public:
     typedef Iso_cuboid_3      result_type;
     typedef Arity_tag< 2 >    Arity;
-
-    Iso_cuboid_3
-    operator()() const
-    { return Iso_cuboid_3(); }
 
     Iso_cuboid_3
     operator()(const Point_3& p, const Point_3& q) const
@@ -1019,10 +1007,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Plane_3
-    operator()() const
-    { return Plane_3(); }
-
-    Plane_3
     operator()(const RT& a, const RT& b, const RT& c, const RT& d) const
     { return Plane_3(a, b, c, d); }
 
@@ -1115,10 +1099,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 1 >   Arity;
 
     Point_3
-    operator()() const
-    { return Point_3(); }
-
-    Point_3
     operator()(Origin o) const
     { return Point_3(o); }
 
@@ -1165,10 +1145,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Ray_2
-    operator()() const
-    {  return Rep(); }
-
-    Ray_2
     operator()(const Point_2& p, const Point_2& q) const
     {  return Rep(p, q); }
 
@@ -1198,10 +1174,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Ray_3
-    operator()() const
-    {  return Ray_3(); }
-
-    Ray_3
     operator()(const Point_3& p, const Point_3& q) const
     {  return Ray_3(p, q); }
 
@@ -1229,10 +1201,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Segment_2
-    operator()() const
-    {  return Rep(); }
-
-    Segment_2
     operator()( const Point_2& p, const Point_2& q) const
     {  return Rep(p, q); }
   };
@@ -1245,10 +1213,6 @@ namespace CommonKernelFunctors {
   public:
     typedef Segment_3        result_type;
     typedef Arity_tag< 2 >   Arity;
-
-    Segment_3
-    operator()() const
-    {  return Segment_3(); }
 
     Segment_3
     operator()( const Point_3& p, const Point_3& q) const
@@ -1317,10 +1281,6 @@ namespace CommonKernelFunctors {
   public:
     typedef Sphere_3               result_type;
     typedef Arity_tag< 4 >         Arity;
-
-    Sphere_3
-    operator()() const
-    {  return Sphere_3(); }
 
     Sphere_3
     operator()( const Point_3& center, const FT& squared_radius,
@@ -1412,10 +1372,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 4 >   Arity;
 
     Tetrahedron_3
-    operator()() const
-    { return Tetrahedron_3(); }
-
-    Tetrahedron_3
     operator()( const Point_3& p, const Point_3& q,
 	        const Point_3& r, const Point_3& s) const
     { return Tetrahedron_3(p, q, r, s); }
@@ -1432,10 +1388,6 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >   Arity;
 
     Triangle_2
-    operator()() const
-    { return Rep(); }
-
-    Triangle_2
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return Rep(p, q, r); }
   };
@@ -1448,10 +1400,6 @@ namespace CommonKernelFunctors {
   public:
     typedef Triangle_3       result_type;
     typedef Arity_tag< 3 >   Arity;
-
-    Triangle_3
-    operator()() const
-    { return Triangle_3(); }
 
     Triangle_3
     operator()( const Point_3& p, const Point_3& q, const Point_3& r) const

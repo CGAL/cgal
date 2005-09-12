@@ -54,9 +54,7 @@ public:
 
   typedef  R_   R;
 
-  Line_2() 
-    : RLine_2(typename R::Construct_line_2()().rep())
-    {}
+  Line_2() {}
 
   Line_2(const Point_2 &p, const Point_2 &q)
     : RLine_2(typename R::Construct_line_2()(p,q).rep()) {}

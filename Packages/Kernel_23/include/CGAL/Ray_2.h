@@ -54,9 +54,7 @@ public:
 
   typedef  R_   R;
 
-  Ray_2() 
-    : RRay_2(typename R::Construct_ray_2()().rep())
-   {}
+  Ray_2() {}
 
   Ray_2(const RRay_2& r)
     : RRay_2(r) {}

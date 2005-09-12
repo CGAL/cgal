@@ -50,9 +50,7 @@ public:
   typedef  R_                          R;
   typedef typename R::FT               FT;
 
-  Triangle_2() 
-    : RTriangle_2(typename R::Construct_triangle_2()().rep())
-    {}
+  Triangle_2() {}
 
   Triangle_2(const RTriangle_2& t)
       : RTriangle_2(t) {}

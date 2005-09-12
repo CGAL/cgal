@@ -77,7 +77,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_point_2 construct_point =
         rep.construct_point_2_object();
-  Point_2 p1 = construct_point();
+  Point_2 p1;
   Point_2 p2 = construct_point(ORIGIN);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Point_2 p3 = construct_point(1,1);
@@ -93,7 +93,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_vector_2 construct_vector =
         rep.construct_vector_2_object();
-  Vector_2 v1 = construct_vector();
+  Vector_2 v1;
   Vector_2 v2 = construct_vector(NULL_VECTOR);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Vector_2 v3 = construct_vector(1,3);
@@ -106,7 +106,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_direction_2 construct_direction
         = rep.construct_direction_2_object();
-  Direction_2 d1 = construct_direction();
+  Direction_2 d1;
   Direction_2 d2 = construct_direction(v3);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Direction_2 d3 = construct_direction(1,4);
@@ -118,21 +118,21 @@ test_new_2(const R& rep)
 
   typename R::Construct_segment_2 construct_segment
         = rep.construct_segment_2_object();
-  Segment_2 s1 = construct_segment();
+  Segment_2 s1;
   Segment_2 s2 = construct_segment(p2,p3);
   Segment_2 s3 = construct_segment(p2,p5);
   Segment_2 s4 = construct_segment(p3,p2);
 
   typename R::Construct_ray_2 construct_ray =
         rep.construct_ray_2_object();
-  Ray_2 r1 = construct_ray();
+  Ray_2 r1;
   Ray_2 r2 = construct_ray(p2,p5);
   Ray_2 r3 = construct_ray(p2,d3);
   Ray_2 r4 = construct_ray(p2,v3);
 
   typename R::Construct_line_2 construct_line
         = rep.construct_line_2_object();
-  Line_2 l1 = construct_line();
+  Line_2 l1;
 #ifndef CGAL_NO_DEPRECATED_CODE
   Line_2 l2 = construct_line(1,1,1);
 #else
@@ -168,7 +168,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_triangle_2 construct_triangle
         = rep.construct_triangle_2_object();
-  Triangle_2 t1 = construct_triangle();
+  Triangle_2 t1;
   Triangle_2 t2 = construct_triangle(p2,p3,p4);
 
   typename R::Construct_iso_rectangle_2 construct_iso_rectangle

@@ -1,3 +1,6 @@
+12 September 2005 Sylvain Pion
+- Remove operator()() for default constructors.
+
 7 September 2005 Andreas Fabri
 - Moved implementation of insert/extract operator to Point_2, Line_2, Circle_2
 

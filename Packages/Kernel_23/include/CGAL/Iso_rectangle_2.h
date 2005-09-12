@@ -52,9 +52,7 @@ public:
 
   typedef  R_   R;
 
-  Iso_rectangle_2() 
-    : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()().rep())
-  {}
+  Iso_rectangle_2() {}
 
   Iso_rectangle_2(const RIso_rectangle_2& r)
     : RIso_rectangle_2(r) {}

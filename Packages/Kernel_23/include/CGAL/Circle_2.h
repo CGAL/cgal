@@ -48,9 +48,7 @@ public:
 
   typedef  R_   R;
 
-  Circle_2()
-    : RCircle_2(typename R::Construct_circle_2()().rep())
-  {}
+  Circle_2() {}
 
   Circle_2(const RCircle_2& t)
     : RCircle_2(t) {}

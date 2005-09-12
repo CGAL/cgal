@@ -3,14 +3,6 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccHidden
-\ccMemberFunction{ Kernel::Sphere_3 operator()();}
-       {introduces an uninitialized variable of type \ccRefName.}
-
-\ccHidden
-\ccMemberFunction{ Kernel::Sphere_3 operator()(const Kernel::Sphere_3 &);}
-        {copy constructor.}
-
 \ccMemberFunction{ Kernel::Sphere_3 operator()(const Kernel::Point_3 & center, 
                           const Kernel::FT  & squared_radius,
                           const Orientation & orientation = COUNTERCLOCKWISE);}

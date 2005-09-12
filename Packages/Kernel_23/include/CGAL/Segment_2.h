@@ -54,9 +54,7 @@ public:
 
   typedef  R_                               R;
 
-  Segment_2() 
-    : RSegment_2(typename R::Construct_segment_2()().rep())
-   {}
+  Segment_2() {}
 
   Segment_2(const Point_2 &sp, const Point_2 &ep)
     :  RSegment_2(typename R::Construct_segment_2()(sp,ep).rep()) {}

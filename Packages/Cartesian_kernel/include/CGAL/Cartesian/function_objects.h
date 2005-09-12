@@ -1421,10 +1421,6 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 1 >              Arity;
 
     Direction_2
-    operator()() const
-    { return Rep(); }
-
-    Direction_2
     operator()(const RT& x, const RT& y) const
     { return Rep(x, y); }
 
@@ -1471,10 +1467,6 @@ namespace CartesianKernelFunctors {
   public:
     typedef Iso_rectangle_2              result_type;
     typedef Arity_tag< 2 >               Arity;
-
-    Iso_rectangle_2
-    operator()() const
-    { return Rep(); }
 
     Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q) const
@@ -1545,10 +1537,6 @@ namespace CartesianKernelFunctors {
     Construct_line_2(const Construct_point_on_2& c_) : c(c_) {}
 
     Line_2
-    operator()() const
-    { return Rep(); }
-
-    Line_2
     operator()(const RT& a, const RT& b, const RT& cc) const
     { return Rep(a, b, cc); }
 
@@ -1608,10 +1596,6 @@ namespace CartesianKernelFunctors {
 		     const Construct_point_on_3& cp_) 
       : cv(cv_), cp(cp_) 
     {}
-
-    Line_3
-    operator()() const
-    { return Line_3(); }
 
     Line_3
     operator()(const Point_3& p, const Point_3& q) const
@@ -1828,10 +1812,6 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 1 >         Arity;
 
     Point_2
-    operator()() const
-    { return Rep(); }
-
-    Point_2
     operator()(Origin o) const
     { return Rep(o); }
 
@@ -2028,10 +2008,6 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 2 >           Arity;
 
     Vector_2
-    operator()() const
-    { return Rep(); }
-
-    Vector_2
     operator()( const Point_2& p, const Point_2& q) const
     { return Rep(q.x() - p.x(), q.y() - p.y()); }
 
@@ -2086,10 +2062,6 @@ namespace CartesianKernelFunctors {
   public:
     typedef Vector_3                 result_type;
     typedef Arity_tag< 2 >           Arity;
-
-    Vector_3
-    operator()() const
-    { return Vector_3(); }
 
     Vector_3
     operator()( const Point_3& p, const Point_3& q) const

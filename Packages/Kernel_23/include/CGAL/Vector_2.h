@@ -60,9 +60,7 @@ public:
 
   typedef  R_                        R;
 
-  Vector_2()
-    :RVector_2(typename R::Construct_vector_2()().rep())
-  {}
+  Vector_2() {}
 
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(typename R::Construct_vector_2()(a, b).rep()) {}

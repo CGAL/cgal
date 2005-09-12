@@ -2006,10 +2006,6 @@ template <typename K>
     typedef Arity_tag< 1 >    Arity;
 
     Direction_2
-    operator()() const
-    { return Rep(); }
-
-    Direction_2
     operator()(const RT& x, const RT& y) const
     { return Rep(x, y); }
 
@@ -2091,10 +2087,6 @@ template <typename K>
   public:
     typedef Iso_rectangle_2   result_type;
     typedef Arity_tag< 2 >    Arity;
-
-    Iso_rectangle_2
-    operator()() const
-    { return Rep(); }
 
     Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q) const
@@ -2205,10 +2197,6 @@ template <typename K>
 
     Construct_line_2() {}
     Construct_line_2(const Construct_point_on_2& cp_) : cp(cp_) {}
-
-    Line_2
-    operator()() const
-    { return Rep(); }
 
     Line_2
     operator()(const RT& a, const RT& b, const RT& c) const
@@ -2412,10 +2400,6 @@ template <typename K>
   public:
     typedef Point_2          result_type;
     typedef Arity_tag< 1 >   Arity;
-
-    Point_2
-    operator()() const
-    { return Rep(); }
 
     Point_2
     operator()(Origin o) const
@@ -2628,10 +2612,6 @@ template <typename K>
     typedef Arity_tag< 2 >   Arity;
 
     Vector_2
-    operator()() const
-    { return Rep(); }
-
-    Vector_2
     operator()( const Point_2& p, const Point_2& q) const
     { 
       return Rep( q.hx()*p.hw() - p.hx()*q.hw(),
@@ -2696,10 +2676,6 @@ template <typename K>
   public:
     typedef Vector_3         result_type;
     typedef Arity_tag< 2 >   Arity;
-
-    Vector_3
-    operator()() const
-    { return Vector_3(); }
 
     Vector_3
     operator()( const Point_3& p, const Point_3& q) const

@@ -98,7 +98,7 @@ test_new_3(const R& rep)
 
   typename R::Construct_point_3 construct_point
         = rep.construct_point_3_object();
-  Point_3 p1 = construct_point();
+  Point_3 p1;
   Point_3 p2 = construct_point(ORIGIN);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Point_3 p3 = construct_point(1,1,1);
@@ -114,7 +114,7 @@ test_new_3(const R& rep)
 
   typename R::Construct_vector_3 construct_vector
         = rep.construct_vector_3_object();
-  Vector_3 v1 = construct_vector();
+  Vector_3 v1;
   Vector_3 v2 = construct_vector(NULL_VECTOR);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Vector_3 v3 = construct_vector(1,1,1);
@@ -127,7 +127,7 @@ test_new_3(const R& rep)
 
   typename R::Construct_direction_3 construct_direction
         = rep.construct_direction_3_object();
-  Direction_3 d1 = construct_direction();
+  Direction_3 d1;
   Direction_3 d2 = construct_direction(v3);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Direction_3 d3 = construct_direction(1,1,5);
@@ -142,19 +142,19 @@ test_new_3(const R& rep)
 
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
-  Segment_3 s1 = construct_segment();
+  Segment_3 s1;
   Segment_3 s2 = construct_segment(p2,p3);
 
   typename R::Construct_ray_3 construct_ray =
         rep.construct_ray_3_object();
-  Ray_3 r1 = construct_ray();
+  Ray_3 r1;
   Ray_3 r2 = construct_ray(p2,p4);
   Ray_3 r3 = construct_ray(p2,d3);
   Ray_3 r4 = construct_ray(p2,v3);
 
   typename R::Construct_line_3 construct_line
         = rep.construct_line_3_object();
-  Line_3 l1 = construct_line();
+  Line_3 l1;
   Line_3 l2 = construct_line(p5,p6);
   Line_3 l3 = construct_line(p2,p3);
   Line_3 l4 = construct_line(p2,d4);
@@ -178,7 +178,7 @@ test_new_3(const R& rep)
   
   typename R::Construct_plane_3 construct_plane
         = rep.construct_plane_3_object();
-  Plane_3 h1 = construct_plane();
+  Plane_3 h1;
   Plane_3 h2 = construct_plane(1,1,1,1);
   Plane_3 h3 = construct_plane(p2,p3,p4);
   Plane_3 h4 = construct_plane(p2,d4);
@@ -202,12 +202,12 @@ test_new_3(const R& rep)
 
   typename R::Construct_triangle_3 construct_triangle
         = rep.construct_triangle_3_object();
-  Triangle_3 t1 = construct_triangle();
+  Triangle_3 t1;
   Triangle_3 t2 = construct_triangle(p2,p3,p4);
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
         = rep.construct_tetrahedron_3_object();
-  Tetrahedron_3 th1 = construct_tetrahedron();
+  Tetrahedron_3 th1;
   Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5);
 
   typename R::Construct_iso_cuboid_3 construct_iso_cuboid

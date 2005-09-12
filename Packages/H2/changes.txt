@@ -1,3 +1,6 @@
+12 September 2005 Sylvain Pion
+- Remove operator()() for default constructors.
+
 7 September 2005 Andreas Fabri
 - Added Qualified_result_types
 - Moved insert and extract operators for streams of Point, Line, and Circle to Kernel_23

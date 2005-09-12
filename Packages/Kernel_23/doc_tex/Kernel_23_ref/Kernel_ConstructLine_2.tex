@@ -3,12 +3,6 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccHidden \ccMemberFunction{Kernel::Line_2 operator()();}
-             {introduces an uninitialized variable .}
-
-\ccHidden \ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Line_2 &h);}
-            {copy constructor.}
-
 \ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Point_2 &p,
                                             const Kernel::Point_2 &q);}
             {introduces a line  passing through the points $p$ and $q$. 

@@ -56,9 +56,7 @@ public:
 
   typedef  R_   R;
 
-  Point_2() 
-    : RPoint_2(typename R::Construct_point_2()().rep())
-  {}
+  Point_2() {}
 
   Point_2(const Origin& o)
     : RPoint_2(typename R::Construct_point_2()(o).rep())

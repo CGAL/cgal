@@ -55,9 +55,7 @@ public:
 
   typedef  R_   R;
 
-  Direction_2()
-    : RDirection_2(typename R::Construct_direction_2()().rep())
-  {}
+  Direction_2() {}
 
   Direction_2(const RDirection_2& d)
     : RDirection_2(d) {}
