@@ -264,7 +264,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
     if (!this->approx().is_point())                                      \
       this->approx() = CGAL::to_interval(*(this->et));                   \
     this->prune_dag();                                                   \
-   }                                                                     \
+  }                                                                      \
 };
 
 CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
@@ -277,7 +277,7 @@ CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
 struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
 {                                                                        \
-  typedef typename Lazy_exact_unary<ET>::AT::Protector P;                \
+  typedef typename Lazy_exact_binary<ET, ET1, ET2>::AT::Protector P;     \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
