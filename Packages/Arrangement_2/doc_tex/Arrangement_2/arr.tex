@@ -2273,7 +2273,7 @@ the arrangement cells. As vertices are associated with \ccc{Point_2}
 objects and edges (halfedge pairs) are associated with
 \ccc{X_monotone_curve_2} objects, both defined by the traits class,
 it is possible to extend the traits-class type by using a meta-traits
-class, as explained in Section~\label{arr_ssec:meta_tr}, which may
+class, as explained in Section~\ref{arr_ssec:meta_tr}, which may
 be a sufficient solution for some applications.
 
 However, the \dcel\ faces are not associated with any object, so it
@@ -2684,7 +2684,7 @@ on the resulting arrangement:
 \caption{An arrangement with history of nine circle as constructed in 
 \ccc{example25.C}. The large circle $C_0$ is eventually removed from the
 arrangement, with all 18 edges it induces.}
-\label{arr_fig:ex_24}
+\label{arr_fig:ex_25}
 %\begin{ccHtmlOnly}
 %<P>
 %<center>
@@ -2696,7 +2696,7 @@ arrangement, with all 18 edges it induces.}
 The following example demonstrates the usage of the global \ccc{remove()}
 function. We construct an arrangement of nine circles, while keeping a handle
 to each inserted circle. We then remove the large circle $C_0$, which induces
-$18$ halfedges, as illustrated in Figure~\ref{arr_fig:ex_24} (note the 
+$18$ halfedges, as illustrated in Figure~\ref{arr_fig:ex_25} (note the 
 vertical tangency points that are marked as red dots). The example also shows
 how to use the \ccc{split_edge()} and \ccc{merge_edge()} functions when
 operating on an arrangement-with-history instance:

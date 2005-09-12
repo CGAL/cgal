@@ -1,0 +1,143 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_cons_data_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_merged_curve_data_traits_2<Traits,Data>}
+
+\ccDefinition
+%============
+
+%RWRW : MORE WORK HERE ...
+The class \ccRefName\ is a model of the \ccc{ArrangementTraits_2} concept
+and serves as a meta-traits class that allows the extension of the curves
+defined by the \ccc{Traits} parameter, which serves as a geometric
+traits-class (a model of the \ccc{ArrangementTraits_2} concept), with
+extraneous (non-geometric) data fields of type \ccc{Data}.
+
+The traits class inherits its point type from \ccc{Traits::Point_2},
+and defines an extended \ccc{Curve_2} and \ccc{X_monotone_curve_2} types,
+as detailed below.
+
+\ccInclude{CGAL/Arr_merged_curve_data_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2}
+
+\ccInheritsFrom
+  \ccc{Traits}
+
+\ccTypes
+%-------
+
+\ccNestedType{typedef typename Traits::Curve_2 Base_curve_2}
+    {the base curve.}
+
+\ccNestedType{typedef typename Traits::X_monotone_curve_2 Base_x_monotone_curve_2}
+    {the base $x$-monotone curve curve.}
+
+\subsection*{Class 
+ Arr\_merged\_curve\_data\_traits\_2$<$Traits,Data$>$::Curve\_2}
+%=====================================================================
+
+The \ccc{Curve_2} class nested within the merged curve-data traits
+extends the \ccc{Traits::Curve_2} type with an extra data field of type
+\ccc{Data}.
+
+\begin{ccClass}{Arr_merged_curve_data_traits_2<Traits,Data>::Curve_2}
+
+\ccInheritsFrom
+  \ccc{Traits::Curve_2}
+
+\ccCreation
+\ccCreationVariable{cv}
+%---------------------
+
+\ccConstructor{Curve_2 ();}
+    {default constructor.}
+
+\ccConstructor{Curve_2 (const Base_curve_2& base, const Data& data);}
+    {constructs curve from the given \ccc{base} curve with an attached
+     \ccc{data} field.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{const Data& get_data () const;}
+  {returns the data field (a non-const version, which returns a reference
+   to the data object, is also available).}
+
+\ccMethod{void set_data (const Data& data);}
+  {sets the data field.}
+
+\end{ccClass}
+
+\subsection*{Class Arr\_merged\_curve\_data\_traits\_2$<$Traits,Data$>$::X\_monotone\_curve\_2}
+%=============================================================================
+
+The \ccc{X_monotone_curve_2} class nested within thethe merged 
+curve-data traits extends the \ccc{Traits::X_monotone_curve_2} type with 
+a container of data fields, accumulated from all curves that induce the
+$x$-monotone curve. Normally, the container consists of a single data object,
+but in case the $x$-monotone curve represents an overlap among $k$ curves,
+its container consists of $k$ data objects, copied from the originating curves.
+
+\begin{ccClass}{Arr_merged_curve_data_traits_2<Traits,Data>::
+                X_monotone_curve_2}
+
+\ccInheritsFrom
+  \ccc{Traits::X_monotone_curve_2}
+
+\ccTypes
+%-------
+
+\ccNestedType{Data_iterator}
+    {an iterator for the data-field container.}
+\ccGlue
+\ccNestedType{Data_const_iterator}
+    {a \ccc{const} iterator for the data-field container.}
+
+\ccCreation
+\ccCreationVariable{xcv}
+%-----------------------
+
+\ccConstructor{X_monotone_curve_2 ();}
+    {default constructor.}
+
+\ccConstructor{X_monotone_curve_2 (const Base_x_monotone_curve_2& base, 
+                                   const Data& data);}
+    {constructs an $x$-monotone curve from the given \ccc{base} $x$-monotone
+     curve with an attached \ccc{data} field.}
+
+\ccConstructor{template <class InputIterator>
+               X_monotone_curve_2 (const Base_x_monotone_curve_2& base, 
+                                   InputIterator begin, InputIterator end);}
+    {constructs an $x$-monotone curve from the given \ccc{base} $x$-monotone
+     curve with the attached data fields, defined by the range 
+     \ccc{[begin,end)}. The value-type of the input iterator is \ccc{Data}.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{size_t number_of_data_objects () const;}
+  {returns the number of data objects associated with the curve.}
+
+\ccMethod{const Data& get_data () const;}
+  {returns the first data field (a non-const version, which returns a reference
+   to the data object, is also available).
+   \ccPrecond{The number of attached data objects is not $0$.}}
+
+
+\ccMethod{void set_data (const Data& data);}
+  {sets the data field.}
+
+\end{ccClass}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
+

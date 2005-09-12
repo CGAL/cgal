@@ -69,7 +69,21 @@ value of this parameter is by default
 In addition, the nested types \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
 are defined, as well as all handle, iterator and circualtor types, as
 defined by the \ccc{Arrangement_2}
-class-template~\lcTex{(\ccRefPage{Arrangement_2<Traits,Dcel>})}.
+class-template~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})}.
+
+\ccNestedType{Curve_handle}{a handle for an input curve.}
+\ccGlue
+\ccNestedType{Curve_iterator}{a bidirectional iterator over the
+       curves that induce the arrangement. Its value-type is
+       \ccc{Curve_extended_2} (see below).}
+
+\ccNestedType{Origin_curve_iterator}
+    {an iterator for the curves that originate a given arrangement edge.
+     Its value type is \ccc{Curve_handle}.}
+\ccGlue
+\ccNestedType{Origin_curve_const_iterator}
+    {a \ccc{const} iterator of the curves that originate a given arrangement
+     edge. Its value type is \ccc{Cruve_const_handle}.}
 
 \ccCreation
 \ccCreationVariable{arr}
@@ -104,7 +118,8 @@ class-template~\lcTex{(\ccRefPage{Arrangement_2<Traits,Dcel>})}.
 \ccAccessFunctions
 %=================
 
-See the \ccc{Arrangement_2} referrence pages~\lcTex{(\ccRefPage{Arrangement_2<Traits,Dcel>})} for the full list.
+See the \ccc{Arrangement_2} referrence 
+pages~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} for the full list.
 
 
 {\sl Accessing the Input Curves}
@@ -115,15 +130,25 @@ See the \ccc{Arrangement_2} referrence pages~\lcTex{(\ccRefPage{Arrangement_2<Tr
 
 \ccMethod{Curve_iterator curves_begin();}
     {returns the begin-iterator of the curves inducing the arrangement.}
-    
+\ccGlue    
 \ccMethod{Curve_iterator curves_end();}
     {returns the past-the-end iterator of the curves inducing the arrangement.}
+ 
+\ccMethod{Size number_of_origin_curves (Halfedge_handle e) const;}
+    {returns the number of input curves that originate the edge \ccc{e}.}
+
+\ccMethod{Origin_curve_iterator origin_curves_begin (Halfedge_handle e);}
+    {returns the begin-iterator of the curves originating the edge \ccc{e}.}
+\ccGlue
+\ccMethod{Origin_curve_iterator origin_curves_end (Halfedge_handle e);}
+    {returns the past-the-end iterator  of the curves originating the edge 
+     \ccc{e}.}
     
 \ccModifiers
 %===========
 
 See the \ccc{Arrangement_2} referrence
-pages~\lcTex{(\ccRefPage{Arrangement_2<Traits,Dcel>})} for the full
+pages~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} for the full
 list of functions for modifying arrangement vertices.
 
 {\sl Modifying Arrangement Edges}
@@ -159,6 +184,47 @@ list of functions for modifying arrangement vertices.
    If the operation causes two faces to merge, the merged face is returned.
    Otherwise, the face to which the edge was incident is returned.}
 
+\subsection*{Class 
+        Arrangement\_with\_history\_2$<$Traits,Dcel$>$::Curve\_extended\_2}
+%==========================================================================
+
+The \ccc{Curve\_extended\_2} nested class extends the \ccc{Curve_2} type
+by storing pointers to the edges the curve induces in the arrangement.
+
+\begin{ccClass}{Arrangement_with_history_2<Traits,Dcel>::Curve_extended_2}
+
+\ccTypes
+%-------
+
+\ccNestedType{iterator}{an iterator for the edges induced by the curve.
+                        Its value type is \ccc{Halfedge_handle}.}
+\ccGlue
+\ccNestedType{const_iterator}{a \ccc{const} iterator for the edges induced by
+                              the curve.
+                              Its value type is \ccc{Halfedge_const_handle}.}
+
+\ccCreationVariable{cv}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{Curve_handle handle ();}
+  {Get a handle to the curve (a \ccc{const} version, returning a \ccc{const}
+   handle, is also available).}
+
+\ccMethod{Size number_of_edges() const;}
+  {returns the number of arrangement edges induced by the curve.}
+
+\ccMethod{iterator edges_begin ();}
+  {returns an iterator for the first edge induced by the curve
+   (a \ccc{const} version is also available).}
+\ccGlue
+\ccMethod{iterator edges_end ();}
+  {returns a apst-the-end iterator for induced edges
+   (a \ccc{const} version is also available).}
+
+\end{ccClass}
+
 \ccSeeAlso
     \ccc{ArrangementDcel}\lcTex{ 
       (\ccRefPage{ArrangementDcel})}\\
@@ -167,7 +233,13 @@ list of functions for modifying arrangement vertices.
     \ccc{ArrangementTraits_2}\lcTex{ 
       (\ccRefPage{ArrangementTraits_2})}\\
     \ccc{Arrangement_2<Traits,Dcel>}\lcTex{ 
-      (\ccRefPage{Arrangement_2<Traits,Dcel>})}
+      (\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} \\
+    \ccc{insertion functions}\lcTex{ 
+      (\ccRefPage{CGAL::insert (Arrangement_with_history_2)})} \\
+    \ccc{removal functions}\lcTex{ 
+      (\ccRefPage{CGAL::remove (Arrangement_with_history_2)})} \\
+    \ccc{overlaying arrangements}\lcTex{ 
+      (\ccRefPage{CGAL::overlay (Arrangement_with_history_2)})}
 
 \end{ccRefClass}
 

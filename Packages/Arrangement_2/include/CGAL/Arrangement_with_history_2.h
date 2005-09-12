@@ -576,13 +576,14 @@ public:
   class Curve_extended_2 : public Curve_halfedges
   {
   public:
-    /* Get a hndle to the curve (non-const version). */
+
+    /* Get a handle to the curve (non-const version). */
     Curve_handle handle ()
     {
       return Curve_handle(this);
     }
 
-    /* Get a hndle to the curve (const version). */
+    /* Get a handle to the curve (const version). */
     Curve_const_handle handle () const
     {
       return Curve_const_handle(this);

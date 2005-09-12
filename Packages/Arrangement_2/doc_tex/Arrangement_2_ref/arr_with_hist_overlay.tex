@@ -1,0 +1,41 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_with_history_overlay.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{overlay (Arrangement_with_history_2)}
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccFunction{template<class Traits, class Dcel1, class Dcel2,
+                     class RedDcel, class OverlayTraits>
+            void overlay (const Arrangement_with_history_2<Traits,Dcel1>& arr1,
+	                  const Arrangement_with_history_2<Traits,Dcel2>& arr2,
+                          Arrangement_2<Traits,ResDcel>& res,
+                          OverlayTraits ovl_tr);}
+   {Computes the overlay of two input arrangement-with-history instances
+    \ccc{arr1} and \ccc{arr2} and sets the output arrangement \ccc{res}
+    to represent the overlaid arrangement. All three arrangements are
+    instantiated using the same geometric traits class, but may be represented
+    using different \dcel\ classes. In order to properly construct the
+    overlaid \dcel\ that represents \ccc{res}, the function uses the
+    overlay-traits object \ccc{ovl_tr}, which should be a model of the
+    \ccc{OverlayTraits} concept, which is able to construct records of the
+    \ccc{ResDcel} class on the basis of the \ccc{Dcel1} and \ccc{Dcel2}
+    records that induce them. The function also constructs a consolidated set
+    of curves that induce \ccc{res}.}
+
+\ccSeeAlso
+    \ccc{OverlayTraits}\lcTex{ 
+      (\ccRefPage{OverlayTraits})}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_with_hist_insert.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert (Arrangement_with_history_2)}
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccFunction{template<class Traits, class Dcel, class PointLocation>
+            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+            insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+                    const typename Traits::Curve_2& c,
+                    const PointLocation& pl);}
+   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and returns
+    a handle to the inserted curve.
+    The point-location object \ccc{pl}, which should be a model of the
+    \ccc{ArrangementPointLocation_2} concept, is used for answering
+    point-location queries during the insertion process.
+    \ccPrecond{\ccc{pl} is attached to the given arrangement \ccc{arr}.}}
+
+\ccFunction{template<class Traits, class Dcel>
+            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+            insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+                    const typename Traits::Curve_2& c);}
+   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and
+    returns a handle to the inserted curve.
+    The function operates as the function listed above, but it uses the default
+    ``walk along line'' point-location strategy, so users need not provide a
+    point-location object.}
+
+\ccFunction{template<class Traits, class Dcel, InputIterator>
+            void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+                         InputIterator first, InputIterator last);}
+   {Aggregately inserts the given range of curves \ccc{[first,last)} into
+    the arrangement \ccc{arr}.
+    \ccPrecond{The value-type of \ccc{InputIterator} is 
+               \ccc{Traits::Curve_2}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

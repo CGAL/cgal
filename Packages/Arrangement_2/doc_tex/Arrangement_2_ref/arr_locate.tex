@@ -1,0 +1,39 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_locate.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{locate}
+
+\ccInclude{CGAL/Arr_batched_point_location.h}
+
+\ccFunction{template<class Arrangement, 
+                     class PointsIterator, class OutputIterator>
+            OutputIterator locate (const Arrangement& arr,
+                                   PointsIterator points_begin,
+                                   PointsIterator points_end,
+                                   OutputIterator oi);}
+   {Performs a batched point-location operation on an arrangement.
+    The function accepts a range of query points, defined by
+    \ccc{[points_begin, points_end)} and locates each point in the
+    arrangement. The query-results are returned in through the output iterator,
+    whose value type is \ccc{std::pair<Point_2,Object>}. Namely, each
+    result is given as a point and an object represneting the arrangement
+    feature that contains it (an \ccc{Object} that may be either
+    \ccc{Face_const_handle}, \ccc{Halfedge_const_handle} or
+    \ccc{Vertex_const_hanlde}). The result pair in output sequence are sorted
+    by an increasing $xy$-lexicographical order on the query points.
+    The function returns a past-the-end iterator for the output sequence.
+    \ccPrecond{The value-type of \ccc{PointsIterator} is 
+               \ccc{Traits::Point_2}.}
+    \ccPrecond{The value-type of \ccc{OutputIterator} is 
+               \ccc{std::pair<Traits::Point_2,Object>}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd
