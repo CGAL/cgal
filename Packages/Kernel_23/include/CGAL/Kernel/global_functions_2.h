@@ -36,6 +36,20 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class K >
+bool
+operator==(const Point_2<K> &p, const Origin& o)
+{
+  return p == Point_2<K>(o);
+}
+
+template < class K >
+bool
+operator!=(const Point_2<K> &p, const Origin& o)
+{
+  return p != Point_2<K>(o);
+}
+
+template < class K >
 inline
 Angle
 angle(const Point_2<K> &p,
