@@ -612,11 +612,11 @@ init_x_O_v_i(Tag_false)
 {
     // all originals are assumed to be nonbasic
     for (int i = 0; i < qp_n; ++i)             {
+        CGAL_qpe_assertion(qp_l[i] <= qp_u[i]);
         // this is some C++ fun, see vector<bool>, we cannot random access
         // the vectors pointed to by qp_fl and qp_fu
         if (*(qp_fl+i)) {                                 // finite lower bound
             if (*(qp_fu+i)) {                             // finite upper bound
-                CGAL_qpe_assertion(qp_l[i] <= qp_u[i]);
                 if (qp_l[i] == qp_u[i]) {                 // fixed variable
                     x_O_v_i[i] = FIXED;
                 } else {                                  // lower < upper   
