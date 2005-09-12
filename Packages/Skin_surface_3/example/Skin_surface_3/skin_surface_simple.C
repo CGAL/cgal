@@ -3,6 +3,8 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Mixed_complex_builder_3.h>
+#include <CGAL/Marching_tetrahedra.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Skin_surface_traits_3<>                 Skin_traits;
 typedef Skin_traits::Regular_traits                   Regular_traits;
@@ -12,6 +14,10 @@ typedef Regular_traits::Bare_point                    Reg_point;
 typedef Skin_traits::Simplicial                       Simplicial;
 
 typedef CGAL::Mixed_complex_builder_3<Skin_traits>    Mixed_complex_builder;
+
+typedef Skin_traits::Mesh                             Mesh;
+typedef CGAL::Marching_tetrahedra_3<Simplicial, Mesh> Marching_tetrahedra;
+
 
 #include <fstream>
 
@@ -56,6 +62,7 @@ int main(int argc, char *argv[]) {
     box = box + wp.point().bbox();
     regular.insert(wp);
   }
+
   // add a bounding octahedron:
   Reg_point mid((box.xmin() + box.xmax())/2,
                 (box.ymin() + box.ymax())/2,
@@ -76,12 +83,18 @@ int main(int argc, char *argv[]) {
   regular.insert(
     Reg_weighted_point(Reg_point(mid.x(),mid.y(),mid.z()-size),-1));
   write_edges(regular, "triangulation.skel");
-  
+
+  // Triangulate mixed complex:
   Simplicial simplicial;
   Mixed_complex_builder(regular, simplicial, shrink);
-
   CGAL_assertion(simplicial.is_valid());
-  
   write_edges(simplicial, "mixed.skel");
+  
+  // Extract the mesh by marching tetrahedra.
+  Mesh mesh;
+  Marching_tetrahedra()(simplicial, mesh);
+  {
+    std::ofstream out("mesh.off"); out << mesh;
+  }
   return 0;
 }
