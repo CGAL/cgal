@@ -97,15 +97,13 @@ public:
     return !(*this == t);
   }
   
-  
-  const Point_2 &
+  typename Qualified_result_of<typename R::Construct_vertex_2, Triangle_2, int>::type
   vertex(int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
   
-  
-  const Point_2 &
+  typename Qualified_result_of<typename R::Construct_vertex_2, Triangle_2, int>::type
   operator[](int i) const
   {
     return vertex(i);

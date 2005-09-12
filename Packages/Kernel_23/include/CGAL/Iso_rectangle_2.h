@@ -37,8 +37,6 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
 public:
   typedef RIso_rectangle_2 Rep;
 
-  typedef typename R_::Cartesian_coordinate_type Cartesian_coordinate_type;
-  typedef typename R_::Homogeneous_coordinate_type Homogeneous_coordinate_type;
 
   const Rep& rep() const
   {
@@ -73,12 +71,14 @@ public:
     : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw).rep()) {}
 
 
-  Point_2 min() const
+  typename Qualified_result_of<typename R::Construct_min_vertex_2, Iso_rectangle_2 >::type
+  min() const
   {
     return R().construct_min_vertex_2_object()(*this);
   }
 
-  Point_2 max() const
+  typename Qualified_result_of<typename R::Construct_max_vertex_2, Iso_rectangle_2 >::type
+  max() const
   {
     return R().construct_max_vertex_2_object()(*this);
   }
@@ -95,39 +95,44 @@ public:
     return ! (*this == i);
   }
 
-  Point_2 
+
+  typename Qualified_result_of<typename R::Construct_vertex_2, Iso_rectangle_2 >::type
   vertex(int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
 
-  Point_2 
+  typename Qualified_result_of<typename R::Construct_vertex_2, Iso_rectangle_2 >::type
   operator[](int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
 
-  Cartesian_coordinate_type xmin() const
+  typename Qualified_result_of<typename R::Compute_xmin_2, Iso_rectangle_2 >::type
+  xmin() const
   {
     return R().compute_xmin_2_object()(*this);
   }
 
-  Cartesian_coordinate_type xmax() const
+  typename Qualified_result_of<typename R::Compute_xmax_2, Iso_rectangle_2 >::type
+  xmax() const
   {
     return R().compute_xmax_2_object()(*this);
   }
 
-  Cartesian_coordinate_type ymin() const
+  typename Qualified_result_of<typename R::Compute_ymin_2, Iso_rectangle_2 >::type 
+  ymin() const
   {
     return R().compute_ymin_2_object()(*this);
   }
 
-  Cartesian_coordinate_type ymax() const
+  typename Qualified_result_of<typename R::Compute_ymax_2, Iso_rectangle_2 >::type
+  ymax() const
   {
     return R().compute_ymax_2_object()(*this);
   }
 
-  Cartesian_coordinate_type
+  typename Qualified_result_of<typename R::Compute_xmin_2, Iso_rectangle_2 >::type
   min_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 );
@@ -137,7 +142,7 @@ public:
       return ymin();
   }
 
-  Cartesian_coordinate_type
+  typename Qualified_result_of<typename R::Compute_xmin_2, Iso_rectangle_2 >::type
   max_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 );

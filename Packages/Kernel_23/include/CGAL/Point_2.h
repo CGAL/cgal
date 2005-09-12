@@ -40,8 +40,6 @@ class Point_2 : public R_::Kernel_base::Point_2
 public:
   typedef RPoint_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
-  typedef typename R_::Cartesian_coordinate_type Cartesian_coordinate_type;
-  typedef typename R_::Homogeneous_coordinate_type Homogeneous_coordinate_type;
 
 
   const Rep& rep() const
@@ -108,22 +106,25 @@ public:
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    return typename R::Construct_cartesian_const_iterator_2()(*this,1);
+    return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
 
 
-  Homogeneous_coordinate_type hx() const
+  typename Qualified_result_of<typename R::Compute_hx_2,Point_2>::type
+  hx() const
   {
     return typename R::Compute_hx_2()(*this);
   }
 
-  Homogeneous_coordinate_type hy() const
+  typename Qualified_result_of<typename R::Compute_hy_2,Point_2>::type
+  hy() const
   {
     return typename R::Compute_hy_2()(*this);
   }
 
-  Homogeneous_coordinate_type hw() const
+  typename Qualified_result_of<typename R::Compute_hw_2,Point_2>::type
+  hw() const
   {
     return typename R::Compute_hw_2()(*this);
   }
@@ -133,7 +134,8 @@ public:
       return 2;
   }
 
-   Cartesian_coordinate_type homogeneous(int i) const
+  typename Qualified_result_of<typename R::Compute_hx_2,Point_2>::type
+  homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
     return (i==0) ?  hx() : (i==1)? hy() : hw();
