@@ -12,6 +12,9 @@
 
 #include <CGAL/Skin_surface_simplicial_complex_3.h>
 
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Skin_surface_polyhedral_items_3.h>
+
 CGAL_BEGIN_NAMESPACE 
 
 // NGHK: CHANGE COMMENT
@@ -41,11 +44,14 @@ public:
   typedef Simplicial_K_                                    Simplicial_K;
   typedef Mesh_K_                                          Mesh_K;
 	
+  // NGHK: TODO: combine R2S & S2M to R2M (instead of an additional converter)
   typedef Weighted_converter_3 <Cartesian_converter<Regular_K, Simplicial_K> >
                                                            R2S_converter;
-  typedef Weighted_converter_3 <Cartesian_converter<Simplicial_K,Mesh_K,
-    To_double<typename Simplicial_K::FT> > >               S2M_converter; 
-  typedef Weighted_converter_3 <Cartesian_converter<Mesh_K,Simplicial_K > >
+  typedef Weighted_converter_3 < Cartesian_converter<Regular_K, Mesh_K> >
+                                                           R2M_converter;
+  typedef Weighted_converter_3 <Cartesian_converter<Simplicial_K,Mesh_K> >
+                                                           S2M_converter; 
+  typedef Weighted_converter_3 <Cartesian_converter<Mesh_K,Simplicial_K> >
                                                            M2S_converter; 
 
   // Regular triangulation
@@ -54,15 +60,16 @@ public:
   typedef CGAL::Regular_triangulation_3<Regular_traits>    Regular;
 
   // Simplicial complex
-  typedef Skin_surface_simplicial_vertex_base_3<Self>      Simplicial_vertex;
-  typedef Skin_surface_simplicial_cell_base_3<Self>        Simplicial_cell;
-  typedef Triangulation_data_structure_3 <Simplicial_vertex,Simplicial_cell>
-                                                           Simplicial_TDS;
-  typedef Skin_surface_simplicial_complex_3<Simplicial_K, Simplicial_TDS>
-                                                           Simplicial;
+  typedef Triangulation_data_structure_3 <
+    Triangulation_vertex_base_3<Simplicial_K>,
+    Skin_surface_simplicial_cell_base_3<Simplicial_K,Mesh_K> >  Simplicial_TDS;
+  typedef Skin_surface_simplicial_complex_3<Simplicial_K, Simplicial_TDS> 
+                                                                Simplicial;
 
   // Polyhedral mesh
-
+  typedef Skin_surface_polyhedral_items_3<Simplicial>         
+                                                  Skin_surface_polyhedral_items;
+  typedef CGAL::Polyhedron_3<Mesh_K, Skin_surface_polyhedral_items> Mesh;
   
   // Tags
   typedef Tag_false                                        Cache_anchor;
@@ -70,6 +77,10 @@ public:
   // Function objects:
   R2S_converter r2s_converter_object() const
   { return R2S_converter(); }
+  R2M_converter r2m_converter_object() const
+  { return R2M_converter(); }
+  S2M_converter s2m_converter_object() const
+  { return S2M_converter(); }
 };
 
 CGAL_END_NAMESPACE

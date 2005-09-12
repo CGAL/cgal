@@ -59,7 +59,6 @@ public:
   }
   // returns the dimension of the simplex
   int dimension () const {
-    CGAL_assertion(ref != -1);
     return (ref & 3);
   }
   template < class T >
@@ -110,7 +109,7 @@ operator==(Simplex_3<T> s0, Simplex_3<T> s1) {
   case (3):
     return (&(*s0.ch) == &(*s1.ch));
   }
-  CGAL_assertion(0);
+  CGAL_assertion(false);
   return false;
 }
 
