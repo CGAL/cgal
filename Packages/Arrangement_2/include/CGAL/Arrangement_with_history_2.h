@@ -449,7 +449,9 @@ public:
 
     // Create duplicates of the stored curves and map the curves of the
     // original arrangement to their corresponding duplicates.
-    typedef std::map<const Curve_halfedges*, Curve_halfedges*>  Curve_map;
+    typedef std::map<const Curve_halfedges*,
+                     Curve_halfedges*>             Curve_map;
+    typedef typename Curve_map::value_type         Curve_map_entry;
 
     Curve_map                 cv_map;
     Curve_const_iterator      ocit;
@@ -466,7 +468,7 @@ public:
       m_curves.push_back (*dup_c);
 
       // Assign a map entry.
-      cv_map.insert (Curve_map::value_type (&(*ocit), dup_c));
+      cv_map.insert (Curve_map_entry (&(*ocit), dup_c));
     }
 
     // Go over the list of halfedges in our arrangement. The curves associated
@@ -909,7 +911,9 @@ public:
     // Create duplicates of the curves stored in both input arrangements
     // and map the curves of the original arrangement to their
     // corresponding duplicates.
-    typedef std::map<const Curve_halfedges*, Curve_halfedges*>  Curve_map;
+    typedef std::map<const Curve_halfedges*,
+                     Curve_halfedges*>             Curve_map;
+    typedef typename Curve_map::value_type         Curve_map_entry;
 
     Curve_map                 cv_map;
     const Curve_2            *p_cv;
@@ -928,7 +932,7 @@ public:
       m_curves.push_back (*dup_c);
 
       // Assign a map entry.
-      cv_map.insert (Curve_map::value_type (&(*ocit1), dup_c));
+      cv_map.insert (Curve_map_entry (&(*ocit1), dup_c));
     }
 
     // Duplicate the curves from the second arrangement.
@@ -944,7 +948,7 @@ public:
       m_curves.push_back (*dup_c);
 
       // Assign a map entry.
-      cv_map.insert (Curve_map::value_type (&(*ocit2), dup_c));
+      cv_map.insert (Curve_map_entry (&(*ocit2), dup_c));
     }
 
     // Go over the list of halfedges in our arrangement. The curves associated

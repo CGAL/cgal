@@ -84,10 +84,19 @@ public:
     {}
 
     /*!
-     * Get the data.
+     * Get the data (const version).
      * \return The data object associated with the curve.
      */
     const Data& get_data () const
+    {
+      return m_data;
+    }
+
+    /*!
+     * Get the data (non-const version).
+     * \return The data object associated with the curve.
+     */
+    Data& get_data ()
     {
       return m_data;
     }
@@ -180,10 +189,21 @@ public:
     }
 
     /*!
-     * Get the first data object associated with the curve.
+     * Get the first data object associated with the curve (const version).
      * \pre number_of_data_objects() is not 0.
      */
     const Data& get_data () const
+    {
+      CGAL_precondition (m_data_list.size() > 0);
+
+      return (m_data_list.front());
+    }
+
+    /*!
+     * Get the first data object associated with the curve (non-const version).
+     * \pre number_of_data_objects() is not 0.
+     */
+    Data& get_data ()
     {
       CGAL_precondition (m_data_list.size() > 0);
 

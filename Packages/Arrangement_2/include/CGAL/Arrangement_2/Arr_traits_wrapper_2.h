@@ -459,7 +459,8 @@ public:
           return (true);
         }
       }
-      else if (cv1_to_right && cv2_to_right)
+      
+      if (cv1_to_right && cv2_to_right)
       {
         // Case 2: Both cv1 and cv2 are defined to the right of p.
         r_res = compare_y_at_x_right (cv1, cv2, p);
@@ -478,7 +479,6 @@ public:
               cv_equal_cv2 = true;
 
             return (res1 == LARGER && res2 == SMALLER);
-
           }
           return (false);
         }
@@ -517,7 +517,8 @@ public:
           return (true);
         }
       }
-      else if (!cv1_to_right && cv2_to_right)
+
+      if (!cv1_to_right && cv2_to_right)
       {
         // Case 3: cv1 is defined to the left of p, and cv2 to its right.
         if (!cv_to_right)
@@ -539,27 +540,27 @@ public:
           return (res2 == SMALLER);
         }
       }
+
+      CGAL_assertion (cv1_to_right && !cv2_to_right);
+
+      // Case 4: cv1 is defined to the right of p, and cv2 to its left.
+      if (cv_to_right)
+      {
+	res1 = compare_y_at_x_right (cv1, cv, p);
+	
+	if (res1 == EQUAL)
+	  cv_equal_cv1 = true;
+        
+	return (res1  == LARGER);
+      }
       else
       {
-        // Case 4: cv1 is defined to the right of p, and cv2 to its left.
-        if (cv_to_right)
-        {
-          res1 = compare_y_at_x_right (cv1, cv, p);
-
-          if (res1 == EQUAL)
-            cv_equal_cv1 = true;
+	res2 = compare_y_at_x_left (cv2, cv, p);
         
-          return (res1  == LARGER);
-        }
-        else
-        {
-          res2 = compare_y_at_x_left (cv2, cv, p);
-        
-          if (res2 == EQUAL)
-            cv_equal_cv2 = true;
- 
-          return (res2 == LARGER);
-        }
+	if (res2 == EQUAL)
+	  cv_equal_cv2 = true;
+	
+	return (res2 == LARGER);
       }
     }
   };
@@ -640,19 +641,13 @@ public:
       {
         // If we start from the top, we encounter the right curve (which
         // is cv2) first. If we start from the bottom, we encounter cv1 first.
-        if (from_top)
-          return (LARGER);
-        else
-          return (SMALLER);
+	return (from_top ? LARGER : SMALLER);
       }
       else
       {
         // If we start from the top, we encounter the right curve (which
         // is cv1) first. If we start from the bottom, we encounter cv2 first.
-        if (from_top)
-          return (SMALLER);
-        else
-          return (LARGER);
+	return (from_top ? SMALLER : LARGER);
       }
     }
   };

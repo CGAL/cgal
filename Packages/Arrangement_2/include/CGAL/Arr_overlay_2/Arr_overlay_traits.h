@@ -46,6 +46,9 @@ public:
   typedef typename ResArr_::Halfedge_handle              Res_halfedge_handle;
   typedef typename ResArr_::Face_handle                  Res_face_handle;
 
+  /*! Destructor. */
+  virtual ~_Arr_default_overlay_traits ()
+  {}
   
   /*!
    * Create a vertex v that corresponds to the coinciding vertices v1 and v2.

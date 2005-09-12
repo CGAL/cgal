@@ -82,10 +82,19 @@ public:
     {}
 
     /*!
-     * Get the data.
+     * Get the data (const version).
      * \return The data object associated with the curve.
      */
     const Data& get_data () const
+    {
+      return m_data;
+    }
+
+    /*!
+     * Get the data (non-const version).
+     * \return The data object associated with the curve.
+     */
+    Data& get_data ()
     {
       return m_data;
     }
@@ -129,10 +138,17 @@ public:
     {}
 
     /*!
-     * Get the first data object associated with the curve.
-     * \pre number_of_data_objects() is not 0.
+     * Get the data object associated with the curve (const version).
      */
     const Data& get_data () const
+    {
+      return (m_data);
+    }
+
+    /*!
+     * Get the data object associated with the curve (non-const version).
+     */
+    Data& get_data ()
     {
       return (m_data);
     }
