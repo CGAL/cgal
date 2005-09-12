@@ -39,8 +39,6 @@ class Direction_2 : public R_::Kernel_base::Direction_2
 
 public:
 
-  typedef typename R_::Homogeneous_coordinate_type Homogeneous_coordinate_type;
-
   typedef RDirection_2 Rep;
 
   const Rep& rep() const
@@ -87,18 +85,20 @@ public:
     return R().construct_perpendicular_direction_2_object()(*this,o);
   }
 
-  
-  Homogeneous_coordinate_type dx() const
+  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2<R_> >::type
+  dx() const
   {
     return R().compute_dx_2_object()(*this);
   }
 
-  Homogeneous_coordinate_type dy() const
+  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2<R_> >::type
+  dy() const
   {
     return R().compute_dy_2_object()(*this);
   }
 
-  Homogeneous_coordinate_type delta(int i) const
+  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2<R_> >::type
+  delta(int i) const
   {
     CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
     return (i==0) ? dx() : dy();
