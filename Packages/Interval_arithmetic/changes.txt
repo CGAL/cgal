@@ -1,4 +1,7 @@
 12 September 2005 Sylvain Pion
+- Workaround for g++ 3.3 (test for CGAL_CFG_COMMA_BUG).
+
+12 September 2005 Sylvain Pion
 - Lazy_exact_nt : change Interval<true> to Interval<false> for compatibility
   with Lazy_kernel.
 
