@@ -1,3 +1,7 @@
+12 September 2005 Sylvain Pion
+- Lazy_exact_nt : change Interval<true> to Interval<false> for compatibility
+  with Lazy_kernel.
+
 7 September 2005 Andreas Fabri
 - Added nested type Lazy_kernel::Kernel_tag
 - The magic functor now returns Lazy_kernel::Class instead of Lazy<Class>

@@ -87,9 +87,10 @@
 
 CGAL_BEGIN_NAMESPACE
 // Abstract base class for lazy numbers and lazy objects
-template <typename AT, typename ET, typename E2A>
+template <typename AT_, typename ET, typename E2A>
 struct Lazy_construct_rep : public Rep
 {
+  typedef AT_ AT;
 
   AT at;
   mutable ET *et;
@@ -104,8 +105,6 @@ struct Lazy_construct_rep : public Rep
   Lazy_construct_rep (const AT& a, const ET& e)
       : at(a), et(new ET(e)) 
   {}
-
-
 
 private:
   Lazy_construct_rep (const Lazy_construct_rep&) { abort(); } // cannot be copied.
@@ -128,7 +127,7 @@ public:
     return *et;
   }
   
-   ET & exact()
+  ET & exact()
   {
     if (et==NULL)
       update_exact();
@@ -143,16 +142,16 @@ public:
 
 // Abstract base representation class for lazy numbers
 template <typename ET>
-struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<true>, ET, To_interval<ET> >
+struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
+                                                  ET, To_interval<ET> >
 {
-typedef Lazy_construct_rep<Interval_nt<true>, ET, To_interval<ET> > Base;
+  typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Base;
 
-  Lazy_exact_rep (const Interval_nt<true> & i)
+  Lazy_exact_rep (const Interval_nt<false> & i)
       : Base(i) {}
 
 private:
   Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
-
 
 };
 
@@ -220,7 +219,7 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 {
   Lazy_exact_nt<ET> op1;
 
-  Lazy_exact_unary (const Interval_nt<true> &i, const Lazy_exact_nt<ET> &a)
+  Lazy_exact_unary (const Interval_nt<false> &i, const Lazy_exact_nt<ET> &a)
       : Lazy_exact_rep<ET>(i), op1(a) {}
 
   int depth() const { return op1.depth() + 1; }
@@ -234,7 +233,7 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
   Lazy_exact_nt<ET1> op1;
   Lazy_exact_nt<ET2> op2;
 
-  Lazy_exact_binary (const Interval_nt<true> &i,
+  Lazy_exact_binary (const Interval_nt<false> &i,
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
       : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
@@ -255,13 +254,15 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
 template <typename ET>                                                   \
 struct NAME : public Lazy_exact_unary<ET>                                \
 {                                                                        \
+  typedef typename Lazy_exact_unary<ET>::AT::Protector P;                \
   NAME (const Lazy_exact_nt<ET> &a)                                      \
-      : Lazy_exact_unary<ET>(OP(a.approx()), a) {}                       \
+      : Lazy_exact_unary<ET>((P(), OP(a.approx())), a) {}                \
                                                                          \
   void update_exact()                                                    \
   {                                                                      \
     this->et = new ET(OP(this->op1.exact()));                            \
-    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et)); \
+    if (!this->approx().is_point())                                      \
+      this->approx() = CGAL::to_interval(*(this->et));                   \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -276,13 +277,15 @@ CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
 struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
 {                                                                        \
+  typedef typename Lazy_exact_unary<ET>::AT::Protector P;                \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
-    : Lazy_exact_binary<ET, ET1, ET2>(a.approx() OP b.approx(), a, b) {} \
+    : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
   void update_exact()                                                    \
   {                                                                      \
     this->et = new ET(this->op1.exact() OP this->op2.exact());           \
-    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et)); \
+    if (!this->approx().is_point())                                      \
+      this->approx() = CGAL::to_interval(*(this->et));                   \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -332,7 +335,7 @@ class Lazy_exact_nt
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int >
 {
   typedef Lazy_exact_nt<ET> Self;
-  typedef Lazy_construct_rep<Interval_nt<true>, ET, To_interval<ET> > Self_rep;
+  typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Self_rep;
 
   // We have a static variable for optimizing zero.
   static const Self zero_;
@@ -414,14 +417,14 @@ public :
     return *this = Lazy_exact_nt<ET>(res);
   }
 
-  const Interval_nt<true>& approx() const
-  { return ptr()->approx(); }
-
-  Interval_nt<false> interval() const
+  Interval_nt<true> interval() const
   {
-    const Interval_nt<true>& i = ptr()->approx();
-    return Interval_nt<false>(i.inf(), i.sup());
+    const Interval_nt<false>& i = approx();
+    return Interval_nt<true>(i.inf(), i.sup());
   }
+
+  const Interval_nt<false>& approx() const
+  { return ptr()->approx(); }
 
   Interval_nt_advanced approx_adv() const
   { return ptr()->approx(); }
@@ -603,7 +606,7 @@ template <typename ET>
 double
 to_double(const Lazy_exact_nt<ET> & a)
 {
-    const Interval_nt<true>& app = a.approx();
+    const Interval_nt<false>& app = a.approx();
     if (app.sup() == app.inf())
 	return app.sup();
 
