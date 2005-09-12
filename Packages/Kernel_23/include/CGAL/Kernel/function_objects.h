@@ -1259,12 +1259,13 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_second_point_2
+  class Construct_second_point_2 : Has_qrt
   {
     typedef typename K::Ray_2    Ray_2;
     typedef typename K::Point_2  Point_2;
   public:
     typedef Point_2              result_type;
+    typedef const Point_2&       qualified_result_type;
     typedef Arity_tag< 1 >       Arity;
 
     const result_type&
