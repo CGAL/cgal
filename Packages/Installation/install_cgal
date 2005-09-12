@@ -2748,8 +2748,10 @@ check_QT_LIB_DIR()
 {
     if [ -n "${QT_LIB_DIR}" ]; then
 	if [ ! -r ${QT_LIB_DIR}/libqt.${LIB_SUFFIX} -a \
-	     ! -r ${QT_LIB_DIR}/libqt${SHARED_LIB_EXT} ]; then
-	     $1 "WARNING: QT_LIB_DIR should contain libqt.${LIB_SUFFIX} or libqt${SHARED_LIB_EXT}."
+	     ! -r ${QT_LIB_DIR}/libqt${SHARED_LIB_EXT} -a \
+             ! -r ${QT_LIB_DIR}/libqt-mt.${LIB_SUFFIX} -a \
+             ! -r ${QT_LIB_DIR}/libqt-mt${SHARED_LIB_EXT} ]; then
+	     $1 "WARNING: QT_LIB_DIR should contain libqt.${LIB_SUFFIX}, libqt${SHARED_LIB_EXT}, libqt-mt.${LIB_SUFFIX} or libqt-mt${SHARED_LIB_EXT}."
 	else
 	    return 1
 	fi

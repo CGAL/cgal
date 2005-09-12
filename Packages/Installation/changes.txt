@@ -1,3 +1,6 @@
+12 September 2005 Sylvain Pion
+- Do not assume libqt-mt cannot exist without libqt.
+
 31 July 2005 Menelaos Karavelas
 - added additional C++ flag (-frounding-math) for g++ 4 for Darwin 8.x:
   -frounding-math is required for correct floating point operations
