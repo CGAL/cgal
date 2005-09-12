@@ -1018,9 +1018,195 @@ namespace CartesianKernelFunctors {
     }
 
     qualified_result_type
-    operator()(const Vector_2& v)
+    operator()(const Vector_2& v) const
     {
       return v.rep().y();
+    }
+  };
+
+
+
+  template <typename K>
+  class Compute_dx_2 : public Has_qrt
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Direction_2        Direction_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Direction_2& d) const
+    {
+      return d.rep().dx();
+    }
+  };
+
+  template <typename K>
+  class Compute_dy_2 : public Has_qrt
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Direction_2        Direction_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Direction_2& d) const
+    {
+      return d.rep().dy();
+    }
+  };
+
+  template <typename K>
+  class Compute_hx_2 : public Has_qrt
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_2        Point_2;
+    typedef typename K::Vector_2        Vector_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Point_2& p) const
+    {
+      return p.rep().hx();
+    }
+
+    qualified_result_type
+    operator()(const Vector_2& v) const
+    {
+      return v.rep().hx();
+    }
+  };
+
+  template <typename K>
+  class Compute_hy_2 : public Has_qrt
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_2        Point_2;
+    typedef typename K::Vector_2       Vector_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Point_2& p) const
+    {
+      return p.rep().hy();
+    }
+
+    qualified_result_type
+    operator()(const Vector_2& v) const
+    {
+      return v.rep().hy();
+    }
+  };
+
+  template <typename K>
+  class Compute_hw_2 : public Has_qrt
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_2        Point_2;
+    typedef typename K::Vector_2       Vector_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Point_2& p) const
+    {
+      return p.rep().hw();
+    }
+
+    qualified_result_type
+    operator()(const Vector_2& v) const
+    {
+      return v.rep().hw();
+    }
+  };
+
+
+  template <typename K>
+  class Compute_xmin_2 : public Has_qrt
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Iso_rectangle_2& r) const
+    {
+      return r.min().x();
+    }
+  };
+
+  template <typename K>
+  class Compute_xmax_2 : public Has_qrt
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Iso_rectangle_2& r) const
+    {
+      return r.max().x();
+    }
+  };
+
+  template <typename K>
+  class Compute_ymin_2 : public Has_qrt
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Iso_rectangle_2& r) const
+    {
+      return r.min().y();
+    }
+  };
+
+  template <typename K>
+  class Compute_ymax_2 : public Has_qrt
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const FT&        qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Iso_rectangle_2& r) const
+    {
+      return r.max().y();
     }
   };
 
