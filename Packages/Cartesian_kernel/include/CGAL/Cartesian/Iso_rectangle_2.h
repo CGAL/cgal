@@ -44,8 +44,6 @@ class Iso_rectangleC2
 
 public:
   typedef R_                                     R;
-  typedef typename R::Cartesian_coordinate_type Cartesian_coordinate_type;
-  typedef typename R::Homogeneous_coordinate_type Homogeneous_coordinate_type;
 
   Iso_rectangleC2() {}
 
