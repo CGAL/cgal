@@ -43,9 +43,6 @@ class Vector_2 : public R_::Kernel_base::Vector_2
 
 public:
 
-  typedef typename R_::Cartesian_coordinate_type Cartesian_coordinate_type;
-  typedef typename R_::Homogeneous_coordinate_type Homogeneous_coordinate_type;
-
   typedef RVector_2 Rep;
 
   const Rep& rep() const
@@ -84,44 +81,54 @@ public:
   {}
 
 
-  Cartesian_coordinate_type x() const
+  typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type
+  x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  Cartesian_coordinate_type y() const
+  
+  typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
+  y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  Cartesian_coordinate_type cartesian(int i) const
+  
+  typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
+  cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  Cartesian_coordinate_type
+  typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type
   operator[](int i) const
   {
       return cartesian(i);
   }
 
-  Homogeneous_coordinate_type hx() const
+  typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type
+  hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
-  Homogeneous_coordinate_type hy() const
+  
+  typename Qualified_result_of<typename R::Compute_hy_2,Vector_2>::type
+  hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  Homogeneous_coordinate_type hw() const
+  typename Qualified_result_of<typename R::Compute_hw_2,Vector_2>::type
+  hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  Cartesian_coordinate_type homogeneous(int i) const
+  typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type
+  homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
     return (i==0) ?  hx() : (i==1)? hy() : hw();
