@@ -22,6 +22,12 @@ The traits class inherits its point type from \ccc{Traits::Point_2},
 and defines an extended \ccc{Curve_2} and \ccc{X_monotone_curve_2} types,
 as detailed below.
 
+Each \ccc{Curve_2} object is associated with a single data field, and this 
+field is copied to all \ccc{X_monotone_curve_2} objects induced by this curve.
+In case two (or more) $x$-monotone curves overlap, their data fields are
+consolidated, such that an $x$-monotone curve with a consolidated container
+of data fields is associated with this curve.
+
 \ccInclude{CGAL/Arr_consolidated_curve_data_traits_2.h}
  
 \ccIsModel
@@ -33,10 +39,10 @@ as detailed below.
 \ccTypes
 %-------
 
-\ccNestedType{typedef typename Traits::Curve_2 Base_curve_2}
+\ccTypedef{typedef typename Traits::Curve_2 Base_curve_2;}
     {the base curve.}
 
-\ccNestedType{typedef typename Traits::X_monotone_curve_2 Base_x_monotone_curve_2}
+\ccTypedef{typedef typename Traits::X_monotone_curve_2 Base_x_monotone_curve_2;}
     {the base $x$-monotone curve curve.}
 
 \subsection*{Class 
@@ -78,7 +84,7 @@ extends the \ccc{Traits::Curve_2} type with an extra data field of type
 \subsection*{Class Arr\_consolidated\_curve\_data\_traits\_2$<$Traits,Data$>$::X\_monotone\_curve\_2}
 %=============================================================================
 
-The \ccc{X_monotone_curve_2} class nested within thethe consolidated 
+The \ccc{X_monotone_curve_2} class nested within the consolidated 
 curve-data traits extends the \ccc{Traits::X_monotone_curve_2} type with 
 a container of data fields, accumulated from all curves that induce the
 $x$-monotone curve. Normally, the container consists of a single data object,
@@ -125,15 +131,44 @@ its container consists of $k$ data objects, copied from the originating curves.
 \ccMethod{size_t number_of_data_objects () const;}
   {returns the number of data objects associated with the curve.}
 
+\ccMethod{Data_iterator data_begin ();}
+  {returns an iterator pointing to the first data object attached to the
+   $x$-monotone curve (a \ccc{const} version is also available).}
+
+\ccMethod{Data_iterator data_end ();}
+  {returns a past-the-end iterator for the attached data objects
+   (a \ccc{const} version is also available).}
+
 \ccMethod{const Data& get_data () const;}
   {returns the first data field (a non-const version, which returns a reference
    to the data object, is also available).
    \ccPrecond{The number of attached data objects is not $0$.}}
 
-%RWRW: MORE WORK HERE ...
+\ccMethod{bool has_same_data (const X_monotone_curve_2& other) const;}
+  {determines whether \ccVar\ is attached to the same data objects as
+   the \ccc{other} $x$-monotone curve.}
+
+\ccModifiers
+%-----------
+
+\ccMethod{void add_data (const Data& data);}
+  {adds the given \ccc{data} object to the container of data objects attached
+   to \ccVar.}
+
+\ccMethod{template <class InputIterator>
+          void add_data (InputIterator begin, InputIterator end);}
+  {adds a range of data objects, specified by \ccc{[begin,end)} to the
+   container of data objects attached to \ccVar.}
+
+\ccMethod{void remove_data (const Data& data);}
+  {removes the \ccc{data} object from the container of data objects attached
+   to \ccVar.}
 
 \ccMethod{void set_data (const Data& data);}
-  {sets the data field.}
+  {sets \ccc{data} as the single data field attached to \ccVar.}
+
+\ccMethod{void clear_data ();}
+  {clears the container of attached data objects.}
 
 \end{ccClass}
 
