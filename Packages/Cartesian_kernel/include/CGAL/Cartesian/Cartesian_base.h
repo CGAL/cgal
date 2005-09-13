@@ -124,8 +124,6 @@ struct Cartesian_base
     typedef const FT_*                                  Cartesian_const_iterator_2;
     typedef const FT_*                                  Cartesian_const_iterator_3;
 
-    typedef const FT_&                                  Cartesian_coordinate_type;
-    typedef const FT_&                                  Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;
     typedef ConicCPA2<Point_2,Data_accessor_2>          Conic_2;

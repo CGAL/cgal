@@ -51,9 +51,6 @@ class VectorC2
 public:
   typedef R_                                     R;
 
-  typedef const FT& Cartesian_coordinate_type;
-  typedef const FT& Homogeneous_coordinate_type;
-
   VectorC2() {}
  
   VectorC2(const FT &x, const FT &y)

@@ -48,8 +48,6 @@ class DirectionC2
   Base base;
 
 public:
-  typedef const FT& Cartesian_coordinate_type;
-  typedef const FT& Homogeneous_coordinate_type;
   typedef R_                                     R;
 
   DirectionC2() {}
