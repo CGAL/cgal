@@ -1,3 +1,6 @@
+13 September 2005 Andreas Fabri
+- Changes in Lazy.h such that the 2D kernel testsuite now passes (without transform)
+
 13 September 2005 Sylvain Pion
 - Protect_FPU_rounding : add expensive assertion.
 - Lazy kernel : various updates/fixes.
