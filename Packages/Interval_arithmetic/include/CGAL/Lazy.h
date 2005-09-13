@@ -406,6 +406,11 @@ struct Approx_converter {
   const typename T::AT&
   operator()(const T&t) const
   { return t.approx(); }
+
+  const Null_vector&
+  operator()(const Null_vector& n) const
+  { return n; }
+
 };
 
 struct Exact_converter {
@@ -413,6 +418,10 @@ struct Exact_converter {
   const typename T::ET&
   operator()(const T&t) const
   { return t.exact(); }
+
+  const Null_vector&
+  operator()(const Null_vector& n) const
+  { return n; }
 };
 
 //____________________________________________________________
@@ -818,14 +827,14 @@ public:
   result_type
   operator()(const L1& l1) const
   {
-    return result_type(l1);
+    return result_type(&l1);
   }
 
   template < typename L1>
   result_type
   operator()(const L1& l1, int i) const
   {
-    return result_type(l1,i);
+    return result_type(&l1,i);
   }
 
 };
