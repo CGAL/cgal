@@ -678,16 +678,17 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_max_vertex_2
+  class Construct_max_vertex_2 : Has_qrt
   {
     typedef typename K::Point_2          Point_2;
     typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
     typedef Point_2           result_type;
+    typedef const Point_2&    qualified_result_type;
     typedef Arity_tag< 1 >    Arity;
 
-    Point_2
+    const Point_2&
     operator()(const Iso_rectangle_2& r) const
     { return r.rep().max(); }
 
@@ -695,29 +696,20 @@ namespace CommonKernelFunctors {
     operator()(const Segment_2& s) const
     { return s.max(); }
   };
-} //namespace CommonKernelFunctors
 
-
-template < typename K>
-struct Qualified_result_of<CommonKernelFunctors::Construct_max_vertex_2<K>, typename K::Segment_2>
-{
-  typedef typename K::Point_2 const &   type;
-};
-
-
-namespace CommonKernelFunctors {
 
   template <typename K>
-  class Construct_min_vertex_2
+  class Construct_min_vertex_2 : Has_qrt
   {
     typedef typename K::Point_2          Point_2;
     typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
     typedef Point_2           result_type;
+    typedef const Point_2&    qualified_result_type;
     typedef Arity_tag< 1 >    Arity;
 
-    Point_2
+    const Point_2&
     operator()(const Iso_rectangle_2& r) const
     { return r.rep().min(); }
 
@@ -726,17 +718,7 @@ namespace CommonKernelFunctors {
     { return s.min(); }
   };
 
-} //namespace CommonKernelFunctors
 
-
-template < typename K>
-struct Qualified_result_of<CommonKernelFunctors::Construct_min_vertex_2<K>, typename K::Segment_2>
-{
-  typedef typename K::Point_2 const &   type;
-};
-
-
-namespace CommonKernelFunctors {
 
   template <typename K>
   class Construct_max_vertex_3
