@@ -145,7 +145,7 @@ public:
   Basic_sweep_line_2 (SweepVisitor* visitor) :
       m_traits(new Traits()),
       m_traitsOwner(true),
-      m_statusLineCurveLess(m_traits),
+      m_statusLineCurveLess(m_traits, &m_currentEvent),
       m_queue(new EventQueue(PointLess(m_traits))),
       m_statusLine(m_statusLineCurveLess),
       m_status_line_insert_hint(m_statusLine.begin()),
@@ -164,7 +164,7 @@ public:
   Basic_sweep_line_2(Traits *traits, SweepVisitor* visitor) :
       m_traits(traits),
       m_traitsOwner(false),
-      m_statusLineCurveLess(m_traits),
+      m_statusLineCurveLess(m_traits, &m_currentEvent),
       m_queue(new EventQueue(PointLess(m_traits))),
       m_statusLine(m_statusLineCurveLess),
       m_status_line_insert_hint(m_statusLine.begin()),
@@ -697,6 +697,9 @@ protected:
   /*! indicates if the traits object was allocated by the sweep */
   bool m_traitsOwner;
 
+   /*! a pointer to the current event */
+  Event *m_currentEvent;
+
   /*! Y-str comprasion functor */
   StatusLineCurveLess m_statusLineCurveLess;
 
@@ -708,10 +711,7 @@ protected:
 
   /*! The status line (Y-str) */
   StatusLine m_statusLine;
-
-  /*! a pointer to the current event */
-  Event *m_currentEvent;
-
+ 
   /*! An iterator of the  status line that is used as a hint for inserts. */
   StatusLineIter m_status_line_insert_hint;
 

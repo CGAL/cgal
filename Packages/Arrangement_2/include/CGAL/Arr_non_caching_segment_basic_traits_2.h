@@ -35,7 +35,10 @@
  */
 
 #include <CGAL/tags.h>
+#include <CGAL/representation_tags.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Arr_traits_2/Segment_assertions.h>
+#include <CGAL/Number_type_traits.h> 
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,6 +52,13 @@ class Arr_non_caching_segment_basic_traits_2 : public T_Kernel
 public:
 
   typedef T_Kernel                              Kernel;
+
+  typedef typename Kernel::FT                   FT;
+  typedef typename Number_type_traits<FT>::Has_exact_division 
+                                                Has_exact_division;
+
+  typedef Segment_assertions<Arr_non_caching_segment_basic_traits_2<Kernel> >
+                                                Segment_assertions;
 
   // Categories:
   typedef Tag_true                              Has_left_category;
@@ -118,8 +128,9 @@ public:
         Compare_y_at_x_2 compare_y_at_x = kernel.compare_y_at_x_2_object();
         );
       
-      CGAL_precondition(compare_y_at_x(p, cv1) == EQUAL &&
-                        compare_y_at_x(p, cv2) == EQUAL);
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
       CGAL_precondition_code(
         Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
@@ -181,8 +192,9 @@ public:
         Compare_y_at_x_2 compare_y_at_x = kernel.compare_y_at_x_2_object();
         );
 
-      CGAL_precondition(compare_y_at_x(p, cv1) == EQUAL &&
-                        compare_y_at_x(p, cv2) == EQUAL);
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
       CGAL_precondition_code(
         Compare_xy_2 compare_xy = kernel.compare_xy_2_object();

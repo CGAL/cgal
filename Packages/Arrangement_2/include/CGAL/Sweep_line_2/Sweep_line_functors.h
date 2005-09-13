@@ -23,6 +23,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
+//#include <CGAL/Sweep_line_2/Sweep_line_event.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,6 +49,9 @@ private:
 };
 
 
+// forward decleration for Sweep_line_event
+template <class Traits_, class Subcurve_>
+class Sweep_line_event;
 
 
 template <class SweepLineTraits_2, class Subcurve> 
@@ -57,15 +61,28 @@ public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Sweep_line_event<Traits, Subcurve>  Event;
   
 
-  Status_line_curve_less_functor(Traits *t) : m_traits(t),
-                                              m_is_equal(false)
+  template <class Sweep_event>
+  Status_line_curve_less_functor(Traits *t, Sweep_event** e_ptr) : m_traits(t),
+                                                            m_curr_event(reinterpret_cast<Event**>(e_ptr)),
+                                                            m_is_equal(false)
 
   {}
 
   Comparison_result operator()(const Subcurve * c1, const Subcurve * c2) const
   {
+    if(std::find((*m_curr_event)->right_curves_begin(), 
+                 (*m_curr_event)->right_curves_end(),
+                 c1) != (*m_curr_event)->right_curves_end() &&
+       std::find((*m_curr_event)->right_curves_begin(), 
+                 (*m_curr_event)->right_curves_end(),
+                 c2) != (*m_curr_event)->right_curves_end())
+
+     return m_traits->compare_y_at_x_right_2_object()
+       (c1->get_last_curve(), c2->get_last_curve(), (*m_curr_event)->get_point());
+
     return m_traits->compare_y_at_x_2_object()
       (m_traits->construct_min_vertex_2_object()(c1->get_last_curve()),
        c2->get_last_curve());
@@ -91,7 +108,10 @@ public:
   }
 
   /*! a pointer to a traits object */
-  Traits * m_traits;
+  Traits *  m_traits;
+
+  Event**   m_curr_event;
+  
 
   mutable bool m_is_equal;
 

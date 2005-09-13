@@ -47,6 +47,7 @@ public:
   typedef T_Kernel                                         Kernel;
   
   typedef Arr_non_caching_segment_basic_traits_2<Kernel>   Base;
+  typedef typename Base::Segment_assertions                Segment_assertions;
 
   /*! Default constructor */
   Arr_non_caching_segment_traits_2() : Base() {}
@@ -164,9 +165,10 @@ public:
 
       const Point_2 & left = min_vertex(cv);
       const Point_2 & right = max_vertex(cv);
-      CGAL_precondition(compare_y_at_x (p, cv) == EQUAL &&
-                        compare_xy(left, p) == SMALLER &&
-                        compare_xy(right, p) == LARGER);
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on(p, cv, Has_exact_division())&&
+         compare_xy(left, p) == SMALLER &&
+         compare_xy(right, p) == LARGER);
 
       typename Base::Construct_segment_2 construct_segment =
         base.construct_segment_2_object();

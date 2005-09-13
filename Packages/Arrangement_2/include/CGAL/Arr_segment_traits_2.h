@@ -25,8 +25,10 @@
  */
 
 #include <CGAL/tags.h>
+#include <CGAL/representation_tags.h>
 #include <CGAL/intersections.h>
-
+#include <CGAL/Number_type_traits.h> 
+#include <CGAL/Arr_traits_2/Segment_assertions.h>
 #include <fstream>
 
 CGAL_BEGIN_NAMESPACE
@@ -45,10 +47,18 @@ class Arr_segment_traits_2
 public:
 
   typedef Kernel_                         Kernel;
+  typedef typename Kernel::FT             FT;
+
+  typedef typename Number_type_traits<FT>::Has_exact_division 
+                                          Has_exact_division;
 
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
+
+  typedef typename Kernel::Line_2         Line_2;
+  typedef Segment_assertions<Arr_segment_traits_2<Kernel> >
+                                          Segment_assertions;
 
   /*!
    * \class Representation of a segement with cached data.
@@ -200,8 +210,9 @@ public:
       CGAL_precondition_code (
         Kernel    kernel;
       );
-      CGAL_precondition (kernel.has_on_2_object() (l, p) &&
-                         kernel.compare_xy_2_object() (p, right()) == SMALLER);
+      CGAL_precondition 
+        (Segment_assertions::_assert_is_point_on (p, l, Has_exact_division())&&
+         kernel.compare_xy_2_object() (p, right()) == SMALLER);
 
       if (is_pt_max)
         ps = p;
@@ -228,8 +239,9 @@ public:
       CGAL_precondition_code (
         Kernel    kernel;
       );
-      CGAL_precondition (kernel.has_on_2_object() (l, p) &&
-                         kernel.compare_xy_2_object() (p, left()) == LARGER);
+      CGAL_precondition 
+        (Segment_assertions::_assert_is_point_on (p, l, Has_exact_division())&&
+         kernel.compare_xy_2_object() (p, left()) == LARGER);
 
       if (is_pt_max)
         pt = p;
@@ -323,7 +335,7 @@ public:
      *         SMALLER if x(p1) < x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    Comparison_result operator() (const Point_2 & p1, const Point_2 & p2) const
+    Comparison_result operator() (const Point_2 & p1, const Point_2 & p2)const
     {
       Kernel    kernel;
       return (kernel.compare_x_2_object()(p1, p2));
@@ -495,11 +507,12 @@ public:
       CGAL_precondition_code (
         typename Kernel::Compare_xy_2 compare_xy = 
                                                   kernel.compare_xy_2_object();
-        Compare_y_at_x_2              compare_y_at_x;
+        //Compare_y_at_x_2              compare_y_at_x;
       );
 
-      CGAL_precondition (compare_y_at_x (p, cv1) == EQUAL &&
-                         compare_y_at_x (p, cv2) == EQUAL);
+      CGAL_precondition 
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
       CGAL_precondition (compare_xy(cv1.left(), p) == SMALLER &&
                          compare_xy(cv2.left(), p) == SMALLER);
@@ -547,11 +560,12 @@ public:
       CGAL_precondition_code (
         typename Kernel::Compare_xy_2 compare_xy = 
                                                  kernel.compare_xy_2_object();
-        Compare_y_at_x_2              compare_y_at_x;
+        //Compare_y_at_x_2              compare_y_at_x;
       );
 
-      CGAL_precondition (compare_y_at_x (p, cv1) == EQUAL &&
-                         compare_y_at_x (p, cv2) == EQUAL);
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
       CGAL_precondition (compare_xy(cv1.right(), p) == LARGER &&
                          compare_xy(cv2.right(), p) == LARGER);
@@ -669,12 +683,13 @@ public:
         Kernel                        kernel;
         typename Kernel::Compare_xy_2 compare_xy = 
                                                  kernel.compare_xy_2_object();
-        Compare_y_at_x_2              compare_y_at_x;
+        //Compare_y_at_x_2              compare_y_at_x;
       );
 
-      CGAL_precondition (compare_y_at_x (p, cv) == EQUAL &&
-                         compare_xy(cv.left(), p) == SMALLER &&
-                         compare_xy(cv.right(), p) == LARGER);
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on(p, cv, Has_exact_division())&&
+         compare_xy(cv.left(), p) == SMALLER &&
+         compare_xy(cv.right(), p) == LARGER);
 
       // Perform the split.
       c1 = cv;
@@ -936,6 +951,9 @@ public:
     return Construct_x_monotone_curve_2();
   }
   //@}
+
+ 
+
 };
 
 /*!
