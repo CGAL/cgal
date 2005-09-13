@@ -265,7 +265,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
     if (!this->approx().is_point())                                      \
       this->approx() = CGAL::to_interval(*(this->et));                   \
     this->prune_dag();                                                   \
-  }                                                                      \
+   }                                                                     \
 };
 #else
 // Macro for unary operations
@@ -299,7 +299,7 @@ CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
 struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
 {                                                                        \
-  typedef typename Lazy_exact_binary<ET, ET1, ET2>::AT::Protector P;     \
+  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;	 \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
@@ -375,6 +375,7 @@ template <typename ET>
 class Lazy_exact_nt
   : public Handle
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int >
+  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, double >
 {
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Self_rep;
@@ -432,16 +433,28 @@ public :
   { return *this = new Lazy_exact_Div<ET>(*this, b); }
 
   // Mixed operators. (could be optimized ?)
-  Self & operator+=(int b)
+  Self & operator+=(CGAL_int(ET) b)
   { return *this = new Lazy_exact_Add<ET>(*this, b); }
 
-  Self & operator-=(int b)
+  Self & operator-=(CGAL_int(ET) b)
   { return *this = new Lazy_exact_Sub<ET>(*this, b); }
 
-  Self & operator*=(int b)
+  Self & operator*=(CGAL_int(ET) b)
   { return *this = new Lazy_exact_Mul<ET>(*this, b); }
 
-  Self & operator/=(int b)
+  Self & operator/=(CGAL_int(ET) b)
+  { return *this = new Lazy_exact_Div<ET>(*this, b); }
+
+  Self & operator+=(CGAL_double(ET) b)
+  { return *this = new Lazy_exact_Add<ET>(*this, b); }
+
+  Self & operator-=(CGAL_double(ET) b)
+  { return *this = new Lazy_exact_Sub<ET>(*this, b); }
+
+  Self & operator*=(CGAL_double(ET) b)
+  { return *this = new Lazy_exact_Mul<ET>(*this, b); }
+
+  Self & operator/=(CGAL_double(ET) b)
   { return *this = new Lazy_exact_Div<ET>(*this, b); }
 
   // % kills filtering

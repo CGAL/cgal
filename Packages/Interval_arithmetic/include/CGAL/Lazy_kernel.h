@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 
 // EK = exact kernel that will be made lazy
 // Kernel = lazy kernel
-template < typename EK_, typename AK_, typename Kernel >
+template < typename EK_, typename AK_, typename E2A_, typename Kernel >
 class Lazy_kernel_base
 //  : public EK::template Base<Kernel>::Type
 {
@@ -50,12 +50,13 @@ public:
   typedef AK_ AK;
   //  typedef Simple_cartesian<Interval_nt<> >   AK;
   typedef EK_   EK;
-  typedef Cartesian_converter<EK, AK,
-                                To_interval<typename EK::RT> > E2A;
+  typedef E2A_  E2A;
+  //typedef Cartesian_converter<EK, AK,
+                                //To_interval<typename EK::RT> > E2A;
 
 
     template < typename Kernel2 >
-    struct Base { typedef Lazy_kernel_base<EK, AK, Kernel2>  Type; };
+    struct Base { typedef Lazy_kernel_base<EK, AK, E2A, Kernel2>  Type; };
 
     // What to do with the tag ?
     // Probably this should not exist, should it ?
@@ -143,21 +144,23 @@ public:
 
 };
 
-template <class EK, class AK>
+template <class EK, class AK, class E2A>
 struct Lazy_kernel_adaptor
-  : public Lazy_kernel_base< EK, AK, Lazy_kernel_adaptor<EK,AK> >
+  : public Lazy_kernel_base< EK, AK, E2A, Lazy_kernel_adaptor<EK,AK, E2A> >
 {};
 
-template <class EK, class AK>
+template <class EK, class AK, class E2A>
 struct Lazy_kernel_without_type_equality
-  : public Lazy_kernel_base< EK, AK, Lazy_kernel_without_type_equality<EK,AK> >
+  : public Lazy_kernel_base< EK, AK, E2A, Lazy_kernel_without_type_equality<EK,AK, E2A> >
 {};
 
-template <class EK, class AK = Simple_cartesian<Interval_nt_advanced> >
+template <class EK, class AK = Simple_cartesian<Interval_nt_advanced>,
+                    class E2A = Cartesian_converter<EK, AK,
+                                To_interval<typename EK::RT> > >
 struct Lazy_kernel
   : public Type_equality_wrapper< 
-             Lazy_kernel_base< EK, AK, Lazy_kernel<EK, AK> >,
-             Lazy_kernel<EK, AK> >
+             Lazy_kernel_base< EK, AK, E2A, Lazy_kernel<EK, AK, E2A> >,
+             Lazy_kernel<EK, AK, E2A> >
 {};
 
 CGAL_END_NAMESPACE

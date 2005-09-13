@@ -59,7 +59,7 @@ approx(Lazy<AT,ET, EFT, E2A>& l)
 
 template <typename ET>
 inline
-const Interval_nt<true>&
+const Interval_nt<false>&
 approx(const Lazy_exact_nt<ET>& l)
 {
   return l.approx();
@@ -465,7 +465,8 @@ public:
 
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
-class Lazy_construct_rep_with_vector_2 : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+class Lazy_construct_rep_with_vector_2
+   : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
 {
   typedef std::vector<Object> AT;
   typedef std::vector<Object> ET;
@@ -634,6 +635,8 @@ operator<<(std::ostream& os, const Lazy<AT,ET,EFT, E2A>& lazy)
   return os << lazy.approx();
 } 
 */
+
+// FIXME : should these be removed ?
 template <typename AT, typename ET, typename EFT, typename E2A>
 bool
 operator==(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
@@ -663,6 +666,7 @@ operator!=(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
 struct Lazy_construction_bbox {
+  static const bool Protection  = true;
   typedef typename AC::result_type result_type;
 
   AC ac;
@@ -671,8 +675,10 @@ struct Lazy_construction_bbox {
   result_type operator()(const L1& l1) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return ac(CGAL::approx(l1));
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return ec(CGAL::exact(l1));
     }
   }
@@ -681,6 +687,7 @@ struct Lazy_construction_bbox {
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
 struct Lazy_construction_nt {
 
+  static const bool Protection  = true;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_exact_nt<ET> result_type;
@@ -691,8 +698,10 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_1<AC, EC, To_interval<ET>, L1>(ac, ec, l1);
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1)));
     }
   }
@@ -701,8 +710,10 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_2<AC, EC, To_interval<ET>, L1,L2>(ac, ec, l1,l2);
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), exact(l2)));
     }
   }
@@ -711,8 +722,10 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_3<AC, EC, To_interval<ET>, L1,L2,L3>(ac, ec, l1,l2,l3);
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), exact(l2), exact(l3)));
     }
   }
@@ -742,7 +755,8 @@ make_lazy(const Object& eto)
   } else if(const typename EK::Circle_2* ptr = object_cast<typename EK::Circle_2>(&eto)){
     return make_object(typename LK::Circle_2(new Lazy_construct_rep_0<typename AK::Circle_2, typename EK::Circle_2, E2A>(*ptr)));
   } else{
-    std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
+    std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#2)" << std::endl;
+    std::cerr << "dynamic type of the Object : " << eto.type().name() << std::endl;
   }            
   return Object();
 }
@@ -782,12 +796,9 @@ struct Ith {
     typedef std::pair<T2,unsigned int >         Pair_type_1;
     typedef std::pair<T2,std::pair<bool,bool> > Pair_type_2;
     
-    const Pair_type_1 *p1;
-    const Pair_type_2 *p2;
-    
-    if(p1=object_cast<Pair_type_1>(&v[i]))
+    if(const Pair_type_1 *p1 = object_cast<Pair_type_1>(&v[i]))
     	return p1->first;
-    else if(p2=object_cast<Pair_type_2>(&v[i]))
+    else if(const Pair_type_2 *p2 = object_cast<Pair_type_2>(&v[i]))
         return p2->first;
     
     std::cout<<" Unexpected encapsulated type "<<std::endl;
@@ -842,6 +853,7 @@ public:
   operator()(const L1& l1, const L2& l2, R1& r1) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       // we suppose that R1 is a Lazy<Something>
       r1 = R1(new Lazy_construct_rep_2_1<AC, EC, E2A, L1, L2, R1>(ac, ec, l1, l2));
     } catch(Interval_nt_advanced::unsafe_comparison) {
@@ -896,6 +908,7 @@ public:
   operator()(const L1& l1, const L2& l2, R1& r1, R2& r2) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       typedef Lazy<std::pair<typename R1::AT, typename R2::AT> , std::pair<typename R1::ET, typename R2::ET> , EFT, E2A> Lazy_pair;
       Lazy_pair lv(new Lazy_construct_rep_2_2<AC, EC, E2A, L1, L2, R1, R2>(ac, ec, l1, l2));
       // lv->approx() is a std::pair<R1::AT, R2::AT>;
@@ -918,6 +931,7 @@ public:
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_intersect_with_iterators {
 
+  static const bool Protection = true;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
@@ -933,6 +947,7 @@ public:
   operator()(const L1& l1, const L2& l2, OutputIterator it) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
       // that is, when we get here we have constructed all approximate results
@@ -965,6 +980,7 @@ public:
       
     } catch (Interval_nt_advanced::unsafe_comparison) {
       // TODO: Instead of using a vector, write an iterator adapter
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       std::vector<Object> exact_objects;
       ec(CGAL::exact(l1), CGAL::exact(l2), std::back_inserter(exact_objects));
       for (std::vector<Object>::iterator oit = exact_objects.begin();
@@ -1000,7 +1016,7 @@ struct Object_cast {
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction_object {
 
-
+  static const bool Protection = true;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Object result_type;
@@ -1016,6 +1032,7 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
  
       if(object_cast<typename AK::Point_2>(& (lo.approx()))){
@@ -1050,6 +1067,7 @@ public:
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
       return make_lazy<LK>(eto);
     }
@@ -1089,6 +1107,7 @@ template <typename AK, typename EK, typename AC, typename EC, typename EFT, type
 struct Pair_of_lazy_construction {
 
 
+  static const bool Protection  = true;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy<AT, ET, EFT, E2A> Lazy_pair;
@@ -1115,8 +1134,10 @@ public:
   operator()(const L1& l1) const
   {
     try {
-      return  new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1);
+      Protect_FPU_rounding<Protection> P;
+return  new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1);
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1)));
     }
   }
@@ -1126,17 +1147,53 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
-      Lazy_pair lazy_pair(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
-      Lazy_pair_first_type first(new Lazy_construct_rep_1<First<AT>, First<ET>, E2A, Lazy_pair>(First<AT>(), First<ET>(), lazy_pair)); 
-      Lazy_pair_second_type second(new Lazy_construct_rep_1<Second<AT>, Second<ET>, E2A, Lazy_pair>(Second<AT>(), Second<ET>(), lazy_pair));
-      return std::make_pair(first, second);
+      Protect_FPU_rounding<Protection> P;
+return new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2);
     } catch (Interval_nt_advanced::unsafe_comparison) {
-      ET et = ec(l1.exact(), l2.exact());
-      return std::make_pair(Lazy_pair_first_type(new Lazy_construct_rep_0<typename AT::first_type, typename ET::first_type, E2A>(et.first)),
-			    Lazy_pair_second_type(new Lazy_construct_rep_0<typename AT::second_type, typename ET::second_type, E2A>(et.second))) ;
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2)));
+    }
+  }
+  
+
+  template <typename L1, typename L2, typename L3>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3) const
+  {
+    try {
+      Protect_FPU_rounding<Protection> P;
+      return new Lazy_construct_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3)));
     }
   }
 
+  template <typename L1, typename L2, typename L3, typename L4>
+  result_type
+  operator()(const L1& l1, const L2& l2, L3& l3, L4& l4) const
+  {
+    try {
+      Protect_FPU_rounding<Protection> P;
+      return new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4)));
+    }
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
+  {
+    try {
+      Protect_FPU_rounding<Protection> P;
+      return new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5)));
+    }
+  }
 };
 */
 
@@ -1146,7 +1203,7 @@ public:
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction {
 
-
+  static const bool Protection  = true;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy<AT, ET, EFT, E2A> Handle;
@@ -1169,8 +1226,10 @@ public:
   operator()(const L1& l1) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return  Handle(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1))));
     }
   }
@@ -1180,8 +1239,10 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2))));
     }
   }
@@ -1192,8 +1253,10 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_construct_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3));
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3))));
     }
   }
@@ -1203,8 +1266,10 @@ public:
   operator()(const L1& l1, const L2& l2, L3& l3, L4& l4) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4));
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4))));
     }
   }
@@ -1214,12 +1279,15 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
   {
     try {
+      Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5));
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5))));
     }
   }
 };
+
 
 
 CGAL_END_NAMESPACE
