@@ -68,8 +68,6 @@ public:
     // Types
   typedef CGAL::Lazy_exact_nt<typename EK::FT>  FT;
   typedef FT RT;
-  typedef FT Cartesian_coordinate_type;
-  typedef RT Homogeneous_coordinate_type;
 
   typedef CGAL::Object Object_2;
   typedef CGAL::Object Object_3;
@@ -84,7 +82,7 @@ public:
   typedef Lazy<typename AK::Circle_2, typename EK::Circle_2, typename EK::FT, E2A> Circle_2;
   typedef Lazy<typename AK::Iso_rectangle_2, typename EK::Iso_rectangle_2, typename EK::FT, E2A> Iso_rectangle_2;
   typedef Lazy<typename AK::Aff_transformation_2, typename EK::Aff_transformation_2, typename EK::FT, E2A> Aff_transformation_2;
-  typedef Lazy<typename AK::Cartesian_const_iterator_2, typename EK::Cartesian_const_iterator_2, typename EK::FT, E2A> Cartesian_const_iterator_2;
+  typedef Cartesian_coordinate_iterator_2<Kernel> Cartesian_const_iterator_2;
   typedef Lazy<typename AK::Data_accessor_2, typename EK::Data_accessor_2, typename EK::FT, E2A> Data_accessor_2;
   typedef Lazy<typename AK::Conic_2, typename EK::Conic_2, typename EK::FT, E2A> Conic_2;
 
@@ -128,13 +126,15 @@ public:
 		   intersect_with_iterators_2_object)
 #else 
 #define CGAL_Kernel_cons(C, Cf) \
-    typedef typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
+    typedef typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Construct_cartesian_const_iterator_2>, \
+                                     Lazy_cartesian_const_iterator_2<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
                                      Lazy_construction_bbox<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>, \
                                      typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
                                                               Lazy_construction_nt<AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
                                                               typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
                                                                                        Lazy_construction_object<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A>,\
-                                                                                       Lazy_construction<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type > ::type C; \
+                                                                                       Lazy_construction<Kernel,AK,EK,typename AK::C, typename EK::C, typename EK::FT, E2A> >::type >::type >::type > ::type C; \
     C Cf() const { return C(); }
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2
