@@ -40,20 +40,11 @@ CGAL_BEGIN_NAMESPACE
 // EK = exact kernel that will be made lazy
 // Kernel = lazy kernel
 template < typename EK_, typename AK_, typename E2A_, typename Kernel >
-class Lazy_kernel_base
-//  : public EK::template Base<Kernel>::Type
-{
-  //    typedef typename EK::template Base<Kernel>::Type   Kernel_base;
-    // Hardcoded for now.
-  //    typedef Simple_cartesian<Interval_nt_advanced>   AK; // A optimiser
+class Lazy_kernel_base {
 public:
-  typedef AK_ AK;
-  //  typedef Simple_cartesian<Interval_nt<> >   AK;
+  typedef AK_   AK;
   typedef EK_   EK;
   typedef E2A_  E2A;
-  //typedef Cartesian_converter<EK, AK,
-                                //To_interval<typename EK::RT> > E2A;
-
 
     template < typename Kernel2 >
     struct Base { typedef Lazy_kernel_base<EK, AK, E2A, Kernel2>  Type; };
