@@ -210,7 +210,14 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
 {
-  return  os << r.rep();
+  switch(os.iword(IO::mode)) {
+  case IO::ASCII :
+    return os << r.min() << ' ' << r.max();
+  case IO::BINARY :
+    return os << r.min() << r.max();
+  default:
+    return os << "Iso_rectangle_2(" << r.min() << ", " << r.max() << ")";
+  }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
 
@@ -219,7 +226,13 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Iso_rectangle_2<R> &r)
 {
-  return is >> r.rep();
+  typename R::Point_2 p, q;
+  
+  is >> p >> q;
+  
+  if (is)
+    r = Iso_rectangle_2<R>(p, q);
+  return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
 
