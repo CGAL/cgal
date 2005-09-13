@@ -57,8 +57,8 @@ all:            \
 demo.moc: demo.C
 	${QT_MOC} -o demo.moc $<
 
-demo_elias.moc: demo_elias.C
-	${QT_MOC} -o demo_elias.moc $<
+#demo_elias.moc: demo_elias.C
+#	${QT_MOC} -o demo_elias.moc $<
 
 demo_line_circle.moc: demo_line_circle.C
 	${QT_MOC} -o demo_line_circle.moc $<
@@ -81,8 +81,8 @@ Qt_widget_get_segment.moc: Qt_widget_get_segment.h
 demo$(EXE_EXT): demo.moc demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
-demo_elias$(EXE_EXT): demo_elias.moc demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_elias demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
+#demo_elias$(EXE_EXT): demo_elias.moc demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
+#	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_elias demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
 demo_line$(EXE_EXT): demo.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) $(LDFLAGS)
@@ -106,7 +106,7 @@ Qt_widget_get_segment$(OBJ_EXT): Qt_widget_get_segment.C Qt_widget_get_segment.m
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_segment.C
 
 clean: \
-                   demo.clean demo_elias.clean demo_line.clean demo_line_circle.clean demo_viewer.clean\
+                   demo.clean demo_line.clean demo_line_circle.clean demo_viewer.clean\
                    Qt_widget_get_arc.clean Qt_widget_get_segment.clean #\
 #                   Qt_widget_get_conic_2.clean \
 #                   demo_conic.clean
