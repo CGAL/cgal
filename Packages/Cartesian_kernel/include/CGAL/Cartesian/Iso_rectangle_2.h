@@ -78,37 +78,6 @@ public:
 
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const Iso_rectangleC2<R> &r)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << r.min() << ' ' << r.max();
-    case IO::BINARY :
-        return os << r.min() << r.max();
-    default:
-        return os << "Iso_rectangleC2(" << r.min() << ", " << r.max() << ")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-std::istream &
-operator>>(std::istream &is, Iso_rectangleC2<R> &r)
-{
-    typename R::Point_2 p, q;
-
-    is >> p >> q;
-
-    if (is)
-	r = Iso_rectangleC2<R>(p, q);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
 
 CGAL_END_NAMESPACE
 
