@@ -356,11 +356,7 @@ public:
     l4_ = L4();
   }
 
-  
-  Lazy_construct_rep_4(const AC& ac, const EC& ec, const L1& l1, const L2& l2,  L3& l3,  L4& l4)
-   : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))), l1_(l1), l2_(l2), l3_(l3), l4_(l4)
-  {}
-  
+    
   Lazy_construct_rep_4(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4)
    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))), l1_(l1), l2_(l2), l3_(l3), l4_(l4)
   {}
