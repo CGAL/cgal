@@ -15,10 +15,10 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Abdelkrim Mebarki <>
+// Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
-#ifndef EULER_INTEGRATOR_2_H_
-#define EULER_INTEGRATOR_2_H_
+#ifndef CGAL_EULER_INTEGRATOR_2_H_
+#define CGAL_EULER_INTEGRATOR_2_H_
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -37,7 +37,7 @@ public:
 protected:
   FT default_integration_step;
 public:
-//  Euler_integrator_2();
+	Euler_integrator_2();
   Euler_integrator_2(const FT & integration_step);
   inline Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const bool & index) const;
   inline Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, const bool & index) const;
@@ -46,38 +46,17 @@ public:
 // just for debugging
 inline FT distance(const Point_2 & p, const Point_2 & q)
 {
-	return sqrt(
-	      (
-	        (
-		 p.x() - q.x()
-	        )
-		*
-		(
-		 p.x() - q.x()
-		)
-	      )
-              +
-              (
-	        (
-		 p.y() - q.y()
-	        )
-	        *
-	        (
-	 	 p.y() - q.y()
-	        )
-	      )
-              );
+	return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));
 }
 };
 
-// An additional constructor to specify the default integration step
+// An additional parameter in the constructor to specify the default integration step
 template <class Vector_field>
 Euler_integrator_2<Vector_field>::Euler_integrator_2(const FT & integration_step)
 {
   default_integration_step = integration_step;
 }
 
-// The integrator functor with additional argument: the integration step
 template <class Vector_field>
 inline typename Euler_integrator_2<Vector_field>::Point_2 
 Euler_integrator_2<Vector_field>::operator()
@@ -88,16 +67,13 @@ Euler_integrator_2<Vector_field>::operator()
       Vector_2 v_t(v.x()*(-1),v.y()*(-1));
       v = v_t;
     }
-//   Point_2 new_point;
   Vector_2 Euler_step=Vector_2
     (
      v.x()*integration_step,
      v.y()*integration_step);
-//   new_point = Point_2(p.x() + Euler_step.x(), p.y() + Euler_step.y());
   return Point_2(p.x() + Euler_step.x(), p.y() + Euler_step.y());
 };
 
-// The integrator functor with additional argument: the integration step
 template <class Vector_field>
 inline typename Euler_integrator_2<Vector_field>::Point_2 
 Euler_integrator_2<Vector_field>::operator()
@@ -109,7 +85,6 @@ Euler_integrator_2<Vector_field>::operator()
   return  euler_integrator(p, vector_field_2, integration_step, v, index);
 };
 
-// The integrator functor
 template <class Vector_field>
 inline typename Euler_integrator_2<Vector_field>::Point_2 
 Euler_integrator_2<Vector_field>::operator()

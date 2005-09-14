@@ -1,3 +1,22 @@
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
+
 #ifndef RUNGE_KUTTA_INTEGRATOR_2_H_
 #define RUNGE_KUTTA_INTEGRATOR_2_H_
 
@@ -28,35 +47,11 @@ public:
 
   inline FT get_default_integration_step(){return default_integration_step;}
   Euler_integrator_2 * get_euler_integrator_2(){return euler_integrator_2;}
-  // just for debugging
-  inline FT distance(const Point_2 & p, const Point_2 & q)
-    {
-      return sqrt(
-		  (
-		   (
-		    p.x() - q.x()
-		    )
-		   *
-		   (
-		    p.x() - q.x()
-		    )
-		   )
-		  +
-		  (
-		   (
-		    p.y() - q.y()
-		    )
-		   *
-		   (
-		    p.y() - q.y()
-		    )
-		   )
-		  );
-    };
+  inline FT distance(const Point_2 & p, const Point_2 & q){
+		return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));};
 };
 
 
-// The default constructor required by the concept
 template <class EulerIntegrator_2, class VectorField_2>
 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::
 Runge_kutta_integrator_2(Euler_integrator_2& integrator)
@@ -67,7 +62,6 @@ Runge_kutta_integrator_2(Euler_integrator_2& integrator)
 }
 
 
-// An additional constructor to specify the default integration step
 template <class EulerIntegrator_2, class VectorField_2>
 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Runge_kutta_integrator_2(Euler_integrator_2&
 							  integrator, const FT & integration_step)
@@ -76,7 +70,6 @@ Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Runge_kutta_integrat
   euler_integrator_2 = &integrator;
 }
 
-// The integrator functor
 template <class EulerIntegrator_2, class VectorField_2>
 inline
 typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::
@@ -91,7 +84,6 @@ Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()
   return p2;
 };
 
-// The integrator functor with additional argument: the integration step
 template <class EulerIntegrator_2, class VectorField_2>
 inline
 typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()
@@ -103,7 +95,6 @@ typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Point_2 Run
   return runge_kutta_integrator_2(p, vector_field_2, integration_step, v, index);
 };
 
-// The integrator functor with additional argument: the integration step
 template <class EulerIntegrator_2, class VectorField_2>
 inline
 typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()

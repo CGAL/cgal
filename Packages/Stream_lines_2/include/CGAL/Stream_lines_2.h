@@ -1,5 +1,24 @@
-#ifndef STREAM_LINES_2_H_ 
-#define STREAM_LINES_2_H_
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
+
+#ifndef CGAL_STREAM_LINES_2_H_ 
+#define CGAL_STREAM_LINES_2_H_
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -8,8 +27,8 @@
 #include <queue>
 #include <math.h>
 
-#include <fstream.h>
-#include <iostream.h>
+#include <fstream>
+#include <iostream>
 
 #include "streamlines_assertions.h"
 
@@ -99,10 +118,9 @@ public:
 	Stream_line_iterator_2 begin();
 	Stream_line_iterator_2 end();
 	// for visualizing streamlines
-	void print_stream_lines(ofstream & fw);
+	void print_stream_lines(std::ofstream & fw);
 	std::list<Point_2> get_pq();
-	void print_stream_lines_eps(ofstream & fw);
-	void print(ofstream & fw);
+	void print_stream_lines_eps(std::ofstream & fw);
 	unsigned int number_of_lines(){return _number_of_lines;};
 	void print_inter(int & iNbreFichier){
 		iNbreFichier++;
@@ -123,7 +141,7 @@ public:
 			else sprintf(str,"res_inter_%d",iNbreFichier);
 			strcat(rep,str);
 			strcat(rep,ext);
-			ofstream fw(rep,ios::out);
+			std::ofstream fw(rep,std::ios::out);
 			print(fw);}}
 	std::list< std::pair<Point_2, Point_2> > get_tr()
 	{
@@ -136,28 +154,7 @@ public:
 			_list.push_front(std::pair<Point_2, Point_2>(p1, p2));
 		}
 		return _list;
-	}/*
-	Pq_element Stream_lines_2<VectorField_2, Integrator_2>::get_top()
-	{
-	Vertex_handle v0, v1, v2; 
-	Face_handle fr;
-	bool b0,b;
-	Pq_element m_Pq;
-	Pq_element m_Pq_element;
-	do{
-		m_Pq_element = pq.top();
-		v0 = m_Pq_element.first;
-		v1 = m_Pq_element.second;
-		v2 = m_Pq_element.third;
-		pq.pop();
-		b0 = m_DT.is_face(v0,v1,v2,fr);
-		b = (!pq.empty());
-	}while ((b)&&(!b0));
-	m_Pq = m_Pq_element;
-	pq.push(m_Pq);
-	return m_Pq;
-	}*/
-	
+	}	
 	std::pair<Point_2, FT> get_biggest_circle()
 	{
 		Pq_element m_Pq = Biggest_circle;
@@ -214,7 +211,7 @@ template <class VectorField_2, class Integrator_2>
 void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vector_field_2 & vector_field_2,	const Integrator_2 & integrator, const int & sampling_step, const bool & step_by_step)
 {
 	seed_point = Point_2((max_x+min_x)/2.0,(max_y+min_y)/2.0);
-// the first chosen point cannot be valid
+// the first chosen point can be not valid
 	FT xrange = max_x - min_x;
 	FT yrange = max_y - min_y;
 	while(!vector_field_2.is_in_domain(seed_point))
@@ -224,8 +221,8 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
 		FT y = min_y + (FT) (((FT) rand() * yrange)/((FT) RAND_MAX));
 		seed_point = Point_2(x, y);
 	}
-	std::cout << seed_point << " first seed point \n ";
-	std::cout << " creating the placement..\n";
+	std::cout << seed_point << "first seed point\n";
+	std::cout << "creating the placement..\n";
 	FT distance = (FT) max_x * (1.0/2.0);
 	bool b = (distance>fSepStl_seed);
 // 	int i=0;
@@ -391,7 +388,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
 						list_of_point.pop_front();
 						m_Vertex_handle = insert_point(new_point, stl_vertices.front()->face(), dist,true);
 					}
-						// adaptive prediction inverted order coefficient
+						// adaptive insertion order coefficient
 					insertion_step = (int) (((dist)-fSepStl_seed) /
 							std::max((FT) sampling_step,vector_field_2.get_integration_step()));
 					if (insertion_step < 0) insertion_step = 0;
@@ -520,7 +517,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
 						list_of_point.pop_back();
 						m_Vertex_handle = insert_point(new_point, stl_vertices.back()->face(), dist,true);
 					}
-					// adaptive prediction inverted order coefficient
+					// adaptive insertion order coefficient
 					insertion_step =	(int) (((dist)-fSepStl_seed) / 
 							std::max((FT) sampling_step,vector_field_2.get_integration_step()));
 					if (insertion_step < 0) insertion_step = 0;
@@ -562,7 +559,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
 					list_of_point.pop_back();
 					m_Vertex_handle = insert_point(new_point, stl_vertices.back()->face(), dist, true);
 				}
-				// adaptive prediction inverted order coefficient
+				// adaptive insertion order coefficient
 				insertion_step =	(int) (((dist)-fSepStl_seed) / 
 						std::max((FT) sampling_step,vector_field_2.get_integration_step()));
 				if (insertion_step < 0) insertion_step = 0;
@@ -731,14 +728,13 @@ void Stream_lines_2<VectorField_2, Integrator_2>::make_iterator(){
 
 // output an stl file
 template <class VectorField_2, class Integrator_2>
-void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(ofstream & fw)
+void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(std::ofstream & fw)
 {
 	typename Stream_line_container_2::iterator begin_iterator;
 	Stream_line_container_2 stl_container_temp = stl_container;
 	Point_container_2 stl;
 	fw << max_x - min_x << " " << max_y - min_y << "\n";
-	fw << stl_container.size() << "\n";/*
-	std::cout << "number of streamlines " << stl_container.size() << endl;*/
+	fw << stl_container.size() << "\n";
 	for(begin_iterator=stl_container_temp.begin();begin_iterator!=stl_container_temp.end();begin_iterator++){
 		fw << (*begin_iterator).size() << "\n";
 		typename Point_container_2::iterator begin_point_iterator = (*begin_iterator).begin();
@@ -753,17 +749,17 @@ void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(ofstream & 
 
 // output an eps file
 template <class VectorField_2, class Integrator_2>
-void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(ofstream & fw)
+void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstream & fw)
 {
 	typename Stream_line_container_2::iterator begin_iterator;
 	Stream_line_container_2 stl_container_temp = stl_container;
 	Point_container_2 stl;
-	fw << "%!PS-Adobe-2.0 EPSF-2.0" << endl;
-	fw << "%%BoundingBox: 0 0" << " " << max_x - min_x << " " << max_y - min_y << endl;
-	fw << "gsave" << endl;
-	fw << "/L {moveto lineto stroke} bind def" << endl;
-	fw << 0.5 << " setlinewidth" << endl;
-	fw << 0.0 << " " << 0.0 << " " << 0.0 << " setrgbcolor" << endl;
+	fw << "%!PS-Adobe-2.0 EPSF-2.0\n";
+	fw << "%%BoundingBox: 0 0" << " " << max_x - min_x << " " << max_y - min_y << "\n";
+	fw << "gsave" << "\n";
+	fw << "/L {moveto lineto stroke} bind def" << "\n";
+	fw << 0.5 << " setlinewidth" << "\n";
+	fw << 0.0 << " " << 0.0 << " " << 0.0 << " setrgbcolor" << "\n";
 	
 	for(begin_iterator=stl_container_temp.begin();begin_iterator!=stl_container_temp.end();begin_iterator++){
 		typename Point_container_2::iterator begin_point_iterator = (*begin_iterator).begin();
@@ -781,8 +777,8 @@ void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(ofstrea
 				fw << i_prec << " " << j_prec << " " << i << " " << j << " L\n";
 			i_prec = i;
 			j_prec = j;}};
-	fw << "grestore" << endl;
-	fw << "showpage" << endl;
+	fw << "grestore\n";
+	fw << "showpage\n";
 	fw.close();}
 
 	
@@ -808,57 +804,6 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_pq()
 	}
 	return _list;
 }
-	
-// output an stl file
-template <class VectorField_2, class Integrator_2>
-void Stream_lines_2<VectorField_2, Integrator_2>::print(ofstream & fw){
-	typename Stream_line_container_2::iterator begin_iterator;
-	Stream_line_container_2 stl_container_temp = stl_container;
-	Point_container_2 stl;
-	fw << max_x - min_x << " " << max_y - min_y << "\n";
-	fw << stl_container.size() << "\n";
-	for(begin_iterator=stl_container_temp.begin();begin_iterator!=stl_container_temp.end();begin_iterator++){
-		fw << (*begin_iterator).size() << "\n";
-		typename Point_container_2::iterator begin_point_iterator = (*begin_iterator).begin();
-		typename Point_container_2::iterator end_point_iterator = (*begin_iterator).end();
-		FT i , j;
-		for(;begin_point_iterator!=end_point_iterator;begin_point_iterator++){
-			Point_2 p = *begin_point_iterator;
-			i = p.x() - min_x;
-			j = p.y() - min_y;
-				fw << i << " " << j << "\n";}}
-	std::priority_queue<Pq_element, std::vector<Pq_element>, C> pq_temp;
-	pq_temp = pq;
-	fw << pq.size() << "\n";
-// 	std::cout << pq.size() << "\n";
-	while (!pq_temp.empty()){
-		Pq_element m_Pq_element = pq_temp.top();
-		Vertex_handle v0 = m_Pq_element.first;
-		Vertex_handle v1 = m_Pq_element.second;
-		Vertex_handle v2 = m_Pq_element.third;
-		pq_temp.pop();
-		Point_2 p0 = v0->point();Point_2 p1 = v1->point();Point_2 p2 = v2->point();
-		Face_handle fr;
-		Point_2 sdPoint = m_Pq_element.fourth.first;
-		FT iSeed = sdPoint.x() - min_x;
-		FT jSeed = sdPoint.y() - min_y;
-		fw << iSeed << " " << jSeed << "\n";}
-// 	fw << m_DT.number_of_edges();
-	Edge_iterator eit = m_DT.edges_begin();
-	for (;eit != m_DT.edges_end();++eit){
-		FT i , j;
-		FT i_prec,j_prec;
-		Point_2 p1 = (*eit).first->vertex(m_DT.ccw((*eit).second))->point();
-		Point_2 p2 = (*eit).first->vertex(m_DT.cw((*eit).second))->point();
-		i = p2.x() + min_x ; j = p2.y() + min_x ;
-		i_prec = p1.x() + min_x ; j_prec = p1.y() + min_x ;
-		fw << i_prec << endl;
-		fw << j_prec << endl;
-		fw << i << endl;
-		fw << j << endl;}
-			
-	fw.close();}
-
 
 CGAL_END_NAMESPACE
 

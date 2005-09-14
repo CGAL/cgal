@@ -1,21 +1,40 @@
-#ifndef TRIANGULAR_FIELD_2_H_ 
-#define TRIANGULAR_FIELD_2_H_
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
+
+#ifndef CGAL_TRIANGULAR_FIELD_2_H_ 
+#define CGAL_TRIANGULAR_FIELD_2_H_
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <assert.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
+
 #include <float.h>
-#include <iostream>
-#include <fstream.h>
 #include <strings.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <fstream>
 #include <list>
 #include <queue>
 #include <cmath> 
-#include <iostream>
 #include <string>
-#include <stdlib.h>
 
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
@@ -29,33 +48,26 @@ public:
 	typedef typename StreamLinesTraits_2::FT FT;
 	typedef typename StreamLinesTraits_2::Point_2 Point_2;
 	typedef typename StreamLinesTraits_2::Vector_2 Vector_2;
-//debuggin
-	std::list<Point_2> list_of_points_0;
-	std::list<Point_2> list_of_points_1;
 protected:
 	typedef CGAL::Triangulation_vertex_base_2<StreamLinesTraits_2> Vb;
-//typedef CGAL::Triangulation_face_base_2<StreamLinesTraits_2> Fb;
 	typedef CGAL::Triangulation_face_base_with_info_2<Vector_2, StreamLinesTraits_2> Fb;
 	typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
 	typedef CGAL::Delaunay_triangulation_2<StreamLinesTraits_2,TDS> D_Ttr;
 	typedef typename D_Ttr::Vertex_handle Vertex_handle;
 	typedef typename TDS::Face_handle Face_handle;
-//debuggin
-	typedef typename D_Ttr::Face_circulator Face_circulator;
-	typedef typename D_Ttr::Edge_iterator Edge_iterator;
 public:
 	typedef typename D_Ttr::Vertex_iterator Vertex_iterator;
 	D_Ttr m_D_Ttr;
 protected:
-	Vector_2 get_vector_field(const Point_2 & p) const;//ok
-	FT get_density_field(const Point_2 & p) const;//ok
-	void fill(std::ifstream & f);//ok;
+	Vector_2 get_vector_field(const Point_2 & p) const;
+	FT get_density_field(const Point_2 & p) const;
+	void fill(std::ifstream & f);
 public:
 	Triangular_field_2(std::ifstream & f){
 	fill(f);}
-	CGAL::Iso_rectangle_2<StreamLinesTraits_2> iso_rectangle() const;//ok
-	std::pair<Vector_2,FT> get_field(const Point_2 & p) const;//ok
-	bool is_in_domain(const Point_2 & p) const;//ok
+	CGAL::Iso_rectangle_2<StreamLinesTraits_2> iso_rectangle() const;
+	std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
+	bool is_in_domain(const Point_2 & p) const;
 	FT get_integration_step(const Point_2 &) const;
 	FT get_integration_step() const;
 protected:
@@ -72,7 +84,7 @@ protected:
 template <class StreamLinesTraits_2>
 void
 Triangular_field_2<StreamLinesTraits_2>::fill(std::ifstream & f){
-	std::cout << " reading file... " << "\n";
+	std::cout << "reading file...\n";
 	int number_of_vertices;
 	f >> number_of_vertices;
 	for (int i=0;i<number_of_vertices;i++){
@@ -95,7 +107,7 @@ Triangular_field_2<StreamLinesTraits_2>::fill(std::ifstream & f){
 			maxx = p.x();
 		if(p.y()>maxy)
 			maxy = p.y();}}
-			std::cout << " number of samples " << m_D_Ttr.number_of_vertices() << "\n";}
+			std::cout << "number of samples " << m_D_Ttr.number_of_vertices() << "\n";}
 
 template <class StreamLinesTraits_2> 
 CGAL::Iso_rectangle_2<StreamLinesTraits_2>
