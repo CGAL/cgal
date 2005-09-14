@@ -28,7 +28,7 @@ void _test_circle_bbox(CK ck)
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
   typedef typename CK::Split_2                     Split_2;  
   typedef typename CK::Get_equation                Get_equation;
-  typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
+  //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
   typedef typename CK::Compare_xy_2                Compare_xy_2;
 
   CGAL::Random generatorOfgenerator;
@@ -58,7 +58,6 @@ void _test_circle_bbox(CK ck)
     CGAL::Bbox_2 box1 = arc1.bbox();
     CGAL::Bbox_2 box2 = arc2.bbox();
     bool box_overlap = do_overlap(box1, box2);
-    
     Intersect_2 theConstruct_intersect_2 
       = ck.intersect_2_object();
     std::vector< CGAL::Object > 
@@ -89,7 +88,7 @@ void _test_circle_bbox(CK ck)
     typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
     typedef typename CK::Split_2                     Split_2;  
     typedef typename CK::Get_equation                Get_equation;
-    typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
+    //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
     typedef typename CK::Compare_xy_2                Compare_xy_2;
 
     CGAL::Random generatorOfgenerator;
@@ -184,19 +183,19 @@ template <class CK>
     Circular_arc_2 arc_down;
     assign(arc_top,outputIterator1[1]);
     assign(arc_down, outputIterator1[0]);
-    assert(!CGAL::CircularFunctors::has_on<CK>(arc_top,
-					    line_vertical.source()));
-    assert(CGAL::CircularFunctors::has_on<CK>(arc_top,
-					      arc_top.source()));
-    assert(CGAL::CircularFunctors::has_on<CK>(arc_top,
-					      arc_top.target()));
-    assert(CGAL::CircularFunctors::has_on<CK>(arc_top,
-					      point_top));
-    assert(!CGAL::CircularFunctors::has_on<CK>(arc_top,
-					      point_down));
-    assert(CGAL::CircularFunctors::has_on<CK>(arc_down,
-					      point_down));
-    assert(!CGAL::CircularFunctors::has_on<CK>(arc_down,
-					      point_top));
+    assert(!ck.has_on_2_object()(arc_top,
+				line_vertical.source()));
+    assert(ck.has_on_2_object()(arc_top,
+				arc_top.source()));
+    assert(ck.has_on_2_object()(arc_top,
+				arc_top.target()));
+    assert(ck.has_on_2_object()(arc_top,
+				point_top));
+    assert(!ck.has_on_2_object()(arc_top,
+				point_down));
+    assert(ck.has_on_2_object()(arc_down,
+				point_down));
+    assert(!ck.has_on_2_object()(arc_down,
+				point_top));
   }
   

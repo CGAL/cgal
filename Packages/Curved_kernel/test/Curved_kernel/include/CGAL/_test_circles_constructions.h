@@ -15,11 +15,16 @@
 
 #include <CGAL/Random.h>
 
+//#define typename 
 template <class CK>
 void _test_circle_construct(CK ck)
 {
+//typedef CK2 CK;
+#if 1
   typedef typename CK::Circle_2                    Circle_2;
   typedef typename CK::Circular_arc_2              Circular_arc_2;
+  typedef typename CK::RT                          RT;
+  typedef typename CK::FT                          FT;
   typedef typename CK::Point_2                     Point_2;
   typedef typename CK::Line_2                      Line_2;
   typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
@@ -28,8 +33,24 @@ void _test_circle_construct(CK ck)
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
   typedef typename CK::Split_2                     Split_2;  
   typedef typename CK::Get_equation                Get_equation;
-  typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
+  //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
   typedef typename CK::Compare_xy_2                Compare_xy_2;
+#else
+  typedef CK::Circle_2                    Circle_2;
+  typedef CK::Circular_arc_2              Circular_arc_2;
+  typedef CK::RT                          RT;
+  typedef CK::FT                          FT;
+  typedef CK::Point_2                     Point_2;
+  typedef CK::Line_2                      Line_2;
+  typedef CK::Circular_arc_point_2     Circular_arc_point_2;
+  typedef CK::Construct_circle_2          Construct_circle_2;
+  typedef CK::Intersect_2   Intersect_2;
+  typedef CK::Make_x_monotone_2           Make_x_monotone_2;
+  typedef CK::Split_2                     Split_2;  
+  typedef CK::Get_equation                Get_equation;
+  //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
+  typedef CK::Compare_xy_2                Compare_xy_2;
+#endif
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -38,6 +59,8 @@ void _test_circle_construct(CK ck)
   int random_max = 127;
   int random_min = -127;
   
+  FT sqrt2 = sqrt(2.0)/2;
+
   //test of get_equation_object()
   int x_equation = theRandom.get_int(random_min,random_max);
   int y_equation = theRandom.get_int(random_min,random_max);
@@ -46,21 +69,21 @@ void _test_circle_construct(CK ck)
   Circle_2 circ_equation(center_circ_equation, r_equation);
   std::cout << "the circle used by the equation :" 
 	    << circ_equation << std::endl;
-  Get_equation theEquation = ck.get_equation_object();
-  Polynomial_for_circles_2_2 theResult_equation = theEquation(circ_equation);
-  std::cout << "a= " << theResult_equation.a() << ", b= " <<
-    theResult_equation.b() << ", r_sq= " <<
-    theResult_equation.r_sq() <<std::endl;
+//  Get_equation theEquation = ck.get_equation_object();
+  //Polynomial_for_circles_2_2 theResult_equation = theEquation(circ_equation);
+  //std::cout << "a= " << theResult_equation.a() << ", b= " <<
+  //  theResult_equation.b() << ", r_sq= " <<
+  //  theResult_equation.r_sq() <<std::endl;
 
 
 
-  //Construct_circle_2
-  Construct_circle_2 theConstruct_circle = ck.construct_circle_2_object();
-  //We use the Polynomial_for_circles_2_2 fund before
-  Circle_2 theConstruct_circle_2 = theConstruct_circle(theResult_equation);
-  std::cout << "the circle made with the equation :" <<
-    theConstruct_circle_2 << std::endl;
-  assert(circ_equation == theConstruct_circle_2);
+//  //Construct_circle_2
+//  Construct_circle_2 theConstruct_circle = ck.construct_circle_2_object();
+//  //We use the Polynomial_for_circles_2_2 fund before
+//  Circle_2 theConstruct_circle_2 = theConstruct_circle(theResult_equation);
+//  std::cout << "the circle made with the equation :" <<
+//    theConstruct_circle_2 << std::endl;
+//  assert(circ_equation == theConstruct_circle_2);
 
 
   //not declare 29/06/2005
@@ -99,8 +122,6 @@ void _test_circle_construct(CK ck)
   assign(the_pair, vector_for_intersection_1[1]);
   Circular_arc_point_2 second = the_pair.first;
   std::cout << second << std::endl;
- // assert((first.is_left() && !second.is_left()) 
-//	 || (!first.is_left() && second.is_left()));
   Compare_xy_2 theCompare_xy_2 = ck.compare_xy_2_object();
   assert(theCompare_xy_2(first, second) == CGAL::SMALLER);
 
@@ -265,20 +286,21 @@ void _test_circle_construct(CK ck)
   assert(vector_for_intersection_overlap_2_1.size() == 1);
   assign(the_pair, vector_for_intersection_overlap_2_1[0]);
   std::cout << "x = " << the_pair.first.x() << " the result must be = " <<
-    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2 
+    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2 
 	    << std::endl;
   
   assert(the_pair.first.x() * 
-	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
-  assert(square(the_pair.first.x() - center_circ_intersection_2_1_x)
+	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2) >= 0);
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
-    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2 
+    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2 
 	    << std::endl;
 
   assert(the_pair.first.y() * 
-	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
-  assert(square(the_pair.first.y() - center_circ_intersection_2_1_y)
+	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2) >= 0);
+  assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
   std::vector< CGAL::Object > 
@@ -289,18 +311,18 @@ void _test_circle_construct(CK ck)
   assert(vector_for_intersection_overlap_2_2.size() == 1);
   assign(the_pair, vector_for_intersection_overlap_2_2[0]);
   std::cout << "x = " << the_pair.first.x() << " the result must be = " <<
-    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2 << std::endl;
+    center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2 << std::endl;
   
   assert(the_pair.first.x() * 
-	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
-  assert(square(the_pair.first.x() - center_circ_intersection_2_1_x)
+	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2) >= 0);
+  assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
-    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2 << std::endl;
+    center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2 << std::endl;
   
   assert(the_pair.first.y() * 
-	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt(2.0)/2) >= 0);
-  assert(square(the_pair.first.y() - center_circ_intersection_2_1_y)
+	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2) >= 0);
+  assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
 
@@ -630,7 +652,7 @@ void _test_circle_construct(CK ck)
     assign(circular_arc_2_full,  outputIterator1[i]);
     std::cout << "Circular_arc_2_" << i << " : " 
 	      << circular_arc_2_full << std::endl;
-    std::cout << "Circular_arc_2_" << i << "source : " 
+   std::cout << "Circular_arc_2_" << i << "source : " 
 	      << circular_arc_2_full.source() << std::endl;
     std::cout << "Circular_arc_2_" << i << "target : " 
 	      << circular_arc_2_full.target() << std::endl;
