@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Integrator_2.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Abdelkrim MEBARKI
+% | Package: Stream_line_2
+% | 
+\RCSdef{\RCSIntegratorRev}{$Revision$}
+\RCSdefDate{\RCSIntegratorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectConcept}{Integrator_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any function object used to instantiate the third
+template parameter of the class
+\ccc{Stream_lines_2<VectorField_2,Integrator_2>}.  This concept provides
+the operation that integrate a new point from a given point with a
+predefined step, and according to a specified vector.
+
+
+\ccTypes
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Point_2}{The  point type.}
+\ccGlue
+\ccNestedType{Vector_field_2}{The vector  type.}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{integrator_2}  %% choose variable name
+\ccConstructor{Integrator_2();}{only a default constructor is needed.}
+\ccGlue
+
+\ccOperations
+{}
+The following operations return the new integrated point.
+\ccMemberFunction{Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2);}{}
+\ccGlue
+\ccMemberFunction{Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2, FT integration_step);}{}
+\ccGlue
+
+\ccHasModels
+\ccc{CGAL::Euler_integrator_2<VectorField_2>} \\
+\ccc{CGAL::Runge_kutta_integrator_2<VectorField_2>} \\
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

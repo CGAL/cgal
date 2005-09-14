@@ -1,0 +1,51 @@
+%% +------------------------------------------------------------------------+
+% | Reference manual page: Triangular_field_2.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2004 Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSTriangularfieldRev}{$Revision$}
+\RCSdefDate{\RCSTriangularfieldDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangular_field_2<StreamLinesTraits_2>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{triangular_field_2}
+\ccDefinition
+  
+The class \ccRefName\ can be used to instantiate the field class of
+the streamline placement.  The templated parameter \ccc{StreamLinesTraits_2} has to be
+instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
+This class provides an empty 2D vector field defined on a regular
+grid, with a bilinear interpolation over its cells.
+
+\ccCreation
+\ccCreationVariable{triangular_field_2}  %% choose variable name
+
+
+\ccThree{Triangular_field_2<StreamLinesTraits>}{r = Triangular_field_2 triangular_field_2}{}
+\ccThreeToTwo
+\ccConstructor{Triangular_field_2(int x_size, int y_size, int step);}
+{Generate a triangular grid of points provided by the input stream\ccVar.}
+
+%\ccInclude{CGAL/Triangular_field_2.h}
+
+\ccIsModel 
+
+\ccc{VectorField_2} \\
+
+
+\ccSeeAlso
+\ccc{VectorField_2} \\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

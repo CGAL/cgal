@@ -1,0 +1,42 @@
+%% +------------------------------------------------------------------------+
+% | Reference manual page: Runge_kutta_integrator_2.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2004 Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSRungekuttaintegratorRev}{$Revision$}
+\RCSdefDate{\RCSRungekuttaintegratorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Runge_kutta_integrator_2<VectorField_2>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{runge_kutta_integrator_2}
+\ccDefinition
+  
+The class \ccRefName\ can be used to instantiate the second order integrator
+function object class of the streamline placement.
+The templated parameter \ccc{VectorField_2} has to
+be instantiated by a model of the concept \ccc{VectorField_2}.
+
+
+%\ccInclude{CGAL/Runge_kutta_2_integrator_2.h}
+
+\ccIsModel 
+
+\ccc{Integrator_2} \\
+
+
+\ccSeeAlso
+\ccc{Integrator_2} \\
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
