@@ -29,12 +29,13 @@
 // Typically, it can be used as a profile counter in a static variable.
 
 #include <CGAL/basic.h>
+#include <string>
 
 CGAL_BEGIN_NAMESPACE
 
 struct Profile_counter
 {
-    Profile_counter(const char *ss)
+  Profile_counter(const std::string & ss)
 	: i(0), s(ss) {}
 
     void operator++() { ++i; }
@@ -46,7 +47,7 @@ struct Profile_counter
 
 private:
     unsigned int i;
-    const char *s;
+    const std::string s;
 };
 
 #ifdef CGAL_PROFILE
