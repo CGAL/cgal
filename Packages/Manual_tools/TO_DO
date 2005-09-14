@@ -44,8 +44,6 @@ Manual_tools/TO_DO
 -- Gif figures that don't have quotes like in src="..." are not copied.
    Either fix it or give error message.
 
--- Cross-linking of ASCII and PRETTY enums in cgal_manual broken.
-
 -- indexing nested types: \ccNestedType{} not indexed?
    For example : Triangulation_2::Line_face_circulator.
    It seems that \ccTypedef names are already indexed???
