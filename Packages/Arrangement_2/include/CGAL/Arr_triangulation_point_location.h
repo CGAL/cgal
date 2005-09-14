@@ -127,15 +127,7 @@ public:
   {
     build_triangulation();
   }
-        
-  /*! Attach an arrangement object. */
-  void init (const Arrangement_2& arr) 
-  {
-    p_arr = &arr;
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
-    build_triangulation();
-  }
-  
+   
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -147,6 +139,18 @@ public:
 
    //Observer functions that are relevant to overload
    //-------------------------------------------------
+
+    /*! Attach an arrangement object. */
+    virtual void after_attach ()
+    {
+      traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+      build_triangulation();
+    }
+
+    virtual void before_detach ()
+    {
+      clear_triangulation();
+    }
 
    /*!
     * Notification after the arrangement has been assigned with another
