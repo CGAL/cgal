@@ -1,5 +1,38 @@
 Manual_tools/TO_DO
 ==================
+ 
+-- template template parameters in functions not working?
+   \ccFunction{template <template <typename> class Stencil>
+   void PQQ(Poly& p, Stencil<Poly> rule, int d);}
+   {comments...}  Reported by Andy.
+
+-- Provide manuals online.
+
+-- page numbering known to acroread does not match the page numbers of the
+   document. Reason is that the table of contents gets its own numbering
+   before the rest, which shifts the page numbers.
+
+-- Math formulas in HTML embedded, search for AsciiMathML
+
+-- Curved kernel: CircularKernel::ConstructIntersections_2: operator()
+   in PDF but not in HTML
+
+-- <title>\cgal</title>: have general flex rule to eliminate <...>
+   markups in titles, see \cgal in STL Extension chapter.
+
+-- Summary listing of member functions for current page
+   use auxiliary file per ref page to do this automatically
+
+-- Extend summary isting of member functions to include base classes
+   (think of derivation from template args -> look at concept aux page)
+
+-- In the HTML manual, concepts and classes/functions are not
+   visually distinguishable : same font (italic) and same color.
+   In the PS/PDF, they are : italic font for classes/functions,
+   and normal font for concepts.
+   Would it be possible to change the HTML version so that they
+   are distinguishable ?  Either using an italic font for concepts
+   like in the PS/PDF, or using a different color ?
 
 -- Add warnings/errors for missing GIF's, and for [ref: entries indicating
    missing ref's labels'
@@ -92,6 +125,17 @@ Manual_tools/TO_DO
 -- syntax highlighting for the HTML examples
 
 -- add a box around the examples and/or use a different background color ???
+
+-- What about introducing template concepts ?
+   Like "InputIterator<T>" for saying "InputIterator with value type T".
+   This would be helpful for documenting requirements on related types.
+   [ I have no clue how hard it would be to modify the manual tools to support
+   this. ]
+
+   ( NB: this is somehow inspired from a proposal to introduce concepts
+     in the C++ language which you can find here :
+     http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2005/n1758.pdf
+     but I only care about simplifying/improving the documentation. )
 
 
 printed cgal manual

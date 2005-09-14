@@ -1,6 +1,29 @@
 Manual/TO_DO
 ==================
 
+-- enum is in the index linked to
+   http://www.cgal.org/Manual/doc_html/cgal_manual/Polyhedron_ref/Class_Polyhedron_incremental_builder_3.html#Enum_enum
+   and there linked to a 404 page.
+
+-- Fix ccTagOperatorLayout in Kernel_23
+
+-- Fix: "area" to doc page /CGAL::area. /This is wrong because the widget 
+   drawing area it is not related to CGAL::area.
+   The same for the combination Meta "Object" Compiler that points to 
+   CGAL::Object.
+
+-- Add -v flag to print commands executed (helps in doing it later by hand)
+
+-- Add -debug flag that prevent temp file from being deleted (debug index)
+
+-- Look into Naming conventions "User Manual" of the OpenGL books
+
+-- generate a pdf manual which does not have left and right pages.
+
+-- Have Installation as separate manual
+
+-- Remove Use of STL manual
+
 -- Document and maybe improve cgal_manual on how to release the 
    manuals, i.e., mainly how to pack them properly with subdirs
    see ./makefile
