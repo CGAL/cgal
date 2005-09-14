@@ -815,12 +815,13 @@ void print_rest( ostream& out, const char* txt){
 //Index
 // =====================================================
 void  make_index(string main_item, string sub_item, string sub_sub_item,
-                 const char* signature, char praefix){
-
-       
-    *current_ostream << "<A NAME=\"Function_";
-    filter_for_index_anchor( *current_ostream, signature);
-    *current_ostream << "\"></A>" << endl;
+                 const char* signature, char praefix)
+{
+    if( praefix == 'f' ) {
+      *current_ostream << "<A NAME=\"Function_";
+      filter_for_index_anchor( *current_ostream, signature);
+      *current_ostream << "\"></A>" << endl; 
+    }
 
     *index_stream << "\\indexentry{" 
                       << main_item <<"@ ??? " <<"<I>" << main_item << "</I>";
@@ -1245,7 +1246,7 @@ void format_variable( const char* signature,
             *anchor_stream << '"' << formatted_var
                            << "\"/{noCCchar}    { wrap_anchor( \""
                            << REPLACE_WITH_CURRENT_PATH_TOKEN 
-                           << current_rootname
+                           << current_rootname 
                            << (is_typedef ? "#Typedef_" :  "#Var_" );
             filter_for_index_anchor( *anchor_stream, variable_name);
             *anchor_stream << "\", yytext); }" << endl;
@@ -1580,7 +1581,7 @@ void format_enum( const char* signature) {
             *anchor_stream << '"' << formatted_enum
                            << "\"/{noCCchar}    { wrap_anchor( \""
                            << REPLACE_WITH_CURRENT_PATH_TOKEN
-                           << current_rootname << "#Enum_";
+                           << current_basename << "#Enum_";
             filter_for_index_anchor( *anchor_stream, enum_name);
             *anchor_stream << "\", yytext); }" << endl;
         }
@@ -1670,6 +1671,7 @@ void format_enum( const char* signature) {
         }
         char* p = parameter_list;
         while ( n--) {
+            // crop whitespace
             while ( *p && *p <= ' ')
                 ++p;
             print_ascii_to_html_spc( *current_ostream, p);
@@ -1705,7 +1707,7 @@ void format_enum( const char* signature) {
                         *anchor_stream << '"' << tmp_param
                                   << "\"/{noCCchar}    { wrap_anchor( \""
                                        << REPLACE_WITH_CURRENT_PATH_TOKEN
-                                       << current_rootname << "#Enum_";
+                                       << current_basename << "#Enum_";
                         filter_for_index_anchor( *anchor_stream, enum_name);
                         *anchor_stream << "\", yytext); }" << endl;
                         delete[] tmp_param;
