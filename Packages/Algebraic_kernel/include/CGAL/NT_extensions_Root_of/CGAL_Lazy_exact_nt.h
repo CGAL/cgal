@@ -36,6 +36,7 @@ struct Lazy_exact_ro2
 {
     typedef typename Root_of_traits<ET>::RootOf_2   RO2;
     typedef Lazy_exact_rep<RO2>                     Base;
+    typedef typename Base::AT::Protector            P;
 
 
     mutable Lazy_exact_nt<ET> op1, op2, op3;
@@ -44,7 +45,7 @@ struct Lazy_exact_ro2
     Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
 		    const Lazy_exact_nt<ET> &b,
 		    const Lazy_exact_nt<ET> &c, bool s)
-      : Base(make_root_of_2(a.approx(), b.approx(), c.approx(), s)),
+      : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
         op1(a), op2(b), op3(c), smaller(s) {}
 
     void update_exact()
