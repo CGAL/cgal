@@ -1475,10 +1475,9 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef const RT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Direction_2& d) const
     {
       return d.rep().dx();
@@ -1493,10 +1492,9 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef const RT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Direction_2& d) const
     {
       return d.rep().dy();
@@ -1513,16 +1511,15 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef const RT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().hx();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().hx();
@@ -1539,16 +1536,15 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef const RT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().hy();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().hy();
@@ -1565,16 +1561,15 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef const RT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().hw();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().hw();

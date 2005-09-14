@@ -982,16 +982,15 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT                         result_type;
-    typedef const result_type &        qualified_result_type;
     typedef Arity_tag< 1 >             Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().x();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().x();
@@ -1008,16 +1007,15 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT                         result_type;
-    typedef const result_type &        qualified_result_type;
     typedef Arity_tag< 1 >             Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().y();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().y();
@@ -1034,10 +1032,9 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Direction_2& d) const
     {
       return d.rep().dx();
@@ -1052,10 +1049,9 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Direction_2& d) const
     {
       return d.rep().dy();
@@ -1071,16 +1067,15 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().hx();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().hx();
@@ -1096,16 +1091,15 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().hy();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().hy();
@@ -1121,16 +1115,15 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Point_2& p) const
     {
       return p.rep().hw();
     }
 
-    qualified_result_type
+    const result_type &
     operator()(const Vector_2& v) const
     {
       return v.rep().hw();
@@ -1146,10 +1139,9 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
       return r.min().x();
@@ -1164,10 +1156,9 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
       return r.max().x();
@@ -1182,10 +1173,9 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
       return r.min().y();
@@ -1200,10 +1190,9 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef const FT&        qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    qualified_result_type
+    const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
       return r.max().y();
