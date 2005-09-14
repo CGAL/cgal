@@ -1,3 +1,6 @@
+14 September 2005 Sylvain Pion
+- Add Stream_lines_2 package to internal releases.
+
 6 September 2005 Sylvain Pion
 - Remove Arrangement, Planar_map, Sweep_line_2 from include_in_release.
 - Add Arrangement_2 in include_in_release.
