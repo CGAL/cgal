@@ -16,6 +16,8 @@ namespace CircularFunctors {
 
     typedef typename CK::Circle_2 result_type;
 
+    using CK::Linear_kernel::Construct_circle_2::operator();
+
     result_type
     operator() ( const typename CK::Polynomial_for_circles_2_2 &eq )
       {

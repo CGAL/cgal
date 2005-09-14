@@ -38,8 +38,8 @@ template <class CK>
     typedef typename CK::Compare_x_2                 Compare_x_2;
     typedef typename CK::Compare_y_2		     Compare_y_2;
     typedef typename CK::Compare_xy_2		     Compare_xy_2;
-    typedef typename CK::Construct_min_vertex_2      Construct_min_vertex_2;
-    typedef typename CK::Construct_max_vertex_2      Construct_max_vertex_2;
+    typedef typename CK::Construct_Circular_min_vertex_2      Construct_Circular_min_vertex_2;
+    typedef typename CK::Construct_Circular_max_vertex_2      Construct_Circular_max_vertex_2;
     typedef CGALi::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
     typedef CGALi::Compare_y_to_right_2<Self>	     Compare_y_to_right_2;
     typedef CGALi::Do_overlap_2<Self>		     Do_overlap_2;
@@ -74,13 +74,13 @@ template <class CK>
   	compare_xy_2_object() const
     	{ return CK().compare_xy_2_object(); }
 
-	Construct_min_vertex_2
-	construct_min_vertex_2_object() const
-  	{ return CK().construct_min_vertex_2_object(); }
+	Construct_Circular_min_vertex_2
+	construct_circular_min_vertex_2_object() const
+  	{ return CK().construct_circular_min_vertex_2_object(); }
 
-	Construct_max_vertex_2
-	construct_max_vertex_2_object() const
-  	{ return CK().construct_max_vertex_2_object(); }
+	Construct_Circular_max_vertex_2
+	construct_circular_max_vertex_2_object() const
+  	{ return CK().construct_circular_max_vertex_2_object(); }
 
   	Compare_y_at_x_2
   	compare_y_at_x_2_object() const 

@@ -61,24 +61,26 @@
   construct_line_arc_2_object)
   CGAL_Curved_Kernel_cons(Construct_circular_arc_point_2,
   construct_circular_arc_point_2_object)
-  CGAL_Curved_Kernel_cons(Compute_x_2,
-  compute_x_2_object)  
-  CGAL_Curved_Kernel_cons(Compute_y_2,
-  compute_y_2_object)
-  CGAL_Curved_Kernel_cons(Construct_min_vertex_2,
-  construct_min_vertex_2_object)
-  CGAL_Curved_Kernel_cons(Construct_max_vertex_2,
-  construct_max_vertex_2_object)
-  CGAL_Curved_Kernel_cons(Construct_source_vertex_2,
-  construct_source_vertex_2_object)
-  CGAL_Curved_Kernel_cons(Construct_target_vertex_2,
-  construct_target_vertex_2_object)
+  CGAL_Curved_Kernel_cons(Compute_Circular_x_2,
+  compute_circular_x_2_object)  
+  CGAL_Curved_Kernel_cons(Compute_Circular_y_2,
+  compute_circular_y_2_object)
+  CGAL_Curved_Kernel_cons(Construct_Circular_min_vertex_2,
+  construct_circular_min_vertex_2_object)
+  CGAL_Curved_Kernel_cons(Construct_Circular_max_vertex_2,
+  construct_circular_max_vertex_2_object)
+  CGAL_Curved_Kernel_cons(Construct_Circular_source_vertex_2,
+  construct_circular_source_vertex_2_object)
+  CGAL_Curved_Kernel_cons(Construct_Circular_target_vertex_2,
+  construct_circular_target_vertex_2_object)
   CGAL_Curved_Kernel_pred(Is_x_monotone_2,
   is_x_monotone_2_object)  
   CGAL_Curved_Kernel_pred(Is_y_monotone_2,
   is_y_monotone_2_object)
   CGAL_Curved_Kernel_pred(Is_vertical_2,
   is_vertical_2_object) 
+  CGAL_Curved_Kernel_pred(Has_on_2,
+  has_on_2_object)
   CGAL_Curved_Kernel_cons(Construct_supporting_circle_2,
   construct_supporting_circle_2_object)
   CGAL_Curved_Kernel_cons(Construct_supporting_line_2,

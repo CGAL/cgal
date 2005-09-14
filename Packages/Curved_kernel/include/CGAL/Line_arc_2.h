@@ -9,7 +9,8 @@ class Line_arc_2
 {
   typedef typename CurvedKernel::FT                        FT;
   typedef typename CurvedKernel::RT                        RT;
-  typedef typename CurvedKernel::Linear_kernel::Point_2    Point_2;
+  //typedef typename CurvedKernel::Linear_kernel::Point_2    Point_2;
+  typedef typename CurvedKernel::Point_2                   Point_2;
   typedef typename CurvedKernel::Line_2                    Line_2;
   typedef typename CurvedKernel::Circle_2                  Circle_2;
   typedef typename CurvedKernel::Circular_arc_point_2   Circular_arc_point_2;
@@ -65,28 +66,33 @@ public:
      : RLine_arc_2(a)
    {}
 
-  const Circular_arc_point_2 & source() const
+  typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
+    //const Circular_arc_point_2 & 
+    source() const
   {
-        return typename R::Construct_source_vertex_2()(*this);
+        return typename R::Construct_Circular_source_vertex_2()(*this);
   }
 
-  const Circular_arc_point_2 & target() const
+  typename Qualified_result_of<typename R::Construct_Circular_target_vertex_2,Line_arc_2>::type
+  //const Circular_arc_point_2 & 
+    target() const
   {
-        return typename R::Construct_target_vertex_2()(*this);
+        return typename R::Construct_Circular_target_vertex_2()(*this);
   }
 
   const Circular_arc_point_2 & left() const
   {
-        return typename R::Construct_min_vertex_2()(*this);
+        return typename R::Construct_Circular_min_vertex_2()(*this);
   }
 
   const Circular_arc_point_2 & right() const
   {
-        return typename R::Construct_max_vertex_2()(*this);
+        return typename R::Construct_Circular_max_vertex_2()(*this);
   }
 
-
-  const Line_2 & supporting_line() const
+  typename Qualified_result_of<typename R::Construct_supporting_line_2,Line_arc_2>::type
+  //const Line_2 & 
+    supporting_line() const
   {
         return typename R::Construct_supporting_line_2()(*this);
   }

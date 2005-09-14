@@ -91,24 +91,28 @@ public:
   {}
 
 
-  const Circular_arc_point_2 & source() const
+  typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Circular_arc_2>::type
+  //const Circular_arc_point_2 &
+  source() const
   {
-	return typename R::Construct_source_vertex_2()(*this);
+	return typename R::Construct_Circular_source_vertex_2()(*this);
   }
 
-  const Circular_arc_point_2 & target() const
+  typename Qualified_result_of<typename R::Construct_Circular_target_vertex_2,Circular_arc_2>::type
+  //const Circular_arc_point_2 &
+  target() const
   {
-	return typename R::Construct_target_vertex_2()(*this);
+	return typename R::Construct_Circular_target_vertex_2()(*this);
   }
 
   const Circular_arc_point_2 & left() const
   {
-	return typename R::Construct_min_vertex_2()(*this);
+	return typename R::Construct_Circular_min_vertex_2()(*this);
   }
 
   const Circular_arc_point_2 & right() const
   {
-	return typename R::Construct_max_vertex_2()(*this);
+	return typename R::Construct_Circular_max_vertex_2()(*this);
   }
 
   bool is_x_monotone() const
@@ -121,7 +125,9 @@ public:
 	return typename R::Is_y_monotone_2()(*this);
   }
 
-  const Circle_2 & supporting_circle() const
+  typename Qualified_result_of<typename R::Construct_supporting_circle_2,Circular_arc_2>::type
+  //const Circle_2 &
+  supporting_circle() const
   {
 	return typename R::Construct_supporting_circle_2()(*this);
   }
@@ -142,6 +148,34 @@ public:
  }
 
 };
+
+ template < typename CK >
+  std::ostream &
+  operator<<(std::ostream & os, const Circular_arc_2<CK> &a)
+  {
+    // The output format is :
+    // - supporting circle
+    // - circle c1
+    // - bool b1
+    // - circle c2
+    // - bool b2
+    return os << a.supporting_circle() << " "
+	      << a.source() << " "
+	      << a.target() << " ";
+  }
+
+  template < typename CK >
+  std::istream &
+  operator>>(std::istream & is, Circular_arc_2<CK> &a)
+  {
+    typename CK::Circle_2 s;
+    typename CK::Circular_arc_point_2 p1;
+    typename CK::Circular_arc_point_2 p2;
+    is >> s >> p1 >> p2 ;
+    if (is)
+      a = Circular_arc_2<CK>(s, p1, p2);
+    return is;
+  }
 
 } // namespace CGAL
 

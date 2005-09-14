@@ -13,7 +13,6 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
-//#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 #include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 namespace CGAL {
 namespace CircularFunctors {
@@ -255,7 +254,7 @@ template < class CK >
   {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
-    typedef typename CK::Linear_kernel::Point_2   Point_2;
+    typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
     if ((a1.supporting_line() == a2.supporting_line())
@@ -310,10 +309,9 @@ template < class CK >
       }
     }
     
-    if(!do_intersect(a1.supporting_line(), a2.supporting_line()))
-      return res;
     Object obj = intersection(a1.supporting_line(), a2.supporting_line());
     const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
+    if(pt == NULL) return res;
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(
 					       Root_for_circles_2_2(
 							       Root_of_2(pt->x()),

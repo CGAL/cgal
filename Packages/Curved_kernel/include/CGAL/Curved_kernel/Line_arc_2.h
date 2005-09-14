@@ -20,11 +20,11 @@ namespace CGALi {
   {
     typedef typename CK::FT                        FT;
     typedef typename CK::RT                        RT;
-    typedef typename CK::Linear_kernel::Point_2    Point_2;
+    typedef typename CK::Point_2                   Point_2;
     typedef typename CK::Line_2                    Line_2;
     typedef typename CK::Circle_2                  Circle_2;
     typedef typename CK::Circular_arc_2            Circular_arc_2;
-    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
     typedef typename CK::Segment_2                 Segment_2;
 
@@ -85,7 +85,7 @@ namespace CGALi {
     {
       CGAL_kernel_precondition(do_intersect(support, l1));
       CGAL_kernel_precondition(do_intersect(support, l2));
-      typedef typename Root_of_2::RT RT_2;
+      //typedef typename Root_of_2::RT RT_2;
       //Voir pour mettre une assertion au assign
       Object obj = intersection(support, l1);
       const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);

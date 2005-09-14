@@ -329,7 +329,7 @@ namespace CGAL {
       operator()(const T &a) const
       {
 	//CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
-	return CurvedKernel().construct_min_vertex_2_object()(a);
+	return CurvedKernel().construct_circular_min_vertex_2_object()(a);
       }
     };
 
@@ -369,7 +369,7 @@ namespace CGAL {
       operator()(const T &a) const
       {
 	//CGAL_kernel_precondition(CurvedKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
-	return (CurvedKernel().construct_max_vertex_2_object()(a));
+	return (CurvedKernel().construct_circular_max_vertex_2_object()(a));
       }
     };
 

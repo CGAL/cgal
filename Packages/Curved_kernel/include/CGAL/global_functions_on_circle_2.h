@@ -29,5 +29,13 @@ intersect_2( const typename CK::Circle_2 & c1,
   return CK().intersect_2_object()(c1,c2,res);
 }
 
+template< class CK >
+inline
+bool
+has_on_2(const typename CK::Circle_2 &c, const typename CK::Circular_arc_point_2 &p)
+{
+  return CK().has_on_2_object()(c, p);
+}
+
 } // namespace CGAL
 #endif // CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_CIRCLE_2_H

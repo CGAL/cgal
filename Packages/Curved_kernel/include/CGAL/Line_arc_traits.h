@@ -52,8 +52,8 @@ public:
   typedef typename CurvedKernel::Equal_2               Equal_2;
   typedef typename CurvedKernel::Make_x_monotone_2     Make_x_monotone_2;
   typedef typename CurvedKernel::Split_2               Split_2;
-  typedef typename CurvedKernel::Construct_min_vertex_2  Construct_min_vertex_2; 
-  typedef typename CurvedKernel::Construct_max_vertex_2  Construct_max_vertex_2;
+  typedef typename CurvedKernel::Construct_Circular_min_vertex_2  Construct_min_vertex_2; 
+  typedef typename CurvedKernel::Construct_Circular_max_vertex_2  Construct_max_vertex_2;
   typedef typename CurvedKernel::Is_vertical_2           Is_vertical_2;
   typedef typename CurvedKernel::Intersect_2 Intersect_2;
 

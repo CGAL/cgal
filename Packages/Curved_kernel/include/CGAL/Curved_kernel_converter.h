@@ -14,35 +14,25 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class C1, class C2,
-	   class LK_converter = Cartesian_converter<typename C1::Linear_kernel,
-                                                    typename C2::Linear_kernel>,
-	   class AK_converter = Algebraic_kernel_converter<typename C1::Algebraic_kernel,
-							 typename C2::Algebraic_kernel > >
-class Curved_kernel_converter 
+  class LK_converter = Cartesian_converter<C1, C2>,
+  //typename C1::Linear_kernel, typename C2::Linear_kernel>,
+  class AK_converter = Algebraic_kernel_converter<typename C1::Algebraic_kernel,
+                                                  typename C2::Algebraic_kernel > >
+class Curved_kernel_converter
+  : public LK_converter
 {
 public:
 
 	typedef C1                       		      Source_kernel;
 	typedef C2                          		      Target_kernel;
-	typedef typename C1::Linear_kernel  		      L1;
-	typedef typename C2::Linear_kernel  		      L2;
+//	typedef typename C1::Linear_kernel  		      L1;
+//	typedef typename C2::Linear_kernel  		      L2;
 	typedef LK_converter                		      Linear_kernel_converter;
 	typedef AK_converter                		      Algebraic_kernel_converter;
 	typedef typename Linear_kernel_converter::Number_type_converter       RT_type_converter;
 	typedef typename Algebraic_kernel_converter::Root_of_type_converter   Root_of_type_converter;
-	
 
-	typename C2::Circle_2
-	operator()(const typename C1::Circle_2 &a) const
-	{
-	  return LK_converter()(a);
-        }
-
-	typename C2::Line_2
-	operator()(const typename C1::Line_2 &a) const
-	{
-	  return LK_converter()(a);
-        }
+        using LK_converter::operator();
 
 	typename C2::Circular_arc_point_2
 	operator()(const typename C1::Circular_arc_point_2 &a) const

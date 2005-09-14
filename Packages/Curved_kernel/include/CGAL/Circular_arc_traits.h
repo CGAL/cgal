@@ -46,8 +46,8 @@ public:
   typedef typename CurvedKernel::Compare_xy_2           Compare_xy_2;
   typedef typename CurvedKernel::Compare_y_at_x_2       Compare_y_at_x_2;
   typedef typename CurvedKernel::Compare_y_to_right_2   Compare_y_at_x_right_2;
-  typedef typename CurvedKernel::Construct_max_vertex_2 Construct_max_vertex_2;
-  typedef typename CurvedKernel::Construct_min_vertex_2 Construct_min_vertex_2;     
+  typedef typename CurvedKernel::Construct_Circular_max_vertex_2 Construct_max_vertex_2;
+  typedef typename CurvedKernel::Construct_Circular_min_vertex_2 Construct_min_vertex_2;     
   typedef typename CurvedKernel::Equal_2                Equal_2;
   typedef typename CurvedKernel::Make_x_monotone_2      Make_x_monotone_2;
   typedef typename CurvedKernel::Split_2                Split_2;
@@ -92,10 +92,10 @@ public:
     { return ck.intersect_2_object(); }
     
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-    { return ck.construct_max_vertex_2_object(); }
+    { return ck.construct_circular_max_vertex_2_object(); }
        
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-    { return ck.construct_min_vertex_2_object(); }
+    { return ck.construct_circular_min_vertex_2_object(); }
        
   Is_vertical_2 is_vertical_2_object() const
     { return Is_vertical_2();}

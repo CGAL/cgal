@@ -29,10 +29,10 @@ namespace CGALi {
   {
     typedef typename CK::FT                        FT;
     typedef typename CK::RT                        RT;
-    typedef typename CK::Linear_kernel::Point_2    Point_2;
+    typedef typename CK::Point_2                   Point_2;
     typedef typename CK::Line_2                    Line_2;
     typedef typename CK::Circle_2                  Circle_2;
-    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 
 public:
@@ -177,13 +177,11 @@ public:
 		   const Circular_arc_point_2 &target)
       : _begin(source), _end(target), _support(support)
     {
-      // This should be moved to some separate function.
-      typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
-      Polynomial_for_circles_2_2 equation = get_equation<CK>(support);
-      CGAL_kernel_precondition(square(source.x() - equation.a()) ==
-			       equation.r_sq() - square(source.y() - equation.b()));
-      CGAL_kernel_precondition(square(target.x() - equation.a()) ==
-			       equation.r_sq() - square(target.y() - equation.b()));
+      // We cannot enable these for now, since the Lazy_curved_kernel
+      // calls it on the Interval kernel without try/catch protection
+      // through the Curved_kernel_converter.
+      // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, source));
+      // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, target));
     }
 
   private:

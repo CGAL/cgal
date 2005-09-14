@@ -58,11 +58,15 @@ public:
       {}
       
       
-  const Root_of_2 & x() const
-    { return typename R::Compute_x_2()(*this);}
+  typename Qualified_result_of<typename R::Compute_Circular_x_2,Circular_arc_point_2>::type
+  //const Root_of_2 &
+  x() const
+    { return typename R::Compute_Circular_x_2()(*this);}
 
-  const Root_of_2 & y() const
-    { return typename R::Compute_y_2()(*this);}
+  typename Qualified_result_of<typename R::Compute_Circular_y_2,Circular_arc_point_2>::type
+  //const Root_of_2 &
+  y() const
+    { return typename R::Compute_Circular_y_2()(*this);}
 
   Bbox_2  bbox() const
     { return typename R::Construct_bbox_2()(*this);}
@@ -86,6 +90,24 @@ operator!=(const Circular_arc_point_2<CurvedKernel> &p,
            const Circular_arc_point_2<CurvedKernel> &q)
 {
   return ! (p == q);
+}
+
+template < class CK >
+std::ostream&
+operator<<(std::ostream &os, const Circular_arc_point_2<CK> &p)
+{
+#if 1
+    return os << p.x() << " " << p.y() << " ";
+#else
+    return os << p.x()[0] << " "
+              << p.x()[1] << " "
+              << p.x()[2] << " "
+              << p.x().is_smaller() << " "
+              << p.y()[0] << " "
+              << p.y()[1] << " "
+              << p.y()[2] << " "
+              << p.y().is_smaller() << " ";
+#endif
 }
 
 } // namespace CGAL

@@ -11,6 +11,9 @@
 #include <list>
 #include <boost/variant.hpp>
 
+//Comment define JUJU_CAST to don't use static_cast<int>
+#define COEF_MULT 1000000
+#define CGAL_CAST_INT
 namespace CGAL {
 
 
@@ -30,14 +33,20 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 
   Polygons polygons;
   Circles circles;
-  CGAL::Dxf_reader<typename CK::Linear_kernel> reader;
+  CGAL::Dxf_reader<CK> reader;
 
   reader(is, polygons, circles);
 
   std::cout << "Read " << polygons.size() << " polygons, and " 
 	    << circles.size() << " circles" << std::endl;
   for(typename Circles::iterator it = circles.begin(); it != circles.end(); it++){
+#ifndef CGAL_CAST_INT
     Arc arc = *it;
+#else
+    Arc arc = Circle_2(Point_2(it->center().x()*COEF_MULT,
+			       it->center().y()*COEF_MULT),
+		       it->squared_radius()*COEF_MULT*COEF_MULT);
+#endif
     *res++ = arc;
   }
 
@@ -54,8 +63,17 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
     pit++;
     do{
       if(!angle){
-	Arc arc = Line_arc_2(begin_point, pit->first); 
-	*res++ = arc;
+#ifndef CGAL_CAST_INT
+	Arc arc = Line_arc_2(begin_point, pit->first);
+#else
+	//For testing
+	 Arc arc = Line_arc_2(Point_2(static_cast<int>(to_double(begin_point.x())*COEF_MULT),
+				     static_cast<int>(to_double(begin_point.y())*COEF_MULT)),
+			     Point_2(static_cast<int>(to_double(pit->first.x())*COEF_MULT),
+				     static_cast<int>(to_double(pit->first.y())*COEF_MULT))); 
+#endif
+	if(begin_point != pit->first)
+	  *res++ = arc;
 	begin_point = pit->first;
 	angle = pit->second;
       }
@@ -90,9 +108,20 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 	else
 	  assert(assign(the_pair, vector_objects[0]));
 	center = Point_2(to_double(the_pair.first.x()),to_double(the_pair.first.y()));
+#ifndef CGAL_CAST_INT
 	Circular_arc_2 circular_arc(begin_point,
 				    center,
 				    end_arc);
+#else
+	//For testing
+	Circular_arc_2 circular_arc(Point_2(static_cast<int>(to_double(begin_point.x())*COEF_MULT),
+					    static_cast<int>(to_double(begin_point.y())*COEF_MULT)),
+				    Point_2(static_cast<int>(to_double(center.x())*COEF_MULT),
+					    static_cast<int>(to_double(center.y())*COEF_MULT)),
+				    Point_2(static_cast<int>(to_double(end_arc.x())*COEF_MULT),
+					    static_cast<int>(to_double(end_arc.y())*COEF_MULT)));
+
+#endif
 	Arc arc = circular_arc;
 	*res++ = arc;
 	begin_point = end_arc;
@@ -101,8 +130,17 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       pit++;
     }while(pit != it->end());
     if(!angle){
-      Arc arc = Line_arc_2(begin_point, first_point); 
-      *res++ = arc;
+#ifndef CGAL_CAST_INT
+      Arc arc = Line_arc_2(begin_point, first_point);
+#else
+      //for testing
+      Arc arc = Line_arc_2(Point_2(static_cast<int>(to_double(begin_point.x())*COEF_MULT),
+				   static_cast<int>(to_double(begin_point.y())*COEF_MULT)),
+			   Point_2(static_cast<int>(to_double(first_point.x())*COEF_MULT),
+				   static_cast<int>(to_double(first_point.y())*COEF_MULT)));
+#endif
+      if(begin_point != first_point)
+	*res++ = arc;
     }
     else {
       end_arc = first_point;
@@ -136,10 +174,19 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       else
 	assert(assign(the_pair, vector_objects[0]));
       center = Point_2(to_double(the_pair.first.x()),to_double(the_pair.first.y()));
+#ifndef CGAL_CAST_INT
       Circular_arc_2 circular_arc(begin_point,
 				  center,
 				  end_arc);
-      
+#else
+      	//For testing
+      Circular_arc_2 circular_arc(Point_2(static_cast<int>(to_double(begin_point.x())*COEF_MULT),
+					  static_cast<int>(to_double(begin_point.y())*COEF_MULT)),
+				  Point_2(static_cast<int>(to_double(center.x())*COEF_MULT),
+					  static_cast<int>(to_double(center.y())*COEF_MULT)),
+				  Point_2(static_cast<int>(to_double(end_arc.x())*COEF_MULT),
+					  static_cast<int>(to_double(end_arc.y())*COEF_MULT)));
+#endif
       Arc arc = circular_arc;
       *res++ = arc;
     }

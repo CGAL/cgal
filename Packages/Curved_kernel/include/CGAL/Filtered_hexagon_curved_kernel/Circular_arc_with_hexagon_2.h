@@ -19,10 +19,10 @@ class Circular_arc_with_hexagon_2 : public CGALi::Debug_id<> {
 
     typedef typename CK::FT                                    FT;
     typedef typename CK::RT                                    RT;
-    typedef typename CK::Linear_kernel::Point_2                Point_2;
+    typedef typename CK::Point_2                               Point_2;
     typedef typename CK::Line_2                                Line_2;
     typedef typename CK::Circle_2                              Circle_2;
-    typedef typename CK::Circular_arc_point_2               Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2                  Circular_arc_point_2;
     typedef typename CK::Circular_arc_2                        Circular_arc_2;
     typedef typename CK::Root_of_2                             Root_of_2;
 

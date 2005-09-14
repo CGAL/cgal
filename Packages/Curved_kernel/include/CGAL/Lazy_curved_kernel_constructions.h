@@ -47,9 +47,9 @@ make_lazy_CK(const Object& eto)
   
   const std::pair<typename EK::Circular_arc_point_2, unsigned> *ptr;
 
-  if(      ptr = 
+  if((     ptr = 
            object_cast<std::pair<typename EK::Circular_arc_point_2,
-	                         unsigned > >(&eto)){
+	                         unsigned > >(&eto))){
            return make_object(std::make_pair(typename LK::Circular_arc_point_2(
 	   new Lazy_construct_rep_0<typename AK::Circular_arc_point_2, 
 	   typename EK::Circular_arc_point_2, E2A>(ptr->first)),ptr->second));
@@ -75,6 +75,7 @@ make_lazy_CK(const Object& eto)
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construct_intersections_2 {
 
+  static const bool Protection = true;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
@@ -91,14 +92,15 @@ public:
   {
   
     try {
+      Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
 
       for(unsigned int i = 0; i < lv.approx().size(); i++){
         
 	const std::pair<typename AK::Circular_arc_point_2, unsigned> *temp_p;
       
-	if(temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2,
-	                         unsigned > >(& (lv.approx()[i]))){
+	if((temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2,
+	                         unsigned > >(& (lv.approx()[i])))){
 	  *it = make_object(std::make_pair(typename LK::Circular_arc_point_2(
 	  new Lazy_construct_rep_1<Ith<typename AK::Circular_arc_point_2>, 
 	  Ith<typename EK::Circular_arc_point_2>, E2A, 
@@ -127,6 +129,7 @@ public:
       }
       
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
       ec(CGAL::exact(l1), CGAL::exact(l2), std::back_inserter(exact_objects));
@@ -144,6 +147,7 @@ public:
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_make_x_monotone_2 {
 
+  static const bool Protection = true;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
@@ -160,6 +164,7 @@ public:
   {
   
     try {
+      Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_1<AC, EC, E2A, L1>(ac, ec, l1));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
       // that is, when we get here we have constructed all approximate results
@@ -186,6 +191,7 @@ public:
       }
       
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
       ec(CGAL::exact(l1), std::back_inserter(exact_objects));
@@ -210,7 +216,7 @@ public:
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction_object_CK {
 
-
+  static const bool Protection = true;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Object result_type;
@@ -228,11 +234,12 @@ template <typename L1>
   {
   
     try {
+      Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
       
        std::pair<typename AK::Circular_arc_point_2, unsigned> *temp_p;
  
-         if(temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2, unsigned > >(& (lo.approx()))){
+         if((temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2, unsigned > >(& (lo.approx())))){
 	typedef Lazy_construct_rep_1<Object_cast<typename AK::Circular_arc_point_2>, 
 	        Object_cast<typename EK::Circular_arc_point_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_point_2>(), 
@@ -260,6 +267,7 @@ template <typename L1>
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1));
       return make_lazy_CK<LK>(eto);
     }
@@ -274,12 +282,13 @@ template <typename L1>
   {
   
     try {
+      Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
  
       std::pair<typename AK::Circular_arc_point_2, unsigned> *temp_p;    
       
       
-    if(temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2, unsigned > >(& (lo.approx()))){
+    if((temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2, unsigned > >(& (lo.approx())))){
 	typedef Lazy_construct_rep_1<Object_cast<typename AK::Circular_arc_point_2>, 
 	        Object_cast<typename EK::Circular_arc_point_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_point_2>(), 
@@ -307,6 +316,7 @@ template <typename L1>
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
       return make_lazy_CK<LK>(eto);
     }

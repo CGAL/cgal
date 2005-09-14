@@ -324,6 +324,21 @@ namespace CircularFunctors {
     return  cmp == 0 || (cmp > 0 &&  a.on_upper_part())
                      || (cmp < 0 && !a.on_upper_part());
   }
+  
+ template < class CK >
+  bool
+  has_on(const typename CK::Circle_2 &a,
+	    const typename CK::Circular_arc_point_2 &p)
+  {
+
+    typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
+    Polynomial_for_circles_2_2 equation = get_equation<CK>(a);
+    if(CGAL::sign_at<typename CK::Algebraic_kernel>
+       (equation,p.coordinates())!= ZERO)
+      return false;
+    return true;
+  }
+
 
   template < class CK >
   void
@@ -644,7 +659,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
     typedef typename CK::Circle_2                 Circle_2;
     typedef typename CK::FT                       FT;
-    typedef typename CK::Linear_kernel::Point_2   Point_2;
+    typedef typename CK::Point_2                  Point_2;
     CGAL_kernel_precondition(A.supporting_circle().squared_radius() != 0);
     int cmp_begin = CGAL::compare(A.source().y(), A.center().y());
     int cmp_end   = CGAL::compare(A.target().y(),   A.center().y());
@@ -755,7 +770,7 @@ template < class CK, class OutputIterator >
     typedef typename CK::Circular_arc_2           Circular_arc_2;
     typedef typename CK::Circle_2                 Circle_2;
     typedef typename CK::FT                       FT;
-    typedef typename CK::Linear_kernel::Point_2   Point_2;
+    typedef typename CK::Point_2                  Point_2;
     typedef std::pair<CGAL::Object,bool >         S_pair;
 
 
@@ -958,7 +973,7 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 	if(a.is_x_monotone())
 	{
 		// The arc is xy-monotone so we just add the bboxes of the endpoints
-		if(a.is_y_monotone())
+	  if(a.is_y_monotone())
 			return a.left().bbox() + a.right().bbox();
 					
 		// Just x-monotone, so we have to find the y-critical point
@@ -967,7 +982,7 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 
 		Bbox_2 left_bb=a.left().bbox(), 
 		       right_bb=a.right().bbox();
-		
+
 		double ymin= (is_on_upper) ? CGAL::min(left_bb.ymin(),right_bb.ymin()) :
 			   	to_interval( y_critical_points<CK>(a.supporting_circle(),true).y() ).first;
 		double ymax= (is_on_upper) ? 
@@ -978,10 +993,8 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 		return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);
 	}
 	
-		
 	// Else return the bounding box of the circle.
 	return a.supporting_circle().bbox();
-		
 		/*  More precise version for non-x-monotone arcs.
 		double xmin,xmax,ymin,ymax;
 
