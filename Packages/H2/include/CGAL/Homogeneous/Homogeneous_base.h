@@ -91,6 +91,8 @@ struct Homogeneous_base
     // Should they be part of the Kernel interface ?
     typedef typename Same_uncertainty_nt<bool, FT>::type
                                                     Bool;
+    typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
+                                                    Sign;
     typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
                                                     Comparison_result;
     typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type

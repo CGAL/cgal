@@ -1,3 +1,7 @@
+15 September 2005 Sylvain Pion
+- Functors : Use K::Oriented_side and co instead of hardcoded CGAL:: enums.
+- Functors : miscelaneous cleanups.
+
 14 September 2005 Sylvain Pion
 - Remove qualified_result_type from functors.
 
