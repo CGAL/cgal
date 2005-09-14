@@ -37,9 +37,12 @@ struct qrt_or_not
 
 template < typename F >
 struct qrt_or_not <F, true>
-{ typedef typename F::qualified_result_type type; };
+{ typedef const typename F::result_type & type; };
 
-template <typename Functor, typename P1=void, typename P2= void, typename P3= void, typename P4= void, typename P5= void, typename P6= void, typename P7= void, typename P8= void>
+template <typename Functor, typename P1 = void, typename P2 = void,
+                            typename P3 = void, typename P4 = void,
+                            typename P5 = void, typename P6 = void,
+                            typename P7 = void, typename P8 = void>
 struct Qualified_result_of
   : qrt_or_not<Functor, boost::is_base_and_derived<Has_qrt, Functor>::value>
 {};

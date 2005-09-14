@@ -431,7 +431,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2  Circle_2;
   public:
     typedef Point_2          result_type;
-    typedef const Point_2&   qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
     const Point_2 &
@@ -573,7 +572,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
     typedef Point_2           result_type;
-    typedef const Point_2&    qualified_result_type;
     typedef Arity_tag< 1 >    Arity;
 
     const Point_2&
@@ -594,7 +592,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
     typedef Point_2           result_type;
-    typedef const Point_2&    qualified_result_type;
     typedef Arity_tag< 1 >    Arity;
 
     const Point_2&
@@ -1100,7 +1097,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2    Point_2;
   public:
     typedef Point_2                result_type;
-    typedef const result_type &    qualified_result_type;
     typedef Arity_tag< 1 >         Arity;
 
     const result_type&
@@ -1120,7 +1116,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2    Point_2;
   public:
     typedef Point_2                result_type;
-    typedef const result_type &    qualified_result_type;
     typedef Arity_tag< 1 >         Arity;
 
     const result_type&
@@ -1135,7 +1130,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2  Point_2;
   public:
     typedef Point_2              result_type;
-    typedef const Point_2&       qualified_result_type;
     typedef Arity_tag< 1 >       Arity;
 
     const result_type&
