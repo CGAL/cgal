@@ -549,7 +549,7 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
   //if is here, the segment intersect the screen boundaries or is inside
   int x1, y1, x2, y2;
   Segment_2<RT>  sr;
-  sr = Segment_2<RT>(Point_2<RT>(scs_x, scs_y), Point_2<RT>(sct_x, sct_y));;  
+  sr = Segment_2<RT>(Point_2<RT>(scs_x, scs_y), Point_2<RT>(sct_x, sct_y));
   //next condition true if the segment is inside
   if(!(scs_x >= xr1 && scs_x <= xr2 &&
      sct_x >= xr1 && sct_x <= xr2 && 
@@ -559,14 +559,15 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
     Iso_rectangle_2<RT> r = Iso_rectangle_2<RT>(Point_2<RT>(xr1, yr1),
                                               Point_2<RT>(xr2, yr2));
     CGAL::Object obj = CGAL::intersection(r, sr);  
-    Point_2<RT>    p;
-    if (CGAL::assign(p, obj)){
-      w << p;
-      return w;
+    if (const Point_2<RT> *p = object_cast<Point_2<RT> >(&obj)){
+      return w << *p;
+    }
+    else if (const Segment_2<RT> *s = object_cast<Segment_2<RT> >(&obj)) {
+      sr = *s;
     }
     else {
-      bool b = CGAL::assign(sr, obj);
-      CGAL_assertion(b);
+      CGAL_assertion(obj.is_empty());
+      return w;
     }
   }
   x1 = w.x_pixel(CGAL::to_double(sr.source().x()));
