@@ -15,7 +15,7 @@
 
 The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
 concept that allow the construction and maintenance of arrangements of
-line segments. It should be templated with a \cgal-kernel model that is
+line segments. It should be parameterized with a \cgal-kernel model that is
 templated in turn with a number type. To avoid numerical errors and
 robustness problems, the number type should support exact rational
 arithmetic.\footnote{That is, the number type should support the arithmetic
@@ -56,7 +56,7 @@ with the \ccStyle{Arr_non_caching_segment_traits_2} traits-class.
  
 \ccIsModel
     \ccc{ArrangementTraits_2} \\
-    \ccc{ArrangementLandmarkTraits_2} \\
+    \ccc{ArrangementLandmarkTraits_2}
 
 \end{ccRefClass}
 
