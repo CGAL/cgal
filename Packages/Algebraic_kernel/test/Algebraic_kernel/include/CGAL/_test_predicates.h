@@ -57,6 +57,7 @@ void _test_solve(AK ak)
   typename AK::Construct_polynomial_1_2 theConstruct_1_2 =
     ak.construct_polynomial_1_2_object();
 
+  //line horizontal in circle's center
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res6;
   theSolve(theConstruct_1_2(0, 1, -5),
 	   theConstruct_2_2(0, 5, 100),
@@ -67,6 +68,7 @@ void _test_solve(AK ak)
   assert(res6[1].second == 1u);
   assert(res6[1].first == Root_for_circles_2_2(10, 5));
 
+  //line vertical in circle's center
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res7;
   theSolve(theConstruct_1_2(1, 0, -5),
 	   theConstruct_2_2(5, 5, 100),
@@ -77,6 +79,7 @@ void _test_solve(AK ak)
   assert(res7[1].second == 1u);
   assert(res7[1].first == Root_for_circles_2_2(5, 15));
 
+  //line vertical tangent left
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res8;
   theSolve(theConstruct_1_2(1, 0, 5),
 	   theConstruct_2_2(5, 5, 100),
@@ -85,6 +88,7 @@ void _test_solve(AK ak)
   assert(res8[0].second == 2u);
   assert(res8[0].first == Root_for_circles_2_2(-5, 5));
 
+  //line vertical tangent right
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res9;
   theSolve(theConstruct_1_2(1, 0, -15),
 	   theConstruct_2_2(5, 5, 100),
@@ -93,6 +97,7 @@ void _test_solve(AK ak)
   assert(res9[0].second == 2u);
   assert(res9[0].first == Root_for_circles_2_2(15, 5));
 
+  //line horizontal tangent on top
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res10;
   theSolve(theConstruct_1_2(0, 1, -15),
 	   theConstruct_2_2(5, 5, 100),
@@ -101,6 +106,7 @@ void _test_solve(AK ak)
   assert(res10[0].second == 2u);
   assert(res10[0].first == Root_for_circles_2_2(5, 15));
   
+  //line horizontal tangent down
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res11;
   theSolve(theConstruct_1_2(0, 1, 5),
 	   theConstruct_2_2(5, 5, 100),
@@ -215,16 +221,33 @@ void _test_solve(AK ak)
     ak.sign_at_object();
   
   for(std::size_t i = 0; i < 500; i++){
-    int a1 = theRandom.get_int(random_min,random_max);
-    int b1 = theRandom.get_int(random_min,random_max);
-    int c1 = theRandom.get_int(random_min,random_max);
-    int a2 = theRandom.get_int(random_min,random_max);
-    int b2 = theRandom.get_int(random_min,random_max);
-    int c2 = theRandom.get_int(random_min,random_max);
+    int a1, b1, c1, a2, b2, c2, a3, b3, r_sq = 0;
+    do{
+    a1 = theRandom.get_int(random_min,random_max);
+    b1 = theRandom.get_int(random_min,random_max);
+    }while((a1 == 0) && (b1 == 0));
+    c1 = theRandom.get_int(random_min,random_max);
+    do{
+    a2 = theRandom.get_int(random_min,random_max);
+    b2 = theRandom.get_int(random_min,random_max);
+    }while((a2 == 0) && (b2 == 0));
+    c2 = theRandom.get_int(random_min,random_max);
+    a3 = theRandom.get_int(random_min,random_max);
+    b3 = theRandom.get_int(random_min,random_max);
+    r_sq = theRandom.get_int(1,random_max);
+    
     std::vector< std::pair<Root_for_circles_2_2, size_t> > res;
     theSolve(theConstruct_1_2(a1, b1, c1),
 	     theConstruct_1_2(a2, b2, c2),
 	     std::back_inserter(res));
+    std::vector< std::pair<Root_for_circles_2_2, size_t> > res2;
+    theSolve(theConstruct_1_2(a2, b2, c2),
+	     theConstruct_2_2(a3, b3, r_sq),
+	     std::back_inserter(res2));
+    std::vector< std::pair<Root_for_circles_2_2, size_t> > res3;
+    theSolve(theConstruct_1_2(a1, b1, c1),
+	     theConstruct_2_2(a3, b3, r_sq),
+	     std::back_inserter(res3));
     for (std::size_t j = 0 ; j < res.size() ; j++){
       assert(res[j].second == 1u);
       assert(theSigh_at(theConstruct_1_2(a1, b1, c1),
@@ -232,6 +255,23 @@ void _test_solve(AK ak)
       assert(theSigh_at(theConstruct_1_2(a2, b2, c2),
 			res[j].first) == CGAL::ZERO);
     }
+    for (std::size_t j = 0 ; j < res2.size() ; j++){
+      if(res2.size() == 1) assert(res2[j].second == 2u);
+      if(res2.size() == 2) assert(res2[j].second == 1u);
+      assert(theSigh_at(theConstruct_2_2(a3, b3, r_sq),
+			res2[j].first) == CGAL::ZERO);
+      assert(theSigh_at(theConstruct_1_2(a2, b2, c2),
+			res2[j].first) == CGAL::ZERO);
+    }
+    for (std::size_t j = 0 ; j < res3.size() ; j++){
+      if(res3.size() == 1) assert(res3[j].second == 2u);
+      if(res3.size() == 2) assert(res3[j].second == 1u);
+      assert(theSigh_at(theConstruct_2_2(a3, b3, r_sq),
+			res3[j].first) == CGAL::ZERO);
+      assert(theSigh_at(theConstruct_1_2(a1, b1, c1),
+			res3[j].first) == CGAL::ZERO);
+    }
+    
   }
   
 }

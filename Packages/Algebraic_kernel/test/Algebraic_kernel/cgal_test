@@ -72,5 +72,6 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run root_of_2
+  compile_and_run test_Algebraic_kernel
 fi
 
