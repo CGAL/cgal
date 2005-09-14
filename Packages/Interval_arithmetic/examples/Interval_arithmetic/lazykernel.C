@@ -9,7 +9,7 @@
 
 
 typedef CGAL::Cartesian_I<CGAL::Gmpq> SC;
-typedef CGAL::Lazy_kernel<SC, CGAL::Cartesian_I<CGAL::Interval_nt<> > > K;
+typedef CGAL::Lazy_kernel<SC, CGAL::Cartesian_I<CGAL::Interval_nt_advanced > > K;
 
 
 
