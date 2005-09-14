@@ -41,7 +41,7 @@ streamlines in accordance with a specified density.
 
 \section{Farthest point seeding streategy}
 \label{Section_2D_Streamlines_Strategy}
-The algorithm implemented in this package (add reference) consists of placing
+The algorithm implemented in this package (add reference to the paper) consists of placing
 one streamline at a time by numerical integration starting at the furthest away
 from all previously placed streamlines.\\The input of our algorithm is given by
 (i) a flow field, (ii) a \textit{density} specified either globally by the
@@ -71,7 +71,7 @@ streamline.\\Our algorithm terminates when the priority queue is empty. The size
 of the biggest cavity being monotonically decreasing, our algorithm guarantees
 the domain saturation.
 
-\subsection{Implementation}
+\section{Implementation}
 \label{Section_2D_Streamlines_Implementation}
 Streamlines are represented as polylines, and are obtained by iteraive
 integration form the seed point. The computation is processed via a list of
