@@ -2074,18 +2074,18 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
     typedef typename K::Sphere_3       Sphere_3;
   public:
-    typedef Oriented_side              result_type;
+    typedef typename K::Oriented_side  result_type;
     typedef Arity_tag< 2 >             Arity;
 
-    Oriented_side
+    result_type
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.oriented_side(p); }
 
-    Oriented_side
+    result_type
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.oriented_side(p); }
 
-    Oriented_side
+    result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.oriented_side(p); }
   };
