@@ -281,7 +281,6 @@ void Arr_triangulation_point_location<Arrangement_2>
   //the triangulation is now updated
   updated_cdt = true;
 
-  // --- printing and debugging of CDT
   CGAL_assertion(cdt.is_valid());
   TRG_PRINT_DEBUG("finished updating the CDT " );
 }
