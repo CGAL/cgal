@@ -50,6 +50,12 @@ inline FT distance(const Point_2 & p, const Point_2 & q)
 }
 };
 
+template <class Vector_field>
+Euler_integrator_2<Vector_field>::Euler_integrator_2()
+{
+  default_integration_step = 1.0;
+}
+
 // An additional parameter in the constructor to specify the default integration step
 template <class Vector_field>
 Euler_integrator_2<Vector_field>::Euler_integrator_2(const FT & integration_step)

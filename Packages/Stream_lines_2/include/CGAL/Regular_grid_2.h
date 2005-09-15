@@ -17,8 +17,8 @@
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
-#ifndef REGULAR_GRID_2_H_ 
-#define REGULAR_GRID_2_H_
+#ifndef CGAL_REGULAR_GRID_2_H_ 
+#define CGAL_REGULAR_GRID_2_H_
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>

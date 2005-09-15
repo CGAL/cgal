@@ -221,7 +221,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
 		FT y = min_y + (FT) (((FT) rand() * yrange)/((FT) RAND_MAX));
 		seed_point = Point_2(x, y);
 	}
-	std::cout << seed_point << "first seed point\n";
+	std::cout << seed_point << " first seed point\n";
 	std::cout << "creating the placement..\n";
 	FT distance = (FT) max_x * (1.0/2.0);
 	bool b = (distance>fSepStl_seed);
