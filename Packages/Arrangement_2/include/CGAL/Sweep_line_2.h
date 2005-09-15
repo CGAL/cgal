@@ -854,14 +854,18 @@ _handle_overlap(Event* event,
     Point_2 end_overlap =
       this->m_traits->construct_max_vertex_2_object()(overlap_cv);
 
+    const std::pair<Event*, bool>& pair_res =
+      push_event(end_overlap, Base_event::OVERLAP);
     //find the event assiciated with end_overlap point (right end point)
-    EventQueueIter q_iter = this->m_queue->find( end_overlap );
+    //EventQueueIter q_iter = this->m_queue->find( end_overlap );
 
     //TODO: in polylines, the event point of the right-end of the overlap
     // is not have to be exist yet,
-    CGAL_assertion(q_iter != this->m_queue->end());
+    //CGAL_assertion(q_iter != this->m_queue->end());
 
-    Event* right_end = (*q_iter).second;
+    //Event* right_end = (*q_iter).second;
+
+    Event* right_end = pair_res.first;
 
     if (this->m_traits->compare_xy_2_object() (event->get_point(), 
                                                begin_overlap) != EQUAL)
@@ -881,7 +885,7 @@ _handle_overlap(Event* event,
     PRINT(curve<<" + " <<*iter<<" => " <<overlap_sc<<"\n");
     // Set the two events' attribute to intersection
     event -> set_overlap();
-    right_end -> set_overlap();
+    //right_end -> set_overlap();
 
     // Remove curve, *iter from the left curves of end_overlap event
     right_end->remove_curve_from_left(curve);
