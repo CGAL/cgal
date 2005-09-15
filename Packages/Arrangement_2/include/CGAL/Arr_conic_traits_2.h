@@ -260,12 +260,6 @@ public:
 	}
 	else
 	{
-	  if (x_res == LARGER)
-	  {
-	    std::cout << "-> cv = " << cv << std::endl;
-	    std::cout << "-> p  = " << p << std::endl;
-	  }
-
 	  CGAL_precondition (x_res != LARGER);
 
 	  q = cv.get_point_at_x (p);

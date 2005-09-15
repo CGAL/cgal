@@ -1481,7 +1481,15 @@ protected:
         res2 = ker.compare_x_2_object() (p, _target);
       }
 
-      return (res1 != EQUAL && res2 != EQUAL && res1 != res2);
+      // If p is not in the (open) x-range (or y-range) of the segment, it
+      // cannot be contained in the segment.
+      if (res1 == EQUAL || res2 == EQUAL || res1 == res2)
+	return (false);
+
+      // Perform an orientation test: This is crucial for segment of line
+      // pairs, as we want to make sure that p lies on the same line as the
+      // source and the target.
+      return (ker.orientation_2_object()(_source, p, _target) == COLLINEAR);
     }
     else
     {

@@ -1123,7 +1123,8 @@ private:
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.
     Alg_kernel         ker;
-    Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source, this->_target);
+    Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source, 
+							    this->_target);
 
     CGAL_assertion (dir_res != EQUAL);
 
@@ -1140,6 +1141,7 @@ private:
       {
         // The arc is a vertical segment:
         this->_info = (this->_info | IS_VERTICAL_SEGMENT);
+	return;
       }
 
       this->_info = (this->_info | DEGREE_2);
@@ -1167,7 +1169,6 @@ private:
                                                                 this->_target);
     Algebraic        ys[2];
     int              n_ys;
-
 
     n_ys = _conic_get_y_coordinates (p_mid.x(), ys);
 
