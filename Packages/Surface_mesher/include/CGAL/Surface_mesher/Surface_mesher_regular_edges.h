@@ -37,7 +37,7 @@ namespace CGAL {
       typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
 
     protected:
-      set <pair <Vertex_handle, Vertex_handle> > bad_edges;
+      std::set <std::pair <Vertex_handle, Vertex_handle> > bad_edges;
 
     protected:
       bool is_in_complex(const C2t3& c, const Facet& f) const {

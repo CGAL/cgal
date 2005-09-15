@@ -45,7 +45,7 @@ class Complex_2_in_triangulation_3 {
 
  private:
   // computes and return an ordered pair of Vertex
-  pair<Vertex_handle, Vertex_handle>
+  std::pair<Vertex_handle, Vertex_handle>
   make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
     if (vh1 < vh2) {
       return std::make_pair(vh1, vh2);
@@ -70,7 +70,7 @@ class Complex_2_in_triangulation_3 {
       imin = i2;
     }
 
-    return make_pair(cmin, imin);
+    return std::make_pair(cmin, imin);
   }
 
  public:
@@ -248,7 +248,7 @@ class Complex_2_in_triangulation_3 {
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
-	      pair<Vertex_handle, Vertex_handle> 
+	      std::pair<Vertex_handle, Vertex_handle> 
 		e = make_ordered_pair(c->vertex(j), 
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first++;
@@ -278,7 +278,7 @@ class Complex_2_in_triangulation_3 {
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
 	    if ( (i != j) && (i != k) ){
-	      pair<Vertex_handle, Vertex_handle> 
+	      std::pair<Vertex_handle, Vertex_handle> 
 		e = make_ordered_pair(c->vertex(j), 
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first++;
@@ -325,7 +325,7 @@ class Complex_2_in_triangulation_3 {
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
-	      pair<Vertex_handle, Vertex_handle> 
+	      std::pair<Vertex_handle, Vertex_handle> 
 		e = make_ordered_pair(c->vertex(j), 
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first--;
@@ -354,7 +354,7 @@ class Complex_2_in_triangulation_3 {
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
 	    if ( (i != j) && (i != k) ){
-	      pair<Vertex_handle, Vertex_handle> 
+	      std::pair<Vertex_handle, Vertex_handle> 
 		e = make_ordered_pair(c->vertex(j), 
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first--;
