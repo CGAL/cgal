@@ -40,7 +40,7 @@ public:
     Circular_arc_2() {}
 
     Circular_arc_2(const Circle_2 &c)
-      : _support(c)
+      : _support(c), Cache_minmax('s')
     {
        // Define a circle intersecting c in the 2 vertical tangent
        // points.
@@ -52,7 +52,7 @@ public:
 
     Circular_arc_2(const Circle_2 &support,
                    const Line_2 &l1, bool b1,
-                   const Line_2 &l2, bool b2)
+                   const Line_2 &l2, bool b2) : Cache_minmax('n')
     {
       Point_2 center1 (support.center().x() + l1.a()/2,
                        support.center().y() + l1.b()/2);
@@ -86,7 +86,7 @@ public:
     Circular_arc_2(const Circle_2 &c,
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _support(c) {
+      : _support(c) , Cache_minmax('n'){
 	  if (c1 != c2){
 	    _begin = CGAL::circle_intersect<CK>(c, c1, b_1);
 	    _end = CGAL::circle_intersect<CK>(c, c2, b_2);
@@ -134,7 +134,7 @@ public:
     // by b_cut
     Circular_arc_2(const Circular_arc_2 &A, const bool b,
 		   const Circle_2 &ccut, const bool b_cut)
-      : _support(A.supporting_circle())
+      : _support(A.supporting_circle()), Cache_minmax('n')
     {
         CGAL_kernel_precondition(A.is_x_monotone());
         CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
@@ -161,7 +161,7 @@ public:
     // (middle is not necessarily on the arc)
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &middle,
-                   const Point_2 &end)
+                   const Point_2 &end): Cache_minmax('n')
     {
       CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
 
@@ -175,7 +175,7 @@ public:
     Circular_arc_2(const Circle_2 &support,
 		   const Circular_arc_point_2 &source,
 		   const Circular_arc_point_2 &target)
-      : _begin(source), _end(target), _support(support)
+      : _begin(source), _end(target), _support(support), Cache_minmax('n')
     {
       // We cannot enable these for now, since the Lazy_curved_kernel
       // calls it on the Interval kernel without try/catch protection
@@ -191,14 +191,25 @@ public:
     Circular_arc_point_2  _begin, _end;
     Circle_2 _support;
 
+
+
   public:
- 
+ mutable char Cache_minmax;
     const Circular_arc_point_2 & left() const
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
 	     : compare_xy(_begin,_end)<0);
-      return on_upper_part() ? _end : _begin;
+      if(Cache_minmax == 's')
+	return _end;
+      if(Cache_minmax == 't')
+	return _begin;
+      if(on_upper_part()){
+	Cache_minmax = 's';
+	return _end;
+      }
+      Cache_minmax = 't';
+      return  _begin;
     }
 
     const Circular_arc_point_2 & right() const
@@ -206,7 +217,16 @@ public:
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
 	     : compare_xy(_begin,_end)<0);
-      return on_upper_part() ? _begin : _end;
+      if(Cache_minmax == 's')
+	return _begin;
+      if(Cache_minmax == 't')
+	return _end;
+       if(on_upper_part()){
+	Cache_minmax = 's';
+	return _begin;
+      }
+      Cache_minmax = 't';
+      return  _end;
     }
 
     const Circular_arc_point_2 & source() const

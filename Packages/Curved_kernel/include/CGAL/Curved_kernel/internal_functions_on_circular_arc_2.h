@@ -453,18 +453,24 @@ namespace CircularFunctors {
 	return res;
       }
 
-      // We need to check that the supporting circles
-      // do intersect before going further.
-      if (! do_intersect(a1.supporting_circle(), a2.supporting_circle())) 
-	{ return res; }
-      
-      // Get the two intersection points of the supporting circles.
+//      // We need to check that the supporting circles
+//      // do intersect before going further.
+//      if (! do_intersect(a1.supporting_circle(), a2.supporting_circle())) 
+//	{ return res; }
+//      
+//      // Get the two intersection points of the supporting circles.
+//      
+//      std::vector<CGAL::Object > intersection_points;
+//      CGAL::intersect_2<CK>
+//	( a1.supporting_circle(), a2.supporting_circle(),
+//	  std::back_inserter(intersection_points) );
       
       std::vector<CGAL::Object > intersection_points;
       CGAL::intersect_2<CK>
 	( a1.supporting_circle(), a2.supporting_circle(),
 	  std::back_inserter(intersection_points) );
-      
+      if(intersection_points.size() == 0) return res;
+
       Circular_arc_point_2 left =
 	(CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
 	 (&(intersection_points[0])))->first;

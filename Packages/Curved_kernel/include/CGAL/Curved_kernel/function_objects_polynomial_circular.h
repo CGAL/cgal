@@ -632,6 +632,10 @@ namespace CircularFunctors {
 
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
+      if (a.rep().Cache_minmax == 't')
+	return (a.rep().source());
+      if (a.rep().Cache_minmax == 's')
+	return (a.rep().target());
       return (a.rep().left());
     }
 
@@ -659,6 +663,10 @@ namespace CircularFunctors {
     
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
+      if (a.rep().Cache_minmax == 's')
+	return (a.rep().source());
+      if (a.rep().Cache_minmax == 't')
+	return (a.rep().target());
       return (a.rep().right());
     }
 
