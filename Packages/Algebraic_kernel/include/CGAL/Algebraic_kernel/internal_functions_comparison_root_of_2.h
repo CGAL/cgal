@@ -28,7 +28,7 @@ compare_11_11( const FT& A1, const FT& B1,
 {
   // Compares roots of (A1 X + B1) and (A2 X + B2).
   assert( A1 > 0 && A2 > 0 );
-  return compare(B2*A1, B1*A2);
+  return CGAL_NTS compare(B2*A1, B1*A2);
 }
 
 /*2 1*/template <class FT>
@@ -50,7 +50,7 @@ compare_21_11(const FT& A2, const FT& B2, const FT& C2,
 
   FT p2 = B1 * (A1*B2 - A2*B1) - C2 * CGAL::square(A1);
 
-  return static_cast<Comparison_result>((int) sign(p2));
+  return enum_cast<Comparison_result>(CGAL_NTS sign(p2));
 }
 
 /*2 2*/template <class FT>
@@ -89,7 +89,7 @@ compare_22_21( const FT& A1p, const FT& B1p, const FT& C1p,
     
     FT P4 = calcP4(J,Jp,A1,C1,A2,C2);
 
-    return static_cast<Comparison_result>(- sign(P4));
+    return enum_cast<Comparison_result>(- CGAL_NTS sign(P4));
     // if ( P4< FT(0) ) return LARGER;   // r1 > l2
     // if ( P4> FT(0) ) return SMALLER;  // r1 < l2
     // return EQUAL;
@@ -146,7 +146,7 @@ compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
 
 	FT P4 = calcP4(I1,I2,K);
 	
-        return static_cast<Comparison_result>((int) sign(P4));
+        return enum_cast<Comparison_result>(CGAL_NTS sign(P4));
     } 
     else{ // J<0
 	if (K > 0) return LARGER;   // l1 > l2
@@ -163,7 +163,7 @@ compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
 
 	FT P4 = calcP4(I1,I2,K);
 	
-        return static_cast<Comparison_result>(- sign(P4));
+        return enum_cast<Comparison_result>(- CGAL_NTS sign(P4));
     }
 }
 
