@@ -12,10 +12,10 @@
 \begin{picture}(6324,5874)(2014,-6823)
 \put(6301,-3931){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,1}$A$}%
 }}}}
-\put(6436,-2896){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,.56,.56}$C$}%
-}}}}
-\put(6256,-5281){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$B$}%
-}}}}
 \put(6751,-4471){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{1,0,0}$D$}%
+}}}}
+\put(6436,-2896){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,.56,.56}$B$}%
+}}}}
+\put(6256,-5281){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$C$}%
 }}}}
 \end{picture}%

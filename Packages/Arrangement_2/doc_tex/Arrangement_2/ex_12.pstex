@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: ex_12.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Sun Jul 17 17:01:32 2005
-%%For: wein@lens (Ron Wein,,09-576985,)
+%%CreationDate: Thu Sep 15 16:52:32 2005
+%%For: wein@cgal (Ron Wein,,09-576985,)
 %%BoundingBox: 0 0 200 186
 %Magnification: 0.5000
 %%EndComments
@@ -201,9 +201,6 @@ n 3150 6750 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 7200 6750 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
-
-% Ellipse
-n 5175 2700 50 50 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 3825 5400 50 50 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr

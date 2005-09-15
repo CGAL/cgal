@@ -20,7 +20,16 @@ literature and have many applications in a range of fields;
 see, e.g.,~\cite{as-aa-00,cgal:h-a-04}.
 
 The curves in $\calC$ can intersect each other, and are not
-necessarily $x$-monotone. We construct a collection $\calC''$ of
+necessarily $x$-monotone.\footnote{A continuous planar curve $C$ is
+{\em $x$-monotone} if every vertical line intersects it at
+most once. For example, a non-vertical line segment is always
+$x$-monotone and so is the graph of any continuous function $y = f(x)$
+(for convenience, we treat vertical line segments as {\em weakly
+$x$-monotone}, as there exists a single vertical line that overlaps them).
+A circle centered or radius $r$ at $(x_0, y_0)$ is not $x$-monotone, as
+the vertical line $x = x_0$ intersects it at $(x_0, y_0 - r)$ and at
+$(x_0, y_0 + r)$.}
+We construct a collection $\calC''$ of
 $x$-monotone subcurves that are pairwise disjoint in their interiors
 in two steps as follows. First, we decompose each curve in $\calC$
 into maximal $x$-monotone subcurves (and possibly isolated points),
@@ -180,7 +189,6 @@ The simple program listed below constructs a planar map of three segments
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>     Number_type;
@@ -188,8 +196,7 @@ typedef CGAL::Cartesian<Number_type>       Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel> Traits;
 typedef Traits::Point_2                    Point_2;
 typedef Traits::X_monotone_curve_2         X_monotone_curve_2;
-typedef CGAL::Arr_default_dcel<Traits>     Dcel;
-typedef CGAL::Arrangement_2<Traits,Dcel>   Arrangement_2;
+typedef CGAL::Arrangement_2<Traits,>       Arrangement_2;
 
 int main()
 \{
@@ -207,7 +214,7 @@ int main()
 \end{alltt}
 
 The constructed arrangement is instantiated with the
-\ccc{Pm_segment_traits_2} traits class to handle segments only. It
+\ccc{Arr_segment_traits_2} traits class to handle segments only. It
 consists of two faces, a triangular face and the unbounded face.
 This program is not very useful, as it ends immediately after the
 arrangement is constructed. We will enhance it in the following

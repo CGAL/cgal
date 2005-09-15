@@ -50,6 +50,10 @@ overlaid arrangement, based on the contents of the input records.
 
 \ccHeading{Functions}
 %====================
+
+Whenever a vertex in the overlaid arrangement is created, one of the
+following functions is called in order to attach the appropriate
+auxiliary data to this vertex:
     
 \ccMethod{void create_vertex (Vertex_handle1 v1,
                               Vertex_handle2 v2,
@@ -87,6 +91,15 @@ overlaid arrangement, based on the contents of the input records.
     {constructs \ccc{v}, which is induced by the intersection of the edges 
      \ccc{e1} and \ccc{e2}.}
 
+Whenever an edge in the overlaid arrangement is created, one of the
+following functions is called in order to attach the appropriate
+auxiliary data to this vertex. Note that an edge is created only once both
+its end-vertices ave been created (and the corresponding \ccc{create_vertex()}
+methods were invoked). In all cases, the edge is represented by a halfedge
+\ccc{e} which is directed (lexicographically) from left to right. The
+\ccc{create_edge()} method should attach auxiliary data to the twin halfedge
+(namely \ccc{e->twin()} as well:
+
 \ccMethod{void create_edge (Halfedge_handle1 e1,
                             Halfedge_handle2 e2,
                             Res_vertex_handle e)) const;}
@@ -104,6 +117,10 @@ overlaid arrangement, based on the contents of the input records.
                             Res_vertex_handle e)) const;}
     {constructs \ccc{e}, which is induced by the edge \ccc{e2} that lies
      inside the face \ccc{f1}.}
+
+The following function is invoked whenever a new face is created. It is
+guaranteed that all halfedges along the face boundary have already been
+created an have thair auxiliary data fields attached to them:
 
 \ccMethod{void create_face (Face_handle1 f1,
                             Face_handle2 f2,
