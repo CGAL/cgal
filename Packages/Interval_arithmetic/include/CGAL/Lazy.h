@@ -627,6 +627,12 @@ public :
   ET&  exact() 
   { return ptr()->exact(); }
 
+  int depth() const
+  {
+    return ptr()->depth();
+  }
+
+
 
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
@@ -639,9 +645,11 @@ private:
 
 // The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>
 
-template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
+template <typename LK, typename AC, typename EC>
 struct Lazy_construction_bbox {
   static const bool Protection  = true;
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
   typedef typename AC::result_type result_type;
 
   AC ac;
@@ -661,10 +669,14 @@ struct Lazy_construction_bbox {
   }
 };
 
-template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
+template <typename LK, typename AC, typename EC>
 struct Lazy_construction_nt {
 
   static const bool Protection  = true;
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_exact_nt<ET> result_type;
@@ -795,9 +807,12 @@ struct Ith {
 
 
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_cartesian_const_iterator_2 {
 
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
   typedef typename LK::Cartesian_const_iterator_2 result_type;
   AC ac;
   EC ec;
@@ -1004,10 +1019,14 @@ struct Object_cast {
 //
 // TODO: write operators for other than two arguments. For the current kernel we only need two for Interscet_2
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_construction_object {
 
   static const bool Protection = true;
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Object result_type;
@@ -1078,10 +1097,15 @@ public:
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_construction {
 
   static const bool Protection  = true;
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy<AT, ET, EFT, E2A> Handle;
@@ -1175,6 +1199,8 @@ public:
     }
   }
 };
+
+
 
 
 

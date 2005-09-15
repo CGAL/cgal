@@ -1,3 +1,6 @@
+14 September 2005 Andreas Fabri
+- Simplified template parameters of functors in Lazy_kernel.h and Lazy.h
+
 13 September 2005 Andreas Fabri
 - Changes in Lazy.h such that the 2D kernel testsuite now passes (without transform)
 
