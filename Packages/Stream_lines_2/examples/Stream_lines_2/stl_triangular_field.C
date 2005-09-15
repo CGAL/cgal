@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Stream_lines_2.h>
@@ -15,29 +14,26 @@ typedef CGAL::Triangular_field_2<K> Field;
 typedef CGAL::Euler_integrator_2<Field> Euler_integrator;
 typedef CGAL::Runge_kutta_integrator_2<Euler_integrator, Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
-typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterator_2 stl_iterator;
+typedef Stl::Stream_line_iterator_2 stl_iterator;
 
-int main(int argc, char **argv)
+int main()
 {
-  Euler_integrator euler_integrator(1);
-  Runge_kutta_integrator runge_kutta_integrator(euler_integrator);
-  
-  std::ifstream infile("data/irregular_data.tri.cin", std::ios::in);
-  Field triangular_field(infile);
-  infile.close();
-  
-  /* the placement of streamlines */  
-  std::cout << "processing...\n";
-  double dSep = 30.0;
-  double dRat = 1.6;
-  Stl Stream_lines(triangular_field, runge_kutta_integrator,dSep,dRat);
-  std::cout << "placement generated\n";
-  
-  stl_iterator begin_iterator = Stream_lines.begin();
-  stl_iterator end_iterator = Stream_lines.end();
-  
+	Euler_integrator euler_integrator(1);
+	Runge_kutta_integrator runge_kutta_integrator(euler_integrator);
+
+	std::ifstream infile("data/irregular_data.tri.cin", std::ios::in);
+	Field triangular_field(infile);
+	infile.close();
+
+	/* the placement of streamlines */
+	std::cout << "processing...\n";
+	double dSep = 30.0;
+	double dRat = 1.6;
+	Stl Stream_lines(triangular_field, runge_kutta_integrator,dSep,dRat);
+	std::cout << "placement generated\n";
+
 	/*writing streamlines to streamlines.stl */
-  std::cout << "streamlines.stl\n";
-  std::ofstream fw("streamlines.stl",std::ios::out);
-  Stream_lines.print_stream_lines(fw);
+	std::cout << "streamlines.stl\n";
+	std::ofstream fw("streamlines.stl",std::ios::out);
+	Stream_lines.print_stream_lines(fw);
 }
