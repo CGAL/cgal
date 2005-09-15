@@ -1601,18 +1601,23 @@ EOF
                         # also eliminate dead links in index.html to doc.
                         \mv ${subdir}/index.html ${subdir}/bak
                         \cat ${subdir}/bak | sed 's/\(class=\"manual\">\).*\(<\/td>\)/\1 -- \2/g' > ${subdir}/index.html
+                        \chmod 644 ${subdir}/index.html
                     fi
                     \mv History.${count} History.${oldcount}
                 fi
             done
             echo -n "${Target}" > History.1
             \mkdir ${Target}
+            \chmod 644 History.1
+            \chmod 755 ${Target}
             if [ -h LAST ]; then \rm -f LAST ; fi
             \ln -s ${Target} LAST
         fi
         popd  > /dev/null
-        cp -r testsuite/* ${TestSuiteResultPath}/${Target}
-        rm -r testsuite
+        \cp -r testsuite/* ${TestSuiteResultPath}/${Target}
+        \rm -r testsuite
+        # set proper read rights for the web server
+        find ${TestSuiteResultPath}/${Target} -type d -exec chmod 755 {} \; -o -type f -exec chmod 644 {} \;
         # send email notification
         if [ "${TestSuiteResultEmail}" != "" ]; then
             # Use this line on Sun Solaris systems
