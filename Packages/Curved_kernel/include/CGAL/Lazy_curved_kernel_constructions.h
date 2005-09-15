@@ -72,10 +72,15 @@ make_lazy_CK(const Object& eto)
 
 // This is the magic functor for functors that write their result as Objects into an output iterator
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_construct_intersections_2 {
 
   static const bool Protection = true;
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
@@ -144,10 +149,15 @@ public:
   }
 };
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_make_x_monotone_2 {
 
   static const bool Protection = true;
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
@@ -213,10 +223,14 @@ public:
 // TODO: write operators for more than two arguments. For the current kernel we only need two for       
 //    Construct_intersections_2 and one for Make_x_monotone_2
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_construction_object_CK {
 
   static const bool Protection = true;
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Object result_type;

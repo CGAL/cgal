@@ -1,0 +1,2 @@
+14 September 2005 Andreas Fabri
+- Simplified template parameters of functors in Lazy_curved_kernel.h and Lazy_curved_kernel_constructions.h
