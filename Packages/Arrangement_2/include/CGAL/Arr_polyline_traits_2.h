@@ -919,8 +919,14 @@ private:
       Comparison_result res_to = compare_xy(max_vertex(cv[to]), q);
       if (res_to == EQUAL) return to;
     
-      // q is not in the x-range of cv:
-      if (res_from == res_to) return INVALID_INDEX;
+      typename Segment_traits_2::Compare_x_2 compare_x =
+        seg_traits->compare_x_2_object();
+
+      Comparison_result res = compare_x(max_vertex(cv[to]), q);
+      if (res != EQUAL) return INVALID_INDEX;
+
+      //// q is not in the x-range of cv:
+      //if (res_from == res_to) return INVALID_INDEX;
       
       // Perform a binary search to locate the segment that contains q in its
       // xy-range:
