@@ -378,7 +378,7 @@ namespace CircularFunctors {
 
     if(a1.is_x_monotone() && a2.is_x_monotone()){
       // Overlapping curves.
-      if (a1.supporting_circle() == a2.supporting_circle()) {
+      if ((a1.supporting_circle() == a2.supporting_circle()) || (a1.supporting_circle() == a2.supporting_circle().opposite()) ) {
 	
 	// The ranges need to overlap in order for the curves to overlap.
 	if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
@@ -471,7 +471,7 @@ namespace CircularFunctors {
 	  std::back_inserter(intersection_points) );
       if(intersection_points.size() == 0) return res;
 
-      Circular_arc_point_2 left =
+      const Circular_arc_point_2 &left =
 	(CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
 	 (&(intersection_points[0])))->first;
       if (intersection_points.size() < 2){// multiplicity 2
@@ -479,7 +479,7 @@ namespace CircularFunctors {
 	  *res++ = make_object(std::make_pair(left,2u));
       }
       else {// multiplicity 1
-	Circular_arc_point_2 right = 
+	const Circular_arc_point_2 &right = 
 	  (CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
 	   (&(intersection_points[1])))->first;
 	// We also need to check that these intersection points are on the arc.
