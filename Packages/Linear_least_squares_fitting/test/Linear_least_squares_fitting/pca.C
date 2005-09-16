@@ -39,7 +39,9 @@ void test_2_point_set(const unsigned int nb_points,
   // fit a line
   std::cout << "  fit a 2D line...";
   Line_2 line;
-  FT quality = linear_least_squares_fitting_2(points.begin(),points.end(),line);
+  Point_2 centroid;
+  FT quality =
+    linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   // dump to ps

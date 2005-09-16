@@ -26,7 +26,6 @@
 #include <iterator>
 #include <list>
 #include <string>
-#include <CGAL/eigen.h>
 #include <CGAL/eigen_2.h>
 #include <CGAL/centroid.h>
 
@@ -34,17 +33,18 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-// fit a line to a 2D point set
-// return a fitting quality (1 - lambda_min/lambda_max):
+// fits a line to a 2D point set
+// returns a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best (zero variance orthogonally to the fitting line)
-//  0 is worst (isotropic case, return a line with default direction)
+//  0 is worst (isotropic case, returns a line with default direction)
 template < typename InputIterator, 
            typename K >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
-                               typename K::Line_2& line,
-                               const K& k, 
+                               typename K::Line_2& line,   // best fit line
+			       typename K::Point_2& c,     // centroid
+                               const K& k,                 // kernel
 			       const typename K::Point_2*)
 {
   typedef typename K::FT          FT;
@@ -56,7 +56,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   CGAL_precondition(begin != end);
 
   // compute centroid
-  Point c = centroid(begin,end,K());
+  c = centroid(begin,end,K());
 
   // assemble covariance matrix as a
   // semi-definite matrix. 
@@ -80,10 +80,9 @@ linear_least_squares_fitting_2(InputIterator begin,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  // TODO: use explicit formula instead.
   eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
 
-  // assert eigen values are positives
+  // assert eigen values are positives or null
   CGAL_assertion(eigen_values.first >= 0 && 
                        eigen_values.second >= 0);
 
@@ -110,8 +109,10 @@ template < typename InputIterator,
 typename K::FT
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
-                               typename K::Line_2& line,
-                               const K& k, const typename K::Triangle_2*)
+                               typename K::Line_2& line, // best fit line
+			       typename K::Point_2& c,   // centroid
+                               const K& k,               // kernel
+			       const typename K::Triangle_2*)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_2     Point;
@@ -123,7 +124,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   CGAL_precondition(begin != end);
 
   // compute centroid
-  Point c = centroid(begin,end,K());
+  c = centroid(begin,end,K());
 
   // assemble covariance matrix as a
   // semi-definite matrix. 
@@ -171,7 +172,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
   // TODO: use explicit formula instead.
-  eigen_semi_definite_symmetric(covariance,2,eigen_vectors,eigen_values);
+  //eigen_semi_definite_symmetric(covariance,2,eigen_vectors,eigen_values);
 
   // assert eigen values are positives
   CGAL_assertion(eigen_values[0] >= 0 && 
@@ -204,16 +205,49 @@ typename K::FT
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
                                typename K::Line_2& line,
+			       typename K::Point_2& centroid,
                                const K& k)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type
-    Value_type;
-  return CGALi::linear_least_squares_fitting_2(begin, end, line, k,
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  return CGALi::linear_least_squares_fitting_2(begin, end, line,
+					       centroid, k, (Value_type*) NULL);
+}
+
+
+template < typename InputIterator, 
+           typename K >
+inline
+typename K::FT
+linear_least_squares_fitting_2(InputIterator begin,
+                               InputIterator end, 
+                               typename K::Line_2& line,
+                               const K& k)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  typename K::Point_2 centroid;
+  return CGALi::linear_least_squares_fitting_2(begin, end, line,
+					       centroid, k,
 					       (Value_type*) NULL);
 }
 
 
-// this one deduces the kernel from the point in container
+// these ones deduce the kernel from the point in container
+
+template < typename InputIterator, 
+           typename Line,
+           typename Point>
+inline
+typename Kernel_traits<Line>::Kernel::FT
+linear_least_squares_fitting_2(InputIterator begin,
+                               InputIterator end, 
+                               Line& line,
+			       Point& centroid)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  typedef typename Kernel_traits<Value_type>::Kernel K;
+  return CGAL::linear_least_squares_fitting_2(begin,end,line,centroid,K());
+}
+
 template < typename InputIterator, 
            typename Line >
 inline

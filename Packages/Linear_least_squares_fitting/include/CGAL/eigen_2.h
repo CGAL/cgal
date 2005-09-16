@@ -2,7 +2,9 @@
 #define __EIGEN_2__
 
 // extract eigenvalues and eigenvectors from a 
-// 2x2 symmetric matrix. Matrix numbering:
+// 2x2 symmetric matrix. 
+// Note: involves a square root
+// Matrix numbering:
 // a b
 // b c 
 // eigen values and vectors are sorted 
