@@ -1,4 +1,4 @@
-Package Linear Least Squares Fitting (name probably needs generalization now) :
+Package Principal Component Analysis
 - provides functions for linear fitting (in the least squares sense)
   of 2D and 3D kernel objects.
 - some basic shape analysis functions :
