@@ -896,11 +896,15 @@ template <typename T>
 // and that the result type is void
 //
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+//template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_functor_2_2 {
   static const bool Protection  = true;
   typedef void result_type;
-
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   AC ac;
   EC ec;
 
