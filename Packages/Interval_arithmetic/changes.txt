@@ -1,3 +1,6 @@
+16 September 2005 Andreas Fabri
+- Added rudimentary printing of the DAG to the Lazy  and Lazy_exact_nt class
+
 14 September 2005 Andreas Fabri
 - Simplified template parameters of functors in Lazy_kernel.h and Lazy.h
 

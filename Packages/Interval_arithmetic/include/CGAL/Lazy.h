@@ -185,7 +185,13 @@ exact(const unsigned int& i)
   return i;
 }
 
-
+template <typename AT, typename ET, typename EFT, typename E2A>
+inline
+void
+print_dag(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level = 0)
+{
+  l.print_dag(os, level);
+}
 
 
 //____________________________________________________________
@@ -223,6 +229,11 @@ public:
     this->at = e2a(e); 
   }
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+  }
 };
 
 
@@ -254,6 +265,16 @@ public:
   Lazy_construct_rep_1(const AC& ac, const EC& ec, const L1& l1)
     : Lazy_construct_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), ec_(ec), l1_(l1)
   {}
+
+  void
+  print_dag(std::ostream& os, int level) const 
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with one child node:");
+      CGAL::print_dag(l1_, os, level+1);
+    }
+  }
 
 };
 
@@ -289,6 +310,16 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))), l1_(l1), l2_(l2)
   {}
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+    }
+  }
 };
 
 
@@ -325,6 +356,17 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3))), l1_(l1), l2_(l2), l3_(l3)
   {}
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with three child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+      CGAL::print_dag(l3_, os, level+1);
+    }
+  }
 };
 
 
@@ -362,6 +404,20 @@ public:
    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))), l1_(l1), l2_(l2), l3_(l3), l4_(l4)
   {}
 
+
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with four child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+      CGAL::print_dag(l3_, os, level+1);
+      CGAL::print_dag(l4_, os, level+1);
+    }
+  }
 };
 
 //____________________________________________________________
@@ -400,6 +456,20 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5))), l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
   {}
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with five child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+      CGAL::print_dag(l3_, os, level+1);
+      CGAL::print_dag(l4_, os, level+1);
+      CGAL::print_dag(l5_, os, level+1);
+    }
+  }
 };
 
 struct Approx_converter {
@@ -463,6 +533,17 @@ public:
     ac(CGAL::approx(l1), std::back_inserter(this->at));
   }
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    os << "A Lazy_construct_rep_with_vector_1 of size " <<  this->at.size() << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with one child node:");
+      CGAL::print_dag(l1_, os, level+1);
+
+    }
+  }
 };
 
 
@@ -503,6 +584,17 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), std::back_inserter(this->at));
   }
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    os << "A Lazy_construct_rep_with_vector_2 of size " <<  this->at.size() << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+    }
+  }
 };
 
 
@@ -538,6 +630,17 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at);
   }
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    os << "A Lazy_construct_rep_2_1" << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+    }
+  }
 };
 
 
@@ -575,6 +678,17 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at.first, this->at.second);
   }
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    os << "A Lazy_construct_rep_2_2"  << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+    }
+  }
 };
 
 
@@ -632,6 +746,10 @@ public :
     return ptr()->depth();
   }
 
+  void print_dag(std::ostream& os, int level) const
+  {
+    ptr()->print_dag(os, level);
+  }
 
 
 private:
@@ -937,10 +1055,14 @@ public:
 
 // This is the magic functor for functors that write their result as Objects into an output iterator
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename LK, typename AC, typename EC>
 struct Lazy_intersect_with_iterators {
 
   static const bool Protection = true;
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;

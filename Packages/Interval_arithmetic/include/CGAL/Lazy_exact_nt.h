@@ -86,6 +86,80 @@
  */
 
 CGAL_BEGIN_NAMESPACE
+
+template <class T>
+void
+print_at(std::ostream& os, const T& at)
+{
+  os << at;
+}
+
+template <class T>
+void
+print_at(std::ostream& os, const std::vector<T>& at)
+{
+  os << "std::vector";
+}
+
+template <>
+void
+print_at(std::ostream& os, const Object& o)
+{
+  os << "CGAL::Object";
+}
+
+template <class ET>
+class Lazy_exact_nt;
+
+template <typename ET>
+inline
+void
+print_dag(const Lazy_exact_nt<ET>& l, std::ostream& os, int level=0)
+{
+  l.print_dag(os, level);
+}
+
+inline
+void
+print_dag(double d, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++){
+    os << "    ";
+  }
+  os << d << std::endl;
+}
+
+
+void
+msg(std::ostream& os, int level, char* s)
+  {
+    int i;
+    for(i = 0; i < level; i++){
+      os << "    ";
+    }
+    os << s << std::endl;
+  }
+
+inline
+void
+print_dag(const Null_vector& nv, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++){
+    os << "    ";
+  }
+  os << "Null_vector" << std::endl;
+}
+
+inline
+void
+print_dag(const Origin& nv, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++){
+    os << "    ";
+  }
+  os << "Origin" << std::endl;
+}
+
 // Abstract base class for lazy numbers and lazy objects
 template <typename AT_, typename ET, typename E2A>
 struct Lazy_construct_rep : public Rep
@@ -134,7 +208,27 @@ public:
     return *et;
   }
 
+  void print_at_et(std::ostream& os, int level) const
+  {
+    for(int i = 0; i < level; i++){
+      os << "    ";
+    }
+    os << "Approximation: ";
+    CGAL::print_at(os, at);
+    os << std::endl;
+    if(! is_lazy()){
+      for(int i = 0; i < level; i++){
+	os << "    ";
+      }
+      os << "Exact: ";
+      CGAL::print_at(os, *et);
+      os << std::endl;
+    }
+  }
 
+  virtual void print_dag(std::ostream& os, int level) const {}
+
+  bool is_lazy() const { return et == NULL; }
   virtual void update_exact() = 0;
   virtual int depth() const  { return 1; }
   virtual ~Lazy_construct_rep () { delete et; };
@@ -150,6 +244,12 @@ struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
   Lazy_exact_rep (const Interval_nt<false> & i)
       : Base(i) {}
 
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+  }
+
 private:
   Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
 
@@ -163,6 +263,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(double(i)) {}
 
   void update_exact()  { this->et = new ET((int)this->approx().inf()); }
+
 };
 
 // double constant
@@ -224,6 +325,16 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 
   int depth() const { return op1.depth() + 1; }
   void prune_dag() { op1 = Lazy_exact_nt<ET>::zero(); }
+
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "Unary number operator:");
+      CGAL::print_dag(op1, os, level+1);
+    }
+  }
 };
 
 // Base binary operation
@@ -242,6 +353,16 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
   {
     op1 = Lazy_exact_nt<ET1>::zero();
     op2 = Lazy_exact_nt<ET2>::zero();
+  }
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "Binary number operator:");
+      CGAL::print_dag(op1, os, level+1);
+      CGAL::print_dag(op2, os, level+1);
+    }
   }
 };
 
@@ -489,6 +610,12 @@ public :
 
   int depth() const
   { return ptr()->depth(); }
+
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    ptr()->print_dag(os, level);
+  }
 
   static const double & get_relative_precision_of_to_double()
   {
