@@ -120,29 +120,8 @@ public:
 	// for visualizing streamlines
 	void print_stream_lines(std::ofstream & fw);
 	std::list<Point_2> get_pq();
-	void print_stream_lines_eps(std::ofstream & fw);
+// 	void print_stream_lines_eps(std::ofstream & fw);
 	unsigned int number_of_lines(){return _number_of_lines;};
-	void print_inter(int & iNbreFichier){
-		iNbreFichier++;
-		if ((iNbreFichier<10)||
-				((iNbreFichier<50)&&(std::div(iNbreFichier,5).rem==0))||
-				(((iNbreFichier<1000)&&(std::div(iNbreFichier,20).rem==0)))){
-			char rep[80];
-			strcpy(rep,"res/");
-			char ext[80];
-			strcpy(ext,".stl");
-				char str[80];
-			if (iNbreFichier<10)
-				sprintf(str,"res_inter_000%d",iNbreFichier);
-			else if (iNbreFichier<100)
-				sprintf(str,"res_inter_00%d",iNbreFichier);
-			else if (iNbreFichier<1000)
-				sprintf(str,"res_inter_0%d",iNbreFichier);
-			else sprintf(str,"res_inter_%d",iNbreFichier);
-			strcat(rep,str);
-			strcat(rep,ext);
-			std::ofstream fw(rep,std::ios::out);
-			print(fw);}}
 	std::list< std::pair<Point_2, Point_2> > get_tr()
 	{
 		std::list< std::pair<Point_2, Point_2> > _list;
@@ -747,41 +726,6 @@ void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(std::ofstre
 				fw << i << " " << j << "\n";}};
 	fw.close();}
 
-// output an eps file
-template <class VectorField_2, class Integrator_2>
-void Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstream & fw)
-{
-	typename Stream_line_container_2::iterator begin_iterator;
-	Stream_line_container_2 stl_container_temp = stl_container;
-	Point_container_2 stl;
-	fw << "%!PS-Adobe-2.0 EPSF-2.0\n";
-	fw << "%%BoundingBox: 0 0" << " " << max_x - min_x << " " << max_y - min_y << "\n";
-	fw << "gsave" << "\n";
-	fw << "/L {moveto lineto stroke} bind def" << "\n";
-	fw << 0.5 << " setlinewidth" << "\n";
-	fw << 0.0 << " " << 0.0 << " " << 0.0 << " setrgbcolor" << "\n";
-	
-	for(begin_iterator=stl_container_temp.begin();begin_iterator!=stl_container_temp.end();begin_iterator++){
-		typename Point_container_2::iterator begin_point_iterator = (*begin_iterator).begin();
-		typename Point_container_2::iterator end_point_iterator = (*begin_iterator).end();
-		
-		FT i_prec = (*begin_point_iterator).x() - min_x;
-		FT j_prec = (*begin_point_iterator).y() - min_y;
-		begin_point_iterator++;
-
-		FT i , j;
-		for(;begin_point_iterator!=end_point_iterator;begin_point_iterator++){
-			Point_2 p = *begin_point_iterator;
-			i = p.x() - min_x;
-			j = p.y() - min_y;
-				fw << i_prec << " " << j_prec << " " << i << " " << j << " L\n";
-			i_prec = i;
-			j_prec = j;}};
-	fw << "grestore\n";
-	fw << "showpage\n";
-	fw.close();}
-
-	
 template <class VectorField_2, class Integrator_2>
 std::list<typename Stream_lines_2<VectorField_2, Integrator_2>::Point_2> 
 Stream_lines_2<VectorField_2, Integrator_2>::get_pq()
