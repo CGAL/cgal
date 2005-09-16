@@ -19,44 +19,29 @@
 
 \ccDefinition
 
-\ccRefName\ is a concept for a 3D surface mesh.
-Its main purpose is to allow
-the parameterization methods to access meshes on an uniform manner.
+MeshAdaptor\_3 is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes on an uniform manner.
+A MeshAdaptor\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their boundary. The surface itself can have holes. The vertices along the boundary of a hole are called "border vertices". A surface is "closed" if it contains no border vertices.
+The surface must be an oriented 2-manifold with border vertices, i.e. the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with boundary can join.
+MeshAdaptor\_3 defines the minimum types, data and methods that a mesh must implement to allow surface parameterization.
+MeshAdaptor\_3 meshes can have any genus, aridity or number of components. In the other hand, as parameterization methods deal only with topological disks, MeshAdaptor\_3 defines an interface oriented towards topological disks
 
-A \ccRefName\ surface consists of vertices $V$,
-facets $F$ and an incidence relation on them.
-No notion of edge is requested.
-Vertices represent points in 3d-space. Facets are planar polygons without holes
-defined by the circular sequence of vertices along their boundary.
-The surface itself can have holes. The vertices
-along the boundary of a hole are called {\em border vertices\/}.
-A surface is {\em closed\/} if it
-contains no border vertices.
 
-The surface must be an
-oriented 2-manifold with border vertices, i.e.
-the neighborhood of each point on the surface is either
-homeomorphic to a disc or to a half disc, except for vertices where
-many holes and surfaces with boundary can join.
+\ccHasModels
 
-\ccRefName\ defines the minimum types, data and methods that a mesh must implement
-to allow surface parameterization.
+Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided. Mesh\_adaptor\_patch\_3<M> is a model of MeshAdaptor\_3 if M is a model of MeshAdaptorWithStream\_3.
 
-\ccRefName\ meshes can have any genus, aridity or number of components.
-In the other hand,
-as parameterization methods deal only with topological disks, \ccRefName\
-defines an interface oriented towards topological disks.
+\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
+\ccRefIdfierPage{CGAL::Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>} \\
 
 
 \ccHeading{Design pattern}
 
-\ccRefName\ is an Adaptor (see [GOF95]): it changes the
-interface of a 3D mesh to match the interface expected by the parameterization methods.
+MeshAdaptor\_3 is an Adaptor (see [GOF95]): it changes the interface of a 3D mesh to match the interface expected by the parameterization methods.
 
 
 \ccTypes
 
-The following handles, iterators, and circulators have appropriate
+The following mutable handles, iterators, and circulators have appropriate
 non-mutable counterparts, i.e. \ccc{const_handle},
 \ccc{const_iterator}, and \ccc{const_circulator}. The mutable types are
 assignable to their non-mutable counterparts.  Both circulators are
@@ -66,155 +51,229 @@ in function parameter lists, the corresponding iterators can be used as
 well.
 
 \ccNestedType{NT}
-       {Number type to represent coordinates.}
-
+{
+Number type to represent coordinates.
+}
 \ccNestedType{Point_2}
-       {2D point that represents (u,v) coordinates computed
-        by parameterization methods. Usual methods are expected.}
-\ccGlue
+{
+2D point that represents (u,v) coordinates computed by parameterization methods. Usual methods are expected.
+}
 \ccNestedType{Point_3}
-       {3D point that represents vertices coordinates. Usual methods are expected.}
-\ccGlue
+{
+3D point that represents vertices coordinates. Usual methods are expected.
+}
 \ccNestedType{Vector_2}
-       {2D vector. Usual methods are expected.}
-\ccGlue
+{
+2D vector. Usual methods are expected.
+}
 \ccNestedType{Vector_3}
-       {3D vector. Usual methods are expected.}
-
+{
+3D vector. Usual methods are expected.
+}
 \ccNestedType{Facet}
-       {Opaque type representing a facet of the 3D mesh.
-        No methods are expected.}
-\ccGlue
+{
+Opaque type representing a facet of the 3D mesh. No methods are expected.
+}
 \ccNestedType{Facet_handle}
-       {Handle to a facet. Model of the Handle concept.}
-\ccGlue
+{
+Handle to a facet. Model of the Handle concept.
+}
+\ccNestedType{Facet_const_handle}
+{
+}
 \ccNestedType{Facet_iterator}
-       {Iterator over all mesh facets. Model of the ForwardIterator concept.}
-
+{
+Iterator over all mesh facets. Model of the ForwardIterator concept.
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
 \ccNestedType{Vertex}
-       {Opaque type representing a vertex of the 3D mesh.
-        No methods are expected.}
-\ccGlue
+{
+Opaque type representing a vertex of the 3D mesh. No methods are expected.
+}
 \ccNestedType{Vertex_handle}
-       {Handle to a vertex. Model of the Handle concept.}
-\ccGlue
+{
+Handle to a vertex. Model of the Handle concept.
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
 \ccNestedType{Vertex_iterator}
-       {Iterator over all vertices of a mesh. Model of the ForwardIterator concept.}
-\ccGlue
+{
+Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
 \ccNestedType{Border_vertex_iterator}
-       {Iterator over vertices of the mesh's \emph{main boundary}.
-        Model of the ForwardIterator concept.}
-\ccGlue
+{
+Iterator over vertices of the mesh "main boundary". Model of the ForwardIterator concept.
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
 \ccNestedType{Vertex_around_facet_circulator}
-       {Counter-clockwise circulator over a facet's vertices.
-        Model of the BidirectionalCirculator concept.}
-\ccGlue
+{
+Counter-clockwise circulator over a facet's vertices. Model of the BidirectionalCirculator concept.
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
 \ccNestedType{Vertex_around_vertex_circulator}
-       {Clockwise circulator over the vertices incident to a vertex.
-        Model of the BidirectionalCirculator concept.}
+{
+Clockwise circulator over the vertices incident to a vertex. Model of the BidirectionalCirculator concept.
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
 
 
 \ccCreation
 
 \ccCreationVariable{m}  %% define variable name used by \ccMethod below
 
-No constructor is required.
+Construction and destruction are undefined.
 
 
 \ccOperations
 
-The following methods returning a handle, iterator, or circulator have appropriate
+The following mutable methods returning a handle, iterator, or circulator have appropriate
 non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
 \ccc{const_iterator}, or \ccc{const_circulator}.
 
 \textbf{MESH INTERFACE:}
 
-\ccMethod{Vertex_iterator mesh_vertices_begin();}
-	{Get iterator over first vertex of mesh.}
-\ccGlue
-\ccMethod{Vertex_iterator  mesh_vertices_end();}
-	{Get iterator over past-the-end vertex of mesh.}
-\ccGlue
-\ccMethod{int  count_mesh_vertices () const;}
-	{Count the number of vertices of the mesh.}
-\ccGlue
-\ccMethod{void  index_mesh_vertices();}
-	{Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.}
-\ccGlue
-\ccMethod{Border_vertex_iterator  mesh_main_border_vertices_begin();}
-	{Get iterator over first vertex of mesh's \emph{main boundary}.}
-\ccGlue
-\ccMethod{Border_vertex_iterator  mesh_main_border_vertices_end ();}
-	{Get iterator over past-the-end vertex of mesh's \emph{main boundary}}
-\ccGlue
-\ccMethod{std::list<Vertex_handle> get_boundary(Vertex_handle seed_vertex);}
-	{Return the boundary containing seed\_vertex
-	 Return an empty list if not found}
-\ccGlue
-\ccMethod{Facet_iterator  mesh_facets_begin ();}
-	{Get iterator over first facet of mesh}
-\ccGlue
-\ccMethod{Facet_iterator  mesh_facets_end ();}
-	{Get iterator over past-the-end facet of mesh}
-\ccGlue
-\ccMethod{int  count_mesh_facets () const;}
-	{Count the number of facets of the mesh}
-\ccGlue
-\ccMethod{bool  is_mesh_triangular () const;}
-	{Return true of all mesh's facets are triangles}
-\ccGlue
-\ccMethod{int  count_mesh_halfedges() const;}
-	{Count the number of halfedges of the mesh}
+\ccMethod{Vertex_iterator mesh_vertices_begin ();}
+{
+Get iterator over first vertex of mesh.
+}
+\ccMethod{Vertex_const_iterator mesh_vertices_begin () const;}
+{
+}
+\ccMethod{Vertex_iterator mesh_vertices_end ();}
+{
+Get iterator over past-the-end vertex of mesh.
+}
+\ccMethod{Vertex_const_iterator mesh_vertices_end () const;}
+{
+}
+\ccMethod{int count_mesh_vertices () const;}
+{
+Count the number of vertices of the mesh.
+}
+\ccMethod{void index_mesh_vertices ();}
+{
+Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
+}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
+{
+Get iterator over first vertex of mesh's "main boundary".
+}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin () const;}
+{
+}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end ();}
+{
+Get iterator over past-the-end vertex of mesh's "main boundary".
+}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end () const;}
+{
+}
+\ccMethod{std::list<Vertex_handle> get_boundary (Vertex_handle seed_vertex);}
+{
+Return the boundary containing seed\_vertex. Return an empty list if not found.
+}
+\ccMethod{Facet_iterator mesh_facets_begin ();}
+{
+Get iterator over first facet of mesh.
+}
+\ccMethod{Facet_const_iterator mesh_facets_begin () const;}
+{
+}
+\ccMethod{Facet_iterator mesh_facets_end ();}
+{
+Get iterator over past-the-end facet of mesh.
+}
+\ccMethod{Facet_const_iterator mesh_facets_end () const;}
+{
+}
+\ccMethod{int count_mesh_facets () const;}
+{
+Count the number of facets of the mesh.
+}
+\ccMethod{bool is_mesh_triangular () const;}
+{
+Return true of all mesh's facets are triangles.
+}
+\ccMethod{int count_mesh_halfedges () const;}
+{
+Count the number of halfedges of the mesh.
+}
 
 \textbf{FACET INTERFACE:}
 
-\ccMethod{Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);}
-	{Get circulator over facet's vertices}
-\ccGlue
-\ccMethod{int  count_facet_vertices(Facet_const_handle facet) const;}
-	{Count the number of vertices of a facet}
+\ccMethod{Vertex_around_facet_circulator facet_vertices_begin (Facet_handle facet);}
+{
+Get circulator over facet's vertices.
+}
+\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin (Facet_const_handle facet) const;}
+{
+}
+\ccMethod{int count_facet_vertices (Facet_const_handle facet) const;}
+{
+Count the number of vertices of a facet.
+}
 
 \textbf{VERTEX INTERFACE:}
 
-\ccMethod{Point_3  get_vertex_position (Vertex_const_handle vertex) const;}
-	{Get the 3D position of a vertex}
-\ccGlue
-\ccMethod{Point_2  get_vertex_uv (Vertex_const_handle vertex) const;}
-	{Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.}
-\ccGlue
-\ccMethod{void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv);}{}
-\ccGlue
-\ccMethod{bool  is_vertex_parameterized (Vertex_const_handle vertex) const;}
-	{Get/set "is parameterized" field of vertex. Default value is undefined.}
-\ccGlue
-\ccMethod{void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized);}{}
-\ccGlue
-\ccMethod{int  get_vertex_index (Vertex_const_handle vertex) const;}
-	{Get/set vertex index. Default value is undefined.}
-\ccGlue
-\ccMethod{void  set_vertex_index (Vertex_handle vertex, int index);}{}
-\ccGlue
-\ccMethod{int  get_vertex_tag(Vertex_const_handle vertex) const;}
-	{Get/set vertex' all purpose tag. Default value is undefined.}
-\ccGlue
-\ccMethod{void set_vertex_tag(Vertex_handle vertex, int tag);}{}
-\ccGlue
-\ccMethod{bool  is_vertex_on_border(Vertex_const_handle vertex) const;}
-	{Return true if a vertex belongs to \emph{any mesh's boundary}}
-\ccGlue
-\ccMethod{bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;}
-	{Return true if a vertex belongs to the mesh's \emph{main boundary}}
-\ccGlue
-\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin(
-                            Vertex_handle vertex,
-                            Vertex_handle start_position = NULL);}
-	{Get circulator over the vertices incident to 'vertex'
-	 'start\_position' defines the optional initial position of the circulator}
-
-\ccHasModels
-
-\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
-\ccRefIdfierPage{CGAL::Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>} \\
+\ccMethod{Point_3 get_vertex_position (Vertex_const_handle vertex) const;}
+{
+Get the 3D position of a vertex.
+}
+\ccMethod{Point_2 get_vertex_uv (Vertex_const_handle vertex) const;}
+{
+Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
+}
+\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 \& uv);}
+{
+}
+\ccMethod{bool is_vertex_parameterized (Vertex_const_handle vertex) const;}
+{
+Get/set "is parameterized" field of vertex. Default value is undefined.
+}
+\ccMethod{void set_vertex_parameterized (Vertex_handle vertex, bool parameterized);}
+{
+}
+\ccMethod{int get_vertex_index (Vertex_const_handle vertex) const;}
+{
+Get/set vertex index. Default value is undefined.
+}
+\ccMethod{void set_vertex_index (Vertex_handle vertex, int index);}
+{
+}
+\ccMethod{int get_vertex_tag (Vertex_const_handle vertex) const;}
+{
+Get/set vertex' all purpose tag. Default value is undefined.
+}
+\ccMethod{void set_vertex_tag (Vertex_handle vertex, int tag);}
+{
+}
+\ccMethod{bool is_vertex_on_border (Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to ANY mesh's boundary.
+}
+\ccMethod{bool is_vertex_on_main_border (Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to the UNIQUE mesh's main boundary.
+}
+\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = NULL);}
+{
+Get circulator over the vertices incident to 'vertex'. 'start\_position' defines the optional initial position of the circulator.
+}
+\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = NULL) const;}
+{
+}
 
 
 \ccSeeAlso

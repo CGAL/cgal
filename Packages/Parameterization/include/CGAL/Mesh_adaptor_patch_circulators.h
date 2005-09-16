@@ -34,26 +34,26 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Mesh_patch_vertex_around_vertex_cir
-// represents a (clockwise) circulator around a vertex
-// of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
-template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
-         class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
+/// Class Mesh_patch_vertex_around_vertex_cir
+/// represents a (clockwise) circulator around a vertex
+/// of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
+template<class MeshPatchPtrType,    ///< = [const] Mesh_adaptor_patch_3*
+         class VertexHandleType,    ///< = Mesh_adaptor_patch_3::Vertex_[const_]handle
          class AdaptorVertexAroundVertexCirculatorType,
-                                    // = Adaptor::Vertex_around_vertex_[const_]circulator
+                                    ///< = Adaptor::Vertex_around_vertex_[const_]circulator
          class AdaptorVertexHandleType>
-                                    // = Adaptor::Vertex_[const_]handle
+                                    ///< = Adaptor::Vertex_[const_]handle
 class Mesh_patch_vertex_around_vertex_cir
     : public VertexHandleType
 {
 // PRIVATE TYPES
 // -------------
 
-    // Base and self classes
+    /// Base and self classes
     typedef VertexHandleType                    Base;
     typedef Mesh_patch_vertex_around_vertex_cir Self;
 
-    // Mesh_patch types
+    /// Mesh_patch types
     typedef typename std::iterator_traits<MeshPatchPtrType>::value_type
                                                 Mesh_patch;
     typedef typename Mesh_patch::Adaptor        Adaptor;
@@ -63,14 +63,14 @@ public:
 // PUBLIC TYPES
 // ------------
 
-    // Export template parameter types
+    /// Export template parameter types
     typedef MeshPatchPtrType                    Mesh_patch_c_ptr;
     typedef VertexHandleType                    Vertex_c_handle;
     typedef AdaptorVertexAroundVertexCirculatorType
                                                 Adaptor_vertex_around_vertex_c_cir;
     typedef AdaptorVertexHandleType             Adaptor_vertex_c_handle;
 
-    // Iterator types
+    /// Iterator types
     typedef typename Adaptor_vertex_around_vertex_c_cir::iterator_category
                                                 iterator_category;
     typedef typename Vertex_c_handle::value_type value_type;
@@ -79,14 +79,14 @@ public:
     typedef typename Vertex_c_handle::reference reference;
     typedef typename Vertex_c_handle::pointer   pointer;
 
-// CREATION
-// --------
+/// CREATION
+/// --------
 
-    // Circulator pointing to NULL
+    /// Circulator pointing to NULL
     Mesh_patch_vertex_around_vertex_cir() {}
 
-    // Get circulator over the vertices incident to 'vertex'
-    // 'start_position' defines the initial position of the circulator [required}
+    /// Get circulator over the vertices incident to 'vertex'
+    /// 'start_position' defines the initial position of the circulator [required}
     Mesh_patch_vertex_around_vertex_cir(Mesh_patch_c_ptr mesh,
                                         Vertex_c_handle vertex,
                                         Vertex_c_handle start_position)
@@ -111,7 +111,7 @@ public:
             vertex->vertex(), start_position->vertex());
     }
 
-    // Copy constructor
+    /// Copy constructor
     Mesh_patch_vertex_around_vertex_cir(const Self& cir)
       : Base(cir),
         m_mesh_patch(cir.m_mesh_patch),
@@ -120,7 +120,7 @@ public:
     {
     }
 
-    // operator =()
+    /// operator =()
     Self& operator =(const Self& cir)
     {
         Base::operator=(cir);
@@ -131,17 +131,17 @@ public:
         return *this;
     }
 
-// OPERATIONS Forward Category
-// ---------------------------
+/// OPERATIONS Forward Category
+/// ---------------------------
 
     bool operator==(const Self& cir)    const { return Base::operator==(cir); }
     bool operator!=(const Self& cir)    const { return !(*this == cir); }
     bool operator==(CGAL_NULL_TYPE ptr) const { return Base::operator==(ptr); }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return !(*this == ptr); }
 
-    //  operator*() and operator->() are inherited
+    ///  operator*() and operator->() are inherited
 
-    // Clockwise rotation
+    /// Clockwise rotation
     Self& operator++()
     {
 //#ifdef DEBUG_TRACE
@@ -248,17 +248,16 @@ public:
         }
 
     }
-    //
     Self  operator++(int) {
         Self tmp = *this;
         ++*this;
         return tmp;
     }
 
-// OPERATIONS Bidirectional Category
-// ---------------------------------
+/// OPERATIONS Bidirectional Category
+/// ---------------------------------
 
-    // Counter-clockwise rotation
+    /// Counter-clockwise rotation
     Self& operator--()
     {
 //#ifdef DEBUG_TRACE
@@ -372,9 +371,9 @@ public:
     }
 
 private:
-    // Update the inherited vertex handle
-    //
-    // Precondition: m_adaptor_circulator and m_center are valid
+    /// Update the inherited vertex handle
+    ///
+    /// Precondition: m_adaptor_circulator and m_center are valid
     void update_inherited_handle()
     {
         Vertex_c_handle current_decorated_vertex = NULL;
@@ -442,37 +441,37 @@ private:
     }
 
 private:
-    // The mesh that we are circulating on:
+    /// The mesh that we are circulating on:
     Mesh_patch_c_ptr m_mesh_patch;
 
-    // Vertex center of the circulation (+ circulator range for a border vertex)
+    /// Vertex center of the circulation (+ circulator range for a border vertex)
     Vertex_c_handle m_center;
 
-    // Internal circulator
+    /// Internal circulator
     Adaptor_vertex_around_vertex_c_cir m_adaptor_circulator;
 
 }; // Mesh_patch_vertex_around_vertex_cir
 
 
-// Class Mesh_patch_vertex_around_facet_cir
-// represents a (clockwise) circulator around a facet
-// of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
+/// Class Mesh_patch_vertex_around_facet_cir
+/// represents a (clockwise) circulator around a facet
+/// of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
 
-template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
-         class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
+template<class MeshPatchPtrType,    ///< = [const] Mesh_adaptor_patch_3*
+         class VertexHandleType,    ///< = Mesh_adaptor_patch_3::Vertex_[const_]handle
          class AdaptorVertexAroundFacetCirculatorType>
-                                    // = Adaptor::Vertex_around_facet_[const_]circulator
+                                    ///< = Adaptor::Vertex_around_facet_[const_]circulator
 class Mesh_patch_vertex_around_facet_cir
     : public VertexHandleType
 {
 // PRIVATE TYPES
 // -------------
 
-    // Base and self classes
+    /// Base and self classes
     typedef VertexHandleType                    Base;
     typedef Mesh_patch_vertex_around_facet_cir  Self;
 
-    // Mesh_patch types
+    /// Mesh_patch types
     typedef typename std::iterator_traits<MeshPatchPtrType>::value_type
                                                 Mesh_patch;
     typedef typename Mesh_patch::Adaptor        Adaptor;
@@ -482,13 +481,13 @@ public:
 // PUBLIC TYPES
 // ------------
 
-    // Export template parameter types
+    /// Export template parameter types
     typedef MeshPatchPtrType                    Mesh_patch_c_ptr;
     typedef VertexHandleType                    Vertex_c_handle;
     typedef AdaptorVertexAroundFacetCirculatorType
                                                 Adaptor_vertex_around_facet_c_cir;
 
-    // Iterator types
+    /// Iterator types
     typedef typename Adaptor_vertex_around_facet_c_cir::iterator_category
                                                 iterator_category;
     typedef typename Vertex_c_handle::value_type value_type;
@@ -497,10 +496,10 @@ public:
     typedef typename Vertex_c_handle::reference reference;
     typedef typename Vertex_c_handle::pointer   pointer;
 
-// CREATION
-// --------
+/// CREATION
+/// --------
 
-    // Circulator pointing to NULL
+    /// Circulator pointing to NULL
     Mesh_patch_vertex_around_facet_cir() {}
 
     Mesh_patch_vertex_around_facet_cir(Mesh_patch_c_ptr mesh,
@@ -515,7 +514,7 @@ public:
         update_inherited_handle();
     }
 
-    // Copy constructor
+    /// Copy constructor
     Mesh_patch_vertex_around_facet_cir(const Self& cir)
       : Base(cir),
         m_mesh_patch(cir.m_mesh_patch),
@@ -525,7 +524,7 @@ public:
         update_inherited_handle();
     }
 
-    // operator =()
+    /// operator =()
     Self& operator =(const Self& cir)
     {
         Base::operator=(cir);
@@ -538,17 +537,17 @@ public:
         return *this;
     }
 
-// OPERATIONS Forward Category
-// ---------------------------
+/// OPERATIONS Forward Category
+/// ---------------------------
 
     bool operator==(CGAL_NULL_TYPE ptr) const { return Base::operator==(ptr); }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return !(*this == ptr); }
     bool operator==(const Self& cir)    const { return Base::operator==(cir); }
     bool operator!=(const Self& cir)    const { return !(*this == cir); }
 
-    //  operator*() and operator->() are inherited
+    ///  operator*() and operator->() are inherited
 
-    // Clockwise rotation
+    /// Clockwise rotation
     Self& operator++()
     {
         // Increment m_adaptor_circulator
@@ -559,17 +558,16 @@ public:
 
         return *this;
     }
-    //
     Self  operator++(int) {
         Self tmp = *this;
         ++*this;
         return tmp;
     }
 
-// OPERATIONS Bidirectional Category
-// ---------------------------------
+/// OPERATIONS Bidirectional Category
+/// ---------------------------------
 
-    // Counterclockwise rotation
+    /// Counterclockwise rotation
     Self& operator--()
     {
         // Decrement m_adaptor_circulator
@@ -587,9 +585,9 @@ public:
     }
 
 private:
-    // Update the inherited vertex handle
-    //
-    // Precondition: m_adaptor_circulator is valid
+    /// Update the inherited vertex handle
+    ///
+    /// Precondition: m_adaptor_circulator is valid
     void update_inherited_handle()
     {
         Vertex_c_handle current_decorated_vertex = NULL;
@@ -623,10 +621,10 @@ private:
     }
 
 private:
-    // The mesh that we are circulating on:
+    /// The mesh that we are circulating on:
     Mesh_patch_c_ptr m_mesh_patch;
 
-    // Internal circulator
+    /// Internal circulator
     Adaptor_vertex_around_facet_c_cir m_adaptor_circulator;
 
 }; // Mesh_patch_vertex_around_facet_cir

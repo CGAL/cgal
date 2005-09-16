@@ -26,17 +26,17 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// This class inherits from Circulator_project<> +
-// adds a conversion to handle/const handle.
-// See Circulator_project<> documentation.
+/// This class inherits from Circulator_project<> +
+/// adds a conversion to handle/const handle.
+/// See Circulator_project<> documentation.
 
-template<class C,               // internal circulator
-         class Fct,             // conversion functor
+template<class C,               ///< Internal circulator.
+         class Fct,             ///< Conversion functor.
          class Ref,
          class Ptr,
-         class ConstHandle,     // const-handle type to convert to
-         class Handle = void*>  // non-const-handle type to convert to
-                                // (void* means none)
+         class ConstHandle,     ///< Const-handle type to convert to.
+         class Handle = void*>  ///< Non-const-handle type to convert to
+                                ///< (void* means none).
 class Convertible_circulator_project
     : public Circulator_project<C, Fct, Ref, Ptr>
 {
@@ -45,8 +45,8 @@ class Convertible_circulator_project
 
 public:
 
-  // CREATION
-  // --------
+  /// CREATION
+  /// --------
 
     Convertible_circulator_project() {}
     Convertible_circulator_project(Base base) : Base(base) {}
@@ -54,8 +54,8 @@ public:
     Convertible_circulator_project(const Self& cir) : Base(cir) {}
     Self& operator=(const Self& cir) { Base::operator=(cir); return *this; }
 
-  // OPERATIONS Forward Category
-  // ---------------------------
+  /// OPERATIONS Forward Category
+  /// ---------------------------
 
     bool  operator==(CGAL_NULL_TYPE ptr) const { return Base::operator==(ptr); }
     bool  operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
@@ -65,14 +65,14 @@ public:
     Self& operator++()     { Base::operator++(); return *this; }
     Self  operator++(int)  { Self tmp(*this); ++(*this); return tmp; }
 
-  // OPERATIONS Bidirectional Category
-  // ---------------------------------
+  /// OPERATIONS Bidirectional Category
+  /// ---------------------------------
 
     Self& operator--()     { Base::operator--(); return *this; }
     Self  operator--(int)  { Self tmp(*this); --(*this); return tmp; }
 
-  // EXTRA CASTS
-  // ---------------------------
+  /// EXTRA CASTS
+  /// -----------
 
     operator Handle()               { return Base::operator->(); }
     operator ConstHandle() const    { return Base::operator->(); }

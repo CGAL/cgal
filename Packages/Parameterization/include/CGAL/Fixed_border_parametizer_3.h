@@ -36,21 +36,21 @@ CGAL_BEGIN_NAMESPACE
 // Declaration
 // ------------------------------------------------------------------------------------
 
-// Class Fixed_border_parametizer_3
-// Model of the ParametizerTraits_3 concept.
-//
-// Base class of fixed border parameterization methods (Tutte, Floater, ...)
-// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
-//
+/// Class Fixed_border_parametizer_3
+/// Model of the ParametizerTraits_3 concept.
+///
+/// Base class of fixed border parameterization methods (Tutte, Floater, ...)
+/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+///
 // Implementation notes: - Subclasses must at least implement compute_wij()
-//                       - The current implementation does not remove border vertices
-//                         from the linear systems => A cannot be symmetric.
+///                       - The current implementation does not remove border vertices
+///                         from the linear systems => A cannot be symmetric.
 template
 <
-    class MeshAdaptor_3,              // 3D surface mesh
-    class BorderParametizer_3         // Strategy to parameterize the surface border
+    class MeshAdaptor_3,              ///< 3D surface mesh
+    class BorderParametizer_3         ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
-    class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
+    class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
                 = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
 >
 class Fixed_border_parametizer_3
@@ -59,14 +59,14 @@ class Fixed_border_parametizer_3
 // Private types
 private:
 
-    // Superclass
+    /// Superclass
     typedef Parametizer_traits_3<MeshAdaptor_3>
                                             Base;
 
 // Public types
 public:
-    // Export Mesh_Adaptor_3, BorderParametizer_3
-    // and SparseLinearAlgebraTraits_d types
+    /// Export Mesh_Adaptor_3, BorderParametizer_3
+    /// and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Base::Error_code       Error_code;
     typedef typename Adaptor::NT            NT;
@@ -105,82 +105,82 @@ public:
 
 // Public operations
 public:
-    // Constructor
-    // @param border_param  Object that maps the surface's border to 2D space
-    // @param sparse_la     Traits object to access a sparse linear system
+    /// Constructor
+    /// @param border_param  Object that maps the surface's border to 2D space
+    /// @param sparse_la     Traits object to access a sparse linear system
     Fixed_border_parametizer_3(Border_param border_param = Border_param(),
                                Sparse_LA sparse_la = Sparse_LA())
         : m_borderParametizer(border_param), m_linearAlgebra(sparse_la)
     {}
 
-    // Default copy constructor and operator =() are fine
+    /// Default copy constructor and operator =() are fine
 
-    // Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
-    // to a piece of the 2D space.
-    // The mapping is linear by pieces (linear in each triangle).
-    // The result is the (u,v) pair image of each vertex of the 3D surface.
-    //
-    // Preconditions:
-    // * 'mesh' must be a surface with 1 connected component
-    // * 'mesh' must be a triangular mesh
-    // * the mesh border must be mapped onto a convex polygon
+    /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+    /// to a piece of the 2D space.
+    /// The mapping is linear by pieces (linear in each triangle).
+    /// The result is the (u,v) pair image of each vertex of the 3D surface.
+    ///
+    /// Preconditions:
+    /// * 'mesh' must be a surface with 1 connected component
+    /// * 'mesh' must be a triangular mesh
+    /// * the mesh border must be mapped onto a convex polygon
     virtual Error_code  parameterize(Adaptor* mesh);
 
 // Protected operations
 protected:
-    // Check parameterize() preconditions:
-    // * 'mesh' must be a surface with 1 connected component
-    // * 'mesh' must be a triangular mesh
-    // * the mesh border must be mapped onto a convex polygon
+    /// Check parameterize() preconditions:
+    /// * 'mesh' must be a surface with 1 connected component
+    /// * 'mesh' must be a triangular mesh
+    /// * the mesh border must be mapped onto a convex polygon
     virtual Error_code  check_parameterize_preconditions(Adaptor* mesh);
 
-    // Initialize A, Bu and Bv after boundary parameterization
-    // Fill the border vertices' lines in both linear systems:
-    // "u = constant" and "v = constant"
-    //
-    // Preconditions:
-    // * vertices must be indexed
-    // * A, Bu and Bv must be allocated
-    // * border vertices must be parameterized
+    /// Initialize A, Bu and Bv after boundary parameterization
+    /// Fill the border vertices' lines in both linear systems:
+    /// "u = constant" and "v = constant"
+    ///
+    /// Preconditions:
+    /// * vertices must be indexed
+    /// * A, Bu and Bv must be allocated
+    /// * border vertices must be parameterized
     void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
                                               const Adaptor& mesh);
 
-    // compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
-    // Implementation note: Subclasses must at least implement compute_wij()
+    /// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+    /// Implementation note: Subclasses must at least implement compute_wij()
     virtual NT  compute_wij(const Adaptor& mesh,
                             Vertex_const_handle main_vertex_Vi,
                             Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
     = 0;
 
-    // Compute the line i of matrix A for i inner vertex
-    // * call compute_wij() to compute the A coefficient Wij for each neighbor Vj
-    // * compute Wii = - sum of Wij
-    //
-    // Preconditions:
-    // * vertices must be indexed
-    // * vertex i musn't be already parameterized
-    // * line i of A must contain only zeros
+    /// Compute the line i of matrix A for i inner vertex
+    /// * call compute_wij() to compute the A coefficient Wij for each neighbor Vj
+    /// * compute Wii = - sum of Wij
+    ///
+    /// Preconditions:
+    /// * vertices must be indexed
+    /// * vertex i musn't be already parameterized
+    /// * line i of A must contain only zeros
     virtual Error_code setup_inner_vertex_relations(Matrix* A,
                                                     Vector* Bu,
                                                     Vector* Bv,
                                                     const Adaptor& mesh,
                                                     Vertex_const_handle vertex);
 
-    // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
+    /// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
     void  set_mesh_uv_from_system (Adaptor* mesh,
                                    const Vector& Xu, const Vector& Xv);
 
-    // Check parameterize() postconditions:
-    // * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
-    // * 3D -> 2D mapping is 1 to 1
+    /// Check parameterize() postconditions:
+    /// * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
+    /// * 3D -> 2D mapping is 1 to 1
     virtual Error_code check_parameterize_postconditions(const Adaptor& mesh,
                                                          const Matrix& A,
                                                          const Vector& Bu,
                                                          const Vector& Bv);
 
-    // Check if 3D -> 2D mapping is 1 to 1
-    //
-    // The default implementation checks each normal
+    /// Check if 3D -> 2D mapping is 1 to 1
+    ///
+    /// The default implementation checks each normal
     virtual bool  is_one_to_one_mapping(const Adaptor& mesh,
                                         const Matrix& A,
                                         const Vector& Bu,
@@ -188,18 +188,18 @@ protected:
 
 // Protected accessors
 protected:
-    // Get the object that maps the surface's border onto a 2D space
+    /// Get the object that maps the surface's border onto a 2D space
     Border_param&   get_border_parametizer()    { return m_borderParametizer; }
 
-    // Get the sparse linear algebra (traits object to access the linear system)
+    /// Get the sparse linear algebra (traits object to access the linear system)
     Sparse_LA&      get_linear_algebra_traits() { return m_linearAlgebra; }
 
 // Fields
 private:
-    // Object that maps the surface's border onto a 2D space
+    /// Object that maps the surface's border onto a 2D space
     Border_param    m_borderParametizer;
 
-    // Traits object to access the linear system
+    /// Traits object to access the linear system
     Sparse_LA       m_linearAlgebra;
 };
 
@@ -208,15 +208,15 @@ private:
 // Implementation
 // ------------------------------------------------------------------------------------
 
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
-// to a piece of the 2D space.
-// The mapping is linear by pieces (linear in each triangle).
-// The result is the (u,v) pair image of each vertex of the 3D surface.
-//
-// Preconditions:
-// * 'mesh' must be a surface with 1 connected component
-// * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon
+/// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+/// to a piece of the 2D space.
+/// The mapping is linear by pieces (linear in each triangle).
+/// The result is the (u,v) pair image of each vertex of the 3D surface.
+///
+/// Preconditions:
+/// * 'mesh' must be a surface with 1 connected component
+/// * 'mesh' must be a triangular mesh
+/// * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -312,10 +312,10 @@ parameterize(Adaptor* mesh)
 }
 
 
-// Check parameterize() preconditions:
-// * 'mesh' must be a surface with 1 connected component
-// * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon
+/// Check parameterize() preconditions:
+/// * 'mesh' must be a surface with 1 connected component
+/// * 'mesh' must be a triangular mesh
+/// * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -377,13 +377,13 @@ check_parameterize_preconditions(Adaptor* mesh)
     return status;
 }
 
-// Initialize A, Bu and Bv after boundary parameterization
-// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant"
-//
-// Preconditions:
-// * vertices must be indexed
-// * A, Bu and Bv must be allocated
-// * border vertices must be parameterized
+/// Initialize A, Bu and Bv after boundary parameterization
+/// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant"
+///
+/// Preconditions:
+/// * vertices must be indexed
+/// * A, Bu and Bv must be allocated
+/// * border vertices must be parameterized
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -413,14 +413,14 @@ initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
     }
 }
 
-// Compute the line i of matrix A for i inner vertex
-// * call compute_wij() to compute the A coefficient Wij for each neighbor Vj
-// * compute Wii = - sum of Wij
-//
-// Preconditions:
-// * vertices must be indexed
-// * vertex i musn't be already parameterized
-// * line i of A must contain only zeros
+/// Compute the line i of matrix A for i inner vertex
+/// * call compute_wij() to compute the A coefficient Wij for each neighbor Vj
+/// * compute Wii = - sum of Wij
+///
+/// Preconditions:
+/// * vertices must be indexed
+/// * vertex i musn't be already parameterized
+/// * line i of A must contain only zeros
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -481,7 +481,7 @@ setup_inner_vertex_relations(Matrix* A,
     return Base::OK;
 }
 
-// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
+/// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -506,9 +506,9 @@ set_mesh_uv_from_system(Adaptor* mesh,
     fprintf(stderr,"    ok\n");
 }
 
-// Check parameterize() postconditions:
-// * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
-// * 3D -> 2D mapping is 1 to 1
+/// Check parameterize() postconditions:
+/// * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
+/// * 3D -> 2D mapping is 1 to 1
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -555,8 +555,8 @@ check_parameterize_postconditions(const Adaptor& mesh,
     return status;
 }
 
-// Check if 3D -> 2D mapping is 1 to 1
-// The default implementation checks each normal
+/// Check if 3D -> 2D mapping is 1 to 1
+/// The default implementation checks each normal
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::

@@ -35,25 +35,25 @@ CGAL_BEGIN_NAMESPACE
 // Class Square_border_parametizer_3
 //
 
-// Base class of strategies that parameterize the border
-// of a 3D surface onto a square.
-// This class is a model of BorderParametizer_3 concept.
-//
-// Design pattern:
-// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
-// a strategy of boundary parameterization for models of MeshAdaptor_3
-//
-// Implementation note:
-// To simplify the implementation, BorderParametizer_3 models know only the
-// MeshAdaptor_3 class. They don't know the parameterization algorithm
-// requirements nor the kind of sparse linear system used.
+/// Base class of strategies that parameterize the border
+/// of a 3D surface onto a square.
+/// This class is a model of BorderParametizer_3 concept.
+///
+/// Design pattern:
+/// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of boundary parameterization for models of MeshAdaptor_3
+///
+/// Implementation note:
+/// To simplify the implementation, BorderParametizer_3 models know only the
+/// MeshAdaptor_3 class. They don't know the parameterization algorithm
+/// requirements nor the kind of sparse linear system used.
 
-template<class MeshAdaptor_3>           // 3D surface
+template<class MeshAdaptor_3>           ///< 3D surface
 class Square_border_parametizer_3
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
@@ -89,21 +89,21 @@ public:
 
 // Public operations
 public:
-    // Destructor of base class should be virtual
+    /// Destructor of base class should be virtual
     virtual ~Square_border_parametizer_3() {}
 
-    // Default constructor, copy constructor and operator =() are fine
+    /// Default constructor, copy constructor and operator =() are fine
 
-    // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
-    // on border's shape. Mark them as "parameterized".
+    /// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
+    /// on border's shape. Mark them as "parameterized".
     Error_code parameterize_border (Adaptor* mesh);
 
-    // Indicate if border's shape is convex
+    /// Indicate if border's shape is convex
     bool  is_border_convex () { return true; }
 
 // Protected operations
 protected:
-    // compute length of an edge
+    /// compute length of an edge
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target) = 0;
@@ -114,17 +114,17 @@ private:
 
 // Private operations
 private:
-    // compute total length of boundary
+    /// compute total length of boundary
     double compute_boundary_length(const Adaptor& mesh);
 
-    // Compute mesh iterator whose offset is closest to 'value'
+    /// Compute mesh iterator whose offset is closest to 'value'
     Border_vertex_iterator closest_iterator(Adaptor* mesh,
                                             const Offset_map& offsets,
                                             double value);
 };
 
 
-// compute  total length of boundary
+/// compute  total length of boundary
 template<class Adaptor>
 inline
 double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
@@ -149,8 +149,8 @@ double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
     return len;
 }
 
-// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
-// on border's shape. Mark them as "parameterized".
+/// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
+/// on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -250,8 +250,8 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     return Parametizer_traits_3<Adaptor>::OK;
 }
 
-// Utility method for parameterize_border()
-// Compute mesh iterator whose offset is closest to 'value'
+/// Utility method for parameterize_border()
+/// Compute mesh iterator whose offset is closest to 'value'
 template<class Adaptor>
 inline
 typename Adaptor::Border_vertex_iterator
@@ -282,17 +282,17 @@ Square_border_parametizer_3<Adaptor>::closest_iterator(Adaptor* mesh,
 // Class Square_border_uniform_parametizer_3
 //
 
-// This class is a model of BorderParametizer_3 concept.
-// It parameterizes the border of a 3D surface onto a square
-// on an uniform manner: points are equally spaced.
+/// This class is a model of BorderParametizer_3 concept.
+/// It parameterizes the border of a 3D surface onto a square
+/// on an uniform manner: points are equally spaced.
 
-template<class MeshAdaptor_3>           // 3D surface
+template<class MeshAdaptor_3>           ///< 3D surface
 class Square_border_uniform_parametizer_3
     : public Square_border_parametizer_3<MeshAdaptor_3>
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
@@ -328,37 +328,37 @@ public:
 
 // Public operations
 public:
-    // Default constructor, copy constructor and operator =() are fine
+    /// Default constructor, copy constructor and operator =() are fine
 
 // Protected operations
 protected:
-    // compute length of an edge
+    /// compute length of an edge
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target)
     {
-        // uniform boundary parameterization: points are equally spaced
+        /// uniform boundary parameterization: points are equally spaced
         return 1;
     }
 };
 
 
-//
-// Class Square_border_arc_length_parametizer_3
-//
+///
+/// Class Square_border_arc_length_parametizer_3
+///
 
-// This class is a model of BorderParametizer_3 concept.
-// It parameterizes the border of a 3D surface onto a square
-// with an arc-length parameterization: (u,v) values are
-// proportional to the length of boundary edges.
+/// This class is a model of BorderParametizer_3 concept.
+/// It parameterizes the border of a 3D surface onto a square
+/// with an arc-length parameterization: (u,v) values are
+/// proportional to the length of boundary edges.
 
-template<class MeshAdaptor_3>           // 3D surface
+template<class MeshAdaptor_3>           ///< 3D surface
 class Square_border_arc_length_parametizer_3
     : public Square_border_parametizer_3<MeshAdaptor_3>
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
@@ -394,17 +394,17 @@ public:
 
 // Public operations
 public:
-    // Default constructor, copy constructor and operator =() are fine
+    /// Default constructor, copy constructor and operator =() are fine
 
 // Protected operations
 protected:
-    // compute length of an edge
+    /// compute length of an edge
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target)
     {
-        // arc-length boundary parameterization: (u,v) values are
-        // proportional to the length of boundary edges
+        /// arc-length boundary parameterization: (u,v) values are
+        /// proportional to the length of boundary edges
         Vector_3 v = mesh.get_vertex_position(target)
                    - mesh.get_vertex_position(source);
         return std::sqrt(v*v);

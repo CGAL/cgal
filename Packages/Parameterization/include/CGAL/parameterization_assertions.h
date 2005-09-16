@@ -16,13 +16,17 @@
 // $Name$
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schönherr, Laurent Saboret
-
+//
 // Generated from script create_assertions.sh
 
-// macro definitions
-// =================
-// assertions
-// ----------
+/// @file parameterization_assertions.h
+/// Define checking macros for the Parameterization package
+
+
+/// macro definitions
+/// =================
+/// assertions
+/// ----------
 
 
 #if defined(CGAL_PARAMETERIZATION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
@@ -87,8 +91,8 @@
 #endif // CGAL_PARAMETERIZATION_NO_ASSERTIONS
 
 
-// preconditions
-// -------------
+/// preconditions
+/// -------------
 
 #if defined(CGAL_PARAMETERIZATION_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || defined(NDEBUG)
@@ -151,8 +155,8 @@
 #endif // CGAL_PARAMETERIZATION_NO_PRECONDITIONS
 
 
-// postconditions
-// --------------
+/// postconditions
+/// --------------
 
 #if defined(CGAL_PARAMETERIZATION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || defined(NDEBUG)
@@ -215,8 +219,8 @@
 #endif // CGAL_PARAMETERIZATION_NO_POSTCONDITIONS
 
 
-// warnings
-// --------
+/// warnings
+/// --------
 
 #if defined(CGAL_PARAMETERIZATION_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || defined(NDEBUG)

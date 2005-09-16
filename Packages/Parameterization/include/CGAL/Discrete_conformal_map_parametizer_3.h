@@ -26,22 +26,22 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Discrete_conformal_map_parametizer_3
-// Model of the ParametizerTraits_3 concept.
-// Implement Discrete Conformap Map parameterization.
-// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
-// This is a conformal parameterization, i.e. it attempts to preserve angles.
+/// Class Discrete_conformal_map_parametizer_3
+/// Model of the ParametizerTraits_3 concept.
+/// Implement Discrete Conformap Map parameterization.
+/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// This is a conformal parameterization, i.e. it attempts to preserve angles.
 
 template
 <
-    class MeshAdaptor_3,              // 3D surface mesh
-    class BorderParametizer_3         // Strategy to parameterize the surface border
+    class MeshAdaptor_3,              ///< 3D surface mesh
+    class BorderParametizer_3         ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
-    class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
+    class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
                 = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
-                                      // Note: the sparse linear system is symmetric 
-                                      // (except around holes) iff 
-                                      // Fixed_border_parametizer_3 removes fixed vertices
+                                      ///< Note: the sparse linear system is symmetric 
+                                      ///< (except around holes) iff 
+                                      ///< Fixed_border_parametizer_3 removes fixed vertices
 >
 class Discrete_conformal_map_parametizer_3
     : public Fixed_border_parametizer_3<MeshAdaptor_3,
@@ -50,8 +50,8 @@ class Discrete_conformal_map_parametizer_3
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3, BorderParametizer_3
-    // and SparseLinearAlgebraTraits_d types
+    /// Export Mesh_Adaptor_3, BorderParametizer_3
+    /// and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
@@ -91,9 +91,9 @@ public:
 
 // Public operations
 public:
-    // Constructor
-    // @param border_param  Object that maps the surface's border to 2D space
-    // @param sparse_la     Traits object to access a sparse linear system
+    /// Constructor
+    /// @param border_param  Object that maps the surface's border to 2D space
+    /// @param sparse_la     Traits object to access a sparse linear system
     Discrete_conformal_map_parametizer_3(Border_param border_param = Border_param(),
                                          Sparse_LA sparse_la = Sparse_LA())
     :   Fixed_border_parametizer_3<Adaptor,
@@ -101,7 +101,7 @@ public:
                                    Sparse_LA>(border_param, sparse_la)
     {}
 
-    // Default copy constructor and operator =() are fine
+    /// Default copy constructor and operator =() are fine
 
 // Protected types
 protected:
@@ -110,7 +110,7 @@ protected:
 
 // Protected operations
 protected:
-    // compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+    /// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
     virtual NT  compute_wij(const Adaptor& mesh,
                             Vertex_const_handle main_vertex_Vi,
                             Vertex_around_vertex_const_circulator neighbor_vertex_Vj)

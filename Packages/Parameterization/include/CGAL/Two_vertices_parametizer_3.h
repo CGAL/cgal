@@ -34,26 +34,26 @@ CGAL_BEGIN_NAMESPACE
 // Declaration
 //
 
-// Class Two_vertices_parametizer_3
-// Model of BorderParametizer_3
-// This class parameterizes 2 extreme vertices of a 3D surface.
-// This kind of border parameterization is used by free border parameterizations.
-//
-// Design pattern:
-// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
-// a strategy of boundary parameterization for models of MeshAdaptor_3
-//
-// Implementation note:
-// To simplify the implementation, BorderParametizer_3 models know only the
-// MeshAdaptor_3 class. They don't know the parameterization algorithm
-// requirements nor the kind of sparse linear system used.
+/// Class Two_vertices_parametizer_3
+/// Model of BorderParametizer_3
+/// This class parameterizes 2 extreme vertices of a 3D surface.
+/// This kind of border parameterization is used by free border parameterizations.
+///
+/// Design pattern:
+/// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of boundary parameterization for models of MeshAdaptor_3
+///
+/// Implementation note:
+/// To simplify the implementation, BorderParametizer_3 models know only the
+/// MeshAdaptor_3 class. They don't know the parameterization algorithm
+/// requirements nor the kind of sparse linear system used.
 
-template<class MeshAdaptor_3>           // 3D surface
+template<class MeshAdaptor_3>           ///< 3D surface
 class Two_vertices_parametizer_3
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
@@ -89,13 +89,13 @@ public:
 
 // Public operations
 public:
-    // Default constructor, copy constructor and operator =() are fine
+    /// Default constructor, copy constructor and operator =() are fine
 
-    // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
+    /// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
     Error_code parameterize_border (Adaptor* mesh);
 
-    // Indicate if border's shape is convex.
-    // Meaningless for free border parameterization algorithms.
+    /// Indicate if border's shape is convex.
+    /// Meaningless for free border parameterization algorithms.
     bool  is_border_convex () { return false; }
 };
 
@@ -104,8 +104,8 @@ public:
 // Implementation
 //
 
-// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
-// Return false on error
+/// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
+/// Return false on error
 template<class Adaptor>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code

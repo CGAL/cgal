@@ -32,14 +32,14 @@ CGAL_BEGIN_NAMESPACE
 template<class PatchableMeshAdaptor_3> class Mesh_adaptor_patch_vertex_const_handle;
 
 
-// Class Mesh_adaptor_patch_vertex
-// Represents a vertex of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
-//
-// Implementation note:
-// A Mesh_adaptor_patch_vertex object is basically a handle to a
-// PatchableMeshAdaptor_3::Vertex + its position / seam.
-// Mesh_adaptor_patch_vertex comparison methods compare the pointers.
-//
+/// Class Mesh_adaptor_patch_vertex
+/// Represents a vertex of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
+///
+/// Implementation note:
+/// A Mesh_adaptor_patch_vertex object is basically a handle to a
+/// PatchableMeshAdaptor_3::Vertex + its position / seam.
+/// Mesh_adaptor_patch_vertex comparison methods compare the pointers.
+///
 template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex
 {
@@ -51,13 +51,13 @@ private:
 // Public types
 public:
 
-    // Export template parameter type
+    /// Export template parameter type
     typedef PatchableMeshAdaptor_3           Adaptor;
 
 // Public operations
 public:
 
-    // Default constructor
+    /// Default constructor
     Mesh_adaptor_patch_vertex()
     {
         m_vertex            = NULL;
@@ -65,11 +65,11 @@ public:
         m_first_cw_neighbor = NULL;
     }
 
-    // Constructor:
-    // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
-    //   must be NULL
-    // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
-    // defines the range of the valid neighbors of adaptor_vertex (included).
+    /// Constructor:
+    /// - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
+    ///   must be NULL
+    /// - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
+    /// defines the range of the valid neighbors of adaptor_vertex (included).
     explicit Mesh_adaptor_patch_vertex(
         typename Adaptor::Vertex_handle adaptor_vertex,
         typename Adaptor::Vertex_handle last_cw_neighbor  = NULL,
@@ -84,7 +84,7 @@ public:
         m_first_cw_neighbor = first_cw_neighbor;
     }
 
-    // Copy constructor
+    /// Copy constructor
     Mesh_adaptor_patch_vertex(const Self& hdl)
     {
         m_vertex            = hdl.m_vertex;
@@ -92,7 +92,7 @@ public:
         m_first_cw_neighbor = hdl.m_first_cw_neighbor;
     }
 
-    // operator =()
+    /// operator =()
     Self& operator =(const Self& hdl)
     {
         m_vertex            = hdl.m_vertex;
@@ -102,7 +102,7 @@ public:
         return *this;
     }
 
-    // Comparison
+    /// Comparison
     bool operator==(const Mesh_adaptor_patch_vertex& vertex) const {
         return m_vertex            == vertex.m_vertex
             && m_last_cw_neighbor  == vertex.m_last_cw_neighbor
@@ -112,7 +112,7 @@ public:
         return ! (*this == vertex);
     }
 
-    // Get content
+    /// Get content
     typename Adaptor::Vertex_handle vertex() {
         return m_vertex;
     }
@@ -134,32 +134,32 @@ public:
 
 // Fields
 private:
-    // The decorated vertex
+    /// The decorated vertex
     typename Adaptor::Vertex_handle m_vertex;
 
-    // [m_first_cw_neighbor, m_last_cw_neighbor] defines the range of the valid 
-    // neighbors of m_vertex (included) if m_vertex is on the main boundary/seam 
-    // (NULL if inner vertex)
+    /// [m_first_cw_neighbor, m_last_cw_neighbor] defines the range of the valid 
+    /// neighbors of m_vertex (included) if m_vertex is on the main boundary/seam 
+    /// (NULL if inner vertex)
     typename Adaptor::Vertex_handle m_last_cw_neighbor;
     typename Adaptor::Vertex_handle m_first_cw_neighbor;
 
 }; // Mesh_adaptor_patch_vertex
 
 
-// Class Mesh_adaptor_patch_vertex_handle
-//
-// This class represents a handle to a Mesh_adaptor_patch_vertex object,
-// thus has the same behavior as Mesh_adaptor_patch_vertex* pointer type.
-//
-// Design pattern:
-// Mesh_adaptor_patch_vertex_handle is an Bridge (see [GOF95]).
-//
-// Implementation note:
-// A Mesh_adaptor_patch_vertex_handle contains in fact a Mesh_adaptor_patch_vertex
-// object, which is basically a handle to a PatchableMeshAdaptor_3::Vertex.
-// Mesh_adaptor_patch_vertex_handle comparison methods basically compare
-// the address of the PatchableMeshAdaptor_3::Vertex pointed by the handles.
-//
+/// Class Mesh_adaptor_patch_vertex_handle
+///
+/// This class represents a handle to a Mesh_adaptor_patch_vertex object,
+/// thus has the same behavior as Mesh_adaptor_patch_vertex* pointer type.
+///
+/// Design pattern:
+/// Mesh_adaptor_patch_vertex_handle is an Bridge (see [GOF95]).
+///
+/// Implementation note:
+/// A Mesh_adaptor_patch_vertex_handle contains in fact a Mesh_adaptor_patch_vertex
+/// object, which is basically a handle to a PatchableMeshAdaptor_3::Vertex.
+/// Mesh_adaptor_patch_vertex_handle comparison methods basically compare
+/// the address of the PatchableMeshAdaptor_3::Vertex pointed by the handles.
+///
 template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_handle
 {
@@ -171,10 +171,10 @@ private:
 // Public types
 public:
 
-    // Export template parameter types
+    /// Export template parameter types
     typedef PatchableMeshAdaptor_3           Adaptor;
 
-    // Iterator types
+    /// Iterator types
     typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3>
                                             Vertex;
     typedef Vertex                          value_type;
@@ -186,7 +186,7 @@ public:
 // Public operations
 public:
 
-    // Constructor from PatchableMeshAdaptor_3::Vertex pointer
+    /// Constructor from PatchableMeshAdaptor_3::Vertex pointer
     Mesh_adaptor_patch_vertex_handle(Vertex* ptr = NULL)
     {
         if (ptr == NULL)
@@ -203,11 +203,11 @@ public:
         assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
-    // Extra constructor that will create the Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>::Vertex on the fly
-    // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
-    //   must be NULL
-    // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
-    // defines the range of the valid neighbors of adaptor_vertex (included).
+    /// Extra constructor that will create the Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>::Vertex on the fly
+    /// - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
+    ///   must be NULL
+    /// - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
+    /// defines the range of the valid neighbors of adaptor_vertex (included).
     explicit Mesh_adaptor_patch_vertex_handle(
         typename Adaptor::Vertex_handle adaptor_vertex,
         typename Adaptor::Vertex_handle last_cw_neighbor  = NULL,
@@ -218,7 +218,7 @@ public:
         m_ptr = &m_vertex;
     }
 
-    // Copy constructor
+    /// Copy constructor
     Mesh_adaptor_patch_vertex_handle(const Self& hdl)
     {
         if (hdl.m_ptr == NULL)
@@ -228,14 +228,14 @@ public:
         }
         else
         {
-            m_vertex = hdl.m_vertex; // *hdl.m_ptr;
+            m_vertex = hdl.m_vertex;
             m_ptr = &m_vertex;
         }
 
         assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
-    // operator =()
+    /// operator =()
     Self& operator =(const Self& hdl)
     {
         if (hdl.m_ptr == NULL)
@@ -245,7 +245,7 @@ public:
         }
         else
         {
-            m_vertex = hdl.m_vertex; // *hdl.m_ptr;
+            m_vertex = hdl.m_vertex;
             m_ptr = &m_vertex;
         }
 
@@ -254,8 +254,8 @@ public:
         return *this;
     }
 
-    // Compare patch vertices instead of patch vertex pointers (2 patch
-    // vertex handles are equal iff they point to the same adaptor vertex)
+    /// Compare patch vertices instead of patch vertex pointers (2 patch
+    /// vertex handles are equal iff they point to the same adaptor vertex)
     bool operator==(const Self& hdl) const
     {
         if (m_ptr == NULL || hdl.m_ptr == NULL)
@@ -265,7 +265,7 @@ public:
     }
     bool operator!=(const Self& hdl) const { return ! (*this == hdl); }
 
-    // Comparison to NULL pointer
+    /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const {
         CGAL_parameterization_assertion(ptr == NULL);
         return m_ptr == NULL;
@@ -280,30 +280,30 @@ public:
 
 // Fields
 private:
-    // The actual pointer
+    /// The actual pointer
     pointer m_ptr;
 
-    // Internal Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> vertex 
-    // pointed to by m_ptr (except if NULL)
+    /// Internal Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> vertex 
+    /// pointed to by m_ptr (except if NULL)
     Vertex m_vertex;
 
 }; // Mesh_adaptor_patch_vertex_handle
 
 
-// Class Mesh_adaptor_patch_vertex_const_handle
-//
-// This class represents a handle to a Mesh_adaptor_patch_vertex object,
-// thus has the same behavior as const Mesh_adaptor_patch_vertex* pointer type.
-//
-// Design pattern:
-// Mesh_adaptor_patch_vertex_const_handle is an Bridge (see [GOF95]).
-//
-// Implementation note:
-// A Mesh_adaptor_patch_vertex_const_handle contains in fact a Mesh_adaptor_patch_vertex
-// object, which is basically a handle to a PatchableMeshAdaptor_3::Vertex.
-// Mesh_adaptor_patch_vertex_const_handle comparison methods basically compare
-// the address of the PatchableMeshAdaptor_3::Vertex pointed by the handles.
-//
+/// Class Mesh_adaptor_patch_vertex_const_handle
+///
+/// This class represents a handle to a Mesh_adaptor_patch_vertex object,
+/// thus has the same behavior as const Mesh_adaptor_patch_vertex* pointer type.
+///
+/// Design pattern:
+/// Mesh_adaptor_patch_vertex_const_handle is an Bridge (see [GOF95]).
+///
+/// Implementation note:
+/// A Mesh_adaptor_patch_vertex_const_handle contains in fact a Mesh_adaptor_patch_vertex
+/// object, which is basically a handle to a PatchableMeshAdaptor_3::Vertex.
+/// Mesh_adaptor_patch_vertex_const_handle comparison methods basically compare
+/// the address of the PatchableMeshAdaptor_3::Vertex pointed by the handles.
+///
 template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_const_handle
 {
@@ -316,10 +316,10 @@ private:
 // Public types
 public:
 
-    // Export template parameter types
+    /// Export template parameter types
     typedef PatchableMeshAdaptor_3           Adaptor;
 
-    // Iterator types
+    /// Iterator types
     typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3>
                                             Vertex;
     typedef Vertex                          value_type;
@@ -331,7 +331,7 @@ public:
 // Public operations
 public:
 
-    // Constructor from PatchableMeshAdaptor_3::Vertex pointer
+    /// Constructor from PatchableMeshAdaptor_3::Vertex pointer
     Mesh_adaptor_patch_vertex_const_handle(const Vertex* ptr = NULL)
     {
         if (ptr == NULL)
@@ -348,11 +348,11 @@ public:
         assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
-    // Extra constructor that will create the Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>::Vertex on the fly
-    // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
-    //   must be NULL
-    // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
-    // defines the range of the valid neighbors of adaptor_vertex (included).
+    /// Extra constructor that will create the Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>::Vertex on the fly
+    /// - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
+    ///   must be NULL
+    /// - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
+    /// defines the range of the valid neighbors of adaptor_vertex (included).
     explicit Mesh_adaptor_patch_vertex_const_handle(
         typename Adaptor::Vertex_const_handle adaptor_vertex,
         typename Adaptor::Vertex_const_handle last_cw_neighbor  = NULL,
@@ -365,7 +365,7 @@ public:
         m_ptr = &m_vertex;
     }
 
-    // Copy constructor
+    /// Copy constructor
     Mesh_adaptor_patch_vertex_const_handle(const Self& hdl)
     {
         if (hdl.m_ptr == NULL)
@@ -375,14 +375,14 @@ public:
         }
         else
         {
-            m_vertex = hdl.m_vertex; // *hdl.m_ptr;
+            m_vertex = hdl.m_vertex;
             m_ptr = &m_vertex;
         }
 
         assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
-    // operator =()
+    /// operator =()
     Self& operator =(const Self& hdl)
     {
         if (hdl.m_ptr == NULL)
@@ -401,8 +401,8 @@ public:
         return *this;
     }
 
-    // Compare patch vertices instead of patch vertex pointers (2 patch
-    // vertex handles are equal iff they point to the same adaptor vertex)
+    /// Compare patch vertices instead of patch vertex pointers (2 patch
+    /// vertex handles are equal iff they point to the same adaptor vertex)
     bool operator==(const Self& hdl) const
     {
         if (m_ptr == NULL || hdl.m_ptr == NULL)
@@ -412,7 +412,7 @@ public:
     }
     bool operator!=(const Self& hdl) const { return ! (*this == hdl); }
 
-    // Comparison to NULL pointer
+    /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const {
         CGAL_parameterization_assertion(ptr == NULL);
         return m_ptr == NULL;
@@ -424,11 +424,11 @@ public:
 
 // Fields
 private:
-    // The actual pointer
+    /// The actual pointer
     pointer m_ptr;
 
-    // Internal Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> vertex 
-    // pointed to by m_ptr (except if NULL)
+    /// Internal Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> vertex 
+    /// pointed to by m_ptr (except if NULL)
     Vertex m_vertex;
 
 }; // Mesh_adaptor_patch_vertex_const_handle

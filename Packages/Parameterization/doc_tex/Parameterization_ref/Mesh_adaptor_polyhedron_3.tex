@@ -1,9 +1,9 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Mesh_adaptor_polyhedron_3.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 13.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSMeshadaptorpolyhedronRev}{$Revision$}
 \RCSdefDate{\RCSMeshadaptorpolyhedronDate}{$Date$}
 % |
@@ -16,65 +16,344 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
-  
-The class \ccRefName\ serves as a traits class for all the two-dimensional
-convex hull and extreme point calculation function.   This class corresponds
-to the default traits class for these functions.
+
+
+Class Mesh\_adaptor\_polyhedron\_3 is a model of PatchableMeshAdaptor\_3 concept, whose purpose is to allow the parameterization package to access meshes on an uniform manner.
+Mesh\_adaptor\_polyhedron\_3 is an adaptor class to access to a Polyhedron 3D mesh using the PatchableMeshAdaptor\_3 interface.
+The input mesh can be of any genus. It can have have any number of boundaries. Its "main border" will be the mesh's longest boundary (if there is at least one boundary).
+
 
 \ccInclude{CGAL/Mesh_adaptor_polyhedron_3.h}
 
+
 \ccIsModel
 
-\ccRefConceptPage{PatchableMeshAdaptor_3}%
-\ccIndexSubitem[c]{PatchableMeshAdaptor_3}{model} \\
+PatchableMeshAdaptor\_3
+
+
+\ccHeading{Design pattern}
+
+Mesh\_adaptor\_polyhedron\_3 is an Adaptor (see [GOF95]): it changes the Polyhedron interface to match the PatchableMeshAdaptor\_3 concept.
+
 
 \ccTypes
 
-\ccTypedef{typedef R::Point_2                        Point_2;}{}
-\ccGlue
-\ccTypedef{typedef R::Less_xy                        Less_xy_2;}{}
-\ccGlue
-\ccTypedef{typedef R::Less_yx                        Less_yx_2;}{}
-\ccGlue
-\ccTypedef{typedef R::Less_signed_distance_to_line_2 
-                                      Less_signed_distance_to_line_2;}{}
-\ccGlue
-\ccTypedef{typedef R::Less_rotate_ccw_2              Less_rotate_ccw_2;}{}
-\ccGlue
-\ccTypedef{typedef R::Left_turn_2                     Left_turn_2;}{}
-\ccGlue
-\ccTypedef{typedef R::Equal_2                        Equal_2;}{}
+The following mutable handles, iterators, and circulators have appropriate
+non-mutable counterparts, i.e. \ccc{const_handle},
+\ccc{const_iterator}, and \ccc{const_circulator}. The mutable types are
+assignable to their non-mutable counterparts.  Both circulators are
+assignable to the \ccc{Vertex_iterator}. The iterators are
+assignable to the respective handle types. Wherever the handles appear
+in function parameter lists, the corresponding iterators can be used as
+well.
+
+{\bf INTERFACE SPECIFIC TO Polyhedron\_3}
+
+\ccNestedType{Polyhedron}
+{
+Export template parameter.
+}
+\ccNestedType{NT}
+{
+Number type.
+}
+\ccNestedType{Point_2}
+{
+Points and vectors.
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Facet}
+{
+Facet.
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+Iterator over all mesh facets.
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex}
+{
+Vertex.
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+Iterator over all mesh vertices.
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+Iterator over mesh boundary vertices.
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+Counter-clockwise circulator over a facet's vertices.
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+Clockwise circulator over the vertices incident to a vertex.
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+
 
 \ccCreation
-\ccCreationVariable{traits}  %% choose variable name
+\ccCreationVariable{m}  %% define variable name used by \ccMethod below
 
-\ccConstructor{Mesh_adaptor_polyhedron_3();}{default constructor.}
+\ccConstructor{Mesh_adaptor_polyhedron_3 (Polyhedron * mesh);}
+{
+Create an adaptator for an existing Polyhedron\_3 mesh. The input mesh can be of any genus. It can have have any number of boundaries. Its "main border" will be the mesh's longest boundary (if there is at least one boundary).
+}
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+The following methods returning a mutable handle, iterator, or circulator have appropriate
+non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
+\ccc{const_iterator}, or \ccc{const_circulator}.
+
+{\bf INTERFACE SPECIFIC TO Polyhedron\_3}
+
+\ccMethod{Polyhedron* get_adapted_mesh ();}
+{
+Get the adapted mesh.
+}
+\ccMethod{const Polyhedron* get_adapted_mesh () const;}
+{
+}
+\ccMethod{Polyhedron::Halfedge_const_handle get_halfedge (Vertex_const_handle source, Vertex_const_handle target) const;}
+{
+Get halfedge from source and target vertices. Will assert if such an halfedge doesn't exist.
+}
+\ccMethod{Polyhedron::Halfedge_handle get_halfedge (Vertex_handle source, Vertex_handle target);}
+{
+}
+\ccMethod{const Halfedge_info* info (Halfedge_const_handle halfedge) const;}
+{
+Access to additional info attached to halfedges.
+}
+\ccMethod{Halfedge_info* info (Halfedge_const_handle halfedge);}
+{
+}
+\ccMethod{const Vertex_info* info (Vertex_const_handle vertex) const;}
+{
+Access to additional info attached to vertices.
+}
+\ccMethod{Vertex_info* info (Vertex_const_handle vertex);}
+{
+}
+\ccMethod{Vertex_iterator mesh_vertices_begin ();}
+{
+Get iterator over first vertex of mesh.
+}
+\ccMethod{Vertex_const_iterator mesh_vertices_begin () const;}
+{
+}
+\ccMethod{Vertex_iterator mesh_vertices_end ();}
+{
+Get iterator over past-the-end vertex of mesh.
+}
+\ccMethod{Vertex_const_iterator mesh_vertices_end () const;}
+{
+}
+\ccMethod{int count_mesh_vertices () const;}
+{
+Count the number of vertices of the mesh.
+}
+\ccMethod{void index_mesh_vertices ();}
+{
+Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
+}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
+{
+Get iterator over first vertex of mesh's main border.
+}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin () const;}
+{
+}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end ();}
+{
+Get iterator over past-the-end vertex of mesh's main border.
+}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end () const;}
+{
+}
+\ccMethod{std::list<Vertex_handle> get_boundary (Vertex_handle seed_vertex);}
+{
+Return the boundary containing seed\_vertex. Return an empty list if not found.
+}
+\ccMethod{Facet_iterator mesh_facets_begin ();}
+{
+Get iterator over first facet of mesh.
+}
+\ccMethod{Facet_const_iterator mesh_facets_begin () const;}
+{
+}
+\ccMethod{Facet_iterator mesh_facets_end ();}
+{
+Get iterator over past-the-end facet of mesh.
+}
+\ccMethod{Facet_const_iterator mesh_facets_end () const;}
+{
+}
+\ccMethod{int count_mesh_facets () const;}
+{
+Count the number of facets of the mesh.
+}
+\ccMethod{bool is_mesh_triangular () const;}
+{
+Return true of all mesh's facets are triangles.
+}
+\ccMethod{int count_mesh_halfedges () const;}
+{
+Count the number of halfedges of the mesh.
+}
+\ccMethod{Vertex_around_facet_circulator facet_vertices_begin (Facet_handle facet);}
+{
+Get circulator over facet's vertices.
+}
+\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin (Facet_const_handle facet) const;}
+{
+}
+\ccMethod{int count_facet_vertices (Facet_const_handle facet) const;}
+{
+Count the number of vertices of a facet.
+}
+\ccMethod{Point_3 get_vertex_position (Vertex_const_handle vertex) const;}
+{
+Get the 3D position of a vertex.
+}
+\ccMethod{Point_2 get_vertex_uv (Vertex_const_handle vertex) const;}
+{
+Get/set the 2D position (u/v pair) of a vertex. Default value is undefined. (stored in halfedges sharing the same vertex).
+}
+\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 \& uv);}
+{
+}
+\ccMethod{bool is_vertex_parameterized (Vertex_const_handle vertex) const;}
+{
+Get/set "is parameterized" field of vertex. Default value is undefined. (stored in halfedges sharing the same vertex).
+}
+\ccMethod{void set_vertex_parameterized (Vertex_handle vertex, bool parameterized);}
+{
+}
+\ccMethod{int get_vertex_index (Vertex_const_handle vertex) const;}
+{
+Get/set vertex index. Default value is undefined. (stored in Polyhedron vertex for debugging purpose).
+}
+\ccMethod{void set_vertex_index (Vertex_handle vertex, int index);}
+{
+}
+\ccMethod{int get_vertex_tag (Vertex_const_handle vertex) const;}
+{
+Get/set vertex' all purpose tag. Default value is undefined. (stored in halfedges sharing the same vertex).
+}
+\ccMethod{void set_vertex_tag (Vertex_handle vertex, int tag);}
+{
+}
+\ccMethod{bool is_vertex_on_border (Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to ANY mesh's boundary.
+}
+\ccMethod{bool is_vertex_on_main_border (Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to the UNIQUE mesh's main boundary, ie the mesh's LONGEST boundary
+}
+\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = NULL);}
+{
+Get circulator over the vertices incident to 'vertex'. 'start\_position' defines the optional initial position of the circulator.
+}
+\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = NULL) const;}
+{
+}
+\ccMethod{int get_vertex_seaming (Vertex_const_handle vertex) const;}
+{
+Get/set vertex seaming flag. Default value is undefined.
+}
+\ccMethod{void set_vertex_seaming (Vertex_handle vertex, int seaming);}
+{
+}
+\ccMethod{int get_halfedge_seaming (Vertex_const_handle source, Vertex_const_handle target) const;}
+{
+Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to the UNIQUE main boundary
+}
+\ccMethod{void set_halfedge_seaming (Vertex_handle source, Vertex_handle target, int seaming);}
+{
+}
+\ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set the 2D position (= (u,v) pair) of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+}
+\ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 \& uv);}
+{
+}
+\ccMethod{bool are_corners_parameterized (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set "is parameterized" field of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+}
+\ccMethod{void set_corners_parameterized (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
+{
+}
+\ccMethod{int get_corners_index (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set index of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+}
+\ccMethod{void set_corners_index (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
+{
+}
+\ccMethod{int get_corners_tag (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set all purpose tag of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+}
+\ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
+{
+}
+
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccc{Mesh_adaptor_patch_3}
+
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_polyhedron_3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+This example program instantiates a polyhedron and a polyhedron adaptor using the default
+traits class and parameterizes the polyhedron.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{Parameterization/Polyhedron_parameterization5.C}
 
-%% \ccIncludeExampleCode{Parameterization/Mesh_adaptor_polyhedron_3.C}
 
 \end{ccRefClass}
 

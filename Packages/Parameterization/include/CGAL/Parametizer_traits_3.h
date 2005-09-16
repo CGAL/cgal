@@ -27,29 +27,29 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Parametizer_traits_3
-// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class)
-// Base class of all parameterization methods
-template<class MeshAdaptor_3>       // 3D surface
+/// Class Parametizer_traits_3
+/// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class)
+/// Base class of all parameterization methods
+template<class MeshAdaptor_3>       ///< 3D surface
 class Parametizer_traits_3
 {
 // Public types
 public:
-    // The various errors detected by this package
+    /// The various errors detected by this package
     enum Error_code {
     OK,
-    ERROR_EMPTY_MESH,               // input mesh is empty
-    ERROR_NON_TRIANGULAR_MESH,      // input mesh is not triangular
-    ERROR_NO_SURFACE_MESH,          // input mesh is not a surface
-    ERROR_INVALID_BOUNDARY,         // parameterization requires a convex border
-    ERROR_BAD_MATRIX_CONDITIONING,  // result is mathematically unstable
-    ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,// cannot solve linear system
-    ERROR_NO_1_TO_1_MAPPING,        // parameterization does not ensure 1 to 1 mapping
-    ERROR_NOT_ENOUGH_MEMORY,        // it's time to buy some RAM :-)
-    ERROR_WRONG_PARAMETER           // a method received an unexpected parameter
+    ERROR_EMPTY_MESH,               ///< input mesh is empty
+    ERROR_NON_TRIANGULAR_MESH,      ///< input mesh is not triangular
+    ERROR_NO_SURFACE_MESH,          ///< input mesh is not a surface
+    ERROR_INVALID_BOUNDARY,         ///< parameterization requires a convex border
+    ERROR_BAD_MATRIX_CONDITIONING,  ///< result is mathematically unstable
+    ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< cannot solve linear system
+    ERROR_NO_1_TO_1_MAPPING,        ///< parameterization does not ensure 1 to 1 mapping
+    ERROR_NOT_ENOUGH_MEMORY,        ///< it's time to buy some RAM :-)
+    ERROR_WRONG_PARAMETER           ///< a method received an unexpected parameter
     };
 
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
@@ -83,25 +83,25 @@ public:
 
 // Public operations
 public:
-    // Destructor of base class should be virtual
+    /// Destructor of base class should be virtual
     virtual ~Parametizer_traits_3() {}
 
-    // Default constructor, copy constructor and operator =() are fine
+    /// Default constructor, copy constructor and operator =() are fine
 
-    // Compute a 1 to 1 mapping from a 3D surface 'mesh'
-    // to a piece of the 2D space.
-    // The mapping is linear by pieces (linear in each triangle).
-    // The result is the (u,v) pair image of each vertex of the 3D surface.
-    //
-    // Preconditions:
-    // * 'mesh' must be a surface with 1 connected component
-    // * 'mesh' must be a triangular mesh
+    /// Compute a 1 to 1 mapping from a 3D surface 'mesh'
+    /// to a piece of the 2D space.
+    /// The mapping is linear by pieces (linear in each triangle).
+    /// The result is the (u,v) pair image of each vertex of the 3D surface.
+    ///
+    /// Preconditions:
+    /// * 'mesh' must be a surface with 1 connected component
+    /// * 'mesh' must be a triangular mesh
     virtual Error_code  parameterize (Adaptor* mesh) = 0;
 
 // Protected operations
 protected:
-    //                                                 -> ->
-    // return cotangent of (P,Q,R) corner (ie cotan of QP,QR angle)
+    ///                                                 -> ->
+    /// return cotangent of (P,Q,R) corner (ie cotan of QP,QR angle)
     double cotangent(const Point_3& P,
                      const Point_3& Q,
                      const Point_3& R)
@@ -119,8 +119,8 @@ protected:
             return 0.0; // undefined
     }
 
-    //                                                 -> ->
-    // return tangent of (P,Q,R) corner (ie tangent of QP,QR angle)
+    ///                                                 -> ->
+    /// return tangent of (P,Q,R) corner (ie tangent of QP,QR angle)
     double tangent(const Point_3& P,
                    const Point_3& Q,
                    const Point_3& R)
@@ -138,14 +138,14 @@ protected:
             return 0.0; // undefined
     }
 
-    //                                                    -> ->
-    // return angle (in radians) of of (P,Q,R) corner (ie QP,QR angle)
-    //
-    // Implementation note: we use this formula
-    // uv = |u||v| CGAL_CLIB_STD::cos(u,v)
-    // u  ^ v  = w
-    // |w| = |u||v| |CGAL_CLIB_STD::sin(u,v)|
-    //**************************************************
+    ///                                                    -> ->
+    /// return angle (in radians) of of (P,Q,R) corner (ie QP,QR angle)
+    ///
+    /// Implementation note: we use this formula
+    /// uv = |u||v| CGAL_CLIB_STD::cos(u,v)
+    /// u  ^ v  = w
+    /// |w| = |u||v| |CGAL_CLIB_STD::sin(u,v)|
+    ///**************************************************
     static double compute_angle_rad(const Point_3& P,
                                     const Point_3& Q,
                                     const Point_3& R)
@@ -176,7 +176,7 @@ protected:
 
 // Private operations
 private:
-    // fix sine
+    /// fix sine
     static double fix_sine(double sine)
     {
         if(sine >= 1)

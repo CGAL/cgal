@@ -29,8 +29,8 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Mesh_adaptor_patch_vertex_list
-// Type of the list of all vertices of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
+/// Class Mesh_adaptor_patch_vertex_list
+/// Type of the list of all vertices of a Mesh_adaptor_patch_3<PatchableMeshAdaptor_3> mesh
 template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_list 
     : public std::list< Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3> >
@@ -38,14 +38,14 @@ class Mesh_adaptor_patch_vertex_list
 // Public types
 public:
 
-    // Export template parameter type
+    /// Export template parameter type
     typedef PatchableMeshAdaptor_3           Adaptor;
 };
 
 
-// Class Mesh_adaptor_patch_vertex_list_iterator
-// Same behavior as Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::iterator 
-// + conversion to Mesh_adaptor_patch_vertex_handle
+/// Class Mesh_adaptor_patch_vertex_list_iterator
+/// Same behavior as Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::iterator 
+/// + conversion to Mesh_adaptor_patch_vertex_handle
 template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_list_iterator 
     : public Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::iterator
@@ -63,7 +63,7 @@ private:
 // Public types
 public:
 
-    // Export template parameter type
+    /// Export template parameter type
     typedef PatchableMeshAdaptor_3           Adaptor;
 
 // Public operations
@@ -83,14 +83,14 @@ public:
     bool operator==(const Self& it) const { return Base::operator==(it); }
     bool operator!=(const Self& it) const { return ! (*this == it); }
 
-    // Comparison to NULL pointer
+    /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const { 
         CGAL_parameterization_assertion(ptr == NULL);
         return Base::operator==( Base() ); 
     }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
 
-    // Conversion to handle
+    /// Conversion to handle
     operator Mesh_adaptor_patch_vertex_handle<Adaptor>() const {
         return &*(*this);
     }
@@ -100,9 +100,9 @@ public:
 };
 
 
-// Class Mesh_adaptor_patch_vertex_list_const_iterator
-// Same behavior as Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::const_iterator 
-// + conversion to Mesh_adaptor_patch_vertex_const_handle
+/// Class Mesh_adaptor_patch_vertex_list_const_iterator
+/// Same behavior as Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::const_iterator 
+/// + conversion to Mesh_adaptor_patch_vertex_const_handle
 template<class PatchableMeshAdaptor_3>
 class Mesh_adaptor_patch_vertex_list_const_iterator 
     : public Mesh_adaptor_patch_vertex_list<PatchableMeshAdaptor_3>::const_iterator
@@ -120,7 +120,7 @@ private:
 // Public types
 public:
 
-    // Export template parameter type
+    /// Export template parameter type
     typedef PatchableMeshAdaptor_3           Adaptor;
 
 // Public operations
@@ -140,14 +140,14 @@ public:
     bool operator==(const Self& it) const { return Base::operator==(it); }
     bool operator!=(const Self& it) const { return ! (*this == it); }
 
-    // Comparison to NULL pointer
+    /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const { 
         CGAL_parameterization_assertion(ptr == NULL);
         return Base::operator==( Base() ); 
     }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
 
-    // Conversion to handle
+    /// Conversion to handle
     operator Mesh_adaptor_patch_vertex_const_handle<Adaptor>() const {
         return &*(*this);
     }

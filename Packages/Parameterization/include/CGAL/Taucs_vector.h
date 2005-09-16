@@ -26,12 +26,12 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Taucs_vector
-// This class is a C++ wrapper around TAUCS' vector type, which is a simple array. 
-// It is also a model of the SparseLinearAlgebraTraits_d::Vector concept
+/// Class Taucs_vector
+/// This class is a C++ wrapper around TAUCS' vector type, which is a simple array. 
+/// It is also a model of the SparseLinearAlgebraTraits_d::Vector concept
 
-template<class T>       // Tested with T = taucs_single or taucs_double
-                        // May also work with T = taucs_dcomplex and taucs_scomplex
+template<class T>       ///< Tested with T = taucs_single or taucs_double
+                        ///< May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_vector
 {
 // Public types
@@ -42,7 +42,7 @@ public:
 // Public operations
 public:
 
-    // Create a vector initialized with zeros
+    /// Create a vector initialized with zeros
     Taucs_vector(int dimension) 
     {
         m_dimension = dimension; 
@@ -53,7 +53,7 @@ public:
             m_element[i] = 0;
     }
 
-    // Copy constructor
+    /// Copy constructor
     Taucs_vector(const Taucs_vector& toCopy) 
     {
         m_dimension = toCopy.m_dimension;
@@ -62,7 +62,7 @@ public:
             m_element[i] = toCopy.m_element[i];
     }
 
-    // operator =()
+    /// operator =()
     Taucs_vector& operator =(const Taucs_vector& toCopy) 
     {
         delete[] m_element;
@@ -81,15 +81,15 @@ public:
         m_element = NULL;
     }
 
-    // Return the vector's number of coefficients
+    /// Return the vector's number of coefficients
     int dimension() const {
         return m_dimension;
     }
 
-    // Read/write access to 1 vector coefficient.
-    //
-    // Preconditions:
-    // * 0 <= i < dimension()
+    /// Read/write access to 1 vector coefficient.
+    ///
+    /// Preconditions:
+    /// * 0 <= i < dimension()
     T operator[](int i) const {
         assert(i < m_dimension);
         return m_element[i];
@@ -99,7 +99,7 @@ public:
         return m_element[i];
     }
 
-    // Get TAUCS vector wrapped by this object
+    /// Get TAUCS vector wrapped by this object
     const T* get_taucs_vector() const {
         return m_element;
     }
@@ -110,8 +110,8 @@ public:
 // Fields
 private:
 
-    int m_dimension;    // Vector size
-    T* m_element;       // Array of m_dimension T elements
+    int m_dimension;    ///< Vector size
+    T* m_element;       ///< Array of m_dimension T elements
 };
 
 

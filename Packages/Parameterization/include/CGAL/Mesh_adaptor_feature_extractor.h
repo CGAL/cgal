@@ -28,18 +28,18 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Class Mesh_adaptor_feature_extractor
-//
-// This class computes features (genus, boundaries, ...)
-// of a 3D surface model of the MeshAdaptor_3 concept.
+/// Class Mesh_adaptor_feature_extractor
+///
+/// This class computes features (genus, boundaries, ...)
+/// of a 3D surface model of the MeshAdaptor_3 concept.
 
-template<class MeshAdaptor_3>           // 3D surface
+template<class MeshAdaptor_3>           ///< 3D surface
 class Mesh_adaptor_feature_extractor
 {
 // Public types
 public:
 
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
@@ -71,18 +71,18 @@ public:
     typedef typename Adaptor::Vertex_around_vertex_const_circulator
                                             Vertex_around_vertex_const_circulator;
 
-    // Mesh boundary
+    /// Mesh boundary
     typedef std::list<Vertex_handle>        Boundary;
-    // List of all boundaries of a mesh
+    /// List of all boundaries of a mesh
     typedef std::vector<Boundary*>          Skeleton;
 
 // Public operations
 public:
 
-    // Constructor
-    //
-    // CAUTION: Caller must NOT modify 'mesh' during the
-    //          Mesh_adaptor_feature_extractor life cycle.
+    /// Constructor
+    ///
+    /// CAUTION: Caller must NOT modify 'mesh' during the
+    ///          Mesh_adaptor_feature_extractor life cycle.
     Mesh_adaptor_feature_extractor(Adaptor *mesh)
     {
         m_mesh_adaptor = mesh;
@@ -95,7 +95,7 @@ public:
     }
     virtual ~Mesh_adaptor_feature_extractor() {}
 
-    // Get number of boundaries
+    /// Get number of boundaries
     int get_nb_boundaries()
     {
         // At first call, extract boundaries and put longest one first
@@ -104,8 +104,8 @@ public:
 
         return m_nb_boundaries;
     }
-    // Get extracted boundaries
-    // The longest boundary is the first one
+    /// Get extracted boundaries
+    /// The longest boundary is the first one
     const Skeleton& get_boundaries()
     {
         // At first call, extract boundaries and put longest one first
@@ -114,7 +114,7 @@ public:
 
         return m_skeleton;
     }
-    // Get longest boundary
+    /// Get longest boundary
     const Boundary* get_longest_boundary()
     {
         // At first call, extract boundaries and put longest one first
@@ -124,7 +124,7 @@ public:
         return m_skeleton[0];
     }
 
-    // Get # of connected components
+    /// Get # of connected components
     int get_nb_connex_components()
     {
         // At first call, count the number of connex components
@@ -134,7 +134,7 @@ public:
         return m_nb_connex_components;
     }
 
-    // Get the genus
+    /// Get the genus
     int get_genus()
     {
         // At first call, compute the genus
@@ -147,8 +147,8 @@ public:
 // Private operations
 private:
 
-    // Extract boundaries and put longest one first
-    // Result is in m_nb_boundaries and m_skeleton
+    /// Extract boundaries and put longest one first
+    /// Result is in m_nb_boundaries and m_skeleton
     void extract_boundaries()
     {
         assert(m_skeleton.size() == 0);
@@ -181,7 +181,7 @@ private:
         std::cerr << "  " << m_nb_boundaries << " boundary(ies) found" << std::endl;
     }
 
-    // add closed boundary Boundary
+    /// add closed boundary Boundary
     bool add_boundary(int tag_free, int tag_done)
     {
         // Find a boundary tagged as "free" and tag it as "processed"
@@ -198,11 +198,11 @@ private:
         return true;
     }
 
-    // Find a boundary tagged as "free" and tag it as "processed"
-    // Return an empty list if not found
+    /// Find a boundary tagged as "free" and tag it as "processed"
+    /// Return an empty list if not found
     std::list<Vertex_handle> find_free_boundary(int tag_free, int tag_done)
     {
-        std::list<Vertex_handle> boundary;  // returned list
+        std::list<Vertex_handle> boundary;  /// returned list
 
         // get any border vertex with "free" tag
         Vertex_handle seed_vertex = NULL;
@@ -231,7 +231,7 @@ private:
         return boundary;
     }
 
-    // get index of the longest boundary
+    /// get index of the longest boundary
     int get_index_longest_boundary() const
     {
         int index = 0;
@@ -254,7 +254,7 @@ private:
         return index;
     }
 
-    // compute  total len of a boundary
+    /// compute  total len of a boundary
     double len(const Boundary* pBoundary) const
     {
         double len = 0.0;
@@ -274,8 +274,8 @@ private:
         return len;
     }
 
-    // Count # of connected components
-    // Result is in m_nb_connex_components
+    /// Count # of connected components
+    /// Result is in m_nb_connex_components
     void count_connex_components()
     {
         m_nb_connex_components = 0;
@@ -297,7 +297,7 @@ private:
         }
     }
 
-    // get any vertex with tag
+    /// get any vertex with tag
     Vertex_handle get_any_vertex_tag(int tag)
     {
         for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
@@ -311,7 +311,7 @@ private:
         return NULL;
     }
 
-    // tag component
+    /// tag component
     void tag_component(Vertex_handle pSeedVertex,
                        const int tag_free,
                        const int tag_done)
@@ -341,17 +341,17 @@ private:
         }
     }
 
-    // Compute the genus
-    // Result is in m_genus
-    //
-    // Implementation note:
-    //  G = (2*C + E - B - F - V)/2 with
-    //  G : genus
-    //  C : # of connected components
-    //  E : # of edges
-    //  B : # of boundaries
-    //  F : # of facets
-    //  V : # of vertices
+    /// Compute the genus
+    /// Result is in m_genus
+    ///
+    /// Implementation note:
+    ///  G = (2*C + E - B - F - V)/2 with
+    ///  G : genus
+    ///  C : # of connected components
+    ///  E : # of edges
+    ///  B : # of boundaries
+    ///  F : # of facets
+    ///  V : # of vertices
     void compute_genus()
     {
         int c = get_nb_connex_components();
@@ -368,12 +368,12 @@ private:
 // Fields
 private:
 
-    // Pointer to mesh to parse
+    /// Pointer to mesh to parse
     Adaptor*    m_mesh_adaptor;
 
-    // m_mesh_adaptor features:
+    /// m_mesh_adaptor features:
     int         m_nb_boundaries;
-    Skeleton    m_skeleton;             // List of boundaries of m_mesh_adaptor
+    Skeleton    m_skeleton;             ///< List of boundaries of m_mesh_adaptor
     int         m_nb_connex_components;
     int         m_genus;
 

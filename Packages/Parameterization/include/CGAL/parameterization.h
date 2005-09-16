@@ -17,6 +17,11 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
+///
+/// @file parameterization.h
+/// Define the main entry points of the parameterization package as C functions
+///
+
 
 #ifndef CGAL_PARAMETERIZATION_H
 #define CGAL_PARAMETERIZATION_H
@@ -26,48 +31,44 @@
 CGAL_BEGIN_NAMESPACE
 
 
-//
-// Main entry points of the parameterization header as C functions
-//
-
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle,
-// using Floater's mean value coordinates algorithm .
-// 1 to 1 mapping is guaranteed.
-//
-// The mapping is linear by pieces (linear in each triangle).
-// The result is the (u,v) pair image of each vertex of the 3D surface.
-//
-// Preconditions:
-// * 'mesh' must be a surface with 1 connected component
-// * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon
-//
+/// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle,
+/// using Floater's mean value coordinates algorithm .
+/// 1 to 1 mapping is guaranteed.
+///
+/// The mapping is linear by pieces (linear in each triangle).
+/// The result is the (u,v) pair image of each vertex of the 3D surface.
+///
+/// Preconditions:
+/// * 'mesh' must be a surface with 1 connected component
+/// * 'mesh' must be a triangular mesh
+/// * the mesh border must be mapped onto a convex polygon
+///
 template <class MeshAdaptor_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
-parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
+parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
 {
     Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
     return parametizer.parameterize(mesh);
 }
 
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
-// to a piece of the 2D space.
-// The mapping is linear by pieces (linear in each triangle).
-// The result is the (u,v) pair image of each vertex of the 3D surface.
-//
-// 1 to 1 mapping may be guaranteed or not, depending of
-// ParametizerTraits_3 algorithm chosen
-//
-// Preconditions:
-// * 'mesh' must be a surface with 1 connected component
-// * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon
-// (for fixed border parameterizations)
-//
+/// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+/// to a piece of the 2D space.
+/// The mapping is linear by pieces (linear in each triangle).
+/// The result is the (u,v) pair image of each vertex of the 3D surface.
+///
+/// 1 to 1 mapping may be guaranteed or not, depending of
+/// ParametizerTraits_3 algorithm chosen
+///
+/// Preconditions:
+/// * 'mesh' must be a surface with 1 connected component
+/// * 'mesh' must be a triangular mesh
+/// * the mesh border must be mapped onto a convex polygon
+/// (for fixed border parameterizations)
+///
 template <class MeshAdaptor_3, class ParametizerTraits_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
-parameterize(MeshAdaptor_3* mesh,               // 3D mesh, model of MeshAdaptor_3 
-             ParametizerTraits_3 parametizer)   // Parameterization method for 'mesh'
+parameterize(MeshAdaptor_3* mesh,               ///< 3D mesh, model of MeshAdaptor_3
+             ParametizerTraits_3 parametizer)   ///< Parameterization method for 'mesh'
 {
     return parametizer.parameterize(mesh);
 }
