@@ -11,12 +11,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source:
-// /CVSROOT/CGAL/Packages/Interpolation/include/CGAL/interpolation_functions.h,v $
-// $Revision$ $Date$
-// $Name$
-//
-// Author(s)     : Pierre Alliez
+// Author(s)     : Pierre Alliez and Sylvain Pion
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_2
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_2
@@ -103,7 +98,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   } // end isotropic case
 } // end linear_least_squares_fitting_2
 
-// fit a line to a 2D triangle set
+// fits a line to a 2D triangle set
 template < typename InputIterator, 
            typename K >
 typename K::FT
