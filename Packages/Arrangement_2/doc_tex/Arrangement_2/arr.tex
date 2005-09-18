@@ -1202,16 +1202,16 @@ is essentially equivalent to the six separate queries performed in
 \label{arr_sec:gl_funcs}
 %=====================================
 
-In Section~\ref{arr_sec:arr_class} we reviewed in detail the
+In Section~\ref{arr_sec:arr_class} we review in details the
 \ccc{Arrangement_2} class, which represents two-dimensional
-subdivisions of bounded planar curves, and mentioned that its
+subdivisions of bounded planar curves, and mention that its
 interface is minimal in the sense that the member functions hardly
 perform any geometric algorithms and are mainly used for
 maintaining the topological structure of the subdivision. In this
-section we go over the global functions that operate on
-arrangements, implementing operations that require non-trivial
-geometric algorithms or loading some extra requirements on the
-traits class.
+section we explain how to utilize the global functions that operate on
+arrangements. The implementation of these operations typically require
+non-trivial geometric algorithms or load some extra requirements on
+the traits class.
 
 \subsection{Incremental Insertion Functions}
 \label{arr_ssec:inc_insert}
@@ -1221,30 +1221,30 @@ traits class.
 \label{arr_sssec:insert_non_x}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-In Section~\ref{arr_sec:arr_class} we explained how to construct
+In Section~\ref{arr_sec:arr_class} we explain how to construct
 arrangements of $x$-monotone curves that are pairwise disjoint in
 their interior, when the location of the segment endpoints in the
-arrangement is known. We now relax this assumption and assume that
-we wish to insert a $x$-monotone curve $c$ into an existing
-arrangement such that its interior is disjoint from all existing
-arrangement edges and vertices, but its location is unknown.
+arrangement is known. Here we relax this constraint, and allow the
+location of the inserted $x$-monotone curve endpoints to be arbitrary,
+as it may be unknown at the time of insertion. We retain the
+requirement that the interior of the inserted curve is disjoint from
+all the mapping of the existing arrangement edges and vertices.
 
 The global function \ccc{insert_non_intersecting(arr, c, pl)}
-performs this exact operation: Its insert the $x$-monotone curve
+performs this exact operation: It inserts the $x$-monotone curve
 \ccc{c} into the arrangement \ccc{arr}. The third argument
 \ccc{pl} is a point-location object attached to the arrangement,
-which is used for performing the insertion: It locates both curve
+which is used for performing the insertion. It locates both curve
 endpoints in the arrangement, where each endpoint is expected to
 either coincide with an existing vertex or lie inside a face.
-Based on the query results, it is possible to invoke one of the
-specialized insertion functions (see
-Section~\ref{arr_sec:arr_class}) and insert $c$ at its proper
-position.\footnote{The \ccc{insert_non_intersecting()} function,
-as all other functions reviewed in this section, is thus a
-function template, parameterized by an arrangement class and a
-point-location class (a model of the
-\ccc{ArrangementPointLocation_2} concept).} The insertion operation
-thus requires hardly any geometric operations on top on the ones
+It is possible to invoke one of the specialized insertion functions
+(see Section~\ref{arr_sec:arr_class}), based on the query results, and
+insert $c$ at its proper position\footnote{The
+\ccc{insert_non_intersecting()} function, as all other functions
+reviewed in this section, is a function template, parameterized by an
+arrangement class and a point-location class (a model of the
+\ccc{ArrangementPointLocation_2} concept).}. The insertion operation
+thus hardly requires any geometric operations on top on the ones
 needed to answer the point-location queries. Moreover, it is
 sufficient that the arrangement class is instantiated with a
 traits class that models the \ccc{ArrangementBasicTraits_2}
@@ -1269,22 +1269,22 @@ instantiated with a traits class that models the refined
 intersection computations (see Section~\ref{arr_sec:traits} for
 the exact details). Given an $x$-monotone curve, it is sufficient
 to locate its left endpoint in the arrangement and to trace its
-{\em zone} --- namely the set of arrangement features it crosses
---- until reaching the right endpoint. Each time the new curve $c$
-traverses an existing vertex or an edge we have to split it into
-subcurves (in the latter case, we have to split the curve
+{\em zone}, namely the set of arrangement features crossing the curve,
+until the right endpoint is reached. Each time the new curve $c$
+crosses an existing vertex or an edge, the curve is split into
+subcurves (in the latter case, we have to split the curve 
 associated with the existing halfedge as well) and associate new
 edges with the resulting subcurves.
 
 The global function \ccc{insert_x_monotone(arr, c, pl)} performs
-this insertion operation: It accepts an $x$-monotone curve \ccc{c}
-which may intersect the arrangement \ccc{arr} and inserts it into
+this insertion operation. It accepts an $x$-monotone curve \ccc{c},
+which may intersect the arrangement \ccc{arr}, and inserts it into
 the arrangement by computing its zone. Users may supply a
 point-location object \ccc{pl}, or use the default walk
 point-location strategy (namely, the function
 \ccc{insert_x_monotone(arr, c)} is also available). The
 running-time of this insertion function is proportional to the
-complexity of the inserted curve's zone.
+complexity of the inserted-curve zone.
 
 \subsubsection{Inserting General Curves}
 \label{arr_sssec:insert_gen}
@@ -1300,23 +1300,23 @@ $x$-monotone).
 
 Suppose that we construct an arrangement of circles. A circle is
 obviously not $x$-monotone, so we cannot use
-\ccc{insert_x_monotone()} in this case.\footnote{Note that a key
+\ccc{insert_x_monotone()} in this case\footnote{Note that a key
 operation when inserting an $x$-monotone curve is to locate its
 left endpoint in the arrangement. A circle, however, does not have
-any endpoints!} However, it is possible to subdivide each circle
+any endpoints!}. However, it is possible to subdivide each circle
 into two $x$-monotone circular arcs (its upper half and its lower
 half) and to insert each $x$-monotone arc separately.
 
 The global function \ccc{insert()} requires that the traits class
-used by the arrangement \ccc{arr} is a model of the concept
+used by the arrangement \ccc{arr} to be a model of the concept
 \ccc{ArrangementTraits_2}, which refines the
-\ccc{ArrangementXMonotoneTraits_2} concept: It has to define an
+\ccc{ArrangementXMonotoneTraits_2} concept. It has to define an
 additional \ccc{Curve_2} type (which may differ from the
-\ccc{X_monotone_curve_2} type) and support its subdivision into
-$x$-monotone curves (see the exact details in
+\ccc{X_monotone_curve_2} type), and support the subdivision of curves
+of this new type into $x$-monotone curves (see the exact details in
 Section~\ref{arr_sec:traits}). The \ccc{insert(arr, c, pl)}
-function performs the insertion of the curve $c$, which need not
-be $x$-monotone, into the arrangement by subdividing it into
+function performs the insertion of the curve $c$, which does not need
+to be $x$-monotone, into the arrangement by subdividing it into
 $x$-monotone subcurves and inserting each one separately. Users
 may supply a point-location object \ccc{pl}, or use the default
 walk point-location strategy by calling \ccc{insert(arr, c)}.
@@ -1325,15 +1325,15 @@ walk point-location strategy by calling \ccc{insert(arr, c)}.
 \label{arr_sssec:insert_point}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-While the arrangement class enables us to insert a point as an
-isolated vertex in a given face, the global functions
-\ccc{insert_vertex(arr, p, pl)} inserts a vertex to \ccc{arr} that
+The arrangement class enables you to insert a point as an isolated
+vertex in a given face. However, the global function
+\ccc{insert_vertex(arr, p, pl)} inserts a vertex into \ccc{arr} that
 corresponds to the point \ccc{p} at an arbitrary location. It uses
 the point-location object \ccc{pl} to locate the point in the
-arrangement (by default, the walk point-location strategy is used)
-and acts according to the result:
+arrangement (by default, the walk point-location strategy is used),
+and acts according to the result as follows:
 \begin{itemize}
-\item If \ccc{p} is located inside a face, it inserts it as an
+\item If \ccc{p} is located inside a face, it is inserted as an
 isolated vertex inside this face.
 \item If \ccc{p} lies on an edge, the edge is split to create a
 vertex associated with \ccc{p}.
@@ -1343,9 +1343,9 @@ we are done.
 In all cases, the function returns a handle to the vertex
 associated with \ccc{p}.
 
-As the insertion operation may involve splitting curves, the
-arrangement \ccc{arr} should be instantiated with a traits class
-that models the \ccc{ArrangementXMonotoneTraits_2} concept.
+The arrangement \ccc{arr} should be instantiated with a traits class
+that models the \ccc{ArrangementXMonotoneTraits_2} concept, as the
+insertion operation may involve splitting curves.
 
 \subsubsection{An Example}
 \label{arr_sssec:insert_ex}
@@ -1359,8 +1359,8 @@ that models the \ccc{ArrangementXMonotoneTraits_2} concept.
 \end{ccTexOnly}
 \caption{An arrangement of five intersecting line segments, as
 constructed in \ccc{example8.C} and \ccc{example9.C}. The segment
-endpoints are marked with dark dots and the arrangement vertices
-that correspond to intersection points are marked by white dots.
+endpoints are marked with disks and the arrangement vertices
+that correspond to intersection points are marked by circles.
 The query point $q$ is marked with a cross and the face that
 contains it is shaded.}
 \label{arr_fig:ex_8}
@@ -1372,21 +1372,21 @@ contains it is shaded.}
 %\end{ccHtmlOnly}
 \end{figure}
 
-The following program constructs an arrangement of intersecting
-line segments. We know that $s_1$ and $s_2$ do not intersect, so
+The program below constructs an arrangement of intersecting
+line-segments. We know that $s_1$ and $s_2$ do not intersect, so
 we use \ccc{insert_non_intersecting()} to insert them into the
 empty arrangement. The rest of the segments are inserted using
 \ccc{insert_x_monotone()} or \ccc{insert()}, which are equivalent
 in case of line segments. The resulting arrangement consists of
-$13$ vertices, $16$ edges and $5$ faces, as can be seen in
+$13$ vertices, $16$ edges, and $5$ faces, as can be seen in
 Figure~\ref{arr_fig:ex_8}.
 
-In the previous examples, all arrangement vertices corresponded to
+In the previous examples, all arrangement vertices correspond to
 segment endpoints. In this case we have additional vertices that
 correspond to intersection points between two segments. The
-coordinates of these intersection points are rational numbers if
-the input coordinates are rational (or integer) --- we therefore
-use the \ccc{Quotient<int>} number type to represent the
+coordinates of these intersection points are rational numbers, if
+the input coordinates are rational (or integer). Therefore,
+the \ccc{Quotient<int>} number type is used to represent the
 coordinates:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example8.C}
@@ -1395,8 +1395,8 @@ coordinates:
 \label{arr_ssec:agg_insert}
 %------------------------------------------
 %
-Let us assume we have to insert a set of $m$ input curves into an
-arrangement. It is possible of course to do this incrementally,
+Let us assume that we have to insert a set of $m$ input curves into an
+arrangement. It is possible of course to do this incrementally, 
 inserting the curves one by one, as shown in the previous section.
 However, the arrangement package provides three global functions
 \ccc{insert_non_intersecting(arr, begin, end)},
@@ -1406,20 +1406,20 @@ iterators \ccc{[begin, end)} into an arrangement \ccc{arr}. The
 different functions accept a set of pairwise interior-disjoint
 $x$-monotone curves, a set of $x$-monotone curves that may
 intersect one another, or a set of general (not necessarily
-$x$-monotone) \ccc{Curve_2} objects --- exactly as their
-incremental counterparts.
+$x$-monotone) curves of type \ccc{Curve_2} --- exactly as their
+counterpart incremental version.
 
-We make a distinction between two cases: (i) The given arrangement
+We distinguish between two cases: (i) The given arrangement
 \ccc{arr} is empty (has only an unbounded face), so we have to
 construct it from scratch. (ii) We have to insert $m$ input curves
 to a non-empty arrangement \ccc{arr}.
 
 In the first case, we have to sweep over the input curves, compute
 their intersection points and construct the \dcel\ that represents
-their planar arrangement. This process can be performed in
+their planar arrangement. This process is performed in
 $O\left((m + k)\log m\right)$ time, where $k$ is the total number
 of intersection points. The running time is asymptotically better
-than the time needed for incremental insertion if the arrangement
+than the time needed for incremental insertion, if the arrangement
 is relatively sparse (when $k$ is bounded by $\frac{m^2}{\log
 m}$), but in practice it is recommended to use this aggregated
 construction process even for dense arrangements, since the
@@ -1427,15 +1427,15 @@ sweep-line algorithm needs less geometric operations compared to
 the incremental insertion algorithms.
 
 Another important advantage the aggregated insertion functions
-have is that they require no point-location queries, thus no
+have is that they do not issue point-location queries. Thus, no
 point-location object needs to be attached to the arrangement. As
 explained in Section~\ref{arr_ssec:pl}, there is a tradeoff
 between construction time and query time in each of the
 point-location strategies, which affects the running times of the
-incremental insertion process. This tradeoff plays no role in case
-of aggregated insertion.
+incremental insertion process. Naturally, this tradeoff is irrelevant
+in case of aggregated insertion.
 
-The following example shows how to construct the arrangement of
+The example below shows how to construct the arrangement of
 line segments depicted in Figure~\ref{arr_fig:ex_8} and built
 incrementally in \ccc{example8.C}, as shown in the previous
 section. We use the aggregated version of
@@ -1446,10 +1446,9 @@ arrangement:
 \ccIncludeExampleCode{../examples/Arrangement_2/example9.C}
 
 In case we have to insert a set of $m$ curves into an existing
-arrangement, we should consider the size of the arrangement $n$.
-As a rule of thumb, if $m = o(\sqrt{n})$ it is usually more
-efficient to insert the curves one by one. For larger input sets,
-it is recommended to use the aggregated insertion procedures.
+arrangement, we consider the size of the arrangement $n$.
+As a rule of thumb, if $m = o(\sqrt{n})$, we insert the curves one by
+one. For larger input sets, we use the aggregated insertion procedures.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -1471,10 +1470,10 @@ dashed line) overlaps one of the ${\mathcal S}_1$ segments.}
 %\end{ccHtmlOnly}
 \end{figure}
 
-In following example we aggregately construct an arrangement of a
-set ${\mathcal S}_1$ containing five line segments, then insert a
-single segment incrementally, and finally add a set ${\mathcal
-S}_2$ with five more line segments in an aggregated fashion. Note
+In example below we aggregately construct an arrangement of a set
+${\mathcal S}_1$ containing five line segments. Then, insert a single
+segment incrementally. Finally, we add a set ${\mathcal S}_2$ with
+five more line segments in an aggregated fashion. Note 
 that the line segments of ${\mathcal S}_1$ are pairwise
 interior-disjoint, so we use \ccc{insert_non_intersecting()}.
 ${\mathcal S}_2$ also contain pairwise interior-disjoint segments,
@@ -1718,8 +1717,8 @@ always stored by an increasing order of their $x$-coordinates.
 \end{center}
 \end{ccTexOnly}
 \caption{An arrangement of three polylines, as constructed in
-\ccc{example12.C}. Dark dots mark vertices associated with
-polyline endpoints while white dots mark vertices that correspond
+\ccc{example12.C}. Disks mark vertices associated with
+polyline endpoints while circles mark vertices that correspond
 to intersection points. Note that $\pi_2$ is split into three
 $x$-monotone polylines and that $\pi_1$ and $\pi_3$ have two
 overlapping sections.}
@@ -1862,7 +1861,7 @@ also support basic accessor functions such as \ccc{source()},
 \end{ccTexOnly}
 \caption{An arrangement of three circles, as constructed in
 \ccc{example13.C}. Each circle is split into two $x$-monotone
-circular arcs, whose endpoints are drawn as dark dots. White dots
+circular arcs, whose endpoints are drawn as disks. Circles
 mark vertices that correspond to intersection points. The vertex
 $v_{\rm max}$ is a common intersection point of all three
 circles.}
@@ -2087,8 +2086,8 @@ them) and store the same data field(s).
 \end{center}
 \end{ccTexOnly}
 \caption{An arrangement of six red and blue segments, as
-constructed in \ccc{example17.C}. Dark dots correspond to
-red--blue intersection points, while white dots mark the endpoints
+constructed in \ccc{example17.C}. Disks correspond to
+red--blue intersection points, while circles mark the endpoints
 of red--blue overlaps.}
 \label{arr_fig:ex_17}
 %\begin{ccHtmlOnly}
