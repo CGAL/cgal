@@ -211,8 +211,8 @@ public:
 
       if(this->m_is_event_on_above)
       {
-              // The current event point starts at the interior of a curve at the 
-              // y-structure (can also indicates overlap).
+        // The current event point starts at the interior of a curve at the
+        // y-structure (can also indicates overlap).
         if(! this->m_currentEvent->has_right_curves())
         {
           // event of isolated point
