@@ -268,7 +268,7 @@ private:
     Verbose_ostream          vout2;     // used for more diagnostic output
     Verbose_ostream          vout3;     // used for full diagnostic output
     Verbose_ostream          vout4;     // used for output of basis inverse
-    Verbose_ostream	         vout5; 	// used for output of validity tests
+    Verbose_ostream	     vout5; 	// used for output of validity tests
     
     // pricing strategy
     Pricing_strategy*        strategyP;
@@ -293,11 +293,11 @@ private:
     // auxiliary problem    
     A_art                    art_A;     // artificial part of constraint matrix
     S_art                    art_s;     // special artificial column for slacks
-    int                      art_s_i;   // art_s_i>=0 ->index of special artificial
-    					// column
-					// art_s_i == -1 -> no sp. art. col
-					// art_s_i == -2 -> sp. art. col removed
-					// after it left basis 
+    int                      art_s_i;   // art_s_i>=0  -> index of special
+                                        //                artificial column
+					// art_s_i==-1 -> no sp. art. col
+					// art_s_i==-2 -> sp. art. col removed
+					//                after it left basis 
     int                      art_basic; // number of basic artificial variables
     C_aux                    aux_c;     // objective function for phase I
     					// initially has the same size as A_art
@@ -923,7 +923,8 @@ public:
 
 private:
   // validity checks:
-    bool is_auxiliary_problem_feasible();
+    bool is_solution_feasible_for_auxiliary_problem();
+    bool is_solution_optimal_for_auxiliary_problem();
 
 public:
   // validity checks:

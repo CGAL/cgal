@@ -3755,7 +3755,7 @@ is_solution_optimal_aux()
     if (art_s_i == -2) ++no_of_wo_vars;
     
     
-    CGAL_expensive_precondition(is_auxiliary_problem_feasible());
+    CGAL_expensive_precondition(is_solution_feasible_for_auxiliary_problem());
 
     // solution vector of auxiliary problem
     Values x_aux(no_of_wo_vars, et0);
@@ -4089,7 +4089,7 @@ is_solution_valid()
 			    vout << "optimal: " << o << std::endl;
 			}
 			return (f && o);
-    case INFEASIBLE: 	f = this->is_auxiliary_problem_feasible();
+    case INFEASIBLE: 	f = this->is_solution_feasible_for_auxiliary_problem();
     			o = this->is_solution_optimal_aux();
 			aux_positive = this->solution() > et0;
 			CGAL_qpe_debug {
@@ -4128,7 +4128,7 @@ bool QP_solver<Rep_>::is_valid()
       }
     case INFEASIBLE:
       {
-	const bool f = this->is_auxiliary_problem_feasible();
+	const bool f = this->is_solution_feasible_for_auxiliary_problem();
 	const bool o = this->is_solution_optimal_aux();
 	const bool aux_positive = this->solution() > et0;
 	CGAL_qpe_debug {
@@ -4155,7 +4155,7 @@ bool QP_solver<Rep_>::is_valid()
 }
 
 template < class Rep_ >
-bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
+bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
 {
   // some simple consistency checks:
   CGAL_qpe_assertion(is_phaseI);
@@ -4187,7 +4187,7 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
   // below that the right-hand size is multiplied by d because we
   // maintain the denominator of the solution (which is d) separately.
 
-  // compute left-hand side of (L1):
+  // compute left-hand side of (L1) (up to slackies):
   Values lhs_col(qp_m, et0);
   Value_const_iterator x_it = x_B_O.begin();
   for (Index_const_iterator i_it = B_O.begin();
@@ -4203,6 +4203,8 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
       } else                              // special artificial variable
 	for (int i=0; i<qp_m; ++i)
 	  lhs_col[i] += (*x_it) * art_s[i];
+
+  // compute left-hand side of (L1) (part for slackies):
   x_it = x_B_S.begin();
   for (Index_const_iterator i_it = B_S.begin();
        i_it != B_S.end();
@@ -4217,6 +4219,110 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
       return false;
   
   return true;
+}
+
+template < class Rep_ >
+bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
+{
+  CGAL_expensive_precondition(is_solution_feasible_for_auxiliary_problem());
+
+  // get number of working variables:
+  // Note for code below: if there ever was a special artifial
+  // variable, it has to be considered for this optimality test,
+  // even if it has already left the basis.
+  const int no_of_wo_vars = this->number_of_working_variables() +
+    (art_s_i == -2)? 1 : 0;
+  
+
+    Index_iterator i_it, M_i_it;
+    Value_iterator v_it;
+    C_auxiliary_iterator c_it;
+    Indices        M;
+    unsigned int            k;
+
+    // collect solution vector of auxiliary problem:
+    Values x_aux(no_of_wo_vars, et0);
+    v_it = x_B_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        x_aux[(*i_it)] = (*v_it);
+    }
+    v_it = x_B_S.begin();
+    for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
+        x_aux[*i_it] = (*v_it);
+    }
+    
+    
+    // Note: lambda[i] <= 0 for qp_r[i] == "GREATER_EQUAL"
+    Values lambda_aux(qp_m, et0);
+    v_it = lambda.begin();
+    for (i_it = C.begin(); i_it != C.end(); ++i_it, ++v_it) {
+        lambda_aux[(*i_it)] = (*v_it);
+    }
+    
+    for (int i = 0; i < qp_m; ++i) {
+        M.push_back(i);
+    }
+ 
+    
+    //debug
+    CGAL_qpe_debug {
+        for (int col = 0; col < qp_m; ++col) {
+	    vout5 << "lambda_aux[" << col << "]= " << lambda_aux[col] 
+	        << std::endl;
+        }        
+    }
+     
+    // tau^T = c^T + lambda'^T * aux_A
+    Values tau_aux(no_of_wo_vars, et0);
+    c_it = aux_c.begin();
+    for (int col = qp_n+slack_A.size(); col < no_of_wo_vars; ++c_it, ++col) {
+        tau_aux[col] = ET(*c_it) * d;
+    }
+    
+    for (int col = 0; col < no_of_wo_vars; ++col) {
+	if (col < qp_n) {                // ordinary original variable
+	    A_by_index_accessor a_accessor(qp_A[col]);
+	    for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+	        tau_aux[col] += lambda_aux[*M_i_it]
+		    * (*A_by_index_iterator( M_i_it, a_accessor));
+	    }
+	} else { 
+	    k = col - qp_n;
+	    if (k < slack_A.size()) {      // slack variable
+	        tau_aux[ col] = ( slack_A[ k].second ? -et1 :  et1)
+		    * lambda_aux[slack_A[k].first];
+	    } else {                          //artificial variable
+	        k -= slack_A.size();
+	        if ((art_s_i == -1) || (col < no_of_wo_vars - 1)) {
+		    				// normal artificial variable
+		    tau_aux[ col] += (art_A[ k].second ? -et1 : et1)
+		        * lambda_aux[ art_A[k].first];
+	        } else {                      // special artificial variable
+	            S_by_index_accessor s_accessor( art_s.begin());
+		    for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+		        tau_aux[ col] += lambda_aux[*M_i_it]
+			    * (*S_by_index_iterator( M_i_it, s_accessor));
+	            }
+	        }
+	    }
+	}
+	CGAL_qpe_debug {
+	    vout5 << "tau_aux[" << col << "]= " << tau_aux[col] << std::endl;
+	}
+    }
+    // since there are only equality constraints in auxiliary problem
+    // we only have to
+    // check tau >= 0, tau^T * x' == 0
+    for (unsigned int col = 0; col < tau_aux.size(); ++col) {
+        if (tau_aux[col] >= et0) {
+	    if (tau_aux[col] * x_aux[col] != et0) {
+	        return false;
+	    }
+	} else {
+	    return false;
+	}
+    }
+    return true;     
 }
 
 CGAL_END_NAMESPACE
