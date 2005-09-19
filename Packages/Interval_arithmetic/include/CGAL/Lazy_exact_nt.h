@@ -87,6 +87,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG 
 template <class T>
 void
 print_at(std::ostream& os, const T& at)
@@ -160,6 +161,8 @@ print_dag(const Origin& nv, std::ostream& os, int level)
   os << "Origin" << std::endl;
 }
 
+#endif
+
 // Abstract base class for lazy numbers and lazy objects
 template <typename AT_, typename ET, typename E2A>
 struct Lazy_construct_rep : public Rep
@@ -208,6 +211,7 @@ public:
     return *et;
   }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void print_at_et(std::ostream& os, int level) const
   {
     for(int i = 0; i < level; i++){
@@ -227,6 +231,7 @@ public:
   }
 
   virtual void print_dag(std::ostream& os, int level) const {}
+#endif
 
   bool is_lazy() const { return et == NULL; }
   virtual void update_exact() = 0;
@@ -244,11 +249,13 @@ struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
   Lazy_exact_rep (const Interval_nt<false> & i)
       : Base(i) {}
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
     this->print_at_et(os, level);
   }
+#endif  
 
 private:
   Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
@@ -326,6 +333,7 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
   int depth() const { return op1.depth() + 1; }
   void prune_dag() { op1 = Lazy_exact_nt<ET>::zero(); }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -335,6 +343,7 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
       CGAL::print_dag(op1, os, level+1);
     }
   }
+#endif
 };
 
 // Base binary operation
@@ -354,6 +363,8 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
     op1 = Lazy_exact_nt<ET1>::zero();
     op2 = Lazy_exact_nt<ET2>::zero();
   }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -364,6 +375,7 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
       CGAL::print_dag(op2, os, level+1);
     }
   }
+#endif
 };
 
 // Here we could use a template class for all operations (STL provides

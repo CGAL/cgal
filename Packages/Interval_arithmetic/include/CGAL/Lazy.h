@@ -266,6 +266,8 @@ public:
     : Lazy_construct_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), ec_(ec), l1_(l1)
   {}
 
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const 
   {
@@ -275,6 +277,7 @@ public:
       CGAL::print_dag(l1_, os, level+1);
     }
   }
+#endif
 
 };
 
@@ -310,6 +313,7 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))), l1_(l1), l2_(l2)
   {}
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -320,6 +324,7 @@ public:
       CGAL::print_dag(l2_, os, level+1);
     }
   }
+#endif
 };
 
 
@@ -356,6 +361,7 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3))), l1_(l1), l2_(l2), l3_(l3)
   {}
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -367,6 +373,7 @@ public:
       CGAL::print_dag(l3_, os, level+1);
     }
   }
+#endif
 };
 
 
@@ -405,6 +412,7 @@ public:
   {}
 
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -418,6 +426,7 @@ public:
       CGAL::print_dag(l4_, os, level+1);
     }
   }
+#endif
 };
 
 //____________________________________________________________
@@ -456,6 +465,7 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5))), l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
   {}
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -470,6 +480,7 @@ public:
       CGAL::print_dag(l5_, os, level+1);
     }
   }
+#endif
 };
 
 struct Approx_converter {
@@ -533,6 +544,7 @@ public:
     ac(CGAL::approx(l1), std::back_inserter(this->at));
   }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -544,6 +556,7 @@ public:
 
     }
   }
+#endif
 };
 
 
@@ -584,6 +597,7 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), std::back_inserter(this->at));
   }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -595,6 +609,7 @@ public:
       CGAL::print_dag(l2_, os, level+1);
     }
   }
+#endif
 };
 
 
@@ -630,6 +645,8 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at);
   }
 
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -641,6 +658,7 @@ public:
       CGAL::print_dag(l2_, os, level+1);
     }
   }
+#endif
 };
 
 
@@ -678,6 +696,7 @@ public:
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at.first, this->at.second);
   }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
@@ -689,6 +708,7 @@ public:
       CGAL::print_dag(l2_, os, level+1);
     }
   }
+#endif
 };
 
 
