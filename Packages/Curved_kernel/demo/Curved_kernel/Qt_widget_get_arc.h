@@ -52,9 +52,9 @@ class Qt_widget_get_arc
   typedef typename R::FT                         FT;
   typedef typename R::Circle_2                   Circle;
   typedef typename R::Circular_arc_2             Circular_arc_2;
-  typedef typename R::Linear_kernel::Segment_2   Segment;
-  typedef typename R::Linear_kernel::Line_2      Line;
-  typedef typename R::Linear_kernel::Point_2     Point;
+  typedef typename R::Segment_2                  Segment;
+  typedef typename R::Line_2                     Line;
+  typedef typename R::Point_2                    Point;
 
 public:
 
@@ -345,8 +345,9 @@ private:
 public:
 
   Circular_arc_2 get_circular_arc() {
-    Circle circ (introduced_circle.center(),
-                 introduced_circle.squared_radius());
+    //Circle circ (introduced_circle.center(),
+                 //introduced_circle.squared_radius());
+    Circle circ = introduced_circle;
 
     if (clockwise)
       std::swap(first_point, second_point);
