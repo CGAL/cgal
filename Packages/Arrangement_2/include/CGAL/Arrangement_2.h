@@ -670,9 +670,14 @@ public:
  bool _are_vertices_different() const;
 
  /*!
-  * Check the the curves of the arrangement are disjoint interior 
+  * Check that the curves of the arrangement are disjoint interior 
   */
  bool _are_curves_disjoint_interior() const;
+
+ /*!
+  * Check that the curves around a given vertex are ordered clock-wise
+  */
+ bool _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const;
   
   /*! Get the number of arrangement vertices. */
   Size number_of_vertices () const

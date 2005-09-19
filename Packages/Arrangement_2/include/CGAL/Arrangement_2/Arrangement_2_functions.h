@@ -2753,6 +2753,9 @@ bool Arrangement_2<Traits,Dcel>::is_valid(Vertex_const_handle v) const
     ++ec;
   }
   while (ec != start);
+
+  if(!_are_curves_ordered_cw_around_vertrex(v))
+    return false;
   
   return true;
 }
@@ -2880,7 +2883,9 @@ bool Arrangement_2<Traits,Dcel>::is_valid(Halfedge_const_handle e) const
    return true;
  }
 
-
+ //---------------------------------------------------------------------------
+ // Check that the arrangement curves are disjoint interior 
+ //
  template<class Traits, class Dcel>
  bool Arrangement_2<Traits,Dcel>::_are_curves_disjoint_interior() const
  {
@@ -2894,6 +2899,41 @@ bool Arrangement_2<Traits,Dcel>::is_valid(Halfedge_const_handle e) const
   visitor.sweep_xcurves(curves.begin(), curves.end());
   
   return (!visitor.found_x());
+ }
+
+ //---------------------------------------------------------------------------
+ // Check that the curves around a given vertex are ordered clock-wise 
+ //
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::
+   _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const
+ {
+   if(v->degree() < 3)
+     return true;
+
+   typename Traits_wrapper_2::Is_between_cw_2  is_between_cw =
+     traits->is_between_cw_2_object();
+   Halfedge_around_vertex_const_circulator ec = v->incident_halfedges();
+   Halfedge_around_vertex_const_circulator start = ec;
+   do
+   {
+     Halfedge_around_vertex_const_circulator prev = ec;
+     --prev;
+     Halfedge_around_vertex_const_circulator next = ec;
+     ++next;
+     bool       eq_curr, eq_next;
+     if(!is_between_cw (ec->curve(),
+                        prev->curve(),
+                        next->curve(),
+                        v->point(),
+                        eq_curr,
+                        eq_next))
+       return false;
+
+     ++ec;
+   }
+   while (ec != start);
+   return true;
  }
 
 
