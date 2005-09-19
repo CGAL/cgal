@@ -36,6 +36,8 @@
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -638,10 +640,39 @@ public:
    * Check whether the arrangement is valid. In particular, check the
    * validity of each vertex, halfedge, and face.
    */
-  bool is_valid() const
-  {
-    return true;
-  }
+  bool is_valid() const;
+
+  /*!
+   * Check the validity of a given vertex 
+   */
+  bool is_valid(Vertex_const_handle v) const;
+
+  /*!
+   * Check the validity of a given halfedge
+   */
+  bool is_valid(Halfedge_const_handle e) const;
+
+  /*!
+   * Check the validity of a given face
+   */
+  bool is_valid(Face_const_handle f) const;
+
+  /*!
+   * Check the validity of a ccb of a given face
+   */
+  bool is_valid(const Ccb_halfedge_const_circulator& start,
+                Face_const_handle f) const;
+
+ /*!
+  * Check that all vertices are unique (no two vertices with the same 
+  * geometric point.
+  */
+ bool _are_vertices_different() const;
+
+ /*!
+  * Check the the curves of the arrangement are disjoint interior 
+  */
+ bool _are_curves_disjoint_interior() const;
   
   /*! Get the number of arrangement vertices. */
   Size number_of_vertices () const

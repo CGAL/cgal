@@ -25,6 +25,10 @@
 #ifndef CGAL_ARRANGEMENT_2_FUNCTIONS_H
 #define CGAL_ARRANGEMENT_2_FUNCTIONS_H
 
+#include <CGAL/function_objects.h> 
+#include <CGAL/Sweep_line_2/Sweep_line_2_visitors.h>
+#include <CGAL/Sweep_line_2.h>
+
 /*! \file
  * Member-function definitions for the Arrangement_2<Traits,Dcel> class.
  */
@@ -2667,6 +2671,231 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
   // Return the merged face.
   return (f1);
 }
+
+
+ //---------------------------------------------------------------------------
+ // Check whether the arrangement is valid. In particular, check the
+ // validity of each vertex, halfedge, and face.
+ //
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::is_valid() const
+{
+  Vertex_const_iterator vi;
+  for (vi = vertices_begin(); vi != vertices_end(); ++vi)
+  {
+    if (!is_valid(vi)) 
+    {
+      CGAL_warning("Invalid vertex!");
+      return false;
+    }
+  }
+    
+  Halfedge_const_iterator ei;
+  for (ei = halfedges_begin(); ei != halfedges_end(); ++ei) 
+  {
+    if (!is_valid(ei)) 
+    {
+      CGAL_warning("Invalid halfedge!");
+      return false;
+    }
+  }
+    
+  Face_const_iterator fi;
+  for (fi = faces_begin(); fi != faces_end(); ++fi) 
+  {
+    if (!is_valid(fi)) 
+    {
+      CGAL_warning("Invalid face!");
+      return false;
+    }
+  }
+  if(!_are_vertices_different())
+  {
+    CGAL_warning("Two(or more) vertices have the same point!");
+    return false;
+  }
+  if(!_are_curves_disjoint_interior())
+  {
+    CGAL_warning("Curves are not disjoint interior!");
+    return false;
+  }
+
+
+  return true;
+}
+
+
+//---------------------------------------------------------------------------
+// Check the validity of a vertex
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::is_valid(Vertex_const_handle v) const
+{    
+  // check if every edge from v has v as its target
+  if(v->is_isolated())
+  {
+    Face_const_handle f = this->incident_face(v);
+    if(f->is_unbounded())
+      return true;
+
+    return (_point_is_in(v->point(), _halfedge(f->outer_ccb())));
+  }
+
+  // the vertex is not isolated
+  Halfedge_around_vertex_const_circulator ec = v->incident_halfedges();
+  Halfedge_around_vertex_const_circulator start = ec;
+  do
+  {
+    if ((*ec).target() != v)
+    {
+      return false;
+    }
+    ++ec;
+  }
+  while (ec != start);
+  
+  return true;
+}
+
+
+//---------------------------------------------------------------------------
+// Check the validity of a halfedge
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::is_valid(Halfedge_const_handle e) const
+{
+  //check relations with next
+  if (e->target() != e->next()->source())
+    return false;
+
+  //check relations with the twin
+  if(e != e->twin()->twin())
+    return false;
+  
+  //check that the end points of the curve associated with the halfedge
+  //really equal the source and target vertices of this halfedge.
+  const X_monotone_curve_2& cv = e->curve();
+  const Point_2& cv_s = traits->construct_min_vertex_2_object()(cv);
+  const Point_2& cv_t = traits->construct_max_vertex_2_object()(cv);
+
+  const Point_2& e_s  = e->source()->point();
+  const Point_2& e_t  = e->target()->point();
+
+  typename Traits_wrapper_2::Equal_2          equal =
+                                            traits->equal_2_object();
+
+  Comparison_result e_res = traits->compare_xy_2_object()(e_s, e_t);
+  if(e_res == SMALLER)
+  {
+    return(equal(e_s, cv_s) && equal(e_t, cv_t));
+  }
+  if(e_res == LARGER)
+  {
+    return(equal(e_s, cv_t) && equal(e_t, cv_s));
+  }
+
+  // in that case, the source and target of the halfedge are equal
+  return false;
+}
+
+
+//---------------------------------------------------------------------------
+// Check the validity of a face
+//
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::is_valid(Face_const_handle f) const
+ {   
+   // check if all edges of f (on all ccb's) refer to f (as their face)
+   Holes_const_iterator iccbit;
+   Ccb_halfedge_const_circulator ccb_circ;
+   
+   if (!f->is_unbounded())
+   {
+     ccb_circ = f->outer_ccb();
+     if (!is_valid(ccb_circ, f))
+       return false;
+   }
+    
+   for (iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit)      
+   {
+     ccb_circ = *iccbit;
+     if (!is_valid(ccb_circ, f))
+       return false;
+   }
+   
+   return true;
+ }
+
+ //---------------------------------------------------------------------------
+ // Check the validity of a ccb of a given face
+ //
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::is_valid
+   (const Ccb_halfedge_const_circulator& start,
+    Face_const_handle f) const
+ {
+   Ccb_halfedge_const_circulator circ = start;
+    
+   do 
+   {
+     if ((*circ).face() != f)
+       return false;
+     ++circ;
+   }
+   while (circ != start);
+   
+   return true;
+ }
+
+ //---------------------------------------------------------------------------
+ // Check that all vertices are unique (no two vertices with the same 
+ // geometric point
+ //
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::_are_vertices_different() const
+ {
+   if(number_of_vertices() < 2)
+     return true;
+
+   std::vector<Point_2> points_vec(number_of_vertices());
+   unsigned int i = 0;
+   for(Vertex_const_iterator vit = vertices_begin();
+       vit != vertices_end();
+       ++vit, ++i)
+   {
+     points_vec[i] = vit->point();
+   }
+   typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+
+   typedef typename Traits_wrapper_2::Compare_xy_2    Compare_xy_2; 
+   Compare_xy_2  compare_xy = traits->compare_xy_2_object();
+   Compare_to_less<Compare_xy_2> cmp = compare_to_less (compare_xy);
+   std::sort(points_vec.begin(), points_vec.end(), cmp);
+   for(i = 1; i < points_vec.size(); ++i)
+   {
+     if(equal(points_vec[i-1], points_vec[i]))
+       return false;
+   }
+
+   return true;
+ }
+
+
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::_are_curves_disjoint_interior() const
+ {
+  // Define the sweep-line types:
+  typedef Sweep_line_do_curves_x_visitor<Traits>      Visitor;
+  typedef Sweep_line_2<Traits, Visitor>               Sweep_line ;
+  
+  // Perform the sweep.
+  Visitor     visitor;
+  Sweep_line  sweep_line (traits, &visitor);
+  visitor.sweep_xcurves(curves.begin(), curves.end());
+  
+  return (!visitor.found_x());
+ }
+
 
 CGAL_END_NAMESPACE
 

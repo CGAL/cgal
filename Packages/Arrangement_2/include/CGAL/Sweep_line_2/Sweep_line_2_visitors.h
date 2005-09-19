@@ -235,9 +235,20 @@ class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
                                                          points_vec.end());
   }
 
+
+  template <class XCurveIterator>
+  void sweep_xcurves(XCurveIterator begin, XCurveIterator end)
+  {
+    //Perform the sweep
+    reinterpret_cast<Sweep_line*>(m_sweep_line) -> sweep(begin, end);
+  }
+
+
   bool after_handle_event(Event* event,SL_iterator iter, bool flag)
   {
-    if(event->is_intersection() || event->is_weak_intersection())
+    if(event->is_intersection() ||
+       event->is_weak_intersection() ||
+       event->is_overlap())
     {
       m_found_x = true;
       reinterpret_cast<Sweep_line*>(m_sweep_line) -> stop_sweep();
@@ -252,13 +263,11 @@ class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
   }
 
 
-
 protected:
 
   bool m_found_x;
 
 };
-
 
 
 CGAL_END_NAMESPACE
