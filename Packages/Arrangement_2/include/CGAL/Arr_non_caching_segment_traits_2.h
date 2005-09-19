@@ -48,6 +48,7 @@ public:
   
   typedef Arr_non_caching_segment_basic_traits_2<Kernel>   Base;
   typedef typename Base::Segment_assertions                Segment_assertions;
+  typedef typename Base::Has_exact_division                Has_exact_division;
 
   /*! Default constructor */
   Arr_non_caching_segment_traits_2() : Base() {}
