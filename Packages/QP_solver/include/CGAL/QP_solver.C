@@ -75,8 +75,10 @@ QP_solver(int n, int m,
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
 { 
   set_pricing_strategy(strategy);
-  set(n,m,A,b,c,D,r);
+  // since 'set' calls 'init_x_O_v_i' which in turn accesses
+  // qp_fl, qp_l, qp_fu, qp_u the two following calls are in this order
   set_explicit_bounds(n, fl, lb, fu, ub);
+  set(n,m,A,b,c,D,r);
   set_verbosity(verbosity);
   init();
   solve();
@@ -116,7 +118,8 @@ set( int n, int m,
     } else {
 	  art_A.reserve( qp_m);
     }
-
+    
+    init_x_O_v_i(Is_in_standard_form());
     set_up_auxiliary_problem(is_perturbed);
     
     e = qp_m-slack_A.size(); // number of equalities
@@ -468,7 +471,7 @@ init( )
     init_basis();
     
     // initialize non-basic original variables
-    init_x_O_v_i(Is_in_standard_form());
+    // init_x_O_v_i(Is_in_standard_form());
         
     // initial solution
     init_solution();
@@ -656,7 +659,7 @@ void  QP_solver<Rep_>::
 init_r_C(Tag_false)
 {
     r_C.insert(r_C.end(), C.size(), et0);
-    multiply__A_CxN_O(x_O_v_i.begin(), r_C.begin());  
+    multiply__A_CxN_O(r_C.begin());  
 }
 
 // initialize r_S_B
@@ -672,7 +675,7 @@ void  QP_solver<Rep_>::
 init_r_S_B(Tag_false)
 {
     r_S_B.insert(r_S_B.end(), S_B.size(), et0);
-    multiply__A_S_BxN_O(x_O_v_i.begin(), r_S_B.begin()); 
+    multiply__A_S_BxN_O(r_S_B.begin()); 
 }
 
 // initialize r_B_O
@@ -688,7 +691,7 @@ void  QP_solver<Rep_>::
 init_r_B_O(Tag_false)
 {
     r_B_O.insert(r_B_O.end(), B_O.size(), et0);
-    multiply__2D_B_OxN_O(x_O_v_i.begin(), r_B_O.begin());
+    multiply__2D_B_OxN_O(r_B_O.begin());
 }
 
 // initialize w
@@ -704,7 +707,7 @@ void  QP_solver<Rep_>::
 init_w(Tag_false)
 {
     w.insert(w.end(), qp_n, et0);
-    multiply__2D_OxN_O(x_O_v_i.begin(), w.begin());
+    multiply__2D_OxN_O(w.begin());
 }
 
 
@@ -1254,16 +1257,24 @@ ratio_test_1( )
 	}
     }
 
- 
+// TESTING: 
+    direction = 1;
+    
     // check `t_i's
     x_i = et1;                                          // trick: initialize
     q_i = et0;                                          // minimum with +oo
 
+    // computation of t_{min}^{j}
+    ratio_test_1__t_min_j(Is_in_standard_form());    
+
     // what happens, if all original variables are nonbasic?
+/*
     ratio_test_1__t_i(   B_O.begin(),   B_O.end(),
 		       x_B_O.begin(), q_x_O.begin(), Tag_false());
     ratio_test_1__t_i(   B_S.begin(),   B_S.end(),
 		       x_B_S.begin(), q_x_S.begin(), Has_equalities_only_and_full_rank());
+*/		       
+    ratio_test_1__t_min_B(Has_equalities_only_and_full_rank());    
 
     // check `t_j'
     ratio_test_1__t_j( Is_linear());
@@ -1313,6 +1324,332 @@ ratio_test_1( )
 	}
     }
 }
+
+
+template < class Rep_ >                         // Standard form
+void  QP_solver<Rep_>::
+ratio_test_1__t_min_j(Tag_true is_in_standard_form)
+{
+}
+
+template < class Rep_ >                         // Upper bounded
+void  QP_solver<Rep_>::
+ratio_test_1__t_min_j(Tag_false is_in_standard_form)
+{
+    if (j < qp_n) {                                 // original variable
+        if (direction == 1) {
+            if (x_O_v_i[j] == LOWER) {              // has lower bound value
+                if (*(qp_fu+j)) {                   // has finite upper bound
+                    x_i = qp_u[j] - qp_l[j];
+                    q_i = et1;
+                    i = j;
+                    ratio_test_bound_index = UPPER;
+                } else {                            // has infinite upper bound
+                    x_i = et1;
+                    q_i = et0;
+                }
+            } else {                                // has value zero
+                if (*(qp_fu+j)) {                   // has finite upper bound
+                    x_i = qp_u[j];
+                    q_i = et1;
+                    i = j;
+                    ratio_test_bound_index = UPPER;
+                } else {                            // has infinite upper bound
+                    x_i = et1;
+                    q_i = et0;                    
+                }
+            }
+        } else {                                    // direction == -1
+            if (x_O_v_i[j] == UPPER) {              // has upper bound value
+                if (*(qp_fl+j)) {                   // has finite lower bound
+                    x_i = qp_u[j] - qp_l[j];
+                    q_i = et1;
+                    i = j;
+                    ratio_test_bound_index = LOWER;
+                } else {                            // has infinite lower bound
+                    x_i = et1;
+                    q_i = et0;
+                }
+            } else {                                // has value zero
+                if (*(qp_fl+j)) {                   // has finite lower bound
+                    x_i = -qp_l[j];
+                    q_i = et1;
+                    i = j;
+                    ratio_test_bound_index = LOWER;
+                } else {                            // has infinite lower bound
+                    x_i = et1;
+                    q_i = et0;
+                }
+            }
+        }
+    } else {                                        // slack or artificial var
+        x_i = et1;
+        q_i = et0;
+    }
+}
+
+template < class Rep_ >
+void  QP_solver<Rep_>::
+ratio_test_1__t_min_B(Tag_true  has_equalities_only_and_full_rank)
+{
+    ratio_test_1_B_O__t_i(B_O.begin(), B_O.end(), x_B_O.begin(),
+                        q_x_O.begin(), Is_in_standard_form());
+}
+
+template < class Rep_ >
+void  QP_solver<Rep_>::
+ratio_test_1__t_min_B(Tag_false has_equalities_only_and_full_rank)
+{
+    ratio_test_1_B_O__t_i(B_O.begin(), B_O.end(), x_B_O.begin(),
+                        q_x_O.begin(), Is_in_standard_form());
+    ratio_test_1_B_S__t_i(B_S.begin(), B_S.end(), x_B_S.begin(),
+                        q_x_S.begin(), Is_in_standard_form());
+}    
+
+// ratio test for the basic original variables
+template < class Rep_ >                         // Standard form
+void  QP_solver<Rep_>::
+ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
+                    Value_iterator x_it, Value_iterator q_it,
+                    Tag_true  is_in_standard_form)
+{    
+    for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+        test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
+    }
+}
+
+// ratio test for the basic original variables                    
+template < class Rep_ >                         // Upper bounded
+void  QP_solver<Rep_>::
+ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
+                    Value_iterator x_it, Value_iterator q_it,
+                    Tag_false is_in_standard_form)
+{
+    if (is_phaseI) {
+        if (direction == 1) {
+            for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+                test_mixed_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
+            }
+        } else {
+            for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+                test_mixed_bounds_dir_neg(*i_it, *x_it, *q_it, i, x_i, q_i);
+            }
+        }
+    } else {
+        if (direction == 1) {
+            for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+                test_explicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
+            }
+        } else {
+            for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+                test_explicit_bounds_dir_neg(*i_it, *x_it, *q_it, i, x_i, q_i);
+            }
+        }
+    }
+}
+
+// ratio test for the basic slack variables
+template < class Rep_ >                         // Standard form
+void  QP_solver<Rep_>::
+ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
+                Value_iterator x_it, Value_iterator q_it,
+                Tag_true  is_in_standard_form)
+{
+    for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+        test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
+    }
+}
+
+// ratio test for the basic slack variables
+template < class Rep_ >                         // Upper bounded
+void  QP_solver<Rep_>::
+ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
+                Value_iterator x_it, Value_iterator q_it,
+                Tag_false is_in_standard_form)
+{
+    if (direction == 1) {
+        for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+            test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
+        }
+    } else {
+        for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
+            test_implicit_bounds_dir_neg(*i_it, *x_it, *q_it, i, x_i, q_i);
+        }    
+    }
+}
+
+// test for one basic variable with implicit bounds only,
+// note that this function writes the member variables i, x_i, q_i
+template < class Rep_ >
+void  QP_solver<Rep_>::
+test_implicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
+                                int& i_min, ET& d_min, ET& q_min)
+{
+    if ((q_k > et0) && (x_k * q_min < d_min * q_k)) {
+        i_min = k;
+        d_min = x_k;
+        q_min = q_k;
+    }
+}
+
+// test for one basic variable with implicit bounds only,
+// note that this function writes the member variables i, x_i, q_i
+template < class Rep_ >
+void  QP_solver<Rep_>::
+test_implicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
+                                int& i_min, ET& d_min, ET& q_min)
+{
+    if ((q_k < et0) && (x_k * q_min < -(d_min * q_k))) {
+        i_min = k;
+        d_min = x_k;
+        q_min = -q_k;
+    }
+}
+
+// test for one basic variable with explicit bounds only,
+// note that this function writes the member variables i, x_i, q_i and
+// ratio_test_bound_index, although the second and third variable name
+// are in the context of upper bounding misnomers
+template < class Rep_ >
+void  QP_solver<Rep_>::
+test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
+                                int& i_min, ET& d_min, ET& q_min)
+{
+    if (q_k > et0) {                                // check for lower bound
+        if (*(qp_fl+k)) {
+            ET  d = x_k - qp_l[k]; 
+            if (d * q_min < d_min * q_k) {
+                i_min = k;
+                d_min = d;
+                q_min = q_k;
+                ratio_test_bound_index = LOWER;
+            }
+        }
+    } else {                                        // check for upper bound
+        if ((q_k < et0) && (*(qp_fu+k))) {
+            ET  d = ET(qp_u[k]) - x_k;
+            if (d * q_min < -(d_min * q_k)) {
+                i_min = k;
+                d_min = d;
+                q_min = -q_k;
+                ratio_test_bound_index = UPPER;
+            }    
+        }
+    }
+}
+
+// test for one basic variable with explicit bounds only,
+// note that this function writes the member variables i, x_i, q_i and
+// ratio_test_bound_index, although the second and third variable name
+// are in the context of upper bounding misnomers
+template < class Rep_ >
+void  QP_solver<Rep_>::
+test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
+                                int& i_min, ET& d_min, ET& q_min)
+{
+    if (q_k < et0) {                                // check for lower bound
+        if (*(qp_fl+k)) {
+            ET  d = x_k - qp_l[k]; 
+            if (d * q_min < -(d_min * q_k)) {
+                i_min = k;
+                d_min = d;
+                q_min = -q_k;
+                ratio_test_bound_index = LOWER;
+            }
+        }
+    } else {                                        // check for upper bound
+        if ((q_k > et0) && (*(qp_fu+k))) {
+            ET  d = ET(qp_u[k]) - x_k;
+            if (d * q_min < d_min * q_k) {
+                i_min = k;
+                d_min = d;
+                q_min = q_k;
+                ratio_test_bound_index = UPPER;
+            }    
+        }
+    }
+}
+
+// test for one basic variable with mixed bounds,
+// note that this function writes the member variables i, x_i, q_i and
+// ratio_test_bound_index, although the second and third variable name
+// are in the context of upper bounding misnomers
+template < class Rep_ >
+void  QP_solver<Rep_>::
+test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
+                                int& i_min, ET& d_min, ET& q_min)
+{
+    if (q_k > et0) {                                // check for lower bound
+        if (k < qp_n) {                             // original variable
+            if (*(qp_fl+k)) {
+                ET  d = x_k - qp_l[k];
+                if (d * q_min < d_min * q_k) {
+                    i_min = k;
+                    d_min = d;
+                    q_min = q_k;
+                    ratio_test_bound_index = LOWER;
+                }
+            }
+        } else {                                    // artificial variable
+            if (x_k * q_min < d_min * q_k) {
+                i_min = k;
+                d_min = x_k;
+                q_min = q_k;
+            }
+        }
+    } else {                                        // check for upper bound
+        if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
+            ET  d = ET(qp_u[k]) - x_k;
+            if (d * q_min < -(d_min * q_k)) {
+                i_min = k;
+                d_min = d;
+                q_min = -q_k;
+                ratio_test_bound_index = UPPER;
+            }
+        }
+    }
+}
+
+// test for one basic variable with mixed bounds,
+// note that this function writes the member variables i, x_i, q_i and
+// ratio_test_bound_index, although the second and third variable name
+// are in the context of upper bounding misnomers
+template < class Rep_ >
+void  QP_solver<Rep_>::
+test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
+                                int& i_min, ET& d_min, ET& q_min)
+{
+    if (q_k < et0) {                                // check for lower bound
+        if (k < qp_n) {                             // original variable
+            if (*(qp_fl+k)) {
+                ET  d = x_k - qp_l[k];
+                if (d * q_min < -(d_min * q_k)) {
+                    i_min = k;
+                    d_min = d;
+                    q_min = -q_k;
+                    ratio_test_bound_index = LOWER;
+                }
+            }
+        } else {                                    // artificial variable
+            if (x_k * q_min < -(d_min * q_k)) {
+                i_min = k;
+                d_min = x_k;
+                q_min = -q_k;
+            }
+        }
+    } else {                                        // check for upper bound
+        if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
+            ET  d = ET(qp_u[k]) - x_k;
+            if (d * q_min < d_min * q_k) {
+                i_min = k;
+                d_min = d;
+                q_min = q_k;
+                ratio_test_bound_index = UPPER;
+            }
+        }
+    }
+}    
+
 
 template < class Rep_ >                                         // QP case
 void
@@ -1976,6 +2313,34 @@ remove_artificial_variable_and_constraint_upd_r(Tag_false )
     r_C[in_C[sigma_i]] = r_C.back();
     r_C.pop_back();
 }
+
+// update that occurs only with upper bounding in ratio test step 1
+template < class Rep_ >            
+void  QP_solver<Rep_>::
+enter_and_leave_variable( )
+{
+    
+    CGAL_qpe_assertion(i == j);
+    
+    ET diff;
+    ET x_j = nonbasic_original_variable_value(j);
+    
+    if (ratio_test_bound_index == LOWER) {
+        diff = ET(qp_l[j]) - x_j;
+    } else {
+        diff = ET(qp_u[j]) - x_j;
+    }
+    
+    if (is_phaseI) {
+        update_r_C_r_S_B__j(diff);
+    } else {
+        update_w_r_B_O__j(diff);
+        update_r_C_r_S_B__j(diff);
+    }
+    
+    x_O_v_i[j] = ratio_test_bound_index;
+}
+
 
 
 // enter variable into basis
@@ -2797,11 +3162,25 @@ multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
     }
 }
 
+// computes r_i
+template < class Rep_ >
+typename QP_solver<Rep_>::ET  QP_solver<Rep_>::
+multiply__A_ixN_O(int row) const
+{
+    A_row_by_index_accessor     a_accessor( A_accessor( qp_A, 0, qp_n), row);
+    ET                          value = et0;                          
+    for (int i = 0; i < qp_n; ++i) {
+        if (!is_basic(i)) {
+            value += ET(a_accessor(i)) * nonbasic_original_variable_value(i);
+        }
+    }
+    return value;
+}
+
 // computes r_{C}:=A_{C, N_O}x_{N_O} with upper bounding
 template < class Rep_ >
 void  QP_solver<Rep_>::
-multiply__A_CxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const
+multiply__A_CxN_O(Value_iterator out) const
 {
     //initialize
     std::fill_n( out, C.size(), et0);
@@ -2840,7 +3219,7 @@ check_r_C(Tag_false) const
     Values                  t_r_C;
     // compute t_r_C from scratch
     t_r_C.insert(t_r_C.end(), C.size(), et0);
-    multiply__A_CxN_O(x_O_v_i.begin(), t_r_C.begin());
+    multiply__A_CxN_O(t_r_C.begin());
     
     // compare r_C and the from scratch computed t_r_C
     bool failed = false;
@@ -2859,8 +3238,7 @@ check_r_C(Tag_false) const
 // computes r_{S_B}:=A_{S_B, N_O}x_{N_O} with upper bounding
 template < class Rep_ >
 void  QP_solver<Rep_>::
-multiply__A_S_BxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const
+multiply__A_S_BxN_O(Value_iterator out) const
 {
     //initialize
     std::fill_n( out, S_B.size(), et0);
@@ -2900,7 +3278,7 @@ check_r_S_B(Tag_false) const
     Values                  t_r_S_B;
     // compute t_r_S_B from scratch
     t_r_S_B.insert(t_r_S_B.end(), S_B.size(), et0);
-    multiply__A_S_BxN_O(x_O_v_i.begin(), t_r_S_B.begin());
+    multiply__A_S_BxN_O(t_r_S_B.begin());
     
     // compare r_S_B and the from scratch computed t_r_S_B
     bool failed = false;
@@ -2921,8 +3299,7 @@ check_r_S_B(Tag_false) const
 // computation of entry of r_B_O instead of each access to D
 template < class Rep_ >
 void  QP_solver<Rep_>::
-multiply__2D_B_OxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const
+multiply__2D_B_OxN_O(Value_iterator out) const
 {
     //initialize
     std::fill_n( out, B_O.size(), et0);
@@ -2961,7 +3338,7 @@ check_r_B_O(Tag_false) const
     Values                  t_r_B_O;
     // compute t_r_B_O from scratch
     t_r_B_O.insert(t_r_B_O.end(), B_O.size(), et0);
-    multiply__2D_B_OxN_O(x_O_v_i.begin(), t_r_B_O.begin());
+    multiply__2D_B_OxN_O(t_r_B_O.begin());
     
     // compare r_B_O and the from scratch computed t_r_B_O
     bool failed = false;
@@ -2981,8 +3358,7 @@ check_r_B_O(Tag_false) const
 // computation of entry of r_B_O instead of each access to D
 template < class Rep_ >
 void  QP_solver<Rep_>::
-multiply__2D_OxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const
+multiply__2D_OxN_O(Value_iterator out) const
 {
     //initialize
     std::fill_n( out, B_O.size(), et0);
@@ -3019,7 +3395,7 @@ check_w(Tag_false) const
     Values              t_w;
     // compute t_w from scratch
     t_w.insert(t_w.end(), qp_n, et0);
-    multiply__2D_OxN_O(x_O_v_i.begin(), t_w.begin());
+    multiply__2D_OxN_O(t_w.begin());
     
     // compare w and the from scratch computed t_w
     bool  failed = false;
@@ -3420,15 +3796,26 @@ void  QP_solver<Rep_>::
 print_solution( )
 {
     if ( vout3.verbose()) {
-	vout3.out() << std::endl
-		    << "     b_C: ";
-	std::copy( b_C.begin(), b_C.begin()+C.size(),
+	   vout3.out() << std::endl
+            << "     b_C: ";
+	   std::copy( b_C.begin(), b_C.begin()+C.size(),
 		   std::ostream_iterator<ET>( vout3.out()," "));
-	vout3.out() << std::endl
-		    << "  -c_B_O: ";
-	std::copy( minus_c_B.begin(), minus_c_B.begin()+B_O.size(),
+	   vout3.out() << std::endl
+            << "  -c_B_O: ";
+	   std::copy( minus_c_B.begin(), minus_c_B.begin()+B_O.size(),
 		   std::ostream_iterator<ET>( vout3.out()," "));
-	vout3.out() << std::endl;
+	   if (!is_in_standard_form) {
+	       vout3.out() << std::endl
+                << "     r_C: ";
+	       std::copy( r_C.begin(), r_C.begin()+r_C.size(),
+	           std::ostream_iterator<ET>( vout3.out(), " "));
+	       vout3.out() << std::endl
+	           << "   r_B_O: ";
+	       std::copy( r_B_O.begin(), r_B_O.begin()+r_B_O.size(),
+	           std::ostream_iterator<ET>( vout3.out(), " "));
+
+	   }
+	   vout3.out() << std::endl;
     }
     if ( vout2.verbose()) {
 	vout2.out() << std::endl

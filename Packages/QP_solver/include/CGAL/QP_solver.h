@@ -366,6 +366,9 @@ private:
     int                      i;         // index of leaving variable `x_i'
     ET                       x_i;       // numerator of leaving variable `x_i'
     ET                       q_i;       // corresponding `q_i'
+    int                      direction; // indicates whether the current
+                                        // entering variable x_j is increased
+                                        // or decreased
     Bound_index              ratio_test_bound_index;  // indicates for leaving
                                         // original variables which bound
                                         // was hit with upper bounding
@@ -745,12 +748,45 @@ public:
     void  ratio_test_1__q_x_O( Tag_false is_linear);
     void  ratio_test_1__q_x_S( Tag_true  has_no_inequalities);
     void  ratio_test_1__q_x_S( Tag_false has_no_inequalities);
+    void  ratio_test_1__t_min_j(Tag_true  is_in_standard_form);  
+    void  ratio_test_1__t_min_j(Tag_false is_in_standard_form);
+    
     void  ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 			     Value_iterator x_it, Value_iterator   q_it,
 			     Tag_true  no_check);
     void  ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 			     Value_iterator x_it, Value_iterator   q_it,
 			     Tag_false  no_check);
+    
+    // replaces the above two functions
+    void  ratio_test_1__t_min_B(Tag_true  has_equalities_only_and_full_rank);
+    void  ratio_test_1__t_min_B(Tag_false has_equalities_only_and_full_rank);    
+    void  ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
+                Value_iterator x_it, Value_iterator q_it,
+                Tag_true  is_in_standard_form);
+    void  ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
+                Value_iterator x_it, Value_iterator q_it,
+                Tag_false is_in_standard_form);
+    void  ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
+                Value_iterator x_it, Value_iterator q_it,
+                Tag_true  is_in_standard_form);
+    void  ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
+                Value_iterator x_it, Value_iterator q_it,
+                Tag_false is_in_standard_form);
+			     
+    void  test_implicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
+                                        int& i_min, ET& d_min, ET& q_min);
+    void  test_implicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
+                                        int& i_min, ET& d_min, ET& q_min);
+    void  test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
+                                        int& i_min, ET& d_min, ET& q_min);
+    void  test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
+                                        int& i_min, ET& d_min, ET& q_min);
+    void  test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
+                                        int& i_min, ET& d_min, ET& q_min);
+    void  test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
+                                        int& i_min, ET& d_min, ET& q_min);    
+                                    
     void  ratio_test_1__t_j( Tag_true  is_linear);
     void  ratio_test_1__t_j( Tag_false is_linear);
 
@@ -800,6 +836,9 @@ public:
                                                     is_in_standard_form);    
     
     void  expel_artificial_variables_from_basis( );
+    
+    // update that occurs only with upper bounding in ratio test step 1
+    void  enter_and_leave_variable( );
 
     void  enter_variable( );
     // update of the vectors w and r
@@ -865,24 +904,23 @@ public:
 
     void  compute__x_B_S( Tag_true  has_no_inequalities);
     void  compute__x_B_S( Tag_false has_no_inequalities);
+    
     void  multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const;
-    void  multiply__A_CxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const;
+    
+    ET    multiply__A_ixN_O(int row) const;
+    void  multiply__A_CxN_O(Value_iterator out) const;
     bool  check_r_C(Tag_true  is_in_standard_form) const;
     bool  check_r_C(Tag_false is_in_standard_form) const;
     
-    void  multiply__A_S_BxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const;
+    void  multiply__A_S_BxN_O(Value_iterator out) const;
     bool  check_r_S_B(Tag_true  is_in_standard_form) const;
     bool  check_r_S_B(Tag_false is_in_standard_form) const;
     
-    void  multiply__2D_B_OxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const;
+    void  multiply__2D_B_OxN_O(Value_iterator out) const;
     bool  check_r_B_O(Tag_true  is_in_standard_form) const;
     bool  check_r_B_O(Tag_false is_in_standard_form) const;
         
-    void  multiply__2D_OxN_O(Bound_index_value_const_iterator in,
-                            Value_iterator out) const;
+    void  multiply__2D_OxN_O(Value_iterator out) const;
     bool  check_w(Tag_true  is_in_standard_form) const;
     bool  check_w(Tag_false is_in_standard_form) const;
                             
@@ -1384,7 +1422,11 @@ void  QP_solver<Rep_>::
 update_1( Tag_true)
 {
     // replace leaving with entering variable
-    replace_variable();
+    if (i == j) {
+        enter_and_leave_variable();
+    } else {
+        replace_variable();
+    }
 }
 
 template < class Rep_ >  inline                                 // QP case
@@ -1394,29 +1436,38 @@ update_1( Tag_false)
     if ( is_phaseI) {                                   // phase I
 
 	// replace leaving with entering variable
-	replace_variable();
+	   if (i == j) {
+	       enter_and_leave_variable();
+	   } else {
+	       replace_variable();
+	   }
 
     } else {                                            // phase II
+        
+        if (i == j) {
+            enter_and_leave_variable();
+        } else {
 
-	if ( ( i >= 0) && basis_matrix_stays_regular()) {
+	       if ( ( i >= 0) && basis_matrix_stays_regular()) {
 
-	    // leave variable from basis, if
-	    // - some leaving variable was found  and
-	    // - basis matrix stays regular
-	    leave_variable();
+	           // leave variable from basis, if
+	           // - some leaving variable was found  and
+	           // - basis matrix stays regular
+	           leave_variable();
 
-	} else {
+	       } else {
 
-	    // enter variable into basis, if
-	    // - no leaving variable was found  or
-	    // - basis matrix would become singular when variable i leaves
+	           // enter variable into basis, if
+	           // - no leaving variable was found  or
+	           // - basis matrix would become singular when variable i leaves
 
-	    if ( i < 0 ) {
-	        enter_variable();
-	    } else {
-	        z_replace_variable();
-	    }
-	}
+	           if ( i < 0 ) {
+	               enter_variable();
+	           } else {
+	               z_replace_variable();
+	           }
+	       }
+	   }
     }
 }
 
