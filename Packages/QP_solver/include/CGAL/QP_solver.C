@@ -4170,12 +4170,12 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
     if (*v_it < et0)
       return false;
   
-  // check whether the current solution is feasible for the auxiliary
-  // problem: for this, we use the fact that the auxiliary problem
+  // Check whether the current solution is feasible for the auxiliary
+  // problem.  For this, we use the fact that the auxiliary problem
   // looks as follows:
   //
   //                          [  x_original  ]
-  //    [ A A_art a_spec A_s] [ x_artificial ] = b * d           (L1)
+  //    [ A A_art a_spec A_s] [ x_artificial ] = b               (L1)
   //                          [   x_special  ]
   //                          [    x_slack   ]
   //
@@ -4183,9 +4183,9 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
   // constraint of the original problem and contains either e_i or
   // -e_i, a_spec is the special artificial column (which only
   // contains zeros, ones, or minus ones), and A_s contains a column
-  // (e_i or -e_i) for every slack variable.  Observe that the
-  // right-hand size is multiplied by d because we maintain the
-  // denominator of the solution (which is d) separately.
+  // (e_i or -e_i) for every slack variable.  Observe in the code
+  // below that the right-hand size is multiplied by d because we
+  // maintain the denominator of the solution (which is d) separately.
 
   // compute left-hand side of (L1):
   Values lhs_col(qp_m, et0);
@@ -4193,20 +4193,16 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
   for (Index_const_iterator i_it = B_O.begin();
        i_it != B_O.end();
        ++i_it, ++x_it)                    // iterate over all nonzero vars
-    if (*i_it < qp_n) {                   // ordinary original variable?
-      A_by_index_accessor  a_accessor(qp_A[*i_it]);
+    if (*i_it < qp_n)                     // ordinary original variable?
       for (int i=0; i<qp_m; ++i)
-	lhs_col[i] += (*x_it) * a_accessor(i);
-    } else {                              // artificial variable?
+	lhs_col[i] += (*x_it) * qp_A[*i_it][i];
+    else                                  // artificial variable?
       if (*i_it != art_s_i)   {           // normal artificial variable?
 	const int k = *i_it - qp_n - slack_A.size();
 	lhs_col[art_A[k].first] += (art_A[ k].second ? -et1 :  et1) * (*x_it);
-      } else {                           // special artificial variable
-	S_by_index_accessor  s_accessor(art_s.begin());
+      } else                              // special artificial variable
 	for (int i=0; i<qp_m; ++i)
-	  lhs_col[i] += (*x_it) * s_accessor(i);
-      }
-    }
+	  lhs_col[i] += (*x_it) * art_s[i];
   x_it = x_B_S.begin();
   for (Index_const_iterator i_it = B_S.begin();
        i_it != B_S.end();
@@ -4219,7 +4215,7 @@ bool QP_solver<Rep_>::is_auxiliary_problem_feasible()
   for (int i=0; i<qp_m; ++i)
     if (lhs_col[i] != ET(qp_b[i]) * d)
       return false;
-
+  
   return true;
 }
 
