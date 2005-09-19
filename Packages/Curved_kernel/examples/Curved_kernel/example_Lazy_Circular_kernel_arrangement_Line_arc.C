@@ -1,3 +1,12 @@
+#include <utility>
+namespace CGAL {
+class MP_Float;
+template < typename T > class Root_of_2;
+template < typename T > class Lazy_exact_nt;
+template < typename T >
+std::pair<double,double> to_interval(const Root_of_2<T>&);
+}
+
 //#include <fstream>
 
 #include <CGAL/basic.h>
@@ -32,7 +41,8 @@ typedef CGAL::Cartesian<NT1>                                 Linear_k1;
 typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
 typedef CGAL::Curved_kernel<Linear_k1, Algebraic_k1>         CK1_;
 
-typedef CGAL::Interval_nt<>                                  NT2;
+//typedef CGAL::Interval_nt<>                                  NT2;
+typedef CGAL::Interval_nt_advanced                           NT2;
 typedef CGAL::Cartesian<NT2>                                 Linear_k2;
 typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
 typedef CGAL::Curved_kernel<Linear_k2,Algebraic_k2>          CK2_;
@@ -94,14 +104,11 @@ int main(){
   CGAL::Random theRandom(random_seed);
   int random_max = 5;
   int random_min = -5;
-  for(int j = 0; j < 10 ; j++){
+ // for(int j = 0; j < 10 ; j++){
   
   ArcContainer ac;
   ArcContainer2 ac2;
-  int x1;
-  int y1;
-  int x2;
-  int y2;
+  int x1,y1,x2,y2;
   double t1,t2,t3,t4;
   CGAL::Timer clck1,clck2;
 
@@ -122,9 +129,10 @@ int main(){
       ac2.push_back( Line_arc_2_2(Point_2_2(x1,y1), Point_2_2(x2,y2)));
     }
   
-  //while(std::cin >> x1 >> y1 >> x2 >> y2){
-   // ac.push_back( Line_arc_2(Point_2(x1,y1), Point_2(x2,y2)));
-  //}
+//  while(std::cin >> x1 >> y1 >> x2 >> y2){
+//    ac.push_back( Line_arc_2(Point_2(x1,y1), Point_2(x2,y2)));
+//    ac2.push_back( Line_arc_2_2(Point_2_2(x1,y1), Point_2_2(x2,y2)));
+//  }
 
 
     Pmwx _pm;
@@ -159,7 +167,7 @@ int main(){
     std::cout<<"Exact Curved_k ="<<(t4-t3)<<std::endl;
 
 
-  }
+ // }
   return 0;
 };
 

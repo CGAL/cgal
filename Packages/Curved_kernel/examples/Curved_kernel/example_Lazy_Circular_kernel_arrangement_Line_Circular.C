@@ -1,3 +1,12 @@
+#include <utility>
+namespace CGAL {
+class MP_Float;
+template < typename T > class Root_of_2;
+template < typename T > class Lazy_exact_nt;
+template < typename T >
+std::pair<double,double> to_interval(const Root_of_2<T>&);
+
+}
 
 //#include <fstream>
 
@@ -31,7 +40,7 @@ typedef CGAL::Cartesian<NT1>                                 Linear_k1;
 typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
 typedef CGAL::Curved_kernel<Linear_k1, Algebraic_k1>         CK1_;
 
-typedef CGAL::Interval_nt<>                                  NT2;
+typedef CGAL::Interval_nt_advanced                           NT2;
 typedef CGAL::Cartesian<NT2>                                 Linear_k2;
 typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
 typedef CGAL::Curved_kernel<Linear_k2,Algebraic_k2>          CK2_;
