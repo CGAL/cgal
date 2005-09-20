@@ -42,18 +42,20 @@ struct Lazy_exact_ro2
     mutable Lazy_exact_nt<ET> op1, op2, op3;
     bool smaller;
 
-#ifndef CGAL_CFG_COMMA_BUG
     Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
 		    const Lazy_exact_nt<ET> &b,
 		    const Lazy_exact_nt<ET> &c, bool s)
+#ifndef CGAL_CFG_COMMA_BUG
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
         op1(a), op2(b), op3(c), smaller(s) {}
 #else
-  Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
-		    const Lazy_exact_nt<ET> &b,
-		    const Lazy_exact_nt<ET> &c, bool s)
-      : Base(P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s)),
-        op1(a), op2(b), op3(c), smaller(s) {}
+      : Base(a.approx() /* dummy value */, a),
+	op1(a), op2(b), op3(c), smaller(s)
+  {
+    P p;
+    this->approx() = make_root_of_2(a.approx(), b.approx(),
+				    c.approx(), s);
+  } 
 #endif
 
     void update_exact()
