@@ -74,10 +74,11 @@ public:
                     this-> traits());
    
     //Perform the sweep
-    reinterpret_cast<Sweep_line*>(m_sweep_line) -> sweep(curves_vec.begin(),
-                          curves_vec.end(),
-                          points_vec.begin(),
-                          points_vec.end());
+    reinterpret_cast<Sweep_line*>(this->m_sweep_line) -> 
+      sweep(curves_vec.begin(),
+            curves_vec.end(),
+            points_vec.begin(),
+            points_vec.end());
   }
 
        
@@ -154,10 +155,11 @@ public:
                     this-> traits());
    
     //Perform the sweep
-    reinterpret_cast<Sweep_line*>(m_sweep_line) -> sweep(curves_vec.begin(),
-                                                         curves_vec.end(),
-                                                         points_vec.begin(),
-                                                         points_vec.end());
+    reinterpret_cast<Sweep_line*>(this->m_sweep_line)->
+      sweep(curves_vec.begin(),
+            curves_vec.end(),
+            points_vec.begin(),
+            points_vec.end());
   }
        
 
@@ -229,10 +231,11 @@ class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
                     this-> traits());
    
     //Perform the sweep
-    reinterpret_cast<Sweep_line*>(m_sweep_line) -> sweep(curves_vec.begin(),
-                                                         curves_vec.end(),
-                                                         points_vec.begin(),
-                                                         points_vec.end());
+    reinterpret_cast<Sweep_line*>(this->m_sweep_line)->
+      sweep(curves_vec.begin(),
+            curves_vec.end(),
+            points_vec.begin(),
+            points_vec.end());
   }
 
 
@@ -240,7 +243,7 @@ class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
   void sweep_xcurves(XCurveIterator begin, XCurveIterator end)
   {
     //Perform the sweep
-    reinterpret_cast<Sweep_line*>(m_sweep_line) -> sweep(begin, end);
+    reinterpret_cast<Sweep_line*>(this->m_sweep_line)-> sweep(begin, end);
   }
 
 
@@ -251,7 +254,7 @@ class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
        event->is_overlap())
     {
       m_found_x = true;
-      reinterpret_cast<Sweep_line*>(m_sweep_line) -> stop_sweep();
+      reinterpret_cast<Sweep_line*>(this->m_sweep_line) -> stop_sweep();
     }
     return true;
   }
