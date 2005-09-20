@@ -367,7 +367,7 @@ public:
    */
   _Conic_arc_2 (const Rat_point_2& p1,
                 const Rat_point_2& p2,
-                const Rat_point_2& p3)
+                const Rat_point_2& p3):_extra_data_P(NULL)
   {
     // Set the source and target.
     Rational          x1 = p1.x();
@@ -455,7 +455,7 @@ public:
 		const Rat_point_2& p2,
 		const Rat_point_2& p3,
 		const Rat_point_2& p4,
-		const Rat_point_2& p5)
+		const Rat_point_2& p5):_extra_data_P(NULL)
   {
     // Make sure that no three points are collinear.
     Rat_kernel                         ker;
@@ -561,7 +561,8 @@ public:
 		const Point_2& app_target,
 		const Rational& r_2, const Rational& s_2, const Rational& t_2,
 		const Rational& u_2, const Rational& v_2, const Rational& w_2):
-    _orient(orient)
+    _orient(orient),
+    _extra_data_P(NULL)
   {
     // Create the integer coefficients of the base conic.
     Rational          rat_coeffs [6];
