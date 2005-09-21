@@ -35,8 +35,8 @@ template<class C,               ///< Internal circulator.
          class Ref,
          class Ptr,
          class ConstHandle,     ///< Const-handle type to convert to.
-         class Handle = void*>  ///< Non-const-handle type to convert to
-                                ///< (void* means none).
+         class Handle = void*   ///< Non-const-handle type to convert to (void*=none).
+>
 class Convertible_circulator_project
     : public Circulator_project<C, Fct, Ref, Ptr>
 {

@@ -19,13 +19,15 @@
 \ccDefinition
 
 PatchableMeshAdaptor\_3 inherits from concept MeshAdaptor\_3, thus is a concept for a 3D surface mesh.
+
 PatchableMeshAdaptor\_3 adds the ability to support patches and virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability to behave exactly as if the surface was "cut" following a certain path.
+
 The main purpose of this feature is to allow the parameterization package to parameterize any 3D surface by decomposing it as a list of topological disks.
 
 
 \ccHasModels
 
-Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided:
+Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided.
 
 \ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
 
@@ -35,17 +37,12 @@ Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided:
 PatchableMeshAdaptor\_3 is an Adaptor (see [GOF95]): it changes the interface of a 3D mesh to match the interface expected by class Mesh\_adaptor\_patch\_3.
 
 
-\ccGeneralizes
+\ccRefines
 
 MeshAdaptor\_3 \\
 
 In addition to the requirements described in the concept MeshAdaptor\_3,
 PatchableMeshAdaptor\_3 provides the following:
-
-
-\ccTypes
-
-Same sub-types as MeshAdaptor\_3.
 
 
 \ccCreation
@@ -81,28 +78,28 @@ Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to th
 
 \ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set the 2D position (= (u,v) pair) of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined.
+Get/set the 2D position (= (u,v) pair) of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
 }
-\ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 \& uv);}
+\ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 & uv);}
 {
 }
 \ccMethod{bool are_corners_parameterized (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set "is parameterized" field of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined.
+Get/set "is parameterized" field of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
 }
 \ccMethod{void set_corners_parameterized (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
 {
 }
 \ccMethod{int get_corners_index (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set index of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined.
+Get/set index of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
 }
 \ccMethod{void set_corners_index (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
 {
 }
 \ccMethod{int get_corners_tag (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set all purpose tag of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined.
+Get/set all purpose tag of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
 }
 \ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
 {

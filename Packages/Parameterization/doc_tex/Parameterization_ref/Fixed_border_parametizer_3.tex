@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 23.08.2005   Author
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSFixedborderparametizerRev}{$Revision$}
 \RCSdefDate{\RCSFixedborderparametizerDate}{$Date$}
 % |
@@ -17,27 +17,177 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
-The class \ccRefName\ does this and that.
 
-\ccInclude{Fixed_border_parametizer_3.h}
+
+Class Fixed\_border\_parametizer\_3 is the base class of fixed border parameterization methods (Tutte, Floater, ...). 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+
+Implementation notes:\begin{itemize}
+\item Subclasses must at least implement compute\_wij().\item The current implementation does not remove border vertices from the linear systems =$>$ A cannot be symmetric.\end{itemize}
+
+\ccInclude{CGAL/Fixed_border_parametizer_3.h}
+
+
 
 \ccIsModel
 
-Concept
+Fixed\_border\_parametizer\_3 is a model of the ParametizerTraits\_3 concept.
+
+
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class MeshAdaptor\_3, 
+class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$, 
+class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
+class Fixed\_border\_parametizer\_3;
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{Error_code}
+{
+The various errors detected by this package.
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccNestedType{Border_param}
+{
+}
+\ccNestedType{Sparse_LA}
+{
+}
+\ccNestedType{Vector}
+{
+}
+\ccNestedType{Matrix}
+{
+}
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{p}  %% variable name used by \ccMethod below
 
-\ccConstructor{Fixed_border_parametizer_3();}{default constructor.}
+\ccConstructor{Fixed_border_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
+{
+Constructor.
+}
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{Parametizer_traits_3< Adaptor >::Error_code parameterize (Adaptor * mesh);}
+{
+Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+Preconditions:\begin{itemize}
+\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
+}
+\ccMethod{Parametizer_traits_3< Adaptor >::Error_code check_parameterize_preconditions (Adaptor * mesh);}
+{
+Check parameterize() preconditions:\begin{itemize}
+\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
+}
+\ccMethod{void initialize_system_from_mesh_border (Matrix * A, Vector * Bu, Vector * Bv, const Adaptor & mesh);}
+{
+Initialize A, Bu and Bv after boundary parameterization. Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant".
+Preconditions:\begin{itemize}
+\item vertices must be indexed.\item A, Bu and Bv must be allocated.\item border vertices must be parameterized. \end{itemize}
+}
+\ccMethod{virtual NT compute_wij (const Adaptor & mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj);}
+{
+Compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement compute\_wij().
+Implemented in Barycentric\_mapping\_parametizer\_3 , Discrete\_authalic\_parametizer\_3 , Discrete\_conformal\_map\_parametizer\_3 , and Mean\_value\_coordinates\_parametizer\_3
+}
+\ccMethod{Parametizer_traits_3< Adaptor >::Error_code setup_inner_vertex_relations (Matrix * A, Vector * Bu, Vector * Bv, const Adaptor & mesh, Vertex_const_handle vertex);}
+{
+Compute the line i of matrix A for i inner vertex:\begin{itemize}
+\item call compute\_wij() to compute the A coefficient Wij for each neighbor Vj.\item compute Wii = - sum of Wij.\end{itemize}
+Preconditions:\begin{itemize}
+\item vertices must be indexed.\item vertex i musn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
+}
+\ccMethod{void set_mesh_uv_from_system (Adaptor * mesh, const Vector & Xu, const Vector & Xv);}
+{
+Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
+}
+\ccMethod{Parametizer_traits_3< Adaptor >::Error_code check_parameterize_postconditions (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
+{
+Check parameterize() postconditions:\begin{itemize}
+\item "A$\ast$Xu = Bu" and "A$\ast$Xv = Bv" systems are solvable with a good conditioning.\item 3D -$>$ 2D mapping is 1 to 1. \end{itemize}
+}
+\ccMethod{bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
+{
+Check if 3D -$>$ 2D mapping is 1 to 1. The default implementation checks each normal.
+}
+\ccMethod{Border_param& get_border_parametizer ();}
+{
+Get the object that maps the surface's border onto a 2D space.
+}
+\ccMethod{Sparse_LA& get_linear_algebra_traits ();}
+{
+Get the sparse linear algebra (traits object to access the linear system).
+}
+
 
 \ccSeeAlso
 
@@ -48,8 +198,8 @@ Concept
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Fixed_border_parametizer_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Fixed_border_parametizer_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 

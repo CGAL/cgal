@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 23.08.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSBarycentricmappingparametizerRev}{$Revision$}
 \RCSdefDate{\RCSBarycentricmappingparametizerDate}{$Date$}
 % |
@@ -17,60 +17,135 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
-The class \ccRefName\ serves as a traits class for all the two-dimensional
-convex hull and extreme point calculation function.   This class can be
-used to compute the convex hull of a set of 3D points projected onto the
-$xy$ plane (\textit{i.e.}, by ignoring the $z$ coordinate).
+
+
+Class Barycentric\_mapping\_parametizer\_3 implements Tutte's barycentric mapping. 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon.
 
 \ccInclude{CGAL/Barycentric_mapping_parametizer_3.h}
 
+
 \ccIsModel
 
-\ccRefConceptPage{MeshAdaptor_3}%
-\ccIndexSubitem[c]{MeshAdaptor_3}{model} \\
+Model of the ParametizerTraits\_3 concept.
+
+
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class MeshAdaptor\_3, 
+class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$, 
+class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
+class Barycentric\_mapping\_parametizer\_3;
+
 
 \ccTypes
 
-\ccAutoIndexingOff
-\ccSetThreeColumns{typedef R::Less_dist_to_line_plane_xy_2<Point_3>}{Less_signed_distance_to_line_2}{}
-\ccThreeToTwo
 
-\ccTypedef{typedef Point_3                        Point_2;}{}
-\ccGlue
-\ccTypedef{typedef Less_xy_plane_xy_2<Point_3>    Less_xy_2;}{}
-\ccGlue
-\ccTypedef{typedef Less_yx_plane_xy_2<Point_3>    Less_yx_2;}{}
-\ccGlue
-\ccTypedef{typedef Less_dist_to_line_plane_xy_2<Point_3> 
-                                      Less_signed_distance_to_line_2;}{}
-\ccGlue
-\ccTypedef{typedef Less_rotate_ccw_plane_xy_2<Point_3> Less_rotate_ccw_2;}{}
-\ccGlue
-\ccTypedef{typedef Left_turn_plane_xy_2<Point_3>        Left_turn_2;}{}
-\ccGlue
-\ccTypedef{typedef Equal_xy_plane_xy_2<Point_3>         Equal_2;}{}
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{Error_code}
+{
+The various errors detected by this package.
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccNestedType{Border_param}
+{
+}
+\ccNestedType{Sparse_LA}
+{
+}
+\ccNestedType{Vector}
+{
+}
+\ccNestedType{Matrix}
+{
+}
+\ccNestedType{Solver}
+{
+}
+
 
 \ccCreation
-\ccCreationVariable{traits}  %% choose variable name
+\ccCreationVariable{p}  %% variable name used by \ccMethod below
 
-\ccConstructor{Barycentric_mapping_parametizer_3();}{default constructor.}
+\ccConstructor{Barycentric_mapping_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
+{
+Constructor.
+}
+
 
 \ccOperations
 
-\ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
-\ccGlue
-\ccMemberFunction{Less_yx_2 less_yx_2_object(); }{}
-\ccGlue
-\ccMemberFunction{Less_signed_distance_to_line_2 
-                  less_signed_distance_to_line_2_object();}{}
-\ccGlue
-\ccMemberFunction{Less_rotate_ccw_2 
-                  less_rotate_ccw_2_object(); }{}
-\ccGlue
-\ccMemberFunction{Left_turn_2 left_turn_2_object(); }{}
-\ccGlue
-\ccMemberFunction{Equal_2 equal_2_object(); }{}
+\ccMethod{virtual NT compute_wij (const Adaptor & mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj);}
+{
+compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+Tutte algorithm is the most simple one: Wij = 1 for j neighbor vertex of i
+}
+\ccMethod{virtual bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
+{
+Check if 3D -$>$ 2D mapping is 1 to 1.
+Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface boundary is mapped onto a 2D convex polygon. All Wij coefficients = 1 (for j vertex neighbor of i), thus mapping is guaranteed if the surface boundary is mapped onto a 2D convex polygon.
+}
 
 
 \ccSeeAlso
@@ -82,8 +157,8 @@ $xy$ plane (\textit{i.e.}, by ignoring the $z$ coordinate).
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Barycentric_mapping_parametizer_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Barycentric_mapping_parametizer_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 

@@ -18,30 +18,64 @@
 
 \ccDefinition
 
-The concept \ccRefName\ does this and that.
+Concept SparseLinearAlgebraTraits\_d::Vector is a concept of a vector that can be multiplied by a sparse matrix.
 
-\ccGeneralizes
 
-ThisConcept \\
-ThatConcept
+\ccRefines
 
-\ccTypes
+This is a sub-concept of LinearAlgebraTraits\_d::Vector.
 
-\ccNestedType{TYPE}{some nested types}
-
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
-
-\ccConstructor{Vector();}{default constructor.}
-
-\ccOperations
-
-\ccMethod{void foo();}{some member functions}
 
 \ccHasModels
 
-\ccc{Some_class},
-\ccc{Some_other_class}.
+\begin{itemize}
+\item Taucs\_vector\item OpenNL::FullVector \end{itemize}
+
+
+
+
+
+
+\ccTypes
+
+
+\ccNestedType{NT}
+{
+}
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccConstructor{Vector (int rows);}
+{
+Create a vector initialized with zeros.
+}
+\ccConstructor{Vector (const Vector & toCopy);}
+{
+Copy constructor.
+}
+
+
+\ccOperations
+
+\ccMethod{Vector& operator= (const Vector & toCopy);}
+{
+operator =()
+}
+\ccMethod{int dimension () const;}
+{
+Return the vector's number of coefficients.
+}
+\ccMethod{NT operator[] (int row) const;}
+{
+Read/write access to 1 vector coefficient.
+Precondition: 0 $<$= row $<$ dimension().
+}
+\ccMethod{NT& operator[] (int row);}
+{
+}
+
 
 \ccSeeAlso
 

@@ -46,8 +46,8 @@
 /// defines an interface oriented towards topological disks
 ///
 /// Models:
-/// * Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
-/// * Mesh_adaptor_patch_3<M> is a model of MeshAdaptor_3 if
+/// - Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
+/// - Mesh_adaptor_patch_3<M> is a model of MeshAdaptor_3 if
 ///   M is a model of MeshAdaptorWithStream_3.
 ///
 /// Design pattern:

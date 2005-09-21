@@ -36,12 +36,12 @@ CGAL_BEGIN_NAMESPACE
 //
 
 /// Class LSCM_parametizer_3
-/// Model of the ParametizerTraits_3 concept
-///
-/// Implement Least Square Conformal Maps parameterization (Levy et al)
+/// implements Least Square Conformal Maps parameterization (Levy et al).
 /// No need to map the surface's border onto a convex polygon
 /// but 1 to 1 mapping is NOT guaranteed.
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
+///
+/// Concept: Model of the ParametizerTraits_3 concept.
 
 template
 <
@@ -66,8 +66,8 @@ private:
 
 // Public types
 public:
-    /// Export Mesh_Adaptor_3, BorderParametizer_3
-    /// and SparseLinearAlgebraTraits_d types
+    // Export Mesh_Adaptor_3, BorderParametizer_3
+    // and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Base::Error_code       Error_code;
     typedef typename Adaptor::NT            NT;
@@ -107,14 +107,14 @@ public:
 // Public operations
 public:
     /// Constructor
-    /// @param border_param  Object that maps (at least 2) border vertices
-    /// @param sparse_la     Traits object to access a sparse linear system
     LSCM_parametizer_3(Border_param border_param = Border_param(),
-                        Sparse_LA sparse_la = Sparse_LA())
+                                            ///< Object that maps the surface's border to 2D space
+                       Sparse_LA sparse_la = Sparse_LA())
+                                            ///< Traits object to access a sparse linear system
         : m_borderParametizer(border_param), m_linearAlgebra(sparse_la)
     {}
 
-    /// Default copy constructor and operator =() are fine
+    // Default copy constructor and operator =() are fine
 
     /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
     /// to a piece of the 2D space.
@@ -122,8 +122,8 @@ public:
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
     /// Preconditions:
-    /// * 'mesh' must be a surface with 1 connected component
-    /// * 'mesh' must be a triangular mesh
+    /// - 'mesh' must be a surface with 1 connected component.
+    /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize(Adaptor* mesh);
 
 // Private types
@@ -134,17 +134,17 @@ private:
 // Private operations
 private:
     /// Check parameterize() preconditions:
-    /// * 'mesh' must be a surface with 1 connected component
-    /// * 'mesh' must be a triangular mesh
+    /// - 'mesh' must be a surface with 1 connected component.
+    /// - 'mesh' must be a triangular mesh.
     virtual Error_code  check_parameterize_preconditions(Adaptor* mesh);
 
     /// Initialize "A*X = B" linear system after
-    /// (at least 2) border vertices are parameterized
+    /// (at least 2) border vertices are parameterized.
     ///
     /// Preconditions:
-    /// * vertices must be indexed
-    /// * X and B must be allocated and empty
-    /// * (at least 2) border vertices must be parameterized
+    /// - vertices must be indexed.
+    /// - X and B must be allocated and empty.
+    /// - (at least 2) border vertices must be parameterized.
     void initialize_system_from_mesh_border(LeastSquaresSolver* solver,
                                             const Adaptor& mesh) ;
 
@@ -154,10 +154,10 @@ private:
     void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
                           Point_2* z0, Point_2* z1, Point_2* z2) ;
 
-    /// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
+    /// Create 2 lines in the linear system per triangle (1 for u, 1 for v).
     ///
     /// Preconditions:
-    /// * vertices must be indexed
+    /// - vertices must be indexed.
     Error_code setup_triangle_relations(LeastSquaresSolver* solver,
                                         const Adaptor& mesh,
                                         Facet_const_handle facet) ;
@@ -167,9 +167,9 @@ private:
                                  const LeastSquaresSolver& solver) ;
 
     /// Check parameterize() postconditions:
-    /// * "A*X = B" system is solvable (in the least squares sense)
-    ///    with a good conditioning
-    /// * 3D -> 2D mapping is 1 to 1
+    /// - "A*X = B" system is solvable (in the least squares sense)
+    ///    with a good conditioning.
+    /// - 3D -> 2D mapping is 1 to 1.
     virtual Error_code check_parameterize_postconditions(const Adaptor& mesh,
                                                          const LeastSquaresSolver& solver);
 
@@ -197,16 +197,16 @@ private:
 /// The result is the (u,v) pair image of each vertex of the 3D surface.
 ///
 /// Preconditions:
-/// * 'mesh' must be a surface with 1 connected component
-/// * 'mesh' must be a triangular mesh
+/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a triangular mesh.
 ///
 /// Implementation note: Outline of the algorithm:
-/// 1) Find an initial solution by projecting on a plane
-/// 2) Lock two vertices of the mesh
-/// 3) Copy the initial u,v coordinates to OpenNL
-/// 3) Construct the LSCM equation with OpenNL
-/// 4) Solve the equation with OpenNL
-/// 5) Copy OpenNL solution to the u,v coordinates
+/// 1) Find an initial solution by projecting on a plane.
+/// 2) Lock two vertices of the mesh.
+/// 3) Copy the initial u,v coordinates to OpenNL.
+/// 3) Construct the LSCM equation with OpenNL.
+/// 4) Solve the equation with OpenNL.
+/// 5) Copy OpenNL solution to the u,v coordinates.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -288,8 +288,8 @@ parameterize(Adaptor* mesh)
 
 
 /// Check parameterize() preconditions:
-/// * 'mesh' must be a surface with 1 connected component
-/// * 'mesh' must be a triangular mesh
+/// - 'mesh' must be a surface with 1 connected component
+/// - 'mesh' must be a triangular mesh
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code
@@ -343,9 +343,9 @@ check_parameterize_preconditions(Adaptor* mesh)
 /// (at least 2) border vertices are parameterized
 ///
 /// Preconditions:
-/// * vertices must be indexed
-/// * X and B must be allocated and empty
-/// * (at least 2) border vertices must be parameterized
+/// - vertices must be indexed
+/// - X and B must be allocated and empty
+/// - (at least 2) border vertices must be parameterized
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -419,7 +419,7 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
 /// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
 ///
 /// Preconditions:
-/// * vertices must be indexed
+/// - vertices must be indexed
 ///
 /// Implementation note: LSCM equation is:
 ///       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
@@ -559,9 +559,9 @@ set_mesh_uv_from_system(Adaptor* mesh,
 }
 
 /// Check parameterize() postconditions:
-/// * "A*X = B" system is solvable (in the least squares sense)
+/// - "A*X = B" system is solvable (in the least squares sense)
 ///   with a good conditioning
-/// * 3D -> 2D mapping is 1 to 1
+/// - 3D -> 2D mapping is 1 to 1
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_traits_3<Adaptor>::Error_code

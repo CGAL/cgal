@@ -28,10 +28,11 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Class Discrete_authalic_parametizer_3
-/// Model of the ParametizerTraits_3 concept
-/// Implement Discrete Authalic Parameterization algorithm (Alliez et al)
-/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon
-/// This is an authalic parameterization, i.e. it attempts to preserve areas
+/// implements Discrete Authalic Parameterization algorithm (Alliez et al).
+/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// This is an authalic parameterization, i.e. it attempts to preserve areas.
+///
+/// Concept: Model of the ParametizerTraits_3 concept.
 
 template
 <
@@ -48,8 +49,8 @@ class Discrete_authalic_parametizer_3
 {
 // Public types
 public:
-    /// Export Mesh_Adaptor_3, BorderParametizer_3
-    /// and SparseLinearAlgebraTraits_d types
+    // Export Mesh_Adaptor_3, BorderParametizer_3
+    // and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
@@ -90,16 +91,16 @@ public:
 // Public operations
 public:
     /// Constructor
-    /// @param border_param  Object that maps the surface's border to 2D space
-    /// @param sparse_la     Traits object to access a sparse linear system
     Discrete_authalic_parametizer_3 (Border_param border_param = Border_param(),
-                                      Sparse_LA sparse_la = Sparse_LA())
+                                            ///< Object that maps the surface's border to 2D space
+                                     Sparse_LA sparse_la = Sparse_LA())
+                                            ///< Traits object to access a sparse linear system
     :   Fixed_border_parametizer_3<Adaptor,
                                    Border_param,
                                    Sparse_LA>(border_param, sparse_la)
     {}
 
-    /// Default copy constructor and operator =() are fine
+    // Default copy constructor and operator =() are fine
 
 // Protected types
 protected:
@@ -108,7 +109,7 @@ protected:
 
 // Protected operations
 protected:
-    /// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+    /// Compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
     virtual NT  compute_wij(const Adaptor& mesh,
                             Vertex_const_handle main_vertex_Vi,
                             Vertex_around_vertex_const_circulator neighbor_vertex_Vj)

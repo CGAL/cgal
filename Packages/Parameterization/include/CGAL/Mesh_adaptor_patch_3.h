@@ -35,10 +35,6 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Class Mesh_adaptor_patch_3
-/// Model of MeshAdaptor_3 concept, whose purpose is to allow
-/// the parameterization package to access meshes on an uniform manner.
-///
 /// Mesh_adaptor_patch_3 is an decorator class to virtually "cut" a patch
 /// in a PatchableMeshAdaptor_3 3D surface. Only the patch is exported,
 /// making the 3D surface look like a topological disk.
@@ -47,8 +43,12 @@ CGAL_BEGIN_NAMESPACE
 /// describes the boundary of a topological disc. This boundary may be an actual
 /// border of the mesh or a virtual border.
 ///
+/// Concept:
+/// Model of MeshAdaptor_3 concept, whose purpose is to allow
+/// the parameterization package to access meshes on an uniform manner.
+///
 /// Design pattern:
-/// Mesh_adaptor_patch_3 is a Decorator (see [GOF95]): it changes the behavior 
+/// Mesh_adaptor_patch_3 is a Decorator (see [GOF95]): it changes the behavior
 /// of a PatchableMeshAdaptor_3 3D surface while keeping its MeshAdaptor_3 interface.
 
 template<class PatchableMeshAdaptor_3>
@@ -60,27 +60,46 @@ private:
     // Forward references
     struct                                  Inner_facets_filter;
 
+    /// Seaming flag
+    enum Seaming_status  { OUTER, INNER, BORDER };
+
 public:
 
-    ///******************************************************************
-    /// MeshAdaptor_3 INTERFACE
-    ///******************************************************************
+    //*******************************************************************
+    /// @name INTERFACE SPECIFIC TO Mesh_adaptor_patch_3
+    //*******************************************************************
+    //@{
 
     /// Export template parameter
     typedef PatchableMeshAdaptor_3           Adaptor;
-    /// Number type
+
+    //@} // end of INTERFACE SPECIFIC TO Mesh_adaptor_patch_3
+
+    //*******************************************************************
+    /// @name MeshAdaptor_3 INTERFACE
+    //*******************************************************************
+    //@{
+
+    /// Number type to represent coordinates
     typedef typename Adaptor::NT            NT;
-    /// Points and vectors
+
+    /// 2D point that represents (u,v) coordinates computed
+    /// by parameterization methods. Usual methods are expected.
     typedef typename Adaptor::Point_2       Point_2;
+    /// 3D point that represents vertices coordinates. Usual methods are expected.
     typedef typename Adaptor::Point_3       Point_3;
+    /// 2D vector. Usual methods are expected.
     typedef typename Adaptor::Vector_2      Vector_2;
+    /// 3D vector. Usual methods are expected.
     typedef typename Adaptor::Vector_3      Vector_3;
-    /// Facet
+
+    /// Opaque type representing a facet of the 3D mesh. No methods are expected.
     typedef typename Adaptor::Facet         Facet;
+    /// Handle to a facet. Model of the Handle concept.
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    /// Iterator over all mesh facets
+    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
     typedef Convertible_filter_iterator<typename Adaptor::Facet_iterator,
                                         Inner_facets_filter,
                                         Facet_const_handle,
@@ -90,21 +109,25 @@ public:
                                         Inner_facets_filter,
                                         Facet_const_handle>
                                             Facet_const_iterator;
-    /// Vertex
+
+    /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
     typedef Mesh_adaptor_patch_vertex<Adaptor> Vertex;
+    /// Handle to a vertex. Model of the Handle concept.
     typedef Mesh_adaptor_patch_vertex_handle<Adaptor>
                                             Vertex_handle;
     typedef Mesh_adaptor_patch_vertex_const_handle<Adaptor>
                                             Vertex_const_handle;
-    /// Iterator over all mesh vertices
+    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef Mesh_adaptor_patch_vertex_list_iterator<Adaptor>
                                             Vertex_iterator;
     typedef Mesh_adaptor_patch_vertex_list_const_iterator<Adaptor>
                                             Vertex_const_iterator;
-    /// Iterator over mesh boundary vertices
+    /// Iterator over vertices of the mesh "main boundary".
+    /// Model of the ForwardIterator concept.
     typedef Vertex_iterator                 Border_vertex_iterator;
     typedef Vertex_const_iterator           Border_vertex_const_iterator;
     /// Counter-clockwise circulator over a facet's vertices
+    /// Model of the BidirectionalCirculator concept.
     typedef Mesh_patch_vertex_around_facet_cir<Mesh_adaptor_patch_3*,
                                                Vertex_handle,
                                                typename Adaptor::Vertex_around_facet_circulator>
@@ -114,6 +137,7 @@ public:
                                                typename Adaptor::Vertex_around_facet_const_circulator>
                                             Vertex_around_facet_const_circulator;
     /// Clockwise circulator over the vertices incident to a vertex
+    /// Model of the BidirectionalCirculator concept.
     typedef Mesh_patch_vertex_around_vertex_cir<Mesh_adaptor_patch_3*,
                                                 Vertex_handle,
                                                 typename Adaptor::Vertex_around_vertex_circulator,
@@ -124,9 +148,10 @@ public:
                                                 typename Adaptor::Vertex_around_vertex_const_circulator,
                                                 typename Adaptor::Vertex_const_handle>
                                             Vertex_around_vertex_const_circulator;
-    /// Seaming flag
-    enum Seaming_status  { OUTER, INNER, BORDER };
 
+    //@} // end of MeshAdaptor_3 INTERFACE
+
+// Friends
     friend class Mesh_adaptor_patch_vertex<Adaptor>;
     friend class Mesh_adaptor_patch_vertex_handle<Adaptor>;
     friend class Mesh_adaptor_patch_vertex_const_handle<Adaptor>;
@@ -151,8 +176,9 @@ public:
 public:
 
     ///******************************************************************
-    /// SPECIFIC TO Mesh_adaptor_patch_3
+    /// @name INTERFACE SPECIFIC TO Mesh_adaptor_patch_3
     ///******************************************************************
+    //@{
 
     /// Create an decorator for an existing PatchableMeshAdaptor_3 mesh
     /// The input mesh can be of any genus, but it has to come with a "seam" that
@@ -160,9 +186,9 @@ public:
     /// border of the mesh or a virtual border.
     ///
     /// Preconditions:
-    /// * first_seam_vertex -> end_seam_vertex defines the outer seam,
+    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   ie Mesh_adaptor_patch_3 will export the "right" of the seam
-    /// * the "seam" is given as a container of Adaptor::Vertex_handle elements.
+    /// - the "seam" is given as a container of Adaptor::Vertex_handle elements.
     template<class InputIterator>
     Mesh_adaptor_patch_3(Adaptor* mesh,
                          InputIterator first_seam_vertex,
@@ -255,9 +281,12 @@ public:
     Adaptor*       get_decorated_mesh()       { return m_mesh_adaptor; }
     const Adaptor* get_decorated_mesh() const { return m_mesh_adaptor; }
 
-    ///******************************************************************
-    /// MeshAdaptor_3 INTERFACE
-    ///******************************************************************
+    //@} // end of INTERFACE SPECIFIC TO Mesh_adaptor_patch_3
+
+    //*******************************************************************
+    /// @name MeshAdaptor_3 INTERFACE
+    //*******************************************************************
+    //@{
 
     // MESH INTERFACE
 
@@ -578,6 +607,9 @@ public:
         return Vertex_around_vertex_const_circulator(this, vertex, start_position);
     }
 
+    //@} // end of MeshAdaptor_3 INTERFACE
+
+
 // Private operations
 private:
 
@@ -590,9 +622,9 @@ private:
     /// (outer seam edges are marked BORDER)
     ///
     /// Preconditions:
-    /// * first_seam_vertex -> end_seam_vertex defines the outer seam,
+    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   ie Mesh_adaptor_patch_3 will export the "right" of the seam
-    /// * the "seam" is given as a container of Adaptor::Vertex_handle elements.
+    /// - the "seam" is given as a container of Adaptor::Vertex_handle elements.
     template<class InputIterator>
     void set_mesh_seaming(InputIterator first_seam_vertex,
                           InputIterator end_seam_vertex)
@@ -679,11 +711,11 @@ private:
     /// by filling the topological disk
     ///
     /// Preconditions:
-    /// * Inner vertices are marked as OUTER, seam vertices as BORDER
-    /// * Inner edges are marked as OUTER,
+    /// - Inner vertices are marked as OUTER, seam vertices as BORDER
+    /// - Inner edges are marked as OUTER,
     ///   outer seam edges as BORDER, inner seam edges as INNER
-    /// * pSeedVertex is in the inner region
-    /// * pSeedVertex != NULL
+    /// - pSeedVertex is in the inner region
+    /// - pSeedVertex != NULL
     ///
     /// Implementation note:
     /// The seaming status of inner edges is unused, thus this part is not tested
@@ -756,8 +788,8 @@ private:
     /// Create a patch vertex from an adaptor vertex + one of its neighbors
     ///
     /// Preconditions:
-    /// * adaptor_neighbor is a neighbor of adaptor_vertex
-    /// * (adaptor_vertex, adaptor_neighbor) must NOT be a seam (non-oriented) edge
+    /// - adaptor_neighbor is a neighbor of adaptor_vertex
+    /// - (adaptor_vertex, adaptor_neighbor) must NOT be a seam (non-oriented) edge
     Vertex_const_handle get_decorated_inner_vertex(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle adaptor_neighbor) const
@@ -817,10 +849,10 @@ private:
     /// + one of its neighbors on the seam
     ///
     /// Preconditions:
-    /// * adaptor_vertex is a border/seam vertex
-    /// * [first_cw_neighbor, last_cw_neighbor] defines the range
+    /// - adaptor_vertex is a border/seam vertex
+    /// - [first_cw_neighbor, last_cw_neighbor] defines the range
     ///   of the valid neighbors of adaptor_vertex (included) or are NULL
-    /// * either first_cw_neighbor or last_cw_neighbor are not NULL
+    /// - either first_cw_neighbor or last_cw_neighbor are not NULL
     Vertex_const_handle get_decorated_border_vertex(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle last_cw_neighbor,

@@ -18,8 +18,15 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// Concept SparseLinearAlgebraTraits_d::Vector.
-/// Concept of the vector class used by the SparseLinearAlgebraTraits_d concept.
+/// Concept SparseLinearAlgebraTraits_d::Vector
+/// is a concept of a vector that can be multiplied by a sparse matrix. 
+///
+/// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Vector.
+///
+/// Models:
+/// - Taucs_vector
+/// - OpenNL::FullVector
+
 class Vector
 {
 // Public types
@@ -44,8 +51,7 @@ public:
 
     /// Read/write access to 1 vector coefficient.
     ///
-    /// Preconditions:
-    /// * 0 <= row < dimension()
+    /// Precondition: 0 <= row < dimension().
     NT  operator[] (int row) const;
     NT&  operator[] (int row);
 };

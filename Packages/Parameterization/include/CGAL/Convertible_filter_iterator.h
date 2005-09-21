@@ -33,8 +33,8 @@ CGAL_BEGIN_NAMESPACE
 template<class Iterator,        ///< Internal iterator.
          class Predicate,       ///< Predicate to filter out elements.
          class ConstHandle,     ///< Const-handle type to convert to.
-         class Handle = void*>  ///< Non-const-handle type to convert to
-                                ///< (void* means none).
+         class Handle = void*   ///< Non-const-handle type to convert to (void*=none).
+>
 class Convertible_filter_iterator
     : public Filter_iterator<Iterator, Predicate>
 {

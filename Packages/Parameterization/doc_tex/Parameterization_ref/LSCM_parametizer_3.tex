@@ -18,26 +18,127 @@
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
+
+Class LSCM\_parametizer\_3 implements Least Square Conformal Maps parameterization (Levy et al). No need to map the surface's border onto a convex polygon but 1 to 1 mapping is NOT guaranteed. This is a conformal parameterization, i.e. it attempts to preserve angles.
 
 \ccInclude{LSCM_parametizer_3.h}
 
 \ccIsModel
 
-Concept
+Model of the ParametizerTraits\_3 concept.
+
+
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class MeshAdaptor\_3, 
+class BorderParametizer\_3 = Two\_vertices\_parametizer\_3$<$MeshAdaptor\_3$>$, 
+class SparseLinearAlgebraTraits\_d = OpenNL::SymmetricLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
+class LSCM\_parametizer\_3;
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{Error_code}
+{
+The various errors detected by this package.
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccNestedType{Border_param}
+{
+}
+\ccNestedType{Sparse_LA}
+{
+}
+\ccNestedType{Vector}
+{
+}
+\ccNestedType{Matrix}
+{
+}
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{p}  %% choose variable name
 
-\ccConstructor{LSCM_parametizer_3();}{default constructor.}
+\ccConstructor{LSCM_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
+{
+Constructor.
+}
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{Parametizer_traits_3< Adaptor >::Error_code parameterize (Adaptor * mesh);}
+{
+Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+Preconditions:\begin{itemize}
+\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh. \end{itemize}
+}
+
 
 \ccSeeAlso
 

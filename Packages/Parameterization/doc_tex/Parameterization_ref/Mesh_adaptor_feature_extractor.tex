@@ -17,27 +17,134 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
-The class \ccRefName\ does this and that.
+
+
+Class Mesh\_adaptor\_feature\_extractor
+
+This class computes features (genus, boundaries, ...) of a 3D surface model of the MeshAdaptor\_3 concept.
 
 \ccInclude{Mesh_adaptor_feature_extractor.h}
 
-\ccIsModel
 
-Concept
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class MeshAdaptor\_3$>$ 
+class Mesh\_adaptor\_feature\_extractor;
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccNestedType{Boundary}
+{
+Mesh boundary.
+}
+\ccNestedType{Skeleton}
+{
+List of all boundaries of a mesh.
+}
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{fe}  %% choose variable name
 
-\ccConstructor{Mesh_adaptor_feature_extractor();}{default constructor.}
+\ccConstructor{Mesh_adaptor_feature_extractor (Adaptor * mesh);}
+{
+Constructor
+CAUTION: Caller must NOT modify 'mesh' during the Mesh\_adaptor\_feature\_extractor life cycle.
+}
+\ccMethod{virtual ~Mesh_adaptor_feature_extractor ();}
+{
+}
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{int get_nb_boundaries ();}
+{
+Get number of boundaries.
+}
+\ccMethod{const Skeleton& get_boundaries ();}
+{
+Get extracted boundaries The longest boundary is the first one
+}
+\ccMethod{const Boundary* get_longest_boundary ();}
+{
+Get longest boundary.
+}
+\ccMethod{int get_nb_connex_components ();}
+{
+Get \# of connected components.
+}
+\ccMethod{int get_genus ();}
+{
+Get the genus.
+}
+
 
 \ccSeeAlso
 

@@ -17,27 +17,290 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
-The class \ccRefName\ does this and that.
+
+
+Mesh\_adaptor\_patch\_3 is an decorator class to virtually "cut" a patch in a PatchableMeshAdaptor\_3 3D surface. Only the patch is exported, making the 3D surface look like a topological disk.
+
+The input mesh can be of any genus, but it has to come with a "seam" that describes the boundary of a topological disc. This boundary may be an actual border of the mesh or a virtual border.
 
 \ccInclude{Mesh_adaptor_patch_3.h}
 
+
 \ccIsModel
 
-Concept
+Model of MeshAdaptor\_3 concept, whose purpose is to allow the parameterization package to access meshes on an uniform manner.
+
+
+\ccHeading{Design pattern}
+
+Mesh\_adaptor\_patch\_3 is a Decorator (see [GOF95]): it changes the behavior of a PatchableMeshAdaptor\_3 3D surface while keeping its MeshAdaptor\_3 interface.
+
+
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class PatchableMeshAdaptor\_3$>$ 
+class Mesh\_adaptor\_patch\_3;
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+The following mutable handles, iterators, and circulators have appropriate
+non-mutable counterparts, i.e. \ccc{const_handle},
+\ccc{const_iterator}, and \ccc{const_circulator}. The mutable types are
+assignable to their non-mutable counterparts.  Both circulators are
+assignable to the \ccc{Vertex_iterator}. The iterators are
+assignable to the respective handle types. Wherever the handles appear
+in function parameter lists, the corresponding iterators can be used as
+well.
+
+{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_patch\_3}
+
+\ccNestedType{Adaptor}
+{
+Export template parameter.
+}
+
+{\bf MeshAdaptor\_3 INTERFACE}
+
+\ccNestedType{NT}
+{
+Number type to represent coordinates.
+}
+\ccNestedType{Point_2}
+{
+2D point that represents (u,v) coordinates computed by parameterization methods. Usual methods are expected.
+}
+\ccNestedType{Point_3}
+{
+3D point that represents vertices coordinates. Usual methods are expected.
+}
+\ccNestedType{Vector_2}
+{
+2D vector. Usual methods are expected.
+}
+\ccNestedType{Vector_3}
+{
+3D vector. Usual methods are expected.
+}
+\ccNestedType{Facet}
+{
+Opaque type representing a facet of the 3D mesh. No methods are expected.
+}
+\ccNestedType{Facet_handle}
+{
+Handle to a facet. Model of the Handle concept.
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+Iterator over all mesh facets. Model of the ForwardIterator concept.
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex}
+{
+Opaque type representing a vertex of the 3D mesh. No methods are expected.
+}
+\ccNestedType{Vertex_handle}
+{
+Handle to a vertex. Model of the Handle concept.
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+Iterator over vertices of the mesh "main boundary". Model of the ForwardIterator concept.
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+Counter-clockwise circulator over a facet's vertices Model of the BidirectionalCirculator concept.
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+Clockwise circulator over the vertices incident to a vertex Model of the BidirectionalCirculator concept.
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
 
-\ccConstructor{Mesh_adaptor_patch_3();}{default constructor.}
+{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_patch\_3}
+
+\ccConstructor{Mesh_adaptor_patch_3 (Adaptor * mesh, InputIterator first_seam_vertex, InputIterator end_seam_vertex);}
+{
+Create an decorator for an existing PatchableMeshAdaptor\_3 mesh The input mesh can be of any genus, but it has to come with a "seam" that describes the boundary of a topological disc. This boundary may be an actual border of the mesh or a virtual border.
+Preconditions:\begin{itemize}
+\item first\_seam\_vertex -$>$ end\_seam\_vertex defines the outer seam, ie Mesh\_adaptor\_patch\_3 will export the "right" of the seam\item the "seam" is given as a container of Adaptor::Vertex\_handle elements. \end{itemize}
+}
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+The following methods returning a mutable handle, iterator, or circulator have appropriate
+non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
+\ccc{const_iterator}, or \ccc{const_circulator}.
+
+{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_patch\_3}
+
+\ccMethod{Adaptor* get_decorated_mesh ();}
+{
+Get the decorated mesh Using this method is NOT recommended
+}
+\ccMethod{const Adaptor* get_decorated_mesh () const;}
+{
+}
+
+{\bf MeshAdaptor\_3 INTERFACE}
+
+\ccMethod{Vertex_iterator mesh_vertices_begin ();}
+{
+Get iterator over first vertex of mesh.
+}
+\ccMethod{Vertex_const_iterator mesh_vertices_begin () const;}
+{
+}
+\ccMethod{Vertex_iterator mesh_vertices_end ();}
+{
+Get iterator over past-the-end vertex of mesh.
+}
+\ccMethod{Vertex_const_iterator mesh_vertices_end () const;}
+{
+}
+\ccMethod{int count_mesh_vertices () const;}
+{
+Count the number of vertices of the mesh.
+}
+\ccMethod{void index_mesh_vertices ();}
+{
+Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
+}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
+{
+Get iterator over first vertex of mesh's main border (aka "seam").
+}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin () const;}
+{
+}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end ();}
+{
+Get iterator over past-the-end vertex of mesh's main border (aka "seam").
+}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end () const;}
+{
+}
+\ccMethod{std::list<Vertex_handle> get_boundary (Vertex_handle seed_vertex);}
+{
+Return the boundary containing seed\_vertex Return an empty list if not found
+}
+\ccMethod{Facet_iterator mesh_facets_begin ();}
+{
+Get iterator over first facet of mesh.
+}
+\ccMethod{Facet_const_iterator mesh_facets_begin () const;}
+{
+}
+\ccMethod{Facet_iterator mesh_facets_end ();}
+{
+Get iterator over past-the-end facet of mesh.
+}
+\ccMethod{Facet_const_iterator mesh_facets_end () const;}
+{
+}
+\ccMethod{int count_mesh_facets () const;}
+{
+Count the number of facets of the mesh.
+}
+\ccMethod{bool is_mesh_triangular () const;}
+{
+Return true of all mesh's facets are triangles.
+}
+\ccMethod{int count_mesh_halfedges () const;}
+{
+Count the number of halfedges of the mesh.
+}
+\ccMethod{Vertex_around_facet_circulator facet_vertices_begin (Facet_handle facet);}
+{
+Get circulator over facet's vertices.
+}
+\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin (Facet_const_handle facet) const;}
+{
+}
+\ccMethod{int count_facet_vertices (Facet_const_handle facet) const;}
+{
+Count the number of vertices of a facet.
+}
+\ccMethod{Point_3 get_vertex_position (Vertex_const_handle vertex) const;}
+{
+Get the 3D position of a vertex.
+}
+\ccMethod{Point_2 get_vertex_uv (Vertex_const_handle vertex) const;}
+{
+Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
+}
+\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 & uv);}
+{
+}
+\ccMethod{bool is_vertex_parameterized (Vertex_const_handle vertex) const;}
+{
+Get/set "is parameterized" field of vertex. Default value is undefined.
+}
+\ccMethod{void set_vertex_parameterized (Vertex_handle vertex, bool parameterized);}
+{
+}
+\ccMethod{int get_vertex_index (Vertex_const_handle vertex) const;}
+{
+Get/set vertex index. Default value is undefined.
+}
+\ccMethod{void set_vertex_index (Vertex_handle vertex, int index);}
+{
+}
+\ccMethod{int get_vertex_tag (Vertex_const_handle vertex) const;}
+{
+Get/set vertex' all purpose tag. Default value is undefined.
+}
+\ccMethod{void set_vertex_tag (Vertex_handle vertex, int tag);}
+{
+}
+\ccMethod{bool is_vertex_on_border (Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to ANY mesh's boundary.
+}
+\ccMethod{bool is_vertex_on_main_border (Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to the UNIQUE mesh's main border set by the constructor
+}
+\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = NULL);}
+{
+Get circulator over the vertices incident to 'vertex' 'start\_position' defines the optional initial position of the circulator
+}
+\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = NULL) const;}
+{
+}
+
 
 \ccSeeAlso
 

@@ -17,27 +17,130 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
-The class \ccRefName\ does this and that.
+
+
+Class Discrete\_conformal\_map\_parametizer\_3 implements Discrete Conformap Map parameterization. 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon. This is a conformal parameterization, i.e. it attempts to preserve angles.
 
 \ccInclude{Discrete_conformal_map_parametizer_3.h}
 
+
 \ccIsModel
 
-Concept
+Model of the ParametizerTraits\_3 concept.
+
+
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class MeshAdaptor\_3, 
+class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$, 
+class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
+class Discrete\_conformal\_map\_parametizer\_3;
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{Error_code}
+{
+The various errors detected by this package.
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccNestedType{Border_param}
+{
+}
+\ccNestedType{Sparse_LA}
+{
+}
+\ccNestedType{Vector}
+{
+}
+\ccNestedType{Matrix}
+{
+}
+\ccNestedType{Solver}
+{
+}
+
 
 \ccCreation
 \ccCreationVariable{a}  %% choose variable name
 
-\ccConstructor{Discrete_conformal_map_parametizer_3();}{default constructor.}
+\ccConstructor{Discrete_conformal_map_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
+{
+Constructor.
+}
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{virtual NT compute_wij (const Adaptor & mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj);}
+{
+compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+}
+
 
 \ccSeeAlso
 

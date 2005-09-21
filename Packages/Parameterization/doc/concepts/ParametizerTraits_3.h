@@ -49,8 +49,8 @@ public:
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
     /// Preconditions:
-    /// * 'mesh' must be a surface with 1 connected component and no hole
-    /// * 'mesh' must be a triangular mesh
+    /// - 'mesh' must be a surface with 1 connected component and no hole
+    /// - 'mesh' must be a triangular mesh
     ErrorCode  parameterize (Adaptor* mesh);
 };
 

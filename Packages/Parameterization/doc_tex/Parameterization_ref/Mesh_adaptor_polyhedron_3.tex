@@ -20,22 +20,39 @@
 \ccDefinition
 
 
-Class Mesh\_adaptor\_polyhedron\_3 is a model of PatchableMeshAdaptor\_3 concept, whose purpose is to allow the parameterization package to access meshes on an uniform manner.
 Mesh\_adaptor\_polyhedron\_3 is an adaptor class to access to a Polyhedron 3D mesh using the PatchableMeshAdaptor\_3 interface.
-The input mesh can be of any genus. It can have have any number of boundaries. Its "main border" will be the mesh's longest boundary (if there is at least one boundary).
 
+A MeshAdaptor\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested.
+
+The surface must be an oriented 2-manifold with border vertices.
+
+MeshAdaptor\_3 meshes can have any genus, aridity or number of components.
+
+It can have have any number of boundaries. Its "main border" will be the mesh's longest boundary (if there is at least one boundary).
+
+It has also the ability to support patches and virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability to behave exactly as if the surface was "cut" following a certain path.
 
 \ccInclude{CGAL/Mesh_adaptor_polyhedron_3.h}
 
 
 \ccIsModel
 
-PatchableMeshAdaptor\_3
+Model of PatchableMeshAdaptor\_3 concept, whose purpose is to allow the parameterization package to access meshes on an uniform manner.
 
 
 \ccHeading{Design pattern}
 
 Mesh\_adaptor\_polyhedron\_3 is an Adaptor (see [GOF95]): it changes the Polyhedron interface to match the PatchableMeshAdaptor\_3 concept.
+
+
+
+\ccParameters
+
+The full template declaration is:
+
+template$<$
+class Polyhedron\_3\_$>$ 
+class Mesh\_adaptor\_polyhedron\_3;
 
 
 \ccTypes
@@ -49,80 +66,88 @@ assignable to the respective handle types. Wherever the handles appear
 in function parameter lists, the corresponding iterators can be used as
 well.
 
-{\bf INTERFACE SPECIFIC TO Polyhedron\_3}
+{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_polyhedron\_3}
 
 \ccNestedType{Polyhedron}
 {
 Export template parameter.
 }
+
+{\bf MeshAdaptor\_3 INTERFACE}
+
 \ccNestedType{NT}
 {
-Number type.
+Number type to represent coordinates.
 }
 \ccNestedType{Point_2}
 {
-Points and vectors.
+2D point that represents (u,v) coordinates computed by parameterization methods. Usual methods are expected.
 }
 \ccNestedType{Point_3}
 {
+3D point that represents vertices coordinates. Usual methods are expected.
 }
 \ccNestedType{Vector_2}
 {
+2D vector. Usual methods are expected.
 }
 \ccNestedType{Vector_3}
 {
+3D vector. Usual methods are expected.
 }
 \ccNestedType{Facet}
 {
-Facet.
+Opaque type representing a facet of the 3D mesh. No methods are expected.
 }
 \ccNestedType{Facet_handle}
 {
+Handle to a facet. Model of the Handle concept.
 }
 \ccNestedType{Facet_const_handle}
 {
 }
 \ccNestedType{Facet_iterator}
 {
-Iterator over all mesh facets.
+Iterator over all mesh facets. Model of the ForwardIterator concept.
 }
 \ccNestedType{Facet_const_iterator}
 {
 }
 \ccNestedType{Vertex}
 {
-Vertex.
+Opaque type representing a vertex of the 3D mesh. No methods are expected.
 }
 \ccNestedType{Vertex_handle}
 {
+Handle to a vertex. Model of the Handle concept.
 }
 \ccNestedType{Vertex_const_handle}
 {
 }
 \ccNestedType{Vertex_iterator}
 {
-Iterator over all mesh vertices.
+Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
 }
 \ccNestedType{Vertex_const_iterator}
 {
 }
 \ccNestedType{Border_vertex_iterator}
 {
-Iterator over mesh boundary vertices.
+Iterator over vertices of the mesh "main boundary". Model of the ForwardIterator concept.
 }
 \ccNestedType{Border_vertex_const_iterator}
 {
 }
 \ccNestedType{Vertex_around_facet_circulator}
 {
-Counter-clockwise circulator over a facet's vertices.
+Counter-clockwise circulator over a facet's vertices. Model of the BidirectionalCirculator concept.
 }
 \ccNestedType{Vertex_around_facet_const_circulator}
 {
 }
 \ccNestedType{Vertex_around_vertex_circulator}
 {
-Clockwise circulator over the vertices incident to a vertex.
+Clockwise circulator over the vertices incident to a vertex. Model of the BidirectionalCirculator concept.
 }
 \ccNestedType{Vertex_around_vertex_const_circulator}
 {
@@ -130,7 +155,9 @@ Clockwise circulator over the vertices incident to a vertex.
 
 
 \ccCreation
-\ccCreationVariable{m}  %% define variable name used by \ccMethod below
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
+
+{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_polyhedron\_3}
 
 \ccConstructor{Mesh_adaptor_polyhedron_3 (Polyhedron * mesh);}
 {
@@ -144,7 +171,7 @@ The following methods returning a mutable handle, iterator, or circulator have a
 non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
 \ccc{const_iterator}, or \ccc{const_circulator}.
 
-{\bf INTERFACE SPECIFIC TO Polyhedron\_3}
+{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_polyhedron\_3}
 
 \ccMethod{Polyhedron* get_adapted_mesh ();}
 {
@@ -174,6 +201,9 @@ Access to additional info attached to vertices.
 \ccMethod{Vertex_info* info (Vertex_const_handle vertex);}
 {
 }
+
+{\bf MeshAdaptor\_3 INTERFACE}
+
 \ccMethod{Vertex_iterator mesh_vertices_begin ();}
 {
 Get iterator over first vertex of mesh.
@@ -198,14 +228,14 @@ Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
 }
 \ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
 {
-Get iterator over first vertex of mesh's main border.
+Get iterator over first vertex of mesh's "main boundary".
 }
 \ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin () const;}
 {
 }
 \ccMethod{Border_vertex_iterator mesh_main_border_vertices_end ();}
 {
-Get iterator over past-the-end vertex of mesh's main border.
+Get iterator over past-the-end vertex of mesh's "main boundary".
 }
 \ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end () const;}
 {
@@ -259,7 +289,7 @@ Get the 3D position of a vertex.
 {
 Get/set the 2D position (u/v pair) of a vertex. Default value is undefined. (stored in halfedges sharing the same vertex).
 }
-\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 \& uv);}
+\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 & uv);}
 {
 }
 \ccMethod{bool is_vertex_parameterized (Vertex_const_handle vertex) const;}
@@ -298,6 +328,8 @@ Get circulator over the vertices incident to 'vertex'. 'start\_position' defines
 \ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = NULL) const;}
 {
 }
+{\bf PatchableMeshAdaptor\_3 INTERFACE}
+
 \ccMethod{int get_vertex_seaming (Vertex_const_handle vertex) const;}
 {
 Get/set vertex seaming flag. Default value is undefined.
@@ -314,28 +346,28 @@ Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to th
 }
 \ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set the 2D position (= (u,v) pair) of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set the 2D position (= (u,v) pair) of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
 }
-\ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 \& uv);}
+\ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 & uv);}
 {
 }
 \ccMethod{bool are_corners_parameterized (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set "is parameterized" field of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set "is parameterized" field of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
 }
 \ccMethod{void set_corners_parameterized (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
 {
 }
 \ccMethod{int get_corners_index (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set index of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set index of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
 }
 \ccMethod{void set_corners_index (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
 {
 }
 \ccMethod{int get_corners_tag (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set all purpose tag of corners at the "right" of the prev\_vertex -> vertex -> next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set all purpose tag of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
 }
 \ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
 {

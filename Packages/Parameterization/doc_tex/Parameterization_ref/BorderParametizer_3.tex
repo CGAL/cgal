@@ -18,30 +18,42 @@
 
 \ccDefinition
 
-The concept \ccRefName\ does this and that.
+Concept BorderParametizer\_3 of a class that parametrizes a given type of mesh, 'Adaptor', which is a model of the MeshAdaptor\_3 concept.
 
-\ccGeneralizes
+Implementation note: To simplify the implementation, BorderParametizer\_3 models know only the MeshAdaptor\_3 class. They don't know the parameterization algorithm requirements nor the kind of sparse linear system used.
 
-ThisConcept \\
-ThatConcept
+
+\ccHeading{Design pattern}
+
+BorderParametizer\_3 models are Strategies (see [GOF95]): they implement a strategy of boundary parameterization for models of MeshAdaptor\_3.
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{ErrorCode}
+{
+}
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{bp}  %% variable name for \ccMethod below
 
-\ccConstructor{BorderParametizer_3();}{default constructor.}
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{ErrorCode parameterize_border (Adaptor * mesh);}
+{
+Assign to mesh's border vertices a 2D position (ie a (u,v) pair) on border's shape. Mark them as "parameterized". Return false on error.
+}
+\ccMethod{bool is_border_convex ();}
+{
+Indicate if border's shape is convex.
+}
 
-\ccHasModels
-
-\ccc{Some_class},
-\ccc{Some_other_class}.
 
 \ccSeeAlso
 

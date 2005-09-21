@@ -171,10 +171,10 @@ private:
 // Public types
 public:
 
-    /// Export template parameter types
+    /// Export template parameter type
     typedef PatchableMeshAdaptor_3           Adaptor;
 
-    /// Iterator types
+    // Iterator types
     typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3>
                                             Vertex;
     typedef Vertex                          value_type;
@@ -316,10 +316,10 @@ private:
 // Public types
 public:
 
-    /// Export template parameter types
+    /// Export template parameter type
     typedef PatchableMeshAdaptor_3           Adaptor;
 
-    /// Iterator types
+    // Iterator types
     typedef Mesh_adaptor_patch_vertex<PatchableMeshAdaptor_3>
                                             Vertex;
     typedef Vertex                          value_type;

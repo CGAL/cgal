@@ -28,9 +28,12 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Class Parametizer_traits_3
-/// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class)
-/// Base class of all parameterization methods
-template<class MeshAdaptor_3>       ///< 3D surface
+/// is the base class of all parameterization methods.
+///
+/// Concept: 
+/// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class).
+
+template<class MeshAdaptor_3>       //< 3D surface
 class Parametizer_traits_3
 {
 // Public types
@@ -49,7 +52,7 @@ public:
     ERROR_WRONG_PARAMETER           ///< a method received an unexpected parameter
     };
 
-    /// Export Mesh_Adaptor_3 type and subtypes
+    // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
@@ -86,7 +89,7 @@ public:
     /// Destructor of base class should be virtual
     virtual ~Parametizer_traits_3() {}
 
-    /// Default constructor, copy constructor and operator =() are fine
+    // Default constructor, copy constructor and operator =() are fine
 
     /// Compute a 1 to 1 mapping from a 3D surface 'mesh'
     /// to a piece of the 2D space.
@@ -94,8 +97,8 @@ public:
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
     /// Preconditions:
-    /// * 'mesh' must be a surface with 1 connected component
-    /// * 'mesh' must be a triangular mesh
+    /// - 'mesh' must be a surface with 1 connected component
+    /// - 'mesh' must be a triangular mesh
     virtual Error_code  parameterize (Adaptor* mesh) = 0;
 
 // Protected operations

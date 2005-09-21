@@ -31,14 +31,14 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Class Taucs_symmetric_solver_traits
-/// Traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems
-/// using TAUCS solvers family
-/// The default solver is the Multifrontal Supernodal Cholesky Factorization
+/// is a traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems
+/// using TAUCS solvers family.
+/// The default solver is the Multifrontal Supernodal Cholesky Factorization.
 ///
-/// Taucs_symmetric_solver_traits is a model of the SparseLinearAlgebraTraits_d concept
+/// Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
-template<class T>       ///< Tested with T = taucs_single or taucs_double
-                        ///< May also work with T = taucs_dcomplex and taucs_scomplex
+template<class T>       // Tested with T = taucs_single or taucs_double
+                        // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_symmetric_solver_traits
 {
 // Public types
@@ -51,10 +51,10 @@ public:
 // Public operations
 public:
 
-    /// Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices
-    /// The default solver is the Multifrontal Supernodal Cholesky Factorization
+    /// Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices.
+    /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
     /// See taucs_linsolve() documentation for the meaning of the
-    /// 'options' and 'arguments' parameters
+    /// 'options' and 'arguments' parameters.
     Taucs_symmetric_solver_traits(
                     const char*  options[]   = NULL,  ///< must be persistent
 		    const void*  arguments[] = NULL)  ///< must be persistent
@@ -66,12 +66,12 @@ public:
         m_arguments = arguments;
     }
 
-    /// Solve the sparse linear system "A*X = B"
+    /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
     /// Preconditions:
-    /// * A.row_dimension()    == B.dimension()
-    /// * A.column_dimension() == X.dimension()
+    /// - A.row_dimension()    == B.dimension().
+    /// - A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
@@ -140,7 +140,7 @@ public:
     /// Indicate if the linear system can be solved and if the matrix conditioning is good.
     ///
     /// Preconditions:
-    /// * A.row_dimension() == B.dimension()
+    /// - A.row_dimension() == B.dimension().
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in TAUCS => we do only basic checking
@@ -166,13 +166,13 @@ private:
 
 
 /// Class Taucs_solver_traits
-/// Traits class for solving GENERAL (aka unsymmetric) sparse linear systems
-/// using TAUCS out-of-core LU factorization
+/// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
+/// using TAUCS out-of-core LU factorization.
 ///
-/// Taucs_solver_traits is a model of the SparseLinearAlgebraTraits_d concept
+/// Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
-template<class T>       ///< Tested with T = taucs_single or taucs_double
-                        ///< May also work with T = taucs_dcomplex and taucs_scomplex
+template<class T>       // Tested with T = taucs_single or taucs_double
+                        // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_solver_traits
 {
 // Public types
@@ -185,12 +185,12 @@ public:
 // Public operations
 public:
 
-    /// Solve the sparse linear system "A*X = B"
+    /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
     /// Preconditions:
-    /// * A.row_dimension()    == B.dimension()
-    /// * A.column_dimension() == X.dimension()
+    /// - A.row_dimension()    == B.dimension().
+    /// - A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
@@ -297,7 +297,7 @@ public:
     /// Indicate if the linear system can be solved and if the matrix conditioning is good.
     ///
     /// Preconditions:
-    /// * A.row_dimension() == B.dimension()
+    /// - A.row_dimension() == B.dimension().
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in TAUCS => we do only basic checking

@@ -33,13 +33,13 @@ CGAL_BEGIN_NAMESPACE
 /// This class computes features (genus, boundaries, ...)
 /// of a 3D surface model of the MeshAdaptor_3 concept.
 
-template<class MeshAdaptor_3>           ///< 3D surface
+template<class MeshAdaptor_3>           //< 3D surface
 class Mesh_adaptor_feature_extractor
 {
 // Public types
 public:
 
-    /// Export Mesh_Adaptor_3 type and subtypes
+    // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;

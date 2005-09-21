@@ -35,21 +35,33 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Class Mesh_adaptor_polyhedron_3
-/// is a model of PatchableMeshAdaptor_3 concept, whose purpose is to allow
-/// the parameterization package to access meshes on an uniform manner.
-///
 /// Mesh_adaptor_polyhedron_3 is an adaptor class to access to a Polyhedron
 /// 3D mesh using the PatchableMeshAdaptor_3 interface.
 ///
-/// The input mesh can be of any genus.
+/// A MeshAdaptor_3 surface consists of vertices,
+/// facets and an incidence relation on them.
+/// No notion of edge is requested.
+/// 
+/// The surface must be an
+/// oriented 2-manifold with border vertices.
+/// 
+/// MeshAdaptor_3 meshes can have any genus, aridity or number of components.
+/// 
 /// It can have have any number of boundaries. Its "main border"
 /// will be the mesh's longest boundary (if there is at least one boundary).
+/// 
+/// It has also the ability to support patches and virtual seams.
+/// Patches are a subset of a 3D mesh. Virtual seams are the ability
+/// to behave exactly as if the surface was "cut" following a certain path.
+///
+/// Concept: 
+/// Model of PatchableMeshAdaptor_3 concept, whose purpose is to allow
+/// the parameterization package to access meshes on an uniform manner.
 ///
 /// Design pattern:
 /// Mesh_adaptor_polyhedron_3 is an Adaptor (see [GOF95]): it changes the
 /// Polyhedron interface to match the PatchableMeshAdaptor_3 concept.
-///
+
 template<class Polyhedron_3_>
 class Mesh_adaptor_polyhedron_3
 {
@@ -100,7 +112,7 @@ private:
 public:
 
     //*******************************************************************
-    /// @name INTERFACE SPECIFIC TO Polyhedron_3
+    /// @name INTERFACE SPECIFIC TO Mesh_adaptor_polyhedron_3
     //*******************************************************************
     //@{
 
@@ -132,7 +144,7 @@ public:
             m_is_parameterized = false;
         }
 
-        /// Default destructor, copy constructor and operator =() are fine
+        // Default destructor, copy constructor and operator =() are fine
 
         /// Access to general purpose tag
         int tag() const { return m_tag; }
@@ -172,7 +184,7 @@ public:
             m_seaming = -1;         // uninitialized
         }
 
-        /// Default destructor, copy constructor and operator =() are fine.
+        // Default destructor, copy constructor and operator =() are fine.
 
         /// Access to 'index' field
         int index() const { return m_index; }
@@ -187,49 +199,56 @@ public:
         void seaming(int seaming) { m_seaming = seaming; }
     };
 
-    //@} // end of INTERFACE SPECIFIC TO Polyhedron_3
+    //@} // end of INTERFACE SPECIFIC TO Mesh_adaptor_polyhedron_3
 
     //*******************************************************************
     /// @name MeshAdaptor_3 INTERFACE
     //*******************************************************************
     //@{
 
-    /// Number type
+    /// Number type to represent coordinates
     typedef typename Polyhedron::Traits::FT NT;
 
-    /// Points and vectors
+    /// 2D point that represents (u,v) coordinates computed
+    /// by parameterization methods. Usual methods are expected.
     typedef typename Polyhedron::Traits::Point_2
                                             Point_2;
+    /// 3D point that represents vertices coordinates. Usual methods are expected.
     typedef typename Polyhedron::Traits::Point_3
                                             Point_3;
+    /// 2D vector. Usual methods are expected.
     typedef typename Polyhedron::Traits::Vector_2
                                             Vector_2;
+    /// 3D vector. Usual methods are expected.
     typedef typename Polyhedron::Traits::Vector_3
                                             Vector_3;
 
-    /// Facet
+    /// Opaque type representing a facet of the 3D mesh. No methods are expected.
     typedef typename Polyhedron::Facet      Facet;
+    /// Handle to a facet. Model of the Handle concept.
     typedef typename Polyhedron::Facet_handle Facet_handle;
     typedef typename Polyhedron::Facet_const_handle
                                             Facet_const_handle;
-    /// Iterator over all mesh facets
+    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
     typedef typename Polyhedron::Facet_iterator
                                             Facet_iterator;
     typedef typename Polyhedron::Facet_const_iterator
                                             Facet_const_iterator;
 
-    /// Vertex
+    /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
     typedef typename Polyhedron::Vertex     Vertex;
+    /// Handle to a vertex. Model of the Handle concept.
     typedef typename Polyhedron::Vertex_handle
                                             Vertex_handle;
     typedef typename Polyhedron::Vertex_const_handle
                                             Vertex_const_handle;
-    /// Iterator over all mesh vertices
+    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef typename Polyhedron::Vertex_iterator
                                             Vertex_iterator;
     typedef typename Polyhedron::Vertex_const_iterator
                                             Vertex_const_iterator;
-    /// Iterator over mesh boundary vertices
+    /// Iterator over vertices of the mesh "main boundary". 
+    /// Model of the ForwardIterator concept.
     typedef CGAL::Convertible_iterator_project<typename std::list<Vertex_handle>::iterator,
                                                Project_vertex_handle_vertex,
                                                Vertex_const_handle,
@@ -239,7 +258,8 @@ public:
                                                Project_vertex_handle_vertex,
                                                Vertex_const_handle>
                                             Border_vertex_const_iterator;
-    /// Counter-clockwise circulator over a facet's vertices
+    /// Counter-clockwise circulator over a facet's vertices.
+    /// Model of the BidirectionalCirculator concept.
     typedef CGAL::Convertible_circulator_project<Halfedge_around_facet_circulator,
                                                  Project_halfedge_vertex,
                                                  Vertex&,
@@ -253,7 +273,8 @@ public:
                                                  const Vertex*,
                                                  Vertex_const_handle>
                                             Vertex_around_facet_const_circulator;
-    /// Clockwise circulator over the vertices incident to a vertex
+    /// Clockwise circulator over the vertices incident to a vertex.
+    /// Model of the BidirectionalCirculator concept.
     typedef CGAL::Convertible_circulator_project<Halfedge_around_vertex_circulator,
                                                  Project_opposite_halfedge_vertex,
                                                  Vertex&,
@@ -275,7 +296,7 @@ public:
 public:
 
     //*******************************************************************
-    /// @name INTERFACE SPECIFIC TO Polyhedron_3
+    /// @name INTERFACE SPECIFIC TO Mesh_adaptor_polyhedron_3
     //*******************************************************************
     //@{
 
@@ -312,7 +333,7 @@ public:
 #endif
     }
 
-    /// Default destructor, copy constructor and operator =() are fine
+    // Default destructor, copy constructor and operator =() are fine
 
     /// Get the adapted mesh
     Polyhedron*       get_adapted_mesh()       { return m_polyhedron; }
@@ -377,7 +398,7 @@ public:
         return &it->second;
     }
 
-    //@} // end of INTERFACE SPECIFIC TO Polyhedron_3
+    //@} // end of INTERFACE SPECIFIC TO Mesh_adaptor_polyhedron_3
 
     //*******************************************************************
     /// @name MeshAdaptor_3 INTERFACE
@@ -430,7 +451,7 @@ public:
         fprintf(stderr,"    ok\n");
     }
 
-    /// Get iterator over first vertex of mesh's main border
+    /// Get iterator over first vertex of mesh's "main boundary"
     Border_vertex_iterator  mesh_main_border_vertices_begin() {
         return Border_vertex_iterator(m_main_border.begin());
     }
@@ -438,7 +459,7 @@ public:
         return Border_vertex_const_iterator(m_main_border.begin());
     }
 
-    /// Get iterator over past-the-end vertex of mesh's main border
+    /// Get iterator over past-the-end vertex of mesh's "main boundary"
     Border_vertex_iterator  mesh_main_border_vertices_end() {
         return Border_vertex_iterator(m_main_border.end());
     }

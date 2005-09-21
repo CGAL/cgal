@@ -18,8 +18,15 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// Concept SparseLinearAlgebraTraits_d::Matrix.
-/// Concept of a sparse matrix class. See SparseLinearAlgebraTraits_d concept.
+/// Concept SparseLinearAlgebraTraits_d::Matrix
+/// is a concept of a sparse matrix class. 
+///
+/// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
+///
+/// Models:
+/// - Taucs_matrix
+/// - OpenNL::SparseMatrix
+
 class Matrix
 {
 // Public types
@@ -43,21 +50,22 @@ public:
     /// Read access to 1 matrix coefficient.
     ///
     /// Preconditions:
-    /// * 0 <= row < row_dimension()
-    /// * 0 <= column < column_dimension()
+    /// - 0 <= row < row_dimension().
+    /// - 0 <= column < column_dimension().
     NT  get_coef (int row, int column) const;
-    /// Write access to 1 matrix coefficient: aij <- aij + val
+
+    /// Write access to 1 matrix coefficient: aij <- aij + val.
     ///
     /// Preconditions:
-    /// * 0 <= row < row_dimension()
-    /// * 0 <= column < column_dimension()
+    /// - 0 <= row < row_dimension().
+    /// - 0 <= column < column_dimension().
     void add_coef(int row, int column, NT value);
 
     /// Write access to 1 matrix coefficient.
     ///
     /// Preconditions:
-    /// * 0 <= row < row_dimension()
-    /// * 0 <= column < column_dimension()
+    /// - 0 <= row < row_dimension().
+    /// - 0 <= column < column_dimension().
     void  set_coef (int row, int column, NT value);
 };
 

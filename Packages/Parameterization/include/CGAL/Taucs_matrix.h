@@ -51,13 +51,14 @@ template<class T> struct Taucs_number;
 
 
 /// Class Taucs_matrix
-/// This class is a C++ wrapper around TAUCS' type taucs_ccs_matrix and
-/// is a model of the SparseLinearAlgebraTraits_d::Matrix concept
+/// is a C++ wrapper around TAUCS' matrix type taucs_ccs_matrix.
 ///
 /// TODO: reallocate the array of non null elements when it's full
+///
+/// Concept: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
 
-template<class T>       ///< Tested with T = taucs_single or taucs_double
-                        ///< May also work with T = taucs_dcomplex and taucs_scomplex
+template<class T>       // Tested with T = taucs_single or taucs_double
+                        // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_matrix
 {
 // Public types
@@ -105,8 +106,8 @@ public:
     /// Read access to 1 matrix coefficient
     ///
     /// Preconditions:
-    /// * 0 <= i < row_dimension()
-    /// * 0 <= j < column_dimension()
+    /// - 0 <= i < row_dimension()
+    /// - 0 <= j < column_dimension()
     T  get_coef (int i, int j) const
     {
         // For symmetric matrices, we store only the lower triangle
@@ -134,8 +135,8 @@ public:
     /// set_coef() does nothing if (i,j) belongs to the upper triangle
     ///
     /// Preconditions:
-    /// * 0 <= i < row_dimension()
-    /// * 0 <= j < column_dimension()
+    /// - 0 <= i < row_dimension()
+    /// - 0 <= j < column_dimension()
     void set_coef(int i, int j, T  val)
     {
         if (m_matrix->flags & TAUCS_SYMMETRIC)
@@ -162,8 +163,8 @@ public:
     /// add_coef() does nothing if (i,j) belongs to the upper triangle
     ///
     /// Preconditions:
-    /// * 0 <= i < row_dimension()
-    /// * 0 <= j < column_dimension()
+    /// - 0 <= i < row_dimension()
+    /// - 0 <= j < column_dimension()
     void add_coef(int i, int j, T val)
     {
         if (m_matrix->flags & TAUCS_SYMMETRIC)
@@ -247,9 +248,9 @@ private:
     /// Return NULL if it doesn't exist (cannot happen if 'create' is true)
     ///
     /// Preconditions:
-    /// * 0 <= i < row_dimension()
-    /// * 0 <= j < column_dimension()
-    /// * j <= i for symmetric matrices (we store only the lower triangle)
+    /// - 0 <= i < row_dimension()
+    /// - 0 <= j < column_dimension()
+    /// - j <= i for symmetric matrices (we store only the lower triangle)
     T* find_element(int i, int j, bool create)
     {
         T* element = NULL;                          // returned value
@@ -318,9 +319,9 @@ private:
     /// Get a pointer to a matrix element. Return NULL if it doesn't exist.
     ///
     /// Preconditions:
-    /// * 0 <= i < row_dimension()
-    /// * 0 <= j < column_dimension()
-    /// * j <= i for symmetric matrices (we store only the lower triangle)
+    /// - 0 <= i < row_dimension()
+    /// - 0 <= j < column_dimension()
+    /// - j <= i for symmetric matrices (we store only the lower triangle)
     const T* find_element(int i, int j) const
     {
         return ((Taucs_matrix<T>*)this)->find_element(i, j, false);
@@ -346,10 +347,11 @@ private:
 /// Class Taucs_symmetric_matrix
 /// This class is a C++ wrapper around a TAUCS SYMMETRIC matrix
 /// (type taucs_ccs_matrix)
-/// It is also a model of the SparseLinearAlgebraTraits_d::Matrix concept
+///
+/// Concept: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
 
-template<class T>       ///< Tested with T = taucs_single or taucs_double
-                        ///< May also work with T = taucs_dcomplex and taucs_scomplex
+template<class T>       // Tested with T = taucs_single or taucs_double
+                        // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_symmetric_matrix
     : public Taucs_matrix<T>
 {

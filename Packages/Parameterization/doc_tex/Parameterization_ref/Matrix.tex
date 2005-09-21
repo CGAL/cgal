@@ -18,30 +18,74 @@
 
 \ccDefinition
 
-The concept \ccRefName\ does this and that.
+Concept SparseLinearAlgebraTraits\_d::Matrix is a concept of a sparse matrix class.
 
-\ccGeneralizes
 
-ThisConcept \\
-ThatConcept
+\ccRefines
 
-\ccTypes
+This is a sub-concept of LinearAlgebraTraits\_d::Matrix.
 
-\ccNestedType{TYPE}{some nested types}
-
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
-
-\ccConstructor{Matrix();}{default constructor.}
-
-\ccOperations
-
-\ccMethod{void foo();}{some member functions}
 
 \ccHasModels
 
-\ccc{Some_class},
-\ccc{Some_other_class}.
+\begin{itemize}
+\item Taucs\_matrix\item OpenNL::SparseMatrix \end{itemize}
+
+
+
+
+
+
+\ccTypes
+
+
+\ccNestedType{NT}
+{
+}
+
+
+\ccCreation
+\ccCreationVariable{m}  %% choose variable name
+
+\ccConstructor{Matrix (int dimension);}
+{
+Create a square matrix initialized with zeros.
+}
+\ccConstructor{Matrix (int rows, int columns);}
+{
+Create a rectangular matrix initialized with zeros.
+}
+
+
+\ccOperations
+
+\ccMethod{int row_dimension () const;}
+{
+Return the matrix number of rows.
+}
+\ccMethod{int column_dimension () const;}
+{
+Return the matrix number of columns.
+}
+\ccMethod{NT get_coef (int row, int column) const;}
+{
+Read access to 1 matrix coefficient.
+Preconditions:\begin{itemize}
+\item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
+}
+\ccMethod{void add_coef (int row, int column, NT value);}
+{
+Write access to 1 matrix coefficient: aij $<$- aij + val.
+Preconditions:\begin{itemize}
+\item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
+}
+\ccMethod{void set_coef (int row, int column, NT value);}
+{
+Write access to 1 matrix coefficient.
+Preconditions:\begin{itemize}
+\item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
+}
+
 
 \ccSeeAlso
 

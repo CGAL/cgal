@@ -18,9 +18,10 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// Concept SparseLinearAlgebraTraits_d.
-/// Concept for solving sparse linear systems "A*X = B".
-/// This is a sub-concept of LinearAlgebraTraits_d.
+/// The concept SparseLinearAlgebraTraits_d
+/// is used to solve sparse linear systems "A*X = B".
+///
+/// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d.
 
 class SparseLinearAlgebraTraits_d
 {
@@ -39,14 +40,14 @@ public:
     /// Return true on success. The solution is then (1/D) * X.
     ///
     /// Preconditions:
-    /// * A.row_dimension()    == B.dimension()
-    /// * A.column_dimension() == X.dimension()
+    /// - A.row_dimension()    == B.dimension()
+    /// - A.column_dimension() == X.dimension()
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D);
 
     /// Indicate if the linear system can be solved and if the matrix conditioning is good.
     ///
     /// Preconditions:
-    /// * A.row_dimension() == B.dimension()
+    /// - A.row_dimension() == B.dimension()
     bool is_solvable (const Matrix& A, const Vector& B);
 };
 

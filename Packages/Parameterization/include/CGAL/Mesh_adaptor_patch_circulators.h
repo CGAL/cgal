@@ -63,14 +63,14 @@ public:
 // PUBLIC TYPES
 // ------------
 
-    /// Export template parameter types
+    // Export template parameter types
     typedef MeshPatchPtrType                    Mesh_patch_c_ptr;
     typedef VertexHandleType                    Vertex_c_handle;
     typedef AdaptorVertexAroundVertexCirculatorType
                                                 Adaptor_vertex_around_vertex_c_cir;
     typedef AdaptorVertexHandleType             Adaptor_vertex_c_handle;
 
-    /// Iterator types
+    // Iterator types
     typedef typename Adaptor_vertex_around_vertex_c_cir::iterator_category
                                                 iterator_category;
     typedef typename Vertex_c_handle::value_type value_type;
@@ -481,13 +481,13 @@ public:
 // PUBLIC TYPES
 // ------------
 
-    /// Export template parameter types
+    // Export template parameter types
     typedef MeshPatchPtrType                    Mesh_patch_c_ptr;
     typedef VertexHandleType                    Vertex_c_handle;
     typedef AdaptorVertexAroundFacetCirculatorType
                                                 Adaptor_vertex_around_facet_c_cir;
 
-    /// Iterator types
+    // Iterator types
     typedef typename Adaptor_vertex_around_facet_c_cir::iterator_category
                                                 iterator_category;
     typedef typename Vertex_c_handle::value_type value_type;

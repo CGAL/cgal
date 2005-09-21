@@ -27,11 +27,12 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Class Taucs_vector
-/// This class is a C++ wrapper around TAUCS' vector type, which is a simple array. 
-/// It is also a model of the SparseLinearAlgebraTraits_d::Vector concept
+/// is a C++ wrapper around TAUCS' vector type, which is a simple array. 
+///
+/// Concept: Model of the SparseLinearAlgebraTraits_d::Vector concept.
 
-template<class T>       ///< Tested with T = taucs_single or taucs_double
-                        ///< May also work with T = taucs_dcomplex and taucs_scomplex
+template<class T>       // Tested with T = taucs_single or taucs_double
+                        // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_vector
 {
 // Public types
@@ -89,7 +90,7 @@ public:
     /// Read/write access to 1 vector coefficient.
     ///
     /// Preconditions:
-    /// * 0 <= i < dimension()
+    /// - 0 <= i < dimension().
     T operator[](int i) const {
         assert(i < m_dimension);
         return m_element[i];

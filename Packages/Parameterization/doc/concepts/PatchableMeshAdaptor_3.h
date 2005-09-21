@@ -29,12 +29,14 @@
 /// the parameterization package to parameterize any 3D surface by decomposing it
 /// as a list of topological disks.
 ///
-/// Models:
-/// Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
+/// Sub-concept: PatchableMeshAdaptor_3 inherits from concept MeshAdaptor_3.
 ///
 /// Design pattern:
 /// PatchableMeshAdaptor_3 is an Adaptor (see [GOF95]): it changes the
 /// interface of a 3D mesh to match the interface expected by class Mesh_adaptor_patch_3.
+///
+/// Models:
+/// Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
 
 class PatchableMeshAdaptor_3 : public MeshAdaptor_3
 {

@@ -20,23 +20,29 @@
 \ccDefinition
 
 MeshAdaptor\_3 is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes on an uniform manner.
+
 A MeshAdaptor\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their boundary. The surface itself can have holes. The vertices along the boundary of a hole are called "border vertices". A surface is "closed" if it contains no border vertices.
+
 The surface must be an oriented 2-manifold with border vertices, i.e. the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with boundary can join.
+
 MeshAdaptor\_3 defines the minimum types, data and methods that a mesh must implement to allow surface parameterization.
+
 MeshAdaptor\_3 meshes can have any genus, aridity or number of components. In the other hand, as parameterization methods deal only with topological disks, MeshAdaptor\_3 defines an interface oriented towards topological disks
 
 
 \ccHasModels
 
-Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided. Mesh\_adaptor\_patch\_3<M> is a model of MeshAdaptor\_3 if M is a model of MeshAdaptorWithStream\_3.
+\begin{itemize}
+\item Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided.\item Mesh\_adaptor\_patch\_3$<$M$>$ is a model of MeshAdaptor\_3 if M is a model of MeshAdaptorWithStream\_3.\end{itemize}
 
-\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
-\ccRefIdfierPage{CGAL::Mesh_adaptor_patch_3<PatchableMeshAdaptor_3>} \\
 
 
 \ccHeading{Design pattern}
 
 MeshAdaptor\_3 is an Adaptor (see [GOF95]): it changes the interface of a 3D mesh to match the interface expected by the parameterization methods.
+
+
+
 
 
 \ccTypes
@@ -235,7 +241,7 @@ Get the 3D position of a vertex.
 {
 Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
 }
-\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 \& uv);}
+\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 & uv);}
 {
 }
 \ccMethod{bool is_vertex_parameterized (Vertex_const_handle vertex) const;}

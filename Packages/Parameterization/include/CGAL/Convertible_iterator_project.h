@@ -33,8 +33,8 @@ CGAL_BEGIN_NAMESPACE
 template<class I,               ///< Internal iterator.
          class Fct,             ///< Conversion functor.
          class ConstHandle,     ///< Const-handle type to convert to.
-         class Handle = void*>  ///< Non-const-handle type to convert to
-                                ///< (void* means none).
+         class Handle = void*   ///< Non-const-handle type to convert to (void*=none).
+>
 class Convertible_iterator_project
     : public Iterator_project<I, Fct>
 {

@@ -39,9 +39,9 @@ CGAL_BEGIN_NAMESPACE
 /// The result is the (u,v) pair image of each vertex of the 3D surface.
 ///
 /// Preconditions:
-/// * 'mesh' must be a surface with 1 connected component
-/// * 'mesh' must be a triangular mesh
-/// * the mesh border must be mapped onto a convex polygon
+/// - 'mesh' must be a surface with 1 connected component
+/// - 'mesh' must be a triangular mesh
+/// - the mesh border must be mapped onto a convex polygon
 ///
 template <class MeshAdaptor_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
@@ -50,6 +50,7 @@ parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
     Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
     return parametizer.parameterize(mesh);
 }
+
 
 /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
 /// to a piece of the 2D space.
@@ -60,9 +61,9 @@ parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
 /// ParametizerTraits_3 algorithm chosen
 ///
 /// Preconditions:
-/// * 'mesh' must be a surface with 1 connected component
-/// * 'mesh' must be a triangular mesh
-/// * the mesh border must be mapped onto a convex polygon
+/// - 'mesh' must be a surface with 1 connected component
+/// - 'mesh' must be a triangular mesh
+/// - the mesh border must be mapped onto a convex polygon
 /// (for fixed border parameterizations)
 ///
 template <class MeshAdaptor_3, class ParametizerTraits_3>
