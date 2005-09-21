@@ -25,7 +25,7 @@
 #define CGAL_LAZY_CURVED_KERNEL_CONSTRUCTIONS_H
 
 #include <CGAL/Lazy.h>
-
+#include <CGAL/Profile_counter.h>
 
 //TODO : More if-else's with object cast for all the possible 
 //       types that could be returned by object-returning functions
@@ -97,6 +97,7 @@ public:
   {
   
     try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
 
@@ -134,6 +135,7 @@ public:
       }
       
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
@@ -174,6 +176,7 @@ public:
   {
   
     try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_1<AC, EC, E2A, L1>(ac, ec, l1));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
@@ -201,6 +204,7 @@ public:
       }
       
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
@@ -248,6 +252,7 @@ template <typename L1>
   {
   
     try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
       
@@ -281,6 +286,7 @@ template <typename L1>
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1));
       return make_lazy_CK<LK>(eto);
@@ -296,6 +302,7 @@ template <typename L1>
   {
   
     try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
  
@@ -330,6 +337,7 @@ template <typename L1>
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
       return make_lazy_CK<LK>(eto);
