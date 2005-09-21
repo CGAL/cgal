@@ -827,7 +827,8 @@ public:
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
       // Check if the two curves have the same supporting line.
-      if (! equal (cv1.line(), cv2.line()))
+      if (! equal (cv1.line(), cv2.line()) && 
+          ! equal (cv1.line().opposite(), cv2.line()))
         return (false);
 
       // Check if the left endpoint of one curve is the right endpoint of the
@@ -864,7 +865,8 @@ public:
       Kernel                    kernel;
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
-      CGAL_precondition (equal (cv1.line(), cv2.line()));
+      CGAL_precondition (equal (cv1.line(), cv2.line()) ||
+                         equal (cv1.line().opposite(), cv2.line()));
 
       // Check which curve extends to the right of the other.
       if (equal (cv1.right(), cv2.left()))
