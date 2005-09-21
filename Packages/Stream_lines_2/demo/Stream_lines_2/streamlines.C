@@ -14,7 +14,6 @@
 #include <stdlib.h>
 
 #include <CGAL/Stream_lines_2.h>
-#include <CGAL/Euler_integrator_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
 #include <CGAL/Triangular_field_2.h>
@@ -24,8 +23,7 @@
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> K;
 typedef CGAL::Regular_grid_2<K> Field;
-typedef CGAL::Euler_integrator_2<Field> Euler_integrator;
-typedef CGAL::Runge_kutta_integrator_2<Euler_integrator, Field> Runge_kutta_integrator;
+typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterator_2 Stl_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_iterator_2 Pt_iterator;
@@ -52,7 +50,6 @@ public:
 	Placement()
 		{
 			Stream_lines = NULL;
-			euler_integrator = NULL;
 			runge_kutta_integrator = NULL;
 			regular_grid = NULL;
 			begin_iterator = NULL;
@@ -64,7 +61,6 @@ public:
 			completed = false;
 		}
 	Stl * Stream_lines;
-	Euler_integrator * euler_integrator;
 	Runge_kutta_integrator * runge_kutta_integrator;
 	Field * regular_grid;
 	Stl_iterator begin_iterator;
@@ -75,7 +71,6 @@ public slots :
 		if (Stream_lines != NULL)
 		{
 			delete Stream_lines;
-			delete euler_integrator;
 			delete runge_kutta_integrator;
 			delete regular_grid;
 			begin_iterator = NULL;
@@ -88,8 +83,7 @@ public slots :
 	void load( const QString & s )
 	{
 		std::cout << s << " laoded\n";
-		euler_integrator = new Euler_integrator(1);  
-  	runge_kutta_integrator = new Runge_kutta_integrator(*euler_integrator);
+  	runge_kutta_integrator = new Runge_kutta_integrator(1.0);
   	std::ifstream infile(s, std::ios::in);
   	double iXSize, iYSize;
 		iXSize = iYSize = 512;
