@@ -61,8 +61,9 @@ public:
 
   // Simplicial complex
   typedef Triangulation_data_structure_3 <
-    Triangulation_vertex_base_3<Simplicial_K>,
-    Skin_surface_simplicial_cell_base_3<Simplicial_K,Mesh_K> >  Simplicial_TDS;
+//    Triangulation_vertex_base_3<Simplicial_K>,
+    Skin_surface_simplicial_vertex_base_3<Simplicial_K,Regular>,
+    Skin_surface_simplicial_cell_base_3<Simplicial_K,Mesh_K,Regular> >  Simplicial_TDS;
   typedef Skin_surface_simplicial_complex_3<Simplicial_K, Simplicial_TDS> 
                                                                 Simplicial;
 

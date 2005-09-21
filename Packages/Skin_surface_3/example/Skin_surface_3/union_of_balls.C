@@ -2,7 +2,7 @@
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Mixed_complex_builder_3.h>
+#include <CGAL/Voronoi_triangulator_3.h>
 #include <CGAL/Marching_tetrahedra.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -14,7 +14,7 @@ typedef Regular_traits::Bare_point                    Reg_point;
 typedef Skin_traits::Simplicial                       Simplicial;
 typedef Simplicial::Finite_cells_iterator             Simpl_Fin_cells_it;
 
-typedef CGAL::Mixed_complex_builder_3<Skin_traits>    Mixed_complex_builder;
+typedef CGAL::Voronoi_triangulator_3<Skin_traits>     Voronoi_triangulator;
 
 typedef Skin_traits::Mesh                             Mesh;
 typedef CGAL::Marching_tetrahedra_3<Simplicial, Mesh> Marching_tetrahedra;
@@ -51,7 +51,6 @@ void write_edges(T &t, char * filename) {
 }
 
 int main(int argc, char *argv[]) {
-  double shrink = .85;
   std::ifstream is;
   if (argc>1) {
     is.open(argv[1]);
@@ -92,33 +91,35 @@ int main(int argc, char *argv[]) {
 
   std::cout << "regular" << std::endl;
 
-  std::cerr << "LIST" << std::endl;
-  // Triangulate mixed complex:
   Simplicial simplicial;
-  Mixed_complex_builder(regular, simplicial, shrink);
-  for (Simpl_Fin_cells_it cit = simplicial.finite_cells_begin();
-       cit != simplicial.finite_cells_end(); cit++) {
-    CGAL::Orientation orient = CGAL::orientation(
-      cit->vertex(0)->point(), cit->vertex(1)->point(),
-      cit->vertex(2)->point(), cit->vertex(3)->point());
-    if (orient == CGAL::NEGATIVE) {
-      //std::cout.precision(20);
-      std::cout << orient << " (" << cit->simpl.dimension() << ") ";
-      for (int i=0; i<4; i++) {
-        std::cout << "[" << cit->vertex(i)->sDel.dimension() 
-                  << ", " << cit->vertex(i)->sVor.dimension() << "] ";
+  Voronoi_triangulator(regular, simplicial);
+
+  {
+    std::ofstream out("orient.off");
+    out << "LIST" << std::endl;
+    // Triangulate mixed complex:
+    for (Simpl_Fin_cells_it cit = simplicial.finite_cells_begin();
+	 cit != simplicial.finite_cells_end(); cit++) {
+      CGAL::Orientation orient = CGAL::orientation(
+	cit->vertex(0)->point(), cit->vertex(1)->point(),
+	cit->vertex(2)->point(), cit->vertex(3)->point());
+      if (orient == CGAL::NEGATIVE) {
+	std::cout.precision(20);
+	std::cout << orient << " (" << cit->simpl.dimension() << ") ";
+	for (int i=0; i<4; i++) {
+	  std::cout << "[" << cit->vertex(i)->sDel.dimension() 
+		    << ", " << cit->vertex(i)->sVor.dimension() << "] ";
+	}
+	std::cout << std::endl;
+	out << "{ OFF 4 4 0\n";
+	for (int i=0; i<4; i++) {
+	  out << "  " << cit->vertex(i)->point() << std::endl;
+	}
+	for (int i=0; i<4; i++) {
+	  out << "  3 " << i << " " << ((i+1)&3) << " " << ((i+2)&3) << std::endl;
+	}
+	out << "}\n";
       }
-      std::cout << std::endl;
-      std::cerr << "{ OFF 4 4 0\n";
-      for (int i=0; i<4; i++) {
-        std::cerr << "  " << cit->vertex(i)->point() << std::endl;
-      }
-      for (int i=0; i<4; i++) {
-	std::cerr << "  3 " << i << " " << ((i+1)&3) << " " << ((i+2)&3) << std::endl;
-      }
-      std::cerr << "}\n";
-      
-	
     }
   }
 
@@ -130,6 +131,7 @@ int main(int argc, char *argv[]) {
   // Extract the mesh by marching tetrahedra.
   Mesh mesh;
   Marching_tetrahedra()(simplicial, mesh);
+  
   {
     std::ofstream out("mesh.off"); out << mesh;
   }

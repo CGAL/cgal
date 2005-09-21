@@ -33,6 +33,12 @@ public:
     return CGAL::sign(
       vh->cell()->surf->value(converter(vh->point())) - iso_value);
   }
+  Mesh_rt value(Sc_cell_handle const &ch, Mesh_point const &p) {
+    return ch->surf->value(p);
+  }
+  Mesh_rt value(Sc_cell_handle const &ch, Sc_point const &p) {
+    return ch->surf->value(converter(p));
+  }
   Mesh_point intersection(Sc_edge const& e) {
     // Precondition: e.first is not an infinite cell: they have not surface set
     return e.first->surf->to_surface(

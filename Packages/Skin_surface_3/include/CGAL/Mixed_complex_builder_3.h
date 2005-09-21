@@ -244,8 +244,6 @@ private:
     construct_3_cells(); // mixed cells corresponding to regular cells
 
     triangulation_incr_builder.end_triangulation();
-
-    compute_value_on_vertices();
   }
 
   Sc_Vertex_handle add_vertex(Rt_Simplex &sDel, Rt_Simplex &sVor); 
@@ -261,7 +259,6 @@ private:
   void construct_1_cells();
   void construct_2_cells();
   void construct_3_cells();
-  void compute_value_on_vertices();
 
 //  typedef std::map<Rt_Simplex, typename Sc_Geom_traits::Point_3> Focus_map;
 //  Focus_map foc_map;
@@ -274,16 +271,15 @@ private:
   Simplicial &sc;
   Triangulation_incremental_builder triangulation_incr_builder;
   Sc_RT shrink;
-  R2S_converter converter;
+  R2S_converter r2s_converter;
   Mixed_complex_visitor visitor;
-  // M_RT shrink_m;
 
   Construct_weighted_circumcenter_3<
     Regular_triangulation_euclidean_traits_3<
     Sc_Geom_traits> >                                orthocenter_obj;
   Compute_squared_radius_smallest_orthogonal_sphere_3<
     Regular_triangulation_euclidean_traits_3<
-    typename Simplicial::Geom_traits> >                                orthoweight_obj;
+    typename Simplicial::Geom_traits> >              orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
 
   int edge_index[4][4];
@@ -832,27 +828,6 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_3_cells(
   }
 }
 
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-void 
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::compute_value_on_vertices() {
-  //   Sc_Cell_handle ch;
-  //   for (Sc_Finite_vertices_iterator vit=sc.finite_vertices_begin();
-  //        vit!=sc.finite_vertices_end(); vit++) {
-  //     ch = vit->cell();
-  //     if (sc.is_infinite(ch)) {
-  //       ch = ch->neighbor(ch->index(sc.infinite_vertex()));
-  //     }
-  //     vit->iValue = ch->surf->value(traits.s2m_converter(vit->point()));
-  //   }
-	
-  //   for (Sc_Finite_cells_iterator cit = sc.finite_cells_begin();
-  //        cit != sc.finite_cells_end();
-  //        cit ++) {
-  //     cit->initialise();
-  //   }
-}
-
-
 // Adds a vertex to the simplicial complex
 template <class SkinTraits_3, class Mixed_complex_visitor_>
 typename Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
@@ -955,6 +930,7 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   assert(vh[1] != vh[2]); assert(vh[1] != vh[3]); assert(vh[1] != vh[4]);
   assert(vh[2] != vh[3]); assert(vh[2] != vh[4]); assert(vh[3] != vh[4]);
   Sc_Cell_handle ch;
+
   if (orient) {
     ch = triangulation_incr_builder.add_cell(vh[0], vh[1], vh[2], vh[3]);
   } else {
@@ -975,58 +951,58 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::get_anchor(Rt_Simp
   Rt_Cell_handle   ch;
 	
   Sc_Point vfoc, dfoc;
-  switch (sVor.dimension()) {
-    case 0:
-      vh=sVor;
-      vfoc = converter(vh->point());
-      break;
-    case 1:
-      e=sVor;
-      vfoc = orthocenter_obj(
-	converter(e.first->vertex(e.second)->point()),
-	converter(e.first->vertex(e.third)->point()));
-      break;
-    case 2:
-      f=sVor;
-      vfoc = orthocenter_obj(
-	converter(f.first->vertex((f.second+1)&3)->point()),
-	converter(f.first->vertex((f.second+2)&3)->point()),
-	converter(f.first->vertex((f.second+3)&3)->point()));
-      break;
-    case 3:
-      ch=sVor;
-      vfoc = orthocenter_obj(
-	converter(ch->vertex(0)->point()),
-	converter(ch->vertex(1)->point()),
-	converter(ch->vertex(2)->point()),
-	converter(ch->vertex(3)->point()));
-      break;
-  }
   switch (sDel.dimension()) {
     case 0:
       vh=sDel;
-      dfoc = converter(vh->point());
+      dfoc = r2s_converter(vh->point());
       break;
     case 1:
       e=sDel;
       dfoc = orthocenter_obj(
-	converter(e.first->vertex(e.second)->point()),
-	converter(e.first->vertex(e.third)->point()));
+	r2s_converter(e.first->vertex(e.second)->point()),
+	r2s_converter(e.first->vertex(e.third)->point()));
       break;
     case 2:
       f=sDel;
       dfoc = orthocenter_obj(
-	converter(f.first->vertex((f.second+1)&3)->point()),
-	converter(f.first->vertex((f.second+2)&3)->point()),
-	converter(f.first->vertex((f.second+3)&3)->point()));
+	r2s_converter(f.first->vertex((f.second+1)&3)->point()),
+	r2s_converter(f.first->vertex((f.second+2)&3)->point()),
+	r2s_converter(f.first->vertex((f.second+3)&3)->point()));
       break;
     case 3:
       ch=sDel;
       dfoc = orthocenter_obj(
-	converter(ch->vertex(0)->point()),
-	converter(ch->vertex(1)->point()),
-	converter(ch->vertex(2)->point()),
-	converter(ch->vertex(3)->point()));
+	r2s_converter(ch->vertex(0)->point()),
+	r2s_converter(ch->vertex(1)->point()),
+	r2s_converter(ch->vertex(2)->point()),
+	r2s_converter(ch->vertex(3)->point()));
+      break;
+  }
+  switch (sVor.dimension()) {
+    case 0:
+      vh=sVor;
+      vfoc = r2s_converter(vh->point());
+      break;
+    case 1:
+      e=sVor;
+      vfoc = orthocenter_obj(
+	r2s_converter(e.first->vertex(e.second)->point()),
+	r2s_converter(e.first->vertex(e.third)->point()));
+      break;
+    case 2:
+      f=sVor;
+      vfoc = orthocenter_obj(
+	r2s_converter(f.first->vertex((f.second+1)&3)->point()),
+	r2s_converter(f.first->vertex((f.second+2)&3)->point()),
+	r2s_converter(f.first->vertex((f.second+3)&3)->point()));
+      break;
+    case 3:
+      ch=sVor;
+      vfoc = orthocenter_obj(
+	r2s_converter(ch->vertex(0)->point()),
+	r2s_converter(ch->vertex(1)->point()),
+	r2s_converter(ch->vertex(2)->point()),
+	r2s_converter(ch->vertex(3)->point()));
       break;
   }
 	

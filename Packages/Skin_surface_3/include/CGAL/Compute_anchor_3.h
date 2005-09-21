@@ -34,6 +34,7 @@ public:
   // Anchor functions
   ///////////////////////////////
 
+  // Thest whether the anchor of edge (wp1,wp2) and wp2 are equal
   Sign test_anchor(Weighted_point &wp1, Weighted_point &wp2) {
     return 
       reg.geom_traits().in_smallest_orthogonal_sphere_3_object()(wp1, wp2);
@@ -45,10 +46,9 @@ public:
     Weighted_point wp1, wp2;
     Cell_handle ch = e.first;
     return test_anchor(
-      ch->vertex(i)->point(),    
-      ch->vertex(e.second+e.third-i)->point());
+      ch->vertex(e.second+e.third-i)->point(),
+      ch->vertex(i)->point());
   }
-
   // Test whether the anchor of f and anchor of the edge f - f.first->vertex(i)
   // are equal
   Sign test_anchor(Facet f, int i){
@@ -140,9 +140,10 @@ compute_anchor_del(Edge const &e) {
   CGAL_assertion(!reg.is_infinite(e));
 
   if (test_anchor(e, e.second)==NEGATIVE) {
-    return Simplex(e.first->vertex(e.second));
-  } else if (test_anchor(e, e.third)==NEGATIVE) {
     return Simplex(e.first->vertex(e.third));
+  }
+  if (test_anchor(e, e.third)==NEGATIVE) {
+    return Simplex(e.first->vertex(e.second));
   } 
   return Simplex(e);
 }
@@ -245,226 +246,6 @@ compute_anchor_del(Cell_handle const ch) {
   }
 }
 
-// template < class RegularTriangulation3, class TagCached >
-// class Compute_anchor_del_3;
-
-// template < class RegularTriangulation3, class TagCached >
-// class Compute_anchor_vor_3;
-
-// template < class RegularTriangulation3 >
-// class Compute_anchor_del_3 < RegularTriangulation3, Tag_false > {
-// public:
-//   typedef RegularTriangulation3                        Rt;
-//   typedef typename Rt::Geom_traits  Geom_traits;
-//   typedef typename Geom_traits::Weighted_point           Weighted_point;
-
-//   typedef typename Rt::Vertex_handle       Vertex_handle;
-//   typedef typename Rt::Cell_handle         Cell_handle;
-//   typedef typename Rt::Facet               Facet;
-//   typedef typename Rt::Edge                Edge;
-
-//   typedef typename Rt::Finite_vertices_iterator Finite_vertices_iterator;
-//   typedef typename Rt::Finite_edges_iterator   Finite_edges_iterator;
-//   typedef typename Rt::Finite_facets_iterator  Finite_facets_iterator;
-//   typedef typename Rt::Finite_cells_iterator   Finite_cells_iterator;
-//   typedef typename Rt::Facet_circulator        Facet_circulator;
-//   typedef Simplex_3<Rt>                        Simplex;
-
-
-	
-//   Compute_anchor_del_3(Rt &reg) : reg(reg) {}
-
-//   Simplex operator() ( Vertex_handle const v ) {
-//     return compute_anchor_del_3(reg, v);
-//   }
-//   Simplex operator() ( Edge const &e ) {
-//     return Simplex();
-//   }
-//   Simplex operator() ( Facet const &f ) {
-//     return Simplex();
-//   }
-//   Simplex operator() ( Cell_handle const ch ) {
-//     return Simplex();
-//   }
-
-// private:
-//   Rt const &reg;
-// };
-// template < class RegularTriangulation3, Tag_true >
-// class Compute_anchor_3
-// {
-// public:
-//   typedef RegularTriangulation3                          Regular;
-//   typedef typename Regular::Geom_traits  Geom_traits;
-//   typedef typename Geom_traits::Weighted_point           Weighted_point;
-
-//   typedef typename Regular::Vertex_handle       Vertex_handle;
-//   typedef typename Regular::Cell_handle         Cell_handle;
-//   typedef typename Regular::Facet               Facet;
-//   typedef typename Regular::Edge                Edge;
-
-//   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
-//   typedef typename Regular::Finite_edges_iterator   Finite_edges_iterator;
-//   typedef typename Regular::Finite_facets_iterator  Finite_facets_iterator;
-//   typedef typename Regular::Finite_cells_iterator   Finite_cells_iterator;
-//   typedef typename Regular::Facet_circulator        Facet_circulator;
-//   typedef Simplex_3<Regular>                        Simplex;
-
-
-	
-//   Compute_anchor_3(Regular &reg) : reg(reg) {	
-//   }
-
-//   Regular &reg;
-	
-//   void clear() {
-//     for (Finite_vertices_iterator vit = reg.finite_vertices_begin();
-// 	 vit != reg.finite_vertices_end();
-// 	 vit++) {
-//       if (eDel.is_defined(vit)) delete eDel[vit];
-//       if (eVor.is_defined(vit)) delete eVor[vit];
-//     }
-//     for (Finite_cells_iterator cit = reg.finite_cells_begin();
-// 	 cit != reg.finite_cells_end();
-// 	 cit++) {
-//       if (fDel.is_defined(cit)) delete fDel[cit];
-//       if (fVor.is_defined(cit)) delete fVor[cit];
-//     }
-//     eDel.clear ();
-//     fDel.clear ();
-//     cDel.clear ();
-//     vVor.clear ();
-//     eVor.clear ();
-//     fVor.clear ();
-//   }
-
-
-//   ///////////////////////////////
-//   // Anchor functions
-//   ///////////////////////////////
-//   // Tests whether the anchor of wp_i, i\in 0..n equals the anchor of
-//   // wp_i, i\in 1..n 
-//   Sign anchor_test_obj(Weighted_point wp1, Weighted_point wp2);
-//   Sign anchor_test_obj(Weighted_point wp1, Weighted_point wp2,
-// 			 Weighted_point wp3);
-//   Sign anchor_test_obj(Weighted_point wp1, Weighted_point wp2,
-// 			 Weighted_point wp3, Weighted_point wp4);
-//   // wrapper predicate functions:
-//   Sign anchor_test(Edge e, int i);
-//   Sign anchor_test(Facet f, int i);
-//   Sign anchor_test(Cell_handle ch, int i);
-
-//   Simplex compute_anchor_del( Edge e );
-//   Simplex compute_anchor_del( Facet f );
-//   Simplex compute_anchor_del( Cell_handle ch );
-//   Simplex compute_anchor_vor( Vertex_handle v );
-//   Simplex compute_anchor_vor( Edge e );
-//   Simplex compute_anchor_vor( Facet f );
-//   Simplex compute_anchor_vor( Cell_handle ch );
-
-//   void compute_anchor();
-
-//   Simplex anchor_del( Vertex_handle v )  {
-//     CGAL_assertion(!reg.is_infinite(v));
-//     return Simplex(v);
-//   }
-
-//   Simplex anchor_del( Edge e );
-//   Simplex anchor_del( Facet f );
-//   Simplex anchor_del( Cell_handle ch );
-//   Simplex anchor_vor( Vertex_handle v );
-//   Simplex anchor_vor( Edge e );
-//   Simplex anchor_vor( Facet f );
-//   Simplex anchor_vor( Cell_handle ch );
-// private:
-//   Unique_hash_map< Vertex_handle, Simplex > vVor;
-//   Unique_hash_map< Vertex_handle,
-// 		   Unique_hash_map< Vertex_handle, Simplex > * >
-//   eDel, eVor;
-//   Unique_hash_map< Cell_handle,
-// 		   std::vector<Simplex> * > fDel, fVor;
-//   Unique_hash_map< Cell_handle,
-// 		   Simplex > cDel;
-// };
-
-// template < class RegularTriangulation3 >
-// class Compute_anchor_3<RegularTriangulation3, Tag_false>
-// {
-// public:
-//   typedef RegularTriangulation3                          Regular;
-//   typedef typename Regular::Geom_traits  Geom_traits;
-//   typedef typename Geom_traits::Weighted_point           Weighted_point;
-
-//   typedef typename Regular::Vertex_handle       Vertex_handle;
-//   typedef typename Regular::Cell_handle         Cell_handle;
-//   typedef typename Regular::Facet               Facet;
-//   typedef typename Regular::Edge                Edge;
-
-//   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
-//   typedef typename Regular::Finite_edges_iterator   Finite_edges_iterator;
-//   typedef typename Regular::Finite_facets_iterator  Finite_facets_iterator;
-//   typedef typename Regular::Finite_cells_iterator   Finite_cells_iterator;
-//   typedef typename Regular::Facet_circulator        Facet_circulator;
-//   typedef Simplex_3<Regular>                        Simplex;
-
-
-	
-//   Compute_anchor_3(Regular &reg) : reg(reg) {	
-//   }
-
-//   ///////////////////////////////
-//   // Anchor functions
-//   ///////////////////////////////
-//   // Tests whether the anchor of wp_i, i\in 0..n equals the anchor of
-//   // wp_i, i\in 1..n 
-//   Sign anchor_test_obj(Weighted_point wp1, Weighted_point wp2);
-//   Sign anchor_test_obj(Weighted_point wp1, Weighted_point wp2,
-// 			 Weighted_point wp3);
-//   Sign anchor_test_obj(Weighted_point wp1, Weighted_point wp2,
-// 			 Weighted_point wp3, Weighted_point wp4);
-//   // wrapper predicate functions:
-//   Sign anchor_test(Edge e, int i);
-//   Sign anchor_test(Facet f, int i);
-//   Sign anchor_test(Cell_handle ch, int i);
-
-//   Simplex compute_anchor_del( Edge const &e );
-//   Simplex compute_anchor_del( Facet const &f );
-//   Simplex compute_anchor_del( Cell_handle const ch );
-//   Simplex compute_anchor_vor( Vertex_handle const v );
-//   Simplex compute_anchor_vor( Edge const &e );
-//   Simplex compute_anchor_vor( Facet const &f );
-//   Simplex compute_anchor_vor( Cell_handle const ch );
-
-//   Simplex anchor_del( Vertex_handle v ) {
-//     return v;
-//   }
-//   Simplex anchor_del( Edge const &e ) {
-//     return compute_anchor_del(e);
-//   }
-//   Simplex anchor_del( Facet const &f ) {
-//     return compute_anchor_del(f);
-//   }
-//   Simplex anchor_del( Cell_handle ch ) {
-//     return compute_anchor_del(ch);
-//   }
-//   Simplex anchor_vor( Vertex_handle v ) {
-//     return compute_anchor_vor(v);
-//   }
-//   Simplex anchor_vor( Edge const &e ) {
-//     return compute_anchor_vor(e);
-//   }
-//   Simplex anchor_vor( Facet const &f ) {
-//     return compute_anchor_vor(f);
-//   }
-//   Simplex anchor_vor( Cell_handle const ch ) {
-//     return ch;
-//   }
-
-// private:
-//   Regular &reg;
-// };
-
-
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
 Compute_anchor_3<RegularTriangulation3>::
@@ -483,10 +264,8 @@ compute_anchor_vor (Vertex_handle const v) {
   adj_vertex = adj_vertices.begin();
   do {
     if (!reg.is_infinite(*adj_vertex)) {
-      side = test_anchor((*adj_vertex)->point(),v->point());
-      if (side == NEGATIVE) {
-	contains_focus = false;
-      }
+      side = test_anchor(v->point(),(*adj_vertex)->point());
+      contains_focus = (side != NEGATIVE);
     }
     adj_vertex++;
   } while ((adj_vertex != adj_vertices.end()) && contains_focus);
@@ -627,76 +406,6 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
   return Simplex(f);
 }
 
-// template < class RegularTriangulation3 >
-// void
-// Compute_anchor_3<RegularTriangulation3>::compute_anchor() {
-//   for (Finite_edges_iterator eit = reg.finite_edges_begin();
-//        eit != reg.finite_edges_end();
-//        eit ++) {
-//     Vertex_handle vh1 = eit->first->vertex(eit->second);
-//     Vertex_handle vh2 = eit->first->vertex(eit->third);
-//     if ((&*vh1) > (&*vh2)) { // Swap
-//       Vertex_handle tmp = vh2; vh2 = vh1; vh1 = tmp;
-//     }
-//     CGAL_assertion((&*vh1) < (&*vh2));
-//     if (!(eDel.is_defined (vh1))) {
-//       eDel[vh1] = new Unique_hash_map<Vertex_handle, Simplex>();
-//     }
-//     CGAL_assertion(eDel.is_defined (vh1));
-//     // Delaunay
-//     (*eDel[vh1])[vh2] = compute_anchor_del(*eit);
-//   }
-//   for (Finite_facets_iterator fit = reg.finite_facets_begin();
-//        fit != reg.finite_facets_end();
-//        fit ++) {
-//     Cell_handle ch = fit->first;
-//     int index = fit->second;
-//     Cell_handle ch2 = ch->neighbor(index);
-//     if (ch2 < ch) { index = ch2->index(ch); ch = ch2; }
-
-//     // Delaunay
-//     if (!fDel.is_defined (ch)) {
-//       fDel[ch] = new std::vector<Simplex>(4);
-//     }
-//     (*fDel[ch])[index] = compute_anchor_del(*fit);
-//     // Voronoi
-//     if (!fVor.is_defined (ch)) {
-//       fVor[ch] = new std::vector<Simplex>(4);
-//     }
-//     (*fVor[ch])[index] = compute_anchor_vor(*fit);
-//   }
-	
-//   for (Finite_cells_iterator cit = reg.finite_cells_begin();
-//        cit != reg.finite_cells_end();
-//        cit ++) {
-//     // Delaunay
-//     cDel[(Cell_handle)cit] = compute_anchor_del(cit);
-//   }
-
-//   for (Finite_edges_iterator eit = reg.finite_edges_begin();
-//        eit != reg.finite_edges_end();
-//        eit ++) {
-//     Vertex_handle vh1 = eit->first->vertex(eit->second);
-//     Vertex_handle vh2 = eit->first->vertex(eit->third);
-//     if ((&*vh1) > (&*vh2)) { // Swap
-//       Vertex_handle tmp = vh2; vh2 = vh1; vh1 = tmp;
-//     }
-//     CGAL_assertion((&*vh1) < (&*vh2));
-//     if (!(eVor.is_defined (vh1))) {
-//       eVor[vh1] = new Unique_hash_map<Vertex_handle, Simplex>();
-//     }
-//     CGAL_assertion(eVor.is_defined (vh1));
-//     // Voronoi
-//     (*eVor[vh1])[vh2] = compute_anchor_vor(*eit);
-//   }
-
-//   for (Finite_vertices_iterator vit = reg.finite_vertices_begin();
-//        vit != reg.finite_vertices_end();
-//        vit ++) {
-//     // Voronoi
-//     vVor[(Vertex_handle)vit] = compute_anchor_vor(vit);
-//   }
-// }
 
 CGAL_END_NAMESPACE
 

@@ -6,10 +6,45 @@
 #include <CGAL/Triangulation_incremental_builder_3.h>
 #include <CGAL/Skin_surface_quadratic_surface_3.h>
 
+#include <CGAL/Simplex_3.h>
+
 CGAL_BEGIN_NAMESPACE
+
+template < class Simplicial_K_,
+           class Regular,
+           class Vb = CGAL::Triangulation_vertex_base_3<Simplicial_K_> >
+class Skin_surface_simplicial_vertex_base_3
+  : public Vb
+{
+public:
+  typedef Simplicial_K_                    Geom_traits;
+  typedef typename Vb::Triangulation_data_structure Tds;
+  typedef typename Tds::Vertex_handle               Vertex_handle;
+  typedef typename Tds::Cell_handle                 Cell_handle;
+  typedef typename Geom_traits::Point_3             Point;
+  typedef typename Geom_traits::RT                  RT;
+  typedef CGAL::Weighted_point<Point,RT>            Weighted_point;
+
+  typedef Simplex_3<Regular>                        Rt_Simplex;
+
+
+  template < class TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef Skin_surface_simplicial_vertex_base_3<Simplicial_K_, Regular, Vb2>
+                                                           Other;
+  };
+
+  Skin_surface_simplicial_vertex_base_3() : Vb() { }
+  Skin_surface_simplicial_vertex_base_3(Vertex_handle v0, Vertex_handle v1,
+                                        Vertex_handle v2, Vertex_handle v3)
+    : Vb(v0, v1, v2, v3) {}
+
+};
 
 template < class SimplicialTraits_3, 
            class MeshTraits_3, 
+	   class Regular,
 	   class Cb = Triangulation_cell_base_3<SimplicialTraits_3> >
 class Skin_surface_simplicial_cell_base_3
   : public Cb
@@ -31,11 +66,12 @@ public:
   typedef MeshTraits_3                                    Mesh_traits_3;
   typedef Skin_surface_quadratic_surface_3<Mesh_traits_3> QuadrSurface;
 	
+  typedef Simplex_3<Regular>                              Rt_Simplex;
   template < class TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
     typedef Skin_surface_simplicial_cell_base_3<
-      SimplicialTraits_3, Mesh_traits_3, Cb2>              Other;
+      SimplicialTraits_3, Mesh_traits_3, Regular, Cb2>              Other;
   };
 
   Skin_surface_simplicial_cell_base_3() : Cb() {

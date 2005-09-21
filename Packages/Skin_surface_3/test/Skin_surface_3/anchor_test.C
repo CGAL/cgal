@@ -11,40 +11,9 @@ typedef CGAL::Regular_triangulation_euclidean_traits_3<
   Skin_traits::Regular_K>                         Regular_traits;
 typedef CGAL::Regular_triangulation_3<Regular_traits>     Regular;
 
-// ******************
-// Simplicial complex
-// ******************
-// #include <CGAL/Skin_surface_simplicial_complex_3.h>
-// typedef CGAL::Skin_surface_simplicial_data_structure_3<
-//   Skin_traits>                                           Simplicial_Tds;
-// typedef CGAL::Skin_surface_simplicial_complex_3<
-//   Skin_traits::Simplicial_K, Simplicial_Tds>             Simplicial;
-
-// #include <CGAL/Mixed_complex_builder_3.h>
-// typedef CGAL::Mixed_complex_builder_3<
-//   Regular,Simplicial,Skin_traits>                        Mixed_complex_builder;
-
-
-// // ***************
-// // Polyhedral mesh
-// // ***************
-// #include <CGAL/Polyhedron_3.h>
-// #include "CGAL/Marching_tetrahedra.h"
-// #include <CGAL/Skin_surface_polyhedral_items_3.h>
-
-// typedef CGAL::Simple_cartesian<double>   Mesh_K;
-// typedef Skin_surface_polyhedral_items_3<Simplicial>         Skin_surface_polyhedral_items;
-// typedef CGAL::Polyhedron_3<Mesh_K, Skin_surface_polyhedral_items> Mesh;
-// typedef Marching_tetrahedra_3<Simplicial, Mesh> Marching_tetrahedra;
-
-// #include <refinement/sqrt3.h>
-// typedef CSubdivider_sqrt3<Simplicial, Mesh> Sqrt3Method;
-
 #include <CGAL/Compute_anchor_3.h>
 
 #include <fstream>
-// #include <CGAL/IO/Polyhedron_iostream.h>
-// #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 
 #include <CGAL/Simplex_3.h>
 typedef Regular_traits::RT                    Weight;

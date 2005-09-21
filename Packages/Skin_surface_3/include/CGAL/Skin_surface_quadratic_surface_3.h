@@ -69,7 +69,8 @@ public:
   }
 	
   RT value(Point const &x) {
-    return orient*(1-s)*(CGAL::squared_distance(x, wp) - s*wp.weight());
+    // Was: multiplied with: (1-s)
+    return orient*(CGAL::squared_distance(x, wp) - s*wp.weight());
   }
   Point to_surface(Point const &p0, Point const &p1) {
     Vector p0c = p0-wp;
