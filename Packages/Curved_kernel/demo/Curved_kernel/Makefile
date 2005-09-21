@@ -24,9 +24,9 @@ CXXFLAGS = \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            -fmessage-length=0 \
 	   $(DEBUG_OPT) \
-	   -DHAVE_CONFIG_H -g #-DCGAL_CURVED_KERNEL_DEBUG
+	   -O2 -DNDEBUG \
+	   -DHAVE_CONFIG_H #-DCGAL_CURVED_KERNEL_DEBUG
 #	   -DCGAL_CURVED_KERNEL_DEBUG \
-           -O2 -DNDEBUG \
            # -I$(HOME)/CGAL/Interval_arithmetic.RootOf_2/include \
 
 
@@ -50,7 +50,8 @@ all:            \
                 demo$(EXE_EXT) \
 		demo_line$(EXE_EXT) \
 		demo_viewer$(EXE_EXT)\
-		demo_line_circle$(EXE_EXT)
+		demo_line_circle$(EXE_EXT)\
+		demo_Lazy_line_circle$(EXE_EXT)
 #                demo_conic$(EXE_EXT) 
 #                demo_elias$(EXE_EXT)
 
@@ -65,6 +66,9 @@ demo_line_circle.moc: demo_line_circle.C
 
 demo_viewer.moc: demo_viewer.C
 	${QT_MOC} -o demo_viewer.moc $<
+
+demo_Lazy_line_circle.moc: demo_Lazy_line_circle.C
+	${QT_MOC} -o demo_Lazy_line_circle.moc $<
 
 #demo_conic.moc: demo_conic.C
 #	${QT_MOC} -o demo_conic.moc $<
@@ -93,6 +97,9 @@ demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_w
 demo_viewer$(EXE_EXT): demo_viewer.moc demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_viewer demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
+demo_Lazy_line_circle$(EXE_EXT): demo_Lazy_line_circle.moc demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Lazy_line_circle demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
+
 #demo_conic$(EXE_EXT): demo_conic.moc demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT)
 #	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_conic demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT) $(LDFLAGS)
 
@@ -107,6 +114,7 @@ Qt_widget_get_segment$(OBJ_EXT): Qt_widget_get_segment.C Qt_widget_get_segment.m
 
 clean: \
                    demo.clean demo_line.clean demo_line_circle.clean demo_viewer.clean\
+		   demo_Lazy_line_circle.clean\
                    Qt_widget_get_arc.clean Qt_widget_get_segment.clean #\
 #                   Qt_widget_get_conic_2.clean \
 #                   demo_conic.clean
