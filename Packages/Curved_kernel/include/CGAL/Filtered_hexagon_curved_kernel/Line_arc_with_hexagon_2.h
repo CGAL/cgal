@@ -18,7 +18,7 @@ class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
 
     typedef typename CK::FT                                    FT;
     typedef typename CK::RT                                    RT;
-    typedef typename CK::Linear_kernel::Point_2                Point_2;
+    typedef typename CK::Point_2                               Point_2;
     typedef typename CK::Line_2                                Line_2;
     typedef typename CK::Segment_2                             Segment_2;
     typedef typename CK::Circle_2                              Circle_2;
@@ -111,11 +111,23 @@ public:
 		const Circular_arc_point_2 & right() const
 			{ return P_arc.right();}
 
-		const Circular_arc_point_2 & source() const
-			{ return P_arc.source();}
+		/* const Circular_arc_point_2 & source() const */
+/* 			{ return P_arc.source();} */
 
-		const Circular_arc_point_2 & target() const
-			{ return P_arc.target();}
+/* 		const Circular_arc_point_2 & target() const */
+/* 			{ return P_arc.target();} */
+
+typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
+                source() const
+                        {
+			  return typename R::Construct_Circular_source_vertex_2()(this->arc());
+			}
+	      
+    typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
+                target() const
+                        {
+			  return typename R::Construct_Circular_target_vertex_2()(this->arc());
+			}
 		
 		const Line_2 & supporting_line() const
 			{ return P_arc.supporting_line();}
@@ -132,7 +144,7 @@ public:
 		
 		///Hexagon construction///
 		
-		void construct_hexagons() 
+		void construct_hexagons() const
 		{
 		  assert(has_no_hexagons());	
 		  hxgn = new Hexagon( CGALi::construct_bounding_hexagon_for_line_arc_2<CK>(P_arc) );
@@ -142,7 +154,7 @@ public:
 	private:
 
 		Line_arc_2 P_arc;
-		Hexagon *hxgn;
+		mutable Hexagon *hxgn;
 
 
 }; // Line_arc_with_hexagon_2

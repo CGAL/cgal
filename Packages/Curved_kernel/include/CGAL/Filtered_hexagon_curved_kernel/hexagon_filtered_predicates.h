@@ -19,8 +19,9 @@ template <class HK>
 class In_range_2
   {
     typedef typename HK::Curved_kernel                           CK;
-    typedef typename HK::Circular_arc_point_2                 Circular_arc_point_2;
+    typedef typename HK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename HK::Circular_arc_2                          Circular_arc_2;
+    typedef typename HK::Line_arc_2                              Line_arc_2;
 
    public:
 
@@ -54,25 +55,36 @@ class In_range_2
       return false;
    }
 
+    //Don't used filter
+    //we must optimize it
+    result_type
+      operator()( const Line_arc_2 &a, const Circular_arc_point_2 &p) const
+    { 
+      return CK().in_range_2_object()(a.arc());
+    }
+    
+
   };
 
 
 template <class HK>
 class Construct_Circular_min_vertex_2
   {
-    typedef typename HK::Curved_kernel                           CK;
-    typedef typename HK::Circular_arc_point_2                 Circular_arc_point_2;
-    typedef typename HK::Circular_arc_2                          Circular_arc_2;
+    typedef typename HK::Curved_kernel                       CK;
+    typedef typename HK::Circular_arc_point_2                Circular_arc_point_2;
+    typedef typename HK::Circular_arc_2                      Circular_arc_2;
 
    public:
 
     typedef Circular_arc_point_2 result_type;
-
+    
+    template <typename T>
     result_type
-      operator()(const Circular_arc_2& a) const
+      operator()(const T& a) const
     { 
       return CK().construct_circular_min_vertex_2_object()(a.arc());
     }
+    
   };
 
 template <class HK>
@@ -86,11 +98,13 @@ class Construct_Circular_max_vertex_2
 
     typedef Circular_arc_point_2 result_type;
 
-    result_type
-      operator()(const Circular_arc_2& a) const
+    template <typename T>
+     result_type
+      operator()(const T& a) const
     { 
       return CK().construct_circular_max_vertex_2_object()(a.arc());
     }
+
   };
 
 template <class HK>
@@ -103,9 +117,10 @@ class Is_vertical_2
    public:
 
     typedef bool result_type;
-
+    
+    template <typename T>
     result_type
-      operator()(const Circular_arc_2& a) const
+      operator()(const T& a) const
     { 
       return CK().is_vertical_2_object()(a.arc());
     }
@@ -117,12 +132,13 @@ class Is_vertical_2
 template <class HK>
 class Compare_y_at_x_2
   {
-    typedef typename HK::Curved_kernel                                       CK;
-    typedef typename HK::Circular_arc_2                                      Circular_arc_2;
+    typedef typename HK::Curved_kernel                                    CK;
+    typedef typename HK::Circular_arc_2                                   Circular_arc_2;
     typedef typename HK::Circular_arc_point_2                             Circular_arc_point_2;
-    typedef typename Circular_arc_2::Hexagon                                 Hexagon;
-    typedef typename Simple_cartesian<double>::Point_2		             Point_2; //Attention!!!
-    typedef Exact_predicates_inexact_constructions_kernel                    EK;
+    typedef typename HK::Line_arc_2                                       Line_arc_2;
+    typedef typename Circular_arc_2::Hexagon                              Hexagon;
+    typedef typename Simple_cartesian<double>::Point_2		          Point_2; //Attention!!!
+    typedef Exact_predicates_inexact_constructions_kernel                 EK;
 
   public:
 
@@ -202,6 +218,13 @@ class Compare_y_at_x_2
 
 	  }
 
+     //Don't used filter
+    //we must optimize it
+     result_type
+    operator()( const Circular_arc_point_2 &p,const Line_arc_2 &a ) const
+     {
+       return CK().compare_y_at_x_2_object()(p,a.arc());
+     }
 
 };
 
@@ -210,9 +233,10 @@ class Compare_y_at_x_2
 template <class HK>
 class Equal_2
   {
-    typedef typename HK::Curved_kernel                                       CK;
-    typedef typename HK::Circular_arc_2                                      Circular_arc_2;
+    typedef typename HK::Curved_kernel                                    CK;
+    typedef typename HK::Circular_arc_2                                   Circular_arc_2;
     typedef typename HK::Circular_arc_point_2                             Circular_arc_point_2;
+    typedef typename HK::Line_arc_2                                       Line_arc_2;
 
   public:
 
@@ -225,6 +249,18 @@ class Equal_2
                 const Circular_arc_point_2 &b ) const
 	 {  return CK().equal_2_object()(a,b);}
 
+    //Don't used filter
+    //we must optimize it
+    result_type
+    operator()( const Line_arc_2 &a ,
+                const Line_arc_2 &b ) const
+    {  return CK().equal_2_object()(a.arc(),b.arc());}
+
+    template <typename T1,typename T2>
+    result_type
+    operator()( const T1 &a ,
+                const T2 &b ) const
+	 {  return false;}
 
     result_type
     operator()( const Circular_arc_2 &a , const Circular_arc_2 &b ) const
@@ -270,11 +306,11 @@ class Equal_2
 template <class HK>
 class Do_overlap_2
   {
-    typedef typename HK::Curved_kernel                                       CK;
-    typedef typename HK::Circular_arc_2                                      Circular_arc_2;
-
-    public:
-
+    typedef typename HK::Curved_kernel                                  CK;
+    typedef typename HK::Circular_arc_2                                 Circular_arc_2;
+    typedef typename HK::Line_arc_2                                     Line_arc_2;
+  public:
+    
     typedef bool result_type;
 
     result_type
@@ -297,6 +333,21 @@ class Do_overlap_2
 
     }
 
+    //Don't used filter
+    //we must optimize it
+    result_type
+    operator()( const Line_arc_2 &a ,
+                const Line_arc_2 &b ) const
+    {  return CK().do_overlap_2_object()(a.arc(),b.arc());}
+
+
+    template <typename T1,typename T2>
+    result_type
+    operator()( const T1 &a ,
+                const T2 &b ) const
+	 {  return false;}
+
+
 };
 
 
@@ -311,13 +362,14 @@ class Do_overlap_2
 
   public:
     typedef Comparison_result result_type;
-
+    
+    template <typename T1, typename T2>
     result_type
-    operator()(const Circular_arc_2 &a1,
-               const Circular_arc_2 &a2,
+    operator()(const T1 &a1,
+               const T2 &a2,
                const Circular_arc_point_2 &p) const
     { return CK().compare_y_to_right_2_object()(a1.arc(), a2.arc(), p); }
-
+    
   };
 
 
@@ -330,6 +382,7 @@ class Do_overlap_2
     typedef typename HK::Curved_kernel            CK;
     typedef typename HK::Rcirc_arc_2              Rcirc_arc_2;
     typedef typename HK::Circular_arc_2       	  Circular_arc_2;
+    typedef typename HK::Line_arc_2               Line_arc_2;
 
   public:
     // typedef OutputIterator result_type;
@@ -355,7 +408,14 @@ class Do_overlap_2
 	
 	return res;
       }
-
+    
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_2 &A, OutputIterator res)
+      { 
+	*res++ = make_object(A);
+	return res;
+      }
   };
 
 
@@ -367,7 +427,9 @@ class Do_overlap_2
     typedef typename HK::Curved_kernel            CK;
     typedef typename HK::Circular_arc_2           Circular_arc_2;
     typedef typename HK::Rcirc_arc_2              Rcirc_arc_2;
+    typedef typename HK::Rline_arc_2              Rline_arc_2;
     typedef typename HK::Circle_2                 Circle;
+    typedef typename HK::Line_arc_2               Line_arc_2;
 
     template < class OutputIterator >
     OutputIterator
@@ -398,6 +460,64 @@ class Do_overlap_2
 	
 
       }
+
+     template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_2 & c1, const Line_arc_2 & c2, 
+	       OutputIterator res)
+      { 
+
+	std::vector<Object> vec;
+	
+	CK().intersect_2_object()(c1.arc(),c2.arc(),std::back_inserter(vec)); 
+
+ 	for(unsigned i=0; i<vec.size() ; i++)
+	{
+	  const Rline_arc_2 *tmp_arc;
+
+	  if ( (tmp_arc=object_cast<Rline_arc_2>(&vec.at(i)) )!=NULL )
+	    *res++ = make_object( Line_arc_2(*tmp_arc) );
+	  else
+	    *res++ = vec.at(i);
+	}
+	
+	return res;	
+      }
+
+     template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_2 & c1, const Line_arc_2 & c2, 
+	       OutputIterator res)
+      { 
+
+	std::vector<Object> vec;
+	
+	CK().intersect_2_object()(c1.arc(),c2.arc(),std::back_inserter(vec)); 
+
+ 	for(unsigned i=0; i<vec.size() ; i++)
+	{
+	  const Rcirc_arc_2 *tmp_arc;
+	  const Rline_arc_2 *tmp_line;
+
+	  if ( (tmp_arc=object_cast<Rcirc_arc_2>(&vec.at(i)) )!=NULL )
+	    *res++ = make_object( Circular_arc_2(*tmp_arc) );
+	  else if ( (tmp_line=object_cast<Rline_arc_2>(&vec.at(i)) )!=NULL )
+	    *res++ = make_object( Line_arc_2(*tmp_line) );
+	  else
+	    *res++ = vec.at(i);
+	}
+	
+	return res;	
+      }
+
+      template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_2 & c1, const Circular_arc_2 & c2, 
+	       OutputIterator res)
+      {
+	return operator()(c2,c1,res);
+      }
+     
     
   };
 
@@ -408,7 +528,9 @@ class Do_overlap_2
 
     typedef typename HK::Curved_kernel            CK;
     typedef typename HK::Rcirc_arc_2              Rcirc_arc_2;
+    typedef typename HK::Rline_arc_2              Rline_arc_2;
     typedef typename HK::Circular_arc_2           Circular_arc_2;
+    typedef typename HK::Line_arc_2               Line_arc_2;
     typedef typename HK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
@@ -428,6 +550,22 @@ class Do_overlap_2
       ha2=Circular_arc_2(ca2); 
 
     }
+    
+    result_type
+    operator()(const Line_arc_2 &A, 
+	       const Circular_arc_point_2 &p,
+	       Line_arc_2 &ha1, Line_arc_2 &ha2) const
+    {  
+
+      Rline_arc_2 ca1 , ca2;
+
+      CK().split_2_object()(A.arc(), p, ca1, ca2);
+
+      ha1=Line_arc_2(ca1); 
+      ha2=Line_arc_2(ca2); 
+
+    }
+    
   };
 
 

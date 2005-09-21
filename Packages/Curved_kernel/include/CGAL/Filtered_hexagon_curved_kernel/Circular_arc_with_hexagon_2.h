@@ -25,6 +25,7 @@ class Circular_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Circular_arc_point_2                  Circular_arc_point_2;
     typedef typename CK::Circular_arc_2                        Circular_arc_2;
     typedef typename CK::Root_of_2                             Root_of_2;
+    typedef CK R;
 
 public:
 
@@ -131,12 +132,24 @@ public:
 		const Circular_arc_point_2 & right() const
 			{ return P_arc.right();}
 
-                const Circular_arc_point_2 & source() const
-			{ return P_arc.source();}
+                //const Circular_arc_point_2 & source() const
+		//	{ return P_arc.source();}
 
-		const Circular_arc_point_2 & target() const
-			{ return P_arc.target();}
-		
+                //const Circular_arc_point_2 & target() const
+		//	{ return P_arc.target();}
+
+    typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Circular_arc_2>::type
+                source() const
+                        {
+			  return typename R::Construct_Circular_source_vertex_2()(this->arc());
+			}
+	      
+    typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Circular_arc_2>::type
+                target() const
+                        {
+			  return typename R::Construct_Circular_target_vertex_2()(this->arc());
+			}
+
 		const Circle_2 & supporting_circle() const
 			{ return P_arc.supporting_circle();}
 
