@@ -14,8 +14,8 @@
  ***************************************************************************/
 
 #include "short_names.h"                    // must be included first
-
 #include <CGAL/basic.h>                     // must be included second
+#include <CGAL/Cartesian.h>                 // must be included third
 
 #include "Mesh_cutter.h"
 
@@ -129,7 +129,7 @@ bool Mesh_cutter::extend()
     // simplify current backbone
     while(simplify());
     return true;
-}	
+}
 
 //***************************************************
 // simplify
@@ -164,7 +164,7 @@ bool Mesh_cutter::simplify()
         iter--; // restore
     }
     return false;
-}	
+}
 
 //***************************************************
 // precompute_distances
@@ -220,5 +220,5 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
         }
     }
     return pBest;
-}	
+}
 

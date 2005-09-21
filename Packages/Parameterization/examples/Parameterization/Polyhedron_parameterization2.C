@@ -33,8 +33,8 @@
 
 
 #include "short_names.h"                    // must be included first
-
 #include <CGAL/basic.h>                     // must be included second
+#include <CGAL/Cartesian.h>                 // must be included third
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
@@ -61,8 +61,8 @@ typedef CGAL::Cartesian<double>                         Kernel;
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
 typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
 
-// Discrete Authalic parametizer 
-typedef CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron>    
+// Discrete Authalic parametizer
+typedef CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron>
                                                         Parametizer;
 
 
@@ -71,8 +71,8 @@ typedef CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron>
 // ----------------------------------------------------------------------------
 
 // Dump parameterized mesh to an eps file
-static bool write_file_eps(const Mesh_adaptor_polyhedron& mesh_adaptor, 
-                           const char *pFilename, 
+static bool write_file_eps(const Mesh_adaptor_polyhedron& mesh_adaptor,
+                           const char *pFilename,
                            double scale = 500.0)
 {
     const Polyhedron* mesh = mesh_adaptor.get_adapted_mesh();
@@ -195,7 +195,7 @@ int main(int argc,char * argv[])
 
     //***************************************
     // Create mesh adaptor
-    // Note: parameterization methods support only 
+    // Note: parameterization methods support only
     // meshes that are toplogical disks
     //***************************************
 
@@ -218,7 +218,7 @@ int main(int argc,char * argv[])
 
     // Write Postscript file
     if (err == Parametizer::OK)
-        write_file_eps(mesh_adaptor, output_filename);       
+        write_file_eps(mesh_adaptor, output_filename);
 
     fprintf(stderr, "\n");
 

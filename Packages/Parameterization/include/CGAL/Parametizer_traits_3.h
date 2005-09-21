@@ -21,7 +21,7 @@
 #ifndef CGAL_PARAMETIZER_3_H
 #define CGAL_PARAMETIZER_3_H
 
-#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel/global_functions.h>
 #include <CGAL/parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE

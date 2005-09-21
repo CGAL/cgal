@@ -23,6 +23,7 @@
 #include <CGAL/config.h>
 
 #if defined(CGAL_CFG_LONGNAME_BUG)
+
 #define Cartesian                       Cn
 #define Simple_cartesian                SC
 #define I_HalfedgeDS_iterator           IPI

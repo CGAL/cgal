@@ -37,8 +37,8 @@
 
 
 #include "short_names.h"                    // must be included first
-
 #include <CGAL/basic.h>                     // must be included second
+#include <CGAL/Cartesian.h>                 // must be included third
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
