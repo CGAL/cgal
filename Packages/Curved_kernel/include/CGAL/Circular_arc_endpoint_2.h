@@ -92,22 +92,26 @@ operator!=(const Circular_arc_point_2<CurvedKernel> &p,
   return ! (p == q);
 }
 
+  template < typename CK >
+  std::istream &
+  operator>>(std::istream & is, Circular_arc_point_2<CK> &p)
+  {
+    typedef typename CK::Root_of_2               Root_of_2;
+    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
+
+    Root_for_circles_2_2 r;
+    is >> r;
+    if(is)
+      p = Circular_arc_point_2<CK>(r);
+    return is;
+  }
+
 template < class CK >
 std::ostream&
 operator<<(std::ostream &os, const Circular_arc_point_2<CK> &p)
 {
-#if 1
+  //I can make it because I know the output format of Root_for_circle
     return os << p.x() << " " << p.y() << " ";
-#else
-    return os << p.x()[0] << " "
-              << p.x()[1] << " "
-              << p.x()[2] << " "
-              << p.x().is_smaller() << " "
-              << p.y()[0] << " "
-              << p.y()[1] << " "
-              << p.y()[2] << " "
-              << p.y().is_smaller() << " ";
-#endif
 }
 
 } // namespace CGAL

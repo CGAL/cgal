@@ -65,22 +65,22 @@ namespace CGALi {
     Root_for_circles_2_2 _p;
   };
   
-  template < typename CK >
-  std::istream &
-  operator>>(std::istream & is, Circular_arc_point_2<CK> &p)
-  {
-    typedef typename CK::Root_of_2               Root_of_2;
-    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
+/*   template < typename CK > */
+/*   std::istream & */
+/*   operator>>(std::istream & is, Circular_arc_point_2<CK> &p) */
+/*   { */
+/*     typedef typename CK::Root_of_2               Root_of_2; */
+/*     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2; */
 
-    typename Root_of_2::RT x1, x2, x3;
-    typename Root_of_2::RT y1, y2, y3;
-    bool b1, b2;
-    is >> x1 >> x2 >> x3 >> b1 >> y1 >> y2 >> y3 >> b2 ;
-    if (is)
-      p = Circular_arc_point_2<CK>(Root_for_circles_2_2(Root_of_2(x3, x2, x1, b1),
-						      Root_of_2(y3, y2, y1, b2)));
-    return is;
-  }
+/*     typename Root_of_2::RT x1, x2, x3; */
+/*     typename Root_of_2::RT y1, y2, y3; */
+/*     bool b1, b2; */
+/*     is >> x1 >> x2 >> x3 >> b1 >> y1 >> y2 >> y3 >> b2 ; */
+/*     if (is) */
+/*       p = Circular_arc_point_2<CK>(Root_for_circles_2_2(Root_of_2(x3, x2, x1, b1), */
+/* 						      Root_of_2(y3, y2, y1, b2))); */
+/*     return is; */
+/*   } */
 
  template < typename CK >
   std::ostream &

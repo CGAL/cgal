@@ -1048,8 +1048,26 @@ template < typename RT >
 std::ostream &
 operator<<(std::ostream &os, const Root_of_2<RT> &r)
 {
-  return os << to_double(r);
+  return os << r[2] << " "
+	    << r[1] << " "
+	    << r[0] << " "
+	    << r.is_smaller() << " ";
+  
+  //return os << to_double(r);
 }
+
+template < typename RT >
+std::istream &
+operator>>(std::istream &is, Root_of_2<RT> &r)
+{
+  RT a,b,c;
+  bool s;
+  is >> a >> b >> c >> s;
+  if(is)
+    r = Root_of_2<RT>(a,b,c,s);  
+  return is;
+}
+
 
 template < typename RT >
 void

@@ -46,6 +46,20 @@ class Root_for_circles_2_2 {
 		<< r.y() << " ";
     }
 
+
+ template < typename RT >
+    std::istream &
+    operator>>(std::istream & is, Root_for_circles_2_2<RT> &r)
+    {
+      typedef typename Root_of_traits< RT >::RootOf_2         Root_of_2;
+      Root_of_2 x,y;
+      is >> x >> y;
+      if(is)
+	r = Root_for_circles_2_2<RT>(x,y);
+      return is;
+    }
+  
+
 }// CGAL  
   
 

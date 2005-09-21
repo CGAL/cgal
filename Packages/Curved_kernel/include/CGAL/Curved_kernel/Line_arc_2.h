@@ -172,28 +172,28 @@ namespace CGALi {
 
   };
   
-  template < typename CK >
-    std::ostream &
-    operator<<(std::ostream & os, const Line_arc_2<CK> &a)
-    {
+  /* template < typename CK > */
+/*     std::ostream & */
+/*     operator<<(std::ostream & os, const Line_arc_2<CK> &a) */
+/*     { */
       
-      return os << a.supporting_line() << " "
-		<< a.source() << " "
-		<< a.target() << " ";
-    }
+/*       return os << a.supporting_line() << " " */
+/* 		<< a.source() << " " */
+/* 		<< a.target() << " "; */
+/*     } */
 
-  template < typename CK >
-  std::istream &
-  operator>>(std::istream & is, Line_arc_2<CK> &a)
-  {
-    typename CK::Line_2 l;
-    typename CK::Circular_arc_point_2 p1;
-    typename CK::Circular_arc_point_2 p2;
-    is >> l >> p1 >> p2 ;
-    if (is)
-      a = Line_arc_2<CK>(l, p1, p2);
-    return is;
-  }
+/*   template < typename CK > */
+/*   std::istream & */
+/*   operator>>(std::istream & is, Line_arc_2<CK> &a) */
+/*   { */
+/*     typename CK::Line_2 l; */
+/*     typename CK::Circular_arc_point_2 p1; */
+/*     typename CK::Circular_arc_point_2 p2; */
+/*     is >> l >> p1 >> p2 ; */
+/*     if (is) */
+/*       a = Line_arc_2<CK>(l, p1, p2); */
+/*     return is; */
+/*   } */
 
 
  } // namespace CGALi
