@@ -41,7 +41,7 @@ public:
   typedef Tag_true                                      Has_left_category;
   typedef Tag_true                                      Has_merge_category;
 
-  public:
+  private:
   typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
 
   // Data members:
