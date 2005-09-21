@@ -131,7 +131,7 @@ public:
 		const Circular_arc_point_2 & right() const
 			{ return P_arc.right();}
 
-		const Circular_arc_point_2 & source() const
+                const Circular_arc_point_2 & source() const
 			{ return P_arc.source();}
 
 		const Circular_arc_point_2 & target() const
@@ -158,7 +158,7 @@ public:
 		
 		///Hexagon construction///
 		
-		void construct_hexagons() 
+		void construct_hexagons() const
 		{
 		  assert(has_no_hexagons());	
 		  CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));
@@ -168,7 +168,7 @@ public:
 	private:
 
 		Circular_arc_2 P_arc;
-		Container hexagons;
+		mutable Container hexagons;
 
 
 }; // Circular_arc_with_hexagon_2

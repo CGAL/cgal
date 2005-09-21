@@ -27,7 +27,7 @@ class In_range_2
     typedef bool result_type;
 
     result_type
-    operator()( Circular_arc_2 &a, const Circular_arc_point_2 &p) const
+    operator()( const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
     { 
       CGAL_precondition( a.arc().is_x_monotone());
       
@@ -57,6 +57,62 @@ class In_range_2
   };
 
 
+template <class HK>
+class Construct_Circular_min_vertex_2
+  {
+    typedef typename HK::Curved_kernel                           CK;
+    typedef typename HK::Circular_arc_point_2                 Circular_arc_point_2;
+    typedef typename HK::Circular_arc_2                          Circular_arc_2;
+
+   public:
+
+    typedef Circular_arc_point_2 result_type;
+
+    result_type
+      operator()(const Circular_arc_2& a) const
+    { 
+      return CK().construct_circular_min_vertex_2_object()(a.arc());
+    }
+  };
+
+template <class HK>
+class Construct_Circular_max_vertex_2
+  {
+    typedef typename HK::Curved_kernel                           CK;
+    typedef typename HK::Circular_arc_point_2                 Circular_arc_point_2;
+    typedef typename HK::Circular_arc_2                          Circular_arc_2;
+
+   public:
+
+    typedef Circular_arc_point_2 result_type;
+
+    result_type
+      operator()(const Circular_arc_2& a) const
+    { 
+      return CK().construct_circular_max_vertex_2_object()(a.arc());
+    }
+  };
+
+template <class HK>
+class Is_vertical_2
+  {
+    typedef typename HK::Curved_kernel                           CK;
+    typedef typename HK::Circular_arc_point_2                 Circular_arc_point_2;
+    typedef typename HK::Circular_arc_2                          Circular_arc_2;
+
+   public:
+
+    typedef bool result_type;
+
+    result_type
+      operator()(const Circular_arc_2& a) const
+    { 
+      return CK().is_vertical_2_object()(a.arc());
+    }
+  };
+
+ 
+
 
 template <class HK>
 class Compare_y_at_x_2
@@ -73,11 +129,14 @@ class Compare_y_at_x_2
     typedef Comparison_result result_type;
 
     result_type
-    operator()( const Circular_arc_point_2 &p, Circular_arc_2 &a ) const
+    operator()( const Circular_arc_point_2 &p,const Circular_arc_2 &a ) const
     {
       bool tmp= In_range_2<HK>()(a,p) ;
       CGAL_kernel_precondition( a.arc().is_x_monotone());
       CGAL_kernel_precondition(tmp);
+
+      if((p == a.arc().source()) || (p == a.arc().target()))
+	return EQUAL;
       
       if(a.has_no_hexagons())
         a.construct_hexagons();
@@ -104,7 +163,6 @@ class Compare_y_at_x_2
 	    else
               {
 		rel_pos=EQUAL;
-
 		Hexagon hxgn= *hips;
 
 		if(_do_intersect_hexagon_2(hxgn,pnt_vec))
@@ -140,7 +198,6 @@ class Compare_y_at_x_2
 
 	      hips++;
 	    }
-		
 	    return rel_pos;
 
 	  }
@@ -170,7 +227,7 @@ class Equal_2
 
 
     result_type
-    operator()( Circular_arc_2 &a , Circular_arc_2 &b ) const
+    operator()( const Circular_arc_2 &a , const Circular_arc_2 &b ) const
     {
 
       CGAL_precondition( a.arc().is_x_monotone());
@@ -221,7 +278,7 @@ class Do_overlap_2
     typedef bool result_type;
 
     result_type
-    operator()( Circular_arc_2 &a , Circular_arc_2 &b ) const
+    operator()( const Circular_arc_2 &a , const Circular_arc_2 &b ) const
     {
 
       CGAL_precondition( a.arc().is_x_monotone());
