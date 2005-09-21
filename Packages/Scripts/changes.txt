@@ -1,3 +1,6 @@
+21 September 2005 Sylvain Pion and Michael Hoffmann
+- autotest_cgal : don't remove current dir.
+
 21 May 2005 Sylvain Pion
 - update autotest_cgal following www server change.
 

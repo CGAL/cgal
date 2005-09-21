@@ -233,6 +233,7 @@ test_script()
 		echo 'COPYING RESULTS';
 		cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
 		echo 'REMOVING LOCAL_TEST_DIR';
+		cd ..;
 		rm -rf ${LOCAL_TEST_DIR} " >> ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
     #PLATFORM=`basename $CGAL_MAKEFILE | sed -e "s/makefile_//g"`
