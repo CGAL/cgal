@@ -25,6 +25,7 @@ class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Circular_arc_point_2                  Circular_arc_point_2;
     typedef typename CK::Line_arc_2                            Line_arc_2;
     typedef typename CK::Root_of_2                             Root_of_2;
+    typedef CK R;
 
 public:
 
