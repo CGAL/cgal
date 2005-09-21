@@ -12,8 +12,7 @@
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> K;
 typedef CGAL::Regular_grid_2<K> Field;
-typedef CGAL::Euler_integrator_2<Field> Euler_integrator;
-typedef CGAL::Runge_kutta_integrator_2<Euler_integrator, Field> Runge_kutta_integrator;
+typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
 typedef Stl::Stream_line_iterator_2 Stl_iterator;
 
