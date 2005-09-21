@@ -109,6 +109,14 @@ print_at(std::ostream& os, const Object& o)
   os << "CGAL::Object";
 }
 
+template <class T1, class T2>
+void
+print_at(std::ostream& os, const std::pair<T1,T2> & at)
+{
+  os << "[ " << at.first << " | " << at.second << " ]" << std::endl ;
+} 
+
+
 template <class ET>
 class Lazy_exact_nt;
 
