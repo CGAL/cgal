@@ -41,7 +41,7 @@ public:
   typedef Tag_true                                      Has_left_category;
   typedef Tag_true                                      Has_merge_category;
 
-protected:
+  public:
   typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
 
   // Data members:
@@ -174,9 +174,11 @@ public:
 
   class Compare_y_at_x_2 {
   private:
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
     const Segment_traits_2  * seg_traits;
 
   public:
+
     /*! Constructor. */
     Compare_y_at_x_2(const Segment_traits_2 * traits) : seg_traits(traits) {}
 
@@ -210,6 +212,8 @@ public:
 
   class Compare_y_at_x_left_2 {
   private:
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+
     const Segment_traits_2  * seg_traits;
 
   public:
@@ -254,6 +258,7 @@ public:
 
   class Compare_y_at_x_right_2 {
   private:
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
     const Segment_traits_2  * seg_traits;
 
   public:
@@ -445,6 +450,8 @@ public:
   class Split_2 
   {
   private:
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+
     Segment_traits_2        * seg_traits;
 
   public:
@@ -520,6 +527,7 @@ public:
 
   class Intersect_2 {
   private:
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
     Segment_traits_2        * seg_traits;
 
   public:
