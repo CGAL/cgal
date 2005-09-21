@@ -22,24 +22,26 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Euler_integrator_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // The class Runge_kutta_integrator_2 is a model of the concept Integrator
-template <class EulerIntegrator_2,class VectorField_2>
+template <class VectorField_2>
 class Runge_kutta_integrator_2{
 public:
-	typedef Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2> self;
+	typedef Runge_kutta_integrator_2<VectorField_2> self;
   typedef typename VectorField_2::FT FT;
   typedef typename VectorField_2::Point_2 Point_2;
   typedef typename VectorField_2::Vector_2 Vector_2;
   typedef typename VectorField_2::Vector_field_2 Vector_field_2;
-  typedef typename EulerIntegrator_2::self Euler_integrator_2;
 protected:
+	typedef CGAL::Euler_integrator_2<VectorField_2> Euler_integrator_2;
   Euler_integrator_2 * euler_integrator_2;
   FT default_integration_step;
 public:
-  Runge_kutta_integrator_2(Euler_integrator_2 euler_integrator_2 = Euler_integrator_2());
+  Runge_kutta_integrator_2();
+  Runge_kutta_integrator_2(FT integration_step);
   Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const bool & index) const;
   Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, const bool & index) const;
   Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, Vector_2 v, const bool & index) const;
@@ -50,20 +52,28 @@ public:
 		return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));};
 };
 
-
-template <class EulerIntegrator_2, class VectorField_2>
-Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::
-Runge_kutta_integrator_2(Euler_integrator_2 integrator)
+template <class VectorField_2>
+Runge_kutta_integrator_2<VectorField_2>::
+Runge_kutta_integrator_2()
 {
+	euler_integrator_2 = new Euler_integrator_2();
   default_integration_step =
-    integrator.get_default_integration_step();
-  euler_integrator_2 = &integrator;
+    euler_integrator_2->get_default_integration_step();
 }
 
-template <class EulerIntegrator_2, class VectorField_2>
+template <class VectorField_2>
+Runge_kutta_integrator_2<VectorField_2>::
+Runge_kutta_integrator_2(FT integration_step)
+{
+	euler_integrator_2 = new Euler_integrator_2(integration_step);
+  default_integration_step =
+    euler_integrator_2->get_default_integration_step();
+}
+
+template <class VectorField_2>
 inline
-typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::
-Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()
+typename Runge_kutta_integrator_2<VectorField_2>::
+Point_2 Runge_kutta_integrator_2<VectorField_2>::operator()
   (const Point_2 & p, const Vector_field_2& vector_field_2, const FT & integration_step, Vector_2 v, const bool & index) const
 {
   Point_2 p1 = (*euler_integrator_2)(p, vector_field_2, 0.5*integration_step, v, index);
@@ -74,25 +84,25 @@ Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()
   return p2;
 };
 
-template <class EulerIntegrator_2, class VectorField_2>
+template <class VectorField_2>
 inline
-typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()
+typename Runge_kutta_integrator_2<VectorField_2>::Point_2 Runge_kutta_integrator_2<VectorField_2>::operator()
 (const Point_2 & p, const Vector_field_2& vector_field_2, const FT & integration_step, const bool & index) const{
   Vector_2 v;
   v = vector_field_2.get_field(p).first;
-  Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>
-    runge_kutta_integrator_2(euler_integrator_2);
+  Runge_kutta_integrator_2<VectorField_2>
+    runge_kutta_integrator_2(default_integration_step);
   return runge_kutta_integrator_2(p, vector_field_2, integration_step, v, index);
 };
 
-template <class EulerIntegrator_2, class VectorField_2>
+template <class VectorField_2>
 inline
-typename Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::Point_2 Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2>::operator()
+typename Runge_kutta_integrator_2<VectorField_2>::Point_2 Runge_kutta_integrator_2<VectorField_2>::operator()
 (const Point_2 & p, const Vector_field_2& vector_field_2, const bool & index) const
 {
   Vector_2 v;
   v = vector_field_2.get_field(p).first;
-  Runge_kutta_integrator_2<EulerIntegrator_2, VectorField_2> runge_kutta_integrator_2(*euler_integrator_2);
+  Runge_kutta_integrator_2<VectorField_2> runge_kutta_integrator_2(default_integration_step);
   return runge_kutta_integrator_2(p, vector_field_2, default_integration_step, v, index);
 };
 
