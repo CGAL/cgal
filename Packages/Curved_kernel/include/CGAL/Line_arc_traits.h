@@ -86,13 +86,13 @@ public:
     { return ck.intersect_2_object(); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-    { return Construct_min_vertex_2(); }
+  { return ck.construct_circular_min_vertex_2_object(); }
 
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-    { return Construct_max_vertex_2(); }
+  { return ck.construct_circular_max_vertex_2_object(); }
 
   Is_vertical_2 is_vertical_2_object() const
-    { return Is_vertical_2();}
+  { return ck.is_vertical_2_object();}
 
 
 };

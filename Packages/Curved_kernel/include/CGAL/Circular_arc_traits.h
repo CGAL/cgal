@@ -52,20 +52,7 @@ public:
   typedef typename CurvedKernel::Make_x_monotone_2      Make_x_monotone_2;
   typedef typename CurvedKernel::Split_2                Split_2;
   typedef typename CurvedKernel::Intersect_2 Intersect_2;
-
-
-  class Is_vertical_2
-  {
-  public:
-    typedef bool result_type;
-
-    // TO BE IMPLEMENTED !!!!!!!
-    bool operator() (const X_monotone_curve_2& cv) const
-    {
-      return false;
-    }
-  };
-
+  typedef typename CurvedKernel::Is_vertical_2 Is_vertical_2;
   
   Compare_x_2 compare_x_2_object() const
   { return ck.compare_x_2_object(); }
@@ -98,7 +85,7 @@ public:
     { return ck.construct_circular_min_vertex_2_object(); }
        
   Is_vertical_2 is_vertical_2_object() const
-    { return Is_vertical_2();}
+    { return ck.is_vertical_2_object();  }
 
 
 };
