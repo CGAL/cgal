@@ -11,15 +11,13 @@
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> K;
 typedef CGAL::Triangular_field_2<K> Field;
-typedef CGAL::Euler_integrator_2<Field> Euler_integrator;
-typedef CGAL::Runge_kutta_integrator_2<Euler_integrator, Field> Runge_kutta_integrator;
+typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
 typedef Stl::Stream_line_iterator_2 stl_iterator;
 
 int main()
 {
-	Euler_integrator euler_integrator(1);
-	Runge_kutta_integrator runge_kutta_integrator(euler_integrator);
+	Runge_kutta_integrator runge_kutta_integrator(1);
 
 	std::ifstream infile("data/irregular_data.tri.cin", std::ios::in);
 	Field triangular_field(infile);
