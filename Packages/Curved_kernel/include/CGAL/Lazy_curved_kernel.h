@@ -76,6 +76,7 @@ class Lazy_curved_kernel_base
   //    typedef Simple_cartesian<Interval_nt_advanced>   AK; // An optimiser
 public:
   typedef AK_ AK;
+  typedef typename EK_::Algebraic_kernel  Algebraic_kernel;
   //  typedef Simple_cartesian<Interval_nt<> >   AK;
   typedef EK_   EK;
   typedef E2A_  E2A;
