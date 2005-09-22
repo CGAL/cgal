@@ -105,7 +105,7 @@ namespace CGAL {
 
   template <class AK>
   typename AK::Root_for_circles_2_2
-  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
+  x_critical_point(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
   {
             typedef typename AK::Root_of_2 Root_of_2;
             typedef typename AK::FT        FT;
@@ -141,7 +141,7 @@ namespace CGAL {
 
   template <class AK>
   typename AK::Root_for_circles_2_2
-  y_critical_points(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
+  y_critical_point(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
   {
             typedef typename AK::Root_of_2 Root_of_2;
             typedef typename AK::FT        FT;

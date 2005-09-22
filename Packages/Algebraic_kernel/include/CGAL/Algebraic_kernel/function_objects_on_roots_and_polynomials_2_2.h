@@ -94,7 +94,7 @@ template < class AK >
     typename AK::Root_for_circles_2_2
       operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
     {
-      return x_critical_points<AK>(c,i);
+      return x_critical_point<AK>(c,i);
     }
 
     template <class OutputIterator>
@@ -115,7 +115,7 @@ template < class AK >
     typename AK::Root_for_circles_2_2
       operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
     {
-      return y_critical_points<AK>(c,i);
+      return y_critical_point<AK>(c,i);
     }
 
      template <class OutputIterator>
