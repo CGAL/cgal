@@ -19,12 +19,12 @@ template <class CK>
     typedef Circular_arc_with_hexagon_2<CK>          Circular_arc_2;
     typedef Line_arc_with_hexagon_2<CK>              Line_arc_2;
     typedef CK                                       Curved_kernel;
-//    typedef typename CK::Linear_kernel               Linear_kernel;
     typedef typename CK::Algebraic_kernel            Algebraic_kernel;
     typedef typename CK::RT                          RT;
     typedef typename CK::FT                          FT;
     typedef typename CK::Root_of_2                   Root_of_2;
-//    typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
+    typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
+    typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
 //    typedef typename CK::Polynomial_1_2              Polynomial_1_2;
     typedef typename CK::Line_2                      Line_2;
     typedef typename CK::Circle_2                    Circle_2;
