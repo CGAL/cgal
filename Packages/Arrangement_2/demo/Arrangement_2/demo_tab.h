@@ -446,9 +446,9 @@ public:
           }
           else
           {
-            // doesnt supoose to reach here at all !!!
-            CGAL_assertion(false);
+            up = pl_draw;
           }
+        
           setColor(Qt::red);
           m_tab_traits.draw_xcurve(this , he->curve() );
         }
@@ -513,9 +513,13 @@ public:
             Coord_type y1 =
               CGAL::to_double(p1.first.y()) / m_tab_traits.COORD_SCALE;
             down = Coord_point(pl_draw.x(),y1);
-            setColor(Qt::red);
-            m_tab_traits.draw_xcurve(this , he->curve() );
           }
+          else
+          {
+            down = pl_draw;
+          }
+          setColor(Qt::red);
+          m_tab_traits.draw_xcurve(this , he->curve() );
         }
         else
         {
@@ -2382,17 +2386,17 @@ public:
 
     if(x != x1 || y != y1) 
     {      
-      Arr_conic_2 *cv = NULL;
+      Arr_conic_2 cv;
 
       switch (w->conic_type)
       {
        case CIRCLE:
         sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
-        cv = new Arr_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad)); 
+        cv =  Arr_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad)); 
         break;
 
        case SEGMENT:
-        cv = new Arr_conic_2(Rat_segment_2 (Rat_point_2(x,y),
+        cv =  Arr_conic_2(Rat_segment_2 (Rat_point_2(x,y),
                                                 Rat_point_2(x1,y1)));
         break;
 
@@ -2418,7 +2422,7 @@ public:
         v = -2*y0*a_sq;
         ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
 
-        cv = new Arr_conic_2(r, s, t, u, v, ww);
+        cv =  Arr_conic_2(r, s, t, u, v, ww);
         break;
 
         // RWRW: Do nothing ...
@@ -2445,7 +2449,7 @@ public:
             *w << m_p1 << m_p2 ;
             return; 
           }
-          cv = new Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
+          cv =  Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
                                     Rat_point_2(x,y));
         }
         break;
@@ -2482,23 +2486,22 @@ public:
           Rational y3 = Rational(static_cast<int>(1000 * m_p3.y() + 0.5), 1000);
           Rational x4 = Rational(static_cast<int>(1000 * m_p4.x() + 0.5), 1000);
           Rational y4 = Rational(static_cast<int>(1000 * m_p4.y() + 0.5), 1000);
-          cv = new Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
+          cv =  Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
                                      Rat_point_2(x3,y3),Rat_point_2(x4,y4),
                                      Rat_point_2(x,y));
-          if (! cv->is_valid())
+          if (! cv.is_valid())
           {
             QMessageBox::information( w, "Insert Conic", "Invalid Conic");
             w->active = false;
             *w << m_p1 << m_p2 << m_p3 << m_p4 << p;
-            delete cv;
             return;
           }
         }
         break;
       }
   
-      CGAL::insert(*(w->m_curves_arr), *cv);
-      CGAL::Bbox_2 curve_bbox = cv->bbox();
+      CGAL::insert(*(w->m_curves_arr), cv);
+      CGAL::Bbox_2 curve_bbox = cv.bbox();
       w->bbox = w->bbox + curve_bbox;
       w->active = false;
       w->new_object(make_object(Coord_segment(m_p1 , p)));
