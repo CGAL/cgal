@@ -695,27 +695,27 @@ namespace CircularFunctors {
     // Define the 2 Circular_arc_endpoints 
     // in the 2 vertical tangent points
 
-    std::vector< Root_for_circles_2_2 > vector_x_critical_points;
-    x_critical_points<CK>(A.supporting_circle(), std::back_inserter(vector_x_critical_points));
-    Circular_arc_point_2 x_critical_point1 = vector_x_critical_points[0];
-    Circular_arc_point_2 x_critical_point2 = vector_x_critical_points[1];
+    std::vector< Root_for_circles_2_2 > vector_x_extremal_points;
+    x_extremal_points<CK>(A.supporting_circle(), std::back_inserter(vector_x_extremal_points));
+    Circular_arc_point_2 x_extremal_point1 = vector_x_extremal_points[0];
+    Circular_arc_point_2 x_extremal_point2 = vector_x_extremal_points[1];
     
     
     if (cmp_begin > 0) {
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					   A.source(),
-					   x_critical_point1));
+					   x_extremal_point1));
       if (cmp_end > 0) {
         // We must cut in 3 parts.
         *res++ = make_object(Circular_arc_2(A.supporting_circle(),
-					    x_critical_point1,
-					    x_critical_point2));
+					    x_extremal_point1,
+					    x_extremal_point2));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point2,
+					     x_extremal_point2,
 					     A.target()));
       } else {
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point1,
+					     x_extremal_point1,
 					     A.target()));
       }
     }
@@ -723,18 +723,18 @@ namespace CircularFunctors {
       // Very similar to the previous case.
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					   A.source(),
-					   x_critical_point2));
+					   x_extremal_point2));
       if (cmp_end < 0) {
         // We must cut in 3 parts.
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point2,
-					     x_critical_point1));
+					     x_extremal_point2,
+					     x_extremal_point1));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point1,
+					     x_extremal_point1,
 					     A.target()));
       } else {
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point2,
+					     x_extremal_point2,
 					     A.target()));
       }
     }
@@ -742,10 +742,10 @@ namespace CircularFunctors {
       if (CGAL::compare(A.source().x(), A.center().x()) < 0) {
         CGAL_kernel_assertion (cmp_end >= 0);
         *res++ = make_object(Circular_arc_2(A.supporting_circle(),
-					    x_critical_point1,
-					    x_critical_point2));
+					    x_extremal_point1,
+					    x_extremal_point2));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point2,
+					     x_extremal_point2,
 					     A.target()));
       }
       else {
@@ -753,9 +753,9 @@ namespace CircularFunctors {
         CGAL_kernel_assertion (cmp_end != LARGER);
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					     A.source(),
-					     x_critical_point1));
+					     x_extremal_point1));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     x_critical_point1,
+					     x_extremal_point1,
 					     A.target()));
       }
     }
@@ -816,22 +816,22 @@ template < class CK, class OutputIterator >
     if (cmp_begin_y > 0) {
     
       *res++ = S_pair(make_object(Circular_arc_2 (A.supporting_circle(),A.source(),
-			          x_critical_points<CK>(A.supporting_circle(),true))),
+			          x_extremal_point<CK>(A.supporting_circle(),true))),
 			          true);
 			       
       if (cmp_end_y > 0) {
         // We must cut in 3 parts.
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-			        x_critical_points<CK>(A.supporting_circle(),true),
-			        x_critical_points<CK>(A.supporting_circle(),false))),
+			        x_extremal_point<CK>(A.supporting_circle(),true),
+			        x_extremal_point<CK>(A.supporting_circle(),false))),
 			        false);
 			   
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-                                x_critical_points<CK>(A.supporting_circle(),false),
+                                x_extremal_point<CK>(A.supporting_circle(),false),
 			        A.target())),true);
       } else {    
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-                                x_critical_points<CK>(A.supporting_circle(),true),
+                                x_extremal_point<CK>(A.supporting_circle(),true),
 			        A.target())) , false);
       }
     }
@@ -840,7 +840,7 @@ template < class CK, class OutputIterator >
             
       *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
 			      A.source(),
-			      x_critical_points<CK>(A.supporting_circle(),false))),
+			      x_extremal_point<CK>(A.supporting_circle(),false))),
 			      false);
 			 
       if (cmp_end_y < CGAL::EQUAL) {
@@ -848,17 +848,17 @@ template < class CK, class OutputIterator >
         // We must cut in 3 parts.
 	
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-			        x_critical_points<CK>(A.supporting_circle(),false), 
-			        x_critical_points<CK>(A.supporting_circle(),true))) ,
+			        x_extremal_point<CK>(A.supporting_circle(),false), 
+			        x_extremal_point<CK>(A.supporting_circle(),true))) ,
 			        true );
 				     					     
 					     
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-                                x_critical_points<CK>(A.supporting_circle(),true),
+                                x_extremal_point<CK>(A.supporting_circle(),true),
 			        A.target())),false);
       } else {
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-                                x_critical_points<CK>(A.supporting_circle(),false),
+                                x_extremal_point<CK>(A.supporting_circle(),false),
 			        A.target())) ,true);
       }
     }
@@ -867,11 +867,11 @@ template < class CK, class OutputIterator >
         assert (cmp_end_y >= 0);
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
                                 A.source(),
-			        x_critical_points<CK>(A.supporting_circle(),false))),
+			        x_extremal_point<CK>(A.supporting_circle(),false))),
 			        false);
 	
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-                                x_critical_points<CK>(A.supporting_circle(),false),
+                                x_extremal_point<CK>(A.supporting_circle(),false),
 			        A.target())) ,true);
       }
       else {
@@ -879,11 +879,11 @@ template < class CK, class OutputIterator >
         assert (cmp_end_y != LARGER);
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
 			        A.source(),
-			        x_critical_points<CK>(A.supporting_circle(),true))),
+			        x_extremal_point<CK>(A.supporting_circle(),true))),
 			        true);		   
 			   
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
-                                x_critical_points<CK>(A.supporting_circle(),true),
+                                x_extremal_point<CK>(A.supporting_circle(),true),
 			        A.target())),false);
       }
     }
@@ -949,7 +949,7 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 				 
 					 			 
 		tmp1.first=make_object(Circular_arc_2(a.supporting_circle(),tmp_arc->source(),
-			               y_critical_points<CK>(a.supporting_circle(),!tmp.second)));
+			               y_extremal_point<CK>(a.supporting_circle(),!tmp.second)));
 			    	    
 			    
 		tmp1.second.first=tmp.second;
@@ -957,7 +957,7 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 		
 		
 		tmp2.first=make_object(Circular_arc_2(a.supporting_circle(),
-                                       y_critical_points<CK>(a.supporting_circle(),!tmp.second),
+                                       y_extremal_point<CK>(a.supporting_circle(),!tmp.second),
 		           			      tmp_arc->target()));
 
 		tmp2.second.first=tmp.second;
@@ -997,9 +997,9 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 		       right_bb=a.right().bbox();
 
 		double ymin= (is_on_upper) ? CGAL::min(left_bb.ymin(),right_bb.ymin()) :
-			   	to_interval( y_critical_points<CK>(a.supporting_circle(),true).y() ).first;
+			   	to_interval( y_extremal_point<CK>(a.supporting_circle(),true).y() ).first;
 		double ymax= (is_on_upper) ? 
-		                to_interval( y_critical_points<CK>(a.supporting_circle(),false).y() ).second:
+		                to_interval( y_extremal_point<CK>(a.supporting_circle(),false).y() ).second:
 			   	CGAL::max(left_bb.ymax(),right_bb.ymax()); 
 		
 				
@@ -1025,16 +1025,16 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 			if(cmp_source_x==cmp_target_x || cmp_source_x==0 || cmp_target_x==0)
 				return a.supporting_circle().bbox();					
 
-		        xmin=to_interval( x_critical_points<CK>(a.supporting_circle(),true).x() ).first;
-			xmax=to_interval( x_critical_points<CK>(a.supporting_circle(),false).x() ).second;
+		        xmin=to_interval( x_extremal_points<CK>(a.supporting_circle(),true).x() ).first;
+			xmax=to_interval( x_extremal_points<CK>(a.supporting_circle(),false).x() ).second;
 
 			if( cmp_source_y==LARGER || cmp_target_y==LARGER)
 			{
-				ymin=to_interval( y_critical_points<CK>(a.supporting_circle(),true).y() ).first;
+				ymin=to_interval( y_extremal_point<CK>(a.supporting_circle(),true).y() ).first;
 				ymax=CGAL::max(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
 			}
 			else{
-				ymax=to_interval( y_critical_points<CK>(a.supporting_circle(),false).y() ).second;
+				ymax=to_interval( y_extremal_point<CK>(a.supporting_circle(),false).y() ).second;
 				ymin=CGAL::min(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
 			}
 
@@ -1043,26 +1043,26 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 		
 		if(cmp_source_y > EQUAL)
 		{
-			xmin=to_interval(x_critical_points<CK>(a.supporting_circle(),true).x()).first;
+			xmin=to_interval(x_extremal_points<CK>(a.supporting_circle(),true).x()).first;
 			xmax=CGAL::max(to_interval(a.source().x()).second,to_interval(a.target().x()).second);
 		}
 		else
 		{
 			xmin=CGAL::min(to_interval(a.source().x()).first,to_interval(a.target().x()).first);
-			xmax=to_interval(x_critical_points<CK>(a.supporting_circle(),false).x()).second;
+			xmax=to_interval(x_extremal_points<CK>(a.supporting_circle(),false).x()).second;
 		}
 
 
 		if( ( cmp_source_y== LARGER && cmp_source_x>= EQUAL) ||		
 		    ( cmp_target_y== LARGER && cmp_target_x<= EQUAL) )
-		    ymax=to_interval(y_critical_points<CK>(a.supporting_circle(),false).y()).second;
+		    ymax=to_interval(y_extremal_point<CK>(a.supporting_circle(),false).y()).second;
 		else
 		    ymax=CGAL::max(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
 
 
 		if( ( cmp_source_y== SMALLER && cmp_source_x<= EQUAL) ||		
 		    ( cmp_target_y== SMALLER && cmp_target_x>= EQUAL) )
-		    ymin=to_interval(y_critical_points<CK>(a.supporting_circle(),true).y()).first;
+		    ymin=to_interval(y_extremal_point<CK>(a.supporting_circle(),true).y()).first;
 		else
 		    ymin=CGAL::min(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
 

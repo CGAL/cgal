@@ -96,7 +96,7 @@ namespace CircularFunctors {
   // Should we have an iterator based interface, or both ?
   template <class CK>
   typename CK::Circular_arc_point_2
-  x_critical_points(const typename CK::Circle_2 & c, bool i)
+  x_extremal_point(const typename CK::Circle_2 & c, bool i)
   {
     typedef typename CK::Algebraic_kernel   AK;
     return AK().x_critical_points_object()(typename CK::Get_equation()(c),i);
@@ -104,7 +104,7 @@ namespace CircularFunctors {
 
   template <class CK,class OutputIterator>
   OutputIterator
-  x_critical_points(const typename CK::Circle_2 & c, OutputIterator res)
+  x_extremal_points(const typename CK::Circle_2 & c, OutputIterator res)
   {
     typedef typename CK::Algebraic_kernel   AK;
     return AK().x_critical_points_object()(typename CK::Get_equation()(c),res);
@@ -112,7 +112,7 @@ namespace CircularFunctors {
 
   template <class CK>
   typename CK::Circular_arc_point_2
-  y_critical_points(const typename CK::Circle_2 & c, bool i)
+  y_extremal_point(const typename CK::Circle_2 & c, bool i)
   {
     typedef typename CK::Algebraic_kernel   AK;
     return AK().y_critical_points_object()(typename CK::Get_equation()(c),i);
@@ -120,7 +120,7 @@ namespace CircularFunctors {
   
   template <class CK,class OutputIterator>
   OutputIterator
-  y_critical_points(const typename CK::Circle_2 & c, OutputIterator res)
+  y_extremal_points(const typename CK::Circle_2 & c, OutputIterator res)
   {
     typedef typename CK::Algebraic_kernel   AK;
     return AK().y_critical_points_object()(typename CK::Get_equation()(c),res);
