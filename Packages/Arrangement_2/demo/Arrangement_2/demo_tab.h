@@ -2303,6 +2303,16 @@ public:
     // Get a polyline approximation of the curve.
     const Point_2&  p_min = m_traits.construct_min_vertex_2_object() (c);
     const Point_2&  p_max = m_traits.construct_max_vertex_2_object() (c);
+
+    if (c.orientation() == CGAL::COLLINEAR)
+    {
+      Coord_point s(CGAL::to_double(p_min.x()), CGAL::to_double(p_min.y()));
+      Coord_point t(CGAL::to_double(p_max.x()), CGAL::to_double(p_max.y()));
+
+      Coord_segment seg(s, t);
+      *w << seg;
+      return;
+    }
     const double    x_min = CGAL::to_double (p_min.x());
     const double    x_max = CGAL::to_double (p_max.x());
     const int       ix_min = (*w).x_pixel(x_min);
