@@ -780,8 +780,8 @@ template < class CK, class OutputIterator >
     typedef std::pair<CGAL::Object,bool >         S_pair;
 
 
-    int cmp_begin_y = CGAL::compare(A.source().y(), A.center().y());
-    int cmp_end_y   = CGAL::compare(A.target().y(), A.center().y());
+    int cmp_begin_y = CGAL::compare(A.source().y(), A.supporting_circle().center().y());
+    int cmp_end_y   = CGAL::compare(A.target().y(), A.supporting_circle().center().y());
     
     int cmp_x=compare_x(A.source(),A.target());
     
@@ -856,7 +856,7 @@ template < class CK, class OutputIterator >
       }
     }
     else { // cmp_begin_y == 0
-      if ( compare(A.source().x(),A.center().x())< 0) {
+      if ( compare(A.source().x(),A.supporting_circle().center().x())< 0) {
         assert (cmp_end_y >= 0);
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
                                 A.source(),
@@ -868,7 +868,7 @@ template < class CK, class OutputIterator >
 			        A.target())) ,true);
       }
       else {
-        assert ( compare(A.source().x(),A.center().x())< 0);
+        assert ( compare(A.source().x(),A.supporting_circle().center().x())< 0);
         assert (cmp_end_y != LARGER);
         *res++ = std::make_pair(make_object(Circular_arc_2 (A.supporting_circle(),
 			        A.source(),
@@ -920,8 +920,8 @@ Output_iterator advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 	
 		const Circular_arc_2 *tmp_arc =CGAL::object_cast<Circular_arc_2>(&vec.at(i).first);
 		
-    		int cmp_begin_x = CGAL::compare(tmp_arc->source().x(), tmp_arc->center().x());
-    		int cmp_end_x   = CGAL::compare(tmp_arc->target().x(), tmp_arc->center().x());
+    		int cmp_begin_x = CGAL::compare(tmp_arc->source().x(), tmp_arc->supporting_circle().center().x());
+    		int cmp_end_x   = CGAL::compare(tmp_arc->target().x(), tmp_arc->supporting_circle().center().x());
 		
 		if(cmp_begin_x!=opposite(cmp_end_x) || cmp_begin_x==CGAL::EQUAL)
 		{
