@@ -666,6 +666,9 @@ namespace CircularFunctors {
     typedef typename CK::Circle_2                 Circle_2;
     typedef typename CK::FT                       FT;
     typedef typename CK::Point_2                  Point_2;
+    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
+    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
+
     CGAL_kernel_precondition(A.supporting_circle().squared_radius() != 0);
     int cmp_begin = CGAL::compare(A.source().y(), A.center().y());
     int cmp_end   = CGAL::compare(A.target().y(),   A.center().y());
@@ -691,26 +694,28 @@ namespace CircularFunctors {
 
     // Define the 2 Circular_arc_endpoints 
     // in the 2 vertical tangent points
-    Circular_arc_2 half_circle( A.supporting_circle(),
-				x_critical_points<CK>(A.supporting_circle(),true),
-				x_critical_points<CK>(A.supporting_circle(),false));
 
+    std::vector< Root_for_circles_2_2 > vector_x_critical_points;
+    x_critical_points<CK>(A.supporting_circle(), std::back_inserter(vector_x_critical_points));
+    Circular_arc_point_2 x_critical_point1 = vector_x_critical_points[0];
+    Circular_arc_point_2 x_critical_point2 = vector_x_critical_points[1];
+    
     
     if (cmp_begin > 0) {
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					   A.source(),
-					   half_circle.source()));
+					   x_critical_point1));
       if (cmp_end > 0) {
         // We must cut in 3 parts.
         *res++ = make_object(Circular_arc_2(A.supporting_circle(),
-					    half_circle.source(),
-					    half_circle.target()));
+					    x_critical_point1,
+					    x_critical_point2));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.target(),
+					     x_critical_point2,
 					     A.target()));
       } else {
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.source(),
+					     x_critical_point1,
 					     A.target()));
       }
     }
@@ -718,27 +723,29 @@ namespace CircularFunctors {
       // Very similar to the previous case.
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					   A.source(),
-					   half_circle.target()));
+					   x_critical_point2));
       if (cmp_end < 0) {
         // We must cut in 3 parts.
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.target(),
-					     half_circle.source()));
+					     x_critical_point2,
+					     x_critical_point1));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.source(),
+					     x_critical_point1,
 					     A.target()));
       } else {
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.target(),
+					     x_critical_point2,
 					     A.target()));
       }
     }
     else { // cmp_begin == 0
       if (CGAL::compare(A.source().x(), A.center().x()) < 0) {
         CGAL_kernel_assertion (cmp_end >= 0);
-        *res++ = make_object(half_circle);
+        *res++ = make_object(Circular_arc_2(A.supporting_circle(),
+					    x_critical_point1,
+					    x_critical_point2));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.target(),
+					     x_critical_point2,
 					     A.target()));
       }
       else {
@@ -746,9 +753,9 @@ namespace CircularFunctors {
         CGAL_kernel_assertion (cmp_end != LARGER);
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					     A.source(),
-					     half_circle.source()));
+					     x_critical_point1));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     half_circle.source(),
+					     x_critical_point1,
 					     A.target()));
       }
     }

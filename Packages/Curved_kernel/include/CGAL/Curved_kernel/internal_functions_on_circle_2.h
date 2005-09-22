@@ -102,6 +102,14 @@ namespace CircularFunctors {
     return AK().x_critical_points_object()(typename CK::Get_equation()(c),i);
   }
 
+  template <class CK,class OutputIterator>
+  OutputIterator
+  x_critical_points(const typename CK::Circle_2 & c, OutputIterator res)
+  {
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().x_critical_points_object()(typename CK::Get_equation()(c),res);
+  }
+
   template <class CK>
   typename CK::Circular_arc_point_2
   y_critical_points(const typename CK::Circle_2 & c, bool i)
@@ -109,6 +117,15 @@ namespace CircularFunctors {
     typedef typename CK::Algebraic_kernel   AK;
     return AK().y_critical_points_object()(typename CK::Get_equation()(c),i);
   }
+  
+  template <class CK,class OutputIterator>
+  OutputIterator
+  y_critical_points(const typename CK::Circle_2 & c, OutputIterator res)
+  {
+    typedef typename CK::Algebraic_kernel   AK;
+    return AK().y_critical_points_object()(typename CK::Get_equation()(c),res);
+  }
+
 
 } // namespace CircularFunctors
 } // namespace CGAL
