@@ -25,14 +25,15 @@ public:
   ~Triangulation_incremental_builder_3() {}
 
   void begin_triangulation(int dim) {
-    t._tds.clear();
-    t.infinite = add_vertex();
-    t._tds.set_dimension(dim); 
+    t.clear();
+    t.tds().delete_cell(t.infinite_vertex()->cell());
+      // t.infinite = add_vertex();
+    t.tds().set_dimension(dim); 
   }
 
   void end_triangulation() {
     construct_infinite_cells();
-    assert(t.infinite->cell() != Cell_handle());
+    assert(t.infinite_vertex()->cell() != Cell_handle());
   }
 
   Vertex_handle add_vertex();
@@ -82,7 +83,7 @@ private:
 template < class TDS_>
 typename Triangulation_incremental_builder_3< TDS_ >::Vertex_handle
 Triangulation_incremental_builder_3< TDS_ >::add_vertex() {
-  return t._tds.create_vertex();
+  return t.tds().create_vertex();
 }
 
 template < class TDS_>
@@ -95,7 +96,7 @@ Triangulation_incremental_builder_3< TDS_ >::add_cell(
   assert(vh0 != vh1); assert(vh0 != vh2); assert(vh0 != vh3);
   assert(vh1 != vh2); assert(vh1 != vh3); assert(vh2 != vh3);
 	
-  Cell_handle ch =  t._tds.create_cell(vh0, vh1, vh2, vh3);
+  Cell_handle ch =  t.tds().create_cell(vh0, vh1, vh2, vh3);
   // Neighbors are by default set to NULL
   vh0->set_cell(ch); vh1->set_cell(ch);
   vh2->set_cell(ch); vh3->set_cell(ch);
@@ -129,11 +130,11 @@ Triangulation_incremental_builder_3< TDS_ >::add_infinite_cell(
 {
   assert(ch0->neighbor(i) == NULL);
   Vertex_handle vh[4];
-  vh[i] = t.infinite;
+  vh[i] = t.infinite_vertex();
   vh[(i+1)&3] = ch0->vertex((i+1)&3);
   vh[(i+2)&3] = ch0->vertex((i+3)&3);
   vh[(i+3)&3] = ch0->vertex((i+2)&3);
-  Cell_handle ch1 =  t._tds.create_cell(vh[0], vh[1], vh[2], vh[3]);
+  Cell_handle ch1 =  t.tds().create_cell(vh[0], vh[1], vh[2], vh[3]);
   // Neighbors are set to NULL
   // Do not set points to the infinite cell. All finite vertices point to
   // finite cells.

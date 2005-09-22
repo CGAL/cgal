@@ -84,19 +84,6 @@ public:
   QuadrSurface *surf;
 };
 	
-template < class GT,
-           class Tds = Triangulation_data_structure_3 <
-             Triangulation_vertex_base_3<GT>,
-             Triangulation_cell_base_3<GT> > >
-class Skin_surface_simplicial_complex_3
-  : public Triangulation_3<GT,Tds> {
-public:
-  typedef Skin_surface_simplicial_complex_3<GT, Tds> Self;
-  typedef Triangulation_3<GT, Tds>                   Parent;
-  typedef typename Parent::Vertex_handle             Vertex_handle;
-	
-  friend class Triangulation_incremental_builder_3<Self>;
-};
 
 
 CGAL_END_NAMESPACE

@@ -21,19 +21,44 @@ public:
   typedef typename K::RT                  RT;
   typedef Weighted_point<Point, RT> Weighted_point;
 
+  Skin_surface_quadratic_surface_3(RT eps=10e-10) : eps(eps) {
+  }
   // Construct the intersection point with the segment (p0,p1)
-  virtual Point to_surface(Point const &p0, Point const &p1) = 0;
+  Point to_surface(Point const &p0, Point const &p1) {
+    CGAL_assertion (Sign(value(p1) * value(p0)) != POSITIVE);
+    RT sq_d = squared_distance(p0,p1);
+    Point pp0=p0, pp1=p1, mid;
+
+    if (value(p1) < value(p0)) {
+      std::swap(pp0, pp1);
+    }
+
+    while (sq_d > eps) {
+      mid = midpoint(pp0,pp1);
+      if (value(mid) > 0) {
+	pp1 = mid;
+      } else {
+	pp0 = mid;
+      }
+      sq_d /= 4;
+    }
+    return mid;
+  };
   virtual Point to_surface(Point const &p, Vector const &v) = 0;
   inline Point to_surface(Segment const &s) {
     return to_surface(s.source(), s.target());
   }
-  virtual Point to_surface(Point const &p0) = 0;
 
-  // Compute the normal in p:
-  virtual Vector normal(Point const &p) = 0; 
+  // Gradient descent
+  virtual Point to_surface(Point const &p0) = 0;
 
   // compute the function value of p
   virtual RT value(Point const &p) = 0;
+  // Compute the gradient in p
+  virtual Vector gradient(Point const &p) = 0; 
+  // Compute the normal in p (normalized gradient)
+  virtual Vector normal(Point const &p) = 0; 
+
 
   // return the dimension of the delaunay simplex:
   virtual int dimension() = 0;
@@ -41,6 +66,7 @@ public:
   // return a continuous density function on the skin surface:
   virtual RT sq_density(Point const &p) = 0;
 
+  RT eps;
 };
 
 /////////////////////////////////////////////////
@@ -63,49 +89,49 @@ public:
   typedef typename K::RT                  RT;
   typedef Weighted_point<Point, RT> Weighted_point;
 
-  Skin_surface_sphere_3(Weighted_point wp, RT s, int orient)
-    : Skin_surface_quadratic_surface_3<K>(), wp(wp), s(s), orient(orient) {
+  Skin_surface_sphere_3(Weighted_point wp, RT s, int orient, RT eps=10e-10)
+    : Skin_surface_quadratic_surface_3<K>(eps),
+      wp(wp), s(s), orient(orient) {
     assert((orient == -1) || (orient == 1));
   }
 	
   RT value(Point const &x) {
-    // Was: multiplied with: (1-s)
-    return orient*(CGAL::squared_distance(x, wp) - s*wp.weight());
+    return orient * (CGAL::squared_distance(x, wp)/s - wp.weight());
   }
-  Point to_surface(Point const &p0, Point const &p1) {
-    Vector p0c = p0-wp;
-    Vector p0p1 = p1-p0;
-    RT sq_d = p0p1*p0p1;
-    RT top = -p0c*p0p1/sq_d; 
+//   Point to_surface(Point const &p0, Point const &p1) {
+//     Vector p0c = p0-wp;
+//     Vector p0p1 = p1-p0;
+//     RT sq_d = p0p1*p0p1;
+//     RT top = -p0c*p0p1/sq_d; 
 
-    RT extr_val = CGAL::squared_distance(p0+top*p0p1, wp) - s*wp.weight();
+//     RT extr_val = CGAL::squared_distance(p0+top*p0p1, wp) - s*wp.weight();
 		
-    if (extr_val > 0) {
-      std::cerr << "im. intersection[" << dimension() << "] "
-		<<  extr_val << "\n"; 
-      return p0 + top*p0p1;
-    }
-    RT d = sqrt(-extr_val/sq_d);
+//     if (extr_val > 0) {
+//       std::cerr << "im. intersection[" << dimension() << "] "
+// 		<<  extr_val << "\n"; 
+//       return p0 + top*p0p1;
+//     }
+//     RT d = sqrt(-extr_val/sq_d);
 
-    // t should be in [0,1]
-    RT t, t1;
-    t = top + d; t1 = top - d;
-    if ((2*t1-1)*(2*t1-1) < (2*t-1)*(2*t-1)) t = t1;
+//     // t should be in [0,1]
+//     RT t, t1;
+//     t = top + d; t1 = top - d;
+//     if ((2*t1-1)*(2*t1-1) < (2*t-1)*(2*t-1)) t = t1;
 
-    if (t < 0) {
-      std::cerr << "Sl[" << dimension() <<"] " <<  t << "\n";
-      return  p0;
-    } else if (t > 1) {
-      std::cerr << "Sh[" << dimension() <<"] " <<  t << "\n";
-      return  p1;
-    } else {
-      // 			if (std::abs(value(p0 + t*p0p1)) >= 0.001) {
-      // 				std::cerr << "VAL: " << value(p0 + t*p0p1) << std::endl;
-      // 			}
-      // 			assert (std::abs(value(p0 + t*p0p1)) < 0.001);
-      return p0 + t*p0p1;
-    }
-  }
+//     if (t < 0) {
+//       std::cerr << "Sl[" << dimension() <<"] " <<  t << "\n";
+//       return  p0;
+//     } else if (t > 1) {
+//       std::cerr << "Sh[" << dimension() <<"] " <<  t << "\n";
+//       return  p1;
+//     } else {
+//       // 			if (std::abs(value(p0 + t*p0p1)) >= 0.001) {
+//       // 				std::cerr << "VAL: " << value(p0 + t*p0p1) << std::endl;
+//       // 			}
+//       // 			assert (std::abs(value(p0 + t*p0p1)) < 0.001);
+//       return p0 + t*p0p1;
+//     }
+//   }
   Point to_surface(Point const &p, Vector const &v) {
     Vector pc = p-wp;
     RT sq_d = v*v;
@@ -134,8 +160,12 @@ public:
   }
 
   Vector normal(Point const &p) {
-    Vector n = orient*(p-wp);
+    Vector n = gradient(p);
     return n/sqrt(n*n);
+  }
+	
+  Vector gradient(Point const &p) {
+    return orient*(p-wp);
   }
 	
   int dimension() {
@@ -179,10 +209,10 @@ public:
   typedef typename K::RT                  RT;
   typedef CGAL::Weighted_point<Point, RT> Weighted_point;
 
-  Skin_surface_hyperboloid_3(Weighted_point wp, Vector t, RT s, int orient)
-    : Skin_surface_quadratic_surface_3<K>(), wp(wp), t(t), s(s), orient(orient) {
+  Skin_surface_hyperboloid_3(Weighted_point wp, Vector t, RT s, int orient,
+    RT eps=10e-10)
+    : Skin_surface_quadratic_surface_3<K>(eps), wp(wp), t(t), s(s), orient(orient) {
     assert((orient == -1) || (orient == 1));
-    if (orient == -1) this->wp = Weighted_point(wp.point(), -wp.weight());
     sq_t = t*t;
   }
 	
@@ -191,47 +221,47 @@ public:
     RT tmp = dir*t;
     tmp = tmp*tmp/sq_t;
 
-    return orient * ((1-s)*dir*dir - tmp + s*(1-s)*wp.weight());
+    return orient * (dir*dir/s - tmp/(s*(1-s))) + wp.weight();
   }
-  Point to_surface(Point const &p0, Point const &p1) {
-    assert(value(p0) * value(p1) <= 0);
+//   Point to_surface(Point const &p0, Point const &p1) {
+//     assert(value(p0) * value(p1) <= 0);
 
-    Vector p0c = p0-wp;
-    Vector p1p0 = p1-p0;
-    RT sq_d = p1p0*p1p0;
+//     Vector p0c = p0-wp;
+//     Vector p1p0 = p1-p0;
+//     RT sq_d = p1p0*p1p0;
 		
-    RT p0_sym = p0c*t;
-    RT p1_sym = (p1-wp)*t;
-    RT d_sym = p0_sym-p1_sym;
+//     RT p0_sym = p0c*t;
+//     RT p1_sym = (p1-wp)*t;
+//     RT d_sym = p0_sym-p1_sym;
 
-    RT den = ((1-s)*sq_d - d_sym*d_sym/sq_t);
-    RT top = -((1-s)*(p0c*p1p0) + p0_sym*d_sym/sq_t) / den;
-    RT extr_val =
-      orient*((1-s)*p0c*p0c-p0_sym*p0_sym/sq_t-s*(1-s)*wp.weight());
+//     RT den = ((1-s)*sq_d - d_sym*d_sym/sq_t);
+//     RT top = -((1-s)*(p0c*p1p0) + p0_sym*d_sym/sq_t) / den;
+//     RT extr_val =
+//       orient*((1-s)*p0c*p0c-p0_sym*p0_sym/sq_t-s*(1-s)*wp.weight());
 			
-    {
-      Point extr = p0+top*p1p0;
-      Vector dir = extr-wp;
-      RT tmp = dir*t; tmp *= tmp/sq_t;
-      extr_val = orient*(-tmp + (1-s)*dir*dir + s*(1-s)*wp.weight());
-    }
-    RT d = sqrt(-orient*extr_val/den);
+//     {
+//       Point extr = p0+top*p1p0;
+//       Vector dir = extr-wp;
+//       RT tmp = dir*t; tmp *= tmp/sq_t;
+//       extr_val = orient*(-tmp + (1-s)*dir*dir + s*(1-s)*wp.weight());
+//     }
+//     RT d = sqrt(-orient*extr_val/den);
 
-    RT t, t1;
-    t = top + d; t1 = top - d;
-    if ((2*t1-1)*(2*t1-1) < (2*t-1)*(2*t-1)) t = t1;
+//     RT t, t1;
+//     t = top + d; t1 = top - d;
+//     if ((2*t1-1)*(2*t1-1) < (2*t-1)*(2*t-1)) t = t1;
 
-    if (t < 0) {
-      std::cerr << "Hl[" << dimension() <<"] " <<  t << "\n";
-      return p0;
-    } else if (t > 1) {
-      std::cerr << "Hh[" << dimension() <<"] " <<  t << "\n";
-      return  p1;
-    } else {
-      assert (std::abs(value(p0 + t*p1p0)) < 0.001);
-      return p0 + t*p1p0;
-    }
-  }
+//     if (t < 0) {
+//       std::cerr << "Hl[" << dimension() <<"] " <<  t << "\n";
+//       return p0;
+//     } else if (t > 1) {
+//       std::cerr << "Hh[" << dimension() <<"] " <<  t << "\n";
+//       return  p1;
+//     } else {
+//       assert (std::abs(value(p0 + t*p1p0)) < 0.001);
+//       return p0 + t*p1p0;
+//     }
+//   }
   Point to_surface(Point const &p, Vector const &v){
     Vector pc = p-wp;
     Point p1 = p + v;
@@ -265,24 +295,16 @@ public:
   }
   Point to_surface(Point const &p0) {
     return to_surface(p0, normal(p0));
-    // 		Vector n = normal(p0);
-    // 		RT val1, val0 = value(p0);
-    // 		Point p1 = p0 - val0*n;
-    // 		val1 = value(p1);
-    // 		while (std::abs(val1) > 1e-10)
-    // 		{
-    // 			val0 = val1;
-    // 			p1 = p1 - val0*n;
-    // 			val1 = value(p1);
-    // 		}
-    // 		return p1;
   }
   Vector normal(Point const &p) {
+    Vector n = gradient(p);
+    return orient*n/sqrt(n*n);
+  }
+  Vector gradient(Point const &p) {
     // -s x + (1-s) y 
     Vector v = p - wp;
     Vector vt = (v*t)/(t*t)*t;
-    Vector n = (1-s)*v - vt;
-    return orient*n/sqrt(n*n);
+    return orient*((1-s)*v - vt);
   }
 
   int dimension() {

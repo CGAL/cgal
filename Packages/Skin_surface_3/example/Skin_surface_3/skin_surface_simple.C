@@ -92,35 +92,9 @@ int main(int argc, char *argv[]) {
 
   std::cout << "regular" << std::endl;
 
-  std::cerr << "LIST" << std::endl;
   // Triangulate mixed complex:
   Simplicial simplicial;
   Mixed_complex_builder(regular, simplicial, shrink);
-  for (Simpl_Fin_cells_it cit = simplicial.finite_cells_begin();
-       cit != simplicial.finite_cells_end(); cit++) {
-    CGAL::Orientation orient = CGAL::orientation(
-      cit->vertex(0)->point(), cit->vertex(1)->point(),
-      cit->vertex(2)->point(), cit->vertex(3)->point());
-    if (orient == CGAL::NEGATIVE) {
-      //std::cout.precision(20);
-      std::cout << orient << " (" << cit->simpl.dimension() << ") ";
-      for (int i=0; i<4; i++) {
-        std::cout << "[" << cit->vertex(i)->sDel.dimension() 
-                  << ", " << cit->vertex(i)->sVor.dimension() << "] ";
-      }
-      std::cout << std::endl;
-      std::cerr << "{ OFF 4 4 0\n";
-      for (int i=0; i<4; i++) {
-        std::cerr << "  " << cit->vertex(i)->point() << std::endl;
-      }
-      for (int i=0; i<4; i++) {
-	std::cerr << "  3 " << i << " " << ((i+1)&3) << " " << ((i+2)&3) << std::endl;
-      }
-      std::cerr << "}\n";
-      
-	
-    }
-  }
 
   std::cout << "simplicial" << std::endl;
 
