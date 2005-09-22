@@ -37,11 +37,25 @@ template <class AK>
     return AK().x_critical_points_object()(c,i);
   }
 
+ template <class AK, class OutputIterator>
+  OutputIterator
+  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+  {
+    return AK().x_critical_points_object()(c,res);
+  }
+
 template <class AK>
   typename AK::Root_for_circles_2_2
   y_critical_points(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
   {
     return AK().y_critical_points_object()(c,i);
+  }
+
+ template <class AK, class OutputIterator>
+  OutputIterator
+  y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+  {
+    return AK().y_critical_points_object()(c,res);
   }
 
 

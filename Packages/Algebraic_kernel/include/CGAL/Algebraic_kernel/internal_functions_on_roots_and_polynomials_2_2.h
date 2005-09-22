@@ -118,7 +118,27 @@ namespace CGAL {
                                    -square(c.b()), c.b()<0));
   }
 
-  
+  template <class AK, class OutputIterator>
+  OutputIterator
+  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+  {
+            typedef typename AK::Root_of_2 Root_of_2;
+            typedef typename AK::FT        FT;
+            typedef typename AK::Root_for_circles_2_2
+                                           Root_for_circles_2_2;
+
+	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
+	    Root_of_2 a2= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
+
+            *res++ =  Root_for_circles_2_2(a1, make_root_of_2(FT(1), FT(0),
+							      -square(c.b()), c.b()<0));
+	    *res++ =  Root_for_circles_2_2(a2, make_root_of_2(FT(1), FT(0),
+							      -square(c.b()), c.b()<0));
+	    return res;
+  }
+
+
+
   template <class AK>
   typename AK::Root_for_circles_2_2
   y_critical_points(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
@@ -133,6 +153,27 @@ namespace CGAL {
             return Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
                                    -square(c.a()),c.a()<0),b1);
   }
+  
+  template <class AK, class OutputIterator>
+    OutputIterator
+    y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+    {
+      typedef typename AK::Root_of_2 Root_of_2;
+      typedef typename AK::FT        FT;
+      typedef typename AK::Root_for_circles_2_2
+	Root_for_circles_2_2;
+      
+      Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
+      Root_of_2 b2= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
+      
+      *res++ = Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
+						   -square(c.a()),c.a()<0),b1);
+      *res++ = Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
+						   -square(c.a()),c.a()<0),b2);
+      return res;
+  }
+
+
 
   } // namespace AlgebraicFunctors
 } // namespace CGAL

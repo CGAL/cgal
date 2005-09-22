@@ -97,6 +97,14 @@ template < class AK >
       return x_critical_points<AK>(c,i);
     }
 
+    template <class OutputIterator>
+      OutputIterator
+      operator()(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+    {
+      return x_critical_points<AK>(c,res);
+    }
+    
+
   };
 
 template < class AK >
@@ -108,6 +116,13 @@ template < class AK >
       operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
     {
       return y_critical_points<AK>(c,i);
+    }
+
+     template <class OutputIterator>
+      OutputIterator
+      operator()(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+    {
+      return y_critical_points<AK>(c,res);
     }
 
   };
