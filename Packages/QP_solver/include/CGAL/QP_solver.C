@@ -48,10 +48,10 @@ QP_solver(int n, int m,
     is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
     no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( !
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
-{ 
+{
+  set_verbosity(verbosity); 
   set_pricing_strategy(strategy);
   set(n,m,A,b,c,D,r);
-  set_verbosity(verbosity);
   init();
   solve();
 }
@@ -73,13 +73,13 @@ QP_solver(int n, int m,
     is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
     no_ineq( check_tag( Has_equalities_only_and_full_rank())), has_ineq( !
     no_ineq), is_in_standard_form(check_tag(Is_in_standard_form()))
-{ 
+{
+  set_verbosity(verbosity); 
   set_pricing_strategy(strategy);
   // since 'set' calls 'init_x_O_v_i' which in turn accesses
   // qp_fl, qp_l, qp_fu, qp_u the two following calls are in this order
   set_explicit_bounds(n, fl, lb, fu, ub);
   set(n,m,A,b,c,D,r);
-  set_verbosity(verbosity);
   init();
   solve();
 }
@@ -120,11 +120,10 @@ set( int n, int m,
     }
     
     init_x_O_v_i(Is_in_standard_form());
-    set_up_auxiliary_problem(is_perturbed);
+    set_up_auxiliary_problem(Is_in_standard_form());
     
     e = qp_m-slack_A.size(); // number of equalities
     l = std::min( n+e+1, m);
-
     // diagnostic output
     CGAL_qpe_debug {
 	if ( vout.verbose()) {
@@ -179,7 +178,7 @@ set_explicit_bounds(int n, FL_iterator fl, L_iterator lb, FU_iterator fu,
     x_O_v_i.insert(x_O_v_i.end(), n, LOWER);
 }
 
-
+/*
 // This is a variant of set_up_auxiliary_problem for symbolic perturbation
 // for the perturbed case
 template < class Rep_ >
@@ -385,14 +384,14 @@ set_up_auxiliary_problem(Tag_true)
 	art_s.clear();
     }
 }
-
+*/
 
 // This is the currently used variant of set_up_auxiliary_problem for symbolic
 // perturbation for the unperturbed case 
-template < class Rep_ >
+template < class Rep_ >                                     // Standard form
 void
 QP_solver<Rep_>::
-set_up_auxiliary_problem(Tag_false)
+set_up_auxiliary_problem(Tag_true)
 {
     // initialize slack and artificial part of `A'
     B_entry  b0( 0), b_max( b0);
@@ -402,47 +401,104 @@ set_up_auxiliary_problem(Tag_false)
 
         if ( has_ineq && ( qp_r[ i] != Rep::EQUAL)) {   // slack variable
 
-	    if ( qp_r[ i] == Rep::LESS_EQUAL) {                 // '<='
-		if ( qp_b[ i] < b0) {
+            if ( qp_r[ i] == Rep::LESS_EQUAL) {                 // '<='
+                if ( qp_b[ i] < b0) {
 
                     // special entry '< -0'
-		    art_s[ i] = -c1;
-		    if ( -qp_b[ i] > b_max) {
-			i_max = slack_A.size();
-			b_max = -qp_b[ i];
-		    }
-		}
+                    art_s[ i] = -c1;
+                    if ( -qp_b[ i] > b_max) {
+                        i_max = slack_A.size();
+                        b_max = -qp_b[ i];
+                    }
+                }
 
-		// store slack column
-		slack_A.push_back( std::make_pair( i, false));
+                // store slack column
+                slack_A.push_back( std::make_pair( i, false));
 
-	    } else {                                            // '>='
-		if ( qp_b[ i] > b0) {
+            } else {                                            // '>='
+                if ( qp_b[ i] > b0) {
 
                     // special entry '> +0'
-		    art_s[ i] = c1;
-		    if (  qp_b[ i] > b_max) {
-			i_max = slack_A.size();
-			b_max = qp_b[ i];
-		    }
-		}
+                    art_s[ i] = c1;
+                    if (  qp_b[ i] > b_max) {
+                        i_max = slack_A.size();
+                        b_max = qp_b[ i];
+                    }
+                }
 
-		// store slack column
-		slack_A.push_back( std::make_pair( i, true));
-	    }
+                // store slack column
+                slack_A.push_back( std::make_pair( i, true));
+            }
 
         } else {                                        // artificial variable
 
             art_A.push_back( std::make_pair( i, qp_b[ i] < b0));
 
-	}
+        }
     }
     // special artificial column needed?
     if ( i_max >= 0) {
-	art_s_i = -i_max;
+        art_s_i = -i_max;
     } else {
-	art_s_i = -1;
-	art_s.clear();
+        art_s_i = -1;
+        art_s.clear();
+    }
+}
+
+template < class Rep_ >                                     // upper bounded
+void
+QP_solver<Rep_>::
+set_up_auxiliary_problem(Tag_false)
+{
+    // initialize slack and artificial part of `A'
+    ET  b0(et0), b_max( b0);
+    C_entry  c1( 1);
+    int              i_max = -1;
+    for ( int i = 0; i < qp_m; ++i) {
+        ET  rhs = ET(qp_b[ i]) - multiply__A_ixO(i);
+        if ( has_ineq && ( qp_r[ i] != Rep::EQUAL)) {   // slack variable
+
+            if ( qp_r[ i] == Rep::LESS_EQUAL) {                 // '<='
+                if ( rhs < b0) {
+
+                    // special entry '< -0'
+                    art_s[ i] = -c1;
+                    if ( -rhs > b_max) {
+                        i_max = slack_A.size();
+                        b_max = -rhs;
+                    }
+                }
+
+                // store slack column
+                slack_A.push_back( std::make_pair( i, false));
+
+            } else {                                            // '>='
+                if ( rhs > b0) {
+
+                    // special entry '> +0'
+                    art_s[ i] = c1;
+                    if (  rhs > b_max) {
+                        i_max = slack_A.size();
+                        b_max = rhs;
+                    }
+                }
+
+                // store slack column
+                slack_A.push_back( std::make_pair( i, true));
+            }
+
+        } else {                                        // artificial variable
+
+            art_A.push_back( std::make_pair( i, rhs < b0));
+
+        }
+    }
+    // special artificial column needed?
+    if ( i_max >= 0) {
+        art_s_i = -i_max;
+    } else {
+        art_s_i = -1;
+        art_s.clear();
     }
 }
 
@@ -458,6 +514,7 @@ init( )
               << "==============" << std::endl
               << "Initialization" << std::endl
               << "==============" << std::endl;
+              
     }
 
     // set status
@@ -472,12 +529,12 @@ init( )
     
     // initialize non-basic original variables
     // init_x_O_v_i(Is_in_standard_form());
+    
+    // initialize additional data members
+    init_additional_data_members();
         
     // initial solution
     init_solution();
-
-    // initialize additional data members
-    init_additional_data_members();
 
     // initialize pricing strategy
     CGAL_qpe_precondition( strategyP != static_cast< Pricing_strategy*>( 0));
@@ -751,12 +808,12 @@ init_solution( )
 //TESTING the updates of r_C, r_S_B, r_B_O, w
     ratio_test_bound_index = LOWER;
     
-    // initialization of vectors r_C, r_S_B   
+    // initialization of vectors r_C, r_S_B  
     init_r_C(Is_in_standard_form());
     init_r_S_B(Is_in_standard_form());
 
     // compute initial solution
-    compute_solution();
+    compute_solution(Is_in_standard_form());
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -852,7 +909,7 @@ transition( )
                     minus_c_B.begin(), std::negate<ET>());
     
     // compute initial solution of phase II
-    compute_solution();
+    compute_solution(Is_in_standard_form());
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -1340,7 +1397,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
         if (direction == 1) {
             if (x_O_v_i[j] == LOWER) {              // has lower bound value
                 if (*(qp_fu+j)) {                   // has finite upper bound
-                    x_i = qp_u[j] - qp_l[j];
+                    x_i = d * (qp_u[j] - qp_l[j]);
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = UPPER;
@@ -1350,7 +1407,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
                 }
             } else {                                // has value zero
                 if (*(qp_fu+j)) {                   // has finite upper bound
-                    x_i = qp_u[j];
+                    x_i = d * qp_u[j];
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = UPPER;
@@ -1362,7 +1419,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
         } else {                                    // direction == -1
             if (x_O_v_i[j] == UPPER) {              // has upper bound value
                 if (*(qp_fl+j)) {                   // has finite lower bound
-                    x_i = qp_u[j] - qp_l[j];
+                    x_i = d * (qp_u[j] - qp_l[j]);
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = LOWER;
@@ -1372,7 +1429,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
                 }
             } else {                                // has value zero
                 if (*(qp_fl+j)) {                   // has finite lower bound
-                    x_i = -qp_l[j];
+                    x_i = d * -qp_l[j];
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = LOWER;
@@ -1517,20 +1574,20 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k > et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  d = x_k - qp_l[k]; 
-            if (d * q_min < d_min * q_k) {
+            ET  diff = x_k - (d * qp_l[k]); 
+            if (diff * q_min < d_min * q_k) {
                 i_min = k;
-                d_min = d;
+                d_min = diff;
                 q_min = q_k;
                 ratio_test_bound_index = LOWER;
             }
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (*(qp_fu+k))) {
-            ET  d = ET(qp_u[k]) - x_k;
-            if (d * q_min < -(d_min * q_k)) {
+            ET  diff = (d * qp_u[k]) - x_k;
+            if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
-                d_min = d;
+                d_min = diff;
                 q_min = -q_k;
                 ratio_test_bound_index = UPPER;
             }    
@@ -1549,20 +1606,20 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k < et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  d = x_k - qp_l[k]; 
-            if (d * q_min < -(d_min * q_k)) {
+            ET  diff = x_k - (d * qp_l[k]); 
+            if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
-                d_min = d;
+                d_min = diff;
                 q_min = -q_k;
                 ratio_test_bound_index = LOWER;
             }
         }
     } else {                                        // check for upper bound
         if ((q_k > et0) && (*(qp_fu+k))) {
-            ET  d = ET(qp_u[k]) - x_k;
-            if (d * q_min < d_min * q_k) {
+            ET  diff = (d * qp_u[k]) - x_k;
+            if (diff * q_min < d_min * q_k) {
                 i_min = k;
-                d_min = d;
+                d_min = diff;
                 q_min = q_k;
                 ratio_test_bound_index = UPPER;
             }    
@@ -1582,10 +1639,10 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     if (q_k > et0) {                                // check for lower bound
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
-                ET  d = x_k - qp_l[k];
-                if (d * q_min < d_min * q_k) {
+                ET  diff = x_k - (d * qp_l[k]);
+                if (diff * q_min < d_min * q_k) {
                     i_min = k;
-                    d_min = d;
+                    d_min = diff;
                     q_min = q_k;
                     ratio_test_bound_index = LOWER;
                 }
@@ -1599,10 +1656,10 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
-            ET  d = ET(qp_u[k]) - x_k;
-            if (d * q_min < -(d_min * q_k)) {
+            ET  diff = (d * qp_u[k]) - x_k;
+            if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
-                d_min = d;
+                d_min = diff;
                 q_min = -q_k;
                 ratio_test_bound_index = UPPER;
             }
@@ -1622,10 +1679,10 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     if (q_k < et0) {                                // check for lower bound
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
-                ET  d = x_k - qp_l[k];
-                if (d * q_min < -(d_min * q_k)) {
+                ET  diff = x_k - (d * qp_l[k]);
+                if (diff * q_min < -(d_min * q_k)) {
                     i_min = k;
-                    d_min = d;
+                    d_min = diff;
                     q_min = -q_k;
                     ratio_test_bound_index = LOWER;
                 }
@@ -1639,10 +1696,10 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
-            ET  d = ET(qp_u[k]) - x_k;
-            if (d * q_min < d_min * q_k) {
+            ET  diff = (d * qp_u[k]) - x_k;
+            if (diff * q_min < d_min * q_k) {
                 i_min = k;
-                d_min = d;
+                d_min = diff;
                 q_min = q_k;
                 ratio_test_bound_index = UPPER;
             }
@@ -1838,7 +1895,7 @@ update_1( )
     }
 
     // compute current solution
-    compute_solution();
+    compute_solution(Is_in_standard_form());
 	 
 }
 
@@ -1867,7 +1924,7 @@ update_2( Tag_false)
     CGAL_expensive_assertion(check_w(Is_in_standard_form()));
 
     // compute current solution
-    compute_solution();
+    compute_solution(Is_in_standard_form());
 }
 
 template < class Rep_ >
@@ -3114,16 +3171,51 @@ update_w_r_B_O__i(ET& x_i)
 
 
 // compute solution
-template < class Rep_ >
-void
-QP_solver<Rep_>::
-compute_solution()
+template < class Rep_ >                             // Standard form
+void  QP_solver<Rep_>::
+compute_solution(Tag_true)
 {
-    // compute current solution
+    // compute current solution, original variables and lambdas
     inv_M_B.multiply( b_C.begin(), minus_c_B.begin(),
                       lambda.begin(), x_B_O.begin());
-    compute__x_B_S( Has_equalities_only_and_full_rank());
+    
+    // compute current solution, slack variables
+    compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
 }
+
+// compute solution
+template < class Rep_ >                             // Upper bounded
+void  QP_solver<Rep_>::
+compute_solution(Tag_false)
+{ 
+    // compute the difference b_C - r_C
+    
+    // Note that for r_C, r_C.size() == C.size() always holds, whereas
+    // for b_C, b_C.size() >= C.size() holds
+    std::transform(b_C.begin(), b_C.begin() + C.size(), r_C.begin(),
+        tmp_l.begin(), std::minus<ET>());
+        
+    // compute the difference minus_c_B - r_B_O
+    if (is_phaseII && is_QP) {
+        // Note that for r_B_O, r_B_O.size() == C.size() always holds,
+        // whereas for minus_c_B, minus_c_B.size() >= C.size()
+        std::transform(minus_c_B.begin(), minus_c_B.begin() + C.size(), 
+            r_B_O.begin(), tmp_x.begin(), std::minus<ET>());
+
+        // compute current solution, original variables and lambdas
+        inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
+                            lambda.begin(), x_B_O.begin());
+    } else {                                            // r_B_O == 0
+    
+        // compute current solution, original variables and lambdas        
+        inv_M_B.multiply( tmp_l.begin(), minus_c_B.begin(),
+                            lambda.begin(), x_B_O.begin());
+    }
+                      
+    // compute current solution, slack variables
+    compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
+}
+
 
 template < class Rep_ >
 void  QP_solver<Rep_>::
@@ -3162,17 +3254,17 @@ multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
     }
 }
 
-// computes r_i
+// computes r_i, needed for the set up of the auxiliary problem,
+// the notion of basic/nonbasic variables is not yet established at
+// this stage
 template < class Rep_ >
 typename QP_solver<Rep_>::ET  QP_solver<Rep_>::
-multiply__A_ixN_O(int row) const
+multiply__A_ixO(int row) const
 {
     A_row_by_index_accessor     a_accessor( A_accessor( qp_A, 0, qp_n), row);
     ET                          value = et0;                          
     for (int i = 0; i < qp_n; ++i) {
-        if (!is_basic(i)) {
-            value += ET(a_accessor(i)) * nonbasic_original_variable_value(i);
-        }
+            value += ET(a_accessor(i)) * original_variable_value(i);
     }
     return value;
 }
@@ -3412,6 +3504,7 @@ check_w(Tag_false) const
 
 // returns the current value of a nonbasic original variable
 // with upper bounding
+// precondition: x_O_v_i must be initialized as well as in_B 
 template < class Rep_ >
 typename QP_solver<Rep_>::ET
 QP_solver<Rep_>::
@@ -3438,6 +3531,39 @@ nonbasic_original_variable_value(int i) const
     }
     return value;
 }
+
+// returns the current value of a original variable
+// with upper bounding needed for set_up_auxiliary_problem,
+// since the headings are not yet known before the set up
+// of the auxiliary problem
+// precondition: x_O_v_i must be initialized
+template < class Rep_ >
+typename QP_solver<Rep_>::ET
+QP_solver<Rep_>::
+original_variable_value(int i) const
+{
+    CGAL_assertion_msg(i < qp_n, "wrong argument");
+    ET      value;
+    switch (x_O_v_i[i]) {
+        case UPPER:
+            value = qp_u[i];
+            break;
+        case ZERO:
+            value = et0;
+            break;
+        case LOWER:
+            value = qp_l[i];
+            break;
+        case FIXED:
+            value = qp_l[i];
+            break;
+        case BASIC:
+            CGAL_qpe_assertion(false);
+            break;
+    }
+    return value;
+}
+
 
 
 // check basis inverse
@@ -3734,8 +3860,13 @@ print_program( )
 	vout4.out() << " |  "
 		    << ( qp_r[ row] == Rep::EQUAL      ? ' ' :
 		       ( qp_r[ row] == Rep::LESS_EQUAL ? '<' : '>')) << "=  "
-		    << qp_b[ row] << std::endl;
+		    << qp_b[ row];
+		    if (!is_in_standard_form) {
+		        vout4.out() << " - " << multiply__A_ixO(row);
+		    }
+		    vout4.out() << std::endl;
     }
+    vout4.out() << std::endl;
 }
 
 template < class Rep_ >

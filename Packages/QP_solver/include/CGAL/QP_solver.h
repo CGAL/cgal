@@ -679,12 +679,9 @@ public:
 // This is a variant of set_up_auxiliary_problem for symbolic perturbation
 // for the perturbed case
     void  set_up_auxiliary_problemI( Tag_true is_perturbed);
-// This is the currently used variant of set_up_auxiliary_problem for symbolic
-// perturbation for the perturbed case 
-    void  set_up_auxiliary_problem( Tag_true is_perturbed);
-// This is the currently used variant of set_up_auxiliary_problem for symbolic
-// perturbation for the unperturbed case 
-    void  set_up_auxiliary_problem( Tag_false is_perturbed);
+
+    void  set_up_auxiliary_problem( Tag_true  is_in_standard_form);
+    void  set_up_auxiliary_problem( Tag_false is_in_standard_form);
 
     // transition (to phase II)
     void  transition( );
@@ -900,14 +897,21 @@ public:
     bool  basis_matrix_stays_regular( );
 
     // current solution
-    void  compute_solution( );
+    void  compute_solution(Tag_true  is_in_standard_form);
+    void  compute_solution(Tag_false is_in_standard_form);
 
-    void  compute__x_B_S( Tag_true  has_no_inequalities);
-    void  compute__x_B_S( Tag_false has_no_inequalities);
+    void  compute__x_B_S( Tag_false  has_no_inequalities,
+                          Tag_false is_in_standard_form);
+    void  compute__x_B_S( Tag_false  has_no_inequalities,
+                          Tag_true  is_in_standard_form);
+    void  compute__x_B_S( Tag_true  has_no_inequalities,
+                          Tag_false is_in_standard_form);
+    void  compute__x_B_S( Tag_true  has_no_inequalities,
+                          Tag_true  is_in_standard_form);
     
     void  multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const;
     
-    ET    multiply__A_ixN_O(int row) const;
+    ET    multiply__A_ixO(int row) const;
     void  multiply__A_CxN_O(Value_iterator out) const;
     bool  check_r_C(Tag_true  is_in_standard_form) const;
     bool  check_r_C(Tag_false is_in_standard_form) const;
@@ -923,7 +927,8 @@ public:
     void  multiply__2D_OxN_O(Value_iterator out) const;
     bool  check_w(Tag_true  is_in_standard_form) const;
     bool  check_w(Tag_false is_in_standard_form) const;
-                            
+    
+    ET  original_variable_value(int i) const;                        
     // returns the current value of a nonbasic original variable
     // with upper bounding
     ET  nonbasic_original_variable_value(int i) const;
@@ -1563,16 +1568,60 @@ basis_matrix_stays_regular()
 
 // current solution
 // ----------------
-template < class Rep_ >  inline                                 // no ineq.
+template < class Rep_ >  inline             // no inequalities, upper bounded
 void  QP_solver<Rep_>::
-compute__x_B_S( Tag_true)
+compute__x_B_S( Tag_true  has_equalities_only_and_full_rank,
+                Tag_false is_in_standard_form)
 {
     // nop
 }
 
-template < class Rep_ >  inline                                // has ineq.
+template < class Rep_ >  inline             // no inequalities, standard form
 void  QP_solver<Rep_>::
-compute__x_B_S( Tag_false)
+compute__x_B_S( Tag_true has_equalities_only_and_full_rank,
+                Tag_true is_in_standard_form)
+{
+    // nop
+}
+
+
+template < class Rep_ >  inline             // has inequalities, upper bounded
+void  QP_solver<Rep_>::
+compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
+                Tag_false is_in_standard_form)
+{
+    // A_S_BxB_O * x_B_O
+    multiply__A_S_BxB_O( x_B_O.begin(), x_B_S.begin());
+
+    // b_S_B - ( A_S_BxB_O * x_B_O)
+    B_by_index_accessor  b_accessor( qp_b);
+    std::transform( B_by_index_iterator( S_B.begin(), b_accessor),
+		    B_by_index_iterator( S_B.end  (), b_accessor),
+		    x_B_S.begin(),
+		    x_B_S.begin(),
+		    compose2_2( std::minus<ET>(),
+				std::bind1st( std::multiplies<ET>(), d),
+				Identity<ET>()));
+				
+    // b_S_B - ( A_S_BxB_O * x_B_O) - r_S_B
+    std::transform(x_B_S.begin(), x_B_S.begin()+S_B.size(),
+                    r_S_B.begin(), x_B_S.begin(), std::minus<ET>());
+
+    // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
+    Value_iterator  x_it = x_B_S.begin();
+    Index_iterator  i_it;
+    for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++x_it) {
+	if ( slack_A[ *i_it - qp_n].second) *x_it = -(*x_it);
+    }
+       
+}
+
+
+
+template < class Rep_ >  inline             // has inequalities, standard form
+void  QP_solver<Rep_>::
+compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
+                Tag_true  is_in_standard_form)
 {
     // A_S_BxB_O * x_B_O
     multiply__A_S_BxB_O( x_B_O.begin(), x_B_S.begin());
