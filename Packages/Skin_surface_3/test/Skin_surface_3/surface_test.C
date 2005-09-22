@@ -12,6 +12,7 @@ typedef Skin_traits::Regular                          Regular;
 typedef Regular_traits::Weighted_point                Reg_weighted_point;
 typedef Regular_traits::Bare_point                    Reg_point;
 typedef Skin_traits::Simplicial                       Simplicial;
+typedef Simplicial::Cell_handle                       Simpl_cell_handle;
 typedef Simplicial::Finite_cells_iterator             Simpl_Fin_cells_it;
 typedef Simplicial::Finite_vertices_iterator          Simpl_Fin_vertices_it;
 
@@ -67,8 +68,23 @@ int main(int argc, char *argv[]) {
     Mixed_complex_builder(regular, simplicial, shrink);
     for (Simpl_Fin_vertices_it vit = simplicial.finite_vertices_begin();
 	 vit != simplicial.finite_vertices_end(); vit++) {
+      if (simplicial.is_infinite(vit->cell())) {
+	std::cerr << "ERROR: is_infinite (main)" << std::endl;
+      }
       Mesh_rt val = extr.value(vit->cell(), vit->point());
-      std::cout << val << std::endl;
+      std::cout << vit->cell()->surf->dimension() << " - "
+		<< val
+		<< std::endl;
+      std::list<Simpl_cell_handle> cells;
+      simplicial.incident_cells(vit, std::back_inserter(cells));
+      for (std::list<Simpl_cell_handle>::iterator cell = cells.begin();
+	   cell != cells.end(); cell++) {
+	if (!simplicial.is_infinite(*cell)) {
+	  std::cout << vit->cell()->surf->dimension() << " "
+		    << (*cell)->surf->dimension() << " - "
+		    << (extr.value(*cell, vit->point())/val) << std::endl;
+	}
+      }
     }
   }
 
