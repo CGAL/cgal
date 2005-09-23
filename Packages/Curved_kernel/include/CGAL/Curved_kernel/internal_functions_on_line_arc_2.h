@@ -237,12 +237,12 @@ template < class CK >
 
     ca1 = Line_arc_2( A.supporting_line(), A.source(), p);
     ca2 = Line_arc_2( A.supporting_line(), p, A.target());
-
-   if ( ca1.right()!=ca2.left() )
-	    {
-	      std::swap(ca1,ca2);
-	    }
     
+    if ( compare_xy<CK>(ca1.left(), ca2.left()) != SMALLER )
+        {
+          std::swap(ca1,ca2);
+        }
+
     return;
   }
 
