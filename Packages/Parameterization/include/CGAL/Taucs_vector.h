@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Class Taucs_vector
-/// is a C++ wrapper around TAUCS' vector type, which is a simple array. 
+/// is a C++ wrapper around TAUCS' vector type, which is a simple array.
 ///
 /// Concept: Model of the SparseLinearAlgebraTraits_d::Vector concept.
 
@@ -44,9 +44,9 @@ public:
 public:
 
     /// Create a vector initialized with zeros
-    Taucs_vector(int dimension) 
+    Taucs_vector(int dimension)
     {
-        m_dimension = dimension; 
+        m_dimension = dimension;
         m_element = new T[dimension];
 
         // init with zeros
@@ -55,7 +55,7 @@ public:
     }
 
     /// Copy constructor
-    Taucs_vector(const Taucs_vector& toCopy) 
+    Taucs_vector(const Taucs_vector& toCopy)
     {
         m_dimension = toCopy.m_dimension;
         m_element = new T[m_dimension];
@@ -64,7 +64,7 @@ public:
     }
 
     /// operator =()
-    Taucs_vector& operator =(const Taucs_vector& toCopy) 
+    Taucs_vector& operator =(const Taucs_vector& toCopy)
     {
         delete[] m_element;
 
@@ -76,7 +76,7 @@ public:
         return *this;
     }
 
-    ~Taucs_vector() 
+    ~Taucs_vector()
     {
         delete[] m_element;
         m_element = NULL;
@@ -90,7 +90,7 @@ public:
     /// Read/write access to 1 vector coefficient.
     ///
     /// Preconditions:
-    /// - 0 <= i < dimension().
+    /// 0 <= i < dimension().
     T operator[](int i) const {
         assert(i < m_dimension);
         return m_element[i];

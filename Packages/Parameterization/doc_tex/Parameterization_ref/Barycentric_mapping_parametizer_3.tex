@@ -16,23 +16,45 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Class Barycentric\_mapping\_parametizer\_3 implements Tutte's barycentric mapping. 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon.
+
+%END-AUTO(\ccDefinition)
 
 \ccInclude{CGAL/Barycentric_mapping_parametizer_3.h}
 
 
 \ccIsModel
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
 Model of the ParametizerTraits\_3 concept.
 
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+None.
+
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccParameters
 
 The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
 
 template$<$
 class MeshAdaptor\_3, 
@@ -40,9 +62,13 @@ class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$Mes
 class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
 class Barycentric\_mapping\_parametizer\_3;
 
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
@@ -124,17 +150,42 @@ The various errors detected by this package.
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
 \ccCreationVariable{p}  %% variable name used by \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
 
 \ccConstructor{Barycentric_mapping_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
 }
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[border\_param]Object that maps the surface's border to 2D space \item[sparse\_la]Traits object to access a sparse linear system \end{description}
+\end{description}
+
+%END-AUTO(\ccCreation)
 
 
 \ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{virtual NT compute_wij (const Adaptor & mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj);}
 {
@@ -147,11 +198,14 @@ Check if 3D -$>$ 2D mapping is 1 to 1.
 Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface boundary is mapped onto a 2D convex polygon. All Wij coefficients = 1 (for j vertex neighbor of i), thus mapping is guaranteed if the surface boundary is mapped onto a 2D convex polygon.
 }
 
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
+
 
 \ccExample
 
@@ -168,6 +222,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Barycentric_mapping_parametizer_3.C}
+
 
 \end{ccRefClass}
 

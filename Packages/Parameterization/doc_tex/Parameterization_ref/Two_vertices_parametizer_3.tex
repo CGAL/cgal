@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Two_vertices_parametizer_3.tex
 % +------------------------------------------------------------------------+
-% | 13.09.2005   Laurent Saboret, Pierre Alliez
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSTwoverticesparametizerRev}{$Revision$}
@@ -16,40 +16,177 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\ccDefinition
-  
-The class \ccRefName\ does this and that.
 
-\ccInclude{Two_vertices_parametizer_3.h}
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Class Two\_vertices\_parametizer\_3 parameterizes 2 extreme vertices of a 3D surface. This kind of border parameterization is used by free border parameterizations.
+
+Implementation note: To simplify the implementation, BorderParametizer\_3 models know only the MeshAdaptor\_3 class. They don't know the parameterization algorithm requirements nor the kind of sparse linear system used.
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Two_vertices_parametizer_3.h}
+
 
 \ccIsModel
 
-Concept
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the BorderParametizer\_3 concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+BorderParametizer\_3 models are Strategies (see [GOF95]): they implement a strategy of boundary parameterization for models of MeshAdaptor\_3.
+
+%END-AUTO(\ccHeading\{Design pattern\})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$
+class MeshAdaptor\_3$>$ 
+class Two\_vertices\_parametizer\_3;
+
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{Error_code}
+{
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{a}  % choose variable name for \ccMethod
 
 \ccConstructor{Two_vertices_parametizer_3();}{default constructor.}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Parametizer_traits_3< Adaptor >::Error_code parameterize_border (Adaptor * mesh);}
+{
+Map 2 extreme vertices of the 3D mesh and mark them as "parameterized".
+Map 2 extreme vertices of the 3D mesh and mark them as "parameterized". Return false on error.
+}
+\ccMethod{bool is_border_convex ();}
+{
+Indicate if border's shape is convex. Meaningless for free border parameterization algorithms.
+}
+
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Two_vertices_parametizer_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Two_vertices_parametizer_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -59,6 +196,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Two_vertices_parametizer_3.C}
+
 
 \end{ccRefClass}
 

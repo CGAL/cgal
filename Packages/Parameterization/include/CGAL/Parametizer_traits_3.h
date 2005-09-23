@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 /// Class Parametizer_traits_3
 /// is the base class of all parameterization methods.
 ///
-/// Concept: 
+/// Concept:
 /// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class).
 
 template<class MeshAdaptor_3>       //< 3D surface
@@ -103,7 +103,7 @@ public:
 
 // Protected operations
 protected:
-    ///                                                 -> ->
+    //                                                  -> ->
     /// return cotangent of (P,Q,R) corner (ie cotan of QP,QR angle)
     double cotangent(const Point_3& P,
                      const Point_3& Q,
@@ -122,7 +122,7 @@ protected:
             return 0.0; // undefined
     }
 
-    ///                                                 -> ->
+    //                                                  -> ->
     /// return tangent of (P,Q,R) corner (ie tangent of QP,QR angle)
     double tangent(const Point_3& P,
                    const Point_3& Q,
@@ -141,14 +141,8 @@ protected:
             return 0.0; // undefined
     }
 
-    ///                                                    -> ->
+    //                                                     -> ->
     /// return angle (in radians) of of (P,Q,R) corner (ie QP,QR angle)
-    ///
-    /// Implementation note: we use this formula
-    /// uv = |u||v| CGAL_CLIB_STD::cos(u,v)
-    /// u  ^ v  = w
-    /// |w| = |u||v| |CGAL_CLIB_STD::sin(u,v)|
-    ///**************************************************
     static double compute_angle_rad(const Point_3& P,
                                     const Point_3& Q,
                                     const Point_3& R)

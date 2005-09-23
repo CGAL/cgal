@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: LSCM_parametizer_3.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSLSCMparametizerRev}{$Revision$}
@@ -16,22 +16,45 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
-  
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Class LSCM\_parametizer\_3 implements Least Square Conformal Maps parameterization (Levy et al). No need to map the surface's border onto a convex polygon but 1 to 1 mapping is NOT guaranteed. This is a conformal parameterization, i.e. it attempts to preserve angles.
 
-\ccInclude{LSCM_parametizer_3.h}
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/LSCM_parametizer_3.h}
+
 
 \ccIsModel
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
 Model of the ParametizerTraits\_3 concept.
 
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+None.
+
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccParameters
 
 The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
 
 template$<$
 class MeshAdaptor\_3, 
@@ -39,9 +62,13 @@ class BorderParametizer\_3 = Two\_vertices\_parametizer\_3$<$MeshAdaptor\_3$>$,
 class SparseLinearAlgebraTraits\_d = OpenNL::SymmetricLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
 class LSCM\_parametizer\_3;
 
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
@@ -120,17 +147,42 @@ The various errors detected by this package.
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{p}  %% choose variable name
+\ccCreationVariable{a}  % choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
 
 \ccConstructor{LSCM_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
 }
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[border\_param]Object that maps the surface's border to 2D space \item[sparse\_la]Traits object to access a sparse linear system \end{description}
+\end{description}
+
+%END-AUTO(\ccCreation)
 
 
 \ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{Parametizer_traits_3< Adaptor >::Error_code parameterize (Adaptor * mesh);}
 {
@@ -139,18 +191,21 @@ Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh. \end{itemize}
 }
 
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/LSCM_parametizer_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/LSCM_parametizer_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -160,6 +215,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/LSCM_parametizer_3.C}
+
 
 \end{ccRefClass}
 

@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Parametizer_traits_3.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSParametizertraitsRev}{$Revision$}
@@ -16,40 +16,205 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\ccDefinition
-  
-The class \ccRefName\ does this and that.
 
-\ccInclude{Parametizer_traits_3.h}
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Class Parametizer\_traits\_3 is the base class of all parameterization methods.
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Parametizer_traits_3.h}
+
 
 \ccIsModel
 
-Concept
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the ParametizerTraits\_3 concept (although you cannot instanciate this class).
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+None.
+
+%END-AUTO(\ccHeading\{Design pattern\})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$
+class MeshAdaptor\_3$>$ 
+class Parametizer\_traits\_3;
+
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Adaptor}
+{
+}
+\ccNestedType{NT}
+{
+}
+\ccNestedType{Facet_handle}
+{
+}
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccNestedType{Vertex_handle}
+{
+}
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccNestedType{Point_3}
+{
+}
+\ccNestedType{Point_2}
+{
+}
+\ccNestedType{Vector_3}
+{
+}
+\ccNestedType{Vector_2}
+{
+}
+\ccNestedType{Facet_iterator}
+{
+}
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccNestedType{Vertex_iterator}
+{
+}
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccNestedType{Border_vertex_iterator}
+{
+}
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccNestedType{Vertex_around_facet_circulator}
+{
+}
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+}
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+\ccEnum{enum Error_code {...}}
+{
+The various errors detected by this package.
+}
+\begin{description}
+\item[Enumerator: ]
+\begin{description}
+\item[OK
+]\item[ERROR\_EMPTY\_MESH
+]input mesh is empty \item[ERROR\_NON\_TRIANGULAR\_MESH
+]input mesh is not triangular \item[ERROR\_NO\_SURFACE\_MESH
+]input mesh is not a surface \item[ERROR\_INVALID\_BOUNDARY
+]parameterization requires a convex border \item[ERROR\_BAD\_MATRIX\_CONDITIONING
+]result is mathematically unstable \item[ERROR\_CANNOT\_SOLVE\_LINEAR\_SYSTEM
+]cannot solve linear system \item[ERROR\_NO\_1\_TO\_1\_MAPPING
+]parameterization does not ensure 1 to 1 mapping \item[ERROR\_NOT\_ENOUGH\_MEMORY
+]it's time to buy some RAM :-) \item[ERROR\_WRONG\_PARAMETER
+]a method received an unexpected parameter \end{description}
+\end{description}
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{p}  % variable name for \ccMethod
 
 \ccConstructor{Parametizer_traits_3();}{default constructor.}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccMethod{virtual ~Parametizer_traits_3 ();}
+{
+Destructor of base class should be virtual.
+}
+
+%END-AUTO(\ccCreation)
+
+
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{virtual Error_code parameterize (Adaptor * mesh);}
+{
+Compute a 1 to 1 mapping from a 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+Preconditions:\begin{itemize}
+\item 'mesh' must be a surface with 1 connected component\item 'mesh' must be a triangular mesh \end{itemize}
+}
+\ccMethod{double cotangent (const Point_3 & P, const Point_3 & Q, const Point_3 & R);}
+{
+return cotangent of (P,Q,R) corner (ie cotan of QP,QR angle)
+}
+\ccMethod{double tangent (const Point_3 & P, const Point_3 & Q, const Point_3 & R);}
+{
+return tangent of (P,Q,R) corner (ie tangent of QP,QR angle)
+}
+\ccMethod{static double compute_angle_rad (const Point_3 & P, const Point_3 & Q, const Point_3 & R);}
+{
+return angle (in radians) of of (P,Q,R) corner (ie QP,QR angle)
+}
+
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Parametizer_traits_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Parametizer_traits_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -59,6 +224,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Parametizer_traits_3.C}
+
 
 \end{ccRefClass}
 

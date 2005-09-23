@@ -1,9 +1,9 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Taucs_matrix.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSTaucsmatrixRev}{$Revision$}
 \RCSdefDate{\RCSTaucsmatrixDate}{$Date$}
 % |
@@ -16,40 +16,155 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\ccDefinition
-  
-The class \ccRefName\ does this and that.
 
-\ccInclude{Taucs_matrix.h}
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Class Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
+
+TODO: reallocate the array of non null elements when it's full
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Taucs_matrix.h}
+
 
 \ccIsModel
 
-Concept
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the SparseLinearAlgebraTraits\_d::Matrix concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$
+class T$>$ 
+class Taucs\_matrix;
+
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+}
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{m}  % choose variable name for \ccMethod
 
-\ccConstructor{Taucs_matrix();}{default constructor.}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Taucs_matrix (int dim, bool is_symmetric = false, int nb_max_elements = 0);}
+{
+Create a square matrix initialized with zeros.
+}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[dim]Matrix dimension \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0) \end{description}
+\end{description}
+\ccConstructor{Taucs_matrix (int rows, int columns, bool is_symmetric = false, int nb_max_elements = 0);}
+{
+Create a rectangular matrix initialized with zeros.
+}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[rows]Matrix dimensions \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0) \end{description}
+\end{description}
+\ccConstructor{~Taucs_matrix ();}
+{
+Delete TAUCS matrix wrapped by this object
+}
+
+%END-AUTO(\ccCreation)
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{int row_dimension () const;}
+{
+Return the matrix number of rows.
+}
+\ccMethod{int column_dimension () const;}
+{
+Return the matrix number of columns.
+}
+\ccMethod{T get_coef (int i, int j) const;}
+{
+Read access to 1 matrix coefficient
+Preconditions:\begin{itemize}
+\item 0 $<$= i $<$ row\_dimension()\item 0 $<$= j $<$ column\_dimension() \end{itemize}
+}
+\ccMethod{void set_coef (int i, int j, T val);}
+{
+Write access to 1 matrix coefficient: aij $<$- val
+Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle set\_coef() does nothing if (i,j) belongs to the upper triangle
+Preconditions:\begin{itemize}
+\item 0 $<$= i $<$ row\_dimension()\item 0 $<$= j $<$ column\_dimension() \end{itemize}
+}
+\ccMethod{void add_coef (int i, int j, T val);}
+{
+Write access to 1 matrix coefficient: aij $<$- aij + val
+Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle add\_coef() does nothing if (i,j) belongs to the upper triangle
+Preconditions:\begin{itemize}
+\item 0 $<$= i $<$ row\_dimension()\item 0 $<$= j $<$ column\_dimension() \end{itemize}
+}
+\ccMethod{const taucs_ccs_matrix* get_taucs_matrix () const;}
+{
+Get TAUCS matrix wrapped by this object.
+}
+\ccMethod{taucs_ccs_matrix* get_taucs_matrix ();}
+{
+}
+
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_matrix.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Taucs_matrix.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -59,6 +174,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Taucs_matrix.C}
+
 
 \end{ccRefClass}
 

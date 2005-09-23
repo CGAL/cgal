@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Mesh_adaptor_feature_extractor.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSMeshadaptorfeatureextractorRev}{$Revision$}
@@ -16,28 +16,39 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Class Mesh\_adaptor\_feature\_extractor
 
 This class computes features (genus, boundaries, ...) of a 3D surface model of the MeshAdaptor\_3 concept.
 
-\ccInclude{Mesh_adaptor_feature_extractor.h}
+%END-AUTO(\ccDefinition)
 
+\ccInclude{CGAL/Mesh_adaptor_feature_extractor.h}
 
 
 \ccParameters
 
 The full template declaration is:
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
 template$<$
 class MeshAdaptor\_3$>$ 
 class Mesh\_adaptor\_feature\_extractor;
 
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
@@ -108,9 +119,24 @@ Mesh boundary.
 List of all boundaries of a mesh.
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{fe}  %% choose variable name
+\ccCreationVariable{a}  % choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
 
 \ccConstructor{Mesh_adaptor_feature_extractor (Adaptor * mesh);}
 {
@@ -121,8 +147,13 @@ CAUTION: Caller must NOT modify 'mesh' during the Mesh\_adaptor\_feature\_extrac
 {
 }
 
+%END-AUTO(\ccCreation)
+
 
 \ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{int get_nb_boundaries ();}
 {
@@ -145,18 +176,21 @@ Get \# of connected components.
 Get the genus.
 }
 
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_feature_extractor.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_feature_extractor.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -166,6 +200,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Mesh_adaptor_feature_extractor.C}
+
 
 \end{ccRefClass}
 

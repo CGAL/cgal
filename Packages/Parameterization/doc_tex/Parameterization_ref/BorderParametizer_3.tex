@@ -16,20 +16,43 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
+
 \ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Concept BorderParametizer\_3 of a class that parametrizes a given type of mesh, 'Adaptor', which is a model of the MeshAdaptor\_3 concept.
 
 Implementation note: To simplify the implementation, BorderParametizer\_3 models know only the MeshAdaptor\_3 class. They don't know the parameterization algorithm requirements nor the kind of sparse linear system used.
 
+%END-AUTO(\ccDefinition)
+
 
 \ccHeading{Design pattern}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
 BorderParametizer\_3 models are Strategies (see [GOF95]): they implement a strategy of boundary parameterization for models of MeshAdaptor\_3.
+
+%END-AUTO(\ccHeading\{Design pattern\})
+
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+None.
+
+%END-AUTO(\ccRefines)
 
 
 \ccTypes
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
@@ -38,12 +61,33 @@ BorderParametizer\_3 models are Strategies (see [GOF95]): they implement a strat
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
 \ccCreationVariable{bp}  %% variable name for \ccMethod below
 
+Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
 
 \ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{ErrorCode parameterize_border (Adaptor * mesh);}
 {
@@ -54,11 +98,21 @@ Assign to mesh's border vertices a 2D position (ie a (u,v) pair) on border's sha
 Indicate if border's shape is convex.
 }
 
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+%END-AUTO(\ccHasModels)
+
 
 \ccSeeAlso
 
 Some\_other\_concept,
 \ccc{some_other_function}.
+
 
 \ccExample
 
@@ -75,6 +129,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/BorderParametizer_3.C}
+
 
 \end{ccRefConcept}
 

@@ -206,6 +206,10 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 /// on an uniform manner: points are equally spaced.
 ///
 /// Concept: Model of the BorderParametizer_3 concept.
+///
+/// Design pattern:
+/// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of boundary parameterization for models of MeshAdaptor_3
 
 template<class MeshAdaptor_3>           //< 3D surface
 class Circular_border_uniform_parametizer_3
@@ -273,6 +277,10 @@ protected:
 /// proportional to the length of boundary edges.
 ///
 /// Concept: Model of the BorderParametizer_3 concept.
+///
+/// Design pattern:
+/// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of boundary parameterization for models of MeshAdaptor_3
 
 template<class MeshAdaptor_3>           //< 3D surface
 class Circular_border_arc_length_parametizer_3

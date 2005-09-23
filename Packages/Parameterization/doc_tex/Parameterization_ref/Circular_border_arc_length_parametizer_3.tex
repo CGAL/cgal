@@ -16,31 +16,57 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 This class parameterizes the border of a 3D surface onto a circle with an arc-length parameterization: (u,v) values are proportional to the length of boundary edges.
 
-\ccInclude{Circular_border_arc_length_parametizer_3.h}
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Circular_border_arc_length_parametizer_3.h}
 
 
 \ccIsModel
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
 Model of the BorderParametizer\_3 concept.
 
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+BorderParametizer\_3 models are Strategies (see [GOF95]): they implement a strategy of boundary parameterization for models of MeshAdaptor\_3
+
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccParameters
 
 The full template declaration is:
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
 template$<$
 class MeshAdaptor\_3$>$ 
 class Circular\_border\_arc\_length\_parametizer\_3;
 
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
@@ -106,14 +132,33 @@ class Circular\_border\_arc\_length\_parametizer\_3;
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
 \ccCreationVariable{bp}  %% variable name for \ccMethod below
 
 \ccConstructor{Circular_border_arc_length_parametizer_3();}{default constructor.}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
 
 \ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{virtual double compute_edge_length (const Adaptor & mesh, Vertex_const_handle source, Vertex_const_handle target);}
 {
@@ -121,18 +166,21 @@ Compute length of an edge:.
 Arc-length boundary parameterization: (u,v) values are proportional to the length of boundary edges.
 }
 
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Circular_border_arc_length_parametizer_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Circular_border_arc_length_parametizer_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -142,6 +190,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Circular_border_arc_length_parametizer_3.C}
+
 
 \end{ccRefClass}
 

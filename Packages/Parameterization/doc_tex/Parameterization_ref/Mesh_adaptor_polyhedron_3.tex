@@ -19,6 +19,8 @@
 
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Mesh\_adaptor\_polyhedron\_3 is an adaptor class to access to a Polyhedron 3D mesh using the PatchableMeshAdaptor\_3 interface.
 
@@ -32,27 +34,43 @@ It can have have any number of boundaries. Its "main border" will be the mesh's 
 
 It has also the ability to support patches and virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability to behave exactly as if the surface was "cut" following a certain path.
 
+%END-AUTO(\ccDefinition)
+
 \ccInclude{CGAL/Mesh_adaptor_polyhedron_3.h}
 
 
 \ccIsModel
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
 Model of PatchableMeshAdaptor\_3 concept, whose purpose is to allow the parameterization package to access meshes on an uniform manner.
+
+%END-AUTO(\ccIsModel)
 
 
 \ccHeading{Design pattern}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
 Mesh\_adaptor\_polyhedron\_3 is an Adaptor (see [GOF95]): it changes the Polyhedron interface to match the PatchableMeshAdaptor\_3 concept.
 
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccParameters
 
 The full template declaration is:
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
 template$<$
 class Polyhedron\_3\_$>$ 
 class Mesh\_adaptor\_polyhedron\_3;
+
+%END-AUTO(\ccParameters)
 
 
 \ccTypes
@@ -66,15 +84,13 @@ assignable to the respective handle types. Wherever the handles appear
 in function parameter lists, the corresponding iterators can be used as
 well.
 
-{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_polyhedron\_3}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Polyhedron}
 {
 Export template parameter.
 }
-
-{\bf MeshAdaptor\_3 INTERFACE}
-
 \ccNestedType{NT}
 {
 Number type to represent coordinates.
@@ -153,16 +169,31 @@ Clockwise circulator over the vertices incident to a vertex. Model of the Bidire
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
 \ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
 
-{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_polyhedron\_3}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
 
 \ccConstructor{Mesh_adaptor_polyhedron_3 (Polyhedron * mesh);}
 {
 Create an adaptator for an existing Polyhedron\_3 mesh. The input mesh can be of any genus. It can have have any number of boundaries. Its "main border" will be the mesh's longest boundary (if there is at least one boundary).
 }
+
+%END-AUTO(\ccCreation)
 
 
 \ccOperations
@@ -171,7 +202,8 @@ The following methods returning a mutable handle, iterator, or circulator have a
 non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
 \ccc{const_iterator}, or \ccc{const_circulator}.
 
-{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_polyhedron\_3}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{Polyhedron* get_adapted_mesh ();}
 {
@@ -201,9 +233,6 @@ Access to additional info attached to vertices.
 \ccMethod{Vertex_info* info (Vertex_const_handle vertex);}
 {
 }
-
-{\bf MeshAdaptor\_3 INTERFACE}
-
 \ccMethod{Vertex_iterator mesh_vertices_begin ();}
 {
 Get iterator over first vertex of mesh.
@@ -328,8 +357,6 @@ Get circulator over the vertices incident to 'vertex'. 'start\_position' defines
 \ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = NULL) const;}
 {
 }
-{\bf PatchableMeshAdaptor\_3 INTERFACE}
-
 \ccMethod{int get_vertex_seaming (Vertex_const_handle vertex) const;}
 {
 Get/set vertex seaming flag. Default value is undefined.
@@ -372,6 +399,8 @@ Get/set all purpose tag of corners at the "right" of the prev\_vertex -$>$ verte
 \ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
 {
 }
+
+%END-AUTO(\ccOperations)
 
 
 \ccSeeAlso

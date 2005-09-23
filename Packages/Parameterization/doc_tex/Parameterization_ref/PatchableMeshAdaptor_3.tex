@@ -16,7 +16,11 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
+
 \ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 PatchableMeshAdaptor\_3 inherits from concept MeshAdaptor\_3, thus is a concept for a 3D surface mesh.
 
@@ -24,36 +28,66 @@ PatchableMeshAdaptor\_3 adds the ability to support patches and virtual seams. P
 
 The main purpose of this feature is to allow the parameterization package to parameterize any 3D surface by decomposing it as a list of topological disks.
 
-
-\ccHasModels
-
-Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided.
-
-\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
+%END-AUTO(\ccDefinition)
 
 
 \ccHeading{Design pattern}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
 PatchableMeshAdaptor\_3 is an Adaptor (see [GOF95]): it changes the interface of a 3D mesh to match the interface expected by class Mesh\_adaptor\_patch\_3.
+
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccRefines
 
-MeshAdaptor\_3 \\
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+PatchableMeshAdaptor\_3 inherits from concept MeshAdaptor\_3.
+
+%END-AUTO(\ccRefines)
 
 In addition to the requirements described in the concept MeshAdaptor\_3,
 PatchableMeshAdaptor\_3 provides the following:
 
 
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+None.
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
+
 \ccCreation
-\ccCreationVariable{m}  %% define variable name used by \ccMethod below
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
 
 Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
 
 
 \ccOperations
 
-\textbf{VERTEX INTERFACE:}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{int get_vertex_seaming (Vertex_const_handle vertex) const;}
 {
@@ -62,9 +96,6 @@ Get/set vertex seaming flag. Default value is undefined.
 \ccMethod{void set_vertex_seaming (Vertex_handle vertex, int seaming);}
 {
 }
-
-\textbf{EDGE INTERFACE:}
-
 \ccMethod{int get_halfedge_seaming (Vertex_const_handle source, Vertex_const_handle target) const;}
 {
 Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to the UNIQUE main boundary
@@ -72,10 +103,6 @@ Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to th
 \ccMethod{void set_halfedge_seaming (Vertex_handle source, Vertex_handle target, int seaming);}
 {
 }
-
-
-\textbf{CORNER INTERFACE:}
-
 \ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
 Get/set the 2D position (= (u,v) pair) of corners at the "right" of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
@@ -104,6 +131,20 @@ Get/set all purpose tag of corners at the "right" of the prev\_vertex -$>$ verte
 \ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
 {
 }
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided.
+
+%END-AUTO(\ccHasModels)
+
+\ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3<Traits>} \\
 
 
 \ccSeeAlso

@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Taucs_vector.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSTaucsvectorRev}{$Revision$}
@@ -16,40 +16,130 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\ccDefinition
-  
-The class \ccRefName\ does this and that.
 
-\ccInclude{Taucs_vector.h}
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Class Taucs\_vector is a C++ wrapper around TAUCS' vector type, which is a simple array.
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Taucs_vector.h}
+
 
 \ccIsModel
 
-Concept
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the SparseLinearAlgebraTraits\_d::Vector concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$
+class T$>$ 
+class Taucs\_vector;
+
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+}
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{a}  % choose variable name for \ccMethod
 
-\ccConstructor{Taucs_vector();}{default constructor.}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Taucs_vector (int dimension);}
+{
+Create a vector initialized with zeros.
+}
+\ccConstructor{Taucs_vector (const Taucs_vector< T > & toCopy);}
+{
+Copy constructor.
+}
+\ccConstructor{~Taucs_vector ();}
+{
+}
+
+%END-AUTO(\ccCreation)
+
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Taucs_vector& operator= (const Taucs_vector< T > & toCopy);}
+{
+operator =()
+}
+\ccMethod{int dimension () const;}
+{
+Return the vector's number of coefficients.
+}
+\ccMethod{T operator[] (int i) const;}
+{
+Read/write access to 1 vector coefficient.
+Preconditions: 0 $<$= i $<$ dimension().
+}
+\ccMethod{T& operator[] (int i);}
+{
+}
+\ccMethod{const T* get_taucs_vector () const;}
+{
+Get TAUCS vector wrapped by this object.
+}
+\ccMethod{T* get_taucs_vector ();}
+{
+}
+
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_vector.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Taucs_vector.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -59,6 +149,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Taucs_vector.C}
+
 
 \end{ccRefClass}
 

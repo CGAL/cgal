@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Taucs_solver_traits.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSTaucssolvertraitsRev}{$Revision$}
@@ -16,40 +16,124 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\ccDefinition
-  
-The class \ccRefName\ does this and that.
 
-\ccInclude{Taucs_solver_traits.h}
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Class Taucs\_solver\_traits is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems using TAUCS out-of-core LU factorization.
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Taucs_solver_traits.h}
+
 
 \ccIsModel
 
-Concept
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the SparseLinearAlgebraTraits\_d concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+None.
+
+%END-AUTO(\ccHeading\{Design pattern\})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$
+class T$>$ 
+class Taucs\_solver\_traits;
+
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Matrix}
+{
+}
+\ccNestedType{Vector}
+{
+}
+\ccNestedType{NT}
+{
+}
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{a}  % choose variable name for \ccMethod
 
 \ccConstructor{Taucs_solver_traits();}{default constructor.}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{bool linear_solver (const Matrix & A, const Vector & B, Vector & X, NT & D);}
+{
+Solve the sparse linear system "A$\ast$X = B". Return true on success. The solution is then (1/D) $\ast$ X.
+Preconditions:\begin{itemize}
+\item A.row\_dimension() == B.dimension().\item A.column\_dimension() == X.dimension(). \end{itemize}
+}
+\ccMethod{bool is_solvable (const Matrix & A, const Vector & B);}
+{
+Indicate if the linear system can be solved and if the matrix conditioning is good.
+Preconditions:\begin{itemize}
+\item A.row\_dimension() == B.dimension(). \end{itemize}
+}
+
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_solver_traits.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Taucs_solver_traits.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -59,6 +143,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Taucs_solver_traits.C}
+
 
 \end{ccRefClass}
 

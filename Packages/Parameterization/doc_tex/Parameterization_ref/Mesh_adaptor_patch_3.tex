@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Mesh_adaptor_patch_3.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % | 
 \RCSdef{\RCSMeshadaptorpatchRev}{$Revision$}
@@ -16,34 +16,53 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Mesh\_adaptor\_patch\_3 is an decorator class to virtually "cut" a patch in a PatchableMeshAdaptor\_3 3D surface. Only the patch is exported, making the 3D surface look like a topological disk.
 
 The input mesh can be of any genus, but it has to come with a "seam" that describes the boundary of a topological disc. This boundary may be an actual border of the mesh or a virtual border.
 
-\ccInclude{Mesh_adaptor_patch_3.h}
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Mesh_adaptor_patch_3.h}
 
 
 \ccIsModel
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
 Model of MeshAdaptor\_3 concept, whose purpose is to allow the parameterization package to access meshes on an uniform manner.
+
+%END-AUTO(\ccIsModel)
 
 
 \ccHeading{Design pattern}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
 Mesh\_adaptor\_patch\_3 is a Decorator (see [GOF95]): it changes the behavior of a PatchableMeshAdaptor\_3 3D surface while keeping its MeshAdaptor\_3 interface.
 
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccParameters
 
 The full template declaration is:
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
 template$<$
 class PatchableMeshAdaptor\_3$>$ 
 class Mesh\_adaptor\_patch\_3;
+
+%END-AUTO(\ccParameters)
 
 
 \ccTypes
@@ -57,15 +76,13 @@ assignable to the respective handle types. Wherever the handles appear
 in function parameter lists, the corresponding iterators can be used as
 well.
 
-{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_patch\_3}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
 Export template parameter.
 }
-
-{\bf MeshAdaptor\_3 INTERFACE}
-
 \ccNestedType{NT}
 {
 Number type to represent coordinates.
@@ -144,11 +161,24 @@ Clockwise circulator over the vertices incident to a vertex Model of the Bidirec
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
 \ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
 
-{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_patch\_3}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
 
 \ccConstructor{Mesh_adaptor_patch_3 (Adaptor * mesh, InputIterator first_seam_vertex, InputIterator end_seam_vertex);}
 {
@@ -157,6 +187,8 @@ Preconditions:\begin{itemize}
 \item first\_seam\_vertex -$>$ end\_seam\_vertex defines the outer seam, ie Mesh\_adaptor\_patch\_3 will export the "right" of the seam\item the "seam" is given as a container of Adaptor::Vertex\_handle elements. \end{itemize}
 }
 
+%END-AUTO(\ccCreation)
+
 
 \ccOperations
 
@@ -164,7 +196,8 @@ The following methods returning a mutable handle, iterator, or circulator have a
 non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
 \ccc{const_iterator}, or \ccc{const_circulator}.
 
-{\bf INTERFACE SPECIFIC TO Mesh\_adaptor\_patch\_3}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{Adaptor* get_decorated_mesh ();}
 {
@@ -173,9 +206,6 @@ Get the decorated mesh Using this method is NOT recommended
 \ccMethod{const Adaptor* get_decorated_mesh () const;}
 {
 }
-
-{\bf MeshAdaptor\_3 INTERFACE}
-
 \ccMethod{Vertex_iterator mesh_vertices_begin ();}
 {
 Get iterator over first vertex of mesh.
@@ -301,18 +331,21 @@ Get circulator over the vertices incident to 'vertex' 'start\_position' defines 
 {
 }
 
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
 
+
 \ccExample
 
 A short example program.
 Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_patch_3.C}| 
+included using the
+\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_patch_3.C}|
 macro. The program example would be part of the source code distribution and
 also part of the automatic test suite.
 
@@ -322,6 +355,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Mesh_adaptor_patch_3.C}
+
 
 \end{ccRefClass}
 

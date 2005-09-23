@@ -19,6 +19,9 @@
 
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
 MeshAdaptor\_3 is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes on an uniform manner.
 
 A MeshAdaptor\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their boundary. The surface itself can have holes. The vertices along the boundary of a hole are called "border vertices". A surface is "closed" if it contains no border vertices.
@@ -29,20 +32,27 @@ MeshAdaptor\_3 defines the minimum types, data and methods that a mesh must impl
 
 MeshAdaptor\_3 meshes can have any genus, aridity or number of components. In the other hand, as parameterization methods deal only with topological disks, MeshAdaptor\_3 defines an interface oriented towards topological disks
 
-
-\ccHasModels
-
-\begin{itemize}
-\item Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided.\item Mesh\_adaptor\_patch\_3$<$M$>$ is a model of MeshAdaptor\_3 if M is a model of MeshAdaptorWithStream\_3.\end{itemize}
-
+%END-AUTO(\ccDefinition)
 
 
 \ccHeading{Design pattern}
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
 MeshAdaptor\_3 is an Adaptor (see [GOF95]): it changes the interface of a 3D mesh to match the interface expected by the parameterization methods.
 
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+None.
+
+%END-AUTO(\ccRefines)
 
 
 \ccTypes
@@ -55,6 +65,9 @@ assignable to the \ccc{Vertex_iterator}. The iterators are
 assignable to the respective handle types. Wherever the handles appear
 in function parameter lists, the corresponding iterators can be used as
 well.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{NT}
 {
@@ -134,12 +147,27 @@ Clockwise circulator over the vertices incident to a vertex. Model of the Bidire
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-
-\ccCreationVariable{m}  %% define variable name used by \ccMethod below
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
 
 Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
 
 
 \ccOperations
@@ -148,7 +176,8 @@ The following mutable methods returning a handle, iterator, or circulator have a
 non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
 \ccc{const_iterator}, or \ccc{const_circulator}.
 
-\textbf{MESH INTERFACE:}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{Vertex_iterator mesh_vertices_begin ();}
 {
@@ -216,9 +245,6 @@ Return true of all mesh's facets are triangles.
 {
 Count the number of halfedges of the mesh.
 }
-
-\textbf{FACET INTERFACE:}
-
 \ccMethod{Vertex_around_facet_circulator facet_vertices_begin (Facet_handle facet);}
 {
 Get circulator over facet's vertices.
@@ -230,9 +256,6 @@ Get circulator over facet's vertices.
 {
 Count the number of vertices of a facet.
 }
-
-\textbf{VERTEX INTERFACE:}
-
 \ccMethod{Point_3 get_vertex_position (Vertex_const_handle vertex) const;}
 {
 Get the 3D position of a vertex.
@@ -280,6 +303,19 @@ Get circulator over the vertices incident to 'vertex'. 'start\_position' defines
 \ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = NULL) const;}
 {
 }
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\begin{itemize}
+\item Adaptators for Polyhedron\_3 and TDS\_2 with 3D points are provided.\item Mesh\_adaptor\_patch\_3$<$M$>$ is a model of MeshAdaptor\_3 if M is a model of MeshAdaptorWithStream\_3.\end{itemize}
+
+%END-AUTO(\ccHasModels)
 
 
 \ccSeeAlso

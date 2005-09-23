@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Fixed_border_parametizer_3.tex
 % +------------------------------------------------------------------------+
-% | 23.08.2005   Author
+% | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
 % |
 \RCSdef{\RCSFixedborderparametizerRev}{$Revision$}
@@ -16,27 +16,48 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+
 \ccDefinition
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
 
 Class Fixed\_border\_parametizer\_3 is the base class of fixed border parameterization methods (Tutte, Floater, ...). 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
 Implementation notes:\begin{itemize}
 \item Subclasses must at least implement compute\_wij().\item The current implementation does not remove border vertices from the linear systems =$>$ A cannot be symmetric.\end{itemize}
 
-\ccInclude{CGAL/Fixed_border_parametizer_3.h}
+%END-AUTO(\ccDefinition)
 
+\ccInclude{CGAL/Fixed_border_parametizer_3.h}
 
 
 \ccIsModel
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
 Fixed\_border\_parametizer\_3 is a model of the ParametizerTraits\_3 concept.
 
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading\{Design pattern\})
+
+None.
+
+%END-AUTO(\ccHeading\{Design pattern\})
 
 
 \ccParameters
 
 The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
 
 template$<$
 class MeshAdaptor\_3, 
@@ -44,9 +65,13 @@ class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$Mes
 class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
 class Fixed\_border\_parametizer\_3;
 
+%END-AUTO(\ccParameters)
+
 
 \ccTypes
 
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
 
 \ccNestedType{Adaptor}
 {
@@ -125,17 +150,42 @@ The various errors detected by this package.
 {
 }
 
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+None.
+
+%END-AUTO(\ccConstants)
+
 
 \ccCreation
-\ccCreationVariable{p}  %% variable name used by \ccMethod below
+\ccCreationVariable{a}  % choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
 
 \ccConstructor{Fixed_border_parametizer_3 (Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
 }
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[border\_param]Object that maps the surface's border to 2D space \item[sparse\_la]Traits object to access a sparse linear system \end{description}
+\end{description}
+
+%END-AUTO(\ccCreation)
 
 
 \ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{Parametizer_traits_3< Adaptor >::Error_code parameterize (Adaptor * mesh);}
 {
@@ -157,7 +207,6 @@ Preconditions:\begin{itemize}
 \ccMethod{virtual NT compute_wij (const Adaptor & mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj);}
 {
 Compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement compute\_wij().
-Implemented in Barycentric\_mapping\_parametizer\_3 , Discrete\_authalic\_parametizer\_3 , Discrete\_conformal\_map\_parametizer\_3 , and Mean\_value\_coordinates\_parametizer\_3
 }
 \ccMethod{Parametizer_traits_3< Adaptor >::Error_code setup_inner_vertex_relations (Matrix * A, Vector * Bu, Vector * Bv, const Adaptor & mesh, Vertex_const_handle vertex);}
 {
@@ -188,11 +237,14 @@ Get the object that maps the surface's border onto a 2D space.
 Get the sparse linear algebra (traits object to access the linear system).
 }
 
+%END-AUTO(\ccOperations)
+
 
 \ccSeeAlso
 
 \ccc{Some_other_class},
 \ccc{some_other_function}.
+
 
 \ccExample
 
@@ -209,6 +261,7 @@ void your_example_code() {
 \end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Parameterization/Fixed_border_parametizer_3.C}
+
 
 \end{ccRefClass}
 
