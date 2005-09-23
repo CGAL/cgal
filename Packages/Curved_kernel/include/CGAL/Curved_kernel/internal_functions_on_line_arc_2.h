@@ -318,9 +318,13 @@ template < class CK >
 							       Root_of_2(pt->y())
 							       )
 					       );
-    if ((has_on<CK>(a1, intersect_point)) && (has_on<CK>(a2, intersect_point)))
-      *res++ = make_object(std::make_pair(intersect_point, 1u));
     
+    if ((compare_xy<CK>(intersect_point, a1.source()) !=
+          compare_xy<CK>(intersect_point, a1.target())) &&
+         (compare_xy<CK>(intersect_point, a2.source()) !=
+          compare_xy<CK>(intersect_point, a2.target())))
+      *res++ = make_object(std::make_pair(intersect_point, 1u));
+
     return res;
   }
 
