@@ -423,7 +423,7 @@ bool process(const std::string& filename,
 				 qp.row_types(),
 				 qp.fl(),qp.l(),qp.fu(),qp.u(),
 				 s,verbosity);
-  const bool is_valid = solver.is_solution_valid();
+  const bool is_valid = solver.is_valid();
   delete s;
 
   if (verbosity > 0 || !is_valid)

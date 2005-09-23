@@ -955,7 +955,7 @@ public:
     }
     
     // 
-    public:
+    private:
     bool is_solution_feasible();
     bool is_solution_optimal(Tag_false is_linear);
     bool is_solution_optimal(Tag_true is_linear);

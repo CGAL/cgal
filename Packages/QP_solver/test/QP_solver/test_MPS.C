@@ -78,7 +78,7 @@ int main(const int argNr,const char **args) {
 				 0, // 0 for default pricing strategy
 				 verbosity);
 
-  if (solver.is_solution_valid()) {
+  if (solver.is_valid()) {
     cout << "Solution is valid." << endl;
     return 0;
   } else {
