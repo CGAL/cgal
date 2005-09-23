@@ -357,7 +357,8 @@ namespace CircularFunctors {
 
     ca1 = Circular_arc_2( A.supporting_circle(), A.source(), p);
     ca2 = Circular_arc_2( A.supporting_circle(), p, A.target());
-    if ( ca1.right()!=ca2.left() )
+    //if ( ca1.right()!=ca2.left() )
+    if ( compare_x<CK>(ca1.left(), ca2.left()) != SMALLER )
 	    {
 	      //std::cout << " SWAP " << std::endl;
 	      std::swap(ca1,ca2);
@@ -483,10 +484,10 @@ namespace CircularFunctors {
 	  (CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
 	   (&(intersection_points[1])))->first;
 	// We also need to check that these intersection points are on the arc.
-	  if (has_on<CK>(a1, left) && has_on<CK>(a2, left))
-	    *res++ = make_object(std::make_pair(left,1u));
-	  if (has_on<CK>(a1, right) && has_on<CK>(a2, right))
-	    *res++ = make_object(std::make_pair(right,1u));
+	if (has_on<CK>(a1, left) && has_on<CK>(a2, left))
+	  *res++ = make_object(std::make_pair(left,1u));
+	if (has_on<CK>(a1, right) && has_on<CK>(a2, right))
+	  *res++ = make_object(std::make_pair(right,1u));
       }
       return res;
     }
