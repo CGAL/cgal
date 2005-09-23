@@ -27,6 +27,52 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Rep_ >
+bool QP_solver<Rep_>::has_finite_lower_bound(int i) const
+  // Given an index of an original or slack variable, returns whether
+  // or not the variable has a finite lower bound.
+{
+  CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
+  return i>=qp_n || check_tag(Is_in_standard_form()) || *(qp_fl+i);
+}
+
+template < class Rep_ >
+bool QP_solver<Rep_>::has_finite_upper_bound(int i) const
+  // Given an index of an original or slack variable, returns whether
+  // or not the variable has a finite upper bound.
+{
+  CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
+  return i<qp_n && !check_tag(Is_in_standard_form()) && *(qp_fu+i);
+}
+
+template < class Rep_ >
+typename QP_solver<Rep_>::ET QP_solver<Rep_>::lower_bound(int i) const
+  // Given an index of an original or slack variable, returns its
+  // lower bound.
+{
+  CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
+  if (i < qp_n)                     // original variable?
+    if (check_tag(Is_in_standard_form()))
+      return et0;
+    else {
+      CGAL_qpe_assertion(has_finite_lower_bound(i));
+      return *(qp_l+i);
+    }
+  else                              // slack variable?
+    return et0;
+}
+
+template < class Rep_ >
+typename QP_solver<Rep_>::ET QP_solver<Rep_>::upper_bound(int i) const
+  // Given an index of an original or slack variable, returns its
+  // upper bound.
+{
+  CGAL_qpe_assertion(i < qp_n); // Note: slack variables cannot have
+				// finite upper bounds.
+  CGAL_qpe_assertion(has_finite_upper_bound(i));
+  return *(qp_u+i);
+}
+
+template < class Rep_ >
 bool QP_solver<Rep_>::is_valid()
 {
     switch(this->m_status) {
@@ -164,13 +210,19 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   // slack variables.)
 
   // get number of working variables:
-  // todo: do not understand this (kf): why is art_s_i not a working variable?
   const int no_of_wo_vars = this->number_of_working_variables() +
-    (art_s_i == -2)? 1 : 0;    // Note: if there ever was a special
-			       // artifial variable, it has to be
-			       // considered for this optimality test,
-			       // even if it has already left the
-			       // basis.
+    (art_s_i == -2)? 1 : 0; // Note: if there ever was a special
+                            // artifical variable, it has to be
+                            // considered for this optimality test,
+                            // even if it has already left the basis.
+                            // (If there was initially a special
+                            // artificial variable and it never left
+                            // the basis, then number_of_-
+                            // working_variables() counts it, so we
+                            // add 0; it it left the basis (and thus
+                            // art_s_i == -2) then number_of_-
+                            // working_variables() does not count it,
+                            // add we need to add 1.)
   
   // collect solution vector of auxiliary problem:
   Values x_aux(no_of_wo_vars, et0);
@@ -207,7 +259,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   C_auxiliary_iterator c_it = aux_c.begin();
   for (int col = qp_n+slack_A.size(); col < no_of_wo_vars; ++c_it, ++col)
     tau_aux[col] = ET(*c_it) * d;
-  
+
   // (b) compute \tau^T = c^T + \lambda^T * aux_A:
   for (int col = 0; col < no_of_wo_vars; ++col) {
     if (col < qp_n)                  // ordinary original variable
@@ -220,7 +272,8 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 	  * lambda_aux[slack_A[k].first];
       else {                         // artificial variable
 	k -= slack_A.size();
-	if (col != art_s_i)          // normal artificial variable
+	if ((art_s_i == -1) || (col < no_of_wo_vars - 1))
+	                             // normal artificial variable
 	  tau_aux[col] += (art_A[ k].second? -et1 : et1)
 	    * lambda_aux[art_A[k].first];
 	else                         // special artificial variable
@@ -242,6 +295,39 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   }
 
   return true;     
+}
+
+template < class Rep_ >
+bool QP_solver<Rep_>::is_solution_feasible()
+{
+    // check bounds on original variables:
+    Value_const_iterator v_it = x_B_O.begin();
+    for (Index_const_iterator i_it = B_O.begin();
+	 i_it != B_O.end();
+	 ++i_it, ++v_it)
+      if (has_finite_lower_bound(*i_it) && *v_it < lower_bound(*i_it) ||
+	  has_finite_upper_bound(*i_it) && *v_it > upper_bound(*i_it))
+	return false;
+
+    // compute A x times d:
+    Values lhs_col(qp_m, et0);
+    v_it = x_B_O.begin();
+    for (Index_const_iterator i_it = B_O.begin();
+	 i_it != B_O.end();
+	 ++i_it, ++v_it)
+      for (int i=0; i<qp_m; ++i)
+	lhs_col[i] += *v_it * qp_A[*i_it][i];
+    
+    // check A x = b (where in the code both sides are multiplied by d):
+    for (int row = 0; row < qp_m; ++row) {
+      const ET rhs = ET(qp_b[row])*d;
+      if (qp_r[row] == Rep::EQUAL         && lhs_col[row] != rhs ||
+	  qp_r[row] == Rep::LESS_EQUAL    && lhs_col[row] >  rhs ||
+	  qp_r[row] == Rep::GREATER_EQUAL && lhs_col[row] <  rhs)
+	return false;
+    }
+    
+    return true;
 }
 
 CGAL_END_NAMESPACE

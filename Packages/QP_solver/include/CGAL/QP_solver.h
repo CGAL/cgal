@@ -965,10 +965,16 @@ public:
     bool is_solution_unbounded(Tag_true is_linear);
 
 private:
-  // validity checks:
-    bool is_solution_feasible_for_auxiliary_problem();
-    bool is_solution_optimal_for_auxiliary_problem();
+  // (inefficient) access to bounds of variables:
+  bool has_finite_lower_bound(int i) const;
+  bool has_finite_upper_bound(int i) const;
+  ET lower_bound(int i) const;
+  ET upper_bound(int i) const;
 
+  // validity checks:
+  bool is_solution_feasible_for_auxiliary_problem();
+  bool is_solution_optimal_for_auxiliary_problem();
+  
 public:
   // validity checks:
   bool is_valid();

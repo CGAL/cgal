@@ -3999,51 +3999,6 @@ get_l() const
 
 template < class Rep_ >
 bool QP_solver<Rep_>::
-is_solution_feasible()
-{
-    Index_iterator i_it, M_i_it;
-    Value_iterator v_it;
-    Indices        M;
-    bool           feasible, row_feasible, original_vars_nonneg;
-    
-    //check nonnegativity constraints
-    original_vars_nonneg = true;
-    v_it = x_B_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        original_vars_nonneg = original_vars_nonneg && ((*v_it) >= et0);
-    }
-    
-    feasible = original_vars_nonneg;
-    
-    // check feasibility against constraint matrix A
-    Values lhs_col(qp_m, et0);
-    //initialize M
-    for (int i = 0; i < qp_m; ++i) {
-        M.push_back(i);
-    }
-    v_it = x_B_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        A_by_index_accessor  a_accessor( qp_A[*i_it]);
-	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-	    lhs_col[*M_i_it] += (*v_it)
-	        * (*A_by_index_iterator( M_i_it, a_accessor));
-	}
-    }
-    for (int row = 0; row < qp_m; ++row) {
-	if (qp_r[row] == Rep::EQUAL) {
-	    row_feasible = (lhs_col[row] == (ET(qp_b[row]) * d));
-	} else {
-	    row_feasible = (qp_r[row] == Rep::LESS_EQUAL) ?
-	        (lhs_col[row] <= (ET(qp_b[row]) * d)) : 
-		(lhs_col[row] >= (ET(qp_b[row]) * d));
-	}
-	feasible = feasible && row_feasible;
-    }
-    return feasible;
-}
-
-template < class Rep_ >
-bool QP_solver<Rep_>::
 is_solution_optimal(Tag_false)		//QP case
 {
     Index_iterator i_it, M_i_it, N_i_it;
@@ -4485,42 +4440,6 @@ is_solution_unbounded(Tag_true)		//LP case
     if (j < qp_n) sum -= d * qp_c[j];
     unbounded = unbounded && (sum > et0);
     return unbounded;
-}
-
-
-template < class Rep_ >
-bool QP_solver<Rep_>::
-is_solution_valid()
-{
-    bool f, o, u, aux_positive;
-    switch(this->m_status) {
-    case UPDATE: 	return false;
-    case OPTIMAL:  	f = this->is_solution_feasible();
-     			o = this->is_solution_optimal(Is_linear());
-			CGAL_qpe_debug {
-    			    vout << "feasible: " << f << std::endl;
-			    vout << "optimal: " << o << std::endl;
-			}
-			return (f && o);
-    case INFEASIBLE: 	f = this->is_solution_feasible_for_auxiliary_problem();
-    			o = this->is_solution_feasible_for_auxiliary_problem();
-			aux_positive = this->solution() > et0;
-			CGAL_qpe_debug {
-    			    vout << "feasible_aux: " << f << std::endl;
-    			    vout << "optimal_aux: " << o << std::endl;
-			    vout << "objective value positive: " <<
-			        aux_positive << std::endl;
-			}
-    			return (f && o && aux_positive);
-    case UNBOUNDED:	f = this->is_solution_feasible();
-    			u = this->is_solution_unbounded(Is_linear());
-			CGAL_qpe_debug {
-			    vout << "feasible: " << f << std::endl;
-			    vout << "unbounded: " << u << std::endl;
-			}
-    			return (f && u);
-    default: 		return false;
-    }
 }
 
 CGAL_END_NAMESPACE
