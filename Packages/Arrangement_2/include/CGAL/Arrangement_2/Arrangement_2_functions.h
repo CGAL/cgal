@@ -1331,6 +1331,7 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
 //
 template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
+                                               const DVertex* v,
                                                const DHalfedge *he) const
 {
   // Keep a counter of the number of x-monotone curves that intersect an upward
@@ -1366,19 +1367,24 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
   }
 
   // Go over all curves of the boundary, starting from the non-vertical curve
-
   // we have located, and count those which are above p.
   const DHalfedge   *first = curr;
 
   do
   {
+    // If the vertex v associated with p (if v is given and is not NULL)
+    // on the boundary of the component, p is obviously not in the interior
+    // the component.
+    if (curr->vertex() == v)
+      return (false);
+
     // Compare the x-coordinates of the current halfedge's endpoint with the
     // query point.
     res_source = compare_x (curr->opposite()->vertex()->point(), p);
     res_target = compare_x (curr->vertex()->point(), p);
 
-    // If the query point is a boundary vertex, it is obviuosly not in the
-    // interior the component.
+    // If the query point coincides with a boundary vertex, it is obviously
+    // not in the interior the component.
     if (res_target == EQUAL && equal (curr->vertex()->point(), p))
       return (false);
 
@@ -1940,8 +1946,7 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
     new_face = true;
     new_f->set_halfedge (he2);
 
-
-    // Set the incident faces of the two new halfedges.The new face should
+    // Set the incident faces of the two new halfedges. The new face should
     // become the incident face of he2, while he1 is associated with the
     // existing face.
     he2->set_face (new_f);
@@ -1972,6 +1977,18 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
       is_hole = true;
     }
 
+    // Go over all isolated vertices located in the face and set their edge
+    // to be he1 (so they are marked as contained within the existing face f).
+    // We do this because an isolated vertex may be assoicated with an edge
+    // that is now incident to the new face we have just created.
+    DIsolated_vertices_iter    iso_verts_it;
+
+    for (iso_verts_it = f->isolated_vertices_begin();
+         iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
+    {
+      iso_verts_it->set_halfedge (he1);
+    }
+
     // Notify the observers that we have split the face.
     _notify_after_split_face (fh,
                               Face_handle (new_f),
@@ -1999,31 +2016,38 @@ void Arrangement_2<Traits,Dcel>::_relocate_in_new_face (DHalfedge *new_he)
   DFace        *new_face = new_he->face();
   DFace        *old_face = new_he->opposite()->face();
 
-
   CGAL_assertion (new_face != old_face);
 
   // Examine the holes inside the existing old face and move the relevant
   // ones into the new face.
-  DHoles_iter   holes_it = old_face->holes_begin();
-  DHoles_iter   hole_to_move;
+  // Note that if the face contains a single hole, then the new face that
+  // has been created is necessarily connected to this hole, hence it is not
+  // possible to relocate the hole inside the new face.
+   DHoles_iter   holes_it = old_face->holes_begin();
+  DHoles_iter    next_it = holes_it;
+  DHoles_iter    hole_to_move;
 
-  while (holes_it != old_face->holes_end())
+  ++next_it;
+  if (next_it != old_face->holes_end())   // More than a single hole?
   {
-    // Check whether the current hole is inside new face.
-    if (_point_is_in((*holes_it)->vertex()->point(), new_he))
-    {
-      // We increment the holes itrator before moving the hole, because
+    // Go over the holes.
+    next_it = holes_it;
+    while (holes_it != old_face->holes_end())
+    {   
+      // We increment the next itrator before moving the hole, because
       // this operation invalidates the iterator.
-      hole_to_move  = holes_it;
-      ++holes_it;
+      ++next_it;
 
-      // Move the hole.
-      _move_hole (old_face, new_face, hole_to_move);
-    }
+      // Check whether the current hole is inside new face.
+      if (_point_is_in ((*holes_it)->vertex()->point(), 
+                        (*holes_it)->vertex(),
+                        new_he))
+      {
+        // Move the hole.
+        _move_hole (old_face, new_face, holes_it);
+      }
 
-    else
-    {
-      ++holes_it;
+      holes_it = next_it;
     }
   }
 
@@ -2036,7 +2060,7 @@ void Arrangement_2<Traits,Dcel>::_relocate_in_new_face (DHalfedge *new_he)
   while (iso_verts_it != old_face->isolated_vertices_end())
   {
     // Check whether the isolated vertex lies inside the new face.
-    if (_point_is_in (iso_verts_it->point(), new_he))
+    if (_point_is_in (iso_verts_it->point(), NULL, new_he))
     {
 
       // We increment the isolated vertices itrator before moving the vertex,
@@ -2738,7 +2762,7 @@ bool Arrangement_2<Traits,Dcel>::is_valid(Vertex_const_handle v) const
     if(f->is_unbounded())
       return true;
 
-    return (_point_is_in(v->point(), _halfedge(f->outer_ccb())));
+    return (_point_is_in (v->point(), NULL, _halfedge(f->outer_ccb())));
   }
 
   // the vertex is not isolated

@@ -152,7 +152,7 @@ public:
   bool point_is_in (const Point_2& p, 
                     Halfedge_const_handle he) const
   {
-    return (p_arr->_point_is_in (p, p_arr->_halfedge (he)));
+    return (p_arr->_point_is_in (p, NULL, p_arr->_halfedge (he)));
   }
 
   /*!

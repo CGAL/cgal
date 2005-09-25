@@ -1277,10 +1277,13 @@ protected:
    * Determine whether a given point lies within the region bounded by
    * a boundary of a connected component.
    * \param p The query point.
+   * \param v A vertex associated with the point p (or NULL if no such vertex
+   *          exists or a vertex may exist but it is not known).
    * \param he A halfedge on the boundary of the connected component.
    * \return (true) if the point lies within region, (false) otherwise.
    */
-  bool _point_is_in (const Point_2& p, 
+  bool _point_is_in (const Point_2& p,
+                     const DVertex* v,
                      const DHalfedge* he) const;
 
   /*!
