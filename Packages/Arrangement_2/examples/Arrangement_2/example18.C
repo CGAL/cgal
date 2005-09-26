@@ -61,7 +61,7 @@ int main ()
                 << "named: " << eit->curve().get_data() << std::endl;
 
       // Rename the curve associated with the edge.
-      arr.modify_edge (eit->handle(),
+      arr.modify_edge (eit,
 		       X_monotone_curve_2 (eit->curve(), "overlap"));
     }
   }

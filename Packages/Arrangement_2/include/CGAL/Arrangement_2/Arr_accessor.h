@@ -317,7 +317,7 @@ public:
   {
     typename Arrangement_2::DHoles_iter   it;
     DFace            *from_f =  p_arr->_face (from_face);
-    DHalfedge        *he = p_arr->_halfedge (hole->handle());
+    DHalfedge        *he = p_arr->_halfedge (hole);
     DHalfedge        *he_first;
     DHalfedge        *he_curr;
     

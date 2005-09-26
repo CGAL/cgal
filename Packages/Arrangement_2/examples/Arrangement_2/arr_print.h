@@ -44,7 +44,7 @@ void print_ccb (typename Arrangement::Ccb_halfedge_const_circulator circ)
   std::cout << "(" << curr->source()->point() << ")";
   do
   {
-    he = curr->handle();
+    he = curr;
     std::cout << "   [" << he->curve() << "]   "
               << "(" << he->target()->point() << ")";
 

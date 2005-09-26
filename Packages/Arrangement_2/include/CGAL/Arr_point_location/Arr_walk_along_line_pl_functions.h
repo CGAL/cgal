@@ -186,7 +186,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
     if (equal (p, iso_verts_it->point()))
-      return (CGAL::make_object (iso_verts_it->handle()));
+      return (CGAL::make_object (iso_verts_it));
   }
 
   // The query point is contained in the face interior:
@@ -353,13 +353,13 @@ _vertical_ray_shoot (const Point_2& p,
           compare_y_at_x (iso_verts_it->point(),
                           closest_he->curve()) == point_above_under)
       {
-        closest_iso_v = iso_verts_it->handle();
+        closest_iso_v = iso_verts_it;
       }
     }
     else if (compare_xy (iso_verts_it->point(),
                          closest_iso_v->point()) == point_above_under)
     {
-      closest_iso_v = iso_verts_it->handle();
+      closest_iso_v = iso_verts_it;
     }
   }
 
@@ -474,7 +474,7 @@ _is_in_connected_component (const Point_2& p,
       if (compare_x (first->source()->point(), p) == EQUAL &&
           compare_y_at_x (p, first->curve()) == EQUAL)
       {
-        closest_he = first->handle();
+        closest_he = first;
         is_on_edge = true;
         return (true);
       }
@@ -488,7 +488,7 @@ _is_in_connected_component (const Point_2& p,
           ! equal (first->source()->point(), p) &&
           ! equal (first->target()->point(), p))
       {
-        closest_he = first->handle();
+        closest_he = first;
         is_on_edge = true;
         return (true);
       }
@@ -537,7 +537,7 @@ _is_in_connected_component (const Point_2& p,
       // and contains p in its interior.
       if (inclusive)
       {
-        closest_he = curr->handle();
+        closest_he = curr;
         is_on_edge = true;
         return (true);
       }
@@ -547,7 +547,7 @@ _is_in_connected_component (const Point_2& p,
             ! equal (curr->source()->point(), p) &&
             ! equal (curr->target()->point(), p))
         {
-          closest_he = curr->handle();
+          closest_he = curr;
           is_on_edge = true;
           return (true);
         }
@@ -578,7 +578,7 @@ _is_in_connected_component (const Point_2& p,
             compare_y_position (closest_he->curve(),
                                 curr->curve()) == curve_above_under)
         {
-          closest_he = curr->handle();
+          closest_he = curr;
           closest_in_ccb = true;
           closest_to_target = (target_res == EQUAL);
         }
@@ -589,13 +589,13 @@ _is_in_connected_component (const Point_2& p,
         {
           // Locate the next halfedge along the boundary that does not
           // contain a vertical segment.
-          Halfedge_const_handle  next_non_vert = curr->handle();
+          Halfedge_const_handle  next_non_vert = curr;
 
           do
           {
             next_non_vert = next_non_vert->next();
 
-            CGAL_assertion (next_non_vert != curr->handle());
+            CGAL_assertion (next_non_vert != curr);
 
           } while (is_vertical (next_non_vert->curve()));
 
@@ -644,7 +644,7 @@ _is_in_connected_component (const Point_2& p,
           (compare_y_at_x (curr->target()->point(),
                            closest_he->curve()) == point_above_under))
       {
-        closest_he = curr->handle();
+        closest_he = curr;
         closest_in_ccb = true;
         closest_to_target =
           (compare_xy (curr->target()->point(),
@@ -703,7 +703,7 @@ _first_around_vertex (Vertex_const_handle v,
                                lowest_left->curve(), 
                                v->point()) == SMALLER)
       {
-        lowest_left = curr->handle();
+        lowest_left = curr;
       }
     }
     else
@@ -715,7 +715,7 @@ _first_around_vertex (Vertex_const_handle v,
                                 top_right->curve(), 
                                 v->point()) == LARGER)
       {
-        top_right = curr->handle();
+        top_right = curr;
       }
     }
 

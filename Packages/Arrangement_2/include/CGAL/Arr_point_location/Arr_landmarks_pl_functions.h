@@ -144,10 +144,10 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     typename Traits_wrapper_2::Equal_2 equal = traits->equal_2_object();
 
     for (iso_verts_it = (*fh)->isolated_vertices_begin();
-   iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
+         iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal (p, iso_verts_it->point()))
-        return (CGAL::make_object (iso_verts_it->handle()));
+        return (CGAL::make_object (iso_verts_it));
     }    
   }
 

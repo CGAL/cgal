@@ -55,7 +55,7 @@ int main ()
   {
     if (vit->degree() > max_degree)
     {
-      v_max = vit->handle();
+      v_max = vit;
       max_degree = vit->degree();
     }
   }

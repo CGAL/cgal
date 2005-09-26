@@ -42,7 +42,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
 
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit)
   {
-    vh = vit->handle();
+    vh = vit;
     if (equal (p, vh->point()))
       return (CGAL::make_object (vh));
   }
@@ -58,7 +58,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
 
   for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit)
   {
-    hh = eit->handle();
+    hh = eit;
     if (is_in_x_range (hh->curve(), p) &&
         compare_y_at_x (p, hh->curve()) == EQUAL)
     {
@@ -152,7 +152,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
       {
         // If no other x-monotone curve containing p in its x-range has been
         // found yet, take the current one as the vertically closest to p.
-        closest_edge = eit->handle();
+        closest_edge = eit;
         found = true;
       }
       else
@@ -163,7 +163,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
         if (compare_y_position (closest_edge->curve(),
                                 eit->curve()) == curve_above_under)
         {
-          closest_edge = eit->handle();
+          closest_edge = eit;
         }
       }
     }
@@ -255,7 +255,7 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
 
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit)
   {
-    vh = vit->handle();
+    vh = vit;
     if (! vh->is_isolated())
       continue;
 
@@ -331,7 +331,7 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
                                lowest_left->curve(), 
                                v->point()) == SMALLER)
       {
-        lowest_left = curr->handle();
+        lowest_left = curr;
       }
     }
     else
@@ -343,7 +343,7 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
                                 top_right->curve(), 
                                 v->point()) == LARGER)
       {
-        top_right = curr->handle();
+        top_right = curr;
       }
     }
 

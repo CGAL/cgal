@@ -126,13 +126,70 @@ public:
     <DHalfedge_const_iter, DHalfedge_iter,
      Halfedge, DDifference, DIterator_category>   Halfedge_const_iterator;
 
-  typedef I_HalfedgeDS_iterator
-    <DEdge_iter, Halfedge, DDifference,
-     DIterator_category>                          Edge_iterator;
-  
-  typedef I_HalfedgeDS_const_iterator
-    <DEdge_const_iter, DEdge_iter, Halfedge,
-     DDifference, DIterator_category>             Edge_const_iterator;
+  /*! \class
+   * Edges iterator - defined as a derived class to make it assignable
+   * to the halfedge iterator type.
+   */
+  class Edge_iterator :
+    public I_HalfedgeDS_iterator<DEdge_iter,
+                                 Halfedge, DDifference,
+                                 DIterator_category>
+  {
+    typedef I_HalfedgeDS_iterator<DEdge_iter,
+                                  Halfedge, DDifference,
+                                  DIterator_category>        Base;
+
+  public:
+ 
+    Edge_iterator ()
+    {}
+
+    Edge_iterator (DEdge_iter iter) :
+      Base (iter)
+    {}
+
+    // Casting to a halfedge iterator.
+    operator Halfedge_iterator () const
+    {
+      return (Halfedge_iterator (DHalfedge_iter (this->current_iterator())));
+    }
+
+    operator Halfedge_const_iterator () const
+    {
+      return (Halfedge_const_iterator 
+              (DHalfedge_const_iter (this->current_iterator())));
+    }    
+  };
+
+  class Edge_const_iterator :
+    public I_HalfedgeDS_const_iterator<DEdge_const_iter, DEdge_iter,
+                                       Halfedge, DDifference,
+                                       DIterator_category>
+  {
+    typedef I_HalfedgeDS_const_iterator<DEdge_const_iter, DEdge_iter,
+                                        Halfedge, DDifference,
+                                        DIterator_category>           Base;
+
+  public:
+ 
+    Edge_const_iterator ()
+    {}
+
+    Edge_const_iterator (Edge_iterator iter) :
+      Base (iter)
+    {}
+
+    Edge_const_iterator (DEdge_const_iter iter) :
+      Base (iter)
+    {}
+
+    // Casting to a halfedge iterator.
+    operator Halfedge_const_iterator () const
+    {
+      return (Halfedge_const_iterator 
+              (DHalfedge_const_iter (this->current_iterator())));
+    }
+  };
   
   typedef I_HalfedgeDS_iterator
     <DFace_iter, Face, DDifference,
@@ -172,16 +229,70 @@ public:
      DDifference,
      DIterator_category>              Holes_const_iterator;
 
-  typedef I_HalfedgeDS_iterator
-    <DIsolated_vertices_iter,
-     Vertex, DDifference,
-     DIterator_category>              Isolated_vertices_iterator;
+  /*! \class
+   * Isolated vertices iterator - defined as a class to make it assignable
+   * to the vertex iterator type.
+   */
+  class Isolated_vertices_iterator :
+    public I_HalfedgeDS_iterator<DIsolated_vertices_iter,
+                                 Vertex, DDifference,
+                                 DIterator_category>
+  {
+    typedef I_HalfedgeDS_iterator<DIsolated_vertices_iter,
+                                  Vertex, DDifference,
+                                  DIterator_category>         Base;
+
+  public:
+
+    Isolated_vertices_iterator ()
+    {}
+
+    Isolated_vertices_iterator (DIsolated_vertices_iter iter) :
+      Base (iter)
+    {}
+
+    // Casting to a vertex iterator.
+    operator Vertex_iterator () const
+    {
+      return (Vertex_iterator (DVertex_iter (this->ptr())));
+    }
+
+    operator Vertex_const_iterator () const
+    {
+      return (Vertex_const_iterator (DVertex_const_iter (this->ptr())));
+    }
+  };
   
-  typedef I_HalfedgeDS_const_iterator
-    <DIsolated_vertices_const_iter,
-     DIsolated_vertices_iter,
-     Vertex, DDifference,
-     DIterator_category>              Isolated_vertices_const_iterator;
+  class Isolated_vertices_const_iterator :
+    public I_HalfedgeDS_const_iterator <DIsolated_vertices_const_iter,
+                                        DIsolated_vertices_iter,
+                                        Vertex, DDifference,
+                                        DIterator_category>
+  {
+    typedef I_HalfedgeDS_const_iterator <DIsolated_vertices_const_iter,
+                                         DIsolated_vertices_iter,
+                                         Vertex, DDifference,
+                                         DIterator_category>            Base;
+
+  public:
+
+    Isolated_vertices_const_iterator ()
+    {}
+
+    Isolated_vertices_const_iterator (Isolated_vertices_iterator iter) :
+      Base (iter)
+    {}
+
+    Isolated_vertices_const_iterator (DIsolated_vertices_const_iter iter) :
+      Base (iter)
+    {}
+
+    // Casting to a vertex iterator.
+    operator Vertex_const_iterator () const
+    {
+      return (Vertex_const_iterator (DVertex_const_iter (this->ptr())));
+    }
+  };
 
   // Definition of handles (equivalent to iterators):
   typedef Vertex_iterator              Vertex_handle;
@@ -204,18 +315,6 @@ public:
     /*! Default constrcutor. */
     Vertex()
     {}
-
-    /*! Get a handle for the vertex (non-const version). */
-    Vertex_handle handle ()
-    {
-      return (DVertex_iter (this));
-    }
-
-    /*! Get a handle for the vertex (const version). */
-    Vertex_const_handle handle () const
-    {
-      return (DVertex_const_iter (this));
-    }
 
     /*! Check whether the vertex is isolated (has no incident halfedges). */
     bool is_isolated() const
@@ -286,18 +385,6 @@ public:
     /*! Default constrcutor. */
     Halfedge ()
     {}
-
-    /*! Get a handle for the halfedge (non-const version). */
-    Halfedge_handle handle ()
-    {
-      return (DHalfedge_iter (this));
-    }
-
-    /*! Get a handle for the halfedge (const version). */
-    Halfedge_const_handle handle () const
-    {
-      return (DHalfedge_const_iter (this));
-    }
 
     /*! Get the source vertex (non-const version). */
     Vertex_handle source ()
@@ -411,18 +498,6 @@ public:
     /*! Default constrcutor. */
     Face()
     {}
-
-    /*! Get a handle for the face (non-const version). */
-    Face_handle handle ()
-    {
-      return (DFace_iter (this));
-    }
-
-    /*! Get a handle for the face (const version). */
-    Face_const_handle handle () const
-    {
-      return (DFace_const_iter (this));
-    }
 
     /*! Check whether the face is unbounded. */
     bool is_unbounded () const

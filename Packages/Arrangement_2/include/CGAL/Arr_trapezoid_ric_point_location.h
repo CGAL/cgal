@@ -356,7 +356,7 @@ protected:
 
     for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit)
     {
-      hh = eit->handle();
+      hh = eit;
       c.push_back(hh);
     }
 

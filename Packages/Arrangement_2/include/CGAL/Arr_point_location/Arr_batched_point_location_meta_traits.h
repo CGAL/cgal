@@ -20,10 +20,7 @@
 #ifndef ARR_BATCHED_POIN_LOCATION_META_TRAITS_H
 #define ARR_BATCHED_POIN_LOCATION_META_TRAITS_H
 
-
 CGAL_BEGIN_NAMESPACE
-
-
 
 template <class Traits, class Arrangement_>
 class Arr_batched_point_location_meta_traits : public Traits
@@ -45,18 +42,20 @@ public:
     friend class Arr_batched_point_location_meta_traits<Traits,
                                                         Halfedge_const_handle>;
 
-    My_X_monotone_curve_2():Base(),
-                            m_he_handle(NULL)
+    My_X_monotone_curve_2():
+      Base(),
+      m_he_handle(NULL)
     {}
 
-    My_X_monotone_curve_2(const Base& cv):Base(cv),
-                                          m_he_handle(NULL)
+    My_X_monotone_curve_2(const Base& cv):
+      Base(cv),
+      m_he_handle(NULL)
     {}
 
-    My_X_monotone_curve_2(const Base&cv, Halfedge_const_handle he):Base(cv),
-                                                                   m_he_handle(he)
+    My_X_monotone_curve_2(const Base&cv, Halfedge_const_handle he):
+      Base(cv),
+      m_he_handle(he)
     {}
-
 
     Halfedge_const_handle get_halfedge_handle() const
     {
@@ -68,9 +67,6 @@ public:
     Halfedge_const_handle m_he_handle;
   }; // nested class My_X_monotone_curve_2 - END
 
-
-
-
   class My_Point_2 : public Base_Point_2 
   {
   public:
@@ -79,16 +75,19 @@ public:
     friend class Arr_batched_point_location_meta_traits<Traits,
                                                         Halfedge_const_handle>;
 
-    My_Point_2(): Base(),
-                  m_v(NULL)
+    My_Point_2():
+      Base(),
+      m_v(NULL)
     {}
 
-    My_Point_2(const Base& pt): Base(pt),
-                                m_v(NULL)
+    My_Point_2(const Base& pt):
+      Base(pt),
+      m_v(NULL)
     {}
 
-    My_Point_2(const Base& pt, Vertex_const_handle v): Base(pt),
-                                                       m_v(v)
+    My_Point_2(const Base& pt, Vertex_const_handle v):
+      Base(pt),
+      m_v(v)
     {}
 
 
@@ -96,13 +95,11 @@ public:
     {
       return m_v;
     }
-
    
-    protected:
+  protected:
     Vertex_const_handle    m_v;
+  
   }; // nested class My_Point_2 - END
-
-
 
 public:
 

@@ -56,8 +56,8 @@ int main ()
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
   {
     std::cout << "[" << eit->curve() << "]. Origin: ";
-    for (ocit = arr.origin_curves_begin (eit->handle());
-         ocit != arr.origin_curves_end (eit->handle()); ++ocit)
+    for (ocit = arr.origin_curves_begin (eit);
+         ocit != arr.origin_curves_end (eit); ++ocit)
     {
       std::cout << " [" << *ocit << "]" << std::flush;
     }

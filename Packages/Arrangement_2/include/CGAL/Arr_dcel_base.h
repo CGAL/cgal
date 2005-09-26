@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 #include <list>
 #include <map>
-#include <CGAL/N_step_adaptor.h>
+#include <CGAL/N_step_adaptor_derived.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
@@ -575,14 +575,16 @@ public:
   typedef typename Vertex_list::iterator              Vertex_iterator;
   typedef typename Halfedge_list::iterator            Halfedge_iterator;
   typedef typename Face_list::iterator                Face_iterator;
-  typedef CGAL::N_step_adaptor<Halfedge_iterator, 2>  Edge_iterator;
+  typedef CGAL::N_step_adaptor_derived<Halfedge_iterator, 
+                                       2>             Edge_iterator;
   
   // Definitions of const iterators.
   typedef typename Vertex_list::const_iterator        Vertex_const_iterator;
   typedef typename Halfedge_list::const_iterator      Halfedge_const_iterator;
   typedef typename Face_list::const_iterator          Face_const_iterator;
-  typedef CGAL::N_step_adaptor<Halfedge_const_iterator,
-                               2>                     Edge_const_iterator;
+  typedef CGAL::N_step_adaptor_derived<Halfedge_const_iterator, 
+                                       2>             Edge_const_iterator;
+
 private:
 
   // Copy Constructor - not supported.

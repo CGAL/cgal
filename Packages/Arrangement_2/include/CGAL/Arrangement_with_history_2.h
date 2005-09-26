@@ -483,14 +483,14 @@ public:
 
     for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
     {
-      e = eit->handle();
+      e = eit;
       for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
       {
         org_c = static_cast<Curve_halfedges*>(*dit);
         dup_c = (cv_map.find (org_c))->second;
 
         *dit = dup_c;
-        dup_c->_insert (e->handle());
+        dup_c->_insert (e);
       }
     }
 
@@ -964,14 +964,14 @@ public:
 
     for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
     {
-      e = eit->handle();
+      e = eit;
       for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
       {
         org_c = static_cast<Curve_halfedges*>(*dit);
         dup_c = (cv_map.find (org_c))->second;
 
         *dit = dup_c;
-        dup_c->_insert (e->handle());
+        dup_c->_insert (e);
       }
     }
 

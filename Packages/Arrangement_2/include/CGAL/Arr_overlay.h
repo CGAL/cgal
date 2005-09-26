@@ -121,74 +121,83 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
     arr1.get_traits()->compare_xy_2_object();
     
   //iterate over arr1's edges and create X_monotone_curve_2 from each edge
-  unsigned int i = 0;
-  for(Edge_const_iterator_1 itr1 = arr1.edges_begin();
-      itr1 != arr1.edges_end();
-      ++itr1, ++i)
+  unsigned int            i = 0;
+  Edge_const_iterator_1   itr1;
+  Halfedge_const_handle_1 he1;
+
+  for (itr1 = arr1.edges_begin(); itr1 != arr1.edges_end(); ++itr1, ++i)
   {
-    Halfedge_const_handle_1 he = itr1->handle();
+    he1 = itr1;
 
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy(he->source()->point(),
-	             he->target()->point()) == SMALLER)
-       he = he->twin();
-    const Base_X_monotone_curve_2& base_cv = he->curve();
+    if(comp_xy(he1->source()->point(),
+               he1->target()->point()) == SMALLER)
+      he1 = he1->twin();
+
+    const Base_X_monotone_curve_2& base_cv = he1->curve();
 
     arr_curves[i] =
-      X_monotone_curve_2(base_cv, he, Halfedge_const_handle_2());
+      X_monotone_curve_2 (base_cv, he1, Halfedge_const_handle_2());
   }
 
   //iterate over arr2's edges and create X_monotone_curve_2 from each edge
-  for(Edge_const_iterator_2 itr2 = arr2.edges_begin();
-      itr2 != arr2.edges_end();
-      ++itr2, ++i)
+  Edge_const_iterator_2   itr2;
+  Halfedge_const_handle_2 he2;
+
+  for (itr2 = arr2.edges_begin(); itr2 != arr2.edges_end(); ++itr2, ++i)
   {
-    Halfedge_const_handle_2 he = itr2->handle();
+    he2 = itr2;
 
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy(he->source()->point(),
-	             he->target()->point()) == SMALLER)
-       he = he->twin();
+    if(comp_xy (he2->source()->point(),
+                he2->target()->point()) == SMALLER)
+       he2 = he2->twin();
 
-    const Base_X_monotone_curve_2& base_cv = he->curve();
+    const Base_X_monotone_curve_2& base_cv = he2->curve();
 
     arr_curves[i] =
-      X_monotone_curve_2(base_cv, Halfedge_const_handle_1(), he);
+      X_monotone_curve_2 (base_cv, Halfedge_const_handle_1(), he2);
   }
 
   // iterate over arr1's vertices and associate each isolated point with
   // its vertex
-  for(Vertex_const_iterator_1 v_itr1 = arr1.vertices_begin();
+  Vertex_const_iterator_1 v_itr1;
+
+  for(v_itr1 = arr1.vertices_begin();
       v_itr1 != arr1.vertices_end();
       ++v_itr1)
   {
     if(v_itr1->is_isolated())
+    {
       iso_points.push_back(Point_2(v_itr1->point(),
                            CGAL::make_object(v_itr1),
                            Object()));
+    }
   }
       
   // iterate over arr2's vertices and associate each isolated point with
   // its vertex
-  for(Vertex_const_iterator_2 v_itr2 = arr2.vertices_begin();
-      v_itr2 != arr2.vertices_end();
-      ++v_itr2)
+  Vertex_const_iterator_2 v_itr2;
+
+  for (v_itr2 = arr2.vertices_begin();
+       v_itr2 != arr2.vertices_end();
+       ++v_itr2)
   {
-    if(v_itr2->is_isolated())
-    iso_points.push_back(Point_2(v_itr2->point(),
-                         Object(),
-                         CGAL::make_object(v_itr2)));
+    if (v_itr2->is_isolated())
+    {
+      iso_points.push_back(Point_2(v_itr2->point(),
+                                   Object(),
+                                   CGAL::make_object(v_itr2)));
+    }
   }
-
-
 
   // clear the result arrangement
   res.clear();
 
   //perform the sweep whith overlay visitor
-  Visitor visitor(arr1, arr2, res, traits);
+  Visitor    visitor(arr1, arr2, res, traits);
   Traits     meta_traits(res.get_traits());
   Sweep_line sweep_object(&meta_traits, &visitor);
   sweep_object.sweep(arr_curves.begin(),

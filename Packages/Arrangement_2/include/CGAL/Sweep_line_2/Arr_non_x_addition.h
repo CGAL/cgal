@@ -97,30 +97,29 @@ public:
     std::vector<Point_2>                 iso_points;
 
     typename Traits::Compare_xy_2  comp_xy = m_traits->compare_xy_2_object();
-    for (Edge_iterator eit = m_arr->edges_begin();
-         eit != m_arr->edges_end();
-         ++eit) 
-    {
-      Halfedge_handle he;
-      if(comp_xy(eit->source()->point(),
-	       eit->target()->point()) == SMALLER)
-         he = eit->handle()->twin();
+    Edge_iterator                  eit;
+    Halfedge_handle                he;
+
+    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+    {      
+      if (comp_xy (eit->source()->point(),
+                   eit->target()->point()) == SMALLER)
+        he = eit->twin();
       else
-        he = eit->handle();
+        he = eit;
 
       xcurves_vec.push_back(X_monotone_curve_2(he->curve(), he));
     }
     
     std::copy(begin, end, std::back_inserter(xcurves_vec));
 
-    for(Vertex_iterator v_itr = m_arr->vertices_begin();
-        v_itr != m_arr->vertices_end();
-        ++v_itr)
-    {
-      if(v_itr->is_isolated())
-        iso_points.push_back(Point_2(v_itr->point(), v_itr->handle()));
-    }
+    Vertex_iterator                vit;
 
+    for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
+    {
+      if(vit->is_isolated())
+        iso_points.push_back(Point_2(vit->point(), vit));
+    }
 
     m_sweep_line.sweep(xcurves_vec.begin(),
                        xcurves_vec.end(),

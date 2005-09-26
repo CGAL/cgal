@@ -82,10 +82,10 @@ OutputIterator locate(const Arrangement& arr,
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
     if(comp_xy(eit->source()->point(),
-	             eit->target()->point()) == LARGER)
-      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->handle());
+               eit->target()->point()) == LARGER)
+      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit);
     else
-      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->handle()->twin());
+      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->twin());
   }
 
   std::vector<Point_2>    iso_points;
@@ -94,7 +94,7 @@ OutputIterator locate(const Arrangement& arr,
       ++v_itr)
   {
     if(v_itr->is_isolated())
-    iso_points.push_back(Point_2(v_itr->point(), v_itr->handle()));
+    iso_points.push_back(Point_2(v_itr->point(), v_itr));
   }
   
   // Perform the sweep, while initializing it with all query points as event

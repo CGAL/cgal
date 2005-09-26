@@ -165,10 +165,12 @@ public:
     {
       // sc is an overlap Subcurve of existing edge and new curve,
       // which means that the edeg will have to be modified
-      if(sc -> get_orig_subcurve1())
-        m_arr -> 
-        modify_edge(this->current_event()->get_halfedge_handle()->next()->twin(),
-          cv);
+      if (sc->get_orig_subcurve1())
+      {
+        m_arr->modify_edge (this->current_event()->get_halfedge_handle()->
+                            next()->twin(),
+                            cv);
+      }
 
       Halfedge_handle next_ccw_he = 
         this->current_event()->get_halfedge_handle()->next()->twin();

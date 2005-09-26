@@ -90,17 +90,17 @@ protected:
   template <class Formatter_>
   void write_vertex(Formatter_& formatter, Vertex_const_iterator v) const
   {
-    formatter.write_vertex_begin(v->handle(), get_index(v));
-    formatter.write_vertex_point(v->handle());
+    formatter.write_vertex_begin(v, get_index(v));
+    formatter.write_vertex_point(v);
     // here users that expand the vertex can write additional data
-    formatter.write_vertex(v->handle()); 
-    formatter.write_vertex_end(v->handle());
+    formatter.write_vertex(v); 
+    formatter.write_vertex_end(v);
   }
 
   template <class Formatter_>
   void write_edge(Formatter_& formatter, Halfedge_const_iterator hi) const
   {
-    Halfedge_const_handle h = hi->handle();
+    Halfedge_const_handle h = hi;
     formatter.write_edge_begin(h/*, get_index(hi)*/);
     formatter.write_halfedge_endpoint_index(get_index(h->source()), "endp1");
     formatter.write_halfedge_endpoint_index(get_index(h->target()), "endp2");
@@ -113,7 +113,7 @@ protected:
   template <class Formatter_>
   void write_face(Formatter_& formatter, Face_const_iterator fi) const
   {
-    Face_const_handle f = fi->handle();
+    Face_const_handle f = fi;
     formatter.write_face_begin(f);
     // write the outer ccb:
     // first write the number of halfedges on it, then write the halfedges
@@ -161,7 +161,7 @@ protected:
     formatter.write_number("number_of_isolated_vertices", n_isolated);
     Isolated_vertices_const_iterator iso_vi = f->isolated_vertices_begin();
     for(; iso_vi != f->isolated_vertices_end(); ++iso_vi)
-      formatter.write_vertex_index(get_index(iso_vi->handle()));
+      formatter.write_vertex_index(get_index(iso_vi));
     
     formatter.write_isolated_vertices_end(f);
     

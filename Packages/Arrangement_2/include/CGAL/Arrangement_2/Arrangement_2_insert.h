@@ -478,9 +478,9 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
     {
       // Get the two edges incident to the end-vertex.
       circ = v_ends[i]->incident_halfedges();
-      e1 = circ->handle();
+      e1 = circ;
       ++circ;
-      e2 = circ->handle();
+      e2 = circ;
 
       // Check if it is possible to merge the two edges.
       if (traits->are_mergeable_2_object() (e1->curve(), e2->curve()))
@@ -630,9 +630,9 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
     typename Arrangement_2::Halfedge_handle                    e1, e2;
 
     circ = v->incident_halfedges();
-    e1 = circ->handle();
+    e1 = circ;
     ++circ;
-    e2 = circ->handle();
+    e2 = circ;
 
     if (traits->are_mergeable_2_object() (e1->curve(), e2->curve()))
     {

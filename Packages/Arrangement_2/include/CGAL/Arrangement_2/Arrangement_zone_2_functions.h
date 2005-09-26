@@ -209,7 +209,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
   {
     // In case there is just a single incident halfedge around v,
     // we should insert cv right after this halfedge.
-    he = he_curr->handle();
+    he = he_curr;
 
     // Note that cv extends to the right of v. In case the single
     // halfedge also extends to the right of v (its source is to
@@ -220,7 +220,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
                                                   v->point()) == EQUAL))
     {
       // Mark that an overlap occurs:
-      intersect_he = he_curr->handle();
+      intersect_he = he_curr;
       return (true);
     }
 
@@ -245,13 +245,13 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     if (cv_equals_curr)
     {
       // cv overlaps with the curve of he_curr:
-      intersect_he = he_curr->handle();
+      intersect_he = he_curr;
       return (true);
     }
     else if (cv_equals_next)
     {
       // cv overlaps with the curve of he_next:
-      intersect_he = he_next->handle();
+      intersect_he = he_next;
       return (true);
     }
 
@@ -259,7 +259,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     {
       // We can conclude that cv should be placed between he_curr and
       // he_next (in a clockwise order), and no overlap occurs.
-      he = he_curr->handle();
+      he = he_curr;
       return (false);
     }
 
@@ -631,7 +631,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // Store the leftmost intersection point and the halfedge handle.
             intersect_p = ip;
             ip_mult = int_p->second;
-            intersect_he = he_curr->handle();
+            intersect_he = he_curr;
             found_overlap = false;
           }
         }
@@ -653,7 +653,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             intersect_p = ip;
             ip_mult = 0;
             overlap_cv = *icv;
-            intersect_he = he_curr->handle();
+            intersect_he = he_curr;
             found_overlap = true;
           }
         }
@@ -730,7 +730,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // handle.
             intersect_p = ip;
             ip_mult = int_p->second;
-            intersect_he = he_curr->handle();
+            intersect_he = he_curr;
             found_overlap = false;
           }
         }
@@ -753,7 +753,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             intersect_p = ip;
             ip_mult = 0;
             overlap_cv = *icv;
-            intersect_he = he_curr->handle();
+            intersect_he = he_curr;
             found_overlap = true;
           }
         }
@@ -793,7 +793,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
     if (compare_y_at_x (iso_verts_it->point(), cv) == EQUAL &&
         compare_xy (iso_verts_it->point(), left_pt) == LARGER)
     {
-      intersect_v = iso_verts_it->handle();
+      intersect_v = iso_verts_it;
       intersect_p = intersect_v->point();
       ip_mult = 0;
       found_intersect = true;
