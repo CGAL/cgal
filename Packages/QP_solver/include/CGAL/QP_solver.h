@@ -954,13 +954,7 @@ public:
 	}
     }
     
-    // 
-    private:
-    bool is_solution_feasible();
-    bool is_solution_optimal(Tag_false is_linear);
-    bool is_solution_optimal(Tag_true is_linear);
-    bool is_solution_optimal_aux();
-    bool is_solution_valid();
+ private:
     bool is_solution_unbounded(Tag_false is_linear);
     bool is_solution_unbounded(Tag_true is_linear);
 
@@ -974,6 +968,10 @@ private:
   // validity checks:
   bool is_solution_feasible_for_auxiliary_problem();
   bool is_solution_optimal_for_auxiliary_problem();
+  bool is_solution_feasible();
+  bool is_solution_optimal();
+  void is_solution_optimal__add_2_D_x(Values& tau,const Values& x,Tag_true);
+  void is_solution_optimal__add_2_D_x(Values& tau,const Values& x,Tag_false);
   
 public:
   // validity checks:
