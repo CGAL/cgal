@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 #include <float.h>
-#include <strings.h>
+// #include <strings.h>
 #include <stdlib.h>
 
 #include <iostream>
@@ -65,7 +65,7 @@ protected:
 public:
 	Triangular_field_2(std::ifstream & f){
 	fill(f);}
-	CGAL::Iso_rectangle_2<StreamLinesTraits_2> iso_rectangle() const;
+	inline typename Geom_traits::Iso_rectangle_2 iso_rectangle() const;
 	std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
 	bool is_in_domain(const Point_2 & p) const;
 	FT get_integration_step(const Point_2 &) const;
@@ -110,10 +110,10 @@ Triangular_field_2<StreamLinesTraits_2>::fill(std::ifstream & f){
 			std::cout << "number of samples " << m_D_Ttr.number_of_vertices() << "\n";}
 
 template <class StreamLinesTraits_2> 
-CGAL::Iso_rectangle_2<StreamLinesTraits_2>
+inline
+typename Triangular_field_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
 Triangular_field_2<StreamLinesTraits_2>::iso_rectangle() const{
-	CGAL::Iso_rectangle_2<StreamLinesTraits_2> r(minx, miny, maxx, maxy);
-	return r;};
+	return typename Geom_traits::Iso_rectangle_2(minx, miny, maxx, maxy);};
 
 template <class StreamLinesTraits_2>
 bool 

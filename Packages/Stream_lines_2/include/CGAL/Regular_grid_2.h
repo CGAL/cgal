@@ -53,7 +53,7 @@ public:
   Regular_grid_2();
 	Regular_grid_2(std::ifstream & f, const FT & x, const FT & y){fill(f, x, y);}
 	void fill(std::ifstream & f, const FT & x, const FT & y);
-  inline CGAL::Iso_rectangle_2<Geom_traits> iso_rectangle() const;
+  inline typename Geom_traits::Iso_rectangle_2 iso_rectangle() const;
   std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
   inline bool is_in_domain(const Point_2 & p) const;
   inline FT get_integration_step(const Point_2 &) const;
@@ -62,9 +62,9 @@ public:
 
 template <class StreamLinesTraits_2>
 inline
-CGAL::Iso_rectangle_2<StreamLinesTraits_2>
+typename Regular_grid_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
 Regular_grid_2<StreamLinesTraits_2>::iso_rectangle() const{
-	return CGAL::Iso_rectangle_2<StreamLinesTraits_2>(0.0, 0.0, domain_size_x, domain_size_y);};
+	return typename Geom_traits::Iso_rectangle_2(0.0, 0.0, domain_size_x, domain_size_y);};
 
 template <class StreamLinesTraits_2>
 inline int 
