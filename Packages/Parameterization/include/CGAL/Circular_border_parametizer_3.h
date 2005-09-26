@@ -257,7 +257,7 @@ public:
 
 // Protected operations
 protected:
-    /// Compute length of an edge:
+    /// Compute length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target)
@@ -328,7 +328,7 @@ public:
 
 // Protected operations
 protected:
-    /// Compute length of an edge:
+    /// Compute length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target)

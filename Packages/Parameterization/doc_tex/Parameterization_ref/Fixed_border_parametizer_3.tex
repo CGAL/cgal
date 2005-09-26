@@ -60,9 +60,9 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class MeshAdaptor\_3, 
-class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$, 
-class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
+class MeshAdaptor\_3,
+class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$,
+class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$
 class Fixed\_border\_parametizer\_3;
 
 %END-AUTO(\ccParameters)
@@ -242,25 +242,12 @@ Get the sparse linear algebra (traits object to access the linear system).
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
-
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Fixed_border_parametizer_3.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Parameterization/Fixed_border_parametizer_3.C}
+\ccRefIdfierPage{CGAL::Parametizer_traits_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::LSCM_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parametizer_3<Traits>}  \\
 
 
 \end{ccRefClass}

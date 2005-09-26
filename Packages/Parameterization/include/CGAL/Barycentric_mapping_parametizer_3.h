@@ -27,11 +27,15 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Class Barycentric_mapping_parametizer_3 
+/// Class Barycentric_mapping_parametizer_3
 /// implements Tutte's barycentric mapping.
 /// 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon.
 ///
 /// Concept: Model of the ParametizerTraits_3 concept.
+///
+/// Design pattern:
+/// ParametizerTraits_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of surface parameterization for models of MeshAdaptor_3.
 
 template
 <

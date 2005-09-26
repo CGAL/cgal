@@ -33,6 +33,10 @@ CGAL_BEGIN_NAMESPACE
 /// This is an authalic parameterization, i.e. it attempts to preserve areas.
 ///
 /// Concept: Model of the ParametizerTraits_3 concept.
+///
+/// Design pattern:
+/// ParametizerTraits_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of surface parameterization for models of MeshAdaptor_3.
 
 template
 <

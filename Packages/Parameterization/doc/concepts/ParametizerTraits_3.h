@@ -20,6 +20,11 @@
 
 /// Concept of parameterization objects for a given type of mesh,
 /// 'Adaptor', which is a model of the MeshAdaptor_3 concept.
+///
+/// Design pattern:
+/// ParametizerTraits_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of surface parameterization for models of MeshAdaptor_3.
+
 class ParametizerTraits_3
 {
 // Public types

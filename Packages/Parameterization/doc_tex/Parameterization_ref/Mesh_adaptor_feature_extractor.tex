@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSMeshadaptorfeatureextractorRev}{$Revision$}
 \RCSdefDate{\RCSMeshadaptorfeatureextractorDate}{$Date$}
 % |
@@ -39,7 +39,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class MeshAdaptor\_3$>$ 
+class MeshAdaptor\_3$>$
 class Mesh\_adaptor\_feature\_extractor;
 
 %END-AUTO(\ccParameters)
@@ -181,25 +181,16 @@ Get the genus.
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefConceptPage{MeshAdaptor_3}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Mesh_adaptor_feature_extractor.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+This example program instantiates a polyhedron and a polyhedron adaptor. If the mesh has no border, it
+virtually "cuts" the mesh before parameterizing it.
+Mesh\_adaptor\_feature\_extractor is used to compute the genus and extract the mesh's boundaries.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Parameterization/Mesh_adaptor_feature_extractor.C}
+\ccIncludeExampleCode{Parameterization/Polyhedron_parameterization5.C}
 
 
 \end{ccRefClass}

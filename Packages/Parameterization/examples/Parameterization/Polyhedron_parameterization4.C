@@ -1,38 +1,4 @@
-// Copyright (c) 2005  INRIA (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $Source$
-// $Revision$
-// $Name$
-//
-// Author(s)     : Laurent Saboret, Pierre Alliez
-
-
 #ifdef CGAL_USE_TAUCS
-
-
-// ----------------------------------------------------------------------------
-// USAGE EXAMPLES
-// ----------------------------------------------------------------------------
-
-//----------------------------------------------------------
-// Floater parameterization
-// circle boundary
-// TAUCS solver
-// output is a eps map
-// input file is mesh.off
-//----------------------------------------------------------
-// Polyhedron_parameterization4 mesh.off mesh.eps
 
 
 #include "short_names.h"                    // must be included first
@@ -43,7 +9,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Mesh_adaptor_polyhedron_3.h>
-#include <CGAL/parameterization.h>
+#include <CGAL/parameterize.h>
 
 #include <CGAL/Taucs_solver_traits.h>
 

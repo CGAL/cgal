@@ -179,7 +179,7 @@
 				RelativePath="..\..\include\Cgal\Mesh_adaptor_polyhedron_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterization.h">
+				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterization_assertions.h">

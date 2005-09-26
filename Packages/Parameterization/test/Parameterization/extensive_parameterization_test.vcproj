@@ -234,7 +234,7 @@
 				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_vertex.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterization.h">
+				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterization_assertions.h">

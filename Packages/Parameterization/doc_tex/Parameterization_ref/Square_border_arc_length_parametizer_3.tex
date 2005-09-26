@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSSquareborderarclengthparametizerRev}{$Revision$}
 \RCSdefDate{\RCSSquareborderarclengthparametizerDate}{$Date$}
 % |
@@ -57,7 +57,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class MeshAdaptor\_3$>$ 
+class MeshAdaptor\_3$>$
 class Square\_border\_arc\_length\_parametizer\_3;
 
 %END-AUTO(\ccParameters)
@@ -171,25 +171,19 @@ arc-length boundary parameterization: (u,v) values are proportional to the lengt
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Square_border_uniform_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Two_vertices_parametizer_3<Traits>}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Square_border_arc_length_parametizer_3.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+This example program instantiates a polyhedron and a polyhedron adaptor
+and parameterizes the polyhedron with Floater's mean value coordinates algorithm
+with the boundary mapped onto a square.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Parameterization/Square_border_arc_length_parametizer_3.C}
+\ccIncludeExampleCode{Parameterization/Polyhedron_parameterization3.C}
 
 
 \end{ccRefClass}

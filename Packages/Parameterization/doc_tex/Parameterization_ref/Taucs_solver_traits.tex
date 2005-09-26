@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSTaucssolvertraitsRev}{$Revision$}
 \RCSdefDate{\RCSTaucssolvertraitsDate}{$Date$}
 % |
@@ -57,7 +57,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class T$>$ 
+class T$>$
 class Taucs\_solver\_traits;
 
 %END-AUTO(\ccParameters)
@@ -124,25 +124,21 @@ Preconditions:\begin{itemize}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_vector<Traits>}  \\
+\ccRefIdfierPage{OpenNL::DefaultLinearSolverTraits<Traits>}  \\
+\ccRefIdfierPage{OpenNL::SymmetricLinearSolverTraits<Traits>}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_solver_traits.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+This example program instantiates a polyhedron and a polyhedron adaptor
+and parameterizes the polyhedron with Floater's mean value coordinates algorithm
+using the TAUCS solver.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Parameterization/Taucs_solver_traits.C}
+\ccIncludeExampleCode{Parameterization/Polyhedron_parameterization4.C}
 
 
 \end{ccRefClass}

@@ -40,12 +40,17 @@ CGAL_BEGIN_NAMESPACE
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 /// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
-/// Implementation notes: 
+/// Implementation notes:
 /// - Subclasses must at least implement compute_wij().
 /// - The current implementation does not remove border vertices
 ///   from the linear systems => A cannot be symmetric.
 ///
-/// Concept: Fixed_border_parametizer_3 is a model of the ParametizerTraits_3 concept.
+/// Concept:
+/// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class).
+///
+/// Design pattern:
+/// ParametizerTraits_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of surface parameterization for models of MeshAdaptor_3.
 
 template
 <

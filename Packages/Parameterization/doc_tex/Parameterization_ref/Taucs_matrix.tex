@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Class Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
+Struct Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
 
 TODO: reallocate the array of non null elements when it's full
 
@@ -49,8 +49,8 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class T$>$ 
-class Taucs\_matrix;
+class T$>$
+struct Taucs\_matrix;
 
 %END-AUTO(\ccParameters)
 
@@ -155,25 +155,30 @@ Get TAUCS matrix wrapped by this object.
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_vector<Traits>}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_matrix.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+A Taucs\_matrix object can be used as a 2D array of floating points.
+Use get\_coef() and set\_coef() to access to the matrix elements.
 
 \begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Parameterization/Taucs_matrix.C}
+typedef CGAL::Taucs_matrix<double>  Matrix;
+
+int main()
+{
+    Matrix m(100, 50);              // 100 x 50 elements
+    m.set_coef(0, 0, 4.3);
+    double val = m.get_coef(0, 0);
+    ...
+}
+
+\end{ccExampleCode}
 
 
 \end{ccRefClass}

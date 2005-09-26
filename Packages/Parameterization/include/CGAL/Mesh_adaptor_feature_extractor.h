@@ -29,8 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Class Mesh_adaptor_feature_extractor
-///
-/// This class computes features (genus, boundaries, ...)
+/// computes features (genus, boundaries, ...)
 /// of a 3D surface model of the MeshAdaptor_3 concept.
 
 template<class MeshAdaptor_3>           //< 3D surface

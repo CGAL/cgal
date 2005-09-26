@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSTaucsvectorRev}{$Revision$}
 \RCSdefDate{\RCSTaucsvectorDate}{$Date$}
 % |
@@ -47,7 +47,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class T$>$ 
+class T$>$
 class Taucs\_vector;
 
 %END-AUTO(\ccParameters)
@@ -130,25 +130,30 @@ Get TAUCS vector wrapped by this object.
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<Traits>}  \\
+\ccRefIdfierPage{OpenNL::DefaultLinearSolverTraits<Traits>}  \\
+\ccRefIdfierPage{OpenNL::SymmetricLinearSolverTraits<Traits>}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_vector.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+A Taucs\_vector object can be used as any array of floating points:
 
 \begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Parameterization/Taucs_vector.C}
+typedef CGAL::Taucs_vector<double>  Vector;
+
+int main(int argc,char * argv[])
+{
+    Vector v(100);  // 100 elements
+    v[0] = 4.3;
+    ...
+}
+
+\end{ccExampleCode}
 
 
 \end{ccRefClass}

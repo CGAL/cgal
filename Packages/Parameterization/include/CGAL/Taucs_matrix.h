@@ -50,8 +50,11 @@ CGAL_BEGIN_NAMESPACE
 template<class T> struct Taucs_number;
 
 
-/// Class Taucs_matrix
+/// Struct Taucs_matrix
 /// is a C++ wrapper around TAUCS' matrix type taucs_ccs_matrix.
+///
+/// This kind of matrix can be either symmetric or not. Symmetric
+/// matrices store only the lower triangle.
 ///
 /// TODO: reallocate the array of non null elements when it's full
 ///
@@ -59,7 +62,7 @@ template<class T> struct Taucs_number;
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
-class Taucs_matrix
+struct Taucs_matrix
 {
 // Public types
 public:
@@ -219,7 +222,7 @@ private:
         if (nb_max_elements <= 0)
         {
             // Pick a number larger than the average valence in a triangular mesh (6)
-            int average_nb_elements_per_row_or_column = 16;    
+            int average_nb_elements_per_row_or_column = 16;
                                             // 16 is fine for parameterization package
 
             if (!is_symmetric)
@@ -344,15 +347,17 @@ private:
 };
 
 
-/// Class Taucs_symmetric_matrix
-/// This class is a C++ wrapper around a TAUCS SYMMETRIC matrix
-/// (type taucs_ccs_matrix)
+/// Struct Taucs_symmetric_matrix
+/// is a C++ wrapper around a TAUCS *symmetric* matrix
+/// (type taucs_ccs_matrix).
+///
+/// Symmetric matrices store only the lower triangle.
 ///
 /// Concept: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
-class Taucs_symmetric_matrix
+struct Taucs_symmetric_matrix
     : public Taucs_matrix<T>
 {
 // Public types

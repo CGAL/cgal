@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSTaucssymmetricsolvertraitsRev}{$Revision$}
 \RCSdefDate{\RCSTaucssymmetricsolvertraitsDate}{$Date$}
 % |
@@ -57,7 +57,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class T$>$ 
+class T$>$
 class Taucs\_symmetric\_solver\_traits;
 
 %END-AUTO(\ccParameters)
@@ -99,7 +99,7 @@ None.
 
 \ccConstructor{Taucs_symmetric_solver_traits (const char * options[] = NULL, const void * arguments[] = NULL);}
 {
-Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See taucs\_linsolve() documentation for the meaning of the 'options' and 'arguments' parameters. 
+Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See taucs\_linsolve() documentation for the meaning of the 'options' and 'arguments' parameters.
 }
 \begin{description}
 \item[Parameters: ]
@@ -133,25 +133,18 @@ Preconditions:\begin{itemize}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<Traits>}  \\
+\ccRefIdfierPage{CGAL::Taucs_vector<Traits>}  \\
+\ccRefIdfierPage{OpenNL::DefaultLinearSolverTraits<Traits>}  \\
+\ccRefIdfierPage{OpenNL::SymmetricLinearSolverTraits<Traits>}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Taucs_symmetric_solver_traits.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Parameterization/Taucs_symmetric_solver_traits.C}
+Currently, the Parameterization package creates non symmetric square linear
+systems, thus no example is available.
 
 
 \end{ccRefClass}

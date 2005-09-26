@@ -18,13 +18,13 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 ///
-/// @file parameterization.h
+/// @file parameterize.h
 /// Define the main entry points of the parameterization package as C functions
 ///
 
 
-#ifndef CGAL_PARAMETERIZATION_H
-#define CGAL_PARAMETERIZATION_H
+#ifndef CGAL_PARAMETERIZE_H
+#define CGAL_PARAMETERIZE_H
 
 #include <CGAL/Mean_value_coordinates_parametizer_3.h>
 
@@ -39,9 +39,9 @@ CGAL_BEGIN_NAMESPACE
 /// The result is the (u,v) pair image of each vertex of the 3D surface.
 ///
 /// Preconditions:
-/// - 'mesh' must be a surface with 1 connected component
-/// - 'mesh' must be a triangular mesh
-/// - the mesh border must be mapped onto a convex polygon
+/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a triangular mesh.
+/// - the mesh border must be mapped onto a convex polygon.
 ///
 template <class MeshAdaptor_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
@@ -58,13 +58,13 @@ parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
 /// The result is the (u,v) pair image of each vertex of the 3D surface.
 ///
 /// 1 to 1 mapping may be guaranteed or not, depending of
-/// ParametizerTraits_3 algorithm chosen
+/// ParametizerTraits_3 algorithm chosen.
 ///
 /// Preconditions:
-/// - 'mesh' must be a surface with 1 connected component
-/// - 'mesh' must be a triangular mesh
+/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a triangular mesh.
 /// - the mesh border must be mapped onto a convex polygon
-/// (for fixed border parameterizations)
+/// (for fixed border parameterizations).
 ///
 template <class MeshAdaptor_3, class ParametizerTraits_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
@@ -77,5 +77,5 @@ parameterize(MeshAdaptor_3* mesh,               ///< 3D mesh, model of MeshAdapt
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_PARAMETERIZATION_H
+#endif //CGAL_PARAMETERIZE_H
 

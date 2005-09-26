@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 21.09.2005   Laurent Saboret, Pierre Alliez
 % | Package: Parameterization
-% | 
+% |
 \RCSdef{\RCSSquareborderuniformparametizerRev}{$Revision$}
 \RCSdefDate{\RCSSquareborderuniformparametizerDate}{$Date$}
 % |
@@ -57,7 +57,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class MeshAdaptor\_3$>$ 
+class MeshAdaptor\_3$>$
 class Square\_border\_uniform\_parametizer\_3;
 
 %END-AUTO(\ccParameters)
@@ -171,25 +171,46 @@ uniform boundary parameterization: points are equally spaced
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Square_border_arc_length_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Two_vertices_parametizer_3<Traits>}  \\
 
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Parameterization/Square_border_uniform_parametizer_3.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
 \begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Parameterization/Square_border_uniform_parametizer_3.C}
+// CGAL kernel
+typedef CGAL::Cartesian<double>                         Kernel;
+
+// Mesh true type and parameterization adaptor
+typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+
+// Square uniform boundary parameterizer
+typedef CGAL::Square_border_uniform_parametizer_3<Mesh_adaptor_polyhedron>
+                                                  Border_parametizer;
+
+// Floater's mean value coordinates parametizer
+// with Square uniform boundary parameterization
+typedef CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron,
+                                                   Border_parametizer>
+                                                        Parametizer;
+
+int main(int argc,char * argv[])
+{
+    Polyhedron mesh;
+    ...
+
+    // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
+
+    Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parametizer());
+    ...
+}
+
+\end{ccExampleCode}
 
 
 \end{ccRefClass}

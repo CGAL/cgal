@@ -34,7 +34,7 @@
 #include <CGAL/basic.h>                     // must be included second
 #include <CGAL/Cartesian.h>                 // must be included third
 
-#include <CGAL/parameterization.h>
+#include <CGAL/parameterize.h>
 #include <CGAL/Mesh_adaptor_patch_3.h>
 #include <CGAL/Circular_border_parametizer_3.h>
 #include <CGAL/Square_border_parametizer_3.h>

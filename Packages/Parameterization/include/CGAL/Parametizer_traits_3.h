@@ -32,6 +32,10 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// Concept:
 /// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class).
+///
+/// Design pattern:
+/// ParametizerTraits_3 models are Strategies (see [GOF95]): they implement
+/// a strategy of surface parameterization for models of MeshAdaptor_3.
 
 template<class MeshAdaptor_3>       //< 3D surface
 class Parametizer_traits_3
