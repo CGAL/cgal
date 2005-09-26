@@ -17,9 +17,9 @@
 \ccCreationVariable{euler_integrator_2}
 \ccDefinition
   
-The class \ccRefName\ can be used to instantiate the first order integrator
-function object class of the streamline placement.
-The templated parameter \ccc{VectorField_2} has to
+The class \ccRefName\ can be used to instantiate the \ccc{Integrator_2} parameter of
+the \ccc{Stream_lines_2<VectorField_2, Integrator_2>} class.
+The template parameter \ccc{VectorField_2} has to
 be instantiated by a model of the concept \ccc{VectorField_2}.
 
 
@@ -31,7 +31,7 @@ be instantiated by a model of the concept \ccc{VectorField_2}.
 
 
 \ccSeeAlso
-\ccc{Integrator_2} \\
+\ccc{Runge_kutta_integrator_2<VectorField_2>} \\
 \end{ccRefFunctionObjectClass}
 
 % +------------------------------------------------------------------------+

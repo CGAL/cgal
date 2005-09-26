@@ -18,8 +18,8 @@
 \ccCreationVariable{regular_grid_2}
 \ccDefinition
   
-The class \ccRefName\ can be used to instantiate the field class of
-the streamline placement.  The templated parameter \ccc{StreamLinesTraits_2} has to be
+The class \ccRefName\ can be used to instantiate the \ccc{VectorField_2} parameter of
+the \ccc{Stream_lines_2<VectorField_2, Integrator_2>} class.  The templated parameter \ccc{StreamLinesTraits_2} has to be
 instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
 This class provides an empty 2D vector field defined on a regular
 grid, with a bilinear interpolation over its cells.
@@ -27,25 +27,23 @@ grid, with a bilinear interpolation over its cells.
 \ccCreation
 \ccCreationVariable{regular_grid_2}  %% choose variable name
 
-
-\ccThree{Regular_grid_2<StreamLinesTraits>}{r = Regular_grid_2 regular_grid_2}{}
-\ccThreeToTwo
-\ccConstructor{Regular_grid_2(int x_size, int y_size, int step);}
-{Generate the regular grid \ccVar.}
-
 \ccThree{Regular_grid_2<StreamLinesTraits_2>}{r = Regular_grid_2 regular_grid_2}{}
 \ccThreeToTwo
 \ccConstructor{Regular_grid_2();}
 {Generate an empty regular grid \ccVar.}
 
+\ccThree{Regular_grid_2<StreamLinesTraits>}{r = Regular_grid_2 regular_grid_2}{}
+\ccThreeToTwo
+\ccConstructor{Regular_grid_2(int x_size, int y_size, int x_step, int y_step);}
+{Generate the regular grid \ccVar (the \ccc{x_size} and \ccc{y_size} parameters specify the size of the grid, while \ccc{x_step} and \ccc{y_step} parameters specify the sampling step on the grid).}
 
 \ccHeading{Modifiers}
 In addition to the minimum interface required by the concept
-definition, the class \ccRefName provides the following function to
+definition, the class \ccRefName  provides the following function to
 fill the vector field with the user data.
 
 \ccMethod{void set_xy(int i, int j, FT x, FT y);}{Attribute the vector 
-(x,y) to the position (i,j) on the reguar grid}
+(x,y) to the position (i,j) on the regular grid.}
 
 
 %\ccInclude{CGAL/Regular_grid_2.h}
@@ -54,9 +52,8 @@ fill the vector field with the user data.
 
 \ccc{VectorField_2} \\
 
-
 \ccSeeAlso
-\ccc{VectorField_2} \\
+\ccc{Triangular_field_2<StreamLinesTraits_2>} \\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

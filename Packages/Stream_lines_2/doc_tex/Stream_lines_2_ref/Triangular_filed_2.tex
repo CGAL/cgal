@@ -21,19 +21,20 @@
 The class \ccRefName\ can be used to instantiate the field class of
 the streamline placement.  The templated parameter \ccc{StreamLinesTraits_2} has to be
 instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
-This class provides an empty 2D vector field defined on a regular
-grid, with a bilinear interpolation over its cells.
+This class provides an empty 2D vector field defined on a triangulated domain.
 
 \ccCreation
 \ccCreationVariable{triangular_field_2}  %% choose variable name
 
 
-\ccThree{Triangular_field_2<StreamLinesTraits>}{r = Triangular_field_2 triangular_field_2}{}
+\ccThree{Triangular_field_2<StreamLinesTraits>}{Triangular_field_2 triangular_field_2}{}
 \ccThreeToTwo
-\ccConstructor{Triangular_field_2(int x_size, int y_size, int step);}
-{Generate a triangular grid of points provided by the input stream\ccVar.}
+\ccConstructor{Triangular_field_2(std::ifstream f);}
+{Generate a triangular grid \ccVar of points provided by the input stream \ccc{f}.}
 
-%\ccInclude{CGAL/Triangular_field_2.h}
+The input stream that defines the triangular domain has to be in ASCII format and specified as follows :\\
+(i) integer that determines the number of samples.\\
+(ii) succesions of points and its corresponding vectors.\\
 
 \ccIsModel 
 
@@ -41,7 +42,7 @@ grid, with a bilinear interpolation over its cells.
 
 
 \ccSeeAlso
-\ccc{VectorField_2} \\
+\ccc{Regular_grid_2<StreamLinesTraits_2>} \\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

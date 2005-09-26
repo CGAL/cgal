@@ -9,12 +9,12 @@
 \end{center}
 \end{ccTexOnly}
 
-% \begin{ccHtmlOnly}
-% <CENTER>
-% <img border=0 src="./tr1.gif" width=300>
-% <img border=0 src="./dt1.gif" width=300>
-% </CENTER>
-% \end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./tr1.gif" width=300>
+<img border=0 src="./dt1.gif" width=300>
+</CENTER>
+\end{ccHtmlOnly}
 
 This chapter describes the \cgal's 2D streamline placement package.
 Basic definitions and notions are given in section
@@ -28,7 +28,7 @@ Basic definitions and notions are given in section
 Vector and direction fields are commonly used for modeling physical
 phenomena, where a direction and magnitude, or a vector is assigned to
 each point inside a domain. Streamlines are very important tools for
-visualizing those entites. A \ccc{streamline} is a curve
+visualizing those entities. A \ccc{streamline} is a curve
 everywhere tangent to the field.  A streamline can be considered as
 the path traced by an imaginary massless particle dropped into a
 steady fluid flow described by the field. In practice, a streamline is
@@ -39,11 +39,11 @@ critical point or generates a closed path. A \ccc{valid} placement of
 streamlines consists of saturating the domain with a set of tangential
 streamlines in accordance with a specified density.
 
-\section{Farthest point seeding streategy}
+\section{Farthest point seeding strategy}
 \label{Section_2D_Streamlines_Strategy}
-The algorithm implemented in this package (add reference to the paper) consists of placing
-one streamline at a time by numerical integration starting at the furthest away
-from all previously placed streamlines.\\The input of our algorithm is given by
+The algorithm implemented in this package consists of placing one streamline at
+a time by numerical integration starting at the furthest away from all
+previously placed streamlines.\\The input of our algorithm is given by
 (i) a flow field, (ii) a \textit{density} specified either globally by the
 inverse of the ideal spacing distance, or locally by a density field, and (iii)
 a \textit{saturation} ratio over the desired spacing required to trigger the
@@ -73,13 +73,14 @@ the domain saturation.
 
 \section{Implementation}
 \label{Section_2D_Streamlines_Implementation}
-Streamlines are represented as polylines, and are obtained by iteraive
-integration form the seed point. The computation is processed via a list of
-Delaunay triangulation vertices.\\To implement the triangular grid, the CGAL 2D
-Delaunay triangulation is used. The priority queue used to store candidate seed
+Streamlines are represented as polylines, and are obtained by iterative
+integration from the seed point. The computation is processed via a list of
+Delaunay triangulation vertices.\\To implement the triangular grid, the \cgal
+\ccc{Delaunay_triangulation_2} class is used. The priority queue used to store
+candidate seed
 points is taken from the Standard Template Library~\cite{cgal:sgcsi-stlpg-97}.
 
-\section{Example}
+\section{Examples}
 \label{Section_2D_Streamlines_Example}
 The first example illustrates the generation of a 2D streamline placement from a 
 vector field defined on a regular grid.

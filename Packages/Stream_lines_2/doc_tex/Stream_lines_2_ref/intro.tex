@@ -12,29 +12,30 @@
 
 %\clearpage
 %\section{Reference pages for 2D placement of streamlines}
-\chapter{Placement of streamlines in 2D field}
+\chapter{2D Placement of Streamlines}
 \label{ref_chapter_2D_Streamlines}
+
+\ccChapterAuthor{Abdelkrim Mebarki}
 
 \subsection*{Definitions}
 Vector and direction fields are commonly used for modeling physical
 phenomena, where a direction and magnitude, or a vector is assigned to
 each point inside a domain.\\ A streamline is a curve everywhere
 tangent to the field. It can be considered as the path traced by an
-imaginary masless particle dropped into a steady fluid flow described
+imaginary massless particle dropped into a steady fluid flow described
 by the field.\\ A streamline is represented as a polyline iteratively
 elongated by bidirectional numerical integration started from a seed
 point, until it comes close to another streamline, hits the domain
-boundary, or reaches a critical point.\\ The Streamlines class consists
+boundary, or reaches a critical point.\\ The \ccc{Stream_lines_2} class consists
 of saturating the domain with a set of tangential streamlines in
 accordance with a specified density.\\ Streamlines are represented as
 containers of points, manipulated by an iterator range of points, and the
 whole placement is accessible via an iterator range of streamlines.\\ The
-streamlines class of \cgal\ depends on three
-template parameters.  The first template parameter stands for a class
-that provide different geometric primitives manipulated by the
-algorithm. The second one stands for a class that represent both the
+\ccc{Stream_lines_2} class of \cgal\ depends on two
+template parameters.  The first template parameter stands for a class that
+represent both the
 vector field and the visualisation domain with operations on them.
-The third template parameter stands for a function object that assure
+The second template parameter stands for a function object that assures
 the integration over the streamlines.
 
 \subsection*{Concepts}
