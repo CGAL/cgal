@@ -651,10 +651,17 @@ std::ostream& operator<<(std::ostream& o,
     o << "A|b: " << endl;
     typename MPS::B_iterator b = qp.b();
     typename MPS::A_iterator A = qp.A();
+    typename MPS::Row_type_iterator r = qp.row_types();
     for (unsigned int i=0; i<m; ++i) {
       for (unsigned int j=0; j<n; ++j)
 	o << std::setw(width) << A[j][i];
-      o << " | " << std::setw(width) << b[i] << endl;
+      if (r[i] == MPS::EQUAL)
+	o << " == ";
+      else if (r[i] == MPS::LESS_EQUAL)
+	o << " <= ";
+      else
+	o << " >= ";
+      o << std::setw(width) << b[i] << endl;
     }
 
     // output D:
@@ -670,7 +677,7 @@ std::ostream& operator<<(std::ostream& o,
     }
 
     // output bounds:
-    if (!qp.is_in_standard_form()) {
+    //if (!qp.is_in_standard_form()) {
       o << "Bounds:" << endl;
       typename MPS::FU_iterator fu = qp.fu();
       typename MPS::FL_iterator fl = qp.fl();
@@ -689,7 +696,7 @@ std::ostream& operator<<(std::ostream& o,
 	  o << "+infty)";
 	o << endl;
       }
-    }
+      //}
   }
   return o;
 }

@@ -50,7 +50,7 @@ int main(const int argNr,const char **args) {
   typedef double IT;
   typedef CGAL::Double ET;
   typedef CGAL::QP_MPS_instance<IT,ET> QP;
-  QP qp(std::cin);
+  QP qp(std::cin,true,verbosity);
 
   // check for format errors in MPS file:
   if (!qp.is_valid()) {
