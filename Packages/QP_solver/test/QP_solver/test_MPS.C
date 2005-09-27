@@ -63,6 +63,12 @@ int main(const int argNr,const char **args) {
     cout << endl << qp << endl;
   }
 
+  // in case of an LP, zero the D matrix:
+  // (Note: if you known in advance that the problem is an LP
+  // you should not do this, see below.)
+  if (qp.is_linear())
+    qp.make_zero_D();
+
   typedef CGAL::QP_solver_MPS_traits_d<QP,
     Tag_false, // is the instance known in advance to be an LP?
     Tag_false, // is the instance's D matrix known to be symmetric?
@@ -72,7 +78,8 @@ int main(const int argNr,const char **args) {
 
   CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
 				 qp.number_of_constraints(),
-				 qp.A(),qp.b(),qp.c(),qp.D(),
+				 qp.A(),qp.b(),qp.c(),
+				 qp.D(),
 				 qp.row_types(),
 				 qp.fl(),qp.l(),qp.fu(),qp.u(),
 				 0, // 0 for default pricing strategy
