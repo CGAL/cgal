@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Parameterization
 PROJECT_NUMBER         = 0.5
-OUTPUT_DIRECTORY       = /auto/papillon/u/papillon/0/user/lsaboret/src/cgal/CVSROOT/Parameterization/doc_doxygen/
+OUTPUT_DIRECTORY       = ./doc_doxygen/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -25,7 +25,7 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = YES
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = /auto/papillon/u/papillon/0/user/lsaboret/src/cgal/CVSROOT/Parameterization/
+STRIP_FROM_PATH        = .
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
@@ -81,8 +81,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /auto/papillon/u/papillon/0/user/lsaboret/src/cgal/CVSROOT/Parameterization/include/CGAL \
-                         /auto/papillon/u/papillon/0/user/lsaboret/src/cgal/CVSROOT/Parameterization/doc/concepts
+INPUT                  = .
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \
@@ -122,7 +121,7 @@ FILE_PATTERNS          = *.c \
                          *.PHP3 \
                          *.M \
                          *.MM
-RECURSIVE              = NO
+RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
