@@ -271,7 +271,6 @@ int main( int argc, char** argv) {
   return success? 0 : 2;
 }
 
-
 template<typename ET,
 	 typename Is_in_standard_form,
 	 typename Is_linear,
@@ -323,8 +322,6 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
   }
 }
  
-
-
 template<typename Rep>
 void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types) {
   int size = rel.size();
