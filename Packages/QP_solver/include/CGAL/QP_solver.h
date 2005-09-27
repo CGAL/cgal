@@ -33,14 +33,15 @@
 #include <CGAL/QP_solver/QP_basis_inverse.h>
 #include <CGAL/QP_pricing_strategy.h>
 
+#include <CGAL/functional.h>
+
 #include <CGAL/QP_full_exact_pricing.h>
 #include <CGAL/QP_partial_exact_pricing.h>
 
-#include <CGAL/functional.h>
 #include <CGAL/algorithm.h>
 
 #ifndef CGAL_IO_VERBOSE_OSTREAM_H
-#include <CGAL/IO/Verbose_ostream.h>
+  #include <CGAL/IO/Verbose_ostream.h>
 #endif
 
 #ifndef CGAL_PROTECT_VECTOR
@@ -58,11 +59,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// =================
-// class declaration
-// =================
+// ==================
+// class declarations
+// ==================
 template < class Rep_ >
 class QP_solver;
+
+namespace QP_solver_impl {
+  template < class Rep_ >
+  class Unbounded_direction_iterator;
+}
 
 // ===============
 // class interface
@@ -646,6 +652,24 @@ public:
 				   minus_c_B.begin(), et0);
     }
 
+public:
+  friend class QP_solver_impl::Unbounded_direction_iterator<Rep>;
+  typedef QP_solver_impl::Unbounded_direction_iterator<Rep>
+    Unbounded_direction_iterator;
+
+  // Returns an iterator over an unbounded direction, that is a |n|-vector
+  // w such that if x denotes the solver's current solution then the point
+  //
+  //    x - t w              for           t > 0,
+  //
+  // is a feasible point of the problem and the objective function on
+  // this ray is unbounded (i.e., it decreases when t increases).
+  Unbounded_direction_iterator unbounded_direction_begin();
+
+  // Returns the past-the-end iterator corresponding to
+  // unbounded_direction_begin().
+  Unbounded_direction_iterator unbounded_direction_end();
+
   private:    
 
     // private member functions
@@ -955,8 +979,6 @@ public:
     }
     
  private:
-    bool is_solution_unbounded(Tag_false is_linear);
-    bool is_solution_unbounded(Tag_true is_linear);
 
 private:
   // (inefficient) access to bounds of variables:
@@ -970,9 +992,8 @@ private:
   bool is_solution_optimal_for_auxiliary_problem();
   bool is_solution_feasible();
   bool is_solution_optimal();
-  void is_solution_optimal__add_2_D_x(Values& tau,const Values& x,Tag_true);
-  void is_solution_optimal__add_2_D_x(Values& tau,const Values& x,Tag_false);
-  
+  bool is_solution_unbounded();
+
 public:
   // validity checks:
   bool is_valid();
@@ -1651,6 +1672,7 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
 
 CGAL_END_NAMESPACE
 
+#include <CGAL/QP_solver/Unbounded_direction.h>
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #  include <CGAL/QP_solver.C>

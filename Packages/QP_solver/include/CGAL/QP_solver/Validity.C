@@ -103,7 +103,7 @@ bool QP_solver<Rep_>::is_valid()
     case UNBOUNDED:    
       {
 	const bool f = this->is_solution_feasible();
-	const bool u = this->is_solution_unbounded(Is_linear());
+	const bool u = this->is_solution_unbounded();
 	CGAL_qpe_debug {
 	  vout << "feasible: " << f << std::endl;
 	  vout << "unbounded: " << u << std::endl;
@@ -330,23 +330,6 @@ bool QP_solver<Rep_>::is_solution_feasible()
 }
 
 template < class Rep_ >
-void QP_solver<Rep_>::
-is_solution_optimal__add_2_D_x(Values& tau,const Values& x,Tag_true) // LP
-{
-}
-
-template < class Rep_ >
-void QP_solver<Rep_>::
-is_solution_optimal__add_2_D_x(Values& tau,const Values& x,Tag_false) // QP
-{
-  for (int col = 0; col < qp_n; ++col) {
-    D_pairwise_accessor twoD(qp_D,col);
-    for (int i=0; i<qp_n; ++i)
-      tau[col] += x[i] * twoD(i);
-  }
-}
-
-template < class Rep_ >
 bool QP_solver<Rep_>::
 is_solution_optimal()
 {
@@ -403,12 +386,14 @@ is_solution_optimal()
     for (int i=0; i<qp_m; ++i)
       tau[col] += lambda_prime[i] * qp_A[col][i];
   }
-  is_solution_optimal__add_2_D_x(tau,x,Is_linear()); // Note: we only
-						     // need to do
-						     // this in the
-						     // QP-case, so we
-						     // need a
-						     // helper...
+  if (!check_tag(Is_linear())) {
+    for (int col = 0; col < qp_n; ++col) {
+      D_pairwise_accessor twoD(qp_D,col);
+      for (int i=0; i<qp_n; ++i)
+	tau[col] += x[i] * twoD(i);
+    }
+  }
+
   for (int col = 0; col < qp_n; ++col)
     CGAL_qpe_debug {
       vout5 << "tau[" << col << "]= " << tau[col] << std::endl;
@@ -457,235 +442,110 @@ is_solution_optimal()
 }
 
 template < class Rep_ >
-bool QP_solver<Rep_>::
-is_solution_unbounded(Tag_false)		//QP case
+bool QP_solver<Rep_>::is_solution_unbounded()
 {
+  // (This is documented in documentation/Test_suite.tex for the case
+  // when the program is in standard form.)
+  //
+  // An "unbounded direction" w is defined to be a vector w such that
+  // x_t(t):= x'-tw yields for any t>=0 feasible solutions with unbounded
+  // objective value (assuming x' denotes the current solution).
+  //
+  // In order to check that the vector w returned by
+  // unbounded_direction_begin() and unbounded_direction_end() is
+  // indeed un anbounded direction, we need to check (i) feasibility
+  // for all t>0 and (ii) that the objective value decreases while t
+  // increases.  As to (i), we need
+  //
+  //     A x_t(t) <=> b   for all t
+  //
+  // which is equivalent to 
+  //
+  //     row j is GREATER_EQUAL then (Aw)_j <= 0,
+  //     row j is         EQUAL then (Aw)_j  = 0,                (C8)
+  //     row j is   LOWER_EQUAL then (Aw)_j >= 0.
+  //
+  // Feasibility of the constraints for the variables x is similar: we
+  // need l <= x_t(t) <= u for all t, which is equivalent to
+  //
+  //     x_j has finite lower bound then w_j <= 0,               (C9)
+  //     x_j has finite upper bound then w_j >= 0.               (C10)
+  //
+  // As to unboundedness (ii), we have (see equation (10) in
+  // documentation/Test_suite.tex)
+  //
+  //     f(x_t(t)) = f(x') + t^2 w^TDw - t(c^T+2x^TD)w,
+  //
+  // that is, the objective function f behaves like a parabola.  So if
+  // it should be unbounded then it has to be a lower parabola which
+  // means w^TDw<=0, but D is positive semidefinite, so w^TDw = 0.
+  // Thus, f must be linear in t, and unboundedness then implies
+  // (c^T+2x^TD)w > 0.  Subsuming, (ii) requires
+  //
+  //      w^TDw = 0,                                             (C11)
+  //      (c^T+2x^TD)w > 0.                                      (C12)
 
-    // doc:Test_suite.tex
-    // Note: the basic feasible direction w is defined such that 
-    // x'-tw yields feasible solutions where x' denotes the current
-    // solution.
-    // The following conditions for the basic feasible direction
-    // w defined as w^T=[q_B_O^T|q_B_S^T|-e_j^T], j in N, must be met
-    // 1.  w <= 0
-    // 2. A * w = 0
-    // 3. w^T * D * w > 0
-    // 4. (c^T + 2 * x'^T * D) * w > 0
-    //  
-    Index_iterator i_it, M_i_it;
-    Value_iterator v_it;
-    Indices        M;
-    bool           unbounded, basic_vars_nonpos;
-    int sl_ind;
-    
-    CGAL_expensive_precondition(is_solution_feasible());
-    
-    //check nonpositivity of w_B_O
-    basic_vars_nonpos = true;
-    v_it = q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++v_it, ++i_it) {
-        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
+  CGAL_expensive_precondition(is_solution_feasible());
+  
+  // check that the direction is not the zero vector:
+  Unbounded_direction_iterator w = unbounded_direction_begin();
+  bool all_zero = true;
+  for (int i=0; i<qp_n; ++i) {
+    if (w[i] != et0)
+      all_zero = false;
+    CGAL_qpe_debug {
+      vout5 << "w[" << i << "]= " << w[i] << std::endl;
     }
-    
-    //check nonpositivity of w_B_S
-    v_it = q_x_S.begin();
-    for (i_it = B_S.begin(); i_it != B_S.end(); ++v_it, ++i_it) {
-        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
-    }
+  }
+  if (all_zero)
+    return false;
 
-    //check basic feasible direction w for A * w=0
-    Values lhs_col(qp_m, et0);
-    //initialize M
-    for (int i = 0; i < qp_m; ++i) {
-        M.push_back(i);
-    }
-    
-    // A_CuS_B,B_O * w_B_O
-    v_it = q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        A_by_index_accessor  a_accessor( qp_A[*i_it]);
-	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-	    lhs_col[*M_i_it] += (*v_it)
-	        * (*A_by_index_iterator( M_i_it, a_accessor));
-	}
-    }
-    
-    // A_CuS_B,B_S * w_B_S
-    v_it = q_x_S.begin();
-    for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
-        sl_ind = *i_it - qp_n;
-	if (slack_A[sl_ind].second) {
-	    lhs_col[slack_A[sl_ind].first] -= *v_it;
-	} else {
-	    lhs_col[slack_A[sl_ind].first] += *v_it;
-	}
-    }
-    
-    //A_CuS_B,N * w_N
-    //
-    // nonbasic nonzero component of w_N corresponds to original variable            
-    if (j < qp_n) {
-        A_by_index_accessor  a_accessor( qp_A[j]);
-        for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-	    lhs_col[*M_i_it] -= d
-	        * (*A_by_index_iterator( M_i_it, a_accessor));
-        }
-    // nonbasic nonzero component of w_N corresponds to slack variable	
-    } else {
-        sl_ind = j - qp_n;
-	if (slack_A[sl_ind].second) {
-	    lhs_col[slack_A[sl_ind].first] += d;
-	} else {
-	    lhs_col[slack_A[sl_ind].first] -= d;
-	}
-    }  
-    unbounded = basic_vars_nonpos;    
-    for (int row = 0; row < qp_m; ++row) {
-        unbounded = unbounded && (lhs_col[row] == et0); 
-    }
-    
-    // check w^T * D * w = 0
-    // D_w contains D * w, will be reused later for the computation
-    // of (c + 2 * x'^T * D) * w
-    // Note: only original variables contribute
-    Values D_w(qp_n, et0);
-    for (int row = 0; row < qp_n; ++row) {
-       v_it = q_x_O.begin();
-       // nonbasic nonzero component of w_N corresponds to original variable
-       if (j < qp_n) D_w[row] = -qp_D[row][j];
-       for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-           D_w[row] += (*v_it) * qp_D[row][*i_it];
-       }    
-    }
-    // w^T * D_w
-    ET sum = et0;
-    v_it =q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-	sum += (*v_it) * D_w[*i_it];
-    }
-    // nonbasic nonzero component of w_N corresponds to original variable 
-    if (j < qp_n) sum -= D_w[j];
-    unbounded = unbounded && (sum == et0);
-    
-    // check c * w + 2 * x'^T * D * w > 0
-    // reuse of D_w
-    // Note: only original variables contribute
-    sum = et0;
-    v_it = x_B_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) { 
-        sum += (*v_it) * D_w[*i_it];
-    }
-    sum *= et2;
-    // c * w
-    v_it = q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        sum += (*v_it) * qp_c[*i_it];
-    }
-    // nonbasic nonzero component of w_N corresponds to original variable
-    if (j < qp_n) sum -= d * qp_c[j];
-    unbounded = unbounded && (sum > et0);
-    return unbounded;
-}
+  // compute A w into aw:
+  Values aw(qp_m, et0);
+  for (int i=0; i<qp_n; ++i)
+    for (int j=0; j<qp_m; ++j)
+      aw[j] += w[i] * qp_A[i][j];
 
+  // check feasibility (C8):
+  for (int row=0; row<qp_m; ++row)
+    if (qp_r[row] == Rep::GREATER_EQUAL && aw[row]  > et0 ||
+	qp_r[row] == Rep::EQUAL         && aw[row] != et0 ||
+	qp_r[row] == Rep::LESS_EQUAL    && aw[row]  < et0) 
+      return false;
 
-template < class Rep_ >
-bool QP_solver<Rep_>::
-is_solution_unbounded(Tag_true)		//LP case
-{
+  // check feasibility (C9) and (C10):
+  for (int i=0; i<qp_n; ++i)
+    if (has_finite_lower_bound(i) && w[i] > et0 ||
+	has_finite_upper_bound(i) && w[i] < et0)
+      return false;
 
-    // doc:Test_suite.tex
-    // Note: the basic feasible direction w is defined such that 
-    // x'-tw yields feasible solutions where x' denotes the current
-    // solution.
-    // The following conditions for the basic feasible direction
-    // w defined as w^T=[q_B_O^T|q_B_S^T|-e_j^T], j in N, must be met
-    // 1.  w<=0
-    // 2. A * w=0
-    // 3. c^T * w>0
-    //
-    Index_iterator i_it, M_i_it;
-    Value_iterator v_it;
-    Indices        M;
-    bool           unbounded, basic_vars_nonpos;
-    int sl_ind;
-    
-    CGAL_expensive_precondition(is_solution_feasible());
-    
-    //check nonpositivity of w_B_O
-    basic_vars_nonpos = true;
-    v_it = q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++v_it, ++i_it) {
-        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
-    }
-    
-    //check nonpositivity of w_B_S
-    v_it = q_x_S.begin();
-    for (i_it = B_S.begin(); i_it != B_S.end(); ++v_it, ++i_it) {
-        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
-    }
+  // check unboundedness w^TDw=0 (C11):
+  Values Dw(qp_n, et0);     // Note: will be reused for (C12) below.
+  if (!check_tag(Is_linear())) {
+    for (int i=0; i<qp_n; ++i)
+      for (int j=0; j<qp_n; ++j)
+	Dw[j] += w[i] * qp_D[j][i];
+    ET sum = et0;           // will hold w^T * Dw...
+    for (int i=0; i<qp_n; ++i)
+      sum += w[i] * Dw[i];
+    if (sum != et0)
+      return false;
+  }
 
-    //check basic feasible direction w for A * w=0
-    Values lhs_col(qp_m, et0);
-    //initialize M
-    for (int i = 0; i < qp_m; ++i) {
-        M.push_back(i);
-    }
-    
-    // A_CuS_B,B_O * w_B_O
-    v_it = q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        A_by_index_accessor  a_accessor( qp_A[*i_it]);
-	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-	    lhs_col[*M_i_it] += (*v_it)
-	        * (*A_by_index_iterator( M_i_it, a_accessor));
-	}
-    }
-    
-    // A_CuS_B,B_S * w_B_S
-    v_it = q_x_S.begin();
-    for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
-        sl_ind = *i_it - qp_n;
-	if (slack_A[sl_ind].second) {
-	    lhs_col[slack_A[sl_ind].first] -= *v_it;
-	} else {
-	    lhs_col[slack_A[sl_ind].first] += *v_it;
-	}
-    }
-    
-    //A_CuS_B,N * w_N
-    //
-    // nonbasic nonzero component of w_N corresponds to original variable    
-    if (j < qp_n) {
-        A_by_index_accessor  a_accessor( qp_A[j]);
-        for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
-	    lhs_col[*M_i_it] -= d
-	        * (*A_by_index_iterator( M_i_it, a_accessor));
-        }
-    // nonbasic nonzero component of w_N corresponds to slack variable
-    } else {
-        sl_ind = j - qp_n;
-	if (slack_A[sl_ind].second) {
-	    lhs_col[slack_A[sl_ind].first] += d;
-	} else {
-	    lhs_col[slack_A[sl_ind].first] -= d;
-	}
-    }  
-    unbounded = basic_vars_nonpos;    
-    for (int row = 0; row < qp_m; ++row) {
-        unbounded = unbounded && (lhs_col[row] == et0); 
-    }
-        
-    //check c^T*w > 0
-    // Note: only original variables contribute 
-    ET sum = et0;
-    v_it = q_x_O.begin();
-    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-        sum += (*v_it) * qp_c[*i_it];
-    }
-    // nonbasic nonzero component of w_N corresponds to original variable
-    if (j < qp_n) sum -= d * qp_c[j];
-    unbounded = unbounded && (sum > et0);
-    return unbounded;
+  // check unboundedness (c^T+2x^TD)w > 0 (C12):
+  ET m1 = et0, m2 = et0;
+  Value_const_iterator x_it = x_B_O.begin();
+  for (Index_const_iterator i_it = B_O.begin();
+       i_it != B_O.end();
+       ++i_it, ++x_it)
+    m1 += *x_it * Dw[*i_it];
+  m1 *= et2;                  // Note: m1 contains 2x^TDw*d (and not 2x^TDw).
+  for (int i=0; i<qp_n; ++i)
+    m2 += w[i] * qp_c[i];
+  if (m2*d + m1 <= et0)
+    return false;
+
+  return true;
 }
 
 CGAL_END_NAMESPACE
