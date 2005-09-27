@@ -11,13 +11,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class SkinTraits_3 >
-class Mixed_complex_visitor_default {
+template <class SkinTraits_3,
+	  class Simplicial_TDS,
+	  class Regular_TDS = Triangulation_data_structure_3 <
+            Triangulation_vertex_base_3<typename SkinTraits_3::Regular_traits>,
+            Regular_triangulation_cell_base_3<typename SkinTraits_3::Regular_traits> > >
+class Mixed_complex_observer_default {
 public:
-  typedef SkinTraits_3                               Skin_traits_3;
-  typedef typename SkinTraits_3::Regular             Regular;
-  typedef typename SkinTraits_3::Simplicial          Simplicial;
-  typedef typename SkinTraits_3::Mesh_K              Mesh_K;
+  typedef SkinTraits_3                                         Skin_traits_3;
+  typedef typename Skin_traits_3::Regular_traits                Regular_traits;
+  typedef typename Skin_traits_3::Simplicial_K                  Simplicial_K;
+  typedef typename Skin_traits_3::Mesh_K                        Mesh_K;
+
+  typedef Regular_triangulation_3<Regular_traits, Regular_TDS> Regular;
+  typedef Triangulation_3<Simplicial_K, Simplicial_TDS>        Simplicial;
 
   typedef typename Regular::Vertex_handle            Rt_Vertex_handle;
   typedef typename Regular::Edge                     Rt_Edge;
@@ -42,7 +49,6 @@ public:
   typedef Skin_surface_sphere_3<Mesh_K>         Sphere_surface;
   typedef Skin_surface_hyperboloid_3<Mesh_K>    Hyperboloid_surface;
 
-  typedef typename Skin_traits_3::Mesh_K        Mesh_K;
   typedef typename Mesh_K::RT                   Mesh_RT;
   typedef typename Mesh_K::Point_3              Mesh_Point;
   typedef Weighted_point<Mesh_Point,Mesh_RT>    Mesh_Weighted_point;
@@ -50,7 +56,7 @@ public:
   typedef typename Skin_traits_3::R2M_converter R2M_converter;
   typedef typename Skin_traits_3::S2M_converter S2M_converter;
 
-  Mixed_complex_visitor_default(Mesh_RT shrink) : 
+  Mixed_complex_observer_default(Mesh_RT shrink) : 
     shrink(shrink), r2m_converter(SkinTraits_3().r2m_converter_object()),
     s2m_converter(SkinTraits_3().s2m_converter_object()) {
   }
@@ -140,13 +146,21 @@ public:
 
 template < 
   class SkinTraits_3,
-  class Mixed_complex_visitor_ = Mixed_complex_visitor_default<SkinTraits_3> >
+  class Simplicial_TDS,
+  class Regular_TDS = Triangulation_data_structure_3 <
+    Triangulation_vertex_base_3<typename SkinTraits_3::Regular_traits>,
+    Regular_triangulation_cell_base_3<typename SkinTraits_3::Regular_traits> > ,
+  class Mixed_complex_observer_ =
+    Mixed_complex_observer_default<SkinTraits_3, Simplicial_TDS, Regular_TDS> >
 class Mixed_complex_builder_3 {
 public:
-  typedef SkinTraits_3                          Skin_traits_3;
-  typedef Mixed_complex_visitor_                Mixed_complex_visitor;
-  typedef typename Skin_traits_3::Regular       Regular;
-  typedef typename Skin_traits_3::Simplicial    Simplicial;
+  typedef SkinTraits_3                                         Skin_traits_3;
+  typedef typename SkinTraits_3::Regular_traits                Regular_traits;
+  typedef typename SkinTraits_3::Simplicial_K                  Simplicial_K;
+
+  typedef Regular_triangulation_3<Regular_traits, Regular_TDS> Regular;
+  typedef Triangulation_3<Simplicial_K, Simplicial_TDS>        Simplicial;
+  typedef Mixed_complex_observer_                               Mixed_complex_observer;
 
   typedef typename Skin_traits_3::R2S_converter R2S_converter;
 private:
@@ -198,7 +212,7 @@ public:
 
   Mixed_complex_builder_3(Regular &T, Simplicial &sc, double shrink)
     : T(T), sc(sc), triangulation_incr_builder(sc), shrink(shrink), 
-      visitor(shrink), compute_anchor_obj(T) {
+      observer(shrink), compute_anchor_obj(T) {
     edge_index[0][0] = -1; edge_index[0][1] =  0;
     edge_index[0][2] =  1; edge_index[0][3] =  2;
     edge_index[1][0] =  0; edge_index[1][1] = -1;
@@ -213,9 +227,9 @@ public:
   }
 
   Mixed_complex_builder_3(Regular &T, Simplicial &sc, double shrink,   
-    Mixed_complex_visitor &visitor)
+    Mixed_complex_observer &observer)
     : T(T), sc(sc), triangulation_incr_builder(sc), shrink(shrink), 
-      visitor(visitor), compute_anchor_obj(T) {
+      observer(observer), compute_anchor_obj(T) {
     edge_index[0][0] = -1; edge_index[0][1] =  0;
     edge_index[0][2] =  1; edge_index[0][3] =  2;
     edge_index[1][0] =  0; edge_index[1][1] = -1;
@@ -259,12 +273,6 @@ private:
   void construct_1_cells();
   void construct_2_cells();
   void construct_3_cells();
-
-//  typedef std::map<Rt_Simplex, typename Sc_Geom_traits::Point_3> Focus_map;
-//  Focus_map foc_map;
-
-  // Reference back to the regular triangulation
-//  std::map<Sc_Cell_handle, Rt_Simplex> backRef;
 	
 private:
   Regular &T;
@@ -272,7 +280,7 @@ private:
   Triangulation_incremental_builder triangulation_incr_builder;
   Sc_RT shrink;
   R2S_converter r2s_converter;
-  Mixed_complex_visitor visitor;
+  Mixed_complex_observer observer;
 
   Construct_weighted_circumcenter_3<
     Regular_triangulation_euclidean_traits_3<
@@ -318,9 +326,11 @@ private:
 };
 
 // Constructs the vertices of the simplicial complex
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
 void
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_vertices() {
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::construct_vertices() {
   Rt_All_cells_iterator acit;
   Rt_Finite_cells_iterator cit;
   Rt_Finite_facets_iterator fit;
@@ -532,18 +542,17 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_vertices
 
 // Constructs the cells of the mixed complex corresponding
 // to Regular vertices
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
 void
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::
 construct_0_cells() {
   Rt_Simplex sDel, sVor;
   Sc_Vertex_handle vh[4];
   
-  //   Quadratic_surface *surf;
   for (Rt_Finite_vertices_iterator vit=T.finite_vertices_begin();
        vit!=T.finite_vertices_end(); vit++) {
-    //     surf = new Sphere_surface(traits.r2m_converter(vit->point()), 
-    //       shrink_m, 1);
     
     Rt_Simplex simplex(vit);
     sDel = compute_anchor_obj.anchor_del(vit);
@@ -576,7 +585,6 @@ construct_0_cells() {
 		Sc_Cell_handle ch;
 		
 		ch = add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
-		// 		ch->surf = surf;
 	      }
 	    }
 	  }
@@ -588,29 +596,18 @@ construct_0_cells() {
 
 // Constructs 1-cells of the mixed complex corresponding to edges
 // of the regular triangulation
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
 void
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_1_cells() {
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::construct_1_cells() {
   Rt_Simplex sDel, sVor, sDel0;
   Sc_Vertex_handle vh[4];
   Rt_Vertex_handle v[2];
   Sc_Cell_handle ch;
   
-  //   Quadratic_surface *surf;
   for (Rt_Finite_edges_iterator eit=T.finite_edges_begin();
        eit!=T.finite_edges_end(); eit++) {
-    //     surf = new Hyperboloid_surface(
-    //       traits.s2m_converter(
-    // 	Sc_Weighted_point(
-    // 	  orthocenter_obj(
-    // 	    traits.r2s_converter(eit->first->vertex(eit->second)->point()),
-    // 	    traits.r2s_converter(eit->first->vertex(eit->third)->point())),
-    // 	  orthoweight_obj(
-    // 	    traits.r2s_converter(eit->first->vertex(eit->second)->point()),
-    // 	    traits.r2s_converter(eit->first->vertex(eit->third)->point())))),
-    //       traits.r2m_converter(eit->first->vertex(eit->second)->point())-
-    //       traits.r2m_converter(eit->first->vertex(eit->third)->point()),
-    //       shrink_m, 1);
     Rt_Simplex simplex(*eit);
     sDel = compute_anchor_obj.anchor_del(*eit);
     sVor = compute_anchor_obj.anchor_vor(*eit);
@@ -646,17 +643,14 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_1_cells(
 		  }
 		  // vh: dimension are (01,11,12,13)
 		  ch = add_cell(vh,orient,simplex);
-		  // 		  ch->surf = surf;
 									
 		  vh[1] = index_02[ccir].V[(index0+fi)&3][index0];
 		  // vh: dimension are (01,02,12,13)
 		  ch = add_cell(vh,1-orient,simplex);
-		  // 		  ch->surf = surf;
 									
 		  vh[2] = index_03[ccir].V[index0];
 		  // vh: dimension are (01,02,03,13)
 		  ch = add_cell(vh,orient,simplex);
-		  // 		  ch->surf = surf;
 		}
 	      }
 	    }
@@ -675,37 +669,21 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_1_cells(
 
 // Constructs 2-cells of the mixed complex corresponding to facets
 // of the regular triangulation
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
 void
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::
 construct_2_cells() {
-  Rt_Simplex sDel, sVor;//, sDel0;
+  Rt_Simplex sDel, sVor;
   Sc_Vertex_handle vh[4]; // Implicit function over vLabels is increasing ...
-  // 	Rt_Vertex_handle v[2];
   Rt_Cell_handle rt_ch;
   Sc_Cell_handle ch;
-  //   Quadratic_surface *surf;
 	
   for (Rt_Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end();
        fit ++) {
-    //     surf = new Hyperboloid_surface(
-    //       traits.s2m_converter(
-    // 	Sc_Weighted_point(
-    // 	  orthocenter_obj(
-    // 	    traits.r2s_converter(fit->first->vertex((fit->second+1)&3)->point()),
-    // 	    traits.r2s_converter(fit->first->vertex((fit->second+2)&3)->point()),
-    // 	    traits.r2s_converter(fit->first->vertex((fit->second+3)&3)->point())),
-    // 	  orthoweight_obj(
-    // 	    traits.r2s_converter(fit->first->vertex((fit->second+1)&3)->point()),
-    // 	    traits.r2s_converter(fit->first->vertex((fit->second+2)&3)->point()),
-    // 	    traits.r2s_converter(fit->first->vertex((fit->second+3)&3)->point())))),
-    //       typename M_traits::Construct_orthogonal_vector_3()(
-    // 	traits.r2m_converter(fit->first->vertex((fit->second+1)&3)->point()),
-    // 	traits.r2m_converter(fit->first->vertex((fit->second+2)&3)->point()),
-    // 	traits.r2m_converter(fit->first->vertex((fit->second+3)&3)->point())),
-    //       1-shrink_m, -1);
-    
+
     rt_ch = fit->first;
     int index = fit->second;
     Rt_Simplex simplex(*fit);
@@ -740,15 +718,12 @@ construct_2_cells() {
 		  }
 
 		  ch = add_cell(vh,orient,simplex);
-		  // 		  ch->surf = surf;
 									
 		  vh[2] = index_13[rt_ch].V[edge_index[index0][index1]];
 		  ch = add_cell(vh,1-orient,simplex);
-		  // 		  ch->surf = surf;
 									
 		  vh[1] = index_03[rt_ch].V[index0];
 		  ch = add_cell(vh,orient,simplex);
-		  // 		  ch->surf = surf;
 		} 
 	      }
 	    }
@@ -769,32 +744,17 @@ construct_2_cells() {
 
 // Constructs 3-cells of the mixed complex corresponding to cells
 // of the regular triangulation
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
 void
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_3_cells() {
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::construct_3_cells() {
   Sc_Vertex_handle vh[4];
   Sc_Cell_handle ch;
 
-  //   Quadratic_surface *surf;
   for (Rt_Finite_cells_iterator cit = T.finite_cells_begin();
        cit != T.finite_cells_end();
        cit++) {
-    //     surf = new Sphere_surface(
-    //       traits.s2m_converter(
-    // 	Sc_Weighted_point(
-    // 	  orthocenter_obj(
-    // 	    traits.r2s_converter(cit->vertex(0)->point()),
-    // 	    traits.r2s_converter(cit->vertex(1)->point()),
-    // 	    traits.r2s_converter(cit->vertex(2)->point()),
-    // 	    traits.r2s_converter(cit->vertex(3)->point())),
-    // 	  orthoweight_obj(
-    // 	    traits.r2s_converter(cit->vertex(0)->point()),
-    // 	    traits.r2s_converter(cit->vertex(1)->point()),
-    // 	    traits.r2s_converter(cit->vertex(2)->point()),
-    // 	    traits.r2s_converter(cit->vertex(3)->point()))
-    // 	  )),
-    //       1-shrink_m, -1);
-		
     // construct the tetrahedron:
     //   C[ch], C[Facet(ch,fi)], C[Edge(ch,ei,vi)], C[ch->vertex(vi)]
     Rt_Simplex simplex(cit);
@@ -818,7 +778,6 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_3_cells(
 		  orient = (index1 + (vi==3))&1;
 		}
 		ch = add_cell(vh, orient, simplex);
-		// 		ch->surf = surf;
 	      }
 	    }
 	  }
@@ -829,22 +788,28 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::construct_3_cells(
 }
 
 // Adds a vertex to the simplicial complex
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
+typename Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::Sc_Vertex_handle
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::
 add_vertex (Rt_Simplex &sDel, Rt_Simplex &sVor)
 {
   Sc_Vertex_handle vh = triangulation_incr_builder.add_vertex();
   vh->point() = get_anchor(sDel, sVor);
-  visitor.after_vertex_insertion(sDel,sVor,vh); 
+  observer.after_vertex_insertion(sDel,sVor,vh); 
 
   return vh;
 }
 
 // Gets a vertex from the simplicial complex based on the anchors
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::get_vertex (
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
+typename Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::Sc_Vertex_handle
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::get_vertex (
   Rt_Simplex &sDel, Rt_Simplex &sVor)
 {
   Rt_Vertex_handle vh;
@@ -920,9 +885,12 @@ Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::get_vertex (
 }
 
 // Adds a cell to the simplicial complex
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Cell_handle
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
+typename Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+				 Regular_TDS, Mixed_complex_observer_>::Sc_Cell_handle
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::
 add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   assert((orient==0) || (orient==1));
   assert(vh[0] != Sc_Vertex_handle()); assert(vh[1] != Sc_Vertex_handle());
@@ -936,14 +904,16 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   } else {
     ch = triangulation_incr_builder.add_cell(vh[0], vh[1], vh[3], vh[2]);
   }
-  //backRef[ch] = s;
-  visitor.after_cell_insertion(s, ch);
+  observer.after_cell_insertion(s, ch);
   return ch;
 }
 
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Point
-Mixed_complex_builder_3<SkinTraits_3,Mixed_complex_visitor_>::get_anchor(Rt_Simplex &sDel, Rt_Simplex &sVor)
+template < class SkinTraits_3, class Simplicial_TDS,
+	   class Regular_TDS, class Mixed_complex_observer_>
+typename SkinTraits_3::Simplicial_K::Point_3
+Mixed_complex_builder_3<SkinTraits_3, Simplicial_TDS,
+			Regular_TDS, Mixed_complex_observer_>::
+get_anchor(Rt_Simplex &sDel, Rt_Simplex &sVor)
 {
   Rt_Vertex_handle vh;
   Rt_Edge           e;

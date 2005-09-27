@@ -8,15 +8,28 @@
 
 typedef CGAL::Skin_surface_traits_3<>                 Skin_traits;
 typedef Skin_traits::Regular_traits                   Regular_traits;
-typedef Skin_traits::Regular                          Regular;
+typedef Skin_traits::Simplicial_K                     Simplicial_K;
+typedef Skin_traits::Mesh_K                           Mesh_K;
+
+// Regular triangulation
+typedef CGAL::Regular_triangulation_3<Regular_traits> Regular;
+
+// Simplicial complex
+typedef CGAL::Triangulation_data_structure_3 <
+  CGAL::Skin_surface_simplicial_vertex_base_3<Simplicial_K,Regular>,
+  CGAL::Skin_surface_simplicial_cell_base_3<Simplicial_K,Mesh_K,Regular> >  Simplicial_TDS;
+typedef CGAL::Triangulation_3<Simplicial_K, Simplicial_TDS>                 Simplicial;
+
+// Polyhedral mesh
+typedef Skin_surface_polyhedral_items_3<Simplicial>               Skin_surface_polyhedral_items;
+typedef CGAL::Polyhedron_3<Mesh_K, Skin_surface_polyhedral_items> Mesh;
+
 typedef Regular_traits::Weighted_point                Reg_weighted_point;
 typedef Regular_traits::Bare_point                    Reg_point;
-typedef Skin_traits::Simplicial                       Simplicial;
-typedef Simplicial::Finite_cells_iterator             Simpl_Fin_cells_it;
+typedef Simplicial::Finite_cells_iterator             T2_Fin_cells_it;
 
-typedef CGAL::Mixed_complex_builder_3<Skin_traits>    Mixed_complex_builder;
-
-typedef Skin_traits::Mesh                             Mesh;
+typedef CGAL::Mixed_complex_builder_3<Skin_traits, Simplicial_TDS>    Mixed_complex_builder;
+  
 typedef CGAL::Marching_tetrahedra_3<Simplicial, Mesh> Marching_tetrahedra;
 
 

@@ -272,6 +272,19 @@ public:
   }
 };
 
+// template <
+//   class SkinTraits_3, class Triangulation_3, class Mesh_3,
+//   class MarchingSurfaceObserver >
+// void marching_tetrahedra(Triangulation_3 &t, Mesh_3 &m,
+//   typename SkinTraits_3::Mesh_K::FT iso=0) {
+//   typedef typename Mesh_3::HalfedgeDS                    HDS;
+//   typedef Mesh_builder<Triangulation_3,HDS,Extractor>  Mesh_builder;
+  
+//   MarchingSurfaceObserver extr(iso);
+//   Mesh_builder builder(t, extr);
+//   m.delegate(builder);
+// }
+
 CGAL_END_NAMESPACE 
 
 #endif // MARCHING_TETRAHEDRA_H
