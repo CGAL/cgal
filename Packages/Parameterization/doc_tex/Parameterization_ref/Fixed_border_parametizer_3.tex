@@ -37,7 +37,7 @@ Implementation notes:\begin{itemize}
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Fixed\_border\_parametizer\_3 is a model of the ParametizerTraits\_3 concept.
+Model of the ParametizerTraits\_3 concept (although you cannot instanciate this class).
 
 %END-AUTO(\ccIsModel)
 
@@ -60,9 +60,9 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class MeshAdaptor\_3,
-class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$,
-class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$
+class MeshAdaptor\_3, 
+class BorderParametizer\_3 = Circular\_border\_arc\_length\_parametizer\_3$<$MeshAdaptor\_3$>$, 
+class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename MeshAdaptor\_3::NT$>$$>$ 
 class Fixed\_border\_parametizer\_3;
 
 %END-AUTO(\ccParameters)

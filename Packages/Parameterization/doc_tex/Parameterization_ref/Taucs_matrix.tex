@@ -24,6 +24,8 @@
 
 Struct Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
 
+This kind of matrix can be either symmetric or not. Symmetric matrices store only the lower triangle.
+
 TODO: reallocate the array of non null elements when it's full
 
 %END-AUTO(\ccDefinition)
@@ -49,7 +51,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class T$>$
+class T$>$ 
 struct Taucs\_matrix;
 
 %END-AUTO(\ccParameters)
