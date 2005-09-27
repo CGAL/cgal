@@ -46,6 +46,34 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if 1 // for debugging only -- will remove this (kf.)
+template<typename T>
+void is_double_kf(const char* msg,const T&)
+{
+  std::cout << "type of '" << msg << "' is unknown" << std::endl;
+}
+template<>
+void is_double_kf(const char* msg,const double&)
+{
+  std::cout << "type of '" << msg << "' is double" << std::endl;
+}
+template<>
+void is_double_kf(const char* msg,const CGAL::Gmpq&)
+{
+  std::cout << "type of '" << msg << "' is CGAL::Gmpq" << std::endl;
+}
+template<>
+void is_double_kf(const char* msg,const CGAL::Gmpz&)
+{
+  std::cout << "type of '" << msg << "' is CGAL::Gmpz" << std::endl;
+}
+template<>
+void is_double_kf(const char* msg,const CGAL::Double&)
+{
+  std::cout << "type of '" << msg << "' is CGAL::Double" << std::endl;
+}
+#endif
+
 // ==================
 // class declarations
 // ==================
@@ -199,14 +227,20 @@ public:
     // TEMPORARILY:
     typedef typename std::iterator_traits<
       typename std::iterator_traits<MatrixIt>::value_type>::value_type IT;
-    #if 0 // for debugging only, see log
+    #if 1 // for debugging only, see log
     const IT first = m[r][c];
     const IT second = m[c][r];
     std::cout << "first=" << first << ", second=" << second
 	      << ", sum=" <<  (first + second)
 	      << ", m[r][c]=" << m[r][c] << ", m[c][r]=" << m[c][r]
 	      << ", " << "sum=" << (m[ r][ c] + m[ c][ r]) 
-	      << ", " << "(sum)=" << ((m[ r][ c]) + (m[ c][ r])) << std::endl;
+	      << ", " << "(sum)=" << ((m[ r][ c]) + (m[ c][ r])) 
+	      << ", " << "result=" 
+                      << (ResultType(m[ r][ c]) + ResultType(m[ c][ r]))
+	      << std::endl;
+    is_double_kf("IT",IT());
+    is_double_kf("ResultType",ResultType());
+    is_double_kf("m[r][c]",m[ r][ c]);
     #endif
     return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
   }
