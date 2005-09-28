@@ -61,10 +61,34 @@ public:
 protected:
 	Vector_2 get_vector_field(const Point_2 & p) const;
 	FT get_density_field(const Point_2 & p) const;
-	void fill(std::ifstream & f);
+	template <class PointInputIterator, class VectorInputIterator>
+	void fill(PointInputIterator pBegin, PointInputIterator pEnd, VectorInputIterator vBegin){
+		std::cout << "reading file...\n";
+		while(pBegin != pEnd){
+			Point_2 p;
+			Vector_2 v;
+			p = (*pBegin);
+			v = (*vBegin);
+			Vertex_handle m_Vertex_handle = m_D_Ttr.insert(p);
+			field_map[p] = v;
+			if (m_D_Ttr.number_of_vertices() == 1){
+				maxx = minx = p.x();
+				maxy = miny = p.y();}
+			if(p.x()<minx)
+				minx = p.x();
+			if(p.y()<miny)
+				miny = p.y();
+			if(p.x()>maxx)
+				maxx = p.x();
+			if(p.y()>maxy)
+				maxy = p.y();
+			pBegin++;
+			vBegin++;}
+			std::cout << "number of samples " << m_D_Ttr.number_of_vertices() << "\n";}
 public:
-	Triangular_field_2(std::ifstream & f){
-	fill(f);}
+	template <class PointInputIterator, class VectorInputIterator>
+	Triangular_field_2(PointInputIterator pBegin, PointInputIterator pEnd, VectorInputIterator vBegin){
+		fill(pBegin, pEnd, vBegin);}
 	inline typename Geom_traits::Iso_rectangle_2 iso_rectangle() const;
 	std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
 	bool is_in_domain(const Point_2 & p) const;
@@ -80,34 +104,6 @@ protected:
 	FT distance(const Point_2 & p, const Point_2 & q){
 		return sqrt(((p.x() - q.x()) * (p.x() - q.x())) + ((p.y() - q.y()) * (p.y() - q.y())));};
 };
-
-template <class StreamLinesTraits_2>
-void
-Triangular_field_2<StreamLinesTraits_2>::fill(std::ifstream & f){
-	std::cout << "reading file...\n";
-	int number_of_vertices;
-	f >> number_of_vertices;
-	for (int i=0;i<number_of_vertices;i++){
-		Point_2 p;
-		Vector_2 v;
-		f >> p;
-		f >> v;
-		if (v.x()!=0 && v.y()!=0){
-		p = Point_2(p.x()*200, p.y()*200);
-		Vertex_handle m_Vertex_handle = m_D_Ttr.insert(p);
-		field_map[p] = v;
-		if (m_D_Ttr.number_of_vertices() == 1){
-			maxx = minx = p.x();
-			maxy = miny = p.y();}
-		if(p.x()<minx)
-			minx = p.x();
-		if(p.y()<miny)
-			miny = p.y();
-		if(p.x()>maxx)
-			maxx = p.x();
-		if(p.y()>maxy)
-			maxy = p.y();}}
-			std::cout << "number of samples " << m_D_Ttr.number_of_vertices() << "\n";}
 
 template <class StreamLinesTraits_2> 
 inline
