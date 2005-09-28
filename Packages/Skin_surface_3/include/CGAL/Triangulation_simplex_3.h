@@ -1,34 +1,34 @@
-#ifndef SIMPLEX_3_H
-#define SIMPLEX_3_H
+#ifndef TRIANGULATION_SIMPLEX_3_H
+#define TRIANGULATION_SIMPLEX_3_H
 
 CGAL_BEGIN_NAMESPACE
 
 template < class Triangulation >
-class Simplex_3 {
+class Triangulation_simplex_3 {
   typedef Triangulation             T;
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Edge          Edge;
   typedef typename T::Facet         Facet;
   typedef typename T::Cell_handle Cell_handle;
 public:
-  Simplex_3() : ref(-1), ch(0L) {}
+  Triangulation_simplex_3() : ref(-1), ch(0L) {}
 	
-  Simplex_3(Vertex_handle v) {
+  Triangulation_simplex_3(Vertex_handle v) {
     ch = v->cell();
     ref = (ch->index(v) << 2); /* dim == 0 */
     CGAL_assertion (ch != 0L);
   }
-  Simplex_3(Edge e) {
+  Triangulation_simplex_3(Edge e) {
     ch = e.first;
     ref = (((e.third<< 2) + e.second) << 2) + 1; /* dim */
     CGAL_assertion (ch != 0L);
   }
-  Simplex_3(Facet f) {
+  Triangulation_simplex_3(Facet f) {
     ch = f.first;
     ref = (f.second << 2) + 2; /* dim */
     CGAL_assertion (ch != 0L);
   }
-  Simplex_3(Cell_handle c) {
+  Triangulation_simplex_3(Cell_handle c) {
     ch = c;
     ref = 3; /* dim */
     CGAL_assertion (ch != 0L);
@@ -62,9 +62,9 @@ public:
     return (ref & 3);
   }
   template < class T >
-  friend bool operator==(Simplex_3<T> s0, Simplex_3<T> s1);
+  friend bool operator==(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1);
   template < class T >
-  friend bool operator< (Simplex_3<T> s0, Simplex_3<T> s1);
+  friend bool operator< (Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1);
 	
 private:
   int ref;        // storage iijjdd (index i, index j, dimension of simplex)
@@ -81,8 +81,8 @@ private:
 ///////////////////////////////
 template < class T >
 bool
-operator==(Simplex_3<T> s0, Simplex_3<T> s1) {
-  typedef Simplex_3<T>             Sim;
+operator==(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
+  typedef Triangulation_simplex_3<T>             Sim;
   if (s0.dimension() != s1.dimension()) return false;
 	
   typename Sim::Cell_handle neighbor;
@@ -115,8 +115,8 @@ operator==(Simplex_3<T> s0, Simplex_3<T> s1) {
 
 template < class T >
 bool
-operator<(Simplex_3<T> s0, Simplex_3<T> s1) {
-  typedef Simplex_3<T>             Sim;
+operator<(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
+  typedef Triangulation_simplex_3<T>             Sim;
 
   if (s0 == s1) return false;
   if (s0.dimension() < s1.dimension()) return true;
@@ -169,4 +169,4 @@ operator<(Simplex_3<T> s0, Simplex_3<T> s1) {
 
 CGAL_END_NAMESPACE
 
-#endif // Simplex_3_H
+#endif // TRIANGULATION_SIMPLEX_3_H

@@ -12,13 +12,13 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template < class SkinTraits_3 >
+template < class SkinSurfaceTraits_3 >
 class Voronoi_triangulator_visitor_default {
 public:
-  typedef SkinTraits_3                               Skin_traits_3;
-  typedef typename SkinTraits_3::Regular             Regular;
-  typedef typename SkinTraits_3::Simplicial          Simplicial;
-  typedef typename SkinTraits_3::Mesh_K              Mesh_K;
+  typedef SkinSurfaceTraits_3                               Skin_traits_3;
+  typedef typename SkinSurfaceTraits_3::Regular             Regular;
+  typedef typename SkinSurfaceTraits_3::Simplicial          Simplicial;
+  typedef typename SkinSurfaceTraits_3::Mesh_K              Mesh_K;
 
   typedef typename Regular::Vertex_handle            Rt_Vertex_handle;
   typedef typename Regular::Edge                     Rt_Edge;
@@ -35,9 +35,9 @@ public:
   typedef typename Simplicial::Edge             Sc_Edge;
   typedef typename Simplicial::Facet            Sc_Facet;
   typedef typename Simplicial::Cell_handle      Sc_Cell_handle;
-  typedef typename Skin_traits_3::Simplicial_K  Simplicial_K;
-  typedef typename Simplicial_K::Point_3        Sc_Point;
-  typedef typename Simplicial_K::RT             Sc_RT;
+  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel  Triangulated_mixed_complex_kernel;
+  typedef typename Triangulated_mixed_complex_kernel::Point_3        Sc_Point;
+  typedef typename Triangulated_mixed_complex_kernel::RT             Sc_RT;
   typedef Weighted_point<Sc_Point,Sc_RT>        Sc_Weighted_point;
   typedef Skin_surface_quadratic_surface_3<Mesh_K> QuadrSurface;
   typedef Skin_surface_sphere_3<Mesh_K>         Sphere_surface;
@@ -48,11 +48,11 @@ public:
   typedef typename Mesh_K::Point_3              Mesh_Point;
   typedef Weighted_point<Mesh_Point,Mesh_RT>    Mesh_Weighted_point;
   
-  typedef typename Skin_traits_3::R2M_converter R2M_converter;
-  typedef typename Skin_traits_3::S2M_converter S2M_converter;
+  typedef typename Skin_traits_3::R2P_converter R2P_converter;
+  typedef typename Skin_traits_3::T2P_converter T2P_converter;
 
   Voronoi_triangulator_visitor_default() 
-  : r2m_converter(SkinTraits_3().r2m_converter_object())
+  : r2p_converter(SkinSurfaceTraits_3().r2p_converter_object())
   {
   }
 
@@ -70,7 +70,7 @@ public:
     // Use the same surface as many times as possible:
     if (vh != vh_old) {
       vh_old = vh;
-      surf = new Sphere_surface(r2m_converter(vh->point()), 1, 1);
+      surf = new Sphere_surface(r2p_converter(vh->point()), 1, 1);
     }
     ch->surf = surf;
   }
@@ -78,21 +78,21 @@ public:
   Rt_Vertex_handle vh_old;
   QuadrSurface *surf;
   
-  R2M_converter r2m_converter;
+  R2P_converter r2p_converter;
 };
 
 template < 
-  class SkinTraits_3,
+  class SkinSurfaceTraits_3,
   class VoronoiTriangulatorVisitor_ = 
-    Voronoi_triangulator_visitor_default<SkinTraits_3> >
+    Voronoi_triangulator_visitor_default<SkinSurfaceTraits_3> >
 class Voronoi_triangulator_3 {
 public:
-  typedef SkinTraits_3                          Skin_traits_3;
+  typedef SkinSurfaceTraits_3                          Skin_traits_3;
   typedef VoronoiTriangulatorVisitor_           Visitor;
   typedef typename Skin_traits_3::Regular       Regular;
   typedef typename Skin_traits_3::Simplicial    Simplicial;
 
-  typedef typename Skin_traits_3::R2S_converter R2S_converter;
+  typedef typename Skin_traits_3::R2T_converter R2T_converter;
 private:
   typedef typename Regular::Vertex_handle            Rt_Vertex_handle;
   typedef typename Regular::Edge                     Rt_Edge;
@@ -108,7 +108,7 @@ private:
   typedef typename Regular::Cell_circulator          Rt_Cell_circulator;
 
   typedef Simplex_3<Regular>                    Rt_Simplex;
-  typedef typename Skin_traits_3::Regular_K       Rt_Geom_traits;
+  typedef typename Skin_traits_3::Regular_kernel       Rt_Geom_traits;
   typedef typename Regular::Bare_point          Rt_Point;
   typedef typename Regular::Geom_traits::RT     Rt_RT;
   typedef typename Regular::Weighted_point      Rt_Weighted_point;
@@ -125,7 +125,7 @@ private:
   typedef typename Simplicial::Finite_cells_iterator    Sc_Finite_cells_iterator;
   typedef typename Simplicial::Cell_circulator          Sc_Cell_circulator;
 	
-  typedef typename Skin_traits_3::Simplicial_K          Sc_Geom_traits;
+  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel          Sc_Geom_traits;
   typedef typename Sc_Geom_traits::Point_3              Sc_Point;
   typedef typename Sc_Geom_traits::RT                   Sc_RT;
   //   typedef Weighted_point<Sc_Point>                Sc_Weighted_point;
@@ -205,7 +205,7 @@ private:
   Regular &T;
   Simplicial &sc;
   Triangulation_incremental_builder triangulation_incr_builder;
-  R2S_converter r2s_converter;
+  R2T_converter r2s_converter;
   Visitor visitor;
 
   Construct_weighted_circumcenter_3<
@@ -240,9 +240,9 @@ private:
 };
 
 // Constructs the vertices of the simplicial complex
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
 void
-Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::
+Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 construct_vertices() {
   Rt_All_cells_iterator acit;
   Rt_Finite_cells_iterator cit;
@@ -313,9 +313,9 @@ construct_vertices() {
 
 // Constructs 3-cells of the mixed complex corresponding to cells
 // of the regular triangulation
-template <class SkinTraits_3, class Mixed_complex_visitor_>
+template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
 void
-Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::
+Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 construct_cells() {
   Rt_Simplex sVor;
   Sc_Vertex_handle vh[4];
@@ -365,9 +365,9 @@ construct_cells() {
 }
 
 // Adds a vertex to the simplicial complex
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
-Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::
+template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
+Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 add_vertex (Rt_Simplex &sVor)
 {
   Sc_Vertex_handle vh = triangulation_incr_builder.add_vertex();
@@ -378,9 +378,9 @@ add_vertex (Rt_Simplex &sVor)
 }
 
 // Gets a vertex from the simplicial complex based on the anchors
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
-Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::get_vertex (
+template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
+Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_vertex (
   Rt_Simplex &sVor)
 {
   Rt_Vertex_handle vh;
@@ -417,9 +417,9 @@ Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::get_vertex (
 }
 
 // Adds a cell to the simplicial complex
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Cell_handle
-Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::
+template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Cell_handle
+Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   assert((orient==0) || (orient==1));
   assert(vh[0] != Sc_Vertex_handle()); assert(vh[1] != Sc_Vertex_handle());
@@ -482,9 +482,9 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   return ch;
 }
 
-template <class SkinTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::Sc_Point
-Voronoi_triangulator_3<SkinTraits_3,Mixed_complex_visitor_>::get_anchor(Rt_Simplex &sVor)
+template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Point
+Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_anchor(Rt_Simplex &sVor)
 {
   Rt_Vertex_handle vh;
   Rt_Edge           e;

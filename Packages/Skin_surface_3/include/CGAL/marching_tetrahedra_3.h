@@ -9,46 +9,6 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template <class T_, class HDS_, class Converter_ >
-class Skin_surface_extractor {
-public:
-  typedef T_         T;
-  typedef HDS_       HDS;
-  typedef Converter_ Converter;
-
-  typedef typename T::Vertex_handle            Sc_vertex_handle;
-  typedef typename T::Edge                     Sc_edge;
-  typedef typename T::Facet                    Sc_facet;
-  typedef typename T::Cell_handle              Sc_cell_handle;
-  typedef typename T::Geom_traits::Point_3     Sc_point;
-
-  typedef typename HDS::Traits                 Mesh_K;
-  typedef typename Mesh_K::RT                  Mesh_rt;
-  typedef typename Mesh_K::Point_3             Mesh_point;
-
-  Skin_surface_extractor(Mesh_rt iso_value=0) : iso_value(iso_value) {
-  }
-  
-  Sign sign(Sc_vertex_handle const vh) {
-    return CGAL::sign(
-      vh->cell()->surf->value(converter(vh->point())) - iso_value);
-  }
-  Mesh_rt value(Sc_cell_handle const &ch, Mesh_point const &p) {
-    return ch->surf->value(p);
-  }
-  Mesh_rt value(Sc_cell_handle const &ch, Sc_point const &p) {
-    return ch->surf->value(converter(p));
-  }
-  Mesh_point intersection(Sc_edge const& e) {
-    // Precondition: e.first is not an infinite cell: they have not surface set
-    return e.first->surf->to_surface(
-      converter(e.first->vertex(e.second)->point()),
-      converter(e.first->vertex(e.third)->point()));
-  }
-  
-  Converter converter;
-  Mesh_rt iso_value;
-};
 
 
 template <class Simplicial_complex, class HalfedgeDS, class MeshExtractor >
@@ -242,46 +202,65 @@ private:
 };
 
 template < 
-  class Triangulation_3, class Mesh_3, 
-  class S2M_converter = Cartesian_converter<
-      typename Triangulation_3::Geom_traits,
-      typename Mesh_3::Traits>,
-  class MarchingSurfaceExtractor =
-    Skin_surface_extractor<
-      Triangulation_3, typename Mesh_3::HalfedgeDS,S2M_converter > >
+  class Triangulation_3,
+  class Mesh_3, 
+  class MarchingTetrahedraTraits_3,
+  class T2P_converter>
 class Marching_tetrahedra_3 {
 public:
   typedef Triangulation_3                     Triang;
   typedef Mesh_3                              Mesh;
   typedef typename Mesh::HalfedgeDS           HDS;
-  typedef S2M_converter                       Converter;
-  typedef MarchingSurfaceExtractor            Extractor;
+  typedef T2P_converter                       Converter;
+  typedef MarchingTetrahedraTraits_3          Marching_tetrahedra_traits;
   typedef typename Mesh::Traits::RT           Mesh_rt;
-  typedef Mesh_builder<Triang,HDS,Extractor>  Mesh_builder;
+  typedef Mesh_builder<Triang,HDS,Marching_tetrahedra_traits>  Mesh_builder;
   
   Marching_tetrahedra_3() {}
   
   void operator()(Triang &t, Mesh &m, Mesh_rt iso=0) {
-    Extractor extr(iso);
+    Marching_tetrahedra_traits extr(iso);
     Mesh_builder builder(t, extr);
     m.delegate(builder);
   }
-  void operator()(Triang &t, Mesh &m, Extractor &extr, Mesh_rt iso=0) {
+  void operator()(Triang &t, Mesh &m, Marching_tetrahedra_traits &extr, Mesh_rt iso=0) {
     Mesh_builder builder(t, extr);
     m.delegate(builder);
   }
 };
 
-// template <
-//   class SkinTraits_3, class Triangulation_3, class Mesh_3,
-//   class MarchingSurfaceObserver >
-// void marching_tetrahedra(Triangulation_3 &t, Mesh_3 &m,
-//   typename SkinTraits_3::Mesh_K::FT iso=0) {
-//   typedef typename Mesh_3::HalfedgeDS                    HDS;
-//   typedef Mesh_builder<Triangulation_3,HDS,Extractor>  Mesh_builder;
+template <class Triangulation_3,
+	  class Polyhedron_3,
+	  class T2P_converter,
+	  class MarchingTetrahedraTraits_3 >
+void marching_tetrahedra_3(
+  Triangulation_3 &triangulation,
+  Polyhedron_3 &polyhedron,
+  MarchingTetrahedraTraits_3 &marching_traits,
+  T2P_converter &converter) {
   
-//   MarchingSurfaceObserver extr(iso);
-//   Mesh_builder builder(t, extr);
+  typedef typename Polyhedron_3::HalfedgeDS                    HDS;
+  typedef MarchingTetrahedraTraits_3                           Marching_traits;
+  typedef Mesh_builder<Triangulation_3,HDS,Marching_traits>    Mesh_builder;
+  
+  Mesh_builder builder(triangulation, marching_traits);
+  polyhedron.delegate(builder);
+}
+
+// NGHK: add this one later:
+// template <class Triangulation_3, class Polyhedron_3,
+// 	  class MarchingTetrahedraTraits_3 >
+// void marching_tetrahedra(
+//   Triangulation_3 &triangulation,
+//   Polyhedron_3 &polyhedron,
+//   MarchingSurfaceTraits_3 &extractor) {
+//   typedef typename Mesh_3::HalfedgeDS                              HDS;
+//   typedef Mesh_builder<Triangulation_3,HDS,MarchingSurfaceObserver>
+//                                                                    Mesh_builder;
+
+  
+//   MarchingSurfaceTraits_3 marching_traits(iso_value);
+//   Mesh_builder builder(t, marching_traits);
 //   m.delegate(builder);
 // }
 

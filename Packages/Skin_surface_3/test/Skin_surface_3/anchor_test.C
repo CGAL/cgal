@@ -7,23 +7,22 @@ typedef CGAL::Skin_surface_traits_3<>     Skin_traits;
 // *********************
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
-typedef CGAL::Regular_triangulation_euclidean_traits_3<
-  Skin_traits::Regular_K>                         Regular_traits;
+typedef Skin_traits::Regular_traits                       Regular_traits;
 typedef CGAL::Regular_triangulation_3<Regular_traits>     Regular;
 
 #include <CGAL/Compute_anchor_3.h>
 
 #include <fstream>
 
-#include <CGAL/Simplex_3.h>
-typedef Regular_traits::RT                    Weight;
-typedef Regular_traits::Bare_point            Point;
-typedef Regular_traits::Weighted_point        Weighted_point;
-typedef Regular::Vertex_handle                Vertex_handle;
-typedef Regular::Edge                         Edge;
-typedef Regular::Facet                        Facet;
-typedef Regular::Cell_handle                  Cell_handle;
-typedef CGAL::Simplex_3<Regular>              Simplex;
+#include <CGAL/Triangulation_simplex_3.h>
+typedef Regular_traits::RT                     Weight;
+typedef Regular_traits::Bare_point             Point;
+typedef Regular_traits::Weighted_point         Weighted_point;
+typedef Regular::Vertex_handle                 Vertex_handle;
+typedef Regular::Edge                          Edge;
+typedef Regular::Facet                         Facet;
+typedef Regular::Cell_handle                   Cell_handle;
+typedef CGAL::Triangulation_simplex_3<Regular> Simplex;
 
 void test_anchor_del() {
   Regular reg;

@@ -2,15 +2,15 @@
 #define COMPUTE_ANCHOR_3_H
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Simplex_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class RegularTriangulation3>
+template < class RegularTriangulation_3>
 class Compute_anchor_3
 {
 public:
-  typedef RegularTriangulation3                        Regular;
+  typedef RegularTriangulation_3                       Regular;
   typedef typename Regular::Geom_traits                Geom_traits;
   typedef typename Geom_traits::Weighted_point         Weighted_point;
   
@@ -24,7 +24,7 @@ public:
   typedef typename Regular::Finite_facets_iterator   Finite_facets_iterator;
   typedef typename Regular::Finite_cells_iterator    Finite_cells_iterator;
   typedef typename Regular::Facet_circulator         Facet_circulator;
-  typedef Simplex_3<Regular>                         Simplex;
+  typedef Triangulation_simplex_3<Regular>           Simplex;
 
 
   Compute_anchor_3(Regular &reg) : reg(reg) {
