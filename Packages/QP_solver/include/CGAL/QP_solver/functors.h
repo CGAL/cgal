@@ -57,18 +57,21 @@ void is_double_kf(const char* msg,const double&)
 {
   std::cout << "type of '" << msg << "' is double" << std::endl;
 }
+class Gmpq;
 template<>
-void is_double_kf(const char* msg,const CGAL::Gmpq&)
+void is_double_kf(const char* msg,const Gmpq&)
 {
   std::cout << "type of '" << msg << "' is CGAL::Gmpq" << std::endl;
 }
+class Gmpz;
 template<>
-void is_double_kf(const char* msg,const CGAL::Gmpz&)
+void is_double_kf(const char* msg,const Gmpz&)
 {
   std::cout << "type of '" << msg << "' is CGAL::Gmpz" << std::endl;
 }
+class Double;
 template<>
-void is_double_kf(const char* msg,const CGAL::Double&)
+void is_double_kf(const char* msg,const Double&)
 {
   std::cout << "type of '" << msg << "' is CGAL::Double" << std::endl;
 }
