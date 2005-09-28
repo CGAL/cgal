@@ -24,7 +24,7 @@ class PointMark : public K::Point_3 {
   PointMark(const Self& pm) : Point_3(pm) {}
   PointMark(const Point_3& p) : Point_3(p) {}
 
-  Self operator=(const Self& pm) {
+  Self& operator=(const Self& pm) {
     (Point_3) *this = (Point_3) pm;
     return *this;
   }
@@ -44,7 +44,9 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
   typedef CGAL::Sphere_geometry<K>                        Kernel;
   typedef typename K::Point_3                             Point_3;
-  typedef Point_3                                           Mark;
+  typedef typename K::Vector_3                            Vector_3;
+  //  typedef Mark_                                           Mark;
+  typedef Point_3                                         Mark;
   typedef CGAL::Sphere_map<Kernel,CGAL::SM_items,Mark>    Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                  SM_decorator;
   typedef SM_decorator                                    Base;
@@ -66,6 +68,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
   typedef typename Sphere_map::SHalfedge_around_sface_const_circulator
     SHalfedge_around_sface_const_circulator;
 
+  typedef typename Sphere_map::Object_handle              Object_handle;
 
   template<typename Nef_polyhedron_3>
   class SVertex_creator {     
@@ -405,13 +408,86 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       return b1+(b2-CGAL::ORIGIN); 
     } 
   };
+  
+  Object_handle top;
+  Object_handle bottom;
+
+  void locate_top_and_bottom() {
+    std::vector<SFace_iterator> topSF;
+    std::vector<SFace_iterator> bottomSF;
+    SFace_iterator sfi = sfaces_begin();
+    topSF.push_back(sfi);
+    bottomSF.push_back(sfi);
+
+    Comparison_result cr;
+    for(++sfi;sfi != sfaces_end(); ++sfi) {
+      cr = compare_z(sfi->mark(), (*topSF.begin())->mark());
+      if(cr != CGAL::SMALLER) {
+	if(cr == CGAL::LARGER)
+	  topSF.clear();
+	topSF.push_back(sfi);	
+      }
+      cr = compare_z(sfi->mark(), (*bottomSF.begin())->mark());
+      if(cr != CGAL::LARGER) {
+	if(cr == CGAL::SMALLER)
+	  bottomSF.clear();
+	bottomSF.push_back(sfi);	
+      }    
+    }
+
+    SFace_handle sf(topSF.front());
+    if(topSF.size()==1)
+      top = Object_handle(SFace_const_handle(sf));
+    else {
+      SHalfedge_handle se(sf->sface_cycles_begin());
+      SHalfedge_around_sface_circulator sfc(se), sfend(sfc);       
+      
+      if(topSF.size()==2) {
+	while(sfc->circle().c()!=0) {
+	  ++sfc;
+	  CGAL_assertion(sfc != sfend);
+	}
+	top = Object_handle(SHalfedge_const_handle(sfc));
+      } else {
+	CGAL_assertion(topSF.size() > 0);
+	while(sfc->source()->point()-CGAL::ORIGIN != Vector_3(0,0,1)) {
+	  ++sfc;
+	  CGAL_assertion(sfc != sfend);
+	}
+	top = Object_handle(SVertex_const_handle(sfc->source()));      
+      }
+    }
+
+    sf = bottomSF.front();
+    if(bottomSF.size()==1)
+      bottom = Object_handle(SFace_const_handle(sf));
+    else {
+      SHalfedge_handle se(sf->sface_cycles_begin());
+      SHalfedge_around_sface_circulator sfc(se), sfend(sfc);       
+      
+      if(bottomSF.size()==2) {
+	while(sfc->circle().c()!=0) {
+	  ++sfc;
+	  CGAL_assertion(sfc != sfend);
+	}
+	bottom = Object_handle(SHalfedge_const_handle(sfc));
+      } else {
+	CGAL_assertion(bottomSF.size() > 0);
+	while(sfc->source()->point()-CGAL::ORIGIN != Vector_3(0,0,1)) {
+	  ++sfc;
+	  CGAL_assertion(sfc != sfend);
+	}
+	bottom = Object_handle(SVertex_const_handle(sfc->source()));      
+      }
+    }
+  }
 
  public:
   Gausian_map() : Base(new Sphere_map) {}
 
   template<typename NK> 
     Gausian_map(const CGAL::Nef_polyhedron_3<NK>& N3,
-		typename CGAL::Nef_polyhedron_3<NK>::Volume_const_iterator c) : Base(new Sphere_map) {
+		typename CGAL::Nef_polyhedron_3<NK>::SFolume_const_iterator c) : Base(new Sphere_map) {
 
     typedef CGAL::Nef_polyhedron_3<NK> Nef_polyhedron_3;
     typedef typename Nef_polyhedron_3::Vertex_const_iterator 
@@ -578,6 +654,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       sf->mark() = v->point();
       link_as_face_cycle(se,sf);
     }
+    locate_top_and_bottom();
   }
 
     void simplify() {
@@ -652,6 +729,13 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       O.select(va);
       //      dump();
       simplify();
+    }
+
+    Object_handle get_top() {
+      return top;
+    }
+    Object_handle get_bottom() {
+      return bottom;
     }
 
     void dump() {
