@@ -148,8 +148,17 @@ int main(int argc, char* argv[]) {
 
   N.delegate(esb);
 
-  //  std::cerr << N;
-  //  CGAL_assertion(N.is_valid(1,0));
+  for(se=D.shalfedges_begin();se!=D.shalfedges_end();++se) {
+    if(se->snext()->circle() == se->circle()) {
+      Single_wall2 W(se->circle().orthogonal_vector(), ip);
+      N.delegate(W);      
+    }
+  }
+
+  N.delegate(esb);
+
+  std::cerr << N;
+  CGAL_assertion(N.is_valid(1,0));
 
   typedef CGAL::Gausian_map<Kernel> Gausian_map;
 

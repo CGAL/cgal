@@ -62,6 +62,11 @@ int main(int argc, char* argv[]) {
   Gausian_map G1(P1);
   G1.dump();
 
+  G1.dump();
+  CGAL::gausian_map_to_nef_3<Kernel, Nef_polyhedron::Items, Nef_polyhedron::Mark> Converter1(G1);
+  Nef_polyhedron N1;
+  N1.delegate(Converter1,true);
+
   t0 = t.time();
 
   // create Gausian map of P2
