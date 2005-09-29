@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MarchingTetrahedraObserver_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSMarchingtetrahedraobserverRev}{$Revision$}
+\RCSdefDate{\RCSMarchingtetrahedraobserverDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MarchingTetrahedraObserver_3}
+
+  Required types and member functions for the \ccRefName\ concept.
+  This concept is used to customize the behavior of the marching
+  tetrahedra algorithm.
+
+  After the construction of a vertex or a triangle of the mesh, the
+  functions \ccc{after_vertex_insertion} and
+  \ccc{after_triangle_insertion} are called respectively.
+
+\ccRefines
+  
+\ccTypes
+
+
+
+\ccCreation
+\ccCreationVariable{observer}
+
+\ccConstructor{MarchingTetrahedraObserver_3(HDS_rt iso_value=0);}{}
+
+\ccOperations
+
+\ccMethod{Sign sign(const Vertex_handle vh) const;}{ }
+\ccMethod{HDS_point intersection(const Edge &e) const;}{ }
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
