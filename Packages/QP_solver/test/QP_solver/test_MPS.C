@@ -73,7 +73,7 @@ int main(const int argNr,const char **args) {
     Tag_false, // is the instance known in advance to be an LP?
     Tag_false, // is the instance's D matrix known to be symmetric?
     Tag_false, // Has_equalities_only_and_full_rank (see manual)?
-    Tag_true>  // Is_in_standard_form (see manual)? // todo: should be false
+    Tag_false> // Is_in_standard_form (see manual)? // todo: should be false
     Traits;
 
   CGAL::QP_pricing_strategy<Traits> *strategy = 
