@@ -76,20 +76,41 @@ int main(const int argNr,const char **args) {
     Tag_true>  // Is_in_standard_form (see manual)? // todo: should be false
     Traits;
 
-  CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
+  CGAL::QP_pricing_strategy<Traits> *strategy = 
+    new CGAL::QP_full_filtered_pricing<Traits,IT>;
+
+  typedef CGAL::QP_solver<Traits> Solver;
+  Solver solver(qp.number_of_variables(),
 				 qp.number_of_constraints(),
 				 qp.A(),qp.b(),qp.c(),
 				 qp.D(),
 				 qp.row_types(),
 				 qp.fl(),qp.l(),qp.fu(),qp.u(),
-				 0, // 0 for default pricing strategy
+                                 strategy,
 				 verbosity);
 
   if (solver.is_valid()) {
     cout << "Solution is valid." << endl;
-    return 0;
   } else {
     cout << "Solution is not valid!." << endl;
     return 1;
   }
+
+  // get solution:
+  cout << "Solution:" << endl;
+  std::vector<ET> x(qp.number_of_variables(),0);  // solution vector
+  Solver::Basic_variable_numerator_iterator
+    x_it =  solver.basic_original_variables_numerator_begin(),
+    x_end = solver.basic_original_variables_numerator_end();
+  Solver::Basic_variable_index_iterator 
+    x_ind = solver.basic_original_variables_index_begin();
+  const ET denom = solver.solution_denominator();
+  for (; x_it != x_end; ++x_it, ++x_ind)
+    x[*x_ind] = *x_it;
+
+  // output solution:
+  for (unsigned int i=0; i<qp.number_of_variables(); ++i)
+    cout << "x[" << i << "] = " << x[i] << "/" << denom
+	 << " (= " << CGAL::to_double(x[i])/CGAL::to_double(denom) << ")"
+	 << endl;
 }
