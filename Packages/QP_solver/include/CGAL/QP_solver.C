@@ -681,23 +681,41 @@ init_x_O_v_i(Tag_false)
                     x_O_v_i[i] = FIXED;
                 } else {                                  // lower < upper   
                     if ((et0 >= qp_l[i]) && (et0 <= qp_u[i])) {
-                        x_O_v_i[i] = ZERO;
+                        if (et0 == qp_l[i]) {
+                            x_O_v_i[i] = LOWER;
+                        } else if (et0 == qp_u[i]) {
+                            x_O_v_i[i] = UPPER;
+                        } else {
+                            x_O_v_i[i] = ZERO;
+                        }
                     } else {
                         x_O_v_i[i] = LOWER;
                     } 
                 }   
             } else {                                     // upper bound infinity
                 if (et0 >= qp_l[i]) {
-                    x_O_v_i[i] = ZERO;
+                    if (et0 == qp_l[i]) {
+                        x_O_v_i[i] = LOWER;
+                    } else {
+                        x_O_v_i[i] = ZERO;
+                    }
                 } else {
                     x_O_v_i[i] = LOWER;
                 }
             }
         } else {                                        // lower bound -infinity
-            if (et0 <= qp_u[i]) {
-                x_O_v_i[i] = ZERO; 
-            } else {
-                x_O_v_i[i] = UPPER;
+            if (*(qp_fu+i)) {                           // upper bound finite
+                if (et0 <= qp_u[i]) {
+                    if (et0 == qp_u[i]) {
+                        x_O_v_i[i] = UPPER;
+                    } else {
+                        x_O_v_i[i] = ZERO;
+                    } 
+                } else {
+                    x_O_v_i[i] = UPPER;
+                }
+            } else {                                    // upper bound -infinity
+                x_O_v_i[i] = ZERO;
             }
         }
     }   
@@ -806,7 +824,8 @@ init_solution( )
     x_B_S .insert( x_B_S .end(), slack_A.size(), et0);
 
 //TESTING the updates of r_C, r_S_B, r_B_O, w
-    ratio_test_bound_index = LOWER;
+//    ratio_test_bound_index = LOWER;
+    direction = 1;
     
     // initialization of vectors r_C, r_S_B  
     init_r_C(Is_in_standard_form());
@@ -1164,20 +1183,23 @@ pricing( )
     }
 
     // call pricing strategy
-    j = strategyP->pricing();
+    j = strategyP->pricing(direction);
 
     // diagnostic output
     CGAL_qpe_debug {
-	if ( vout.verbose()) {
-	    if ( j < 0) {
-		vout2 << "entering variable: none" << std::endl;
-	    } else {
-		vout1 << "  ";
-		vout  << "entering"; vout2 << " variable"; vout << ": ";
-		vout  << j;
-		vout2 << " (" << variable_type( j) << ')' << std::endl;
-	    }
-	}
+        if ( vout.verbose()) {
+            if ( j < 0) {
+                vout2 << "entering variable: none" << std::endl;
+	       } else {
+                vout1 << "  ";
+                vout  << "entering"; vout2 << " variable"; vout << ": ";
+                vout  << j;
+                vout2 << " (" << variable_type( j) << ')' << std::endl;
+                vout << "direction: "
+                    << ((direction == 1) ? "positive" : "negative")
+                    << std::endl;
+            }
+        }
     }
 }
 
@@ -1315,14 +1337,20 @@ ratio_test_1( )
     }
 
 // TESTING: 
-    direction = 1;
+//  direction = 1;
     
     // check `t_i's
     x_i = et1;                                          // trick: initialize
     q_i = et0;                                          // minimum with +oo
 
     // computation of t_{min}^{j}
-    ratio_test_1__t_min_j(Is_in_standard_form());    
+    ratio_test_1__t_min_j(Is_in_standard_form());
+    CGAL_qpe_debug {
+        if (vout2.verbose()) {
+            vout2.out() << "t_min_j: " << x_i << '/' << q_i << std::endl;
+            vout2.out() << std::endl;
+        }
+    }    
 
     // what happens, if all original variables are nonbasic?
 /*
@@ -1338,21 +1366,21 @@ ratio_test_1( )
 
     // diagnostic output
     CGAL_qpe_debug {
-	if ( vout2.verbose()) {
-	    for ( unsigned int k = 0; k < B_O.size(); ++k) {
-		vout2.out() << "t_O_" << k << ": "
-			    << x_B_O[ k] << '/' << q_x_O[ k]
-			    << ( ( q_i > et0) && ( i == B_O[ k]) ? " *" : "")
-			    << std::endl;
-	    }
-	    if ( has_ineq) {
-		for ( unsigned int k = 0; k < B_S.size(); ++k) {
-		    vout2.out() << "t_S_" << k << ": "
-				<< x_B_S[ k] << '/' << q_x_S[ k]
-				<< ( ( q_i > et0) && ( i == B_S[ k]) ? " *":"")
-				<< std::endl;
-		}
-	    }
+        if ( vout2.verbose()) {
+            for ( unsigned int k = 0; k < B_O.size(); ++k) {
+                print_ratio_1_original(k, x_B_O[k], q_x_O[k]);
+            }     
+            if ( has_ineq) {
+                for ( unsigned int k = 0; k < B_S.size(); ++k) {
+                    /*
+                    vout2.out() << "t_S_" << k << ": "
+				    << x_B_S[ k] << '/' << q_x_S[ k]
+				    << ( ( q_i > et0) && ( i == B_S[ k]) ? " *":"")
+				    << std::endl;
+				    */
+				    print_ratio_1_slack(k, x_B_S[k], q_x_S[k]);
+                }
+            }
 	    if ( is_QP && is_phaseII) {
 		vout2.out() << std::endl
 			    << "  t_j: " << mu << '/' << nu
@@ -1389,6 +1417,9 @@ ratio_test_1__t_min_j(Tag_true is_in_standard_form)
 {
 }
 
+// By the pricing step we have the following precondition
+//  direction == 1 => x_O_v_i[j] == (LOWER v ZERO)
+// direction == -1 => x_O_v_i[j] == (UPPER v ZERO) 
 template < class Rep_ >                         // Upper bounded
 void  QP_solver<Rep_>::
 ratio_test_1__t_min_j(Tag_false is_in_standard_form)
@@ -1397,7 +1428,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
         if (direction == 1) {
             if (x_O_v_i[j] == LOWER) {              // has lower bound value
                 if (*(qp_fu+j)) {                   // has finite upper bound
-                    x_i = d * (qp_u[j] - qp_l[j]);
+                    x_i = (qp_u[j] - qp_l[j]);
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = UPPER;
@@ -1407,7 +1438,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
                 }
             } else {                                // has value zero
                 if (*(qp_fu+j)) {                   // has finite upper bound
-                    x_i = d * qp_u[j];
+                    x_i = qp_u[j];
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = UPPER;
@@ -1419,7 +1450,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
         } else {                                    // direction == -1
             if (x_O_v_i[j] == UPPER) {              // has upper bound value
                 if (*(qp_fl+j)) {                   // has finite lower bound
-                    x_i = d * (qp_u[j] - qp_l[j]);
+                    x_i = (qp_u[j] - qp_l[j]);
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = LOWER;
@@ -1429,7 +1460,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
                 }
             } else {                                // has value zero
                 if (*(qp_fl+j)) {                   // has finite lower bound
-                    x_i = d * -qp_l[j];
+                    x_i = -qp_l[j];
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = LOWER;
@@ -2377,15 +2408,21 @@ void  QP_solver<Rep_>::
 enter_and_leave_variable( )
 {
     
-    CGAL_qpe_assertion(i == j);
+    CGAL_qpe_assertion((i == j) && (i >= 0));
+    
+    CGAL_qpe_debug {
+	vout2 <<   "<--> nonbasic (" << variable_type( j) << ") variable " << j
+	      << " enters and leaves basis" << std::endl << std::endl;
+    }
+
     
     ET diff;
     ET x_j = nonbasic_original_variable_value(j);
     
     if (ratio_test_bound_index == LOWER) {
-        diff = ET(qp_l[j]) - x_j;
+        diff = x_j - ET(qp_l[j]);
     } else {
-        diff = ET(qp_u[j]) - x_j;
+        diff = x_j - ET(qp_u[j]);
     }
     
     if (is_phaseI) {
@@ -2396,6 +2433,9 @@ enter_and_leave_variable( )
     }
     
     x_O_v_i[j] = ratio_test_bound_index;
+    
+    // variable entered and left basis
+    i = -1; j = -1;
 }
 
 
@@ -3781,7 +3821,7 @@ check_basis_inverse( Tag_false)
     return res;
 }
 
-// setting the pricing strategy
+// setting the strategy
 template < class Rep_ >
 void  QP_solver<Rep_>::
 set_pricing_strategy( Pricing_strategy *strategy)
@@ -3867,6 +3907,25 @@ print_program( )
 		    vout4.out() << std::endl;
     }
     vout4.out() << std::endl;
+    
+    // explicit bounds
+    if (!is_in_standard_form) {
+        vout4.out() << "explicit bounds:" << std::endl; 
+        for (int i = 0; i < qp_n; ++i) {
+            if (*(qp_fl+i)) {                   // finite lower bound
+                vout4.out() << qp_l[i];
+            } else {                            // infinite lower bound
+                vout4.out() << "-inf";
+            }
+            vout4.out() << " <= x_" << i << " <= ";
+            if (*(qp_fu+i)) {
+                vout4.out() << qp_u[i];
+            } else {
+                vout4.out() << "inf";
+            }
+            vout4.out() << std::endl;
+        }
+    }
 }
 
 template < class Rep_ >
@@ -3949,30 +4008,144 @@ print_solution( )
 	   vout3.out() << std::endl;
     }
     if ( vout2.verbose()) {
-	vout2.out() << std::endl
-		    << "  lambda: ";
-	std::copy( lambda.begin(), lambda.begin()+C.size(),
-		   std::ostream_iterator<ET>( vout2.out(), " "));
-	vout2.out() << std::endl
-		    << "   x_B_O: ";
-	std::copy( x_B_O.begin(), x_B_O.begin()+B_O.size(),
-		   std::ostream_iterator<ET>( vout2.out(), " "));
-	vout2.out() << std::endl;
-	if ( has_ineq) {
-	    vout2.out() << "   x_B_S: ";
-	    std::copy( x_B_S.begin(), x_B_S.begin()+B_S.size(),
-		       std::ostream_iterator<ET>( vout2.out()," "));
-	    vout2.out() << std::endl;
-	}
-	const ET denom = inv_M_B.denominator();
-	vout2.out() << "   denominator: " << denom << std::endl;
-	vout2.out() << std::endl;
+        vout2.out() << std::endl << "  lambda: ";
+        std::copy( lambda.begin(), lambda.begin()+C.size(),
+            std::ostream_iterator<ET>( vout2.out(), " "));
+        vout2.out() << std::endl << "   x_B_O: ";
+        std::copy( x_B_O.begin(), x_B_O.begin()+B_O.size(),
+            std::ostream_iterator<ET>( vout2.out(), " "));
+        vout2.out() << std::endl;
+        if (!is_in_standard_form) {
+            vout2.out() << "   x_N_O: ";
+            for (int i = 0; i < qp_n; ++i) {
+                if (!is_basic(i)) {
+                    vout2.out() << d * nonbasic_original_variable_value(i);
+                    vout2.out() << " ";    
+                }
+            }
+            vout2.out() << std::endl;
+        }
+        if ( has_ineq) {
+            vout2.out() << "   x_B_S: ";
+            std::copy( x_B_S.begin(), x_B_S.begin()+B_S.size(),
+                std::ostream_iterator<ET>( vout2.out()," "));
+            vout2.out() << std::endl;
+        }
+        const ET denom = inv_M_B.denominator();
+        vout2.out() << "   denominator: " << denom << std::endl;
+        vout2.out() << std::endl;
     }
     Quotient<ET>  s = solution();
     vout1 << "  ";
     vout.out() << "solution: " << s << "  ~= " << to_double( s) << std::endl;
     vout2 << std::endl;
 }
+
+template < class Rep_ >
+void  QP_solver<Rep_>::
+print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
+{
+    if (is_in_standard_form) {                      // direction == 1
+        if (q_k > et0) {                            // check for lower bound
+            vout2.out() << "t_O_" << k << ": "
+            << x_k << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+            << std::endl;
+        } else if (q_k < et0) {                     // check for upper bound
+            vout2.out() << "t_O_" << k << ": "
+            << "inf" << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;
+        } else {                                    // q_k == 0
+            vout2.out() << "t_O_" << k << ": "
+            << "??" << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;
+        }
+    } else {                                        // upper bounded
+        if (q_k * direction > et0) {                // check for lower bound
+            if (B_O[k] < qp_n) {                         // original variable
+                if (*(qp_fl+B_O[k])) {                   // finite lower bound
+                    vout2.out() << "t_O_" << k << ": "
+                    << x_k - (d * qp_l[B_O[k]]) << '/' << q_k
+                    << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+                    << std::endl;
+                } else {                            // lower bound -infinity
+                    vout2.out() << "t_O_" << k << ": "
+                    << "-inf" << '/' << q_k
+                    << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+                    << std::endl;                
+                }
+            } else {                                // artificial variable
+                vout2.out() << "t_O_" << k << ": "
+                << x_k << '/' << q_k
+                << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+                << std::endl;
+            }
+        } else if (q_k * direction < et0) {         // check for upper bound
+            if (B_O[k] < qp_n) {                         // original variable
+                if (*(qp_fu+B_O[k])) {                   // finite upper bound
+                    vout2.out() << "t_O_" << k << ": "
+                    << (d * qp_l[B_O[k]]) - x_k << '/' << q_k
+                    << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+                    << std::endl;                    
+                } else {                            // upper bound infinity
+                    vout2.out() << "t_O_" << k << ": "
+                    << "inf" << '/' << q_k
+                    << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+                    << std::endl;
+                }
+            } else {                                // artificial variable
+                vout2.out() << "t_O_" << k << ": "
+                << "inf" << '/' << q_k
+                << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+                << std::endl;
+            }
+        } else {                                    // q_k == 0
+            vout2.out() << "t_O_" << k << ": "
+            <<  "??" << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
+            << std::endl;
+        }
+    }
+}
+
+template < class Rep_ >
+void  QP_solver<Rep_>::
+print_ratio_1_slack(int k, const ET& x_k, const ET& q_k)
+{
+    if (is_in_standard_form) {                      // direction == 1
+        if (q_k > et0) {                            // check for lower bound
+            vout2.out() << "t_S_" << k << ": "
+            << x_k << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;
+        } else {                                    // check for upper bound
+            vout2.out() << "t_S_" << k << ": "
+            << "inf" << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;        
+        }
+    } else {                                        // upper bounded
+        if (q_k * direction > et0) {                // check for lower bound
+            vout2.out() << "t_S_" << k << ": "
+            << x_k << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;            
+        } else if (q_k * direction < et0) {         // check for upper bound
+            vout2.out() << "t_S_" << k << ": "
+            << "inf" << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;
+        } else {                                    // q_k == 0
+            vout2.out() << "t_S_" << k << ": "
+            << "??" << '/' << q_k
+            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << std::endl;
+        }
+    }
+}
+
 
 template < class Rep_ >
 const char*  QP_solver<Rep_>::
