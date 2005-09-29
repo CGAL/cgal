@@ -83,10 +83,11 @@ bool QP_solver<Rep_>::is_valid()
 	const bool f = this->is_solution_feasible();
 	const bool o = this->is_solution_optimal();
 	CGAL_qpe_debug {
+	  vout << "is in phase II: " << is_phaseII << std::endl;
 	  vout << "feasible: " << f << std::endl;
 	  vout << "optimal: " << o << std::endl;
 	}
-	return f && o;
+	return is_phaseII && f && o;
       }
     case INFEASIBLE:
       {
@@ -94,21 +95,23 @@ bool QP_solver<Rep_>::is_valid()
 	const bool o = this->is_solution_optimal_for_auxiliary_problem();
 	const bool aux_positive = this->solution() > et0;
 	CGAL_qpe_debug {
+	  vout << "is in phase I: " << is_phaseI << std::endl;
 	  vout << "feasible_aux: " << f << std::endl;
 	  vout << "optimal_aux: " << o << std::endl;
 	  vout << "objective value positive: " << aux_positive << std::endl;
 	}
-	return f && o && aux_positive;
+	return is_phaseI && f && o && aux_positive;
       }
     case UNBOUNDED:    
       {
 	const bool f = this->is_solution_feasible();
 	const bool u = this->is_solution_unbounded();
 	CGAL_qpe_debug {
+	  vout << "is in phase II: " << is_phaseII << std::endl;
 	  vout << "feasible: " << f << std::endl;
 	  vout << "unbounded: " << u << std::endl;
 	}
-	return f && u;
+	return is_phaseII && f && u;
       }
     default: 	      
       return false;
@@ -121,10 +124,18 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   // some simple consistency checks:
   CGAL_qpe_assertion(is_phaseI);
 
-  // check nonnegativity of original- and artificial variables:
-  for (Value_const_iterator v_it = x_B_O.begin(); v_it != x_B_O.end(); ++v_it)
-    if (*v_it < et0)
-      return false;
+  // check bounds on original- and artificial variables:
+  Value_const_iterator v_it = x_B_O.begin();
+  for (Index_const_iterator i_it = B_O.begin();
+       i_it != B_O.end();
+       ++i_it, ++v_it)
+    if (*i_it < qp_n) {                 // original variable?
+      if (has_finite_lower_bound(*i_it) && *v_it < lower_bound(*i_it) ||
+	  has_finite_upper_bound(*i_it) && *v_it > upper_bound(*i_it))
+	return false;
+    } else                              // artificial variable?
+      if (*v_it < et0)
+	return false;
   
   // check nonegativity of slack variables:
   for (Value_const_iterator v_it = x_B_S.begin(); v_it != x_B_S.end(); ++v_it)
@@ -148,7 +159,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   // below that the right-hand size is multiplied by d because we
   // maintain the denominator of the solution (which is d) separately.
 
-  // compute left-hand side of (C1) (up to slackies):
+  // compute left-hand side of (C1) (up to slackies and nonbasics):
   Values lhs_col(qp_m, et0);
   Value_const_iterator x_it = x_B_O.begin();
   for (Index_const_iterator i_it = B_O.begin();
@@ -165,6 +176,14 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
 	for (int i=0; i<qp_m; ++i)
 	  lhs_col[i] += (*x_it) * art_s[i];
 
+  // compute left-hand side of (C1) (part for nonbasics):
+  for (int i=0; i<qp_n; ++i)
+    if (!is_basic(i)) {
+      const ET var = nonbasic_original_variable_value(i); // should be ET&
+      for (int j=0; j<qp_m; ++j)
+	lhs_col[j] += var * qp_A[i][j];
+    }
+
   // compute left-hand side of (C1) (part for slackies):
   x_it = x_B_S.begin();
   for (Index_const_iterator i_it = B_S.begin();
@@ -173,7 +192,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
     const int k = *i_it - qp_n;
     lhs_col[slack_A[k].first] += (slack_A[ k].second ? -et1 : et1) * (*x_it);
   }
-  
+
   // check equality (C1);
   for (int i=0; i<qp_m; ++i)
     if (lhs_col[i] != ET(qp_b[i]) * d)
@@ -234,6 +253,10 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   for (Index_const_iterator i_it = B_S.begin();
        i_it != B_S.end(); ++i_it, ++v_it)
     x_aux[*i_it] = *v_it;
+  if (!check_tag(Is_in_standard_form()))
+    for (int i=0; i<qp_n; ++i)
+      if (!is_basic(i))
+	x_aux[i] = nonbasic_original_variable_value(i);
   
   // Note: lambda[i] <= 0 for qp_r[i] == "GREATER_EQUAL"
   // todo: (ask frans) what does the above note mean?
@@ -299,34 +322,32 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 template < class Rep_ >
 bool QP_solver<Rep_>::is_solution_feasible()
 {
+  Values lhs_col(qp_m, et0);
+  for (int i=0; i<qp_n; ++i) {
+
     // check bounds on original variables:
-    Value_const_iterator v_it = x_B_O.begin();
-    for (Index_const_iterator i_it = B_O.begin();
-	 i_it != B_O.end();
-	 ++i_it, ++v_it)
-      if (has_finite_lower_bound(*i_it) && *v_it < lower_bound(*i_it) ||
-	  has_finite_upper_bound(*i_it) && *v_it > upper_bound(*i_it))
-	return false;
+    const ET var = is_basic(i)? x_B_O[in_B[i]] :  // should be ET &
+      nonbasic_original_variable_value(i);
+    if (has_finite_lower_bound(i) && var < lower_bound(i) ||
+	has_finite_upper_bound(i) && var > upper_bound(i))
+      return false;
+
 
     // compute A x times d:
-    Values lhs_col(qp_m, et0);
-    v_it = x_B_O.begin();
-    for (Index_const_iterator i_it = B_O.begin();
-	 i_it != B_O.end();
-	 ++i_it, ++v_it)
-      for (int i=0; i<qp_m; ++i)
-	lhs_col[i] += *v_it * qp_A[*i_it][i];
-    
-    // check A x = b (where in the code both sides are multiplied by d):
-    for (int row = 0; row < qp_m; ++row) {
-      const ET rhs = ET(qp_b[row])*d;
-      if (qp_r[row] == Rep::EQUAL         && lhs_col[row] != rhs ||
-	  qp_r[row] == Rep::LESS_EQUAL    && lhs_col[row] >  rhs ||
-	  qp_r[row] == Rep::GREATER_EQUAL && lhs_col[row] <  rhs)
-	return false;
-    }
-    
-    return true;
+    for (int j=0; j<qp_m; ++j)
+      lhs_col[j] += var * qp_A[i][j];
+  }
+  
+  // check A x = b (where in the code both sides are multiplied by d):
+  for (int row = 0; row < qp_m; ++row) {
+    const ET rhs = ET(qp_b[row])*d;
+    if (qp_r[row] == Rep::EQUAL         && lhs_col[row] != rhs ||
+	qp_r[row] == Rep::LESS_EQUAL    && lhs_col[row] >  rhs ||
+	qp_r[row] == Rep::GREATER_EQUAL && lhs_col[row] <  rhs)
+      return false;
+  }
+  
+  return true;
 }
 
 template < class Rep_ >
@@ -358,17 +379,14 @@ is_solution_optimal()
 
   // get solution vector of original problem (multiplied by d):
   Values x(qp_n, et0);
-  Value_const_iterator v_it = x_B_O.begin();
-  for (Index_const_iterator i_it = B_O.begin();
-       i_it != B_O.end();
-       ++i_it, ++v_it)
-    x[*i_it] = *v_it;
+  for (int i=0; i<qp_n; ++i)
+    x[i] = is_basic(i)? x_B_O[in_B[i]] : nonbasic_original_variable_value(i);
 
   // get \lambda:
   // Note: as the \lambda we have access to is actual d times the \lambda
   // from (C3), we will not compute \tau but \tau * d.
   Values lambda_prime(qp_m, et0);
-  v_it = lambda.begin();
+  Value_const_iterator v_it = lambda.begin();
   for (Index_const_iterator i_it = C.begin();
        i_it != C.end(); ++i_it, ++v_it)
     lambda_prime[*i_it] = *v_it;
@@ -401,12 +419,9 @@ is_solution_optimal()
 
   // compute A x:
   Values lhs_col(qp_m, et0);
-  v_it = x_B_O.begin();
-  for (Index_const_iterator i_it = B_O.begin();
-       i_it != B_O.end();
-       ++i_it, ++v_it) 
-    for (int i=0; i<qp_m; ++i)
-      lhs_col[i] += *v_it * qp_A[*i_it][i];
+  for (int i=0; i<qp_n; ++i)
+    for (int j=0; j<qp_m; ++j)
+      lhs_col[j] += x[i] * qp_A[i][j];
 
   // check (C5) and (C6), more precisely:
   // - check \lambda[i] >= 0 for i in LE:={j|qp_r[j]==LESS_EQUAL}
@@ -487,6 +502,11 @@ bool QP_solver<Rep_>::is_solution_unbounded()
 
   CGAL_expensive_precondition(is_solution_feasible());
   
+  // get solution vector of original problem (multiplied by d):
+  Values x(qp_n, et0);
+  for (int i=0; i<qp_n; ++i)
+    x[i] = is_basic(i)? x_B_O[in_B[i]] : nonbasic_original_variable_value(i);
+
   // check that the direction is not the zero vector:
   Unbounded_direction_iterator w = unbounded_direction_begin();
   bool all_zero = true;
@@ -535,10 +555,8 @@ bool QP_solver<Rep_>::is_solution_unbounded()
   // check unboundedness (c^T+2x^TD)w > 0 (C12):
   ET m1 = et0, m2 = et0;
   Value_const_iterator x_it = x_B_O.begin();
-  for (Index_const_iterator i_it = B_O.begin();
-       i_it != B_O.end();
-       ++i_it, ++x_it)
-    m1 += *x_it * Dw[*i_it];
+  for (int i=0; i<qp_n; ++i)
+    m1 += x[i] * Dw[i];
   m1 *= et2;                  // Note: m1 contains 2x^TDw*d (and not 2x^TDw).
   for (int i=0; i<qp_n; ++i)
     m2 += w[i] * qp_c[i];
