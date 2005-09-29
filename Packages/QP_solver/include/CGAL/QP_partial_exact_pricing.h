@@ -62,7 +62,7 @@ class QP_partial_exact_pricing : public QP__partial_base<Rep_> {
 			       Random&  random    = default_random);
 
     // operations
-    int  pricing( );
+    int  pricing(int& direction );
     
     // creation
     ~QP_partial_exact_pricing(){ };
@@ -85,7 +85,7 @@ QP_partial_exact_pricing( bool  randomize, Random&  random)
 // operations
 template < class Rep_ >
 int  QP_partial_exact_pricing<Rep_>::
-pricing( )
+pricing(int& direction )
 {
     Index_const_iterator  it, min_it;
     ET                            mu, min_mu =  0;

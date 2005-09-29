@@ -64,7 +64,7 @@ class QP_full_filtered_pricing : public QP__filtered_base<Rep_,NT_,ET2NT_> {
     QP_full_filtered_pricing( ET2NT et2nt = ET2NT());
 
     // operations
-    int  pricing( );
+    int  pricing(int& direction );
     
     // cleanup
     ~QP_full_filtered_pricing() { };
@@ -88,7 +88,7 @@ QP_full_filtered_pricing( ET2NT et2nt)
 // operations
 template < class Rep_, class NT_, class ET2NT_ >
 int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
-pricing( )
+pricing(int& direction )
 {
     // get properties of quadratic program
     int  w = this->solver().number_of_working_variables();

@@ -71,7 +71,7 @@ class QP_partial_filtered_pricing
 				  ET2NT    et2nt     = ET2NT());
 
     // operations
-    int  pricing( );
+    int  pricing(int& direction );
 
     void  init( );
     void  transition( );
@@ -115,7 +115,7 @@ transition( )
 
 template < class Rep_, class NT_, class ET2NT_ >
 int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
-pricing( )
+pricing(int& direction )
 {
     // initialize filtered computation
     this->init_NT();
