@@ -148,6 +148,10 @@ printed cgal manual
 
 latex_to_html
 -------------
+-- bash shell issue: if a filename contains special characters like '(', 
+   it doesnt get backquoted before using this filename as argument to
+   some other programs
+
 -- Numbered equations
 
 -- Document new filename macros: \lciInputPath, \lciOutputFilename, 
