@@ -60,6 +60,10 @@ class QP_pricing_strategy {
     typedef  typename Rep::ET           ET;
     typedef  CGAL::QP_solver<Rep>      QP_solver;
     typedef  CGAL::Verbose_ostream      Verbose_ostream;
+    typedef  typename Rep::Is_in_standard_form
+                                        Is_in_standard_form;
+    typedef  typename Rep::Is_linear    Is_linear;
+
 
   public:
 
@@ -68,7 +72,7 @@ class QP_pricing_strategy {
     void  init( int dummy);
 
     // operations
-    virtual  int   pricing( ) = 0;
+    virtual  int   pricing(int& direction ) = 0;
 
     virtual  void  leaving_basis( int i) { }
     virtual  void  transition( ) { }
@@ -88,7 +92,7 @@ protected:
     
     // operations
     ET  mu_j( int j) const;
-    
+
     // access
     const QP_solver&  solver( ) const { return *solverP; }
     Verbose_ostream&  vout  ( ) const { return *voutP;   }
@@ -152,10 +156,19 @@ template < class Rep_ >  inline
 typename Rep_::ET  QP_pricing_strategy<Rep_>::
 mu_j( int j) const
 {
-    return solver().mu_j( j,
+    if (!check_tag(Is_in_standard_form()) &&
+        !check_tag(Is_linear()) && !solver().phaseI() && solver().is_basic(j)) {
+        return solver().mu_j( j,
+            solver().lambda_numerator_begin(),
+            solver().basic_original_variables_numerator_begin(),
+            solver().w_j_numerator(j),
+            solver().variables_common_denominator());
+    } else {
+        return solver().mu_j( j,
 			  solver().lambda_numerator_begin(),
 			  solver().basic_original_variables_numerator_begin(),
 			  solver().variables_common_denominator());
+    }
 }
 
 CGAL_END_NAMESPACE
