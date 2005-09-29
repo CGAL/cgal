@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SkinSurfaceTraits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSSkinSurfaceTraitsRev}{$Revision$}
+\RCSdefDate{\RCSSkinSurfaceTraitsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SkinSurfaceTraits_3}
+\label{pageSkinSurfaceTraits}  
+
+Required types and member functions for the \ccRefName\ concept. This
+geometric traits concept is used for the construction of a polyhedral
+mesh approximating a skin surface \ccc{CGAL::skin_surface_3<Traits>}.
+It defines three \cgal\ kernels and the appropriate converters.
+
+\ccRefines
+
+%\ccc{CopyConstructable}, \ccc{Assignable}.
+
+\ccTypes
+
+\ccNestedType{Regular_kernel}{This is the \ccc{kernel} used in the
+  regular triangulation.}
+
+\ccNestedType{Triangulated_mixed_complex_kernel}{This is the
+  \ccc{kernel} used in the \ccc{Triangulated_mixed_complex}.}
+
+\ccNestedType{Polyhedron_kernel}{This is the \ccc{kernel} used for the
+  geometric objects defined by the mesh.}
+
+\ccNestedType{R2T_converter}{Converter to convert geometric objects
+  defined within \ccc{Regular_kernel} to objects defined within
+  \ccc{Triangulated_mixed_complex_kernel}.}
+
+\ccNestedType{R2P_converter}{Converter to convert geometric objects
+  defined within \ccc{Regular_kernel} to objects defined within
+  \ccc{Polyhedron_kernel}.}
+
+\ccNestedType{T2P_converter}{Converter to convert geometric objects
+  defined within \ccc{Triangulated_mixed_complex_kernel} to objects
+  defined within \ccc{Polyhedron_kernel}.}
+
+\ccNestedType{T2P_converter}{Converter to convert geometric objects
+  defined within \ccc{Polyhedron_kernel} to objects
+  defined within \ccc{Triangulated_mixed_complex_kernel}.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{SkinSurfaceTraits_3( const typename Regular_kernel::FT s=.5);}{
+    constructor that takes the shrink factor as argument.}
+
+\ccHasModels
+
+\ccRefIdfierPage{Skin_surface_traits_3<Regular_kernel,Triangulated_mixed_complex_kernel,Polyhedron_kernel>}
+
+\ccSeeAlso
+
+%\ccRefIdfierPage{Skin_surface_traits_3<Regular_kernel, Triangulated_mixed_complex_kernel, Polyhedron_kernel>}\\
+\ccRefIdfierPage{skin_surface_3}
+
+\ccHeading{Access Member Functions}
+%\ccThree{Halfedge_iterator}{P.size_of_border_halfedges();}{}
+
+\ccMethod{R2T_converter r2t_converter_object() const;}{returns a
+  converter of geometric objects from the \ccc{Regular_kernel} to the
+  \ccc{Triangulated_mixed_complex_kernel}.}
+
+\ccMethod{R2P_converter r2p_converter_object() const;}{returns a
+  converter of geometric objects from the \ccc{Regular_kernel} to the
+  \ccc{Polyhedron_kernel}.}
+
+\ccMethod{T2P_converter t2p_converter_object() const;}{returns a
+  converter of geometric objects from the
+  \ccc{Triangulated_mixed_complex_kernel} to the
+  \ccc{Polyhedron_kernel}.}
+
+\ccMethod{P2T_converter p2t_converter_object() const;}{returns a
+  converter of geometric objects from the
+  \ccc{Triangulated_mixed_complex_kernel} to the
+  \ccc{Polyhedron_kernel}.}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

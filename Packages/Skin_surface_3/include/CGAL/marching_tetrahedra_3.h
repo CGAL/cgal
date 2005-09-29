@@ -9,14 +9,14 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-
-
-template <class Simplicial_complex, class HalfedgeDS, class MeshExtractor >
+template <class Simplicial_complex,
+	  class HalfedgeDS,
+	  class MarchingTetrahedraTraits_3 >
 class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
  public:
-  typedef Simplicial_complex Sc;
-  typedef HalfedgeDS         HDS;
-  typedef MeshExtractor      Extractor;
+  typedef Simplicial_complex                    Sc;
+  typedef HalfedgeDS                            HDS;
+  typedef MarchingTetrahedraTraits_3            MarchingTetrahedraTraits;
  private:
   typedef typename Sc::Vertex_handle            Sc_vertex_handle;
   typedef typename Sc::Edge                     Sc_edge;
@@ -47,8 +47,8 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
   typedef CGAL::Bounded_side                    Bounded_side;
 
  public:
-  Mesh_builder(Sc &sc, Extractor &extr)
-    : sc(sc), extr(extr), nVertices(0) {
+  Mesh_builder(Sc &sc, const MarchingTetrahedraTraits &traits)
+    : sc(sc), traits(traits), nVertices(0) {
   }
   
   void operator()( HDS& hds) {
@@ -60,8 +60,8 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
     Sc_vertex_handle vh0, vh1;
     for (Sc_finite_edges_iterator eit=sc.finite_edges_begin();
 	 eit!=sc.finite_edges_end(); eit++) {
-      if ((extr.sign(eit->first->vertex(eit->second))==POSITIVE)!=
-	  (extr.sign(eit->first->vertex(eit->third))==POSITIVE)) {
+      if ((traits.sign(eit->first->vertex(eit->second))==POSITIVE)!=
+	  (traits.sign(eit->first->vertex(eit->third))==POSITIVE)) {
 	add_vertex(B,eit);
       }
     }
@@ -77,7 +77,7 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
       for (int i=0; i<4; i++) { in[i]=-1; out[i]=-1; }
 
       for (int i=0; i<4; i++) {
-        if (extr.sign(cit->vertex(i)) == POSITIVE) {
+        if (traits.sign(cit->vertex(i)) == POSITIVE) {
           in[Nin] = i; Nin++;
         } else {
           out[i-Nin] = i;
@@ -145,11 +145,9 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
   }
 private:
   Sc &sc;
-  Extractor &extr;
+  const MarchingTetrahedraTraits &traits;
   std::map< Vpair, int > vertices;
   int nVertices;
-//CGAL::Cartesian_converter<Sc_traits, HDS_traits, CGAL::To_double<Sc_RT> > sc2m_converter;
-//CGAL::Cartesian_converter<HDS_traits, Sc_traits> m2sc_converter;
 
   Vpair makePair(Sc_vertex_handle vh0, Sc_vertex_handle vh1) {
     if (vh0 < vh1) return Vpair(vh0,vh1); else return Vpair(vh1,vh0);
@@ -164,7 +162,7 @@ private:
     while (sc.is_infinite(ccir)) ccir ++;
     assert(!sc.is_infinite(ccir));
 
-    B.add_vertex(extr.intersection(Sc_edge(ccir, 
+    B.add_vertex(traits.intersection(Sc_edge(ccir, 
       ccir->index(e->first->vertex(e->second)),
       ccir->index(e->first->vertex(e->third)))));
     vertices[vpair] = nVertices;
@@ -201,43 +199,13 @@ private:
   }
 };
 
-template < 
-  class Triangulation_3,
-  class Mesh_3, 
-  class MarchingTetrahedraTraits_3,
-  class T2P_converter>
-class Marching_tetrahedra_3 {
-public:
-  typedef Triangulation_3                     Triang;
-  typedef Mesh_3                              Mesh;
-  typedef typename Mesh::HalfedgeDS           HDS;
-  typedef T2P_converter                       Converter;
-  typedef MarchingTetrahedraTraits_3          Marching_tetrahedra_traits;
-  typedef typename Mesh::Traits::RT           Mesh_rt;
-  typedef Mesh_builder<Triang,HDS,Marching_tetrahedra_traits>  Mesh_builder;
-  
-  Marching_tetrahedra_3() {}
-  
-  void operator()(Triang &t, Mesh &m, Mesh_rt iso=0) {
-    Marching_tetrahedra_traits extr(iso);
-    Mesh_builder builder(t, extr);
-    m.delegate(builder);
-  }
-  void operator()(Triang &t, Mesh &m, Marching_tetrahedra_traits &extr, Mesh_rt iso=0) {
-    Mesh_builder builder(t, extr);
-    m.delegate(builder);
-  }
-};
-
 template <class Triangulation_3,
 	  class Polyhedron_3,
-	  class T2P_converter,
 	  class MarchingTetrahedraTraits_3 >
 void marching_tetrahedra_3(
   Triangulation_3 &triangulation,
   Polyhedron_3 &polyhedron,
-  MarchingTetrahedraTraits_3 &marching_traits,
-  T2P_converter &converter) {
+  const MarchingTetrahedraTraits_3 &marching_traits) {
   
   typedef typename Polyhedron_3::HalfedgeDS                    HDS;
   typedef MarchingTetrahedraTraits_3                           Marching_traits;
@@ -246,23 +214,6 @@ void marching_tetrahedra_3(
   Mesh_builder builder(triangulation, marching_traits);
   polyhedron.delegate(builder);
 }
-
-// NGHK: add this one later:
-// template <class Triangulation_3, class Polyhedron_3,
-// 	  class MarchingTetrahedraTraits_3 >
-// void marching_tetrahedra(
-//   Triangulation_3 &triangulation,
-//   Polyhedron_3 &polyhedron,
-//   MarchingSurfaceTraits_3 &extractor) {
-//   typedef typename Mesh_3::HalfedgeDS                              HDS;
-//   typedef Mesh_builder<Triangulation_3,HDS,MarchingSurfaceObserver>
-//                                                                    Mesh_builder;
-
-  
-//   MarchingSurfaceTraits_3 marching_traits(iso_value);
-//   Mesh_builder builder(t, marching_traits);
-//   m.delegate(builder);
-// }
 
 CGAL_END_NAMESPACE 
 

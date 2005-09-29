@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Marching_tetrahedra_traits_skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSMarchingtetrahedratraitsskinRev}{$Revision$}
+\RCSdefDate{\RCSMarchingtetrahedratraitsskinDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Marching_tetrahedra_traits_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}
+\label{pageMarchingtetrahedratraitsskinsurface}
+
+\ccDefinition
+  
+\ccInclude{CGAL/Marching_tetrahedra_traits_skin_surface_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{MarchingTetrahedraTraits_3}
+
+\ccTypes
+
+\ccTypedef{typedef Converter_              Converter;}{}
+
+\ccTypedef{typedef typename Triangulation_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Triangulation_3::Edge          Edge;}{}
+
+\ccTypedef{typedef typename HalfedgeDS::Traits             HDS_K;}{}
+\ccGlue
+\ccTypedef{typedef typename HDS_K::RT                   HDS_rt;}{}
+\ccGlue
+\ccTypedef{typedef typename HDS_K::Point_3              HDS_point;}{}
+
+
+
+%\ccNestedType{Regular_kernel}{This is the \ccc{kernel} used in the
+%  regular triangulation.}
+
+\ccCreation
+\ccCreationVariable{marching_traits}  %% choose variable name
+
+\ccConstructor{Marching_tetrahedra_traits_skin_surface_3(HDS_rt iso_value=0);}{}
+
+\ccOperations
+
+\ccMethod{  Sign sign(const Vertex_handle vh) const;}{ }
+\ccMethod{HDS_point intersection(const Edge &e) const;}{ }
+
+\ccSeeAlso
+\ccRefIdfierPage{marching_tetrahedra_3}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

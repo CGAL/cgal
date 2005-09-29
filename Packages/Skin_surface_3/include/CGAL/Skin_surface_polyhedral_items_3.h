@@ -31,7 +31,7 @@ struct Skin_surface_polyhedral_face : public CGAL::HalfedgeDS_face_base<Refs> {
 
 // An items type using my face.
 template <class TetraComplex>
-struct Skin_surface_polyhedral_items_3 : public CGAL::Polyhedron_items_3 {
+struct Skin_surface_polyhedral_items_3 : public CGAL::Polyhedron_3_items_3 {
   template <class Refs, class Traits>
   struct Vertex_wrapper {
     typedef typename Traits::Point_3 Point;

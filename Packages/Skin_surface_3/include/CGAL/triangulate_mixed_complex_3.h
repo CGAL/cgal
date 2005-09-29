@@ -3,7 +3,6 @@
 
 // #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
-// #include <CGAL/Simplex_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulated_mixed_complex_observer_3.h>

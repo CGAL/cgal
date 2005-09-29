@@ -10,24 +10,24 @@ template < class RegularTriangulation_3>
 class Compute_anchor_3
 {
 public:
-  typedef RegularTriangulation_3                       Regular;
-  typedef typename Regular::Geom_traits                Geom_traits;
+  typedef RegularTriangulation_3                       Regular_triangulation;
+  typedef typename Regular_triangulation::Geom_traits  Geom_traits;
   typedef typename Geom_traits::Weighted_point         Weighted_point;
   
-  typedef typename Regular::Vertex_handle Vertex_handle;
-  typedef typename Regular::Cell_handle   Cell_handle;
-  typedef typename Regular::Facet         Facet;
-  typedef typename Regular::Edge          Edge;
+  typedef typename RegularTriangulation_3::Vertex_handle Vertex_handle;
+  typedef typename RegularTriangulation_3::Cell_handle   Cell_handle;
+  typedef typename RegularTriangulation_3::Facet         Facet;
+  typedef typename RegularTriangulation_3::Edge          Edge;
   
-  typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Regular::Finite_edges_iterator    Finite_edges_iterator;
-  typedef typename Regular::Finite_facets_iterator   Finite_facets_iterator;
-  typedef typename Regular::Finite_cells_iterator    Finite_cells_iterator;
-  typedef typename Regular::Facet_circulator         Facet_circulator;
-  typedef Triangulation_simplex_3<Regular>           Simplex;
+  typedef typename RegularTriangulation_3::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename RegularTriangulation_3::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename RegularTriangulation_3::Finite_facets_iterator   Finite_facets_iterator;
+  typedef typename RegularTriangulation_3::Finite_cells_iterator    Finite_cells_iterator;
+  typedef typename RegularTriangulation_3::Facet_circulator         Facet_circulator;
+  typedef Triangulation_simplex_3<RegularTriangulation_3>           Simplex;
 
 
-  Compute_anchor_3(Regular &reg) : reg(reg) {
+  Compute_anchor_3(const RegularTriangulation_3 &reg) : reg(reg) {
   }
 
   ///////////////////////////////
@@ -101,33 +101,33 @@ public:
   Simplex compute_anchor_vor( Edge const &e );
   Simplex compute_anchor_vor( Facet const &f );
 
-  Simplex anchor_del( Vertex_handle v ) {
+  Simplex anchor_del( const Vertex_handle v ) {
     return v;
   }
-  Simplex anchor_del( Edge const &e ) {
+  Simplex anchor_del( const Edge &e ) {
     return compute_anchor_del(e);
   }
-  Simplex anchor_del( Facet const &f ) {
+  Simplex anchor_del( const Facet &f ) {
     return compute_anchor_del(f);
   }
-  Simplex anchor_del( Cell_handle ch ) {
+  Simplex anchor_del( const Cell_handle ch ) {
     return compute_anchor_del(ch);
   }
-  Simplex anchor_vor( Vertex_handle v ) {
+  Simplex anchor_vor( const Vertex_handle v ) {
     return compute_anchor_vor(v);
   }
-  Simplex anchor_vor( Edge const &e ) {
+  Simplex anchor_vor( const Edge &e ) {
     return compute_anchor_vor(e);
   }
-  Simplex anchor_vor( Facet const &f ) {
+  Simplex anchor_vor( const Facet &f ) {
     return compute_anchor_vor(f);
   }
-  Simplex anchor_vor( Cell_handle const ch ) {
+  Simplex anchor_vor( const Cell_handle ch ) {
     return ch;
   }
 
 private:
-  Regular &reg;
+  const Regular_triangulation &reg;
 };
 
 

@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSskinsurfaceRev}{$Revision$}
+\RCSdefDate{\RCSskinsurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+%\ccHtmlNoClassLinks
+\begin{ccRefFunction}{skin_surface_3}
+%\label{refSkinSurfaceskinsurface}
+
+\ccDefinition
+
+This function constructs a coarse polyhedron approximating the skin
+surface given by the balls obtained from the input operator.
+
+%constructs a piecewise linear approximation of the skin surface formed
+%by the iterator range \ccc{[first,last)} of value type
+%\ccc{Weighted_point}. The shrink factor is defined in
+%\ccc{skin_surface_traits} and the mesh is stored in \ccc{polyhedron}.
+
+\ccInclude{CGAL/skin_surface_3.h}
+
+
+\ccGlobalFunction{
+template <class InputIterator, class Polyhedron_3, class SkinSurfaceTraits_3>
+void skin_surface_3(InputIterator first, InputIterator last, 
+                    Polyhedron_3 &polyhedron, 
+                    const SkinSurfaceTraits_3 &skin_surface_traits);}
+
+\ccSeeAlso
+\ccRefIdfierPage{Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{SkinSurfaceTraits_3}\\
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

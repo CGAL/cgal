@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Skin_surface_traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSSkinsurfacetraitsRev}{$Revision$}
+\RCSdefDate{\RCSSkinsurfacetraitsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Skin_surface_traits_3<Regular_kernel,Triangulated_mixed_complex_kernel,Polyhedron_kernel>}
+%\label{refSkinsurfacetraits}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{SkinSurfaceTraits_3}
+concept.  It defines the geometric types and primitive operations used
+in the construction and refinement of a skin surface 
+
+\ccInclude{CGAL/Skin_surface_traits_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{SkinSurfaceTraits_3}
+
+\ccTypes
+
+\ccNestedType{Regular_kernel}{This is the \ccc{kernel} used in the
+  regular triangulation.}
+
+\ccNestedType{Triangulated_mixed_complex_kernel}{This is the
+  \ccc{kernel} used in the \ccc{Triangulated_mixed_complex}.}
+
+\ccNestedType{Polyhedron_kernel}{This is the \ccc{kernel} used for the
+  geometric objects defined by the mesh.}
+
+\ccNestedType{R2T_converter}{Converter to convert geometric objects
+  defined within \ccc{Regular_kernel} to objects defined within
+  \ccc{Triangulated_mixed_complex_kernel}.}
+
+\ccNestedType{R2P_converter}{Converter to convert geometric objects
+  defined within \ccc{Regular_kernel} to objects defined within
+  \ccc{Polyhedron_kernel}.}
+
+\ccNestedType{T2P_converter}{Converter to convert geometric objects
+  defined within \ccc{Triangulated_mixed_complex_kernel} to objects
+  defined within \ccc{Polyhedron_kernel}.}
+
+\ccNestedType{T2P_converter}{Converter to convert geometric objects
+  defined within \ccc{Polyhedron_kernel} to objects
+  defined within \ccc{Triangulated_mixed_complex_kernel}.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Skin_surface_traits_3( const typename Regular_kernel::FT s=.5);}{
+    constructor that takes the shrink factor as argument.}
+
+%\ccOperations
+
+
+\ccSeeAlso
+\ccRefIdfierPage{SkinSurfaceTraits_3}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

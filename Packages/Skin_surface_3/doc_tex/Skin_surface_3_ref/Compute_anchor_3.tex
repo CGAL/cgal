@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Compute_anchor_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSComputeanchorRev}{$Revision$}
+\RCSdefDate{\RCSComputeanchorDate}{$Date$}
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Compute_anchor_3<RegularTriangulation_3>}
+
+\ccDefinition
+
+The affine hulls of a Regular simplex and its dual Voronoi cell
+intersect in a single point, called the center. The closest point in a
+Regular simplex (Voronoi cell) is called the anchor point of the
+simplex (cell). The anchor point coincides with the center of the
+simplex (cell) or with the center of one of its faces. 
+
+The class \ccRefName\ for a given Regular simplex (Power cell) with
+the center of which simplex it coincides.
+
+DEGENERATE 
+
+\ccInclude{CGAL/Compute_anchor_3.h}
+
+\ccTypes
+
+\ccTypedef{typedef RegularTriangulation_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef RegularTriangulation_3::Edge          Edge;}{}
+\ccGlue
+\ccTypedef{typedef RegularTriangulation_3::Facet         Facet;}{}
+\ccGlue
+\ccTypedef{typedef RegularTriangulation_3::Cell_handle   Cell_handle;}{}
+
+\ccGlue
+\ccTypedef{typedef Triangulation_simplex_3<RegularTriangulation_3> Simplex;}{}
+
+
+\ccCreation
+\ccCreationVariable{compute_anchor}  %% choose variable name
+
+\ccConstructor{Compute_anchor_3(const RegularTriangulation_3 &reg);}{
+    constructor that takes the shrink factor as argument.}
+
+\ccOperations
+
+\ccMethod{Simplex anchor_del( const Vertex_handle v );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_del( const Edge &e );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_del( const Facet &f );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_del( const Cell_handle ch );}{ }
+
+\ccMethod{Simplex anchor_vor( const Vertex_handle v );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Edge &e );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Facet &f );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Cell_handle ch );}{ }
+
+
+%\ccSeeAlso
+%\ccRefIdfierPage{CGAL::SkinSurfaceTraits_3<Traits>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

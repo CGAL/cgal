@@ -3,7 +3,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
-#include <CGAL/Simplex_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 #include <CGAL/Marching_tetrahedra.h>
 
