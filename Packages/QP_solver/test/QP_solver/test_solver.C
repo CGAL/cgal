@@ -27,6 +27,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <locale>
 
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
@@ -236,7 +237,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   std::ws(in);
   bool eof = in.eof();
   t = Token::token(in);
-  while (!eof && !std::isdigit(t[0])) {
+  while (!eof && !isdigit(t[0])) {
     // process:
     bool good;
     if (t == "+l")
