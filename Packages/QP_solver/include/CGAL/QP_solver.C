@@ -3550,26 +3550,27 @@ typename QP_solver<Rep_>::ET
 QP_solver<Rep_>::
 nonbasic_original_variable_value(int i) const
 {
-    CGAL_assertion_msg(!is_basic(i) && i < qp_n, "wrong argument");
-    ET      value;
-    switch (x_O_v_i[i]) {
-        case UPPER:
-            value = qp_u[i];
-            break;
-        case ZERO:
-            value = et0;
-            break;
-        case LOWER:
-            value = qp_l[i];
-            break;
-        case FIXED:
-            value = qp_l[i];
-            break;
-        case BASIC:
-            CGAL_qpe_assertion(false);
-            break;
-    }
-    return value;
+  if (check_tag(Is_in_standard_form()))
+    return et0;
+
+  CGAL_assertion_msg(!is_basic(i) && i < qp_n, "wrong argument");
+  switch (x_O_v_i[i]) {
+  case UPPER:
+    return qp_u[i];
+    break;
+  case ZERO:
+    return et0;
+    break;
+  case LOWER:
+    return qp_l[i];
+    break;
+  case FIXED:
+    return qp_l[i];
+    break;
+  case BASIC:
+    CGAL_qpe_assertion(false);
+  }
+  return et0; // dummy
 }
 
 // returns the current value of a original variable
