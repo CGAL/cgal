@@ -36,4 +36,13 @@ RHS
   rhs  c1  3
   rhs  c2  25
   rhs  c3  4
+BOUNDS
+  LO  BND  x2  2
+  UP  BND  x2  10
+  MI  BND  x3
+  UP  BND  x3  0
+  LO  BND  x4  -3
+  UP  BND  x4  3
+  MI  BND  x5
+  MI  BND  x6
 ENDATA
