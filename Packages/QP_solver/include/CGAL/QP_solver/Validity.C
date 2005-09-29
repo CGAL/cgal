@@ -179,7 +179,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   // compute left-hand side of (C1) (part for nonbasics):
   for (int i=0; i<qp_n; ++i)
     if (!is_basic(i)) {
-      const ET var = nonbasic_original_variable_value(i); // should be ET&
+      const ET var = nonbasic_original_variable_value(i) * d;
       for (int j=0; j<qp_m; ++j)
 	lhs_col[j] += var * qp_A[i][j];
     }
@@ -256,7 +256,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   if (!check_tag(Is_in_standard_form()))
     for (int i=0; i<qp_n; ++i)
       if (!is_basic(i))
-	x_aux[i] = nonbasic_original_variable_value(i);
+	x_aux[i] = nonbasic_original_variable_value(i) * d;
   
   // Note: lambda[i] <= 0 for qp_r[i] == "GREATER_EQUAL"
   // todo: (ask frans) what does the above note mean?
@@ -327,7 +327,7 @@ bool QP_solver<Rep_>::is_solution_feasible()
 
     // check bounds on original variables:
     const ET var = is_basic(i)? x_B_O[in_B[i]] :  // should be ET &
-      nonbasic_original_variable_value(i);
+      nonbasic_original_variable_value(i) * d;
     if (has_finite_lower_bound(i) && var < lower_bound(i) ||
 	has_finite_upper_bound(i) && var > upper_bound(i))
       return false;
@@ -380,7 +380,7 @@ is_solution_optimal()
   // get solution vector of original problem (multiplied by d):
   Values x(qp_n, et0);
   for (int i=0; i<qp_n; ++i)
-    x[i] = is_basic(i)? x_B_O[in_B[i]] : nonbasic_original_variable_value(i);
+    x[i] = is_basic(i)? x_B_O[in_B[i]] : nonbasic_original_variable_value(i)*d;
 
   // get \lambda:
   // Note: as the \lambda we have access to is actual d times the \lambda
@@ -505,7 +505,7 @@ bool QP_solver<Rep_>::is_solution_unbounded()
   // get solution vector of original problem (multiplied by d):
   Values x(qp_n, et0);
   for (int i=0; i<qp_n; ++i)
-    x[i] = is_basic(i)? x_B_O[in_B[i]] : nonbasic_original_variable_value(i);
+    x[i] = is_basic(i)? x_B_O[in_B[i]] : nonbasic_original_variable_value(i)*d;
 
   // check that the direction is not the zero vector:
   Unbounded_direction_iterator w = unbounded_direction_begin();
