@@ -26,7 +26,7 @@ public:
   Construct_anchor_point_3(RT &shrink) : shrink(shrink) {}
   
   Point operator()(const Point &anchor_del, const Point &anchor_vor) {
-    return anchor_del + s*(anchor_vor - anchor_del);
+    return anchor_del + shrink*(anchor_vor - anchor_del);
   }
   RT shrink;
 };

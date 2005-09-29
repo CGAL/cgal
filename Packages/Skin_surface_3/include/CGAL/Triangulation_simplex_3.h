@@ -11,27 +11,27 @@ class Triangulation_simplex_3 {
   typedef typename T::Facet         Facet;
   typedef typename T::Cell_handle Cell_handle;
 public:
-  Triangulation_simplex_3() : ref(-1), ch(0L) {}
+  Triangulation_simplex_3() : ref(-1), ch() {}
 	
   Triangulation_simplex_3(Vertex_handle v) {
     ch = v->cell();
     ref = (ch->index(v) << 2); /* dim == 0 */
-    CGAL_assertion (ch != 0L);
+    CGAL_assertion (ch != NULL);
   }
   Triangulation_simplex_3(Edge e) {
     ch = e.first;
     ref = (((e.third<< 2) + e.second) << 2) + 1; /* dim */
-    CGAL_assertion (ch != 0L);
+    CGAL_assertion (ch != NULL);
   }
   Triangulation_simplex_3(Facet f) {
     ch = f.first;
     ref = (f.second << 2) + 2; /* dim */
-    CGAL_assertion (ch != 0L);
+    CGAL_assertion (ch != NULL);
   }
   Triangulation_simplex_3(Cell_handle c) {
     ch = c;
     ref = 3; /* dim */
-    CGAL_assertion (ch != 0L);
+    CGAL_assertion (ch != NULL);
   }
 
   operator Vertex_handle ()

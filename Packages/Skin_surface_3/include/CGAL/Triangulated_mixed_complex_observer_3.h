@@ -36,7 +36,6 @@ public:
   typedef typename Triangulated_mixed_complex::Facet         Sc_Facet;
   typedef typename Triangulated_mixed_complex::Cell_handle   Sc_Cell_handle;
   
-  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel  Triangulated_mixed_complex_kernel;
   typedef typename Triangulated_mixed_complex_kernel::Point_3        Sc_Point;
   typedef typename Triangulated_mixed_complex_kernel::RT             Sc_RT;
   typedef Weighted_point<Sc_Point,Sc_RT>        Sc_Weighted_point;

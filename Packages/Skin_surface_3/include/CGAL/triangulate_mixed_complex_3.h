@@ -89,14 +89,6 @@ public:
     : regular(regular), triangulated_mixed_complex(triangulated_mixed_complex),
       triangulation_incr_builder(triangulated_mixed_complex), shrink(.5), 
       observer(shrink), compute_anchor_obj(regular) {
-    edge_index[0][0] = -1; edge_index[0][1] =  0;
-    edge_index[0][2] =  1; edge_index[0][3] =  2;
-    edge_index[1][0] =  0; edge_index[1][1] = -1;
-    edge_index[1][2] =  3; edge_index[1][3] =  4;
-    edge_index[2][0] =  1; edge_index[2][1] =  3;
-    edge_index[2][2] = -1; edge_index[2][3] =  5;
-    edge_index[3][0] =  2; edge_index[3][1] =  4;
-    edge_index[3][2] =  5; edge_index[3][3] = -1;
     assert((0<shrink) && (shrink<1));
 
     build();
@@ -110,14 +102,6 @@ public:
     : regular(regular), triangulated_mixed_complex(triangulated_mixed_complex),
       triangulation_incr_builder(triangulated_mixed_complex), shrink(.5), 
       observer(observer), compute_anchor_obj(regular) {
-    edge_index[0][0] = -1; edge_index[0][1] =  0;
-    edge_index[0][2] =  1; edge_index[0][3] =  2;
-    edge_index[1][0] =  0; edge_index[1][1] = -1;
-    edge_index[1][2] =  3; edge_index[1][3] =  4;
-    edge_index[2][0] =  1; edge_index[2][1] =  3;
-    edge_index[2][2] = -1; edge_index[2][3] =  5;
-    edge_index[3][0] =  2; edge_index[3][1] =  4;
-    edge_index[3][2] =  5; edge_index[3][3] = -1;
 	  
     assert((0<shrink) && (shrink<1));
 
@@ -171,7 +155,7 @@ private:
     typename Triangulated_mixed_complex::Geom_traits> >              orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
 
-  int edge_index[4][4];
+  const static int edge_index[4][4];
   struct Index_c4 { Sc_Vertex_handle V[4]; };
   struct Index_c6 { Sc_Vertex_handle V[6]; };
   struct Index_c44 { Sc_Vertex_handle V[4][4]; };
@@ -205,6 +189,13 @@ private:
 
   std::list<Sc_Vertex_handle> degenerate_vertices;
 };
+
+template < class SkinSurfaceTraits_3, class TriangulatedMixedComplex,
+	   class Regular_TDS, class Mixed_complex_observer_>
+const int Mixed_complex_triangulator_3<
+  SkinSurfaceTraits_3, TriangulatedMixedComplex,
+  Regular_TDS, Mixed_complex_observer_>::edge_index[4][4] =
+  {{-1,0,1,2},{0,-1,3,4},{1,3,-1,5},{2,4,5,-1}};
 
 // Constructs the vertices of the simplicial complex
 template < class SkinSurfaceTraits_3, class TriangulatedMixedComplex,

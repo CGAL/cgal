@@ -14,7 +14,8 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Skin_surface_traits_3<Regular_kernel,Triangulated_mixed_complex_kernel,Polyhedron_kernel>}
+\begin{ccRefClass}{Skin_surface_traits_3<RegularTriangulationTraits_3,
+    TriangulationTraits_3, PolyhedronTraits_3>}
 %\label{refSkinsurfacetraits}
 
 \ccDefinition
@@ -30,39 +31,59 @@ in the construction and refinement of a skin surface
 \ccRefConceptPage{SkinSurfaceTraits_3}
 
 \ccTypes
+\ccThree{typedef RegularTriangulationTraits_3}
+{Triangulated_mixed_complex_traits}{}
+%\ccThreeToTwo
 
-\ccNestedType{Regular_kernel}{This is the \ccc{kernel} used in the
+\ccTypedef{typedef RegularTriangulationTraits_3
+  Regular_triangulation_traits;}{This is the \ccc{kernel} used in the
   regular triangulation.}
-
-\ccNestedType{Triangulated_mixed_complex_kernel}{This is the
-  \ccc{kernel} used in the \ccc{Triangulated_mixed_complex}.}
-
-\ccNestedType{Polyhedron_kernel}{This is the \ccc{kernel} used for the
-  geometric objects defined by the mesh.}
+\ccGlue
+\ccTypedef{typedef TriangulationTraits_3 Triangulated_mixed_complex_traits;}{
+  This is the \ccc{kernel} used in the \ccc{Triangulated_mixed_complex}.}
+\ccGlue
+\ccTypedef{typedef PolyhedronTraits_3 Polyhedron_traits;}{This is the
+  \ccc{kernel} used for the geometric objects defined by the mesh.}
 
 \ccNestedType{R2T_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_kernel} to objects defined within
-  \ccc{Triangulated_mixed_complex_kernel}.}
+  defined within \ccc{Regular_traits} to objects defined within
+  \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccNestedType{R2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_kernel} to objects defined within
-  \ccc{Polyhedron_kernel}.}
+  defined within \ccc{Regular_traits} to objects defined within
+  \ccc{Polyhedron_traits}.}
 
 \ccNestedType{T2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Triangulated_mixed_complex_kernel} to objects
-  defined within \ccc{Polyhedron_kernel}.}
+  defined within \ccc{Triangulated_mixed_complex_traits} to objects
+  defined within \ccc{Polyhedron_traits}.}
 
 \ccNestedType{T2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Polyhedron_kernel} to objects
-  defined within \ccc{Triangulated_mixed_complex_kernel}.}
+  defined within \ccc{Polyhedron_traits} to objects
+  defined within \ccc{Triangulated_mixed_complex_traits}.}
+
+\ccTypedef{typedef
+  Regular_triangulation_traits::In_smallest_orthocenter_3
+  In_smallest_orthocenter_3;}{bla}
+\ccNestedType{Construct_weighted_circumcenter_3;}{bla}
+\ccNestedType{Construct_triangulated_mixed_complex_vertex_3}{bla}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Skin_surface_traits_3( const typename Regular_kernel::FT s=.5);}{
+\ccConstructor{Skin_surface_traits_3( const typename Regular_traits::FT s=.5);}{
     constructor that takes the shrink factor as argument.}
 
-%\ccOperations
+\ccOperations
+
+\ccMethod{In_smallest_orthogonal_sphere_3
+  in_smallest_orthogonal_sphere_3_object();}{ }
+\ccGlue
+\ccMethod{Construct_weighted_circumcenter_3
+  construct_weighted_circumcenter_3_object();}{ }
+\ccGlue
+\ccMethod{Construct_triangulated_mixed_complex_vertex_3
+  construct_triangulated_mixed_complex_vertex_3_object();}{ }
+\ccMethod{Regular_traits::FT shrink_factor();}{ }
 
 
 \ccSeeAlso
