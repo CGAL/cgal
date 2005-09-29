@@ -141,11 +141,13 @@ public:
     typedef  Indices::const_iterator      Index_const_iterator;
     //typedef  Indices::const_iterator    Index_iterator;
 
-private:
+
     // used for upper  bounding, indicates the value of a nonbasic original
     // variable, a variable that is fixed will never be priced and therefore
     // remains nonbasic forever
     enum  Bound_index  { LOWER, ZERO, UPPER, FIXED, BASIC };
+    
+private:
     typedef  std::vector<Bound_index>    Bound_index_values;
     typedef  typename Bound_index_values::iterator
                                         Bound_index_value_iterator;
@@ -598,6 +600,15 @@ public: // only the pricing strategies (including user-defined ones
     return ( in_B[ j] >= 0);
   }
   
+  bool is_original(int j) const
+  {
+    CGAL_qpe_precondition( j >= 0);
+    CGAL_qpe_precondition( j < number_of_working_variables());
+    return (j < qp_n);    
+  }
+    
+  bool phaseI( ) const {return is_phaseI;}
+  
   bool is_artificial(int k) const;
 
   int get_l() const;
@@ -620,6 +631,24 @@ public: // only the pricing strategies (including user-defined ones
         { return Lambda_value_iterator(
                      lambda_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
+        
+    // access to the vector w
+    ET  w_j_numerator(int j) const
+    { 
+        CGAL_qpe_precondition((0 <= j) && (j < qp_n));
+        return w[j];
+    }
+    
+    Bound_index  nonbasic_original_variable_bound_index(int i) const
+    {
+        CGAL_assertion_msg(!is_basic(i) && i < qp_n, "wrong argument");
+        if (x_O_v_i[i] == BASIC) {
+            CGAL_qpe_assertion(false);
+        }
+        return x_O_v_i[i];  
+    };
+    
+    
 private:
     // miscellaneous
     // -------------
@@ -946,7 +975,7 @@ public:
     
     void  multiply__2D_B_OxN_O(Value_iterator out) const;
     bool  check_r_B_O(Tag_true  is_in_standard_form) const;
-    bool  check_r_B_O(Tag_false is_in_standard_form) const;
+    bool  check_r_B_O(Tag_false is_instandard_form) const;
         
     void  multiply__2D_OxN_O(Value_iterator out) const;
     bool  check_w(Tag_true  is_in_standard_form) const;
@@ -966,6 +995,8 @@ public:
     void  print_program ( );
     void  print_basis   ( );
     void  print_solution( );
+    void  print_ratio_1_original(int k, const ET& x_k, const ET& q_k);
+    void  print_ratio_1_slack(int k, const ET& x_k, const ET& q_k);
 
     const char*  variable_type( int k) const;
     
@@ -1008,6 +1039,7 @@ public:
 
     // pricing
     // -------
+    // computation of mu_j with standard form
     template < class RndAccIt1, class RndAccIt2, class NT >  
     NT
     mu_j( int j, RndAccIt1 lambda_it, RndAccIt2 x_it, const NT& dd) const
@@ -1032,6 +1064,35 @@ public:
 
 	return mu_j;
     }
+    
+    // computation of mu_j with upper bounding
+    template < class RndAccIt1, class RndAccIt2, class NT >  
+    NT
+    mu_j( int j, RndAccIt1 lambda_it, RndAccIt2 x_it, const NT& w_j,
+            const NT& dd) const
+    {
+	NT  mu_j;
+
+	if ( j < qp_n) {                                // original variable
+
+	    // [c_j +] A_Cj^T * lambda_C
+	    mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
+	    mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
+
+	    // ... + 2 D_Bj^T * x_B
+	    mu_j__quadratic_part( mu_j, j, x_it, w_j, dd, Is_linear());
+
+	} else {                                        // slack or artificial
+
+	    mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
+				       Has_equalities_only_and_full_rank());
+
+	}
+
+	return mu_j;
+    }
+    
+        
 
   private:
 
@@ -1053,22 +1114,62 @@ public:
 					     A_by_index_accessor( qp_A[ j])));
     }
 
-    template < class NT, class It > inline                      // LP case
+    template < class NT, class It > inline          // LP case, standard form
     void
     mu_j__quadratic_part( NT&, int, It, Tag_true) const
     {
 	// nop
     }
+    
+    template < class NT, class It > inline          // LP case, upper bounded
+    void
+    mu_j__quadratic_part( NT&, int, It, const NT& w_j, const NT& dd,
+                                                            Tag_true) const
+    {
+	// nop
+    }    
 
-    template < class NT, class It > inline                      // QP case
+    template < class NT, class It > inline          // QP case, standard form
     void
     mu_j__quadratic_part( NT& mu_j, int j, It x_it, Tag_false) const
     {
-	if ( is_phaseII) {
-	    mu_j__quadratic_part( mu_j, j, x_it, Tag_false(), Is_symmetric());
-	}
+        if ( is_phaseII) {
+	       if (check_tag(Is_symmetric())) {           // D symmetric
+                // 2 D_Bj^T * x_B
+                mu_j += inv_M_B.inner_product_x( x_it,
+                    D_by_index_iterator( B_O.begin(),
+				    D_by_index_accessor( qp_D[ j]))) * NT( 2);
+            } else {                                   // D non-symmetric
+                // ( D_Bj^T + D_jB) * x_B
+                mu_j += inv_M_B.inner_product_x( x_it,
+                    D_pairwise_iterator_inexact( B_O.begin(),
+                    D_pairwise_accessor_inexact( qp_D, j)));
+            }
+        }
     }
 
+    template < class NT, class It > inline          // QP case, upper bounded
+    void
+    mu_j__quadratic_part( NT& mu_j, int j, It x_it, const NT& w_j,
+                                            const NT& dd, Tag_false) const
+    {
+        if ( is_phaseII) {
+            mu_j += dd * w_j;
+            if (check_tag(Is_symmetric())) {           // D symmetric
+                // 2 D_Bj^T * x_B
+                mu_j += inv_M_B.inner_product_x( x_it,
+                    D_by_index_iterator( B_O.begin(),
+                    D_by_index_accessor( qp_D[ j]))) * NT( 2);
+            } else {                                   // D non-symmetric
+                // ( D_Bj^T + D_jB) * x_B
+                mu_j += inv_M_B.inner_product_x( x_it,
+                    D_pairwise_iterator_inexact( B_O.begin(),
+                    D_pairwise_accessor_inexact( qp_D, j)));
+            }
+        }
+    }
+
+/*
     template < class NT, class It >  inline                     // QP, D sym.
     void
     mu_j__quadratic_part( NT& mu_j, int j, It x_it, Tag_false, Tag_true) const
@@ -1089,7 +1190,7 @@ public:
 				 D_pairwise_iterator_inexact( B_O.begin(),
 				     D_pairwise_accessor_inexact( qp_D, j)));
     }
-
+*/
     template < class NT, class It >  inline                     // no ineq.
     void
     mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, const NT& dd, Tag_true) const
@@ -1452,7 +1553,7 @@ void  QP_solver<Rep_>::
 update_1( Tag_true)
 {
     // replace leaving with entering variable
-    if (i == j) {
+    if ((i == j) && (i >= 0)) {
         enter_and_leave_variable();
     } else {
         replace_variable();
@@ -1466,7 +1567,7 @@ update_1( Tag_false)
     if ( is_phaseI) {                                   // phase I
 
 	// replace leaving with entering variable
-	   if (i == j) {
+	   if ((i == j) && (i >= 0)) {
 	       enter_and_leave_variable();
 	   } else {
 	       replace_variable();
@@ -1474,7 +1575,7 @@ update_1( Tag_false)
 
     } else {                                            // phase II
         
-        if (i == j) {
+        if ((i == j) && (i >= 0)) {
             enter_and_leave_variable();
         } else {
 
@@ -1630,7 +1731,11 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
 				
     // b_S_B - ( A_S_BxB_O * x_B_O) - r_S_B
     std::transform(x_B_S.begin(), x_B_S.begin()+S_B.size(),
-                    r_S_B.begin(), x_B_S.begin(), std::minus<ET>());
+                    r_S_B.begin(), x_B_S.begin(),
+                    compose2_2(std::minus<ET>(),
+                        Identity<ET>(),
+                        std::bind1st( std::multiplies<ET>(), d)));
+                        
 
     // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
     Value_iterator  x_it = x_B_S.begin();
