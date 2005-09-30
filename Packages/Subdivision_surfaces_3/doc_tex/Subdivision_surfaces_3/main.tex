@@ -61,58 +61,55 @@ and takes a cue from the policy-based design \cite{cgal:sp-mrlbg-05}.
  
 %% \begin{ccHtmlOnly}
 %%     <CENTER>
-%%         <img src="./fig/shark.gif" alt="Hammerhead"><P>
+%%         <img src="./fig/QTSub.gif" alt="QT subdivision on a rook model"><P>
 %%     </CENTER>
 %% \end{ccHtmlOnly}
-
-%% the combinatorial integrity of them. It is based on the highly
-%% flexible design of the halfedge data structure, see the introduction
-%% in Chapter~\ref{chapterHalfedgeDS} and~\cite{k-ugpdd-99}. However, the
-%% polyhedral surface can be used and understood with
-
 
 % +------------------------------------------------------------------------+
 \section{Subdivision Algorithms}
 % +------------------------------------------------------------------------+
 Subdivision algorithms define surfaces as the limit
-of recursive refinement of a polyhedral mesh. The chapter teaser
-shows a sequence of a subdivision on the rook mesh.
-%Figure \ref{fig:RefSchemes} shows the four major refinement 
-%patterns used in practice.
-%% A mesh is a special graph whose
-%% primitives (i.e.~vertices, edges and facets)
-%% carry attribute information such as vertex 
-%% positions or facet colors. 
+of recursive refinement of a polyhedral mesh, called
+\emph{control mesh}. The refinements generate mesh points 
+to be smoothed to approximate the limit surface.   
+The chapter teaser shows a sequence of a subdivision on 
+a chess model. 
 
 Points on the refined mesh are smoothed by averaging
 neighbor points on the input mesh. A graph, called \emph{stencil}, 
 determines the input submesh whose points contribute to the 
-position of a smoothed point. Stencils are defined at the time 
-the refinement pattern is chosen. For example, 
+position of a refined point. Stencils are defined at the time 
+the refinement pattern is chosen.  
 %as illustrated in Figure \ref{fig:RefMap},
-the PQQ scheme has a vertex-node stencil, which defines 
-the 1-ring of an input vertex; an edge-node stencil, which 
-defines the 1-ring of a input edge; and a facet-node stencil,
-which defines an input facet.
+For example, the \emph{P}rimal \emph{Q}uadtrateral \emph{Q}uadrisection 
+(PQQ) scheme has a vertex-node stencil, which defines 
+the 1-ring of an input vertex; an edge-node stencil, which defines 
+the 1-ring of a input edge; and a facet-node stencil, which defines 
+an input facet.
 
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.5\textwidth}{%
       \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
-    }
+    }\\ \vspace{0.5cm}
+    The blue neighborhoods in the top row indicate the corresponding
+    stencils of the refined nodes in red. 
   \end{center}
 \end{ccTexOnly}
 
 %while the DQQ scheme has only a corner-node stencil, which 
 %relates the facet of a corner to a target node.
 Stencils with weights are called \emph{geometry masks}.
-Geometry masks of Catmull-Clark subdivision are shown below,
+One practical set of geometry masks of the PQQ scheme is
+Catmull-Clark subdivision \cite{cgal:cc-rgbss-78}, which are shown below.
 
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.4\textwidth}{%
       \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask}%
-    }
+    } \\ \vspace{0.5cm}
+    The red nodes indicates the refined nodes and the submeshes 
+    show the corresponding stencils.
   \end{center}
 \end{ccTexOnly}
 
@@ -125,12 +122,21 @@ Geometry masks of Catmull-Clark subdivision are shown below,
 
 The weights shown here are unnormalized, and $n$ is the valence 
 of the vertex. 
-Points on the subdivided mesh are computed by a linear combination
-of the points on the source submesh (i.e.~the stencil) and the mask.
+The point on the subdivided mesh is computed by a summation
+of the weighted points on its stencil (i.e.~the input submesh).
+For example, a Catmull-Clark facet-node is computed by the summation
+of $1/4$ of each stencil node. 
+One refinement pattern may has several specific set of masks. In other 
+words, a facet-node of PQQ scheme may be computed by the summation
+of $1/5$ of each stencil node. Although it is legal in 
+\ccc{CGAL::Subdivision_surfaces_3} to have any kind geometry mask,
+the result surfaces may be odd, not smooth, or not even exist.
+To learn how to design a good mask, both mathematically and esthetically, 
+readers should refer to \cite{cgal:ww-smgd-02}.
+
 %The averaging process can typically be factored into 
 %simpler steps \cite{Oswald-2003-CSS}.
-%and this has
-%been implemented in the OpenMesh library \cite{Sovakar-2004-APISUB}.
+%and this has been implemented in the OpenMesh library \cite{Sovakar-2004-APISUB}.
 %However, while stencil factoring simplifies the implementation,
 %it is less efficient because it requires repeated visits 
 %to all nodes.
@@ -149,8 +155,6 @@ policies.
 %, which compute the smoothed points based on the
 %Catmull-Clark geometry masks.
 
-%\ccc{Subdivision_surfaces_3} supports 1-ring mesh refinement based on 
-%half-edge data structures.
 %A subdivision scheme of \ccc{CGAL::Subdivision_surfaces_3} is a 
 %refinement host parameterized with a geometry policy. 
 
@@ -160,10 +164,12 @@ policies.
 
 % +-------------------------------------------------------------+
 \subsection{Example: Catmull-Clark Subdivision}
-\ccc{CGAL::Subdivision_surfaces_3::PQQ}, the refinement 
-host for the PQQ refinement, realizes the topological 
-refinement, maintains three stencils of the 
-PQQ scheme, and calls policies to smooth the refined points.
+\ccc{CGAL::Subdivision_surfaces_3::PQQ} is the refinement 
+host for the PQQ refinement. It realizes the topological 
+refinement (splitting each quadrilateral facet into four), 
+maintains three stencils of the 
+PQQ scheme, and calls geometry policies to assign the positions
+of refined points.
 
 \begin{ccExampleCode}
   // S is the geometry policy realizing the geometry masks
@@ -171,10 +177,12 @@ PQQ scheme, and calls policies to smooth the refined points.
   static void PQQ(Polyhedron& p, S<Polyhedron> rule, int step)
 \end{ccExampleCode}
 
-\ccc{Subdivision_surfaces_3} provides \ccc{CGAL::CatmullClark_stencil} 
-realizing the geometry masks of Catmull-Clark subdivision 
-\cite{cgal:cc-rgbss-78}. 
-The Catmull-Clark subdivision is then constructed by parameterizing 
+To implement Catmull-Clark subdivision, we only need to implement
+the geometry policies and reuse the \ccc{PQQ} refinement host.
+Considering the popularity of Catmull-Clark subdivision,
+\ccc{Subdivision_surfaces_3} supports \ccc{CGAL::CatmullClark_stencil},
+which realizes the geometry masks of Catmull-Clark subdivision. 
+The Catmull-Clark subdivision is then realized by parameterizing 
 \ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
 \ccc{CGAL::CatmullClark_stencil}.
 
@@ -185,7 +193,7 @@ The Catmull-Clark subdivision is then constructed by parameterizing
 \end{ccExampleCode}
 
 \ccc{Polyhedron} is a model of the \ccc{CGAL::Polyhedron_3}
-concept, and \ccc{step} specifies the subdivision depth.
+concept, and \ccc{step} specifies the refinement depth.
 
 %Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are supported
 %in \ccc{CGAL::Subdivision_surfaces_3} as convenient functions.
@@ -199,12 +207,12 @@ quadrisection (DQQ) and $\sqrt{3}$ triangulation, which
 are used by Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ subdivision, 
 respectively. 
 
-The refined mesh is shown below the input mesh.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.6\textwidth}{%
       \includegraphics[width=0.6\textwidth]{\FIGDIR/RefSchemes}%
-    }
+    }\\ \vspace{0.5cm}
+    The refined mesh is shown below the control mesh.
   \end{center}
 \end{ccTexOnly}
 
@@ -247,59 +255,40 @@ Each refinement host is a template function of
 a mesh type and a policy type. The mesh type is
 a model of the \ccc{CGAL::Polyhedron_3} concept, and the
 policy type is a class with functions realizing the 
-geometry masks of the subdivision scheme.
+geometry masks of a specific subdivision scheme.
 Refinement hosts refine the mesh, maintain the stencils 
-(i.e.~the mapping between the source and the refined mesh), 
-and call policy functions
-to assign the smoothed points. \ccc{Point_3} type is required
-to be defined in the mesh type, but no flag of the mesh 
-is required to maintain the stencils. The stencils are maintained
-by ordering new vertices to match the sequence of connectivity 
-operations of the refinement. Interested users should 
-refer to \cite{cgal:sp-mrbee-05} for details of the 
-ordering algorithm.
+(i.e.~the mapping between the control mesh and the refined mesh), 
+and call policy functions to assign the smoothed points. 
+The refinement is done by applying a sequence of connectivity 
+operations (mostly are Euler operations).
+The stencils are maintained by ordering new nodes to match the 
+sequence of connectivity operations (which generate the refined nodes) 
+of the refinement. By matching the ordering, no flag of the mesh
+to indicate the stencils is required to maintain the stencils. 
+Though to cooperate the geometry policies, \ccc{Point_3} type is 
+required to be defined within the mesh. For details of the 
+refinement algorithm and implementation, interested users should 
+refer to \cite{cgal:sp-mrbee-05} .
 
 % +-------------------------------------------------------------+
 \section{Geometry Policy}
-A geometry policy is a class that defines a set of geometry masks. 
+A geometry policy class defines a set of geometry masks. 
 Each geometry mask is realized as a member function (i.e.~the policy) 
 assigning new points according to the stencil weights.
 %The policy interface is defined with the refinement host. 
-Each policy receives a primitive handle 
-(e.g.~\ccc{Halfedge_handle}) of the input mesh, and the reference of 
-the \ccc{Point} to the refined vertex. The realization of the policy
-collects the neighbors of the primitive handle (i.e.~the stencil),
-and computes the new point by a linear combination of the stencil 
+Each policy function receives a primitive handle 
+(e.g.~\ccc{Halfedge_handle}) of the control mesh, and the reference of 
+the \ccc{Point} to the refined vertex. In general, the implementation of 
+the policy function collects the neighbors of the primitive 
+handle (i.e.~the stencil), and (ideally) computes the new point 
+by a linear combination of the stencil 
 points and the mask (i.e.~the stencil weights).
-
-The interfaces of a geometry policy need to match the stencils of 
-the refinement host. For example, a PQQ host requires three 
-policy functions for meshes without open boundaries: a vertex-node 
-stencil, an edge-node stencil, and a facet-node stencil. 
-%To support meshes with boundaries, a policy function
-%for border vertices is also required.
-
-\begin{ccTexOnly}
-  \begin{center}
-    \parbox{0.5\textwidth}{%
-      \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
-    }
-  \end{center}
-\end{ccTexOnly}
-
-%\begin{ccHtmlOnly}
-%  <CENTER>
-%  <A HREF="./FIG/PQQStencil.gif">
-%     <img src="./FIG/PQQStencil.gif" alt="Stencils of PQQ scheme "></A><P>
-%  </CENTER>
-%\end{ccHtmlOnly}
-
 Following example shows an implementation of geometry masks 
 of Catmull-Clark subdivision. \ccc{Point} is an alias to \ccc{Point_3}
 in \ccc{Poly}.
 
 \begin{ccExampleCode}
-template <class P>
+template <class Poly>
 class CatmullClark_stencil {
   //
   void facet_node(Facet_handle facet, Point& pt) {
@@ -352,20 +341,86 @@ class CatmullClark_stencil {
   }
 }
 \end{ccExampleCode}
-%% Move these back when add the border support
-%%   void border_node(Halfedge_handle edge, Point& ept, Point& vpt) {
-%%     Point& ep1 = edge->vertex()->point();
-%%     Point& ep2 = edge->opposite()->vertex()->point();
-%%     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-%%     Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
-%%     Point& vp1  = vcir->opposite()->vertex()->point();
-%%     Point& vp0  = vcir->vertex()->point();
-%%     Point& vp_1 = (--vcir)->opposite()->vertex()->point();
-%%     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-%%                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
-%%                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
-%%   }
+The interfaces of a geometry policy need to match the stencils of 
+the refinement host. A PQQ refinement host requires three 
+policy functions for meshes without open boundaries: a vertex-node 
+stencil, an edge-node stencil, and a facet-node stencil. 
+To support meshes with boundaries, a policy function
+for border vertices is also required.
+
+%% \begin{ccTexOnly}
+%%   \begin{center}
+%%     \parbox{0.5\textwidth}{%
+%%       \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
+%%     }
+%%   \end{center}
+%% \end{ccTexOnly}
+
+%\begin{ccHtmlOnly}
+%  <CENTER>
+%  <A HREF="./FIG/PQQStencil.gif">
+%     <img src="./FIG/PQQStencil.gif" alt="Stencils of PQQ scheme "></A><P>
+%  </CENTER>
+%\end{ccHtmlOnly}
+
+
+\begin{ccExampleCode}
+  void border_node(Halfedge_handle edge, Point& ept, Point& vpt) {
+    Point& ep1 = edge->vertex()->point();
+    Point& ep2 = edge->opposite()->vertex()->point();
+    ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
+
+    Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
+    Point& vp1  = vcir->opposite()->vertex()->point();
+    Point& vp0  = vcir->vertex()->point();
+    Point& vp_1 = (--vcir)->opposite()->vertex()->point();
+    vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
+                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+  }
+\end{ccExampleCode}
+
+
+The interface of PQQ, PTQ, DQQ and $\sqrt{3}$ refinement hosts are 
+defined below:
+
+
+\begin{ccExampleCode}
+template <class Poly>
+class PQQ_stencil {
+  void facet_node(Facet_handle, Point&) {};
+  void edge_node(Halfedge_handle, Point&) {};
+  void vertex_node(Vertex_handle, Point&) {};
+
+  void border_node(Halfedge_handle, Point&, Point&) {};
+};
+
+template <class Poly>
+class PTQ_stencil {
+  void edge_node(Halfedge_handle, Point&) {};
+  void vertex_node(Vertex_handle, Point&) {};
+
+  void border_node(Halfedge_handle, Point&, Point&) {};
+};
+
+template <class Poly>
+class DQQ_stencil {
+public:
+  void corner_node(Halfedge_handle edge, Point& pt) {};
+};
+
+template <class Poly>
+class Sqrt3_stencil {
+public:
+  void vertex_node(Vertex_handle vertex, Point& pt) {}
+};
+\end{ccExampleCode}
+
+Note \ccc{DQQ_stencil} and \ccc{Sqrt3_stencil} do not support
+meshes with global boundaries. Also, \ccc{PTQ_stencil} and
+\ccc{Sqrt3_stencil} are subset of \ccc{PQQ_stencil}, and are not
+explicitly defined in \ccc{Subdivision_surfaces_3}.
 
 %% \begin{ccExampleCode}
 %% PQQ<_M,CCstencil>(Mesh,CCstencil<_M>())
@@ -404,8 +459,9 @@ class CatmullClark_stencil {
 % +------------------------------------------------------------------------+
 \section{Built-in subdivision schemes}
 % +------------------------------------------------------------------------+
-Catmull-Clark , Loop, \DS\ and $\sqrt{3}$ subdivisions are directly supported 
-by \ccc{Subdivision_surfaces_3}. 
+Considering their popularity in graphics modeling, 
+Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ subdivisions are directly
+supported in \ccc{Subdivision_surfaces_3}. 
 %Each of these subdivision schemes is realized by parameterizing 
 %the corresponding geometry policy to the .
 
@@ -430,9 +486,11 @@ Following shows an example of \DS\ subdivision on a polyhedral mesh.
 % +------------------------------------------------------------------------+
 \section{Customize subdivision schemes}
 % +------------------------------------------------------------------------+
-To construct a customized subdivision scheme, users first choose a 
-refinement host with the intended topological pattern, and then 
-implement the geometry policy accordingly. 
+The goal of \ccc{Subdivision_surfaces_3} is to provide a flexible platform
+to develop user-flavored subdivision schemes.
+To construct a customized subdivision scheme, users can simply 
+choose a refinement host with the intended topological pattern, 
+and then realize the geometry policy accordingly. 
 Following example develops a subdivision scheme
 generating improved Loop subdivision surfaces based on the PTQ 
 refinement (i.e~\ccc{Subdivision_surfaces_3<Polyhedron>::PTQ}). 
