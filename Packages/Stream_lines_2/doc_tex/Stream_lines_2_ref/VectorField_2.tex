@@ -48,14 +48,16 @@ different queries.
 \ccMethod{CGAL::Iso_rectangle_2<Geom_traits> iso_rectangle();}{return
 the bounding box of the whole domain.}
 \ccGlue
-\ccMethod{std::pair<Vector_2,FT> get_field(Point_2 p);}{returns the
-vector field value and the local density.}
+\ccMethod{std::pair<Vector_2,FT> get_field(Point_2 p);}
+{returns the vector field value and the local density.
+\ccPrecond \ccc{is_in_domain(p)} must be true.}
 \ccGlue
 \ccMethod{bool is_in_domain(Point_2 p);}{returns true if the point p
 is inside the domain boundaries, false otherwise.}
 \ccGlue
-\ccMethod{FT get_integration_step(Point_2 p);}{returns the integration 
-step at the point p.}
+\ccMethod{FT get_integration_step(Point_2 p);}
+{returns the integration step at the point p.
+\ccPrecond \ccc{is_in_domain(p)} must be true.}
 \ccGlue
 
 \ccHasModels

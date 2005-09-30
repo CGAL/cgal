@@ -36,18 +36,20 @@ The class \ccRefName\ has two template parameters. The first parameter
 
 \ccTypes
 \ccThree{typedef VectorField_2:::Point_iterator_x}{xxx_xxxx_xxx;}{}
-\ccTypedef{typedef VectorField_2::FT FT;}{the traits class.}
+\ccTypedef{typedef VectorField_2::Geom_traits Geom_traits;}{the traits class.}
+\ccGlue
+\ccTypedef{typedef VectorField_2::FT FT;}{the scalar type.}
 \ccGlue
 \ccTypedef{typedef VectorField_2::Point_2 Point_2;}{the point type.}
 \ccGlue
-\ccTypedef{typedef VectorField_2::Vector_2 Vector_2;}{the vector point.}
+\ccTypedef{typedef VectorField_2::Vector_2 Vector_2;}{the vector type.}
 
 The class \ccRefName\ provides also two types for handling
 streamlines:
 
-\ccNestedType{Point_iterator_2;}{iterator range of points.}
+\ccNestedType{Point_iterator_2;}{iterator of points with value type \ccc{Point_2}.}
 \ccGlue
-\ccNestedType{Stream_line_iterator_2;}{iterator range of streamlines.}
+\ccNestedType{Stream_line_iterator_2;}{an iterator to visit the streamlines with value type \ccc{std::pair<Point_iterator_2, Point_iterator_2>}.}
 \ccGlue
 
 

@@ -29,12 +29,12 @@ This class provides an empty 2D vector field defined on a triangulated domain.
 
 \ccThree{Triangular_field_2<StreamLinesTraits>}{Triangular_field_2 triangular_field_2}{}
 \ccThreeToTwo
-\ccConstructor{Triangular_field_2( pInputIterator first_point, pInputIterator last_point, vInputIterator first_vector)}
+\ccConstructor{Triangular_field_2( InputIterator1 first_point, InputIterator1 last_point, InputIterator2 first_vector)}
 {		Defines the points in the range  
 		$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ 
 		as the sample points of the grid, with the corresponding number of vectors started at \ccc{first_vector}.
-\ccPrecond The \ccc{value_type} of \ccc{pInputIteratorp} is \ccc{Point}.
-\ccPrecond The \ccc{value_type} of \ccc{vInputIteratorv} is \ccc{Vector}.}
+\ccPrecond The \ccc{value_type} of \ccc{InputIterator1} is \ccc{Point}.
+\ccPrecond The \ccc{value_type} of \ccc{InputIterator2} is \ccc{Vector}.}
 
 \ccIsModel 
 
