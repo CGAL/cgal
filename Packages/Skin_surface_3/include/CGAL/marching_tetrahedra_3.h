@@ -6,34 +6,37 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Marching_tetrahedra_observer_default_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
-template <class Simplicial_complex,
+template <class Triangulation_3,
 	  class HalfedgeDS,
-	  class MarchingTetrahedraTraits_3 >
-class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
+	  class MarchingTetrahedraTraits_3,
+	  class MarchingTetrahedraObserver_3 >
+class Marching_tetrahedra_builder : public Modifier_base<HalfedgeDS> {
  public:
-  typedef Simplicial_complex                    Sc;
+  typedef Triangulation_3                       Triang;
   typedef HalfedgeDS                            HDS;
-  typedef MarchingTetrahedraTraits_3            MarchingTetrahedraTraits;
+  typedef MarchingTetrahedraTraits_3            Traits;
+  typedef MarchingTetrahedraObserver_3          Observer;
  private:
-  typedef typename Sc::Vertex_handle            Sc_vertex_handle;
-  typedef typename Sc::Edge                     Sc_edge;
-  typedef typename Sc::Facet                    Sc_facet;
-  typedef typename Sc::Cell_handle              Sc_cell_handle;
+  typedef typename Triang::Vertex_handle            Triang_vertex_handle;
+  typedef typename Triang::Edge                     Triang_edge;
+  typedef typename Triang::Facet                    Triang_facet;
+  typedef typename Triang::Cell_handle              Triang_cell_handle;
   
-  typedef typename Sc::Finite_vertices_iterator Sc_finite_vertices_iterator;
-  typedef typename Sc::Finite_edges_iterator    Sc_finite_edges_iterator;
-  typedef typename Sc::Finite_facets_iterator   Sc_finite_facets_iterator;
-  typedef typename Sc::All_cells_iterator       Sc_all_cells_iterator;
-  typedef typename Sc::Finite_cells_iterator    Sc_finite_cells_iterator;
+  typedef typename Triang::Finite_vertices_iterator Triang_finite_vertices_iterator;
+  typedef typename Triang::Finite_edges_iterator    Triang_finite_edges_iterator;
+  typedef typename Triang::Finite_facets_iterator   Triang_finite_facets_iterator;
+  typedef typename Triang::All_cells_iterator       Triang_all_cells_iterator;
+  typedef typename Triang::Finite_cells_iterator    Triang_finite_cells_iterator;
   
-  typedef typename Sc::Cell_circulator          Sc_cell_circulator;
-  typedef typename Sc::Geom_traits              Sc_traits;
-  typedef typename Sc_traits::RT                Sc_rt;
-  typedef typename Sc_traits::Point_3           Sc_point;
-  typedef typename Sc_traits::Triangle_3        Sc_triangle;
+  typedef typename Triang::Cell_circulator          Triang_cell_circulator;
+  typedef typename Triang::Geom_traits              Triang_traits;
+  typedef typename Triang_traits::RT                Triang_rt;
+  typedef typename Triang_traits::Point_3           Triang_point;
+  typedef typename Triang_traits::Triangle_3        Triang_triangle;
   
   typedef typename HDS::Vertex_handle           HDS_vertex_handle;
   typedef typename HDS::Halfedge_handle         HDS_halfedge_handle;
@@ -43,23 +46,22 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
   typedef typename HDS_traits::Point_3          HDS_point;
   typedef typename HDS_traits::RT               HDS_rt;
   
-  typedef std::pair<Sc_vertex_handle,Sc_vertex_handle> Vpair;
-  typedef CGAL::Bounded_side                    Bounded_side;
+  typedef std::pair<Triang_vertex_handle,Triang_vertex_handle> Vpair;
 
  public:
-  Mesh_builder(Sc &sc, const MarchingTetrahedraTraits &traits)
-    : sc(sc), traits(traits), nVertices(0) {
+  Marching_tetrahedra_builder(const Triang &triang, const Traits &traits, Observer &observer)
+    : triang(triang), traits(traits), observer(observer), nVertices(0) {
   }
   
   void operator()( HDS& hds) {
-    CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
+    Polyhedron_incremental_builder_3<HDS> B( hds, true);
     
     B.begin_surface(0,0,0);
     
     // First generate vertices of the mesh:
-    Sc_vertex_handle vh0, vh1;
-    for (Sc_finite_edges_iterator eit=sc.finite_edges_begin();
-	 eit!=sc.finite_edges_end(); eit++) {
+    Triang_vertex_handle vh0, vh1;
+    for (Triang_finite_edges_iterator eit=triang.finite_edges_begin();
+	 eit!=triang.finite_edges_end(); eit++) {
       if ((traits.sign(eit->first->vertex(eit->second))==POSITIVE)!=
 	  (traits.sign(eit->first->vertex(eit->third))==POSITIVE)) {
 	add_vertex(B,eit);
@@ -69,8 +71,8 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
     // Then triangulate each cell of the triangulation:
     int in[4], out[4], Nin;
     Vpair vpair;
-    for (Sc_finite_cells_iterator cit= sc.finite_cells_begin();
-         cit!=sc.finite_cells_end();
+    for (Triang_finite_cells_iterator cit= triang.finite_cells_begin();
+         cit!=triang.finite_cells_end();
          cit++) {
       Nin = 0;
       
@@ -144,25 +146,26 @@ class Mesh_builder : public CGAL::Modifier_base<HalfedgeDS> {
     B.end_surface();
   }
 private:
-  Sc &sc;
-  const MarchingTetrahedraTraits &traits;
+  const Triang &triang;
+  const Traits &traits;
+  Observer &observer;
   std::map< Vpair, int > vertices;
   int nVertices;
 
-  Vpair makePair(Sc_vertex_handle vh0, Sc_vertex_handle vh1) {
+  Vpair makePair(Triang_vertex_handle vh0, Triang_vertex_handle vh1) {
     if (vh0 < vh1) return Vpair(vh0,vh1); else return Vpair(vh1,vh0);
   }
 
-  void add_vertex(CGAL::Polyhedron_incremental_builder_3<HDS> &B,
-    Sc_finite_edges_iterator const &e) {
+  void add_vertex(Polyhedron_incremental_builder_3<HDS> &B,
+    Triang_finite_edges_iterator const &e) {
     Vpair vpair = makePair(
       e->first->vertex(e->second),
       e->first->vertex(e->third));
-    Sc_cell_circulator ccir = sc.incident_cells(*e);
-    while (sc.is_infinite(ccir)) ccir ++;
-    assert(!sc.is_infinite(ccir));
+    Triang_cell_circulator ccir = triang.incident_cells(*e);
+    while (triang.is_infinite(ccir)) ccir ++;
+    assert(!triang.is_infinite(ccir));
 
-    B.add_vertex(traits.intersection(Sc_edge(ccir, 
+    B.add_vertex(traits.intersection(Triang_edge(ccir, 
       ccir->index(e->first->vertex(e->second)),
       ccir->index(e->first->vertex(e->third)))));
     vertices[vpair] = nVertices;
@@ -170,9 +173,9 @@ private:
   }
   
   // Orientation is right
-  void add_facet(CGAL::Polyhedron_incremental_builder_3<HDS> &B,
+  void add_facet(Polyhedron_incremental_builder_3<HDS> &B,
     int v0, int v1, int v2,
-    Sc_cell_handle ch) {
+    Triang_cell_handle ch) {
     assert((v0!=v1) && (v0!=v2) && (v1!=v2));
     HDS_face_handle f = B.begin_facet();
     B.add_vertex_to_facet( v0 );
@@ -182,18 +185,9 @@ private:
   }
 
   // Add quadruple or two triangles (orientation is right)
-  void add_facet(CGAL::Polyhedron_incremental_builder_3<HDS> &B,
+  void add_facet(Polyhedron_incremental_builder_3<HDS> &B,
     int v0, int v1, int v2, int v3,
-    Sc_cell_handle ch) {
-//     assert((v0!=v1) && (v0!=v2) && (v0!=v3));
-//     assert((v1!=v2) && (v1!=v3) && (v2!=v3));
-//     HDS_Face_handle f = B.begin_facet();
-//     B.add_vertex_to_facet( v0 );
-//     B.add_vertex_to_facet( v1 );
-//     B.add_vertex_to_facet( v2 );
-//     B.add_vertex_to_facet( v3 );
-//     B.end_facet();
-// OR:
+    Triang_cell_handle ch) {
     add_facet(B, v0, v1, v3, ch);
     add_facet(B, v1, v2, v3, ch);
   }
@@ -201,17 +195,42 @@ private:
 
 template <class Triangulation_3,
 	  class Polyhedron_3,
-	  class MarchingTetrahedraTraits_3 >
+	  class MarchingTetrahedraTraits_3,
+	  class MarchingTetrahedraObserver_3>
 void marching_tetrahedra_3(
-  Triangulation_3 &triangulation,
+  const Triangulation_3 &triangulation,
   Polyhedron_3 &polyhedron,
-  const MarchingTetrahedraTraits_3 &marching_traits) {
+  const MarchingTetrahedraTraits_3 &traits,
+  MarchingTetrahedraObserver_3 &observer) {
+  
+  typedef typename Polyhedron_3::HalfedgeDS                   HDS;
+  typedef MarchingTetrahedraTraits_3                          Traits;
+  typedef MarchingTetrahedraObserver_3                        Observer;
+  typedef Marching_tetrahedra_builder<Triangulation_3,HDS, Traits, Observer>
+                                                              Builder;
+  
+  Builder builder(triangulation, traits, observer);
+  polyhedron.delegate(builder);
+}
+
+template <class Triangulation_3,
+	  class Polyhedron_3,
+	  class MarchingTetrahedraTraits_3>
+void marching_tetrahedra_3(
+  const Triangulation_3 &triangulation,
+  Polyhedron_3 &polyhedron,
+  const MarchingTetrahedraTraits_3 &traits) {
   
   typedef typename Polyhedron_3::HalfedgeDS                    HDS;
-  typedef MarchingTetrahedraTraits_3                           Marching_traits;
-  typedef Mesh_builder<Triangulation_3,HDS,Marching_traits>    Mesh_builder;
-  
-  Mesh_builder builder(triangulation, marching_traits);
+  typedef typename Triangulation_3::Cell_handle                Cell_handle;
+  typedef MarchingTetrahedraTraits_3                           Traits;
+  typedef Marching_tetrahedra_observer_default_3<Cell_handle, Polyhedron_3>
+                                                               Observer; 
+  typedef Marching_tetrahedra_builder<Triangulation_3,HDS,Traits,Observer>
+                                                               Builder;
+
+  Observer observer;
+  Builder builder(triangulation, traits, observer);
   polyhedron.delegate(builder);
 }
 

@@ -18,7 +18,7 @@
 \section{Introduction}
 \label{sectionSkinSurfaceIntro}
 
-Skin surfaces, introduced by Edelsbrunner in \cite{e-dssd-99} (TODO: was
+Skin surfaces, introduced by Edelsbrunner in \cite{cgal:e-dssd-99} (TODO: was
 \cite{e-dssd-98}), have a rich and simple combinatorial and geometric
 structure that makes them suitable for modeling large molecules in
 biological computing.  Meshing such surfaces is often required for
@@ -33,8 +33,9 @@ due to the appearance of patches of spheres and hyperboloids
 connecting the balls.
 
 This package constructs an isotopic mesh from a set of balls and a
-shrink factor. An optimized algorithm is implemented for meshing the
-union of a set of balls.
+shrink factor using the algorithm described in
+\cite{cgal:kv-mssct-05}. An optimized algorithm is implemented for
+meshing the union of a set of balls.
 
 \section{Definition}
 A skin surface is defined as the boundary of an infinite set of balls.

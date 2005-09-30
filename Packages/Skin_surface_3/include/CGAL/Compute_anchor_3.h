@@ -329,7 +329,7 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
   Vertex_handle v1 = e.first->vertex(e.third);
 
   bool contains_focus = true;
-  Sign side = CGAL::NEGATIVE;
+  Sign side = NEGATIVE;
   Simplex s;
   
   Facet_circulator fcir, fstart;

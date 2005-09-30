@@ -15,25 +15,52 @@
 
 \ccDefinition
 
-marching tetrahedra description
+The function \ccRefName\ implements the marching tetrahedra algorithm
+\cite{cgal:tpg-rmtiise-99}. 
+
+The input is either an input range or a triangulation. The value type
+of the input iterator is \ccc{Cell_handle_3}. The four vertices of a
+cell are indexed with 0, 1, 2 and 3 in positive orientation, the
+positive orientation being defined by the orientation of the
+underlying Euclidean space $\R^3$, which is the case for
+\ccc{Triangulation_3}, cf.\ Section~\ref{Triangulation3-sec-intro}.
+% NGHK: check link above...
+
+The output is a \ccc{Polyhedron_3} and is constructed using the
+\ccc{Polyhedral_incremental_builder_3}.
 
 \ccInclude{CGAL/marching_tetrahedra_3.h}
 
+\ccGlobalFunction{
+template <class InputIterator,
+	  class Polyhedron_3,
+	  class MarchingTetrahedraTraits_3,
+          class MarchingTetrahedraObserver_3 >
+void marching_tetrahedra_3(
+  InputIterator first, 
+  InputIterator last, 
+  Polyhedron_3 &polyhedron,
+  const MarchingTetrahedraTraits_3 &marching_traits,
+  const MarchingTetrahedraObserver_3 &marching_observer = 
+    CGAL::Marching_tetrahedra_observer_default_3());}
 
 \ccGlobalFunction{
 template <class Triangulation_3,
 	  class Polyhedron_3,
-	  class MarchingTetrahedraTraits_3 >
+	  class MarchingTetrahedraTraits_3,
+          class MarchingTetrahedraObserver_3 >
 void marching_tetrahedra_3(
   const Triangulation_3 &triangulation,
   Polyhedron_3 &polyhedron,
-  const MarchingTetrahedraTraits_3 &marching_traits);}
+  const MarchingTetrahedraTraits_3 &marching_traits,
+  const MarchingTetrahedraObserver_3 &marching_observer = 
+    CGAL::Marching_tetrahedra_observer_default_3());}
 
-
-%\ccSeeAlso
-%\ccRefIdfierPage{Polyhedron_3<Traits>}\\
-%\ccRefIdfierPage{SkinSurfaceTraits_3<Regular_kernel, Triangulated_mixed_complex_kernel, Polyhedron_kernel>}\\
-
+\ccSeeAlso
+\ccRefIdfierPage{MarchingTetrahedraTraits_3}\\
+\ccRefIdfierPage{MarchingTetrahedraObserver_3}\\
+\ccRefIdfierPage{Polyhedron_3}\\
+\ccRefIdfierPage{Triangulation_3}
 
 \end{ccRefFunction}
 

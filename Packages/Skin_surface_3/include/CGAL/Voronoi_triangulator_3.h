@@ -429,10 +429,10 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   Sc_Cell_handle ch;
 
 // NGHK: DEBUG:
-  CGAL::Orientation o = CGAL::orientation(
+  Orientation o = orientation(
     vh[0]->point(), vh[1]->point(),
     vh[2]->point(), vh[3]->point());
-  if (((orient) &&(o!=CGAL::POSITIVE))||((!orient)&&(o!=CGAL::NEGATIVE)))  {
+  if (((orient) &&(o!=POSITIVE))||((!orient)&&(o!=NEGATIVE)))  {
     std::cout << "Orient: " << o;
     Rt_Vertex_handle  r_vh;
     Rt_Edge           r_e;
@@ -468,7 +468,7 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
           break;
       }
     }
-    o = CGAL::orientation(vert[0],vert[1],vert[2],vert[3]);
+    o = orientation(vert[0],vert[1],vert[2],vert[3]);
     std::cout << " -- " << orient << " -- " << o << std::endl;
   }
 

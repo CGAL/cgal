@@ -23,6 +23,7 @@ public:
 
   Skin_surface_quadratic_surface_3(RT eps=10e-10) : eps(eps) {
   }
+  virtual ~Skin_surface_quadratic_surface_3() {};
   // Construct the intersection point with the segment (p0,p1)
   Point to_surface(Point const &p0, Point const &p1) {
     CGAL_assertion (Sign(value(p1) * value(p0)) != POSITIVE);
@@ -53,7 +54,7 @@ public:
   virtual Point to_surface(Point const &p0) = 0;
 
   // compute the function value of p
-  virtual RT value(Point const &p) = 0;
+  virtual RT value(Point const &p) const = 0;
   // Compute the gradient in p
   virtual Vector gradient(Point const &p) = 0; 
   // Compute the normal in p (normalized gradient)
@@ -84,10 +85,11 @@ public:
 template < class K >
 class Skin_surface_sphere_3 : public Skin_surface_quadratic_surface_3<K> {
 public:
-  typedef typename K::Point_3             Point;
-  typedef typename K::Vector_3            Vector;
-  typedef typename K::RT                  RT;
-  typedef Weighted_point<Point, RT> Weighted_point;
+  typedef Skin_surface_quadratic_surface_3<K> Parent; 
+  typedef typename Parent::Point              Point;
+  typedef typename Parent::Vector             Vector;
+  typedef typename Parent::RT                 RT;
+  typedef typename Parent::Weighted_point     Weighted_point;
 
   Skin_surface_sphere_3(Weighted_point wp, RT s, int orient, RT eps=10e-10)
     : Skin_surface_quadratic_surface_3<K>(eps),
@@ -95,8 +97,8 @@ public:
     assert((orient == -1) || (orient == 1));
   }
 	
-  RT value(Point const &x) {
-    return orient * (CGAL::squared_distance(x, wp)/s - wp.weight());
+  RT value(Point const &x) const {
+    return orient * (squared_distance(x, wp)/s - wp.weight());
   }
 //   Point to_surface(Point const &p0, Point const &p1) {
 //     Vector p0c = p0-wp;
@@ -104,7 +106,7 @@ public:
 //     RT sq_d = p0p1*p0p1;
 //     RT top = -p0c*p0p1/sq_d; 
 
-//     RT extr_val = CGAL::squared_distance(p0+top*p0p1, wp) - s*wp.weight();
+//     RT extr_val = squared_distance(p0+top*p0p1, wp) - s*wp.weight();
 		
 //     if (extr_val > 0) {
 //       std::cerr << "im. intersection[" << dimension() << "] "
@@ -137,7 +139,7 @@ public:
     RT sq_d = v*v;
     RT top = -pc*v/sq_d; 
 
-    RT extr_val = CGAL::squared_distance(p+top*v, wp) - s*wp.weight();
+    RT extr_val = squared_distance(p+top*v, wp) - s*wp.weight();
 		
     if (extr_val > 0) {
       // 			std::cerr << "im. intersection[" << dimension() << "] "
@@ -204,10 +206,11 @@ private:
 template < class K >
 class Skin_surface_hyperboloid_3 : public Skin_surface_quadratic_surface_3<K> {
 public:
-  typedef typename K::Point_3             Point;
-  typedef typename K::Vector_3            Vector;
-  typedef typename K::RT                  RT;
-  typedef CGAL::Weighted_point<Point, RT> Weighted_point;
+  typedef Skin_surface_quadratic_surface_3<K> Parent; 
+  typedef typename Parent::Point              Point;
+  typedef typename Parent::Vector             Vector;
+  typedef typename Parent::RT                 RT;
+  typedef typename Parent::Weighted_point     Weighted_point;
 
   Skin_surface_hyperboloid_3(Weighted_point wp, Vector t, RT s, int orient,
     RT eps=10e-10)
@@ -216,7 +219,7 @@ public:
     sq_t = t*t;
   }
 	
-  RT value(Point const &x) {
+  RT value(Point const &x) const {
     Vector dir = x-wp;
     RT tmp = dir*t;
     tmp = tmp*tmp/sq_t;
@@ -322,7 +325,7 @@ public:
     }
     assert(scale >= 0);
 		
-    return CGAL::squared_distance(wp, p) - scale*vt*vt/(t*t);
+    return squared_distance(wp, p) - scale*vt*vt/(t*t);
   }
 private:
   Weighted_point wp;

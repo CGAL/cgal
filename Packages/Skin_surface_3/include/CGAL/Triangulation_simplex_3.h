@@ -16,22 +16,22 @@ public:
   Triangulation_simplex_3(Vertex_handle v) {
     ch = v->cell();
     ref = (ch->index(v) << 2); /* dim == 0 */
-    CGAL_assertion (ch != NULL);
+    CGAL_assertion (ch != Cell_handle());
   }
   Triangulation_simplex_3(Edge e) {
     ch = e.first;
     ref = (((e.third<< 2) + e.second) << 2) + 1; /* dim */
-    CGAL_assertion (ch != NULL);
+    CGAL_assertion (ch != Cell_handle());
   }
   Triangulation_simplex_3(Facet f) {
     ch = f.first;
     ref = (f.second << 2) + 2; /* dim */
-    CGAL_assertion (ch != NULL);
+    CGAL_assertion (ch != Cell_handle());
   }
   Triangulation_simplex_3(Cell_handle c) {
     ch = c;
     ref = 3; /* dim */
-    CGAL_assertion (ch != NULL);
+    CGAL_assertion (ch != Cell_handle());
   }
 
   operator Vertex_handle ()

@@ -22,23 +22,41 @@
 
   After the construction of a vertex or a triangle of the mesh, the
   functions \ccc{after_vertex_insertion} and
-  \ccc{after_triangle_insertion} are called respectively.
+  \ccc{after_facet_insertion} are called respectively.
 
 \ccRefines
-  
+\ccc{CopyConstructable}, \ccc{Assignable}.
+
 \ccTypes
 
+\ccNestedType{Triangulation_cell_handle;}{handle to the Cell type of
+  the triangulation}
+
+\ccNestedType{Polyhedron_vertex_handle;}{handle to the Vertex type of
+  the polyhedron}
+\ccGlue
+\ccNestedType{Polyhedron_facet_handle;}{handle to the Facet type of the
+  polyhedron}
 
 
 \ccCreation
 \ccCreationVariable{observer}
 
-\ccConstructor{MarchingTetrahedraObserver_3(HDS_rt iso_value=0);}{}
+\ccConstructor{MarchingTetrahedraObserver_3();}{}
+
+\ccConstructor{MarchingTetrahedraObserver_3( const
+  MarchingTetrahedraObserver_3& traits2);}{ copy constructor.}
 
 \ccOperations
 
-\ccMethod{Sign sign(const Vertex_handle vh) const;}{ }
-\ccMethod{HDS_point intersection(const Edge &e) const;}{ }
+\ccMethod{void after_vertex_insertion(Triangulation_cell_handle ch,
+  int i, int j, Polyhedron_vertex_handle vh);}{ this function is
+  called after the insertion of a new vertex to the mesh. }
+\ccMethod{void after_facet_insertion(Triangulation_cell_handle ch,
+  Polyhedron_facet_handle fh);}{this function is called after the
+  insertion of a facet vertex to the mesh. Note that this function can
+  be called twice with the same face if two vertices of the cell lie
+  inside and two outside the mesh. }
 
 \ccHasModels
 

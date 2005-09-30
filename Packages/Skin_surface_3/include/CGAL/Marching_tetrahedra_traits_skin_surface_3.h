@@ -24,8 +24,8 @@ public:
   }
   
   Sign sign(const Vertex_handle vh) const {
-    return CGAL::sign(
-      vh->cell()->surf->value(converter(vh->point())) - iso_value);
+    return CGAL_NTS sign(
+       vh->cell()->surf->value(converter(vh->point())) - iso_value);
   }
   HDS_point intersection(const Edge &e) const {
     // Precondition: e.first is not an infinite cell: they have not surface set
