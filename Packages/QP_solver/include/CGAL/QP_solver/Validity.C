@@ -130,12 +130,12 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
        i_it != B_O.end();
        ++i_it, ++v_it)
     if (*i_it < qp_n) {                 // original variable?
-      if (has_finite_lower_bound(*i_it) && *v_it < lower_bound(*i_it) ||
-	  has_finite_upper_bound(*i_it) && *v_it > upper_bound(*i_it))
-	return false;
+      if (has_finite_lower_bound(*i_it) && (*v_it < lower_bound(*i_it) * d) ||
+	    has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d))
+        return false;
     } else                              // artificial variable?
       if (*v_it < et0)
-	return false;
+        return false;
   
   // check nonegativity of slack variables:
   for (Value_const_iterator v_it = x_B_S.begin(); v_it != x_B_S.end(); ++v_it)
@@ -194,10 +194,12 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   }
 
   // check equality (C1);
-  for (int i=0; i<qp_m; ++i)
-    if (lhs_col[i] != ET(qp_b[i]) * d)
+  for (int i=0; i<qp_m; ++i) {
+    if ((qp_r[i] == Rep::EQUAL)         && (lhs_col[i] != ET(qp_b[i]) * d) ||
+        (qp_r[i] == Rep::LESS_EQUAL)    && (lhs_col[i]  > ET(qp_b[i]) * d) ||
+        (qp_r[i] == Rep::GREATER_EQUAL) && (lhs_col[i]  < ET(qp_b[i]) * d))
       return false;
-  
+  }
   return true;
 }
 
@@ -328,8 +330,8 @@ bool QP_solver<Rep_>::is_solution_feasible()
     // check bounds on original variables:
     const ET var = is_basic(i)? x_B_O[in_B[i]] :  // should be ET &
       nonbasic_original_variable_value(i) * d;
-    if (has_finite_lower_bound(i) && var < lower_bound(i) ||
-	has_finite_upper_bound(i) && var > upper_bound(i))
+    if (has_finite_lower_bound(i) && var < lower_bound(i) * d ||
+	has_finite_upper_bound(i) && var > upper_bound(i) * d)
       return false;
 
 
@@ -444,12 +446,12 @@ is_solution_optimal()
   // check condition (C7) on \tau:
   for (int col = 0; col < qp_n; ++col) {
     const bool lower_tight = has_finite_lower_bound(col) &&
-      ET(lower_bound(col)) == x[col];
+      ET(lower_bound(col) * d) == x[col];
     const bool upper_tight = has_finite_upper_bound(col) &&
-      ET(upper_bound(col)) == x[col];
+      ET(upper_bound(col) * d) == x[col];
     if ( lower_tight && !upper_tight && tau[col] <et0 ||
 	!lower_tight && !upper_tight && tau[col]!=et0 ||
-        !lower_tight &&  upper_tight && tau[col] >et0)
+        !lower_tight &&  upper_tight && tau[col] >et0) 
 	return false;
   }
 
