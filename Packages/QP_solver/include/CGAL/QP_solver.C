@@ -978,6 +978,24 @@ solution_numerator( ) const
         // accumulate
         z += s * *x_i_it;
     }
+    
+    //  linear part of solution numerator with upper bounding
+    if (!check_tag(Is_in_standard_form())) {
+        // only in phaseII we need to account for nonbasic original variables,
+        // since in phaseI only artificial variables have nonzero objective
+        // function coefficients
+        // Since we do not have a minus_c_N vector we have to use 
+        // qp_c
+        if (is_phaseII) {
+            s = et0;
+            for (int i = 0; i < qp_n; ++i) {
+                if (!is_basic(i)) {
+                    s += ET(qp_c[i]) * nonbasic_original_variable_value(i); 
+                }
+            }
+            z += d * d * s;
+        }
+    }
     return z;
 }
 
@@ -1920,13 +1938,25 @@ update_1( )
     CGAL_expensive_assertion(check_r_S_B(Is_in_standard_form()));
     
     // check the vectors r_B_O and w in phaseII for QPs
-    if (is_phaseII && is_QP) {
-        CGAL_expensive_assertion(check_r_B_O(Is_in_standard_form()));
-        CGAL_expensive_assertion(check_w(Is_in_standard_form()));
+    CGAL_qpe_debug {
+        if (is_phaseII && is_QP) {
+            CGAL_expensive_assertion(check_r_B_O(Is_in_standard_form()));
+            CGAL_expensive_assertion(check_w(Is_in_standard_form()));
+        }
     }
 
     // compute current solution
     compute_solution(Is_in_standard_form());
+    
+    // check feasibility 
+    CGAL_qpe_debug {
+        if (is_phaseI) {
+            CGAL_expensive_assertion(
+                is_solution_feasible_for_auxiliary_problem());
+        } else {
+            CGAL_expensive_assertion(is_solution_feasible());
+        }
+    }
 	 
 }
 
@@ -4046,7 +4076,7 @@ template < class Rep_ >
 void  QP_solver<Rep_>::
 print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
 {
-    if (is_in_standard_form) {                      // direction == 1
+    if (is_in_standard_form) {                      // => direction == 1
         if (q_k > et0) {                            // check for lower bound
             vout2.out() << "t_O_" << k << ": "
             << x_k << '/' << q_k
@@ -4055,12 +4085,12 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
         } else if (q_k < et0) {                     // check for upper bound
             vout2.out() << "t_O_" << k << ": "
             << "inf" << '/' << q_k
-            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
             << std::endl;
         } else {                                    // q_k == 0
             vout2.out() << "t_O_" << k << ": "
             << "??" << '/' << q_k
-            << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
+            << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
             << std::endl;
         }
     } else {                                        // upper bounded
@@ -4115,7 +4145,7 @@ template < class Rep_ >
 void  QP_solver<Rep_>::
 print_ratio_1_slack(int k, const ET& x_k, const ET& q_k)
 {
-    if (is_in_standard_form) {                      // direction == 1
+    if (is_in_standard_form) {                      // => direction == 1
         if (q_k > et0) {                            // check for lower bound
             vout2.out() << "t_S_" << k << ": "
             << x_k << '/' << q_k
