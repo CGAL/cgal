@@ -680,37 +680,16 @@ public:
   Halfedge_handle merge_edge (Halfedge_handle e1, 
                               Halfedge_handle e2)
   {
-    Vertex_handle      vh;
-
-    if (e1->target() == e2->source() || e1->target() == e2->target())
-    {
-      vh = e1->target();
-    }
-    else
-    {
-      CGAL_precondition_msg(e1->source() == e2->source() || 
-                            e1->source() == e2->target(),
-                            "The two edges do not share a common end-vertex.");
-      vh = e1->source();
-    }
-
-    size_t             degree = vh->degree();
-    CGAL_precondition_msg (degree == 2,
-                           "Cannot remove the common end-vertex.");
-
-    CGAL_precondition_msg (this->traits->are_mergeable_2_object()(e1->curve(),
-								  e2->curve()),
-                           "Curves are not mergeable.");
+    CGAL_precondition_msg (Base_arr_2::are_mergeable(e1, e2),
+                           "Edges are not mergeable.");
 
     // Merge the two curves.
     Data_x_curve_2       cv;
     
-    this->traits->merge_2_object() (e1->curve(), e2->curve(),
-				    cv);
+    this->traits->merge_2_object()(e1->curve(), e2->curve(), cv);
 
     return (Base_arr_2::merge_edge (e1, e2, cv));
   }
-  //@}
 
 protected:
 
