@@ -2960,6 +2960,29 @@ bool Arrangement_2<Traits,Dcel>::is_valid(Halfedge_const_handle e) const
    return true;
  }
 
+ //---------------------------------------------------------------------------
+ // Check if two edges are mergeable 
+ //
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::
+   are_mergeable (Halfedge_const_handle e1, Halfedge_const_handle e2) const
+{
+  Vertex_const_handle      vh;
+
+  if (e1->target() == e2->source() || e1->target() == e2->target())
+    vh = e1->target();
+  else
+    if(e1->source() == e2->source() || e1->source() == e2->target())
+      vh = e1->source();
+    else
+      return false;
+  
+  if(vh->degree() != 2)
+    return false;
+
+  return(this->traits->are_mergeable_2_object()(e1->curve(),e2->curve()));
+}
+
 
 CGAL_END_NAMESPACE
 
