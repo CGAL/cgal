@@ -596,7 +596,7 @@ public:
       {
         Ccb_halfedge_circulator cc = *hit;
         do {
-          Halfedge_handle he = cc->handle(); 
+          Halfedge_handle he = cc; 
           Halfedge_handle he2 = he->twin();
           Face_handle inner_face = he2->face(); 
           if (antenna(he))
@@ -1382,7 +1382,7 @@ public:
          hei != m_curves_arr->halfedges_end();
          ++hei) 
     {
-      if(are_mergeable(closest_curve, hei))
+      if(m_curves_arr->are_mergeable(closest_curve, hei))
       {
         X_monotone_curve_2 & xcurve = hei->curve();
         Coord_type dist = m_tab_traits.xcurve_point_distance(p, xcurve , this);
@@ -1400,22 +1400,6 @@ public:
     {
       m_curves_arr->merge_edge( closest_curve, second_curve);
     }
-  }
-
-  bool are_mergeable(Halfedge_handle he1, Halfedge_handle he2)
-  {
-    Vertex_const_handle s1 = he1->source();
-    Vertex_const_handle t1 = he1->target();
-    Vertex_const_handle s2 = he2->source();
-    Vertex_const_handle t2 = he2->target();
-
-    if(!(s1 == s2 && s1->degree() == 2) &&
-       !(t1 == s1 && t1->degree() == 2) &&
-       !(s1 == t1 && s1->degree() == 2) &&
-       !(t1 == t2 && t1->degree() == 2))
-      return false;
-
-    return (m_traits.are_mergeable_2_object()(he1->curve(),  he2->curve()));
   }
 
 
@@ -2190,10 +2174,10 @@ public:
        */
       Ccb_halfedge_circulator cc=f->outer_ccb();
       do {
-        if(w->antenna(cc->handle()))
+        if(w->antenna(cc))
           continue;
          
-        Halfedge_handle he = cc->handle();
+        Halfedge_handle he = cc;
         X_monotone_curve_2 c = he->curve();
         // Get the co-ordinates of the curve's source and target.
         double sx = CGAL::to_double(he->source()->point().x()),
