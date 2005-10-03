@@ -70,24 +70,26 @@ private:
 
 // Public types
 public:
-    // Export Mesh_Adaptor_3, BorderParametizer_3
-    // and SparseLinearAlgebraTraits_d types
-    typedef MeshAdaptor_3                   Adaptor;
+    // We have to repeat the types exported by superclass
+    /// @cond SKIP_IN_MANUAL
     typedef typename Base::Error_code       Error_code;
+    typedef MeshAdaptor_3                   Adaptor;
     typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Facet         Facet;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Facet_iterator Facet_iterator;
     typedef typename Adaptor::Facet_const_iterator
                                             Facet_const_iterator;
+    typedef typename Adaptor::Vertex        Vertex;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
@@ -103,9 +105,15 @@ public:
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator
                                             Vertex_around_vertex_const_circulator;
+    /// @endcond
+
+    /// Export BorderParametizer_3 template parameter
     typedef BorderParametizer_3             Border_param;
+    /// Export SparseLinearAlgebraTraits_d template parameter
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+    /// Sparse linear algebra's matrix type
     typedef typename Sparse_LA::Vector      Vector;
+    /// Sparse linear algebra's vector type
     typedef typename Sparse_LA::Matrix      Matrix;
 
 // Public operations

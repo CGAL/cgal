@@ -56,33 +56,56 @@ public:
     ERROR_WRONG_PARAMETER           ///< a method received an unexpected parameter
     };
 
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export MeshAdaptor_3 template parameter
     typedef MeshAdaptor_3                   Adaptor;
+
+    // Export Mesh_Adaptor_3 subtypes
+    //
+    /// Number type to represent coordinates
     typedef typename Adaptor::NT            NT;
+    /// 2D point that represents (u,v) coordinates computed
+    /// by parameterization methods. Usual methods are expected.
+    typedef typename Adaptor::Point_2       Point_2;
+    /// 3D point that represents vertices coordinates. Usual methods are expected.
+    typedef typename Adaptor::Point_3       Point_3;
+    /// 2D vector. Usual methods are expected.
+    typedef typename Adaptor::Vector_2      Vector_2;
+    /// 3D vector. Usual methods are expected.
+    typedef typename Adaptor::Vector_3      Vector_3;
+    /// Opaque type representing a facet of the 3D mesh. No methods are expected.
+    typedef typename Adaptor::Facet         Facet;
+    /// Handle to a facet. Model of the Handle concept.
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
+    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
     typedef typename Adaptor::Facet_iterator Facet_iterator;
     typedef typename Adaptor::Facet_const_iterator
                                             Facet_const_iterator;
+    /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
+    typedef typename Adaptor::Vertex        Vertex;
+    /// Handle to a vertex. Model of the Handle concept.
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
+    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
+    /// Iterator over vertices of the mesh "main boundary".
+    /// Model of the ForwardIterator concept.
     typedef typename Adaptor::Border_vertex_iterator
                                             Border_vertex_iterator;
     typedef typename Adaptor::Border_vertex_const_iterator
                                             Border_vertex_const_iterator;
+    /// Counter-clockwise circulator over a facet's vertices
+    /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_facet_circulator
                                             Vertex_around_facet_circulator;
     typedef typename Adaptor::Vertex_around_facet_const_circulator
                                             Vertex_around_facet_const_circulator;
+    /// Clockwise circulator over the vertices incident to a vertex
+    /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_vertex_circulator
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator

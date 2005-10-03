@@ -17,10 +17,10 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
-///
-/// @file parameterize.h
-/// Define the main entry points of the parameterization package as C functions
-///
+//  We need a doxygen comment about CGAL in order for doxygen to
+//  extract the global functions, variables or constants of the namespace
+/// @namespace CGAL
+/// CGAL is a great stuff!
 
 
 #ifndef CGAL_PARAMETERIZE_H

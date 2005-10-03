@@ -34,12 +34,16 @@ class BorderParametizer_3
 {
 // Public types
 public:
+    /// Export MeshAdaptor_3 template parameter
     typedef xxx Adaptor;
-    typedef typename Parametizer_traits_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+
+    /// The various errors detected by this package
+    typedef xxx Error_code;
 
 // Public operations
 public:
+    // Construction and destruction are undefined
+
     /// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     /// on border's shape. Mark them as "parameterized".
     /// Return false on error.

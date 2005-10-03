@@ -151,27 +151,6 @@ public:
 
     //@} // end of MeshAdaptor_3 INTERFACE
 
-// Friends
-    friend class Mesh_adaptor_patch_vertex<Adaptor>;
-    friend class Mesh_adaptor_patch_vertex_handle<Adaptor>;
-    friend class Mesh_adaptor_patch_vertex_const_handle<Adaptor>;
-    friend class Mesh_adaptor_patch_vertex_list_iterator<Adaptor>;
-    friend class Mesh_adaptor_patch_vertex_list_const_iterator<Adaptor>;
-    friend class Mesh_patch_vertex_around_facet_cir<Mesh_adaptor_patch_3*,
-                                                    Vertex_handle,
-                                                    typename Adaptor::Vertex_around_facet_circulator>;
-    friend class Mesh_patch_vertex_around_facet_cir<const Mesh_adaptor_patch_3*,
-                                                    Vertex_const_handle,
-                                                    typename Adaptor::Vertex_around_facet_const_circulator>;
-    friend class Mesh_patch_vertex_around_vertex_cir<Mesh_adaptor_patch_3*,
-                                                     Vertex_handle,
-                                                     typename Adaptor::Vertex_around_vertex_circulator,
-                                                     typename Adaptor::Vertex_handle>;
-    friend class Mesh_patch_vertex_around_vertex_cir<const Mesh_adaptor_patch_3*,
-                                                     Vertex_const_handle,
-                                                     typename Adaptor::Vertex_around_vertex_const_circulator,
-                                                     typename Adaptor::Vertex_const_handle>;
-
 // Public operations
 public:
 
@@ -989,6 +968,27 @@ private:
     private:
         const Mesh_adaptor_patch_3* m_mesh_patch;
     };
+
+// Friends
+    friend class Mesh_adaptor_patch_vertex<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_handle<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_const_handle<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_list_iterator<Adaptor>;
+    friend class Mesh_adaptor_patch_vertex_list_const_iterator<Adaptor>;
+    friend class Mesh_patch_vertex_around_facet_cir<Mesh_adaptor_patch_3*,
+                                                    Vertex_handle,
+                                                    typename Adaptor::Vertex_around_facet_circulator>;
+    friend class Mesh_patch_vertex_around_facet_cir<const Mesh_adaptor_patch_3*,
+                                                    Vertex_const_handle,
+                                                    typename Adaptor::Vertex_around_facet_const_circulator>;
+    friend class Mesh_patch_vertex_around_vertex_cir<Mesh_adaptor_patch_3*,
+                                                     Vertex_handle,
+                                                     typename Adaptor::Vertex_around_vertex_circulator,
+                                                     typename Adaptor::Vertex_handle>;
+    friend class Mesh_patch_vertex_around_vertex_cir<const Mesh_adaptor_patch_3*,
+                                                     Vertex_const_handle,
+                                                     typename Adaptor::Vertex_around_vertex_const_circulator,
+                                                     typename Adaptor::Vertex_const_handle>;
 
 }; // Mesh_adaptor_patch_3
 

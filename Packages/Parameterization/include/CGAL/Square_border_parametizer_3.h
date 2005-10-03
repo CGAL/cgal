@@ -54,35 +54,62 @@ class Square_border_parametizer_3
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    /// Export MeshAdaptor_3 template parameter
     typedef MeshAdaptor_3                   Adaptor;
+
+    /// The various errors detected by this package
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
+
+// Protected types
+protected:
+    // Export Mesh_Adaptor_3 subtypes
+    //
+    /// Number type to represent coordinates
     typedef typename Adaptor::NT            NT;
+    /// 2D point that represents (u,v) coordinates computed
+    /// by parameterization methods. Usual methods are expected.
+    typedef typename Adaptor::Point_2       Point_2;
+    /// 3D point that represents vertices coordinates. Usual methods are expected.
+    typedef typename Adaptor::Point_3       Point_3;
+    /// 2D vector. Usual methods are expected.
+    typedef typename Adaptor::Vector_2      Vector_2;
+    /// 3D vector. Usual methods are expected.
+    typedef typename Adaptor::Vector_3      Vector_3;
+    /// Opaque type representing a facet of the 3D mesh. No methods are expected.
+    typedef typename Adaptor::Facet         Facet;
+    /// Handle to a facet. Model of the Handle concept.
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
+    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
     typedef typename Adaptor::Facet_iterator Facet_iterator;
     typedef typename Adaptor::Facet_const_iterator
                                             Facet_const_iterator;
+    /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
+    typedef typename Adaptor::Vertex        Vertex;
+    /// Handle to a vertex. Model of the Handle concept.
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
+    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
+    /// Iterator over vertices of the mesh "main boundary".
+    /// Model of the ForwardIterator concept.
     typedef typename Adaptor::Border_vertex_iterator
                                             Border_vertex_iterator;
     typedef typename Adaptor::Border_vertex_const_iterator
                                             Border_vertex_const_iterator;
+    /// Counter-clockwise circulator over a facet's vertices
+    /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_facet_circulator
                                             Vertex_around_facet_circulator;
     typedef typename Adaptor::Vertex_around_facet_const_circulator
                                             Vertex_around_facet_const_circulator;
+    /// Clockwise circulator over the vertices incident to a vertex
+    /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_vertex_circulator
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator
@@ -298,24 +325,33 @@ class Square_border_uniform_parametizer_3
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    // We have to repeat the types exported by superclass
+    /// @cond SKIP_IN_MANUAL
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
+    /// @endcond
+
+// Protected types
+protected:
+    // We have to repeat the types exported by superclass
+    /// @cond SKIP_IN_MANUAL
     typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Facet         Facet;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Facet_iterator Facet_iterator;
     typedef typename Adaptor::Facet_const_iterator
                                             Facet_const_iterator;
+    typedef typename Adaptor::Vertex        Vertex;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
@@ -331,6 +367,7 @@ public:
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator
                                             Vertex_around_vertex_const_circulator;
+    /// @endcond
 
 // Public operations
 public:
@@ -338,20 +375,20 @@ public:
 
 // Protected operations
 protected:
-    /// compute length of an edge
+    /// Compute length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target)
     {
-        /// uniform boundary parameterization: points are equally spaced
+        /// Uniform boundary parameterization: points are equally spaced.
         return 1;
     }
 };
 
 
-///
-/// Class Square_border_arc_length_parametizer_3
-///
+//
+// Class Square_border_arc_length_parametizer_3
+//
 
 /// This class parameterizes the border of a 3D surface onto a square,
 /// with an arc-length parameterization: (u,v) values are
@@ -369,24 +406,33 @@ class Square_border_arc_length_parametizer_3
 {
 // Public types
 public:
-    // Export Mesh_Adaptor_3 type and subtypes
+    // We have to repeat the types exported by superclass
+    /// @cond SKIP_IN_MANUAL
     typedef MeshAdaptor_3                   Adaptor;
     typedef typename Parametizer_traits_3<Adaptor>::Error_code
                                             Error_code;
+    /// @endcond
+
+// Protected types
+protected:
+    // We have to repeat the types exported by superclass
+    /// @cond SKIP_IN_MANUAL
     typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Facet         Facet;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Facet_iterator Facet_iterator;
     typedef typename Adaptor::Facet_const_iterator
                                             Facet_const_iterator;
+    typedef typename Adaptor::Vertex        Vertex;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
@@ -402,6 +448,7 @@ public:
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator
                                             Vertex_around_vertex_const_circulator;
+    /// @endcond
 
 // Public operations
 public:
@@ -409,13 +456,13 @@ public:
 
 // Protected operations
 protected:
-    /// compute length of an edge
+    /// Compute length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
                                        Vertex_const_handle source,
                                        Vertex_const_handle target)
     {
-        /// arc-length boundary parameterization: (u,v) values are
-        /// proportional to the length of boundary edges
+        /// Arc-length boundary parameterization: (u,v) values are
+        /// proportional to the length of boundary edges.
         Vector_3 v = mesh.get_vertex_position(target)
                    - mesh.get_vertex_position(source);
         return std::sqrt(v*v);
