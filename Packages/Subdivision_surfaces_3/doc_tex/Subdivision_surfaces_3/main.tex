@@ -180,15 +180,15 @@ of refined points.
 To implement Catmull-Clark subdivision, we only need to implement
 the geometry policies and reuse the \ccc{PQQ} refinement host.
 Considering the popularity of Catmull-Clark subdivision,
-\ccc{Subdivision_surfaces_3} supports \ccc{CGAL::CatmullClark_stencil},
+\ccc{Subdivision_surfaces_3} supports \ccc{CGAL::CatmullClark_stencil_3},
 which realizes the geometry masks of Catmull-Clark subdivision. 
 The Catmull-Clark subdivision is then realized by parameterizing 
 \ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
-\ccc{CGAL::CatmullClark_stencil}.
+\ccc{CGAL::CatmullClark_stencil_3}.
 
 \begin{ccExampleCode}
   void CatmullClark_subdivision(Polyhedron& p, int step) {
-    PQQ(p, CatmullClark_stencil<Polyhedron>(), step);
+    PQQ(p, CatmullClark_stencil_3<Polyhedron>(), step);
   }
 \end{ccExampleCode}
 
@@ -289,7 +289,7 @@ in \ccc{Poly}.
 
 \begin{ccExampleCode}
 template <class Poly>
-class CatmullClark_stencil {
+class CatmullClark_stencil_3 {
   //
   void facet_node(Facet_handle facet, Point& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
@@ -388,7 +388,7 @@ defined below:
 
 \begin{ccExampleCode}
 template <class Poly>
-class PQQ_stencil {
+class PQQ_stencil_3 {
   void facet_node(Facet_handle, Point&) {};
   void edge_node(Halfedge_handle, Point&) {};
   void vertex_node(Vertex_handle, Point&) {};
@@ -397,7 +397,7 @@ class PQQ_stencil {
 };
 
 template <class Poly>
-class PTQ_stencil {
+class PTQ_stencil_3 {
   void edge_node(Halfedge_handle, Point&) {};
   void vertex_node(Vertex_handle, Point&) {};
 
@@ -405,21 +405,21 @@ class PTQ_stencil {
 };
 
 template <class Poly>
-class DQQ_stencil {
+class DQQ_stencil_3 {
 public:
   void corner_node(Halfedge_handle edge, Point& pt) {};
 };
 
 template <class Poly>
-class Sqrt3_stencil {
+class Sqrt3_stencil_3 {
 public:
   void vertex_node(Vertex_handle vertex, Point& pt) {}
 };
 \end{ccExampleCode}
 
-Note \ccc{DQQ_stencil} and \ccc{Sqrt3_stencil} do not support
-meshes with global boundaries. Also, \ccc{PTQ_stencil} and
-\ccc{Sqrt3_stencil} are subset of \ccc{PQQ_stencil}, and are not
+Note \ccc{DQQ_stencil_3} and \ccc{Sqrt3_stencil_3} do not support
+meshes with global boundaries. Also, \ccc{PTQ_stencil_3} and
+\ccc{Sqrt3_stencil_3} are subset of \ccc{PQQ_stencil_3}, and are not
 explicitly defined in \ccc{Subdivision_surfaces_3}.
 
 %% \begin{ccExampleCode}
@@ -467,16 +467,16 @@ supported in \ccc{Subdivision_surfaces_3}.
 
 \begin{ccExampleCode}
   static void CatmullClark_subdivision(Polyhedron& p, int step) {
-    PQQ(p, CatmullClark_stencil<Polyhedron>(), step);
+    PQQ(p, CatmullClark_stencil_3<Polyhedron>(), step);
   }
   static void Loop_subdivision(Polyhedron& p, int step) {
-    PTQ(p, Loop_stencil<Polyhedron>() , step);
+    PTQ(p, Loop_stencil_3<Polyhedron>() , step);
   }
   static void DooSabin_subdivision(Polyhedron& p, int step) {
-    DQQ(p, DooSabin_stencil<Polyhedron>(), step);
+    DQQ(p, DooSabin_stencil_3<Polyhedron>(), step);
   }
   static void Sqrt3_subdivision(Polyhedron& p, int step) {
-    Sqrt3(p, Sqrt3_stencil<Polyhedron>(), step);
+    Sqrt3(p, Sqrt3_stencil_3<Polyhedron>(), step);
   }
 \end{ccExampleCode}
 
@@ -495,7 +495,7 @@ Following example develops a subdivision scheme
 generating improved Loop subdivision surfaces based on the PTQ 
 refinement (i.e~\ccc{Subdivision_surfaces_3<Polyhedron>::PTQ}). 
 The geometry policy is developed as a subclass 
-of \ccc{PQQ_stencil}), which defines the superset of PTQ stencils.
+of \ccc{PQQ_stencil_3}), which defines the superset of PTQ stencils.
 
 A policy function for subdivision surfaces is semantically
 required to assigned the smoothed point based on the source mesh.

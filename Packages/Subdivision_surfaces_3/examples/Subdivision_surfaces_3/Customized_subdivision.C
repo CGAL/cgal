@@ -19,7 +19,7 @@ using namespace CGAL;
 // ======================================================================
 ///
 template <class _Poly>
-class WLoop_stencil : public PQQ_stencil<_Poly> {
+class WLoop_stencil_3 : public PQQ_stencil_3<_Poly> {
   typedef _Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   Polyhedron P;
   in >> P; // read the .off
 
-  Subdivision_surfaces_3<Polyhedron>::PTQ(P, WLoop_stencil<Polyhedron>(), d);
+  Subdivision_surfaces_3<Polyhedron>::PTQ(P, WLoop_stencil_3<Polyhedron>(), d);
 
   cout << P; // write the .off
  

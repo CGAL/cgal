@@ -32,9 +32,9 @@
 CGAL_BEGIN_NAMESPACE
 
 // ======================================================================
-//
+/// The setncil of the Primal-Quadrilateral-Quadrisection 
 template <class Poly>
-class PQQ_stencil {
+class PQQ_stencil_3 {
 public:
   typedef Poly                                        Polyhedron;
 
@@ -59,9 +59,9 @@ public:
 
 
 // ======================================================================
-//
+/// Bi-linear geometry mask for PQQ, PTQ, and Sqrt(3) scheme 
 template <class Poly>
-class Linear_stencil : public PQQ_stencil<Poly> {
+class Linear_stencil_3 : public PQQ_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
 
@@ -111,11 +111,11 @@ public:
 };
 
 // ======================================================================
-//
+/// The geometry mask of Catmull-Clark subdivision 
 template <class Poly>
-class CatmullClark_stencil : public Linear_stencil<Poly> {
+class CatmullClark_stencil_3 : public Linear_stencil_3<Poly> {
 public:
-  typedef Poly                                        Polyhedron;
+  typedef Poly                                         Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -189,9 +189,9 @@ public:
 
 
 // ======================================================================
-//
+/// The geometry mask of Loop subdivision
 template <class Poly>
-class Loop_stencil : public PQQ_stencil<Poly> {
+class Loop_stencil_3 : public PQQ_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
 
@@ -264,9 +264,9 @@ public:
 
 
 //==========================================================================
-//
+/// The setncil of the Dual-Quadrilateral-Quadrisection 
 template <class Poly>
-class DQQ_stencil {
+class DQQ_stencil_3 {
 public:
   typedef Poly                                        Polyhedron;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -285,9 +285,9 @@ public:
 
 
 // ======================================================================
-///
+/// The geometry mask of Doo-Sabin subdivision
 template <class Poly>
-class DooSabin_stencil : public DQQ_stencil<Poly> {
+class DooSabin_stencil_3 : public DQQ_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
   
@@ -328,9 +328,9 @@ public:
 };
 
 // ======================================================================
-//
+// The geometry mask of Sqrt(3) subdivision
 template <class Poly>
-class Sqrt3_stencil : public Linear_stencil<Poly> {
+class Sqrt3_stencil_3 : public Linear_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
   
