@@ -27,8 +27,11 @@ CGAL_BEGIN_NAMESPACE
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
 template<class VDA>
-struct Accessor
+class Accessor
 {
+public:
+  // TYPES
+  //------
   typedef typename VDA::Non_degenerate_faces_iterator
   Non_degenerate_faces_iterator;
 
@@ -41,31 +44,31 @@ struct Accessor
   typedef typename VDA::Edge_degeneracy_tester Edge_degeneracy_tester;
   typedef typename VDA::Face_degeneracy_tester Face_degeneracy_tester;
 
-#ifndef VDA_NO_CACHED_TESTERS
+  typedef typename VDA::Find_valid_vertex      Find_valid_vertex;
+
   typedef typename VDA::Cached_edge_degeneracy_tester
   Cached_edge_degeneracy_tester;
 
   typedef typename VDA::Cached_face_degeneracy_tester
   Cached_face_degeneracy_tester;
-#endif
 
-#ifndef VDA_NO_CACHED_TESTERS
-  static const Cached_edge_degeneracy_tester& edge_tester(const VDA& vda) {
-    return vda.cached_e_tester_;
-  }
+  // CONSTRUCTOR
+  //------------
+  Accessor(VDA* vda) : vda(vda) {}
+  Accessor(const VDA* vda) : vda(const_cast<VDA*>(vda)) {}
 
-  static const Cached_face_degeneracy_tester& face_tester(const VDA& vda) {
-    return vda.cached_f_tester_;
-  }
-#else
-  static const Edge_degeneracy_tester& edge_tester(const VDA& vda) {
-    return vda.tr_.edge_degeneracy_tester_object();
+  // METHODS
+  //--------
+  const Cached_edge_degeneracy_tester& edge_tester() const {
+    return vda->cached_e_tester_;
   }
 
-  static const Face_degeneracy_tester& face_tester(const VDA& vda) {
-    return vda.tr_.face_degeneracy_tester_object();
+  const Cached_face_degeneracy_tester& face_tester() const {
+    return vda->cached_f_tester_;
   }
-#endif
+
+private:
+  VDA* vda;
 };
 
 

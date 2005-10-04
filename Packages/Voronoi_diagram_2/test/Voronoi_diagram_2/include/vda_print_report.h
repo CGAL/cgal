@@ -32,20 +32,12 @@ void print_report(const VDA& vda, const Projector& project,
 		  const Dual_primal_projector& dp_project,
 		  Stream& os = std::cout)
 {
-#if 1
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Accessor<VDA>  Accessor;
-  const typename Accessor::Cached_edge_degeneracy_tester& edge_tester =
-    Accessor::edge_tester(vda);
+  typename VDA::Accessor accessor = vda.accessor();
+  const typename VDA::Accessor::Cached_edge_degeneracy_tester& edge_tester =
+    accessor.edge_tester();
 
-  const typename Accessor::Cached_face_degeneracy_tester& face_tester =
-    Accessor::face_tester(vda);
-#else
-  typename VDA::Edge_degeneracy_tester edge_tester =
-    vda.voronoi_traits().edge_degeneracy_tester_object();
-
-  typename VDA::Face_degeneracy_tester face_tester =
-    vda.voronoi_traits().face_degeneracy_tester_object();
-#endif
+  const typename VDA::Accessor::Cached_face_degeneracy_tester& face_tester =
+    accessor.face_tester();
 
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
@@ -150,8 +142,7 @@ void print_report(const VDA& vda, const Projector& project,
     for (vit = vda.vertices_begin(); vit != vda.vertices_end(); ++vit) {
       os << "vertex (degree = " << vit->degree() << "): " << std::flush;
 
-      typedef CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<VDA>
-	Find_valid_vertex;
+      typedef typename VDA::Accessor::Find_valid_vertex  Find_valid_vertex;
 
       typename VDA::Delaunay_graph::Face_handle fvalid =
 	Find_valid_vertex()(&vda,vit->dual());

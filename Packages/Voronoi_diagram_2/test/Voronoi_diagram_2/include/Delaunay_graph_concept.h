@@ -43,9 +43,9 @@ class Delaunay_graph_concept
   typedef typename Geom_traits::Point_2  Point_2;
 
   struct Vertex_handle
-    : public CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex_handle>
+    : public CGAL_VORONOI_DIAGRAM_2_INS::Dummy_iterator<Vertex_handle>
   {
-    typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex_handle>  Base;
+    typedef CGAL_VORONOI_DIAGRAM_2_INS::Dummy_iterator<Vertex_handle>  Base;
 
     Vertex_handle() {}
     Vertex_handle(const Base&) {}
@@ -54,9 +54,9 @@ class Delaunay_graph_concept
   };
 
   struct Face_handle
-    : public CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face_handle>
+    : public CGAL_VORONOI_DIAGRAM_2_INS::Dummy_iterator<Face_handle>
   {
-    typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face_handle>  Base;
+    typedef CGAL_VORONOI_DIAGRAM_2_INS::Dummy_iterator<Face_handle>  Base;
 
     Face_handle() {}
     Face_handle(const Base&) {}
@@ -178,29 +178,17 @@ class Delaunay_graph_concept
     Finite_edges_iterator(const Dummy_edge_iterator&) {}
   };
 
-#if 1
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Dummy_iterator<Face>
   All_faces_iterator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face>
-  Finite_faces_iterator;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Dummy_iterator<Vertex>
   All_vertices_iterator;
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex>
-  Finite_vertices_iterator;
-#else
-  typedef Face_handle All_faces_iterator;
-  typedef Face_handle Finite_faces_iterator;
 
-  typedef Vertex_handle All_vertices_iterator;
-  typedef Vertex_handle Finite_vertices_iterator;
-#endif
+  typedef All_faces_iterator      Finite_faces_iterator;
+  typedef All_faces_iterator      Face_circulator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex>
-  Vertex_circulator;
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face>
-  Face_circulator;
+  typedef All_vertices_iterator   Finite_vertices_iterator;
+  typedef All_vertices_iterator   Vertex_circulator;
 
   struct Edge_circulator : public Dummy_edge_iterator
   {

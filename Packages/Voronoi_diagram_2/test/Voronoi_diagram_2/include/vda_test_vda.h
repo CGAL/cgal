@@ -217,7 +217,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
 template<class VDA>
 void test_vda(const VDA& vda)
 {
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Accessor<VDA>    Accessor;
+  typedef typename VDA::Accessor                      Accessor;
 
   // testing types
   //--------------

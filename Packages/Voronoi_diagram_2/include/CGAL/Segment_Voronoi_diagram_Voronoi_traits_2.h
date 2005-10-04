@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 template<class DG>
 class SVD_Nearest_site_2
 {
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<DG,false> Accessor;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result_accessor<DG,false> Accessor;
 
  public:
   typedef DG                                          Delaunay_graph;
@@ -48,7 +48,7 @@ class SVD_Nearest_site_2
   typedef typename Delaunay_graph::Edge               Edge;
   typedef typename Delaunay_graph::Point_2            Point_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<DG,false> Query_result;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<DG,false> Query_result;
 
   typedef Arity_tag<2>    Arity;
   typedef Query_result    return_type;
@@ -467,7 +467,7 @@ class SVD_Face_degeneracy_tester
 
 template<class SVD2>
 class Segment_Voronoi_diagram_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
    SVD_Nearest_site_2<SVD2> >
 {
@@ -476,7 +476,7 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
   typedef SVD_Face_degeneracy_tester<SVD2>              Face_tester;
   typedef SVD_Nearest_site_2<SVD2>                      SVD_Nearest_site_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <SVD2,Edge_tester,Face_tester,SVD_Nearest_site_2>
   Base;
 
@@ -527,7 +527,7 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
 
 template<class SVD2>
 class Segment_Voronoi_diagram_cached_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_cached_Voronoi_traits_2
   <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
    SVD_Nearest_site_2<SVD2> >
 {
@@ -536,7 +536,7 @@ class Segment_Voronoi_diagram_cached_Voronoi_traits_2
   typedef SVD_Face_degeneracy_tester<SVD2>            Face_tester;
   typedef SVD_Nearest_site_2<SVD2>                    SVD_Nearest_site_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_cached_Voronoi_traits_2
   <SVD2,Edge_tester,Face_tester,SVD_Nearest_site_2>
   Base;
 
@@ -549,7 +549,7 @@ class Segment_Voronoi_diagram_cached_Voronoi_traits_2
 
 template<class SVD2>
 class Segment_Voronoi_diagram_ref_counted_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_ref_counted_Voronoi_traits_2
   <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
    SVD_Nearest_site_2<SVD2> >
 {
@@ -559,7 +559,7 @@ class Segment_Voronoi_diagram_ref_counted_Voronoi_traits_2
   typedef SVD_Nearest_site_2<SVD2>                     SVD_Nearest_site_2;
 
   typedef
-  CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
+  CGAL_VORONOI_DIAGRAM_2_INS::Default_ref_counted_Voronoi_traits_2
   <SVD2,Edge_tester,Face_tester,SVD_Nearest_site_2>
   Base;
 
@@ -584,7 +584,7 @@ class Segment_Voronoi_diagram_2;
 
 template<class Gt, class DS, class LTag>
 class Identity_Voronoi_traits_2< Segment_Voronoi_diagram_2<Gt,DS,LTag> >
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Identity_Voronoi_traits_2_base
   < Segment_Voronoi_diagram_2<Gt,DS,LTag>,
     Segment_Voronoi_diagram_Voronoi_traits_2
     < Segment_Voronoi_diagram_2<Gt,DS,LTag> >
@@ -594,7 +594,7 @@ class Identity_Voronoi_traits_2< Segment_Voronoi_diagram_2<Gt,DS,LTag> >
 template<class Gt, class STag, class DS, class LTag>
 class Identity_Voronoi_traits_2<
   Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> >
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Identity_Voronoi_traits_2_base
   < Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>,
     Segment_Voronoi_diagram_Voronoi_traits_2
     < Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> >

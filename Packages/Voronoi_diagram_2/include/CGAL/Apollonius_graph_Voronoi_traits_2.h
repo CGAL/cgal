@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 template<class DG>
 class AG_Nearest_site_2
 {
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<DG,false> Accessor;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result_accessor<DG,false> Accessor;
 
  public:
   typedef DG                                          Delaunay_graph;
@@ -48,7 +48,7 @@ class AG_Nearest_site_2
   typedef typename Delaunay_graph::Edge               Edge;
   typedef typename Delaunay_graph::Point_2            Point_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<DG,false> Query_result;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<DG,false> Query_result;
 
   typedef Arity_tag<2>    Arity;
   typedef Query_result   return_type;
@@ -236,19 +236,19 @@ class AG_Edge_degeneracy_tester
 
 template<class AG2>
 class Apollonius_graph_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <AG2, AG_Edge_degeneracy_tester<AG2>,
-   CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>,
    AG_Nearest_site_2<AG2> >
 {
  private:
   typedef AG_Edge_degeneracy_tester<AG2>              Edge_tester;
   typedef AG_Nearest_site_2<AG2>                      AG_Nearest_site_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<AG2>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>
   Face_tester;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <AG2,Edge_tester,Face_tester,AG_Nearest_site_2>
   Base;
 
@@ -298,19 +298,19 @@ class Apollonius_graph_Voronoi_traits_2
 
 template<class AG2>
 class Apollonius_graph_cached_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_cached_Voronoi_traits_2
   <AG2, AG_Edge_degeneracy_tester<AG2>,
-   CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>,
    AG_Nearest_site_2<AG2> >
 {
  private:
   typedef AG_Edge_degeneracy_tester<AG2>              Edge_tester;
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<AG2>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>
   Face_tester;
 
   typedef AG_Nearest_site_2<AG2>                      AG_Nearest_site_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_cached_Voronoi_traits_2
   <AG2,Edge_tester,Face_tester,AG_Nearest_site_2>
   Base;
 
@@ -322,20 +322,20 @@ class Apollonius_graph_cached_Voronoi_traits_2
 
 template<class AG2>
 class Apollonius_graph_ref_counted_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_ref_counted_Voronoi_traits_2
   <AG2, AG_Edge_degeneracy_tester<AG2>, 
-   CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>,
    AG_Nearest_site_2<AG2> >
 {
  private:
   typedef AG_Edge_degeneracy_tester<AG2>              Edge_tester;
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<AG2>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>
   Face_tester;
 
   typedef AG_Nearest_site_2<AG2>                      AG_Nearest_site_2;
 
   typedef
-  CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
+  CGAL_VORONOI_DIAGRAM_2_INS::Default_ref_counted_Voronoi_traits_2
   <AG2,Edge_tester,Face_tester,AG_Nearest_site_2>
   Base;
 
@@ -352,7 +352,7 @@ template<class Gt,class Agds,class LTag> class Apollonius_graph_hierarchy_2;
 
 template<class Gt, class Agds, class LTag>
 class Identity_Voronoi_traits_2< Apollonius_graph_2<Gt,Agds,LTag> >
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Identity_Voronoi_traits_2_base
   < Apollonius_graph_2<Gt,Agds,LTag>,
     Apollonius_graph_Voronoi_traits_2< Apollonius_graph_2<Gt,Agds,LTag> >
   >
@@ -360,7 +360,7 @@ class Identity_Voronoi_traits_2< Apollonius_graph_2<Gt,Agds,LTag> >
 
 template<class Gt, class Agds, class LTag>
 class Identity_Voronoi_traits_2< Apollonius_graph_hierarchy_2<Gt,Agds,LTag> >
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Identity_Voronoi_traits_2_base
   < Apollonius_graph_hierarchy_2<Gt,Agds,LTag>,
     Apollonius_graph_Voronoi_traits_2
     < Apollonius_graph_hierarchy_2<Gt,Agds,LTag> >

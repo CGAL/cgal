@@ -70,7 +70,7 @@ class Voronoi_traits_concept
     } 
   };
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<DG>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<DG>
   Face_degeneracy_tester;
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {

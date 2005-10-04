@@ -1,3 +1,13 @@
+4 Oct 2005:  Menelaos Karavelas
+- renamed namespace Voronoi_diagram_2_namespace to VoronoiDiagram_2
+- added short names for publicly visible classes
+- added Internal namespace and moved all internal code to this namespace
+- modified Accessor class to provide the Find_valid_vertex functor
+- added accessor method in Voronoi_diagram_2 class that returns an
+  Accessor object
+- changed the implementation of accessor; the accessor now stores a
+  pointer to the class.
+
 28 August 2005:  Menelaos Karavelas
 - attempt to remove warning produced by ICL.EXE for the
 Concrete_Voronoi_diagram_2 class.

@@ -136,10 +136,10 @@ class Voronoi_diagram_2
   typedef Voronoi_diagram_2<DG,Tr>           Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<Self,true>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result_accessor<Self,true>
   Locate_result_accessor;
 
-  friend struct CGAL_VORONOI_DIAGRAM_2_NS::Accessor<Self>;
+  friend struct CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>;
  public:
   //-------
   // TYPES
@@ -179,70 +179,44 @@ class Voronoi_diagram_2
   typedef typename Voronoi_traits::Has_nearest_site_2  Has_nearest_site_2;
   typedef typename Voronoi_traits::Point_2             Point_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<Self,true>  Locate_result;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<Self,true>  Locate_result;
 
-#if 1
+  // TYPES FOR THE DEGENERACY TESTERS
   typedef typename Voronoi_traits::Has_insert          Has_insert;
   typedef typename Voronoi_traits::Has_remove          Has_remove;
   typedef typename Voronoi_traits::Has_get_conflicts   Has_get_conflicts;
 
-#if 0
   typedef
-  CGAL_VORONOI_DIAGRAM_2_NS::Degeneracy_tester_chooser<Voronoi_traits,
-						       Has_insert,
-						       Has_get_conflicts>
-  Chooser;
-#else
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_NS::Degeneracy_tester_chooser
+  CGAL_VORONOI_DIAGRAM_2_INS::Degeneracy_tester_chooser
   <Voronoi_traits,
    Or< typename Not<typename To_boolean_tag<Has_insert>::Tag>::Tag,
        typename To_boolean_tag<Has_get_conflicts>::Tag>::Tag::value
   >
   Chooser;
-#endif
 
   typedef typename Chooser::Edge_degeneracy_tester   Edge_degeneracy_tester;
   typedef typename Chooser::Face_degeneracy_tester   Face_degeneracy_tester;
 
   typedef Edge_degeneracy_tester   Cached_edge_degeneracy_tester;
   typedef Face_degeneracy_tester   Cached_face_degeneracy_tester;
-#else
-  // TYPES FOR THE DEGENERACY TESTERS
-  typedef typename Voronoi_traits::Edge_degeneracy_tester
-  Edge_degeneracy_tester;
-  typedef typename Voronoi_traits::Face_degeneracy_tester
-  Face_degeneracy_tester;
-
-#ifndef VDA_NO_CACHED_TESTERS
- protected:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester
-  <Edge_degeneracy_tester>
-  Cached_edge_degeneracy_tester;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_face_degeneracy_tester
-  <Face_degeneracy_tester>
-  Cached_face_degeneracy_tester;
-#endif
-#endif
 
  protected:
   // DEGENERACY TESTER BINDERS
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_degeneracy_tester_binder<Self>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_degeneracy_tester_binder<Self>
   Edge_degeneracy_tester_binder;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_degeneracy_tester_binder<Self>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face_degeneracy_tester_binder<Self>
   Face_degeneracy_tester_binder;
 
   // ITERATORS FOR EDGES
   typedef Filter_iterator<Dual_edges_iterator,Edge_degeneracy_tester_binder>
   Non_degenerate_edges_iterator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_iterator_adaptor
   <Self,Non_degenerate_edges_iterator>
   Edge_iterator_base;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_validity_tester
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_validity_tester
   <Self,Edge_iterator_base>
   Edge_validity_tester;
 
@@ -250,16 +224,16 @@ class Voronoi_diagram_2
   Valid_edges_iterator;
 
  public:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_iterator_adaptor
   <Self,Valid_edges_iterator,Tag_false>
   Edge_iterator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Halfedge_iterator_adaptor
   <Self,Edge_iterator>
   Halfedge_iterator;
 
   // THE HALFEDGE
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge<Self>     Halfedge;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Halfedge<Self>     Halfedge;
 
  protected:
   // ITERATORS FOR FACES
@@ -267,51 +241,51 @@ class Voronoi_diagram_2
   Non_degenerate_faces_iterator;
 
  public:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face_iterator_adaptor
   <Self,Non_degenerate_faces_iterator>
   Face_iterator;
 
   // THE FACE
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face<Self>         Face;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face<Self>         Face;
 
  protected:
   // ITERATORS FOR VERTICES
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Vertex_validity_tester<Self>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex_validity_tester<Self>
   Vertex_validity_tester;
 
   typedef Filter_iterator<Dual_faces_iterator,Vertex_validity_tester>
   Non_degenerate_vertices_iterator;
 
  public:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Vertex_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex_iterator_adaptor
   <Self,Non_degenerate_vertices_iterator>
   Vertex_iterator;
 
   // THE VERTEX
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Vertex<Self>       Vertex;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex<Self>       Vertex;
 
  public:
   // HANDLES
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Handle_adaptor<Halfedge>  Halfedge_handle;
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Handle_adaptor<Vertex>    Vertex_handle;
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Handle_adaptor<Face>      Face_handle;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Halfedge>  Halfedge_handle;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Vertex>    Vertex_handle;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Face>      Face_handle;
 
   // CIRCULATORS
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_around_vertex_circulator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Halfedge_around_vertex_circulator_adaptor
   <Halfedge>
   Halfedge_around_vertex_circulator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Ccb_halfedge_circulator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Ccb_halfedge_circulator_adaptor
   <Halfedge>
   Ccb_halfedge_circulator;
 
   // THE BOUNDED AND UNBOUNDED FACES ITERATOR
  protected:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_face_tester
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Bounded_face_tester
   <Self,Non_degenerate_faces_iterator>
   Bounded_face_tester;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Unbounded_face_tester
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Unbounded_face_tester
   <Self,Non_degenerate_faces_iterator>
   Unbounded_face_tester;
 
@@ -325,21 +299,21 @@ class Voronoi_diagram_2
   Bounded_faces_iterator_base;
 
  public:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face_iterator_adaptor
   <Self,Unbounded_faces_iterator_base>
   Unbounded_faces_iterator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face_iterator_adaptor
   <Self,Bounded_faces_iterator_base>
   Bounded_faces_iterator;
 
   // THE BOUNDED AND UNBOUNDED HALFEDGES ITERATOR
  protected:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_edge_tester
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Bounded_edge_tester
   <Self,Edge_iterator>
   Bounded_edge_tester;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Unbounded_edge_tester
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Unbounded_edge_tester
   <Self,Edge_iterator>
   Unbounded_edge_tester;
 
@@ -353,11 +327,11 @@ class Voronoi_diagram_2
   Bounded_edges_iterator_base;
 
  public:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Halfedge_iterator_adaptor
   <Self,Unbounded_edges_iterator_base>
   Unbounded_halfedges_iterator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Halfedge_iterator_adaptor
   <Self,Bounded_edges_iterator_base>
   Bounded_halfedges_iterator;
 
@@ -400,6 +374,14 @@ class Voronoi_diagram_2
 			     //    Voronoi cell
                              // 2. also circulates around the edges of
                              //    a Voronoi vertex
+
+
+  // ACCESSOR
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>  Accessor;
+
+private:
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Find_valid_vertex<Self>
+  Find_valid_vertex;
 
 public:
   //--------------
@@ -475,21 +457,13 @@ public:
   }
 
   size_type number_of_connected_components() const {
-    return CGAL_VORONOI_DIAGRAM_2_NS::Connected_components<Self>()(*this);
+    return CGAL_VORONOI_DIAGRAM_2_INS::Connected_components<Self>()(*this);
   }
 
   // DEGENERACY TESTERS
-#if 0
-  const Edge_degeneracy_tester& edge_degeneracy_tester() const {
-    return tr_.edge_degeneracy_tester_object();
-  }
 
-  const Face_degeneracy_tester& face_degeneracy_tester() const {
-    return tr_.face_degeneracy_tester_object();
-  }
-#endif
-
-#ifndef VDA_NO_CACHED_TESTERS
+  // MAYBE THE FOLLOWING TWO METHODS SHOULD BE PRIVATE AND ACCESSED
+  // ONLY THROUGH THE ACCESSOR
   const Cached_edge_degeneracy_tester& edge_tester() const {
     return cached_e_tester_;
   }
@@ -497,15 +471,6 @@ public:
   const Cached_face_degeneracy_tester& face_tester() const {
     return cached_f_tester_;
   }
-#else
-  const Edge_degeneracy_tester& edge_tester() const {
-    return tr_.edge_degeneracy_tester_object();
-  }
-
-  const Face_degeneracy_tester& face_tester() const {
-    return tr_.face_degeneracy_tester_object();
-  }
-#endif
 
   // UNBOUNDED/BOUNDED FACE
   Face_handle unbounded_face() const {
@@ -772,7 +737,7 @@ public:
       Face_handle f( Face(this, ns_qr) );
       return Locate_result_accessor::make_locate_result(f);
     } else if ( ns_qr.is_face() ) {
-      CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<Self> vertex_finder;
+      Find_valid_vertex vertex_finder;
       Dual_face_handle dfvalid = vertex_finder(this, ns_qr);
       Vertex_handle v( Vertex(this, dfvalid) );
       return Locate_result_accessor::make_locate_result(v);
@@ -805,11 +770,9 @@ public:
  private:
   bool validate_degeneracy_testers(const Tag_true&) const {
     // we do have cached degeneracy testers
-#ifndef VDA_NO_CACHED_TESTERS
     return
       cached_e_tester_.is_valid(dual_) &&
       cached_f_tester_.is_valid(dual_);
-#endif
   }
 
   bool validate_degeneracy_testers(const Tag_false&) const {
@@ -851,10 +814,8 @@ public:
  protected:
   // we do have cached degeneracy testers
   void clear_testers(const Tag_true&) {
-#ifndef VDA_NO_CACHED_TESTERS
     cached_e_tester_.clear();
     cached_f_tester_.clear();
-#endif
   }
 
   // we do not have cached degeneracy testers
@@ -873,13 +834,16 @@ public:
     std::swap(tr_, other.tr_);
   }
 
+  // ACCESSOR
+  //---------
+  Accessor accessor() const { return Accessor(this); }
+  Accessor accessor() { return Accessor(this); }
+
  private:
   Delaunay_graph  dual_;
   Voronoi_traits tr_;
-#ifndef VDA_NO_CACHED_TESTERS
   Cached_edge_degeneracy_tester cached_e_tester_;
   Cached_face_degeneracy_tester cached_f_tester_;
-#endif
 
  protected:
   Dual_edge opposite(const Dual_edge& e) const {
