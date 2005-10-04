@@ -1,4 +1,4 @@
-#!/usr/bin/csh -f
+#!/bin/csh -f
 #
 
 set prog_name = $0
@@ -32,8 +32,8 @@ while ($#argv > 0)
    endif
 
    set in_files = "$in_files $1"
-   setenv TEXINPUTS $1:h:$TEXINPUTS
-   setenv BIBINPUTS $1:h:$BIBINPUTS
+   #setenv TEXINPUTS $1:h:$TEXINPUTS
+   #setenv BIBINPUTS $1:h:$BIBINPUTS
    shift
 end
 
