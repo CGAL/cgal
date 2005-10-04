@@ -368,11 +368,10 @@ public:
 // Public operations
 public:
 
-    /// Create a square SYMMETRIC matrix initialized with zeros
-    Taucs_symmetric_matrix(int  dim,                  ///< Matrix dimension
-                           int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                                      ///< matrix (automatically computed if 0)
-        : Taucs_matrix<T>(dim, true, nb_max_elements)
+    /// Create a square SYMMETRIC matrix initialized with zeros.
+    /// The max number of non 0 elements in the matrix is automatically computed.
+    Taucs_symmetric_matrix(int  dim)                  ///< Matrix dimension
+        : Taucs_matrix<T>(dim, true)
     {
     }
 
