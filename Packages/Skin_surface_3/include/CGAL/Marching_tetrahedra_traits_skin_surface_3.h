@@ -1,9 +1,8 @@
 #ifndef MARCHING_TETRAHEDRA_TRAITS_SKIN_SURFACE_3_H
 #define MARCHING_TETRAHEDRA_TRAITS_SKIN_SURFACE_3_H
 
-// #include <CGAL/Polyhedron_3_incremental_builder_3.h>
-// #include <CGAL/Modifier_base.h>
-// #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Modifier_base.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -23,15 +22,15 @@ public:
     : iso_value(iso_value) {
   }
   
-  Sign sign(const Vertex_handle vh) const {
+  Sign sign(Cell_handle ch, int i) const {
     return CGAL_NTS sign(
-       vh->cell()->surf->value(converter(vh->point())) - iso_value);
+       ch->surf->value(converter(ch->vertex(i)->point())) - iso_value);
   }
-  HDS_point intersection(const Edge &e) const {
+  HDS_point intersection(Cell_handle ch, int i, int j) const {
     // Precondition: e.first is not an infinite cell: they have not surface set
-    return e.first->surf->to_surface(
-      converter(e.first->vertex(e.second)->point()),
-      converter(e.first->vertex(e.third)->point()));
+    return ch->surf->to_surface(
+      converter(ch->vertex(i)->point()),
+      converter(ch->vertex(j)->point()));
   }
 
   // Additional functions, not belonging to the traits concept:

@@ -3,14 +3,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class TriangulationCellHandle_3,
+template <class Triangulation_3,
 	  class Polyhedron_3 >
 class Marching_tetrahedra_observer_default_3 {
 public:
-
-  typedef TriangulationCellHandle_3                   Triangulation_cell_handle;
-  typedef typename Polyhedron_3::Vertex_handle        Polyhedron_vertex_handle; 
-  typedef typename Polyhedron_3::Facet_handle         Polyhedron_facet_handle; 
+  typedef Triangulation_3                       Triangulation;
+  typedef typename Triangulation::Cell_handle   Triangulation_cell_handle;
+  typedef typename Polyhedron_3::Vertex_handle  Polyhedron_vertex_handle; 
+  typedef typename Polyhedron_3::Facet_handle   Polyhedron_facet_handle; 
 
   Marching_tetrahedra_observer_default_3() {
   }
