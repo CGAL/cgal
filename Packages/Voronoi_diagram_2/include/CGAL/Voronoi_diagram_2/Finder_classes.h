@@ -37,7 +37,6 @@ struct Find_next_halfedge
   typedef Triangulation_cw_ccw_2  CW_CCW_2;
 
   typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
-  typedef typename VDA::Edge_degeneracy_tester        Edge_tester;
 
   void operator()(const VDA* vda, const Delaunay_face_handle& f, int i,
 		  Delaunay_face_handle& fnext, int& inext) const

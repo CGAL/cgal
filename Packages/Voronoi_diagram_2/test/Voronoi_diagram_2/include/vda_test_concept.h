@@ -39,8 +39,8 @@ void test_edge_as_pair(const E&, const std::pair<F_handle,int>&)
 //============================================================================
 //============================================================================
 
-template<class DG>
-void test_dual_graph_concept(const DG& dg)
+template<class DG, class VT>
+void test_dual_graph_concept(const DG& dg, const VT& vt)
 {
   // testing types
   typedef typename DG::size_type                      size_type;
@@ -69,6 +69,28 @@ void test_dual_graph_concept(const DG& dg)
   typedef typename DG::Face_circulator                Face_circulator;
   typedef typename DG::Edge_circulator                Edge_circulator;
   typedef typename DG::Vertex_circulator              Vertex_circulator;
+
+  // testing constructors
+  {
+    // copy constructor
+    DG dg2(dg);
+
+    // assignment operator
+    DG dg3;
+    dg3 = dg2;
+
+    // constructors that take an iterator range
+    std::vector<typename VT::Site_2> v;
+    for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
+	 vit != dg.finite_vertices_end(); ++vit) {
+      v.push_back(vt.get_site_2_object()(vit));
+    }
+#ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
+    // HACK UNTIL Triangulation_hierarchy_2 conforms with the concept
+    DG dg4(v.begin(), v.end());
+    DG dg5(v.begin(), v.end(), Geom_traits());
+#endif
+  }
 
   // testing convertibility of iterators and circulators to handles
   if ( dg.number_of_vertices() > 0 ) {

@@ -168,7 +168,7 @@ void print_report(const VDA& vda, const Projector& project,
 	do {
 	  hc++;
 	  n_halfedges++;
-	  CGAL_assertion( fit->is_halfedge_on_outer_ccb(hc) );
+	  CGAL_assertion( fit->is_halfedge_on_ccb(hc) );
 	} while ( hc != hc_start );
       }
     }

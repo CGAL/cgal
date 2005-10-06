@@ -21,6 +21,10 @@
 
 #include <CGAL/basic.h>
 
+// HACK: NEEDED FOR SEEMLESS TESTING OF HIERARCHY UNTIL THE
+//       Triangulation_hierarchy_2 meets the DelaunayGraph_2 CONCEPT
+#include <CGAL/Triangulation_hierarchy_2.h>
+
 #include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"
 #include "vda_print_report.h"

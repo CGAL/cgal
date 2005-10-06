@@ -57,9 +57,8 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
 
     hc = hc_start;
     do {
-      bool b1 = f->is_halfedge_on_outer_ccb(hc);
-      bool b2 = f->is_halfedge_on_inner_ccb(hc);
-      CGAL_assertion( b1 && !b2 );
+      bool b1 = f->is_halfedge_on_ccb(hc);
+      CGAL_assertion( b1 );
       ++hc;
     } while ( hc != hc_start );
   }
@@ -147,8 +146,6 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   typedef typename VDA::Halfedge              Halfedge;
 
   // types  
-  typedef typename Halfedge::Vertex           Vertex;
-  typedef typename Halfedge::Face             Face;
   typedef typename Halfedge::Halfedge_handle  Halfedge_handle;
   typedef typename Halfedge::Vertex_handle    Vertex_handle;
   typedef typename Halfedge::Face_handle      Face_handle;
@@ -171,7 +168,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   CGAL_assertion( e_prev->next() == e );
 
   Face_handle f = e->face();
-  CGAL_assertion( f->is_halfedge_on_outer_ccb(e) );
+  CGAL_assertion( f->is_halfedge_on_ccb(e) );
 
   Vertex_handle v_src, v_trg;
   if ( e->has_source() ) {
@@ -249,6 +246,7 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Halfedge_around_vertex_circulator  HAVC;
   typedef typename VDA::Ccb_halfedge_circulator            CCBHC;
 
+  typedef typename VDA::Generator_iterator            Generator_iterator;
   
   // testing access methods
   //-----------------------
@@ -524,6 +522,20 @@ void test_vda(const VDA& vda)
       CGAL_assertion( beit->has_source() && beit->has_target() );
     }
     CGAL_assertion( beit->has_source() && beit->has_target() );
+  }
+
+  // testing generator iterator
+  Generator_iterator git;
+  for (git = vda.generators_begin();
+       git != vda.generators_end(); ++git) {
+    typename VT::Site_2 s = *git;
+  }
+
+  if ( vda.generators_begin() != vda.generators_end() ) {
+    for (git = --vda.generators_end();
+	 git != vda.generators_begin(); --git) {
+      typename VT::Site_2 s = *git;
+    }
   }
 }
 

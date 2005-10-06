@@ -98,21 +98,21 @@ that the Voronoi diagram adaptor can use it.
 
 \ccCreationVariable{dg}  %% choose variable name
 
-%\ccThree{DelaunayGraph_2}{dg(It begin, It beyond, Geom_traits gt)+}{}
-%\ccThreeToTwo
-%
-%\ccCreation
-%In addition to the default and constructors, as well as the assignment
-%operator, the following constructors are required.
-%
-%\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond);}
-%{Constructor that takes an iterator range. The value type of the
-%  iterator must be \ccc{Site_2}.}
-%\ccGlue
-%\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond,
-%  Geom_traits gt);}
-%{Constructor that takes an iterator range and an instance of the
-%  geometric traits. The value type of the iterator must be \ccc{Site_2}.}
+\ccThree{DelaunayGraph_2}{dg(It begin, It beyond, Geom_traits gt)+}{}
+\ccThreeToTwo
+
+\ccCreation
+In addition to the default and copy constructors, as well as the assignment
+operator, the following constructors are required.
+
+\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond);}
+{Constructor that takes an iterator range. The value type of the
+  iterator must be \ccc{Site_2}.}
+\ccGlue
+\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond,
+  Geom_traits gt);}
+{Constructor that takes an iterator range and an instance of the
+  geometric traits. The value type of the iterator must be \ccc{Site_2}.}
 
 
 \ccHeading{Access methods}
@@ -273,12 +273,17 @@ the finite or infinite character of any feature.
 
 
 
-%\ccHeading{Insertion}
-%\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
-%%
-%\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
-%site \ccc{s} in the Delaunay graph.}
-%%
+\ccHeading{Insertion}
+\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
+%
+\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
+site \ccc{s} in the Delaunay graph.}
+%
+\ccMethod{template<class Iterator>
+size_type  insert(Iterator first, Iterator beyond);}{Inserts the
+sites in the iterator range \ccc{[first,beyond)} in the Delaunay graph.
+The \ccc{Iterator} type must be a model of \ccc{OutputIterator} and its
+value type must be \ccc{Site_2}}.
 
 
 %\ccHeading{Nearest neighbor location}

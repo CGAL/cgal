@@ -46,9 +46,6 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
   diagram.}
 \ccGlue
-\ccNestedType{Curve}{A type for the curves represented by the
-  halfedge.}
-\ccGlue
 \ccNestedType{Ccb_halfedge_circulator}{A type for a circulator over
   the halfedges of the connected components of the boundary of a
   Voronoi face. The value type of the circulator is
@@ -61,6 +58,10 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccGlue
 \ccTypedef{typedef typename Delaunay_graph::Edge Delaunay_edge;}{A type for
   the dual edge in the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef typename Delaunay_graph::Vertex_handle
+Delaunay_vertex_handle;}
+{A type for vertex handles in the Delaunay graph.}
 
 \ccCreationVariable{e}  %% choose variable name
 
@@ -98,10 +99,26 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
   traverse the halfedges of the CCB containing \ccc{e}. The circulator
   is initialized to \ccc{e}.}
 \ccGlue
-\ccMethod{Curve curve();}{Returns the curve represented by the halfedge.}
-\ccGlue
 \ccMethod{Delaunay_edge dual();}{Returns the dual edge, i.e., the
   corresponding dual edge in the Delaunay graph.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle up();}{returns a handle to the vertex in
+the Delaunay graph corresponding to the defining site above of
+the Voronoi edge.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle down();}{returns a handle to the vertex
+in the Delaunay graph corresponding to the defining site below of
+the Voronoi edge.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle left();}{returns a handle to the vertex in
+the Delaunay graph corresponding to the defining site to the left of
+the Voronoi edge.
+\ccPrecond{\ccc{has_source()} must be \ccStyle{true}.}}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle right();}{returns a handle to the vertex in
+the Delaunay graph corresponding to the defining site to the right of
+the Voronoi edge.
+\ccPrecond{\ccc{has_target()} must be \ccStyle{true}.}}
 
 \ccHeading{Predicate Methods}
 \ccThree{bool}{e.is_unbounded()+}{}
@@ -141,6 +158,7 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccSeeAlso
 \ccc{VoronoiDiagramVertex_2}\\
 \ccc{VoronoiDiagramFace_2}\\
+\ccc{DelaunayGraph_2]\\
 \ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 

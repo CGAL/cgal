@@ -130,13 +130,7 @@ class Face
     return false;
   }
 
-  bool is_halfedge_on_inner_ccb(const Halfedge_handle&) const {
-    // MOST PROBABLY WHAT I NEED TO DO HERE IS TO RETURN false, SINCE
-    // THERE ARE NO INNER CCBs.
-    return false;
-  }
-
-  bool is_halfedge_on_outer_ccb(const Halfedge_handle& he) const {
+  bool is_halfedge_on_ccb(const Halfedge_handle& he) const {
     Ccb_halfedge_circulator hc_start = outer_ccb();
     Ccb_halfedge_circulator hc = hc_start;
     do {

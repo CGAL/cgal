@@ -224,6 +224,13 @@ class Delaunay_graph_concept
   }
 
  public:
+  Delaunay_graph_concept(const Geom_traits& gt = Geom_traits()) {}
+
+  template<class Iterator>
+  Delaunay_graph_concept(Iterator first, Iterator beyond,
+			 const Geom_traits& gt = Geom_traits()) {}
+
+
   void insert(const Site_2&) {}
 
   size_type number_of_vertices() const { return 0; }

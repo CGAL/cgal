@@ -32,7 +32,7 @@ template<class VDA>
 class Edge_degeneracy_tester_binder
 {
  private:
-  typedef typename VDA::Edge_degeneracy_tester  EDT;
+  typedef typename VDA::Accessor::Edge_degeneracy_tester  EDT;
 
  public:
   typedef typename EDT::result_type               result_type;
@@ -56,7 +56,7 @@ template<class VDA>
 class Face_degeneracy_tester_binder
 {
  private:
-  typedef typename VDA::Face_degeneracy_tester  FDT;
+  typedef typename VDA::Accessor::Face_degeneracy_tester  FDT;
 
  public:
   typedef typename FDT::result_type               result_type;

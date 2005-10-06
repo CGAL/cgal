@@ -39,6 +39,8 @@ class Dummy_iterator : public Emptyset_iterator
   typedef value_type*        pointer;
   typedef const value_type&  const_reference;
   typedef const value_type*  const_pointer;
+  typedef std::size_t        size_type;
+  typedef std::ptrdiff_t     difference_type;
 
   Dummy_iterator() {}
   Dummy_iterator(const Dummy_iterator&) {}

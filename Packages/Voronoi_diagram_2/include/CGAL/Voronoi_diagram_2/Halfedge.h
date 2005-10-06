@@ -39,8 +39,10 @@ class Halfedge
   typedef typename DG::Face_handle              Delaunay_face_handle;
   typedef typename DG::Vertex_circulator        Delaunay_vertex_circulator;
   typedef typename DG::Edge_circulator          Delaunay_edge_circulator;
-  typedef typename VDA::Edge_degeneracy_tester  Edge_degeneracy_tester;
-  typedef typename VDA::Face_degeneracy_tester  Face_degeneracy_tester;
+  typedef typename VDA::Accessor::Edge_degeneracy_tester
+    Edge_degeneracy_tester;
+  typedef typename VDA::Accessor::Face_degeneracy_tester
+    Face_degeneracy_tester;
 
  private:
   Self find_next_1D() const {
@@ -73,7 +75,6 @@ public:
   typedef typename VDA::Delaunay_graph            Delaunay_graph;
   typedef typename Delaunay_graph::Edge           Delaunay_edge;
   typedef typename Delaunay_graph::Vertex_handle  Delaunay_vertex_handle;
-
 
   // CONSTRUCTORS
   //-------------
@@ -356,29 +357,5 @@ CGAL_END_NAMESPACE
 
 //=========================================================================
 //=========================================================================
-#if 0
-
-#ifdef CGAL_USE_QT
-
-#include <CGAL/IO/Qt_widget.h>
-
-CGAL_BEGIN_NAMESPACE
-
-CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
-
-template<class VDA>
-Qt_widget& operator<<(Qt_widget& qt_w, const Halfedge<VDA>& e)
-{
-  qt_w << e.curve();
-  return qt_w;
-}
-
-CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
-
-CGAL_END_NAMESPACE
-
-#endif // CGAL_USE_QT
-
-#endif
 
 #endif // CGAL_VORONOI_DIAGRAM_2_HALFEDGE_2_H

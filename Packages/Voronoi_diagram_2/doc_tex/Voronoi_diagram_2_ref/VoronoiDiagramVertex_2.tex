@@ -63,6 +63,10 @@ vertex provided by the class \ccc{Voronoi_diagram_2}.
 \ccGlue
 \ccTypedef{typedef typename Delaunay_graph::Face_handle Delaunay_face_handle;}
 {A type for the handle of the dual face.}
+\ccGlue
+\ccTypedef{typedef typename Delaunay_graph::Vertex_handle
+Delaunay_vertex_handle;}
+{A type for the handles of vertices in the Delaunay graph.}
 
 \ccCreationVariable{v}  %% choose variable name
 
@@ -85,6 +89,23 @@ vertex provided by the class \ccc{Voronoi_diagram_2}.
 \ccMethod{Delaunay_face_handle dual();}
 {Returns a handle to the dual face, i.e., the corresponding dual face in the
   Delaunay graph.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle first();}{returns a handle to the vertex in
+the Delaunay graph corresponding to the first generating site of the
+Voronoi vertex.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle second();}{returns a handle to the vertex
+in the Delaunay graph corresponding to the second generating site of the
+Voronoi vertex.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle third();}{returns a handle to the vertex
+in the Delaunay graph corresponding to the third generating site of the
+Voronoi vertex.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle operator[](unsigned int i);}
+{returns a handle to the vertex in the Delaunay graph corresponding to 
+the $(i+1)$-th generating site of the Voronoi vertex.
+\ccPrecond{\ccc{i} must be smaller or equal to 2.}}
 
 \ccHeading{Predicate Methods}
 
@@ -106,6 +127,7 @@ vertex provided by the class \ccc{Voronoi_diagram_2}.
 \ccSeeAlso
 \ccc{VoronoiDiagramHalfedge_2}\\
 \ccc{VoronoiDiagramFace_2}\\
+\ccc{DelaunayGraph_2}\\
 \ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 

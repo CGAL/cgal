@@ -1,3 +1,13 @@
+6 Oct 2005:  Menelaos Karavelas
+- modified doc to match the code; changes in the concepts according to
+  Mariette's suggestions/comments
+- modified testing accordingly
+- added insertion methods and constructors in the DelaunayGraph_2 concept;
+  The Triangulation_hierarchy_2 class is no longer a model of the concept: it
+  lacks a constructor that takes an iterator range.
+- added generator iterator in testsuites; generator iterator may need some
+  more work. Open question: should sites be renamed to generators?
+
 4 Oct 2005:  Menelaos Karavelas
 - renamed namespace Voronoi_diagram_2_namespace to VoronoiDiagram_2
 - added short names for publicly visible classes

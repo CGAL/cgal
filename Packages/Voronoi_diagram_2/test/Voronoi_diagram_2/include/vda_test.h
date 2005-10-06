@@ -123,7 +123,7 @@ class VDA_Tester
 
   void test_vd(const VD& vd) const
   {
-    test_dual_graph_concept( vd.dual() );
+    test_dual_graph_concept( vd.dual(), vd.voronoi_traits() );
     test_voronoi_traits_concept( vd.dual(), vd.voronoi_traits() );
 
     std::ofstream nos("");

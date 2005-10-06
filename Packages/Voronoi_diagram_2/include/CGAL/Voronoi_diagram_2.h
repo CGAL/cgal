@@ -149,7 +149,6 @@ class Voronoi_diagram_2
 
   // the (triangulated) dual graph
   typedef DG                                          Delaunay_graph;
-  typedef typename Delaunay_graph::Geom_traits        Geom_traits;  
   typedef Tr                                          Voronoi_traits;
 
   typedef typename Delaunay_graph::size_type          size_type;
@@ -174,13 +173,15 @@ class Voronoi_diagram_2
   typedef typename Delaunay_graph::All_edges_iterator
   All_dual_edges_iterator;
 
- public:
+ protected:
   // POINT LOCATION RELATED TYPES
   typedef typename Voronoi_traits::Has_nearest_site_2  Has_nearest_site_2;
+ public:
   typedef typename Voronoi_traits::Point_2             Point_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<Self,true>  Locate_result;
 
+ protected:
   // TYPES FOR THE DEGENERACY TESTERS
   typedef typename Voronoi_traits::Has_insert          Has_insert;
   typedef typename Voronoi_traits::Has_remove          Has_remove;
@@ -354,7 +355,8 @@ class Voronoi_diagram_2
   typedef Iterator_project<Face_iterator,Project_site_2>
   Generator_iterator;
 
- public:
+#if 0
+ private:
   struct Face_circulator {}; // 1. circulates through the Voronoi cells
 			     //    that are neighbors of the given
 			     //    Voronoi cell;
@@ -374,7 +376,7 @@ class Voronoi_diagram_2
 			     //    Voronoi cell
                              // 2. also circulates around the edges of
                              //    a Voronoi vertex
-
+#endif
 
   // ACCESSOR
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>  Accessor;
@@ -460,7 +462,7 @@ public:
     return CGAL_VORONOI_DIAGRAM_2_INS::Connected_components<Self>()(*this);
   }
 
-  // DEGENERACY TESTERS
+  // DEGENERACY TESTERS -- THESE ARE UNDOCUMENTED
 
   // MAYBE THE FOLLOWING TWO METHODS SHOULD BE PRIVATE AND ACCESSED
   // ONLY THROUGH THE ACCESSOR
@@ -908,6 +910,8 @@ public:
     return counter;
   }
 
+#if 0
+ // REMOVAL IS NOT READY YET
  protected:
   void update_cached_testers(const Face_handle& f, const Tag_true&)
   {
@@ -936,7 +940,7 @@ public:
   inline void remove(const Face_handle& f) {
     return remove(f, Has_remove());
   }
-
+#endif
 };
 
 

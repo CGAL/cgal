@@ -81,8 +81,8 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 %\ccMethod{Halfedge_handle halfedge_on_outer_ccb();}{Same as
 %  \ccc{f.halfedge()}.}
 \ccGlue
-\ccMethod{Ccb_halfedge_circulator outer_ccb();}{Returns a circulator for
-  traversing the (outer) boundary of \ccc{f}.}
+\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a circulator for
+  traversing the boundary of \ccc{f}.}
 %% \ccGlue
 %% \ccMethod{Holes_iterator holes_begin();}{Starts at an arbitrary halfedge
 %%   on the boundary of a hole inside \ccc{f}. Since the faces in
@@ -99,15 +99,15 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 \ccThree{bool}{f.is_halfedge_on_outer_ccb(Halfedge e)+}{}
 \ccMethod{bool is_unbounded();}{Returns \ccStyle{true} if the face in
   an unbounded face in the Voronoi diagram.}
-\ccGlue
-\ccMethod{bool is_halfedge_on_inner_ccb(Halfedge e);}{Returns
-  \ccStyle{true} if is \ccc{e} is a halfedge of an inner CCB of
-  \ccc{f}. Since in Voronoi diagrams, faces do not have holes, this
-  method is really not needed. It has been added for compliance with
-  arrangements.}
-\ccGlue
-\ccMethod{bool is_halfedge_on_outer_ccb(Halfedge e);}{Returns
-  \ccStyle{true} if \ccc{e} is a halfedge of the (outer) boundary of
+%\ccGlue
+%\ccMethod{bool is_halfedge_on_inner_ccb(Halfedge e);}{Returns
+%  \ccStyle{true} if is \ccc{e} is a halfedge of an inner CCB of
+%  \ccc{f}. Since in Voronoi diagrams, faces do not have holes, this
+%  method is really not needed. It has been added for compliance with
+%  arrangements.}
+%\ccGlue
+\ccMethod{bool is_halfedge_on_ccb(Halfedge e);}{Returns
+  \ccStyle{true} if \ccc{e} is a halfedge of the boundary of
   \ccc{f}.}
 \ccGlue
 \ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
@@ -121,6 +121,7 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 \ccSeeAlso
 \ccc{VoronoiDiagramVertex_2}\\
 \ccc{VoronoiDiagramHalfedge_2}\\
+\ccc{DelaunayGraph_2]\\
 \ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 
