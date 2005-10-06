@@ -1176,14 +1176,7 @@ public:
 			   bool remove_target = true);
 
 
-  /*!
-   * Check if two edges can be merged to a single edge.
-   * \param e1 The first edge (one of the pair of twin halfedges).
-   * \param e2 The second edge (one of the pair of twin halfedges).
-   * \return true iff e1 and e2 are mergeable.
-   */
-  bool are_mergeable (Halfedge_const_handle e1,
-                      Halfedge_const_handle e2) const;
+  
   //@}
 
 protected:
