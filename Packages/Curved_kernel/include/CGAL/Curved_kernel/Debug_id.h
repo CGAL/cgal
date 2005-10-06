@@ -22,7 +22,7 @@ namespace CGALi {
 // It is empty, unless CGAL_CURVED_KERNEL_DEBUG is defined.
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-  template <typename = void>
+  template <typename T = void>
   struct Debug_id {
     const Debug_id & id() const { return *this; }
   };
@@ -36,7 +36,7 @@ namespace CGALi {
 #else
   // I make it a template in order to avoid linking problems
   // with the static data member.
-  template <typename = void>
+  template <typename T = void>
   class Debug_id {
     static int cnt;
   public:
