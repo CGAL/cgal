@@ -58,15 +58,12 @@ BISON   = bison -d -t -v
 # =====================================================================
 
 # Files that will be moved into LATEX_CONV_BIN upon installation:
-PROGRAM_FILES =		cc_extract			\
-			cc_build_checker		\
-			cc_extract_html			\
+PROGRAM_FILES =		cc_extract_html			\
 	        	cc_extract_images		\
 			cc_index_link                   \
 
 # Files that will be copied into LATEX_CONV_BIN upon installation:
-SCRIPT_FILES  = 	cc_check			\
-			latex_to_html			\
+SCRIPT_FILES  = 	latex_to_html			\
 			cc_extract_include		\
                         cc_remove_unwanted_links
 
@@ -100,25 +97,6 @@ basic.o : basic.h
 
 buffer.o : buffer.C buffer.h config.h basic.h
 
-extract_lex.o : extract_syntax.tab.h buffer.h config.h basic.h
-
-extract_syntax.o : extract_syntax.tab.h buffer.h config.h basic.h
-
-cc_extract.o : buffer.h config.h basic.h
-
-cc_build_checker.o : buffer.h config.h basic.h
-
-# program
-# --------------------
-OBJ        = extract_lex.o extract_syntax.o buffer.o basic.o
-HEADER     = extract_syntax.tab.h buffer.h config.h basic.h
-
-cc_extract : ${OBJ} ${HEADER} cc_extract.o
-	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJ} ${LDFLAGS}
-
-cc_build_checker : ${OBJ} ${HEADER} cc_build_checker.o
-	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJ} ${LDFLAGS}
-
 
 # LaTeX Converter
 # ==========================
@@ -133,13 +111,13 @@ cc_extract_html.o : cc_extract_html.C
 
 # program
 # --------------------
-OBJHTML    = html_lex.o          \
-             html_syntax.o       \
+OBJHTML    = lexer.o    \
+             syntax.o \
              basic.o             \
              buffer.o            \
              macro_dictionary.o  \
              internal_macros.o   \
-             html_error.o        \
+             error.o        \
              string_conversion.o \
              cpp_formatting.o    \
              input.o             \
@@ -163,8 +141,8 @@ cc_index_link : cc_index_link.o
 # Generic Production Rules:
 # =====================================================================
 
-%.C: %.yy
-	${FLEX} $*.yy > $*.C
+%.C: %.lex
+	${FLEX} $*.lex > $*.C
 
 %.C %.tab.h: %.y
 	${BISON} $*.y
@@ -211,13 +189,13 @@ install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 # Target to Create Dependencies Automatically:
 # =====================================================================
 
-DEPENDSRC  = html_lex.C          \
-             html_syntax.C       \
+DEPENDSRC  = lexer.C    \
+             syntax.C \
              basic.C             \
              buffer.C            \
              macro_dictionary.C  \
              internal_macros.C   \
-             html_error.C        \
+             error.C        \
              string_conversion.C \
              cpp_formatting.C    \
              input.C             \
@@ -227,24 +205,22 @@ DEPENDSRC  = html_lex.C          \
 
 # Prepared for SunPro CC. Change -xM1 to -M, -MM, or -MD, for Gnu g++.
 
-depend: ${DEPENDSRC}
-	# Works only with SunPro CC
-	CC -I. ${CPPFLAGS} ${CXXFLAGS} -xM1 ${DEPENDSRC} | grep -v "STL/SUN" | grep -v "opt/SUNWspro" | sort | uniq > Makefile_depend
+#depend: ${DEPENDSRC}
+#	# Works only with SunPro CC
+#	CC -I. ${CPPFLAGS} ${CXXFLAGS} -xM1 ${DEPENDSRC} | grep -v "STL/SUN" | grep -v "opt/SUNWspro" | sort | uniq > Makefile_depend
 
+depend: ${DEPENDSRC}
+	${CXX} -MM -I. ${CPPFLAGS} ${CXXFLAGS} ${DEPENDSRC} > Makefile_depend
 
 # =====================================================================
 # Auxiliary Targets:
 # =====================================================================
 clean :
-	-rm -f	*.o			\
-		extract_lex.C		\
-		extract_syntax.output	\
-		extract_syntax.tab.h	\
-		extract_syntax.C	\
-		html_lex.C		\
-		html_syntax.output	\
-		html_syntax.tab.h	\
-		html_syntax.C
+	-rm -f	*.o *~ *.bak	\
+		lexer.C		\
+		syntax.output	\
+		syntax.tab.h	\
+		syntax.C
 
 cleanall : clean
 	-rm -f  $(PROGRAM_FILES)

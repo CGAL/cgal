@@ -18,8 +18,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <list>
-#include <html_config.h>
-#include <html_error.h>
+#include <config.h>
+#include <error.h>
 #include <macro_dictionary.h>
 #include <string_conversion.h>
 #include <cpp_formatting.h>
@@ -53,6 +53,8 @@ ostream* index_stream = 0;
 ostream* HREF_stream = 0;
 ostream* HREF_counter_stream = 0; 
 
+ostream* null_stream = new ofstream("blubberblafile");
+
 string   pre_main_filename;
 string   main_filename = "<cout>";
 string   class_filename;
@@ -72,8 +74,6 @@ string   class_filepath;
 string   pre_main_uppath;
 string   main_uppath;
 string   class_uppath;
-
-
 
 /* Auxiliary functions for stream handling */
 /* ======================================= */
@@ -248,7 +248,6 @@ void push_current_output_w_filename( const string& filename) {
     insertInternalGlobalMacro( "\\lciOutputPath",    current_filepath);
     insertInternalGlobalMacro( "\\lciOutputUppath",  current_uppath);
 }
-
 
 // EOF //
 

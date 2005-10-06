@@ -14,8 +14,8 @@
 **************************************************************************/
 
 %{
-#include <html_syntax.h>
-#include <html_lex.h>
+#include <syntax.h>
+#include <lexer.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,13 +23,13 @@
 #include <ctype.h>
 
 #include <string_conversion.h>
-#include <html_error.h>
+#include <error.h>
+#include <config.h>
 #include <input.h>
 #include <macro_dictionary.h>
 #include <cpp_formatting.h>
 #include <internal_macros.h>
 
-#include <html_config.h>
 
 
 /* Own prototypes */

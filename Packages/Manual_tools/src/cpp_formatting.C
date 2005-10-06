@@ -16,8 +16,8 @@
 #include <string_conversion.h>
 #include <macro_dictionary.h>
 #include <internal_macros.h>
-#include <html_config.h>
-#include <html_error.h>
+#include <config.h>
+#include <error.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <output.h>
@@ -862,6 +862,30 @@ void  make_index(string main_item, string sub_item, string sub_sub_item,
 }
 
 
+void
+generate_substitution_rule( const char *formatted, 
+                            const char *name,
+                            const char *type ) 
+{
+    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted
+                   << "\"    { ECHO; }" << endl;
+    *anchor_stream << '"' << formatted
+                   << "\"/{noCCchar}    { wrap_anchor( \""
+                   << REPLACE_WITH_CURRENT_PATH_TOKEN 
+                   << current_basename 
+                   << "#" << type << "_";
+    filter_for_index_anchor( *anchor_stream, name);
+    *anchor_stream << "\", yytext); }" << endl;
+}
+
+bool
+is_index_enabled() { 
+    return
+        macroIsTrue( "\\lciIfHtmlIndex") && 
+        macroIsTrue( "\\ccIndex")  &&  
+        macroIsTrue( "\\ccAutoIndex");
+}
+
 // Three column layout functions
 // =====================================================
 
@@ -917,34 +941,33 @@ void format_function( bool method, const char* signature,
     if (!class_name.empty() &&  macroIsTrue( "\\ccIndex") && 
           macroIsTrue( "\\ccAutoIndex") &&
           !(macroIsTrue( "\\ccIsRefFunction")  && 
-          macroIsTrue( "\\ccIsFunctionTemplate"))) {
-        char* formatted_function = convert_fontified_ascii_to_html( 
-            function_name);
+          macroIsTrue( "\\ccIsFunctionTemplate"))) 
+    {
+        char* formatted_function = 
+          convert_fontified_ascii_to_html( function_name );
         string class_name; 
-        if (macroIsTrue( "\\lciIfHtmlRefIndex"))
+        if( macroIsTrue("\\lciIfHtmlRefIndex") )
             class_name = macroX("\\ccPureClassName");
         else
-           class_name =  macroX("\\ccRefFilename");
+            class_name = macroX("\\ccRefFilename");
 
         // Make a hyperlink. Types could be substituted
         // according the rules.
-
-        if (method) {
-           if (!normal_operator)
-                  make_index(formatted_function,class_name,"",signature,'f');  
+        if (!normal_operator) {
+            if (method) 
+                make_index(formatted_function,class_name,"",signature,'f');  
+            else
+                make_index(formatted_function,"","",signature,'f'); 
         }
-        else  {
-           if (!normal_operator)
-                  make_index(formatted_function,"","",signature,'f'); 
-        }               
         delete[] formatted_function;
         
     } 
-    if ( !normal_operator && !method && macroIsTrue( "\\lciIfHtmlIndex") 
-         && macroIsTrue( "\\lciIfHtmlRefIndex")  &&  macroIsTrue( "\\ccIndex") 
-         &&  macroIsTrue( "\\ccAutoIndex") && class_name.empty()  
-         && !(macroIsTrue( "\\ccIsRefFunction")  && 
-          macroIsTrue( "\\ccIsFunctionTemplate"))) {
+    if ( !normal_operator && !method && is_index_enabled() &&
+         macroIsTrue( "\\lciIfHtmlRefIndex")  &&  
+         class_name.empty() &&          
+         !( macroIsTrue( "\\ccIsRefFunction")  && 
+            macroIsTrue( "\\ccIsFunctionTemplate")) ) 
+    {
 
         char* formatted_function = convert_fontified_ascii_to_html( 
             function_name);
@@ -956,7 +979,6 @@ void format_function( bool method, const char* signature,
 
     // end index
     // ----------
-
 
     if ( return_value)
         print_ascii_to_html_spc( *current_ostream, return_value);
@@ -1235,50 +1257,36 @@ void format_variable( const char* signature,
     three_cols_html_begin( *current_ostream, 
                            exp_size_ret * stretch_factor > 
                                table_width*table_first_col/100.0);
-   
+    
     if ( class_name.empty()) {
         if ( macroIsTrue( "\\lciIfHtmlLinks") && 
              macroIsTrue( "\\lciIfHtmlRefLinks") && 
-             strlen(variable_name) > 1) {
+             strlen(variable_name) > 1) 
+        {
             // generate a substitution rule for hyperlinking
-            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
-                           << "\"    { ECHO; }" << endl;
-            *anchor_stream << '"' << formatted_var
-                           << "\"/{noCCchar}    { wrap_anchor( \""
-                           << REPLACE_WITH_CURRENT_PATH_TOKEN 
-                           << current_rootname 
-                           << (is_typedef ? "#Typedef_" :  "#Var_" );
-            filter_for_index_anchor( *anchor_stream, variable_name);
-            *anchor_stream << "\", yytext); }" << endl;
+            generate_substitution_rule( 
+              formatted_var, 
+              variable_name, 
+              (is_typedef ? "Typedef" :  "Var" ) );
         }
-        if ( macroIsTrue( "\\lciIfHtmlIndex") && 
-             macroIsTrue( "\\lciIfHtmlRefIndex") && 
-             macroIsTrue( "\\ccIndex")  &&  macroIsTrue( "\\ccAutoIndex")) {
-            // index
+        if ( macroIsTrue( "\\lciIfHtmlRefIndex") && is_index_enabled() ) 
+        {
             char p = (is_typedef ? 't' : 'v');
             make_index(formatted_var,"","",variable_name,p);
         }
-    } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-                 &&  macroIsTrue( "\\ccAutoIndex")) {
-        // index
-        char p = (is_typedef ? 't' : 'v');
-        make_index(string(variable_name),string(class_name),"",
-                   variable_name,p);
-
-    }
-
-    if ( !class_name.empty() && !macroIsTrue( "\\lciIfHtmlClassIndex") && 
-                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-                 &&  macroIsTrue( "\\ccAutoIndex")) {
-            // index
+    } else {
+        if ( is_index_enabled() ) {
             char p = (is_typedef ? 't' : 'v');
-            make_index(formatted_var,"","",variable_name,p);
+            if( macroIsTrue( "\\lciIfHtmlClassIndex") ) 
+                make_index(variable_name,class_name,"",variable_name,p);
+            else
+                make_index(formatted_var,"","",variable_name,p);
+        }
     }
-    
 
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
-         macroIsTrue( "\\lciIfHtmlIndex")) {
+         macroIsTrue( "\\lciIfHtmlIndex")) 
+    {
         *current_ostream << "<A NAME=\""
                         << (is_typedef ? "Typedef_" :  "Var_" );
         filter_for_index_anchor( *current_ostream, variable_name);
@@ -1347,30 +1355,12 @@ void format_class_declaration( const char* signature) {
     char* formatted_struct = convert_fontified_ascii_to_html( struct_name);
     two_cols_html_begin( *current_ostream);
     if ( class_name.empty()) {
-        if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) {
-            // generate a substitution rule for hyperlinking
-            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
-                           << "\"    { ECHO; }" << endl;
-            *anchor_stream << '"' << formatted_struct
-                           << "\"/{noCCchar}    { wrap_anchor( \""
-                           << REPLACE_WITH_CURRENT_PATH_TOKEN 
-                           << current_rootname << "#Struct_";
-            filter_for_index_anchor( *anchor_stream, struct_name);
-            *anchor_stream << "\", yytext); }" << endl;
-        }
-        if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-               &&  macroIsTrue( "\\ccAutoIndex")) {
-            // index
-            make_index(formatted_struct,"","",struct_name,'s');
-        }
-    } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-                 &&  macroIsTrue( "\\ccAutoIndex")) {
-        // index
-        make_index(string(struct_name),string(class_name),"",
-                   struct_name,'s');
-
-    }
+        if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) 
+            generate_substitution_rule( formatted_struct, struct_name, "Struct" );        
+        if ( is_index_enabled() ) 
+            make_index( formatted_struct,"","",struct_name,'s' );
+    } else if ( macroIsTrue( "\\lciIfHtmlClassIndex") && is_index_enabled() ) 
+        make_index(string(struct_name),string(class_name),"",struct_name,'s');
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
          macroIsTrue( "\\lciIfHtmlIndex")) {
         *current_ostream << "<A NAME=\"Struct_";
@@ -1413,23 +1403,15 @@ void format_struct( const char* signature) {
     if ( class_name.empty() || (! macroIsTrue( "\\lciIfHtmlClassIndex"))) {
         if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(struct_name) > 1) {
             // generate a substitution rule for hyperlinking
-            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
-                           << "\"    { ECHO; }" << endl;
-            *anchor_stream << '"' << formatted_struct
-                           << "\"/{noCCchar}    { wrap_anchor( \""
-                           << REPLACE_WITH_CURRENT_PATH_TOKEN 
-                           << current_rootname << "#Struct_";
-            filter_for_index_anchor( *anchor_stream, struct_name);
-            *anchor_stream << "\", yytext); }" << endl;
+            generate_substitution_rule( formatted_struct, struct_name, "Struct" );
         }
-        if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-                &&  macroIsTrue( "\\ccAutoIndex")) {
+        if ( is_index_enabled() ) {
             // index
             make_index(formatted_struct,"","",struct_name,'s');
         }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-                 &&  macroIsTrue( "\\ccAutoIndex")) {
+                 is_index_enabled() )
+    {
         // index
         make_index(string(struct_name),string(class_name),"",
                    struct_name,'s');
@@ -1522,9 +1504,10 @@ void format_nested_type( const char* nested_type_name) {
     char* formatted_class = convert_fontified_ascii_to_html( template_class_name);
     two_cols_html_begin( *current_ostream);
 
-    if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-         macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-         &&  macroIsTrue( "\\ccAutoIndex")) {
+    
+    if ( /*macroIsTrue( "\\lciIfHtmlClassIndex") && */
+         is_index_enabled() ) 
+    {
         // index
         if ( ! template_class_name.empty())
            make_index(string(nested_type_name),string(class_name),"",
@@ -1576,17 +1559,9 @@ void format_enum( const char* signature) {
     if ( class_name.empty() || !(macroIsTrue( "\\lciIfHtmlClassIndex"))) {
         if ( macroIsTrue( "\\lciIfHtmlLinks")  && strlen( enum_name) > 1) {
             // generate a substitution rule for hyperlinking
-            *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
-                           << "\"    { ECHO; }" << endl;
-            *anchor_stream << '"' << formatted_enum
-                           << "\"/{noCCchar}    { wrap_anchor( \""
-                           << REPLACE_WITH_CURRENT_PATH_TOKEN
-                           << current_basename << "#Enum_";
-            filter_for_index_anchor( *anchor_stream, enum_name);
-            *anchor_stream << "\", yytext); }" << endl;
+            generate_substitution_rule( formatted_enum, enum_name, "Enum" );
         }
-        if ( macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-            &&  macroIsTrue( "\\ccAutoIndex")) {
+        if( is_index_enabled() ) {
             // index
             char* kk = newstr(formatted_enum); 
             char* k = strtok(kk,"=");
@@ -1602,8 +1577,7 @@ void format_enum( const char* signature) {
             delete[] kk;
         }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-                 macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
-                 &&  macroIsTrue( "\\ccAutoIndex")) {
+                 is_index_enabled() ) {
         // index
         char* kk = newstr(formatted_enum); 
         char* k = strtok(kk,"=");
@@ -1679,7 +1653,8 @@ void format_enum( const char* signature) {
             if ( (class_name.empty() || 
                   !(macroIsTrue( "\\lciIfHtmlClassIndex"))) && 
                      macroIsTrue( "\\ccIndex") &&  
-                     macroIsTrue( "\\ccAutoIndex")) {
+                     macroIsTrue( "\\ccAutoIndex")) 
+            {
                 if ( macroIsTrue( "\\lciIfHtmlIndex")) {
                     // index: print enum tags with (possible) initializers
                     char* kk = newstr(p); 
@@ -1702,22 +1677,14 @@ void format_enum( const char* signature) {
                     *q = '\0';
                     if ( strlen( p) > 1) {
                         char *tmp_param = convert_fontified_ascii_to_html( p);
-                        *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_param
-                                  << "\"    { ECHO; }" << endl;
-                        *anchor_stream << '"' << tmp_param
-                                  << "\"/{noCCchar}    { wrap_anchor( \""
-                                       << REPLACE_WITH_CURRENT_PATH_TOKEN
-                                       << current_basename << "#Enum_";
-                        filter_for_index_anchor( *anchor_stream, enum_name);
-                        *anchor_stream << "\", yytext); }" << endl;
+                        generate_substitution_rule( tmp_param, enum_name, "Enum" );
                         delete[] tmp_param;
                     }
                     *q = c_tmp; // restore initializer
                 }
             } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-                         macroIsTrue( "\\lciIfHtmlIndex")  &&  
-                         macroIsTrue( "\\ccIndex")  &&  
-                         macroIsTrue( "\\ccAutoIndex")) {
+                         is_index_enabled() ) 
+            {
                 // index: print enum tags with their (possible) initializers
                 char* kk = newstr(p);
                 char* k = strtok(kk,"=");

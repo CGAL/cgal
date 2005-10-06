@@ -107,6 +107,10 @@ Include_stack::pop() {
 	if ( ! quiet_switch)
 	    cerr << ']' << flush;
 	fclose( file());
+        // after leaving a file that was masked by \includeonly ...
+        /*if( !is_to_be_included( name() ) && is_include_only() )
+            // .. enable_io() again
+            Output_file::enable_io();*/
     }
     if ( size() > 1) {
 	Stack::iterator i = m_stack.begin();

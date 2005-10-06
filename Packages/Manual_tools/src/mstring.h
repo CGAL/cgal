@@ -19,15 +19,18 @@ using namespace std;
 #if ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 
 #include <ext/hash_map>
+#include <ext/hash_set>
 
 using __gnu_cxx::hash;
 using __gnu_cxx::hash_map;
+using __gnu_cxx::hash_set;
 
 namespace __gnu_cxx {
 
 #else // ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 
 #include <hash_map>
+#include <hash_set>
 namespace std {
 
 #endif // ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))

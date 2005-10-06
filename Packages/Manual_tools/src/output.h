@@ -34,7 +34,7 @@ extern string  tmp_path;
 // Output_file with stream operators
 // -------------------------------------
 
-#define OUT(x) if ( m_out) *m_out << x; return *this
+#define OUT(x) if ( m_out ) *m_out << x; return *this
 
 class Output_file {
     ostream* m_out;
@@ -66,6 +66,7 @@ public:
     Output_file&  operator<<( unsigned short i)         { OUT(i);}
     Output_file&  operator<<( ostream& (*f)(ostream&))  { OUT(f);}
     Output_file&  operator<<( ios& (*f)(ios&) )         { OUT(f);}
+      
     operator const void*() const    { return m_out ? (void*)(*m_out) : 0; }
     Output_file&  flush() {
 	if (m_out)
@@ -85,6 +86,8 @@ public:
 };
 #undef OUT
 
+// actually, this is the output that _was_ the current output 
+// before calling push_current_output
 extern Output_file current_output;
 
 void push_current_output();

@@ -1548,7 +1548,6 @@
 \newcommand{lefteqn}[1]{#1}
 
 \gdef\lcTabularBorder{0} %% Set this to [1..] to get a table with border [1..]
-
 %% Args: column format string
 \newcommand{\lciTabularBegin}[1]{\lciIfEqualExpanded{\lcTabularBorder}{0}{%
     \lcRawHtml{
@@ -1586,6 +1585,7 @@
     }{% else next character in table entry
         \lcRawHtml{<TD ALIGN=LEFT VALIGN=TOP NOWRAP>
 }#1}}
+
 
 %% Args: total number of cols, another \hline, an \end or next char in table
 \newcommand{\lciTabularHline}[2]{%
@@ -1701,7 +1701,7 @@
 % |     * Splitting the Input
 % +--------------------------------------------------------------------------
 
-\newcommand{\includeonly}[1]{}
+\newcommand{\includeonly}[1]{\lciIncludeOnly{#GXC1}}
 \newcommand{\include}[1]{\lciInclude{#GXC1}}
 \newcommand{\input}[1]{\lciInclude{#GXC1}}
 

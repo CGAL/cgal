@@ -14,16 +14,16 @@
 **************************************************************************/
 
 %{
-#include <html_lex.h>
+#include <lexer.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <html_config.h>
 #include <string_conversion.h>
 #include <internal_macros.h>
-#include <html_error.h>
-#include <html_syntax.tab.h>
+#include <error.h>
+#include <config.h>
+#include <syntax.tab.h>
 
 #include <input.h>
 #include <lex_include_impl.h>
@@ -168,6 +168,7 @@ inline char* next_digit( char* s) {
                           \end{envir} occurs. Another example is cprog.
 
     --  IncludeMode       parses lciInclude filename,
+    --  InputMode         parses lciInput   filename,
 
     --  ParameterStart:   starts a (La)TeX macro parameter, i.e. 
                           comments, braces, brackets, and escaped symbols,
@@ -200,6 +201,7 @@ inline char* next_digit( char* s) {
 
 %x AllttMode
 %x IncludeMode
+%x InputMode
 %x ParameterStart
 %x ParameterMode
 %x AllttParameterStart
@@ -294,9 +296,34 @@ number          {digit}+
 			yyterminate();
 		    }
 		    BEGIN( old_state);
-		    include_stack.push_file( yytext);
+                    //string filename = string(yytext);
+                    if( is_to_be_included( yytext ) )
+		      include_stack.push_file( yytext );
 		    break;
 }
+
+<INITIAL,AllttMode>[\\](lciInput){seps}[\{]{seps}   {  
+                    old_state = YY_START;
+                    BEGIN ( InputMode);
+                    break;
+}
+<InputMode>{filename}          {
+                    /* remove remaining characters before the '}' */
+                    int c = yyinput();
+                    while( c != EOF && c != '}') {
+                        if ( c == '\n')
+                            inc_line();
+                        c = yyinput();
+                    }
+                    if ( c == EOF) {
+                        printErrorMessage( EOFInIncludeFilenameError);
+                        yyterminate();
+                    }
+                    BEGIN( old_state);
+                    include_stack.push_file( yytext );
+                    break;
+}
+
 
  /* TeX Macro Definitions                         */
  /* LaTeX newcommand is as internal macro defined */

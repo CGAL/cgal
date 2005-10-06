@@ -23,9 +23,9 @@
 
 #include <macro_dictionary.h>
 #include <internal_macros.h>
-#include <html_config.h>
-#include <html_syntax.h>
-#include <html_error.h>
+#include <config.h>
+#include <error.h>
+#include <syntax.h>
 #include <string_conversion.h>
 #include <input.h>
 #include <output.h>
@@ -129,18 +129,18 @@ extern int HREF_counter;
 /* ============================================ */
 
 void handleString( const char* s) {
-    if ( current_ostream)
-	*current_ostream << s;
+  if( current_ostream )
+    *current_ostream << s;
 }
 
 void handleString( const string& s) {
-    if ( current_ostream)
-	*current_ostream << s;
+  if( current_ostream )
+    *current_ostream << s;
 }
 
 void handleChar( char c) {
-    if ( current_ostream)
-	*current_ostream << c;
+  if( current_ostream )
+    *current_ostream << c;
 }
 
 
@@ -407,8 +407,8 @@ main( int argc, char **argv) {
 
     if (! include_stack.push_file( config_path + sty_filename))
 	exit(1);
-
     yyparse();
+    std::cerr << "after configfile" << std::endl;
     if (V_switch) {
 	cerr << endl;
 	exit(0);

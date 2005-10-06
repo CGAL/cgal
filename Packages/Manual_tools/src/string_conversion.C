@@ -18,8 +18,8 @@
 #include <output.h>
 #include <input.h>
 #include <sstream>
-#include <html_config.h>
-#include <html_error.h>
+#include <config.h>
+#include <error.h>
 
 // New style conversion routines
 // =======================================
@@ -109,13 +109,14 @@ void remove_separator( string& s) {
 // since these cause problems as well.
 string replace_template_braces_and_colons( string name) {
     for ( size_t i = 0; i < name.size(); ++i) {
-	if ( name[i]=='<' ) {
-	    name.replace(i,1,"-");
-        }
-	else if ( name[i]=='>' ) {
-	    name.replace(i,1,"-");
-	}
-	else if ( name[i]==':' || name[i]==',' || name[i]==' ') {
+	if ( name[i]==':' || 
+             name[i]==',' || 
+             name[i]==' ' || 
+             name[i]=='<' ||
+             name[i]=='>' /*||
+             name[i]=='(' ||
+             name[i]==')' */ ) 
+        {
 	    name.replace(i,1,"-");
 	}
     }

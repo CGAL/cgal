@@ -12,8 +12,8 @@
  
 **************************************************************************/
 
-#ifndef HTML_ERROR_H
-#define HTML_ERROR_H 1
+#ifndef ERROR_H
+#define ERROR_H 1
 
 #include <iostream>
 
@@ -109,6 +109,6 @@ void        printErrorMessage( ErrorNumber n,
 
 int         yyerror( char *s);  // needed for yyparse()
 
-#endif // HTML_ERROR_H 1 //
+#endif // ERROR_H 1 //
 // EOF //
 

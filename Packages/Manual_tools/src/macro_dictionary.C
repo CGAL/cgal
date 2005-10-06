@@ -15,11 +15,11 @@
 #include <macro_dictionary.h>
 
 #include <iostream>
-#include <html_lex.h>
+#include <lexer.h>
 #include <input.h>
 #include <string_conversion.h>
-#include <html_error.h>
-#include <html_config.h>
+#include <error.h>
+#include <config.h>
 #include <list>
 #include <string.h>
 

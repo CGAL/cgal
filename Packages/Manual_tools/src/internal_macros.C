@@ -20,9 +20,9 @@
 #include <macro_dictionary.h>
 #include <cpp_formatting.h>
 #include <input.h>
-#include <html_lex.h>
-#include <html_error.h>
-#include <html_config.h>
+#include <lexer.h>
+#include <error.h>
+#include <config.h>
 #include <output.h>
 
 // ======================================================================
@@ -982,6 +982,13 @@ cross_link_template( const string&, string param[], size_t n, size_t opt) {
     return string( "\\lcRawHtml{") + handleHtmlCrossLink(cc_string,true) + '}';
 }
 
+string                // macro
+handle_include_only( const string& s, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0 );
+    include_only( param[0] ); // only single filename supported currently
+    return string();
+}
+
 // Chapter File Handling
 // ======================================================================
 
@@ -1242,6 +1249,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciCloseFile",  close_file, 0);
 
     insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
+    
+    insertInternalGlobalMacro( "\\lciIncludeOnly",  handle_include_only,  1);
 }
 
 // EOF //

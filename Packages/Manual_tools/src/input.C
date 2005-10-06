@@ -17,13 +17,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <list>
-#include <html_config.h>
-#include <html_error.h>
+#include <config.h>
+#include <error.h>
 #include <macro_dictionary.h>
 #include <string_conversion.h>
 #include <cpp_formatting.h>
 
 using namespace std;
+
 
 
 // Path for the HTML conversion tools for the default configuration files.
@@ -102,9 +103,9 @@ istream* open_file_for_read( const string& name){
     istream* in = new ifstream( name.c_str());
     if ( ! *in) {
         cerr << ' ' << endl 
-	     << prog_name << ": error: cannot open file `" << name
-	     << "' for reading." << endl;
-	exit(1);
+             << prog_name << ": error: cannot open file `" << name
+             << "' for reading." << endl;
+        exit(1);
     }
     return in;
 }
@@ -134,6 +135,43 @@ int open_counter_file_for_read( const string& name){
     return i;
 }
 
+static hash_set< string > files_to_be_included;
 
-// EOF //
 
+bool 
+is_include_only() {
+    return !files_to_be_included.empty();
+}
+
+bool     
+is_to_be_included( const string& name ) {
+    //std::cerr << "include? " << name << std::endl;
+    return !is_include_only() || 
+            files_to_be_included.find( name ) != files_to_be_included.end();
+}
+
+
+void     
+include_only( const string& filename_list) {
+    files_to_be_included.clear();
+    
+    string::size_type first = 0;
+    string::size_type last = 0;
+    string name = "";
+    while( last < filename_list.size() ) {
+        last = filename_list.find(',', first);
+        if( last < filename_list.size() )
+            name = filename_list.substr( first, last-first );
+        else
+            name = filename_list.substr( first,
+                                        filename_list.size()-first );
+        
+        first = last+1;
+        //std::cerr << "adding \"" << name << "\" to includeonly set." << std::endl;
+        files_to_be_included.insert( name );
+    }    
+}
+
+
+
+// EOF

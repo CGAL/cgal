@@ -64,6 +64,16 @@ istream* open_file_for_read( const string& name);
 istream* open_file_for_read_w_input_dirs( const string& name);
 int      open_counter_file_for_read( const string& name);
 
+// if a file 'name' should be included. in case of \includeonly{f}, 
+// only 'f' is included. otherwise, all files are included
+bool     is_to_be_included( const string& name );
+
+// true iff there was some \includeonly statement with non-empty filename
+bool     is_include_only();
+
+// comma-separated list of files (excluding the .tex-filename extension)
+void     include_only( const string& name );
+
 /* Parts taken from lex_include.h          */
 /* ======================================= */
 

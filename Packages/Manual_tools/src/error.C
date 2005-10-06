@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  html_error.C
+  error.C
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Error messages and protocol output.
@@ -12,8 +12,8 @@
  
 **************************************************************************/
 
-#include <html_error.h>
-#include <html_config.h>
+#include <error.h>
+#include <config.h>
 #include <input.h>
 #include <string_conversion.h>
 

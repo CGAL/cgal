@@ -303,9 +303,11 @@ print_time() {
 
 run_command() {
   ExitCode=0
+  cmd=${@//(/\\(};
+  cmd=${cmd//)/\\)};  
   if [ $Quiet -eq 0 ] ; then
     { 
-      if ! eval "$@" 2>&1 ; then
+      if ! eval "$cmd" 2>&1 ; then
         # We need to set ExitCode=1, but that won't work with that pipe.
         # Instead we touch a file and test that later.
         touch ${LogFile}.tmp.err
@@ -316,7 +318,7 @@ run_command() {
       ExitCode=1
     fi
   else
-    if ! eval "$@" > ${LogFile}.tmp  2>&1 ; then
+    if ! eval "$cmd" > ${LogFile}.tmp  2>&1 ; then
       ExitCode=1
       #error noexit "Non-zero exit-code when running '$@'."
     fi
@@ -489,8 +491,8 @@ convert() {
         lgout -n "[$dir"
         cd $dir
         for f in *.html ; do
-            vout -n " ["${dir}/$f
-            run_command anchor_filter $f ${AbsOutDir}/${dir}/$f
+            vout -n " [${dir}/$f"
+            run_command anchor_filter "$f" "${AbsOutDir}/${dir}/$f"
             if [ $ErrorInLogfile -eq 1 ]; then GlobalExitCode=1 ; fi
             vout -n "]"
         done

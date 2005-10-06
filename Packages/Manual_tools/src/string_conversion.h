@@ -16,7 +16,7 @@
 #define STRING_CONVERSION_H 1
 
 #include <mstring.h>
-#include <html_lex.h>
+#include <lexer.h>
 
 // New style conversion routines
 // =======================================
