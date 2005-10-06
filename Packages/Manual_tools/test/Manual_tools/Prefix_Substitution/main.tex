@@ -1,0 +1,51 @@
+
+The example illustrates both typical usages (with a fantasy function
+that does not exist in \cgal).
+
+\ccSetThreeColumns{CGAL_Point<R>}{CGAL_f( CGAL_Vector<R> v)}{}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    the original \cgal\ prefix.}
+\vspace{-\parskip}
+
+\begin{tabbing}
+\ccTexHtml{CCimplementation \= Implementation \= \kill}{}
+  \verb+\def\ccTargetPrefix{}+ \\
+  \verb+\renewcommand{\ccTagReplacePrefix}{\ccTrue}+
+\end{tabbing}
+\def\ccTargetPrefix{}
+\renewcommand{\ccTagReplacePrefix}{\ccTrue}
+\vspace{-\parskip}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    assuming name spaces. {\tt ;-)}}
+\vspace{-\parskip}
+
+\begin{tabbing}
+\ccTexHtml{CCimplementation \= Implementation \= \kill}{}
+  \verb+\def\ccTargetPrefix{GTE}+ \\
+  \verb+\renewcommand{\ccTagReplaceInclude}{\ccTrue}+
+\end{tabbing}
+\def\ccTargetPrefix{GTE}
+\renewcommand{\ccTagReplaceInclude}{\ccTrue}
+\vspace{-\parskip}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    make a Porsche from this declaration.}
+\vspace{-\parskip}
+
+\begin{tabbing}
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
+  \verb+\renewcommand{\ccTagReplacePrefix}{\ccFalse}+ \\
+  \verb+\renewcommand{\ccTagReplaceInclude}{\ccFalse}+
+\end{tabbing}
+\renewcommand{\ccTagReplacePrefix}{\ccFalse}
+\renewcommand{\ccTagReplaceInclude}{\ccFalse}
+
+% ----------------------------------------------------------------------

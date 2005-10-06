@@ -1,0 +1,28 @@
+\def\ccLongParamLayout{\ccFalse}
+\def\ccTagRmEigenClassName{\ccTrue}
+\ccTexHtml{\ccAutoIndexingOn}{}
+\begin{ccClass}{ClassD}
+
+\ccThree{ClassD}{pp.operator+( const ClassD& qq) const;}{}
+First, a  declaration  with all default substitution rule active.
+
+\ccCreationVariable{pp}
+
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
+      member function.}
+
+Second, all rules switched off.
+\ccTagFullDeclarations
+
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
+      member function.}
+
+Third, back to the default.
+\ccTagDefaults
+
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
+      member function.}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------

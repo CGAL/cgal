@@ -1,0 +1,44 @@
+
+
+\begin{ccClassTemplate}{CGAL_tree_point_interface1<P, W, Key,  
+    Left, Right, Comp>}
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\end{ccClassTemplate}
+
+If the class does not fit any longer in one line, it wraps around.
+
+\begin{ccClassTemplate}{CGAL_tree_point_interface2<Point, Window, Key,  
+         Point_func, Window_left_func, 
+         Window_right_func, Compare>}
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\end{ccClassTemplate}
+
+The formatting for long parameter lists put the new type name in an extra line.
+
+\begin{ccClassTemplate}{CGAL_tree_point_interface3<Point, Window, Key,  
+         Point_func, Window_left_func, 
+         Window_right_func, Compare>}
+\def\ccLongParamLayout{\ccTrue}
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\def\ccLongParamLayout{\ccFalse}
+\end{ccClassTemplate}
+
+The proposed solution uses a typedef to avoid duplicating the long
+template class name all over the specification.
+
+\begin{ccClass}{Point_interface}
+  
+The following line must be done by hand if it should be
+formatted more nicely.
+
+\ccStyle{typedef CGAL_tree_point_interface<Point, Window, Key,  
+         Point_func, Window_left_func, 
+         Window_right_func, Compare> Point_interface;}
+       
+Since here the specification is written in terms of the above
+\ccStyle{typedef}.
+
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\end{ccClass}
+
+% ----------------------------------------------------------------------

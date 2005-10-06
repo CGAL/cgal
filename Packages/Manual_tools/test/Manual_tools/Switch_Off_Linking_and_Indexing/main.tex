@@ -1,0 +1,119 @@
+
+\ccThree{boolx}{a.link5( LinkB a, B b)}{}
+\ccThreeToTwo
+
+\ccHtmlNoClassIndex\ccHtmlNoLinks
+\begin{ccClass}{LinkA}
+\ccCreationVariable{a}
+
+A class \ccClassName\ with \verb+\ccHtmlNoClassIndex+ and
+\verb+\ccHtmlNoLinks+ to suppress cross linking:
+
+  \ccFunction{
+     bool link1(const LinkA& a, const B& b);}{%
+             a function is still indexed.
+         }
+  \ccGlue
+  \ccMethod{
+     bool link2(const LinkA& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccStruct{struct LocalX {};}{a nested struct is not indexed.}
+\end{ccClass}
+
+
+\begin{ccClass}{LinkB}
+\ccCreationVariable{b}
+
+A class \ccClassName\ without \verb+\ccHtmlNoClassIndex+ but the individual
+declarations are prefixed with \verb+\ccHtmlNoIndex+ and 
+\verb+\ccHtmlNoLinks+:
+
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccFunction{
+     bool link3(const LinkB& a, const B& b);}{%
+             explicitly not indexed.
+         }
+  \ccGlue
+  \ccMethod{
+     bool link4(const LinkB& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccHtmlNoIndex
+  \ccStruct{struct LocalY {};}{a nested struct explicitly not indexed.}
+\end{ccClass}
+
+The same for a global function and struct.
+
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccFunction{
+     bool link5(const LinkB& a, const B& b);}{%
+             explicitly not indexed.
+         }
+  \ccGlue
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccStruct{struct GlobalX {};}{a global struct explicitly not indexed and 
+                                not linked.}
+  \ccGlue
+  \ccStruct{struct GlobalY {};}{a global struct indexed and linked.}
+
+Try it for a reference environment.
+
+\ccFunction{
+     bool link6(const UnlinkedRefClassA& a, const B& b);}{%
+             UnlinkedRefClass is not linked.
+}
+
+\ccHtmlNoRefIndex\ccHtmlNoRefLinks
+\begin{ccRefClass}{UnlinkedRefClassA}
+\ccCreationVariable{a}
+
+A class \ccRefName\ with \verb+\ccHtmlNoRefIndex+ and
+\verb+\ccHtmlNoRefLinks+ to suppress cross linking:
+
+  \ccMethod{
+     bool link7(const UnlinkedRefClassA& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccStruct{struct LocalX {};}{a nested struct is not indexed.}
+\end{ccRefClass}
+
+And now try removing links from certain sections of the text.
+
+\begin{ccClass}{turn_off}
+
+\ccDefinition
+
+Class that creates unwanted links so we turn them off
+using \verb+\ccHtmlLinksOff+, \verb+\ccHtmlLinksOn+, and
+\verb+\ccHtmlNoLinksFrom+.
+
+A link to this \ccc{turn_off} should be here, but \ccHtmlLinksOff not
+to this \ccc{turn_off} nor this other \ccc{turn_off}\ccHtmlLinksOn as they
+are between \verb+\ccHtmlLinksOff+ and \verb+\ccHtmlLinksOn+ commands.
+However this \ccc{turn_off} link should be there.  This
+\ccHtmlNoLinksFrom{\ccc{turn_off} and this other \ccc{turn_off}}, which
+are inside the argument of a \verb+\ccHtmlNoLinksFrom+ command, should
+not be linked.
+
+\end{ccClass}
+
+\ccFunction{
+     bool turn_off(const A& a, const B& b);}{%
+             a function name that is linked.
+         }
+
+\ccHtmlLinksOff
+\ccFunction{
+   bool test_me(const turn_off& T);}{%
+      The \ccc{turn_offs} here should not be linked
+   }
+\ccHtmlLinksOn
+
+
+
+
+% ----------------------------------------------------------------------

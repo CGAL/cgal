@@ -1,0 +1,142 @@
+
+\begin{ccRefClass}{Circulator_from_container<C>}
+
+This is a ref class \ccRefName\ and should produce an index entry 
+without the template parameter...
+\end{ccRefClass}
+
+\begin{ccRefConcept}{Concept}
+The reference concept \ccRefName\ is talked about here...
+\end{ccRefConcept}
+
+\begin{ccRefConcept}[Scope::]{Concept}
+A reference concept is talked about here...
+
+\ccTypes
+\ccNestedType{Vertex}{is the scope prefix correct here?}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{Concept_name}
+Reference concept \ccRefName, which has an underscore in its name is 
+talked about here...
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{Concept<Template_parameter>}
+
+\ccRefName\ is a templated concept.  The concept name should still be in
+the default font, but there shouldn't be any problems with the template
+parameter name.  The index entry for this should not include the template
+parameter.
+
+\ccTypes
+
+\ccNestedType{Type1}{some type}
+\ccNestedType{Type2}{some other type}
+
+\ccCreationVariable{tc}
+\ccPredicates
+
+\ccMethod{void do_nothing(T& t);}{}
+
+\end{ccRefConcept}
+
+\begin{ccRefConstant}{GLOBAL}
+The constant \ccRefName\ is talked about there
+\end{ccRefConstant}
+
+\begin{ccRefConstant}[Concept::]{GLOBAL}
+The constant \ccRefScope\ccRefName\ is talked about there
+\end{ccRefConstant}
+
+\begin{ccRefEnum}[Class::]{Enum}
+A reference enumeration is talked about here...
+\end{ccRefEnum}
+
+\begin{ccRefEnum}{Enum}
+A reference enumeration is talked about here...
+\end{ccRefEnum}
+
+\begin{ccRefFunction}[Class::]{Function}
+A reference function is talked about here...
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{Function}
+A reference function is talked about here...
+\end{ccRefFunction}
+
+\begin{ccRefFunctionObjectClass}{FOClass}
+Function object class \ccRefName\ is talked about here...
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}[Kernel::]{FOConcept}
+Function object class \ccRefScope\ccRefName\ is talked about here...
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectConcept}{FOConcept}
+Function object concept \ccRefName\ is talked about here...
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}[Kernel::]{FOConcept}
+Function object concept \ccRefScope\ccRefName\ is talked about here...
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefVariable}[Class::]{Variable}
+A reference variable is talked about here...
+\end{ccRefVariable}
+
+\begin{ccRefVariable}{Variable}
+A reference variable is talked about here...
+\end{ccRefVariable}
+
+\begin{ccRefMacro}[Class::]{Macro}
+A reference macro is talked about here...
+\end{ccRefMacro}
+
+\begin{ccRefMacro}{Macro}
+A reference macro is talked about here...
+\end{ccRefMacro}
+
+\begin{ccRefFunctionObjectConcept}{Kernel::Point_2}
+Some function object concept or other.  Is the ``Kernel'' prefix there?
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectClass}{Point_2<R>}
+Some function object class or other.
+\end{ccRefFunctionObjectClass}
+
+\ccRefIdfierPage{Macro} 
+
+Setting \verb|\ccRefPageFill| to \verb|\hfill|
+
+\renewcommand{\ccRefPageFill}{\hfill}
+\ccRefConceptPage{Concept_name}
+
+\begin{ccRefConcept}{HDS<T,I,A>}
+
+This page number should be with dot fill at the edge of the page
+\renewcommand{\ccRefPageFill}{\dotfill}
+
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+This page number should be (pg. \#):
+
+\gdef\ccRefPageNumAtMargin{\ccFalse}
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+This page number should again be with dot fill at the edge of the page
+
+\gdef\ccRefPageNumAtMargin{\ccTrue}
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+\end{ccRefConcept}
+
+
+% EOF %
+
+
+
+

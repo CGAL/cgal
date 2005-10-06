@@ -1,0 +1,54 @@
+
+In an simple \verb+\ccc{}+ macro: \ccc{var_\tt k_th\ccFont _foo8;} and
+boldface: \ccc{var_\bf k_th\ccFont _foo8;}
+
+A global variable declaration.
+
+\ccSetThreeColumns{\tt k_th\ccFont _dim\ }{\tt k_th\ccFont _foo8;}{}
+\ccVariable{\tt k_th\ccFont _dim \tt k_th\ccFont _foo8;}{%
+    a {\tt k\_th}-dimensional variable.}
+
+A constructor and a member function within a class where the classname
+also uses font changing macros.
+
+\def\ccTagRmEigenClassName{\ccFalse}
+
+\begin{ccClass}{\tt k_th\ccFont _dim_Class}
+  \ccCreationVariable{v}
+  \ccSetThreeColumns{\tt k_th\ccFont _dim_retvalue\ }{v.k_th\ccFont
+    _dim_foo( \tt k_th\ccFont _dim_param)\ ;}{}
+  \ccSetTwoColumns{\tt k_th\ccFont _dim_Class v( \tt k_th\ccFont
+    _dim_param) \ ;}{}
+  \ccConstructor{\tt k_th\ccFont _dim_Class();}{The default constructor.}
+  \ccConstructor{\tt k_th\ccFont _dim_Class( \tt k_th\ccFont
+    _dim_param);}{The custom constructor.}  
+  \ccMemberFunction{\tt k_th\ccFont _dim_retvalue \tt k_th\ccFont
+    _dim_foo( \tt k_th\ccFont _dim_param);}{a function.}
+\end{ccClass}
+
+\def\ccLongParamLayout{\ccTrue}
+
+\begin{ccClassTemplate}{CGAL_Segment_tree_\tt k\ccFont <_T1, _C1, _T2,
+    _C2,\dots, _T\tt k\ccFont , _C\tt k\ccFont , _V>}
+
+\ccCreationVariable{s}
+\ccThree{void}{Dummy}{}
+
+\ccConstructor{CGAL_Segment_tree_\tt k\ccFont <_T1, _C1, _T2,
+    _C2,\dots, _T\tt k\ccFont , _C\tt k\ccFont ,
+    _V>();}{Creation of a {\tt k}-dimensional Segment
+  Tree, where the i-th coordinate has type \ccStyle{_Ti} and a
+  comparator of type \ccStyle{_Ci}. Parameter type
+\ccStyle{Value} is set to \ccStyle{_V}.}
+
+
+\ccMethod{void CGAL_Segment_tree_\tt k \ccFont
+    window_query(GIS_interval_data_\tt k \ccFont 
+    win, back_insert_iterator<GIS_interval_data_list_\tt k\ccFont>  out);}{%
+All elements that
+  intersect the associated $d$-dimensional half open interval of 
+\ccStyle{win} are placed in the list of  \ccStyle{out}.}
+
+\end{ccClassTemplate}
+
+% ----------------------------------------------------------------------

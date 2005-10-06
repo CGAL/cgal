@@ -1,0 +1,44 @@
+\begin{ccClass}{Demo_Class1}
+
+Text\footnote{A footnote in a class environment.}.
+
+\ccCreationVariable{p}
+
+\ccStyle{#include< Demo_Class1.h>}
+\ccTwo{Demo_Class1 p;X}{}
+
+  \ccConstructor{Demo_Class1();}{introduces
+     a variable \ccVar\ initialized to the default. \CC\ code:
+     {\tt Demo\_Class1();}. Test
+     ccStyle: \ccStyle{Underscore\_within  ccStyle}.}
+
+  \ccConstructor{Demo_Class1( const Demo_Class1 &);}{copy
+    constructor. \CC\ code: {\tt Demo\_Class1(const Demo\_Class1 \&);}}
+
+\ccThree{Demo_Class1}{p.x();}{}
+
+  \ccMethod{FT   x()  const;}{Cartesian x-coordinate\protect\footnotemark{}.
+    \CC\ code: {\tt FT x() const;}}
+
+  \ccMethod{const FT&   y();}{Cartesian y-coordinate. \CC\ code: {\tt
+      const FT\& y();}}
+
+  \ccMethod{Demo_Class1   
+             transform( const CGAL_HAff_transformation<FT,RT> &t) const;
+             }{ Longish declarations forces the comment to start in
+             the next line.}
+
+  \ccMethod{Demo_Class1   
+             longish_function_name( 
+                        const CGAL_Aff_transformation<FT,RT> &t,
+                        const Dummy_Type &q,
+                        Long_Type_Name Variable_Also_Long) const;
+             }{ Even more longish declarations forces the parameters printed
+             one per line. This was the default formatting.}
+           
+\footnotetext{Another footnote in this class file,
+  implemented with mark and text.}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------

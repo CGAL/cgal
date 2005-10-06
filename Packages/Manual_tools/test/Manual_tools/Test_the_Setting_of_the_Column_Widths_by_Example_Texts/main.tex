@@ -1,0 +1,35 @@
+
+
+\ccSetThreeColumns{int}{foo( int i, int j);}{}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+\ccSetThreeColumns{int}{}{returns gnats$(i,j)$.}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+\ccSetThreeColumns{}{foo( int i, int j);}{returns gnats$(i,j)$.}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+Test it with the special characters (changed catcodes) for function
+and contructor declarations.  
+
+
+\ccSetThreeColumns{_#_^}{_#_^f*&*&oo( int i);}{}
+\ccSetTwoColumns{_#_^ foo( int i, int j);}{}
+\begin{ccClass}{Gnu1}
+  \ccCreationVariable{g}
+  \ccConstructor{Gnu1( double d);}{test.}
+  \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{ccClass}
+
+Specify a column layout for a function and propagate it to a contructor.
+
+\ccSetThreeColumns{intM}{foo( Gnats<T> gn);M}{}
+\ccPropagateThreeToTwoColumns
+\begin{ccClass}{Gnu2}
+  \ccCreationVariable{g}
+  \ccConstructor{Gnu2( double d);}{test.}
+  \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{ccClass}
+
+
+% ----------------------------------------------------------------------

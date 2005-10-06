@@ -1352,6 +1352,7 @@ Packages/Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unse
 Packages/Manual_tools/src/latex_converter_config/gif/cc_xi.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#unset
 Packages/Manual_tools/src/mstring.doc -text
+Packages/Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#unset
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/overlay_example.eps -text
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/overlay_example.pdf -text
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/simple_overlay.eps -text
