@@ -102,13 +102,13 @@ private:
                                             Border_vertex_iterator;
     typedef typename Adaptor::Border_vertex_const_iterator
                                             Border_vertex_const_iterator;
-    /// Counter-clockwise circulator over a facet's vertices
+    /// Counter-clockwise circulator over a facet's vertices.
     /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_facet_circulator
                                             Vertex_around_facet_circulator;
     typedef typename Adaptor::Vertex_around_facet_const_circulator
                                             Vertex_around_facet_const_circulator;
-    /// Clockwise circulator over the vertices incident to a vertex
+    /// Clockwise circulator over the vertices incident to a vertex.
     /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_vertex_circulator
                                             Vertex_around_vertex_circulator;

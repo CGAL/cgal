@@ -32,6 +32,13 @@ CGAL_BEGIN_NAMESPACE
 /// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 /// This is an authalic parameterization, i.e. it attempts to preserve areas.
 ///
+/// The superclass Fixed_border_parametizer_3 implements most of the parameterization algorithm.
+/// Discrete_authalic_parametizer_3:
+/// - provides default BorderParametizer_3 and SparseLinearAlgebraTraits_d template
+///   parameters that make sense.
+/// - implements compute_wij() to compute wij = (i,j) coefficient of matrix A
+///   for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.
+///
 /// Concept: Model of the ParametizerTraits_3 concept.
 ///
 /// Design pattern:

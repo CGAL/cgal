@@ -27,9 +27,16 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Class Barycentric_mapping_parametizer_3
-/// implements Tutte's barycentric mapping.
+/// Class Barycentric_mapping_parametizer_3 implements Tutte's Barycentric Mapping.
 /// 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon.
+///
+/// The superclass Fixed_border_parametizer_3 implements most of the parameterization algorithm.
+/// Barycentric_mapping_parametizer_3:
+/// - provides default BorderParametizer_3 and SparseLinearAlgebraTraits_d template
+///   parameters that make sense.
+/// - implements compute_wij() to compute wij = (i,j) coefficient of matrix A
+///   for j neighbor vertex of i based on Tutte's barycentric mapping method.
+/// - implements a tailored version of is_one_to_one_mapping().
 ///
 /// Concept: Model of the ParametizerTraits_3 concept.
 ///

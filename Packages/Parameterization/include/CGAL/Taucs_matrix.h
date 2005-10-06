@@ -56,7 +56,8 @@ template<class T> struct Taucs_number;
 /// This kind of matrix can be either symmetric or not. Symmetric
 /// matrices store only the lower triangle.
 ///
-/// TODO: reallocate the array of non null elements when it's full
+/// @todo Taucs_matrix must reallocate the array of non null elements when it's full
+/// @todo Filling a Taucs_matrix by lines is very slow. We must improve this code.
 ///
 /// Concept: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
 
@@ -283,7 +284,7 @@ private:
                  || (idx == m_matrix->colptr[j+1])) // or on the column j+1
                   && create )
                 {
-                    // TODO: reallocate m_matrix if it's full
+                    // @todo reallocate m_matrix if it's full
                     assert(m_nb_elements < m_nb_max_elements);
 
                     // The number of elements to shift is:

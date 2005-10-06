@@ -26,7 +26,10 @@ Struct Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matr
 
 This kind of matrix can be either symmetric or not. Symmetric matrices store only the lower triangle.
 
-TODO: reallocate the array of non null elements when it's full
+\begin{description}
+\item[Todo]Taucs\_matrix must reallocate the array of non null elements when it's full
+
+Filling a Taucs\_matrix by lines is very slow. We must improve this code.\end{description}
 
 %END-AUTO(\ccDefinition)
 
@@ -103,10 +106,6 @@ Create a rectangular matrix initialized with zeros.
 \begin{description}
 \item[rows]Matrix dimensions \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0) \end{description}
 \end{description}
-\ccConstructor{~Taucs_matrix ();}
-{
-Delete TAUCS matrix wrapped by this object
-}
 
 %END-AUTO(\ccCreation)
 

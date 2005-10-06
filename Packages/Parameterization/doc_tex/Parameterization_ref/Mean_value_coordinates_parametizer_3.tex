@@ -27,6 +27,9 @@ class is usually called via the global function parameterize().
 
 Class Mean\_value\_coordinates\_parametizer\_3 implements Floater's Mean Value Coordinates parameterization. 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon. This is a conformal parameterization, i.e. it attempts to preserve angles.
 
+The superclass Fixed\_border\_parametizer\_3 implements most of the parameterization algorithm. Mean\_value\_coordinates\_parametizer\_3:\begin{itemize}
+\item provides default BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Floater's Mean Value Coordinates parameterization.\item implements a tailored version of is\_one\_to\_one\_mapping().\end{itemize}
+
 %END-AUTO(\ccDefinition)
 
 \ccInclude{CGAL/Mean_value_coordinates_parametizer_3.h}

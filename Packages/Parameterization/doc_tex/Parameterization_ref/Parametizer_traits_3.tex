@@ -22,7 +22,10 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Class Parametizer\_traits\_3 is the base class of all parameterization methods.
+Class Parametizer\_traits\_3 is the base class of all parameterization methods. This class is a pure virtual class, thus cannot be instanciated.
+
+This class doesn't do much. Its main goal is to ensure that suclasses will be proper models of the ParametizerTraits\_3 concept:\begin{itemize}
+\item Parametizer\_traits\_3 defines the Error\_code list of errors detected by this package\item Parametizer\_traits\_3 declares a pure virtual method parameterize()\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -137,14 +140,14 @@ Iterator over vertices of the mesh "main boundary". Model of the ForwardIterator
 }
 \ccNestedType{Vertex_around_facet_circulator}
 {
-Counter-clockwise circulator over a facet's vertices Model of the BidirectionalCirculator concept.
+Counter-clockwise circulator over a facet's vertices. Model of the BidirectionalCirculator concept.
 }
 \ccNestedType{Vertex_around_facet_const_circulator}
 {
 }
 \ccNestedType{Vertex_around_vertex_circulator}
 {
-Clockwise circulator over the vertices incident to a vertex Model of the BidirectionalCirculator concept.
+Clockwise circulator over the vertices incident to a vertex. Model of the BidirectionalCirculator concept.
 }
 \ccNestedType{Vertex_around_vertex_const_circulator}
 {
@@ -160,7 +163,7 @@ Clockwise circulator over the vertices incident to a vertex Model of the Bidirec
 
 \ccEnum{enum Error_code {...}}
 {
-The various errors detected by this package.
+The list of errors detected by this package.
 }
 \begin{description}
 \item[Enumerator: ]
@@ -189,10 +192,7 @@ The various errors detected by this package.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccMethod{virtual ~Parametizer_traits_3 ();}
-{
-Destructor of base class should be virtual.
-}
+
 
 %END-AUTO(\ccCreation)
 

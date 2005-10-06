@@ -19,7 +19,7 @@
 
 
 /// Concept SparseLinearAlgebraTraits_d::Matrix
-/// is a concept of a sparse matrix class. 
+/// is a concept of a sparse matrix class.
 ///
 /// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
 ///

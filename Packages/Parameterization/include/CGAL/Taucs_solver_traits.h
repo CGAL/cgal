@@ -35,6 +35,9 @@ CGAL_BEGIN_NAMESPACE
 /// using TAUCS solvers family.
 /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
 ///
+/// @todo Add to Taucs_symmetric_solver_traits the ability to solve
+/// linear systems in the least squares sense.
+///
 /// Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
 template<class T>       // Tested with T = taucs_single or taucs_double
@@ -141,6 +144,9 @@ public:
     ///
     /// Preconditions:
     /// - A.row_dimension() == B.dimension().
+    ///
+    /// @todo Implement Taucs_symmetric_solver_traits::is_solvable() by solving the system,
+    /// then checking that | ||A*X||/||B|| - 1 | < epsilon
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in TAUCS => we do only basic checking
@@ -298,6 +304,9 @@ public:
     ///
     /// Preconditions:
     /// - A.row_dimension() == B.dimension().
+    ///
+    /// @todo Implement Taucs_solver_traits::is_solvable() by solving the system,
+    /// then checking that | ||A*X||/||B|| - 1 | < epsilon
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in TAUCS => we do only basic checking

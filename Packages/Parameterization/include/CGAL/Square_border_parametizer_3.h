@@ -37,6 +37,10 @@ CGAL_BEGIN_NAMESPACE
 
 /// Base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
+/// Square_border_parametizer_3 is a pure virtual class, thus
+/// cannot be instanciated.
+/// Anyway, it implements most of the algorithm. Subclasses just
+/// have to implement compute_edge_length() to compute a segment's length.
 ///
 /// Implementation note:
 /// To simplify the implementation, BorderParametizer_3 models know only the
@@ -102,13 +106,13 @@ protected:
                                             Border_vertex_iterator;
     typedef typename Adaptor::Border_vertex_const_iterator
                                             Border_vertex_const_iterator;
-    /// Counter-clockwise circulator over a facet's vertices
+    /// Counter-clockwise circulator over a facet's vertices.
     /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_facet_circulator
                                             Vertex_around_facet_circulator;
     typedef typename Adaptor::Vertex_around_facet_const_circulator
                                             Vertex_around_facet_const_circulator;
-    /// Clockwise circulator over the vertices incident to a vertex
+    /// Clockwise circulator over the vertices incident to a vertex.
     /// Model of the BidirectionalCirculator concept.
     typedef typename Adaptor::Vertex_around_vertex_circulator
                                             Vertex_around_vertex_circulator;
@@ -312,6 +316,9 @@ Square_border_parametizer_3<Adaptor>::closest_iterator(Adaptor* mesh,
 
 /// This class parameterizes the border of a 3D surface onto a square
 /// on an uniform manner: points are equally spaced.
+/// Square_border_parametizer_3 implements most of the boudary parameterization
+/// algorithm. This class implements only compute_edge_length() to compute a
+/// segment's length.
 ///
 /// Concept: Model of the BorderParametizer_3 concept.
 ///
@@ -393,8 +400,11 @@ protected:
 /// This class parameterizes the border of a 3D surface onto a square,
 /// with an arc-length parameterization: (u,v) values are
 /// proportional to the length of boundary edges.
+/// Square_border_parametizer_3 implements most of the boudary parameterization
+/// algorithm. This class implements only compute_edge_length() to compute a
+/// segment's length.
 ///
-/// Concept: Model of the BorderParametizer_3 concept.
+/// Concept: Model of the BorderParametizer_3 concept (although you cannot instanciate this class).
 ///
 /// Design pattern:
 /// BorderParametizer_3 models are Strategies (see [GOF95]): they implement

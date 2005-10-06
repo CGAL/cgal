@@ -27,6 +27,9 @@ class is usually called via the global function parameterize().
 
 Class Discrete\_authalic\_parametizer\_3 implements Discrete Authalic Parameterization algorithm (Alliez et al). 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon. This is an authalic parameterization, i.e. it attempts to preserve areas.
 
+The superclass Fixed\_border\_parametizer\_3 implements most of the parameterization algorithm. Discrete\_authalic\_parametizer\_3:\begin{itemize}
+\item provides default BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.\end{itemize}
+
 %END-AUTO(\ccDefinition)
 
 \ccInclude{CGAL/Discrete_authalic_parametizer_3.h}

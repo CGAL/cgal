@@ -98,6 +98,9 @@ None.
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
+
+
+
 %END-AUTO(\ccCreation)
 
 
@@ -116,8 +119,10 @@ Preconditions:\begin{itemize}
 {
 Indicate if the linear system can be solved and if the matrix conditioning is good.
 Preconditions:\begin{itemize}
-\item A.row\_dimension() == B.dimension(). \end{itemize}
+\item A.row\_dimension() == B.dimension().\end{itemize}
 }
+\begin{description}
+\item[Todo]Implement Taucs\_solver\_traits::is\_solvable() by solving the system, then checking that $|$ $|$$|$A$\ast$X$|$$|$/$|$$|$B$|$$|$ - 1 $|$ $<$ epsilon \end{description}
 
 %END-AUTO(\ccOperations)
 

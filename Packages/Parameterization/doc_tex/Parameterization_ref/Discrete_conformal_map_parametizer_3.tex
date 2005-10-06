@@ -27,6 +27,9 @@ class is usually called via the global function parameterize().
 
 Class Discrete\_conformal\_map\_parametizer\_3 implements Discrete Conformap Map parameterization. 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon. This is a conformal parameterization, i.e. it attempts to preserve angles.
 
+The superclass Fixed\_border\_parametizer\_3 implements most of the parameterization algorithm. Discrete\_conformal\_map\_parametizer\_3:\begin{itemize}
+\item provides default BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Discrete Conformap Map method.\end{itemize}
+
 %END-AUTO(\ccDefinition)
 
 \ccInclude{CGAL/Discrete_conformal_map_parametizer_3.h}

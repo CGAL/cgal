@@ -40,10 +40,19 @@ CGAL_BEGIN_NAMESPACE
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 /// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
-/// Implementation notes:
-/// - Subclasses must at least implement compute_wij().
-/// - The current implementation does not remove border vertices
-///   from the linear systems => A cannot be symmetric.
+/// This class is a pure virtual class, thus cannot be instanciated.
+/// Anyway, it implements most of the parameterization algorithm, i.e. most of
+/// the parameterize() method.
+/// Subclasses:
+/// - must provide BorderParametizer_3 and SparseLinearAlgebraTraits_d template
+///   parameters that make sense.
+/// - must implement compute_wij() to compute wij = (i,j) coefficient of matrix A
+///   for j neighbor vertex of i.
+/// - may implement a tailored version of is_one_to_one_mapping().
+///
+/// @todo Fixed_border_parametizer_3 should remove border vertices
+/// from the linear systems in order to have a symmetric definite positive
+/// matrix for Tutte's Barycentric Mapping and Discrete Conformap Map algorithms.
 ///
 /// Concept:
 /// Model of the ParametizerTraits_3 concept (although you cannot instanciate this class).

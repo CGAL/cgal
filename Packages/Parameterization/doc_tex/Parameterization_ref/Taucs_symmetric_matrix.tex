@@ -83,14 +83,14 @@ None.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Taucs_symmetric_matrix (int dim, int nb_max_elements = 0);}
+\ccConstructor{Taucs_symmetric_matrix (int dim);}
 {
-Create a square SYMMETRIC matrix initialized with zeros.
+Create a square SYMMETRIC matrix initialized with zeros. The max number of non 0 elements in the matrix is automatically computed. 
 }
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[dim]Matrix dimension \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0) \end{description}
+\item[dim]Matrix dimension \end{description}
 \end{description}
 \ccConstructor{Taucs_symmetric_matrix (int rows, int columns, int nb_max_elements = 0);}
 {

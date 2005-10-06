@@ -41,6 +41,10 @@ CGAL_BEGIN_NAMESPACE
 /// but 1 to 1 mapping is NOT guaranteed.
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
+/// @todo Add to SparseLinearAlgebraTraits_d the ability to solve
+/// linear systems in the least squares sense, then access to the solver
+/// via the traits class interface instead of calls specific to OpenNL.
+///
 /// Concept: Model of the ParametizerTraits_3 concept.
 ///
 /// Design pattern:

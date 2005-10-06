@@ -24,6 +24,9 @@
 
 Class Taucs\_symmetric\_solver\_traits is a traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
 
+\begin{description}
+\item[Todo]Add to Taucs\_symmetric\_solver\_traits the ability to solve linear systems in the least squares sense.\end{description}
+
 %END-AUTO(\ccDefinition)
 
 \ccInclude{CGAL/Taucs_symmetric_solver_traits.h}
@@ -125,8 +128,10 @@ Preconditions:\begin{itemize}
 {
 Indicate if the linear system can be solved and if the matrix conditioning is good.
 Preconditions:\begin{itemize}
-\item A.row\_dimension() == B.dimension(). \end{itemize}
+\item A.row\_dimension() == B.dimension().\end{itemize}
 }
+\begin{description}
+\item[Todo]Implement Taucs\_symmetric\_solver\_traits::is\_solvable() by solving the system, then checking that $|$ $|$$|$A$\ast$X$|$$|$/$|$$|$B$|$$|$ - 1 $|$ $<$ epsilon \end{description}
 
 %END-AUTO(\ccOperations)
 

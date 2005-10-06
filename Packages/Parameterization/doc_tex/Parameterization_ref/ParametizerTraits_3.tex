@@ -67,7 +67,7 @@ None.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccConstants)
 
-\ccEnum{enum ErrorCode {...}}
+\ccEnum{enum Error_code {...}}
 {
 The various errors detected by this package.
 }
@@ -97,6 +97,9 @@ Construction and destruction are undefined.
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
+
+
+
 %END-AUTO(\ccCreation)
 
 
@@ -105,7 +108,7 @@ Construction and destruction are undefined.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{ErrorCode parameterize (Adaptor * mesh);}
+\ccMethod{Error_code parameterize (Adaptor * mesh);}
 {
 Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
 Preconditions:\begin{itemize}

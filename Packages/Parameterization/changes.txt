@@ -1,6 +1,14 @@
 Parameterization Package: Release changes:
 ---------------------------------------------------------------------
 
-0.1 (30 march 2005)
+0.5 (10/06/2005)
 
-    - initial develop version
+    - Most of the first version of the package is finished.
+      First submission to CGAL editorial board.
+      See User Manual for known bugs and tasks to do quickly.
+
+0.1 (03/30/2005)
+
+    - Initial develop version
+
+None of this package was available in CGAL 3.1.

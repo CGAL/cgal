@@ -24,8 +24,12 @@
 
 Class Fixed\_border\_parametizer\_3 is the base class of fixed border parameterization methods (Tutte, Floater, ...). 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
-Implementation notes:\begin{itemize}
-\item Subclasses must at least implement compute\_wij().\item The current implementation does not remove border vertices from the linear systems =$>$ A cannot be symmetric.\end{itemize}
+This class is a pure virtual class, thus cannot be instanciated. Anyway, it implements most of the parameterization algorithm, i.e. most of the parameterize() method. Subclasses:\begin{itemize}
+\item must provide BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item must implement compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i.\item may implement a tailored version of is\_one\_to\_one\_mapping().\end{itemize}
+
+
+\begin{description}
+\item[Todo]Fixed\_border\_parametizer\_3 should remove border vertices from the linear systems in order to have a symmetric definite positive matrix for Tutte's Barycentric Mapping and Discrete Conformap Map algorithms.\end{description}
 
 %END-AUTO(\ccDefinition)
 

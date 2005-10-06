@@ -28,12 +28,16 @@
 CGAL_BEGIN_NAMESPACE
 
 
+/// NOT YET IMPLEMENTED
+///
 /// Class Natural_conformal_map_parametizer_3
 /// implements Natural Conformal Map parameterization algorithm (Alliez et al).
 /// No need to map the surface's border onto a convex polygon
 /// but 1 to 1 mapping not guaranteed.
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
-/// NOT YET IMPLEMENTED
+///
+/// @todo Implement Natural Conformal Map parameterization algorithm (Alliez et al)
+/// in class Natural_conformal_map_parametizer_3
 ///
 /// Concept: Model of the ParametizerTraits_3 concept.
 ///

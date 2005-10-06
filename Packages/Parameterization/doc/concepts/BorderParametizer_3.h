@@ -47,7 +47,7 @@ public:
     /// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     /// on border's shape. Mark them as "parameterized".
     /// Return false on error.
-    ErrorCode parameterize_border (Adaptor* mesh);
+    Error_code parameterize_border (Adaptor* mesh);
 
     /// Indicate if border's shape is convex
     bool  is_border_convex ();
