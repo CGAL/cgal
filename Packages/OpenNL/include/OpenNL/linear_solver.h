@@ -61,30 +61,33 @@
 namespace OpenNL {
 
 
-/*
- * Class DefaultLinearSolverTraits
- * Traits class for solving general sparse linear systems
- * (model of the SparseLinearAlgebraTraits_d concept)
- * By default, it uses OpenNL BICGSTAB general purpose solver
- */
+
+// Class DefaultLinearSolverTraits
+// is a traits class for solving general sparse linear systems.
+// By default, it uses OpenNL BICGSTAB general purpose solver.
+//
+// TODO: Add to OpenNL a BICGSTAB general purpose solver
+// with Jacobi preconditioner to increase speed and support larger systems.
+//
+// Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
 template
 <
-    class COEFFTYPE,                        // type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
-    class VECTOR = FullVector<COEFFTYPE>,   // model of SparseLinearSolverTraits_d::Vector
-    class SOLVER = Solver_BICGSTAB<MATRIX,VECTOR> // BICGSTAB general purpose solver
+    class COEFFTYPE,                            // type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>,     // model of SparseLinearSolverTraits_d::Matrix
+    class VECTOR = FullVector<COEFFTYPE>,       // model of SparseLinearSolverTraits_d::Vector
+    class SOLVER = Solver_BICGSTAB<MATRIX,VECTOR>// BICGSTAB general purpose solver
 >
 class DefaultLinearSolverTraits
 {
 // Public types
 public:
+    // For SparseLinearAlgebraTraits_d concept
+    typedef COEFFTYPE                       NT;
     typedef MATRIX                          Matrix ;
     typedef VECTOR                          Vector ;
-    typedef COEFFTYPE                       CoeffType ;
 
-    // added for SparseLinearAlgebraTraits_d::Vector concept
-    typedef COEFFTYPE                       NT;
+    typedef COEFFTYPE                       CoeffType ;
 
 // Private types
 public:
@@ -99,8 +102,8 @@ public:
     // (modified for SparseLinearAlgebraTraits_d concept)
     //
     // Preconditions:
-    // * A.row_dimension()    == B.dimension()
-    // * A.column_dimension() == X.dimension()
+    // - A.row_dimension()    == B.dimension()
+    // - A.column_dimension() == X.dimension()
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         Solver solver ;
@@ -113,7 +116,10 @@ public:
     // (added for SparseLinearAlgebraTraits_d concept)
     //
     // Preconditions:
-    // * A.row_dimension() == B.dimension()
+    // A.row_dimension() == B.dimension()
+    //
+    // TODO: Implement DefaultLinearSolverTraits::is_solvable() by solving the system,
+    // then checking that | ||A*X||/||B|| - 1 | < epsilon
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in Solver_BICGSTAB => we do only basic checking
@@ -124,20 +130,21 @@ public:
     }
 } ;
 
-
-/*
- * Class SymmetricLinearSolverTraits
- * Traits class for solving SYMMETRIC POSITIVE sparse linear systems
- * (model of the SparseLinearAlgebraTraits_d concept)
- * By default, it uses OpenNL Conjugate Gradient algorithm without preconditioner
- */
+// Class SymmetricLinearSolverTraits
+// is a traits class for solving SYMMETRIC DEFINITE POSITIVE sparse linear systems.
+// By default, it uses OpenNL Conjugate Gradient solver without preconditioner.
+//
+// TODO: Add to OpenNL a Conjugate Gradient solver
+// with Jacobi preconditioner to increase speed and support larger systems.
+//
+// Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
 template
 <
-    class COEFFTYPE,                        // type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
-    class VECTOR = FullVector<COEFFTYPE>,   // model of SparseLinearSolverTraits_d::Vector
-    class SOLVER = Solver_CG<MATRIX, VECTOR>// Conjugate Gradient algorithm without preconditioner
+    class COEFFTYPE,                            // type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>,     // model of SparseLinearSolverTraits_d::Matrix
+    class VECTOR = FullVector<COEFFTYPE>,       // model of SparseLinearSolverTraits_d::Vector
+    class SOLVER = Solver_CG<MATRIX, VECTOR>    // Conjugate Gradient solver
 >
 class SymmetricLinearSolverTraits
     : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>
@@ -338,8 +345,8 @@ public:
 
     // ----------------------------- Solver -------------------------------
 
-    // Solves a linear system or minimizes a quadratic form
-    // Return true on success
+    // Solves a linear system or minimizes a quadratic form.
+    // Return true on success.
     // (modified for SparseLinearAlgebraTraits_d concept)
     bool solve()
     {
