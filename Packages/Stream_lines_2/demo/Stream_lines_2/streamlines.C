@@ -29,10 +29,10 @@ typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterato
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_iterator_2 Pt_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_2 Point;
 
-
-bool d_pq = false;
-bool d_tr = false;
-bool d_bc = false;
+bool d_stl = true;
+bool d_pq  = false;
+bool d_tr  = false;
+bool d_bc  = false;
 std::list<Point> _list;
 std::list<std::pair<Point, Point > > _tr_list;
 std::pair<Point, double> bc;
@@ -45,6 +45,7 @@ public:
 	bool completed;
 	double density_;
 	double ratio_;
+	double integrating_;
 	int sampling_;
 	int number_of_lines_;
 	Placement()
@@ -56,6 +57,7 @@ public:
 			end_iterator = NULL;
 			density_ = 3.84;
 			ratio_ = 1.6;
+			integrating_ = 1.0;
 			sampling_ = 1;
 			number_of_lines_ = 0;
 			completed = false;
@@ -75,6 +77,7 @@ public slots :
 			delete regular_grid;
 			begin_iterator = NULL;
 			end_iterator = NULL;
+			d_stl = true;
 			d_pq = false;
 			d_tr = false;
 			d_bc = false;
@@ -83,7 +86,7 @@ public slots :
 	void load( const QString & s )
 	{
 		std::cout << s << " laoded\n";
-  	runge_kutta_integrator = new Runge_kutta_integrator(1.0);
+  	runge_kutta_integrator = new Runge_kutta_integrator(integrating_);
   	std::ifstream infile(s, std::ios::in);
   	double iXSize, iYSize;
 		iXSize = iYSize = 512;
@@ -91,6 +94,7 @@ public slots :
 		infile.close();
 		completed = false;
 		number_of_lines_ = 0;
+		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
@@ -102,15 +106,18 @@ public slots :
 		number_of_lines_ = Stream_lines->number_of_lines();
 		std::cout << "success\n";
 		completed = true;
+		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
+		draw();
 	}
 	void generateFirst()
 	{
 		if (!completed)
 			Stream_lines = new Stl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
 		number_of_lines_ = Stream_lines->number_of_lines();
+		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
@@ -123,6 +130,7 @@ public slots :
 			if (completed)
 				std::cerr << "placement completed!\n";}
 		number_of_lines_ = Stream_lines->number_of_lines();
+		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
@@ -133,6 +141,7 @@ public slots :
 		for (int i=0;i<10;i++)
 			generateNext();
 		number_of_lines_ = Stream_lines->number_of_lines();
+		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
@@ -144,6 +153,7 @@ public slots :
 			generateNext();
 		number_of_lines_ = Stream_lines->number_of_lines();
 		draw();
+		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
@@ -155,6 +165,10 @@ public slots :
   		begin_iterator = Stream_lines->begin();
   		end_iterator = Stream_lines->end();
 		}
+	}
+	void draw_stl()
+	{
+		d_stl = !d_stl;
 	}
 	void draw_pq()
 	{
@@ -171,7 +185,7 @@ public slots :
 		d_bc = !d_bc;
 		bc = Stream_lines->get_biggest_circle();
 		_bc_list.clear();
-		for (double f=0;f<=360;f++)
+		for (double f=0.0;f<=6.29;f=f+0.05)
 		{
 			Point p1 ( bc.first.x() + ((bc.second) * cos(f)) , bc.first.y() + ((bc.second) * sin(f)) );
 			_bc_list.push_front(p1);
@@ -184,17 +198,22 @@ public slots :
 	}
 	void density()
 	{
-		density_ =  QInputDialog::getDouble("Get density" , "Density", 0.0, 1.0, 12.0, 2);
+		density_ =  QInputDialog::getDouble("Get density" , "Density", density_, 1.0, 12.0, 2);
 		emit(optionschanged());
 	}
 	void ratio()
 	{
-		ratio_ =  QInputDialog::getDouble("Get saturation ratio" , "Saturation ratio", 1.0, 0.5, 2.0, 1);
+		ratio_ =  QInputDialog::getDouble("Get saturation ratio" , "Saturation ratio", ratio_, 1.0, 5.0, 1);
+		emit(optionschanged());
+	}
+	void integrating()
+	{
+		integrating_ =  QInputDialog::getDouble("Get integrating step" , "integrating step", integrating_, 1.0, 10.0,1);
 		emit(optionschanged());
 	}
 	void sampling()
 	{
-		sampling_ =  QInputDialog::getInteger("Get sampling step" , "Sampling step", 1, 0, 2);
+		sampling_ =  QInputDialog::getInteger("Get sampling step" , "Sampling step", sampling_, 0, 10);
 		emit(optionschanged());
 	}
 signals:
@@ -260,41 +279,44 @@ public slots :
 	
 	void drawing()
 	{
-		glClearColor(0.95, 0.95, 1.0, 0.0);
+		glClearColor(1.0, 1.0, 1.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT);
-		
-		glViewport ( -380, -465, 1024, 1024);
-// 		glMatrixMode ( GL_PROJECTION );
-// 		glLoadIdentity ();
-// 		glOrtho(0.0, 512.0, 0.0, 0.0, 512.0, 0.0);
 
-		glColor3f(1.0, 1.0, 0.95);
-		glBegin(GL_POLYGON);
-		glVertex2f(511.0/512.0, 511.0/512.0);
-		glVertex2f(0.0, 511.0/512.0);
-		glVertex2f(0.0, 0.0);
-		glVertex2f(511.0/512.0, 0.0);
-		glEnd();
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+		glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+		glEnable(GL_MULTISAMPLE);
+		
+		glLineWidth(0.5f);
+		
+		int XSize = width()  - 30;
+		int YSize = height() - 120;
+		int Diff = div(XSize - YSize, 2).quot;
+		if (Diff > 0)
+			glViewport ( 10+Diff, 40, YSize, height()-80);
+		else
+		{
+			Diff = -Diff;
+			glViewport ( 10, 40+Diff, width()-20, XSize);
+		}
+		
+		glMatrixMode ( GL_PROJECTION );
+		glLoadIdentity ();
+		glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+
 		glColor3f(0.0, 0.0, 0.0);
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(511.0/512.0, 511.0/512.0);
-		glVertex2f(0.0, 511.0/512.0);
+		glVertex2f(1.0, 1.0);
+		glVertex2f(0.0, 1.0);
 		glVertex2f(0.0, 0.0);
-		glVertex2f(511.0/512.0, 0.0);
+		glVertex2f(1.0, 0.0);
 		glEnd();
-		for (Stl_iterator sit = p.begin_iterator; sit != p.end_iterator; sit++)
-		{
-			glBegin(GL_LINE_STRIP);
-			for (Pt_iterator pit = (*sit).first; pit != (*sit).second; pit++)
-			{
-// 				std::cout << (*pit).x() << "  " << (*pit).y() << "\n"; 
-				glVertex2f((*pit).x() / 512, (*pit).y() / 512);
-			}
-			glEnd();
-		}
-		glColor3f(1.0, 0.0, 0.0);
+		
 		if (d_pq)
 		{
+			glColor3f(1.0, 0.0, 0.0);
+			glLineWidth(0.5f);
 			glBegin(GL_POINTS);
 			for (std::list<Point>::iterator pit = _list.begin(); pit != _list.end(); pit++)
 			{
@@ -302,9 +324,10 @@ public slots :
 			}
 			glEnd();
 		}
-		glColor3f(0.0, 0.0, 1.0);
 		if (d_tr)
 		{
+			glColor3f(0.0, 0.0, 1.0);
+			glLineWidth(0.25f);
 			for (std::list< std::pair<Point, Point> >::iterator pit = _tr_list.begin(); pit != _tr_list.end(); pit++)
 			{
 				glBegin(GL_LINES);
@@ -313,15 +336,32 @@ public slots :
 				glEnd();
 			}
 		}
-		glColor3f(0.0, 1.0, 0.0);
 		if (d_bc)
 		{
-			glBegin(GL_POINTS);
+			glColor3f(0.0, 1.0, 0.0);
+			glLineWidth(0.5f);
+			glBegin(GL_LINE_STRIP);
 			for (std::list<Point>::iterator pit = _bc_list.begin(); pit != _bc_list.end(); pit++)
 			{
 				glVertex2f((*pit).x() / 512, (*pit).y() / 512);
 			}
 			glEnd();
+		}
+		
+		if (d_stl)
+		{
+			glColor3f(0.0, 0.0, 0.0);
+			glLineWidth(1.5f);
+			for (Stl_iterator sit = p.begin_iterator; sit != p.end_iterator; sit++)
+			{
+				glBegin(GL_LINE_STRIP);
+				for (Pt_iterator pit = (*sit).first; pit != (*sit).second; pit++)
+				{
+// 					std::cout << (*pit).x() << "  " << (*pit).y() << "\n"; 
+						glVertex2f((*pit).x() / 512, (*pit).y() / 512);
+				}
+				glEnd();
+			}
 		}
 		update();
 	}
@@ -355,12 +395,10 @@ void paintGL()
 		
 		densitytextlabel->setText("Separating distance");
 		statusbar->addWidget(densitytextlabel);
-		
 		densitylabel = new QLabel(this);
 		gcvt(p.density_, 4, str);
 		densitylabel->setText(str);
 		statusbar->addWidget(densitylabel);
-
 		densityspacelabel = new QLabel(this);
 		densityspacelabel->setText("    ");
 		statusbar->addWidget(densityspacelabel);
@@ -368,12 +406,10 @@ void paintGL()
 		ratiotextlabel = new QLabel(this);
 		ratiotextlabel->setText("Saturation ratio");
 		statusbar->addWidget(ratiotextlabel);
-		
 		ratiolabel = new QLabel(this);
 		gcvt(p.ratio_, 4, str);
 		ratiolabel->setText(str);
 		statusbar->addWidget(ratiolabel);
-
 		ratiospacelabel = new QLabel(this);
 		ratiospacelabel->setText("    ");
 		statusbar->addWidget(ratiospacelabel);
@@ -381,39 +417,33 @@ void paintGL()
 		samplingtextlabel = new QLabel(this);
 		samplingtextlabel->setText("Sampling step");
 		statusbar->addWidget(samplingtextlabel);
-		
 		samplinglabel = new QLabel(this);
 		gcvt(p.sampling_, 4, str);
 		samplinglabel->setText(str);
 		statusbar->addWidget(samplinglabel);
-
 		samplingspacelabel = new QLabel(this);
 		samplingspacelabel->setText("    ");
 		statusbar->addWidget(samplingspacelabel);
-		
+
 		numbertextlabel = new QLabel(this);
 		numbertextlabel->setText("Number of lines");
 		statusbar->addWidget(numbertextlabel);
-		
 		numberlabel = new QLabel(this);
 		gcvt(p.number_of_lines_, 4, str);
 		numberlabel->setText(str);
 		statusbar->addWidget(numberlabel);
-
 		numberspacelabel = new QLabel(this);
 		numberspacelabel->setText("    ");
 		statusbar->addWidget(numberspacelabel);
 
-// 		xcursorposition = new QLabel(this);
-// 		xcursorposition->setText("cursor position");
-// 		statusbar->addWidget(xcursorposition);
-// 
-// 		ycursorposition = new QLabel(this);
-// 		ycursorposition->setText("cursor position");
-// 		statusbar->addWidget(ycursorposition);
-// 		
-		statusbar->move(0, 570);
-		statusbar->resize(800, 30);
+		statusbar->move(0, height() - 30);
+		statusbar->resize(width(), 30);
+	}
+	
+	void resizeEvent ( QResizeEvent * )
+	{
+		statusbar->move(0, height() - 30);
+		statusbar->resize(width(), 30);
 	}
 	
 // void mouseMoveEvent ( QMouseEvent * e )
@@ -438,7 +468,7 @@ MyWidget::MyWidget(QGLWidget *parent)
 
 	setPaletteBackgroundColor(QColor(255,255,255));
 
-	setFixedSize(800, 600);
+// 	setFixedSize(800, 600);
 	
 	setstatus();
 
@@ -453,9 +483,9 @@ MyWidget::MyWidget(QGLWidget *parent)
 	placement->insertItem( "&Generate", &p, SLOT(generate()), CTRL+Key_G );
 	placement->insertItem( "Generate &First", &p, SLOT(generateFirst()), CTRL+Key_F );
 	placement->insertItem( "Generate &Next", &p, SLOT(generateNext()), CTRL+Key_N );
-	placement->insertItem( "Step by s&tep", &p, SLOT(generateTen()), CTRL+Key_T );
+	placement->insertItem( "Next &ten streamlines", &p, SLOT(generateTen()), CTRL+Key_T );
 	placement->insertItem( "&Complete the placement", &p, SLOT(generateAll()), CTRL+Key_C );
-	placement->insertItem( "&Draw Streamlines", &p, SLOT(draw()), CTRL+Key_D );
+	placement->insertItem( "&Draw streamlines", &p, SLOT(draw_stl()), CTRL+Key_D );
 	placement->insertItem( "Draw &queue elements", &p, SLOT(draw_pq()), CTRL+Key_Q );
 	placement->insertItem( "Draw t&riangulation", &p, SLOT(draw_tr()), CTRL+Key_R );
 	placement->insertItem( "Draw &biggest circle", &p, SLOT(draw_bc()), CTRL+Key_B );
@@ -463,6 +493,7 @@ MyWidget::MyWidget(QGLWidget *parent)
 	options->insertItem( "Density", &p, SLOT(density()));
 	options->insertItem( "Saturation ration", &p, SLOT(ratio()));
 	options->insertItem( "Sampling step", &p, SLOT(sampling()));
+	options->insertItem( "Integrating step", &p, SLOT(integrating()));
 	placement->insertItem( "&Options", options );
 	file->insertItem( "&Save", save );
 	menu->insertItem( "&File", file );
