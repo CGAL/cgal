@@ -1,3 +1,7 @@
+7 October 2005 Sylvain Pion
+- Fix mentions of examples/example.C in the installation guide since it is not
+  here anymore.
+
 12 September 2005 Sylvain Pion
 - Do not assume libqt-mt cannot exist without libqt.
 

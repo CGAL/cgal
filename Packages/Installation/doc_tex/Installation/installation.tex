@@ -1179,22 +1179,18 @@ have consequences for the makefile variables \texttt{CGAL\_CXX} and
 \index{building applications} 
 \index{compiling applications}
 
-The directory \texttt{\cgaldir/examples} contains a small program
-(example.C) and a sample makefile with some comments. The
-\texttt{CGAL\_MAKEFILE} variable in this makefile (see section
-\ref{sec:makefiles}) is automatically substituted by the
-\texttt{install\_cgal} script and equals the most recently generated
-include makefile in the \texttt{\cgaldir/make} directory. After the
-installation of \cgal\ this sample makefile is ready for use. Just
-type '\texttt{make example}' to compile the program
-\texttt{example.C}. There is a script for conveniently creating
-makefiles for \cgal\ applications, see
-section~\ref{sec:create_cgal_makefile}.
+There is a script for conveniently creating makefiles for \cgal\ applications,
+see section~\ref{sec:create_cgal_makefile}.
 
-Furthermore the directories \texttt{\cgaldir/examples} and
-\texttt{\cgaldir/demo} contain many subdirectories with non-graphical
-and graphical example programs.  In all these directories you will
-find a makefile that is ready for use.
+The directories \texttt{\cgaldir/examples} and \texttt{\cgaldir/demo}
+contain many subdirectories with non-graphical and graphical example
+programs.  In all these directories you will find a makefile that is
+ready for use.
+
+You either need to substitute the \texttt{CGAL\_MAKEFILE} variable in
+these makefiles (see section \ref{sec:makefiles}), or set the
+environment variable, to point to the makefile in the \texttt{\cgaldir/make}
+directory.  Then just type \texttt{make}.
 
 \section{Installation on Cygwin}\label{sec:cygwin}
 \index{Cygwin!installation on}\index{installation!on Cygwin}
