@@ -1540,6 +1540,12 @@ Packages/Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#u
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/Parameterization/doc/specification/param.pdf -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/LSCM.eps -text
+Packages/Parameterization/doc_tex/Parameterization/LSCM.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/authalic.eps -text
+Packages/Parameterization/doc_tex/Parameterization/authalic.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/floater.eps -text
+Packages/Parameterization/doc_tex/Parameterization/floater.png -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/grid512.bmp -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/holes.off -text
 Packages/Parameterization/examples/Parameterization/data/mannequin-devil.off -text

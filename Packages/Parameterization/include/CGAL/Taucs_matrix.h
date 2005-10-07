@@ -56,7 +56,7 @@ template<class T> struct Taucs_number;
 /// This kind of matrix can be either symmetric or not. Symmetric
 /// matrices store only the lower triangle.
 ///
-/// @todo Taucs_matrix must reallocate the array of non null elements when it's full
+/// @todo Taucs_matrix must reallocate the array of non null elements when it's full.
 /// @todo Filling a Taucs_matrix by lines is very slow. We must improve this code.
 ///
 /// Concept: Model of the SparseLinearAlgebraTraits_d::Matrix concept.

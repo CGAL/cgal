@@ -27,7 +27,7 @@ The result is the (u,v) pair image of each vertex of the 3D surface.
 1 to 1 mapping may be guaranteed or not, depending of the algorithm chosen.
 
 \ccInclude{CGAL/parameterize.h}
-  
+
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
@@ -43,6 +43,7 @@ Preconditions:\begin{itemize}
 \begin{description}
 \item[mesh]3D mesh, model of MeshAdaptor\_3 concept \end{description}
 \end{description}
+
 \ccFunction{Parametizer_traits_3<MeshAdaptor_3>::Error_code parameterize (MeshAdaptor_3 * mesh, ParametizerTraits_3 parametizer);}
 {
 Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
@@ -73,11 +74,11 @@ The full template declaration is:
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Barycentric_mapping_parametizer_3<Traits>}  \\
-\ccRefIdfierPage{CGAL::Discrete_authalic_parametizer_3<Traits>}  \\
-\ccRefIdfierPage{CGAL::Discrete_conformal_map_parametizer_3<Traits>}  \\
-\ccRefIdfierPage{CGAL::LSCM_parametizer_3<Traits>}  \\
-\ccRefIdfierPage{CGAL::Mean_value_coordinates_parametizer_3<Traits>}  \\
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parametizer_3}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parametizer_3}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parametizer_3}  \\
+\ccRefIdfierPage{CGAL::LSCM_parametizer_3}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parametizer_3}  \\
 
 
 \ccExample

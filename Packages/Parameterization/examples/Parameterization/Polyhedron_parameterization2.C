@@ -1,3 +1,5 @@
+// Polyhedron_parameterization2.C
+
 #include "short_names.h"                    // must be included first
 #include <CGAL/basic.h>                     // must be included second
 #include <CGAL/Cartesian.h>                 // must be included third
@@ -86,7 +88,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // Discrete Authalic Parameterization
+    // Discrete Authalic parameterization
     //***************************************
 
     Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parametizer());

@@ -1,3 +1,5 @@
+// Polyhedron_parameterization1.C
+
 #include "short_names.h"                    // must be included first
 #include <CGAL/basic.h>                     // must be included second
 #include <CGAL/Cartesian.h>                 // must be included third
@@ -26,7 +28,7 @@ typedef CGAL::Cartesian<double>                             Kernel;
 typedef CGAL::Polyhedron_3<Kernel>                          Polyhedron;
 typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>         Mesh_adaptor_polyhedron;
 
-// Parametizers base class for this kind of mesh
+// Defines the error codes
 typedef CGAL::Parametizer_traits_3<Mesh_adaptor_polyhedron> Parametizer;
 
 
