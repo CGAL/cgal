@@ -98,7 +98,7 @@ EOF
     echo_ok
     if [ -d html.orig ] ; then
       printf "    compare  ...  ";
-      if diff -w html html.orig; then
+      if diff -w html html.orig >& log; then
         echo_ok
       else
         echo_failed
