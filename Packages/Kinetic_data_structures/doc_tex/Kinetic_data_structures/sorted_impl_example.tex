@@ -1,0 +1,195 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Implementing the Sort kinetic data structure}
+\label{sec:sort_kds_overviewl}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We will now explain how to implement the kinetic data structure used in the previous example. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Overview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Figure~\ref{fig:example_program}, depicts a complete kinetic data
+structure, \ccc{CGAL::KDS::Sort<Traits>}, implemented using our
+framework. The data structure being maintained is very simple: a list
+of the geometric objects in the simulation sorted by their $x$
+coordinate. However, it touches upon the most important parts of the
+framework. For a simple kinetic data structure like this, much of the
+code is shared with other kinetic data structures. 
+
+Like most kinetic data structures the maintained data has
+two parts (in this case stored separately)
+\begin{itemize}
+\item the combinatorial structure being maintained, in this case in the
+list \ccc{objects_} declared at the end of the class.
+\item the mapping between connections in the combinatorial structure and 
+pending events. In this case the connections are pairs of adjacent
+objects in the sorted list. The mapping is stored in the map
+\ccc{certificates_} using the key of the first point in the pair.
+When a pair is destroyed (because the objects are no longer adjacent),
+the event key stored in the mapping is used to deschedule the
+corresponding event.
+\end{itemize}
+
+As is characteristic of many kinetic data structures, \ccc{Sort}
+defines a class \ccc{Event}, which stores the information for a single
+event, and has six main methods. The methods are:
+\begin{itemize}
+\item \ccc{insert}: a point has been added to the simulation and
+  must be added to the data structure.
+\item \ccc{set}: an point has changed its trajectory and the
+  two certificates involving it must be updated
+\item \ccc{erase}: an point has been removed from the
+  simulation. It must be removed from the data structure, the events
+  involving it descheduled and a new event created.
+\item \ccc{swap}: an event has occurred and two objects are about to
+  become out of order in the list and so must be exchanged.
+\item \ccc{rebuild_certificate}: for some reason, a predicate
+  corresponding to a particular piece of the combinatorial structure
+  is no longer valid or the action that was going to be taken in
+  response to its failure is no longer correct. Update the predicate
+  appropriately. This method is only called from within the kinetic
+  data structure.
+\item \ccc{audit}: check that the combinatorial structure is
+  valid at the given time.
+\end{itemize}
+
+The first three methods are called in response to notifications from
+the \ccc{MovingObjectTable}. The fourth method is called by
+\ccc{Event} objects. The last method is called in response to a
+notification from the \ccc{Simulator}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\ccc{Sort} in detail.}
+\label{sec:sorted_impl_example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+On initialization the \ccc{CGAL::KDS::Sort<Traits>} registers for
+notifications with a \ccc{MovingObjectTable} and a \ccc{Simulator}. It
+receives notifications through two proxy objects,
+\ccc{mot_listener_} and \ccc{sim_listener_}, which implement the
+notification interface and call functions on the kinetic data
+structure when appropriate. We provide standard proxy objects,
+\ccc{Notifying_table_listener_helper} and
+\ccc{Simulator_kds_listener_}, which are used, but implementers
+of kinetic data structures are free to implement their own versions of
+these simple classes. The former proxy calls the \ccc{insert},
+\ccc{erase} and
+\ccc{set} methods of the kinetic data structure when
+appropriate. The latter proxy calls the \ccc{audit} method when there
+is a rational time value at which verification can be performed. See
+Section~\ref{sec:simulator} for an explanation of when this occurs.
+
+The proxy objects store the (reference counted) pointers to the
+\ccc{MovingObjectTable} and \ccc{Simulator} objects for later use. The
+\ccc{Simulator} pointer is used by the kinetic data structure to
+request the current time and schedule and deschedule events. The
+\ccc{MovingObjectTable} pointer is used to access the actual
+coordinates of the kinetic objects. The use of reference counted
+pointers guarantees that there will be no dangling pointers in the
+code.
+
+ Once initialization is completed, the behavior of the kinetic data
+structure is entirely event driven.
+
+The first thing that will occur is the addition of a point to the
+\ccc{MovingObjectTable} which results in the \ccc{insert} method being
+called. This method is passed a \ccc{Key} which uniquely identifies a
+point in the \ccc{MovingObjectTable}. The
+\ccc{CGAL::KDS::Sort<Traits>} makes use of the \ccc{InstantaneousKernel} to properly
+handle the insertion by using a \ccc{InstantenousKernel}-provided
+functor which compares the $x$ coordinates of two objects at the
+current instant of time. This functor is then passed to the
+STL library function
+\ccc{upper_bound} which returns the location in the sorted list of the
+point before which the new point should be inserted to maintain a
+sorted order. The point is inserted and the new pairs created (the new
+point and the objects before and after it) must have certificates
+created for them and events scheduled. The \ccc{rebuild_certificate}
+function is called to handle updating the certificates. The
+\ccc{rebuild_certificate} function will also deschedule any previous
+certificates when necessary.
+
+Note that this implementation assumes that \ccc{insert} is only
+called at instants when there is a rational time topologically
+equivalent to the current root. The \ccc{Time current_time_nt()} call made
+to the \ccc{Simulator} will fail otherwise--i.e.\ when two events
+occur simultaneously, a degeneracy. The easiest way to handle this is
+to postpone insertion until a non-degenerate rational time exists or
+to only insert objects at rational times. We ignore that issue in the
+example since handling it is somewhat situation dependent.
+
+The \ccc{rebuild_certificate} function updates the certificate
+associated with a passed pair to make sure it is correct. It first
+checks if there is a previous event corresponding to the pair which
+needs to be descheduled, and if so requests that the \ccc{Simulator}
+deschedule it. Then a \ccc{RootStack} is requested from the
+\ccc{Simulator}, passing in the certificate function created by the
+\ccc{KineticKernel}'s \ccc{Less_x_2} predicate applied to the pair of objects in
+question. Then an \ccc{Event} is created to exchange the two objects
+and scheduled in the \ccc{Simulator} at for that time. Note that the
+certificate function may not have any roots after the current time. In
+that case, the root stack will return
+\ccc{std::numeric_limits<Root>::infinity()}. The \ccc{Simulator}
+detects this and will not schedule the associated event, but will
+instead return a placeholder \ccc{Event_key}.
+
+The \ccc{Event} is in charge of alerting the
+\ccc{CGAL::KDS::Sort<Traits>} that it needs to be updated when a
+particular certificate failure occurs. Typically event classes are
+very simple, effectively just storing a pointer to the kinetic data
+structure and an identifier for the combinatorial piece which needs to
+be updated in addition to the time when the update must occur. This
+certificate also stores a copy of the \ccc{RootStack} for reasons
+which will be discussed in the next paragraph. In order to be handled
+by the \ccc{Simulator}, the \ccc{Event} class must have the following
+method
+\begin{itemize}
+\item \ccc{process} which is called with the value true when the event occurs.
+\end{itemize}
+\noindent In addition, in order to ease debugging,
+it must be able to be output to an \ccc{std::ostream}.
+
+The \ccc{swap} method is the update method in the \ccc{Sort} kinetic
+data structure. When a pair of objects is swapped, three old pairs of
+points are destroyed and replaced by three new pairs. Calls to
+\ccc{rebuild_certificate} handle the updating of the certificates
+between a point of the swapped pair and its outside neighbors in the
+list. The pair that has just been exchanged should be dealt with
+differently for optimal efficiency. The predicate function
+corresponding to the new ordering of the swapped pair is the negation
+of that for the old ordering (i.e.\ $x_k(t)-x_j(t)$ as opposed to
+$x_j(t)-x_k(t)$), and so has the same roots. As a result, the old
+\ccc{RootStack} can be used to find the next root, saving a great
+deal of time. In addition, the event which is currently being
+processed does not need to be descheduled as it is deleted by the
+\ccc{Simulator}. Notice that the update method does not make any
+reference to time. This is necessary to properly support degeneracies,
+since few or no exact calculations can be made without a topologically
+equivalent rational time, which might not exist. The \ccc{insert}
+method is mostly used for initialization and so can be assumed to
+occur at a non-degenerate time, the same assumption is less easily
+made about an event.
+
+As described in Section~\ref{sec:simulator}, the \ccc{Simulator} can
+periodically send out notifications that there is a rational time at
+which all the kinetic data structures are non-degenerate and can be
+easily verified. The \ccc{audit} method is called in response to such
+a notification. Validation consists of using the
+\ccc{InstantaneousKernel} to check that each pair in the list is
+ordered correctly.
+
+The remaining two methods, \ccc{set} and \ccc{erase} are only
+necessary if the the kinetic data structure wishes to support dynamic
+trajectory changes and removals. These methods are called by the
+\ccc{mot_listener_} helper when appropriate.
+
+That is all it takes to implement a kinetic data structure which is
+exact, supports dynamic insertions and deletions of objects, allows
+points to change motions on the fly, and allows a variety of solvers
+and motion types to be used without modifications.
+
+\subsubsection{Code}
+\label{fig:example_program}
+An example kinetic data structure using the framework.  
+\ccIncludeExampleCode{Kinetic_data_structures/include/Sort.h}

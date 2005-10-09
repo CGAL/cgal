@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Moving_object_inserter.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSMovingobjectinserterRev}{$Revision$}
+\RCSdefDate{\RCSMovingobjectinserterDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{KDS::Insert_event<MovingObjectTable>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+This event inserts a point into the \ccc{MovingObjectTable} when the event is processed.
+
+\ccInclude{CGAL/KDS/Insert_event.h}
+
+\ccCreation
+\ccCreationVariable{i}  %% choose variable name
+
+\ccConstructor{Insert_event(MovingObjectTable::Data o, MovingObjectTable::Pointer t);}{Insert the object o, into the table t when processed.}
+
+
+\ccSeeAlso
+
+\ccc{MovingObjectTable},
+\ccc{CGAL::KDS::Notifying_table<MovingObject>}.
+
+\ccExample
+
+
+\verb|\ccIncludeExampleCode{Kinetic_data_structures/sort.cc}| 
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

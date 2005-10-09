@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Delaunay_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunaytriangulationRev}{$Revision$}
+\RCSdefDate{\RCSDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{KDS::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ maintains a Delaunay triangulation on top of the
+points contained in a \ccc{MovingObjectTable}. It has one main method
+of interest. \ccc{triangulation()} which returns the triangulation it
+is maintaining. In addition, as an optimisation, you can turn on and
+off whether it is currently maintaining its certificates. This allows
+a large number of changes to the underlying points to be made at one
+time without recomputing the certificates each time a single point
+changes.
+
+The class \ccc{KDS::Qt_Delaunay_triangulation_3} displays a kinetic
+Delaunay triangulation in three dimensions using the Coin library.
+
+The optional \ccc{Visitor} template argument is a model of
+\ccc{DelaunayTriangulationVisitor_3} and can be used to monitor
+changes in the kinetic data structure.
+
+The optional \ccc{Triangulation} template argument must be a model of
+a static Delaunay triangulation and have
+\ccc{CGAL::KDS::Delaunay_triangulation_cell_base_3<Traits>} a the cell
+type.
+
+\ccInclude{CGAL/KDS/Delaunay_triangulation_3.h}
+
+
+\ccTypes
+
+\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation} built using the \ccc{InstantaneousKernel} as the kernel.}
+
+\ccNestedType{Listener}{The base class to extend if you wish to subscribe to events. The \ccRefName\ has exactly one event \ccc{TRIANGULATION} which occurs when the triangulation changes.}
+
+\ccCreation
+\ccCreationVariable{dt}  %% choose variable name
+
+\ccConstructor{Delaunay_triangulation_3(Simulator::Pointer sp, MovingObjectTable::Pointer mot);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
+
+\ccOperations
+
+\ccMethod{const Triangulation* triangulation();}{Access the triangulation that is maintained. }
+
+\ccMethod{bool has_certificates();}{This method returns true if the \ccRefName\ is currently maintaining certificates for a Delaunay triangulation. }
+
+\ccMethod{void set_has_certificates(bool tf);}{This method allows you to control whether the triangulation is maintaining certificates.}
+
+\ccSeeAlso
+
+\ccc{KDS::Regular_triangulation_3},
+\ccc{KDS::Delaunay_triangulation_2}, 
+\ccc{Listener}, 
+\ccc{KDS::Qt_Delaunay_triangulation_3}.
+
+\ccExample
+
+\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_3.cc}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

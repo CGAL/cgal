@@ -1,0 +1,477 @@
+#ifndef CGAL_POLYNOMIAL_INTERNAL_ISOLATING_INTERVAL_H
+#define CGAL_POLYNOMIAL_INTERNAL_ISOLATING_INTERVAL_H
+#include <CGAL/Polynomial/basic.h>
+#include <CGAL/Polynomial/internal/interval_arithmetic.h>
+#include <iostream>
+
+CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+
+
+//! necessary to support filtered_numbers which I don't like
+template <class NT, class Functor>
+typename Functor::result_type apply(const Functor &f,  const NT &a){
+  return f(a); 
+}
+
+//! necessary to support filtered_numbers which I don't like
+template <class NT, class Functor>
+typename Functor::result_type apply(const Functor &f,  const NT &a,
+				    const NT &b){
+  return f( a, b); 
+}
+
+//! necessary to support filtered_numbers which I don't like
+template <class NT, class Functor, class Data>
+typename Functor::result_type apply(const Functor &f,  const NT &a,
+				    const NT &b, const Data &da, const Data &db){
+  return f( a, b, da, db); 
+}
+
+//! Define the interface for a bounding interval By convention the intervals are closed.
+/*!
+  Just remember the bounds.  
+
+*/
+template <class FT_t>
+class Isolating_interval {
+  typedef Isolating_interval<FT_t> This;
+public:
+  typedef FT_t NT;
+  Isolating_interval(){}
+  Isolating_interval(const NT &lbi): lb_(lbi), ub_(lbi){
+  }
+  Isolating_interval(const NT &lbi, const NT &ubi): lb_(lbi), ub_(ubi){
+    if(0) print(); // make sure it is instantiated
+    if (lb() > ub()){
+      std::cerr << "lb_=" << lb() << " and ub_=" << ub() << std::endl;
+    }
+    Polynomial_assertion(lb() <= ub());
+    // snap things to a power of 2. I'll deal later
+  }
+
+  typedef enum Endpoint {UPPER, LOWER} Endpoint;
+
+  //! Damn this is awful, but I can't think of another way for Filtered interval
+  template <class Function>
+  typename Function::result_type apply_to_endpoint(const Function &f, Endpoint b) const {
+    if (b==UPPER){
+      return apply(f,ub());
+    } else {
+      return apply(f, lb());
+    }
+  }
+  
+  //! Damn this is awful, but I can't think of another way for Filtered interval
+  template <class Function>
+  typename Function::result_type apply_to_midpoint(const Function &f) {
+    return apply(f,middle());
+  }
+
+  //! 
+  template <class Function>
+  typename Function::result_type apply_to_interval(const Function &f) const {
+    return apply(f, lb(), ub());
+  }
+
+  //! Allow some extra data. This is kind of an evil hack.
+  template <class Function, class Data>
+  typename Function::result_type apply_to_interval(const Function &f, 
+						   const Data &d0, const Data &d1) const {
+    return apply(f, lb(), ub(), d0, d1);
+  }
+
+
+  This upper_endpoint_interval() const {
+    return This(ub());
+  }
+
+  This lower_endpoint_interval() const {
+    return This(lb());
+  }
+
+  //! Make the interval singular on bound b.
+  This endpoint_interval(Endpoint b) const {
+    if (b==UPPER){
+      return This(ub());
+    } else {
+      return This(lb());
+    }
+  }
+
+  This midpoint_interval() const {
+    return This(middle());
+  }
+
+  //! Split in half
+  This first_half() const {
+    return This(lb(), middle());
+  }
+  //! Split in half
+  This second_half() const {
+    return This(middle(), ub());
+  }
+
+  //! Return both the first and second half; the midpoint is computed once
+  std::pair<This,This> split() const
+  {
+    NT mid = middle();
+    return std::pair<This,This>(This(lb(), mid), This(mid, ub()));
+  }
+
+  //! Returns the interval [(a+(a+b)/2)/2,((a+b)/2+b)/2]
+  This middle_half() const
+  {
+    NT mid = middle();
+    NT mid_left = midpoint(lb(), middle());
+    NT mid_right = midpoint(middle(), ub());
+
+    return This(mid_left, mid_right);
+  }
+
+  std::pair<This,This> split_at(const NT& x) const
+  {
+    CGAL_precondition( !is_singular() &&
+		       lower_bound() < x && x < upper_bound() );
+    return std::pair<This,This>( This(lower_bound(), x),
+				 This(x, upper_bound()) );
+  }
+
+  This interval_around_endpoint(Endpoint b) const
+  {
+    NT mid = middle();
+
+    if ( b == LOWER ) {
+      return This(lower_bound()-NT(1), mid);
+    } // end-if
+
+
+    // b == UPPER
+    return This(mid, upper_bound()+NT(1));
+  }
+
+
+  //! See if the interval only contains a point. 
+  bool is_singular() const {
+    return lb()==ub();
+  }
+  const NT &to_nt() const {
+    Polynomial_precondition(is_singular());
+    return lb();
+  }
+
+  /*bool overlaps(const This &o) const {
+    if (lb_ > o.lb_ && lb_ < o.ub_) return true;
+    else if (ub_ > o.lb_ && lb_ < o.ub_) return true;
+    else if (o.ub_ > lb_ && lb_ < ub_) return true;
+    else if (o.lb_ > lb_ && lb_ < ub_) return true;
+    else if (*this==o) return true;
+    else return false;
+    }*/
+  
+  //! Compare this interval to another. 
+  Order order(const This &o) const {
+    if (*this < o) return STRICTLY_BELOW;
+    else if (o < *this) return STRICTLY_ABOVE;
+    else if (lb() <= o.lb() && ub() >= o.ub()) return CONTAINS;
+    else if (o.lb() <= lb() && o.ub() >= ub()) return CONTAINED;
+    else if (*this == o) return EQUAL;
+    else if (lb() < o.lb()) return BELOW;
+    else return ABOVE;
+  }
+
+  //! Cut this at bound b on interval o
+  /*!  i.e. If bd is UPPER, then o is assumed to be below this (but
+    overlaping) and the new interval goes from o.upper_bound() to
+    this->upper_bound()
+  */
+  /*This chop(const This &o, Endpoint bd) const {
+    if (bd== UPPER) {
+    Polynomial_assertion(lb()== o.lb() && ub() > o.ub());
+    return This(o.ub(), ub());
+    } else {
+    Polynomial_assertion(ub()== o.ub() && lb() < o.lb());
+    return This(lb(),o.lb());
+    }
+    }*/
+
+  int number_overlap_intervals(const This &o) const {
+    Order ord= order(o);
+    switch(ord) {
+    case CONTAINS:
+      return 3;
+    case CONTAINED:
+      return 1;
+    case BELOW:
+    case ABOVE:
+      return 2;
+    case STRICTLY_ABOVE:
+    case STRICTLY_BELOW:
+      return 1;
+    default:
+      return -1;
+    }
+  }
+
+  // If we have two partially overllaping intervals, then
+  // *_overlap_interval  return the three possible intervals of *this:
+  // the common interval and the non-common remainders of the two
+  // intervals.
+  This first_overlap_interval(const This &o) const {
+    Order ord= order(o);
+    switch(ord){
+    case CONTAINS:
+      return This(lb(), o.lb());
+    case CONTAINED:
+    case STRICTLY_ABOVE:
+    case STRICTLY_BELOW:
+      return *this;
+    case BELOW:
+      return This(lb(), o.lb());
+    case ABOVE:
+      return This(lb(), o.ub());
+    default:
+      return This();
+    };
+  }
+
+  This second_overlap_interval(const This &o) const {
+    Order ord= order(o);
+    switch(ord){
+    case CONTAINS:
+      return This(o.lb(), o.ub());
+    case BELOW:
+      return This(o.lb(), ub());
+    case ABOVE:
+      return This(o.ub(), ub());
+    default:
+      return This();
+    };
+  }
+
+  This third_overlap_interval(const This &o) const {
+    Order ord= order(o);
+    switch(ord){
+    case CONTAINS:
+      return This(o.ub(), ub());
+    default:
+      return This();
+    };
+  }
+
+  /*std::pair<This, This> split_with(const This &o) const {
+    bool I_would_like_to_get_rid_of_this;
+    CGAL_precondition(0);
+    Order ord= order(o);
+    typedef std::pair<This, This> IP;
+    switch(ord){
+    case STRICTLY_BELOW:
+      return IP(*this, endpoint_interval(UPPER));
+    case STRICTLY_ABOVE:
+      return IP(endpoint_interval(LOWER, *this));
+    case BELOW:
+      return IP(This(lb(), o.lb()), This(ub(), o.ub()));
+    case CONTAINS:
+      return IP(This(lb(), o.lb()), This();
+    }
+    }*/
+
+  //! Split this and o into 3 parts
+  /*!
+    this and o must overlap and this must be below or containing o.
+    Then the three regions created by the 4 endpoints are returned. 
+  */
+  /*
+  void subintervals(const This &o, This &a, This &b, This &c) const {
+    bool I_would_like_to_get_rid_of_this;
+
+    Order ord= order(o);
+    switch (ord){
+    case BELOW:
+      a=This(lb(), o.lb());
+      b=This(o.lb(), ub());
+      c=This(ub(), o.ub());
+      break;
+    case CONTAINS:
+      a=This(lb, o.lb());
+      b=o;
+      c=This(o.ub(), ub());
+      break;
+    case CONTAINED:
+      a=This(o.lb, lb());
+      b=*this;
+      c=This(ub(), o.ub());
+      break;
+    case ABOVE:
+      a=This(o.lb(), lb());
+      b=This(lb(), o.ub());
+      c=This(o.ub(), ub());
+      break;
+    case STRICTLY_BELOW:
+      a=*this;
+      b=This(ub(), o.lb());
+      c=o;
+      break;
+    case STRICTLY_ABOVE:
+      a=o;
+      b=This(o.ub(), lb());
+      c=*this;
+      break;
+    default:
+      CGAL_assertion(0);
+    }
+    CGAL_postcondition(a.ub()==b.lb());
+    CGAL_postcondition(b.ub()==c.lb());
+    }*/
+
+  /**/
+  bool operator<(const This &o) const {
+    if (ub() < o.lb()) return true;
+    return (ub() == o.lb() && (!is_singular() || !o.is_singular()));
+    /*
+    if (ub() == o.lb() && (!is_singular() || !o.is_singular())) return true; 
+    else return false;
+    */
+  }
+  bool operator>(const This &o) const {
+    return o < *this;
+  }
+  bool operator>=(const This &o) const {
+    return *this >0 || *this==o;
+  }
+  bool operator<=(const This &o) const {
+    return *this < 0 || *this==o;
+  }
+  bool operator==(const This &o) const {
+    return lb()==o.lb() && ub()==o.ub();
+  }
+  bool operator!=(const This &o) const {
+    return lb()!=o.lb() || ub()!=o.ub();
+  }
+  
+  //! Approximate the width with doubles. 
+  double approximate_width() const {
+    return to_double(ub()) - to_double(lb());
+  }
+
+  double approximate_relative_width() const {
+    return approximate_width()/std::max(to_double(abs(ub())), to_double(abs(lb())));
+  }
+
+  bool contains(const This &o){
+    return lb() <= o.lb() && ub() >= o.ub();
+  }
+  template <class OStream>
+  void write(OStream &out) const {
+    if (is_singular()){
+      out << lb();
+    } else {
+      out << "(" << lb() << "..." << ub() << ")";
+    }
+    if (0) print();
+  }
+  void print() const ;
+
+  This operator-() const {
+    return This(-ub(), -lb());
+  }
+
+  //! return an interval
+  std::pair<double, double> double_interval() const {
+    std::pair<double, double>
+      lbi= to_interval(lb()),
+      ubi= to_interval(ub());
+    return std::pair<double, double>(lbi.first, ubi.second);
+  }
+
+  const NT& lower_bound() const {
+    //    bool not_recommended;
+    return lb();
+  }
+  const NT& upper_bound() const {
+    //    bool not_recommended;
+    return ub();
+  }						   
+
+  void set_upper(const NT& u) {
+    ub_ = u;
+  }
+
+  void set_lower(const NT& l) {
+    lb_ = l;
+  }
+
+  /*std::pair<NT, NT> () const {
+    return std::pair<NT,NT>(lb_, ub_);
+    }*/
+
+  
+  //! find the min interval containing both. 
+  /*This operator||(const This &o){
+    return This(std::min(lb(), o.lb()), std::max(ub(), o.ub()));
+    }*/
+
+  //! Union
+  This operator||(const This &o) const {
+    return This(std::min(lb(), o.lb()), std::max(ub(), o.ub()));
+  }
+  
+  NT middle() const {
+    return NT(0.5)*(ub()+lb());
+  }
+
+protected:
+  NT lb_, ub_;
+
+  NT midpoint(const NT& a, const NT& b) const {
+    return NT(0.5)*(a+b);
+  }
+
+  const NT &lb() const {
+    return lb_;
+  }
+  const NT &ub() const {
+    return ub_;
+  }
+
+  /*static NT infinity() {
+    if (std::numeric_limits<NT>::has_infinity){
+    return std::numeric_limits<NT>::infinity();
+    } else if (std::numeric_limits<NT>::is_bounded){
+    return std::numeric_limits<NT>::max();
+    } else {
+    return NT(1000000000);
+    }
+    }*/
+};
+
+template <class NT>
+void Isolating_interval<NT>::print() const {
+    write(std::cout);
+    std::cout << std::endl;
+}
+
+template <class OStream, class NT>
+OStream &operator<<(OStream &out, const Isolating_interval<NT> &ii){
+  ii.write(out);
+  return out;
+}
+
+/*template <class NT>
+std::pair<double, double> to_interval(const Isolating_interval<NT> &ii){
+  return ii.to_interval();
+  }*/
+
+CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+
+#ifdef POLYNOMIAL_USE_CGAL
+
+CGAL_BEGIN_NAMESPACE
+template <class NT>
+std::pair<double, double> to_interval(const POLYNOMIAL_NS::internal::Isolating_interval<NT> &ii){
+  return ii.double_interval();
+}
+CGAL_END_NAMESPACE
+
+#endif
+
+#endif

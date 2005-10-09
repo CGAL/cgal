@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Qt_gui_3.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSQtguiRev}{$Revision$}
+\RCSdefDate{\RCSQtguiDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{KDS::Qt_widget_3<Simulator>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a graphical interface for running 3D
+kinetic data structures. This class uses Coin or another Open Inventor
+implementation to manage and display the geometry. 
+
+\ccInclude{CGAL/KDS/IO/Qt_widget_3.h}
+
+\ccTypes
+
+\ccNestedType{Listener}{This listener provides \ccc{CURRENT_TIME} notifications when the structures should update their geometry. It also provides a method \ccc{SoSeparator* root()} which returns an place for geometry to be inserted into the scene graph.}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Qt_widget_3(int argc, char *arv[], Simulator::Pointer p);}{default constructor.}
+
+\ccOperations
+
+\ccMethod{int begin_event_loop();}{Start interactive processing.}
+
+\ccMethod{Simulator* simulator();}{Return a pointer to the simulator.}
+
+\ccMethod{double current_time();}{Return a the current time approximated as a double.}
+
+
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

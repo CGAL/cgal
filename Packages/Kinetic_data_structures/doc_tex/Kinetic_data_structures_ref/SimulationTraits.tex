@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SimulationTraits.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SimulationTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+This concept ties together the parts needed in order to run a kinetic
+data structure. 
+
+
+\ccTypes
+
+\ccNestedType{NT}{The number type used for representation.}
+
+\ccNestedType{Static_kernel}{A CGAL kernel which can be used for static computations.}
+
+\ccNestedType{Instantaneous_kernel}{A model of
+  \ccc{InstantaneousKernel} which can be used to apply static CGAL
+  data structures to snapshots of moving data.}
+
+\ccNestedType{Kinetic_kernel}{A model of \ccc{KineticKernel}.}
+
+\ccNestedType{Simulator}{A model of \ccc{Simulator} which will be used by all the kinetic data structures.}
+
+\ccNestedType{Moving_point_table}{A model of \ccc{NotifyingTable} which can be used to store moving points of an appropriate dimension. This is really optional and not needed if no kinetic data structures use points.}
+
+\ccOperations
+
+\ccMethod{Static_kernel static_kernel_object();}{Get a new static kernel.}
+
+\ccMethod{Instantaneous_kernel instantaneous_kernel_object();}{Get a new instantaneous kernel.}
+
+\ccMethod{Kinetic_kernel kinetic_kernel_object();}{Get a new kinetic kernel.}
+
+\ccMethod{Simulator* simulator_pointer();}{Return a pointer to the \ccc{Simulator} which is to be used in the simulation.}
+
+\ccMethod{Moving_point_table* moving_point_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
+
+\ccHasModels
+
+\ccc{CGAL::KDS::Exact_simulation_traits_2},
+\ccc{CGAL::KDS::Exact_simulation_traits_3},
+\ccc{CGAL::KDS::Inexact_simulation_traits_2},
+\ccc{CGAL::KDS::Inexact_simulation_traits_3},
+\ccc{CGAL::KDS::Exact_linear_simulation_traits_2},
+\ccc{CGAL::KDS::Exact_linear_simulation_traits_3},
+\ccc{CGAL::KDS::Inexact_linear_simulation_traits_2},
+\ccc{CGAL::KDS::Inexact_linear_simulation_traits_3}
+
+
+
+\ccExample
+
+\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_2.cc}| 
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

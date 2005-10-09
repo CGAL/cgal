@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: RootEnumerator.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSRootEnumeratorRev}{$Revision$}
+\RCSdefDate{\RCSRootEnumeratorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RootStack}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ enumerates through roots of a function.
+
+\ccTypes
+
+\ccNestedType{Root}{The root of a function.}
+\ccNestedType{Traits}{The traits class for this concept.}
+
+\ccCreation
+\ccCreationVariable{re}  %% choose variable name
+
+\ccConstructor{RootStack();}{default constructor.}
+
+\ccConstructor{RootStack(Function f, Root lb, Root ub, Traits tr);}{Construct a \ccRefName\ over the roots of \ccc{f} in the open interval \ccc{lb} to \ccc{ub}.}
+
+\ccOperations
+
+\ccMethod{void pop();}{Advance to the next root. As a precondition, finished() must be false.}
+
+\ccMethod{Root top();}{Return the current root. As a precondition, finished() must be false.}
+
+\ccMethod{bool empty();}{Return true if there are no more roots left.}
+
+%\ccHasModels
+
+%\ccc{KDS::Numeric_root_enumerator}.
+
+\ccSeeAlso
+
+FunctionKernel, Simulator.
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,103 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: FunctionKernel.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSFunctionKernelRev}{$Revision$}
+\RCSdefDate{\RCSFunctionKernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{FunctionKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ encapsulates all the methods for representing and handing functions.
+
+\ccTypes
+
+\ccNestedType{Function}{The type of function being handled.}
+
+\ccNestedType{NT}{The basic representational number type.}
+
+\ccNestedType{Root}{A type representing the roots of a \ccc{Function}.}
+
+\ccNestedType{Root_enumerator}{A model of \ccc{RootEnumerator}. These objects can be created by calling the \ccc{root_enumerator_object} method with a \ccc{Function} and two (optional) \ccc{Root} objects. The enumerator then enumerates all roots of the function in the open inverval defined by the two root arguments. They optional arguments default to positive and negative infinity. }
+
+\ccNestedType{Root_enumerator_traits}{The traits for the \ccc{Root_enumerator} class.}
+
+Each of the following types has a corresponding \ccc{type_object} method (not explicitly documented) which takes a \ccc{Function} as an argument.
+
+\ccNestedType{Sign_at}{A functor which returns the sign of a \ccc{Function} at a \ccc{NT} or \ccc{Root}.}
+
+\ccNestedType{Multiplicity}{A functor which returns the multiplicity of roots.}
+
+\ccNestedType{Sign_above}{A functor which returns sign of a function immediately above a root.}
+
+The following functor likewise have a \ccc{type_object} method, but these take arguments other than a \ccc{Function}. The arguments are given below.
+
+\ccNestedType{Sign_between_roots}{This functor, creation of which requires two \ccc{Root}s, returns the sign of a passed function between the pair of roots.}
+
+%\ccNestedType{Compare_isolated_roots_in_interval}{This functor, creation of which requires two functions, compares the roots of two functions in an isolating invterval. More specifically, it takes two \ccc{NT}s as an argument. These numbers must isolate a root for each of the functions the functor is constructed with. The functor then returns true if the isolated root of the first function is less than that of the second.}
+
+%\ccNestedType{Quotient}{Compute the quotient of two \ccc{Functions}s.}
+
+%\ccNestedType{Pseudo_quotient}{Compute the pseudo quotient of two \ccc{Functions}s.}
+
+%\ccNestedType{Remainder}{Compute the remainder of one \ccc{Functions} divided by another.}
+
+\ccNestedType{Are_negations_object}{Return true of the two functions passed are negations of one another.}
+
+%\ccNestedType{Sturm_sequence}{This object evaluates the Sturm sequence of two \ccc{Function}s at a \ccc{NT} value. Construction requires two \ccc{Function}s.}
+
+\ccNestedType{Differentiate}{This functor computes the derivitive of a \ccc{Function}. Construction takes no arguments.}
+
+%\ccNestedType{Sign_Sturm_sequence}{This object evaluates the Sturm sequence of two \ccc{Function}s at a \ccc{NT} value. Construction requires two \ccc{Function}s.}
+
+The following methods do not require any arguments to get the functor and take one \ccc{Function} as a functor argument.
+
+%\ccNestedType{Root_bound_evaluator}{This functor computes a root bound on a passed \ccc{Function}. }
+
+%\ccNestedType{Invert_variable}{Map $f(x)$ to $x^d f(1/x)$.}
+
+\ccNestedType{Negate_variable}{Map $f(x)$ to $f(-x)$.}
+
+%\ccNestedType{Map_rational_interval_to_positive}{}
+
+%\ccNestedType{Rational_translate_zero}{}
+%\ccNestedType{Shift_power}{}
+
+\ccNestedType{Construct_function}{The functor can be used to construct instances of \ccc{Function}.}
+
+
+%\ccCreation
+%\ccCreationVariable{fk}  %% choose variable name
+
+%\ccConstructor{FunctionKernel(Root_enumerator_traits tr);}{}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccHasModels
+\ccc{POLYNOMIAL::Kernel<RootEnumerator>}, \ccc{POLYNOMIAL::Filtered_kernel<RootEnumerator>}.
+
+\ccSeeAlso
+
+RootEnumerator
+
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

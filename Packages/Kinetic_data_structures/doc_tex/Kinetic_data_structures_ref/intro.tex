@@ -1,0 +1,127 @@
+\chapter{Kinetic Data Structures}
+\label{ref-chapter-kds}
+
+\ccHeading{Definition} 
+
+Kinetic data structures are a way of adding motion to classical
+geometric data structures. \cgal provides a number of classes to aid
+implementation of kinetic data structures as well as a number of
+prepackaged kinetic data structures.
+
+There are three levels at which the user can interact with the
+package. The can use an existing kinetic data structure, write a new
+kinetic data structure, or replace parts of the framework. The
+concepts and models are grouped into these three classes.
+
+\ccHeading{Existing Kinetic Data Structures}
+
+\ccRefIdfierPage{CGAL::KDS::Sort<Traits>}
+
+\ccRefIdfierPage{CGAL::KDS::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}
+
+\ccRefIdfierPage{CGAL::KDS::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}
+
+\ccRefIdfierPage{CGAL::KDS::Regular_triangulation_3<Traits, Visitor, Triangulation>}
+
+\ccRefIdfierPage{CGAL::KDS::Enclosing_box_2<Traits>}
+
+\ccRefIdfierPage{CGAL::KDS::Enclosing_box_3<Traits>}
+
+
+\ccHeading{Basic Concepts}
+
+\ccRefConceptPage{Event}
+
+\ccRefConceptPage{InstantaneousKernel}
+
+\ccRefConceptPage{Key}
+
+\ccRefConceptPage{KineticKernel}
+
+\ccRefConceptPage{MovingObjectTable}
+
+\ccRefConceptPage{RootStack}
+
+\ccRefConceptPage{Simulator}
+
+\ccRefConceptPage{SimulationTraits}
+
+
+\ccHeading{Advanced Concepts}
+
+\ccRefConceptPage{EventQueue}
+
+\ccRefConceptPage{FunctionKernel}
+
+
+\ccHeading{Basic Classes}
+
+\ccRefIdfierPage{CGAL::KDS::Simulator<FunctionKernel, EventQueue>}
+
+\ccRefIdfierPage{CGAL::KDS::Notifying_table<MovingObject>}
+
+\ccRefIdfierPage{CGAL::KDS::Cartesian_instantaneous_kernel<MovingObjectTable, StaticKernel>}
+
+\ccRefIdfierPage{CGAL::KDS::Cartesian_kinetic_kernel<FunctionKernel>}
+
+\ccRefIdfierPage{CGAL::KDS::Insert_event<MovingObjectTable>}
+
+\ccHeading{Advanced Classes}
+
+\ccRefIdfierPage{CGAL::KDS::Regular_triangulation_instantaneous_traits_3<MovingObjectTable, StaticKernel>}
+
+\ccRefIdfierPage{CGAL::Ref_counted<Object>}
+
+\ccRefIdfierPage{CGAL::Listener<Interface>}
+
+\ccRefIdfierPage{CGAL::Multi_listener<Interface>}
+
+
+%\ccHeading{Helper Classes}
+
+%\ccRefIdfierPage{CGAL::KDS::Delaunay_triangulation_default_watcher_2}
+
+%\ccRefIdfierPage{CGAL::KDS::Delaunay_triangulation_recent_edges_watcher_2<Triangulation>}
+
+
+\ccHeading{GUI Classes}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_widget_2<Simulator>}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_widget_3<Simulator>}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_moving_points_2<Traits, QtWidget2>}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_moving_points_3<Traits, QtGui>}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_moving_weighted_points_3<Traits, QtWidget3>}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_triangulation_2<KineticDelaunay_2, QtWidget_2, Qt_moving_points_2>}
+
+\ccRefIdfierPage{CGAL::KDS::Qt_triangulation_3<KineticDelaunay_3, QtWidget_3, Qt_moving_points_3>}
+
+%\ccRefIdfierPage{CGAL::KDS::Coin_kinetic_triangulation_3}
+
+
+
+
+
+
+\lcHtml{\ccHeading{Links to the Reference Sections}}
+
+It complains if I don't have any references so here one is \cite{cgal:ansi-is14882-98}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

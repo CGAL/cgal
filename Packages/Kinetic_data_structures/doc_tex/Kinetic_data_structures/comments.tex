@@ -1,0 +1,173 @@
+\section{Comments}
+
+
+The package is rather complex,
+
+
+\subsection{User Manual}
+
+
+define_exact_kds and define_numeric_kds are more than strange.
+\textit{I agree. On the other hand, due to the complexity of things, I
+think something along those lines is needed (otherwise there are 9
+#includes and 10 typedefs which need to be added to every
+file). Perhaps a header which defines a "Exact_simulator" or
+"Numeric_simulation" class which simply defines the types as defined
+in the headers.}
+
+
+
+
+
+
+Section 1.3.1
+
+The two ways to use KDS  "as fast as possible", and "Alternatively"
+are hard to grasp. You might have two examples  insteas of the #ifdefs
+If I understand it right they are very different in nature. The one
+with GUI has a notion of a a regular beat of time, where snapshots
+are taken and the snapshot gets visualized. Events can even happen
+between the beats. The other mode of usage is only interested in
+events.
+\textit{Separate it into two examples, one explicitly showing the GUI}.
+
+
+Also the example should do more than start the event loop  or
+set current time to infinity.
+\textit{Maybe}
+
+
+
+
+
+The #include section could be shorter.
+There is no need to include Delaunay_triangulation_{vertex,face}_base_2.h
+\textit{I should remove some of the includes.}
+
+You could regroup
+#include <CGAL/KDS/Moving_object_table.h>
+#include <CGAL/KDS/Moving_object_inserter.h>
+in <CGAL/KDS/basic.h> and this one could
+be included by Cartesain_kinetic_kernel.h
+\textit{They aren't really conceptually related and can be used without one another, so I would rather not. Perhaps they can go into the ``Helper headers''. I could also use default arguments for KDS::Delaunay_triangulation and skip many of the headers. I had wanted to avoid that, but it could make it less intimidating.}
+
+
+Are "Simulator", "Time", "FunctionKernel" defined in the
+magic header file? Obscure.
+And what about Cartesian_instantaneous_kernel? If it comes
+from CGAL/KDS/Cartesian_kinetic_kernel.h, then this
+header file might be called CGAL/KDS/Cartesian.h
+with the two types in there.
+\textit{It doesn't come from there, but maybe it could. Strictly speaking it is more of an adaptor, but I could simplify things. }
+
+
+The template arguments of KDS::Delaunay_triangulation_2
+do not correspond to the reference manual.
+\textit{Indeed. This should be fixed.}
+
+Would it be possible to have default template arguments which
+make the example shorter?
+\textit{I could, I was trying to avoid default arguments in the example in order to show everything, but I could change that.}
+
+Concerning the trajectories, would it be possible to have CGAL::Vectors
+where the direction of the vector is the direction and its length
+the speed? This would be intuitive.
+\textit{Hmmm, I could write constructors from a point and a vector.}
+
+Also get rid of the random. It saves you one #include ==:>-
+Instead take four points
+p0(0,1) with Vector(0,1)
+p1(1,0) with Vector(0,0) (does not move)
+p2(1,3) with Vector(0,0)
+p3(2,2) with Vector(-1,0)
+\textit{Sure}
+
+Then you can even make screenshots of all events.
+
+Also I would start with a static setting. Why inserting them
+one after the other. Set the stage, switch on the clock
+to keep it simple.
+
+
+p8: "five new events" why five?
+
+p9: Simulator<..,Exact,..>  but the reference manual has no Exact
+
+p11, paragraph3: MovingObjectTable -> Moving_object_table bwecause it is a model.
+
+
+Reference Management  Don't we have that in the support library Handle/Rep
+
+p12: "or other listening class" -> "or other listening objects"
+
+
+p13: POLYNOMIAL -> Polynomial
+
+p14: KDSMoving_object_table -> KDS::Moving_object_table
+p14: passingh -> passing, possition -> position, being processs in order -> being processed in order
+
+More Typos
+simplist -> simplest
+classeds -> classes
+reference through -> referenced through
+each of these is created -> each of these are created
+
+
+I skipped the rest of the user manual for the next round of review ==:>-
+
+
+__________________________
+Reference Manual
+
+The same example all over the place ??
+
+_____
+Listener<Interface>
+
+you make define -> you ??? define
+"inherits from the Listener interface??? Do you mean inherits from the template argument
+\ccc{Interface> ?
+
+listner -> listener
+poxy -> proxy
+An notifier -> A notifier
+ref counted -> rfeference counted
+
+
+_____
+Moving_object_table<Object>
+
+Object can easily be confused with CGAL::Obejct
+true -> \ccc{true}
+Object mot[Key key]   Do you return a copy or a reference
+
+mot.editing() -> mot.is_editing()
+
+I suggest to get rid of "_object" in the member function names.
+STL container do not have that either.
+
+_____
+Multi_listener
+
+Is this class obsolete? The fact that it is not in the right namespace
+and not in the right directory seems to indicate that.
+
+
+_____
+Pointer_queue
+
+Why is class Time in a comment?
+
+
+_____
+RootEnumerator
+
+It looks very much like an iterator
+
+\textit{But it is not quite an iterator. It is basically a container
+or stack. We decided not to go for the iterator model since it is
+comparatively heavy. In addition, allowing iterators into the
+RootEnumerator disallows a number of optimizations. We have
+RootContainers if you want iterators.
+
+It is now called RootStack and has appropraitely named methods.}

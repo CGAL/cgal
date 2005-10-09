@@ -1,0 +1,52 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Revision$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{InstantaneousKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ covers models that act as adaptors allowing CGAL static data structures to act on snapshots of kinetic data. It typically only supports one type of moving object.
+
+\ccTypes 
+
+\ccNestedType{Time}{The type used to represent the current time. This must be a ring or field type.}
+
+\ccCreationVariable{a}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Time time();}{Return the current time.}
+\ccMethod{void set_time(Time);}{Set the current time to have a certain value. All existing predicates are updated automatically.}
+
+Some of the debugging operations involve writing events to standard
+out or to a log file. This operation should be supported if you wish
+to use the debugging aids.
+
+\ccHasModels
+
+\ccc{CGAL::KDS::Cartesian_instantaneous_kernel}
+
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

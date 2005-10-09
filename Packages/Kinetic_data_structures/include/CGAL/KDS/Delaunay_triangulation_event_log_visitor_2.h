@@ -1,0 +1,52 @@
+#ifndef CGAL_KDS_DELAUNAY_TRIANGULATION_2_LOG_WATCHER_BASE_H
+#define CGAL_KDS_DELAUNAY_TRIANGULATION_2_LOG_WATCHER_BASE_H
+#include <CGAL/KDS/basic.h>
+#include <vector>
+#include <sstream>
+#include <CGAL/KDS/Delaunay_triangulation_visitor_base_2.h>
+
+CGAL_KDS_BEGIN_NAMESPACE
+
+struct Delaunay_triangulation_event_log_visitor_2: public Delaunay_triangulation_visitor_base_2 {
+  Delaunay_triangulation_event_log_visitor_2(){}
+
+  template <class Edge>
+  void pre_flip(Edge e){
+    typedef typename Edge::first_type::value_type::Vertex_handle::value_type::Point Point;
+    std::ostringstream out;
+    Point a= e.first->vertex((e.second+1)%3)->point();
+    Point b= e.first->vertex((e.second+2)%3)->point();
+    out << "Flipping away edge {" << std::min(a,b) << ", " << std::max(a,b) << "}";
+    log_.push_back(out.str());
+    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str());
+  }
+
+  template <class Edge>
+  void post_flip(Edge e){
+    typedef typename Edge::first_type::value_type::Vertex_handle::value_type::Point Point;
+    std::ostringstream out;
+    Point a= e.first->vertex((e.second+1)%3)->point();
+    Point b= e.first->vertex((e.second+2)%3)->point();
+    out << "Flipping in edge {" << std::min(a,b) << ", " << std::max(a,b) << "}";
+    log_.push_back(out.str());
+    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str());
+  }
+
+  typedef std::vector<std::string>::const_iterator iterator;
+  iterator begin()  const {
+    return log_.begin();
+  }
+  iterator end()  const {
+    return log_.end();
+  }
+
+  size_t size() const {
+    return log_.size();
+  }
+
+  std::vector<std::string> log_;
+};
+
+CGAL_KDS_END_NAMESPACE
+
+#endif

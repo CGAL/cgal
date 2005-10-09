@@ -1,0 +1,49 @@
+
+
+\subsection{Two Dimensional Delaunay}
+\label{sec:delaunay_2_example}
+
+The \ccc{CGAL::KDS::Delaunay_triangulation_2<Traits, Visitor, Triangulation>} class is the simplist
+interesting kinetic data structure we provide. 
+
+The source code, included at the end of the subsection, shows the
+basic parts necessary to a \ccc{CGAL::KDS::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}.
+
+In order to simplify implementing, debugging and using kinetic data
+structures, the common types needed by each kinetic data structure are
+grouped into traits classes, called \ccc{SimulationTraits}. The
+framework provides a number of choices which work with appropriate
+provided kinetic data structures. The provided traits classes are
+named {Exact,Inexact}\_simulation\_traits\_{1,2,3}, depending on
+whether computations are performed exactly and the dimension
+required. The details of what is in the traits classes are described
+both in the
+\ccc{SimulationTraits} reference pages and later in the user manual. Here we opt for exact computations in two dimensions.
+
+In order to monitor the Delaunay triangulation as the simulation is
+run, we use a visitor. This is a small class, which is passed to the
+Delaunay triangulation. The triangulation calls methods on the visitor
+class whenever things happen. In the case, the visitor,
+\ccc{CGAL::KDS::Delaunay_triangulation_event_log_visitor_2} simply makes a record of each event that occurs.
+
+Once the traits class and kinetic Delaunay have been created, we need
+to add points to the simulation. To do this, we add them directly to
+the
+\ccc{MovingObjectTable} using the \ccc{insert} method. 
+
+
+Now that the triangulation has been set up at points added (or
+scheduled for addition), we can run the kinetic data structure. Here
+we ask the simulation to process all events and then using the visitor
+to print out a record of all events that occur. Note that there are a
+finite number of events since eventually all the points are spead far
+apart and simply moving outward. If instead, we had added a
+\ccc{CGAL::KDS::Enclosing_box_2<Traits>} to the simulation, then 
+there would be an infinite number of events as the points repeatedly
+bounce off the walls.
+
+For an equivalent example with a graphical interface, see
+demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.cc.
+
+\label{fig:delaunay_2_usage_program}
+\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_2.cc}

@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Simulator.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Daniel Russel
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSSimulatorRev}{$Revision$}
+\RCSdefDate{\RCSSimulatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{KDS::Simulator<FunctionKernel, EventQueue>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ controls kinetic data structures by maintaining
+a concept of time and ensuring that events are processed when
+necessary. 
+
+In addition, the \ccRefName\ can call on the kinetic data structures
+to audit themselves at appropriate times. When the last event
+processed and the next to be processed have different times, then
+there is a rational value of time at which all kinetic data structures
+should be non-degenerate (since there are no events at that time). At
+such a time, kinetic data structures can easily verify their
+correctness by checking that all the certificate predicates have the
+correct value. When exactness checks are enabled, whenever the last
+event processed and the next event to be processed have different
+times, a
+\ccc{KDS::Simulator::Listener::HAS_AUDIT_TIME} notification is made. Kinetic
+data structures can listen for that event, and when it is made, they
+can call \ccc{KDS::Simulator::audit_time()} to get the time value and
+then verify that their structure is correct.
+
+\ccInclude{CGAL/KDS/Simulator.h}
+
+\ccIsModel
+
+InstantaneousKernel
+
+
+
+\ccCreation
+\ccCreationVariable{sim}  %% choose variable name
+
+\ccConstructor{Simulator(const Time start=Time(0), const Time end= Time::infinity());}{Construct a \ccRefName\ which will process events between times start and end (events outside this window will be discarded).}
+
+\ccExample
+
+\ccRefName\ is used in all of the example programs, such as the sorting example
+\ccIncludeExampleCode{Kinetic_data_structures/sort.cc}.
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

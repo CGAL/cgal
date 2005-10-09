@@ -1,0 +1,232 @@
+#ifndef CGAL_POLYNOMIAL_INTERNAL_VIRTUAL_FUNCTION_OPS_H
+#define CGAL_POLYNOMIAL_INTERNAL_VIRTUAL_FUNCTION_OPS_H
+
+#include <CGAL/Polynomial/basic.h>
+#include <CGAL/Polynomial/internal/filtered_function_node_bases.h>
+#include <CGAL/Polynomial/internal/interval_arithmetic.h>
+
+
+CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+
+template <class Traits>
+class Filtered_function_node_plus: public Filtered_function_node_binary_operation<Traits> {
+  typedef Filtered_function_node_plus<Traits> This;
+  typedef Filtered_function_node_binary_operation<Traits> P;
+public:
+  Filtered_function_node_plus(const typename P::Pointer &lc, 
+			const typename P::Pointer &rc): P(lc, rc) {
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(P::left_child()->interval_function() + P::right_child()->interval_function());
+  }
+  virtual ~Filtered_function_node_plus(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << "(";
+      this->lc_->write(out);
+      out << " + ";
+      this->rc_->write(out);
+      out << ")";
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(P::left_child()->exact_function() + P::right_child()->exact_function());
+  }
+};
+
+
+template <class Traits>
+class Filtered_function_node_times: public Filtered_function_node_binary_operation<Traits> {
+  typedef Filtered_function_node_times<Traits> This;
+  typedef Filtered_function_node_binary_operation<Traits> P;
+public:
+  Filtered_function_node_times(const typename P::Pointer &lc, 
+			const typename P::Pointer &rc): P(lc, rc) {
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(P::left_child()->interval_function() * P::right_child()->interval_function());
+  }
+  virtual ~Filtered_function_node_times(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << "(";
+      this->lc_->write(out);
+      out << " * ";
+      this->rc_->write(out);
+      out << ")";
+     } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(P::left_child()->exact_function() * P::right_child()->exact_function());
+  }
+};
+
+template <class Traits>
+class Filtered_function_node_minus: public Filtered_function_node_binary_operation<Traits> {
+  typedef Filtered_function_node_minus<Traits> This;
+  typedef Filtered_function_node_binary_operation<Traits> P;
+public:
+  Filtered_function_node_minus(const typename P::Pointer &lc, 
+			const typename P::Pointer &rc): P(lc, rc) {
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(P::left_child()->interval_function() - P::right_child()->interval_function());
+  }
+  virtual ~Filtered_function_node_minus(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << "(";
+      this->lc_->write(out);
+      out << " - ";
+      this->rc_->write(out);
+      out << ")";
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(P::left_child()->exact_function() - P::right_child()->exact_function());
+  }
+};
+
+
+template <class Traits>
+class Filtered_function_node_unary_minus: public Filtered_function_node_unary_operation<Traits> {
+  typedef Filtered_function_node_unary_minus<Traits> This;
+  typedef Filtered_function_node_unary_operation<Traits> P;
+public:
+  Filtered_function_node_unary_minus(const typename P::Pointer &c): P(c){
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(-P::child()->interval_function());
+  }
+  virtual ~Filtered_function_node_unary_minus(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << "-";
+      this->child()->write(out);
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(-P::child()->exact_function());
+  }
+};
+
+template <class Traits>
+class Filtered_function_node_times_constant: public Filtered_function_node_unary_operation<Traits> {
+  typedef Filtered_function_node_times_constant<Traits> This;
+  typedef Filtered_function_node_unary_operation<Traits> P;
+public:
+  Filtered_function_node_times_constant(const typename P::Pointer &c, const typename P::Exact_function::NT &cst): P(c), c_(cst){
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(P::child()->interval_function() * POLYNOMIAL_NS::To_interval<typename P::Exact_function::NT>()(c_));
+  }
+  virtual ~Filtered_function_node_times_constant(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << c_ << " * ";
+      this->child()->write(out);
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(c_*P::child()->exact_function());
+  }
+  typename P::Exact_function::NT c_;
+};
+
+
+template <class Traits>
+class Filtered_function_node_plus_constant: public Filtered_function_node_unary_operation<Traits> {
+  typedef Filtered_function_node_plus_constant<Traits> This;
+  typedef Filtered_function_node_unary_operation<Traits> P;
+public:
+  Filtered_function_node_plus_constant(const typename P::Pointer &c, const typename P::Exact_function::NT &cst): P(c), c_(cst){
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(typename P::Interval_function::NT(POLYNOMIAL_NS::To_interval<typename P::Exact_function::NT>()(c_)) 
+			     + P::child()->interval_function());
+  }
+  virtual ~Filtered_function_node_plus_constant(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << "(";
+      out << c_ << " + ";
+      this->child()->write(out);
+      out << ")";
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(c_+P::child()->exact_function());
+  }
+  typename P::Exact_function::NT c_;
+};
+
+template <class Traits>
+class Filtered_function_node_times_double_constant: public Filtered_function_node_unary_operation<Traits> {
+  typedef Filtered_function_node_times_double_constant<Traits> This;
+  typedef Filtered_function_node_unary_operation<Traits> P;
+public:
+  Filtered_function_node_times_double_constant(const typename P::Pointer &c, double d): P(c), c_(d){
+    P::set_interval_function(typename P::Interval_function::NT(POLYNOMIAL_NS::To_interval<double>()(c_))*P::child()->interval_function());
+  }
+  virtual ~Filtered_function_node_times_double_constant(){}
+  virtual void write(std::ostream &out) const {
+    if (P::has_exact_function()){
+      out << c_<< " * ";
+      this->child()->write(out);
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(typename P::Exact_function::NT(c_)*P::child()->exact_function());
+  }
+  double c_;
+};
+
+
+template <class Traits>
+class Filtered_function_node_plus_double_constant: public Filtered_function_node_unary_operation<Traits> {
+  typedef Filtered_function_node_plus_double_constant<Traits> This;
+  typedef Filtered_function_node_unary_operation<Traits> P;
+public:
+  Filtered_function_node_plus_double_constant(const typename P::Pointer &c, double cst): P(c), c_(cst){
+    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function( P::child()->interval_function()+ POLYNOMIAL_NS::To_interval<double>()(c_));
+  }
+  virtual ~Filtered_function_node_plus_double_constant(){}
+  virtual void write(std::ostream &out) const {
+    if (!P::has_exact_function()){
+      out << "(";
+      out << c_<< " + ";
+      this->child()->write(out);
+      out << ")";
+    } else {
+      out << P::exact_function();
+    }
+  }
+protected:
+  virtual void generate_exact_function() const {
+    P::set_exact_function(P::child()->exact_function() + typename P::Exact_function::NT(c_));
+  }
+  double c_;
+};
+
+
+
+
+
+CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+#endif

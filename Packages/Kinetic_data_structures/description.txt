@@ -1,0 +1,2 @@
+This is a framework for implementing kinetic data structures and sweepline
+algorithms as well as a number of kinetic data structures.

@@ -1,0 +1,132 @@
+\chapter{Kinetic Data Structures Framework}
+\label{chapter-kds}
+\ccChapterAuthor{Daniel Russel}
+\minitoc
+
+
+
+%\def\c#1{\protect{\em{\small #1}}}
+
+
+%\def\KK{\ccc{KineticKernel}}
+%\def\MOT{\ccc{MovingObjectTable}}
+%\def\S{\ccc{Solver}}
+%\def\Sim{\ccc{Simulator}}
+%\def\IK{\ccc{InstantaneousKernel}}
+%\def\MF{\ccc{MotionFunction}}
+%\def\SK{\ccc{StaticKernel}}
+%\def\Int{\ccc{Interval_NT}}
+%\def\FG{\ccc{FunctionGenerator}}
+%\def\R{\ccc{Root}}
+%\def\P{\ccc{Function}}
+%\def\PK{\ccc{FunctionKernel}}
+%\def\RK{\ccc{RootKernel}}
+%\def\KP{\ccc{KineticPredicate}}
+%\def\CF{\ccc{ConstructedFunction}}
+%\def\Sk{\ccc{Sort}}
+
+\def\note#1{$\langle\langle${\bf #1}$\rangle\rangle$}
+%\message{Remove note before final version!}
+%\def{\th}{^{\rm th}}
+
+% space tweaks
+%\addtolength{\parskip}{-1pt}
+
+\input{Kinetic_data_structures/todo.tex}
+
+
+This chapter describes a framework for implementing kinetic data
+structures and sweepline algorithms as well as several kinetic data
+structures implemented on top of this framework. We first, in
+Section~\ref{sec:kds_intro} introduce kinetic data structures and
+sweepline algorithms. We then present kinetic datastructures for
+Delaunay triangulations in two and three dimensions in
+Section~\ref{sec:provided_kdss}. Following that, in
+Section~\ref{sec:architecture} we discuss the architecture of the
+framework and finally we give several examples of using the framework
+in Section~\ref{sec:examples}. The framework makes heavy use of our
+\ccc{Polynomial} package to provide models of the \ccc{FunctionKernel}
+concept.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Kinetic Data Structures and Sweep Algorithms}
+\label{sec:kds_intro}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Kinetic Data Structures}
+Motion is ubiquitous in the world around us and is a feature of many
+problems of interest to computational geometers. Kinetic data
+structures were introduced by Basch et. al. in '97~\cite{basch97data,
+guibas98kinetic}. They exploit the combinatorial nature of most
+geometric data structures---the combinatorial structure remains
+invariant under some motions of the underlying geometric primitives
+and, when the structure does need to change, it does so at discrete
+times and in a limited manner. Algorithms that fit within the kinetic
+data structures framework have been found for a number of geometric
+constructs of interest, including Delaunay and regular triangulations
+in two and three dimensions (implementations of which are provided)
+and various types of clustering.
+
+Computational geometry is built on the idea of
+\textit{predicates}---functions of the description of geometric
+primitives which return a discrete set of values. Many of the
+predicates reduce to determining the sign of an algebraic expression
+of the representation (i.e.\ coordinates of points) of the geometric
+primitives. For example, to test whether a point lies above or below a
+plane, we compute the dot product of the point with the normal of the
+plane and subtract the plane's offset along the normal. If the result
+is positive, the point is above the plane, zero on the plane, negative
+below.
+
+The validity of many combinatorial structures built on top of
+geometric primitives can be proved by checking a finite number of
+predicates of the primitives. These predicates are called {\em
+  certificates}. For example, a three-dimensional convex hull is
+proved to be correct by checking, for each face, that all points are
+below the outward facing plane supporting it.
+
+The kinetic data structures framework is built on top of this view of
+computational geometry. Let the geometric primitives move by replacing
+each of their coordinates with a function of time. As time advances,
+the primitives now trace paths in space called {\em trajectories}. The
+values of the certificates which proved the correctness of the static
+structure now become functions of time, called the {\em certificate
+  functions}. As long as these functions have the correct value, the
+original structure is still correct. However, if one of the
+certificate functions changes value, the original structure must be
+updated and some new set of certificate functions computed. We call
+such occurrences {\em events}.
+
+Maintaining a kinetic data structure is then a matter of determining
+which certificate function changes value next (typically this amounts
+to determining which certificate function has the first root after the
+current time) and then updating the structure and certificate
+functions.
+
+The {\em Kinetic data structures framework} provides a basis for
+implementing such data structures on moving data and allows the user
+to easily change between exact, filtered or numeric computation.
+
+\subsection{Sweepline view}
+
+Instead of sweeping over time, we can instead sweep over one of the
+geometric coordinates. For example, we can compute a planar
+arrangement of x-monotone curves by sweeping along the x-coordinate
+from negative infinity to infinity, tracking the order the vertical
+order of the curves. The certificates are then that one curve is above
+another at the current ``time'' or x value. Each time two curves
+intersect, we must exchange their vertical order. The computation
+entailed is exactly the same as tracking the sorted order of a set of
+points as they move along the real line.
+
+\input{Kinetic_data_structures/provided_kdss.tex}
+
+\input{Kinetic_data_structures/architecture.tex}
+
+\input{Kinetic_data_structures/examples.tex}
+
+
+
+% LocalWords:  Guibas Menelaos CGAL templated Expr KDSs deschedule
+% LocalWords:  Karavelas

@@ -1,0 +1,45 @@
+
+\subsection{Implementing a Trivial Kinetic Data Structure}
+\label{sec:trivial_kds_example}
+
+ This kinetic data structure maintains one event in the queue which
+has a list of the coordinates of all the known moving objects.  Two
+classes are defined, the \ccc{Trivial_event}, and the
+\ccc{Trivial_kds}. The event classes must be declared outside of the
+kinetic data structure so that the \ccc{operator<<} can be defined for
+them. 
+
+The kinetic data structure maintains one event containing a list of
+the trajectories of all objects in the the simulation. This
+event must updated whenever any objects change, in addition, it is
+always created to fail one time unit in the future, so it must be
+recreated when it fails. As a result, the kinetic data structure has
+the main parts of a real one--it responds to changes in trajectories
+of the objects and certificate failures (when the event expires).
+
+ The public methods can be grouped into three sets which are shared
+ with almost all other kinetic data structures:
+\begin{itemize}
+\item \ccc{has_certificates} and \ccc{set_has_certificates} which
+  checks/sets whether the kinetic data structure is currently
+  maintaining certificates.
+\item \ccc{insert}, \ccc{set}, \ccc{erase} which are called by the
+  \ccc{CGAL::KDS::Notifying_table_listener_helper} in response to the
+  addition, modification, or deletion of an object to, in or from the
+  simulation.
+\item \ccc{audit} which is called periodically by the
+  \ccc{CGAL::KDS::Simulator_kds_listener} when kinetic data structures can
+  easily audit themselves.
+\end{itemize} 
+
+In addition, it has one method which is called when a certificate
+fails. The name/existence of such methods depend on the nature of the
+kinetic data structure in question.
+
+Like many kinetic data structures, it takes a \ccc{SimulationTraits}
+as a template argument. This traits class defines the types needed for
+the simulation and is responsible for instantiating them.
+
+ \label{fig:trivial_usage_program}
+\ccIncludeExampleCode{Kinetic_data_structures/trivial_kds.cc}
+%../../examples/Kinetic_data_structures/ % LocalWords: CGAL

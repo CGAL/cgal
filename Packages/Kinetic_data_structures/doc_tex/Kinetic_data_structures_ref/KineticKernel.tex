@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: KineticKernel.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSKineticKernelRev}{$Revision$}
+\RCSdefDate{\RCSKineticKernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{KineticKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ acts as the kinetic analog of a CGAL
+kernel. It provides some set of primitives and predicats acting on
+them.
+
+\ccTypes
+
+\ccNestedType{Motion_function}{The type which is used to represent coordinates of moving primitives. This is the analog of the CGAL kernel \ccc{RT}.}
+\ccNestedType{Certificate_function}{The type representing the results of predicates.}
+
+\ccCreationVariable{a}  %% choose variable name
+
+
+\ccHasModels
+
+\ccc{CGAL::KDS::Cartesian_kinetic_kernel}.
+
+
+
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

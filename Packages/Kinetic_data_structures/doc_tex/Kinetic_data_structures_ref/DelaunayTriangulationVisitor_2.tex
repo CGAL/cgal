@@ -1,0 +1,43 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunayTriangulationVisitorRev}{$Revision$}
+\RCSdefDate{\RCSDelaunayTriangulationVisitorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{DelaunayTriangulationVisitor_2}
+
+\ccDefinition
+
+This concept is for proxy objects which get notified when a kinetic Delaunay triangulation changes.
+
+\ccCreationVariable{v}
+
+\ccOperations
+
+\ccMethod{void delete_vertex(Vertex_handle);}{The vertex is about to be deleted.}
+
+\ccMethod{void new_vertex(Vertex_handle);}{The vertex was just created.}
+
+\ccMethod{void change_vertex(Vertex_handle);}{Something changed at the vertex.}
+
+\ccMethod{template <class It>  void new_faces(It begin, It end);}{New faces have just been made.}
+ 
+\ccMethod{template <class It> void delete_faces(It, It);}{The faces in the range are about to be deleted.}
+
+\ccMethod{void pre_flip(Edge);}{The edge is about to be flipped.}
+
+\ccMethod{void post_flip(Edge);}{The edge was just created with a flip.}
+
+
+\ccHasModels 
+
+\ccc{CGAL::KDS::Delaunay_triangulation_visitor_base_2}, \ccc{CGAL::KDS::Delaunay_triangulation_recent_edges_visitor_2},  \ccc{CGAL::KDS::Delaunay_triangulation_recent_event_log_visitor_2}
+
+\end{ccRefConcept}
+
+

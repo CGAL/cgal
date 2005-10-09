@@ -1,0 +1,45 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: FunctionKernel.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSFunctionRev}{$Revision$}
+\RCSdefDate{\RCSFunctionDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Function}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ encapsulates what the KDS framework needs to know about functions.
+
+\ccTypes
+
+\ccNestedType{NT}{The basic representational number type.}
+
+\ccOperations
+
+\ccMethod{NT operator()(NT t);}{Evaluate the function at the value \ccc{t}. The result returned can be exact or not depending on whether \ccc{NT} is an exact number type or not.}
+
+\ccHasModels
+\ccc{POLYNOMIAL::Polynomial<NT>}
+
+\ccSeeAlso
+
+RootEnumerator, FunctionKernel
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

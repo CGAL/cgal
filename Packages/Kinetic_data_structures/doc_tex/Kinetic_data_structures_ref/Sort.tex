@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Sort.tex
+% +------------------------------------------------------------------------+
+% | 27.03.2005   Author
+% | Package: KDS
+% | 
+\RCSdef{\RCSSortRev}{$Revision$}
+\RCSdefDate{\RCSSortDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{KDS::Sort<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ maintains a sorted list of objects. It is the
+simplest kinetic data structure provided and is a good place to start
+when looking at the basics of implementing a kinetic data
+structure. 
+
+Note that it does not expose any programming interface, as it is meant
+mostly as an example.
+
+\ccInclude{CGAL/KDS/Sort.h}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Sort(Traits tr);}{The basic constructor.}
+
+\ccSeeAlso
+
+\ccc{CGAL::KDS::Ref_counted},
+\ccc{CGAL::KDS::Delaunay_triangulation_2}.
+\ccc{CGAL::KDS::Simple_kds_base}.
+
+\ccExample
+
+
+\ccIncludeExampleCode{Kinetic_data_structures/sort.cc}| 
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

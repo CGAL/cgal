@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: RootEnumerator.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSRootEnumeratorRev}{$Revision$}
+\RCSdefDate{\RCSRootEnumeratorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Root}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ for the values used to represent roots of functions and times.
+
+
+\ccCreation
+\ccCreationVariable{re}  %% choose variable name
+
+\ccConstructor{Root();}{default constructor. The value is undefined.}
+\ccConstructor{Root(NT v);}{Construct a root from a some number. The number types supported must include \ccc{double} and the function coefficient type.}
+
+
+\ccOperations 
+
+Roots must support all binary comparisons with other roots as well as
+(possibly through constructors) with the constant 0. 
+
+
+\ccGlobalFunction{std::ostream &operator<<(std::ostream &, Root);}{Write the root in some human readable format.}
+
+\ccGlobalFunction{double to_double(Root);}{Return a double approximation of the root value.}
+
+\ccGlobalFunction{std::pair<double, double> to_interval(Root);}{Return an interval containing the root value.}
+
+
+\ccGlobalFunction{Root infinity<Root>();}{This function template must
+be specialized to return a valid value which will be used to represent
+infinity. Alternatively, \ccc{std::numeric_limits<Root>} could be
+specialized and the \ccc{std::numeric_limits<Root>::infinity()} value
+\ccc{std::numeric_limits<Root>::max()} value will be used. }
+
+
+\ccHasModels
+
+\ccc{double}, \ccc{CGAL::POLYNOMIAL/Simple_interval_root.h}.
+
+\ccSeeAlso
+
+FunctionKernel, RootEnumerator.
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
