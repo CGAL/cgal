@@ -54,10 +54,11 @@ int main(int argc, char *argv[]){
     Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
     Qt_mpt::Pointer qtmpt= new Qt_mpt(tr, qtsim);
 
-    Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();
     Traits::Simulator::Pointer sim= tr.simulator_pointer();
     Traits::Moving_point_table::Pointer mpt= tr.moving_point_table_pointer();
     
+    typedef Traits::Function_kernel::Function Fn;
+
     if (file.empty()) {
       CGAL::Random rand;
       for (int i=0; i< n; ++i){
@@ -68,10 +69,10 @@ int main(int argc, char *argv[]){
 	  coefsz.push_back((rand.get_double()*10-5)/(j+1));
 	  coefsw.push_back((rand.get_double())/(j+1));
 	}
-	Traits::Kinetic_kernel::Weighted_point_3 mp(Traits::Kinetic_kernel::Point_3(cf(coefsx.begin(), coefsx.end()),
-										    cf(coefsy.begin(), coefsy.end()),
-										    cf(coefsz.begin(), coefsz.end())),
-						     cf(coefsw.begin(), coefsw.end()));
+	Traits::Kinetic_kernel::Weighted_point_3 mp(Traits::Kinetic_kernel::Point_3(Fn(coefsx.begin(), coefsx.end()),
+										    Fn(coefsy.begin(), coefsy.end()),
+										    Fn(coefsz.begin(), coefsz.end())),
+						     Fn(coefsw.begin(), coefsw.end()));
 	tr.moving_point_table_pointer()->insert(mp);
       }
     } else {
@@ -104,8 +105,7 @@ int main(int argc, char *argv[]){
     Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
     Qt_mpt::Pointer qtmpt= new Qt_mpt(tr, qtsim);  
   
-    Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();
-    
+    typedef Traits::Function_kernel::Function Fn;
     Traits::Simulator::Pointer sim= tr.simulator_pointer();
     Traits::Moving_point_table::Pointer mpt= tr.moving_point_table_pointer();
     CGAL::KDS::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
@@ -119,9 +119,9 @@ int main(int argc, char *argv[]){
 	  coefsy.push_back((rand.get_double()*10-5)/(j+1));
 	  coefsz.push_back((rand.get_double()*10-5)/(j+1));
 	}
-	Traits::Kinetic_kernel::Point_3 mp(cf(coefsx.begin(), coefsx.end()),
-					   cf(coefsy.begin(), coefsy.end()),
-					   cf(coefsz.begin(), coefsz.end()));
+	Traits::Kinetic_kernel::Point_3 mp(Fn(coefsx.begin(), coefsx.end()),
+					   Fn(coefsy.begin(), coefsy.end()),
+					   Fn(coefsz.begin(), coefsz.end()));
 	tr.moving_point_table_pointer()->insert(mp);
       }
     } else {

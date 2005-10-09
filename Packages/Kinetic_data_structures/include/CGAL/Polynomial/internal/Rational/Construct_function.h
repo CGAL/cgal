@@ -10,11 +10,11 @@ struct Construct_function{
   typedef Fn result_type;
   typedef typename result_type::NT argument_type;
     
-  template <class It>
+  /*template <class It>
   result_type operator()(It b, 
 			 It e) const {
     return result_type(b,e);
-  }
+    }*/
 
   //! construct high degree polynomials
   result_type operator()(const argument_type &a0, 

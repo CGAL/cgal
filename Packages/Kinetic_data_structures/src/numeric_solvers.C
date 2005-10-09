@@ -22,10 +22,28 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 static const double max_error_value =0.0000005;
 
+/*double polish_root(const double *begin, const double *end,
+		   double rt) {
+  std::cout << "Polished from " << rt << " to ";
+  typedef POLYNOMIAL_NS::Polynomial<double> Fn;
+  typedef POLYNOMIAL_NS::internal::Derivative<Fn> Diff;
+  Diff dx;
+  Fn f(begin, end);
+  Fn d= dx(f);
+
+  //int numit=0;
+  for (int i=0; i< 10; ++i) {
+    double delta= -f(rt)/d(rt);
+    rt= rt+delta;
+  }
+  std::cout << rt << std::endl;
+  return rt;
+  }*/
+
 
 template <class NT> 
 static inline void check_first_root(const NT *begin, const NT *end, 
-			     NT lb, std::vector<NT> &roots){
+				    NT lb, std::vector<NT> &roots){
   // if we are not close to the current time, then we are fine
   if (roots.empty()) return;
   if (roots.back() > lb+ .0005) return;
@@ -107,7 +125,7 @@ static void jama_compute_roots(const NT *begin, const NT *end,  NT lb,
   for (int i=0; i< real.dim1(); ++i){
     //std::cout << "Testing " << real[i] << "+" << imag[i] << "i" << std::endl;
     if (is_real(real[i], imag[i]) && real[i] < ub && real[i] > lb-tol){
-      roots.push_back(real[i]);
+      roots.push_back(real[i]/*polish_root(begin, end, real[i])*/);
     }
   }
   std::sort(roots.begin(), roots.end(), root_compare<NT>());
@@ -120,7 +138,7 @@ static void jama_compute_roots(const NT *begin, const NT *end,  NT lb,
 
 
 template <bool CLEAN, class NT>
-static inline void compute_quadratic_roots(const NT *begin, const NT *,  NT lb, NT ub,
+static inline void compute_quadratic_roots(const NT *begin, const NT *end,  NT lb, NT ub,
 			     std::vector<NT> &roots){
   NT max_error=0;
   if (CLEAN) max_error=max_error_value;
