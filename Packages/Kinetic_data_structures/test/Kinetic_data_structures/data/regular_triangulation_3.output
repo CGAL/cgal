@@ -1,0 +1,526 @@
+Flipping away edge {(2), (6)}
+Flipping in facet {(7), (9), (17)}
+Flipping away facet {(3), (12), (13)}
+Flipping in facet {(5), (12), (13)}
+Flipping away facet {(N), (5), (16)}
+Flipping in facet {(5), (16), (18)}
+Flipping away facet {(6), (9), (17)}
+Flipping in facet {(9), (11), (17)}
+Flipping away edge {(9), (17)}
+Flipping in facet {(2), (7), (11)}
+Flipping away facet {(N), (3), (5)}
+Flipping in facet {(N), (1), (5)}
+Flipping away facet {(0), (10), (15)}
+Flipping in facet {(0), (14), (15)}
+Flipping away facet {(0), (2), (16)}
+Flipping in facet {(2), (13), (16)}
+Flipping away edge {(5), (16)}
+Flipping in facet {(0), (1), (18)}
+Flipping away facet {(0), (3), (10)}
+Flipping in facet {(0), (3), (13)}
+Flipping away facet {(0), (3), (5)}
+Flipping in facet {(3), (5), (13)}
+Flipping away edge {(0), (3)}
+Flipping in facet {(1), (13), (14)}
+Flipping away edge {(13), (15)}
+Flipping in facet {(2), (10), (12)}
+Flipping away edge {(0), (10)}
+Flipping in facet {(2), (13), (14)}
+Flipping away facet {(8), (10), (11)}
+Flipping in facet {(N), (10), (11)}
+Flipping away facet {(0), (1), (13)}
+Flipping in facet {(0), (1), (5)}
+Flipping away edge {(8), (11)}
+Flipping in facet {(N), (15), (17)}
+Flipping away edge {(1), (13)}
+Flipping in facet {(3), (5), (14)}
+Flipping away facet {(2), (9), (16)}
+Flipping in facet {(7), (9), (16)}
+Flipping away edge {(2), (16)}
+Flipping in facet {(7), (13), (18)}
+Flipping away facet {(N), (8), (15)}
+Flipping in facet {(8), (10), (15)}
+Flipping away edge {(3), (13)}
+Flipping in facet {(5), (10), (14)}
+Flipping away facet {(3), (5), (14)}
+Flipping in facet {(1), (5), (14)}
+Flipping away facet {(3), (8), (14)}
+Flipping in facet {(8), (14), (19)}
+Flipping away edge {(0), (15)}
+Flipping in facet {(2), (8), (14)}
+Flipping away edge {(6), (19)}
+Flipping in facet {(N), (4), (16)}
+Flipping away edge {(13), (16)}
+Flipping in facet {(0), (7), (18)}
+Flipping away edge {(10), (11)}
+Flipping in facet {(N), (12), (15)}
+Flipping away facet {(0), (1), (16)}
+Flipping in facet {(0), (1), (19)}
+Flipping away facet {(10), (12), (13)}
+Flipping in facet {(5), (12), (13)}
+Flipping away edge {(6), (8)}
+Flipping in facet {(N), (4), (17)}
+Flipping away facet {(2), (4), (17)}
+Flipping in facet {(4), (7), (17)}
+Flipping away facet {(N), (8), (10)}
+Flipping in facet {(3), (8), (10)}
+Flipping away edge {(2), (4)}
+Flipping in facet {(0), (7), (8)}
+Flipping away facet {(4), (7), (17)}
+Flipping in facet {(6), (7), (17)}
+Flipping away edge {(12), (13)}
+Flipping in facet {(2), (5), (9)}
+Flipping away facet {(N), (3), (8)}
+Flipping in facet {(3), (8), (19)}
+Flipping away facet {(N), (10), (12)}
+Flipping in facet {(N), (3), (12)}
+Flipping away edge {(N), (10)}
+Flipping in facet {(3), (15), (17)}
+Flipping away edge {(4), (7)}
+Flipping in facet {(0), (6), (8)}
+Flipping away edge {(3), (8)}
+Flipping in facet {(10), (17), (19)}
+Flipping away facet {(N), (11), (15)}
+Flipping in facet {(N), (11), (17)}
+Flipping away facet {(2), (7), (8)}
+Flipping in facet {(2), (8), (17)}
+Flipping away edge {(10), (13)}
+Flipping in facet {(2), (5), (14)}
+Flipping away edge {(3), (14)}
+Flipping in facet {(1), (10), (19)}
+Flipping away facet {(7), (9), (16)}
+Flipping in facet {(6), (7), (16)}
+Flipping away facet {(2), (7), (17)}
+Flipping in facet {(2), (11), (17)}
+Flipping away edge {(7), (16)}
+Flipping in facet {(0), (6), (18)}
+Flipping away edge {(9), (13)}
+Flipping in facet {(2), (5), (18)}
+Flipping away facet {(N), (4), (6)}
+Flipping in facet {(N), (6), (16)}
+Flipping away facet {(N), (6), (9)}
+Flipping in facet {(6), (9), (11)}
+Flipping away facet {(0), (2), (17)}
+Flipping in facet {(0), (8), (17)}
+Flipping away edge {(N), (6)}
+Flipping in facet {(11), (16), (17)}
+Flipping away edge {(7), (8)}
+Flipping in facet {(0), (6), (17)}
+Flipping away edge {(7), (17)}
+Flipping in facet {(0), (6), (11)}
+Flipping away facet {(N), (11), (12)}
+Flipping in facet {(N), (9), (12)}
+Flipping away facet {(4), (6), (17)}
+Flipping in facet {(4), (6), (8)}
+Flipping away edge {(N), (8)}
+Flipping in facet {(4), (17), (19)}
+Flipping away edge {(0), (17)}
+Flipping in facet {(6), (8), (11)}
+Flipping away edge {(2), (17)}
+Flipping in facet {(8), (11), (15)}
+Flipping away facet {(8), (10), (17)}
+Flipping in facet {(10), (15), (17)}
+Flipping away edge {(N), (15)}
+Flipping in facet {(3), (12), (17)}
+Flipping away edge {(4), (6)}
+Flipping in facet {(0), (8), (16)}
+Flipping away facet {(6), (8), (11)}
+Flipping in facet {(0), (6), (11)}
+Flipping away facet {(0), (5), (14)}
+Flipping in facet {(1), (5), (14)}
+Flipping away facet {(8), (14), (19)}
+Flipping in facet {(4), (8), (19)}
+Flipping away facet {(0), (2), (14)}
+Flipping in facet {(0), (13), (14)}
+Flipping away edge {(6), (8)}
+Flipping in facet {(0), (16), (17)}
+Flipping away edge {(6), (17)}
+Flipping in facet {(0), (11), (16)}
+Flipping away edge {(3), (5)}
+Flipping in facet {(1), (10), (12)}
+Flipping away facet {(8), (10), (19)}
+Flipping in facet {(10), (15), (19)}
+Flipping away edge {(8), (19)}
+Flipping in facet {(4), (15), (17)}
+Flipping away facet {(0), (8), (14)}
+Flipping in facet {(4), (8), (14)}
+Flipping away facet {(2), (9), (18)}
+Flipping in facet {(2), (7), (18)}
+Flipping away edge {(8), (16)}
+Flipping in facet {(0), (4), (17)}
+Flipping away facet {(0), (1), (14)}
+Flipping in facet {(0), (14), (19)}
+Flipping away edge {(11), (12)}
+Flipping in facet {(9), (15), (17)}
+Flipping away edge {(8), (10)}
+Flipping in facet {(4), (14), (15)}
+Flipping away facet {(0), (1), (18)}
+Flipping in facet {(1), (5), (18)}
+Flipping away edge {(0), (1)}
+Flipping in facet {(5), (13), (19)}
+Flipping away facet {(N), (5), (12)}
+Flipping in facet {(N), (9), (12)}
+Flipping away edge {(0), (14)}
+Flipping in facet {(4), (13), (19)}
+Flipping away edge {(1), (13)}
+Flipping in facet {(5), (14), (19)}
+Flipping away edge {(10), (17)}
+Flipping in facet {(3), (15), (19)}
+Flipping away edge {(2), (18)}
+Flipping in facet {(5), (7), (13)}
+Flipping away edge {(0), (5)}
+Flipping in facet {(13), (18), (19)}
+Flipping away facet {(2), (10), (12)}
+Flipping in facet {(10), (12), (15)}
+Flipping away edge {(N), (5)}
+Flipping in facet {(1), (9), (18)}
+Flipping away facet {(9), (16), (18)}
+Flipping in facet {(6), (16), (18)}
+Flipping away facet {(0), (6), (11)}
+Flipping in facet {(0), (6), (7)}
+Flipping away facet {(0), (2), (11)}
+Flipping in facet {(2), (7), (11)}
+Flipping away facet {(N), (9), (18)}
+Flipping in facet {(N), (1), (9)}
+Flipping away edge {(0), (2)}
+Flipping in facet {(7), (8), (13)}
+Flipping away facet {(1), (9), (18)}
+Flipping in facet {(1), (5), (9)}
+Flipping away edge {(N), (18)}
+Flipping in facet {(1), (6), (16)}
+Flipping away edge {(9), (18)}
+Flipping in facet {(5), (6), (7)}
+Flipping away facet {(4), (16), (17)}
+Flipping in facet {(N), (4), (17)}
+Flipping away facet {(1), (16), (18)}
+Flipping in facet {(1), (18), (19)}
+Flipping away edge {(1), (14)}
+Flipping in facet {(5), (10), (19)}
+Flipping away facet {(13), (14), (19)}
+Flipping in facet {(4), (13), (19)}
+Flipping away edge {(4), (16)}
+Flipping in facet {(N), (0), (19)}
+Flipping away edge {(1), (16)}
+Flipping in facet {(N), (6), (19)}
+Flipping away edge {(2), (10)}
+Flipping in facet {(5), (14), (15)}
+Flipping away edge {(N), (4)}
+Flipping in facet {(0), (17), (19)}
+Flipping away facet {(5), (6), (9)}
+Flipping in facet {(1), (5), (9)}
+Flipping away facet {(2), (7), (11)}
+Flipping in facet {(2), (9), (11)}
+Flipping away facet {(8), (13), (14)}
+Flipping in facet {(2), (13), (14)}
+Flipping away facet {(0), (7), (13)}
+Flipping in facet {(7), (13), (18)}
+Flipping away facet {(2), (7), (13)}
+Flipping in facet {(2), (5), (7)}
+Flipping away edge {(2), (7)}
+Flipping in facet {(5), (8), (9)}
+Flipping away edge {(8), (14)}
+Flipping in facet {(2), (4), (15)}
+Flipping away facet {(0), (4), (8)}
+Flipping in facet {(0), (8), (13)}
+Flipping away edge {(2), (11)}
+Flipping in facet {(8), (9), (15)}
+Flipping away facet {(N), (1), (19)}
+Flipping in facet {(N), (3), (19)}
+Flipping away facet {(1), (10), (12)}
+Flipping in facet {(5), (10), (12)}
+Flipping away edge {(14), (19)}
+Flipping in facet {(4), (5), (10)}
+Flipping away edge {(0), (6)}
+Flipping in facet {(7), (16), (18)}
+Flipping away facet {(5), (9), (12)}
+Flipping in facet {(2), (9), (12)}
+Flipping away facet {(0), (8), (17)}
+Flipping in facet {(0), (8), (11)}
+Flipping away edge {(7), (13)}
+Flipping in facet {(5), (8), (18)}
+Flipping away facet {(2), (9), (12)}
+Flipping in facet {(9), (12), (15)}
+Flipping away edge {(2), (12)}
+Flipping in facet {(1), (5), (15)}
+Flipping away facet {(10), (15), (19)}
+Flipping in facet {(4), (10), (15)}
+Flipping away facet {(2), (5), (9)}
+Flipping in facet {(5), (8), (9)}
+Flipping away facet {(4), (8), (17)}
+Flipping in facet {(4), (8), (15)}
+Flipping away edge {(2), (9)}
+Flipping in facet {(1), (8), (15)}
+Flipping away edge {(5), (9)}
+Flipping in facet {(1), (7), (8)}
+Flipping away edge {(1), (18)}
+Flipping in facet {(5), (6), (19)}
+Flipping away edge {(4), (8)}
+Flipping in facet {(2), (13), (15)}
+Flipping away facet {(5), (6), (18)}
+Flipping in facet {(6), (7), (18)}
+Flipping away edge {(0), (4)}
+Flipping in facet {(13), (17), (19)}
+Flipping away edge {(1), (2)}
+Flipping in facet {(5), (8), (15)}
+Flipping away edge {(8), (17)}
+Flipping in facet {(11), (13), (15)}
+Flipping away edge {(5), (6)}
+Flipping in facet {(1), (7), (19)}
+Flipping away facet {(1), (5), (19)}
+Flipping in facet {(1), (5), (10)}
+Flipping away facet {(1), (7), (19)}
+Flipping in facet {(6), (7), (19)}
+Flipping away edge {(1), (19)}
+Flipping in facet {(3), (6), (10)}
+Flipping away edge {(15), (19)}
+Flipping in facet {(3), (4), (17)}
+Flipping away edge {(13), (14)}
+Flipping in facet {(2), (4), (5)}
+Flipping away edge {(6), (11)}
+Flipping in facet {(7), (9), (16)}
+Flipping away facet {(5), (10), (15)}
+Flipping in facet {(5), (10), (12)}
+Flipping away facet {(10), (12), (15)}
+Flipping in facet {(3), (10), (12)}
+Flipping away facet {(5), (7), (19)}
+Flipping in facet {(5), (18), (19)}
+Flipping away edge {(10), (12)}
+Flipping in facet {(3), (5), (14)}
+Flipping away facet {(4), (13), (17)}
+Flipping in facet {(4), (13), (15)}
+Flipping away edge {(2), (14)}
+Flipping in facet {(4), (5), (15)}
+Flipping away facet {(8), (13), (15)}
+Flipping in facet {(2), (8), (15)}
+Flipping away edge {(2), (4)}
+Flipping in facet {(5), (13), (15)}
+Flipping away facet {(5), (18), (19)}
+Flipping in facet {(5), (13), (18)}
+Flipping away facet {(3), (17), (19)}
+Flipping in facet {(N), (17), (19)}
+Flipping away facet {(2), (8), (13)}
+Flipping in facet {(2), (5), (8)}
+Flipping away edge {(4), (13)}
+Flipping in facet {(5), (15), (19)}
+Flipping away edge {(2), (13)}
+Flipping in facet {(5), (11), (15)}
+Popping (2)
+Popped (2) from {(11) (5) (15) (8)}
+Flipping away facet {(1), (3), (5)}
+Flipping in facet {(3), (5), (10)}
+Moving (2) from {(11) (5) (15) (8)}
+Moved (2) from {(8) (1) (5) (15)}
+Flipping away facet {(5), (10), (18)}
+Flipping in facet {(5), (7), (18)}
+Flipping away edge {(3), (5)}
+Flipping in facet {(10), (12), (14)}
+Flipping away facet {(0), (8), (13)}
+Flipping in facet {(8), (13), (18)}
+Moving (2) from {(8) (1) (5) (15)}
+Moved (2) from {(1) (5) (15) (12)}
+Flipping away facet {(0), (18), (19)}
+Flipping in facet {(0), (16), (19)}
+Flipping away facet {(5), (12), (15)}
+Flipping in facet {(1), (5), (12)}
+Flipping away facet {(N), (1), (3)}
+Flipping in facet {(N), (3), (12)}
+Flipping away facet {(11), (13), (15)}
+Flipping in facet {(11), (15), (17)}
+Flipping away edge {(5), (12)}
+Flipping in facet {(1), (10), (14)}
+Flipping away edge {(13), (15)}
+Flipping in facet {(5), (17), (19)}
+Moving (2) from {(5) (1) (14) (15)}
+Moved (2) from {(1) (14) (10) (5)}
+Flipping away facet {(3), (6), (19)}
+Flipping in facet {(N), (6), (19)}
+Flipping away edge {(7), (19)}
+Flipping in facet {(6), (10), (18)}
+Pushing (2) into {(1) (14) (10) (5)}
+Pushed (2)
+Flipping away facet {(7), (9), (11)}
+Flipping in facet {(7), (8), (11)}
+Flipping away facet {(5), (13), (17)}
+Flipping in facet {(11), (13), (17)}
+Flipping away edge {(8), (13)}
+Flipping in facet {(5), (11), (18)}
+Flipping away facet {(0), (16), (19)}
+Flipping in facet {(N), (0), (19)}
+Flipping away facet {(1), (5), (10)}
+Flipping in facet {(1), (5), (7)}
+Flipping away edge {(0), (19)}
+Flipping in facet {(N), (13), (17)}
+Flipping away facet {(16), (18), (19)}
+Flipping in facet {(6), (16), (19)}
+Flipping away edge {(18), (19)}
+Flipping in facet {(6), (10), (13)}
+Flipping away edge {(3), (19)}
+Flipping in facet {(N), (4), (10)}
+Flipping away facet {(1), (7), (9)}
+Flipping in facet {(6), (7), (9)}
+Flipping away facet {(1), (5), (15)}
+Flipping in facet {(1), (5), (8)}
+Flipping away edge {(16), (19)}
+Flipping in facet {(N), (6), (13)}
+Flipping away edge {(6), (19)}
+Flipping in facet {(N), (10), (13)}
+Flipping away edge {(10), (18)}
+Flipping in facet {(6), (7), (13)}
+Flipping away edge {(10), (12)}
+Flipping in facet {(1), (3), (14)}
+Flipping away facet {(1), (5), (7)}
+Flipping in facet {(1), (7), (8)}
+Flipping away edge {(1), (5)}
+Flipping in facet {(2), (8), (14)}
+Flipping away edge {(10), (15)}
+Flipping in facet {(3), (4), (14)}
+Flipping away facet {(5), (7), (13)}
+Flipping in facet {(7), (13), (18)}
+Flipping away facet {(N), (10), (19)}
+Flipping in facet {(4), (10), (19)}
+Flipping away facet {(1), (2), (8)}
+Flipping in facet {(1), (2), (7)}
+Flipping away facet {(9), (11), (15)}
+Flipping in facet {(9), (15), (17)}
+Flipping away facet {(9), (12), (15)}
+Flipping in facet {(9), (15), (17)}
+Flipping away facet {(5), (10), (13)}
+Flipping in facet {(5), (10), (19)}
+Flipping away edge {(9), (15)}
+Flipping in facet {(1), (8), (17)}
+Flipping away edge {(2), (8)}
+Flipping in facet {(5), (7), (14)}
+Flipping away facet {(3), (15), (17)}
+Flipping in facet {(3), (12), (15)}
+Flipping away facet {(5), (10), (18)}
+Flipping in facet {(7), (10), (18)}
+Flipping away edge {(N), (0)}
+Flipping in facet {(13), (16), (17)}
+Flipping away edge {(3), (17)}
+Flipping in facet {(N), (4), (12)}
+Flipping away facet {(1), (6), (10)}
+Flipping in facet {(1), (6), (7)}
+Flipping away edge {(1), (2)}
+Flipping in facet {(7), (10), (14)}
+Flipping away facet {(5), (10), (14)}
+Flipping in facet {(4), (5), (10)}
+Flipping away facet {(4), (5), (14)}
+Flipping in facet {(4), (5), (15)}
+Flipping away facet {(8), (9), (17)}
+Flipping in facet {(8), (9), (11)}
+Flipping away facet {(4), (10), (14)}
+Flipping in facet {(3), (4), (10)}
+Flipping away edge {(8), (17)}
+Flipping in facet {(1), (11), (15)}
+Flipping away edge {(4), (14)}
+Flipping in facet {(2), (3), (15)}
+Flipping away edge {(5), (13)}
+Flipping in facet {(11), (18), (19)}
+Flipping away edge {(0), (8)}
+Flipping in facet {(7), (11), (18)}
+Flipping away facet {(0), (11), (13)}
+Flipping in facet {(0), (13), (17)}
+Flipping away edge {(2), (7)}
+Flipping in facet {(5), (10), (14)}
+Flipping away edge {(N), (19)}
+Flipping in facet {(4), (13), (17)}
+Flipping away facet {(5), (8), (15)}
+Flipping in facet {(5), (8), (11)}
+Flipping away edge {(9), (12)}
+Flipping in facet {(N), (1), (17)}
+Flipping away edge {(8), (18)}
+Flipping in facet {(5), (7), (11)}
+Flipping away facet {(5), (7), (10)}
+Flipping in facet {(5), (7), (19)}
+Flipping away edge {(6), (18)}
+Flipping in facet {(7), (13), (16)}
+Flipping away edge {(11), (13)}
+Flipping in facet {(17), (18), (19)}
+Flipping away edge {(1), (10)}
+Flipping in facet {(3), (7), (14)}
+Flipping away edge {(5), (18)}
+Flipping in facet {(7), (11), (19)}
+Flipping away edge {(8), (15)}
+Flipping in facet {(1), (11), (14)}
+Flipping away edge {(15), (19)}
+Flipping in facet {(4), (5), (17)}
+Flipping away edge {(16), (18)}
+Flipping in facet {(0), (7), (13)}
+Flipping away facet {(5), (7), (11)}
+Flipping in facet {(7), (8), (11)}
+Flipping away facet {(5), (10), (14)}
+Flipping in facet {(2), (5), (10)}
+Flipping away edge {(5), (7)}
+Flipping in facet {(8), (14), (19)}
+Flipping away edge {(5), (8)}
+Flipping in facet {(11), (14), (19)}
+Flipping away facet {(0), (13), (17)}
+Flipping in facet {(13), (17), (18)}
+Flipping away facet {(1), (11), (15)}
+Flipping in facet {(1), (11), (17)}
+Flipping away edge {(11), (15)}
+Flipping in facet {(5), (14), (17)}
+Flipping away edge {(8), (19)}
+Flipping in facet {(7), (11), (14)}
+Flipping away facet {(7), (11), (18)}
+Flipping in facet {(0), (7), (18)}
+Flipping away facet {(4), (17), (19)}
+Flipping in facet {(4), (13), (17)}
+Flipping away facet {(13), (16), (17)}
+Flipping in facet {(N), (13), (17)}
+Flipping away facet {(1), (3), (7)}
+Flipping in facet {(3), (6), (7)}
+Flipping away facet {(N), (3), (4)}
+Flipping in facet {(N), (4), (10)}
+Flipping away facet {(13), (17), (19)}
+Flipping in facet {(17), (18), (19)}
+Flipping away edge {(4), (19)}
+Flipping in facet {(5), (10), (13)}
+Flipping away edge {(10), (18)}
+Flipping in facet {(7), (13), (19)}
+Flipping away edge {(8), (16)}
+Flipping in facet {(7), (9), (11)}
+Flipping away edge {(7), (18)}
+Flipping in facet {(0), (13), (19)}
+Flipping away facet {(7), (13), (19)}
+Flipping in facet {(7), (10), (13)}
+Flipping away edge {(N), (3)}
+Flipping in facet {(6), (10), (12)}
+Flipping away facet {(7), (11), (16)}
+Flipping in facet {(0), (7), (16)}
+Flipping away facet {(1), (6), (9)}
+Flipping in facet {(N), (6), (9)}
+Flipping away facet {(N), (4), (10)}
+Flipping in facet {(N), (10), (13)}
+Flipping away edge {(1), (7)}
+Flipping in facet {(6), (8), (14)}
+Flipping away edge {(N), (4)}
+Flipping in facet {(12), (13), (17)}
+Flipping away facet {(1), (8), (11)}
+Flipping in facet {(1), (8), (9)}
+Flipping away facet {(4), (13), (17)}
+Flipping in facet {(5), (13), (17)}
+Flipping away facet {(1), (12), (17)}
+Flipping in facet {(12), (15), (17)}
+Flipping away edge {(4), (17)}
+Flipping in facet {(5), (12), (15)}
+Flipping away facet {(3), (12), (15)}
+Flipping in facet {(3), (4), (12)}
+Flipping away facet {(12), (14), (15)}
+Flipping in facet {(1), (12), (15)}
+Flipping away edge {(12), (14)}
+Flipping in facet {(1), (3), (4)}
+Flipping away edge {(4), (13)}
+Flipping in facet {(5), (10), (12)}
+Flipping away facet {(4), (5), (10)}
+Flipping in facet {(2), (5), (10)}
+Flipping away edge {(4), (5)}
+Flipping in facet {(2), (12), (15)}
+Flipping away edge {(4), (10)}
+Flipping in facet {(2), (3), (12)}
+Flipping away facet {(1), (12), (15)}
+Flipping in facet {(N), (1), (12)}
+Flipping away facet {(N), (12), (15)}
+Flipping in facet {(N), (12), (17)}
+Flipping away facet {(1), (3), (12)}
+Flipping in facet {(1), (3), (6)}

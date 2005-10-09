@@ -840,32 +840,36 @@ protected:
 	CGAL::Sign sn = CGAL::sign(sar(kdel_.simulator()->current_time()));
 	
 #ifndef NDEBUG
-	if ( sn != CGAL::sign(sar(to_double(kdel_.simulator()->current_time())))) {
-	  std::cerr <<"Difference of opinion on sign at" << std::endl;
-	  std::cerr <<"Real root " <<kdel_.simulator()->current_time() << std::endl;
-	  std::cerr <<"Approximation " << to_double(kdel_.simulator()->current_time()) << std::endl;
-	  std::cerr <<"Polynomial " << cf << std::endl;
+	{
+	  if ( sn != CGAL::sign(sar(to_double(kdel_.simulator()->current_time())))) {
+	    std::cerr <<"Difference of opinion on sign at" << std::endl;
+	    std::cerr <<"Real root " <<kdel_.simulator()->current_time() << std::endl;
+	    std::cerr <<"Approximation " << to_double(kdel_.simulator()->current_time()) << std::endl;
+	    std::cerr <<"Polynomial " << cf << std::endl;
+	  }
+	  
+	  typename Base_traits::Simulator::Function_kernel::Sign_at csar
+	    = kdel_.simulator()->function_kernel_object().sign_at_object(kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
+												    point(internal::vertex_of_facet(f,1)->point()),
+												    point(internal::vertex_of_facet(f,2)->point()),
+												    point(f.first->vertex(f.second)->point())));
+	  CGAL::Sign csn = CGAL::sign(csar(kdel_.simulator()->current_time()));
+	  CGAL_assertion(csn==CGAL::POSITIVE);
 	}
-
-	typename Base_traits::Simulator::Function_kernel::Sign_at csar
-	  = kdel_.simulator()->function_kernel_object().sign_at_object(kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
-												  point(internal::vertex_of_facet(f,1)->point()),
-												  point(internal::vertex_of_facet(f,2)->point()),
-												  point(f.first->vertex(f.second)->point())));
-	CGAL::Sign csn = CGAL::sign(csar(kdel_.simulator()->current_time()));
-	CGAL_assertion(csn==CGAL::POSITIVE);
 #endif
 	
 	if (sn == CGAL::NEGATIVE) {
 	  CGAL_KDS_LOG(LOG_LOTS, "rejected because of side ");
 	  CGAL_KDS_LOG_WRITE(LOG_LOTS, internal::write_facet(f, LOG_STREAM));
-	  CGAL_KDS_LOG(LOG_LOTS, internal::vertex_of_facet(f,0)->point() << " : " 
+	  CGAL_KDS_LOG(LOG_LOTS, std::endl << internal::vertex_of_facet(f,0)->point() << " : " 
 		       << point(internal::vertex_of_facet(f,0)->point()) << std::endl);
 	  CGAL_KDS_LOG(LOG_LOTS, internal::vertex_of_facet(f,1)->point() << " : " 
 		       << point(internal::vertex_of_facet(f,1)->point()) << std::endl);
 	  CGAL_KDS_LOG(LOG_LOTS, internal::vertex_of_facet(f,2)->point() << " : " 
 		       << point(internal::vertex_of_facet(f,2)->point()) << std::endl);
 	  CGAL_KDS_LOG(LOG_LOTS, k << " : " << point(k) << std::endl);
+	  CGAL_KDS_LOG(LOG_LOTS, cf << " : " << kdel_.simulator()->current_time() << std::endl << std::endl);
+
 	  break;
 	}
       }
@@ -904,7 +908,7 @@ protected:
       }
       if (hinf) continue;
 
-      bool handled= handle_redundant(k, *beg);
+      bool handled= handle_redundant(k, *cur);
       if (handled) return;
     }
     std::cerr << "None of the cells could handle vertex " << k << std::endl;
