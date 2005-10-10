@@ -205,37 +205,36 @@ void marching_tetrahedra_3(
   
   typedef typename Polyhedron_3::HalfedgeDS                    HDS;
   typedef MarchingTetrahedraTraits_3                           Traits;
-  typedef Marching_tetrahedra_observer_default_3<Triangulation_3, Polyhedron_3>
-    Observer; 
+  typedef Marching_tetrahedra_observer_default_3<Triangulation_3,Polyhedron_3>
+                                                               Observer; 
   typedef Marching_tetrahedra_builder<Triangulation_3,HDS,Traits,Observer>
-    Builder;
+                                                               Builder;
 
   Observer observer;
-  Builder builder(
-    triangulation,
-    traits, observer);
+  Builder builder(triangulation, traits, observer);
+    
   polyhedron.delegate(builder);
 }
 
-// template <class InputIterator,
-// 	  class Polyhedron_3,
-// 	  class MarchingTetrahedraTraits_3,
-// 	  class MarchingTetrahedraObserver_3>
-// void marching_tetrahedra_3(
-//   InputIterator first, InputIterator last,
-//   Polyhedron_3 &polyhedron,
-//   const MarchingTetrahedraTraits_3 &traits,
-//   MarchingTetrahedraObserver_3 &observer) {
+template <class Triangulation_3,
+	  class Polyhedron_3,
+	  class MarchingTetrahedraTraits_3,
+	  class MarchingTetrahedraObserver_3>
+void marching_tetrahedra_3(
+  const Triangulation_3 &triangulation,
+  Polyhedron_3 &polyhedron,
+  const MarchingTetrahedraTraits_3 &traits,
+  MarchingTetrahedraObserver_3 &observer) {
   
-//   typedef typename Polyhedron_3::HalfedgeDS                   HDS;
-//   typedef MarchingTetrahedraTraits_3                          Traits;
-//   typedef MarchingTetrahedraObserver_3                        Observer;
-//   typedef Marching_tetrahedra_builder<Triangulation_3,HDS, Traits, Observer>
-//                                                               Builder;
+  typedef typename Polyhedron_3::HalfedgeDS                   HDS;
+  typedef MarchingTetrahedraTraits_3                          Traits;
+  typedef MarchingTetrahedraObserver_3                        Observer;
+  typedef Marching_tetrahedra_builder<Triangulation_3,HDS,Traits,Observer>
+                                                              Builder;
   
-//   Builder builder(first, last, traits, observer);
-//   polyhedron.delegate(builder);
-// }
+  Builder builder(triangulation, traits, observer);
+  polyhedron.delegate(builder);
+}
 
 // template <class Triangulation_3,
 // 	  class Polyhedron_3,

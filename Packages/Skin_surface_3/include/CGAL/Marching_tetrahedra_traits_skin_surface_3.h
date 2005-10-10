@@ -21,27 +21,19 @@ public:
   Marching_tetrahedra_traits_skin_surface_3(HDS_rt iso_value=0)
     : iso_value(iso_value) {
   }
-  
+
+  // These two functions are required by the marching tetrahedra algorithm
   Sign sign(Cell_handle ch, int i) const {
     return CGAL_NTS sign(
        ch->surf->value(converter(ch->vertex(i)->point())) - iso_value);
   }
   HDS_point intersection(Cell_handle ch, int i, int j) const {
-    // Precondition: e.first is not an infinite cell: they have not surface set
+    // Precondition: ch is not an infinite cell: their surface is not set
     return ch->surf->to_surface(
       converter(ch->vertex(i)->point()),
       converter(ch->vertex(j)->point()));
   }
 
-  // Additional functions, not belonging to the traits concept:
-  HDS_rt value(const Cell_handle &ch, const HDS_point &p) const {
-    return ch->surf->value(p);
-  }
-  HDS_rt value(const Cell_handle &ch, const Triang_Point &p) const {
-    return ch->surf->value(converter(p));
-  }
-
-  
 private:
   Converter converter;
   HDS_rt iso_value;

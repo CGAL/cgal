@@ -6,6 +6,7 @@
 #include <CGAL/Triangulated_mixed_complex_3.h>
 #include <CGAL/triangulate_mixed_complex_3.h>
 #include <CGAL/Marching_tetrahedra_traits_skin_surface_3.h>
+#include <CGAL/Marching_tetrahedra_observer_skin_surface_3.h>
 #include <CGAL/marching_tetrahedra_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -20,14 +21,16 @@ void skin_surface_3(InputIterator first, InputIterator last,
   typedef typename Regular_traits::Bare_point              Reg_point;
   typedef typename Regular_traits::Weighted_point          Reg_weighted_point;
 
-  typedef Regular_triangulation_3<Regular_traits>    Regular;
+  typedef Regular_triangulation_3<Regular_traits> Regular;
   typedef Triangulated_mixed_complex_3<SkinSurfaceTraits_3>
-                                                     Triangulated_mixed_complex;
+                                                  Triangulated_mixed_complex;
   typedef Marching_tetrahedra_traits_skin_surface_3<
     Triangulated_mixed_complex,
     Polyhedron_3,
-    typename SkinSurfaceTraits_3::T2P_converter>     Marching_tetrahedra_traits;
-
+    typename SkinSurfaceTraits_3::T2P_converter>  Marching_tetrahedra_traits;
+  typedef Marching_tetrahedra_observer_skin_surface_3<
+    Triangulated_mixed_complex, Polyhedron_3>     Marching_tetrahedra_observer;
+    
   // Code
   Regular regular;
   Triangulated_mixed_complex triangulated_mixed_complex;
@@ -70,9 +73,10 @@ void skin_surface_3(InputIterator first, InputIterator last,
 
   // Extract the coarse mesh using marching_tetrahedra
   Marching_tetrahedra_traits marching_traits;
+  Marching_tetrahedra_observer marching_observer;
   
   marching_tetrahedra_3(
-    triangulated_mixed_complex, polyhedron, marching_traits);
+    triangulated_mixed_complex, polyhedron, marching_traits, marching_observer);
 }
 
 
