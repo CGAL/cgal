@@ -91,11 +91,14 @@ class Virtual_Voronoi_diagram_base_2
   virtual void insert(const Circle_2&) {}
 
   virtual void remove(const Object& o) {
+    // remove is not ready yet
+#if 0
     Locate_result lr;
     if ( CGAL::assign(lr, o) && lr.is_face() ) {
       Face_handle f = lr;
       Base::remove(f);
     }
+#endif
   }
 
   virtual
@@ -337,15 +340,17 @@ class Concrete_power_diagram_2
   typedef VBase::Point_2   Point_2;
   typedef VBase::Circle_2  Circle_2;
 
-  Base::Geom_traits::Weighted_point_2 to_site(const Point_2& p) const {
+  typedef Base::Delaunay_graph::Geom_traits  Geom_traits;
+
+  Geom_traits::Weighted_point_2 to_site(const Point_2& p) const {
     Base::Point_2 pp(p.x(), p.y());
-    return Base::Geom_traits::Weighted_point_2(pp, 0);
+    return Geom_traits::Weighted_point_2(pp, 0);
   }
 
-  Base::Geom_traits::Weighted_point_2 to_site(const Circle_2& c) const {
+  Geom_traits::Weighted_point_2 to_site(const Circle_2& c) const {
     Point_2 center = c.center();
     Base::Point_2 p(center.x(), center.y());
-    return Base::Geom_traits::Weighted_point_2(p, c.squared_radius());
+    return Geom_traits::Weighted_point_2(p, c.squared_radius());
   }
 
  public:
@@ -376,7 +381,7 @@ class Concrete_power_diagram_2
     Base::Delaunay_graph::Finite_vertices_iterator vit;
     for (vit = this->dual().finite_vertices_begin();
 	 vit != this->dual().finite_vertices_end(); ++vit) {
-      Base::Geom_traits::Weighted_point_2 wp = vit->point();
+      Geom_traits::Weighted_point_2 wp = vit->point();
       Point_2 center( CGAL::to_double(wp.point().x()),
 		      CGAL::to_double(wp.point().y()) );
       Circle_2 c( center, CGAL::to_double(wp.weight()) );
@@ -415,16 +420,18 @@ class Concrete_Apollonius_diagram_2
   typedef VBase::Point_2   Point_2;
   typedef VBase::Circle_2  Circle_2;
 
-  Base::Geom_traits::Site_2 to_site(const Point_2& p) const {
-    Base::Geom_traits::Point_2 pp(p.x(), p.y());
-    return Base::Geom_traits::Site_2(p, 0);    
+  typedef Base::Delaunay_graph::Geom_traits  Geom_traits;
+
+  Geom_traits::Site_2 to_site(const Point_2& p) const {
+    Geom_traits::Point_2 pp(p.x(), p.y());
+    return Geom_traits::Site_2(p, 0);    
   }
 
-  Base::Geom_traits::Site_2 to_site(const Circle_2& c) const {
+  Geom_traits::Site_2 to_site(const Circle_2& c) const {
     ::Rep::Point_2 center = c.center();
-    Base::Geom_traits::Point_2 p(center.x(), center.y());
-    Base::Geom_traits::Site_2::Weight w = CGAL::sqrt(c.squared_radius());
-    return Base::Geom_traits::Site_2(p, w);
+    Geom_traits::Point_2 p(center.x(), center.y());
+    Geom_traits::Site_2::Weight w = CGAL::sqrt(c.squared_radius());
+    return Geom_traits::Site_2(p, w);
   }
 
  public:
