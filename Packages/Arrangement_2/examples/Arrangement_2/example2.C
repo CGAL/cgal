@@ -52,7 +52,7 @@ int main ()
     next_v = curr_v;
     ++next_v;
 
-    if (curr_v->is_isolated() && arr.incident_face(curr_v) == uf)
+    if (curr_v->is_isolated() && curr_v->face() == uf)
       arr.remove_isolated_vertex (curr_v);      
   }
 

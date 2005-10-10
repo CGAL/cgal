@@ -262,8 +262,7 @@ Arrangement_2<Traits,Dcel>::remove_isolated_vertex (Vertex_handle v)
 
   // Get the face containing v.
   DVertex      *p_v = _vertex (v);
-  DHalfedge    *p_he = p_v->halfedge();
-  DFace        *p_f = (p_he != NULL) ?  p_he->face() : un_face;
+  DFace        *p_f = p_v->face();
   Face_handle   f = Face_handle (p_f);
   
   // Notify the observers that we are abount to remove a vertex.
@@ -350,8 +349,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     // The given vertex is an isolated one: We should in fact insert the curve
     // in the interior of the face containing this vertex.
     DVertex    *v1 = _vertex (v);
-    DHalfedge  *p_he = v1->halfedge();
-    DFace      *p_f = (p_he != NULL) ?  p_he->face() : un_face;
+    DFace      *p_f = v1->face();
 
     // v1 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face. 
@@ -367,10 +365,6 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
   DHalfedge  *prev1 = _locate_around_vertex (_vertex (v), cv);
-
-
-
-
 
   CGAL_assertion_msg
     (prev1 != NULL,
@@ -441,8 +435,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 
     // in the interior of the face containing this vertex.
     DVertex    *v2 = _vertex (v);
-    DHalfedge  *p_he = v2->halfedge();
-    DFace      *p_f = (p_he != NULL) ?  p_he->face() : un_face;
+    DFace      *p_f = v2->face();
 
     // v2 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
@@ -468,8 +461,6 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                            prev2, v1);
 
   return (Halfedge_handle (new_he));
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -531,8 +522,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
   {
     // Get the face containing the isolated vertex v1.
     DVertex    *p_v1 = _vertex (v1);
-    DHalfedge  *he1 = p_v1->halfedge();
-    DFace      *f1 = (he1 != NULL) ?  he1->face() : un_face;
+    DFace      *f1 = p_v1->face();
 
     // v1 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
@@ -545,8 +535,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
       DVertex    *p_v2 = _vertex (v2);
 
       CGAL_assertion_code (
-        DHalfedge  *he2 = p_v2->halfedge();
-        DFace      *f2 = (he2 != NULL) ?  he2->face() : un_face;
+        DFace      *f2 = p_v2->face();
       );
 
       CGAL_assertion_msg
@@ -587,8 +576,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
   {
     // Get the face containing the isolated vertex v2.
     DVertex    *p_v2 = _vertex (v2);
-    DHalfedge  *he2 = p_v2->halfedge();
-    DFace      *f2 = (he2 != NULL) ?  he2->face() : un_face;
+    DFace      *f2 = p_v2->face();
 
     // v2 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
@@ -637,7 +625,6 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
-
                                                 Halfedge_handle prev1,
                                                 Vertex_handle v2)
 {
@@ -658,8 +645,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
   {
     // Get the face containing the isolated vertex v2.
     DVertex    *p_v2 = _vertex (v2);
-    DHalfedge  *he2 = p_v2->halfedge();
-    DFace      *f2 = (he2 != NULL) ?  he2->face() : un_face;
+    DFace      *f2 = p_v2->face();
 
     CGAL_assertion_msg
       (f2 == (_halfedge (prev1))->face(),
@@ -988,16 +974,6 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   if (f1->halfedge() == he3)
   {
     f1->set_halfedge (he1);
-
-    // Go over all isolated vertices inside f1 and update their fictitious
-    // incident face (which used to be he3) to be he1.
-    DIsolated_vertices_iter     iso_vert_it;
-
-    for (iso_vert_it = f1->isolated_vertices_begin();
-         iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
-    {
-      iso_vert_it->set_halfedge (he1);
-    }
   }
   else
   {
@@ -1006,19 +982,8 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   }
 
   if (f2->halfedge() == he4)
-
   {
     f2->set_halfedge (he2);
-
-    // Go over all isolated vertices inside f2 and update their fictitious
-    // incident face (which used to be he4) to be he2.
-    DIsolated_vertices_iter     iso_vert_it;
-
-    for (iso_vert_it = f2->isolated_vertices_begin();
-         iso_vert_it != f2->isolated_vertices_end(); ++iso_vert_it)
-    {
-      iso_vert_it->set_halfedge (he2);
-    }
   }
   else
   {
@@ -1458,7 +1423,6 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
 }
 
 //-----------------------------------------------------------------------------
-
 // Move a given hole from one face to another.
 //
 template<class Traits, class Dcel>
@@ -1495,7 +1459,6 @@ void Arrangement_2<Traits,Dcel>::_move_hole (DFace *from_face,
   _notify_after_move_hole (circ);
 
   return;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1512,9 +1475,8 @@ void Arrangement_2<Traits,Dcel>::_insert_isolated_vertex (DFace *f,
   // inside f.
   _notify_before_add_isolated_vertex (fh, vh);
 
-  // Associate the incident haldefge of the vertex with a halfedge on the
-  // outer boundary of the face (or NULL if the face is unbounded).
-  v->set_halfedge (f->halfedge());
+  // Set a pointer to the face containing the vertex.
+  v->set_face (f);
 
   // Initiate a new hole inside the given face.
   f->add_isolated_vertex (v);
@@ -1545,7 +1507,7 @@ void Arrangement_2<Traits,Dcel>::_move_isolated_vertex
                                        vh);
 
   // Set the new halfedge of the vertex (may be NULL if to_face is unbounded).
-  v->set_halfedge (to_face->halfedge());
+  v->set_face (to_face);
 
   // Move the isolated vertex from the first face to the other.
   to_face->add_isolated_vertex (v);
@@ -1977,18 +1939,6 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
       is_hole = true;
     }
 
-    // Go over all isolated vertices located in the face and set their edge
-    // to be he1 (so they are marked as contained within the existing face f).
-    // We do this because an isolated vertex may be assoicated with an edge
-    // that is now incident to the new face we have just created.
-    DIsolated_vertices_iter    iso_verts_it;
-
-    for (iso_verts_it = f->isolated_vertices_begin();
-         iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
-    {
-      iso_verts_it->set_halfedge (he1);
-    }
-
     // Notify the observers that we have split the face.
     _notify_after_split_face (fh,
                               Face_handle (new_f),
@@ -2003,7 +1953,6 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 }
 
 //-----------------------------------------------------------------------------
-
 // Relocate all holes and isolated vertices to their proper position,
 // immediately after a face has split due to the insertion of a new halfedge.
 //
@@ -2023,7 +1972,7 @@ void Arrangement_2<Traits,Dcel>::_relocate_in_new_face (DHalfedge *new_he)
   // Note that if the face contains a single hole, then the new face that
   // has been created is necessarily connected to this hole, hence it is not
   // possible to relocate the hole inside the new face.
-   DHoles_iter   holes_it = old_face->holes_begin();
+  DHoles_iter    holes_it = old_face->holes_begin();
   DHoles_iter    next_it = holes_it;
   DHoles_iter    hole_to_move;
 
@@ -2062,7 +2011,6 @@ void Arrangement_2<Traits,Dcel>::_relocate_in_new_face (DHalfedge *new_he)
     // Check whether the isolated vertex lies inside the new face.
     if (_point_is_in (iso_verts_it->point(), NULL, new_he))
     {
-
       // We increment the isolated vertices itrator before moving the vertex,
       // because this operation invalidates the iterator.
       iso_vert_to_move  = iso_verts_it;
@@ -2222,7 +2170,6 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
 // should point at this hole.
 //
 template<class Traits, class Dcel>
-
 typename Arrangement_2<Traits,Dcel>::DFace*
 Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
 					  bool remove_source,
@@ -2336,18 +2283,6 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
       if (f1->halfedge() == he1 || f1->halfedge() == he2)
       {
         f1->set_halfedge (prev1);
-
-        // Go over all isolated vertices inside f1 and update their fictitious
-        // incident face (which used to be he1 or he2) to be prev1.
-        DIsolated_vertices_iter     iso_vert_it;
-
-        for (iso_vert_it = f1->isolated_vertices_begin();
-
-             iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
-
-        {
-          iso_vert_it->set_halfedge (prev1);
-        }
       }
       else
       {
@@ -2424,16 +2359,6 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
       // stays on the outer boundary.
       f1->set_halfedge (prev1);
 
-      // Go over all isolated vertices inside f1 and update their fictitious
-      // incident face (which used to be he1 or he2) to be prev1.
-      DIsolated_vertices_iter     iso_vert_it;
-
-      for (iso_vert_it = f1->isolated_vertices_begin();
-           iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
-      {
-        iso_vert_it->set_halfedge (prev1);
-      }
-
       // Notify the observers that a new hole has been formed.
       Ccb_halfedge_circulator   hccb = (Halfedge_handle(he1->next()))->ccb();
 
@@ -2488,7 +2413,6 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
       he1->vertex()->set_halfedge (prev2);
 
     if (he2->vertex()->halfedge() == he2)
-
       he2->vertex()->set_halfedge (prev1);
 
     // Delete the curve associated with the edge to be removed.
@@ -2547,21 +2471,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
     // In case he1, which is about to be deleted, is a representative
     // halfedge of the face f1, we replace it by its predecessor.
     if (f1->halfedge() == he1)
-    {
-
       f1->set_halfedge (prev1);
-
-      // Go over all isolated vertices inside f1 and update their fictitious
-      // incident face (which used to be he1) to be prev1.
-      DIsolated_vertices_iter     iso_vert_it;
-
-      for (iso_vert_it = f1->isolated_vertices_begin();
-           iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
-      {
-        iso_vert_it->set_halfedge (prev1);
-      }
-
-    }
 
     // Move the isolated vertices inside f2 to f1.
     DIsolated_vertices_iter    iso_verts_it;
@@ -2696,270 +2606,258 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
   return (f1);
 }
 
-
- //---------------------------------------------------------------------------
- // Check whether the arrangement is valid. In particular, check the
- // validity of each vertex, halfedge, and face.
- //
+//---------------------------------------------------------------------------
+// Check whether the arrangement is valid. In particular, check the
+// validity of each vertex, halfedge, and face.
+//
 template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::is_valid() const
 {
-  Vertex_const_iterator vi;
-  for (vi = vertices_begin(); vi != vertices_end(); ++vi)
+  Vertex_const_iterator   vit;
+
+  for (vit = vertices_begin(); vit != vertices_end(); ++vit)
   {
-    if (!is_valid(vi)) 
+    if (! _is_valid (vit)) 
     {
-      CGAL_warning("Invalid vertex!");
-      return false;
+      CGAL_warning ("Invalid vertex!");
+      return (false);
     }
   }
     
-  Halfedge_const_iterator ei;
-  for (ei = halfedges_begin(); ei != halfedges_end(); ++ei) 
+  Halfedge_const_iterator heit;
+
+  for (heit = halfedges_begin(); heit != halfedges_end(); ++heit) 
   {
-    if (!is_valid(ei)) 
+    if (! _is_valid (heit)) 
     {
-      CGAL_warning("Invalid halfedge!");
-      return false;
+      CGAL_warning ("Invalid halfedge!");
+      return (false);
     }
   }
     
-  Face_const_iterator fi;
-  for (fi = faces_begin(); fi != faces_end(); ++fi) 
+  Face_const_iterator     fit;
+
+  for (fit = faces_begin(); fit != faces_end(); ++fit) 
   {
-    if (!is_valid(fi)) 
+    if (! _is_valid (fit)) 
     {
       CGAL_warning("Invalid face!");
-      return false;
+      return (false);
     }
   }
-  if(!_are_vertices_different())
+
+  if (!_are_vertices_unique())
   {
-    CGAL_warning("Two(or more) vertices have the same point!");
-    return false;
-  }
-  if(!_are_curves_disjoint_interior())
-  {
-    CGAL_warning("Curves are not disjoint interior!");
-    return false;
+    CGAL_warning ("Two (or more) vertices have the same point!");
+    return (false);
   }
 
-
-  return true;
+  // If we reached here, the arrangement is valid.
+  return (true);
 }
 
-
 //---------------------------------------------------------------------------
-// Check the validity of a vertex
+// Check the validity of a vertex.
 //
 template<class Traits, class Dcel>
-bool Arrangement_2<Traits,Dcel>::is_valid(Vertex_const_handle v) const
+bool Arrangement_2<Traits,Dcel>::_is_valid(Vertex_const_handle v) const
 {    
-  // check if every edge from v has v as its target
-  if(v->is_isolated())
+  // In case of an isolated vertex, make sure it is really contained in the
+  // face attached to it.
+  if (v->is_isolated())
   {
-    Face_const_handle f = this->incident_face(v);
-    if(f->is_unbounded())
-      return true;
+    Face_const_handle   f = v->face();
+
+    if (f->is_unbounded())
+      return (true);
 
     return (_point_is_in (v->point(), NULL, _halfedge(f->outer_ccb())));
   }
 
-  // the vertex is not isolated
-  Halfedge_around_vertex_const_circulator ec = v->incident_halfedges();
-  Halfedge_around_vertex_const_circulator start = ec;
+  // Make sure that the vertex is the target of all its incident halfedges.
+  Halfedge_around_vertex_const_circulator circ = v->incident_halfedges();
+  Halfedge_around_vertex_const_circulator start = circ;
+
   do
   {
-    if ((*ec).target() != v)
-    {
-      return false;
-    }
-    ++ec;
-  }
-  while (ec != start);
+    if (circ->target() != v)
+      return (false);
+    
+    ++circ;
+  } while (circ != start);
 
-  if(!_are_curves_ordered_cw_around_vertrex(v))
-    return false;
+  // Make sure the curves are correctly ordered around the vertex.
+  if (!_are_curves_ordered_cw_around_vertrex (v))
+    return (false);
   
-  return true;
+  return (true);
 }
 
 
 //---------------------------------------------------------------------------
-// Check the validity of a halfedge
+// Check the validity of a halfedge.
 //
 template<class Traits, class Dcel>
-bool Arrangement_2<Traits,Dcel>::is_valid(Halfedge_const_handle e) const
+bool Arrangement_2<Traits,Dcel>::_is_valid (Halfedge_const_handle he) const
 {
-  //check relations with next
-  if (e->target() != e->next()->source())
-    return false;
+  // Check relations with the previous and the next halfedges.
+  if (he->prev()->target() != he->source())
+    return (false);
 
-  //check relations with the twin
-  if(e != e->twin()->twin())
-    return false;
+  if (he->target() != he->next()->source())
+    return (false);
+
+  // Check relations with the twin.
+  if (he != he->twin()->twin())
+    return (false);
   
-  //check that the end points of the curve associated with the halfedge
-  //really equal the source and target vertices of this halfedge.
-  const X_monotone_curve_2& cv = e->curve();
+  if (he->source != he->twin()->target() || 
+      he->target() != he->twin()->source())
+    return (false);
+
+  // Check that the end points of the curve associated with the halfedge
+  // really equal the source and target vertices of this halfedge.
+  const X_monotone_curve_2& cv = he->curve();
   const Point_2& cv_s = traits->construct_min_vertex_2_object()(cv);
   const Point_2& cv_t = traits->construct_max_vertex_2_object()(cv);
 
   const Point_2& e_s  = e->source()->point();
   const Point_2& e_t  = e->target()->point();
 
-  typename Traits_wrapper_2::Equal_2          equal =
-                                            traits->equal_2_object();
+  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
 
-  Comparison_result e_res = traits->compare_xy_2_object()(e_s, e_t);
-  if(e_res == SMALLER)
+  Comparison_result res = traits->compare_xy_2_object() (e_s, e_t);
+
+  if (res == SMALLER)
   {
-    return(equal(e_s, cv_s) && equal(e_t, cv_t));
+    return (equal (e_s, cv_s) && equal (e_t, cv_t));
   }
-  if(e_res == LARGER)
+  else if (res == LARGER)
   {
-    return(equal(e_s, cv_t) && equal(e_t, cv_s));
+    return (equal (e_s, cv_t) && equal (e_t, cv_s));
   }
 
-  // in that case, the source and target of the halfedge are equal
-  return false;
+  // In that case, the source and target of the halfedge are equal.
+  return (false);
 }
 
+//---------------------------------------------------------------------------
+// Check the validity of a face.
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::_is_valid (Face_const_handle f) const
+{   
+  // check if all edges of f (on all ccb's) refer to f (as their face)
+  Holes_const_iterator          iccbit;
+  Ccb_halfedge_const_circulator ccb_circ;
+   
+  if (! f->is_unbounded())
+  {
+    ccb_circ = f->outer_ccb();
+    if (! is_valid(ccb_circ, f))
+      return (false);
+  }
+    
+  for (iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit)      
+  {
+    ccb_circ = *iccbit;
+    if (! is_valid(ccb_circ, f))
+      return (false);
+  }
+   
+  return (true);
+}
 
 //---------------------------------------------------------------------------
-// Check the validity of a face
+// Check the validity of a CCB of a given face.
 //
- template<class Traits, class Dcel>
- bool Arrangement_2<Traits,Dcel>::is_valid(Face_const_handle f) const
- {   
-   // check if all edges of f (on all ccb's) refer to f (as their face)
-   Holes_const_iterator iccbit;
-   Ccb_halfedge_const_circulator ccb_circ;
-   
-   if (!f->is_unbounded())
-   {
-     ccb_circ = f->outer_ccb();
-     if (!is_valid(ccb_circ, f))
-       return false;
-   }
+template<class Traits, class Dcel>
+bool
+Arrangement_2<Traits,Dcel>::_is_valid (Ccb_halfedge_const_circulator start,
+                                       Face_const_handle f) const
+{
+  // Make sure that all halfegdes along the CCB have the same incident face.
+  Ccb_halfedge_const_circulator circ = start;
     
-   for (iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit)      
-   {
-     ccb_circ = *iccbit;
-     if (!is_valid(ccb_circ, f))
-       return false;
-   }
-   
-   return true;
- }
-
- //---------------------------------------------------------------------------
- // Check the validity of a ccb of a given face
- //
- template<class Traits, class Dcel>
- bool Arrangement_2<Traits,Dcel>::is_valid
-   (const Ccb_halfedge_const_circulator& start,
-    Face_const_handle f) const
- {
-   Ccb_halfedge_const_circulator circ = start;
+  do 
+  {
+    if (circ->face() != f)
+      return (false);
     
-   do 
-   {
-     if ((*circ).face() != f)
-       return false;
-     ++circ;
-   }
-   while (circ != start);
+    ++circ;
+  }while (circ != start);
    
-   return true;
- }
+  return (true);
+}
 
- //---------------------------------------------------------------------------
- // Check that all vertices are unique (no two vertices with the same 
- // geometric point
- //
- template<class Traits, class Dcel>
- bool Arrangement_2<Traits,Dcel>::_are_vertices_different() const
- {
-   if(number_of_vertices() < 2)
-     return true;
+//---------------------------------------------------------------------------
+// Check that all vertices are unique (no two vertices with the same 
+// geometric point).
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::_are_vertices_unique() const
+{
+  if (number_of_vertices() < 2)
+    return (true);
 
-   std::vector<Point_2> points_vec(number_of_vertices());
-   unsigned int i = 0;
-   for(Vertex_const_iterator vit = vertices_begin();
-       vit != vertices_end();
-       ++vit, ++i)
-   {
-     points_vec[i] = vit->point();
-   }
-   typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
-
-   typedef typename Traits_wrapper_2::Compare_xy_2    Compare_xy_2; 
-   Compare_xy_2  compare_xy = traits->compare_xy_2_object();
-   Compare_to_less<Compare_xy_2> cmp = compare_to_less (compare_xy);
-   std::sort(points_vec.begin(), points_vec.end(), cmp);
-   for(i = 1; i < points_vec.size(); ++i)
-   {
-     if(equal(points_vec[i-1], points_vec[i]))
-       return false;
-   }
-
-   return true;
- }
-
- //---------------------------------------------------------------------------
- // Check that the arrangement curves are disjoint interior 
- //
- template<class Traits, class Dcel>
- bool Arrangement_2<Traits,Dcel>::_are_curves_disjoint_interior() const
- {
-  // Define the sweep-line types:
-  typedef Sweep_line_do_curves_x_visitor<Traits>      Visitor;
-  typedef Sweep_line_2<Traits, Visitor>               Sweep_line ;
+  // Store all points.
+  std::vector<Point_2>  points_vec (number_of_vertices());
+  Vertex_const_iterator vit;
+  unsigned int          i = 0;
   
-  // Perform the sweep.
-  Visitor     visitor;
-  Sweep_line  sweep_line (traits, &visitor);
-  visitor.sweep_xcurves(curves.begin(), curves.end());
+  for (vit = vertices_begin(); vit != vertices_end(); ++vit, ++i)
+    points_vec[i] = vit->point();
+
+  // Sort the vector of points and make sure no two adjacent points in the
+  // sorted vector are equal.
+  typedef typename Traits_wrapper_2::Compare_xy_2    Compare_xy_2; 
   
-  return (!visitor.found_x());
- }
+  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+  Compare_xy_2                  compare_xy = traits->compare_xy_2_object();
+  Compare_to_less<Compare_xy_2> cmp = compare_to_less (compare_xy);
+  
+  std::sort(points_vec.begin(), points_vec.end(), cmp);
+  for (i = 1; i < points_vec.size(); ++i)
+  {
+    if(equal(points_vec[i-1], points_vec[i]))
+      return (false);
+  }
+  
+  return (true);
+}
 
- //---------------------------------------------------------------------------
- // Check that the curves around a given vertex are ordered clock-wise 
- //
- template<class Traits, class Dcel>
- bool Arrangement_2<Traits,Dcel>::
-   _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const
- {
-   if(v->degree() < 3)
-     return true;
+//---------------------------------------------------------------------------
+// Check that the curves around a given vertex are ordered clockwise .
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::_are_curves_ordered_cw_around_vertrex
+    (Vertex_const_handle v) const
+{
+  if(v->degree() < 3)
+    return (true);
 
-   typename Traits_wrapper_2::Is_between_cw_2  is_between_cw =
-     traits->is_between_cw_2_object();
-   Halfedge_around_vertex_const_circulator ec = v->incident_halfedges();
-   Halfedge_around_vertex_const_circulator start = ec;
-   do
-   {
-     Halfedge_around_vertex_const_circulator prev = ec;
-     --prev;
-     Halfedge_around_vertex_const_circulator next = ec;
-     ++next;
-     bool       eq_curr, eq_next;
-     if(!is_between_cw (ec->curve(),
-                        prev->curve(),
-                        next->curve(),
-                        v->point(),
-                        eq_curr,
-                        eq_next))
-       return false;
+  typename Traits_wrapper_2::Is_between_cw_2  is_between_cw =
+                                              traits->is_between_cw_2_object();
 
-     ++ec;
-   }
-   while (ec != start);
-   return true;
- }
+  Halfedge_around_vertex_const_circulator circ = v->incident_halfedges();
+  Halfedge_around_vertex_const_circulator start = circ;
+  Halfedge_around_vertex_const_circulator prev, next;
+  bool                                    eq1, eq2;
 
+  do
+  {
+    prev = circ; --prev;
+    next = circ; ++next;
+
+    if (!is_between_cw (circ->curve(), prev->curve(), next->curve(),
+                        v->point(), eq1, eq2))
+      return (false);
+
+    ++circ;
+   } while (circ != start);
+   
+  return (true);
+}
  
 CGAL_END_NAMESPACE
 

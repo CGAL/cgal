@@ -35,6 +35,30 @@
 
 CGAL_BEGIN_NAMESPACE
 
+void* _clean_pointer (const void* p)
+{
+  const unsigned int  mask = ~1;
+  const unsigned int  val = (reinterpret_cast<unsigned int>(p) & mask);
+
+  return (reinterpret_cast<void*> (val));
+}
+
+void* _set_lsb (const void* p)
+{
+  const unsigned int  mask = 1;
+  const unsigned int  val = (reinterpret_cast<unsigned int>(p) | mask);
+
+  return (reinterpret_cast<void*> (val));
+}
+
+bool _is_lsb_set (const void* p)
+{
+  const unsigned int  mask = 1;
+  const unsigned int  val = reinterpret_cast<unsigned int>(p);
+
+  return ((val & mask) != 0); 
+}
+
 /*! \class
  * Base vertex class. 
  */
@@ -235,22 +259,53 @@ public:
   Arr_vertex() 
   {}
 
+  /*! Check if the vertex is isolated. */
+  bool is_isolated () const
+  {
+    // Note that we use the LSB of the p_he pointer as a Boolean flag.
+    return (_is_lsb_set (this->p_he));
+  }
+
   /*! Get an incident halfedge (const version). */
   const Halfedge* halfedge () const
   {
+    CGAL_precondition (! is_isolated());
     return (reinterpret_cast<const Halfedge*>(this->p_he));
   }
 
   /*! Get an incident halfedge (non-const version). */
   Halfedge* halfedge ()
   {
+    CGAL_precondition (! is_isolated());
     return (reinterpret_cast<Halfedge*>(this->p_he));
   }
 
-  /*! Set an incident halfedge. */
+  /*! Set an incident halfedge (for non-isolated vertices). */
   void set_halfedge (Halfedge* he)
   { 
+    // Set the halfedge pointer and reset the LSB.
     this->p_he = he;
+  }
+
+  /*! Get the containing face (const version). */
+  const Face* face () const
+  {
+    CGAL_precondition (is_isolated());
+    return (reinterpret_cast<const Face*>(_clean_pointer (this->p_he)));
+  }
+
+  /*! Get an containing face (non-const version). */
+  Face* face ()
+  {
+    CGAL_precondition (is_isolated());
+    return (reinterpret_cast<Face*>(_clean_pointer (this->p_he)));
+  }
+
+  /*! Set the containing face (for isolated vertices). */
+  void set_face (Face* f)
+  { 
+    // Set the face pointer and set the LSB.
+    this->p_he = _set_lsb (f);
   }
 };
 
@@ -810,12 +865,24 @@ public:
     for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
     {
       v = &(*vit);
-      h = v->halfedge();
-
       dup_v = (v_map.find (v))->second;
-      dup_h = (he_map.find (h))->second;
 
-      dup_v->set_halfedge (dup_h);
+      if (v->is_isolated())
+      {
+        // Isolated vertex - set it containing face.
+        f = v->face();
+        dup_f = (f_map.find (f))->second;
+
+        dup_v->set_face (dup_f);
+      }
+      else
+      {
+        // Regular vertex - set its incident halfedge.
+        h = v->halfedge();
+        dup_h = (he_map.find (h))->second;
+
+        dup_v->set_halfedge (dup_h);
+      }
     }
 
     // Update the halfedge records.

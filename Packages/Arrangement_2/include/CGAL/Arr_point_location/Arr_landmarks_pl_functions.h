@@ -147,7 +147,10 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
          iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal (p, iso_verts_it->point()))
-        return (CGAL::make_object (iso_verts_it));
+      {
+        Vertex_const_handle  vh = iso_verts_it;
+        return (CGAL::make_object (vh));
+      }
     }    
   }
 
@@ -172,7 +175,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   
   if (vh->is_isolated())
   {
-    Face_const_handle f = p_arr->incident_face(vh);
+    Face_const_handle f = vh->face();
     return _walk_from_face(f, p, vh->point());
   }
 

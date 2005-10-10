@@ -40,6 +40,7 @@ int main ()
   Point_2          q6 (1, 0);
 
   landmarks_pl.attach (arr);
+
   point_location_query (landmarks_pl, q4);
   point_location_query (landmarks_pl, q5);
   point_location_query (landmarks_pl, q6);

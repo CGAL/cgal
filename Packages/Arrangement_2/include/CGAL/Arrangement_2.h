@@ -316,13 +316,6 @@ public:
     Vertex()
     {}
 
-    /*! Check whether the vertex is isolated (has no incident halfedges). */
-    bool is_isolated() const
-    {
-      const DHalfedge  *he = Base::halfedge();
-      return (he == NULL || he->vertex() != this);
-    }
-
     /*! Get the vertex degree (number of incident edges). */
     Size degree () const
     {
@@ -345,7 +338,10 @@ public:
       return (n);
     }
 
-    /*! Get the incident halfedges (non-const version). */
+    /*!
+     * Get the incident halfedges (non-const version).
+     * \pre The vertex is not isolated.
+     */
     Halfedge_around_vertex_circulator incident_halfedges() 
     {
       CGAL_precondition (! is_isolated());
@@ -354,13 +350,38 @@ public:
         (DHalfedge_iter (Base::halfedge()));
     }
 
-    /*! Get the incident halfedges (const version). */
+    /*!
+     * Get the incident halfedges (const version).
+     * \pre The vertex is not isolated.
+     */
     Halfedge_around_vertex_const_circulator incident_halfedges() const 
     {
       CGAL_precondition (! is_isolated());
 
       return Halfedge_around_vertex_const_circulator
         (DHalfedge_const_iter (Base::halfedge())); 
+    }
+
+    /*! 
+     * Get the face that contains the vertex (non-const version).
+     * \pre The vertex is isolated.
+     */
+    Face_handle face()
+    {
+      CGAL_precondition (is_isolated());
+
+      return (DFace_iter (Base::face()));
+    }
+
+    /*! 
+     * Get the face that contains the vertex (const version).
+     * \pre The vertex is isolated.
+     */
+    Face_const_handle face() const
+    {
+      CGAL_precondition (is_isolated());
+
+      return (DFace_const_iter (Base::face()));
     }
 
   private:
@@ -370,6 +391,7 @@ public:
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
+    void set_face (DFace* );
 
   };
 
@@ -713,46 +735,10 @@ public:
 
   /*!
    * Check whether the arrangement is valid. In particular, check the
-   * validity of each vertex, halfedge, and face.
+   * validity of each vertex, halfedge and face, their incidence relations
+   * and the geometric properties of the arrangement.
    */
   bool is_valid() const;
-
-  /*!
-   * Check the validity of a given vertex 
-   */
-  bool is_valid(Vertex_const_handle v) const;
-
-  /*!
-   * Check the validity of a given halfedge
-   */
-  bool is_valid(Halfedge_const_handle e) const;
-
-  /*!
-   * Check the validity of a given face
-   */
-  bool is_valid(Face_const_handle f) const;
-
-  /*!
-   * Check the validity of a ccb of a given face
-   */
-  bool is_valid(const Ccb_halfedge_const_circulator& start,
-                Face_const_handle f) const;
-
- /*!
-  * Check that all vertices are unique (no two vertices with the same 
-  * geometric point.
-  */
- bool _are_vertices_different() const;
-
- /*!
-  * Check that the curves of the arrangement are disjoint interior 
-  */
- bool _are_curves_disjoint_interior() const;
-
- /*!
-  * Check that the curves around a given vertex are ordered clock-wise
-  */
- bool _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const;
   
   /*! Get the number of arrangement vertices. */
   Size number_of_vertices () const
@@ -879,52 +865,6 @@ public:
 
     return (Face_const_handle (un_face));
   }
-
-  /*!
-   * Get the face containing the given isolated vertex (non-const version).
-   * \param The query vertex.
-   * \pre v is an isolated vertex (it has no incident halfedges).
-   * \return A handle to the face containing v.
-   */
-  inline Face_handle incident_face (Vertex_handle v)
-  {
-    CGAL_precondition (v->is_isolated());
-
-    // Get the fictitious incident halfedge of the vertex.
-    DVertex    *p_v = _vertex (v);
-
-    DHalfedge  *p_he = p_v->halfedge();
-
-    // If this halfedge is vald, return it incident face. Otherwise, return
-    // the unbounded face.
-    if (p_he != NULL)
-      return (Face_handle (p_he->face()));
-    else
-      return (Face_handle (un_face));
-  }
-
-  /*!
-   * Get the face containing the given isolated vertex (const version).
-   * \param The query vertex.
-   * \pre v is an isolated vertex (it has no incident halfedges).
-   * \return A const handle to the face containing v.
-   */
-  inline Face_const_handle incident_face (Vertex_const_handle v) const
-  {
-    CGAL_precondition (v->is_isolated());
-
-    // Get the fictitious incident halfedge of the vertex.
-    const DVertex    *p_v = _vertex (v);
-    const DHalfedge  *p_he = p_v->halfedge();
-
-    // If this halfedge is vald, return it incident face. Otherwise, return
-    // the unbounded face.
-    if (p_he != NULL)
-      return (Face_const_handle (p_he->face()));
-    else
-      return (Face_const_handle (un_face));
-  }
-
 
   /*! Get an iterator for the first face in the arrangement. */
   Face_iterator faces_begin() 
@@ -1174,8 +1114,6 @@ public:
   Face_handle remove_edge (Halfedge_handle e,
                            bool remove_source = true,
 			   bool remove_target = true);
-
-
   
   //@}
 
@@ -1268,7 +1206,6 @@ protected:
 
   /// \name Converting pointers to handles (for the arrangement accessor).
   //@{
-
 
   /*! Convert a pointer to a DCEL vertex to a vertex handle. */
   Vertex_handle _handle_for (DVertex *v)
@@ -1562,6 +1499,33 @@ protected:
   DFace *_remove_edge (DHalfedge *e,
 		       bool remove_source, bool remove_target);
 
+  //@}
+
+  /// \name Auxiliary (protected) functions for validity checking.
+  //@{
+
+  /*! Check the validity of a given vertex. */
+  bool _is_valid (Vertex_const_handle v) const;
+
+  /*! Check the validity of a given halfedge. */
+  bool _is_valid (Halfedge_const_handle he) const;
+
+  /*! Check the validity of a given face. */
+  bool _is_valid (Face_const_handle f) const;
+
+  /*! Check the validity of a CCB of a given face. */
+  bool _is_valid (Ccb_halfedge_const_circulator start,
+                  Face_const_handle f) const;
+
+  /*!
+   * Check that all vertices are unique (no two vertices with the same 
+   * geometric point.
+   */
+  bool _are_vertices_unique() const;
+  
+  /*! Check that the curves around a given vertex are ordered clockwise. */
+  bool _are_curves_ordered_cw_around_vertrex (Vertex_const_handle v) const;
+  
   //@}
 
 protected:

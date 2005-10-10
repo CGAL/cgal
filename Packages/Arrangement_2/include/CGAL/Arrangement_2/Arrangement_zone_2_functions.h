@@ -165,7 +165,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
     {
       // Compute the zone of cv starting from the face that contains the
       // isolated vertex left_v.
-      done = _zone_in_face (arr.incident_face(left_v),
+      done = _zone_in_face (left_v->face(),
                             false);     // left_pt is not on the face boundary.
     }
 

@@ -680,7 +680,8 @@ public:
   Halfedge_handle merge_edge (Halfedge_handle e1, 
                               Halfedge_handle e2)
   {
-    CGAL_precondition_msg (are_mergeable(e1, e2), "Edges are not mergeable.");
+    CGAL_precondition_msg (are_mergeable(e1, e2), 
+                           "Edges are not mergeable.");
 
     // Merge the two curves.
     Data_x_curve_2       cv;
@@ -699,21 +700,36 @@ public:
   bool are_mergeable (Halfedge_const_handle e1,
                       Halfedge_const_handle e2) const
   {
+    // In order to be mergeable, the two halfedges must share a common
+    // end-vertex. We assign vh to be this vertex.
     Vertex_const_handle      vh;
     
     if (e1->target() == e2->source() || e1->target() == e2->target())
+    {
       vh = e1->target();
+    }
     else
-      if(e1->source() == e2->source() || e1->source() == e2->target())
+    {
+      if (e1->source() == e2->source() || e1->source() == e2->target())
+      {
         vh = e1->source();
+      }
       else
-        return false;
+      {
+        // No common end-vertex: the edges are not mergeable.
+        return (false);
+      }
+    }
   
-    if(vh->degree() != 2)
-      return false;
+    // If there are other edges incident to vh, it is impossible to remove it
+    // and merge the two edges.
+    if (vh->degree() != 2)
+      return (false);
     
-    return(this->traits->are_mergeable_2_object()(e1->curve(),e2->curve()));
-}
+    // Check whether the curves associated with the two edges are mergeable.
+    return (this->traits->are_mergeable_2_object()(e1->curve(),
+                                                   e2->curve()));
+  }
 
 protected:
 

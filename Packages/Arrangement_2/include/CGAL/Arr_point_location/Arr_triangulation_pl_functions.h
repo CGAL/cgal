@@ -137,11 +137,11 @@ Object Arr_triangulation_point_location<Arrangement_2>
   CGAL_assertion(!v1->is_isolated());
   CGAL_assertion(!v2->is_isolated());
   if (v0->is_isolated())
-    return (CGAL::make_object(p_arr->incident_face(v0)));
+    return (CGAL::make_object(v0->face()));
   if (v1->is_isolated())
-    return (CGAL::make_object(p_arr->incident_face(v1)));
+    return (CGAL::make_object(v1->face()));
   if (v2->is_isolated())
-    return (CGAL::make_object(p_arr->incident_face(v2)));
+    return (CGAL::make_object(v2->face()));
 
   //find the face in the pm correspond to the 3 vertices
   Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 

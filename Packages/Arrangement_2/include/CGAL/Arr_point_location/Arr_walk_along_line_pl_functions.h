@@ -186,7 +186,10 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
     if (equal (p, iso_verts_it->point()))
-      return (CGAL::make_object (iso_verts_it));
+    {
+      Vertex_const_handle  vh = iso_verts_it;
+      return (CGAL::make_object (vh));
+    }
   }
 
   // The query point is contained in the face interior:
