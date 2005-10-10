@@ -35,30 +35,30 @@ CGAL_KDS_BEGIN_NAMESPACE;
 template <class Traits_t>
 struct Skip_even_roots_function_kernel: public Traits_t {
 
-  class Root_enumerator: private Traits_t::Root_enumerator {
+  class Root_stack: private Traits_t::Root_stack {
   private:
-    typedef typename Traits_t::Root_enumerator Wrapped_solver;
+    typedef typename Traits_t::Root_stack Wrapped_solver;
     typedef typename Traits_t::Function Function;
     
   public:
-    typedef typename Root_enumerator::Root Root;
-    typedef typename Root_enumerator::Traits Traits;
+    typedef typename Wrapped_solver::Root Root;
+    typedef Traits_t Traits;
     //! Construct and check preconditions
     /*!
     
     */
-    Root_enumerator(const Function &uf, const Root& lb, 
-		    const Root& ub, const Traits_t& k): solver_(k.root_enumerator_object(uf, lb, ub)), 
-							one_even_(false),
-							rm_(k.is_even_multiplicity_object(uf)){
+    Root_stack(const Function &uf, const Root& lb, 
+	       const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)), 
+						   one_even_(false),
+						   rm_(k.is_even_multiplicity_object(uf)){
       CGAL_KDS_LOG(LOG_LOTS, "Solving " << uf << std::endl); //<< " at time " << lb << std::endl);
 #if 0
       {
 	Wrapped_solver sc(uf, lb, ub, k);
 	CGAL_KDS_LOG(LOG_LOTS, "Found roots: ");
 	while (!sc.finished()){
-	  CGAL_KDS_LOG(LOG_LOTS, sc.current() << " ");
-	  sc.advance();
+	  CGAL_KDS_LOG(LOG_LOTS, sc.top() << " ");
+	  sc.pop();
 	}
 	CGAL_KDS_LOG(LOG_LOTS, std::endl);
       }
@@ -67,14 +67,14 @@ struct Skip_even_roots_function_kernel: public Traits_t {
       CGAL_expensive_assertion_code(if (sar(lb)== CGAL::NEGATIVE){std::cerr << "Invalid certificate with function " << uf << std::endl << "In interval from " << lb << std::endl <<"to " << ub << std::endl;});
       CGAL_expensive_assertion(sar(lb)!= CGAL::NEGATIVE);
       
-      if (solver_.finished()){
+      if (solver_.empty()){
 	finish();
       } else {
-	CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.current())(uf);
+	CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.top())(uf);
 	if (sn == CGAL::NEGATIVE){
 	  root_=lb;
-	  Wrapped_solver sp= k.root_enumerator_object(uf, lb,ub);
-	  std::cerr << "First root is " <<  sp.current()<<std::endl;
+	  Wrapped_solver sp= k.root_stack_object(uf, lb,ub);
+	  std::cerr << "First root is " <<  sp.top()<<std::endl;
 	  std::cerr << "Degeneracy " << uf << " at " << lb << std::endl;
 	} else {
 	  // \todo fix hack
@@ -86,7 +86,7 @@ struct Skip_even_roots_function_kernel: public Traits_t {
       CGAL_KDS_LOG(LOG_LOTS, "Solution is " << root_ << std::endl);
     }
   
-    Root_enumerator(){}
+    Root_stack(){}
 
     //! Drop even roots
     const Root& top() const {
@@ -122,21 +122,22 @@ struct Skip_even_roots_function_kernel: public Traits_t {
       const bool debug=true;
 #endif
 
-      if ( debug && rm_(root_) && !one_even_){
+      if ( debug && !one_even_ && rm_(root_) ){
 	CGAL_assertion(!one_even_);
 	CGAL_KDS_LOG(LOG_LOTS, "Keeping front root" << std::endl);
 	one_even_=true;
       } else {
-	root_=solver_.current();
-	solver_.advance();
+	root_=solver_.top();
+	solver_.pop();
 	while (!debug && rm_(root_)){
-	  if (solver_.finished()){
+	  if (solver_.empty()){
 	    finish();
 	    break;
 	  } else {
 	    CGAL_KDS_LOG(LOG_LOTS, "skipping even root " << root_ << std::endl);
-	    root_=solver_.current();
-	    solver_.advance();
+	    assert(!solver_.empty());
+	    root_=solver_.top();
+	    solver_.pop();
 	  }
 	}
       }
@@ -243,12 +244,12 @@ struct Skip_even_roots_function_kernel: public Traits_t {
   };
 
 
-  Root_enumerator root_enumerator_object(const typename Traits_t::Function &f,
-					 const typename Traits_t::Root &lb 
-					 = -std::numeric_limits<typename Traits_t::Root>::infinity(),
-					 const typename Traits_t::Root &ub 
-					 = std::numeric_limits<typename Traits_t::Root>::infinity()) {
-    return Root_enumerator(f, lb, ub, *this);
+  Root_stack root_stack_object(const typename Traits_t::Function &f,
+			       const typename Traits_t::Root &lb 
+			       = -std::numeric_limits<typename Traits_t::Root>::infinity(),
+			       const typename Traits_t::Root &ub 
+			       = std::numeric_limits<typename Traits_t::Root>::infinity()) {
+    return Root_stack(f, lb, ub, *this);
   }
 };
 

@@ -44,12 +44,12 @@ public:
   Upper_bound_root_stack(): cur_(Root::infinity()) {
   };
   Upper_bound_root_stack(const Polynomial &f, 
-			      const Root &lb,
-			      const Root &ub,
-			      const Traits &tr): kernel_(tr), f_(f),
-						 lb_(lb), ub_(ub),
-						 rc_(kernel_.root_count_object(f_)),
-						 has_ss_(false){
+			 const Root &lb,
+			 const Root &ub,
+			 const Traits &tr): kernel_(tr), f_(f),
+					    lb_(lb), ub_(ub),
+					    rc_(kernel_.root_count_object(f_)),
+					    has_ss_(false){
     initialize();
 
     do {
