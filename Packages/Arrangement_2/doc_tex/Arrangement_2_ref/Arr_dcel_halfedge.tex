@@ -53,6 +53,11 @@ pointers or references:
   \ccMethod{Halfedge* opposite();}
     {returns the twin halfedge.}
 
+  \ccMethod{Comparison_result direction() const;}
+    {returns \ccc{SMALLER} if \ccVar{}'s source vertex is lexicographically
+     smaller than it target, and \ccc{LARGER} if it is lexicographically
+     larger than the target.}
+
   \ccMethod{Halfedge* prev();}
     {returns the previous halfedge along the chain.}
 
@@ -73,6 +78,13 @@ pointers or references:
 
   \ccMethod{void set_opposite(Halfedge* opp);}
     {sets the opposite halfedge.}
+
+  \ccMethod{void set_direction (Comparison_result dir);}
+    {sets the lexicographical order between \ccVar{}'s source and target
+     vertices to be \ccc{dir}. The direction of the opposite halfedge is
+     also set to the opposite direction.
+     \ccPrecond{\ccc{dir} is either \ccc{SMALLER} or \ccc{LARGER}
+                (and not \ccc{EQUAL}).}}
 
   \ccMethod{void set_prev(Halfedge* prev);}
     {sets the previous halfedge of \ccVar{} along the chain,

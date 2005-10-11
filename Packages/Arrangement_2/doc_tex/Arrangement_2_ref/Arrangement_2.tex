@@ -48,6 +48,8 @@ The available traits classes and {\sc Dcel} classes are described below.
 \ccGlue
 \ccNestedType{Dcel}{the {\sc Dcel} representation of the arrangement.}
 
+\ccTypedef{typedef Arrangement_2<Traits_2,Dcel> Self;}{}
+
 \ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
   {the point type, as defined by the traits class.}
 
@@ -201,11 +203,6 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccMethod{Face_handle unbounded_face();}
     {returns a handle for the unbounded face of the arrangement.}
 
-\ccMethod{Face_handle incident_face (Vertex_handle v);}
-    {returns a handle for the face containing the isolated vertex \ccc{v}
-     in its interior.
-     \ccPrecond{\ccc{v} is an isolated vertex (has no incident edges).}}
-   
 \ccMethod{Size number_of_faces() const;}
     {returns the number of faces in the arrangement.}
 

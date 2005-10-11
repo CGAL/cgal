@@ -44,7 +44,11 @@ that return constant handles, iterators or circulators:
     {returns a circulator circulator that allows going over the halfedges
      incident to \ccVar{} (that have \ccVar{} as their target).
      The edges are traversed in a clockwise direction around \ccVar{}.
-     \ccPrecond{\ccVar{} is not an isolated vertex.}}
+     \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
+
+\ccMethod{Face_handle face();}
+    {returns a handle to the face that contains \ccVar{} in its interior.
+     \ccPrecond{\ccVar{} is an isolated vertex.}}
 
 \ccMethod{const typename Traits::Point_2& point() const;}
     {returns the point associated with the vertex.}

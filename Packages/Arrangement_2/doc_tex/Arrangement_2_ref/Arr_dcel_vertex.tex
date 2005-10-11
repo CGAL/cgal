@@ -44,8 +44,16 @@ associated point, and the actual \ccc{Point} object is stored elsewhere.
 All functions below also have \ccc{const} counterparts, returning non-mutable
 pointers or references:
 
+\ccMethod{bool is_isolated() const;}
+    {returns whether the vertex is isolated (has no incident halfedges).}
+
 \ccMethod{Halfedge* halfedge();}
-    {returns an incident halfedge that has \ccVar{} as its target.}
+    {returns an incident halfedge that has \ccVar{} as its target.
+     \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
+
+\ccMethod{Face* face();}
+    {returns the face that conatins \ccVar{} in its interior.
+     \ccPrecond{\ccVar{} is an isolated vertex.}}
 
 \ccMethod{Point& point();}
     {returns the associated point.}
@@ -54,7 +62,11 @@ pointers or references:
 %===========
 
 \ccMethod{void set_halfedge (Halfedge* e);}
-    {sets the incident halfedge.}
+    {sets the incident halfedge, marking \ccVar{} as a regular vertex.}
+
+\ccMethod{void set_face (Face* f);}
+    {sets the face that contains \ccVar{} in its interior, marking \ccVar{}
+     as an isolated vertex.}
 
 \ccMethod{void set_point (Point* p);}
     {sets the associated point.}

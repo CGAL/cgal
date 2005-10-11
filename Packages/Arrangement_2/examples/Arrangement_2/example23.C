@@ -8,14 +8,6 @@
 #include <CGAL/Arr_overlay.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
-struct Logical_and
-{
-  bool operator() (bool b1, bool b2) const
-  {
-    return (b1 && b2);
-  }
-};
-
 typedef CGAL::Gmpq                                       Number_type;
 typedef CGAL::Cartesian<Number_type>                     Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>               Traits_2;
@@ -26,7 +18,7 @@ typedef CGAL::Arrangement_2<Traits_2, Dcel>              Arrangement_2;
 typedef CGAL::Arr_face_overlay_traits<Arrangement_2,
                                       Arrangement_2,
                                       Arrangement_2,
-                                      Logical_and>       Overlay_traits;
+                                      std::logical_and<bool> > Overlay_traits;
 
 int main ()
 {

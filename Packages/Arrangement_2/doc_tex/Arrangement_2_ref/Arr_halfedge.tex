@@ -48,6 +48,13 @@ that return constant handles, iterators or circulators:
 \ccMethod{Vertex_handle target();}
     {returns a handle for the the target vertex of \ccVar{}.}
 
+\ccMethod{Comparison_result direction() const;}
+    {returns the direction of the halfedge: \ccc{SMALLER} if \ccVar{}'s
+     source vertex is lexicographically smaller than it target (so the
+     halfedge is directed from left to right), and \ccc{LARGER} if it is
+     lexicographically larger than the target (so the halfedge is directed
+     from right to left).}
+
 \ccMethod{Face_handle face();}
     {returns the face that \ccVar{} is incident to (lying to its left).}
 
