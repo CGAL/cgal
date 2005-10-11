@@ -80,8 +80,12 @@ private :
 
   typedef std::vector<EventPtr> EventPtr_Vector ;
 
-  typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
+  typedef tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
+  typedef tuple<Point_2,Point_2> Edge ;
+  
+  typedef tuple<Edge,Edge,Edge> Edge_triple ;
+  
   typedef typename Halfedge::SSBase SSBase;
   typedef typename Halfedge::Base   HBase;
   typedef typename Vertex::Base     VBase;
@@ -101,7 +105,7 @@ public:
 
 private :
 
-class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
+  class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
   {
   public:
 
@@ -109,12 +113,11 @@ class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
 
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
-      return mBuilder.CompareEvents(aA,aB); 
+      return mBuilder.CompareEvents(aA,aB) == SMALLER ; 
     }
 
   private:
 
-    
     Self const& mBuilder ;
   } ;
 
@@ -161,38 +164,55 @@ private :
   {
     return aV->halfedge()->face()->halfedge();
   }
+  
   static inline Halfedge_handle HasDefiningBorder1 ( Vertex_handle aV )
   {
     return handle_assigned(aV->halfedge()->opposite()->prev()->face()) ;
   }
+  
   static inline Halfedge_handle GetDefiningBorder1 ( Vertex_handle aV )
   {
     return aV->halfedge()->opposite()->prev()->face()->halfedge();
   }
+  
   static inline Halfedge_handle GetDefiningBorder2 ( Vertex_handle aV )
   {
     return aV->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
   }
-  static inline std::pair<Point_2,Point_2> GetSegment ( Halfedge_const_handle aH )
+  
+  static inline Edge GetEdge ( Halfedge_const_handle aH )
   {
-    return std::make_pair(aH->opposite()->vertex()->point(),aH->vertex()->point());
+    return make_tuple(aH->opposite()->vertex()->point(),aH->vertex()->point());
   }
+  
+  static inline Edge_triple GetEdgeTriple ( Halfedge_const_handle aE0 
+                                          , Halfedge_const_handle aE1 
+                                          , Halfedge_const_handle aE2 
+                                          )
+  {
+    return make_tuple(GetEdge(aE0),GetEdge(aE1),GetEdge(aE2));
+  }
+  
   Vertex_handle GetVertex ( int aIdx )
   {
     return mWrappedVertices[aIdx].mVertex ;
   }
+  
   Vertex_handle GetPrevInLAV ( Vertex_handle aV )
   {
     return GetVertex ( mWrappedVertices[aV->id()].mPrev ) ;
   }
+  
   Vertex_handle GetNextInLAV ( Vertex_handle aV )
   {
     return GetVertex ( mWrappedVertices[aV->id()].mNext ) ;
   }
+  
   void SetPrevInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
     mWrappedVertices[aV->id()].mPrev = aPrev->id();
   }
+  
   void SetNextInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
     mWrappedVertices[aV->id()].mNext = aPrev->id();
@@ -212,6 +232,7 @@ private :
   {
     mWrappedVertices[aVertex->id()].mIsReflex = true ;
   }
+  
   bool IsReflex ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsReflex ;
@@ -221,6 +242,7 @@ private :
   {
     mWrappedVertices[aVertex->id()].mIsProcessed = true ;
   }
+  
   bool IsProcessed ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
@@ -254,11 +276,9 @@ private :
     return rR ;
   }
 
-  
-  
   bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
   {
-    return Exist_event(GetSegment(aE0), GetSegment(aE1), GetSegment(aE2));
+    return Exist_sls_event_2<Traits>(mTraits)()(GetEdgeTriple(aE0, aE1, aE2));
   }
   
   bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL     
@@ -268,23 +288,16 @@ private :
                               , Halfedge_const_handle aOppositeNext
                               ) const
   {
-    return Is_event_inside_offset_zone( GetSegment(aReflexL)
-                                      , GetSegment(aReflexR)
-                                      , GetSegment(aOpposite)
-                                      , GetSegment(aOppositePrev)
-                                      , GetSegment(aOppositeNext)
-                                      ) ;
+    return Is_sls_event_inside_offset_zone_2<Traits>(mTraits)()( GetEdgeTriple(aReflexL     , aReflexR, aOpposite)
+                                                               , GetEdgeTriple(aOppositePrev,aOpposite, aOppositeNext)
+                                                               ) ;
   }
   
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    return Compare_event_times( GetSegment(aA->border_a())
-                              , GetSegment(aA->border_b())
-                              , GetSegment(aA->border_c())
-                              , GetSegment(aB->border_a())
-                              , GetSegment(aB->border_b())
-                              , GetSegment(aB->border_c())
-                              ) ;
+    return Compare_sls_event_times_2<Traits>(mTraits)()( GetEdgeTriple(aA->border_a(), aA->border_b(), aA->border_c())
+                                                       , GetEdgeTriple(aB->border_a(), aB->border_b(), aB->border_c())
+                                                       ) ;
   }
   
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
@@ -293,33 +306,25 @@ private :
                                                 ) const
   {
     if ( aSeed->is_inner() )
-      return Compare_event_distance_to_seed( GetSegment(GetDefiningBorder0(aSeed))
-                                           , GetSegment(GetDefiningBorder1(aSeed))
-                                           , GetSegment(GetDefiningBorder2(aSeed))
-                                           , GetSegment(aA->border_a())
-                                           , GetSegment(aA->border_b())
-                                           , GetSegment(aA->border_c())
-                                           , GetSegment(aB->border_a())
-                                           , GetSegment(aB->border_b())
-                                           , GetSegment(aB->border_c())
-                                           ) ;
+      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( GetEdgeTriple(GetDefiningBorder0(aSeed)
+                                                                                   ,GetDefiningBorder1(aSeed)
+                                                                                   ,GetDefiningBorder2(aSeed)
+                                                                                   )
+                                                                    , GetEdgeTriple(aA->border_a(), aA->border_b(), aA->border_c())
+                                                                    , GetEdgeTriple(aB->border_a(), aB->border_b(), aB->border_c())
+                                                                    ) ;
     else
-      return Compare_event_distance_to_seed( aSeed->point()
-                                           , GetSegment(aA->border_a())
-                                           , GetSegment(aA->border_b())
-                                           , GetSegment(aA->border_c())
-                                           , GetSegment(aB->border_a())
-                                           , GetSegment(aB->border_b())
-                                           , GetSegment(aB->border_c())
-                                           ) ;
+      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
+                                                                    , GetEdgeTriple(aA->border_a(), aA->border_b(), aA->border_c())
+                                                                    , GetEdgeTriple(aB->border_a(), aB->border_b(), aB->border_c())
+                                                                    ) ;
   }
 
-  std::pair<Point_2,FT> ConstructEventPointAndTime( Event const& aE ) const
+  void SetEventTimeAndPoint( Event& aE )
   {
-    return Construct_event( GetSegment(aE.border_a())
-                          , GetSegment(aE.border_b())
-                          , GetSegment(aE.border_c())
-                          ); 
+    FT lTime ; Point_2 lP ;
+    tie(lTime,lP) = Construct_sls_event_time_and_point_2<Traits>(mTraits)()( GetEdgeTriple(aE.border_a(), aE.border_b(), aE.border_c()) ); 
+    aE.SetTimeAndPoint(lTime,lP);
   }
      
   BorderTriple GetDefiningBorders( Vertex_handle aA, Vertex_handle aB ) ;
@@ -388,12 +393,9 @@ private:
 
   //Input
   Traits mTraits ;
-  typename Traits::Left_turn_2                    Left_turn ;
-  typename Traits::Exist_event                    Exist_event ;
-  typename Traits::Is_event_inside_offset_zone    Is_event_inside_offset_zone ;
-  typename Traits::Compare_event_times            Compare_event_times ;
-  typename Traits::Compare_event_distance_to_seed Compare_event_distance_to_seed ;
-  typename Traits::Construct_event                Construct_event ;
+  
+  typename Traits::Left_turn_2 Left_turn ;
+  
 
   //Internal
 

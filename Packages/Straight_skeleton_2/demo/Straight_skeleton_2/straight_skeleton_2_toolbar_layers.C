@@ -31,22 +31,22 @@
 
 Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
                               ,QMainWindow *mw
-			      ,PolygonalRegion const& pr
-			      ,Ssds const& ss
-			      ,PolygonalRegion const& off
-			      ) : QToolBar(mw, "LT"),
+                              ,PolygonalRegion const& pr
+                              ,Sls const& sls
+                              ,PolygonalRegion const& off
+                              ) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
-    showP  = new Qt_layer_show_polygon<PolygonalRegion>(pr,CGAL::RED);
-    showSS = new Qt_layer_show_skeleton<Ssds>(ss);
-    showO  = new Qt_layer_show_polygon<PolygonalRegion>(off,CGAL::YELLOW);
+    showP   = new Qt_layer_show_polygon<PolygonalRegion>(pr,CGAL::RED);
+    showSLS = new Qt_layer_show_skeleton<Sls>(sls);
+    showO   = new Qt_layer_show_polygon<PolygonalRegion>(off,CGAL::BLACK);
 
     //set the widget
     widget = w;
     window = mw;
 
     widget->attach(showP);
-    widget->attach(showSS);
+    widget->attach(showSLS);
     widget->attach(showO);
 
 
@@ -66,10 +66,10 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
     but[2] = new QToolButton(this, "offset");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Polygon Offset");
-    
+
     nr_of_buttons = 3;
     button_group = new QButtonGroup(0, "nonexclusive");
-    
+
     for(int i =0; i<nr_of_buttons; i++){
       but[i]->setToggleButton(true);
       but[i]->toggle();
@@ -79,15 +79,15 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
     connect(but[0], SIGNAL(stateChanged(int)),
         showP, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
-        showSS, SLOT(stateChanged(int)));
+        showSLS, SLOT(stateChanged(int)));
     connect(but[2], SIGNAL(stateChanged(int)),
         showO, SLOT(stateChanged(int)));
-  }	
+  }
 
   Layers_toolbar::~Layers_toolbar()
   {
     delete showP;
-    delete showSS;
+    delete showSLS;
     delete showO;
     delete button_group;
   };

@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE=/home/fcacciola/dev/CGAL/make/makefile_i686_Linux-2.4.27-2-386_g++-3.3.5
+CGAL_MAKEFILE=/home/fcacciola/dev/CGAL/make/makefile_i686_Linux-2.6.8-2-386_g++-3.3.5
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -47,8 +47,7 @@ straight_skeleton_2_toolbar_layers$(OBJ_EXT): straight_skeleton_2_toolbar_layers
 straight_skeleton_2_toolbar_layers.moc: straight_skeleton_2_toolbar_layers.h
 	$(QT_MOC) -o straight_skeleton_2_toolbar_layers.moc straight_skeleton_2_toolbar_layers.h
 
-straight_skeleton_2.moc: straight_skeleton_2.C \
-		 straight_skeleton_2_toolbar$(OBJ_EXT) \
+straight_skeleton_2.moc: straight_skeleton_2.C straight_skeleton_2_toolbar$(OBJ_EXT) \
 		 straight_skeleton_2_toolbar_layers$(OBJ_EXT)
 	${QT_MOC} -o straight_skeleton_2.moc straight_skeleton_2.C
 

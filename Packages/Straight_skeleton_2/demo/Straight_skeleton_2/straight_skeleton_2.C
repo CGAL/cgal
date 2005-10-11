@@ -46,6 +46,7 @@ int main(int, char*)
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 #include <qfiledialog.h>
+#include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
@@ -66,7 +67,6 @@ int main(int, char*)
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
-
 class ActiveCanvasClient : QObject
 {
     Q_OBJECT
@@ -79,8 +79,8 @@ public:
         connect( socket, SIGNAL(readyRead()), SLOT(socketReadyRead()) );
         connect( socket, SIGNAL(connectionClosed()), SLOT(socketConnectionClosed()) );
         connect( socket, SIGNAL(error(int)), SLOT(socketError(int)) );
-                
-        Connect();        
+
+        Connect();
     }
 
     ~ActiveCanvasClient()
@@ -90,18 +90,18 @@ public:
     void Connect()
     {
       socket->connectToHost( "localhost", 4242 );
-    } 
-    
+    }
+
     void undraw_object ( int n )
     {
       if ( !is_connected() )
         Connect();
-        
+
       if ( is_connected() )
       {
         QString lCmd;
         QTextOStream(&lCmd) << '~' << n << '\n' ;
-        sendToServer(lCmd);  
+        sendToServer(lCmd);
       }
     }
 
@@ -109,54 +109,54 @@ public:
     {
       return ( color.red() << 16 ) + (color.green() << 8 ) + color.blue() ;
     }
-    
+
     int draw_point ( double x, double y, CGAL::Color color, char const* layer )
     {
       int rID = -1 ;
-      
+
       if ( !is_connected() )
         Connect();
-        
+
       if ( is_connected() )
       {
         QString lCmd;
         QTextOStream(&lCmd) << 'P' << mID << ' ' << toInt(color) << ' ' << x << ' ' << y << '\n'  ;
-        sendToServer(lCmd);  
+        sendToServer(lCmd);
         rID = mID++;
       }
-      
+
       return rID ;
     }
 
     int draw_segment ( double sx, double sy, double tx, double ty, CGAL::Color color, char const* layer )
     {
       int rID = -1 ;
-      
+
       if ( !is_connected() )
         Connect();
-        
+
       if ( is_connected() )
       {
         QString lCmd;
         QTextOStream(&lCmd) << 'S' << mID << ' ' << toInt(color) << ' ' << sx << ' ' << sy << ' ' << tx << ' ' << ty << '\n' ;
-        sendToServer(lCmd);  
+        sendToServer(lCmd);
         rID = mID++;
       }
-      
+
       return rID ;
     }
-    
+
 private slots:
     void closeConnection()
     {
         socket->close();
-        if ( socket->state() == QSocket::Closing ) 
+        if ( socket->state() == QSocket::Closing )
         {
             // We have a delayed close.
             connect( socket, SIGNAL(delayedCloseFinished()),
                     SLOT(socketClosed()) );
         }
-        else 
+        else
         {
             // The socket is closed.
             socketClosed();
@@ -168,7 +168,7 @@ private slots:
       socket->writeBlock(aMessage,aMessage.length());
       socket->flush();
     }
-        
+
     void socketConnected()
     {
     }
@@ -184,24 +184,24 @@ private slots:
     void socketError( int e )
     {
       QTextStream ts(socket);
-      while ( socket->canReadLine() ) 
+      while ( socket->canReadLine() )
         std::cerr << "Active Canvas Server socket error: " << e << std::endl ;
     }
 
     void socketReadyRead()
     {
       QTextStream ts(socket);
-      while ( socket->canReadLine() ) 
+      while ( socket->canReadLine() )
         std::cerr << "Active Canvas Server Response: " << ((char const*)ts.readLine()) << std::endl ;
     }
-    
-    bool is_connected() { return socket->state() == QSocket::Connected ; } 
-    
+
+    bool is_connected() { return socket->state() == QSocket::Connected ; }
+
 private:
 
     QSocket *socket;
     int mID ;
-    
+
 };
 
 ActiveCanvasClient sAC_Client ;
@@ -232,11 +232,11 @@ int Straight_skeleton_external_draw_point ( double x, double y, CGAL::Color colo
 
 int Straight_skeleton_external_draw_segment ( double sx
                                             , double sy
-      				            , double tx
-				            , double ty
-					    , CGAL::Color color
-					    , char const* layer
-					    )
+                                            , double tx
+                                            , double ty
+                                            , CGAL::Color color
+                                            , char const* layer
+                                            )
 {
   return sAC_Client.draw_segment(sx,sy,tx,ty,color,layer);
 }
@@ -248,11 +248,12 @@ int Straight_skeleton_external_draw_segment ( double sx
 
 const QString my_title_string("Straight_skeleton_2 Demo");
 
-Ssds ssds;
-PolygonalRegion region ;
 int current_state;
+Sls sls;
+PolygonalRegion input_region ;
 PolygonalRegion offset_region ;
-double offset_time = 0.1 ;
+double offset_val  = 7 ;
+int  offset_steps = 4 ;
 
 class MyWindow : public QMainWindow
 {
@@ -287,9 +288,11 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("Generate Skeleton", this, SLOT(create_ss()), CTRL+Key_G );
+    draw->insertItem("Generate Skeleton", this, SLOT(create_sls()), CTRL+Key_G );
     draw->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
-    
+    draw->insertItem("Set Offset Distance", this, SLOT(set_offset()));
+    draw->insertItem("Set Offset Steps", this, SLOT(set_steps()));
+
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
@@ -304,7 +307,7 @@ public:
     newtoolbar = new Tools_toolbar(widget, this);
 
     //the new scenes toolbar
-    vtoolbar = new Layers_toolbar(widget, this, region, ssds, offset_region);
+    vtoolbar = new Layers_toolbar(widget, this, input_region, sls, offset_region);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -327,8 +330,8 @@ public slots:
   {
     widget->lock();
     widget->clear();
-    ssds.clear();
-    region.clear();
+    sls.clear();
+    input_region.clear();
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
@@ -342,44 +345,79 @@ private slots:
     PolygonPtr poly(new Polygon());
     if (CGAL::assign(*poly, obj))
     {
-      CGAL::Orientation expected = ( region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+      CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( poly->orientation() != expected )
         poly->reverse_orientation();
-      region.push_back(poly);  
+      input_region.push_back(poly);
     }
     widget->redraw();
   };
 
 
-  void create_ss()
+  void create_sls()
   {
-    Builder builder ;
-    
-    for( PolygonalRegion::const_iterator bit = region.begin(), ebit = region.end() ; bit != ebit ; ++ bit )
+    SlsBuilder builder ;
+
+    for( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
     {
       builder.insert_CCB((*bit)->vertices_begin(),(*bit)->vertices_end());
-    }  
-    std::cout << "Proceesing..." << std::endl ;
-    ssds = builder.proceed() ;
-    std::cout << "Done." << std::endl ;
+    }
+    sls = builder.proceed() ;
     widget->redraw();
     something_changed();
   }
-    
+
   void create_offset()
   {
-    if ( ssds.size_of_halfedges() > 0 )
+    if ( sls.size_of_halfedges() > 0 )
     {
       offset_region.clear();
-      PolygonOffset lOffset(ssds);
-offset_time = 0.1 ;      
-      lOffset.Create(offset_time*offset_time, std::back_inserter(offset_region) );
-std::cout << (int)offset_region.size() << " offset polygons generated\n" ;
-if ( offset_region.size() > 0 )
-  std::cout << (int)offset_region.front()->size() << " vertices in offset polygon # 0\n" ;      
-    }  
+      for ( int i = 0 ; i < offset_steps ; ++ i )
+      {
+        OffsetBuilder lOffsetBuilder(sls);
+        lOffsetBuilder.Create(i*offset_val, std::back_inserter(offset_region) );
+      }
+      widget->redraw();
+      something_changed();
+    }
   }
-  
+
+  void set_offset()
+  {
+    bool ok = FALSE;
+    QString text = QInputDialog::getText( "Straight Skeleton and Offseting demo"
+                                        , "Enter offset distance"
+                                        , QLineEdit::Normal
+                                        , QString::number(offset_val)
+                                        , &ok
+                                        , this
+                                        );
+    if ( ok && !text.isEmpty() )
+    {
+      double tmp = text.toDouble(&ok);
+      if ( ok )
+        offset_val = tmp ;
+    }
+  }
+
+  void set_steps()
+  {
+    bool ok = FALSE;
+    QString text = QInputDialog::getText( "Straight Skeleton and Offseting demo"
+                                        , "Enter offset steps"
+                                        , QLineEdit::Normal
+                                        , QString::number(offset_steps)
+                                        , &ok
+                                        , this
+                                        );
+    if ( ok && !text.isEmpty() )
+    {
+      double tmp = text.toInt(&ok);
+      if ( ok )
+        offset_steps = tmp ;
+    }
+  }
+
   void about()
   {
     QMessageBox::about( this, my_title_string,
@@ -427,17 +465,17 @@ if ( offset_region.size() > 0 )
   {
     QString fileName = QFileDialog::getSaveFileName(
                          "sample.poly", "Polygonal PolygonalRegion files (*.poly)", this );
-    if ( !fileName.isNull() && region.size() > 0 )
+    if ( !fileName.isNull() && input_region.size() > 0 )
     {
       std::ofstream out(fileName);
-      
+
       CGAL::set_ascii_mode(out);
-     
-      out << region.size() << std::endl ;
-      
-      for ( PolygonalRegion::const_iterator bit = region.begin(), ebit = region.end() ; bit != ebit ; ++ bit )
+
+      out << input_region.size() << std::endl ;
+
+      for ( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
         out << **bit ;
-        
+
     }
   }
 
@@ -445,15 +483,15 @@ if ( offset_region.size() > 0 )
   {
     QString fileName = QFileDialog::getSaveFileName(
                          "sample.edg", "CDT edges file (*.edg)", this );
-    if ( !fileName.isNull() && region.size() > 0 )
+    if ( !fileName.isNull() && input_region.size() > 0 )
     {
       std::ofstream out(fileName);
-      
+
       CGAL::set_ascii_mode(out);
-     
+
       std::vector<Segment> lEdges ;
-      
-      for ( PolygonalRegion::const_iterator bit = region.begin(), ebit = region.end() ; bit != ebit ; ++ bit )
+
+      for ( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
       {
         Polygon::const_iterator first = (*bit)->vertices_begin();
         Polygon::const_iterator end   = (*bit)->vertices_end  ();
@@ -461,16 +499,16 @@ if ( offset_region.size() > 0 )
         for ( Polygon::const_iterator it = first ; it != end ; ++ it )
         {
           Polygon::const_iterator nx = ( it != last ? it + 1 : first ) ;
-          lEdges.push_back( Segment(*it,*nx) ) ;  
-        }  
+          lEdges.push_back( Segment(*it,*nx) ) ;
+        }
       }
-      
+
       out << lEdges.size() << '\n' ;
       for ( std::vector<Segment>::const_iterator sit = lEdges.begin(), esit = lEdges.end() ; sit != esit ; ++ sit )
         out << sit->source() << ' ' << sit->target() << '\n' ;
     }
   }
-  
+
   void load_polygon()
   {
     QString s( QFileDialog::getOpenFileName(
@@ -479,10 +517,10 @@ if ( offset_region.size() > 0 )
       return;
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
-    region.clear();
+    input_region.clear();
     int ccb_count ;
     in >> ccb_count ;
-    
+
     for ( int i = 0 ; i < ccb_count ; ++ i )
     {
       PolygonPtr poly( new Polygon() );
@@ -490,15 +528,22 @@ if ( offset_region.size() > 0 )
       if ( i == 0 )
       {
         CGAL::Bbox_2 lBbox = poly->bbox();
-        widget->set_window(lBbox.xmin(), lBbox.xmax(), lBbox.ymin(), lBbox.ymax());
+        double w = lBbox.xmax() - lBbox.xmin();
+        double h = lBbox.ymax() - lBbox.ymin();
+        double s = std::sqrt(w*w+h*h);
+        double m = s * 0.05 ;
+        widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
+        offset_val = m ;
+        offset_steps = 2 ;
       }
-      CGAL::Orientation expected = ( region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+      CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( poly->orientation() != expected )
         poly->reverse_orientation();
-      region.push_back(poly);
-    } 
-         
-    ssds.clear();
+      input_region.push_back(poly);
+    }
+
+    offset_region.clear();
+    sls.clear();
     widget->redraw();
     something_changed();
   }

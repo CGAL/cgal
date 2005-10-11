@@ -18,18 +18,18 @@
 // Author(s)     : Radu Ursu
 
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include <CGAL/Polygon_offset_2.h>
+#include <CGAL/Polygon_offset_builder_2.h>
 
-typedef CGAL::Straight_skeleton_2<K>                          Ssds;
-typedef CGAL::Straight_skeleton_builder_traits_2<K>           BuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<BuilderTraits,Ssds> Builder;
+typedef CGAL::Straight_skeleton_2<K>                            Sls;
+typedef CGAL::Straight_skeleton_builder_traits_2<K>             SlsBuilderTraits;
+typedef CGAL::Straight_skeleton_builder_2<SlsBuilderTraits,Sls> SlsBuilder;
 
-typedef CGAL::Polygon_offset_traits_2<K>                 PolygonOffsetTraits;
-typedef CGAL::Polygon_offset_2<Ssds,PolygonOffsetTraits> PolygonOffset;
+typedef CGAL::Polygon_offset_builder_traits_2<K>                        OffsetBuilderTraits;
+typedef CGAL::Polygon_offset_builder_2<Sls,OffsetBuilderTraits,Polygon> OffsetBuilder;
 
-typedef Ssds::Halfedge_iterator     Halfedge_iterator;
-typedef Ssds::Vertex_handle         Vertex_handle;
-typedef Ssds::Face_const_iterator   Face_const_iterator;
-typedef Ssds::Halfedge_const_handle Halfedge_const_handle ;
-typedef Ssds::Vertex_const_handle   Vertex_const_handle ;
+typedef Sls::Halfedge_iterator     Halfedge_iterator;
+typedef Sls::Vertex_handle         Vertex_handle;
+typedef Sls::Face_const_iterator   Face_const_iterator;
+typedef Sls::Halfedge_const_handle Halfedge_const_handle ;
+typedef Sls::Vertex_const_handle   Vertex_const_handle ;
 

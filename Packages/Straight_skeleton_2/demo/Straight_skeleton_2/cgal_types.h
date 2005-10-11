@@ -16,19 +16,24 @@
 // $Name$
 //
 // Author(s)     : Radu Ursu
+#ifndef CGAL_TYPES
+#define CGAL_TYPES
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
-typedef double                     NT;
-typedef CGAL::Cartesian<NT>        K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
 typedef K::Point_2                 Point;
 typedef CGAL::Polygon_2<K>         Polygon;
 typedef boost::shared_ptr<Polygon> PolygonPtr;
 typedef CGAL::Segment_2<K>         Segment;
 typedef std::vector<PolygonPtr>    PolygonalRegion ;
+
+#endif
 

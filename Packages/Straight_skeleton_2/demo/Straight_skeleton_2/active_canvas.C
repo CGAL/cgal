@@ -51,7 +51,7 @@ int main(int, char*)
 #include <qtextstream.h>
 #include <qstringlist.h>
 
-#include "cgal_types.h"
+#include "active_canvas_cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
@@ -130,7 +130,7 @@ const QString my_title_string("Active Canvas");
 int current_state;
 
 #include <CGAL/IO/Qt_widget_layer.h>
-#include "types.h"
+#include "active_canvas_types.h"
 
 class Layer : public CGAL::Qt_widget_layer
 {

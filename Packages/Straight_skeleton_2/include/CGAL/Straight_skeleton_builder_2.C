@@ -22,9 +22,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_2_C
 #define CGAL_STRAIGHT_SKELETON_BUILDER_2_C 1
 
-#include <boost/tuple/tuple.hpp>
 #include <boost/bind.hpp>
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,17 +40,12 @@ template<class Gt, class SS>
 Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& aTraits )
   :
   mTraits(aTraits)
- ,mEventCompare(aTraits)
+ ,Left_turn(aTraits.get<typename Traits::Left_turn_2>())
+ ,mEventCompare(*this)
  ,mVertexID(0)
  ,mEdgeID(0)
  ,mEventID(0)
  ,mStepID(0)
- ,Left_turn                     (aTraits.template get<typename Traits::Left_turn_2>())
- ,Exist_event                   (aTraits.template get<typename Traits::Exist_event>())
- ,Is_event_inside_offset_zone   (aTraits.template get<typename Traits::Is_event_inside_offset_zone>())
- ,Compare_event_times           (aTraits.template get<typename Traits::Compare_event_times>())
- ,Compare_event_distance_to_seed(aTraits.template get<typename Traits::Compare_event_distance_to_seed>())
- ,Construct_event               (aTraits.template get<typename Traits::Construct_event>())
 {
 }
 
@@ -63,9 +56,7 @@ Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& 
 //
 template<class Gt, class SS>
 typename Straight_skeleton_builder_2<Gt,SS>::BorderTriple
-Straight_skeleton_builder_2<Gt,SS>::GetDefiningBorders( Vertex_handle aA
-                                                       ,Vertex_handle aB
-                                                      )
+Straight_skeleton_builder_2<Gt,SS>::GetDefiningBorders( Vertex_handle aA, Vertex_handle aB )
 {
   Halfedge_handle lAL = GetDefiningBorder0(aA);
   Halfedge_handle lAR = GetDefiningBorder2(aA);
@@ -77,21 +68,23 @@ Straight_skeleton_builder_2<Gt,SS>::GetDefiningBorders( Vertex_handle aA
 
 template<class Gt, class SS>
 typename Straight_skeleton_builder_2<Gt,SS>::EventPtr
-Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode
-                                                  ,Vertex_handle aRNode
-                                                 )
+Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode )
 {
   EventPtr rResult ;
 
   Halfedge_handle lBorderA, lBorderB, lBorderC ;
-  boost::tie(lBorderA,lBorderB,lBorderC) = GetDefiningBorders(aLNode,aRNode);
+  tie(lBorderA,lBorderB,lBorderC) = GetDefiningBorders(aLNode,aRNode);
 
   if ( lBorderA != lBorderB && lBorderB != lBorderC )
   {
-    if ( ExistEvent(lBorderA,lBorderB,lBorderC)  )
+    if ( ExistEvent(lBorderA,lBorderB,lBorderC) )
+    {
       rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, aLNode, aRNode ) ) ;
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+      SetEventTimeAndPoint(*rResult);
+#endif
+    }  
   }
-  
   return rResult ;
 }
 
@@ -104,33 +97,24 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle    aNo
                                                            ,EventPtr_Vector& aCandidates
                                                           )
 {
-  CGAL_SSBUILDER_TRACE("Computing potential split event between E" << aReflexLBorder->id() << ",E" <<aReflexRBorder->id() << " and E" << aOppositeBorder->id() );
+  CGAL_SSBUILDER_TRACE("Computing potential split event between E" << aReflexLBorder->id() 
+                      << ",E" <<aReflexRBorder->id() << " and E" << aOppositeBorder->id() 
+                      );
   
-  if (    Halfedge_const_handle(aOppositeBorder) != aReflexLBorder
-       && Halfedge_const_handle(aOppositeBorder) != aReflexRBorder
-     )
+  if ( Halfedge_const_handle(aOppositeBorder) != aReflexLBorder && Halfedge_const_handle(aOppositeBorder) != aReflexRBorder )
   {
     if ( ExistEvent(aReflexLBorder,aReflexRBorder,aOppositeBorder) )
     {
       Halfedge_handle lPrevOppBorder = GetPrevInCCB(aOppositeBorder);
       Halfedge_handle lNextOppBorder = GetNextInCCB(aOppositeBorder);
 
-      if ( IsEventInsideOffsetZone( aReflexLBorder 
-                                  , aReflexRBorder 
-                                  , aOppositeBorder
-                                  , lPrevOppBorder 
-                                  , lNextOppBorder 
-                                  )
-         )
-       {
-         aCandidates.push_back( EventPtr( new SplitEvent( aReflexLBorder
-                                                         ,aReflexRBorder
-                                                         ,aOppositeBorder
-                                                         ,aNode
-                                                         ,aOppositeBorder
-                                                        )
-                                        )
-                              ) ;
+      if ( IsEventInsideOffsetZone(aReflexLBorder, aReflexRBorder, aOppositeBorder, lPrevOppBorder, lNextOppBorder) )
+      {
+         EventPtr lEvent( new SplitEvent( aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode,aOppositeBorder) ) ; 
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+         SetEventTimeAndPoint(*lEvent);
+#endif
+         aCandidates.push_back(lEvent) ;
        }
     }
   }
@@ -175,8 +159,7 @@ Straight_skeleton_builder_2<Gt,SS>::FindSplitEvent( Vertex_handle aNode )
 
 
 template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>
-  ::CollectNewEvents( Vertex_handle aNode, EventPtr_Vector& aEvents )
+void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode, EventPtr_Vector& aEvents )
 {
   Vertex_handle lPrev = GetPrevInLAV(aNode) ;
   Vertex_handle lNext = GetNextInLAV(aNode) ;
@@ -234,9 +217,7 @@ void Straight_skeleton_builder_2<Gt,SS>
 
 template<class Gt, class SS>
 typename Straight_skeleton_builder_2<Gt,SS>::EventPtr
-Straight_skeleton_builder_2<Gt,SS>::ChooseBestNewEvent( Vertex_handle    aNode
-                                                       ,EventPtr_Vector& aEvents
-                                                      )
+Straight_skeleton_builder_2<Gt,SS>::ChooseBestNewEvent( Vertex_handle aNode, EventPtr_Vector& aEvents )
 {
   size_type lC = aEvents.size();
 
@@ -283,9 +264,7 @@ void Straight_skeleton_builder_2<Gt,SS>::AddNewEvent( Vertex_handle aNode )
 //! edges.\n
 //
 template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_handle aA
-                                                                    , Vertex_handle aB
-                                                                    )
+void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB )
 {
   Halfedge_handle lOA = aA->primary_bisector() ;
   Halfedge_handle lOB = aB->primary_bisector() ;
@@ -331,9 +310,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
 }
 
 template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::AreBisectorsCoincident ( Halfedge_const_handle aA
-                                                                 ,Halfedge_const_handle aB
-                                                                ) const
+bool Straight_skeleton_builder_2<Gt,SS>::AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB  ) const
 {
   Halfedge_const_handle lA_LBorder = aA->defining_border();
   Halfedge_const_handle lA_RBorder = aA->opposite()->defining_border();
@@ -392,7 +369,9 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
     lOBisector->HBase::set_prev(lIBorder);
     lOBorder  ->HBase::set_prev(lIBisector);
     lIBisector->HBase::set_next(lOBorder);
-    CGAL_SSBUILDER_TRACE("Adding Contour Bisector at N:" << v->id() << "\n B" << lOBisector->id() << " (Out)\n B" << lIBisector->id() << " (In)" ) ;
+    CGAL_SSBUILDER_TRACE("Adding Contour Bisector at N:" << v->id() << "\n B" << lOBisector->id()
+                        << " (Out)\n B" << lIBisector->id() << " (In)" 
+                        ) ;
   }
 }
 
@@ -412,10 +391,9 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
   Vertex_handle lLSeed = aEvent.left_seed () ;
   Vertex_handle lRSeed = aEvent.right_seed() ;
 
-  Point_2 lP ; FT lTime ;
-  boost::tie(lP,lTime) = ConstructEventPointAndTime(aEvent);  
+  SetEventTimeAndPoint(aEvent);  
   
-  Vertex_handle lNewNode = mSS.SBase::vertices_push_back( Vertex( mVertexID++, lP, lTime) ) ;
+  Vertex_handle lNewNode = mSS.SBase::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time()) ) ;
   
   mWrappedVertices.push_back( VertexWrapper(lNewNode) ) ;
   
@@ -472,7 +450,10 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
 
   CGAL_SSBUILDER_TRACE ( "Looking up for E" << aBorder->id() << " on SLAV. P=" << aEvent.point() ) ;
 
-  CGAL_SSBUILDER_SHOW_AUX ( SS_IO_AUX::ScopedSegmentDrawing draw_(aBorder->vertex()->point(),aBorder->opposite()->vertex()->point(),CGAL::YELLOW,"OppBorder") ; )
+  CGAL_SSBUILDER_SHOW_AUX ( SS_IO_AUX::ScopedSegmentDrawing draw_(aBorder->vertex()->point()
+                                                                 ,aBorder->opposite()->vertex()->point()
+                                                                 ,CGAL::YELLOW,"OppBorder") ;
+                          )
 
   for ( Vertex_iterator vi = mSS.vertices_begin(); vi != mSS.vertices_end(); ++ vi )
   {
@@ -529,11 +510,10 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent
 
     CGAL_SSBUILDER_TRACE ( "Opposite E" << lOppBorder->id() << " is between N" << lOppL->id() << " and N" << lOppR->id() ) ;
 
-    Point_2 lP ; FT lTime ;
-    boost::tie(lP,lTime) = ConstructEventPointAndTime(aEvent);
+    SetEventTimeAndPoint(aEvent);  
     
-    Vertex_handle lNodeA = mSS.SBase::vertices_push_back( Vertex( mVertexID++, lP, lTime ) ) ;
-    Vertex_handle lNodeB = mSS.SBase::vertices_push_back( Vertex( mVertexID++, lP, lTime ) ) ;
+    Vertex_handle lNodeA = mSS.SBase::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time() ) ) ;
+    Vertex_handle lNodeB = mSS.SBase::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time() ) ) ;
 
     mWrappedVertices.push_back( VertexWrapper(lNodeA) ) ;
     mWrappedVertices.push_back( VertexWrapper(lNodeB) ) ;
@@ -602,9 +582,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EdgeEvent& aEvent )
     {
       CGAL_SSBUILDER_TRACE("Creating new Edge Event's Bisector");
       
-      Halfedge_handle lNOBisector = mSS.SBase::edges_push_back ( Halfedge(mEdgeID)
-                                                                ,Halfedge(mEdgeID+1)
-                                                               );
+      Halfedge_handle lNOBisector = mSS.SBase::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1) );
                                                                
       Halfedge_handle lNIBisector = lNOBisector->opposite();
       mEdgeID += 2 ;
@@ -657,13 +635,8 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( SplitEvent& aEvent )
       Halfedge_handle lReflexLBorder = GetDefiningBorder0(lSeed);
       Halfedge_handle lReflexRBorder = GetDefiningBorder2(lSeed);
 
-      Halfedge_handle lNOBisector_L = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++)
-                                                                  ,Halfedge(mEdgeID++)
-                                                                  );
-      Halfedge_handle lNOBisector_R = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++)
-                                                                  ,Halfedge(mEdgeID++)
-
-                                                                 );
+      Halfedge_handle lNOBisector_L = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++) );
+      Halfedge_handle lNOBisector_R = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++) );
       Halfedge_handle lNIBisector_L = lNOBisector_L->opposite();
       Halfedge_handle lNIBisector_R = lNOBisector_R->opposite();
 
@@ -745,13 +718,8 @@ void Straight_skeleton_builder_2<Gt,SS>::Propagate()
 
     switch ( lEvent->type() )
     {
-      case Event::cEdgeEvent :
-             HandleEdgeEvent( static_cast<EdgeEvent&> (*lEvent) ) ;
-             break ;
-
-      case Event::cSplitEvent:
-             HandleMultiSplitEvent ( static_cast<SplitEvent*>(&(*lEvent)) ) ;
-             break ;
+      case Event::cEdgeEvent : HandleEdgeEvent       ( static_cast<EdgeEvent&> (  *lEvent)  ) ;  break ;
+      case Event::cSplitEvent: HandleMultiSplitEvent ( static_cast<SplitEvent*>(&(*lEvent)) ) ;  break ;
     }
 
     ++ mStepID ;
@@ -763,7 +731,7 @@ template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aSplitNodes )
 {
   Vertex_handle lLNode, lRNode ;
-  boost::tie(lLNode,lRNode)=aSplitNodes;
+  tie(lLNode,lRNode)=aSplitNodes;
   Halfedge_handle lIBisector = lRNode->primary_bisector()->opposite();
 
   Exclude(lRNode);
@@ -815,9 +783,7 @@ typename Straight_skeleton_builder_2<Gt,SS>::Ssds Straight_skeleton_builder_2<Gt
 template<class Gt, class SS>
 template<class InputPointIterator>
 Straight_skeleton_builder_2<Gt,SS>&
-Straight_skeleton_builder_2<Gt,SS>::insert_CCB (  InputPointIterator aBegin
-                                                , InputPointIterator aEnd
-                                               )
+Straight_skeleton_builder_2<Gt,SS>::insert_CCB ( InputPointIterator aBegin, InputPointIterator aEnd  )
 {
   CGAL_SSBUILDER_TRACE("Inserting Connected Component of the Boundary....");
 
@@ -834,9 +800,7 @@ Straight_skeleton_builder_2<Gt,SS>::insert_CCB (  InputPointIterator aBegin
     InputPointIterator lCurr = aBegin ;
     while ( lCurr != aEnd )
     {
-      Halfedge_handle lCCWBorder = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++)
-                                                               ,Halfedge(mEdgeID++)
-                                                             );
+      Halfedge_handle lCCWBorder = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++)  );
       Halfedge_handle lCWBorder = lCCWBorder->opposite();
 
       Vertex_handle lVertex = mSS.SBase::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
@@ -919,10 +883,7 @@ Straight_skeleton_builder_2<Gt,SS>::insert_CCB (  InputPointIterator aBegin
 
   for ( Vertex_iterator v = mSS.SBase::vertices_begin(); v != mSS.SBase::vertices_end(); ++ v )
   {
-    bool lIsReflex = !Left_turn( GetPrevInLAV(v)->point()
-                                ,v              ->point()
-                                ,GetNextInLAV(v)->point()
-                               );
+    bool lIsReflex = !Left_turn( GetPrevInLAV(v)->point(),v->point(),GetNextInLAV(v)->point() );
     if ( lIsReflex )
     {
       SetIsReflex(v);

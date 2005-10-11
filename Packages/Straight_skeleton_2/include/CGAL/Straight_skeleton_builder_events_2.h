@@ -62,11 +62,7 @@ public:
   Point_2         point   () const { return mP ; }
   FT              time    () const { return mTime ; }
   
-  void SetPointAndTime( Point_2 const& aP, FT const& aTime )
-  {
-    mP    = aP    ;
-    mTime = aTime ;
-  }
+  void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
   
   friend std::ostream& operator<< ( std::ostream& ss
                                    ,Straight_skeleton_builder_event_2<R> const& e 

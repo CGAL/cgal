@@ -19,21 +19,21 @@
 
 #include <CGAL/IO/Qt_widget_layer.h>
 
-template <class Ssds>
+template <class Sls>
 class Qt_layer_show_skeleton : public CGAL::Qt_widget_layer
 {
 public:
 
-  Qt_layer_show_skeleton(Ssds const& aSsds) : mSsds(aSsds)
+  Qt_layer_show_skeleton(Sls const& aSls) : mSls(aSls)
   {};
-  
+
   void draw()
   {
-    typename Ssds::Rep::Construct_segment_2 construct_segment ;
-    
+    typename Sls::Rep::Construct_segment_2 construct_segment ;
+
     widget->lock();
-    
-    for ( Face_const_iterator fit = mSsds.faces_begin(), efit = mSsds.faces_end()
+
+    for ( Face_const_iterator fit = mSls.faces_begin(), efit = mSls.faces_end()
           ; fit != efit
           ; ++ fit
         )
@@ -45,24 +45,24 @@ public:
         if ( he == null_halfedge )
           break ;
         if ( he->is_bisector() )
-        {  
-          bool lOK =    he->vertex() != null_vertex 
-	             && he->opposite() != null_halfedge 
-		     && he->opposite()->vertex() != null_vertex ;
-		     
+        {
+          bool lOK =    he->vertex() != null_vertex
+                     && he->opposite() != null_halfedge
+                     && he->opposite()->vertex() != null_vertex ;
+
           *widget << ( lOK ? (he->is_contour_bisector()? CGAL::GREEN : CGAL::BLUE ) : CGAL::YELLOW ) ;
           *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
         }
-	he = he->next();
+        he = he->next();
       }
       while ( he != hstart ) ;
     }
-    
+
     widget->unlock();
   }
 private:
 
-  Ssds const& mSsds;
+  Sls const& mSls;
   const Halfedge_const_handle null_halfedge ;
   const Vertex_const_handle   null_vertex ;
 
@@ -73,31 +73,38 @@ private:
 template <class PolygonalRegion>
 class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
 {
+  typedef typename PolygonalRegion::value_type BoundaryPtr ;
+
+  typedef typename BoundaryPtr::element_type Boundary ;
+
+  typedef typename PolygonalRegion::const_iterator const_boundary_iterator ;
+
+  typedef typename Boundary::const_iterator const_vertex_iterator ;
+
+  typename Boundary::Traits::Construct_segment_2 construct_segment ;
+
 public:
 
   Qt_layer_show_polygon(PolygonalRegion const& aRegion, CGAL::Color aColor ) : mRegion(aRegion),  mColor(aColor) {};
-  
+
   void draw()
   {
     widget->lock();
-    
+
     *widget << mColor;
 
-    for ( typename PolygonalRegion::const_iterator bit = mRegion.begin(), ebit = mRegion.end()
-        ; bit != ebit 
-	; ++ bit 
-	)
+    for ( const_boundary_iterator bit = mRegion.begin(), ebit = mRegion.end(); bit != ebit; ++ bit )
     {
-      Polygon::const_iterator first = (*bit)->vertices_begin();
-      Polygon::const_iterator end   = (*bit)->vertices_end  ();
-      Polygon::const_iterator last  = end - 1 ;
-      for ( Polygon::const_iterator it = first ; it != end ; ++ it )
+      const_vertex_iterator first = (*bit)->vertices_begin();
+      const_vertex_iterator end   = (*bit)->vertices_end  ();
+      const_vertex_iterator last  = end - 1 ;
+      for ( const_vertex_iterator it = first ; it != end ; ++ it )
       {
-        Polygon::const_iterator nx = ( it != last ? it + 1 : first ) ;
-        *widget << Segment(*it,*nx) ;  
-      }  
+        const_vertex_iterator nx = ( it != last ? it + 1 : first ) ;
+        *widget << construct_segment(*it,*nx) ;
+      }
     }
-    
+
     widget->unlock();
 
   }

@@ -22,428 +22,262 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H 1
 
-#include <algorithm>
-
-#include <CGAL/constructions/kernel_ftC2.h>
-#include <CGAL/constructions/Straight_skeleton_ftC2.h>
-#include <CGAL/predicates/Straight_skeleton_ftC2.h>
-#include <CGAL/certified_numeric_predicates.h>
-#include <CGAL/Unfiltered_predicate_adaptor.h>
-#include <CGAL/Filtered_predicate.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Straight_skeleton_aux.h>
-#include <CGAL/Threetuple.h>
+#include <CGAL/Straight_skeleton_builder_traits_2_aux.h>
+#include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
+#include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
 template<class K>
-struct Exist_event
+struct Exist_sls_event_2 : Sls_functor_base_2<K>
 {
-  typedef typename K::FT FT ;
-  
-  typedef typename K::Point_2 Point_2 ;
-    
-  typedef std::pair<Point_2,Point_2> Point_2_Pair ;
-  
-  typedef Threetuple<Point_2_Pair> Line_triple ;
+  typedef Sls_functor_base_2<K> Base ;
+
+  typedef typename Base::FT          FT ;
+  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<3>    Arity ;
-  
-  Uncertain<bool> operator() ( Line_triple const& aE ) const
+  typedef Arity_tag<1>    Arity ;
+
+  Uncertain<bool> operator() ( Edge_triple const& aET ) const
   {
-    FT  ma, mb, mc
-       ,na, nb, nc
-       ,sa, sb, sc ;
-   
-    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
-                      ,ma,mb,mc
-                      );          
-                      
-    line_from_pointsC2(aE.e1.first.x(),aE.e1.first.y(),aE.e1.second.x(),aE.e1.second.y()
-                      ,na,nb,nc
-                      );          
-    
-    line_from_pointsC2(aE.e2.first.x(),aE.e2.first.y(),aE.e2.second.x(),aE.e3.second.y()
-                      ,sa,sb,sc
-                      );          
-    
-    return exist_single_point_offset_lines_isec(ma,mb,mc,na,nb,nc,sa,sb,sc) ;
-  }                             
+    CGAL_SSTRAITS_TRACE("Exist Event:" << aET);
+    LineC2 l0,l1,l2;
+    tie(l0,l1,l2) = toLineC2_triple(aET);
+
+    return exist_offset_lines_isec2(l0,l1,l2) ;
+  }
+};
+
+
+template<class K>
+struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
+{
+  typedef Sls_functor_base_2<K> Base ;
+
+  typedef typename Base::FT          FT ;
+  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::LineC2      LineC2 ;
+
+  typedef Uncertain<Comparison_result> result_type ;
+  typedef Arity_tag<2>                 Arity ;
+
+  Uncertain<Comparison_result> operator() ( Edge_triple const& aL, Edge_triple const& aR ) const
+  {
+    LineC2 l0,l1,l2,r0,r1,r2;
+    tie(l0,l1,l2) = toLineC2_triple(aL);
+    tie(r0,r1,r2) = toLineC2_triple(aR);
+
+    return compare_offset_lines_isec_timesC2(l0,l1,l2,r0,r1,r2) ;
+  }
 };
 
 template<class K>
-struct Compare_event_times
+struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
 {
-  typedef typename K::FT FT ;
-  
-  typedef typename K::Point_2 Point_2 ;
-  
-  typedef std::pair<Point_2,Point_2> Point_2_Pair ;
-  
-  typedef Threetuple<Point_2_Pair> Line_triple ;
-  
-  typedef Uncertain<Comparison_result> result_type ;
-  typedef Arity_tag<6>                 Arity ;
-  
-  Uncertain<Comparison_result> operator() ( Line_triple const& aL,  Line_triple const& aR ) const
-  {
-    FT  l0a, l0b, l0c
-       ,l1a, l1b, l1c
-       ,l2a, l2b, l2c
-       ,r0a, r0b, r0c
-       ,r1a, r1b, r1c
-       ,r2a, r2b, r2c ;
-   
-    line_from_pointsC2(aL.e0.first.x(),aL.e0.first.y(),aL.e0.second.x(),aL.e0.second.y()
-                      ,l0a,l0b,l0c
-                      );          
-                      
-    line_from_pointsC2(aL.e1.first.x(),aL.e1.first.y(),aL.e1.second.x(),aL.e1.second.y()
-                      ,l1a,l1b,l1c
-                      );          
-    
-    line_from_pointsC2(aL.e2.first.x(),aL.e2.first.y(),aL.e2.second.x(),aL.e2.second.y()
-                      ,l2a,l2b,l2c
-                      );          
-    
-    line_from_pointsC2(aR.e0.first.x(),aR.e0.first.y(),aR.e0.second.x(),aR.e0.second.y()
-                      ,r0a,r0b,r0c
-                      );          
-                      
-    line_from_pointsC2(aR.e1.first.x(),aR.e1.first.y(),aR.e1.second.x(),aR.e1.second.y()
-                      ,r1a,r1b,r1c
-                      );          
-    
-    line_from_pointsC2(aR.e2.first.x(),aR.e2.first.y(),aR.e2.second.x(),aR.e2.second.y()
-                      ,r2a,r2b,r2c
-                      );        
-   
-    return compare_offset_lines_isec_times(l0a,l0b,l0c
-                                          ,l1a,l1b,l1c
-                                          ,l2a,l2b,l2c                                      
-                                          ,r0a,r0b,r0c
-                                          ,r1a,r1b,r1c
-                                          ,r2a,r2b,r2c
-                                          ) ;
-  }                             
-};
+  typedef Sls_functor_base_2<K> Base ;
 
-template<class K>
-struct Compare_event_distance_to_seed
-{
-  typedef typename K::FT FT ;
-  
-  typedef typename K::Point_2 Point_2 ;
-  
-  typedef std::pair<Point_2,Point_2> Point_2_Pair ;
-  
-  typedef Threetuple<Point_2_Pair> Line_triple ;
-  
+  typedef typename Base::Point_2     Point_2 ;
+  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::LineC2      LineC2 ;
+
   typedef Uncertain<Comparison_result> result_type ;
-  typedef Arity_tag<7>                 Arity ;
-  
+  typedef Arity_tag<3>                 Arity ;
+
   Uncertain<Comparison_result> operator() ( Point_2     const& aP
-                                          , Line_triple const& aL
-                                          , Line_triple const& aR
+                                          , Edge_triple const& aL
+                                          , Edge_triple const& aR
                                          ) const
   {
-    FT  l0a, l0b, l0c
-       ,l1a, l1b, l1c
-       ,l2a, l2b, l2c
-       ,r0a, r0b, r0c
-       ,r1a, r1b, r1c
-       ,r2a, r2b, r2c ;
-   
-    line_from_pointsC2(aL.e0.first.x(),aL.e0.first.y(),aL.e0.second.x(),aL.e0.second.y()
-                      ,l0a,l0b,l0c
-                      );          
-                      
-    line_from_pointsC2(aL.e1.first.x(),aL.e1.first.y(),aL.e1.second.x(),aL.e1.second.y()
-                      ,l1a,l1b,l1c
-                      );          
-    
-    line_from_pointsC2(aL.e2.first.x(),aL.e2.first.y(),aL.e2.second.x(),aL.e2.second.y()
-                      ,l2a,l2b,l2c
-                      );          
-    
-    line_from_pointsC2(aR.e0.first.x(),aR.e0.first.y(),aR.e0.second.x(),aR.e0.second.y()
-                      ,r0a,r0b,r0c
-                      );          
-                      
-    line_from_pointsC2(aR.e1.first.x(),aR.e1.first.y(),aR.e1.second.x(),aR.e1.second.y()
-                      ,r1a,r1b,r1c
-                      );          
-    
-    line_from_pointsC2(aR.e2.first.x(),aR.e2.first.y(),aR.e2.second.x(),aR.e2.second.y()
-                      ,r2a,r2b,r2c
-                      );        
-   
-    return compare_offset_lines_isec_sdist_to_point(aP.x()
-                                                   ,aP.y()
-                                                   ,l0a,l0b,l0c
-                                                   ,l1a,l1b,l1c
-                                                   ,l2a,l2b,l2c
-                                                   ,r0a,r0b,r0c
-                                                   ,r1a,r1b,r1c
-                                                   ,r2a,r2b,r2c
-                                                   ) ;
-  }                             
-  
-  Uncertain<Comparison_result> operator() ( Line_triple const& aS
-                                          , Line_triple const& aL
-                                          , Line_triple const& aR
+    LineC2 l0,l1,l2,r0,r1,r2;
+    tie(l0,l1,l2) = toLineC2_triple(aL);
+    tie(r0,r1,r2) = toLineC2_triple(aR);
+
+    return compare_offset_lines_isec_sdist_to_pointC2(toVertexC2(aP),l0,l1,l2,r0,r1,r2) ;
+  }
+
+  Uncertain<Comparison_result> operator() ( Edge_triple const& aS
+                                          , Edge_triple const& aL
+                                          , Edge_triple const& aR
                                           ) const
   {
-    FT  s0a, s0b, s0c
-       ,s1a, s1b, s1c
-       ,s2a, s2b, s2c
-       ,l0a, l0b, l0c
-       ,l1a, l1b, l1c
-       ,l2a, l2b, l2c
-       ,r0a, r0b, r0c
-       ,r1a, r1b, r1c
-       ,r2a, r2b, r2c ;
-   
-    line_from_pointsC2(aS.e0.first.x(),aS.e0.first.y(),aS.e0.second.x(),aS.e0.second.y()
-                      ,s0a,s0b,s0c
-                      );          
-                      
-    line_from_pointsC2(aS.e1.first.x(),aS.e1.first.y(),aS.e1.second.x(),aS.e1.second.y()
-                      ,s1a,s1b,s1c
-                      );          
-                      
-    line_from_pointsC2(aS.e2.first.x(),aS.e2.first.y(),aS.e2.second.x(),aS.e2.second.y()
-                      ,s2a,s2b,s2c
-                      );          
-                      
-    line_from_pointsC2(aL.e0.first.x(),aL.e0.first.y(),aL.e0.second.x(),aL.e0.second.y()
-                      ,l0a,l0b,l0c
-                      );          
-                      
-    line_from_pointsC2(aL.e1.first.x(),aL.e1.first.y(),aL.e1.second.x(),aL.e1.second.y()
-                      ,l1a,l1b,l1c
-                      );          
-    
-    line_from_pointsC2(aL.e2.first.x(),aL.e2.first.y(),aL.e2.second.x(),aL.e2.second.y()
-                      ,l2a,l2b,l2c
-                      );          
-    
-    line_from_pointsC2(aR.e0.first.x(),aR.e0.first.y(),aR.e0.second.x(),aR.e0.second.y()
-                      ,r0a,r0b,r0c
-                      );          
-                      
-    line_from_pointsC2(aR.e1.first.x(),aR.e1.first.y(),aR.e1.second.x(),aR.e1.second.y()
-                      ,r1a,r1b,r1c
-                      );          
-    
-    line_from_pointsC2(aR.e2.first.x(),aR.e2.first.y(),aR.e2.second.x(),aR.e2.second.y()
-                      ,r2a,r2b,r2c
-                      );        
-   
-    return compare_offset_lines_isec_sdist_to_point(s0a,s0b,s0c
-                                                   ,s1a,s1b,s1c
-                                                   ,s2a,s2b,s2c
-                                                   ,l0a,l0b,l0c
-                                                   ,l1a,l1b,l1c
-                                                   ,l2a,l2b,l2c
-                                                   ,r0a,r0b,r0c
-                                                   ,r1a,r1b,r1c
-                                                   ,r2a,r2b,r2c
-                                                   ) ;
-  }                             
+    LineC2 s0,s1,s2,l0,l1,l2,r0,r1,r2;
+    tie(s0,s1,s2) = toLineC2_triple(aS);
+    tie(l0,l1,l2) = toLineC2_triple(aL);
+    tie(r0,r1,r2) = toLineC2_triple(aR);
+
+    return compare_offset_lines_isec_sdist_to_pointC2(s0,s1,s2,l0,l1,l2,r0,r1,r2) ;
+  }
+
 };
 
 template<class K>
-struct Is_event_inside_offset_zone
+struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
 {
-  typedef typename K::FT FT ;
-  
-  typedef typename K::Point_2 Point_2 ;
-  
-  typedef std::pair<Point_2,Point_2> Point_2_Pair ;
-  
-  typedef Threetuple<Point_2_Pair> Line_triple ;
-  
+  typedef Sls_functor_base_2<K> Base ;
+
+  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::LineC2      LineC2 ;
+
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<5>    Arity ;
-  
-  Uncertain<bool> operator() ( Line_triple const& aE, Line_triple const& aO ) const
+  typedef Arity_tag<2>    Arity ;
+
+  Uncertain<bool> operator() ( Edge_triple const& aE, Edge_triple const& aO ) const
   {
-    FT  la, lb, lc
-       ,ra, rb, rc
-       ,ea, eb, ec
-       ,pa, pb, pc
-       ,na, nb, nc ;
-   
-    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
-                      ,la,lb,lc
-                      );          
-                      
-    line_from_pointsC2(aE.e1.first.x(),aE.e1.first.y(),aE.e1.second.x(),aE.e1.second.y()
-                      ,ra,rb,rc
-                      );          
-    
-    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
-                      ,ea,eb,ec
-                      );          
-    
-    line_from_pointsC2(aO.e0.first.x(),aO.e0.first.y(),aO.e0.second.x(),aO.e0.second.y()
-                      ,pa,pb,pc
-                      );          
-                      
-    line_from_pointsC2(aO.e2.first.x(),aO.e2.first.y(),aO.e2.second.x(),aO.e2.second.y()
-                      ,na,nb,nc
-                      );          
-    
-    return is_offset_lines_isec_inside_offset_zone(la,lb,lc
-                                                  ,ra,rb,rc
-                                                  ,ea,eb,ec
-                                                  ,pa,pb
-                                                  ,ea,eb
-                                                  ,na,nb
-                                                  ) ;
-  }                             
+    LineC2 e0,e1,e2,lo,co,ro ;
+    tie(e0,e1,e2) = toLineC2_triple(aE);
+    tie(lo,co,ro) = toLineC2_triple(aO);
+
+    return is_offset_lines_isec_inside_offset_zoneC2(e0,e1,e2,lo,co,ro) ;
+   }
 };
 
 template<class K>
-struct Construct_event
+struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
 {
-  typedef typename K::FT FT ;
-  
-  typedef typename K::Point_2 Point_2 ;
-  
-  typedef std::pair<Point_2,Point_2> Point_2_Pair ;
-  
-  typedef Threetuple<Point_2_Pair> Line_triple ;
-  
-  typedef std::pair<Point_2,FT> result_type ;
-  typedef Arity_tag<3>          Arity ;
-  
-  std::pair<Point_2,FT> operator() ( Line_triple const& aE ) const
+  typedef Sls_functor_base_2<K> Base ;
+
+  typedef typename Base::FT          FT ;
+  typedef typename Base::Point_2     Point_2 ;
+  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::LineC2      LineC2 ;
+
+  typedef tuple<FT,Point_2> result_type ;
+  typedef Arity_tag<1>      Arity ;
+
+  tuple<FT,Point_2> operator() ( Edge_triple const& aE ) const
   {
-    FT  ma, mb, mc
-       ,na, nb, nc
-       ,sa, sb, sc ;
-   
-    line_from_pointsC2(aE.e0.first.x(),aE.e0.first.y(),aE.e0.second.x(),aE.e0.second.y()
-                      ,ma,mb,mc
-                      );          
-                      
-    line_from_pointsC2(aE.e1.first.x(),aE.e1.first.y(),aE.e1.second.x(),aE.e1.second.y()
-                      ,na,nb,nc
-                      );          
-    
-    line_from_pointsC2(aE.e2.first.x(),aE.e2.first.y(),aE.e2.second.x(),aE.e2.second.y()
-                      ,sa,sb,sc
-                      );          
-    
-    typedef Quotient<FT> QFT ;
-                      
-    QFT qx,qy ;
-      
-    QFT qt = construct_offset_lines_isec(ma,mb,mc,na,nb,nc,sa,sb,sc,qx,qy) ;
-    
-    FT x = qx.numerator() / qx.denominator();
-    FT y = qy.numerator() / qy.denominator();
-    FT t = qt.numerator() / qt.denominator();
-                                                   
-    return std::make_pair( Point_2(x,y), t ) ;
-  }                             
+    LineC2 l0,l1,l2;
+    tie(l0,l1,l2) = toLineC2_triple(aE);
+
+    FT tn,td;
+    tie(tn,td) = compute_offset_lines_isec_timeC2(l0,l1,l2);
+
+    FT t = tn / td ;
+
+    FT x,y ;
+    tie(x,y) = construct_offset_lines_isecC2(l0,l1,l2);
+
+    return make_tuple(t,Point_2(x,y)) ;
+  }
 };
+
+} // namespace CGALi
 
 template<class K>
 struct Straight_skeleton_builder_traits_2_functors
 {
-  typedef Exist_event                   <K> Exist_event ;
-  typedef Compare_event_times           <K> Compare_event_times ;
-  typedef Compare_event_distance_to_seed<K> Compare_event_distance_to_seed ;
-  typedef Is_event_inside_offset_zone   <K> Is_event_inside_offset_zone ;
-  typedef Construct_event               <K> Construct_event ;
-                                  
+  typedef CGALi::Exist_sls_event_2                   <K> Exist_sls_event_2 ;
+  typedef CGALi::Compare_sls_event_times_2           <K> Compare_sls_event_times_2 ;
+  typedef CGALi::Compare_sls_event_distance_to_seed_2<K> Compare_sls_event_distance_to_seed_2 ;
+  typedef CGALi::Is_sls_event_inside_offset_zone_2   <K> Is_sls_event_inside_offset_zone_2 ;
+  typedef CGALi::Construct_sls_event_time_and_point_2<K> Construct_sls_event_time_and_point_2 ;
+
 } ;
+
 template<class K>
-class Straight_skeleton_builder_traits_2_base
+struct Straight_skeleton_builder_traits_2_base
 {
-public:
-  
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
-  
+
   typedef typename K::Left_turn_2 Left_turn_2 ;
-  
+
+  template<class F> F get() const { return F(); }
+} ;
+
+
+template<class Is_filtered_kernel, class K> class Straight_skeleton_builder_traits_2_impl ;
+
+template<class K>
+class Straight_skeleton_builder_traits_2_impl<Tag_false,K> : public Straight_skeleton_builder_traits_2_base<K>
+{
+  typedef Straight_skeleton_builder_traits_2_functors<K> Unfiltering ;
+
+public:
+
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Exist_sls_event_2>
+    Exist_sls_event_2 ;
+
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_sls_event_times_2>
+    Compare_sls_event_times_2 ;
+
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_sls_event_distance_to_seed_2>
+    Compare_sls_event_distance_to_seed_2 ;
+
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_sls_event_inside_offset_zone_2>
+    Is_sls_event_inside_offset_zone_2 ;
+
+  typedef typename Unfiltering::Construct_sls_event_time_and_point_2 Construct_sls_event_time_and_point_2 ;
+
+} ;
+
+template<class K>
+class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skeleton_builder_traits_2_base<K>
+{
+  typedef Straight_skeleton_builder_traits_2_functors<typename K::EK> Exact ;
+  typedef Straight_skeleton_builder_traits_2_functors<typename K::FK> Filtering ;
+  typedef Straight_skeleton_builder_traits_2_functors<K>              Unfiltering ;
+
+  typedef typename K::C2E BaseC2E ;
+  typedef typename K::C2F BaseC2F ;
+
+  typedef CGALi::Edge_triple_converter_2<BaseC2E> C2E ;
+  typedef CGALi::Edge_triple_converter_2<BaseC2F> C2F ;
+
+public:
+
+
+  typedef Filtered_predicate<typename Exact    ::Exist_sls_event_2
+                            ,typename Filtering::Exist_sls_event_2
+                            , C2E
+                            , C2F
+                            >
+                            Exist_sls_event_2 ;
+
+  typedef Filtered_predicate< typename Exact    ::Compare_sls_event_times_2
+                            , typename Filtering::Compare_sls_event_times_2
+                            , C2E
+                            , C2F
+                            >
+                            Compare_sls_event_times_2 ;
+
+  typedef Filtered_predicate< typename Exact    ::Compare_sls_event_distance_to_seed_2
+                            , typename Filtering::Compare_sls_event_distance_to_seed_2
+                            , C2E
+                            , C2F
+                            >
+    Compare_sls_event_distance_to_seed_2 ;
+
+
+  typedef Filtered_predicate< typename Exact    ::Is_sls_event_inside_offset_zone_2
+                            , typename Filtering::Is_sls_event_inside_offset_zone_2
+                            , C2E
+                            , C2F
+                            >
+    Is_sls_event_inside_offset_zone_2 ;
+
+  typedef typename Unfiltering::Construct_sls_event_time_and_point_2 Construct_sls_event_time_and_point_2 ;
+
   template<class F> F get() const { return F(); }
 } ;
 
 template<class K>
-class Straight_skeleton_builder_traits_2 : public Straight_skeleton_builder_traits_2_base<K>
+class Straight_skeleton_builder_traits_2
+  : public Straight_skeleton_builder_traits_2_impl<typename CGALi::Is_filtering_kernel<K>::type, K >
 {
-  typedef Straight_skeleton_builder_traits_2_functors<K> Unfiltering ;
-  
-public:
-  
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Exist_event> 
-    Exist_event ;
-  
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_event_times> 
-    Compare_event_times ;
-    
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_event_distance_to_seed> 
-    Compare_event_distance_to_seed ;  
-    
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_event_inside_offset_zone> 
-    Is_event_inside_offset_zone ;
-  
-  typedef typename Unfiltering::Construct_event Construct_event ;
-  
 } ;
 
-template<>
-class Straight_skeleton_builder_traits_2<Exact_predicates_inexact_constructions_kernel>
-  :
-  public Straight_skeleton_builder_traits_2_base<Exact_predicates_inexact_constructions_kernel>
-{
-
-  typedef Exact_predicates_inexact_constructions_kernel K ;
-  
-  typedef Straight_skeleton_builder_traits_2_functors<K::EK> Exact ;
-  typedef Straight_skeleton_builder_traits_2_functors<K::FK> Filtering ;
-  typedef Straight_skeleton_builder_traits_2_functors<K>     Unfiltering ;
-  
-  typedef K::C2E C2E ;
-  typedef K::C2F C2F ;
-  
-public:
-  
-  
-  typedef Filtered_predicate<Exact::Exist_event, Filtering::Exist_event, C2E, C2F> 
-    Exist_event ;
-  
-  typedef Filtered_predicate< Exact::Compare_event_times, Filtering::Compare_event_times, C2E, C2F> 
-    Compare_event_times ;
-    
-  typedef Filtered_predicate< Exact    ::Compare_event_distance_to_seed
-                            , Filtering::Compare_event_distance_to_seed
-                            , C2E
-                            , C2F
-                            > 
-    Compare_event_distance_to_seed ;  
-    
-    
-  typedef Filtered_predicate< Exact    ::Is_event_inside_offset_zone
-                            , Filtering::Is_event_inside_offset_zone 
-                            , C2E
-                            , C2F
-                            > 
-    Is_event_inside_offset_zone ;
-  
-  typedef Unfiltering::Construct_event Construct_event ;
-  
-  template<class F> F get() const { return F(); }
-} ;
+SLS_CREATE_FUNCTOR_ADAPTER(Exist_sls_event_2);
+SLS_CREATE_FUNCTOR_ADAPTER(Compare_sls_event_times_2);
+SLS_CREATE_FUNCTOR_ADAPTER(Compare_sls_event_distance_to_seed_2);
+SLS_CREATE_FUNCTOR_ADAPTER(Is_sls_event_inside_offset_zone_2);
+SLS_CREATE_FUNCTOR_ADAPTER(Construct_sls_event_time_and_point_2);
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H //
 // EOF //

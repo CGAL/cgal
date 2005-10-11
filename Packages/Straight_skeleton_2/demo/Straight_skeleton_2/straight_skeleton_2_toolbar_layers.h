@@ -42,7 +42,7 @@ public:
   Layers_toolbar(CGAL::Qt_widget *w
                 , QMainWindow *mw
                 , PolygonalRegion const& pr
-                , Ssds const& ss
+                , Sls const& sls
                 , PolygonalRegion const& off
                 );
   ~Layers_toolbar();
@@ -54,7 +54,7 @@ private:
   int                 nr_of_buttons;
 
   Qt_layer_show_polygon <PolygonalRegion> *showP;
-  Qt_layer_show_skeleton<Ssds>   *showSS;
+  Qt_layer_show_skeleton<Sls>            *showSLS;
   Qt_layer_show_polygon <PolygonalRegion> *showO;
 
 };//end class

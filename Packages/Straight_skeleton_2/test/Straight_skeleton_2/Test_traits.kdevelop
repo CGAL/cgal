@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Fernando Cacciola</author>
-    <email>fernando.cacciola@gmail.com</email>
+    <email>fernando_cacciola@gmail.com</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -10,13 +10,12 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
-    <secondaryLanguages/>
     <versioncontrol/>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>straight_skeleton_2</mainprogram>
-      <directoryradio>build</directoryradio>
+      <mainprogram>test_sls_traits</mainprogram>
+      <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
       <terminal>false</terminal>
@@ -33,12 +32,12 @@
       <prio>0</prio>
       <dontact>false</dontact>
       <makebin/>
+      <defaulttarget/>
       <makeoptions/>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
       </environments>
-      <defaulttarget/>
     </make>
   </kdevcustomproject>
   <kdevdebugger>
@@ -113,26 +112,20 @@
       <type ext="h" />
     </useglobaltypes>
   </kdevfilecreate>
-  <cppsupportpart>
-    <filetemplates>
-      <interfacesuffix>.h</interfacesuffix>
-      <implementationsuffix>.c</implementationsuffix>
-    </filetemplates>
-  </cppsupportpart>
   <kdevcppsupport>
+    <references/>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>
       <includeEnums>true</includeEnums>
       <includeTypedefs>false</includeTypedefs>
-      <automaticCodeCompletion>false</automaticCodeCompletion>
-      <automaticArgumentsHint>false</automaticArgumentsHint>
+      <automaticCodeCompletion>true</automaticCodeCompletion>
+      <automaticArgumentsHint>true</automaticArgumentsHint>
       <automaticHeaderCompletion>true</automaticHeaderCompletion>
       <codeCompletionDelay>250</codeCompletionDelay>
       <argumentsHintDelay>400</argumentsHintDelay>
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
-    <references/>
     <creategettersetter>
       <prefixGet/>
       <prefixSet>set</prefixSet>
@@ -142,13 +135,6 @@
       <inlineSet>true</inlineSet>
     </creategettersetter>
   </kdevcppsupport>
-  <kdevdocumentation>
-    <projectdoc>
-      <docsystem/>
-      <docurl/>
-      <usermanualurl/>
-    </projectdoc>
-  </kdevdocumentation>
   <kdevfileview>
     <groups>
       <hidenonprojectfiles>false</hidenonprojectfiles>
@@ -159,6 +145,12 @@
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
+  <cppsupportpart>
+    <filetemplates>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.c</implementationsuffix>
+    </filetemplates>
+  </cppsupportpart>
   <kdevvisualadvance>
     <emulator>VisualBoyAdvance</emulator>
     <binary/>
@@ -168,8 +160,11 @@
     <graphicFilter>-f0</graphicFilter>
     <scaling>-1</scaling>
   </kdevvisualadvance>
-  <ctagspart>
-    <customArguments/>
-    <customTagfilePath/>
-  </ctagspart>
+  <kdevdocumentation>
+    <projectdoc>
+      <docsystem/>
+      <docurl/>
+      <usermanualurl/>
+    </projectdoc>
+  </kdevdocumentation>
 </kdevelop>
