@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
     degree= std::atoi(argv[2]);
   }
   std::cout << "Using " << num_points  << " degree " << degree << " points.\n";
-
+  CGAL_KDS_SET_LOG_LEVEL(CGAL::KDS::LOG_SOME);
   typedef CGAL::KDS::Exact_simulation_traits_1 Tr;
   Tr tr;
   typedef Tr::Simulator::Time Time;

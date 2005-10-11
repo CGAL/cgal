@@ -101,8 +101,17 @@ public:
     Cut_pair cp(k, new_point(k));
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   cp,less_);
+
+    std::cout << "Curve " << k << " starts at " 
+	      << tr_.simulator_pointer()->rational_current_time();
+    if (it != sorted_.end()) {
+      std::cout << " below curve " << next(it)->first;
+    }
+    std::cout << std::endl;
+
     sorted_.insert(it, cp);
     rebuild_certificate(--it); rebuild_certificate(--it);
+    
   }
 
 
@@ -137,7 +146,10 @@ public:
      solver is used to compute the next root between the two points
      being swapped. This method is called by an Event object. This
      addes a new vertex and two new edges.*/
-  void swap(iterator it, typename Traits::Simulator::Root_stack &s) {
+  void swap(const typename Traits::Simulator::Time &t, iterator it,
+	    typename Traits::Simulator::Root_stack &s) {
+    std::cout << "Curves " << it->first << " and " << next(it)->first 
+	      << " intersect at " << t << std::endl;
     typename Traits::Simulator::Pointer sp= tr_.simulator_pointer();
     assert(find(it->first) == it);
     events_.erase(it->first);
@@ -188,6 +200,8 @@ public:
   /* Remove object k and destroy 2 certificates and create one new one.
      This function is called by the MOT_listener. One new vertex and one new edge are added.*/
   void erase(typename Traits::Moving_point_table::Key k) {
+    std::cout << "Curve " << k << " ends at " 
+	      << tr_.simulator_pointer()->rational_current_time() << std::endl;
     iterator it =  find(k);
     int lastp= it->second;
     iterator p= it; --p;
@@ -226,6 +240,13 @@ public:
   Key_iterator end() const {
     return sorted_.end();
   }
+  ~Planar_arrangement() {
+    for (typename std::map<typename Traits::Moving_point_table::Key,
+	   typename Traits::Simulator::Event_key >::iterator it= events_.begin(); 
+	 it != events_.end(); ++it){
+      tr_.simulator_pointer()->delete_event(it->second);
+    }
+  }
 
   Traits tr_;
   // The points in sorted order
@@ -245,13 +266,12 @@ public:
 template <class Planar_arrangement, class Id, class Solver> 
 class Swap_event {
 public:
-  Swap_event(Id o, typename Planar_arrangement::Pointer sorter, 
+  Swap_event(Id o, Planar_arrangement* sorter, 
 	     const Solver &s): left_object_(o), sorter_(sorter), s_(s){}
-  void process(const typename Solver::Root &){
-    std::cout << "Swap at " << left_object_->first << std::endl;
-    sorter_->swap(left_object_, s_);
+  void process(const typename Solver::Root &t){
+    sorter_->swap(t, left_object_, s_);
   }
-  Id left_object_; typename Planar_arrangement::Pointer sorter_; Solver s_;
+  Id left_object_; Planar_arrangement* sorter_; Solver s_;
 };
 template <class S, class I, class SS>
 std::ostream &operator<<(std::ostream &out,

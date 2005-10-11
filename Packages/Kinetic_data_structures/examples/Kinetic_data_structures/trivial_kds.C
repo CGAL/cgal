@@ -36,7 +36,7 @@ struct Trivial_event{
 template <class Object, class Time, class KDS>
 std::ostream &operator<<(std::ostream &out,
 			 const Trivial_event<Object, Time, KDS> &) {
-  out << "An event";
+  out << "\"An event\"";
   return out;
 }
 
@@ -96,7 +96,7 @@ struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> > {
 				       objects_.end(),
 				       *tr_.moving_point_table_pointer(), 
 				       this));
-	std::cout << "Created event " << event_ << " at time " << t << std::endl;
+	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
 	assert(!event_ 
 	       || sp->event(event_, Event()).objects_.size() == objects_.size());
       } else {

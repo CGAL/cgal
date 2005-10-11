@@ -113,8 +113,12 @@ public:
     typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
     for (typename std::list<Object_key>::const_iterator it
 	   = sorted_.begin(); *it != sorted_.back(); ++it){
-      if (!less(*next(it), *it)){
+      if (!less(*it, *next(it))){
+	std::cerr << "ERROR: objects " << *it << " and " 
+		  << *next(it) << " are out of order.\n";
+	std::cerr << "ERROR: order is ";
 	write(std::cerr);
+	std::cerr << std::endl;
       }
     }
   }

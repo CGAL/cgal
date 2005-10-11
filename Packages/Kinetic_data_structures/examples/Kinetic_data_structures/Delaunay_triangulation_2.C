@@ -41,6 +41,7 @@ int main(int, char *[]){
   while (simtr.simulator_pointer()->next_event_time() 
 	 < simtr.simulator_pointer()->end_time()){
     sp->set_current_event_number(sp->current_event_number()+1);
+    std::cout << "At time " << simtr.simulator_pointer()->current_time() << ":\n";
     std::cout << kdel.triangulation_data_structure();
   }
 

@@ -969,7 +969,7 @@ public:
     //generate_geometry();
 
     CGAL_postcondition(audit_structure());
-    v_.post_edge_flip(central_edge);
+    v_.post_facet_flip(central_edge);
     return central_edge;
   }
 

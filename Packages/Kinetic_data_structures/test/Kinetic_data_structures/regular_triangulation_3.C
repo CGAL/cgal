@@ -42,8 +42,8 @@ int main(int, char *[]){
     sp->set_current_event_number(sp->current_event_number()+1);
   }
 
-  std::copy(kdel.visitor().begin(), kdel.visitor().end(),
-    std::ostream_iterator<std::string>(std::cout, "\n"));
+  /*std::copy(kdel.visitor().begin(), kdel.visitor().end(),
+    std::ostream_iterator<std::string>(std::cout, "\n"));*/
 
   
   std::ifstream out("data/regular_triangulation_3.output");
