@@ -1,3 +1,6 @@
+11 October 2005 Sylvain Pion
+- Add KDS to internal releases.
+
 14 September 2005 Sylvain Pion
 - Add Stream_lines_2 package to internal releases.
 
