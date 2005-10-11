@@ -9,8 +9,8 @@ void _test_constuctor(AK ak)
   CGAL::Random theRandom(random_seed);
   int random_max = 127;
   int random_min = -127;
-  typename AK::Construct_polynomial_circle_2_2 theConstruct_2_2 =
-    ak.construct_polynomial_circle_2_2_object();
+  typename AK::Construct_polynomial_for_circles_2_2 theConstruct_2_2 =
+    ak.construct_polynomial_for_circles_2_2_object();
   typename AK::Construct_polynomial_1_2 theConstruct_1_2 =
     ak.construct_polynomial_1_2_object();
   

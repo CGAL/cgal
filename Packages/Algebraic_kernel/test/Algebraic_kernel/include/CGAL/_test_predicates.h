@@ -8,8 +8,8 @@ void _test_solve(AK ak)
     ak.solve_object();
 
   //Polynomial_for_circles_2_2
-  typename AK::Construct_polynomial_circle_2_2 theConstruct_2_2 =
-    ak.construct_polynomial_circle_2_2_object();
+  typename AK::Construct_polynomial_for_circles_2_2 theConstruct_2_2 =
+    ak.construct_polynomial_for_circles_2_2_object();
 
   std::vector< std::pair<Root_for_circles_2_2, size_t> > res1;
   theSolve(theConstruct_2_2(5, 5, 25),
@@ -284,8 +284,8 @@ void _test_sign_at(AK ak)
     ak.sign_at_object();
   
   //Polynomial_for_circles_2_2
-  typename AK::Construct_polynomial_circle_2_2 theConstruct_2_2 =
-    ak.construct_polynomial_circle_2_2_object();
+  typename AK::Construct_polynomial_for_circles_2_2 theConstruct_2_2 =
+    ak.construct_polynomial_for_circles_2_2_object();
 
   assert(theSigh_at(theConstruct_2_2(5, 5, 100),
 		    Root_for_circles_2_2(-5,5)) == CGAL::ZERO);
@@ -329,8 +329,8 @@ void _test_critical_points(AK ak)
   int random_min = -127;
 
   typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
-  typename AK::Construct_polynomial_circle_2_2 theConstruct_2_2 =
-    ak.construct_polynomial_circle_2_2_object();
+  typename AK::Construct_polynomial_for_circles_2_2 theConstruct_2_2 =
+    ak.construct_polynomial_for_circles_2_2_object();
   typename AK::X_critical_points theX_critical_points =
     ak.x_critical_points_object();
   
