@@ -1,8 +1,8 @@
-\begin{ccRefConcept}{AlgebraicKernel_2_2::PolynomialCircle_2_2}
+\begin{ccRefConcept}{AlgebraicKernel_2_2::PolynomialForCircles_2_2}
 
 \ccDefinition
 
-The \ccc{PolynomialCircle_2_2} represents bivariate polynomials of degree up
+The \ccc{PolynomialForCircles_2_2} represents bivariate polynomials of degree up
 to~2 capable of storing equations of circles, whose center has
 coordinates of type \ccc{FT}, a model of \ccc{FieldNumberType}, as 
 well as the square of the radius. 
@@ -14,9 +14,11 @@ well as the square of the radius.
 by \ccc{Rational_traits<FT>}.\footnote{again...}
 
 \ccCreation
-\ccCreationVariable{p}
+\ccCreationVariable{pol}
 
-\footnote{to be done}
+\ccConstructor{Polynomial_2_2();}{Default constructor.}
+
+\ccConstructor{Polynomial_2_2(const FT & a, const FT & b, const FT & rsq);}{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 - rsq}.}
 
 \ccAccessFunctions
 
@@ -28,16 +30,17 @@ by \ccc{Rational_traits<FT>}.\footnote{again...}
 
 \ccOperations
 
-\ccFunction{bool operator ==(const PolynomialCircle_2_2 & p,
-	const PolynomialCircle_2_2 & q);}{}
+The comparison operator \ccc{==} must be provided. 
+
+\ccFunction{bool operator ==(const PolynomialForCircles_2_2 & p,
+	const PolynomialForCircles_2_2 & q);}{}
 
 \ccHasModels
 
-\footnote{to be done}
+\ccc{Polynomial_for_circles_2_2}
 
 \ccSeeAlso
 
-\ccRefIdfierPage{AlgebraicKernel_2_2::RootOf_2}\\
 \ccRefIdfierPage{AlgebraicKernel_2_2}
 
 \end{ccRefConcept}
