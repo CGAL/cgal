@@ -28,9 +28,6 @@ CGAL_KDS_BEGIN_NAMESPACE;
 
   Using it is slightly akward due to the passing of unbound templates
   into the PolynomialKernel.
-
-  See \example CGAL/KDS/define_exact_kds.h for an example of how to
-  use this.
 */
 #ifdef NDEBUG
 template <class Traits_t, bool SKIP_EVEN_ROOTS=true>
@@ -56,13 +53,13 @@ struct Skip_even_roots_function_kernel: public Traits_t {
 						   one_even_(false),
 						   rm_(k.is_even_multiplicity_object(uf)){
       CGAL_KDS_LOG(LOG_LOTS, "Solving " << uf << std::endl); //<< " at time " << lb << std::endl);
-      CGAL_expensive_assertion_code(typename Traits_t::Sign_at sar=k.sign_at_object(uf));
-      CGAL_expensive_assertion_code(if (sar(lb)== CGAL::NEGATIVE){
+      CGAL_exactness_assertion_code(typename Traits_t::Sign_at sar=k.sign_at_object(uf));
+      CGAL_exactness_assertion_code(if (sar(lb)== CGAL::NEGATIVE){
 				      std::cerr << "Invalid certificate with function " 
 						<< uf << std::endl << "In interval from "
 						<< lb << std::endl <<"to " << ub 
 						<< std::endl;});
-      CGAL_expensive_assertion(sar(lb)!= CGAL::NEGATIVE);
+      CGAL_exactness_assertion(sar(lb)!= CGAL::NEGATIVE);
       
       CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.top())(uf);
       if (sn == CGAL::NEGATIVE){
