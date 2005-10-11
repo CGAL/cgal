@@ -12,7 +12,7 @@ public:
   typedef typename Triangulation_3::Vertex_handle            Vertex_handle;
   typedef typename Triangulation_3::Edge                     Edge;
   typedef typename Triangulation_3::Cell_handle              Cell_handle;
-  typedef typename Triangulation_3::Geom_traits::Point_3     Triang_Point;
+  typedef typename Triangulation_3::Geom_traits::Point_3     Triang_point;
 
   typedef typename HalfedgeDS::Traits                 HDS_K;
   typedef typename HDS_K::RT                   HDS_rt;
@@ -24,8 +24,7 @@ public:
 
   // These two functions are required by the marching tetrahedra algorithm
   Sign sign(Cell_handle ch, int i) const {
-    return CGAL_NTS sign(
-       ch->surf->value(converter(ch->vertex(i)->point())) - iso_value);
+    return CGAL_NTS sign(value(ch,ch->vertex(i)->point()) - iso_value);
   }
   HDS_point intersection(Cell_handle ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
@@ -34,6 +33,13 @@ public:
       converter(ch->vertex(j)->point()));
   }
 
+  // Additional functions, not belonging to the traits concept:
+  HDS_rt value(const Cell_handle &ch, const HDS_point &p) const {
+    return ch->surf->value(p);
+  }
+  HDS_rt value(const Cell_handle &ch, const Triang_point &p) const {
+    return ch->surf->value(converter(p));
+  }
 private:
   Converter converter;
   HDS_rt iso_value;

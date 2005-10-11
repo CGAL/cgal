@@ -4,6 +4,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Skin_surface_sqrt3_3.h>
+#include <CGAL/Skin_surface_refinement_traits_3.h>
 
 #include <list>
 #include <fstream>
@@ -15,7 +16,8 @@ typedef Regular_traits::Bare_point                       Reg_point;
 typedef Regular_traits::Weighted_point                   Reg_weighted_point;
 typedef CGAL::Triangulated_mixed_complex_3<Skin_surface_traits>
                                                      Triangulated_mixed_complex;
-typedef CGAL::Polyhedron_3<Skin_surface_traits::Polyhedron_kernel> Polyhedron;
+typedef Skin_surface_traits::Polyhedron_kernel       Polyhedron_kernel;
+typedef CGAL::Polyhedron_3<Polyhedron_kernel>        Polyhedron;
 
 typedef CGAL::Marching_tetrahedra_traits_skin_surface_3<
   Triangulated_mixed_complex,
@@ -24,10 +26,16 @@ typedef CGAL::Marching_tetrahedra_traits_skin_surface_3<
 typedef CGAL::Marching_tetrahedra_observer_skin_surface_3<
   Triangulated_mixed_complex, Polyhedron>     Marching_tetrahedra_observer;
 
+typedef CGAL::Skin_surface_refinement_traits_3<
+          Triangulated_mixed_complex, 
+          Polyhedron_kernel, 
+          Skin_surface_traits::T2P_converter,
+          Skin_surface_traits::P2T_converter>    Skin_surface_refinement_traits;
+
 int main(int argc, char *argv[]) {
   std::list<Reg_weighted_point> l;
   
-  l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1));
+  l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1.1));
   l.push_front(Reg_weighted_point(Reg_point(0,1,0), 2));
   l.push_front(Reg_weighted_point(Reg_point(0,0,2), 1));
 
@@ -83,6 +91,8 @@ int main(int argc, char *argv[]) {
     out << polyhedron;
   }
 
+  Skin_surface_refinement_traits refinement_traits(triangulated_mixed_complex);
+  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits);
   
   { 
     std::ofstream out("mesh.off");

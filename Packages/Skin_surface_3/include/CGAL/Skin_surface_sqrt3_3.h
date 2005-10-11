@@ -1,9 +1,11 @@
 #ifndef SKIN_SURFACE_SQRT3_3_H
 #define SKIN_SURFACE_SQRT3_3_H
 
-#include <CGAL/Skin_surface_refinement_traits.h>
+#include <CGAL/Skin_surface_refinement_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
+
+// This code is based on the Polyhedron tutorial 
 
 template <class Polyhedron_3,
 	  class SkinSurfaceRefinementTraits_3>
@@ -31,15 +33,9 @@ class Skin_surface_sqrt3
   typedef typename Polyhedron::Facet_iterator                 Facet_iterator;
   typedef typename Kernel::FT                                 FT;
 
-  typedef typename Triangulation::Cell_handle                 SC_Cell_handle;
-  typedef typename Triangulation::Geom_traits                 SC_Kernel;
-  typedef typename SC_Kernel::Point_3                         SC_Point;
-  typedef typename SC_Kernel::Segment_3                       SC_Segment;
-  typedef typename SC_Kernel::RT                              SC_RT;
-	
 public:
-  Skin_surface_sqrt3(Triangulation &triang, Polyhedron &P) 
-    : triang(triang), P(P) {}
+  Skin_surface_sqrt3(Polyhedron &P, Traits &traits) 
+    : P(P), traits(traits) {}
 
   //*********************************************
   // Subdivision
@@ -66,8 +62,6 @@ public:
   }
 
 private:
-  Triangulation &triang;
-  Polyhedron &P;
 	
   //*********************************************
   // Subdivide
@@ -154,6 +148,20 @@ private:
 
     CGAL_postcondition( P.is_valid());
   }
+  
+  //*********************************************
+  // Split halfedge
+  //*********************************************
+  void split_halfedge(Halfedge_handle e)
+  {
+    // Create two new vertices on e.
+    Point p_new = e->vertex()->point();
+    e = e->prev();
+    p_new = p_new + .5*(e->vertex()->point()-p_new);
+
+    P.split_vertex( e, e->next()->opposite());
+    e->next()->vertex()->point() = p_new;
+  }
 
   //*********************************************
   // Trisect halfedge
@@ -194,26 +202,20 @@ private:
   }
 
   void to_surface(Vertex_iterator v) {
-//    assert(v->halfedge()->facet()->tetras.size() != 0);
-
-    //SC_Point triang_p = m2triang_converter(v->point());
-    //SC_Cell_handle ch = triang.locate(
-//				  triang_p, *(v->halfedge()->facet()->tetras.begin()));
-    //assert(!triang.is_infinite(ch));
-	
-    //SC_Segment seg = ch->get_segment(triang_p);
-    //v->point() = triang2m_converter(ch->surf->to_surface(seg));
+    v->point() = traits.to_surface_along_transversal_segment(v->point());
   }
+  
+  Polyhedron &P;
+  Traits &traits;
 };
 
 template <class Polyhedron_3,
-	  class Triangulation_3,
 	  class SkinSurfaceRefinementTraits_3>
 void skin_surface_sqrt3(
           Polyhedron_3 &p, 
-          Triangulation_3 const &t,
-          SkinSurfaceRefinementTraits_3 const &traits,
+          SkinSurfaceRefinementTraits_3 &traits,
           int nSubdiv = 2) {
+            
   typedef Skin_surface_sqrt3<Polyhedron_3, SkinSurfaceRefinementTraits_3> Sqrt3;
   Sqrt3 subdivider(p, traits);
             
