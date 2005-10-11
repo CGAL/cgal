@@ -62,6 +62,12 @@ A model \ccVar\ of this type must provide:
 {Copies in the output iterator the \ccc{x}-critical points of polynomial 
 \ccc{p}, as objects of type \ccc{AlgebraicKernel_2_2::RootForCircles_2_2}.} 
 
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernel_2_2::RootForCircles_2_2
+    operator()(const AlgebraicKernel_2_2::PolynomialForCircles_2_2 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{x}-critical point of polynomial \ccc{p}.} 
+
 \ccHasModels
 
 \ccc{Algebraic_kernel_2_2::X_critical_points;}
@@ -85,6 +91,12 @@ A model \ccVar\ of this type must provide:
 	     OutputIterator res);}
 {Copies in the output iterator the \ccc{y}-critical points of polynomial 
 \ccc{p}, as objects of type \ccc{AlgebraicKernel_2_2::RootForCircles_2_2}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernel_2_2::RootForCircles_2_2
+    operator()(const AlgebraicKernel_2_2::PolynomialForCircles_2_2 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{y}-critical point of polynomial \ccc{p}.} 
 
 \ccHasModels
 
