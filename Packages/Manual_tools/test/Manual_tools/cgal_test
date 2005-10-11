@@ -98,7 +98,7 @@ EOF
     echo_ok
     if [ -d html.orig ] ; then
       printf "    compare  ...  ";
-      if diff -w html html.orig >& log; then
+      if diff -w  -I "^<\!-- by cc_extract" html html.orig >& log; then
         echo_ok
       else
         echo_failed
@@ -126,6 +126,10 @@ EOF
   cd ..    
 }
 
+remove_htmlorig() {
+  DIRECTORY=$1;
+  rm -rf $DIRECTORY/html.orig
+}
 
 is_testdir() {
   if [[ -d $1 && -e $1/main.tex ]]; then
@@ -158,8 +162,6 @@ foreach_testdir() {
 
 # --------------------------------- main -------------------------
 
-Parameters=$@;
-
 OLDPWD=`pwd`
 ROOTDIR="`pwd`/../.."
 #ROOTDIR="${HOME}/cvs/Manual_tools"
@@ -168,6 +170,7 @@ LATEX_CONV_BIN="${ROOTDIR}/src"
 LATEX_CONV_CONFIG="${LATEX_CONV_BIN}/latex_converter_config"
 KeepHtml=0
 KeepLog=0
+CreateOrig=0
 Parameters=""
 
 
@@ -175,14 +178,14 @@ cd ${LATEX_CONV_BIN}
 make 
 cd ${OLDPWD}
 
-# setup html.orig in each test directory
-tar xzf html.orig.tgz
 
 while [ $# -gt 0 ] ; do
   case "$1" in
     -keephtml) KeepHtml=1
         ;;
     -keeplog) KeepLog=1
+        ;;
+    -create_orig) CreateOrig=1
         ;;
     -*) echo "${ErrorColor}ERROR${ResetColor}: Unknow option '$1'." 1>&2
         exit 1
@@ -199,14 +202,21 @@ while [ $# -gt 0 ] ; do
 done
 
 
+# setup html.orig in each test directory
+tar xzf html.orig.tgz
 
-if [[ $# -eq 1 && $1 -eq "-keeplog" ]] ; then
-  REMOVE_HTML=0
-  shift
+# if $DIR/html.orig is to be created: remove those html.orig directories 
+# that are to be created, to avoid dangling files that are not used anymore
+if [ $CreateOrig -eq 1 ]; then
+  foreach_testdir remove_htmlorig $Parameters
 fi
 
-
 foreach_testdir test_dir $Parameters;
+
+if [ $CreateOrig -eq 1 ]; then
+  rm -rf html.orig.tgz
+  tar czf html.orig.tgz `find . -name html.orig -maxdepth 2`  
+fi
 
 rm -rf `tar tzf html.orig.tgz` 
 
