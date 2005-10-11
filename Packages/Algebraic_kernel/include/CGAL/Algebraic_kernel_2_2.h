@@ -11,81 +11,66 @@
 #include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 #include <CGAL/global_functions_on_root_for_circle_2_2.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
   template< class RT_ >
   struct Algebraic_kernel_2_2
   {
     typedef Algebraic_kernel_2_2<RT_>        Self;
 
-    typedef RT_  RT;
+    typedef RT_                                                             RT;
+    typedef typename Root_of_traits< RT >::RootOf_1  FT;
 
-    typedef typename Root_of_traits< RT >::RootOf_2         Root_of_2;
-    typedef typename Root_of_traits< RT >::RootOf_1         FT;
-    typedef Root_for_circles_2_2< RT >             Root_for_circles_2_2;
+    typedef Polynomial_1_2<RT>                                  Polynomial_1_2; 
+    typedef Polynomial_for_circles_2_2<RT>               Polynomial_for_circles_2_2; 
+    // problem RT / FT ?
 
-    typedef Polynomial_for_circles_2_2<RT>
-    Polynomial_for_circles_2_2; // probleme RT / FT
-
-    typedef Polynomial_1_2<RT>
-    Polynomial_1_2; // probleme RT / FT
-
-    typedef AlgebraicFunctors::Solve<Self>  Solve;
-    typedef AlgebraicFunctors::Sign_at<Self> Sign_at;
-    typedef AlgebraicFunctors::X_critical_points<Self> X_critical_points;
-    typedef AlgebraicFunctors::Y_critical_points<Self> Y_critical_points;
-    typedef AlgebraicFunctors::Compare_x<RT>   Compare_x;
-    typedef AlgebraicFunctors::Compare_y<RT>   Compare_y;
-    typedef AlgebraicFunctors::Compare_xy<RT>  Compare_xy;
-
-    typedef AlgebraicFunctors::Construct_polynomial_circle_2_2<Self>
-    Construct_polynomial_circle_2_2;
+    typedef typename Root_of_traits< RT >::RootOf_2  Root_of_2;
+    typedef Root_for_circles_2_2< RT >                       Root_for_circles_2_2;
 
     typedef AlgebraicFunctors::Construct_polynomial_1_2<Self>
-    Construct_polynomial_1_2;
-
-    Solve 
-    solve_object() const
-      { return Solve(); }
-
-    Construct_polynomial_circle_2_2
-    construct_polynomial_circle_2_2_object() const
-    {
-      return Construct_polynomial_circle_2_2();
-    }
+                                                                                    Construct_polynomial_1_2;
+    typedef AlgebraicFunctors::Construct_polynomial_for_circles_2_2<Self>
+                                                                       Construct_polynomial_for_circles_2_2;
+    typedef AlgebraicFunctors::Solve<Self>                  Solve;
+    typedef AlgebraicFunctors::Sign_at<Self>               Sign_at;
+    typedef AlgebraicFunctors::X_critical_points<Self> X_critical_points;
+    typedef AlgebraicFunctors::Y_critical_points<Self> Y_critical_points;
+    typedef AlgebraicFunctors::Compare_x<RT>          Compare_x;
+    typedef AlgebraicFunctors::Compare_y<RT>          Compare_y;
+    typedef AlgebraicFunctors::Compare_xy<RT>        Compare_xy;
 
     Construct_polynomial_1_2
-    construct_polynomial_1_2_object() const
-    {
-      return Construct_polynomial_1_2();
-    }
+                 construct_polynomial_1_2_object() const
+    { return Construct_polynomial_1_2(); }
 
-    Sign_at
-    sign_at_object() const
-    { return Sign_at();}
+    Construct_polynomial_for_circles_2_2
+                 construct_polynomial_for_circles_2_2_object() const
+    { return Construct_polynomial_for_circles_2_2(); }
 
-    X_critical_points
-    x_critical_points_object() const
-    { return X_critical_points();}
+    Solve solve_object() const
+    { return Solve(); }
 
-    Y_critical_points
-    y_critical_points_object() const
-    { return Y_critical_points();}
+    Sign_at sign_at_object() const
+    { return Sign_at(); }
 
-    Compare_x
-    compare_x_object() const
+    X_critical_points x_critical_points_object() const
+    { return X_critical_points(); }
+
+    Y_critical_points y_critical_points_object() const
+    { return Y_critical_points(); }
+
+    Compare_x compare_x_object() const
     { return Compare_x(); }
     
-    Compare_y
-    compare_y_object() const
+    Compare_y compare_y_object() const
     { return Compare_y(); }
     
-    Compare_xy
-    compare_xy_object() const
+    Compare_xy compare_xy_object() const
     { return Compare_xy(); }
 
   };
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_ALGEBRAIC_KERNEL_2_2_H
