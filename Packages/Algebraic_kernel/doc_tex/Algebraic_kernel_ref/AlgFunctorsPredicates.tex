@@ -8,9 +8,9 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Comparison_result
-    operator()(const AlgebraicKernel_2_2::RootCircle_2_2 & r1,
-	const AlgebraicKernel_2_2::RootCircle_2_2 & r2);}
-{Compares the \ccc{x} variables of two \ccc{RootCircle_2_2}.}
+    operator()(const AlgebraicKernel_2_2::RootForCircles_2_2 & r1,
+	     const AlgebraicKernel_2_2::RootForCircles_2_2 & r2);}
+{Compares the \ccc{x} variables of two \ccc{RootForCircles_2_2}.}
 
 \ccHasModels
 
@@ -31,9 +31,9 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Comparison_result
-    operator()(const AlgebraicKernel_2_2::RootCircle_2_2 & r1,
-	const AlgebraicKernel_2_2::RootCircle_2_2 & r2);}
-{Compares the \ccc{y} variables of two \ccc{RootCircle_2_2}.}
+    operator()(const AlgebraicKernel_2_2::RootForCircles_2_2 & r1,
+	     const AlgebraicKernel_2_2::RootForCircles_2_2 & r2);}
+{Compares the \ccc{y} variables of two \ccc{RootForCircles_2_2}.}
 
 \ccHasModels
 
@@ -54,9 +54,9 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Comparison_result
-    operator()(const AlgebraicKernel_2_2::RootCircle_2_2 & r1,
-	const AlgebraicKernel_2_2::RootCircle_2_2 & r2);}
-{Compares two \ccc{RootCircle_2_2} lexicographically.}
+    operator()(const AlgebraicKernel_2_2::RootForCircles_2_2 & r1,
+	     const AlgebraicKernel_2_2::RootForCircles_2_2 & r2);}
+{Compares two \ccc{RootForCircles_2_2} lexicographically.}
 
 \ccHasModels
 
@@ -78,8 +78,8 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Sign
-    operator()(const AlgebraicKernel_2_2::PolynomialCircle_2_2 & p,
-	const AlgebraicKernel_2_2::RootCircle_2_2 & r);}
+    operator()(const AlgebraicKernel_2_2::PolynomialForCircles_2_2 & p,
+	     const AlgebraicKernel_2_2::RootForCircles_2_2 & r);}
 {Computes the sign of polynomial \ccc{p} evaluated at a root \ccc{r}.}
 
 \ccHasModels
