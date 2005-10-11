@@ -32,16 +32,31 @@ public:
 				     Static_kernel sk): skernel_(sk),
 							convert_(sk),
 							mot_(mot){
+#ifndef NDBEUG
+    initialized_=false;
+#endif
   }
+
   void set_time(const Time &t) const {
     convert_.set_time(t);
     cache_.clear();
+#ifndef NDEBUG
+    initialized_=true;
+#endif
   }
   const Time & time() const {
     return convert_.time();
   }
   
   const typename Converter::result_type& static_object(typename Object_table::Key k) const {
+#ifndef NDEBUG
+    if (!initialized_){
+      std::cerr << "The InstantaneousKernel (or one of its predicates) was\n";
+      std::cerr << "used without the time being set. This probably is the sign\n";
+      std::cerr << "of misusing it--specifically make sure you store a copy\n";
+      std::cerr << "from the SimulatorTraits and get predicates from it.\n";
+    }
+#endif
     if (cache_.find(k) == cache_.end()){
       cache_.insert(std::pair<typename Object_table::Key, 
 		    typename Converter::result_type>(k, convert_(mot_->at(k))));
@@ -54,6 +69,9 @@ public:
     return skernel_;
   }
 protected:
+#ifndef NDEBUG
+  mutable bool initialized_;
+#endif
   mutable Static_kernel skernel_;
   mutable Converter convert_;
   typename Object_table::Const_pointer mot_;

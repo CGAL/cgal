@@ -61,7 +61,8 @@ public:
 
   // Register this KDS with the MovingObjectTable and the Simulator
   Planar_arrangement(Traits tr):tr_(tr),
-				less_(tr.instantaneous_kernel_object().less_x_1_object()),
+				ik_(tr.instantaneous_kernel_object()),
+				less_(ik_.less_x_1_object()),
 				siml_(tr.simulator_pointer(), this),
 				motl_(tr.moving_point_table_pointer(), this){}
 
@@ -83,9 +84,17 @@ public:
   }
 
   void write(std::ostream &out) const {
+    if (tr_.simulator_pointer()->has_rational_current_time()){
+      ik_.set_time(tr_.simulator_pointer()->rational_current_time());
+    }
     for (typename std::list<Cut_pair>::const_iterator it
 	   = sorted_.begin(); it != sorted_.end(); ++it){
-      out << it->first << " "; 
+      out << it->first;
+      if (tr_.simulator_pointer()->has_rational_current_time()) {
+	out << "=(" << ik_.static_object(it->first) << ") ";
+      } else {
+	out << " ";
+      } 
     }
     out << std::endl;
   }
@@ -97,7 +106,7 @@ public:
      start of the curve.*/
   void insert(typename Traits::Moving_point_table::Key k) {
     //std::cout << "Inserting " << k <<std::endl;
-    tr_.instantaneous_kernel_object().set_time(tr_.simulator_pointer()->rational_current_time());
+    ik_.set_time(tr_.simulator_pointer()->rational_current_time());
     Cut_pair cp(k, new_point(k));
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   cp,less_);
@@ -108,10 +117,13 @@ public:
       std::cout << " below curve " << next(it)->first;
     }
     std::cout << std::endl;
+   
 
     sorted_.insert(it, cp);
     rebuild_certificate(--it); rebuild_certificate(--it);
     
+    write(std::cout);
+    std::cout << std::endl;
   }
 
 
@@ -179,7 +191,7 @@ public:
   void audit() const {
     if (sorted_.size() <2) return;
     typename Traits::Simulator::Const_pointer sp= tr_.simulator_pointer();
-    tr_.instantaneous_kernel_object().set_time(sp->rational_current_time());
+    ik_.set_time(sp->rational_current_time());
     //typename Instantaneous_kernel::Less_x_2 less= kernel_i_.less_x_2_object();
     for (typename std::list<Cut_pair>::const_iterator it
 	   = sorted_.begin(); it->first != sorted_.back().first; ++it){
@@ -256,6 +268,7 @@ public:
 	   typename Traits::Simulator::Event_key > events_;
   std::vector<Edge > edges_;
   std::vector<Approximate_point > approx_coords_;
+  typename Traits::Instantaneous_kernel ik_;
   Compare_first less_;
   Sim_listener siml_; 
   MOT_listener motl_; 
@@ -361,3 +374,4 @@ int main(int, char *[]){
   mpostfile << "endfig\n";
   return EXIT_SUCCESS;
 }
+
