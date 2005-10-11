@@ -1,3 +1,33 @@
+\begin{ccRefConcept}{AlgebraicKernel_2_2::ConstructPolynomial_1_2}
+
+\ccDefinition
+
+\ccCreationVariable{cpol}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernel_2_2::Polynomial1_2
+	operator()(const AlgebraicKernel_2_2::RT a,
+		const AlgebraicKernel_2_2::RT b,
+		const AlgebraicKernel_2_2::RT c);}
+{Constructs polynomial \ccc{ax+by+c}.}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernel_2_2::ConstructPolynomialForCircles_1_2}
+
+\ccCreationVariable{cpol}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernel_2_2::Polynomial1_2
+	operator()(const AlgebraicKernel_2_2::FT a,
+		const AlgebraicKernel_2_2::FT b,
+		const AlgebraicKernel_2_2::FT rsq);}
+{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 - rsq}.}
+
+\end{ccRefConcept}
+
 \begin{ccRefConcept}{AlgebraicKernel_2_2::Solve}
 
 \ccDefinition
@@ -8,10 +38,24 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
+    operator()(const AlgebraicKernel_2_2::Polynomial_1_2 &p1,
+	     const AlgebraicKernel_2_2::Polynomial_1_2 &p2,
+	     OutputIterator res);}
+{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< AlgebraicKernel_2_2::RootForCircles_2_2, int>}.} \footnote{???}
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernel_2_2::Polynomial1_2 &p1,
+	     const AlgebraicKernel_2_2::PolynomialForCircles_2_2 &p2,
+	     OutputIterator res);}
+{Same as previous.} 
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
     operator()(const AlgebraicKernel_2_2::PolynomialForCircles_2_2 &p1,
 	     const AlgebraicKernel_2_2::PolynomialForCircles_2_2 &p2,
 	     OutputIterator res);}
-{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< AlgebraicKernel_2_2::RootForCircles_2_2, int>}.} 
+{Same as previous.} 
 
 \ccHasModels
 

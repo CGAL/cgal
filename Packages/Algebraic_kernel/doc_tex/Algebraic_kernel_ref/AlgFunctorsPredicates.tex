@@ -78,9 +78,15 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Sign
-    operator()(const AlgebraicKernel_2_2::PolynomialForCircles_2_2 & p,
+    operator()(const AlgebraicKernel_2_2::Polynomial_1_2 & p,
 	     const AlgebraicKernel_2_2::RootForCircles_2_2 & r);}
 {Computes the sign of polynomial \ccc{p} evaluated at a root \ccc{r}.}
+
+\ccMethod{template < class OutputIterator >
+    CGAL::Sign
+    operator()(const AlgebraicKernel_2_2::PolynomialForCircles_2_2 & p,
+	     const AlgebraicKernel_2_2::RootForCircles_2_2 & r);}
+{Same as previous.}
 
 \ccHasModels
 
