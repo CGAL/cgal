@@ -35,7 +35,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-void* _clean_pointer (const void* p)
+inline void* _clean_pointer (const void* p)
 {
   const unsigned int  mask = ~1;
   const unsigned int  val = (reinterpret_cast<unsigned int>(p) & mask);
@@ -43,7 +43,7 @@ void* _clean_pointer (const void* p)
   return (reinterpret_cast<void*> (val));
 }
 
-void* _set_lsb (const void* p)
+inline void* _set_lsb (const void* p)
 {
   const unsigned int  mask = 1;
   const unsigned int  val = (reinterpret_cast<unsigned int>(p) | mask);
@@ -51,7 +51,7 @@ void* _set_lsb (const void* p)
   return (reinterpret_cast<void*> (val));
 }
 
-bool _is_lsb_set (const void* p)
+inline bool _is_lsb_set (const void* p)
 {
   const unsigned int  mask = 1;
   const unsigned int  val = reinterpret_cast<unsigned int>(p);
@@ -79,14 +79,17 @@ public:
 
 protected:
 
-  void       *p_he;   // An incident halfedge pointing at the vertex.
+  void       *p_inc;  // An incident halfedge pointing at the vertex,
+                      // or the face containing the vertex (in case it is
+                      // isolated). The LSB for the pointer indicates whether
+                      // the vertex is isolated).
   Point      *p_pt;   // The point associated with the vertex.
 
 public:
 
   /*! Default constructor. */
   Arr_vertex_base() :
-    p_he (NULL),
+    p_inc (NULL),
     p_pt (NULL)
   {}
   
@@ -143,6 +146,8 @@ protected:
   void       *p_next;  // The next halfedge in the component boundary.
 
   void       *p_v;     // The incident vertex (the target of the halfedge).
+                       // The LSB of this pointer is used to store the
+                       // direction of the halfedge.
   void       *p_f;     // The incident face (to the left of the halfedge).
   
   X_monotone_curve *p_cv; // The associated x-monotone curve.
@@ -174,7 +179,6 @@ public:
   {
     return (*p_cv);
   }
-
 
   /*! Set the x-monotone curve. */
   void set_curve (X_monotone_curve* c)
@@ -262,50 +266,50 @@ public:
   /*! Check if the vertex is isolated. */
   bool is_isolated () const
   {
-    // Note that we use the LSB of the p_he pointer as a Boolean flag.
-    return (_is_lsb_set (this->p_he));
+    // Note that we use the LSB of the p_inc pointer as a Boolean flag.
+    return (_is_lsb_set (this->p_inc));
   }
 
   /*! Get an incident halfedge (const version). */
   const Halfedge* halfedge () const
   {
     CGAL_precondition (! is_isolated());
-    return (reinterpret_cast<const Halfedge*>(this->p_he));
+    return (reinterpret_cast<const Halfedge*>(this->p_inc));
   }
 
   /*! Get an incident halfedge (non-const version). */
   Halfedge* halfedge ()
   {
     CGAL_precondition (! is_isolated());
-    return (reinterpret_cast<Halfedge*>(this->p_he));
+    return (reinterpret_cast<Halfedge*>(this->p_inc));
   }
 
   /*! Set an incident halfedge (for non-isolated vertices). */
   void set_halfedge (Halfedge* he)
   { 
     // Set the halfedge pointer and reset the LSB.
-    this->p_he = he;
+    this->p_inc = he;
   }
 
   /*! Get the containing face (const version). */
   const Face* face () const
   {
     CGAL_precondition (is_isolated());
-    return (reinterpret_cast<const Face*>(_clean_pointer (this->p_he)));
+    return (reinterpret_cast<const Face*>(_clean_pointer (this->p_inc)));
   }
 
   /*! Get an containing face (non-const version). */
   Face* face ()
   {
     CGAL_precondition (is_isolated());
-    return (reinterpret_cast<Face*>(_clean_pointer (this->p_he)));
+    return (reinterpret_cast<Face*>(_clean_pointer (this->p_inc)));
   }
 
   /*! Set the containing face (for isolated vertices). */
   void set_face (Face* f)
   { 
     // Set the face pointer and set the LSB.
-    this->p_he = _set_lsb (f);
+    this->p_inc = _set_lsb (f);
   }
 };
 
@@ -343,6 +347,40 @@ public:
   void set_opposite (Halfedge* he) 
   { 
     this->p_opp = he;
+  }
+
+  /*!
+   * Get the direction of the halfedge (the result of the lexicoraphical
+   * comparison between the source and the target endpoints).
+   * \return SMALLER if the halfedge is directed to the right,
+   *         LARGER if the halfedge is directed to the left.
+   */
+  Comparison_result direction () const
+  {
+    // Note that we use the LSB of the p_v pointer as a Boolean flag.
+    if (_is_lsb_set (this->p_v))
+      return (SMALLER);
+    else
+      return (LARGER);
+  }
+
+  /*! Set the direction of the edge (and of its opposite halfedge). */
+  void set_direction (Comparison_result dir)
+  {
+    CGAL_precondition (dir != EQUAL);
+
+    Halfedge*   opp = reinterpret_cast<Halfedge*> (p_opp);
+
+    if (dir == SMALLER)
+    {
+      this->p_v = _set_lsb (this->p_v);
+      opp->p_v = _clean_pointer (opp->p_v);
+    }
+    else
+    {
+      this->p_v = _clean_pointer (this->p_v);
+      opp->p_v = _set_lsb (opp->p_v);
+    }
   }
 
   /*! Get the previous halfedge along the chain (const version). */
@@ -386,19 +424,23 @@ public:
   /*! Get the target vertex (const version). */
   const Vertex* vertex () const 
   { 
-    return (reinterpret_cast<const Vertex*>(this->p_v));
+    return (reinterpret_cast<const Vertex*>(_clean_pointer (this->p_v)));
   }
 
   /*! Get the target vertex (non-const version). */
   Vertex* vertex ()
   { 
-    return (reinterpret_cast<Vertex*>(this->p_v));
+    return (reinterpret_cast<Vertex*>(_clean_pointer (this->p_v)));
   }
 
   /*! Set the target vertex. */
   void set_vertex (Vertex* v)
   {
-    this->p_v = v;
+    // Set the vertex pointer, preserving the content of the LSB.
+    if (_is_lsb_set (this->p_v))
+      this->p_v = _set_lsb (v);
+    else
+      this->p_v = v;
   }
 
   /*! Get the incident face (const version). */
@@ -910,6 +952,7 @@ public:
       dup_h->set_opposite (dup_opp);
       dup_h->set_prev (dup_prev);
       dup_h->set_next (dup_next);
+      dup_h->set_direction (h->direction());
     }
 
     // Update the face records.

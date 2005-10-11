@@ -500,6 +500,7 @@ public:
     const DHalfedge* opposite () const;
     DHalfedge* opposite ();
     void set_opposite (DHalfedge* );
+    void set_direction (Comparison_result );
     void set_prev (DHalfedge* he);
     void set_next (DHalfedge* he);
     const DVertex* vertex () const ;
@@ -1383,12 +1384,14 @@ protected:
    * \param f The face containing the two end vertices.
    * \param v1 The free vertex that corresponds to the left endpoint of cv.
    * \param v2 The free vertex that corresponds to the right endpoint of cv.
+   * \param res The comparison result of the points associated with v1 and v2.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve, directed from v1 to v2.
    */
   DHalfedge* _insert_in_face_interior (const X_monotone_curve_2& cv,
                                        DFace *f,
-                                       DVertex *v1, DVertex *v2);
+                                       DVertex *v1, DVertex *v2,
+                                       Comparison_result res);
 
   /*! 
    * Insert an x-monotone curve into the arrangement, such that one of its
@@ -1400,12 +1403,15 @@ protected:
    * \param prev The reference halfedge. We should represent cv as a pair
    *             of edges, one of them should become prev's successor.
    * \param v The free vertex that corresponds to the other endpoint.
+   * \param res The comparison result of the points associated with prev's
+   *            target and v.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve, whose target is the vertex v.
    */
   DHalfedge* _insert_from_vertex (const X_monotone_curve_2& cv,
                                   DHalfedge *prev,
-                                  DVertex *v);
+                                  DVertex *v,
+                                  Comparison_result res);
 
   /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
@@ -1416,6 +1422,8 @@ protected:
    * \param cv the given curve.
    * \param prev1 The reference halfedge for the first vertex.
    * \param prev2 The reference halfedge for the second vertex.
+   * \param res The comparison result of the points associated with prev1's
+   *            target vertex and prev2's target vertex.
    * \param new_face Output - whether a new face has been created.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
@@ -1425,6 +1433,7 @@ protected:
   DHalfedge* _insert_at_vertices (const X_monotone_curve_2& cv,
                                   DHalfedge *prev1, 
                                   DHalfedge *prev2,
+                                  Comparison_result res,
                                   bool& new_face);
 
   /*!

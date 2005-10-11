@@ -398,9 +398,7 @@ _vertical_ray_shoot (const Point_2& p,
   {
     // The entire vertical segment is above (below) the query point: Return the
     // endpoint closest to it.
-    const bool    is_directed_up = (traits->compare_xy_2_object()
-      (closest_he->source()->point(),
-       closest_he->target()->point()) == SMALLER);
+    const bool    is_directed_up = (closest_he->direction() == SMALLER);
 
     if ((shoot_up && is_directed_up) ||
         (! shoot_up && ! is_directed_up))
@@ -455,8 +453,6 @@ _is_in_connected_component (const Point_2& p,
                                             traits->compare_y_at_x_2_object();
   typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
                                         traits->compare_y_position_2_object();
-  typename Traits_wrapper_2::Compare_xy_2         compare_xy =
-                                            traits->compare_xy_2_object();
 
   // Start from the first non-vertical segment in the connected component.
   Ccb_halfedge_const_circulator  first = circ;
@@ -649,9 +645,7 @@ _is_in_connected_component (const Point_2& p,
       {
         closest_he = curr;
         closest_in_ccb = true;
-        closest_to_target =
-          (compare_xy (curr->target()->point(),
-                       curr->source()->point()) == point_above_under);
+        closest_to_target = (curr->direction() != point_above_under);
       }
     }
 
@@ -678,8 +672,6 @@ _first_around_vertex (Vertex_const_handle v,
 {
   // Travrse the incident halfedges of the current vertex and locate the
   // lowest one to its left and the topmost to its right.
-  typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
-                                      traits->compare_xy_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_right_2 compare_y_at_x_right =
                                       traits->compare_y_at_x_right_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_left_2  compare_y_at_x_left =
@@ -697,7 +689,7 @@ _first_around_vertex (Vertex_const_handle v,
   {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
-    if (compare_xy (curr->source()->point(), v->point()) == SMALLER)
+    if (curr->direction() == SMALLER)
     {
       // The curve associated with the current halfedge is defined to the left
       // of v.

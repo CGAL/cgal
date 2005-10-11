@@ -125,9 +125,9 @@ public:
       }
     } 
     else 
+    {
       // the previous event on the curve is already in the planar map. 
       // Let's use it.
-    {
       Halfedge_handle prev = lastEvent->get_halfedge_handle();
      
       // skip to the right halfedge
@@ -176,9 +176,10 @@ public:
                                              Subcurve* sc,
                                              bool &new_face_created)
   {
-    Halfedge_handle res = 
+    Halfedge_handle res =
       m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
-			                                    new_face_created);
+                                          LARGER,
+                                          new_face_created);
 
     if (new_face_created)
     {

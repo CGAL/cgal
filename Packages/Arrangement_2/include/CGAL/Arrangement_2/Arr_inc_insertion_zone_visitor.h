@@ -150,13 +150,8 @@ public:
 	// and if this halfedge is directed from left to right.
         // If so, right_he's target is now the new vertex, and we have to
         // proceed to the next halfedge (which is going to be split).
-        if (right_he == left_he &&
-	    traits->compare_xy_2_object() 
-	                 (left_he->source()->point(),
-			  left_he->target()->point()) == SMALLER)
-	{
+        if (right_he == left_he && left_he->direction() == SMALLER)
           right_he = right_he->next();
-	}
       }
     }
 

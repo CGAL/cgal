@@ -357,7 +357,9 @@ public:
     
     
     // Make sure there is no change of directions as we traverse the polyline.
-    const Comparison_result cmp_x_res = compare_x(*ps, *pt);
+    CGAL_precondition_code (
+      const Comparison_result cmp_x_res = compare_x(*ps, *pt);
+    );
     const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
     CGAL_precondition (cmp_xy_res != EQUAL);
     ++ps; ++pt;

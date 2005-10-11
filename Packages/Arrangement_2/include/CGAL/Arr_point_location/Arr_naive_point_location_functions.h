@@ -85,15 +85,10 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
     // Make sure that the edge is directed from right to left, so that p
     // (which lies below it) is contained in its incident face. If necessary,
     // we take the twin halfedge.
-    if (traits->compare_xy_2_object() ((*p_hh)->source()->point(), 
-                                       (*p_hh)->target()->point()) == SMALLER)
-    {
+    if ((*p_hh)->direction() == SMALLER)
       hh = (*p_hh)->twin();
-    }
     else
-    {
       hh = *p_hh;
-    }
 
     // Return the incident face.
     return (CGAL::make_object (hh->face()));
@@ -303,8 +298,6 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
 {
   // Travrse the incident halfedges of the current vertex and locate the
   // lowest one to its left and the topmost to its right.
-  typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
-                                      traits->compare_xy_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_right_2 compare_y_at_x_right =
                                       traits->compare_y_at_x_right_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_left_2  compare_y_at_x_left =
@@ -322,7 +315,7 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
   {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
-    if (compare_xy (curr->source()->point(), v->point()) == SMALLER)
+    if (curr->direction() == SMALLER)
     {
       // The curve associated with the current halfedge is defined to the left
       // of v.

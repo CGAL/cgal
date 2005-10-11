@@ -658,8 +658,7 @@ public:
     // we should split and return the halfedge associated with cv1, and
     // otherwise we should return the halfedge associated with cv2 after the
     // split.
-    if (this->traits->compare_xy_2_object() (e->source()->point(),
-					     e->target()->point()) == SMALLER)
+    if (e->direction() == SMALLER)
     {
       return (Base_arr_2::split_edge (e, cv1, cv2));
     }

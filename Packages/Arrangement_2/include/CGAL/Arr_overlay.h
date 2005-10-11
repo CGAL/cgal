@@ -117,9 +117,6 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
   std::list<Point_2>                iso_points;
   arr_curves.resize(arr1.number_of_edges() + arr2.number_of_edges());
   
-  typename Base_Traits::Compare_xy_2    comp_xy =
-    arr1.get_traits()->compare_xy_2_object();
-    
   //iterate over arr1's edges and create X_monotone_curve_2 from each edge
   unsigned int            i = 0;
   Edge_const_iterator_1   itr1;
@@ -131,8 +128,7 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
 
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy(he1->source()->point(),
-               he1->target()->point()) == SMALLER)
+    if (he1->direction() == SMALLER)
       he1 = he1->twin();
 
     const Base_X_monotone_curve_2& base_cv = he1->curve();
@@ -151,8 +147,7 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
 
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy (he2->source()->point(),
-                he2->target()->point()) == SMALLER)
+    if (he2->direction() == SMALLER)
        he2 = he2->twin();
 
     const Base_X_monotone_curve_2& base_cv = he2->curve();

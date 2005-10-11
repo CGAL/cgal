@@ -91,14 +91,12 @@ public:
 		     std::back_inserter(iso_points),
 		     m_traits);
 
-    typename Traits::Compare_xy_2  comp_xy = m_traits->compare_xy_2_object();
     Edge_iterator                  eit;
     Halfedge_handle                he;
 
     for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
     {
-      if (comp_xy (eit->source()->point(),
-                   eit->target()->point()) == SMALLER)
+      if (eit->direction() == SMALLER)
         he = eit->twin();
       else
         he = eit;
@@ -129,24 +127,23 @@ public:
     std::vector<X_monotone_curve_2>      xcurves_vec;
     std::vector<Point_2>                 iso_points;
 
-    typename Traits::Compare_xy_2  comp_xy = m_traits->compare_xy_2_object();
-    for (Edge_iterator eit = m_arr->edges_begin();
-         eit != m_arr->edges_end();
-         ++eit) 
+    Edge_iterator    eit;
+    Halfedge_handle  he;
+
+    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
     {
-      Halfedge_handle he;
-      if(comp_xy(eit->source()->point(),
-	       eit->target()->point()) == SMALLER)
-         he = eit->twin();
+      if (eit->direction() == SMALLER)
+        he = eit->twin();
       else
         he = eit;
 
       xcurves_vec.push_back(X_monotone_curve_2(he->curve(), he));
     }
 
-    for(Vertex_iterator v_itr = m_arr->vertices_begin();
-        v_itr != m_arr->vertices_end();
-        ++v_itr)
+    Vertex_iterator v_itr;
+
+    for (v_itr = m_arr->vertices_begin(); 
+         v_itr != m_arr->vertices_end(); ++v_itr)
     {
       if(v_itr->is_isolated())
         iso_points.push_back(Point_2(v_itr->point(), v_itr));

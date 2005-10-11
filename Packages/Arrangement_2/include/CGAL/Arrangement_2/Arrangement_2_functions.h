@@ -317,8 +317,10 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
   DVertex         *v2 =
       _create_vertex (traits->construct_max_vertex_2_object()(cv));
 
-  // Create the edge connecting the two vertices.
-  DHalfedge       *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
+  // Create the edge connecting the two vertices (note we know v1 is smaller
+  // that v2).
+  DHalfedge       *new_he = _insert_in_face_interior (cv, p_f, v1, v2,
+                                                      SMALLER);
 
   // Return a handle to the new halfedge directed from left to right.
   return (Halfedge_handle (new_he));
@@ -355,8 +357,10 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     // container of its containing face. 
     _find_and_erase_isolated_vertex (p_f, v1);
 
-    // Create the edge connecting the two vertices.
-    DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
+    // Create the edge connecting the two vertices (note that we know that
+    // v1 is smaller than v2).
+    DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2,
+                                                   SMALLER);
 
     // Return a handle to the new halfedge directed from left to right.
     return (Halfedge_handle (new_he));
@@ -370,9 +374,11 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     (prev1 != NULL,
      "The inserted curve should not exist in the arrangement.");
 
-  // Perform the insertion.
+  // Perform the insertion (note that we know that prev1->vertex is smaller
+  // than v2).
   DHalfedge  *new_he = _insert_from_vertex (cv,
-                                           prev1, v2);
+                                            prev1, v2,
+                                            SMALLER);
 
   return (Halfedge_handle (new_he));
 }
@@ -402,9 +408,11 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   DVertex         *v2 =
       _create_vertex (traits->construct_max_vertex_2_object()(cv));
 
-  // Perform the insertion.
+  // Perform the insertion (note that we know that prev->vertex is smaller
+  // than v2).
   DHalfedge  *new_he = _insert_from_vertex (cv,
-                                            _halfedge (prev), v2);
+                                            _halfedge (prev), v2,
+                                            SMALLER);
 
   return (Halfedge_handle (new_he));
 }
@@ -432,7 +440,6 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   if (v->is_isolated())
   {
     // The given vertex is an isolated one: We should in fact insert the curve
-
     // in the interior of the face containing this vertex.
     DVertex    *v2 = _vertex (v);
     DFace      *p_f = v2->face();
@@ -441,8 +448,10 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     // container of its containing face.
     _find_and_erase_isolated_vertex (p_f, v2);
 
-    // Create the edge connecting the two vertices.
-    DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
+    // Create the edge connecting the two vertices (note that we know that
+    // v1 is smaller than v2).
+    DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2,
+                                                   SMALLER);
     
     // Return a handle to the new halfedge whose target is the new vertex
     return (Halfedge_handle (new_he->opposite()));
@@ -456,9 +465,11 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     (prev2 != NULL,
      "The inserted curve should not exist in the arrangement.");
 
-  // Perform the insertion.
+  // Perform the insertion (note that we know that prev2->vertex is larger
+  // than v1).
   DHalfedge  *new_he = _insert_from_vertex (cv,
-                                           prev2, v1);
+                                            prev2, v1,
+                                            LARGER);
 
   return (Halfedge_handle (new_he));
 }
@@ -489,9 +500,11 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   DVertex         *v1 =
       _create_vertex (traits->construct_min_vertex_2_object()(cv));
 
-  // Perform the insertion.
+  // Perform the insertion (note that we know that prev->vertex is larger
+  // than v1).
   DHalfedge  *new_he = _insert_from_vertex (cv,
-                                            _halfedge (prev), v1);
+                                            _halfedge (prev), v1,
+                                            LARGER);
 
   return (Halfedge_handle (new_he));
 }
@@ -547,8 +560,13 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
       _find_and_erase_isolated_vertex (f1, p_v2);
 
       // Perform the insertion.
+      Comparison_result  res = traits->compare_xy_2_object() (v1->point(),
+                                                              v2->point());
+      CGAL_assertion (res != EQUAL);
+
       DHalfedge  *new_he = _insert_in_face_interior (cv, f1,
-                                                     p_v1, p_v2);
+                                                     p_v1, p_v2,
+                                                     res);
 
       return (Halfedge_handle (new_he));
     }
@@ -567,8 +585,13 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 
     // Perform the insertion. Note that the returned halfedge is directed
     // toward v1 (and not toward v2), so we return its twin.
+    Comparison_result  res = traits->compare_xy_2_object() (v2->point(),
+                                                            v1->point());
+    CGAL_assertion (res != EQUAL);
+
     DHalfedge  *new_he = _insert_from_vertex (cv,
-                                              prev2, p_v1);
+                                              prev2, p_v1,
+                                              res);
 
     return (Halfedge_handle (new_he->opposite()));
   }
@@ -595,8 +618,13 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
        "The inserted curve should not intersect the existing arrangement.");
 
     // Perform the insertion.
+    Comparison_result  res = traits->compare_xy_2_object() (v1->point(),
+                                                            v2->point());
+    CGAL_assertion (res != EQUAL);
+
     DHalfedge  *new_he = _insert_from_vertex (cv,
-                                              prev1, p_v2);
+                                              prev1, p_v2,
+                                              res);
 
     return (Halfedge_handle (new_he));
   }
@@ -656,8 +684,14 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     _find_and_erase_isolated_vertex (f2, p_v2);
 
     // Perform the insertion.
+    Comparison_result  res = traits->compare_xy_2_object() 
+                                             (prev1->target()->point(),
+                                              v2->point());
+    CGAL_assertion (res != EQUAL);
+
     DHalfedge  *new_he = _insert_from_vertex (cv,
-                                              _halfedge (prev1), p_v2);
+                                              _halfedge (prev1), p_v2,
+                                              res);
 
     return (Halfedge_handle (new_he));
   }
@@ -726,11 +760,22 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
       (! _is_inside_new_face (p_prev2, p_prev1, cv));
   }
 
+  // Compare the points associated with the end-vertices of the edge we are
+  // about to create.
+  Comparison_result    res;
+
+  if (prev1_before_prev2)
+    res = traits->compare_xy_2_object() (p_prev1->vertex()->point(),
+                                         p_prev2->vertex()->point());
+  else
+    res = traits->compare_xy_2_object() (p_prev2->vertex()->point(),
+                                         p_prev1->vertex()->point());
+
   // Perform the insertion.
   bool        new_face_created = false;
   DHalfedge  *new_he = (prev1_before_prev2) ?
-    _insert_at_vertices (cv, p_prev1, p_prev2, new_face_created) :
-    _insert_at_vertices (cv, p_prev2, p_prev1, new_face_created);
+    _insert_at_vertices (cv, p_prev1, p_prev2, res, new_face_created) :
+    _insert_at_vertices (cv, p_prev2, p_prev1, res, new_face_created);
 
   if (new_face_created)
   {
@@ -1090,7 +1135,6 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
     do
     {
       if (compare_xy (ccb2->vertex()->point(), *p_min2) == SMALLER)
-
         p_min2 = &(ccb2->vertex()->point());
 
       ccb2 = ccb2->next();
@@ -1233,10 +1277,10 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   const DHalfedge   *curr = first;
   const DHalfedge   *last = prev1->next();
   const Point_2     *p_min = &(prev2->vertex()->point());
+  bool               prev_is_min = true;
 
   do
   {
-
     // Note that we may visit the smallest vertex several times, for example
     // when we have:
     //
@@ -1250,10 +1294,17 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
     // and h3, and since we take the last halfedge, we wil locate h3.
     // On the other hand, if we reach the vertex from h3, we will leave it
     // using h1's twin and will not return to it.
-    if (compare_xy (curr->vertex()->point(), *p_min) != LARGER)
+    if (curr->direction() == LARGER &&
+        (prev_is_min ||
+         compare_xy (curr->vertex()->point(), *p_min) != LARGER))
     {
       left_edge = curr;
       p_min = &(curr->vertex()->point());
+      prev_is_min = true;
+    }
+    else
+    {
+      prev_is_min = false;
     }
 
     curr = curr->next();
@@ -1672,7 +1723,8 @@ typename Arrangement_2<Traits,Dcel>::DHalfedge*
 Arrangement_2<Traits,Dcel>::_insert_in_face_interior
     (const X_monotone_curve_2& cv,
      DFace *f,
-     DVertex *v1, DVertex *v2)
+     DVertex *v1, DVertex *v2,
+     Comparison_result res)
 {
   // Notify the observers that we are about to create a new edge.
   _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
@@ -1696,6 +1748,10 @@ Arrangement_2<Traits,Dcel>::_insert_in_face_interior
   // Assign the incident halfedges of the two new vertices.
   v1->set_halfedge (he1);
   v2->set_halfedge (he2);
+
+  // Set the direction of the halfedges: res indicates the direction of he2,
+  // as it is the comparison result between its source (v1) and target (v2).
+  he2->set_direction (res);
 
   // Create a handle to the new halfedge pointing at the curve target.
   Halfedge_handle   hh (he2);
@@ -1726,7 +1782,8 @@ template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::DHalfedge*
 Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
                                                  DHalfedge *prev,
-                                                 DVertex *v)
+                                                 DVertex *v,
+                                                 Comparison_result res)
 {
   // Get the incident face of the previous halfedge . Note that this will also
   // be the incident face of the two new halfedges we are about to create.
@@ -1763,8 +1820,11 @@ Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
 
   prev->set_next (he2);
 
-  // Notify the observers that we have created a new edge.
+  // Set the direction of the halfedges: res indicates the direction of he2,
+  // as it is the comparison result between its source and target (v).
+  he2->set_direction (res);
 
+  // Notify the observers that we have created a new edge.
   _notify_after_create_edge (Halfedge_handle (he2));
 
   // Return a pointer to the new halfedge whose target is the free vertex v.
@@ -1783,6 +1843,7 @@ typename Arrangement_2<Traits,Dcel>::DHalfedge*
 Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
                                                  DHalfedge *prev1,
                                                  DHalfedge *prev2,
+                                                 Comparison_result res,
                                                  bool& new_face)
 {
   // Get the vertices that match cv's endpoints.
@@ -1839,6 +1900,10 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 
   prev1->set_next (he2);
   prev2->set_next (he1);
+
+  // Set the direction of the halfedges: res indicates the direction of he2,
+  // as it is the comparison result between its source and target.
+  he2->set_direction (res);
 
   // Check whether prev1 and prev2 used to belong to the same connected
   // component or to different components.
@@ -2128,7 +2193,6 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
     // Insert he4 between he2 and its predecessor.
     he2->prev()->set_next (he4);
   }
-
   else
   {
     // he1 and he2 form an "antenna", so he4 becomes he3's successor.
@@ -2148,6 +2212,10 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
   // Update the properties of the twin halfedges we have just split.
   he1->set_next(he3);
   he1->set_vertex(v);
+
+  // The direction of he3 is the same as he1's (and the direction of he4 is
+  // the same as he2).
+  he3->set_direction (he1->direction());
 
   // Associate cv1 with he1 (and its twin). We allocate a new curve for cv2
   // and associate it with he3 (and its twin).
@@ -2711,30 +2779,42 @@ bool Arrangement_2<Traits,Dcel>::_is_valid (Halfedge_const_handle he) const
   if (he != he->twin()->twin())
     return (false);
   
-  if (he->source != he->twin()->target() || 
+  if (he->source() != he->twin()->target() || 
       he->target() != he->twin()->source())
     return (false);
+
+  if (he->direction() == he->twin()->direction())
+  {
+    std::cout << "!!!" << std::endl;
+    return (false);
+  }
 
   // Check that the end points of the curve associated with the halfedge
   // really equal the source and target vertices of this halfedge.
   const X_monotone_curve_2& cv = he->curve();
-  const Point_2& cv_s = traits->construct_min_vertex_2_object()(cv);
-  const Point_2& cv_t = traits->construct_max_vertex_2_object()(cv);
+  const Point_2& cv_min = traits->construct_min_vertex_2_object()(cv);
+  const Point_2& cv_max = traits->construct_max_vertex_2_object()(cv);
 
-  const Point_2& e_s  = e->source()->point();
-  const Point_2& e_t  = e->target()->point();
+  const Point_2& he_s  = he->source()->point();
+  const Point_2& he_t  = he->target()->point();
 
   typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
 
-  Comparison_result res = traits->compare_xy_2_object() (e_s, e_t);
+  Comparison_result res = traits->compare_xy_2_object() (he_s, he_t);
+
+  if (he->direction() != res)
+  {
+    std::cout << "@@@" << std::endl;
+    return (false);
+  }
 
   if (res == SMALLER)
   {
-    return (equal (e_s, cv_s) && equal (e_t, cv_t));
+    return (equal (he_s, cv_min) && equal (he_t, cv_max));
   }
   else if (res == LARGER)
   {
-    return (equal (e_s, cv_t) && equal (e_t, cv_s));
+    return (equal (he_s, cv_max) && equal (he_t, cv_min));
   }
 
   // In that case, the source and target of the halfedge are equal.
@@ -2754,14 +2834,14 @@ bool Arrangement_2<Traits,Dcel>::_is_valid (Face_const_handle f) const
   if (! f->is_unbounded())
   {
     ccb_circ = f->outer_ccb();
-    if (! is_valid(ccb_circ, f))
+    if (! _is_valid (ccb_circ, f))
       return (false);
   }
     
   for (iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit)      
   {
     ccb_circ = *iccbit;
-    if (! is_valid(ccb_circ, f))
+    if (! _is_valid (ccb_circ, f))
       return (false);
   }
    

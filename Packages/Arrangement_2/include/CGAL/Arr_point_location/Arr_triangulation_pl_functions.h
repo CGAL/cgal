@@ -68,8 +68,11 @@ Object Arr_triangulation_point_location<Arrangement_2>
       for (iso_verts_it = face_found->isolated_vertices_begin();
           iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
       {
-        if (equal (p, (*iso_verts_it).point()))
-          return (CGAL::make_object (*iso_verts_it));
+        if (equal (p, iso_verts_it->point()))
+        {
+          Vertex_const_handle  vh = iso_verts_it;
+          return (CGAL::make_object (vh));
+        }
       }
 
       return (CGAL::make_object(face_found));
@@ -202,8 +205,11 @@ Object Arr_triangulation_point_location<Arrangement_2>
   for (iso_verts_it = face_found->isolated_vertices_begin();
       iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
   {
-    if (equal (p, (*iso_verts_it).point()))
-      return (CGAL::make_object (*iso_verts_it));
+    if (equal (p, iso_verts_it->point()))
+    {
+      Vertex_const_handle  vh = iso_verts_it;
+      return (CGAL::make_object (vh));
+    }
   }		
 
   return (CGAL::make_object(face_found));

@@ -208,9 +208,7 @@ public:
     // make sure that the halfedge associated with 'sc' is the directed from
     // right to left , since we always 'look' above , and the incident face 
     //is on the left of the  halfedge
-
-    CGAL_assertion(this->traits()->compare_xy_2_object()
-      (he->source()->point(), he->target()->point()) == LARGER);
+    CGAL_assertion (he->direction() == LARGER);
 
     this->traits()->split_2_object()(he->curve(), pt, sub_cv2, sub_cv1);
     return (this->m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));

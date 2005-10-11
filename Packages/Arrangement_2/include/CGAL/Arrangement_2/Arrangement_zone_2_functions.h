@@ -214,8 +214,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     // Note that cv extends to the right of v. In case the single
     // halfedge also extends to the right of v (its source is to
     // the right), check if an overlap occurs.
-    if ((traits->compare_xy_2_object()(v->point(),
-                                       he->source()->point()) == SMALLER) &&
+    if (he->direction() == LARGER &&
         (traits->compare_y_at_x_right_2_object() (he->curve(), cv,
                                                   v->point()) == EQUAL))
     {
@@ -291,9 +290,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_right
                     (cv_left_pt, query_he->curve()) == EQUAL);
 
   // Check whether the given halfedge is directed to the right.
-  const bool               query_he_directed_right =
-    (traits->compare_xy_2_object() (query_he->source()->point(),
-                                    query_he->target()->point()) == SMALLER);
+  const bool               query_he_directed_right = 
+                                   (query_he->direction() == SMALLER);
 
   // Check whether the curve lies above of below the edge immediately to
   // the right of its left endpoint.
@@ -346,8 +344,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right =
-    (traits->compare_xy_2_object() (query_he->source()->point(),
-                                    query_he->target()->point()) == SMALLER);
+                                   (query_he->direction() == SMALLER);
 
   // Check whether the curve lies above of below the edge (we use the curve
   // position predicate, as we know they cruves do not overlap and intersect
@@ -589,8 +586,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // endpoints of the curve associated with the current halfedge,
       //  in order to filter unnecessary intersection computations.
       if (found_intersect &&
-          compare_xy (he_curr->source()->point(), intersect_p) == LARGER &&
-          compare_xy (he_curr->target()->point(), intersect_p) == LARGER)
+          ((he_curr->direction() == SMALLER &&
+            compare_xy (he_curr->source()->point(), intersect_p) == LARGER) ||
+           (he_curr->direction() == LARGER &&
+            compare_xy (he_curr->target()->point(), intersect_p) == LARGER)))
       {
         // The current x-monotone curve lies entirely to the right of
         // ip_left, so its intersection with cv (if any) cannot lie to
@@ -687,8 +686,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // endpoints of the curve associated with the current halfedge,
       //  in order to filter unnecessary intersection computations.
       if (found_intersect &&
-          compare_xy (he_curr->source()->point(), intersect_p) == LARGER &&
-          compare_xy (he_curr->target()->point(), intersect_p) == LARGER)
+          ((he_curr->direction() == SMALLER &&
+            compare_xy (he_curr->source()->point(), intersect_p) == LARGER) ||
+           (he_curr->direction() == LARGER &&       
+            compare_xy (he_curr->target()->point(), intersect_p) == LARGER)))
       {
         // The current x-monotone curve lies entirely to the right of
         // ip_left, so its intersection with cv (if any) cannot lie to
@@ -971,16 +972,10 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
         // We have a tangency point. If right_he is directed from left to
         // right, we take the inserted halfedge to be left_he, otherwise
         // right_he itself becomes left_he:
-        if (traits->compare_xy_2_object()
-            (right_he->source()->point(),
-             right_he->target()->point()) == SMALLER)
-        {
+        if (right_he->direction() == SMALLER)
           left_he = inserted_he;
-        }
         else
-        {
           left_he = right_he;
-        }
       }
       else
       {
@@ -1043,9 +1038,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
     traits->construct_max_vertex_2_object() (overlap_cv);
   Vertex_handle   he_right_v;
 
-  if (traits->
-      compare_xy_2_object()(intersect_he->source()->point(),
-			    intersect_he->target()->point()) == SMALLER)
+  if (intersect_he->direction() == SMALLER)
   {
     he_right_v = intersect_he->target();
   }

@@ -70,19 +70,15 @@ OutputIterator locate(const Arrangement& arr,
   typedef Basic_sweep_line_2<Meta_traits_2, Visitor>       Sweep_line;
 
   // Go over all arrangement edges.
-  std::vector<X_monotone_curve_2>  xcurves_vec;
-  xcurves_vec.resize(arr.number_of_edges());
-  typename Traits_2::Compare_xy_2    comp_xy =
-    arr.get_traits()->compare_xy_2_object();
-  Edge_const_iterator       eit;
+  std::vector<X_monotone_curve_2>  xcurves_vec (arr.number_of_edges());
+  Edge_const_iterator              eit;
+  Size                             i = 0;
 
-  Size i = 0;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit, ++i) 
   {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy(eit->source()->point(),
-               eit->target()->point()) == LARGER)
+    if (eit->direction() == LARGER)
       xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit);
     else
       xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->twin());

@@ -101,6 +101,8 @@ void print_face (typename Arrangement::Face_const_handle f)
 template<class Arrangement>
 void print_arrangement (const Arrangement& arr)
 {
+  CGAL_precondition (arr.is_valid());
+
   // Print the arrangement vertices.
   typename Arrangement::Vertex_const_iterator  vit;
 

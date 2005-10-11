@@ -96,14 +96,12 @@ public:
     std::vector<X_monotone_curve_2>      xcurves_vec;
     std::vector<Point_2>                 iso_points;
 
-    typename Traits::Compare_xy_2  comp_xy = m_traits->compare_xy_2_object();
     Edge_iterator                  eit;
     Halfedge_handle                he;
 
     for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
     {      
-      if (comp_xy (eit->source()->point(),
-                   eit->target()->point()) == SMALLER)
+      if (eit->direction() == SMALLER)
         he = eit->twin();
       else
         he = eit;

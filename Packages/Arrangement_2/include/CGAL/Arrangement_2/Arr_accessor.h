@@ -207,6 +207,8 @@ public:
    * \param cv the given curve.
    * \param prev1 The reference halfedge for the first vertex.
    * \param prev2 The reference halfedge for the second vertex.
+   * \param res The comparsion result between the points associated with the
+   *            target vertex of prev and the target vertex of prev2.
    * \param new_face Output - whether a new face has been created.
    * \return A handle for one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
@@ -216,11 +218,13 @@ public:
   Halfedge_handle insert_at_vertices_ex (const X_monotone_curve_2& cv,
                                          Halfedge_handle prev1, 
                                          Halfedge_handle prev2,
+                                         Comparison_result res,
                                          bool& new_face)
   {
     DHalfedge*  he = p_arr->_insert_at_vertices (cv,
                                                  p_arr->_halfedge (prev1),
                                                  p_arr->_halfedge (prev2),
+                                                 res,
                                                  new_face);
 
     CGAL_assertion (he != NULL);
@@ -237,16 +241,20 @@ public:
    * \param prev The reference halfedge. We should represent cv as a pair
    *             of edges, one of them should become prev's successor.
    * \param v The free vertex that corresponds to the other endpoint.
+   * \param res The comparsion result between the points associated with
+   *            the target vertex of prev and the vertex v.
    * \return A handle to one of the halfedges corresponding to the inserted
    *         curve, whose target is the vertex v.
    */
   Halfedge_handle insert_from_vertex_ex (const X_monotone_curve_2& cv,
                                          Halfedge_handle prev,
-                                         Vertex_handle v)
+                                         Vertex_handle v,
+                                         Comparison_result res)
   {
     DHalfedge*  he = p_arr->_insert_from_vertex (cv,
                                                  p_arr->_halfedge (prev),
-                                                 p_arr->_vertex (v));
+                                                 p_arr->_vertex (v),
+                                                 res);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -261,18 +269,22 @@ public:
    * \param f The face containing the two end vertices.
    * \param v1 The free vertex that corresponds to the left endpoint of cv.
    * \param v2 The free vertex that corresponds to the right endpoint of cv.
+   * \param res The comparsion result between the points associated with the
+   *            vertices v1 and v2.
    * \return A handle to one of the halfedges corresponding to the inserted
    *         curve, directed from v1 to v2.
    */
   Halfedge_handle insert_in_face_interior_ex (const X_monotone_curve_2& cv,
                                               Face_handle f,
                                               Vertex_handle v1,
-                                              Vertex_handle v2)
+                                              Vertex_handle v2,
+                                              Comparison_result res)
   {
     DHalfedge*  he = p_arr->_insert_in_face_interior (cv,
                                                       p_arr->_face (f),
                                                       p_arr->_vertex (v1),
-                                                      p_arr->_vertex (v2));
+                                                      p_arr->_vertex (v2),
+                                                      res);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
