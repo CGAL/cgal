@@ -27,11 +27,8 @@ The concept \ccc{VoronoiDiagramVertex_2} defines the requirements of the
 vertex provided by the class \ccc{Voronoi_diagram_2}.
 
 \ccRefines
-\ccc{DefaultConstructible}\\
-\ccc{CopyConstructible}\\
-\ccc{Assignable}\\
-\ccc{EqualityComparable}\\
-\ccc{LessThanComparable}
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
+\ccc{EqualityComparable}, \ccc{LessThanComparable}
 
 \ccTypes
 %
@@ -51,35 +48,28 @@ vertex provided by the class \ccc{Voronoi_diagram_2}.
   vertex.}
 \ccGlue
 \ccNestedType{size_type}{A type for sizes.}
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
+\ccThreeToTwo
 \ccGlue
 \ccNestedType{Halfedge_around_vertex_circulator}{A type for a
   circulator that allows to traverse all incident halfedges. The value
   type of the circulator is \ccc{Halfedge}.}
-%
-\ccThree{typedef typename Delaunay_graph::Face_handle}{Delaunay_face_handle;}{}
-\ccThreeToTwo
+\ccGlue
 \ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Face_handle Delaunay_face_handle;}
+\ccTypedef{typedef Delaunay_graph::Face_handle Delaunay_face_handle;}
 {A type for the handle of the dual face.}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Vertex_handle
-Delaunay_vertex_handle;}
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
 {A type for the handles of vertices in the Delaunay graph.}
 
 \ccCreationVariable{v}  %% choose variable name
 
 \ccHeading{Access Methods}
-%\ccThree{Dual_face_handle}{v.dual_face()+}{}
-\ccThree{Halfedge_around_vertex_circulator}{v.incident_halfedges()+}{}
+\ccThree{Delaunay_vertex_handle}{v[unsigned int i]+}{}
 \ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge
   that has \ccc{v} as its target.}
-\ccGlue
-\ccMethod{Halfedge_around_vertex_circulator incident_halfedges();}
-{Returns a circulator that allows the traversal of the halfedges that
-  have \ccc{v} as their target. The edges are traversed around \ccc{v}
-  in a order opposite to that of the \ccc{Ccb_halfedges_circulator}.}
 \ccGlue
 \ccMethod{size_type degree();}{Returns the degree of the vertex,
   i.e. the number of incident halfedges.}
@@ -90,22 +80,29 @@ Delaunay_vertex_handle;}
 {Returns a handle to the dual face, i.e., the corresponding dual face in the
   Delaunay graph.}
 \ccGlue
-\ccMethod{Delaunay_vertex_handle first();}{returns a handle to the vertex in
+\ccMethod{Delaunay_vertex_handle first();}{Returns a handle to the vertex in
 the Delaunay graph corresponding to the first generating site of the
 Voronoi vertex.}
 \ccGlue
-\ccMethod{Delaunay_vertex_handle second();}{returns a handle to the vertex
+\ccMethod{Delaunay_vertex_handle second();}{Returns a handle to the vertex
 in the Delaunay graph corresponding to the second generating site of the
 Voronoi vertex.}
 \ccGlue
-\ccMethod{Delaunay_vertex_handle third();}{returns a handle to the vertex
+\ccMethod{Delaunay_vertex_handle third();}{Returns a handle to the vertex
 in the Delaunay graph corresponding to the third generating site of the
 Voronoi vertex.}
 \ccGlue
 \ccMethod{Delaunay_vertex_handle operator[](unsigned int i);}
-{returns a handle to the vertex in the Delaunay graph corresponding to 
+{Returns a handle to the vertex in the Delaunay graph corresponding to 
 the $(i+1)$-th generating site of the Voronoi vertex.
 \ccPrecond{\ccc{i} must be smaller or equal to 2.}}
+\ccThree{Halfedge_around_vertex_circulator}{v.incident_halfedges()+}{}
+\ccGlue
+\ccMethod{Halfedge_around_vertex_circulator incident_halfedges();}
+{Returns a circulator that allows the traversal of the halfedges that
+  have \ccc{v} as their target. The edges are traversed around \ccc{v}
+  in the counterclockwise sense. All incident halfedges have \ccc{v}
+  as their target vertex.}
 
 \ccHeading{Predicate Methods}
 

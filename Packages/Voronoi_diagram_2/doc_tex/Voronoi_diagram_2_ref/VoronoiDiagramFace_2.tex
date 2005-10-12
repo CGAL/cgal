@@ -29,11 +29,8 @@ The concept \ccc{VoronoiDiagramFace_2} defines the requirements of the
 face provided by the class \ccc{Voronoi_diagram_2}.
 
 \ccRefines
-\ccc{DefaultConstructible}\\
-\ccc{CopyConstructible}\\
-\ccc{Assignable}\\
-\ccc{EqualityComparable}\\
-\ccc{LessThanComparable}
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
+\ccc{EqualityComparable}, \ccc{LessThanComparable}
 
 \ccTypes
 %
@@ -53,59 +50,37 @@ face provided by the class \ccc{Voronoi_diagram_2}.
   circulator over the halfedges of the connected components of the
   boundary of the face. The value type of the circulator is
   \ccc{Halfedge}.}
-%% \ccGlue
-%% \ccNestedType{Holes_iterator}{A type for a bidirectional iterator over
-%%   the holes in the face. Since we have a Voronoi diagram that is a
-%%   model of an abstract Voronoi diagram, such holes do not exist. The
-%%   value type of the iterator is \ccc{Halfedge}.
-%%   This iterator is simply added for similarity with arrangements.}
-%
-\ccThree{typedef typename Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
-\ccThreeToTwo
-%
+\ccGlue
 \ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
-\ccTypedef{typedef typename Delaunay_graph::Vertex_handle
+%
+\ccGlue
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
+\ccThreeToTwo
+\ccTypedef{typedef Delaunay_graph::Vertex_handle
   Delaunay_vertex_handle;}{A type for the handle to a dual vertex.}
 
 \ccCreationVariable{f}  %% choose variable name
 
 
 \ccHeading{Access Methods}
-\ccThree{Ccb_halfedge_circulator}{f.outer_ccb()+}{}
-%\ccThree{Dual_vertex_handle}{f.dual_vertex()+}{}
+\ccThree{Ccb_halfedge_circulator}{f.halfedge()+}{}
 %
 \ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge on
   the (outer connected component of the) boundary of \ccc{f}.}
-%\ccGlue
-%\ccMethod{Halfedge_handle halfedge_on_outer_ccb();}{Same as
-%  \ccc{f.halfedge()}.}
 \ccGlue
 \ccMethod{Ccb_halfedge_circulator ccb();}{Returns a circulator for
-  traversing the boundary of \ccc{f}.}
-%% \ccGlue
-%% \ccMethod{Holes_iterator holes_begin();}{Starts at an arbitrary halfedge
-%%   on the boundary of a hole inside \ccc{f}. Since the faces in
-%%   abstract Voronoi diagrams do not do not have holes, this method and
-%%   the one below have been added for compliance with arrangements.}
-%% \ccGlue
-%% \ccMethod{Holes_iterator holes_end();}{Past-the-end iterator.}
-%
+  traversing the halfedges on the boundary of \ccc{f}. The halfedges
+  are traversed in counter-clockwise order.}
+\ccGlue
 \ccMethod{Delaunay_vertex_handle dual();}
 {Returns a handle to the dual vertex, i.e., the
   corresponding dual vertex in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}
-\ccThree{bool}{f.is_halfedge_on_outer_ccb(Halfedge e)+}{}
+\ccThree{bool}{f.is_halfedge_on_ccb(Halfedge e)+}{}
 \ccMethod{bool is_unbounded();}{Returns \ccStyle{true} if the face in
   an unbounded face in the Voronoi diagram.}
-%\ccGlue
-%\ccMethod{bool is_halfedge_on_inner_ccb(Halfedge e);}{Returns
-%  \ccStyle{true} if is \ccc{e} is a halfedge of an inner CCB of
-%  \ccc{f}. Since in Voronoi diagrams, faces do not have holes, this
-%  method is really not needed. It has been added for compliance with
-%  arrangements.}
-%\ccGlue
 \ccMethod{bool is_halfedge_on_ccb(Halfedge e);}{Returns
   \ccStyle{true} if \ccc{e} is a halfedge of the boundary of
   \ccc{f}.}
@@ -121,7 +96,7 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 \ccSeeAlso
 \ccc{VoronoiDiagramVertex_2}\\
 \ccc{VoronoiDiagramHalfedge_2}\\
-\ccc{DelaunayGraph_2]\\
+\ccc{DelaunayGraph_2}\\
 \ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 

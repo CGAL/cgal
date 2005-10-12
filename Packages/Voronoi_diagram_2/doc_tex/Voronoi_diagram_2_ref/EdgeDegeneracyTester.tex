@@ -20,9 +20,7 @@
 \begin{ccRefFunctionObjectConcept}{EdgeDegeneracyTester}
 
 \ccRefines
-\ccc{DefaultConstructible}\\
-\ccc{CopyConstructible}\\
-\ccc{Assignable}\\
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
 \ccc{AdaptableFunctor} (with two arguments)
 
 \ccTypes
@@ -31,39 +29,29 @@ In addition to the types required by the \ccc{AdaptableFunctor}
 concept, a model of this concept must provide the following types:
 
 
-\ccThree{typedef typename Delaunay_graph::Finite_edges_iterator}
+\ccThree{typedef Delaunay_graph::Finite_edges_iterator}
 {Finite_edges_iterator}{}
 \ccThreeToTwo
 \ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Edge Edge;}{}
+\ccTypedef{typedef Delaunay_graph::Edge Edge;}{}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Face_handle Face_handle;}{}
+\ccTypedef{typedef Delaunay_graph::Face_handle Face_handle;}{}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Edge_circulator
+\ccTypedef{typedef Delaunay_graph::Edge_circulator
   Edge_circulator;}{}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::All_edges_iterator
+\ccTypedef{typedef Delaunay_graph::All_edges_iterator
   All_edges_iterator;}{}
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Finite_edges_iterator
+\ccTypedef{typedef Delaunay_graph::Finite_edges_iterator
   Finite_edges_iterator;}{}
 
 \ccCreationVariable{edt}
 
-%\ccCreation
-
-%In addition to the default and copy constructors and the assignment
-%operator, the following constructor must be defined:
-
-%\ccThree{EdgeDegeneracyTester et(Dual_graph* dg)+}{}
-%\ccThreeToTwo
-%\ccConstructor{EdgeDegeneracyTester(Dual_graph* dg);}{A constructor
-%  that is initialized by a pointer to a \ccc{Dual_graph} object.}
-
 \ccOperations
-It must also provide the following operations:
+%It must also provide the following operations:
 
 \ccThree{bool}{edt(Delaunay_graph dg, Finite_edges_iterator feit)+}{}
 \ccThreeToTwo
@@ -73,26 +61,26 @@ It must also provide the following operations:
   degenerate, i.e., it has zero length.}
 %
 \ccMemberFunction{bool operator()(Delaunay_graph dg, Face_hanfle f, int i);}
-{returns \ccStyle{true}, if the dual edge of the edge
+{Returns \ccStyle{true}, if the dual edge of the edge
   \ccc{(f,i)} (that belongs to the Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
 \ccGlue
 \ccMemberFunction{bool operator()(Delaunay_graph dg, Edge_circulator ec);}
-{returns \ccStyle{true}, if the dual edge of \ccc{*ec} (that
+{Returns \ccStyle{true}, if the dual edge of \ccc{*ec} (that
   belongs to the Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
 \ccGlue
 \ccMemberFunction{bool operator()(Delaunay_graph dg, All_edges_iterator aeit);}
-{returns \ccStyle{true}, if the dual edge of \ccc{*aeit} (that
+{Returns \ccStyle{true}, if the dual edge of \ccc{*aeit} (that
   belongs to the Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
 \ccGlue
 \ccMemberFunction{bool operator()(Delaunay_graph dg,
   Finite_edges_iterator feit);}
-{returns \ccStyle{true}, if the dual edge of \ccc{*feit}  (that
+{Returns \ccStyle{true}, if the dual edge of \ccc{*feit}  (that
   belongs to the Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 

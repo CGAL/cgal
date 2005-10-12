@@ -20,9 +20,7 @@
 \begin{ccRefFunctionObjectConcept}{FaceDegeneracyTester}
 
 \ccRefines
-\ccc{DefaultConstructible}\\
-\ccc{CopyConstructible}\\
-\ccc{Assignable}\\
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
 \ccc{AdaptableFunctor} (with two arguments)
 
 \ccTypes
@@ -32,34 +30,24 @@ concept, a model of this concept must provide the following types:
 
 %\ccTwo{FaceDegeneracyTester::Dual_graph+}{}
 %
-\ccThree{typedef typename Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
 \ccThreeToTwo
 \ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
 %
 \ccGlue
-\ccTypedef{typedef typename Delaunay_graph::Vertex_handle Vertex_handle;}{}
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Vertex_handle;}{}
 
 
 \ccCreationVariable{fdt}
 
-%\ccCreation
-
-%In addition to the default and copy constructors and the assignment
-%operator, the following constructor must be defined:
-
-%\ccThree{EdgeDegeneracyTester et(Dual_graph* dg)+}{}
-%\ccThreeToTwo
-%\ccConstructor{EdgeDegeneracyTester(Dual_graph* dg);}{A constructor
-%  that is initialized by a pointer to a \ccc{Dual_graph} object.}
-
 \ccOperations
-It must also provide the following operation:
+%It must also provide the following operation:
 
 \ccThree{bool}{Delaunay_graph dg, fdt(Vertex_handle v)+}{}
 \ccThreeToTwo
 \ccMemberFunction{bool operator()(Delaunay_graph dg, Vertex_handle v);}
-{returns \ccStyle{true}, if the dual face of \ccc{v} (that
+{Returns \ccStyle{true}, if the dual face of \ccc{v} (that
   belongs to the Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}
 %
