@@ -1,0 +1,62 @@
+# This is the makefile for compiling the CGAL object library libCGAL.a.
+#
+# N.B. There are different makefiles for creating the object library
+# and the shared object library, because the suffix rules (in particular:
+# the compiler flags) for these libraries are different.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_LIB_CXXFLAGS) -I../../include
+
+#---------------------------------------------------------------------#
+# Object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+pixmaps$(OBJ_EXT)\
+Qt_examiner_viewer$(OBJ_EXT)\
+Qt_widget_2_core$(OBJ_EXT)\
+Qt_core$(OBJ_EXT)\
+Qt_timer$(OBJ_EXT)\
+Qt_window_2$(OBJ_EXT)
+
+MOC_FILES = \
+Qt_core.moc Qt_timer.moc Qt_window_2.moc Qt_examiner_viewer.moc Qt_widget_2_core.moc
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: moc lib_no_install
+	#mv $(CGAL_QT_LIB) $(CGAL_LIB_DESTINATION)
+
+lib_no_install: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+	$(CGAL_LIB_CREATE)$(CGAL_QT_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_LIB_LDFLAGS)
+	$(RANLIB) $(CGAL_QT_LIB)
+	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+
+moc: $(MOC_FILES)
+
+clean:
+	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS) $(MOC_FILES)
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+
+%.moc: ../../include/CGAL/KDS/IO/internal/%.h
+	$(QT_MOC) $< > $@

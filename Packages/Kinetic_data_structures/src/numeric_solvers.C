@@ -1,9 +1,9 @@
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
 
-#include "tnt_array2d.h"
-#include "tnt_array1d.h"
-#include "jama_eig.h"
+#include <TNT/tnt_array2d.h>
+#include <TNT/tnt_array1d.h>
+#include <TNT/jama_eig.h>
 
 #include <algorithm>
 #include <functional>
