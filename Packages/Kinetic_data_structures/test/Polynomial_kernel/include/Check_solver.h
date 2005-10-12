@@ -41,7 +41,7 @@ public:
     clear_timings();
 
     unsigned int max_root = 20;
-    POLYNOMIAL_NS::Wilkinson_generator<K> gen(k_);
+    CGAL_POLYNOMIAL_NS::Wilkinson_generator<K> gen(k_);
     Fn q=gen(max_root);
     DV a;
     for (unsigned int i = 1; i <= max_root; i++) {
@@ -56,7 +56,7 @@ public:
     clear_timings();
 
     unsigned int degree = 50;
-    POLYNOMIAL_NS::Mignotte_generator<K> gen(k_);
+    CGAL_POLYNOMIAL_NS::Mignotte_generator<K> gen(k_);
     Fn q=gen(degree);
     DV a;
     a.push_back(-1.0925395143411487);
@@ -218,7 +218,7 @@ public:
       a.push_back(478.0766178);
       check_polynomial(q, a);
       Root_container s=
-	k_.root_container_object(q, -POLYNOMIAL_NS::infinity<Rt>(), POLYNOMIAL_NS::infinity<Rt>());
+	k_.root_container_object(q, -CGAL_POLYNOMIAL_NS::infinity<Rt>(), CGAL_POLYNOMIAL_NS::infinity<Rt>());
       
       //******************************* UP TO HERE *****************************
       
@@ -246,8 +246,8 @@ public:
       a.push_back(1.602781661);
       check_polynomial(q, a, 0);
       Root_container s=
-	k_.root_container_object(q, -POLYNOMIAL_NS::infinity<Rt>(),
-				 POLYNOMIAL_NS::infinity<Rt>());
+	k_.root_container_object(q, -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
+				 CGAL_POLYNOMIAL_NS::infinity<Rt>());
       
       //******************************* UP TO HERE *****************************
       
@@ -261,8 +261,8 @@ public:
   }
 
   void check_polynomial(const Fn &q, const DV &a,
-			const Rt& start = -POLYNOMIAL_NS::infinity<Rt>(),
-			const Rt& end = POLYNOMIAL_NS::infinity<Rt>() ){
+			const Rt& start = -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
+			const Rt& end = CGAL_POLYNOMIAL_NS::infinity<Rt>() ){
 
     CGAL::Timer timer;
 

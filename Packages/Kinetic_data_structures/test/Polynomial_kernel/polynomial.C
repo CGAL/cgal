@@ -185,9 +185,9 @@ int main(int argc, char* argv[])
     }*/
   {
     typedef CGAL::Gmpq                        NT;
-    typedef POLYNOMIAL_NS::Polynomial<NT>     Polynomial;
+    typedef CGAL_POLYNOMIAL_NS::Polynomial<NT>     Polynomial;
     
-    typedef POLYNOMIAL_NS::internal::Rational_traits_base<Polynomial>
+    typedef CGAL_POLYNOMIAL_NS::internal::Rational_traits_base<Polynomial>
       Rational_traits;
     Rational_traits tr;
     test_polynomial(tr);
@@ -197,8 +197,8 @@ int main(int argc, char* argv[])
   
   {
     typedef CGAL::Gmpq NT;
-    typedef POLYNOMIAL_NS::Default_filtering_traits<NT> FT;
-    typedef POLYNOMIAL_NS::internal::Filtered_rational_traits<FT> Tr;
+    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<NT> FT;
+    typedef CGAL_POLYNOMIAL_NS::internal::Filtered_rational_traits<FT> Tr;
     Tr tr;
     test_polynomial(tr);
   }

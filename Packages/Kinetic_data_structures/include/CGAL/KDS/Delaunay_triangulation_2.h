@@ -1,5 +1,5 @@
-#ifndef KINETIC_DELAUNAY_2_H
-#define KINETIC_DELAUNAY_2_H
+#ifndef CGAL_KDS_KINETIC_DELAUNAY_2_H
+#define CGAL_KDS_KINETIC_DELAUNAY_2_H
 #include <CGAL/KDS/basic.h>
 
 

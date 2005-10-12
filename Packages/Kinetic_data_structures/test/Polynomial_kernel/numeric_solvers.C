@@ -12,8 +12,8 @@
 
 
 bool verbose=true;
-typedef POLYNOMIAL_NS::Polynomial<double> Pd;
-typedef POLYNOMIAL_NS::Root_stack_default_traits<Pd> Dt;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Pd;
+typedef CGAL_POLYNOMIAL_NS::Root_stack_default_traits<Pd> Dt;
 
 
 template <class Solver_traits>
@@ -26,11 +26,11 @@ class Nongsl_root_stack {
     for (int i=0; i<= f.degree(); ++i){
       c[i]= CGAL::to_double(f[i]);
     }
-    POLYNOMIAL_NS::internal::jama_polynomial_compute_roots(&*c.begin(),
+    CGAL_POLYNOMIAL_NS::internal::jama_polynomial_compute_roots(&*c.begin(),
 							   &*c.begin()+ f.degree()+1, 
 							   lb, ub, roots_);
   }
-  /*void initialize(const POLYNOMIAL_NS::Polynomial<double> &f, double lb, double ub) {
+  /*void initialize(const CGAL_POLYNOMIAL_NS::Polynomial<double> &f, double lb, double ub) {
     polynomial_compute_roots(&*f.begin(), &*f.begin()+ f.degree()+1, lb, ub, CLEAN, roots_);
     }*/
 public:
@@ -44,12 +44,12 @@ public:
   Nongsl_root_stack(){};
 
   void pop() {
-    Polynomial_precondition(!roots_.empty());
+    CGAL_Polynomial_precondition(!roots_.empty());
     roots_.pop_back();
   }
 
   const Root& top() const {
-    Polynomial_precondition(!roots_.empty());
+    CGAL_Polynomial_precondition(!roots_.empty());
     return roots_.back();
   }
 
@@ -77,8 +77,8 @@ int main(int argc, char* argv[])
   {
     if (verbose) std::cout <<"GSL________________________________________\n";
     else std::cout << "GSL &\t";
-    typedef POLYNOMIAL_NS::Numeric_root_stack<Dt> NRE;
-    typedef POLYNOMIAL_NS::Kernel<Pd, NRE> K;
+    typedef CGAL_POLYNOMIAL_NS::Numeric_root_stack<Dt> NRE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
     K k;
     Check_solver<K > cg(k,verbose);
     cg.all();
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     if (verbose) std::cout <<"NonGSL_____________________________________\n";
     else std::cout << "NonGSL &\t";
     typedef Nongsl_root_stack<Dt> NRE;
-    typedef POLYNOMIAL_NS::Kernel<Pd, NRE> K;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
     K k;
     Check_solver<K > cg(k,verbose);
     cg.all();
@@ -101,9 +101,9 @@ int main(int argc, char* argv[])
   /*{
     if (verbose) std::cout <<"Descartes__________________________________\n";
     else std::cout << "Descartes &\t";
-    typedef POLYNOMIAL_NS::Upper_bound_enumerator_Descartes_traits<Pd> Dt;
-    typedef POLYNOMIAL_NS::Upper_bound_root_enumerator<Dt> NRE;
-    typedef POLYNOMIAL_NS::Kernel<Pd, NRE> K;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_enumerator_Descartes_traits<Pd> Dt;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_enumerator<Dt> NRE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
     K k;
     Check_solver<K > cg(k,verbose);
     cg.all();

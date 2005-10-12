@@ -6,14 +6,14 @@
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
 #include <CGAL/Polynomial/Polynomial.h>
 
-typedef POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
-typedef POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
 
 
 int main(int, char *[]){
   {
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
     CRE::Root r(0);
     double d= CGAL::to_double(r);
     std::pair<double,double> p= CGAL::to_interval(r);
@@ -21,8 +21,8 @@ int main(int, char *[]){
   }
 
   {
-    typedef POLYNOMIAL_NS::Root_stack_default_traits<Polynomial_bigint> BIT;
-    typedef POLYNOMIAL_NS::CORE_Expr_root_stack<BIT> CRE;
+    typedef CGAL_POLYNOMIAL_NS::Root_stack_default_traits<Polynomial_bigint> BIT;
+    typedef CGAL_POLYNOMIAL_NS::CORE_Expr_root_stack<BIT> CRE;
     CRE::Root r(0);
     double d= CGAL::to_double(r);
     std::pair<double,double> p= CGAL::to_interval(r);

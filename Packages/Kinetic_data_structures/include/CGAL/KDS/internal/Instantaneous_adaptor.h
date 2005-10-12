@@ -4,7 +4,6 @@
 
 CGAL_KDS_BEGIN_NAMESPACE;
 
-#define compute_static(k) ik_.static_object(k)
 
 //! An object to help convert between moving objects and their static representations to wrap a predicate.
 /*!  A ref counted pointer is stored to the part of the
@@ -31,29 +30,31 @@ public:
 
 
   result_type operator()(const first_argument_type &arg0) const {
-    return pred_(compute_static(arg0));
+    return pred_(ik_.static_object(arg0));
   }
 
   result_type operator()(const first_argument_type &arg0, 
 			 const second_argument_type &arg1) const {
-    /*std::cout << "Args " << compute_static(arg0) <<", " 
-	      << compute_static(arg1) << " result " << pred_(compute_static(arg0), compute_static(arg1)) 
-	      << " antiresult " << pred_(compute_static(arg1), compute_static(arg0)) << std::endl;*/
+    /*std::cout << "Args " << ik_.static_object(arg0) <<", " 
+	      << ik_.static_object(arg1) << " result " << pred_(ik_.static_object(arg0), ik_.static_object(arg1)) 
+	      << " antiresult " << pred_(ik_.static_object(arg1), ik_.static_object(arg0)) << std::endl;*/
 
-    return pred_(compute_static(arg0), compute_static(arg1));
+    return pred_(ik_.static_object(arg0), ik_.static_object(arg1));
   }
 
   result_type operator()(const first_argument_type &arg0, 
 			 const second_argument_type &arg1,
 			 const third_argument_type &arg2) const {
-    return pred_(compute_static(arg0), compute_static(arg1), compute_static(arg2));
+    return pred_(ik_.static_object(arg0), ik_.static_object(arg1), 
+		 ik_.static_object(arg2));
   }
 
   result_type operator()(const first_argument_type &arg0, 
 			 const second_argument_type &arg1,
 			 const third_argument_type &arg2,
 			 const fourth_argument_type &arg3) const {
-    return pred_(compute_static(arg0), compute_static(arg1), compute_static(arg2), compute_static(arg3));
+    return pred_(ik_.static_object(arg0), ik_.static_object(arg1), 
+		 ik_.static_object(arg2), ik_.static_object(arg3));
   }
 
   result_type operator()(const first_argument_type &arg0, 
@@ -61,8 +62,9 @@ public:
 			 const third_argument_type &arg2,
 			 const fourth_argument_type &arg3,
 			 const fifth_argument_type &arg4) const {
-    return pred_(compute_static(arg0), compute_static(arg1), compute_static(arg2),
-		 compute_static(arg3), compute_static(arg4));
+    return pred_(ik_.static_object(arg0), ik_.static_object(arg1),
+		 ik_.static_object(arg2), ik_.static_object(arg3),
+		 ik_.static_object(arg4));
   }
 
 protected:
@@ -71,7 +73,6 @@ protected:
   Predicate pred_;
 };
 
-#undef compute_static
 
 CGAL_KDS_END_NAMESPACE;
 #endif

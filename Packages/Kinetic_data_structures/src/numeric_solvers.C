@@ -13,7 +13,7 @@
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Derivative.h>
 
-#ifdef POLYNOMIAL_USE_GSL
+#ifdef CGAL_POLYNOMIAL_USE_GSL
 #include <gsl/gsl_poly.h>
 #include <gsl/gsl_errno.h>
 #endif
@@ -48,8 +48,8 @@ static inline void check_first_root(const NT *begin, const NT *end,
   if (roots.empty()) return;
   if (roots.back() > lb+ .0005) return;
   
-  typedef POLYNOMIAL_NS::Polynomial<NT> Fn;
-  typedef POLYNOMIAL_NS::internal::Derivative<Fn> Diff;
+  typedef CGAL_POLYNOMIAL_NS::Polynomial<NT> Fn;
+  typedef CGAL_POLYNOMIAL_NS::internal::Derivative<Fn> Diff;
   Diff dx;
   Fn f(begin, end);
   Fn d= dx(f);
@@ -142,7 +142,7 @@ static inline void compute_quadratic_roots(const NT *begin, const NT *end,  NT l
 			     std::vector<NT> &roots){
   NT max_error=0;
   if (CLEAN) max_error=max_error_value;
-  Polynomial_assertion(begin[2] != 0);
+  CGAL_Polynomial_assertion(begin[2] != 0);
     
   NT desc= begin[1]*begin[1]-4*begin[0]*begin[2];
   if (desc < 0) return;
@@ -188,7 +188,7 @@ static inline void compute_linear_roots(const NT *begin, const NT *,
 
 
 
-#ifdef POLYNOMIAL_USE_GSL
+#ifdef CGAL_POLYNOMIAL_USE_GSL
 
 template <bool CLEAN>
 static inline void gsl_compute_roots(const double *begin, const double *end, 

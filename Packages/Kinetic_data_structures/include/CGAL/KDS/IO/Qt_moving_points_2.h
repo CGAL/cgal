@@ -1,5 +1,5 @@
-#ifndef GRAPHICAL_MOVING_POINT_SET_H
-#define GRAPHICAL_MOVING_POINT_SET_H
+#ifndef CGAL_KDS_IO_MOVING_POINT_SET_2_H
+#define CGAL_KDS_IO_MOVING_POINT_SET_2_H
 #include <CGAL/KDS/basic.h>
 //#include <CGAL/KDS/Moving_object_table.h>
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>

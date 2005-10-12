@@ -19,9 +19,9 @@
 
 #include "Check_solver.h"
 
-typedef POLYNOMIAL_NS::Polynomial<double> Polynomial_double;
-typedef POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
-typedef POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Polynomial_double;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
 
 bool verbose=true;
 
@@ -39,24 +39,23 @@ int main(int argc, char* argv[])
   {
     if (verbose) std::cout <<"Descartes_filtered__________________________\n";
     else std::cout << "Descartes filtered&\t";
-    typedef POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
-    typedef POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
+    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
+    typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
     K k;
     Check_solver<K > cg(k, verbose);
     cg.all();
     cg.exact();
     std::cout << std::endl;
   }
-  return EXIT_SUCCESS;
  {
     if (verbose) std::cout <<"Sturm_filtered__________________________\n";
     else std::cout << "Sturm filtered&\t";
-    typedef POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
-    typedef POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
+    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
+    typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
     K k;
     Check_solver<K > cg(k, verbose);
     cg.all();
@@ -67,9 +66,9 @@ int main(int argc, char* argv[])
   {
     if (verbose) std::cout <<"Descartes_exact_____________________________\n";
     else std::cout << "Descartes&\t";
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
-    typedef POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
-    typedef POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
 
     K k;
     Check_solver<K> cc(k,verbose);
@@ -79,12 +78,12 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
 
- {
+  {
     if (verbose) std::cout <<"Sturm_exact_________________________________\n";
     else std::cout << "Sturm&\t";
-    typedef POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
-    typedef POLYNOMIAL_NS::Sturm_root_stack<RET> RE;
-    typedef POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
+    typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
+    typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack<RET> RE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
     K k;
     Check_solver<K > cg(k,verbose);
     cg.all();
@@ -96,9 +95,9 @@ int main(int argc, char* argv[])
   /*{
     if (verbose) std::cout << "Filtered_Sturm( Field, Gmpq )______________________\n";
     else std::cout << "F S Gmpq & ";
-    typedef POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
-    typedef POLYNOMIAL_NS::Sturm_lazy_solver<RET> RE;
-    typedef POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
+    typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
+    typedef CGAL_POLYNOMIAL_NS::Sturm_lazy_solver<RET> RE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
     Check_solver<Filtered_Sturm_solver_f_gmpq > cs;
     cs.all();
     //cs.square_free();
@@ -124,14 +123,14 @@ int main(int argc, char* argv[])
  {
     if (verbose) std::cout << "CORE_______________________________________\n";
     else std::cout << "CORE & ";
-    typedef POLYNOMIAL_NS::Root_stack_default_traits<Polynomial_bigint> BIT;
-    typedef POLYNOMIAL_NS::CORE_Expr_root_stack<BIT> CRE;
-    typedef POLYNOMIAL_NS::Kernel<Polynomial_bigint, CRE> K;
+    typedef CGAL_POLYNOMIAL_NS::Root_stack_default_traits<Polynomial_bigint> BIT;
+    typedef CGAL_POLYNOMIAL_NS::CORE_Expr_root_stack<BIT> CRE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_bigint, CRE> K;
     K k;
     Check_solver<K > cc(k,verbose);
     cc.square_free();
-    cc.wilkinson();
-    cc.mignotte();
+    //cc.wilkinson();
+    //cc.mignotte();
     cc.small_intervals();
     //cc.exact();
     if (!verbose) std::cout << " -- &";

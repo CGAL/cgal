@@ -10,13 +10,13 @@
 #include <CGAL/KDS/internal/To_static.h>
 //#include <CGAL/KDS/Cartesian_static_converter.h>
 
-#define MSA(Pred, pred, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, This, Point_2> Pred##_##d;\
+#define CGAL_MSA(Pred, pred, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, This, Point_2> Pred##_##d;\
 Pred##_##d pred##_##d##_object() const {\
 typename Static_kernel::Pred##_##d sp= rep_->static_kernel().pred##_##d##_object();\
 return Pred##_##d(*this, sp);\
 }
 
-#define TSO(name) typedef typename Static_kernel::name name;
+#define CGAL_TSO(name) typedef typename Static_kernel::name name;
 
 
 CGAL_KDS_BEGIN_NAMESPACE
@@ -32,7 +32,7 @@ public:
 				     Static_kernel sk): skernel_(sk),
 							convert_(sk),
 							mot_(mot){
-#ifndef NDBEUG
+#ifndef NDEBUG
     initialized_=false;
 #endif
   }
@@ -151,38 +151,38 @@ public:
   }
 
 
-  MSA(Side_of_oriented_circle,side_of_oriented_circle, 2);
-  MSA(Orientation,orientation, 2);
-  MSA(Compare_x, compare_x, 2);
-  MSA(Compare_y,compare_y, 2);
-  MSA(Less_x, less_x, 2);
-  MSA(Less_y, less_y, 2); 
-  TSO(Segment_2);
-  TSO(Triangle_2);
+  CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, 2);
+  CGAL_MSA(Orientation,orientation, 2);
+  CGAL_MSA(Compare_x, compare_x, 2);
+  CGAL_MSA(Compare_y,compare_y, 2);
+  CGAL_MSA(Less_x, less_x, 2);
+  CGAL_MSA(Less_y, less_y, 2); 
+  CGAL_TSO(Segment_2);
+  CGAL_TSO(Triangle_2);
 
-  MSA(Side_of_oriented_sphere,side_of_oriented_sphere, 3);
-  MSA(Orientation,orientation, 3);
-  //MSA(Power_test,power_test, 3);
-  MSA(Compare_x,compare_x, 3);
-  MSA(Compare_y,compare_y, 3);
-  MSA(Compare_z,compare_z, 3);
-  MSA(Compare_xyz,compare_xyz, 3);
-  MSA(Less_x, less_x, 3);
-  MSA(Less_y, less_y, 3); 
-  MSA(Less_z, less_z, 3); 
-  MSA(Coplanar_orientation, coplanar_orientation, 3); 
-  MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, 3); 
-  TSO(Segment_3);
-  TSO(Triangle_3);
-  TSO(Tetrahedron_3);
-  TSO(Line_3);
-  TSO(Ray_3);
-  TSO(Object_3);
-  TSO(Plane_3);
+  CGAL_MSA(Side_of_oriented_sphere,side_of_oriented_sphere, 3);
+  CGAL_MSA(Orientation,orientation, 3);
+  //CGAL_MSA(Power_test,power_test, 3);
+  CGAL_MSA(Compare_x,compare_x, 3);
+  CGAL_MSA(Compare_y,compare_y, 3);
+  CGAL_MSA(Compare_z,compare_z, 3);
+  CGAL_MSA(Compare_xyz,compare_xyz, 3);
+  CGAL_MSA(Less_x, less_x, 3);
+  CGAL_MSA(Less_y, less_y, 3); 
+  CGAL_MSA(Less_z, less_z, 3); 
+  CGAL_MSA(Coplanar_orientation, coplanar_orientation, 3); 
+  CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, 3); 
+  CGAL_TSO(Segment_3);
+  CGAL_TSO(Triangle_3);
+  CGAL_TSO(Tetrahedron_3);
+  CGAL_TSO(Line_3);
+  CGAL_TSO(Ray_3);
+  CGAL_TSO(Object_3);
+  CGAL_TSO(Plane_3);
 protected:
   Rep_pointer rep_;
 };
-#undef MSA
-#undef TSO
+#undef CGAL_MSA
+#undef CGAL_TSO
 CGAL_KDS_END_NAMESPACE
 #endif

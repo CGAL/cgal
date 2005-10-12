@@ -11,8 +11,8 @@ CGAL_KDS_BEGIN_NAMESPACE
 template <class Traits>
 struct Derivitive_filter_function_kernel: public Traits {
   
-  class Root_stack: public POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> {
-    typedef POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> Parent;
+  class Root_stack: public CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> {
+    typedef CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> Parent;
   public:
     typedef typename Parent::Root Root;
     typedef typename Traits::Function Function;

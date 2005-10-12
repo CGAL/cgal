@@ -49,7 +49,7 @@ typedef enum {LOG_NONE=0, LOG_SOME=2, LOG_LOTS=3} Log_level;
 
 CGAL_KDS_END_NAMESPACE
 
-#if 1
+
 #include <CGAL/KDS/internal/Log.h>
 
 #define CGAL_KDS_LOG(level, expr) if (CGAL::KDS::internal::Logs::get().is_output(level))\
@@ -58,16 +58,7 @@ CGAL_KDS_END_NAMESPACE
 {std::ostream &LOG_STREAM= CGAL::KDS::internal::Logs::get().stream(level); expr;}
 #define CGAL_KDS_ERROR(expr) std::cerr << expr;
 #define CGAL_KDS_SET_LOG_LEVEL(level) CGAL::KDS::internal::Logs::get().set_level(level);
-/*#define CGAL_KDS_LOG_MAPLE(expr) if (CGAL::KDS::internal::Logs::get().output_maple()) \
-  {CGAL::KDS::internal::Logs::get().maple_stream() << expr;}*/
-#define CGAL_KDS_LOG_MAPLE(expr) {};
-#else
-#define CGAL_KDS_LOG(level, expr) {};
-#define CGAL_KDS_SET_LOG_LEVEL(level) {};
-#define CGAL_KDS_ERROR(expr) std::cerr << expr;
-#define CGAL_KDS_LOG_MAPLE(expr) {};
-#define LOG_STREAM 
-#define CGAL_KDS_LOG_WRITE(l, e) {};
-#endif
+
+
 
 #endif

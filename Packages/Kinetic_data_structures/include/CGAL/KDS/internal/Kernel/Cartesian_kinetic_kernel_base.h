@@ -1,5 +1,5 @@
-#ifndef KINETIC_KERNEL_CORE_H
-#define KINETIC_KERNEL_CORE_H
+#ifndef CGAL_KDS_INTERNAL_KERNEL_CARTESIAN_KINETIC_KERNEL_BASE_H
+#define CGAL_KDS_INTERNAL_KERNEL_CARTESIAN_KINETIC_KERNEL_BASE_H
 #include <CGAL/KDS/basic.h>
 #include <CGAL/KDS/internal/Kernel/Cartesian_moving_point_1.h>
 #include <CGAL/KDS/internal/Kernel/Cartesian_moving_point_2.h>
@@ -10,16 +10,6 @@
 #include <CGAL/KDS/internal/Kernel/Reverse_time.h>
 #include <CGAL/KDS/internal/Kernel/Delaunay_lifting.h>
 #include <CGAL/KDS/internal/Kernel/Center.h>
-
-//#include <CGAL/KDS_internals/kernel_defines.h>
-/*#define FOD(UC, lc, d) typedef internal::Cartesian_##lc##_##d<This> UC##_##d;\
-UC##_##d lc##_##d##_object() const {\
-return UC##_##d();\
-}*/
-/*#define FODW(UC, lc, d) typedef internal::Cartesian_##lc##_##d<Weighted_point_##d> UC##_##d;\
-UC##_##d lc##_##d##_object() const {\
-return UC##_##d();\
-}*/
 
 CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
 

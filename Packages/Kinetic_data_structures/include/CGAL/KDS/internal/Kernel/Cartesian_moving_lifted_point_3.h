@@ -1,5 +1,5 @@
-#ifndef KDS_CARTESIAN_WEIGHTED_MOVING_LIFTED_3_H_
-#define KDS_CARTESIAN_WEIGHTED_MOVING_LIFTED_3_H_
+#ifndef CGAL_KDS_CARTESIAN_WEIGHTED_MOVING_LIFTED_3_H_
+#define CGAL_KDS_CARTESIAN_WEIGHTED_MOVING_LIFTED_3_H_
 #include <CGAL/KDS/basic.h>
 #include <iostream>
 #include <CGAL/KDS/Kernel/Cartesian_moving_point_3.h>

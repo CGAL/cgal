@@ -1,5 +1,5 @@
-#ifndef KDS_CARTESIAN_MOVING_POINT_1_H_
-#define KDS_CARTESIAN_MOVING_POINT_1_H_
+#ifndef CGAL_KDS_CARTESIAN_MOVING_POINT_1_H_
+#define CGAL_KDS_CARTESIAN_MOVING_POINT_1_H_
 #include <CGAL/KDS/basic.h>
 #include <iostream>
 

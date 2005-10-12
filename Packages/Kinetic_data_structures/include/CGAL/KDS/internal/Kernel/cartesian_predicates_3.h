@@ -1,5 +1,5 @@
-#ifndef KDS_CARTESIAN_PREDICATES_3_H
-#define KDS_CARTESIAN_PREDICATES_3_H
+#ifndef CGAL_KDS_CARTESIAN_PREDICATES_3_H
+#define CGAL_KDS_CARTESIAN_PREDICATES_3_H
 #include <CGAL/KDS/basic.h>
 #include <CGAL/determinant.h>
 
@@ -307,7 +307,7 @@ typename Pt::Coordinate co3(const Pt &a, const Pt &b, const Pt &c, const Pt &d){
   RT ret= CGAL::det3x3_by_formula(a00, a01, a02,
 				  a10, a11, a12,
 				  a20, a21, a22);
-  CGAL_KDS_LOG_MAPLE(std::endl << std::endl);
+  /*CGAL_KDS_LOG_MAPLE(std::endl << std::endl);
   CGAL_KDS_LOG_MAPLE( "co3\n");
   CGAL_KDS_LOG_MAPLE( "m:= matrix(4,4, [[1," << a.x()<<","<<a.y() <<","<<a.z() << "], [1," << b.x()<<","<<b.y()<<","<<b.z());
   CGAL_KDS_LOG_MAPLE( "], [1," << c.x() <<","<<c.y()<<","<<c.z() << "], [1,");
@@ -316,7 +316,7 @@ typename Pt::Coordinate co3(const Pt &a, const Pt &b, const Pt &c, const Pt &d){
   CGAL_KDS_LOG_MAPLE( "m2:= matrix(3,3,[[,");
   CGAL_KDS_LOG_MAPLE( a00 << "," << a01 << "," << a02 << "], [");
   CGAL_KDS_LOG_MAPLE( a10 << "," << a11 << "," << a12 << "], [");
-  CGAL_KDS_LOG_MAPLE( a20 << "," << a21 << "," << a22 << "]]);");
+  CGAL_KDS_LOG_MAPLE( a20 << "," << a21 << "," << a22 << "]]);");*/
   
   //std::cout << "returning " << ret << std::endl;
   return ret;

@@ -1,5 +1,5 @@
-#ifndef QT_KINETIC_DELAUNAY_2_H
-#define QT_KINETIC_DELAUNAY_2_H
+#ifndef CGAL_KDS_IO_QT_TRIANGULATION_2_H
+#define CGAL_KDS_IO_QT_TRIANGULATION_2_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/KDS/Ref_counted.h>

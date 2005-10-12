@@ -4,7 +4,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/KDS/internal/Kernel/Cartesian_moving_weighted_point_3.h>
 
-#define MSAW(Pred, pred, d) typedef Instantaneous_adaptor<typename Parent::Static_kernel::Pred##_##d, This, Weighted_point_3> Pred##_##d;\
+#define CGAL_MSAW(Pred, pred, d) typedef Instantaneous_adaptor<typename Parent::Static_kernel::Pred##_##d, This, Weighted_point_3> Pred##_##d;\
 Pred##_##d pred##_##d##_object() const {\
 typename Parent::Static_kernel::Pred##_##d sp= Parent::rep_->static_kernel().pred##_##d##_object();\
 return Pred##_##d(*this, sp);\
@@ -40,13 +40,13 @@ public:
     or temporaries.
   */
   typedef typename Parent::Static_kernel::Bare_point Bare_point;
-  MSAW(Power_test,power_test, 3);
+  CGAL_MSAW(Power_test,power_test, 3);
   
   void write_point(const Weighted_point_3 p, std::ostream &out) const {
     out << p << " = " << Parent::rep_->static_object(p) << std::endl;;
   }
 };
-#undef MSAW
+#undef CGAL_MSAW
 
 CGAL_KDS_END_NAMESPACE
 #endif

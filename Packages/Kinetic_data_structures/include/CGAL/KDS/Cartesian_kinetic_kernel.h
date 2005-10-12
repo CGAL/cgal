@@ -1,17 +1,9 @@
-#ifndef KINETIC_KERNEL_H
-#define KINETIC_KERNEL_H
+#ifndef CGAL_KDS_KINETIC_KERNEL_H
+#define CGAL_KDS_KINETIC_KERNEL_H
 #include <CGAL/KDS/basic.h>
 #include <CGAL/KDS/internal/Kernel/Cartesian_kinetic_kernel_base.h>
 
-//#include <CGAL/KDS_internals/kernel_defines.h>
-/*#define FOD(UC, lc, d) typedef internal::Cartesian_##lc##_##d<This> UC##_##d;\
-UC##_##d lc##_##d##_object() const {\
-return UC##_##d();\
-}*/
-/*#define FODW(UC, lc, d) typedef internal::Cartesian_##lc##_##d<Weighted_point_##d> UC##_##d;\
-UC##_##d lc##_##d##_object() const {\
-return UC##_##d();\
-}*/
+
 
 CGAL_KDS_BEGIN_NAMESPACE
 

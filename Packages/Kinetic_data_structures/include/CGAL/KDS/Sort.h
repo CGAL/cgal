@@ -1,5 +1,5 @@
-#ifndef KDS_TESTING_SORT_H
-#define KDS_TESTING_SORT_H
+#ifndef CGAL_KDS_TESTING_SORT_H
+#define CGAL_KDS_TESTING_SORT_H
 #include <CGAL/KDS/basic.h>
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
 #include <algorithm>
