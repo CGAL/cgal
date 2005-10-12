@@ -187,7 +187,7 @@ while [ $# -gt 0 ] ; do
         ;;
     -create_orig) CreateOrig=1
         ;;
-    -*) echo "${ErrorColor}ERROR${ResetColor}: Unknow option '$1'." 1>&2
+    -*) printf "${ErrorColor}ERROR${ResetColor}: Unknow option '$1'.\n" 1>&2
         exit 1
         ;;
     *)  Parameters="${Parameters} `echo $1 | sed 's/[/]$//'`"
