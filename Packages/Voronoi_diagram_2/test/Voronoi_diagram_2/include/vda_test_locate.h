@@ -64,13 +64,14 @@ void test_locate_dg(const VDA& vda, const Projector& project,
 {
   typedef typename VDA::Voronoi_traits                Voronoi_traits;
   typedef typename Voronoi_traits::Nearest_site_2     Nearest_site_2;
-  
-  typedef typename Nearest_site_2::Vertex_handle      Vertex_handle;
-  typedef typename Nearest_site_2::Face_handle        Face_handle;
-  typedef typename Nearest_site_2::Edge               Edge;
+
+  typedef typename Nearest_site_2::Query_result       Query_result;
+  typedef typename Query_result::Vertex_handle        Vertex_handle;
+  typedef typename Query_result::Face_handle          Face_handle;
+  typedef typename Query_result::Edge                 Edge;
 
   Nearest_site_2 nearest_site = vda.voronoi_traits().nearest_site_2_object();
-  typename Nearest_site_2::Query_result ns_qr;
+  Query_result ns_qr;
 
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {

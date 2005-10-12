@@ -25,6 +25,9 @@ template<class T> void kill_warning(const T&) {}
 template<class T>
 void test_is_convertible_to(const T&) {}
 
+template<class Value>
+void test_value_type(const Value&) {}
+
 template<class Iterator>
 void test_iterator(Iterator first, Iterator beyond)
 {

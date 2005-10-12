@@ -47,6 +47,8 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
   typedef typename DG::Geom_traits                    Geom_traits;
   typedef typename DG::Triangulation_data_structure   Tds;
 
+  typedef typename DG::Site_2                         Site_2;
+
   typedef typename DG::Vertex                         Vertex;
   typedef typename DG::Face                           Face;
   typedef typename DG::Edge                           Edge;
@@ -72,6 +74,9 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
 
   // testing constructors
   {
+    // constructor taking geom traits
+    DG dg0(Geom_traits());
+
     // copy constructor
     DG dg2(dg);
 
@@ -80,7 +85,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     dg3 = dg2;
 
     // constructors that take an iterator range
-    std::vector<typename VT::Site_2> v;
+    std::vector</*typename VT::*/Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(vt.get_site_2_object()(vit));
@@ -92,24 +97,40 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
 #endif
   }
 
-  // testing convertibility of iterators and circulators to handles
+  // testing convertibility of iterators and circulators to handles;
+  // testing value type coherence
   if ( dg.number_of_vertices() > 0 ) {
     test_is_convertible_to<Vertex_handle>(dg.all_vertices_begin());
     test_is_convertible_to<Vertex_handle>(dg.finite_vertices_begin());
+    test_value_type<Vertex>(*dg.all_vertices_begin());
+    test_value_type<Vertex>(*dg.finite_vertices_begin());
   }
 
   if ( dg.number_of_faces() > 0 ) {
     test_is_convertible_to<Face_handle>(dg.all_faces_begin());
     test_is_convertible_to<Face_handle>(dg.finite_faces_begin());
+    test_value_type<Face>(*dg.all_faces_begin());
+    test_value_type<Face>(*dg.finite_faces_begin());
+  }
+
+  if ( dg.tds().number_of_edges() > 0 ) {
+    test_value_type<Edge>(*dg.all_edges_begin());
+    test_value_type<Edge>(*dg.finite_edges_begin());    
   }
 
   if ( dg.dimension() == 2 ) {
     Vertex_circulator vc = dg.incident_vertices(dg.finite_vertex());
     test_is_convertible_to<Vertex_handle>(vc);
+    test_value_type<Vertex>(*vc);
 
     Face_circulator fc = dg.incident_faces(dg.finite_vertex());
     test_is_convertible_to<Face_handle>(fc);
+    test_value_type<Face>(*fc);
+
+    Edge_circulator ec = dg.incident_edges(dg.finite_vertex());
+    test_value_type<Edge>(*ec);
   }
+
 
   // testing existence of access methods
   const Tds& tds = dg.tds();
@@ -169,6 +190,24 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     dg.is_infinite( Edge(dg.infinite_face(), 0) );
     Edge_circulator ec = dg.incident_edges(dg.infinite_vertex());
     dg.is_infinite( ec );
+  }
+
+  // testing insertion
+  if ( dg.number_of_vertices() > 0 ) {
+    DG dg1;
+    std::vector</*typename VT::*/Site_2> v;
+    for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
+	 vit != dg.finite_vertices_end(); ++vit) {
+      v.push_back(vt.get_site_2_object()(vit));
+    }
+    CGAL_assertion( v.size() > 0 );
+
+    // one-site insertion
+    /*typename VT::*/Site_2 s = v[0];
+    dg1.insert(s);
+
+    // insertion that take an iterator range
+    dg1.insert(v.begin(), v.end());
   }
 
   // testing validity
@@ -270,9 +309,6 @@ void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
   typedef typename VT::Nearest_site_2             Nearest_site_2;
   typedef typename Nearest_site_2::Delaunay_graph Delaunay_graph;
   typedef typename Nearest_site_2::Query_result   Query_result;
-  typedef typename Nearest_site_2::Vertex_handle  Vertex_handle;
-  typedef typename Nearest_site_2::Face_handle    Face_handle;
-  typedef typename Nearest_site_2::Edge           Edge;
   typedef typename Nearest_site_2::Point_2        Point_2;
 
   typedef typename Query_result::Delaunay_graph   QR_Delaunay_graph;
@@ -288,13 +324,13 @@ void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
   Query_result qr = ns(dg, p);
 
   if ( qr.is_face() ) {
-    Face_handle f = qr;
+    QR_Face_handle f = qr;
     kill_warning(f);
   } else if ( qr.is_edge() ) {
-    Edge e = qr;
+    QR_Edge e = qr;
     kill_warning(e);
   } else if ( qr.is_vertex() ) {
-    Vertex_handle v = qr;
+    QR_Vertex_handle v = qr;
     kill_warning(v);
   }
 
