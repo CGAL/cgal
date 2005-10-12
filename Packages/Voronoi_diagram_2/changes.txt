@@ -1,3 +1,9 @@
+12 Oct 2005:  Menelaos Karavelas
+- modified doc according to new design
+
+11 Oct 2005:  Menelaos Karavelas
+- added more testing for the Delaunay graph concept.
+
 10 Oct 2005:  Menelaos Karavelas
 - fixed bug in demo
 
