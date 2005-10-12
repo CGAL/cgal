@@ -860,6 +860,12 @@ public:
   // insertion when get_conflicts() is defined
   void update_cached_testers(const Site_2& t, const Tag_true&)
   {
+    // THERE IS POTENTIAL PROBLEM IN THIS METHOD; WE DO NOT ACCOUNT
+    // FOR THE VERTICES THAT BECOME HIDDEN ONCE A NEW SITE IN
+    // INSERTED; THIS AFFECTS THE CORRECTNESS OF THE THE CACHED FACE
+    // DEGENERACY TESTER, SINCE IN THIS CASE, I.E., WHEN HIDDEN SITES
+    // ARE CREATED, WE NEED TO DELETE THEM FROM THE CACHED DEGENERACY
+    // TESTER.
     if ( dual_.dimension() == 2 ) {
       std::vector<Dual_edge>        vec_e;
       std::vector<Dual_face_handle> vec_f;
@@ -915,13 +921,14 @@ public:
  protected:
   void update_cached_testers(const Face_handle& f, const Tag_true&)
   {
+    // HERE WE ALSO NEED TO ACCOUNT FOR THE DELETED VERTEX. THE
+    // DELETED VERTEX CAN AFFECT THE CACHED FACE DEGENERACY TESTER
     Dual_vertex_handle v = f->dual();
     Dual_edge_circulator ec_start = dual_.incident_edges(v);
     Dual_edge_circulator ec = ec_start;
     do {
       cached_e_tester_.erase(*ec);
     } while ( ++ec != ec_start );
-    
   }
 
   void update_cached_testers(const Face_handle& f, const Tag_false&) {}
