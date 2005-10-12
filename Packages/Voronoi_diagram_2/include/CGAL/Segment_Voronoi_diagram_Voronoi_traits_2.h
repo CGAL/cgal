@@ -43,9 +43,7 @@ class SVD_Nearest_site_2
 
  public:
   typedef DG                                          Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
-  typedef typename Delaunay_graph::Face_handle        Face_handle;
-  typedef typename Delaunay_graph::Edge               Edge;
+
   typedef typename Delaunay_graph::Point_2            Point_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<DG,false> Query_result;
@@ -56,6 +54,9 @@ class SVD_Nearest_site_2
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
   typedef typename Delaunay_graph::Site_2             Site_2;
+  typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Face_handle;
+  typedef typename Delaunay_graph::Edge               Edge;
 
  public:
   Query_result operator()(const Delaunay_graph& dg, const Point_2& p) const {
@@ -267,6 +268,7 @@ class SVD_Edge_degeneracy_tester
   typedef typename Delaunay_graph::Site_2              Site_2;
 
   typedef typename Geom_traits::Equal_2                Equal_2;
+  typedef typename Geom_traits::Orientation_2          Orientation_2;
 
  private:
   bool is_degenerate_infinite_edge(const Delaunay_graph& dual,
@@ -306,8 +308,7 @@ class SVD_Edge_degeneracy_tester
       }
     }
 
-    typename Geom_traits::Orientation_2
-      orientation = dual.geom_traits().orientation_2_object();
+    Orientation_2 orientation = dual.geom_traits().orientation_2_object();
 
     return orientation(s_end[0], s_end[1], v->site()) == COLLINEAR;
   }
@@ -384,6 +385,9 @@ class SVD_Face_degeneracy_tester
   typedef typename Delaunay_graph::size_type        size_type;
   typedef typename Delaunay_graph::Site_2           Site_2;
 
+  typedef typename Geom_traits::Equal_2             Equal_2;
+  typedef typename Geom_traits::Orientation_2       Orientation_2;
+
  public:
   bool operator()(const Delaunay_graph& dual, const Vertex_handle& v) const
   {
@@ -440,8 +444,7 @@ class SVD_Face_degeneracy_tester
 
       if ( vv[i]->storage_site().is_point() ) { return false; }
 
-      typename Geom_traits::Equal_2
-	are_equal = dual.geom_traits().equal_2_object();
+      Equal_2 are_equal = dual.geom_traits().equal_2_object();
       if ( !are_equal(v->site(),vv[i]->site().source_site()) &&
 	   !are_equal(v->site(),vv[i]->site().target_site()) ) {
 	return false;
@@ -453,8 +456,7 @@ class SVD_Face_degeneracy_tester
       }
     }
 
-    typename Geom_traits::Orientation_2
-      orientation = dual.geom_traits().orientation_2_object();
+    Orientation_2 orientation = dual.geom_traits().orientation_2_object();
 
     return orientation(s_end[0], s_end[1], v->site()) == COLLINEAR;
   }

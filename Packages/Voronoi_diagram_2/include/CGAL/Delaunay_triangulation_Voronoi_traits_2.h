@@ -39,9 +39,6 @@ class DT_Nearest_site_2
 
  public:
   typedef DG                                              Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_handle          Vertex_handle;
-  typedef typename Delaunay_graph::Face_handle            Face_handle;
-  typedef typename Delaunay_graph::Edge                   Edge;
   typedef typename Delaunay_graph::Geom_traits::Point_2   Point_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<DG,false> Query_result;
@@ -51,6 +48,9 @@ class DT_Nearest_site_2
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
+  typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Face_handle;
+  typedef typename Delaunay_graph::Edge               Edge;
   typedef typename Delaunay_graph::Vertex_circulator  Vertex_circulator;
   typedef typename Delaunay_graph::Face_circulator    Face_circulator;
   typedef typename Delaunay_graph::Edge_circulator    Edge_circulator;

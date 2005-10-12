@@ -42,9 +42,6 @@ class RT_Nearest_site_2
 
  public:
   typedef DG                                          Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
-  typedef typename Delaunay_graph::Face_handle        Face_handle;
-  typedef typename Delaunay_graph::Edge               Edge;
 
  private:
   typedef typename Delaunay_graph::Geom_traits        Geom_traits;
@@ -60,6 +57,9 @@ class RT_Nearest_site_2
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
+  typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Face_handle;
+  typedef typename Delaunay_graph::Edge               Edge;
   typedef typename Delaunay_graph::Vertex_circulator  Vertex_circulator;
   typedef typename Delaunay_graph::Face_circulator    Face_circulator;
   typedef typename Delaunay_graph::Edge_circulator    Edge_circulator;
