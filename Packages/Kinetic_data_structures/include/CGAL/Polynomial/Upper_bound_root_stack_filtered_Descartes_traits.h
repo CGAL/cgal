@@ -16,9 +16,9 @@ class Upper_bound_root_stack_filtered_Descartes_traits: public internal::Filtere
   typedef internal::Filtered_rational_traits<Traits>  P;
   typedef Upper_bound_root_stack_filtered_Descartes_traits<Traits> This;
 public:
-  typedef POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
+  typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
 
-  typedef POLYNOMIAL_NS::internal::Simple_interval_root<This> Root;
+  typedef CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<This> Root;
 
   typedef internal::Filtered_Descartes_root_counter<This> Root_count;
   Root_count root_count_object(const typename P::Function &f) const {

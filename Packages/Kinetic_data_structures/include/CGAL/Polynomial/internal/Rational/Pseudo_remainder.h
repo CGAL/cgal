@@ -33,12 +33,12 @@ struct Pseudo_remainder
   Polynomial
   operator()(const Polynomial& t, const Polynomial& v) const
   {
-    Polynomial_precondition( t.degree() >= v.degree() );
+    CGAL_Polynomial_precondition( t.degree() >= v.degree() );
 
     int n = v.degree();
     int m = t.degree();
     int divdeg = m - n;
-    Polynomial_assertion( divdeg >= 0 );
+    CGAL_Polynomial_assertion( divdeg >= 0 );
 
 
     std::vector<NT> r_coef(m+1);
@@ -78,9 +78,9 @@ struct Pseudo_remainder
       return r;
       }*/
 
-    POLYNOMIAL_NS::Sign s_vn = POLYNOMIAL_NS::sign(v[n]);
+    CGAL_POLYNOMIAL_NS::Sign s_vn = CGAL_POLYNOMIAL_NS::sign(v[n]);
 
-    if ( (divdeg % 2 == 0) && s_vn == POLYNOMIAL_NS::NEGATIVE ) {
+    if ( (divdeg % 2 == 0) && s_vn == CGAL_POLYNOMIAL_NS::NEGATIVE ) {
       r = -r;
     }
 

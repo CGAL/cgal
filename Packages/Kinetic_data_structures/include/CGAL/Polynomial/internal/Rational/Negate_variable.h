@@ -35,7 +35,7 @@ public:
 
     Polynomial ret(coefs.begin(), coefs.end());
 
-    Polynomial_assertion(ret.degree() == f.degree());
+    CGAL_Polynomial_assertion(ret.degree() == f.degree());
 
     return ret;
   }

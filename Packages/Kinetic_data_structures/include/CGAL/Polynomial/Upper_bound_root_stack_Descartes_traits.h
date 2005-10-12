@@ -14,7 +14,7 @@ class Upper_bound_root_stack_Descartes_traits: public internal::Root_stack_trait
   typedef internal::Root_stack_traits_base<Poly>  P;
   typedef Upper_bound_root_stack_Descartes_traits<Poly> This;
 public:
-  typedef POLYNOMIAL_NS::internal::Simple_interval_root<This> Root;
+  typedef CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<This> Root;
 
   typedef internal::Descartes_root_counter<This> Root_count;
   Root_count root_count_object(const typename P::Function &f) const {

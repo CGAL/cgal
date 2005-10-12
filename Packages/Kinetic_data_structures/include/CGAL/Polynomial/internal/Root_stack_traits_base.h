@@ -17,7 +17,7 @@ private:
   typedef Rational_traits_base<Poly> P;
 
 public:
-  typedef POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
+  typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

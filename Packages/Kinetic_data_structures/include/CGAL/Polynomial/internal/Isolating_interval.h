@@ -45,7 +45,7 @@ public:
     if (lb() > ub()){
       std::cerr << "lb_=" << lb() << " and ub_=" << ub() << std::endl;
     }
-    Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(lb() <= ub());
     // snap things to a power of 2. I'll deal later
   }
 
@@ -155,7 +155,7 @@ public:
     return lb()==ub();
   }
   const NT &to_nt() const {
-    Polynomial_precondition(is_singular());
+    CGAL_Polynomial_precondition(is_singular());
     return lb();
   }
 
@@ -463,11 +463,11 @@ std::pair<double, double> to_interval(const Isolating_interval<NT> &ii){
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
-#ifdef POLYNOMIAL_USE_CGAL
+#ifdef CGAL_POLYNOMIAL_USE_CGAL
 
 CGAL_BEGIN_NAMESPACE
 template <class NT>
-std::pair<double, double> to_interval(const POLYNOMIAL_NS::internal::Isolating_interval<NT> &ii){
+std::pair<double, double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Isolating_interval<NT> &ii){
   return ii.double_interval();
 }
 CGAL_END_NAMESPACE

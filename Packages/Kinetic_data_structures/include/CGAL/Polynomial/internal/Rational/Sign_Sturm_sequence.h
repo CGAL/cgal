@@ -19,7 +19,7 @@ class Sign_Sturm_sequence : public Sturm_sequence_t
 
  protected:
   typedef Sturm_sequence                         Base;
-  typedef POLYNOMIAL_NS::Sign                    Sign;
+  typedef CGAL_POLYNOMIAL_NS::Sign                    Sign;
   typedef typename Kernel::Sign_at               Sign_at;
 
 public:
@@ -37,7 +37,7 @@ protected:
   {
     Sign s0 = Sign_at( this->seq_[0] )(x);
 
-    CGAL_precondition( s0 != CGAL::ZERO );
+    CGAL_Polynomial_precondition( s0 != CGAL::ZERO );
 
     std::vector<Sign> signs(this->size_);
     signs[0] = s0;
@@ -57,7 +57,7 @@ protected:
   template<class NTRep>
   int sum_of_signs_base(const NTRep& a, const NTRep& b) const
   {
-    CGAL_precondition( b >= a );
+    CGAL_Polynomial_precondition( b >= a );
 
     unsigned int Va = sign_variations_base(a);
     if ( Va == 0 ) { return 0; }

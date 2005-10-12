@@ -21,15 +21,15 @@ struct Pseudo_quotient
   Polynomial
   operator()(const Polynomial& t, const Polynomial& v) const
   {
-   Polynomial_precondition( t.degree() >= v.degree() );
-   Polynomial_precondition( !v.is_zero() );
+    CGAL_Polynomial_precondition( t.degree() >= v.degree() );
+    CGAL_Polynomial_precondition( !v.is_zero() );
    
-   int m = t.degree();
-   int n = v.degree();
-   int divdeg = m - n;
+    int m = t.degree();
+    int n = v.degree();
+    int divdeg = m - n;
 
-   std::vector<NT> r_coef(m+1);
-   std::vector<NT> q_coef(divdeg+1);
+    std::vector<NT> r_coef(m+1);
+    std::vector<NT> q_coef(divdeg+1);
 
     // compute the powers of v[n] from 0 to m-n
     std::vector<NT> pow(divdeg+1);

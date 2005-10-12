@@ -7,7 +7,7 @@
 #include <CGAL/Polynomial/internal/Descartes_root_count.h>
 
 
-#define DSPRINT(x)
+#define CGAL_DSPRINT(x)
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 //! A Solver which uses
@@ -87,10 +87,10 @@ protected:
 							     intervals_.back().num_roots.is_odd());
     else ret= Root(intervals_.back().interval,f_, intervals_.back().left_sign,
 		   intervals_.back().right_sign,  kernel_);
-    DSPRINT(std::cout << "Trying root " << ret << std::endl);
-    DSPRINT(std::cout << "Root count was " << intervals_.back().num_roots << std::endl);
+    CGAL_DSPRINT(std::cout << "Trying root " << ret << std::endl);
+    CGAL_DSPRINT(std::cout << "Root count was " << intervals_.back().num_roots << std::endl);
     if ( !(ub_> ret)){
-      DSPRINT(std::cout << "Rejection due to >=" << ub_ << std::endl);
+      CGAL_DSPRINT(std::cout << "Rejection due to >=" << ub_ << std::endl);
       intervals_.clear();
       return Root::infinity();
     } else {
@@ -100,7 +100,7 @@ protected:
   }
 
   void initialize(){
-    Polynomial_expensive_precondition(lb_<ub_);
+    CGAL_Polynomial_expensive_precondition(lb_<ub_);
     
     if (f_.is_constant()) return;
     /*else if (f_.is_linear()){
@@ -130,7 +130,7 @@ protected:
 				       ii.apply_to_endpoint(kernel_.sign_at_object(f_),
 							    Interval::LOWER),
 				       ii.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::UPPER)));
-    DSPRINT(std::cout << "Initial interval is " << ii <<std::endl);
+    CGAL_DSPRINT(std::cout << "Initial interval is " << ii <<std::endl);
   }
 
   void subdivide_front(){
@@ -139,17 +139,17 @@ protected:
     //assert(!intervals_.back().is_good());
     
     Interval_info ii= intervals_.back();
-    DSPRINT(std::cout << "Investigating " << ii.interval << std::endl);
+    CGAL_DSPRINT(std::cout << "Investigating " << ii.interval << std::endl);
     intervals_.pop_back();      
     
     Interval uh= ii.interval.second_half();
     Interval lh= ii.interval.first_half();
     Interval mi= lh.upper_endpoint_interval();
-    POLYNOMIAL_NS::Sign sm= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
+    CGAL_POLYNOMIAL_NS::Sign sm= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
     //CGAL::Sign lms= sm;
     //CGAL::Sign ums= sm;
     //std::cout << "Splitting at " << mid << std::endl;
-    bool mid_is_root=(sm == POLYNOMIAL_NS::ZERO);
+    bool mid_is_root=(sm == CGAL_POLYNOMIAL_NS::ZERO);
     
     /*if (mid_is_root){
       Interval mi1= lh.second_half();
@@ -168,7 +168,7 @@ protected:
     
     //Root_count uhc= compute_root_count(uh, sm, ii.right_sign); //uh.apply_to_interval(rc_);
     //if (!uhc.is_zero()){
-    DSPRINT(std::cout << "Produced u interval of " << uh << std::endl);
+    CGAL_DSPRINT(std::cout << "Produced u interval of " << uh << std::endl);
     intervals_.push_back(Interval_info(uh, sm, ii.right_sign));
     //}
     if (mid_is_root) {
@@ -176,7 +176,7 @@ protected:
 	/*Root_count rc;
 	  if (deg%2==0) rc= Root_count::even(); //single_even
 	  else rc= Root_count::odd(); //single_odd*/
-      intervals_.push_back(Interval_info(mi, POLYNOMIAL_NS::ZERO, POLYNOMIAL_NS::ZERO));
+      intervals_.push_back(Interval_info(mi, CGAL_POLYNOMIAL_NS::ZERO, CGAL_POLYNOMIAL_NS::ZERO));
     }
     
     
@@ -185,7 +185,7 @@ protected:
     //std::cout << "Produced l interval of " << lh << std::endl;
     intervals_.push_back(Interval_info(lh, ii.left_sign, sm));
     //}
-    DSPRINT(write_intervals(std::cout));
+    CGAL_DSPRINT(write_intervals(std::cout));
   }
 
 
@@ -194,7 +194,7 @@ protected:
       ss_= kernel_.Sturm_root_count_object(f_);
       has_ss_=true;
     }
-    DSPRINT(std::cout << "Computing sturm for " << intervals_.back().interval << std::endl);
+    CGAL_DSPRINT(std::cout << "Computing sturm for " << intervals_.back().interval << std::endl);
     //std::cout << "Computing sturm for " << intervals_.back().interval << std::endl;
     unsigned int ct= intervals_.back().interval.apply_to_interval(ss_);
     if (ct == 0){
@@ -272,7 +272,9 @@ protected:
     //std::cout << "Initialized.\n";
   }
 
-  Root_count compute_root_count(const Interval &ii, POLYNOMIAL_NS::Sign sl, POLYNOMIAL_NS::Sign sr){
+  Root_count compute_root_count(const Interval &ii,
+				CGAL_POLYNOMIAL_NS::Sign sl,
+				CGAL_POLYNOMIAL_NS::Sign sr){
     return Root_count(ii.apply_to_interval(rc_, sl, sr));
   }
   
@@ -298,9 +300,10 @@ protected:
 
   struct Interval_info{
     Root_count num_roots;
-    POLYNOMIAL_NS::Sign left_sign;
-    POLYNOMIAL_NS::Sign right_sign;
-    Interval_info(Interval in, /*Root_count num,*/ POLYNOMIAL_NS::Sign ls, POLYNOMIAL_NS::Sign rs):
+    CGAL_POLYNOMIAL_NS::Sign left_sign;
+    CGAL_POLYNOMIAL_NS::Sign right_sign;
+    Interval_info(Interval in, /*Root_count num,*/ CGAL_POLYNOMIAL_NS::Sign ls, 
+		  CGAL_POLYNOMIAL_NS::Sign rs):
       num_roots(Root_count::UNKNOWN), left_sign(ls), right_sign(rs), interval(in){}
     Interval interval;
     /*bool is_good(){

@@ -85,7 +85,7 @@ protected:
     do {
       Sign s = sign( this->coefs_[this->degree()] );
       if ( s == ZERO ) {
-	Polynomial_assertion( this->coefs_.size() > 0 );
+	CGAL_Polynomial_assertion( this->coefs_.size() > 0 );
 	this->coefs_.resize(this->coefs_.size() - 1);
       } else {
 	break;

@@ -24,7 +24,7 @@ public:
 protected:
 
   virtual  void generate_exact_function() const {
-    Polynomial_assertion(0);
+    CGAL_Polynomial_assertion(0);
   }
 };
 
@@ -72,7 +72,7 @@ public:
 protected:
 
   virtual  void generate_exact_function() const {
-    Polynomial_assertion(0);
+    CGAL_Polynomial_assertion(0);
   }
 };
 

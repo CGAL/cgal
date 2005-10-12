@@ -7,7 +7,7 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 template <class K>
 struct Sign_between_roots {
-  typedef POLYNOMIAL_NS::Sign result_type;
+  typedef CGAL_POLYNOMIAL_NS::Sign result_type;
   typedef typename K::Function argument_type;
     
   Sign_between_roots(){}

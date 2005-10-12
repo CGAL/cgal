@@ -15,7 +15,7 @@ class Filtered_function_node_plus: public Filtered_function_node_binary_operatio
 public:
   Filtered_function_node_plus(const typename P::Pointer &lc, 
 			const typename P::Pointer &rc): P(lc, rc) {
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
     P::set_interval_function(P::left_child()->interval_function() + P::right_child()->interval_function());
   }
   virtual ~Filtered_function_node_plus(){}
@@ -44,7 +44,7 @@ class Filtered_function_node_times: public Filtered_function_node_binary_operati
 public:
   Filtered_function_node_times(const typename P::Pointer &lc, 
 			const typename P::Pointer &rc): P(lc, rc) {
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
     P::set_interval_function(P::left_child()->interval_function() * P::right_child()->interval_function());
   }
   virtual ~Filtered_function_node_times(){}
@@ -72,7 +72,7 @@ class Filtered_function_node_minus: public Filtered_function_node_binary_operati
 public:
   Filtered_function_node_minus(const typename P::Pointer &lc, 
 			const typename P::Pointer &rc): P(lc, rc) {
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
     P::set_interval_function(P::left_child()->interval_function() - P::right_child()->interval_function());
   }
   virtual ~Filtered_function_node_minus(){}
@@ -100,7 +100,7 @@ class Filtered_function_node_unary_minus: public Filtered_function_node_unary_op
   typedef Filtered_function_node_unary_operation<Traits> P;
 public:
   Filtered_function_node_unary_minus(const typename P::Pointer &c): P(c){
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
     P::set_interval_function(-P::child()->interval_function());
   }
   virtual ~Filtered_function_node_unary_minus(){}
@@ -124,8 +124,9 @@ class Filtered_function_node_times_constant: public Filtered_function_node_unary
   typedef Filtered_function_node_unary_operation<Traits> P;
 public:
   Filtered_function_node_times_constant(const typename P::Pointer &c, const typename P::Exact_function::NT &cst): P(c), c_(cst){
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
-    P::set_interval_function(P::child()->interval_function() * POLYNOMIAL_NS::To_interval<typename P::Exact_function::NT>()(c_));
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(P::child()->interval_function() 
+			     *CGAL_POLYNOMIAL_NS::To_interval<typename P::Exact_function::NT>()(c_));
   }
   virtual ~Filtered_function_node_times_constant(){}
   virtual void write(std::ostream &out) const {
@@ -150,8 +151,8 @@ class Filtered_function_node_plus_constant: public Filtered_function_node_unary_
   typedef Filtered_function_node_unary_operation<Traits> P;
 public:
   Filtered_function_node_plus_constant(const typename P::Pointer &c, const typename P::Exact_function::NT &cst): P(c), c_(cst){
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
-    P::set_interval_function(typename P::Interval_function::NT(POLYNOMIAL_NS::To_interval<typename P::Exact_function::NT>()(c_)) 
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    P::set_interval_function(typename P::Interval_function::NT(CGAL_POLYNOMIAL_NS::To_interval<typename P::Exact_function::NT>()(c_)) 
 			     + P::child()->interval_function());
   }
   virtual ~Filtered_function_node_plus_constant(){}
@@ -178,7 +179,7 @@ class Filtered_function_node_times_double_constant: public Filtered_function_nod
   typedef Filtered_function_node_unary_operation<Traits> P;
 public:
   Filtered_function_node_times_double_constant(const typename P::Pointer &c, double d): P(c), c_(d){
-    P::set_interval_function(typename P::Interval_function::NT(POLYNOMIAL_NS::To_interval<double>()(c_))*P::child()->interval_function());
+    P::set_interval_function(typename P::Interval_function::NT(CGAL_POLYNOMIAL_NS::To_interval<double>()(c_))*P::child()->interval_function());
   }
   virtual ~Filtered_function_node_times_double_constant(){}
   virtual void write(std::ostream &out) const {
@@ -203,8 +204,8 @@ class Filtered_function_node_plus_double_constant: public Filtered_function_node
   typedef Filtered_function_node_unary_operation<Traits> P;
 public:
   Filtered_function_node_plus_double_constant(const typename P::Pointer &c, double cst): P(c), c_(cst){
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
-    P::set_interval_function( P::child()->interval_function()+ POLYNOMIAL_NS::To_interval<double>()(c_));
+   CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+   P::set_interval_function( P::child()->interval_function()+ CGAL_POLYNOMIAL_NS::To_interval<double>()(c_));
   }
   virtual ~Filtered_function_node_plus_double_constant(){}
   virtual void write(std::ostream &out) const {

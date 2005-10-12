@@ -23,11 +23,11 @@ public:
   //! Note, the result is an upper bound
   template <class NTT>
   result_type operator()(const NTT &lb, const NTT &ub,
-			 POLYNOMIAL_NS::Sign=POLYNOMIAL_NS::ZERO,
-			 POLYNOMIAL_NS::Sign=POLYNOMIAL_NS::ZERO) const {
+			 CGAL_POLYNOMIAL_NS::Sign=CGAL_POLYNOMIAL_NS::ZERO,
+			 CGAL_POLYNOMIAL_NS::Sign=CGAL_POLYNOMIAL_NS::ZERO) const {
     typename Kernel::Function mf= map_(lb, ub);
     
-    typename POLYNOMIAL_NS::Alternation_counter<first_argument_type> ac;
+    typename CGAL_POLYNOMIAL_NS::Alternation_counter<first_argument_type> ac;
     for (int i=0; i<= mf.degree(); ++i){
       ac.push_back(mf[i]);
     }

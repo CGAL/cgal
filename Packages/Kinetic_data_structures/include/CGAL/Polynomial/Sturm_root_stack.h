@@ -992,14 +992,14 @@ protected:
 
 
     if ( CGAL::is_finite(low) && CGAL::is_finite(high) ) {
-      Polynomial_assertion( low <= high );
+      CGAL_Polynomial_assertion( low <= high );
       return Interval(INT(low), INT(high));
     }
 
     INT low_nt = std::min(lower.lower_bound(), upper.lower_bound());
     INT high_nt = std::max(lower.upper_bound(), upper.upper_bound());
 
-    Polynomial_assertion( low_nt <= high_nt );
+    CGAL_Polynomial_assertion( low_nt <= high_nt );
 
     return Interval(low_nt, high_nt);
   }

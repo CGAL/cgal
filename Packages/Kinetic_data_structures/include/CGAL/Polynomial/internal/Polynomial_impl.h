@@ -10,7 +10,7 @@
 
 
 
-#define EXCESSIVE(x) 
+#define CGAL_EXCESSIVE(x) 
 
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
@@ -118,7 +118,7 @@ public:
   //! Returns true if f(t)=0
   
   bool is_zero() const {
-    Polynomial_assertion( coefs_.empty() == (coefs_.size()==0) );
+    CGAL_Polynomial_assertion( coefs_.empty() == (coefs_.size()==0) );
     return coefs_.empty();
   }
 
@@ -147,7 +147,7 @@ public:
       for (unsigned int i = 0; i <= new_deg; ++i){
 	ret.coefs_[i] = operator[](i) + o[i];
       }
-      EXCESSIVE(std::cout << *this << " - " << o << " + " << ret << std::endl);
+      CGAL_EXCESSIVE(std::cout << *this << " - " << o << " + " << ret << std::endl);
       ret.finalize();
       return ret;
     }
@@ -164,7 +164,7 @@ public:
       for (unsigned int i = 0; i <= new_deg; ++i) {
 	ret.coefs_[i] = operator[](i) - o[i];
       }
-      EXCESSIVE(std::cout << *this << " - " << o << " = " << ret << std::endl);
+      CGAL_EXCESSIVE(std::cout << *this << " - " << o << " = " << ret << std::endl);
       ret.finalize();
       return ret;
     }
@@ -188,7 +188,7 @@ public:
 	ret.coefs_[i+j] = result;
       }
     }
-    EXCESSIVE(std::cout << *this << " * " << o << " = " << ret << std::endl);
+    CGAL_EXCESSIVE(std::cout << *this << " * " << o << " = " << ret << std::endl);
     return ret;
   }
 
@@ -198,7 +198,7 @@ public:
 
     This res(*this);
     res.coefs_[0] += a;
-    EXCESSIVE(std::cout << *this << " + " << a << " = " << res << std::endl);
+    CGAL_EXCESSIVE(std::cout << *this << " + " << a << " = " << res << std::endl);
     return res;
   }
 
@@ -433,6 +433,9 @@ inline T operator-(int a, const Polynomial_impl<T, NT> &poly)
 {
   return -(poly - NT(a));
 }
+
+
+#undef CGAL_EXCESSIVE
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 

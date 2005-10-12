@@ -43,12 +43,12 @@ public:
       return it;
     }
     bool operator==(const iterator &o) const {
-      Polynomial_precondition(renum_.empty() 
+      CGAL_Polynomial_precondition(renum_.empty() 
 			      || o.renum_.empty());
       return renum_.empty() && o.renum_.empty();
     }
     bool operator!=(const iterator &o) const {
-      Polynomial_precondition(renum_.empty() 
+      CGAL_Polynomial_precondition(renum_.empty() 
 			      || o.renum_.empty());
       if ( renum_.empty() && o.renum_.empty() ) { return false; }
       return !renum_.empty() || !o.renum_.empty();

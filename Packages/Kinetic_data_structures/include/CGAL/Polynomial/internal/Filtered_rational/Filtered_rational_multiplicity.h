@@ -28,13 +28,13 @@ public:
   template <class NTT>
   result_type operator()(const NTT &t) const {
     //typename Kernel::Sign_at sa=;
-    Polynomial_exactness_assertion( kernel_.sign_at_object(h_[0])(t)==POLYNOMIAL_NS::ZERO);
+    CGAL_Polynomial_exactness_assertion( kernel_.sign_at_object(h_[0])(t)==POLYNOMIAL_NS::ZERO);
     //if (kernel_.sign_at_object(fh)(t)!= ::CGAL::ZERO) return 0;
     // need to check if it is an even root
     int deg=1;
     
     
-    POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
     
     if (h_[0].interval_function().is_zero()) return -1;
     //typename POLYNOMIAL_NS::To_interval<NTT> ti;
@@ -56,7 +56,7 @@ public:
 	typename Kernel::Exact_traits::NT vale= h_[deg].exact_function()(e);
 	// catch up exact and evaluate
 	
-	if (POLYNOMIAL_NS::sign(vale) == POLYNOMIAL_NS::ZERO) {
+	if (CGAL_POLYNOMIAL_NS::sign(vale) == CGAL_POLYNOMIAL_NS::ZERO) {
 	
 	} else {
 	  // filtering is off

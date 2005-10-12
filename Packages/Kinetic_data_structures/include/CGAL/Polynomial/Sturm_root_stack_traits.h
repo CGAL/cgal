@@ -62,7 +62,7 @@ public:
   //  typedef
   //  POLYNOMIAL_NS::Hybrid_isolating_interval<typename Polynomial::NT>
   //  Isolating_interval;
-  typedef POLYNOMIAL_NS::internal::Isolating_interval<typename Polynomial::NT>
+  typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename Polynomial::NT>
   Isolating_interval;
 };
 

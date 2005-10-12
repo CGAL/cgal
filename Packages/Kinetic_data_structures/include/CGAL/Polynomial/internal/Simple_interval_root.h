@@ -88,7 +88,7 @@ public:
 		       Sign slb, Sign sub, 
 		       Traits k): ii_(ii), function_(sa),
 				  kernel_(k){
-    Polynomial_precondition(!interval().is_singular());
+    CGAL_Polynomial_precondition(!interval().is_singular());
     //Sign slb= sign_(ii_.lower_bound());
     if (slb == sub){
       if (slb== POSITIVE){
@@ -102,7 +102,7 @@ public:
       set_type(UP);
     } else {
       set_type(INF|EVEN);
-      Polynomial_assertion(0);
+      CGAL_Polynomial_assertion(0);
     }
     compute_approximation();
     audit();
@@ -110,20 +110,20 @@ public:
 
   static This infinity(){
     This ret(Type(UP|INF));
-    assert(ret.is_infinite());
+    CGAL_Polynomial_postcondition(ret.is_infinite());
     //ret.compute_approximation();
     return ret;
   }
 
   bool operator<(const This &o) const {
-    Polynomial_expensive_precondition(!is_null() && !o.is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
     return r==SMALLER;
   }
   
   bool operator>(const This &o) const {
-    Polynomial_expensive_precondition(!is_null() && !o.is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
     return r==LARGER;
@@ -132,19 +132,19 @@ public:
   bool operator!=(const This &o) const {
     /*if (is_null()) return !o.is_null();
       else if (o.is_null()) return true;*/
-    Polynomial_expensive_precondition(!is_null() && !o.is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
     return r != EQUAL;
   }
   bool operator<=(const This &o) const {
-    Polynomial_expensive_precondition(!is_null() && !o.is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
     return r != LARGER;
   }
   bool operator>=(const This &o) const {
-    Polynomial_expensive_precondition(!is_null() && !o.is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
     return r != SMALLER;
@@ -153,7 +153,7 @@ public:
   bool operator==(const This &o) const {
     /*if (is_null()) return o.is_null();
       else if (o.is_null()) return false;*/
-    Polynomial_expensive_precondition(!is_null() && !o.is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
     return r==EQUAL;
@@ -179,7 +179,7 @@ public:
     \todo compute closest double rather than stupid approximation
   */
   double double_approximation(double accuracy=.000001) const {
-    Polynomial_expensive_precondition(!is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null());
     return compute_double(accuracy);
   }
 
@@ -189,8 +189,8 @@ public:
   */
   std::pair<NT, NT> isolating_interval() const {
     bool do_not_use;
-    Polynomial_precondition(!is_infinite()); 
-    Polynomial_expensive_precondition(!is_null());
+    CGAL_Polynomial_precondition(!is_infinite()); 
+    CGAL_Polynomial_expensive_precondition(!is_null());
     return interval().to_exact_interval();
   }
 
@@ -199,7 +199,7 @@ public:
     This refines the current interval too.
   */
   std::pair<double, double> double_interval(double accuracy=.001) const {
-    Polynomial_expensive_precondition(!is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null());
     return compute_interval(accuracy);
   }
   
@@ -219,7 +219,7 @@ public:
   
   //! Negate the interval. 
   This operator-() const {
-    Polynomial_expensive_precondition(!is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null());
     if (is_pos_inf()) return This(Type(INF));
     else if (is_neg_inf()) return infinity();
     else if (is_rational()){
@@ -238,7 +238,7 @@ public:
     return type_&CONST;
   }
   NT to_rational() const {
-    Polynomial_precondition(is_rational());
+    CGAL_Polynomial_precondition(is_rational());
     return ii_.to_nt();
   }
   //! Return true if the root is +/- infinity.
@@ -346,7 +346,7 @@ protected:
   }
 
   void refine() const {
-    Polynomial_precondition(is_normal());
+    CGAL_Polynomial_precondition(is_normal());
     Sign sn= interval().apply_to_midpoint(sign_at());
     if (sn == ZERO){
       set_is_rational(interval().midpoint_interval());
@@ -388,7 +388,7 @@ protected:
   Comparison_result compare(const This &o) const {
     audit();
     o.audit();
-    Polynomial_precondition(-SMALLER == LARGER);
+    CGAL_Polynomial_precondition(-SMALLER == LARGER);
     // Elimate all cases where the functions are equal or negations
     if (is_normal() && o.is_normal()) {
       Order rel= interval().order(o.interval());
@@ -399,7 +399,7 @@ protected:
       else if (is_pos_inf() || o.is_neg_inf()) return LARGER;
       else if (is_neg_inf() || o.is_pos_inf()) return SMALLER;
       else {
-	Polynomial_assertion(0); return EQUAL;
+	CGAL_Polynomial_assertion(0); return EQUAL;
       }
     }
 
@@ -437,8 +437,8 @@ protected:
   //! Compare where this has type CONST
   Comparison_result compare_with_rational(const This &o) const {
     //std::cout << "Comparing " << *this << " and " << o << std::endl;
-    Polynomial_assertion(!is_rational());
-    Polynomial_assertion(o.is_rational());
+    CGAL_Polynomial_assertion(!is_rational());
+    CGAL_Polynomial_assertion(o.is_rational());
 
     Order rel= interval().order(o.interval());
     if (rel == STRICTLY_BELOW) return SMALLER;
@@ -466,7 +466,7 @@ protected:
     This compares two when neither is const or inf, when this is to the left of o.
   */
   Comparison_result compare_normal(const This &o) const {
-    Polynomial_assertion(is_normal() && o.is_normal());
+    CGAL_Polynomial_assertion(is_normal() && o.is_normal());
 
     refine_using(o.interval());
     o.refine_using(interval());
@@ -489,7 +489,7 @@ protected:
 	return EQUAL;
       }
 
-      Polynomial_assertion(interval()==o.interval());
+      CGAL_Polynomial_assertion(interval()==o.interval());
       
       refine();
       o.refine();
@@ -509,7 +509,7 @@ protected:
 
   //! Check that everything is correct
   void audit() const {
-    Polynomial_assertion(!is_null());
+    CGAL_Polynomial_assertion(!is_null());
 #ifndef NDEBUG
     bool problem=false;
     if (is_infinite()){
@@ -543,7 +543,7 @@ protected:
       std::cerr << "Type is " << int(type_ &1) << int(type_&2)<<int(type_&4) << int(type_&8) << std::endl;
       std::cerr << interval()<< ", " << interval().apply_to_endpoint(sign_at(), Interval::LOWER)
 		<< interval().apply_to_endpoint(sign_at(), Interval::UPPER) << std::endl;
-      Polynomial_exactness_assertion(0);
+      CGAL_Polynomial_exactness_assertion(0);
     }
 #endif
   }
@@ -563,7 +563,7 @@ protected:
 
   typename Traits::Sign_at sign_at() const {
     // we loose the function when we find a rational value
-    Polynomial_precondition(!is_rational());
+    CGAL_Polynomial_precondition(!is_rational());
     return kernel_.sign_at_object(function_);
   }
 
@@ -596,7 +596,7 @@ protected:
   }
 
   Sign lower_sign() const {
-    Polynomial_precondition(!is_infinite());
+    CGAL_Polynomial_precondition(!is_infinite());
     if (is_even_multiplicity()){
       if (is_up()) return POSITIVE;
       else return NEGATIVE;
@@ -638,7 +638,7 @@ protected:
   }
 
   double immutable_double_approximation(double accuracy=0.00001) const {
-    Polynomial_expensive_precondition(!is_null());
+    CGAL_Polynomial_expensive_precondition(!is_null());
     This temp = *this;
     return temp.compute_double(accuracy);
   }
@@ -697,13 +697,13 @@ CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 //CGAL_BEGIN_NAMESPACE
 namespace CGAL {
 template <class F>
-double to_double(const POLYNOMIAL_NS::internal::Simple_interval_root<F> &f){
+double to_double(const CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<F> &f){
   //bool to_double_in_sir;
   return f.double_approximation();
 }
 
 template <class F>
-std::pair<double, double> to_interval(const POLYNOMIAL_NS::internal::Simple_interval_root<F> &f){
+std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<F> &f){
   //bool to_interval_in_sir;
   return f.double_interval();
 }
@@ -713,8 +713,8 @@ std::pair<double, double> to_interval(const POLYNOMIAL_NS::internal::Simple_inte
 
 namespace std {
   template <class Tr>
-  struct numeric_limits<POLYNOMIAL_NS::internal::Simple_interval_root<Tr> > {
-    typedef POLYNOMIAL_NS::internal::Simple_interval_root<Tr> T;
+  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> > {
+    typedef CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> T;
     static const bool is_specialized = true;
     static T min() throw () {return -T::infinity();}
     static T max() throw () {return T::infinity();}

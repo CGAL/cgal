@@ -45,7 +45,7 @@ public:
   }
 
   void set_coef(unsigned int c, Parent::NT v) {
-    Polynomial_assertion(c < Parent::coefs_.size());
+    CGAL_Polynomial_assertion(c < Parent::coefs_.size());
     coefs_[c]=v;
   }
 

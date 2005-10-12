@@ -20,7 +20,7 @@ public:
 
   using P::operator();
   typename P::result_type operator()(const typename K::Root &v) const {
-    Polynomial_precondition(0);
+    CGAL_Polynomial_precondition(0);
     return 1;
   }
 };

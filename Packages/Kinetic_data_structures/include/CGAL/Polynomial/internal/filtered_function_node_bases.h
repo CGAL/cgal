@@ -137,7 +137,7 @@ class Filtered_function_node_unary_transform: public Filtered_function_node_unar
 public:
   Filtered_function_node_unary_transform(const typename P::Pointer &c, 
 				   const EF &fe, const IF &fi): P(c), fe_(fe){
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
     P::set_interval_function(fi(P::child()->interval_function()));
   }
   virtual ~Filtered_function_node_unary_transform(){}
@@ -166,7 +166,7 @@ public:
   Filtered_function_node_binary_transform(const typename P::Pointer &lc, 
 					  const typename P::Pointer &rc,
 					  const EF &fe, const IF &fi): P(lc, rc), fe_(fe){
-    POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
     P::set_interval_function(fi(P::left_child()->interval_function(), P::right_child()->interval_function()));
   }
   virtual ~Filtered_function_node_binary_transform(){}

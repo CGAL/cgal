@@ -5,7 +5,7 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class Kernel>
-POLYNOMIAL_NS::Sign sign_above(const typename Kernel::Function &p,
+CGAL_POLYNOMIAL_NS::Sign sign_above(const typename Kernel::Function &p,
 		      const typename Kernel::NT &nt, const Kernel &k){
   // to make sure this is not called in vain
   assert( false );
@@ -23,21 +23,21 @@ public:
   typedef typename Kernel::NT argument_type;
   //  typedef typename POLYNOMIAL_NS::Sign result_type;
   // g++ 3.4 does not like the above declaration
-  typedef POLYNOMIAL_NS::Sign result_type;
+  typedef CGAL_POLYNOMIAL_NS::Sign result_type;
   result_type operator()(const argument_type &nt) const {
     //CGAL_exactness_precondition(k.sign_at_object(p)(nt)==CGAL::ZERO);
-    POLYNOMIAL_NS::Sign sn= k_.sign_at_object(p_)(nt);
-    if (sn != POLYNOMIAL_NS::ZERO) return sn;
+    CGAL_POLYNOMIAL_NS::Sign sn= k_.sign_at_object(p_)(nt);
+    if (sn != CGAL_POLYNOMIAL_NS::ZERO) return sn;
     typename Kernel::Differentiate d= k_.differentiate_object();
     typename Kernel::Function pcur= d(p_);
     do {
-      POLYNOMIAL_NS::Sign sn= k_.sign_at_object(pcur)(nt);
-      if (sn != POLYNOMIAL_NS::ZERO) return sn;
+      CGAL_POLYNOMIAL_NS::Sign sn= k_.sign_at_object(pcur)(nt);
+      if (sn != CGAL_POLYNOMIAL_NS::ZERO) return sn;
       else {
 	pcur=d(pcur);
       }
     } while (!pcur.is_zero());
-    return POLYNOMIAL_NS::ZERO;
+    return CGAL_POLYNOMIAL_NS::ZERO;
   }
 protected:
   typename Kernel::Function p_;

@@ -15,7 +15,7 @@
 #include <CGAL/Polynomial/internal/Rational/Sign_below_rational.h>
 
 
-#define DF_UNARY_CONSTRUCTION(UCName, lcname) class UCName {\
+#define CGAL_DF_UNARY_CONSTRUCTION(UCName, lcname) class UCName {\
   typedef typename Exact_traits::UCName ED;\
   typedef typename Interval_traits::UCName ID;\
   typedef Filtered_function_node_unary_transform< Filtering_traits, ED, ID> Node;\
@@ -37,15 +37,15 @@ UCName lcname##_object() const {\
 
 // std::cout << "UCName of " << f << std::endl;
 
-#define DF_UNARY_CONSTRUCTION_DATA(UCName, lcname, data_type) class UCName {\
+#define CGAL_DF_UNARY_CONSTRUCTION_DATA(UCName, lcname, data_type) class UCName {\
   typedef typename Exact_traits::UCName ED;\
   typedef typename Interval_traits::UCName ID;\
   typedef Filtered_function_node_unary_transform< Filtering_traits, ED, ID> Node;\
 public:\
   UCName(const typename ED::NT& d, const This &k): ed_(k.exact_traits_object().lcname##_object(d)),\
-                                     id_(k.interval_traits_object().lcname##_object(POLYNOMIAL_NS::To_interval<typename ED::NT>()(d))){} \
+                                     id_(k.interval_traits_object().lcname##_object(CGAL_POLYNOMIAL_NS::To_interval<typename ED::NT>()(d))){} \
   UCName(double d, const This &k): ed_(k.exact_traits_object().lcname##_object(typename ED::NT(d))),\
-				       id_(k.interval_traits_object().lcname##_object(POLYNOMIAL_NS::To_interval<double>()(d))){} \
+				       id_(k.interval_traits_object().lcname##_object(CGAL_POLYNOMIAL_NS::To_interval<double>()(d))){} \
   UCName(int d, const This &k): ed_(k.exact_traits_object().lcname##_object(d)),\
 				       id_(k.interval_traits_object().lcname##_object(d)){}\
  typedef Function result_type;\
@@ -63,13 +63,13 @@ UCName lcname##_object(data_type d) const {\
 
 //std::cout << "UCName of " << f << std::endl;
 
-#define DF_UNARY_CONSTRUCTION_DATA_2(UCName, lcname, data_type) class UCName {\
+#define CGAL_DF_UNARY_CONSTRUCTION_DATA_2(UCName, lcname, data_type) class UCName {\
   typedef typename Exact_traits::UCName ED;\
   typedef typename Interval_traits::UCName ID;\
   typedef Filtered_function_node_unary_transform< Filtering_traits, ED, ID> Node;\
 public:\
   UCName(const typename ED::NT& a, const typename ED::NT& b, const This &k): ed_(k.exact_traits_object().lcname##_object(a,b)),\
-                                     id_(k.interval_traits_object().lcname##_object(POLYNOMIAL_NS::To_interval<typename ED::NT>()(a,b))){} \
+                                     id_(k.interval_traits_object().lcname##_object(CGAL_POLYNOMIAL_NS::To_interval<typename ED::NT>()(a,b))){} \
    typedef Function result_type;\
   typedef result_type argument_type;\
   result_type operator()(const argument_type &f) const {\
@@ -83,7 +83,7 @@ UCName lcname##_object(data_type a, data_type b) const {\
 				  return UCName(a, b, *this);\
 						    }
 
-#define DF_BINARY_CONSTRUCTION(UCName, lcname) class UCName {\
+#define CGAL_DF_BINARY_CONSTRUCTION(UCName, lcname) class UCName {\
   typedef typename Exact_traits::UCName ED;\
   typedef typename Interval_traits::UCName ID;\
   typedef Filtered_function_node_binary_transform< Filtering_traits, ED, ID> Node;\
@@ -106,17 +106,7 @@ UCName lcname##_object() const {\
 
 //std::cout << "UCName of " << f << " and " << fp << std::endl;
 
-/*
-#define DECLARE_PICKER(UCName, lcname) template <class K> struct UCName##_picker {\
-typedef typename K::UCName Functor;\
-static Functor functor_object(const K &k) {return k.lcname##_object();}\
-};
-#define DECLARE_CONSTRUCTION(UCName, lcname) private:\
- DECLARE_PICKER(UCName, lcname) \
-public: \
-typedef Filtered_unary_construction<This, UCName##_picker> UCName;\
- UCName lcname##_object() const {return UCName(*this);}
-*/
+
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 template <class Filter_traits_t, template<class Fn> class Rational_traits = internal::Rational_traits_base>
@@ -134,27 +124,27 @@ public:
 
   Filtered_rational_traits(){}
  
-  DF_UNARY_CONSTRUCTION(Differentiate, differentiate);
+  CGAL_DF_UNARY_CONSTRUCTION(Differentiate, differentiate);
 
-  DF_UNARY_CONSTRUCTION(Invert_variable, invert_variable);
+  CGAL_DF_UNARY_CONSTRUCTION(Invert_variable, invert_variable);
   
-  DF_UNARY_CONSTRUCTION_DATA(Rational_translate_zero, rational_translate_zero, NT);
+  CGAL_DF_UNARY_CONSTRUCTION_DATA(Rational_translate_zero, rational_translate_zero, NT);
   
-  DF_UNARY_CONSTRUCTION_DATA(Shift_power, shift_power, int);
+  CGAL_DF_UNARY_CONSTRUCTION_DATA(Shift_power, shift_power, int);
 
-  DF_UNARY_CONSTRUCTION(Negate_variable, negate_variable);
+  CGAL_DF_UNARY_CONSTRUCTION(Negate_variable, negate_variable);
 
-  DF_BINARY_CONSTRUCTION(Quotient, quotient);
+  CGAL_DF_BINARY_CONSTRUCTION(Quotient, quotient);
 
-  DF_BINARY_CONSTRUCTION(Remainder, remainder);
+  CGAL_DF_BINARY_CONSTRUCTION(Remainder, remainder);
 
-  DF_BINARY_CONSTRUCTION(Pseudo_quotient, pseudo_quotient);
+  CGAL_DF_BINARY_CONSTRUCTION(Pseudo_quotient, pseudo_quotient);
 
-  DF_BINARY_CONSTRUCTION(Pseudo_remainder, pseudo_remainder);
+  CGAL_DF_BINARY_CONSTRUCTION(Pseudo_remainder, pseudo_remainder);
 
-  DF_BINARY_CONSTRUCTION(Quotient_remainder, quotient_remainder);
+  CGAL_DF_BINARY_CONSTRUCTION(Quotient_remainder, quotient_remainder);
 
-  DF_UNARY_CONSTRUCTION_DATA_2(Map_rational_interval_to_positive_2, map_rational_interval_to_positive_2, NT);
+  CGAL_DF_UNARY_CONSTRUCTION_DATA_2(Map_rational_interval_to_positive_2, map_rational_interval_to_positive_2, NT);
 
   
   class Standard_sequence {

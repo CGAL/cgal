@@ -42,7 +42,7 @@ protected:
   }
 
   template<class RT>
-  static RT compute_gcd(const POLYNOMIAL_NS::Polynomial<RT>& p) {
+  static RT compute_gcd(const CGAL_POLYNOMIAL_NS::Polynomial<RT>& p) {
     int deg = p.degree();
     if ( deg < 0 ) { return RT(1); }
     if ( deg == 0 ) { return abs(p[0]); }
@@ -55,7 +55,7 @@ protected:
   }
 
   template<class RT>
-  static RT compute_lcm(const POLYNOMIAL_NS::Polynomial<RT>& p) {
+  static RT compute_lcm(const CGAL_POLYNOMIAL_NS::Polynomial<RT>& p) {
     int deg = p.degree();
     assert( deg >= 1 );
 
@@ -67,7 +67,7 @@ protected:
   }
 
   template<class RT>
-  static RT compute_lazy_lcm(const POLYNOMIAL_NS::Polynomial<RT>& p) {
+  static RT compute_lazy_lcm(const CGAL_POLYNOMIAL_NS::Polynomial<RT>& p) {
     int deg = p.degree();
     assert( deg >= 1 );
 
@@ -80,7 +80,7 @@ protected:
 
   static Polynomial compute_integer_polynomial(const Polynomial& p) {
     typedef typename Rational_traits<NT>::RT    RT;
-    typedef POLYNOMIAL_NS::Polynomial<RT>       RT_Polynomial;
+    typedef CGAL_POLYNOMIAL_NS::Polynomial<RT>       RT_Polynomial;
     int deg = p.degree();
     if ( deg < 0 ) { return p; }
     if ( deg == 0 ) {
@@ -104,7 +104,7 @@ protected:
 
   static Polynomial compute_primitive_polynomial(const Polynomial& p) {
     typedef typename Rational_traits<NT>::RT    RT;
-    typedef POLYNOMIAL_NS::Polynomial<RT>       RT_Polynomial;
+    typedef CGAL_POLYNOMIAL_NS::Polynomial<RT>       RT_Polynomial;
     // we assume that p has only integer coefficients
     int deg = p.degree();
     if ( deg < 0 ) { return p; }

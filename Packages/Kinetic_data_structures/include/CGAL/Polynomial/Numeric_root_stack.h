@@ -1,5 +1,5 @@
-#ifndef POLYNOMIAL_NUMERIC_SOLVER_H
-#define POLYNOMIAL_NUMERIC_SOLVER_H
+#ifndef CGAL_POLYNOMIAL_NUMERIC_SOLVER_H
+#define CGAL_POLYNOMIAL_NUMERIC_SOLVER_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Numeric_root_stack_core.h>
 

@@ -8,14 +8,14 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class Kernel, class NTT>
 unsigned int filtered_root_multiplicity(const typename Kernel::Function &fh,
 			       const NTT &t, const Kernel &k){
-  Polynomial_exactness_assertion(k.sign_at_object(fh)(t)==POLYNOMIAL_NS::ZERO);
+  CGAL_Polynomial_exactness_assertion(k.sign_at_object(fh)(t)==CGAL_POLYNOMIAL_NS::ZERO);
   //if (k.sign_at_object(fh)(t)!= ::CGAL::ZERO) return 0;
   // need to check if it is an even root
   int interval_deg=1;
   int exact_deg=-1;
   if (0) k.sign_at_object(fh);
   
-  POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+  CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
   
   if (fh.interval_function().is_zero()) return -1;
   //typename POLYNOMIAL_NS::To_interval<NTT> ti;
@@ -46,7 +46,7 @@ unsigned int filtered_root_multiplicity(const typename Kernel::Function &fh,
 	++exact_deg;
       }
       typename Kernel::Exact_kernel::NT ev= cfe(e);
-      if (POLYNOMIAL_NS::sign(ev) == POLYNOMIAL_NS::ZERO) {
+      if (CGAL_POLYNOMIAL_NS::sign(ev) == CGAL_POLYNOMIAL_NS::ZERO) {
 	// update interval;
 
 	/*To_interval<typename Kernel::Exact_kernel::Function::NT> ei;

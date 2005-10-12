@@ -8,7 +8,7 @@ template<class Fn>
 class Sign_at_rational
 {
 protected:
-  typedef POLYNOMIAL_NS::Sign  Sign;
+  typedef CGAL_POLYNOMIAL_NS::Sign  Sign;
 
 
 public:
@@ -24,7 +24,7 @@ public:
   template <class TNT>
   Sign operator()(const TNT& t) const
   {
-    return POLYNOMIAL_NS::sign( p(NT(t)) );
+    return CGAL_POLYNOMIAL_NS::sign( p(NT(t)) );
   }
 
   //! Evaluate the sign of the value of the polynomial

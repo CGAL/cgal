@@ -283,14 +283,14 @@ CGAL_BEGIN_NAMESPACE
 
 
 template <class NT>
-double to_double(const POLYNOMIAL_NS::Explicit_root<NT> &r){
+double to_double(const CGAL_POLYNOMIAL_NS::Explicit_root<NT> &r){
   return r.to_double();
 }
 
 
 
 template <class NT>
-std::pair<double, double> to_interval(const POLYNOMIAL_NS::Explicit_root<NT> &r){
+std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::Explicit_root<NT> &r){
   return r.to_interval();
 }
 
@@ -302,9 +302,9 @@ CGAL_END_NAMESPACE
 
 namespace std {
   template <class Tr>
-  struct numeric_limits<POLYNOMIAL_NS::Explicit_root<Tr> >: public numeric_limits<Tr> {
+  struct numeric_limits<CGAL_POLYNOMIAL_NS::Explicit_root<Tr> >: public numeric_limits<Tr> {
     typedef numeric_limits<Tr> P;
-    typedef POLYNOMIAL_NS::Explicit_root<Tr> T;
+    typedef CGAL_POLYNOMIAL_NS::Explicit_root<Tr> T;
     static const bool is_specialized = true;
     static T min() throw() {return T(P::min());}
     static T max() throw() {return T(P::max());}

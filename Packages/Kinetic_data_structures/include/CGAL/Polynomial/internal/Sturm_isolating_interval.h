@@ -277,7 +277,7 @@ CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 template <class NT>
 std::pair<double, double>
-to_interval(const POLYNOMIAL_NS::internal::Sturm_isolating_interval<NT> &ii)
+to_interval(const CGAL_POLYNOMIAL_NS::internal::Sturm_isolating_interval<NT> &ii)
 {
   return ii.to_interval();
 }

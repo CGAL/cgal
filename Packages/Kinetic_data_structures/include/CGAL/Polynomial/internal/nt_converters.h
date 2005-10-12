@@ -3,7 +3,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-#ifdef POLYNOMIAL_USE_CGAL
+#ifdef CGAL_POLYNOMIAL_USE_CGAL
 #include <CGAL/NT_converter.h>
 #include <CGAL/number_utils_classes.h>
 

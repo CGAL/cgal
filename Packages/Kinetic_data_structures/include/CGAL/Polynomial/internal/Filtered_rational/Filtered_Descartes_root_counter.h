@@ -52,7 +52,7 @@ unsigned int filtered_Descartes_root_counter(const typename Kernel::Function &fh
 					     Kernel k){
   typename Kernel::Interval_traits::NT bi, ei;
   typename Kernel::Interval_traits::Function fim;
-  POLYNOMIAL_NS::Alternation_counter<typename Kernel::Interval_traits::NT> ac;
+  CGAL_POLYNOMIAL_NS::Alternation_counter<typename Kernel::Interval_traits::NT> ac;
   {
     Interval_arithmetic_guard iag;
     
@@ -88,7 +88,7 @@ unsigned int filtered_Descartes_root_counter(const typename Kernel::Function &fh
       
       typename Kernel::Exact_traits::Function fem= ek.map_rational_interval_to_positive_object(fh.exact_function())(be, ee);
       
-      POLYNOMIAL_NS::Alternation_counter<typename Kernel::Exact_traits::NT> ace;
+      CGAL_POLYNOMIAL_NS::Alternation_counter<typename Kernel::Exact_traits::NT> ace;
       for (int i=0; i<= fem.degree(); ++i){
 	ace.push_back(fem[i]);
       }
@@ -112,7 +112,7 @@ unsigned int filtered_Descartes_root_counter(const typename Kernel::Function &fh
     
     typename Kernel::Exact_traits::Function fem= ek.map_rational_interval_to_positive_object(fh.exact_function())(be, ee);
     
-    POLYNOMIAL_NS::Alternation_counter<typename Kernel::Exact_traits::NT> ac;
+    CGAL_POLYNOMIAL_NS::Alternation_counter<typename Kernel::Exact_traits::NT> ac;
     for (int i=0; i<= fem.degree(); ++i){
       ac.push_back(fem[i]);
     }
@@ -137,8 +137,8 @@ public:
 
   template <class NTT>
   result_type operator()(const NTT &begin, const NTT &end,
-			 POLYNOMIAL_NS::Sign,
-			 POLYNOMIAL_NS::Sign) const {
+			 CGAL_POLYNOMIAL_NS::Sign,
+			 CGAL_POLYNOMIAL_NS::Sign) const {
     return filtered_Descartes_root_counter(h_, begin, end, true, kernel_);
   }
 

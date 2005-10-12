@@ -1,5 +1,5 @@
-#ifndef POLYNOMIAL_NUMERIC_SOLVER_CORE_H
-#define POLYNOMIAL_NUMERIC_SOLVER_CORE_H
+#ifndef CGAL_POLYNOMIAL_NUMERIC_SOLVER_CORE_H
+#define CGAL_POLYNOMIAL_NUMERIC_SOLVER_CORE_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 #include <CGAL/Polynomial/Polynomial.h>
@@ -39,12 +39,12 @@ public:
   Numeric_root_stack_core(){};
 
   void pop() {
-    Polynomial_precondition(!roots_.empty());
+    CGAL_Polynomial_precondition(!roots_.empty());
     roots_.pop_back();
   }
 
   const Root& top() const {
-    Polynomial_precondition(!roots_.empty());
+    CGAL_Polynomial_precondition(!roots_.empty());
     return roots_.back();
   }
 

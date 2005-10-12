@@ -14,7 +14,7 @@ protected:
 public:
   typedef enum DRC {INVALID=-12, UNKNOWN =-3,ZERO=0, ONE=1, EVEN=2, ODD=3, SOME=5} Count;
   Descartes_root_count(unsigned int i){
-    Polynomial_exactness_precondition(i<10000); // catch overflow
+    CGAL_Polynomial_exactness_precondition(i<10000); // catch overflow
     /*if (i==0) ct_= ZERO;
     else if (i==1) ct_= ONE;
     else if (i%2 == 0) ct_= EVEN;

@@ -1,5 +1,5 @@
-#ifndef POLYNOMIAL_CORE_SOLVER_H
-#define POLYNOMIAL_CORE_SOLVER_H
+#ifndef CGAL_POLYNOMIAL_CORE_SOLVER_H
+#define CGAL_POLYNOMIAL_CORE_SOLVER_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/internal/Explicit_root.h>
@@ -41,7 +41,7 @@ public:
     return cur_;
   }
   void pop() {
-    Polynomial_precondition(counter_<=num_roots_);
+    CGAL_Polynomial_precondition(counter_<=num_roots_);
     if (counter_ == num_roots_) {
       no_roots();
     } else {

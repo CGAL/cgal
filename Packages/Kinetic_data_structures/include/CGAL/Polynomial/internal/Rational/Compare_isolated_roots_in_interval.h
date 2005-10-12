@@ -24,7 +24,7 @@ public:
   Compare_isolated_roots_in_interval(){}
 
 
-  typedef POLYNOMIAL_NS::Comparison_result  result_type;
+  typedef CGAL_POLYNOMIAL_NS::Comparison_result  result_type;
   typedef NT                       argument_type;
   typedef NT                       first_argument_type;
   typedef NT                       second_argument_type;
@@ -33,12 +33,12 @@ public:
   {
     int sgn = seq.sum_of_signs(a, b);
 
-    if ( sgn == POLYNOMIAL_NS::ZERO ) { return POLYNOMIAL_NS::EQUAL; }
+    if ( sgn == CGAL_POLYNOMIAL_NS::ZERO ) { return CGAL_POLYNOMIAL_NS::EQUAL; }
 
     int s_a = static_cast<int>(  kernel_.sign_at_object(q)(a) );
 
-    if ( sgn == s_a ) { return POLYNOMIAL_NS::SMALLER; }
-    return POLYNOMIAL_NS::LARGER;
+    if ( sgn == s_a ) { return CGAL_POLYNOMIAL_NS::SMALLER; }
+    return CGAL_POLYNOMIAL_NS::LARGER;
   }
 
 

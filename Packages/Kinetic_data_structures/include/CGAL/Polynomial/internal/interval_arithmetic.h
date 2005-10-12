@@ -8,7 +8,7 @@
   \todo wrapper support for boost::interval
 */
 
-#ifdef POLYNOMIAL_USE_CGAL
+#ifdef CGAL_POLYNOMIAL_USE_CGAL
 #include <CGAL/Interval_arithmetic.h>
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE

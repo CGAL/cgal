@@ -16,7 +16,7 @@ public:
   }
   Sign_at(){}
   typedef typename K::Root argument_type;
-  typedef POLYNOMIAL_NS::Sign result_type;
+  typedef CGAL_POLYNOMIAL_NS::Sign result_type;
 
   template <class T> 
   result_type operator()(const T &v) const {
@@ -29,7 +29,7 @@ public:
 protected:
 
   template <class R>
-  POLYNOMIAL_NS::Sign eval(const R &r) const {
+  CGAL_POLYNOMIAL_NS::Sign eval(const R &r) const {
     std::pair<double, double> i= to_interval(r);
     if (i.first==i.second){
       double d= i.second;
@@ -49,7 +49,7 @@ protected:
 	}
 	if (!s.empty()){
 	  if (s.top()==r){
-	    return POLYNOMIAL_NS::ZERO;
+	    return CGAL_POLYNOMIAL_NS::ZERO;
 	  }
 	  // now we know it is not a root
 	  
@@ -70,15 +70,15 @@ protected:
   }
 
   template <class RT>
-  POLYNOMIAL_NS::Sign eval(const POLYNOMIAL_NS::Explicit_root<RT> &r){
+  CGAL_POLYNOMIAL_NS::Sign eval(const CGAL_POLYNOMIAL_NS::Explicit_root<RT> &r){
     typedef  Explicit_root<RT> R;
     typename R::Representation rep= r.representation();
-    typedef  typename POLYNOMIAL_NS::Polynomial<typename R::Representation> Rep_poly;
-    typename POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Rep_poly> pc;
-    return POLYNOMIAL_NS::sign(pc(p_)(rep));
+    typedef  typename CGAL_POLYNOMIAL_NS::Polynomial<typename R::Representation> Rep_poly;
+    typename CGAL_POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Rep_poly> pc;
+    return CGAL_POLYNOMIAL_NS::sign(pc(p_)(rep));
   }
 
-  POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const {
+  CGAL_POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const {
     typedef typename K::Root_stack_traits::Sign_at SA;
     SA sa= k_.root_stack_traits_object().sign_at_object(p_);
     return sa(nt);

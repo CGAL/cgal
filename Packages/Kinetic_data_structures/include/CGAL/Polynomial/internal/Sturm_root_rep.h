@@ -921,14 +921,14 @@ CGAL_BEGIN_NAMESPACE
 
 template<class S, class I>
 double
-to_double(const POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
+to_double(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
 {
   return r.to_double();
 }
 
 template<class S, class I>
 std::pair<double,double>
-to_interval(const POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
+to_interval(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
 {
   return r.to_interval();
 }
@@ -940,10 +940,10 @@ CGAL_END_NAMESPACE
 
 namespace std {
   template <class S, class I>
-  struct numeric_limits<POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> >: 
-    public numeric_limits<typename POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT > {
-    typedef numeric_limits<POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> > P;
-    typedef POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> T;
+  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> >: 
+    public numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT > {
+    typedef numeric_limits<CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> > P;
+    typedef CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> T;
     static const bool is_specialized = true;
     static T min() throw() {return T(P::min());}
     static T max() throw() {return T(P::max());}

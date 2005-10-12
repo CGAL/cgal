@@ -1,5 +1,5 @@
-#ifndef ALTERNATION_COUNTER_H
-#define ALTERNATION_COUNTER_H
+#ifndef CGAL_ALTERNATION_COUNTER_H
+#define CGAL_ALTERNATION_COUNTER_H
 
 #include <CGAL/Polynomial/basic.h>
 

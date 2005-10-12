@@ -9,7 +9,7 @@ template<class Fn>
 class Filtered_sign_at_rational
 {
 protected:
-  typedef POLYNOMIAL_NS::Sign  Sign;
+  typedef CGAL_POLYNOMIAL_NS::Sign  Sign;
 
 
 public:
@@ -27,18 +27,18 @@ public:
   {
    
     {
-      POLYNOMIAL_NS::Interval_arithmetic_guard ig;
+      CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard ig;
       typename Fn::Interval_function::NT tin= to_interval(t);
       typename Fn::Interval_function::NT iv = p.interval_function()(tin);
-      Sign ret= POLYNOMIAL_NS::ZERO;
-      if (iv.sup() < 0) ret= POLYNOMIAL_NS::NEGATIVE;
-      else if (iv.inf() > 0) ret= POLYNOMIAL_NS::POSITIVE;
-      if (ret != POLYNOMIAL_NS::ZERO) {
+      Sign ret= CGAL_POLYNOMIAL_NS::ZERO;
+      if (iv.sup() < 0) ret= CGAL_POLYNOMIAL_NS::NEGATIVE;
+      else if (iv.inf() > 0) ret= CGAL_POLYNOMIAL_NS::POSITIVE;
+      if (ret != CGAL_POLYNOMIAL_NS::ZERO) {
 	//std::cout << "The sign of " << p << " at " << t << " is found to be " << ret << " using intervals" << std::endl;
 	return ret;
       }
     }
-    Sign ret= POLYNOMIAL_NS::sign(p.exact_function()(typename Fn::Exact_function::NT(t)));
+    Sign ret= CGAL_POLYNOMIAL_NS::sign(p.exact_function()(typename Fn::Exact_function::NT(t)));
     //std::cout << "The sign of " << p << " at " << t << " is found to be " << ret << " using intervals" << std::endl;
     return ret;
   }

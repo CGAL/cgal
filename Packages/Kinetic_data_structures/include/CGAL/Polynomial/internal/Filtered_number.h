@@ -251,12 +251,12 @@ CGAL_POLYNOMIAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 template <class NT>
-double to_double(const POLYNOMIAL_NS::Filtered_number<NT> &a) {
+double to_double(const CGAL_POLYNOMIAL_NS::Filtered_number<NT> &a) {
   return a.to_double();
 }
 
 template <class NT>
-std::pair<double, double> to_interval(const POLYNOMIAL_NS::Filtered_number<NT> &a) {
+std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::Filtered_number<NT> &a) {
   return a.to_interval();
 }
 
@@ -264,7 +264,7 @@ CGAL_END_NAMESPACE
 
 
 template <class NT>
-std::ostream &operator<<(std::ostream &out, const POLYNOMIAL_NS::Filtered_number<NT> &a) {
+std::ostream &operator<<(std::ostream &out, const CGAL_POLYNOMIAL_NS::Filtered_number<NT> &a) {
   a.write(out);
   return out;
 }
