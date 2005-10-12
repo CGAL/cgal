@@ -24,11 +24,15 @@
 // New style conversion routines
 // =======================================
 
-string int_to_string( int i) {
-    ostringstream out;
-    out << i;
-    return out.str();
+template< typename T >
+string anytype_to_string( T t ) {
+   ostringstream out;
+   out << t;
+   return out.str();
 }
+
+string   int_to_string( int   i ) { return anytype_to_string( i ); }
+string float_to_string( float f ) { return anytype_to_string( f ); }
 
 // Roman numbers up to 109
 static const char * const roman_numbers[110] = {

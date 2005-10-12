@@ -360,6 +360,7 @@ string expandMacro( const string& macro,
                                     else {
                                         repl = expandFirstMacro(
                                             parameters[index]);
+                                        //std::cout << "replacement text for \"" << parameters[index] << "\": " << repl << std::endl;
                                         expand_cache[index] = repl;
                                         cache_valid[index]  = true;
                                     }

@@ -408,7 +408,7 @@ main( int argc, char **argv) {
     if (! include_stack.push_file( config_path + sty_filename))
 	exit(1);
     yyparse();
-    std::cerr << "after configfile" << std::endl;
+    
     if (V_switch) {
 	cerr << endl;
 	exit(0);

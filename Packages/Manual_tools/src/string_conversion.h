@@ -22,6 +22,7 @@
 // =======================================
 
 string int_to_string( int i);
+string float_to_string( float f );
 
 // Returns the roman digit representation for a number i, 0 <= i <= 109.
 string int_to_roman_string( int i);

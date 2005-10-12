@@ -736,6 +736,31 @@ global_mod_to( const string&, string param[], size_t n, size_t opt) {
     return string();
 }
 
+
+string
+add( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    int sum = atoi( param[0].c_str() ) 
+            + atoi( param[1].c_str() );
+    std::cout << param[0] << " " << param[1] << std::endl;
+    std::cout << "performing lciAdd: " << sum << std::endl;
+    return int_to_string( sum );
+}
+
+string
+expand_n( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 2, 0);
+    int N      = atoi( param[0].c_str() ); 
+    string cmd = param[1];
+    string retval = string();
+    //std::cout << std::endl << "expand_n " << N << " " << cmd << " -> " << std::endl;
+    for( ; N > 0; --N ) 
+        retval += macroX( cmd );
+    //std::cout << retval << std::endl;
+    return retval;
+}
+
+
 // String conversion
 // ======================================================================
 string 
@@ -1175,6 +1200,18 @@ line_number( const string&, string param[], size_t n, size_t opt) {
     return "0";
 }
 
+string
+to_html_width( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    string width=param[0];
+    string::size_type pos = width.find( "\\textwidth" );
+    if( pos != string::npos ) {
+        width = width.substr( 0, pos );
+        return float_to_string( atof( width.c_str() ) * 100.0 ) + "\\%";
+    } 
+    return "0";
+}
+
 // Initialize
 // ======================================================================
 void init_internal_macros() {
@@ -1195,6 +1232,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciIfLess", if_less, 2);
     insertInternalGlobalMacro( "\\lciIfLessOrEqual", if_less_or_equal, 2);
     insertInternalGlobalMacro( "\\lciAddTo",  add_to, 2);
+    insertInternalGlobalMacro( "\\lciAdd",  add,    2);
     insertInternalGlobalMacro( "\\lciMultTo", mult_to, 2);
     insertInternalGlobalMacro( "\\lciDivTo",  div_to, 2);
     insertInternalGlobalMacro( "\\lciModTo",  mod_to, 2);
@@ -1202,6 +1240,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciGlobalMultTo", global_mult_to, 2);
     insertInternalGlobalMacro( "\\lciGlobalDivTo",  global_div_to, 2);
     insertInternalGlobalMacro( "\\lciGlobalModTo",  global_mod_to, 2);
+    
+    insertInternalGlobalMacro( "\\lciExpandN",      expand_n, 2);
 
     insertInternalGlobalMacro( "\\lciToUpper",      string_to_upper, 1);
     insertInternalGlobalMacro( "\\lciToRoman",      int_to_roman, 1);
@@ -1251,6 +1291,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
     
     insertInternalGlobalMacro( "\\lciIncludeOnly",  handle_include_only,  1);
+    insertInternalGlobalMacro( "\\lciToHtmlWidth",  to_html_width,  1);
 }
 
 // EOF //

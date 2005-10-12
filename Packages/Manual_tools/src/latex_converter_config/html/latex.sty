@@ -1540,36 +1540,52 @@
 % |     * Tabular Environment
 % +--------------------------------------------------------------------------
 
-\newenvironment{tabular}{\lciTabularBegin}{\lciTabularEnd}
-\newenvironment{tabular*}[1]{\lciTabularBegin}{\lciTabularEnd}
-\newenvironment{array}{\lciTabularBegin}{\lciTabularEnd}
-\newenvironment{eqnarray}{\[\lciTabularBegin{lll}}{\lciTabularEnd\]}
-\newenvironment{eqnarray*}{\[\lciTabularBegin{lll}}{\lciTabularEnd\]}
+\newenvironment{tabular}{\lciTabularBegin{}}{\lciTabularEnd}
+\newenvironment{tabular*}{\lciTabularBegin}{\lciTabularEnd}
+\newenvironment{array}{\lciTabularBegin{}}{\lciTabularEnd}
+\newenvironment{eqnarray}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
+\newenvironment{eqnarray*}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
 \newcommand{lefteqn}[1]{#1}
 
 \gdef\lcTabularBorder{0} %% Set this to [1..] to get a table with border [1..]
+
 %% Args: column format string
-\newcommand{\lciTabularBegin}[1]{\lciIfEqualExpanded{\lcTabularBorder}{0}{%
-    \lcRawHtml{
-<TABLE>}}{\lcRawHtml{
-<TABLE BORDER=}\lcTabularBorder\lcRawHtml{>}}%
-    \newcommand{\lciTabularColumns}{0}%
-    \newcommand{&}{\lciTabularSkip}%
-    \renewcommand{\\}{\lciTabularNL}%
-    \renewcommand{\\*}{\lciTabularNL}%
-    \renewcommand{\\@o}{\lciTabularNL}%
-    \renewcommand{\\*@o}{\lciTabularNL}%
-    \lciTabularCountColumns #1\*%
+\newcommand{\lciTabularBegin}[2]{
+  \lciIfEqual{#1}{}%
+    {\lcRawHtml{<TABLE}}%
+    {\lcRawHtml{<TABLE WIDTH="}\lciToHtmlWidth{#1}\lcRawHtml{"}}%
+  \lciIfEqualExpanded{\lcTabularBorder}{0}%
+    {}%
+    {\lcRawHtml{ BORDER=}\lcTabularBorder}%
+  \lcRawHtml{>}%
+  \newcommand{\lciTabularColumns}{0}%
+  \newcommand{&}{\lciTabularSkip}%
+  \renewcommand{\\}{\lciTabularNL}%
+  \renewcommand{\\*}{\lciTabularNL}%
+  \renewcommand{\\@o}{\lciTabularNL}%
+  \renewcommand{\\*@o}{\lciTabularNL}%
+  \newcommand{\tdAttrib}{}%  
+  \newcommand{\tdAttribOrig}{}%  
+  \newcommand{\popTDAttrib}{%
+    \lciTopStack{\tdAttrib}{\lcTabularLocalVariable}%
+    \lciPopStack{\tdAttrib}%
+    \lcTabularLocalVariable{}%
+  }%
+  \newcommand{\popTDAttribQuiet}{\lciPopStack{\tdAttrib}}%
+  \lciTabularCountColumns #2\*%  
+  \lciReverseStack{\tdAttrib}{\tdAttribOrig}%
+  \lciTabularContNL
 }
-\newcommand{\lciTabularBegin@om}{\lciTabularBegin{#2}}
+%\newcommand{\lciTabularBegin@om}{\lciTabularBegin{#2}}
 
 %% Args: a character of the column format string. Parses until \* detected.
-\newcommand{\lciTabularCountColumns}[1]{\lciIfEqual{#C1}{\*}{%
-        \lciTabularContNL}{%
-    \lciIfEqual{#C1}{l}{\lciAddTo{\lciTabularColumns}{1}}{%
-    \lciIfEqual{#C1}{c}{\lciAddTo{\lciTabularColumns}{1}}{%
-    \lciIfEqual{#C1}{r}{\lciAddTo{\lciTabularColumns}{1}}{%
-}}}\lciTabularCountColumns}}
+\newcommand{\lciTabularCountColumns}[1]{%
+  \lciIfEqual{#C1}{\*}{}{%
+    \lciIfEqual{#C1}{l}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=LEFT NOWRAP}} {%
+    \lciIfEqual{#C1}{c}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=CENTER NOWRAP}} {%
+    \lciIfEqual{#C1}{r}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=RIGHT NOWRAP}} {%
+    \lciIfEqual{#C1}{X}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=LEFT}} {%
+}}}}\lciTabularCountColumns}}
 
 %% Args: either \hline, \end, or next character in table entry
 \newcommand{\lciTabularContNL}[1]{\lciIfEqual{#C1}{\hline}{% \hline
@@ -1577,43 +1593,65 @@
     }{\lciIfEqual{#C1}{\end}{% \end{envir}
         \newcommand{\lciNoTabularClosing}{}#1%
     }{% else next character in table entry
-        \lcRawHtml{<TR>}\lciTabularCont #1}}}
+        \lcRawHtml{
+  <TR>}%
+\edef\tdAttrib{\tdAttribOrig}%
+\lciTabularCont{#1}}}}
 
 %% Args: either \multicolumn, or next character in table entry
-\newcommand{\lciTabularCont}[1]{\lciIfEqual{#C1}{\multicolumn}{% \multicolumn
-        \lciTabularMulticolumn%
-    }{% else next character in table entry
-        \lcRawHtml{<TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-}#1}}
+\newcommand{\lciTabularCont}[1]{%
+  \lciIfEqual{#C1}{\multicolumn}%
+    {\lciTabularMulticolumn}%
+    {\lcRawHtml{
+    <TD VALIGN=TOP }\popTDAttrib\lcRawHtml{>} 
+{#1}%
+    }% else next character in table entry
+}
 
 
 %% Args: total number of cols, another \hline, an \end or next char in table
 \newcommand{\lciTabularHline}[2]{%
-    \lciIfEqualExpanded{\lcTabularBorder}{0}{%
-        \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP COLSPAN=#XC1><HR>}%
-        %\lcRawHtml{<HR>}%  don't show second <HR>, it looks ugly.
-        \lcRawHtml{</TD></TR>}}{}%
-    \lciIfEqual{#C2}{\hline}{% \hline omit second \hline, if any.
-        \lciTabularContNL}{\lciTabularContNL #2}%
+    \lciIfEqualExpanded{\lcTabularBorder}{0}%
+    {%
+      \lcRawHtml{
+  <TR>
+    <TD VALIGN=TOP ALIGN=LEFT NOWRAP COLSPAN=#XC1><HR></TD>
+  </TR>}%
+    }%
+    {}%
+    \lciIfEqual{#C2}{\hline}
+      {\lciTabularContNL} % \hline omit second \hline, if any.
+      {\lciTabularContNL{#2}}%
 }
 
 %% Args: number of cols, column format string, table entry
 \newcommand{\lciTabularMulticolumn}[3]{%
-    \lcRawHtml{<TD ALIGN=LEFT VALIGN=TOP NOWRAP COLSPAN=#XC1>
+ \lciExpandN{#X1}{\popTDAttribQuiet}%
+    \lcRawHtml{
+    <TD }%
+    \lciIfEqual{#2}{l}{ALIGN=LEFT NOWRAP} {%
+    \lciIfEqual{#2}{c}{ALIGN=CENTER NOWRAP} {%
+    \lciIfEqual{#2}{r}{ALIGN=RIGHT NOWRAP}% 
+    {ALIGN=LEFT}}}% default alignment. 
+    \lcRawHtml{ VALIGN=TOP COLSPAN=#XC1>
 }#3}
 
-\newcommand{\lciTabularEnd}{\lciIfDefined{\lciNoTabularClosing}{}{\lcRawHtml{
-</TD></TR>}}\lcRawHtml{</TABLE>
+\newcommand{\lciTabularEnd}{%
+  \lciIfDefined{\lciNoTabularClosing}{}{\lcRawHtml{
+    </TD>
+  </TR>}}
+\lcRawHtml{</TABLE>
 }%% We rely on the scoping rules of definitions in environments to
   % restore the old definitions of & and \\.
   \gdef\lcTabularBorder{0}%
 }
 
 \newcommand{\lciTabularNL}{\lcRawHtml{
-    </TD></TR>}\lciTabularContNL}
+    </TD>
+  </TR>}\lciTabularContNL}
 
 \newcommand{\lciTabularSkip}{\lcRawHtml{
-        </TD>}\lciTabularCont}
+    </TD>}\lciTabularCont}
 
 \newcommand{\hline}{\lcRawHtml{<HR>}}
 \newcommand{\vline}{}
