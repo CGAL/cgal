@@ -120,7 +120,7 @@ int main(int argc,char * argv[])
         return(EXIT_FAILURE);
     }
 
-    // File names are:
+    // File name is:
     const char* input_filename  = argv[1];
 
 
