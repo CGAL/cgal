@@ -385,6 +385,23 @@ void test_vda(const VDA& vda)
   // testing validity
   CGAL_assertion( vda.is_valid() );
 
+  // testing existence of non-default constructors
+  {
+    VDA vda2(vda.voronoi_traits());
+    VDA vda3(vda.voronoi_traits(), vda.dual().geom_traits());
+
+    std::vector<typename VT::Site_2> vs;
+    for (Generator_iterator git = vda.generators_begin();
+	 git != vda.generators_end(); ++git) {
+      vs.push_back(*git);
+    }
+
+    VDA vda4(vs.begin(), vs.end());
+    VDA vda5(vs.begin(), vs.end(), vda.voronoi_traits());
+    VDA vda6(vs.begin(), vs.end(), vda.voronoi_traits(),
+	     vda.dual().geom_traits());
+  }
+
   // testing copy constructor
   VDA vda_copy(vda);
   size_type nv = vda.number_of_vertices();

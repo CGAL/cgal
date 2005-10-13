@@ -102,33 +102,33 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
   if ( dg.number_of_vertices() > 0 ) {
     test_is_convertible_to<Vertex_handle>(dg.all_vertices_begin());
     test_is_convertible_to<Vertex_handle>(dg.finite_vertices_begin());
-    test_value_type<Vertex>(*dg.all_vertices_begin());
-    test_value_type<Vertex>(*dg.finite_vertices_begin());
+    test_is_convertible_to<Vertex>(*dg.all_vertices_begin());
+    test_is_convertible_to<Vertex>(*dg.finite_vertices_begin());
   }
 
   if ( dg.number_of_faces() > 0 ) {
     test_is_convertible_to<Face_handle>(dg.all_faces_begin());
     test_is_convertible_to<Face_handle>(dg.finite_faces_begin());
-    test_value_type<Face>(*dg.all_faces_begin());
-    test_value_type<Face>(*dg.finite_faces_begin());
+    test_is_convertible_to<Face>(*dg.all_faces_begin());
+    test_is_convertible_to<Face>(*dg.finite_faces_begin());
   }
 
   if ( dg.tds().number_of_edges() > 0 ) {
-    test_value_type<Edge>(*dg.all_edges_begin());
-    test_value_type<Edge>(*dg.finite_edges_begin());    
+    test_is_convertible_to<Edge>(*dg.all_edges_begin());
+    test_is_convertible_to<Edge>(*dg.finite_edges_begin());    
   }
 
   if ( dg.dimension() == 2 ) {
     Vertex_circulator vc = dg.incident_vertices(dg.finite_vertex());
     test_is_convertible_to<Vertex_handle>(vc);
-    test_value_type<Vertex>(*vc);
+    test_is_convertible_to<Vertex>(*vc);
 
     Face_circulator fc = dg.incident_faces(dg.finite_vertex());
     test_is_convertible_to<Face_handle>(fc);
-    test_value_type<Face>(*fc);
+    test_is_convertible_to<Face>(*fc);
 
     Edge_circulator ec = dg.incident_edges(dg.finite_vertex());
-    test_value_type<Edge>(*ec);
+    test_is_convertible_to<Edge>(*ec);
   }
 
 
