@@ -282,23 +282,24 @@ public slots :
 		glClearColor(1.0, 1.0, 1.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
 		glEnable(GL_LINE_SMOOTH);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 		glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-		glEnable(GL_MULTISAMPLE);
-		
+
+
 		glLineWidth(0.5f);
 		
-		int XSize = width()  - 30;
-		int YSize = height() - 120;
+		int XSize = width();
+		int YSize = height();
 		int Diff = div(XSize - YSize, 2).quot;
 		if (Diff > 0)
-			glViewport ( 10+Diff, 40, YSize, height()-80);
+			glViewport ( 10+Diff, 40, YSize - 80, height() - 80);
 		else
 		{
 			Diff = -Diff;
-			glViewport ( 10, 40+Diff, width()-20, XSize);
+			glViewport ( 10, 40+Diff, width() - 20, XSize - 20);
 		}
 		
 		glMatrixMode ( GL_PROJECTION );
