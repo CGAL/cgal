@@ -52,6 +52,7 @@ public:
   Regular_grid_2(const int & m, const int & n,const FT & x, const FT & y);
   Regular_grid_2();
 	Regular_grid_2(std::ifstream & f, const FT & x, const FT & y){fill(f, x, y);}
+  ~Regular_grid_2(){delete [] vector_field;}
 	void fill(std::ifstream & f, const FT & x, const FT & y);
   inline typename Geom_traits::Iso_rectangle_2 iso_rectangle() const;
   std::pair<Vector_2,FT> get_field(const Point_2 & p) const;

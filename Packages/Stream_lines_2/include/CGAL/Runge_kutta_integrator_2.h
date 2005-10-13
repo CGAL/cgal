@@ -42,6 +42,7 @@ protected:
 public:
   Runge_kutta_integrator_2();
   Runge_kutta_integrator_2(FT integration_step);
+  ~Runge_kutta_integrator_2();
   Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const bool & index) const;
   Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, const bool & index) const;
   Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, Vector_2 v, const bool & index) const;
@@ -68,6 +69,13 @@ Runge_kutta_integrator_2(FT integration_step)
 	euler_integrator_2 = new Euler_integrator_2(integration_step);
   default_integration_step =
     euler_integrator_2->get_default_integration_step();
+}
+
+template <class VectorField_2>
+Runge_kutta_integrator_2<VectorField_2>::
+~Runge_kutta_integrator_2()
+{
+	delete euler_integrator_2;
 }
 
 template <class VectorField_2>
