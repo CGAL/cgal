@@ -1823,6 +1823,12 @@ Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_with
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_with_sharp_edge.off -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/cross.off -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/quint_tris.off -text
+Packages/Subdivision_surfaces_3/test/Subdivision_surfaces_3/data/corner.off -text
+Packages/Subdivision_surfaces_3/test/Subdivision_surfaces_3/data/corner_tris_with_hole.off -text
+Packages/Subdivision_surfaces_3/test/Subdivision_surfaces_3/data/corner_with_hole.off -text
+Packages/Subdivision_surfaces_3/test/Subdivision_surfaces_3/data/corner_with_sharp_edge.off -text
+Packages/Subdivision_surfaces_3/test/Subdivision_surfaces_3/data/cross.off -text
+Packages/Subdivision_surfaces_3/test/Subdivision_surfaces_3/data/quint_tris.off -text
 Packages/Surface_mesher/doc/scheme.fig -text
 Packages/Surface_mesher/doc/scheme.ps -text
 Packages/Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
