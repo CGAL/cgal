@@ -98,7 +98,7 @@ EOF
     echo_ok
     if [ -d html.orig ] ; then
       printf "    compare  ...  ";
-      if diff -w  -I "^<\!-- by cc_extract" html html.orig >& log; then
+      if diff -w  -I "^<\!-- by cc_extract" -I "<p class=\"TitlePageDate\">" html html.orig >& log; then
         echo_ok
       else
         echo_failed
@@ -117,10 +117,10 @@ EOF
   if [ ${REMOVE_WRAPPER_TEX} -eq 1 ]; then
     rm wrapper.tex
   fi
-  if [ $KeepHtml -eq 0 ] ; then
+  if [[ $KeepHtml -eq 0 && $ExitCode -eq 0 ]] ; then
     rm -rf html
   fi
-  if [ $KeepLog -eq 0 ] ; then
+  if [[ $KeepLog -eq 0 && $ExitCode -eq 0 ]] ; then
     rm -rf log wrapper.hlg
   fi
   cd ..    
