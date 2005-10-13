@@ -64,6 +64,7 @@ public:
     {
         static const char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
                                                  "taucs.factor.mf=true",
+                                                 "taucs.factor.ordering=metis",
                                                  NULL};
         m_options   = (options == NULL) ? MULTIFRONTAL_LLT : options;
         m_arguments = arguments;
