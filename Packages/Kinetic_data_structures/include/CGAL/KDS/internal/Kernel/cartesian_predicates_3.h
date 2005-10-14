@@ -123,7 +123,7 @@ struct Cartesian_power_test_3 {
     FT dst = dsx*dsx + dsy*dsy 
       + dsz*dsz - (d.weight()) + (e.weight());
     
-    return CGAL::det4x4_by_formula(dpx, dpy, dpz, dpt,
+    return ::CGAL::det4x4_by_formula(dpx, dpy, dpz, dpt,
 				   dqx, dqy, dqz, dqt,
 				   drx, dry, drz, drt,
 				   dsx, dsy, dsz, dst);

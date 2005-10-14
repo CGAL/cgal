@@ -101,7 +101,7 @@ struct Suggested_exact_simulation_types {
   typedef  Simulator_function_kernel::Root Time;
 
   //typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
-  typedef CGAL::KDS::Heap_pointer_pointer_event_queue<Time, double> Queue_base;
+  typedef CGAL::KDS::Heap_pointer_event_queue<Time> Queue_base;
   struct Event_queue: public Queue_base{
     Event_queue(const Time &start): Queue_base(start){}
   };

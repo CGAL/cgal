@@ -17,8 +17,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_QUEUE_H
-#define CGAL_KDS_QUEUE_H
+#ifndef CGAL_KDS_HEAP_POINTER_EVENT_QUEUE_H
+#define CGAL_KDS_HEAP_POINTER_EVENT_QUEUE_H
 #include <CGAL/KDS/basic.h>
 #include <iostream>
 #include <vector>
@@ -118,7 +118,7 @@ protected:
 CGAL_KDS_END_INTERNAL_NAMESPACE
 
 
-CGAL_KDS_BEGIN_NAMESPACE;
+CGAL_KDS_BEGIN_NAMESPACE
 
 
 template <class Priority> class Bin_pointer_event_queue;
@@ -340,7 +340,7 @@ public:
     for (; curi != endi; ++curi){
       Priority t=(*curi)->time();
       // HACK HACK because CGAL::to_double(t) won't compile with gcc 3.4
-      double d= CGAL::to_double(t); //CGAL::to_double(t);
+      double d= to_double(t); //CGAL::to_double(t);
       out << "<" << d << ": ";
       (*curi)->write(out);
       out << ">\n";
@@ -477,7 +477,7 @@ std::ostream &operator<<(std::ostream &out, const Heap_pointer_event_queue<D> &q
   return out;
 }
 
-CGAL_KDS_END_NAMESPACE;
+CGAL_KDS_END_NAMESPACE
 
 
 #endif
