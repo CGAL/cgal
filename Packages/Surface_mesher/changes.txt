@@ -1,3 +1,6 @@
+14 september 2005 Mariette
+  - put package Surface_mesher on cgal cvs serveur
+
 2 september 2005 Laurent Rineau
 - in Surface_mesher:
     - new file include/CGAL/Point_with_surface_index_geom_traits.h to have
