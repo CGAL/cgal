@@ -36,7 +36,7 @@
 #include <CGAL/KDS/Cartesian_kinetic_kernel.h>
 #include <CGAL/KDS/Derivitive_filter_function_kernel.h>
 #include <CGAL/KDS/Skip_even_roots_function_kernel.h>
-#include <CGAL/KDS/Two_list_pointer_event_queue.h>
+//#include <CGAL/KDS/Two_list_pointer_event_queue.h>
 #include <CGAL/KDS/Heap_pointer_event_queue.h>
 #include <CGAL/KDS/Simulator.h>
 
@@ -100,7 +100,8 @@ struct Suggested_exact_simulation_types {
     };*/
   typedef  Simulator_function_kernel::Root Time;
 
-  typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
+  //typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
+  typedef CGAL::KDS::Heap_pointer_pointer_event_queue<Time, double> Queue_base;
   struct Event_queue: public Queue_base{
     Event_queue(const Time &start): Queue_base(start){}
   };
@@ -121,8 +122,8 @@ struct Suggested_inexact_simulation_types {
 
   typedef  Simulator_function_kernel::Root Time;
 
-  typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
-  //typedef CGAL::KDS::Heap_pointer_event_queue<Time> Queue_base;
+  //typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
+  typedef CGAL::KDS::Heap_pointer_event_queue<Time> Queue_base;
   struct Event_queue: public Queue_base{
     Event_queue(const Time &start): Queue_base(start){}
   };
