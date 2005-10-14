@@ -151,6 +151,8 @@ class Voronoi_diagram_2
   typedef DG                                          Delaunay_graph;
   typedef Tr                                          Voronoi_traits;
 
+  typedef typename Delaunay_graph::Geom_traits        Geom_traits;
+
   typedef typename Delaunay_graph::size_type          size_type;
 
  protected:
@@ -389,8 +391,9 @@ public:
   //--------------
   // CONSTRUCTORS
   //--------------
-  Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(), tr_(tr) {}
+  Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits(),
+		    const Geom_traits& gt = Geom_traits())
+    : dual_(gt), tr_(tr) {}
 
   Voronoi_diagram_2(const Delaunay_graph& dg,
 		    const Voronoi_traits& tr = Voronoi_traits())
@@ -398,8 +401,9 @@ public:
 
   template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond,
-		    const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(first, beyond), tr_(tr) {}
+		    const Voronoi_traits& tr = Voronoi_traits(),
+		    const Geom_traits& gt = Geom_traits())
+    : dual_(first, beyond, gt), tr_(tr) {}
 
   Voronoi_diagram_2(const Voronoi_diagram_2& other)
     : dual_(other.dual_), tr_(other.tr_) {}

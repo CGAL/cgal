@@ -81,6 +81,8 @@ class Delaunay_graph_concept
     }
 
     bool is_edge(Face_handle, int) const { return false; }
+
+    std::size_t number_of_edges() const { return 0; }
   };
 
   typedef Data_structure_t<Vertex_handle,Face_handle> Data_structure;
@@ -232,6 +234,9 @@ class Delaunay_graph_concept
 
 
   void insert(const Site_2&) {}
+
+  template<class Iterator>
+  int insert(Iterator, Iterator) { return 0; }
 
   size_type number_of_vertices() const { return 0; }
   size_type number_of_faces() const { return 0; }

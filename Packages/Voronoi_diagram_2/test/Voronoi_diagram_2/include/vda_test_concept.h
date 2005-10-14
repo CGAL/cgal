@@ -47,7 +47,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
   typedef typename DG::Geom_traits                    Geom_traits;
   typedef typename DG::Triangulation_data_structure   Tds;
 
-  typedef typename DG::Site_2                         Site_2;
+  //  typedef typename DG::Site_2                         Site_2;
 
   typedef typename DG::Vertex                         Vertex;
   typedef typename DG::Face                           Face;
@@ -85,7 +85,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     dg3 = dg2;
 
     // constructors that take an iterator range
-    std::vector</*typename VT::*/Site_2> v;
+    std::vector<typename VT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(vt.get_site_2_object()(vit));
@@ -195,7 +195,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
   // testing insertion
   if ( dg.number_of_vertices() > 0 ) {
     DG dg1;
-    std::vector</*typename VT::*/Site_2> v;
+    std::vector<typename VT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(vt.get_site_2_object()(vit));
@@ -203,7 +203,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     CGAL_assertion( v.size() > 0 );
 
     // one-site insertion
-    /*typename VT::*/Site_2 s = v[0];
+    typename VT::Site_2 s = v[0];
     dg1.insert(s);
 
     // insertion that take an iterator range

@@ -1,3 +1,18 @@
+15 Oct 2005:  Menelaos Karavelas
+- changes towards the new design of the traits
+
+13 Oct 2005:  Menelaos Karavelas
+Testing:
+- removed unnecessary function and added testing for non-default
+  constructors for the Voronoi_diagram_2 class
+Code:
+- modified constructors of Voronoi_diagram_2 to take an instance of
+  the geometric traits of the Delaunay graph.
+- added type for the geometric traits of the Delaunay graph.
+Documentation:
+- added afore-mentioned changes in constructors and type for the
+  Voronoi_diagram_2 class.
+
 12 Oct 2005:  Menelaos Karavelas
 - modified doc according to new design
 
