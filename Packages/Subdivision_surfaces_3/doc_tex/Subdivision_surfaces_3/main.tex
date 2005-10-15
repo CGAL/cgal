@@ -31,11 +31,6 @@
     \setlength{\unitlength}{1mm}
     \begin{picture}(0,0)(0.0,0.0)
       \put (78,25){% textwidth = 156mm
-          %\includegraphics[width=0.095\textwidth]{\FIGDIR/rook_mesh}
-          %\includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt1}
-          %\includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt2}
-          %\includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf1}
-          %\includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf2}
           \includegraphics[width=0.45\textwidth]{\FIGDIR/QTSub}
       }
     \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
@@ -59,11 +54,11 @@ takes advantage of this separation of topology and geometry,
 and takes a cue from the policy-based design \cite{cgal:sp-mrlbg-05}.
 
  
-%% \begin{ccHtmlOnly}
-%%     <CENTER>
-%%         <img src="./fig/QTSub.gif" alt="QT subdivision on a rook model"><P>
-%%     </CENTER>
-%% \end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+     <CENTER>
+         <img src="./FIG/QTSub.jpg" alt="QT subdivision on a rook model"><P>
+     </CENTER>
+\end{ccHtmlOnly}
 
 % +------------------------------------------------------------------------+
 \section{Subdivision Algorithms}
@@ -113,12 +108,11 @@ Catmull-Clark subdivision \cite{cgal:cc-rgbss-78}, which are shown below.
   \end{center}
 \end{ccTexOnly}
 
-%\begin{ccHtmlOnly}
-%  <CENTER>
-%  <A HREF="./FIG/cc_mask.gif">
-%     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"></A><P>
-%  </CENTER>
-%\end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+  <CENTER>
+     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"></A><P>
+  </CENTER>
+\end{ccHtmlOnly}
 
 The weights shown here are unnormalized, and $n$ is the valence 
 of the vertex. 
@@ -216,12 +210,11 @@ respectively.
   \end{center}
 \end{ccTexOnly}
 
-%\begin{ccHtmlOnly}
-%  <CENTER>
-%  <A HREF="./FIG/RefSchemes.gif">
-%     <img src="./FIG/RefSchemes.gif" alt="Refinement Hosts"></A><P>
-%  </CENTER>
-%\end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+  <CENTER>
+     <img src="./FIG/RefSchemes.gif" alt="Refinement Hosts"></A><P>
+  </CENTER>
+\end{ccHtmlOnly}
 
 
 \begin{ccExampleCode}
