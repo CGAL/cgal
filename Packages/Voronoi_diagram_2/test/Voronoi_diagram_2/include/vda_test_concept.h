@@ -88,7 +88,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     std::vector<typename VT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
-      v.push_back(vt.get_site_2_object()(vit));
+      v.push_back(vt.access_site_2_object()(vit));
     }
 #ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
     // HACK UNTIL Triangulation_hierarchy_2 conforms with the concept
@@ -198,7 +198,7 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     std::vector<typename VT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
-      v.push_back(vt.get_site_2_object()(vit));
+      v.push_back(vt.access_site_2_object()(vit));
     }
     CGAL_assertion( v.size() > 0 );
 
@@ -227,13 +227,15 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
 
   typedef typename VT::Edge_degeneracy_tester  EDT;
   typedef typename VT::Face_degeneracy_tester  FDT;
+  typedef typename VT::Access_site_2           Access_site_2;
+  typedef typename VT::Construct_dual_point_2  Construct_dual_point_2;
   typedef typename VT::Has_nearest_site_2      Has_ns;
-
-  typedef typename VT::Vertex_handle           Vertex_handle;
 
   // test nested concepts
   test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
   test_fdt_concept( dg, vt.face_degeneracy_tester_object() );
+  test_as_concept( dg, vt.access_site_2_object() );
+  test_cdp_concept( dg, vt.construct_dual_point_2_object() );
   test_ns_concept( dg, vt, Has_ns() );
 }
 
@@ -295,6 +297,32 @@ void test_fdt_concept(const DG& dg, const FDT& fdt)
   Vertex_handle v = dg.finite_vertex();
   bool b = fdt(dg, v);
   kill_warning(b);
+}
+
+//============================================================================
+//============================================================================
+
+template<class DG, class AS>
+void test_as_concept(const DG&, const AS&)
+{
+  std::cerr << "***********************************************" << std::endl;
+  std::cerr << "***********************************************" << std::endl;
+  std::cerr << "*************** not ready yet *****************" << std::endl;
+  std::cerr << "***********************************************" << std::endl;
+  std::cerr << "***********************************************" << std::endl;
+}
+
+//============================================================================
+//============================================================================
+
+template<class DG, class CDP>
+void test_cdp_concept(const DG&, const CDP&)
+{
+  std::cerr << "***********************************************" << std::endl;
+  std::cerr << "***********************************************" << std::endl;
+  std::cerr << "*************** not ready yet *****************" << std::endl;
+  std::cerr << "***********************************************" << std::endl;
+  std::cerr << "***********************************************" << std::endl;
 }
 
 //============================================================================

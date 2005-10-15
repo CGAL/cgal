@@ -1,3 +1,6 @@
+16 Oct 2005:  Menelaos Karavelas
+- more changes towards the new design of the traits
+
 15 Oct 2005:  Menelaos Karavelas
 - changes towards the new design of the traits
 

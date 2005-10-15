@@ -26,6 +26,7 @@
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
 #ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
 #include <CGAL/Voronoi_diagram_2/Identity_Voronoi_traits_2.h>
@@ -37,45 +38,23 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class AG2>
-class Apollonius_graph_Voronoi_traits_2
+struct Apollonius_graph_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <AG2,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_edge_tester_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename AG2::Site_2,AG2,Tag_true>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_dual_point_2<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,
+						     AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_nearest_site_2<AG2> >
 {
- private:
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
-  <AG2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_edge_tester_2<AG2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<AG2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_nearest_site_2<AG2> >
-  Base;
-
-  typedef Apollonius_graph_Voronoi_traits_2<AG2>  Self;
-
- public:
   typedef typename AG2::Point_2                   Point_2;
   typedef typename AG2::Site_2                    Site_2;
-  typedef typename Base::Vertex_handle            Vertex_handle;
-  typedef typename Base::Face_handle              Face_handle;
 
   typedef Tag_true                                Has_get_conflicts;
   typedef Tag_true                                Has_insert;
   typedef Tag_true                                Has_remove;
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<Site_2,Vertex_handle,Tag_true>
-  Get_site_2;
-
-  Get_site_2 get_site_2_object() const { return Get_site_2(); }
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_dual_point_2<AG2>
-  Get_point_2;
-
-  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 

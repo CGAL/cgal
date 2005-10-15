@@ -348,7 +348,7 @@ class Voronoi_diagram_2
 
     Site_2& operator()(const Face& f) const {
       static Site_2 s;
-      s = Voronoi_traits().get_site_2_object()(f.dual());
+      s = Voronoi_traits().access_site_2_object()(f.dual());
       return s;
     }
   };

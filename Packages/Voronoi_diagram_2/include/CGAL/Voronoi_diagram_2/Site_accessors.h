@@ -29,8 +29,8 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class S, class H, class Use_const_ref> struct Site_accessor;
-template<class S, class H, class Use_const_ref> struct Point_accessor;
+template<class S, class DG, class Use_const_ref> struct Site_accessor;
+template<class S, class DG, class Use_const_ref> struct Point_accessor;
 
 //=========================================================================
 
@@ -50,11 +50,11 @@ struct Const_ref_chooser<T,Tag_false>
 
 //=========================================================================
 
-template<class S, class Vertex_handle, class Use_const_ref>
+template<class S, class DG, class Use_const_ref>
 struct Site_accessor
 {
   typedef typename Const_ref_chooser<S,Use_const_ref>::Type  result_type;
-  typedef Vertex_handle                                      value_type;
+  typedef typename DG::Vertex_handle                         Vertex_handle;
   typedef Arity_tag<1>                                       Arity;
 
   result_type operator()(const Vertex_handle& v) const {
@@ -64,11 +64,11 @@ struct Site_accessor
 
 //=========================================================================
 
-template<class P, class Vertex_handle, class Use_const_ref>
+template<class P, class DG, class Use_const_ref>
 struct Point_accessor
 {
   typedef typename Const_ref_chooser<P,Use_const_ref>::Type  result_type;
-  typedef Vertex_handle                                      value_type;
+  typedef typename DG::Vertex_handle                         Vertex_handle;
   typedef Arity_tag<1>                                       Arity;
 
   result_type operator()(const Vertex_handle& v) const {

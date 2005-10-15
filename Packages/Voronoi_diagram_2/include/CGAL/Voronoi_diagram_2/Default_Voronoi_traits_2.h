@@ -48,70 +48,76 @@ struct Default_face_degeneracy_tester
 
 //=========================================================================
 
-template<class DG, class ET, class FT, class NS>
+struct Null_functor
+{
+  Null_functor() {}
+  template<typename T> Null_functor(T t) {}
+};
+
+//=========================================================================
+
+template<class Functor>
+struct Functor_exists
+{
+  typedef Tag_true  Value;
+};
+
+template<>
+struct Functor_exists<Null_functor>
+{
+  typedef Tag_false Value;
+};
+
+//=========================================================================
+
+template<class DG, class ET, class FT, class AS, class CDP,
+	 class SI, class NS>
 class Default_Voronoi_traits_2
 {
  private:
-  typedef Default_Voronoi_traits_2<DG,ET,FT,NS>   Self;
+  typedef Default_Voronoi_traits_2<DG,ET,FT,AS,CDP,SI,NS>   Self;
 
  public:
-  typedef DG  Delaunay_graph;
-  typedef ET  Edge_degeneracy_tester;
-  typedef FT  Face_degeneracy_tester;
-  typedef NS  Nearest_site_2;
+  typedef DG   Delaunay_graph;
+  typedef ET   Edge_degeneracy_tester;
+  typedef FT   Face_degeneracy_tester;
+  typedef AS   Access_site_2;
+  typedef CDP  Construct_dual_point_2;
 
-  typedef Tag_true Has_nearest_site_2;
+  typedef NS   Nearest_site_2;
+  typedef SI   Site_inserter;
 
-  typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
-  typedef typename Delaunay_graph::Face_handle    Face_handle;
+  typedef typename Functor_exists<Nearest_site_2>::Value  Has_nearest_site_2;
+  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+
+  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
+    return e_tester_;
+  }
+
+  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
+    return f_tester_;
+  }
+
+  Access_site_2 access_site_2_object() const {
+    return Access_site_2();
+  }
+
+  Construct_dual_point_2 construct_dual_point_2_object() const {
+    return Construct_dual_point_2();
+  }
 
   Nearest_site_2 nearest_site_2_object() const {
     return Nearest_site_2();
   }
 
-  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
-    return e_tester_;
-  }
-
-  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
-    return f_tester_;
+  Site_inserter site_inserter_object() const {
+    return Site_inserter();
   }
 
  protected:
   Edge_degeneracy_tester e_tester_;
   Face_degeneracy_tester f_tester_;
 };
-
-
-template<class DG, class ET, class FT>
-class Default_Voronoi_traits_2<DG,ET,FT,Tag_false>
-{
- private:
-  typedef Default_Voronoi_traits_2<DG,ET,FT,Tag_false>   Self;
-
- public:
-  typedef DG  Delaunay_graph;
-  typedef ET  Edge_degeneracy_tester;
-  typedef FT  Face_degeneracy_tester;
-
-  typedef Tag_false Has_nearest_site_2;
-
-  typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
-
-  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
-    return e_tester_;
-  }
-
-  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
-    return f_tester_;
-  }
-
- protected:
-  Edge_degeneracy_tester e_tester_;
-  Face_degeneracy_tester f_tester_;
-};
-
-
 
 
 //=========================================================================

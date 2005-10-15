@@ -26,6 +26,7 @@
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -35,46 +36,24 @@ CGAL_BEGIN_NAMESPACE
 
 
 template<class DT2>
-class Delaunay_triangulation_Voronoi_traits_2
+struct Delaunay_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <DT2,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_edge_tester_2<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
+   <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_dual_point_2<DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
+   <typename DT2::Geom_traits::Point_2,DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
 {
- private:
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
-  <DT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_edge_tester_2<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
-  Base;
-
-  typedef Delaunay_triangulation_Voronoi_traits_2<DT2>  Self;
-
- public:
   typedef typename DT2::Geom_traits::Point_2      Point_2;
   typedef Point_2                                 Site_2;
-  typedef typename Base::Vertex_handle            Vertex_handle;
-  typedef typename Base::Face_handle              Face_handle;
 
   typedef Tag_true                                Has_get_conflicts;
   typedef Tag_true                                Has_insert;
   typedef Tag_true                                Has_remove;
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor<Point_2,Vertex_handle,Tag_true>
-  Get_site_2;
-
-  Get_site_2 get_site_2_object() const { return Get_site_2(); }
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_dual_point_2<DT2>
-  Get_point_2;
-
-  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 

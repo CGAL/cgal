@@ -52,10 +52,6 @@ class Vertex
   typedef typename Delaunay_graph::Vertex_handle     Delaunay_vertex_handle;
 
  private:
-  typedef typename VDA::Voronoi_traits::Get_site_2::result_type
-  Get_site_2_site;
-
- private:
   Delaunay_face_handle find_valid_vertex(const Delaunay_face_handle& f) const
   {
     return Find_valid_vertex<VDA>()(vda_, f);
@@ -182,13 +178,7 @@ class Vertex
     Delaunay_face_handle fvalid = find_valid_vertex(f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
 
-#if 1
-    return vda_->voronoi_traits().get_point_2_object()(fvalid);
-#else
-    return VDA::Voronoi_traits::make_vertex(fvalid->vertex(0),
-					    fvalid->vertex(1),
-					    fvalid->vertex(2));
-#endif
+    return vda_->voronoi_traits().construct_dual_point_2_object()(fvalid);
   }
 
   // DUAL FEATURE

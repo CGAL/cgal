@@ -38,45 +38,23 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class SVD2>
-class Segment_Voronoi_diagram_Voronoi_traits_2
+struct Segment_Voronoi_diagram_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <SVD2,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SVD2::Site_2,
+					     SVD2,Tag_false>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Null_functor,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
 {
- private:
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
-  <SVD2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
-  Base;
-
-  typedef Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>  Self;
-
- public:
   typedef typename SVD2::Point_2                   Point_2;
   typedef typename SVD2::Site_2                    Site_2;
-  typedef typename SVD2::Vertex_handle             Vertex_handle;
-  typedef typename SVD2::Face_handle               Face_handle;
 
   typedef Tag_false                                Has_get_conflicts;
   typedef Tag_false                                Has_insert;
   typedef Tag_false                                Has_remove;
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<Site_2,Vertex_handle,Tag_false>
-  Get_site_2;
-
-  Get_site_2 get_site_2_object() const { return Get_site_2(); }
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>
-  Get_point_2;
-
-  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 

@@ -26,6 +26,7 @@
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
 
 #ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
@@ -38,45 +39,24 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class RT2>
-class Regular_triangulation_Voronoi_traits_2
+struct Regular_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
   <RT2,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_edge_tester_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
+   <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_dual_point_2<RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
+   <typename RT2::Geom_traits::Point_2,RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
 {
- private:
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
-  <RT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_edge_tester_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
-  Base;
-
-  typedef Regular_triangulation_Voronoi_traits_2<RT2>  Self;
-
- public:
   typedef typename RT2::Geom_traits::Point_2           Point_2;
   typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
-  typedef typename RT2::Vertex_handle                  Vertex_handle;
-  typedef typename RT2::Face_handle                    Face_handle;
 
   typedef Tag_true                                Has_get_conflicts;
   typedef Tag_true                                Has_insert;
   typedef Tag_true                                Has_remove;
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor<Point_2,Vertex_handle,Tag_true>
-  Get_site_2;
-
-  Get_site_2 get_site_2_object() const { return Get_site_2(); }
-
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_dual_point_2<RT2>
-  Get_point_2;
-
-  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 

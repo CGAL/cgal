@@ -23,6 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -86,19 +87,12 @@ class Voronoi_traits_concept
   typedef typename DG::Vertex_handle  Vertex_handle;
   typedef typename DG::Face_handle    Face_handle;
 
-  struct Get_site_2 {
-    typedef Site_2         result_type;
-    typedef Vertex_handle  value_type;
-    typedef Arity_tag<1>   Arity;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<Site_2,DG,Tag_false>
+  Access_site_2;
 
-    result_type operator()(const Vertex_handle& v) const {
-      return Site_2();
-    }
-  };
+  Access_site_2 access_site_2_object() const { return Access_site_2(); }
 
-  Get_site_2 get_site_2_object() const { return Get_site_2(); }
-
-  struct Get_point_2 {
+  struct Construct_dual_point_2 {
     typedef Point_2       result_type;
     typedef Face_handle   value_type;
     typedef Arity_tag<1>  Arity;
@@ -108,7 +102,9 @@ class Voronoi_traits_concept
     }
   };
 
-  Get_point_2 get_point_2_object() const { return Get_point_2(); }
+  Construct_dual_point_2 construct_dual_point_2_object() const {
+    return Construct_dual_point_2();
+  }
 
  private:
   Edge_degeneracy_tester e_tester_;
