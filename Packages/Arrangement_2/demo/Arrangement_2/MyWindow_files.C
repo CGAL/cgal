@@ -28,6 +28,9 @@
 #include "demo_tab.h"
 #include "Conic_reader.h"
 
+#include <CGAL/IO/Arrangement_2_writer.h>
+#include <CGAL/IO/Arrangement_2_reader.h>
+#include <CGAL/IO/Arrangement_2_ascii_formatter.h>
 
 
 /*! open a segment file and add new tab */
@@ -243,40 +246,38 @@ void MyWindow::fileOpenPm()
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-      /*Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
-       (myBar->currentPage());*/
-      //w_demo_p->m_curves_arr->read(inputFile);
-	  /*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
-    	w_demo_p->empty = true;
-      else 
-        w_demo_p->empty = false;*/
+       (myBar->currentPage());
+     CGAL::Arrangement_2_reader<Seg_arr> arr_reader(*w_demo_p->m_curves_arr);
+     CGAL::Arrangement_2_ascii_formatter<Seg_arr> formatter(inputFile);
+     arr_reader(formatter);
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
-    {// because the operator >> in Arr_polyline_traits doesn't work...
-     /* Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+    {
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
-       (myBar->currentPage());*/
-       //w_demo_p->m_curves_arr->read(inputFile);
-
-	   /*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
-	     w_demo_p->empty = false;
-       else 
-         w_demo_p->empty = true;*/
+       (myBar->currentPage());
+     CGAL::Arrangement_2_reader<Pol_arr> arr_reader(*w_demo_p->m_curves_arr);
+     CGAL::Arrangement_2_ascii_formatter<Pol_arr> formatter(inputFile);
+     arr_reader(formatter);
 	   break;
     }
    case CONIC_TRAITS: // dosen't work !!
     {
-  //   Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
-  //     static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
-  //     (myBar->currentPage());
-	 //w_demo_p->m_curves_arr->read(inputFile);
-     break;
+      /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+       (myBar->currentPage());
+     CGAL::Arrangement_2_reader<Conic_arr> arr_reader(*w_demo_p->m_curves_arr);
+     CGAL::Arrangement_2_ascii_formatter<Conic_arr> formatter(inputFile);
+     arr_reader(formatter);
+     break;*/
     }
   }  
   
   inputFile.close();
+
   
   w_demo_p1->set_window(w_demo_p1->bbox.xmin() , w_demo_p1->bbox.xmax() , 
                      w_demo_p1->bbox.ymin() , w_demo_p1->bbox.ymax());
@@ -286,7 +287,7 @@ void MyWindow::fileOpenPm()
   updateMode( dragMode );
   something_changed();
 
-  setCaption( QString( "Planar Map -- %1" ).arg( m_filename ) );
+  setCaption( QString( "Arrangement -- %1" ).arg( m_filename ) );
   statusBar()->message( QString( "Opened \'%1\'" ).arg( m_filename ), 2000 );
 
 }
@@ -320,24 +321,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     Conic_reader<Conic_traits>  reader;
     std::list<Arr_conic_2>               curve_list;
     reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
-    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
-    /*char dummy[256];
-    Arr_conic_2 cv;
-    int count;
-    inputFile >> count;
-    inputFile.getline(dummy, sizeof(dummy));
-    for (int i = 0; i < count; i++) 
-    {
-      ReadCurve(inputFile, cv);
-      
-      CGAL::insert(*(w_demo_p->m_curves_arr), cv);
-      
-      CGAL::Bbox_2 curve_bbox = cv.bbox();
-      if (i == 0)
-        w_demo->bbox = curve_bbox;
-      else
-        w_demo->bbox = w_demo->bbox + curve_bbox;
-    }	*/
+    CGAL::insert_curves (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
   }
   
   else if (w_demo->traits_type == POLYLINE_TRAITS)
@@ -376,7 +360,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
       pol_list.push_back(curve);
     }
-    CGAL::insert(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
+    CGAL::insert_curves(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
   }
   
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -409,7 +393,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       seg_list.push_back(curve);
     }
     
-    CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
+    CGAL::insert_curves(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
   }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 
                      w_demo->bbox.ymin() , w_demo->bbox.ymax());
@@ -588,8 +572,8 @@ void MyWindow::skip_comments( std::ifstream& is, char* one_line )
 void MyWindow::fileSaveAs()
 {
   QString filename =
-    QFileDialog::getSaveFileName(QString::null, "Planar Map (*.pm)", this,
-                                 "file save as", "Planar Map -- File Save As");
+    QFileDialog::getSaveFileName(QString::null, "Arrangement (*.arr)", this,
+                                 "file save as", "Arrangement -- File Save As");
   if ( !filename.isEmpty() ) 
   {
     int answer = 0;
@@ -632,35 +616,40 @@ void MyWindow::fileSave()
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-    /* Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
+     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
-       (myBar->currentPage());*/
-     //outFile << w_demo_p->m_curves_arr;
+       (myBar->currentPage());
+     CGAL::Arrangement_2_writer<Seg_arr> arr_writer(*w_demo_p->m_curves_arr);
+     CGAL::Arrangement_2_ascii_formatter<Seg_arr> formatter(outFile);
+     arr_writer(formatter);
      break;
     }
    case POLYLINE_TRAITS:
     {
-     /*Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
-       (myBar->currentPage());*/
-     //outFile << w_demo_p->m_curves_arr;
+       (myBar->currentPage());
+     CGAL::Arrangement_2_writer<Pol_arr> arr_writer(*w_demo_p->m_curves_arr);
+     CGAL::Arrangement_2_ascii_formatter<Pol_arr> formatter(outFile);
+     arr_writer(formatter);
      break;
     }
    case CONIC_TRAITS:
     {
-    /* Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
+      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
-       (myBar->currentPage());*/
-     //outFile << w_demo_p->m_curves_arr;
+       (myBar->currentPage());
+     CGAL::Arrangement_2_writer<Conic_arr> arr_writer(*w_demo_p->m_curves_arr);
+     CGAL::Arrangement_2_ascii_formatter<Conic_arr> formatter(outFile);
+     arr_writer(formatter);
      break;
     }
   }  
   
   outFile.close();
   
-  setCaption( QString( "Planar Map -- %1" ).arg( m_filename ) );
+  setCaption( QString( "Arrangement -- %1" ).arg( m_filename ) );
   statusBar()->message( QString( "Saved \'%1\'" ).arg( m_filename ), 2000 );
-  //m_changed = FALSE;
 }
 
 /*! save planar map to post script */

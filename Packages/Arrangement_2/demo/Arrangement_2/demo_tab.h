@@ -238,7 +238,7 @@ private:
   typedef typename Tab_traits::Lanmarks_point_location Lanmarks_point_location;
 
   typedef My_observer<Arrangement_2>                    Observer;
-  typedef typename Arrangement_2::Origin_curve_iterator Origin_curve_iterator;
+  typedef typename Arrangement_2::Originating_curve_iterator Originating_curve_iterator;
   typedef typename Arrangement_2::Curve_edge_iterator   Curve_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;
 
@@ -685,13 +685,13 @@ public:
       }
       if(remove_org_curve)
       {
-        Origin_curve_iterator  ocit, temp;
-        ocit  = m_curves_arr->origin_curves_begin (removable_halfedge);
-        while(ocit != m_curves_arr->origin_curves_end (removable_halfedge))
+        Originating_curve_iterator  ocit, temp;
+        ocit  = m_curves_arr->originating_curves_begin (removable_halfedge);
+        while(ocit != m_curves_arr->originating_curves_end (removable_halfedge))
         {
           temp = ocit;
           ++temp;
-          CGAL::remove(*m_curves_arr, ocit->handle());
+          CGAL::remove_curve(*m_curves_arr, ocit->handle());
           ocit = temp;
         }
       }
@@ -925,9 +925,9 @@ public:
       if (remove_org_curve)
       {
 
-        Origin_curve_iterator  ocit, temp;
-        ocit  = m_curves_arr->origin_curves_begin (removable_halfedge);
-        while(ocit != m_curves_arr->origin_curves_end (removable_halfedge))
+        Originating_curve_iterator  ocit, temp;
+        ocit  = m_curves_arr->originating_curves_begin (removable_halfedge);
+        while(ocit != m_curves_arr->originating_curves_end (removable_halfedge))
         {
           temp = ocit;
           ++temp;
@@ -974,9 +974,9 @@ public:
     {
       setColor(Qt::red);  // highlight the removable edge with red color
 
-       Origin_curve_iterator  ocit, temp;
-       ocit  = m_curves_arr->origin_curves_begin (removable_halfedge);
-       while(ocit != m_curves_arr->origin_curves_end (removable_halfedge))
+       Originating_curve_iterator  ocit, temp;
+       ocit  = m_curves_arr->originating_curves_begin (removable_halfedge);
+       while(ocit != m_curves_arr->originating_curves_end (removable_halfedge))
        {
          temp = ocit;
          ++temp;
@@ -1615,7 +1615,7 @@ public:
     Arr_seg_point_2 source(coord_source.x(), coord_source.y());
     Arr_seg_point_2 target(coord_target.x(), coord_target.y());
     Arr_seg_2 seg (source, target);
-    CGAL::insert(*(w->m_curves_arr), seg);
+    CGAL::insert_curve(*(w->m_curves_arr), seg);
     CGAL::Bbox_2 curve_bbox = seg.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
@@ -2043,7 +2043,7 @@ private:
   void get_polyline(Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
     Arr_pol_2  pol (points.begin(), points.end()); 
-    CGAL::insert(*(w->m_curves_arr), pol);
+    CGAL::insert_curve(*(w->m_curves_arr), pol);
     CGAL::Bbox_2 curve_bbox = pol.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
@@ -2494,7 +2494,7 @@ public:
         break;
       }
   
-      CGAL::insert(*(w->m_curves_arr), cv);
+      CGAL::insert_curve(*(w->m_curves_arr), cv);
       CGAL::Bbox_2 curve_bbox = cv.bbox();
       w->bbox = w->bbox + curve_bbox;
       w->active = false;
