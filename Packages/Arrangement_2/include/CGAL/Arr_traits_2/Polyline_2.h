@@ -439,7 +439,7 @@ std::ostream& operator<< (std::ostream & os,
 
 /*! Input operator for a polyline. */
 template <class SegmentTraits>
-std::istream operator>> (std::istream& is,
+std::istream& operator>> (std::istream& is,
 			 Polyline_2<SegmentTraits>& pl)
 {
   typedef Polyline_2<SegmentTraits>  Curve_2;
