@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
-#include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -32,46 +32,21 @@ CGAL_BEGIN_NAMESPACE
 template<class DG>
 class Voronoi_traits_concept
 {
- public:
+private:
+  typedef Voronoi_traits_concept<DG>       Self;
+
+public:
   typedef DG                               Delaunay_graph;
 
   typedef CGAL::Object    Object;
   typedef Tag_false       Has_nearest_site_2;
-  typedef Tag_false       Has_get_conflicts;
-  typedef Tag_false       Has_insert;
+  typedef Tag_false       Has_site_inserter;
   typedef Tag_false       Has_remove;
 
-  struct Edge_degeneracy_tester
-  {
-    typedef DG  Delaunay_graph;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_degeneracy_tester<DG>
+  Edge_degeneracy_tester;
 
-    typedef typename DG::Edge                   Edge;
-    typedef typename DG::Face_handle            Face_handle;
-    typedef typename DG::Edge_circulator        Edge_circulator;
-    typedef typename DG::All_edges_iterator     All_edges_iterator;
-    typedef typename DG::Finite_edges_iterator  Finite_edges_iterator;
-
-    typedef bool           result_type;
-    typedef Arity_tag<2>   Arity;
-
-    bool operator()(const Delaunay_graph&, const Edge&) const {
-      return false;
-    }
-
-    bool operator()(const Delaunay_graph&, const Face_handle&, int) const {
-      return false;
-    }
-
-    bool operator()(const Delaunay_graph&, const Edge_circulator&) const {
-      return false;
-    }
-
-    bool operator()(const Delaunay_graph&, const All_edges_iterator&) const {
-      return false;
-    } 
-  };
-
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Default_face_degeneracy_tester<DG>
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DG>
   Face_degeneracy_tester;
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
@@ -94,7 +69,7 @@ class Voronoi_traits_concept
 
   struct Construct_dual_point_2 {
     typedef Point_2       result_type;
-    typedef Face_handle   value_type;
+    typedef typename DG::Face_handle   Face_handle;
     typedef Arity_tag<1>  Arity;
 
     Point_2 operator()(const Face_handle& f) const {
@@ -106,7 +81,21 @@ class Voronoi_traits_concept
     return Construct_dual_point_2();
   }
 
- private:
+  void clear() {
+    e_tester_.clear();
+    f_tester_.clear();
+  }
+
+  void swap(Self& other) {
+    e_tester_.swap(other.e_tester_);
+    f_tester_.swap(other.f_tester_);
+  }
+
+  bool is_valid() const {
+    return e_tester_.is_valid() && f_tester_.is_valid();
+  }
+
+private:
   Edge_degeneracy_tester e_tester_;
   Face_degeneracy_tester f_tester_;
 };
