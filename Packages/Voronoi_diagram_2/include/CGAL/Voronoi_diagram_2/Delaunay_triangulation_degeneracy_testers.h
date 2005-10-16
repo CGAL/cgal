@@ -21,6 +21,7 @@
 #define CGAL_VORONOI_DIAGRAM_2_DELAUNAY_TRIANGULATION_DEGENERACY_TESTERS_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,6 +32,7 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
 template<class DG>
 class Delaunay_triangulation_edge_tester_2
+  : public Degeneracy_tester_base
 {
   // tests whether a dual edge has zero length
  public:

@@ -75,6 +75,8 @@ class Cached_edge_degeneracy_tester
   typedef typename Edge_degeneracy_tester::Arity        Arity;
 
  private:
+  typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester> Self;
+
   // true if degenerate, false otherwise
 #ifdef USE_STD_MAP
   typedef std::map<Edge,bool,Edge_less<Edge> > Edge_map;
@@ -133,7 +135,7 @@ class Cached_edge_degeneracy_tester
     return operator()(dual, *eit);
   }
 
-  bool erase(const Edge& e) {
+  bool erase(const Edge& e) const {
 #ifdef USE_STD_MAP
     typename Edge_map::iterator it = emap.find(e);
     if ( it == emap.end() ) { return false; }
@@ -154,6 +156,13 @@ class Cached_edge_degeneracy_tester
     emap.clear(UNDEFINED);
 #endif
   }
+
+  void swap(Self& other) {
+    e_tester.swap(other.e_tester);
+    std::swap(emap, other.emap);
+  }
+
+  bool is_valid() const { return true; }
 
   bool is_valid(const Delaunay_graph& dual) const {
 #ifdef USE_STD_MAP
@@ -200,6 +209,8 @@ class Cached_face_degeneracy_tester
   typedef typename Face_degeneracy_tester::Arity        Arity;
 
  private:
+  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester>   Self;
+
 #ifdef USE_STD_MAP
   typedef std::map<Vertex_handle,bool>  Vertex_map;
 #else
@@ -226,7 +237,7 @@ class Cached_face_degeneracy_tester
     return b;
   }
 
-  bool erase(const Vertex_handle& v) {
+  bool erase(const Vertex_handle& v) const {
 #ifdef USE_STD_MAP
     typename Vertex_map::iterator it = vmap.find(v);
     if ( it == vmap.end() ) { return false; }
@@ -245,6 +256,12 @@ class Cached_face_degeneracy_tester
     vmap.clear();
   }
 
+  void swap(Self& other) {
+    f_tester.swap(other.f_tester);
+    std::swap(vmap, other.vmap);
+  }
+
+  bool is_valid() const { return true; }
 
   bool is_valid(const Delaunay_graph& dual) const {
 #ifdef USE_STD_MAP
@@ -273,172 +290,25 @@ class Cached_face_degeneracy_tester
 
 //=========================================================================
 
-template<class DG> class Default_face_degeneracy_tester;
+template<class DG> class Identity_face_degeneracy_tester;
 
 template<class DG>
-class Cached_face_degeneracy_tester<Default_face_degeneracy_tester<DG> >
-  : public Default_face_degeneracy_tester<DG>
+class Cached_face_degeneracy_tester<Identity_face_degeneracy_tester<DG> >
+  : public Identity_face_degeneracy_tester<DG>
 {
  private:
-  typedef Default_face_degeneracy_tester<DG>  Base;
+  typedef Identity_face_degeneracy_tester<DG>   Base;
+  typedef Cached_face_degeneracy_tester<Base>   Self;
 
  public:
-  bool erase(const typename Base::Vertex_handle&) { return true; }
+  bool erase(const typename Base::Vertex_handle&) const { return true; }
 
   void clear() {}
+  void swap(Self&) {}
+
+  bool is_valid() const { return true; }
 
   bool is_valid(const typename Base::Delaunay_graph&) const { return true; }
-};
-
-//=========================================================================
-//=========================================================================
-
-
-template<class Tester_handle_t, class Types_t>
-struct Handle_to_tester_adaptor : public Types_t
-{
- private:
-  typedef Tester_handle_t                       Tester_handle;
-  typedef typename Tester_handle::element_type  Tester;
-
- public:
-  typedef typename Tester::result_type          result_type;
-
-  Handle_to_tester_adaptor() {
-    Tester rc_tester;
-    h_.initialize_with(rc_tester);    
-  }
-
-  template<typename argument_type_1, typename argument_type_2>
-  result_type operator()(const argument_type_1& arg1,
-			 const argument_type_2& arg2) const {
-    return h_.Ptr()->operator()(arg1, arg2);
-  }
-
-  template<typename argument_type_1, typename argument_type_2,
-	   typename argument_type_3>
-  result_type operator()(const argument_type_1& arg1,
-			 const argument_type_2& arg2,
-			 const argument_type_3& arg3) const {
-    return h_.Ptr()->operator()(arg1, arg2, arg3);
-  }
-
- private:
-  Tester_handle h_;
-};
-
-
-//=========================================================================
-//=========================================================================
-
-template<class Edge_tester_t>
-class Ref_counted_edge_degeneracy_tester_base
-  : public Cached_edge_degeneracy_tester<Edge_tester_t>,
-    public Ref_counted_virtual
-{
- private:
-  typedef Cached_edge_degeneracy_tester<Edge_tester_t>  Base;
-
- public:
-  ~Ref_counted_edge_degeneracy_tester_base() {}
-};
-
-//=========================================================================
-
-template<class Face_tester_t>
-class Ref_counted_face_degeneracy_tester_base
-  : public Cached_face_degeneracy_tester<Face_tester_t>,
-    public Ref_counted_virtual
-{
- private:
-  typedef Cached_face_degeneracy_tester<Face_tester_t>  Base;
-
- public:
-  ~Ref_counted_face_degeneracy_tester_base() {}
-};
-
-
-//=========================================================================
-//=========================================================================
-
-
-
-template<class T>
-struct Edge_degeneracy_tester_types
-{
-  typedef typename T::result_type            result_type;
-  typedef typename T::Arity                  Arity;
-
-  typedef typename T::Delaunay_graph         Delaunay_graph;
-  typedef typename T::Edge                   Edge;
-  typedef typename T::Edge_circulator        Edge_circulator;
-  typedef typename T::All_edges_iterator     All_edges_iterator;
-  typedef typename T::Finite_edges_iterator  Finite_edges_iterator;
-};
-
-//=========================================================================
-
-template<class T>
-struct Face_degeneracy_tester_types
-{
-  typedef typename T::result_type               result_type;
-  typedef typename T::Arity                     Arity;
-
-  typedef typename T::Delaunay_graph            Delaunay_graph;
-  typedef typename T::Vertex_handle             Vertex_handle;
-  typedef typename T::Vertex_circulator         Vertex_circulator;
-  typedef typename T::All_vertices_iterator     All_vertices_iterator;
-  typedef typename T::Finite_vertices_iterator  Finite_vertices_iterator;
-};
-
-//=========================================================================
-
-template<class Edge_tester_t>
-class Ref_counted_edge_degeneracy_tester
-  : public Handle_to_tester_adaptor
-  <Handle_for_virtual
-   <Ref_counted_edge_degeneracy_tester_base<Edge_tester_t> >,
-   Edge_degeneracy_tester_types<Edge_tester_t>
-   >
-{
- private:
-  typedef Edge_degeneracy_tester_types<Edge_tester_t>  Edge_tester_types;
-
-  typedef
-  Ref_counted_edge_degeneracy_tester_base<Edge_tester_t>
-  Ref_counted_tester_base;
-
-  typedef Handle_for_virtual<Ref_counted_tester_base>
-  Ref_counted_tester_base_handle;
-
-  typedef Handle_to_tester_adaptor<Ref_counted_tester_base_handle,
-				   Edge_tester_types>
-  Base;
-};
-
-//=========================================================================
-
-template<class Face_tester_t>
-class Ref_counted_face_degeneracy_tester
-  : public Handle_to_tester_adaptor
-  <Handle_for_virtual
-   <Ref_counted_face_degeneracy_tester_base<Face_tester_t> >,
-   Face_degeneracy_tester_types<Face_tester_t>
-  >
-{
- private:
-  typedef Face_degeneracy_tester_types<Face_tester_t>  Face_tester_types;
-
-  typedef
-  Ref_counted_face_degeneracy_tester_base<Face_tester_t>
-  Ref_counted_tester_base;
-
-  typedef Handle_for_virtual<Ref_counted_tester_base>
-  Ref_counted_tester_base_handle;
-
-  typedef Handle_to_tester_adaptor<Ref_counted_tester_base_handle,
-				   Face_tester_types>
-  Base;
 };
 
 //=========================================================================
