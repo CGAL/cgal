@@ -24,6 +24,21 @@
 #include <string_conversion.h>
 #include <cpp_formatting.h>
 
+
+
+struct Null_stream : std::ostream 
+{ 
+   struct Null_buf : std::streambuf { 
+       int overflow(int c) { 
+         return traits_type::not_eof(c); 
+       } 
+   } m_sbuf; 
+   
+   Null_stream()
+    : std::ios(&m_sbuf), std::ostream(&m_sbuf) 
+   {} 
+}; 
+
 using namespace std;
 
 // Directory for the temporary files. A default is given.
@@ -53,7 +68,7 @@ ostream* index_stream = 0;
 ostream* HREF_stream = 0;
 ostream* HREF_counter_stream = 0; 
 
-ostream* null_stream = new ofstream("blubberblafile");
+ostream* null_stream = new Null_stream();
 
 string   pre_main_filename;
 string   main_filename = "<cout>";
