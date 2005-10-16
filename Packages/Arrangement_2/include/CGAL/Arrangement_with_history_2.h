@@ -32,6 +32,7 @@
 #include <CGAL/Arr_observer.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
+#include <CGAL/IO/Arrangement_2_reader.h>
 
 #include <set>
 
@@ -76,6 +77,7 @@ protected:
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   friend class Arr_with_history_accessor<Self>;
+  friend class Arrangement_2_reader<Self>;
 
   // Define the data-traits class based on Traits_2.
   typedef Arr_consolidated_curve_data_traits_2<Traits_2,Curve_2*>

@@ -35,11 +35,13 @@
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/IO/Arrangement_2_reader.h>
 #include <map>
 #include <vector>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
+
 
 /*! \class
  * The arrangement class, representing planar subdivisions induced by
@@ -69,6 +71,7 @@ protected:
 
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
+  friend class Arrangement_2_reader<Self>;
   
   typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
