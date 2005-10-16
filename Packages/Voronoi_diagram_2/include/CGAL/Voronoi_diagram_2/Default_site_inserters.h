@@ -22,7 +22,7 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
-#include <vector>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,10 +76,16 @@ public:
 
   result_type operator()(Delaunay_graph& dg, const Site_2& t) const
   {
+    // THERE IS POTENTIAL PROBLEM IN THIS METHOD; WE DO NOT ACCOUNT
+    // FOR THE VERTICES THAT BECOME HIDDEN ONCE A NEW SITE IN
+    // INSERTED; THIS AFFECTS THE CORRECTNESS OF THE THE CACHED FACE
+    // DEGENERACY TESTER, SINCE IN THIS CASE, I.E., WHEN HIDDEN SITES
+    // ARE CREATED, WE NEED TO DELETE THEM FROM THE CACHED DEGENERACY
+    // TESTER.
     typedef typename Delaunay_graph::Edge          Dual_edge;
     typedef typename Delaunay_graph::Face_handle   Dual_face_handle;
-    typedef std::vector<Dual_edge>                 Dual_edge_list;
-    typedef std::vector<Dual_face_handle>          Dual_face_handle_list;
+    typedef std::list<Dual_edge>                   Dual_edge_list;
+    typedef std::list<Dual_face_handle>            Dual_face_handle_list;
 
     if ( dg.dimension() != 2 ) { return dg.insert(t); }
 
