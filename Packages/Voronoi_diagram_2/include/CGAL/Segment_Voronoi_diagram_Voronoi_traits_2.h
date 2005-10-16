@@ -26,10 +26,8 @@
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
 
-#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
-#include <CGAL/Voronoi_diagram_2/Identity_Voronoi_traits_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +37,31 @@ CGAL_BEGIN_NAMESPACE
 
 template<class SVD2>
 struct Segment_Voronoi_diagram_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
+  <SVD2,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SVD2::Site_2,
+					     SVD2,Tag_false>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename SVD2::Site_2,
+						     SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
+{
+  typedef typename SVD2::Point_2                   Point_2;
+  typedef typename SVD2::Site_2                    Site_2;
+
+  typedef Tag_false                                Has_remove;
+};
+
+
+
+//=========================================================================
+//=========================================================================
+
+template<class SVD2>
+struct Segment_Voronoi_diagram_caching_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Caching_Voronoi_traits_base_2
   <SVD2,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
@@ -52,96 +74,33 @@ struct Segment_Voronoi_diagram_Voronoi_traits_2
   typedef typename SVD2::Point_2                   Point_2;
   typedef typename SVD2::Site_2                    Site_2;
 
-  typedef Tag_false                                Has_get_conflicts;
-  typedef Tag_false                                Has_insert;
   typedef Tag_false                                Has_remove;
 };
 
-
-
 //=========================================================================
 //=========================================================================
 
 template<class SVD2>
-class Segment_Voronoi_diagram_cached_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_cached_Voronoi_traits_2
+struct Segment_Voronoi_diagram_identity_Voronoi_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
   <SVD2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_degeneracy_tester<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SVD2::Site_2,
+					     SVD2,Tag_false>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename SVD2::Site_2,
+						     SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
 {
- private:
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Default_cached_Voronoi_traits_2
-  <SVD2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
-  Base;
+  typedef typename SVD2::Point_2                   Point_2;
+  typedef typename SVD2::Site_2                    Site_2;
 
-  typedef Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD2>  Self;
+  typedef Tag_false                                Has_remove;
 };
 
 //=========================================================================
 //=========================================================================
-
-
-template<class SVD2>
-class Segment_Voronoi_diagram_ref_counted_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Default_ref_counted_Voronoi_traits_2
-  <SVD2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
-{
- private:
-  typedef
-  CGAL_VORONOI_DIAGRAM_2_INS::Default_ref_counted_Voronoi_traits_2
-  <SVD2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
-  Base;
-
-  typedef Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD2>  Self;
-};
-
-//=========================================================================
-//=========================================================================
-
-
-//=========================================================================
-//=========================================================================
-
-#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
-
-template<class Gt, class STag, class DS, class LTag >
-class Segment_Voronoi_diagram_hierarchy_2;
-
-template<class Gt, class DS, class LTag>
-class Segment_Voronoi_diagram_2;
-
-
-template<class Gt, class DS, class LTag>
-class Identity_Voronoi_traits_2< Segment_Voronoi_diagram_2<Gt,DS,LTag> >
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Identity_Voronoi_traits_2_base
-  < Segment_Voronoi_diagram_2<Gt,DS,LTag>,
-    Segment_Voronoi_diagram_Voronoi_traits_2
-    < Segment_Voronoi_diagram_2<Gt,DS,LTag> >
-  >
-{};
-
-template<class Gt, class STag, class DS, class LTag>
-class Identity_Voronoi_traits_2<
-  Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> >
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Identity_Voronoi_traits_2_base
-  < Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>,
-    Segment_Voronoi_diagram_Voronoi_traits_2
-    < Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> >
-  >
-{};
-
-#endif // VDA_USE_IDENTITY_VORONOI_TRAITS
 
 CGAL_END_NAMESPACE
 
