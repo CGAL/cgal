@@ -41,7 +41,7 @@ class Delaunay_triangulation_nearest_site_2
 
   typedef Locate_result<DG,false>                     Query_result;
   typedef Arity_tag<2>                                Arity;
-  typedef Query_result                                return_type;
+  typedef Query_result                                result_type;
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;

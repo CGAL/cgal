@@ -40,7 +40,7 @@ class Regular_triangulation_nearest_site_2
   typedef typename DG::Geom_traits::Point_2           Point_2;
   typedef Locate_result<DG,false>                     Query_result;
   typedef Arity_tag<2>                                Arity;
-  typedef Query_result                                return_type;
+  typedef Query_result                                result_type;
 
  private:
   typedef Locate_result_accessor<DG,false>            Accessor;
