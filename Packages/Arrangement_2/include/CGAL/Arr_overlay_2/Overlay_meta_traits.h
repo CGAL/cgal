@@ -587,6 +587,36 @@ public:
      */
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
+      Vertex_handle_red vr1;
+      Vertex_handle_red vr2;
+
+      Vertex_handle_blue vb1;
+      Vertex_handle_blue vb2;
+
+      bool did_assign_v1_red  = assign(vr1, p1.get_red_object());
+      bool did_assign_v2_red  = assign(vr2, p2.get_red_object());
+      bool did_assign_v1_blue = assign(vb1, p1.get_blue_object());
+      bool did_assign_v2_blue = assign(vb2, p2.get_blue_object());
+
+      if((did_assign_v1_red && did_assign_v1_blue) ||
+         (did_assign_v2_red && did_assign_v2_blue))
+         return (m_base_cmp_xy(p1, p2));
+
+      if(did_assign_v1_red && did_assign_v2_red)
+      {
+        if(vr1 == vr2)
+          return EQUAL;
+
+        return (m_base_cmp_xy(p1, p2));
+      }
+
+      if(did_assign_v1_blue && did_assign_v2_blue)
+      {
+        if(vb1 == vb2)
+          return EQUAL;
+
+        return (m_base_cmp_xy(p1, p2));
+      }
       return (m_base_cmp_xy(p1, p2));
     }
   };
@@ -597,6 +627,8 @@ public:
   {
     return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
+
+
 
 
   class Compare_y_at_x_2
