@@ -113,7 +113,7 @@ put_on_web()
 {
     if [ -n "${USE_CURL}" ]; then
         $CURL --upload-file ${1} --user anonymous:${MAIL_ADDRESS} \
-              ftp://${FTP_SERVER}/${FTP_STORE_DIR}/ >> ${ACTUAL_LOGFILE} 2>&1
+              ftp://${FTP_SERVER}/${FTP_STORE_DIR}/${2} >> ${ACTUAL_LOGFILE} 2>&1
     else
         $FTP -n $FTP_SERVER <<EOF
 quote USER anonymous
