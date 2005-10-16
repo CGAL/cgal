@@ -46,12 +46,6 @@ public:
 
   typedef typename VDA::Find_valid_vertex      Find_valid_vertex;
 
-  typedef typename VDA::Cached_edge_degeneracy_tester
-  Cached_edge_degeneracy_tester;
-
-  typedef typename VDA::Cached_face_degeneracy_tester
-  Cached_face_degeneracy_tester;
-
   // CONSTRUCTOR
   //------------
   Accessor(VDA* vda) : vda(vda) {}
@@ -59,13 +53,8 @@ public:
 
   // METHODS
   //--------
-  const Cached_edge_degeneracy_tester& edge_tester() const {
-    return vda->cached_e_tester_;
-  }
-
-  const Cached_face_degeneracy_tester& face_tester() const {
-    return vda->cached_f_tester_;
-  }
+  VDA* ptr() { return vda; }
+  const VDA* ptr() const { return vda; }
 
 private:
   VDA* vda;
