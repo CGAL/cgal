@@ -14,10 +14,10 @@
 #include <CGAL/Delaunay_triangulation_Voronoi_traits_2.h>
 
 // typedefs for defining the adaptor
-typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef CGAL::Delaunay_triangulation_2<K>                    DT;
-typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>    VT;
-typedef CGAL::Voronoi_diagram_2<DT,VT>                       VD;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel        K;
+typedef CGAL::Delaunay_triangulation_2<K>                          DT;
+typedef CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT>  VT;
+typedef CGAL::Voronoi_diagram_2<DT,VT>                             VD;
 
 // typedef for the result type of the point location
 typedef VT::Site_2                    Site_2;
