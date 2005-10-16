@@ -83,7 +83,7 @@ typedef Coord_kernel::Circle_2                             Coord_circle;
 
 typedef CGAL::Polygon_2<Coord_kernel> Polygon;  // polygon is usefull for filling faces
 
-typedef CGAL::Gmpq                                         NT;
+typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
 typedef CGAL::Cartesian<NT>                                Kernel;
 
 
