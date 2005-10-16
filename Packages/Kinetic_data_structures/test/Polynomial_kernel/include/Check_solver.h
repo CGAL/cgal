@@ -171,21 +171,21 @@ public:
   }
 
   void roots() {
-    assert(std::numeric_limits<Rt>::has_infinity);
+    CGAL_assertion(std::numeric_limits<Rt>::has_infinity);
     Rt inf= std::numeric_limits<Rt>::infinity();
     Rt minf= -std::numeric_limits<Rt>::infinity();
     Rt big(100000);
     Rt small(-1000000);
     Rt z(0);
-    assert(big < inf);
-    assert(big > minf);
-    assert(small < big);
-    assert(z > small);
-    assert(-big < big);
-    assert(small < inf);
-    assert(small > minf);
-    assert(z > minf);
-    assert(z < inf);
+    CGAL_assertion(big < inf);
+    CGAL_assertion(big > minf);
+    CGAL_assertion(small < big);
+    CGAL_assertion(z > small);
+    CGAL_assertion(-big < big);
+    CGAL_assertion(small < inf);
+    CGAL_assertion(small > minf);
+    CGAL_assertion(z > minf);
+    CGAL_assertion(z < inf);
   }
   
   void all(){

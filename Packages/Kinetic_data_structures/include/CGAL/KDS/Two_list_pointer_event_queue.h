@@ -608,7 +608,7 @@ protected:
 
 
   unsigned int max_front_size() const {
-    return std::max(10U, static_cast<unsigned int>(std::sqrt(front_.size()+back_.size())));
+    return std::max(10U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
   }
 
   Queue front_, back_;

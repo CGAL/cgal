@@ -659,6 +659,7 @@ public:
   void insert(Point_key k){
     bool had_certificates= has_certificates();
     set_has_certificates(false);
+    kdel_.triangulation().geom_traits().set_time(kdel_.simulator()->rational_current_time());
     typename Triangulation::Cell_handle h= kdel_.triangulation().locate(k);
     typename KDel::Triangulation::Vertex_handle vh= kdel_.new_vertex_regular(k, h);
     if (vh==NULL){

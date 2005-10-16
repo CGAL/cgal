@@ -28,7 +28,10 @@
 */
 
 #ifdef CGAL_POLYNOMIAL_USE_CGAL
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
+#include <CGAL/double.h>
+#include <CGAL/int.h>
+
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 //! The class we use for interval arithmetic.
