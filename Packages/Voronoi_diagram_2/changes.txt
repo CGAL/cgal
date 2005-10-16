@@ -1,5 +1,17 @@
 16 Oct 2005:  Menelaos Karavelas
 - more changes towards the new design of the traits
+- in point location example: replaced the old Voronoi traits by the
+  new caching Voronoi traits class
+- testing: added testing for new functors in Voronoi traits
+- in nearest site functors, renamed return_type to result_type
+- removed unused code
+- degeneracy testers: took away code for ref-counted testers;
+  added swap, clear and is_valid methods (caching testers have state...);
+  renamed Default_face_degeneracy_tester to Identity_face_degeneracy_tester
+- added identity traits classes for the Delaunay graphs we have in CGAL
+- adaptor: changes according to new design of traits; potential
+  problem in the copy constructor and assignment operator for the
+  caching traits
 
 15 Oct 2005:  Menelaos Karavelas
 - changes towards the new design of the traits
