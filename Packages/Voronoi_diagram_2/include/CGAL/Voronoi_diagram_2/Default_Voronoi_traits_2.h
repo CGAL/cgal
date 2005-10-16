@@ -21,8 +21,9 @@
 #define CGAL_VORONOI_DIAGRAM_2_DEFAULT_VORONOI_TRAITS_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
 #include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
-#include <CGAL/Handle_for_virtual.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,64 +32,21 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class DG>
-struct Default_face_degeneracy_tester
+template<class DG, class ET, class FT, class AS, class CDP, class NS>
+class Voronoi_traits_base_base_2
 {
-  // tests whether a face has zero area
-  typedef DG                                      Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
+private:
+  typedef Voronoi_traits_base_base_2<DG,ET,FT,AS,CDP,NS>  Self;
 
-  typedef bool           result_type;
-  typedef Arity_tag<2>   Arity;
-
-  bool operator()(const Delaunay_graph&, const Vertex_handle&) const {
-    return false;
-  }
-};
-
-//=========================================================================
-
-struct Null_functor
-{
-  Null_functor() {}
-  template<typename T> Null_functor(T t) {}
-};
-
-//=========================================================================
-
-template<class Functor>
-struct Functor_exists
-{
-  typedef Tag_true  Value;
-};
-
-template<>
-struct Functor_exists<Null_functor>
-{
-  typedef Tag_false Value;
-};
-
-//=========================================================================
-
-template<class DG, class ET, class FT, class AS, class CDP,
-	 class SI, class NS>
-class Default_Voronoi_traits_2
-{
- private:
-  typedef Default_Voronoi_traits_2<DG,ET,FT,AS,CDP,SI,NS>   Self;
-
- public:
+public:
   typedef DG   Delaunay_graph;
   typedef ET   Edge_degeneracy_tester;
   typedef FT   Face_degeneracy_tester;
   typedef AS   Access_site_2;
   typedef CDP  Construct_dual_point_2;
-
   typedef NS   Nearest_site_2;
-  typedef SI   Site_inserter;
 
   typedef typename Functor_exists<Nearest_site_2>::Value  Has_nearest_site_2;
-  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;
@@ -110,102 +68,83 @@ class Default_Voronoi_traits_2
     return Nearest_site_2();
   }
 
+  void clear() {
+    e_tester_.clear();
+    f_tester_.clear();
+  }
+
+  void swap(Self& other) {
+    e_tester_.swap(other.e_tester_);
+    f_tester_.swap(other.f_tester_);
+  }
+
+  bool is_valid() const {
+    return e_tester_.is_valid() && f_tester_.is_valid();
+  }
+
+ protected:
+  Edge_degeneracy_tester e_tester_;
+  Face_degeneracy_tester f_tester_;
+};
+
+//=========================================================================
+//=========================================================================
+
+template<class DG, class ET, class FT, class AS, class CDP,
+	 class SI, class NS>
+class Voronoi_traits_base_2
+  : public Voronoi_traits_base_base_2<DG,ET,FT,AS,CDP,NS>
+{
+ private:
+  typedef Voronoi_traits_base_2<DG,ET,FT,AS,CDP,SI,NS>    Self;
+  typedef Voronoi_traits_base_base_2<DG,ET,FT,AS,CDP,NS>  Base;
+
+ public:
+  typedef SI   Site_inserter;
+
+  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+
   Site_inserter site_inserter_object() const {
     return Site_inserter();
   }
-
- protected:
-  Edge_degeneracy_tester e_tester_;
-  Face_degeneracy_tester f_tester_;
 };
 
 
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ET, class FT, class NS>
-class Default_cached_Voronoi_traits_2
+template<class DG, class ETB, class FTB, class AS, class CDP,
+	 class SIB, class NS>
+class Caching_Voronoi_traits_base_2
+  : public Voronoi_traits_base_base_2<DG,
+				      Cached_edge_degeneracy_tester<ETB>,
+				      Cached_face_degeneracy_tester<FTB>,
+				      AS,CDP,NS>
 {
- private:
-  typedef ET  Edge_degeneracy_tester_base;
-  typedef FT  Face_degeneracy_tester_base;
+protected:
+  typedef ETB   Edge_degeneracy_tester_base;
+  typedef FTB   Face_degeneracy_tester_base;
+  typedef SIB   Site_inserter_base;
 
-  typedef Default_cached_Voronoi_traits_2<DG,ET,FT,NS>  Self;
+  typedef Caching_Voronoi_traits_base_2<DG,ETB,FTB,AS,CDP,SIB,NS>  Self;
 
- public:
-  typedef DG           Delaunay_graph;
-  typedef NS           Nearest_site_2;
-
+public:
   typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
 
-  //  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester_base,
-  //					Edge_degeneracy_tester>
   typedef Cached_face_degeneracy_tester<Face_degeneracy_tester_base>
   Face_degeneracy_tester;
 
+  typedef Default_caching_site_inserter<Self,Site_inserter_base>
+  Site_inserter;
 
- public:
-  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
-    return e_tester_;
+  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+
+  Site_inserter site_inserter_object() const {
+    return Site_inserter(this);
   }
-
-  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
-    return f_tester_;
-  }
-
-  Nearest_site_2 nearest_site_2_object() const {
-    return Nearest_site_2();
-  }
-
- protected:
-  Edge_degeneracy_tester e_tester_;
-  Face_degeneracy_tester f_tester_;
 };
 
-
-//=========================================================================
-//=========================================================================
-
-
-template<class DG, class ET, class FT, class NS>
-class Default_ref_counted_Voronoi_traits_2
-{
- private:
-  typedef ET  Edge_degeneracy_tester_base;
-  typedef FT  Face_degeneracy_tester_base;
-
-  typedef Default_ref_counted_Voronoi_traits_2<DG,ET,FT,NS>  Self;
-
- public:
-  typedef DG           Delaunay_graph;
-  typedef NS           Nearest_site_2;
-
-  typedef Ref_counted_edge_degeneracy_tester<Edge_degeneracy_tester_base>
-  Edge_degeneracy_tester;
-
-  //  typedef Ref_counted_face_degeneracy_tester<Face_degeneracy_tester_base,
-  //					     Edge_degeneracy_tester>
-  typedef Ref_counted_face_degeneracy_tester<Face_degeneracy_tester_base>
-  Face_degeneracy_tester;
-
- public:
-  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
-    return e_tester_;
-  }
-
-  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
-    return f_tester_;
-  }
-
-  Nearest_site_2 nearest_site_2_object() const {
-    return Nearest_site_2();
-  }
-
- protected:
-  Edge_degeneracy_tester e_tester_;
-  Face_degeneracy_tester f_tester_;
-};
 
 //=========================================================================
 //=========================================================================
