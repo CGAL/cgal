@@ -163,13 +163,7 @@ class Vertex
   Delaunay_vertex_handle operator[](unsigned int i) const {
     CGAL_precondition( i <= 2 );
     CGAL_precondition( vda_->dual().dimension() == 2 );
-#if 0
-    Delaunay_face_handle fvalid = find_valid_vertex(f_);
-    CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
-    return fvalid->vertex(i);
-#else
     return f_->vertex(i);
-#endif
   }
 
   // ACCESS TO GEOMETRIC OBJECTS

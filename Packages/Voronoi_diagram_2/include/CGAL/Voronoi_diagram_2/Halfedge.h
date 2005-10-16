@@ -85,17 +85,8 @@ public:
     : vda_(vda), f_(f), i_(i), v1_(Delaunay_vertex_handle()),
       v2_(Delaunay_vertex_handle())
   {
-#if !defined(CGAL_NO_PRECONDITIONS) && !defined(NDEBUG)
     CGAL_precondition( vda_->dual().dimension() == 2 );
     CGAL_precondition( !vda_->edge_tester()(vda_->dual(), f_, i_) );
-#if 0
-    Delaunay_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
-    // the following test prohibit creating a halfedge which is
-    // temporarily invalid...; this creates a problem for the
-    // segment Voronoi diagram
-    CGAL_precondition( !vda_->face_tester()(vda_->dual(), v) );
-#endif
-#endif
   }
 
   Halfedge(const VDA* vda, Delaunay_vertex_handle v1,
