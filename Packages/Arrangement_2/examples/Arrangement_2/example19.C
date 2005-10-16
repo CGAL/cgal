@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example19.C
+// Using a simple arrangement observer.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -52,20 +53,20 @@ int main ()
   Segment_2      s3 (Point_2(1, 0), Point_2(0, -1));
   Segment_2      s4 (Point_2(0, -1), Point_2(-1, 0));
 
-  insert_non_intersecting (arr, s1);
-  insert_non_intersecting (arr, s2);
-  insert_non_intersecting (arr, s3);
-  insert_non_intersecting (arr, s4);
+  insert_non_intersecting_curve (arr, s1);
+  insert_non_intersecting_curve (arr, s2);
+  insert_non_intersecting_curve (arr, s3);
+  insert_non_intersecting_curve (arr, s4);
 
   // Insert a vertical segment dividing the diamond into two, and a
   // a horizontal segment dividing the diamond into four:
   Segment_2      s_vert (Point_2(0, -1), Point_2(0, 1));
   Arrangement_2::Halfedge_handle
-                 e_vert = insert_non_intersecting (arr, s_vert);
+                 e_vert = insert_non_intersecting_curve (arr, s_vert);
 
   Segment_2      s_horiz (Point_2(-1, 0), Point_2(1, 0));
 
-  insert (arr, s_horiz);
+  insert_curve (arr, s_horiz);
 
   std::cout << "V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 

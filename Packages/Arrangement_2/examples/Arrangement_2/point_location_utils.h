@@ -61,6 +61,7 @@ void vertical_ray_shooting_query
   
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
+  typename Arrangement_2::Face_const_handle      f;
 
   if (CGAL::assign (e, obj))
   {
@@ -75,12 +76,16 @@ void vertical_ray_shooting_query
     else
       std::cout << "Hit a vertex: " << v->point() << std::endl;
   }
-  else
+  else if (CGAL::assign (f, obj))
   {
     // We did not hit anything:
-    CGAL_assertion_msg (obj.is_empty(), "Invalid object.");
+    CGAL_assertion (f->is_unbounded());
     
     std::cout << "Hit nothing." << std::endl; 
+  }
+  else
+  {
+    CGAL_assertion_msg (false, "Invalid object.");
   }
 
   return;

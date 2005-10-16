@@ -1,0 +1,27 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_insert_x_monotone.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_x_monotone_curves}
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccFunction{template<class Traits, class Dcel, InputIterator>
+            void insert_x_monotone_curves (Arrangement_2<Traits,Dcel>& arr,
+                         InputIterator first, InputIterator last);}
+   {Inserts the given range of $x$-monotone curves \ccc{[first,last)}
+    into the arrangement \ccc{arr}. The insertion is performed in an aggregated
+    manner, using the sweep-line algorithm. The \ccc{Traits} parameter must
+    be a model of the \ccc{ArrangementXMonotoneTraits_2} concept.
+    \ccPrecond{The value-type of \ccc{InputIterator} is 
+               \ccc{Traits::X_monotone_curve_2}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

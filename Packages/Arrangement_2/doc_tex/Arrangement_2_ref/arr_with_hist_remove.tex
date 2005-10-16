@@ -8,14 +8,14 @@
 
 \ccRefPageBegin
 
-\begin{ccRefFunction}{remove (Arrangement_with_history_2)}
+\begin{ccRefFunction}{remove_curve (Arrangement_with_history_2)}
 
 \ccInclude{CGAL/Arrangement_with_history_2.h}
 
 \ccThree{Orientation~~}{}{\hspace*{8.5cm}}
 
 \ccFunction{template <class Traits, class Dcel>
-            Size remove (Arrangement_with_history_2<Traits,Dcel>& arr,
+            Size remove_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
         typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle ch);}
    {Removes a curve, specified by its handle \ccc{ch}, from the arrangement,
     by deleting all the edges it induces. The function returns the number of

@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example1.C
+// Constructing an arrangement using the simple edge-insertion functions.
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>

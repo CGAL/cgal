@@ -1108,8 +1108,9 @@ have member functions called \ccc{ray_shoot_up(q)} and
 \ccc{ray_shoot_down(q)} that accept a query point $q$ and output a
 \cgal\ \ccc{Object}. This can be assigned to either a
 \ccc{Halfedge_const_handle} or to a \ccc{Vertex_const_handle}.
-Alternatively, the returned value is an empty object if there is
-no edge or vertex lying directly above (or below) $q$.
+Alternatively, the returned value is a \ccc{Face_const_handle}
+for the unbounded face of the arrangement, in case there is no edge
+or vertex lying directly above (or below) $q$.
 
 The following function template, also located in the example file
 \ccc{point_location_utils.h}, accepts a vertical ray-shooting
@@ -1133,6 +1134,7 @@ void vertical_ray_shooting_query
 
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
+  typename Arrangement_2::Face_const_handle      f;
 
   if (CGAL::assign (e, obj)) \{
     // We hit an edge:
@@ -1145,10 +1147,14 @@ void vertical_ray_shooting_query
     else
       std::cout << "Hit a vertex: " << v->point() << std::endl;
   \}
-  else \{
+  else if (CGAL::assign (f, obj)) \{
     // We did not hit anything:
-    CGAL_assertion_msg (obj.is_empty(), "Invalid object.");
-    std::cout << "Hit nothing." << std::endl;
+    CGAL_assertion (f->is_unbounded());
+    
+    std::cout << "Hit nothing." << std::endl; 
+  \}
+  else \{
+    CGAL_assertion_msg (false, "Invalid object.");
   \}
 \}
 \end{alltt}
@@ -1237,7 +1243,7 @@ as it may be unknown at the time of insertion. We retain the
 requirement that the interior of the inserted curve is disjoint from
 all existing arrangement edges and vertices.
 
-The global function \ccc{insert_non_intersecting(arr, c, pl)}
+The global function \ccc{insert_non_intersecting_curve(arr, c, pl)}
 inserts the $x$-monotone curve \ccc{c} into the arrangement \ccc{arr},
 with the precondition that the interior of \ccc{arr} is disjoint from
 all \ccc{arr}'s existing edges and vertices. The third argument
@@ -1248,7 +1254,7 @@ either coincide with an existing vertex or lie inside a face.
 It is possible to invoke one of the specialized insertion functions
 (see Section~\ref{arr_sec:arr_class}), based on the query results, and
 insert $c$ at its proper position\footnote{The
-\ccc{insert_non_intersecting()} function, as all other functions
+\ccc{insert_non_intersecting_curve()} function, as all other functions
 reviewed in this section, is a function template, parameterized by an
 arrangement class and a point-location class (a model of the
 \ccc{ArrangementPointLocation_2} concept).}. The insertion operation
@@ -1260,7 +1266,7 @@ concept (or the \ccc{ArrangementLandmarkTraits_2} concept, if the
 landmarks point-location strategy is used), which does not have to
 support the computation of intersection points between curves.
 
-The global function \ccc{insert_non_intersecting(arr, c)} is also
+The global function \ccc{insert_non_intersecting_curve(arr, c)} is also
 available. Instead of accepting a user-defined point-location
 object, it defines a local instance of the walk point-location
 class and uses it to insert the curve.
@@ -1269,7 +1275,7 @@ class and uses it to insert the curve.
 \label{arr_sssec:insert_x_mon}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The \ccc{insert_non_intersecting()} function is very
+The \ccc{insert_non_intersecting_curve()} function is very
 efficient, but its preconditions on the input curves are still
 rather restricting. Let us assume that the arrangement is
 instantiated with a traits class that models the refined
@@ -1284,15 +1290,30 @@ subcurves (in the latter case, we have to split the curve
 associated with the existing halfedge as well) and associate new
 edges with the resulting subcurves.
 
-The global function \ccc{insert_x_monotone(arr, c, pl)} performs
+The global function \ccc{insert_x_monotone_curve(arr, c, pl)} performs
 this insertion operation. It accepts an $x$-monotone curve \ccc{c},
 which may intersect the arrangement \ccc{arr}, and inserts it into
 the arrangement by computing its zone. Users may supply a
 point-location object \ccc{pl}, or use the default walk
 point-location strategy (namely, the function
-\ccc{insert_x_monotone(arr, c)} is also available). The
+\ccc{insert_x_monotone_curve(arr, c)} is also available). The
 running-time of this insertion function is proportional to the
 complexity of the inserted-curve zone.
+
+\begin{ccAdvanced}
+
+In some cases users may have a prior knowledge of the location of the
+left endpoint of the $x$-monotone curve \ccc{c} they wish to insert,
+so they can perform the insertion without issuing any point-location
+queries. This can be done by calling
+\ccc{insert_x_monotone_curve(arr, c, obj)}, where \ccc{obj} is an
+object represents the location of \ccc{c}'s left endpoint in the
+arrangement --- namely it wraps a \ccc{Vertex_const_handle}, a
+\ccc{Halfedge_const_handle} or a \ccc{Face_const_handle} (see
+also Section~\ref{arr_ssec:pl}).
+
+\end{ccAdvanced}
+
 
 \subsubsection{Inserting General Curves}
 \label{arr_sssec:insert_gen}
@@ -1301,33 +1322,33 @@ complexity of the inserted-curve zone.
 So far all our examples were of arrangements of line segments,
 where the \ccc{Arrangement_2} template was instantiated with the
 \ccc{Arr_segment_traits_2} class. In this case, the fact that
-\ccc{insert_x_monotone()} accepts an $x$-monotone curve does not
+\ccc{insert_x_monotone_curve()} accepts an $x$-monotone curve does not
 seem to be a restriction, as all line segments are $x$-monotone
 (note that we consider vertical line segments to be {\em weakly}
 $x$-monotone).
 
 Suppose that we construct an arrangement of circles. A circle is
 obviously not $x$-monotone, so we cannot use
-\ccc{insert_x_monotone()} in this case\footnote{Note that a key
+\ccc{insert_x_monotone_curve()} in this case\footnote{Note that a key
 operation when inserting an $x$-monotone curve is to locate its
 left endpoint in the arrangement. A circle, however, does not have
 any endpoints!}. However, it is possible to subdivide each circle
 into two $x$-monotone circular arcs (its upper half and its lower
 half) and to insert each $x$-monotone arc separately.
 
-The global function \ccc{insert()} requires that the traits class
+The global function \ccc{insert_curve()} requires that the traits class
 used by the arrangement \ccc{arr} to be a model of the concept
 \ccc{ArrangementTraits_2}, which refines the
 \ccc{ArrangementXMonotoneTraits_2} concept. It has to define an
 additional \ccc{Curve_2} type (which may differ from the
 \ccc{X_monotone_curve_2} type), and support the subdivision of curves
 of this new type into $x$-monotone curves (see the exact details in
-Section~\ref{arr_sec:traits}). The \ccc{insert(arr, c, pl)}
+Section~\ref{arr_sec:traits}). The \ccc{insert_curve(arr, c, pl)}
 function performs the insertion of the curve $c$, which does not need
 to be $x$-monotone, into the arrangement by subdividing it into
 $x$-monotone subcurves and inserting each one separately. Users
 may supply a point-location object \ccc{pl}, or use the default
-walk point-location strategy by calling \ccc{insert(arr, c)}.
+walk point-location strategy by calling \ccc{insert_curve(arr, c)}.
 
 \subsubsection{Inserting Points}
 \label{arr_sssec:insert_point}
@@ -1335,7 +1356,7 @@ walk point-location strategy by calling \ccc{insert(arr, c)}.
 
 The arrangement class enables you to insert a point as an isolated
 vertex in a given face. However, the global function
-\ccc{insert_vertex(arr, p, pl)} inserts a vertex into \ccc{arr} that
+\ccc{insert_point(arr, p, pl)} inserts a vertex into \ccc{arr} that
 corresponds to the point \ccc{p} at an arbitrary location. It uses
 the point-location object \ccc{pl} to locate the point in the
 arrangement (by default, the walk point-location strategy is used),
@@ -1382,11 +1403,11 @@ contains it is shaded.}
 
 The program below constructs an arrangement of intersecting
 line-segments. We know that $s_1$ and $s_2$ do not intersect, so
-we use \ccc{insert_non_intersecting()} to insert them into the
+we use \ccc{insert_non_intersecting_curve()} to insert them into the
 empty arrangement. The rest of the segments are inserted using
-\ccc{insert_x_monotone()} or \ccc{insert()}, which are equivalent
-in case of line segments. The resulting arrangement consists of
-$13$ vertices, $16$ edges, and $5$ faces, as can be seen in
+\ccc{insert_x_monotone_curve()} or \ccc{insert_curve()}, which are
+equivalent in case of line segments. The resulting arrangement consists
+of $13$ vertices, $16$ edges, and $5$ faces, as can be seen in
 Figure~\ref{arr_fig:ex_8}.
 
 In the previous examples, all arrangement vertices correspond to
@@ -1407,15 +1428,16 @@ Let us assume that we have to insert a set of $m$ input curves into an
 arrangement. It is possible of course to do this incrementally, 
 inserting the curves one by one, as shown in the previous section.
 However, the arrangement package provides three global functions
-\ccc{insert_non_intersecting(arr, begin, end)},
-\ccc{insert_x_monotone(arr, begin, end)} and \ccc{insert(arr,
-begin, end)} that insert a range of curves, given by the input
-iterators \ccc{[begin, end)} into an arrangement \ccc{arr}. The
-different functions accept a set of pairwise interior-disjoint
-$x$-monotone curves, a set of $x$-monotone curves that may
-intersect one another, or a set of general (not necessarily
-$x$-monotone) curves of type \ccc{Curve_2} --- exactly as their
-counterpart incremental version.
+\ccc{insert_non_intersecting_curves(arr, begin, end)},
+\ccc{insert_x_monotone_curves(arr, begin, end)} and
+\ccc{insert_curves(arr, begin, end)} that insert a range of curves,
+given by the input iterators \ccc{[begin, end)} into an arrangement
+\ccc{arr}. The different functions accept a set of pairwise
+interior-disjoint $x$-monotone curves that are also interior-disjoint
+from all existing arrangement edges and vertices, a set of $x$-monotone
+curves that may intersect one another, or a set of general (not
+necessarily $x$-monotone) curves of type \ccc{Curve_2} --- exactly as their
+counterpart incremental versions.
 
 We distinguish between two cases: (i) The given arrangement
 \ccc{arr} is empty (has only an unbounded face), so we have to
@@ -1446,9 +1468,9 @@ in case of aggregated insertion.
 The example below shows how to construct the arrangement of
 line segments depicted in Figure~\ref{arr_fig:ex_8} and built
 incrementally in \ccc{example8.C}, as shown in the previous
-section. We use the aggregated version of
-\ccc{insert_x_monotone()} as we deal with line segments. Note that
-no point-location object is defined and attached to the
+section. We use the aggregated insertion function
+\ccc{insert_x_monotone_curves()} as we deal with line segments.
+Note that no point-location object is defined and attached to the
 arrangement:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example9.C}
@@ -1483,10 +1505,10 @@ ${\mathcal S}_1$ containing five line segments. Then we insert a single
 segment incrementally. Finally, we add a set ${\mathcal S}_2$ with
 five more line segments in an aggregated fashion. Note 
 that the line segments of ${\mathcal S}_1$ are pairwise
-interior-disjoint, so we use \ccc{insert_non_intersecting()}.
+interior-disjoint, so we use \ccc{insert_non_intersecting_curves()}.
 ${\mathcal S}_2$ also contain pairwise interior-disjoint segments,
 but as they intersect the existing arrangement, we have to use
-\ccc{insert_x_monotone()} to insert them. Also note that the
+\ccc{insert_x_monotone_curves()} to insert them. Also note that the
 single segment $s$ we insert incrementally overlaps an existing
 arrangement edge:
 
@@ -1623,15 +1645,16 @@ part and the lower part of the unit circle) and a single isolated
 point.
 
 Note that the refined model \ccc{ArrangementTraits_2} is required
-only when using the global \ccc{insert()} functions (see
-Section~\ref{arr_sec:gl_funcs}), which accept a \ccc{Curve_2}
-object in the incremental version, or a range of \ccc{Curve_2}
-objects in the aggregated version.
+only when using the global \ccc{insert_curve()} and
+\ccc{insert_curves()} functions (see Section~\ref{arr_sec:gl_funcs}),
+which accept a \ccc{Curve_2} object in the incremental version,
+or a range of \ccc{Curve_2} objects in the aggregated version.
 
 In the rest of this section we will review the traits classes
 included in the public distribution of \cgal, that handle line
 segments, polylines and conic arcs. The last subsection overviews
-the meta-traits classes distributed with \cgal.
+two decrators for geometric traits classes distributed with \cgal
+(also referred to as ``meta-traits'' classes).
 
 \subsection{Traits Classes for Line Segments}
 \label{arr_ssec:tr_segs}
@@ -1847,8 +1870,8 @@ type represents a bounded, not necessarily $x$-monotone conic arc.
 The \ccc{X_monotone_curve_2} type is derived from \ccc{Curve_2},
 but its constructors are to be used only by the traits class.
 Users should therefore construct only \ccc{Curve_2} objects and
-insert them into the arrangement using the \ccc{insert()}
-functions.
+insert them into the arrangement using the \ccc{insert_curve()}
+or \ccc{insert_curves()} functions.
 
 Conic arcs can be constructed from full ellipses or by specifying
 a supporting curve, two endpoints and an orientation. However,
@@ -2408,18 +2431,18 @@ the overlay of two planar arrangement is also useful for supporting
 Boolean operations on polygons (or generalized polygons,
 see~\cite{behsms-cbcab-02}).
 
-The function \ccc{overlay (arr1, arr2, ovl_arr, ovl_traits)} accepts
-two input arrangement instances \ccc{arr1} and \ccc{arr2}, and constructs
+The function \ccc{overlay (arr_a, arr_b, ovl_arr, ovl_traits)} accepts
+two input arrangement instances \ccc{arr_a} and \ccc{arr_b}, and constructs
 their overlay instance \ccc{ovl_arr}. All three arrangements must use the
 same geometric primitives, namely they should be instances of the
 arrangement classes that are all instantiated using the same geometric
-traits class. Let us assume that \ccc{arr1} is of type
-\ccc{Arrangement_2<Traits,Dcel1>}, \ccc{arr2} is of type
-\ccc{Arrangement_2<Traits,Dcel2>} and \ccc{ovl_arr} is of type 
-\ccc{Arrangement_2<Traits,ResDcel>}. The \ccc{ovl_traits} parameter is
+traits class. Let us assume that \ccc{arr_a} is of type
+\ccc{Arrangement_2<Traits,Dcel_A>}, \ccc{arr_b} is of type
+\ccc{Arrangement_2<Traits,Dcel_B>} and the resulting \ccc{ovl_arr} is of type 
+\ccc{Arrangement_2<Traits,Dcel_R>}. The \ccc{ovl_traits} parameter is
 an instance of an {\em overlay traits-class}, which enables the creation of
-\ccc{ResDcel} records in the overlaid arrangement from the \dcel\ features
-of \ccc{arr1} and \ccc{arr2} that they correspond to.
+\ccc{Dcel_R} records in the overlaid arrangement from the \dcel\ features
+of \ccc{arr_a} and \ccc{arr_b} that they correspond to.
 
 In principle, we distinguish among three levels of overlay:
 \begin{description}
@@ -2430,7 +2453,7 @@ default \dcel\ class \ccc{Arr_default_dcel}. Typically, the overlaid
 arrangement in this case stores no extra data with its \dcel\ records as
 well (or if it does, the additional data fields cannot be computed by
 the overlay operation), so by overlaying the two arrangement we just
-compute the arrangement of all curves that induce \ccc{arr1} and \ccc{arr2}.
+compute the arrangement of all curves that induce \ccc{arr_a} and \ccc{arr_b}.
 We note that the same result can be obtained using the normal insertion
 operations, but users may choose to use overlay computation in order to
 achieve better running time.
@@ -2444,7 +2467,7 @@ fields with their faces (consider, for example, the geographic-map example
 given in the beginning of this section). The resulting overlaid arrangement
 will typically also store extraneous data fields with its faces, where the
 data field that is attached to an overlaid face can be computed from the
-data fields of the two faces (in \ccc{arr1} and \ccc{arr2}) that induce
+data fields of the two faces (in \ccc{arr_a} and \ccc{arr_b}) that induce
 the overlaid face.
 
 The \ccc{Arr_face_overlay_traits} class should be used as an overlay
@@ -2452,8 +2475,8 @@ traits-class for face-overlay operations. It operates on arrangement whose
 \dcel\ representation is based on the \ccc{Arr_face_extended_dcel}
 class-template (see Section~\ref{arr_ssec:ex_dcel_face}). The face-overlay
 traits-class is templated with a functor that is capable of combining two
-face-data fields, of types \ccc{Dcel1::Face_data} and
-\ccc{Dcel2::Face_data}, and computing the output \ccc{RedDcel::Face_data}
+face-data fields, of types \ccc{Dcel_A::Face_data} and
+\ccc{Dcel_B::Face_data}, and computing the output \ccc{Dcel_R::Face_data}
 object. The overlay traits-class uses this function to properly construct
 the overlaid faces.
 
@@ -2562,7 +2585,7 @@ curves stored in the container, while \ccc{curves_begin()} and
 \ccc{curves_end()} return \ccc{Arrangement_with_history_2::Curve_iterator}
 objects that define the  valid range of curves that induce the arrangement.
 The value type of this iterator is 
-\ccc{Arrangement_with_history_2::Curve_extended_2}, which extends the 
+\ccc{Arrangement_with_history_2::Curve_with_edges_2}, which extends the 
 \ccc{Curve_2} type as defined by the traits class (see below). Moreover,
 the curve-iterator type is equivalent to 
 \ccc{Arrangement_with_history_2::Curve_handle}, which is used for accessing
@@ -2584,13 +2607,13 @@ should be able to trace all input curves that overlap over this edge.
 The \ccc{Arrangement_with_history_2} class is extended by several member
 functions that enable such an inverse mapping. Given a halfedge handle \ccc{e}
 in an arrangement with history \ccc{arr}, then 
-\ccc{arr.number_of_origin_curves(e)} returns the number of curves that induce
-the edge (which should be 1 in non-degenerate cases, and 2 or more in case of
-overlaps), while \ccc{arr.origin_curves_begin(e)} and 
-\ccc{arr.origin_curves_end(e)} return 
-\ccc{Arrangement_with_history_2::Origin_curve_iterator} objects that define
-the range of curves that induce \ccc{e}. The value type of these iterator
-is of course \ccc{Arrangement_with_history_2::Curve_extended_2}.
+\ccc{arr.number_of_originating_curves(e)} returns the number of curves that
+induce the edge (which should be 1 in non-degenerate cases, and 2 or more
+in case of overlaps), while \ccc{arr.originating_curves_begin(e)} and 
+\ccc{arr.originating_curves_end(e)} return 
+\ccc{Arrangement_with_history_2::Originating_curve_iterator} objects that
+define the range of curves that induce \ccc{e}. The value type of these
+iterator is of course \ccc{Arrangement_with_history_2::Curve_with_edges_2}.
 
 In this context we mention that it is possible to overlay two 
 arrangement-with-history instances that are templated by the same traits
@@ -2617,15 +2640,17 @@ The most significant difference between the arrangement with history class
 and the basic arrangement class is the way they handle their input curves.
 \ccc{Arrangement_with_history_2} always stores the \ccc{Curve_2} objects
 that induce it, thus it is impossible to insert $x$-monotone curves into
-an arrangement with history. The global \ccc{insert_non_intersecting()}
-and \ccc{insert_x_monotone()} are therefore not available for arrangements
-with history and only the global \ccc{insert()} functions (the incremental
+an arrangement with history. The global \ccc{insert_non_intersecting_curve()}
+and \ccc{insert_x_monotone_curve()} (as well as their aggregated versions)
+are therefore not available for arrangements
+with history and only the global \ccc{insert_curve()} and 
+\ccc{insert_curves()} functions (the incremental
 insertion function and the aggregated insertion function) are supported ---
 see also Section~\ref{arr_sssec:insert_gen}. Notice however that while the
-incremental insertion function \ccc{insert(arr,c)} for an \ccc{Arrangement_2}
-object \ccc{arr} does not have a return value, the corresponding 
-arrangement-with-history function returns a \ccc{Curve_handle} to the inserted
-curve.
+incremental insertion function \ccc{insert_curve(arr,c)} for an
+\ccc{Arrangement_2} object \ccc{arr} does not have a return value,
+the corresponding arrangement-with-history function returns a
+\ccc{Curve_handle} to the inserted curve.
 
 As we are able to keep track of all edges induced by an input curve, we also
 provide a global function that removes a curve from an arrangement. By calling
@@ -2638,7 +2663,7 @@ In some cases, users may need to operate directly on the arrangement edges.
 We first mention that the specialized insertion functions (see 
 Section~\ref{arr_sssec:mf_insert_cv}) are not supported, as they accept
 $x$-monotone curves. Insertion can only be performed via the global 
-\ccc{insert()} functions. The other edge-manipulation functions 
+insertion functions. The other edge-manipulation functions 
 (see Section~\ref{arr_sssec:mf_halfedges}) are however available, but have 
 a different interface that does not use $x$-monotone curves:
 \begin{itemize}

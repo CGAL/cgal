@@ -1,4 +1,6 @@
 //! \file examples/Arrangement_2/example18.C
+// Associating a name attribute with segments using the merged curve-data
+// traits.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -38,17 +40,17 @@ int main ()
 
   Point_2          points1[5] = {Point_2(0,0), Point_2(2,4), Point_2(3,3),
                                  Point_2(4,4), Point_2(6,0)};
-  insert (arr, Curve_2 (Polyline_2 (points1, points1 + 5), "A"));
+  insert_curve (arr, Curve_2 (Polyline_2 (points1, points1 + 5), "A"));
 
   Point_2          points2[3] = {Point_2(1,5), Point_2(3,3), Point_2(5,5)};
-  insert (arr, Curve_2 (Polyline_2 (points2, points2 + 3), "B"));
+  insert_curve (arr, Curve_2 (Polyline_2 (points2, points2 + 3), "B"));
 
   Point_2          points3[4] = {Point_2(1,0), Point_2(2,2),
                                  Point_2(4,2), Point_2(5,0)};
-  insert (arr, Curve_2 (Polyline_2 (points3, points3 + 4), "C"));
+  insert_curve (arr, Curve_2 (Polyline_2 (points3, points3 + 4), "C"));
 
   Point_2          points4[2] = {Point_2(0,2), Point_2(6,2)};
-  insert (arr, Curve_2 (Polyline_2 (points4, points4 + 2), "D"));
+  insert_curve (arr, Curve_2 (Polyline_2 (points4, points4 + 2), "D"));
 
   // Print all edges that correspond to an overlapping polyline.
   Arrangement_2::Edge_iterator    eit;

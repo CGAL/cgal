@@ -1,0 +1,27 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_with_hist_insert.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_curves (Arrangement_with_history_2)}
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccFunction{template<class Traits, class Dcel, InputIterator>
+            void insert_curves (Arrangement_with_history_2<Traits,Dcel>& arr,
+                         InputIterator first, InputIterator last);}
+   {Aggregately inserts the given range of curves \ccc{[first,last)} into
+    the arrangement \ccc{arr}.
+    \ccPrecond{The value-type of \ccc{InputIterator} is 
+               \ccc{Traits::Curve_2}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example8.C
+// Using the global incremental insertion functions.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -28,11 +29,11 @@ int main ()
   Segment_2      s4 (Point_2(0, 2), Point_2(6, 0));
   Segment_2      s5 (Point_2(3, 0), Point_2(5, 5));
 
-  insert_non_intersecting (arr, s1, pl);
-  insert_non_intersecting (arr, s2, pl);
-  insert_x_monotone (arr, s3, pl);
-  insert_x_monotone (arr, s4, pl);
-  insert (arr, s5, pl);
+  insert_non_intersecting_curve (arr, s1, pl);
+  insert_non_intersecting_curve (arr, s2, pl);
+  insert_x_monotone_curve (arr, s3, pl);
+  insert_x_monotone_curve (arr, s4, pl);
+  insert_curve (arr, s5, pl);
 
   // Print the size of the arrangement.
   std::cout << "V = " << arr.number_of_vertices()

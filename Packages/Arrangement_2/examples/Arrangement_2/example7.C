@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example7.C
+// Answering a batched point-location query.
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>

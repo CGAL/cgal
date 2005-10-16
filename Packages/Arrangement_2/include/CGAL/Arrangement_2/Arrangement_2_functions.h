@@ -39,7 +39,8 @@ CGAL_BEGIN_NAMESPACE
 // Default constructor.
 //
 template<class Traits, class Dcel>
-Arrangement_2<Traits,Dcel>::Arrangement_2 ()
+Arrangement_2<Traits,Dcel>::Arrangement_2 () :
+  n_iso_verts (0)  
 {
   // Set an empty unbounded face.
   un_face = dcel.new_face();
@@ -66,7 +67,8 @@ Arrangement_2<Traits,Dcel>::Arrangement_2 (const Self& arr) :
 // Constructor given a traits object.
 //
 template<class Traits, class Dcel>
-Arrangement_2<Traits,Dcel>::Arrangement_2 (Traits_2 *tr)
+Arrangement_2<Traits,Dcel>::Arrangement_2 (Traits_2 *tr) :
+  n_iso_verts (0)
 {
   // Set an empty unbounded face.
   un_face = dcel.new_face();
@@ -106,6 +108,9 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 
   // Duplicate the DCEL.
   un_face = dcel.assign (arr.dcel, arr.un_face);
+
+  // Copy the number of isolated vertices.
+  n_iso_verts = arr.n_iso_verts;
 
   // Go over the vertices and create duplicates of the stored points.
   typename Dcel::Vertex_iterator       vit;
@@ -192,7 +197,7 @@ Arrangement_2<Traits,Dcel>::~Arrangement_2 ()
 //-----------------------------------------------------------------------------
 // Clear the arrangement.
 template<class Traits, class Dcel>
-void Arrangement_2<Traits,Dcel>::clear()
+void Arrangement_2<Traits,Dcel>::clear ()
 {
   // Notify the observers that we are about to clear the arragement.
   _notify_before_clear ();
@@ -201,6 +206,7 @@ void Arrangement_2<Traits,Dcel>::clear()
   dcel.delete_all();
   un_face = dcel.new_face();
   un_face->set_halfedge (NULL);
+  n_iso_verts = 0;
 
   // Clear the point and curve containers.
   points.destroy();
@@ -279,6 +285,7 @@ Arrangement_2<Traits,Dcel>::remove_isolated_vertex (Vertex_handle v)
     {
       // We have found the isolated vertex - erase it.
       p_f->erase_isolated_vertex (iso_verts_it);
+      n_iso_verts--;
       break;
     }
   }
@@ -356,6 +363,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     // v1 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face. 
     _find_and_erase_isolated_vertex (p_f, v1);
+    n_iso_verts--;
 
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
@@ -447,6 +455,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     // v2 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
     _find_and_erase_isolated_vertex (p_f, v2);
+    n_iso_verts--;
 
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
@@ -540,6 +549,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     // v1 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
     _find_and_erase_isolated_vertex (f1, p_v1);
+    n_iso_verts--;
 
     if (v2->is_isolated())
     {
@@ -558,6 +568,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
       // v2 will not be isolated any more - remove it from the isolated
       // vertices container of its containing face.
       _find_and_erase_isolated_vertex (f1, p_v2);
+      n_iso_verts--;
 
       // Perform the insertion.
       Comparison_result  res = traits->compare_xy_2_object() (v1->point(),
@@ -604,6 +615,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     // v2 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
     _find_and_erase_isolated_vertex (f2, p_v2);
+    n_iso_verts--;
 
     // Go over the incident halfedges around v1 and find the halfedge after
     // which the new curve should be inserted.
@@ -682,6 +694,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     // v2 will not be isolated any more - remove it from the isolated vertices
     // container of its containing face.
     _find_and_erase_isolated_vertex (f2, p_v2);
+    n_iso_verts--;
 
     // Perform the insertion.
     Comparison_result  res = traits->compare_xy_2_object() 
@@ -1531,6 +1544,7 @@ void Arrangement_2<Traits,Dcel>::_insert_isolated_vertex (DFace *f,
 
   // Initiate a new hole inside the given face.
   f->add_isolated_vertex (v);
+  n_iso_verts++;
 
   // Notify the observers that we have formed a new isolated vertex.
   _notify_after_add_isolated_vertex (vh);

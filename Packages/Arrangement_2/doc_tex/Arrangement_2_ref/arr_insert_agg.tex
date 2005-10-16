@@ -1,0 +1,29 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_insert.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_curves}
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccFunction{template<class Traits, class Dcel, InputIterator>
+            void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                                InputIterator first, InputIterator last);}
+   {Aggregately inserts the given range of curves \ccc{[first,last)} into
+    the arrangement \ccc{arr}, where no restrictions are made on the nature of
+    the inserted curves. The \ccc{Traits} parameter must be a model of the
+    \ccc{ArrangementTraits_2} concept. The input curves are subdivided into
+    $x$-monotone subcurves (and perhaps isolated points), which are inserted
+    into the arrangement using the sweep-line algorithm.
+    \ccPrecond{The value-type of \ccc{InputIterator} is 
+               \ccc{Traits::Curve_2}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

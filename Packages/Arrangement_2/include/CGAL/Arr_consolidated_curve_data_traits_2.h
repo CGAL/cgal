@@ -24,6 +24,7 @@
  * Definition of the Arr_consolidated_curve_data_traits_2<Traits,Data> class.
  */
 
+#include <set>
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
@@ -114,13 +115,13 @@ public:
   
   /*!
    * Representation of an x-monotone cuvre. As this curve may represent
-   * an overlapping section of several input curves, we store a list of data
+   * an overlapping section of several input curves, we store a set of data
    * objects with it.
    */
   class X_monotone_curve_2 : public Base_x_monotone_curve_2 
   {
   private:
-    typedef std::list<Data>                          Data_container;
+    typedef std::set<Data>                           Data_container;
 
   public:
     typedef typename Data_container::iterator        Data_iterator;
@@ -128,7 +129,7 @@ public:
 
   private:
 
-    Data_container  m_data_list;
+    Data_container  m_data_set;
 
   public:
 
@@ -144,7 +145,7 @@ public:
      */
     X_monotone_curve_2 (const Base_x_monotone_curve_2& cv) :
       Base_x_monotone_curve_2(cv),
-      m_data_list()
+      m_data_set()
     {}
 
     /*!
@@ -155,9 +156,9 @@ public:
     X_monotone_curve_2 (const Base_x_monotone_curve_2& cv,
                         const Data& data) :
       Base_x_monotone_curve_2(cv),
-      m_data_list()
+      m_data_set()
     {
-      m_data_list.push_back(data);
+      m_data_set.insert (data);
     }
 
     /*!
@@ -172,12 +173,9 @@ public:
                         const InputIterator& begin,
                         const InputIterator& end) :
       Base_x_monotone_curve_2(cv),
-      m_data_list()
+      m_data_set()
     {
-      InputIterator    it;
-
-      for (it = begin; it != end; it++)
-        m_data_list.push_back(*it);
+      m_data_set.insert (begin, end);
     }
 
     /*!
@@ -185,7 +183,7 @@ public:
      */
     int number_of_data_objects () const
     {
-      return (m_data_list.size());
+      return (m_data_set.size());
     }
 
     /*!
@@ -194,20 +192,9 @@ public:
      */
     const Data& get_data () const
     {
-      CGAL_precondition (m_data_list.size() > 0);
+      CGAL_precondition (m_data_set.size() > 0);
 
-      return (m_data_list.front());
-    }
-
-    /*!
-     * Get the first data object associated with the curve (non-const version).
-     * \pre number_of_data_objects() is not 0.
-     */
-    Data& get_data ()
-    {
-      CGAL_precondition (m_data_list.size() > 0);
-
-      return (m_data_list.front());
+      return (*(m_data_set.begin()));
     }
 
     /*!
@@ -215,12 +202,12 @@ public:
      */
     Data_const_iterator data_begin () const
     {
-      return (m_data_list.begin());
+      return (m_data_set.begin());
     }
 
     Data_const_iterator data_end () const
     {
-      return (m_data_list.end());
+      return (m_data_set.end());
     }
 
     /*!
@@ -228,12 +215,12 @@ public:
      */
     Data_iterator data_begin ()
     {
-      return (m_data_list.begin());
+      return (m_data_set.begin());
     }
 
     Data_iterator data_end ()
     {
-      return (m_data_list.end());
+      return (m_data_set.end());
     }
 
     /*!
@@ -241,7 +228,7 @@ public:
      */
     bool has_same_data (const X_monotone_curve_2& cv) const
     {
-      return (m_data_list == cv.m_data_list);
+      return (m_data_set == cv.m_data_set);
     }
 
     /*!
@@ -250,7 +237,7 @@ public:
      */
     void add_data (const Data& data)
     {
-      m_data_list.push_back (data);
+      m_data_set.insert (data);
       return;
     }
 
@@ -260,7 +247,7 @@ public:
      */
     void remove_data (const Data& data)
     {
-      m_data_list.remove (data);
+      m_data_set.erase (data);
       return;
     }
 
@@ -283,11 +270,7 @@ public:
     template <class InputIterator>
     void add_data (const InputIterator& begin, const InputIterator& end)
     {
-      InputIterator    it;
-
-      for (it = begin; it != end; ++it)
-        m_data_list.push_back(*it);
-
+      m_data_set.insert (begin, end);
       return;
     }
 
@@ -296,7 +279,7 @@ public:
      */
     void clear_data ()
     {
-      m_data_list.clear();
+      m_data_set.clear();
       return;
     }
   };

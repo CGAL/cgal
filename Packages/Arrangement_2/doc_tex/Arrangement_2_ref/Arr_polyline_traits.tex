@@ -42,8 +42,10 @@ own risk.
 %========================================================================
 
 The \ccc{Curve_2} class nested within the polyline traits is used to
-represent (general) piecewise linear curves and support their construction
-from any range of points. The copy and default constructor as well as 
+represent general continuous piecewise-linear curves (a polyline can be
+self-intersecting) and support their construction from any range of points.
+
+The copy and default constructor as well as 
 the assignment operator are provided for polyline curves. In addition, 
 an \ccc{operator<<} for the curves is defined for standard output streams.
 
@@ -71,7 +73,7 @@ allows traversing the points that comprise a polyline curve.}
   {constructs a polyline defined by the given range of points
    \ccc{[first, last)} (the value-type of \ccc{InputIterator} must be
    \ccc{SegmentTraits::Point_2}.
-   If the range contains $n$ points labeled $(p_{0},p_{1},\ldots,p_{n})$,
+   If the range contains $(n + 1)$ points labeled $(p_{0},p_{1},\ldots,p_{n})$,
    the generated polyline consists of $n$ segments, where the $k$th segment 
    is defined by the endpoints $[p_{k-1},p_{k}]$. The first point in the 
    range is considered as the source point of the polyline while the last 
@@ -83,8 +85,8 @@ allows traversing the points that comprise a polyline curve.}
 
 \ccMethod{size_t points() const;}
   {returns the number of points that comprise the polyline.
-   Note that if there are $M$ points in the polyline, it is comprised
-   of $M-1$ segments.}
+   Note that if there are $n$ points in the polyline, it is comprised
+   of $(n - 1)$ segments.}
 
 \ccMethod{const_iterator begin() const;}
   {returns an iterator pointing at the source point of the polyline.}
@@ -99,7 +101,7 @@ allows traversing the points that comprise a polyline curve.}
   {returns an iterator pointing before the beginning of the polyline.}
 
 \ccMethod{size_t size() const;}
-  {returns the number line segments comprising the polyline
+  {returns the number of line segments comprising the polyline
    (equivalent to \ccc{pi.points() - 1}).}
 
 \ccMethod{typename SegmentTraits::X_monotone_curve_2
@@ -134,7 +136,10 @@ precondition that the point range define an $x$-monotone polyline.
 
 We note that the points that define the $x$-monotone polyline are
 always stored in an ascending lexicographical $xy$-order, so their order may
-be reversed with respect to the input sequence.
+be reversed with respect to the input sequence. Also note that the
+$x$-monotonicity ensures that an $x$-monotone polyline is never
+self-intersecting (thus, a self-intersecting polyline will be subdivided
+to several interior-disjoint $x$-monotone subcurves).
 
 \begin{ccClass}{Arr_polyline_traits_2<SegmentTraits>::X_monotone_curve_2}
 \end{ccClass}

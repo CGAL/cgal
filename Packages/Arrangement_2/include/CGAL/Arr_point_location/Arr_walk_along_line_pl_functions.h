@@ -378,7 +378,8 @@ _vertical_ray_shoot (const Point_2& p,
   if (closest_he == invalid_he)
   {
     // We did not encounter any edge above (below) the query point:
-    return Object();
+    Face_const_handle  uf = p_arr->unbounded_face();
+    return (CGAL::make_object (uf));
   }
 
   // Check if one of closest_he's end vertices lies directly above (below) the

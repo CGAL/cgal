@@ -176,6 +176,27 @@ public:
   }
 
   /*!
+   * Initialize the zone-computation process with a given curve.
+   * \param _cv The query curve.
+   * \param _obj An object that represents the location of the left
+   *             endpoint of the curve.
+   */
+  void init_with_hint (const X_monotone_curve_2& _cv,
+                       const Object& _obj)
+  {
+    // Set the curve and its endpoints.
+    cv = _cv;
+    left_pt = traits->construct_min_vertex_2_object() (cv);
+    right_pt = traits->construct_max_vertex_2_object() (cv);
+
+    // Set the object that represents the location of the left endpoint
+    // in the arrangement.
+    obj = _obj;
+
+    return;
+  }
+
+  /*!
    * Compute the zone of the given curve and issue the apporpriate
    * notifications for the visitor.
    */

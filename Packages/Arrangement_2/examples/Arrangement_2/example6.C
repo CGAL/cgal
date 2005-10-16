@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example6.C
+// Answering vertical ray-shooting queries.
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>

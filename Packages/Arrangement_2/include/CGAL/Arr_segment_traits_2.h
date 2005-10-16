@@ -95,7 +95,7 @@ public:
      * Constructor from a segment.
      * \param seg The segment.
      */
-    _Segment_cached_2 (const Segment_2 & seg)
+    _Segment_cached_2 (const Segment_2& seg)
     {
       Kernel   kernel;
 
@@ -121,7 +121,7 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    _Segment_cached_2 (const Point_2 & source, const Point_2 & target) :
+    _Segment_cached_2 (const Point_2& source, const Point_2& target) :
       ps (source),
       pt (target)
     {
@@ -168,7 +168,7 @@ public:
      * Assignment operator.
      * \param seg the source segment to copy from
      */
-    const _Segment_cached_2& operator= (const Segment_2 & seg)
+    const _Segment_cached_2& operator= (const Segment_2& seg)
     {
       Kernel   kernel;
 
@@ -211,7 +211,8 @@ public:
         Kernel    kernel;
       );
       CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, l, Has_exact_division())&&
+        (Segment_assertions::_assert_is_point_on (p, l, 
+                                                  Has_exact_division()) &&
          kernel.compare_xy_2_object() (p, right()) == SMALLER);
 
       if (is_pt_max)
@@ -240,7 +241,8 @@ public:
         Kernel    kernel;
       );
       CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, l, Has_exact_division())&&
+        (Segment_assertions::_assert_is_point_on (p, l, 
+                                                  Has_exact_division()) &&
          kernel.compare_xy_2_object() (p, left()) == LARGER);
 
       if (is_pt_max)
@@ -284,10 +286,16 @@ public:
     {
       Kernel                          kernel;
       typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
-      const Comparison_result         res1 = compare_x (p, ps);
-      const Comparison_result         res2 = compare_x (p, pt);
+      const Comparison_result         res1 = compare_x (p, left());
 
-      return (res1 == EQUAL || res2 == EQUAL || res1 != res2);
+      if (res1 == SMALLER)
+        return (false);
+      else if (res1 == EQUAL)
+        return (true);
+
+      const Comparison_result         res2 = compare_x (p, right());
+
+      return (res2 != LARGER);
     }
 
     /*!
@@ -299,10 +307,16 @@ public:
     {
       Kernel                          kernel;
       typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
-      const Comparison_result         res1 = compare_y (p, ps);
-      const Comparison_result         res2 = compare_y (p, pt);
+      const Comparison_result         res1 = compare_y (p, left());
 
-      return (res1 == EQUAL || res2 == EQUAL || res1 != res2);
+      if (res1 == SMALLER)
+        return (false);
+      else if (res1 == EQUAL)
+        return (true);
+
+      const Comparison_result         res2 = compare_y (p, right());
+
+      return (res2 != LARGER);
     }
   };
 
@@ -335,7 +349,7 @@ public:
      *         SMALLER if x(p1) < x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    Comparison_result operator() (const Point_2 & p1, const Point_2 & p2)const
+    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
       Kernel    kernel;
       return (kernel.compare_x_2_object()(p1, p2));
@@ -380,7 +394,7 @@ public:
      * \param cv The curve.
      * \return The left endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
+    const Point_2& operator() (const X_monotone_curve_2& cv) const
     {
       return (cv.left());
     }
@@ -400,7 +414,7 @@ public:
      * \param cv The curve.
      * \return The right endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
+    const Point_2& operator() (const X_monotone_curve_2& cv) const
     {
       return (cv.right());
     }
@@ -445,8 +459,8 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    Comparison_result operator() (const Point_2 & p,
-                                  const X_monotone_curve_2 & cv) const
+    Comparison_result operator() (const Point_2& p,
+                                  const X_monotone_curve_2& cv) const
     {
       CGAL_precondition (! cv.is_degenerate());
       CGAL_precondition (cv.is_in_x_range (p));
@@ -511,8 +525,10 @@ public:
       );
 
       CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
-         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
+        (Segment_assertions::_assert_is_point_on (p, cv1, 
+                                                  Has_exact_division()) &&
+         Segment_assertions::_assert_is_point_on (p, cv2,
+                                                  Has_exact_division()));
 
       CGAL_precondition (compare_xy(cv1.left(), p) == SMALLER &&
                          compare_xy(cv2.left(), p) == SMALLER);
@@ -564,8 +580,10 @@ public:
       );
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
-         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
+        (Segment_assertions::_assert_is_point_on (p, cv1, 
+                                                  Has_exact_division()) &&
+         Segment_assertions::_assert_is_point_on (p, cv2,
+                                                  Has_exact_division()));
 
       CGAL_precondition (compare_xy(cv1.right(), p) == LARGER &&
                          compare_xy(cv2.right(), p) == LARGER);
@@ -673,7 +691,7 @@ public:
      * \param c2 Output: The right resulting subcurve (p is its left endpoint).
      * \pre p lies on cv but is not one of its end-points.
      */
-    void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
+    void operator() (const X_monotone_curve_2& cv, const Point_2& p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       CGAL_precondition (! cv.is_degenerate());
@@ -683,11 +701,11 @@ public:
         Kernel                        kernel;
         typename Kernel::Compare_xy_2 compare_xy = 
                                                  kernel.compare_xy_2_object();
-        //Compare_y_at_x_2              compare_y_at_x;
       );
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on(p, cv, Has_exact_division())&&
+        (Segment_assertions::_assert_is_point_on (p, cv,
+                                                  Has_exact_division()) &&
          compare_xy(cv.left(), p) == SMALLER &&
          compare_xy(cv.right(), p) == LARGER);
 
@@ -1015,7 +1033,9 @@ public:
    */
   operator Segment_2 () const
   {
-    return (Segment_2 (this->ps, this->pt));
+    Kernel     kernel;
+    Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
+    return (seg);
   }
 
   /*!
@@ -1023,8 +1043,9 @@ public:
    */
   Bbox_2 bbox() const
   {
-    Segment_2 seg (this->ps, this->pt);
-    return (seg.bbox());
+    Kernel     kernel;
+    Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
+    return (kernel.construct_bbox_2_object() (seg));
   }
 
   /*!

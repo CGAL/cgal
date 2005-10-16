@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example16.C
+// Constructing an arrangement of arcs of rational functions.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -58,7 +59,7 @@ int main ()
   arcs.push_back (a2);
   arcs.push_back (a3);
   arcs.push_back (a4);
-  insert (arr, arcs.begin(), arcs.end());
+  insert_curves (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "V = " << arr.number_of_vertices()

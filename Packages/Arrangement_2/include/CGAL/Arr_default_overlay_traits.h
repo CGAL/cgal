@@ -49,16 +49,16 @@ class Arr_default_overlay_traits :
  * object of type Data1 and Data2 is computed using the functor
  * Overlay_face_data.
  */
-template <class Arrangement1_, class Arrangement2_, class ResArr_,
+template <class ArrangementA, class ArrangementB, class ArrangementR,
 	  class OverlayFaceData_>
 class Arr_face_overlay_traits :
-  public _Arr_default_overlay_traits<Arrangement1_, Arrangement2_, ResArr_> 
+  public _Arr_default_overlay_traits<ArrangementA, ArrangementB, ArrangementR> 
 {
 public:
 
-  typedef typename Arrangement1_::Face_const_handle    Face_handle1;
-  typedef typename Arrangement2_::Face_const_handle    Face_handle2;
-  typedef typename ResArr_::Face_handle                Res_face_handle;
+  typedef typename ArrangementA::Face_const_handle    Face_handle_A;
+  typedef typename ArrangementB::Face_const_handle    Face_handle_B;
+  typedef typename ArrangementR::Face_handle          Face_handle_R;
 
   typedef OverlayFaceData_                             Overlay_face_data;
 
@@ -71,9 +71,9 @@ public:
   /*!
    * Create a face f that matches the overlapping region between f1 and f2.
    */
-  virtual void create_face (Face_handle1 f1,
-			    Face_handle2 f2,
-			    Res_face_handle f) const
+  virtual void create_face (Face_handle_A f1,
+			    Face_handle_B f2,
+			    Face_handle_R f) const
   {
     // Overlay the data objects associated with f1 and f2 and store the result
     // with f.

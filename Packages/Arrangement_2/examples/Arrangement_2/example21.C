@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example21.C
+// Extending all DCEL records (vertices, edges and faces).
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -29,12 +30,12 @@ int main ()
   Segment_2      s5 (Point_2(1, 3), Point_2(4, 8));
   Segment_2      s6 (Point_2(4, 8), Point_2(7, 3));
 
-  insert_non_intersecting (arr, s1);
-  insert_non_intersecting (arr, s2);
-  insert_non_intersecting (arr, s3);
-  insert_x_monotone (arr, s4);
-  insert_x_monotone (arr, s5);
-  insert_x_monotone (arr, s6);
+  insert_non_intersecting_curve (arr, s1);
+  insert_non_intersecting_curve (arr, s2);
+  insert_non_intersecting_curve (arr, s3);
+  insert_x_monotone_curve (arr, s4);
+  insert_x_monotone_curve (arr, s5);
+  insert_x_monotone_curve (arr, s6);
 
   // Go over all arrangement vertices and set their colors.
   Arrangement_2::Vertex_iterator            vit;

@@ -575,7 +575,7 @@ public:
   //@}
 
   // Define iterators for the origin curves of an edge:
-  class Curve_extended_2 : public Curve_halfedges
+  class Curve_with_edges_2 : public Curve_halfedges
   {
   public:
 
@@ -594,45 +594,46 @@ public:
 
   typedef I_Dereference_iterator<
     typename Data_x_curve_2::Data_iterator,
-    Curve_extended_2,
+    Curve_with_edges_2,
     typename Data_x_curve_2::Data_iterator::difference_type,
     typename Data_x_curve_2::Data_iterator::iterator_category>
-                                              Origin_curve_iterator;
+                                              Originating_curve_iterator;
   
   typedef I_Dereference_const_iterator<
     typename Data_x_curve_2::Data_const_iterator,
     typename Data_x_curve_2::Data_iterator,
-    Curve_extended_2,
+    Curve_with_edges_2,
     typename Data_x_curve_2::Data_iterator::difference_type,
     typename Data_x_curve_2::Data_iterator::iterator_category>
-                                              Origin_curve_const_iterator;
+                                              Originating_curve_const_iterator;
   
   /// \name Traversal of the origin curves of an edge.
   //@{
-  Size number_of_origin_curves (Halfedge_handle e) const
+  Size number_of_originating_curves (Halfedge_handle e) const
   {
     return (e->curve().number_of_data_objects());
   }
 
-  Origin_curve_iterator origin_curves_begin (Halfedge_handle e)
+  Originating_curve_iterator originating_curves_begin (Halfedge_handle e)
   {
-    return Origin_curve_iterator (e->curve().data_begin());
+    return Originating_curve_iterator (e->curve().data_begin());
   }
 
-  Origin_curve_iterator origin_curves_end (Halfedge_handle e)
+  Originating_curve_iterator originating_curves_end (Halfedge_handle e)
   {
-    return Origin_curve_iterator (e->curve().data_end());
+    return Originating_curve_iterator (e->curve().data_end());
   }
 
-  Origin_curve_const_iterator
-  origin_curves_begin (Halfedge_const_handle e) const
+  Originating_curve_const_iterator
+  originating_curves_begin (Halfedge_const_handle e) const
   {
-    return Origin_curve_const_iterator (e->curve().data_begin());
+    return Originating_curve_const_iterator (e->curve().data_begin());
   }
 
-  Origin_curve_const_iterator origin_curves_end (Halfedge_const_handle e) const
+  Originating_curve_const_iterator
+  originating_curves_end (Halfedge_const_handle e) const
   {
-    return Origin_curve_const_iterator (e->curve().data_end());
+    return Originating_curve_const_iterator (e->curve().data_end());
   }
   //@}
 
@@ -769,8 +770,8 @@ protected:
    * \return A handle to the inserted curve.
    */
   template <class PointLocation>
-  Curve_handle _insert (const Curve_2& cv,
-                        const PointLocation& pl)
+  Curve_handle _insert_curve (const Curve_2& cv,
+                              const PointLocation& pl)
   {
     // Allocate an extended curve (with an initially empty set of edges)
     // and store it in the curves' list.
@@ -786,7 +787,7 @@ protected:
     Data_curve_2       data_curve (cv, p_cv);
     Base_arr_2&        base_arr = *this;
 
-    CGAL::insert (base_arr, data_curve, pl);
+    CGAL::insert_curve (base_arr, data_curve, pl);
     
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
@@ -799,7 +800,7 @@ protected:
    * \param cv The curve to be inserted.
    * \return A handle to the inserted curve.
    */
-  Curve_handle _insert (const Curve_2& cv)
+  Curve_handle _insert_curve (const Curve_2& cv)
   {
     // Allocate an extended curve (with an initially empty set of edges)
     // and store it in the curves' list.
@@ -815,7 +816,7 @@ protected:
     Data_curve_2       data_curve (cv, p_cv);
     Base_arr_2&        base_arr = *this;
 
-    CGAL::insert (base_arr, data_curve);
+    CGAL::insert_curve (base_arr, data_curve);
     
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
@@ -828,7 +829,7 @@ protected:
    * \param end A past-the-end iterator for the last curve in the range.
    */
   template <class InputIterator>
-  void _insert (InputIterator begin, InputIterator end)
+  void _insert_curves (InputIterator begin, InputIterator end)
   {
     // Create a list of extended curves (with an initially empty sets of edges)
     std::list<Data_curve_2>   data_curves;
@@ -848,7 +849,7 @@ protected:
     // Perform an aggregated insertion operation into the base arrangement.
     Base_arr_2&        base_arr = *this;
 
-    CGAL::insert (base_arr, data_curves.begin(), data_curves.end());
+    CGAL::insert_curves (base_arr, data_curves.begin(), data_curves.end());
     return;
   }
 
@@ -857,7 +858,7 @@ protected:
    * \param ch A handle to the curve to be removed.
    * \return The number of removed edges.
    */
-  Size _remove (Curve_handle ch)
+  Size _remove_curve (Curve_handle ch)
   {
     // Go over all edges the given curve induces.
     Curve_halfedges                     *p_cv = &(*ch); 
@@ -1017,15 +1018,15 @@ public:
  */
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
-insert (Arrangement_with_history_2<Traits,Dcel>& arr,
-        const typename Traits::Curve_2& c,
-        const PointLocation& pl)
+insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
+              const typename Traits::Curve_2& c,
+              const PointLocation& pl)
 {
   // Obtain an arrangement accessor and perform the insertion.
   typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
   Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
 
-  return (arr_access.insert (c, pl));
+  return (arr_access.insert_curve (c, pl));
 }
 
 /*!
@@ -1038,14 +1039,14 @@ insert (Arrangement_with_history_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel>
 typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
-insert (Arrangement_with_history_2<Traits,Dcel>& arr,
-        const typename Traits::Curve_2& c)
+insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
+              const typename Traits::Curve_2& c)
 {
   // Obtain an arrangement accessor and perform the insertion.
   typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
   Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
 
-  return (arr_access.insert (c));
+  return (arr_access.insert_curve (c));
 }
 
 
@@ -1059,14 +1060,14 @@ insert (Arrangement_with_history_2<Traits,Dcel>& arr,
  * \pre The value type of the iterators must be Curve_2.
  */
 template <class Traits, class Dcel, class InputIterator>
-void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
-             InputIterator begin, InputIterator end)
+void insert_curves (Arrangement_with_history_2<Traits,Dcel>& arr,
+                    InputIterator begin, InputIterator end)
 {
   // Obtain an arrangement accessor and perform the insertion.
   typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
   Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
 
-  arr_access.insert (begin, end);
+  arr_access.insert_curves (begin, end);
   return;
 }
 
@@ -1076,15 +1077,15 @@ void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
  * \return The number of removed edges.
  */
 template <class Traits, class Dcel>
-typename Arrangement_with_history_2<Traits,Dcel>::Size
-remove (Arrangement_with_history_2<Traits,Dcel>& arr,
-        typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle ch)
+typename Arrangement_with_history_2<Traits,Dcel>::Size remove_curve
+    (Arrangement_with_history_2<Traits,Dcel>& arr,
+     typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle ch)
 {
   // Obtain an arrangement accessor and perform the removal.
   typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
   Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
 
-  return (arr_access.remove (ch));
+  return (arr_access.remove_curve (ch));
 }
 
 /*!
@@ -1106,11 +1107,7 @@ void overlay (const Arrangement_with_history_2<Traits, Dcel1>& arr1,
               Arrangement_with_history_2<Traits, ResDcel>& res,
               OverlayTraits& traits)
 {
-  // Obtain an arrangement accessor and perform the overlay.
   res._overlay (arr1, arr2, traits);
-  //Arr_accessor<Arrangement_with_history_2<Traits,Dcel> >  arr_access (res);
-
-  //arr_access.overlay (arr1, arr2, traits);
   return;
 }
 

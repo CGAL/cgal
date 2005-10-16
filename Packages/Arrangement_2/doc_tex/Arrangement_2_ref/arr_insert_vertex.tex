@@ -8,13 +8,13 @@
 
 \ccRefPageBegin
 
-\begin{ccRefFunction}{insert_vertex}
+\begin{ccRefFunction}{insert_point}
 
 \ccInclude{CGAL/Arrangement_2.h}
 
 \ccFunction{template<class Traits, class Dcel, class PointLocation>
             typename Arrangement_2<Traits,Dcel>::Vertex_handle
-            insert_vertex (Arrangement_2<Traits,Dcel>& arr,
+            insert_point (Arrangement_2<Traits,Dcel>& arr,
                            const typename Traits::Point_2& p,
                            const PointLocation& pl);}
    {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
@@ -30,7 +30,7 @@
 
 \ccFunction{template<class Traits, class Dcel>
             typename Arrangement_2<Traits,Dcel>::Vertex_handle
-            insert_vertex (Arrangement_2<Traits,Dcel>& arr,
+            insert_point (Arrangement_2<Traits,Dcel>& arr,
                            const typename Traits::Point_2& p);}
    {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
     This function operated just like the function above, but it uses the

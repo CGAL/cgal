@@ -135,7 +135,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   //	for then get_parent() is not defined
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
-    return (CGAL::make_object (p_arr->unbounded_face()));
+    Face_const_handle  uf = p_arr->unbounded_face();
+    return (CGAL::make_object (uf));
   }
 
   Halfedge_const_handle h=cv.get_parent();
@@ -183,7 +184,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     break;
   }
 
-  return Object();  
+  Face_const_handle  uf = p_arr->unbounded_face();
+  return (CGAL::make_object (uf));
 }
 
 

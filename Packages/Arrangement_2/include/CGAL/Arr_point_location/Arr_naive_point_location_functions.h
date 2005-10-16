@@ -280,7 +280,10 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
 
   // Set back the result according to its type.
   if (type == NAIVE_PL_NONE)
-    return Object();
+  {
+    Face_const_handle  uf = p_arr->unbounded_face();
+    return (CGAL::make_object (uf));
+  }
   else if (type == NAIVE_PL_VERTEX)
     return (CGAL::make_object (closest_v));
   else

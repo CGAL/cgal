@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example3.C
+// Using the edge-manipulation functions.
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Cartesian.h>

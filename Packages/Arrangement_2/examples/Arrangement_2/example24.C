@@ -1,4 +1,5 @@
 // file: examples/Arrangement_2/example24.C
+// Constructing an arrangement with curve history.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -24,18 +25,18 @@ int main ()
 
   // Insert s1, s2 and s3 incrementally:
   Segment_2         s1 (Point_2 (0, 3), Point_2 (4, 3));
-  Curve_handle      c1 = insert (arr, s1);
+  Curve_handle      c1 = insert_curve (arr, s1);
   Segment_2         s2 (Point_2 (3, 2), Point_2 (3, 5));
-  Curve_handle      c2 = insert (arr, s2);
+  Curve_handle      c2 = insert_curve (arr, s2);
   Segment_2         s3 (Point_2 (2, 3), Point_2 (5, 3));
-  Curve_handle      c3 = insert (arr, s3);
+  Curve_handle      c3 = insert_curve (arr, s3);
 
   // Insert three additional segments aggregately:
   Segment_2         segs[3];
   segs[0] = Segment_2 (Point_2 (2, 6), Point_2 (7, 1));
   segs[1] = Segment_2 (Point_2 (0, 0), Point_2 (2, 6));
   segs[2] = Segment_2 (Point_2 (3, 4), Point_2 (6, 4));
-  insert (arr, segs, segs + 3);
+  insert_curves (arr, segs, segs + 3);
 
   // Print out the curves and the number edges each one induces.
   Arr_with_hist_2::Curve_iterator            cit;
@@ -49,15 +50,15 @@ int main ()
 
   // Print the arrangement edges, along with the list of curves that
   // induce each edge.
-  Arr_with_hist_2::Edge_iterator             eit;
-  Arr_with_hist_2::Origin_curve_iterator     ocit;
+  Arr_with_hist_2::Edge_iterator                  eit;
+  Arr_with_hist_2::Originating_curve_iterator     ocit;
 
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
   {
-    std::cout << "[" << eit->curve() << "]. Origin: ";
-    for (ocit = arr.origin_curves_begin (eit);
-         ocit != arr.origin_curves_end (eit); ++ocit)
+    std::cout << "[" << eit->curve() << "]. Originating curves: ";
+    for (ocit = arr.originating_curves_begin (eit);
+         ocit != arr.originating_curves_end (eit); ++ocit)
     {
       std::cout << " [" << *ocit << "]" << std::flush;
     }

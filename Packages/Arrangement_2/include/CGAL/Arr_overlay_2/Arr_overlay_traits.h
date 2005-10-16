@@ -29,22 +29,22 @@ CGAL_BEGIN_NAMESPACE
  * data with their DCEL features. The resulting arrangement is also assumed
  * to be templated with the default DCEL.
  */
-template <class Arrangement1_, class Arrangement2_, class ResArr_>
+template <class ArrangementA, class ArrangementB, class ArrangementR>
 class _Arr_default_overlay_traits
 {
 public:
 
-  typedef typename Arrangement1_::Vertex_const_handle    Vertex_handle1;
-  typedef typename Arrangement1_::Halfedge_const_handle  Halfedge_handle1;
-  typedef typename Arrangement1_::Face_const_handle      Face_handle1;
+  typedef typename ArrangementA::Vertex_const_handle    Vertex_handle_A;
+  typedef typename ArrangementA::Halfedge_const_handle  Halfedge_handle_A;
+  typedef typename ArrangementA::Face_const_handle      Face_handle_A;
 
-  typedef typename Arrangement2_::Vertex_const_handle    Vertex_handle2;
-  typedef typename Arrangement2_::Halfedge_const_handle  Halfedge_handle2;
-  typedef typename Arrangement2_::Face_const_handle      Face_handle2;
+  typedef typename ArrangementB::Vertex_const_handle    Vertex_handle_B;
+  typedef typename ArrangementB::Halfedge_const_handle  Halfedge_handle_B;
+  typedef typename ArrangementB::Face_const_handle      Face_handle_B;
   
-  typedef typename ResArr_::Vertex_handle                Res_vertex_handle;
-  typedef typename ResArr_::Halfedge_handle              Res_halfedge_handle;
-  typedef typename ResArr_::Face_handle                  Res_face_handle;
+  typedef typename ArrangementR::Vertex_handle          Vertex_handle_R;
+  typedef typename ArrangementR::Halfedge_handle        Halfedge_handle_R;
+  typedef typename ArrangementR::Face_handle            Face_handle_R;
 
   /*! Destructor. */
   virtual ~_Arr_default_overlay_traits ()
@@ -53,81 +53,81 @@ public:
   /*!
    * Create a vertex v that corresponds to the coinciding vertices v1 and v2.
    */
-  virtual void create_vertex (Vertex_handle1 /* v1 */,
-			      Vertex_handle2 /* v2 */,
-			      Res_vertex_handle /* v */) const
+  virtual void create_vertex (Vertex_handle_A /* v1 */,
+			      Vertex_handle_B /* v2 */,
+			      Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that mathces v1, which lies of the edge e2.
    */
-  virtual void create_vertex (Vertex_handle1 /* v1 */,
-			      Halfedge_handle2 /* e2 */,
-			      Res_vertex_handle /* v */) const
+  virtual void create_vertex (Vertex_handle_A /* v1 */,
+			      Halfedge_handle_B /* e2 */,
+			      Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that mathces v1, contained in the face f2.
    */
-  virtual void create_vertex (Vertex_handle1 /* v1 */,
-			      Face_handle2 /* f2 */,
-			      Res_vertex_handle /* v */) const
+  virtual void create_vertex (Vertex_handle_A /* v1 */,
+			      Face_handle_B /* f2 */,
+			      Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that mathces v2, which lies of the edge e1.
    */
-  virtual void create_vertex (Halfedge_handle1 /* e1 */,
-			      Vertex_handle2 /* v2 */,
-			      Res_vertex_handle /* v */) const
+  virtual void create_vertex (Halfedge_handle_A /* e1 */,
+			      Vertex_handle_B /* v2 */,
+			      Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that mathces v2, contained in the face f1.
    */
-  virtual void create_vertex (Face_handle1 /* f1 */,
-			      Vertex_handle2 /* v2 */,
-			      Res_vertex_handle /* v */) const
+  virtual void create_vertex (Face_handle_A /* f1 */,
+			      Vertex_handle_B /* v2 */,
+			      Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that mathces the intersection of the edges e1 and e2.
    */
-  virtual void create_vertex (Halfedge_handle1 /* e1 */,
-			      Halfedge_handle2 /* e2 */,
-			      Res_vertex_handle /* v */) const
+  virtual void create_vertex (Halfedge_handle_A /* e1 */,
+			      Halfedge_handle_B /* e2 */,
+			      Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create an edge e that matches the overlap between e1 and e2.
    */
-  virtual void create_edge (Halfedge_handle1 /* e1 */,
-			    Halfedge_handle2 /* e2 */,
-			    Res_halfedge_handle /* e */) const
+  virtual void create_edge (Halfedge_handle_A /* e1 */,
+			    Halfedge_handle_B /* e2 */,
+			    Halfedge_handle_R /* e */) const
   {}
 
   /*!
    * Create an edge e that matches the edge e1, contained in the face f2.
    */
-  virtual void create_edge (Halfedge_handle1 /* e1 */,
-			    Face_handle2 /* f2 */,
-			    Res_halfedge_handle /* e */) const
+  virtual void create_edge (Halfedge_handle_A /* e1 */,
+			    Face_handle_B /* f2 */,
+			    Halfedge_handle_R /* e */) const
   {}
 
   /*!
    * Create an edge e that matches the edge e2, contained in the face f1.
    */
-  virtual void create_edge (Face_handle1 /* f1 */,
-			    Halfedge_handle2 /* e2 */,
-			    Res_halfedge_handle /* e */) const
+  virtual void create_edge (Face_handle_A /* f1 */,
+			    Halfedge_handle_B /* e2 */,
+			    Halfedge_handle_R /* e */) const
   {}
 
   /*!
    * Create a face f that matches the overlapping region between f1 and f2.
    */
-  virtual void create_face (Face_handle1 /* f1 */,
-			    Face_handle2 /* f2 */,
-			    Res_face_handle /* f */) const
+  virtual void create_face (Face_handle_A /* f1 */,
+			    Face_handle_B /* f2 */,
+			    Face_handle_R /* f */) const
   {}
 
 };

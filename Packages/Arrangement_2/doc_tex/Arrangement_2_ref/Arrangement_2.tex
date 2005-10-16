@@ -169,6 +169,9 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccMethod{Size number_of_vertices() const;}
     {returns the number of vertices in the arrangement.}
 
+\ccMethod{Size number_of_isolated_vertices() const;}
+    {returns the total number of isolated vertices in the arrangement.}
+
 \ccMethod{Vertex_iterator vertices_begin();}
     {returns the begin-iterator of the vertices in the arrangement.}
     
@@ -305,7 +308,9 @@ counterparts, returning constant iterators instead of mutable ones:
    two vertices, and returns a handle for the halfedge directed from \ccc{v1}
    to \ccc{v2}.
    \ccPrecond{\ccc{v1} and \ccc{v2} are associated with \ccc{c}'s endpoints.} 
-   \ccPrecond{\ccc{v1} and \ccc{v2} are not already connected by an edge.}}
+   \ccPrecond{If \ccc{v1} and \ccc{v2} are already
+              connected by an edge, this edge represents an $x$-monotone
+              curve that is interior-disjoint from \ccc{c}).}}
 
 \begin{ccAdvanced}
 
@@ -349,8 +354,9 @@ counterparts, returning constant iterators instead of mutable ones:
    \ccc{pred1->target()} to \ccc{v2}.
    \ccPrecond{\ccc{pred1->target()} and \ccc{v2} are associated with 
    \ccc{c}'s endpoints.} 
-   \ccPrecond{\ccc{pred1->target()} and \ccc{v2} are not already connected
-   by an edge.}}
+   \ccPrecond{If \ccc{pred1->target} and \ccc{v2} are already connected
+              by an edge, this edge represents an $x$-monotone curve that
+              is interior-disjoint from \ccc{c}).}}
 
 \ccMethod{Halfedge_handle insert_at_vertices (const X_monotone_curve_2& c,
                                               Halfedge_handle pred1, 
@@ -364,8 +370,9 @@ counterparts, returning constant iterators instead of mutable ones:
    \ccc{pred1->target()} to \ccc{pred2->target()}.
    \ccPrecond{\ccc{pred1->target()} and \ccc{pred2->target()} are associated
    with \ccc{c}'s endpoints.} 
-   \ccPrecond{\ccc{pred1->target()} and \ccc{pred2->target()} are not already
-   connected by an edge.}}
+   \ccPrecond{If \ccc{pred1->target} and \ccc{pred2->target()} are already
+              connected by an edge, this edge represents an $x$-monotone
+              curve that is interior-disjoint from \ccc{c}).}}
 
 \end{ccAdvanced}
 

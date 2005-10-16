@@ -1,4 +1,5 @@
 // file: examples/Arrangement_2/example25.C
+// Removing curves and manipulating edges in an arrangement with history.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -43,7 +44,7 @@ int main ()
   C[8] = Rat_circle_2 (Rat_point_2 (2, 5), 1, CGAL::CLOCKWISE);
 
   for (k = 0; k < 9; k++)
-    handles[k] = insert (arr, C[k]);
+    handles[k] = insert_curve (arr, C[k]);
 
   std::cout << "V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
@@ -51,7 +52,7 @@ int main ()
 
   // Remove the large circle C[0].
   std::cout << "Removing C[0] : ";
-  std::cout << remove (arr, handles[0]) 
+  std::cout << remove_curve (arr, handles[0]) 
             << " edges have been removed." << std::endl;
 
   std::cout << "V = " << arr.number_of_vertices()

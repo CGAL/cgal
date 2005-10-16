@@ -668,6 +668,7 @@ protected:
   // Data members:
   Dcel                dcel;         // The DCEL representing the arrangement.
   DFace              *un_face;      // The unbounded face of the DCEL.
+  Size                n_iso_verts;  // Number of isolated vertices.
   Points_container    points;       // Container for the points that
                                     // correspond to the vertices.
   Points_alloc        points_alloc; // Allocator for the points.
@@ -748,6 +749,12 @@ public:
   Size number_of_vertices () const
   {
     return (dcel.size_of_vertices());
+  }
+
+  /*! Get the number of isolated arrangement vertices. */
+  Size number_of_isolated_vertices () const
+  {
+    return (n_iso_verts);
   }
 
   /*! Get the number of arrangement halfedges (the result is always even). */
@@ -1992,9 +1999,9 @@ private:
  * \param pl A point-location object associated with the arrangement.
  */
 template <class Traits, class Dcel, class PointLocation>
-void insert (Arrangement_2<Traits,Dcel>& arr,
-             const typename Traits::Curve_2& c,
-             const PointLocation& pl);
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const typename Traits::Curve_2& c,
+                   const PointLocation& pl);
 
 /*!
  * Insert a curve into the arrangement (incremental insertion).
@@ -2005,8 +2012,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
  * \param cv The curve to be inserted.
  */
 template <class Traits, class Dcel>
-void insert (Arrangement_2<Traits,Dcel>& arr,
-             const typename Traits::Curve_2& c);
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const typename Traits::Curve_2& c);
 
 /*!
  * Insert a range of curves into the arrangement (aggregated insertion). 
@@ -2018,8 +2025,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
  * \pre The value type of the iterators must be Curve_2.
  */
 template <class Traits, class Dcel, class InputIterator>
-void insert (Arrangement_2<Traits,Dcel>& arr,
-             InputIterator begin, InputIterator end);
+void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                    InputIterator begin, InputIterator end);
 
 /*!
  * Insert an x-monotone curve into the arrangement (incremental insertion).
@@ -2029,9 +2036,25 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
  * \param pl A point-location object associated with the arrangement.
  */
 template <class Traits, class Dcel, class PointLocation>
-void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        const typename Traits::X_monotone_curve_2& c,
-                        const PointLocation& pl);
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c,
+                              const PointLocation& pl);
+
+/*!
+ * Insert an x-monotone curve into the arrangement (incremental insertion)
+ * when the location of the left endpoint of the curve is known and is
+ * given as an isertion hint.
+ * The inserted x-monotone curve may intersect the existing arrangement.
+ * \param arr The arrangement.
+ * \param cv The x-monotone curve to be inserted.
+ * \param obj An object that represents the location of cv's left endpoint
+ *            in the arrangement.
+ */
+
+template <class Traits, class Dcel>
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c,
+                              const Object& obj);
 
 /*!
  * Insert an x-monotone curve into the arrangement (incremental insertion).
@@ -2041,8 +2064,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
  * \param cv The x-monotone curve to be inserted.
  */
 template <class Traits, class Dcel>
-void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        const typename Traits::X_monotone_curve_2& c);
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c);
 
 /*!
  * Insert a range of x-monotone curves into the arrangement (aggregated
@@ -2054,8 +2077,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
  * \pre The value type of the iterators must be X_monotone_curve_2.
  */
 template <class Traits, class Dcel, class InputIterator>
-void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        InputIterator begin, InputIterator end);
+void insert_x_monotone_curves (Arrangement_2<Traits,Dcel>& arr,
+                               InputIterator begin, InputIterator end);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
@@ -2070,9 +2093,9 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c,
-                         const PointLocation& pl);
+insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
+                               const typename Traits::X_monotone_curve_2& c,
+                               const PointLocation& pl);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
@@ -2088,8 +2111,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c);
+insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
+                               const typename Traits::X_monotone_curve_2& c);
 
 /*!
  * Insert a range of pairwise interior-disjoint x-monotone curves into
@@ -2103,8 +2126,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
  *      interiors do not intersect any existing edge or vertex.
  */
 template <class Traits, class Dcel, class InputIterator>
-void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                              InputIterator begin, InputIterator end);
+void insert_non_intersecting_curves (Arrangement_2<Traits,Dcel>& arr,
+                                     InputIterator begin, InputIterator end);
 
 /*!
  * Remove an edge from the arrangement. In case it is possible to merge
@@ -2129,9 +2152,9 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
-insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-               const typename Traits::Point_2& p,
-               const PointLocation& pl);
+insert_point (Arrangement_2<Traits,Dcel>& arr,
+              const typename Traits::Point_2& p,
+              const PointLocation& pl);
 
 /*!
  * Insert a vertex that corresponds to a given point into the arrangement.
@@ -2142,8 +2165,8 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
-insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-               const typename Traits::Point_2& p);
+insert_point (Arrangement_2<Traits,Dcel>& arr,
+              const typename Traits::Point_2& p);
 
 /*!
  * Remove a vertex from the arrangement.

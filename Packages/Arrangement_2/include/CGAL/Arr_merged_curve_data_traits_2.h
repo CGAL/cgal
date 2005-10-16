@@ -24,6 +24,8 @@
  * Definition of the Arr_merged_curve_data_traits_2<Traits,Data> class.
  */
 
+#include <list>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \class

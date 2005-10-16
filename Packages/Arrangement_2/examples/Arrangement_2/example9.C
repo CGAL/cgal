@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example9.C
+// Using the global aggregated insertion functions.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -25,7 +26,7 @@ int main ()
   segments.push_back (Segment_2 (Point_2(0, 2), Point_2(6, 0)));
   segments.push_back (Segment_2 (Point_2(3, 0), Point_2(5, 5)));
 
-  insert_x_monotone (arr, segments.begin(), segments.end());
+  insert_x_monotone_curves (arr, segments.begin(), segments.end());
 
   // Print the size of the arrangement.
   std::cout << "V = " << arr.number_of_vertices()

@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example22.C
+// A simple overlay of two arrangements.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -25,10 +26,10 @@ int main ()
   Segment_2      s3 (Point_2(6, 6), Point_2(2, 6));
   Segment_2      s4 (Point_2(2, 6), Point_2(2, 2));
 
-  insert_non_intersecting (arr1, s1);
-  insert_non_intersecting (arr1, s2);
-  insert_non_intersecting (arr1, s3);
-  insert_non_intersecting (arr1, s4);
+  insert_non_intersecting_curve (arr1, s1);
+  insert_non_intersecting_curve (arr1, s2);
+  insert_non_intersecting_curve (arr1, s3);
+  insert_non_intersecting_curve (arr1, s4);
 
   // Construct the second arrangement, containing a rhombus-shaped face.
   Arrangement_2          arr2;
@@ -38,10 +39,10 @@ int main ()
   Segment_2      t3 (Point_2(4, 7), Point_2(1, 4));
   Segment_2      t4 (Point_2(1, 4), Point_2(4, 1));
 
-  insert_non_intersecting (arr2, t1);
-  insert_non_intersecting (arr2, t2);
-  insert_non_intersecting (arr2, t3);
-  insert_non_intersecting (arr2, t4);
+  insert_non_intersecting_curve (arr2, t1);
+  insert_non_intersecting_curve (arr2, t2);
+  insert_non_intersecting_curve (arr2, t3);
+  insert_non_intersecting_curve (arr2, t4);
 
   // Compute the overlay of the two arrangements.
   Arrangement_2          overlay_arr;

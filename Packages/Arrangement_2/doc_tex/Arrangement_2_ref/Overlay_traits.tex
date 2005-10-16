@@ -12,8 +12,8 @@
 
 A model for the \ccRefName\ should be able to operate on records (namely,
 vertices, halfedges and faces) of two input \dcel\ classes, named
-\ccc{Dcel1} and \ccc{Dcel2}, and construct the records of an output \dcel\
-class, referred to as \ccc{ResDcel}.
+\ccc{Dcel_A} and \ccc{Dcel_B}, and construct the records of an output \dcel\
+class, referred to as \ccc{Dcel_R}.
 
 Models for the concept are used by the global \ccc{overlay()} function to
 maintain the auxiliary data stored with the \dcel\ records of the resulting
@@ -22,29 +22,29 @@ overlaid arrangement, based on the contents of the input records.
 \ccTypes
 %=======
 
-\ccNestedType{Vertex_handle1}
-{a constant handle a vertex in \ccc{Dcel1}.}
+\ccNestedType{Vertex_handle_A}
+{a constant handle a vertex in \ccc{Dcel_A}.}
 \ccGlue
-\ccNestedType{Halfedge_handle1}
-{a constant handle to a halfedge in \ccc{Dcel1}.}
+\ccNestedType{Halfedge_handle_A}
+{a constant handle to a halfedge in \ccc{Dcel_A}.}
 \ccGlue
-\ccNestedType{Face_handle1}
-{a constant handle to a face \ccc{Dcel1}.}
+\ccNestedType{Face_handle_A}
+{a constant handle to a face \ccc{Dcel_A}.}
 
-\ccNestedType{Vertex_handle2}
-{a constant handle to a vertex in \ccc{Dcel2}.}
+\ccNestedType{Vertex_handle_B}
+{a constant handle to a vertex in \ccc{Dcel_B}.}
 \ccGlue
-\ccNestedType{Halfedge_handle2}
-{a constant handle to a halfedge in \ccc{Dcel2}.}
+\ccNestedType{Halfedge_handle_B}
+{a constant handle to a halfedge in \ccc{Dcel_B}.}
 \ccGlue
-\ccNestedType{Face_handle2}
-{a constant handle to a face in \ccc{Dcel2}.}
+\ccNestedType{Face_handle_B}
+{a constant handle to a face in \ccc{Dcel_B}.}
 
-\ccNestedType{Res_vertex_handle}{a handle to a vertex in \ccc{ResDcel}.}
+\ccNestedType{Vertex_handle_R}{a handle to a vertex in \ccc{Dcel_R}.}
 \ccGlue
-\ccNestedType{Res_halfedge_handle}{a handle to a halfedge in \ccc{ResDcel}.}
+\ccNestedType{Halfedge_handle_R}{a handle to a halfedge in \ccc{Dcel_R}.}
 \ccGlue
-\ccNestedType{Res_face_handle}{a handle to a faces in \ccc{ResDcel}.}
+\ccNestedType{Face_handle_R}{a handle to a faces in \ccc{Dcel_R}.}
 
 \ccCreationVariable{ovl_tr}
 
@@ -55,39 +55,39 @@ Whenever a vertex in the overlaid arrangement is created, one of the
 following functions is called in order to attach the appropriate
 auxiliary data to this vertex:
     
-\ccMethod{void create_vertex (Vertex_handle1 v1,
-                              Vertex_handle2 v2,
-                              Res_vertex_handle v)) const;}
+\ccMethod{void create_vertex (Vertex_handle_A v1,
+                              Vertex_handle_B v2,
+                              Vertex_handle_R v)) const;}
     {constructs \ccc{v}, which is induced by the coinciding vertices 
      \ccc{v1} and \ccc{v2}.}
 
-\ccMethod{void create_vertex (Vertex_handle1 v1,
-                              Halfedge_handle2 e2,
-                              Res_vertex_handle v)) const;}
+\ccMethod{void create_vertex (Vertex_handle_A v1,
+                              Halfedge_handle_B e2,
+                              Vertex_handle_R v)) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v1} that lies on
      the edge \ccc{e2}.}
 
-\ccMethod{void create_vertex (Vertex_handle1 v1,
-                              Face_handle2 f2,
-                              Res_vertex_handle v)) const;}
+\ccMethod{void create_vertex (Vertex_handle_A v1,
+                              Face_handle_B f2,
+                              Vertex_handle_R v)) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v1} that lies
      inside the face \ccc{f2}.}
 
-\ccMethod{void create_vertex (Halfedge_handle1 e1,
-                              Vertex_handle2 v2,
-                              Res_vertex_handle v)) const;}
+\ccMethod{void create_vertex (Halfedge_handle_A e1,
+                              Vertex_handle_B v2,
+                              Vertex_handle_R v)) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v2} that lies on
      the edge \ccc{e1}.}
 
-\ccMethod{void create_vertex (Face_handle1 f1,
-                              Vertex_handle2 v2,
-                              Res_vertex_handle v)) const;}
+\ccMethod{void create_vertex (Face_handle_A f1,
+                              Vertex_handle_B v2,
+                              Vertex_handle_R v)) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v2} that lies
      inside the face \ccc{f1}.}
 
-\ccMethod{void create_vertex (Halfedge_handle1 e1,
-                              Halfedge_handle2 e2,
-                              Res_vertex_handle v)) const;}
+\ccMethod{void create_vertex (Halfedge_handle_A e1,
+                              Halfedge_handle_B e2,
+                              Vertex_handle_R v)) const;}
     {constructs \ccc{v}, which is induced by the intersection of the edges 
      \ccc{e1} and \ccc{e2}.}
 
@@ -96,35 +96,35 @@ following functions is called in order to attach the appropriate
 auxiliary data to this vertex. Note that an edge is created only once both
 its end-vertices ave been created (and the corresponding \ccc{create_vertex()}
 methods were invoked). In all cases, the edge is represented by a halfedge
-\ccc{e} which is directed (lexicographically) from left to right. The
+\ccc{e} which is directed (lexicographically) from right to left. The
 \ccc{create_edge()} method should attach auxiliary data to the twin halfedge
-(namely \ccc{e->twin()} as well:
+(namely to \ccc{e->twin()}) as well:
 
-\ccMethod{void create_edge (Halfedge_handle1 e1,
-                            Halfedge_handle2 e2,
-                            Res_vertex_handle e)) const;}
+\ccMethod{void create_edge (Halfedge_handle_A e1,
+                            Halfedge_handle_B e2,
+                            Halfedge_handle_R e)) const;}
     {constructs \ccc{e}, which is induced by an overlap between the edges 
      \ccc{e1} and \ccc{e2}.}
 
-\ccMethod{void create_edge (Halfedge_handle1 e1,
-                            Face_handle2 f2,
-                            Res_vertex_handle e)) const;}
+\ccMethod{void create_edge (Halfedge_handle_A e1,
+                            Face_handle_B f2,
+                            Halfedge_handle_R e)) const;}
     {constructs \ccc{e}, which is induced by the edge \ccc{e1} that lies
      inside the face \ccc{f2}.}
 
-\ccMethod{void create_edge (Face_handle1 f1,
-                            Halfedge_handle2 e2,
-                            Res_vertex_handle e)) const;}
+\ccMethod{void create_edge (Face_handle_A f1,
+                            Halfedge_handle_B e2,
+                            Halfedge_handle_R e)) const;}
     {constructs \ccc{e}, which is induced by the edge \ccc{e2} that lies
      inside the face \ccc{f1}.}
 
 The following function is invoked whenever a new face is created. It is
 guaranteed that all halfedges along the face boundary have already been
-created an have thair auxiliary data fields attached to them:
+created an have their auxiliary data fields attached to them:
 
-\ccMethod{void create_face (Face_handle1 f1,
-                            Face_handle2 f2,
-                            Res_face_handle f)) const;}
+\ccMethod{void create_face (Face_handle_A f1,
+                            Face_handle_B f2,
+                            Face_handle_R f)) const;}
     {constructs \ccc{f}, which is induced by the an overlap between the
      faces \ccc{f1} and \ccc{f2}.}
 
@@ -133,7 +133,7 @@ created an have thair auxiliary data fields attached to them:
 \ccc{Arr_default_overlay_traits<Arrangement>}\lcTex{
   (\ccRefPage{CGAL::Arr_default_overlay_traits<Arrangement>})}\\
 \ccc{Arr_face_overlay_traits<Arr1,Arr2,ResArr,OvlFaceData>}\lcTex{
-  (\ccRefPage{CGAL::Arr_face_overlay_traits<Arr1,Arr2,ResArr,OvlFaceData>})}\\
+  (\ccRefPage{CGAL::Arr_face_overlay_traits<Arr_A,Arr_B,Arr_R,OvlFaceData>})}\\
 
 \ccSeeAlso
      \ccc{overlay}\lcTex{

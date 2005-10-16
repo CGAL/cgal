@@ -1,0 +1,30 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_remove.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{remove_vertex}
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccFunction{template <class Traits, class Dcel>
+            bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
+                    typename Arrangement_2<Traits,Dcel>::Vertex_handle v);}
+   {Tries to removed the vertex \ccc{v} from the given arrangement \ccc{arr}.
+    The vertex can be removed if it is either an isolated vertex and has no
+    incident edge, or if it is a {\sl redundant} vertex --- that is, it has
+    exactly two incident edges whose associated curves can be merged to form
+    a single $x$-monotone curve. The assumption is that \ccc{Traits} is a
+    model of the refines \ccc{ArrangementXMonotoneTraits_2}, such that it
+    supports merge operations on $x$-monotone curves.
+    The function returns whether it succeeded in deleting \ccc{v} from the
+    arrangement.}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

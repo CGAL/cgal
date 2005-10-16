@@ -67,10 +67,10 @@ public:
    * \return A handle to the inserted curve.
    */
   template <class PointLocation>
-  Curve_handle insert (const Curve_2& cv,
-                       const PointLocation& pl)
+  Curve_handle insert_curve (const Curve_2& cv,
+                             const PointLocation& pl)
   {
-    return (p_arr->_insert (cv, pl));
+    return (p_arr->_insert_curve (cv, pl));
   }
 
   /*!
@@ -79,9 +79,9 @@ public:
    * \param cv The curve to be inserted.
    * \return A handle to the inserted curve.
    */
-  Curve_handle insert (const Curve_2& cv)
+  Curve_handle insert_curve (const Curve_2& cv)
   {
-    return (p_arr->_insert (cv));
+    return (p_arr->_insert_curve (cv));
   }
 
   /*!
@@ -90,9 +90,9 @@ public:
    * \param end A past-the-end iterator for the last curve in the range.
    */
   template <class InputIterator>
-  void insert (InputIterator begin, InputIterator end)
+  void insert_curves (InputIterator begin, InputIterator end)
   {
-    p_arr->_insert (begin, end);
+    p_arr->_insert_curves (begin, end);
     return;
   }
 
@@ -101,27 +101,10 @@ public:
    * \param ch A handle to the curve to be removed.
    * \return The number of removed edges.
    */
-  Size remove (Curve_handle ch)
+  Size remove_curve (Curve_handle ch)
   {
-    return (p_arr->_remove (ch));
+    return (p_arr->_remove_curve (ch));
   }
-
-  /*!
-   * Overlay the two given arrangements.
-   * \param arr1 The first arrangement.
-   * \param arr2 The second arrangement.
-   * \param overlay_tr An overlay-traits class.
-   */
-  /*
-  template <class Dcel1, class Dcel2, class OverlayTraits>
-  void overlay (const Arrangement_with_history_2<Traits_2, Dcel1>& arr1,
-                const Arrangement_with_history_2<Traits_2, Dcel2>& arr2,
-                OverlayTraits& overlay_tr)
-  {
-    p_arr->_overlay (arr1, arr2, overlay_tr);
-    return;
-  }
-  */
   //@}
 };
 

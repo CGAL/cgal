@@ -50,14 +50,15 @@ may go to infinity without hitting any arrangement feature on its way.
   {locates the arrangement feature that is first hit by an upward-facing
    vertical ray emanating from the query point \ccc{q},
    and returns a handle for this feature.
-   The function returns an \ccc{Object} instance that may either {\sl empty},
-   in case \ccc{q} lies above the upper envelope of the arrnagement, or it
-   may be a wrapper for either of the following types:
+   The function returns an \ccc{Object} instance that may be a wrapper for
+   one of the following types:
    \begin{itemize}
    \item \ccc{Arrangement_2::Halfedge_const_handle}, in case the vertical
          ray hits an arrangement edge;
    \item \ccc{Arrangement_2::Vertex_const_handle}, in case the vertical
          ray hits an arrangement vertex.
+   \item \ccc{Arrangement_2::Face_const_handle} for the unbounded arrangement
+         face in case \ccc{q} lies above the upper envelope of the arrangement.
    \end{itemize}
    \ccPrecond{\ccVar{} has been attached to a valid arrangement instance.}}
 
@@ -65,14 +66,15 @@ may go to infinity without hitting any arrangement feature on its way.
   {locates the arrangement feature that is first hit by a downward-facing
    vertical ray emanating from the query point \ccc{q},
    and returns a handle for this feature.
-   The function returns an \ccc{Object} instance that may either {\sl empty},
-   in case \ccc{q} lies below the lower envelope of the arrnagement, or it
-   may be a wrapper for either of the following types:
+   The function returns an \ccc{Object} instance that may be a wrapper for
+   one of the following types:
    \begin{itemize}
    \item \ccc{Arrangement_2::Halfedge_const_handle}, in case the vertical
          ray hits an arrangement edge;
    \item \ccc{Arrangement_2::Vertex_const_handle}, in case the vertical
          ray hits an arrangement vertex.
+   \item \ccc{Arrangement_2::Face_const_handle} for the unbounded arrangement
+         face in case \ccc{q} lies below the lower envelope of the arrangement.
    \end{itemize}
    \ccPrecond{\ccVar{} has been attached to a valid arrangement instance.}}
 

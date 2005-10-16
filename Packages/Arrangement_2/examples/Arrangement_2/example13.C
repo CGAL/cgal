@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example13.C
+// Constructing an arrangement of circles using the conic-arc traits.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -42,9 +43,9 @@ int main ()
   // Construct the arrangement of the three circles.
   Arrangement_2    arr;
 
-  insert (arr, cv1);
-  insert (arr, cv2);
-  insert (arr, cv3);
+  insert_curve (arr, cv1);
+  insert_curve (arr, cv2);
+  insert_curve (arr, cv3);
   
   // Locate the vertex with maximal degree.
   Arrangement_2::Vertex_const_iterator  vit;

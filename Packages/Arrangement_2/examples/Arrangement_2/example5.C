@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example5.C
+// Answering point-location queries.
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>

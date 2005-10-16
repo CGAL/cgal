@@ -45,9 +45,9 @@ CGAL_BEGIN_NAMESPACE
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
 template <class Traits, class Dcel, class PointLocation>
-void insert (Arrangement_2<Traits,Dcel>& arr, 
-             const typename Traits::Curve_2& c,
-             const PointLocation& pl)
+void insert_curve (Arrangement_2<Traits,Dcel>& arr, 
+                   const typename Traits::Curve_2& c,
+                   const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -103,7 +103,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
       CGAL_assertion (iso_p != NULL);
 
       // Inserting a point into the arrangement:
-      insert_vertex (arr, *iso_p, pl);
+      insert_point (arr, *iso_p, pl);
     }
   }
 
@@ -117,8 +117,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 // strategy is used as default.
 //
 template <class Traits, class Dcel>
-void insert (Arrangement_2<Traits,Dcel>& arr,
-             const typename Traits::Curve_2& c)
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const typename Traits::Curve_2& c)
 {
   typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
   typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
@@ -127,7 +127,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
   Walk_pl    walk_pl(arr);
 
   //insert the curve using the walk point location
-  insert(arr, c, walk_pl);
+  insert_curve (arr, c, walk_pl);
+  return;
 }
 
 //-----------------------------------------------------------------------------
@@ -136,8 +137,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 // existing arrangement.
 //
 template <class Traits, class Dcel, class InputIterator>
-void insert (Arrangement_2<Traits,Dcel>& arr,
-             InputIterator begin, InputIterator end)
+void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                    InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -171,9 +172,9 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
 template <class Traits, class Dcel, class PointLocation>
-void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        const typename Traits::X_monotone_curve_2& c,
-                        const PointLocation& pl)
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c,
+                              const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -204,14 +205,53 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 }
 
 //-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement (incremental insertion)
+// when the location of the left endpoint of the curve is known and is
+// given as an isertion hint.
+// The inserted x-monotone curve may intersect the existing arrangement.
+//
+template <class Traits, class Dcel>
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c,
+                              const Object& obj)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
+
+  // Define a zone-computation object an a visitor that performs the
+  // incremental insertion.
+  typedef Arr_inc_insertion_zone_visitor<Arrangement_2>  Zone_visitor;
+  Zone_visitor                                     visitor;
+  Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
+
+  // Initialize the zone-computation object with the given curve.
+  arr_zone.init_with_hint (c, obj);
+
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
+  arr_access.notify_before_global_change();
+
+  // Insert the x-monotone curve into the arrangement.
+  arr_zone.compute_zone();
+
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
 // Overloaded version with no point location object - the walk point-location
 // strategy is used as default.
 //
 template <class Traits, class Dcel>
-void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        const typename Traits::X_monotone_curve_2& c)
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c)
 {
   typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
   typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
@@ -219,7 +259,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
   // create walk point location object
   Walk_pl    walk_pl(arr);
 
-  insert_x_monotone(arr, c, walk_pl);
+  insert_x_monotone_curve (arr, c, walk_pl);
+  return;
 }
 
 //-----------------------------------------------------------------------------
@@ -228,8 +269,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 // may also intersect the existing arrangement.
 //
 template <class Traits, class Dcel, class InputIterator>
-void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        InputIterator begin, InputIterator end)
+void insert_x_monotone_curves (Arrangement_2<Traits,Dcel>& arr,
+                               InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -266,9 +307,9 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c,
-                         const PointLocation& pl)
+insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
+                               const typename Traits::X_monotone_curve_2& c,
+                               const PointLocation& pl)
 {
   // Locate the curve endpoints.
   CGAL::Object   obj1 =
@@ -380,8 +421,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c)
+insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
+                               const typename Traits::X_monotone_curve_2& c)
 {
   typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
   typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
@@ -389,7 +430,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
   // create walk point location object
   Walk_pl    walk_pl(arr);
 
-  return (insert_non_intersecting(arr, c, walk_pl));
+  return (insert_non_intersecting_curve (arr, c, walk_pl));
 }
 
 //-----------------------------------------------------------------------------
@@ -398,8 +439,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 // any existing edge or vertex in the arragement (aggregated insertion).
 //
 template <class Traits, class Dcel, class InputIterator>
-void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                              InputIterator begin, InputIterator end)
+void insert_non_intersecting_curves (Arrangement_2<Traits,Dcel>& arr,
+                                     InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -510,9 +551,9 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
-insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-               const typename Traits::Point_2& p,
-               const PointLocation& pl)
+insert_point (Arrangement_2<Traits,Dcel>& arr,
+              const typename Traits::Point_2& p,
+              const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -581,8 +622,8 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
-insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-               const typename Traits::Point_2& p)
+insert_point (Arrangement_2<Traits,Dcel>& arr,
+              const typename Traits::Point_2& p)
 {
   typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
   typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
@@ -590,7 +631,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
   // create walk point location object
   Walk_pl    walk_pl(arr);
 
-  return (insert_vertex(arr, p, walk_pl));
+  return (insert_point (arr, p, walk_pl));
 }
 
 //-----------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example23.C
+// A face overlay of two arrangement with extended face records.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -30,10 +31,10 @@ int main ()
   Segment_2      s3 (Point_2(6, 6), Point_2(2, 6));
   Segment_2      s4 (Point_2(2, 6), Point_2(2, 2));
 
-  insert_non_intersecting (arr1, s1);
-  insert_non_intersecting (arr1, s2);
-  insert_non_intersecting (arr1, s3);
-  insert_non_intersecting (arr1, s4);
+  insert_non_intersecting_curve (arr1, s1);
+  insert_non_intersecting_curve (arr1, s2);
+  insert_non_intersecting_curve (arr1, s3);
+  insert_non_intersecting_curve (arr1, s4);
 
   // Mark just the bounded face.
   Arrangement_2::Face_iterator   fit;
@@ -50,10 +51,10 @@ int main ()
   Segment_2      t3 (Point_2(4, 7), Point_2(1, 4));
   Segment_2      t4 (Point_2(1, 4), Point_2(4, 1));
 
-  insert_non_intersecting (arr2, t1);
-  insert_non_intersecting (arr2, t2);
-  insert_non_intersecting (arr2, t3);
-  insert_non_intersecting (arr2, t4);
+  insert_non_intersecting_curve (arr2, t1);
+  insert_non_intersecting_curve (arr2, t2);
+  insert_non_intersecting_curve (arr2, t3);
+  insert_non_intersecting_curve (arr2, t4);
 
   // Mark just the bounded face.
   CGAL_assertion (arr2.number_of_faces() == 2);

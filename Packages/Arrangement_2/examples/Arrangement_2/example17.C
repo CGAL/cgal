@@ -1,4 +1,6 @@
 //! \file examples/Arrangement_2/example17.C
+// Associating a color attribute with segments using the consolidated
+// curve-data traits.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -34,18 +36,18 @@ int main ()
   Segment_2         s2 (Point_2(2, 0), Point_2(3, 3));
   Segment_2         s3 (Point_2(0, 3), Point_2(2, 5));
 
-  insert (arr, Colored_segment_2 (s1, RED), pl);
-  insert (arr, Colored_segment_2 (s2, RED), pl);
-  insert (arr, Colored_segment_2 (s3, RED), pl);
+  insert_curve (arr, Colored_segment_2 (s1, RED), pl);
+  insert_curve (arr, Colored_segment_2 (s2, RED), pl);
+  insert_curve (arr, Colored_segment_2 (s3, RED), pl);
 
   // Insert three BLUE line segments.
   Segment_2         s4 (Point_2(-1, 3), Point_2(4, 1));
   Segment_2         s5 (Point_2(-1, 0), Point_2(4, 1));
   Segment_2         s6 (Point_2(-2, 1), Point_2(1, 4));
 
-  insert (arr, Colored_segment_2 (s4, BLUE), pl);
-  insert (arr, Colored_segment_2 (s5, BLUE), pl);
-  insert (arr, Colored_segment_2 (s6, BLUE), pl);
+  insert_curve (arr, Colored_segment_2 (s4, BLUE), pl);
+  insert_curve (arr, Colored_segment_2 (s5, BLUE), pl);
+  insert_curve (arr, Colored_segment_2 (s6, BLUE), pl);
 
   // Go over all vertices and print just the ones corresponding to intersection
   // points between RED segments and BLUE segments. Note that we skip endpoints

@@ -1,4 +1,5 @@
 //! \file examples/Arrangement_2/example2.C
+// Constructing an arrangement with isolated vertices.
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
