@@ -220,7 +220,7 @@ class VDA_Tester
     vda_timer_.start();
     
     VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
-			typename VD::Voronoi_traits::Has_insert());
+			typename VD::Voronoi_traits::Has_site_inserter());
     vda_timer_.stop();
 
     test_vd(*vd);

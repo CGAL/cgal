@@ -22,6 +22,7 @@
 
 #include <CGAL/Triangulation_utils_2.h>
 #include "helper_functions.h"
+#include <list>
 
 //============================================================================
 //============================================================================
@@ -230,6 +231,35 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   typedef typename VT::Access_site_2           Access_site_2;
   typedef typename VT::Construct_dual_point_2  Construct_dual_point_2;
   typedef typename VT::Has_nearest_site_2      Has_ns;
+  typedef typename VT::Has_site_inserter       Has_si;
+
+  // testing copy constructor and assignment operator
+  {
+    VT vt2(vt);
+    CGAL_assertion( vt2.is_valid() );
+
+    VT vt3;
+    vt3 = vt;
+    CGAL_assertion( vt3.is_valid() );
+  }
+
+  // testing clear and swap methods
+  {
+    VT vt2(vt);
+    vt2.clear();
+    CGAL_assertion( vt2.is_valid() );
+
+    VT vt3(vt);
+    vt2.swap(vt3);
+
+    CGAL_assertion( vt2.is_valid() );
+    CGAL_assertion( vt3.is_valid() );
+  }
+
+  // testing validity method
+  bool b = vt.is_valid();
+  kill_warning( b );
+  CGAL_assertion( b );
 
   // test nested concepts
   test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
@@ -237,6 +267,7 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   test_as_concept( dg, vt.access_site_2_object() );
   test_cdp_concept( dg, vt.construct_dual_point_2_object() );
   test_ns_concept( dg, vt, Has_ns() );
+  test_si_concept( dg, vt, Has_si() );
 }
 
 
@@ -277,6 +308,25 @@ void test_edt_concept(const DG& dg, const EDT& edt)
   Edge_circulator ec = dg.incident_edges(dg.finite_vertex());
   b = edt(dg, ec);
   kill_warning(b);
+
+  // testing copy constructor and assignment operator
+  {
+    EDT edt2(edt);
+    EDT edt3;
+    edt3 = edt;
+  }
+
+  // testing clear and swap
+  {
+    EDT edt2(edt);
+    EDT edt3(edt);
+    edt2.clear();
+    edt2.swap(edt3);
+  }
+
+  // validity testing
+  b = edt.is_valid();
+  kill_warning(b);
 }
 
 //============================================================================
@@ -297,32 +347,112 @@ void test_fdt_concept(const DG& dg, const FDT& fdt)
   Vertex_handle v = dg.finite_vertex();
   bool b = fdt(dg, v);
   kill_warning(b);
+
+  // testing copy constructor and assignment operator
+  {
+    FDT fdt2(fdt);
+    FDT fdt3;
+    fdt3 = fdt;
+  }
+
+  // testing clear and swap
+  {
+    FDT fdt2(fdt);
+    FDT fdt3(fdt);
+    fdt2.clear();
+    fdt2.swap(fdt3);
+  }
+
+  // validity testing
+  b = fdt.is_valid();
+  kill_warning(b);
 }
 
 //============================================================================
 //============================================================================
 
 template<class DG, class AS>
-void test_as_concept(const DG&, const AS&)
+void test_as_concept(const DG& dg, const AS& as)
 {
-  std::cerr << "***********************************************" << std::endl;
-  std::cerr << "***********************************************" << std::endl;
-  std::cerr << "*************** not ready yet *****************" << std::endl;
-  std::cerr << "***********************************************" << std::endl;
-  std::cerr << "***********************************************" << std::endl;
+  // types for the AdaptableFunctor concept
+  typedef typename AS::result_type               result_type;
+  typedef typename AS::Arity                     Arity;
+
+  typedef typename AS::Vertex_handle             Vertex_handle;
+
+  if ( dg.number_of_vertices() > 0 ) {
+    result_type site = as(dg.finite_vertices_begin());
+    kill_warning( site );
+  }
 }
 
 //============================================================================
 //============================================================================
 
 template<class DG, class CDP>
-void test_cdp_concept(const DG&, const CDP&)
+void test_cdp_concept(const DG& dg, const CDP& cdp)
 {
-  std::cerr << "***********************************************" << std::endl;
-  std::cerr << "***********************************************" << std::endl;
-  std::cerr << "*************** not ready yet *****************" << std::endl;
-  std::cerr << "***********************************************" << std::endl;
-  std::cerr << "***********************************************" << std::endl;
+  // types for the AdaptableFunctor concept
+  typedef typename CDP::result_type               result_type;
+  typedef typename CDP::Arity                     Arity;
+
+  typedef typename CDP::Face_handle               Face_handle;
+
+  if ( dg.dimension() > 1 &&
+       dg.finite_faces_begin() != dg.finite_faces_end() ) {
+    Face_handle f = dg.finite_faces_begin();
+    result_type point = cdp(f);
+    kill_warning( point );
+  }
+}
+
+//============================================================================
+//============================================================================
+
+template<class DG, class VT>
+void test_si_concept(const DG&, const VT&, CGAL::Tag_false) {}
+
+template<class DG, class VT>
+void test_si_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
+{
+  typedef typename VT::Site_inserter               Site_inserter;
+  typedef typename Site_inserter::Delaunay_graph   Delaunay_graph;
+  typedef typename Site_inserter::Site_2           Site_2;
+
+  // types for the AdaptableFunctor concept
+  typedef typename Site_inserter::Arity            Arity;
+  typedef typename Site_inserter::result_type      result_type;
+
+  Site_inserter si = vt.site_inserter_object();
+  
+  if ( dg.number_of_vertices() == 0 ) { return; }
+
+  DG dg2;
+
+  CGAL_assertion( dg2.number_of_vertices() == 0 );
+
+  Site_2 t = vt.access_site_2_object()(dg.finite_vertices_begin())
+;
+  result_type v = si(dg2, t);
+  kill_warning( v );
+
+  CGAL_assertion( dg2.number_of_vertices() == 1 );
+
+  dg2.clear();
+  CGAL_assertion( dg2.number_of_vertices() == 0 );
+
+  typedef std::list<result_type>               res_list;
+  typedef std::back_insert_iterator<res_list>  output_iterator;
+
+  res_list v_list;
+
+  CGAL_assertion( v_list.size() == 0 );
+
+  output_iterator oit(v_list);
+  oit = si(dg2, t, oit);
+
+  CGAL_assertion( v_list.size() == 1 );
+  CGAL_assertion( dg2.number_of_vertices() == 1 );  
 }
 
 //============================================================================
@@ -338,6 +468,10 @@ void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
   typedef typename Nearest_site_2::Delaunay_graph Delaunay_graph;
   typedef typename Nearest_site_2::Query_result   Query_result;
   typedef typename Nearest_site_2::Point_2        Point_2;
+
+  // types for the AdaptableFunctor concept
+  typedef typename Nearest_site_2::Arity          Arity;
+  typedef typename Nearest_site_2::result_type    result_type;
 
   typedef typename Query_result::Delaunay_graph   QR_Delaunay_graph;
   typedef typename Query_result::Vertex_handle    QR_Vertex_handle;
