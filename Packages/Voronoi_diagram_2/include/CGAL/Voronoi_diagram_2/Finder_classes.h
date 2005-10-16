@@ -113,13 +113,9 @@ class Find_valid_vertex
 
     if ( b[0] || b[1] || b[2] ) {
       if ( fvalid == Delaunay_face_handle() || cur < fvalid ) {
-#if 1
 	if ( !vda->dual().is_infinite(cur) ) {
 	  fvalid = cur;
 	}
-#else
-	fvalid = cur;
-#endif
       }
     }
 
