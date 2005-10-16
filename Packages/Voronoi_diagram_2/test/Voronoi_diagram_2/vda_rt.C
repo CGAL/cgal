@@ -45,22 +45,20 @@ typedef CGAL::Regular_triangulation_euclidean_traits_2<K>        Gt;
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 
-typedef CGAL::Regular_triangulation_vertex_base_2<Gt>            VBB;
-typedef CGAL::Regular_triangulation_face_base_2<Gt>              FB;
-typedef CGAL::Triangulation_hierarchy_vertex_base_2<VBB>         VB;
-typedef CGAL::Triangulation_data_structure_2<VB,FB>              TDS;
-typedef CGAL::Regular_triangulation_2<Gt,TDS>                    RTB;
-typedef CGAL::Triangulation_hierarchy_2<RTB>                     RT;
+typedef CGAL::Regular_triangulation_vertex_base_2<Gt>              VBB;
+typedef CGAL::Regular_triangulation_face_base_2<Gt>                FB;
+typedef CGAL::Triangulation_hierarchy_vertex_base_2<VBB>           VB;
+typedef CGAL::Triangulation_data_structure_2<VB,FB>                TDS;
+typedef CGAL::Regular_triangulation_2<Gt,TDS>                      RTB;
+typedef CGAL::Triangulation_hierarchy_2<RTB>                       RT;
 #else
-typedef CGAL::Regular_triangulation_2<Gt>                        RT;
+typedef CGAL::Regular_triangulation_2<Gt>                          RT;
 #endif
-typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>         VT;
-//typedef CGAL::Regular_triangulation_cached_Voronoi_traits_2<RT>  VT;
-#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
-typedef CGAL::Voronoi_diagram_2<RT>                              VDA;
-#else
-typedef CGAL::Voronoi_diagram_2<RT,VT>                           VDA;
-#endif
+
+typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>           UVT;
+typedef CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT>   CVT;
+typedef CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT>  IVT;
+typedef CGAL::Voronoi_diagram_2<RT,CVT>                            VDA;
 
 struct RT_Predicate
 {

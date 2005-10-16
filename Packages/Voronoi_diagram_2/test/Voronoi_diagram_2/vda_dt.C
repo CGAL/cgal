@@ -39,21 +39,19 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
 
-typedef CGAL::Triangulation_vertex_base_2<K>                      VBB;
-typedef CGAL::Triangulation_hierarchy_vertex_base_2<VBB>          VB;
-typedef CGAL::Triangulation_data_structure_2<VB>                  TDS;
-typedef CGAL::Delaunay_triangulation_2<K,TDS>                     DTB;
-typedef CGAL::Triangulation_hierarchy_2<DTB>                      DT;
+typedef CGAL::Triangulation_vertex_base_2<K>                        VBB;
+typedef CGAL::Triangulation_hierarchy_vertex_base_2<VBB>            VB;
+typedef CGAL::Triangulation_data_structure_2<VB>                    TDS;
+typedef CGAL::Delaunay_triangulation_2<K,TDS>                       DTB;
+typedef CGAL::Triangulation_hierarchy_2<DTB>                        DT;
 #else
-typedef CGAL::Delaunay_triangulation_2<K>                         DT;
+typedef CGAL::Delaunay_triangulation_2<K>                           DT;
 #endif
-//typedef CGAL::Delaunay_triangulation_cached_Voronoi_traits_2<DT>  VT;
-typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>         VT;
-#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
-typedef CGAL::Voronoi_diagram_2<DT>                               VDA;
-#else
-typedef CGAL::Voronoi_diagram_2<DT,VT>                            VDA;
-#endif
+
+typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>           UVT;
+typedef CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT>   CVT;
+typedef CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT>  IVT;
+typedef CGAL::Voronoi_diagram_2<DT,CVT>                             VDA;
 
 struct DT_Predicate
 {

@@ -49,13 +49,10 @@ typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>                 SVD;
 #else
 typedef CGAL::Segment_Voronoi_diagram_2<Gt>                           SVD;
 #endif
-typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           VT;
-//typedef CGAL::Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD>    VT;
-#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
-typedef CGAL::Voronoi_diagram_2<SVD>                                  VDA;
-#else
-typedef CGAL::Voronoi_diagram_2<SVD,VT>                               VDA;
-#endif
+typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           UVT;
+typedef CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD>   CVT;
+typedef CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD>  IVT;
+typedef CGAL::Voronoi_diagram_2<SVD,CVT>                              VDA;
 
 int main()
 {

@@ -28,7 +28,6 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
 #include <CGAL/Apollonius_graph_Voronoi_traits_2.h>
-#include <CGAL/Cached_Voronoi_traits_2.h>
 
 typedef CGAL::Simple_cartesian<double>                        Rep;
 typedef CGAL::Apollonius_graph_filtered_traits_2<Rep>         K;
@@ -41,14 +40,11 @@ typedef CGAL::Apollonius_graph_hierarchy_2<K>                 AG;
 #else
 typedef CGAL::Apollonius_graph_2<K>                           AG;
 #endif
-typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>           VT;
-//typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>           UVT;
-//typedef CGAL::Cached_Voronoi_traits_2<UVT>                    VT;
-#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
-typedef CGAL::Voronoi_diagram_2<AG>                           VDA;
-#else
-typedef CGAL::Voronoi_diagram_2<AG,VT>                        VDA;
-#endif
+
+typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>           UVT;
+typedef CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG>   CVT;
+typedef CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG>  IVT;
+typedef CGAL::Voronoi_diagram_2<AG,CVT>                       VDA;
 
 int main()
 {
