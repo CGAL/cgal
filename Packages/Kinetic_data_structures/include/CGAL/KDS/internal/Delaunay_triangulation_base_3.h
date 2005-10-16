@@ -1080,7 +1080,7 @@ public:
     //typename Simulator::Event_handle<Event_base> eh(simulator()->event(k, Event_base()));
     //typename Simulator::Root_stack s= eh.pointer()->root_stack();
     
-    return simulator()->event(k, Event_base()).root_stack();
+    return simulator()->template event<Event_base>(k/*, Event_base()*/).root_stack();
   }
   /*
   typename Simulator::Time extract_time(Event_key k) const {

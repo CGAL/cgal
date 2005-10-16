@@ -398,14 +398,14 @@ public:
  template <class Event_type>
  const Event_type& event(const Event_key &k) const {
     CGAL_KDS_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
-    return queue_.get<Event_type>(k);
+    return queue_.template get<Event_type>(k);
   }
 
-  template <class Event_type>
- const Event_type& event(const Event_key &k, const Event_type&) const {
+  /*template <class Event_type>
+  const Event_type& event(const Event_key &k, const Event_type&) const {
     CGAL_KDS_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
-    return queue_.get<Event_type>(k);
-  }
+    return queue_.template get<Event_type>(k);
+    }*/
 
   //! Access the time of an event
   const Time &event_time(const Event_key &k) const {

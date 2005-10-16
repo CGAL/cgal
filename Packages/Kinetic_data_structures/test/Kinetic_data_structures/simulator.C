@@ -30,6 +30,9 @@ struct Test_event {
     }
     tt_->process_one_event();
   }
+  bool operator==(const Test_event<T> &o) const {
+    return t_== o.t_&& tt_==o.tt_;
+  }
 };
 
 template <class T>
@@ -87,8 +90,9 @@ struct Test {
       while ( !s.empty() ){
 	
 	if (time_map.find(s.top()) == time_map.end()){
-	  Key k=sim->new_event(s.top(), Ev(s.top(), this));
-	  
+	  Ev ev(s.top(), this);
+	  Key k=sim->new_event(s.top(), ev);
+	  assert(sim->template event<Ev>(k) == ev);
 	  if (s.top() >= sim->end_time()){
 	    assert(k==sim->null_event());
 	  }
@@ -110,7 +114,7 @@ struct Test {
   }
 
   void check_event(Key k, Time t){
-    const Ev &mev = sim->event(k, ev);
+    const Ev &mev = sim->template event<Ev>(k);
     if (mev.time() != t){
       std::cerr << "ERROR Messed up event in queue: expected " << t << " got " << mev.time() 
 		<< std::endl;
