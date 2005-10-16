@@ -1,3 +1,6 @@
+17 October 2005 Sylvain Pion
+- tools.tex [autotest_cgal] : add support for curl instead of wget+ftp.
+
 4 August 2005 Sylvain Pion
 - Updates on memory management.
 

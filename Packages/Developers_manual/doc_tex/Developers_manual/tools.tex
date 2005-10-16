@@ -227,11 +227,19 @@ may pass to {\tt wget} you should put in the {\tt \$WGET} variable in {\tt
 a recent version of {\tt wget} (1.9.1 is fine, but 1.8.2 is not). You must
 also create a file in your {\tt \$HOME} called {\tt .wgetrc} (alternatively,
 it is also possible to use another file by setting the {\tt WGETRC} variable),
-that contains the following:
+that contains the following lines:
 \begin{verbatim}
-$ cat ~/.wgetrc 
 --http-user=member1
 --http-passwd=xxxxxxx
+\end{verbatim}
+
+Alternatively, you can use {\tt curl} instead of {\tt wget}.  In order to
+do so, you need to add {\tt USE\_CURL=''y''} to your {\tt .autocgalrc} file.
+{\tt curl} is then also used as a replacement for {\tt ftp} for uploading the
+test results.
+You also have to add the following line in a file called {\tt \$HOME/.curlrc}:
+\begin{verbatim}
+--user member1:xxxxxxx
 \end{verbatim}
 
 The next step is to specify the name of the hosts. To do that, you must define
@@ -300,6 +308,9 @@ should be ``''.
 {\tt TEST\_DIR\_ROOT} specifies where the test-suite will be copied before
 being run.  For example, this can be set to \ccc{/tmp}, instead of the default
 which is {\tt \$CGAL}.  This directory can be local to the testing machine.
+
+{\tt USE\_CURL} specifies if {\tt curl} should be used as a replacement for
+{\tt wget} and {\tt ftp}.  Set it to {\tt ''y''} to use {\tt curl}.
 
 \index{.autocgalrc configuration file@{\tt .autocgalrc} configuration file|)}
 \index{autotest_cgal script@{\tt autotest\_cgal} script|)}
