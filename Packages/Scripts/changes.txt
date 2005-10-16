@@ -1,3 +1,6 @@
+17 October 2005 Sylvain Pion
+- autotest_cgal : add support for curl instead of wget_ftp.
+
 21 September 2005 Sylvain Pion and Michael Hoffmann
 - autotest_cgal : don't remove current dir.
 

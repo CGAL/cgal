@@ -6,8 +6,8 @@
 # $Revision$ $Date$
 # ----------------------------------------------------
 # You will need 
-#  * GNU wget 
-#    (see ftp://sunsite.auc.dk/pub/infosystems/wget/)
+#  * GNU wget and ftp
+#  * or alternatively curl
 #
 # Furthermore you have to edit .autocgalrc in order to
 # cutomize it for your environment.
@@ -24,6 +24,8 @@ umask 022
 
 
 WGET="wget"
+CURL="curl"
+CURL_OPTS="--remote-name --silent --location-trusted"
 CGAL_URL="http://cgal.inria.fr/CGAL/Members/Releases"
 LATEST_LOCATION="${CGAL_URL}/LATEST"
 TAR="tar"
@@ -53,8 +55,6 @@ if [ -f $HOME/.autocgalrc ]; then
 else
   echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
 fi
-
-
 
 
 
@@ -111,13 +111,18 @@ datestr()
 # $2 = target filename (basename only)
 put_on_web()
 {
-$FTP -n $FTP_SERVER <<EOF
+    if [ -n "${USE_CURL}" ]; then
+        $CURL --upload-file ${1} --user anonymous:${MAIL_ADDRESS} \
+              ftp://${FTP_SERVER}/${FTP_STORE_DIR}/ >> ${ACTUAL_LOGFILE} 2>&1
+    else
+        $FTP -n $FTP_SERVER <<EOF
 quote USER anonymous
 quote PASS ${MAIL_ADDRESS}
 binary
 put ${1} ${FTP_STORE_DIR}/${2}
 quit
 EOF
+    fi
 }
 
 error()
@@ -274,7 +279,11 @@ get_cgal()
 {
     log ${ACTUAL_LOGFILE} "getting CGAL"
     rm -f ${CGAL_ZIPFILE}
-    ${WGET} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+    if [ -n "${USE_CURL}" ]; then
+        ${CURL} ${CURL_OPTS} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+    else
+        ${WGET} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+    fi
     if [ ${?} != 0 ]; then
 	error "Could not get CGAL"
     fi
@@ -384,7 +393,11 @@ if [ -r "LATEST" ]; then
   rm -rf LATEST
 fi
   log ${ACTUAL_LOGFILE} "getting LATEST"
-  ${WGET} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+  if [ -n "${USE_CURL}" ]; then
+    ${CURL} ${CURL_OPTS} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+  else
+    ${WGET} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+  fi
 if [ ! -f "LATEST" ]; then
   error "COULD NOT DOWNLOAD LATEST!"
 fi
