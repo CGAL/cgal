@@ -21,6 +21,7 @@
 #define CGAL_VORONOI_DIAGRAM_2_DEFAULT_SITE_INSERTERS_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
@@ -57,15 +58,16 @@ struct Default_site_inserter
 
 //===========================================================================
 
-template<class VT>
+template<class VT, class SI>
 class Default_caching_site_inserter
 {
 private:
   typedef VT  Voronoi_traits;
+  typedef SI  Site_inserter;
 
 public:
   typedef typename Voronoi_traits::Delaunay_graph   Delaunay_graph;
-  typedef typename Voronoi_traits::Site_2           Site_2;
+  typedef typename Site_inserter::Site_2            Site_2;
   typedef typename Delaunay_graph::Vertex_handle    result_type;
   typedef Arity_tag<2>                              Arity;
 
@@ -79,17 +81,16 @@ public:
     typedef std::vector<Dual_edge>                 Dual_edge_list;
     typedef std::vector<Dual_face_handle>          Dual_face_handle_list;
 
-    if ( dg.dual().dimension() != 2 ) { return dg.insert(t); }
+    if ( dg.dimension() != 2 ) { return dg.insert(t); }
 
     Dual_edge_list        e_list;
     Dual_face_handle_list f_list;
-    dg.dual().get_conflicts_and_boundary(t,
-					 std::back_inserter(f_list),
-					 std::back_inserter(e_list));
+    dg.get_conflicts_and_boundary(t, std::back_inserter(f_list),
+				  std::back_inserter(e_list));
 
     for (typename Dual_edge_list::iterator it = e_list.begin();
 	 it != e_list.end(); ++it) {
-      vt_->edge_degeneracy_tester().erase(*it);
+      vt_->edge_degeneracy_tester_object().erase(*it);
     }
 
     for (typename Dual_face_handle_list::iterator it = f_list.begin();
@@ -97,10 +98,10 @@ public:
       Dual_face_handle f = *it;
       for (int j = 0; j < 3; j++) {
 	Dual_edge e(f, j);
-	vt_->edge_degeneracy_tester().erase(e);
+	vt_->edge_degeneracy_tester_object().erase(e);
       }
     }
-    return dg.insert(t);
+    return Site_inserter()(dg, t);
   }
 
   template<class OutputIterator>
@@ -112,6 +113,15 @@ public:
 
 private:
   const Voronoi_traits* vt_;
+};
+
+//===========================================================================
+
+template<class VT>
+struct Default_caching_site_inserter<VT,Null_functor>
+{
+  Default_caching_site_inserter() {}
+  template<typename T> Default_caching_site_inserter(T t) {}
 };
 
 //===========================================================================
