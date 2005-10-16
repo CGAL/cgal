@@ -32,12 +32,11 @@ void print_report(const VDA& vda, const Projector& project,
 		  const Dual_primal_projector& dp_project,
 		  Stream& os = std::cout)
 {
-  typename VDA::Accessor accessor = vda.accessor();
-  const typename VDA::Accessor::Cached_edge_degeneracy_tester& edge_tester =
-    accessor.edge_tester();
+  const typename VDA::Voronoi_traits::Edge_degeneracy_tester& edge_tester =
+    vda.voronoi_traits().edge_degeneracy_tester_object();
 
-  const typename VDA::Accessor::Cached_face_degeneracy_tester& face_tester =
-    accessor.face_tester();
+  const typename VDA::Voronoi_traits::Face_degeneracy_tester& face_tester =
+    vda.voronoi_traits().face_degeneracy_tester_object();
 
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
