@@ -66,7 +66,7 @@ function createTestsuite()
       fi
     done
 
-    # construct input file for test_suite_QP_solver:
+    # construct input file for test_suite_QP_solver/test_solver:
     echo "Constructing file '${dataFile}'; this may take a while ..."
     cd ..
     if [ "x$cgalOrNot" == "xCGAL" ]; then
@@ -85,7 +85,14 @@ function createTestsuite()
       DATAFILES=`find $dataDir -name ${mfile}*$extension`
       for f in $DATAFILES
 	do
-	LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+	# following is a temporary fix to prevent test-cases for upper-bounding
+        # to be used with pricing strategies pe, ff, pf:
+	is_upper=`expr $tmp : 'Ub_.*'`
+	if [ "$is_upper" == "0" ]; then
+	    LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+	else
+	    LIST="${LIST} $level fe $f"
+	fi
 	tmp=`basename "$f"`
 	if grep -q "/$tmp/" "$dataDir/CVS/Entries"; then
 	    echo -n "";
