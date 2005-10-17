@@ -732,8 +732,10 @@ public:
 
  public:
   inline Face_handle insert(const Site_2& t) {
+#if 0
     // THE FOLLOWING LINE MAY BE ADDED FOR DEBUGGING PURPOSES
     for (Halfedge_iterator it=halfedges_begin();it!=halfedges_end();++it) ;
+#endif
     return insert(t, Has_site_inserter());
   }
 
