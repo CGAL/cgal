@@ -194,12 +194,9 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   }
 
   // check equality (C1);
-  for (int i=0; i<qp_m; ++i) {
-    if ((qp_r[i] == Rep::EQUAL)         && (lhs_col[i] != ET(qp_b[i]) * d) ||
-        (qp_r[i] == Rep::LESS_EQUAL)    && (lhs_col[i]  > ET(qp_b[i]) * d) ||
-        (qp_r[i] == Rep::GREATER_EQUAL) && (lhs_col[i]  < ET(qp_b[i]) * d))
+  for (int i=0; i<qp_m; ++i)
+    if (lhs_col[i] != ET(qp_b[i]) * d)
       return false;
-  }
   return true;
 }
 
