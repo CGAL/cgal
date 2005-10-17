@@ -38,6 +38,28 @@ std::list<std::pair<Point, Point > > _tr_list;
 std::pair<Point, double> bc;
 std::list<Point> _bc_list;
 
+QMenuBar   * menu;
+QPopupMenu * file;
+QPopupMenu * save;
+QPopupMenu * placement;
+QPopupMenu * options;
+QPopupMenu * view;
+
+
+int generate_id;
+int generatefirst_id;
+int generatenext_id;
+int generateten_id;
+int generateresume_id;
+int view_id;
+int drawstl_id;
+int drawpq_id;
+int drawtr_id;
+int drawbc_id;
+int addimage_id;
+int clear_id;
+int save_id;
+
 class Placement : public QObject
 {
 	Q_OBJECT
@@ -67,6 +89,10 @@ public:
 	Field * regular_grid;
 	Stl_iterator begin_iterator;
 	Stl_iterator end_iterator;
+	~Placement(){
+		delete Stream_lines;
+	  delete runge_kutta_integrator;
+		delete regular_grid;}
 public slots :
 	void clear()
 	{
@@ -98,6 +124,10 @@ public slots :
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
+		/*enable menu items*/
+		placement->setItemEnabled(generate_id, true);
+		placement->setItemEnabled(generatefirst_id, true);
+		menu->setItemEnabled(view_id, true);
 	}
 	void generate()
 	{
@@ -110,6 +140,10 @@ public slots :
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
+		/*enable menu items*/
+		placement->setItemEnabled(generate_id, false);
+		placement->setItemEnabled(generatefirst_id, false);
+		placement->setItemEnabled(clear_id, true);
 		draw();
 	}
 	void generateFirst()
@@ -122,41 +156,60 @@ public slots :
 		d_tr = false;
 		d_bc = false;
 		draw();
+		placement->setItemEnabled(generate_id, false);
+		placement->setItemEnabled(generatefirst_id, false);
+		placement->setItemEnabled(generatenext_id, !completed);
+		placement->setItemEnabled(generateten_id,  !completed);
+		placement->setItemEnabled(generateresume_id,  !completed);
+		placement->setItemEnabled(clear_id,  !completed);
 	}
-	void generateNext()
+	void generateNext(bool b = true)
 	{
 		if (!completed){ 
 			completed = ! Stream_lines->continue_next(*regular_grid, *runge_kutta_integrator, sampling_);
 			if (completed)
 				std::cerr << "placement completed!\n";}
-		number_of_lines_ = Stream_lines->number_of_lines();
 		d_stl = true;
 		d_pq = false;
 		d_tr = false;
 		d_bc = false;
-		draw();
+		if (b)
+			draw();
+		placement->setItemEnabled(generatenext_id, !completed);
+		placement->setItemEnabled(generateten_id, !completed);
+		placement->setItemEnabled(generateresume_id, !completed);
+		placement->setItemEnabled(clear_id,  !completed);
 	}
 	void generateTen()
 	{
 		for (int i=0;i<10;i++)
-			generateNext();
-		number_of_lines_ = Stream_lines->number_of_lines();
-		d_stl = true;
-		d_pq = false;
-		d_tr = false;
-		d_bc = false;
+			generateNext(false);
 		draw();
 	}
 	void generateAll()
 	{
 		while (!completed)
-			generateNext();
-		number_of_lines_ = Stream_lines->number_of_lines();
+			generateNext(false);
 		draw();
-		d_stl = true;
-		d_pq = false;
-		d_tr = false;
-		d_bc = false;
+	}
+	void purge()
+	{
+		if (Stream_lines != NULL)
+			delete Stream_lines;
+		Stream_lines = NULL;
+		begin_iterator = NULL;
+		end_iterator = NULL;
+	
+		// desable all generator menu items
+		placement->setItemEnabled(generate_id, true);
+		placement->setItemEnabled(generatefirst_id, true);
+		placement->setItemEnabled(generatenext_id, false);
+		placement->setItemEnabled(generateten_id, false);
+		placement->setItemEnabled(generateresume_id, false);
+		placement->setItemEnabled(clear_id, false);
+		file->setItemEnabled(save_id, false);
+
+		draw();
 	}
 	void draw()
 	{
@@ -164,6 +217,11 @@ public slots :
 		{
   		begin_iterator = Stream_lines->begin();
   		end_iterator = Stream_lines->end();
+		}
+		else
+		{
+  		begin_iterator = NULL;
+  		end_iterator = NULL;
 		}
 	}
 	void draw_stl()
@@ -227,7 +285,6 @@ Q_OBJECT
 public:
 	Placement p;
 	
-	
 	QStatusBar * statusbar;
 	QLabel * densitylabel;
 	QLabel * densitytextlabel;
@@ -246,10 +303,16 @@ public:
 	
 	MyWidget(QGLWidget *parent = 0);
 public slots :
+	~MyWidget(){
+		delete menu;
+		delete file;
+		delete save;
+		delete placement;}
 	QString openedfile(){
 	p.clear();
 	QString s = QFileDialog::getOpenFileName( "",
 		"Vector fields (*.vec.cin)", this, "open file dialog", "Choose a file to load" );
+	if (!s.isEmpty())
 	emit(fileloaded(s));
 	return s;
 	}
@@ -473,34 +536,51 @@ MyWidget::MyWidget(QGLWidget *parent)
 	
 	setstatus();
 
-	QMenuBar *menu = new QMenuBar(this, "Menu bar");
-	QPopupMenu * file = new QPopupMenu( this , "file");
-	QPopupMenu * save = new QPopupMenu( this , "save");
-	QPopupMenu * placement = new QPopupMenu( this , "placement");
-	QPopupMenu * options = new QPopupMenu( this , "options");
+	menu = new QMenuBar(this, "Menu bar");
+	file = new QPopupMenu( this , "file");
+	save = new QPopupMenu( this , "save");
+	placement = new QPopupMenu( this , "placement");
+	options = new QPopupMenu( this , "options");
+	view = new QPopupMenu( this , "viewing");
 	save->insertItem( "Save &eps file", this, SLOT(savedepsfile()), CTRL+Key_E );
 	save->insertItem( "Save &stl file", this, SLOT(savedstlfile()), CTRL+Key_S );
 	file->insertItem( "&Load", this, SLOT(openedfile()), CTRL+Key_L );
-	placement->insertItem( "&Generate", &p, SLOT(generate()), CTRL+Key_G );
-	placement->insertItem( "Generate &First", &p, SLOT(generateFirst()), CTRL+Key_F );
-	placement->insertItem( "Generate &Next", &p, SLOT(generateNext()), CTRL+Key_N );
-	placement->insertItem( "Next &ten streamlines", &p, SLOT(generateTen()), CTRL+Key_T );
-	placement->insertItem( "&Complete the placement", &p, SLOT(generateAll()), CTRL+Key_C );
-	placement->insertItem( "&Draw streamlines", &p, SLOT(draw_stl()), CTRL+Key_D );
-	placement->insertItem( "Draw &queue elements", &p, SLOT(draw_pq()), CTRL+Key_Q );
-	placement->insertItem( "Draw t&riangulation", &p, SLOT(draw_tr()), CTRL+Key_R );
-	placement->insertItem( "Draw &biggest circle", &p, SLOT(draw_bc()), CTRL+Key_B );
-	placement->insertItem( "&Image", this, SLOT(openedimage()), CTRL+Key_I );
-	options->insertItem( "Density", &p, SLOT(density()));
-	options->insertItem( "Saturation ration", &p, SLOT(ratio()));
-	options->insertItem( "Sampling step", &p, SLOT(sampling()));
-	options->insertItem( "Integrating step", &p, SLOT(integrating()));
-	placement->insertItem( "&Options", options );
-	file->insertItem( "&Save", save );
+	generate_id = placement->insertItem( "&Generate", &p, SLOT(generate()), CTRL+Key_G );
+	generatefirst_id = placement->insertItem( "Generate &First", &p, SLOT(generateFirst()), CTRL+Key_F );
+	generatenext_id = placement->insertItem( "Generate &Next", &p, SLOT(generateNext()), CTRL+Key_N );
+	generateten_id = placement->insertItem( "Next &ten streamlines", &p, SLOT(generateTen()), CTRL+Key_T );
+	generateresume_id = placement->insertItem( "&Resume the placement", &p, SLOT(generateAll()), CTRL+Key_C );
+	clear_id = placement->insertItem( "&Clear", &p, SLOT(purge()), CTRL+Key_M );
+	drawstl_id = view->insertItem( "&Draw streamlines", &p, SLOT(draw_stl()), CTRL+Key_D );
+	drawpq_id = view->insertItem( "Draw &queue elements", &p, SLOT(draw_pq()), CTRL+Key_Q );
+	drawtr_id = view->insertItem( "Draw t&riangulation", &p, SLOT(draw_tr()), CTRL+Key_R );
+	drawbc_id = view->insertItem( "Draw &biggest circle", &p, SLOT(draw_bc()), CTRL+Key_B );
+	addimage_id = placement->insertItem( "&Image", this, SLOT(openedimage()), CTRL+Key_I );
+	options->insertItem( "Density...", &p, SLOT(density()));
+	options->insertItem( "Saturation ration...", &p, SLOT(ratio()));
+	options->insertItem( "Sampling step...", &p, SLOT(sampling()));
+	options->insertItem( "Integrating step...", &p, SLOT(integrating()));
+	placement->insertItem( "&Options ", options );
+	save_id = file->insertItem( "&Save", save );
 	menu->insertItem( "&File", file );
 	menu->insertItem( "&Placement", placement );
+	view_id = menu->insertItem( "&View ", view );
 	file->insertItem( "&Quit", qApp, SLOT(quit()), ALT+Key_F4 );
+	
+	// desable all generator menu items
+	placement->setItemEnabled(generate_id, false);
+	placement->setItemEnabled(generatefirst_id, false);
+	placement->setItemEnabled(generatenext_id, false);
+	placement->setItemEnabled(generateten_id, false);
+	placement->setItemEnabled(generateresume_id, false);
+	placement->setItemEnabled(clear_id, false);
+	
+	menu->setItemEnabled(view_id, false);
+	
+	placement->setItemEnabled(addimage_id, false);
+	file->setItemEnabled(save_id, false);
 
+	
 	connect(this, SIGNAL(fileloaded(const QString &)), &p, SLOT(load(const QString &)));
 	connect(this, SIGNAL(imageloaded(const QString &)), &p, SLOT(image(const QString &)));
 	connect(&p, SIGNAL(optionschanged()), this, SLOT(updatestatus()));
