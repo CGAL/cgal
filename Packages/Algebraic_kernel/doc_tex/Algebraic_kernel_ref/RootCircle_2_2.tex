@@ -2,22 +2,23 @@
 
 \ccDefinition
 
-The \ccc{RootForCircles_2_2} concept represents algebraic numbers that can
-store the roots of systems of two \ccc{PolynomialForCircles_2_2}
+The \ccc{AlgebraicKernel_2_2::RootForCircles_2_2} concept represents
+algebraic numbers that can store the roots of systems of two
+\ccc{AlgebraicKernel_2_2::PolynomialForCircles_2_2}
 equations of degree 2 in two variables \ccc{x} and \ccc{y}. 
 
-\ccAccessFunctions
+%\ccAccessFunctions
 
-\ccFunction{const RootOf_2 & x();}{}
-\ccGlue
-\ccFunction{const RootOf_2 & y();}{}
+%\ccFunction{const AlgebraicKernel_2_2::RootOf_2 & x();}{}
+%\ccGlue
+%\ccFunction{const AlgebraicKernel_2_2::RootOf_2 & y();}{}
 
 \ccOperations
 
 The comparison operator \ccc{==} must be provided. 
 
-\ccFunction{bool operator ==(const RootForCircles_2_2 & p,
-	const RootForCircles_2_2 & q);}{}
+\ccFunction{bool operator ==(const AlgebraicKernel_2_2::RootForCircles_2_2 & p,
+	const AlgebraicKernel_2_2::RootForCircles_2_2 & q);}{}
 
 \ccHasModels
 

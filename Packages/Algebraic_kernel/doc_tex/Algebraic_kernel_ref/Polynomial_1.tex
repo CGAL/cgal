@@ -2,34 +2,31 @@
 
 \ccDefinition
 
-The \ccc{Polynomial_1_2} represents bivariate polynomials of degree 1 whose coefficients are of type \ccc{RT}, a model of \ccc{RingNumberType}. 
+The \ccc{AlgebraicKernel_2_2::Polynomial_1_2} represents bivariate
+polynomials of degree 1 whose coefficients are of type \ccc{RT}, a
+model of \ccc{RingNumberType}.
 
 \ccTypes
-
-\ccc{RT} is supposed to be a model of \ccc{RingNumberType}, given 
-by \ccc{Rational_traits<FT>}.\footnote{again...}
 
 \ccCreation
 \ccCreationVariable{pol}
 
 \ccConstructor{Polynomial_1_2();}{Default constructor.}
 
-\ccConstructor{Polynomial_1_2(const RT & a, const RT & b, const RT & c);}{Constructs polynomial \ccc{ax+by+c}.}
+%\ccAccessFunctions
 
-\ccAccessFunctions
+%\ccFunction{const RT & a() const;}{}
+%\ccGlue
+%\ccFunction{const RT & b() const;}{}
+%\ccGlue
+%\ccFunction{const RT & c() const;}{}
 
-\ccFunction{const FT & a() const;}{}
-\ccGlue
-\ccFunction{const FT & b() const;}{}
-\ccGlue
-\ccFunction{const FT & c() const;}{}
+%\ccOperations
 
-\ccOperations
+%The comparison operator \ccc{==} must be provided. 
 
-The comparison operator \ccc{==} must be provided. 
-
-\ccFunction{bool operator ==(const Polynomial_1_2 & p,
-	const Polynomial_1_2 & q);}{}
+%\ccFunction{bool operator ==(const AlgebraicKernel_2_2::Polynomial_1_2 & p,
+%	const AlgebraicKernel_2_2::Polynomial_1_2 & q);}{}
 
 \ccHasModels
 

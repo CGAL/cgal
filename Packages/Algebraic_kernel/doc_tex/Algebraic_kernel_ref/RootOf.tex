@@ -2,7 +2,7 @@
 
 \ccDefinition
 
-The \ccc{RootOf_2} concept represents algebraic numbers of
+The \ccc{AlgebraicKernel_2_2::RootOf_2} concept represents algebraic numbers of
 degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
 
 \ccc{FT} denotes the \ccc{FieldNumberType} constructed from \ccc{RT}.
@@ -12,13 +12,17 @@ degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
 
 \footnote{How to get RT...?}
 
-\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, int i);}{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$.}\footnote{numbering of roots from 0 or 1? to be checked}
+\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, int i);}{Returns 
+the \ccc{i}th root of equation $aX^2+bX+c=0$.}
+\footnote{numbering of roots from 0 or 1? to be checked}
 \ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, int i);}{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$.}
+\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, int i);}{Returns
+the \ccc{i}th root of equation $aX^2+bX+c=0$.}
 
 \ccOperations
 
-The comparison operators \ccc{==, !=, <, >, <=, >=} need to be
+The comparison operators \ccc{==, !=, <, >, <=, >=} as well as the \ccc{sign}
+and \ccc{compare} functions need to be
 provided to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}. 
 
 In addition, the following operations must be provided:
