@@ -2,7 +2,7 @@
 ## Simple LP in non-standard-form
 
 with(LinearAlgebra):
-is_part_of_CGAL_testsuite:= false: # not yet
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example 8.1b from Chvatal":
 
