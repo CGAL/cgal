@@ -21,7 +21,6 @@
 #define CGAL_VORONOI_DIAGRAM_2_ITERATOR_ADAPTORS_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <cstdlib>
 #include <iterator>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Triangulation_utils_2.h>

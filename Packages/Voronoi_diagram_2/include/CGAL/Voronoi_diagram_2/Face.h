@@ -22,7 +22,6 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
-#include <cstdlib>
 #include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE
