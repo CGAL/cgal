@@ -4,4 +4,5 @@ GNUmakefile
 Doxyfile
 TODO
 applications
+applications.README
 spheres_create_input.sh
