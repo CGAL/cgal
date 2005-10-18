@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
-#include <vector>
 
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Derivative.h>
