@@ -42,7 +42,7 @@ compile_and_run()
     fi
     echo "Executing $1 ... "
     echo
-    ulimit -t 1800
+    ulimit -t 2500
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   succesful execution   of $1" >> $ERRORFILE
     else
