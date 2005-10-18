@@ -142,15 +142,15 @@ public:
     // texture coordinates
     double u() const { return m_u; }
     double v() const { return m_v; }
-    void uv(double u, double v) 
-    { 
+    void uv(double u, double v)
+    {
 #ifdef DEBUG_TRACE
-        std::cerr << "      H" << index() 
+        std::cerr << "      H" << index()
                   << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ")"
                   << "<- (u=" << u << ",v=" << v << ")\n";
 #endif
-        m_u = u; 
-        m_v = v; 
+        m_u = u;
+        m_v = v;
     }
 
     // param.
@@ -174,7 +174,7 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
     int m_tag;
 
     // seaming status
-    int m_seaming;              
+    int m_seaming;
 
 public:
     // life cycle
@@ -503,9 +503,9 @@ public:
         fprintf(pFile, "# vertices\n") ;
         Vertex_iterator pVertex;
         for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
-            fprintf(pFile,"v %g %g %g\n", 
-                    (double)pVertex->point().x(), 
-                    (double)pVertex->point().y(), 
+            fprintf(pFile,"v %g %g %g\n",
+                    (double)pVertex->point().x(),
+                    (double)pVertex->point().y(),
                     (double)pVertex->point().z());
 
         // Write UVs (1 UV / halfedge)
@@ -579,13 +579,12 @@ public:
         double xdiff = xmax-xmin;
         double ydiff = ymax-ymin;
         double zdiff = zmax-zmin;
-        double max = std::max(std::max(xdiff,ydiff),zdiff);
-        if(max == xdiff)
+        if (xdiff >= std::max(ydiff,zdiff))
         {
             pVertexMin = pVertex_xMin;
             pVertexMax = pVertex_xMax;
         }
-        else if(max == ydiff)
+        else if (ydiff >= std::max(xdiff,zdiff))
         {
             pVertexMin = pVertex_yMin;
             pVertexMax = pVertex_yMax;
