@@ -1,0 +1,5 @@
+- check the normals to the skin surface
+- give surface_test input
+- check triangulate_mixed_complex: converter not from traits
+- polyhedron traits does not define Vector
+- Chew's algorithm

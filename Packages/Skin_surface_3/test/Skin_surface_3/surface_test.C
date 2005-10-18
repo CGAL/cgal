@@ -83,10 +83,11 @@ int main(int argc, char *argv[]) {
       triangulated_mixed_complex.incident_cells(vit, std::back_inserter(cells));
       for (std::list<Tr2_cell_handle>::iterator cell = cells.begin();
 	   cell != cells.end(); cell++) {
+	Polyhedron_rt val2 = marching_traits.value(*cell, vit->point());
 	if (!triangulated_mixed_complex.is_infinite(*cell)) {
 	  std::cout << vit->cell()->surf->dimension() << " "
 		    << (*cell)->surf->dimension() << " - "
-		    << (marching_traits.value(*cell, vit->point())/val) << std::endl;
+		    << (val2/val) << std::endl;
 	}
       }
     }

@@ -85,26 +85,31 @@ public:
 
   Mixed_complex_triangulator_3(
     Regular &regular,
-    Triangulated_mixed_complex &triangulated_mixed_complex)
-    : regular(regular), triangulated_mixed_complex(triangulated_mixed_complex),
-      triangulation_incr_builder(triangulated_mixed_complex), shrink(.5), 
-      observer(shrink), compute_anchor_obj(regular) {
+    Triangulated_mixed_complex &triangulated_mixed_complex,
+    Skin_traits_3 &skin_traits)
+    : regular(regular),
+      triangulated_mixed_complex(triangulated_mixed_complex),
+      skin_traits(skin_traits),
+      observer(shrink), 
+      triangulation_incr_builder(triangulated_mixed_complex), 
+      compute_anchor_obj(regular) {
     assert((0<shrink) && (shrink<1));
 
     build();
   }
 
-  // NGHK: shrink .5 is fixed here: change it!
   Mixed_complex_triangulator_3(
     Regular &regular,
     Triangulated_mixed_complex &triangulated_mixed_complex,
+    Skin_traits_3 &skin_traits,
     Triangulated_mixed_complex_observer &observer)
-    : regular(regular), triangulated_mixed_complex(triangulated_mixed_complex),
-      triangulation_incr_builder(triangulated_mixed_complex), shrink(.5), 
-      observer(observer), compute_anchor_obj(regular) {
+    : regular(regular),
+      triangulated_mixed_complex(triangulated_mixed_complex),
+      skin_traits(skin_traits),
+      observer(observer),
+      triangulation_incr_builder(triangulated_mixed_complex), 
+      compute_anchor_obj(regular) {
 	  
-    assert((0<shrink) && (shrink<1));
-
     build();
   }
 
@@ -141,11 +146,13 @@ private:
 private:
   Regular &regular;
   Triangulated_mixed_complex &triangulated_mixed_complex;
-  Triangulation_incremental_builder triangulation_incr_builder;
-  // NGHK: remove next two:
-  Sc_RT shrink;
-  R2T_converter r2s_converter;
+  Skin_traits_3 &skin_traits;
   Triangulated_mixed_complex_observer &observer;
+
+  Triangulation_incremental_builder triangulation_incr_builder;
+
+  // NGHK: remove:
+  R2T_converter r2s_converter;
 
   Construct_weighted_circumcenter_3<
     Regular_triangulation_euclidean_traits_3<
@@ -848,7 +855,7 @@ get_anchor(Rt_Simplex &sDel, Rt_Simplex &sVor)
       break;
   }
 	
-  return dfoc + shrink*(vfoc - dfoc);
+  return dfoc + skin_traits.shrink_factor()*(vfoc - dfoc);
 }
 
 template < 
@@ -865,9 +872,9 @@ void triangulate_mixed_complex_3(
     SkinSurfaceTraits_3,
     Regular_3,
     TriangulatedMixedComplex_3,
-    MixedComplexObserver_3>                          Mixed_complex_triangulator;
+    MixedComplexObserver_3>              Mixed_complex_triangulator;
     
-  Mixed_complex_triangulator(rt, sc, observer);
+  Mixed_complex_triangulator(rt, sc, traits, observer);
 }
 
 

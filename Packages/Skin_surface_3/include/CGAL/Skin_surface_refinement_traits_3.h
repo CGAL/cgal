@@ -16,6 +16,7 @@ public:
   typedef typename Polyhedron_traits::Point_3     Polyhedron_point;
   typedef typename Polyhedron_traits::Segment_3   Polyhedron_segment;
   typedef typename Polyhedron_traits::Line_3      Polyhedron_line;
+  typedef typename Polyhedron_traits::Vector_3    Polyhedron_vector;
   typedef typename Polyhedron_traits::Plane_3     Polyhedron_plane;
 
   typedef typename Triangulation::Cell_handle     Triang_cell_handle;
@@ -34,7 +35,6 @@ public:
     
   }
     
-   
   Polyhedron_point to_surface_along_transversal_segment(
     Polyhedron_point &p) {
     Triang_cell_handle ch = t.locate(p2t_converter(p));
@@ -48,6 +48,15 @@ public:
     return ch->surf->to_surface(
       transversal_segment.start(), transversal_segment.end());
   }
+  Polyhedron_vector normal(Polyhedron_point const &p) {
+    Triang_cell_handle ch = t.locate(p2t_converter(p));
+    return ch->surf->normal(p);
+  }
+  int dimension(Polyhedron_point const &p) {
+    Triang_cell_handle ch = t.locate(p2t_converter(p));
+    return ch->surf->dimension();
+  }
+private:
   Polyhedron_segment get_transversal_segment(
     Triang_cell_handle ch, Polyhedron_point &p) {
     // Compute signs on vertices and sort them:
@@ -118,6 +127,7 @@ public:
       CGAL_assertion_msg(false,"intersection: no intersection.");
     return p;
   }
+
   Sign sign(Triang_cell_handle ch, int i) {
     return CGAL_NTS sign(
        ch->surf->value(t2p_converter(ch->vertex(i)->point())) - iso_value);

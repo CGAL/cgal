@@ -76,9 +76,9 @@ public:
       // Process edges whose vertices lie on different sides of the surface
       int edgeN=0;
       for (int i=0; i<nIn; i++) {
-	for (int j=nIn; j<4; j++) {
-	  cellV[edgeN++] = process_edge(B, cit,sortedV[i],sortedV[j]);
-	}
+        for (int j=nIn; j<4; j++) {
+          cellV[edgeN++] = process_edge(B, cit,sortedV[i],sortedV[j]);
+        }
       }
 
       // Construct triangles:

@@ -12,8 +12,8 @@ template <class Polyhedron_3,
 class Skin_surface_sqrt3
 {
   typedef Polyhedron_3                                        Polyhedron;
-  typedef SkinSurfaceRefinementTraits_3                       Traits;
-  typedef typename Traits::Triangulation                      Triangulation;
+  typedef SkinSurfaceRefinementTraits_3                       Refinement_traits;
+  typedef typename Refinement_traits::Triangulation           Triangulation;
   
   typedef typename Polyhedron::Traits                         Kernel;
   typedef typename Kernel::Point_3                            Point;
@@ -34,7 +34,7 @@ class Skin_surface_sqrt3
   typedef typename Kernel::FT                                 FT;
 
 public:
-  Skin_surface_sqrt3(Polyhedron &P, Traits &traits) 
+  Skin_surface_sqrt3(Polyhedron &P, Refinement_traits &traits) 
     : P(P), traits(traits) {}
 
   //*********************************************
@@ -206,7 +206,7 @@ private:
   }
   
   Polyhedron &P;
-  Traits &traits;
+  Refinement_traits &traits;
 };
 
 template <class Polyhedron_3,

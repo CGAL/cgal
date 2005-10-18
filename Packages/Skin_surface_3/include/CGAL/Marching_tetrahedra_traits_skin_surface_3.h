@@ -15,8 +15,8 @@ public:
   typedef typename Triangulation_3::Geom_traits::Point_3     Triang_point;
 
   typedef typename HalfedgeDS::Traits                 HDS_K;
-  typedef typename HDS_K::RT                   HDS_rt;
-  typedef typename HDS_K::Point_3              HDS_point;
+  typedef typename HDS_K::Point_3                     HDS_point;
+  typedef typename HDS_point::R::RT                   HDS_rt;
 
   Marching_tetrahedra_traits_skin_surface_3(HDS_rt iso_value=0)
     : iso_value(iso_value) {

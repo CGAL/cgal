@@ -62,7 +62,7 @@ public:
 
 
   // return the dimension of the delaunay simplex:
-  virtual int dimension() = 0;
+  virtual int dimension() const = 0;
 
   // return a continuous density function on the skin surface:
   virtual RT sq_density(Point const &p) = 0;
@@ -100,40 +100,7 @@ public:
   RT value(Point const &x) const {
     return orient * (squared_distance(x, wp)/s - wp.weight());
   }
-//   Point to_surface(Point const &p0, Point const &p1) {
-//     Vector p0c = p0-wp;
-//     Vector p0p1 = p1-p0;
-//     RT sq_d = p0p1*p0p1;
-//     RT top = -p0c*p0p1/sq_d; 
 
-//     RT extr_val = squared_distance(p0+top*p0p1, wp) - s*wp.weight();
-		
-//     if (extr_val > 0) {
-//       std::cerr << "im. intersection[" << dimension() << "] "
-// 		<<  extr_val << "\n"; 
-//       return p0 + top*p0p1;
-//     }
-//     RT d = sqrt(-extr_val/sq_d);
-
-//     // t should be in [0,1]
-//     RT t, t1;
-//     t = top + d; t1 = top - d;
-//     if ((2*t1-1)*(2*t1-1) < (2*t-1)*(2*t-1)) t = t1;
-
-//     if (t < 0) {
-//       std::cerr << "Sl[" << dimension() <<"] " <<  t << "\n";
-//       return  p0;
-//     } else if (t > 1) {
-//       std::cerr << "Sh[" << dimension() <<"] " <<  t << "\n";
-//       return  p1;
-//     } else {
-//       // 			if (std::abs(value(p0 + t*p0p1)) >= 0.001) {
-//       // 				std::cerr << "VAL: " << value(p0 + t*p0p1) << std::endl;
-//       // 			}
-//       // 			assert (std::abs(value(p0 + t*p0p1)) < 0.001);
-//       return p0 + t*p0p1;
-//     }
-//   }
   Point to_surface(Point const &p, Vector const &v) {
     Vector pc = p-wp;
     RT sq_d = v*v;
@@ -170,7 +137,7 @@ public:
     return orient*(p-wp);
   }
 	
-  int dimension() {
+  int dimension() const {
     if (orient == 1) return 0; else return 3;
   }
 
@@ -310,7 +277,7 @@ public:
     return orient*((1-s)*v - vt);
   }
 
-  int dimension() {
+  int dimension() const {
     if (orient == 1) return 1; else return 2;
   }
 
