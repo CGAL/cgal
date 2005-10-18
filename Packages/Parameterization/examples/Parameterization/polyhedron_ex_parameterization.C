@@ -106,7 +106,7 @@ typedef Polyhedron_ex                                       Polyhedron;
 typedef Mesh_adaptor_polyhedron_ex                          Mesh_adaptor_polyhedron;
 typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
 
-// Parametizer for this kind of mesh
+// Defines the error codes
 typedef CGAL::Parametizer_traits_3<Mesh_patch_polyhedron>   Parametizer;
 
 // Type describing a border or seam as a vertex list
@@ -117,9 +117,9 @@ typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
 // Private functions
 // ----------------------------------------------------------------------------
 
-// Cut the mesh to make it homeomorphic to a disk
+// If the mesh is a topological disk, extract its longest boundary,
 // or extract a region homeomorphic to a disc.
-// Return the border of this region (empty on error)
+// Return the border/seam (empty on error)
 //
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
@@ -134,6 +134,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 
     Seam seam;              // returned list
 
+    // Get pointer to Polyhedron_3 mesh
     assert(mesh_adaptor != NULL);
     Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
     assert(mesh != NULL);
@@ -150,7 +151,7 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
         const Boundary* pBoundary = feature_extractor.get_longest_boundary();
         seam = *pBoundary;
     }
-    else // if mesh is NOT a topological disk
+    else // if mesh is NOT a topological disk, create a virtual cut
     {
         Backbone seamingBackbone;           // result of cutting
         Backbone::iterator he;
@@ -500,8 +501,8 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     // print mesh info
-    fprintf(stderr, "(%d facets, ",mesh.size_of_facets());
-    fprintf(stderr, "%d vertices)\n",mesh.size_of_vertices());
+    fprintf(stderr, "(%d facets, ", (int)mesh.size_of_facets());
+    fprintf(stderr, "%d vertices)\n", (int)mesh.size_of_vertices());
 
     //***************************************
     // Create mesh adaptor
@@ -511,18 +512,16 @@ int main(int argc,char * argv[])
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // The parameterization package supports only meshes that
-    // are toplogical disks => we need to virtually "cut" the mesh
-    // to make it homeomorphic to a disk
-    //
-    // 1) Cut the mesh
+    // are topological disks => we need to compute a "cutting" of the mesh
+    // that makes it it homeomorphic to a disk
     Seam seam = cut_mesh(&mesh_adaptor);
     if (seam.empty())
     {
         fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
         return EXIT_FAILURE;
     }
-    //
-    // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
+
+    // Create adaptor that virtually "cuts" the mesh following the 'seam' path
     Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
                                        seam.begin(),
                                        seam.end());
@@ -583,7 +582,7 @@ int main(int argc,char * argv[])
         }
     }
 
-    cerr << std::endl;
+    fprintf(stderr, "\n");
 
     return (err == Parametizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

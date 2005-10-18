@@ -1,0 +1,69 @@
+\section{Output}
+
+Parameterizations store the result in the (u,v) fields of the input mesh's vertices
+and/or halfedges. The package user must traverse the mesh to get this output.
+
+Note: (u,v) fields do not exist in the standard Polyhedron and TDS, thus
+the output traversal is specific to the way the (u,v) fields are implemented.
+
+\subsection{EPS Output Example}
+
+The code below gets the (u,v) fields computed by a parameterization method
+in a Polyhedron\_3 mesh with a Mesh\_adaptor\_polyhedron\_3 adaptor:
+
+\begin{ccExampleCode}
+
+// CGAL kernel
+typedef CGAL::Cartesian<double>                         Kernel;
+
+// Mesh true type and parameterization adaptors
+typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+...
+
+// Dump parameterized mesh to an eps file
+static bool write_file_eps(const Mesh_adaptor_polyhedron& mesh_adaptor,
+                           const char *pFilename,
+                           double scale = 500.0)
+{
+    // Get actual mesh from adaptor
+    const Polyhedron* mesh = mesh_adaptor.get_adapted_mesh();
+
+    FILE *pFile = fopen(pFilename,"wt");
+    ...
+
+    // for each halfedge
+    for (pHalfedge = mesh->halfedges_begin();
+         pHalfedge != mesh->halfedges_end();
+         pHalfedge++)
+    {
+        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
+        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
+        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
+        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
+        fprintf(pFile,"%g %g %g %g E\n",x1,y1,x2,y2);
+    }
+
+    ...
+    fclose(pFile);
+}
+
+int main(int argc,char * argv[])
+{
+    Polyhedron mesh;
+    ...
+
+    // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    // Note: parameterization methods support only meshes that are toplogical disks
+    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
+
+    // Parameterization
+    ...
+
+    // Write Postscript file
+    write_file_eps(mesh_adaptor, output_filename);
+}
+
+\end{ccExampleCode}
+
+See the complete code in Polyhedron\_parameterization4.C example.

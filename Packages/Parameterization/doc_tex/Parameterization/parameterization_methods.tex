@@ -3,9 +3,8 @@
 
 \subsection{CGAL::parameterize()}
 
-From the user's point of view, this package provides a second entry point
-where the user may specify a parameterization method (including a border
-parameterization method and a linear solver):
+This package provides a second \ccc{parameterize()} entry point
+where the user can specify a parameterization method:
 
 \ccFunction{Parametizer_traits_3<MeshAdaptor_3>::Error_code parameterize (MeshAdaptor_3 * mesh, ParametizerTraits_3 parametizer);}
 {
@@ -21,7 +20,7 @@ Preconditions:\begin{itemize}
 \end{description}
 
 
-\subsection{Parameterization Methods List}
+\subsection{Parameterization Methods List and Concept}
 
 This \cgal\ package implements some of the state-of-the-art
 parameterization methods as models of the ParametizerTraits\_3 concept:
@@ -122,7 +121,7 @@ See the complete code in Polyhedron\_parameterization2.C example.
 \end{figure}
 
 
-\subsection{Boundary parameterization Methods List}
+\subsection{Boundary parameterization Methods List and Concept}
 
 Boundary parameterization methods define a
 set of constraints (a constraint specifies two u,v coordinates for
@@ -153,16 +152,18 @@ vertices). They have to be on the specified boundary.
 
         \item one shape among a set of standard ones (circle, square).
 
+        \ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3}  \\
+        \ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3}  \\
+        \ccRefIdfierPage{CGAL::Square_border_arc_length_parametizer_3}  \\
+        \ccRefIdfierPage{CGAL::Square_border_uniform_parametizer_3}  \\
+
         \item a convex polygon.
+
+        (not yet implemented)
 
         \end{itemize}
 
     \end{itemize}
-
-    \ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3}  \\
-    \ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3}  \\
-    \ccRefIdfierPage{CGAL::Square_border_arc_length_parametizer_3}  \\
-    \ccRefIdfierPage{CGAL::Square_border_uniform_parametizer_3}  \\
 
 \end{itemize}
 

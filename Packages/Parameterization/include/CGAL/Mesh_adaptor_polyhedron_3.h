@@ -37,24 +37,28 @@ CGAL_BEGIN_NAMESPACE
 
 /// Mesh_adaptor_polyhedron_3 is an adaptor class to access to a Polyhedron
 /// 3D mesh using the PatchableMeshAdaptor_3 interface.
+/// Among other things, this concept defines the accessor to the (u,v) values
+/// computed by parameterizations methods.
+///
+/// Note that these interfaces are decorators that add "on the fly"
+/// the necessary fields to unmodified CGAL data structures (using STL maps).
+/// For performance reasons, it is recommended to use CGAL data structures
+/// enriched with the proper fields.
 ///
 /// A MeshAdaptor_3 surface consists of vertices,
 /// facets and an incidence relation on them.
 /// No notion of edge is requested.
-/// 
-/// The surface must be an
-/// oriented 2-manifold with border vertices.
-/// 
+///
 /// MeshAdaptor_3 meshes can have any genus, aridity or number of components.
-/// 
+///
 /// It can have have any number of boundaries. Its "main border"
 /// will be the mesh's longest boundary (if there is at least one boundary).
-/// 
+///
 /// It has also the ability to support patches and virtual seams.
 /// Patches are a subset of a 3D mesh. Virtual seams are the ability
 /// to behave exactly as if the surface was "cut" following a certain path.
 ///
-/// Concept: 
+/// Concept:
 /// Model of PatchableMeshAdaptor_3 concept, whose purpose is to allow
 /// the parameterization package to access meshes on an uniform manner.
 ///
@@ -247,7 +251,7 @@ public:
                                             Vertex_iterator;
     typedef typename Polyhedron::Vertex_const_iterator
                                             Vertex_const_iterator;
-    /// Iterator over vertices of the mesh "main boundary". 
+    /// Iterator over vertices of the mesh "main boundary".
     /// Model of the ForwardIterator concept.
     typedef CGAL::Convertible_iterator_project<typename std::list<Vertex_handle>::iterator,
                                                Project_vertex_handle_vertex,

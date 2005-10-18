@@ -100,14 +100,18 @@ The general definition of input meshes handled by the package is:
 
 \item 2-manifold
 
-\item Oriented
+\item Oriented.
 
-\item One connected component. The input mesh can be of any genus,
+\item The input mesh can be of any genus and have any number of connected components,
 -but- it has to come with a description of a boundary (a list of
 vertices) which is the boundary of
 a topological disc. If no boundary is given, we assume that it
-coincides with the longest boundary already in the input mesh.  Note
-that this way the user is responsible for cutting a closed mesh of
+coincides with the longest boundary already in the input mesh.
+
+The package will only parameterize the inside part of the given boundary,
+thus only one connected component.
+
+Note that this way the user is responsible for cutting a closed mesh of
 arbitrary genus (even a topological disc with an intricate seam
 cut), as long as this condition is verified.
 

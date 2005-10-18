@@ -22,11 +22,11 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Mesh\_adaptor\_polyhedron\_3 is an adaptor class to access to a Polyhedron 3D mesh using the PatchableMeshAdaptor\_3 interface.
+Mesh\_adaptor\_polyhedron\_3 is an adaptor class to access to a Polyhedron 3D mesh using the PatchableMeshAdaptor\_3 interface. Among other things, this concept defines the accessor to the (u,v) values computed by parameterizations methods.
+
+Note that these interfaces are decorators that add "on the fly" the necessary fields to unmodified CGAL data structures (using STL maps). For performance reasons, it is recommended to use CGAL data structures enriched with the proper fields.
 
 A MeshAdaptor\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested.
-
-The surface must be an oriented 2-manifold with border vertices.
 
 MeshAdaptor\_3 meshes can have any genus, aridity or number of components.
 
@@ -67,7 +67,7 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$
-class Polyhedron\_3\_$>$
+class Polyhedron\_3\_$>$ 
 class Mesh\_adaptor\_polyhedron\_3;
 
 %END-AUTO(\ccParameters)

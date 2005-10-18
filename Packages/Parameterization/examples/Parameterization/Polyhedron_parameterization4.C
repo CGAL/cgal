@@ -42,7 +42,8 @@ typedef CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron>
 // TAUCS solver
 typedef CGAL::Taucs_solver_traits<double>               Solver;
 
-// Floater's mean value coordinates parametizer with TAUCS
+// Floater's mean value coordinates parametizer (circular border)
+// with TAUCS solver
 typedef CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron,
                                                    Border_parametizer,
                                                    Solver>
@@ -195,8 +196,8 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // Floater's mean value coordinates parameterization
-    // with TAUCS solver.
+    // Floater's mean value coordinates parametizer (circular border)
+    // with TAUCS solver
     //***************************************
 
     Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parametizer());

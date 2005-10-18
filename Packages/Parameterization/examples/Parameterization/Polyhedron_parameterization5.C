@@ -30,7 +30,7 @@ typedef CGAL::Polyhedron_3<Kernel>                          Polyhedron;
 typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>         Mesh_adaptor_polyhedron;
 typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
 
-// Parametizers base class for this kind of mesh
+// Defines the error codes
 typedef CGAL::Parametizer_traits_3<Mesh_patch_polyhedron>   Parametizer;
 
 // Type describing a border or seam as a vertex list
@@ -149,18 +149,16 @@ int main(int argc,char * argv[])
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // The parameterization package supports only meshes that
-    // are toplogical disks => we need to virtually "cut" the mesh
-    // to make it homeomorphic to a disk
-    //
-    // 1) Cut the mesh
+    // are topological disks => we need to compute a "cutting" of the mesh
+    // that makes it it homeomorphic to a disk
     Seam seam = cut_mesh(&mesh_adaptor);
     if (seam.empty())
     {
         fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
         return EXIT_FAILURE;
     }
-    //
-    // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
+
+    // Create adaptor that virtually "cuts" the mesh following the 'seam' path
     Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
                                        seam.begin(),
                                        seam.end());
@@ -172,6 +170,7 @@ int main(int argc,char * argv[])
     Parametizer::Error_code err = CGAL::parameterize(&mesh_patch);
     if (err != Parametizer::OK)
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
+
 
 
     fprintf(stderr, "\n");

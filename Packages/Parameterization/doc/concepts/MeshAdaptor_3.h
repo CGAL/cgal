@@ -20,7 +20,7 @@
 
 /// MeshAdaptor_3 is a concept for a 3D surface mesh.
 /// Its main purpose is to allow the parameterization methods to access meshes on an uniform manner.
-/// 
+///
 /// A MeshAdaptor_3 surface consists of vertices,
 /// facets and an incidence relation on them.
 /// No notion of edge is requested.
@@ -30,16 +30,18 @@
 /// along the boundary of a hole are called "border vertices".
 /// A surface is "closed" if it
 /// contains no border vertices.
-/// 
+///
 /// The surface must be an
 /// oriented 2-manifold with border vertices, i.e.
 /// the neighborhood of each point on the surface is either
 /// homeomorphic to a disc or to a half disc, except for vertices where
 /// many holes and surfaces with boundary can join.
-/// 
+///
 /// MeshAdaptor_3 defines the minimum types, data and methods that a mesh must implement
 /// to allow surface parameterization.
-/// 
+/// Among other things, this concept defines the accessor to the (u,v) values
+/// computed by parameterizations methods.
+///
 /// MeshAdaptor_3 meshes can have any genus, aridity or number of components.
 /// In the other hand,
 /// as parameterization methods deal only with topological disks, MeshAdaptor_3
@@ -89,7 +91,7 @@ public:
     /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef xxx Vertex_iterator;
     typedef xxx Vertex_const_iterator;
-    /// Iterator over vertices of the mesh "main boundary". 
+    /// Iterator over vertices of the mesh "main boundary".
     /// Model of the ForwardIterator concept.
     typedef xxx Border_vertex_iterator;
     typedef xxx Border_vertex_const_iterator;

@@ -1,2 +1,75 @@
-\section{Solvers}
+\section{Sparse Linear Algebra}
+
+\subsection{Solvers List and Concept}
+
+We provide an interface to several state-of-the-art
+sparse linear solvers, as models of the SparseLinearAlgebraTraits\_d concept:
+
+\begin{itemize}
+
+\item OpenNL (Bruno L{\'e}vy) is shipped with \cgal. This is the default solver.
+
+OpenNL::DefaultLinearSolverTraits  \\
+OpenNL::SymmetricLinearSolverTraits  \\
+
+\item TAUCS is a reference direct solver for sparse symmetric matrices.
+
+\ccRefIdfierPage{CGAL::Taucs_solver_traits}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits}  \\
+
+\item SuperLU is a reference direct solver for sparse unsymmetric matrices.
+
+(not yet implemented)
+
+\end{itemize}
+
+
+\subsection{TAUCS Solver Example}
+
+The code above uses the default sparse linear solver: OpenNL.
+
+The code below applies the default parameterization method
+(Floater's mean value coordinates with a circular border),
+but specifically instantiates TAUCS solver:
+
+\begin{ccExampleCode}
+
+// CGAL kernel
+typedef CGAL::Cartesian<double>                         Kernel;
+
+// Mesh true type and parameterization adaptors
+typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+
+// Circular border parametizer (the default)
+typedef CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron>
+                                                        Border_parametizer;
+// TAUCS solver
+typedef CGAL::Taucs_solver_traits<double>               Solver;
+
+// Floater's mean value coordinates parametizer (circular border)
+// with TAUCS solver
+typedef CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron,
+                                                   Border_parametizer,
+                                                   Solver>
+                                                        Parametizer;
+
+int main(int argc,char * argv[])
+{
+    Polyhedron mesh;
+    ...
+
+    // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    // Note: parameterization methods support only meshes that are toplogical disks
+    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
+
+    // Floater's mean value coordinates parametizer (circular border)
+    // with TAUCS solver
+    Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parametizer());
+    ...
+}
+
+\end{ccExampleCode}
+
+See the complete code in Polyhedron\_parameterization4.C example.
 

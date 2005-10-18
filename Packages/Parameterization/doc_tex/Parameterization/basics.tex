@@ -3,7 +3,7 @@
 
 \subsection{Default Parameterization}
 
-From the user's point of view, this package's simplest entry point is:
+From the user's point of view, this package's basic entry point is:
 
 \ccFunction{Parametizer_traits_3<MeshAdaptor_3>::Error_code parameterize (MeshAdaptor_3 * mesh);}
 {
@@ -43,7 +43,7 @@ The result is stored in the (u,v) fields of the mesh's vertices and/or halfedges
 \end{figure}
 
 
-\subsection{Supported Meshes}
+\subsection{Supported Meshes List and Concept}
 
 The general definition of input meshes handled by the package is:
 
@@ -53,21 +53,38 @@ The general definition of input meshes handled by the package is:
 
 \item 2-manifold
 
-\item Oriented
+\item Oriented.
 
-\item One connected component. The input mesh can be of any genus,
+\item The input mesh can be of any genus and have any number of connected components,
 -but- it has to come with a description of a boundary (a list of
 vertices) which is the boundary of
 a topological disc. If no boundary is given, we assume that it
 coincides with the longest boundary already in the input mesh.
 
+Note that this way the user is responsible for cutting a closed mesh of
+arbitrary genus (even a topological disc with an intricate seam
+cut), as long as this condition is verified.
+
+The package will only parameterize the inside part of the given boundary,
+thus only one connected component.
+
 \end{itemize}
 
+The package accesses such meshes through the MeshAdaptor\_3 concept. Among other
+things, this concept defines the accessor to the (u,v) values computed
+by parameterizations.
+
 The package proposes
-an interface with both the 2D Triangulation Data Structure enriched
+a MeshAdaptor\_3 interface with both the 2D Triangulation Data Structure enriched
 with 3D points (not yet implemented) and the Polyhedron:
 
 \ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3}  \\
+
+Note that these interfaces are decorators that add "on the fly" the necessary
+fields to unmodified CGAL data structures (using STL maps).
+For performance reasons, it is recommended to use CGAL data structures
+enriched with the proper fields.
+See Polyhedron\_ex class in polyhedron\_ex\_parameterization.C example.
 
 
 \subsection{Default Parameterization Example}
