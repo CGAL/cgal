@@ -9,6 +9,7 @@
 #include <functional>
 #include <iterator>
 
+
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Derivative.h>
 
@@ -115,7 +116,7 @@ static void jama_compute_roots(const NT *begin, const NT *end,  NT lb,
   TNT::Array1D<NT> real, imag;
   ev.getImagEigenvalues(imag);
   ev.getRealEigenvalues(real);
-  assert(imag.dim1()== real.dim1());
+  CGAL_Polynomial_assertion(imag.dim1()== real.dim1());
 
   NT tol;
   if (CLEAN) tol=.00005;
