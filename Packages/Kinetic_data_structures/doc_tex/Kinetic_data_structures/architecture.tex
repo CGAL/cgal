@@ -70,12 +70,12 @@ concepts.
 \begin{figure*}[htb]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics[ scale=.6]{Kinetic_data_structures/big_architecture_pct}
+\includegraphics[ scale=.6]{Kinetic_data_structures/architecture_pct}
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
 <center>
-<imp border=1 src="./big_architecture.gif" align=center alt="The architecture of the kinetic data structures package">
+<imp border=1 src="./architecture.png" align=center alt="The architecture of the kinetic data structures package">
 <\center>
 \end{ccHtmlOnly}
 \caption{ \label{fig:architecture} 
@@ -373,7 +373,7 @@ following sections.
 We provide a number of different classes to facilitate graphical
 display and manipulation of kinetic data structures. There are two and
 three dimensional user interfaces based on the Qt
-(\ccc{CGAL::KDS::Qt_widget_2<Simulator>}) and Coin~\cite{coin}
+(\ccc{CGAL::KDS::Qt_widget_2<Simulator>}) and Coin (\url{http://www.coin3d.org})
 (\ccc{CGAL::KDS::QT_widget_3<Simulator>}) libraries,
 respectively.  The graphical interfaces allows the simulations to be
 start and stopped, events can be stepped through and time reversed.
@@ -389,8 +389,7 @@ objects. For example, each kinetic data structure must have access to
 the \ccc{Simulator} so that it can schedule and deschedule events. These
 pointers are all reference counted in order to guarantee that they are
 always valid. We provide a standard reference counting pointer and
-object base to facilitate this, namely \ccc{Ref_counted<Object>}
-\cite{cheriton}.
+object base to facilitate this, namely \ccc{Ref_counted<Object>}.
 
 Each shared object in the framework defines a type \ccc{Pointer} which is the
 type for a reference counter pointer pointing to it. These should be
