@@ -188,7 +188,7 @@ int main(int argc,char * argv[])
     //***************************************
     // Create mesh adaptor
     // Note: parameterization methods support only
-    // meshes that are toplogical disks
+    // meshes that are topological disks
     //***************************************
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes

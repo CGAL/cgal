@@ -24,21 +24,24 @@ disk and on piecewise linear mappings into a planar domain.
 
 This \cgal\ package implements some of
 the state-of-the-art parameterization methods:
+
 \begin{itemize}
 
 \item Fixed boundary:
 
     \begin{itemize}
 
-    \item Tutte uniform weights (guaranteed one-to-one mapping for
-    convex boundary).
+    \item Tutte uniform weights, described in \cite{cgal:fh-survey-05}.
+    One-to-one mapping is guaranteed for convex boundary.
 
-    \item Mean coordinate values (ditto).
+    \item Mean value coordinates, described in \cite{cgal:f-mvc-03}.
+    One-to-one mapping is guaranteed for convex boundary.
 
-    \item Discrete conformal maps (conditionally guaranteed if all
-    weights positive and convex boundary).
+    \item Discrete conformal maps, described in \cite{cgal:fh-survey-05}.
+    Conditionally guaranteed if all weights are positive and boundary is convex.
 
-    \item Authalic (ditto).
+    \item Discrete Authalic parameterization, described in \cite{cgal:dma-ipsm-02}.
+    Conditionally guaranteed if all weights are positive and boundary is convex.
 
     \end{itemize}
 
@@ -46,9 +49,9 @@ the state-of-the-art parameterization methods:
 
     \begin{itemize}
 
-    \item Least squares conformal maps.
+    \item Least squares conformal maps, described in \cite{cgal:lprm-lscm-02}.
 
-    \item Discrete conformal maps.
+    \item Natural conformal maps, described in \cite{cgal:dma-ipsm-02}.
 
     \end{itemize}
 

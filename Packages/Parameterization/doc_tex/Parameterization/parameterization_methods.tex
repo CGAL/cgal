@@ -9,7 +9,9 @@ where the user can specify a parameterization method:
 \ccFunction{Parametizer_traits_3<MeshAdaptor_3>::Error_code parameterize (MeshAdaptor_3 * mesh, ParametizerTraits_3 parametizer);}
 {
 Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+
 1 to 1 mapping may be guaranteed or not, depending of ParametizerTraits\_3 algorithm chosen.
+
 Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon (for fixed border parameterizations).\end{itemize}
 }
@@ -31,21 +33,23 @@ parameterization methods as models of the ParametizerTraits\_3 concept:
 
     \begin{itemize}
 
-    \item Tutte uniform weights (guaranteed one-to-one mapping for
-    convex boundary)
+    \item Tutte uniform weights, described in \cite{cgal:fh-survey-05}.
+    One-to-one mapping is guaranteed for convex boundary.
 
     \ccRefIdfierPage{CGAL::Barycentric_mapping_parametizer_3}  \\
 
-    \item Mean coordinate values (ditto)
+    \item Mean value coordinates, described in \cite{cgal:f-mvc-03}.
+    One-to-one mapping is guaranteed for convex boundary.
 
     \ccRefIdfierPage{CGAL::Mean_value_coordinates_parametizer_3}  \\
 
-    \item Discrete conformal maps (conditionally guaranteed if all
-    weights positive and convex boundary)
+    \item Discrete conformal maps, described in \cite{cgal:fh-survey-05}.
+    Conditionally guaranteed if all weights are positive and boundary is convex.
 
     \ccRefIdfierPage{CGAL::Discrete_conformal_map_parametizer_3}  \\
 
-    \item Authalic (ditto)
+    \item Discrete Authalic parameterization, described in \cite{cgal:dma-ipsm-02}.
+    Conditionally guaranteed if all weights are positive and boundary is convex.
 
     \ccRefIdfierPage{CGAL::Discrete_authalic_parametizer_3}  \\
 
@@ -55,11 +59,11 @@ parameterization methods as models of the ParametizerTraits\_3 concept:
 
     \begin{itemize}
 
-    \item Least squares conformal maps
+    \item Least squares conformal maps, described in \cite{cgal:lprm-lscm-02}.
 
     \ccRefIdfierPage{CGAL::LSCM_parametizer_3}  \\
 
-    \item Discrete conformal maps
+    \item Natural conformal maps, described in \cite{cgal:dma-ipsm-02}.
 
     (not yet implemented)
 
@@ -91,7 +95,6 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // Note: parameterization methods support only meshes that are toplogical disks
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // Discrete Authalic parameterization
@@ -121,7 +124,7 @@ See the complete code in Polyhedron\_parameterization2.C example.
 \end{figure}
 
 
-\subsection{Boundary parameterization Methods List and Concept}
+\subsection{Boundary parameterizations List and Concept}
 
 Boundary parameterization methods define a
 set of constraints (a constraint specifies two u,v coordinates for
@@ -152,11 +155,6 @@ vertices). They have to be on the specified boundary.
 
         \item one shape among a set of standard ones (circle, square).
 
-        \ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3}  \\
-        \ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3}  \\
-        \ccRefIdfierPage{CGAL::Square_border_arc_length_parametizer_3}  \\
-        \ccRefIdfierPage{CGAL::Square_border_uniform_parametizer_3}  \\
-
         \item a convex polygon.
 
         (not yet implemented)
@@ -165,13 +163,18 @@ vertices). They have to be on the specified boundary.
 
     \end{itemize}
 
+    \ccRefIdfierPage{CGAL::Circular_border_arc_length_parametizer_3}  \\
+    \ccRefIdfierPage{CGAL::Circular_border_uniform_parametizer_3}  \\
+    \ccRefIdfierPage{CGAL::Square_border_arc_length_parametizer_3}  \\
+    \ccRefIdfierPage{CGAL::Square_border_uniform_parametizer_3}  \\
+
 \end{itemize}
 
 
 \subsection{Square Border Arc Length Parameterization Example}
 
 The code below applies a Floater's mean value coordinates parameterization
-with a Square Border Arc Length Parameterization:
+with a Square Border Arc Length parameterization:
 
 \begin{ccExampleCode}
 
@@ -197,7 +200,6 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // Note: parameterization methods support only meshes that are toplogical disks
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // Floater's mean value coordinates parameterization

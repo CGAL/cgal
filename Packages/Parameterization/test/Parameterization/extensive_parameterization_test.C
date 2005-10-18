@@ -276,8 +276,8 @@ int main(int argc,char * argv[])
         // The parameterization package needs an adaptor to handle Polyhedron_ex meshes
         Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
-        // The parameterization package supports only meshes that
-        // are toplogical disks => we need to virtually "cut" the mesh
+        // The parameterization methods support only meshes that
+        // are topological disks => we need to virtually "cut" the mesh
         // to make it homeomorphic to a disk
         //
         // 1) Cut the mesh

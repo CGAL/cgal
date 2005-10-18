@@ -39,8 +39,8 @@
 ///
 /// MeshAdaptor_3 defines the minimum types, data and methods that a mesh must implement
 /// to allow surface parameterization.
-/// Among other things, this concept defines the accessor to the (u,v) values
-/// computed by parameterizations methods.
+/// Among other things, this concept defines accessors to fields specific
+/// to parameterizations methods: index, u, v, is_parameterized.
 ///
 /// MeshAdaptor_3 meshes can have any genus, aridity or number of components.
 /// In the other hand,

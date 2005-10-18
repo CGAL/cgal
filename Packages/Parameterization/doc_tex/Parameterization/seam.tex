@@ -1,16 +1,16 @@
 \section{Cutting a Mesh}
 
-\subsection{Computing the Cut}
+\subsection{Computing a Cut}
 
-In this
-package, we focus on triangulated surfaces that are homeomorphic to a
-disk.
+The input mesh can be of any genus and have any number of connected components,
+-but- it has to come with a description of a boundary (a list of
+vertices) which is the boundary of
+a topological disc. If no boundary is given, we assume that it
+coincides with the longest boundary already in the input mesh.
 
-Computing a cut that transforms
-a closed mesh of arbitrary genus into a topological disk is a research domain
-of its own. This package doesn't cover this subject.
-The package user is responsible for computing a cut that transforms
+This package does not provide algorithms that transform
 a closed mesh of arbitrary genus into a topological disk.
+The package user is responsible for computing such a cut.
 
 We provide in polyhedron\_ex\_parameterization.C a simple cutting algorithm as example.
 Serious users will have to use a more robust method.
@@ -24,15 +24,14 @@ disk (models of MeshAdaptor\_3). This software design simplifies the implementat
 parameterization methods.
 
 Mesh\_adaptor\_patch\_3 class is responsible of virtually "cutting"
-a patch in a PatchableMeshAdaptor\_3 mesh to make it appear as a topological disk
+a patch in a PatchableMeshAdaptor\_3 mesh, to make it appear as a topological disk
 with a MeshAdaptor\_3 interface.
 
 PatchableMeshAdaptor\_3 inherits from concept MeshAdaptor\_3, thus is a concept for a 3D surface mesh.
 PatchableMeshAdaptor\_3 adds the ability to support patches and virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability to behave exactly as if the surface was "cut" following a certain path.
 
-The package proposes
-a PatchableMeshAdaptor\_3 interface with both the 2D Triangulation Data Structure enriched
-with 3D points (not yet implemented) and the Polyhedron:
+The MeshAdaptor\_3 interfaces with both the 2D Triangulation Data Structure enriched
+with 3D points (not yet implemented) and the Polyhedron are also models of PatchableMeshAdaptor\_3:
 
 \ccRefIdfierPage{CGAL::Mesh_adaptor_polyhedron_3}  \\
 
@@ -75,7 +74,7 @@ int main(int argc,char * argv[])
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
-    // The parameterization package supports only meshes that
+    // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
     // that makes it it homeomorphic to a disk
     Seam seam = cut_mesh(&mesh_adaptor);

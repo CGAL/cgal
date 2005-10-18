@@ -3,15 +3,16 @@
 
 \subsection{Default Parameterization}
 
-From the user's point of view, this package's basic entry point is:
+From the user's point of view, this package's entry point is:
 
 \ccFunction{Parametizer_traits_3<MeshAdaptor_3>::Error_code parameterize (MeshAdaptor_3 * mesh);}
 {
 Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle, using
 Floater's mean value coordinates algorithm. 1 to 1 mapping is guaranteed.
 The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+
 Preconditions:\begin{itemize}
-\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon.\end{itemize}
+\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\end{itemize}
 }
 \begin{description}
 \item[Parameters: ]
@@ -20,8 +21,8 @@ Preconditions:\begin{itemize}
 \end{description}
 
 This CGAL::parameterize() function provides a default parameterization method: Floater's
-mean coordinate values, with an arc length circular border parameterization, and using
-OpenNL sparse linear solver.
+Mean value coordinates (see \cite{cgal:f-mvc-03}), with an arc length circular border
+parameterization, and using OpenNL sparse linear solver.
 
 The result is stored in the (u,v) fields of the mesh's vertices and/or halfedges.
 
@@ -38,7 +39,7 @@ The result is stored in the (u,v) fields of the mesh's vertices and/or halfedges
         \label{parameterization-fig-floater}
 
         % Title
-        \caption{Floater's mean value coordinates parameterization}
+        \caption{Floater's Mean value coordinates parameterization}
     \end{center}
 \end{figure}
 
@@ -49,9 +50,9 @@ The general definition of input meshes handled by the package is:
 
 \begin{itemize}
 
-\item Triangulated
+\item Triangulated.
 
-\item 2-manifold
+\item 2-manifold.
 
 \item Oriented.
 
@@ -109,7 +110,6 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // Note: parameterization methods support only meshes that are toplogical disks
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // Floater's mean value coordinates parameterization

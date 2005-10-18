@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 ///   parameters that make sense.
 /// - implements compute_wij() to compute wij = (i,j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Tutte's barycentric mapping method.
-/// - implements a tailored version of is_one_to_one_mapping().
+/// - implements a optimized version of is_one_to_one_mapping().
 ///
 /// Concept: Model of the ParametizerTraits_3 concept.
 ///
@@ -132,7 +132,7 @@ protected:
 
 // Protected operations
 protected:
-    /// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+    /// Compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
     virtual NT  compute_wij(const Adaptor& mesh,
                             Vertex_const_handle main_vertex_Vi,
                             Vertex_around_vertex_const_circulator neighbor_vertex_Vj)

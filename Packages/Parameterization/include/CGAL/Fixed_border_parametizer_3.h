@@ -48,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 ///   parameters that make sense.
 /// - must implement compute_wij() to compute wij = (i,j) coefficient of matrix A
 ///   for j neighbor vertex of i.
-/// - may implement a tailored version of is_one_to_one_mapping().
+/// - may implement a optimized version of is_one_to_one_mapping().
 ///
 /// @todo Fixed_border_parametizer_3 should remove border vertices
 /// from the linear systems in order to have a symmetric definite positive

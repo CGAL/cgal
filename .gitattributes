@@ -1546,6 +1546,10 @@ Packages/Parameterization/doc_tex/Parameterization/authalic.eps -text
 Packages/Parameterization/doc_tex/Parameterization/authalic.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/floater.eps -text
 Packages/Parameterization/doc_tex/Parameterization/floater.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/parametizer_class_diagram.eps -text
+Packages/Parameterization/doc_tex/Parameterization/parametizer_class_diagram.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/parametizers_class_hierarchy.eps -text
+Packages/Parameterization/doc_tex/Parameterization/parametizers_class_hierarchy.png -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/grid512.bmp -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/holes.off -text
 Packages/Parameterization/examples/Parameterization/data/mannequin-devil.off -text
@@ -1555,10 +1559,6 @@ Packages/Parameterization/examples/Parameterization/data/parameterization.mtl -t
 Packages/Parameterization/examples/Parameterization/data/rotor.off -text
 Packages/Parameterization/examples/Parameterization/data/sphere966.off -text
 Packages/Parameterization/examples/Parameterization/data/three_peaks.off -text
-Packages/Parameterization/temporary-doc/uml_diagrams/Fixed[!!-~]border[!!-~]param.[!!-~]-[!!-~]class[!!-~]diagram.png -text svneol=unset#unset
-Packages/Parameterization/temporary-doc/uml_diagrams/Fixed[!!-~]border[!!-~]param.[!!-~]-[!!-~]sequence[!!-~]diagram.png -text svneol=unset#unset
-Packages/Parameterization/temporary-doc/uml_diagrams/Parametizers[!!-~]class[!!-~]hierarchy.png -text svneol=unset#unset
-Packages/Parameterization/temporary-doc/uml_diagrams/use[!!-~]case[!!-~]diagram.png -text svneol=unset#unset
 Packages/Parameterization/test/Parameterization/data/aircraft.off -text
 Packages/Parameterization/test/Parameterization/data/cube.off -text
 Packages/Parameterization/test/Parameterization/data/knot2.off -text

@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 ///   parameters that make sense.
 /// - implements compute_wij() to compute wij = (i,j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Floater's Mean Value Coordinates parameterization.
-/// - implements a tailored version of is_one_to_one_mapping().
+/// - implements a optimized version of is_one_to_one_mapping().
 ///
 /// Concept: Model of the ParametizerTraits_3 concept.
 ///

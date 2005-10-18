@@ -353,7 +353,7 @@ static const char *  optv[] =
     //     '+' -- indicates that the option takes 1 or more arguments;
 
     "t:type <string>", // -t or --type
-    // -t    floater     -> mean coordinate values (default)
+    // -t    floater     -> mean value coordinates (default)
     //       conformal   -> conformal
     //       natural     -> free boundaries
     //       uniform     -> weight = 1
@@ -511,7 +511,7 @@ int main(int argc,char * argv[])
     // The parameterization package needs an adaptor to handle Polyhedron_ex meshes
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
-    // The parameterization package supports only meshes that
+    // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
     // that makes it it homeomorphic to a disk
     Seam seam = cut_mesh(&mesh_adaptor);

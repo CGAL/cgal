@@ -1,2 +1,49 @@
 \section{Extending the Package and Reusing Code}
 
+\subsection{Reusing Mesh Adaptors}
+
+MeshAdaptor\_3 defines a concept to access to a general polyhedral mesh.
+The current interface is optimized for the parameterization package,
+but may be easily generalized.
+
+The package proposes
+a MeshAdaptor\_3 interface with both the 2D Triangulation Data Structure enriched
+with 3D points and the Polyhedron.
+
+Any algorithm that must work on both TDS\_2 with 3D points and the Polyhedron
+may take advantage of these adaptors.
+
+
+\subsection{Reusing Sparse Linear Algebra}
+
+The SparseLinearAlgebraTraits\_d concept and the traits classes for OpenNL,
+TAUCS and SuperLU are totaly independent of the rest of the package,
+and may be reused directly by CGAL developers.
+
+
+\subsection{Adding New Parameterization Methods}
+
+Implementing a new fixed border linear parameterization is very easy.
+Most of the code of the fixed border methods
+is factorized in the Fixed\_border\_parametizer\_3 class.
+Subclasses must mainly implement a compute\_wij() method
+that computes $wij$ = (i,j) coefficient of matrix A for $vj$ neighbor vertex of $vi$.
+
+Implementing a new free border linear parameterization is more complex.
+Anyway, LSCM and Natural Conformal parameterizations are good starting points.
+
+Implementing \ccc{non} linear parameterizations would be a nice improvment
+of this package. In the other hand, most of the work remains to do.
+Only the mesh adaptors can be directly reused.
+
+
+\subsection{Adding New Boundary Parameterization Methods}
+
+Implementing a new boundary parameterization method is easy.
+Square, Circular and 2-Points boundary parameterizations are good starting points.
+
+
+\subsection{Mesh Cutting}
+
+Obviously, this package would benefit of robust algorithms that transform
+a closed mesh of arbitrary genus into a topological disk.

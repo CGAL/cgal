@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle,
-/// using Floater's mean value coordinates algorithm .
+/// using Floater's mean value coordinates algorithm.
 /// 1 to 1 mapping is guaranteed.
 ///
 /// The mapping is linear by pieces (linear in each triangle).
@@ -41,7 +41,6 @@ CGAL_BEGIN_NAMESPACE
 /// Preconditions:
 /// - 'mesh' must be a surface with 1 connected component.
 /// - 'mesh' must be a triangular mesh.
-/// - the mesh border must be mapped onto a convex polygon.
 ///
 template <class MeshAdaptor_3>
 typename Parametizer_traits_3<MeshAdaptor_3>::Error_code

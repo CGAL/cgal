@@ -20,11 +20,16 @@
 
 /// PatchableMeshAdaptor_3 inherits from concept MeshAdaptor_3, thus is a concept
 /// for a 3D surface mesh.
-/// 
+///
 /// PatchableMeshAdaptor_3 adds the ability to support patches and virtual seams.
 /// Patches are a subset of a 3D mesh. Virtual seams are the ability
 /// to behave exactly as if the surface was "cut" following a certain path.
-/// 
+///
+/// This mainly means that:
+/// - vertices can be tagged as inside or outside the patch to parameterize
+/// - the fields specific to parameterizations (index, u, v, is_parameterized)
+///   can be set per "corner" (aka half-edge)
+///
 /// The main purpose of this feature is to allow
 /// the parameterization package to parameterize any 3D surface by decomposing it
 /// as a list of topological disks.

@@ -1,2 +1,64 @@
 \section{Not Yet Implemented}
 
+The authors of this package plan to add the next improvments in a close
+future:
+
+\begin{itemize}
+
+\item Speed up solving of sparse linear systems:
+
+    \begin{itemize}
+
+    \item Add to OpenNL a BICGSTAB and a Conjugate Gradient solvers
+    with Jacobi preconditioner, to increase speed and support larger systems.
+
+    \item Fixed\_border\_parametizer\_3 should remove border vertices from
+    the linear systems, in order to have a symmetric definite positive matrix
+    for Tutte's Barycentric Mapping and Discrete Conformap Map algorithms.
+
+    \item Taucs\_matrix must reallocate the array of non null elements when it's full.
+
+    \item Filling a Taucs\_matrix by lines is very slow. We must optimize this code.
+
+    \item Add traits class for SuperLU solver.
+
+    \end{itemize}
+
+\item Implement PatchableMeshAdaptor\_3 adaptor for 2D Triangulation
+Data Structure enriched with 3D points.
+
+\item Implement Natural Conformal Map parameterization algorithm.
+
+\item Implement arc-length and uniform boundary parameterizations
+      over a convex polygon.
+
+\item Detect at installation time if TAUCS and SuperLU are installed,
+      then set appropriate compilation variables.
+
+\item Demos:
+
+    \begin{itemize}
+
+        \item Qt/OpenGL demo (same features as polyhedron\_ex\_parameterization.C
+        + 3D rendering of textured mesh + 2D rendering of parameterized mesh)
+
+        \item MFC/OpenGL demo (same features as Qt/OpenGL demo)
+
+    \end{itemize}
+
+\item Code cleaning:
+
+    \begin{itemize}
+
+    \item Add to SparseLinearAlgebraTraits\_d, Taucs\_symmetric\_solver\_traits
+    and SuperLU traits class
+    the ability to solve linear systems in the least squares sense. Then, access to
+    the solver via the concept interface instead of calls specific to OpenNL.
+
+    \item In all solver traits classes,
+    implement is\_solvable() by solving the system, then checking that $|$ $|$$|$A$\ast$X$|$$|$/$|$$|$B$|$$|$ - 1 $|$ $<$ epsilon. This method is
+    currently not implemented.
+
+    \end{itemize}
+
+\end{itemize}

@@ -19,9 +19,6 @@
 
 \ccDefinition
 
-As all parameterization algorithms of the package, Discrete\_authalic\_parametizer\_3
-class is usually called via the global function parameterize().
-
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
@@ -31,6 +28,11 @@ The superclass Fixed\_border\_parametizer\_3 implements most of the parameteriza
 \item provides default BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.\end{itemize}
 
 %END-AUTO(\ccDefinition)
+
+Discrete Authalic parameterization is described in \cite{cgal:dma-ipsm-02}.
+
+As all parameterization algorithms of the package, Discrete\_authalic\_parametizer\_3
+class is usually called via the global function parameterize().
 
 \ccInclude{CGAL/Discrete_authalic_parametizer_3.h}
 

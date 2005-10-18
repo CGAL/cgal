@@ -28,7 +28,7 @@ A MeshAdaptor\_3 surface consists of vertices, facets and an incidence relation 
 
 The surface must be an oriented 2-manifold with border vertices, i.e. the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with boundary can join.
 
-MeshAdaptor\_3 defines the minimum types, data and methods that a mesh must implement to allow surface parameterization. Among other things, this concept defines the accessor to the (u,v) values computed by parameterizations methods.
+MeshAdaptor\_3 defines the minimum types, data and methods that a mesh must implement to allow surface parameterization. Among other things, this concept defines accessors to fields specific to parameterizations methods: index, u, v, is\_parameterized.
 
 MeshAdaptor\_3 meshes can have any genus, aridity or number of components. In the other hand, as parameterization methods deal only with topological disks, MeshAdaptor\_3 defines an interface oriented towards topological disks
 

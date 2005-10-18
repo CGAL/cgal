@@ -19,18 +19,20 @@
 
 \ccDefinition
 
-As all parameterization algorithms of the package, Barycentric\_mapping\_parametizer\_3
-class is usually called via the global function parameterize().
-
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
 Class Barycentric\_mapping\_parametizer\_3 implements Tutte's Barycentric Mapping. 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon.
 
 The superclass Fixed\_border\_parametizer\_3 implements most of the parameterization algorithm. Barycentric\_mapping\_parametizer\_3:\begin{itemize}
-\item provides default BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Tutte's barycentric mapping method.\item implements a tailored version of is\_one\_to\_one\_mapping().\end{itemize}
+\item provides default BorderParametizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_wij() to compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Tutte's barycentric mapping method.\item implements a optimized version of is\_one\_to\_one\_mapping().\end{itemize}
 
 %END-AUTO(\ccDefinition)
+
+Tutte uniform weights algorithm is described in \cite{cgal:fh-survey-05}.
+
+As all parameterization algorithms of the package, Barycentric\_mapping\_parametizer\_3
+class is usually called via the global function parameterize().
 
 \ccInclude{CGAL/Barycentric_mapping_parametizer_3.h}
 
@@ -119,7 +121,7 @@ Constructor.
 
 \ccMethod{virtual NT compute_wij (const Adaptor & mesh, Vertex_const_handle main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj);}
 {
-compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+Compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i.
 Tutte algorithm is the most simple one: Wij = 1 for j neighbor vertex of i
 }
 \ccMethod{virtual bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}

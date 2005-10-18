@@ -251,7 +251,7 @@ int main(int argc,char * argv[])
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
-    // The parameterization package supports only meshes that
+    // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
     // that makes it it homeomorphic to a disk
     Seam seam = cut_mesh(&mesh_adaptor);

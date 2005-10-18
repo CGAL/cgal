@@ -1,7 +1,7 @@
 \section{Output}
 
 Parameterizations store the result in the (u,v) fields of the input mesh's vertices
-and/or halfedges. The package user must traverse the mesh to get this output.
+and/or halfedges. The package user must traverse the mesh to get the output.
 
 Note: (u,v) fields do not exist in the standard Polyhedron and TDS, thus
 the output traversal is specific to the way the (u,v) fields are implemented.
@@ -54,7 +54,6 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // Note: parameterization methods support only meshes that are toplogical disks
     Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // Parameterization

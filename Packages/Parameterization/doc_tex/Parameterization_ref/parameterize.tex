@@ -33,10 +33,10 @@ The result is the (u,v) pair image of each vertex of the 3D surface.
 
 \ccFunction{Parametizer_traits_3<MeshAdaptor_3>::Error_code parameterize (MeshAdaptor_3 * mesh);}
 {
-Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle, using Floater's mean value coordinates algorithm . 1 to 1 mapping is guaranteed.
+Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle, using Floater's mean value coordinates algorithm. 1 to 1 mapping is guaranteed.
 The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
 Preconditions:\begin{itemize}
-\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon.\end{itemize}
+\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\end{itemize}
 }
 \begin{description}
 \item[Parameters: ]
