@@ -21,6 +21,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_VIRTUAL_FUNCTION_REPS_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/filtered_function_node_bases.h>
+#include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 

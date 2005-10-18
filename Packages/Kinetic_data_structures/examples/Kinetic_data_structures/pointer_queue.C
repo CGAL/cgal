@@ -14,7 +14,7 @@ public:
     return Time(i_);
   };
   void process(double t) const {
-    std::cout << i_ << "\n";
+    std::cout << "Event at " << i_ << "\n";
     proc_time_=i_;
     assert(t==i_);
   }

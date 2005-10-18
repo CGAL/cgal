@@ -409,7 +409,7 @@ protected:
     std::vector<typename Delaunay::Vertex_handle> nvhs(kdel_.moving_object_table()->size());
     for (typename MPT::Keys_iterator it= kdel_.moving_object_table()->keys_begin();
 	 it != kdel_.moving_object_table()->keys_end(); ++it){
-      nvhs[it->index()] = dt.insert(*it);
+      nvhs[(*it).index()] = dt.insert(*it);
     }
     CGAL_KDS_LOG(LOG_LOTS, "Done building." << std::endl);
     for (typename Delaunay::Finite_vertices_iterator fit= dt.finite_vertices_begin();

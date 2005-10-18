@@ -98,7 +98,7 @@ struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> > {
 				       this));
 	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
 	assert(!event_ 
-	       || sp->event(event_, Event()).objects_.size() == objects_.size());
+	       || sp->template event<Event>(event_, Event()).objects_.size() == objects_.size());
       } else {
 	if (event_) {
 	  std::cout << "Time to delete all certificates." << std::endl;
