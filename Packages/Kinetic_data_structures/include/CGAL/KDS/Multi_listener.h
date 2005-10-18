@@ -64,9 +64,10 @@ public:
     h_->new_listener(this);
   }
   //! Copy and subscribe the new object
-  This operator=(const This &o){
+  const This& operator=(const This &o){
     h_= o.h_;
     h_->new_listener(this);
+    return *this;
   }
 protected:
   typename Interface::Notifier_pointer h_;

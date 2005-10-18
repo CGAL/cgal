@@ -649,6 +649,7 @@ public:
       change_vertex(k, true);
     } else {
       // if low dimensional
+      triangulation_.geom_traits().set_time(simulator()->rational_current_time());
       vh=triangulation_.insert(k, h);
     }
     
@@ -1657,10 +1658,10 @@ private:
       std::swap(ids[1], ids[2]);
       }*/
       return simulator()->root_stack_object(soc_(point(ids[0]),
-						      point(ids[1]),
-						      point(ids[2]),
-						      point(ids[3]),
-						      point(ids[4])));
+						 point(ids[1]),
+						 point(ids[2]),
+						 point(ids[3]),
+						 point(ids[4])));
     }
     
   }

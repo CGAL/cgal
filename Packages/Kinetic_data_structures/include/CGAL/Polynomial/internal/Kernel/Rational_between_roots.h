@@ -79,6 +79,8 @@ struct Rational_between_roots {
 	}
       }
     }
+    CGAL_postcondition(0);
+    return result_type(0);
   }
   
 };

@@ -110,7 +110,7 @@ private:
     h_->this_is_not_a_function();
     CGAL_assertion(0);
   }
-  LB_this operator=(const LB_this &o){
+  const LB_this& operator=(const LB_this &o){
     CGAL_assertion(0);
     h_->this_is_not_a_function();
     return *this;
