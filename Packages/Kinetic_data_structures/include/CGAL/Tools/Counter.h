@@ -96,7 +96,7 @@ protected:
 /*!
   I don't remember why I did this. 
 */
-template <>
+/*template <>
 template <class LT>
 class Counter<int, Label<LT> >{
   typedef Label<LT> Label;
@@ -132,10 +132,7 @@ public:
   int operator-(const This &o) const {
     return t_.index()-o.t_.index();
   }
-  /*const This& operator+=(T &v) {
-    t_+=v;
-    return *this;
-    }*/
+
   const This& operator+=(unsigned int v) {
     t_= Label(t_.index()+v);
     return *this;
@@ -155,7 +152,7 @@ public:
   typedef Label& reference;
 protected:
   Label t_;
-};
+};*/
 
 template <class T>
 Counter<T> counter(T t){
