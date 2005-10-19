@@ -23,7 +23,7 @@
 * Definition of the Arr_landmarks_ann<Arrangement> template.
 */
 #include <CGAL/basic.h>
-#include <ANN/ANN.h>
+#include <CGAL/Arr_point_location/ANN.h>"
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 
 //#define CGAL_LM_ANN_DEBUG
