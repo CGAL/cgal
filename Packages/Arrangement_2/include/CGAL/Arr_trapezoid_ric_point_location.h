@@ -369,6 +369,13 @@ protected:
    */
   Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
 
+  /*! In vertical ray shoot, when the closest halfedge is found (or unbounded face)
+  * we check the isolated vertices inside the face to check whether there
+  * is an isolated vertex right above/below the query point.
+  */ 
+  Object _check_isolated_for_vertical_ray_shoot(
+                              Halfedge_const_handle &halfedge_found, 
+                              const Point_2& p, bool shoot_up) const;
 };
 
 CGAL_END_NAMESPACE
