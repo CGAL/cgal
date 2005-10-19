@@ -2700,10 +2700,7 @@ bool Arrangement_2<Traits,Dcel>::is_valid() const
   for (vit = vertices_begin(); vit != vertices_end(); ++vit)
   {
     if (! _is_valid (vit)) 
-    {
-      CGAL_warning ("Invalid vertex!");
       return (false);
-    }
   }
     
   Halfedge_const_iterator heit;
@@ -2711,10 +2708,7 @@ bool Arrangement_2<Traits,Dcel>::is_valid() const
   for (heit = halfedges_begin(); heit != halfedges_end(); ++heit) 
   {
     if (! _is_valid (heit)) 
-    {
-      CGAL_warning ("Invalid halfedge!");
       return (false);
-    }
   }
     
   Face_const_iterator     fit;
@@ -2722,17 +2716,11 @@ bool Arrangement_2<Traits,Dcel>::is_valid() const
   for (fit = faces_begin(); fit != faces_end(); ++fit) 
   {
     if (! _is_valid (fit)) 
-    {
-      CGAL_warning("Invalid face!");
       return (false);
-    }
   }
 
   if (!_are_vertices_unique())
-  {
-    CGAL_warning ("Two (or more) vertices have the same point!");
     return (false);
-  }
 
   // If we reached here, the arrangement is valid.
   return (true);

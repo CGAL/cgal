@@ -159,24 +159,19 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     break;
 
   case TD::CURVE:
-    /* special case:
-    h->source()->point(),p,h->target()->point() have same x
-    coardinates.
-    return value should be h(no h->twin()).
-    */
-    // orientation of h
-    if (shoot_up == traits->compare_x_2_object()(h->source()->point(),
-                                                 h->target()->point()))
+    if ((shoot_up && h->direction() == SMALLER) ||
+        (!shoot_up && h->direction() == LARGER))
       h=h->twin();
+
     return (CGAL::make_object(h));
 
   case TD::TRAPEZOID:
     if (!(((traits->is_in_x_range_2_object()(h->curve(),p)) &&
           (traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
           (traits->compare_x_2_object()(h->source()->point(),
-                                        h->target()->point()) == SMALLER)
-        ))
+                                        h->target()->point()) == SMALLER)))
         h = h->twin();
+
     return (CGAL::make_object(h));
 
   default:

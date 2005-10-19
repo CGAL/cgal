@@ -478,7 +478,8 @@ public:
     // arrangement, so we now have to modify these pointers, according to the
     // mapping we have just created. While doing so, we also construct the set
     // of edges associated with each (duplicated) curve in our arrangement.
-    typename Data_x_curve_2::Data_iterator  dit;
+    Data_iterator                           dit;
+    std::list<Curve_2*>                     dup_curves;
     Edge_iterator                           eit;
     Halfedge_handle                         e;
     const Curve_halfedges                  *org_c;
@@ -486,14 +487,17 @@ public:
     for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
     {
       e = eit;
+      dup_curves.clear();
       for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
       {
         org_c = static_cast<Curve_halfedges*>(*dit);
         dup_c = (cv_map.find (org_c))->second;
 
-        *dit = dup_c;
+        dup_curves.push_back (dup_c);
         dup_c->_insert (e);
       }
+      e->curve().clear_data();
+      e->curve().add_data (dup_curves.begin(), dup_curves.end());
     }
 
     return;
@@ -593,18 +597,18 @@ public:
   };
 
   typedef I_Dereference_iterator<
-    typename Data_x_curve_2::Data_iterator,
+    Data_iterator,
     Curve_with_edges_2,
-    typename Data_x_curve_2::Data_iterator::difference_type,
-    typename Data_x_curve_2::Data_iterator::iterator_category>
+    typename Data_iterator::difference_type,
+    typename Data_iterator::iterator_category>
                                               Originating_curve_iterator;
   
   typedef I_Dereference_const_iterator<
     typename Data_x_curve_2::Data_const_iterator,
-    typename Data_x_curve_2::Data_iterator,
+    Data_iterator,
     Curve_with_edges_2,
-    typename Data_x_curve_2::Data_iterator::difference_type,
-    typename Data_x_curve_2::Data_iterator::iterator_category>
+    typename Data_x_curve_2::Data_const_iterator::difference_type,
+    typename Data_x_curve_2::Data_const_iterator::iterator_category>
                                               Originating_curve_const_iterator;
   
   /// \name Traversal of the origin curves of an edge.
@@ -974,11 +978,12 @@ public:
     }
 
     // Go over the list of halfedges in our arrangement. The curves associated
-    // with these edges sotre pointers to the curves in the original
+    // with these edges store pointers to the curves in the original
     // arrangement, so we now have to modify these pointers, according to the
     // mapping we have just created. While doing so, we also construct the set
     // of edges associated with each (duplicated) curve in our arrangement.
-    typename Data_x_curve_2::Data_iterator  dit;
+    Data_iterator                           dit;
+    std::list<Curve_2*>                     dup_curves;
     Edge_iterator                           eit;
     Halfedge_handle                         e;
     const Curve_halfedges                  *org_c;
@@ -986,14 +991,17 @@ public:
     for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
     {
       e = eit;
+      dup_curves.clear();
       for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
       {
         org_c = static_cast<Curve_halfedges*>(*dit);
         dup_c = (cv_map.find (org_c))->second;
 
-        *dit = dup_c;
+        dup_curves.push_back (dup_c);
         dup_c->_insert (e);
       }
+      e->curve().clear_data();
+      e->curve().add_data (dup_curves.begin(), dup_curves.end());
     }
 
     // Re-attach the observer to the arrangement.

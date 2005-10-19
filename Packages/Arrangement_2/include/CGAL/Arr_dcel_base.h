@@ -369,7 +369,7 @@ public:
   {
     CGAL_precondition (dir != EQUAL);
 
-    Halfedge*   opp = reinterpret_cast<Halfedge*> (p_opp);
+    Halfedge*   opp = reinterpret_cast<Halfedge*> (this->p_opp);
 
     if (dir == SMALLER)
     {

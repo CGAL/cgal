@@ -322,7 +322,7 @@ public:
     /*! Get the vertex degree (number of incident edges). */
     Size degree () const
     {
-      if (is_isolated())
+      if (this->is_isolated())
         return (0);
 
       // Go around the vertex and count the incident halfedges.
@@ -347,7 +347,7 @@ public:
      */
     Halfedge_around_vertex_circulator incident_halfedges() 
     {
-      CGAL_precondition (! is_isolated());
+      CGAL_precondition (! this->is_isolated());
 
       return Halfedge_around_vertex_circulator
         (DHalfedge_iter (Base::halfedge()));
@@ -359,7 +359,7 @@ public:
      */
     Halfedge_around_vertex_const_circulator incident_halfedges() const 
     {
-      CGAL_precondition (! is_isolated());
+      CGAL_precondition (! this->is_isolated());
 
       return Halfedge_around_vertex_const_circulator
         (DHalfedge_const_iter (Base::halfedge())); 
@@ -371,7 +371,7 @@ public:
      */
     Face_handle face()
     {
-      CGAL_precondition (is_isolated());
+      CGAL_precondition (this->is_isolated());
 
       return (DFace_iter (Base::face()));
     }
@@ -382,7 +382,7 @@ public:
      */
     Face_const_handle face() const
     {
-      CGAL_precondition (is_isolated());
+      CGAL_precondition (this->is_isolated());
 
       return (DFace_const_iter (Base::face()));
     }
