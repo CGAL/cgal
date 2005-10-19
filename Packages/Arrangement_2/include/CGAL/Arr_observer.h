@@ -46,11 +46,9 @@ public:
   typedef typename Arrangement_2::Ccb_halfedge_circulator  
                                                       Ccb_halfedge_circulator;
 
-protected:
+private:
 
   Arrangement_2  *p_arr;           // The associated arrangement.
-
-private:
 
   /*! Copy constructor - not supported. */
   Arr_observer (const Self& );
@@ -87,6 +85,18 @@ public:
 
   /// \name Modifying the associated arrangement.
   //@{
+
+  /*! Get the associated arrangement (non-const version). */
+  const Arrangement_2* arrangement () const
+  {
+    return (p_arr);
+  }
+
+  /*! Get the associated arrangement (non-const version). */
+  Arrangement_2* arrangement ()
+  {
+    return (p_arr);
+  }
 
   /*!
    * Attach the observer to an arrangement. 
