@@ -24,14 +24,7 @@
  * Arr_landmarks_point_location<Arrangement> class.
  */
 
-#ifdef LANDMARKS_CLOCK_DEBUG
-  #define LM_CLOCK_DEBUG(cmd)   cmd
-#else
-  #define LM_CLOCK_DEBUG(cmd)
-#endif
-
 //#define CGAL_LM_DEBUG
-
 #ifdef CGAL_LM_DEBUG
   #define PRINT_DEBUG(expr)   std::cout << expr << std::endl
   #define LM_DEBUG(cmd)   cmd
@@ -70,9 +63,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   PRINT_DEBUG("nearest neighbor of point "<< p << " is " << landmark_point);
   
   //walk from the nearest_vertex to the point p, using walk algorithm, 
-  //and find the location of p.  
-  LM_CLOCK_DEBUG(clock_t w_time_start = clock());
-  
+  //and find the location of p.   
   Object  out_obj; //the output object
   
   //if the landmark s not found in the arangement
@@ -109,8 +100,6 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     return out_obj;
   }
   
-  LM_CLOCK_DEBUG(clock_t w_time_end = clock() );
-  LM_CLOCK_DEBUG(clock_for_walk += (double) (w_time_end - w_time_start) );
   PRINT_DEBUG( "return from walk" << std::endl);
   
 #ifdef CGAL_LM_DEBUG
@@ -192,10 +181,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     m_flipped_edges.clear();  //clear the curves that were flipped
     
     new_vertex = false;
-    LM_CLOCK_DEBUG(clock_t ff_time_start = clock());
     obj = _find_face (p, vh, new_vertex);
-    LM_CLOCK_DEBUG(clock_t ff_time_end = clock() );
-    LM_CLOCK_DEBUG(clock_ff += (double) (ff_time_end - ff_time_start) );
 
     if (new_vertex)
     {
@@ -253,7 +239,6 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         Vertex_const_handle vh,
         bool & new_vertex) const
 { 
-  LM_CLOCK_DEBUG( entries_to_find_face++ );
   PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh->point() ); 
   
   new_vertex = false;
@@ -656,9 +641,6 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   bool found_vertex = false;
   Halfedge_const_handle out_edge;
   
-  LM_CLOCK_DEBUG( bool first_hit = true; );
-  LM_CLOCK_DEBUG(clock_t na_time_start = clock());//time start
-
   do {
     PRINT_DEBUG(std::endl << "inside loop on face ");
     p_in_face = false;
@@ -668,24 +650,17 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     }
     else {    
       h_circ = face->outer_ccb();
-      LM_CLOCK_DEBUG(clock_t is_point_ts = clock());
       p_in_face = _is_point_in_face(p, h_circ, found_edge, 
         found_vertex, out_edge); 
-      LM_CLOCK_DEBUG( if (! p_in_face) first_hit = false );
-      LM_CLOCK_DEBUG(clock_t is_point_te = clock() );
-      LM_CLOCK_DEBUG(clock_is_point += 
-        (double)(is_point_te - is_point_ts));
       PRINT_DEBUG("is_point_in_face returned  "<<  p_in_face );
     }
     if (found_vertex)
     {
-      LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
       Vertex_const_handle v = out_edge->target(); 
       return (CGAL::make_object(v)); //is it really the target?
     }
     else if (found_edge) 
     {
-      LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
       Halfedge_const_handle h = out_edge; 
       return (CGAL::make_object(h));
     }
@@ -698,40 +673,26 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
       while (hole_it != hole_end) 
       {
         PRINT_DEBUG(" loop on holes");
-        LM_CLOCK_DEBUG(clock_t is_point_ts = clock());
         p_in_hole = _is_point_in_face(p, *hole_it, 
           found_edge, found_vertex, out_edge); 
-        LM_CLOCK_DEBUG(clock_t is_point_te = clock() );
-        LM_CLOCK_DEBUG(clock_is_point += 
-          (double)(is_point_te - is_point_ts));
         if (found_vertex)
         {
-          LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
           return (CGAL::make_object(out_edge->target())); 
           //is it really the target?
         }
         else if (found_edge) 
         {
-          LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
           return (CGAL::make_object(out_edge));
         }
         else if (p_in_hole) {
-          LM_CLOCK_DEBUG( first_hit = false );
           h_circ = *hole_it; 
           //update the new "face " to be the hole. check its holes.      
 
-          LM_CLOCK_DEBUG(clock_t find_edge_time_start = clock());
           if ( _find_edge_to_flip (p, np, h_circ , out_edge) ) {
-            LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
-            LM_CLOCK_DEBUG(clock_find_edge += 
-              (double) (find_edge_time_end - find_edge_time_start));
             out_edge = out_edge->twin();
             face = out_edge->face();
           }
           else {
-            LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
-            LM_CLOCK_DEBUG(clock_find_edge += 
-              (double) (find_edge_time_end - find_edge_time_start));
             PRINT_ERROR( "ERROR 10:  intersection not found");
             LM_DEBUG(getchar());
             return (CGAL::make_object (p_arr->unbounded_face()));
@@ -747,11 +708,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     }
     else {
       //find edge to switch face to (face is never unbounded)
-      LM_CLOCK_DEBUG(clock_t find_edge_time_start = clock());
       if ( _find_edge_to_flip (p, np, face->outer_ccb() , out_edge) ) {
-        LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
-        LM_CLOCK_DEBUG(clock_find_edge += 
-          (double) (find_edge_time_end - find_edge_time_start));
         out_edge = out_edge->twin();        
         face = out_edge->face();
         PRINT_DEBUG("after find_edge_to_flip. changed to twin @ " );
@@ -759,31 +716,22 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
                   <<" -->"<< out_edge->target()->point() );
       }
       else {
-        LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
-        LM_CLOCK_DEBUG(clock_find_edge += 
-          (double) (find_edge_time_end - find_edge_time_start));
         PRINT_ERROR("ERROR 9:  intersection not found");
         LM_DEBUG(getchar());
         //e = p_arr->halfedges_end();
         //lt = Planar_map::UNBOUNDED_FACE;
-        LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
         return (CGAL::make_object (p_arr->unbounded_face()));
       }
     }
   }while (!p_in_face); 
 
-  LM_CLOCK_DEBUG(clock_t na_time_end = clock() );
-  LM_CLOCK_DEBUG(clock_new_alg += (double) (na_time_end - na_time_start) );
-
   if (face == p_arr->unbounded_face()) 
   {
     PRINT_DEBUG("before return from walk from face. unbounded face.");
-    LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
     return (CGAL::make_object (p_arr->unbounded_face()));
   }
 
   PRINT_DEBUG("before return from walk from face. ");
-  LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
   return (CGAL::make_object (face));
 }
 
@@ -805,7 +753,6 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
            bool & found_vertex,      //out is p equals e->target?
            Halfedge_const_handle  & out_edge) const  //output if on curve        
 {
-  LM_CLOCK_DEBUG( entries_is_point_in_face ++) ;
   PRINT_DEBUG("inside is_point_in_face. face = " << (*face).source()->point()
                 <<"-->" << (*face).target()->point());
 
@@ -908,7 +855,6 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   //what we will check is whether this edge was selected already 
   //(and flipped),  in this case we will not flip it again, 
   //but move to the next edge
-  LM_CLOCK_DEBUG( entries_find_edge++ );
   PRINT_DEBUG("inside find_edge_to_flip.   " );
 
   //create a segment vp--p. 
@@ -959,13 +905,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
       if (p_in_x_range || v_in_x_range || p1_in_x_range || p2_in_x_range)
       {    
         bool intersect;
-        
-        LM_CLOCK_DEBUG(clock_t check_app_ts = clock());  
-        bool check_res = _check_approximate_intersection
-          (seg, cv, intersect);
-        LM_CLOCK_DEBUG(clock_t check_app_te = clock());
-        LM_CLOCK_DEBUG(clock_check_app += 
-          (double) (check_app_te - check_app_ts));
+        bool check_res = _check_approximate_intersection (seg, cv, intersect);
 
         if (check_res) 
         {
@@ -1010,8 +950,6 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
                   const X_monotone_curve_2 & cv,
                   bool & intersect) const 
 {
-  LM_CLOCK_DEBUG( entries_to_check_app ++ );
-
   typename Traits_wrapper_2::Equal_2              equal = 
                                             traits->equal_2_object();
   typename Traits_wrapper_2::Compare_xy_2          compare_xy = 
