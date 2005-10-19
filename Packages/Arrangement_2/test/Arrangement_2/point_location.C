@@ -1,7 +1,7 @@
 
 //#define CONICS
 #define SEGMENTS
-//#define DRAW_QT
+#define DRAW_QT
 //#define SEGMENTS_IN_DOUBLE
 
 #include <CGAL/Cartesian.h>
@@ -122,43 +122,48 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //init - all point locations
   CGAL::Timer            timer;
 
-   timer.reset(); timer.start();
+  //timer.reset(); timer.start();
   Naive_point_location            naive_pl (arr);                 // 0
-  timer.stop(); 
-  std::cout << "Naive construction took " << timer.time() <<std::endl;
+  //timer.stop(); 
+  //std::cout << "Naive construction took " << timer.time() <<std::endl;
 
-   timer.reset(); timer.start();
+  //timer.reset(); timer.start();
   Walk_point_location             walk_pl (arr);                  // 1
-  timer.stop(); 
-  std::cout << "Walk construction took " << timer.time() <<std::endl;
+  //timer.stop(); 
+  //std::cout << "Walk construction took " << timer.time() <<std::endl;
 
   timer.reset(); timer.start();
   Ric_point_location              ric_pl(arr);                    // 3
   timer.stop(); 
   std::cout << "Ric construction took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Lm_point_location               lm_pl (arr);                    // 4
   timer.stop(); 
   std::cout << "Lm (vert) construction took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Random_lm_generator             random_g(arr);    
   Lm_random_point_location        randon_lm_pl (arr, &random_g);  // 5
   timer.stop(); 
   std::cout << "Random lm construction took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Grid_lm_generator               grid_g(arr);      
   Lm_grid_point_location          grid_lm_pl (arr, &grid_g);      // 6
   timer.stop(); 
   std::cout << "Grid lm construction took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Halton_lm_generator             halton_g(arr);
   Lm_halton_point_location        halton_lm_pl (arr, &halton_g);  // 7
   timer.stop(); 
   std::cout << "Halton lm construction took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
 #ifdef SEGMENTS
   timer.reset(); timer.start();
@@ -172,6 +177,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); 
   std::cout << "Trg construction took " << timer.time() <<std::endl;
 #endif
+  std::cout<< std::endl;
 
   // ===> Add new point location instance here. <===
 
@@ -188,7 +194,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //LOCATE the points in the list using all PL strategies
 
   //std::cout << "Time in seconds" <<std::endl; ;
-  std::cout << std::endl << "Naive" ;
+  std::cout << std::endl;
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
@@ -198,9 +204,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[0].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "Naive location took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
-  std::cout << "Walk";
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
@@ -210,9 +216,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[1].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "Walk location took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
-  std::cout << "RIC" ;
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
@@ -222,9 +228,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[2].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "RIC location took " << timer.time() <<std::endl;
+  //std::cout << ' ' << timer.time() ;
 
-  std::cout << "Landmarks (vertices) " <<std::endl;;
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++)
@@ -234,9 +240,10 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[3].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "Landmarks (vertices) location took " << timer.time() <<std::endl;
+//  std::cout << ' ' << timer.time() ;
 
-  std::cout << "Random LM" ;
+//  std::cout << "" ;
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
@@ -246,9 +253,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[4].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "Random LM location took " << timer.time() <<std::endl;
+//  std::cout << ' ' << timer.time() ;
 
-  std::cout << "Grid LM" ;
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
@@ -258,9 +265,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[5].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "Grid LM location took " << timer.time() <<std::endl;
+//  std::cout << ' ' << timer.time() ;
 
-  std::cout << "Halton LM" ;
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
@@ -270,7 +277,8 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[6].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  std::cout << "Halton LM location took " << timer.time() <<std::endl;
+//  std::cout << ' ' << timer.time() ;
 
 #ifdef SEGMENTS
   std::cout << "Middle edges LM" ;
@@ -297,6 +305,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); ///END
   std::cout << " location took " << timer.time() <<std::endl;
 #endif
+  std::cout << std::endl;
 
   // ===> Add a call to operate the the new point location. <===
 
@@ -312,7 +321,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
    
   //get size of objects
   unsigned int size = objs[0].size();
-  std::cout <<"size is "<< size << std::endl;
+//  std::cout <<"size is "<< size << std::endl;
 
   for (pl_index=0; pl_index<pls_num; pl_index++)
   {
@@ -337,13 +346,13 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
         {
           std::cout << "Error in point location number " 
             << pl_index << " did no return a face"<< std::endl;
-          return (-1);
+          //return (-1);
         }
         else if (fh_curr != fh_ref)
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different face"<< std::endl;
-          return (-1);         
+          //return (-1);         
         }
       }  
       //if (fh_ref->is_unbounded())
@@ -362,14 +371,14 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
         {
           std::cout << "Error in point location number " 
             << pl_index << " did no return halfedge"<< std::endl;
-          return (-1);
+          //return (-1);
         }
         else if ((hh_curr != hh_ref) && (hh_curr->twin() != hh_ref))
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different halfedge"<< std::endl;
           //std::cout << "Halfedge (curr): "<< hh_curr->curve() << std::endl;
-          return (-1);         
+          //return (-1);         
         }
       }      
     }
@@ -383,13 +392,13 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
         {
           std::cout << "Error in point location number " 
             << pl_index << " did no return a vertex"<< std::endl;
-          return (-1);
+          //return (-1);
         }
         else if (vh_curr != vh_ref)
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different vertex"<< std::endl;
-          return (-1);         
+          //return (-1);         
         }
       }
       //std::cout << "Vertex: "<< vh_ref->point() << std::endl;
@@ -398,7 +407,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     else
     {
       std::cout << "Illegal point-location result." << std::endl;    
-      return (-1);
+      //return (-1);
     }
   }
   
@@ -456,6 +465,9 @@ void  draw (Arrangement_2 & arr, Points_list &plist,
   double x_min=bbox.xmin(), x_max=bbox.xmax(), 
          y_min=bbox.ymin(), y_max=bbox.ymax();
   double x,y;
+  std::cout << "Arrangement bounding box = (" << x_min 
+            << ","<< y_min << ") - (" << x_max << "," 
+            << y_max <<")"<< std::endl;
 
   //update the bouding box to fit the points
   if (draw_points)
@@ -539,10 +551,14 @@ int main (int argc, char * argv[])
   timer.reset(); 
   timer.start(); //START
   Arrangement_2  arr;
-  insert (arr, curve_list.begin(), curve_list.end());
-   timer.stop(); ///END
+  insert_curves (arr, curve_list.begin(), curve_list.end());
+  timer.stop(); ///END
   std::cout << "Arrangement aggregate construction took " 
-    << timer.time() <<std::endl;
+            << timer.time() <<std::endl;  
+  // Print the size of the arrangement.
+  std::cout << "V = " << arr.number_of_vertices()
+            << ",  E = " << arr.number_of_edges() 
+            << ",  F = " << arr.number_of_faces() << std::endl;
 
   //read point and insert them into a list of points
   Points_list           plist;
@@ -561,7 +577,7 @@ int main (int argc, char * argv[])
     exit(-1);
   }
   
-  std::cout << "Point-location test was finished O.K."<<std::endl<<std::endl;
+  //std::cout << "Point-location test was finished O.K."<<std::endl<<std::endl;
 
   if (draw_arr)
   {
