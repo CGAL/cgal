@@ -31,9 +31,12 @@
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
 #include <CGAL/Arr_batched_point_location.h>
 
+//-------------------------------
+#include <CGAL/Memory_sizer.h> 
+typedef CGAL::Memory_sizer::size_type size_type;
 
 //#define CGAL_LM_DEBUG
-
+//
 //#ifdef CGAL_LM_DEBUG
 //	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
 //	#define LM_DEBUG(cmd)   cmd
@@ -98,13 +101,11 @@ protected:
 	typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
 	// Data members:
-	const Arrangement_2     *p_arr;     // The associated arrangement.
 	const Traits_wrapper_2  *traits;    // Its associated traits object.
 	Nearest_neighbor		nn;			// The associated nearest neighbor obj
 	bool  ignore_notifications;	
 	bool  updated;
 	int	  num_small_not_updated_changes;
-	int	  num_landmarks;
 
 private:
 
@@ -119,14 +120,12 @@ public:
 	  /*! Constructor. */
 	  Arr_landmarks_generator (const Arrangement_2& arr) : 
 	      Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)), 
-		  p_arr(&arr),
 		  ignore_notifications (false), 
 		  updated (false), 
-		  num_small_not_updated_changes(0), 
-		  num_landmarks(0)
+		  num_small_not_updated_changes(0)
 	  {
 		  PRINT_DEBUG("Arr_landmarks_generator constructor"); 
-		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+		  traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
 		  // need to call this in the inherited class constructor
 		  // build_landmarks_set();
 	  }
@@ -137,23 +136,22 @@ public:
 	  * This is a pure virtual function (must be implemented in 
 	  * the class that derives from this one)
 	  */
-	  virtual void build_landmarks_set ()
-	  {
-		 PRINT_DEBUG("build_landmarks_set."); 
-		 NN_Points_set     nn_points; 
+    virtual void build_landmarks_set ()
+    {
+      PRINT_DEBUG("build_landmarks_set."); 
+      NN_Points_set     nn_points; 
 
-		 //Go over planar map, and insert all vertices as landmarks
-		 _create_nn_points_set(nn_points);
+      //Go over planar map, and insert all vertices as landmarks
+      _create_nn_points_set(nn_points);
 
-		 //the search structure is now updated
-		 PRINT_DEBUG("call to initialize the nearest neighbor search."); 
-		 nn.clean();
-		 nn.init(nn_points.begin(), nn_points.end());
+      //the search structure is now updated
+      PRINT_DEBUG("call to initialize the nearest neighbor search."); 
+      nn.clean();
+      nn.init(nn_points.begin(), nn_points.end());
 
-		 // num_landmarks = ?
-		 num_small_not_updated_changes = 0;
-		 updated = true;
-	  }
+      num_small_not_updated_changes = 0;
+      updated = true;
+    }
 
 	  /*!
 	  * clear the tree
@@ -161,10 +159,7 @@ public:
 	  virtual void clear_landmarks_set ()
 	  {
 		  PRINT_DEBUG("clear_landmarks_set.");
-
 		  nn.clean();
-
-		  num_landmarks = 0;
 		  num_small_not_updated_changes = 0;
 		  updated = false;		  
 	  }
@@ -189,8 +184,7 @@ public:
     virtual void before_assign (const Arrangement_2& arr)
     {
       clear_landmarks_set();
-      p_arr = &arr;
-      traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+      traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
 		  ignore_notifications = true;   
     }
     /*!
@@ -211,8 +205,7 @@ public:
     virtual void before_attach (const Arrangement_2& arr)
     {
 		  clear_landmarks_set();
-		  p_arr = &arr; 
-		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+		  traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
 		  ignore_notifications = true;
     }
 
@@ -422,11 +415,12 @@ protected:
     //call the function that creates the landmarks 
     _create_points_set(points);
 
-		PRINT_DEBUG("before batched point location."); 
+    PRINT_DEBUG("before batched point location."); 
 
     //locate the landmarks in the arrangement using batched point location
     // global function.
-    locate(*p_arr,points.begin(),points.end(),std::back_inserter(pairs));
+    locate(*(this->arrangement()),points.begin(),points.end(),
+           std::back_inserter(pairs));
 
     //random shuffle of the points since the batched p.l. sorts them
     std::random_shuffle ( pairs.begin (), pairs.end ());
@@ -441,8 +435,6 @@ protected:
       nn_points.push_back(np);
     }
   }
-
-
 };
 
 CGAL_END_NAMESPACE

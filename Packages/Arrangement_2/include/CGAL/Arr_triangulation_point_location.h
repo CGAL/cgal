@@ -105,7 +105,6 @@ protected:
   typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
   // Data members:
-  const Arrangement_2     *p_arr;      // The associated arrangement.
   const Traits_wrapper_2  *traits;     // Its associated traits object.
   bool                    ignore_notifications;  
   CDT                     cdt;
@@ -115,15 +114,13 @@ public:
 
   /*! Default constructor. */
   Arr_triangulation_point_location () : 
-    p_arr (NULL),
     traits (NULL)
   {
   }
 
   /*! Constructor given an arrangement. */
   Arr_triangulation_point_location (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),   
-    p_arr (&arr)
+    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr))
   {
     build_triangulation();
   }
@@ -141,9 +138,13 @@ public:
    //-------------------------------------------------
 
     /*! Attach an arrangement object. */
+    virtual void before_attach (const Arrangement_2& arr)
+    {
+	    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+    }
+
     virtual void after_attach ()
     {
-      traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
       build_triangulation();
     }
 

@@ -111,7 +111,9 @@ protected:
 
     Edge_const_iterator    eit;
     Halfedge_const_handle  hh;
-    for (eit=p_arr->edges_begin(); eit != p_arr->edges_end(); eit++)
+    Arrangement_2 *arr = this->arrangement();
+
+    for (eit=arr->edges_begin(); eit != arr->edges_end(); eit++)
     {
       //get 2 endpoints of edge
       hh = eit;

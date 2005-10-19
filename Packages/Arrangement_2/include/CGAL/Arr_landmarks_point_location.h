@@ -24,12 +24,10 @@
  */
 
 //#define CGAL_LM_DEBUG
-//#define LANDMARKS_CLOCK_DEBUG
-//#define TRAITS_CLOCK_DEBUG
-//#define RATIONAL_CIRCLES
 
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>
+#include <time.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,6 +36,7 @@ CGAL_BEGIN_NAMESPACE
  * on a planar arrangement using the Landmarks algorithm.
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
+
 template <class Arrangement_, 
 	  class Arr_landmarks_generator_ = 
 	                      Arr_landmarks_vertices_generator<Arrangement_> >
@@ -86,7 +85,6 @@ protected:
   mutable Halfedge_const_handle *m_start_edge; //edge the landmark is on
   bool	delete_generator;	             // Indicates whether the generator was
                                        // locally allocated.
-
 public:
 
   /*! Default constructor. */
@@ -96,7 +94,8 @@ public:
     lm_gen(NULL), 
     m_start_edge(NULL),
     delete_generator (false)
-  {}
+  {
+  }
 
   /*! Constructor given an arrangement only. */
   Arr_landmarks_point_location (const Arrangement_2& arr) :
@@ -172,45 +171,8 @@ public:
    */
   Object locate (const Point_2& p) const;
 
-  /*!
-   * Locate the arrangement feature which a upward vertical ray emanating from
-   * the given point hits.
-   * \param p The query point.
-   * \return An object representing the arrangement feature the ray hits.
-   *         This object is either an empty object or a
-   *         Halfedge_const_handle or a Vertex_const_handle.
-   */
-  Object ray_shoot_up (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, true));
-  }
-
-  /*!
-   * Locate the arrangement feature which a downward vertical ray emanating
-   * from the given point hits.
-   * \param p The query point.
-   * \return An object representing the arrangement feature the ray hits.
-   *         This object is either an empty object or a
-   *         Halfedge_const_handle or a Vertex_const_handle.
-   */
-  Object ray_shoot_down (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, false));
-  }
-
+ 
 protected:
-
-  /*!
-   * Locate the arrangement feature which a vertical ray emanating from the
-   * given point hits, considering isolated vertices.
-   * \param p The query point.
-   * \param shoot_up Indicates whether the ray is directed upward or downward.
-   * \return An object representing the arrangement feature the ray hits.
-   *         This object is either a Halfedge_const_handle,
-   *         a Vertex_const_handle or an empty object.
-   */
-  Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
-
 
   /*!
    * Walks from the given vertex to the query point.

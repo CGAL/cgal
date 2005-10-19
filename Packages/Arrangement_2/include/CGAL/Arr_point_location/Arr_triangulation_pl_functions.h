@@ -44,7 +44,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
   TRG_PRINT_DEBUG("------ locate point "<< p);
 
   //init output
-  Face_const_handle face_found = p_arr->unbounded_face();
+  Face_const_handle face_found = this->arrangement()->unbounded_face();
 
   //locate in the CDT
   CDT_Point p1 = static_cast <CDT_Point> (p);
@@ -184,7 +184,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
     } while ((++havc1 != havc1_done)&& !found );
   } while ((++havc0 != havc0_done)&& !found );
 
-  if (face_found == p_arr->unbounded_face())
+  if (face_found == this->arrangement()->unbounded_face())
   {
     if (! found_unbounded)
     {
@@ -240,9 +240,10 @@ void Arr_triangulation_point_location<Arrangement_2>
   //Go over the arrangement, and create a triangulation of it
   Edge_const_iterator eit;
 
-  eit = p_arr->edges_begin();
+  eit = this->arrangement()->edges_begin();
 
-  for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); eit++)
+  for (eit = this->arrangement()->edges_begin(); 
+       eit != this->arrangement()->edges_end(); eit++)
   {
     //get vertices from edge
     Vertex_const_handle pm_vh1 = (*eit).source();

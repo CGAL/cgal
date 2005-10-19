@@ -56,7 +56,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
     TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
-    return (CGAL::make_object (p_arr->unbounded_face()));
+    return (CGAL::make_object (this->arrangement()->unbounded_face()));
   }
 
   Halfedge_const_handle h = cv.get_parent();
@@ -134,8 +134,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   // treat special case, where trapezoid is unbounded.
   //	for then get_parent() is not defined
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
-  {
-    Face_const_handle  uf = p_arr->unbounded_face();
+  { 
+    Face_const_handle  uf = this->arrangement()->unbounded_face();
     return (CGAL::make_object (uf));
   }
 
@@ -179,7 +179,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     break;
   }
 
-  Face_const_handle  uf = p_arr->unbounded_face();
+  Face_const_handle  uf = this->arrangement()->unbounded_face();
   return (CGAL::make_object (uf));
 }
 

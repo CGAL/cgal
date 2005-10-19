@@ -139,7 +139,6 @@ protected:
   typedef Trapezoidal_decomposition             TD;
 
   // Data members:
-  const Arrangement_2       *p_arr;   // The associated arrangement.
   const Traits_wrapper_2    *traits;  // Its associated traits object.
 
   TD                        td;       // instance of trapezoidal decomposition
@@ -154,7 +153,6 @@ public:
 
   /*! Default constructor. */
   Arr_trapezoid_ric_point_location (bool rebuild = true) : 
-    p_arr (NULL),
     traits (NULL),
     td_traits(NULL)
   {
@@ -163,13 +161,10 @@ public:
 
   /*! Constructor given an arrangement. */
   Arr_trapezoid_ric_point_location (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),   
-    p_arr (&arr)
+    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr))
   {
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
-    //should the td_traits get the wrapper or the original traits?
+    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
     td_traits = new Td_traits(*traits);
-    //td_traits = new Td_traits(p_arr->get_traits());
     td.init_traits(td_traits);
 
     build_trapezoid_ric();
@@ -181,20 +176,7 @@ public:
     if (td_traits)
       delete (td_traits);
   }
-        
-  /*! Attach an arrangement object. */
-  void init (const Arrangement_2& arr) 
-  {
-    p_arr = &arr;
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
-    //should the td_traits get the wrapper or the original traits?
-    td_traits = new Td_traits(*traits);
-    //td_traits = new Td_traits(p_arr->get_traits());
-    td.init_traits(td_traits);
-
-    build_trapezoid_ric();
-  }
-  
+ 
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -237,8 +219,7 @@ public:
   virtual void before_assign (const Arrangement_2& arr)
   {
     clear_trapezoid_ric();
-    p_arr = &arr;
-	  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+	  traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
   }
 
   virtual void after_assign ()
@@ -259,8 +240,9 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_trapezoid_ric();
-    p_arr = &arr;
-	  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+	  traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+    td_traits = new Td_traits(*traits);
+    td.init_traits(td_traits);
   }
 
   virtual void after_attach ()
@@ -353,8 +335,9 @@ protected:
     Halfedge_handle_container c; 
     Edge_const_iterator         eit;
     Halfedge_const_handle    hh;
+    Arrangement_2 *arr = this->arrangement();
 
-    for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit)
+    for (eit = arr->edges_begin(); eit != arr->edges_end(); ++eit)
     {
       hh = eit;
       c.push_back(hh);
@@ -369,7 +352,7 @@ protected:
     for (cit = c.begin(); cit < c.end(); cit++)
     {
       hh = *cit;
-      he = (const_cast<Arrangement_2 *>(p_arr))->non_const_handle(hh);
+      he = arr->non_const_handle(hh);
       td.insert(X_curve_plus(he));
     }
 

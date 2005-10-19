@@ -26,7 +26,14 @@
 #include <list>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+
+//#define LM_ANN
+
+#ifdef LM_ANN
+#include <CGAL/Arr_point_location/Arr_lm_ann.h>
+#else
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
+#endif
 
 //#define CGAL_LM_VERTICES_DEBUG
 #ifdef CGAL_LM_VERTICES_DEBUG
@@ -35,6 +42,8 @@
 	#define PRINT_V_DEBUG(expr)
 #endif
 
+#include <CGAL/Memory_sizer.h> 
+typedef CGAL::Memory_sizer::size_type size_type;
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +56,11 @@ CGAL_BEGIN_NAMESPACE
 */
 template <class Arrangement_, 
 	  class Nearest_neighbor_ 
-	  = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
+#ifdef LM_ANN
+	  = Arr_landmarks_ann <typename Arrangement_::Traits_2> >
+#else
+    = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
+#endif
 class Arr_landmarks_vertices_generator 
   : public Arr_observer <Arrangement_>
 {
@@ -80,7 +93,6 @@ protected:
   typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
   // Data members:
-  const Arrangement_2     *p_arr;   // The associated arrangement.
   const Traits_wrapper_2  *traits;  // Its associated traits object.
   Nearest_neighbor	   nn;      // The associated nearest neighbor object.
   bool                     ignore_notifications;	
@@ -101,14 +113,13 @@ public:
   /*! Constructor. */
   Arr_landmarks_vertices_generator (const Arrangement_2& arr) : 
     Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)), 
-    p_arr(&arr),
     ignore_notifications (false), 
     updated (false), 
     num_small_not_updated_changes(0), 
     num_landmarks(0)
   {
     PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
     build_landmarks_set();
   }
   
@@ -125,7 +136,9 @@ public:
 
     //Go over planar map, and insert all vertices as landmarks
     Vertex_const_iterator   vit;
-    for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
+    Arrangement_2 *arr = this->arrangement();
+
+    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); vit++)
     {
       //get point from vertex
       Point_2 p = vit->point() ;
@@ -138,12 +151,11 @@ public:
       
       //PRINT_V_DEBUG("landmark = "<< p); 
     } 
-    
+
     //the search structure is now updated
     nn.clean();
     nn.init(plist.begin(), plist.end());
     
-    // num_landmarks = ?
     num_small_not_updated_changes = 0;
     updated = true;
   }
@@ -195,8 +207,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmarks_set();
-    p_arr = &arr; 
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
     ignore_notifications = false;
   }
   

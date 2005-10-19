@@ -95,8 +95,10 @@ protected:
     //find bounding box
     double x_min=0, x_max=0, y_min=0, y_max=0;
     double x,y;
-    Vertex_const_iterator vit; 
-    for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
+    Vertex_const_iterator vit;
+    Arrangement_2 *arr = this->arrangement();
+
+    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); vit++)
     {
       x = CGAL::to_double(vit->point().x());
       y = CGAL::to_double(vit->point().y());
@@ -113,7 +115,7 @@ protected:
     if (number_of_landmarks > 0)
       n = number_of_landmarks;
     else
-      n= p_arr->number_of_vertices();
+      n= arr->number_of_vertices();
     
     //calculate
     double x_trans = x_max - x_min;
@@ -137,16 +139,16 @@ protected:
     {
       for ( i = 0; i < ndim; i++ )
       {
-	seed2 = seed[i] + step * leap[i];
-	r[i] = 0.0E+00;
-	base_inv = 1.0E+00 / ( ( double ) base[i] );
-	while ( seed2 != 0 )
-	{
-	  digit = seed2 % base[i];
-	  r[i] = r[i] + ( ( double ) digit ) * base_inv;
-	  base_inv = base_inv / ( ( double ) base[i] );
-	  seed2 = seed2 / base[i];
-	}
+	      seed2 = seed[i] + step * leap[i];
+	      r[i] = 0.0E+00;
+	      base_inv = 1.0E+00 / ( ( double ) base[i] );
+	      while ( seed2 != 0 )
+	      {
+	        digit = seed2 % base[i];
+	        r[i] = r[i] + ( ( double ) digit ) * base_inv;
+	        base_inv = base_inv / ( ( double ) base[i] );
+	        seed2 = seed2 / base[i];
+	      }
       }
       //i_to_halton ( ndim, step, seed, leap, base, r );
       //r[0] is the x_coord
