@@ -1,4 +1,3 @@
-\usepackage{url}
 
 \chapter{Kinetic Data Structures Framework}
 \label{chapter-kds}
@@ -36,18 +35,33 @@
 
 \input{Kinetic_data_structures/todo.tex}
 
+Lets say you want to maintain a sorted list of items (each item is
+associate with a real number key which they are sorted on). You can
+imagine placing each of the items on the point corresponding to its
+key. Now, let the key for each item change continuously (i.e. no jumps
+are allowed). As long as no to (consecutive) items cross, the sorted
+order is intact. When two cross, they need to be exchanged in the list
+and then the sorted order is once again correct. This is a trivial
+example of a kinetic data structure and, the maintenance of a
+combinatorial which changes at discrete times (events), event though
+the basic building blocks are changing continuously is gives power to
+the kinetic data structures idea.
 
 This chapter describes a framework for implementing kinetic data
 structures and sweepline algorithms as well as several kinetic data
 structures implemented on top of this framework. We first, in
 Section~\ref{sec:kds_intro} introduce kinetic data structures and
-sweepline algorithms. We then present kinetic datastructures for
-Delaunay triangulations in two and three dimensions in
-Section~\ref{sec:provided_kdss}. Following that, in
-Section~\ref{sec:architecture} we discuss the architecture of the
+sweepline algorithms. This section can be skipped if the reader is
+already familiar with the area. The next section,
+Section~\ref{sec:kds_terms} introduces the terms we will use when
+discussing kinetic data structures, it is recommended reading. We then
+present kinetic data structures for Delaunay triangulations in two and
+three dimensions in Section~\ref{sec:provided_kdss}. Following that,
+in Section~\ref{sec:architecture} we discuss the architecture of the
 framework and finally we give several examples of using the framework
-in Section~\ref{sec:examples}. The framework makes heavy use of our
-\ccc{Polynomial} package to provide models of the \ccc{FunctionKernel}
+to implement a kinetic data structure in
+Section~\ref{sec:examples}. The framework makes heavy use of our
+\ccc{Polynomial_kernel} package to provide models of the \ccc{FunctionKernel}
 concept.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +85,7 @@ in two and three dimensions (implementations of which are provided)
 and various types of clustering.
 
 Computational geometry is built on the idea of
-\textit{predicates}---functions of the description of geometric
+predicates---functions of the description of geometric
 primitives which return a discrete set of values. Many of the
 predicates reduce to determining the sign of an algebraic expression
 of the representation (i.e.\ coordinates of points) of the geometric
@@ -83,22 +97,22 @@ below.
 
 The validity of many combinatorial structures built on top of
 geometric primitives can be proved by checking a finite number of
-predicates of the primitives. These predicates are called {\em
-  certificates}. For example, a three-dimensional convex hull is
+predicates of the primitives. These predicates are called 
+  certificates. For example, a three-dimensional convex hull is
 proved to be correct by checking, for each face, that all points are
 below the outward facing plane supporting it.
 
 The kinetic data structures framework is built on top of this view of
 computational geometry. Let the geometric primitives move by replacing
 each of their coordinates with a function of time. As time advances,
-the primitives now trace paths in space called {\em trajectories}. The
+the primitives now trace paths in space called trajectories. The
 values of the certificates which proved the correctness of the static
-structure now become functions of time, called the {\em certificate
-  functions}. As long as these functions have the correct value, the
+structure now become functions of time, called the certificate
+  functions. As long as these functions have the correct value, the
 original structure is still correct. However, if one of the
 certificate functions changes value, the original structure must be
 updated and some new set of certificate functions computed. We call
-such occurrences {\em events}.
+such occurrences events.
 
 Maintaining a kinetic data structure is then a matter of determining
 which certificate function changes value next (typically this amounts
@@ -121,6 +135,23 @@ another at the current ``time'' or x value. Each time two curves
 intersect, we must exchange their vertical order. The computation
 entailed is exactly the same as tracking the sorted order of a set of
 points as they move along the real line.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Terms Used}
+\label{sec:kds_terms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{description}
+\item[primitive] The basic geometric types--i.e.\ the points of a triangulation. A primitive has a set of {\em coordinates}.
+\item[combinatorial structure] A structure built on top of the primitives. The structure does not depend directly on the coordinates of the primitives, only on relationships between them.
+\item[trajectory] The path traced out by a primitive as time passes. In other words how the coordinates of a primitive change with time.
+\item[snapshot] The position of all the primitives at a particular moment in time.
+\item[predicate] A function which takes the coordinates of several primitives from a snapshot as input and produces a discrete set of outputs.
+\item[certificate] One of a set of predicates which, when all having the correct values, ensure that the combinatorial structure is correct.
+\item[certificate function] A function of time which is positive when the corresponding certificate has the correct value. Then the certificate function changes sign, the combinatorial structure needs to be updated.
+\item[event] When a certificate function changes sign and the combinatorial structure needs to be updated.
+\item[static] Having to do with geometric data structures on non-moving primitives.
+\end{description}
 
 \input{Kinetic_data_structures/provided_kdss.tex}
 

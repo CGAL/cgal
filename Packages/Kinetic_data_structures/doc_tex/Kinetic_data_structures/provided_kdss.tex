@@ -1,17 +1,19 @@
 \section{Provided Kinetic Data Structures}
 \label{sec:provided_kdss}
 
-Here we present a using a kinetic data structure--Delaunay
-triangulations in two dimensions--. The framework provides some
-additional kinetic data structures, for example, sorting on x
-coordinate (\ccc{CGAL::KDS::Sort<Traits>}), Delaunay triangulation in
-3 dimensions (\ccc{CGAL::KDS::Delaunay_triangulation_3<Traits,
-Visitor, Triangulation>} and regular triangulations in 3D
-(\ccc{CGAL::KDS::Regular_triangulation_3<Traits, Visitor,
-Triangulation}) as well as bounding boxes to make visual simulations
-more appealing (\ccc{CGAL::KDS::Enclosing_box_2<Traits>},
-\ccc{CGAL::KDS::Enclosing_box_3<Traits>}. These are documented in the
-reference manual.
+Along with the framework, we provide several already implemented kinetic data structures. They currently are 
+\begin{description}
+\item[\ccc{CGAL::KDS::Sort<Traits>}] maintain a list of points sorted by x-coordinate.
+\item[\ccc{CGAL::KDS::Delaunay_triangulation_2<Traits,Visitor, Triangulation>},\ccc{CGAL::KDS::Delaunay_triangulation_3<Traits,Visitor, Triangulation>}] maintain the Delaunay triangulation of a set of two or three dimensional points.
+\item[\ccc{CGAL::KDS::Regular_triangulation_3<Traits, Visitor,
+Triangulation}] maintain the regular triangulation of a set of waiting three dimensional points.
+\item[\ccc{CGAL::KDS::Enclosing_box_2<Traits>}, \ccc{CGAL::KDS::Enclosing_box_3<Traits>}] restrict points to stay within a box by bouncing them off the walls.
+\end{description}
+
+Using all of the kinetic data structures is quite similar, so we only
+present the case of Delaunay triangulation in two dimensions. See the
+respective reference pages and demos for details of using the other
+data structures.
 
 \input{Kinetic_data_structures/delaunay_2_example.tex}
 

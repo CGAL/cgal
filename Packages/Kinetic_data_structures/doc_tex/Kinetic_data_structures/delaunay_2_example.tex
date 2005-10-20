@@ -3,22 +3,20 @@
 \subsection{Two Dimensional Delaunay}
 \label{sec:delaunay_2_example}
 
-The \ccc{CGAL::KDS::Delaunay_triangulation_2<Traits, Visitor, Triangulation>} class is the simplist
-interesting kinetic data structure we provide. 
-
-The source code, included at the end of the subsection, shows the
-basic parts necessary to a \ccc{CGAL::KDS::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}.
-
-In order to simplify implementing, debugging and using kinetic data
-structures, the common types needed by each kinetic data structure are
-grouped into traits classes, called \ccc{SimulationTraits}. The
-framework provides a number of choices which work with appropriate
-provided kinetic data structures. The provided traits classes are
-named {Exact,Inexact}\_simulation\_traits\_{1,2,3}, depending on
-whether computations are performed exactly and the dimension
-required. The details of what is in the traits classes are described
-both in the
-\ccc{SimulationTraits} reference pages and later in the user manual. Here we opt for exact computations in two dimensions.
+As with static triangulations, in order to use the data structure the
+user must provide a traits class. In addition, an optional visitor
+class can be provided to monitor how the data structure changes, and a
+custom triangulation can be provided. The traits class must be a model
+of \ccc{SimulationTraits}. Most of the details of the traits class can
+be ignored for the time being other than two parts 
+\begin{description}
+\item[\ccc{moving_point_table_pointer()}] this returns a (reference counted) pointer to a table which keeps track of all the primitives.
+\item[\ccc{simulator_pointer()}] this returns a pointer to the \ccc{Simulator} which is what controls how time advances.
+\end{description}
+The framework provides a number of models of the
+\ccc{SimulationTraits} named
+\{Exact,Inexact\}\_simulation\_traits\_\{1,2,3\}. Here we opt for
+exact computations (and require two dimensions).
 
 In order to monitor the Delaunay triangulation as the simulation is
 run, we use a visitor. This is a small class, which is passed to the

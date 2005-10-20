@@ -11,38 +11,48 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The framework is divided in to five main concepts as shown in Figure
-\ref{fig:architecture}. They are:
-\begin{itemize}
-\item \ccc{FunctionKernel}: a computational kernel for representing and manipulating
-  functions and their roots. The \ccc{FunctionKernel}~ is provided by a separate
-  package and not discussed in detail here. 
-\item \ccc{KineticKernel}:  a class which defines kinetic geometric primitives and
+\ref{fig:architecture}. These are all wrapped into a
+\ccc{SimulatorTraits} concept, through which they are accessed to
+preform various functions. Users of existing kinetic data structures will need to become familiar with the following two main concepts 
+\begin{description}
+\item[\ccc{Simulator}] a class that maintains the concept of time and a priority
+  queue of the events. It is accessed from the \ccc{SimulationTraits} object using the \ccc{SimulationTraits::simulator_pointer()} method.
+\item[\ccc{NotifyingTable}] a container which stores kinetic geometric
+  primitives and provides notifications when their trajectories
+  change. The \ccc{SimulationTraits} creates an model of this concept
+  called \ccc{SimulatorTraits::Moving_point_table} (assuming the
+  primitives are points) which is accessible through the
+  \ccc{SimulatorTraits::moving_point_table_pointer()} method.
+\end{description}
+Users who wish to implement kinetic data structures must become
+familiar with a further two concepts:
+\begin{description}
+\item[\ccc{KineticKernel}]  a class which defines kinetic geometric primitives and
   predicates acting on them.
-\item \ccc{MovingObjectTable}: a container which stores kinetic geometric primitives and
-  provides notifications when their trajectories change.
-\item \ccc{InstantaneousKernel}: a model of the CGAL kernel concept which allows static
+\item[\ccc{InstantaneousKernel}] a model of the CGAL kernel concept which allows static
   algorithms to act on a snapshot of the kinetic data structure.
-\item \ccc{Simulator}: a class that maintains the concept of time and a priority
-  queue of the events.
-\end{itemize}
-Models of these concepts are wrapped together into a
-\ccc{SimulationTraits} object which manages creation of and access to
-the objects.
+\end{description}
+The final main concept is that of the \ccc{FunctionKernel} a
+computational kernel for representing and manipulating functions and
+their roots. The \ccc{FunctionKernel}~ is provided by a separate
+package and not discussed in detail here (other than the reference
+page).
 
 In a typical scenario using the framework, a model of
 \ccc{SimulationTraits} is created and a number of geometric primitives
-(e.g.\ points) are added to the \ccc{MovingObjectTable}. Then a
-kinetic data structure, for example a two dimensional kinetic Delaunay
+(e.g.\ points) are added to the
+\ccc{SimulationTraits::Moving_point_table}. Then a kinetic data
+structure, for example a two dimensional kinetic Delaunay
 triangulation, is initialized and passed the \ccc{SimulationTraits}
 object. The kinetic Delaunay triangulation extracts the trajectories
-of the points from the \ccc{MovingObjectTable} and the current time
-from the \ccc{Simulator}. It then uses an instance of an
-\ccc{InstantaneousKernel}, obtained from the \ccc{SimulationTraits} to
-enable a static algorithm to compute the Delaunay triangulation of the
-points at the current time. An instance of a \ccc{Kinetickernel} is
-used to compute the \ccc{in_circle} certificate function for each edge
-of the initial Delaunay triangulation (in order to verify that the
-four points around the edge remain Delaunay). The kinetic data
+of the points from the \ccc{SimulationTraits::Moving_point_table} and
+the current time from the \ccc{Simulator}. It then uses an instance of
+an \ccc{InstantaneousKernel}, obtained from the \ccc{SimulationTraits}
+to enable a static algorithm to compute the Delaunay triangulation of
+the points at the current time. An instance of a \ccc{Kinetickernel}
+is used to compute the \ccc{in_circle} certificate function for each
+edge of the initial Delaunay triangulation (in order to verify that
+the four points around the edge remain Delaunay). The kinetic data
 structure requests that the \ccc{Simulator} solve each certificate
 function and schedule an appropriate event. The \ccc{Simulator} uses
 the \ccc{FunctionKernel} to compute and compare the roots of the
@@ -58,14 +68,14 @@ being flipped). The processing occurs via a callback from an object
 representing an event to the kinetic Delaunay data structure.
 
 If the trajectory of a moving point changes, for example it bounces
-off a wall, then the \ccc{MovingObjectTable} notifies the kinetic Delaunay data
+off a wall, then the \ccc{NotifyingTable} notifies the kinetic Delaunay data
 structure. The kinetic Delaunay data structure then updates all the
 certificates of edges adjacent to faces containing the updated point and
 reschedules those events with the \ccc{Simulator}.
 
 A more detailed example will be discussed in
-Section~\ref{sec:examples}. We will next discuss the principle
-concepts.
+Section~\ref{sec:examples}. We will next discuss the main concepts in
+order from most fundamental (and least exposed) to most exposed.
 
 \begin{figure*}[htb]
 \begin{ccTexOnly}
@@ -79,19 +89,12 @@ concepts.
 <\center>
 \end{ccHtmlOnly}
 \caption{ \label{fig:architecture} 
-{\em Framework architecture:} Each large white box represents a main concept, the sub boxes their
-contained concepts, and regular text their methods. A ``Uses'' arrow means
-that a model of concept will generally use methods from (and therefore
-should take as a template parameter) the target of the arrow.  A
-``Provides model of'' arrow means that the source model provides an
-implementation of the destination concept through a \ccc{typedef}.
-Finally, a ``Notifies'' arrow means that the class notifies the other
-class of events using a standardized notification interface.  See
-Section~\ref{sec:architecture} for a description of each of the main
-concepts. }
+{\em Framework architecture:} The main concepts and their relationships are shown. }
 %\end{minipage}
 %\end{center}
 \end{figure*}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Kinetic primitives and predicates: the KineticKernel.}
@@ -150,9 +153,9 @@ predicate on some geometric primitives, the \ccc{InstantaneousKernel}
 first computes the static representation of the kinetic primitives,
 and then uses these to compute the static predicate. We provide two
 models, the
-\ccc{CGAL::KDS::Cartesian_instantaneous_kernel<MovingObjectTable,
+\ccc{CGAL::KDS::Cartesian_instantaneous_kernel<NotifyingTable,
 Kernel>} and
-\ccc{CGAL::KDS::Regular_triangulation_instantaneous_traits<MovingObjectTable,
+\ccc{CGAL::KDS::Regular_triangulation_instantaneous_traits<NotifyingTable,
 Kernel>}.
 
 We are able to use this technique due to a couple of important
@@ -278,7 +281,7 @@ must be divided into two odd roots before being returned. These cases
 are handled properly by our \ccc{Simulator} and solvers.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Coordinating many kinetic data structures: the MovingObjectTable.}
+\subsection{Coordinating many kinetic data structures: the NotifyingTable.}
 \label{sec:moving_object_table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -291,21 +294,21 @@ provide one model, \ccc{CGAL::KDS::Notifying_table<Object>}.
 
 In the simple example presented in
 Section~\ref{sec:architecture_overview}, the kinetic Delaunay
-triangulation queries the \ccc{MovingObjectTable} for all the moving points on
+triangulation queries the \ccc{NotifyingTable} for all the moving points on
 initialization. Later, when the simulation is running, the
-\ccc{MovingObjectTable} notifies the kinetic Delaunay data structure whenever a point's
+\ccc{NotifyingTable} notifies the kinetic Delaunay data structure whenever a point's
 trajectory changes.
 
-The \ccc{MovingObjectTable} allows multiple kinetic data structures to
+The \ccc{NotifyingTable} allows multiple kinetic data structures to
 access a set of kinetic geometric primitives of a particular type and
 alerts the kinetic data structures when a new primitive is added, one
 is removed, or a primitive's trajectory changes. Our model of the
-\ccc{MovingObjectTable}, \ccc{NotifyingTable} is actually a generic
+\ccc{NotifyingTable}, \ccc{Notifying_table} is actually a generic
 container that provides notification when an editing session ends (for
 efficiency, changes are batched together). There is no internal
 functionality specific to kinetic data structures or to a particular
 type of primitive. The user must specify what type of kinetic
-primitive a particular instance of the \ccc{MovingObjectTable} model
+primitive a particular instance of the \ccc{NotifyingTable} model
 will contain through a template argument (in the architecture diagram
 Figure~\ref{fig:architecture}, a three dimensional moving point is
 used as an example). This type is exposed as the \ccc{Object} type
@@ -314,17 +317,17 @@ identifies the object within this container and which has a type
 specific to this container type is used.
 
 The provided models of \ccc{SimulationTraits} each define a model of
-\ccc{MovingObjectTable} containing points of appropriate
-dimensionality. Like the \ccc{Simulator} they \ccc{MovingObjectTable}
+\ccc{NotifyingTable} containing points of appropriate
+dimensionality. Like the \ccc{Simulator} they \ccc{NotifyingTable}
 models are explicitly shared and accessed through reference counted
 pointers.
 
-The \ccc{MovingObjectTable} uses a notification system which will be
+The \ccc{NotifyingTable} uses a notification system which will be
 briefly explained in Section~\ref{sec:misc} to notify interested
 kinetic data structures when a set of changes to the primitives is
 completed. The kinetic data structures must then request the keys of
 the inserted, changed and erase objects from the
-\ccc{MovingObjectTable} and handle them accordingly. We provide helper
+\ccc{NotifyingTable} and handle them accordingly. We provide helper
 classes to handle a number of common scenarios such as a kinetic data
 structure which is incremental and can handle the changes of a single
 object at a time (as is done in the example,
@@ -333,10 +336,10 @@ structure which will rebuild all certificates any time any objects are
 changed (which can be more efficient when many objects change at
 once). The user can easily add other policies as needed.
 
-The \ccc{MovingObjectTable} model provided will not meet the needs of
+The \ccc{NotifyingTabke} model provided will not meet the needs of
 all users as there are many more specialized scenarios where a more
 optimized handling of updates will be needed. The general structure of
-the \ccc{MovingObjectTable} model can be extended to handle many such
+the \ccc{NotifyingTabke} model can be extended to handle many such
 cases. For example, if moving segments are used, then some kinetic
 data structures will want to access each segment as an object, where
 as others will only need to access the individual endpoints. This extra
@@ -345,17 +348,17 @@ based) kinetic data structures by adding methods to return modified
 polygons in addition to those which return changed points.
 
 When trajectory changes happen at rational time values, the
-\ccc{MovingObjectTable} can check that the trajectories are
+\ccc{NotifyingTabke} can check that the trajectories are
 $C^0$-continuous. Unfortunately, the situation is much more
 complicated for changes which occur at roots. In practice, motions can
 be rounded off to nearby rational values without problem.
 
-The \ccc{MovingObjectTable} only knows about one type of kinetic
+The \ccc{NotifyingTabke} only knows about one type of kinetic
 primitive and has no concept of time, other kinetic primitives or
 predicates. When a kinetic data structure handles an insertion, for
 example, it must query the \ccc{Simulator} for an appropriate time
 value and generate primitives using the \ccc{KineticKernel}. A more
-detailed discussion of how to use the \ccc{MovingObjectTable} appears
+detailed discussion of how to use the \ccc{NotifyingTabke} appears
 in Section~\ref{sec:examples}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -373,7 +376,7 @@ following sections.
 We provide a number of different classes to facilitate graphical
 display and manipulation of kinetic data structures. There are two and
 three dimensional user interfaces based on the Qt
-(\ccc{CGAL::KDS::Qt_widget_2<Simulator>}) and Coin (\url{http://www.coin3d.org})
+(\ccc{CGAL::KDS::Qt_widget_2<Simulator>}) and Coin (\texttt{http://www.coin3d.org})
 (\ccc{CGAL::KDS::QT_widget_3<Simulator>}) libraries,
 respectively.  The graphical interfaces allows the simulations to be
 start and stopped, events can be stepped through and time reversed.
@@ -400,7 +403,7 @@ arguments.
 \subsubsection{Runtime event passing}
 
 Runtime events must be passed from \textit{notifiers}, namely the
-\ccc{MovingObjectTable} and the \ccc{Simulator} to the kinetic data structures to
+\ccc{NotifyingTable} and the \ccc{Simulator} to the kinetic data structures to
 \textit{listeners}, such as a kinetic data structure which needs to
 update itself when an event occurs These are passed using a simple,
 standardized notification interface. To use notifications, first
