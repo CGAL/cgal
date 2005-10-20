@@ -397,8 +397,8 @@ public:
   //! return an interval
   std::pair<double, double> double_interval() const {
     std::pair<double, double>
-      lbi= to_interval(lb()),
-      ubi= to_interval(ub());
+      lbi= CGAL_POLYNOMIAL_TO_INTERVAL(lb()),
+      ubi= CGAL_POLYNOMIAL_TO_INTERVAL(ub());
     return std::pair<double, double>(lbi.first, ubi.second);
   }
 

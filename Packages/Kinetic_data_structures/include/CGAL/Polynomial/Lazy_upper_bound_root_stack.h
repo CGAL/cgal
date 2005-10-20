@@ -69,7 +69,7 @@ public:
   }
   std::pair<double,double> to_interval() const {
     if (!rep_) return iv_;
-    else return to_interval(rep_->isolated_root());
+    else return CGAL_POLYNOMIAL_TO_INTERVAL(rep_->isolated_root());
   }
   bool is_rational() const {
     return rep_->isolated_root().is_rational();

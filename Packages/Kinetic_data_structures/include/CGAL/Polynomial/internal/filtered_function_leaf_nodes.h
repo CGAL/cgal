@@ -54,7 +54,7 @@ class Filtered_function_node_double_constant: public Filtered_function_node<Trai
   typedef Filtered_function_node<Traits> P;
 public:
   Filtered_function_node_double_constant(double d, const typename P::Interval_function_converter &ifc): P(ifc){
-    P::set_interval_function(typename P::Interval_function(to_interval(d)));
+    P::set_interval_function(typename P::Interval_function(std::pair<double,double>(d,d)));
  
   }
 
@@ -106,7 +106,7 @@ public:
     typename P::Interval_function fi;
     fi.set_nominal_degree(f.degree());
     for (int i=0; i<= f.degree(); ++i){
-      fi.set_coef(i, to_interval(f[i]));
+      fi.set_coef(i, std::pair<double,double>(f[i], f[i]));
     }
     P::set_interval_function(fi);
   }

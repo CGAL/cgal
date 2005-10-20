@@ -53,12 +53,12 @@ public:
     return nt_;
   }
   double d() const {
-    if (!double_) return CGAL::to_double(nt_);
+    if (!double_) return CGAL_POLYNOMIAL_TO_DOUBLE(nt_);
     return d_;
   }
   const std::pair<double, double> &it() const {
-    if (!double_) return CGAL::to_interval(nt_);
-    return CGAL::to_interval(d_);
+    if (!double_) return CGAL_POLYNOMIAL_TO_INTERVAL(nt_);
+    return std::pair<double,double>(d_, d_);
   }
   This operator-() const {
     if (double_){
@@ -150,14 +150,14 @@ public:
       return This(NT(.5)*(a.nt() + b.nt()));
     }
   }
-  double to_double() const {
+  double compute_double() const {
     return d();
   }
-  std::pair<double, double> to_interval() const {
+  std::pair<double, double> compute_interval() const {
     if (double_){
       return std::pair<double, double>(d(), d());
     } else {
-      return CGAL::to_interval(nt());
+      return CGAL_POLYNOMIAL_TO_INTERVAL(nt());
     }
   }
   void write(std::ostream &out) const {
@@ -257,7 +257,7 @@ double to_double(const Filtered_number<NT> &a) {
 
 template <class NT>
 std::pair<double, double> to_interval(const Filtered_number<NT> &a) {
-  return a.to_interval();
+  return a.compute_interval();
 }
 
 template <class NT>
@@ -271,7 +271,7 @@ CGAL_POLYNOMIAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 template <class NT>
 double to_double(const CGAL_POLYNOMIAL_NS::Filtered_number<NT> &a) {
-  return a.to_double();
+  return a.compute_double();
 }
 
 template <class NT>

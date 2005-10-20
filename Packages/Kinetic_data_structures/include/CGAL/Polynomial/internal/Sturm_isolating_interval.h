@@ -229,9 +229,9 @@ public:
     return This(-ub(), -lb());
   }
 
-  std::pair<double, double> to_interval() const {
+  std::pair<double, double> compute_interval() const {
     std::pair<double, double> lbi =
-      CGAL::to_interval(lb()), ubi= CGAL::to_interval(ub());
+      CGAL_POLYNOMIAL_TO_INTERVAL(lb()), ubi= CGAL_POLYNOMIAL_TO_INTERVAL(ub());
 
     return std::pair<double, double>(lbi.first, ubi.second);
   }
@@ -288,7 +288,7 @@ OStream &operator<<(OStream &out, const Sturm_isolating_interval<NT> &ii){
 
 template <class NT>
 std::pair<double, double> to_interval(const Sturm_isolating_interval<NT> &ii){
-  return ii.to_interval();
+  return ii.compute_interval();
 }
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
@@ -298,7 +298,7 @@ template <class NT>
 std::pair<double, double>
 to_interval(const CGAL_POLYNOMIAL_NS::internal::Sturm_isolating_interval<NT> &ii)
 {
-  return ii.to_interval();
+  return ii.compute_interval();
 }
 CGAL_END_NAMESPACE
 

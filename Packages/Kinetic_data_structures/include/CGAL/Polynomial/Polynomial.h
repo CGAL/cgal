@@ -37,10 +37,11 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 */
 template <class NTT>
 class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT> {
-  typedef internal::Polynomial_impl<Polynomial<NTT>, NTT>  Parent;
   typedef Polynomial<NTT> This;
+  typedef internal::Polynomial_impl<This, NTT>  Parent;
 
-  friend class internal::Polynomial_impl<Polynomial<NTT>, NTT>; // NOT SO CLEAN
+
+  friend class  internal::template Polynomial_impl<This, NTT>; // NOT SO CLEAN
 
 #ifndef NDEBUG
   typedef std::string Approximation;

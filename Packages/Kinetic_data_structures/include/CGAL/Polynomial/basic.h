@@ -84,6 +84,7 @@ typedef ::CGAL::Sqrt_field_tag       Sqrt_field_tag;
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 
+#define CGAL_POLYNOMIAL_TO_DOUBLE(d) CGAL::to_double(d)
 
 
 

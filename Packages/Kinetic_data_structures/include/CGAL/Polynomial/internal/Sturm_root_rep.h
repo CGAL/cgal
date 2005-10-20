@@ -841,7 +841,7 @@ public:
   //======================
   // CONVERTOR TO double
   //======================
-  double to_double(double acc = 1e-10) const
+  double compute_double(double acc = 1e-10) const
   {
     if ( idx == -1 ) {
       return DBL_MAX * DBL_MAX;
@@ -852,7 +852,7 @@ public:
     }
 
     if ( is_exact() ) {
-      return CGAL::to_double(lower_bound());
+      return CGAL_POLYNOMIAL_TO_DOUBLE(lower_bound());
     }
 
     Exact_nt xacc(acc);
@@ -876,20 +876,20 @@ public:
     }
 #endif
       
-    return CGAL::to_double( lower_bound() );
+    return CGAL_POLYNOMIAL_TO_DOUBLE( lower_bound() );
   }
 
   //========================
   // CONVERTOR TO interval
   //========================
-  std::pair<double,double> to_interval() const
+  std::pair<double,double> compute_interval() const
   {
-    to_double();
+    compute_double();
 
     std::pair<double,double> i_low =
-      CGAL::to_interval(ivl.lower_bound());
+      CGAL_POLYNOMIAL_TO_INTERVAL(ivl.lower_bound());
     std::pair<double,double> i_high =
-      CGAL::to_interval(ivl.upper_bound());
+      CGAL_POLYNOMIAL_TO_INTERVAL(ivl.upper_bound());
 
     return std::pair<double,double>(i_low.first, i_high.second);
   }
@@ -908,7 +908,7 @@ public:
       os << "{" << ivl << ", " << idx << "}";
     }
     Self copy = *this;
-    os << " = " << copy.to_double();
+    os << " = " << copy.compute_double();
     return os;
   }
 
@@ -942,14 +942,14 @@ template<class S, class I>
 double
 to_double(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
 {
-  return r.to_double();
+  return r.compute_double();
 }
 
 template<class S, class I>
 std::pair<double,double>
 to_interval(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
 {
-  return r.to_interval();
+  return r.compute_interval();
 }
 
 

@@ -1001,9 +1001,9 @@ protected:
     typedef typename Interval::NT INT;
 
     std::pair<double,double> ilower =
-      CGAL::to_interval(lower.lower_bound());
+      CGAL_POLYNOMIAL_TO_INTERVAL(lower.lower_bound());
     std::pair<double,double> iupper =
-      CGAL::to_interval(upper.upper_bound());
+      CGAL_POLYNOMIAL_TO_INTERVAL(upper.upper_bound());
 
 
     double low = std::min(ilower.first, iupper.first);

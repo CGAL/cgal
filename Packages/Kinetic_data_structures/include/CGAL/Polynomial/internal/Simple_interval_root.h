@@ -332,15 +332,15 @@ protected:
     double oaw;//= interval().approximate_width();
     while (interval().approximate_relative_width() > accuracy){
       oaw= interval().approximate_width();
-      std::pair<double,double> before= to_interval(interval());
+      std::pair<double,double> before= CGAL_POLYNOMIAL_TO_INTERVAL(interval());
       refine();
-      std::pair<double,double> after= to_interval(interval());
+      std::pair<double,double> after= CGAL_POLYNOMIAL_TO_INTERVAL(interval());
       CGAL_assertion(oaw != interval().approximate_width());
       /*if (oaw == interval().approximate_width()){
 	break;
 	}*/
     }
-    return to_interval(interval());
+    return CGAL_POLYNOMIAL_TO_INTERVAL(interval());
   }
 
   double compute_double(double accuracy) const {

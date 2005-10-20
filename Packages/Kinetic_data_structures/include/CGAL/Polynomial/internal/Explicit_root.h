@@ -43,7 +43,7 @@ public:
   //! Set it to an invalid value
   Explicit_root(): value_(0), is_inf_(true){
 #ifndef NDEBUG
-    approximation_=to_double();
+    approximation_=compute_double();
 #endif
   }
 
@@ -58,12 +58,12 @@ public:
       value_= NT(v);
     }
 #ifndef NDEBUG
-    approximation_=to_double();
+    approximation_=compute_double();
 #endif
   }
 
   //! Should be protected
-  double to_double() const {
+  double compute_double() const {
     if (is_inf_) {
       if (CGAL::sign(value_)==CGAL::POSITIVE){
 	return infinity<double>();
@@ -71,7 +71,7 @@ public:
 	return -infinity<double>();
       }
     }
-    return ::CGAL::to_double(value_);
+    return CGAL_POLYNOMIAL_TO_DOUBLE(value_);
   }
 
   bool is_even_multiplicity() const {
@@ -80,11 +80,11 @@ public:
 
  
   //! Do not use, should be protected
-  std::pair<double, double> to_interval() const {
+  std::pair<double, double> compute_interval() const {
     if (is_inf_){
-      return std::pair<double, double>(to_double(), to_double());
+      return std::pair<double, double>(compute_double(), compute_double());
     }
-    return ::CGAL::to_interval(value_);
+    return CGAL_POLYNOMIAL_TO_INTERVAL(value_);
   }
 
   typedef NT Representation;
@@ -170,7 +170,7 @@ protected:
   
   Explicit_root(const NT &nt, bool isinf): value_(nt), is_inf_(isinf){
 #ifndef NDEBUG
-    approximation_=to_double();
+    approximation_=compute_double();
 #endif
   }
 
@@ -182,96 +182,7 @@ protected:
 #endif
 };
 
-#if 0
 
-template <>
-class Explicit_root<double>  {
-  typedef Explicit_root This;
-public:
-
- 
-  Explicit_root(): value_(infinity_rep()){}
-
-  template <class NT>
-  Explicit_root(const NT &v){
-    value_= CGAL::to_double(v);
-  }
-
-  double to_double() const {
-    return value_;
-  }
-  
-  typedef double Representation;
-  const Representation &representation() const {
-    return value_;
-  }
-
-  std::pair<double, double> to_interval() const {
-    return std::pair<double,double>(value_,value_);
-  }
- 
-  void write(std::ostream &out) const {
-    out << value_;
-  }
-
-  bool is_even_multiplicity() const {
-    return false;
-  }
-
-  /*
-  std::pair<double, double> isolating_interval() const {
-    return std::pair<double, double>(value_, value_);
-    }*/
-
-  bool operator<(const This &o) const {
-    return value_ < o.value_;
-  }
-  bool operator>(const This &o) const {
-    return value_ > o.value_;
-  }
-  bool operator<=(const This &o) const {
-    return value_ <= o.value_;
-  }
-  bool operator>=(const This &o) const {
-    return value_ >= o.value_;
-  }
-  bool operator==(const This &o) const {
-    return value_ == o.value_;
-  }
-  bool operator!=(const This &o) const {
-    return value_ != o.value_;
-  }
-  This operator-() const {
-    return This(-value_);;
-  }
-
-  int multiplicity() const {
-    if (*this == infinity() || *this == -infinity()) return -1;
-    else return 1;
-  }
-
-  /*void write_type() const {
-    std::cout << "double" << std::endl;
-    }*/
-  double to_rational() const {
-    return value_;
-  }
-  bool is_rational() const {
-    return true;
-  }
-  static double infinity_rep(){
-    if (std::numeric_limits<double>::has_infinity){
-      return (std::numeric_limits<double>::infinity());
-    } else return (std::numeric_limits<double>::max());
-  }
-protected:
-  double value_;
-
-  
-};
-
-
-#endif
 
 template <class NT>
 std::ostream &operator<<(std::ostream &out, const Explicit_root<NT> &r){
@@ -303,14 +214,14 @@ CGAL_BEGIN_NAMESPACE
 
 template <class NT>
 double to_double(const CGAL_POLYNOMIAL_NS::Explicit_root<NT> &r){
-  return r.to_double();
+  return r.compute_double();
 }
 
 
 
 template <class NT>
 std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::Explicit_root<NT> &r){
-  return r.to_interval();
+  return r.compute_interval();
 }
 
 
