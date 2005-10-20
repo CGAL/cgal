@@ -318,6 +318,8 @@ public: // methods
     CGAL_postcondition( i4 != i1 && i4 != i2 );
   }
 
+  /** This fonction verifies that every vertex of the umbrella is found
+      twice (which means almost that the umbrella is a circle). */
   static
   bool check_umbrella(Umbrella& umbrella)
   {
@@ -338,7 +340,6 @@ public: // methods
 
     return true;
   } // end check_umbrella
-
 
   void init()
   {
@@ -440,6 +441,7 @@ public: // methods
 			 make_transform_iterator(incident_vertices.end(),
 						 distance_from_v)));
 
+    // filling 'pre_star' and 'ratios' with initial values
     for(typename std::vector<Cell_handle>::const_iterator cit = 
           incident_cells.begin();
         cit != incident_cells.end();
@@ -461,6 +463,8 @@ public: // methods
     details::Map_value_of<Pre_star,
       std::map<Facet, double> > value_of_ratios(ratios);
 
+    CGAL_assertion_code(Pre_star best_pre_star = pre_star;)
+
 //     std::cerr << "worst_radius_ratio=" << worst_radius_ratio << std::endl;
 //     std::cerr << "=" << 
 // 	  *(std::min_element(make_transform_iterator(pre_star.begin(),
@@ -473,7 +477,10 @@ public: // methods
 
     std::pair<double, Facet> facet = *(pre_star.front());
     Facet link = facet.second;
+
+    // first critial radius
     double critical_r = facet.first;
+
 //     pre_star.pop_front();
 
 //     std::cerr << "v=" << &*v << std::endl;
@@ -490,7 +497,7 @@ public: // methods
 
         // link.first n'est pas contrainte donc on est dans le domaine.
         CGAL_assertion( !tr.is_infinite(link.first) );
-	CGAL_assertion( link.first->is_in_domain() );
+        //        CGAL_assertion( link.first->is_in_domain() );
 	CGAL_assertion( ! link.first->
 			is_facet_on_surface(link.second) );
  
@@ -501,7 +508,7 @@ public: // methods
         CGAL_assertion( ! opposite_cell->
                             is_facet_on_surface(opposite_index) );
 	CGAL_assertion( !tr.is_infinite(opposite_cell) );
-        //	CGAL_assertion(	opposite_cell->is_in_domain() );
+        //        CGAL_assertion(	opposite_cell->is_in_domain() );
  
 	
 	int number_of_erased_facets = 0;
@@ -510,6 +517,11 @@ public: // methods
 
         for(int i = 0; i<4 ; ++i)
           {
+            std::cerr << critical_r << " " 
+                      << power_product(v->point(),
+                                       opposite_cell->vertex(i)->point())
+                      << " " << sq_d_v << std::endl;
+            
             CGAL_assertion(
 	      critical_r < power_product(v->point(),
 					 opposite_cell->vertex(i)->point())
@@ -580,6 +592,8 @@ public: // methods
 // 	std::cerr << "min_of_pre_star=" << min_of_pre_star << std::endl;
         if( min_of_pre_star > worst_radius_ratio )
 	  {
+            CGAL_assertion_code(best_pre_star = pre_star;)
+
 	    worst_radius_ratio = min_of_pre_star;
 	    if( !pre_star.empty() )
 	      best_weight = (critical_r + pre_star.front()->first) / 2;
@@ -614,18 +628,17 @@ public: // methods
 
       std::vector<Cell_handle> deleted_cells;
       std::vector<Facet> internal_facets;
+      std::vector<Facet> boundary_facets;
       deleted_cells.reserve(64);
       internal_facets.reserve(64);
-      Facet one_boundary_facet;
+      boundary_facets.reserve(64); // BEURK
       
       tr.find_conflicts(wp,
 			v->cell(),
-			Oneset_iterator<Facet>(one_boundary_facet) ,
+                        std::back_inserter(boundary_facets),
 			std::back_inserter(deleted_cells),
 			std::back_inserter(internal_facets));
      
-      
-
       // delete cells from the list of bad cells
       for(typename std::vector<Cell_handle>::iterator
 	    cit = deleted_cells.begin(); 
@@ -635,14 +648,14 @@ public: // methods
       
 
       const Facet one_boundary_facet_from_outside =
-	tr.mirror_facet(one_boundary_facet);
+	tr.mirror_facet(boundary_facets[0]);
       // Here, one_boundary_facet_from_outside is a facet on the
       // boundary of the conflicts zone, seen from outside the
       // conflicts zone.
 
-      const bool seed_domain_marker = one_boundary_facet.first->is_in_domain();
+      const bool seed_domain_marker = boundary_facets[0].first->is_in_domain();
 
-      CGAL_assertion(!tr.is_infinite(one_boundary_facet.first) ||
+      CGAL_assertion(!tr.is_infinite(boundary_facets[0].first) ||
 		     !seed_domain_marker);
       
 
@@ -651,27 +664,40 @@ public: // methods
       {
 	typename std::vector<Facet>::iterator ifit = internal_facets.begin();
 	for ( ; ifit != internal_facets.end() ; ++ifit) {
-	  if ( ifit->first->is_facet_on_surface(ifit->second) ) {
-	    CGAL_assertion_code(
-              if(!tr.has_vertex(*ifit,v))
-		{
-		  std::cerr << "Error: " << v->point() << std::endl;
-		  CGAL_assertion(false );
-		}
-	    )
-	    int iv;
-	    tr.has_vertex(*ifit,v, iv);
-	    int i1,i2;
-	    find_the_two_other_indices(ifit->second, iv, i1, i2);
-	    Vertex_handle v1 = ifit->first->vertex(i1);
-	    Vertex_handle v2 = ifit->first->vertex(i2);
-	    order_two_handles ( v1, v2 );
-	    CGAL_assertion( v1 < v2 );
-	    umbrella.insert(std::make_pair(v1, v2));
+          const int index = ifit->second;
+          const Cell_handle& cell = ifit->first;
+	  if ( cell->is_facet_on_surface(index) ) {
+            // for each edges of all marked internal facets
+            for(int i1 = 0; i1 < 4; ++i1)
+              for(int i2 = i1 + 1; i2 < 4; ++i2)
+                if( i1 != index && i2 != index )
+                {
+                  Vertex_handle v1 = cell->vertex(i1);
+                  Vertex_handle v2 = cell->vertex(i2);
+                  order_two_handles ( v1, v2 );
+                  CGAL_assertion( v1 < v2 );
+                  const std::pair<Vertex_handle, Vertex_handle> edge = 
+                    std::make_pair(v1, v2);
+                  typename Umbrella::iterator it = umbrella.find(edge);
+                  if( it != umbrella.end() )
+                    umbrella.erase(it);
+                  else
+                    // @TODO: remark: umbrella.find()/umbrella.insert() can
+                    // be improved using lower_bound()!
+                    // See the trick in include/CGAL/Double_map.h
+                    umbrella.insert(edge);
+                }
+            // remove already present edges, so that only external
+            // edges of the umbrella are in umbrella at the end
 	  }
 	}
       }
+
+      // The next two assertions mean
+      //    index == 0 <==> umbrella.empty()
       CGAL_assertion( index > 0 || umbrella.empty());
+      CGAL_assertion( !umbrella.empty() || index == 0 );
+
       //DEBUG
 //       std::cerr << umbrella.size();
 
