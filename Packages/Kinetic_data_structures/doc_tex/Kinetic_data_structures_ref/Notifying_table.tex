@@ -19,22 +19,6 @@
 \ccDefinition
   
 
-This container holds a set of objects of a particular type. It creates
-notifications using the standard \ccc{Multi_listener} interface when a
-primitive changes or is added or deleted. Objects which are listening
-for events can then ask which primitives changed.
-
-For speed, modifications to the \ccRefName\ can be grouped into
-editing sessions. A session is begun by calling
-\ccc{set_editing(true)} and ended by calling \ccc{set_editing(false)}.
-There is one type of notification, namely, \ccc{Listener::IS_EDITING}
-which occurs when the editing mode is set to false, signaling that a
-batch of changes is completed.
-
-As an convenience, the change methods can be called without setting
-the editing state to true, this acts as if it were set to true for
-that one function call.
-
 MovingObjects are stored in a vector. This means that access is constant
 time, but storage is not generally freed. The only way to be sure is
 to remove all reference counts for the table or to call \ccc{clear()}.
@@ -44,67 +28,9 @@ to remove all reference counts for the table or to call \ccc{clear()}.
 
 \ccIsModel
 
-MovingObjectTable
-
-\ccTypes
-
-\ccNestedType{Key}{A key identifying an object in the table.}
-
-\ccNestedType{Data}{The type being stored in the table.}
-
-\ccNestedType{Listener}{The base class to derive from for listening for runtime events.}
-
-The following types are iterators. Each type, \ccc{Foo_iterator} has two corresponding methods \ccc{foo_begin} and \ccc{foo_end} which allow you to iterate through the objects in the set \ccc{Foo}.
-
-\ccNestedType{Keys_iterator}{An iterator through all the valid keys in the table.}
-
-\ccNestedType{Set_iterator}{An iterator through all the objects which have been changed in the last editing session.}
-
-\ccNestedType{Inserted_iterator}{An iterator through all the objects which were added in the last editing session.}
-
-\ccNestedType{Erased_iterator}{An iterator through all the objects which were deleted in the last editing session.}
-
-\ccCreation
-\ccCreationVariable{mot}  %% choose variable name
-
-\ccConstructor{Moving_object_table();}{default constructor.}
-
-\ccOperations
-
-\ccMethod{Moving_object operator[](Key key) const;}{Access the object referenced by the key.}
-
-\ccMethod{Moving_object object(Key key) const;}{Access the object referencd by the key.}
-
-\ccMethod{void set_is_editing(bool is_editing);}{Set the editing state of
-  the object. A notification is sent when the editing state is set to
-  false after it has been true, i.e. the editing session is finished.
-  This allows changes to be batched together.}
-
-\ccMethod{bool is_editing() const;}{Access the editing state.}
-
-\ccMethod{void set(Key key, Moving_object object);}{This method changes
-  the motion of one moving object.  The position at the current time
-  should not be different from the previous current position. However,
-  at the moment I do not check this as there is no reference to time
-  in the \ccRefName.
-    If \ccc{is_editing()} is not true, then it is as if the calls \ccc{set_editing(true)}, \ccc{set_object(key, value)} and finally \ccc{set_editing(false)} were made. If it is true, then no notifications are created.}
-
-  \ccMethod{Key insert(Moving_object ob);}{Insert a new object into the
-    table and return a \ccc{Key} which can be used to refer to it. See
-    \ccc{set_object} for a description of editing modes.}
+NotifyingTable
 
 
- \ccMethod{void erase(Key key);}{ Delete an object from the
-   table. The object with Key key must already be in the table. This
-   does not necessarily decrease the amount of storage used at all. In
-   fact, it is unlikely to do so.  See \ccc{set_object()} for an
-   explainating of how the editing modes are used.  }
-
-\ccMethod{void clear();}{Remove all objects from the table and free all storage.}
-
-\ccSeeAlso
-
-\ccc{Multi_listener}.
 
 
 \end{ccRefClass}

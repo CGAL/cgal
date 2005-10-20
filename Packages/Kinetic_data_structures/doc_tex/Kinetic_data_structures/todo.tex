@@ -4,17 +4,51 @@
 
 \begin{itemize}
 
-\item I like the idea of changing MovingObjectTable to ActiveObjectTable. Not sure if Notifying\_table should follow suit. 
-
-\item Regular triangulation 3 is not entirely working.
-
-\item I reorganized out of existance my 3D demos.
+\item The name NotifyingTable is not very good. One possibility is
+ActiveObjectTable.
 
 \item The other trajectory modification events need to be documented
+(Set\_moving\_point)
 
-\item There is no testing of the Delaunay 3 Visitor class. 
+\item There is no 2d regular triangulation. This is not too much work,
+but a bit (since I will need to refactor my 2d delaunay)
 
-\item The architeture figure goes to the end for some reason. 
+\item the FunctionKernel is not documented much (the options are never
+explained)
+
+\item The is some confusion about where a KDS should get a
+FunctionKernel. Currently they mostly get them from the Simulator
+(which directly provides the RootStack). I am not sure that this is
+the right solution. The better solution may just be to have the
+FunctionKernel (and RootStack) be fetched from the SimulationTraits.
+
+\item I use TNT which is currently put in a include/TNT (parallel to
+include/CGAL). Exposing it like this is a bit problematic. I could
+modify the headers to nest TNT in the CGAL namespace and hide it in
+include/CGAL.
+
+\item The FunctionKernel numeric solver I implemented is not as good
+as the one provided by GSL which is shipped on most linux boxes. It is
+GPL, so the user does have to make a decision about using it. One
+option would be to have a set of headers GSL\_numeric\_solver,
+GSL\_inexact\_simulation\_traits, etc. which the user could choose to use
+and to pull all the GSL stuff into the headers. I don't think we can
+keep it in the library and still have the dynamic libraries link.
+
+\item The 3d visualizion uses Coin. It is currently all in headers so
+there is really no problem with the user only using it if they have
+coin. It is pretty simple to port it to any other 3d viewer if CGAL
+picks one.
+
+\item The whole SimulationTraits is a bit funny since it allows you to
+a) fetch a bunch of kernels and b) fetch pointers to the
+movingpointtable and simulator. I don't see an obvious way to keep its
+simplicity and have it make more sense.
+
+\item the bib entry has not been added yet
+
+\item 
+
 
 \end{itemize}
 

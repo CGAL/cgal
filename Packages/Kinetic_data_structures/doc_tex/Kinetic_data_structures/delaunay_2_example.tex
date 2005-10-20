@@ -24,7 +24,7 @@ Delaunay triangulation. The triangulation calls methods on the visitor
 class whenever things happen. In the case, the visitor,
 \ccc{CGAL::KDS::Delaunay_triangulation_event_log_visitor_2} simply makes a record of each event that occurs.
 
-Once the traits class and kinetic Delaunay have been created, we need
+Once the traits class and kinetic Delaunay have been created, we need4
 to add points to the simulation. To do this, we add them directly to
 the
 \ccc{MovingObjectTable} using the \ccc{insert} method. 
@@ -42,6 +42,38 @@ bounce off the walls.
 
 For an equivalent example with a graphical interface, see
 demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.C.
+
+\begin{figure*}[htb]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_0_crop_pct} 
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_1_crop_pct}
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_2_crop_pct}
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_3_crop_pct}\\
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_4_crop_pct}
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_5_crop_pct}
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_6_crop_pct}
+\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_7_crop_pct}\\
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<center>
+<imp border=1 src="./delaunay_shot_0.crop.png" align=center alt="Frame 0">
+<imp border=1 src="./delaunay_shot_1.crop.png" align=center alt="Frame 1">
+<imp border=1 src="./delaunay_shot_2.crop.png" align=center alt="Frame 2">
+<imp border=1 src="./delaunay_shot_3.crop.png" align=center alt="Frame 3">
+<imp border=1 src="./delaunay_shot_4.crop.png" align=center alt="Frame 4">
+<imp border=1 src="./delaunay_shot_5.crop.png" align=center alt="Frame 5">
+<imp border=1 src="./delaunay_shot_6.crop.png" align=center alt="Frame 6">
+<imp border=1 src="./delaunay_shot_7.crop.png" align=center alt="Frame 7">
+<\center>
+\end{ccHtmlOnly}
+\caption{ \label{fig:delaunay_events} 
+{\em Some events from a Delaunay triangulation kinetic data structure:} Before and after the first several events in a kinetic data structure is shown. The pictures are screen shots from demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.C. }
+%\end{minipage}
+%\end{center}
+\end{figure*}
+
 
 \label{fig:delaunay_2_usage_program}
 \ccIncludeExampleCode{Kinetic_data_structures/Delaunay_triangulation_2.C}

@@ -67,7 +67,7 @@ boundary of the quadralateral containing the edge and one for the edge
 being flipped). The processing occurs via a callback from an object
 representing an event to the kinetic Delaunay data structure.
 
-If the trajectory of a moving point changes, for example it bounces
+If the trajectory of a primitive changes, for example it bounces
 off a wall, then the \ccc{NotifyingTable} notifies the kinetic Delaunay data
 structure. The kinetic Delaunay data structure then updates all the
 certificates of edges adjacent to faces containing the updated point and
@@ -106,18 +106,13 @@ The \ccc{KineticKernel} is the kinetic analog of the CGAL
 primitives, kinetic predicates acting on them and constructions from
 them. The short example in Section~\ref{sec:architecture_overview}
 uses the \ccc{KineticKernel} to compute the \ccc{in\_circle}
-certificate functions. We currently provide three models, namely
-\ccc{CGAL::KDS::Cartesian_kinetic_kernel<Polynomial_kernel>},
-\ccc{CGAL::KDS::Cartesian_lifted_kinetic_kernel<Polynomial_kernel> },
-and
-\ccc{CGAL::KDS::Filtered_cartesian_lifted_kinetic_kernel<Filtered_polynomial_kernel>}
-which define two and three dimensional moving weighted and unweighted
+certificate functions. We currently provide one model, namely
+\ccc{CGAL::KDS::Cartesian_kinetic_kernel<FunctionKernel>}, which
+defines two and three dimensional moving weighted and unweighted
 points and the predicates necessary for Delaunay triangulations and
-regular triangulations. The lifted version refers to manipulting
-points which have had the Delaunay lifting map applied ($(x,y) \mapsto
-(x,y,x^2+y^2$) directly.  A \ccc{Function} from the
-\ccc{FunctionKernel} plays the role of the \ccc{RT} in static CGAL
-kernels and is the storage type for coordinates of kinetic
+regular triangulations. The kernel provides the type \ccc{Function}
+which plays the role of the \ccc{RT} in static
+CGAL kernels and is the storage type for coordinates of kinetic
 primitives. Algorithms request predicate functors from the kernel and
 then apply these functors to kinetic primitives.
 
@@ -133,26 +128,19 @@ is discussed in the next section.
 \label{sec:instantaneous_kernel}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The \ccc{InsantaneousKernel} allows other CGAL algorithms and data
-structures to be applied to snapshots of a moving geometric data
-set. Operations on snapshots can be used to initialize, test and
-modify kinetic data structures by acting on ``snapshots'' of the
-changing data structure. A model of the \ccc{InstantaneousKernel}
-concept is a model of the CGAL \ccc{Kernel} which allows existing CGAL
-algorithms to be used on such snapshots.  For example, as mentioned in
-Section~\ref{sec:architecture_overview}, with the
-\ccc{InstantaneousKernel} we can use the CGAL Delaunay triangulation
-package to initialize a kinetic Delaunay data structure. We can also
-use the \ccc{InstantaneousKernel} and static Delaunay triangulation
-data structure to manage insertion of new points into and deletion of
-points from a kinetic Delaunay triangulation. The
-\ccc{InstantaneousKernel} model redefines the geometric primitives
-expected by the CGAL algorithm to be their kinetic counterparts (or,
-in practice, handles to them). When the algorithm wants to compute a
-predicate on some geometric primitives, the \ccc{InstantaneousKernel}
-first computes the static representation of the kinetic primitives,
-and then uses these to compute the static predicate. We provide two
-models, the
+The \ccc{InstantaneousKernel} allows other CGAL algorithms and data
+structures to act on snapshots of a simulation. This ability is useful
+for initializing and auditing kinietic data structures. A model of the
+\ccc{InstantaneousKernel} concept proves a model of the CGAL
+\ccc{Kernel} and works by computing the possition of each primitive in
+the snapshot before performing the calculation requested by the static
+algorithm.  For example, with the \ccc{InstantaneousKernel} we can use
+the \ccc{Delaunay_triangulation_2<Traits, Tds>} to initialize a
+kinetic Delaunay data structure and to insert new points into an
+existing triangulation. In addition, the \ccc{InstantaneousKernel} can
+be used to audit the kinetic data structure by comparing it to the
+static data structure computed for that instant in time. We provide
+two models, the
 \ccc{CGAL::KDS::Cartesian_instantaneous_kernel<NotifyingTable,
 Kernel>} and
 \ccc{CGAL::KDS::Regular_triangulation_instantaneous_traits<NotifyingTable,
@@ -161,26 +149,15 @@ Kernel>}.
 We are able to use this technique due to a couple of important
 features of the CGAL architecture. First of all, the kernel is stored
 as an object in CGAL data structures, so it can have state (for the
-\ccc{InstantaneousKernel} the important state is the current
-time). Secondly, predicates are not global functions, instead they are
-functors that the algorithm requests from the kernel. This means that
-they too, can have internal state, namely a pointer to the
-\ccc{InstantaneousKernel} and this state can be set correctly when
-they are created. Then, when an algorithm tries to compute a
-predicate, the predicate functor asks the \ccc{InstantaneousKernel} to
-convert its input (handles to kinetic geometric primitives) into
-static primitives and can then use a predicate from a static CGAL
-kernel to properly compute the predicate value.
-
-%The pointer from the \ccc{InstantaneousKernel} predicate to the \ccc{InstantaneousKernel} object is
-%unfortunate, but necessary. Some CGAL algorithms request all the
-%predicate functors they need from the kernel at initialization and
-%store those functors internally. Since a given CGAL object (i.e.\ a
-%Delaunay triangulation) must be able to be used at several snapshots
-%of time, there must be a way to easily update time for all the
-%predicates, necessitating shared data. Fortunately, predicates are not
-%copied around too much, so reference counting the shared data is not
-%expensive.
+\ccc{InstantaneousKernel} the important state is the current time, and
+the colection of trajectories). Secondly, predicates are not global
+functions, instead they are functors that the algorithm requests from
+the kernel. This means that they too, can have internal state. Then,
+when an algorithm tries to compute a predicate, the predicate functor
+asks the \ccc{InstantaneousKernel} to convert its input (handles to
+kinetic geometric primitives) into static primitives and can then use
+a predicate from a static CGAL kernel to properly compute the
+predicate value.
 
 Note that the time value used by our \ccc{InstantaneousKernel} model
 must be support arithmetic operations. Some of the models of
@@ -198,37 +175,40 @@ when the next event occurs and processing it. This is the job of the
 \ccc{Simulator}. It handles all event scheduling, descheduling and
 processing and provides objects which can be used to determine when
 certificate functions become invalid. Since events occur at the roots
-of certificate functions, the \ccc{Root} type defined by a
-\ccc{FunctionKernel} is used to represent time by the \ccc{Simulator}. In the
-example in Section~\ref{sec:architecture_overview} the kinetic
-Delaunay data structure requests that the \ccc{Simulator} determine
-when \ccc{in\_circle} certificate functions become invalid and
-schedules events with the \ccc{Simulator}. The \ccc{Simulator} also
-makes sure the appropriate callbacks to the kinetic Delaunay data
-structure are made when certificates become invalid. We provide one
-model of the \ccc{Simulator}, \ccc{CGAL::KDS::Simulator<FunctionKernel,
-EventQueue>}.
+of certificate functions (when the certificate function changes sign),
+the \ccc{Root} type defined by a \ccc{FunctionKernel} is used to
+represent time by the \ccc{Simulator}. In the example in
+Section~\ref{sec:architecture_overview} the kinetic Delaunay data
+structure requests that the \ccc{Simulator} determine when
+\ccc{in\_circle} certificate functions become invalid and schedules an
+\ccc{Event} with the \ccc{Simulator}. When the certificate fails, the
+\ccc{Simulator} calls the \ccc{Event::process(Time)} method on the
+\ccc{Event}. The framework provides one model of the \ccc{Simulator},
+\ccc{CGAL::KDS::Simulator<FunctionKernel, EventQueue>}.
 
-Note that the \ccc{Simulator} is a object which is accessed by many
-other objects at run time (for example, any running kinetic data
-structures, the graphical interface). As a result, all axess to it is
-through a reference counted pointer, \ccc{Simulator::Pointer}. This
-pointer can be safetly stored.
+Note that the \ccc{CGAL::KDS::Simulator<FunctionKernel, EventQueue>}
+is a object which is accessed by many other objects at run time (for
+example, any running kinetic data structures, the graphical
+interface). As a result, all access to it is through a reference
+counted pointer, \ccc{CGAL::KDS::Simulator<FunctionKernel,
+EventQueue>::Pointer}. This pointer can be safely stored. The
+\ccc{Simulator} is created by the \ccc{SimulationTraits} and accessed
+through the traits.
 
 Our model of the \ccc{Simulator} is parameterized by a
 \ccc{FunctionKernel} and a \ccc{EventQueue}. The former allows the
-root stack (which holds the roots of a polygon) and root
-type to be changed, so numeric, exact or filtered exact computation
-models can be used. The priority queue is by default a queue which
-uses an interface with virtual functions to access the events,
-allowing different kinetic data structures to use a single queue. It
-can be replaced by a queue specialized for a particular kinetic data
-structure if desired.
+root stack (which allows enumeration of the roots of a polygon) and
+root type to be changed, so numeric, exact or filtered exact
+computation models can be used. The priority queue is by default a
+queue which uses an interface with virtual functions to access the
+events, allowing different kinetic data structures to use a single
+queue. It can be replaced by a queue specialized for a particular
+kinetic data structure if desired.
 
-The \ccc{Root} concept is quite limited in which operations it supports---it
-effectively only supports comparisons.  Roots cannot be used
-in computations or as the time value in an \ccc{InstantaneousKernel}. As a result, we take
-a somewhat more topological view of time. 
+The \ccc{Root} concept is quite limited in which operations it
+supports---it effectively only supports comparisons.  Roots cannot be
+used in computations or as the time value in an
+\ccc{InstantaneousKernel}. 
 
 Two times, $t_0$ and $t_1$, are considered \textit{topologically
 equivalent} if no roots occur in the interval $[t_0,t_1]$. The lack of
@@ -245,7 +225,7 @@ easily represented. This flexibility is used extensively in the \ccc{Simulator}.
 
 When such a $t_r$ exists, the kinetic data structures are all
 guaranteed to be valid (and the corresponding static data structure
-non-degenerate) and so the datastructure can be easily audited. The \ccc{Simulator} can
+non-degenerate) and so the data structure can be easily audited. The \ccc{Simulator} can
 notify the kinetic data structures when this occurs and they can then
 use an \ccc{InstantaneousKernel} to perform self-verification.
 
@@ -269,28 +249,21 @@ being solved is zero at the current time. If it is zero, and negative
 immediately afterwords, then the certificate fails immediately. This
 can be checked in a similar manner.
 
-Even roots of functions (where the function touches zero but does
-not become negative) can generally be discarded without any work being
-done since they represent a momentary degeneracy. However, at an even
-root, the kinetic data structure is degenerate, and as a result is not
-easily verifiable. 
-
-Since, kinetic data structures are generally written only to handle odd
-roots, when verification is being performed as above, each even root
-must be divided into two odd roots before being returned. These cases
-are handled properly by our \ccc{Simulator} and solvers.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Coordinating many kinetic data structures: the NotifyingTable.}
 \label{sec:moving_object_table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-A framework for kinetic data structures needs to have support for
-easily updating the trajectories of kinetic primitives, such as when a
-collision occurs. This requirement is in contrast to static geometric
-data structures where the geometric primitives never change and their
-representations are often stored internally to the data structure. We
-provide one model, \ccc{CGAL::KDS::Notifying_table<Object>}.
+A framework for kinetic data structures needs to support updating the
+trajectories of kinetic primitives, such as when a collision occurs,
+and notification of the kinetic data structure of such changes. This
+requirement is in contrast to static geometric data structures where
+the geometric primitives never change and their representations are
+often stored internally to the data structure. As a result, primitives
+are stored in a centralized table and the data structures stores
+\ccc{Key}s instead of the actual primitive. We provide one model of
+such a table, \ccc{CGAL::KDS::Notifying_table<Object>}.
 
 In the simple example presented in
 Section~\ref{sec:architecture_overview}, the kinetic Delaunay
@@ -299,28 +272,24 @@ initialization. Later, when the simulation is running, the
 \ccc{NotifyingTable} notifies the kinetic Delaunay data structure whenever a point's
 trajectory changes.
 
-The \ccc{NotifyingTable} allows multiple kinetic data structures to
-access a set of kinetic geometric primitives of a particular type and
-alerts the kinetic data structures when a new primitive is added, one
-is removed, or a primitive's trajectory changes. Our model of the
-\ccc{NotifyingTable}, \ccc{Notifying_table} is actually a generic
-container that provides notification when an editing session ends (for
-efficiency, changes are batched together). There is no internal
-functionality specific to kinetic data structures or to a particular
-type of primitive. The user must specify what type of kinetic
-primitive a particular instance of the \ccc{NotifyingTable} model
-will contain through a template argument (in the architecture diagram
-Figure~\ref{fig:architecture}, a three dimensional moving point is
-used as an example). This type is exposed as the \ccc{Object} type
-shown in the figure. To access an object, a \ccc{Key} which uniquely
-identifies the object within this container and which has a type
-specific to this container type is used.
+More specifically, the \ccc{NotifyingTable} allows multiple kinetic
+data structures to access a set of kinetic geometric primitives of a
+particular type and alerts the kinetic data structures when a new
+primitive is added, one is removed, or a primitive's trajectory
+changes. The user must specify what type of kinetic primitive a
+particular instance of the \ccc{NotifyingTable} model will contain
+through a template argument. This type is exposed as the \ccc{Data}
+type shown in the figure. To access an object, a \ccc{Key} which
+uniquely identifies the object within this container and which has a
+type specific to this container type is used.
 
 The provided models of \ccc{SimulationTraits} each define a model of
 \ccc{NotifyingTable} containing points of appropriate
-dimensionality. Like the \ccc{Simulator} they \ccc{NotifyingTable}
-models are explicitly shared and accessed through reference counted
-pointers.
+dimensionality. This type is called
+\ccc{SimulationTraits::Moving_point_table} and accessed through
+\ccc{SimulationTraits::moving_point_table_pointer()}. Like the
+\ccc{Simulator} they \ccc{NotifyingTable} models are explicitly shared
+and accessed through reference counted pointers.
 
 The \ccc{NotifyingTable} uses a notification system which will be
 briefly explained in Section~\ref{sec:misc} to notify interested
@@ -339,7 +308,7 @@ once). The user can easily add other policies as needed.
 The \ccc{NotifyingTabke} model provided will not meet the needs of
 all users as there are many more specialized scenarios where a more
 optimized handling of updates will be needed. The general structure of
-the \ccc{NotifyingTabke} model can be extended to handle many such
+the \ccc{NotifyingTable} model can be extended to handle many such
 cases. For example, if moving segments are used, then some kinetic
 data structures will want to access each segment as an object, where
 as others will only need to access the individual endpoints. This extra
@@ -348,7 +317,7 @@ based) kinetic data structures by adding methods to return modified
 polygons in addition to those which return changed points.
 
 When trajectory changes happen at rational time values, the
-\ccc{NotifyingTabke} can check that the trajectories are
+\ccc{NotifyingTable} can check that the trajectories are
 $C^0$-continuous. Unfortunately, the situation is much more
 complicated for changes which occur at roots. In practice, motions can
 be rounded off to nearby rational values without problem.
