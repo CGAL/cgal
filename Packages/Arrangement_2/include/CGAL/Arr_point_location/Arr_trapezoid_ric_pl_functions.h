@@ -152,7 +152,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up));
   }
 
-  Halfedge_const_handle h=cv.get_parent();
+  Halfedge_const_handle h = cv.get_parent();
 
   switch(td_lt)
   {
@@ -197,17 +197,23 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
 }
 
 //-----------------------------------------------------------------------------
-// In vertical ray shoot, when the closest halfedge is found (or unbounded face)
-// we check the isolated vertices inside the face to check whether there
+// In vertical ray shoot, when the closest halfedge is found (or unbounded
+// face) we check the isolated vertices inside the face to check whether there
 // is an isolated vertex right above/below the query point.
 // 
 template <class Arrangement>
-Object Arr_trapezoid_ric_point_location<Arrangement>
-::_check_isolated_for_vertical_ray_shoot(Halfedge_const_handle &halfedge_found, 
-                                         const Point_2& p, 
-                                         bool shoot_up) const
+Object Arr_trapezoid_ric_point_location<Arrangement>::
+_check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found, 
+                                        const Point_2& p, 
+                                        bool shoot_up) const
 {
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
+  typename Traits_2::Compare_x_2          compare_x =
+                this->arrangement()->get_traits()->compare_x_2_object();
+  typename Traits_2::Compare_xy_2         compare_xy =
+                this->arrangement()->get_traits()->compare_xy_2_object();
+  typename Traits_2::Compare_y_at_x_2     compare_y_at_x =
+                this->arrangement()->get_traits()->compare_y_at_x_2_object();
 
   Isolated_vertices_const_iterator   iso_verts_it;
   Vertex_const_handle                closest_iso_v;
@@ -215,11 +221,14 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   const Halfedge_const_handle        invalid_he;
   Face_const_handle                  face;
 
+  // If the closest feature is a valid halfedge, take its incident face.
+  // Otherwise, take the unbounded face.
   if (halfedge_found == invalid_he)
     face = this->arrangement()->unbounded_face();
   else
     face = halfedge_found->face();
 
+  // Go over the isolated vertices in the face.
   for (iso_verts_it = face->isolated_vertices_begin();
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
@@ -238,9 +247,9 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     if (closest_iso_v == invalid_v)
     {
       // Compare the current isolated vertex with the closest halfedge.
-      if (closest_he == invalid_he ||
+      if (halfedge_found == invalid_he ||
           compare_y_at_x (iso_verts_it->point(),
-                          closest_he->curve()) == point_above_under)
+                          halfedge_found->curve()) == point_above_under)
       {
         closest_iso_v = iso_verts_it;
       }
@@ -252,18 +261,17 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     }
   }
 
+  // If we found an isolated vertex above (or under) the query point, return
+  // a handle to this vertex.
   if (closest_iso_v != invalid_v)
-  {
-    // The first object we encounter when we shoot a vertical ray from p is
-    // an isolated vertex:
     return (CGAL::make_object (closest_iso_v));
-  }
 
+  // If we are inside the unbounded face, return this face.
   if (halfedge_found == invalid_he)
     return (CGAL::make_object (face));
 
-  //else
-  return (CGAL::make_object(h));
+  // Return the halfedge lying above (or below) the query point.
+  return (CGAL::make_object (halfedge_found));
 }
 
 

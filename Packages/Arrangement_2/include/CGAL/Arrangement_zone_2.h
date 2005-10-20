@@ -89,8 +89,6 @@ protected:
   Visitor                *visitor;     // The zone visitor.
 
   Intersect_map           inter_map;   // Stores all computed intersections.
-  Curves_set              invalid_cvs; // Curves with whom the intersections
-                                       // are no longer valid.
 
   const Vertex_handle     invalid_v;   // An invalid vertex handle.
   const Halfedge_handle   invalid_he;  // An invalid halfedge handle.
@@ -253,12 +251,14 @@ private:
   /*!
    * Get the next intersection of cv with the given halfedge.
    * \param he A handle to the halfedge.
+   * \param skip_first_point Should we skip the first intersection point.
    * \return An object representing the next intersection: Intersect_point_2
    *         in case of a simple intersection point, X_monotone_curve_2 in
    *         case of an overlap, and an empty object if there is no
    *         intersection.
    */
-  CGAL::Object _compute_next_intersection (Halfedge_handle he);
+  CGAL::Object _compute_next_intersection (Halfedge_handle he,
+                                           bool skip_first_point);
 
   /*!
    * Remove the next intersection of cv with the given halfedge from the map.
@@ -275,8 +275,11 @@ private:
    * overlap_cv and intersect_he) and set the flags found_intersect and
    * found_overlap accordingly.
    * \param face A handle to the face.
+   * \param on_boundary Specifies whether the left endpoint of the curve lies
+   *                    on the face boundary.
    */
-  void _leftmost_intersection_with_face_boundary (Face_handle face);
+  void _leftmost_intersection_with_face_boundary (Face_handle face,
+                                                  bool on_boundary);
 
   /*!
    * Compute the zone of an x-monotone curve in a given arrangement face.
@@ -289,7 +292,7 @@ private:
    * \param on_boundary Specifies whether the left endpoint of the curve lies
    *                    on the face boundary.
    * \pre If on_boundary is (true) then left_he must be valid; if it is (false)
-   *      then bothe left_v anf left_he must be invalid.
+   *      then both left_v anf left_he must be invalid.
    * \return (true) if we are done with the zone-computation process;
    *         (false) if we still have a remaining portion of cv to continue
    *         with.

@@ -352,6 +352,7 @@ public:
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
       Kernel    kernel;
+
       return (kernel.compare_x_2_object()(p1, p2));
     }
   };
@@ -376,6 +377,7 @@ public:
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
       Kernel    kernel;
+
       return (kernel.compare_xy_2_object()(p1, p2));
     }
   };
@@ -469,7 +471,7 @@ public:
 
       if (! cv.is_vertical())
       {
-        // Compare p with the supporting line.
+        // Compare p with the segment's supporting line.
         return (kernel.compare_y_at_x_2_object()(p, cv.line()));
       }
       else

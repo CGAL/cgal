@@ -41,7 +41,7 @@ int main ()
   Point_2          q5 (5, 2);
   Point_2          q6 (1, 0);
 
-  trap_pl.init (arr);
+  trap_pl.attach (arr);
   vertical_ray_shooting_query (trap_pl, q4);
   vertical_ray_shooting_query (trap_pl, q5);
   vertical_ray_shooting_query (trap_pl, q6);

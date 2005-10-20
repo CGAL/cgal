@@ -193,22 +193,22 @@ public:
      */
     bool operator() (const X_monotone_curve_2& cv, const Point_2& p) const
     {
-      // Compare p to the left and right endpoints of the curve.
+      // Compare p to the left endpoint of the curve.
       Base                    tr;
-      Construct_min_vertex_2  min_vertex = tr.construct_min_vertex_2_object();
-      Construct_max_vertex_2  max_vertex = tr.construct_max_vertex_2_object();
       Compare_x_2             compare_x = tr.compare_x_2_object();
+      Comparison_result       res;
 
-      if (compare_x (p, min_vertex(cv)) == SMALLER)
-        // p is to the left of the x-range.
-        return (false);
+      res = compare_x (p, tr.construct_min_vertex_2_object() (cv));
+      
+      if (res == SMALLER)
+        return (false);         // p is to the left of the x-range.
+      else if (res == EQUAL)
+        return (true);
 
-      if (compare_x (p, max_vertex(cv)) == LARGER)
-        // p is to the right of the x-range.
-        return (false);
+      // If necessary, compare p to the right endpoint of the curve.
+      res = compare_x (p, tr.construct_max_vertex_2_object() (cv));
 
-      // p is in the x-range of cv:
-      return (true);
+      return (res != LARGER);
     }
 
     /*!

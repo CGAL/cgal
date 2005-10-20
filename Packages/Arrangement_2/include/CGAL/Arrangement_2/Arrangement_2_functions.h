@@ -1268,11 +1268,8 @@ int Arrangement_2<Traits,Dcel>::_halfedge_distance (const DHalfedge *e1,
 template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
     (const DHalfedge *prev1,
-
      const DHalfedge *prev2,
-
      const X_monotone_curve_2& cv) const
-
 {
   // Go over all halfedges of along boundary of the new face which will
   // contain prev1: As the new face is not constructed yet, this traversal
@@ -1289,7 +1286,7 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   const DHalfedge   *first = prev2->next();
   const DHalfedge   *curr = first;
   const DHalfedge   *last = prev1->next();
-  const Point_2     *p_min = &(prev2->vertex()->point());
+  const DVertex     *v_min = prev2->vertex();
   bool               prev_is_min = true;
 
   do
@@ -1309,10 +1306,11 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
     // using h1's twin and will not return to it.
     if (curr->direction() == LARGER &&
         (prev_is_min ||
-         compare_xy (curr->vertex()->point(), *p_min) != LARGER))
+         curr->vertex() == v_min ||
+         compare_xy (curr->vertex()->point(), v_min->point()) == SMALLER))
     {
       left_edge = curr;
-      p_min = &(curr->vertex()->point());
+      v_min = curr->vertex();
       prev_is_min = true;
     }
     else
@@ -1351,7 +1349,7 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   }
 
   return (traits->compare_y_at_x_right_2_object() (*cv_curr, *cv_next,
-                                                   *p_min) == LARGER);
+                                                   v_min->point()) == LARGER);
 }
 
 //-----------------------------------------------------------------------------
