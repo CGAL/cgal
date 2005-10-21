@@ -1039,6 +1039,14 @@ Packages/Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_7
 Packages/Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.png -text svneol=unset#unset
 Packages/Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.eps -text
 Packages/Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.pdf -text svneol=unset#unset
+Packages/Kinetic_data_structures/src/CGALQt/KDS_faster.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_pause.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_play.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_play_through.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_play_to.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_reverse.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_slower.xpm -text
+Packages/Kinetic_data_structures/src/CGALQt/KDS_stop.xpm -text
 Packages/Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 Packages/Manual/doc_tex/Manual/fig/a-simp.eps -text
 Packages/Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset

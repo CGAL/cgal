@@ -4,14 +4,14 @@ namespace CGAL {
   namespace KDS {
     namespace internal {
       namespace pixmaps {
-#include "play.xpm"
-#include "pause.xpm"
-#include "stop.xpm"
-#include "play_to.xpm"
-#include "play_through.xpm"
-#include "reverse.xpm"
-#include "faster.xpm"
-#include "slower.xpm"
+#include "KDS_play.xpm"
+#include "KDS_pause.xpm"
+#include "KDS_stop.xpm"
+#include "KDS_play_to.xpm"
+#include "KDS_play_through.xpm"
+#include "KDS_reverse.xpm"
+#include "KDS_faster.xpm"
+#include "KDS_slower.xpm"
       }
       char * const * const play_xpm= pixmaps::play_xpm;
       char * const * const faster_xpm= pixmaps::faster_xpm;
