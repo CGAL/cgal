@@ -1,9 +1,9 @@
-#include <CGAL/KDS/IO/internal/Qt_examiner_viewer.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_examiner_viewer.h>
 #include <qpushbutton.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <CGAL/KDS/IO/internal/pixmaps.h>
+#include <CGAL/KDS/IO/internal/KDS_pixmaps.h>
 
-#include "Qt_examiner_viewer.moc"
+#include "KDS_Qt_examiner_viewer.moc"
 
 namespace CGAL {
   namespace KDS {

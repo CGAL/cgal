@@ -20,10 +20,10 @@
 #ifndef CGAL_KDS_QT_SIMULATOR_2_H_
 #define CGAL_KDS_QT_SIMULATOR_2_H_
 #include <CGAL/KDS/basic.h>
-#include <CGAL/KDS/IO/internal/GUI_base.h>
-#include <CGAL/KDS/IO/internal/Qt_window_2.h>
-#include <CGAL/KDS/IO/internal/Qt_widget_2_core.h>
-#include <CGAL/KDS/IO/internal/Qt_timer.h>
+#include <CGAL/KDS/IO/internal/KDS_GUI_base.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_window_2.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_widget_2_core.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_timer.h>
 #include <CGAL/KDS/Ref_counted.h>
 #include <CGAL/KDS/Multi_listener.h>
 #include <set>

@@ -1,4 +1,4 @@
-#include <CGAL/KDS/IO/internal/pixmaps.h>
+#include <CGAL/KDS/IO/internal/KDS_pixmaps.h>
 
 namespace CGAL {
   namespace KDS {

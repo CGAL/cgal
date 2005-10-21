@@ -25,9 +25,9 @@
 
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/KDS/IO/internal/Qt_core.h>
-#include <CGAL/KDS/IO/internal/pixmaps.h>
-#include <CGAL/KDS/IO/internal/Qt_widget_2_core.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_core.h>
+#include <CGAL/KDS/IO/internal/KDS_pixmaps.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_widget_2_core.h>
 #include <map>
 #include <qmainwindow.h>
 #include <set>

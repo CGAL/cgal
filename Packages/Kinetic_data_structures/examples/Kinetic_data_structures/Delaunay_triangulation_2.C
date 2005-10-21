@@ -17,10 +17,6 @@ int main(int, char *[]){
 
   KDel kdel(simtr);
 
-    
-  typedef CGAL::KDS::Insert_event<
-    Simulation_traits::Moving_point_table> Insert_event;
-
   CGAL::Random rand(std::time(NULL));
   
   Simulation_traits::Function_kernel::Construct_function cf

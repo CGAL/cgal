@@ -1,6 +1,6 @@
-#include <CGAL/KDS/IO/internal/Qt_widget_2_core.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_widget_2_core.h>
 
-#include "Qt_widget_2_core.moc"
+#include "KDS_Qt_widget_2_core.moc"
 
 namespace CGAL {
   namespace KDS {

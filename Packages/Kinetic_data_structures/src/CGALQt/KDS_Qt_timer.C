@@ -1,6 +1,6 @@
-#include <CGAL/KDS/IO/internal/Qt_timer.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_timer.h>
 
-#include "Qt_timer.moc"
+#include "KDS_Qt_timer.moc"
 
 namespace CGAL {
   namespace KDS {

@@ -51,7 +51,9 @@ public:
   }
   //! Return a pointer to the value.
   W* operator->() const {
-    return &W(t_);
+    static W ret;
+    ret=W(t_);
+    return &ret;
   }
   bool operator==(const This &o) const {
     return t_ == o.t_;

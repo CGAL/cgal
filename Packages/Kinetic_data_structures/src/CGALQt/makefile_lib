@@ -20,33 +20,26 @@ CXXFLAGS = $(CGAL_LIB_CXXFLAGS) -I../../include
 #---------------------------------------------------------------------#
 # Object files
 #---------------------------------------------------------------------#
+-include kds.makefile
+-include fake.makefile
 
-CGAL_OBJECTS = \
-pixmaps$(OBJ_EXT)\
-Qt_examiner_viewer$(OBJ_EXT)\
-Qt_widget_2_core$(OBJ_EXT)\
-Qt_core$(OBJ_EXT)\
-Qt_timer$(OBJ_EXT)\
-Qt_window_2$(OBJ_EXT)
+CGAL_OBJECTS = $(CGAL_KDS_OBJECTS) dummy$(OBJ_EXT)
 
-MOC_FILES = \
-Qt_core.moc Qt_timer.moc Qt_window_2.moc Qt_examiner_viewer.moc Qt_widget_2_core.moc
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-lib: moc lib_no_install
+lib: lib_no_install
 	#mv $(CGAL_QT_LIB) $(CGAL_LIB_DESTINATION)
 
-lib_no_install: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+lib_no_install: $(CGAL_OBJECTS) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 	$(CGAL_LIB_CREATE)$(CGAL_QT_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
 	$(RANLIB) $(CGAL_QT_LIB)
 	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
-moc: $(MOC_FILES)
 
 clean:
 	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS) $(MOC_FILES)
@@ -57,6 +50,3 @@ clean:
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
-
-%.moc: ../../include/CGAL/KDS/IO/internal/%.h
-	$(QT_MOC) $< > $@

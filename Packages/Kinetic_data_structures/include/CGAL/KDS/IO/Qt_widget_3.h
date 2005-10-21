@@ -21,9 +21,9 @@
 #define CGAL_KDS_IO_QT_SIMULATOR_3_H_
 #include <CGAL/KDS/basic.h>
 #include <CGAL/KDS/IO/Coin_pointer.h>
-#include <CGAL/KDS/IO/internal/GUI_base.h>
-#include <CGAL/KDS/IO/internal/Qt_examiner_viewer.h>
-#include <CGAL/KDS/IO/internal/Qt_timer.h>
+#include <CGAL/KDS/IO/internal/KDS_GUI_base.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_examiner_viewer.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_timer.h>
 #include <CGAL/KDS/Listener.h>
 #include <CGAL/KDS/Ref_counted.h>
 #include <Inventor/Qt/SoQt.h>

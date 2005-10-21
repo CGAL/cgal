@@ -1,6 +1,6 @@
-#include <CGAL/KDS/IO/internal/Qt_core.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_core.h>
 
-#include "Qt_core.moc"
+#include "KDS_Qt_core.moc"
 
 namespace CGAL {
   namespace KDS {

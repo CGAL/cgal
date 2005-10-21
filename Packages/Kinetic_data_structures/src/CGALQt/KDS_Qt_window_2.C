@@ -1,6 +1,6 @@
-#include <CGAL/KDS/IO/internal/Qt_window_2.h>
+#include <CGAL/KDS/IO/internal/KDS_Qt_window_2.h>
 
-#include "Qt_window_2.moc"
+#include "KDS_Qt_window_2.moc"
 
 namespace CGAL {
   namespace KDS {

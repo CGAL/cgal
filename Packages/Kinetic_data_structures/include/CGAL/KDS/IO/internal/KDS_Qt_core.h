@@ -20,7 +20,7 @@
 #ifndef CGAL_KDS_IO_INTERNAL_QT_SIMULATOR_CORE_H
 #define CGAL_KDS_IO_INTERNAL_QT_SIMULATOR_CORE_H
 #include <CGAL/KDS/basic.h>
-#include <CGAL/KDS/IO/internal/GUI_base.h>
+#include <CGAL/KDS/IO/internal/KDS_GUI_base.h>
 #include <qobject.h>
 
 namespace CGAL {
