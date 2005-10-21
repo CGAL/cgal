@@ -254,6 +254,7 @@ int main( int argc, char** argv) {
     std::ifstream from(fileName.c_str());
     if (!from) {
       std::cout << "could not open file: " << fileName << "\n";
+      success = false;
     } else {
       std::cout << "processing file: " << fileName << "\n";
       read_tags(from, read_names_table);
