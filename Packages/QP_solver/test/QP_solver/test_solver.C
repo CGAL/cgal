@@ -337,7 +337,7 @@ bool process(const std::string& filename,
 
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
-  std::cout << "[process: verb is " << v << "]" << std::endl;
+  std::cout << "[process: verb is " << verbosity << "]" << std::endl;
 
   // read QP instance:
   std::ifstream in(filename.c_str());
