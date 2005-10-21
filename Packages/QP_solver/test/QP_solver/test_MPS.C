@@ -63,21 +63,25 @@ int main(const int argNr,const char **args) {
     cout << endl << qp << endl;
   }
 
+  typedef Tag_false Is_linear; // is the instance known in advance to be an LP?
+  typedef Tag_false Is_symmetric; // is the D matrix known to be symmetric?
+  typedef Tag_false Has_equalities_only_and_full_rank; // (see manual)
+  typedef Tag_false Is_in_standard_form; // (see manual)?
+
   // in case of an LP, zero the D matrix:
   // (Note: if you known in advance that the problem is an LP
   // you should not do this, see below.)
-  if (qp.is_linear())
+  if (qp.is_linear() && !check_tag(Is_linear()))
     qp.make_zero_D();
 
   typedef CGAL::QP_solver_MPS_traits_d<QP,
-    Tag_false, // is the instance known in advance to be an LP?
-    Tag_false, // is the instance's D matrix known to be symmetric?
-    Tag_false, // Has_equalities_only_and_full_rank (see manual)?
-    Tag_false> // Is_in_standard_form (see manual)? // todo: should be false
-    Traits;
+    Is_linear,
+    Is_symmetric,
+    Has_equalities_only_and_full_rank,
+    Is_in_standard_form>         Traits;
 
-  CGAL::QP_pricing_strategy<Traits> *strategy = 
-    new CGAL::QP_full_filtered_pricing<Traits,IT>;
+  CGAL::QP_pricing_strategy<Traits> *strategy = 0;
+  //    new CGAL::QP_full_filtered_pricing<Traits,IT>;
 
   typedef CGAL::QP_solver<Traits> Solver;
   Solver solver(qp.number_of_variables(),
@@ -109,8 +113,12 @@ int main(const int argNr,const char **args) {
     x[*x_ind] = *x_it;
 
   // output solution:
+  cout << "Exact solution:" << endl;
   for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-    cout << "x[" << i << "] = " << x[i] << "/" << denom
-	 << " (= " << CGAL::to_double(x[i])/CGAL::to_double(denom) << ")"
+    cout << "x[" << i << "] = " << x[i] << "/" << denom << endl;
+  cout << "Solution (as doubles):" << endl;
+  for (unsigned int i=0; i<qp.number_of_variables(); ++i)
+    cout << "x[" << i << "] ~= "
+	 << CGAL::to_double(x[i])/CGAL::to_double(denom)
 	 << endl;
 }
