@@ -117,6 +117,8 @@ class QP_solver {
     typedef  typename std::iterator_traits<B_iterator>::value_type  B_entry;
     typedef  typename std::iterator_traits<C_iterator>::value_type  C_entry;
     typedef  typename std::iterator_traits<D_row     >::value_type  D_entry;
+    typedef  typename std::iterator_traits<L_iterator>::value_type  L_entry;
+    typedef  typename std::iterator_traits<U_iterator>::value_type  U_entry;
 
     // slack columns
     typedef  std::pair<int,bool>        Slack_column;
@@ -347,7 +349,8 @@ private:
     const bool               is_LP;     // flag indicating a linear    program
     const bool               is_QP;     // flag indicating a quadratic program
     const bool               no_ineq;   // flag indicating no ineq. constraits
-    const bool               has_ineq;  // flag indicating    ineq. constraits
+    const bool               has_ineq;  // flag indicating that there might be
+                                        // inequality constraits
     const bool               is_in_standard_form; // flag indicating standard
                                         // form ..
 
@@ -436,7 +439,7 @@ private:
 	         Const_oneset_iterator<Row_type>( Rep::EQUAL));
 	         
     // set-up of explicit bounds
-    void set_explicit_bounds(int n, FL_iterator fl, L_iterator lb,
+    void set_explicit_bounds(FL_iterator fl, L_iterator lb,
             FU_iterator fu, U_iterator ub); 
 
     // initialization (of phase I)
@@ -593,17 +596,17 @@ public: // only the pricing strategies (including user-defined ones
   // access to working variables
   int  number_of_working_variables( ) const { return in_B.size(); }
   
-  bool  is_basic( int j) const
+  bool is_basic( int j) const
   { 
-    CGAL_qpe_precondition( j >= 0);
-    CGAL_qpe_precondition( j < number_of_working_variables());
-    return ( in_B[ j] >= 0);
+    CGAL_qpe_precondition(j >= 0);
+    CGAL_qpe_precondition(j < number_of_working_variables());
+    return (in_B[ j] >= 0);
   }
   
   bool is_original(int j) const
   {
-    CGAL_qpe_precondition( j >= 0);
-    CGAL_qpe_precondition( j < number_of_working_variables());
+    CGAL_qpe_precondition(j >= 0);
+    CGAL_qpe_precondition(j < number_of_working_variables());
     return (j < qp_n);    
   }
     
@@ -709,8 +712,7 @@ public:
     void  init_basis__slack_variables( int s_i, Tag_false has_no_inequalities);
     void  init_basis__constraints    ( int s_i, Tag_true  has_no_inequalities);
     void  init_basis__constraints    ( int s_i, Tag_false has_no_inequalities);
-    void  init_x_O_v_i(Tag_true  is_in_standard_form);
-    void  init_x_O_v_i(Tag_false is_in_standard_form);
+    void  init_x_O_v_i();
     void  init_r_C(Tag_true  is_in_standard_form);
     void  init_r_C(Tag_false is_in_standard_form);
     void  init_r_S_B(Tag_true  is_in_standard_form);
@@ -981,9 +983,8 @@ public:
     bool  check_w(Tag_true  is_in_standard_form) const;
     bool  check_w(Tag_false is_in_standard_form) const;
     
+    // utility routines for QP's in nonstandard form:
     ET  original_variable_value(int i) const;                        
-    // returns the current value of a nonbasic original variable
-    // with upper bounding
     ET  nonbasic_original_variable_value(int i) const;
 
     // check basis inverse
@@ -1778,6 +1779,7 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
 CGAL_END_NAMESPACE
 
 #include <CGAL/QP_solver/Unbounded_direction.h>
+#include <CGAL/QP_solver/NonstandardForm.C>
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #  include <CGAL/QP_solver.C>
