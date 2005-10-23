@@ -492,7 +492,8 @@ bool processFType(const std::string& filename,
 	Has_equalities_only_and_full_rank,Tag_true>(filename,options))
       success = false;
 #endif
-#ifdef QP_NOT_F
+#if 0 // todo: once solver works for explicit bounds, we change this
+      // back to: #ifdef QP_NOT_F
   if (!processOnlyOneValue || value==false)
     if (!processType<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Tag_false>(filename,options))
