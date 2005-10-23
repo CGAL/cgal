@@ -2,21 +2,24 @@
 #define CGAL_HEXAGON_PRIMITIVES_H
 
 #include <vector>
+#include <stack>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Object.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
+#include <CGAL/Curved_kernel_converter.h>
+
 
 namespace CGAL{
  namespace CGALi{
 
 using CGAL::CircularFunctors::advanced_make_xy_monotone;
 
-
+//#define FILEWRITE
 
 CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
   construct_polygon_from_bbox(const CGAL::Bbox_2& bb )
@@ -71,7 +74,6 @@ CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
 	  pgn.push_back(Point_2(bb2.xmax(),bb2.ymax()));
 	  pgn.push_back(Point_2(bb1.xmax(),bb1.ymax()));
 	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymax()));
-	  std::cout<<"MPHKA"<<std::endl;
 	}
 	else if( ( tmp=(src_bb.xmin()<trgt_bb.xmin() && src_bb.ymin()<trgt_bb.ymin())) ||
 	              (trgt_bb.xmin()<src_bb.xmin() && trgt_bb.ymin()<src_bb.ymin()))
@@ -85,7 +87,6 @@ CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
 	  pgn.push_back(Point_2(bb2.xmin(),bb2.ymax()));
 	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymax()));
 	  pgn.push_back(Point_2(bb1.xmin(),bb1.ymin()));	       
-	  std::cout<<"MPHKA"<<std::endl;	       	       
 	}
 	
 	
@@ -247,9 +248,6 @@ CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
 	}
 		
 		
-
-
-		
 	//Point 6
 	if(is_on_upper_part==is_on_left_side)
 	  plgn.push_back(Point_2(left_bb.xmin(),left_bb.ymin()));
@@ -257,8 +255,32 @@ CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
 	  plgn.push_back(Point_2(left_bb.xmin(),left_bb.ymax()));
 
 		
+        //Reverse (except the last one) the order of the vertices if the hexagon
+        //is on the upper part , so that all the hexagons
+        //appear with their vertices in counterclockwise order		
 		
-		
+        if(is_on_upper_part)
+        {
+          std::stack<Point_2> stck;
+          int siz=plgn.size();
+        
+          for(int i=0;i<siz-1;++i)
+            stck.push(plgn[i]);
+
+          Point_2 last_one=plgn[siz-1];
+          plgn.clear();
+
+          
+
+          for(int i=0;i<siz-1;++i)
+          {
+            plgn.push_back(stck.top());
+            stck.pop();
+          }
+
+          plgn.push_back(last_one);
+        }
+          
 		
 		
 	return plgn;       
@@ -287,21 +309,92 @@ Output_iterator construct_bounding_hexagons_2(const typename CK::Circular_arc_2 
 
   }	
 
+ bool  _inner_intersect_hexagon_predicate(const CGAL::Polygon_2<Simple_cartesian< double > > &a,
+                                          const CGAL::Polygon_2<Simple_cartesian<double> > &b)
+ {
+
+    typedef Simple_cartesian<double> CK;
+    typedef CK::RT      RT;
+    typedef CK::Point_2 Point_2;
+    typedef CGAL::Polygon_2<CK> Polygon_2;
+    typedef Simple_cartesian<Interval_nt<> > intrv_CK;
+    typedef intrv_CK::Line_2  intrv_Line_2;
+    typedef intrv_CK::Point_2  intrv_Point_2;
+
+    
+  bool pred=(a[0].x()!=a[1].x() && a[0].y()!=a[1].y());
+      
+          Interval_nt<> d1=a[0].x(),d2=a[0].y();
+          Interval_nt<> e1=a[1].x(),e2=a[1].y();
+          intrv_Point_2 a0( d1, d2 );
+          intrv_Point_2 a1( e1, e2 );
+
+          intrv_Line_2 tmp_ln(a0,a1);
+
+   	
+      if(pred && !tmp_ln.is_vertical())
+        {
+	  int i;
+	
+	  for(i=0;i<b.size();i++)
+	    {
+	      
+                //if(b[i]==a[0] || b[i]==a[1])
+                //  return true;	     
+
+	      std::pair<double,double> app_y=tmp_ln.y_at_x(b[i].x()).pair();
+
+              if(b[i].y()>=app_y.first )
+	        if(i==0)
+	          break;
+	        else 
+	          return true;
+	    }
+	
+	  if(i!=0)
+	    return false;
+
+	 }
+	
+
+	  //Condition implied: the segment used for testing is vertical
+	 if(a[2+pred].x()==a[3+pred].x())
+	   return true;
+	 
+          Interval_nt<> d12=a[2+pred].x(),d22=a[2+pred].y();
+          Interval_nt<> e12=a[3+pred].x(),e22=a[3+pred].y();
+          intrv_Point_2 a2( d12, d22 );
+          intrv_Point_2 a3( e12, e22 );
+
+          intrv_Line_2 tmp_ln2(a2,a3);
+	 
+	 for(int i=0;i<b.size();i++) 
+	 {
+	   std::pair<double,double> app_y=tmp_ln2.y_at_x(b[i].x()).pair();
+
+           if(b[i].y()<=app_y.second ) 
+	     return true;	
+	 }
+			
+	 return false;
+			
+}
+
+
 bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > &p1,
 			     const CGAL::Polygon_2<Simple_cartesian<double> > &p2)
   {
     typedef Simple_cartesian<double> CK;
     typedef CK::RT      RT;
     typedef CK::Point_2 Point_2;
-    typedef CK::Line_2      Line_2;
     typedef CGAL::Polygon_2<CK> Polygon_2;
+    typedef Simple_cartesian<Interval_nt<> > intrv_CK;
+    typedef intrv_CK::Line_2  intrv_Line_2;
+    typedef intrv_CK::Point_2  intrv_Point_2;
 		
     Polygon_2 a,b;
-    bool pred,tmp;
-    CGAL::Comparison_result side;
+    bool intersect,tmp=0;
     Point_2 frst,scnd;
-    CGAL::Bbox_2 bb;
-
 	
     int size1=p1.size(),
     	size2=p2.size();
@@ -313,15 +406,10 @@ bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > 
       {	
 	a=p2;
 	b=p1;
-	bb=CGAL::Bbox_2(p2.left_vertex()->x(),p2.bottom_vertex()->y(), 
-			p2.right_vertex()->x() ,p2.top_vertex()->y());
-
       } else if (size2==4)
       {
 	a=p1;
 	b=p2;
-	bb=CGAL::Bbox_2(p1.left_vertex()->x(),p1.bottom_vertex()->y(), 
-			p1.right_vertex()->x() ,p1.top_vertex()->y());
       } else 
       {
 		 
@@ -337,74 +425,41 @@ bool _do_intersect_hexagon_2(const CGAL::Polygon_2<Simple_cartesian< double > > 
 	{
 	  a=p1;
 	  b=p2;
-	  bb=test1;
 	}else
 	{
 	  a=p2;
 	  b=p1;
-	  bb=CGAL::Bbox_2(p2.left_vertex()->x(),p2.bottom_vertex()->y(), 
-			  p2.right_vertex()->x() ,p2.top_vertex()->y());
 	}
 
       }
 
-      pred=(a[0].x()!=a[1].x() && a[0].y()!=a[1].y());
-      
-      	 if(a[pred].y()==bb.ymax() || (pred && a[0].y()==bb.ymax()))
-	   side=SMALLER;
-         else 
-	   side=LARGER;
-      
-    	
-      if(pred)
-        {
-	  int i;
-	  Line_2 tmp_ln(a[0],a[1]);
-	
-	  for(i=0;i<b.size();i++)
-	    {
-	      
-	     
-	      std::pair<double,double> app_y=to_interval(tmp_ln.y_at_x(b[i].x()));
-		
-              if((side==SMALLER && b[i].y()<=app_y.second) ||(side==LARGER && b[i].y()>=app_y.first))
-	        if(i==0)
-	          break;
-	        else 
-	          return true;
-	    }
-	
-	  if(i!=0)
-	    return false;
+       intersect=_inner_intersect_hexagon_predicate(a,b);
 
-	 }
-	
-	 
-	  //Condition implied: the segment used for testing is vertical
-	 if(a[2+pred].x()==a[3+pred].x())
-	   return true;
-	 
-	 side=opposite(side);
-	 Line_2 tmp_ln(a[2+pred],a[3+pred]);
-	 
-	 for(int i=0;i<b.size();i++) 
-	 {
-	   std::pair<double,double> app_y=to_interval(tmp_ln.y_at_x(b[i].x()));
-		
-           if((side==SMALLER && b[i].y()<=app_y.second) ||(side==LARGER && b[i].y()>=app_y.first))
-	     return true;	
-	 }
-			
-	 return false;
-			
-}
+       if(intersect==false || b.size()==4)
+         return intersect;
+       else
+         return _inner_intersect_hexagon_predicate(b,a);
 
-
+   }
 
 // This is meant for x_monotone and for non-x_monotone cases
 template < typename Hex_iterator1, typename Hex_iterator2 >
 bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_iterator2 b_begin, Hex_iterator2 b_end)
   {
+
+#ifdef FILEWRITE
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      CGAL::Timer clck;
+      double t1,t2;
+      double ag;
+      int times;
+      std::ifstream pare("hexagons_intersect_2.txt");
+      pare>>times>>ag;
+      pare.close();
+      clck.start();
+      t1=clck.time();
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#endif
 
     for(Hex_iterator1 it1=a_begin;it1!=a_end;it1++)
       for(Hex_iterator2 it2=b_begin;it2!=b_end;it2++) 
@@ -415,15 +470,84 @@ bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_ite
 	{
 	  bool tmp = _do_intersect_hexagon_2(*it1,*it2);
           if (tmp)
+
+            {
+#ifdef FILEWRITE
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      t2=clck.time();
+      std::ofstream dwse("hexagons_intersect_2.txt");
+      dwse<<(++times)<<" "<<(ag+t2-t1)<<endl;
+      dwse.close();
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#endif
+
 	    return true;
+            }
         }
 
+
+#ifdef FILEWRITE
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      t2=clck.time();
+      std::ofstream dwse("hexagons_intersect_2.txt");
+      dwse<<(++times)<<" "<<(ag+t2-t1)<<endl;
+      dwse.close();
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#endif
 	return false;
 
   }// do_intersect_hexagons_2
 
 
  }//namespace CGALi
+
+
+template < class CK, class Hexagon>
+  class Hexagon_construction_with_interval_2 {
+
+  typedef typename CK::Circular_arc_2  Circular_arc_2;
+  typedef typename CK::Line_arc_2  Line_arc_2;
+  typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> >                   FK;
+  typedef CGAL::Curved_kernel< FK,CGAL::Algebraic_kernel_2_2<FK::RT> >   CK2;
+  typedef CGAL::Curved_kernel_converter<CK,CK2>                          Conv;
+
+  public:
+
+  template < class OutputIterator>
+  OutputIterator  
+  operator()(const Circular_arc_2 &a, OutputIterator res) const
+    {
+      Conv cnv;
+      return CGALi::construct_bounding_hexagons_2<CK2>(cnv(a),res);
+   }
+
+  Hexagon operator()(const Line_arc_2 &a) const
+    {
+      Conv cnv;
+      return CGALi::construct_bounding_hexagon_for_line_arc_2<CK2>(cnv(a));
+   }
+
+};
+
+
+template < class CK, class Hexagon>
+ class Hexagon_construction_on_lazy_kernel_2 {
+
+  typedef typename CK::Circular_arc_2  Circular_arc_2;
+  typedef typename CK::Line_arc_2  Line_arc_2;
+
+  public:
+
+  template < class OutputIterator>
+  OutputIterator  
+  operator()(const Circular_arc_2 &a, OutputIterator res) const
+    { return CGALi::construct_bounding_hexagons_2<typename CK::AK>(a.approx(),res);}
+
+  Hexagon  operator()(const Line_arc_2 &a) const
+    { return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::AK>(a.approx());}
+
+};
+
 
 }// namespace CGAL
 
