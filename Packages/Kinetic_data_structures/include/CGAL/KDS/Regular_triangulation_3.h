@@ -1022,6 +1022,8 @@ protected:
     } else {
       return kdel_.simulator()->null_event();
     }
+    CGAL_postcondition(0);
+    return kdel_.simulator()->null_event();
   }
 
 
@@ -1064,6 +1066,8 @@ protected:
     } else {
       return kdel_.simulator()->null_event();
     }
+    CGAL_postcondition(0);
+    return kdel_.simulator()->null_event();
   }
 
   void on_geometry_changed(){

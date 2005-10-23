@@ -41,7 +41,7 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT> {
   typedef internal::Polynomial_impl<This, NTT>  Parent;
 
 
-  friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
+  // friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
 
 #ifndef NDEBUG
   typedef std::string Approximation;
@@ -89,7 +89,7 @@ public:
     strip_leading_zeros();
   }
 
-private:
+
   Polynomial(const Parent &p): Parent(p){
 #ifndef NDEBUG
     approximate();
@@ -113,7 +113,7 @@ protected:
     } while ( !this->is_zero() );
   }
 
-
+public:
   void finalize() {
     strip_leading_zeros();
   }

@@ -82,6 +82,8 @@ protected:
 	  return sbr(p_);
 
 	}
+	CGAL_postcondition(0);
+	return CGAL_POLYNOMIAL_NS::ZERO;
       }
       //}
       //return sb;

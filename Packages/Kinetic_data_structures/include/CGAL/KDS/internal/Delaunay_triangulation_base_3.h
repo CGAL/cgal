@@ -1663,7 +1663,9 @@ private:
 						 point(ids[3]),
 						 point(ids[4])));
     }
-    
+    // Some compilers give warnings without this
+    CGAL_postcondition(0);
+    return simulator()->root_stack_object(typename TraitsT::Simulator::Function_kernel::Function(0));
   }
 
   TraitsT tr_;

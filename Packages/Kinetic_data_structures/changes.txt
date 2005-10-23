@@ -1,0 +1,3 @@
+- I just changed finalize and the copy from parent constructor in Polynomial
+  to be public to get around a VC problem with declaring polynomial_impl
+a friend.

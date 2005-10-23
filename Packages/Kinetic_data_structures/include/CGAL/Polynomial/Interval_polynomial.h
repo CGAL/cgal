@@ -34,7 +34,9 @@ class Interval_polynomial: public internal::Polynomial_impl<Interval_polynomial,
   typedef internal::Polynomial_impl<Interval_polynomial, Interval_nt>  Parent;
   friend class internal::Polynomial_impl<Interval_polynomial, Interval_nt>;
 
+public:
   void finalize(){}
+protected:
   Interval_polynomial(const Parent &p): Parent(p){}
 public:
   Interval_polynomial(){}
