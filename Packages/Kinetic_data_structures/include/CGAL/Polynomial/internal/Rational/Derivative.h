@@ -32,12 +32,12 @@ private:
   struct It {
     It(Cit it, int i): i_(i), cit_(it) {}
     It(){}
-    
-    typedef typename Cit::iterator_category iterator_category;
-    typedef typename Cit::value_type value_type;
-    typedef typename Cit::pointer pointer;
-    typedef typename Cit::reference reference;
-    typedef typename Cit::difference_type difference_type;
+    typedef typename Fn::iterator MCit;
+    typedef typename MCit::iterator_category iterator_category;
+    typedef typename MCit::value_type value_type;
+    typedef typename MCit::pointer pointer;
+    typedef typename MCit::reference reference;
+    typedef typename MCit::difference_type difference_type;
 
     value_type operator*() const {
       return value_type(i_)**cit_;
@@ -83,7 +83,7 @@ private:
     }
   protected:
     int i_;
-    Cit cit_;
+    MCit cit_;
   };
 public:
   typedef Fn result_type;

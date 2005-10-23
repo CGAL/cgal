@@ -40,7 +40,7 @@ template <class Priority>
 class Heap_pointer_event_queue_item: public Ref_counted<Heap_pointer_event_queue_item<Priority> > {
 public:
   Heap_pointer_event_queue_item():bin_(-1), time_(infinity_or_max<Priority>(Priority(0))){}
-  Heap_pointer_event_queue_item(unsigned int bin, const Priority &t): bin_(bin), time_(t){}
+  Heap_pointer_event_queue_item(int bin, const Priority &t): bin_(bin), time_(t){}
 
   virtual void write(std::ostream &out) const =0;
   const Priority& time() const {return time_;};

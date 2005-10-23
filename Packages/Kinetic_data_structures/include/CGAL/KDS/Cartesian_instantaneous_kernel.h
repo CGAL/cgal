@@ -35,7 +35,7 @@ typename Static_kernel::Pred##_##d sp= rep_->static_kernel().pred##_##d##_object
 return Pred##_##d(*this, sp);\
 }
 
-#define CGAL_TSO(name) typedef typename Static_kernel::name name;
+#define CGAL_TSO(name) typedef typename Static_kernel::name name
 
 
 CGAL_KDS_BEGIN_NAMESPACE
