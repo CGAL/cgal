@@ -4,11 +4,14 @@
 #define CGAL_LINE_ARC_WITH_HEXAGON_2_H
 
 #include <vector>
+#include <fstream> //vgale
+#include <CGAL/Timer.h> //vgale
 #include <iterator>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Filtered_hexagon_curved_kernel/hexagon_primitives.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -26,6 +29,10 @@ class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Line_arc_2                            Line_arc_2;
     typedef typename CK::Root_of_2                             Root_of_2;
     typedef CK R;
+    typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> >                   FK;
+    typedef CGAL::Curved_kernel< FK,CGAL::Algebraic_kernel_2_2<FK::RT> >   CK2;
+    typedef CGAL::Curved_kernel_converter<CK,CK2>                          Conv;
+
 
 public:
 
@@ -106,10 +113,12 @@ public:
 		
 		///Interface of the inner arc/// 
 
-		const Circular_arc_point_2 & left() const
+                typename Qualified_result_of<typename R::Construct_Circular_min_vertex_2,Line_arc_2>::type
+		left() const
 			{ return P_arc.left();}
-
-		const Circular_arc_point_2 & right() const
+                
+                typename Qualified_result_of<typename R::Construct_Circular_max_vertex_2,Line_arc_2>::type
+                right() const
 			{ return P_arc.right();}
 
 		/* const Circular_arc_point_2 & source() const */
@@ -147,8 +156,13 @@ typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line
 		
 		void construct_hexagons() const
 		{
-		  assert(has_no_hexagons());	
-		  hxgn = new Hexagon( CGALi::construct_bounding_hexagon_for_line_arc_2<CK>(P_arc) );
+
+                 typedef typename boost::mpl::if_<boost::is_same<typename CK::Definition_tag, typename CK::Curved_tag>, \
+                                                  Hexagon_construction_with_interval_2<CK,Hexagon>, \
+                                                  Hexagon_construction_on_lazy_kernel_2<CK,Hexagon> >::type Construct;
+
+
+		  hxgn = new Hexagon(Construct()(P_arc));
 		}
 
 
