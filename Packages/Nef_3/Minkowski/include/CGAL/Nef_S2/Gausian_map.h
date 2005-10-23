@@ -654,7 +654,6 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       sf->mark() = v->point();
       link_as_face_cycle(se,sf);
     }
-    locate_top_and_bottom();
   }
 
     void simplify() {
