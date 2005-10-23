@@ -5,13 +5,18 @@
 
 #include <vector>
 #include <iterator>
+#include <fstream> //vgale
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
+#include <CGAL/Curved_kernel_converter.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Timer.h> //Vgalto
 #include <CGAL/Filtered_hexagon_curved_kernel/hexagon_primitives.h>
 
 CGAL_BEGIN_NAMESPACE
+
 
 template < class CK, 
 	   class Container = std::vector<Polygon_2<Simple_cartesian<double> > > >
@@ -26,6 +31,10 @@ class Circular_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Circular_arc_2                        Circular_arc_2;
     typedef typename CK::Root_of_2                             Root_of_2;
     typedef CK R;
+    typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> >                   FK;
+    typedef CGAL::Curved_kernel< FK,CGAL::Algebraic_kernel_2_2<FK::RT> >   CK2;
+    typedef CGAL::Curved_kernel_converter<CK,CK2>                          Conv;
+
 
 public:
 
@@ -126,11 +135,12 @@ public:
 		
 		///Interface of the inner arc/// 
 
-		const Circular_arc_point_2 & left() const
-			{ return P_arc.left();}
-
-		const Circular_arc_point_2 & right() const
-			{ return P_arc.right();}
+		typename Qualified_result_of<typename R::Construct_Circular_min_vertex_2,Circular_arc_2>::type
+                left() const
+			{ return typename R::Construct_Circular_min_vertex_2()(this->arc());}
+                typename Qualified_result_of<typename R::Construct_Circular_max_vertex_2,Circular_arc_2>::type
+                right() const
+			{ return typename R::Construct_Circular_max_vertex_2()(this->arc());}
 
                 //const Circular_arc_point_2 & source() const
 		//	{ return P_arc.source();}
@@ -173,8 +183,42 @@ public:
 		
 		void construct_hexagons() const
 		{
+
+#ifdef FILEWRITE
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      CGAL::Timer clck;
+      double t1,t2;
+      double ag;
+      int times;
+      std::ifstream pare("constructhexagons.txt");
+      pare>>times>>ag;
+      pare.close();
+      clck.start();
+      t1=clck.time();
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#endif
+
+
+
+
 		  assert(has_no_hexagons());	
-		  CGALi::construct_bounding_hexagons_2<CK>(P_arc,std::back_inserter(hexagons));
+
+        typedef typename boost::mpl::if_<boost::is_same<typename CK::Definition_tag, typename CK::Curved_tag>, \
+                                         Hexagon_construction_with_interval_2<CK,Hexagon>, \
+                                         Hexagon_construction_on_lazy_kernel_2<CK,Hexagon> >::type Construct;
+
+                  Construct()(P_arc,std::back_inserter(hexagons));  
+
+
+#ifdef FILEWRITE
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      t2=clck.time();
+      std::ofstream dwse("constructhexagons.txt");
+      dwse<<(++times)<<" "<<(ag+t2-t1)<<endl;
+      dwse.close();
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#endif
+
 		}
 
 
