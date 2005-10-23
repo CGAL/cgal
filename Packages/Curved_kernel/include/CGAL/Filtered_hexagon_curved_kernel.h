@@ -24,7 +24,7 @@ template <class CK>
     typedef typename CK::FT                          FT;
     typedef typename CK::Root_of_2                   Root_of_2;
     typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
-    typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
+//    typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
 //    typedef typename CK::Polynomial_1_2              Polynomial_1_2;
     typedef typename CK::Line_2                      Line_2;
     typedef typename CK::Circle_2                    Circle_2;
@@ -43,8 +43,8 @@ template <class CK>
     typedef typename CK::Compare_xy_2		     Compare_xy_2;
     typedef typename CK::Construct_Circular_source_vertex_2 Construct_Circular_source_vertex_2;
     typedef typename CK::Construct_Circular_target_vertex_2 Construct_Circular_target_vertex_2;
-    typedef CGALi::Construct_Circular_min_vertex_2<Self>   Construct_Circular_min_vertex_2;
-    typedef CGALi::Construct_Circular_max_vertex_2<Self>   Construct_Circular_max_vertex_2;
+    typedef CGALi::Construct_Circular_min_vertex_2<Self> Construct_Circular_min_vertex_2;
+    typedef CGALi::Construct_Circular_max_vertex_2<Self> Construct_Circular_max_vertex_2;
     typedef CGALi::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
     typedef CGALi::Compare_y_to_right_2<Self>	     Compare_y_to_right_2;
     typedef CGALi::Do_overlap_2<Self>		     Do_overlap_2;
