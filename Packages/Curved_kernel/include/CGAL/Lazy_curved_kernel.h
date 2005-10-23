@@ -111,6 +111,13 @@ public:
     // typedef typename CK::Kernel_tag                       Kernel_tag;
     // typedef typename CK::Rep_tag                          Rep_tag;
 
+
+    //Please remove this if you consider it to be sloppy
+      struct  Lazy_tag{};
+      typedef Lazy_tag                     Definition_tag;
+      typedef typename EK::Definition_tag  Curved_tag;
+    ////////////////////////////////////////////////////
+
     // Types
   typedef CGAL::Lazy_exact_nt<typename EK::FT>  FT;
   typedef FT RT;
@@ -152,6 +159,12 @@ public:
                                      Lazy_construct_intersections_2 <Kernel,typename AK::C, typename EK::C>, \
             typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Make_x_monotone_2>, \
                                      Lazy_make_x_monotone_2 <Kernel,typename AK::C, typename    EK::C>, \
+            typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Make_xy_monotone_2>, \
+                                     Lazy_make_x_monotone_2 <Kernel,typename AK::C, typename    EK::C>, \
+            typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Advanced_make_x_monotone_2>, \
+                                     Lazy_advanced_make_x_monotone_2 <Kernel,typename AK::C, typename    EK::C>, \
+            typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Advanced_make_xy_monotone_2>, \
+                                     Lazy_advanced_make_x_monotone_2 <Kernel,typename AK::C, typename    EK::C>, \
 	    typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Split_2>, \
                                      Lazy_functor_2_2 <Kernel, typename AK::C, typename EK::C>, \
             typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
@@ -160,7 +173,7 @@ public:
                                      Lazy_construction_nt<Kernel,typename AK::C, typename EK::C>,\
             typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
                                      Lazy_construction_object<Kernel,typename AK::C, typename EK::C>,\
-                                     Lazy_construction<Kernel,typename AK::C, typename EK::C> >::type >::type > ::type > ::type > ::type > ::type C; \
+         Lazy_construction<Kernel,typename AK::C, typename EK::C> >::type >::type >::type >::type >::type >::type >::type >::type >::type C; \
     C Cf() const { return C(); }
 
 
