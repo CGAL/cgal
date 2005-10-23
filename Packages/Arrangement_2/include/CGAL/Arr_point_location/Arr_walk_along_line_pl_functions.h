@@ -453,7 +453,11 @@ _is_in_connected_component (const Point_2& p,
   typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
                                             traits->compare_y_at_x_2_object();
   typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
-                                        traits->compare_y_position_2_object();
+                                       traits->compare_y_position_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_right_2  compare_y_at_x_right =
+                                       traits->compare_y_at_x_right_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_left_2   compare_y_at_x_left =
+                                       traits->compare_y_at_x_left_2_object();
 
   // Start from the first non-vertical segment in the connected component.
   Ccb_halfedge_const_circulator  first = circ;
@@ -512,6 +516,7 @@ _is_in_connected_component (const Point_2& p,
   Ccb_halfedge_const_circulator  curr = first;
   Comparison_result   source_res, target_res;
   Comparison_result   res;
+  Comparison_result   y_res;
   bool                closest_in_ccb = (closest_he != invalid_he &&
                                         closest_he->face() == circ->face());
 
@@ -571,16 +576,80 @@ _is_in_connected_component (const Point_2& p,
       // semi-open x-range (source, target] of this curve and lies below it.
       if (source_res != EQUAL)
       {
-        // If the current curve is closer to p than the closest curve found
-        // so far, assign its halfedge as the closest one.
         if (closest_he == invalid_he ||
-            (! closest_in_ccb && closest_he->twin() == curr) ||
-            compare_y_position (closest_he->curve(),
-                                curr->curve()) == curve_above_under)
+            (! closest_in_ccb && closest_he->twin() == curr))
         {
+          // If we have no closests halfedge, we have just found one.
+          // Alternatively, if the closest halfedge is not in our CCB, but it
+          // the twin of our current halfedge, we can take our halfedge to be
+          // the closest one.
           closest_he = curr;
           closest_in_ccb = true;
           closest_to_target = (target_res == EQUAL);
+        }
+        else
+        {
+          // Compare with the vertically closest curve so far and detemine the
+          // curve closest to p. We first check the case that the two curves
+          // have a common endpoint (note that the two curves do not intersect
+          // in their interiors).
+          if ((closest_he->source() == curr->source() &&
+               closest_he->direction() == curr->direction()) ||
+              (closest_he->source() == curr->target() &&
+               closest_he->direction() != curr->direction()))
+          {
+            if (closest_he->direction() == SMALLER)
+            {
+              // Both curves extend to the right from a common point.
+              y_res = compare_y_at_x_right (closest_he->curve(),
+                                            curr->curve(), 
+                                            closest_he->source()->point());
+            }
+            else
+            {
+              // Both curves extend to the left from a common point.
+              y_res = compare_y_at_x_left (closest_he->curve(),
+                                           curr->curve(), 
+                                           closest_he->source()->point());
+            }
+          }
+          else if ((closest_he->target() == curr->source() &&
+                    closest_he->direction() != curr->direction()) ||
+                   (closest_he->target() == curr->target() &&
+                    closest_he->direction() == curr->direction()))
+          {
+            if (closest_he->direction() == SMALLER)
+            {
+              // Both curves extend to the left from a common point.
+              y_res = compare_y_at_x_left (closest_he->curve(),
+                                           curr->curve(), 
+                                           closest_he->target()->point());
+            }
+            else
+            {
+              // Both curves extend to the right from a common point.
+              y_res = compare_y_at_x_right (closest_he->curve(),
+                                            curr->curve(), 
+                                            closest_he->target()->point());
+            }
+          }
+          else
+          {
+            // In case the two curves do not have a common endpoint, but
+            // overlap in their x-range (both contain p), just compare their
+            // positions:
+            y_res = compare_y_position (closest_he->curve(),
+                                        curr->curve());
+          }
+
+          // If the current curve is closer to p than the closest curve found
+          // so far, assign its halfedge as the closest one.
+          if (y_res == curve_above_under)
+          {
+            closest_he = curr;
+            closest_in_ccb = true;
+            closest_to_target = (target_res == EQUAL);
+          }
         }
 
         // In the degenerate case where p lies below the target vertex of

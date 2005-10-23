@@ -59,6 +59,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit)
   {
     hh = eit;
+
     if (is_in_x_range (hh->curve(), p) &&
         compare_y_at_x (p, hh->curve()) == EQUAL)
     {
@@ -119,17 +120,22 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
 
   // Go over all halfedges in the arrangement.
   typename Traits_wrapper_2::Is_in_x_range_2      is_in_x_range =
-                                        traits->is_in_x_range_2_object();
+                                       traits->is_in_x_range_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
-                                        traits->compare_y_at_x_2_object();
+                                       traits->compare_y_at_x_2_object();
   typename Traits_wrapper_2::Is_vertical_2        is_vertical =
-                                        traits->is_vertical_2_object();
+                                       traits->is_vertical_2_object();
   typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
-                                        traits->compare_y_position_2_object();
+                                       traits->compare_y_position_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_right_2  compare_y_at_x_right =
+                                       traits->compare_y_at_x_right_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_left_2   compare_y_at_x_left =
+                                       traits->compare_y_at_x_left_2_object();
 
   typename Arrangement::Edge_const_iterator    eit = p_arr->edges_begin();
   typename Arrangement::Halfedge_const_handle  closest_edge;
   Comparison_result                            res;
+  Comparison_result                            y_res;
   bool                                         in_x_range;
   bool                                         found = false;
 
@@ -152,14 +158,60 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
       }
       else
       {
-        // Compare with the vertically closest cure so far and detemine the
-        // curve closest to p. Note that the two curves do not intersect
-        // in their interiors.
-        if (compare_y_position (closest_edge->curve(),
-                                eit->curve()) == curve_above_under)
+        // Compare with the vertically closest curve so far and detemine the
+        // curve closest to p. We first check the case that the two curves
+        // have a common endpoint (note that the two curves do not intersect
+        // in their interiors).
+        if ((closest_edge->source() == eit->source() &&
+             closest_edge->direction() == eit->direction()) ||
+            (closest_edge->source() == eit->target() &&
+             closest_edge->direction() != eit->direction()))
         {
-          closest_edge = eit;
+          if (closest_edge->direction() == SMALLER)
+          {
+            // Both curves extend to the right from a common point.
+            y_res = compare_y_at_x_right (closest_edge->curve(),
+                                          eit->curve(), 
+                                          closest_edge->source()->point());
+          }
+          else
+          {
+            // Both curves extend to the left from a common point.
+            y_res = compare_y_at_x_left (closest_edge->curve(),
+                                         eit->curve(), 
+                                         closest_edge->source()->point());
+          }
         }
+        else if ((closest_edge->target() == eit->source() &&
+                  closest_edge->direction() != eit->direction()) ||
+                 (closest_edge->target() == eit->target() &&
+                  closest_edge->direction() == eit->direction()))
+        {
+          if (closest_edge->direction() == SMALLER)
+          {
+            // Both curves extend to the left from a common point.
+            y_res = compare_y_at_x_left (closest_edge->curve(),
+                                         eit->curve(), 
+                                         closest_edge->target()->point());
+          }
+          else
+          {
+            // Both curves extend to the right from a common point.
+            y_res = compare_y_at_x_right (closest_edge->curve(),
+                                          eit->curve(), 
+                                          closest_edge->target()->point());
+          }
+        }
+        else
+        {
+          // In case the two curves do not have a common endpoint, but overlap
+          // in their x-range (both contain p), just compare their positions:
+          y_res = compare_y_position (closest_edge->curve(),
+                                      eit->curve());
+        }
+ 
+        if (y_res == curve_above_under)
+          closest_edge = eit;
       }
     }
 

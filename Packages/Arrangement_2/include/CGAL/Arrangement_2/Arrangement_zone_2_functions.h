@@ -455,11 +455,15 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
   }
 
   // The intersections with the curve have not been computed yet, so we
-  // have to compute them now.
+  // have to compute them now. Note that the first curve we intersect is
+  // always the subcurve associated with the given halfegde and the second
+  // curve is the one we insert. Even though the order seems unimportant, we
+  // exploit this fact in some of the traits classes in order to optimize
+  // computations.
   Intersect_list           inter_list;
   bool                     is_first = true;
 
-  traits->intersect_2_object() (cv, he->curve(),
+  traits->intersect_2_object() (he->curve(), cv,
                                 std::back_inserter(inter_list));
 
   // Discard all intersection lying to the left of left_pt.
