@@ -41,7 +41,7 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT> {
   typedef internal::Polynomial_impl<This, NTT>  Parent;
 
 
-  friend class  internal::template Polynomial_impl<This, NTT>; // NOT SO CLEAN
+  friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
 
 #ifndef NDEBUG
   typedef std::string Approximation;

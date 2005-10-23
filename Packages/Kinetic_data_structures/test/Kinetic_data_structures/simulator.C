@@ -1,3 +1,6 @@
+#define CGAL_CHECK_EXACTNESS
+#define CGAL_CHECK_EXPENSIVE
+
 #include <CGAL/KDS/Exact_simulation_traits_2.h>
 #include <CGAL/KDS/Inexact_simulation_traits_2.h>
 #include <vector>
@@ -191,7 +194,7 @@ struct Test {
 int main(int, char *[]){
   CGAL::Timer timer;
 
-  {
+  if (0) {
     CGAL::KDS::Exact_simulation_traits_2::Simulator ts;
     ts.event<Test_event<CGAL::KDS::Exact_simulation_traits_2::Simulator> >(CGAL::KDS::Exact_simulation_traits_2::Simulator::Event_key());
   }

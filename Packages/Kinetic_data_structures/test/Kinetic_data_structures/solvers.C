@@ -10,7 +10,6 @@
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/KDS/Inexact_simulation_traits_1.h>
 
 template <bool Skip>
 struct Exact_simulation_types {
@@ -157,7 +156,7 @@ int main(int, char *[]){
   }
 
   {
-    typedef CGAL::KDS::Inexact_simulation_traits_1 Traits;
+    
   }
 
   return EXIT_SUCCESS;

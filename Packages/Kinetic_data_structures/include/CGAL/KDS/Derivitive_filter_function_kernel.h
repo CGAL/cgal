@@ -20,7 +20,8 @@
 #ifndef CGAL_KDS_NUMERIC_SOLVER_H
 #define CGAL_KDS_NUMERIC_SOLVER_H
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/internal/Numeric_root_stack_core.h>
+#include <CGAL/Polynomial/Numeric_root_stack.h>
+#include <CGAL/Polynomial/internal/numeric_solvers.h>
 
 
 CGAL_KDS_BEGIN_NAMESPACE
@@ -30,7 +31,9 @@ CGAL_KDS_BEGIN_NAMESPACE
 template <class Traits>
 struct Derivitive_filter_function_kernel: public Traits {
   
-  class Root_stack: public CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> {
+  typedef CGAL::POLYNOMIAL::Numeric_root_stack<Traits,
+					       CGAL::POLYNOMIAL::internal::Turkowski_cleaned_numeric_solver> Root_stack;
+  /*class Root_stack: public CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> {
     typedef CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> Parent;
   public:
     typedef typename Parent::Root Root;
@@ -46,7 +49,7 @@ struct Derivitive_filter_function_kernel: public Traits {
     }
 
     Root_stack(){};
-  };
+    };*/
 
   typedef typename Root_stack::Root Root;
 

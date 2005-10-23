@@ -24,6 +24,124 @@ public:
   
   Check_solver(const K& k, bool verbose): k_(k), verbose(verbose), cf_(k_.construct_function_object()){}
 
+  template <class It>
+  void check_polynomial(const Fn &q, It roots_b, It roots_e,
+			const Rt& start = -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
+			const Rt& end = CGAL_POLYNOMIAL_NS::infinity<Rt>() ){
+
+    CGAL::Timer timer;
+
+
+    typename K::Is_even_multiplicity iem = k_.is_even_multiplicity_object(q);
+    //int current_root=0;
+    if (verbose) {
+      std::cout << "Polynomial: " << q << std::endl;
+      std::cout << "Window: (";
+      
+      std::cout<< CGAL::to_double(start);
+      std::cout << ", ";
+      std::cout << CGAL::to_double(end);
+      std::cout << ")" << std::endl;
+      std::cout << "Maple: ";
+      for (It c= roots_b; c!= roots_e; ++c){
+	/*if (CGAL::to_double(start) >= a[i]-.00001){
+	  ++current_root;
+	} else if (CGAL::to_double(end) <= a[i]){
+
+	} else {*/
+	  std::cout << "<" << *c  << "> ";
+	  //}
+      }
+      std::cout << std::endl;
+      
+     
+      std::cout << "Solver: ";
+    }
+    std::vector<Rt> roots;
+    DV comp;
+    int reps=0;
+    timer.start();
+    int total_roots=0;
+    do {
+      Root_container s= k_.root_container_object(q, start, end);
+      typename Root_container::iterator it= s.begin();
+      Rt last_root= -std::numeric_limits<Rt>::infinity();
+      while (it != s.end()){
+	if (reps==0  && verbose){
+	  //comp.push_back(CGAL::to_double(r));
+	  CGAL_assertion(last_root<= *it);
+	  last_root=*it;
+	  roots.push_back(*it);
+	  
+	  std::cout << "<" << CGAL::to_double(*it);
+	  if (iem(*it)) { std::cout <<"E";}
+	  std::cout << "> " << std::flush;
+	}
+	++it;
+	++total_roots;
+      }
+      ++total_roots;
+      if (reps==0 && verbose) {
+	std::vector<bool> taken_maple(roots_e-roots_b, false), taken_solver(roots.size(), false);
+	for (unsigned int i=0; i< roots.size(); ++i){
+	  double rd= CGAL::to_double(roots[i]);
+	  bool ie= iem(roots[i]);
+	  int mult=1;
+	  if (ie) mult=2;
+	  for (int k=0; k<mult; ++k) {
+	    int mm=-1;
+	    double md=.5;
+	    for (It c= roots_b; c != roots_e; ++c){
+	      if (std::abs(rd-*c) < md  && taken_maple[c-roots_b]==false){
+		md= std::abs(rd-*c);
+		mm=c-roots_b;
+	      }
+	    }
+	    if (mm != -1){
+	      taken_maple[mm]=true;
+	      taken_solver[i]=true;
+	    }
+	  }
+	}
+
+	bool has_error=false;
+	for (unsigned int i=0; i< taken_maple.size(); ++i){
+	  if (!taken_maple[i] && Rt(roots_b[i]-.00001) > start && Rt(roots_b[i]) < end) has_error=true;
+	}
+
+	for (unsigned int i=0; i< taken_solver.size(); ++i){
+	  if (!taken_solver[i]) has_error=true;
+	}
+	
+	if (has_error) {
+	  std::cout << std::endl;
+	  for (unsigned int i=0; i< taken_maple.size(); ++i){
+	    if (!taken_maple[i] && Rt(roots_b[i]) > start && Rt(roots_b[i]) < end)
+	      std::cerr << "ERROR Missing " << roots_b[i] << std::endl;
+	  }
+	  
+	  for (unsigned int i=0; i< taken_solver.size(); ++i){
+	    if (!taken_solver[i]) std::cerr << "ERROR Extra " << roots[i] << std::endl;
+	  }
+	}
+
+	std::cout << std::endl;
+      }
+      ++reps;
+    } while (timer.time() <3 && !verbose);
+    
+    timer.stop();
+
+    if (verbose) {
+      std::cout << "Elapsed time: " << timer.time()/reps << std::endl;
+      
+      std::cout << std::endl << std::endl; 
+    } else {
+      num_roots += total_roots;
+      total_time += timer.time();
+    }     
+  }
+
   void clear_timings(){
     total_time=0;
     num_roots=0;
@@ -33,6 +151,45 @@ public:
       std::cout.setf(std::ios::fixed);
       std::cout.precision(2);
       std::cout << 1000000.0*total_time/static_cast<double>(num_roots) << " & ";
+    }
+  }
+
+  void cleaned() {
+    // polynomials whose roots have been filtered based on derivitives
+    {
+      Fn q= cf_(-16.614835192865492,19.540659228538015,-4);
+      DV a; a.push_back(3.788873605);
+      check_polynomial(q,a.begin(), a.end(), 1.096291202);
+    }
+    {
+      Fn q= cf_(16.614835192865492,-19.540659228538015,4);
+      DV a; a.push_back(1.09630); a.push_back(3.788873605);
+      check_polynomial(q,a.begin(), a.end(), 1.096291202);
+    }
+    {
+      Fn q= cf_(3.788873605, -3.788873605);
+      DV a; a.push_back(1.0);
+      check_polynomial(q,a.begin(), a.end(), 1);
+    }
+    {
+      Fn q= cf_(-3.788873605, 3.788873605);
+      DV a;
+      check_polynomial(q,a.begin(), a.end(), 1);
+    }
+    {
+      Fn q= cf_(-2295485086.0,2072822157.0, 116461914.2,  -116175036.5, -10063149.87,
+		-196007.0344, 3460.886000, 136.9100396, 1.0);
+      DV a;
+      a.push_back(-79.34012316);
+      a.push_back(-45.32403162);
+      a.push_back(-32.43524488);
+      a.push_back(-22.45230969);
+      a.push_back(-5.239841933);
+      a.push_back(1.123932833);
+      a.push_back(3.435646759);
+      a.push_back(43.32193209);
+      check_polynomial(q, a.begin(), a.end(), Rt(-79.34012316));
+      check_polynomial(q, a.begin()+2, a.end(), Rt(-45.32403162));
     }
   }
 
@@ -47,7 +204,7 @@ public:
     for (unsigned int i = 1; i <= max_root; i++) {
       a.push_back(i);
     }
-    check_polynomial(q,a);
+    check_polynomial(q,a.begin(), a.end());
     write_timings();
   }
 
@@ -63,7 +220,7 @@ public:
     a.push_back(0.20000000000000001);
     a.push_back(0.20000000000000001);
     a.push_back(1.0756542734086822);
-    check_polynomial(q,a);
+    check_polynomial(q,a.begin(), a.end());
     write_timings();
   }
 
@@ -73,47 +230,47 @@ public:
       Fn q= cf_(1,3,-4,-7);
       DV a; a.push_back(-0.8746784187); a.push_back(-0.2800178096);
       a.push_back(0.5832676569);
-      check_polynomial(q,a);
+      check_polynomial(q,a.begin(), a.end());
     }
     {
       Fn q= cf_(2,0,1);
       DV a;
-      check_polynomial(q,a);
+      check_polynomial(q,a.begin(), a.end());
     }
     /*
       {
       Fn q= Fn::make(0);
       DV a;
-      check_square_free_polynomial(q,a,print_multiplicity);
+      check_square_free_polynomial(q,a.begin(), a.end(),print_multiplicity);
       }
       {
       Fn q= Fn::make(-3);
       DV a;
-      check_square_free_polynomial(q,a,print_multiplicity);
+      check_square_free_polynomial(q,a.begin(), a.end(),print_multiplicity);
       }
     */
     {
       Fn q= cf_(2,-1);
       DV a;
       a.push_back(2);
-      check_polynomial(q,a);
+      check_polynomial(q,a.begin(), a.end());
     }
     {
       Fn q= cf_(1,3,-4);
       DV a;a.push_back(-.25); a.push_back(1);
-      check_polynomial(q,a);
+      check_polynomial(q,a.begin(), a.end());
     }
     {
       Fn q= cf_(2,5,-4,-7,8,-14);
       DV a;a.push_back(0.7382979184);
-      check_polynomial(q,a);
+      check_polynomial(q,a.begin(), a.end());
     }
     {
       Fn q= cf_(2, 0, -1, 1, -3, -2);
       DV a;a.push_back(-1.833007477);
       a.push_back(-.8474637161);
       a.push_back(.7987710980);
-      check_polynomial(q,a);
+      check_polynomial(q,a.begin(), a.end());
     }
     write_timings();
   }
@@ -132,9 +289,9 @@ public:
     a.push_back(1.123932833);
     a.push_back(3.435646759);
     a.push_back(43.32193209);
-    check_polynomial(q, a, Rt(5.0), Rt(40.0));
-    check_polynomial(q, a, Rt(0.0), Rt(45.0));
-    check_polynomial(q, a, Rt(1.123932834), Rt(20.0));
+    check_polynomial(q, a.begin()+7, a.end()-1, Rt(5.0), Rt(40.0));
+    check_polynomial(q, a.begin()+5, a.end(), Rt(0.0), Rt(45.0));
+    check_polynomial(q, a.begin()+6, a.end()-1, Rt(1.123932834), Rt(20.0));
     write_timings();
   }
 
@@ -161,11 +318,11 @@ public:
       a.push_back(7);
       a.push_back(10);
       a.push_back(11);
-      check_polynomial(q,a);
-      check_polynomial(q,a, Rt(-4), Rt(9));
-      check_polynomial(q,a, Rt(-4), Rt(7));
-      check_polynomial(q,a, Rt(-3), Rt(9));
-      check_polynomial(q,a, Rt(-3), Rt(7));
+      check_polynomial(q,a.begin(), a.end());
+      check_polynomial(q,a.begin()+2, a.end()-2, Rt(-4), Rt(9));
+      check_polynomial(q,a.begin()+2, a.end()-4, Rt(-4), Rt(7));
+      check_polynomial(q,a.begin()+4, a.end()-2, Rt(-3), Rt(9));
+      check_polynomial(q,a.begin()+4, a.end()-4, Rt(-3), Rt(7));
     }
     write_timings();
   }
@@ -216,7 +373,7 @@ public:
       a.push_back(2.562471103);
       a.push_back(3.490003117);
       a.push_back(478.0766178);
-      check_polynomial(q, a);
+      check_polynomial(q, a.begin(), a.end());
       Root_container s=
 	k_.root_container_object(q, -CGAL_POLYNOMIAL_NS::infinity<Rt>(), CGAL_POLYNOMIAL_NS::infinity<Rt>());
       
@@ -224,7 +381,7 @@ public:
       
       typename Root_container::iterator it=s.begin();
       while ( it != s.end() ) {
-	check_polynomial(q, a, *it);
+	check_polynomial(q, a.begin(), a.end(), *it);
 	++it;
       }
     }
@@ -244,7 +401,7 @@ public:
       a.push_back(0.2307182653);
       a.push_back(0.4663233325);
       a.push_back(1.602781661);
-      check_polynomial(q, a, 0);
+      check_polynomial(q, a.begin(), a.end(), 0);
       Root_container s=
 	k_.root_container_object(q, -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
 				 CGAL_POLYNOMIAL_NS::infinity<Rt>());
@@ -253,126 +410,14 @@ public:
       
       typename Root_container::iterator it=s.begin();
       while ( it != s.end() ) {
-	check_polynomial(q, a, *it);
+	check_polynomial(q, a.begin(), a.end(), *it);
 	++it;
       }
       
     }
   }
 
-  void check_polynomial(const Fn &q, const DV &a,
-			const Rt& start = -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
-			const Rt& end = CGAL_POLYNOMIAL_NS::infinity<Rt>() ){
 
-    CGAL::Timer timer;
-
-
-    typename K::Is_even_multiplicity iem = k_.is_even_multiplicity_object(q);
-    int current_root=0;
-    if (verbose) {
-      std::cout << "Polynomial: " << q << std::endl;
-      std::cout << "Window: (";
-      
-      std::cout<< CGAL::to_double(start);
-      std::cout << ", ";
-      std::cout << CGAL::to_double(end);
-      std::cout << ")" << std::endl;
-      std::cout << "Maple: ";
-      for (unsigned int i=0; i< a.size(); ++i){
-	if (CGAL::to_double(start) >= a[i]-.00001){
-	  ++current_root;
-	} else if (CGAL::to_double(end) <= a[i]){
-
-	} else {
-	  std::cout << "<" << a[i]  << "> ";
-	}
-      }
-      std::cout << std::endl;
-      
-     
-      std::cout << "Solver: ";
-    }
-    std::vector<Rt> roots;
-    DV comp;
-    int reps=0;
-    timer.start();
-    int total_roots=0;
-    do {
-      Root_container s= k_.root_container_object(q, start, end);
-      typename Root_container::iterator it= s.begin();
-      while (it != s.end()){
-	if (reps==0  && verbose){
-	  //comp.push_back(CGAL::to_double(r));
-	  roots.push_back(*it);
-	  
-	  std::cout << "<" << CGAL::to_double(*it);
-	  if (iem(*it)) { std::cout <<"E";}
-	  std::cout << "> " << std::flush;
-	}
-	++it;
-	++total_roots;
-      }
-      ++total_roots;
-      if (reps==0 && verbose) {
-	std::vector<bool> taken_maple(a.size(), false), taken_solver(roots.size(), false);
-	for (unsigned int i=0; i< roots.size(); ++i){
-	  double rd= CGAL::to_double(roots[i]);
-	  bool ie= iem(roots[i]);
-	  int mult=1;
-	  if (ie) mult=2;
-	  for (int k=0; k<mult; ++k) {
-	    int mm=-1;
-	    double md=.0005;
-	    for (unsigned int j=0; j< a.size(); ++j){
-	      if (std::abs(rd-a[j]) < md  && taken_maple[j]==false){
-		md= std::abs(rd-a[j]);
-		mm=j;
-	      }
-	    }
-	    if (mm != -1){
-	      taken_maple[mm]=true;
-	      taken_solver[i]=true;
-	    }
-	  }
-	}
-
-	bool has_error=false;
-	for (unsigned int i=0; i< taken_maple.size(); ++i){
-	  if (!taken_maple[i] && Rt(a[i]-.00001) > start && Rt(a[i]) < end) has_error=true;
-	}
-
-	for (unsigned int i=0; i< taken_solver.size(); ++i){
-	  if (!taken_solver[i]) has_error=true;
-	}
-	
-	if (has_error) {
-	  std::cout << std::endl;
-	  for (unsigned int i=0; i< taken_maple.size(); ++i){
-	    if (!taken_maple[i] && Rt(a[i]) > start && Rt(a[i]) < end)
-	      std::cerr << "ERROR Missing " << a[i] << std::endl;
-	  }
-	  
-	  for (unsigned int i=0; i< taken_solver.size(); ++i){
-	    if (!taken_solver[i]) std::cerr << "ERROR Extra " << roots[i] << std::endl;
-	  }
-	}
-
-	std::cout << std::endl;
-      }
-      ++reps;
-    } while (timer.time() <3 && !verbose);
-    
-    timer.stop();
-
-    if (verbose) {
-      std::cout << "Elapsed time: " << timer.time()/reps << std::endl;
-      
-      std::cout << std::endl << std::endl; 
-    } else {
-      num_roots += total_roots;
-      total_time += timer.time();
-    }     
-  }
 };
 
 //typedef CGAL::Polynomial::Polynomial_kernel<Polynomial_gmpq> Kernel_gmpq;

@@ -17,8 +17,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -g \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           -Iinclude -I../../include\
+           $(LONG_NAME_PROBLEM_CXXFLAGS) -g
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -27,15 +27,15 @@ CXXFLAGS = -g \
 LIBPATH = \
           $(CGAL_LIBPATH)
 
-LDFLAGS =  -lboost_program_options \
+LDFLAGS =  -lboost_program_options ../../src/libCGAL.a \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) 
 
-QT_LDFLAGS =  -lboost_program_options \
+QT_LDFLAGS = -lboost_program_options ../../src/libCGAL.a  ../../src/CGALQt/libCGALQt.a\
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS) 
 
-COIN_LDFLAGS = $(LDFLAGS) -lCoin -lSoQt
+COIN_LDFLAGS =  $(QT_LDFLAGS) -lCoin -lSoQt 
 
 #---------------------------------------------------------------------#
 #                    target entries

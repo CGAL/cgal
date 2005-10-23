@@ -22,6 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/KDS/Ref_counted.h>
 #include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Simulator_kds_listener.h>
 
 CGAL_KDS_BEGIN_NAMESPACE
 
@@ -76,7 +77,7 @@ class  Enclosing_box_2: public Ref_counted<Enclosing_box_2<Traits> > {
   friend class Enclosing_box_bounce_event_2<This>;
   typedef typename Simulator::Function_kernel::Function Function;
 public:
-  enum Side {TOP=0, BOTTOM=1, LEFT=2, RIGHT=3};
+  enum Side {INVALID=-1, TOP=0, BOTTOM=1, LEFT=2, RIGHT=3};
 
   typedef typename Moving_point_table::Data Point;
   typedef typename Moving_point_table::Key Point_key;
@@ -106,13 +107,17 @@ public:
 
   void insert(Point_key k) {
     double tb=std::numeric_limits<double>::infinity();
-    Side bs= try_bound(LEFT, k, bs, tb);
+    Side bs=INVALID;
+    bs= try_bound(LEFT, k, bs, tb);
     bs= try_bound(RIGHT, k, bs, tb);
     bs= try_bound(TOP, k, bs, tb);
     bs= try_bound(BOTTOM, k, bs, tb);
     if (tb != std::numeric_limits<double>::infinity()){
       certs_[k]= traits_.simulator_pointer()->new_event(tb, Event(this,bs,k,tb));
+      CGAL_postcondition(bs != INVALID);
       //std::cout << certs_[k] << std::endl;
+    } else {
+      CGAL_postcondition(bs == INVALID);
     }
     /*std::cout << "Scheduled event for point " << k << " with motion " << traits_.moving_point_table_pointer()->at(k) 
 	      << " for time " << tb << " on wall " << bs << std::endl;*/
@@ -145,7 +150,8 @@ public:
 
     Point pt(Function(coefs[0].begin(), coefs[0].end()),
 	     Function(coefs[1].begin(), coefs[1].end()));
-    //std::cout << "Changing motion from " << traits_.moving_point_table_pointer()->at(k) << " to " << pt << std::endl;
+    /*std::cout << "Changing motion from " << traits_.moving_point_table_pointer()->at(k) << " to " 
+      << pt << " at " << time <<  std::endl;*/
     traits_.moving_point_table_pointer()->set(k, pt);
     CGAL_assertion(traits_.moving_point_table_pointer()->at(k) == pt);
   }
@@ -200,26 +206,42 @@ protected:
     }
   }
 
-  void compute_bounce(const Function& f, NT time, std::vector<NT> &out) {
+  void compute_bounce(const Function& f, NT t, std::vector<NT> &out) {
+    // x is contant
+    // v is negative v
+    // higher order coefs on constant
     // out(time)=f(time)
     // out'(time)= -f'(time)
     typename Simulator::Function_kernel::Differentiate cd
       = function_kernel_object().differentiate_object();
-    NT v= -cd(f)(time);
-    NT x= f(time);
+   
     if (f.degree() >=2) {
-      Function fh= Function(f.begin()+2, f.end());
-      NT fhv= fh(time);
-      out.push_back(x-v*time-fhv);
-      out.push_back(v-fhv);
+      std::vector<NT> hcoefs(f.begin(), f.end());
+      hcoefs[0]=0;
+      hcoefs[1]=0;
+      Function fh(hcoefs.begin(), hcoefs.end());
+      Function dfh= cd(fh);
+      out.push_back(f[0]+2*f[1]*t+2*t*dfh(t));
+      out.push_back(-f[1]-2*dfh(t));
       out.insert(out.end(), f.begin()+2, f.end());
     } else {
-      out.push_back(x-v*time);
+      NT v= -cd(f)(t);
+      NT x= f(t);
+      out.push_back(x-v*t);
       out.push_back(v);
       //out.push_back(x);
     }
+    /*{
+      Function ft(out.begin(), out.end());
+      NT nt= ft(t);
+      NT ot= f(t);
+      NT nd= cd(ft)(t);
+      NT od= cd(f)(t);
+      }*/
+    
     CGAL_exactness_assertion_code(Function ft(out.begin(), out.end()););
     CGAL_exactness_assertion(ft(time) == f(time));
+    CGAL_exactness_assertion(cd(ft)(time) == -cd(f)(time));
   }
   
 

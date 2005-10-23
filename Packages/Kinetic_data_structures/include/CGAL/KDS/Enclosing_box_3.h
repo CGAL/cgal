@@ -222,31 +222,42 @@ protected:
     }
   }
 
-  void compute_bounce(const Function& f, NT time, std::vector<NT> &out) {
+  void compute_bounce(const Function& f, NT t, std::vector<NT> &out) {
+    // x is contant
+    // v is negative v
+    // higher order coefs on constant
     // out(time)=f(time)
     // out'(time)= -f'(time)
-    CGAL_assertion(out.empty());
     typename Simulator::Function_kernel::Differentiate cd
       = function_kernel_object().differentiate_object();
-    NT v= -cd(f)(time);
-    NT x= f(time);
+   
     if (f.degree() >=2) {
-      Function fh= Function(f.begin()+2, f.end());
-      NT fhv= fh(time);
-      out.push_back(x-v*time-fhv);
-      out.push_back(v-fhv);
+      std::vector<NT> hcoefs(f.begin(), f.end());
+      hcoefs[0]=0;
+      hcoefs[1]=0;
+      Function fh(hcoefs.begin(), hcoefs.end());
+      Function dfh= cd(fh);
+      out.push_back(f[0]+2*f[1]*t+2*t*dfh(t));
+      out.push_back(-f[1]-2*dfh(t));
       out.insert(out.end(), f.begin()+2, f.end());
     } else {
-      out.push_back(x-v*time);
+      NT v= -cd(f)(t);
+      NT x= f(t);
+      out.push_back(x-v*t);
       out.push_back(v);
       //out.push_back(x);
     }
-    CGAL_assertion(out.size() == static_cast<unsigned int>(f.degree()+1));
+    /*{
+      Function ft(out.begin(), out.end());
+      NT nt= ft(t);
+      NT ot= f(t);
+      NT nd= cd(ft)(t);
+      NT od= cd(f)(t);
+      }*/
+    
     CGAL_exactness_assertion_code(Function ft(out.begin(), out.end()););
-    CGAL_exactness_assertion_code(if (ft(time) != f(time)) {std::cout << "Failed to compute proper bounce at time " << time << std::endl;});
-    CGAL_exactness_assertion_code(if (ft(time) != f(time)) {std::cout << ft << std::endl;});
-    CGAL_exactness_assertion_code(if (ft(time) != f(time)) {std::cout << f << std::endl;});
     CGAL_exactness_assertion(ft(time) == f(time));
+    CGAL_exactness_assertion(cd(ft)(time) == -cd(f)(time));
   }
   
 

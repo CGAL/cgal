@@ -1,3 +1,6 @@
+#define CGAL_CHECK_EXACTNESS
+#define CGAL_CHECK_EXPENSIVE
+
 #include <iostream>
 #include <cstdlib>
 

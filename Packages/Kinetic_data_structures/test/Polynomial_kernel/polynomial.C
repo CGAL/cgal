@@ -1,3 +1,6 @@
+#define CGAL_CHECK_EXACTNESS
+#define CGAL_CHECK_EXPENSIVE
+
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Polynomial.h>

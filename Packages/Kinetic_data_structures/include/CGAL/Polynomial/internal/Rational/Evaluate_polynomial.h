@@ -20,10 +20,11 @@
 #ifndef CGAL_POLYNOMIAL_INTERNAL_EVALUATE_H
 #define CGAL_POLYNOMIAL_INTERNAL_EVALUATE_H
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/internal/numeric_solvers.h>
 #include <vector>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+
+double evaluate_polynomial(const double *b, const double *e, double t);
 
 template <class NT>
 inline NT evaluate_polynomial(const std::vector<NT> &coefs, const NT &t) {

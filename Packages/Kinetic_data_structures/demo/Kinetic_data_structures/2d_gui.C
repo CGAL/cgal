@@ -1,4 +1,6 @@
 #include <CGAL/KDS/Exact_simulation_traits_2.h>
+#include <CGAL/KDS/Enclosing_box_2.h>
+
 
 #ifdef CGAL_USE_QT
 #include <CGAL/KDS/IO/Qt_widget_2.h>
@@ -22,10 +24,12 @@ int main(int argc, char*argv[]){
   typedef CGAL::KDS::Qt_moving_points_2<Traits, Gui> Qt_moving_points;
   typedef CGAL::KDS::Insert_event<Traits::Moving_point_table> Insert_event;
   typedef Traits::Kinetic_kernel::Point_2 Moving_point;
+  typedef CGAL::KDS::Enclosing_box_2<Traits> Box;
   Traits tr;
 
   Gui::Pointer qtsim=new Gui(argc, argv, tr.simulator_pointer());
   Qt_moving_points::Pointer qtmptp= new Qt_moving_points(qtsim, tr);
+  Box::Pointer box= new Box(tr);
   
  
   Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();

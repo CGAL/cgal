@@ -1,3 +1,6 @@
+#define CGAL_CHECK_EXACTNESS
+#define CGAL_CHECK_EXPENSIVE
+
 #include <CGAL/KDS/Sort.h>
 #include <CGAL/KDS/Insert_event.h>
 #include <CGAL/KDS/Exact_simulation_traits_1.h>

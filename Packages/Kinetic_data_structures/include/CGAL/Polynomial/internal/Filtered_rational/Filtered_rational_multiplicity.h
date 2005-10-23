@@ -47,7 +47,7 @@ public:
   template <class NTT>
   result_type operator()(const NTT &t) const {
     //typename Kernel::Sign_at sa=;
-    CGAL_Polynomial_exactness_assertion( kernel_.sign_at_object(h_[0])(t)==POLYNOMIAL_NS::ZERO);
+    CGAL_Polynomial_exactness_assertion( kernel_.sign_at_object(h_[0])(t)==CGAL_POLYNOMIAL_NS::ZERO);
     //if (kernel_.sign_at_object(fh)(t)!= ::CGAL::ZERO) return 0;
     // need to check if it is an even root
     int deg=1;
