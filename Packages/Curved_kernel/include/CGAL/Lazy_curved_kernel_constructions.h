@@ -220,6 +220,76 @@ public:
   }
 };
 
+
+template <typename LK, typename AC, typename EC>
+struct Lazy_advanced_make_x_monotone_2 {
+
+  static const bool Protection = true;
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
+  typedef void result_type;
+  typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
+  typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
+  AC ac;
+  EC ec;
+
+public:
+
+  // In the example we intersect two Lazy<Segment>s
+  // and write into a back_inserter(list<Object([Lazy<Point>,Lazy<Segment>]) >)
+  template <typename L1, typename OutputIterator>
+  OutputIterator
+  operator()(const L1& l1,OutputIterator it) const
+  {
+  
+    try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
+      Protect_FPU_rounding<Protection> P;
+      Lazy_vector lv(new Lazy_construct_rep_with_vector_1<AC, EC, E2A, L1>(ac, ec, l1));
+      // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
+      // that is, when we get here we have constructed all approximate results
+      for(unsigned int i = 0; i < lv.approx().size(); i++){
+          if(object_cast<typename AK::Circular_arc_2>(& (lv.approx()[i].first))){
+	  *it = std::make_pair(make_object(typename LK::Circular_arc_2(
+	  new Lazy_construct_rep_1<Ith<typename AK::Circular_arc_2>, 
+	  Ith<typename EK::Circular_arc_2>,E2A, 
+	  Lazy_vector>(Ith<typename AK::Circular_arc_2>(i), 
+	  Ith<typename EK::Circular_arc_2>(i), lv))),lv.approx()[i].second);
+	  ++it;
+	} else if(object_cast<typename AK::Line_arc_2>(& (lv.approx()[i].first))){
+	  *it = std::make_pair(make_object(typename LK::Line_arc_2(
+	  new Lazy_construct_rep_1<Ith<typename AK::Line_arc_2>, 
+	  Ith<typename EK::Line_arc_2>,E2A, 
+	  Lazy_vector>(Ith<typename AK::Line_arc_2>(i), 
+	  Ith<typename EK::Line_arc_2>(i), lv))),lv.approx()[i].second);
+	  ++it;
+	} 
+	else{
+	  std::cout << "UNEXPECTED ADVANCED_MAKE_X_MONOTONE PRODUCT" << std::endl;
+	  abort();
+	}
+      }
+      
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(__PRETTY_FUNCTION__));
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      // TODO: Instead of using a vector, write an iterator adapter
+      std::vector<Object> exact_objects;
+      ec(CGAL::exact(l1), std::back_inserter(exact_objects));
+      for (std::vector<Object>::iterator oit = exact_objects.begin();
+	   oit != exact_objects.end();
+	   oit++){
+	*it = std::make_pair(make_lazy_CK<LK>((*oit).first),(*oit).second);
+	++it;
+      }
+    }
+    return it;
+  }
+};
+
 // The following functor returns an Object with a Lazy<Something> inside
 // As the nested kernels return Objects of AK::Something and EK::Something
 // we have to unwrap them from the Object, and wrap them in a Lazy<Something>
