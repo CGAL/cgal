@@ -80,12 +80,16 @@ public:
         return typename R::Construct_Circular_target_vertex_2()(*this);
   }
 
-  const Circular_arc_point_2 & left() const
+  typename Qualified_result_of<typename R::Construct_Circular_min_vertex_2,Line_arc_2>::type
+  //const Circular_arc_point_2 & left() const
+  left() const
   {
         return typename R::Construct_Circular_min_vertex_2()(*this);
   }
 
-  const Circular_arc_point_2 & right() const
+  typename Qualified_result_of<typename R::Construct_Circular_max_vertex_2,Line_arc_2>::type
+  //const Circular_arc_point_2 & right() const
+  right() const
   {
         return typename R::Construct_Circular_max_vertex_2()(*this);
   }
