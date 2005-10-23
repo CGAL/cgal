@@ -51,6 +51,12 @@
   in_range_2_object)
   CGAL_Curved_Kernel_cons(Make_x_monotone_2,
   make_x_monotone_2_object)
+  CGAL_Curved_Kernel_cons(Make_xy_monotone_2,
+  make_xy_monotone_2_object)
+  CGAL_Curved_Kernel_cons(Advanced_make_x_monotone_2,
+  advanced_make_x_monotone_2_object)
+  CGAL_Curved_Kernel_cons(Advanced_make_xy_monotone_2,
+  advanced_make_xy_monotone_2_object)
   CGAL_Curved_Kernel_cons(Intersect_2,
   intersect_2_object)
   CGAL_Curved_Kernel_cons(Split_2,
