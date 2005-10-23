@@ -42,9 +42,6 @@
 	#define PRINT_V_DEBUG(expr)
 #endif
 
-#include <CGAL/Memory_sizer.h> 
-typedef CGAL::Memory_sizer::size_type size_type;
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \class

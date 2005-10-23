@@ -32,9 +32,6 @@
 #include <CGAL/Arr_batched_point_location.h>
 
 //-------------------------------
-#include <CGAL/Memory_sizer.h> 
-typedef CGAL::Memory_sizer::size_type size_type;
-
 //#define CGAL_LM_DEBUG
 //
 //#ifdef CGAL_LM_DEBUG
@@ -44,7 +41,6 @@ typedef CGAL::Memory_sizer::size_type size_type;
 //	#define PRINT_DEBUG(expr)
 //	#define LM_DEBUG(cmd) 
 //#endif
-
 
 CGAL_BEGIN_NAMESPACE
 
