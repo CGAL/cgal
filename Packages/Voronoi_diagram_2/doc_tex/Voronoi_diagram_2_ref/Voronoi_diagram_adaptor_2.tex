@@ -43,7 +43,7 @@ model of the \ccc{VoronoiTraits_2} concept.
 
 \ccTypes
 %
-\ccThree{typedef Voronoi_traits::Generator_2}{Delaunay_graph+}{}
+\ccThree{typedef Delaunay_graph::size_type}{Delaunay_graph+}{}
 \ccThreeToTwo
 \ccTwo{Voronoi_diagram_2<DG,VT>::Locate_result+}{}
 %
@@ -54,8 +54,8 @@ model of the \ccc{VoronoiTraits_2} concept.
 \ccGlue
 \ccTypedef{typedef Voronoi_traits::Point_2 Point_2;}{A type a point.}
 \ccGlue
-\ccTypedef{typedef Voronoi_traits::Generator_2 Generator_2;}{A type
-  for the generators of the Voronoi diagram.}
+\ccTypedef{typedef Voronoi_traits::Site_2 Site_2;}{A type
+  for the sites of the Voronoi diagram.}
 \ccGlue
 \ccTypedef{typedef Delaunay_graph::size_type size_type;}{A type for sizes.}
 %\ccGlue
@@ -125,8 +125,8 @@ corresponding handles.
   the bounded halfedges of the Voronoi diagram. Its value type is
   \ccc{Halfedge}.}
 \ccGlue
-\ccNestedType{Generator_iterator}{A type for an iterator over the
-  generators of the Voronoi diagram. Its value type is \ccc{Generator_2}.}
+\ccNestedType{Site_iterator}{A type for an iterator over the
+  sites of the Voronoi diagram. Its value type is \ccc{Site_2}.}
 
 \ccCreationVariable{vd}
 
@@ -146,9 +146,9 @@ corresponding handles.
 \ccConstructor{template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond, Voronoi_traits
   tr = Voronoi_traits());}{Creates a Voronoi diagram using as
-  generators the sites in the iterator range \ccStyle{[first, beyond)}
+  sites the sites in the iterator range \ccStyle{[first, beyond)}
   and using \ccc{tr} as Voronoi traits. The value type of
-  \ccc{Iterator} must be \ccc{Generator_2}.}
+  \ccc{Iterator} must be \ccc{Site_2}.}
 
 
 \ccHeading{Access Methods}
@@ -274,14 +274,14 @@ change in the Voronoi diagram.
 \ccGlue
 \ccMethod{Vertex_iterator vertices_end();}{Past-the-end iterator.}
 
-The following iterator provides access to the generators that define
-the Voronoi diagram. Its value type is \ccc{Generator_2}. It is
+The following iterator provides access to the sites that define
+the Voronoi diagram. Its value type is \ccc{Site_2}. It is
 invalidated by any change in the Voronoi diagram.
 
-\ccMethod{Generator_iterator generators_begin();}
-{Starts at an arbitrary generator.}
+\ccMethod{Site_iterator sites_begin();}
+{Starts at an arbitrary site.}
 \ccGlue
-\ccMethod{Generator_iterator generators_end();}{Past-the-end iterator.}
+\ccMethod{Site_iterator sites_end();}{Past-the-end iterator.}
 
 
 \ccHeading{Circulators}
@@ -334,19 +334,19 @@ invalidated by any modification in the face over which it is defined.
 
 
 \ccHeading{Insertion}
-\ccThree{Face_handle}{vd.insert(Generator_2 g)+}{}
-\ccMethod{Face_handle insert(Generator_2 g);}{Inserts the generator
-  \ccc{g} in the Voronoi diagram. A handle to the face corresponding
-  to the Voronoi face of \ccc{g} in the Voronoi diagram is
-  returned. If \ccc{g} has an empty Voronoi cell, the default
+\ccThree{Face_handle}{vd.insert(Site_2 t)+}{}
+\ccMethod{Face_handle insert(Site_2 t);}{Inserts the site
+  \ccc{t} in the Voronoi diagram. A handle to the face corresponding
+  to the Voronoi face of \ccc{t} in the Voronoi diagram is
+  returned. If \ccc{t} has an empty Voronoi cell, the default
   constructed face handle is returned. This method is supported only
   if \ccStyle{Voronoi_traits::Has_insert} is set to \ccStyle{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{template<class Iterator>
   size_type insert(Iterator first, Iterator beyond);}{Inserts, in the
-  Voronoi diagram, the generators in the iterator range \ccc{[first,
+  Voronoi diagram, the sites in the iterator range \ccc{[first,
     beyond)}. The value type of \ccc{Iterator} must be
-  \ccc{Generator_2}. The number of generators in the iterator range is
+  \ccc{Site_2}. The number of sites in the iterator range is
   returned. This method is supported only if
   \ccStyle{Voronoi_traits::Has_insert} is set to \ccStyle{CGAL::Tag_true}.}
 
@@ -425,9 +425,17 @@ model of \ccc{DelaunayGraph_2}\\
 \ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
 \ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}\\
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>}\\
 \ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>}
 
 \end{ccRefClass}
 

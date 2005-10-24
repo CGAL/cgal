@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
 
-\begin{ccRefClass}{Regular_triangulation_Voronoi_traits_2<RT2>}
+\begin{ccRefClass}{Regular_triangulation_identity_Voronoi_traits_2<RT2>}
 
 %% add template arg's if necessary
 
@@ -31,6 +31,21 @@ The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
 concept. The template parameter of the \ccRefName\ class must be a
 model of the \ccc{DelaunayGraph_2} concept, and in particular it has
 the semantics of a 2D regular triangulation.
+%
+This model of the Voronoi traits for 2D regular triangulations provides
+mute edge and face degeneracy testers, i.e., the testers always
+return a negative answer when we ask the question whether an edge (a
+face, respectively) is degenerate, i.e., it has zero length (zero
+area, respectively).
+Since the degeneracy testers of this traits class do not really
+perform any tests, they are much more efficient compared to the
+degeneracy testers in the
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>} and
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>} classes
+(which actually do some work). This traits class is suitable for
+users who want to view 2D regular triangulations as Voronoi diagrams,
+but do not care for degenerate features in the Voronoi diagram.
+
 
 
 \ccInclude{CGAL/Regular_triangulation_Voronoi_traits_2.h}

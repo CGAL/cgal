@@ -85,19 +85,53 @@ concept, a model of this concept must provide the following types:
   degenerate, i.e., it has zero length.}
 
 
+
+\ccHeading{Miscellaneous}
+The following methods are important when the edge degeneracy tester
+maintains a state. This can happen if the edge degeneracy tester
+caches its results.
+
+\ccThree{bool}{edt.swap(other)++}{}
+%
+\ccMethod{void clear();}{Clears the state of the tester.}
+\ccGlue
+\ccMethod{void swap(EdgeDegeneracyTester other);}{The tester
+  \ccc{edt} and \ccc{other} are swapped. This method should be
+  preferred to \ccStyle{edt=other} or \ccStyle{edt(other)} if
+  \ccc{other} is deleted afterwards.}
+\ccGlue
+\ccMethod{bool is_valid();}{Tests the validity of the tester.}
+
+
 \ccHasModels
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>::Edge_degeneracy_tester}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>::Edge_degeneracy_tester}\\
 \ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Edge_degeneracy_tester}\\
-\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Edge_degeneracy_tester}
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>::Edge_degeneracy_tester}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>::Edge_degeneracy_tester}
 
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
 \ccc{FaceDegeneracyTester}\\
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>}\\
 \ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>}
 
 \end{ccRefFunctionObjectConcept}

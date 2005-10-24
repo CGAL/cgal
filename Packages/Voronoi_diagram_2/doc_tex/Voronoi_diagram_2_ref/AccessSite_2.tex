@@ -1,0 +1,84 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+\begin{ccRefFunctionObjectConcept}{AccessSite_2}
+
+The functor \ccc{AccessSite_2} is responsible for accessing the site
+corresponding to the vertex handle passed to it as an argument. The
+result type of this functor is the site type of the Voronoi traits
+providing this functor, or a const reference to this site type.
+
+\ccRefines
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccTypes
+
+In addition to the types required by the \ccc{AdaptableFunctor}
+concept, a model of this concept must provide the following types:
+
+\ccTwo{SiteAccess_2::Vertex_handle+}{}
+\ccNestedType{Vertex_handle}{A type for handles of the vertices in the
+  Delaunay graph.}
+
+\ccCreationVariable{as}
+
+\ccOperations
+%It must also provide the following operations:
+
+\ccThree{result_type}{as(Vertex_handle v)+}{}
+\ccThreeToTwo
+\ccMemberFunction{result_type operator()(Vertex_handle v);}
+{Returns the site corresponding to the vertex handle \ccc{v} in the
+  Delaunay graph. The vertex handle \ccc{v} cannot correspond to the
+  infinite vertex.}
+%
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Access_site_2}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>::Access_site_2}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>::Access_site_2}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Access_site_2}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>::Access_site_2}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>::Access_site_2}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Access_site_2}\\
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>::Access_site_2}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>::Access_site_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Access_site_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>::Access_site_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>::Access_site_2}
+
+
+\ccSeeAlso
+\ccc{VoronoiTraits_2}\\
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>}
+
+\end{ccRefFunctionObjectConcept}

@@ -42,10 +42,10 @@ that the Voronoi diagram adaptor can use it.
 \ccGlue
 \ccNestedType{Geom_traits}{A type for the geometric traits associated
   with the Delaunay graph.}
-\ccGlue
+%\ccGlue
 %\ccNestedType{Point_2}{A type for a point.}
 %\ccGlue
-\ccNestedType{Site_2}{A type for the generators of the Voronoi diagram.}
+%\ccNestedType{Site_2}{A type for the sites of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Triangulation_data_structure}{A type for the underlying
   triangulation data structure. It must be a model of the concept
@@ -282,21 +282,21 @@ the finite or infinite character of any feature.
 
 
 
-\ccHeading{Insertion}
-\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
+%\ccHeading{Insertion}
+%\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
+%%
+%The following insertion methods are in some sense optional. They are
+%only required if in the corresponding Voronoi traits the
+%\ccc{Has_insert} tag is set to \ccc{CGAL::Tag_true}.
 %
-The following insertion methods are in some sense optional. They are
-only required if in the corresponding Voronoi traits the
-\ccc{Has_insert} tag is set to \ccc{CGAL::Tag_true}.
-
-\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
-site \ccc{s} in the Delaunay graph.}
-%
-\ccMethod{template<class Iterator>
-size_type  insert(Iterator first, Iterator beyond);}{Inserts the
-sites in the iterator range \ccc{[first,beyond)} in the Delaunay graph.
-The \ccc{Iterator} type must be a model of \ccc{OutputIterator} and its
-value type must be \ccc{Site_2}}.
+%\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
+%site \ccc{s} in the Delaunay graph.}
+%%
+%\ccMethod{template<class Iterator>
+%size_type  insert(Iterator first, Iterator beyond);}{Inserts the
+%sites in the iterator range \ccc{[first,beyond)} in the Delaunay graph.
+%The \ccc{Iterator} type must be a model of \ccc{OutputIterator} and its
+%value type must be \ccc{Site_2}}.
 
 
 %\ccHeading{Nearest neighbor location}

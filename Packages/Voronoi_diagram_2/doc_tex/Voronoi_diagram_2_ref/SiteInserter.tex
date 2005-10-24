@@ -1,0 +1,87 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+\begin{ccRefFunctionObjectConcept}{SiteInserter}
+
+The functor \ccc{SiteInserter} is responsible for inserting a site in
+the Delaunay graph. The result type of the functor is a vertex handle
+of the Delaunay graph which either points to the vertex of the
+Delaunay graph corresponding to the site just inserted or the
+default constructed vertex handle. The latter case can happen if the
+site inserted is \textit{hidden}, i.e., it has an empty Voronoi cell.
+
+\ccRefines
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccTypes
+
+In addition to the types required by the \ccc{AdaptableFunctor}
+concept, a model of this concept must provide the following types:
+
+\ccTwo{SiteInserter::Delaunay_graph+}{}
+\ccNestedType{Delaunay_handle}{A type for the Delaunay graph.}
+\ccGlue
+\ccNestedType{Site_2}{A type for the sites of the Delaunay graph.}
+
+\ccCreationVariable{si}
+
+\ccOperations
+%It must also provide the following operations:
+
+\ccThree{result_type}{si(Delaunay_graph& dg, Site_2 t)+}{}
+\ccThreeToTwo
+\ccMemberFunction{result_type operator()(Delaunay_graph& dg, Site_2 t);}
+{Inserts the site \ccc{t} in the Delaunay graph \ccc{dg} and returns a
+  vertex handle. The vertex handle either points to the vertex
+  corresponding to the site \ccc{t} or is the default constructed
+  vertex handle. The latter case happens if the Voronoi cell of
+  \ccc{t} is empty.}
+%
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Site_inserter}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>::Site_inserter}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>::Site_inserter}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Site_inserter}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>::Site_inserter}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>::Site_inserter}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Site_inserter}\\
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>::Site_inserter}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>::Site_inserter}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Site_inserter}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>::Site_inserter}
+
+
+\ccSeeAlso
+\ccc{VoronoiTraits_2}\\
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>}
+
+\end{ccRefFunctionObjectConcept}

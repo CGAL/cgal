@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
 
-\begin{ccRefClass}{Regular_triangulation_Voronoi_traits_2<RT2>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>}
 
 %% add template arg's if necessary
 
@@ -30,26 +30,31 @@
 The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
 concept. The template parameter of the \ccRefName\ class must be a
 model of the \ccc{DelaunayGraph_2} concept, and in particular it has
-the semantics of a 2D regular triangulation.
+the semantics of the (triangulated) dual graph of the 2D segment
+Voronoi diagram. This model of the Voronoi traits for 2D segment
+Voronoi diagrams performs caching for the results of the degeneracy
+testers.
 
 
-\ccInclude{CGAL/Regular_triangulation_Voronoi_traits_2.h}
+
+\ccInclude{CGAL/Segment_Voronoi_diagram_Voronoi_traits_2.h}
 
 \ccIsModel
 \ccc{VoronoiTraits_2}
 
 \ccTypes
-\ccThree{typedef CGAL::Tag_true}{Has_nearest_site_2+}{}
+\ccThree{typedef CGAL::Tag_false}{Has_nearest_site_2+}{}
 \ccTypedef{typedef CGAL::Tag_true Has_nearest_site_2;}{}
 \ccGlue
-\ccTypedef{typedef CGAL::Tag_true Has_inserter;}{}
+\ccTypedef{typedef CGAL::Tag_false Has_inserter;}{}
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
 \ccc{DelaunayGraph_2}\\
-\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Regular_triangulation_2<Traits,Tds>}
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

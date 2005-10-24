@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
 
-\begin{ccRefClass}{Regular_triangulation_Voronoi_traits_2<RT2>}
+\begin{ccRefClass}{Regular_triangulation_caching_Voronoi_traits_2<RT2>}
 
 %% add template arg's if necessary
 
@@ -30,7 +30,9 @@
 The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
 concept. The template parameter of the \ccRefName\ class must be a
 model of the \ccc{DelaunayGraph_2} concept, and in particular it has
-the semantics of a 2D regular triangulation.
+the semantics of a 2D regular triangulation. This model of
+the Voronoi traits for 2D regular triangulations performs caching for the
+results of the degeneracy testers.
 
 
 \ccInclude{CGAL/Regular_triangulation_Voronoi_traits_2.h}
@@ -47,7 +49,7 @@ the semantics of a 2D regular triangulation.
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
 \ccc{DelaunayGraph_2}\\
-\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
 \ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
 \ccc{CGAL::Regular_triangulation_2<Traits,Tds>}
 \end{ccRefClass}

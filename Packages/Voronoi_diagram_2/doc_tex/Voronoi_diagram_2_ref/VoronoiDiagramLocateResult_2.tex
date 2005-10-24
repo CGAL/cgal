@@ -31,12 +31,12 @@ class. Essentially it provides the requirements for a class
 representing the return type of a point location query performed on a
 Voronoi diagram. Semantically, the result of the query is either a
 vertex, edge or face of the Voronoi diagram. It is a vertex if the
-query point is equidistant to at least three generators of the Voronoi
+query point is equidistant to at least three sites of the Voronoi
 diagram. It is an edge if the query point is equidistant to exactly
-two generators of the Voronoi diagram. In all other cases, the result
+two sites of the Voronoi diagram. In all other cases, the result
 of the point location is a face, namely, the unique face of the
 Voronoi diagram that contains the query point in its interior; in this
-case there exists a unique generator closest to the query point. The
+case there exists a unique site closest to the query point. The
 \ccc{VoronoiDiagramLocateResult_2} concept encapsulates the 
 semantics described above.
 
