@@ -2,7 +2,7 @@
 
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Derivative.h>
-
+#include <vector>
 
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
