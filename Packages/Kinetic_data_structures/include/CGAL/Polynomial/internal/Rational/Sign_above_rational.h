@@ -27,7 +27,7 @@ template <class Kernel>
 CGAL_POLYNOMIAL_NS::Sign sign_above(const typename Kernel::Function &p,
 		      const typename Kernel::NT &nt, const Kernel &k){
   // to make sure this is not called in vain
-  assert( false );
+  CGAL_precondition( false );
   // to avoid warning
   return 0;
 }
