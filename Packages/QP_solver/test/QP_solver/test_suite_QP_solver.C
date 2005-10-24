@@ -317,10 +317,10 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
     delete strat;
     delete[] row_types;
     return sol_solver_valid;
-  } else {
+  } else
     error("could not read problem instance");
-    return false;
-  }
+
+  return false;
 }
  
 template<typename Rep>
@@ -332,7 +332,6 @@ void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types) {
   for (int i = 0; i < size; ++i) {
     row_types[i] = typename Rep::Row_type(rel[i]); 		
   }
-	
 }
 
 template<typename T>
