@@ -450,14 +450,8 @@ class Do_overlap_2
     operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2, 
 	       OutputIterator res)
       { 
-        if(c1.has_no_hexagons())
-          c1.construct_hexagons();
-
-        if(c2.has_no_hexagons())
-          c2.construct_hexagons();
-
-        if(!do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
-         return res;
+        //if(!do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
+        // return res;
 
 	std::vector<Object> vec;
 	
