@@ -52,21 +52,28 @@ public:
     // need to check if it is an even root
     int deg=1;
     
-    
-    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
-    
-    if (h_[0].interval_function().is_zero()) return -1;
+    typename Kernel::Interval_traits::NT i;
+    {
+      CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+      if (h_[0].interval_function().is_zero()) return -1;
+      i = kernel_.exact_to_interval_converter_object().nt_converter()(t);
+    }
     //typename POLYNOMIAL_NS::To_interval<NTT> ti;
     
-    typename Kernel::Interval_traits::NT i= kernel_.exact_to_interval_converter_object().nt_converter()(t);
+  
     typename Kernel::Exact_traits::NT e(t);
     do {
       if (h_.size() == static_cast<unsigned int>(deg)) {
 	h_.push_back(kernel_.differentiate_object()(h_.back()));
       }
-      gd.set_enabled(true); // turn on filtering
-      typename Kernel::Interval_traits::NT vali= h_[deg].interval_function()(i);
-      gd.set_enabled(false); // turn off filtering
+      typename Kernel::Interval_traits::NT vali;
+      {
+	CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+	//gd.set_enabled(true); // turn on filtering
+	vali = h_[deg].interval_function()(i);
+	//gd.set_enabled(false); // turn off filtering
+      }
+
       if (vali.sup() < 0 || vali.inf() >0){
 	return deg;
       } else if (vali.sup()==0 && vali.inf()==0){

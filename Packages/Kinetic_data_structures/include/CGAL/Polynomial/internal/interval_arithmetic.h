@@ -46,7 +46,8 @@ typedef CGAL::Interval_nt_advanced Interval_nt;
   Create an instance of this class when you want to perform interval arithmetic.
   When the destructor is called, the mode will be automatically cleaned up. 
 */
-struct Interval_arithmetic_guard {
+struct Interval_arithmetic_guard: public CGAL::Protect_FPU_rounding<true>{};
+/*struct Interval_arithmetic_guard {
   //! I should check that the rounding is not already upwards.
   Interval_arithmetic_guard() {
     bk_= FPU_get_and_set_cw(CGAL_FE_UPWARD);
@@ -70,14 +71,10 @@ struct Interval_arithmetic_guard {
     }
   }
 protected:
-  /*!
-    Store the rounding mode to restore here. This could probably be made static. 
-    Making it static might have consequences for multithreaded programs, I am not sure.
-  */
   FPU_CW_t bk_;
-};
+};*/
 
-template <class NT>
+  template <class NT>
 class To_interval: public CGAL::To_interval<NT> {
 public:
   To_interval(){}

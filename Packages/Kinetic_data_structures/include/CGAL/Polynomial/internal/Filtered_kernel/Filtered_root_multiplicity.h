@@ -34,14 +34,20 @@ unsigned int filtered_root_multiplicity(const typename Kernel::Function &fh,
   int exact_deg=-1;
   if (0) k.sign_at_object(fh);
   
-  CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+
+  typename Kernel::Interval_kernel::NT i;
+  typename Kernel::Interval_kernel::Function cfi;
   
-  if (fh.interval_function().is_zero()) return -1;
-  //typename POLYNOMIAL_NS::To_interval<NTT> ti;
+  {
+    CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+    
+    if (fh.interval_function().is_zero()) return -1;
+    //typename POLYNOMIAL_NS::To_interval<NTT> ti;
+    
+    i = k.interval_function_converter_object().nt_converter()(t);
   
-  typename Kernel::Interval_kernel::NT i= k.interval_function_converter_object().nt_converter()(t);
-  
-  typename Kernel::Interval_kernel::Function cfi= fh.interval_function().derivative();
+    cfi = fh.interval_function().derivative();
+  }
   typename Kernel::Exact_kernel::Function cfe;
   typename Kernel::Exact_kernel::NT e;
   do {
@@ -52,7 +58,7 @@ unsigned int filtered_root_multiplicity(const typename Kernel::Function &fh,
     } else if (vali.sup()==0 && vali.inf()==0){
       
     } else {
-      gd.set_enabled(false); // Turn off filtering for exact
+      //gd.set_enabled(false); // Turn off filtering for exact
 
       // catch up exact and evaluate
       if (exact_deg==-1) {
@@ -72,15 +78,21 @@ unsigned int filtered_root_multiplicity(const typename Kernel::Function &fh,
 	Polynomial_converter<typename Kernel::Exact_kernel::Function,
 	typename Kernel::Interval_kernel::Function, ::CGAL::To_interval<typename Kernel::Exact_kernel::Function::NT> > pei(ei);*/
 	
-	gd.set_enabled(true); // turn on filtering
-	cfi= k.exact_interval_function_converter_object()(cfe);
+	// turn on filtering
+	{
+	  CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+	  cfi= k.exact_interval_function_converter_object()(cfe);
+	}
       } else {
 	// filtering is off
 	return interval_deg;
       }
     }
     // filtering is on
-    cfi=cfi.derivative();
+    {
+      CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
+      cfi=cfi.derivative();
+    }
     ++interval_deg;
   } while (true);
 }
