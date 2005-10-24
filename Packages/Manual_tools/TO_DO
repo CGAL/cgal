@@ -1,228 +1,311 @@
 Manual_tools/TO_DO
 ==================
- 
--- template template parameters in functions not working?
-   \ccFunction{template <template <typename> class Stencil>
-   void PQQ(Poly& p, Stencil<Poly> rule, int d);}
-   {comments...}  Reported by Andy.
 
--- Provide manuals online.
+-- Bug Fixes
+-- Feature Requests
+-- Projects
 
--- page numbering known to acroread does not match the page numbers of the
-   document. Reason is that the table of contents gets its own numbering
-   before the rest, which shifts the page numbers.
 
--- Math formulas in HTML embedded, search for AsciiMathML
+Bug Fixes
+============================================================================
 
--- Curved kernel: CircularKernel::ConstructIntersections_2: operator()
-   in PDF but not in HTML
+-- HTML: An enum without type name makes the HTML cnverter create a cross
+   link from 'enum' to 'enum', which is nonsens ;-), see for example:
+   http://www.cgal.org/Members/Manual_test/LAST/Polyhedron/Polyhedron_ref/Class_Polyhedron_incremental_builder_3.html#Enum_enum
 
--- <title>\cgal</title>: have general flex rule to eliminate <...>
-   markups in titles, see \cgal in STL Extension chapter.
+-- TeX, HTML: In Subdivision_surfaces_3 a problem showed up with 
+   template template parameters in functions, they seem to not working.
+   Check the example \ccFunction{template <template <typename> class Stencil>
+   void PQQ(Poly& p, Stencil<Poly> rule, int d);}{comments...}
 
--- Summary listing of member functions for current page
-   use auxiliary file per ref page to do this automatically
+-- HTML: In Curved_kernel: CircularKernel::ConstructIntersections_2: operator()
+   in PDF but not in HTML. Something wrong with nested scopes/operator()?
 
--- Extend summary isting of member functions to include base classes
-   (think of derivation from template args -> look at concept aux page)
+-- HTML: The <title> in HTML is literally shown in Mozilla's window title, 
+   HTML markups inside the title are shown literally, see for example,
+   \cgal in STL Extension chapter. Can probably easily fixed with an 
+   additional MODE and flex-rules in cc_anchor....stage_1
 
--- In the HTML manual, concepts and classes/functions are not
+-- TeX, HTML: In the HTML manual, concepts and classes/functions are not
    visually distinguishable : same font (italic) and same color.
    In the PS/PDF, they are : italic font for classes/functions,
-   and normal font for concepts.
-   Would it be possible to change the HTML version so that they
-   are distinguishable ?  Either using an italic font for concepts
-   like in the PS/PDF, or using a different color ?
+   and normal font for concepts. The HTML manual should be consistent.
 
--- Add warnings/errors for missing GIF's, and for [ref: entries indicating
-   missing ref's labels'
+-- TeX, HTML: The operator simplification is not working in the CGAL manual, 
+   see operator< in Point_2, it should read p < q and not p.operator<(q)
+   This is probably a problem of the CGAL manual that some previous
+   file is disabling the operator simplification explicitly. Check by
+   enabling it explicitly  with \def\ccTagOperatorLayout{\ccTrue}
 
--- Check which HTML standard we use. Validate pages officially.
+-- TeX, HTML: In Nef_polyhedron_S2<Traits>::Sphere_point, the removal of the
+   Sphere_point type from signatures does not work as expected, e.g.,
+   p == Sphere_point q should read p == q instead. It's probably a problem
+   of the CGAL manual, not the tools, since the Sphere_point must probably
+   be given with its scope to properly match and then disappear.
+   (HTML manual)
 
--- Make cross links from \label \ref pairs use the numbers, not the arrow icon.
+-- HTML: During the HTML conversion, a subdirectory in /usr/tmp is used to
+   hold all temporary files. However, latex_to_html.css seems to show up
+   occasionally in /usr/tmp directly, which it shouldn't.
 
--- Gif figures that don't have quotes like in src="..." are not copied.
-   Either fix it or give error message.
+-- HTML: some problem with stepcounter 
+   [I don't know what that is about anymore, so, I suggest to write a 
+    test for \stepcounter ]
 
--- indexing nested types: \ccNestedType{} not indexed?
+-- HTML: bash shell issue: if a filename contains special characters like '(', 
+   it doesnt get backquoted before using this filename as argument to
+   some other programs
+
+-- TeX: get rid of the underfull \hbox messages for the eps_tabs images
+   (annoys finding the real problems in the log.
+
+
+Feature Requests
+============================================================================
+
+-- DOC: Provide manuals online (done once Manual_tools is in the internal 
+   release).
+
+-- PDF: page numbering known to acroread does not match the page numbers of 
+   the document. Reason is that the table of contents gets its own numbering
+   before the rest, which shifts the page numbers.
+
+-- TeX, HTML: indexing nested types: \ccNestedType{} not indexed?
    For example : Triangulation_2::Line_face_circulator.
    It seems that \ccTypedef names are already indexed???
 
--- operator simplification not working, see operator< in Point_2
+-- HTML: Gif images copied to the HTML manual in a postprocessing step in 
+   the latex_to_html script: References to GIF images (and other formats 
+   too) are collected in the final HTML output and then searched in the
+   input directories and copied. It seems that missing images are not
+   properly reported as errors (or warnings), which could be improved.
 
--- Removal of same type not working, see Nef_S2 Sphere_segment
-   (in Sphere_point, might be a scope question that the surrounding class
-    must be given as well).
+-- HTML: Proper IMG tags in XHTML need quotes around the filename, i.e.
+   <IMG SRC="...">, and not <IM SRC=...>. When copying GIF images, the
+   HTML converter detects only IMG tags with proper quoted filenames,
+   but since HTML allows the filename without quotes, we should either
+   allow those as well, or issue an error message.
 
--- Bug: why does latex_to_html.css show up in /usr/tmp ?
+-- HTML: Label/ref pairs are encoded with [ref: prefixes until the 
+   cc_anchor.... pass creates the hyperlinks. A leftover [ref:...] tag 
+   thus indicates a missing \label statement, which could be detected in a
+   postprocessing step (maybe in the cc_anchor_footer.stage_3 rules?)
+   and issue a proper warning.
 
--- Problem: The .gif figures are needed for the Modifier section. Since
-    the modifier section does reside in a different directory, but
-    does not create its own file, for example, for a chapter, will the
-    latex_to_html converter not find the gif file automatically from the
-    Modifier directory. The latex_to_html converter searches the file in
-    the Miscellany directory instead, where we just keep a copy of those
-    gif files for now, until maybe the converter can be improved.
+-- HTML: Cross links from \label \ref pairs currently use in the HTML
+   converter a GIF image of an arrow for the reference. Since we have
+   now all necessary counters, we could switch to the proper number
+   definitions as in LaTeX (i.e. Section 5, Equation 3, etc.). Looks
+   better. Needs probably a glance at how the \label is implemented in
+   LaTeX, i.e., which counter it picks.
 
--- Once \includonly works, we might need a script to gray out unused TOC
-   entries (using a different CSS class for the link)
+-- HTML: Implement a macro to analyse length values such as 1pt, 2in, etc.,
+   and store the result in \lciLength. Implement \hspace and \vspace
+   based on that, use later in \includegraphics, etc.
 
--- detect and layout long template parameter lists
+-- HTML: Currently, the output filename of a chapter is directly derived 
+   from the chapters input filename, which implies that only one chapter
+   can exist per input file. This could be changed in a way by adding the
+   chapter number as some suffix to the output filename.
 
--- Documentation
+-- HTML: A reference chapter in the CGAL manual has a intro.tex file to
+   list all classes and concepts that are then properly linked. The
+   subsequent \input statement and \ccRefClass, etc., pages create 
+   additional links from the intro page to all the reference pages,
+   which are then redundant, and could be omitted. A simple command
+   could be added to turn off those links created for the \ccRefClass, 
+   etc., entries.
 
--- Test suite
+-- DOC: The current manual for the tools didn't actually convert to HTML
+   nicely itself. Has that already been changed?
 
--- Check what to do with
-   Tutorial/doc_tex
+-- HTML: Now that we have counters we can implement numbered equations,
+   with the number properly placed at the right margin.
 
--- Macro to analyse length value (1pt, 2in, ...) and store in \lciLength
-   Implement \hspace and \vspace
+-- HTML: Improve \ifthenelse package with parsing of \and ...
 
--- Allow several chapters in one file, all chapters except the first
-   have output filenames with a chapter number per file as suffix
+-- HTML: Make index only if \makeindex is defined. Adapt the links in
+   the HTML header and footers accordingly if the index isn't build.
 
--- OS License GPL for Manual tools: ask ETH/MPI for allowance
+-- HTML: Make TOC only if \tableofcontents is defined. Adapt the links in
+   the HTML header and footers accordingly if the table of contents 
+   isn't build.
 
--- Make User manual to print separately
+-- HTML: Enter TOC, Index, Biblio into TOC and Navigation only if they exist.
+   In it's extreme (single page conversion or no entries for TOC etc)
+   the header and footer navigation bars can become empty.
 
--- Each Chapter in its own PS file
-   try \includeonly and check of TOC gets reduced also
+-- TEST: Check what happens if the main latex input file is in a subdir.
 
--- Add new commands such as
-   \ccSummaryMethod{bool is_valid();}{short summary comment}
-   That creates a summary entry and a "more" link to the full
-   documentation (on the same page, or also applicable to base classes).
+-- CHECK: What does cc_remove_unwanted_links? (strips all links in an area
+   delimited by keyword lines in the HTML files). Is it used anywhere
+   or documented? Could it be replaced by the new \lcNoLinkBegin/End?
 
--- remove cc_check and cc_extract from distribution, which implies
-    - removing them from the src directory
-    - removing cc_extract.tex cc_extract.ps.gz from doc directory
+-- HTML: The navigation bar contains a "Next" link. It's creation can be
+   moved to the style file, such as latex_to_html_style_modern.sty, to be
+   more flexible here. It should be also possible to have it in the header.
+   Extend the navigation bar similarly with "Prev" navigation links.
+
+-- HTML: Add (optionally) a linking feature to refer from source code examples
+   to the example file in the CGAL release, e.g., when using
+   \ccIncludeExampleCode.
+
+-- HTML: Add counter to theorem environment
+
+-- HTML: Check and improve that cross linking within a reference page points 
+   to the top of the page (navigation header) and not to the section title
+   (if the reference page has a separate file of its own of course).
+
+
+Projects
+============================================================================
+
+-- SRC: move cc_check and cc_extract from src directory to a separate 
+   directory, which implies
+    - moving them from the src directory
+    - moving cc_extract.tex cc_extract.ps.gz from doc directory
     - changing cc_manual.tex to remove references to this (in particular
       the picture that shows how the tools interact)
     - ???
 
--- some problem with stepcounter
+-- TeX, HTML: Each Chapter in its own PS file
+   try \includeonly and check of TOC gets reduced also
 
--- ccRefIdfierPage should add the global scope if it's not there.
-   This is easier done when access to all .tex files is available as adding
-   the scope can be the default action?
+-- HTML: Realize \includeonly for the HTML converter, read the LaTeX aux 
+   files to retrieve the proper counters
 
--- no linking except inside \ccc command ???
+-- HTML: Once \includonly works, we might think about a script to gray out 
+   unused TOC entries (using a different CSS class for the link)
 
--- no linking of file to itself ???
+-- Doc: revise the existing documentation to reflect the state
+   of the converter.
 
--- add a command to turn off the link created by \input in HTML
-
--- make doc convertable to HTML
-
--- make a list of examples (generated from ccIncludeExample command)
-    -- better if all code is included using this command
-
--- make ccIncludeExample change to a smaller font?
-
--- syntax highlighting for the HTML examples
-
--- add a box around the examples and/or use a different background color ???
-
--- What about introducing template concepts ?
-   Like "InputIterator<T>" for saying "InputIterator with value type T".
-   This would be helpful for documenting requirements on related types.
-   [ I have no clue how hard it would be to modify the manual tools to support
-   this. ]
-
-   ( NB: this is somehow inspired from a proposal to introduce concepts
-     in the C++ language which you can find here :
-     http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2005/n1758.pdf
-     but I only care about simplifying/improving the documentation. )
-
-
-printed cgal manual
--------------------
--- Check header/footer of printed manuals
-
--- Change page numbers of printed manual to <Part-Num>-<Chapter-Num> 
-   + page per chapter
-
--- get rid of the underfull \hbox messages for the eps_tabs images
-   (annoys finding the real problems in the log.
-
-latex_to_html
--------------
--- bash shell issue: if a filename contains special characters like '(', 
-   it doesnt get backquoted before using this filename as argument to
-   some other programs
-
--- Numbered equations
+-- Doc: add new implementation documentation for the internal 
+   documentation of the HTML converter. Maybe think of a total of 
+   three documents: one manual describing the user level of the tools
+   and style files provided. One manual describing the internal language 
+   that allows developers to write new style files for the converter. 
+   A third manual that documents the tools architecture, its inner working,
+   each module, file handling, etc.
 
 -- Document new filename macros: \lciInputPath, \lciOutputFilename, 
    ...Rootname, ...FilePath, ...Uppath
+
+-- Control uses of current filename and main filename to clean those names up
+
+-- Test suite: the old test suite is outdated and broken. Revive it.
 
 -- Embedd latex2gif scripts into converter, apply it to figures (check
    if a *.gif or *.png is provided before converting automatically)
    and for complicated formulas etc.
 
--- Control uses of current filename and main filename to clean those names up
+-- HTML: Find out if math formulas can be better supported in HTML than
+   embedding GIF's. One random pointer is something called AsciiMathML.
 
--- Revise the file output handling: merge handleChapter and handleClassFile,
+-- HTML: Learn about the different (X)HTML standards and make the converter 
+   output compliant (and validate the CGAL manual and place suitable
+   logo after that). Maybe make the converter parameterized by the
+   standard version.
+
+-- HTML: Problem: The .gif figures are needed for the Modifier section. 
+   Since the modifier section does reside in a different directory, but
+   does not create its own file, for example, for a chapter, will the
+   latex_to_html converter not find the gif file automatically from the
+   Modifier directory. The latex_to_html converter searches the file in
+   the Miscellany directory instead, where we just keep a copy of those
+   gif files for now, until maybe the converter can be improved.
+
+-- TeX, HTML: Template parameter lists are currently layouted in both 
+   manuals in a single line. This is not adequate for our long parameter 
+   lists anymore. We need to detect and layout long template parameter 
+   lists into multiple lines with some indentation.
+
+-- HTML: Revise the cross-linking machinery to allow automatic C++ cross 
+   links only in C++ code sections such as \begin{verbatim}, \ccc{}, etc.
+   Make sure that other cross linking rules, such as for \label/\ref pairs,
+   still work in the main text. This would get rid of funny cross links
+   of common words that are also CGAL functions, such as 'area'.
+
+-- TeX, HTML: In addition to a table of contents we can make a table of 
+   examples based on the consistent use of the \ccIncludeExampleCode command 
+   (or similar). Question: What would one want to list in this table of 
+   examples? Currently we have just the filename as text, or in the
+   \begin{ccExampleCode} environment we have nothing but the program. 
+   We could create new macros with the additional table of examples entry.
+   Most likely we would need to go through all packages manually.
+
+-- CHECK: Go through LaTeX book appendix once more to check new macros not 
+   yet supported
+
+-- TeX, HTML: Doxygen lists all member functions for a class in a brief 
+   summary. One would need two-passes. One that writes the member functions 
+   per reference page in a separate file and one that reads it at the
+   beginning of a reference page. The HTML converter could re-use the
+   LaTeX generated file.
+      Can this member function summary listing be extended to include
+   member functions of base classes (or, analogously, from base
+   concepts of refined concepts)
+      Alternatively, or in addition as implementation technique, add new
+   commands such as \ccSummaryMethod{bool is_valid();}{short summary comment}
+   that creates a summary entry and a "more" link to the full documentation
+   (on the same page, or also applicable to base classes).
+      For the automatic method, we are lacking currently the short summary
+   comment. Being backward compatible, we could add it as an optional 
+   argument to \ccMethod and others, e.g.,
+   \ccMethod{void foo();}[Does nothing.]{really does nothing.}
+   If the optional arg is missing, one could repeat a certain prefix of 
+   the long comment before writing the "more" link, e.g., the first sentence.
+      Maybe, instead of reading the LaTeX *.aux file, one could run the
+   converter twice and create it's own *.aux file, called *.hax file.
+   It could carry the member function summaries around.
+
+-- TeX, HTML: Improve on the current code environment that currently formats 
+   the program examples in plain <tt> font. Instead, syntax highlighting and
+   pretty print could be used. Optional line-numbering, however, in 
+   HTML it should be made sure that cut-copy-paste takes just the code
+   and not the line numbers (e.g., through tables or so).
+
+-- TeX, HTML: Concepts have often associated types that can be seen as 
+   'template parameters to concepts'. They might also show up in the next 
+   C++ standard:
+   http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2005/n1758.pdf
+   Like "InputIterator<T>" for saying "InputIterator with value type T".
+   This would be helpful for documenting requirements on related types.
+   Extend the tools to handle such tamplate parameters to concepts.
+   [ Could be easy to support, because it exists already for classes.]
+
+-- HTML: More generic #X expand mechanism for \edef, learn what \protect does
+   in TeX, e.g., where to stop the expansions???
+   Implement \expandafter macro
+
+-- HTML: Currently, the converter has a strict policy about when to create 
+   a new HTML file, namely for chapters, class pages, and reference pages 
+   only. This could be generalized to scheme similar to the handling of 
+   section numbers and listing in the table of contents. A counter is set to
+   a level value, and all chapters, section, etc., that have a lower number
+   than this level create new files, while all with higher numbers are just 
+   kept in the currently open file. 
+      This is a difficult project; it would need a serious reverse 
+   engineering of the current output file organization and all its side 
+   effects, in particular how sometimes the filename of the most recently
+   used file (except the current file we are writing to) is used, e.g., to
+   link index intries or table of contents entries back to the referring file.
+      The current output file organization is rather custom tailored
+   and not flexible and not general. It has fixed output channels for
+   anchor rules, index, table of contents, bibliography, and index.
+   It has a recursive way of opening new output files for reference sections
+   and resume writing to the surrounding chapter file after completing the
+   reference section. This scheme could be simplified and generalized.
+      In particular, merge handleChapter and handleClassFile,
    make it generic and apply it to all sectioning commands depending on
    some level counter. Consider anchor_stream to put on stack as well
    or open and close it for each push and pop.
 
--- Make also one HTML page possible for a hole LaTeX document.
-   For this, embedd TOC, index and library, in main file.
+-- HTML: Currently, \part{} is disabled and does not produce as part title. 
+   Can be encabled once the full hierarchical file output is supported.
 
--- Maybe, an *.aux file (named *.hax for latex_to_html), would be good
-   to transport TOC entries and other stuff in two-pass translations.
-
--- If we get a *.hax file, we can also realize \includeonly, where all
-   counter values stay preserved.
-
--- Improve \ifthenelse package with parsing of \and ...
-
--- Check if more stuff in the auxfile should be used, 
-   should also the aux files of \include'd files be considered
-
--- Make index only if \makeindex is defined. Adapt header and footers.
-
--- Make TOC only if \tableofcontents is defined.
-
--- Make bibliography at its appropriate place.
-
--- Enter TOC, Index, Biblio into TOC and Navigation only if they exist.
-
--- Check for completely empty navigation line (for single HTML page
-   conversions)
-
--- Convert my own LaTeX papers as test cases for single HTML page.
-
--- Check what happens if the main latex input file is in a subdir.
-
--- More generic #X expand mechanism for \edef, check what \protect does
-   (i.e., where to stop the expansions)
-
--- What does cc_remove_unwanted_links? (strips all links in an area
-   delimited by keyword lines in the HTML files). Is it used anywhere
-   or documented? Could it be replaced by the new \lcNoLinkBegin/End?
-
--- Move "Next" navigation creation to style file for parametrization.
-
--- Consider "Prev" navigation lines.
-
--- hyperlink rules for \ccInclude to link example programs
-
--- Go through LaTeX book appendix once more to check new macros not 
-   yet supported
-
--- Add counter to theorem environment
-
--- expandafter macro
-
--- Enable part title when full hierarchical file output is supported
-
--- Check and improve that cross linking to reference pages point to 
-   the top of the page (navigation header), not the section title
-   (if the reference pages are in there own file of course).
-
--- Remove the explicit \ccRefPageBegin/End's from my manual pages
-   since they are automatically called in the refPage environment
+-- HTML: In its extreme, the converter should be able to create a single
+   HTML page for a hole LaTeX document. For this, we need to embed the
+   table of contents as well as the index, and the bibliography.
+   TEST: Convert my own LaTeX papers as test cases for single HTML page.
 

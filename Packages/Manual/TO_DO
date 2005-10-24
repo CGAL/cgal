@@ -1,41 +1,66 @@
 Manual/TO_DO
 ==================
 
--- enum is in the index linked to
-   http://www.cgal.org/Manual/doc_html/cgal_manual/Polyhedron_ref/Class_Polyhedron_incremental_builder_3.html#Enum_enum
-   and there linked to a 404 page.
+-- Bug Fixes
+-- Feature Requests
+-- Projects
 
--- Fix ccTagOperatorLayout in Kernel_23
 
--- Fix: "area" to doc page /CGAL::area. /This is wrong because the widget 
-   drawing area it is not related to CGAL::area.
-   The same for the combination Meta "Object" Compiler that points to 
-   CGAL::Object.
+Bug Fixes
+============================================================================
 
--- Add -v flag to print commands executed (helps in doing it later by hand)
+-- MAN: Remove the explicit \ccRefPageBegin/End's from my manual pages
+   since they are automatically called in the refPage environment [small]
 
--- Add -debug flag that prevent temp file from being deleted (debug index)
 
--- Look into Naming conventions "User Manual" of the OpenGL books
+Feature Requests
+============================================================================
 
--- generate a pdf manual which does not have left and right pages.
+-- TeX: Change page numbers of printed manual to <Part-Num>-<Chapter-Num> 
+   + page per chapter. It simplifies packaging of individual manuals. 
+   Try just to redefine \thepage. It might not work as smooth as expected 
+   with the indexing and would turn thus into a project, not a feature 
+   request. Seek consensus on cgal-develop/cgal-editor for such change.
 
--- Have Installation as separate manual
+-- TeX, HTML: header/footer are not respected yet. The printed manuals
+   have no footer like the HTML manuals yet. Can be added to the wrapper 
+   file embodied into cgal_manual.
 
--- Remove Use of STL manual
+-- SRC: Add -v flag to cgal_manual to print commands executed 
+   (helps in doing it later by hand)
 
--- Document and maybe improve cgal_manual on how to release the 
-   manuals, i.e., mainly how to pack them properly with subdirs
-   see ./makefile
+-- SRC: Add -debug flag to cgal_manual that prevent temp file from 
+   being deleted (debug index)
 
--- Would it be possible to replace the requirement that the Manual/
+-- CHECK: Look into Naming conventions. e.g., "User Manual" of the OpenGL books
+
+-- PDF: generate a pdf manual which does not have left and right pages.
+   (Andreas Fabri requested that, but I don't know exactly where the problem
+   is.)
+
+-- DOC: Remove Use of STL manual
+
+-- SRC: Would it be possible to replace the requirement that the Manual/
    directory is placed side by side with the package we want to build the
    doc, by an environment variable (which could default to "../..") ?
+   (name it CGAL_MANUAL_DIR, define it to end with .../Manual/ )
 
--- letter option for letter size paper in PS
 
--- alternative for creating PDF (some options seem to be missing for 
+Projects
+============================================================================
+
+-- CHECK: Check what to do with  Tutorial/doc_tex, needs reorganization
+   to be intergrated into the automatic manual test build. The tutorials
+   should be build and tested as all other manuals too.
+
+-- SRC: either adapt cgal_manual, or create a new script that works on the
+   latest test suite result, and builds a release candidate of the manuals,
+   in particular, repackages the files into their proper subdirectories 
+   before tar'ing. (Check the current release for file organization.)
+
+-- SRC: How to support US letter paper at the same time as A4 in PS and PDF?
+
+-- CHECK: alternative for creating PDF (some options seem to be missing for 
    good font support though, -ups, -Ppdf???)
-
-   dvips -t letter -o pdf_wrapper.ps pdf_wrapper
-   ps2pdf pdf_wrapper.ps
+   ???: dvips -t letter -o pdf_wrapper.ps pdf_wrapper
+   ???: ps2pdf pdf_wrapper.ps
