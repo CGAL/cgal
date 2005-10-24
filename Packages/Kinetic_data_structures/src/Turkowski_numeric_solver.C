@@ -347,13 +347,15 @@ void Turkowski_polynomial_compute_roots(const double *begin, const double *end, 
     compute_quadratic_roots(begin, end, lb, ub, roots);
     break;
   case 3:
-    double rd[3];
-    int numr= FindCubicRoots(begin, rd);
-    for (int i=numr-1; i>=0; --i){
-      if (root_is_good(rd[i], 0.0, lb, ub)) roots.push_back(rd[i]);
+    {
+      double rd[3];
+      int numr= FindCubicRoots(begin, rd);
+      for (int i=numr-1; i>=0; --i){
+	if (root_is_good(rd[i], 0.0, lb, ub)) roots.push_back(rd[i]);
+      }
+      std::sort(roots.begin(), roots.end(), std::greater<double>());
+      break;
     }
-    std::sort(roots.begin(), roots.end(), std::greater<double>());
-    break;
   default:
     Turkowski_polynomial_compute_roots_t<false>(begin, end, lb, ub, roots);
 
@@ -375,14 +377,16 @@ void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const doubl
     compute_quadratic_cleaned_roots(begin, end, lb, ub, roots);
     break;
   case 3: 
-    double rd[3];
-    int numr= FindCubicRoots(begin, rd);
-    for (int i=numr-1; i>=0; --i){
-      if (root_is_good(rd[i], 0.0, lb-.000005, ub)) roots.push_back(rd[i]);
+    {
+      double rd[3];
+      int numr= FindCubicRoots(begin, rd);
+      for (int i=numr-1; i>=0; --i){
+	if (root_is_good(rd[i], 0.0, lb-.000005, ub)) roots.push_back(rd[i]);
+      }
+      std::sort(roots.begin(), roots.end(), std::greater<double>());
+      check_first_root(begin, end, lb, roots);
+      break;
     }
-    std::sort(roots.begin(), roots.end(), std::greater<double>());
-    check_first_root(begin, end, lb, roots);
-    break;
   default:
     Turkowski_polynomial_compute_roots_t<true>(begin, end, lb, ub, roots);
   }
