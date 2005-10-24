@@ -331,12 +331,12 @@ Flipping in facet {(1), (10), (14)}
 Flipping away edge {(13), (15)}
 Flipping in facet {(5), (17), (19)}
 Moving (2) from {(5) (1) (14) (15)}
-Moved (2) from {(10) (1) (14) (5)}
+Moved (2) from {(14) (1) (5) (10)}
 Flipping away facet {(3), (6), (19)}
 Flipping in edge {(N), (10)}
 Flipping away edge {(7), (19)}
 Flipping in facet {(6), (10), (18)}
-Pushing (2) into {(10) (1) (14) (5)}
+Pushing (2) into {(14) (1) (5) (10)}
 Pushed (2)
 Flipping away facet {(7), (9), (11)}
 Flipping in edge {(8), (16)}
