@@ -27,11 +27,11 @@ CXXFLAGS = -g \
 LIBPATH = \
           $(CGAL_LIBPATH)
 
-LDFLAGS =  -lboost_program_options ../../src/libCGAL.a \
+LDFLAGS =  -lboost_program_options \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) 
 
-QT_LDFLAGS = -lboost_program_options ../../src/libCGAL.a  ../../src/CGALQt/libCGALQt.a\
+QT_LDFLAGS = -lboost_program_options \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS) 
 
