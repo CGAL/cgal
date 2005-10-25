@@ -10,7 +10,7 @@ template <class NT>
 void generate(int n, int d, int num_coords) {
   CGAL::Random rand;
   for (int i=0; i< n; ++i){
-    std::vector<double> coefs[num_coords];
+    std::vector<std::vector<double> > coefs(num_coords);
     for (int j=0; j< d; ++j){
       for (int k=0; k < num_coords; ++k){
 	coefs[k].push_back((rand.get_double()*10-5)/(j+1));
