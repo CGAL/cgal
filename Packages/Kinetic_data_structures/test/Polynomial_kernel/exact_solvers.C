@@ -8,7 +8,6 @@
 #include <CGAL/Polynomial/Filtered_kernel.h>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Filtered_function.h>
-#include <CGAL/Polynomial/CORE_Expr_root_stack.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
@@ -18,13 +17,18 @@
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
 
 #include <CGAL/Gmpq.h>
-#include <CORE/BigInt.h>
+
+#ifdef CGAL_USE_CORE
+#include <CGAL/Polynomial/CORE_Expr_root_stack.h>
+
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
+#endif
 
 #include "Check_solver.h"
 
 typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Polynomial_double;
 typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
-typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
+
 
 bool verbose=true;
 
@@ -123,6 +127,7 @@ int main(int argc, char* argv[])
     }*/
 
   
+#ifdef CGAL_USE_CORE
  {
     if (verbose) std::cout << "CORE_______________________________________\n";
     else std::cout << "CORE & ";
@@ -139,6 +144,7 @@ int main(int argc, char* argv[])
     if (!verbose) std::cout << " -- &";
     std::cout << std::endl;
   }
+#endif
 
 #if 0
   {
