@@ -20,7 +20,7 @@ int main(int, char *[]){
     CRE::Root r(0);
     double d= CGAL::to_double(r);
     std::pair<double,double> p= CGAL::to_interval(r);
-    if(d+p.second && 0);
+    if((d+p.second>0) && 0);
   }
 
 
@@ -31,7 +31,7 @@ int main(int, char *[]){
     CRE::Root r(0);
     double d= CGAL::to_double(r);
     std::pair<double,double> p= CGAL::to_interval(r);
-    if (d+p.second&&0);
+    if ((d+p.second>0)&&0);
   }
 #endif
   return 0;

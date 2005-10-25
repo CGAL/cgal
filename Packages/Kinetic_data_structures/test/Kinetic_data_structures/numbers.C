@@ -14,7 +14,7 @@ struct Check{
     assert(v <= 0 || v > 0); // break symmetry due to compiler warning
     if (std::numeric_limits<NT>::has_infinity){
       NT inf= std::numeric_limits<NT>::infinity();
-      NT inf2=inf;
+      //NT inf2=inf;
       NT ninf= -inf;
       assert(inf > v);
       assert(ninf < v);
@@ -22,7 +22,7 @@ struct Check{
       assert(ninf < zero);
       assert(inf > ninf);
       assert(ninf < inf);
-      assert(inf2==inf);
+      //assert(inf2==inf);
     }
   }
 };
