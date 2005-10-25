@@ -6,7 +6,7 @@
 #include <CGAL/KDS/Notifying_table.h>
 #include <CGAL/KDS/Simulation_traits.h>
 #include <CGAL/KDS/Simulator.h>
-#include <CGAL/KDS/Two_list_pointer_event_queue.h>
+#include <CGAL/KDS/Heap_pointer_event_queue.h>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -25,7 +25,7 @@ struct Exact_simulation_types {
   
   typedef  typename Simulator_function_kernel::Root Time;
 
-  typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
+  typedef CGAL::KDS::Heap_pointer_event_queue<Time> Queue_base;
   struct Event_queue: public Queue_base{
     Event_queue(const Time &start): Queue_base(start){}
   };
