@@ -26,6 +26,8 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 
 # define FLOAT double
+
+static const int MAXN= 55;
 //# define PARAMFLOAT double_t
 
 
@@ -104,7 +106,7 @@ FindCubicRoots(const FLOAT coeff[4], FLOAT x[3])
  * CADLINC, Inc., Palo Alto, California
  *******************************************************************************/
 
-#define MAXN 55
+
 
 static void
 FindPolynomialRoots(
@@ -299,12 +301,13 @@ FindPolynomialRoots(
 #undef MAXN
 
 template <bool CLEAN>
-static void Turkowski_polynomial_compute_roots_t(const double *begin, const double *end,  double lb, 
-						 double ub, std::vector<double> &roots){
+static void Turkowski_polynomial_compute_roots_t(const double *begin, const double *end, 
+						 double lb, double ub, 
+						 std::vector<double> &roots){
   std::size_t numc= end-begin;
-  double rp[numc];
-  double cp[numc];
-  double cc[numc];
+  double rp[MAXN];
+  double cp[MAXN];
+  double cc[MAXN];
 
   /*for (unsigned int i=0; i< numc; ++i){
     rp[i]= std::numeric_limits<double>::infinity();
