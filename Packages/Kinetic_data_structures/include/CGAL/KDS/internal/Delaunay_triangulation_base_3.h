@@ -472,6 +472,12 @@ public:
   }
 
 
+  typename Triangulation::Vertex_handle new_vertex(Point_key k){
+    triangulation_.geom_traits().set_time(simulator()->rational_current_time());
+    Cell_handle h= triangulation_.locate(k);
+    return new_vertex(k,h);
+  }
+
   //! 
   /*!
     Some old certificate edges will be lost, have to find all conflicts first. 
@@ -483,7 +489,7 @@ public:
     This occurs when a degree 3 edges has a facet added but none destroyed--i.e. a boundary edge
     with degree 3.
   */
-  typename Triangulation::Vertex_handle new_vertex(Point_key k, Cell_handle h=NULL){
+  typename Triangulation::Vertex_handle new_vertex(Point_key k, Cell_handle h){
     /*if (triangulation_.dimension()==3){
       for (All_edges_iterator eit = triangulation_.all_edges_begin();
       eit != triangulation_.all_edges_end(); ++eit){

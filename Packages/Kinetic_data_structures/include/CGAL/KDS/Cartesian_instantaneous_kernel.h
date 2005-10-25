@@ -57,11 +57,13 @@ public:
   }
 
   void set_time(const Time &t) const {
-    convert_.set_time(t);
-    cache_.clear();
+    if (t != convert_.time()) {
+      convert_.set_time(t);
+      cache_.clear();
 #ifndef NDEBUG
-    initialized_=true;
+      initialized_=true;
 #endif
+    }
   }
   const Time & time() const {
     return convert_.time();
