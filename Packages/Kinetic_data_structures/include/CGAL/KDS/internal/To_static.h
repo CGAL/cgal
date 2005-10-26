@@ -60,12 +60,12 @@ public:
   }
   //! What this believes the time to be.
   const Time& time() const {
-#ifndef NDEBUG
+    /*#ifndef NDEBUG
     if (!initialized_) {
       std::cerr << "You must set time before using a snapshot.\n";
       CGAL_precondition(initialized_);
     }
-#endif    
+    #endif    */
     return t_;
   }
   //! Set the time.
