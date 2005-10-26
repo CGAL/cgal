@@ -21,7 +21,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_DERIVATIVE_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <vector>
+#include <iterator>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -33,11 +33,12 @@ private:
     It(Cit it, int i): i_(i), cit_(it) {}
     It(){}
     typedef typename Fn::iterator MCit;
-    typedef typename MCit::iterator_category iterator_category;
-    typedef typename MCit::value_type value_type;
-    typedef typename MCit::pointer pointer;
-    typedef typename MCit::reference reference;
-    typedef typename MCit::difference_type difference_type;
+    typedef typename std::iterator_traits<MCit> Traits;
+    typedef typename Traits::iterator_category iterator_category;
+    typedef typename Traits::value_type value_type;
+    typedef typename Traits::pointer pointer;
+    typedef typename Traits::reference reference;
+    typedef typename Traits::difference_type difference_type;
 
     value_type operator*() const {
       return value_type(i_)**cit_;
