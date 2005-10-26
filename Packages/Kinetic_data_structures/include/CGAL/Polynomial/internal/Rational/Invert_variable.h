@@ -21,6 +21,7 @@
 #define CGAL_POLYNOMIAL_KERNEL_INVERT_VARIABLE_H
 
 #include <CGAL/Polynomial/basic.h>
+#include <vector>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 //------------------------------------------------------------------
