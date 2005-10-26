@@ -106,7 +106,14 @@ Feature Requests
 -- HTML: Currently, the output filename of a chapter is directly derived 
    from the chapters input filename, which implies that only one chapter
    can exist per input file. This could be changed in a way by adding the
-   chapter number as some suffix to the output filename.
+   chapter number as some suffix to the output filename. Since it is 
+   nice to have a canonical name for the HTML files per chapter based on
+   the LaTeX filename (and independent of the chapter number that would
+   depend on the context of how many other chapters are there), this 
+   canonical name is used for example from other web pages to refer to
+   individual chapters, it would be nice to keep this property. Suggestion,
+   add the chapter number to the filename for chapters except for the 
+   first chapter in a LaTeX input file.
 
 -- HTML: A reference chapter in the CGAL manual has a intro.tex file to
    list all classes and concepts that are then properly linked. The
