@@ -79,7 +79,6 @@ Polynomial<NT>::Polynomial(int n) {
 
 template <class NT>
 Polynomial<NT>::Polynomial(int n, NT * c) {
-  assert("array c has n+1 elements");
   degree = n;
   if (n >= 0) {
     coeff = new NT[n+1];
