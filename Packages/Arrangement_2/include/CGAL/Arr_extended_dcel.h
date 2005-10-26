@@ -128,7 +128,7 @@ public:
  * An extended DCEL face with auxiliary data field.
  */
 template <class FaceBase_, typename FaceData_>
-class Arr_extended_face : public Arr_face_base
+class Arr_extended_face : public FaceBase_
 {
   typedef Arr_extended_face<FaceBase_, FaceData_>  Self;
   typedef FaceBase_                                Base;
