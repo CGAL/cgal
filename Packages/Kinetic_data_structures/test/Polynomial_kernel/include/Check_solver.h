@@ -26,8 +26,8 @@ public:
 
   template <class It>
   void check_polynomial(const Fn &q, It roots_b, It roots_e,
-			const Rt& start = -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
-			const Rt& end = CGAL_POLYNOMIAL_NS::infinity<Rt>() ){
+			const Rt& start = -std::numeric_limits<Rt>::infinity(),
+			const Rt& end = std::numeric_limits<Rt>::infinity() ){
 
     CGAL::Timer timer;
 
@@ -375,7 +375,8 @@ public:
       a.push_back(478.0766178);
       check_polynomial(q, a.begin(), a.end());
       Root_container s=
-	k_.root_container_object(q, -CGAL_POLYNOMIAL_NS::infinity<Rt>(), CGAL_POLYNOMIAL_NS::infinity<Rt>());
+	k_.root_container_object(q, -std::numeric_limits<Rt>::infinity(),
+				 std::numeric_limits<Rt>::infinity());
       
       //******************************* UP TO HERE *****************************
       
@@ -403,8 +404,8 @@ public:
       a.push_back(1.602781661);
       check_polynomial(q, a.begin(), a.end(), 0);
       Root_container s=
-	k_.root_container_object(q, -CGAL_POLYNOMIAL_NS::infinity<Rt>(),
-				 CGAL_POLYNOMIAL_NS::infinity<Rt>());
+	k_.root_container_object(q, -std::numeric_limits<Rt>::infinity(),
+				 std::numeric_limits<Rt>::infinity());
       
       //******************************* UP TO HERE *****************************
       
