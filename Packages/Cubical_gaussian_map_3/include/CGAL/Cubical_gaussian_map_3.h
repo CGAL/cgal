@@ -1023,15 +1023,17 @@ protected:
       
       edge->set_is_real(true);
       edge->twin()->set_is_real(true);
-
       handle_new_boundary_edge(edge);
 
       // Insert an edge into the adjacent face:
       Arr_halfedge_handle adjacent_edge;
-      if (edge->face()->is_unbounded()) 
+      if (edge->face()->is_unbounded()) {
         adjacent_edge = get_adjacent_halfedge_handle(edge->twin());
-      else 
+        handle_new_boundary_edge(adjacent_edge);
+      } else {
         adjacent_edge = get_adjacent_halfedge_handle(edge);
+        handle_new_boundary_edge(adjacent_edge->twin());
+      }
       adjacent_edge->set_is_real(true);
       adjacent_edge->twin()->set_is_real(true);
       
