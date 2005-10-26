@@ -417,8 +417,10 @@ public:
       Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
                           pl_point.y() / m_tab_traits.COORD_SCALE);
       CGAL::Object    obj = ray_shoot_up (temp_p);
-      if(obj.is_empty())
+      Face_const_handle ubf;
+      if(CGAL::assign(ubf, obj))
       {
+        CGAL_assertion(ubf->is_unbounded());
         up = Coord_point(pl_draw.x() , y_max());
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
       }
@@ -487,7 +489,8 @@ public:
 
       CGAL::Object    obj = ray_shoot_down (temp_p);
       Coord_point down;
-      if(obj.is_empty())
+      Face_const_handle ubf;
+      if(CGAL::assign(ubf, obj))
       {
         down = Coord_point(pl_draw.x() , y_min());
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
