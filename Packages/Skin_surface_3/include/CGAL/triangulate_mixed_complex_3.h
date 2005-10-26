@@ -90,10 +90,9 @@ public:
     : regular(regular),
       triangulated_mixed_complex(triangulated_mixed_complex),
       skin_traits(skin_traits),
-      observer(shrink), 
+      observer(skin_traits.shrink_factor()), 
       triangulation_incr_builder(triangulated_mixed_complex), 
       compute_anchor_obj(regular) {
-    assert((0<shrink) && (shrink<1));
 
     build();
   }
