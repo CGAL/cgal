@@ -11,19 +11,19 @@
 
 const int num_events=1000;
 
-template <class T> 
+template <class T, class Time> 
 struct Test_event {
-  typename T::Time t_;
+  Time t_;
   T *tt_;
 
-  Test_event(typename T::Time t, T *tt): t_(t), tt_(tt){}
-  const typename T::Time &time() const {
+  Test_event(Time t, T *tt): t_(t), tt_(tt){}
+  const Time &time() const {
     return t_;
   }
 
   Test_event(){}
 
-  void process(const typename T::Time& t) {
+  void process(const Time& t) {
     if (tt_->expected_next_event_time() != t) {
       std::cerr << "ERROR Wrong event occurred. Expecting time " << tt_->expected_next_event_time() 
 		<< " got time " << t << std::endl;
@@ -33,13 +33,13 @@ struct Test_event {
     }
     tt_->process_one_event();
   }
-  bool operator==(const Test_event<T> &o) const {
+  bool operator==(const Test_event<T, Time> &o) const {
     return t_== o.t_&& tt_==o.tt_;
   }
 };
 
-template <class T>
-std::ostream& operator<<(std::ostream &out, const Test_event<T> &e) {
+template <class T, class Time>
+std::ostream& operator<<(std::ostream &out, const Test_event<T, Time> &e) {
   return out << e.t_;
 }
 
@@ -52,7 +52,7 @@ struct Test {
   typedef typename Sim::Event_key Key;
   typedef typename Sim::Function_kernel FK;
   
-  typedef Test_event<Test<Sim> > Ev;
+  typedef Test_event<This, Time> Ev;
   Ev ev;
   typename Sim::Pointer sim;
   FK fk;
@@ -194,10 +194,6 @@ struct Test {
 int main(int, char *[]){
   CGAL::Timer timer;
 
-  if (0) {
-    CGAL::KDS::Exact_simulation_traits_2::Simulator ts;
-    ts.event<Test_event<CGAL::KDS::Exact_simulation_traits_2::Simulator> >(CGAL::KDS::Exact_simulation_traits_2::Simulator::Event_key());
-  }
   {
     timer.start();
     Test<CGAL::KDS::Exact_simulation_traits_2::Simulator> ts;
