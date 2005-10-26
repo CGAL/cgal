@@ -103,7 +103,7 @@ protected:
     if ( this->is_zero() ) { return; }
 
     do {
-      Sign s = sign( this->coefs_[this->degree()] );
+      Sign s = CGAL::sign( this->coefs_[this->degree()] );
       if ( s == ZERO ) {
 	CGAL_Polynomial_assertion( this->coefs_.size() > 0 );
 	this->coefs_.resize(this->coefs_.size() - 1);

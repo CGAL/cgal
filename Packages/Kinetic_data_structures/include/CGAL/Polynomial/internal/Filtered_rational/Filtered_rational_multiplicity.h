@@ -91,6 +91,9 @@ public:
       }
       ++deg;
     } while (true);
+
+    CGAL_postcondition(0);
+    return 1;
   }
 
 protected:
