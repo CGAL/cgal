@@ -59,8 +59,8 @@ FindCubicRoots(const FLOAT coeff[4], FLOAT x[3])
     double theta = std::acos(R / std::sqrt(Qcubed));
     double sqrtQ = std::sqrt(Q);
     x[0] = -2 * sqrtQ * std::cos( theta           / 3) - a1 / 3;
-    x[1] = -2 * sqrtQ * std::cos((theta + 2 * M_PI) / 3) - a1 / 3;
-    x[2] = -2 * sqrtQ * std::cos((theta + 4 * M_PI) / 3) - a1 / 3;
+    x[1] = -2 * sqrtQ * std::cos((theta + 2 * CGAL_PI) / 3) - a1 / 3;
+    x[2] = -2 * sqrtQ * std::cos((theta + 4 * CGAL_PI) / 3) - a1 / 3;
     return (3);
   }
 
