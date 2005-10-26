@@ -963,8 +963,8 @@ std::cout << "In newtonRefine, input J=" << J.first
 	// one bit of accuracy, but you stand to loose an
 	// arbitrary amount of bits of accuracy if you are unlucky!
 	// So I will comment out the next line.  --Chee (Aug 9, 2004).
-	// 
-	// x = (J.second + J.first).div2();
+	// RWRW: Uncommented the next line to prevent an infinite loop: 
+	x = (J.second + J.first).div2();
 
         N ++;      // be more confident or aggressive
 	           //  (perhaps we should double N)
