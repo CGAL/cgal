@@ -34,9 +34,17 @@ Feature Requests
 
 -- CHECK: Look into Naming conventions. e.g., "User Manual" of the OpenGL books
 
--- PDF: generate a pdf manual which does not have left and right pages.
-   (Andreas Fabri requested that, but I don't know exactly where the problem
-   is.)
+-- TeX: generate a PostScript and PDF manuals for single sided printers, 
+   i.e., which do not distinguish between left and right pages. Things
+   to check: alignment with paper boundaries, header and footer, and 
+   the "Class", "Concept", etc., tabs should all be on the right side.
+   Suggestion: make this an option of cgal_manual, but the default
+   remains double sided, since almost all users will have double sided
+   printers these days. We also have to figure out whether we want to 
+   support all combinations of A4 and letter size paper with single or
+   double sided printing on the download page, or if this is an option
+   for Andreas GeometryFactory only to offer cumstomized manuals for
+   his customers.
 
 -- DOC: Remove Use of STL manual
 
