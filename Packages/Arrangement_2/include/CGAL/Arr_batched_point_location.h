@@ -95,8 +95,9 @@ OutputIterator locate(const Arrangement& arr,
   
   // Perform the sweep, while initializing it with all query points as event
   // points.
-  Visitor     visitor (oi, arr);
-  Sweep_line  sweep_line (&visitor);
+  Visitor          visitor (oi, arr);
+  Meta_traits_2    meta_tr(arr.get_traits());
+  Sweep_line  sweep_line (&meta_tr ,&visitor);
   
   sweep_line.sweep(xcurves_vec.begin(),
 		               xcurves_vec.end(),
