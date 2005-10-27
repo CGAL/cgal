@@ -331,7 +331,6 @@ bool QP_solver<Rep_>::is_solution_feasible()
 	has_finite_upper_bound(i) && var > upper_bound(i) * d)
       return false;
 
-
     // compute A x times d:
     for (int j=0; j<qp_m; ++j)
       lhs_col[j] += var * qp_A[i][j];
