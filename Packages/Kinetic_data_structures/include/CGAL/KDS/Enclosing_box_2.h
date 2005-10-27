@@ -148,8 +148,9 @@ public:
     /*typename Traits::Simulator::Function_kernel::Create_function cf
       = traits_.simulator_pointer()->function_kernel().create_function_object();*/
 
-    Point pt(Function(coefs[0].begin(), coefs[0].end()),
-	     Function(coefs[1].begin(), coefs[1].end()));
+    Function fx(coefs[0].begin(), coefs[0].end());
+    Function fy(coefs[1].begin(), coefs[1].end());
+    Point pt(fx,fy);
     /*std::cout << "Changing motion from " << traits_.moving_point_table_pointer()->at(k) << " to " 
       << pt << " at " << time <<  std::endl;*/
     traits_.moving_point_table_pointer()->set(k, pt);
