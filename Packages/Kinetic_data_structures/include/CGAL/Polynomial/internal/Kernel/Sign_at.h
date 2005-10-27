@@ -82,12 +82,12 @@ protected:
 	  return sbr(p_);
 
 	}
-	CGAL_postcondition(0);
-	return CGAL_POLYNOMIAL_NS::ZERO;
       }
       //}
       //return sb;
     }
+    CGAL_postcondition(false);
+    return CGAL_POLYNOMIAL_NS::ZERO;
   }
 
   template <class RT>
