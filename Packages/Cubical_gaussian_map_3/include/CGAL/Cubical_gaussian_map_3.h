@@ -1102,7 +1102,7 @@ protected:
       if (proj_normal2.get_is_real()) v2->set_is_real(true);     
     } else {
       //! \todo use a default point location
-      edge = insert_non_intersecting(m_arrangements[id], cv);
+      edge = insert_non_intersecting_curve(m_arrangements[id], cv);
       const Arr_vertex_handle & v1 = edge->source();
       const Arr_vertex_handle & v2 = edge->target();
 
@@ -1609,7 +1609,7 @@ public:
       Arr_halfedge_handle boundary_edges[NUM_CORNERS];
 
       //! \todo use a default point location
-      boundary_edges[0] = insert_non_intersecting(m_arrangements[i], cv0);
+      boundary_edges[0] = insert_non_intersecting_curve(m_arrangements[i], cv0);
       boundary_edges[1] =
         m_arrangements[i].insert_from_left_vertex(cv1,
                                                   boundary_edges[0]->target());
