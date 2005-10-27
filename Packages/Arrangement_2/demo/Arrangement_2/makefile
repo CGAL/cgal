@@ -22,7 +22,7 @@ else
 COREROOT_INC=
 COREROOT_LIB=
 ifdef CORE_LIB_DIR
-CORE_LIB=-lCore++
+CORE_LIB=-lcore++
 else
 CORE_LIB=
 endif
