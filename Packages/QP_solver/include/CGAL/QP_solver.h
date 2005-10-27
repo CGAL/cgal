@@ -183,8 +183,11 @@ private:
     typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
                                         A_by_index_iterator;
 
+    // todo: following can be removed once we have all these (outdated)
+    // accessors removed:
     typedef  QP_vector_accessor< B_iterator, false, false >
                                         B_by_index_accessor;
+
     typedef  Join_input_iterator_1< Index_const_iterator, B_by_index_accessor >
                                         B_by_index_iterator;
 
@@ -302,6 +305,10 @@ private:
 
     // auxiliary problem    
     A_art                    art_A;     // artificial part of constraint matrix
+                                        // Note: in phase I there is an
+                                        // additional "fake" column attached
+                                        // to this "matrix", see init_basis()
+
     S_art                    art_s;     // special artificial column for slacks
     int                      art_s_i;   // art_s_i>=0  -> index of special
                                         //                artificial column
@@ -356,11 +363,22 @@ private:
 
     // additional variables
     int                      l;         // minimum of 'qp_n+e+1' and 'qp_m'
+                                        // Note: this is an upper bound for
+                                        // the size of the reduced basis in
+                                        // phase I (in phase II, the reduced
+                                        // basis size can be arbitrarily
+                                        // large)
     
     int 		     e;         // number of equality constraints
     
+    // Given a variable number i, in_B[i] is -1 iff x_i is not in the current
+    // basis.  If the number in_B[i] is >=0, it is the basis heading of x_i.
     Indices                  in_B;      // variable   in basis, -1 if non-basic
+
+    // Given a number i in {0,...,qp_m-1} of a constraint, 
     Indices                  in_C;      // constraint in basis, -1 if non-basic
+                                        // Note: in_C is only maintained if
+                                        // there are inequality constraints.
 
     Values                   b_C;       // exact version of `qp_b'
                                         // restricted to basic constraints C
@@ -735,8 +753,7 @@ public:
 // for the perturbed case
     void  set_up_auxiliary_problemI( Tag_true is_perturbed);
 
-    void  set_up_auxiliary_problem( Tag_true  is_in_standard_form);
-    void  set_up_auxiliary_problem( Tag_false is_in_standard_form);
+    void  set_up_auxiliary_problem();
 
     // transition (to phase II)
     void  transition( );
@@ -1241,40 +1258,6 @@ public:
 
 // initialization
 // --------------
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
-init_basis__slack_variables( int, Tag_true)
-{
-    // nop
-}
-
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
-init_basis__constraints( int, Tag_true)
-{
-    // create 'm' dummy entries in 'C'
-    C.reserve( qp_m);
-    for ( i = 0; i < qp_m; ++i) C.push_back( i);
-}
-
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
-init_solution__b_C( Tag_true)
-{
-    b_C.reserve( qp_m);
-    std::copy( qp_b, qp_b+qp_m, std::back_inserter( b_C));
-}
-
-template < class Rep_ >  inline                                 // has ineq.
-void  QP_solver<Rep_>::
-init_solution__b_C( Tag_false)
-{ 
-    b_C.insert( b_C.end(), l, et0);
-    B_by_index_accessor  b_accessor( qp_b);
-    std::copy( B_by_index_iterator( C.begin(), b_accessor),
-	       B_by_index_iterator( C.end  (), b_accessor),
-	       b_C.begin());
-}
 
 // transition
 // ----------
@@ -1454,7 +1437,8 @@ ratio_test_1__t_j( Tag_false)
 	    mu +=     d*ET( qp_c[ j]);
 	    nu -= et2*d*ET( qp_D[ j][ j]);
 	}
-	CGAL_qpe_assertion(nu <= et0);
+	CGAL_qpe_assertion_msg(nu <= et0,
+	   "nu <= et0 violated -- is your D matrix positive semidefinite?");
 
 	// check `t_j'
 	if ( ( nu < et0) && ( ( mu * q_i) > ( x_i * nu))) {
