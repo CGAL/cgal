@@ -2432,101 +2432,41 @@ compute_solution(Tag_false)
     compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
 }
 
-
 template < class Rep_ >
 void  QP_solver<Rep_>::
-multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
+multiply__A_S_BxB_O(Value_iterator in, Value_iterator out) const
 {
-    // initialize
-    std::fill_n( out, B_S.size(), et0);
-
-    // foreach original column of A in B_O (artificial columns are zero in S_B
-    A_column              a_col;                             // except special)
-    Index_const_iterator  row_it, col_it;
-    Value_iterator        out_it;
-    ET                    in_value;
-    for ( col_it = B_O.begin(); col_it != B_O.end(); ++col_it, ++in) {
-	in_value = *in;
-	out_it   = out;
-
-	if ( *col_it < qp_n) {	                        // original variable
-	    a_col = qp_A[ *col_it];
-
-	    // foreach row of A in S_B
-	    for ( row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
-		                                             ++out_it) {
-		*out_it += ET( a_col[ *row_it]) * in_value;
-	    }
-	} else {
-	    if ( *col_it == art_s_i) {                  // special artificial
-
-		// foreach row of 'art_s'
-		for ( row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
-		                                                 ++out_it) {
-		    *out_it += ET( art_s[ *row_it]) * in_value;
-		}
-	    }
-	}
-    }
-}
-
-// Computes r_i, for i=row, for the solution x_init with which the
-// solver starts the computation. I.e., computes the scalar product
-// of the row-th row of A and the vector x_init which contains as 
-// its entries the values original_variable_value(i) (0<=i<qp_n).
-template < class Rep_ >
-typename QP_solver<Rep_>::ET  QP_solver<Rep_>::
-multiply__A_ixO(int row) const
-{
-  ET value = et0;
-  for (int i = 0; i < qp_n; ++i)
-    // Note: the following computes
-    //
-    //   value += original_variable_value(i) * qp_A[i][row];
-    //
-    // but for efficiency, we only add summands that are known to be
-    // nonzero.
-    switch (x_O_v_i[i]) {
-    case UPPER:
-      value += ET(qp_u[i]) * qp_A[i][row];
-      break;
-    case LOWER:
-    case FIXED:
-      value += ET(qp_l[i]) * qp_A[i][row];
-      break;
-    case BASIC:
-      CGAL_qpe_assertion(false);
-    default:
-      break;
-    }
-
-  return value;
-}
-
-// computes r_{C}:=A_{C, N_O}x_{N_O} with upper bounding
-template < class Rep_ >
-void  QP_solver<Rep_>::
-multiply__A_CxN_O(Value_iterator out) const
-{
-    //initialize
-    std::fill_n( out, C.size(), et0);
-
-    Index_const_iterator    row_it;
-    Value_iterator          out_it;
-    A_column                a_col;
-    ET                      value;
+  // initialize with zero vector
+  std::fill_n( out, B_S.size(), et0);
+  
+  // foreach original column of A in B_O (artificial columns are zero in S_B
+  A_column              a_col;                             // except special)
+  Index_const_iterator  row_it, col_it;
+  Value_iterator        out_it;
+  ET                    in_value;
+  for ( col_it = B_O.begin(); col_it != B_O.end(); ++col_it, ++in) {
+    const ET in_value = *in;
+    out_it   = out;
     
-    // for each original nonartificial nonbasic variable
-    for (int i = 0; i < qp_n; ++i) {
-        if (!is_basic(i)) {
-            value = nonbasic_original_variable_value(i);
-            out_it = out;
-            a_col = qp_A[i];
-            for ( row_it = C.begin(); row_it != C.end(); ++row_it, ++out_it) {
-                *out_it += ET(a_col[*row_it]) * value;
-            } 
-        }
+    if ( *col_it < qp_n) {	                        // original variable
+      a_col = qp_A[ *col_it];
+      
+      // foreach row of A in S_B
+      for ( row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
+	      ++out_it) {
+	*out_it += ET( a_col[ *row_it]) * in_value;
+      }
+    } else {
+      if ( *col_it == art_s_i) {                  // special artificial
+	
+	// foreach row of 'art_s'
+	for ( row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
+		++out_it) {
+	  *out_it += ET( art_s[ *row_it]) * in_value;
+	}
+      }
     }
+  }
 }
 
 // compare the updated vector r_{C} with t_r_C=A_{C, N_O}x_{N_O}
@@ -2558,34 +2498,6 @@ check_r_C(Tag_false) const
         }
     }
     return (!failed);
-}
-
-
-// computes r_{S_B}:=A_{S_B, N_O}x_{N_O} with upper bounding
-template < class Rep_ >
-void  QP_solver<Rep_>::
-multiply__A_S_BxN_O(Value_iterator out) const
-{
-    //initialize
-    std::fill_n( out, S_B.size(), et0);
-
-    Index_const_iterator    row_it;
-    Value_iterator          out_it;
-    A_column                a_col;
-    ET                      value;
-    
-    // for each original nonartificial nonbasic variable
-    for (int i = 0; i < qp_n; ++i) {
-        if (!is_basic(i)) {
-            value = nonbasic_original_variable_value(i);
-            out_it = out;
-            a_col = qp_A[i];
-            for (row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
-                                                                ++out_it)  {
-                *out_it += ET(a_col[*row_it]) * value;
-            } 
-        }
-    }
 }
 
 // compare the updated vector r_{S_B} with t_r_S_B=A_{S_B, N_O}x_{N_O}
@@ -2677,32 +2589,6 @@ check_r_B_O(Tag_false) const
         }
     }
     return (!failed);   
-}
-
-// computes w:=2D_{O, N_O}x_{N_O} with upper bounding
-// OPTIMIZATION: If D is symmetric we can multiply by two at the end of the
-// computation of entry of r_B_O instead of each access to D
-template < class Rep_ >
-void  QP_solver<Rep_>::
-multiply__2D_OxN_O(Value_iterator out) const
-{
-    //initialize
-    std::fill_n( out, B_O.size(), et0);
-
-    Value_iterator          out_it;
-    ET                      value;
-    
-    // foreach entry in w
-    out_it = out;
-    for (int row_it = 0; row_it < qp_n; ++row_it, ++out_it) {
-        D_pairwise_accessor d_accessor_i(qp_D, row_it);
-        for (int i = 0; i < qp_n; ++i) {
-            if (!is_basic(i)) {
-                value = nonbasic_original_variable_value(i);
-                *out_it += d_accessor_i(i) * value;
-            }
-        }    
-    }
 }
 
 // compares the updated vector w with t_w=2D_{O,N_O}*x_N_O
@@ -3018,8 +2904,10 @@ print_program( )
 	if ( ! art_A.empty()) {
 	    vout4.out() << " |  ";
 	    for ( i = 0; i < (int)art_A.size(); ++i) {
-		vout4.out() << ( art_A[ i].first != row ? " 0" :
-		               ( art_A[ i].second ? "-1" : "+1")) << ' ';
+	      if (art_s_i == i+qp_n+(int)slack_A.size())
+		vout4.out() << " * ";          // for special artificial column
+	      vout4.out() << ( art_A[ i].first != row ? " 0" :
+		             ( art_A[ i].second ? "-1" : "+1")) << ' ';
 	    }
 	}
 	if ( ! art_s.empty()) vout4.out() << " |  " << art_s[ row] << ' ';

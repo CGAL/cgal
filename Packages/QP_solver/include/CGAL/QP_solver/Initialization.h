@@ -105,8 +105,7 @@ set(int n, int m,
 {
   // assertions:
   CGAL_qpe_precondition(n > 0);
-  CGAL_qpe_precondition(m >= 0); // todo: the check was originally
-				 // m>0; so do we have test-cases m==0?
+  CGAL_qpe_precondition(m >= 0); 
 
   // store QP
   qp_n = n; qp_m = m;
@@ -138,10 +137,10 @@ set(int n, int m,
   if (!check_tag(Is_in_standard_form()))
     init_x_O_v_i();
 
-  set_up_auxiliary_problem(Is_in_standard_form());
+  set_up_auxiliary_problem();
     
   e = qp_m-slack_A.size(); // number of equalities
-  l = std::min(n+e+1, m);  // todo kf: what is this?
+  l = std::min(n+e+1, m);  // maximal size of basis in phase I
   
   // diagnostic output:
   CGAL_qpe_debug {
@@ -163,8 +162,8 @@ set(int n, int m,
 		      << (check_tag(Is_symmetric()) ? "" : "not ")
 		      << "symmetric" << std::endl;
 	}
-	vout2.out() << "flag: " << (has_ineq ? "might have" : "no")
-		    << " inequality constraints" << std::endl;
+	if (has_ineq)
+	  vout2.out() << "flag: no inequalities and full rank" << std::endl;
 	if (vout4.verbose()) print_program();
       }
     }
@@ -193,6 +192,8 @@ set_explicit_bounds(FL_iterator fl,L_iterator lb,FU_iterator fu,U_iterator ub)
   qp_u = ub;
 }
 
+// todo: following is an old version that should be replaced by the out#def'ed
+// one below.
 template < class Rep_ >
 void QP_solver<Rep_>::init_x_O_v_i()
 {
@@ -210,42 +211,87 @@ void QP_solver<Rep_>::init_x_O_v_i()
 
     if (*(qp_fl+i))                    // finite lower bound?
       if (*(qp_fu+i))                  // finite lower and finite upper bound?
+        if (qp_l[i] == qp_u[i])        // fixed variable?
+          x_O_v_i[i] = FIXED;
+        else                           // finite lower < finite upper?
+          if (qp_l[i] <= l0 && u0 <= qp_u[i])
+            // todo kf: why don't we prefer zero so that multiplication is
+            // cheap? or isn't this the whole point about using ZERO? (same
+            // question at other places in this routine...
+            if (l0 == qp_l[i])
+              x_O_v_i[i] = LOWER;
+            else if (u0 == qp_u[i])
+              x_O_v_i[i] = UPPER;
+            else
+              x_O_v_i[i] = ZERO;
+          else
+            x_O_v_i[i] = LOWER;
+      else                             // finite lower and infinite upper bound?
+        if (l0 >= qp_l[i])
+          if (l0 == qp_l[i])
+            x_O_v_i[i] = LOWER;
+          else
+            x_O_v_i[i] = ZERO;
+        else 
+          x_O_v_i[i] = LOWER;
+    else                               // infinite lower bound?
+      if (*(qp_fu+i))                  // infinite lower and finite upper?
+        if (u0 <= qp_u[i])
+          if (u0 == qp_u[i])
+            x_O_v_i[i] = UPPER;
+          else
+            x_O_v_i[i] = ZERO;
+        else
+          x_O_v_i[i] = UPPER;
+      else                             // infinite lower and infinite upper?
+        x_O_v_i[i] = ZERO;
+  }
+}
+
+#if 0
+template < class Rep_ >
+void QP_solver<Rep_>::
+init_x_O_v_i()
+{
+  // allocate storage:
+  x_O_v_i.reserve(qp_n);
+  x_O_v_i.resize (qp_n);
+
+  // constants for comparisions:
+  const L_entry l0(0);
+  const U_entry u0(0);
+  
+  // our initial solution will have all original variables nonbasic,
+  // and so we initialize them to zero (if the bound on the variable
+  // allows it), or to the variable's lower or upper bound:
+  for (int i = 0; i < qp_n; ++i) {
+    CGAL_qpe_assertion(qp_l[i]<=qp_u[i] || !*(qp_fl+i) || !*(qp_fu+i));
+
+    if (*(qp_fl+i))                    // finite lower bound?
+      if (*(qp_fu+i))                  // finite lower and finite upper bound?
 	if (qp_l[i] == qp_u[i])        // fixed variable?
 	  x_O_v_i[i] = FIXED;
-	else                           // finite lower < finite upper?
+	else                           // finite lower and finite upper?
 	  if (qp_l[i] <= l0 && u0 <= qp_u[i])
-	    // todo kf: why don't we prefer zero so that multiplication is
-	    // cheap? or isn't this the whole point about using ZERO? (same
-	    // question at other places in this routine...
-	    if (l0 == qp_l[i])
-	      x_O_v_i[i] = LOWER;
-	    else if (u0 == qp_u[i])
-	      x_O_v_i[i] = UPPER;
-	    else
-	      x_O_v_i[i] = ZERO;
-	  else
-	    x_O_v_i[i] = LOWER;
-      else                             // finite lower and infinite upper bound?
-	if (l0 >= qp_l[i])
-	  if (l0 == qp_l[i])
-	    x_O_v_i[i] = LOWER;
-	  else
 	    x_O_v_i[i] = ZERO;
+	  else
+	    x_O_v_i[i] = LOWER;
+      else                             // finite lower and infinite upper?
+	if (qp_l[i] <= l0)
+	  x_O_v_i[i] = ZERO;
 	else 
 	  x_O_v_i[i] = LOWER;
     else                               // infinite lower bound?
       if (*(qp_fu+i))                  // infinite lower and finite upper?
 	if (u0 <= qp_u[i])
-	  if (u0 == qp_u[i])
-	    x_O_v_i[i] = UPPER;
-	  else
-	    x_O_v_i[i] = ZERO;
+	  x_O_v_i[i] = ZERO;
 	else
 	  x_O_v_i[i] = UPPER;
       else                             // infinite lower and infinite upper?
 	x_O_v_i[i] = ZERO;
   }
 }
+#endif
 
 #if 0  // (fw) The following is a variant of set_up_auxiliary_problem()
        // for symbolic perturbation for the perturbed case.
@@ -470,96 +516,25 @@ signed_leading_exponent(int row)
 }
 #endif // end of alternative implementation
 
-template < class Rep_ >                                     // standard form
-void QP_solver<Rep_>::set_up_auxiliary_problem(Tag_true)
+template < class Rep_ >
+void QP_solver<Rep_>::
+set_up_auxiliary_problem()
 {
-  // initialize slack and artificial part of A:
-  const B_entry  b0(0);
-  B_entry        b_max(b0);
-  const C_entry  c1(1);
-  int            i_max = -1;
-  for (int i = 0; i < qp_m; ++i)
-    if (has_ineq && (qp_r[i] != Rep::EQUAL)) { // inequality constraint, so we
-					       // add a slack variable, and
-					       // (if needed) a special
-					       // artificial
-      if (qp_r[i] == Rep::LESS_EQUAL) {        // '<='
+  ET            b_max(et0);
+  const C_entry c1(1);
+  int           i_max = -1;
 
-	// add special artificial ('< -0') in case the inequality is
-	// infeasible for our starting point (which is the origin):
-	if (qp_b[i] < b0) { 
-	  art_s[i] = -c1;
-	  if (-qp_b[i] > b_max) {
-	    i_max = slack_A.size();
-	    b_max = -qp_b[i];
-	  }
-	}
-
-	// slack variable:
-	slack_A.push_back(std::make_pair(i, false));
-      } else {                                 // '>='
-
-	// add special artificial ('> +0') in case the inequality is
-	// infeasible for our starting point (which is the origin):
-	if (qp_b[i] > b0) {
-	  art_s[i] = c1;
-	  if (qp_b[i] > b_max) {
-	    i_max = slack_A.size();
-	    b_max = qp_b[i];
-	  }
-	}
-	
-	// store slack column
-	slack_A.push_back(std::make_pair(i, true));
-      }
-      
-    } else                                     // equality constraint, so we
-					       // add an artificial variable
-      // todo kf: if b0==zero here, nothing needs to be done, right? Does it
-      // cause any troubles if we actually do nothing?
-      art_A.push_back(std::make_pair(i, qp_b[i] < b0));
-
-  // Note: in order to make our initial starting point (which is the origin) a
-  // feasible point of the auxiliary problem, we need to initialize the
-  // special artificial value correctly, namely to
-  //
-  //   max { |b_i| | i is index of an infeasible inequality constraint }.
-  //
-  // The index of this "most infeasible" constraint is, at this point of the
-  // code, i_max (or i_max is -1 in which case all inequality constraints are
-  // feasible and hence no special artififial column is needed at all).
-
-  // prepare initialization of special artificial column:
-  // Note: the real work is done in init_basis() below.
-  if (i_max >= 0) {
-    art_s_i = i_max;                           // Note: the actual
-					       // initialization of art_s_i
-					       // will be done in init_basis()
-					       // below. We misuse art_s_i to
-					       // remember i_max.
-  } else {                                     // no special art col needed
-    art_s_i = -1;
-    art_s.clear();
-  }
-}
-
-template < class Rep_ >                                     // nonstandard form
-void QP_solver<Rep_>::set_up_auxiliary_problem(Tag_false)
-{
-  // initialize slack and artificial part of A:
-  ET             b_max(et0);
-  const C_entry  c1(1);
-  int            i_max = -1;
   for (int i = 0; i < qp_m; ++i) {
     // Note: For nonstandard form problems, our initial solution is not the
-    // zero vector (but original_variable_value(i), 0<=i<qp_n), and therefore,
-    // rhs=b-Ax is not simply b as in the standard form case, but Ax_init-b:
-    ET  rhs = ET(qp_b[i]) - multiply__A_ixO(i);
+    // zero vector (but the vector with values original_variable_value(i),
+    // 0<=i<qp_n), and therefore, rhs=b-Ax is not simply b as in the standard
+    // form case, but Ax_init-b:
+    const ET rhs = check_tag(Is_in_standard_form())?
+      qp_b[i] : ET(qp_b[i]) - multiply__A_ixO(i);
 
     if (has_ineq && (qp_r[i] != Rep::EQUAL)) { // inequality constraint, so we
-					       // add a slack variable, and
-					       // (if needed) a special
-					       // artificial
+					       // add a slack variable, and (if
+					       // needed) a special artificial
       if (qp_r[i] == Rep::LESS_EQUAL) {        // '<='
 
 	// add special artificial ('< -0') in case the inequality is
@@ -592,8 +567,11 @@ void QP_solver<Rep_>::set_up_auxiliary_problem(Tag_false)
       
     } else                                     // equality constraint, so we
 					       // add an artificial variable
-      // todo kf: if et0==zero here, nothing needs to be done, right? Does it
-      // cause any troubles if we actually do nothing?
+      // (Note: if rhs==et0 here then the artificial variable is (at the
+      // moment!) not needed. However, we nonetheless add it, for the following
+      // reason. If we did and were given an equality problem with the zero
+      // vector as the right-hand side then NO artificials would be added at
+      // all; so our initial basis would be empty, something we do not want.)
       art_A.push_back(std::make_pair(i, rhs < et0));
   }
 
@@ -601,7 +579,7 @@ void QP_solver<Rep_>::set_up_auxiliary_problem(Tag_false)
   // feasible point of the auxiliary problem, we need to initialize the
   // special artificial value correctly, namely to
   //
-  //   max { |b_i| | i is index of an infeasible inequality constraint }.
+  //   max { |b_i| | i is index of an infeasible inequality constraint }. (C1)
   //
   // The index of this "most infeasible" constraint is, at this point of the
   // code, i_max (or i_max is -1 in which case all inequality constraints are
@@ -623,7 +601,8 @@ void QP_solver<Rep_>::set_up_auxiliary_problem(Tag_false)
 
 // initialization (phase I)
 template < class Rep_ >
-void QP_solver<Rep_>::init()
+void QP_solver<Rep_>::
+init()
 {
   CGAL_qpe_debug {
     vout2 << std::endl
@@ -669,171 +648,218 @@ void QP_solver<Rep_>::init()
   }
 }
 
-// KF: AM HERE
-
-// initial basis and basis inverse
+// Set up the initial basis and basis inverse.
 template < class Rep_ >
-void
-QP_solver<Rep_>::
+void QP_solver<Rep_>::
 init_basis()
 {
-    int  i, s_i = -1;
-    int  j, s   = slack_A.size();
+  int s_i = -1;
+  const int s = slack_A.size();
+  
+  // has special artificial column?
+  if (!art_s.empty()) {
 
-    // has special artificial column?
-    if (!art_s.empty()) {
-    	// generate fake column that behaves like the special
-	// artificial column for all purposes. In particular,
-	// for initializing the basis, we only need the entry
-	// of the special column corresponding to the most infeasible
-	// row - exactly this is stored now.
-      s_i = art_s_i;
-	art_s_i = qp_n+s+art_A.size();
-	art_A.push_back(std::make_pair(s_i, !slack_A[s_i].second));
-    }
+    // Note: we maintain the information about the special artificial column in
+    // the variable art_s_i and the vector s_art; in addition, however, we also
+    // add a special "fake" column to art_A. This "fake" column has (in
+    // constrast to the special artificial column) only one nonzero entry,
+    // namely a +-1 for the most infeasible row (see (C1) above).
 
-    // initialize indices of basic variables
-    if (!in_B.empty()) in_B.clear();
-    in_B.reserve(qp_n+s+art_A.size());
-    in_B.insert(in_B.end(), qp_n, -1);        // no original variable is basic
+    // add "fake" column to art_A:
+    s_i = art_s_i;                    // index of most infeasible row, see (C1)
+    art_s_i = qp_n+s+art_A.size();    // number of special artificial var
+    art_A.push_back(std::make_pair(s_i, !slack_A[s_i].second)); // todo kf: I
+								// do not
+								// understand
+								// this
+  }
+  
+  // initialize indices of basic variables:
+  if (!in_B.empty()) in_B.clear();
+  in_B.reserve(qp_n+s+art_A.size());
+  in_B.insert(in_B.end(), qp_n, -1);  // no original variable is basic
+  
+  init_basis__slack_variables(s_i, Has_equalities_only_and_full_rank());
+  
+  if (!B_O.empty()) B_O.clear();
+  B_O.reserve(qp_n);                  // all artificial variables are basic
+  for (int i = 0; i < (int)art_A.size(); ++i) {
+    B_O .push_back(qp_n+s+i);
+    in_B.push_back(i);
+  }
+  art_basic = art_A.size();
+  
+  // initialize indices of 'basic' and 'nonbasic' constraints:
+  if (!C.empty()) C.clear();
+  init_basis__constraints(s_i, Has_equalities_only_and_full_rank());
+  
+  // diagnostic output:
+  CGAL_qpe_debug {
+    if (vout.verbose()) print_basis();
+  }
+  
+  // initialize basis inverse (explain: 'art_s' not needed here (todo kf: don't
+  // understand this note)):
+  inv_M_B.init(art_A.size(), art_A.begin());
+}
 
-    init_basis__slack_variables(s_i, Has_equalities_only_and_full_rank());
-
-    if (!B_O.empty()) B_O.clear();
-    B_O.reserve(qp_n);                         // all artificial variables are
-    for (i = 0, j = qp_n+s; i < (int)art_A.size(); ++i, ++j) {        // basic
-	   B_O.push_back(j);
-	in_B  .push_back(i);
-    }
-    art_basic = art_A.size();
-
-    // initialize indices of 'basic' and 'nonbasic' constraints
-    if (!C.empty()) C.clear();
-    init_basis__constraints(s_i, Has_equalities_only_and_full_rank());
-
-    // diagnostic output
-    CGAL_qpe_debug {
-        if (vout.verbose()) print_basis();
-    }
-
-    // initialize basis inverse (explain: 'art_s' not needed here)
-    inv_M_B.init(art_A.size(), art_A.begin());
+template < class Rep_ >  inline                                 // no ineq.
+void QP_solver<Rep_>::
+init_basis__slack_variables( int, Tag_true)
+{
+    // nop
 }
 
 template < class Rep_ >                                        // has ineq.
-void  QP_solver<Rep_>::
-init_basis__slack_variables(int s_i, Tag_false)
+void QP_solver<Rep_>::
+init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i is the index of
+						 // the most infeasible row,
+						 // see (C1).
 {
-    int  s = slack_A.size();
+  const int s = slack_A.size();
+  
+  // reserve memory:
+  if (!B_S.empty()) B_S.clear();
+  B_S.reserve(s);
+  
+  // all slack variables are basic, except the slack variable corresponding to
+  // special artificial variable (which is nonbasic): (todo kf: I do not
+  // understand this)
+  for (int i = 0; i < s; ++i)
+    if (i != s_i) {
+      in_B.push_back(B_S.size());
+      B_S .push_back(i+qp_n);     
+    } else
+      in_B.push_back(-1);
+}
 
-    // reserve memory
-    if (!B_S.empty()) B_S.clear();
-    B_S.reserve(s);
+template < class Rep_ >  inline                                 // no ineq.
+void QP_solver<Rep_>::
+init_basis__constraints( int, Tag_true)
+{
+  // reserve memory:
+  C.reserve(qp_m);
 
-    // (almost) all slack variables are basic
-    // Note: slack var. corresponding to special artificial var. is nonbasic
-    for (i = 0, j = qp_n; i < s; ++i, ++j) {
-	if (i != s_i) {
-	    in_B  .push_back(B_S.size());
-	       B_S.push_back(j);     
-	} else {
-	    in_B  .push_back(-1);
-	}
-    }
+  // As there are no inequalities, C consists of all inequality constraints
+  // only, so we add them all:
+  for (int i = 0; i < qp_m; ++i)
+    C.push_back(i);
 }
 
 template < class Rep_ >                                        // has ineq.
-void  QP_solver<Rep_>::
-init_basis__constraints(int s_i, Tag_false)
+void QP_solver<Rep_>::
+init_basis__constraints(int s_i, Tag_false)  // Note: s_i is the index of the
+					     // most infeasible row, see (C1).
 {
-    // reserve memory
-    if (!in_C  .empty()) in_C  .clear();
-    if (!   S_B.empty())    S_B.clear();
-      C.reserve(l);
-    S_B.reserve(slack_A.size());
+  int i, j;
 
-    // store constraints' indices
-    in_C.insert(in_C.end(), qp_m, -1);
-    if (s_i >= 0) s_i = slack_A[s_i].first;
-    for (i = 0, j = 0; i < qp_m; ++i) {
-	if (qp_r[i] == Rep::EQUAL) {          // equal. constraints are basic
-	       C.push_back(i);
-	    in_C[i] = j;
-	    ++j;
-	} else {                                // ineq. constrai. are nonbasic
-	    if (i != s_i) S_B.push_back(i);
-	}
-    }
-    if (s_i >= 0) {                            // special ineq. con. is basic
-	   C.push_back(s_i);
-	in_C[s_i] = j;
-    }
+  // reserve memory:
+  if (!in_C.empty()) in_C.clear();
+  if (! S_B.empty())  S_B.clear();
+  C.reserve(l);
+  S_B.reserve(slack_A.size());
+  
+  // store constraints' indices:
+  in_C.insert(in_C.end(), qp_m, -1);
+  if (s_i >= 0) s_i = slack_A[s_i].first;
+  for (i = 0, j = 0; i < qp_m; ++i)
+    if (qp_r[i] == Rep::EQUAL) {             // equal. constraints are basic
+      C.push_back(i);
+      in_C[i] = j;
+      ++j;
+    } else                                   // ineq. constrai. are nonbasic
+      if (i != s_i)
+	S_B.push_back(i);
+  if (s_i >= 0) {                            // special ineq. con. is basic
+                                             // todo kf: do not really underst.
+    C.push_back(s_i);
+    in_C[s_i] = j;
+  }
 }
 
-// initialize r_C
+// Initialize r_C.
 template < class Rep_ >                 // Standard form
 void  QP_solver<Rep_>::
 init_r_C(Tag_true)
 {
 }
 
-// initialize r_C
+// Initialize r_C.
 template < class Rep_ >                 // Upper bounded
 void  QP_solver<Rep_>::
 init_r_C(Tag_false)
 {
-    r_C.insert(r_C.end(), C.size(), et0);
-    multiply__A_CxN_O(r_C.begin());  
+  r_C.resize(C.size());
+  multiply__A_CxN_O(r_C.begin());  
 }
 
-// initialize r_S_B
+// Initialize r_S_B.
 template < class Rep_ >                 // Standard form
 void  QP_solver<Rep_>::
 init_r_S_B(Tag_true)
 {
 }
 
-// initialize r_S_B
+// Initialize r_S_B.
 template < class Rep_ >                 // Upper bounded
 void  QP_solver<Rep_>::
 init_r_S_B(Tag_false)
 {
-    r_S_B.insert(r_S_B.end(), S_B.size(), et0);
-    multiply__A_S_BxN_O(r_S_B.begin()); 
+  r_S_B.resize(S_B.size());
+  multiply__A_S_BxN_O(r_S_B.begin()); 
 }
 
-// initialize r_B_O
+// Initialize r_B_O.
 template < class Rep_ >                 // Standard form
 void  QP_solver<Rep_>::
 init_r_B_O(Tag_true)
 {
 }
 
-// initialize r_B_O
+// Initialize r_B_O.
 template < class Rep_ >                 // Upper bounded
 void  QP_solver<Rep_>::
 init_r_B_O(Tag_false)
 {
-    r_B_O.insert(r_B_O.end(), B_O.size(), et0);
-    multiply__2D_B_OxN_O(r_B_O.begin());
+  r_B_O.resize(B_O.size());
+  multiply__2D_B_OxN_O(r_B_O.begin());
 }
 
-// initialize w
+// Initialize w.
 template < class Rep_ >                 // Standard form
 void  QP_solver<Rep_>::
 init_w(Tag_true)
 {
 }
 
-// initialize w
+// Initialize w.
 template < class Rep_ >                 // Upper bounded
 void  QP_solver<Rep_>::
 init_w(Tag_false)
 {
-    w.insert(w.end(), qp_n, et0);
-    multiply__2D_OxN_O(w.begin());
+  w.resize(qp_n);
+  multiply__2D_OxN_O(w.begin());
 }
 
+template < class Rep_ >  inline                                 // no ineq.
+void  QP_solver<Rep_>::
+init_solution__b_C(Tag_true)
+{
+  b_C.reserve(qp_m);
+  std::copy(qp_b, qp_b+qp_m, std::back_inserter(b_C));
+}
+
+template < class Rep_ >  inline                                 // has ineq.
+void  QP_solver<Rep_>::
+init_solution__b_C(Tag_false)
+{ 
+  b_C.insert(b_C.end(), l, et0);
+  B_by_index_accessor  b_accessor(qp_b); // todo kf: is there some boost
+					 // replacement for this accessor?
+  std::copy(B_by_index_iterator(C.begin(), b_accessor),
+	    B_by_index_iterator(C.end  (), b_accessor),
+	    b_C.begin());
+}
 
 // initial solution
 template < class Rep_ >
@@ -841,82 +867,90 @@ void
 QP_solver<Rep_>::
 init_solution()
 {
-    // initialize exact version of `qp_b' restricted to basic constraints C
-    // (implicit conversion to ET)
-    if (!b_C.empty()) b_C.clear();
-    init_solution__b_C(Has_equalities_only_and_full_rank());
+  // initialize exact version of `qp_b' restricted to basic constraints C
+  // (implicit conversion to ET):
+  if (!b_C.empty()) b_C.clear();
+  init_solution__b_C(Has_equalities_only_and_full_rank());
 
-    // initialize exact version of `aux_c' and 'minus_c_B', the
-    // latter restricted to basic variables B_O
-    if (!minus_c_B.empty()) minus_c_B.clear();
-    minus_c_B.insert(minus_c_B.end(), l, -et1);
-    if (art_s_i > 0) minus_c_B[art_A.size()-1] *= ET(qp_n+qp_m);
-    // and now aux_c
-    aux_c.reserve(art_A.size());
-    aux_c.insert(aux_c.end(), art_A.size(), 0);
-    for (int col=qp_n+slack_A.size(); col<number_of_working_variables(); ++col)
-    {
-    	if (col==art_s_i) {
-            // special artificial
-	    aux_c[col-qp_n-slack_A.size()]=  qp_n+qp_m;
-        } else {
-	    // normal artificial
-	    aux_c[col-qp_n-slack_A.size()]= 1;
-	}
-    }
-    // allocate memory for current solution
-    if (!lambda.empty()) lambda.clear();
-    if (!x_B_O .empty()) x_B_O .clear();
-    if (!x_B_S .empty()) x_B_S .clear();
-    lambda.insert(lambda.end(), l, et0);
-    x_B_O .insert(x_B_O .end(), l, et0);
-    x_B_S .insert(x_B_S .end(), slack_A.size(), et0);
+  // initialize exact version of `aux_c' and 'minus_c_B', the
+  // latter restricted to basic variables B_O:
+  if (!minus_c_B.empty()) minus_c_B.clear();
+  minus_c_B.insert(minus_c_B.end(), l, -et1);   // todo: what is minus_c_B?
+  if (art_s_i > 0)
+    minus_c_B[art_A.size()-1] *= ET(qp_n+qp_m); // Note: the idea here is to
+						// give more weight to the
+						// special artifical variable
+						// so that it gets removed very
+						// early, - todo kf: why?
 
-//TESTING the updates of r_C, r_S_B, r_B_O, w
-//    ratio_test_bound_index = LOWER;
-    direction = 1;
+  // ...and now aux_c: as we want to make all artificial variables (including
+  // the special one) zero, we weigh these variables with >= 1 in the objective
+  // function (and leave the other entries in the objective function at zero):
+  aux_c.reserve(art_A.size());
+  aux_c.insert(aux_c.end(), art_A.size(), 0);
+  for (int col=qp_n+slack_A.size(); col<number_of_working_variables(); ++col)
+    if (col==art_s_i)                           // special artificial?
+      aux_c[col-qp_n-slack_A.size()]=  qp_n+qp_m;
+    else                                        // normal artificial
+      aux_c[col-qp_n-slack_A.size()]= 1;
+
+  // allocate memory for current solution:
+  if (!lambda.empty()) lambda.clear();
+  if (!x_B_O .empty()) x_B_O .clear();
+  if (!x_B_S .empty()) x_B_S .clear();
+  lambda.insert(lambda.end(), l, et0);
+  x_B_O .insert(x_B_O .end(), l, et0);
+  x_B_S .insert(x_B_S .end(), slack_A.size(), et0);
+
+  #if 0 // todo kf: I guess the following code can be removed...
+  //TESTING the updates of r_C, r_S_B, r_B_O, w
+  //    ratio_test_bound_index = LOWER;
+  //direction = 1;
+  #endif
     
-    // initialization of vectors r_C, r_S_B  
-    init_r_C(Is_in_standard_form());
-    init_r_S_B(Is_in_standard_form());
+  // initialization of vectors r_C, r_S_B:
+  init_r_C(Is_in_standard_form());
+  init_r_S_B(Is_in_standard_form());
 
-    // compute initial solution
-    compute_solution(Is_in_standard_form());
+  // compute initial solution:
+  compute_solution(Is_in_standard_form());
 
-    // diagnostic output
-    CGAL_qpe_debug {
-        if (vout.verbose()) print_solution();
-    }
+  // diagnostic output:
+  CGAL_qpe_debug {
+    if (vout.verbose()) print_solution();
+  }
 }
 
-// initialize additional data members
+// Initialize additional data members.
 template < class Rep_ >
 void
 QP_solver<Rep_>::
 init_additional_data_members()
 {
-    if (!A_Cj.empty()) A_Cj.clear();
-    A_Cj.insert(A_Cj.end(), l, et0);
-    if (!two_D_Bj.empty()) two_D_Bj.clear();
-    two_D_Bj.insert(two_D_Bj.end(), l, et0);
+  // todo kf: do we really have to insert et0 or would it suffice to just
+  // resize() in the following statements?
 
-    if (!q_lambda.empty()) q_lambda.clear();
-    q_lambda.insert(q_lambda.end(), l, et0);
-    if (!q_x_O.empty()) q_x_O.clear();
-    q_x_O.insert(q_x_O.end(), l, et0);
-    if (!q_x_S.empty()) q_x_S.clear();
-    q_x_S.insert(q_x_S.end(), slack_A.size(), et0);
-    
-    if (!tmp_l.empty()) tmp_l.clear();
-    tmp_l.insert(tmp_l.end(), l, et0);
-    if (!tmp_l_2.empty()) tmp_l_2.clear();
-    tmp_l_2.insert(tmp_l_2.end(), l, et0);
-    if (!tmp_x.empty()) tmp_x.clear();
-    tmp_x.insert(tmp_x.end(), l, et0);
-    if (!tmp_x_2.empty()) tmp_x_2.clear();
-    tmp_x_2.insert(tmp_x_2.end(), l, et0);
+  if (!A_Cj.empty()) A_Cj.clear();
+  A_Cj.insert(A_Cj.end(), l, et0);
+  if (!two_D_Bj.empty()) two_D_Bj.clear();
+  two_D_Bj.insert(two_D_Bj.end(), l, et0);
+  
+  if (!q_lambda.empty()) q_lambda.clear();
+  q_lambda.insert(q_lambda.end(), l, et0);
+  if (!q_x_O.empty()) q_x_O.clear();
+  q_x_O.insert(q_x_O.end(), l, et0);
+  if (!q_x_S.empty()) q_x_S.clear();
+  q_x_S.insert(q_x_S.end(), slack_A.size(), et0);
+  
+  if (!tmp_l.empty()) tmp_l.clear();
+  tmp_l.insert(tmp_l.end(), l, et0);
+  if (!tmp_l_2.empty()) tmp_l_2.clear();
+  tmp_l_2.insert(tmp_l_2.end(), l, et0);
+  if (!tmp_x.empty()) tmp_x.clear();
+  tmp_x.insert(tmp_x.end(), l, et0);
+  if (!tmp_x_2.empty()) tmp_x_2.clear();
+  tmp_x_2.insert(tmp_x_2.end(), l, et0);
 }
-
 
 CGAL_END_NAMESPACE
 

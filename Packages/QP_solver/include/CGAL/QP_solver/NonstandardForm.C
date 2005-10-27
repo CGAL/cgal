@@ -74,6 +74,118 @@ QP_solver<Rep_>::nonbasic_original_variable_value(int i) const
   return original_variable_value(i);
 }
 
+// Computes r_i:= A_i x_init, for i=row, where x_init is the solution
+// with which the solver starts the computation. I.e., computes the
+// scalar product of the row-th row of A and the vector x_init which
+// contains as its entries the values original_variable_value(i),
+// 0<=i<qp_n.
+template < class Rep_ >
+typename QP_solver<Rep_>::ET  QP_solver<Rep_>::
+multiply__A_ixO(int row) const
+{
+  ET value = et0;
+
+  for (int i = 0; i < qp_n; ++i)
+    // Note: the following computes
+    //
+    //   value += original_variable_value(i) * qp_A[i][row];
+    //
+    // but for efficiency, we only add summands that are known to be
+    // nonzero.
+    switch (x_O_v_i[i]) {
+    case UPPER:
+      value += ET(qp_u[i]) * qp_A[i][row];
+      break;
+    case LOWER:
+    case FIXED:
+      value += ET(qp_l[i]) * qp_A[i][row];
+      break;
+    case BASIC:
+      CGAL_qpe_assertion(false);
+    default:
+      break;
+    }
+
+  return value;
+}
+
+// Computes r_{C}:= A_{C, N_O} x_{N_O}.
+//
+// Precondition: this routine should only be called for nonstandard form
+// problems.
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__A_CxN_O(Value_iterator out) const
+{
+  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()));
+  
+  // initialize with zero vector:
+  std::fill_n(out, C.size(), et0);
+  
+  for (int i = 0; i < qp_n; ++i)
+    if (!is_basic(i)) {
+      const ET x_i = nonbasic_original_variable_value(i);
+      const A_column a_col = qp_A[i];
+      Value_iterator out_it = out;
+      for (Index_const_iterator row_it = C.begin();
+	   row_it != C.end();
+	   ++row_it, ++out_it)
+	*out_it += x_i * a_col[*row_it];
+    }
+}
+
+// Computes w:= 2D_{O, N_O} x_{N_O}.
+//
+// Precondition: this routine should only be called for nonstandard form
+// problems.
+//
+// todo: In order to optimize this routine, we can if D is symmetric,
+// multiply by two at the end of the computation instead of at each
+// access to D. (Maybe its also faster to call
+// nonbasic_original_variable_value() only O(n) times and not O(n^2)
+// times.)
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__2D_OxN_O(Value_iterator out) const
+{
+  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()));
+
+  // initialize with zero vector:
+  std::fill_n(out, B_O.size(), et0);
+  
+  for (int row_it = 0; row_it < qp_n; ++row_it, ++out) {
+    D_pairwise_accessor d_row(qp_D, row_it);
+    for (int i = 0; i < qp_n; ++i)
+      if (!is_basic(i)) {
+	const ET value = nonbasic_original_variable_value(i);
+	*out += d_row(i) * value;
+      }
+  }
+}
+
+// Computes r_{S_B}:= A_{S_B, N_O} x_{N_O}.
+//
+// Precondition: this routine should only be called for nonstandard form
+// problems.
+template < class Rep_ >
+void  QP_solver<Rep_>::
+multiply__A_S_BxN_O(Value_iterator out) const
+{
+  // initialize with zero vector:
+  std::fill_n(out, S_B.size(), et0);
+  
+  for (int i = 0; i < qp_n; ++i)
+    if (!is_basic(i)) {
+      const ET x_i = nonbasic_original_variable_value(i);
+      const A_column a_col = qp_A[i];
+      Value_iterator out_it = out;
+      for (Index_const_iterator row_it = S_B.begin();
+	   row_it != S_B.end();
+	   ++row_it, ++out_it)
+	*out_it += x_i * a_col[*row_it];
+    }
+}
+
 CGAL_END_NAMESPACE
 
 // ===== EOF ==================================================================
