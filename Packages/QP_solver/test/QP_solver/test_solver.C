@@ -211,7 +211,6 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   const int v = string_to<int>(t);
   if (v<0 || v>5)
     bailout("illegal verbosity");
-  std::cout << "[verb is " << v << "]" << std::endl;
   options.insert(Arg("Verbosity",v));
 
   // read strategy:
@@ -337,7 +336,6 @@ bool process(const std::string& filename,
 
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
-  std::cout << "[process: verb is " << verbosity << "]" << std::endl;
 
   // read QP instance:
   std::ifstream in(filename.c_str());
