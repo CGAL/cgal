@@ -11,13 +11,13 @@ CGAL_BEGIN_NAMESPACE
 
 
 template <class CK>
- class Filtered_hexagon_curved_kernel {
+ class Filtered_hexagon_curved_kernel : public CK {
 
   public:
 
     typedef Filtered_hexagon_curved_kernel<CK>       Self;
-    typedef Circular_arc_with_hexagon_2<CK>          Circular_arc_2;
-    typedef Line_arc_with_hexagon_2<CK>              Line_arc_2;
+    typedef Circular_arc_with_hexagon_2<Self>        Circular_arc_2;
+    typedef Line_arc_with_hexagon_2<Self>            Line_arc_2;
     typedef CK                                       Curved_kernel;
     typedef typename CK::Algebraic_kernel            Algebraic_kernel;
     typedef typename CK::RT                          RT;
@@ -41,19 +41,22 @@ template <class CK>
     typedef typename CK::Compare_x_2                 Compare_x_2;
     typedef typename CK::Compare_y_2		     Compare_y_2;
     typedef typename CK::Compare_xy_2		     Compare_xy_2;
-    typedef typename CK::Construct_Circular_source_vertex_2 Construct_Circular_source_vertex_2;
-    typedef typename CK::Construct_Circular_target_vertex_2 Construct_Circular_target_vertex_2;
-    typedef CGALi::Construct_Circular_min_vertex_2<Self> Construct_Circular_min_vertex_2;
-    typedef CGALi::Construct_Circular_max_vertex_2<Self> Construct_Circular_max_vertex_2;
-    typedef CGALi::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
-    typedef CGALi::Compare_y_to_right_2<Self>	     Compare_y_to_right_2;
-    typedef CGALi::Do_overlap_2<Self>		     Do_overlap_2;
-    typedef CGALi::Equal_2<Self>		     Equal_2;
-    typedef CGALi::In_range_2<Self>		     In_range_2;
-    typedef CGALi::Make_x_monotone_2<Self>	     Make_x_monotone_2;
-    typedef CGALi::Intersect_2<Self>                 Intersect_2;
-    typedef CGALi::Split_2<Self>		     Split_2;
-    typedef CGALi::Is_vertical_2<Self>               Is_vertical_2;
+    typedef typename CK::Compute_Circular_x_2        Compute_Circular_x_2;
+    typedef typename CK::Compute_Circular_y_2        Compute_Circular_y_2;
+    typedef Hexagon_functors::Construct_Circular_source_vertex_2<Self> Construct_Circular_source_vertex_2;
+    typedef Hexagon_functors::Construct_Circular_target_vertex_2<Self> Construct_Circular_target_vertex_2;
+    typedef Hexagon_functors::Construct_Circular_min_vertex_2<Self> Construct_Circular_min_vertex_2;
+    typedef Hexagon_functors::Construct_Circular_max_vertex_2<Self> Construct_Circular_max_vertex_2;
+    typedef Hexagon_functors::Has_on_2<Self>		     Has_on_2;
+    typedef Hexagon_functors::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
+    typedef Hexagon_functors::Compare_y_to_right_2<Self>     Compare_y_to_right_2;
+    typedef Hexagon_functors::Do_overlap_2<Self>             Do_overlap_2;
+    typedef Hexagon_functors::Equal_2<Self>		     Equal_2;
+    typedef Hexagon_functors::In_range_2<Self>		     In_range_2;
+    typedef Hexagon_functors::Make_x_monotone_2<Self>	     Make_x_monotone_2;
+    typedef Hexagon_functors::Intersect_2<Self>              Intersect_2;
+    typedef Hexagon_functors::Split_2<Self>		     Split_2;
+    typedef Hexagon_functors::Is_vertical_2<Self>            Is_vertical_2;
 
 
 
@@ -80,6 +83,14 @@ template <class CK>
   	compare_xy_2_object() const
     	{ return CK().compare_xy_2_object(); }
 
+	Construct_Circular_source_vertex_2
+	construct_circular_source_vertex_2_object() const
+  	{ return Construct_Circular_source_vertex_2(); }
+
+	Construct_Circular_target_vertex_2
+	construct_circular_target_vertex_2_object() const
+  	{ return Construct_Circular_target_vertex_2(); }
+
 	Construct_Circular_min_vertex_2
 	construct_circular_min_vertex_2_object() const
   	{ return Construct_Circular_min_vertex_2(); }
@@ -87,6 +98,11 @@ template <class CK>
 	Construct_Circular_max_vertex_2
 	construct_circular_max_vertex_2_object() const
   	{ return Construct_Circular_max_vertex_2(); }
+
+        Has_on_2
+        has_on_2_object() const
+        { return Has_on_2(); }
+
 
   	Compare_y_at_x_2
   	compare_y_at_x_2_object() const 
