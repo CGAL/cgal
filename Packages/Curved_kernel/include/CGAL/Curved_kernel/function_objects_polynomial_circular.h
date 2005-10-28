@@ -280,24 +280,19 @@ namespace CircularFunctors {
     
     result_type
     operator() (const Circular_arc_2 &A1, const Circular_arc_2 &A2) const
-    { 
-          std::cout<<"DO_OVERLAP"<<std::endl;
-      return do_overlap<CK>(A1, A2); }
+    { return do_overlap<CK>(A1, A2); }
     
     result_type
     operator() (const Line_arc_2 &A1, const Line_arc_2 &A2) const
-    {           std::cout<<"DO_OVERLAP"<<std::endl;
-      return do_overlap<CK>(A1, A2); }
+    { return do_overlap<CK>(A1, A2); }
 
     result_type
       operator() (const Line_arc_2 &A1, const Circular_arc_2 &A2) const
-    { std::cout<<"DO_OVERLAP"<<std::endl;
-      return false; }
+    {return false; }
 
      result_type
     operator() (const Circular_arc_2 &A1, const Line_arc_2 &A2) const
-    { std::cout<<"DO_OVERLAP"<<std::endl;
-      return false; }
+    {return false; }
 
   };
 
@@ -317,15 +312,15 @@ namespace CircularFunctors {
     OutputIterator
     operator()(const Circular_arc_2 &A, OutputIterator res) const
       { 
-//        std::vector< std::pair<Object,bool> > vec;
+        std::vector< std::pair<Object,bool> > vec;
 
-//        advanced_make_x_monotone<CK> (A, std::back_inserter(vec));
-return    make_x_monotone<CK> (A, res);
+        advanced_make_x_monotone<CK> (A, std::back_inserter(vec));
+//return    make_x_monotone<CK> (A, res);
 
-//        for(unsigned i=0;i<vec.size();++i)
-//          *res++=vec.at(i).first;       
+        for(unsigned i=0;i<vec.size();++i)
+          *res++=vec.at(i).first;       
 
-//        return res;
+        return res;
 
       }
 
