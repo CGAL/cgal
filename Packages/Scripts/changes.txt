@@ -1,3 +1,6 @@
+29 October 2005 Sylvain Pion
+- Add NICE_OPTIONS option to autotest_cgal.
+
 17 October 2005 Sylvain Pion
 - autotest_cgal : add support for curl instead of wget_ftp.
 

@@ -48,6 +48,7 @@ FTP="ftp"
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal.lock"
+NICE_OPTIONS="-19"
 
 # Now loading autocgalrc.
 if [ -f $HOME/.autocgalrc ]; then
@@ -232,7 +233,7 @@ test_script()
 		rm -rf ${LOCAL_TEST_DIR};
 		cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
 		cd ${LOCAL_TEST_DIR};
-                nice -19 make ${MAKE_OPTS};
+                nice ${NICE_OPTIONS} make ${MAKE_OPTS};
 		echo 'COLLECTING RESULTS';
 		./collect_cgal_testresults;
 		echo 'COPYING RESULTS';
