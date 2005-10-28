@@ -48,7 +48,7 @@
 //
 //   -DQP_L -DQP_NOT_S -DQP_R -DQP_F -DQP_INT
 //
-// to GNU g++.
+// to GNU g++.  (Or even simpler, work with test_MPS.C.)
 #if (!defined(QP_L) && !defined(QP_S) && !defined(QP_R) && !defined(QP_F) && \
       !defined(QP_NOT_L) && !defined(QP_NOT_S) && !defined(QP_NOT_R) && \
       !defined(QP_NOTF))
