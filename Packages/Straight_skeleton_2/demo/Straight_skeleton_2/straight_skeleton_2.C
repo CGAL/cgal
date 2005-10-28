@@ -204,7 +204,6 @@ private:
 
 };
 
-ActiveCanvasClient sAC_Client ;
 
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
@@ -220,6 +219,9 @@ void Straight_skeleton_external_trace ( std::string s )
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
+
+ActiveCanvasClient sAC_Client ;
+
 void Straight_skeleton_external_undraw_object ( int n )
 {
   sAC_Client.undraw_object(n);
@@ -345,6 +347,13 @@ private slots:
     PolygonPtr poly(new Polygon());
     if (CGAL::assign(*poly, obj))
     {
+      CGAL::Bbox_2 lBbox = poly->bbox();
+      double w = lBbox.xmax() - lBbox.xmin();
+      double h = lBbox.ymax() - lBbox.ymin();
+      double s = std::sqrt(w*w+h*h);
+      double m = s * 0.05 ;
+      offset_val = m ;
+      offset_steps = 2 ;
       CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( poly->orientation() != expected )
         poly->reverse_orientation();
@@ -372,7 +381,7 @@ private slots:
     if ( sls.size_of_halfedges() > 0 )
     {
       offset_region.clear();
-      for ( int i = 0 ; i < offset_steps ; ++ i )
+      for ( int i = 1 ; i <= offset_steps ; ++ i )
       {
         OffsetBuilder lOffsetBuilder(sls);
         lOffsetBuilder.Create(i*offset_val, std::back_inserter(offset_region) );
@@ -412,7 +421,7 @@ private slots:
                                         );
     if ( ok && !text.isEmpty() )
     {
-      double tmp = text.toInt(&ok);
+      int tmp = text.toInt(&ok);
       if ( ok )
         offset_steps = tmp ;
     }

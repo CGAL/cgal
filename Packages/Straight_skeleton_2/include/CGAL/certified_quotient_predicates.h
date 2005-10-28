@@ -41,8 +41,8 @@ inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
 
 template <class NT>
 inline Uncertain<bool> certified_quotient_is_zero(const Quotient<NT>& x)
-{ 
-  return CGAL_NTS certified_is_zero(x.num) ; 
+{
+  return CGAL_NTS certified_is_zero(x.num) ;
 }
 
 template <class NT>
@@ -53,32 +53,32 @@ Uncertain<Sign> certified_quotient_sign(const Quotient<NT>& x)
   Uncertain<Sign> sigden = CGAL_NTS certified_sign(x.den) ;
   Uncertain<bool> same = signum == sigden ;
   if ( is_indeterminate(same) )
-       return make_uncertain(NEGATIVE,POSITIVE);
+       return Uncertain<Sign>(NEGATIVE,POSITIVE);
   else return same ? signum : make_uncertain(NEGATIVE);
 }
 
 template <class NT1, class NT2>
 CGAL_MEDIUM_INLINE
 Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, const Quotient<NT2>& y)
-{ 
+{
   // No assumptions on the sign of  den  are made
-  
+
   // code assumes that SMALLER == - 1;
   CGAL_precondition( SMALLER == static_cast<Comparison_result>(-1) );
-  
+
   Uncertain<Sign> xnumsign = CGAL_NTS certified_sign(x.num) ;
   Uncertain<Sign> xdensign = CGAL_NTS certified_sign(x.den) ;
   Uncertain<Sign> ynumsign = CGAL_NTS certified_sign(y.num) ;
   Uncertain<Sign> ydensign = CGAL_NTS certified_sign(y.den) ;
-  
-  if (  is_indeterminate(xnumsign) 
-     || is_indeterminate(xdensign) 
-     || is_indeterminate(ynumsign) 
-     || is_indeterminate(ydensign) 
-     ) 
+
+  if (  is_indeterminate(xnumsign)
+     || is_indeterminate(xdensign)
+     || is_indeterminate(ynumsign)
+     || is_indeterminate(ydensign)
+     )
   {
-    return make_uncertain(SMALLER,LARGER);
-  } 
+    return Uncertain<Comparison_result>(SMALLER,LARGER);
+  }
   else
   {
     int xsign = xnumsign * xdensign ;
@@ -98,37 +98,37 @@ Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, 
     {
         return make_uncertain((xsign < ysign) ? SMALLER : LARGER);
     }
-  }  
+  }
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_zero(const Quotient<NT>& n)
-{ 
-  return certified_quotient_is_zero(n); 
+{
+  return certified_quotient_is_zero(n);
 }
 template <class NT>
 inline Uncertain<bool> certified_is_positive(const Quotient<NT>& n)
-{ 
-  return certified_quotient_is_positive(n); 
+{
+  return certified_quotient_is_positive(n);
 }
 template <class NT>
 inline Uncertain<bool> certified_is_negative(const Quotient<NT>& n)
-{ 
-  return certified_quotient_is_negative(n); 
+{
+  return certified_quotient_is_negative(n);
 }
 template <class NT>
 inline Uncertain<Sign> certified_sign(const Quotient<NT>& n)
-{ 
-  return certified_quotient_sign(n); 
+{
+  return certified_quotient_sign(n);
 }
 
 template <class NT1, class NT2>
 inline Uncertain<Comparison_result> certified_compare(const Quotient<NT1>& n1, const Quotient<NT2>& n2)
-{ 
-  return certified_quotient_compare(n1,n2); 
+{
+  return certified_quotient_compare(n1,n2);
 }
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
- 
+
