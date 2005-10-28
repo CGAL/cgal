@@ -116,6 +116,45 @@ struct circle_lt {
   }
 };
 
+/*
+template <typename Point, typename Edge>
+struct Halfedge_key2 {
+  typedef Halfedge_key2<Point,Edge> Self;
+  Point p; int i; Edge e;
+  Halfedge_key2(Point pi, int ii, Edge ei) : 
+    p(pi), i(ii), e(ei){}
+  Halfedge_key2(const Self& k) : p(k.p), i(k.i), e(k.e) {}
+  Self& operator=(const Self& k) { p=k.p; i=k.i; e=k.e; return *this; }
+  bool operator==(const Self& k) const { return p==k.p && i==k.i; }
+  bool operator!=(const Self& k) const { return !operator==(k); }
+};
+
+template <typename Point, typename Edge>
+struct Halfedge_key_lt2 {
+  typedef Halfedge_key2<Point,Edge> Key;
+  typedef typename Point::R R;
+  typedef typename R::Vector_3 Vector;
+  typedef typename R::Direction_3 Direction;
+  bool operator()( const Key& k1, const Key& k2) const { 
+    if ( k1.p == k2.p ) 
+      return (k1.i < k2.i);
+    // previous code: 
+     //  else return CGAL::lexicographically_xyz_smaller(k1.p,k2.p);
+    Direction l(k1.e->vector());
+    if( k1.i < 0) l = -l;
+    return (Direction( k2.p - k1.p) == l); 
+  }
+};
+*/
+
+template <typename Edge_handle>
+struct Halfedge_key_lt3 {
+
+  bool operator()(const Edge_handle& e1, const Edge_handle& e2) const {
+    return  CGAL::lexicographically_xyz_smaller(e1->source()->point(), e2->source()->point()); 
+  }
+};
+
 template <typename Point, typename Edge, class Decorator>
 struct Halfedge_key {
   typedef Halfedge_key<Point,Edge,Decorator> Self;
@@ -977,6 +1016,188 @@ public:
   }
 
  private:
+  //#define CGAL_NEF_NO_HALFEDGE_KEYS
+#ifdef CGAL_NEF_NO_HALFEDGE_KEYS
+
+  void pair_up_halfedges() const {
+  /*{\Mop pairs all halfedge stubs to create the edges in 3-space.}*/
+
+  //  CGAL_NEF_SETDTHREAD(43*61);
+    CGAL_NEF_TRACEN(">>>>>pair_up_halfedges");
+    //    typedef Halfedge_key2< Point_3, Halfedge_handle>
+    // Halfedge_key;
+    typedef Halfedge_key_lt3<Halfedge_handle> 
+      Halfedge_key_lt;
+    typedef std::list<Halfedge_handle>  Halfedge_list;
+    
+    typedef typename Standard_kernel::Kernel_tag   Kernel_tag;
+    typedef CGAL::Pluecker_line_3<Kernel_tag,Standard_kernel> Pluecker_line_3;
+    typedef CGAL::Pluecker_line_lt        Pluecker_line_lt;
+    typedef std::map< Pluecker_line_3, Halfedge_list, Pluecker_line_lt> 
+      Pluecker_line_map;
+    
+    Pluecker_line_map M;
+    Pluecker_line_map M2;
+    Pluecker_line_map M3;
+    Pluecker_line_map M4;
+    
+    //  Progress_indicator_clog progress( 2*this->sncp()->number_of_halfedges(), 
+    //				    "SNC_constructor: pairing up edges...");
+    
+    NT eval(Infi_box::compute_evaluation_constant_for_halfedge_pairup(*this->sncp()));;
+    
+    Halfedge_iterator e;
+    CGAL_forall_halfedges(e,*this->sncp()) {
+      //    progress++;
+      Point_3 p = e->source()->point();
+      Point_3 q = p + e->vector();
+      CGAL_NEF_TRACE(" segment("<<p<<", "<<q<<")"<<
+	    " direction("<<e->vector()<<")");
+      Standard_point_3 sp = Infi_box::standard_point(p,eval);
+      Standard_point_3 sq = Infi_box::standard_point(q,eval);
+      Pluecker_line_3  l( sp, sq);
+      
+      int inverted;
+      l = categorize( l, inverted);
+      
+      if(Infi_box::is_edge_on_infibox(e))
+	if(Infi_box::is_type4(e))
+	  M4[l].push_back(e);
+	else
+	  if(Infi_box::is_type3(e))
+	    M3[l].push_back(e);
+	  else
+	    M2[l].push_back(e);
+      else
+	M[l].push_back(e);
+      
+      // the following trace crashes when compiling with optimizations (-O{n})
+      //CGAL_NEF_TRACEN(Infi_box::standard_point(point(vertex(e)))+
+      //   Vector_3(e->point())); 
+      
+      CGAL_NEF_TRACEN(" line("<<l<<")"<<" inverted="<<inverted);
+    }
+    
+    typename Pluecker_line_map::iterator it;
+    
+    CGAL_forall_iterators(it,M4) {
+      //    progress++;
+      it->second.sort(Halfedge_key_lt());
+      CGAL_NEF_TRACEN("search opposite  "<<it->first); 
+      typename Halfedge_list::iterator itl;
+      CGAL_forall_iterators(itl,it->second) {
+	Halfedge_handle e1 = *itl;
+	++itl; 
+	CGAL_assertion(itl != it->second.end());
+	Halfedge_handle e2 = *itl;
+	while(normalized(e1->vector()) != normalized(-e2->vector())) {
+	  ++itl;
+	  make_twins(e1,*itl);
+	  e1 = e2;
+	  ++itl;
+	  e2 = *itl;
+	}
+	CGAL_NEF_TRACEN("    " << e1->source()->point() 
+			<< " -> " << e2->source()->point());
+	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
+	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	make_twins(e1,e2);
+	CGAL_assertion(e1->mark()==e2->mark());
+	
+	// discard temporary sphere_point ?
+      }
+    }
+
+    CGAL_forall_iterators(it,M3) {
+      //    progress++;
+      it->second.sort(Halfedge_key_lt());
+      CGAL_NEF_TRACEN("search opposite  "<<it->first); 
+      typename Halfedge_list::iterator itl;
+      CGAL_forall_iterators(itl,it->second) {
+	Halfedge_handle e1 = *itl;
+	++itl; 
+	CGAL_assertion(itl != it->second.end());
+	Halfedge_handle e2 = *itl;
+	while(normalized(e1->vector()) != normalized(-e2->vector())) {
+	  ++itl;
+	  make_twins(e1,*itl);
+	  e1 = e2;
+	  ++itl;
+	  e2 = *itl;
+	}
+	CGAL_NEF_TRACEN("    " << e1->source()->point() 
+			<< " -> " << e2->source()->point());
+	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
+	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	make_twins(e1,e2);
+	CGAL_assertion(e1->mark()==e2->mark());
+	
+	// discard temporary sphere_point ?
+      }
+    }    
+
+    CGAL_forall_iterators(it,M2) {
+      //    progress++;
+      it->second.sort(Halfedge_key_lt());
+      CGAL_NEF_TRACEN("search opposite  "<<it->first); 
+      typename Halfedge_list::iterator itl;
+      CGAL_forall_iterators(itl,it->second) {
+	Halfedge_handle e1 = *itl;
+	++itl; 
+	CGAL_assertion(itl != it->second.end());
+	Halfedge_handle e2 = *itl;
+	while(normalized(e1->vector()) != normalized(-e2->vector())) {
+	  ++itl;
+	  make_twins(e1,*itl);
+	  e1 = e2;
+	  ++itl;
+	  e2 = *itl;
+	}
+	CGAL_NEF_TRACEN("    " << e1->source()->point() 
+			<< " -> " << e2->source()->point());
+	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
+	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	make_twins(e1,e2);
+	CGAL_assertion(e1->mark()==e2->mark());
+	
+	// discard temporary sphere_point ?
+      }
+    }
+    
+    CGAL_forall_iterators(it,M) {
+      //    progress++;
+      it->second.sort(Halfedge_key_lt());
+      CGAL_NEF_TRACEN("search opposite  "<<it->first); 
+      typename Halfedge_list::iterator itl;
+      CGAL_forall_iterators(itl,it->second) {
+	Halfedge_handle e1 = *itl;
+	++itl; 
+	CGAL_assertion(itl != it->second.end());
+	Halfedge_handle e2 = *itl;
+	while(normalized(e1->vector()) != normalized(-e2->vector())) {
+	  ++itl;
+	  make_twins(e1,*itl);
+	  e1 = e2;
+	  ++itl;
+	  e2 = *itl;
+	}
+	CGAL_NEF_TRACEN("    " << e1->source()->point() 
+			<< " -> " << e2->source()->point());
+	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
+	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	make_twins(e1,e2);
+	CGAL_assertion(e1->mark()==e2->mark());
+	
+	// discard temporary sphere_point ?
+      }
+    }
+
+  }
+#else
   void pair_up_halfedges() const {
   /*{\Mop pairs all halfedge stubs to create the edges in 3-space.}*/
 
@@ -1124,6 +1345,7 @@ public:
       }
     }
   }
+#endif
 
   void link_shalfedges_to_facet_cycles() const {
   /*{\Mop creates all non-trivial facet cycles from sedges. 
@@ -1303,6 +1525,8 @@ public:
       V.minimal_sface() = f;
       visit_shell_objects(f,V);
       
+      CGAL_NEF_TRACEN("minimal vertex " << V.minimal_sface()->center_vertex()->point());
+
       MinimalSFace.push_back(V.minimal_sface());
       EntrySFace.push_back(f);
       V.increment_shell_number();

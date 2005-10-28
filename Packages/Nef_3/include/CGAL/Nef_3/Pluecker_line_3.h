@@ -277,7 +277,7 @@ void normalize()
   CGAL_NEF_TRACEN("normalize");
   int i=0;
   while(i<6 && c_[i]==FT(0))
-    i++;
+    ++i;
     
   if(i>5)
     return;
