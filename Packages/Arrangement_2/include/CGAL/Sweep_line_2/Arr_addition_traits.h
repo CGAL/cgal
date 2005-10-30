@@ -29,6 +29,9 @@ CGAL_BEGIN_NAMESPACE
 template <class Traits, class Arrangement_>
 class Arr_addition_traits : public Traits
 {
+protected:
+  Traits*    m_base_traits;
+
 public:
 
   typedef Arrangement_                              Arrangement;
@@ -41,12 +44,16 @@ public:
   typedef typename Traits::Intersect_2              Base_Intersect_2;
   typedef typename Traits::Split_2                  Base_Split_2;
   typedef typename Traits::Make_x_monotone_2        Base_Make_x_monotone_2;
+  typedef typename Traits::Construct_min_vertex_2   Base_Construct_min_vertex_2;
+  typedef typename Traits::Construct_max_vertex_2   Base_Construct_max_vertex_2;
+  typedef typename Traits::Compare_xy_2             Base_Compare_xy_2;
 
   //Constructor
   Arr_addition_traits()
   {}
 
-  Arr_addition_traits(Traits& tr): Traits(tr)
+  Arr_addition_traits(Traits& tr): Traits(tr),
+                                   m_base_traits(&tr)
   {}
 
   // nested class My_X_monotone_curve_2
@@ -192,7 +199,7 @@ public:
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object () 
   {
-    return Intersect_2(Traits::intersect_2_object()); 
+    return Intersect_2(m_base_traits->intersect_2_object()); 
   }
 
 
@@ -220,7 +227,7 @@ public:
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object () 
   {
-    return Split_2(Traits::split_2_object());
+    return Split_2(m_base_traits->split_2_object());
   }
 
 
@@ -271,7 +278,112 @@ public:
   /*! Get a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object () 
   {
-    return Make_x_monotone_2(Traits::make_x_monotone_2_object());
+    return Make_x_monotone_2(m_base_traits->make_x_monotone_2_object());
+  }
+
+
+  class Construct_min_vertex_2
+  {
+  private:
+    Base_Construct_min_vertex_2 m_base_min_v;
+
+  public:
+
+    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base):
+        m_base_min_v(base)
+    {}
+
+
+
+    /*!
+     * Get the left endpoint of the x-monotone curve (segment).
+     * \param cv The curve.
+     * \return The left endpoint.
+     */
+    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    {
+
+      if(cv.get_halfedge_handle() == Halfedge_handle())
+        return (Point_2(m_base_min_v(cv), Vertex_handle()));
+      Vertex_handle vh = cv.get_halfedge_handle()->target();
+      return (Point_2(m_base_min_v(cv), vh));
+    }
+  };
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Construct_min_vertex_2 construct_min_vertex_2_object () const
+  {
+    return Construct_min_vertex_2(m_base_traits->construct_min_vertex_2_object());
+  }
+
+
+  class Construct_max_vertex_2
+  {
+  private:
+    Base_Construct_max_vertex_2 m_base_max_v;
+
+  public:
+
+    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base):
+        m_base_max_v(base)
+    {}
+
+
+
+    /*!
+     * Get the right endpoint of the x-monotone curve .
+     * \param cv The curve.
+     * \return The right endpoint.
+     */
+    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    {
+      if(cv.get_halfedge_handle() == Halfedge_handle())
+        return (Point_2(m_base_max_v(cv), Vertex_handle()));
+      Vertex_handle vh = cv.get_halfedge_handle()->source();
+      return (Point_2(m_base_max_v(cv), vh));
+    }
+  };
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Construct_max_vertex_2 construct_max_vertex_2_object () const
+  {
+    return Construct_max_vertex_2(m_base_traits->construct_max_vertex_2_object());
+  }
+
+
+   class Compare_xy_2
+  {
+  private:
+    Base_Compare_xy_2 m_base_cmp_xy;
+
+  public:
+
+    Compare_xy_2(const Base_Compare_xy_2& base):
+        m_base_cmp_xy(base)
+    {}
+
+
+
+    /*!
+     * Get the left endpoint of the x-monotone curve (segment).
+     * \param cv The curve.
+     * \return The left endpoint.
+     */
+    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    {
+      if(p1.get_vertex_handle() == p2.get_vertex_handle() &&
+         p1.get_vertex_handle() != Vertex_handle())
+        return EQUAL;
+
+      return (m_base_cmp_xy(p1, p2));
+    }
+  };
+
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_xy_2 compare_xy_2_object () 
+  {
+    return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
 
 };
