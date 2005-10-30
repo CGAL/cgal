@@ -61,7 +61,7 @@ private:
   void mousePressEvent(QMouseEvent *e)
   {
     CGAL::Qt_widget_get_segment<Rep>::mousePressEvent(e);
-    if(e->button() == Qt::RightButton && is_pure(e->state()))
+    if(e->button() == Qt::RightButton && this->is_pure(e->state()))
     {
       if(seg_list->empty()) {
         QMessageBox::warning( widget, "There are no segments in the list!",
