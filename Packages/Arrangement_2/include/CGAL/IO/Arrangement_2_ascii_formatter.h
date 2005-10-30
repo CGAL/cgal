@@ -1,16 +1,53 @@
+// Copyright (c) 2005  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michal Meyerovitch <gorgymic@post.tau.ac.il>
+//                 Ron Wein           <wein@post.tau.ac.il>
+//                 (based on old version by Ester Ezra)
 #ifndef CGAL_IO_ARRANGEMENT_2_ASCII_FORMATTER_H
 #define CGAL_IO_ARRANGEMENT_2_ASCII_FORMATTER_H
+
+/*! \file
+ * The header file for the Arrangement_2_ascii_formatter<Arrangement> class.
+ */
 
 #include <CGAL/basic.h>
 #include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arrangement_2>
+/*! \class
+ * A class defining a textual (ASCII) input/output format for arrangements
+ * and supports reading and writing an arrangement from or to input/output
+ * streams.
+ */
+template <class Arrangement_>
 class Arrangement_2_ascii_formatter
 {
-public: 
+
+public:
+
+  typedef Arrangement_                                    Arrangement_2;
   typedef typename Arrangement_2::Size                    Size;
+  typedef typename Arrangement_2::Dcel                    Dcel;
+  typedef typename Arrangement_2::Traits_2                Traits_2;
+  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits_2::Point_2                      Point_2;
+
   typedef typename Arrangement_2::Vertex_iterator         Vertex_iterator;
   typedef typename Arrangement_2::Halfedge_iterator       Halfedge_iterator;
   typedef typename Arrangement_2::Face_iterator           Face_iterator;
@@ -19,319 +56,466 @@ public:
   typedef typename Arrangement_2::Halfedge_handle         Halfedge_handle;
   typedef typename Arrangement_2::Face_handle             Face_handle;
 
-  typedef typename Arrangement_2::Vertex_const_iterator   Vertex_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef typename Arrangement_2::Face_const_iterator     Face_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_iterator
+                                                      Vertex_const_iterator;
+  typedef typename Arrangement_2::Halfedge_const_iterator
+                                                      Halfedge_const_iterator;
+  typedef typename Arrangement_2::Face_const_iterator 
+                                                      Face_const_iterator;
 
-  typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle       Face_const_handle;
-
-  typedef typename Arrangement_2::Holes_const_iterator    Holes_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_handle 
+                                                      Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle
+                                                      Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle   
+                                                      Face_const_handle;
+ 
+  typedef typename Arrangement_2::Holes_const_iterator
+                                             Holes_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                              Ccb_halfedge_const_circulator;
+                                             Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Isolated_vertices_const_iterator
-                                              Isolated_vertices_const_iterator;
+                                             Isolated_vertices_const_iterator;
 
-  typedef typename Arrangement_2::Dcel                    Dcel;
-  typedef typename Arrangement_2::Traits_2                Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                      Point_2;
 
 protected:
-  typedef typename Dcel::Vertex                           D_vertex;
-  typedef typename Dcel::Halfedge                         D_halfedge;
-  typedef typename Dcel::Face                             D_face;
+
+  typedef typename Dcel::Vertex                           DVertex;
+  typedef typename Dcel::Halfedge                         DHalfedge;
+  typedef typename Dcel::Face                             DFace;
+  
+  // Data members:
+  std::ostream  *m_out;
+  std::istream  *m_in;
+  IO::Mode       m_old_mode;
 
 public:  
-  Arrangement_2_ascii_formatter(std::ostream& o) : m_out(&o), m_in(NULL)
+
+  /*! Construct an output formatter. */
+  Arrangement_2_ascii_formatter (std::ostream& os) :
+    m_out (&os),
+    m_in(NULL)
   {}
 
-  Arrangement_2_ascii_formatter(std::istream& i, std::ostream& o) : m_out(&o), m_in(&i)
+  /*! Construct an input formatter. */
+  Arrangement_2_ascii_formatter (std::istream& is) :
+    m_out(NULL),
+    m_in(&is)
   {}
 
-  Arrangement_2_ascii_formatter(std::istream& i) : m_out(NULL), m_in(&i)
-  {}
-
+  /*! Destructor. */
   virtual ~Arrangement_2_ascii_formatter()
   {}
 
-  std::ostream& out() const { return *m_out; }
-  std::istream& in() { return *m_in; }
-
-  // write functions
-  void write_arr_begin(const Arrangement_2& m_arr)
+  /*! Get the output stream. */
+  inline std::ostream& out ()
   {
-	  CGAL_assertion(m_out);
+    CGAL_assertion (m_out != NULL);
+    return (*m_out);
+  }
+
+  /*! Get the input stream. */
+  inline std::istream& in ()
+  {
+    CGAL_assertion (m_in != NULL);
+    return (*m_in);
+  }
+
+  /// \name Global write functions.
+  //@{
+
+  /*! Write a begin-arrangement comment. */
+  void write_arr_begin (const Arrangement_2& arr)
+  {
+    CGAL_assertion (m_out != NULL);
     m_old_mode = get_mode(*m_out);
-    set_ascii_mode(*m_out);
-    write_comment("************************************************");
-    write_comment("Begin planar map");
-    write_comment("************************************************");
+    set_ascii_mode (*m_out);
+    write_comment("BEGIN ARRANGEMENT");
+
+    return;
   }
 
-  void write_arr_end() const
+  /*! Write an end-arrangement comment. */
+  void write_arr_end()
   {
-    write_comment("************************************************");
-    write_comment("End planar map");
-    write_comment("************************************************");
-    set_mode(*m_out, m_old_mode);
+    write_comment("END ARRANGEMENT");
+    set_mode (*m_out, m_old_mode);
+
+    return;
   }
 
-  void write_value(unsigned int val, char delimiter = '\n') const
+  /*! Write an unsigned integer value. */
+  void write_value (unsigned int val, char delimiter = '\n')
   {
     out() << val << delimiter;
+    return;
   }
 
-  void write_comment(const char *str) const
+  /*! Write a comment line. */
+  void write_comment (const char *str)
   {
-    out() <<"# "<< str << std::endl;
+    out() << "# " << str << std::endl;
+    return;
   }
 
-  void write_size(const char *title, Size size)
+  /*! Write a labeled size value. */
+  void write_size (const char *label, Size size)
   { 
-	  out() << size << std::endl; 
+    write_comment (label);
+    write_value (size);  
+    return;
   }
 
-  void write_number(const char *title, int num)
+  /*! Write a begin-vertices comment. */
+  void write_vertices_begin()
   {
-    write_comment(title);
-    write_value(num);  
+    write_comment("BEGIN VERTICES");
+    return;
   }
 
-  void write_vertices_begin() const
+  /*! Write an end-vertices comment. */
+  void write_vertices_end()
   {
-    write_comment("Vertices:");
-    write_comment("------------------------------------------");    
+    write_comment("END VERTICES");
+    return;
   }
-  void write_vertices_end() const {}
 
-  void write_halfedges_begin() const
+  /*! Write a begin-edges comment. */
+  void write_edges_begin()
   {
-    write_comment("Halfedges:");
-    write_comment("------------------------------------------");    
+    write_comment("BEGIN EDGES");
+    return;
   }
-  void write_halfedges_end() const {}
 
-  void write_faces_begin() const
+  /*! Write an end-edges comment. */
+  void write_edges_end()
   {
-    write_comment("Faces:");
-    write_comment("------------------------------------------");
+    write_comment("END EDGES");
+    return;
   }
-  void write_faces_end() const {}
 
-  // vertex
-  void write_vertex_begin(Vertex_const_handle v, std::size_t idx) const
+  /*! Write a begin-faces comment. */
+  void write_faces_begin()
+  {
+    write_comment("BEGIN FACES");
+    return;
+  }
+
+  /*! Write an end-faces comment. */
+  void write_faces_end()
+  {
+    write_comment("END FACES");
+    return;
+  }
+  //@}
+
+  /// \name Write a vertex.
+  //@{
+  void write_vertex_begin (Vertex_const_handle , std::size_t )
   {}
-  void write_vertex_end(Vertex_const_handle v) const
+
+  void write_vertex_end (Vertex_const_handle )
   {}
   
-  void write_vertex_point(Vertex_const_handle v) const
+  void write_point (const Point_2& p)
   {
-    out() << v->point() << std::endl;
+    out() << p << std::endl;
+    return;
   }
 
-  void write_vertex(Vertex_const_handle v) const {}
-
-  // edge & halfedge
-  void write_edge_begin(Halfedge_const_handle h) const
+  virtual void write_vertex_data (Vertex_const_handle v)
   {}
-  void write_edge_end(Halfedge_const_handle h) const
+  //@}
+
+  /// \name Write an edge.
+  //@{
+  void write_edge_begin (Halfedge_const_handle )
   {}
 
-  void write_halfedge_endpoint_index(std::size_t idx, const char *title=0)
+  void write_edge_end (Halfedge_const_handle )
+  {}
+
+  void write_vertex_index (std::size_t idx)
   {
-    write_value(idx, ' ');
+    write_value (idx, ' ');
   }
 
-  void write_edge_curve(Halfedge_const_handle h) const
+  void write_curve (const X_monotone_curve_2& cv)
   {
-    out() << h->curve() << std::endl;
+    out() << cv << std::endl;
+    return;
   }
-  void write_halfedge(Halfedge_const_handle h) const {}
 
-  // face
-  void write_face_begin(Face_const_handle f) const
+  virtual void write_halfedge_data (Halfedge_const_handle he)
+  {}
+  //@}
+
+  /// \name Write a face.
+  //@{
+  void write_face_begin (Face_const_handle f)
   {
     if (f->is_unbounded())
-      write_comment("start UNBOUNDED face");
+      write_comment("BEGIN FACE (unbounded)");
     else
-      write_comment("start BOUNDED face");
-    write_comment("------------------------------------------");      
+      write_comment("BEGIN FACE (bounded)");
+    return;
   }
-  void write_face_end(Face_const_handle f) const
+
+  void write_face_end (Face_const_handle )
   {
-    write_comment("end face");
-    write_comment("------------------------------------------");    
+    write_comment("END FACE");
   }
 
-  void write_outer_ccb_begin(Face_const_handle f) const
+  void write_outer_ccb_begin (Face_const_handle )
   {
-    write_comment("outer ccb");
+    write_comment("Outer CCB:");
   }
-  void write_outer_ccb_end(Face_const_handle f) const
+
+  void write_outer_ccb_end(Face_const_handle )
   {}
 
-  void write_holes_begin(Face_const_handle f) const
-  {}
-  void write_holes_end(Face_const_handle f) const
+  void write_holes_begin(Face_const_handle )
   {}
 
-  void write_inner_ccb_begin(Face_const_handle f) const
+  void write_holes_end(Face_const_handle )
+  {}
+
+  void write_inner_ccb_begin(Face_const_handle )
   {
-    write_comment("inner ccb");
+    write_comment("Inner CCB:");
   }
-  void write_inner_ccb_end(Face_const_handle f) const
+
+  void write_inner_ccb_end(Face_const_handle )
   {}
 
-  void write_face(Face_const_handle f) const {}
+  virtual void write_face_data (Face_const_handle )
+  {}
 
-  void write_ccb_halfedges_begin() const {}
-  void write_ccb_halfedges_end() const
+  void write_ccb_halfedges_begin()
+  {}
+  
+  void write_ccb_halfedges_end()
   {
     out() << std::endl;    
   }
 
-  void write_halfedge_index(std::size_t idx) const
+  void write_halfedge_index (std::size_t idx)
   {
-    write_value(idx, ' ');
+    write_value (idx, ' ');
   }
 
-  void write_isolated_vertices_begin(Face_const_handle f) const
+  void write_isolated_vertices_begin (Face_const_handle )
   {
-    write_comment("isolated vertices");
+    write_comment("Isolated vertices:");
   }
-  void write_isolated_vertices_end(Face_const_handle f) const
+
+  void write_isolated_vertices_end(Face_const_handle )
   {
     out() << std::endl;
   }
+  //@}
 
-  void write_vertex_index(std::size_t idx) const
-  {
-    write_value(idx, ' ');
-  }  
+  /// \name Global read functions.
+  //@{
 
-  // read functions
-  void read_arr_begin() 
+  /*! Start reading an arrangement. */
+  void read_arr_begin () 
   {
-   	CGAL_assertion(m_in);
+    CGAL_assertion (m_in != NULL);
     m_old_mode = get_mode(*m_in);
     set_ascii_mode(*m_in);
-	  skip_comments(in());
+    _skip_comments();
   }
+
+  /*! Read the arrangement edge. */
   void read_arr_end() 
   {
-    skip_comments(in());
+    _skip_comments();
     set_mode(*m_in, m_old_mode);
   }
 
-  Size read_size(const char *title=0)
+  /*! Read a size value (with a label comment line before it). */
+  std::size_t read_size (const char *title = NULL)
   {
-    Size size;
-    in() >> size;
-	  skip_until_EOL(in());
-	  return size;
+    std::size_t   val;
+
+    _skip_comments();
+    in() >> val;
+    _skip_until_EOL();
+
+    return (val);
   }
 
-  int read_number(const char *title=0)
+  /*! Reading the arrangement vertices. */
+  void read_vertices_begin()
   {
-    skip_comments(in());
-  	int tmp;
-  	in() >> tmp;
-  	return tmp;
+    _skip_comments();
   }
 
-  void read_vertices_begin() { skip_comments(in()); }
-  void read_vertices_end() {}
+  void read_vertices_end()
+  {
+    _skip_comments();
+  }
 
-  void read_halfedges_begin() { skip_comments(in()); }
-  void read_halfedges_end() {}
+  /*! Reading the arrangement edges. */
+  void read_edges_begin()
+  {
+    _skip_comments();
+  }
 
-  void read_faces_begin() { skip_comments(in()); }
-  void read_faces_end() {}
+  void read_edges_end()
+  {
+    _skip_comments();
+  }
 
-  // vertex
-  void read_vertex_begin() {}
-  void read_vertex_end() {}
-  void read_vertex_point(Point_2& p) 
+  /*! Reading the arrangement faces. */
+  void read_faces_begin()
+  {
+    _skip_comments();
+  }
+
+  void read_faces_end()
+  {
+    _skip_comments();
+  }
+  //@}
+
+  /// \name Reading a vertex.
+  //@{
+  void read_vertex_begin ()
+  {}
+  
+  void read_vertex_end ()
+  {}
+
+  void read_point (Point_2& p) 
   {
     in() >> p;
-	skip_until_EOL(in());
+    _skip_until_EOL();
+
+    return;
   }
-  void read_vertex(D_vertex* v) {}
+
+  virtual void read_vertex_data (Vertex_handle v)
+  {}
+  //@}
+
+  /// \name Reading an edge.
+  //@{
+  void read_edge_begin ()
+  {}
   
-  // edge & halfedge
-  void read_edge_begin() {}
-  void read_edge_end() {}
-  std::size_t read_halfedge_endpoint_index(const char *title=0) 
+  void read_edge_end ()
+  {}
+  
+  std::size_t read_vertex_index () 
   {
-    std::size_t result;  
-	  in() >> result;
-	  return result;
+    std::size_t  val;
+
+    in() >> val;
+    return (val);
   }
-  void read_halfedge_curve(X_monotone_curve_2& cv) 
+
+  void read_curve (X_monotone_curve_2& cv) 
   {
     in() >> cv;
-	skip_until_EOL(in());
+    _skip_until_EOL();
+
+    return;
   }
 
-  void read_halfedge(D_halfedge* h) {}
+  virtual void read_halfedge_data (Halfedge_handle )
+  {}
  
-  // face
-  void read_face_begin() { skip_comments(in()); }
-  void read_face_end() { skip_comments(in()); }
-
-  void read_outer_ccb_begin() { skip_comments(in()); }
-  void read_outer_ccb_end() {}
-
-  void read_halfedge_index(std::size_t& index) { in() >> index; }
-
-  void read_holes_begin() {}
-  void read_holes_end() {}
-
-  void read_inner_ccb_begin() { skip_comments(in()); }
-  void read_inner_ccb_end() {}
-
-  void read_ccb_halfedges_begin() {}
-  void read_ccb_halfedges_end() 
+  /// \name Reading a face.
+  //@{
+  void read_face_begin ()
   {
-    skip_until_EOL(in());
-  }
-
-  void read_isolated_vertices_begin() { skip_comments(in()); }
-  void read_isolated_vertices_end() 
-  {
-    skip_until_EOL(in());
-  }
-
-  void read_vertex_index(std::size_t& index) { in() >> index; }
-
-  void read_face(D_face* f) {}
-
-
-  // istream modifier skips chars until end of line.
-  std::istream& skip_until_EOL( std::istream& in) 
-  {
-    char c;
-    while ( in.get(c) && c != '\n')
-      ;
-    return in;
+    _skip_comments();
   }
   
-  // istream modifier that checks for OFF comments and removes them.
-  std::istream& skip_comments( std::istream& in) 
+  void read_face_end ()
   {
-    char c;
-    while( (in >> c) && c == '#')
-      skip_until_EOL(in);
-    in.putback(c);
-    return in;
+    _skip_comments();
   }
 
+  void read_outer_ccb_begin ()
+  {
+    _skip_comments();
+  }
+  
+  void read_outer_ccb_end ()
+  {}
+
+  std::size_t read_halfedge_index ()
+  { 
+    std::size_t  val;
+
+    in() >> val;
+    return (val);
+  }
+
+  void read_holes_begin ()
+  {}
+  
+  void read_holes_end ()
+  {}
+
+  void read_inner_ccb_begin ()
+  {
+    _skip_comments();
+  }
+  
+  void read_inner_ccb_end ()
+  {}
+
+  void read_ccb_halfedges_begin()
+  {}
+  
+  void read_ccb_halfedges_end() 
+  {
+    _skip_until_EOL ();
+  }
+
+  void read_isolated_vertices_begin ()
+  {
+    _skip_comments();
+  }
+  
+  void read_isolated_vertices_end () 
+  {
+    _skip_until_EOL();
+  }
+
+  virtual void read_face_data (Face_handle )
+  {}
+  //@}
+
 protected:
-  std::ostream * m_out;
-  std::istream * m_in;
-  IO::Mode       m_old_mode;
+
+  /*! Skip until end of line. */
+  void _skip_until_EOL () 
+  {
+    CGAL_assertion (m_in != NULL);
+
+    int     c;
+    while ((c = m_in->get()) != EOF && c != '\n');
+    return;
+  }
+  
+  /*! Skip comment lines. */
+  void _skip_comments () 
+  {
+    CGAL_assertion (m_in != NULL);
+
+    int     c;
+    while ((c = m_in->get()) != EOF && c == '#')
+      _skip_until_EOL();
+    m_in->putback (c);
+
+    return;
+  }
+
 };
 
 CGAL_END_NAMESPACE

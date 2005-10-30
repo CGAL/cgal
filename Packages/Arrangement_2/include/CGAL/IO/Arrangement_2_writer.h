@@ -1,85 +1,138 @@
+// Copyright (c) 2005  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michal Meyerovitch <gorgymic@post.tau.ac.il>
+//                 Ron Wein           <wein@post.tau.ac.il>
+//                 (based on old version by Ester Ezra)
 #ifndef CGAL_IO_ARRANGEMENT_2_WRITER_H
 #define CGAL_IO_ARRANGEMENT_2_WRITER_H
 
+/*! \file
+ * The header file for the Arrangement_2_writer<Arrangement> class.
+ */
+
 #include <CGAL/IO/Arrangement_2_ascii_formatter.h>
-#include <CGAL/Inverse_index.h>
+#include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arrangement_2>
+/*! \class
+ * An auxiliary class for writing an arrangement to an output stream.
+ */
+template <class Arrangement_>
 class Arrangement_2_writer
 {
-public: 
+public:
+
+  typedef Arrangement_                                    Arrangement_2;
+  typedef Arrangement_2_writer<Arrangement_2>             Self;
+
+protected:
+
   typedef typename Arrangement_2::Size                    Size;
-  typedef typename Arrangement_2::Vertex_iterator         Vertex_iterator;
-  typedef typename Arrangement_2::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Arrangement_2::Face_iterator           Face_iterator;
-
-  typedef typename Arrangement_2::Vertex_handle           Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle         Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle             Face_handle;
   
-  typedef typename Arrangement_2::Vertex_const_iterator   Vertex_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef typename Arrangement_2::Face_const_iterator     Face_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_iterator
+                                                      Vertex_const_iterator;
+  typedef typename Arrangement_2::Halfedge_const_iterator
+                                                      Halfedge_const_iterator;
+  typedef typename Arrangement_2::Edge_const_iterator
+                                                      Edge_const_iterator;
+  typedef typename Arrangement_2::Face_const_iterator 
+                                                      Face_const_iterator;
 
-  typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle       Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle 
+                                                      Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle
+                                                      Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle   
+                                                      Face_const_handle;
  
-  typedef typename Arrangement_2::Holes_const_iterator    Holes_const_iterator;
+  typedef typename Arrangement_2::Holes_const_iterator
+                                             Holes_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                              Ccb_halfedge_const_circulator;
+                                             Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Isolated_vertices_const_iterator
-                                              Isolated_vertices_const_iterator;
+                                             Isolated_vertices_const_iterator;
   
-  typedef Inverse_index<Halfedge_const_iterator>          Halfedges_index;
-  typedef Inverse_index<Vertex_const_iterator>            Vertices_index;
+  typedef Inverse_index<Halfedge_const_iterator>      Halfedges_index;
+  typedef Inverse_index<Vertex_const_iterator>        Vertices_index;
 
-  Arrangement_2_writer(const Arrangement_2& arr) :
+  // Data memebrs:
+  const Arrangement_2&   m_arr;
+  Halfedges_index*       m_he_index;
+  Vertices_index*        m_v_index;
+
+private:
+
+  // Copy constructor and assignment operator - not supported.
+  Arrangement_2_writer (const Self& );
+  Self& operator= (const Self& );
+
+public:
+
+  /*! Constructor. */
+  Arrangement_2_writer (const Arrangement_2& arr) :
     m_arr(arr)
   {
-    m_h_index = new Halfedges_index(arr.halfedges_begin(),
-                                    arr.halfedges_end());
-    m_v_index = new Vertices_index(arr.vertices_begin(),
-                                   arr.vertices_end());
+    m_he_index = new Halfedges_index (arr.halfedges_begin(),
+                                      arr.halfedges_end());
+    m_v_index = new Vertices_index (arr.vertices_begin(),
+                                    arr.vertices_end());
   }
 
+  /*! Destructor. */
   virtual ~Arrangement_2_writer()
   {
-    if (m_h_index) delete m_h_index;
-    if (m_v_index) delete m_v_index;
+    if (m_he_index)
+      delete m_he_index;
+    if (m_v_index)
+      delete m_v_index;
   }
 
-  template <class Formatter_>
-  void operator()(Formatter_& formatter) const
+  /*! Write the arrangement. */
+  template <class Formatter>
+  void operator()(Formatter& formatter) const
   {
     formatter.write_arr_begin(m_arr);
-    formatter.write_size("number_of_vertices", m_arr.number_of_vertices());
-    formatter.write_size("number_of_halfedges", m_arr.number_of_halfedges());
-    formatter.write_size("number_of_faces", m_arr.number_of_faces());
+    formatter.write_size ("number_of_vertices", m_arr.number_of_vertices());
+    formatter.write_size ("number_of_edges", m_arr.number_of_edges());
+    formatter.write_size ("number_of_faces", m_arr.number_of_faces());
 
-    // write the vertices
+    // Write the vertices.
     formatter.write_vertices_begin();
-    Vertex_const_iterator v_iter = m_arr.vertices_begin();
-    for (; v_iter != m_arr.vertices_end(); ++v_iter)
-      write_vertex(formatter, v_iter);
+    Vertex_const_iterator  vit;
+    for (vit = m_arr.vertices_begin(); vit != m_arr.vertices_end(); ++vit)
+      _write_vertex (formatter, vit);
     formatter.write_vertices_end();
 
-    // write the edges & halfedges
-    formatter.write_halfedges_begin();
-    Halfedge_const_iterator h_iter = m_arr.halfedges_begin();
-    for (; h_iter != m_arr.halfedges_end(); ++h_iter, ++h_iter)
-      write_edge(formatter, h_iter);
-    formatter.write_halfedges_end();
+    // Write the edges.
+    formatter.write_edges_begin();
+    Edge_const_iterator    eit;
+    for (eit = m_arr.edges_begin(); eit != m_arr.edges_end(); ++eit)
+      _write_edge (formatter, eit);
+    formatter.write_edges_end();
 
-    // write faces
+    // Write the faces.
     formatter.write_faces_begin();
-    Face_const_iterator f_iter = m_arr.faces_begin();
-    for (; f_iter != m_arr.faces_end(); ++f_iter)
-      write_face(formatter, f_iter);
+    Face_const_iterator    fit;
+    for (fit = m_arr.faces_begin(); fit != m_arr.faces_end(); ++fit)
+      _write_face(formatter, fit);
     formatter.write_faces_end();
 
     formatter.write_arr_end();
@@ -87,133 +140,151 @@ public:
 
 protected:
 
-  template <class Formatter_>
-  void write_vertex(Formatter_& formatter, Vertex_const_iterator v) const
+  /*! Write a vertex. */
+  template <class Formatter>
+  void _write_vertex (Formatter& formatter, Vertex_const_iterator vit) const
   {
-    formatter.write_vertex_begin(v, get_index(v));
-    formatter.write_vertex_point(v);
-    // here users that expand the vertex can write additional data
-    formatter.write_vertex(v); 
-    formatter.write_vertex_end(v);
+    Vertex_const_handle  v = vit;
+    formatter.write_vertex_begin (v, _get_index(v));
+    formatter.write_point (v->point()); // Write the associated point.
+    formatter.write_vertex_data (v);    // Write additional user-defined data.
+    formatter.write_vertex_end (v);
+
+    return;
   }
 
-  template <class Formatter_>
-  void write_edge(Formatter_& formatter, Halfedge_const_iterator hi) const
+  /*! Write an edge (a pair of halfedges). */
+  template <class Formatter>
+  void _write_edge (Formatter& formatter, Edge_const_iterator hit) const
   {
-    Halfedge_const_handle h = hi;
-    formatter.write_edge_begin(h/*, get_index(hi)*/);
-    formatter.write_halfedge_endpoint_index(get_index(h->source()), "endp1");
-    formatter.write_halfedge_endpoint_index(get_index(h->target()), "endp2");
-    formatter.write_edge_curve(h);
-    formatter.write_halfedge(h);
-    formatter.write_halfedge(h->twin());
-    formatter.write_edge_end(h);
+    Halfedge_const_handle he = hit;
+
+    formatter.write_edge_begin (he /*, _get_index(hit)*/);
+    formatter.write_vertex_index (_get_index(he->source()));
+    formatter.write_vertex_index (_get_index(he->target()));
+    
+    if (he->direction() == SMALLER)
+      formatter.write_vertex_index (0);
+    else
+      formatter.write_vertex_index (1);
+      
+    formatter.write_curve (he->curve()); // Write the associated curve.
+    formatter.write_halfedge_data (he);  // Write additional user-defined data.
+    formatter.write_halfedge_data (he->twin());
+    formatter.write_edge_end (he);
+
+    return;
   }
 
-  template <class Formatter_>
-  void write_face(Formatter_& formatter, Face_const_iterator fi) const
+  /*! Write a face. */
+  template <class Formatter>
+  void _write_face (Formatter& formatter, Face_const_iterator fit) const
   {
-    Face_const_handle f = fi;
+    Face_const_handle     f = fit;
+
     formatter.write_face_begin(f);
-    // write the outer ccb:
-    // first write the number of halfedges on it, then write the halfedges
-    // indices
-    formatter.write_outer_ccb_begin(f);                                                  
+
+    // Write the outer CCB.
+    formatter.write_outer_ccb_begin(f);
     if (f->is_unbounded())
     {
-      formatter.write_number("halfedges_on_outer_boundary", 0);
+      formatter.write_size ("halfedges_on_outer_CCB", 0);
     }
     else
     {
       Ccb_halfedge_const_circulator hec = f->outer_ccb();
 
-      std::size_t n = circulator_size(hec);
-      formatter.write_number("halfedges_on_outer_boundary", n);
+      std::size_t n = _circulator_size (hec);
+      formatter.write_size ("halfedges_on_outer_CCB", n);
 
-      write_ccb_halfedges(formatter, hec);
+      _write_ccb (formatter, hec);
     }
     formatter.write_outer_ccb_end(f);
 
-    // write the holes of the face
+    // Write the holes inside the face.
     formatter.write_holes_begin(f);
-    std::size_t n_holes = std::distance(f->holes_begin(), f->holes_end());
-    formatter.write_number("number_of_holes", n_holes);
+    std::size_t n_holes = std::distance (f->holes_begin(), f->holes_end());
+    formatter.write_size ("number_of_holes", n_holes);
 
-    Holes_const_iterator hole_iter = (Holes_const_iterator)f->holes_begin();
-    for (; hole_iter != (Holes_const_iterator)f->holes_end(); ++hole_iter)
+    Holes_const_iterator  hole_it;
+    for (hole_it = f->holes_begin(); hole_it != f->holes_end(); ++hole_it)
     {
       formatter.write_inner_ccb_begin(f);
 
-      Ccb_halfedge_const_circulator hec = (*hole_iter);      
-      std::size_t n = circulator_size(hec);
-      formatter.write_number("halfedges_on_inner_boundary", n);
-      write_ccb_halfedges(formatter, hec);
+      Ccb_halfedge_const_circulator hec = (*hole_it);      
+      std::size_t n = _circulator_size (hec);
+      formatter.write_size ("halfedges_on_inner_CCB", n);
+      _write_ccb (formatter, hec);
       
       formatter.write_inner_ccb_end(f);
     }
-
     formatter.write_holes_end(f);
 
-    // write the isolated vertices of the face
+    // Write the isolated vertices inside the face.
     formatter.write_isolated_vertices_begin(f);
     std::size_t n_isolated = std::distance(f->isolated_vertices_begin(),
                                            f->isolated_vertices_end());
-    formatter.write_number("number_of_isolated_vertices", n_isolated);
-    Isolated_vertices_const_iterator iso_vi = f->isolated_vertices_begin();
-    for(; iso_vi != f->isolated_vertices_end(); ++iso_vi)
-      formatter.write_vertex_index(get_index(iso_vi));
-    
+    formatter.write_size ("number_of_isolated_vertices", n_isolated);
+
+    Isolated_vertices_const_iterator  iso_vit;
+    for (iso_vit = f->isolated_vertices_begin();
+         iso_vit != f->isolated_vertices_end(); ++iso_vit)
+    {
+      formatter.write_vertex_index (_get_index(iso_vit));
+    }
     formatter.write_isolated_vertices_end(f);
     
-    // this is used for writing face additional data
-    formatter.write_face(f);
+    // Write additional user-defined data associated with the face.
+    formatter.write_face_data (f);
     formatter.write_face_end(f);
+
+    return;
   }
 
-  template <class Formatter_>   
-  void write_ccb_halfedges(Formatter_& formatter,
-                           Ccb_halfedge_const_circulator hec_begin) const      
+  /*! Write the edges along a given CCB. */
+  template <class Formatter>   
+  void _write_ccb (Formatter& formatter,
+                   Ccb_halfedge_const_circulator circ) const      
   {
+    Ccb_halfedge_const_circulator  curr = circ;
+
     formatter.write_ccb_halfedges_begin();
-    Ccb_halfedge_const_circulator hec = hec_begin;
     do {
-      formatter.write_halfedge_index(get_index(hec));
-      ++hec;
-    } while (hec != hec_begin);
+      formatter.write_halfedge_index (_get_index(curr));
+      ++curr;
+    } while (curr != circ);
     formatter.write_ccb_halfedges_end();
+
+    return;
   }
   
-  std::size_t get_index(Vertex_const_iterator v) const
+  /*! Get the mapped index of a given vertex. */
+  std::size_t _get_index (Vertex_const_handle v) const
   {
-    CGAL_assertion(m_v_index);
     return (*m_v_index)[v];
   }
 
-  std::size_t get_index(Halfedge_const_iterator h) const
+  /*! Get the mapped index of a given halfegde. */
+  std::size_t _get_index (Halfedge_const_handle he) const
   {
-    CGAL_assertion(m_h_index);
-    return (*m_h_index)[h];
+    return (*m_he_index)[he];
   }
 
-  std::size_t my_circulator_size(Ccb_halfedge_const_circulator c) const
+  /*! Get the number of edges along a given CCB. */
+  std::size_t _circulator_size (Ccb_halfedge_const_circulator circ) const
   {
-    // Simply count.
-    if ( c == CGAL_CIRC_NULL)
-        return 0;
+    CGAL_assertion (circ != CGAL_CIRC_NULL);
 
-    std::size_t     n = 0;
-    Ccb_halfedge_const_circulator   d = c;
+    std::size_t                    n = 0;
+    Ccb_halfedge_const_circulator  curr = circ;
+
     do {
-        ++n;
-        ++d;
-    } while( c != d);
-    return n;  
-  }
-  
-protected:
-  const Arrangement_2& m_arr;
-  Halfedges_index*     m_h_index;
-  Vertices_index*      m_v_index;
+      ++n;
+      ++curr;
+    } while(curr != circ);
+
+    return (n);
+  }  
 };
 
 CGAL_END_NAMESPACE

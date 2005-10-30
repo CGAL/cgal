@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Tel-Aviv University (Israel).
+// Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -12,13 +12,19 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision$
+// $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Eti Ezra <estere@post.tau.ac.il>
+// Author(s)     : Michal Meyerovitch <gorgymic@post.tau.ac.il>
+//                 Ron Wein           <wein@post.tau.ac.il>
+//                 (based on old version by Ester Ezra)
 
 #ifndef CGAL_ARR_IOSTREAM_H
 #define CGAL_ARR_IOSTREAM_H
+
+/*! \file
+ * Definition of the I/O operators for the Arrangement_2<Traits,Dcel> class.
+ */
 
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_2.h>
@@ -28,36 +34,44 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! Exporter operator */
-template <class Traits, class Dcel> inline
-std::ostream & operator << (std::ostream & os, 
-                            const Arrangement_2<Traits,Dcel> & arr)
+/*!
+ * Output operator (importer).
+ * \param os The output stream.
+ * \param arr The arrangement.
+ */
+template <class Traits, class Dcel>
+std::ostream& operator<< (std::ostream & os, 
+                          const Arrangement_2<Traits,Dcel>& arr)
 {
-  typedef Arrangement_2<Traits,Dcel>                   Arrangement_2;
-  typedef Arrangement_2_writer<Arrangement_2>          Arr_writer;
-  typedef Arrangement_2_ascii_formatter<Arrangement_2> Ascii_formatter;
+  typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
+  typedef Arrangement_2_writer<Arrangement_2>           Arr_writer;
+  typedef Arrangement_2_ascii_formatter<Arrangement_2>  Ascii_formatter;
 
-  Ascii_formatter ascii(os);
-  Arr_writer writer(arr);
-  writer(ascii);
-    
-  return os;
+  Ascii_formatter ascii_format (os);
+  Arr_writer      writer (arr);
+
+  writer (ascii_format);
+  return (os);
 }
 
-/*! Improter operator */
-template <class Traits, class Dcel> inline
-std::istream & operator >> (std::istream & is, 
-                            Arrangement_2<Traits,Dcel> & arr)
+/*!
+ * Output operator (exporter).
+ * \param is The input stream.
+ * \param arr The arrangement.
+ */
+template <class Traits, class Dcel>
+std::istream& operator>> (std::istream& is, 
+                          Arrangement_2<Traits,Dcel>& arr)
 {
-  typedef Arrangement_2<Traits,Dcel>                   Arrangement_2;
-  typedef Arrangement_2_reader<Arrangement_2>          Arr_reader;
-  typedef Arrangement_2_ascii_formatter<Arrangement_2> Ascii_formatter;
+  typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
+  typedef Arrangement_2_reader<Arrangement_2>           Arr_reader;
+  typedef Arrangement_2_ascii_formatter<Arrangement_2>  Ascii_formatter;
 
-  Ascii_formatter ascii(is);
-  Arr_reader reader(arr);
-  reader(ascii);
+  Ascii_formatter ascii_format (is);
+  Arr_reader      reader(arr);
   
-  return is;
+  reader (ascii_format);
+  return (is);
 }
 
 CGAL_END_NAMESPACE
