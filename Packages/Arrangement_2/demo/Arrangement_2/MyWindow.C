@@ -221,8 +221,8 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   file->insertItem("&Open Segment File...", this, SLOT(fileOpenSegment()));
   file->insertItem("&Open Polyline File...", this, SLOT(fileOpenPolyline()));
   file->insertItem("&Open Conic File...", this, SLOT(fileOpenConic()));
-  file->insertItem("&Open Segment Pm File...", this, SLOT(fileOpenSegmentPm()));
-  //file->insertItem("&Open Polyline Pm File...", this, SLOT(fileOpenPolylinePm()));
+  file->insertItem("&Open Segment Arr File...", this, SLOT(fileOpenSegmentPm()));
+  file->insertItem("&Open Polyline Arr File...", this, SLOT(fileOpenPolylinePm()));
   //file->insertItem("&Open Conic Pm File", this, SLOT(fileOpenConicPm()));
   file->insertItem("&Save...", this, SLOT(fileSave()));
   file->insertItem("&Save As...", this, SLOT(fileSaveAs()));

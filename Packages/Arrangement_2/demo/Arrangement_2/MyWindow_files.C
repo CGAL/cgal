@@ -249,9 +249,7 @@ void MyWindow::fileOpenPm()
       Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-     CGAL::Arrangement_2_reader<Seg_arr> arr_reader(*w_demo_p->m_curves_arr);
-     CGAL::Arrangement_2_ascii_formatter<Seg_arr> formatter(inputFile);
-     arr_reader(formatter);
+      inputFile >> (*w_demo_p->m_curves_arr);
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
@@ -259,9 +257,7 @@ void MyWindow::fileOpenPm()
       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-     CGAL::Arrangement_2_reader<Pol_arr> arr_reader(*w_demo_p->m_curves_arr);
-     CGAL::Arrangement_2_ascii_formatter<Pol_arr> formatter(inputFile);
-     arr_reader(formatter);
+     inputFile >> (*w_demo_p->m_curves_arr);
 	   break;
     }
    case CONIC_TRAITS: // dosen't work !!
@@ -269,10 +265,8 @@ void MyWindow::fileOpenPm()
       /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
        (myBar->currentPage());
-     CGAL::Arrangement_2_reader<Conic_arr> arr_reader(*w_demo_p->m_curves_arr);
-     CGAL::Arrangement_2_ascii_formatter<Conic_arr> formatter(inputFile);
-     arr_reader(formatter);
-     break;*/
+     inputFile >> (*w_demo_p->m_curves_arr);*/
+     break;
     }
   }  
   
@@ -619,9 +613,7 @@ void MyWindow::fileSave()
      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-     CGAL::Arrangement_2_writer<Seg_arr> arr_writer(*w_demo_p->m_curves_arr);
-     CGAL::Arrangement_2_ascii_formatter<Seg_arr> formatter(outFile);
-     arr_writer(formatter);
+     outFile << (*w_demo_p->m_curves_arr);
      break;
     }
    case POLYLINE_TRAITS:
@@ -629,19 +621,15 @@ void MyWindow::fileSave()
       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-     CGAL::Arrangement_2_writer<Pol_arr> arr_writer(*w_demo_p->m_curves_arr);
-     CGAL::Arrangement_2_ascii_formatter<Pol_arr> formatter(outFile);
-     arr_writer(formatter);
+      outFile << (*w_demo_p->m_curves_arr);
      break;
     }
    case CONIC_TRAITS:
     {
-      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
+      /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
        (myBar->currentPage());
-     CGAL::Arrangement_2_writer<Conic_arr> arr_writer(*w_demo_p->m_curves_arr);
-     CGAL::Arrangement_2_ascii_formatter<Conic_arr> formatter(outFile);
-     arr_writer(formatter);
+      outFile << (*w_demo_p->m_curves_arr);*/
      break;
     }
   }  
@@ -696,5 +684,3 @@ void MyWindow::fileSave_ps()
 
 
 #endif // CGAL_USE_QT
-
-
