@@ -1428,7 +1428,8 @@ replace_variable_slack_original_upd_r(Tag_false )
     r_C.pop_back();
     
     // update x_O_v_i
-    x_O_v_i[i] = ratio_test_bound_index;
+    if (!is_artificial(i)) // original and not artificial?
+      x_O_v_i[i] = ratio_test_bound_index;
 }
 
 
