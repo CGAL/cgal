@@ -40,7 +40,6 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT> {
   typedef Polynomial<NTT> This;
   typedef internal::Polynomial_impl<This, NTT>  Parent;
 
-
   // friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
 
 #ifndef NDEBUG
@@ -60,6 +59,11 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT> {
 #endif
   }
 public:
+
+  // hack to try to fix pgCC
+  //using typename Parent::iterator;
+  typedef typename Parent::iterator iterator;
+
   //================
   // CONSTRUCTORS
   //================

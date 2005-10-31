@@ -72,9 +72,19 @@ public:
     initialize();
 
     do {
-      initialize_intervals();
+      isolate_top();
       cur_= make_next_root();
     } while (!(cur_ >lb_));
+  };
+  Upper_bound_root_stack(const Polynomial &f, 
+			 const Root &lb,
+			 const Root &ub,
+			 const Traits &tr,
+			 bool dont_isolate): kernel_(tr), f_(f),
+					     lb_(lb), ub_(ub),
+					     rc_(kernel_.root_count_object(f_)),
+					     has_ss_(false){
+    initialize();
   };
 
   const Root& top() const {
@@ -82,7 +92,7 @@ public:
   }
 
   void pop() {
-    initialize_intervals();
+    isolate_top();
     cur_= make_next_root();
   }
 
@@ -90,8 +100,87 @@ public:
     return cur_==Root::infinity();
   }
 
-protected:
+  /*Isolating_interval spanned_interval() const {
+    CGAL_precondition(!empty());
+    if (intervals_.empty()){
+      return cur_.isolating_interval();
+    } else {
+      Isolating_interval lb;
+      if (cur_ != Root()){
+	return lb= cur_.isolating_interval();
+      } else {
+	lb= intervals_.back().interval;
+      }
+      
+      Isolating_iterval ub= intervals_.front().interval;
+      return lb| ub;
+    } 
+    }*/
 
+  
+
+  // the following methods should be protected, but...
+  bool top_is_isolated() const {
+    return cur_ != -std::numeric_limits<Root>::infinity();
+
+      /*intervals_.back().interval.is_singular() 
+      || intervals_.back().num_roots.is_single() 
+      && intervals_.back().left_sign != ZERO 
+      && intervals_.back().right_sign != ZERO
+      && intervals_.back().right_sign != intervals_.back().left_sign;*/
+  }
+
+  bool refine_top(double ub) {
+    while (intervals_.back().interval.double_interval().first < ub) {
+      if (classify_top()){
+	make_next_root();
+	return true;
+      } else {
+	refine_top();
+      }
+    }
+  }
+
+  bool refine_bottom(double lb) {
+    CGAL_assertion(0);
+    return false;
+  }
+
+  void pop_no_isolate() {
+    cur_= -std::numeric_limits<Root>::infinity();
+  }
+
+  std::pair<double, double> double_interval() const {
+    CGAL_precondtion(!empty());
+    double lb;
+    if (top_is_isolated()){
+      lb= cur_.double_interval(std::numeric_limits<double>::infinity()).first;
+    } else {
+      lb= intervals_.back().interval.double_interval().first;
+    }
+    double ub;
+    if (intervals_.empty()){
+      ub= cur_.double_interval(std::numeric_limits<double>::infinity()).second;
+    } else {
+      ub= intervals_.front().interval.double_interval().second;
+    }
+    return std::pair<double, double>(lb, ub);
+  }
+  
+
+ //! establish the invariant 
+  /*!
+    The front interval contains only one root. 
+  */
+  void isolate_top(){
+    //write_intervals(std::cout);
+    while (!intervals_.empty()){
+      if (classify_top()) break;
+      subdivide_top();
+    } // while (the first has more than one interval);
+    //std::cout << "Initialized.\n";
+  }
+protected:
 
   Root make_next_root(){
     if (intervals_.empty()){
@@ -122,11 +211,6 @@ protected:
     CGAL_Polynomial_expensive_precondition(lb_<ub_);
     
     if (f_.is_constant()) return;
-    /*else if (f_.is_linear()){
-      if (handle_linear()) return;
-      }*/
-    
-    //std::cout << "Initializing on " << f_ << " with bounds " << lb_ << " and " << ub_ << std::endl;
     
     typename Traits::Root_bound rbe= kernel_.root_bound_object();
     NT rb= rbe(f_);
@@ -134,16 +218,14 @@ protected:
     if (lb_ == -Root::infinity()) {
       lbi= Interval(-rb);
     } else {
-      lbi= lb_.interval(); //power_of_two(lb_.interval().lower_bound());
+      lbi= lb_.isolating_interval(); //power_of_two(lb_.interval().lower_bound());
     }
     if (ub_== Root::infinity()){
       ubi= Interval(rb);
     } else {
-      ubi= ub_.interval();
+      ubi= ub_.isolating_interval();
     }
     Interval ii= lbi || ubi;
-    // make up a sign
-    //Root_count rc= compute_root_count(ii, POLYNOMIAL_NS::POSITIVE, POLYNOMIAL_NS::POSITIVE); //ii.apply_to_interval(rc_);
 
     intervals_.push_back(Interval_info(ii, // skip rc
 				       ii.apply_to_endpoint(kernel_.sign_at_object(f_),
@@ -152,11 +234,8 @@ protected:
     CGAL_DSPRINT(std::cout << "Initial interval is " << ii <<std::endl);
   }
 
-  void subdivide_front(){
+  void subdivide_top(){
    
-    
-    //assert(!intervals_.back().is_good());
-    
     Interval_info ii= intervals_.back();
     CGAL_DSPRINT(std::cout << "Investigating " << ii.interval << std::endl);
     intervals_.pop_back();      
@@ -165,50 +244,24 @@ protected:
     Interval lh= ii.interval.first_half();
     Interval mi= lh.upper_endpoint_interval();
     CGAL_POLYNOMIAL_NS::Sign sm= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
-    //CGAL::Sign lms= sm;
-    //CGAL::Sign ums= sm;
-    //std::cout << "Splitting at " << mid << std::endl;
+
     bool mid_is_root=(sm == CGAL_POLYNOMIAL_NS::ZERO);
     
-    /*if (mid_is_root){
-      Interval mi1= lh.second_half();
-      Interval mi2= uh.first_half();
-      Interval mhc= mi1|| mi2;
-      Root_count uhc = compute_root_count(mhc, CGAL::POSITIVE, CGAL::POSITIVE); // just make up signs
-      CGAL_assertion(uhc != Root_count::zero());
-      if (uhc== Root_count::one()){
-      uh= uh.second_half();
-      lh= lh.first_half();
-      lms= lh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::UPPER);
-      ums= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
-      std::cout << "Skipping interval " << mhc << " around exact root " << mi << "\n";
-      }
-      }*/
-    
-    //Root_count uhc= compute_root_count(uh, sm, ii.right_sign); //uh.apply_to_interval(rc_);
-    //if (!uhc.is_zero()){
     CGAL_DSPRINT(std::cout << "Produced u interval of " << uh << std::endl);
     intervals_.push_back(Interval_info(uh, sm, ii.right_sign));
     //}
     if (mid_is_root) {
-      // need to check if it is an even root
-	/*Root_count rc;
-	  if (deg%2==0) rc= Root_count::even(); //single_even
-	  else rc= Root_count::odd(); //single_odd*/
       intervals_.push_back(Interval_info(mi, CGAL_POLYNOMIAL_NS::ZERO, CGAL_POLYNOMIAL_NS::ZERO));
     }
     
     
-    //Root_count lhc= compute_root_count(lh, ii.left_sign, sm); //lh.apply_to_interval(rc_);
-    //if (!lhc.is_zero()) {
-    //std::cout << "Produced l interval of " << lh << std::endl;
     intervals_.push_back(Interval_info(lh, ii.left_sign, sm));
-    //}
+
     CGAL_DSPRINT(write_intervals(std::cout));
   }
 
 
-  bool sturm_front() {
+  bool sturm_top() {
     if (!has_ss_){
       ss_= kernel_.Sturm_root_count_object(f_);
       has_ss_=true;
@@ -220,12 +273,7 @@ protected:
       intervals_.pop_back();
       return true;
     } else if (ct==1) {
-	//if (intervals_.back().left_sign == intervals_.back().right_sign){
-	  //  intervals_.back().num_roots =1; //single_even
-	  //} else {
-	  ; //single_odd
-	  //}
-	  intervals_.back().num_roots =1;
+      intervals_.back().num_roots =1;
     } else {
       intervals_.back().num_roots=Root_count(ct);
     }
@@ -233,63 +281,54 @@ protected:
   }
 
 
-  void upperbound_front() {
+  void upperbound_top() {
     intervals_.back().num_roots=compute_root_count(intervals_.back().interval, 
 						   intervals_.back().left_sign,
 						   intervals_.back().right_sign); //ii.apply_to_interval(rc_);
   }
 
-  void count_singular_front(){
+  void count_singular_top(){
     assert(intervals_.back().num_roots.is_unknown());
     int deg=intervals_.back().interval.apply_to_endpoint(kernel_.multiplicity_object(f_), Interval::LOWER);
     intervals_.back().num_roots=deg;
   }
 
-  //! establish the invariant 
-  /*!
-    The front interval contains only one root. 
-  */
-  void initialize_intervals(){
-    //write_intervals(std::cout);
-    while (!intervals_.empty()){
-       CGAL_assertion(intervals_.back().left_sign 
-	     == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER));
-      CGAL_assertion(intervals_.back().right_sign 
-	     == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::UPPER));
-
-
-      // compute a root count
-      if (intervals_.back().interval.is_singular()) {
-	count_singular_front();
-	//std::cout << "Breaking in singular." << std::endl;
-	break;
-      } else if (intervals_.back().interval.approximate_width() <= min_interval_width()){ 
-	if (sturm_front()) continue;
-	if (intervals_.back().num_roots.is_single()
-	    && intervals_.back().left_sign != ZERO 
-	    && intervals_.back().right_sign != ZERO) break;
-      } else  if (intervals_.back().num_roots.is_unknown()) {
-	upperbound_front();
-
-	if (intervals_.back().num_roots.is_zero()){
-	  intervals_.pop_back();
-	  continue;
-	}
-	
-	if (intervals_.back().num_roots.is_single()
-	    && intervals_.back().left_sign != ZERO
-	    && intervals_.back().right_sign != ZERO) {
-	  CGAL_assertion( intervals_.back().left_sign != intervals_.back().right_sign);
-	  //std::cout << "Breaking in normal." << std::endl;
-	  break;
-	}
-      }
-
-      subdivide_front();
+  bool classify_top() {
+    CGAL_assertion(intervals_.back().left_sign 
+		   == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER));
+    CGAL_assertion(intervals_.back().right_sign 
+		   == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::UPPER));
+    
+    
+    // compute a root count
+    if (intervals_.back().interval.is_singular()) {
+      count_singular_top();
+      //std::cout << "Breaking in singular." << std::endl;
+      return true;
+    } else if (intervals_.back().interval.approximate_width() <= min_interval_width()){ 
+      if (sturm_top()) return false;
+      if (intervals_.back().num_roots.is_single()
+	  && intervals_.back().left_sign != ZERO 
+	  && intervals_.back().right_sign != ZERO) return true;
+    } else  if (intervals_.back().num_roots.is_unknown()) {
+      upperbound_top();
       
-    } // while (the first has more than one interval);
-    //std::cout << "Initialized.\n";
+      if (intervals_.back().num_roots.is_zero()){
+	intervals_.pop_back();
+	return false;
+      }
+      
+      if (intervals_.back().num_roots.is_single()
+	  && intervals_.back().left_sign != ZERO
+	  && intervals_.back().right_sign != ZERO) {
+	CGAL_assertion( intervals_.back().left_sign != intervals_.back().right_sign);
+	//std::cout << "Breaking in normal." << std::endl;
+	return true;
+      }
+    }
   }
+
+ 
 
   Root_count compute_root_count(const Interval &ii,
 				CGAL_POLYNOMIAL_NS::Sign sl,

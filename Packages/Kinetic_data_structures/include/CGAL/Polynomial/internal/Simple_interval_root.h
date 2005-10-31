@@ -11,7 +11,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source$
+// $source: /CVSROOT/CGAL/Packages/Kinetic_data_structures/include/CGAL/Polynomial/internal/Simple_interval_root.h,v $
 // $Revision$ $Date$
 // $Name$
 //
@@ -107,7 +107,7 @@ public:
 		       Sign slb, Sign sub, 
 		       Traits k): ii_(ii), function_(sa),
 				  kernel_(k){
-    CGAL_Polynomial_precondition(!interval().is_singular());
+    CGAL_Polynomial_precondition(!isolating_interval().is_singular());
     //Sign slb= sign_(ii_.lower_bound());
     if (slb == sub){
       if (slb== POSITIVE){
@@ -206,12 +206,18 @@ public:
   /*!
     I forget why I use this. 
   */
-  std::pair<NT, NT> isolating_interval() const {
+  Interval isolating_interval() const {
+    CGAL_Polynomial_precondition(!is_infinite()); 
+    CGAL_Polynomial_expensive_precondition(!is_null());
+    return ii_;
+  }
+
+  /*std::pair<NT, NT> isolating_interval() const {
     bool do_not_use;
     CGAL_Polynomial_precondition(!is_infinite()); 
     CGAL_Polynomial_expensive_precondition(!is_null());
     return interval().to_exact_interval();
-  }
+    }*/
 
   //! To use for interval arithmetic
   /*!
@@ -242,7 +248,7 @@ public:
     if (is_pos_inf()) return This(Type(INF));
     else if (is_neg_inf()) return infinity();
     else if (is_rational()){
-      return This(-interval(), !is_even_multiplicity(), kernel_);
+      return This(-isolating_interval(), !is_even_multiplicity(), kernel_);
     } else {
       This copy= *this;
       copy.ii_= -ii_;
@@ -269,9 +275,32 @@ public:
     return (is_up() || is_down()) && (!is_infinite());
   }
   //! This is needed by the solvers
-  Interval interval() const {
+  /*Interval interval() const {
     return ii_;
+    }*/
+
+  Comparison_result compare(const This &o) const {
+    audit();
+    o.audit();
+    CGAL_Polynomial_precondition(-SMALLER == LARGER);
+    // Elimate all cases where the functions are equal or negations
+    if (is_normal() && o.is_normal()) {
+      Order rel= isolating_interval().order(o.isolating_interval());
+      if (rel == STRICTLY_BELOW) return SMALLER;
+      else if (rel == STRICTLY_ABOVE) return LARGER;
+    } else if (is_infinite() || o.is_infinite()){
+      if (type() == o.type()) return EQUAL;
+      else if (is_pos_inf() || o.is_neg_inf()) return LARGER;
+      else if (is_neg_inf() || o.is_pos_inf()) return SMALLER;
+      else {
+	CGAL_Polynomial_assertion(0); return EQUAL;
+      }
+    }
+
+    // The functions are now not equal and both roots are finite
+    return compare_finite(o);
   }
+
 protected:
 
   void write_internal(std::ostream &o) const {
@@ -280,7 +309,7 @@ protected:
     } else if (is_neg_inf()){
       o << "-inf";
     } else {
-      o<< interval();
+      o<< isolating_interval();
       if (is_rational()){
 	if (is_even_multiplicity()){
 	  o<<"(Even)";
@@ -329,18 +358,18 @@ protected:
       }
     }
     
-    double oaw;//= interval().approximate_width();
-    while (interval().approximate_relative_width() > accuracy){
-      oaw= interval().approximate_width();
-      std::pair<double,double> before= CGAL_POLYNOMIAL_TO_INTERVAL(interval());
+    double oaw;//= isolating_interval().approximate_width();
+    while (isolating_interval().approximate_relative_width() > accuracy){
+      oaw= isolating_interval().approximate_width();
+      std::pair<double,double> before= CGAL_POLYNOMIAL_TO_INTERVAL(isolating_interval());
       refine();
-      std::pair<double,double> after= CGAL_POLYNOMIAL_TO_INTERVAL(interval());
-      CGAL_assertion(oaw != interval().approximate_width());
-      /*if (oaw == interval().approximate_width()){
+      std::pair<double,double> after= CGAL_POLYNOMIAL_TO_INTERVAL(isolating_interval());
+      CGAL_assertion(oaw != isolating_interval().approximate_width());
+      /*if (oaw == isolating_interval().approximate_width()){
 	break;
 	}*/
     }
-    return CGAL_POLYNOMIAL_TO_INTERVAL(interval());
+    return CGAL_POLYNOMIAL_TO_INTERVAL(isolating_interval());
   }
 
   double compute_double(double accuracy) const {
@@ -366,65 +395,45 @@ protected:
 
   void refine() const {
     CGAL_Polynomial_precondition(is_normal());
-    Sign sn= interval().apply_to_midpoint(sign_at());
+    Sign sn= isolating_interval().apply_to_midpoint(sign_at());
     if (sn == ZERO){
-      set_is_rational(interval().midpoint_interval());
-    } else if (contains_root(interval().first_half(), lower_sign(), sn)){
-      set_interval(interval().first_half());
+      set_is_rational(isolating_interval().midpoint_interval());
+    } else if (contains_root(isolating_interval().first_half(), lower_sign(), sn)){
+      set_interval(isolating_interval().first_half());
     } else {
-      set_interval(interval().second_half());
+      set_interval(isolating_interval().second_half());
     }
   }
 
   void refine_using(const Interval &o) const {
-    int noi= interval().number_overlap_intervals(o);
+    int noi= isolating_interval().number_overlap_intervals(o);
     if (noi == 1) return;
 
-    Interval fi= interval().first_overlap_interval(o);
+    Interval fi= isolating_interval().first_overlap_interval(o);
     Sign fsn= fi.apply_to_endpoint(sign_at(), Interval::UPPER);
 
     if (fsn == ZERO){
-      set_is_rational(fi.upper_endpoint_interval());
+      set_is_rational(fi.upper_endpoint_isolating_interval());
     } else if (contains_root(fi, lower_sign(), fsn)){
       set_interval(fi);
     } else {
-      Interval si= interval().second_overlap_interval(o);
+      Interval si= isolating_interval().second_overlap_interval(o);
       if (noi==2){
 	set_interval(si);
       } else {
 	Sign ssn= si.apply_to_endpoint(sign_at(), Interval::UPPER);
 	if (ssn== ZERO){
-	  set_is_rational(si.upper_endpoint_interval());
+	  set_is_rational(si.upper_endpoint_isolating_interval());
 	} else if (contains_root(si, fsn, ssn)) {
 	  set_interval(si);
 	} else {
-	  set_interval(interval().third_overlap_interval(o));
+	  set_interval(isolating_interval().third_overlap_interval(o));
 	}
       }
     }
   }
 
-  Comparison_result compare(const This &o) const {
-    audit();
-    o.audit();
-    CGAL_Polynomial_precondition(-SMALLER == LARGER);
-    // Elimate all cases where the functions are equal or negations
-    if (is_normal() && o.is_normal()) {
-      Order rel= interval().order(o.interval());
-      if (rel == STRICTLY_BELOW) return SMALLER;
-      else if (rel == STRICTLY_ABOVE) return LARGER;
-    } else if (is_infinite() || o.is_infinite()){
-      if (type() == o.type()) return EQUAL;
-      else if (is_pos_inf() || o.is_neg_inf()) return LARGER;
-      else if (is_neg_inf() || o.is_pos_inf()) return SMALLER;
-      else {
-	CGAL_Polynomial_assertion(0); return EQUAL;
-      }
-    }
 
-    // The functions are now not equal and both roots are finite
-    return compare_finite(o);
-  }
 
   Comparison_result compare_finite(const This &o) const {
     audit();
@@ -442,8 +451,8 @@ protected:
  
   Comparison_result compare_rational(const This &o) const {
     if (is_rational() && o.is_rational()){
-      if (interval()== o.interval()) return EQUAL;
-      else if (interval() < o.interval()) return SMALLER;
+      if (isolating_interval()== o.isolating_interval()) return EQUAL;
+      else if (isolating_interval() < o.isolating_interval()) return SMALLER;
       else return LARGER;
     } else if (o.is_rational()) {
       return compare_with_rational(o);
@@ -459,15 +468,15 @@ protected:
     CGAL_Polynomial_assertion(!is_rational());
     CGAL_Polynomial_assertion(o.is_rational());
 
-    Order rel= interval().order(o.interval());
+    Order rel= isolating_interval().order(o.isolating_interval());
     if (rel == STRICTLY_BELOW) return SMALLER;
     else if (rel== STRICTLY_ABOVE) return LARGER;
     else {
       typename Traits::Sign_at osa= sign_at();
-      Sign sn= o.interval().apply_to_endpoint(osa, Interval::LOWER);
+      Sign sn= o.isolating_interval().apply_to_endpoint(osa, Interval::LOWER);
       //std::cout << "Sign is " << sn << " and type of o is " << o.type_ << std::endl;
       if (sn==ZERO) {
-	set_is_rational(o.interval());
+	set_is_rational(o.isolating_interval());
 	audit();
 	return EQUAL;
       } else if (sn==POSITIVE){
@@ -487,8 +496,8 @@ protected:
   Comparison_result compare_normal(const This &o) const {
     CGAL_Polynomial_assertion(is_normal() && o.is_normal());
 
-    refine_using(o.interval());
-    o.refine_using(interval());
+    refine_using(o.isolating_interval());
+    o.refine_using(isolating_interval());
 
     do {
       audit(); o.audit();
@@ -497,7 +506,7 @@ protected:
       if (is_rational() || o.is_rational()){
 	return compare_rational(o);
       }
-      Order ord= interval().order(o.interval());
+      Order ord= isolating_interval().order(o.isolating_interval());
       if (ord== STRICTLY_BELOW) return SMALLER;
       else if (ord == STRICTLY_ABOVE) return LARGER;
      
@@ -508,19 +517,19 @@ protected:
 	return EQUAL;
       }
 
-      CGAL_Polynomial_assertion(interval()==o.interval());
+      CGAL_Polynomial_assertion(isolating_interval()==o.isolating_interval());
       
       refine();
       o.refine();
-    } while (interval().approximate_width() > .0000001);
+    } while (isolating_interval().approximate_width() > .0000001);
 
     std::cout << "Using sturm to compare " << *this << " and " << o << std::endl;
     /*Polynomial_assertion_code(typename Traits::Compare_isolated_roots_in_interval apred
 			      = kernel_.compare_isolated_roots_in_interval_object(function_, function_));
-    Polynomial_assertion_code(Comparison_result cc= interval().apply_to_interval(apred));
+    Polynomial_assertion_code(Comparison_result cc= isolating_interval().apply_to_interval(apred));
     Polynomial_assertion(cc == EQUAL);*/
     typename Traits::Compare_isolated_roots_in_interval pred=kernel_.compare_isolated_roots_in_interval_object(function_,o.function_);
-    Comparison_result co= interval().apply_to_interval(pred);
+    Comparison_result co= isolating_interval().apply_to_interval(pred);
     std::cout << "The result is " << co << std::endl;
     return co;
   }
@@ -534,34 +543,34 @@ protected:
     if (is_infinite()){
       problem= problem || is_even_multiplicity();
     } else if (is_rational()){
-      //problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::LOWER) != ZERO);
+      //problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::LOWER) != ZERO);
     } else if (is_even_multiplicity()){
       if (is_up()){
-	problem = problem || interval().is_singular();
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::LOWER) != POSITIVE);
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::UPPER) != POSITIVE);
+	problem = problem || isolating_interval().is_singular();
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::LOWER) != POSITIVE);
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::UPPER) != POSITIVE);
       } else {
-	problem = problem || interval().is_singular();
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::LOWER) != NEGATIVE);
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::UPPER) != NEGATIVE);
+	problem = problem || isolating_interval().is_singular();
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::LOWER) != NEGATIVE);
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::UPPER) != NEGATIVE);
       }
     } else {
       if (is_up()){
-	problem = problem || interval().is_singular();
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::LOWER) != NEGATIVE);
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::UPPER) != POSITIVE);
+	problem = problem || isolating_interval().is_singular();
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::LOWER) != NEGATIVE);
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::UPPER) != POSITIVE);
       } else {
-	problem = problem || interval().is_singular();
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::LOWER) != POSITIVE);
-	problem = problem || (interval().apply_to_endpoint(sign_at(), Interval::UPPER) != NEGATIVE);
+	problem = problem || isolating_interval().is_singular();
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::LOWER) != POSITIVE);
+	problem = problem || (isolating_interval().apply_to_endpoint(sign_at(), Interval::UPPER) != NEGATIVE);
       }
     }
 
     if (problem){
       std::cerr << "Problem with interval.\n";
       std::cerr << "Type is " << int(type_ &1) << int(type_&2)<<int(type_&4) << int(type_&8) << std::endl;
-      std::cerr << interval()<< ", " << interval().apply_to_endpoint(sign_at(), Interval::LOWER)
-		<< interval().apply_to_endpoint(sign_at(), Interval::UPPER) << std::endl;
+      std::cerr << isolating_interval()<< ", " << isolating_interval().apply_to_endpoint(sign_at(), Interval::LOWER)
+		<< isolating_interval().apply_to_endpoint(sign_at(), Interval::UPPER) << std::endl;
       CGAL_Polynomial_exactness_assertion(0);
     }
 #endif
@@ -570,7 +579,7 @@ protected:
 
 
   //! Is this used? 
-  /*Simple_interval_root(Interval ii, Type type, Polynomial sign, bool mult): interval()(ii), type_(type),
+  /*Simple_interval_root(Interval ii, Type type, Polynomial sign, bool mult): isolating_interval()(ii), type_(type),
 									    function_(sign), is_odd_(mult){
     bool is_this_used;
     negated_=false;
@@ -685,7 +694,7 @@ double to_double(const Simple_interval_root<F> &f){
 
 template <class F>
 std::pair<double,double> to_interval(const Simple_interval_root<F> &f){
-  return f.to_interval();
+  return f.to_isolating_interval();
   }*/
 
 template <class F>

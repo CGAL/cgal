@@ -61,6 +61,7 @@ typedef int Comparison_result;
 static const int EQUAL= CGAL::EQUAL;
 static const int SMALLER= CGAL::SMALLER;
 static const int LARGER = CGAL::LARGER;
+static const int UNKNOWN = -3;
 typedef int Order;
 static const int STRICTLY_BELOW = -3;
 static const int BELOW=-2;
