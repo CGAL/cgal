@@ -15,7 +15,7 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-static const double max_error_value =0.00005;
+//static const double max_error_value =0.00005;
 
 
 
