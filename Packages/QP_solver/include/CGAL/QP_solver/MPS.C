@@ -618,85 +618,86 @@ std::ostream& operator<<(std::ostream& o,
     Use_sparse_representation_for_A_> MPS;
   const unsigned int n = qp.number_of_variables();
   const unsigned int m = qp.number_of_constraints();
-  const int width = 10;
   
   // output general information:
   using std::endl;
   const char *yes = "yes", *no = "no";
-  o << "QP is linear (i.e., an LP):            "
+  o << "===========" << endl
+    << "MPS problem" << endl
+    << "===========" << endl
+    << "                       linear: "
     << (qp.is_linear()? yes : no) << endl
-    << "QP is in standard form:                "
+    << "             in standard form: "
     << (qp.is_in_standard_form()? yes : no) << endl
-    << "QP has equalities only and full rank:  "
+    << "equalities only and full rank: "
     << (qp.has_equalities_only_and_full_rank()? yes : no) << endl;
   if (!qp.is_linear())
-    o << "QP has symmetric D matrix:             "
+    o << "           symmetric D matrix: "
       << (qp.is_symmetric()? yes : no) << endl
-      << "D matrix storage format in MPS stream: "
+      << "      D matrix storage format: "
       << qp.D_format_type() << endl;
 
   if (qp.verbosity() > 1) {
     // output c:
-    o << "Number of variables (n):               "
+    o << "          number of variables: "
       << qp.number_of_variables() << endl
-      << "Number of constraints (m):             "
+      << "        number of constraints: "
       << qp.number_of_constraints() << endl
-      << "c: " << endl;
-    typename MPS::C_iterator c = qp.c();
-    for (unsigned int i=0; i<n; ++i, ++c)
-      o << std::setw(width) << *c;
+      << endl
+      << "objective vector: " << endl << "  ";
+    std::copy(qp.c(),qp.c()+n,
+	      std::ostream_iterator<IT_>(o, " "));
     o << endl;
-  
+
+    // output D:
+    if (!qp.is_linear()) {
+      o << "quadratic objective matrix: " << endl;
+      typename MPS::D_iterator D = qp.D();
+      for (unsigned int i=0; i<n; ++i, ++D) {
+	typename MPS::D_iterator::value_type entry = *D;
+	o << "  ";
+	for (unsigned int j=0; j<n; ++j, ++entry)
+	  o << *entry << " ";
+	o << endl;
+      }
+    }
+
     // output A and b:
-    o << "A|b: " << endl;
+    o << "constraints: " << endl;
     typename MPS::B_iterator b = qp.b();
     typename MPS::A_iterator A = qp.A();
     typename MPS::Row_type_iterator r = qp.row_types();
     for (unsigned int i=0; i<m; ++i) {
       for (unsigned int j=0; j<n; ++j)
-	o << std::setw(width) << A[j][i];
+	o << "  " << A[j][i];
       if (r[i] == MPS::EQUAL)
 	o << " == ";
       else if (r[i] == MPS::LESS_EQUAL)
 	o << " <= ";
       else
 	o << " >= ";
-      o << std::setw(width) << b[i] << endl;
-    }
-
-    // output D:
-    if (!qp.is_linear()) {
-      o << "D: " << endl;;
-      typename MPS::D_iterator D = qp.D();
-      for (unsigned int i=0; i<n; ++i, ++D) {
-	typename MPS::D_iterator::value_type entry = *D;
-	for (unsigned int j=0; j<n; ++j, ++entry)
-	  o << std::setw(width) << *entry;
-	o << endl;
-      }
+      o << b[i] << endl;
     }
 
     // output bounds:
-    //if (!qp.is_in_standard_form()) {
-      o << "Bounds:" << endl;
-      typename MPS::FU_iterator fu = qp.fu();
-      typename MPS::FL_iterator fl = qp.fl();
-      typename MPS::U_iterator u = qp.u();
-      typename MPS::L_iterator l = qp.l();
-      for (unsigned int i=0; i<n; ++i, ++fu, ++fl, ++u, ++l) {
-	o << "x" << std::left << std::setw(width) << i << "in ";
-	if (*fl)
-	  o << '[' << *l;
-	else
-	  o << "(-infty";
-	o << ',';
-	if (*fu)
-	  o << *u << ']';
+    o << "Bounds:" << endl;
+    typename MPS::FU_iterator fu = qp.fu();
+    typename MPS::FL_iterator fl = qp.fl();
+    typename MPS::U_iterator u = qp.u();
+    typename MPS::L_iterator l = qp.l();
+    for (unsigned int i=0; i<n; ++i, ++fu, ++fl, ++u, ++l) {
+      o << "  x" << std::left << std::setw(3) << i << "in ";
+      if (*fl)
+	o << '[' << *l;
+      else
+	o << "(-infty";
+      o << ',';
+      if (*fu)
+	o << *u << ']';
 	else
 	  o << "+infty)";
-	o << endl;
-      }
-      //}
+      o << endl;
+    }
   }
   return o;
 }
