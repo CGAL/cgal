@@ -1,6 +1,4 @@
-// Test program for the linear_least_square_fitting() functions.
-// Pierre Alliez
-
+// Demo program for the linear_least_square_fitting() functions.
 #include <vector>
 #include <cassert>
 #include <stdlib.h>
