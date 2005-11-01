@@ -1,7 +1,7 @@
 #ifndef __EIGEN__
 #define __EIGEN__
 
-// this piece of code has been provided by Bruno Levy
+// piece of code provided by B.Levy
 // it is planned to replace it.
 
 template <class FT>

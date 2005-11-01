@@ -92,7 +92,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   {
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through 
-    // the centroid and with a default vector.
+    // the centroid and with a default horizontal vector.
     line = Line(c,Vector(1,0));
     return (FT)0.0;
   } // end isotropic case
@@ -226,7 +226,8 @@ linear_least_squares_fitting_2(InputIterator begin,
 }
 
 
-// these ones deduce the kernel from the point in container
+// these ones deduce the kernel from the 
+// points in container
 
 template < typename InputIterator, 
            typename Line,
