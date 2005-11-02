@@ -23,7 +23,7 @@ CGAL_BEGIN_NAMESPACE
 
 class Homogeneous_tag;
 class Cartesian_tag;
-template<class R, class Tag> class Exact_intersect_xy_2;
+template<class R, class Tag> struct Exact_intersect_xy_2;
 
 template <class R>
 struct Exact_intersect_xy_2 <R,Cartesian_tag>
