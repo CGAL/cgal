@@ -117,7 +117,7 @@ namespace CGAL {
       return facet_visited[facet];
     }
     
-    bool nb_visits (const int facet) const {
+    int nb_visits (const int facet) const {
       CGAL_assertion (facet>=0 && facet <4);
       return visits[facet];
     }
