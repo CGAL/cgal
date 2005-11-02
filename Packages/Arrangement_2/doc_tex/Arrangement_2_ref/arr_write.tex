@@ -1,0 +1,33 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_write.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{write}
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+\ccFunction{template<class Traits, class Dcel, class Formatter>
+            std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
+                                 std::ostream& os,
+                                 Formatter& formatter);}
+   {Writes the arrangement \ccc{arr} into the given output stream using a specific
+    output format. \ccc{formatter}, which must be a model of the
+    \ccc{ArrangementOutputFormatter}, defines the output format.}
+
+\ccFunction{template<class Traits, class Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                                      const Arrangement_2<Traits,Dcel>& arr);}
+   {Writes the arrangement \ccc{arr} into the given output stream using the
+    output format defined by the \ccc{Arr_text_formatter} class --- that is,
+    only the basic geometric and topological features of the arrangement are
+    written, without any auxiliary data that may be attached to the \dcel\ features.}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

@@ -38,24 +38,21 @@ interest, it is sufficient to override just \ccc{before_split_face()}
 
 \ccNestedType{Arrangement_2}{the type of the associated arrangement.}
 
-\ccNestedType{Point_2}
-  {same as \ccc{Arrangement_2::Point_2}.}
+\ccTypedef{typedef typename Arrangement_2::Point_2 Point_2;}
+    {the point type.}
 \ccGlue
-\ccNestedType{X_monotone_curve_2}
-  {same as \ccc{Arrangement_2::X_monotone_curve_2}.}
+\ccTypedef{typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
 
-\ccNestedType{Vertex_handle}
-  {same as \ccc{Arrangement_2::Vertex_handle}.}
+\ccTypedef{typedef typename Arrangement_2::Vertex_handle Vertex_handle;}{}
 \ccGlue
-\ccNestedType{Halfedge_handle}
-  {same as \ccc{Arrangement_2::Halfedge_handle}.}
+\ccTypedef{typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;}{}
 \ccGlue
-\ccNestedType{Face_handle}
-  {same as \ccc{Arrangement_2::Face_handle}.}
+\ccTypedef{typedef typename Arrangement_2::Face_handle Face_handle;}{}
 \ccGlue
-\ccNestedType{Ccb_halfedge_circulator}
-  {same as \ccc{Arrangement_2::Ccb_halfedge_circulator}.
-   Holes are represented using a circulator for they outer CCB.}
+\ccTypedef{typedef typename Arrangement_2::Ccb_halfedge_circulator Ccb_halfedge_circulator;}
+    {represents the boundary of a connected component (CCB).
+     In particular, holes are represented by a circulator for their outer CCB.}
 
 \ccCreation
 \ccCreationVariable{obs}
