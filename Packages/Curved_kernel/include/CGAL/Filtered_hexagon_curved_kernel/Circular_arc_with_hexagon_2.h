@@ -3,6 +3,7 @@
 #ifndef CGAL_CIRCULAR_ARC_WITH_HEXAGON_2_H
 #define CGAL_CIRCULAR_ARC_WITH_HEXAGON_2_H
 
+#include <CGAL/basic.h>
 #include <vector>
 #include <iterator>
 #include <fstream> //vgale
