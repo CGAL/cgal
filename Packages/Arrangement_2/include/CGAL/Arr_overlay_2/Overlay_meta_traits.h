@@ -345,13 +345,12 @@ public:
   {
   private:
 
-    Base_Intersect_2      m_base_intersect;
+    Traits*      m_base_tr;
 
   public:
    
     /*! Constructor. */
-    Intersect_2 (const Base_Intersect_2& base) :
-        m_base_intersect (base)
+    Intersect_2 (Traits* base) : m_base_tr (base)
     {}
 
     template<class OutputIterator>
@@ -370,7 +369,16 @@ public:
 
       const std::pair<Base_Point_2, unsigned int>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
-      OutputIterator oi_end = m_base_intersect(cv1, cv2, oi);
+      /*OutputIterator oi_end;
+      if(m_base_tr->compare_xy_2_object()
+          (m_base_tr->construct_min_vertex_2_object()(cv1),
+           m_base_tr->construct_min_vertex_2_object()(cv2)) == LARGER)
+        oi_end = m_base_tr->intersect_2_object()(cv1, cv2, oi);
+      else
+        oi_end = m_base_tr->intersect_2_object()(cv2, cv1, oi);*/
+
+      OutputIterator oi_end = m_base_tr->intersect_2_object()(cv1, cv2, oi);
+
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
       // the extenede X_monotone_curve_2 
@@ -439,7 +447,7 @@ public:
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object () 
   {
-    return Intersect_2(m_base_traits->intersect_2_object()); 
+    return Intersect_2(m_base_traits); 
   }
 
 
