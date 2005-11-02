@@ -251,7 +251,7 @@ void push_current_output( const string& key) {
 
 void push_current_output_w_filename( const string& filename) {
     push_current_output();
-    current_ostream  = open_file_for_write( tmp_path + filename);
+    current_ostream  = open_file_for_write( filename);
     current_filename = filename;
     current_basename = basename_string( current_filename);
     current_rootname = rootname_string( current_basename);

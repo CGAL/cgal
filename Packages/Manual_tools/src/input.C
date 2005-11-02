@@ -167,7 +167,6 @@ include_only( const string& filename_list) {
                                         filename_list.size()-first );
         
         first = last+1;
-        //std::cerr << "adding \"" << name << "\" to includeonly set." << std::endl;
         files_to_be_included.insert( name );
     }    
 }

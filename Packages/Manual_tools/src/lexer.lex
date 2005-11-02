@@ -168,7 +168,6 @@ inline char* next_digit( char* s) {
                           \end{envir} occurs. Another example is cprog.
 
     --  IncludeMode       parses lciInclude filename,
-    --  InputMode         parses lciInput   filename,
 
     --  ParameterStart:   starts a (La)TeX macro parameter, i.e. 
                           comments, braces, brackets, and escaped symbols,
@@ -201,7 +200,6 @@ inline char* next_digit( char* s) {
 
 %x AllttMode
 %x IncludeMode
-%x InputMode
 %x ParameterStart
 %x ParameterMode
 %x AllttParameterStart
@@ -296,30 +294,6 @@ number          {digit}+
 			yyterminate();
 		    }
 		    BEGIN( old_state);
-                    //string filename = string(yytext);
-                    if( is_to_be_included( yytext ) )
-		      include_stack.push_file( yytext );
-		    break;
-}
-
-<INITIAL,AllttMode>[\\](lciInput){seps}[\{]{seps}   {  
-                    old_state = YY_START;
-                    BEGIN ( InputMode);
-                    break;
-}
-<InputMode>{filename}          {
-                    /* remove remaining characters before the '}' */
-                    int c = yyinput();
-                    while( c != EOF && c != '}') {
-                        if ( c == '\n')
-                            inc_line();
-                        c = yyinput();
-                    }
-                    if ( c == EOF) {
-                        printErrorMessage( EOFInIncludeFilenameError);
-                        yyterminate();
-                    }
-                    BEGIN( old_state);
                     include_stack.push_file( yytext );
                     break;
 }

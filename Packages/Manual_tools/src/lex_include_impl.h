@@ -36,13 +36,11 @@ Include_stack::push_file( FILE* in,
 			  size_t new_line_number) {
     if ( ! quiet_switch) {
 	const string& cpath (macroX( "\\lciConfigPath"));
-	if ( cpath.size() < name.size()) {
-	    if ( name.substr(0, cpath.size()) == cpath)
-		cerr << '[' << name.substr( cpath.size()) << flush;
-	    else
-		cerr << '[' << name << flush;
-	} else
-	    cerr << '[' << name << flush;
+	if ( cpath.size() < name.size() && 
+             name.substr(0, cpath.size()) == cpath )
+            cerr << '[' << name.substr( cpath.size()) << flush;
+	else
+            cerr << '[' << name << flush;
     }
     if( ! empty()) {
 	m_stack.front().m_state = YY_START;
@@ -107,10 +105,6 @@ Include_stack::pop() {
 	if ( ! quiet_switch)
 	    cerr << ']' << flush;
 	fclose( file());
-        // after leaving a file that was masked by \includeonly ...
-        /*if( !is_to_be_included( name() ) && is_include_only() )
-            // .. enable_io() again
-            Output_file::enable_io();*/
     }
     if ( size() > 1) {
 	Stack::iterator i = m_stack.begin();

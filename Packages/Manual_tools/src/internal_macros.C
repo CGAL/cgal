@@ -742,8 +742,6 @@ add( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
     int sum = atoi( param[0].c_str() ) 
             + atoi( param[1].c_str() );
-    std::cout << param[0] << " " << param[1] << std::endl;
-    std::cout << "performing lciAdd: " << sum << std::endl;
     return int_to_string( sum );
 }
 
@@ -1007,11 +1005,20 @@ cross_link_template( const string&, string param[], size_t n, size_t opt) {
     return string( "\\lcRawHtml{") + handleHtmlCrossLink(cc_string,true) + '}';
 }
 
-string                // macro
+string
 handle_include_only( const string& s, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0 );
     include_only( param[0] ); // only single filename supported currently
     return string();
+}
+
+string
+handle_to_be_included( const string& s, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0 );
+    if( is_to_be_included( param[0] ) )
+      return string("\\lcTrue");
+    else
+      return string("\\lcFalse");
 }
 
 // Chapter File Handling
@@ -1144,11 +1151,20 @@ push_output( const string&, string param[], size_t n, size_t opt) {
     return string();
 }
 
+
+string
+open_tmp_file( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    remove_separator( param[0]);
+    push_current_output_w_filename( tmp_path + expandFirstMacro(param[0]) );
+    return string();
+}
+
 string
 open_file( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     remove_separator( param[0]);
-    push_current_output_w_filename( expandFirstMacro(param[0]));
+    push_current_output_w_filename( expandFirstMacro(param[0]) );
     return string();
 }
 
@@ -1281,16 +1297,18 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciIfFileExists", if_file_exists, 1);
     insertInternalGlobalMacro( "\\lciCopyFile",     copy_file, 2);
 
-    insertInternalGlobalMacro( "\\lciChapter",    handle_chapter, 1);
+    insertInternalGlobalMacro( "\\lciChapter",     handle_chapter, 1);
 
-    insertInternalGlobalMacro( "\\lciPopOutput",  pop_output,  0);
-    insertInternalGlobalMacro( "\\lciPushOutput", push_output, 1);
-    insertInternalGlobalMacro( "\\lciOpenFile",   open_file, 1);
-    insertInternalGlobalMacro( "\\lciCloseFile",  close_file, 0);
+    insertInternalGlobalMacro( "\\lciPopOutput",   pop_output,  0);
+    insertInternalGlobalMacro( "\\lciPushOutput",  push_output, 1);
+    insertInternalGlobalMacro( "\\lciOpenTmpFile", open_tmp_file, 1);
+    insertInternalGlobalMacro( "\\lciOpenFile",    open_file, 1);
+    insertInternalGlobalMacro( "\\lciCloseFile",   close_file, 0);
 
     insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
     
     insertInternalGlobalMacro( "\\lciIncludeOnly",  handle_include_only,  1);
+    insertInternalGlobalMacro( "\\lciIfToBeIncluded",  handle_to_be_included,  1);
     insertInternalGlobalMacro( "\\lciToHtmlWidth",  to_html_width,  1);
 }
 

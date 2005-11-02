@@ -355,7 +355,24 @@
         \lciReverseStack{#1}{#2}%
     }}
 
-  
+% arg1: stack 
+% arg2: operation
+\newcommand{\lciForeachElementInStack}[2]{%
+  \begingroup%
+  \edef\lciLocalVariableBlubberbla{#1}%
+  \lciForeachElementInStackPrime{\lciLocalVariableBlubberbla}{#2}%
+  \endgroup%
+}
+
+\newcommand{\lciForeachElementInStackPrime}[2]{%
+  \lciIfEmpty{#1}{}{%
+    \lciTopStack{#1}{\localvariablevalue}%
+    #2{\localvariablevalue}%
+    \lciPopStack{#1}%
+    \lciForeachElementInStackPrime{#1}{#2}%
+  }%
+}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |

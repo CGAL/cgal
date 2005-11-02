@@ -126,10 +126,6 @@ class Include_stack {
     typedef Stack::size_type  size_type;
     Stack   m_stack;
 
-    // Push current state. Init with new file and new_line_number.
-    bool                 push_file( FILE* in, 
-				    const string& name,
-				    size_t new_line_number = 1);
 
 public:
     inline bool          empty() const { return m_stack.empty(); }
@@ -142,6 +138,11 @@ public:
     inline size_t        line()  const { return m_stack.front().line(); }
     inline size_t&       line()        { return m_stack.front().line(); }
 
+    // Push current state. Init with new file and new_line_number.
+    bool                 push_file( FILE* in, 
+				    const string& name,
+				    size_t new_line_number = 1);
+				    
     // Push current state. Open and init with new file and new_line_number.
     // Test for TeX file extensions and respect latex_conv_inputs.
     bool                 push_file( const string& name,

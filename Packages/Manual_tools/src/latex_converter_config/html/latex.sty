@@ -184,8 +184,8 @@
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
     % prepare Index Header and Footer (only if index is actually used)
-    \lciOpenFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
-    \lciOpenFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
+    \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
+    \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
 }
 
 % Args: tmp-path, main-rootname: reads *.auxtmp file created by latex_to_html
@@ -1004,6 +1004,7 @@
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \refstepcounter{part}%
     \setcounter{chapter}{0}%
+    \lciUndef{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}
     \lciIfEqualExpanded{\lciDocumentClass}{article}%
         {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{\lciPartNum}{%
@@ -1018,9 +1019,10 @@
 
 \newcommand{\lciEndPart}{%
   \lciEndChapter
-  \lciIfEqualExpanded{\lciCounterpart}{0}{}{% check for first part
+  \lciIfDefined{\lciTheFirstPartHasAlreadyBeenProcessedFlag}{ % check for first part
     \lciPrintFootnotes\lciResetFootnotes
-  }}
+  }{\newcommand{\lciTheFirstPartHasAlreadyBeenProcessedFlag}{}}%
+}
 
 \gdef\lciReplaceWithCurrentPathToken{REPLACE_WITH_CURRENT_PATH}%
 
@@ -1065,7 +1067,7 @@
 
 \newcommand{\lciEndChapter}{%
   \lciEndSection
-  \lciIfEqualExpanded{\lciCounterchapter}{0}{}{% check for first chapter
+  \lciIfDefined{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{% check for first chapter
     \lciPrintFootnotes\lciResetFootnotes
     \lciPopFootnotes
     % navigation footer
@@ -1076,7 +1078,10 @@
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
     \lciPopOutput
-  }}
+  }%
+  {\newcommand{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{}}%
+  % only do something, after the first chapter has already been processed  
+}
 
 % section
 \newcommand{\section}[1]{\section[#1]{#1}}
@@ -1231,7 +1236,7 @@
     \setcounter{footnote}{0}}{}%
   }{%
     \lciPushFootnotes
-    \lciOpenFile{\lciTitleFilename}%
+    \lciOpenTmpFile{\lciTitleFilename}%
     \lciTitleFileHeader
   }
 }{%
@@ -1383,16 +1388,21 @@
 % ###########################################################################
 % --> see latex_to_html.sty
 
+\gdef{\lciListOfAlreadyDefinedCounters}{}
+
 \newcommand{\newtheorem}[2]{%
     \gdef{\begin@#C1}{{\bf #2}~~\lcRawHtml{<EM>}}%
     \gdef{\begin@#C1@o}{{\bf #2 (##1)}~~\lcRawHtml{<EM>}}%
     \gdef{\end#C1}{\lcRawHtml{</EM>}}%
 }
 \newcommand{\newcounter}[1]{%
+    \lciPushGlobalStack{\lciListOfAlreadyDefinedCounters}{#C1}%
     \gdef{\lciCounter#C1}{0}%
     \gdef{\the#C1}{\arabic{#1}}%
-    \gdef{\lciDependantCounter#C1}{}}
+    \gdef{\lciDependantCounter#C1}{}%   
+}
 \newcommand{\newcounter@mo}{%
+    \lciPushGlobalStack{\lciListOfAlreadyDefinedCounters}{#C1}%
     \gdef{\lciCounter#C1}{0}%
     \gdef{\the#C1}{\arabic{#1}}%
     \gdef{\lciDependantCounter#C1}{}%
@@ -1604,7 +1614,7 @@
     {\lciTabularMulticolumn}%
     {\lcRawHtml{
     <TD VALIGN=TOP }\popTDAttrib\lcRawHtml{>} 
-{#1}%
+#1%
     }% else next character in table entry
 }
 
@@ -1689,7 +1699,7 @@
 
 \newenvironment{thebibliography}[1]{%
     \newcommand{\lciFirstBibItem}{}%
-    \lciOpenFile{\lciBibFilename}%
+    \lciOpenTmpFile{\lciBibFilename}%
     \lciBibFileHeader
 }{%
     \lcNoLinkEnd
@@ -1740,7 +1750,23 @@
 % +--------------------------------------------------------------------------
 
 \newcommand{\includeonly}[1]{\lciIncludeOnly{#GXC1}}
-\newcommand{\include}[1]{\lciInclude{#GXC1}}
+
+
+\newcommand{\include}[1]{%
+  \begingroup
+  \newcommand{\printItem}[1]{
+\lciBackslash{}setcounter\{##1\}\{\value{##X1}\}%
+  }%
+  \lciIfToBeIncluded{#GXC1}{%
+    \lciInclude{#GXC1}%
+    \lciOpenFile{#GXC1.hax}%
+    \lciForeachElementInStack{\lciListOfAlreadyDefinedCounters}{\printItem}%
+    \lciCloseFile%
+  }%
+  {\lciIfFileExists{#GXC1.hax}{\input{#GXC1.hax}}{}}%
+  \endgroup%
+}
+
 \newcommand{\input}[1]{\lciInclude{#GXC1}}
 
 
