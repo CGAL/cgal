@@ -132,12 +132,14 @@ Section~\ref{arr_sec:notif} we review the notification mechanism
 that allows external classes to keep track of the changes that an
 arrangement instance goes through. Section~\ref{arr_sec:ex_dcel}
 explains how to extend the \dcel\ records, to store extra data
-with them, and to efficiently update this data. In
-Section~\ref{arr_sec:overlay} we introduce the fundamental
-operation of overlaying two arrangements. Finally,
+with them, and to efficiently update this data.
+In Section~\ref{arr_sec:overlay} we introduce the fundamental
+operation of overlaying two arrangements.
 Section~\ref{arr_sec:arr_with_hist} describes the
 \ccc{Arrangement_with_history_2} class-template that extends the
 arrangement by storing additional history records with its curves.
+Finally, in Section~\ref{arr_sec:io} we review the arrangement
+input/output functions.
 
 \section{The Main Arrangement Class}
 \label{arr_sec:arr_class}
@@ -1653,8 +1655,9 @@ or a range of \ccc{Curve_2} objects in the aggregated version.
 In the rest of this section we will review the traits classes
 included in the public distribution of \cgal, that handle line
 segments, polylines and conic arcs. The last subsection overviews
-two decrators for geometric traits classes distributed with \cgal
-(also referred to as ``meta-traits'' classes).
+decrators for geometric traits classes distributed with \cgal,
+which extend other geometic traits-class by attaching auxiliary
+data with the geometric objects.
 
 \subsection{Traits Classes for Line Segments}
 \label{arr_ssec:tr_segs}
@@ -2029,28 +2032,26 @@ constructors, for polynomial arcs and for rational arcs:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example16.C}
 
-\subsection{Meta-Traits Classes}
+\subsection{Traits-Class Decorators}
 \label{arr_ssec:meta_tr}
-%-------------------------------
+%-----------------------------------
 %
-Meta-traits classes serve as {\em decorators} of other geometric
-traits classes. They allow attaching user-defined data to curves
-(and to points), and automatically manipulate this data,
-distributing it to the geometric entities that are constructed. We
-note that additional information can also be maintained by
-extending the vertex, halfedge, or face types provided of the
+Geometric traits-class decorators allow user to attach of auxiliary
+data to curves (and to points), where the decorators automatically
+manipulate this data, distributing it to the geometric entities that
+are constructed. We note that additional information can also be maintained
+by extending the vertex, halfedge, or face types provided of the
 \dcel\ class used by the arrangement; see the details in
 Section~\ref{arr_sec:ex_dcel}.
 
-The two meta-traits classes
-\ccc{Arr_consolidated_curve_data_traits_2<BaseTraits, Data>} and
-the \ccc{Arr_merged_curve_data_traits_2<BaseTraits, Data,
-MergeFunc>} are used to attach a data field to curves. Both
-classes are templated by a base-traits class, which is one of the
+The arrangement package includes to predefined traits-class decorator
+templates, named \ccc{Arr_consolidated_curve_data_traits_2<BaseTraits, Data>}
+and \ccc{Arr_merged_curve_data_traits_2<BaseTraits, Data, MergeFunc>}.
+They are used to attach a data field to curves. Both templates
+are parameterized by a base-traits class, which is one of the
 geometric traits classes described in the previous subsections, or
-a user-defined traits class. The meta-traits classes derive
-themselves from the base-traits class and in particular inherits
-it \ccc{Point_2} type. In addition:
+a user-defined traits class. The decorator derives itself from the base-traits
+class, and in particular inherits it \ccc{Point_2} type. In addition:
 \begin{itemize}
 \item \ccc{Curve_2} is derived from the basic \ccc{BaseTraits::Curve_2}
 class, adding an extra field of type \ccc{Data} to it.
@@ -2075,13 +2076,13 @@ manipulate the data fields.
 Users can create an extended curve (or an extended $x$-monotone
 curve) from a basic curve and a data object. When curves are
 inserted into an arrangement, they may be split, and the
-meta-traits class handles their data fields automatically:
+decorator handles their data fields automatically:
 \begin{itemize}
 \item When a curve is subdivided into $x$-monotone subcurves, its
 data field is automatically copied to each of the resulting
 subcurves.
 
-\item When an $x$-monotone curve is split into two, the meta-traits
+\item When an $x$-monotone curve is split into two, the decorator
 class automatically copies its data field(s) to both resulting
 subcurves.
 
@@ -2309,12 +2310,12 @@ store additional information (perhaps of non-geometric nature) with
 the arrangement cells. As vertices are associated with \ccc{Point_2}
 objects and edges (halfedge pairs) are associated with
 \ccc{X_monotone_curve_2} objects, both defined by the traits class,
-it is possible to extend the traits-class type by using a meta-traits
-class, as explained in Section~\ref{arr_ssec:meta_tr}, which may
+it is possible to extend the traits-class type by using a traits-class
+decorator, as explained in Section~\ref{arr_ssec:meta_tr}, which may
 be a sufficient solution for some applications.
 
 However, the \dcel\ faces are not associated with any object, so it
-is impossible to extend them using a meta-traits class. The only
+is impossible to extend them using a traits-class decorator. The only
 solution in this case is to extend the \dcel\ face records. We also
 give users the ability to conveniently extend all \dcel\ records
 (namely vertices, halfedges and faces), which can also be advantageous
@@ -2741,6 +2742,94 @@ how to use the \ccc{split_edge()} and \ccc{merge_edge()} functions when
 operating on an arrangement-with-history instance:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example25.C}
+
+\section{Input/Output Functions}
+\label{arr_sec:io}
+%===============================
+
+In some cases, we would like to reuse an arrangement instance constructed
+by our application in the future --- for example, our arrangement may
+represent a very complicated geographical map and we have various
+applications that need to answer point-location queries on this map.
+Naturally, we can store the set of curves that induces the arrangement,
+but this implies that we need to construct the arrangement from
+scratch each time we need to reuse it. A more efficient solution would
+be to save the arrangement to a file, so that other application can
+reread it from there.
+
+We provide an {\em inserter} (the \ccc{<<} operator) and an {\em extractor}
+(the \ccc{>>} operator) for the \ccc{Arrangement_2<Traits,Dcel>} class,
+such that an arrangement instance can be inserted into an output stream
+or read from an input stream. The arrangement is written using a simple
+predefined textual format that encodes the arrangement topology, as
+well as all geometric entities associated with vertices and edges.
+
+To use the input/output operators, we require that the \ccc{Point_2} type
+and the \ccc{X_monotone_curve_2} type defined by the traits class both
+support the \ccc{<<} and\ccc{>>} operators. The \ccc{Arr_conic_traits_2}
+class (see Section~\ref{arr_ssec:tr_conic}) and the 
+\ccc{Arr_rational_arc_traits_2} class (see Section~\ref{arr_ssec:tr_ratfunc})
+currently do not provide these operator for the geometric types
+they define, so only arrangements of line segments or of polylines can
+be written or read.
+
+The following example constructs the arrangement depicted in 
+Figure~\ref{arr_fig:ex_5} and writes it to an output file. It also
+demonstrates how to re-read the arrangement from a file:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example26.C}
+
+The inserter and extractor both ignore any auxiliary data stored with
+the arrangement features, thus they are ideal for arrangements
+instantiated using the \ccc{Arr_default_dcel} class.
+However, as explained in Section~\ref{arr_sec:ex_dcel}, one can easily
+extend the arrangement faces by using the \ccc{Arr_face_extended_dcel}
+template, or extend all \dcel\ records by using the \ccc{Arr_extended_dcel}
+template. In such cases, it may be crucial that the auxiliary data fields
+are written to the file or read from there.
+
+The arrangement package includes the global functions
+\ccc{write(arr, os, formatter)}, which writes the arrangement \ccc{arr}
+to an output stream \ccc{os}, and \ccc{read(arr, os, formatter)}, which
+reads the arrangement \ccc{arr} from an input stream \ccc{is}. Both
+operations are performed using a \ccc{formatter} object, which define
+the I/O format. The package is shipped with three formatter classes:
+\begin{itemize}
+\item \ccc{Arr_text_formatter<Arrangement>} defines a simple textual
+I/O format for the arrangement topology and geometry, disregarding any
+auxiliary data that may be associated with the arrangement features.
+This is the default formatter used by the arrangement inserter and the
+arrangement extractor, as defined above.
+
+\item \ccc{Arr_face_extended_text_formatter<Arrangement>} operates on
+arrangements whose \dcel\ representation is based on the
+\ccc{Arr_face_extended_dcel<Traits,FaceData>} class (see
+Section~\ref{arr_ssec:ex_dcel_face}). It supports reading and writing
+the auxiliary data objects stored with the arrangement faces providing
+that the \ccc{FaceData} class supports an inserter and an extractor.
+
+\item \ccc{Arr_extended_dcel_text_formatter<Arrangement>} operates on
+arrangements whose \dcel\ representation is based on the
+\ccc{Arr_extended_dcel<Traits,VertexData,HalfedgeData,FaceData>} class
+(see Section~\ref{arr_ssec:ex_dcel_all}). It supports reading and writing
+the auxiliary data objects stored with the arrangement vertices, edges
+and faces, providing that the \ccc{VertexData}, \ccc{HalfedgeData} and
+\ccc{FaceData} classed all have inserters and extractors.
+\end{itemize}
+
+The following example constructs the same arrangement as example~21
+(see Section~\ref{arr_ssec:ex_dcel_all}) which is depicted in
+Figure~\ref{arr_fig:ex_20}, and writes it to an output file. It also
+demonstrates how to re-read the arrangement from a file:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example27.C}
+
+External users may write their own formatter classes by implementing
+models to the \ccc{ArrangementInputFormatter} and the
+\ccc{ArrangementOutputFormatter}, as defined in the reference manual.
+Doing so, they can define other I/O formats, such as an XML-based
+format or a binary format.
+
 
 \section{Adapting to {\sc Boost} Graphs}
 \label{arr_sec:bgl}
