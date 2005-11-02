@@ -197,6 +197,9 @@ class random_access_input_iterator
   public:
   typedef typename Container::value_type  value_type;
 
+  random_access_input_iterator()
+  {}
+
   random_access_input_iterator(Container& _container, unsigned int _index = 0):
       m_container(&_container),
       m_index(_index)
