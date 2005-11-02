@@ -26,11 +26,11 @@
  */
 
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
-#include <CGAL/Arrangement_2/Arr_accessor.h>
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
-#include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
+#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_construction.h>
 #include <CGAL/Sweep_line_2/Arr_addition.h>
 #include <CGAL/Sweep_line_2/Arr_non_x_construction.h>

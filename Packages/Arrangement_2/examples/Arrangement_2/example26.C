@@ -33,8 +33,7 @@ int main ()
   out_file.close();
 
   // Read the arrangement from the file.
-  Arrangement_2    arr2;
-  
+  Arrangement_2    arr2;  
   std::ifstream    in_file ("arr_ex26.dat");
 
   in_file >> arr2;

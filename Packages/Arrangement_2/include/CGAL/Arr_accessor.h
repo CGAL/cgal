@@ -159,30 +159,30 @@ public:
    * Check whether the given halfedge lies on the outer boundary of the given
    * face.
    * \param f A handle for the given face.
-   * \param e The given halfedge.
-   * \return (true) in case e lies on the outer boundary of f;
+   * \param he The given halfedge.
+   * \return (true) in case he lies on the outer boundary of f;
    *         (false) otherwise.
    */
   bool is_on_outer_boundary (Face_const_handle f,
-                             Halfedge_const_handle e) const
+                             Halfedge_const_handle he) const
   {
     return (p_arr->_is_on_outer_boundary (p_arr->_face (f),
-                                          p_arr->_halfedge (e)) != NULL);
+                                          p_arr->_halfedge (he)) != NULL);
   }
 
   /*!
    * Check whether the given halfedge lies on the inner boundary of the given
    * face.
    * \param f A handle for the given face.
-   * \param e The given halfedge.
-   * \return (true) in case e lies on the outer boundary of f;
+   * \param he The given halfedge.
+   * \return (true) in case he lies on the outer boundary of f;
    *         (false) otherwise.
    */
   bool is_on_inner_boundary (Face_const_handle f,
-                             Halfedge_const_handle e) const
+                             Halfedge_const_handle he) const
   {
     return (p_arr->_is_on_inner_boundary (p_arr->_face (f),
-                                          p_arr->_halfedge (e)) != NULL);
+                                          p_arr->_halfedge (he)) != NULL);
   }
 
   /*!
@@ -231,7 +231,7 @@ public:
     return (p_arr->_handle_for (he));
   }
 
-   /*!
+  /*!
    * Insert an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex. The other
@@ -363,7 +363,7 @@ public:
    * \return Whether the vertex was successfully moved.
    */
   bool move_isolated_vertex (Face_handle from_face, Face_handle to_face,
-                              Vertex_handle v)
+                             Vertex_handle v)
   {
     typename Arrangement_2::DIsolated_vertices_iter   it;
     DFace            *from_f =  p_arr->_face (from_face);
@@ -393,8 +393,7 @@ public:
   bool find_and_erase_isolated_vertex (Face_handle f, Vertex_handle v)
   {
     return p_arr->_find_and_erase_isolated_vertex (p_arr->_face (f),
-                                                   p_arr->_vertex (v));                                            
-
+                                                   p_arr->_vertex (v));
   }
  
   /*!
@@ -493,7 +492,6 @@ public:
    * \return A handle for the remaining face.
    */
   Face_handle remove_edge_ex (Halfedge_handle e,
-
 			      bool remove_source = true,
 			      bool remove_target = true)
   {

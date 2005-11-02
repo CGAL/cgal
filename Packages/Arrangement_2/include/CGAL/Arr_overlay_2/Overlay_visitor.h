@@ -21,7 +21,7 @@
 #define OVERLAY_VISITOR_H
 
 #include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
-#include <CGAL/Arrangement_2/Arr_accessor.h>
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h> 
 
 CGAL_BEGIN_NAMESPACE

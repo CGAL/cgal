@@ -21,7 +21,7 @@
 #define ARR_CONSTRUCTION_VISITOR_H
 
 
-#include <CGAL/Arrangement_2/Arr_accessor.h>
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Sweep_line_2_empty_visitor.h>
 
 CGAL_BEGIN_NAMESPACE

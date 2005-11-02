@@ -245,11 +245,9 @@ protected:
     for (k = 0; k < n_holes; k++)
     {
       // Read the current hole.
-      formatter.read_inner_ccb_begin();
       inner_size = formatter.read_size ("halfedges_on_inner_CCB");
       he = _read_ccb (formatter, new_f, inner_size);
       new_f->add_hole (he);
-      formatter.read_inner_ccb_end();
     }
     formatter.read_holes_end();
 

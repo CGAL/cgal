@@ -107,9 +107,9 @@ public:
 
   /*! Write the arrangement. */
   template <class Formatter>
-  void operator()(Formatter& formatter) const
+  void operator() (Formatter& formatter) const
   {
-    formatter.write_arr_begin(m_arr);
+    formatter.write_arr_begin();
     formatter.write_size ("number_of_vertices", m_arr.number_of_vertices());
     formatter.write_size ("number_of_edges", m_arr.number_of_edges());
     formatter.write_size ("number_of_faces", m_arr.number_of_faces());
@@ -145,10 +145,10 @@ protected:
   void _write_vertex (Formatter& formatter, Vertex_const_iterator vit) const
   {
     Vertex_const_handle  v = vit;
-    formatter.write_vertex_begin (v, _get_index(v));
+    formatter.write_vertex_begin();
     formatter.write_point (v->point()); // Write the associated point.
     formatter.write_vertex_data (v);    // Write additional user-defined data.
-    formatter.write_vertex_end (v);
+    formatter.write_vertex_end();
 
     return;
   }
@@ -159,7 +159,7 @@ protected:
   {
     Halfedge_const_handle he = hit;
 
-    formatter.write_edge_begin (he /*, _get_index(hit)*/);
+    formatter.write_edge_begin ();
     formatter.write_vertex_index (_get_index(he->source()));
     formatter.write_vertex_index (_get_index(he->target()));
     
@@ -171,7 +171,7 @@ protected:
     formatter.write_curve (he->curve()); // Write the associated curve.
     formatter.write_halfedge_data (he);  // Write additional user-defined data.
     formatter.write_halfedge_data (he->twin());
-    formatter.write_edge_end (he);
+    formatter.write_edge_end ();
 
     return;
   }
@@ -182,48 +182,45 @@ protected:
   {
     Face_const_handle     f = fit;
 
-    formatter.write_face_begin(f);
+    formatter.write_face_begin();
 
     // Write the outer CCB.
-    formatter.write_outer_ccb_begin(f);
+    formatter.write_outer_ccb_begin();
     if (f->is_unbounded())
     {
       formatter.write_size ("halfedges_on_outer_CCB", 0);
     }
     else
     {
-      Ccb_halfedge_const_circulator hec = f->outer_ccb();
+      Ccb_halfedge_const_circulator  out_ccb = f->outer_ccb();
+      const std::size_t              n = _circulator_size (out_ccb);
 
-      std::size_t n = _circulator_size (hec);
       formatter.write_size ("halfedges_on_outer_CCB", n);
-
-      _write_ccb (formatter, hec);
+      _write_ccb (formatter, out_ccb);
     }
-    formatter.write_outer_ccb_end(f);
+    formatter.write_outer_ccb_end();
 
     // Write the holes inside the face.
-    formatter.write_holes_begin(f);
-    std::size_t n_holes = std::distance (f->holes_begin(), f->holes_end());
+    formatter.write_holes_begin();
+    const std::size_t    n_holes = std::distance (f->holes_begin(),
+                                                  f->holes_end());
     formatter.write_size ("number_of_holes", n_holes);
 
     Holes_const_iterator  hole_it;
     for (hole_it = f->holes_begin(); hole_it != f->holes_end(); ++hole_it)
     {
-      formatter.write_inner_ccb_begin(f);
+      Ccb_halfedge_const_circulator  in_ccb = (*hole_it);      
+      const std::size_t              n = _circulator_size (in_ccb);
 
-      Ccb_halfedge_const_circulator hec = (*hole_it);      
-      std::size_t n = _circulator_size (hec);
       formatter.write_size ("halfedges_on_inner_CCB", n);
-      _write_ccb (formatter, hec);
-      
-      formatter.write_inner_ccb_end(f);
+      _write_ccb (formatter, in_ccb);      
     }
-    formatter.write_holes_end(f);
+    formatter.write_holes_end();
 
     // Write the isolated vertices inside the face.
-    formatter.write_isolated_vertices_begin(f);
-    std::size_t n_isolated = std::distance(f->isolated_vertices_begin(),
-                                           f->isolated_vertices_end());
+    formatter.write_isolated_vertices_begin();
+    std::size_t  n_isolated = std::distance (f->isolated_vertices_begin(),
+                                             f->isolated_vertices_end());
     formatter.write_size ("number_of_isolated_vertices", n_isolated);
 
     Isolated_vertices_const_iterator  iso_vit;
@@ -232,11 +229,11 @@ protected:
     {
       formatter.write_vertex_index (_get_index(iso_vit));
     }
-    formatter.write_isolated_vertices_end(f);
+    formatter.write_isolated_vertices_end();
     
     // Write additional user-defined data associated with the face.
     formatter.write_face_data (f);
-    formatter.write_face_end(f);
+    formatter.write_face_end();
 
     return;
   }

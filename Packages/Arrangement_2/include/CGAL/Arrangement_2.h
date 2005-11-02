@@ -33,7 +33,7 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_observer.h>
-#include <CGAL/Arrangement_2/Arr_accessor.h>
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/IO/Arrangement_2_reader.h>
 #include <map>

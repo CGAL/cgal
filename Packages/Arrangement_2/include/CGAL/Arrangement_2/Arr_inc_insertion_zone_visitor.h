@@ -24,7 +24,7 @@
  * Definition of the Arr_inc_insertion_zone_visitor_2 class.
  */
 
-#include <CGAL/Arrangement_2/Arr_accessor.h>
+#include <CGAL/Arr_accessor.h>
 //#define ARR_INC_INSERT_DEBUG
 
 CGAL_BEGIN_NAMESPACE

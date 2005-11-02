@@ -60,7 +60,7 @@ public:
   typedef typename ArrangementB::Face_const_handle    Face_handle_B;
   typedef typename ArrangementR::Face_handle          Face_handle_R;
 
-  typedef OverlayFaceData_                             Overlay_face_data;
+  typedef OverlayFaceData_                            Overlay_face_data;
 
 private:
 
