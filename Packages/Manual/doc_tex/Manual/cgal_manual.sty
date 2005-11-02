@@ -279,6 +279,15 @@
   }%
 }
 
+
+
+\lcTex{\catcode`@=11}
+\lcTex{\@input{cgal_include_only.tex}}
+\lcTex{\catcode`@=12}
+
+\lcHtml{\lciIfFileExists{cgal_include_only.tex}{\input{cgal_include_only.tex}}{}}
+
+
 % +------------------------------------------------------------------------+
 % | end of cgal_manual.sty
 % +------------------------------------------------------------------------+
