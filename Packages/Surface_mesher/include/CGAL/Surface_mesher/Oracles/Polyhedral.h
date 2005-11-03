@@ -44,7 +44,7 @@ public:
   typedef typename Geom_traits::Line_3 Line;
   typedef typename Geom_traits::Triangle_3 Triangle;
 
-  typedef typename Tr::Vertex_iterator Vertex_iterator;
+  typedef typename Tr::Finite_vertices_iterator Vertex_iterator;
 
   typedef std::list<Point> Points;
 
