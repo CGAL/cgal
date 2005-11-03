@@ -63,28 +63,10 @@ int main(const int argNr,const char **args) {
     cout << endl << qp << endl;
   }
 
-#if 1
-  cout << "M:= Matrix(" << endl;
-  for (int i=0; i<qp.number_of_variables(); ++i) {
-    cout << "[";
-    for (int j=0; j<qp.number_of_variables(); ++j) {
-      cout << std::setprecision(27) << qp.D()[i][j] << endl;
-      if (j<qp.number_of_variables()-1)
-	cout << ",";
-    }
-    cout << "]";
-    if (i<qp.number_of_variables()-1)
-      cout << ",";
-    cout << endl;
-  }
-  return 0;
-#endif
-      
-
   typedef Tag_false Is_linear; // is the instance known in advance to be an LP?
-  typedef Tag_false Is_symmetric; // is the D matrix known to be symmetric?
+  typedef Tag_true Is_symmetric; // is the D matrix known to be symmetric?
   typedef Tag_false Has_equalities_only_and_full_rank; // (see manual)
-  typedef Tag_true Is_in_standard_form; // (see manual)?
+  typedef Tag_false Is_in_standard_form; // (see manual)?
 
   // in case of an LP, zero the D matrix:
   // (Note: if you known in advance that the problem is an LP
@@ -114,7 +96,7 @@ int main(const int argNr,const char **args) {
   if (solver.is_valid()) {
     cout << "Solution is valid." << endl;
   } else {
-    cout << "Solution is not valid!." << endl;
+    cout << "Solution is not valid!" << endl;
     return 1;
   }
 

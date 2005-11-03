@@ -416,6 +416,12 @@ bool process(const std::string& filename,
     Is_in_standard_form,IT,ET,
     typename QP_instance::D_iterator> Traits;
 
+  // temporary (todo): exit if pricing strategy is different from FE
+  // and nonstandard form solver is being used:
+  if (!check_tag(Is_in_standard_form()) &&
+      options.find("Strategy")->second != FE)
+    return true;
+
   // solve:
   CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
   CGAL::QP_solver<Traits> solver(qp.number_of_variables(),

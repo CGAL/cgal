@@ -107,7 +107,13 @@ pricing_helper(int& direction, Tag_true is_in_standard_form)
         if ( ! this->solver().is_basic( j)) {
 	
             // don't price artificial variables
-            if (this->solver().is_artificial( j)) continue;
+   	    if (this->solver().is_artificial( j)) {
+	      CGAL_qpe_debug { 
+		this->vout() << "mu_" << j << ": artificial [ not priced ]"
+			     << std::endl;
+	      }
+	      continue;
+	    }
 
             // compute mu_j
             mu = this->mu_j( j);
@@ -146,7 +152,13 @@ pricing_helper(int& direction, Tag_false is_in_standard_form)
         if ( ! this->solver().is_basic( j)) {
 	
             // don't price artificial variables
-            if (this->solver().is_artificial( j)) continue;
+            if (this->solver().is_artificial( j)) {
+	      CGAL_qpe_debug { 
+		this->vout() << "mu_" << j << ": artificial [ not priced ]"
+			     << std::endl;
+	      }
+	      continue;
+	    }
             
             // original variable
             if (this->solver().is_original(j)) {
@@ -224,7 +236,8 @@ pricing_helper(int& direction, Tag_false is_in_standard_form)
                 mu = this->mu_j( j);
 
                 CGAL_qpe_debug {
-                    this->vout() << "mu_" << j << ": " << mu << std::endl;
+                    this->vout() << "mu_" << j << ": " << mu 
+				 << " LOWER (slack)" << std::endl;
                 }
 
                 // new minimum?

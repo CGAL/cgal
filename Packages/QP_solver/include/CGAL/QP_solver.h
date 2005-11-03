@@ -65,10 +65,14 @@ CGAL_BEGIN_NAMESPACE
 template < class Rep_ >
 class QP_solver;
 
-namespace QP_solver_impl {
+namespace QP_solver_impl {   // namespace for implemenation details
+
+  // forward declaration of iterator over entries of
+  // unbounded direction:
   template < class Rep_ >
   class Unbounded_direction_iterator;
-}
+
+} // end of namespace for implementation details
 
 // ===============
 // class interface
@@ -76,159 +80,163 @@ namespace QP_solver_impl {
 template < class Rep_ >
 class QP_solver {
 
-  public:
+public: // public types
+  typedef  Rep_                       Rep;
+  typedef  QP_solver<Rep>             Self;
+  
+  // types from the representation class:
+  typedef  typename Rep::ET           ET;
+  
+  typedef  typename Rep::A_iterator   A_iterator;
+  typedef  typename Rep::B_iterator   B_iterator;
+  typedef  typename Rep::C_iterator   C_iterator;
+  typedef  typename Rep::D_iterator   D_iterator;
+  typedef  typename Rep::L_iterator   L_iterator;
+  typedef  typename Rep::U_iterator   U_iterator;
+  typedef  typename Rep::FL_iterator  FL_iterator;
+  typedef  typename Rep::FU_iterator  FU_iterator;
+  
+  typedef  typename Rep::Row_type     Row_type;
+  typedef  typename Rep::Row_type_iterator
+                                      Row_type_iterator;
+  
+  typedef  typename Rep::Is_linear    Is_linear;
+  typedef  typename Rep::Is_symmetric Is_symmetric;
+  typedef  typename Rep::Has_equalities_only_and_full_rank
+                                      Has_equalities_only_and_full_rank;
+  typedef  typename Rep::Is_in_standard_form
+                                      Is_in_standard_form;
 
-    // self
-    typedef  Rep_                       Rep;
-    typedef  QP_solver<Rep>            Self;
+private: // private types
 
-    // types from the representation class
-    typedef  typename Rep::ET           ET;
+  // types of original problem:
+  typedef  typename std::iterator_traits<A_iterator>::value_type  A_column;
+  typedef  typename std::iterator_traits<D_iterator>::value_type  D_row;
+  
+  typedef  typename std::iterator_traits<A_column  >::value_type  A_entry;
+  typedef  typename std::iterator_traits<B_iterator>::value_type  B_entry;
+  typedef  typename std::iterator_traits<C_iterator>::value_type  C_entry;
+  typedef  typename std::iterator_traits<D_row     >::value_type  D_entry;
+  typedef  typename std::iterator_traits<L_iterator>::value_type  L_entry;
+  typedef  typename std::iterator_traits<U_iterator>::value_type  U_entry;
+  
+  // slack columns:
+  //
+  // The following two types are used to (conceptually) add to the matrix A
+  // additional columns that model the constraints "x_s>=0" for the slack
+  // variables x_s.  Of course, we do not store the column (which is just
+  // +-1), so we just maintain a pair (int,bool):: the first entry says in
+  // which column the +-1 is and the second entry of the pair says whether it
+  // is +1 (false) or -1 (true).
+  typedef  std::pair<int,bool>        Slack_column;
+  typedef  std::vector<Slack_column>  A_slack;
 
-    typedef  typename Rep::A_iterator   A_iterator;
-    typedef  typename Rep::B_iterator   B_iterator;
-    typedef  typename Rep::C_iterator   C_iterator;
-    typedef  typename Rep::D_iterator   D_iterator;
-    typedef  typename Rep::L_iterator   L_iterator;
-    typedef  typename Rep::U_iterator   U_iterator;
-    typedef  typename Rep::FL_iterator  FL_iterator;
-    typedef  typename Rep::FU_iterator  FU_iterator;
+  // artificial columns
+  //
+  // Artificial columns that are (conceptually) added to the matrix A are
+  // handled exactly like slack columns (see above).
+  typedef  std::pair<int,bool>        Art_column;
+  typedef  std::vector<Art_column>    A_art;
 
-    typedef  typename Rep::Row_type     Row_type;
-    typedef  typename Rep::Row_type_iterator
-                                        Row_type_iterator;
+  // special artificial column:
+  //
+  // Also for the special artificial variable we (conceptually) add a column
+  // to A. This column contains only +-1's (but it may contain several nonzero
+  // entries).
+  typedef  std::vector<A_entry>       S_art;
+  
+  // auxiliary objective vector (i.e., the objective vector for phase I):
+  typedef  std::vector<C_entry>       C_aux;
 
-    typedef  typename Rep::Is_linear    Is_linear;
-    typedef  typename Rep::Is_symmetric Is_symmetric;
-    typedef  typename Rep::Has_equalities_only_and_full_rank
-                                        Has_equalities_only_and_full_rank;
-    typedef  typename Rep::Is_in_standard_form
-                                        Is_in_standard_form;
-
-  private:
-
-    // private types
-    // -------------
-    // types of original problem
-    typedef  typename std::iterator_traits<A_iterator>::value_type  A_column;
-    typedef  typename std::iterator_traits<D_iterator>::value_type  D_row;
-
-    typedef  typename std::iterator_traits<A_column  >::value_type  A_entry;
-    typedef  typename std::iterator_traits<B_iterator>::value_type  B_entry;
-    typedef  typename std::iterator_traits<C_iterator>::value_type  C_entry;
-    typedef  typename std::iterator_traits<D_row     >::value_type  D_entry;
-    typedef  typename std::iterator_traits<L_iterator>::value_type  L_entry;
-    typedef  typename std::iterator_traits<U_iterator>::value_type  U_entry;
-
-    // slack columns
-    typedef  std::pair<int,bool>        Slack_column;
-    typedef  std::vector<Slack_column>  A_slack;
-
-    // artificial columns
-    typedef  std::pair<int,bool>        Art_column;
-    typedef  std::vector<Art_column>    A_art;
-    typedef  std::vector<A_entry>       S_art;
-
-    // auxiliary objective vector
-    typedef  std::vector<C_entry>       C_aux;
-    
-
-    // indices (variables and constraints)
-public:
-    // QP__partial_base.h needs them
-    typedef  std::vector<int>           Indices;
-
-    // it seems we need the non-const version here as well
-    typedef  Indices::iterator            Index_iterator;
-    typedef  Indices::const_iterator      Index_const_iterator;
-    //typedef  Indices::const_iterator    Index_iterator;
-
-
-    // used for upper  bounding, indicates the value of a nonbasic original
-    // variable, a variable that is fixed will never be priced and therefore
-    // remains nonbasic forever
-    enum  Bound_index  { LOWER, ZERO, UPPER, FIXED, BASIC };
-    
+public: // export some additional types:
+  
+  typedef  std::vector<int>           Indices; // QP__partial_base.h needs it.
+  
+  typedef  Indices::iterator          Index_iterator;
+  typedef  Indices::const_iterator    Index_const_iterator;
+  
+  // For problems in nonstandard form we also export the following type, which
+  // for an original variable will say whether it sits at is lower, upper, at
+  // its lower and upper (fixed) bound, or at zero, or whether the variable is
+  // basic:
+  enum  Bound_index  { LOWER, ZERO, UPPER, FIXED, BASIC };
+  
 private:
-    typedef  std::vector<Bound_index>    Bound_index_values;
-    typedef  typename Bound_index_values::iterator
-                                        Bound_index_value_iterator;
-    typedef  typename Bound_index_values::const_iterator
-                                        Bound_index_value_const_iterator;
+  typedef  std::vector<Bound_index>    Bound_index_values;
+  typedef  typename Bound_index_values::iterator
+  Bound_index_value_iterator;
+  typedef  typename Bound_index_values::const_iterator
+  Bound_index_value_const_iterator;
+  
+  // values (variables' numerators):
+  typedef  std::vector<ET>            Values;
+  typedef  typename Values::iterator  Value_iterator;
+  typedef  typename Values::const_iterator
+                                      Value_const_iterator;
 
-    // values (variables' numerators)
-    typedef  std::vector<ET>            Values;
-    typedef  typename Values::iterator  Value_iterator;
-    typedef  typename Values::const_iterator
-                                        Value_const_iterator;
-
-    // quotient functor
-    typedef  Creator_2< ET, ET, Quotient<ET> >
-                                        Quotient_creator;
+  // quotient functors:
+  typedef  Creator_2< ET, ET, Quotient<ET> >
+                                      Quotient_creator;
+  typedef  typename CGAL::Bind<Quotient_creator,
+    typename Quotient_creator::argument2_type,2>::Type
+                                      Quotient_maker;
     
-    
-    typedef  typename CGAL::Bind<Quotient_creator,
-                 typename Quotient_creator::argument2_type,2>::Type
-                                        Quotient_maker;
-    
-    
-    // access values by basic index functor
-    typedef  Value_by_basic_index<Value_const_iterator>
-                                        Value_by_basic_index;
+  // access values by basic index functor:
+  typedef  Value_by_basic_index<Value_const_iterator>
+                                      Value_by_basic_index;
 
-    // access to original problem by basic variable/constraint index
-    typedef  QP_vector_accessor<
-		 typename std::iterator_traits<A_iterator>::value_type,
-		 false, false >         A_by_index_accessor;
-    typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
-                                        A_by_index_iterator;
+  // access to original problem by basic variable/constraint index:
+  typedef  QP_vector_accessor<
+    typename std::iterator_traits<A_iterator>::value_type,
+               false, false >         A_by_index_accessor;
+  typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
+                                      A_by_index_iterator;
 
-    // todo: following can be removed once we have all these (outdated)
-    // accessors removed:
-    typedef  QP_vector_accessor< B_iterator, false, false >
-                                        B_by_index_accessor;
+  // todo kf: following can be removed once we have all these (outdated)
+  // accessors removed:
+  typedef  QP_vector_accessor< B_iterator, false, false >
+                                      B_by_index_accessor;
+  typedef  Join_input_iterator_1< Index_const_iterator, B_by_index_accessor >
+                                      B_by_index_iterator;
 
-    typedef  Join_input_iterator_1< Index_const_iterator, B_by_index_accessor >
-                                        B_by_index_iterator;
+  typedef  QP_vector_accessor< C_iterator, false, false >
+                                      C_by_index_accessor;
+  typedef  Join_input_iterator_1< Index_const_iterator, C_by_index_accessor >
+                                      C_by_index_iterator;
 
-    typedef  QP_vector_accessor< C_iterator, false, false >
-                                        C_by_index_accessor;
-    typedef  Join_input_iterator_1< Index_const_iterator, C_by_index_accessor >
-                                        C_by_index_iterator;
+  typedef  QP_vector_accessor<
+    typename std::iterator_traits<D_iterator>::value_type,
+    false, false >                    D_by_index_accessor;
+  typedef  Join_input_iterator_1< Index_const_iterator, D_by_index_accessor >
+                                      D_by_index_iterator;
 
-    typedef  QP_vector_accessor<
-		 typename std::iterator_traits<D_iterator>::value_type,
-		 false, false >         D_by_index_accessor;
-    typedef  Join_input_iterator_1< Index_const_iterator, D_by_index_accessor >
-                                        D_by_index_iterator;
+  typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
+                                      A_accessor;
+  typedef  typename CGAL::Bind< A_accessor,
+    typename A_accessor::argument2_type,2>::Type
+                                      A_row_by_index_accessor;
+  typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
+                                      A_row_by_index_iterator;
 
-    typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
-                                        A_accessor;
-    typedef  typename CGAL::Bind< A_accessor,
-    	typename A_accessor::argument2_type,2>::Type
-                                        A_row_by_index_accessor;
-    typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
-                                        A_row_by_index_iterator;
+  // Access to the matrix D is sometimes exact, and sometimes inexact:
+  typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, ET >
+                                      D_pairwise_accessor;
+  typedef  Join_input_iterator_1< Index_const_iterator,
+                                      D_pairwise_accessor >
+                                      D_pairwise_iterator;
+  typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, D_entry >
+                                      D_pairwise_accessor_inexact;
+  typedef  Join_input_iterator_1< Index_const_iterator, 
+                                      D_pairwise_accessor_inexact >
+                                      D_pairwise_iterator_inexact;
 
-    typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, ET >
-                                        D_pairwise_accessor;
-    typedef  Join_input_iterator_1< Index_const_iterator,
-                                        D_pairwise_accessor >
-                                        D_pairwise_iterator;
-
-    typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, D_entry >
-                                        D_pairwise_accessor_inexact;
-    typedef  Join_input_iterator_1< Index_const_iterator, 
-                                        D_pairwise_accessor_inexact >
-                                        D_pairwise_iterator_inexact;
-
-    // access to special artificial column by basic constraint index
-    typedef  QP_vector_accessor< typename S_art::const_iterator, false, false>
-                                        S_by_index_accessor;
-    typedef  Join_input_iterator_1< Index_iterator, S_by_index_accessor >
-                                        S_by_index_iterator;
-
-  public:
+  // access to special artificial column by basic constraint index:
+  typedef  QP_vector_accessor< typename S_art::const_iterator, false, false>
+                                      S_by_index_accessor;
+  typedef  Join_input_iterator_1< Index_iterator, S_by_index_accessor >
+                                      S_by_index_iterator;
+  
+public:
 
     // public types
     enum Status { UPDATE, INFEASIBLE, UNBOUNDED, OPTIMAL };
@@ -321,9 +329,20 @@ private:
     
     // current status
     Indices                  B_O;       // basis (original variables)
+                                        // Note: the size of B_O is always
+                                        // correct, i.e., equals the number of
+                                        // basic original variables, plus (in
+                                        // phase I) the number of basic
+                                        // artificial variables.
+
     Indices                  B_S;       // basis (   slack variables)
     
-    Indices                  C;         //    basic constraints ( C = E+S_N )
+    Indices                  C;         // basic constraints ( C = E+S_N )
+                                        // Note: the size of C is always
+                                        // correct, i.e., corresponds to the
+                                        // size of the (conceptual) set
+                                        // $E\cup S_N$.
+
     Indices                  S_B;       // nonbasic constraints ( S_B '=' B_S)
     
     QP_basis_inverse<ET,Is_linear>
@@ -332,6 +351,9 @@ private:
     const ET&                d;         // reference to `inv_M_B.denominator()'
     
     Values                   x_B_O;     // basic variables (original)
+                                        // Note: x_B_O is only enlarged,
+                                        // so its size need not be |B|.
+
     Values                   x_B_S;     // basic variables (slack)
     Values                   lambda;    // lambda (from KKT conditions)
     Bound_index_values       x_O_v_i;   // bounds value index vector
@@ -339,10 +361,16 @@ private:
                                         // with each update in order to avoid
                                         // evaluating a matrix vector
                                         // multiplication
-    Values                   w;         // w = 2D_{O, N_O}x_{N_O}
     Values                   r_C;       // r_C = A_{C,N_O}x_{N_O}
+                                        // Note: r_C.size() == C.size().
+
     Values                   r_S_B;     // r_S_B = A_{S_B,N_O}x_{N_O}
+
+    // The following to variables are initialized (if used at all) in
+    // transition().  They are not used in case Is_linear or
+    // Is_in_standard_form is set to Tag_true.
     Values                   r_B_O;     // r_B_O = 2D_{B_O,N_O}x_{N_O}
+    Values                   w;         // w = 2D_{O, N_O}x_{N_O}
     
     int                      m_phase;   // phase of the Simplex method
     Status                   m_status;  // status of last pivot step
@@ -384,11 +412,15 @@ private:
                                         // restricted to basic constraints C
     Values                   minus_c_B; // exact version of `-qp_c'
                                         // restricted to basic variables B_O
+                                        // Note: minus_c_B is only enlarged,
+                                        // so its size need not be |B|.
 
     Values                   A_Cj;      // exact version of j-th column of A
                                         // restricted to basic constraints C
     Values                   two_D_Bj;  // exact version of twice the j-th
                                         // column of D restricted to B_O
+                                        // Note: tmp_x_2 is only enlarged,
+                                        // so its size need not be |B|.
     
     int                      j;         // index of entering variable `x_j'
     
@@ -407,13 +439,20 @@ private:
     
     Values                   q_lambda;  // length dependent on C
     Values                   q_x_O;     // used in the ratio test & update
-    					// length dependent on B_O
+                                        // Note: q_x_O is only enlarged,
+                                        // so its size need not be |B|.
+
     Values                   q_x_S;     // 
 
     Values                   tmp_l;     // temporary vector of size l
     Values                   tmp_x;     // temporary vector of s. >= B_O.size()
+                                        // Note: tmp_x is only enlarged,
+                                        // so its size need not be |B|.
+
     Values                   tmp_l_2;   // temporary vector of size l
     Values                   tmp_x_2;   // temporary vector of s. >= B_O.size()
+                                        // Note: tmp_x_2 is only enlarged,
+                                        // so its size need not be |B|.
 
   public:
 
@@ -735,10 +774,9 @@ public:
     void  init_r_C(Tag_false is_in_standard_form);
     void  init_r_S_B(Tag_true  is_in_standard_form);
     void  init_r_S_B(Tag_false is_in_standard_form);
-    void  init_r_B_O(Tag_true  is_in_standard_form);
-    void  init_r_B_O(Tag_false is_in_standard_form);
-    void  init_w(Tag_true  is_in_standard_form);
-    void  init_w(Tag_false is_in_standard_form);
+
+    void  init_r_B_O();
+    void  init_w();
 
 
     void  init_solution( );
@@ -1278,11 +1316,11 @@ transition( Tag_false)
       Index_iterator, 1>::Type >
                                         twice_D_transition_iterator;
     
-    // initialization of vector w
-    init_w(Is_in_standard_form());                                    
-    
-    // initialization of vector r_B_O
-    init_r_B_O(Is_in_standard_form());
+    // initialization of vector w and vector r_B_O:
+    if (!check_tag(Is_in_standard_form())) {
+      init_w();                      
+      init_r_B_O();
+    }
 
     inv_M_B.transition( twice_D_transition_iterator( B_O.begin(),
 	bind_1( compose( D_transition_creator_iterator(),

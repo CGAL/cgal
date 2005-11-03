@@ -816,6 +816,7 @@ bool map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
   using CGAL::Tag_true;
 
   bool success;
+  std::cout << "index is " << index << std::endl;
   switch (index) {
   case  0: 	
     success = doIt<CGAL::Gmpq,Tag_false,Tag_false,Tag_false,

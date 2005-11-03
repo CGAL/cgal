@@ -192,6 +192,7 @@ set_explicit_bounds(FL_iterator fl,L_iterator lb,FU_iterator fu,U_iterator ub)
   qp_u = ub;
 }
 
+#if 0
 // todo: following is an old version that should be replaced by the out#def'ed
 // one below.
 template < class Rep_ >
@@ -247,8 +248,8 @@ void QP_solver<Rep_>::init_x_O_v_i()
         x_O_v_i[i] = ZERO;
   }
 }
+#endif
 
-#if 0
 template < class Rep_ >
 void QP_solver<Rep_>::
 init_x_O_v_i()
@@ -291,7 +292,6 @@ init_x_O_v_i()
 	x_O_v_i[i] = ZERO;
   }
 }
-#endif
 
 #if 0  // (fw) The following is a variant of set_up_auxiliary_problem()
        // for symbolic perturbation for the perturbed case.
@@ -809,38 +809,6 @@ init_r_S_B(Tag_false)
   multiply__A_S_BxN_O(r_S_B.begin()); 
 }
 
-// Initialize r_B_O.
-template < class Rep_ >                 // Standard form
-void  QP_solver<Rep_>::
-init_r_B_O(Tag_true)
-{
-}
-
-// Initialize r_B_O.
-template < class Rep_ >                 // Upper bounded
-void  QP_solver<Rep_>::
-init_r_B_O(Tag_false)
-{
-  r_B_O.resize(B_O.size());
-  multiply__2D_B_OxN_O(r_B_O.begin());
-}
-
-// Initialize w.
-template < class Rep_ >                 // Standard form
-void  QP_solver<Rep_>::
-init_w(Tag_true)
-{
-}
-
-// Initialize w.
-template < class Rep_ >                 // Upper bounded
-void  QP_solver<Rep_>::
-init_w(Tag_false)
-{
-  w.resize(qp_n);
-  multiply__2D_OxN_O(w.begin());
-}
-
 template < class Rep_ >  inline                                 // no ineq.
 void  QP_solver<Rep_>::
 init_solution__b_C(Tag_true)
@@ -907,6 +875,15 @@ init_solution()
   //    ratio_test_bound_index = LOWER;
   //direction = 1;
   #endif
+
+  // The following sets the pricing direction to "up" (meaning that
+  // the priced variable will be increased and not decreased); the
+  // statement is completely useless except that it causes debugging
+  // output to be consistent in case we are running in standard form.
+  // (If we are in standard form, the variable 'direction' is never
+  // touched; otherwise, it will be set to the correct value during
+  // each pricing step.)
+  direction = 1;
     
   // initialization of vectors r_C, r_S_B:
   init_r_C(Is_in_standard_form());

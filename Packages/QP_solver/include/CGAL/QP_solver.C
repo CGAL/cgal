@@ -1102,6 +1102,8 @@ update_1( )
         } else {
             CGAL_expensive_assertion(is_solution_feasible());
         }
+	CGAL_expensive_assertion(check_tag(Is_in_standard_form()) ||
+				 r_C.size() == C.size());
     }
 	 
 }
@@ -1420,10 +1422,10 @@ replace_variable_slack_original_upd_r(Tag_false )
     
     int     sigma_j = slack_A[ j-qp_n].first;
     
-    // append r_gamma_C(sigma_j) from r_C to r_S_B
+    // append r_gamma_C(sigma_j) from r_C to r_S_B:
     r_S_B.push_back(r_C[in_C[sigma_j]]);
     
-    // remove r_gamma_C(sigma_j) from r_C
+    // remove r_gamma_C(sigma_j) from r_C:
     r_C[in_C[sigma_j]] = r_C.back();
     r_C.pop_back();
     
@@ -1623,56 +1625,65 @@ void
 QP_solver<Rep_>::
 enter_variable( )
 {
+
     CGAL_qpe_debug {
 	vout2 << "--> nonbasic (" << variable_type( j) << ") variable "
 	      << j << " enters basis" << std::endl << std::endl;
     }
 
-    // update basis & basis inverse
-    if ( no_ineq || ( j < qp_n)) {                      // original variable
+    // update basis & basis inverse:
+    if (no_ineq || (j < qp_n)) {              // original variable
     
-        // updates for the upper bounded case
+        // updates for the upper bounded case:
         enter_variable_original_upd_w_r(Is_in_standard_form());
 
-	// enter original variable [ in: j ]
-	if ( minus_c_B.size() == B_O.size()) {
-	    minus_c_B.push_back( et0);
-	        q_x_O.push_back( et0);
-	      tmp_x  .push_back( et0);
-	      tmp_x_2.push_back( et0);
-	     two_D_Bj.push_back( et0);
-	        x_B_O.push_back( et0);
+	// enter original variable [ in: j ]:
+	if (minus_c_B.size() <= B_O.size()) { // Note: minus_c_B and the
+					      // containers resized in this
+					      // if-block are only enlarged
+					      // and never made smaller
+					      // (while B_O always has the
+					      // correct size). We check here
+					      // whether we need to enlarge
+					      // them.
+	    minus_c_B.push_back(et0);
+	        q_x_O.push_back(et0);
+	      tmp_x  .push_back(et0);
+	      tmp_x_2.push_back(et0);
+	     two_D_Bj.push_back(et0);
+	        x_B_O.push_back(et0);
 	}
-	minus_c_B[ B_O.size()] = -ET( qp_c[ j]);
+	minus_c_B[B_O.size()] = -ET(qp_c[ j]); // Note: B_O has always the
+					       // correct size.
 	
-	in_B  [ j] = B_O.size();
-	   B_O.push_back( j);
-	
+	in_B[j] = B_O.size();
+	B_O.push_back(j);
 
 	// diagnostic output
 	CGAL_qpe_debug {
-	    if ( vout2.verbose()) print_basis();
+	    if (vout2.verbose())
+	      print_basis();
 	}
 	    
 	// update basis inverse
 	// note: (-1)\hat{\nu} is stored instead of \hat{\nu}
-	inv_M_B.enter_original( q_lambda.begin(), q_x_O.begin(), -nu);
+	inv_M_B.enter_original(q_lambda.begin(), q_x_O.begin(), -nu);
 	
-    } else {                                            // slack variable
-        
-        // updates for the upper bounded case
+    } else {                                  // slack variable
+
+        // updates for the upper bounded case:
         enter_variable_slack_upd_w_r(Is_in_standard_form());
 
-	// enter slack variable [ in: j ]
+	// enter slack variable [ in: j ]:
 	in_B  [ j] = B_S.size();
 	   B_S.push_back( j);
 	   S_B.push_back( slack_A[ j-qp_n].first);
 
-	// leave inequality constraint [ out: j ]
+	// leave inequality constraint [ out: j ]:
 	int old_row = slack_A[ j-qp_n].first;
 	int k = in_C[old_row];
 	
-	// reflect change of active constraints heading C in b_C
+	// reflect change of active constraints heading C in b_C:
 	b_C[ k] = b_C[C.size()-1];
 		
 	   C[ k] = C.back();
@@ -1680,17 +1691,18 @@ enter_variable( )
 	in_C[ old_row       ] = -1;
 	   C.pop_back();
 	
-	// diagnostic output
+	// diagnostic output:
 	CGAL_qpe_debug {
-	    if ( vout2.verbose()) print_basis();
+	    if (vout2.verbose())
+	      print_basis();
 	}
 
-	// update basis inverse
-	inv_M_B.swap_constraint( k);
-	inv_M_B.enter_slack();
+	// update basis inverse:
+	inv_M_B.swap_constraint(k);  // swap to back
+	inv_M_B.enter_slack();       // drop drop
     }
 
-    // variable entered
+    // variable entered:
     j -= in_B.size();
 }
 
@@ -1715,8 +1727,9 @@ enter_variable_original_upd_w_r(Tag_false )
     update_w_r_B_O__j(x_j);
     update_r_C_r_S_B__j(x_j);
     
-    // append w_j to r_B_O   
-    r_B_O.push_back(w[j]);
+    // append w_j to r_B_O
+    if (!check_tag(Is_linear())) // (kf.)
+      r_B_O.push_back(w[j]);
     
     // update x_O_v_i
     x_O_v_i[j] = BASIC;
@@ -1746,8 +1759,6 @@ enter_variable_slack_upd_w_r(Tag_false )
     r_C[in_C[sigma_j]] = r_C.back();
     r_C.pop_back();
 }
-
-
 
 // leave variable from basis
 template < class Rep_ >
@@ -1849,8 +1860,10 @@ leave_variable_original_upd_w_r(Tag_false )
     update_r_C_r_S_B__i(x_i);    
     
     // remove r_beta_O(i) from r_B_O
-    r_B_O[in_B[i]] = r_B_O.back();
-    r_B_O.pop_back();
+    if (!check_tag(Is_linear())) { // (kf.)
+      r_B_O[in_B[i]] = r_B_O.back();
+      r_B_O.pop_back();
+    }
     
     // update x_O_v_i
     x_O_v_i[i] = ratio_test_bound_index;
@@ -1993,7 +2006,8 @@ z_replace_variable_original_by_original_upd_w_r(Tag_false )
     update_r_C_r_S_B__j_i(x_j, x_i);
     
     // replace r_beta_O(i) with w_j    
-    r_B_O[in_B[i]] = w[j];
+    if (!check_tag(Is_linear())) // (kf.)
+      r_B_O[in_B[i]] = w[j];
     
     // update x_O_v_i
     x_O_v_i[j] = BASIC;
@@ -2077,8 +2091,10 @@ z_replace_variable_original_by_slack_upd_w_r(Tag_false )
     r_C.pop_back();
     
     // remove r_beta_O(i) from r_B_O    
-    r_B_O[in_B[i]] = r_B_O.back();
-    r_B_O.pop_back();
+    if (!check_tag(Is_linear())) { // (kf.)
+      r_B_O[in_B[i]] = r_B_O.back();
+      r_B_O.pop_back();
+    }
     
     // update x_O_v_i
     x_O_v_i[i] = ratio_test_bound_index;
@@ -2172,7 +2188,8 @@ z_replace_variable_slack_by_original_upd_w_r(Tag_false )
     r_S_B.pop_back();
     
     // append w_j to r_B_O    
-    r_B_O.push_back(w[j]);
+    if (!check_tag(Is_linear())) // (kf.)
+      r_B_O.push_back(w[j]);
     
     // update x_O_v_i
     x_O_v_i[j] = BASIC;
@@ -2319,118 +2336,130 @@ update_r_C_r_S_B__i(ET& x_i)
 }
 
 
-// update of w and r_B_O with "x_j" column
+// Update of w and r_B_O with "x_j" column.
+//
+// todo: could be optimized slightly by factoring out the factor 2
+// (which is implicitly contained in the pairwise accessor for D).
 template < class Rep_ >
 void  QP_solver<Rep_>::
 update_w_r_B_O__j(ET& x_j)
 {
-    // update of vector w
+  // assertion checking:
+  CGAL_expensive_assertion(!check_tag(Is_in_standard_form()));
+
+  // Note: we only do anything it we are dealing with a QP.
+  if (!check_tag(Is_linear())) {
     D_pairwise_accessor     d_accessor_j(qp_D, j);
     
-    for (int it = 0; it < qp_n; ++it) {
-        w[it] -= d_accessor_j(it) * x_j;
-    }
+    // update of vector w:
+    for (int it = 0; it < qp_n; ++it)
+      w[it] -= d_accessor_j(it) * x_j;
     
-    // update of r_B_O
+    // update of r_B_O:
     D_pairwise_iterator D_B_O_j_it(B_O.begin(), d_accessor_j);
-    
-    for (Value_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
-                                                ++r_B_O_it, ++D_B_O_j_it) {
+    for (Value_iterator r_B_O_it = r_B_O.begin();
+	 r_B_O_it != r_B_O.end();
+	 ++r_B_O_it, ++D_B_O_j_it)
         *r_B_O_it -= *D_B_O_j_it * x_j;
-    }
+  }
 }
-
 
 // update of w and r_B_O with "x_j" and "x_i" column
 template < class Rep_ >
 void  QP_solver<Rep_>::
 update_w_r_B_O__j_i(ET& x_j, ET& x_i)
 {
-    // update of vector w
+  // assertion checking:
+  CGAL_expensive_assertion(!check_tag(Is_in_standard_form()));
+
+  // Note: we only do anything it we are dealing with a QP.
+  if (!check_tag(Is_linear())) {
     D_pairwise_accessor     d_accessor_i(qp_D, i);
     D_pairwise_accessor     d_accessor_j(qp_D, j);
     
-    for (int it = 0; it < qp_n; ++it) {
+    // update of vector w
+    for (int it = 0; it < qp_n; ++it)
         w[it] += (d_accessor_i(it) * x_i) - (d_accessor_j(it) * x_j);
-    }
     
     // update of r_B_O
     D_pairwise_iterator D_B_O_j_it(B_O.begin(), d_accessor_j);
     D_pairwise_iterator D_B_O_i_it(B_O.begin(), d_accessor_i);
-    
-    for (Value_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
-                                    ++r_B_O_it, ++D_B_O_j_it, ++D_B_O_i_it) {
+    for (Value_iterator r_B_O_it = r_B_O.begin();
+	 r_B_O_it != r_B_O.end();
+	 ++r_B_O_it, ++D_B_O_j_it, ++D_B_O_i_it)
         *r_B_O_it += (*D_B_O_i_it * x_i) - (*D_B_O_j_it * x_j);
-    }
+  }
 }
-
 
 // update of w and r_B_O with "x_i" column
 template < class Rep_ >
 void  QP_solver<Rep_>::
 update_w_r_B_O__i(ET& x_i)
 {
-    // update of vector w
+  CGAL_expensive_assertion(!check_tag(Is_in_standard_form()));
+
+  // Note: we only do anything it we are dealing with a QP.
+  if (!check_tag(Is_linear())) {
+
+    // update of vector w:
     D_pairwise_accessor     d_accessor_i(qp_D, i);
     
-    for (int it = 0; it < qp_n; ++it) {
+    for (int it = 0; it < qp_n; ++it)
         w[it] += d_accessor_i(it) * x_i;
-    }
     
-    // update of r_B_O    
+    // update of r_B_O:
     D_pairwise_iterator D_B_O_i_it(B_O.begin(), d_accessor_i);
-    
-    for (Value_iterator r_B_O_it = r_B_O.begin(); r_B_O_it != r_B_O.end();
-                                                ++r_B_O_it, ++D_B_O_i_it) {
+    for (Value_iterator r_B_O_it = r_B_O.begin();
+	 r_B_O_it != r_B_O.end();
+	 ++r_B_O_it, ++D_B_O_i_it)
         *r_B_O_it += *D_B_O_i_it * x_i;
-    }
+  }
 }
 
-
-// compute solution
-template < class Rep_ >                             // Standard form
+// Compute solution, meaning compute the solution vector x and the KKT
+// coefficients lambda.
+template < class Rep_ >                                      // Standard form
 void  QP_solver<Rep_>::
 compute_solution(Tag_true)
 {
-    // compute current solution, original variables and lambdas
-    inv_M_B.multiply( b_C.begin(), minus_c_B.begin(),
-                      lambda.begin(), x_B_O.begin());
-    
-    // compute current solution, slack variables
-    compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
+  // compute current solution, original variables and lambdas
+  inv_M_B.multiply( b_C.begin(), minus_c_B.begin(),
+		    lambda.begin(), x_B_O.begin());
+  
+  // compute current solution, slack variables
+  compute__x_B_S(Has_equalities_only_and_full_rank(), Is_in_standard_form());
 }
 
-// compute solution
-template < class Rep_ >                             // Upper bounded
+// Compute solution, meaning compute the solution vector x and the KKT
+// coefficients lambda.
+template < class Rep_ >                                      // Upper bounded
 void  QP_solver<Rep_>::
 compute_solution(Tag_false)
 { 
-    // compute the difference b_C - r_C
-    
-    // Note that for r_C, r_C.size() == C.size() always holds, whereas
-    // for b_C, b_C.size() >= C.size() holds
-    std::transform(b_C.begin(), b_C.begin() + C.size(), r_C.begin(),
-        tmp_l.begin(), std::minus<ET>());
+  // compute the difference b_C - r_C
+  std::transform(b_C.begin(), b_C.begin()+C.size(), // Note: r_C.size() ==
+						    // C.size() always holds,
+						    // whereas b_C.size() >=
+						    // C.size() in general.
+		 r_C.begin(),  tmp_l.begin(), std::minus<ET>());
         
-    // compute the difference minus_c_B - r_B_O
-    if (is_phaseII && is_QP) {
-        // Note that for r_B_O, r_B_O.size() == C.size() always holds,
-        // whereas for minus_c_B, minus_c_B.size() >= C.size()
-        std::transform(minus_c_B.begin(), minus_c_B.begin() + C.size(), 
-            r_B_O.begin(), tmp_x.begin(), std::minus<ET>());
-
-        // compute current solution, original variables and lambdas
-        inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
-                            lambda.begin(), x_B_O.begin());
-    } else {                                            // r_B_O == 0
+  // compute the difference minus_c_B - r_B_O:
+  if (is_phaseII && is_QP) {
+    std::transform(minus_c_B.begin(), minus_c_B.begin() + B_O.size(), 
+		   r_B_O.begin(), tmp_x.begin(), std::minus<ET>());
     
-        // compute current solution, original variables and lambdas        
-        inv_M_B.multiply( tmp_l.begin(), minus_c_B.begin(),
-                            lambda.begin(), x_B_O.begin());
-    }
-                      
-    // compute current solution, slack variables
-    compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
+    // compute current solution, original variables and lambdas:
+    inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
+		      lambda.begin(), x_B_O.begin());
+  } else {                                          // r_B_O == 0
+    
+    // compute current solution, original variables and lambdas        
+    inv_M_B.multiply( tmp_l.begin(), minus_c_B.begin(),
+		      lambda.begin(), x_B_O.begin());
+  }
+  
+  // compute current solution, slack variables
+  compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
 }
 
 template < class Rep_ >
@@ -3020,6 +3049,8 @@ print_solution( )
 	           << "   r_B_O: ";
 	       std::copy( r_B_O.begin(), r_B_O.begin()+r_B_O.size(),
 	           std::ostream_iterator<ET>( vout3.out(), " "));
+	       if (r_B_O.size() == 0)
+		 vout3.out() << "< will only be allocated in phase II>";
 
 	   }
 	   vout3.out() << std::endl;

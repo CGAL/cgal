@@ -186,6 +186,34 @@ multiply__A_S_BxN_O(Value_iterator out) const
     }
 }
 
+// Initialize r_B_O.
+//
+// Note: this routine is called from transition() (and not during the
+// initialization of the QP-solver).
+template < class Rep_ >
+void  QP_solver<Rep_>::
+init_r_B_O()
+{
+  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()) &&
+			!check_tag(Is_linear()));
+  r_B_O.resize(B_O.size());
+  multiply__2D_B_OxN_O(r_B_O.begin());
+}
+
+// Initialize w.
+//
+// Note: this routine is called from transition() (and not during the
+// initialization of the QP-solver).
+template < class Rep_ >
+void  QP_solver<Rep_>::
+init_w()
+{
+  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()) &&
+			!check_tag(Is_linear()));
+  w.resize(qp_n);
+  multiply__2D_OxN_O(w.begin());
+}
+
 CGAL_END_NAMESPACE
 
 // ===== EOF ==================================================================

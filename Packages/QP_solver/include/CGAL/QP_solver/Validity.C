@@ -83,9 +83,9 @@ bool QP_solver<Rep_>::is_valid()
 	const bool f = this->is_solution_feasible();
 	const bool o = this->is_solution_optimal();
 	CGAL_qpe_debug {
-	  vout << "is in phase II: " << is_phaseII << std::endl;
-	  vout << "feasible: " << f << std::endl;
-	  vout << "optimal: " << o << std::endl;
+	  vout << " is in phase II: " << is_phaseII << std::endl;
+	  vout << "       feasible: " << f << std::endl;
+	  vout << "        optimal: " << o << std::endl;
 	}
 	return is_phaseII && f && o;
       }
@@ -95,10 +95,10 @@ bool QP_solver<Rep_>::is_valid()
 	const bool o = this->is_solution_optimal_for_auxiliary_problem();
 	const bool aux_positive = this->solution() > et0;
 	CGAL_qpe_debug {
-	  vout << "is in phase I: " << is_phaseI << std::endl;
-	  vout << "feasible_aux: " << f << std::endl;
-	  vout << "optimal_aux: " << o << std::endl;
-	  vout << "objective value positive: " << aux_positive << std::endl;
+	  vout << "            is in phase I: " << is_phaseI << std::endl;
+	  vout << "             feasible_aux: " << f << std::endl;
+	  vout << "              optimal_aux: " << o << std::endl;
+	  vout << " objective value positive: " << aux_positive << std::endl;
 	}
 	return is_phaseI && f && o && aux_positive;
       }
@@ -107,9 +107,9 @@ bool QP_solver<Rep_>::is_valid()
 	const bool f = this->is_solution_feasible();
 	const bool u = this->is_solution_unbounded();
 	CGAL_qpe_debug {
-	  vout << "is in phase II: " << is_phaseII << std::endl;
-	  vout << "feasible: " << f << std::endl;
-	  vout << "unbounded: " << u << std::endl;
+	  vout << " is in phase II: " << is_phaseII << std::endl;
+	  vout << "       feasible: " << f << std::endl;
+	  vout << "      unbounded: " << u << std::endl;
 	}
 	return is_phaseII && f && u;
       }
