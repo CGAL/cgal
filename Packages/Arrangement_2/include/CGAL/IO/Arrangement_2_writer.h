@@ -25,7 +25,6 @@
  * The header file for the Arrangement_2_writer<Arrangement> class.
  */
 
-#include <CGAL/IO/Arrangement_2_ascii_formatter.h>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <algorithm>
