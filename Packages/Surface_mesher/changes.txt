@@ -1,7 +1,7 @@
 3 novembre 2005 Mariette
 - surface mesher is now on cgal cvs serveur
 - added in doc_tex the specifications of Complex_2_in Triangulation_3
-  although they do not correspond to the code developpedby David
+  although they do not correspond to the code developped by David
 
 14 september 2005 Mariette
   - put package Surface_mesher on cgal local cvs serveur
