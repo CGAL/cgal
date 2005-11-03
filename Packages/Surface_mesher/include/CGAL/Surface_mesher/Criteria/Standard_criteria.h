@@ -98,7 +98,7 @@ namespace CGAL {
       debug (dbg) {
       if (debug)
 	std::cerr << "angle min = " << angle_min << " degrees\n";
-      B = std::sin (M_PI * angle_min / 180);
+      B = std::sin (CGAL_PI * angle_min / 180);
       B = B * B;
       if (debug)
 	std::cerr << "B = " << B << std::endl;
