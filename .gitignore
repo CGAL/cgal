@@ -67,7 +67,14 @@ Packages/Mesh_3/applications/off_to_ghs
 Packages/Mesh_3/applications/read_mesh
 Packages/Mesh_3/applications/slivers_exuder
 Packages/Mesh_3/applications/stat_mesh
+Packages/Mesh_3/examples/Mesh_3/chair-after.mesh
+Packages/Mesh_3/examples/Mesh_3/chair-after.png
+Packages/Mesh_3/examples/Mesh_3/chair-before.png
+Packages/Mesh_3/examples/Mesh_3/chair-slivers.off
+Packages/Mesh_3/examples/Mesh_3/chair-surface-initiale.off
+Packages/Mesh_3/examples/Mesh_3/chair.mesh
 Packages/Mesh_3/examples/Mesh_3/depends
+Packages/Mesh_3/examples/Mesh_3/dump_of_initial_points
 Packages/Mesh_3/examples/Mesh_3/implicit_surfaces_mesher_3
 Packages/Mesh_3/examples/Mesh_3/my_makefile
 Packages/Mesh_3/test/Mesh_3/*.mesh

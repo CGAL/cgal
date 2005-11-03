@@ -1,3 +1,10 @@
 depends
 implicit_surfaces_mesher_3
 my_makefile
+chair-after.mesh
+chair-after.png
+chair-before.png
+chair-slivers.off
+chair-surface-initiale.off
+chair.mesh
+dump_of_initial_points
