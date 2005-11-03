@@ -1,3 +1,17 @@
+This directory is a repository of tools, related to Mesh_3, but which
+are not demos nor examples. Some of them (like slivers_exuder) will
+perhaps be moved to demo/Mesh_3/ in the future.
+
+Here is the list of tools:
+    off_to_ghs
+    read_mesh
+    stat_mesh
+    slivers_exuder
+    display_distribution
+    lanteri
+
+Details follows...
+
 lanteri:
 --------
   This tool is designed specificaly for answering to a request of
