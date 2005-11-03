@@ -35,7 +35,7 @@ void init_options()
   string_options["tets"] = "";
   string_options["noboite"] = "";
   string_options["mesh"] = "";
-  double_options["echelle"] = 1;
+  double_options["scale"] = 1;
 }
 
 void usage(char *argv0, std::string error = "")
@@ -44,7 +44,20 @@ void usage(char *argv0, std::string error = "")
     std:: cerr << "Error: " << error << std::endl;
   std::cerr << "Usage:\n  " 
             << argv0
-            << " [(--tets|--noboite|--mesh) file]"
+            << " [--scale x] (--tets|--noboite|--mesh) FILE\n"
+	    << "Options:\n"
+	    << "  --scale SCALE                 "
+	    << "SCALE is a real number, which will be the\n"
+	    << "                                "
+	    << "the vertical scaling of the histogram.\n"
+	    << "  --tets FILE\n"
+	    << "  --noboite FILE\n"
+	    << "  --mesh FILE\n"
+	    << "                                "
+	    << "Read input file FILE.\n"
+	    << "                                "
+	    << "FILE must a .tets file, or a .noboite file,\n"
+	    << "                                or a .mesh file."
             << std::endl;
   exit(1);
 }
@@ -132,14 +145,14 @@ void output_distribution_to_png(std::vector<double>& elements,
   if( number_of_classes == 0 ) return;
   const double width = 1.0 / number_of_classes;
 
-  const double echelle = double_options["echelle"];
+  const double scale = double_options["scale"];
 
   *widget << CGAL::FillColor(CGAL::BLACK);
   //   *widget << Segment_2(Point_2(0., 0.), Point_2(1., 0.));
   for(int k=0;k<number_of_classes;k++)
     if(distribution[k]>0)
       {
-	double height = ( (distribution[k]+0.)/number_of_cells ) * echelle;
+	double height = ( (distribution[k]+0.)/number_of_cells ) * scale;
 	*widget << CGAL::BLACK 
 		<< Rectangle_2(Point_2(k*width, 0),
 			       Point_2((k+1)*width, height));
@@ -389,7 +402,7 @@ int main(int argc, char** argv)
   if(ghs)
     ghs = read_noboite(elements, in_file);
   std::stringstream png_name;
-  png_name << filename << "-echelle-" << double_options["echelle"]
+  png_name << filename << "-scale-" << double_options["scale"]
 	   << ".png";
   if(tets || mesh || ghs)
     output_distribution_to_png(elements, 1., 100, png_name.str());

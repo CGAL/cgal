@@ -4,9 +4,10 @@
 
 void usage(char* name)
 {
-  std::cerr << name << " [file_base_name]\n"
-	    << "  will convert file_base_name.off to file_base_name.faces \n"
-	    << "  and file_base_name.points.\n";
+  std::cerr << "Usage:\n"
+	    << name << " [FILE_BASENAME]\n"
+	    << "    will convert FILE_BASENAME.off to FILE_BASENAME.faces \n"
+	    << "    and FILE_BASENAME.points.\n";
   exit(1);
 }
 

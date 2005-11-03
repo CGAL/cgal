@@ -16,8 +16,9 @@ int main(int , char** argv)
   std::ifstream ifs(argv[1]);
   if( !ifs )
   {
-    std::cerr << "usage:\n"
-              << "  " << argv[0] << " file.mesh\n";
+    std::cerr << "Usage:\n"
+              << "  " << argv[0] << " FILE\n"
+	      << "  FILE must be a .mesh file.\n";
     return EXIT_FAILURE;
   }
 

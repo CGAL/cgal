@@ -1,0 +1,108 @@
+lanteri:
+--------
+  This tool is designed specificaly for answering to a request of
+  Stephane Lanteri, INRIA. It uses several files:
+  - utils.h exports templated functions
+          'display_faces_counts',
+          'display_facets_by_surface_indices_statistics',
+	  'display_vertices_by_surface_indices_statistics',
+	  'display_cells_by_volume_indices_statistics'.
+  - distribution.h and distribution.C exports functions
+          'compute_distribution',
+          'display_distribution'.
+    They use Distribution_displayer.h.
+  - Distribution_displayer.h defines a base class
+  'Distribution_displayer', with two pure virtual functions:
+          'fill_rectangle',
+	  'segment'
+  - Gd_displayer.h Qt_widget_displayer.h
+    Gd_displayer.C Qt_widget_displayer.C
+      implementes two different classes derived of
+      'Distribution_displayer' (two implementation for displaying).
+  - lanteri_process_results.C defines three functions (declared in
+  lanteri.C):
+          'process_cells',
+	  'process_volume_edges',
+	  'process_surface_edges'.
+  - lanteri_utils.h defines two templated functions:
+          'scan_edges_and_process',
+	  'scan_cells_and_process'.
+    These two functions use functions of lanteri_process_results.C.
+
+display_distribution:
+--------------------
+Usage:
+  ./display_distribution [--scale x] (--tets|--noboite|--mesh) FILE
+Options:
+  --scale SCALE                 SCALE is a real number, which will be the
+                                the vertical scaling of the histogram.
+  --tets FILE
+  --noboite FILE
+  --mesh FILE
+                                Read input file FILE.
+                                FILE must a .tets file, or a .noboite file,
+                                or a .mesh file.
+
+This tool displays the radius-radius ratio distribution of a mesh file,
+and save it in a png file named FILE-scale-SCALE.png.
+
+off_to_ghs:
+----------
+Usage:
+./off_to_ghs [FILE_BASENAME]
+    will convert FILE_BASENAME.off to FILE_BASENAME.faces
+    and FILE_BASENAME.points.
+
+read_mesh:
+---------
+Usage:
+  ./read_mesh FILE
+  FILE must be a .mesh file.
+
+This tools read a .mesh file and displays faces counts, such as in:
+    Vertices: 3247
+    Facets on surface: 6474
+    Cells: 19670
+    Cells in volume: 18335
+
+This file uses utils.h, and types.h.
+
+stat_mesh:
+---------
+Usage:
+  ./stat_mesh FILE
+  FILE must be a .mesh file.
+
+Same as read_mesh, but displays more informations:
+    Vertices: 3247
+    Facets on surface: 6474
+    Cells: 19670
+    Cells in volume: 18335
+
+  Statistics:
+(vertices)
+    Vertices with index #0: 0
+    Vertices with index #1: 450
+    Vertices with index #2: 563
+    Vertices with index #3: 705
+    Vertices with index #4: 863
+    Vertices with index #5: 666
+(facets)
+    Hybrid facets: 0
+    Facets on surface #0: 0
+    Facets on surface #1: 896
+    Facets on surface #2: 1122
+    Facets on surface #3: 1406
+    Facets on surface #4: 1722
+    Facets on surface #5: 1328
+
+slivers_exuder:
+--------------
+This tools exudes slivers from a .mesh file (medit format).
+
+Usage:
+  ./slivers_exuder INPUT OUTPUT
+    INPUT must be a .mesh file name.
+    OUPUT is the name of a .mesh file ouput.
+
+Uses utils.h and weighted_types.h.

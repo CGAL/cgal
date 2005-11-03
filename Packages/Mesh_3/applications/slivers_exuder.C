@@ -19,8 +19,10 @@ int main(int , char** argv)
   std::ofstream ofs(argv[2]);
   if( !ifs || !ofs)
   {
-    std::cerr << "usage:\n"
-              << "  " << argv[0] << " input.mesh output.mesh\n";
+    std::cerr << "Usage:\n"
+              << "  " << argv[0] << " INPUT OUTPUT\n"
+	      << "    INPUT must be a .mesh file name.\n"
+	      << "    OUPUT is the name of a .mesh file ouput.\n";
     return EXIT_FAILURE;
   }
 

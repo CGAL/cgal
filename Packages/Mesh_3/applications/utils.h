@@ -14,7 +14,7 @@ void display_faces_counts(const Tr& tr,
               << prefix << "Facets on surface: " 
               << CGAL::number_of_facets_on_surface(tr) << std::endl
               << prefix << "Cells: "
-              << tr.number_of_cells()
+              << tr.number_of_cells() << std::endl
               << prefix << "Cells in volume: " 
               << CGAL::number_of_cells_in_domain(tr) << std::endl;
 }
