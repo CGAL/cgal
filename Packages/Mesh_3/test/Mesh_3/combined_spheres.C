@@ -100,41 +100,41 @@ typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
 
 class Special_tets_criteria
 {
-  double size_bound;
-  double shape_bound;
-  double special_size;
-  double r;
+  double squared_radius_bound;
+  double squared_radius_edge_bound;
+  double squared_special_radius_bound;
+  double squared_r1;
 
 public:
-  Special_tets_criteria(const double special_size, const double r1,
+  Special_tets_criteria(const double special_radius_bound, 
+			const double r1,
                         const double radius_edge_bound = 2,
-                        const double squared_radius_bound = 0)
-    : size_bound(squared_radius_bound),
-      shape_bound(radius_edge_bound),
-      special_size(special_size),
-      r(r1) {}
+                        const double radius_bound = 0)
+    : squared_radius_bound(radius_bound*radius_bound),
+      squared_radius_edge_bound(radius_edge_bound*radius_edge_bound),
+      squared_special_radius_bound(special_radius_bound*special_radius_bound),
+      squared_r1(r1*r1) {}
 
   typedef Tr::Cell_handle Cell_handle;
   typedef Tets_criteria::Quality Quality;
 
-  class Is_bad
-  {
+  class Is_bad {
   protected:
-    const double shape_bound;
-    const double size_bound;
-    const double r1;
-    const double squared_special_size;
+    const double squared_radius_edge_bound;
+    const double squared_radius_bound;
+    const double squared_r1;
+    const double squared_special_radius_bound;
   public:
     typedef Tr::Point Point_3;
       
-    Is_bad(const double radius_edge_bound, 
-	   const double squared_radius_bound,
-           const double r1,
-           const double size)
-      : shape_bound(radius_edge_bound),
-	size_bound(squared_radius_bound),
-        r1(r1),
-        squared_special_size(size*size){};
+    Is_bad(const double squared_radius_edge_bound_, 
+	   const double squared_radius_bound_,
+           const double squared_r1_,
+           const double squared_special_radius_bound_)
+      : squared_radius_edge_bound(squared_radius_edge_bound_),
+	squared_radius_bound(squared_radius_bound_),
+        squared_r1(squared_r1_),
+        squared_special_radius_bound(squared_special_radius_bound_){};
       
     bool operator()(const Cell_handle& c,
                     Quality& qual) const
@@ -155,24 +155,26 @@ public:
       Circumcenter circumcenter = 
         Geom_traits().construct_circumcenter_3_object();
 
-      const double size = CGAL::to_double(radius(p, q, r, s));
-      const double sq_distance_from_origin = 
-        CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
-
-      double min_size_bound = size_bound;
-      if( squared_special_size != 0 && 
-          sq_distance_from_origin < r1*r1 )
+      double min_squared_radius_bound = squared_radius_bound;
+      if( squared_special_radius_bound != 0)
       {
-        if( min_size_bound == 0 )
-          min_size_bound = squared_special_size;
-        else
-          if( squared_special_size < min_size_bound )
-            min_size_bound = squared_special_size;
+	const double sq_distance_from_origin = 
+	  CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
+	if(sq_distance_from_origin < squared_r1 )
+	{
+	  if( min_squared_radius_bound == 0 )
+	    min_squared_radius_bound = squared_special_radius_bound;
+	  else
+	    if( squared_special_radius_bound < min_squared_radius_bound )
+	      min_squared_radius_bound = squared_special_radius_bound;
+	}
       }
 
-      if( min_size_bound != 0)
+      const double sq_radius = CGAL::to_double(radius(p, q, r, s));
+
+      if( min_squared_radius_bound != 0)
       {
-        qual.second = size / min_size_bound;
+        qual.second = sq_radius / min_squared_radius_bound;
         // normalized by size bound to deal
         // with size field
         if( qual.sq_size() > 1 )
@@ -181,7 +183,9 @@ public:
           return true;
         }
       }
-      if( shape_bound == 0 )
+      else
+	qual.second = 1;
+      if( squared_radius_edge_bound == 0 )
       {
         qual = Quality(0,1);
         return false;
@@ -199,16 +203,17 @@ public:
       min_sq_length = CGAL::min(min_sq_length,
                                 CGAL::to_double(distance(r, s)));
 
-      qual.first = size / min_sq_length;
+      qual.first = sq_radius / min_sq_length;
 
-      return (qual.first > shape_bound);
+      return (qual.first > squared_radius_edge_bound);
     }
 
   }; // end Is_bad
 
 
   Is_bad is_bad_object() const
-  { return Is_bad(shape_bound, size_bound, r, special_size); }
+  { return Is_bad(squared_radius_edge_bound, squared_radius_bound,
+		  squared_r1, squared_special_radius_bound); }
 
 }; // end Special_tets_criteria
 
@@ -216,7 +221,7 @@ typedef CGAL::Implicit_surfaces_mesher_3<Tr,
 					 Oracle,
                                          Multi_criterion,
                                          Special_tets_criteria> Mesher;
-
+// 					 Tets_criteria> Mesher;
 #include <vector>
 
 int main(int, char**)
@@ -323,10 +328,12 @@ int main(int, char**)
   criterion_vector.push_back(&aspect_ratio_criterion);
   Multi_criterion multi_criterion (criterion_vector);
 
-  Special_tets_criteria tets_criteria(tets_radius_radius_ratio_bound,
-                                      tets_squared_size_bound,
-                                      r1,
-                                      special_size_bound);
+  Special_tets_criteria tets_criteria(special_size_bound,
+				      r1, 
+				      tets_radius_radius_ratio_bound,
+                                      tets_squared_size_bound);
+//   Tets_criteria tets_criteria(tets_radius_radius_ratio_bound,
+// 			      tets_squared_size_bound);
 
   Mesher mesher (tr, oracle, multi_criterion, tets_criteria);
   mesher.refine_mesh();
