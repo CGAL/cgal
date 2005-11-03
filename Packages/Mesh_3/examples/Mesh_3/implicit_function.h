@@ -57,7 +57,7 @@ public:
     case -1: return IN;
     case 0: return ON;
     case 1: return OUT;
-    default: assert (res == -1 || res == 0 || res == 1);
+    default: CGAL_assertion (res == -1 || res == 0 || res == 1);
     }
     return OUT;  // never used
   }
