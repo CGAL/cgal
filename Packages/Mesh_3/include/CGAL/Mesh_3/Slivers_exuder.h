@@ -486,10 +486,10 @@ public: // methods
 
         for(int i = 0; i<4 ; ++i)
           {
-            std::cerr << critical_r << " " 
-                      << power_product(v->point(),
-                                       opposite_cell->vertex(i)->point())
-                      << " " << sq_d_v << std::endl;
+//             std::cerr << critical_r << " " 
+//                       << power_product(v->point(),
+//                                        opposite_cell->vertex(i)->point())
+//                       << " " << sq_d_v << std::endl;
             
             CGAL_assertion(
 	      critical_r < power_product(v->point(),
@@ -602,7 +602,7 @@ public: // methods
       internal_facets.reserve(64);
       boundary_facets.reserve(64); // BEURK
       
-      std::cerr << wp << " / " << sq_d_v << std::endl;
+//       std::cerr << wp << " / " << sq_d_v << std::endl;
       tr.find_conflicts(wp,
 			v->cell(),
                         std::back_inserter(boundary_facets),
