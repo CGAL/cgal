@@ -27,7 +27,7 @@ int main(int , char** argv)
   }
 
   std::cout << "  Reading " << argv[1] << std::endl;
-  if(! CGAL::input_pslg_from_medit(ifs,
+  if(! CGAL::input_from_medit(ifs,
                                    c2t3,
                                    true,         // debug
                                    &std::cout) ) // debug to cout
@@ -41,7 +41,7 @@ int main(int , char** argv)
   exuder.pump_vertices();
 
   std::cout << "  Writing " << argv[2] << std::endl;
-  CGAL::output_pslg_to_medit(ofs, c2t3);
+  CGAL::output_to_medit(ofs, c2t3);
 
   return EXIT_SUCCESS;
 }

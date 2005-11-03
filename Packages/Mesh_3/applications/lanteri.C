@@ -129,7 +129,7 @@ int main(int , char**)
   }
 
   std::cout << "  Reading " << filename << std::endl;
-  if( ! CGAL::input_pslg_from_medit(ifs,
+  if( ! CGAL::input_from_medit(ifs,
                                     c2t3,
                                     true,         // debug
                                     &std::cout) ) // debug to cout

@@ -31,7 +31,7 @@ namespace CGAL {
 
 template <class C2T3>
 void
-output_pslg_to_medit (std::ostream& os, const C2T3& c2t3)
+output_to_medit (std::ostream& os, const C2T3& c2t3)
 {
   typedef typename C2T3::Triangulation_3 Tr;
   typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
@@ -105,7 +105,7 @@ output_pslg_to_medit (std::ostream& os, const C2T3& c2t3)
   // End
   os << "End" << std::endl;
 
-} // end output_pslg_to_medit
+} // end output_to_medit
 
 namespace Mesh_3 { namespace details {
   
@@ -146,10 +146,10 @@ namespace Mesh_3 { namespace details {
 
 template < class C2T3>
 bool
-input_pslg_from_medit (std::istream& is, 
+input_from_medit (std::istream& is, 
                        C2T3 & c2t3,
                        bool debug = false, 
-                       std::ostream* debug_str = &std::cout) {
+                       std::ostream* debug_str = &std::cerr) {
   typedef typename C2T3::Triangulation_3 Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;
@@ -161,7 +161,7 @@ input_pslg_from_medit (std::istream& is,
   
   Mesh_3::details::Debug debug_stream(debug,
                                       debug_str,
-                                      "CGAL::input_pslg_from_medit()"
+                                      "CGAL::input_from_medit()"
                                       "input error:");
 
   Tr& tr = c2t3.triangulation();
@@ -278,7 +278,7 @@ input_pslg_from_medit (std::istream& is,
     return true;
   else
     return debug_stream << "  \"End\" expected!\n"; 
-} // end input_pslg_from_medit
+} // end input_from_medit
 
 template < class Tr>
 int number_of_cells_in_domain(const Tr& T) {

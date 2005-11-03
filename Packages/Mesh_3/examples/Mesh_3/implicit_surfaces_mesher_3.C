@@ -524,7 +524,7 @@ int main(int argc, char **argv) {
       }
     
       // Output
-      output_pslg_to_medit(*out, mesher.complex_2_in_triangulation_3());
+      output_to_medit(*out, mesher.complex_2_in_triangulation_3());
     }
 
 #ifdef CGAL_USE_QT
@@ -556,7 +556,7 @@ int main(int argc, char **argv) {
     if( file ) {
       std::cerr << "Writing to file " << mesh_after_filename
 		<< "..." << std::endl;
-      output_pslg_to_medit(file, mesher.complex_2_in_triangulation_3());
+      output_to_medit(file, mesher.complex_2_in_triangulation_3());
     }
     else
       usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());

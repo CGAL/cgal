@@ -414,7 +414,7 @@ int main(int argc, char **argv) {
       }
     
       // Output
-      output_pslg_to_medit(*out, mesher.complex_2_in_triangulation_3());
+      output_to_medit(*out, mesher.complex_2_in_triangulation_3());
     }
     
   if( dump_distribution )
@@ -438,7 +438,7 @@ int main(int argc, char **argv) {
     std::ofstream file(mesh_after_filename.c_str());
     if( file ) {
       std::cerr << "Writing to file " << mesh_after_filename << "..." << std::endl;
-      output_pslg_to_medit(file, mesher.complex_2_in_triangulation_3());
+      output_to_medit(file, mesher.complex_2_in_triangulation_3());
     }
     else
       usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());

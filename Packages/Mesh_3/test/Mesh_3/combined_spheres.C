@@ -346,5 +346,5 @@ int main(int, char**)
     filename = "combined_spheres.mesh";
 
   std::ofstream out(filename.c_str());
-  CGAL::output_pslg_to_medit(out, mesher.complex_2_in_triangulation_3());
+  CGAL::output_to_medit(out, mesher.complex_2_in_triangulation_3());
 }

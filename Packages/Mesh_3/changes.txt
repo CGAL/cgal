@@ -1,3 +1,9 @@
+3 november 2005 Laurent Rineau
+- modified applications/ tools
+- rename functions:
+     output_pslg_to_medit  -> output_to_medit
+     input_pslg_from_medit -> input_from_medit
+
 7 september 2005 Laurent Rineau
 - "New" tools in the subdirectory applications/
   Actually, they were lost in the tools/ subdirectory of the package, that

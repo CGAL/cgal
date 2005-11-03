@@ -186,5 +186,5 @@ int main(int , char** )
   mesher.refine_mesh();
 
   std::ofstream out("multi_spheres.mesh");
-  CGAL::output_pslg_to_medit(out, mesher.complex_2_in_triangulation_3());
+  CGAL::output_to_medit(out, mesher.complex_2_in_triangulation_3());
 }
