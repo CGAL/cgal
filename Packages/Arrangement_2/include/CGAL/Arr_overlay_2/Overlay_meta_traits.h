@@ -369,16 +369,13 @@ public:
 
       const std::pair<Base_Point_2, unsigned int>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
-      /*OutputIterator oi_end;
+      OutputIterator oi_end;
       if(m_base_tr->compare_xy_2_object()
           (m_base_tr->construct_min_vertex_2_object()(cv1),
            m_base_tr->construct_min_vertex_2_object()(cv2)) == LARGER)
         oi_end = m_base_tr->intersect_2_object()(cv1, cv2, oi);
       else
-        oi_end = m_base_tr->intersect_2_object()(cv2, cv1, oi);*/
-
-      OutputIterator oi_end = m_base_tr->intersect_2_object()(cv1, cv2, oi);
-
+        oi_end = m_base_tr->intersect_2_object()(cv2, cv1, oi);
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
       // the extenede X_monotone_curve_2 
