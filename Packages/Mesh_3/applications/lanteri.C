@@ -123,7 +123,7 @@ int main(int , char**)
   std::cout << "Input filename:" << std::endl;
   std::cin >> filename;
   std::ifstream ifs(filename.c_str());
-  if( !ifs || !cin)
+  if( !ifs || !std::cin)
   {
     return EXIT_FAILURE;
   }
