@@ -25,15 +25,15 @@ namespace CGAL {
 template <typename Tr>
 class Mesh_criteria_3 
 {
-  double size_bound;
-  double shape_bound;
+  double squared_radius_bound_;
+  double radius_edge_bound_;
 public:
   typedef typename Tr::Cell_handle Cell_handle;
 
   Mesh_criteria_3(const double radius_edge_bound = 2, 
 		  const double squared_radius_bound = 0)
-    : size_bound(squared_radius_bound),
-      shape_bound(radius_edge_bound)
+    : squared_radius_bound_(squared_radius_bound),
+      radius_edge_bound_(radius_edge_bound)
   {
   };
 
@@ -66,39 +66,39 @@ public:
   inline
   double squared_radius_bound() const 
   {
-    return size_bound; 
+    return squared_radius_bound_; 
   };
 
   inline 
   void set_squared_radius_bound(const double squared_radius_bound) 
   { 
-    size_bound = squared_radius_bound;
+    squared_radius_bound_ = squared_radius_bound;
   };
 
   inline
   double radius_edge_bound() const 
   {
-    return shape_bound; 
+    return radius_edge_bound_; 
   };
 
   inline 
   void set_radius_edge_bound(const double radius_edge_bound) 
   { 
-    shape_bound = radius_edge_bound;
+    radius_edge_bound_ = radius_edge_bound;
   };
 
   class Is_bad
   {
   protected:
-    const double shape_bound;
-    const double size_bound;
+    const double radius_edge_bound_;
+    const double squared_radius_bound_;
   public:
     typedef typename Tr::Point Point_3;
       
     Is_bad(const double radius_edge_bound, 
 	   const double squared_radius_bound)
-      : shape_bound(radius_edge_bound),
-	size_bound(squared_radius_bound) {};
+      : radius_edge_bound_(radius_edge_bound),
+	squared_radius_bound_(squared_radius_bound) {};
       
     bool operator()(const Cell_handle& c,
                     Quality& qual) const
@@ -118,9 +118,9 @@ public:
 
       double size = to_double(radius(p, q, r, s));
 
-      if( size_bound != 0 )
+      if( squared_radius_bound_ != 0 )
         {
-          qual.second = size / size_bound;
+          qual.second = size / squared_radius_bound_;
             // normalized by size bound to deal
             // with size field
           if( qual.sq_size() > 1 )
@@ -129,7 +129,7 @@ public:
               return true;
             }
         }
-      if( shape_bound == 0 )
+      if( radius_edge_bound_ == 0 )
 	{
 	  qual = Quality(0,1);
 	  return false;
@@ -144,14 +144,14 @@ public:
 
       qual.first = size / min_sq_length;
 
-      return (qual.first > shape_bound);
+      return (qual.first > radius_edge_bound_);
     }
     
   }; // end Is_bad
     
 
   Is_bad is_bad_object() const
-  { return Is_bad(shape_bound, size_bound); }
+  { return Is_bad(radius_edge_bound_, squared_radius_bound_); }
 
 }; // end Mesh_criteria_3
 
