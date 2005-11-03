@@ -13,3 +13,4 @@ Parameterization Package: Release changes:
     - Initial develop version
 
 None of this package was available in CGAL 3.1.
+
