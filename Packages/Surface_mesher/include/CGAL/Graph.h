@@ -41,11 +41,13 @@ class Graph {
     else n = nit->second;
     for (Elements_iterator it = loe.begin();
 	 it != loe.end();
-	 ++it) {
-      Node<E>* succ;
+	 ++it) 
+    {
       nit = nodes.find(*it);
+
+      Node<E>* succ;
       if (  nit == nodes.end()) {
-	Node<E>* succ = new Node<E>(*it);
+	succ = new Node<E>(*it);
 	nodes.insert( std::make_pair(*it, succ) ); 
       }
       else succ = nit->second;
