@@ -253,20 +253,22 @@ private:
 template <typename Tr,
           typename Criteria,
           typename Oracle, // BEURK
-          typename Base = 
+          typename BaseP = // workaround for VC7, see below
             Refine_tets_with_oracle_base<Tr, Criteria, Oracle>,
           typename Facets_level = Refine_facets<Tr>
  >
 class Refine_tets : 
-  public Base, 
+  public BaseP, 
   public Mesher_level <
     Tr,
-    Refine_tets<Tr, Criteria, Oracle, Base, Facets_level>,
+    Refine_tets<Tr, Criteria, Oracle, BaseP, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
   >
 {
+  typedef BaseP Base; // workaround for VC7
+
   Facets_level& f_level;
 public:
   typedef Refine_tets<Tr, Criteria, Oracle, Base, Facets_level> Self;
@@ -280,7 +282,8 @@ public:
 
   Refine_tets(Tr& t, Criteria crit, Oracle& oracle, Facets_level& facets_level)
     : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
-  {}
+  {} // here VC7 complain about default constructor of Base, if the
+     // workaround is not used.
 
 }; // end class Refine_tets
 
