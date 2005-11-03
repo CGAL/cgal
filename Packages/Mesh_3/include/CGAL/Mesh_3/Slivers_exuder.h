@@ -350,23 +350,20 @@ public: // methods
 
   void pump_vertices(double radius_ratio_limit = 1.)
   {
+    // store radius_ratio_limit in the member stop_limit_on_radius_ratio
     stop_limit_on_radius_ratio = radius_ratio_limit;
-    int failure_count = 0;
 
-    //     while(  front.first < 0.5 && !cell_queue.empty() )
     while( !cell_queue.empty() )
       {
 	  
 	std::pair<double, Cell_handle> front = *(cell_queue.front());
 	Cell_handle c = front.second;
-// 	std::cerr << "worst radius=" << front.first << std::endl;
-	
 	  
 	int i;
 	for( i = 0; i < 4; ++i )
 	  {
             // do not pump surface vertices
-	    if( c->vertex(i)->point().surface_index() > 0 
+	    if( c->vertex(i)->point().surface_index() == 0 
                 && pump_vertex(c->vertex(i)) )
 	      {
 		std::cout << "P";
@@ -374,41 +371,13 @@ public: // methods
 	      }
 	    else
 	      std::cout << ".";
-	    // 	    if(i == 3)
-	    // 	      {
-	    // 		cell_queue.pop_front();
-	    // 		++failure_count;
-	    // 	      }
 	  }
 
 	// if the tet could not be deleted
-	if (i==4) {
+	if (i==4)
 	  cell_queue.pop_front();
-	  ++failure_count;
-	}
-
-	else {
-// 	  front = *(cell_queue.front());
-	  // 	std::ofstream dump("dump.off");
-	  // 	output_surface_facets_to_off(dump, tr);
-	  // 	dump.close();
-	
-// 	std::cerr << "\n";
-// 	std::cerr << "Pumped vertices:  " 
-// 		  << num_of_pumped_vertices << std::endl;
-// 	std::cerr << "Ignored vertices: " 
-// 		  << num_of_ignored_vertices << std::endl;
-// 	std::cerr << "Average pumping:  " 
-// 		  << (total_pumping / num_of_pumped_vertices) 
-// 		  << std::endl;
-	}
-
-
-// 	std::cerr << std::endl 
-// 		  << "Size of queue = " << cell_queue.size()
-// 		  << std::endl;
       }
-  }
+  } // end function pump_vertices
 
   bool pump_vertex(Vertex_handle v)
   {
@@ -633,11 +602,14 @@ public: // methods
       internal_facets.reserve(64);
       boundary_facets.reserve(64); // BEURK
       
+      std::cerr << wp << " / " << sq_d_v << std::endl;
       tr.find_conflicts(wp,
 			v->cell(),
                         std::back_inserter(boundary_facets),
 			std::back_inserter(deleted_cells),
 			std::back_inserter(internal_facets));
+
+      CGAL_assertion( best_pre_star.size() == boundary_facets.size() );
      
       // delete cells from the list of bad cells
       for(typename std::vector<Cell_handle>::iterator
