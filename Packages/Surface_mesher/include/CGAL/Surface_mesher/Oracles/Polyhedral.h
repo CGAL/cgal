@@ -44,7 +44,7 @@ public:
   typedef typename Geom_traits::Line_3 Line;
   typedef typename Geom_traits::Triangle_3 Triangle;
 
-  typedef typename Tr::Finite_vertices_iterator Vertex_iterator;
+  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef std::list<Point> Points;
 
@@ -80,13 +80,13 @@ public:
       std::cerr << "done\n\n";
     }
 
-  Vertex_iterator finite_vertices_begin()
+  Finite_vertices_iterator finite_vertices_begin()
   {
     return tr.finite_vertices_begin();
   }
 
   
-  Vertex_iterator finite_vertices_end()
+  Finite_vertices_iterator finite_vertices_end()
   {
     return tr.finite_vertices_end();
   }
@@ -96,7 +96,7 @@ public:
   Points random_points (int n) {
     Points res;
 
-    for (Vertex_iterator vit = finite_vertices_begin(); 
+    for (Finite_vertices_iterator vit = finite_vertices_begin(); 
 	 vit != finite_vertices_end() && n > 0;
 	 ++vit, --n)
       res.push_back (vit->point());
