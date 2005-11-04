@@ -692,23 +692,48 @@ public: // only the pricing strategies (including user-defined ones
                      lambda_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
         
-    // access to the vector w
-    ET  w_j_numerator(int j) const
-    { 
-        CGAL_qpe_precondition((0 <= j) && (j < qp_n));
-        return w[j];
+  // Returns w[j] for an original variable x_j.
+  ET w_j_numerator(int j) const
+  { 
+    CGAL_qpe_precondition((0 <= j) && (j < qp_n));
+    return w[j];
+  }
+  
+  Bound_index nonbasic_original_variable_bound_index(int i) const
+    // Returns on which bound the nonbasic variable x_i is currently
+    // sitting:
+    //
+    // - LOWER: the variable is sitting on its lower bound.
+    // - UPPER: the variable is sitting on its upper bound.
+    // - FIXED: the variable is sitting on its lower and upper bound.
+    // - ZERO: the variable has value zero and is sitting on its lower
+    //   bound, its upper bound, or betweeen the two bounds.
+    //
+    // Note: in the latter case you can call state_of_zero_nonbasic_variable()
+    // to find out which bound is active, if any.
+  {
+    CGAL_assertion(!check_tag(Is_in_standard_form()) &&
+		   !is_basic(i) && i < qp_n);
+    if (x_O_v_i[i] == BASIC) {
+      CGAL_qpe_assertion(false);
     }
-    
-    Bound_index  nonbasic_original_variable_bound_index(int i) const
-    {
-        CGAL_assertion_msg(!is_basic(i) && i < qp_n, "wrong argument");
-        if (x_O_v_i[i] == BASIC) {
-            CGAL_qpe_assertion(false);
-        }
-        return x_O_v_i[i];  
-    };
-    
-    
+    return x_O_v_i[i];  
+  };
+  
+  int state_of_zero_nonbasic_variable(int i) const
+    // Returns -1 if the original variable x_i equals its lower bound,
+    // 0 if it lies strictly between its lower and upper bound, and 1 if
+    // it coincides with its upper bound.
+    // 
+    // See also the documentation of nonbasic_original_variable_bound_index()
+    // above.
+  {
+    CGAL_assertion(!check_tag(Is_in_standard_form()) &&
+		   !is_basic(i) && i < qp_n && x_O_v_i[i] == ZERO);
+    return CGAL::is_zero(qp_l[i])? -1 :
+      (CGAL::is_zero(qp_u[i])? 1 : 0);
+  }
+  
 private:
     // miscellaneous
     // -------------
