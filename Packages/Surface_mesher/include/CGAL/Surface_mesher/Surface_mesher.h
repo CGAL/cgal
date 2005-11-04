@@ -227,7 +227,7 @@ namespace CGAL {
 	return NO_CONFLICT;
       }
 
-    bool test_if_facet_is_encroached(const Facet f, const Point p)
+    bool test_if_facet_is_encroached(const Facet f, const Point& p)
     {
       if( tr.is_infinite(f.first) ) 
 	return false;
