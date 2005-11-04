@@ -301,9 +301,9 @@ This script is the driver program for creating \cgal\ manuals.  It
 makes use of \LaTeX, PDF\LaTeX, Bib\TeX, \texttt{makeindex},
 \texttt{latex\_to\_html}, and other tools to create the PostScript,
 PDF, and HTML manuals for individual \emph{CVS Packages} as well as
-custom \emph{Modules}. It encodes the conventions of how \cgal\ manuals are
-organized and how the general purpose tools need to be called to
-create the manuals. We specify these conventions here in the
+custom \emph{Modules} and its \emph{Sub-Modules}. It encodes the conventions 
+of how \cgal\ manuals are organized and how the general purpose tools need 
+to be called to create the manuals. We specify these conventions here in the
 developers manual. Note that a brief documentation is also kept in the
 script itself, these documentations need to be kept synchronized!
 
@@ -341,6 +341,38 @@ script itself, these documentations need to be kept synchronized!
      This driver is a complete \LaTeX\ file including the
      \verb|\begin{document}| command and such. It includes the various
      chapters from the packages.
+   
+   \item[Sub-Modules]~
+     
+     Another presentation unit on top of modules. A sub-module only contains 
+     a subset of the packages in a module. The numbering of pages, 
+     chapters, equations et cetera is inherited from the module, while the
+     table of context and the index is shrink-wrapped to the sub-module.
+     
+     Generally, for some module \texttt{m.tex}, a sub-module \texttt{sub} is 
+     defined in a file \texttt{m\_\_sub.only.tex} that contains \LaTeX\ 
+     commands to be executed before the document starts. The most obvious 
+     command therein is probably \texttt{$\backslash$includeonly}. Note: packages split 
+     into user manual and reference manual need two entries in the 
+     \texttt{\\includeonly} command. Sub-modules have to adhere to the 
+     filenaming scheme from above, in order to be found by the 
+     \texttt{cgal\_manual} script. There can be multiple sub-modules for each
+     module. Sub-modules of sub-modules are not supported.
+     
+     For example, consider a module stored in \texttt{cgal\_manual.tex}. A 
+     sub-module \texttt{Geom} should be built, restricting the module to user 
+     and reference manual of the package \texttt{Geom}. It could be stored in 
+     a file called \texttt{cgal\_manual\_\_Geom.only.tex}, only containing the
+     \LaTeX\ command 
+     \texttt{$\backslash$includeonly\{Geom/main,Geom\_ref/main\}}.
+     
+     When building a module with the \texttt{cgal\_manual} script, the 
+     default is to produce no sub-modules of it. The desired sub-modules
+     can be specified by \texttt{-sub-modules=mod1,mod2..} where sub-modules
+     are given as a comma-separated list. Only the sub-module name has to be 
+     given, not the filename under which it is stored. A special sub-module
+     is \texttt{all}, which matches all sub-modules present in the current 
+     directory.
 \end{description}
 
  This script can create individual package documentation given the name of
@@ -437,6 +469,13 @@ overwrite the old results.
     \textbf{-s        }          create a summary logfile .sum .
     \textbf{-quiet    }          no progress messages.
     \textbf{-realquiet}          suppresses also error messages.
+        
+    \textbf{-cmdlog   }          create a logfile "cmd_log" containing all commands 
+                          that were issued during execution
+                     
+    \textbf{-sub-modules=mod1,mod2...}
+                          build specified sub-modules, given as a comma-
+                          separated list.                      
 \end{alltt}
 
 
