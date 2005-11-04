@@ -5,6 +5,7 @@
 #include <fstream>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Mesh_3/IO.h>
 
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 
@@ -21,16 +22,21 @@ int main(int , char** argv)
   {
     std::cerr << "Usage:\n"
               << "  " << argv[0] << " INPUT OUTPUT\n"
-	      << "    INPUT must be a .mesh file name.\n"
-	      << "    OUPUT is the name of a .mesh file ouput.\n";
+	      << "    INPUT must be a file name.\n"
+	      << "    OUPUT is the name of the ouput file.\n"
+              << "    both INPUT and OUPUT are files  of format .mesh.cgal,\n"
+              << "    produced by CGAL::Mesh_3::output_mesh(),\n"
+              << "    with points CGAL::Weighted_point_with_surface_index\n"
+              << "    and cells CGAL::Mesh_3::"
+      "Complex_2_in_triangulation_cell_base_3.\n";;
     return EXIT_FAILURE;
   }
 
   std::cout << "  Reading " << argv[1] << std::endl;
-  if(! CGAL::input_from_medit(ifs,
-                                   c2t3,
-                                   true,         // debug
-                                   &std::cout) ) // debug to cout
+  if(! CGAL::Mesh_3::input_mesh(ifs,
+                                c2t3,
+                                true,         // debug
+                                &std::cerr) ) // debug to cerr
     return EXIT_FAILURE;
   ifs.close();
 
@@ -41,7 +47,7 @@ int main(int , char** argv)
   exuder.pump_vertices();
 
   std::cout << "  Writing " << argv[2] << std::endl;
-  CGAL::output_to_medit(ofs, c2t3);
+  CGAL::Mesh_3::output_mesh(ofs, c2t3);
 
   return EXIT_SUCCESS;
 }

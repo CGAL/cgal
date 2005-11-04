@@ -26,6 +26,7 @@
 #include <string>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Point_traits.h>
+#include <CGAL/utility.h>
 
 namespace CGAL {
 
@@ -125,7 +126,7 @@ namespace Mesh_3 { namespace details {
     Debug& apply(T& t)
     {
       if(active)
-        *out << header << t;
+        *out << header << t << std::endl;
       return *this;
     }
 
@@ -138,10 +139,9 @@ namespace Mesh_3 { namespace details {
   template <typename T>
   Debug& operator<<(Debug& d, const T& t)
   {
-    d.apply(t);
-    return d;
+    return d.apply(t);
   }
-} // end namespace detailes
+} // end namespace details
 } // end namespace Mesh_3
 
 template < class C2T3>
@@ -151,6 +151,7 @@ input_from_medit (std::istream& is,
                        bool debug = false, 
                        std::ostream* debug_str = &std::cerr) {
   typedef typename C2T3::Triangulation_3 Tr;
+  typedef typename Tr::Triangulation_data_structure Tds;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;
   typedef Point_traits<Point> P_traits;
@@ -165,10 +166,11 @@ input_from_medit (std::istream& is,
                                       "input error:");
 
   Tr& tr = c2t3.triangulation();
+  Tds& tds = tr.tds();
 
   tr.clear();
 
-  // Header.
+  // Header
   std::string temp_string;
   int temp_int;
 
@@ -199,8 +201,10 @@ input_from_medit (std::istream& is,
   if( ! (is >> number_of_vertices) )
     return debug_stream << "  number of vertices expected!\n";
   
-  Cell_handle c_hint = Cell_handle();
-  std::vector<Vertex_handle> V(number_of_vertices);
+  std::vector<Vertex_handle> V(number_of_vertices+1);
+
+  V[0] = tr.infinite_vertex();
+
   for(int i = 0; i < number_of_vertices; ++i)
   {
     P_traits point_convert;
@@ -218,9 +222,9 @@ input_from_medit (std::istream& is,
     Point p = point_convert.point(bp);
     p.set_surface_index(index);
 
-    Vertex_handle v = tr.insert(p, c_hint);
-    V[i] = v;
-    c_hint = v->cell();
+    Vertex_handle v = tds.create_vertex();
+    v->set_point(p);
+    V[i+1] = v;
   }
 
   // Facets
@@ -233,19 +237,18 @@ input_from_medit (std::istream& is,
   if( !is )
     return debug_stream << "  number of facets expected!\n";
 
+  std::vector< CGAL::Triple<int, int, int> > 
+    facets_vector(number_of_facets_on_surface);
+
   for(int i = 0; i < number_of_facets_on_surface; ++i)
   {
     int i1, i2, i3;
     is >> i1 >> i2 >> i3 >> temp_int;
 
-    Cell_handle ch;
-    int i, j, k;
-    if( !is || !tr.is_facet(V[i1-1], V[i2-1], V[i3-1], ch, i, j, k) )
+    if( !is )
       return debug_stream << "  cannot read facet!\n";
 
-    const int index = 6-i-j-k;
-
-    c2t3.set_in_complex(ch, index);
+    facets_vector[i] = CGAL::make_triple(i1, i2, i3);
   }
   
   // Tetrahedra
@@ -266,9 +269,26 @@ input_from_medit (std::istream& is,
     is >> i1 >> i2 >> i3 >> i4 >> temp_int;
 
     Cell_handle ch;
-    if( !is || !tr.is_cell(V[i1-1], V[i2-1], V[i3-1],V[i4-1], ch) )
+    if( !is || !tr.is_cell(V[i1], V[i2], V[i3],V[i4], ch) )
       return debug_stream << "  cannot read cell!\n";
     ch->set_in_domain(true);
+  }
+
+  // Inserts surface facets, using facets_vector
+
+  for(int i = 0; i < number_of_facets_on_surface; ++i)
+  {
+    Cell_handle ch;
+    int i, j, k;
+    if( !is || !tr.is_facet(V[facets_vector[i].first],
+                            V[facets_vector[i].second],
+                            V[facets_vector[i].third],
+                            ch, i, j, k) )
+      return debug_stream << "  cannot read facet!\n";
+
+    const int index = 6-i-j-k;
+
+    c2t3.set_in_complex(ch, index);
   }
   
   // End

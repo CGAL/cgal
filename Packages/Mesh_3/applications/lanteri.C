@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // vertex and cell bases
+#include <CGAL/Triangulation_vertex_base_with_info_3.h> // for Slivers_exuder.h
 #include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
@@ -8,18 +9,21 @@
 // c2t3
 #include <CGAL/Complex_2_in_triangulation_3.h>
 
-// delaunay
-#include <CGAL/Delaunay_triangulation_3.h>
+// regular
+#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
 
 // traits class for reading meshes
-#include <CGAL/Point_with_surface_index_geom_traits.h>
+#include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
 
 // radius_ratio
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 
 // traits class
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Point_with_surface_index_geom_traits<K> My_traits;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
+typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 
 // vertex and cell types
 typedef CGAL::Triangulation_vertex_base_3<My_traits> Vb1;
@@ -81,12 +85,29 @@ public:
   }
 }; // end template class Cell_with_volume_index
 
+template <class Gt, class Cb>
+inline
+std::istream&
+operator>>(std::istream &is, Cell_with_volume_index<Gt, Cb>& c)
+{
+  return is >> static_cast<Cb&>(c);
+}
+
+template <class Gt, class Cb>
+inline
+std::ostream&
+operator<<(std::ostream &os, const Cell_with_volume_index<Gt, Cb>& c)
+  // no combinatorial information.
+{
+  return os <<  static_cast<const Cb&>(c);
+}
+
 typedef Cell_with_volume_index<My_traits, Cb3> Cb;
 
 // triangulation
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 
-typedef CGAL::Delaunay_triangulation_3<My_traits, Tds> Tr;
+typedef CGAL::Regular_triangulation_3<My_traits, Tds> Tr;
 
 // c2t3
 typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
@@ -98,6 +119,7 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 #include <vector>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Mesh_3/IO.h>
 
 #include "utils.h"
 #include "distribution.h"
@@ -129,10 +151,10 @@ int main(int , char**)
   }
 
   std::cout << "  Reading " << filename << std::endl;
-  if( ! CGAL::input_from_medit(ifs,
-                                    c2t3,
-                                    true,         // debug
-                                    &std::cout) ) // debug to cout
+  if( ! CGAL::Mesh_3::input_mesh(ifs,
+                                 c2t3,
+                                 true,         // debug
+                                 &std::cerr) ) // debug to cerr
     return EXIT_FAILURE;
   
   display_faces_counts(tr, "    ", &std::cout);

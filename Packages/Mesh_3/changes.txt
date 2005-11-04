@@ -1,3 +1,16 @@
+4 november 2005 Laurent Rineau
+- modified Special_tets_criteria in test/Mesh_3/combined_spheres.C
+  This criteria class has five size bounds, one for each sphere.
+- new output/input operators in:
+    include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h
+  (in surface mesher:)
+    include/CGAL/Complex_2_in_triangulation_cell_base_3.h
+    include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h
+    include/CGAL/Point_with_surface_index.h
+    include/CGAL/Weighted_point_with_surface_index.h
+  This permits to save/load meshes with i/o operators of Triangulation_3.
+
+
 3 november 2005 Laurent Rineau
 - modified applications/ tools
 - rename functions:

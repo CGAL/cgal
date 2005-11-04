@@ -49,14 +49,32 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-RUN_PROGRAMS=   multi_spheres$(EXE_EXT) \
-		combined_spheres$(EXE_EXT)
+#RUN_PROGRAMS=   multi_spheres$(EXE_EXT) \
+#		combined_spheres$(EXE_EXT)
 
+RUN_PROGRAMS=  	combined_spheres$(EXE_EXT)
+
+LINKS = ../../applications/lanteri \
+        ../../applications/read_mesh \
+        ../../applications/stat_mesh \
+        ../../applications/display_distribution \
+        ../../applications/slivers_exuder 
+
+.PHONY: all run tools links clean
 
 all: $(RUN_PROGRAMS)
 
 run: $(RUN_PROGRAMS)
 	for p in $(RUN_PROGRAMS); do ./$p; done
+
+links:
+	for l in $(LINKS); do rm -f `basename $$l`; ln -s $$l .; done
+
+tools:
+	for l in $(LINKS); do \
+	  make -C ../../applications `basename $$l`; \
+		OTHER_CXXFLAGS=$(OTHER_CXXFLAGS)\
+	 done
 
 multi_spheres$(EXE_EXT): multi_spheres$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)multi_spheres multi_spheres$(OBJ_EXT) $(LDFLAGS)

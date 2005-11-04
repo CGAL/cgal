@@ -83,7 +83,10 @@ clean: \
                    Qt_widget_displayer.clean \
                    read_mesh.clean \
                    slivers_exuder.clean \
-                   stat_mesh.clean 
+                   stat_mesh.clean \
+                   display_distribution.clean \
+                   off_to_ghs.clean 
+
 
 #---------------------------------------------------------------------#
 #                    suffix rules

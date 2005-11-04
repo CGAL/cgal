@@ -88,6 +88,30 @@ namespace CGAL {
     }
   };  // end Complex_2_in_triangulation_cell_base_3
 
+template < class GT, class Cb >
+inline
+std::istream&
+operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
+{
+  bool b;
+  is >> static_cast<Cb&>(c);
+  is >> b;
+  c.set_in_domain(b);
+  return is;
+}
+
+template < class GT, class Cb >
+inline
+std::ostream&
+operator<<(std::ostream &os,
+           const Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
+{
+  os << static_cast<const Cb&>(c);
+  if(is_ascii(os))
+    os << ' ';
+  return os << c.is_in_domain();
+}
+
   }//namespace Mesh_3
 }  // namespace CGAL
 

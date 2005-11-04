@@ -2,5 +2,5 @@ my_makefile
 combined_spheres
 multi_spheres
 *.mesh
-spheres-*.cin
+*.mesh.cgal
 *.png

@@ -26,6 +26,7 @@
 #include <string>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Mesh_3/IO.h>
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
@@ -100,41 +101,49 @@ typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
 
 class Special_tets_criteria
 {
-  double squared_radius_bound;
+  std::vector<double> squared_sphere_radii;
+  std::vector<double> squared_radius_bounds;
   double squared_radius_edge_bound;
-  double squared_special_radius_bound;
-  double squared_r1;
 
 public:
-  Special_tets_criteria(const double special_radius_bound, 
-			const double r1,
-                        const double radius_edge_bound = 2,
-                        const double radius_bound = 0)
-    : squared_radius_bound(radius_bound*radius_bound),
-      squared_radius_edge_bound(radius_edge_bound*radius_edge_bound),
-      squared_special_radius_bound(special_radius_bound*special_radius_bound),
-      squared_r1(r1*r1) {}
+  Special_tets_criteria(const std::vector<double> sphere_radii,
+			const std::vector<double> radius_bounds,
+                        const double radius_edge_bound = 2)
+    : squared_sphere_radii(5),
+      squared_radius_bounds(5),
+      squared_radius_edge_bound(radius_edge_bound * radius_edge_bound)
+  {
+    for(int i = 0; i < 5; ++i)
+    {
+      squared_sphere_radii[i] = sphere_radii[i] * sphere_radii[i];
+      squared_radius_bounds[i] = radius_bounds[i] * radius_bounds[i];
+    }
+  }
 
   typedef Tr::Cell_handle Cell_handle;
   typedef Tets_criteria::Quality Quality;
 
   class Is_bad {
   protected:
-    const double squared_radius_edge_bound;
-    const double squared_radius_bound;
-    const double squared_r1;
-    const double squared_special_radius_bound;
+    std::vector<double> squared_sphere_radii;
+    std::vector<double> squared_radius_bounds;
+    double squared_radius_edge_bound;
   public:
     typedef Tr::Point Point_3;
       
-    Is_bad(const double squared_radius_edge_bound_, 
-	   const double squared_radius_bound_,
-           const double squared_r1_,
-           const double squared_special_radius_bound_)
-      : squared_radius_edge_bound(squared_radius_edge_bound_),
-	squared_radius_bound(squared_radius_bound_),
-        squared_r1(squared_r1_),
-        squared_special_radius_bound(squared_special_radius_bound_){};
+    Is_bad(const std::vector<double> squared_sphere_radii_,
+           const std::vector<double> squared_radius_bounds_,
+           const double squared_radius_edge_bound_)
+      : squared_sphere_radii(5),
+        squared_radius_bounds(5),
+        squared_radius_edge_bound(squared_radius_edge_bound_)
+    {
+      for(int i = 0; i < 5; ++i)
+      {
+        squared_sphere_radii[i] = squared_sphere_radii_[i];
+        squared_radius_bounds[i] = squared_radius_bounds_[i];
+      }
+    }
       
     bool operator()(const Cell_handle& c,
                     Quality& qual) const
@@ -155,26 +164,37 @@ public:
       Circumcenter circumcenter = 
         Geom_traits().construct_circumcenter_3_object();
 
-      double min_squared_radius_bound = squared_radius_bound;
-      if( squared_special_radius_bound != 0)
+      const double sq_distance_from_origin = 
+        CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
+
+      double current_squared_radius_bound = 0;
+      
+      if(sq_distance_from_origin < squared_sphere_radii[0] )
       {
-	const double sq_distance_from_origin = 
-	  CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
-	if(sq_distance_from_origin < squared_r1 )
-	{
-	  if( min_squared_radius_bound == 0 )
-	    min_squared_radius_bound = squared_special_radius_bound;
-	  else
-	    if( squared_special_radius_bound < min_squared_radius_bound )
-	      min_squared_radius_bound = squared_special_radius_bound;
-	}
+        current_squared_radius_bound = squared_radius_bounds[0];
+      }
+      else if(sq_distance_from_origin < squared_sphere_radii[1] )
+      {
+        current_squared_radius_bound = squared_radius_bounds[1];
+      } 
+      else if(sq_distance_from_origin < squared_sphere_radii[2] )
+      {
+        current_squared_radius_bound = squared_radius_bounds[2];
+      } 
+      else if(sq_distance_from_origin < squared_sphere_radii[3] )
+      {
+        current_squared_radius_bound = squared_radius_bounds[3];
+      } 
+      else 
+      {
+        current_squared_radius_bound = squared_radius_bounds[4];
       }
 
       const double sq_radius = CGAL::to_double(radius(p, q, r, s));
 
-      if( min_squared_radius_bound != 0)
+      if( current_squared_radius_bound != 0)
       {
-        qual.second = sq_radius / min_squared_radius_bound;
+        qual.second = sq_radius / current_squared_radius_bound;
         // normalized by size bound to deal
         // with size field
         if( qual.sq_size() > 1 )
@@ -212,8 +232,8 @@ public:
 
 
   Is_bad is_bad_object() const
-  { return Is_bad(squared_radius_edge_bound, squared_radius_bound,
-		  squared_r1, squared_special_radius_bound); }
+  { return Is_bad(squared_sphere_radii, squared_radius_bounds,
+		  squared_radius_edge_bound); }
 
 }; // end Special_tets_criteria
 
@@ -232,14 +252,25 @@ int main(int, char**)
   FT r3;
   FT r4;
   FT r5;
-  double special_size_bound;
-
+  std::vector<double> size_bounds(5);
+  std::vector<double> radii(5);
+  
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
-  std::cout << "Input size bound for sphere <= r1:" << std::endl;
-  std::cin >> special_size_bound;
-  if(!cin)
+  std::cout << "Input the corresponding 5 size bounds:" << std::endl;
+  std::cin >> size_bounds[0]
+           >> size_bounds[1]
+           >> size_bounds[2]
+           >> size_bounds[3]
+           >> size_bounds[4];
+  if(!std::cin)
     return EXIT_FAILURE;
+
+  radii[0] = r1;
+  radii[1] = r2;
+  radii[2] = r3;
+  radii[3] = r4;
+  radii[4] = r5;
 
   const FT precision = 0.1; // mm
   const int number_of_initial_points = 10;
@@ -248,8 +279,7 @@ int main(int, char**)
 
   const double facets_uniform_size_bound = 30.; // mm
   const double facets_aspect_ratio_bound = 0; // degres
-  const double tets_radius_radius_ratio_bound = 2.5;
-  const double tets_squared_size_bound = 0;
+  const double tets_radius_edge_bound = 2.5;
 
   Sphere sphere1(r1);
   Sphere sphere2(r2);
@@ -328,23 +358,24 @@ int main(int, char**)
   criterion_vector.push_back(&aspect_ratio_criterion);
   Multi_criterion multi_criterion (criterion_vector);
 
-  Special_tets_criteria tets_criteria(special_size_bound,
-				      r1, 
-				      tets_radius_radius_ratio_bound,
-                                      tets_squared_size_bound);
-//   Tets_criteria tets_criteria(tets_radius_radius_ratio_bound,
-// 			      tets_squared_size_bound);
+  Special_tets_criteria tets_criteria(radii,
+                                      size_bounds,
+				      tets_radius_edge_bound);
 
   Mesher mesher (tr, oracle, multi_criterion, tets_criteria);
   mesher.refine_mesh();
 
   std::string filename;
-  std::cout << "Input filename (default: combined_spheres.mesh):" << std::endl;
+  std::cout << "Ouput filename:" << std::endl;
   std::cin >> filename;
-
-  if(filename.empty())
-    filename = "combined_spheres.mesh";
 
   std::ofstream out(filename.c_str());
   CGAL::output_to_medit(out, mesher.complex_2_in_triangulation_3());
+  out.close();
+
+  filename += ".cgal";
+  std::ofstream out_cgal(filename.c_str());
+
+  CGAL::Mesh_3::output_mesh(out_cgal,
+                            mesher.complex_2_in_triangulation_3());
 }
