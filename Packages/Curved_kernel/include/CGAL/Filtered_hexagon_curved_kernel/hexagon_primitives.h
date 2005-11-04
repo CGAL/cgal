@@ -10,9 +10,9 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Object.h>
+#include <CGAL/Lazy.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Curved_kernel_converter.h>
-
 
 namespace CGAL{
  namespace CGALi{
@@ -302,6 +302,7 @@ Output_iterator construct_bounding_hexagons_2(const typename CK::Circular_arc_2 
 
     advanced_make_xy_monotone<CK>(a,std::back_inserter(xy_arcs));
 
+
     for(unsigned int i=0;i<xy_arcs.size();i++)
       *res++=construct_bounding_hexagon_2<CK>(xy_arcs.at(i));
 
@@ -447,20 +448,6 @@ template < typename Hex_iterator1, typename Hex_iterator2 >
 bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_iterator2 b_begin, Hex_iterator2 b_end)
   {
 
-#ifdef FILEWRITE
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-      CGAL::Timer clck;
-      double t1,t2;
-      double ag;
-      int times;
-      std::ifstream pare("hexagons_intersect_2.txt");
-      pare>>times>>ag;
-      pare.close();
-      clck.start();
-      t1=clck.time();
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#endif
-
     for(Hex_iterator1 it1=a_begin;it1!=a_end;it1++)
       for(Hex_iterator2 it2=b_begin;it2!=b_end;it2++) 
 	if( !(it2->top_vertex()->y() < it1->bottom_vertex()->y() || 
@@ -470,30 +457,10 @@ bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_ite
 	{
 	  bool tmp = _do_intersect_hexagon_2(*it1,*it2);
           if (tmp)
-
-            {
-#ifdef FILEWRITE
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-      t2=clck.time();
-      std::ofstream dwse("hexagons_intersect_2.txt");
-      dwse<<(++times)<<" "<<(ag+t2-t1)<<endl;
-      dwse.close();
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#endif
-
 	    return true;
-            }
+            
         }
 
-
-#ifdef FILEWRITE
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-      t2=clck.time();
-      std::ofstream dwse("hexagons_intersect_2.txt");
-      dwse<<(++times)<<" "<<(ag+t2-t1)<<endl;
-      dwse.close();
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#endif
 	return false;
 
   }// do_intersect_hexagons_2
@@ -501,6 +468,8 @@ bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_ite
 
  }//namespace CGALi
 
+
+//Lazy like functors that there is no use to be included in the kernel
 
 template < class CK, class Hexagon>
   class Hexagon_construction_with_interval_2 {
@@ -518,13 +487,27 @@ template < class CK, class Hexagon>
   operator()(const Circular_arc_2 &a, OutputIterator res) const
     {
       Conv cnv;
-      return CGALi::construct_bounding_hexagons_2<CK2>(cnv(a),res);
+      static const bool Protection = true;
+      try{return CGALi::construct_bounding_hexagons_2<CK2>(cnv(a),res);}
+      catch (Interval_nt_advanced::unsafe_comparison)
+      {
+         CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+         return CGALi::construct_bounding_hexagons_2<CK>(a,res);
+      }
+
    }
 
   Hexagon operator()(const Line_arc_2 &a) const
     {
       Conv cnv;
-      return CGALi::construct_bounding_hexagon_for_line_arc_2<CK2>(cnv(a));
+      static const bool Protection = true;
+      try{return CGALi::construct_bounding_hexagon_for_line_arc_2<CK2>(cnv(a));}
+      catch (Interval_nt_advanced::unsafe_comparison)
+      {
+         CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+         return CGALi::construct_bounding_hexagon_for_line_arc_2<CK>(a);
+      }
+
    }
 
 };
@@ -541,14 +524,32 @@ template < class CK, class Hexagon>
   template < class OutputIterator>
   OutputIterator  
   operator()(const Circular_arc_2 &a, OutputIterator res) const
-    { return CGALi::construct_bounding_hexagons_2<typename CK::AK>(a.approx(),res);}
+    { 
+      static const bool Protection = true;      
+      try{return CGALi::construct_bounding_hexagons_2<typename CK::AK>(a.approx(),res);}
+      catch (Interval_nt_advanced::unsafe_comparison)
+      {
+         CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+         return CGALi::construct_bounding_hexagons_2<typename CK::EK>(a.exact(),res);
+      }
+
+   }
 
   Hexagon  operator()(const Line_arc_2 &a) const
-    { return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::AK>(a.approx());}
+    { 
+      static const bool Protection = true;
+      try{return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::AK>(a.approx());}
+      catch (Interval_nt_advanced::unsafe_comparison)
+      {
+         CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+         return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::EK>(a.exact());
+      }
 
+    }
 };
 
 
 }// namespace CGAL
 
 #endif // CGAL_HEXAGON_PRIMITIVES_H
+

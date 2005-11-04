@@ -4,8 +4,6 @@
 #define CGAL_LINE_ARC_WITH_HEXAGON_2_H
 
 #include <vector>
-#include <fstream> //vgale
-#include <CGAL/Timer.h> //vgale
 #include <iterator>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Curved_kernel/Debug_id.h>
@@ -16,9 +14,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class CK >
+template < class HK >
 class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
 
+    typedef typename HK::Curved_kernel                         CK;
     typedef typename CK::FT                                    FT;
     typedef typename CK::RT                                    RT;
     typedef typename CK::Point_2                               Point_2;
@@ -121,19 +120,13 @@ public:
                 right() const
 			{ return P_arc.right();}
 
-		/* const Circular_arc_point_2 & source() const */
-/* 			{ return P_arc.source();} */
-
-/* 		const Circular_arc_point_2 & target() const */
-/* 			{ return P_arc.target();} */
-
-typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
+                typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
                 source() const
                         {
 			  return typename R::Construct_Circular_source_vertex_2()(this->arc());
 			}
 	      
-    typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
+                typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
                 target() const
                         {
 			  return typename R::Construct_Circular_target_vertex_2()(this->arc());
@@ -142,7 +135,7 @@ typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line
 		const Line_2 & supporting_line() const
 			{ return P_arc.supporting_line();}
 
-		Bbox_2 bbox()
+		Bbox_2 bbox() const
 			{ return P_arc.bbox();}
 			
 			
@@ -160,8 +153,6 @@ typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line
                  typedef typename boost::mpl::if_<boost::is_same<typename CK::Definition_tag, typename CK::Curved_tag>, \
                                                   Hexagon_construction_with_interval_2<CK,Hexagon>, \
                                                   Hexagon_construction_on_lazy_kernel_2<CK,Hexagon> >::type Construct;
-
-
 		  hxgn = new Hexagon(Construct()(P_arc));
 		}
 
@@ -176,9 +167,9 @@ typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line
 
 
 
-  template < typename CK >
+  template < typename HK >
   std::ostream &
-  operator<<(std::ostream & os, const Line_arc_with_hexagon_2<CK> &a)
+  operator<<(std::ostream & os, const Line_arc_with_hexagon_2<HK> &a)
   {
     // The output format is :
     // Supporting line
@@ -187,19 +178,21 @@ typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line
     return os << a.arc() << " ";
   }
 
-  template < typename CK >
+  template < typename HK >
   std::istream &
-  operator>>(std::istream & is, Line_arc_with_hexagon_2<CK> &a)
+  operator>>(std::istream & is, Line_arc_with_hexagon_2<HK> &a)
   {
+    typedef typename HK::Curved_kernel                         CK;
     typename CK::Line_2 s;
     typename CK::Circular_arc_point_2 p1;
     typename CK::Circular_arc_point_2 p2;
     is >> s >> p1 >> p2 ;
     if (is)
-      a = Line_arc_with_hexagon_2<CK>(s, p1, p2);
+      a = Line_arc_with_hexagon_2<HK>(s, p1, p2);
     return is;
   }
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LINE_ARC_WITH_HEXAGON_2_H
+
