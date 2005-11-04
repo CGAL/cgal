@@ -369,12 +369,11 @@ int main(int, char**)
   std::cout << "Ouput filename:" << std::endl;
   std::cin >> filename;
 
-  std::ofstream out(filename.c_str());
+  std::ofstream out((filename+".mesh").c_str());
   CGAL::output_to_medit(out, mesher.complex_2_in_triangulation_3());
   out.close();
 
-  filename += ".cgal";
-  std::ofstream out_cgal(filename.c_str());
+  std::ofstream out_cgal((filename+".cgal").c_str());
 
   CGAL::Mesh_3::output_mesh(out_cgal,
                             mesher.complex_2_in_triangulation_3());
