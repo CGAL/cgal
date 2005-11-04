@@ -1107,6 +1107,10 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
 	os << std::endl;
   }
 
+    // asks the tds for the combinatorial information 
+  tr.tds().print_cells(os, V);
+
+
   // write the non combinatorial information on the cells
   // using the << operator of Cell
   // works because the iterator of the tds traverses the cells in the
@@ -1132,8 +1136,6 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
     }
   }
 
-  // asks the tds for the combinatorial information 
-  tr.tds().print_cells(os, V);
   
   return os ;
 }

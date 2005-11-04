@@ -1,3 +1,7 @@
+
+4 November 2005 Mariette Yvinec
+- fixed a bug in input output operators of the triangulation
+
 5 September 2005 Sylvain Pion
 - test-suite : fix for g++ 4.1 pickyness.
 
