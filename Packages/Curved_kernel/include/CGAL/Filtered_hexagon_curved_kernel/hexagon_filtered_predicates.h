@@ -15,7 +15,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace Hexagon_functors {
 
 
 template <class HK>
@@ -72,10 +72,48 @@ class In_range_2
 
     result_type
     operator()( const Line_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return _in_range_2(a,p);}
+    {return _in_range_2(a,p);}
     
 
   };
+
+template <class HK>
+class Construct_Circular_source_vertex_2
+  {
+    typedef typename HK::Curved_kernel                       CK;
+    typedef typename HK::Circular_arc_point_2                Circular_arc_point_2;
+    typedef typename HK::Circular_arc_2                      Circular_arc_2;
+
+   public:
+
+    typedef Circular_arc_point_2 result_type;
+
+    template <typename T>
+    result_type
+      operator()(const T& a) const
+    {return CK().construct_circular_source_vertex_2_object()(a.arc());}
+
+  };
+
+
+template <class HK>
+class Construct_Circular_target_vertex_2
+  {
+    typedef typename HK::Curved_kernel                       CK;
+    typedef typename HK::Circular_arc_point_2                Circular_arc_point_2;
+    typedef typename HK::Circular_arc_2                      Circular_arc_2;
+
+   public:
+
+    typedef Circular_arc_point_2 result_type;
+
+    template <typename T>
+    result_type
+      operator()(const T& a) const
+    {return CK().construct_circular_target_vertex_2_object()(a.arc());}
+
+  };
+
 
 
 template <class HK>
@@ -92,7 +130,7 @@ class Construct_Circular_min_vertex_2
     template <typename T>
     result_type
       operator()(const T& a) const
-    { return a.left();}
+    { return CK().construct_circular_min_vertex_2_object()(a.arc());}
     
   };
 
@@ -110,9 +148,48 @@ class Construct_Circular_max_vertex_2
     template <typename T>
      result_type
       operator()(const T& a) const
-    { return a.right();  }
+    { return CK().construct_circular_max_vertex_2_object()(a.arc()); }
 
   };
+
+
+template <class HK>
+class Has_on_2
+  {
+    typedef typename HK::Curved_kernel                                    CK;
+    typedef typename HK::Circular_arc_2                                   Circular_arc_2;
+    typedef typename HK::Circular_arc_point_2                             Circular_arc_point_2;
+    typedef typename HK::Line_arc_2                                       Line_arc_2;
+
+  public:
+
+    typedef bool result_type;
+
+  private:
+
+    template <class Arc_2>
+    result_type
+    _has_on_2(const Arc_2 &a, const Circular_arc_point_2 &p) const
+    {
+         //Just for the time being
+        return CK().has_on_2_object()(a.arc(),p);
+    }
+
+  public:
+
+    result_type
+    operator()( const Circular_arc_2 &a,const Circular_arc_point_2 &p ) const
+    {
+      CGAL_precondition( a.arc().is_x_monotone());
+      return _has_on_2(a,p);
+    }
+
+    result_type
+    operator()( const Line_arc_2 &a, const Circular_arc_point_2 &p ) const
+     {return _has_on_2(a,p);}
+
+};
+
 
 template <class HK>
 class Is_vertical_2
@@ -184,7 +261,7 @@ class Compare_y_at_x_2
               {
 		rel_pos=EQUAL;
 		Hexagon hxgn= *hips;
-		if(_do_intersect_hexagon_2(hxgn,pnt_vec))
+		if(CGALi::_do_intersect_hexagon_2(hxgn,pnt_vec))
                    return CK().compare_y_at_x_2_object()(p,a.arc());
                   
 
@@ -325,7 +402,7 @@ class Do_overlap_2
       if(b.has_no_hexagons())
         b.construct_hexagons();
 
-      if(do_intersect_hexagons_2( a.hexagons_begin(),a.hexagons_end(),b.hexagons_begin(),b.hexagons_end() ) )
+      if(CGALi::do_intersect_hexagons_2( a.hexagons_begin(),a.hexagons_end(),b.hexagons_begin(),b.hexagons_end() ) )
         return CK().do_overlap_2_object()(a.arc(),b.arc());
 
       return false;
@@ -450,8 +527,15 @@ class Do_overlap_2
     operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2, 
 	       OutputIterator res)
       { 
-        //if(!do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
-        // return res;
+        if(c1.has_no_hexagons())
+          c1.construct_hexagons();
+
+        if(c2.has_no_hexagons())
+          c2.construct_hexagons();
+
+        if(!CGALi::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),
+	                                   c2.hexagons_begin(),c2.hexagons_end()) )
+         return res;
 
 	std::vector<Object> vec;
 	
@@ -483,7 +567,7 @@ class Do_overlap_2
         if(c2.has_no_hexagons())
           c2.construct_hexagons();
 
-        if(!do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
+        if(!CGALi::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
          return res;
 
 
@@ -515,7 +599,7 @@ class Do_overlap_2
         if(c2.has_no_hexagons())
           c2.construct_hexagons();
 
-        if(!do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
+        if(!CGALi::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
          return res;
 
 
@@ -596,8 +680,9 @@ class Do_overlap_2
 
 
   
-} //CGALi
+} //Hexagon_functors
 
 CGAL_END_NAMESPACE  
 
 #endif // CGAL_HEXAGON_FILTERED_PREDICATES_H  
+
