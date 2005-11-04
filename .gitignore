@@ -77,8 +77,8 @@ Packages/Mesh_3/examples/Mesh_3/depends
 Packages/Mesh_3/examples/Mesh_3/dump_of_initial_points
 Packages/Mesh_3/examples/Mesh_3/implicit_surfaces_mesher_3
 Packages/Mesh_3/examples/Mesh_3/my_makefile
+Packages/Mesh_3/test/Mesh_3/*.cgal
 Packages/Mesh_3/test/Mesh_3/*.mesh
-Packages/Mesh_3/test/Mesh_3/*.mesh.cgal
 Packages/Mesh_3/test/Mesh_3/*.png
 Packages/Mesh_3/test/Mesh_3/combined_spheres
 Packages/Mesh_3/test/Mesh_3/multi_spheres
