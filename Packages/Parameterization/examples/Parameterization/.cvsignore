@@ -1,0 +1,8 @@
+Polyhedron_parameterization?
+polyhedron_ex_parameterization
+*.kdev*
+ProgramOutput.*
+error.txt
+test
+*_extra.*
+
