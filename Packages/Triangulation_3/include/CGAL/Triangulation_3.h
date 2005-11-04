@@ -1118,20 +1118,29 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   switch ( tr.dimension() ) {
   case 3:
     {
-      for(Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it)
+      for(Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it) {
 	os << *it; // other information
+        if(is_ascii(os))
+          os << std::endl;
+      }
       break;
     }
   case 2:
     {
-      for(Facet_iterator it=tr.facets_begin(); it != tr.facets_end(); ++it)
+      for(Facet_iterator it=tr.facets_begin(); it != tr.facets_end(); ++it) {
 	os << *((*it).first); // other information
+        if(is_ascii(os))
+          os << std::endl;
+      }
       break;
     }
   case 1:
     {
-      for(Edge_iterator it=tr.edges_begin(); it != tr.edges_end(); ++it)
+      for(Edge_iterator it=tr.edges_begin(); it != tr.edges_end(); ++it) {
 	os << *((*it).first); // other information 
+        if(is_ascii(os))
+          os << std::endl;
+      }
       break;
     }
   }

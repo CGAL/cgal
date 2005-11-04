@@ -1,3 +1,7 @@
+4 November 2005 Laurent Rineau
+(I am new in commiters of Triangulation_3.)
+- another patch of the output operator of Triangulation_3: add a
+  std::endl between cells info, if the output stream is in ascii mode.
 
 4 November 2005 Mariette Yvinec
 - fixed a bug in input output operators of the triangulation
