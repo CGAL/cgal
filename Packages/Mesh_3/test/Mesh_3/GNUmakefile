@@ -22,6 +22,7 @@ endif
 OTHER_CXXFLAGS?=
 
 CXXFLAGS = \
+	   -I../../../Triangulation_3/include \
            -I../../include \
 	   -I../../../Data_structure_for_queries_3/include \
            -I ../../../Surface_mesher/include \
