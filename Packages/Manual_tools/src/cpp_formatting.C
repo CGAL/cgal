@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <output.h>
+#include <sstream>
 
 // New style conversion routines
 // =======================================
@@ -55,6 +56,14 @@ const double width_per_character  = 5.5;
 // A greater value forces declarations to be printed in multiple lines.
 double stretch_factor = 1.6;
 
+
+string
+get_new_anonymous_anchor() {
+    static int counter = 0;
+    std::stringstream s;
+    s << "xyz_anonymous_anchor_" << (++counter);
+    return s.str();
+}
 
 /* HTML generating functions */
 /* ========================= */
@@ -333,12 +342,13 @@ void split_function_declaration( const char* signature,
             // it's not the cast operator, restore old position
             s = p;
     }
-    if ( q - s) {
+    if ( q - s ) {
         function_name = new char[ q - s + 1];
         strncpy( function_name, s + 1, q - s);
         function_name[ q - s] = '\0';
     } else 
         function_name = 0;
+    
     
     // check for a scope operator
     while ( s != s_end && *s <= ' ')
@@ -368,8 +378,16 @@ void split_function_declaration( const char* signature,
         return_value = new char[ s - q + 2];
         strncpy( return_value, q, s - q + 1);
         return_value[ s - q + 1] = '\0';
-    } else 
+    } else if( function_name == string("enum") && enum_decl ) {
+        // consider the following situation:
+        // enum { SOME_CONSTANT, ANOTHER_CONSTANT };
+        // then, our 'split_function_declaration' has found "enum" to be the name of the enum.
+        // correct:
+        return_value = function_name;
+        function_name = 0;
+    } else
         return_value = 0;
+        
 }
 
 // This function separates a variable declaration around the variable name.
@@ -817,6 +835,8 @@ void print_rest( ostream& out, const char* txt){
 void  make_index(string main_item, string sub_item, string sub_sub_item,
                  const char* signature, char praefix)
 {
+    if( !signature || strlen(signature) == 0 )
+      return;
     if( praefix == 'f' ) {
       *current_ostream << "<A NAME=\"Function_";
       filter_for_index_anchor( *current_ostream, signature);
@@ -867,6 +887,8 @@ generate_substitution_rule( const char *formatted,
                             const char *name,
                             const char *type ) 
 {
+    if( !name || strlen(name) == 0 )
+        return;
     *anchor_stream << "[a-zA-Z0-9_]\"" << formatted
                    << "\"    { ECHO; }" << endl;
     *anchor_stream << '"' << formatted
@@ -1556,43 +1578,50 @@ void format_enum( const char* signature) {
     char* formatted_enum = convert_fontified_ascii_to_html( enum_name);
 
     two_cols_html_begin( *current_ostream);
-    if ( class_name.empty() || !(macroIsTrue( "\\lciIfHtmlClassIndex"))) {
-        if ( macroIsTrue( "\\lciIfHtmlLinks")  && strlen( enum_name) > 1) {
+    if ( class_name.empty() || !macroIsTrue( "\\lciIfHtmlClassIndex") ) {
+        if ( macroIsTrue( "\\lciIfHtmlLinks") )         
             // generate a substitution rule for hyperlinking
             generate_substitution_rule( formatted_enum, enum_name, "Enum" );
-        }
+        
         if( is_index_enabled() ) {
             // index
             char* kk = newstr(formatted_enum); 
             char* k = strtok(kk,"=");
             if (k==NULL)
                 make_index(formatted_enum,"","",enum_name,'e'); 
-            else {
-                //   cerr << endl << "MMMMMMMMMMMMMMM" << endl
-                //     << formatted_enum << endl
-                //     << kk << endl
-                //     << k << endl << "===============" << endl;
-                make_index(k,"","",enum_name,'e');
-            }
+            else 
+                make_index(k,"","",enum_name,'e');                
             delete[] kk;
         }
     } else  if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
-                 is_index_enabled() ) {
+                 is_index_enabled() ) 
+    {
         // index
         char* kk = newstr(formatted_enum); 
         char* k = strtok(kk,"=");
         if (k==NULL) 
-           make_index(string(formatted_enum),string(class_name),
-                   "",enum_name,'e'); 
+            make_index(formatted_enum,class_name,
+                       "",enum_name,'e'); 
         else    
-           make_index(string(k),string(class_name),
-                   "",enum_name,'e');
+            make_index(k,class_name,
+                       "",enum_name,'e');
         delete[] kk;
     }
+
+    string enum_anchor;
+    if( enum_name )
+        enum_anchor = string(enum_name);
+    else
+        enum_anchor = get_new_anonymous_anchor();
+    
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
-         macroIsTrue( "\\lciIfHtmlIndex")) {
+         macroIsTrue( "\\lciIfHtmlIndex")) 
+    {
         *current_ostream << "<A NAME=\"Enum_";
-        filter_for_index_anchor( *current_ostream, enum_name);
+        if( enum_name ) 
+            filter_for_index_anchor( *current_ostream, enum_name);
+        else
+            *current_ostream << enum_anchor;
         *current_ostream << "\"></A>" << endl;
     }
     // end index
@@ -1636,6 +1665,7 @@ void format_enum( const char* signature) {
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
     *current_ostream << formatted_enum;
+
     if ( parameter_list) {
         *current_ostream << " { ";
         if ( exp_size > table_width) {
@@ -1655,17 +1685,17 @@ void format_enum( const char* signature) {
                      macroIsTrue( "\\ccIndex") &&  
                      macroIsTrue( "\\ccAutoIndex")) 
             {
-                if ( macroIsTrue( "\\lciIfHtmlIndex")) {
+                if ( macroIsTrue( "\\lciIfHtmlIndex") ) {
                     // index: print enum tags with (possible) initializers
                     char* kk = newstr(p); 
                     char* k = strtok(kk,"=");
                     if (k==NULL) 
-                       make_index(p,"","",enum_name,'e'); 
+                       make_index(p,"","",enum_anchor.c_str(),'e'); 
                     else    
-                       make_index(k,"","",enum_name,'e');
+                       make_index(k,"","",enum_anchor.c_str(),'e');
                     delete[] kk; 
                 }               
-                if ( macroIsTrue( "\\lciIfHtmlLinks")) {
+                if ( macroIsTrue( "\\lciIfHtmlLinks") ) {
                     // generate a substitution rule for hyperlinking
                     // Here, the initializer has to be suppressed
                     char* q = p;
@@ -1677,7 +1707,7 @@ void format_enum( const char* signature) {
                     *q = '\0';
                     if ( strlen( p) > 1) {
                         char *tmp_param = convert_fontified_ascii_to_html( p);
-                        generate_substitution_rule( tmp_param, enum_name, "Enum" );
+                        generate_substitution_rule( tmp_param, enum_anchor.c_str(), "Enum" );
                         delete[] tmp_param;
                     }
                     *q = c_tmp; // restore initializer
@@ -1689,10 +1719,10 @@ void format_enum( const char* signature) {
                 char* kk = newstr(p);
                 char* k = strtok(kk,"=");
                 if (k==NULL)
-                    make_index(string(p), string(class_name) ,"", enum_name, 
+                    make_index(p, class_name ,"", enum_anchor.c_str(), 
                                'e'); 
                 else
-                    make_index(string(k),string(class_name),"",enum_name, 'e');
+                    make_index(k,class_name,"",enum_anchor.c_str(), 'e');
                 delete[] kk;
             }
             p += strlen( p) + 1;  // skip to next parameter
