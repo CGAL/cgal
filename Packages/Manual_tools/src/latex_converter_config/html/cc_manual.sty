@@ -502,6 +502,9 @@
 \newcommand{\ccClassTemplateName}{}
 \newcommand{\ccPureClassTemplateName}{}
 
+\gdef\ccRefCategoryIsConcept{\ccFalse}
+
+
 % #1 == global scope used in ref-page section title 
 \newcommand{\ccDefGlobalScope}[1]{%
                    \gdef\ccPureGlobalScope{#1}%
@@ -604,7 +607,13 @@
       \lciIf{\ccIsFunctionObjectClass}{Function Object Class }{%
       \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept }{%
       \ccRefCategory~}}}%
-      \ccc{#XC1#XC2}}}
+      \ccRefCategoryIsConcept{\ccc{#XC1#XC2}}{%
+        \begingroup%
+         \def\ccFont{}% class-names should be printed with default font
+         \ccc{#XC1#XC2}%
+        \endgroup% restore old ccFont
+      }%      
+      }}
 
 %% #1 == ccCategory
 %% #2 == ccRefName
@@ -616,6 +625,7 @@
 
 \newenvironment{ccRefConcept}{%
                    \gdef\ccRefPureGlobalScope{}%
+                   \def\ccRefCategoryIsConcept{\ccTrue}%
                    \begin{ccRefDeclaration}{Concept}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefClass}{%
@@ -636,6 +646,7 @@
 \newenvironment{ccRefFunctionObjectConcept}{%
                    \gdef\ccRefPureGlobalScope{}%
                    \gdef\ccIsFunctionObjectConcept{\ccTrue}%
+                   \def\ccRefCategoryIsConcept{\ccTrue}%
                    \begin{ccRefDeclaration}{FunctionObjectConcept}}%
                {\gdef\ccIsFunctionObjectConcept{\ccFalse}\end{ccRefDeclaration}}
 

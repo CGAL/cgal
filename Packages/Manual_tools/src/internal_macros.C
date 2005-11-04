@@ -24,6 +24,7 @@
 #include <error.h>
 #include <config.h>
 #include <output.h>
+#include <sstream>
 
 // ======================================================================
 // External visible functions
@@ -921,11 +922,10 @@ string
 cc_style( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);  // uses cc_string as parameter, param[0] is a dummy
                          // to avoid scanning of spaces behind \ccc
-    string s( "\\lciRawOutputN{");
-    char* p = convert_C_to_html( cc_string);
-    s += int_to_string( strlen(p)) + '}' + p;
-    delete[] p;
-    return s;
+    string html = convert_C_to_html( cc_string );
+    std::stringstream s;
+    s << "\\lciRawOutputN{" << html.length() << "}" << html;
+    return s.str();
 }
 
 string

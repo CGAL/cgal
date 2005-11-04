@@ -20,6 +20,7 @@
 #include <sstream>
 #include <config.h>
 #include <error.h>
+#include <macro_dictionary.h>
 
 // New style conversion routines
 // =======================================
@@ -51,6 +52,41 @@ static const char * const roman_numbers[110] = {
     "xc","xci","xcii","xciii","xciv","xcv","xcvi","xcvii","xcviii","xcix",
     "c","ci","cii","ciii","civ","cv","cvi","cvii","cviii","cix"
 };
+
+
+/* An object storing the current font */
+/* ================================== */
+/* It is only used within CCMode at the moment */
+
+Font current_font = rm_font;
+
+/* HTML Tags to set and reset a specific font. */
+const char* html_font_opening[ end_font_array] = {
+    "",
+    "<TT>",
+    "<B>",
+    "<I>",
+    "<I>",
+    "<TT>",
+    "<TT>",
+    "<VAR>",
+    "<MATH>"
+};
+const char* html_font_closing[ end_font_array] = {
+    "",
+    "</TT>",
+    "</B>",
+    "</I>",
+    "</I>",
+    "</TT>",
+    "</TT>",
+    "</VAR>",
+    "</MATH>"
+};
+
+const int max_tag_size = 20;
+char  font_tag_buffer[max_tag_size];
+
 
 // Returns the roman digit representation for a number i, 0 <= i <= 109.
 string int_to_roman_string( int i) {
@@ -534,18 +570,32 @@ char* convert_indexentry_for_makeindex(const char* txt) {
     return s;
 }
 
+string string_to_lower( string s ) {
+    for( string::iterator it = s.begin(); it != s.end(); ++it ) {
+        *it = tolower( *it );
+    }
+    return s;
+}
+
+Font latex_font_to_Font( string font ) {
+    font = string_to_lower( font );
+    if( font == "\\it" )
+        return it_font;
+    else if( font == "\\bf" )
+        return bf_font;
+    
+    return rm_font;
+}
    
-char* convert_C_to_html( const char* txt) {
-    current_font = it_font;
-    char* tmp = convert_fontified_ascii_to_html( txt);
-    const char* end_font = new_font_tags( it_font);
-    char* formatted = new char[ strlen( tmp) + strlen( end_font) + 8];
-    strcpy( formatted, "<I>");
-    strcat( formatted, tmp);
-    strcat( formatted, end_font);
-    strcat( formatted, "</I>");
+string convert_C_to_html( const char* txt) {
+    Font ccFont         = latex_font_to_Font( macroX( "\\ccFont" ) );
+    string open_ccFont  = html_font_opening[ ccFont ];
+    string close_ccFont = html_font_closing[ ccFont ];
+    current_font = ccFont;
+    char* tmp = convert_fontified_ascii_to_html( txt );
+    string retval = open_ccFont + string(tmp) + close_ccFont;
     delete[] tmp;
-    return formatted;
+    return retval;
 }
 
 
@@ -657,38 +707,6 @@ void filter_for_index_anchor( ostream& out, const char* text) {
 }
 
 
-/* An object storing the current font */
-/* ================================== */
-/* It is only used within CCMode at the moment */
-
-Font current_font = rm_font;
-
-/* HTML Tags to set and reset a specific font. */
-const char* html_font_opening[ end_font_array] = {
-    "",
-    "<TT>",
-    "<B>",
-    "<I>",
-    "<I>",
-    "<TT>",
-    "<TT>",
-    "<VAR>",
-    "<MATH>"
-};
-const char* html_font_closing[ end_font_array] = {
-    "",
-    "</TT>",
-    "</B>",
-    "</I>",
-    "</I>",
-    "</TT>",
-    "</TT>",
-    "</VAR>",
-    "</MATH>"
-};
-
-const int max_tag_size = 20;
-char  font_tag_buffer[max_tag_size];
 
 const char* font_changing_tags( Font old_font, Font new_font) {
     CC_Assert( old_font > unknown_font && old_font < end_font_array);

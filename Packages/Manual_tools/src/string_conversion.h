@@ -102,8 +102,8 @@ inline char* convert_fontified_ascii_to_html( const string& txt) {
     return convert_fontified_ascii_to_html( txt.c_str());
 }
 
-char* convert_C_to_html( const char* txt);
-inline char* convert_C_to_html( const string& txt) {
+string convert_C_to_html( const char* txt );
+inline string convert_C_to_html( const string& txt) {
     return convert_C_to_html( txt.c_str());
 }
 
