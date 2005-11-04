@@ -28,7 +28,7 @@ The concept \ccc{DelaunayGraph_2} defines the requirements for the
 first template parameter of the \ccc{Voronoi_diagram_2<DG,VT>}
 class. The \ccc{DelaunayGraph_2} concept essentially defines the
 requirements that a class representing a Delaunay graph must obey so
-that the Voronoi diagram adaptor can use it.
+that the Voronoi diagram adaptor can adapt it.
 
 \ccRefines
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}
@@ -55,7 +55,7 @@ that the Voronoi diagram adaptor can use it.
 \ccGlue
 \ccNestedType{Face}{A type for the faces of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{A type for the
+\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{The type of the
   edges of the Delaunay graph.}
 \ccGlue
 \ccNestedType{Vertex_handle}{Handle to the vertices of the Delaunay graph.}
@@ -114,14 +114,15 @@ operator, the following constructors are required.
 \ccConstructor{DelaunayGraph_2(Geom_traits gt);}
 {Constructor that takes an instance of the geometric traits.}
 \ccGlue
-\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond);}
+\ccConstructor{template<class It> DelaunayGraph_2(It first, It beyond);}
 {Constructor that takes an iterator range. The value type of the
-  iterator must be \ccc{Site_2}.}
+  iterator must be the type of the sites of the Delaunay graph.}
 \ccGlue
-\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond,
+\ccConstructor{template<class It> DelaunayGraph_2(It first, It beyond,
   Geom_traits gt);}
 {Constructor that takes an iterator range and an instance of the
-  geometric traits. The value type of the iterator must be \ccc{Site_2}.}
+  geometric traits. The value type of the iterator must be the type of
+  the sites of the Delaunay graph.}
 
 
 \ccHeading{Access methods}
@@ -155,7 +156,8 @@ operator, the following constructors are required.
 
 A model of the \ccc{DelaunayGraph_2} concept must provide several
 iterators and circulators that allow to traverse it (completely or
-partially).
+partially). All iterators and circulators must be convertible to the
+corresponding handles.
 
 
 \ccHeading{Face, Edge and Vertex Iterators}

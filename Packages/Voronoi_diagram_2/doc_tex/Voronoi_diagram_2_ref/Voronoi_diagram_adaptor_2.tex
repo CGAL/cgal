@@ -43,7 +43,7 @@ model of the \ccc{VoronoiTraits_2} concept.
 
 \ccTypes
 %
-\ccThree{typedef Delaunay_graph::size_type}{Delaunay_graph+}{}
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle+}{}
 \ccThreeToTwo
 \ccTwo{Voronoi_diagram_2<DG,VT>::Locate_result+}{}
 %
@@ -58,19 +58,28 @@ model of the \ccc{VoronoiTraits_2} concept.
   for the sites of the Voronoi diagram.}
 \ccGlue
 \ccTypedef{typedef Delaunay_graph::size_type size_type;}{A type for sizes.}
-%\ccGlue
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
+{A type for the vertex handles of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Face_handle Delaunay_face_handle;}
+{A type for the face handles of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}
+{A type for the edges of the Delaunay graph.}
+\ccGlue
 \ccNestedType{Locate_result}{The result type of the point location
-  queries. In must be a model of the \ccc{VoronoiDiagramLocateResult_2}
-  concept.}
+  queries.}
+%  It must be a model of the \ccc{VoronoiDiagramLocateResult_2} concept.}
 \ccGlue
-\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.
-  It is a model of the \ccc{VoronoiDiagramHalfedge_2} concept.}
+\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
+%  It is a model of the \ccc{VoronoiDiagramHalfedge_2} concept.}
 \ccGlue
-\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.
-  It is a model of the \ccc{VoronoiDiagramVertex_2} concept.}
+\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
+%  It is a model of the \ccc{VoronoiDiagramVertex_2} concept.}
 \ccGlue
-\ccNestedType{Face}{A type for the faces of the Voronoi diagram.
-  It is a model of the \ccc{VoronoiDiagramFace_2} concept.}
+\ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
+%  It is a model of the \ccc{VoronoiDiagramFace_2} concept.}
 
 The vertices, edges and faces of the Voronoi diagram are accessed
 through \ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
@@ -153,21 +162,21 @@ corresponding handles.
 
 \ccHeading{Access Methods}
 %
-\ccThree{Halfedge_handle}{vd.number_of_halfedges()+}{}
+\ccThree{Halfedge_handle}{vd.number_of_connected_components()+}{}
 %
 \ccMethod{Delaunay_graph dual();}
 {Returns a reference to the dual graph, i.e., the Delaunay graph.}
 \ccGlue
-\ccMethod{Halfedge_handle dual(Halfedge::Delaunay_edge e);}
+\ccMethod{Halfedge_handle dual(Delaunay_edge e);}
 {Returns a handle to the halfedge in the Voronoi diagram that is dual
   to the edge \ccc{e} in the Delaunay graph.}
 \ccGlue
-\ccMethod{Face_handle dual(Face::Delaunay_vertex_handle v);}
+\ccMethod{Face_handle dual(Delaunay_vertex_handle v);}
 {Returns a handle to the face in the Voronoi diagram that is dual to
   the vertex corresponding to the vertex handle \ccc{v} in the
   Delaunay graph.}
 \ccGlue
-\ccMethod{Vertex_handle dual(Vertex::Delaunay_face_handle f);}
+\ccMethod{Vertex_handle dual(Delaunay_face_handle f);}
 {Returns a handle to the vertex in the Voronoi diagram that is dual to
   the face corresponding to the face handle \ccc{f} in the Delaunay graph.}
 \ccGlue
@@ -188,7 +197,8 @@ corresponding handles.
 {Returns the number of connected components of the Voronoi skeleton.}
 \ccGlue
 \ccMethod{Face_handle unbounded_face();}{Returns one of the unbounded
-  faces of the Voronoi diagram. If no unbounded faces exist the
+  faces of the Voronoi diagram. If no unbounded faces exist (this can
+  happen if the number of sites is zero) the
   default constructed face handle is returned.}
 \ccGlue
 \ccMethod{Face_handle bounded_face();}{Returns one of the bounded
@@ -226,11 +236,13 @@ and circulators that allow to traverse it.
 \ccThree{Unbounded_halfedges_iterator}{vd.unbounded_halfedges_begin()+}{}
 
 The following iterators allow respectively to visit the faces (all or
-only the unbounded ones), edges, halfedges and vertices of the Voronoi
-diagram. These iterators are non-mutable, bidirectional and their
+only the unbounded/bounded ones), edges, halfedges (all or only the
+unbounded/bounded ones) and vertices of the Voronoi diagram. These
+iterators are non-mutable, bidirectional and their 
 value types are respectively \ccc{Face}, \ccc{Halfedge},
-\ccc{Halfedge} and \ccc{Vertex}. The iterators are invalidated by any
-change in the Voronoi diagram.
+\ccc{Halfedge} and \ccc{Vertex}. All iterators are convertible to the
+corresponding handles and are invalidated by any change in the Voronoi
+diagram.
 
 \ccMethod{Face_iterator faces_begin();}{Starts at an arbitrary Voronoi face.}
 \ccGlue
@@ -305,27 +317,28 @@ invalidated by any modification in the face over which it is defined.
 %
 \ccMethod{Ccb_halfedge_circulator ccb_halfedges(Face_handle f);}
 {Starts at an arbitrary halfedge on the boundary of the Voronoi face
-  \ccc{*f}.}
+  \ccc{f}.}
 \ccGlue
 \ccMethod{Ccb_halfedge_circulator ccb_halfedges(Face_handle f,
   Halfedge_handle h);} 
 {Returns a circulator over the halfedges on the boundary of
-  \ccc{*f}. The circulator is initialized with the halfedge \ccc{*h}.
-  \ccPrecond{The halfedge \ccc{*h} must lie on the boundary of \ccc{*f}.}}
+  \ccc{f}. The circulator is initialized with the halfedge \ccc{h}.
+  \ccPrecond{The halfedge \ccc{h} must lie on the boundary of \ccc{f}.}}
 
 \ccThree{Halfedge_around_vertex_circulator}{vd.incident_halfedges+}{}
 \ccThreeToTwo
 %
 \ccMethod{Halfedge_around_vertex_circulator
   incident_halfedges(Vertex_handle v);}
-{Starts at an arbitrary halfedge incident to Voronoi vertex \ccc{*v}.}
+{Starts at an arbitrary halfedge incident to Voronoi vertex \ccc{v}.}
 \ccGlue
 \ccMethod{Halfedge_around_vertex_circulator
   incident_halfedges(Vertex_handle v, Halfedge_handle h);}
 {Returns a circulator over the halfedges incident to the Voronoi
-  vertex \ccc{*v}. The circulator is initialized with the halfedge
-  \ccc{*h}.
-  \ccPrecond{The halfedge \ccc{*h} must be incident to \ccc{*v}.}}
+  vertex \ccc{v}. The circulator is initialized with the halfedge
+  \ccc{h}.
+  \ccPrecond{The vertex \ccc{v} must be the target vertex of the
+    halfedge \ccc{h}.}}
 
 
 %\begin{ccTexOnly}
@@ -340,7 +353,8 @@ invalidated by any modification in the face over which it is defined.
   to the Voronoi face of \ccc{t} in the Voronoi diagram is
   returned. If \ccc{t} has an empty Voronoi cell, the default
   constructed face handle is returned. This method is supported only
-  if \ccStyle{Voronoi_traits::Has_insert} is set to \ccStyle{CGAL::Tag_true}.}
+  if \ccStyle{Voronoi_traits::Has_inserter} is set to
+  \ccStyle{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{template<class Iterator>
   size_type insert(Iterator first, Iterator beyond);}{Inserts, in the
@@ -348,7 +362,7 @@ invalidated by any modification in the face over which it is defined.
     beyond)}. The value type of \ccc{Iterator} must be
   \ccc{Site_2}. The number of sites in the iterator range is
   returned. This method is supported only if
-  \ccStyle{Voronoi_traits::Has_insert} is set to \ccStyle{CGAL::Tag_true}.}
+  \ccStyle{Voronoi_traits::Has_inserter} is set to \ccStyle{CGAL::Tag_true}.}
 
 
 \ccHeading{Queries}
@@ -356,8 +370,18 @@ invalidated by any modification in the face over which it is defined.
 \ccMethod{Locate_result locate(Point_2 p);}{Performs point location for
   the query point \ccc{p}. In other words, the face, halfedge or
   vertex of the Voronoi diagram is found on which the point \ccc{p}
-  lies.
-  \ccPrecond{The dual Delaunay graph must contain at least one vertex.}}
+  lies. This method is supported only if
+  \ccStyle{Voronoi_traits::Has_nearest_site_2} is set to
+  \ccStyle{CGAL::Tag_true}.
+  \ccPrecond{The Voronoi diagram must contain at least one face.}}
+\ccGlue
+\ccMethod{template<class OutputIt> OutputIt nearest_sites(Point_2 p,
+  OutputIt oit);}{\ccc{OutputIt} is an output iterator with
+  \ccc{Face_handle} as value type. This methods outputs in the
+  container pointed to by \ccc{oit} the face handles corresponding to
+  the nearest site(s) of \ccc{p} in the Voronoi diagram. The resulting
+  output iterator is returned.}
+
 
 
 

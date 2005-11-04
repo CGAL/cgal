@@ -19,19 +19,19 @@
 
 
 
-\begin{ccRefConcept}{VoronoiDiagramHalfedge_2}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>::Halfedge}
 
 \ccDefinition
-The concept \ccc{VoronoiDiagramHalfedge_2} defines the requirements of the
-halfedge provided by the \ccc{Voronoi_diagram_2} class.
+The class \ccRefName\ is the Voronoi halfedge class provided by the
+\ccc{Voronoi_diagram_2<DG,VT>} class. Below we present its interface.
 
-\ccRefines
+\ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
 \ccc{EqualityComparable}, \ccc{LessThanComparable}
 
 \ccTypes
 %
-\ccTwo{VoronoiDiagramHalfedge_2::Ccb_halfedge_circulator+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT>::Halfedge::Ccb_halfedge_circulator+}{}
 \ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
@@ -43,12 +43,13 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
   diagram.}
 \ccGlue
-\ccNestedType{Ccb_halfedge_circulator}{A type for a circulator over
-  the halfedges of the connected components of the boundary of a
+\ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
+  circulator over the halfedges of the boundary of a
   Voronoi face. The value type of the circulator is
-  \ccc{VoronoiDiagramHalfedge_2}.}
+  \ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge} and is convertible to
+  \ccc{Halfedge_handle}.}
 \ccGlue
-\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It is a
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
 \ccThreeToTwo
@@ -67,9 +68,9 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccHeading{Access Methods}
 \ccThree{Ccb_halfedge_circulator}{e.opposite()+}{}
 %
-\ccMethod{Halfedge_handle opposite();}{Returns the twin halfedge.}
+\ccMethod{Halfedge_handle twin();}{Returns the twin halfedge.}
 \ccGlue
-\ccMethod{Halfedge_handle twin();}{Same as \ccc{e.opposite()}.}
+\ccMethod{Halfedge_handle opposite();}{Same as \ccc{e.twin()}.}
 \ccGlue
 \ccMethod{Halfedge_handle next();}{Returns the next halfedge in the
   counterclockwise sense around the boundary of the face that \ccc{e}
@@ -91,11 +92,14 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
   \ccPrecond{The target vertex must exist, i.e., \ccc{has_target()}
     must return \ccStyle{true}.}}
 \ccGlue
-\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a circulator to
-  traverse the halfedges of the boundary of the Voronoi face
-  containing \ccc{e}. The circulator is initialized to \ccc{e}.}
+\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a bidirectional
+  circulator to traverse the halfedges on the boundary of the Voronoi
+  face containing \ccc{e}. The circulator is initialized to
+  \ccc{e}. Applying \ccc{operator++} (resp. \ccc{operator--}) to this
+  circulator returns the next halfedge on the boundary of the face
+  containing \ccc{e} in the counterclockwise (resp. clockwise) sense.}
 \ccGlue
-\ccMethod{Delaunay_edge dual();}{Returns the dual edge, i.e., the
+\ccMethod{Delaunay_edge dual();}{Returns the
   corresponding dual edge in the Delaunay graph.}
 \ccGlue
 \ccMethod{Delaunay_vertex_handle up();}{Returns a handle to the vertex in
@@ -148,15 +152,12 @@ the Voronoi edge.
   they exist, of course); the previous of its next halfedge is itself
   and the next of its previous halfedge is itself.}
 
-\ccHasModels
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}\\
-
 \ccSeeAlso
-\ccc{VoronoiDiagramVertex_2}\\
-\ccc{VoronoiDiagramFace_2}\\
-\ccc{DelaunayGraph_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>}
-\end{ccRefConcept}
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Face}\\
+\ccc{DelaunayGraph_2}
+\end{ccRefClass}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

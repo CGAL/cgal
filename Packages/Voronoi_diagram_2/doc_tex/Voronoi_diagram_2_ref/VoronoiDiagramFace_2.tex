@@ -19,22 +19,22 @@
 
 
 
-\begin{ccRefConcept}{VoronoiDiagramFace_2}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>::Face}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The concept \ccc{VoronoiDiagramFace_2} defines the requirements of the
-face provided by the class \ccc{Voronoi_diagram_2}.
+The class \ccRefName\ is the Voronoi face class provided by the
+\ccc{Voronoi_diagram_2<DG,VT>} class. Below we present its interface.
 
-\ccRefines
+\ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
 \ccc{EqualityComparable}, \ccc{LessThanComparable}
 
 \ccTypes
 %
-\ccTwo{VoronoiDiagramFace_2::Ccb_halfedge_circulator+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT>::Face::Halfedge_handle+}{}
 \ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
@@ -47,18 +47,19 @@ face provided by the class \ccc{Voronoi_diagram_2}.
   diagram.}
 \ccGlue
 \ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
-  circulator over the halfedges of the connected components of the
-  boundary of the face. The value type of the circulator is
-  \ccc{Halfedge}.}
+  circulator over the halfedges on the boundary of the face. The value
+  type of the circulator is
+  \ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}, and is convertible
+  to \ccc{Halfedge_handle}.}
 \ccGlue
-\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It is a
   model of the \ccc{DelaunayGraph_2} concept.}
 %
 \ccGlue
 \ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
 \ccThreeToTwo
 \ccTypedef{typedef Delaunay_graph::Vertex_handle
-  Delaunay_vertex_handle;}{A type for the handle to a dual vertex.}
+  Delaunay_vertex_handle;}{A type for the handle of the dual vertex.}
 
 \ccCreationVariable{f}  %% choose variable name
 
@@ -67,38 +68,35 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 \ccThree{Ccb_halfedge_circulator}{f.halfedge()+}{}
 %
 \ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge on
-  the (outer connected component of the) boundary of \ccc{f}.}
+  the boundary of \ccc{f}.}
 \ccGlue
-\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a circulator for
-  traversing the halfedges on the boundary of \ccc{f}. The halfedges
-  are traversed in counter-clockwise order.}
+\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a bidirectional
+  circulator for traversing the halfedges on the boundary of
+  \ccc{f}. The halfedges are traversed in counterclockwise order.}
 \ccGlue
 \ccMethod{Delaunay_vertex_handle dual();}
-{Returns a handle to the dual vertex, i.e., the
-  corresponding dual vertex in the Delaunay graph.}
+{Returns a handle to the corresponding dual vertex in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}
 \ccThree{bool}{f.is_halfedge_on_ccb(Halfedge e)+}{}
-\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} if the face in
+\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} iff the face in
   an unbounded face in the Voronoi diagram.}
 \ccMethod{bool is_halfedge_on_ccb(Halfedge e);}{Returns
-  \ccStyle{true} if \ccc{e} is a halfedge of the boundary of
+  \ccStyle{true} iff \ccc{e} is a halfedge of the boundary of
   \ccc{f}.}
 \ccGlue
-\ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
+\ccMethod{bool is_valid();}{Returns \ccStyle{true} iff the following
   conditions are met: the face does not have zero area; all its
   adjacent halfedges do not have zero length; all its adjacent
   halfedges return the face as their adjacent face.}
 
-\ccHasModels
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Face}\\
 
 \ccSeeAlso
-\ccc{VoronoiDiagramVertex_2}\\
-\ccc{VoronoiDiagramHalfedge_2}\\
-\ccc{DelaunayGraph_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>}
-\end{ccRefConcept}
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}\\
+\ccc{DelaunayGraph_2}
+\end{ccRefClass}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
