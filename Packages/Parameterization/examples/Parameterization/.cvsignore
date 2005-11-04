@@ -5,4 +5,7 @@ ProgramOutput.*
 error.txt
 test
 *_extra.*
-
+Debug
+Release
+*.ncb
+*.suo

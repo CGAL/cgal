@@ -2,5 +2,9 @@ extensive_parameterization_test
 *.kdev*
 ProgramOutput.*
 error.txt
+Debug
+Release
+*.ncb
+*.suo
 
 
