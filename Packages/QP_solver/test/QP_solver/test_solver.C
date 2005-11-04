@@ -281,7 +281,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   Token::put_token_back(t);
 
   // output:
-  const int Width = 35;
+  const int Width = 15;
   using std::cout;
   using std::left;
   using std::setw;
