@@ -77,6 +77,27 @@ template <class P>
 struct Is_weighted< Weighted_point_with_surface_index<P> > 
   : public Is_weighted<P> {};
 
+template <class Point>
+std::ostream&
+operator<<(std::ostream &os, const Weighted_point_with_surface_index<Point>& p)
+{
+  os << static_cast<const Point&>(p);
+  if(is_ascii(os))
+    os << ' ';
+  return os << p.surface_index();
+}
+
+template <class Point>
+std::istream&
+operator>>(std::istream &is, Weighted_point_with_surface_index<Point>& p)
+{
+  is >>  static_cast<Point&>(p);
+  int index;
+  is >> index;
+  p.set_surface_index(index);
+  return is;
+}
+
 } // end namespace CGAL
 
 #endif

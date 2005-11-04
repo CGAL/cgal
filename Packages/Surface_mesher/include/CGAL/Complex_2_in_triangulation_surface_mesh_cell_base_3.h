@@ -164,6 +164,21 @@ namespace CGAL {
 
   };  // end Complex_2_in_triangulation_surface_mesh_cell_base_3
 
+template < class GT, class Cb >
+std::istream&
+operator>>(std::istream &is,
+           Complex_2_in_triangulation_surface_mesh_cell_base_3<GT, Cb> &v)
+{
+  return is >> static_cast<Cb&>(v);
+}
+
+template < class GT, class Cb >
+std::ostream&
+operator<<(std::ostream &os,
+           const Complex_2_in_triangulation_surface_mesh_cell_base_3<GT, Cb> &v)
+{
+  return os << static_cast<const Cb&>(v);
+}
 
 }  // namespace CGAL
 

@@ -104,8 +104,48 @@ namespace CGAL {
   }
   };  // end Complex_2_in_triangulation_cell_base_3
 
+template < class GT, class Cb >
+inline
+std::istream&
+operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
+{
+  bool b;
+  is >> static_cast<Cb&>(c);
+  if( ! is )
+      std:: cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
+                 << "bad avant!\n";
+  if( is.eof() )
+    std::cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
+              << "eof!\n";
+ for(int i = 0; i < 4; ++i)
+  {
+    is >> b;
+    if( ! is )
+      std:: cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
+                 << i << " bad\n";
+    c.set_surface_facet(i, b);
+  }
+  return is;
+}
+
+template < class GT, class Cb >
+inline
+std::ostream&
+operator<<(std::ostream &os,
+           const Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
+{
+  os << static_cast<const Cb&>(c);
+  for(int i = 0; i < 4; ++i)
+  {
+    if(is_ascii(os))
+      os << ' ';
+    os << c.is_facet_on_surface(i);
+  }
+  return os;
+}
 
 }  // namespace CGAL
+
 
 
 #endif  // CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
