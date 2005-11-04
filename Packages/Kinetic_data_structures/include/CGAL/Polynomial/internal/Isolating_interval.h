@@ -56,7 +56,7 @@ class Isolating_interval {
   typedef Isolating_interval<FT_t> This;
 public:
   typedef FT_t NT;
-  Isolating_interval(){}
+  Isolating_interval(): lb_(1), ub_(-1){}
   Isolating_interval(const NT &lbi): lb_(lbi), ub_(lbi){
   }
   Isolating_interval(const NT &lbi, const NT &ubi): lb_(lbi), ub_(ubi){
@@ -65,7 +65,6 @@ public:
       std::cerr << "lb_=" << lb() << " and ub_=" << ub() << std::endl;
     }
     CGAL_Polynomial_assertion(lb() <= ub());
-    // snap things to a power of 2. I'll deal later
   }
 
   typedef enum Endpoint {UPPER, LOWER} Endpoint;
@@ -73,6 +72,7 @@ public:
   //! Damn this is awful, but I can't think of another way for Filtered interval
   template <class Function>
   typename Function::result_type apply_to_endpoint(const Function &f, Endpoint b) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     if (b==UPPER){
       return apply(f,ub());
     } else {
@@ -83,12 +83,14 @@ public:
   //! Damn this is awful, but I can't think of another way for Filtered interval
   template <class Function>
   typename Function::result_type apply_to_midpoint(const Function &f) {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return apply(f,middle());
   }
 
   //! 
   template <class Function>
   typename Function::result_type apply_to_interval(const Function &f) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return apply(f, lb(), ub());
   }
 
@@ -96,20 +98,24 @@ public:
   template <class Function, class Data>
   typename Function::result_type apply_to_interval(const Function &f, 
 						   const Data &d0, const Data &d1) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return apply(f, lb(), ub(), d0, d1);
   }
 
 
   This upper_endpoint_interval() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(ub());
   }
 
   This lower_endpoint_interval() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(lb());
   }
 
   //! Make the interval singular on bound b.
   This endpoint_interval(Endpoint b) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     if (b==UPPER){
       return This(ub());
     } else {
@@ -118,21 +124,25 @@ public:
   }
 
   This midpoint_interval() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(middle());
   }
 
   //! Split in half
   This first_half() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(lb(), middle());
   }
   //! Split in half
   This second_half() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(middle(), ub());
   }
 
   //! Return both the first and second half; the midpoint is computed once
   std::pair<This,This> split() const
   {
+    CGAL_Polynomial_assertion(lb() <= ub());
     NT mid = middle();
     return std::pair<This,This>(This(lb(), mid), This(mid, ub()));
   }
@@ -140,6 +150,7 @@ public:
   //! Returns the interval [(a+(a+b)/2)/2,((a+b)/2+b)/2]
   This middle_half() const
   {
+    CGAL_Polynomial_assertion(lb() <= ub());
     NT mid = middle();
     NT mid_left = midpoint(lb(), middle());
     NT mid_right = midpoint(middle(), ub());
@@ -149,14 +160,31 @@ public:
 
   std::pair<This,This> split_at(const NT& x) const
   {
+    CGAL_Polynomial_assertion(lb() <= ub());
     CGAL_precondition( !is_singular() &&
 		       lower_bound() < x && x < upper_bound() );
     return std::pair<This,This>( This(lower_bound(), x),
 				 This(x, upper_bound()) );
   }
 
+  This split_at_first_half(const NT& x) const
+  {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_precondition( !is_singular() &&
+		       lower_bound() < x && x < upper_bound() );
+    return This(lower_bound(), x);
+  }
+  This split_at_second_half(const NT& x) const
+  {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_precondition( !is_singular() &&
+		       lower_bound() < x && x < upper_bound() );
+    return This(x, upper_bound());
+  }
+
   This interval_around_endpoint(Endpoint b) const
   {
+    CGAL_Polynomial_assertion(lb() <= ub());
     NT mid = middle();
 
     if ( b == LOWER ) {
@@ -171,9 +199,12 @@ public:
 
   //! See if the interval only contains a point. 
   bool is_singular() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return lb()==ub();
   }
+
   const NT &to_nt() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     CGAL_Polynomial_precondition(is_singular());
     return lb();
   }
@@ -189,6 +220,8 @@ public:
   
   //! Compare this interval to another. 
   Order order(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     if (*this < o) return STRICTLY_BELOW;
     else if (o < *this) return STRICTLY_ABOVE;
     else if (lb() <= o.lb() && ub() >= o.ub()) return CONTAINS;
@@ -214,6 +247,8 @@ public:
     }*/
 
   int number_overlap_intervals(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     Order ord= order(o);
     switch(ord) {
     case CONTAINS:
@@ -236,6 +271,8 @@ public:
   // the common interval and the non-common remainders of the two
   // intervals.
   This first_overlap_interval(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     Order ord= order(o);
     switch(ord){
     case CONTAINS:
@@ -254,6 +291,8 @@ public:
   }
 
   This second_overlap_interval(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     Order ord= order(o);
     switch(ord){
     case CONTAINS:
@@ -268,6 +307,8 @@ public:
   }
 
   This third_overlap_interval(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     Order ord= order(o);
     switch(ord){
     case CONTAINS:
@@ -344,6 +385,8 @@ public:
 
   /**/
   bool operator<(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     if (ub() < o.lb()) return true;
     return (ub() == o.lb() && (!is_singular() || !o.is_singular()));
     /*
@@ -352,31 +395,44 @@ public:
     */
   }
   bool operator>(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     return o < *this;
   }
   bool operator>=(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     return *this >0 || *this==o;
   }
   bool operator<=(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     return *this < 0 || *this==o;
   }
   bool operator==(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     return lb()==o.lb() && ub()==o.ub();
   }
   bool operator!=(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
+    CGAL_Polynomial_assertion(o.lb() <= o.ub());
     return lb()!=o.lb() || ub()!=o.ub();
   }
   
   //! Approximate the width with doubles. 
   double approximate_width() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return to_double(ub()) - to_double(lb());
   }
 
   double approximate_relative_width() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return approximate_width()/std::max(to_double(abs(ub())), to_double(abs(lb())));
   }
 
   bool contains(const This &o){
+    CGAL_Polynomial_assertion(lb() <= ub());
     return lb() <= o.lb() && ub() >= o.ub();
   }
   template <class OStream>
@@ -391,11 +447,13 @@ public:
   void print() const ;
 
   This operator-() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(-ub(), -lb());
   }
 
   //! return an interval
   std::pair<double, double> double_interval() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     std::pair<double, double>
       lbi= CGAL_POLYNOMIAL_TO_INTERVAL(lb()),
       ubi= CGAL_POLYNOMIAL_TO_INTERVAL(ub());
@@ -403,19 +461,23 @@ public:
   }
 
   const NT& lower_bound() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     //    bool not_recommended;
     return lb();
   }
   const NT& upper_bound() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     //    bool not_recommended;
     return ub();
   }						   
 
   void set_upper(const NT& u) {
+    CGAL_Polynomial_assertion(lb() <= ub());
     ub_ = u;
   }
 
   void set_lower(const NT& l) {
+    CGAL_Polynomial_assertion(lb() <= ub());
     lb_ = l;
   }
 
@@ -431,10 +493,12 @@ public:
 
   //! Union
   This operator||(const This &o) const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return This(std::min(lb(), o.lb()), std::max(ub(), o.ub()));
   }
   
   NT middle() const {
+    CGAL_Polynomial_assertion(lb() <= ub());
     return NT(0.5)*(ub()+lb());
   }
 

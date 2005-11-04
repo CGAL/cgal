@@ -292,7 +292,7 @@ public:
   */
   void process_front() {
     CGAL_precondition(!empty());
-    CGAL_precondition_code(Item_handle k= queue_.front());
+    //CGAL_precondition_code(Item_handle k= queue_.front());
     CGAL_KDS_LOG(LOG_LOTS, "Processing " << queue_.front() << std::endl);
     Item_handle ih= queue_.front();
     pop_front();
@@ -300,6 +300,8 @@ public:
     ih->process(ih->time());
     CGAL_expensive_postcondition(is_valid());
   }
+
+
 
   //! debugging
   bool print() const {
@@ -415,6 +417,17 @@ protected:
     else return less_items(i, parent(i));
   }
 
+  //! remove the front of the queue and fix the heap property
+  void pop_front() {
+    CGAL_expensive_precondition(!empty());
+    Item_handle item= queue_.front();
+    swap(0, queue_.size()-1);
+    queue_.back()->set_bin(-1);
+    queue_.pop_back();   
+    if (!queue_.empty()) bubble_down(0);
+  }
+
+
   //! Make sure that item i is not less than its parents and fix
   void bubble_down(unsigned int i) {
     CGAL_expensive_precondition(i<queue_.size());
@@ -445,15 +458,6 @@ protected:
   void bubble(unsigned int i){
     bubble_up(i);
     bubble_down(i);
-  }
- //! remove the front of the queue and fix the heap property
-  void pop_front() {
-    CGAL_expensive_precondition(!empty());
-    Item_handle item= queue_.front();
-    swap(0, queue_.size()-1);
-    queue_.back()->set_bin(-1);
-    queue_.pop_back();   
-    if (!queue_.empty()) bubble_down(0);
   }
 
   //! debugging

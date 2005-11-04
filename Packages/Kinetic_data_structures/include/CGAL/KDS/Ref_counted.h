@@ -143,19 +143,20 @@ class Ref_counted
   /*!  I need this constructor since the reference count needs to be
     reset on a copy.
    */
-  Ref_counted(const Ref_counted&) {
-    this_should_not_compile(T());
-    assert(0);
-  }
-
- 
-  
   This operator=(const This &) {
     this_should_not_compile(T());
     assert(0);
     return *this;
+  }  
+  Ref_counted(const Ref_counted&o) {
+    this_should_not_compile(T());
+    assert(0);
   }
 public:
+
+  
+  
+ 
 
   //! Initialize the count to 0.
   //#ifdef NEW_REF_COUNTED

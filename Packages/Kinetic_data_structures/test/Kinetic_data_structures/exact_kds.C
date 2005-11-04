@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
   Tr tr;
   typedef Tr::Simulator::Time Time;
 
-  typedef CGAL::KDS::Insert_event<Tr::Moving_point_table> MOI;
+  typedef CGAL::KDS::Insert_event<Tr::Active_objects_table> MOI;
   typedef Tr::Kinetic_kernel::Point_2 MP;
   
   for (unsigned int i=0; i< num_points; ++i){
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
       coefs.push_back(static_cast<double>(std::rand())/static_cast<double>(RAND_MAX));
     }
     tr.simulator_pointer()->new_event(Time(i/100.0), MOI(MP(Tr::Function_kernel::Function(coefs.begin(), coefs.end()), 
-							    Tr::Function_kernel::Function(0)), tr.moving_point_table_pointer()));
+							    Tr::Function_kernel::Function(0)), tr.active_objects_table_pointer()));
   }
 
   

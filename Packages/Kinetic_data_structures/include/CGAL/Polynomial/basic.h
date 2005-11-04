@@ -23,6 +23,7 @@
 
 
 #include <CGAL/Polynomial/internal/config.h>
+#include <CGAL/Polynomial/internal/Statistics.h>
 #include <boost/static_assert.hpp>
 /*!
 

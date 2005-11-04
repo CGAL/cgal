@@ -21,6 +21,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_ROOT_CONTAINER_H
 
 #include <CGAL/Polynomial/basic.h>
+#include <iterator>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -44,15 +45,18 @@ public:
     iterator(const typename This::RE &re): renum_(re){}
 
     typedef Root value_type;
+    typedef const iterator& reference;
+    typedef const value_type * pointer;
+    typedef std::size_t difference_type;
+    typedef std::forward_iterator_tag iterator_category;
 
     const value_type &operator*() const {
       return renum_.top();
     }
-
-    const value_type *operator->() const {
+    pointer operator->() const {
       return &renum_.top();
     }
-    const iterator& operator++() {
+    reference operator++() {
       renum_.pop();
       return *this;
     }
@@ -60,6 +64,12 @@ public:
       iterator it= *this;
       renum_.pop();
       return it;
+    }
+    const iterator& operator+(unsigned int i){
+      for (unsigned int j=0; j< i; ++j){
+	operator++();
+      }
+      return *this;
     }
     bool operator==(const iterator &o) const {
       CGAL_Polynomial_precondition(renum_.empty() 

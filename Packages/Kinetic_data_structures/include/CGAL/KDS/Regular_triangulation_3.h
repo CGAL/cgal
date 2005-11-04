@@ -216,7 +216,7 @@ std::ostream& operator<<(std::ostream &out, const Regular_3_push_event<K,S,KK,C>
 
 template <class Traits> 
 struct Regular_triangulation_3_types {
-  typedef typename Traits::Moving_point_table MPT;
+  typedef typename Traits::Active_objects_table MPT;
   typedef typename Traits::Kinetic_kernel KK;
   typedef CGAL::Triangulation_cell_base_3<typename Traits::Instantaneous_kernel> CFB;
 
@@ -261,10 +261,10 @@ private:
   
 public:
   typedef TraitsT Traits;
-  typedef typename Traits::Moving_point_table::Key Point_key;
+  typedef typename Traits::Active_objects_table::Key Point_key;
 
 protected:
-  typedef typename Traits::Moving_point_table MPT;
+  typedef typename Traits::Active_objects_table MPT;
   typedef typename Traits::Simulator Simulator;
   typedef typename Traits::Simulator::Event_key Event_key;
   typedef typename Traits::Simulator::Time Time;
@@ -344,15 +344,15 @@ protected:
   
   typedef typename CGAL::KDS::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::KDS::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Moving_point_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Moving_point_table::Listener, This>;
+  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Active_objects_table::Listener, This> Moving_point_table_listener;
+  friend class CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Active_objects_table::Listener, This>;
 
 public:
   typedef VisitorT Visitor;
   
   Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
 							    siml_(tr.simulator_pointer(), this),
-							    motl_(tr.moving_point_table_pointer(), this),
+							    motl_(tr.active_objects_table_pointer(), this),
 							    listener_(NULL){
   }
 
@@ -704,7 +704,7 @@ public:
 	    vit->info()= make_certificate(vit);
 	  }
 	}
-	for (typename Base_traits::Moving_point_table::Keys_iterator kit= kdel_.moving_object_table()->keys_begin(); 
+	for (typename Base_traits::Active_objects_table::Keys_iterator kit= kdel_.moving_object_table()->keys_begin(); 
 	     kit != kdel_.moving_object_table()->keys_end(); ++kit){
 	  typename Triangulation::Vertex_handle vh= kdel_.vertex_handle(*kit);
 	  if (vh == NULL){

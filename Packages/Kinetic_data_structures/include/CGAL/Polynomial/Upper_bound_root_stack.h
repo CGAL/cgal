@@ -44,6 +44,7 @@ protected:
   typedef typename Traits_t::Sturm_root_count Sturm_root_counter;
   typedef typename Traits_t::Function Polynomial;
   typedef typename Traits_t::NT NT;
+  enum Interval_classification {GOOD, EMPTY, SOME};
 public:
   typedef Traits_t Traits;
   typedef typename Traits_t::Root Root;
@@ -71,10 +72,9 @@ public:
 					    has_ss_(false){
     initialize();
 
-    do {
+    //do {
       isolate_top();
-      cur_= make_next_root();
-    } while (!(cur_ >lb_));
+      //} while (!(cur_ >lb_));
   };
   Upper_bound_root_stack(const Polynomial &f, 
 			 const Root &lb,
@@ -88,16 +88,16 @@ public:
   };
 
   const Root& top() const {
+    CGAL_Polynomial_precondition(cur_ != std::numeric_limits<Root>::quiet_NaN());
     return cur_;
   }
 
   void pop() {
     isolate_top();
-    cur_= make_next_root();
   }
 
   bool empty() const {
-    return cur_==Root::infinity();
+    return cur_==std::numeric_limits<Root>::infinity();
   }
 
   /*Isolating_interval spanned_interval() const {
@@ -121,7 +121,7 @@ public:
 
   // the following methods should be protected, but...
   bool top_is_isolated() const {
-    return cur_ != -std::numeric_limits<Root>::infinity();
+    return cur_ != std::numeric_limits<Root>::quiet_NaN();
 
       /*intervals_.back().interval.is_singular() 
       || intervals_.back().num_roots.is_single() 
@@ -131,14 +131,23 @@ public:
   }
 
   bool refine_top(double ub) {
-    while (intervals_.back().interval.double_interval().first < ub) {
-      if (classify_top()){
-	make_next_root();
-	return true;
+    while (!intervals_.empty() && intervals_.back().interval.double_interval().first < ub) {
+      Interval_classification c=classify_top();
+      if (c==GOOD){
+	cur_=make_next_root();
+	if (cur_ <= lb_) {
+	  cur_= std::numeric_limits<Root>::quiet_NaN();
+	  continue;
+	} else {
+	  return true;
+	}
+      } else if (c== EMPTY) {
+	intervals_.pop_back();
       } else {
-	refine_top();
+	subdivide_top();
       }
     }
+    return false;
   }
 
   bool refine_bottom(double lb) {
@@ -147,16 +156,25 @@ public:
   }
 
   void pop_no_isolate() {
-    cur_= -std::numeric_limits<Root>::infinity();
+    if (intervals_.empty()){
+      cur_= std::numeric_limits<Root>::infinity();
+    } else {
+      cur_= std::numeric_limits<Root>::quiet_NaN();
+    }
   }
 
   std::pair<double, double> double_interval() const {
-    CGAL_precondtion(!empty());
+    //CGAL_Polynomial_precondition(!empty());
+    if (empty()) return std::pair<double, double>(std::numeric_limits<double>::infinity(),
+						  std::numeric_limits<double>::infinity());
     double lb;
     if (top_is_isolated()){
       lb= cur_.double_interval(std::numeric_limits<double>::infinity()).first;
-    } else {
+    } else if (!intervals_.empty()) {
       lb= intervals_.back().interval.double_interval().first;
+    } else {
+      return std::pair<double, double>(std::numeric_limits<double>::infinity(),
+				       std::numeric_limits<double>::infinity());
     }
     double ub;
     if (intervals_.empty()){
@@ -174,11 +192,21 @@ public:
   */
   void isolate_top(){
     //write_intervals(std::cout);
-    while (!intervals_.empty()){
-      if (classify_top()) break;
-      subdivide_top();
-    } // while (the first has more than one interval);
-    //std::cout << "Initialized.\n";
+    do {
+      while (!intervals_.empty()){
+	Interval_classification cl= classify_top();
+	if (cl== EMPTY) intervals_.pop_back();
+	else if (cl== SOME) {
+	  subdivide_top();
+	} else {
+	  break;
+	}
+      } // while (the first has more than one interval);
+      //std::cout << "Initialized.\n";
+      //if (!intervals_empty()){
+      cur_= make_next_root();
+    } while (cur_<= lb_);
+      // }
   }
 protected:
 
@@ -213,7 +241,7 @@ protected:
     if (f_.is_constant()) return;
     
     typename Traits::Root_bound rbe= kernel_.root_bound_object();
-    NT rb= rbe(f_);
+    NT rb; if (lb_==-Root::infinity() || ub_== Root::infinity()) rb= rbe(f_);
     Interval lbi, ubi;
     if (lb_ == -Root::infinity()) {
       lbi= Interval(-rb);
@@ -233,16 +261,17 @@ protected:
 				       ii.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::UPPER)));
     CGAL_DSPRINT(std::cout << "Initial interval is " << ii <<std::endl);
   }
-
+  
+  
   void subdivide_top(){
    
     Interval_info ii= intervals_.back();
     CGAL_DSPRINT(std::cout << "Investigating " << ii.interval << std::endl);
-    intervals_.pop_back();      
+    intervals_.pop_back();
     
-    Interval uh= ii.interval.second_half();
-    Interval lh= ii.interval.first_half();
-    Interval mi= lh.upper_endpoint_interval();
+    const Interval uh= ii.interval.second_half();
+    const Interval mi= uh.lower_endpoint_interval();
+    const Interval lh= ii.interval.first_half();
     CGAL_POLYNOMIAL_NS::Sign sm= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
 
     bool mid_is_root=(sm == CGAL_POLYNOMIAL_NS::ZERO);
@@ -259,25 +288,26 @@ protected:
 
     CGAL_DSPRINT(write_intervals(std::cout));
   }
+  
+  /*void subdivide_top(double v){
+    Interval_info ii= intervals_.back();
+    CGAL_DSPRINT(std::cout << "Investigating " << ii.interval << std::endl);
+    intervals_.pop_back();      
+    
+    
 
+    }*/
+  
 
-  bool sturm_top() {
+  //return true if this pops
+  unsigned int sturm_top() {
     if (!has_ss_){
       ss_= kernel_.Sturm_root_count_object(f_);
       has_ss_=true;
     }
     CGAL_DSPRINT(std::cout << "Computing sturm for " << intervals_.back().interval << std::endl);
     //std::cout << "Computing sturm for " << intervals_.back().interval << std::endl;
-    unsigned int ct= intervals_.back().interval.apply_to_interval(ss_);
-    if (ct == 0){
-      intervals_.pop_back();
-      return true;
-    } else if (ct==1) {
-      intervals_.back().num_roots =1;
-    } else {
-      intervals_.back().num_roots=Root_count(ct);
-    }
-    return false;
+    return intervals_.back().interval.apply_to_interval(ss_);
   }
 
 
@@ -293,7 +323,7 @@ protected:
     intervals_.back().num_roots=deg;
   }
 
-  bool classify_top() {
+  Interval_classification classify_top() {
     CGAL_assertion(intervals_.back().left_sign 
 		   == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER));
     CGAL_assertion(intervals_.back().right_sign 
@@ -304,18 +334,28 @@ protected:
     if (intervals_.back().interval.is_singular()) {
       count_singular_top();
       //std::cout << "Breaking in singular." << std::endl;
-      return true;
+      return GOOD;
     } else if (intervals_.back().interval.approximate_width() <= min_interval_width()){ 
-      if (sturm_top()) return false;
-      if (intervals_.back().num_roots.is_single()
-	  && intervals_.back().left_sign != ZERO 
-	  && intervals_.back().right_sign != ZERO) return true;
+      unsigned int ct= sturm_top();
+      if (ct == 0){
+	//intervals_.pop_back();
+	return EMPTY;
+      } else if (ct==1) {
+	intervals_.back().num_roots =1;
+	if (intervals_.back().num_roots.is_single()
+	    && intervals_.back().left_sign != ZERO 
+	    && intervals_.back().right_sign != ZERO) return GOOD;
+	else return SOME;
+      } else {
+	intervals_.back().num_roots=Root_count(ct);
+	return SOME;
+      }
     } else  if (intervals_.back().num_roots.is_unknown()) {
       upperbound_top();
       
       if (intervals_.back().num_roots.is_zero()){
-	intervals_.pop_back();
-	return false;
+	//intervals_.pop_back();
+	return EMPTY;
       }
       
       if (intervals_.back().num_roots.is_single()
@@ -323,9 +363,13 @@ protected:
 	  && intervals_.back().right_sign != ZERO) {
 	CGAL_assertion( intervals_.back().left_sign != intervals_.back().right_sign);
 	//std::cout << "Breaking in normal." << std::endl;
-	return true;
+	return GOOD;
+      } else {
+	return SOME;
       }
     }
+    CGAL_Polynomial_postcondition(0);
+    return SOME;
   }
 
  

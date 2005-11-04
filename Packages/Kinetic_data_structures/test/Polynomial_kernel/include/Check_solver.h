@@ -2,12 +2,15 @@
 #define CHECK_SOLVER_H
 #include <CGAL/Polynomial/internal/polynomial_generators.h>
 #include <CGAL/Timer.h>
+#include <vector>
+#include <iterator>
 
 
 
 template <class K>
 class Check_solver{
 public:
+  typedef typename K::Root_stack Root_stack;
   typedef typename K::Root_container Root_container;
   typedef std::vector<double> DV;
   typedef typename K::Root Rt;
@@ -63,21 +66,32 @@ public:
     timer.start();
     int total_roots=0;
     do {
-      Root_container s= k_.root_container_object(q, start, end);
-      typename Root_container::iterator it= s.begin();
+      Root_stack s= k_.root_stack_object(q, start, end);
       Rt last_root= -std::numeric_limits<Rt>::infinity();
-      while (it != s.end()){
+      while (!s.empty()){
 	if (reps==0  && verbose){
 	  //comp.push_back(CGAL::to_double(r));
-	  CGAL_assertion(last_root<= *it);
-	  last_root=*it;
-	  roots.push_back(*it);
-	  
-	  std::cout << "<" << CGAL::to_double(*it);
-	  if (iem(*it)) { std::cout <<"E";}
-	  std::cout << "> " << std::flush;
+	  if (last_root > s.top()){
+	    std::cerr << "ERROR last root was " << last_root << " and current root is " 
+		      << s.top() << std::endl;
+	  }
+	  CGAL_assertion(last_root<= s.top());
+	  last_root=s.top();
+	  Rt cur= s.top();
+	  if (cur < end) {
+	    /*if (cur == std::numeric_limits<Rt>::infinity() || cur > 10000){
+	      int i=0; 
+	      }*/
+	    roots.push_back(s.top());
+	    
+	    std::cout << "<" << CGAL::to_double(s.top());
+	    if (iem(s.top())) { std::cout <<"E";}
+	    std::cout << "> " << std::flush;
+	  } else { 
+
+	  }
 	}
-	++it;
+	s.pop();
 	++total_roots;
       }
       ++total_roots;
@@ -106,7 +120,7 @@ public:
 
 	bool has_error=false;
 	for (unsigned int i=0; i< taken_maple.size(); ++i){
-	  if (!taken_maple[i] && Rt(roots_b[i]-.00001) > start && Rt(roots_b[i]) < end) has_error=true;
+	  if (!taken_maple[i]) has_error=true;
 	}
 
 	for (unsigned int i=0; i< taken_solver.size(); ++i){
@@ -116,7 +130,7 @@ public:
 	if (has_error) {
 	  std::cout << std::endl;
 	  for (unsigned int i=0; i< taken_maple.size(); ++i){
-	    if (!taken_maple[i] && Rt(roots_b[i]) > start && Rt(roots_b[i]) < end)
+	    if (!taken_maple[i])
 	      std::cerr << "ERROR Missing " << roots_b[i] << std::endl;
 	  }
 	  
@@ -377,13 +391,13 @@ public:
       Root_container s=
 	k_.root_container_object(q, -std::numeric_limits<Rt>::infinity(),
 				 std::numeric_limits<Rt>::infinity());
+
+      std::vector<Rt> roots;
+      std::copy(s.begin(), s.end(), std::back_inserter(roots));
       
-      //******************************* UP TO HERE *****************************
-      
-      typename Root_container::iterator it=s.begin();
-      while ( it != s.end() ) {
-	check_polynomial(q, a.begin(), a.end(), *it);
-	++it;
+      //typename Root_container::iterator it=s.begin();
+      for (unsigned int offset=0; offset < roots.size()-1; ++offset){
+	check_polynomial(q, a.begin()+offset+1, a.end(), roots[offset]);
       }
     }
 
@@ -407,12 +421,12 @@ public:
 	k_.root_container_object(q, -std::numeric_limits<Rt>::infinity(),
 				 std::numeric_limits<Rt>::infinity());
       
-      //******************************* UP TO HERE *****************************
+      std::vector<Rt> roots;
+      std::copy(s.begin(), s.end(), std::back_inserter(roots));
       
-      typename Root_container::iterator it=s.begin();
-      while ( it != s.end() ) {
-	check_polynomial(q, a.begin(), a.end(), *it);
-	++it;
+      //typename Root_container::iterator it=s.begin();
+      for (unsigned int offset=0; offset < roots.size()-1; ++offset){
+	check_polynomial(q, a.begin()+offset+1, a.end(), roots[offset]);
       }
       
     }

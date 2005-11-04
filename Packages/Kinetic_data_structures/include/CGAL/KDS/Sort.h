@@ -48,7 +48,7 @@ template <class Traits> class Sort:
   // The way the Simulator represents time.
   typedef typename Traits::Simulator::Time Time;
   // A label for a moving primitive in the MovingObjectTable
-  typedef typename Traits::Moving_point_table::Key Object_key;
+  typedef typename Traits::Active_objects_table::Key Object_key;
   // A label for a certificate so it can be descheduled.
   typedef typename Traits::Simulator::Event_key Event_key;
   // To shorten the names. Use the default choice for the static kernel.
@@ -62,12 +62,12 @@ template <class Traits> class Sort:
 				This> Sim_listener;
   // Redirects the MovingObjectTable notifications to function calls
   typedef typename CGAL::KDS::
-  Notifying_table_listener_helper<typename Traits::Moving_point_table::Listener,
+  Notifying_table_listener_helper<typename Traits::Active_objects_table::Listener,
 				      This> MOT_listener;
 public:
    // Register this KDS with the MovingObjectTable and the Simulator
   Sort(Traits tr): sim_listener_(tr.simulator_pointer(), this),
-		   mot_listener_(tr.moving_point_table_pointer(), this),
+		   mot_listener_(tr.active_objects_table_pointer(), this),
 		   kk_(tr.kinetic_kernel_object()),
 		   ik_(tr.instantaneous_kernel_object()){}
 
@@ -161,7 +161,7 @@ public:
     events_.erase(k);
   }
   template <class It> static It next(It it){ return ++it;}
-  typename Traits::Moving_point_table::Data object(Object_key k) const { 
+  typename Traits::Active_objects_table::Data object(Object_key k) const { 
     return mot_listener_.notifier()->at(k);
   }
   typename Traits::Simulator* simulator() {return sim_listener_.notifier();}

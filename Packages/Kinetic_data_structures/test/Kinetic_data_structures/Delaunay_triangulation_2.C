@@ -36,7 +36,7 @@ int main(int, char *[]){
     Simulation_traits::Kinetic_kernel::Point_2 p;
     il >> p;
     //std::cout << p << std::endl;
-    simtr.moving_point_table_pointer()->insert(p);
+    simtr.active_objects_table_pointer()->insert(p);
     ++nread;
   }
 

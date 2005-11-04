@@ -3,11 +3,11 @@
 
 #include <CGAL/KDS/Exact_simulation_traits_2.h>
 #include <CGAL/KDS/Inexact_simulation_traits_2.h>
-#include <vector>
-#include <algorithm>
-#include <map>
 #include <CGAL/KDS/Two_list_pointer_event_queue.h>
 #include <CGAL/Timer.h>
+#include <algorithm>
+#include <map>
+#include <vector>
 
 const int num_events=1000;
 

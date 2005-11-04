@@ -46,7 +46,7 @@ CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
 
 template <class Traits> 
 struct Delaunay_triangulation_3_types {
-  typedef typename Traits::Moving_point_table MPT;
+  typedef typename Traits::Active_objects_table MPT;
   typedef typename Traits::Kinetic_kernel KK;
   typedef CGAL::KDS::Delaunay_triangulation_cell_base_3<Traits> CFBI;
   /*typedef CGAL::Triangulation_cell_base_with_info_3<Delaunay_cache_3<MPT, KK>, 
@@ -115,7 +115,7 @@ private:
   };
 
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Visitor> KDel;
-  typedef typename TraitsT::Moving_point_table::Key Point_key;
+  typedef typename TraitsT::Active_objects_table::Key Point_key;
     
   struct Listener_core{
     typedef typename This::Pointer Notifier_pointer;
@@ -125,14 +125,15 @@ private:
   
   typedef typename CGAL::KDS::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::KDS::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Moving_point_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Moving_point_table::Listener, This>;
+  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Active_objects_table::Listener, This> Moving_point_table_listener;
+  friend class CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Active_objects_table::Listener, This>;
 
 public:
   //! Initialize it. 
   Delaunay_triangulation_3(TraitsT tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
 							      siml_(tr.simulator_pointer(), this),
-							      motl_(tr.moving_point_table_pointer(), this),
+							      motl_(tr.active_objects_table_pointer(),
+								    this),
 							      listener_(NULL){
   }
 

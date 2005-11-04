@@ -16,6 +16,8 @@
 #include <CGAL/Polynomial/Default_filtering_traits.h>
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
 
+#include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
+
 #include <CGAL/Gmpq.h>
 
 #ifdef CGAL_USE_CORE
@@ -44,32 +46,19 @@ int main(int argc, char* argv[])
 
 
   {
-    if (verbose) std::cout <<"Descartes_filtered__________________________\n";
-    else std::cout << "Descartes filtered&\t";
-    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
-    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
-    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
-    typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
+    if (verbose) std::cout <<"Descartes_lazy______________________________\n";
+    else std::cout << "DL&\t";
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+    typedef CGAL_POLYNOMIAL_NS::Lazy_upper_bound_root_stack<BIT> CRE;
+    typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
+
     K k;
-    Check_solver<K > cg(k, verbose);
-    cg.all();
-    cg.exact();
+    Check_solver<K> cc(k,verbose);
+    cc.all();
+    cc.exact();
+    if (!verbose) std::cout << " -- &";
     std::cout << std::endl;
   }
- {
-    if (verbose) std::cout <<"Sturm_filtered__________________________\n";
-    else std::cout << "Sturm filtered&\t";
-    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
-    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
-    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
-    typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
-    K k;
-    Check_solver<K > cg(k, verbose);
-    cg.all();
-    cg.exact();
-    std::cout << std::endl;
- }
-
   {
     if (verbose) std::cout <<"Descartes_exact_____________________________\n";
     else std::cout << "Descartes&\t";
@@ -84,6 +73,34 @@ int main(int argc, char* argv[])
     if (!verbose) std::cout << " -- &";
     std::cout << std::endl;
   }
+  {
+    if (verbose) std::cout <<"Descartes_filtered__________________________\n";
+    else std::cout << "Descartes filtered&\t";
+    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
+    typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
+    K k;
+    Check_solver<K > cg(k, verbose);
+    cg.all();
+    cg.exact();
+    std::cout << std::endl;
+  }
+  {
+    if (verbose) std::cout <<"Sturm_filtered__________________________\n";
+    else std::cout << "Sturm filtered&\t";
+    typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
+    typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
+    typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
+    K k;
+    Check_solver<K > cg(k, verbose);
+    cg.all();
+    cg.exact();
+    std::cout << std::endl;
+ }
+
+ 
 
   {
     if (verbose) std::cout <<"Sturm_exact_________________________________\n";

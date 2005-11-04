@@ -279,7 +279,7 @@ public:
    
     Item *ni = make_event(t, e);
     
-    //CGAL_exactness_assertion(t >= lb_);
+    //CGAL_exactness_assertion(t >= lbs_);
     //lb_=std::min(t, lb_);
     
     if (t <= ub_) {
@@ -436,6 +436,10 @@ public:
     return null_event_;
   }
  
+  void clear() {
+    front_.clear();
+    back_.clear();
+  }
 
 protected:
 
@@ -584,7 +588,7 @@ protected:
       ++it;
     }
 
-    double split= CGAL::to_interval(it->time()).second;
+    double split= to_interval(it->time()).second;
     while (it->time() < split && it != front_.end()) ++it;
 
     if (it != front_.end()) {

@@ -163,6 +163,15 @@ public:
     root after the current time.
   */
   Root_stack root_stack_object(const typename Function_kernel::Function &mf) const {
+    CGAL_KDS_LOG(LOG_LOTS, "Solving " << mf << std::endl); 
+    CGAL_exactness_assertion_code(typename Function_kernel::Sign_at sar=kernel_.sign_at_object(mf));
+    CGAL_exactness_assertion_code(if (sar(current_time())== CGAL::NEGATIVE){
+				    std::cerr << "Invalid certificate with function " 
+					      << std::endl << "In interval from "
+					      << current_time() << std::endl <<"to " << end_time() 
+					      << std::endl;});
+    CGAL_exactness_assertion(sar(current_time())!= CGAL::NEGATIVE);
+
     return Root_stack(mf, current_time(), end_time(), kernel_.root_stack_traits_object());
   }
   //! return the polynomial kernel
@@ -304,9 +313,9 @@ public:
     CGAL_exactness_precondition(!(t < current_time()));
     //if (cert.time() == Time::infinity()) return final_event();
   
-    if (!( t < end_time())){
+    /*if (!( t < end_time())){
       return null_event();
-    } else {
+      } else {*/
       //CGAL_assertion(cert.time() < end_time());
       //if (0) cert.process();
       //std::cout << "Requested to schedule "; cert->write(std::cout);
@@ -320,7 +329,7 @@ public:
       //if (log()->is_output(Log::LOTS)) write(log()->stream(Log::LOTS));
       
       return key;
-    }
+      //}
   }
 
   //! The key corresponding to events which never occur.
@@ -486,22 +495,25 @@ protected:
     cur_time_= next_event_time();
     last_event_time_= cur_time_;
     //_last_event_time=cur_time_;
-
-    queue_.process_front();
+    if (queue_.front_priority() < end_time()) {
+      queue_.process_front();
     /*for (typename KDSs::iterator it= kdss_.begin(); it != kdss_.end(); ++it){
       (*it)->write(std::cout);
       }*/
     
-    ++number_of_events_;
+      ++number_of_events_;
 #ifdef CGAL_KDS_CHECK_EXPENSIVE
-    if (cur_time_ != next_event_time()){
-      typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-      audit_time_= bet(cur_time_, next_event_time());
-      CGAL_KDS_LOG(LOG_SOME, "Next audit is at time " << audit_time_ << std::endl);
-    } else {
-      CGAL_KDS_LOG(LOG_SOME, "Can't audit between events.\n");
-    }
+      if (cur_time_ != next_event_time()){
+	typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
+	audit_time_= bet(cur_time_, next_event_time());
+	CGAL_KDS_LOG(LOG_SOME, "Next audit is at time " << audit_time_ << std::endl);
+      } else {
+	CGAL_KDS_LOG(LOG_SOME, "Can't audit between events.\n");
+      }
 #endif
+    } else {
+      queue_.clear();
+    }
     
     //std::cout << queue_<< std::endl;
     CGAL_expensive_postcondition_code(if (cur_time_== next_event_time()))

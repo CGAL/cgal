@@ -18,7 +18,9 @@
 
 \ccDefinition
   
-The concept \ccRefName\ enumerates through roots of a function.
+The concept \ccRefName\ enumerates through roots of a function. Most
+of the root stacks maintain the invariant that
+\ccc{pop()} can be called exactly once per root in the interval. However, certain of the \ccRefName s delay prooving that there are no remaining root, and so might return one root with the value \ccc{std::numeric_limits<Root>::infinity()} which does not correspond to an existing root. Comparing \ccc{top()} to the \ccc{Root} defining the end of the interval will allow you to make sure that it corresponds to an actual root of the polynomial (it is greater or equal then it is not in the interval). 
 
 \ccTypes
 
@@ -34,11 +36,11 @@ The concept \ccRefName\ enumerates through roots of a function.
 
 \ccOperations
 
-\ccMethod{void pop();}{Advance to the next root. As a precondition, finished() must be false.}
+\ccMethod{void pop();}{Advance to the next root. As a precondition, empty() must be false.}
 
-\ccMethod{Root top();}{Return the current root. As a precondition, finished() must be false.}
+\ccMethod{Root top();}{Return the current root. As a precondition, empty() must be false. Note that the \ccc{Root} returned might not actually be in the interval (since the solver has not yet proved that there are no more roots).}
 
-\ccMethod{bool empty();}{Return true if there are no more roots left.}
+\ccMethod{bool empty();}{Return true if there are known to be no more roots left. There might not actually be any roots of the polynomial left in the interval, but the work necessary to prove this has been delayed.}
 
 %\ccHasModels
 

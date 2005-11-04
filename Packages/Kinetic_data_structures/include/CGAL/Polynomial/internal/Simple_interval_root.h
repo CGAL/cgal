@@ -103,11 +103,12 @@ public:
   }
 
   //! Represent a root by an interval and a polynomial
-  Simple_interval_root(const Interval &ii, const Polynomial &sa, 
+  Simple_interval_root(const Interval &ii,
+		       const Polynomial &sa, 
 		       Sign slb, Sign sub, 
 		       Traits k): ii_(ii), function_(sa),
 				  kernel_(k){
-    CGAL_Polynomial_precondition(!isolating_interval().is_singular());
+    CGAL_Polynomial_precondition(!ii_.is_singular());
     //Sign slb= sign_(ii_.lower_bound());
     if (slb == sub){
       if (slb== POSITIVE){
@@ -149,8 +150,8 @@ public:
   }
   
   bool operator!=(const This &o) const {
-    /*if (is_null()) return !o.is_null();
-      else if (o.is_null()) return true;*/
+    if (is_null()) return !o.is_null();
+    else if (o.is_null()) return true;
     CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
@@ -170,8 +171,8 @@ public:
   }
   
   bool operator==(const This &o) const {
-    /*if (is_null()) return o.is_null();
-      else if (o.is_null()) return false;*/
+    if (is_null()) return o.is_null();
+    else if (o.is_null()) return false;
     CGAL_Polynomial_expensive_precondition(!is_null() && !o.is_null());
     Comparison_result r= compare(o);
     audit(); o.audit();
@@ -413,7 +414,7 @@ protected:
     Sign fsn= fi.apply_to_endpoint(sign_at(), Interval::UPPER);
 
     if (fsn == ZERO){
-      set_is_rational(fi.upper_endpoint_isolating_interval());
+      set_is_rational(fi.upper_endpoint_interval());
     } else if (contains_root(fi, lower_sign(), fsn)){
       set_interval(fi);
     } else {
@@ -423,7 +424,7 @@ protected:
       } else {
 	Sign ssn= si.apply_to_endpoint(sign_at(), Interval::UPPER);
 	if (ssn== ZERO){
-	  set_is_rational(si.upper_endpoint_isolating_interval());
+	  set_is_rational(si.upper_endpoint_interval());
 	} else if (contains_root(si, fsn, ssn)) {
 	  set_interval(si);
 	} else {
@@ -523,14 +524,11 @@ protected:
       o.refine();
     } while (isolating_interval().approximate_width() > .0000001);
 
-    std::cout << "Using sturm to compare " << *this << " and " << o << std::endl;
-    /*Polynomial_assertion_code(typename Traits::Compare_isolated_roots_in_interval apred
-			      = kernel_.compare_isolated_roots_in_interval_object(function_, function_));
-    Polynomial_assertion_code(Comparison_result cc= isolating_interval().apply_to_interval(apred));
-    Polynomial_assertion(cc == EQUAL);*/
+    //std::cout << "Using sturm to compare " << *this << " and " << o << std::endl;
+    
     typename Traits::Compare_isolated_roots_in_interval pred=kernel_.compare_isolated_roots_in_interval_object(function_,o.function_);
     Comparison_result co= isolating_interval().apply_to_interval(pred);
-    std::cout << "The result is " << co << std::endl;
+    //std::cout << "The result is " << co << std::endl;
     return co;
   }
   
@@ -759,12 +757,12 @@ namespace std {
     static const int max_exponent=0;
     static const int max_exponent10=0;
     static const bool has_infinity=true;
-    static const bool has_quiet_NaN = false;
+    static const bool has_quiet_NaN = true;
     static const bool has_signaling_NaN= false;
     static const float_denorm_style has_denorm= denorm_absent;
     static const bool has_denorm_loss = false;
     static T infinity() throw() {return T::infinity();}
-    static T quiet_NaN() throw(){return T(0);}
+    static T quiet_NaN() throw(){return T();}
     static T denorm_min() throw() {return T(0);}
     static const bool is_iec559=false;
     static const bool is_bounded =false;

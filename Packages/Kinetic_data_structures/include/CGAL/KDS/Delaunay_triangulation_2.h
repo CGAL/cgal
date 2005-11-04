@@ -83,7 +83,7 @@ public:
 
   typedef typename Simulation_traits::Kinetic_kernel Kinetic_kernel;
   typedef typename Simulation_traits::Simulator Simulator;
-  typedef typename Simulation_traits::Moving_point_table Moving_point_table;
+  typedef typename Simulation_traits::Active_objects_table Moving_point_table;
 
   typedef typename Moving_point_table::Key Point_key;
   typedef typename Simulator::Event_key Event_key;
@@ -118,7 +118,7 @@ public:
   Delaunay_triangulation_2(Simulation_traits st,
 			   Visitor w= Visitor()): traits_(st), 
 						  siml_(st.simulator_pointer(), this), 
-						  motl_(st.moving_point_table_pointer(), this),
+						  motl_(st.active_objects_table_pointer(), this),
 						  del_(traits_.instantaneous_kernel_object()),
 						  soc_(traits_.kinetic_kernel_object().side_of_oriented_circle_2_object()),
 						  o2_(traits_.kinetic_kernel_object().orientation_2_object()),
@@ -155,8 +155,8 @@ public:
     if (del_.dimension() != 2) return;
     Delaunay sdel(traits_.instantaneous_kernel_object());
     sdel.geom_traits().set_time(traits_.simulator_pointer()->rational_current_time());
-    sdel.insert(traits_.moving_point_table_pointer()->keys_begin(), 
-		traits_.moving_point_table_pointer()->keys_end());
+    sdel.insert(traits_.active_objects_table_pointer()->keys_begin(), 
+		traits_.active_objects_table_pointer()->keys_end());
 
     CGAL_KDS_LOG(CGAL::KDS::LOG_LOTS, sdel << std::endl);
 
@@ -437,7 +437,7 @@ protected:
   Visitor watcher_;
   
   const typename Moving_point_table::Data& point(Point_key k) const{
-    return traits_.moving_point_table_pointer()->at(k);
+    return traits_.active_objects_table_pointer()->at(k);
   }
   
 

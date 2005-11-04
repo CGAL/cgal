@@ -157,7 +157,7 @@ public:
 
   // KDS typedefs
   typedef typename TraitsT::Simulator Simulator;
-  typedef typename TraitsT::Moving_point_table Moving_object_table;
+  typedef typename TraitsT::Active_objects_table Moving_object_table;
   typedef typename TraitsT::Kinetic_kernel Kinetic_kernel;
   //typedef typename Simulator::Time Time;
   typedef typename Moving_object_table::Key Point_key;
@@ -1043,7 +1043,7 @@ public:
  
 
   const Moving_object_table* moving_object_table() const {
-    return tr_.moving_point_table_pointer();
+    return tr_.active_objects_table_pointer();
   }
 
   Simulator* simulator() {

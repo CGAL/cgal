@@ -24,18 +24,18 @@ bool sort_test(Traits &tr){
   if (tr.simulator_pointer()->has_rational_current_time()){
     ratt=tr.simulator_pointer()->rational_current_time();
   } else {
-    std::cerr << "Out of events, but the time is not rational." << std::endl;
+    std::cerr << "ERROR Out of events, but the time is not rational." << std::endl;
     std::cerr << "Current time is " << tr.simulator_pointer()->current_time() 
 	      << " the end time is " << tr.simulator_pointer()->end_time() << std::endl;
     ratt= CGAL::to_interval(tr.simulator_pointer()->end_time()).second;
   }
 
   while (c != sort.end()){
-    if (tr.moving_point_table_pointer()->at(*c).x()(ratt) 
-	< tr.moving_point_table_pointer()->at(*b).x()(ratt)){
-      std::cerr << "Objects " << *c << " = " << tr.moving_point_table_pointer()->at(*c).x() << " and " 
-		<< *b << " = " << tr.moving_point_table_pointer()->at(*b).x() << " out of order at end of time " 
-		<< tr.simulator_pointer()->rational_current_time() << std::endl;
+    if (tr.active_objects_table_pointer()->at(*c).x()(ratt) 
+	< tr.active_objects_table_pointer()->at(*b).x()(ratt)){
+      std::cerr << "ERROR Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and " 
+		<< *b << " = " << tr.active_objects_table_pointer()->at(*b).x() << " out of order at end of time " 
+		<<ratt << std::endl;
       error=true;
     }
     
