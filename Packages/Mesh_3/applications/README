@@ -16,12 +16,12 @@ lanteri:
 --------
   This tool is designed specificaly for answering to a request of
   Stephane Lanteri, INRIA. It uses several files:
-  - utils.h exports templated functions
+  - utils.h contains templated functions
           'display_faces_counts',
           'display_facets_by_surface_indices_statistics',
 	  'display_vertices_by_surface_indices_statistics',
 	  'display_cells_by_volume_indices_statistics'.
-  - distribution.h and distribution.C exports functions
+  - distribution.h and distribution.C declare and define functions
           'compute_distribution',
           'display_distribution'.
     They use Distribution_displayer.h.
