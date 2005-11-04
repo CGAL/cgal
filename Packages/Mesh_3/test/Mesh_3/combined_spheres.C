@@ -366,7 +366,7 @@ int main(int, char**)
   mesher.refine_mesh();
 
   std::string filename;
-  std::cout << "Ouput filename:" << std::endl;
+  std::cout << "Ouput file name (without extension):" << std::endl;
   std::cin >> filename;
 
   std::ofstream out((filename+".mesh").c_str());
