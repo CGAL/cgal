@@ -1,3 +1,14 @@
+4 Nov 2005:  Menelaos Karavelas
+- changes to the doc towards the new design of the traits class and
+  the introduction of the adaptation policy class
+- changed the result type of the Nearest_site_2 to boost::variant
+- renamed Construct_dual_point_2 functor in Voronoi traits to
+  Construct_Voronoi_point_2
+- added types for Delaunay graph features in Voronoi diagram adaptor
+  class
+- insertions are now done through site inserters
+- changed test files according to changes in design
+
 16 Oct 2005:  Menelaos Karavelas
 - more changes towards the new design of the traits
 - in point location example: replaced the old Voronoi traits by the

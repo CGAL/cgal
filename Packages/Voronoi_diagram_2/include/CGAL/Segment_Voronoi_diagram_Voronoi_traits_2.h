@@ -43,7 +43,7 @@ struct Segment_Voronoi_diagram_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SVD2::Site_2,
 					     SVD2,Tag_false>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_Voronoi_point_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename SVD2::Site_2,
 						     SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
@@ -67,7 +67,7 @@ struct Segment_Voronoi_diagram_caching_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SVD2::Site_2,
 					     SVD2,Tag_false>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_Voronoi_point_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Null_functor,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >
 {
@@ -88,7 +88,7 @@ struct Segment_Voronoi_diagram_identity_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SVD2::Site_2,
 					     SVD2,Tag_false>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_dual_point_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_Voronoi_point_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename SVD2::Site_2,
 						     SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_nearest_site_2<SVD2> >

@@ -172,7 +172,7 @@ class Vertex
     Delaunay_face_handle fvalid = find_valid_vertex(f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
 
-    return vda_->voronoi_traits().construct_dual_point_2_object()(fvalid);
+    return vda_->voronoi_traits().construct_Voronoi_point_2_object()(fvalid);
   }
 
   // DUAL FEATURE

@@ -29,7 +29,7 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class AG2>
-class Apollonius_graph_dual_point_2
+class Apollonius_graph_Voronoi_point_2
 {
 private:
   typedef typename AG2::Geom_traits      Geom_traits;
@@ -48,7 +48,7 @@ public:
 //=========================================================================
 
 template<class DT2>
-class Delaunay_triangulation_dual_point_2
+class Delaunay_triangulation_Voronoi_point_2
 {
 private:
   typedef typename DT2::Geom_traits       Geom_traits;
@@ -67,7 +67,7 @@ public:
 //=========================================================================
 
 template<class RT2>
-class Regular_triangulation_dual_point_2
+class Regular_triangulation_Voronoi_point_2
 {
 private:
   typedef typename RT2::Geom_traits       Geom_traits;
@@ -85,7 +85,7 @@ public:
 //=========================================================================
 
 template<class SVD2>
-class Segment_Voronoi_diagram_dual_point_2
+class Segment_Voronoi_diagram_Voronoi_point_2
 {
 private:
   typedef typename SVD2::Geom_traits   Geom_traits;

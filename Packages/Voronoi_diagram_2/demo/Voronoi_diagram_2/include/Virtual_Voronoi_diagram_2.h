@@ -71,7 +71,7 @@ class Virtual_Voronoi_diagram_base_2
   typedef typename Base::Face_handle              Face_handle;
   typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
   typedef typename Base::Edge_iterator            Edge_iterator;
-  typedef typename Base::Generator_iterator       Generator_iterator;
+  typedef typename Base::Site_iterator            Site_iterator;
 
   typedef Halfedge_with_draw_t                    Halfedge_with_draw;
 
@@ -225,9 +225,9 @@ class Virtual_Voronoi_diagram_base_2
 
   virtual void draw_sites(Qt_widget& widget) const
   {
-    for (Generator_iterator git = this->generators_begin();
-	 git != this->generators_end(); ++git) {
-      widget << *git;
+    for (Site_iterator sit = this->sites_begin();
+	 sit != this->sites_end(); ++sit) {
+      widget << *sit;
     }
   }
 

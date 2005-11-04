@@ -42,7 +42,7 @@ struct Apollonius_graph_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_edge_tester_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename AG2::Site_2,AG2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_dual_point_2<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_Voronoi_point_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,
 						     AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_nearest_site_2<AG2> >
@@ -64,7 +64,7 @@ struct Apollonius_graph_caching_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_edge_tester_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename AG2::Site_2,AG2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_dual_point_2<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_Voronoi_point_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,
    						     AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_nearest_site_2<AG2> >
@@ -85,7 +85,7 @@ struct Apollonius_graph_identity_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_degeneracy_tester<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename AG2::Site_2,AG2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_dual_point_2<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_Voronoi_point_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,
 						     AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_nearest_site_2<AG2> >

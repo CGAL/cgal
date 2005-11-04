@@ -39,7 +39,7 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 template<class Edge_tester_t, class Use_std_map = Tag_false>
 class Cached_edge_degeneracy_tester;
 
-template<class Face_degeneracy_t, class Use_std_tag = Tag_false>
+template<class Face_degeneracy_t, class Use_std_map = Tag_false>
 class Cached_face_degeneracy_tester;
 
 //=========================================================================
@@ -77,6 +77,17 @@ private:
   }
 
 public:
+  Cached_edge_degeneracy_tester() {}
+  Cached_edge_degeneracy_tester(const Self& other) {
+    e_tester = other.e_tester;
+  }
+
+  Self& operator=(const Self& other) {
+    clear();
+    e_tester = other.e_tester;
+    return *this;
+  }
+
   bool operator()(const Delaunay_graph& dual, const Edge& e) const {
     if ( dual.dimension() < 2 ) { return false; }
 
@@ -128,8 +139,13 @@ public:
   }
 
   void swap(Self& other) {
+    // doing a real swap is not ready yet
+#if 1
+    clear();
+#else
     e_tester.swap(other.e_tester);
     std::swap(emap, other.emap);
+#endif
   }
 
   bool is_valid() const { return true; }
@@ -186,6 +202,17 @@ private:
   }
 
 public:
+  Cached_edge_degeneracy_tester() {}
+  Cached_edge_degeneracy_tester(const Self& other) {
+    e_tester = other.e_tester;
+  }
+
+  Self& operator=(const Self& other) {
+    clear();
+    e_tester = other.e_tester;
+    return *this;
+  }
+
   bool operator()(const Delaunay_graph& dual, const Edge& e) const {
     if ( dual.dimension() < 2 ) { return false; }
     if ( emap.is_defined(e) && emap[e] != UNDEFINED ) {
@@ -230,8 +257,13 @@ public:
   }
 
   void swap(Self& other) {
+    // doing a real swap is not ready yet
+#if 1
+    clear();
+#else
     e_tester.swap(other.e_tester);
     std::swap(emap, other.emap);
+#endif
   }
 
   bool is_valid() const { return true; }
@@ -276,6 +308,17 @@ private:
   typedef std::map<Vertex_handle,bool>  Vertex_map;
 
 public:
+  Cached_face_degeneracy_tester() {}
+  Cached_face_degeneracy_tester(const Self& other) {
+    f_tester = other.f_tester;
+  }
+
+  Self& operator=(const Self& other) {
+    clear();
+    f_tester = other.f_tester;
+    return *this;
+  }
+
   bool operator()(const Delaunay_graph& dual, const Vertex_handle& v) const {
     if ( dual.dimension() < 2 ) { return false; }
 
@@ -302,8 +345,13 @@ public:
   }
 
   void swap(Self& other) {
+    // doing a real swap is not ready yet
+#if 1
+    clear();
+#else
     f_tester.swap(other.f_tester);
     std::swap(vmap, other.vmap);
+#endif
   }
 
   bool is_valid() const { return true; }
@@ -344,6 +392,17 @@ private:
   typedef Unique_hash_map<Vertex_handle,Three_valued>   Vertex_map;
 
 public:
+  Cached_face_degeneracy_tester() {}
+  Cached_face_degeneracy_tester(const Self& other) {
+    f_tester = other.f_tester;
+  }
+
+  Self& operator=(const Self& other) {
+    clear();
+    f_tester = other.f_tester;
+    return *this;
+  }
+
   bool operator()(const Delaunay_graph& dual, const Vertex_handle& v) const {
     if ( dual.dimension() < 2 ) { return false; }
     if ( vmap.is_defined(v) && vmap[v] != UNDEFINED ) { return vmap[v]; }
@@ -365,8 +424,13 @@ public:
   }
 
   void swap(Self& other) {
+    // doing a real swap is not ready yet
+#if 1
+    clear();
+#else
     f_tester.swap(other.f_tester);
     std::swap(vmap, other.vmap);
+#endif
   }
 
   bool is_valid() const { return true; }

@@ -224,6 +224,7 @@ void test_vda(const VDA& vda)
   typedef typename VDA::size_type                     size_type;
 
   typedef typename VDA::Point_2                       Point_2;
+  typedef typename VDA::Site_2                        Site_2;
   typedef typename VDA::Locate_result                 Locate_result;
 
   typedef typename VDA::Halfedge                      Halfedge;
@@ -233,6 +234,10 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Halfedge_handle               Halfedge_handle;
   typedef typename VDA::Face_handle                   Face_handle;
   typedef typename VDA::Vertex_handle                 Vertex_handle;
+
+  typedef typename VDA::Delaunay_edge                 Delaunay_edge;
+  typedef typename VDA::Delaunay_face_handle          Delaunay_face_handle;
+  typedef typename VDA::Delaunay_vertex_handle        Delaunay_vertex_handle;
 
   typedef typename VDA::Edge_iterator                 Edge_iterator;
   typedef typename VDA::Halfedge_iterator             Halfedge_iterator;
@@ -246,7 +251,7 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Halfedge_around_vertex_circulator  HAVC;
   typedef typename VDA::Ccb_halfedge_circulator            CCBHC;
 
-  typedef typename VDA::Generator_iterator            Generator_iterator;
+  typedef typename VDA::Site_iterator                 Site_iterator;
   
   // testing access methods
   //-----------------------
@@ -391,9 +396,9 @@ void test_vda(const VDA& vda)
     VDA vda3(vda.voronoi_traits(), vda.dual().geom_traits());
 
     std::vector<typename VT::Site_2> vs;
-    for (Generator_iterator git = vda.generators_begin();
-	 git != vda.generators_end(); ++git) {
-      vs.push_back(*git);
+    for (Site_iterator sit = vda.sites_begin();
+	 sit != vda.sites_end(); ++sit) {
+      vs.push_back(*sit);
     }
 
 #ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
@@ -544,16 +549,14 @@ void test_vda(const VDA& vda)
   }
 
   // testing generator iterator
-  Generator_iterator git;
-  for (git = vda.generators_begin();
-       git != vda.generators_end(); ++git) {
-    typename VT::Site_2 s = *git;
+  Site_iterator sit;
+  for (sit = vda.sites_begin(); sit != vda.sites_end(); ++sit) {
+    typename VT::Site_2 s = *sit;
   }
 
-  if ( vda.generators_begin() != vda.generators_end() ) {
-    for (git = --vda.generators_end();
-	 git != vda.generators_begin(); --git) {
-      typename VT::Site_2 s = *git;
+  if ( vda.sites_begin() != vda.sites_end() ) {
+    for (sit = --vda.sites_end(); sit != vda.sites_begin(); --sit) {
+      typename VT::Site_2 s = *sit;
     }
   }
 }

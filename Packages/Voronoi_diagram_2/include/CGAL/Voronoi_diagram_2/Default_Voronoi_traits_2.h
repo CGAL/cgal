@@ -32,19 +32,23 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ET, class FT, class AS, class CDP, class NS>
+template<class DG, class ET, class FT, class AS, class CVP, class NS>
 class Voronoi_traits_base_base_2
 {
 private:
-  typedef Voronoi_traits_base_base_2<DG,ET,FT,AS,CDP,NS>  Self;
+  typedef Voronoi_traits_base_base_2<DG,ET,FT,AS,CVP,NS>  Self;
 
 public:
   typedef DG   Delaunay_graph;
   typedef ET   Edge_degeneracy_tester;
   typedef FT   Face_degeneracy_tester;
   typedef AS   Access_site_2;
-  typedef CDP  Construct_dual_point_2;
+  typedef CVP  Construct_Voronoi_point_2;
   typedef NS   Nearest_site_2;
+
+  typedef typename Delaunay_graph::Vertex_handle    Vertex_handle;
+  typedef typename Delaunay_graph::Face_handle      Face_handle;
+  typedef typename Delaunay_graph::Edge             Edge;
 
   typedef typename Functor_exists<Nearest_site_2>::Value  Has_nearest_site_2;
 
@@ -60,8 +64,8 @@ public:
     return Access_site_2();
   }
 
-  Construct_dual_point_2 construct_dual_point_2_object() const {
-    return Construct_dual_point_2();
+  Construct_Voronoi_point_2 construct_Voronoi_point_2_object() const {
+    return Construct_Voronoi_point_2();
   }
 
   Nearest_site_2 nearest_site_2_object() const {
@@ -90,14 +94,14 @@ public:
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ET, class FT, class AS, class CDP,
+template<class DG, class ET, class FT, class AS, class CVP,
 	 class SI, class NS>
 class Voronoi_traits_base_2
-  : public Voronoi_traits_base_base_2<DG,ET,FT,AS,CDP,NS>
+  : public Voronoi_traits_base_base_2<DG,ET,FT,AS,CVP,NS>
 {
  private:
-  typedef Voronoi_traits_base_2<DG,ET,FT,AS,CDP,SI,NS>    Self;
-  typedef Voronoi_traits_base_base_2<DG,ET,FT,AS,CDP,NS>  Base;
+  typedef Voronoi_traits_base_2<DG,ET,FT,AS,CVP,SI,NS>    Self;
+  typedef Voronoi_traits_base_base_2<DG,ET,FT,AS,CVP,NS>  Base;
 
  public:
   typedef SI   Site_inserter;
@@ -113,20 +117,20 @@ class Voronoi_traits_base_2
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ETB, class FTB, class AS, class CDP,
+template<class DG, class ETB, class FTB, class AS, class CVP,
 	 class SIB, class NS>
 class Caching_Voronoi_traits_base_2
   : public Voronoi_traits_base_base_2<DG,
 				      Cached_edge_degeneracy_tester<ETB>,
 				      Cached_face_degeneracy_tester<FTB>,
-				      AS,CDP,NS>
+				      AS,CVP,NS>
 {
 protected:
   typedef ETB   Edge_degeneracy_tester_base;
   typedef FTB   Face_degeneracy_tester_base;
   typedef SIB   Site_inserter_base;
 
-  typedef Caching_Voronoi_traits_base_2<DG,ETB,FTB,AS,CDP,SIB,NS>  Self;
+  typedef Caching_Voronoi_traits_base_2<DG,ETB,FTB,AS,CVP,SIB,NS>  Self;
 
 public:
   typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester_base>

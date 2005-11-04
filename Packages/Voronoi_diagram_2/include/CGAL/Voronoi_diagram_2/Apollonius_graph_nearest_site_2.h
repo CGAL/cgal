@@ -21,8 +21,9 @@
 #define CGAL_VORONOI_DIAGRAM_2_APOLLONIUS_GRAPH_NEAREST_SITE_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <CGAL/Triangulation_utils_2.h>
+
+#include <boost/variant.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,13 +38,10 @@ class Apollonius_graph_nearest_site_2
  public:
   typedef DG                                          Delaunay_graph;
   typedef typename Delaunay_graph::Point_2            Point_2;
-  typedef Locate_result<DG,false>                     Query_result;
   typedef Arity_tag<2>                                Arity;
-  typedef Query_result                                result_type;
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
-  typedef Locate_result_accessor<DG,false>            Accessor;
 
   typedef typename Delaunay_graph::Geom_traits        Geom_traits;
   typedef typename Delaunay_graph::Site_2             Site_2;
@@ -52,8 +50,10 @@ class Apollonius_graph_nearest_site_2
   typedef typename Delaunay_graph::Edge               Edge;
   typedef typename Delaunay_graph::Face_circulator    Face_circulator;
 
- public:
-  Query_result operator()(const Delaunay_graph& dg, const Point_2& p) const {
+public:
+  typedef boost::variant<Vertex_handle,Edge,Face_handle> result_type;
+
+  result_type operator()(const Delaunay_graph& dg, const Point_2& p) const {
     CGAL_precondition( dg.dimension() >= 0 );
 
     typename Geom_traits::Oriented_side_of_bisector_2 side_of_bisector =
@@ -61,7 +61,7 @@ class Apollonius_graph_nearest_site_2
 
     Vertex_handle v = dg.nearest_neighbor(p);
     if ( dg.dimension() == 0 ) {
-      return Accessor::make_locate_result(v);
+      return v;
     }
 
     if ( dg.dimension() == 1 ) {
@@ -72,9 +72,9 @@ class Apollonius_graph_nearest_site_2
       Oriented_side os = side_of_bisector(v1->site(), v2->site(), p);
       
       if ( os == ON_ORIENTED_BOUNDARY ) {
-	return Accessor::make_locate_result(e);
+	return e;
       } else {
-	return Accessor::make_locate_result(v);
+	return v;
       }
     }
 
@@ -103,8 +103,7 @@ class Apollonius_graph_nearest_site_2
       CGAL_assertion( os2 != ON_NEGATIVE_SIDE );
 
       if ( os1 == ON_ORIENTED_BOUNDARY && os2 == ON_ORIENTED_BOUNDARY ) {
-	Face_handle f(fc);
-	return Accessor::make_locate_result(f);
+	return Face_handle(fc);
       }
 
       ++fc;
@@ -135,18 +134,16 @@ class Apollonius_graph_nearest_site_2
 
       if ( os1 == ON_ORIENTED_BOUNDARY ) {
 	Face_handle f(fc);
-	Edge e(f, CW_CCW_2::cw(index));
-	return Accessor::make_locate_result(e);
+	return Edge(f, CW_CCW_2::cw(index));
       } else if ( os2 == ON_ORIENTED_BOUNDARY ) {
 	Face_handle f(fc);
-	Edge e(f, CW_CCW_2::ccw(index));
-	return Accessor::make_locate_result(e);
+	return Edge(f, CW_CCW_2::ccw(index));
       }
 
       ++fc;
     } while ( fc != fc_start );
 
-    return Accessor::make_locate_result(v);
+    return v;
   }
 };
 

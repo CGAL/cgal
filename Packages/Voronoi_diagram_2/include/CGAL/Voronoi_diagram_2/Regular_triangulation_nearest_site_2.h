@@ -21,8 +21,9 @@
 #define CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_NEAREST_SITE_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <CGAL/Triangulation_utils_2.h>
+
+#include <boost/variant.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,12 +39,9 @@ class Regular_triangulation_nearest_site_2
  public:
   typedef DG                                          Delaunay_graph;
   typedef typename DG::Geom_traits::Point_2           Point_2;
-  typedef Locate_result<DG,false>                     Query_result;
   typedef Arity_tag<2>                                Arity;
-  typedef Query_result                                result_type;
 
  private:
-  typedef Locate_result_accessor<DG,false>            Accessor;
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
 
   typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
@@ -57,7 +55,9 @@ class Regular_triangulation_nearest_site_2
   typedef typename Geom_traits::Weighted_point_2      Weighted_point_2;
 
  public:
-  Query_result operator()(const Delaunay_graph& dg, const Point_2& p) const {
+  typedef boost::variant<Vertex_handle,Edge,Face_handle>  result_type;
+
+  result_type operator()(const Delaunay_graph& dg, const Point_2& p) const {
     CGAL_precondition( dg.dimension() >= 0 );
 
     typename Geom_traits::Compare_power_distance_2 cmp_power_distance =
@@ -66,7 +66,7 @@ class Regular_triangulation_nearest_site_2
     Vertex_handle v = dg.nearest_power_vertex(p);
 
     if ( dg.dimension() == 0 ) {
-      return Accessor::make_locate_result(v);
+      return v;
     }
 
     if ( dg.dimension() == 1 ) {
@@ -84,7 +84,7 @@ class Regular_triangulation_nearest_site_2
 	    cr = cmp_power_distance(p, v2->point(), v->point());
 	    CGAL_assertion( cr != SMALLER );
 	    if ( cr == EQUAL ) {
-	      return Accessor::make_locate_result( e );
+	      return e;
 	    }
 	  }
 	} else {
@@ -93,14 +93,14 @@ class Regular_triangulation_nearest_site_2
 	    cr = cmp_power_distance(p, v1->point(), v->point());
 	    CGAL_assertion( cr != SMALLER );
 	    if ( cr == EQUAL ) {
-	      return Accessor::make_locate_result( e );
+	      return e;
 	    }
 	  }
 	}
 	++ec;
       } while ( ec != ec_start );
 
-      return Accessor::make_locate_result(v);
+      return v;
     }
 
     CGAL_assertion( dg.dimension() == 2 );
@@ -128,8 +128,7 @@ class Regular_triangulation_nearest_site_2
       CGAL_assertion( cr2 != SMALLER );
 
       if ( cr1 == EQUAL && cr2 == EQUAL ) {
-	Face_handle f(fc);
-	return Accessor::make_locate_result(f);
+	return Face_handle(fc);
       }
 
       ++fc;
@@ -159,18 +158,16 @@ class Regular_triangulation_nearest_site_2
 
       if ( cr1 == EQUAL ) {
 	Face_handle f(fc);
-	Edge e(f, CW_CCW_2::cw(index));
-	return Accessor::make_locate_result(e);
+	return Edge(f, CW_CCW_2::cw(index));
       } else if ( cr2 == EQUAL ) {
 	Face_handle f(fc);
-	Edge e(f, CW_CCW_2::ccw(index));
-	return Accessor::make_locate_result(e);
+	return Edge(f, CW_CCW_2::ccw(index));
       }
 
       ++fc;
     } while ( fc != fc_start );
 
-    return Accessor::make_locate_result(v);
+    return v;
   }
 };
 

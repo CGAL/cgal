@@ -23,6 +23,7 @@
 #include <CGAL/Triangulation_utils_2.h>
 #include "helper_functions.h"
 #include <list>
+#include <boost/variant.hpp>
 
 //============================================================================
 //============================================================================
@@ -221,17 +222,18 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
 template<class DG, class VT>
 void test_voronoi_traits_concept(const DG& dg, const VT& vt)
 {
-  typedef typename VT::Point_2                 Point_2;
-  typedef typename VT::Site_2                  Site_2;
-
-  typedef typename VT::Delaunay_graph          Delaunay_graph;
-
-  typedef typename VT::Edge_degeneracy_tester  EDT;
-  typedef typename VT::Face_degeneracy_tester  FDT;
-  typedef typename VT::Access_site_2           Access_site_2;
-  typedef typename VT::Construct_dual_point_2  Construct_dual_point_2;
-  typedef typename VT::Has_nearest_site_2      Has_ns;
-  typedef typename VT::Has_site_inserter       Has_si;
+  typedef typename VT::Point_2                    Point_2;
+  typedef typename VT::Site_2                     Site_2;
+  typedef typename VT::Delaunay_graph             Delaunay_graph;
+  typedef typename VT::Vertex_handle              Vertex_handle;
+  typedef typename VT::Face_handle                Face_handle;
+  typedef typename VT::Edge                       Edge;
+  typedef typename VT::Edge_degeneracy_tester     EDT;
+  typedef typename VT::Face_degeneracy_tester     FDT;
+  typedef typename VT::Access_site_2              Access_site_2;
+  typedef typename VT::Construct_Voronoi_point_2  Construct_Voronoi_point_2;
+  typedef typename VT::Has_nearest_site_2         Has_ns;
+  typedef typename VT::Has_site_inserter          Has_si;
 
   // testing copy constructor and assignment operator
   {
@@ -265,7 +267,7 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
   test_fdt_concept( dg, vt.face_degeneracy_tester_object() );
   test_as_concept( dg, vt.access_site_2_object() );
-  test_cdp_concept( dg, vt.construct_dual_point_2_object() );
+  test_cvp_concept( dg, vt.construct_Voronoi_point_2_object() );
   test_ns_concept( dg, vt, Has_ns() );
   test_si_concept( dg, vt, Has_si() );
 }
@@ -389,19 +391,19 @@ void test_as_concept(const DG& dg, const AS& as)
 //============================================================================
 //============================================================================
 
-template<class DG, class CDP>
-void test_cdp_concept(const DG& dg, const CDP& cdp)
+template<class DG, class CVP>
+void test_cvp_concept(const DG& dg, const CVP& cvp)
 {
   // types for the AdaptableFunctor concept
-  typedef typename CDP::result_type               result_type;
-  typedef typename CDP::Arity                     Arity;
+  typedef typename CVP::result_type               result_type;
+  typedef typename CVP::Arity                     Arity;
 
-  typedef typename CDP::Face_handle               Face_handle;
+  typedef typename CVP::Face_handle               Face_handle;
 
   if ( dg.dimension() > 1 &&
        dg.finite_faces_begin() != dg.finite_faces_end() ) {
     Face_handle f = dg.finite_faces_begin();
-    result_type point = cdp(f);
+    result_type point = cvp(f);
     kill_warning( point );
   }
 }
@@ -431,8 +433,7 @@ void test_si_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
 
   CGAL_assertion( dg2.number_of_vertices() == 0 );
 
-  Site_2 t = vt.access_site_2_object()(dg.finite_vertices_begin())
-;
+  Site_2 t = vt.access_site_2_object()(dg.finite_vertices_begin());
   result_type v = si(dg2, t);
   kill_warning( v );
 
@@ -466,37 +467,35 @@ void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
 {
   typedef typename VT::Nearest_site_2             Nearest_site_2;
   typedef typename Nearest_site_2::Delaunay_graph Delaunay_graph;
-  typedef typename Nearest_site_2::Query_result   Query_result;
   typedef typename Nearest_site_2::Point_2        Point_2;
 
   // types for the AdaptableFunctor concept
   typedef typename Nearest_site_2::Arity          Arity;
   typedef typename Nearest_site_2::result_type    result_type;
 
-  typedef typename Query_result::Delaunay_graph   QR_Delaunay_graph;
-  typedef typename Query_result::Vertex_handle    QR_Vertex_handle;
-  typedef typename Query_result::Face_handle      QR_Face_handle;
-  typedef typename Query_result::Edge             QR_Edge;
+  typedef typename VT::Vertex_handle              Vertex_handle;
+  typedef typename VT::Face_handle                Face_handle;
+  typedef typename VT::Edge                       Edge;
 
   if ( dg.dimension() < 0 ) { return; }
 
   Nearest_site_2 ns = vt.nearest_site_2_object();
   Point_2 p(0,0);
 
-  Query_result qr = ns(dg, p);
+  result_type qr = ns(dg, p);
 
-  if ( qr.is_face() ) {
-    QR_Face_handle f = qr;
+  if ( Face_handle* f = boost::get<Face_handle>(&qr) ) {
     kill_warning(f);
-  } else if ( qr.is_edge() ) {
-    QR_Edge e = qr;
+  } else if ( Edge* e = boost::get<Edge>(&qr) ) {
     kill_warning(e);
-  } else if ( qr.is_vertex() ) {
-    QR_Vertex_handle v = qr;
+  } else if ( Vertex_handle* v = boost::get<Vertex_handle>(&qr) ) {
     kill_warning(v);
+  } else {
+    // we should have reached this line
+    CGAL_assertion( false );
   }
 
-  Query_result qr1 = ns(dg, p);
+  result_type qr1 = ns(dg, p);
   bool b = (qr == qr1);
   CGAL_assertion(b);
   kill_warning(b);

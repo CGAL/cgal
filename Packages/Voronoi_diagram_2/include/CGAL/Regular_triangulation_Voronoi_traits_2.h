@@ -42,7 +42,7 @@ struct Regular_triangulation_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_dual_point_2<RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
    <typename RT2::Geom_traits::Point_2,RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
@@ -66,7 +66,7 @@ struct Regular_triangulation_caching_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_dual_point_2<RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
    <typename RT2::Geom_traits::Point_2,RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
@@ -88,7 +88,7 @@ struct Regular_triangulation_identity_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_dual_point_2<RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
    <typename RT2::Geom_traits::Point_2,RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >

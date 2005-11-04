@@ -23,6 +23,7 @@
 #include <CGAL/basic.h>
 #include <iostream>
 #include <vector>
+#include <boost/variant.hpp>
 
 #include "helper_functions.h"
 
@@ -64,30 +65,27 @@ void test_locate_dg(const VDA& vda, const Projector& project,
 {
   typedef typename VDA::Voronoi_traits                Voronoi_traits;
   typedef typename Voronoi_traits::Nearest_site_2     Nearest_site_2;
-
-  typedef typename Nearest_site_2::Query_result       Query_result;
-  typedef typename Query_result::Vertex_handle        Vertex_handle;
-  typedef typename Query_result::Face_handle          Face_handle;
-  typedef typename Query_result::Edge                 Edge;
+  typedef typename Voronoi_traits::Vertex_handle      Vertex_handle;
+  typedef typename Voronoi_traits::Face_handle        Face_handle;
+  typedef typename Voronoi_traits::Edge               Edge;
+  typedef typename Nearest_site_2::result_type        result_type;
 
   Nearest_site_2 nearest_site = vda.voronoi_traits().nearest_site_2_object();
-  Query_result ns_qr;
+
+  result_type ns_qr;
 
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
     ns_qr = nearest_site(vda.dual(), vecp[i]);
-    if ( ns_qr.is_vertex() ) {
+    if ( Vertex_handle* v = boost::get<Vertex_handle>(&ns_qr) ) {
       os << "FACE";
-      Vertex_handle v = ns_qr;
       kill_warning( v );
-    } else if ( ns_qr.is_edge() ) {
+    } else if ( Edge* e = boost::get<Edge>(&ns_qr) ) {
       os << "EDGE";
-      Edge e = ns_qr;
       kill_warning( e );
-    } else if ( ns_qr.is_face() ) {
+    } else if ( Face_handle* f = boost::get<Face_handle>(&ns_qr) ) {
       os << "VERTEX";
-      Face_handle f = ns_qr;
       kill_warning( f );
     } else {
       os << " *** NOT READY YET *** ";
@@ -101,7 +99,6 @@ template<class VDA, class Point_vector, class OStream>
 void test_locate_vd(const VDA& vda, const Point_vector& vecp, OStream& os)
 {
   typename VDA::Locate_result lr;
-
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;

@@ -44,7 +44,7 @@ struct Delaunay_triangulation_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_dual_point_2<DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_Voronoi_point_2<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
    <typename DT2::Geom_traits::Point_2,DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
@@ -67,7 +67,7 @@ struct Delaunay_triangulation_caching_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_dual_point_2<DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_Voronoi_point_2<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
    <typename DT2::Geom_traits::Point_2,DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
@@ -89,7 +89,7 @@ struct Delaunay_triangulation_identity_Voronoi_traits_2
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_dual_point_2<DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_Voronoi_point_2<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
    <typename DT2::Geom_traits::Point_2,DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >

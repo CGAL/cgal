@@ -43,6 +43,7 @@
 #include <CGAL/Voronoi_diagram_2/Connected_components.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 
+#include <boost/variant.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,11 +77,11 @@ class Voronoi_diagram_2
 
   typedef typename Delaunay_graph::size_type          size_type;
 
- protected:
-  typedef typename Delaunay_graph::Vertex_handle      Dual_vertex_handle;
-  typedef typename Delaunay_graph::Face_handle        Dual_face_handle;
-  typedef typename Delaunay_graph::Edge               Dual_edge;
+  typedef typename Delaunay_graph::Vertex_handle      Delaunay_vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Delaunay_face_handle;
+  typedef typename Delaunay_graph::Edge               Delaunay_edge;
 
+ protected:
   typedef typename Delaunay_graph::Edge_circulator    Dual_edge_circulator;
   typedef typename Delaunay_graph::Vertex_circulator  Dual_vertex_circulator;
   typedef typename Delaunay_graph::Face_circulator    Dual_face_circulator;
@@ -267,7 +268,7 @@ class Voronoi_diagram_2
 
  public:
   typedef Iterator_project<Face_iterator,Project_site_2>
-  Generator_iterator;
+  Site_iterator;
 
   // ACCESSOR
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>  Accessor;
@@ -309,15 +310,15 @@ public:
   //------------------
 
   // VORONOI FEATURES FROM DELAUNAY FEATURES
-  Halfedge_handle dual(typename Halfedge::Delaunay_edge& e) const {
+  Halfedge_handle dual(Delaunay_edge& e) const {
     return Halfedge_handle( Halfedge(this, e.first, e.second) );
   }
 
-  Face_handle dual(typename Face::Delaunay_vertex_handle& v) const {
+  Face_handle dual(Delaunay_vertex_handle& v) const {
     return Face_handle( Face(this, v) );
   }
 
-  Vertex_handle dual(typename Vertex::Delaunay_face_handle& f) const {
+  Vertex_handle dual(Delaunay_face_handle& f) const {
     return Vertex_handle( Vertex(this, f) );
   }
 
@@ -569,13 +570,13 @@ public:
     return Vertex_iterator(this, non_degenerate_vertices_end());
   }
 
-  // GENERATOR ITERATOR
-  Generator_iterator generators_begin() const {
-    return Generator_iterator(faces_begin());    
+  // SITE ITERATOR
+  Site_iterator sites_begin() const {
+    return Site_iterator(faces_begin());    
   }
 
-  Generator_iterator generators_end() const {
-    return Generator_iterator(faces_end());
+  Site_iterator sites_end() const {
+    return Site_iterator(faces_end());
   }
 
   // CIRCULATORS
@@ -621,6 +622,7 @@ public:
     CGAL_precondition( dual_.number_of_vertices() > 0 );
 
     typedef typename Voronoi_traits::Nearest_site_2    Nearest_site_2;
+#if 0
     typedef typename Nearest_site_2::Query_result      Query_result;
 
     Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
@@ -646,6 +648,37 @@ public:
       Halfedge_handle e( Halfedge(this, de.first, de.second) );
       return Locate_result_accessor::make_locate_result(e);
     }
+#else
+    typedef typename Nearest_site_2::result_type      Query_result;
+
+    Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
+    Query_result ns_qr = nearest_site(dual_, p);
+
+    if ( const Delaunay_vertex_handle* dv =
+	 boost::get<Delaunay_vertex_handle>(&ns_qr) ) {
+      Face_handle f( Face(this, *dv) );
+      return Locate_result_accessor::make_locate_result(f);
+    } else if ( const Delaunay_face_handle *df =
+		boost::get<Delaunay_face_handle>(&ns_qr) ) {
+      Find_valid_vertex vertex_finder;
+      Delaunay_face_handle dfvalid = vertex_finder(this, *df);
+      Vertex_handle v( Vertex(this, dfvalid) );
+      return Locate_result_accessor::make_locate_result(v);
+    } else if ( const Delaunay_edge* de =
+		boost::get<Delaunay_edge>(&ns_qr) ) {
+      CGAL_assertion(  !edge_tester()(dual_, *de)  );
+      if ( dual_.dimension() == 1 ) {
+	Delaunay_vertex_handle v1 =
+	  de->first->vertex(CW_CCW_2::ccw(de->second));
+	Delaunay_vertex_handle v2 =
+	  de->first->vertex(CW_CCW_2::cw(de->second) );
+	Halfedge_handle e( Halfedge(this, v1, v2) );
+	return Locate_result_accessor::make_locate_result(e);
+      }
+      Halfedge_handle e( Halfedge(this, de->first, de->second) );
+      return Locate_result_accessor::make_locate_result(e);
+    }
+#endif
 
     // I should never have reached this line;
     CGAL_assertion( false );
@@ -709,7 +742,7 @@ public:
   Voronoi_traits tr_;
 
  protected:
-  Dual_edge opposite(const Dual_edge& e) const {
+  Delaunay_edge opposite(const Delaunay_edge& e) const {
     int i_mirror = dual_.tds().mirror_index(e.first, e.second);
     return Dual_edge( e.first->neighbor(e.second), i_mirror );
   }
@@ -720,8 +753,8 @@ public:
  protected:
   // insert is supported...
   inline Face_handle insert(const Site_2& t, const Tag_true&) {
-    Dual_vertex_handle v = tr_.site_inserter_object()(dual_, t);
-    if ( v == Dual_vertex_handle() ) { return Face_handle(); }
+    Delaunay_vertex_handle v = tr_.site_inserter_object()(dual_, t);
+    if ( v == Delaunay_vertex_handle() ) { return Face_handle(); }
     return Face_handle( Face(this, v) );
   }
 
