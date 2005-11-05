@@ -1,3 +1,6 @@
+05 November 2005 Andreas Fabri
+- Added typedefs for reference and const_reference so that back_inserter works for Union_find
+
 17 April 2004  Sylvain Pion
 - Rename iterator to Iterator in test program to workaround a PGCC bug.
 

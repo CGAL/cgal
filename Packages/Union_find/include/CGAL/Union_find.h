@@ -103,7 +103,10 @@ public:
     typedef Union_find_struct*                               pointer;
     typedef const Union_find_struct*                         const_pointer;
 
-    typedef T                                                value_type;
+    typedef T                                                value_type; 
+    typedef T&                                               reference; 
+    typedef const T&                                         const_reference; 
+
     typedef CGALi::UF_forward_iterator< pointer, T, T&, T*>  iterator;
     typedef iterator                                         handle;
     typedef CGALi::UF_forward_iterator< const_pointer, T, const T&, const T*>
