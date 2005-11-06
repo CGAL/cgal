@@ -30,7 +30,6 @@
 
 #include <CGAL/IO/Arrangement_2_writer.h>
 #include <CGAL/IO/Arrangement_2_reader.h>
-#include <CGAL/IO/Arrangement_2_ascii_formatter.h>
 
 
 /*! open a segment file and add new tab */
