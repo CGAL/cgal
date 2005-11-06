@@ -178,8 +178,8 @@ class Virtual_Voronoi_diagram_base_2
       }
     }
 
-    typename Base::Voronoi_traits::Edge_degeneracy_tester e_tester =
-      Base::voronoi_traits().edge_degeneracy_tester_object();
+    typename Base::Adaptation_policy::Edge_degeneracy_tester e_tester =
+      Base::adaptation_policy().edge_degeneracy_tester_object();
     for (unsigned int i = 0; i < fvec.size(); i++) {
       for (int j = 0; j < 3; j++) {
 	Delaunay_edge e(fvec[i], j);
