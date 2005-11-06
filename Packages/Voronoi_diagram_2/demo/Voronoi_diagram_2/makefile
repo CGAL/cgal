@@ -57,7 +57,7 @@ Voronoi_diagram_2$(EXE_EXT): Voronoi_diagram_2$(OBJ_EXT)
 	Voronoi_diagram_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Voronoi_diagram_2.clean ; rm -f *.moc
+                   Voronoi_diagram_2.clean ; rm -fr *.moc *.app
 
 #---------------------------------------------------------------------#
 #                    suffix rules
