@@ -228,24 +228,25 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   typedef typename VT::Vertex_handle              Vertex_handle;
   typedef typename VT::Face_handle                Face_handle;
   typedef typename VT::Edge                       Edge;
-  typedef typename VT::Edge_degeneracy_tester     EDT;
-  typedef typename VT::Face_degeneracy_tester     FDT;
+  //  typedef typename VT::Edge_degeneracy_tester     EDT;
+  //  typedef typename VT::Face_degeneracy_tester     FDT;
   typedef typename VT::Access_site_2              Access_site_2;
   typedef typename VT::Construct_Voronoi_point_2  Construct_Voronoi_point_2;
   typedef typename VT::Has_nearest_site_2         Has_ns;
-  typedef typename VT::Has_site_inserter          Has_si;
+  //  typedef typename VT::Has_site_inserter          Has_si;
 
   // testing copy constructor and assignment operator
   {
     VT vt2(vt);
-    CGAL_assertion( vt2.is_valid() );
+    //    CGAL_assertion( vt2.is_valid() );
 
     VT vt3;
     vt3 = vt;
-    CGAL_assertion( vt3.is_valid() );
+    //    CGAL_assertion( vt3.is_valid() );
   }
 
   // testing clear and swap methods
+#if 0
   {
     VT vt2(vt);
     vt2.clear();
@@ -262,111 +263,168 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   bool b = vt.is_valid();
   kill_warning( b );
   CGAL_assertion( b );
+#endif
 
   // test nested concepts
-  test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
-  test_fdt_concept( dg, vt.face_degeneracy_tester_object() );
+  //  test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
+  //  test_fdt_concept( dg, vt.face_degeneracy_tester_object() );
   test_as_concept( dg, vt.access_site_2_object() );
   test_cvp_concept( dg, vt.construct_Voronoi_point_2_object() );
   test_ns_concept( dg, vt, Has_ns() );
-  test_si_concept( dg, vt, Has_si() );
+  //  test_si_concept( dg, vt, Has_si() );
 }
 
 
 //============================================================================
 //============================================================================
 
-template<class DG, class EDT>
-void test_edt_concept(const DG& dg, const EDT& edt)
+template<class DG, class VT, class AP>
+void test_adaptation_policy_concept(const DG& dg, const VT& vt, const AP& ap)
+{
+  typedef typename AP::Site_2                     Site_2;
+  typedef typename AP::Delaunay_graph             Delaunay_graph;
+  typedef typename AP::Vertex_handle              Vertex_handle;
+  typedef typename AP::Face_handle                Face_handle;
+  typedef typename AP::Edge                       Edge;
+  typedef typename AP::All_edges_iterator         All_edges_iterator;
+  typedef typename AP::Finite_edges_iterator      Finite_edges_iterator;
+  typedef typename AP::Edge_circulator            Edge_circulator;
+  typedef typename AP::Edge_rejector              ER;
+  typedef typename AP::Face_rejector              FR;
+  typedef typename AP::Has_site_inserter          Has_si;
+
+  // testing copy constructor and assignment operator
+  {
+    AP ap2(ap);
+    CGAL_assertion( ap2.is_valid() );
+
+    AP ap3;
+    ap3 = ap;
+    CGAL_assertion( ap3.is_valid() );
+  }
+
+  // testing clear and swap methods
+  {
+    AP ap2(ap);
+    ap2.clear();
+    CGAL_assertion( ap2.is_valid() );
+
+    AP ap3(ap);
+    ap2.swap(ap3);
+
+    CGAL_assertion( ap2.is_valid() );
+    CGAL_assertion( ap3.is_valid() );
+  }
+
+  // testing validity method
+  bool b = ap.is_valid();
+  kill_warning( b );
+  CGAL_assertion( b );
+
+  // test nested concepts
+  test_er_concept( dg, ap.edge_rejector_object() );
+  test_fr_concept( dg, ap.face_rejector_object() );
+  //  test_as_concept( dg, vt.access_site_2_object() );
+  //  test_cvp_concept( dg, vt.construct_Voronoi_point_2_object() );
+  //  test_ns_concept( dg, vt, Has_ns() );
+  test_si_concept( dg, vt, ap, Has_si() );
+}
+
+
+//============================================================================
+//============================================================================
+
+template<class DG, class ER>
+void test_er_concept(const DG& dg, const ER& er)
 {
   // types for AdaptableFunctor concept
-  typedef typename EDT::result_type               result_type;
-  typedef typename EDT::Arity                     Arity;
+  typedef typename ER::result_type               result_type;
+  typedef typename ER::Arity                     Arity;
 
 
-  typedef typename EDT::Delaunay_graph            Delaunay_graph;
-  typedef typename EDT::Edge                      Edge;
-  typedef typename EDT::Face_handle               Face_handle;
-  typedef typename EDT::Edge_circulator           Edge_circulator;
-  typedef typename EDT::All_edges_iterator        All_edges_iterator;
-  typedef typename EDT::Finite_edges_iterator     Finite_edges_iterator;
+  typedef typename ER::Delaunay_graph            Delaunay_graph;
+  typedef typename ER::Edge                      Edge;
+  typedef typename ER::Face_handle               Face_handle;
+  typedef typename ER::Edge_circulator           Edge_circulator;
+  typedef typename ER::All_edges_iterator        All_edges_iterator;
+  typedef typename ER::Finite_edges_iterator     Finite_edges_iterator;
 
   if ( dg.dimension() < 1 ) { return; }
 
   bool b;
 
   if ( dg.all_edges_begin() != dg.all_edges_end() ) {
-    b = edt(dg, dg.all_edges_begin());
+    b = er(dg, dg.all_edges_begin());
   }
 
   if ( dg.finite_edges_begin() != dg.finite_edges_end() ) {
-    b = edt(dg, dg.finite_edges_begin());
+    b = er(dg, dg.finite_edges_begin());
 
     Edge e = *dg.finite_edges_begin();
-    b = edt(dg, e);
-    b = edt(dg, e.first, e.second);
+    b = er(dg, e);
+    b = er(dg, e.first, e.second);
   }
 
   Edge_circulator ec = dg.incident_edges(dg.finite_vertex());
-  b = edt(dg, ec);
+  b = er(dg, ec);
   kill_warning(b);
 
   // testing copy constructor and assignment operator
   {
-    EDT edt2(edt);
-    EDT edt3;
-    edt3 = edt;
+    ER er2(er);
+    ER er3;
+    er3 = er;
   }
 
   // testing clear and swap
   {
-    EDT edt2(edt);
-    EDT edt3(edt);
-    edt2.clear();
-    edt2.swap(edt3);
+    ER er2(er);
+    ER er3(er);
+    er2.clear();
+    er2.swap(er3);
   }
 
   // validity testing
-  b = edt.is_valid();
+  b = er.is_valid();
   kill_warning(b);
 }
 
 //============================================================================
 //============================================================================
 
-template<class DG, class FDT>
-void test_fdt_concept(const DG& dg, const FDT& fdt)
+template<class DG, class FR>
+void test_fr_concept(const DG& dg, const FR& fr)
 {
   // types for the AdaptableFunctor concept
-  typedef typename FDT::result_type               result_type;
-  typedef typename FDT::Arity                     Arity;
+  typedef typename FR::result_type               result_type;
+  typedef typename FR::Arity                     Arity;
 
-  typedef typename FDT::Delaunay_graph            Delaunay_graph;
-  typedef typename FDT::Vertex_handle             Vertex_handle;
+  typedef typename FR::Delaunay_graph            Delaunay_graph;
+  typedef typename FR::Vertex_handle             Vertex_handle;
 
   if ( dg.dimension() < 1 ) { return; }
 
   Vertex_handle v = dg.finite_vertex();
-  bool b = fdt(dg, v);
+  bool b = fr(dg, v);
   kill_warning(b);
 
   // testing copy constructor and assignment operator
   {
-    FDT fdt2(fdt);
-    FDT fdt3;
-    fdt3 = fdt;
+    FR fr2(fr);
+    FR fr3;
+    fr3 = fr;
   }
 
   // testing clear and swap
   {
-    FDT fdt2(fdt);
-    FDT fdt3(fdt);
-    fdt2.clear();
-    fdt2.swap(fdt3);
+    FR fr2(fr);
+    FR fr3(fr);
+    fr2.clear();
+    fr2.swap(fr3);
   }
 
   // validity testing
-  b = fdt.is_valid();
+  b = fr.is_valid();
   kill_warning(b);
 }
 
@@ -411,13 +469,13 @@ void test_cvp_concept(const DG& dg, const CVP& cvp)
 //============================================================================
 //============================================================================
 
-template<class DG, class VT>
-void test_si_concept(const DG&, const VT&, CGAL::Tag_false) {}
+template<class DG, class VT, class AP>
+void test_si_concept(const DG&, const VT&, const AP&, CGAL::Tag_false) {}
 
-template<class DG, class VT>
-void test_si_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
+template<class DG, class VT, class AP>
+void test_si_concept(const DG& dg, const VT& vt, const AP& ap, CGAL::Tag_true)
 {
-  typedef typename VT::Site_inserter               Site_inserter;
+  typedef typename AP::Site_inserter               Site_inserter;
   typedef typename Site_inserter::Delaunay_graph   Delaunay_graph;
   typedef typename Site_inserter::Site_2           Site_2;
 
@@ -425,7 +483,7 @@ void test_si_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
   typedef typename Site_inserter::Arity            Arity;
   typedef typename Site_inserter::result_type      result_type;
 
-  Site_inserter si = vt.site_inserter_object();
+  Site_inserter si = ap.site_inserter_object();
   
   if ( dg.number_of_vertices() == 0 ) { return; }
 

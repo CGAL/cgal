@@ -34,6 +34,7 @@
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_Voronoi_traits_2.h>
+#include <CGAL/Regular_triangulation_adaptation_policies_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<K>        Gt;
@@ -55,39 +56,28 @@ typedef CGAL::Triangulation_hierarchy_2<RTB>                       RT;
 typedef CGAL::Regular_triangulation_2<Gt>                          RT;
 #endif
 
-typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>           UVT;
-typedef CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT>   CVT;
-typedef CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT>  IVT;
-typedef CGAL::Voronoi_diagram_2<RT,CVT>                            VDA;
+typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>           VT;
+typedef CGAL::Identity_policy_2<RT,VT>                             IP;
+typedef CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT>
+CDRP;
 
-struct RT_Predicate
+typedef CGAL::Voronoi_diagram_2<RT,VT,IP>                          IVDA;
+typedef CGAL::Voronoi_diagram_2<RT,VT,CDRP>                        CDRVDA;
+
+
+template<class VD>
+void run_tests()
 {
-  bool operator()(const RT& rt) const {
-    if ( rt.dimension() == 1 ) {
-      std::cerr << "The regular triangulation is 1-dimensional."
-		<< std::endl;
-      std::cerr << "Cannot view the regular triangulation as an arrangement."
-		<< std::endl;
-      return true;
-    }
-    return false;
-  }
-};
-
-
-int main()
-{
-  typedef RT::Geom_traits::Weighted_point_2           Site_2;
-  typedef Project_point<RT::Vertex_handle,Site_2>     Project_point;
-  typedef Project_dual<VDA,RT::Geom_traits::Point_2>  Project_dual;
-  typedef VDA_Tester<VDA,Project_point,Project_dual>  Tester;
+  typedef typename VD::Delaunay_graph                          DG;
+  typedef typename DG::Geom_traits::Weighted_point_2           Site_2;
+  typedef Project_point<typename RT::Vertex_handle,Site_2>     Project_point;
+  typedef Project_dual<VD,typename RT::Geom_traits::Point_2>   Project_dual;
+  typedef VDA_Tester<VD,Project_point,Project_dual>            Tester;
 
   Project_point   project_point;
   Project_dual    project_dual;
 
   Tester test(project_point, project_dual);
-
-  //  RT_Predicate p;
 
   test.reset_timers();
 
@@ -110,6 +100,13 @@ int main()
   test("data/data3.rt.cin", "data/queries5.cin");
 
   test.print_loc_times();
+}
+
+int main()
+{
+  run_tests<IVDA>();
+  print_separator(std::cout);
+  run_tests<CDRVDA>();
 
   return 0;
 }

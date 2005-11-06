@@ -60,13 +60,13 @@ class Face
   Face(const VDA* vda = NULL) : vda_(vda) {}
   Face(const VDA* vda, Delaunay_vertex_handle v) : vda_(vda), v_(v)
   {
-    //    CGAL_precondition( !vda_->face_tester()(v_) );
+    //    CGAL_precondition( !vda_->face_rejector()(v_) );
   }
 
   Face(const VDA* vda, const Non_degenerate_faces_iterator& it)
     : vda_(vda), v_(it.base())
   {
-    //    CGAL_precondition( !vda_->face_tester()(v_) );
+    //    CGAL_precondition( !vda_->face_rejector()(v_) );
   }
 
   // ACCESS TO NEIGHBORING OBJECTS
@@ -89,8 +89,8 @@ class Face
     // if I want to return also infinite edges replace the test in
     // the while loop by the following test (i.e., should omit the
     // testing for infinity):
-    //           vda_->edge_tester()(vda_->dual(), ec)
-    while ( vda_->edge_tester()(vda_->dual(), ec) ||
+    //           vda_->edge_rejector()(vda_->dual(), ec)
+    while ( vda_->edge_rejector()(vda_->dual(), ec) ||
 	    vda_->dual().is_infinite(ec) ) {
       ++ec;
       CGAL_assertion( ec != ec_start );
@@ -150,16 +150,16 @@ class Face
 
     if ( vda_->dual().dimension() < 1 ) { return true; }
 
-    bool valid = !vda_->face_tester()(vda_->dual(), v_);
+    bool valid = !vda_->face_rejector()(vda_->dual(), v_);
 
-    valid = valid && !vda_->edge_tester()( vda_->dual(), halfedge()->dual() );
+    valid = valid && !vda_->edge_rejector()(vda_->dual(), halfedge()->dual());
 
     Ccb_halfedge_circulator hc = outer_ccb();
     Ccb_halfedge_circulator hc_start = hc;
     Face_handle f_this(*this);
     do {
       valid = valid && hc->face() == f_this;
-      valid = valid && !vda_->edge_tester()( vda_->dual(), hc->dual() );
+      valid = valid && !vda_->edge_rejector()( vda_->dual(), hc->dual() );
       hc++;
     } while ( hc != hc_start );
 

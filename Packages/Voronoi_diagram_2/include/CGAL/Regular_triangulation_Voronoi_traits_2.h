@@ -22,85 +22,26 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Regular_triangulation_nearest_site_2.h>
-#include <CGAL/Voronoi_diagram_2/Regular_triangulation_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
-#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 #include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
 
 CGAL_BEGIN_NAMESPACE
-
-//=========================================================================
-//=========================================================================
 
 template<class RT2>
 struct Regular_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
   <RT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_edge_tester_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename RT2::Geom_traits::Point_2,RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
 {
   typedef typename RT2::Geom_traits::Point_2           Point_2;
   typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
-
-//=========================================================================
-//=========================================================================
-
-
-template<class RT2>
-struct Regular_triangulation_caching_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Caching_Voronoi_traits_base_2
-  <RT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_edge_tester_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
-   <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename RT2::Geom_traits::Point_2,RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
-{
-  typedef typename RT2::Geom_traits::Point_2           Point_2;
-  typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
-
-  typedef Tag_true                                Has_remove;
-};
-
-//=========================================================================
-//=========================================================================
-
-template<class RT2>
-struct Regular_triangulation_identity_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
-  <RT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_degeneracy_tester<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
-   <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename RT2::Geom_traits::Point_2,RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
-{
-  typedef typename RT2::Geom_traits::Point_2           Point_2;
-  typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
-
-  typedef Tag_true                                Has_remove;
-};
-
-//=========================================================================
-//=========================================================================
 
 CGAL_END_NAMESPACE
 

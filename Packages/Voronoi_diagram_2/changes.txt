@@ -1,3 +1,11 @@
+6 Nov 2005:  Menelaos Karavelas
+- more changes in doc: added AdaptationPolicy_2 concept and modified
+  other parts of doc according to new design. Still to do: models for
+  adaptation policies and user manual.
+- fixed example according to new design
+- fixed demo according to new design
+- in code: renamed testers from degeneracy testers to rejectors
+
 4 Nov 2005:  Menelaos Karavelas
 - changes to the doc towards the new design of the traits class and
   the introduction of the adaptation policy class

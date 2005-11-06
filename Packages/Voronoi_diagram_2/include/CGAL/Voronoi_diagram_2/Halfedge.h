@@ -32,17 +32,15 @@ template<class VDA>
 class Halfedge
 {
  private:
-  typedef Halfedge<VDA>                         Self;
-  typedef Triangulation_cw_ccw_2                CW_CCW_2;
+  typedef Halfedge<VDA>                          Self;
+  typedef Triangulation_cw_ccw_2                 CW_CCW_2;
 
-  typedef typename VDA::Delaunay_graph          DG;
-  typedef typename DG::Face_handle              Delaunay_face_handle;
-  typedef typename DG::Vertex_circulator        Delaunay_vertex_circulator;
-  typedef typename DG::Edge_circulator          Delaunay_edge_circulator;
-  typedef typename VDA::Accessor::Edge_degeneracy_tester
-    Edge_degeneracy_tester;
-  typedef typename VDA::Accessor::Face_degeneracy_tester
-    Face_degeneracy_tester;
+  typedef typename VDA::Delaunay_graph           DG;
+  typedef typename DG::Face_handle               Delaunay_face_handle;
+  typedef typename DG::Vertex_circulator         Delaunay_vertex_circulator;
+  typedef typename DG::Edge_circulator           Delaunay_edge_circulator;
+  typedef typename VDA::Accessor::Edge_rejector  Edge_rejector;
+  typedef typename VDA::Accessor::Face_rejector  Face_rejector;
 
  private:
   Self find_next_1D() const {
@@ -86,7 +84,7 @@ public:
       v2_(Delaunay_vertex_handle())
   {
     CGAL_precondition( vda_->dual().dimension() == 2 );
-    CGAL_precondition( !vda_->edge_tester()(vda_->dual(), f_, i_) );
+    CGAL_precondition( !vda_->edge_rejector()(vda_->dual(), f_, i_) );
   }
 
   Halfedge(const VDA* vda, Delaunay_vertex_handle v1,
@@ -105,7 +103,7 @@ public:
     }
 
     int cw_i = CW_CCW_2::cw(i_);
-    if (  vda_->face_tester()(vda_->dual(), f_->vertex(cw_i))  ) {
+    if (  vda_->face_rejector()(vda_->dual(), f_->vertex(cw_i))  ) {
       Delaunay_face_handle fopp;
       int iopp;
       find_opposite(f_, i_, fopp, iopp); //equivalent to: twin().next().twin();
@@ -151,14 +149,14 @@ public:
     // if I want to return also infinite edges replace the test in
     // the while loop by the following test (i.e., should omit the
     // testing for infinity):
-    //           vda_->edge_tester()(vda_->dual(), f, i)
+    //           vda_->edge_rejector()(vda_->dual(), f, i)
     do {
       f = fprev->neighbor(iprev);
       int i_mirror = vda_->dual().tds().mirror_index(fprev, iprev);
       i = CW_CCW_2::ccw( i_mirror );
       fprev = f;
       iprev = i;
-    } while ( vda_->edge_tester()(vda_->dual(), f, i) ||
+    } while ( vda_->edge_rejector()(vda_->dual(), f, i) ||
 	      vda_->dual().is_infinite(f, i) );
 
     return Halfedge_handle( Self(vda_, f, i) );
@@ -277,11 +275,11 @@ public:
       valid = valid && v1_ != Delaunay_vertex_handle();
       valid = valid && v2_ != Delaunay_vertex_handle();
     } else {
-      valid = valid && !vda_->edge_tester()(vda_->dual(), f_, i_);
+      valid = valid && !vda_->edge_rejector()(vda_->dual(), f_, i_);
 
       Delaunay_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
 
-      valid = valid && !vda_->face_tester()(vda_->dual(), v);
+      valid = valid && !vda_->face_rejector()(vda_->dual(), v);
     }
 
     Halfedge_handle h_this(*this);

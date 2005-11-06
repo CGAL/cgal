@@ -96,7 +96,7 @@ public:
 
     for (typename Dual_edge_list::iterator it = e_list.begin();
 	 it != e_list.end(); ++it) {
-      vt_->edge_degeneracy_tester_object().erase(*it);
+      vt_->edge_rejector_object().erase(*it);
     }
 
     for (typename Dual_face_handle_list::iterator it = f_list.begin();
@@ -104,7 +104,7 @@ public:
       Dual_face_handle f = *it;
       for (int j = 0; j < 3; j++) {
 	Dual_edge e(f, j);
-	vt_->edge_degeneracy_tester_object().erase(e);
+	vt_->edge_rejector_object().erase(e);
       }
     }
     return Site_inserter()(dg, t);

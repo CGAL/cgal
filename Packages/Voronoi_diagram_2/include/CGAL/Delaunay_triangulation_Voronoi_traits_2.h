@@ -22,86 +22,27 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Delaunay_triangulation_nearest_site_2.h>
-#include <CGAL/Voronoi_diagram_2/Delaunay_triangulation_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
-#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 #include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
-//=========================================================================
-//=========================================================================
-
-
 template<class DT2>
 struct Delaunay_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
   <DT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_edge_tester_2<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
    <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_Voronoi_point_2<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename DT2::Geom_traits::Point_2,DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
 {
   typedef typename DT2::Geom_traits::Point_2      Point_2;
   typedef Point_2                                 Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
-
-//=========================================================================
-//=========================================================================
-
-template<class DT2>
-struct Delaunay_triangulation_caching_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Caching_Voronoi_traits_base_2
-  <DT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_edge_tester_2<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
-   <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_Voronoi_point_2<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename DT2::Geom_traits::Point_2,DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
-{
-  typedef typename DT2::Geom_traits::Point_2      Point_2;
-  typedef Point_2                                 Site_2;
-
-  typedef Tag_true                                Has_remove;
-};
-
-//=========================================================================
-//=========================================================================
-
-template<class DT2>
-struct Delaunay_triangulation_identity_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
-  <DT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_degeneracy_tester<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
-   <typename DT2::Geom_traits::Point_2,DT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_Voronoi_point_2<DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename DT2::Geom_traits::Point_2,DT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_nearest_site_2<DT2> >
-{
-  typedef typename DT2::Geom_traits::Point_2      Point_2;
-  typedef Point_2                                 Site_2;
-
-  typedef Tag_true                                Has_remove;
-};
-
-//=========================================================================
-//=========================================================================
 
 CGAL_END_NAMESPACE
 

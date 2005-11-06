@@ -27,13 +27,14 @@
 #include <CGAL/Simple_cartesian.h>
 #include "Delaunay_graph_concept.h"
 #include "Voronoi_traits_concept.h"
+#include "Adaptation_policy_concept.h"
 
 
 typedef CGAL::Simple_cartesian<double>              K;
 typedef CGAL::Delaunay_graph_concept<K>             DG;
 typedef CGAL::Voronoi_traits_concept<DG>            VT;
-typedef CGAL::Voronoi_diagram_2<DG,VT>              VDA;
-
+typedef CGAL::Adaptation_policy_concept<DG,VT>      AP;
+typedef CGAL::Voronoi_diagram_2<DG,VT,AP>           VDA;
 
 int main()
 {

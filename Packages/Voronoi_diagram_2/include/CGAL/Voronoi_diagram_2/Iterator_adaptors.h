@@ -179,7 +179,7 @@ class Edge_iterator_adaptor
     int j = CW_CCW_2::ccw( e.second );
     typename VDA::Delaunay_graph::Vertex_handle v = e.first->vertex(j);
 
-    if ( this->vda_->face_tester()(this->vda_->dual(), v) ) {
+    if ( this->vda_->face_rejector()(this->vda_->dual(), v) ) {
       this->value_ = *this->value_.opposite();
     }
   }

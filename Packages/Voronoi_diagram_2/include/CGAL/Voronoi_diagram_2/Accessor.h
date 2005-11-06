@@ -41,8 +41,8 @@ public:
   typedef typename VDA::Valid_edges_iterator
   Valid_edges_iterator;
 
-  typedef typename VDA::Edge_degeneracy_tester Edge_degeneracy_tester;
-  typedef typename VDA::Face_degeneracy_tester Face_degeneracy_tester;
+  typedef typename VDA::Edge_rejector  Edge_rejector;
+  typedef typename VDA::Face_rejector  Face_rejector;
 
   typedef typename VDA::Find_valid_vertex      Find_valid_vertex;
 

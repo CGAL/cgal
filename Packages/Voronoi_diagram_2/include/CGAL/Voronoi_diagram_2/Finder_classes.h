@@ -49,7 +49,7 @@ struct Find_next_halfedge
       inext = vda->dual().tds().mirror_index(fcur, cw_i);
       fcur = fnext;
       icur = inext;
-    } while ( vda->edge_tester()(vda->dual(), fnext, inext) );
+    } while ( vda->edge_rejector()(vda->dual(), fnext, inext) );
   }
 };
 
@@ -108,7 +108,7 @@ class Find_valid_vertex
 
     bool b[3];
     for (int i = 0; i < 3; i++) {
-      b[i] = !vda->edge_tester()(vda->dual(), cur, i);
+      b[i] = !vda->edge_rejector()(vda->dual(), cur, i);
     }
 
     if ( b[0] || b[1] || b[2] ) {

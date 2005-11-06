@@ -43,31 +43,19 @@ public:
   typedef Tag_false       Has_site_inserter;
   typedef Tag_false       Has_remove;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_degeneracy_tester<DG>
-  Edge_degeneracy_tester;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_degeneracy_tester<DG>
-  Face_degeneracy_tester;
-
-  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
-    return e_tester_;
-  }
-
-  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
-    return f_tester_;
-  }
 
   typedef typename DG::Point_2        Point_2;
   typedef typename DG::Site_2         Site_2;
   typedef typename DG::Vertex_handle  Vertex_handle;
   typedef typename DG::Face_handle    Face_handle;
+  typedef typename DG::Edge           Edge;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<Site_2,DG,Tag_false>
   Access_site_2;
 
   Access_site_2 access_site_2_object() const { return Access_site_2(); }
 
-  struct Construct_dual_point_2 {
+  struct Construct_Voronoi_point_2 {
     typedef Point_2       result_type;
     typedef typename DG::Face_handle   Face_handle;
     typedef Arity_tag<1>  Arity;
@@ -77,10 +65,11 @@ public:
     }
   };
 
-  Construct_dual_point_2 construct_dual_point_2_object() const {
-    return Construct_dual_point_2();
+  Construct_Voronoi_point_2 construct_Voronoi_point_2_object() const {
+    return Construct_Voronoi_point_2();
   }
 
+#if 0
   void clear() {
     e_tester_.clear();
     f_tester_.clear();
@@ -94,10 +83,7 @@ public:
   bool is_valid() const {
     return e_tester_.is_valid() && f_tester_.is_valid();
   }
-
-private:
-  Edge_degeneracy_tester e_tester_;
-  Face_degeneracy_tester f_tester_;
+#endif
 };
 
 

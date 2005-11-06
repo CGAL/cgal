@@ -28,6 +28,7 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
 #include <CGAL/Apollonius_graph_Voronoi_traits_2.h>
+#include <CGAL/Apollonius_graph_adaptation_policies_2.h>
 
 typedef CGAL::Simple_cartesian<double>                        Rep;
 typedef CGAL::Apollonius_graph_filtered_traits_2<Rep>         K;
@@ -36,21 +37,27 @@ typedef CGAL::Apollonius_graph_filtered_traits_2<Rep>         K;
 
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 
-typedef CGAL::Apollonius_graph_hierarchy_2<K>                 AG;
+typedef CGAL::Apollonius_graph_hierarchy_2<K>                  AG;
 #else
-typedef CGAL::Apollonius_graph_2<K>                           AG;
+typedef CGAL::Apollonius_graph_2<K>                            AG;
 #endif
 
-typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>           UVT;
-typedef CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG>   CVT;
-typedef CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG>  IVT;
-typedef CGAL::Voronoi_diagram_2<AG,CVT>                       VDA;
+typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>            VT;
+typedef CGAL::Identity_policy_2<AG,VT>                         IP;
 
-int main()
+typedef CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG> CDRP;
+
+typedef CGAL::Voronoi_diagram_2<AG,VT,IP>                      IVDA;
+typedef CGAL::Voronoi_diagram_2<AG,VT,CDRP>                    CDRVDA;
+
+template<class VD>
+void run_tests()
 {
-  typedef Project_site<AG::Vertex_handle,AG::Site_2>    Project_site;
-  typedef Project_ag_dual<VDA,AG::Site_2>               Project_ag_dual;
-  typedef VDA_Tester<VDA,Project_site,Project_ag_dual>  Tester;
+  typedef typename VD::Delaunay_graph                        DG;
+  typedef typename DG::Site_2                                Site_2;
+  typedef Project_site<typename DG::Vertex_handle,Site_2>    Project_site;
+  typedef Project_ag_dual<VD,Site_2>                         Project_ag_dual;
+  typedef VDA_Tester<VD,Project_site,Project_ag_dual>        Tester;
 
   Project_site      project_site;
   Project_ag_dual   project_ag_dual;
@@ -81,6 +88,13 @@ int main()
   test("data/data5.ag.cin", "data/queries1.cin");
 
   test.print_loc_times();
+}
+
+int main()
+{
+  run_tests<IVDA>();
+  print_separator(std::cout);
+  run_tests<CDRVDA>();
 
   return 0;
 }

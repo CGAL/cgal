@@ -76,10 +76,10 @@ class Vertex
       // if I want to return also infinite edges replace the test in
       // the if statement by the following test (i.e., should omit the
       // testing for infinity):
-      //           !vda_->edge_tester()(vda_->dual(), fvalid, i)
-      if ( !vda_->edge_tester()(vda_->dual(), fvalid, i) &&
+      //           !vda_->edge_rejector()(vda_->dual(), fvalid, i)
+      if ( !vda_->edge_rejector()(vda_->dual(), fvalid, i) &&
 	   !vda_->dual().is_infinite(fvalid, i) ) {
-	if ( vda_->face_tester()(vda_->dual(), fvalid->vertex(ccw_i)) ) {
+	if ( vda_->face_rejector()(vda_->dual(), fvalid->vertex(ccw_i)) ) {
 	  Delaunay_face_handle fopp;
 	  int iopp, i_mirror = vda_->dual().tds().mirror_index(fvalid, i);
 

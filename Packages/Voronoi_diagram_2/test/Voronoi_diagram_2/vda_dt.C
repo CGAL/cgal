@@ -31,6 +31,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_Voronoi_traits_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
@@ -48,38 +49,29 @@ typedef CGAL::Triangulation_hierarchy_2<DTB>                        DT;
 typedef CGAL::Delaunay_triangulation_2<K>                           DT;
 #endif
 
-typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>           UVT;
-typedef CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT>   CVT;
-typedef CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT>  IVT;
-typedef CGAL::Voronoi_diagram_2<DT,CVT>                             VDA;
+typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>           VT;
+typedef CGAL::Identity_policy_2<DT,VT>                              IP;
 
-struct DT_Predicate
-{
-  bool operator()(const DT& dt) const {
-    if ( dt.dimension() == 1 ) {
-      std::cerr << "The Delaunay triangulation is 1-dimensional."
-		<< std::endl;
-      std::cerr << "Cannot view the Delaunay triangulation as an arrangement."
-		<< std::endl;
-      return true;
-    }
-    return false;
-  }
-};
+typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT>
+CDRP;
 
-int main()
+typedef CGAL::Voronoi_diagram_2<DT,VT,IP>                           IVDA;
+typedef CGAL::Voronoi_diagram_2<DT,VT,CDRP>                         CDRVDA;
+
+
+template<class VD>
+void run_tests()
 {
-  typedef DT::Geom_traits::Point_2 Point_2;
-  typedef Project_point<DT::Vertex_handle,Point_2>    Project_point;
-  typedef Project_dual<VDA,Point_2>                   Project_dual;
-  typedef VDA_Tester<VDA,Project_point,Project_dual>  Tester;
+  typedef typename VD::Delaunay_graph                         DG;
+  typedef typename DG::Geom_traits::Point_2                   Point_2;
+  typedef Project_point<typename DG::Vertex_handle,Point_2>   Project_point;
+  typedef Project_dual<VD,Point_2>                            Project_dual;
+  typedef VDA_Tester<VD,Project_point,Project_dual>           Tester;
 
   Project_point   project_point;
   Project_dual    project_dual;
 
   Tester test(project_point, project_dual);
-
-  //  DT_Predicate p;
 
   test.reset_timers();
 
@@ -103,6 +95,14 @@ int main()
   test("data/degenerate1.dt.cin", "data/queries4.cin");
 
   test.print_loc_times();
+}
+
+
+int main()
+{
+  run_tests<IVDA>();
+  print_separator(std::cout);
+  run_tests<CDRVDA>();
 
   return 0;
 }

@@ -36,37 +36,31 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class Edge_tester_t, class Use_std_map = Tag_false>
-class Cached_edge_degeneracy_tester;
+template<class Edge_rejector_t, class Use_std_map = Tag_false>
+class Cached_edge_rejector;
 
-template<class Face_degeneracy_t, class Use_std_map = Tag_false>
-class Cached_face_degeneracy_tester;
+template<class Face_rejector_t, class Use_std_map = Tag_false>
+class Cached_face_rejector;
 
 //=========================================================================
 //=========================================================================
 
-template<class Edge_tester_t>
-class Cached_edge_degeneracy_tester<Edge_tester_t,Tag_true>
+template<class Edge_rejector_t>
+class Cached_edge_rejector<Edge_rejector_t,Tag_true>
 {
 private:
-  typedef Cached_edge_degeneracy_tester<Edge_tester_t,Tag_true>  Self;
+  typedef Cached_edge_rejector<Edge_rejector_t,Tag_true>  Self;
 
 public:
-  typedef Edge_tester_t    Edge_degeneracy_tester;
-
-  typedef typename Edge_degeneracy_tester::Delaunay_graph  Delaunay_graph;
-  typedef typename Edge_degeneracy_tester::Edge            Edge;
-  typedef typename Edge_degeneracy_tester::Face_handle     Face_handle;
-  typedef typename Edge_degeneracy_tester::Edge_circulator Edge_circulator;
-
-  typedef typename Edge_degeneracy_tester::All_edges_iterator
-  All_edges_iterator;
-
-  typedef typename Edge_degeneracy_tester::Finite_edges_iterator
-  Finite_edges_iterator;
-
-  typedef typename Edge_degeneracy_tester::result_type  result_type;
-  typedef typename Edge_degeneracy_tester::Arity        Arity;
+  typedef Edge_rejector_t                                Edge_rejector;
+  typedef typename Edge_rejector::Delaunay_graph         Delaunay_graph;
+  typedef typename Edge_rejector::Edge                   Edge;
+  typedef typename Edge_rejector::Face_handle            Face_handle;
+  typedef typename Edge_rejector::Edge_circulator        Edge_circulator;
+  typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
+  typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
+  typedef typename Edge_rejector::result_type            result_type;
+  typedef typename Edge_rejector::Arity                  Arity;
 
 private:
   typedef std::map<Edge,bool,Edge_less<Edge> >   Edge_map;
@@ -77,14 +71,14 @@ private:
   }
 
 public:
-  Cached_edge_degeneracy_tester() {}
-  Cached_edge_degeneracy_tester(const Self& other) {
-    e_tester = other.e_tester;
+  Cached_edge_rejector() {}
+  Cached_edge_rejector(const Self& other) {
+    e_rejector = other.e_rejector;
   }
 
   Self& operator=(const Self& other) {
     clear();
-    e_tester = other.e_tester;
+    e_rejector = other.e_rejector;
     return *this;
   }
 
@@ -94,7 +88,7 @@ public:
     typename Edge_map::iterator it = emap.find(e);
     if ( it != emap.end() ) { return it->second; }
 
-    bool b = e_tester(dual, e);
+    bool b = e_rejector(dual, e);
 
     Edge e_opp = opposite(dual, e);
     std::pair<Edge,bool> p = std::make_pair(e,b);
@@ -143,7 +137,7 @@ public:
 #if 1
     clear();
 #else
-    e_tester.swap(other.e_tester);
+    e_rejector.swap(other.e_rejector);
     std::swap(emap, other.emap);
 #endif
   }
@@ -161,34 +155,28 @@ public:
   }
 
 private:
-  Edge_degeneracy_tester e_tester;
+  Edge_rejector e_rejector;
   mutable Edge_map emap;
 };
 
 //=========================================================================
 
-template<class Edge_tester_t>
-class Cached_edge_degeneracy_tester<Edge_tester_t,Tag_false>
+template<class Edge_rejector_t>
+class Cached_edge_rejector<Edge_rejector_t,Tag_false>
 {
 private:
-  typedef Cached_edge_degeneracy_tester<Edge_tester_t,Tag_false>  Self;
+  typedef Cached_edge_rejector<Edge_rejector_t,Tag_false>  Self;
 
 public:
-  typedef Edge_tester_t    Edge_degeneracy_tester;
-
-  typedef typename Edge_degeneracy_tester::Delaunay_graph  Delaunay_graph;
-  typedef typename Edge_degeneracy_tester::Edge            Edge;
-  typedef typename Edge_degeneracy_tester::Face_handle     Face_handle;
-  typedef typename Edge_degeneracy_tester::Edge_circulator Edge_circulator;
-
-  typedef typename Edge_degeneracy_tester::All_edges_iterator
-  All_edges_iterator;
-
-  typedef typename Edge_degeneracy_tester::Finite_edges_iterator
-  Finite_edges_iterator;
-
-  typedef typename Edge_degeneracy_tester::result_type  result_type;
-  typedef typename Edge_degeneracy_tester::Arity        Arity;
+  typedef Edge_rejector_t                                Edge_rejector;
+  typedef typename Edge_rejector::Delaunay_graph         Delaunay_graph;
+  typedef typename Edge_rejector::Edge                   Edge;
+  typedef typename Edge_rejector::Face_handle            Face_handle;
+  typedef typename Edge_rejector::Edge_circulator        Edge_circulator;
+  typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
+  typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
+  typedef typename Edge_rejector::result_type            result_type;
+  typedef typename Edge_rejector::Arity                  Arity;
 
 private:
   enum Three_valued { UNDEFINED = -1, False, True };
@@ -202,14 +190,14 @@ private:
   }
 
 public:
-  Cached_edge_degeneracy_tester() {}
-  Cached_edge_degeneracy_tester(const Self& other) {
-    e_tester = other.e_tester;
+  Cached_edge_rejector() {}
+  Cached_edge_rejector(const Self& other) {
+    e_rejector = other.e_rejector;
   }
 
   Self& operator=(const Self& other) {
     clear();
-    e_tester = other.e_tester;
+    e_rejector = other.e_rejector;
     return *this;
   }
 
@@ -219,7 +207,7 @@ public:
       return emap[e];
     }
 
-    bool b = e_tester(dual, e);
+    bool b = e_rejector(dual, e);
     Three_valued b3 = (b ? True : False);
     emap[e] = b3;
     emap[opposite(dual, e)] = b3;
@@ -261,7 +249,7 @@ public:
 #if 1
     clear();
 #else
-    e_tester.swap(other.e_tester);
+    e_rejector.swap(other.e_rejector);
     std::swap(emap, other.emap);
 #endif
   }
@@ -280,7 +268,7 @@ public:
   }
 
 private:
-  Edge_degeneracy_tester e_tester;
+  Edge_rejector e_rejector;
   mutable Edge_map emap;
 };
 
@@ -289,33 +277,31 @@ private:
 //=========================================================================
 
 
-template<class Face_degeneracy_t>
-class Cached_face_degeneracy_tester<Face_degeneracy_t,Tag_true>
+template<class Face_rejector_t>
+class Cached_face_rejector<Face_rejector_t,Tag_true>
 {
   // tests whether a face has zero area
 public:
-  typedef Face_degeneracy_t                     Face_degeneracy_tester;
-
-  typedef typename Face_degeneracy_tester::Delaunay_graph  Delaunay_graph;
-  typedef typename Face_degeneracy_tester::Vertex_handle   Vertex_handle;
-
-  typedef typename Face_degeneracy_tester::result_type  result_type;
-  typedef typename Face_degeneracy_tester::Arity        Arity;
+  typedef Face_rejector_t                         Face_rejector;
+  typedef typename Face_rejector::Delaunay_graph  Delaunay_graph;
+  typedef typename Face_rejector::Vertex_handle   Vertex_handle;
+  typedef typename Face_rejector::result_type     result_type;
+  typedef typename Face_rejector::Arity           Arity;
 
 private:
-  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester,Tag_true>  Self;
+  typedef Cached_face_rejector<Face_rejector,Tag_true>  Self;
 
   typedef std::map<Vertex_handle,bool>  Vertex_map;
 
 public:
-  Cached_face_degeneracy_tester() {}
-  Cached_face_degeneracy_tester(const Self& other) {
-    f_tester = other.f_tester;
+  Cached_face_rejector() {}
+  Cached_face_rejector(const Self& other) {
+    f_rejector = other.f_rejector;
   }
 
   Self& operator=(const Self& other) {
     clear();
-    f_tester = other.f_tester;
+    f_rejector = other.f_rejector;
     return *this;
   }
 
@@ -325,7 +311,7 @@ public:
     typename Vertex_map::iterator it = vmap.find(v);
     if ( it != vmap.end() ) { return it->second; }
 
-    bool b = f_tester(dual, v);
+    bool b = f_rejector(dual, v);
     vmap.insert( std::make_pair(v,b) );
     return b;
   }
@@ -349,7 +335,7 @@ public:
 #if 1
     clear();
 #else
-    f_tester.swap(other.f_tester);
+    f_rejector.swap(other.f_rejector);
     std::swap(vmap, other.vmap);
 #endif
   }
@@ -366,40 +352,38 @@ public:
   }
 
 private:
-  Face_degeneracy_tester f_tester;
+  Face_rejector f_rejector;
   mutable Vertex_map vmap;
 };
 
 //=========================================================================
 
-template<class Face_degeneracy_t>
-class Cached_face_degeneracy_tester<Face_degeneracy_t,Tag_false>
+template<class Face_rejector_t>
+class Cached_face_rejector<Face_rejector_t,Tag_false>
 {
   // tests whether a face has zero area
 public:
-  typedef Face_degeneracy_t                     Face_degeneracy_tester;
-
-  typedef typename Face_degeneracy_tester::Delaunay_graph  Delaunay_graph;
-  typedef typename Face_degeneracy_tester::Vertex_handle   Vertex_handle;
-
-  typedef typename Face_degeneracy_tester::result_type  result_type;
-  typedef typename Face_degeneracy_tester::Arity        Arity;
+  typedef Face_rejector_t                         Face_rejector;
+  typedef typename Face_rejector::Delaunay_graph  Delaunay_graph;
+  typedef typename Face_rejector::Vertex_handle   Vertex_handle;
+  typedef typename Face_rejector::result_type     result_type;
+  typedef typename Face_rejector::Arity           Arity;
 
 private:
-  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester,Tag_false> Self;
+  typedef Cached_face_rejector<Face_rejector,Tag_false> Self;
 
   enum Three_valued { UNDEFINED = -1, False, True };
   typedef Unique_hash_map<Vertex_handle,Three_valued>   Vertex_map;
 
 public:
-  Cached_face_degeneracy_tester() {}
-  Cached_face_degeneracy_tester(const Self& other) {
-    f_tester = other.f_tester;
+  Cached_face_rejector() {}
+  Cached_face_rejector(const Self& other) {
+    f_rejector = other.f_rejector;
   }
 
   Self& operator=(const Self& other) {
     clear();
-    f_tester = other.f_tester;
+    f_rejector = other.f_rejector;
     return *this;
   }
 
@@ -407,7 +391,7 @@ public:
     if ( dual.dimension() < 2 ) { return false; }
     if ( vmap.is_defined(v) && vmap[v] != UNDEFINED ) { return vmap[v]; }
 
-    bool b = f_tester(dual, v);
+    bool b = f_rejector(dual, v);
     Three_valued b3 = (b ? True : False);
     vmap[v] = b3;
     return b;
@@ -428,7 +412,7 @@ public:
 #if 1
     clear();
 #else
-    f_tester.swap(other.f_tester);
+    f_rejector.swap(other.f_rejector);
     std::swap(vmap, other.vmap);
 #endif
   }
@@ -447,7 +431,7 @@ public:
   }
 
 private:
-  Face_degeneracy_tester f_tester;
+  Face_rejector f_rejector;
   mutable Vertex_map vmap;
 };
 
@@ -456,16 +440,15 @@ private:
 
 // Specialization for the identity face degeneracy tester
 
-template<class DG> class Identity_face_degeneracy_tester;
+template<class DG> class Identity_face_rejector;
 
 template<class DG>
-class Cached_face_degeneracy_tester<Identity_face_degeneracy_tester<DG>,
-				    Tag_false>
-  : public Identity_face_degeneracy_tester<DG>
+class Cached_face_rejector<Identity_face_rejector<DG>,Tag_false>
+  : public Identity_face_rejector<DG>
 {
  private:
-  typedef Identity_face_degeneracy_tester<DG>            Base;
-  typedef Cached_face_degeneracy_tester<Base,Tag_false>  Self;
+  typedef Identity_face_rejector<DG>            Base;
+  typedef Cached_face_rejector<Base,Tag_false>  Self;
 
  public:
   bool erase(const typename Base::Vertex_handle&) const { return true; }
@@ -476,10 +459,8 @@ class Cached_face_degeneracy_tester<Identity_face_degeneracy_tester<DG>,
 };
 
 template<class DG>
-class Cached_face_degeneracy_tester<Identity_face_degeneracy_tester<DG>,
-				    Tag_true>
-  : public Cached_face_degeneracy_tester<Identity_face_degeneracy_tester<DG>,
-					 Tag_false>
+class Cached_face_rejector<Identity_face_rejector<DG>,Tag_true>
+  : public Cached_face_rejector<Identity_face_rejector<DG>,Tag_false>
 {};
 
 //=========================================================================

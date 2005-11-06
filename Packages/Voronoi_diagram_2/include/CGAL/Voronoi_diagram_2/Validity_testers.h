@@ -52,16 +52,16 @@ class Edge_validity_tester
   Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
 
   bool operator()(const Edges_iterator_base& eit) const {
-    CGAL_assertion( !vda_->edge_tester()(vda_->dual(), eit->dual()) );
+    CGAL_assertion( !vda_->edge_rejector()(vda_->dual(), eit->dual()) );
 
     int cw_i = CW_CCW_2::cw( eit->dual().second );
     int ccw_i = CW_CCW_2::ccw( eit->dual().second );
 
     Delaunay_vertex_handle v_ccw_i = eit->dual().first->vertex(ccw_i);
-    CGAL_assertion(  !vda_->face_tester()(vda_->dual(), v_ccw_i)  );
+    CGAL_assertion(  !vda_->face_rejector()(vda_->dual(), v_ccw_i)  );
 
     Delaunay_vertex_handle v_cw_i = eit->dual().first->vertex(cw_i);
-    if (  !vda_->face_tester()(vda_->dual(), v_cw_i)  ) {
+    if (  !vda_->face_rejector()(vda_->dual(), v_cw_i)  ) {
       return false;
     }
 

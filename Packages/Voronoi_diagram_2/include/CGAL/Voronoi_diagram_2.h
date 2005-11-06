@@ -43,6 +43,8 @@
 #include <CGAL/Voronoi_diagram_2/Connected_components.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 
+#include <CGAL/Identity_policy_2.h>
+
 #include <boost/variant.hpp>
 
 CGAL_BEGIN_NAMESPACE
@@ -51,11 +53,11 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class DG, class Tr>
+template<class DG, class VT, class AP = Identity_policy_2<DG,VT> >
 class Voronoi_diagram_2
 {
  private:
-  typedef Voronoi_diagram_2<DG,Tr>           Self;
+  typedef Voronoi_diagram_2<DG,VT,AP>        Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result_accessor<Self,true>
@@ -71,7 +73,8 @@ class Voronoi_diagram_2
 
   // the (triangulated) dual graph
   typedef DG                                          Delaunay_graph;
-  typedef Tr                                          Voronoi_traits;
+  typedef VT                                          Voronoi_traits;
+  typedef AP                                          Adaptation_policy;
 
   typedef typename Delaunay_graph::Geom_traits        Geom_traits;
 
@@ -107,25 +110,25 @@ class Voronoi_diagram_2
 
  protected:
   // TYPES FOR THE DEGENERACY TESTERS
-  typedef typename Voronoi_traits::Has_site_inserter   Has_site_inserter;
-  typedef typename Voronoi_traits::Has_remove          Has_remove;
+  typedef typename Adaptation_policy::Has_site_inserter  Has_site_inserter;
+  typedef typename Adaptation_policy::Has_remove         Has_remove;
 
-  typedef typename Voronoi_traits::Edge_degeneracy_tester
-  Edge_degeneracy_tester;
+  typedef typename Adaptation_policy::Edge_rejector
+  Edge_rejector;
 
-  typedef typename Voronoi_traits::Face_degeneracy_tester
-  Face_degeneracy_tester;
+  typedef typename Adaptation_policy::Face_rejector
+  Face_rejector;
 
  protected:
   // DEGENERACY TESTER BINDERS
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_degeneracy_tester_binder<Self>
-  Edge_degeneracy_tester_binder;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_rejector_binder<Self>
+  Edge_rejector_binder;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face_degeneracy_tester_binder<Self>
-  Face_degeneracy_tester_binder;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face_rejector_binder<Self>
+  Face_rejector_binder;
 
   // ITERATORS FOR EDGES
-  typedef Filter_iterator<Dual_edges_iterator,Edge_degeneracy_tester_binder>
+  typedef Filter_iterator<Dual_edges_iterator,Edge_rejector_binder>
   Non_degenerate_edges_iterator;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Edge_iterator_adaptor
@@ -153,7 +156,7 @@ class Voronoi_diagram_2
 
  protected:
   // ITERATORS FOR FACES
-  typedef Filter_iterator<Dual_vertices_iterator,Face_degeneracy_tester_binder>
+  typedef Filter_iterator<Dual_vertices_iterator,Face_rejector_binder>
   Non_degenerate_faces_iterator;
 
  public:
@@ -328,6 +331,9 @@ public:
   // VORONOI TRAITS
   const Voronoi_traits& voronoi_traits() const { return tr_; }
 
+  // ADAPTATION POLICY
+  const Adaptation_policy& adaptation_policy() const { return ap_; }
+
   // SIZE RELATED METHODS
   size_type number_of_vertices() const {
     size_type num_v = 0;
@@ -358,12 +364,12 @@ public:
 
   // MAYBE THE FOLLOWING TWO METHODS SHOULD BE PRIVATE AND ACCESSED
   // ONLY THROUGH THE ACCESSOR
-  const Edge_degeneracy_tester& edge_tester() const {
-    return tr_.edge_degeneracy_tester_object();
+  const Edge_rejector& edge_rejector() const {
+    return ap_.edge_rejector_object();
   }
 
-  const Face_degeneracy_tester& face_tester() const {
-    return tr_.face_degeneracy_tester_object();
+  const Face_rejector& face_rejector() const {
+    return ap_.face_rejector_object();
   }
 
   // UNBOUNDED/BOUNDED FACE
@@ -400,13 +406,13 @@ public:
  private:
   Non_degenerate_faces_iterator non_degenerate_faces_begin() const {
     return filter_iterator( dual_.finite_vertices_end(),
-			    Face_degeneracy_tester_binder(this),
+			    Face_rejector_binder(this),
 			    dual_.finite_vertices_begin() );
   }
 
   Non_degenerate_faces_iterator non_degenerate_faces_end() const {
     return filter_iterator( dual_.finite_vertices_end(),
-			    Face_degeneracy_tester_binder(this) );
+			    Face_rejector_binder(this) );
   }
 
  public:
@@ -462,13 +468,13 @@ public:
  private:
   Non_degenerate_edges_iterator non_degenerate_edges_begin() const {
     return filter_iterator( dual_.finite_edges_end(),
-			    Edge_degeneracy_tester_binder(this),
+			    Edge_rejector_binder(this),
 			    dual_.finite_edges_begin() );
   }
 
   Non_degenerate_edges_iterator non_degenerate_edges_end() const {
     return filter_iterator( dual_.finite_edges_end(),
-			    Edge_degeneracy_tester_binder(this) );
+			    Edge_rejector_binder(this) );
   }
 
 
@@ -666,7 +672,7 @@ public:
       return Locate_result_accessor::make_locate_result(v);
     } else if ( const Delaunay_edge* de =
 		boost::get<Delaunay_edge>(&ns_qr) ) {
-      CGAL_assertion(  !edge_tester()(dual_, *de)  );
+      CGAL_assertion(  !edge_rejector()(dual_, *de)  );
       if ( dual_.dimension() == 1 ) {
 	Delaunay_vertex_handle v1 =
 	  de->first->vertex(CW_CCW_2::ccw(de->second));
@@ -695,7 +701,7 @@ public:
   //-----------------
   bool is_valid() const {
     bool valid = dual_.is_valid();
-    valid = valid && tr_.is_valid();
+    valid = valid && ap_.is_valid();
 
     for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
       valid = valid && it->is_valid();
@@ -724,12 +730,12 @@ public:
  public:
   void clear() {
     dual_.clear();
-    tr_.clear();
+    ap_.clear();
   }
 
   void swap(Self& other) {
     dual_.swap(other.dual_);
-    tr_.swap(other.tr_);
+    ap_.swap(other.ap_);
   }
 
   // ACCESSOR
@@ -739,6 +745,7 @@ public:
 
  private:
   Delaunay_graph  dual_;
+  Adaptation_policy ap_;
   Voronoi_traits tr_;
 
  protected:
@@ -753,7 +760,7 @@ public:
  protected:
   // insert is supported...
   inline Face_handle insert(const Site_2& t, const Tag_true&) {
-    Delaunay_vertex_handle v = tr_.site_inserter_object()(dual_, t);
+    Delaunay_vertex_handle v = ap_.site_inserter_object()(dual_, t);
     if ( v == Delaunay_vertex_handle() ) { return Face_handle(); }
     return Face_handle( Face(this, v) );
   }
@@ -818,18 +825,18 @@ public:
 
 // I/O OPERATORS
 //--------------
-template<class DG, class VT>
+template<class DG, class VT, class AP>
 std::ostream& operator<<(std::ostream& os,
-			 const Voronoi_diagram_2<DG,VT>& vd)
+			 const Voronoi_diagram_2<DG,VT,AP>& vd)
 {
   vd.file_output(os);
   return os;
 }
 
 
-template<class DG, class VT>
+template<class DG, class VT, class AP>
 std::istream& operator>>(std::istream& is,
-			 Voronoi_diagram_2<DG,VT>& vd)
+			 Voronoi_diagram_2<DG,VT,AP>& vd)
 {
   vd.file_input(is);
   return is;

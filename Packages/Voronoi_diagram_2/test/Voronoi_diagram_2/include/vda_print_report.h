@@ -32,11 +32,11 @@ void print_report(const VDA& vda, const Projector& project,
 		  const Dual_primal_projector& dp_project,
 		  Stream& os = std::cout)
 {
-  const typename VDA::Voronoi_traits::Edge_degeneracy_tester& edge_tester =
-    vda.voronoi_traits().edge_degeneracy_tester_object();
+  const typename VDA::Adaptation_policy::Edge_rejector& edge_rejector =
+    vda.adaptation_policy().edge_rejector_object();
 
-  const typename VDA::Voronoi_traits::Face_degeneracy_tester& face_tester =
-    vda.voronoi_traits().face_degeneracy_tester_object();
+  const typename VDA::Adaptation_policy::Face_rejector& face_rejector =
+    vda.adaptation_policy().face_rejector_object();
 
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
@@ -46,7 +46,7 @@ void print_report(const VDA& vda, const Projector& project,
   int n_all = 0, n_empty = 0, n_vert = 0;
   for (typename VDA::Face_iterator fit = vda.faces_begin();
        fit != vda.faces_end(); ++fit) {
-    //    CGAL_assertion( !face_tester(vda.dual(), fit->dual_vertex()) );
+    //    CGAL_assertion( !face_rejector(vda.dual(), fit->dual_vertex()) );
     n_all++;
   }
 
@@ -55,7 +55,7 @@ void print_report(const VDA& vda, const Projector& project,
 	vit != vda.dual().finite_vertices_end(); ++vit) {
     n_vert++;
     typename VDA::Delaunay_graph::Vertex_handle v(vit);
-    if ( face_tester(vda.dual(), v) ) {
+    if ( face_rejector(vda.dual(), v) ) {
       n_empty++;
     }    
   }
@@ -83,7 +83,7 @@ void print_report(const VDA& vda, const Projector& project,
     for (deit = vda.dual().all_edges_begin();
 	 deit != vda.dual().all_edges_end(); ++deit) {
       n_dual_edges++;
-      if ( edge_tester(vda.dual(), deit) ) {
+      if ( edge_rejector(vda.dual(), deit) ) {
 	os << "degenerate edge: " << std::flush;
 	print_dual_edge(vda, *deit, project, os);
 	n_edge_degen++;
@@ -110,7 +110,7 @@ void print_report(const VDA& vda, const Projector& project,
     typename VDA::Delaunay_graph::Finite_vertices_iterator dvit;
     for ( dvit = vda.dual().finite_vertices_begin();
 	  dvit != vda.dual().finite_vertices_end(); ++dvit) {
-      if ( face_tester(vda.dual(),dvit) ) {
+      if ( face_rejector(vda.dual(),dvit) ) {
 	n_empty_faces++;
       }
     }

@@ -30,6 +30,7 @@
 #include <CGAL/Segment_Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_traits_2.h>
 #include <CGAL/Segment_Voronoi_diagram_Voronoi_traits_2.h>
+#include <CGAL/Segment_Voronoi_diagram_adaptation_policies_2.h>
 
 typedef CGAL::MP_Float  NT;
 typedef CGAL::Ring_tag  MTag;
@@ -49,16 +50,24 @@ typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>                 SVD;
 #else
 typedef CGAL::Segment_Voronoi_diagram_2<Gt>                           SVD;
 #endif
-typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           UVT;
-typedef CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD>   CVT;
-typedef CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD>  IVT;
-typedef CGAL::Voronoi_diagram_2<SVD,CVT>                              VDA;
+typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           VT;
+typedef CGAL::Identity_policy_2<SVD,VT>                               IP;
 
-int main()
+typedef CGAL::Segment_Voronoi_diagram_caching_degeneracy_removal_policy_2<SVD>
+CDRP;
+
+typedef CGAL::Voronoi_diagram_2<SVD,VT,IP>                            IVDA;
+typedef CGAL::Voronoi_diagram_2<SVD,VT,CDRP>                          CDRVDA;
+
+template<class VD>
+void run_tests()
 {
-  typedef Project_site<SVD::Vertex_handle,SVD::Site_2>   Project_site;
-  typedef Project_primal<VDA,SVD::Point_2>               Project_primal;
-  typedef VDA_Tester<VDA,Project_site,Project_primal>    Tester;
+  typedef typename VD::Delaunay_graph                       DG;
+  typedef typename VD::Voronoi_traits::Site_2               Site_2;
+  typedef typename VD::Voronoi_traits::Point_2              Point_2;
+  typedef Project_site<typename DG::Vertex_handle,Site_2>   Project_site;
+  typedef Project_primal<VD,Point_2>                        Project_primal;
+  typedef VDA_Tester<VD,Project_site,Project_primal>        Tester;
 
   Project_site    project_site;
   Project_primal  project_primal;
@@ -100,6 +109,13 @@ int main()
   test("data/data11.svd.cin", "data/queries3.cin");
 
   test.print_loc_times();
+}
+
+int main()
+{
+  run_tests<IVDA>();
+  print_separator(std::cout);
+  run_tests<CDRVDA>();
 
   return 0;
 }

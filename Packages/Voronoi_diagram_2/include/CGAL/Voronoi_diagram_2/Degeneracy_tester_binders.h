@@ -29,48 +29,48 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=======================================================================
 
 template<class VDA>
-class Edge_degeneracy_tester_binder
+class Edge_rejector_binder
 {
- private:
-  typedef typename VDA::Accessor::Edge_degeneracy_tester  EDT;
+private:
+  typedef typename VDA::Accessor::Edge_rejector  ER;
 
- public:
-  typedef typename EDT::result_type               result_type;
-  typedef Arity_tag<1>                            Arity;
+public:
+  typedef typename ER::result_type               result_type;
+  typedef Arity_tag<1>                           Arity;
 
-  Edge_degeneracy_tester_binder(const VDA* vda = NULL) : vda_(vda) {}
+  Edge_rejector_binder(const VDA* vda = NULL) : vda_(vda) {}
 
   template<class A>
   bool operator()(const A& a) const {
     CGAL_precondition( vda_ != NULL );
-    return vda_->edge_tester()(vda_->dual(), a);
+    return vda_->edge_rejector()(vda_->dual(), a);
   }
 
- private:
+private:
   const VDA* vda_;
 };
 
 //=======================================================================
 
 template<class VDA>
-class Face_degeneracy_tester_binder
+class Face_rejector_binder
 {
- private:
-  typedef typename VDA::Accessor::Face_degeneracy_tester  FDT;
+private:
+  typedef typename VDA::Accessor::Face_rejector  FR;
 
- public:
-  typedef typename FDT::result_type               result_type;
-  typedef Arity_tag<1>                            Arity;
+public:
+  typedef typename FR::result_type               result_type;
+  typedef Arity_tag<1>                           Arity;
 
-  Face_degeneracy_tester_binder(const VDA* vda = NULL) : vda_(vda) {}
+  Face_rejector_binder(const VDA* vda = NULL) : vda_(vda) {}
 
   template<class A>
   bool operator()(const A& a) const {
     CGAL_precondition( vda_ != NULL );
-    return vda_->face_tester()(vda_->dual(), a);
+    return vda_->face_rejector()(vda_->dual(), a);
   }
 
- private:
+private:
   const VDA* vda_;
 };
 

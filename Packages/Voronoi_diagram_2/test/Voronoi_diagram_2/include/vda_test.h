@@ -125,6 +125,8 @@ class VDA_Tester
   {
     test_dual_graph_concept( vd.dual(), vd.voronoi_traits() );
     test_voronoi_traits_concept( vd.dual(), vd.voronoi_traits() );
+    test_adaptation_policy_concept( vd.dual(), vd.voronoi_traits(),
+				    vd.adaptation_policy() );
 
     std::ofstream nos("");
 
@@ -220,7 +222,7 @@ class VDA_Tester
     vda_timer_.start();
     
     VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
-			typename VD::Voronoi_traits::Has_site_inserter());
+			typename VD::Adaptation_policy::Has_site_inserter());
     vda_timer_.stop();
 
     test_vd(*vd);
