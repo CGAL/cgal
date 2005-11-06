@@ -19,144 +19,144 @@
 
 
 
-\begin{ccRefConcept}{AdaptationPolicy}
+\begin{ccRefConcept}{AdaptationPolicy_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The concept \ccc{VoronoiTraits_2} defines the combinatorial and
-geometric predicate requirements for the
-\ccc{Voronoi_diagram_2<DG,VT>} class. The
-\ccc{VoronoiTraits_2} concept essentially defines the requirements on
-the predicates that determine whether a feature of the triangulated
-Delaunay graph has a degenerate dual feature in the Voronoi diagram
-that is the dual of the triangulated Delaunay graph.
+The concept \ccc{AdaptationPolicy_2} defines the requirements on
+the predicate functors that determine whether a feature of the
+triangulated Delaunay graph should be rejected or not. It also
+provides a functor for inserting sites in the Delaunay graph. The last
+functor is optional and a tag determines whether it is provided or
+not. Note that while the first two functors do not modify the Delaunay
+graph they take as an argument, the last ones does.
 
 \ccRefines
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}
 
 \ccTypes
-\ccTwo{VoronoiTraits_2::Face_degeneracy_tester+}{}
+\ccTwo{AdaptationPolicy_2::Delaunay_graph+}{}
 %
-\ccNestedType{Point_2}{A type for a point.}
-\ccGlue
 \ccNestedType{Site_2}{A type for the sites of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Delaunay_graph}{A type for the triangulated Delaunay
   graph. The type \ccc{Delaunay_graph} must be a model of the
   \ccc{DelaunayGraph_2} concept.}
+%%
+\ccThree{typedef Delaunay_graph::Finite_edges_iterator}
+{Finite_edges_iterator+}{}
+\ccThreeToTwo
 \ccGlue
-\ccNestedType{Edge_degeneracy_tester}{A type for the predicate that
-  tests whether a Voronoi edge is degenerate, i.e., it has zero
-  length. It must be a model of the \ccc{EdgeDegeneracyTester} concept.}
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Vertex_handle;}{}
+%{Type for the vertex handles of the Delaunay graph.}
 \ccGlue
-\ccNestedType{Face_degeneracy_tester}{A type for the predicate that
-  tests whether a Voronoi face is degenerate, i.e., it has zero
-  area. It must be a model of the \ccc{FaceDegeneracyTester} concept.}
+\ccTypedef{typedef Delaunay_graph::Face_handle Face_handle;}{}
+%{Type for the face handles of the Delaunay graph.}
 \ccGlue
-\ccNestedType{Has_inserter}{A tag for determining if the Voronoi
-  traits class provides a functor for inserting sites in the Delaunay
+\ccTypedef{typedef Delaunay_graph::Edge Edge;}{}
+%{Type for the edges of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::All_edges_iterator All_edges_iterator;}{}
+%{Type for the iterator over all edges of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Finite_edges_iterator Finite_edges_iterator;}
+{}
+%{Type for the iterator over the finite edges of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Edge_circulator Edge_circulator;}{}
+%{Type for the edge circulator of the Delaunay graph.}
+%%
+\ccTwo{AdaptationPolicy_2::Edge_rejector+}{}
+\ccGlue
+\ccNestedType{Edge_rejector}{A type for the predicate functor that is
+  responsible for rejecting an edge of the Delaunay graph. It must be
+  model of the concepts \ccc{DefaultConstructible},
+  \ccc{CopyConstructible}, \ccc{Assignable}, and \ccc{AdaptableFunctor} 
+  (with two arguments). It must provide the following operators:\\
+  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg, Edge e)}\\
+  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg, Face_handle f, int i)}\\
+  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg, Edge_circulator ec)}\\
+  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg,
+    All_edges_iterator eit)}\\
+  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg,
+    Finite_edges_iterator eit)}\\
+  The functor returns \ccStyle{true} iff the edge is rejected.}
+\ccGlue
+\ccNestedType{Face_rejector}{A type for the predicate functor that is
+  responsible for rejecting a face of the Delaunay graph. It must be
+  model of the concepts \ccc{DefaultConstructible},
+  \ccc{CopyConstructible}, \ccc{Assignable}, \ccc{AdaptableFunctor}
+  (with two arguments). It must provide the following operator:\\
+  \centerline{\ccc{bool operator()(Delaunay graph dg, Vertex_handle v)}}\\
+  The functor returns \ccStyle{true} iff the face is rejected.}
+\ccGlue
+\ccNestedType{Has_inserter}{A tag for determining if the adaptation
+  policy class provides a functor for inserting sites in the Delaunay
   graph. This tag is equal to either \ccc{CGAL::Tag_true} (a site
   inserter functor is available) ir \ccc{CGAL::Tag_false} (a site
   inserter functor is not available).}
 \ccGlue
-\ccNestedType{Has_nearest_site_2}{A tag for determining if the Voronoi
-  traits class provides a functor for performing nearest site queries.
-  This tag is equal to either \ccc{CGAL::Tag_true} (a nearest site
-  query functor is available) or \ccc{CGAL::Tag_false} (a nearest site
-  query functor is not available).}
-\ccGlue
-\ccNestedType{Access_site_2}{A type for a functor that accesses the
-  sites associated with a vertex. It must be a model of the
-  \ccc{AccessSite_2} concept.}
-\ccGlue
-\ccNestedType{Construct_dual_point_2}{A type for a functor that
-  constructs the dual point of a face in the Delaunay graph, i.e., the
-  Voronoi vertex in the Voronoi diagram given to a face in the
-  Delaunay graph. It must be a model of the \ccc{ConstructDualPoint_2}
-  concept.}
-\ccGlue
-\ccNestedType{Nearest_site_2}{A type for a functor that performs
-  nearest site queries. It must be a model of the concept
-  \ccc{DelaunayGraphNearestSite_2}. This type is required only if
-  \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
-\ccGlue
 \ccNestedType{Site_inserter}{A type for a functor that inserts sites
-  in the Delaunay graph. It must be a model of the \ccc{SiteInserter}
-  concept. This type is required only if the \ccc{Has_inserter} tag
-  is equal to \ccc{CGAL::Tag_true}.}
+  in the Delaunay graph. It must be model of the concepts
+  \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}, 
+  \ccc{AdaptableFunctor} (with two arguments). It must provide the
+  following operator\\
+  \centerline{\ccc{Vertex_handle operaotr()(Delaunay_graph& dg, Site_2 t)}}\\
+  The vertex handle returned either points to the vertex of the
+  Delaunay graph corresponding to the site just inserted or the
+  default constructed vertex handle. The latter case can happen if the
+  site inserted is \textit{hidden}, i.e., it has an empty Voronoi cell.\\
+  This type is required only if the \ccc{Has_inserter} tag is equal to
+  \ccc{CGAL::Tag_true}.}
 
-%\ccThree{typedef Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
-%\ccThreeToTwo
-%\ccTypedef{typedef Delaunay_graph::Vertex_handle
-%  Vertex_handle;}{Handle to the vertices of the Delaunay graph.}
 
-
-\ccCreationVariable{vt}  %% choose variable name
+\ccCreationVariable{ap}  %% choose variable name
 
 \ccHeading{Access to objects}
-\ccThree{Edge_degeneracy_tester}{vt.edge_degeneracy_tester_object()+}{}
-\ccMethod{Edge_degeneracy_tester edge_degeneracy_tester_object();}{}
+\ccThree{Edge_rejector}{ap.edge_rejector_object()+}{}
+\ccMethod{Edge_rejector edge_rejector_object();}{}
 \ccGlue
-\ccMethod{Face_degeneracy_tester face_degeneracy_tester_object();}{}
-\ccGlue
-\ccMethod{Access_site_2 access_site_2_object();}{}
-\ccGlue
-\ccMethod{Construct_dual_point_2 construct_dual_point_2_object();}{}
-\ccGlue
-\ccMethod{Nearest_site_2 nearest_site_2_object();}{This method is
-  required only if \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
+\ccMethod{Face_rejector face_rejector_object();}{}
 \ccGlue
 \ccMethod{Site_inserter site_inserter_object();}{This method is
   required only if \ccc{Has_inserter} is equal to \ccc{CGAL::Tag_true}.}
 
 \ccHeading{Miscellaneous}
-The following methods are important when the Voronoi traits maintain a
-state. This can happen if we have caching Voronoi traits, i.e., when
-we have Voronoi traits that cache the results of the edge and face
-degeneracy testers.
+The following methods are important when the adaptation policy maintains a
+state. This can happen if we have a caching adaptation policy, i.e., when
+we cache the results of the edge and face rejectors.
 
-\ccThree{bool}{vt.swap(other)++}{}
+\ccThree{bool}{ap.swap(other)++}{}
 %
-\ccMethod{void clear();}{Clears the state of the Voronoi traits.}
+\ccMethod{void clear();}{Clears the state of the adaptation policy.}
 \ccGlue
-\ccMethod{void swap(VoronoiTraits_2 other);}{The Voronoi traits
-  \ccc{vt} and \ccc{other} are swapped. This method should be
+\ccMethod{void swap(AdaptationPolicy_2 other);}{The adaptation policies
+  \ccc{ap} and \ccc{other} are swapped. This method should be
   preferred to \ccStyle{vt=other} or \ccStyle{vt(other)} if
   \ccc{other} is deleted afterwards.}
 \ccGlue
-\ccMethod{bool is_valid();}{Tests the validity of the Voronoi traits.}
-
-%\ccHeading{Access methods}
-%\ccThree{Site_2}{vt.site(Vertex_handle v);}{}
-%\ccMethod{Site_2 site(Vertex_handle v);}{Returns the site associated
-%  with the vertex of the Delaunay graph represented by \ccc{v}.
-%  \ccPrecond{\ccc{v} must not be the infinite vertex.}}
+\ccMethod{bool is_valid();}{Tests the validity of the adaptation policy.}
+\ccMethod{bool is_valid(Delaunay_graph dg);}{Tests the validity of the
+  adaptation policy using extra information from the Delaunay graph
+  \ccc{dg}.}
 
 %
 \ccHasModels
-\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
-\ccc{CGAL::Apollonius_graph_caching_Voronoi_traits_2<AG2>}\\
-\ccc{CGAL::Apollonius_graph_identity_Voronoi_traits_2<AG2>}\\
-\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
-\ccc{CGAL::Delaunay_triangulation_caching_Voronoi_traits_2<DT2>}\\
-\ccc{CGAL::Delaunay_triangulation_identity_Voronoi_traits_2<DT2>}\\
-\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Regular_triangulation_caching_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Regular_triangulation_identity_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_caching_Voronoi_traits_2<SVD2>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_identity_Voronoi_traits_2<SVD2>}
+\ccc{CGAL::Identity_policy_2<DG,VT>}\\
+\ccc{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_degeneracy_removal_policy_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_degeneracy_removal_policy_2<SVD2>}
 
 \ccSeeAlso
 \ccc{DelaunayGraph_2}\\
-\ccc{EdgeDegeneracyTester}\\
-\ccc{FaceDegeneracyTester}\\
-\ccc{AccessSite_2}\\
-\ccc{ConstructDualPoint_2}\\
-\ccc{DelaunayGraphNearestSite_2}\\
-\ccc{SiteInserter}\\
+\ccc{VoronoiTraits_2}\\
 \ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 
