@@ -108,7 +108,7 @@ public:
   template <class Formatter>
   void operator() (Formatter& formatter) const
   {
-    formatter.write_arr_begin();
+    formatter.write_arrangement_begin();
     formatter.write_size ("number_of_vertices", m_arr.number_of_vertices());
     formatter.write_size ("number_of_edges", m_arr.number_of_edges());
     formatter.write_size ("number_of_faces", m_arr.number_of_faces());
@@ -134,7 +134,7 @@ public:
       _write_face(formatter, fit);
     formatter.write_faces_end();
 
-    formatter.write_arr_end();
+    formatter.write_arrangement_end();
   }
 
 protected:
@@ -167,7 +167,8 @@ protected:
     else
       formatter.write_vertex_index (1);
       
-    formatter.write_curve (he->curve()); // Write the associated curve.
+    formatter.write_x_monotone_curve (he->curve()); 
+                                         // Write the associated curve.
     formatter.write_halfedge_data (he);  // Write additional user-defined data.
     formatter.write_halfedge_data (he->twin());
     formatter.write_edge_end ();

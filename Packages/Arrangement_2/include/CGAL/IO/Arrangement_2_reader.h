@@ -25,6 +25,7 @@
  * The header file for the Arrangement_2_reader<Arrangement> class.
  */
 
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <algorithm>
@@ -60,18 +61,17 @@ protected:
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Point_2                      Point_2;
 
-protected:
-
-  typedef typename Dcel::Vertex                           DVertex;
-  typedef typename Dcel::Halfedge                         DHalfedge;
-  typedef typename Dcel::Face                             DFace;
-
-  typedef typename Arrangement_2::Stored_point_2          Stored_point_2;
-  typedef typename Arrangement_2::Stored_curve_2          Stored_curve_2;
+  typedef Arr_accessor<Arrangement_2>                     Arr_accessor;
+  typedef typename Arr_accessor::Dcel_vertex              DVertex;
+  typedef typename Arr_accessor::Dcel_halfedge            DHalfedge;
+  typedef typename Arr_accessor::Dcel_face                DFace;
 
   // Data members:
   Arrangement_2&           m_arr;
+  Arr_accessor             m_arr_access;
+  Point_2                  m_point;
   std::vector<DVertex*>    m_vertices;
+  X_monotone_curve_2       m_curve;
   std::vector<DHalfedge*>  m_halfedges;
 
 private:
@@ -84,7 +84,8 @@ public:
 
   /*! Constructor. */
   Arrangement_2_reader (Arrangement_2& arr) :
-    m_arr(arr)
+    m_arr (arr),
+    m_arr_access (arr)
   {}
 
   /*! Destructor. */
@@ -99,7 +100,7 @@ public:
     m_arr.clear();
 
     // Read the arrangement dimensions.
-    formatter.read_arr_begin();
+    formatter.read_arrangement_begin();
 
     const Size  number_of_vertices = formatter.read_size("number_of_vertices");
     const Size  number_of_halfedges = 2*formatter.read_size("number_of_edges");
@@ -135,7 +136,7 @@ public:
       _read_face (formatter);
     formatter.read_faces_end();
 
-    formatter.read_arr_end();
+    formatter.read_arrangement_end();
     return;
   }
 
@@ -147,14 +148,11 @@ protected:
   {
     formatter.read_vertex_begin();
 
-    // Allocate a new DCEL vertex and associate it with the point we read.
-    DVertex*        new_v = m_arr.dcel.new_vertex();
-    Point_2         p;
+    // Read the point associated with the vertex.
+    formatter.read_point (m_point);
 
-    formatter.read_point (p);
-
-    Stored_point_2 *p_p = m_arr._new_point (p);
-    new_v->set_point(p_p);
+    // Allocate a new DCEL vertex and associate it with this point.
+    DVertex*        new_v = m_arr_access.new_vertex (m_point);
 
     // Read any auxiliary data associated with the vertex.
     formatter.read_vertex_data (Vertex_handle (new_v));
@@ -169,18 +167,17 @@ protected:
   {
     formatter.read_edge_begin();
 
-    // Allocate a pair of new DCEL halfegdes and associate them with the
-    // x-monotone curve we read.
-    DHalfedge          *new_he = m_arr.dcel.new_edge();
+    // Read the indices of the end-vertices and the edge direction.
     std::size_t         source_idx = formatter.read_vertex_index();
     std::size_t         target_idx = formatter.read_vertex_index();
     std::size_t         direction = formatter.read_vertex_index();
-    X_monotone_curve_2  cv;
 
-    formatter.read_curve (cv);
+    // Read the x-monotone curve associated with the edge. 
+    formatter.read_x_monotone_curve (m_curve);
 
-    Stored_curve_2     *p_cv = m_arr._new_curve (cv);
-    new_he->set_curve(p_cv);
+    // Allocate a pair of new DCEL halfegdes and associate them with the
+    // x-monotone curve we read.
+    DHalfedge          *new_he = m_arr_access.new_edge (m_curve);
 
     // Set the cross pointers between the twin halfedges and the end vertices.
     m_vertices[target_idx]->set_halfedge (new_he);
@@ -216,19 +213,19 @@ protected:
 
     // Try reading the outer CCB of the face.
     formatter.read_outer_ccb_begin();
-    Size       outer_size = formatter.read_size ("halfedges_on_outer_CCB");
-    DFace     *new_f = NULL;
-    DHalfedge *he;
+    Size        outer_size = formatter.read_size ("halfedges_on_outer_CCB");
+    DFace      *new_f = NULL;
+    DHalfedge  *he;
 
     if (outer_size == 0)
     {
       // We currently read the unbounded face.
-      new_f = m_arr.un_face;
+      new_f = m_arr_access.unbounded_face();
     }
     else
     {
       // Allocate a new DCEL face and read its outer CCB.
-      new_f = m_arr.dcel.new_face();
+      new_f = m_arr_access.new_face();
       he = _read_ccb (formatter, new_f, outer_size);
       new_f->set_halfedge (he);
     }
@@ -268,7 +265,9 @@ protected:
     }
     formatter.read_isolated_vertices_end();
 
-    m_arr.n_iso_verts += n_isolated_vertices;
+    // Update the total number of isolated vertices in the arrangement.
+    m_arr_access.set_number_of_isolated_vertices
+      (m_arr.number_of_isolated_vertices() + n_isolated_vertices);
 
     // Read any auxiliary data associated with the face.
     formatter.read_face_data (Face_handle (new_f));

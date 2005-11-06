@@ -32,12 +32,12 @@ CGAL_BEGIN_NAMESPACE
  * Used mostly by the global functions that operate on arrangments with
  * history objects.
  */
-template <class Arr_with_hist_>
+template <class ArrWithHistory_>
 class Arr_with_history_accessor
 {
 public:
 
-  typedef Arr_with_hist_                         Arrangement_with_history_2;
+  typedef ArrWithHistory_                        Arrangement_with_history_2;
   typedef Arr_with_history_accessor<Arrangement_with_history_2> Self;
 
   typedef typename Arrangement_with_history_2::Traits_2      Traits_2;
@@ -45,6 +45,8 @@ public:
   typedef typename Arrangement_with_history_2::Point_2       Point_2;
   typedef typename Arrangement_with_history_2::Curve_2       Curve_2;
   typedef typename Arrangement_with_history_2::Curve_handle  Curve_handle;
+  typedef typename Arrangement_with_history_2::Halfedge_handle
+                                                             Halfedge_handle;
 
 private:
 
@@ -106,6 +108,46 @@ public:
     return (p_arr->_remove_curve (ch));
   }
   //@}
+
+  /// \name Assigning input curves.
+  //@{
+
+  /*!
+   * Create a new curve in the curves' container.
+   * \param cv The source curve.
+   * \return A handle for the curve.
+   */
+  Curve_handle new_curve (const Curve_2& cv)
+  {
+    // Allocate an extended curve (with an initially empty set of edges)
+    // and store it in the curves' list.
+    typename Arrangement_with_history_2::Curve_halfedges  *p_cv = 
+                                           p_arr->m_curves_alloc.allocate (1);
+    
+    p_arr->m_curves_alloc.construct (p_cv, cv);
+    p_arr->m_curves.push_back (*p_cv);
+    
+    // Return a handle to the inserted curve (the last in the list).
+    Curve_handle       ch = p_arr->m_curves.end();
+    return (--ch);
+  }
+
+  /*!
+   * Set the cross-pointers between a curve and an edge.
+   * \param ch A handle for the curve.
+   * \param he A halfedge handle representing the edge.
+   */
+  void connect_curve_edge (Curve_handle ch, Halfedge_handle he)
+  {
+    // Add the edge to the list of cv's induced edges.
+    typename Arrangement_with_history_2::Curve_halfedges&  cv = *ch;
+    cv._insert (he);
+
+    // Add the curve to the set of he's inducing curves. 
+    he->curve().data().insert (&cv);
+  
+    return;
+  }  
 };
 
 CGAL_END_NAMESPACE

@@ -32,7 +32,6 @@
 #include <CGAL/Arr_observer.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
-#include <CGAL/IO/Arrangement_2_reader.h>
 
 #include <set>
 
@@ -77,7 +76,6 @@ protected:
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   friend class Arr_with_history_accessor<Self>;
-  friend class Arrangement_2_reader<Self>;
 
   // Define the data-traits class based on Traits_2.
   typedef Arr_consolidated_curve_data_traits_2<Traits_2,Curve_2*>
@@ -163,6 +161,7 @@ protected:
   {
     friend class Curve_halfedges_observer;
     friend class Arrangement_with_history_2<Traits_, Dcel_>;
+    friend class Arr_with_history_accessor<Self>;
 
   private:
 
@@ -447,7 +446,7 @@ public:
 
   /// \name Traversal of the arrangement curves.
   //@{
-  Size number_of_curves ()
+  Size number_of_curves () const
   {
     return (m_curves.size());
   }

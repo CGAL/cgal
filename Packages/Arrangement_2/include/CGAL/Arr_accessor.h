@@ -40,6 +40,7 @@ public:
   typedef Arrangement_                                  Arrangement_2;
   typedef Arr_accessor<Arrangement_2>                   Self;
 
+  typedef typename Arrangement_2::Size                  Size;
   typedef typename Arrangement_2::Point_2               Point_2;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
@@ -500,6 +501,69 @@ public:
     
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));
+  }
+  //@}
+
+  /// \name Functions used by the arrangement reader.
+  //@{
+  typedef DVertex                         Dcel_vertex;
+  typedef DHalfedge                       Dcel_halfedge;
+  typedef DFace                           Dcel_face;
+
+  /*!
+   * Create a new vertex, associated with the given point.
+   * \param p The point.
+   * \return A pointer to the created DCEL vertex.
+   */
+  Dcel_vertex* new_vertex (const Point_2& p)
+  {
+    typename Arrangement_2::Stored_point_2 *p_p = p_arr->_new_point (p);
+    Dcel_vertex                            *new_v = p_arr->dcel.new_vertex();
+
+    new_v->set_point (p_p);
+    return (new_v);
+  }
+
+  /*!
+   * Create a new edge (halfedge pair), associated with the given curve.
+   * \param cv The x-monotone curve.
+   * \return A pointer to one of the created DCEL halfedge.
+   */
+  Dcel_halfedge* new_edge (const X_monotone_curve_2& cv)
+  {
+    typename Arrangement_2::Stored_curve_2 *p_cv = p_arr->_new_curve (cv);
+    Dcel_halfedge                          *new_he = p_arr->dcel.new_edge();
+
+    new_he->set_curve (p_cv);
+    return (new_he);
+  }
+
+  /*!
+   * Get the unbounded face.
+   * \return A pointer to the unbounded DCEL face.
+   */
+  Dcel_face* unbounded_face ()
+  {
+    return (p_arr->un_face);
+  }
+
+  /*!
+   * Create a new face.
+   * \return A pointer to the created DCEL face.
+   */
+  Dcel_face* new_face ()
+  {
+    return (p_arr->dcel.new_face());
+  }
+
+  /*!
+   * Update the total number of isolated vertices in the arrangement.
+   * \param n The new number of isolated vertices.
+   */
+  void set_number_of_isolated_vertices (Size n)
+  {
+    p_arr->n_iso_verts = n;
+    return;
   }
   //@}
 };

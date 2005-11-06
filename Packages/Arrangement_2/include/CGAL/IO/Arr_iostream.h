@@ -26,7 +26,6 @@
  * Definition of the I/O operators for the Arrangement_2<Traits,Dcel> class.
  */
 
-#include <CGAL/basic.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/IO/Arr_text_formatter.h>
 #include <CGAL/IO/Arrangement_2_writer.h>

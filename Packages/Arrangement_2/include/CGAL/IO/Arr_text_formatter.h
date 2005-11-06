@@ -124,7 +124,7 @@ public:
   //@{
 
   /*! Write a begin-arrangement comment. */
-  void write_arr_begin ()
+  void write_arrangement_begin ()
   {
     CGAL_assertion (m_out != NULL);
     m_old_out_mode = get_mode(*m_out);
@@ -135,7 +135,7 @@ public:
   }
 
   /*! Write an end-arrangement comment. */
-  void write_arr_end()
+  void write_arrangement_end()
   {
     _write_comment ("END ARRANGEMENT");
     set_mode (*m_out, m_old_out_mode);
@@ -202,7 +202,7 @@ public:
   void write_vertex_end ()
   {}
   
-  void write_point (const Point_2& p)
+  virtual void write_point (const Point_2& p)
   {
     out() << p << std::endl;
     return;
@@ -226,7 +226,7 @@ public:
     return;
   }
 
-  void write_curve (const X_monotone_curve_2& cv)
+  virtual void write_x_monotone_curve (const X_monotone_curve_2& cv)
   {
     out() << cv << std::endl;
     return;
@@ -291,7 +291,7 @@ public:
   //@{
 
   /*! Start reading an arrangement. */
-  void read_arr_begin () 
+  void read_arrangement_begin () 
   {
     CGAL_assertion (m_in != NULL);
     m_old_in_mode = get_mode(*m_in);
@@ -300,7 +300,7 @@ public:
   }
 
   /*! Read the arrangement edge. */
-  void read_arr_end() 
+  void read_arrangement_end() 
   {
     _skip_comments();
     set_mode(*m_in, m_old_in_mode);
@@ -360,7 +360,7 @@ public:
   void read_vertex_end ()
   {}
 
-  void read_point (Point_2& p) 
+  virtual void read_point (Point_2& p) 
   {
     in() >> p;
     _skip_until_EOL();
@@ -388,7 +388,7 @@ public:
     return (val);
   }
 
-  void read_curve (X_monotone_curve_2& cv) 
+  virtual void read_x_monotone_curve (X_monotone_curve_2& cv) 
   {
     in() >> cv;
     _skip_until_EOL();
