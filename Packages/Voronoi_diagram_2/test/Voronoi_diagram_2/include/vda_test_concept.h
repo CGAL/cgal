@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VDA_TEST_CONCEPT_H
 #define CGAL_VDA_TEST_CONCEPT_H 1

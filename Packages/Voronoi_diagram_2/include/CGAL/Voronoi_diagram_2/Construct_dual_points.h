@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_CONSTRUCT_DUAL_POINTS_H
 #define CGAL_VORONOI_DIAGRAM_2_CONSTRUCT_DUAL_POINTS_H 1

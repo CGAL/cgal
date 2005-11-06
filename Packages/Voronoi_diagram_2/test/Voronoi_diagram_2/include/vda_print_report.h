@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef VDA_PRINT_REPORT_H
 #define VDA_PRINT_REPORT_H 1

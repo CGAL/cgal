@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_NEAREST_SITE_2_H
 #define CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_NEAREST_SITE_2_H 1

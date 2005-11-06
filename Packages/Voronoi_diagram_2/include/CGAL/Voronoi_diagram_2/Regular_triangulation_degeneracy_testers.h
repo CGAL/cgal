@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_DEGENERACY_TESTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_DEGENERACY_TESTERS_H 1
@@ -33,7 +33,7 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
 template<class DG>
 class Regular_triangulation_edge_tester_2
-  : public Degeneracy_tester_base
+  : public Rejector_base
 {
   // tests whether a dual edge has zero length
  public:

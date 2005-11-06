@@ -17,31 +17,33 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_VORONOI_DIAGRAM_2_EDGE_LESS_H
-#define CGAL_VORONOI_DIAGRAM_2_EDGE_LESS_H 1
+
+#ifndef CGAL_IDENTITY_POLICY_2_H
+#define CGAL_IDENTITY_POLICY_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Policy_base.h>
+#include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
 CGAL_BEGIN_NAMESPACE
 
-CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
-template<class Edge_t>
-struct Edge_less
+template<class DG, class VT>
+struct Identity_policy_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Policy_base
+  <DG,
+   CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_rejector<DG>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<DG>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename VT::Site_2,DG> >
 {
-  typedef Edge_t        Edge;
-  typedef bool          result_type;
-  typedef Arity_tag<2>  Arity;
+  typedef typename VT::Site_2     Site_2;
 
-  bool operator()(const Edge& e1, const Edge& e2) const {
-    if ( e1.first != e2.first ) { return e1.first < e2.first; }
-    return e1.second < e2.second;
-  }
+  typedef Tag_true   Has_remove;
 };
 
 
-CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
-
 CGAL_END_NAMESPACE
 
-#endif // CGAL_VORONOI_DIAGRAM_2_EDGE_LESS_H
+
+#endif // CGAL_IDENTITY_POLICY_2_H

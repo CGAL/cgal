@@ -1,0 +1,144 @@
+// Copyright (c) 2005 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+#ifndef CGAL_VORONOI_DIAGRAM_2_POLICY_BASE_H
+#define CGAL_VORONOI_DIAGRAM_2_POLICY_BASE_H 1
+
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
+#include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
+
+CGAL_BEGIN_NAMESPACE
+
+CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+
+//=========================================================================
+//=========================================================================
+
+template<class DG, class ER, class FR>
+class Policy_base_base
+{
+private:
+  typedef Policy_base_base<DG,ER,FR>  Self;
+
+public:
+  typedef DG                                              Delaunay_graph;
+  typedef typename Delaunay_graph::Vertex_handle          Vertex_handle;
+  typedef typename Delaunay_graph::Face_handle            Face_handle;
+  typedef typename Delaunay_graph::Edge                   Edge;
+  typedef typename Delaunay_graph::All_edges_iterator     All_edges_iterator;
+  typedef typename Delaunay_graph::Finite_edges_iterator  Finite_edges_iterator;
+  typedef typename Delaunay_graph::Edge_circulator        Edge_circulator;
+
+  typedef ER   Edge_rejector;
+  typedef FR   Face_rejector;
+
+  const Edge_rejector& edge_rejector_object() const {
+    return e_rejector_;
+  }
+
+  const Face_rejector& face_rejector_object() const {
+    return f_rejector_;
+  }
+
+  void clear() {
+    e_rejector_.clear();
+    f_rejector_.clear();
+  }
+
+  void swap(Self& other) {
+    e_rejector_.swap(other.e_rejector_);
+    f_rejector_.swap(other.f_rejector_);
+  }
+
+  bool is_valid() const {
+    return e_rejector_.is_valid() && f_rejector_.is_valid();
+  }
+
+  bool is_valid(const Delaunay_graph& dg) const {
+    // to be implemented
+    return true;
+  }
+
+protected:
+  Edge_rejector e_rejector_;
+  Face_rejector f_rejector_;
+};
+
+//=========================================================================
+//=========================================================================
+
+template<class DG, class ER, class FR, class SI>
+class Policy_base
+  : public Policy_base_base<DG,ER,FR>
+{
+private:
+  typedef Policy_base<DG,ER,FR,SI>    Self;
+  typedef Policy_base_base<DG,ER,FR>  Base;
+
+public:
+  typedef SI   Site_inserter;
+
+  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+
+  Site_inserter site_inserter_object() const {
+    return Site_inserter();
+  }
+};
+
+//=========================================================================
+//=========================================================================
+
+template<class DG, class ERB, class FRB, class SIB>
+class Caching_policy_base
+  : public Policy_base_base<DG,
+			    Cached_edge_rejector<ERB>,
+			    Cached_face_rejector<FRB> >
+{
+protected:
+  typedef ERB   Edge_rejector_base;
+  typedef FRB   Face_rejector_base;
+  typedef SIB   Site_inserter_base;
+
+  typedef Caching_policy_base<DG,ERB,FRB,SIB>  Self;
+
+public:
+  typedef Cached_edge_rejector<Edge_rejector_base>                Edge_rejector;
+  typedef Cached_face_rejector<Face_rejector_base>                Face_rejector;
+  typedef Default_caching_site_inserter<Self,Site_inserter_base>  Site_inserter;
+
+  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+
+  Site_inserter site_inserter_object() const {
+    return Site_inserter(this);
+  }
+};
+
+
+//=========================================================================
+//=========================================================================
+
+
+CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
+
+CGAL_END_NAMESPACE
+
+
+#endif // CGAL_VORONOI_DIAGRAM_2_POLICY_BASE_2_H

@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_REGULAR_TRIANGULATION_VORONOI_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_VORONOI_TRAITS_2_H 1

@@ -561,7 +561,8 @@ private slots:
   {
     QMessageBox::about( this, title(),
 			"This is a demo for the Voronoi diagram adaptor\n\n"
-			"Author: Menelaos Karavelas <mkaravel@tem.uoc.gr>\n\n"
+			"Author: Menelaos Karavelas "
+			"<mkaravel@iacm.forth.gr>\n\n"
 			"Copyright (c) CGAL 2005");
   }
 
