@@ -68,9 +68,9 @@ int main ()
     do
     {
       // Get the color of the current half-edge.
-      if (eit->curve().number_of_data_objects() == 1)
+      if (eit->curve().data().size() == 1)
       {
-        color = eit->curve().get_data();
+        color = eit->curve().data().front();
 
         if (color == RED)
           has_red = true;
@@ -99,10 +99,10 @@ int main ()
     bool       has_red = false;
     bool       has_blue = false;
 
-    Traits_2::X_monotone_curve_2::Data_const_iterator       dit;
+    Traits_2::Data_container::const_iterator       dit;
 
-    for (dit = eit->curve().data_begin();
-         dit != eit->curve().data_end(); ++dit)
+    for (dit = eit->curve().data().begin();
+         dit != eit->curve().data().end(); ++dit)
     {
       if (*dit == RED)
         has_red = true;

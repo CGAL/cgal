@@ -2784,10 +2784,7 @@ bool Arrangement_2<Traits,Dcel>::_is_valid (Halfedge_const_handle he) const
     return (false);
 
   if (he->direction() == he->twin()->direction())
-  {
-    std::cout << "!!!" << std::endl;
     return (false);
-  }
 
   // Check that the end points of the curve associated with the halfedge
   // really equal the source and target vertices of this halfedge.
@@ -2803,10 +2800,7 @@ bool Arrangement_2<Traits,Dcel>::_is_valid (Halfedge_const_handle he) const
   Comparison_result res = traits->compare_xy_2_object() (he_s, he_t);
 
   if (he->direction() != res)
-  {
-    std::cout << "@@@" << std::endl;
     return (false);
-  }
 
   if (res == SMALLER)
   {

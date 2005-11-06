@@ -1,12 +1,12 @@
 //! \file examples/Arrangement_2/example18.C
-// Associating a name attribute with segments using the merged curve-data
+// Associating a name attribute with segments using the generic curve-data
 // traits.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_merged_curve_data_traits_2.h>
+#include <CGAL/Arr_curve_data_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <string>
 
@@ -26,7 +26,7 @@ typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>   Polyline_traits_2;
 typedef Polyline_traits_2::Curve_2                      Polyline_2;
-typedef CGAL::Arr_merged_curve_data_traits_2
+typedef CGAL::Arr_curve_data_traits_2
             <Polyline_traits_2, Name, Merge_names>      Traits_2;
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::Curve_2                               Curve_2;
@@ -57,10 +57,10 @@ int main ()
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
   {
-    if (eit->curve().get_data().length() > 1)
+    if (eit->curve().data().length() > 1)
     {
       std::cout << "[" << eit->curve() << "]  "
-                << "named: " << eit->curve().get_data() << std::endl;
+                << "named: " << eit->curve().data() << std::endl;
 
       // Rename the curve associated with the edge.
       arr.modify_edge (eit,
