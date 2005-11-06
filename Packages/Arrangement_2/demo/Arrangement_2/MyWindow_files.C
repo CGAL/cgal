@@ -28,9 +28,7 @@
 #include "demo_tab.h"
 #include "Conic_reader.h"
 
-#include <CGAL/IO/Arrangement_2_writer.h>
-#include <CGAL/IO/Arrangement_2_reader.h>
-
+#include <CGAL/IO/Arr_with_history_iostream.h>
 
 /*! open a segment file and add new tab */
 void MyWindow::fileOpenSegment()

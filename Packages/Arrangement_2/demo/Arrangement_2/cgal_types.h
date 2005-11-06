@@ -36,7 +36,6 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/squared_distance_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
