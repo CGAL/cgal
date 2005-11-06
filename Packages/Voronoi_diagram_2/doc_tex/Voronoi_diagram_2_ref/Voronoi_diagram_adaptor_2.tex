@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
 
-\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>}
 
 %% add template arg's if necessary
 
@@ -45,7 +45,7 @@ model of the \ccc{VoronoiTraits_2} concept.
 %
 \ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle+}{}
 \ccThreeToTwo
-\ccTwo{Voronoi_diagram_2<DG,VT>::Locate_result+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Locate_result+}{}
 %
 \ccTypedef{typedef DG Delaunay_graph;}{A type for the dual Delaunay graph.}
 \ccGlue
@@ -88,7 +88,7 @@ The circulators and iterators are assignable to the
 corresponding handle types, and they are also convertible to the
 corresponding handles.
 
-\ccTwo{Voronoi_diagram_2<DG,VT>::Unbounded_halfedges_iterator+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Unbounded_halfedges_iterator+}{}
 %
 \ccNestedType{Halfedge_handle}{Handle for halfedges.}
 \ccGlue
@@ -140,7 +140,7 @@ corresponding handles.
 \ccCreationVariable{vd}
 
 \ccCreation
-\ccThree{Voronoi_diagram_2<DG,VT>}{vd}{}
+\ccThree{Voronoi_diagram_2<DG,VT,AP>}{vd}{}
 \ccThreeToTwo
 %
 \ccConstructor{Voronoi_diagram_2(Voronoi_traits
@@ -402,7 +402,7 @@ invalidated by any modification in the face over which it is defined.
   \ccc{std::istream& operator>>(std::istream&, Delaunay_graph)}
 }
 \ccFunction{
-std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,VT> vd);}
+std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,VT,AP> vd);}
 {Writes the current state of the Voronoi diagram to the output
   stream \ccc{os}.\\
   The following operator must be defined:\\
@@ -410,7 +410,7 @@ std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,VT> vd);}
 }
 \ccGlue
 \ccFunction{
-std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT> vd);}
+std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT,AP> vd);}
 {Reads the current state of the Voronoi diagram from the input
   stream \ccc{is}.\\
   The following operator must be defined:\\
@@ -428,7 +428,7 @@ std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT> vd);}
 %
 \ccMethod{void clear();}{Clears all contents of the Voronoi diagram.}
 \ccGlue
-\ccMethod{void swap(Voronoi_diagram_2<DG,VT> other);}{The Voronoi
+\ccMethod{void swap(Voronoi_diagram_2<DG,VT,AP> other);}{The Voronoi
   diagrams \ccc{other} and \ccVar\ are
   swapped. \ccVar.\ccc{swap(other)} should be preferred to
   \ccVar\ccc{ = other} or to 
@@ -438,9 +438,9 @@ std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT> vd);}
 \ccc{DelaunayGraph_2}\\
 \ccc{VoronoiTraits_2}\\
 \ccc{AdaptationPolicy_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Face}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Face}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Vertex}\\
 \ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Regular_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Triangulation_hierarchy_2<Tr>} provided that \ccc{Tr} is a

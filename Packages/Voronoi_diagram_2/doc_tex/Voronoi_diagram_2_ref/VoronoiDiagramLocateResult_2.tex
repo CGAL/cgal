@@ -19,13 +19,13 @@
 
 
 
-\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>::Locate_result}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>::Locate_result}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The class \ccc{Voronoi_diagram_2<DG,VT>::Locate_result} is the result
+The class \ccc{Voronoi_diagram_2<DG,VT,AP>::Locate_result} is the result
 type of a point location query performed on a Voronoi diagram.
 The result of the query is either a
 vertex, edge or face of the Voronoi diagram. It is a vertex if the
@@ -41,7 +41,7 @@ case there exists a unique site closest to the query point.
 \ccc{EqualityComparable}
 
 \ccTypes
-\ccTwo{Voronoi_diagram_2<DG,VT>::Locate_result::Halfedge_handle+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Locate_result::Halfedge_handle+}{}
 %
 \ccNestedType{Vertex_handle}{Handle for the vertices of the Voronoi diagram.}
 \ccGlue
@@ -97,7 +97,7 @@ case there exists a unique site closest to the query point.
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>}
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

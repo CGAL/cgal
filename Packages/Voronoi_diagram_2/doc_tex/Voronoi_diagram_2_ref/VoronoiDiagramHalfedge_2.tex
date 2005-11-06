@@ -19,11 +19,11 @@
 
 
 
-\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>::Halfedge}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>::Halfedge}
 
 \ccDefinition
 The class \ccRefName\ is the Voronoi halfedge class provided by the
-\ccc{Voronoi_diagram_2<DG,VT>} class. Below we present its interface.
+\ccc{Voronoi_diagram_2<DG,VT,AP>} class. Below we present its interface.
 
 \ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
@@ -31,7 +31,7 @@ The class \ccRefName\ is the Voronoi halfedge class provided by the
 
 \ccTypes
 %
-\ccTwo{Voronoi_diagram_2<DG,VT>::Halfedge::Ccb_halfedge_circulator+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Halfedge::Ccb_halfedge_circulator+}{}
 \ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
@@ -46,7 +46,7 @@ The class \ccRefName\ is the Voronoi halfedge class provided by the
 \ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
   circulator over the halfedges of the boundary of a
   Voronoi face. The value type of the circulator is
-  \ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge} and is convertible to
+  \ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge} and is convertible to
   \ccc{Halfedge_handle}.}
 \ccGlue
 \ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It is a
@@ -153,9 +153,9 @@ the Voronoi edge.
   and the next of its previous halfedge is itself.}
 
 \ccSeeAlso
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Vertex}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Face}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Face}\\
 \ccc{DelaunayGraph_2}
 \end{ccRefClass}
 

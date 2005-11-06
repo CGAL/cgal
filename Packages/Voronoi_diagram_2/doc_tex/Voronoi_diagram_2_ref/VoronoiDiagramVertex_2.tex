@@ -19,12 +19,12 @@
 
 
 
-\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>::Vertex}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>::Vertex}
 
 \ccDefinition
 %
 The class \ccRefName\ is the Voronoi vertex class provided by the class 
-\ccc{Voronoi_diagram_2<DG,VT>} class. Below we present its interface.
+\ccc{Voronoi_diagram_2<DG,VT,AP>} class. Below we present its interface.
 
 \ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
@@ -32,7 +32,7 @@ The class \ccRefName\ is the Voronoi vertex class provided by the class
 
 \ccTypes
 %
-\ccTwo{Voronoi_diagram_2<DG,VT>::Vertex::Halfedge_handle+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Vertex::Halfedge_handle+}{}
 \ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
@@ -53,7 +53,7 @@ The class \ccRefName\ is the Voronoi vertex class provided by the class
   circulator that allows to traverse all incident halfedges, i.e., all
   halfedges that have the vertex as their target. The value
   type of the circulator is
-  \ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge} and is convertible to
+  \ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge} and is convertible to
   \ccc{Halfedge_handle}.}
 \ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
 \ccThreeToTwo
@@ -123,9 +123,9 @@ the $(i+1)$-th generating site of the Voronoi vertex.
 
 
 \ccSeeAlso
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Face}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Face}\\
 \ccc{DelaunayGraph_2}
 \end{ccRefClass}
 

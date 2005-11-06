@@ -19,14 +19,14 @@
 
 
 
-\begin{ccRefClass}{Voronoi_diagram_2<DG,VT>::Face}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>::Face}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
 The class \ccRefName\ is the Voronoi face class provided by the
-\ccc{Voronoi_diagram_2<DG,VT>} class. Below we present its interface.
+\ccc{Voronoi_diagram_2<DG,VT,AP>} class. Below we present its interface.
 
 \ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
@@ -34,7 +34,7 @@ The class \ccRefName\ is the Voronoi face class provided by the
 
 \ccTypes
 %
-\ccTwo{Voronoi_diagram_2<DG,VT>::Face::Halfedge_handle+}{}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Face::Halfedge_handle+}{}
 \ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
 \ccGlue
 \ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
@@ -49,7 +49,7 @@ The class \ccRefName\ is the Voronoi face class provided by the
 \ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
   circulator over the halfedges on the boundary of the face. The value
   type of the circulator is
-  \ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}, and is convertible
+  \ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge}, and is convertible
   to \ccc{Halfedge_handle}.}
 \ccGlue
 \ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It is a
@@ -92,9 +92,9 @@ The class \ccRefName\ is the Voronoi face class provided by the
 
 
 \ccSeeAlso
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Vertex}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge}\\
 \ccc{DelaunayGraph_2}
 \end{ccRefClass}
 
