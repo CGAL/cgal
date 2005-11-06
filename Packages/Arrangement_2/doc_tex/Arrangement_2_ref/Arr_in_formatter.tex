@@ -55,10 +55,10 @@ reading an arrangement from an input stream using a specific format.
 \ccHeading{Formatted Input Functions}
 %=====================================
 
-\ccMethod{void read_arr_begin ();}
+\ccMethod{void read_arrangement_begin ();}
     {reads a message indicating the beginning of the arrangement.}
 \ccGlue
-\ccMethod{void read_arr_end ();}
+\ccMethod{void read_arrangement_end ();}
     {reads a message indicating the end of the arrangement.}
 
 \ccMethod{Size read_size (const char *label = NULL);}
@@ -106,7 +106,7 @@ reading an arrangement from an input stream using a specific format.
 \ccMethod{std::size_t read_halfedge_index ();}
     {reads and returns halfedge index.}
 
-\ccMethod{void read_curve (X_monotone_curve_2& c);}
+\ccMethod{void read_x_monotone_curve (X_monotone_curve_2& c);}
     {reads an $x$-monotone curve.}
 
 \ccMethod{void read_halfegde_data (Halfedge_handle he);}

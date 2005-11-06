@@ -1,0 +1,32 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_with_hist_write.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{write (Arrangement_with_history_2)}
+
+\ccInclude{CGAL/IO/Arr_with_history_iostream.h}
+
+\ccFunction{template<class Traits, class Dcel, class Formatter>
+            std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
+                                 std::ostream& os,
+                                 Formatter& formatter);}
+   {Writes the arrangement-with-history instance \ccc{arr} into the given
+    output stream using a specific output format. \ccc{formatter}, which must
+    be a model of the \ccc{ArrWithHistoryOutputFormatter}, defines the output
+    format.}
+
+\ccFunction{template<class Traits, class Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                                      const Arrangement_with_history_2<Traits,Dcel>& arr);}
+   {Writes the arrangement-with-history instance \ccc{arr} into the given
+    output stream using the default output format.}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

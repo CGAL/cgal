@@ -55,10 +55,10 @@ writing an arrangement to an output stream using a specific format.
 \ccHeading{Formatted Output Functions}
 %=====================================
 
-\ccMethod{void write_arr_begin ();}
+\ccMethod{void write_arrangement_begin ();}
     {writes a message indicating the beginning of the arrangement.}
 \ccGlue
-\ccMethod{void write_arr_end ();}
+\ccMethod{void write_arrangement_end ();}
     {writes a message indicating the end of the arrangement.}
 
 \ccMethod{void write_size (const char *label, Size size);}
@@ -106,7 +106,7 @@ writing an arrangement to an output stream using a specific format.
 \ccMethod{void write_halfedge_index (std::size_t idx);}
     {writes a halfedge index.}
 
-\ccMethod{void write_curve (const X_monotone_curve_2& c);}
+\ccMethod{void write_x_monotone_curve (const X_monotone_curve_2& c);}
     {writes an $x$-monotone curve.}
 
 \ccMethod{void write_halfegde_data (Halfedge_const_handle he);}
