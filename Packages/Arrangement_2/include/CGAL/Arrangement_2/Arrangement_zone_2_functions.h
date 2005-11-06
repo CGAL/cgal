@@ -944,6 +944,8 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
     cv = sub_cv2;
   }
 
+  const X_monotone_curve_2  *p_orig_curve = NULL;
+
   if (! found_iso_vert)
   {
     // Check whether intersect_p coincides with one of the end-vertices of the
@@ -971,6 +973,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
 
       right_he = _direct_intersecting_edge_to_left (sub_cv1, intersect_he);
     }
+
+    // Store the curve currently associated with the intersecting halfedge.
+    p_orig_curve = &(intersect_he->curve());
   }
   else
   {
@@ -978,9 +983,6 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
     right_v = intersect_v;
     right_he = invalid_he;
   }
-
-  // Store the curve currently associated with the intersecting halfedge.
-  const X_monotone_curve_2  *p_orig_curve = &(intersect_he->curve());
 
   // Notify the visitor that the left endpoint of the first subcurve is
   // located within the current face and both its endpoint are located
