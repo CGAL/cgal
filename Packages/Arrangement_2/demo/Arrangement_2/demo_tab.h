@@ -918,7 +918,7 @@ public:
   void find_removable_halfedges(QMouseEvent *e)
   {
     //  if the arrangement is empty do nothing
-    if( m_curves_arr->number_of_vertices() == 0)
+    if( m_curves_arr->number_of_edges() == 0)
       return;
 
     // get the point of the mouse
