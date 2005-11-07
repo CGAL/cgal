@@ -221,7 +221,7 @@ pricing_helper(int& direction, Tag_false is_in_standard_form)
 		min_j = j; min_mu = mu;
 		direction = 1;
 	      }                            
-	    } else 
+	    }
 	    break;
 	  }
 	case QP_solver::UPPER:
