@@ -66,7 +66,7 @@ int main(const int argNr,const char **args) {
   typedef Tag_false Is_linear; // is the instance known in advance to be an LP?
   typedef Tag_true Is_symmetric; // is the D matrix known to be symmetric?
   typedef Tag_false Has_equalities_only_and_full_rank; // (see manual)
-  typedef Tag_false Is_in_standard_form; // (see manual)?
+  typedef Tag_true Is_in_standard_form; // (see manual)?
 
   // in case of an LP, zero the D matrix:
   // (Note: if you known in advance that the problem is an LP
@@ -101,24 +101,26 @@ int main(const int argNr,const char **args) {
   }
 
   // get solution:
-  cout << "Solution:" << endl;
-  std::vector<ET> x(qp.number_of_variables(),0);  // solution vector
-  Solver::Basic_variable_numerator_iterator
-    x_it =  solver.basic_original_variables_numerator_begin(),
-    x_end = solver.basic_original_variables_numerator_end();
-  Solver::Basic_variable_index_iterator 
-    x_ind = solver.basic_original_variables_index_begin();
-  const ET denom = solver.variables_common_denominator();
-  for (; x_it != x_end; ++x_it, ++x_ind)
-    x[*x_ind] = *x_it;
-
-  // output solution:
-  cout << "Exact solution:" << endl;
-  for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-    cout << "x[" << i << "] = " << x[i] << "/" << denom << endl;
-  cout << "Solution (as doubles):" << endl;
+  if (solver.status() != Solver::INFEASIBLE) {
+    cout << "Solution:" << endl;
+    std::vector<ET> x(qp.number_of_variables(),0);  // solution vector
+    Solver::Basic_variable_numerator_iterator
+      x_it =  solver.basic_original_variables_numerator_begin(),
+      x_end = solver.basic_original_variables_numerator_end();
+    Solver::Basic_variable_index_iterator 
+      x_ind = solver.basic_original_variables_index_begin();
+    const ET denom = solver.variables_common_denominator();
+    for (; x_it != x_end; ++x_it, ++x_ind)
+      x[*x_ind] = *x_it;
+    
+    // output solution:
+    cout << "Exact solution:" << endl;
+    for (unsigned int i=0; i<qp.number_of_variables(); ++i)
+      cout << "x[" << i << "] = " << x[i] << "/" << denom << endl;
+    cout << "Solution (as doubles):" << endl;
   for (unsigned int i=0; i<qp.number_of_variables(); ++i)
     cout << "x[" << i << "] ~= "
 	 << CGAL::to_double(x[i])/CGAL::to_double(denom)
 	 << endl;
+  }
 }
