@@ -191,7 +191,8 @@ pricing_helper(int& direction, Tag_false is_in_standard_form)
 	    const ET mu = this->mu_j(j);
 
 	    // determine whether the variable is on lower or upper bound, or
-	    // somewhere it the middle.
+	    // somewhere it the middle:
+	    //
 	    // Note: it cannot be both on the lower and upper bound (as it is
 	    // not FIXED).
 	    const int where =
