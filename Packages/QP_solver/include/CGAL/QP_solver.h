@@ -730,8 +730,11 @@ public: // only the pricing strategies (including user-defined ones
   {
     CGAL_assertion(!check_tag(Is_in_standard_form()) &&
 		   !is_basic(i) && i < qp_n && x_O_v_i[i] == ZERO);
-    return CGAL::is_zero(qp_l[i])? -1 :
-      (CGAL::is_zero(qp_u[i])? 1 : 0);
+    if (*(qp_fl+i) && CGAL::is_zero(qp_l[i]))
+      return -1;
+    if (*(qp_fu+i) && CGAL::is_zero(qp_u[i]))
+      return 1;
+    return 0;
   }
   
 private:
