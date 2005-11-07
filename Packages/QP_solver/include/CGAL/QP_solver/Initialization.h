@@ -163,7 +163,8 @@ set(int n, int m,
 		      << "symmetric" << std::endl;
 	}
 	if (has_ineq)
-	  vout2.out() << "flag: no inequalities and full rank" << std::endl;
+	  vout2.out() << "flag: has inequalities or rank not full"
+		      << std::endl;
 	if (vout4.verbose()) print_program();
       }
     }
