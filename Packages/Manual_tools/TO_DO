@@ -9,33 +9,44 @@ Manual_tools/TO_DO
 Bug Fixes
 ============================================================================
 
+FIXED:
 -- HTML: An enum without type name makes the HTML cnverter create a cross
    link from 'enum' to 'enum', which is nonsens ;-), see for example:
    http://www.cgal.org/Members/Manual_test/LAST/Polyhedron/Polyhedron_ref/Class_Polyhedron_incremental_builder_3.html#Enum_enum
-
--- TeX, HTML: In Subdivision_surfaces_3 a problem showed up with 
-   template template parameters in functions, they seem to not working.
-   Check the example \ccFunction{template <template <typename> class Stencil>
-   void PQQ(Poly& p, Stencil<Poly> rule, int d);}{comments...}
-
--- HTML: In Curved_kernel: CircularKernel::ConstructIntersections_2: operator()
-   in PDF but not in HTML. Something wrong with nested scopes/operator()?
-
--- HTML: The <title> in HTML is literally shown in Mozilla's window title, 
-   HTML markups inside the title are shown literally, see for example,
-   \cgal in STL Extension chapter. Can probably easily fixed with an 
-   additional MODE and flex-rules in cc_anchor....stage_1
 
 -- TeX, HTML: In the HTML manual, concepts and classes/functions are not
    visually distinguishable : same font (italic) and same color.
    In the PS/PDF, they are : italic font for classes/functions,
    and normal font for concepts. The HTML manual should be consistent.
 
+ADDED:
+-- HTML: Proper IMG tags in XHTML need quotes around the filename, i.e.
+   <IMG SRC="...">, and not <IM SRC=...>. When copying GIF images, the
+   HTML converter detects only IMG tags with proper quoted filenames,
+   but since HTML allows the filename without quotes, we should either
+   allow those as well, or issue an error message.
+
+Seems to work:
+
+-- TeX, HTML: In Subdivision_surfaces_3 a problem showed up with 
+   template template parameters in functions, they seem to not working.
+   Check the example \ccFunction{template <template <typename> class Stencil>
+   void PQQ(Poly& p, Stencil<Poly> rule, int d);}{comments...}
+
+   
+-- HTML: The <title> in HTML is literally shown in Mozilla's window title, 
+   HTML markups inside the title are shown literally, see for example,
+   \cgal in STL Extension chapter. Can probably easily fixed with an 
+   additional MODE and flex-rules in cc_anchor....stage_1
+
 -- TeX, HTML: The operator simplification is not working in the CGAL manual, 
    see operator< in Point_2, it should read p < q and not p.operator<(q)
    This is probably a problem of the CGAL manual that some previous
    file is disabling the operator simplification explicitly. Check by
    enabling it explicitly  with \def\ccTagOperatorLayout{\ccTrue}
+
+indeed. enabling it explicitly solves it. maybe it is generally a good idea to 
+enable it at the beginning of each section/chapter/texfile
 
 -- TeX, HTML: In Nef_polyhedron_S2<Traits>::Sphere_point, the removal of the
    Sphere_point type from signatures does not work as expected, e.g.,
@@ -44,6 +55,27 @@ Bug Fixes
    be given with its scope to properly match and then disappear.
    (HTML manual)
 
+when removing the scope from the section beginning, it works as expected.
+so: manual problem.
+
+-- HTML: Gif images copied to the HTML manual in a postprocessing step in 
+   the latex_to_html script: References to GIF images (and other formats 
+   too) are collected in the final HTML output and then searched in the
+   input directories and copied. It seems that missing images are not
+   properly reported as errors (or warnings), which could be improved.
+
+it works already.
+
+UNCLEAR:
+
+-- HTML: In Curved_kernel: CircularKernel::ConstructIntersections_2: operator()
+   in PDF but not in HTML. Something wrong with nested scopes/operator()?
+  ===> there is no ConstructIntersections_2 in the Curved_kernel
+
+OPEN:
+
+
+
 -- HTML: During the HTML conversion, a subdirectory in /usr/tmp is used to
    hold all temporary files. However, latex_to_html.css seems to show up
    occasionally in /usr/tmp directly, which it shouldn't.
@@ -51,10 +83,6 @@ Bug Fixes
 -- HTML: some problem with stepcounter 
    [I don't know what that is about anymore, so, I suggest to write a 
     test for \stepcounter ]
-
--- HTML: bash shell issue: if a filename contains special characters like '(', 
-   it doesnt get backquoted before using this filename as argument to
-   some other programs
 
 -- TeX: get rid of the underfull \hbox messages for the eps_tabs images
    (annoys finding the real problems in the log.
@@ -73,18 +101,6 @@ Feature Requests
 -- TeX, HTML: indexing nested types: \ccNestedType{} not indexed?
    For example : Triangulation_2::Line_face_circulator.
    It seems that \ccTypedef names are already indexed???
-
--- HTML: Gif images copied to the HTML manual in a postprocessing step in 
-   the latex_to_html script: References to GIF images (and other formats 
-   too) are collected in the final HTML output and then searched in the
-   input directories and copied. It seems that missing images are not
-   properly reported as errors (or warnings), which could be improved.
-
--- HTML: Proper IMG tags in XHTML need quotes around the filename, i.e.
-   <IMG SRC="...">, and not <IM SRC=...>. When copying GIF images, the
-   HTML converter detects only IMG tags with proper quoted filenames,
-   but since HTML allows the filename without quotes, we should either
-   allow those as well, or issue an error message.
 
 -- HTML: Label/ref pairs are encoded with [ref: prefixes until the 
    cc_anchor.... pass creates the hyperlinks. A leftover [ref:...] tag 
