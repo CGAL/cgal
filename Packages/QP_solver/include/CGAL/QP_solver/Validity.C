@@ -75,14 +75,27 @@ typename QP_solver<Rep_>::ET QP_solver<Rep_>::upper_bound(int i) const
 template < class Rep_ >
 bool QP_solver<Rep_>::is_valid()
 {
+  CGAL_qpe_debug {
+    vout << std::endl;
+    vout << "========" << std::endl;
+    vout << "Validity" << std::endl;
+    vout << "========" << std::endl;
+  }
     switch(this->m_status) {
     case UPDATE:
+	CGAL_qpe_debug {
+	  vout << " still in Update state!" << std::endl;
+	}
       return false;
     case OPTIMAL:
       {
 	const bool f = this->is_solution_feasible();
 	const bool o = this->is_solution_optimal();
 	CGAL_qpe_debug {
+	  vout << std::endl
+	       << "----------" << std::endl
+	       << "Validation" << std::endl
+	       << "----------" << std::endl;
 	  vout << " is in phase II: " << is_phaseII << std::endl;
 	  vout << "       feasible: " << f << std::endl;
 	  vout << "        optimal: " << o << std::endl;
@@ -95,6 +108,10 @@ bool QP_solver<Rep_>::is_valid()
 	const bool o = this->is_solution_optimal_for_auxiliary_problem();
 	const bool aux_positive = this->solution() > et0;
 	CGAL_qpe_debug {
+	  vout << std::endl
+	       << "----------" << std::endl
+	       << "Validation" << std::endl
+	       << "----------" << std::endl;
 	  vout << "            is in phase I: " << is_phaseI << std::endl;
 	  vout << "             feasible_aux: " << f << std::endl;
 	  vout << "              optimal_aux: " << o << std::endl;
@@ -107,6 +124,10 @@ bool QP_solver<Rep_>::is_valid()
 	const bool f = this->is_solution_feasible();
 	const bool u = this->is_solution_unbounded();
 	CGAL_qpe_debug {
+	  vout << std::endl
+	       << "----------" << std::endl
+	       << "Validation" << std::endl
+	       << "----------" << std::endl;
 	  vout << " is in phase II: " << is_phaseII << std::endl;
 	  vout << "       feasible: " << f << std::endl;
 	  vout << "      unbounded: " << u << std::endl;
@@ -114,6 +135,9 @@ bool QP_solver<Rep_>::is_valid()
 	return is_phaseII && f && u;
       }
     default: 	      
+	CGAL_qpe_debug {
+	  vout << " unknown state!" << std::endl;
+	}
       return false;
     }
 }
@@ -229,7 +253,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 
   // get number of working variables:
   const int no_of_wo_vars = this->number_of_working_variables() +
-    (art_s_i == -2)? 1 : 0; // Note: if there ever was a special
+    (art_s_i == -2? 1 : 0); // Note: if there ever was a special
                             // artifical variable, it has to be
                             // considered for this optimality test,
                             // even if it has already left the basis.
