@@ -402,7 +402,8 @@ bool QP_MPS_instance<IT_,ET_,
   t = token();
   std::string rhs_id;
   while (t != "RANGES" && t != "BOUNDS" &&
-	 t != "DMATRIX" && t != "QMATRIX" && t != "ENDATA") {
+	 t != "DMATRIX" && t != "QMATRIX" && t != "QUADOBJ" &&
+	 t != "ENDATA") {
     // read rhs identifier and if it is different from the one
     // from the previous iteration, ignore the whole row:
     bool ignore;
@@ -463,7 +464,7 @@ bool QP_MPS_instance<IT_,ET_,
 
   t = token();
   std::string bound_id;
-  while (t != "QMATRIX" && t != "DMATRIX" && t != "ENDATA") {
+  while (t != "QMATRIX" && t != "DMATRIX" && t != "QUADOBJ" && t != "ENDATA") {
     // process type of bound:
     enum Bound_type { LO, UP, FX, FR, MI, PL};
     Bound_type type;
@@ -552,7 +553,8 @@ bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_A_>::qmatrix_section()
 {
   std::string t = token();
-  if (t!="QMATRIX" && t!="DMATRIX") { // (Note: *MATRIX section is optional.)
+  if (t!="QMATRIX" && t!="DMATRIX" && t!="QUADOBJ") { // (Note: *MATRIX
+						      // section is optional.)
     put_token_back(t);
     is_linear_ = true;
     return true;
