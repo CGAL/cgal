@@ -223,6 +223,9 @@ string path_string( string name) { // either empty or includes a trailing '/'
 
 string uppath_string( string path) { // '../../' type of path reversing 'path'
     std::size_t len = std::count( path.begin(), path.end(), '/');
+    // absolute paths imply an empty uppath.
+    if( len > 1 && path[0] == '/' )
+        return string("");
     string result( "");
     for ( std::size_t i = 0; i < len; ++i) {
         result += "../";
