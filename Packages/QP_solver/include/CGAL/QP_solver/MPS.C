@@ -475,7 +475,7 @@ bool QP_MPS_instance<IT_,ET_,
     else if (t=="FX")
       type = FX;
     else if (t=="FR")
-      type = FX;
+      type = FR;
     else if (t=="MI")
       type = MI;
     else if (t=="PL")
@@ -483,6 +483,9 @@ bool QP_MPS_instance<IT_,ET_,
     else    
       return
 	err1("expected 'LO', 'UP', 'FX', 'FR', 'MI', or 'PL' here but found '%'",t);
+    
+    // remember bound:
+    const std::string bound = t;
 
     // find bound identifier:
     t = token();
@@ -504,7 +507,7 @@ bool QP_MPS_instance<IT_,ET_,
     IT val;
     if (type==LO || type==UP || type==FX)
       if (!number(val))
-	return err1("expected number after '%' in LO/UP/FX bound",t);
+	return err2("expected number after '%' in % bound",t,bound);
 
     // store bound:
     switch (type) {
