@@ -59,8 +59,9 @@ BISON   = bison -d -t -v
 
 # Files that will be moved into LATEX_CONV_BIN upon installation:
 PROGRAM_FILES =		cc_extract_html			\
-	        	cc_extract_images		\
 			cc_index_link                   \
+	        	cc_extract_images		
+			
 
 # Files that will be copied into LATEX_CONV_BIN upon installation:
 SCRIPT_FILES  = 	latex_to_html			\
@@ -124,6 +125,9 @@ OBJHTML    = lexer.o    \
              output.o            \
              cc_extract_html.o
 
+OBJIMAGES = cc_extract_images_lexer.C cc_extract_images.o
+
+
 # configure input.C with the right parameters
 input.o: input.C
 	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
@@ -133,6 +137,9 @@ input.o: input.C
 
 cc_extract_html : $(OBJHTML)
 	${CXX} ${CXXFLAGS} -o $@ ${OBJHTML} ${LDFLAGS}
+
+cc_extract_images : $(OBJIMAGES)
+	${CXX} ${CXXFLAGS} -o $@ ${OBJIMAGES} ${LDFLAGS}
 
 cc_index_link : cc_index_link.o
 	${CXX} ${CXXFLAGS} -o $@ $@.o ${LD_FLAGS}
