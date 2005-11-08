@@ -17,7 +17,7 @@ preform various functions. Users of existing kinetic data structures will need t
 \begin{description}
 \item[\ccc{Simulator}] a class that maintains the concept of time and a priority
   queue of the events. It is accessed from the \ccc{SimulationTraits} object using the \ccc{SimulationTraits::simulator_pointer()} method.
-\item[\ccc{NotifyingTable}] a container which stores kinetic geometric
+\item[\ccc{ActiveObjectsTable}] a container which stores kinetic geometric
   primitives and provides notifications when their trajectories
   change. The \ccc{SimulationTraits} creates an model of this concept
   called \ccc{SimulatorTraits::Moving_point_table} (assuming the
@@ -68,7 +68,7 @@ being flipped). The processing occurs via a callback from an object
 representing an event to the kinetic Delaunay data structure.
 
 If the trajectory of a primitive changes, for example it bounces
-off a wall, then the \ccc{NotifyingTable} notifies the kinetic Delaunay data
+off a wall, then the \ccc{ActiveObjectsTable} notifies the kinetic Delaunay data
 structure. The kinetic Delaunay data structure then updates all the
 certificates of edges adjacent to faces containing the updated point and
 reschedules those events with the \ccc{Simulator}.
@@ -141,9 +141,9 @@ existing triangulation. In addition, the \ccc{InstantaneousKernel} can
 be used to audit the kinetic data structure by comparing it to the
 static data structure computed for that instant in time. We provide
 two models, the
-\ccc{CGAL::KDS::Cartesian_instantaneous_kernel<NotifyingTable,
+\ccc{CGAL::KDS::Cartesian_instantaneous_kernel<ActiveObjectsTable,
 Kernel>} and
-\ccc{CGAL::KDS::Regular_triangulation_instantaneous_traits<NotifyingTable,
+\ccc{CGAL::KDS::Regular_triangulation_instantaneous_traits<ActiveObjectsTable,
 Kernel>}.
 
 We are able to use this technique due to a couple of important
@@ -251,7 +251,7 @@ can be checked in a similar manner.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Coordinating many kinetic data structures: the NotifyingTable.}
+\subsection{Coordinating many kinetic data structures: the ActiveObjectsTable.}
 \label{sec:moving_object_table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -263,40 +263,40 @@ the geometric primitives never change and their representations are
 often stored internally to the data structure. As a result, primitives
 are stored in a centralized table and the data structures stores
 \ccc{Key}s instead of the actual primitive. We provide one model of
-such a table, \ccc{CGAL::KDS::Notifying_table<Object>}.
+such a table, \ccc{CGAL::KDS::Active_objects_vector<Object>}.
 
 In the simple example presented in
 Section~\ref{sec:architecture_overview}, the kinetic Delaunay
-triangulation queries the \ccc{NotifyingTable} for all the moving points on
+triangulation queries the \ccc{ActiveObjectsTable} for all the moving points on
 initialization. Later, when the simulation is running, the
-\ccc{NotifyingTable} notifies the kinetic Delaunay data structure whenever a point's
+\ccc{ActiveObjectsTable} notifies the kinetic Delaunay data structure whenever a point's
 trajectory changes.
 
-More specifically, the \ccc{NotifyingTable} allows multiple kinetic
+More specifically, the \ccc{ActiveObjectsTable} allows multiple kinetic
 data structures to access a set of kinetic geometric primitives of a
 particular type and alerts the kinetic data structures when a new
 primitive is added, one is removed, or a primitive's trajectory
 changes. The user must specify what type of kinetic primitive a
-particular instance of the \ccc{NotifyingTable} model will contain
+particular instance of the \ccc{ActiveObjectsTable} model will contain
 through a template argument. This type is exposed as the \ccc{Data}
 type shown in the figure. To access an object, a \ccc{Key} which
 uniquely identifies the object within this container and which has a
 type specific to this container type is used.
 
 The provided models of \ccc{SimulationTraits} each define a model of
-\ccc{NotifyingTable} containing points of appropriate
+\ccc{ActiveObjectsTable} containing points of appropriate
 dimensionality. This type is called
 \ccc{SimulationTraits::Moving_point_table} and accessed through
 \ccc{SimulationTraits::moving_point_table_pointer()}. Like the
-\ccc{Simulator} they \ccc{NotifyingTable} models are explicitly shared
+\ccc{Simulator} they \ccc{ActiveObjectsTable} models are explicitly shared
 and accessed through reference counted pointers.
 
-The \ccc{NotifyingTable} uses a notification system which will be
+The \ccc{ActiveObjectsTable} uses a notification system which will be
 briefly explained in Section~\ref{sec:misc} to notify interested
 kinetic data structures when a set of changes to the primitives is
 completed. The kinetic data structures must then request the keys of
 the inserted, changed and erase objects from the
-\ccc{NotifyingTable} and handle them accordingly. We provide helper
+\ccc{ActiveObjectsTable} and handle them accordingly. We provide helper
 classes to handle a number of common scenarios such as a kinetic data
 structure which is incremental and can handle the changes of a single
 object at a time (as is done in the example,
@@ -305,10 +305,10 @@ structure which will rebuild all certificates any time any objects are
 changed (which can be more efficient when many objects change at
 once). The user can easily add other policies as needed.
 
-The \ccc{NotifyingTabke} model provided will not meet the needs of
+The \ccc{ActiveObjectsTable} model provided will not meet the needs of
 all users as there are many more specialized scenarios where a more
 optimized handling of updates will be needed. The general structure of
-the \ccc{NotifyingTable} model can be extended to handle many such
+the \ccc{ActiveObjectsTable} model can be extended to handle many such
 cases. For example, if moving segments are used, then some kinetic
 data structures will want to access each segment as an object, where
 as others will only need to access the individual endpoints. This extra
@@ -317,17 +317,17 @@ based) kinetic data structures by adding methods to return modified
 polygons in addition to those which return changed points.
 
 When trajectory changes happen at rational time values, the
-\ccc{NotifyingTable} can check that the trajectories are
+\ccc{ActiveObjectsTable} can check that the trajectories are
 $C^0$-continuous. Unfortunately, the situation is much more
 complicated for changes which occur at roots. In practice, motions can
 be rounded off to nearby rational values without problem.
 
-The \ccc{NotifyingTabke} only knows about one type of kinetic
+The \ccc{ActiveObjectsTable} only knows about one type of kinetic
 primitive and has no concept of time, other kinetic primitives or
 predicates. When a kinetic data structure handles an insertion, for
 example, it must query the \ccc{Simulator} for an appropriate time
 value and generate primitives using the \ccc{KineticKernel}. A more
-detailed discussion of how to use the \ccc{NotifyingTabke} appears
+detailed discussion of how to use the \ccc{ActiveObjectsTable} appears
 in Section~\ref{sec:examples}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -372,14 +372,14 @@ arguments.
 \subsubsection{Runtime event passing}
 
 Runtime events must be passed from \textit{notifiers}, namely the
-\ccc{NotifyingTable} and the \ccc{Simulator} to the kinetic data structures to
-\textit{listeners}, such as a kinetic data structure which needs to
-update itself when an event occurs These are passed using a simple,
-standardized notification interface. To use notifications, first
-defines a small proxy class which inherits from a \ccc{Listener} base
-type provided by the notifier. The \ccc{Listener} base class registers
-itself with the notifier on construction (and unregisters itself on
-destruction).
+\ccc{ActiveObjectsTable} and the \ccc{Simulator} to the kinetic data
+structures to \textit{listeners}, such as a kinetic data structure
+which needs to update itself when an event occurs These are passed
+using a simple, standardized notification interface. To use
+notifications, first defines a small proxy class which inherits from a
+\ccc{Listener} base type provided by the notifier. The \ccc{Listener}
+base class registers itself with the notifier on construction (and
+unregisters itself on destruction).
 
 When the some state of the notifier changes it, it calls the
 \ccc{new_notification} method on the proxy object provided and passes

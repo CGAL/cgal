@@ -11,27 +11,27 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{KDS::Insert_event<MovingObjectTable>}  %% add template arg's if necessary
+\begin{ccRefClass}{KDS::Insert_event<ActiveObjectTable>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-This event inserts a point into the \ccc{MovingObjectTable} when the event is processed.
+This event inserts a point into the \ccc{ActiveObjectTable} when the event is processed.
 
 \ccInclude{CGAL/KDS/Insert_event.h}
 
 \ccCreation
 \ccCreationVariable{i}  %% choose variable name
 
-\ccConstructor{Insert_event(MovingObjectTable::Data o, MovingObjectTable::Pointer t);}{Insert the object o, into the table t when processed.}
+\ccConstructor{Insert_event(ActiveObjectTable::Data o, ActiveObjectTable::Pointer t);}{Insert the object o, into the table t when processed.}
 
 
 \ccSeeAlso
 
-\ccc{MovingObjectTable},
-\ccc{CGAL::KDS::Notifying_table<MovingObject>}.
+ActiveObjectsTable,
+\ccc{CGAL::KDS::Active_objects_vector<MovingObject>}.
 
 \ccExample
 

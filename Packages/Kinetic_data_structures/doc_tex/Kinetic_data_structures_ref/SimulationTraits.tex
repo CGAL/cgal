@@ -34,7 +34,7 @@ data structure.
 
 \ccNestedType{Simulator}{A model of \ccc{Simulator} which will be used by all the kinetic data structures.}
 
-\ccNestedType{Moving_point_table}{A model of \ccc{NotifyingTable} which can be used to store moving points of an appropriate dimension. This is really optional and not needed if no kinetic data structures use points.}
+\ccNestedType{Active_objects_table}{A model of \ccc{ActiveObjectsTable} which can be used to store moving points of an appropriate dimension. This is really optional and not needed if no kinetic data structures use points.}
 
 \ccOperations
 \ccCreationVariable{st}
@@ -47,7 +47,7 @@ data structure.
 
 \ccMethod{Simulator* simulator_pointer();}{Return a pointer to the \ccc{Simulator} which is to be used in the simulation.}
 
-\ccMethod{Moving_point_table* moving_point_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
+\ccMethod{Active_objects_table* active_objects_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
 
 \ccHasModels
 

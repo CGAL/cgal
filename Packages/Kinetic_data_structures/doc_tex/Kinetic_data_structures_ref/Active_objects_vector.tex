@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{KDS::Notifying_table<MovingObject>}  %% add template arg's if necessary
+\begin{ccRefClass}{KDS::Active_objects_vector<MovingObject>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -24,11 +24,11 @@ time, but storage is not generally freed. The only way to be sure is
 to remove all reference counts for the table or to call \ccc{clear()}.
 
 
-\ccInclude{CGAL/KDS/Notifying_table.h}
+\ccInclude{CGAL/KDS/Active_objects_vector.h}
 
 \ccIsModel
 
-NotifyingTable
+ActiveObjectsTable
 
 
 
