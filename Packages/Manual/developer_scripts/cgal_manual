@@ -1254,15 +1254,22 @@ sub_module_should_be_built() {
 make_module() {    
   cmdlog "rm -f cgal_include_only.tex"
   local name=${1%.tex}
-  make_manual_prime \
+  local submodules=`find . -name "${name}__*.only.tex" -maxdepth 1`;
+  
+  # only store aux-files, if we are interested in it, later
+  if [ "$submodules" == "" ]; then
+    make_manual ${name}
+  else
+    make_manual_prime \
       before_latex_whole_manual \
       before_pdf_whole_manual \
       before_html_whole_manual ${name}
-  
+  fi
+    
   # afterwards, the sub-modules are made.
   # find all *.only.tex files in the current directory that 
   # start with $1 and have a trailing __*.only.tex
-  for submodule in `ls ${1%.tex}__*.only.tex`; do
+  for submodule in $submodules; do
     local v=${submodule%.only.tex}
     v=${v#*__}
     if sub_module_should_be_built $v; then
@@ -1281,7 +1288,6 @@ make_module() {
   done
   cleanup_latex ${name}
   rm -f `find . -name "*.aux"`
-  
   rm -f ${name}-latexauxfiles.tgz ${name}-pdfauxfiles.tgz 
 }
 
