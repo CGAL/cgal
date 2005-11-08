@@ -23,9 +23,9 @@ int main ()
 
   // Insert some isolated points:
   Face_handle     uf = arr.unbounded_face();
-  Vertex_handle   u1 = arr.insert_isolated_vertex (Point_2 (3, 3), uf);
-  Vertex_handle   u2 = arr.insert_isolated_vertex (Point_2 (1, 5), uf);
-  Vertex_handle   u3 = arr.insert_isolated_vertex (Point_2 (5, 5), uf);
+  Vertex_handle   u1 = arr.insert_in_face_interior (Point_2 (3, 3), uf);
+  Vertex_handle   u2 = arr.insert_in_face_interior (Point_2 (1, 5), uf);
+  Vertex_handle   u3 = arr.insert_in_face_interior (Point_2 (5, 5), uf);
 
   // Insert four segments that form a rectangular face:
   Segment_2       s1 (Point_2 (1, 3), Point_2 (3, 5));

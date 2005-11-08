@@ -297,7 +297,7 @@ public:
    * \param f The face that should contain the isolated vertex.
    * \param v The isolated vertex.
    */
-  void insert_isolated_vertex_ex (Face_handle f, Vertex_handle v)
+  void insert_isolated_vertex (Face_handle f, Vertex_handle v)
   {
     p_arr->_insert_isolated_vertex (p_arr->_face (f), p_arr->_vertex(v));
   }

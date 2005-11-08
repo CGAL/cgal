@@ -59,10 +59,10 @@ value of this parameter is by default
 
 \ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
   {the point type, as defined by the traits class.}
-
+\ccGlue
 \ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
   {the $x$-monotone curve type, as defined by the traits class.}
-
+\ccGlue
 \ccTypedef{typedef typename Traits_2::Curve_2 Curve_2;}
   {the curve type, as defined by the traits class.}
 
@@ -71,28 +71,19 @@ are defined, as well as all handle, iterator and circualtor types, as
 defined by the \ccc{Arrangement_2}
 class-template~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})}.
 
-\ccNestedType{Curve_handle}{a handle for an input curve (actually to an
-       extended \ccc{Curve_with_edges_2} object --- see below).}
+\ccNestedType{Curve_handle}{a handle for an input curve.}
 \ccGlue
 \ccNestedType{Curve_iterator}{a bidirectional iterator over the
        curves that induce the arrangement. Its value-type is
-       \ccc{Curve_with_edges_2} (see below).}
+       \ccc{Curve_2}.}
 
-\ccNestedType{Curve_edge_iterator}
+\ccNestedType{Induced_edge_iterator}
        {an iterator over the edges induced by an input curve.
         Its value type is \ccc{Halfedge_handle}.}
-\ccGlue
-\ccNestedType{Curve_edge_const_iterator}
-       {a \ccc{const} iterator over the edges induced by an input curve.
-	Its value type is \ccc{Halfedge_const_handle}.}
 
 \ccNestedType{Originating_curve_iterator}
     {an iterator for the curves that originate a given arrangement edge.
      Its value type is \ccc{Curve_handle}.}
-\ccGlue
-\ccNestedType{Originating_curve_const_iterator}
-    {a \ccc{const} iterator of the curves that originate a given arrangement
-     edge. Its value type is \ccc{Cruve_const_handle}.}
 
 \ccCreation
 \ccCreationVariable{arr}
@@ -142,16 +133,27 @@ pages~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} for the full list.
 \ccGlue    
 \ccMethod{Curve_iterator curves_end();}
     {returns the past-the-end iterator of the curves inducing the arrangement.}
- 
+
+\ccMethod{Size number_of_induced_edges (Curve_handle ch) const;}
+    {returns the number of arrangement edges induced by the curve \ccc{ch}.}
+
+\ccMethod{Induced_edge_iterator 
+          induced_edges_begin (Curve_handle ch) const;}
+    {returns the begin-iterator of the edges induced by the curve \ccc{ch}.}
+\ccGlue
+\ccMethod{Induced_edge_iterator 
+          induced_edges_end (Curve_handle ch) const;}
+    {returns the past-the-end iterator of the edges induced by the curve \ccc{ch}.}
+    
 \ccMethod{Size number_of_originating_curves (Halfedge_handle e) const;}
     {returns the number of input curves that originate the edge \ccc{e}.}
 
 \ccMethod{Originating_curve_iterator 
-          originating_curves_begin (Halfedge_handle e);}
+          originating_curves_begin (Halfedge_handle e) const;}
     {returns the begin-iterator of the curves originating the edge \ccc{e}.}
 \ccGlue
 \ccMethod{Originating_curve_iterator 
-          originating_curves_end (Halfedge_handle e);}
+          originating_curves_end (Halfedge_handle e) const;}
     {returns the past-the-end iterator  of the curves originating the edge 
      \ccc{e}.}
     
@@ -198,37 +200,6 @@ curves and the edges they induce.
    arrangement.
    If the operation causes two faces to merge, the merged face is returned.
    Otherwise, the face to which the edge was incident is returned.}
-
-\subsection*{Class 
-        Arrangement\_with\_history\_2$<$Traits,Dcel$>$::Curve\_with\_edges\_2}
-%=============================================================================
-
-The \ccc{Curve_with_edges_2} nested class extends the \ccc{Curve_2} type
-by storing pointers to the edges the curve induces in the arrangement.
-
-\begin{ccClass}{Arrangement_with_history_2<Traits,Dcel>::Curve_with_edges_2}
-
-\ccCreationVariable{cv}
-
-\ccAccessFunctions
-%-----------------
-
-\ccMethod{Curve_handle handle ();}
-  {Get a handle to the curve (a \ccc{const} version, returning a \ccc{const}
-   handle, is also available).}
-
-\ccMethod{Size number_of_edges() const;}
-  {returns the number of arrangement edges induced by the curve.}
-
-\ccMethod{Curve_edge_iterator edges_begin ();}
-  {returns an iterator for the first edge induced by the curve
-   (a \ccc{const} version is also available).}
-\ccGlue
-\ccMethod{Curve_edge_iterator edges_end ();}
-  {returns a apst-the-end iterator for induced edges
-   (a \ccc{const} version is also available).}
-
-\end{ccClass}
 
 \ccSeeAlso
     \ccc{ArrangementDcel}\lcTex{ 

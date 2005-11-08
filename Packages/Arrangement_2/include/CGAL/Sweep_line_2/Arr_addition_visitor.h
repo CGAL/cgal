@@ -245,9 +245,9 @@ public:
     
     Halfedge_handle he = ray_shoot_up(*iter);
     if(he == Halfedge_handle(NULL))
-      res = m_arr->insert_isolated_vertex(pt, m_arr->unbounded_face());
+      res = m_arr->insert_in_face_interior (pt, m_arr->unbounded_face());
     else
-      res = m_arr->insert_isolated_vertex(pt, he->face());
+      res = m_arr->insert_in_face_interior (pt, he->face());
 
     return (res);
   }

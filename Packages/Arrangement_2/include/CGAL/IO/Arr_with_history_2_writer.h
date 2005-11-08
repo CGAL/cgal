@@ -51,8 +51,8 @@ protected:
                                                      Curve_const_handle;
   typedef typename Arr_with_history_2::Halfedge_const_handle
                                                      Halfedge_const_handle;
-  typedef typename Arr_with_history_2::Curve_edge_const_iterator
-                                                     Curve_edge_const_iterator;
+  typedef typename Arr_with_history_2::Induced_edge_iterator
+                                                     Induced_edge_iterator;
 
 private:
 
@@ -104,11 +104,14 @@ protected:
 
     // Write the induced edges.
     formatter.write_induced_edges_begin();
-    formatter.write_size ("induced_edges", cv->number_of_edges());
+    formatter.write_size ("induced_edges", m_arr.number_of_induced_edges(cv));
     
-    Curve_edge_const_iterator   ceit;
-    for (ceit = cv->edges_begin(); ceit != cv->edges_end(); ++ceit)
-      formatter.write_halfedge_index (this->_get_index (*ceit));
+    Induced_edge_iterator   ieit;
+    for (ieit = m_arr.induced_edges_begin(cv);
+         ieit != m_arr.induced_edges_end(cv); ++ieit)
+    {
+      formatter.write_halfedge_index (this->_get_index (*ieit));
+    }
     formatter.write_induced_edges_end();
     
     formatter.write_curve_end();

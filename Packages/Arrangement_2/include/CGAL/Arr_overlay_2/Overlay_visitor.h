@@ -26,8 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 template < class Traits_,
            class Arrangement1_,
            class Arrangement2_,
@@ -66,7 +64,7 @@ public:
 
   typedef Event_                                         Event;
   typedef Subcurve_                                      Subcurve;
-  
+
   typedef Overlay_visitor< Traits,
                            Arrangement1,
                            Arrangement2,
@@ -74,12 +72,12 @@ public:
                            Event,
                            Subcurve,
                            OverlayTraits >               Self;
-  
+
   typedef Arr_construction_visitor< Traits,
                                   Arrangement,
                                   Event,
                                   Subcurve >             Base;
-  
+
   typedef typename Base::SubCurveIter                    SubCurveIter;
   typedef typename Base::SubCurveRevIter                 SubCurveRevIter;
   typedef typename Base::SL_iterator                     SL_iterator;
@@ -87,7 +85,6 @@ public:
   typedef Unique_hash_map<Halfedge_handle,Curve_info>    Hash_map;
   using Base::m_arr;
   using Base::m_arr_access;
-
 
   private:
 
@@ -115,7 +112,6 @@ public:
 
   /*! Destructor */
   virtual ~Overlay_visitor() {}
-
 
   bool after_handle_event(Event * event, SL_iterator iter, bool flag)
   {
@@ -154,15 +150,11 @@ public:
     }
     return res;
   }
- 
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
   {
     Base::add_subcurve(cv, sc);
   }
-
-    
-
 
   void update_event(Event* e,
                     const Point_2& end_point,
@@ -181,7 +173,6 @@ public:
       }
   }
 
-
   void update_event(Event* e,
                     Subcurve* c1,
                     Subcurve* c2,
@@ -189,7 +180,6 @@ public:
   {
     CGAL_assertion(created == true);
   }
-
 
   void update_event(Event *e,
                     Subcurve* sc)
@@ -225,10 +215,6 @@ public:
       }
   }
 
-
-      
-                  
-
   virtual Halfedge_handle insert_in_face_interior
     (const X_monotone_curve_2& cv,
      Subcurve* sc)
@@ -253,8 +239,6 @@ public:
     return res;
   }
 
-
-
   virtual Halfedge_handle insert_from_right_vertex
                           (const X_monotone_curve_2& cv,
                            Halfedge_handle he,
@@ -277,7 +261,6 @@ public:
     return res;
   }
 
-
   virtual Halfedge_handle insert_from_left_vertex
                           (const X_monotone_curve_2& cv,
                            Halfedge_handle he,
@@ -296,7 +279,6 @@ public:
     this ->create_edge(sc, res->twin());
     return res;
   }
-
 
   virtual Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
                                              Halfedge_handle hhandle,
@@ -404,8 +386,6 @@ public:
     return res;
   }
 
-
-
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                SL_iterator iter)
   {
@@ -483,8 +463,6 @@ public:
     m_overlay_traits->create_vertex(red_v, blue_f, v);
     return v;
   }
-   
-      
 
   // maps halfedge and his twin, right_dir is true iff he is directed from
   // left to right
@@ -519,10 +497,6 @@ public:
       m_halfedges_map[he->twin()] = cv_info_twin;
     }
   }
-
-
- 
-
 
   void create_vertex(Event *event, Vertex_handle res_v, Subcurve* sc_above)
   {
@@ -603,9 +577,6 @@ public:
     }
   }
 
-
-
-
   void create_edge(Subcurve *sc, Halfedge_handle res_he)
   {
     Halfedge_handle_red  red_he;
@@ -648,7 +619,6 @@ public:
       }
   }
 
-
   void after_sweep()
   {
     //after sweep finshed, merge the two unbouded_faces from each arrangment
@@ -656,8 +626,6 @@ public:
                                    m_blue_arr->unbounded_face(),
                                    m_arr->unbounded_face());
   }
-  
-
 
 protected:
 
@@ -667,8 +635,6 @@ protected:
   OverlayTraits*            m_overlay_traits;
 
 };
-
-
 
 CGAL_END_NAMESPACE
 

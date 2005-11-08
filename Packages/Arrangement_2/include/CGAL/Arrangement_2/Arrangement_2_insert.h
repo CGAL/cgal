@@ -577,8 +577,8 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
   {
     // p lies inside a face: Insert it as an isolated vertex it the interior of
     // this face.
-    vh_for_p = arr.insert_isolated_vertex (p,
-                                           arr.non_const_handle (*fh));
+    vh_for_p = arr.insert_in_face_interior (p,
+                                            arr.non_const_handle (*fh));
   }
   else if ((hh = 
 	    object_cast<typename Arrangement_2::Halfedge_const_handle>(&obj)) 

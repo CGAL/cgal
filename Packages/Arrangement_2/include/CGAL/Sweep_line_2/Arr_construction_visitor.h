@@ -213,7 +213,7 @@ public:
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                SL_iterator iter)
   {
-    return (m_arr ->insert_isolated_vertex(pt, m_arr->unbounded_face()));
+    return (m_arr->insert_in_face_interior (pt, m_arr->unbounded_face()));
   }
 
 

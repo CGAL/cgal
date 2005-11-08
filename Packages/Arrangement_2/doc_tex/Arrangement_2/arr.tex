@@ -658,7 +658,7 @@ Isolated points are in general simpler geometric entities than
 curves and indeed the member functions that manipulate them are
 easier to understand.
 
-The function \ccc{insert_isolated_vertex(p, f)} inserts an
+The function \ccc{insert_in_face_interior(p, f)} inserts an
 isolated point $p$, located in the interior of a given face $f$,
 into the arrangement and returns a handle to the arrangement
 vertex it has created and associated with $p$. Naturally, this
@@ -2589,21 +2589,21 @@ The member function \ccc{number_of_curves()} returns the number of input
 curves stored in the container, while \ccc{curves_begin()} and 
 \ccc{curves_end()} return \ccc{Arrangement_with_history_2::Curve_iterator}
 objects that define the  valid range of curves that induce the arrangement.
-The value type of this iterator is 
-\ccc{Arrangement_with_history_2::Curve_with_edges_2}, which extends the 
-\ccc{Curve_2} type as defined by the traits class (see below). Moreover,
-the curve-iterator type is equivalent to 
-\ccc{Arrangement_with_history_2::Curve_handle}, which is used for accessing
-the stored curves. Naturally, the corresponding constant-iterator and
-constant-handle types are also defined.
+The value type of this iterator is \ccc{Curve_2}. Moreover, the curve-iterator
+type is equivalent to  \ccc{Arrangement_with_history_2::Curve_handle}, which
+is used for accessing the stored curves. Naturally, the corresponding
+constant-iterator and constant-handle types are also defined.
 
-As we have just mentioned, a \ccc{Curve_handle} serves as a pointer to an
-extended curve. The \ccc{Curve_2} type is extended by the 
-\ccc{number_of_edges()} method, and by the \ccc{begin_edges()} and 
-\ccc{end_edges()} methods, returning iterators that define the valid range
-of arrangement edges that are induced by the curve. The value type of these
-iterator is \ccc{Halfedge_handle}. It is thus possible to account for all
-arrangement edges induced by an input curve.
+As we have just mentioned, a \ccc{Curve_handle} object \ccc{ch} serves as
+a pointer to a curve stored in an arrangement-with-history instance \ccc{arr}.
+Using this handle, it is possible to obtain the number of arrangement edges
+this curve induces by calling \ccc{arr.number_of_induced_edges(ch)}.
+The functions \ccc{arr.induced_edges_begin(ch)} and
+\ccc{arr.induced_edges_end(ch)} return iterators of type
+\ccc{Arrangement_with_history_2::Induced_edges_iterator} that define the
+valid range of edges induced by \ccc{ch}. The value type of these iterators
+is \ccc{Halfedge_handle}. It is thus possible to traverse all arrangement
+edges induced by an input curve.
 
 It is also important to be able to perform the inverse mapping: given an
 arrangement edge, we would like to be able to determine which input curve
@@ -2635,25 +2635,24 @@ Section~\ref{arr_sec:overlay}).
 %
 As the \ccc{Arrangement_with_history_2} class extends the \ccc{Arrangement_2}
 class, it inherits the fundamental modification operations, such as 
-\ccc{assign()} and \ccc{clear()}, from it. The vertex manipulation functions
+\ccc{assign()} and \ccc{clear()}, from it. The vertex-manipulation functions
 are also inherited and supported (see Sections~\ref{arr_sssec:mf_iso_verts}
 and~\ref{arr_sssec:insert_point} for the details). However, there are some 
 fundamental differences between the interfaces of the two classes, which we
 highlight in this subsection.
 
-The most significant difference between the arrangement with history class
+The most significant difference between the arrangement-with-history class
 and the basic arrangement class is the way they handle their input curves.
 \ccc{Arrangement_with_history_2} always stores the \ccc{Curve_2} objects
 that induce it, thus it is impossible to insert $x$-monotone curves into
 an arrangement with history. The global \ccc{insert_non_intersecting_curve()}
 and \ccc{insert_x_monotone_curve()} (as well as their aggregated versions)
-are therefore not available for arrangements
-with history and only the global \ccc{insert_curve()} and 
-\ccc{insert_curves()} functions (the incremental
-insertion function and the aggregated insertion function) are supported ---
-see also Section~\ref{arr_sssec:insert_gen}. Notice however that while the
-incremental insertion function \ccc{insert_curve(arr,c)} for an
-\ccc{Arrangement_2} object \ccc{arr} does not have a return value,
+are therefore not available for arrangement-with-history instances
+and only the global \ccc{insert_curve()} and \ccc{insert_curves()} functions
+(the incremental insertion function and the aggregated insertion function)
+are supported --- see also Section~\ref{arr_sssec:insert_gen}. Notice however
+that while the incremental insertion function \ccc{insert_curve(arr,c)} for
+an \ccc{Arrangement_2} object \ccc{arr} does not have a return value,
 the corresponding arrangement-with-history function returns a
 \ccc{Curve_handle} to the inserted curve.
 

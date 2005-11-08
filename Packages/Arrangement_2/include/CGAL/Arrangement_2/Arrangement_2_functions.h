@@ -219,30 +219,12 @@ void Arrangement_2<Traits,Dcel>::clear ()
 }
 
 //-----------------------------------------------------------------------------
-// Replace the point associated with the given vertex.
+// Insert a point as an isolated vertex in the interior of a given face.
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
-Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh,
-                                           const Point_2& p)
-{
-  CGAL_precondition_msg (traits->equal_2_object() (vh->point(), p),
-                         "The new point is different from the current one.");
-
-  // Modify the vertex.
-  _modify_vertex (_vertex (vh), p);
-
-  // Return a handle to the modified vertex.
-  return (vh);
-}
-
-//-----------------------------------------------------------------------------
-// Insert an isolated vertex in the interior of a given face.
-//
-template<class Traits, class Dcel>
-typename Arrangement_2<Traits,Dcel>::Vertex_handle
-Arrangement_2<Traits,Dcel>::insert_isolated_vertex (const Point_2& p,
-                                                    Face_handle f)
+Arrangement_2<Traits,Dcel>::insert_in_face_interior (const Point_2& p,
+                                                     Face_handle f)
 {
   DFace          *p_f = _face (f);
 
@@ -255,53 +237,6 @@ Arrangement_2<Traits,Dcel>::insert_isolated_vertex (const Point_2& p,
 
   // Return a handle to the new isolated vertex.
   return (vh);
-}
-
-//-----------------------------------------------------------------------------
-// Remove an isolated vertex from the interior of a given face.
-//
-template<class Traits, class Dcel>
-typename Arrangement_2<Traits,Dcel>::Face_handle
-Arrangement_2<Traits,Dcel>::remove_isolated_vertex (Vertex_handle v)
-{
-  CGAL_precondition (v->is_isolated());
-
-  // Get the face containing v.
-  DVertex      *p_v = _vertex (v);
-  DFace        *p_f = p_v->face();
-  Face_handle   f = Face_handle (p_f);
-  
-  // Notify the observers that we are abount to remove a vertex.
-  _notify_before_remove_vertex (v);
-
-  // Locate the vertex in the isolated vertices container of the face and
-  // remove it.
-  DIsolated_vertices_iter     iso_verts_it;
-
-  for (iso_verts_it = p_f->isolated_vertices_begin();
-       iso_verts_it != p_f->isolated_vertices_end(); ++iso_verts_it)
-  {
-    if (&(*iso_verts_it) == p_v)
-    {
-      // We have found the isolated vertex - erase it.
-      p_f->erase_isolated_vertex (iso_verts_it);
-      n_iso_verts--;
-      break;
-    }
-  }
-
-  CGAL_assertion_msg (iso_verts_it != p_f->isolated_vertices_end(),
-                      "Failed to locate the isolated vertex inside a face.");
-
-  // Delete the vertex.
-  _delete_point (p_v->point());
-  dcel.delete_vertex (p_v);
-
-  // Notify the observers that the vertex has been removed.
-  _notify_after_remove_vertex ();
-
-  // Return a handle for the face that used to contain the deleted vertex.
-  return (f);
 }
 
 //-----------------------------------------------------------------------------
@@ -806,6 +741,71 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     new_he = new_he->opposite();
 
   return (Halfedge_handle (new_he));
+}
+
+//-----------------------------------------------------------------------------
+// Replace the point associated with the given vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh,
+                                           const Point_2& p)
+{
+  CGAL_precondition_msg (traits->equal_2_object() (vh->point(), p),
+                         "The new point is different from the current one.");
+
+  // Modify the vertex.
+  _modify_vertex (_vertex (vh), p);
+
+  // Return a handle to the modified vertex.
+  return (vh);
+}
+
+//-----------------------------------------------------------------------------
+// Remove an isolated vertex from the interior of a given face.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Face_handle
+Arrangement_2<Traits,Dcel>::remove_isolated_vertex (Vertex_handle v)
+{
+  CGAL_precondition (v->is_isolated());
+
+  // Get the face containing v.
+  DVertex      *p_v = _vertex (v);
+  DFace        *p_f = p_v->face();
+  Face_handle   f = Face_handle (p_f);
+  
+  // Notify the observers that we are abount to remove a vertex.
+  _notify_before_remove_vertex (v);
+
+  // Locate the vertex in the isolated vertices container of the face and
+  // remove it.
+  DIsolated_vertices_iter     iso_verts_it;
+
+  for (iso_verts_it = p_f->isolated_vertices_begin();
+       iso_verts_it != p_f->isolated_vertices_end(); ++iso_verts_it)
+  {
+    if (&(*iso_verts_it) == p_v)
+    {
+      // We have found the isolated vertex - erase it.
+      p_f->erase_isolated_vertex (iso_verts_it);
+      n_iso_verts--;
+      break;
+    }
+  }
+
+  CGAL_assertion_msg (iso_verts_it != p_f->isolated_vertices_end(),
+                      "Failed to locate the isolated vertex inside a face.");
+
+  // Delete the vertex.
+  _delete_point (p_v->point());
+  dcel.delete_vertex (p_v);
+
+  // Notify the observers that the vertex has been removed.
+  _notify_after_remove_vertex ();
+
+  // Return a handle for the face that used to contain the deleted vertex.
+  return (f);
 }
 
 //-----------------------------------------------------------------------------

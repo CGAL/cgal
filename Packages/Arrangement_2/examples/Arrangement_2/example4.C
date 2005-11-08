@@ -31,7 +31,7 @@ int main ()
   Segment_2       s7 (p4, p0);
   Segment_2       s8 (p0, p2);
 
-  Vertex_handle   v0 = arr.insert_isolated_vertex (p0, arr.unbounded_face());
+  Vertex_handle   v0 = arr.insert_in_face_interior (p0, arr.unbounded_face());
   Halfedge_handle e1 = arr.insert_in_face_interior (s1, arr.unbounded_face());
   Halfedge_handle e2 = arr.insert_from_left_vertex (s2, e1);
   Halfedge_handle e3 = arr.insert_from_right_vertex (s3, e2);

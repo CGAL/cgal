@@ -176,10 +176,10 @@ topological input may invalidate the arrangement.
    \ccc{pred2->target()} are associated with \ccc{c}'s endpoints and that if a new face
    is created, then \ccc{is_inside_new_face (pred1, pred2, c)} is \ccc{true}.}}
 
-\ccMethod{void insert_isolated_vertex_ex (Face_handle f, Vertex_handle v);}
+\ccMethod{void insert_isolated_vertex (Face_handle f, Vertex_handle v);}
     {inserts \ccc{v} as an isolated vertex inside \ccc{f}.
-     \ccPrecond{It is the user's responsibility that \ccc{v->point()} is contained
-     in the interior of the given face.}}
+     \ccPrecond{It is the user's responsibility that \ccc{v->point()} is
+     contained in the interior of the given face.}}
 
 \ccMethod{bool move_hole (Face_handle f1, Face_handle f2,
                           Ccb_halfedge_circulator hole);}

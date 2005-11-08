@@ -235,29 +235,14 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccModifiers
 %===========
 
-{\sl Modifying Arrangement Vertices}
-%----------------------------
+{\sl Specialized Insertion Methods}
+%------------------------------
 
-\ccMethod{Vertex_handle modify_vertex (Vertex_handle v,
-                                       const Point_2& p);}
-   {sets \ccc{p} to be the point associated with the vertex \ccc{v}.
-    The function returns a handle for the modified vertex (same as \ccc{v}).
-    \ccPrecond{\ccc{p} is geometrically equivalent to the point currently
-               associated with \ccc{v}.}}
-
-\ccMethod{Vertex_handle insert_isolated_vertex (const Point_2& p,
-                                                Face_handle f);}
+\ccMethod{Vertex_handle insert_in_face_interior (const Point_2& p,
+                                                 Face_handle f);}
    {inserts the point \ccc{p} to the arrangement as an isolated vertex in
     the interior of the face \ccc{f} and returns a handle for the newly
     created vertex.}
-
-\ccMethod{Face_handle remove_isolated_vertex (Vertex_handle v);}
-   {removes the isolated vertex \ccc{v} from the arrangement. The function
-    returned the face \ccc{f} that used to contain the isolated vertex.
-    \ccPrecond{\ccc{v} is an isolated vertex (has no incident edges).}}
-
-{\sl Specialized Insertion Methods}
-%---------------------------
 
 \ccMethod{Halfedge_handle insert_in_face_interior
                                       (const X_monotone_curve_2& c, 
@@ -376,8 +361,20 @@ counterparts, returning constant iterators instead of mutable ones:
 
 \end{ccAdvanced}
 
-{\sl Modifying Arrangement Edges}
-%--------------------------
+{\sl Modifying Vertices and Edges}
+%-----------------------------
+
+\ccMethod{Vertex_handle modify_vertex (Vertex_handle v,
+                                       const Point_2& p);}
+   {sets \ccc{p} to be the point associated with the vertex \ccc{v}.
+    The function returns a handle for the modified vertex (same as \ccc{v}).
+    \ccPrecond{\ccc{p} is geometrically equivalent to the point currently
+               associated with \ccc{v}.}}
+
+\ccMethod{Face_handle remove_isolated_vertex (Vertex_handle v);}
+   {removes the isolated vertex \ccc{v} from the arrangement. The function
+    returned the face \ccc{f} that used to contain the isolated vertex.
+    \ccPrecond{\ccc{v} is an isolated vertex (has no incident edges).}}
 
 \ccMethod{Halfedge_handle modify_edge (Halfedge_handle e,
                                        const X_monotone_curve& c);}

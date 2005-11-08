@@ -56,8 +56,8 @@ int main ()
   Vertex_handle   v4 = e7->target();
   Halfedge_handle e8 = arr.insert_from_right_vertex (s8, w2);
   Vertex_handle   v5 = e8->target();
-  Vertex_handle   v6 = arr.insert_isolated_vertex (Point_2 (2000, 1666),
-                                                   e8->face());
+  Vertex_handle   v6 = arr.insert_in_face_interior (Point_2 (2000, 1666),
+                                                    e8->face());
 
   arr.insert_at_vertices (s9, v4, v6);
   arr.insert_at_vertices (s10, v5, v6);

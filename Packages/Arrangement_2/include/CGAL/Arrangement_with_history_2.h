@@ -171,7 +171,7 @@ protected:
     Halfedges_set m_halfedges;
 
   public:
-    
+
     /*! Default constructor. */
     Curve_halfedges ()
     {}
@@ -184,44 +184,44 @@ protected:
     typedef typename Halfedges_set::iterator             iterator;
     typedef typename Halfedges_set::const_iterator       const_iterator;
 
+  private:
+
     /*! Get the number of edges induced by the curve. */
-    Size number_of_edges () const
+    Size _size () const
     {
       return (m_halfedges.size());
     }
 
-    /*! Get an iterator for the first edge in the set (non-const version). */
-    iterator edges_begin ()
+    /*! Get an iterator for the first edge in the set (const version). */
+    const_iterator _begin () const
     {
-      return (m_halfedges.begin());
+      return m_halfedges.begin();
     }
 
-    /*! Get an iterator for the first edge in the set (const version). */
-    const_iterator edges_begin () const
+    /*! Get an iterator for the first edge in the set (non-const version). */
+    iterator _begin ()
     {
       return m_halfedges.begin();
     }
     
-    /*! Get a past-the-end iterator for the set edges (non-const version). */
-    iterator edges_end ()
-    {
-      return m_halfedges.end();
-    }
-
     /*! Get a past-the-end iterator for the set edges (const version). */
-    const_iterator edges_end () const
+    const_iterator _end () const
     {
       return m_halfedges.end();
     }
 
-  private:
+    /*! Get a past-the-end iterator for the set edges (non-const version). */
+    iterator _end ()
+    {
+      return m_halfedges.end();
+    }
 
     /*! Insert an edge to the set. */
     iterator _insert (Halfedge_handle he)
     {
       std::pair<iterator, bool> res = m_halfedges.insert(he);
       CGAL_assertion(res.second);
-      return res.first;
+      return (res.first);
     }
     
     /*! Erase an edge, given by its position, from the set. */
@@ -396,9 +396,6 @@ public:
   typedef Curve_iterator                                 Curve_handle;
   typedef Curve_const_iterator                           Curve_const_handle;
 
-  typedef typename Curve_halfedges::iterator         Curve_edge_iterator;
-  typedef typename Curve_halfedges::const_iterator   Curve_edge_const_iterator;
-
   /// \name Constructors.
   //@{
 
@@ -472,34 +469,49 @@ public:
   }
   //@}
 
-  // Define iterators for the origin curves of an edge:
-  class Curve_with_edges_2 : public Curve_halfedges
+  /*! \class
+   * Edges iterator - defined as a derived class to make it assignable
+   * to the halfedge iterator type.
+   */
+  class Originating_curve_iterator :
+    public I_Dereference_iterator<Data_iterator,
+                                  Curve_2,
+                                  typename Data_iterator::difference_type,
+                                  typename Data_iterator::iterator_category>
   {
+    typedef I_Dereference_iterator<Data_iterator,
+                                   Curve_2,
+                                   typename Data_iterator::difference_type,
+                                   typename Data_iterator::iterator_category>
+                                                                          Base;
+
   public:
+ 
+    Originating_curve_iterator ()
+    {}
 
-    /* Get a handle to the curve (non-const version). */
-    Curve_handle handle ()
+    Originating_curve_iterator (Data_iterator iter) :
+      Base (iter)
+    {}
+
+    // Casting to a curve iterator.
+    operator Curve_iterator () const
     {
-      return Curve_handle(this);
+      Curve_halfedges   *p_cv = static_cast<Curve_halfedges*>(this->ptr());
+      return (Curve_iterator (p_cv));
     }
 
-    /* Get a handle to the curve (const version). */
-    Curve_const_handle handle () const
+    operator Curve_const_iterator () const
     {
-      return Curve_const_handle(this);
-    }
+      const Curve_halfedges   
+                        *p_cv = static_cast<Curve_halfedges*>(this->ptr());
+      return (Curve_const_iterator  (p_cv));
+    }    
   };
 
-  typedef I_Dereference_iterator<
-    Data_iterator,
-    Curve_with_edges_2,
-    typename Data_iterator::difference_type,
-    typename Data_iterator::iterator_category>
-                                              Originating_curve_iterator;
-  
   /// \name Traversal of the origin curves of an edge.
   //@{
-  Size number_of_originating_curves (Halfedge_handle e) const
+  Size number_of_originating_curves (Halfedge_const_handle e) const
   {
     return (e->curve().data().size());
   }
@@ -514,6 +526,28 @@ public:
   originating_curves_end (Halfedge_const_handle e) const
   {
     return Originating_curve_iterator (e->curve().data().end());
+  }
+  //@}
+
+  typedef typename Curve_halfedges::const_iterator   Induced_edge_iterator;
+
+  /// \name Traversal of the edges induced by a curve.
+  //@{
+  Size number_of_induced_edges (Curve_const_handle c) const
+  {
+    return (c->_size());
+  }
+
+  Induced_edge_iterator
+  induced_edges_begin (Curve_const_handle c) const
+  {
+    return (c->_begin());
+  }
+
+  Induced_edge_iterator
+  induced_edges_end (Curve_const_handle c) const
+  {
+    return (c->_end());
   }
   //@}
 
@@ -671,12 +705,12 @@ protected:
   Size _remove_curve (Curve_handle ch)
   {
     // Go over all edges the given curve induces.
-    Curve_halfedges                     *p_cv = &(*ch); 
-    typename Curve_halfedges::iterator   it = ch->edges_begin();
-    Halfedge_handle                      he;
-    Size                                 n_removed = 0;
+    Curve_halfedges                           *p_cv = &(*ch); 
+    typename Curve_halfedges::const_iterator   it = ch->_begin();
+    Halfedge_handle                            he;
+    Size                                       n_removed = 0;
 
-    while (it != ch->edges_end())
+    while (it != ch->_end())
     {
       // Check how many curves have originated the current edge.
       // Note we increment the iterator now, as the edge may be removed.

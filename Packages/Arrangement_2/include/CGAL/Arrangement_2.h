@@ -104,7 +104,6 @@ protected:
 
 public:
 
-
   // Forward declerations:
   class Vertex;
   class Halfedge;
@@ -921,41 +920,18 @@ public:
   }
   //@}
 
-  /// \name Vertex manipulation functions.
+  /// \name Specilaized insertion functions.
   //@{
 
   /*!
-   * Replace the point associated with the given vertex.
-   * \param v The vertex to modify.
-   * \param p The point that should be associated with the edge.
-   * \pre p is geometrically equivalent to the current point
-   *      associated with v.
-   * \return A handle for a the modified vertex (same as v).
-   */
-  Vertex_handle modify_vertex (Vertex_handle v,
-                               const Point_2& p);
-
-  /*!
-   * Insert an isolated vertex in the interior of a given face.
-   * \param p The isolated point.
+   * Insert a point that forms an isolated vertex in the interior of a given
+   * face.
+   * \param p The given point.
    * \param f The face into which we insert the new isolated vertex.
    * \return A handle for the isolated vertex that has been created.
    */
-  Vertex_handle insert_isolated_vertex (const Point_2& p,
-                                        Face_handle f);
-
-  /*!
-   * Remove an isolated vertex from the interior of a given face.
-   * \param v The vertex to remove.
-   * \pre v is an isolated vertex (it has no incident halfedges).
-   * \return A handle for the face containing v.
-   */
-  Face_handle remove_isolated_vertex (Vertex_handle v);
-  
-  ///@}
-
-  /// \name Specilaized insertion functions for x-monotone curves.
-  //@{
+  Vertex_handle insert_in_face_interior (const Point_2& p,
+                                         Face_handle f);
 
   /*!
    * Insert an x-monotone curve into the arrangement as a new hole (inner
@@ -1066,6 +1042,30 @@ public:
                                       Halfedge_handle prev2);
 
   //@}
+
+  /// \name Vertex manipulation functions.
+  //@{
+
+  /*!
+   * Replace the point associated with the given vertex.
+   * \param v The vertex to modify.
+   * \param p The point that should be associated with the edge.
+   * \pre p is geometrically equivalent to the current point
+   *      associated with v.
+   * \return A handle for a the modified vertex (same as v).
+   */
+  Vertex_handle modify_vertex (Vertex_handle v,
+                               const Point_2& p);
+
+  /*!
+   * Remove an isolated vertex from the interior of a given face.
+   * \param v The vertex to remove.
+   * \pre v is an isolated vertex (it has no incident halfedges).
+   * \return A handle for the face containing v.
+   */
+  Face_handle remove_isolated_vertex (Vertex_handle v);
+  
+  ///@}
 
   /// \name Halfedge manipulation functions.
   //@{

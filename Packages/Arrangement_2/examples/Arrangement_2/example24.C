@@ -45,7 +45,7 @@ int main ()
   for (cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
   {
     std::cout << "Curve [" << *cit << "] induces "
-              << cit->number_of_edges() << " edges." << std::endl;    
+              << arr.number_of_induced_edges(cit) << " edges." << std::endl; 
   }
 
   // Print the arrangement edges, along with the list of curves that

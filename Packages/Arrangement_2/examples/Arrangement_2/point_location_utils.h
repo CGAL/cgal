@@ -107,7 +107,7 @@ void construct_segments_arr (Arrangement& arr)
   Point_2    p0 (3,2), p1 (0,3), p2 (2,5), p3 (4,5), p4 (6,3), p5 (3,0);
   Segment_2  s1 (p1, p2), s2 (p2, p3), s3 (p3, p4), s4 (p4, p5), s5 (p5, p1);
 
-  arr.insert_isolated_vertex (p0, arr.unbounded_face());
+  arr.insert_in_face_interior (p0, arr.unbounded_face());
 
   Halfedge_handle e1 = arr.insert_in_face_interior (s1, arr.unbounded_face());
   Halfedge_handle e2 = arr.insert_from_left_vertex (s2, e1->target());
