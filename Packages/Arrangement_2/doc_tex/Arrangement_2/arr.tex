@@ -148,13 +148,13 @@ input/output functions.
 The class \ccc{Arrangement_2<Traits,Dcel>} is the main class in
 the arrangement package. It is used to represent planar
 arrangements and provides the interface needed to construct them,
-traverse them, and maintain them. An arrangement is defined by the
-\dcel\ class, which represents the {\em topological structure} of the
-planar subdivision, and a geometric {\em traits} class that determines
-the family of planar curves that form the arrangement. It supplies a
-minimal set of geometric operations (predicates and constructions)
-required to construct and maintain the arrangement and to operate on
-it.
+traverse them, and maintain them. An arrangement is defined by
+a geometric {\em traits} class that determines the family of planar
+curves that form the arrangement, and a \dcel\ class, which
+represents the {\em topological structure} of the planar subdivision.
+It supplies a minimal set of geometric operations (predicates and
+constructions) required to construct and maintain the arrangement
+and to operate on it.
 
 The design of the arrangement package is guided by the need to
 separate between the representation of the arrangements and the
@@ -244,10 +244,7 @@ vertex-iterator type is equivalent to
 \ccc{Arrangement_2::Vertex_handle}, which serves as a pointer to a
 vertex. As we show next, all functions related to arrangement features
 accept handle types as input parameters and return handle types as
-their output. Each of the three nested classes (namely
-\ccc{Arrangement_2::Vertex}, \ccc{Arrangement_2::Halfedge} and
-\ccc{Arrangement_2::Face}) support a \ccc{handle()} method that
-returns a handle to the object at hand.
+their output.
 
 In addition to the iterators for arrangement vertices, halfedges
 and faces, the arrangement class also provides \ccc{edges_begin()}
@@ -256,9 +253,6 @@ and \ccc{edges_end()} that return
 arrangement edges. Note that the value type of this iterator is
 \ccc{Arrangement_2::Halfedge}, representing one of the twin
 halfedges that represent the edge.
-%In fact, as twin halfedges always are always contiguous in the
-%halfedge container, using this iterator is equivalent to going
-%over all halfedges and taking every second halfedge.
 
 All iterator, circulator and handle types also have non-mutable
 ({\em const}) counterparts. For example, the arrangement has a
@@ -317,10 +311,7 @@ void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
 \end{alltt}
 
 In case of an isolated vertex, it is possible to obtain the face
-that contains this vertex. However, this is done via a method of
-the \ccc{Arrangement_2} class, called \ccc{incident_face
-(Vertex_handle v)}, and not by using a method of the nested class
-\ccc{Vertex}.
+that contains this vertex using the \ccc{face()} method.
 
 \subsubsection{Traversal Methods for an Arrangement Halfedge}
 \label{arr_sssec:tr_halfedge}
@@ -498,9 +489,9 @@ construct an arrangement using the global insertion-functions. You may
 skip to Section~\ref{arr_sec:gl_funcs}, and return to this subsection at
 a later point in time.
 
-\subsubsection{Inserting Non-Intersecting Curves}
+\subsubsection{Inserting Non-Intersecting $x$-Monotone Curves}
 \label{arr_sssec:mf_insert_cv}
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
 The most important functions that allow users to modify the
 arrangement, and perhaps the most frequently used ones, are the
@@ -664,13 +655,9 @@ into the arrangement and returns a handle to the arrangement
 vertex it has created and associated with $p$. Naturally, this
 function has a precondition that $p$ is really an isolated point,
 namely it does not coincide with any existing arrangement vertex
-and does not lie on any edge.
-
-As mentioned in Section~\ref{arr_ssec:traverse},
-it is possible to obtain the face containing an isolated vertex
-by calling \ccc{incident_face(v)} (with the precondition that $v$
-is an isolated vertex --- other vertices may not necessarily have
-a unique incident face).
+and does not lie on any edge. As mentioned in
+Section~\ref{arr_ssec:traverse}, it is possible to obtain the face
+containing an isolated vertex handle $v$ by calling \ccc{v->face()}.
 
 The function \ccc{remove_isolated_vertex(v)} receives a handle to
 an isolated vertex and removes it from the arrangement.
@@ -871,6 +858,14 @@ depicted in Figure~\ref{arr_fig:ex_4} using the specialized
 insertion functions that accept predecessor halfedges:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example4.C}
+
+It is possible to perform even more refined operations on an
+\ccc{Arrangement_2} instance given specific topological information.
+As most of these operations are very fragile and perform no preconditions
+on their input in order to gain efficiency, they are not included in the
+public interface of the arrangement class. Instead, the
+\ccc{Arr_accessor<Arrangement>} class allows access to these internal
+arrangement operations --- see more details in the Reference Manual.
 \end{ccAdvanced}
 
 \section{Issuing Queries on an Arrangement}
@@ -1461,10 +1456,10 @@ the incremental insertion algorithms.
 Another important advantage the aggregated insertion functions
 have is that they do not issue point-location queries. Thus, no
 point-location object needs to be attached to the arrangement. As
-explained in Section~\ref{arr_ssec:pl}, there is a tradeoff
+explained in Section~\ref{arr_ssec:pl}, there is a trade-off
 between construction time and query time in each of the
 point-location strategies, which affects the running times of the
-incremental insertion process. Naturally, this tradeoff is irrelevant
+incremental insertion process. Naturally, this trade-off is irrelevant
 in case of aggregated insertion.
 
 The example below shows how to construct the arrangement of
@@ -1542,7 +1537,7 @@ two curves that can be merged to form a single $x$-monotone curve.
 If neither of the two cases apply, the function returns an
 indication that it has failed to remove the vertex.
 
-The function \ccc{remove_vertex(arr, e)} removes the edge \ccc{e}
+The function \ccc{remove_edge(arr, e)} removes the edge \ccc{e}
 from the arrangement by simply calling \ccc{arr.remove_edge(e)}
 (see Section~\ref{arr_ssec:modify}). In addition, if either of the
 end vertices of \ccc{e} becomes redundant after the removal of the
@@ -1550,7 +1545,7 @@ edge, it is removed as well.
 
 The following example demonstrates the usage of the global removal
 functions. In creates an arrangement of four line segment forming
-an H-shape with a double horizonal line. Then it removes the two
+an H-shape with a double horizontal line. Then it removes the two
 horizontal edges and clears all redundant vertices, such that the
 final arrangement consists of just two edges associated with the
 vertical line segments:
@@ -1655,8 +1650,8 @@ or a range of \ccc{Curve_2} objects in the aggregated version.
 In the rest of this section we will review the traits classes
 included in the public distribution of \cgal, that handle line
 segments, polylines and conic arcs. The last subsection overviews
-decrators for geometric traits classes distributed with \cgal,
-which extend other geometic traits-class by attaching auxiliary
+decorators for geometric traits classes distributed with \cgal,
+which extend other geometric traits-class by attaching auxiliary
 data with the geometric objects.
 
 \subsection{Traits Classes for Line Segments}
@@ -1881,7 +1876,7 @@ a supporting curve, two endpoints and an orientation. However,
 several constructors of \ccc{Curve_2} are available to allow some
 special cases, such as circular arcs or line segments. The
 \ccc{Curve_2} (and the derived \ccc{X_monotone_curve_2}) classes
-also support basic accessor functions such as \ccc{source()},
+also support basic access functions such as \ccc{source()},
 \ccc{target()} and \ccc{orientation()}.
 
 \subsubsection{Examples for Arrangements of Conics}
@@ -2214,7 +2209,7 @@ topological structure. Most notifier functions belong to this
 category, were the relevant local changes include:
 \begin{itemize}
 \item A new vertex is constructed and associated with a point.
-\item A edge\footnote{The term ``edge'' refers to a pair of twin
+\item An edge\footnote{The term ``edge'' refers to a pair of twin
 half-edges.} is constructed and associated with an $x$-monotone
 curve.
 \item An edge is split into two.
@@ -2327,7 +2322,7 @@ for some applications.
 
 So far we have used the default \ccc{Arr_default_dcel<Traits>} class
 in all examples. This was done implicitly, as this class serves as
-a default parameter for the \ccc{Arrabgement_2} template. The default
+a default parameter for the \ccc{Arrangement_2} template. The default
 \dcel\ class just associates points with vertices and $x$-monotone
 curves with halfedge, but nothing more. In this section we show
 how to use alternative \dcel\ templates to easily extend the desired
@@ -2353,7 +2348,7 @@ only then go over the faces and attach the appropriate data fields to
 the arrangement faces. However, in some cases the face data can only
 by computed when the face is created (split from another face, or merged
 with another face). In such cases one can use an arrangement observer
-tailored for this task, which recieves updates whenever a face is
+tailored for this task, which receives updates whenever a face is
 modified and sets its data field accordingly. 
 
 \begin{figure}[t]
@@ -2365,7 +2360,7 @@ modified and sets its data field accordingly.
 \caption{An arrangement of six line segments, as constructed in
 \ccc{example20.C} and \ccc{example21.C} (in \ccc{example21.C} we treat
 the segments as directed, so they are drawn as arrows directed from the
-source to the target). The indices associated with the halfegdes in
+source to the target). The indices associated with the halfedges in
 \ccc{example20.C} are shown in brackets.}
 \label{arr_fig:ex_20}
 %\begin{ccHtmlOnly}
@@ -2376,7 +2371,7 @@ source to the target). The indices associated with the halfegdes in
 %\end{ccHtmlOnly}
 \end{figure}
 
-In the next example we construct an arrangement of size line segements
+In the next example we construct an arrangement of size line segments
 that contains seven bounded faces (see Figure~\ref{arr_fig:ex_20}). We
 use an observer that gets notified each time a new face is created and
 associates it with a running index (where the index of the unbounded face
