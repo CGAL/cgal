@@ -30,6 +30,8 @@ CGAL_KDS_BEGIN_NAMESPACE
 
 struct Inexact_simulation_traits_1: 
   public internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_1> {
+  typedef  internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_1> P;
+  Inexact_simulation_traits_1(P::Time st=0, P::Time et=10000.0): P(st, et){}
 };
 
 CGAL_KDS_END_NAMESPACE

@@ -3,7 +3,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
 #include <CGAL/KDS/Cartesian_kinetic_kernel.h>
-#include <CGAL/KDS/Notifying_table.h>
+#include <CGAL/KDS/Active_objects_vector.h>
 #include <CGAL/KDS/Simulation_traits.h>
 #include <CGAL/KDS/Simulator.h>
 #include <CGAL/KDS/Heap_pointer_event_queue.h>
@@ -25,11 +25,11 @@ struct Sest_types {
   typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
  
   struct Event_queue: public Queue_base{
-    Event_queue(const Time &start): Queue_base(start){}
+    Event_queue(const Time &start, const Time &end): Queue_base(start, end){}
   };
   
   typedef CGAL::KDS::Simulator<Simulator_function_kernel, Event_queue > Simulator;
-  typedef CGAL::KDS::Notifying_table<typename Kinetic_kernel::Point_1> Active_objects_table;
+  typedef CGAL::KDS::Active_objects_vector<typename Kinetic_kernel::Point_1> Active_objects_table;
   typedef CGAL::KDS::Cartesian_instantaneous_kernel<Active_objects_table,
 						    Static_kernel> Instantaneous_kernel;
   
@@ -72,7 +72,7 @@ void check_one(const Traits &tr, const Fn &fn, const Rt &lb, const Rt* rt) {
 int main(int, char *[]){
 
 
-  {
+  /*{
     typedef Exact_simulation_traits<true> Traits;
     Traits tr;
     typedef Traits::Simulator::Root_stack::Root Root;
@@ -86,12 +86,12 @@ int main(int, char *[]){
     }
 
     {
-      Root rts[]={Root(4), inf};
+      Root rts[]={Root(1), Root(1), Root(2), Root(2), Root(4), inf};
       Traits::Simulator::Function_kernel::Function f=  -cf(-1,1)*cf(-1,1)*cf(-2,1)*cf(-2,1)*cf(-4,1);
       check_one(tr,f , zero, rts);
     }
     {
-      Root rts[]={Root(2), Root(4), inf};
+      Root rts[]={Root(1), Root(1), Root(2),Root(3), Root(3), Root(4), inf};
       Traits::Simulator::Function_kernel::Function f=  cf(-1,1)*cf(-1,1)*cf(-2,1)*cf(-3,1)
 	*cf(-3,1)*cf(-4,1);
       check_one(tr,f , zero, rts);
@@ -102,7 +102,7 @@ int main(int, char *[]){
       Traits::Simulator::Function_kernel::Function f= -cf(0,1)*cf(1,-1);
       check_one(tr,f , zero, rts);
     }
-  }
+  }*/
 
   {
     typedef Exact_simulation_traits<false> Traits;

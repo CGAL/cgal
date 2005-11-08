@@ -42,9 +42,15 @@ CGAL_END_NAMESPACE
 #define CGAL_Polynomial_precondition(x) CGAL_precondition(x)
 #define CGAL_Polynomial_precondition_code(x) CGAL_precondition_code(x)
 #define CGAL_Polynomial_postcondition(x) CGAL_postcondition(x)
+#ifdef CGAL_POLYNOMIAL_CHECK_EXPENSIVE
 #define CGAL_Polynomial_expensive_precondition(x) CGAL_expensive_precondition(x)
 #define CGAL_Polynomial_expensive_assertion(x) CGAL_expensive_assertion(x)
 #define CGAL_Polynomial_expensive_postcondition(x) CGAL_expensive_postcondition(x)
+#else
+#define CGAL_Polynomial_expensive_precondition(x)
+#define CGAL_Polynomial_expensive_assertion(x)
+#define CGAL_Polynomial_expensive_postcondition(x)
+#endif
 #define CGAL_Polynomial_exactness_assertion(x) CGAL_exactness_assertion(x)
 #define CGAL_Polynomial_exactness_postcondition(x) CGAL_exactness_postcondition(x)
 #define CGAL_Polynomial_exactness_precondition(x) CGAL_exactness_precondition(x)

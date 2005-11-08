@@ -26,7 +26,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/KDS/Delaunay_triangulation_face_base_2.h>
 #include <CGAL/KDS/Delaunay_triangulation_visitor_base_2.h>
-#include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 #include <CGAL/KDS/Simulator_kds_listener.h>
 #include <CGAL/KDS/internal/tds_2_helpers.h>
 #include <CGAL/Triangulation_data_structure_2.h>
@@ -111,8 +111,8 @@ public:
 
   typedef typename CGAL::KDS::Simulator_kds_listener<typename Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::KDS::Simulator_kds_listener<typename Simulator::Listener, This>;
-  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename Moving_point_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::KDS::Notifying_table_listener_helper<typename Moving_point_table::Listener, This>;
+  typedef typename CGAL::KDS::Active_objects_listener_helper<typename Moving_point_table::Listener, This> Moving_point_table_listener;
+  friend class CGAL::KDS::Active_objects_listener_helper<typename Moving_point_table::Listener, This>;
 public:
 
   Delaunay_triangulation_2(Simulation_traits st,

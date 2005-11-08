@@ -44,7 +44,7 @@ protected:
   typedef CORE_Expr_root_stack<Solver_traits> This;
 public:
   typedef Solver_traits Traits;
-  typedef Explicit_root<CORE::Expr> Root;
+  typedef internal::Explicit_root<CORE::Expr> Root;
 
   //! NOTE: The function must be square free!!!!!!!!!!!
   CORE_Expr_root_stack(const typename Solver_traits::Function &f,  

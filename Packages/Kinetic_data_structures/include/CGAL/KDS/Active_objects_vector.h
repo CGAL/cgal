@@ -52,11 +52,11 @@ CGAL_KDS_BEGIN_NAMESPACE;
   to remove all reference counts for the table or to call clear().
 */
 template <class Value_t > 
-class Notifying_table: 
-  public Ref_counted<Notifying_table<Value_t > > {
+class Active_objects_vector: 
+  public Ref_counted<Active_objects_vector<Value_t > > {
 protected:
   //! Convenience
-  typedef Notifying_table<Value_t> This;
+  typedef Active_objects_vector<Value_t> This;
   typedef std::vector<Value_t> Storage;
   struct Listener_core{
     typedef enum {IS_EDITING} Notification_type;
@@ -78,10 +78,10 @@ public:
 
 
   //! default constructor
-  Notifying_table():editing_(false){}
+  Active_objects_vector():editing_(false){}
 
   
-  ~Notifying_table(){CGAL_precondition(subscribers_.empty());}
+  ~Active_objects_vector(){CGAL_precondition(subscribers_.empty());}
 
   //! access a point
   const Data &operator[](Key key) const {

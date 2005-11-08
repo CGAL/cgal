@@ -140,14 +140,13 @@ public:
 
   //! Create a simulator passing the start time and the end time.
   Simulator(const Time &start_time=Time(0.0),
-	    const Time &end_time= internal::infinity_or_max(Time())):queue_(start_time),
-									 cur_time_(start_time), 
-									 end_time_(end_time),
-									 last_event_time_(-internal::infinity_or_max(Time())),
-									 mp_(kernel_.rational_between_roots_object()),
-									 ir_(kernel_.is_rational_object()),
-									 tr_(kernel_.to_rational_object())
-  {
+	    const Time &end_time= internal::infinity_or_max(Time())):queue_(start_time, end_time),
+								     cur_time_(start_time), 
+								     end_time_(end_time),
+								     last_event_time_(-internal::infinity_or_max(Time())),
+								     mp_(kernel_.rational_between_roots_object()),
+								     ir_(kernel_.is_rational_object()),
+								     tr_(kernel_.to_rational_object()) {
     number_of_events_=0;
 #ifdef CGAL_KDS_CHECK_EXPENSIVE
     // make it less than the current time.
@@ -299,6 +298,7 @@ public:
   void set_end_time(const Time &t){
     CGAL_precondition(cur_time_==end_time_);
     end_time_= t;
+    queue_.set_end_priority(t);
   }
 
   //! Create a new event and return its key
@@ -349,6 +349,7 @@ public:
   template <class E>
   void new_final_event(const E &cert){
     bool do_I_use_this;
+    // this should be in the simulator anyway,
     return queue_.set_final_event(cert);
   }
 
@@ -495,7 +496,7 @@ protected:
     cur_time_= next_event_time();
     last_event_time_= cur_time_;
     //_last_event_time=cur_time_;
-    if (queue_.front_priority() < end_time()) {
+    //if (queue_.front_priority() < end_time()) {
       queue_.process_front();
     /*for (typename KDSs::iterator it= kdss_.begin(); it != kdss_.end(); ++it){
       (*it)->write(std::cout);
@@ -511,9 +512,9 @@ protected:
 	CGAL_KDS_LOG(LOG_SOME, "Can't audit between events.\n");
       }
 #endif
-    } else {
+      /*} else {
       queue_.clear();
-    }
+      }*/
     
     //std::cout << queue_<< std::endl;
     CGAL_expensive_postcondition_code(if (cur_time_== next_event_time()))

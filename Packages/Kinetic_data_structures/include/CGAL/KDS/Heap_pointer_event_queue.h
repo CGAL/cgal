@@ -170,9 +170,13 @@ public:
   //typedef Item_handle Key;
 
   //! Construct it with a suggested size of sz.
-  Heap_pointer_event_queue(const Priority&, int sz=1000) {
+  Heap_pointer_event_queue(const Priority&, const Priority &end, int sz=1000): end_(end) {
     queue_.reserve(sz);
     null_event_= Key(new internal::Heap_pointer_event_queue_dummy_item<Priority>());
+  }
+
+  const Priority& end_priority() const {
+    return end_;
   }
 
   //! insert value_type into the queue and return a reference to it
@@ -292,13 +296,17 @@ public:
   */
   void process_front() {
     CGAL_precondition(!empty());
-    //CGAL_precondition_code(Item_handle k= queue_.front());
-    CGAL_KDS_LOG(LOG_LOTS, "Processing " << queue_.front() << std::endl);
-    Item_handle ih= queue_.front();
-    pop_front();
-    //std::pop_heap(queue_.begin(), queue_.end());
-    ih->process(ih->time());
-    CGAL_expensive_postcondition(is_valid());
+    if (queue_.front()->time() < end_priority()){
+      //CGAL_precondition_code(Item_handle k= queue_.front());
+      CGAL_KDS_LOG(LOG_LOTS, "Processing " << queue_.front() << std::endl);
+      Item_handle ih= queue_.front();
+      pop_front();
+      //std::pop_heap(queue_.begin(), queue_.end());
+      ih->process(ih->time());
+      CGAL_expensive_postcondition(is_valid());
+    } else {
+      clear();
+    }
   }
 
 
@@ -371,6 +379,7 @@ protected:
   Compare compare_;
   std::vector<Item_handle> final_events_;
   Key null_event_;
+  Priority end_;
 
   bool is_in_heap(Key k) const {
     for (unsigned int i=0; i< queue_.size(); ++i){

@@ -10,7 +10,7 @@
 #include <CGAL/KDS/Erase_event.h>
 #include <CGAL/KDS/Exact_simulation_traits_1.h>
 #include <CGAL/KDS/Simulator_kds_listener.h>
-#include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 
 
 template <class Sort, class Id, class Solver> 
@@ -28,7 +28,7 @@ template <class TraitsT> class Planar_arrangement:
   typedef TraitsT Traits;
   typedef Planar_arrangement<TraitsT> This;
 
-  typedef std::pair<typename Traits::Moving_point_table::Key, int> Cut_pair;
+  typedef std::pair<typename Traits::Active_objects_table::Key, int> Cut_pair;
 
   // this is used to identify pairs of objects in the list
   typedef typename std::list<Cut_pair>::iterator iterator;
@@ -53,8 +53,8 @@ template <class TraitsT> class Planar_arrangement:
 			 This> Sim_listener;
   // Redirects the MovingObjectTable notifications to function calls
   typedef typename CGAL::KDS::
-  Notifying_table_listener_helper<typename Traits::Moving_point_table::Listener,
-				  This> MOT_listener;
+  Active_objects_listener_helper<typename Traits::Active_objects_table::Listener,
+				 This> MOT_listener;
 
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
@@ -64,7 +64,7 @@ public:
 				ik_(tr.instantaneous_kernel_object()),
 				less_(ik_.less_x_1_object()),
 				siml_(tr.simulator_pointer(), this),
-				motl_(tr.moving_point_table_pointer(), this){}
+				motl_(tr.active_objects_table_pointer(), this){}
 
 
   Approximate_point vertex(int i) const {
@@ -104,7 +104,7 @@ public:
      returns the first place where an item can be inserted in a sorted
      list. Called by the MOT_listener. This adds an vertex for the
      start of the curve.*/
-  void insert(typename Traits::Moving_point_table::Key k) {
+  void insert(typename Traits::Active_objects_table::Key k) {
     //std::cout << "Inserting " << k <<std::endl;
     ik_.set_time(tr_.simulator_pointer()->rational_current_time());
     Cut_pair cp(k, new_point(k));
@@ -132,7 +132,7 @@ public:
      If there is a previous certificate there, deschedule it.*/
   void rebuild_certificate(const iterator it) {
     typename Traits::Simulator::Pointer sp= tr_.simulator_pointer();
-    typename Traits::Moving_point_table::Pointer mp= tr_.moving_point_table_pointer();
+    typename Traits::Active_objects_table::Pointer mp= tr_.active_objects_table_pointer();
     
     if (it == sorted_.end()) return;
     if (events_.find(it->first) != events_.end()) {
@@ -204,14 +204,14 @@ public:
   /* Update the certificates adjacent to object k. This method is called by
      the MOT_listener. std::equal_range finds all items equal 
      to a key in a sorted list (there can only be one).*/
-  void set(typename Traits::Moving_point_table::Key k) {
+  void set(typename Traits::Active_objects_table::Key k) {
     iterator it =  find(k);
     rebuild_certificate(it); rebuild_certificate(--it);
   }
 
   /* Remove object k and destroy 2 certificates and create one new one.
      This function is called by the MOT_listener. One new vertex and one new edge are added.*/
-  void erase(typename Traits::Moving_point_table::Key k) {
+  void erase(typename Traits::Active_objects_table::Key k) {
     std::cout << "Curve " << k << " ends at " 
 	      << tr_.simulator_pointer()->rational_current_time() << std::endl;
     iterator it =  find(k);
@@ -228,7 +228,7 @@ public:
   template <class It> static It next(It it){ return ++it;}
 
  
-  iterator find(typename Traits::Moving_point_table::Key k) {
+  iterator find(typename Traits::Active_objects_table::Key k) {
     iterator it = sorted_.begin();
     while (it != sorted_.end()){
       if (it->first ==k) return it;
@@ -238,14 +238,14 @@ public:
     return it;
   }
 
-  int new_point(typename Traits::Moving_point_table::Key k) {
+  int new_point(typename Traits::Active_objects_table::Key k) {
     double tv= CGAL::to_double(tr_.simulator_pointer()->current_time());
-    double dv= CGAL::to_double(tr_.moving_point_table_pointer()->at(k).x()(tv));
+    double dv= CGAL::to_double(tr_.active_objects_table_pointer()->at(k).x()(tv));
     approx_coords_.push_back(Approximate_point(tv, dv));
     return approx_coords_.size()-1;
   }
 
-  typedef typename std::list<typename Traits::Moving_point_table::Key>::const_iterator Key_iterator;
+  typedef typename std::list<typename Traits::Active_objects_table::Key>::const_iterator Key_iterator;
   Key_iterator begin() const {
     return sorted_.begin();
   }
@@ -253,7 +253,7 @@ public:
     return sorted_.end();
   }
   ~Planar_arrangement() {
-    for (typename std::map<typename Traits::Moving_point_table::Key,
+    for (typename std::map<typename Traits::Active_objects_table::Key,
 	   typename Traits::Simulator::Event_key >::iterator it= events_.begin(); 
 	 it != events_.end(); ++it){
       tr_.simulator_pointer()->delete_event(it->second);
@@ -264,7 +264,7 @@ public:
   // The points in sorted order
   std::list<Cut_pair > sorted_;
   // events_[k] is the certificates between k and the object after it
-  std::map<typename Traits::Moving_point_table::Key,
+  std::map<typename Traits::Active_objects_table::Key,
 	   typename Traits::Simulator::Event_key > events_;
   std::vector<Edge > edges_;
   std::vector<Approximate_point > approx_coords_;
@@ -304,8 +304,8 @@ int main(int, char *[]){
   typedef CGAL::KDS::Exact_simulation_traits_1 Traits;
   typedef Traits::Kinetic_kernel::Point_1 Moving_point;
   typedef Traits::Simulator::Time Time;
-  typedef CGAL::KDS::Insert_event<Traits::Moving_point_table> Insert_event;
-  typedef CGAL::KDS::Erase_event<Traits::Moving_point_table> Erase_event;
+  typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> Insert_event;
+  typedef CGAL::KDS::Erase_event<Traits::Active_objects_table> Erase_event;
   typedef Planar_arrangement<Traits> Sort;
 
   Traits tr;
@@ -331,10 +331,10 @@ int main(int, char *[]){
   for (unsigned int i=0; i< curves.size(); ++i){
     tr.simulator_pointer()->new_event(Time(curves[i].first.first), 
 				      Insert_event(Moving_point(curves[i].second),
-						   tr.moving_point_table_pointer()));
+						   tr.active_objects_table_pointer()));
     tr.simulator_pointer()->new_event(Time(curves[i].first.second), 
-				      Erase_event(Traits::Moving_point_table::Key(i), 
-						  tr.moving_point_table_pointer()));
+				      Erase_event(Traits::Active_objects_table::Key(i), 
+						  tr.active_objects_table_pointer()));
   }
 
   while (sp->next_event_time() < sp->end_time()) {

@@ -21,8 +21,9 @@
 #define CGAL_POLYNOMIAL_LAZY_UPPER_BOUND_ROOT_STACK_H
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 /*
   Root has pointer to Root_rep, solver_rep (ref counted), a double approximation;
@@ -76,6 +77,10 @@ class Lazy_upper_bound_root_stack_root {
   
 
   Comparison_result compare_double(const This &o) const {
+    /*if (iv_.sup() == std::numeric_limits<double>::infinity() 
+	|| o.iv_.sup() == std::numeric_limits<double>::infinity()){
+      int i=-5;++i;
+      }*/
     if (iv_.inf() > o.iv_.sup()) return LARGER;
     else if (iv_.sup() < o.iv_.inf()) return SMALLER;
     else if (iv_.is_point() && o.iv_.is_point()) return EQUAL;
@@ -87,36 +92,24 @@ class Lazy_upper_bound_root_stack_root {
     if (cd != UNKNOWN) {
       return cd;
     } else {
-      /*update_interval();
-      int cd= compare_double(o);
-      if (cd != UNKNOWN){
-	return cd;
-      }
-      o.update_interval();
-      
-      cd= compare_double(o);*/
-
-      /*if (cd != UNKNOWN){
-	return cd;
-	} else {*/
-	if (rep_->has_root() && !o.rep_->has_root()) {
-	 bool ret= o.srep_->refine_top(iv_.sup());
-	  o.update_interval();
-	  if (!ret) {
-	    return SMALLER;
-	  }
-	} else if (o.rep_->has_root() && !rep_->has_root()) {
-	  bool ret= srep_->refine_top(o.iv_.sup());
-	  update_interval();
-	  if (!ret) {
-	    return LARGER;
-	  }
+      if (rep_->has_root() && !o.rep_->has_root()) {
+	bool ret= o.srep_->refine_top(iv_.sup());
+	o.update_interval();
+	if (!ret) {
+	  return SMALLER;
+	} 
+      } else if (o.rep_->has_root() && !rep_->has_root()) {
+	bool ret= srep_->refine_top(o.iv_.sup());
+	//update_interval();
+	if (!ret) {
+	  return LARGER;
 	}
-	ensure_exact();
-	o.ensure_exact();
-	return rep_->root().compare(o.rep_->root());
       }
-    //}
+      ensure_exact();
+      o.ensure_exact();
+      Comparison_result ret= rep_->root().compare(o.rep_->root());
+      return ret;
+    }
     CGAL_Polynomial_postcondition(0);
     return  UNKNOWN;
   }
@@ -132,19 +125,20 @@ public:
   Lazy_upper_bound_root_stack_root(typename Solver_rep::Pointer sp): srep_(sp), 
 								     rep_(sp->current_root_rep()){
     iv_=srep_->double_interval();
-    ++lazy_stats.created_;
+    //++lazy_stats.created_;
   }
-  Lazy_upper_bound_root_stack_root(){}
+  Lazy_upper_bound_root_stack_root(): iv_(std::numeric_limits<double>::quiet_NaN(),
+					  std::numeric_limits<double>::quiet_NaN()){}
 
   ~Lazy_upper_bound_root_stack_root() {
-    if (srep_&& rep_->has_root()){
-      ++lazy_stats.isolated_;
+    if (srep_ && rep_->has_root()){
+      //++lazy_stats.isolated_;
     }
   }
 
   /*typedef typename Rep::Root Root;
-  Lazy_upper_bound_root_stack_root(const Root &rt): iv_(CGAL_POLYNOMIAL_TO_INTERVAL(rt), rep_(rt) {
-  }*/
+    Lazy_upper_bound_root_stack_root(const Root &rt): iv_(CGAL_POLYNOMIAL_TO_INTERVAL(rt), rep_(rt) {
+    }*/
   
   bool operator==(const This &o) const {
     return compare(o)==EQUAL;
@@ -186,7 +180,7 @@ public:
   std::pair<double,double> double_interval(double tol= std::numeric_limits<double>::infinity()) const {
     if (tol != std::numeric_limits<double>::infinity()) {
       ensure_exact();
-      iv_= CGAL_POLYNOMIAL_TO_INTERVAL(rep_->root());
+      //iv_= CGAL_POLYNOMIAL_TO_INTERVAL(rep_->root());
     }
     return std::pair<double,double>(iv_.inf(), iv_.sup());
   }
@@ -240,13 +234,16 @@ std::ostream& operator<<(std::ostream &out, const Lazy_upper_bound_root_stack_ro
   return out;
 }
 
-/*template <class Rep, class Solver_rep>
-double to_double(const Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
-  return rt.to_double();
-}
+CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-template <class Rep, class Solver_rep>
-std::pair<double,double> to_interval(const Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
+/*template <class Rep, class Solver_rep>
+  double to_double(const Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
+  return rt.to_double();
+  }
+
+  template <class Rep, class Solver_rep>
+  std::pair<double,double> to_interval(const Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
   return rt.double_interval();
   }*/
 
@@ -261,7 +258,7 @@ protected:
   typedef Lazy_upper_bound_root_stack<Traits_t> This;
 public:
   typedef Traits_t Traits;
-  typedef Lazy_upper_bound_root_stack_root<Root_rep, Solver_rep> Root;
+  typedef internal::Lazy_upper_bound_root_stack_root<Root_rep, Solver_rep> Root;
   typedef typename Traits::Function Function;
 
   Lazy_upper_bound_root_stack(){
@@ -320,6 +317,7 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Solver_rep: public CGAL::KDS::Ref_
 	     const Root &ub,
 	     const Traits &tr): solver_(f, lb.troot(), ub.troot(), tr, false){
     cur_= new Root_rep();
+    ++internal::lazy_stats.created_;
     if (solver_.empty()){
       cur_->set_root(std::numeric_limits<TRoot>::infinity());
     }
@@ -398,12 +396,12 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Solver_rep: public CGAL::KDS::Ref_
   }
 
   bool refine_top(double lb) {
-    ++lazy_stats.refine_attempted_;
+    ++internal::lazy_stats.refine_attempted_;
     bool ret= solver_.refine_top(lb);
     if (solver_.top_is_isolated()){
       set_root();
     } else {
-      ++lazy_stats.refine_succeeded_;
+      ++internal::lazy_stats.refine_succeeded_;
       //++lazy_stats.isolated_;
     }
     return ret;
@@ -416,12 +414,12 @@ protected:
     cur_= new Root_rep(*o.cur_);
     
   }
-
   void set_root() {
     CGAL_precondition(!cur_->has_root());
     if (solver_.empty()){
       cur_->set_root(std::numeric_limits<TRoot>::infinity());
     } else {
+      ++internal::lazy_stats.isolated_;
       cur_->set_root(solver_.top());
       solver_.pop_no_isolate();
     }
@@ -435,20 +433,24 @@ template <class Traits_t>
 struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::KDS::Ref_counted<Root_rep> {
   typedef TRoot Root;
   typedef CGAL::KDS::Ref_counted<Root_rep> RC;
-  Root_rep() {
+  Root_rep(): has_root_(false) {
     CGAL_Polynomial_postcondition(!has_root());
   }
-  Root_rep(const TRoot &tr): root_(tr){}
   template <class NT>
-  Root_rep(const NT &nt): root_(nt){}
+  Root_rep(const NT &nt): root_(nt), has_root_(true){}
 
-  Root_rep(double d): root_(d){}
+  Root_rep(double d): root_(d), has_root_(true){ /*CGAL_Polynomial_precondition(d != -std::numeric_limits<double>::infinity());*/}
 
-  Root_rep(const Root_rep &o): RC(), root_(o.root_){}
+  Root_rep(const Root_rep &o): RC(), root_(o.root_), has_root_(o.has_root_){}
+  Root_rep(const TRoot &tr): root_(tr), has_root_(true){    
+    //CGAL_Polynomial_precondition(tr != -std::numeric_limits<TRoot>::infinity());
+  }
 
   void set_root(const TRoot &tr) {
+    CGAL_Polynomial_precondition(tr != -std::numeric_limits<TRoot>::infinity());
     CGAL_Polynomial_precondition(!has_root());
     root_=tr;
+    has_root_=true;
   }
 
   const TRoot& root() const {
@@ -458,40 +460,41 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::KDS::Ref_co
   
   bool has_root() const {
     CGAL_precondition(std::numeric_limits<Root>::has_quiet_NaN);
-    return root_!= std::numeric_limits<Root>::quiet_NaN();
+    return has_root_;
   }
 
   /*std::pair<double,double> current_interval(typename Solver_rep::Pointer srep) const {
     if (is_isolated()){
-      return root_.double_interval();
+    return root_.double_interval();
     } else {
-      srep->check_current(this);
-      return srep->double_interval();
+    srep->check_current(this);
+    return srep->double_interval();
     }
     }*/
   
   mutable TRoot root_;
+  bool has_root_;
 };
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 
 namespace CGAL {
   template <class Rep, class Solver_rep>
-  double to_double(const CGAL_POLYNOMIAL_NS::Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
+  double to_double(const CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
     return rt.to_double();
   }
   
   template <class Rep, class Solver_rep>
-  std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
+  std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
     return rt.double_interval();
   }
 }
 
 namespace std {
   template <class R, class SR>
-  struct numeric_limits<CGAL_POLYNOMIAL_NS::Lazy_upper_bound_root_stack_root<R, SR> >{
+  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<R, SR> >{
     typedef numeric_limits<typename R::Root> Rnl;
-    typedef CGAL_POLYNOMIAL_NS::Lazy_upper_bound_root_stack_root<R, SR> T;
+    typedef CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<R, SR> T;
     static const bool is_specialized = true;
     static T min() throw () {return -infinity();}
     static T max() throw () {return infinity();}

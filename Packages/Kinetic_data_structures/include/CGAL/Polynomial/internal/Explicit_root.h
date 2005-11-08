@@ -22,7 +22,7 @@
 #include <CGAL/Polynomial/basic.h>
 
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 //! a root that is represented explicitly
 /*!
   Not, the number type must have std::numeric_limits defined and 
@@ -206,21 +206,21 @@ std::pair<double, double>  to_interval(const Explicit_root<NT> &r){
 */
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
 
 CGAL_BEGIN_NAMESPACE
 
 
 template <class NT>
-double to_double(const CGAL_POLYNOMIAL_NS::Explicit_root<NT> &r){
+double to_double(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<NT> &r){
   return r.compute_double();
 }
 
 
 
 template <class NT>
-std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::Explicit_root<NT> &r){
+std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<NT> &r){
   return r.compute_interval();
 }
 
@@ -232,9 +232,9 @@ CGAL_END_NAMESPACE
 
 namespace std {
   template <class Tr>
-  struct numeric_limits<CGAL_POLYNOMIAL_NS::Explicit_root<Tr> >: public numeric_limits<Tr> {
+  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> >: public numeric_limits<Tr> {
     typedef numeric_limits<Tr> P;
-    typedef CGAL_POLYNOMIAL_NS::Explicit_root<Tr> T;
+    typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> T;
     static const bool is_specialized = true;
     static T min() throw() {return T(P::min());}
     static T max() throw() {return T(P::max());}

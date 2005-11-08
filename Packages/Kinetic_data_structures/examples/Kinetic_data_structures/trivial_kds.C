@@ -1,6 +1,6 @@
 #include <CGAL/KDS/Ref_counted.h>
 #include <CGAL/KDS/Exact_simulation_traits_1.h>
-#include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 #include <CGAL/KDS/Simulator_kds_listener.h>
 #include <iostream>
 #include <set>
@@ -48,12 +48,12 @@ std::ostream &operator<<(std::ostream &out,
 template <class Traits>
 struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> > {
   typedef Trivial_kds<Traits> This;
-  typedef typename Traits::Moving_point_table::Data Point;
+  typedef typename Traits::Active_objects_table::Data Point;
   typedef typename Traits::Simulator::Time Time;
-  typedef typename Traits::Moving_point_table::Key Point_key;
+  typedef typename Traits::Active_objects_table::Key Point_key;
   typedef typename Traits::Simulator::Event_key Event_key;
-  typedef CGAL::KDS::Notifying_table_listener_helper<
-    typename Traits::Moving_point_table::Listener, This> Notifying_table_helper;
+  typedef CGAL::KDS::Active_objects_listener_helper<
+    typename Traits::Active_objects_table::Listener, This> Active_objects_helper;
   typedef CGAL::KDS::Simulator_kds_listener<
     typename Traits::Simulator::Listener, This> Simulator_helper;
 
@@ -62,7 +62,7 @@ struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> > {
 
   Trivial_kds(Traits tr): has_certificates_(true),
 			  tr_(tr),
-			  nth_(tr.moving_point_table_pointer(), this),
+			  nth_(tr.active_objects_table_pointer(), this),
 			  sh_(tr.simulator_pointer(), this){}
 
   // this method is called with the value true when the event is processed
@@ -94,7 +94,7 @@ struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> > {
 	Time t= CGAL::to_interval(sp->current_time()).second+1;
 	event_= sp->new_event(t, Event(objects_.begin(), 
 				       objects_.end(),
-				       *tr_.moving_point_table_pointer(), 
+				       *tr_.active_objects_table_pointer(), 
 				       this));
 	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
 	assert(!event_ 
@@ -159,7 +159,7 @@ protected:
   std::set<Point_key > objects_;
   Event_key event_;
   Traits tr_;
-  Notifying_table_helper nth_;
+  Active_objects_helper nth_;
   Simulator_helper sh_;
 };
 
@@ -178,13 +178,13 @@ int main(int, char *[]){
   tk->set_has_certificates(true);
 
   typedef Traits::Kinetic_kernel::Point_2 Point;
-  Traits::Moving_point_table::Key k
-    = tr.moving_point_table_pointer()->insert(Point(cf(1), cf(0)));
+  Traits::Active_objects_table::Key k
+    = tr.active_objects_table_pointer()->insert(Point(cf(1), cf(0)));
   sp->set_current_event_number(sp->current_event_number()+10);
-  tr.moving_point_table_pointer()
+  tr.active_objects_table_pointer()
     ->set(k, Traits::Kinetic_kernel::Point_2(cf(2), cf(0)));
   sp->set_current_event_number(sp->current_event_number()+10);
-  tr.moving_point_table_pointer()->erase(k); 
+  tr.active_objects_table_pointer()->erase(k); 
   sp->set_current_event_number(sp->current_event_number()+10);
   return EXIT_SUCCESS;
 }

@@ -27,7 +27,7 @@ CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
 struct Rest3_types: public Sest_types  {
   typedef CGAL::Regular_triangulation_euclidean_traits_3< Sest_types::Static_kernel> Static_kernel;
   typedef Sest_types::Kinetic_kernel::Weighted_point_3 Active_object;
-  typedef Notifying_table<Active_object> Active_objects_table;
+  typedef Active_objects_vector<Active_object> Active_objects_table;
   typedef Regular_triangulation_instantaneous_traits_3< Active_objects_table,				
 							Static_kernel> Instantaneous_kernel;
 };
@@ -45,6 +45,13 @@ struct Regular_triangulation_exact_simulation_traits_3:
 			    internal::Rest3_types::Kinetic_kernel,
 			    internal::Rest3_types::Simulator,
 			    internal::Rest3_types::Active_objects_table > {
+  typedef  Simulation_traits<internal::Rest3_types::Static_kernel,
+			    internal::Rest3_types::Instantaneous_kernel,
+			    internal::Rest3_types::Kinetic_kernel,
+			    internal::Rest3_types::Simulator,
+			     internal::Rest3_types::Active_objects_table > P;
+  Regular_triangulation_exact_simulation_traits_3(const P::Time &lb= P::Time(0),
+						  const P::Time &ub=std::numeric_limits<P::Time>::infinity()): P(lb,ub){}
 };
 CGAL_KDS_END_NAMESPACE
 

@@ -39,13 +39,13 @@ CGAL_KDS_BEGIN_NAMESPACE
   Moving_object_table_listener template paramenter should provide.
 */
 template <class Moving_object_table_listener, class KDS>
-class Notifying_table_listener_helper: public Moving_object_table_listener {
+class Active_objects_listener_helper: public Moving_object_table_listener {
   typedef typename Moving_object_table_listener::Notifier_pointer::element_type MOT;
   typedef Moving_object_table_listener P;
 public:
 
   //! The constructor
-  Notifying_table_listener_helper(typename Moving_object_table_listener::Notifier_pointer h,
+  Active_objects_listener_helper(typename Moving_object_table_listener::Notifier_pointer h,
 				  KDS *kds):
     Moving_object_table_listener(h), t_(kds){
     for (typename Moving_object_table_listener::Notifier::Keys_iterator it= P::notifier()->keys_begin(); 

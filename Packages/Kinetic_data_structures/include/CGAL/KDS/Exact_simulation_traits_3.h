@@ -25,6 +25,9 @@
 CGAL_KDS_BEGIN_NAMESPACE
 
 struct Exact_simulation_traits_3: public internal::Suggested_exact_simulation_traits<internal::Sest_types::Kinetic_kernel::Point_3> {
+  typedef internal::Suggested_exact_simulation_traits<internal::Sest_types::Kinetic_kernel::Point_3> P;
+  Exact_simulation_traits_3(const P::Time &lb = 0,
+			    const P::Time &ub = std::numeric_limits<P::Time>::infinity()): P(lb,ub){}
 };
 CGAL_KDS_END_NAMESPACE
 

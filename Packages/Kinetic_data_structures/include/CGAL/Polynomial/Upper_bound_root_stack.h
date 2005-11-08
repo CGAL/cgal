@@ -130,8 +130,8 @@ public:
       && intervals_.back().right_sign != intervals_.back().left_sign;*/
   }
 
-  bool refine_top(double ub) {
-    while (!intervals_.empty() && intervals_.back().interval.double_interval().first < ub) {
+  bool refine_top(NT ub) {
+    while (!intervals_.empty() && intervals_.back().interval.contains(ub) < ub) {
       Interval_classification c=classify_top();
       if (c==GOOD){
 	cur_=make_next_root();
@@ -162,6 +162,10 @@ public:
       cur_= std::numeric_limits<Root>::quiet_NaN();
     }
   }
+
+  /*Isolating_interval interval() const {
+    
+  }*/
 
   std::pair<double, double> double_interval() const {
     //CGAL_Polynomial_precondition(!empty());

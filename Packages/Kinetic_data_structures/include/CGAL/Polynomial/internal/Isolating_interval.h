@@ -435,6 +435,11 @@ public:
     CGAL_Polynomial_assertion(lb() <= ub());
     return lb() <= o.lb() && ub() >= o.ub();
   }
+
+  bool contains(const NT &o){
+    return lb() <= o && ub() >= o;
+  }
+
   template <class OStream>
   void write(OStream &out) const {
     if (is_singular()){

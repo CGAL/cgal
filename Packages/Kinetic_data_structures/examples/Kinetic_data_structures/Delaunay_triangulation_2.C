@@ -3,11 +3,11 @@
 #include <CGAL/KDS/Delaunay_triangulation_2.h>
 #include <CGAL/KDS/Insert_event.h>
 #include <CGAL/Random.h>
-#include <CGAL/KDS/Exact_simulation_traits_2.h>
+#include <CGAL/KDS/Inexact_simulation_traits_2.h>
 
 int main(int, char *[]){
 
-  typedef CGAL::KDS::Exact_simulation_traits_2 Simulation_traits;
+  typedef CGAL::KDS::Inexact_simulation_traits_2 Simulation_traits;
   typedef Simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
 
   typedef CGAL::KDS::Delaunay_triangulation_2<Simulation_traits> KDel;
@@ -29,9 +29,9 @@ int main(int, char *[]){
 	  cf(rand.get_double()*10-5, 
 	     rand.get_double(), 
 	     rand.get_double()));
-    Simulation_traits::Simulator::Time t(static_cast<double>(i)/4.0);
+    //Simulation_traits::Simulator::Time t(static_cast<double>(i)/4.0);
     
-    simtr.moving_point_table_pointer()->insert(mp);
+    simtr.active_objects_table_pointer()->insert(mp);
   }
 
   while (simtr.simulator_pointer()->next_event_time() 

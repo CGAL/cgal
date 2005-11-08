@@ -91,8 +91,8 @@ protected:
   }
 
   template <class RT>
-  CGAL_POLYNOMIAL_NS::Sign eval(const CGAL_POLYNOMIAL_NS::Explicit_root<RT> &r){
-    typedef  Explicit_root<RT> R;
+  CGAL_POLYNOMIAL_NS::Sign eval(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<RT> &r){
+    typedef  internal::Explicit_root<RT> R;
     typename R::Representation rep= r.representation();
     typedef  typename CGAL_POLYNOMIAL_NS::Polynomial<typename R::Representation> Rep_poly;
     typename CGAL_POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Rep_poly> pc;

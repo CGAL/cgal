@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
 #define CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
 #include <CGAL/Polynomial/basic.h>
+#include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
 
@@ -727,6 +728,7 @@ double to_double(const CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<F> &f)
   //bool to_double_in_sir;
   return f.double_approximation();
 }
+
 
 template <class F>
 std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<F> &f){

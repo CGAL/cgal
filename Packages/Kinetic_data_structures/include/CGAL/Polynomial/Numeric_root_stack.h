@@ -21,6 +21,7 @@
 #define CGAL_POLYNOMIAL_NUMERIC_ROOT_STACK_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
+#include <CGAL/Polynomial/Polynomial.h>
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 

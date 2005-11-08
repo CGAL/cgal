@@ -17,30 +17,30 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_EXACT_SIMULATION_TRAITS_2_H
-#define CGAL_KDS_EXACT_SIMULATION_TRAITS_2_H
+#ifndef CGAL_KDS_SIMULATION_TRAITS_H
+#define CGAL_KDS_SIMULATION_TRAITS_H
 #include <CGAL/KDS/basic.h>
+
+
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Simple_cartesian.h>
-
+#include <CGAL/KDS/Active_objects_vector.h>
+#include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
+#include <CGAL/KDS/Cartesian_kinetic_kernel.h>
+#include <CGAL/KDS/Derivitive_filter_function_kernel.h>
+#include <CGAL/KDS/Handle_degeneracy_function_kernel.h>
+#include <CGAL/KDS/Simulator.h>
+#include <CGAL/KDS/Two_list_pointer_event_queue.h>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Polynomial/Numeric_root_stack.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
-
-#include <CGAL/KDS/Cartesian_kinetic_kernel.h>
-#include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
-#include <CGAL/KDS/Derivitive_filter_function_kernel.h>
-#include <CGAL/KDS/Handle_degeneracy_function_kernel.h>
-#include <CGAL/KDS/Two_list_pointer_event_queue.h>
+#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
+#include <CGAL/Simple_cartesian.h>
 //#include <CGAL/KDS/Heap_pointer_event_queue.h>
-#include <CGAL/KDS/Simulator.h>
-#include <CGAL/KDS/Notifying_table.h>
 
 
 CGAL_KDS_BEGIN_NAMESPACE
@@ -49,6 +49,7 @@ template <class StaticKernel, class InstantaneousKernel,
 	  class KineticKernel, class SimulatorC, class ActiveObjectsTable>
 struct Simulation_traits {
 public:
+  
   typedef ActiveObjectsTable Active_objects_table;
 
   typedef typename StaticKernel::FT NT;
@@ -60,12 +61,15 @@ public:
 
   typedef typename Simulator::Function_kernel Function_kernel;
 
+  typedef typename Function_kernel::Root Time;
+
   typedef InstantaneousKernel Instantaneous_kernel;
 
+  Simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub)), ao_(new ActiveObjectsTable){}
   Simulation_traits(): sp_(new Simulator()), ao_(new ActiveObjectsTable){
   }
-  Simulation_traits(typename Simulator::Pointer sp): sp_(sp){
-  }
+  /*Simulation_traits(typename Simulator::Pointer sp): sp_(sp){
+    }*/
 
   Simulator* simulator_pointer(){ return sp_.get();}
   const Simulator* simulator_pointer() const { return sp_.get();}
@@ -108,19 +112,28 @@ struct Sest_types {
   typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
  
   struct Event_queue: public Queue_base{
-    Event_queue(const Time &start): Queue_base(start){}
+    Event_queue(const Time &start, const Time &end): Queue_base(start, end){}
   };
   
   typedef CGAL::KDS::Simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
 
 template <class ActiveObject>
-struct Suggested_exact_simulation_traits: public Simulation_traits<typename Sest_types::Static_kernel,
-								   Cartesian_instantaneous_kernel<Notifying_table<ActiveObject>,
-												  typename Sest_types::Static_kernel>,
-								   typename Sest_types::Kinetic_kernel,
-								   typename Sest_types::Simulator,
-								   Notifying_table<ActiveObject> > {
+struct Suggested_exact_simulation_traits: 
+  public Simulation_traits<typename Sest_types::Static_kernel,
+			   Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
+							  typename Sest_types::Static_kernel>,
+			   typename Sest_types::Kinetic_kernel,
+			   typename Sest_types::Simulator,
+			   Active_objects_vector<ActiveObject> > {
+  typedef Simulation_traits<typename Sest_types::Static_kernel,
+			    Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
+							   typename Sest_types::Static_kernel>,
+			    typename Sest_types::Kinetic_kernel,
+			    typename Sest_types::Simulator,
+			    Active_objects_vector<ActiveObject> > P;
+  Suggested_exact_simulation_traits(const typename P::Time &lb, 
+				    const typename P::Time &ub): P(lb,ub){}
 };
 
 
@@ -137,7 +150,7 @@ struct Sist_types {
   typedef CGAL::KDS::Heap_pointer_event_queue<Time> Queue_base;
 
   struct Event_queue: public Queue_base{
-    Event_queue(const Time &start): Queue_base(start){}
+    Event_queue(const Time &start, const Time &finish): Queue_base(start, finish){}
   };
   typedef CGAL::KDS::Simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
@@ -145,11 +158,19 @@ struct Sist_types {
 
 template <class ActiveObject>
 struct Suggested_inexact_simulation_traits: public Simulation_traits<typename Sist_types::Static_kernel,
-								     Cartesian_instantaneous_kernel<Notifying_table<ActiveObject>,
+								     Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
 												   typename Sist_types::Static_kernel>,
-								   typename Sist_types::Kinetic_kernel,
+								     typename Sist_types::Kinetic_kernel,
+								     typename Sist_types::Simulator,
+								     Active_objects_vector<ActiveObject> > {
+  typedef Simulation_traits<typename Sist_types::Static_kernel,
+			    Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
+							   typename Sist_types::Static_kernel>,
+			    typename Sist_types::Kinetic_kernel,
 								   typename Sist_types::Simulator,
-								   Notifying_table<ActiveObject> > {
+			    Active_objects_vector<ActiveObject> > P;
+  Suggested_inexact_simulation_traits(const typename P::Time &lb, 
+				      const typename P::Time &ub): P(lb,ub){}
 };
 
 CGAL_KDS_END_INTERNAL_NAMESPACE

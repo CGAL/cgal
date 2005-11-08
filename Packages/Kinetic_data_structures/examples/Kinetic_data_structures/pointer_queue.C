@@ -29,7 +29,7 @@ std::ostream &operator<<(std::ostream &out, Event e){
 
 int main(int, char *[]){
   typedef CGAL::KDS::Heap_pointer_event_queue<Time> Q;
-  Q pq(100);
+  Q pq(0, 10000);
   typedef Q::Key Key;
   std::vector<Key>  items;
 

@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYNOMIAL_TOOLS_INTERVAL_ARITHMETIC_H
 #define CGAL_POLYNOMIAL_TOOLS_INTERVAL_ARITHMETIC_H
 #include <CGAL/Polynomial/basic.h>
+#include <utility>
 
 /*!
   \file interval_arithmetic.h
@@ -74,11 +75,20 @@ protected:
   FPU_CW_t bk_;
 };*/
 
-  template <class NT>
+template <class NT>
 class To_interval: public CGAL::To_interval<NT> {
 public:
   To_interval(){}
 };
+
+/*template <class NT>
+std::pair<double,double> to_interval(const NT&a){
+  return CGAL::to_interval(a);
+}
+
+std::pair<double,double> to_interval(double d){
+  return CGAL::to_interval(d);
+  }*/
 
 
 #define CGAL_POLYNOMIAL_TO_INTERVAL(nt) CGAL::to_interval(nt)
@@ -89,7 +99,25 @@ std::pair<double, double> to_interval(const NT &nt){
   }*/
 //using CGAL::to_interval;
 
+namespace internal {
+  template <class Traits> class Simple_interval_root;
+  template <class R1, class R2> class Lazy_upper_bound_root_stack_root;
+  template <class R> class Explicit_root;
+}
+
+
 CGAL_POLYNOMIAL_END_NAMESPACE
+
+CGAL_BEGIN_NAMESPACE 
+
+template <class Traits> 
+std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Traits> &r);
+template <class R1, class R2> 
+std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<R1, R2> &lr);
+template <class R> 
+std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Explicit_root<R> &r);
+
+CGAL_END_NAMESPACE
 
 #elif POLYNOMIAL_USE_BOOST_INTERVAL
 

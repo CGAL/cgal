@@ -27,7 +27,7 @@
 #include <iterator>
 #include <iostream>
 #include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 #include <CGAL/KDS/Simulator_kds_listener.h>
 
 CGAL_KDS_BEGIN_NAMESPACE
@@ -62,7 +62,7 @@ template <class Traits> class Sort:
 				This> Sim_listener;
   // Redirects the MovingObjectTable notifications to function calls
   typedef typename CGAL::KDS::
-  Notifying_table_listener_helper<typename Traits::Active_objects_table::Listener,
+  Active_objects_listener_helper<typename Traits::Active_objects_table::Listener,
 				      This> MOT_listener;
 public:
    // Register this KDS with the MovingObjectTable and the Simulator

@@ -82,7 +82,7 @@ protected:
   This evaluates the polynomials at the root and takes the sign. Much faster for doubles at least.
 */
 template <class RNT, class Kernel>
-class Sign_above<CGAL_POLYNOMIAL_NS::Explicit_root<RNT>, Kernel> {
+class Sign_above<CGAL_POLYNOMIAL_NS::internal::Explicit_root<RNT>, Kernel> {
   typedef Evaluate_polynomial<Kernel, RNT> Eval;
 public:
   Sign_above(const typename Kernel::Function &fn, Kernel ){
@@ -91,7 +91,7 @@ public:
   }
   Sign_above(){}
 
-  typedef CGAL_POLYNOMIAL_NS::Explicit_root<RNT> argument_type;
+  typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<RNT> argument_type;
   typedef CGAL_POLYNOMIAL_NS::Sign result_type;
 
   result_type operator()(const argument_type &v) const {

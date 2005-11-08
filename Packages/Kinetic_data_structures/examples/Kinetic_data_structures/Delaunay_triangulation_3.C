@@ -29,7 +29,7 @@ int main(int , char *[]){
 				       Traits::Function_kernel::Function(coefsy.begin(), coefsy.end()),
 				       Traits::Function_kernel::Function(coefsz.begin(), coefsz.end()));
     //std::cout << mp << std::endl;
-    tr.moving_point_table_pointer()->insert(mp);
+    tr.active_objects_table_pointer()->insert(mp);
   }
 
   kdel.set_has_certificates(true);

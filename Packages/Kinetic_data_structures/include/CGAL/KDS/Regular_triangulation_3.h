@@ -32,7 +32,7 @@
 #include <CGAL/KDS/Ref_counted.h>
 
 #include <CGAL/KDS/Simulator_kds_listener.h>
-#include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 
 CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
 
@@ -344,8 +344,8 @@ protected:
   
   typedef typename CGAL::KDS::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::KDS::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Active_objects_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::KDS::Notifying_table_listener_helper<typename TraitsT::Active_objects_table::Listener, This>;
+  typedef typename CGAL::KDS::Active_objects_listener_helper<typename TraitsT::Active_objects_table::Listener, This> Moving_point_table_listener;
+  friend class CGAL::KDS::Active_objects_listener_helper<typename TraitsT::Active_objects_table::Listener, This>;
 
 public:
   typedef VisitorT Visitor;

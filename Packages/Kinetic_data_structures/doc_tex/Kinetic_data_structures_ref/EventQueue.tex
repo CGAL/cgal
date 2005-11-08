@@ -33,7 +33,7 @@ queue must implement the \ccc{Event} concept.
 \ccCreation
 \ccCreationVariable{q}  %% choose variable name
 
-\ccConstructor{EventQueue(Time start, int size_hint);}{Construct a queue which will start at time start.}
+\ccConstructor{EventQueue(Priority start, Priority end, int size_hint);}{Construct a queue which will start at time start and run until time end.}
 
 \ccOperations
 
@@ -54,6 +54,8 @@ queue must implement the \ccc{Event} concept.
 \ccMethod{Priority next_priority() const;}{Return the priority of the next event in the queue.}
 
 \ccMethod{void process_next();}{Process the next \ccc{Event} by calling its process method with its \ccc{Priority}.}
+
+\ccMethod{void set_end_priority();}{Set the priority beyond which to ignore events.}
 
 \ccHasModels
 

@@ -25,9 +25,9 @@
 
 CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
 struct Rist3_types: public Sist_types  {
-  typedef CGAL::Regular_triangulation_euclidean_traits_3< Sest_types::Static_kernel> Static_kernel;
-  typedef Sest_types::Kinetic_kernel::Weighted_point_3 Active_object;
-  typedef Notifying_table<Active_object> Active_objects_table;
+  typedef CGAL::Regular_triangulation_euclidean_traits_3< Sist_types::Static_kernel> Static_kernel;
+  typedef Sist_types::Kinetic_kernel::Weighted_point_3 Active_object;
+  typedef Active_objects_vector<Active_object> Active_objects_table;
   typedef Regular_triangulation_instantaneous_traits_3< Active_objects_table,				
 							Static_kernel> Instantaneous_kernel;
 };
@@ -45,6 +45,13 @@ struct Regular_triangulation_inexact_simulation_traits_3:
 			    internal::Rist3_types::Kinetic_kernel,
 			    internal::Rist3_types::Simulator,
 			    internal::Rist3_types::Active_objects_table > {
+  typedef Simulation_traits<internal::Rist3_types::Static_kernel,
+			    internal::Rist3_types::Instantaneous_kernel,
+			    internal::Rist3_types::Kinetic_kernel,
+			    internal::Rist3_types::Simulator,
+			    internal::Rist3_types::Active_objects_table > P;
+  Regular_triangulation_inexact_simulation_traits_3(const P::Time lb=0,
+						    const P::Time ub=10000): P(lb, ub){}
 };
 CGAL_KDS_END_NAMESPACE
 

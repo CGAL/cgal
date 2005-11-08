@@ -114,7 +114,7 @@ public:
   }
 
   Edge cross(Edge &e) const {
-    int a=-1, b;
+    int a=-1, b=-1;
     for (int i=0; i<4; ++i){
       if (i != e.second && i != e.third){
 	if (a==-1) {
