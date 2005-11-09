@@ -67,6 +67,7 @@ Packages/Mesh_3/applications/off_to_ghs
 Packages/Mesh_3/applications/read_mesh
 Packages/Mesh_3/applications/slivers_exuder
 Packages/Mesh_3/applications/stat_mesh
+Packages/Mesh_3/doxygen
 Packages/Mesh_3/examples/Mesh_3/chair-after.mesh
 Packages/Mesh_3/examples/Mesh_3/chair-after.png
 Packages/Mesh_3/examples/Mesh_3/chair-before.png
