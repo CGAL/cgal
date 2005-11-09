@@ -209,13 +209,13 @@ int main(int , char** argv)
 
     ofs_maillage << tr.number_of_vertices() << " "
                  << CGAL::number_of_cells_in_domain(tr) << " "
-                 << CGAL::number_of_facets_on_surface(c2t3, 5)
+                 << CGAL::number_of_facets_on_surface_with_index(c2t3, 5)
                  << std::endl;
 
     for(int i = 1; i <= 5; ++i)
     {
       *ofs_surfaces[i] << tr.number_of_vertices() << " "
-                       << CGAL::number_of_facets_on_surface(c2t3, i)
+                       << CGAL::number_of_facets_on_surface_with_index(c2t3, i)
                        << std::endl;
     }
 

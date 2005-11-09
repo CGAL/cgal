@@ -311,8 +311,8 @@ int number_of_cells_in_domain(const Tr& T) {
 }
 
 template <class C2T3>
-int number_of_facets_on_surface(const C2T3& c2t3,
-                                const unsigned int surface_index)
+int number_of_facets_on_surface_with_index(const C2T3& c2t3,
+                                           const unsigned int surface_index)
 {
   typedef typename C2T3::Triangulation_3 Tr;
 
