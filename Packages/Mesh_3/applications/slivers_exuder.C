@@ -20,15 +20,13 @@ int main(int , char** argv)
   std::ofstream ofs(argv[2]);
   if( !ifs || !ofs)
   {
-    std::cerr << "Usage:\n"
-              << "  " << argv[0] << " INPUT OUTPUT\n"
-	      << "    INPUT must be a file name.\n"
-	      << "    OUPUT is the name of the ouput file.\n"
-              << "    both INPUT and OUPUT are files  of format .mesh.cgal,\n"
-              << "    produced by CGAL::Mesh_3::output_mesh(),\n"
-              << "    with points CGAL::Weighted_point_with_surface_index\n"
-              << "    and cells CGAL::Mesh_3::"
-      "Complex_2_in_triangulation_cell_base_3.\n";;
+    std::cerr <<
+"Usage:\n" <<
+"  " << argv[0] << " INPUT OUTPUT\n" <<
+"\n" <<
+"  INPUT" << format_cgal_description <<
+"\n" <<
+"  OUPUT is the name of the ouput file. It will be the same format\n";
     return EXIT_FAILURE;
   }
 

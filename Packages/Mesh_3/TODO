@@ -1,3 +1,11 @@
+- clean include/CGAL/IO/File_medit.h Surface_mesher/include/CGAL/IO/
+  and include/CGAL/IO.h
+  -- Laurent Rineau, 2005/11/09
+
+ - error messages, if reading file does not work, in applications/
+ - add a "writing..." in combined_spheres.C
+  -- Laurent Rineau, 2005/11/04
+
       - examples/Mesh_3/polyhedral_surface_mesher.C is broken because:
         - output_pslg_to_medit() in include/CGAL/IO/File_medit.h need
           surface_index() in points. :-(

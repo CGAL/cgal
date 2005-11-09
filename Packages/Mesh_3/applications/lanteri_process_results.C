@@ -77,23 +77,26 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
   return main_display.save_png(filename.c_str());
 }
 
-bool process_cells(const std::vector<Qualities>& volume_cells_quality)
+bool process_cells(const std::vector<Qualities>& volume_cells_quality,
+                   std::string filename_prefix)
 {
   return process_aux_1(volume_cells_quality,
-                       "lanteri_cells.png",
+                       filename_prefix + "_cells_radius_radius_ratio.png",
                        global_number_of_classes);
 }
 
-bool process_volume_edges(const std::vector<Qualities>& volume_edges_lenght)
+bool process_volume_edges(const std::vector<Qualities>& volume_edges_lenght,
+                          std::string filename_prefix)
 {
   return process_aux_2(volume_edges_lenght,
-                       "lanteri_volume_edges.png",
+                       filename_prefix + "_volume_edges_lenghts.png",
                        global_number_of_classes);
 }
 
-bool process_surface_edges(const std::vector<Qualities>& surface_edges_lenght)
+bool process_surface_edges(const std::vector<Qualities>& surface_edges_lenght,
+                           std::string filename_prefix)
 {
   return process_aux_2(surface_edges_lenght,
-                       "lanteri_surface_edges.png",
+                       filename_prefix + "_surface_edges.png",
                        global_number_of_classes);
 }

@@ -8,6 +8,8 @@ Double_options double_options;
 
 void init_parameters()
 {
+  double_options["r"] = 0;
+  double_options["special"] = 0.;
   double_options["curvature_bound"] = 1000000000000000.;
   
   // bound on radius of surface Delaunay balls

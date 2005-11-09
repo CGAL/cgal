@@ -97,7 +97,6 @@ template <class Gt, class Cb>
 inline
 std::ostream&
 operator<<(std::ostream &os, const Cell_with_volume_index<Gt, Cb>& c)
-  // no combinatorial information.
 {
   return os <<  static_cast<const Cb&>(c);
 }
@@ -124,9 +123,12 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 #include "utils.h"
 #include "distribution.h"
 
-bool process_cells(const std::vector<Qualities>& volume_cells_quality);
-bool process_volume_edges(const std::vector<Qualities>& volume_edges_lenght);
-bool process_surface_edges(const std::vector<Qualities>& surface_edges_lenght);
+bool process_cells(const std::vector<Qualities>& volume_cells_quality,
+                   std::string);
+bool process_volume_edges(const std::vector<Qualities>& volume_edges_lenght,
+                          std::string);
+bool process_surface_edges(const std::vector<Qualities>& surface_edges_lenght,
+                           std::string);
 
 #include "lanteri_utils.h"
 
@@ -138,19 +140,30 @@ int main(int , char**)
   C2T3 c2t3(tr);
 
   double r1, r2, r3, r4, r5;
+  std::vector<double> size_bounds(5);
+  std::vector<double> radii(5);
+  
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
+  std::cout << "Input the corresponding 5 size bounds:" << std::endl;
+  std::cin >> size_bounds[0]
+           >> size_bounds[1]
+           >> size_bounds[2]
+           >> size_bounds[3]
+           >> size_bounds[4];
+  if(!std::cin)
+    return EXIT_FAILURE;
 
   std::string filename;
   std::cout << "Input filename:" << std::endl;
   std::cin >> filename;
-  std::ifstream ifs(filename.c_str());
+  std::ifstream ifs((filename+".cgal").c_str());
   if( !ifs || !std::cin)
   {
     return EXIT_FAILURE;
   }
 
-  std::cout << "  Reading " << filename << std::endl;
+  std::cout << "  Reading " << (filename+".cgal") << std::endl;
   if( ! CGAL::Mesh_3::input_mesh(ifs,
                                  c2t3,
                                  true,         // debug
@@ -194,10 +207,10 @@ int main(int , char**)
 
   std::cout << "\n"
             << "  Edges lengths:\n";
-  if(!scan_edges_and_process(tr, "    ", &std::cout))
+  if(!scan_edges_and_process(tr, filename, "    ", &std::cout))
     return EXIT_FAILURE;
     
-  if(!scan_cells_and_process(tr))
+  if(!scan_cells_and_process(tr, filename))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

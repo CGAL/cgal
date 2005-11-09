@@ -1,5 +1,4 @@
 #include "Gd_displayer.h"
-#include <stdio.h>
 
 Gd_displayer::Gd_displayer(int sx, int sy)
 {

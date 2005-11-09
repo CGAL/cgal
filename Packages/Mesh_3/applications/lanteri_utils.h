@@ -1,6 +1,9 @@
+#include <string>
+
 template <class Tr>
 bool
 scan_edges_and_process(const Tr& tr,
+                       std::string filename_prefix,
                        std::string prefix = "",
                        // prefix to each line output
                        std::ostream* out_stream =
@@ -8,6 +11,7 @@ scan_edges_and_process(const Tr& tr,
                        // output stream
                        )
 {
+  // reminder: Qualities is std::vector<double> (voir "distribution.h")
   std::vector<Qualities> surface_edges_length;
   std::vector<Qualities> volume_edges_length;
 
@@ -77,13 +81,13 @@ scan_edges_and_process(const Tr& tr,
                 << volume_edges_length_max[i] << std::endl;
   }
 
-  return process_surface_edges(surface_edges_length) &&
-    process_volume_edges(volume_edges_length);
+  return process_surface_edges(surface_edges_length, filename_prefix) &&
+    process_volume_edges(volume_edges_length, filename_prefix);
 }
 
 template <class Tr>
 bool
-scan_cells_and_process(const Tr& tr)
+scan_cells_and_process(const Tr& tr, std::string filename_prefix)
 {
   std::vector<Qualities> volume_cells_quality;
 
@@ -106,5 +110,5 @@ scan_cells_and_process(const Tr& tr)
       volume_cells_quality[positive_index].push_back(quality);
     }
 
-  return process_cells(volume_cells_quality);
+  return process_cells(volume_cells_quality, filename_prefix);
 }

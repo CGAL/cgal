@@ -42,6 +42,7 @@
 #include <algorithm> // std::max_element()
 #include <sstream>
 
+
 /////////////// Types /////////////// 
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
@@ -60,10 +61,136 @@ typedef CGAL::Surface_mesher::Multi_implicit_oracle<My_traits, Func> Impl_oracle
 typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
+
+
+
+
+
+
+class Special_tets_criteria
+{
+  double size_bound;
+  double shape_bound;
+  double special_size;
+  double r;
+
+public:
+  Special_tets_criteria(const double special_size, const double r1,
+                        const double radius_edge_bound = 2,
+                        const double squared_radius_bound = 0)
+    : size_bound(squared_radius_bound),
+      shape_bound(radius_edge_bound),
+      special_size(special_size),
+      r(r1) {}
+
+  typedef Tr::Cell_handle Cell_handle;
+  typedef Tets_criteria::Quality Quality;
+
+  class Is_bad
+  {
+  protected:
+    const double shape_bound;
+    const double size_bound;
+    const double r1;
+    const double squared_special_size;
+  public:
+    typedef Tr::Point Point_3;
+      
+    Is_bad(const double radius_edge_bound, 
+	   const double squared_radius_bound,
+           const double r1,
+           const double size)
+      : shape_bound(radius_edge_bound),
+	size_bound(squared_radius_bound),
+        r1(r1),
+        squared_special_size(size*size){};
+      
+    bool operator()(const Cell_handle& c,
+                    Quality& qual) const
+    {
+      const Point_3& p = c->vertex(0)->point();
+      const Point_3& q = c->vertex(1)->point();
+      const Point_3& r = c->vertex(2)->point();
+      const Point_3& s = c->vertex(3)->point();
+
+      typedef Tr::Geom_traits Geom_traits;
+      typedef Geom_traits::Compute_squared_radius_3 Radius;
+      typedef Geom_traits::Compute_squared_distance_3 Distance;
+      typedef Geom_traits::Construct_circumcenter_3 Circumcenter;
+      typedef Geom_traits::FT FT;
+
+      Radius radius = Geom_traits().compute_squared_radius_3_object();
+      Distance distance = Geom_traits().compute_squared_distance_3_object();
+      Circumcenter circumcenter = 
+        Geom_traits().construct_circumcenter_3_object();
+
+      const double sq_distance_from_origin = 
+        CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
+
+      double min_sq_length = CGAL::to_double(distance(p, q));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(p, r)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(p, s)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(q, r)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(q, s)));
+      min_sq_length = CGAL::min(min_sq_length,
+                                CGAL::to_double(distance(r, s)));
+
+      double min_size_bound = size_bound;
+      if( squared_special_size != 0 && 
+          sq_distance_from_origin < r1*r1 )
+      {
+        if( min_size_bound == 0 )
+          min_size_bound = squared_special_size;
+        else
+          if( squared_special_size < min_size_bound )
+            min_size_bound = squared_special_size;
+      }
+
+      if( min_size_bound != 0)
+      {
+        qual.second = min_sq_length / min_size_bound;
+        // normalized by size bound to deal
+        // with size field
+        if( qual.sq_size() > 1 )
+        {
+          qual.first = 1; // (do not compute aspect)
+          return true;
+        }
+      }
+      if( shape_bound == 0 )
+      {
+        qual = Quality(0,1);
+        return false;
+      }
+
+      const double size = CGAL::to_double(radius(p, q, r, s));
+      qual.first = size / min_sq_length;
+
+      return (qual.first > shape_bound);
+    }
+
+  }; // end Is_bad
+
+
+  Is_bad is_bad_object() const
+  { return Is_bad(shape_bound, size_bound, r, special_size); }
+
+}; // end Special_tets_criteria
+
+
+
+
+
+
+
 typedef CGAL::Implicit_surfaces_mesher_3<Tr, 
 					 Impl_oracle,
                                          Criteria,
-                                         Tets_criteria> Mesher;
+                                         Special_tets_criteria> Mesher;
 
 typedef CGAL::Simple_cartesian<double> Simple_kernel;
 typedef Simple_kernel::Iso_rectangle_2 Rectangle_2;
@@ -450,8 +577,13 @@ int main(int argc, char **argv) {
   //  criterion_vector.push_back(&facet_on_surface_criterion);
   Criteria C (criterion_vector);
 
-  Tets_criteria tets_criteria(double_options["tets_aspect_ratio_bound"],
-			      double_options["tets_size_bound"]);
+//   Tets_criteria tets_criteria(double_options["tets_aspect_ratio_bound"],
+// 			      double_options["tets_size_bound"]);
+  Special_tets_criteria
+    tets_criteria(double_options["special"],
+                  double_options["r"],
+                  double_options["tets_aspect_ratio_bound"],
+                  double_options["tets_size_bound"]);
 
   std::cerr << "Initial number of points: " << tr.number_of_vertices() 
             << std::endl;

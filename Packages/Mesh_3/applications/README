@@ -9,8 +9,25 @@ Here is the list of tools:
     slivers_exuder
     display_distribution
     lanteri
+    cgal_to_medit
 
 Details follows...
+
+Files formats:
+-------------
+[too be written]
+
+cgal_to_medit:
+-------------
+Usage:
+  ./cgal_to_medit INPUT OUPUT
+
+  INPUT must be a file of format produced by the output operator of
+  CGAL::Triangulation_3, with points
+  CGAL::Weighted_point_with_surface_index and cells
+  CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
+
+  OUTPUT will be a medit file.
 
 lanteri:
 --------
@@ -71,21 +88,29 @@ read_mesh:
 ---------
 Usage:
   ./read_mesh FILE
-  FILE must be a .mesh file.
 
+  FILE must be a file of format produced by the output operator of
+  CGAL::Triangulation_3, with points
+  CGAL::Weighted_point_with_surface_index and cells
+  CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
+ 
 This tools read a .mesh file and displays faces counts, such as in:
     Vertices: 3247
     Facets on surface: 6474
     Cells: 19670
     Cells in volume: 18335
-
+ 
 This file uses utils.h, and types.h.
-
+ 
 stat_mesh:
 ---------
 Usage:
   ./stat_mesh FILE
-  FILE must be a .mesh file.
+
+  FILE must be a file of format produced by the output operator of
+  CGAL::Triangulation_3, with points
+  CGAL::Weighted_point_with_surface_index and cells
+  CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
 
 Same as read_mesh, but displays more informations:
     Vertices: 3247
@@ -112,11 +137,16 @@ Same as read_mesh, but displays more informations:
 
 slivers_exuder:
 --------------
-This tools exudes slivers from a .mesh file (medit format).
+This tools exudes slivers from a cgal triangulation.
 
 Usage:
   ./slivers_exuder INPUT OUTPUT
-    INPUT must be a .mesh file name.
-    OUPUT is the name of a .mesh file ouput.
+
+  INPUT must be a file of format produced by the output operator of
+  CGAL::Triangulation_3, with points
+  CGAL::Weighted_point_with_surface_index and cells
+  CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
+
+  OUPUT is the name of the ouput file. It will be the same format
 
 Uses utils.h and weighted_types.h.

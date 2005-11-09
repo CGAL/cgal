@@ -55,11 +55,12 @@ LDFLAGS = \
 
 RUN_PROGRAMS=  	combined_spheres$(EXE_EXT)
 
-LINKS = ../../applications/lanteri \
-        ../../applications/read_mesh \
-        ../../applications/stat_mesh \
-        ../../applications/display_distribution \
-        ../../applications/slivers_exuder 
+TOOLS = lanteri \
+        read_mesh \
+        stat_mesh \
+        display_distribution \
+        slivers_exuder \
+        cgal_to_medit
 
 .PHONY: all run tools links clean
 
@@ -69,13 +70,13 @@ run: $(RUN_PROGRAMS)
 	for p in $(RUN_PROGRAMS); do ./$p; done
 
 links:
-	for l in $(LINKS); do rm -f `basename $$l`; ln -s $$l .; done
+	for t in $(TOOLS); do rm -f $$t; ln -s ../../applications/$$t .; done
 
 tools:
-	for l in $(LINKS); do \
-	  make -C ../../applications `basename $$l`; \
-		OTHER_CXXFLAGS=$(OTHER_CXXFLAGS)\
-	 done
+	for t in $(TOOLS); do \
+	  make -C ../../applications $$t \
+	           OTHER_CXXFLAGS=$(OTHER_CXXFLAGS) ; \
+	done
 
 multi_spheres$(EXE_EXT): multi_spheres$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)multi_spheres multi_spheres$(OBJ_EXT) $(LDFLAGS)

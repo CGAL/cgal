@@ -19,11 +19,9 @@ int main(int , char** argv)
   {
     std::cerr << "Usage:\n"
               << "  " << argv[0] << " FILE\n"
-	      << "  FILE must be a file of format .mesh.cgal,\n"
-              << "  produced by CGAL::Mesh_3::output_mesh(),\n"
-              << "  with points CGAL::Weighted_point_with_surface_index\n"
-              << "  and cells CGAL::Mesh_3::"
-      "Complex_2_in_triangulation_cell_base_3.\n";
+              << "\n"
+	      << "  FILE" << format_cgal_description
+              << "\n";
     return EXIT_FAILURE;
   }
 
