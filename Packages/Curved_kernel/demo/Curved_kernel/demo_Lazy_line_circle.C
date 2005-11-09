@@ -403,7 +403,7 @@ public slots:
       v = get_segment_layer->get_line_arc();
     }
     arc_container().push_back(v);
-    insert(pm(),arc_container().back(),pl());
+    insert_curve(pm(),arc_container().back(),pl());
     something_changed = true;
     widget->redraw();
   }
@@ -418,7 +418,7 @@ public slots:
 //	insert(pm(),*it,pl());
 //      };
 //    }
-      insert(pm(),arc_container().begin(), arc_container().end());
+      insert_curves(pm(),arc_container().begin(), arc_container().end());
       std::cout << pm().number_of_vertices() << std::endl;
       std::cout << pm().number_of_halfedges() << std::endl;
     something_changed = true;

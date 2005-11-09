@@ -372,7 +372,7 @@ public slots:
       v = get_segment_layer->get_line_arc();
     }
     arc_container().push_back(v);
-    insert(pm(),arc_container().back(),pl());
+    insert_curve(pm(),arc_container().back(),pl());
     something_changed = true;
     widget->redraw();
   }
@@ -384,7 +384,7 @@ public slots:
       pm().clear();
       for (ArcContainer::const_iterator it=arc_container().begin();
 	   it != arc_container().end(); ++it) {
-	insert(pm(),*it,pl());
+	insert_curve(pm(),*it,pl());
       };
     }
     something_changed = true;
