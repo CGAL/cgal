@@ -192,6 +192,9 @@ main( int argc, char **argv) {
 
     Switch help_switch  = NO_SWITCH;
     Switch dummy_switch;
+    
+    insertInternalGlobalMacro( "\\lciInstallLatexConverterCSSFile", "" );
+    
     for (i = 1; i < argc; i++) {
 
         /* check switches */
@@ -319,6 +322,7 @@ main( int argc, char **argv) {
 	    cerr << prog_name << " " << prog_release << " (c) Lutz Kettner" 
 		 << endl;
 	    cerr << "Using: ";
+            eraseMacro( "\\lciInstallLatexConverterCSSFile" );
         endDetect();
         detectSwitch( help_switch, "h");
         endDetect();
