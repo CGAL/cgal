@@ -41,15 +41,23 @@ all:            \
                 display_distribution$(EXE_EXT) \
                 off_to_ghs$(EXE_EXT) \
                 lanteri$(EXE_EXT) \
+                lanteri_output_tet_mesh$(EXE_EXT) \
                 read_mesh$(EXE_EXT) \
                 slivers_exuder$(EXE_EXT) \
+                cgal_to_medit$(EXE_EXT) \
                 stat_mesh$(EXE_EXT) 
+
+cgal_to_medit$(EXE_EXT): cgal_to_medit$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cgal_to_medit cgal_to_medit$(OBJ_EXT) $(LDFLAGS)
 
 display_distribution$(EXE_EXT): display_distribution$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)display_distribution display_distribution$(OBJ_EXT) $(LDFLAGS)
 
 off_to_ghs$(EXE_EXT): off_to_ghs$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)off_to_ghs off_to_ghs$(OBJ_EXT) $(LDFLAGS)
+
+lanteri_output_tet_mesh$(EXE_EXT): lanteri_output_tet_mesh$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_output_tet_mesh lanteri_output_tet_mesh$(OBJ_EXT) $(LDFLAGS)
 
 lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
                    distribution$(OBJ_EXT) \
@@ -78,7 +86,9 @@ stat_mesh$(EXE_EXT): stat_mesh$(OBJ_EXT)
 clean: \
                    distribution.clean \
                    Gd_displayer.clean \
+                   cgal_to_medit.clean \
                    lanteri.clean \
+                   lanteri_output_tet_mesh.clean \
                    lanteri_process_results.clean \
                    Qt_widget_displayer.clean \
                    read_mesh.clean \

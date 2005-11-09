@@ -310,6 +310,45 @@ int number_of_cells_in_domain(const Tr& T) {
   return result;
 }
 
+template <class C2T3>
+int number_of_facets_on_surface(const C2T3& c2t3,
+                                const unsigned int surface_index)
+{
+  typedef typename C2T3::Triangulation_3 Tr;
+
+  const Tr& tr = c2t3.triangulation();
+
+  int count = 0;
+
+  for(typename Tr::Finite_facets_iterator fit = tr.finite_facets_begin();
+      fit != tr.finite_facets_end();
+      ++fit)
+  {
+    const typename Tr::Cell_handle& cell = fit->first;
+    const int index = fit->second;
+
+    if(c2t3.complex_subface_type(cell, index) != C2T3::NOT_IN_COMPLEX)
+    {
+      const typename Tr::Vertex_handle& va = cell->vertex((index+1)&3);
+      const typename Tr::Vertex_handle& vb = cell->vertex((index+1)&3);
+      const typename Tr::Vertex_handle& vc = cell->vertex((index+1)&3);
+
+      const unsigned int va_index = va->point().surface_index();
+      const unsigned int vb_index = vb->point().surface_index();
+      const unsigned int vc_index = vc->point().surface_index();
+
+      if(va_index == surface_index &&
+         vb_index == surface_index &&
+         vc_index == surface_index)
+      {
+        ++count;
+      }
+    }
+  }
+  return count;
+} // end number_of_facets_on_surface(Tr, int) 
+
+
 } // end namespace CGAL
 
 #endif // CGAL_IO_FILE_MEDIT_H
