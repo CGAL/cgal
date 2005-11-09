@@ -97,7 +97,7 @@ int main(){
   for (ArcContainer::const_iterator it=ac.begin();
        it != ac.end(); ++it) {
     //insert(_pm,_pl,*it);
-    insert(_pm,*it,_pl);
+    insert_curve(_pm,*it,_pl);
       };
   
   return 0;

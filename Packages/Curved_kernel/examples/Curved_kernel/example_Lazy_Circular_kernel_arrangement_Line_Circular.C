@@ -169,7 +169,7 @@ int main(){
   for (ArcContainer::const_iterator it=ac.begin();
        it != ac.end(); ++it) {
     //insert(_pm,_pl,*it);
-    insert(_pm,*it,_pl);
+    insert_curve(_pm,*it,_pl);
       };
 
   t2=clck1.time();
@@ -188,7 +188,7 @@ int main(){
   for (ArcContainer2::const_iterator it2=ac2.begin();
        it2 != ac2.end(); ++it2) {
     //insert(_pm,_pl,*it);
-    insert(_pm2,*it2,_pl2);
+    insert_curve(_pm2,*it2,_pl2);
       };
 
   t4=clck2.time();

@@ -98,7 +98,7 @@ int main(){
 	 it != ac.end(); ++it) {
       std::cout << i++ << std::endl;
       //insert(_pm,_pl,*it);
-      insert(_pm,*it,_pl);
+      insert_curve(_pm,*it,_pl);
     };
   }
   return 0;
