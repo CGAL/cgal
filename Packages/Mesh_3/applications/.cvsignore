@@ -2,7 +2,11 @@ lanteri
 stat_mesh
 read_mesh
 slivers_exuder
+cgal_to_medit
 *.mesh
 *.png
+*.maillage
+*.surface*
 display_distribution
+lanteri_output_tet_mesh
 off_to_ghs

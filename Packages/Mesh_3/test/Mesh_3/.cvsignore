@@ -4,3 +4,5 @@ multi_spheres
 *.mesh
 *.cgal
 *.png
+*.maillage
+*.surface*
