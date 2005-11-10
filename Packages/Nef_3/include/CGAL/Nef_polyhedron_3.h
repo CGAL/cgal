@@ -1268,8 +1268,32 @@ protected:
     } else {
       Halffacet_iterator fi;
       CGAL_forall_halffacets(fi,snc()) {
-	if(is_standard(fi) || ninety)
+	if(is_standard(fi) || ninety) {
 	  fi->plane() = fi->plane().transform( aff);
+#ifdef CGAL_NEF3_FACET_WITH_BOX 
+	  typedef typename Halffacet::Box Box;
+	  bool first = true;
+	  Halffacet_cycle_iterator cycle_it = fi->facet_cycles_begin();
+	  if( cycle_it.is_shalfedge() ) {
+	    SHalfedge_iterator edge_it(cycle_it);
+	    SHalfedge_around_facet_circulator
+	      start( edge_it ), end( edge_it );
+	    CGAL_For_all( start, end ) {
+	      const Point_3& p = start->source()->source()->point();
+	      typename Kernel::FT q[3];
+	      q[0] = p.x();
+	      q[1] = p.y();
+	      q[2] = p.z();
+	      if(first) {
+		fi->b = Box(q,q);
+		first = false;
+	      } else
+		fi->b.extend(q);
+	    }
+	  } else
+	    CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?"); 
+#endif
+	}
       }    
 
       if(!aff.is_even())

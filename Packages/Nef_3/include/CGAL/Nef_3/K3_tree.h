@@ -762,7 +762,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 #endif
   for( o = O.begin(); o != O.end(); ++o) {
     if( CGAL::assign( v, *o)) {
-      if( level) os << v->point() << std::endl;
+      if( level || true) os << v->point() << std::endl;
       ++v_count;
     }
     else if( CGAL::assign( e, *o)) {
@@ -994,12 +994,13 @@ bool classify_objects(Object_iterator start, Object_iterator end,
 #ifdef CGAL_NEF3_FACET_WITH_BOX
     Partial_facet pf,pfn,pfp;
     if( side == ON_ORIENTED_BOUNDARY && CGAL::assign(pf, *o)) {
-      pf.divide(partition_plane, pfn, pfp);
-      *o1 = Object_handle(pfn);
-      ++o1;
-      *o2 = Object_handle(pfp);
-      ++o2;
-      return true;
+      if(pf.divide(partition_plane, pfn, pfp)) {
+        *o1 = Object_handle(pfn);
+        ++o1;
+        *o2 = Object_handle(pfp);
+        ++o2;
+        return true;
+      }
     }
 #endif
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {

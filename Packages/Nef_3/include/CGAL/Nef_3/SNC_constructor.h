@@ -1526,7 +1526,8 @@ public:
     timer_ray_shooting.reset();
 #endif 
 
-    //    CGAL_NEF_SETDTHREAD(43*37*503*509);
+    //    CGAL_NEF_SETDTHREAD(37*43*503*509);
+
     CGAL_NEF_TRACEN(">>>>>create_volumes");
     Sface_shell_hash     ShellSf(-1);
     Face_shell_hash      ShellF(-1);

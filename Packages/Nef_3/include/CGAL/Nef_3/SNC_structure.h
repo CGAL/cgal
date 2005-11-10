@@ -526,8 +526,8 @@ public:
     Isolated_vertex_iterator isolated_vertices_end() { return isolated_vertices.end(); }
 
     bool divide(const Plane_3& p, Partial_facet& pf1, Partial_facet& pf2) {
-      std::cerr << "divide " << std::endl;
-      debug();
+      //      std::cerr << "divide " << std::endl;
+      //      debug();
       pf1.f = pf2.f = f;
       Outer_cycle_iterator oc = outer_cycles.begin();
       for(;oc != outer_cycles.end(); ++oc) {
@@ -535,16 +535,18 @@ public:
 	CGAL_assertion(oc->first != oc->second);
 	SHalfedge_around_facet_circulator se = oc->first, se_begin(se), se_new(se), se_end;
 	Oriented_side ref = p.oriented_side(se->source()->source()->point()), cur;
-	std::cerr << "start " << se->source()->source()->point() << ":" << ref << std::endl;
+	//	std::cerr << "start " << se->source()->source()->point() << ":" << ref << std::endl;
 	while(ref == ON_ORIENTED_BOUNDARY && se != oc->second) {
 	  ++se;
 	  ref = p.oriented_side(se->source()->source()->point());
-	  std::cerr << "boundary " << se->source()->source()->point() << ":" << ref  << std::endl;
+	  //	  std::cerr << "boundary " << se->source()->source()->point() << ":" << ref  << std::endl;
 	}
+	if(se == oc->second) 
+	  return false;
 
 	for(++se;se != oc->second;++se) {
 	  cur = p.oriented_side(se->source()->source()->point());
-	  std::cerr << "current " << se->source()->source()->point() << ":" << cur  << std::endl;
+	  //	  std::cerr << "current " << se->source()->source()->point() << ":" << cur  << std::endl;
 	  if(cur != ref) {
 	    CGAL_assertion(ref != ON_ORIENTED_BOUNDARY);
 	    if(cur == ON_ORIENTED_BOUNDARY) {
@@ -567,11 +569,21 @@ public:
 	      se_new = se;
 	  next = false;
 	}
-	std::cerr << "end of cycle " << ref << std::endl;
-	if(ref == ON_POSITIVE_SIDE)
-	  pf2.outer_cycles.push_back(Outer_cycle(se_begin, se));
-	else if(ref == ON_NEGATIVE_SIDE)
-	  pf1.outer_cycles.push_back(Outer_cycle(se_begin, se));
+	//	std::cerr << "end of cycle " << ref << std::endl;
+	if(next) {
+	  if(ref == ON_POSITIVE_SIDE) {
+	    pf1.outer_cycles.push_back(Outer_cycle(se_new, se));
+	    pf2.outer_cycles.push_back(Outer_cycle(se_begin, --se));
+	  } else {
+	    pf2.outer_cycles.push_back(Outer_cycle(se_new, se));	 
+	    pf1.outer_cycles.push_back(Outer_cycle(se_begin, --se));	 
+	  }
+	} else {
+	  if(ref == ON_POSITIVE_SIDE)
+	    pf2.outer_cycles.push_back(Outer_cycle(se_begin, se));
+	  else if(ref == ON_NEGATIVE_SIDE)
+	    pf1.outer_cycles.push_back(Outer_cycle(se_begin, se));
+	}
       }
 
       Inner_cycle_iterator ic = inner_cycles.begin();
@@ -609,9 +621,9 @@ public:
 	if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
 	  pf1.isolated_vertices.push_back(*iv);
       }
-      std::cerr << "into " << std::endl;
-      pf1.debug();      
-      pf2.debug();
+      //      std::cerr << "into " << std::endl;
+      //      pf1.debug();      
+      //      pf2.debug();
       return true;
     }
 

@@ -98,7 +98,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_contain_internally( Partial_facet& pf, 
 				const Point_3& p) const {
     CGAL_NEF_TRACEN("does point lie in partial facet" << p);
-    pf.debug();
+    //    pf.debug();
     if( !pf.f->plane().has_on(p))
       return false;
     return (locate_point_in_halffacet( p, pf) == CGAL::ON_BOUNDED_SIDE); 
@@ -331,7 +331,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_intersect_internally( const Segment_3& seg,
 				  Partial_facet pf,
 				  Point_3& p) const { 
-    CGAL_NEF_TRACEN("-> Intersection facet - segment");
+    CGAL_NEF_TRACEN("-> Intersection partial facet - segment");
     Plane_3 h( pf.f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
     CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
@@ -416,6 +416,11 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					 Partial_facet pf) const {
 
+    if(p.x() < pf.f->b.min_coord(0) || p.x() > pf.f->b.max_coord(0) ||
+       p.y() < pf.f->b.min_coord(1) || p.y() > pf.f->b.max_coord(1) ||
+       p.z() < pf.f->b.min_coord(2) || p.z() > pf.f->b.max_coord(2))
+      return CGAL::ON_UNBOUNDED_SIDE;
+    
     typedef Project_halfedge_point
       < SHalfedge, Point_3> Project;
     typedef Iterator_project
