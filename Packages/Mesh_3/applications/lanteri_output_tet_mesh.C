@@ -157,7 +157,9 @@ int main(int , char** argv)
   std::ofstream ofs_maillage((file_prefix + ".maillage").c_str());
 
   // output five surface meshes files
-  std::vector<std::ofstream*> ofs_surfaces(5);
+  std::vector<std::ofstream*> ofs_surfaces(6); 
+  // ofs_surfaces[0] will not be used.
+
   for(int i = 1; i <= 5; ++i)
   {
     std::stringstream str_stream;
