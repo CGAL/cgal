@@ -1,4 +1,3 @@
-#line 1254 "k3_tree.nw"
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -38,7 +37,13 @@ public:
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
-  typedef typename SNC_structure::Halffacet_triangle_handle Halffacet_triangle_handle;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+  typedef typename SNC_structure::Halffacet_triangle_handle 
+                                  Halffacet_triangle_handle;
+#endif
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+  typedef typename SNC_structure::Partial_facet Partial_facet;
+#endif
   typedef typename SNC_structure::Object_handle Object_handle;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
@@ -61,8 +66,12 @@ public:
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Vertex_handle v, Depth depth);
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Halfedge_handle e, Depth depth);
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Halffacet_handle f, Depth depth);
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Halffacet_triangle_handle f, Depth depth);
-
+#endif
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+  template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Partial_facet& f, Depth depth);
+#endif
   bool reference_counted;
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
@@ -122,8 +131,13 @@ public:
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
   typedef typename SNC_structure::Halffacet_triangle_handle 
                                   Halffacet_triangle_handle;
+#endif
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+  typedef typename SNC_structure::Partial_facet Partial_facet;
+#endif
 
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef std::vector<Object_handle> Object_list;
@@ -161,19 +175,29 @@ Side_of_plane<SNC_decorator>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+  Halffacet_triangle_handle t;
+#endif
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+  Partial_facet pf;
+#endif
   if( CGAL::assign( v, o))
     return (*this)( pl, pop, v, depth);
   else if( CGAL::assign( e, o))
     return (*this)( pl, pop, e, depth);
   else if( CGAL::assign( f, o))
     return (*this)( pl, pop, f, depth);
-  else {
-    Halffacet_triangle_handle t;
-    if( CGAL::assign( t, o))
-      return (*this)( pl, pop, t, depth);
-    else
-      CGAL_assertion_msg( 0, "wrong handle");
-  }
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+  else if( CGAL::assign(pf, o))
+    return (*this)( pl, pop, pf.f, depth);
+#endif
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+  else if( CGAL::assign( t, o))
+    return (*this)( pl, pop, t, depth);
+#endif
+  else
+    CGAL_assertion_msg( 0, "wrong handle");
+  
   return Oriented_side(); // never reached
 }
 
@@ -301,6 +325,7 @@ Side_of_plane<SNC_decorator>::operator()
   return ON_ORIENTED_BOUNDARY;
 }
 
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
 template <typename SNC_decorator>
 template <typename Depth>
 Oriented_side
@@ -353,6 +378,7 @@ Side_of_plane<SNC_decorator>::operator()
   CGAL_assertion( on_negative_side);
   return ON_NEGATIVE_SIDE;
 }
+#endif
 
 /* 
    As for the edges, if a facet is tanget to the plane it is not considered as
@@ -365,12 +391,49 @@ Side_of_plane<SNC_decorator>::operator()
    as far as two vertices located on different sides of the plane.
 */
 
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+template <class SNC_decorator>
+template <typename Depth>
+Oriented_side
+Side_of_plane<SNC_decorator>::operator()
+  ( const Plane_3& pl, const Point_3& pop, Partial_facet& pf, Depth depth) {
+  CGAL_assertion_msg(false, "not implemented yet");
+  
+  return ON_ORIENTED_BOUNDARY;
+}
+#endif
+
 template <class SNC_decorator>
 template <typename Depth>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
   ( const Plane_3& pl, const Point_3& pop, Halffacet_handle f, Depth depth) {
     CGAL_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+    switch(depth%3) {
+    case 0:
+      if(f->b.min_coord(0) > pop.x())
+	return ON_POSITIVE_SIDE;
+      if(f->b.max_coord(0) < pop.x())
+	return ON_NEGATIVE_SIDE;
+      break;
+    case 1:
+      if(f->b.min_coord(1) > pop.y())
+	return ON_POSITIVE_SIDE;
+      if(f->b.max_coord(1) < pop.y())
+	return ON_NEGATIVE_SIDE;
+      break;
+    case 2:
+      if(f->b.min_coord(2) > pop.z())
+	return ON_POSITIVE_SIDE;
+      if(f->b.max_coord(2) < pop.z())
+	return ON_NEGATIVE_SIDE;
+      break;
+    default: CGAL_assertion_msg(false, "wrong value");
+    }    
+    return ON_ORIENTED_BOUNDARY;
+#else  
+
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
   CGAL_assertion(fc.is_shalfedge());
@@ -401,6 +464,7 @@ Side_of_plane<SNC_decorator>::operator()
       return ON_ORIENTED_BOUNDARY;
   }
   return facet_side;
+#endif
 }
 
 template <class SNC_decorator>

@@ -72,6 +72,17 @@ struct binop_intersection_test_segment_tree {
         init( true );
       } else {
         init( false );
+#ifdef CGAL_NEF3_FACET_WITH_BOX 
+	std::pair<double, double> q[3];
+	q[0] = CGAL::to_interval( f->b.min_coord(0) );
+	q[1] = CGAL::to_interval( f->b.min_coord(1) );
+	q[2] = CGAL::to_interval( f->b.min_coord(2) );
+	Box_intersection_d::Box_d< double, 3 >::extend(q);
+	q[0] = CGAL::to_interval( f->b.max_coord(0) );
+	q[1] = CGAL::to_interval( f->b.max_coord(1) );
+	q[2] = CGAL::to_interval( f->b.max_coord(2) );
+	Box_intersection_d::Box_d< double, 3 >::extend(q);	
+#else
         Halffacet_cycle_iterator cycle_it = f->facet_cycles_begin();
         if( cycle_it.is_shalfedge() ) {
 	  SHalfedge_iterator edge_it(cycle_it);
@@ -83,6 +94,7 @@ struct binop_intersection_test_segment_tree {
           }
         } else
           CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
+#endif
       }
     }
 

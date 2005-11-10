@@ -1201,7 +1201,7 @@ public:
   void pair_up_halfedges() const {
   /*{\Mop pairs all halfedge stubs to create the edges in 3-space.}*/
 
-  //  CGAL_NEF_SETDTHREAD(43*61);
+//    CGAL_NEF_SETDTHREAD(43*61);
     CGAL_NEF_TRACEN(">>>>>pair_up_halfedges");
     typedef Halfedge_key< Point_3, Halfedge_handle, SNC_decorator>
       Halfedge_key;
@@ -1487,6 +1487,32 @@ public:
       FM_decorator D(*this->sncp());
       D.create_facet_objects(it->first,it->second.begin(),it->second.end());
     }
+#ifdef CGAL_NEF3_FACET_WITH_BOX 
+    typedef typename Halffacet::Box Box;
+    Halffacet_handle f;
+    CGAL_forall_halffacets(f, *this->sncp()) {      
+      bool first = true;
+      Halffacet_cycle_iterator cycle_it = f->facet_cycles_begin();
+      if( cycle_it.is_shalfedge() ) {
+	SHalfedge_iterator edge_it(cycle_it);
+	SHalfedge_around_facet_circulator
+	  start( edge_it ), end( edge_it );
+	CGAL_For_all( start, end ) {
+	  const Point_3& p = start->source()->source()->point();
+	  typename Kernel::FT q[3];
+	  q[0] = p.x();
+	  q[1] = p.y();
+	  q[2] = p.z();
+	  if(first) {
+	    f->b = Box(q,q);
+	    first = false;
+	  } else
+	    f->b.extend(q);
+	}
+      } else
+	CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?"); 
+    }
+#endif
     //    CGAL_NEF_SETDTHREAD(1);
   }
 
@@ -1500,7 +1526,7 @@ public:
     timer_ray_shooting.reset();
 #endif 
 
-    //    CGAL_NEF_SETDTHREAD(37*43*19*47);
+    //    CGAL_NEF_SETDTHREAD(43*37*503*509);
     CGAL_NEF_TRACEN(">>>>>create_volumes");
     Sface_shell_hash     ShellSf(-1);
     Face_shell_hash      ShellF(-1);
