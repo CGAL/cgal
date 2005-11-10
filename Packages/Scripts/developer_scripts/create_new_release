@@ -106,8 +106,13 @@ do
   [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
 done
 
+################################
+
+# The module stuff is commented out on 10/11/05, because those scripts are
+# unused now, and they might make the conversion to SVN harder.
+
 # We now call the create_modules script
 # The All directory is the CVSDIR directory
 
-cd ${TMPDIR}
-./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
+# cd ${TMPDIR}
+# ./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1

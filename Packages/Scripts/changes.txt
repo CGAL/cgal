@@ -1,3 +1,6 @@
+10 November 2005 Sylvain Pion
+- create_new_release : Comment out module creation stuff.
+
 29 October 2005 Sylvain Pion
 - Add NICE_OPTIONS option to autotest_cgal.
 
