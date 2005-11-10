@@ -12,7 +12,7 @@
 
 #include "utils.h"
 
-int main(int , char** argv)
+int main(int argc, char** argv)
 {
   Tr tr;
   C2T3 c2t3(tr);
