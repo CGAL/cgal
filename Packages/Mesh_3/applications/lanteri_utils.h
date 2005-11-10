@@ -3,6 +3,7 @@
 template <class Tr>
 bool
 scan_edges_and_process(const Tr& tr,
+                       std::vector<double> length_bounds,
                        std::string filename_prefix,
                        std::string prefix = "",
                        // prefix to each line output
@@ -81,8 +82,12 @@ scan_edges_and_process(const Tr& tr,
                 << volume_edges_length_max[i] << std::endl;
   }
 
-  return process_surface_edges(surface_edges_length, filename_prefix) &&
-    process_volume_edges(volume_edges_length, filename_prefix);
+  return process_surface_edges(surface_edges_length,
+                               length_bounds,
+                               filename_prefix) &&
+    process_volume_edges(volume_edges_length,
+                         length_bounds,
+                         filename_prefix);
 }
 
 template <class Tr>

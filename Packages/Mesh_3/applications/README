@@ -3,19 +3,32 @@ are not demos nor examples. Some of them (like slivers_exuder) will
 perhaps be moved to demo/Mesh_3/ in the future.
 
 Here is the list of tools:
+    cgal_to_medit
+    display_distribution
+    filter_remove_tets_from_medit
+    lanteri
+    lanteri_output_tet_mesh
     off_to_ghs
     read_mesh
-    stat_mesh
     slivers_exuder
-    display_distribution
-    lanteri
-    cgal_to_medit
+    stat_mesh
 
 Details follows...
 
 Files formats:
 -------------
 [too be written]
+
+filter_remove_tets_from_medit:
+-----------------------------
+This is a filter, written in Perl.
+
+Use it like that:
+  ./filter_remove_tets_from_medit < file.mesh > file-notets.mesh
+
+It takes a medit file as standard input, and returns to standard
+output the same medit file, without its tetrahedra.
+
 
 cgal_to_medit:
 -------------
@@ -59,6 +72,11 @@ lanteri:
           'scan_edges_and_process',
 	  'scan_cells_and_process'.
     These two functions use functions of lanteri_process_results.C.
+
+lanteri_output_tet_mesh:
+-----------------------
+  This tool is designed specificaly for answering to a request of
+  Stephane Lanteri, INRIA.
 
 display_distribution:
 --------------------
@@ -140,7 +158,7 @@ slivers_exuder:
 This tools exudes slivers from a cgal triangulation.
 
 Usage:
-  ./slivers_exuder INPUT OUTPUT
+  ./slivers_exuder INPUT OUTPUT bound
 
   INPUT must be a file of format produced by the output operator of
   CGAL::Triangulation_3, with points
@@ -148,5 +166,7 @@ Usage:
   CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
 
   OUPUT is the name of the ouput file. It will be the same format
+
+  0<=bound<=1.0 is a bound on pumping process.
 
 Uses utils.h and weighted_types.h.

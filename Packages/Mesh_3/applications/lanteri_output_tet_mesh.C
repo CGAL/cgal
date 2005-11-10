@@ -166,12 +166,15 @@ int main(int , char** argv)
     ofs_surfaces[i] = new std::ofstream(str_stream.str().c_str());
   }
 
-  std::cout << "  Reading " << argv[1] << std::endl;
+  std::cout << "  Reading file " << (file_prefix + ".cgal") << std::endl;
 
   if( CGAL::Mesh_3::input_mesh(ifs, c2t3,
                                true,
                                &std::cerr) )
   {
+    std::cout << "  Writing file " << (file_prefix + ".maillage") << std::endl
+              << "  and files " << (file_prefix + ".surface*") << std::endl;
+
     typedef C2T3::Triangulation_3 Tr;
     typedef Tr::Finite_cells_iterator Finite_cells_iterator;
     typedef Tr::Finite_facets_iterator Finite_facets_iterator;

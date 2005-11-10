@@ -55,12 +55,15 @@ LDFLAGS = \
 
 RUN_PROGRAMS=  	combined_spheres$(EXE_EXT)
 
-TOOLS = lanteri \
-        read_mesh \
-        stat_mesh \
+TOOLS=  cgal_to_medit \
         display_distribution \
+        filter_remove_tets_from_medit \
+        lanteri \
+        lanteri_output_tet_mesh \
+        off_to_ghs \
+        read_mesh \
         slivers_exuder \
-        cgal_to_medit
+        stat_mesh
 
 .PHONY: all run tools links clean
 

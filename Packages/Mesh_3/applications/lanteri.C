@@ -124,11 +124,13 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 #include "distribution.h"
 
 bool process_cells(const std::vector<Qualities>& volume_cells_quality,
-                   std::string);
-bool process_volume_edges(const std::vector<Qualities>& volume_edges_lenght,
-                          std::string);
-bool process_surface_edges(const std::vector<Qualities>& surface_edges_lenght,
-                           std::string);
+                   const std::string filename_prefix);
+bool process_volume_edges(const std::vector<Qualities>& volume_edges_length,
+                          const std::vector<double>& length_bounds,
+                          const std::string filename_prefix);
+bool process_surface_edges(const std::vector<Qualities>& surface_edges_length,
+                           const std::vector<double>& length_bounds,
+                           const std::string filename_prefix);
 
 #include "lanteri_utils.h"
 
@@ -155,7 +157,7 @@ int main(int , char**)
     return EXIT_FAILURE;
 
   std::string filename;
-  std::cout << "Input filename:" << std::endl;
+  std::cout << "Input filename (with extension):" << std::endl;
   std::cin >> filename;
   std::ifstream ifs((filename+".cgal").c_str());
   if( !ifs || !std::cin)
@@ -207,7 +209,7 @@ int main(int , char**)
 
   std::cout << "\n"
             << "  Edges lengths:\n";
-  if(!scan_edges_and_process(tr, filename, "    ", &std::cout))
+  if(!scan_edges_and_process(tr, size_bounds, filename, "    ", &std::cout))
     return EXIT_FAILURE;
     
   if(!scan_cells_and_process(tr, filename))
