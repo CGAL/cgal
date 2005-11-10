@@ -1753,18 +1753,18 @@
 
 
 \newcommand{\include}[1]{%
-  \begingroup
-  \newcommand{\printItem}[1]{
-\lciBackslash{}setcounter\{##1\}\{\value{##X1}\}%
-  }%
   \lciIfToBeIncluded{#GXC1}{%
     \lciInclude{#GXC1}%
-    \lciOpenFile{#GXC1.hax}%
-    \lciForeachElementInStack{\lciListOfAlreadyDefinedCounters}{\printItem}%
-    \lciCloseFile%
+    \begingroup
+      \newcommand{\printItem}[1]{
+\lciBackslash{}setcounter\{##1\}\{\value{##X1}\}%
+      }%
+      \lciOpenFile{#GXC1.hax}%
+      \lciForeachElementInStack{\lciListOfAlreadyDefinedCounters}{\printItem}%
+      \lciCloseFile%
+    \endgroup%
   }%
   {\lciIfFileExists{#GXC1.hax}{\input{#GXC1.hax}}{}}%
-  \endgroup%
 }
 
 \newcommand{\input}[1]{\lciInclude{#GXC1}}
