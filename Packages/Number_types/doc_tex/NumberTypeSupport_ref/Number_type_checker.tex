@@ -64,7 +64,7 @@ Some operations have a particular behavior documented here.
 \ccFunction{double to_double(const Number_type_checker& c);}
 {returns \ccc{to_double(c.n1())}.  No particular check is made here.}
 
-\ccFunction{std::pair<>to_interval(const Number_type_checker& c);}
+\ccFunction{std::pair<double, double> to_interval(const Number_type_checker& c);}
 {returns \ccc{to_interval(c.n1())}.  No particular check is made here.}
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Number_type_checker& c);}
