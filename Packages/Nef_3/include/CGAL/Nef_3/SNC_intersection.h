@@ -423,8 +423,12 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     
     typedef Project_halfedge_point
       < SHalfedge, Point_3> Project;
-    typedef Iterator_project
-      < SHalfedge_around_facet_const_circulator, Project> Iterator;
+    typedef Circulator_project
+      < SHalfedge_around_facet_const_circulator, Project, 
+      const Point_3&, const Point_3*> Circulator;
+    typedef Container_from_circulator<Circulator> Container;
+    //    typedef Iterator_project
+    //      < SHalfedge_around_facet_const_circulator, Project> Iterator;
 
     typedef typename Partial_facet::Outer_cycle_iterator  Outer_cycle_iterator;
     typedef typename Partial_facet::Inner_cycle_iterator  Inner_cycle_iterator;
@@ -438,8 +442,16 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     Outer_cycle_iterator oc = pf.outer_cycles_begin();
     while(oc != pf.outer_cycles_end() && 
 	  outer_bound_pos == CGAL::ON_BOUNDED_SIDE) {
-      outer_bound_pos = bounded_side_3(Iterator(SHalfedge_around_facet_const_circulator(oc->first)), 
-				       Iterator(SHalfedge_around_facet_const_circulator(oc->second)), p, h);
+      if(oc->first == oc->second) {
+	SHalfedge_around_facet_const_circulator hfc(oc->first);
+	Circulator c(hfc);
+	Container ct(c);
+	CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
+	outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);	
+      } else {
+	outer_bound_pos = bounded_side_3(Circulator(SHalfedge_around_facet_const_circulator(oc->first)), 
+					 Circulator(SHalfedge_around_facet_const_circulator(oc->second)), p, h);
+      }
       ++oc;
     }
     if(outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
@@ -450,8 +462,16 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     Inner_cycle_iterator ic = pf.inner_cycles_begin();
     while(ic != pf.inner_cycles_end() && 
 	  inner_bound_pos == CGAL::ON_UNBOUNDED_SIDE) {
-      inner_bound_pos = bounded_side_3(Iterator(SHalfedge_around_facet_const_circulator(ic->first)), 
-				       Iterator(SHalfedge_around_facet_const_circulator(ic->second)), p, h);
+      if(ic->first == ic->second) {
+	SHalfedge_around_facet_const_circulator hfc(ic->first);
+	Circulator c(hfc);
+	Container ct(c);
+	CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
+	outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);	
+      } else {
+	inner_bound_pos = bounded_side_3(Circulator(SHalfedge_around_facet_const_circulator(ic->first)), 
+					 Circulator(SHalfedge_around_facet_const_circulator(ic->second)), p, h);
+      }
       ++ic;
     }
     if(inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )

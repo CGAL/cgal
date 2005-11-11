@@ -762,7 +762,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 #endif
   for( o = O.begin(); o != O.end(); ++o) {
     if( CGAL::assign( v, *o)) {
-      if( level || true) os << v->point() << std::endl;
+      if( level) os << v->point() << std::endl;
       ++v_count;
     }
     else if( CGAL::assign( e, *o)) {
@@ -999,7 +999,7 @@ bool classify_objects(Object_iterator start, Object_iterator end,
         ++o1;
         *o2 = Object_handle(pfp);
         ++o2;
-        return true;
+	continue;
       }
     }
 #endif
