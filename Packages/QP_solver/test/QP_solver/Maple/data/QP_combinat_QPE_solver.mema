@@ -40,7 +40,7 @@ n:=op(1, A)[2]:
 
 l:=combinat['permute'](m, m):
 
-for i from 1 to combinat['numbperm'](m) do:
+for i from 1 to 1 do # combinat['numbperm'](m) do: # takes to long for all possibilities
   A_p:=A[op(i, l), 1 .. n]:
   relop_p:=relop[op(i, l), 1..1]:
   b_p:=b[op(i, l), 1..1]:
