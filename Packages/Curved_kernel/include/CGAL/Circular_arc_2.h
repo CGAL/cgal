@@ -77,11 +77,6 @@ public:
     : RCircular_arc_2(typename R::Construct_circular_arc_2()(start, middle, end)) {}
   
   Circular_arc_2(const Circle_2 &support,
-                 const Point_2 &begin,
-                 const Point_2 &end)
-    : RCircular_arc_2(typename R::Construct_circular_arc_2()(support, begin, end)) {}
-  
-  Circular_arc_2(const Circle_2 &support,
                  const Circular_arc_point_2 &begin,
                  const Circular_arc_point_2 &end)
     : RCircular_arc_2(typename R::Construct_circular_arc_2()(support, begin, end)) {}
@@ -127,6 +122,11 @@ public:
   bool is_y_monotone() const
   {
 	return typename R::Is_y_monotone_2()(*this);
+  }
+
+  bool on_upper_part() const
+  {
+        return typename R::On_upper_part_2()(*this);
   }
 
   typename Qualified_result_of<typename R::Construct_supporting_circle_2,Circular_arc_2>::type
