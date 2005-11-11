@@ -277,11 +277,11 @@ public:
 
       int cmp_y = compare_y(_begin, _end);
 
-      // Is the arc on the upper part ?
+      // Is the arc on the right part ?
       if (cmp_begin > 0 || cmp_end > 0)
         return cmp_y < 0;
 
-      // Is the arc on the lower part ?
+      // Is the arc on the left part ?
       if (cmp_begin < 0 || cmp_end < 0)
         return cmp_y > 0;
 
