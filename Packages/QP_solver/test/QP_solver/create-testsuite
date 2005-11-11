@@ -157,6 +157,8 @@ if [ "x$1" == "xCGAL" ]; then
     echo "Generating CGAL testsuite."
 elif [ "x$1" == "xall" ]; then
     echo "Generating all of the internal testsuite."
+elif [ "x$1" == "xNOTCGAL" ]; then
+    echo "Generating all of the internal testsuite minus the CGAL testcases."
 else
     echo "Usage: $0 CGAL|NOTCGAL|all [verbosity]"
     echo ""
