@@ -94,11 +94,11 @@ EOF
   fi
   printf "testing ${DIRECTORY}\n";
   printf "    convert  ...  ";
-  if ${LATEX_CONV_BIN}/latex_to_html -date "1.1.1900" -config $LATEX_CONV_CONFIG -quiet wrapper.tex >& log; then
+  if ${LATEX_CONV_BIN}/latex_to_html -date "1.1.1900" -config $LATEX_CONV_CONFIG wrapper.tex >& log; then
     echo_ok
     if [ -d html.orig ] ; then
       printf "    compare  ...  ";
-      if diff -w  -I "^<\!-- by cc_extract" -I "<p class=\"TitlePageDate\">" html html.orig >& log; then
+      if diff -w  -I "^<\!-- by cc_extract" -I "<p class=\"TitlePageDate\">" html html.orig >> log; then
         echo_ok
       else
         echo_failed
