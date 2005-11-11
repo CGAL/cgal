@@ -870,6 +870,22 @@ template < class CK >
 
 
   template <class CK>
+  class On_upper_part_2
+  {
+    typedef typename CK::Circular_arc_2            Circular_arc_2;
+
+  public:
+
+    typedef bool result_type;
+    typedef Arity_tag<1>             Arity;
+
+    result_type operator() (const Circular_arc_2 & a) const
+    {
+      return (a.rep().on_upper_part());
+    }
+  };
+
+  template <class CK>
   class Construct_supporting_circle_2: Has_qrt
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
