@@ -83,6 +83,8 @@
   is_x_monotone_2_object)  
   CGAL_Curved_Kernel_pred(Is_y_monotone_2,
   is_y_monotone_2_object)
+  CGAL_Curved_Kernel_pred(On_upper_part_2,
+  on_upper_part_2_object)
   CGAL_Curved_Kernel_pred(Is_vertical_2,
   is_vertical_2_object) 
   CGAL_Curved_Kernel_pred(Has_on_2,
