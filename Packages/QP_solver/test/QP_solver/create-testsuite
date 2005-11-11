@@ -68,11 +68,20 @@ function createTestsuite()
 
     # construct input file for test_suite_QP_solver/test_solver:
     echo "Constructing file '${dataFile}'; this may take a while ..."
+    echo "  Collecting test-cases from MEMA-files..."
     cd ..
     if [ "x$cgalOrNot" == "xCGAL" ]; then
 	TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*.mema`
+	do_cgal=1
+	do_notcgal=0
+    elif [ "x$cgalOrNot" == "xNOTCGAL" ]; then
+	TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= false' Maple/data/*.mema`
+	do_cgal=0
+	do_notcgal=1
     elif [ "x$cgalOrNot" == "xall" ]; then
 	TESTFILES=`grep -l 'is_part_of_CGAL_testsuite' Maple/data/*.mema`
+	do_cgal=1
+	do_notcgal=1
     else
 	bailout "Internal error."
     fi
@@ -101,6 +110,30 @@ function createTestsuite()
 	fi
       done
     done
+    if [ $oldFormat == "false" ]; then
+	if [ $do_cgal == 1 ]; then
+	    echo "  Adding additional MPS-files from testsuite-data/additional-for-cgal/..."
+	    TESTFILES=`find testsuite-data/additional-for-cgal -name '*.mps'`
+	    for f in $TESTFILES
+	      do
+              # following is a temporary fix to prevent test-cases for upp.-b.
+              # to be used with pricing strategies pe, ff, pf:
+	      LIST="${LIST} $level fe $f"
+	      #LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+	    done
+	fi
+	if [ $do_notcgal == 1 ]; then
+	    echo "  Adding additional MPS-files from testsuite-data/additional-not-for-cgal/..."
+	    TESTFILES=`find testsuite-data/additional-not-for-cgal -name '*.mps'`
+	    for f in $TESTFILES
+	      do
+              # following is a temporary fix to prevent test-cases for upp.-b.
+              # to be used with pricing strategies pe, ff, pf:
+	      LIST="${LIST} $level fe $f"
+	      #LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+	    done
+	fi
+    fi
     echo $LIST > ${dataFile}
 
     # check that all $dataDir/*.data_* files that are part of the CGAL
@@ -125,7 +158,7 @@ if [ "x$1" == "xCGAL" ]; then
 elif [ "x$1" == "xall" ]; then
     echo "Generating all of the internal testsuite."
 else
-    echo "Usage: $0 CGAL|all [verbosity]"
+    echo "Usage: $0 CGAL|NOTCGAL|all [verbosity]"
     echo ""
     echo "$0 all:  creates the internal testsuite consisting of all tests"
     echo "$0 CGAL: creates the CGAL testsuite (a subset of all tests)"
