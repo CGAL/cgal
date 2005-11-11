@@ -112,10 +112,10 @@ bool QP_solver<Rep_>::is_valid()
 	       << "----------" << std::endl
 	       << "Validation" << std::endl
 	       << "----------" << std::endl;
-	  vout << "            is in phase I: " << is_phaseI << std::endl;
-	  vout << "             feasible_aux: " << f << std::endl;
-	  vout << "              optimal_aux: " << o << std::endl;
-	  vout << " objective value positive: " << aux_positive << std::endl;
+	  vout << "      is in phase I: " << is_phaseI << std::endl;
+	  vout << "       feasible_aux: " << f << std::endl;
+	  vout << "        optimal_aux: " << o << std::endl;
+	  vout << " obj. val. positive: " << aux_positive << std::endl;
 	}
 	return is_phaseI && f && o && aux_positive;
       }
@@ -229,42 +229,90 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 {
   CGAL_expensive_precondition(is_solution_feasible_for_auxiliary_problem());
 
-  // As described in equation (C1) in routine is_solution_feasible_-
-  // for_auxiliary_problem(), the auxiliary problem looks as follows:
+  // Let us first see what exactly we need to check. Observe that the (normal)
+  // artificial variables are merely introduced to have an initial feasible
+  // solution: for each infeasible equality, we introduce an artificial so
+  // that the equality gets feasible. (Also, we need at least one artificial
+  // to have an initial basis, see comment in set_up_auxiliary_problem().)  So
+  // once an artificial drops to zero during phase I, we can argue as follows
+  // to prove that we can FIX THIS ARTIFICIAL TO ZERO FOREVER (and, as a
+  // consequence, do not need to price it in the sequel): since the artificial
+  // has dropped to zero, we now have a point that fulfills the artificial's
+  // equality with equality in the original problem, and so we can
+  // conceptually set up a NEW auxiliary problem, in which no artificial is
+  // needed for the equality in question.  This shows that there is no need to
+  // ever change an artificial again once it has come down to zero (and that
+  // is why we do not price artificials, see the pricing strategies).
   //
-  //                   minimize     aux_c^T x
+  // Note that the same observation also applies to the special artificial
+  // variable.  Once the latter drops to zero, we have found a point that
+  // fulfills all inequality constraints of the original problem.  So we can
+  // again (conceptually) set up a new auxiliary problem --- this time without
+  // a special artificial.
+  //
+  // With these considerations in mind, the check we perform below is the
+  // following.  We test whether the auxiliary problem
+  //
+  //                   minimize     aux_c^T x                    (C13)
   //                   subject to   aux_A x =  b,
   //                                      x >= 0,
   //
-  // where aux_A = [ A A_art a_spec A_s].
+  // where aux_A = [ A A_art a_spec A_s], is optimal.  Here, the column a_spec
+  // is only present in aux_A if the special artificial is (existent and)
+  // nonzero; similarly, A_s only contains the columns of the (ordinary)
+  // artificials that are nonzero.  Three cases may occur:
   //
-  // Using the KKT conditions, we obtain that a feasible point x is
-  // optimal iff there exists a m-vector \lambda and a |x|-vector \tau
-  // such that
+  // - If the current solution does not optimally solve (C13), the test fails
+  //   (and we have found a bug).
+  //
+  // - If the current solution optimally solves (C13) and has an objective
+  //   value that is nonzero (i.e., larger than zero), we can conclude that
+  //   the original problem input by the user is infeasible: if it were
+  //   feasible there would be a solution x' to the initial auxiliary problem
+  //   where all artificials (including the special one) are zero. But
+  //   (C13) IS the initial auxiliary problem with the additional constraints
+  //   that some auxiliaries (possibly including the special one) are fixed to
+  //   zero; so x' would be a feasible point of (C13) with objective value 0,
+  //   contradiction.
+  //
+  // - If the current solution optimally solves (C13) and has objective value
+  //   zero, we have found a feasible point of the initial problem input by
+  //   user. So we can continue with phase II.
+  //
+  // Note: if we checked optimality of (C13) with ALL artificial included,
+  // this does not always work. The example Ub_LP_Chvatal_8_1_d_QPE_solver.mps
+  // in the testsuite will then cause problems: during some pricing step in
+  // phase I, the solver sees that no non-artificial variable can be taken
+  // into the basis, and so it concludes that the current solution optimally
+  // solves auxiliary problem. As the objective function is nonzero, the
+  // original problem is recognized as infeasible (which is correct), but the
+  // validiaty check fails because in this instance, the entry in \tau from
+  // (C2) below for some artificial is negative.
+  //
+  // Implementation of this check: using the KKT conditions, we obtain that a
+  // feasible point x is optimal iff there exists a m-vector \lambda and a
+  // |x|-vector \tau such that
   //
   //              \tau^T = c^T + \lambda^T aux_A,                (C2)
   //              \tau^T x =  0,
   //              \tau     >= 0.
   //
-  // These are the conditions we are going to check below. (Notice
-  // here that x is the vector containing the original variables, the
-  // artificial variables, the special artificial variable, and the
-  // slack variables.)
+  // These are the conditions we are going to check below. (Notice here that x
+  // is the vector containing the original variables, the nonzero artificial
+  // variables, the special artificial variable if it exists and is nonzero,
+  // and the slack variables. In the code below, x will contain all ordinary
+  // artifical variables, whether zero or not, and we will check \tau >= 0
+  // only for those components of \tau that correspond to nonzero
+  // aritificials.)
 
-  // get number of working variables:
-  const int no_of_wo_vars = this->number_of_working_variables() +
-    (art_s_i == -2? 1 : 0); // Note: if there ever was a special
-                            // artifical variable, it has to be
-                            // considered for this optimality test,
-                            // even if it has already left the basis.
-                            // (If there was initially a special
-                            // artificial variable and it never left
-                            // the basis, then number_of_-
-                            // working_variables() counts it, so we
-                            // add 0; it it left the basis (and thus
-                            // art_s_i == -2) then number_of_-
-                            // working_variables() does not count it,
-                            // add we need to add 1.)
+  // get number of original and (zero or nonzero, ordinary or special)
+  // artificial variables:
+  //
+  // Note: if there was initially a special artificial variable and it never
+  // left the basis, then number_of_working_variables() counts it; if it left
+  // the basis (and thus art_s_i == -2) then number_of_working_variables()
+  // does not count it.
+  const int no_of_wo_vars = this->number_of_working_variables();
   
   // collect solution vector of auxiliary problem:
   Values x_aux(no_of_wo_vars, et0);
@@ -291,6 +339,8 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 
   // output for debugging:
   CGAL_qpe_debug {
+    for (int i = 0; i < no_of_wo_vars; ++i)
+      vout5 << "x_aux[" << i << "]= " << x_aux[i] << std::endl;
     for (int col = 0; col < qp_m; ++col)
       vout5 << "lambda_aux[" << col << "]= " << lambda_aux[col] << std::endl;
   }
@@ -335,8 +385,11 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 
   // check last two lines of (C2):
   for (int col = 0; col < no_of_wo_vars; ++col)
-    if (tau_aux[col] < et0 || 
-	tau_aux[col] * x_aux[col] != et0)
+    if (!is_artificial(col) || x_aux[col] != et0) // is it a slack or original
+						  // vairable, or a nonzero
+						  // aritificial?
+      if (tau_aux[col] < et0 || 
+	  tau_aux[col] * x_aux[col] != et0)
 	return false;
 
   return true;     
