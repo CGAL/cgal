@@ -359,7 +359,7 @@ pricing( )
                 vout  << "entering"; vout2 << " variable"; vout << ": ";
                 vout  << j;
                 vout2 << " (" << variable_type( j) << ')' << std::endl;
-                vout << "direction: "
+                vout2 << "direction: "
                     << ((direction == 1) ? "positive" : "negative")
                     << std::endl;
             }
