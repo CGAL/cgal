@@ -78,6 +78,15 @@ public:
     CGAL_precondition (CGAL::sign(c) == POSITIVE);
   }
 
+  /*! Unary minus. */
+  Self operator- () const
+  {
+    if (is_rational)
+      return Self (-alpha);
+    else
+      return Self (-alpha, -beta, gamma);
+  }
+
   /*! Add a rational number. */
   Self operator+ (const NT& val) const
   {
