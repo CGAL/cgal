@@ -348,6 +348,23 @@ public: // methods
     return true;
   } // end check_umbrella
 
+  
+  template <class Input_facet_it>
+  static
+  bool check_pre_star(const Pre_star& pre_star, 
+                      Input_facet_it begin,
+                      Input_facet_it end)
+  {
+    Pre_star pre_star_copy = pre_star;
+
+    for(Input_facet_it fit = begin;
+        fit != end;
+        ++fit)
+      if(!pre_star_copy.erase(*fit))
+        return false;
+    return pre_star_copy.empty();
+  }
+
   void init()
   {
     cell_queue.clear();
@@ -616,6 +633,9 @@ public: // methods
 			std::back_inserter(internal_facets));
 
       CGAL_assertion( best_pre_star.size() == boundary_facets.size() );
+      CGAL_assertion( check_pre_star(best_pre_star,
+                                     boundary_facets.begin(),
+                                     boundary_facets.end()) );
      
       // delete cells from the list of bad cells
       for(typename std::vector<Cell_handle>::iterator
@@ -899,30 +919,30 @@ private: // methods
     Critical_radius critical_radius = 
       tr.geom_traits().compute_critical_squared_radius_3_object();
     
-    const double result = critical_radius(c->vertex(0)->point(),
-                                          c->vertex(1)->point(),
-                                          c->vertex(2)->point(),
-                                          c->vertex(3)->point(),
-                                          v->point());
-    CGAL_assertion_code(
-      typedef typename Traits::Construct_weighted_circumcenter_3
-        Construct_weighted_circumcenter_3;
-      typedef typename Traits::Compute_power_product_3
-        Compute_power_product_3;
-      Compute_power_product_3 power_product =
-        tr.geom_traits().compute_power_product_3_object();
-      Construct_weighted_circumcenter_3 weighted_circumcenter =
-        tr.geom_traits().construct_weighted_circumcenter_3_object();
+    const FT result = critical_radius(c->vertex(0)->point(),
+                                      c->vertex(1)->point(),
+                                      c->vertex(2)->point(),
+                                      c->vertex(3)->point(),
+                                      v->point());
+//     CGAL_assertion_code(
+//       typedef typename Geom_traits::Construct_weighted_circumcenter_3
+//         Construct_weighted_circumcenter_3;
+//       typedef typename Geom_traits::Compute_power_product_3
+//         Compute_power_product_3;
+//       Compute_power_product_3 power_product =
+//         tr.geom_traits().compute_power_product_3_object();
+//       Construct_weighted_circumcenter_3 weighted_circumcenter =
+//         tr.geom_traits().construct_weighted_circumcenter_3_object();
 
-      Weighted_point wc(weighted_circumcenter(c->vertex(0)->point(),
-                                              c->vertex(1)->point(),
-                                              c->vertex(2)->point(),
-                                              c->vertex(3)->point()))
-      );
+//       Weighted_point wc(weighted_circumcenter(c->vertex(0)->point(),
+//                                               c->vertex(1)->point(),
+//                                               c->vertex(2)->point(),
+//                                               c->vertex(3)->point()))
+//       );
     
-    CGAL_assertion( result == power_product(v->point(), wc) );
+//     CGAL_assertion( result == power_product(v->point(), wc) );
     
-    return result;
+    return CGAL::to_double(result);
   }
 
 //   void restore_markers_around(Vertex_handle v)
