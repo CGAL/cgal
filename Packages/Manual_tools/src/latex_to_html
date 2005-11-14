@@ -342,7 +342,11 @@ run_command() {
 
 build_anchor_filter() {
     if [ ! -r cc_anchor_rules.$1 ]; then touch cc_anchor_rules.$1 ; fi
-    \cat ${ConfigHtml}/cc_anchor_header.$1 cc_anchor_rules.$1 ${ConfigHtml}/cc_anchor_footer.$1 | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_filter.yy
+    \cat ${ConfigHtml}/cc_anchor_header.$1 \
+         cc_anchor_rules.$1 \
+         ${ConfigHtml}/cc_anchor_ref_catchall \
+         ${ConfigHtml}/cc_anchor_footer.$1 \
+      | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_filter.yy
     ${Flex} cc_anchor_filter.yy > cc_anchor_filter.c
     ${CC} -o cc_anchor_filter.$1 cc_anchor_filter.c
     #\rm cc_anchor_filter.c cc_anchor_filter.yy
