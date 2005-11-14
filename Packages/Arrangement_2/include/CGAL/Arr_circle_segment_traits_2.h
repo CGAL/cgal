@@ -353,7 +353,7 @@ public:
       // of the supporting circle.
       Point_2         vpts[2];
       unsigned int    n_vpts = cv.vertical_tangency_points (vpts);
-        
+
       if (cv.is_full())
       {
         CGAL_assertion (n_vpts == 2);

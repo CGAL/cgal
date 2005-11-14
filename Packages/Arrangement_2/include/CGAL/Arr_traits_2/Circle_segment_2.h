@@ -115,8 +115,14 @@ public:
 
 private:
 
+  typedef typename Point_2::CoordNT                        CoordNT;
+
+  // Data members:
   Line_2        _line;        // The supporting line (for line segments).
-  Circle_2      _circ;        // The supporting circle (for circular arc).
+  Circle_2      _circ;        // The supporting circle (for circular arcs).
+  bool          _has_radius;  // Is the radius (not just the squared radius)
+                              // explicitly specified).
+  NT            _radius;      // The radius, in case it is specified.
   Point_2       _source;      // The source point.
   Point_2       _target;      // The target point.
   Orientation   _orient;      // The orientation (COLLINEAR for line segments).
@@ -126,6 +132,7 @@ public:
 
   /*! Default constructor. */
   _Circle_segment_2 () :
+    _has_radius (false),
     _orient (COLLINEAR),
     _is_full (false)
   {}
@@ -135,6 +142,7 @@ public:
    */
   _Circle_segment_2 (const Segment_2& seg) :
     _line (seg),
+    _has_radius (false),
     _source (seg.source().x(), seg.source().y()),
     _target (seg.target().x(), seg.target().y()),
     _orient (COLLINEAR),
@@ -152,6 +160,7 @@ public:
   _Circle_segment_2 (const Line_2& line,
                      const Point_2& source, const Point_2& target) :
     _line (line),
+    _has_radius (false),
     _source (source),
     _target (target),
     _orient (COLLINEAR),
@@ -166,9 +175,13 @@ public:
                                    line.c()) == ZERO);
   }
 
-  /*! Constructor from a circle. */
+  /*!
+   * Constructor from a circle.
+   * \param circ The circle.
+   */
   _Circle_segment_2 (const Circle_2& circ) :
     _circ (circ),
+    _has_radius (false),
     _orient (circ.orientation()),
     _is_full (true)
   {
@@ -176,9 +189,26 @@ public:
   }
 
   /*!
-   * Constructor of a circular, given a supporting circle and two endpoints,
-   * which need not necessarily have rational coordinates. The orientation of
-   * the circle determines the orientation of the arc.
+   * Constructor from a circle.
+   * \param c The circle center.
+   * \param r The radius.
+   * \param orient The orientation of the circle.
+   */
+  _Circle_segment_2 (const typename Kernel::Point_2& c,
+                     const NT& r, Orientation orient) :
+    _circ (c, r*r, orient),
+    _has_radius (true),
+    _radius (r),
+    _orient (orient),
+    _is_full (true)
+  {
+    CGAL_assertion (orient != COLLINEAR);
+  }
+
+  /*!
+   * Constructor of a circular arc, given a supporting circle and two
+   * endpoints, which need not necessarily have rational coordinates.
+   * The orientation of the circle determines the orientation of the arc.
    * \param circ The supporting circle.
    * \param source The source point.
    * \param target The target point.
@@ -187,19 +217,56 @@ public:
   _Circle_segment_2 (const Circle_2& circ,
                      const Point_2& source, const Point_2& target) :
     _circ (circ),
+    _has_radius (false),
     _source (source),
     _target (target),
     _orient (circ.orientation()),
     _is_full (false)
   {
+    CGAL_assertion (_orient != COLLINEAR);
+
     CGAL_precondition
       (CGAL::compare (CGAL::square (source.x() - circ.center().x()),
-                      circ.squared_radius -
+                      circ.squared_radius() -
                       CGAL::square (source.y() - circ.center().y())) == EQUAL);
 
     CGAL_precondition
       (CGAL::compare (CGAL::square (target.x() - circ.center().x()),
-                      circ.squared_radius -
+                      circ.squared_radius() -
+                      CGAL::square (target.y() - circ.center().y())) == EQUAL);
+  }
+
+  /*!
+   * Constructor of a circular arc, given a supporting circle and two
+   * endpoints, which need not necessarily have rational coordinates.
+   * \param c The circle center.
+   * \param r The radius.
+   * \param orient The orientation of the circle.
+   * \param source The source point.
+   * \param target The target point.
+   * \pre Both endpoints lie on the supporting circle.
+   */
+  _Circle_segment_2 (const typename Kernel::Point_2& c,
+                     const NT& r, Orientation orient,
+                     const Point_2& source, const Point_2& target) :
+    _circ (c, r*r, orient),
+    _has_radius (true),
+    _radius (r),
+    _source (source),
+    _target (target),
+    _orient (circ.orientation()),
+    _is_full (false)
+  {
+    CGAL_assertion (orient != COLLINEAR);
+
+    CGAL_precondition
+      (CGAL::compare (CGAL::square (source.x() - circ.center().x()),
+                      circ.squared_radius() -
+                      CGAL::square (source.y() - circ.center().y())) == EQUAL);
+
+    CGAL_precondition
+      (CGAL::compare (CGAL::square (target.x() - circ.center().x()),
+                      circ.squared_radius() -
                       CGAL::square (target.y() - circ.center().y())) == EQUAL);
   }
 
@@ -273,10 +340,23 @@ public:
     if (_is_full)
     {
       // In case of a full circle, create both vertical tangency points:
-      const NT&                  x0 = _circ.center().x();
-      const NT&                  y0 = _circ.center().y();
-      typename Point_2::CoordNT  xv_left (x0, -1, _circ.squared_radius());
-      typename Point_2::CoordNT  xv_right (x0, 1, _circ.squared_radius());
+      const NT&     x0 = _circ.center().x();
+      const NT&     y0 = _circ.center().y();
+      CoordNT       xv_left;
+      CoordNT       xv_right;
+
+      if (_has_radius)
+      {
+        // In case the radius is explicitly given:
+        xv_left = CoordNT (x0 - _radius);
+        xv_right = CoordNT (x0 + _radius);
+      }
+      else
+      {
+        // In case only the squared root is given:
+        xv_left = CoordNT (x0, -1, _circ.squared_radius());
+        xv_right = CoordNT (x0, 1, _circ.squared_radius());
+      }
 
       vpts[0] = Point_2 (xv_left, y0);
       vpts[1] = Point_2 (xv_right, y0);
@@ -348,9 +428,11 @@ private:
         // We collect the left tangency point when going from Q[1] to Q[2]:
         if (CGAL::compare (y0, trg.y()) != EQUAL)
         {
-          typename Point_2::CoordNT  xv_left (x0, -1, _circ.squared_radius());
-
-          vpts[n_vpts] = Point_2 (xv_left, y0);
+          if (_has_radius)
+            vpts[n_vpts] = Point_2 (CoordNT (x0 - _radius), y0);
+          else
+            vpts[n_vpts] = Point_2 (CoordNT (x0, -1, _circ.squared_radius()),
+                                             y0);
           n_vpts++;
         }
       }
@@ -359,9 +441,11 @@ private:
         // We collect the right tangency point when going from Q[3] to Q[0]:
         if (CGAL::compare (y0, trg.y()) != EQUAL)
         {
-          typename Point_2::CoordNT  xv_right (x0, 1, _circ.squared_radius());
-          
-          vpts[n_vpts] = Point_2 (xv_right, y0);
+          if (_has_radius)
+            vpts[n_vpts] = Point_2 (CoordNT (x0 + _radius), y0);
+          else
+            vpts[n_vpts] = Point_2 (CoordNT (x0, 1, _circ.squared_radius()),
+                                             y0);
           n_vpts++;
         }
       }
