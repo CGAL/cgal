@@ -18,10 +18,10 @@ An object \ccc{arr} of the class \ccClassTemplateName\ represents the
 planar subdivision induced by a set of $x$-monotone curves and isolated
 points into maximally connected cells. The arrangement is represented as
 a doubly-connected edge-list ({\sc Dcel}) such that each {\sc Dcel} vertex
-is associated with a point of the plane and each edge\footnote{An arrangement
-edge is always comprised of a pair of twin {\sc Dcel} halfedges.} is
+is associated with a point of the plane and each edge is
 associated with an $x$-monotone curve whose interior is disjoint from all
-other edges and vertices.
+other edges and vertices. Recall that an arrangement
+edge is always comprised of a pair of twin {\sc Dcel} halfedges.
 
 The \ccClassTemplateName\ template has two parameters:
 \begin{itemize}
@@ -106,10 +106,10 @@ iterators can be used as well.
        Its value-type is \ccStyle{Halfedge}.}
 \ccGlue
 \ccNestedType{Ccb_halfedge_circulator}{a bidirectional circulator over the
-       halfedges of a CCB (connected component of the boundary).\footnote{Each
+       halfedges of a CCB (connected component of the boundary).
+       Its value-type is \ccStyle{Halfedge}. Each
        bounded face has a single CCB representing it outer boundary, and may
        have several inner CCBs representing its holes.}
-       Its value-type is \ccStyle{Halfedge}.}
 \ccGlue
 \ccNestedType{Holes_iterator}{a bidirectional iterator over the holes 
        (i.e., inner CCBs) contained inside a given face.
@@ -160,11 +160,11 @@ iterators can be used as well.
     {determines whether the arrangement is empty (contains only the unbounded
      face, with no vertices or edges).}
 
-All \ccc{begin()} and \ccc{end()} methods listed below also have \ccc{const}
+All \ccc{_begin()} and \ccc{_end()} methods listed below also have \ccc{const}
 counterparts, returning constant iterators instead of mutable ones:
 
-{\sl Accessing the Arrangement Vertices}
-%-------------------------------
+$\bullet$ {\sl Accessing the Arrangement Vertices:}
+%----------------------------------------------
 
 \ccMethod{Size number_of_vertices() const;}
     {returns the number of vertices in the arrangement.}
@@ -178,8 +178,8 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccMethod{Vertex_iterator vertices_end();}
     {returns the past-the-end iterator of the vertices in the arrangement.}
 
-{\sl Accessing the Arrangement Edges}
-%----------------------------
+$\bullet$ {\sl Accessing the Arrangement Edges:}
+%-------------------------------------------
 
 \ccMethod{Size number_of_halfedges() const;}
     {returns the number of halfedges in the arrangement.}
@@ -190,7 +190,7 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccMethod{Halfedge_iterator halfedges_end();}
     {returns the past-the-end iterator of the halfedges in the arrangement.}
 
-\ccMethod{Size number_of_edge() const;}
+\ccMethod{Size number_of_edges() const;}
     {returns the number of edges in the arrangement (equivalent to
      \ccc{arr.number_of_halfedges() / 2}).}
 
@@ -200,8 +200,8 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccMethod{Edge_iterator edges_end();}
     {returns the past-the-end iterator of the edges in the arrangement.}
 
-{\sl Accessing the Arrangement Faces}
-%----------------------------
+$\bullet$ {\sl Accessing the Arrangement Faces:}
+%-------------------------------------------
 
 \ccMethod{Face_handle unbounded_face();}
     {returns a handle for the unbounded face of the arrangement.}
@@ -235,14 +235,15 @@ counterparts, returning constant iterators instead of mutable ones:
 \ccModifiers
 %===========
 
-{\sl Specialized Insertion Methods}
-%------------------------------
+$\bullet$ {\sl Specialized Insertion Methods:}
+%------------------------------------------
 
 \ccMethod{Vertex_handle insert_in_face_interior (const Point_2& p,
                                                  Face_handle f);}
    {inserts the point \ccc{p} to the arrangement as an isolated vertex in
     the interior of the face \ccc{f} and returns a handle for the newly
-    created vertex.}
+    created vertex.
+    \ccPrecond{\ccc{p} lies in the interior of the face \ccc{f}.}}
 
 \ccMethod{Halfedge_handle insert_in_face_interior
                                       (const X_monotone_curve_2& c, 
@@ -253,8 +254,10 @@ counterparts, returning constant iterators instead of mutable ones:
     The function returns a handle for one of the new halfedges
     corresponding to the inserted curve, directed (lexicographically)
     from left to right.
-    \ccPrecond{Both endpoints of \ccc{c} are not already associated with
-    existing arrangement vertices.}}
+    \ccPrecond{\ccc{c} lies entirely in the interior of the face \ccc{f} and
+    is disjoint from all existing arrangement vertices and edges (in
+    particular, both its endpoints are not already associated with existing
+    arrangement vertices).}}
 
 \ccMethod{Halfedge_handle insert_from_left_vertex
                                       (const X_monotone_curve_2& c,
@@ -266,6 +269,8 @@ counterparts, returning constant iterators instead of mutable ones:
    The function returns a handle for one of the new halfedges corresponding
    to the inserted curve, directed to the newly created vertex --- that is,
    directed (lexicographically) from left to right.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{v} is associated with the left endpoint of \ccc{c}.}
    \ccPrecond{The right endpoint of \ccc{c} is not already associated with
    an existing arrangement vertex.}}
@@ -280,6 +285,8 @@ counterparts, returning constant iterators instead of mutable ones:
    The function returns a handle for one of the new halfedges corresponding
    to the inserted curve, directed to the newly created vertex --- that is,
    directed (lexicographically) from right to left.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{v} is associated with the right endpoint of \ccc{c}.}
    \ccPrecond{The left endpoint of \ccc{c} is not already associated with
    an existing arrangement vertex.}}
@@ -292,6 +299,8 @@ counterparts, returning constant iterators instead of mutable ones:
    and \ccc{v2}. The function creates a new halfedge pair that connects the
    two vertices, and returns a handle for the halfedge directed from \ccc{v1}
    to \ccc{v2}.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{v1} and \ccc{v2} are associated with \ccc{c}'s endpoints.} 
    \ccPrecond{If \ccc{v1} and \ccc{v2} are already
               connected by an edge, this edge represents an $x$-monotone
@@ -308,8 +317,11 @@ counterparts, returning constant iterators instead of mutable ones:
    to the circular list of halfedges around \ccc{pred->target()} right
    between \ccc{pred} and its successor. The function returns a handle for
    one of the new halfedges directed (lexicographically) from left to right.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{pred->target()} is associated with the left endpoint
-   of \ccc{c}.}
+   of \ccc{c}, and \ccc{c} should be inserted after \ccc{pred} in a
+   clockwise order around this vertex.} 
    \ccPrecond{The right endpoint of \ccc{c} is not already associated with
    an existing arrangement vertex.}}
 
@@ -322,8 +334,11 @@ counterparts, returning constant iterators instead of mutable ones:
    to the circular list of halfedges around \ccc{pred->target()} right
    between \ccc{pred} and its successor. The function returns a handle for
    one of the new halfedges directed (lexicographically) from right to left.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{pred->target()} is associated with the right endpoint
-   of \ccc{c}.}
+   of \ccc{c}, and \ccc{c} should be inserted after \ccc{pred} in a
+   clockwise order around this vertex.}
    \ccPrecond{The left endpoint of \ccc{c} is not already associated with
    an existing arrangement vertex.}}
 
@@ -337,6 +352,8 @@ counterparts, returning constant iterators instead of mutable ones:
    inserted right between \ccc{pred1} and its successor around \ccc{pred1}'s
    target vertex) and returns a handle for the halfedge directed from
    \ccc{pred1->target()} to \ccc{v2}.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{pred1->target()} and \ccc{v2} are associated with 
    \ccc{c}'s endpoints.} 
    \ccPrecond{If \ccc{pred1->target} and \ccc{v2} are already connected
@@ -353,6 +370,8 @@ counterparts, returning constant iterators instead of mutable ones:
    \ccc{pred2} indicate the exact place for these halfedges around the two
    target vertices) and returns a handle for the halfedge directed from
    \ccc{pred1->target()} to \ccc{pred2->target()}.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
    \ccPrecond{\ccc{pred1->target()} and \ccc{pred2->target()} are associated
    with \ccc{c}'s endpoints.} 
    \ccPrecond{If \ccc{pred1->target} and \ccc{pred2->target()} are already
@@ -361,8 +380,8 @@ counterparts, returning constant iterators instead of mutable ones:
 
 \end{ccAdvanced}
 
-{\sl Modifying Vertices and Edges}
-%-----------------------------
+$\bullet$ {\sl Modifying Vertices and Edges:}
+%-----------------------------------------
 
 \ccMethod{Vertex_handle modify_vertex (Vertex_handle v,
                                        const Point_2& p);}

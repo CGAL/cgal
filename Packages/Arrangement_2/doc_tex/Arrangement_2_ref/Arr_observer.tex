@@ -15,8 +15,9 @@
 %============
 
 \ccClassTemplateName\ serves as an abstract base class for all observer
-classes that are designed to be attached to an arrangement instance of
-type \ccc{Arrangement}. This base class handles the attachment of the
+classes that are attached to an arrangement instance of type \ccc{Arrangement}
+and recieve notifications from the arrangement.
+This base class handles the attachment of the
 observer to a given arrangement instance or to the detachment of the
 observer from this arrangement instance. It also gives a default empty
 implementation to all notification functions that are invoked by the
@@ -101,7 +102,7 @@ interest, it is sufficient to override just \ccc{before_split_face()}
 \ccGlue
 \ccMethod{virtual void after_global_change ();}
     {issued immediately after a global function has stopped modifying the
-     attached}
+     attached arrangement.}
 
 \ccHeading{Notifications on Attachment or Detachment}
 %====================================================
@@ -184,7 +185,8 @@ interest, it is sufficient to override just \ccc{before_split_face()}
                                  	 Face_handle f2,
                                  	 bool is_hole);}
     {issued immediately after the existing face \ccc{f1} has been split,
-     such that a portion of it now forms a new face \ccc{f2}.}
+     such that a portion of it now forms a new face \ccc{f2}. The flag
+     \ccc{is_hole} designates whether \ccc{f2} forms a hole inside \ccc{f1}.}
 
 \ccMethod{virtual void before_split_hole (Face_handle f,
                                           Ccb_halfedge_circulator h,

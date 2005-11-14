@@ -34,9 +34,9 @@ A {\sl bounded conic arc} is defined as either of the following:
       conic curve, with the arc endpoints being $p_s$ and $p_t$ 
       (the source and target points, respectively). The orientation $o$  
       indicates whether we proceed from $p_s$ to $p_t$ in a clockwise or in a
-      counterclockwise direction.\footnote{In degenerate situation, $C$ may
-      correspond to a pair of line. In this case $o$ may specify a
-      \ccc{COLLINEAR} orientation.}
+      counterclockwise direction. Note that $C$ may also
+      correspond to a line or to pair of lines --- in this case $o$ may
+      specify a \ccc{COLLINEAR} orientation.
 \end{itemize}
 
 A very useful subset of the set of conic arcs are line segments and circular
@@ -51,9 +51,9 @@ up the arrangement  construction.
 In our representation, all conic coefficients (namely $r, s, t, u, v, w$)
 must be rational numbers. This guarantees that the coordinates of all
 arrangement vertices (in particular, those representing instersection
-points) are algebraic numbers of degree $4$.\footnote{A real number $\alpha$
+points) are algebraic numbers of degree $4$ (a real number $\alpha$
 is an algebraic number of degree $d$ if there exist a polynomial $p$ with
-{\sl integer} coefficient of degree $d$ such that $p(\alpha) = 0$.}
+{\sl integer} coefficient of degree $d$ such that $p(\alpha) = 0$).
 We therefore require separate representations of the curve coefficients and
 the point coordiantes. The \ccc{NtTraits} should be instantiated with a class
 that defines nested \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic}

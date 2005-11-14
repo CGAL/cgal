@@ -26,12 +26,13 @@ not only interesting in their own right, they are also very useful
 for approximating or interpolating more complicated curves.
 
 In our representation, all polynomial coefficients (the coefficients of $P$
-and $Q$) must be rational numbers.\footnote{This guarantees that the
+and $Q$) must be rational numbers. This guarantees that the
 $x$-coordinates of all arrangement vertices (in particular, those
 representing instersection points) can be represneted as roots of
 polynomials with integer coefficients --- namely, algebraic numbers.
 The $y$-coordinates can be obtained by simple arithmetic operations on
-the $x$-coordinates, hence they are also algebraic numbers.}
+the $x$-coordinates, hence they are also algebraic numbers.
+
 We therefore require separate representations of the curve coefficients and
 the point coordiantes. The \ccc{NtTraits} should be instantiated with a class
 that defines nested \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic} number

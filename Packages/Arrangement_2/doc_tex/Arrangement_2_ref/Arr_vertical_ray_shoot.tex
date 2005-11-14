@@ -24,7 +24,9 @@ below it (an exception to this rule is the degenerate situation where the
 query point lies in the interior of a vertical edge). Note that it may happen
 that the query point lies above the upper envelope (or below the lower
 envelope) of the arrangement, so that the vertical ray emanating from it
-may go to infinity without hitting any arrangement feature on its way.
+may go to infinity without hitting any arrangement feature on its way. In this
+case we return the unbounded face as the feature lying above (or below) the
+query point.
 
 \ccTypes
 %=======

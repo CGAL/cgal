@@ -48,8 +48,8 @@ curve splitting. The reverse merge operation is optionally supported.
  {\sl in an ascending lexicographical $xy$-order} into the output iterator.
  The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
  \ccc{Object} either wraps a \ccc{pair<Point_2,unsigned int>} instance, which
- represents an intersection point with its multiplicity;\footnote{if the
- multiplicity is undefined or not known, it can be set to $0$.} or an
+ represents an intersection point with its multiplicity (in case the
+ multiplicity is undefined or not known, it should be set to $0$) or an
  \ccc{X_monotone_curve_2} instance, representing an overlapping subcurve of
  \ccc{c1} and \ccc{c2}. The operator returns a past-the-end iterator
  for the output sequence.}
