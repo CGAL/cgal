@@ -1,7 +1,7 @@
 #!/bin/bash
 maple=`which maple`
 if [ "x$maple" == "x" ]; then
-    maple="/Applications/Maple 9.5/Maple 9.5.app/Contents/MacOS/bin/maple"
+    maple="/Library/Frameworks/Maple.framework/Versions/10/bin/maple"
 fi
 level=4 # verbosity level for the solver
 
