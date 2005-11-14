@@ -50,9 +50,9 @@ for the new points, subdivision algorithms can be classified
 according to the topological refinement of the underlying mesh.
 \ccc{Subdivision_surfaces_3}, working on the concept of the 
 \ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}),
-takes advantage of this separation of topology and geometry, 
-and takes a cue from the policy-based design \cite{cgal:sp-mrlbg-05}.
-
+takes advantage of this separation of geometry and topology.
+Each subdivision algorithm is a refinement function parametrized
+by a set of rountines of geometric averageing.
  
 \begin{ccHtmlOnly}
      <CENTER>
@@ -410,8 +410,10 @@ public:
 };
 \end{ccExampleCode}
 
-Note \ccc{DQQ_stencil_3} and \ccc{Sqrt3_stencil_3} do not support
-meshes with global boundaries. Also, \ccc{PTQ_stencil_3} and
+Note in current implementation, \ccc{DQQ_stencil_3} and 
+\ccc{Sqrt3_stencil_3} do not support
+meshes with global boundaries; though these might be changed
+in the future release. Also, \ccc{PTQ_stencil_3} and
 \ccc{Sqrt3_stencil_3} are subset of \ccc{PQQ_stencil_3}, and are not
 explicitly defined in \ccc{Subdivision_surfaces_3}.
 
@@ -488,7 +490,7 @@ Following example develops a subdivision scheme
 generating improved Loop subdivision surfaces based on the PTQ 
 refinement (i.e~\ccc{Subdivision_surfaces_3<Polyhedron>::PTQ}). 
 The geometry policy is developed as a subclass 
-of \ccc{PQQ_stencil_3}), which defines the superset of PTQ stencils.
+of \ccc{PQQ_stencil_3}, which defines the superset of PTQ stencils.
 
 A policy function for subdivision surfaces is semantically
 required to assigned the smoothed point based on the source mesh.

@@ -22,9 +22,9 @@ A stencil maps an input control submesh to a node on the refined
 mesh. \ccClassTemplateName\ defines the policy interface of 
 stencils of the PQQ refinement. Served as the programming guideline,
 \ccClassTemplateName\ does not realize any specific geometry mask.
-Since stencil interfaces of PTQ and $\sqrt{3}$ refinements are
-designed as subsets of PQQ refinement, \ccClassTemplateName\ can 
-be used to derive geometry masks for PTQ and $\sqrt{3}$ refinement.
+Since stencil interfaces of the PTQ and the $\sqrt{3}$ refinements are
+in nature subsets of the PQQ refinement, \ccClassTemplateName\ can 
+be used to derive geometry masks for the PTQ and the $\sqrt{3}$ refinement.
 
 %% \begin{ccTexOnly}
 %%     \vspace{-7mm}
@@ -98,7 +98,7 @@ define the access interface of the facet-node stencil.
 \ccc{pt} is semantically required to be smoothed by averaging 
 points of the neighborhood of \ccc{f}.
 Override this function to support geometry masks for subdivisions 
-based on PQQ and $\sqrt{3}$ refinement.
+based on the PQQ and the $\sqrt{3}$ refinement.
 } 
 
 \ccMethod{
@@ -108,7 +108,7 @@ define the access interface of the edge-node stencil.
 \ccc{pt} is semantically required to be smoothed by 
 averaging points of the neighborhood of \ccc{e}.
 Override this function to support geometry masks for subdivisions 
-based on PQQ and PTQ refinement.
+based on the PQQ and the PTQ refinement.
 } 
 
 \ccMethod{
@@ -118,7 +118,7 @@ define the access interface of the vertex-node stencil.
 \ccc{pt} is semantically required to be smoothed by averaging 
 points of the neighborhood of \ccc{v}.
 Override this function to support geometry masks for subdivisions 
-based on PQQ, PTQ and $\sqrt{3}$ refinement.
+based on the PQQ, the PTQ and the $\sqrt{3}$ refinement.
 } 
 
 
