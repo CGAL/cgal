@@ -169,6 +169,10 @@ public:
     bool is_real = h1->get_is_real() || h2->get_is_real();
     h->set_is_real(is_real);
     h->twin()->set_is_real(is_real);
+    h->add_arr(0);
+    h->add_arr(1);
+    h->twin()->add_arr(0);
+    h->twin()->add_arr(1);
   }
 
   /*! 9 */
@@ -178,6 +182,8 @@ public:
     bool is_real = h1->get_is_real();
     h->set_is_real(is_real);
     h->twin()->set_is_real(is_real);
+    h->add_arr(0);
+    h->twin()->add_arr(0);
   }
 
   /*! 10 */
@@ -187,6 +193,8 @@ public:
     bool is_real = h2->get_is_real();
     h->set_is_real(is_real);
     h->twin()->set_is_real(is_real);
+    h->add_arr(1);
+    h->twin()->add_arr(1);
   }
 };
 

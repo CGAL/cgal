@@ -36,10 +36,36 @@ public:
 
 /*! Extend the arrangement halfedge */
 template <class X_monotone_curve_2>
-class Polyhedral_cgm_arr_halfedge : public Cgm_arr_halfedge<X_monotone_curve_2> {
+class Polyhedral_cgm_arr_halfedge : public Cgm_arr_halfedge<X_monotone_curve_2>
+{
+private:
+  /*! A mask of the ids of the original arrangements that contributed the
+   * halfedge while performing the minkowski sum.
+   * \todo This should be made optional. It is relevant only if the polytope
+   * is the result of a Minkowski sum operation, and it is needed only by the 
+   * drawing routines.
+   */
+  unsigned int m_arr_mask;
+  
 public:
   /*! Constructor */
-  Polyhedral_cgm_arr_halfedge() {}
+  Polyhedral_cgm_arr_halfedge() : m_arr_mask(0x0) {}
+
+  /*! Add a arrangement to the mask of the original arrangements in the
+   * minkowski sum.
+   * \param arr_id the id of the added arrangement
+   */
+  void add_arr(unsigned int id) { m_arr_mask |= 0x1 << id; }
+
+  /*! Return true iff a given arrangement contributed this halfedge
+   * while performing the minkowski sum
+   */
+  bool is_arr(unsigned int id) const { return m_arr_mask & (0x1 << id); }
+
+  /*! Obtain the mask of the ids of the original arrangements that contributed
+   * the halfedge while performing the minkowski sum
+   */
+  unsigned int get_arr_mask() const { return m_arr_mask; }
 };
 
 /*! Extend the arrangement face */

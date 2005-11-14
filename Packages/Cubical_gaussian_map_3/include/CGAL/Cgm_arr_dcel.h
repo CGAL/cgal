@@ -86,36 +86,14 @@ private:
   /*! Indicates whether the halfedge is real (as opposed to synthetic) */
   bool m_is_real;
 
-  /*! A mask of the ids of the original arrangements that contributed the
-   * halfedge while performing the minkowski sum
-   */
-  unsigned int m_org_arr_mask;
-
 public:
-  Cgm_arr_halfedge() : m_is_real(false), m_org_arr_mask(0x0) {}
+  Cgm_arr_halfedge() : m_is_real(false) {}
 
   /*! Return true if the halfedge is real */
   bool get_is_real() const { return m_is_real; }
 
   /*! Set the flag that indicates whether the halfedge is real */
   void set_is_real(bool flag) { m_is_real = flag; }
-  
-  /*! Add a arrangement to the mask of the original arrangements in the
-   * minkowski sum.
-   * \param arr_id the id of the added arrangement
-   */
-  void add_org_arr(unsigned int arr_id) { m_org_arr_mask |= 0x1 << arr_id; }
-
-  /*! Return true iff a given arrangement contributed this halfedge
-   * while performing the minkowski sum
-   */
-  bool is_org_arr(unsigned int arr_id) const
-  { return m_org_arr_mask & (0x1 << arr_id); }
-
-  /*! Obtain the mask of the ids of the original arrangements that contributed
-   * the halfedge while performing the minkowski sum
-   */
-  unsigned int get_org_arr_mask() const { return m_org_arr_mask; }
 };
   
 /*! Extend the arrangement face */
