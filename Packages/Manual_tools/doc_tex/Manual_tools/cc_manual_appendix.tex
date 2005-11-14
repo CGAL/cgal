@@ -1,7 +1,6 @@
 \appendix
 
-% TODO: uncommenting leads to an error when executing cgal_manual
-%\section{Quick Reference Guide}
+\section{Quick Reference Guide}
 
 \newcommand{\Indent}{\hspace*{5pt}}
 
@@ -9,6 +8,11 @@ In this appendix we summarize the various commands that are defined in
 {\tt cc\_manual.sty} and provide either an example of the result or a
 brief explanation of what the command does.  
 
+
+
+\begin{ccClassTemplate}{Gnu<T>}
+\ccCreationVariable{g}
+\lcTex{
 \tablehead{
 \hline
 &  \\
@@ -16,10 +20,12 @@ brief explanation of what the command does.
 & \\ \hline \hline
 }
 \tabletail{\hline}
-
-\begin{ccClassTemplate}{Gnu<T>}
-\ccCreationVariable{g}
-\begin{supertabular}{|p{7.4cm}|p{7.4cm}|} 
+\begin{supertabular}{|p{7.4cm}|p{7.4cm}|}
+}
+\lcHtml{\begin{tabular}{pp}
+\textbf{Command} & \textbf{Example and/or Result} \\
+}
+ 
 
 \verb|\CC| & \CC \Mindex{CC}\\ \hline
 
@@ -55,7 +61,7 @@ brief explanation of what the command does.
 \verb|\ccChapterAuthor{|\VarText{author name}\verb|}| 
 &\verb|\ccChapterAuthor{Alice \and Irene}| \\
 & \\
-&{\em Alice and Irene}  
+&FIXME: em {\em Alice and Irene} 
 \ccIndexEntry{ChapterAuthor}\\ \hline
 
 &\verb|\def\ccTagChapterRelease{\ccTrue}| \\
@@ -523,7 +529,9 @@ layout such that the descriptions align properly
 &\verb+\begin{ccRefClass}[Poly]{A_class<C>}+  \\
            \VarText{class description}  &  \\
         \verb|\end{ccRefClass}| &\\
-& {\large\bf \ccPrintTokens Class CGAL::Poly::A_class<C>\ccEnd\ccEndFont}  \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Class CGAL::Poly::A_class<C>\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\ccStyle{Class CGAL::Poly::A_class<C>}}}}  \\
 & \\
 & defines a label for the class
 that can be referred to by \verb|\ccRefPage| and \verb|\ccRefIdfierPage|
@@ -540,7 +548,7 @@ resp.; defines \verb|\ccRefName| and \verb|\ccPureRefName| to
 & \verb+\begin{ccRefConcept}{Circulator}+ \\
 \Indent\Indent \verb|{|\VarText{concept name}\verb|}|  & \\
            \VarText{concept description} & \\
-        \verb|\end{ccRefConcept}| &  {\large\bf Concept Circulator}   \\
+        \verb|\end{ccRefConcept}| &  {\large{\bf Concept Circulator}}   \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment 
 \Eindex{ccRefConcept}\\ \hline
@@ -556,7 +564,9 @@ the reference page for \VarText{concept} begins
 & \verb+\begin{ccRefEnum}{Orientation}+  \\
            \VarText{enum description}  & \\
         \verb|\end{ccRefEnum}|  &\\
-& {\large\bf \ccPrintTokens Enum CGAL::Orientation\ccEnd\ccEndFont}   \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Enum CGAL::Orientation\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\large\ccStyle{Enum CGAL::Orientation}}}}   \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment 
 \Eindex{ccRefEnum}\\ \hline
@@ -567,7 +577,9 @@ the reference page for \VarText{concept} begins
 \Indent\Indent\verb|{|\VarText{function name}\verb|}|   & \\
            \VarText{function description} &  \\
         \verb|\end{ccRefFunction}|  & \\ 
-& {\large\bf \ccPrintTokens Function CGAL::ch_jarvis\ccEnd\ccEndFont}   \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Function CGAL::ch_jarvis\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\large\ccStyle{Function CGAL::ch_jarvis}}}}   \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment 
 \Eindex{ccRefFunction}\\ \hline
@@ -579,7 +591,9 @@ the reference page for \VarText{concept} begins
 & \Indent\Indent\verb+{Less_xy_2<Point_2>}+ \\
            \VarText{function object description} &  \\
         \verb|\end{ccRefFunctionObjectClass}|  & \\ 
-& {\large\bf \ccPrintTokens Function Object Class CGAL::Less_xy_2<Point_2>\ccEnd\ccEndFont}   \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Function Object Class CGAL::Less_xy_2<Point_2>\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\large\ccStyle{Function Object Class CGAL::Less_xy_2<Point_2>}}}}  \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment 
 \Eindex{ccRefFunctionObjectClass}\\ \hline
@@ -592,7 +606,9 @@ the reference page for \VarText{concept} begins
 & \verb+{Less_xy_2}+ \\
            \VarText{concept description} &  \\
         \verb|\end{ccRefFunctionObjectConcept}|  & \\ 
-& {\large\bf \ccPrintTokens Function Object Concept Less_xy_2\ccEnd\ccEndFont}   \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Function Object Concept Less_xy_2\ccEnd\ccEndFont}}
+\lcHtml{{\large{\bf\ccStyle{Function Object Concept Less_xy_2}}}}   \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment 
 \Eindex{ccRefFunctionObjectClass}\\ \hline
@@ -617,7 +633,9 @@ the reference page for \VarText{identifier} begins
 & \verb+\begin{ccRefMacro}{For_all}+ \\
            \VarText{macro description} & \\
         \verb|\end{ccRefMacro}| & \\
-& {\large\bf \ccPrintTokens Function CGAL::For_all\ccEnd\ccEndFont}  \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Function CGAL::For_all\ccEnd\ccEndFont}}
+\lcHtml{{\large{\bf\ccStyle{Function CGAL::For_all}}}} \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment   
 \Eindex{ccRefMacro}\\ \hline
@@ -675,7 +693,9 @@ environment formatted using \verb|\ccc|
 \Indent\Indent\verb|{|\VarText{variable name}\verb|}| & \\
            \VarText{variable description} &  \\
         \verb|\end{ccRefVariable}|  &\\
-& {\large\bf \ccPrintTokens Variable CGAL::ORIGIN\ccEnd\ccEndFont}   \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Variable CGAL::ORIGIN\ccEnd\ccEndFont}}
+\lcHtml{{\large{\bf\ccStyle{Variable CGAL::ORIGIN}}}}   \\
 & \\
 & defines labels and variables as for the {\tt ccRefClass} environment   
 \Eindex{ccRefVariable}\\ \hline
@@ -716,7 +736,8 @@ in a temporary variable so it may be restored using
 \verb|\ccSection{|\VarText{section title}\verb|}| 
 & \verb|\ccSection{Section}| \\ 
 & \\
-& {\Large\bf 2 Section (\ccc{Gnu<T>})} 
+& {\large{\bf{2 Section (\ccc{Gnu<T>})}}} 
+
 %& (assuming command used after \verb|\begin{ccClassTemplate}{Gnu<T>}|)
 \ccIndexEntry{Section}\\ \hline
 
@@ -767,7 +788,9 @@ given
 \verb|\ccSubsection{|\VarText{subsection name}\verb|}| 
 & \verb|\ccSubsection{Subsection}| \\
 & \\
-& {\bf 2.1 Subsection (\ccc{Gnu<T>})} 
+%& {\bf{\large 2.1 Subsection (\ccc{Gnu<T>})}} <--- TODO: why does this not work?
+% after this ^^^^, everything is typeset using boldface
+& {\large{\bf 2.1 Subsection (\ccc{Gnu<T>})}} 
 \\ \hline
 \verb|\def\ccTagChapterAuthor{|\VarText{bool}\verb|}|
 & \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse| 
@@ -1039,6 +1062,7 @@ without the \$s
 \verb|\Z| 
 & \Z
 \Mindex{Z}\\ \hline
-\end{supertabular} 
+\lcTex{\end{supertabular}}
+\lcHtml{\end{tabular}}
 
 \end{ccClassTemplate}

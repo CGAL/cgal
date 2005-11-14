@@ -14,14 +14,20 @@
 % The style is compatible with LaTeX2e:
 \documentclass[11pt]{article}
 
-\usepackage{latexsym}
-\usepackage{amssymb}
 \usepackage{path}
 \usepackage{nonlinkedpath}
-\usepackage{epsfig}
 \usepackage{cc_manual}
+\usepackage{cc_manual_index}
 \usepackage{latex_to_html}
-\usepackage{supertabular}
+
+\lcTex{
+  \usepackage{latexsym}
+  \usepackage{supertabular}
+  \usepackage{amssymb}
+  \usepackage{graphicx}
+  \usepackage{epsfig}
+}
+
 
 \makeindex
 
@@ -38,27 +44,28 @@
 
 \sloppy
 
-
-\lcTex{\ccIndexingOff}  % this manual produces its own index; examples are not 
-                        % to be indexed
-
-%\lcTex
-{
+\begin{ccTexOnly}
   \begingroup
     \catcode`\|=0
     \catcode`\[=1
     \catcode`\]=2
     \catcode`\{=12
-    \catcode`\}=12    
-    \catcode`\\=12    
+    \catcode`\}=12
+    \catcode`\\=12
     |gdef|Open[[|tt {]]
     |gdef|Close[[|tt }]]
     |gdef|Backslash[[|tt \]]
   |endgroup
+\end{ccTexOnly}
+
+\lcHtml{%
+ \newcommand{\Backslash}{\verb+\+}
+ \newcommand{\leavevmode}{}
 }
-%\lcHtml{
-%\newcommand{\Backslash}{\verb+\+}
-%}
+
+\lcTex{\ccIndexingOff}  % this manual produces its own index; examples are not 
+                        % to be indexed
+
 
 \newcommand{\Mindex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
 \newcommand{\Eindex}[1]{\index{#1 environment@{\tt #1} environment}}
@@ -67,15 +74,6 @@
 \newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
 \newcommand{\Dindex}[1]{#1\index{#1}}
 \newcommand{\VarText}[1]{$<${\em #1}$>$}
-
-%\newcommand{\Mindex}[1]{}
-%\newcommand{\Eindex}[1]{}
-%\newcommand{\ccIndexEntry}[1]{}
-%\newcommand{\lcIndex}[1]{}
-%\newcommand{\TTindex}[1]{}
-%\newcommand{\Dindex}[1]{}
-%\newcommand{\VarText}[1]{}
-
 
 % ----------------------------------------------------------------------
 \title {{\huge\tt cc\_manual.sty}\\[3mm]
@@ -181,7 +179,7 @@ the tools is given in Figure~\ref{ToolsOverviewFig}.
     \label{ToolsOverviewFig}\figuretopindent
 \begin{ccHtmlOnly}
 <CENTER>
-  <IMG SRC="./tools_overview.gif" ALT="Files and tools used in manual writing">
+  <IMG SRC="Manual_tools/tools_overview.gif" ALT="Files and tools used in manual writing">
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
@@ -1554,7 +1552,7 @@ possibilities.
     \label{figureHorizontal}\figuretopindent
 \begin{ccHtmlOnly}
 <CENTER>
-   <IMG SRC="./horizontal_struct.gif" ALT="Horizontal layout with two examples: A function that fits well in three columns and a constructor formatted in two columns and three lines.">
+   <IMG SRC="Manual_tools/horizontal_struct.gif" ALT="Horizontal layout with two examples: A function that fits well in three columns and a constructor formatted in two columns and three lines.">
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
@@ -1644,7 +1642,7 @@ column layout using one line:
     \label{figureVertical}\figuretopindent
 \begin{ccHtmlOnly}
 <CENTER>
-  <IMG SRC="./vertical_struct.gif" ALT="Vertical layout with two examples: A function that fits well in three columns, and a function formatted in three lines.">
+  <IMG SRC="Manual_tools/vertical_struct.gif" ALT="Vertical layout with two examples: A function that fits well in three columns, and a function formatted in three lines.">
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
@@ -1845,8 +1843,10 @@ A couple of \Dindex{special characters} are also changeable with a
 \ccIndexEntry{Ampersand}\ccIndexEntry{CloseAngle}\ccIndexEntry{Tilde}
 
 \begin{tabbing}
-  M \= \verb+foo\ccptyParameter bar+M \= foo\ccUnderscore barMMM 
-    \= \verb+foo\ccAmpersand bar+M \= \kill
+\lcTex{
+  M \= +foo ccUnderscore bar M \= foo\ccUnderscore barMMM 
+    \= +foo ccAmpersand bar M \= foo\ccAmpersand bar\kill }
+
   \> \verb+foo\ccUnderscore bar+      \> {\em foo\ccUnderscore bar} \>
      \verb+foo\ccHat bar+             \> {\em foo\ccHat bar} \\
   \> \verb+foo\ccOpenAngle bar+       \> {\em foo\ccOpenAngle bar} \>
