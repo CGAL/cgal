@@ -16,7 +16,7 @@
             typename Arrangement_2<Traits,Dcel>::Vertex_handle
             insert_point (Arrangement_2<Traits,Dcel>& arr,
                            const typename Traits::Point_2& p,
-                           const PointLocation& pl);}
+                           const PointLocation& pl = walk_pl);}
    {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
     The function uses the point-location object \ccc{pl} (a model of the
     \ccc{ArrangementPointLocation_2} concept) to locate \ccc{p} in \ccc{arr}.
@@ -26,16 +26,20 @@
     At any case, the function returns a handle for the vertex associated
     with \ccc{p}. The \ccc{Triats} parameter is a model of the refined
     \ccc{ArrangementXMonotoneTraits_2}, such that it supports split operations.
-    \ccPrecond{\ccc{pl} is attached to the given arrangement \ccc{arr}.}}
+    By default, the function uses the ``walk along line'' point-location
+    strategy --- namely an instance of the class
+    \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+    \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+    \ccc{arr}.}}
 
-\ccFunction{template<class Traits, class Dcel>
-            typename Arrangement_2<Traits,Dcel>::Vertex_handle
-            insert_point (Arrangement_2<Traits,Dcel>& arr,
-                           const typename Traits::Point_2& p);}
-   {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
-    This function operated just like the function above, but it uses the
-    default ``walk along line'' point-location strategy, so users need not
-    provide a point-location object.} 
+%\ccFunction{template<class Traits, class Dcel>
+%            typename Arrangement_2<Traits,Dcel>::Vertex_handle
+%            insert_point (Arrangement_2<Traits,Dcel>& arr,
+%                           const typename Traits::Point_2& p);}
+%   {Inserts the point \ccc{p} as an arrangement vertex in \ccc{arr}.
+%    This function operated just like the function above, but it uses the
+%    default ``walk along line'' point-location strategy, so users need not
+%    provide a point-location object.} 
 
 \end{ccRefFunction}
 

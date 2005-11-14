@@ -16,7 +16,7 @@
             typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
             insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
                          const typename Traits::X_monotone_curve_2& c,
-                         const PointLocation& pl);}
+                         const PointLocation& pl = walk_pl);}
    {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
     \ccc{arr}, where the interior of \ccc{c} is disjoint from all existing
     arrangement vertices and edges. Under this assumption, it is possible to
@@ -29,19 +29,23 @@
     the two point-location queries on \ccc{c}'s endpoints. As the insertion
     operations creates just a single new edge, the function returns a handle
     for this one of twin halfedges that form this edge.
-    \ccPrecond{\ccc{pl} is attached to the given arrangement \ccc{arr}.}}
+    By default, the function uses the ``walk along line'' point-location
+    strategy --- namely an instance of the class
+    \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+    \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+    \ccc{arr}.}}
 
-\ccFunction{template<class Traits, class Dcel>
-            typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-            insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c);}
-   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
-    \ccc{arr}, where the interior of \ccc{c} is disjoint from all existing
-    arrangement vertices and edges. The function returns a handle for the
-    one of the twin halfedges created by the insertion.
-    The function operates as the function listed above, but it uses the default
-    ``walk along line'' point-location strategy, so users need not provide a
-    point-location object.}
+%\ccFunction{template<class Traits, class Dcel>
+%            typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+%            insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
+%                         const typename Traits::X_monotone_curve_2& c);}
+%   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
+%    \ccc{arr}, where the interior of \ccc{c} is disjoint from all existing
+%    arrangement vertices and edges. The function returns a handle for the
+%    one of the twin halfedges created by the insertion.
+%   The function operates as the function listed above, but it uses the default
+%    ``walk along line'' point-location strategy, so users need not provide a
+%    point-location object.}
 
 \end{ccRefFunction}
 
