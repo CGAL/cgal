@@ -278,10 +278,17 @@ public: //types
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
   
 private: //types
-  // Umbrella will represent the link of the umbrella of a point in the
-  // restricted Delaunay.
+  /** Umbrella will represent the link of the umbrella of a point in the
+   *  restricted Delaunay. */
   typedef std::set<std::pair<Vertex_handle, Vertex_handle> > Umbrella;
+
   
+  /** Pre_star will represent the pre-star of a point. It is a
+   *  (double)-map of Facet (viewed from cells outside the star),
+   *  ordered by the critial_radius of the point with the cell lies on
+   *  the facet, at the exterior of the pre-star. */
+  typedef CGAL::Double_map<Facet, double> Pre_star;
+
 public: // methods
   Slivers_exuder(Tr& t, double d = 0.45)
     : tr(t), sq_delta(d*d), num_of_pumped_vertices(0),
@@ -395,7 +402,6 @@ public: // methods
     
     std::map<Facet, double> ratios;
     
-    typedef CGAL::Double_map<Facet, double> Pre_star;
     Pre_star pre_star;
 
     double best_weight = 0;
@@ -888,44 +894,34 @@ private: // methods
   double compute_critical_radius(const Vertex_handle& v,
 				 const Cell_handle& c) const
   {
-/*    typedef typename Geom_traits::Construct_weighted_circumcenter_3
-      Construct_weighted_circumcenter_3;
-    typedef typename Geom_traits::
-      Compute_squared_radius_smallest_orthogonal_sphere_3
-      Compute_squared_radius_smallest_orthogonal_sphere_3;
-
-    Construct_weighted_circumcenter_3 weighted_circumcenter =
-      tr.geom_traits().construct_weighted_circumcenter_3_object();
-    Compute_squared_radius_smallest_orthogonal_sphere_3
-      squared_radius_smallest_orthogonal_sphere =
-      tr.geom_traits().
-      compute_squared_radius_smallest_orthogonal_sphere_3_object();
-
-    const Weighted_point& wp0 = c->vertex(0)->point();
-    const Weighted_point& wp1 = c->vertex(1)->point();
-    const Weighted_point& wp2 = c->vertex(2)->point();
-    const Weighted_point& wp3 = c->vertex(3)->point();
-    
-    Weighted_point wc(weighted_circumcenter(wp0, wp1, wp2, wp3),
-		      squared_radius_smallest_orthogonal_sphere(wp0,
-								wp1,
-								wp2,
-								wp3));
-
-    return CGAL::to_double(power_product(wc,v->point()));*/
-    
-//     std::cerr << "c(";
     typedef typename Geom_traits::Compute_critical_squared_radius_3
       Critical_radius;
     Critical_radius critical_radius = 
       tr.geom_traits().compute_critical_squared_radius_3_object();
     
-    double result = critical_radius(c->vertex(0)->point(),
-			            c->vertex(1)->point(),
-				    c->vertex(2)->point(),
-				    c->vertex(3)->point(),
-				    v->point());
-//     std::cerr << result << ")";
+    const double result = critical_radius(c->vertex(0)->point(),
+                                          c->vertex(1)->point(),
+                                          c->vertex(2)->point(),
+                                          c->vertex(3)->point(),
+                                          v->point());
+    CGAL_assertion_code(
+      typedef typename Traits::Construct_weighted_circumcenter_3
+        Construct_weighted_circumcenter_3;
+      typedef typename Traits::Compute_power_product_3
+        Compute_power_product_3;
+      Compute_power_product_3 power_product =
+        tr.geom_traits().compute_power_product_3_object();
+      Construct_weighted_circumcenter_3 weighted_circumcenter =
+        tr.geom_traits().construct_weighted_circumcenter_3_object();
+
+      Weighted_point wc(weighted_circumcenter(c->vertex(0)->point(),
+                                              c->vertex(1)->point(),
+                                              c->vertex(2)->point(),
+                                              c->vertex(3)->point()))
+      );
+    
+    CGAL_assertion( result == power_product(v->point(), wc) );
+    
     return result;
   }
 
