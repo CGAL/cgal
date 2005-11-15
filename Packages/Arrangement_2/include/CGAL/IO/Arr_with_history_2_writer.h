@@ -104,11 +104,12 @@ protected:
 
     // Write the induced edges.
     formatter.write_induced_edges_begin();
-    formatter.write_size ("induced_edges", m_arr.number_of_induced_edges(cv));
+    formatter.write_size ("induced_edges",
+                          this->m_arr.number_of_induced_edges(cv));
     
     Induced_edge_iterator   ieit;
-    for (ieit = m_arr.induced_edges_begin(cv);
-         ieit != m_arr.induced_edges_end(cv); ++ieit)
+    for (ieit = this->m_arr.induced_edges_begin(cv);
+         ieit != this->m_arr.induced_edges_end(cv); ++ieit)
     {
       formatter.write_halfedge_index (this->_get_index (*ieit));
     }

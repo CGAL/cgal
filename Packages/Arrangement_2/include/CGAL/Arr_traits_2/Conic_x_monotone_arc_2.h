@@ -188,7 +188,8 @@ public:
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.
     Alg_kernel         ker;
-    Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source, this->_target);
+    Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source,
+                                                            this->_target);
 
     CGAL_precondition (dir_res != EQUAL);
     if (dir_res == EQUAL)
@@ -988,6 +989,77 @@ public:
         c1._source.set_generating_conic (_id);
         c2._target.set_generating_conic (_id);
       }
+    }
+
+    return;
+  }
+
+  /*!
+   * Flip the arc.
+   * \return An arc with swapped source and target and a reverse orienation.
+   */
+  Self flip () const
+  {
+    // Make a copy of the current arc.
+    Self    arc = *this;
+
+    // Reverse the orientation.
+    if (_orient == CLOCKWISE)
+      arc._orient = COUNTERCLOCKWISE;
+    else if (_orient == COUNTERCLOCKWISE)
+      arc._orient = CLOCKWISE;
+
+    // Swap the source and the target.
+    arc._source = _target;
+    arc._target = _source;
+
+    // Change the direction bit among the information flags.
+    arc._info = (this->_info ^ IS_DIRECTED_RIGHT);
+
+    return (arc);
+  }
+
+  /*!
+   * Trim the arc given its new endpoints.
+   * \param ps The new source point.
+   * \param pt The new target point.
+   * \return The new trimmed arc.
+   * \pre Both ps and pt lies on the arc and must conform with the current
+   *      direction of the arc.
+   */
+  Self trim (const Conic_point_2& ps,
+             const Conic_point_2& pt) const
+  {
+    CGAL_precondition (! _is_special_segment());
+
+    // Make sure that both ps and pt lie on the arc.
+    CGAL_precondition (this->contains_point (ps) &&
+                       this->contains_point (pt));
+
+    // Make sure that the endpoints conform with the direction of the arc.
+    Alg_kernel   ker;
+    CGAL_precondition ((((this->_info & IS_DIRECTED_RIGHT) != 0) &&
+                        ker.compare_xy_2_object() (ps, pt) == SMALLER) ||
+                       (((this->_info & IS_DIRECTED_RIGHT) == 0) &&
+                        ker.compare_xy_2_object() (ps, pt) == LARGER));
+
+    // Make a copy of the current arc and assign its endpoints.
+    Self         arc = *this;
+    
+    if (! ker.equal_2_object() (ps, _source))
+    {
+      arc._source = ps;
+
+      if (! ps.is_generating_conic (_id))
+        arc._source.set_generating_conic (_id);
+    }
+    
+    if (! ker.equal_2_object() (pt, _target))
+    {
+      arc._target = pt;
+
+      if (! pt.is_generating_conic (_id))
+        arc._target.set_generating_conic (_id);
     }
 
     return;
