@@ -26,63 +26,132 @@
 
 #include <CGAL/Arr_traits_2/One_root_number.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Handle_for.h>
 #include <ostream>
 
 CGAL_BEGIN_NAMESPACE
+
+// Forward declaration:
+template <class NumberType_> class _One_root_point_2;
 
 /*! \class
  * Representation of a point whose coordinates are one-root numbers.
  */
 template <class NumberType_>
-class _One_root_point_2
+class _One_root_point_2_rep //: public Ref_counted
 {
+  friend class _One_root_point_2<NumberType_>;
+
 public:
 
   typedef NumberType_                 NT;
+  typedef _One_root_point_2_rep<NT>   Self;
   typedef _One_root_number<NT>        CoordNT;
 
 private:
 
-  CoordNT       _x;
+  CoordNT       _x;            // The coordinates.
   CoordNT       _y;
 
 public:
 
   /*! Default constructor. */
-  _One_root_point_2 () :
+  _One_root_point_2_rep () :
     _x (0),
     _y (0)
   {}
 
   /*! Constructor of a point with rational coefficients. */
-  _One_root_point_2 (const NT& x, const NT& y) :
+  _One_root_point_2_rep (const NT& x, const NT& y) :
     _x (x),
     _y (y)
   {}
 
   /*! Constructor of a point with one-root coefficients. */
-  _One_root_point_2 (const CoordNT& x, const CoordNT& y) :
+  _One_root_point_2_rep (const CoordNT& x, const CoordNT& y) :
     _x (x),
     _y (y)
+  {}
+};
+
+/*! \class
+ * A handle for a point whose coordinates are one-root numbers.
+ */
+template <class NumberType_>
+class _One_root_point_2 :
+  public Handle_for<_One_root_point_2_rep<NumberType_> >
+{
+public:
+
+  typedef NumberType_                 NT;
+  typedef _One_root_point_2<NT>       Self;
+  typedef _One_root_number<NT>        CoordNT;
+
+private:
+
+  typedef _One_root_point_2_rep<NT>   Point_rep;
+  typedef Handle_for<Point_rep>       Point_handle;
+
+public:
+
+  /*! Default constructor. */
+  _One_root_point_2 () :
+    Point_handle (Point_rep())
+  {}
+
+  /*! Copy constructor. */
+  _One_root_point_2 (const Self& p) :
+    Point_handle (p)
+  {}
+
+  /*! Constructor of a point with rational coefficients. */
+  _One_root_point_2 (const NT& x, const NT& y) :
+    Point_handle (Point_rep (x, y))
+  {}
+
+  /*! Constructor of a point with one-root coefficients. */
+  _One_root_point_2 (const CoordNT& x, const CoordNT& y) :
+    Point_handle (Point_rep (x, y))
   {}
 
   /*! Get the x-coordinate. */
   const CoordNT& x () const
   {
-    return (_x);
+    return (ptr()->_x);
   }
 
   /*! Get the y-coordinate. */
   const CoordNT& y () const
   {
-    return (_y);
+    return (ptr()->_y);
   }
 
   /*! Check for equality. */
-  bool equals (const _One_root_point_2<NT>& p) const
+  bool equals (const Self& p) const
   {
-    return (CGAL::compare (_x, p._x) == EQUAL &&
-            CGAL::compare (_y, p._y) == EQUAL);
+    if (this->identical (p))
+      return (true);
+
+    return (CGAL::compare (ptr()->_x, p.ptr()->_x) == EQUAL &&
+            CGAL::compare (ptr()->_y, p.ptr()->_y) == EQUAL);
+  }
+
+  /*! Set the point coordinates. */
+  void set (const NT& x, const NT& y)
+  {
+    copy_on_write();
+    ptr()->_x = CoordNT (x);
+    ptr()->_y = CoordNT (y);
+    return;
+  }
+
+  /*! Set the point coordinates. */
+  void set (const CoordNT& x, const CoordNT& y)
+  {
+    copy_on_write();
+    ptr()->_x = x;
+    ptr()->_y = y;
+    return;
   }
 };
 

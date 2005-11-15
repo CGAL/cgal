@@ -69,6 +69,9 @@ public:
      */
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
+      if (p1.identical (p2))
+        return (EQUAL);
+
       return (CGAL::compare (p1.x(), p2.x()));
     }
   };
@@ -92,6 +95,9 @@ public:
      */
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
+      if (p1.identical (p2))
+        return (EQUAL);
+
       Comparison_result  res = CGAL::compare (p1.x(), p2.x());
 
       if (res != EQUAL)
@@ -295,9 +301,6 @@ public:
      */
     bool operator() (const Point_2& p1, const Point_2& p2) const
     {
-      if (&p1 == &p2)
-        return (true);
-
       return (p1.equals (p2));
     }
   };
@@ -428,6 +431,7 @@ public:
   class Split_2
   {
   public:
+
     /*!
      * Split a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
@@ -448,7 +452,7 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () const
+  Split_2 split_2_object ()
   {
     return Split_2();
   }
