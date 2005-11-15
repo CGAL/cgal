@@ -11,28 +11,28 @@
 \label{bobs_sec:intro}
 % ===============================================================
 %
-This package consists of the implementation of Boolean-set operations
+This package consists of the implementation of Boolean set-operations
 on point sets bounded by $x$-monotone curves in 2-dimensional
 Euclidean space. In particular, it contains the implementation of
-{\em regularized} Boolean-set operations, intersection predicates, and
+{\em regularized} Boolean set-operations, intersection predicates, and
 point containment predicates.
 % and Minkowski sum computations.
 
-A regularized Boolean-set operation $\mbox{op}^*$ can be obtained by
+A regularized Boolean set-operation $\mbox{op}^*$ can be obtained by
 first taking the interior of the resultant point set of an {\em ordinary}
-Boolean-set operation $(P\ \mbox{op}\ Q)$ and then by taking the
-closure~\cite{h-sm-04}. That is
+Boolean set-operation $(P\ \mbox{op}\ Q)$ and then by taking the
+closure~\cite{cgal:h-sm-04}. That is
 $P\ \mbox{op}^*\ Q = \mbox{closure}(\mbox{interior} (P\ \mbox{op}\ Q))$.
-Regularized Boolean-set operations appear in Constructive Solid
+Regularized Boolean set-operations appear in Constructive Solid
 Geometry (CSG), because regular sets are closed under regularized
-Boolean-set operations, and because regularization eliminates lower
+Boolean set-operations, and because regularization eliminates lower
 dimensional features, thus simplifying and restricting the
 representation to physically meaningful solids.
 % A simplified representation does not have to store selection marks;
 % they are implicitly always set for vertices and edges, and for faces
 % they are deduced from a suitably chosen orientation condition on their
 % boundaries.
-Ordinary Boolean-set operations, which distinguish between the
+Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented yet. These
 operations operate on, and result with, general polygons, which
 include isolated curves and points, and open shapes. The \ccc{Nef_2}
@@ -117,10 +117,10 @@ polygons. (c) The complement of a strictly simple polygon.}
 \end{figure}
 
 % ===============================================================
-\section{Boolean-Set Operations on General Polygons}
+\section{Boolean Set-Operations on General Polygons}
 \label{bobs_sec:bops}
 % ===============================================================
-For two point sets $P$ and $Q$, the (ordinary) Boolean-set operations are
+For two point sets $P$ and $Q$, the (ordinary) Boolean set-operations are
 defined as follows:
 \begin{description}
 \item [Intersection predicate] tests whether the two polygons $P$ and $Q$
@@ -138,17 +138,17 @@ defined as follows:
 \label{bobs_ssec:regularized_bops}
 % ===============================================================
 A general polygon, which is an operand or a result of a regularized
-Boolean-set operation is considered as being a closed point-set (that
+Boolean set-operation is considered as being a closed point-set (that
 consist of its interior and its boundary). The distinction between the
 interior and  the exterior of a polygon is determined by the order of
-its vertices. The definition of the regularized Boolean-set operations 
+its vertices. The definition of the regularized Boolean set-operations 
 is slightly different than the definition of the ordinary as mentioned
 above. For example, the intersection predicate tests whether the
 interior of two polygons $P$ and $Q$ overlap. Thus, if two polygons
 have a finite set of points, or even a boundary curve, in common, they
 are concidered non-intersecting.
 
-All functions that implement the regularized Boolean-set operations
+All functions that implement the regularized Boolean set-operations
 are parameterized by a \ccc{GeneralPolygonSetTraits_2} type. The
 result is provided through a single general polygon or an output
 iterator of a range of general polygons. If  an output iterator is
@@ -229,7 +229,7 @@ int main ()
 \subsection{Interface}
 \label{bobs_ssec:interface}
 % ---------------------------------------------------------------
-The methods that implement the Boolean-set operations provided by this
+The methods that implement the Boolean set-operations provided by this
 package come in two flavors as follows. Some of the methods accept two
 parameters that represent two operands. These methods store the result
 in a third instance, the current object. Their counterpart methods
@@ -270,15 +270,15 @@ $R$ must be pairwise disjoint in their interiors.
 \section{The Main Components}
 \label{bobs_sec:main_components}
 % ===============================================================
-The central component in the Boolean-Set Operations package is the
+The central component in the Boolean Set-Operations package is the
 \ccc{General_polygon_set_2} class-template. It employs the
 \ccc{Arrangement_2} class to represent a point set in the plane as a
 planar arrangement; see Chapter~\ref{chapterArrangement_2}. 
 An instance of the \ccc{General_polygon_set_2} class-template can be
 constructed from general polygons or general polygons with holes. The
 precise definitions of these polygons are provided in the following
-subsections. It provides methods to apply regularized Boolean-set
-operations on pairs of \ccc{General_polygon_set_2} objects or general
+subsections. It provides methods to apply regularized Boolean 
+set-operations on pairs of \ccc{General_polygon_set_2} objects or general
 polygon (or general polygon with holes) directly, and a few other utility
 methods. The input and output of these methods consist of one or more
 general polygons, some of which may have holes.
@@ -383,7 +383,7 @@ traits is obtained in the future.
 % the operation or simplify the representation of the result. For example,
 % the intersection of two convex polygons is either an empty polygon or a
 % convex polygon.
-Regular sets are closed under regularized Boolean-set operations.
+Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may output, general
 polygons with holes. The concept \ccc{GeneralPolygonSetTraits_2}
 requires a type of polygon with holes that corresponds to the concept
@@ -398,9 +398,9 @@ polygon that represents the outer boundary, and clockwise order for
 the general polygons that represent the holes.
 
 The exact definition of the obtained general polygon with holes as a
-result of a Boolean-set operation or a sequence of such operations is
-closely related to the definition of regularized Boolean-set
-operations, being the colsure of the interior of the corresponding
+result of a Boolean set-operation or a sequence of such operations is
+closely related to the definition of regularized Boolean 
+set-operations, being the colsure of the interior of the corresponding
 ordinary operation as explained next.
 \begin{wrapfigure}{l}{2.5cm}
 \begin{center}
@@ -479,7 +479,7 @@ to maintain a container of \ccc{X_monotone_curve_2} objects, which
 represents the boundary of the general polygon.
 
 The code excerpt listed below defines a general-polygon set type that
-can be used to perform Boolean-set operations on point sets bounded by
+can be used to perform Boolean set-operations on point sets bounded by
 linear segments used by the \ccc{Arrangement_2} class by default. A
 model of the \ccc{ExtendedGeneralPolygon_2} concept that represents a
 (linear) polygon bounded by curves of type \ccc{Arr_segment_2} is
@@ -499,6 +499,6 @@ typedef CGAL::General_polygon_set_2<Traits>             General_polygon_set;
 Swapping the linear arrangement traits \ccc{Arr_segment_traits_2}
 above with a traits class that handle conic arcs, such as
 \ccc{Arr_conic_traits_2}, results with the definition of a
-general-polygon set type that can be used to perform Boolean-set
-operations on point sets bounded by conic arcs of type
+general-polygon set type that can be used to perform Boolean 
+set-operations on point sets bounded by conic arcs of type
 \ccc{Arr_conic_2}.
