@@ -3,6 +3,7 @@ README for the Specification and Manual Writing Tools
 =====================================================
 24.08.1999   Zurich       Lutz Kettner   kettner@acm.org
 29.01.2000   Saarbruecken Susan Hert     hert@mpi-sb.mpg.de
+ 1. 9.2005   Saarbruecken Andreas Meyer  ameyer@mpi-inf.mpg.de
 
 This is the directory containing the tools for extracting the
 C++ declarations from a specification, to check the specification
@@ -12,10 +13,7 @@ The directory structure is:
     README                    this file.
     INSTALLATION              installation instructions.
 
-    RCS/                      revision controlled files.
     latex_converter_config/   configuration files for the LaTeX converter.
-    test/                     test suite.
-    test_html/                conversion example using multiple directories.
 
 See also the file INSTALLATION in the parent directory for how to
 install the complete distribution.
