@@ -5,8 +5,8 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 #CGAL_MAKEFILE = c:/cgal/CGAL-3.0/make/makefile_i686_CYGWINNT-5.1-1.5.6_g++-3.3.1
-CGAL_MAKEFILE = c:/cgal/CGAL-3.0/make/makefile_i686_CYGWINNT-5.1-1.5.6_CL.EXE-1310
-
+#CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.11_g++-3.3.3
+CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.11_CL.EXE-1310
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
@@ -19,7 +19,7 @@ MY_OPT_FLAGS =  -DNOLAZY -DBLIND
 #pour desactiver le dump dans geomview -DBLIND
 #pour desactiver l'evaluation paresseuse -DNOLAZY
 
-CXXFLAGS =  -DNDEBUG -O2 -DNOLAZY -DBLIND\
+CXXFLAGS =   -I c:/cgal/develop/Interval_arithmetic/include -O2 -DNDEBUG -DNOLAZY -DBLIND\
 	    $(CGAL_CXXFLAGS) -I../include $(MY_OPT_FLAGS) 
 
 
@@ -46,6 +46,9 @@ all: extract$(EXE_EXT)
 
 extract$(EXE_EXT): extract$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extract  extract$(OBJ_EXT) $(LDFLAGS)
+
+T3$(EXE_EXT): T3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)T3  T3$(OBJ_EXT) $(LDFLAGS)
 
 
 wr$(EXE_EXT): wr$(OBJ_EXT)

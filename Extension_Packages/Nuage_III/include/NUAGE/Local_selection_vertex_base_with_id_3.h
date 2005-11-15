@@ -5,15 +5,17 @@
 // ----------------------------------------------------------------------
 //
 
-// file          : include/CGAL/Local_selection_vertex_base_3.h
+// file          : include/CGAL/Local_selection_vertex_base_with_id_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+// author(s)     : Andreas Fabri
 //
 // ======================================================================
 
-#ifndef LOCAL_SELECTION_VERTEX_BASE_3_H
-#define LOCAL_SELECTION_VERTEX_BASE_3_H
+#ifndef LOCAL_SELECTION_VERTEX_BASE_WITH_ID_3_H
+#define LOCAL_SELECTION_VERTEX_BASE_WITH_ID_3_H
+
+#include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <utility>
 
@@ -21,19 +23,17 @@
 #include <map>
 #include <set>
 
-#include <CGAL/Triangulation_vertex_base_3.h>
-
 namespace NUAGE {
 
 template <class K, class VertexBase = CGAL::Triangulation_vertex_base_3<K> >
-class Local_selection_vertex_base_3 : public VertexBase
+class Local_selection_vertex_base_with_id_3 : public VertexBase
 {
 public:
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename VertexBase::template Rebind_TDS<TDS2>::Other  Vb2;
-    typedef Local_selection_vertex_base_3<K,Vb2>                    Other;
+    typedef Local_selection_vertex_base_with_id_3<K,Vb2>                    Other;
   };
 
 
@@ -71,7 +71,7 @@ public:
   //-------------------- DATA MEMBERS ---------------------------------
 
 private:
-
+  int _id;
   int _mark;
   int _post_mark;
   Intern_successors_type* _incident_border;
@@ -91,7 +91,8 @@ private:
 
 public:
 
-  Local_selection_vertex_base_3()
+
+  Local_selection_vertex_base_with_id_3()
     : VertexBase(), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -103,7 +104,7 @@ public:
       _incident_border->second->first = NULL;
     }
   
-  Local_selection_vertex_base_3(const Point & p)
+  Local_selection_vertex_base_with_id_3(const Point & p)
     : VertexBase(p), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -115,7 +116,7 @@ public:
       _incident_border->second->first = NULL;
     }
   
-  Local_selection_vertex_base_3(const Point & p, Cell_handle f)
+  Local_selection_vertex_base_with_id_3(const Point & p, Cell_handle f)
     : VertexBase(p, f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -127,7 +128,7 @@ public:
       _incident_border->second->first = NULL;
     }
 
-  Local_selection_vertex_base_3(Cell_handle f)
+  Local_selection_vertex_base_with_id_3(Cell_handle f)
     : VertexBase(f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -139,7 +140,7 @@ public:
       _incident_border->second->first = NULL;
     }
 
-	Local_selection_vertex_base_3(const Local_selection_vertex_base_3& other)
+	Local_selection_vertex_base_with_id_3(const Local_selection_vertex_base_with_id_3& other)
     : VertexBase(), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -152,7 +153,7 @@ public:
 	}
   //-------------------- DESTRUCTOR -----------------------------------
 
-  ~Local_selection_vertex_base_3()
+  ~Local_selection_vertex_base_with_id_3()
     {
       if (_incident_border != NULL)
 	{
@@ -176,6 +177,16 @@ public:
     }
 
   //-------------------- MEMBER FUNCTIONS -----------------------------
+
+  int& id()
+  {
+    return _id;
+  }
+
+  const int& id() const
+  {
+    return _id;
+  }
 
   inline void re_init()
     {
@@ -476,10 +487,10 @@ public:
 };
 
 template <class K, class VertexBase>
-std::list<typename Local_selection_vertex_base_3<K,VertexBase>::Vertex_handle> Local_selection_vertex_base_3<K,VertexBase>::interior_edges;
+std::list<typename Local_selection_vertex_base_with_id_3<K,VertexBase>::Vertex_handle> Local_selection_vertex_base_with_id_3<K,VertexBase>::interior_edges;
 
 template <class K, class VertexBase>
-std::list<typename Local_selection_vertex_base_3<K,VertexBase>::Incidence_request_elt> Local_selection_vertex_base_3<K,VertexBase>::incidence_requests;
+std::list<typename Local_selection_vertex_base_with_id_3<K,VertexBase>::Incidence_request_elt> Local_selection_vertex_base_with_id_3<K,VertexBase>::incidence_requests;
 
 } // namespace NUAGE
 

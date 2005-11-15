@@ -4,6 +4,7 @@
 
 #include <NUAGE/Parse.h>
 
+namespace NUAGE {
 
 void usage(char* program)
 {
@@ -30,6 +31,10 @@ void usage(char* program)
 	    << "     -out fname     : writes points to file ./fname" << std::endl
 	    << "     -out_format -of: choose file format for output (iv, wrl, oogl, medit," << std::endl
 	    << "                                                     ply, stl, all, none)" << std::endl
+            << "     -rgb r g b     : color of the surface" << std::endl
+            << "     -no_header     : The Vrml header and footer are not written" << std::endl	    
+	    << "     -area  a       : set the area threshold: No faces larger than area * average_area" << std::endl
+	    << "     -perimeter  p  : set the perimeter threshold: No faces larger than perometer * average_perimeter" << std::endl
 	    << "     All options can be abbreviated by their first character" << std::endl;
 }
 
@@ -38,60 +43,84 @@ void usage(char* program)
 bool
 parse(int argc, char* argv[], Options &opt)
 {
-  AF_CGAL_CLIB_STD::strcpy(opt.program, argv[0]);
+  std::strcpy(opt.program, argv[0]);
   --argc;
   argv++;
   if(argc == 0)
     std::cout << "nothing ???" << std::endl;
   
   while ((argc > 0) && (argv[0][0] == '-')){
-    if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-D")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-Delaunay"))) {
+    if ((!std::strcmp(argv[0], "-D")) || (!std::strcmp(argv[0], "-Delaunay"))) {
       opt.Delaunay = true;
       argv++;
       argc--;
       std::cout << "-D ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-c")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-contours"))) {
+    else if ((!std::strcmp(argv[0], "-c")) || (!std::strcmp(argv[0], "-contours"))) {
       opt.contour = true;
       argv++;
       argc--;
       std::cout << "-c ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-s")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-shuffle"))) {
+    else if ((!std::strcmp(argv[0], "-s")) || (!std::strcmp(argv[0], "-shuffle"))) {
       opt.shuffle = true;
       argv++;
       argc--;
       std::cout << "-s ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-b")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-binary"))) {
+    else if ((!std::strcmp(argv[0], "-b")) || (!std::strcmp(argv[0], "-binary"))) {
       opt.binary = true;
       argv++;
       argc--;
       std::cout << "-b ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-x")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-xyz"))) {
+    else if ((!std::strcmp(argv[0], "-x")) || (!std::strcmp(argv[0], "-xyz"))) {
       opt.xyz = true;
       argv++;
       argc--;
       std::cout << "-x ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-nb")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-no_border"))) {
+    else if ((!std::strcmp(argv[0], "-nb")) || (!std::strcmp(argv[0], "-no_border"))) {
       opt.K = HUGE_VAL;
       opt.K_init = opt.K;
       argv++;
       argc--;
       std::cout << "-nb ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-d")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-delta"))){
-      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.DELTA) != 1) {
-	std::cerr << "Argument for DELTA must be a number"
+    else if ((!std::strcmp(argv[0], "-nh")) || (!std::strcmp(argv[0], "-no_header"))) {
+      opt.no_header = true;
+      argv++;
+      argc--;
+      std::cout << "-nh ";
+    }
+    else if ((!std::strcmp(argv[0], "-d")) || (!std::strcmp(argv[0], "-delta"))){
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.delta) != 1) {
+	std::cerr << "Argument for delta must be a number"
 		  << std::endl;
       }
       argv += 2;
       argc -= 2;
-      std::cout << "-d " << opt.DELTA << " "; 
+      std::cout << "-d " << opt.delta << " "; 
     }  
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-ki"))){
+    else if ((!std::strcmp(argv[0], "-a")) || (!std::strcmp(argv[0], "-area"))){
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.area) != 1) {
+	std::cerr << "Argument for area must be a number"
+		  << std::endl;
+      }
+      argv += 2;
+      argc -= 2;
+      std::cout << "-a " << opt.area << " "; 
+    }   
+    else if ((!std::strcmp(argv[0], "-pe")) || (!std::strcmp(argv[0], "-perimeter"))){
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.perimeter) != 1) {
+	std::cerr << "Argument for perimeter must be a number"
+		  << std::endl;
+      }
+      argv += 2;
+      argc -= 2;
+      std::cout << "-perimeter " << opt.perimeter << " "; 
+    }  
+    else if ((!std::strcmp(argv[0], "-ki"))){
       if ((CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.K_init) != 1)||
 	  (CGAL_CLIB_STD::sscanf(argv[2], "%lf", &opt.K) != 1)){
 	std::cerr << "Argument for K must be a number"
@@ -100,8 +129,19 @@ parse(int argc, char* argv[], Options &opt)
       argv += 3;
       argc -= 3;
       std::cout << "-ki " << opt.K_init << " " << opt.K << " ";
+    }  
+    else if ((!std::strcmp(argv[0], "-rgb"))){
+      if ((CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.red) != 1)||
+	  (CGAL_CLIB_STD::sscanf(argv[2], "%lf", &opt.green) != 1) ||
+	  (CGAL_CLIB_STD::sscanf(argv[3], "%lf", &opt.blue) != 1)){
+	std::cerr << "Argument for rgb must be three numbers"
+		  << std::endl;
+      }
+      argv += 4;
+      argc -= 4;
+      std::cout << "-rgb " << opt.red << " " << opt.green << " " << opt.blue << " " ;
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-ks"))){
+    else if ((!std::strcmp(argv[0], "-ks"))){
       if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.K_step) != 1) {
 	std::cerr << "Argument for K must be a number"
 		  << std::endl;
@@ -110,7 +150,7 @@ parse(int argc, char* argv[], Options &opt)
       argc -= 2;
       std::cout << "-ks " << opt.K_step << " ";
     }  
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-k"))){
+    else if ((!std::strcmp(argv[0], "-k"))){
       if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.K) != 1) {
 	std::cerr << "Argument for K must be a number"
 		  << std::endl;
@@ -120,7 +160,7 @@ parse(int argc, char* argv[], Options &opt)
       argc -= 2;
       std::cout << "-k " << opt.K_init << " ";
     } 
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-n")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-number_of_points"))){
+    else if ((!std::strcmp(argv[0], "-n")) || (!std::strcmp(argv[0], "-number_of_points"))){
       if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.number_of_points) != 1) {
 	std::cerr << "Argument for the number of points must be a number"
 		  << std::endl;
@@ -129,7 +169,7 @@ parse(int argc, char* argv[], Options &opt)
       argc -= 2;
       std::cout << "-n " << opt.number_of_points << " ";
     }  
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-m")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-max_of_connected_components"))){
+    else if ((!std::strcmp(argv[0], "-m")) || (!std::strcmp(argv[0], "-max_of_connected_components"))){
       if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.max_connected_comp) != 1) {
 	std::cerr << "Argument for the number of connected components must be a number"
 		  << std::endl;
@@ -145,7 +185,7 @@ parse(int argc, char* argv[], Options &opt)
       argc -= 2;
       std::cout << "-m " << opt.max_connected_comp << " ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-p")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-post"))){
+    else if ((!std::strcmp(argv[0], "-p")) || (!std::strcmp(argv[0], "-post"))){
       if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.NB_BORDER_MAX) != 1) {
 	std::cerr << "Argument for post process must be a number"
 		  << std::endl;
@@ -154,44 +194,44 @@ parse(int argc, char* argv[], Options &opt)
       argc -= 2;
       std::cout << "-p " << opt.NB_BORDER_MAX << " ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-i")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-in"))) {
-      AF_CGAL_CLIB_STD::strcpy(opt.finname, argv[1]);
+    else if ((!std::strcmp(argv[0], "-i")) || (!std::strcmp(argv[0], "-in"))) {
+      std::strcpy(opt.finname, argv[1]);
       opt.file_input = true;
       argv += 2;
       argc -= 2;
       std::cout << "-i " << opt.finname << " ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-s")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-sect_in"))) {
-      AF_CGAL_CLIB_STD::strcpy(opt.finname, argv[1]);
+    else if ((!std::strcmp(argv[0], "-s")) || (!std::strcmp(argv[0], "-sect_in"))) {
+      std::strcpy(opt.finname, argv[1]);
       opt.Section_file = true;
       opt.file_input = true;
       argv += 2;
       argc -= 2;
       std::cout << "-s " << opt.finname << " ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-o")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-out"))) {
-      AF_CGAL_CLIB_STD::strcpy(opt.foutname, argv[1]);
+    else if ((!std::strcmp(argv[0], "-o")) || (!std::strcmp(argv[0], "-out"))) {
+      std::strcpy(opt.foutname, argv[1]);
       opt.file_output = true;
       argv += 2;
       argc -= 2;
       std::cout << "-o " << opt.foutname << " ";
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-of")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-out_format"))) {
-      if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "wrl"))
+    else if ((!std::strcmp(argv[0], "-of")) || (!std::strcmp(argv[0], "-out_format"))) {
+      if (!std::strcmp(argv[1], "wrl"))
 	opt.out_format = 0;
-      else if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "oogl"))
+      else if (!std::strcmp(argv[1], "oogl"))
 	opt.out_format = 1;
-      else if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "medit"))
+      else if (!std::strcmp(argv[1], "medit"))
 	opt.out_format = 2;
-      else if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "ply"))
+      else if (!std::strcmp(argv[1], "ply"))
 	opt.out_format = 3;
-      else if(!AF_CGAL_CLIB_STD::strcmp(argv[1], "iv"))
+      else if(!std::strcmp(argv[1], "iv"))
 	opt.out_format = 4;
-      else if(!AF_CGAL_CLIB_STD::strcmp(argv[1], "stl"))
+      else if(!std::strcmp(argv[1], "stl"))
 	opt.out_format = 5;
-      else if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "all"))
+      else if (!std::strcmp(argv[1], "all"))
 	opt.out_format = -1;
-      else if (!AF_CGAL_CLIB_STD::strcmp(argv[1], "none"))
+      else if (!std::strcmp(argv[1], "none"))
 	opt.out_format = -2;
       else
 	std::cout << "unrecognized file format." << std::endl;
@@ -200,9 +240,9 @@ parse(int argc, char* argv[], Options &opt)
       argv += 2;
       argc -= 2;
     }
-    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-?")) ||
-	     (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-h")) ||
-	     (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-help"))) {
+    else if ((!std::strcmp(argv[0], "-?")) ||
+	     (!std::strcmp(argv[0], "-h")) ||
+	     (!std::strcmp(argv[0], "-help"))) {
       usage(opt.program);
       return false;
     }
@@ -220,4 +260,4 @@ parse(int argc, char* argv[], Options &opt)
   return true;
 }
 
-
+} // namespace NUAGE

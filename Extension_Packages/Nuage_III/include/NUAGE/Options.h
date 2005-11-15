@@ -1,5 +1,5 @@
-#ifndef NUAGE_PARSE_H
-#define NUAGE_PARSE_H
+#ifndef NUAGE_OPTIONS_H
+#define NUAGE_OPTIONS_H
 
 
 namespace NUAGE {
@@ -42,10 +42,6 @@ public:
 };
 
 
-void usage(char* program);
-
-bool parse(int argc, char* argv[], Options &opt);
-
 } // namespace NUAGE
 
-#endif  // NUAGE_PARSE_H
+#endif  // NUAGE_OPTIONS_H

@@ -7,11 +7,14 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Random.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Tvb_3_2.h>
+#include <NUAGE/Surface_vertex_base_2.h>
+#include <NUAGE/Surface_face_base_2.h>
+#include <NUAGE/orient.h>
 
-//#define AF_CGAL_CLIB_STD std
-#define AF_CGAL_CLIB_STD
 
-
+namespace NUAGE {
 
 
 template <class Vertex>
@@ -36,8 +39,8 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
 
   char foutput_points[100];
   char foutput_faces[100];
-  AF_CGAL_CLIB_STD::strcpy(foutput_points, foutput);
-  AF_CGAL_CLIB_STD::strcpy(foutput_faces, foutput);
+  std::strcpy(foutput_points, foutput);
+  std::strcpy(foutput_faces, foutput);
   CGAL_CLIB_STD::strcat(foutput_points, ".points");
   CGAL_CLIB_STD::strcat(foutput_faces, ".faces");
   std::ofstream os_points(foutput_points, std::ios::out);
@@ -110,19 +113,7 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
 	  os_faces << " 0 0 0 0" << std::endl; 
 	}
     }
-  /*
-  // iterer sur _additional_facets_list pour rajouter les facttes manquantes
-  for(Additional_facets_iterator add_f_it =
-	S.additional_facets_list_begin();
-      add_f_it != S.additional_facets_list_end(); add_f_it++)
-    {
-      os_faces << 3 << " ";
-      os_faces << vertex_index_map[(*add_f_it).first] + 1 << " ";
-      os_faces << vertex_index_map[(*add_f_it).second] + 1 << " ";
-      os_faces << vertex_index_map[(*add_f_it).third] + 1 << " ";
-      os_faces << " 0 0 0 0" << std::endl; 
-    }
-  */
+
   std::cout << "-- medit result written." << std::endl;
 }
 
@@ -141,9 +132,9 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
   Triangulation_3& T = S.triangulation();
 
   char foutput_tmp[100];
-  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+  std::strcpy(foutput_tmp, foutput);
 
-  CGAL_CLIB_STD::strcat(foutput_tmp, ".oogl");
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".off");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
@@ -214,21 +205,7 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
 	  // color 
 	}
     }
-  /*
-  // iterer sur _additional_facets_list pour rajouter les facttes manquantes
-  for(Additional_facets_iterator add_f_it =
-	S.additional_facets_list_begin();
-      add_f_it != S.additional_facets_list_end(); add_f_it++)
-    {
-      os << 3 << " ";
-      os << vertex_index_map((*add_f_it).first] << " ";
-      os << vertex_index_map[(*add_f_it).second] << " ";
-      os << vertex_index_map[(*add_f_it).third] << " ";
-      os << 0 << std::endl;  // without color.
-      // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
-      // color 
-    }
-  */
+
   std::cout << "-- oogl result written." << std::endl;
 }
 
@@ -244,7 +221,7 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
   typedef typename Surface::Cell_handle Cell_handle;
   Triangulation_3& T = S.triangulation();
   char foutput_tmp[100];
-  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+  std::strcpy(foutput_tmp, foutput);
 
   CGAL_CLIB_STD::strcat(foutput_tmp, ".ply");
   std::ofstream os(foutput_tmp, std::ios::out | std::ios::binary);
@@ -326,21 +303,7 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
 	  // color 
 	}
     }
-  /*
-  // iterer sur _additional_facets_list pour rajouter les facttes manquantes
-  for(Additional_facets_iterator add_f_it =
-	S.additional_facets_list_begin();
-      add_f_it != S.additional_facets_list_end(); add_f_it++)
-    {
-      os << 3 << " ";
-      os << vertex_index_map[(*add_f_it).first] << " ";
-      os << vertex_index_map[(*add_f_it).second] << " ";
-      os << vertex_index_map[(*add_f_it).third];
-      os << std::endl;  // without color.
-      // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
-      // color 
-    }
-  */
+
   //std::cout << "-- ply result written." << std::endl;
 }
 
@@ -622,7 +585,7 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
   typedef typename Surface::Cell_handle Cell_handle;
   Triangulation_3& T = S.triangulation();
   char foutput_tmp[100];
-  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+  std::strcpy(foutput_tmp, foutput);
 
   CGAL_CLIB_STD::strcat(foutput_tmp, ".iv");
   std::ofstream os(foutput_tmp, std::ios::out);
@@ -721,20 +684,7 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
 	  os << -1; 
 	}
     }
-  /*
-  // iterer sur _additional_facets_list pour rajouter les facttes manquantes
-  for(Additional_facets_iterator add_f_it =
-	S.additional_facets_list_begin();
-      add_f_it != S.additional_facets_list_end(); add_f_it++)
-    {
-      os << "," << std::endl <<
-"		            ";
-       os << vertex_index_map[(*add_f_it).first] << ", ";
-       os << vertex_index_map[(*add_f_it).second] << ", ";
-       os << vertex_index_map[(*add_f_it).third] << ", ";
-       os << -1;
-    }
-  */
+
 
   os << " ]\n"
     "      }\n"
@@ -812,7 +762,7 @@ write_boundaries(std::ostream& os, const Surface& S)
 template <class Surface>
 void
 write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
-				  const bool& boundary)
+				  const bool& boundary, double red, double green, double blue, bool no_header)
 {
 
   typedef typename Surface::Triangulation_3 Triangulation_3;
@@ -822,9 +772,16 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
   typedef typename Surface::Cell_handle Cell_handle;
   Triangulation_3& T = S.triangulation();
 
+  typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > Kernel;
+ 
+  typedef CGAL::Triangulation_data_structure_2<CGAL::Tvb_3_2<Kernel> > TDS;
+
+  TDS tds;
+
+  TDS::Vertex_handle inf = orient(tds, S);
 
   char foutput_tmp[100];
-  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+  std::strcpy(foutput_tmp, foutput);
 
   CGAL_CLIB_STD::strcat(foutput_tmp, ".wrl");
   std::ofstream os(foutput_tmp, std::ios::out);
@@ -838,86 +795,15 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
 
   CGAL::set_ascii_mode(os);
   
-  // Header.
-  os << 
-    "#VRML V2.0 utf8\n"
-    "Background {skyColor .1 .5 .5}\n"
-    "Group {\n"
-    "children [\n"
-    "Shape {\n"
-    "appearance Appearance {\n"
-    "material Material { diffuseColor .6 .5 .9}}\n"
-    "geometry\n"
-    "IndexedFaceSet {\n"
-    "coord DEF def_coords Coordinate {\n"
-    "point [ " << std::endl;
-  
-  CGAL::Unique_hash_map<Vertex_handle, int> vertex_index_map(-1, T.number_of_vertices());
-
-  int count(0);
-  for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
-       v_it != T.finite_vertices_end();
-       v_it++){
-    typename CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
-    if ((!v_it->is_exterior()) && d == -1){
-      d = count;
-      count++;
-      os << v_it->point()  << " ,\n";
-    }
-  }
-  os << " ]\n"
-    "}\n"
-    "solid FALSE\n"
-    "coordIndex [\n";
-
-  for(Finite_facets_iterator f_it = T.finite_facets_begin(); 
-      f_it != T.finite_facets_end(); 
-      f_it++)
-    {
-      Cell_handle n, c = (*f_it).first;
-      int ni, ci = (*f_it).second;
-      n = c->neighbor(ci);
-      ni = n->index(c);
-      int i1, i2 ,i3;
-
-      if (c->is_selected_facet(ci))
-	{
-	  i1 = (ci+1) & 3;
-	  i2 = (ci+2) & 3;
-	  i3 = (ci+3) & 3;
-	  
-	  os << vertex_index_map[c->vertex(i1)] << ", ";
-	  os << vertex_index_map[c->vertex(i2)] << ", ";
-	  os << vertex_index_map[c->vertex(i3)] << ", ";
-	  os << "-1,\n";
-	}
-
-       if (n->is_selected_facet(ni))
-	{
-	  i1 = (ni+1) & 3;
-	  i2 = (ni+2) & 3;
-	  i3 = (ni+3) & 3;
-	  os << vertex_index_map[n->vertex(i1)] << ", ";
-	  os << vertex_index_map[n->vertex(i2)] << ", ";
-	  os << vertex_index_map[n->vertex(i3)] << ", ";
-	  os << "-1,\n"; 
-	}
-    }
-  /*
-  // iterer sur _additional_facets_list pour rajouter les facttes manquantes
-  for(Additional_facets_iterator add_f_it =
-      S.additional_facets_list_begin();
-	add_f_it != S.additional_facets_list_end(); add_f_it++)
-    {
-       os << vertex_index_map[(*add_f_it).first] << ", ";
-       os << vertex_index_map[(*add_f_it).second] << ", ";
-       os << vertex_index_map[(*add_f_it).third] << ", ";
-       os << "-1,\n";
-    }
-  */
-  os << " ]\n"
-    "}# IndexedFaceSet\n"
-    "}# Shape\n";
+  if(! no_header){
+    // Header.
+    os << 
+      "#VRML V2.0 utf8\n"
+      "Background {skyColor .1 .5 .5}\n"
+      "Group {\n"
+      "children [\n" << std::endl;
+  };
+    tds.vrml_output(os, red, green, blue, inf, true);  
 
   if (boundary){
     write_boundaries(os, S);
@@ -941,8 +827,11 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
       "}\n"
       "} # Shape\n";
   }
+
+  if(! no_header){
     os << "] # children\n"
       "} # Group\n";
+  }
   std::cout << "-- wrl result written." << std::endl;
 }
 
@@ -962,7 +851,7 @@ write_in_file_stl_selected_facets(char* foutput, const Surface& S)
 
 
   char foutput_tmp[100];
-  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+  std::strcpy(foutput_tmp, foutput);
 
   CGAL_CLIB_STD::strcat(foutput_tmp, ".stl");
   std::ofstream os(foutput_tmp, std::ios::out);
@@ -1032,7 +921,8 @@ write_in_file_stl_selected_facets(char* foutput, const Surface& S)
 template <class Surface>
 void
 write_in_file_selected_facets(char* foutput, const Surface& S,
-			     const bool& boundary, const int& out_format)
+			     const bool& boundary, const int& out_format,
+			      double red, double green, double blue, bool no_header)
 {
   switch(out_format)
     {
@@ -1041,13 +931,13 @@ write_in_file_selected_facets(char* foutput, const Surface& S,
       return;
     case -1:      
       write_in_file_iv_selected_facets(foutput, S, boundary);
-      write_in_file_vrml2_selected_facets(foutput, S, boundary);
+      write_in_file_vrml2_selected_facets(foutput, S, boundary, red, green, blue, no_header);
       write_in_file_gv_selected_facets(foutput, S);
       write_in_file_medit_selected_facets(foutput, S);
       //write_in_file_ply_selected_facets(foutput, S);
       return;
     case 0:
-      write_in_file_vrml2_selected_facets(foutput, S, boundary);
+      write_in_file_vrml2_selected_facets(foutput, S, boundary, red, green, blue, no_header);
       return;
     case 1:
       write_in_file_gv_selected_facets(foutput, S);
@@ -1067,6 +957,7 @@ write_in_file_selected_facets(char* foutput, const Surface& S,
     }
 }
 
+} // namespace NUAGE
 
 //=====================================================================
 #endif // IOFILE_MANIPULATOR_H

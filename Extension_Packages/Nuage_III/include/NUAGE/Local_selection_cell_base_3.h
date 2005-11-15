@@ -14,6 +14,7 @@
 #ifndef LOCAL_SELECTION_CELL_BASE_3_H
 #define LOCAL_SELECTION_CELL_BASE_3_H
 
+namespace NUAGE {
 
 template < class CellBase >
 class Local_selection_cell_base_3 : public CellBase
@@ -34,9 +35,10 @@ private:
 #ifdef FACET_NUMBER
   int _facet_number[4];
 #endif
-  typedef double coord_type;        
+  typedef double coord_type; 
+#ifndef NOLAZY       
   typedef typename CGAL::Simple_cartesian<coord_type>::Point_3 D_Point;
-
+#endif //NOLAZY 
   //-------------------- DATA MEMBERS ---------------------------------
 
   coord_type* _smallest_radius_facet_tab;
@@ -222,5 +224,7 @@ facet_number(int i)
 #endif //NOLAZY
 
 };
+
+} // namespace NUAGE
 
 #endif // LOCAL_SELECTION_CELL_BASE_3_H

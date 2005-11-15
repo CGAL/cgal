@@ -8,14 +8,20 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/squared_distance_3.h>
-
+#include <CGAL/Timer.h>
 #include <cstdio>
 #include <cstring>
 #include <cassert>
 #include <vector>
 #include <list>
 
+#include <NUAGE/Surface_vertex_base_2.h>
+#include <NUAGE/Surface_face_base_2.h>
+#include <NUAGE/construct_surface_2.h>
 
+namespace NUAGE {
+
+class Options;
 
 // This iterator allows to visit all contours. It has the particularity
 // that it visits the entry point of the contour twice. This allows to
@@ -176,11 +182,9 @@ public:
   typedef std::pair< Vertex_handle, Vertex_handle > Edge_like;
   typedef CGAL::Triple< Vertex_handle, Vertex_handle, Vertex_handle > Facet_like;
 
-  typedef std::list< Facet_like > Additional_facets_list;
-  typedef typename Additional_facets_list::iterator Additional_facets_iterator;
-  
+    
   typedef std::multimap< criteria, IO_edge_type*, 
-    std::less<criteria> > Ordered_border_type;
+                         std::less<criteria> > Ordered_border_type;
   typedef typename Ordered_border_type::iterator Ordered_border_iterator;
 
   enum Validation_case {NOT_VALID, NOT_VALID_CONNECTING_CASE, FINAL_CASE,
@@ -193,7 +197,6 @@ private:
   Triangulation_3& T;
 
   Ordered_border_type _ordered_border;
-  Additional_facets_list _additional_facets_list;
   int _number_of_border;
 
   const coord_type SLIVER_ANGULUS; // = sampling quality of the surface
@@ -206,6 +209,10 @@ private:
   const criteria STANDBY_CANDIDATE_BIS;
   const criteria NOT_VALID_CANDIDATE;
 
+  const double area;
+  const double perimeter;
+  double total_area;
+  double total_perimeter;
   //---------------------------------------------------------------------
 
   CGAL::Timer t1;
@@ -223,18 +230,77 @@ private:
 
   std::list<Point> outliers;
 
+  int _number_of_connected_components;
 
 public:
-  Extract_surface(Triangulation_3& T_, double delta)
-    : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(delta), min_K(HUGE_VAL), 
+  Extract_surface(Triangulation_3& T_, const Options& opt)
+    : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
     NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), _vh_number(T.number_of_vertices()), _facet_number(0),
-    _postprocessing_counter(0), _size_before_postprocessing(0)
-  {}
+    _postprocessing_counter(0), _size_before_postprocessing(0), area(opt.area), perimeter(opt.perimeter), 
+    total_area(0), total_perimeter(0), _number_of_connected_components(0)
+  {
+    bool re_init = false;
+    do 
+      {
+	_number_of_connected_components++;
+
+	if (init(re_init))
+	  {
+	    re_init = false;
+	    std::cout << "Growing connected component " << _number_of_connected_components << std::endl;
+	    extend(opt.K_init, opt.K_step, opt.K);
+
+	    std::cout << "Number of facets: " << number_of_facets() << std::endl;
+	  
+	    if ((number_of_facets() > T.number_of_vertices())&&
+		(opt.NB_BORDER_MAX > 0))
+	      // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
+	      {
+		while(postprocessing(opt.NB_BORDER_MAX)){
+		  re_init = true;
+		  extend(opt.K_init, opt.K_step, opt.K);
+		}
+	      }
+
+
+	  } 
+      }while(re_init &&
+	     ((_number_of_connected_components < opt.max_connected_comp)||
+	      (opt.max_connected_comp < 0))); 
+
+    _tds_2_inf = construct_surface(_tds_2, *this);
+  }
 
   ~Extract_surface()
   {}
+
+
+  typedef CGAL::Triangulation_data_structure_2<Surface_vertex_base_2<Kernel,Vertex_handle>,
+                                               Surface_face_base_2<Kernel, typename Triangulation_3::Facet> > TDS_2;
+
+
+  mutable TDS_2 _tds_2;
+
+  mutable typename TDS_2::Vertex_handle _tds_2_inf;
+
+  const TDS_2& tds_2() const
+  {
+    return _tds_2;
+  }
+  
+  bool is_on_surface(const typename TDS_2::Vertex_handle vh) const
+  {
+    return vh != _tds_2_inf;
+  }
+  
+
+
+  int number_of_connected_components() const
+  {
+    return _number_of_connected_components;
+  }
 
 
   Triangulation_3&
@@ -242,6 +308,10 @@ public:
   {
     return T;
   }
+
+
+
+
 
   int number_of_facets() const
   {
@@ -289,9 +359,6 @@ public:
     return _postprocessing_counter;
   }
 
-  //=====================================================================
-  // The next functions come from utilities.h
-  //=====================================================================
 
 
    Next_border_elt* get_border_elt(const Vertex_handle& v1, const Vertex_handle& v2)
@@ -527,6 +594,16 @@ public:
    void
   select_facet(const Cell_handle& c, const int& i)
   {
+    if(area!=0){
+            total_area += compute_area(c->vertex((i+1)&3)->point(),
+				       c->vertex((i+2)&3)->point(),
+				       c->vertex((i+3)&3)->point());
+    }
+    if(perimeter != 0){
+      total_perimeter += compute_perimeter(c->vertex((i+1)&3)->point(),
+					   c->vertex((i+2)&3)->point(),
+					   c->vertex((i+3)&3)->point());
+    }
     c->select_facet(i);
     _facet_number++;
     c->set_facet_number(i, _facet_number);
@@ -556,11 +633,9 @@ public:
     return _border_count;
   }
 
-  // eof utilities.h
  
 
 
-  //=====================================================================
   //=====================================================================
   
   coord_type get_smallest_radius_delaunay_sphere(const Cell_handle& c,
@@ -666,8 +741,24 @@ public:
 
     return value;
   }
+//---------------------------------------------------------------------
+  coord_type
+  compute_area(const Point& p1, const Point& p2, const Point& p3) const
+  {
+    return typename Kernel::Compute_area_3()(p1,p2,p3);
+  }
+//---------------------------------------------------------------------
+  coord_type
+  compute_perimeter(const Point& p1, const Point& p2, const Point& p3) const
+  {
+    return sqrt(CGAL::squared_distance(p1,p2)) 
+           + sqrt(CGAL::squared_distance(p2,p3)) 
+           + sqrt(CGAL::squared_distance(p3,p1));
+  }
 
   //---------------------------------------------------------------------
+  // For a border edge e we determine the incident facet which has the highest 
+  // chance to be a natural extension of the surface
 
   Radius_edge_type compute_value(const Edge_IFacet& e)
   {
@@ -710,11 +801,38 @@ public:
 	    int n_i2 = e_it.first.third;
 	    int n_i3 = 6 - n_ind - n_i1 - n_i2; 
 
-	    coord_type tmp = get_smallest_radius_delaunay_sphere(neigh, n_ind);
-	      
+	    coord_type tmp=0;
+	    // If the triangle has a very large area and a very high perimeter,
+	    // we do not want to consider it as a good candidate.
+	    if(_facet_number > 1000){
+	      if(area != 0){
+		coord_type avg_area = total_area/_facet_number;
+		coord_type ar =  compute_area(facet_it.first->vertex(n_i1)->point(),
+					      facet_it.first->vertex(n_i2)->point(),
+					      facet_it.first->vertex(n_i3)->point());
+		if(ar > (area * avg_area)){
+		  tmp = HUGE_VAL;
+		}
+	      }
+	      if((perimeter != 0) && (tmp != HUGE_VAL)){
+		coord_type avg_perimeter = total_perimeter/_facet_number;
+		coord_type pe = compute_perimeter(facet_it.first->vertex(n_i1)->point(),
+						  facet_it.first->vertex(n_i2)->point(),
+						  facet_it.first->vertex(n_i3)->point());
+		if(pe > (perimeter * avg_perimeter)){
+		  tmp = HUGE_VAL;
+		}
+	      }
+	    }
+	       
+	       
+	    if(tmp != HUGE_VAL){
+	      tmp = get_smallest_radius_delaunay_sphere(neigh, n_ind);
+	    }
+	    
 	    Edge_like el1(neigh->vertex(n_i1),neigh->vertex(n_i3)),
 	      el2(neigh->vertex(n_i2),neigh->vertex(n_i3));
-
+	    
 	    if ((tmp != HUGE_VAL)&&
 		neigh->vertex(n_i3)->not_interior()&&
 		(!is_interior_edge(el1))&&(!is_interior_edge(el2)))
@@ -988,51 +1106,6 @@ public:
 	  }
 	v->erase_incidence_request();
       }
-  }
-
-  //---------------------------------------------------------------------
-
-  bool
-  try_to_close_border(IO_edge_type* /*p*/)
-  {
-    //=================== Pas une mauvaise idee, MAIS =================
-    // ATTENTION C'est incompatible avec le post-traitement !!!
-
-    // pour l'instant on ferme juste les triangles qui ne sont pas dans
-    // Delaunay, des que l'on en trouve un...
-
-
-    //   Edge_IFacet e_Ifacet = p->first;
-    //   Cell_handle c = e_Ifacet.first.first;
-    //   Vertex_handle 
-    //     v1 = c->vertex(e_Ifacet.first.second),
-    //     v2 = c->vertex(e_Ifacet.first.third);
-
-    //   Edge_like el(v1, v2);
-    //   Border_elt result;
-    //   is_border_elt(el, result);
-  
-    //   Next_border_elt* succ1 = el.second->get_next_on_border(result.second);
-    //   Vertex_handle  v_succ1 = (Vertex*) succ1->first;
-    //   Next_border_elt* succ2 = v_succ1->get_next_on_border(result.second);
-    //   Vertex_handle  v_succ2 = (Vertex*) succ2->first;
-  
-    //   if (v_succ2 == el.first)
-    //     {
-    //       // dans ce cas on a a faire a un contour a trois cote qui n'a pas ete
-    //       // trouve comme candidat a fermer... certainement pas dans Delaunay...
-    //       remove_border_elt(el);
-    //       force_merge(Edge_like(el.second, v_succ1), succ1->second);
-    //       force_merge(Edge_like(v_succ1, el.first), succ2->second);
-    //       el.first->dec_mark();
-    //       el.second->dec_mark();
-    //       v_succ1->dec_mark();
-    //       // marquer la facette en question pour l'affichage...
-    //       _facet_number++;
-    //       _additional_facets_list.push_back(Facet_like(el.second, v_succ1, el.first));
-    //       return true;
-    //     }
-    return false;
   }
 
 
@@ -1751,11 +1824,12 @@ public:
 	{ 
 	  E.swap_selected_facets_on_conflict_boundary(vh);
 	  E.re_init_for_free_cells_cache(vh);
-	  const Point& p = vh->point();
+	  Point p = vh->point();
 	  if (!T.remove(vh)) {
 	    std::cerr << "+++Delaunay_triangulation_3.remove(Vertex_handle) failed."  <<
 	      p << std::endl;
 	  } else {
+	    E.dec_vh_number();
 	    E.store_outlier(p);
 	  }
 	  return true;
@@ -1765,12 +1839,12 @@ public:
 	  E.swap_selected_facets_on_conflict_boundary(vh);
 	  E.retract_border_for_incident_facets(vh);
 	  E.re_init_for_free_cells_cache(vh);
-	  E.dec_vh_number();
-	  const Point& p = vh->point();
+	  Point p = vh->point();
 	  if (!T.remove(vh)){
 	    std::cerr << "+++Delaunay_triangulation_3.remove(Vertex_handle) failed." <<
 	      p << std::endl;
 	  } else {
+	    E.dec_vh_number();
 	    E.store_outlier(p);
 	  }
 	  return true;
@@ -1873,5 +1947,7 @@ public:
 
 
 }; // class Extract_surface
+
+} // namespace NUAGE
 
 #endif // NUAGE_EXTRACT_SURFACE_H
