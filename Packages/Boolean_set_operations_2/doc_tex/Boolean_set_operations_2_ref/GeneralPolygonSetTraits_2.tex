@@ -1,0 +1,93 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{GeneralPolygonSetTraits_2}
+
+\ccThree{GeneralPolygonSetTraits_2}{General_polygon_with_holes_2}{}
+\ccThreeToTwo
+
+\ccDefinition
+% ===========
+This concept defines the minimal set of geometric predicates needed to
+perform the Boolean-set operations. It refines the $x$-monotone
+arrangement-traits concept. In addition to the \ccc{Point_2} and
+\ccc{X_monotone_curve_2} types defined in the generalized concept, it defines
+a type that represents a general polygon and another one that represents
+general polygon with holes. It also requires operations that operate on these
+types.
+
+\ccRefines
+\ccc{ArrangementXMonotoneTraits_2}
+
+\ccTypes
+% ======
+
+\ccNestedType{General_polygon_2}{represents a general polygon.}
+\ccGlue
+\ccNestedType{General_polygon_with_holes_2}{represents a general polygon
+  with holes.}
+
+\ccNestedType{Curve_const_iterator}
+{A const iterator of curves. Its value type is const
+\ccc{X_monotone_curve_2}.}
+
+\ccHeading{Functor Types}
+% =======================
+
+\ccThree{Construct_general_polygon_2}{}{\hspace*{\ccwComment}}
+\ccThreeToTwo
+
+\ccNestedType{Construct_general_polygon_2}
+{a functor that constructs a general polygon from a range of
+$x$-monotone curves. It uses the operator\\
+ \ccc{void operator() (InputIterator begin, Input iterator end,
+                       General_polygon_2 & pgn)}, \\
+ parameterized by the \ccc{InputIterator} type.}
+
+\ccNestedType{Construct_curves_2}
+{a functor that returns a pair that consists of the begin and
+ past-the-end iterators of the $x$ monotone curves of the boundary of
+ a given general polygon. It uses the operator\\
+ \ccc{std:pair<Curve_const_iterator,
+               Curve_const_iterator>
+  operator() (const General_polygon_2 & pgn)}.}
+
+\ccCreation
+\ccCreationVariable{traits}
+% =========================
+
+\ccConstructor{GeneralPolygonSetTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{GeneralPolygonSetTraits_2(GeneralPolygonSetTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{GeneralPolygonSetTraits_2  operator=(other);}{assignment operator.}
+
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Construct_general_polygon_2 construct_general_polygon_2_object();}
+{returns a functor that constructs a general polygon.}
+
+\ccMethod{Construct_curves_2 construct_curves_2_object();}
+{returns a functor that obtains the curves of a general polygon.}
+
+\ccPredicates
+% ===========
+\ccMethod{bool is_simple(General_polygon_2 & pgn);}
+{returns \ccc{true} if the general polygon \ccc{pgn} is simple, and
+\ccc{false} otherwise. Used as precondition for some of the operations.}
+
+\ccHasModels
+%===========
+\ccc{CGAL::Polygon_set_traits_2<Kernel>}
+
+\ccSeeAlso
+% ========
+\ccSeeAlso
+  \ccc{Arrangement_2}\lcTex{(\ccRefPage{Arrangement_2})}\\
+  \ccc{ArrangementXMonotoneTraits_2}\lcTex{(\ccRefPage{ArrangementXMonotoneTraits_2})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

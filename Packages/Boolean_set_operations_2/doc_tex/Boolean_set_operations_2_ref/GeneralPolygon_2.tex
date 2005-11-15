@@ -1,0 +1,79 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{GeneralPolygon_2}
+
+% \ccTypes
+% %=======
+% \ccNestedType{Size}{number of edges size type.}
+% \ccGlue
+% \ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+%        vertices of the polygonal region. Its value-type is \ccc{Vertex}.}
+% \ccGlue
+% \ccNestedType{X_monotone_curve_2}{represents a planar (weakly) $x$-monotone
+%   curve. The type of the geometric mapping of the polygonal edges.}
+% \ccGlue
+% \ccNestedType{Curve_const_iterator}{a bidirectional iterator over the
+%   geometric mapping of the polygon edges. Its value type is
+%   \ccc{X_monotone_curve_2}.}
+
+\ccDefinition
+% ===========
+A model of this concept represents a simple basic general-polygon. The
+concept requires the ability to access the geometric mapping of the
+edges of the polygon. These curves must be $x$-monotone curves. Curves
+of non-adjacent edges do not intersect in their interiors. The
+vertices of such a polygon can be ordered clockwise or counterclockwise. 
+
+\ccCreation
+\ccCreationVariable{polygon}
+
+\ccThree{Edge_const_iterator~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccConstructor{GeneralPolygon_2();}{default constructor.}
+\ccGlue
+\ccConstructor{GeneralPolygon_2(GeneralPolygon_2 other);}
+{copy constructor.}
+\ccGlue
+\ccMethod{GeneralPolygon_2  operator=(other);}{assignment operator.}
+% \ccGlue
+% \ccConstructor{template <class InputIterator>
+% GeneralPolygon_2(InputIterator begin, InputIterator end);}
+% {constructs a general polygon from a given range of curves.}
+
+% \ccOperations
+% %====================================
+% 
+% \ccMethod{Vertex_iterator vertices_begin();} {returns the begin
+% iterator of the vertices.}
+% \ccGlue
+% \ccMethod{Vertex_iterator vertices_end();} {returns the past-the-end
+% iterator of the vertices.}
+% 
+% \ccMethod{Curve_const_iterator curves_begin();} {returns the begin
+% iterator of the curves.}
+% \ccGlue
+% \ccMethod{Curve_const_iterator curves_end();} {returns the past-the-end
+% iterator of the curves.}
+% 
+% \ccMethod{Size size();} {returns the number of edges.}
+
+\ccPredicates
+% ===========
+\ccMethod{bool is_simple();}{returns \ccc{true} if the polygonal
+region is simple, and \ccc{false} otherwise. Used as precondition for
+some of the operations.}
+% \ccMethod{bool is_convex();}{returns \ccc{true} if the polygonal
+% region is convex, and \ccc{false} otherwise.}
+% \ccMethod{Orientation orientation();} {returns the orientation of
+% the polygonal region. If the number of vertices $\ccc{size()} < 3$ then
+% \ccc{COLLINEAR} is returned. 
+% \ccPrecond{ \ccStyle{is_simple()}.}}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::Polygon_2<Kernel_2>}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

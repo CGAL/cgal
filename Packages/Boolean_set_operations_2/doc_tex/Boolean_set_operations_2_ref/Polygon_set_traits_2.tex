@@ -1,0 +1,22 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Polygon_set_traits_2<Kernel>}
+
+\ccThree{Polygon_set_traits_2<Kernel>}{stuff()}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+The traits class \ccRefName\ is a model of the \ccc{GeneralPolygonSetTraits_2}
+that enables the Boolean set-operations on (linear) polygons.
+It should be parameterized with a kernel, which is used in turn to
+define the exposed type \ccc{General_polygon_2} to be of type
+\ccc{Polygon_2<Kernel>}.
+
+\ccInclude{CGAL/Polygon_set_traits_2.h}
+ 
+\ccIsModel
+    \ccc{GeneralPolygonSetTraits_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

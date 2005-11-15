@@ -1,0 +1,254 @@
+\ccRefPageBegin
+\label{ref_boolean_operations}
+
+\ccThree{OutputIterator}{symmetric_difference}{}
+\ccThreeToTwo
+
+\ccInclude{CGAL/Bops_regularized_bops.h}
+
+% ============================================================================
+\begin{ccRefFunction}{do_intersect}
+
+\ccDefinition
+
+Each one of the following functions returns \ccc{true} if the two given
+general polygons \ccc{p1} and \ccc{p2} intersect in their interior,
+and \ccc{false} otherwise.
+
+\ccInclude{CGAL/IO/Boolean_set_operations.h}
+
+\ccGlobalFunction{template <class Traits>
+bool do_intersect(const Traits::General_polygon_2 & p1,
+                  const Traits::General_polygon_2 & p2);}
+
+\ccGlobalFunction{template <class Traits>
+bool do_intersect(const Traits::General_polygon_2 & p1,
+                  const Traits::General_polygon_with_holes_2 & p2);}
+
+\ccGlobalFunction{template <class Traits>
+bool do_intersect(const Traits::General_polygon_with_holes_2 & p2,
+                  const Traits::General_polygon_2 & p1);}
+
+\ccGlobalFunction{template <class Traits>
+bool do_intersect(const Traits::General_polygon_with_holes_2 & p1,
+                  const Traits::General_polygon_with_holes_2 & p2);}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::intersection}\\
+\ccRefIdfierPage{CGAL::join}\\
+\ccRefIdfierPage{CGAL::difference}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+% ============================================================================
+\begin{ccRefFunction}{intersection}
+
+\ccDefinition
+
+Each one of the following four functions computes the intersection of
+two given general polygons \ccc{p1} and \ccc{p2}, inserts the
+resulting polygons with holes into an output container through a given
+output iterator \ccc{oi}, and returns the output iterator. The value
+type of the \ccc{OutputIterator} is \ccc{General_polygon_with_holes_2}.
+
+\ccInclude{CGAL/IO/Boolean_set_operations.h}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const Traits::General_polygon_2 & p1,
+                            const Traits::General_polygon_2 & p2,
+                            OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const Traits::General_polygon_2 & p1,
+                            const Traits::General_polygon_with_holes_2 & p2,
+                            OutputIterator oi);}
+  
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const Traits::General_polygon_with_holes_2 & p2,
+                            const Traits::General_polygon_2 & p1,
+                            OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const Traits::General_polygon_with_holes_2 & p1,
+                            const Traits::General_polygon_with_holes_2 & p2,
+                            OutputIterator oi);}
+  
+\ccGlobalFunction{template <class InputIterator, class OutputIterator>
+OutputIterator intersection(InputIterator & begin, InputIterator & end,
+                            OutputIterator oi);}
+{Computes the intersection of the general polygons (or general polygons with
+holes) in the given range. (The value type of the input iterator is
+used to distinguish between the two.) The result, represented by a set
+of general poygon with holes, is inserted into and output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{General_polygon_with_holes_2}.}
+
+\ccGlobalFunction{template <class InputIterator1, class InputIterator2,
+		  class OutputIterator>
+OutputIterator intersection(InputIterator1 & pgn_begin,
+                            InputIterator1 & pgn_end,
+                            InputIterator2 & pgn_with_holes_begin,
+	                    InputIterator2 & pgn_with_holes_end,
+		            OutputIterator oi);}
+{Computes the intersection of the general polygons and general polygons
+with holes in the given two ranges. The result, represented by a set
+of general poygon with holes, is inserted into and output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{General_polygon_with_holes_2}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::join}\\
+\ccRefIdfierPage{CGAL::difference}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+% ============================================================================
+\begin{ccRefFunction}{join}
+
+\ccDefinition
+
+\ccInclude{CGAL/IO/Boolean_set_operations.h}
+
+Each one of the following four functions computes the union of two
+given general polygons \ccc{p1} and \ccc{p2}. If the two given
+polygons overlap, it returns \ccc{true} and places the resulting
+polygon in \ccc{p}. Otherwise, it returns \ccc{false}.
+
+\ccGlobalFunction{template <class Traits, class OutPolygon>
+bool join(const Traits::General_polygon_2 & p1,
+          const Traits::General_polygon_2 & p2,
+	  const Traits::General_polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class Traits, class OutPolygon>
+bool join(const Traits::General_polygon_2 & p1,
+          const Traits::General_polygon_with_holes_2 & p2,
+	  const Traits::General_polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class Traits, class OutPolygon>
+bool join(const Traits::General_polygon_with_holes_2 & p2,
+          const Traits::General_polygon_2 & p1,
+	  const Traits::General_polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class Traits, class OutPolygon>
+bool join(const Traits::General_polygon_with_holes_2 & p1,
+          const Traits::General_polygon_with_holes_2 & p2,
+	  const Traits::General_polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class InputIterator, class OutputIterator>
+OutputIterator join(InputIterator & begin, InputIterator & end,
+                    OutputIterator oi);}
+{Computes the union of the general polygons (or general polygons with
+holes) in the given range. (The value type of the input iterator is
+used to distinguish between the two.) The result, represented by a set
+of general poygon with holes, is inserted into and output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{General_polygon_with_holes_2}.}
+
+\ccGlobalFunction{template <class InputIterator1, class InputIterator2,
+		  class OutputIterator>
+OutputIterator join(InputIterator1 & pgn_begin, InputIterator1 & pgn_end,
+                    InputIterator2 & pgn_with_holes_begin,
+	            InputIterator2 & pgn_with_holes_end,
+		    OutputIterator oi);}
+{Computes the union of the general polygons and general polygons
+with holes in the given two ranges. The result, represented by a set
+of general poygon with holes, is inserted into and output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{General_polygon_with_holes_2}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::intersection}\\
+\ccRefIdfierPage{CGAL::difference}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+% ============================================================================
+\begin{ccRefFunction}{difference}
+
+\ccDefinition
+
+\ccInclude{CGAL/IO/Boolean_set_operations.h}
+
+Each one of the following four functions computes the difference
+between two given general polygons \ccc{p1} and \ccc{p2}, and inserts
+the resulting polygons with holes into an output container through the
+output iterator \ccc{oi}. The value type of the \ccc{OutputIterator}
+is \ccc{General_polygon_with_holes_2}.
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator difference(const Traits::General_polygon_2 & p1,
+                          const Traits::General_polygon_2 & p2,
+                          OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator difference(const Traits::General_polygon_2 & p1,
+                          const Traits::General_polygon_with_holes_2 & p2,
+                          OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator difference(const Traits::General_polygon_with_holes_2 & p2,
+                          const Traits::General_polygon_2 & p1,
+                          OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator difference(const Traits::General_polygon_with_holes_2 & p1,
+                          const Traits::General_polygon_with_holes_2 & p2,
+                          OutputIterator oi);}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::intersection}\\
+\ccRefIdfierPage{CGAL::join}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+% ============================================================================
+\begin{ccRefFunction}{symmetric_difference}
+
+\ccDefinition
+
+\ccInclude{CGAL/IO/Boolean_set_operations.h}
+
+Each one of the following four functions computes the symmetric
+difference between two given general polygons \ccc{p1} and \ccc{p2},
+and inserts the resulting polygons with holes into an output container
+through the output iterator \ccc{oi}. The value type of the
+\ccc{OutputIterator} is \ccc{General_polygon_with_holes_2}.
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator symmetric_difference(const Traits::General_polygon_2 & p1,
+                                   const Traits::General_polygon_2 & p2,
+                                   OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator
+symmetric_difference(const Traits::General_polygon_2 & p1,
+                     const Traits::General_polygon_with_holes_2 & p2,
+                     OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator
+symmetric_difference(const Traits::General_polygon_with_holes_2 & p2,
+                     const Traits::General_polygon_2 & p1,
+                     OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator
+symmetric_difference(const Traits::General_polygon_with_holes_2 & p1,
+                     const Traits::General_polygon_with_holes_2 & p2,
+                     OutputIterator oi);}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::intersection}\\
+\ccRefIdfierPage{CGAL::join}\\
+\ccRefIdfierPage{CGAL::difference}
+
+\end{ccRefFunction}
+\ccRefPageEnd

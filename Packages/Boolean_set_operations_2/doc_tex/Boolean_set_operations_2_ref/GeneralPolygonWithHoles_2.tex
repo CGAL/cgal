@@ -1,0 +1,73 @@
+\ccRefPageBegin
+
+\def\ccLongParamLayout{\ccFalse}
+\begin{ccRefConcept}{GeneralPolygonWithHoles_2}
+
+\ccTypes
+% ======
+\ccThree{GeneralPolygonWithHoles}{Hole_const_iterator~}{}
+\ccThreeToTwo
+
+% \ccNestedType{Size}{number of holes size type.}
+
+\ccNestedType{General_polygon_2}{general-polygon type used to
+represent the outer boundary and each hole.}
+
+\ccNestedType{Hole_const_iterator}{bidirectional iterator
+  over the polygonal holes. Its value type is
+  \ccc{General_polygon_2}.}
+
+\ccDefinition
+% ===========
+A model of this concept represents a general polygon with holes. The
+concept requires the ability to access the general polygon that
+represents the outer boundary and the general polygons that represent
+the holes.
+
+% \lcTex{\ccwParamIndent=0mm}
+\ccThree{GeneralPolygonWithHoles_2}{polygon.outer_boundary()~~~}{}
+\ccThreeToTwo
+
+\ccCreation
+\ccCreationVariable{polygon}
+
+\ccConstructor{GeneralPolygonWithHoles_2();}{default constructor.}
+\ccGlue
+\ccConstructor{GeneralPolygonWithHoles_2(GeneralPolygonWithHoles_2 other);}
+{copy constructor.}
+\ccGlue
+\ccMethod{GeneralPolygonWithHoles_2 operator=(other);}{assignment operator.}
+
+\ccConstructor{template <class InputIterator>
+GeneralPolygonWithHoles_2(General_polygon_2 & outer,
+                          InputIterator begin, InputIterator end);}
+{constructs a general polygon with holes using a given general polygon
+as the outer boundary and a given range of holes. The holes must be
+pairwise disjoint in their interiors.}
+
+\ccAccessFunctions
+% ================
+
+\ccMethod{Hole_const_iterator holes_begin() const;}
+{returns the begin iterator of the holes.}
+\ccGlue
+\ccMethod{Hole_const_iterator holes_begin() const;}
+{returns the past-the-end iterator of the holes.}
+
+\ccMethod{const General_polygon_2 & outer_boundary() const;}
+{returns the general polygon that represents the outer boundary.
+\ccPrecond{The polygon must not be unbounded.}}
+
+\ccPredicates
+% ===========
+\ccMethod{bool is_unbounded();}
+{returns \ccc{true} if the outer boundary exists, and \ccc{false}
+otherwise.}
+
+\ccHasModels
+%===========
+\ccc{CGAL::General_polygon_with_holes_2<General_polygon>}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

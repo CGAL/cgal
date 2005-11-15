@@ -1,0 +1,44 @@
+\RCSdef{\RCSPolygonwithholesoperatorostreamRev}{$Revision$}
+\RCSdefDate{\RCSPolygonwithholesoperatorostreamDate}{$Date$}
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}
+\label{refPolygon_with_holes_operator_rightshift}
+
+\ccDefinition
+
+This operator imports a polygon or a polygon with holes from the input
+stream \ccc{in}. Only the point coordinates of the boundary are used.
+If the stream \ccc{in} does not contain a permissible polygon or a
+polygon with holes, the \ccc{ios::badbit} of the input stream \ccc{in}
+is set and $P$ remains unchanged.
+
+An ASCII and a binary format exist. The stream detects the
+format automatically and can read both.
+
+\ccInclude{CGAL/IO/Polygon_iostream.h}
+
+\ccGlobalFunction{template <class Kernel>
+    istream& operator>>( istream& in,
+                         CGAL::Polygon_2<Kernel>& P);}
+
+\ccInclude{CGAL/IO/Polygon_with_holes_iostream.h}
+
+\ccGlobalFunction{template <class General_polygon>
+    istream& operator>>( istream& in,
+                         CGAL::Polygon_with_holes_2<Polygon>& P);}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polygon_2<Kernel>}\\ 
+\ccRefIdfierPage{CGAL::Polygon_with_holes_2<Polygon>}\\ 
+\lcTex{\ccc{operator<<} \dotfill\ 
+    page~\pageref{refPolygon_with_holes_operator_leftshift}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>.
+}
+
+% \ccImplementation
+
+\end{ccRefFunction}
+

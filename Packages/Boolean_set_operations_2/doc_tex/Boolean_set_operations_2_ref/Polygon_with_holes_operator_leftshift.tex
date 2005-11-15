@@ -1,0 +1,44 @@
+\RCSdef{\RCSPolygonwithholesoperatoristreamrev}{$Revision$}
+\RCSdefDate{\RCSPolygonwithholesoperatoristreamDate}{$Date$}
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}
+\label{refPolygon_with_holes_operator_leftshift}
+
+\ccDefinition
+
+This operator exports a polygon or a polygon with holes $P$ to the
+output stream \ccc{out}. The output is in ASCII format. Only the point
+coordinates of the boundary are exported.
+
+An ASCII and a binary format exist. The format can be selected with
+the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
+\ccc{set_binary_mode} respectively. The modifier \ccc{set_pretty_mode}
+can be used to allow for (a few) structuring comments in the
+output. Otherwise, the output would be free of comments.  The default
+for writing is ASCII without comments.
+
+\ccInclude{CGAL/IO/Polygon_iostream.h}
+
+\ccGlobalFunction{template <class Kernel>
+    ostream& operator<<( ostream& out, 
+                         const CGAL::Polygon_2<Kernel>& P);}
+  
+\ccInclude{CGAL/IO/Polygon_with_holes_iostream.h}
+
+\ccGlobalFunction{template <class Polygon>
+    ostream& operator<<( ostream& out, 
+                         const CGAL::Polygon_with_holes_2<Polygon>& P);}
+  
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polygon_2<Kernel>}\\ 
+\ccRefIdfierPage{CGAL::Polygon_with_holes_2<Polygon>}\\ 
+\lcTex{\ccc{operator>>} \dotfill\ 
+    page~\pageref{refPolygon_with_holes_operator_rightshift}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>.
+}
+
+\end{ccRefFunction}
+

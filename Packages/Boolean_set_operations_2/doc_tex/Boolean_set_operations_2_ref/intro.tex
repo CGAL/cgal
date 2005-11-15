@@ -1,0 +1,42 @@
+% ===============================================================
+\section*{Introduction}
+\label{bobs_ref_sec:intro}
+% =======================
+%
+This package consists of the implementation of Boolean set-operations
+on point sets bounded by $x$-monotone curves in 2-dimensional
+Euclidean space. In particular, it contains the implementation of
+regularized Boolean set-operations, intersection predicates, and point
+containment predicates.
+
+\subsection*{Concepts}
+
+% \ccRefConceptPage{GeneralPolygon_2}\\
+\ccRefConceptPage{GeneralPolygonWithHoles_2}\\
+\ccRefConceptPage{GeneralPolygonSetTraits_2}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::General_polygon_set_2<General_polygon,Traits>}\\
+\ccRefIdfierPage{CGAL::Polygon_with_holes_2<Polygon>}\\
+\ccRefIdfierPage{CGAL::Polygon_set_traits_2<Kernel>}
+
+\subsection*{Functions}
+
+Boolean Operations
+  {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+   \lcTex{\hfill page~\pageref{ref_boolean_operations}}}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Polygon>
+            ostream& operator<<( ostream& out, 
+                                 const CGAL::Polygon_with_holes_2<Polygon>& P);}
+    {\lcRawHtml{<A HREF="Function_operator.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refPolygon_with_holes_operator_leftshift}}}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Polygon>
+            istream& operator>>( istream& in, 
+                                 CGAL::Polygon_with_holes_2<Polygon>& P);}
+    {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refPolygon_with_holes_operator_rightshift}}}
