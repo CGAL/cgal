@@ -238,8 +238,9 @@ private:
   typedef typename Tab_traits::Lanmarks_point_location Lanmarks_point_location;
 
   typedef My_observer<Arrangement_2>                    Observer;
-  typedef typename Arrangement_2::Originating_curve_iterator Originating_curve_iterator;
-  typedef typename Arrangement_2::Curve_edge_iterator   Curve_edge_iterator;
+  typedef typename Arrangement_2::Originating_curve_iterator
+                                                    Originating_curve_iterator;
+  typedef typename Arrangement_2::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;
 
 private:
@@ -689,12 +690,15 @@ public:
       if(remove_org_curve)
       {
         Originating_curve_iterator  ocit, temp;
+        Curve_handle                ch;
         ocit  = m_curves_arr->originating_curves_begin (removable_halfedge);
-        while(ocit != m_curves_arr->originating_curves_end (removable_halfedge))
+        while (ocit != 
+               m_curves_arr->originating_curves_end (removable_halfedge))
         {
           temp = ocit;
           ++temp;
-          CGAL::remove_curve(*m_curves_arr, ocit->handle());
+          ch = ocit;
+          CGAL::remove_curve(*m_curves_arr, ocit);
           ocit = temp;
         }
       }
@@ -930,13 +934,15 @@ public:
 
         Originating_curve_iterator  ocit, temp;
         ocit  = m_curves_arr->originating_curves_begin (removable_halfedge);
-        while(ocit != m_curves_arr->originating_curves_end (removable_halfedge))
+        while (ocit !=
+               m_curves_arr->originating_curves_end (removable_halfedge))
         {
           temp = ocit;
           ++temp;
-          Curve_handle ch = ocit->handle();
-          for(Curve_edge_iterator itr = ch->edges_begin();
-              itr != ch->edges_end();
+          Curve_handle          ch = ocit;
+          Induced_edge_iterator itr;
+          for(itr = m_curves_arr->induced_edges_begin(ch);
+              itr != m_curves_arr->induced_edges_end(ch);
               ++itr)
           {
              m_tab_traits.draw_xcurve(this,(*itr)->curve());
@@ -983,9 +989,11 @@ public:
        {
          temp = ocit;
          ++temp;
-         Curve_handle ch = ocit->handle();
-         for(Curve_edge_iterator itr = ch->edges_begin();
-             itr != ch->edges_end();
+
+         Curve_handle          ch = ocit;
+         Induced_edge_iterator itr;
+         for(itr = m_curves_arr->induced_edges_begin(ch);
+             itr != m_curves_arr->induced_edges_end(ch);
              ++itr)
          {
            m_tab_traits.draw_xcurve(this,(*itr)->curve());
