@@ -189,7 +189,7 @@ Side_of_plane<SNC_decorator>::operator()
     return (*this)( pl, pop, f, depth);
 #ifdef CGAL_NEF3_FACET_WITH_BOX
   else if( CGAL::assign(pf, o))
-    return (*this)( pl, pop, pf.f, depth);
+    return (*this)( pl, pop, pf, depth);
 #endif
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   else if( CGAL::assign( t, o))
@@ -409,6 +409,7 @@ Oriented_side
 Side_of_plane<SNC_decorator>::operator()
   ( const Plane_3& pl, const Point_3& pop, Halffacet_handle f, Depth depth) {
     CGAL_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
+    /*
 #ifdef CGAL_NEF3_FACET_WITH_BOX
     switch(depth%3) {
     case 0:
@@ -433,7 +434,7 @@ Side_of_plane<SNC_decorator>::operator()
     }    
     return ON_ORIENTED_BOUNDARY;
 #else  
-
+    */
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
   CGAL_assertion(fc.is_shalfedge());
@@ -452,11 +453,10 @@ Side_of_plane<SNC_decorator>::operator()
   if( facet_side == ON_ORIENTED_BOUNDARY)
     return ON_ORIENTED_BOUNDARY;
   CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
+  Oriented_side point_side;
   while( sc != send) {
     v = sc->source()->center_vertex();
-    if(!OnSideMap.is_defined(v))
-      OnSideMap[v] = pl.oriented_side(v->point());  
-    Oriented_side point_side = OnSideMap[v];
+    point_side = (*this) (pl, pop, v, depth);
     ++sc;
     if( point_side == ON_ORIENTED_BOUNDARY)
       continue;
@@ -464,7 +464,7 @@ Side_of_plane<SNC_decorator>::operator()
       return ON_ORIENTED_BOUNDARY;
   }
   return facet_side;
-#endif
+  //#endif
 }
 
 template <class SNC_decorator>
