@@ -77,6 +77,10 @@ _test_triangulation_iterator( const Triangulation &T )
   Finite_facets_iterator FFit;
   Finite_edges_iterator FEit;
   Finite_vertices_iterator FVit;
+  for (Cit = T.tds().raw_cells_begin(); Cit != T.tds().raw_cells_end(); ++Cit) {
+    Cell_handle ch = Cit;
+    (void) ch;
+  }
   if (T.dimension()==3) {
   for (FCit = T.finite_cells_begin(); FCit != T.finite_cells_end(); ++FCit)
   {

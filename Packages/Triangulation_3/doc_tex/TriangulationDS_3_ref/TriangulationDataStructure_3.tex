@@ -501,6 +501,12 @@ into the triangulation data structure.}
 \ccGlue
 \ccMethod{Cell_iterator cells_end() const;}{}
 \ccGlue
+\ccMethod{Cell_iterator raw_cells_begin() const;}
+{Low-level access to the cells, does not return \ccc{cells_end()}
+when \ccVar.\ccc{dimension()}~$<3$.}
+\ccGlue
+\ccMethod{Cell_iterator raw_cells_end() const;}{}
+\ccGlue
 \ccMethod{Facet_iterator facets_begin() const;}
 {Returns \ccc{facets_end()} when \ccVar.\ccc{dimension()}~$<2$.}
 \ccGlue
