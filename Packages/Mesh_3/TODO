@@ -1,3 +1,9 @@
+- Verify that FT can be from an exact kernel...
+- Make depends for applications/makefile
+  -- Laurent Rineau, 2005/11/14
+
+- add an assertion in compute_critical_radius() of Sliver_exuder.h
+- clean global functions in include/CGAL/Mesh_3/Sliver_exuder.h
 - clean include/CGAL/IO/File_medit.h Surface_mesher/include/CGAL/IO/
   and include/CGAL/IO.h
   -- Laurent Rineau, 2005/11/09
@@ -18,7 +24,7 @@
                   include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h
         *is* broken.
       - File_medit.h should not require systematicaly surface_index()
-      - provide .cin files for tests (read Dev'Manual)
+[DONE]- provide .cin files for tests (read Dev'Manual)
       - remove info()s everywhere
           Mesh_3/include/CGAL/Implicit_surfaces_mesher_3.h
           Mesh_3/include/CGAL/Mesh_3/Facet_on_surface_criterion.h
