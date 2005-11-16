@@ -206,7 +206,8 @@ public:
     _is_full (false)
   {}
 
-  /*! Constructor from a line segment.
+  /*!
+   * Constructor from a line segment.
    * \param seg The segment.
    */
   _Circle_segment_2 (const Segment_2& seg) :
@@ -214,6 +215,21 @@ public:
     _has_radius (false),
     _source (seg.source().x(), seg.source().y()),
     _target (seg.target().x(), seg.target().y()),
+    _orient (COLLINEAR),
+    _is_full (false)
+  {}
+
+  /*!
+  * Constructor from of a line segment.
+   * \param ps The source point.
+   * \param pt The target point.
+   */
+  _Circle_segment_2 (const typename Kernel::Point_2& ps,
+                     const typename Kernel::Point_2& pt) :
+    _line (ps, pt),
+    _has_radius (false),
+    _source (ps.x(), ps.y()),
+    _target (pt.x(), pt.y()),
     _orient (COLLINEAR),
     _is_full (false)
   {}
@@ -264,7 +280,8 @@ public:
    * \param orient The orientation of the circle.
    */
   _Circle_segment_2 (const typename Kernel::Point_2& c,
-                     const NT& r, Orientation orient) :
+                     const NT& r,
+                     Orientation orient = COUNTERCLOCKWISE) :
     _circ (c, r*r, orient),
     _has_radius (true),
     _radius (r),
@@ -558,6 +575,25 @@ private:
   }
 };
 
+/*!
+ * Exporter for conic arcs.
+ */
+template <class Kernel_>
+std::ostream& 
+operator<< (std::ostream& os, 
+            const _Circle_segment_2<Kernel_>& c)
+{
+  if(c.orientation() == COLLINEAR)
+  {
+    os<< "segment: " << c.source() << " -> " << c.target()<<std::endl;
+  }
+  else
+  {
+    os<< "circ arc: " <<c.circle()<<" "<<c.source() << " -> " << c.target()<<std::endl;
+  }
+
+  return (os);
+}
 /*! \class
  * Representation of an x-monotone circular arc.
  */
@@ -809,9 +845,35 @@ public:
       return (false);
 
     // Compare the curve coefficients.
-    return (CGAL::compare (_first, cv._first) == EQUAL &&
-            CGAL::compare (_second, cv._second) == EQUAL &&
-            CGAL::compare (_third, cv._third) == EQUAL);
+    if (! is_linear())
+    {
+      // The two circles must have the same center and the same radius.
+      return (CGAL::compare (x0(), cv.x0()) == EQUAL &&
+              CGAL::compare (y0(), cv.y0()) == EQUAL &&
+              CGAL::compare (sqr_r(), cv.sqr_r()) == EQUAL);
+    }
+
+    // Compare the line equations: Note that these may be scaled.
+    NT    fact1;
+    NT    fact2;
+
+    if (is_vertical())
+    {
+      if (! cv.is_vertical())
+        return (false);
+
+      fact1 = a();
+      fact2 = cv.a();
+    }
+    else
+    {
+      fact1 = b();
+      fact2 = cv.b();
+    }
+
+    return (CGAL::compare (fact2*a(), fact1*cv.a()) == EQUAL &&
+            CGAL::compare (fact2*b(), fact1*cv.b()) == EQUAL &&
+            CGAL::compare (fact2*c(), fact1*cv.c()) == EQUAL);
   }
 
   /*!
