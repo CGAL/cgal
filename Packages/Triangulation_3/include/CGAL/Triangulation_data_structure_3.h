@@ -518,6 +518,16 @@ public:
     return cell_container().end();
   }
 
+  Cell_iterator raw_cells_begin() const
+  {
+    return cell_container().begin();
+  }
+
+  Cell_iterator raw_cells_end() const
+  {
+    return cell_container().end();
+  }
+
   Facet_iterator facets_begin() const
   {
     if ( dimension() < 2 )
