@@ -6,3 +6,5 @@ multi_spheres
 *.png
 *.maillage
 *.surface*
+ProgramOutput.*
+error.txt

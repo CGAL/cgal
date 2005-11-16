@@ -88,7 +88,9 @@ Packages/Mesh_3/test/Mesh_3/*.maillage
 Packages/Mesh_3/test/Mesh_3/*.mesh
 Packages/Mesh_3/test/Mesh_3/*.png
 Packages/Mesh_3/test/Mesh_3/*.surface*
+Packages/Mesh_3/test/Mesh_3/ProgramOutput.*
 Packages/Mesh_3/test/Mesh_3/combined_spheres
+Packages/Mesh_3/test/Mesh_3/error.txt
 Packages/Mesh_3/test/Mesh_3/multi_spheres
 Packages/Mesh_3/test/Mesh_3/my_makefile
 Packages/Min_annulus_d/*.aux
