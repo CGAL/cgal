@@ -57,37 +57,37 @@ auxiliary data to this vertex:
     
 \ccMethod{void create_vertex (Vertex_handle_A v1,
                               Vertex_handle_B v2,
-                              Vertex_handle_R v)) const;}
+                              Vertex_handle_R v) const;}
     {constructs \ccc{v}, which is induced by the coinciding vertices 
      \ccc{v1} and \ccc{v2}.}
 
 \ccMethod{void create_vertex (Vertex_handle_A v1,
                               Halfedge_handle_B e2,
-                              Vertex_handle_R v)) const;}
+                              Vertex_handle_R v) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v1} that lies on
      the edge \ccc{e2}.}
 
 \ccMethod{void create_vertex (Vertex_handle_A v1,
                               Face_handle_B f2,
-                              Vertex_handle_R v)) const;}
+                              Vertex_handle_R v) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v1} that lies
      inside the face \ccc{f2}.}
 
 \ccMethod{void create_vertex (Halfedge_handle_A e1,
                               Vertex_handle_B v2,
-                              Vertex_handle_R v)) const;}
+                              Vertex_handle_R v) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v2} that lies on
      the edge \ccc{e1}.}
 
 \ccMethod{void create_vertex (Face_handle_A f1,
                               Vertex_handle_B v2,
-                              Vertex_handle_R v)) const;}
+                              Vertex_handle_R v) const;}
     {constructs \ccc{v}, which is induced by the vertex \ccc{v2} that lies
      inside the face \ccc{f1}.}
 
 \ccMethod{void create_vertex (Halfedge_handle_A e1,
                               Halfedge_handle_B e2,
-                              Vertex_handle_R v)) const;}
+                              Vertex_handle_R v) const;}
     {constructs \ccc{v}, which is induced by the intersection of the edges 
      \ccc{e1} and \ccc{e2}.}
 
@@ -102,19 +102,19 @@ methods were invoked). In all cases, the edge is represented by a halfedge
 
 \ccMethod{void create_edge (Halfedge_handle_A e1,
                             Halfedge_handle_B e2,
-                            Halfedge_handle_R e)) const;}
+                            Halfedge_handle_R e) const;}
     {constructs \ccc{e}, which is induced by an overlap between the edges 
      \ccc{e1} and \ccc{e2}.}
 
 \ccMethod{void create_edge (Halfedge_handle_A e1,
                             Face_handle_B f2,
-                            Halfedge_handle_R e)) const;}
+                            Halfedge_handle_R e) const;}
     {constructs \ccc{e}, which is induced by the edge \ccc{e1} that lies
      inside the face \ccc{f2}.}
 
 \ccMethod{void create_edge (Face_handle_A f1,
                             Halfedge_handle_B e2,
-                            Halfedge_handle_R e)) const;}
+                            Halfedge_handle_R e) const;}
     {constructs \ccc{e}, which is induced by the edge \ccc{e2} that lies
      inside the face \ccc{f1}.}
 
@@ -124,7 +124,7 @@ created an have their auxiliary data fields attached to them:
 
 \ccMethod{void create_face (Face_handle_A f1,
                             Face_handle_B f2,
-                            Face_handle_R f)) const;}
+                            Face_handle_R f) const;}
     {constructs \ccc{f}, which is induced by the an overlap between the
      faces \ccc{f1} and \ccc{f2}.}
 
