@@ -256,13 +256,15 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
+      std::cout<<"cv1: " << cv1<<"\n";
+      std::cout<<"cv2: " << cv2<<"\n";
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
       CGAL_precondition (cv1.point_position (p) == EQUAL &&
                          cv2.point_position (p) == EQUAL);
 
-      CGAL_precondition (CGAL::compare (p.x(), cv1.left().x()) == LARGER &&
-                         CGAL::compare (p.x(), cv2.left().x()) == LARGER);
+      CGAL_precondition (CGAL::compare (p.x(), cv1.left().x()) != SMALLER &&
+                         CGAL::compare (p.x(), cv2.left().x()) != SMALLER);
 
       // Compare the two curves immediately to the left of p:
       return (cv1.compare_to_left (cv2, p));

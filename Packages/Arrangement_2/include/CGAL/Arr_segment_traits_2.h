@@ -278,6 +278,15 @@ public:
     }
 
     /*!
+     * Check if the curve is directed lexicographic from left to right
+     */
+    bool is_directed_right () const
+    {
+      return (is_pt_max);
+    }
+
+    
+    /*!
      * Check if the given point is in the x-range of the segment.
      * \param p The query point.
      * \return (true) is in the x-range of the segment; (false) if it is not.
@@ -377,7 +386,6 @@ public:
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
       Kernel    kernel;
-
       return (kernel.compare_xy_2_object()(p1, p2));
     }
   };
@@ -1068,6 +1076,20 @@ public:
   const Point_2& target() const
   {
     return (this->pt);
+  }
+
+  /*! Construct an opposite curve */
+  Arr_segment_2 construct_opposite() const
+  {
+    Arr_segment_2 opp;
+    opp.l = this->l;
+    opp.ps = this->pt;
+    opp.pt = this->ps;
+    opp.is_pt_max = !(this->is_pt_max);
+    opp.is_vert = this->is_vert;
+    opp.is_degen = this->is_degen;
+    
+    return (opp);
   }
 };
 
