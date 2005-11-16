@@ -11,6 +11,7 @@ typedef CGAL::Double_map<int, int> Map;
 int main(int, char**)
 {
   Map f;
+  Map f2;
 
   for(int n=0; n<500; n++)
     {
@@ -20,11 +21,20 @@ int main(int, char**)
 
   CGAL_assertion(f.size()<=500);
 
+  f2 = f; // check the assignment 
+  f2 = f2; // check the auto-assignment 
+  Map f3(f); // check the copy constructor
+
+  CGAL_assertion(f.size() == f2.size());
+  CGAL_assertion(f.size() == f3.size());
+
   int i, i2;
   i2 = 0;
   while(!f.empty())
     {
       i = f.front()->second;
+      f2.erase(i);
+      f3.erase(i);
       int new_i2 = f.front()->first;
       CGAL_assertion(new_i2>=i2);
       i2=new_i2;
@@ -33,6 +43,8 @@ int main(int, char**)
     }
 
   CGAL_assertion(f.size()==0);
+  CGAL_assertion(f2.empty());
+  CGAL_assertion(f3.empty());
 
   for(int n=0; n<500; n++)
     {

@@ -27,19 +27,21 @@
 
 namespace CGAL {
 
-template <class _Key, class _Data, class _Direct_order = std::less<_Key>, 
-          class _Reverse_order = std::less<_Data> >
+template <class _Key, class _Data, class _Direct_compare = std::less<_Key>, 
+          class _Reverse_compare = std::less<_Data> >
 class Double_map
 {
 public:
   typedef _Key Key;
   typedef _Data Data;
-  typedef _Direct_order Direct_order;
-  typedef _Reverse_order Reverse_order;
+  typedef _Direct_compare Direct_compare;
+  typedef _Reverse_compare Reverse_compare;
+
+  typedef Double_map<Key, Data, Direct_compare, Reverse_compare> Self;
   
-  typedef std::multimap <Data, Key, Reverse_order> Reverse_func;
+  typedef std::multimap <Data, Key, Reverse_compare> Reverse_func;
   typedef typename Reverse_func::iterator reverse_iterator;
-  typedef std::map <Key, reverse_iterator, Direct_order> Direct_func;
+  typedef std::map <Key, reverse_iterator, Direct_compare> Direct_func;
 
   typedef std::pair<Key, reverse_iterator> Direct_entry;
   typedef std::pair<Data, Key> Reverse_entry;
@@ -62,6 +64,12 @@ public :
   // The default constructor
   Double_map () {}
 
+  // The copy constructor
+  Double_map(const Self& dm)
+  {
+    copy(dm);
+  }
+
   // Queries
   bool empty() const
   {
@@ -81,10 +89,31 @@ public :
   }
   
   void clear()
+  {
+    direct_func.clear();
+    reverse_func.clear();
+  }
+
+  Self& operator=(const Self& dm)
+  {
+    if(&dm != this)
+      copy(dm);
+    return *this;
+  }
+
+  void copy(const Self& dm)
+  {
+    clear();
+
+    reverse_func = dm.reverse_func;
+    
+    for(reverse_iterator rit = reverse_func.begin();
+        rit != reverse_func.end();
+        ++rit)
     {
-      direct_func.clear();
-      reverse_func.clear();
+      direct_func[rit->second] = rit;
     }
+  }
 
   // Assignation
   bool insert(const Key& k, const Data& d)
@@ -162,10 +191,10 @@ public :
     }
 };
 
-template <class _Key, class _Data, class _Direct_order, 
-  class _Reverse_order>
+template <class _Key, class _Data, class _Direct_compare, 
+  class _Reverse_compare>
 bool
-Double_map<_Key, _Data, _Direct_order, _Reverse_order>::
+Double_map<_Key, _Data, _Direct_compare, _Reverse_compare>::
 erase(const Key& k)
 {
   CGAL_assertion(is_valid());
