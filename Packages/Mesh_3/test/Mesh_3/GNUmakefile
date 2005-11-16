@@ -70,7 +70,7 @@ TOOLS=  cgal_to_medit \
 all: $(RUN_PROGRAMS)
 
 run: $(RUN_PROGRAMS)
-	for p in $(RUN_PROGRAMS); do ./$p; done
+	./cgal_test
 
 links:
 	for t in $(TOOLS); do rm -f $$t; ln -s ../../applications/$$t .; done
