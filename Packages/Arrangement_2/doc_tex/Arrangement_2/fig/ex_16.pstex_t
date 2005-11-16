@@ -9,7 +9,7 @@
   \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
   \selectfont}%
 \fi\endgroup%
-\begin{picture}(5874,5874)(1789,-6598)
+\begin{picture}(6068,6068)(1692,-6695)
 \put(4366,-3661){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,.56}$a_1$}%
 }}}}
 \put(5536,-2941){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{.56,0,0}$a_3$}%

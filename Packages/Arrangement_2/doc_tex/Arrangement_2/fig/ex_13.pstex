@@ -1,9 +1,9 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: ex_13.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Mon Jul 11 17:23:41 2005
-%%For: wein@cgal (Ron Wein,,09-576985,)
-%%BoundingBox: 0 0 200 170
+%%CreationDate: Wed Nov 16 18:40:51 2005
+%%For: efif@lap-eye (Efraim Fogel,,,)
+%%BoundingBox: 0 0 206 177
 %Magnification: 0.5000
 %%EndComments
 /$F2psDict 200 dict def
@@ -45,8 +45,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 170 moveto 0 0 lineto 200 0 lineto 200 170 lineto closepath clip newpath
--63.4 241.3 translate
+newpath 0 177 moveto 0 0 lineto 206 0 lineto 206 177 lineto closepath clip newpath
+-60.3 244.4 translate
 1 -1 scale
 
 /cp {closepath} bind def
@@ -103,6 +103,16 @@ $F2psBegin
 %
 % Fig objects follow
 %
+% 
+% here starts figure with depth 55
+% Ellipse
+7.500 slw
+n 2025 2250 101 101 0 360 DrawEllipse gs col7 s gr
+
+% Ellipse
+n 8325 7650 101 101 0 360 DrawEllipse gs col7 s gr
+
+% here ends figure;
 % 
 % here starts figure with depth 50
 % Ellipse
@@ -248,7 +258,7 @@ n 7507 5895 m 7627 5850 l 7507 5805 l  col15 s
 n 7200 5940 m
  7200 5850 l gs col15 s gr 
 % Polyline
-n 2025 2295 m 8325 2295 l 8325 7650 l 2025 7650 l
+n 2025 2250 m 8325 2250 l 8325 7650 l 2025 7650 l
  cp gs col0 s gr 
 % here ends figure;
 % 
