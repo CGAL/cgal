@@ -95,7 +95,8 @@ protected:
     PLUS_SQRT_DISC_ROOT = 64,
     FACING_UP = 128,
     FACING_DOWN = 256,
-    FACING_MASK = 128 + 256
+    FACING_MASK = 128 + 256,
+    IS_SPECIAL_SEGMENT = 512
   };
 
   Algebraic      alg_r;      // The coefficients of the supporting conic curve:
@@ -172,7 +173,8 @@ public:
   }
 
   /*!
-   * Construct a segment connecting to given endpoints.
+   * Construct a special segment connecting to given endpoints (for the usage
+   * of the landmarks point-location strategy).
    * \param source The source point.
    * \param target The target point.
    */
@@ -218,6 +220,9 @@ public:
     // Check if the segment is vertical.
     if (CGAL::sign (this->_extra_data_P->b) == ZERO)
       this->_info = (this->_info | IS_VERTICAL_SEGMENT);
+
+    // Mark that this is a special segment.
+    this->_info = (this->_info | IS_SPECIAL_SEGMENT);
 
     return;
   }
@@ -1037,15 +1042,24 @@ public:
                        this->contains_point (pt));
 
     // Make sure that the endpoints conform with the direction of the arc.
+    Self         arc = *this;
     Alg_kernel   ker;
+
+    if (! ((((this->_info & IS_DIRECTED_RIGHT) != 0) &&
+            ker.compare_xy_2_object() (ps, pt) == SMALLER) ||
+           (((this->_info & IS_DIRECTED_RIGHT) == 0) &&
+            ker.compare_xy_2_object() (ps, pt) == LARGER)))
+    {
+      arc._info = (this->_info ^ IS_DIRECTED_RIGHT);
+    }
+    /*
     CGAL_precondition ((((this->_info & IS_DIRECTED_RIGHT) != 0) &&
                         ker.compare_xy_2_object() (ps, pt) == SMALLER) ||
                        (((this->_info & IS_DIRECTED_RIGHT) == 0) &&
                         ker.compare_xy_2_object() (ps, pt) == LARGER));
+    */
 
-    // Make a copy of the current arc and assign its endpoints.
-    Self         arc = *this;
-    
+    // Make a copy of the current arc and assign its endpoints.    
     if (! ker.equal_2_object() (ps, _source))
     {
       arc._source = ps;
@@ -1062,7 +1076,7 @@ public:
         arc._target.set_generating_conic (_id);
     }
 
-    return;
+    return (arc);
   }
 
   /*!
@@ -1259,6 +1273,15 @@ private:
     {
       CGAL_assertion (n_ys == 2);
       p_arc_mid = Point_2 (p_mid.x(), ys[1]);
+
+      if (! _is_strictly_between_endpoints (p_arc_mid))
+      {
+        std::cout << "ps = (" << _source << ")   pt = (" << _target
+                  << ")   orientation = " << _orient << std::endl;
+        std::cout << "x_mid = " << p_mid.x() << "  ys = "
+                  << ys[0] << ", " << ys[1] << std::endl;
+      }
+
       CGAL_assertion (_is_strictly_between_endpoints (p_arc_mid));
 
       // Mark that we should use the +sqrt(disc) root for points on this
@@ -1296,7 +1319,7 @@ private:
    */
   bool _is_special_segment () const
   {
-    return (this->_extra_data_P != NULL && this->_extra_data_P->side == ZERO);
+    return ((this->_info & IS_SPECIAL_SEGMENT) != 0);
   }
 
   /*!

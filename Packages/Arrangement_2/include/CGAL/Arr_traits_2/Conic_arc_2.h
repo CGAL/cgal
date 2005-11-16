@@ -1160,32 +1160,79 @@ private:
       return;
     }
 
-    // In case the base conic is a hyperbola, build the extra hyperbolic data
-    // (this happens when (4rs - t^2) < 0).
-    if (CGAL::sign (4*_r*_s - _t*_t) == NEGATIVE)
-      _build_hyperbolic_arc_data ();
-    else
-      _extra_data_P = NULL;
+    _extra_data_P = NULL;
 
-    // In case of a non-degenerate parabola or a hyperbola, make sure 
-    // the arc is not infinite.
+    // Check whether we have a degree 2 curve.
     if ((CGAL::sign (_r) != ZERO ||
 	 CGAL::sign (_s) != ZERO ||
-	 CGAL::sign (_t) != ZERO) &&
-	CGAL::sign (4*_r*_s - _t*_t) != POSITIVE)
+	 CGAL::sign (_t) != ZERO))
     {
-      Alg_kernel       ker;
-      Point_2          p_mid = ker.construct_midpoint_2_object() (_source,
-								  _target);
-      Point_2          ps[2];
-
-      bool  finite_at_x = (get_points_at_x(p_mid, ps) > 0);
-      bool  finite_at_y = (get_points_at_y(p_mid, ps) > 0);
-      
-      if (! finite_at_x && ! finite_at_y)
+      if (_orient == COLLINEAR)
       {
-	_info = 0;          // Invalid arc.
-	return;
+        // We have a segment of a line pair with rational coefficients.
+        // Compose the equation of the underlying line
+        // (with algebraic coefficients).
+        const Algebraic        x1 = _source.x(), y1 = _source.y();
+        const Algebraic        x2 = _target.x(), y2 = _target.y();
+        
+        // The supporting line is A*x + B*y + C = 0, where:
+        //
+        //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2 
+        //
+        // We use the extra dat field to store the equation of this line.
+        _extra_data_P = new Extra_data;
+        _extra_data_P->a = y2 - y1;
+        _extra_data_P->b = x1 - x2;
+        _extra_data_P->c = x2*y1 - x1*y2;
+        _extra_data_P->side = ZERO;
+
+        // Make sure the midpoint is on the line pair (thus making sure that
+        // the two points are not taken from different lines).
+        Alg_kernel       ker;
+        Point_2          p_mid = ker.construct_midpoint_2_object() (_source,
+                                                                    _target);
+        
+        if (CGAL::sign ((nt_traits.convert(_r)*p_mid.x() + 
+                         nt_traits.convert(_t)*p_mid.y() + 
+                         nt_traits.convert(_u)) * p_mid.x() +
+                        (nt_traits.convert(_s)*p_mid.y() +
+                         nt_traits.convert(_v)) * p_mid.y() +
+                        nt_traits.convert(_w)) != ZERO)
+        {
+          _info = 0;          // Invalid arc.
+          return;
+        }
+      }
+      else 
+      {
+        // The sign of (4rs - t^2) detetmines the conic type:
+        // - if it is possitive, the conic is an ellipse,
+        // - if it is negative, the conic is a hyperbola,
+        // - if it is zero, the conic is a parabola.
+        CGAL::Sign   sign_conic = CGAL::sign (4*_r*_s - _t*_t);
+
+        if (sign_conic == NEGATIVE)
+          // Build the extra hyperbolic data
+          _build_hyperbolic_arc_data ();
+
+        if (sign_conic != POSITIVE)
+        {
+          // In case of a non-degenerate parabola or a hyperbola, make sure 
+          // the arc is not infinite.
+          Alg_kernel       ker;
+          Point_2          p_mid = ker.construct_midpoint_2_object() (_source,
+                                                                      _target);
+          Point_2          ps[2];
+
+          bool  finite_at_x = (get_points_at_x(p_mid, ps) > 0);
+          bool  finite_at_y = (get_points_at_y(p_mid, ps) > 0);
+      
+          if (! finite_at_x && ! finite_at_y)
+          {
+            _info = 0;          // Invalid arc.
+            return;
+          }
+        }
       }
     }
 
@@ -1450,12 +1497,23 @@ protected:
     if (is_full_conic())
       return (true);
 
-    // In case of a hyperbolic arc, make sure the point is located on the
-    // same branch as the arc.
-    if (_extra_data_P != NULL && _extra_data_P->side != ZERO)
+    // Check if we have extra data available.
+    if (_extra_data_P != NULL)
     {
-      if (_sign_of_extra_data(p.x(), p.y()) != _extra_data_P->side)
-        return (false);
+      if (_extra_data_P->side != ZERO)
+      {
+        // In case of a hyperbolic arc, make sure the point is located on the
+        // same branch as the arc.
+        if (_sign_of_extra_data(p.x(), p.y()) != _extra_data_P->side)
+          return (false);
+      }
+      else
+      {
+        // In case we have a segment of a line pair, make sure that p really
+        // satisfies the equation of the line.
+        if (_sign_of_extra_data(p.x(), p.y()) != ZERO)
+          return (false);
+      }
     }
 
     // Act according to the conic degree.
