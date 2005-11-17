@@ -328,6 +328,35 @@ public:
   {
     return Merge_2();
   }
+
+  // required for Boolean_set_operations_2 package
+  typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2; 
+
+  Construct_opposite_2 construct_opposite_2_object() const
+  {
+    return Construct_opposite_2();
+  }
+
+  class Compare_endpoints_xy_2 
+  {
+  public:
+
+    Comparison_result operator()(const X_monotone_curve_2& cv)
+    {
+      typedef typename Kernel::Construct_vertex_2     Construct_vertex_2;
+
+      Kernel k;
+      Base b;
+      Construct_vertex_2 ctr_v = k.construct_vertex_2_object();
+      Compare_xy_2 cmp_xy = b.compare_xy_2_object();
+      return(cmp_xy(ctr_v(cv,0), ctr_v(cv,1)));
+    }
+  };
+
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
+  {
+    return Compare_endpoints_xy_2();
+  }
   //@}
 };
 
