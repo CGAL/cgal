@@ -18,20 +18,17 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-
 \begin{ccRefConcept}{VoronoiTraits_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The concept \ccc{VoronoiTraits_2} defines the combinatorial and
-geometric predicate requirements for the
-\ccc{Voronoi_diagram_2<DG,VT,AP>} class. The
-\ccc{VoronoiTraits_2} concept essentially defines the requirements on
-the predicates that determine whether a feature of the triangulated
-Delaunay graph has a degenerate dual feature in the Voronoi diagram
-that is the dual of the triangulated Delaunay graph.
+The concept \ccc{VoronoiTraits_2} defines the functors required for
+accessing geometric information in the Delaunay graph that is needed by the
+\ccc{Voronoi_diagram_2<DG,VT,AP>} class.
+It optionally defines a functor for performing nearest site queries. A
+tag is provided for determining whether this functor is defined or not.
 
 \ccRefines
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}

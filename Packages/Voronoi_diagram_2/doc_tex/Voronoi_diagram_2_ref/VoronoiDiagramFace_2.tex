@@ -86,8 +86,9 @@ The class \ccRefName\ is the Voronoi face class provided by the
   \ccc{f}.}
 \ccGlue
 \ccMethod{bool is_valid();}{Returns \ccStyle{true} iff the following
-  conditions are met: the face does not have zero area; all its
-  adjacent halfedges do not have zero length; all its adjacent
+  conditions are met: the dual vertex of the face is not rejected by
+  the chosen adaptation policy;
+  all its adjacent halfedges do not have zero length; all its adjacent
   halfedges return the face as their adjacent face.}
 
 

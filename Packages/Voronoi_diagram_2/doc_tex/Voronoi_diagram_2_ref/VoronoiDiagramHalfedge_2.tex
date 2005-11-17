@@ -146,8 +146,9 @@ the Voronoi edge.
   in other words it is a bisecting ray.}
 \ccGlue
 \ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
-  conditions are met: the halfedge does not have zero length; the
-  twin edge of its twin edge is itself; its adjacent face does not
+  conditions are met: the dual edge of the halfedge is not a rejected
+  edge with respect to the chosen adaptation policy;
+  the twin edge of its twin edge is itself; its adjacent face does not
   have zero area; its source and target vertices are valid (provided
   they exist, of course); the previous of its next halfedge is itself
   and the next of its previous halfedge is itself.}

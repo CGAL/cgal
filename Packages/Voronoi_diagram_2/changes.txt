@@ -1,6 +1,9 @@
 17 Nov 2005: Menelaos Karavelas
 - added site removers in code and adaptation policies but have neither
   updated the doc, nor added testing for this functionality
+- re-added testing of constructor that takes an iterator range (fixed
+  the problem with this constructor in the triangulation hierarchy)
+- finalized reference manual according to new design
 
 6 Nov 2005:  Menelaos Karavelas
 - more changes in doc: added AdaptationPolicy_2 concept and modified

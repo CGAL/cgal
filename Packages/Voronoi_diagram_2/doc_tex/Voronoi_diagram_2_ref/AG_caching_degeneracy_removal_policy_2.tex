@@ -18,35 +18,40 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-\begin{ccRefClass}{Delaunay_triangulation_Voronoi_traits_2<DT2>}
+\begin{ccRefClass}{Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}
 
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{traits}
+\ccCreationVariable{policy}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
+The class \ccRefName\ provides a model for the \ccc{AdaptationPolicy_2}
 concept. The template parameter of the \ccRefName\ class must be a
 model of the \ccc{DelaunayGraph_2} concept, and in particular it has
-the semantics of a 2D Delaunay triangulation.
+the semantics of a (triangulated) 2D Apollonius graph. This policy
+caches the results of the edge and face rejectors and results in a
+Voronoi diagram that has no degenerate features, i.e., no Voronoi
+edges of zero length and no Voronoi faces of zero area.
 
 
-\ccInclude{CGAL/Delaunay_triangulation_Voronoi_traits_2.h}
+\ccInclude{CGAL/Apollonius_graph_adaptation_policies_2.h}
 
 \ccIsModel
-\ccc{VoronoiTraits_2}
+\ccc{AdaptationPolicy_2}
 
 \ccTypes
-\ccThree{typedef CGAL::Tag_true}{Has_nearest_site_2+}{}
-\ccTypedef{typedef CGAL::Tag_true Has_nearest_site_2;}{}
+\ccThree{typedef CGAL::Tag_true}{Has_inserter+}{}
+\ccTypedef{typedef CGAL::Tag_true Has_inserter;}{}
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
 \ccc{DelaunayGraph_2}\\
+\ccc{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
 \ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}\\
-\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}
+\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

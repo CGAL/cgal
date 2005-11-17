@@ -31,10 +31,12 @@ The class \ccRefName\ provides an adaptor that enables us
 to view a triangulated Delaunay graph as their dual subdivision, the
 Voronoi diagram. The class \ccRefName\ is designed to provide an API
 that is similar to that of \cgal's arrangements.\\
-The template parameter of the \ccRefName\ class corresponds to the
+The first template parameter of the \ccRefName\ class corresponds to the
 triangulated Delaunay graph and must be a model of the
 \ccc{DelaunayGraph_2} concept. The second template parameter must be a
-model of the \ccc{VoronoiTraits_2} concept.
+model of the \ccc{VoronoiTraits_2} concept. The third template
+parameter must be a model of the \ccc{AdaptationPolicy_2} concept. The
+third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,VT>}.
 
 \ccInclude{CGAL/Voronoi_diagram_2.h}
 
@@ -51,6 +53,9 @@ model of the \ccc{VoronoiTraits_2} concept.
 \ccGlue
 \ccTypedef{typedef VT Voronoi_traits;}{A type for the traits needed by
   the Voronoi diagram adaptor.}
+\ccGlue
+\ccTypedef{typedef AP Adaptation_policy;}{A type for the adaptation
+  policy used.}
 \ccGlue
 \ccTypedef{typedef Voronoi_traits::Point_2 Point_2;}{A type a point.}
 \ccGlue
@@ -162,7 +167,7 @@ corresponding handles.
 
 \ccHeading{Access Methods}
 %
-\ccThree{Halfedge_handle}{vd.number_of_connected_components()+}{}
+\ccThree{Adaptation_policy}{vd.number_of_connected_components()+}{}
 %
 \ccMethod{Delaunay_graph dual();}
 {Returns a reference to the dual graph, i.e., the Delaunay graph.}
@@ -182,6 +187,9 @@ corresponding handles.
 \ccGlue
 \ccMethod{Voronoi_traits voronoi_traits();}
 {Returns a reference to the Voronoi traits.}
+\ccGlue
+\ccMethod{Adaptation_policy adaptation_policy();}
+{Returns a reference to the adaptation policy.}
 \ccGlue
 \ccMethod{size_type number_of_vertices();}
 {Returns the number of Voronoi vertices.}
@@ -452,7 +460,16 @@ model of \ccc{DelaunayGraph_2}\\
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
 \ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}\\
+\ccc{CGAL::Identity_policy_2<DG,VT>}\\
+\ccc{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_degeneracy_removal_policy_2<SVD2>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_caching_degeneracy_removal_policy_2<SVD2>}
 
 \end{ccRefClass}
 

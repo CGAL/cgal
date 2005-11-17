@@ -103,9 +103,9 @@ graph they take as an argument, the last ones does.
   \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}, 
   \ccc{AdaptableFunctor} (with two arguments). It must provide the
   following operator\\
-  \centerline{\ccc{Vertex_handle operaotr()(Delaunay_graph& dg, Site_2 t)}}\\
+  \centerline{\ccc{Vertex_handle operator()(Delaunay_graph& dg, Site_2 t)}}\\
   The vertex handle returned either points to the vertex of the
-  Delaunay graph corresponding to the site just inserted or the
+  Delaunay graph corresponding to the site just inserted or is the
   default constructed vertex handle. The latter case can happen if the
   site inserted is \textit{hidden}, i.e., it has an empty Voronoi cell.\\
   This type is required only if the \ccc{Has_inserter} tag is equal to
