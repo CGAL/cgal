@@ -58,8 +58,10 @@ public:
   // Compute the gradient in p
   virtual Vector gradient(Point const &p) = 0; 
   // Compute the normal in p (normalized gradient)
-  virtual Vector normal(Point const &p) = 0; 
-
+  Vector normal(Point const &p) {
+    Vector n = gradient(p);
+    return n/sqrt(n*n);
+  }
 
   // return the dimension of the delaunay simplex:
   virtual int dimension() const = 0;
@@ -128,10 +130,6 @@ public:
     return wp + sqrt(s*wp.weight()/(pc*pc))*pc;
   }
 
-  Vector normal(Point const &p) {
-    Vector n = gradient(p);
-    return n/sqrt(n*n);
-  }
 	
   Vector gradient(Point const &p) {
     return orient*(p-wp);
@@ -265,10 +263,6 @@ public:
   }
   Point to_surface(Point const &p0) {
     return to_surface(p0, normal(p0));
-  }
-  Vector normal(Point const &p) {
-    Vector n = gradient(p);
-    return orient*n/sqrt(n*n);
   }
   Vector gradient(Point const &p) {
     // -s x + (1-s) y 

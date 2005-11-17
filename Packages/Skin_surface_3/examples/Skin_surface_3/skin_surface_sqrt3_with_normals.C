@@ -40,15 +40,8 @@ int main(int argc, char *argv[]) {
   
   std::ifstream in("data/caffeine.cin");
   Reg_weighted_point wp;
-  while (in >> wp)
-    l.push_back(Reg_weighted_point(
-		  wp.point(),
-		  wp.weight()/skin_surface_traits.shrink_factor()));
+  while (in >> wp) l.push_back(wp);
     
-//   l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1.1));
-//   l.push_front(Reg_weighted_point(Reg_point(0,1,0), 2));
-//   l.push_front(Reg_weighted_point(Reg_point(0,0,2), 1));
-
   // Code
   Regular regular;
   Triangulated_mixed_complex triangulated_mixed_complex;
@@ -130,20 +123,6 @@ int main(int argc, char *argv[]) {
       std::size_t n = circulator_size( hc);
       CGAL_assertion( n >= 3);
       out << n;
-      double x,y,z;
-      x = y = z = 0;
-      do {
-	x += hc->vertex()->point().x();
-	y += hc->vertex()->point().y();
-	z += hc->vertex()->point().z();
-	out << " " << index[ VCI(hc->vertex())];
-	++hc;
-      } while( hc != hc_end);
-      int dim = refinement_traits.dimension(
-	Polyhedron_kernel::Point_3(x/n,y/n,z/n));
-      out << " " << 250-75*dim << " " << 250-75*dim << " " << 250-75*dim;
-      
-      out << std::endl;
     }
     
   }
