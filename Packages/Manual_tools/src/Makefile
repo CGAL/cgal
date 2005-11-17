@@ -31,7 +31,7 @@
 
 # C++ Compiler Options:
 # CXXFLAGS = -v
-CXXFLAGS = -g
+CXXFLAGS = -g -O2
 
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
 # CC = gcc
@@ -72,6 +72,7 @@ SCRIPT_FILES  = 	latex_to_html			\
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
 		 	latex_converter_config/html/*.css	\
 			latex_converter_config/html/cc_*.stage_?  \
+			latex_converter_config/html/cc_anchor_ref_catchall  \
 			latex_converter_config/html/*.mst
 GIF_CONFIG_FILES  =	latex_converter_config/gif/*.gif
 REF_CONFIG_FILES  =	latex_converter_config/ref_pages/*.tex
