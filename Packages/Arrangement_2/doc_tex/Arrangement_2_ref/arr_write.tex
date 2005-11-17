@@ -7,7 +7,6 @@
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
-
 \begin{ccRefFunction}{write}
 
 \ccInclude{CGAL/IO/Arr_iostream.h}
@@ -28,6 +27,26 @@
     only the basic geometric and topological features of the arrangement are
     written, without any auxiliary data that may be attached to the \dcel\ features.}
 
-\end{ccRefFunction}
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+\ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
+\ccFunction{template<class Traits, class Dcel, class Formatter>
+            std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
+                                 std::ostream& os,
+                                 Formatter& formatter);}
+   {Writes the arrangement-with-history instance \ccc{arr} into the given
+    output stream using a specific output format. \ccc{formatter}, which must
+    be a model of the \ccc{ArrWithHistoryOutputFormatter}, defines the output
+    format.}
+
+\ccFunction{template<class Traits, class Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                                      const Arrangement_with_history_2<Traits,Dcel>& arr);}
+   {Writes the arrangement-with-history instance \ccc{arr} into the given
+    output stream using the default output format.}
+
+\ccSeeAlso
+  \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}
+
+\end{ccRefFunction}
 \ccRefPageEnd

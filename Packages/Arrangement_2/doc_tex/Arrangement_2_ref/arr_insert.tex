@@ -42,6 +42,37 @@
 %    ``walk along line'' point-location strategy, so users need not provide a
 %    point-location object.}
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccFunction{template<class Traits, class Dcel, class PointLocation>
+            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+            insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
+                    const typename Traits::Curve_2& c,
+                    const PointLocation& pl = walk_pl);}
+   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and returns
+    a handle to the inserted curve.
+    The point-location object \ccc{pl}, which should be a model of the
+    \ccc{ArrangementPointLocation_2} concept, is used for answering
+    point-location queries during the insertion process.
+    By default, the function uses the ``walk along line'' point-location
+    strategy --- namely an instance of the class
+    \ccc{Arr_walk_along_line_point_location<Arrangement_with_history_2<Traits,Dcel> >}.
+    \ccPrecond{If provided, \ccc{pl} is attached to the given arrangement
+    \ccc{arr}.}}
+
+%\ccFunction{template<class Traits, class Dcel>
+%            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+%            insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
+%                    const typename Traits::Curve_2& c);}
+%   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and
+%    returns a handle to the inserted curve.
+%   The function operates as the function listed above, but it uses the default
+%    ``walk along line'' point-location strategy, so users need not provide a
+%    point-location object.}
+
 \end{ccRefFunction}
 
 \ccRefPageEnd

@@ -1,10 +1,10 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: insert_at_vertices.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Mon Apr  4 08:43:45 2005
-%%For: wein@cgal (Ron Wein,,09-576985,)
-%%BoundingBox: 0 0 139 98
-%Magnification: 0.4500
+%%CreationDate: Thu Nov 17 13:41:06 2005
+%%For: efif@lap-eye (Efraim Fogel,,,)
+%%BoundingBox: 0 0 111 80
+%Magnification: 0.3500
 %%EndComments
 /$F2psDict 200 dict def
 $F2psDict begin
@@ -45,8 +45,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 98 moveto 0 0 lineto 139 0 lineto 139 98 lineto closepath clip newpath
--40.2 154.2 translate
+newpath 0 80 moveto 0 0 lineto 111 0 lineto 111 80 lineto closepath clip newpath
+-29.8 121.4 translate
 1 -1 scale
 
 /cp {closepath} bind def
@@ -99,10 +99,20 @@ newpath 0 98 moveto 0 0 lineto 139 0 lineto 139 98 lineto closepath clip newpath
 $F2psBegin
 10 setmiterlimit
 0 slj 0 slc
- 0.02700 0.02700 sc
+ 0.02100 0.02100 sc
 %
 % Fig objects follow
 %
+% 
+% here starts figure with depth 55
+% Ellipse
+7.500 slw
+n 1500 2100 75 75 0 360 DrawEllipse gs col7 s gr
+
+% Ellipse
+n 6600 5700 75 75 0 360 DrawEllipse gs col7 s gr
+
+% here ends figure;
 % 
 % here starts figure with depth 50
 % Polyline

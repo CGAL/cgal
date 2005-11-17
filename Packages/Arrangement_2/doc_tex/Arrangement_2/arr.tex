@@ -97,10 +97,10 @@ interior. See Figure~\ref{arr_fig:seg_dcel} for an illustration of the
 various \dcel\ features. For more details on the \dcel\ data structure
 see~\cite[Chapter~2]{bkos-cgaa-00}.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
   \begin{center}
-    \input{Arrangement_2/fig/arr_segs.pstex_t}
+  \includegraphics{Arrangement_2/fig/arr_segs}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -538,16 +538,16 @@ implemented as global functions that operate on the arrangement and
 the inserted curve(s); see Section~\ref{arr_sec:gl_funcs} for more
 details and examples.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
+  \begin{center}
   \begin{tabular}{ccc}
-    \input{Arrangement_2/fig/insert_in_face.pstex_t} &
-    \input{Arrangement_2/fig/insert_from_vertex.pstex_t} &
-    \input{Arrangement_2/fig/insert_at_vertices.pstex_t}\\
+    \includegraphics{Arrangement_2/fig/insert_in_face} &
+    \includegraphics{Arrangement_2/fig/insert_from_vertex} &
+    \includegraphics{Arrangement_2/fig/insert_at_vertices}\\
   {\small (a)} & {\small (b)} & {\small (c)}\\
   \end{tabular}
-\end{center}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -633,10 +633,10 @@ that has just been created.
 from $v_1$ to $v_2$.
 \end{itemize}
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
   \begin{center}
-  \input{Arrangement_2/fig/ex_1.pstex_t}
+  \includegraphics{Arrangement_2/fig/ex_1}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -692,11 +692,11 @@ containing an isolated vertex handle $v$ by calling \ccc{v->face()}.
 The function \ccc{remove_isolated_vertex(v)} receives a handle to
 an isolated vertex and removes it from the arrangement.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_2.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_2}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -763,16 +763,16 @@ of its end-vertices to become isolated, we remove this vertex as well.
 However, users can control this behavior and choose to keep the
 isolated vertices.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
+  \begin{center}
   \begin{tabular}{ccc}
-    \input{Arrangement_2/fig/ex_3a.pstex_t} &
-    \input{Arrangement_2/fig/ex_3b.pstex_t} &
-    \input{Arrangement_2/fig/ex_3c.pstex_t} \\
+    \includegraphics{Arrangement_2/fig/ex_3a} &
+    \includegraphics{Arrangement_2/fig/ex_3b} &
+    \includegraphics{Arrangement_2/fig/ex_3c} \\
   {\small (a)} & {\small (b)} & {\small (c)}\\
   \end{tabular}
-\end{center}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -873,11 +873,11 @@ correspond to the curve endpoints, and one that accepts a handle
 for one vertex and a predecessor halfedge around the second
 vertex.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_4.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_4}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -1100,11 +1100,11 @@ selected point-location strategy.
 \label{arr_sssec:pl_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_5.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_5}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -1436,11 +1436,11 @@ insertion operation may involve splitting curves.
 \label{arr_sssec:insert_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_8.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_8}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -1542,11 +1542,11 @@ arrangement, we consider the size of the arrangement to be $n$.
 As a rule of thumb, if $m = o(\sqrt{n})$, we insert the curves one by
 one. For larger input sets, we use the aggregated insertion procedures.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_10.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_10}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -1819,11 +1819,11 @@ the polyline. The nested \ccc{X_monotone_curve_2} type inherits
 from \ccc{Curve_2}. The points in an $x$-monotone curve are
 always stored by an increasing order of their $x$-coordinates.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_12.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_12}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -1968,11 +1968,11 @@ also support basic access functions such as \ccc{source()},
 \subsubsection{Examples for Arrangements of Conics}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_13.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_13}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -1997,11 +1997,11 @@ and it has six incident edges:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example13.C}
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_14.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_14}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2093,11 +2093,11 @@ coefficients, specifying the polynomial $P$ alone (and $Q(x) =
 1$), or from two vectors of coefficients, specifying both $P$ and
 $Q$.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_16.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_16}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2204,11 +2204,11 @@ the consolidated set $S_1 \cup S_2$.
 \subsubsection{Examples}
 %~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_17.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_17}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2235,11 +2235,11 @@ corresponds to overlaps between red and blue line segments:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example17.C}
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_18.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_18}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2366,11 +2366,11 @@ classes, by inheriting from the base observer class and overriding
 the relevant notification functions, as required by their
 applications.
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_19.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_19}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2455,11 +2455,11 @@ with another face). In such cases one can use an arrangement observer
 tailored for this task, which receives updates whenever a face is
 modified and sets its data field accordingly. 
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_20.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_20}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2611,11 +2611,11 @@ concept. The details of this concept are given in the reference manual.
 \label{arr_ssec:simp_ovl}
 %----------------------------------------
 %
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_22.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_22}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2809,11 +2809,11 @@ the details).
 \label{arr_ssec:arr_hist_ex}
 %---------------------------
 %
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_24.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_24}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -2835,11 +2835,11 @@ on the resulting arrangement:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example24.C}
 
-\begin{figure}[t]
+\begin{figure}[!htp]
 \begin{ccTexOnly}
-\begin{center}
-\input{Arrangement_2/fig/ex_25.pstex_t}
-\end{center}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_25}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
