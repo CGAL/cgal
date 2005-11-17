@@ -536,6 +536,49 @@ public:
     return Merge_2();
   }
 
+  class Compare_endpoints_xy_2
+  {
+  public:
+    /*!
+     * compare lexicogrphic the endpoints of a x-monotone curve.
+     * \param cv the curve
+     * \return SMALLER if the curve is directed right, else return SMALLER
+     */
+
+    Comparison_result operator()(const X_monotone_curve_2& cv)
+    {
+      if(cv.is_directed_right())
+        return(SMALLER);
+      return (LARGER);
+    }
+  };
+
+  /*! Get a Compare_endpoints_xy_2 functor object. */
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
+  {
+    return Compare_endpoints_xy_2();
+  }
+
+
+  class Construct_opposite_2
+  {
+  public:
+    /*!
+     * construct an opposite x-monotone curve.
+     * \param cv the curve
+     * \return an opposite x-monotone curve.
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv)
+    {
+      return cv.construct_opposite();
+    }
+  };
+
+  Construct_opposite_2 construct_opposite_2_object() const
+  {
+    return Construct_opposite_2();
+  } 
+
 };
 
 CGAL_END_NAMESPACE

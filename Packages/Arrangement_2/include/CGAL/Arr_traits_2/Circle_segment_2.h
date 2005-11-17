@@ -1027,6 +1027,34 @@ public:
     return;
   }
 
+
+  /*! return true iff the arc is directed right lexicoraphically. */
+  bool is_directed_right() const
+  {
+    return (_dir_right);
+  }
+
+
+  /*! construct an opposite arc. */
+  Self construct_opposite() const
+  {
+    Self opp_cv;
+    opp_cv._first = this->_first;
+    opp_cv._second = this-> _second;
+    opp_cv._third = this-> _third;
+    opp_cv._source = this->_target;
+    opp_cv._target = this->_source;
+    if(this->_orient == CLOCKWISE)
+      opp_cv._orient = COUNTERCLOCKWISE;
+    else
+      if(this->_orient == COUNTERCLOCKWISE)
+        opp_cv._orient = CLOCKWISE;
+      else
+        opp_cv._orient = COLLINEAR;
+    opp_cv._dir_right = !(this->_dir_right);
+    opp_cv._is_vert = this->_is_vert;
+  }
+
 protected:
 
   /// \name Accessors for circular arcs.
