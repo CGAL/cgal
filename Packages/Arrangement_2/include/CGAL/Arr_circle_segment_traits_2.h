@@ -544,7 +544,6 @@ public:
      * \param cv the curve
      * \return SMALLER if the curve is directed right, else return SMALLER
      */
-
     Comparison_result operator()(const X_monotone_curve_2& cv)
     {
       if(cv.is_directed_right())
@@ -574,6 +573,7 @@ public:
     }
   };
 
+  /*! Get a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();

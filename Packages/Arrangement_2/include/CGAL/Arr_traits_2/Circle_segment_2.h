@@ -1053,6 +1053,8 @@ public:
         opp_cv._orient = COLLINEAR;
     opp_cv._dir_right = !(this->_dir_right);
     opp_cv._is_vert = this->_is_vert;
+
+    return (opp_cv);
   }
 
 protected:
