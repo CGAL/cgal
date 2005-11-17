@@ -420,6 +420,15 @@ public:
       //   y = -(u*x(p) + w) / v
       y = -(alg_u*p.x() + alg_w) / alg_v;
     }
+    else if (this->_orient == COLLINEAR)
+    {
+      CGAL_assertion (this->_extra_data_P != NULL);
+
+      // In this case the equation of the supporting line is given by the
+      // extra data structure.
+      y = -(this->_extra_data_P->a * p.x() +
+            this->_extra_data_P->c) / this->_extra_data_P->b;
+    }
     else
     {
       CGAL_assertion ((this->_info & DEGREE_MASK) == DEGREE_2);
@@ -1245,6 +1254,9 @@ private:
       return;
     }
 
+    if (this->_orient == COLLINEAR)
+      return;
+
     // Compute a midpoint between the source and the target and get the y-value
     // of the arc at its x-coordiante.
     Point_2          p_mid = ker.construct_midpoint_2_object() (this->_source,
@@ -1270,23 +1282,12 @@ private:
       CGAL_assertion (n_ys == 2);
       p_arc_mid = Point_2 (p_mid.x(), ys[1]);
 
-      if (! _is_strictly_between_endpoints (p_arc_mid))
-      {
-        std::cout << "ps = (" << _source << ")   pt = (" << _target
-                  << ")   orientation = " << _orient << std::endl;
-        std::cout << "x_mid = " << p_mid.x() << "  ys = "
-                  << ys[0] << ", " << ys[1] << std::endl;
-      }
-
       CGAL_assertion (_is_strictly_between_endpoints (p_arc_mid));
 
       // Mark that we should use the +sqrt(disc) root for points on this
       // x-monotone arc.
       this->_info = (this->_info | PLUS_SQRT_DISC_ROOT);
     }
-
-    if (this->_orient == COLLINEAR)
-      return;
 
     // Check whether the conic is facing up or facing down:
     // Check whether the arc (which is x-monotone of degree 2) lies above or
