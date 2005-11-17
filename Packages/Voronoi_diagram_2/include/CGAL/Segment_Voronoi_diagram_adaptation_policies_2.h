@@ -40,12 +40,11 @@ struct Segment_Voronoi_diagram_degeneracy_removal_policy_2
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename SVD2::Site_2,
-						     SVD2> >
+						     SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<SVD2> >
 {
   typedef typename SVD2::Point_2                   Point_2;
   typedef typename SVD2::Site_2                    Site_2;
-
-  typedef Tag_false                                Has_remove;
 };
 
 
@@ -58,12 +57,11 @@ struct Segment_Voronoi_diagram_caching_degeneracy_removal_policy_2
   <SVD2,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_edge_tester_2<SVD2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Voronoi_diagram_face_tester_2<SVD2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Null_functor,
    CGAL_VORONOI_DIAGRAM_2_INS::Null_functor>
 {
   typedef typename SVD2::Point_2                   Point_2;
   typedef typename SVD2::Site_2                    Site_2;
-
-  typedef Tag_false                                Has_remove;
 };
 
 //=========================================================================

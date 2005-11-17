@@ -40,12 +40,10 @@ struct Apollonius_graph_degeneracy_removal_policy_2
   <AG2,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_edge_tester_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<AG2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,
-						     AG2> >
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<AG2> >
 {
   typedef typename AG2::Site_2                    Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
 
@@ -58,12 +56,10 @@ struct Apollonius_graph_caching_degeneracy_removal_policy_2
   <AG2,
    CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_edge_tester_2<AG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<AG2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,
-   						     AG2> >
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AG2::Site_2,AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<AG2> >
 {
   typedef typename AG2::Site_2                    Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
 //=========================================================================

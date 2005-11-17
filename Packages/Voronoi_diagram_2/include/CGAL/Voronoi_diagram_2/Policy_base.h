@@ -24,6 +24,7 @@
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
 #include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
+#include <CGAL/Voronoi_diagram_2/Default_site_removers.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -85,28 +86,34 @@ protected:
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ER, class FR, class SI>
+template<class DG, class ER, class FR, class SI, class SR>
 class Policy_base
   : public Policy_base_base<DG,ER,FR>
 {
 private:
-  typedef Policy_base<DG,ER,FR,SI>    Self;
-  typedef Policy_base_base<DG,ER,FR>  Base;
+  typedef Policy_base<DG,ER,FR,SI,SR>   Self;
+  typedef Policy_base_base<DG,ER,FR>    Base;
 
 public:
   typedef SI   Site_inserter;
+  typedef SR   Site_remover;
 
-  typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+  typedef typename Functor_exists<Site_inserter>::Value  Has_site_inserter;
+  typedef typename Functor_exists<Site_remover>::Value   Has_site_remover;
 
   Site_inserter site_inserter_object() const {
     return Site_inserter();
+  }
+
+  Site_remover site_remover_object() const {
+    return Site_remover();
   }
 };
 
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ERB, class FRB, class SIB>
+template<class DG, class ERB, class FRB, class SIB, class SRB>
 class Caching_policy_base
   : public Policy_base_base<DG,
 			    Cached_edge_rejector<ERB>,
@@ -116,18 +123,25 @@ protected:
   typedef ERB   Edge_rejector_base;
   typedef FRB   Face_rejector_base;
   typedef SIB   Site_inserter_base;
+  typedef SRB   Site_remover_base;
 
-  typedef Caching_policy_base<DG,ERB,FRB,SIB>  Self;
+  typedef Caching_policy_base<DG,ERB,FRB,SIB,SRB>  Self;
 
 public:
   typedef Cached_edge_rejector<Edge_rejector_base>                Edge_rejector;
   typedef Cached_face_rejector<Face_rejector_base>                Face_rejector;
   typedef Default_caching_site_inserter<Self,Site_inserter_base>  Site_inserter;
+  typedef Default_caching_site_remover<Self,Site_remover_base>    Site_remover;
 
   typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
+  typedef typename Functor_exists<Site_remover>::Value    Has_site_remover;
 
   Site_inserter site_inserter_object() const {
     return Site_inserter(this);
+  }
+
+  Site_remover site_remover_object() const {
+    return Site_remover(this);
   }
 };
 

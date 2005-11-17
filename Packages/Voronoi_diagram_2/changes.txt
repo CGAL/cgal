@@ -1,3 +1,7 @@
+17 Nov 2005: Menelaos Karavelas
+- added site removers in code and adaptation policies but have neither
+  updated the doc, nor added testing for this functionality
+
 6 Nov 2005:  Menelaos Karavelas
 - more changes in doc: added AdaptationPolicy_2 concept and modified
   other parts of doc according to new design. Still to do: models for

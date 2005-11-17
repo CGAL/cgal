@@ -41,11 +41,10 @@ struct Delaunay_triangulation_degeneracy_removal_policy_2
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_edge_tester_2<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename DT2::Geom_traits::Point_2,DT2> >
+   <typename DT2::Geom_traits::Point_2,DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<DT2> >
 {
   typedef typename DT2::Geom_traits::Point_2      Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
 
@@ -59,11 +58,10 @@ struct Delaunay_triangulation_caching_degeneracy_removal_policy_2
    CGAL_VORONOI_DIAGRAM_2_INS::Delaunay_triangulation_edge_tester_2<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<DT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename DT2::Geom_traits::Point_2,DT2> >
+   <typename DT2::Geom_traits::Point_2,DT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<DT2> >
 {
   typedef typename DT2::Geom_traits::Point_2      Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
 //=========================================================================

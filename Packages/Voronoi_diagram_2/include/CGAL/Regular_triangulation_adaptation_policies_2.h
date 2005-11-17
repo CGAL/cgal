@@ -40,11 +40,10 @@ struct Regular_triangulation_degeneracy_removal_policy_2
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_edge_tester_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename RT2::Geom_traits::Point_2,RT2> >
+   <typename RT2::Geom_traits::Point_2,RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<RT2> >
 {
   typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
 
@@ -59,11 +58,10 @@ struct Regular_triangulation_caching_degeneracy_removal_policy_2
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_edge_tester_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter
-   <typename RT2::Geom_traits::Point_2,RT2> >
+   <typename RT2::Geom_traits::Point_2,RT2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<RT2> >
 {
   typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
-
-  typedef Tag_true                                Has_remove;
 };
 
 //=========================================================================

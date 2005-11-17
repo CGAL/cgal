@@ -82,28 +82,28 @@ public:
     // DEGENERACY TESTER, SINCE IN THIS CASE, I.E., WHEN HIDDEN SITES
     // ARE CREATED, WE NEED TO DELETE THEM FROM THE CACHED DEGENERACY
     // TESTER.
-    typedef typename Delaunay_graph::Edge          Dual_edge;
-    typedef typename Delaunay_graph::Face_handle   Dual_face_handle;
-    typedef std::list<Dual_edge>                   Dual_edge_list;
-    typedef std::list<Dual_face_handle>            Dual_face_handle_list;
+    typedef typename Delaunay_graph::Edge          Edge;
+    typedef typename Delaunay_graph::Face_handle   Face_handle;
+    typedef std::list<Edge>                        Edge_list;
+    typedef std::list<Face_handle>                 Face_handle_list;
 
     if ( dg.dimension() != 2 ) { return dg.insert(t); }
 
-    Dual_edge_list        e_list;
-    Dual_face_handle_list f_list;
+    Edge_list        e_list;
+    Face_handle_list f_list;
     dg.get_conflicts_and_boundary(t, std::back_inserter(f_list),
 				  std::back_inserter(e_list));
 
-    for (typename Dual_edge_list::iterator it = e_list.begin();
+    for (typename Edge_list::iterator it = e_list.begin();
 	 it != e_list.end(); ++it) {
       vt_->edge_rejector_object().erase(*it);
     }
 
-    for (typename Dual_face_handle_list::iterator it = f_list.begin();
+    for (typename Face_handle_list::iterator it = f_list.begin();
 	 it != f_list.end(); ++it) {
-      Dual_face_handle f = *it;
+      Face_handle f = *it;
       for (int j = 0; j < 3; j++) {
-	Dual_edge e(f, j);
+	Edge e(f, j);
 	vt_->edge_rejector_object().erase(e);
       }
     }

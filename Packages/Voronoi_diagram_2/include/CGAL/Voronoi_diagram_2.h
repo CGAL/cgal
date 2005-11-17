@@ -111,7 +111,7 @@ class Voronoi_diagram_2
  protected:
   // TYPES FOR THE DEGENERACY TESTERS
   typedef typename Adaptation_policy::Has_site_inserter  Has_site_inserter;
-  typedef typename Adaptation_policy::Has_remove         Has_remove;
+  typedef typename Adaptation_policy::Has_site_remover   Has_site_remover;
 
   typedef typename Adaptation_policy::Edge_rejector
   Edge_rejector;

@@ -35,11 +35,10 @@ struct Adaptation_policy_concept
   <DG,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_rejector<DG>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<DG>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Null_functor,
    CGAL_VORONOI_DIAGRAM_2_INS::Null_functor>
 {
   typedef typename VT::Site_2   Site_2;
-
-  typedef Tag_false  Has_remove;
 };
 
 
