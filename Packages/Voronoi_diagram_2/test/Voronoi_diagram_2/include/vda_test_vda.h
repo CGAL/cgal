@@ -401,12 +401,10 @@ void test_vda(const VDA& vda)
       vs.push_back(*sit);
     }
 
-#ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
     VDA vda4(vs.begin(), vs.end());
     VDA vda5(vs.begin(), vs.end(), vda.voronoi_traits());
     VDA vda6(vs.begin(), vs.end(), vda.voronoi_traits(),
 	     vda.dual().geom_traits());
-#endif
   }
 
   // testing copy constructor

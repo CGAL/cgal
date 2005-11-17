@@ -92,11 +92,8 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
 	 vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(vt.access_site_2_object()(vit));
     }
-#ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
-    // HACK UNTIL Triangulation_hierarchy_2 conforms with the concept
     DG dg4(v.begin(), v.end());
     DG dg5(v.begin(), v.end(), Geom_traits());
-#endif
   }
 
   // testing convertibility of iterators and circulators to handles;
