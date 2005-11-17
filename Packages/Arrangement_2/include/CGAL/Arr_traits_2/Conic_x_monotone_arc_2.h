@@ -1009,14 +1009,14 @@ public:
     Self    arc = *this;
 
     // Reverse the orientation.
-    if (_orient == CLOCKWISE)
+    if (this->_orient == CLOCKWISE)
       arc._orient = COUNTERCLOCKWISE;
-    else if (_orient == COUNTERCLOCKWISE)
+    else if (this->_orient == COUNTERCLOCKWISE)
       arc._orient = CLOCKWISE;
 
     // Swap the source and the target.
-    arc._source = _target;
-    arc._target = _source;
+    arc._source = this->_target;
+    arc._target = this->_source;
 
     // Change the direction bit among the information flags.
     arc._info = (this->_info ^ IS_DIRECTED_RIGHT);
@@ -1050,17 +1050,13 @@ public:
            (((this->_info & IS_DIRECTED_RIGHT) == 0) &&
             ker.compare_xy_2_object() (ps, pt) == LARGER)))
     {
+      // We are allowed to change the direction only in case of a segment.
+      CGAL_assertion (this->_orient == COLLINEAR);
       arc._info = (this->_info ^ IS_DIRECTED_RIGHT);
     }
-    /*
-    CGAL_precondition ((((this->_info & IS_DIRECTED_RIGHT) != 0) &&
-                        ker.compare_xy_2_object() (ps, pt) == SMALLER) ||
-                       (((this->_info & IS_DIRECTED_RIGHT) == 0) &&
-                        ker.compare_xy_2_object() (ps, pt) == LARGER));
-    */
 
     // Make a copy of the current arc and assign its endpoints.    
-    if (! ker.equal_2_object() (ps, _source))
+    if (! ker.equal_2_object() (ps, this->_source))
     {
       arc._source = ps;
 
@@ -1068,7 +1064,7 @@ public:
         arc._source.set_generating_conic (_id);
     }
     
-    if (! ker.equal_2_object() (pt, _target))
+    if (! ker.equal_2_object() (pt, this->_target))
     {
       arc._target = pt;
 
