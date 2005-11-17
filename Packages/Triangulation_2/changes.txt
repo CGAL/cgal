@@ -1,3 +1,13 @@
+17 November 2005 Menelaos Karavelas
+- fixed typo found by chance in ref manual for triangulation hierarchy
+- added constructor in Triangulation_hierarchy_2 class that takes an
+  iterator range and a geometric traits object; this addition was done
+  for two reasons: (1) such a constructor was missing although advertized
+  (the ref manual says that the hierarchy offers the same
+  functionality as the base class) and (2) in order for the
+  Triangulation_hierarchy_2 class to conform with the requirements of
+  the DelaunayGraph_2 concept of the Voronoi_diagram_2 package.
+
 10 September 2005 Sylvain Pion
 - Add missing this-> for g++ 4.1.
 
