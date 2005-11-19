@@ -1628,19 +1628,18 @@ vertical line segments:
 As mentioned in the introduction of this chapter, the traits class
 encapsulates the definitions of the geometric entities and
 implements the geometric predicates and constructions needed by
-the \ccc{Arrangement_2} and by its peripheral algorithms. We have
-also mentioned throughout the chapter that there are different
-levels of requirements from the traits class, namely the traits
-class can be a model of different concepts, of different
-refinement levels.
+the \ccc{Arrangement_2} and by its peripheral algorithms. We also
+mention throughout the chapter that there are different levels of
+requirements from the traits class, namely the traits class can model
+different concepts refinement-levels.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 A model of the basic concept, \ccc{ArrangementBasicTraits_2},
 needs to define the types \ccc{Point_2} and
 \ccc{X_monotone_curve_2}, where objects of the first type are
-associated with arrangement vertices and objects of the latter
-type are associated with edges. In addition, it has to support the
-following set of predicates:
+the geometric mapping of arrangement vertices, and objects of the
+latter type are the geometric mapping of edges. In addition, it has to
+support the following set of predicates:
 \begin{itemize}
 \item Compare the $x$-coordinates of two points $p$ and $q$.
 \item Compare two points $p$ and $q$ lexicographically, by their
@@ -1662,12 +1661,12 @@ disjoint in their interiors and for performing point-location
 queries and vertical ray-shooting queries.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The landmarks point-location strategy (see
+The landmark point-location strategy (see
 Section~\ref{arr_ssec:pl}) needs its associated arrangement to be
 instantiated with a model of the refined
-\ccc{ArrangementLandmarkTraits_2}. A model of this concept must
-define an approximated number type (typically \ccc{double}) and
-support the additional operations:
+\ccc{ArrangementLandmarkTraits_2} traits concept. A model of this
+concept must define an approximated number type (typically
+\ccc{double}) and support the additional operations:
 \begin{itemize}
 \item Given a point \ccc{p}, approximate the $x$ and $y$-coordinates
 of \ccc{p} using the approximated number type.
@@ -1676,9 +1675,9 @@ curve connecting $p_1$ and $p_2$.
 \end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-If the traits class models the \ccc{ArrangementXMonotoneTraits_2}
+A traits class that models the \ccc{ArrangementXMonotoneTraits_2}
 concept, which refines the \ccc{ArrangementBasicTraits_2}
-concept, it has to support the following functions:
+concept, has to support the following functions:
 \begin{itemize}
 \item Compute all intersection points and overlapping sections of
 two given $x$-monotone curves. If possible, compute also the
@@ -1689,10 +1688,10 @@ curvatures are not the same, $p$ is of multiplicity 2, etc.}
 Knowing the multiplicity of an intersection point is not required,
 but it can speed up the arrangement construction.
 \item Split an $x$-monotone curve $c$ into two subcurves at a point
-$p$ lying in $c$'s interior.
+$p$ lying in the interior of $c$.
 \item Given two $x$-monotone curve $c_1$ and $c_2$ that share a
 common endpoint, determine whether $c_1$ and $c_2$ are {\em
-mergeable} --- that is, whether they can be merged to form a
+mergeable}, that is, whether they can be merged to form a
 single continuous $x$-monotone curve.
 \item Merge two mergeable $x$-monotone curve $c_1$ and $c_2$.
 \end{itemize}
@@ -1701,16 +1700,16 @@ possible to construct arrangements of sets of $x$-monotone curves
 (and points) in general settings.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The refined concept \ccc{ArrangementTraits_2} refines the
+The concept \ccc{ArrangementTraits_2} refines the
 \ccc{ArrangementXMonotoneTraits_2} concept by adding the notion
 of a general, not necessarily $x$-monotone (and not necessarily
 connected) curve. A model of this concept must define the
-\ccc{Curve_2} type and support the separation of an curve into a
+\ccc{Curve_2} type and support the division of a curve into a
 set of continuous $x$-monotone curves and isolated points. For
 example, the curve $C:\ (x^2 + y^2)(x^2 + y^2 - 1) = 0$ is the
 unit circle (the loci of all points for which $x^2 + y^2  = 1$)
 with the origin $(0,0)$ as a singular point in its interior. $C$
-should therefore be separated into two circular arcs (the upper
+should therefore be divided into two circular arcs (the upper
 part and the lower part of the unit circle) and a single isolated
 point.
 
@@ -1722,7 +1721,7 @@ which accept a \ccc{Curve_2} object in the incremental version,
 or a range of \ccc{Curve_2} objects in the aggregated version.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-In the rest of this section we will review the traits classes
+In the rest of this section we review the traits classes
 included in the public distribution of \cgal, that handle line
 segments, polylines and conic arcs. The last subsection overviews
 decorators for geometric traits classes distributed with \cgal,
@@ -1733,43 +1732,40 @@ data with the geometric objects.
 \label{arr_ssec:tr_segs}
 %-----------------------------------------
 %
-The \ccc{Arr_segment_traits_2<Kernel>} class has been used so far
-in all example programs in this chapter. It is parameterized by a
+The \ccc{Arr_segment_traits_2<Kernel>} class used so far
+in all example programs in this chapter is parameterized by a
 geometric kernel and uses the \ccc{Kernel::Point_2} type as it
-point type. However, it is important to note that the
-\ccc{X_monotone_curve_2} type (and the \ccc{Curve_2} type) is {\em
-not} identical to the \ccc{Kernel::Segment_2} type. The reason is
-that a kernel segment is typically represented by its two
-endpoints, and these may have a complicated representation if the
-segment has been intersected and split several times (in
-comparison with the representation of its original endpoints), and
-this fact may significantly slow down the various traits-class
-operations involving such a segment. The
-\ccc{Arr_segment_traits_2} therefore represents a segment using
-its supporting line and two endpoints, such that most computations
+point type. However, nor the \ccc{Curve_2} neither the
+\ccc{X_monotone_curve_2} types are identical to the
+\ccc{Kernel::Segment_2} type. A kernel segment is typically
+represented by its two endpoints, and these may have a large
+representation, if the segment is intersected and split several
+times (in comparison with the representation of its original
+endpoints). The large representation may significantly slow down the
+various traits-class operations involving such a segment. In contrast,
+the \ccc{Arr_segment_traits_2} represents a segment using
+its supporting line and the two endpoints, such that most computations
 are performed on the supporting line, which never changes as the
 segment is split. It also caches some additional information with
-the segment to speed up the various predicates.
-
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-However, it is important to note that an \ccc{X_monotone_curve_2}
-object can be constructed from two endpoints or from a kernel
-segment. Moreover, an \ccc{X_monotone_curve_2} instance can also
-be casted or assigned to a \ccc{Kernel::Segment_2} object. The two
-types are thus fully convertible to one another.
+the segment to speed up various predicates.
+An \ccc{X_monotone_curve_2} object can still be constructed from two
+endpoints or from a kernel segment. Moreover, an
+\ccc{X_monotone_curve_2} instance can also be casted or assigned to a
+\ccc{Kernel::Segment_2} object. The two types are thus fully
+convertible to one another.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The arrangement package also offers a simpler alternative
 segment-traits class. The traits class
-\ccc{Arr_non_caching_segment_basic_traits<Kernel>} is a model of
+\ccc{Arr_non_caching_segment_basic_traits<Kernel>} models 
 the \ccc{ArrangementBasicTraits_2} concept. It uses
 \ccc{Kernel::Point_2} as its point type and
 \ccc{Kernel::Segment_2} as its $x$-monotone curve type. As this
 traits class does not support intersecting and splitting segments,
-the kernel representation is efficient enough. It is still less
+the kernel representation is sufficient. It is still less
 efficient than \ccc{Arr_segment_traits_2} for constructing
-arrangements of pairwise disjoint line segments, but using this
-traits class may be preferable as it reduces the memory
+arrangements of pairwise disjoint line segments in many cases, but
+using this traits class may be preferable as it reduces the memory
 consumption a bit, since no extra data is stored with the line
 segments.
 
@@ -1789,9 +1785,9 @@ contains hardly any intersection points.
 The \ccc{Arr_polyline_traits_2<SegmentTraits>} class can be used
 to maintain arrangements of polylines (a.k.a. poly-segments),
 which are continuous piecewise linear curves. A polyline can be
-created from any range of points, where the $i$th and $(i+1)$st
-points in the range represent the endpoints of the $i$th segment
-of the polyline. The polyline traits class is templated with a
+created from a range of points, where the $i$-th and $(i+1)$-st
+points in the range represent the endpoints of the $i$-th segment
+of the polyline. The polyline traits class is parameterized with a
 segment-traits class that supports the basic operations on
 segments.
 
@@ -1801,23 +1797,24 @@ necessarily $x$-monotone. They can be used to approximate more
 complicated curves in a convenient manner, as the algebra needed
 to handle them is elementary --- rational arithmetic is sufficient
 to construct an arrangement of polylines is an exact and robust
-manner. Note, however, that a single polyline can be split to an
-unbounded number of $x$-monotone polylines, and that the number of
-intersection points (or overlapping sections) between two
-polylines is also unbounded.
+manner. Note, however, that a single polyline can be split into
+many $x$-monotone polylines, and that the number of intersection
+points (or overlapping sections) between two polylines can also
+numerous. 
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The polyline-traits class is a model of the
+The polyline traits-class is a model of the
 \ccc{ArrangementTraits_2} concept and of the
 \ccc{ArrangementLandmarkTraits_2} concept. It inherits its point
-type from the segment-traits class, and define the polyline type,
+type from the segment traits-class, and define the polyline type,
 which serves as its \ccc{Curve_2}. Polyline curve objects can be
-constructed from any range of points. They also support the
-traversal methods \ccc{begin()} and \ccc{end()} which return
-\ccc{const_iterator} objects for going over the points defining
-the polyline. The nested \ccc{X_monotone_curve_2} type inherits
+constructed from a range of points. They also enable the traversal
+over the range of defining points, whose first and past-the-end
+iterators can be obtained through the methods \ccc{begin()} and
+\ccc{end()}. The nested \ccc{X_monotone_curve_2} type inherits
 from \ccc{Curve_2}. The points in an $x$-monotone curve are
-always stored by an increasing order of their $x$-coordinates.
+always stored in lexicographically increasing order of their
+coordinates.
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
@@ -1832,17 +1829,17 @@ always stored by an increasing order of their $x$-coordinates.
 \end{ccHtmlOnly}
 \caption{An arrangement of three polylines, as constructed in
 \ccc{example12.C}. Disks mark vertices associated with
-polyline endpoints while circles mark vertices that correspond
+polyline endpoints, while circles mark vertices that correspond
 to intersection points. Note that $\pi_2$ is split into three
-$x$-monotone polylines and that $\pi_1$ and $\pi_3$ have two
+$x$-monotone polylines, and that $\pi_1$ and $\pi_3$ have two
 overlapping sections.}
 \label{arr_fig:ex_12}
 \end{figure}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example program constructs an arrangement of three
-polylines, as drawn in Figure~\ref{arr_fig:ex_12}. Note that most
-points defining the polylines are not associated with arrangement
+polylines, as illustrated in Figure~\ref{arr_fig:ex_12}. Note that
+most points defining the polylines are not associated with arrangement
 vertices:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example12.C}
@@ -1851,7 +1848,7 @@ vertices:
 \label{arr_ssec:tr_conic}
 %-------------------------------
 %
-A {\em conic curve} is an algebraic curve of degree 2, namely it
+A {\em conic curve} is an algebraic curve of degree 2. Namely, it
 is the locus of all points $(x,y)$ satisfying the equation $C:\ r
 x^2 + s y^2 + t xy + u x + v y + w = 0$, where the six
 coefficients $\langle r, s, t, u, v, w \rangle$ completely
@@ -1866,7 +1863,7 @@ conic curve with a single connected branch. When $r = s = t = 0$
 we have a line, which can be considered as a type of a degenerate
 parabola.
 %
-\item If $\Delta_{C} < 0$ the curve is a hyperbola --- that is, it
+\item If $\Delta_{C} < 0$ the curve is a hyperbola. That is, it
 is comprised of two disconnected unbounded branches.
 \end{itemize}
 
@@ -1884,7 +1881,7 @@ counterclockwise orientation (but may also be collinear in case of
 degenerate conic curves).
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-We will always assume that the conic coefficients $\langle r, s,
+We always assume that the conic coefficients $\langle r, s,
 t, u, v, w \rangle$ are rational. When dealing with linear curves
 (line segments and polylines), similar assumptions guarantee that
 all intersection points also have rational coordinates, such that
@@ -1901,13 +1898,11 @@ In addition, conic arcs may not necessarily be $x$-monotone, and
 must be split at points where the tangent to the arc is vertical.
 Such points typically have coordinates that are algebraic numbers
 of degree $2$.
-
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 It is therefore clear that we have to use different number types
 to represent the conic coefficients and the point coordinates.
 Note that as arrangement vertices induced by intersection points
 and points with vertical tangents are likely to have algebraic
-coordinates, we also let the original endpoints of the input arcs
+coordinates, we also allow the original endpoints of the input arcs
 $p_s$ and $p_t$ have algebraic coordinates.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
@@ -1916,7 +1911,7 @@ template is designed for efficient handling of arrangements of
 bounded conic arcs. The template has three parameters, defined as
 follows:
 \begin{itemize}
-\item The \ccc{RatKernel} class is a geometric kernel whose field
+\item The \ccc{RatKernel} class is a geometric kernel, whose field
 type is an exact rational type. It is used to define basic
 geometric entities (e.g., a line segment or a circle) with rational
 coefficients. Typically we use one of the standard \cgal\ kernels,
@@ -1944,12 +1939,11 @@ computations on the number types it defines.
 \end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The \ccc{Arr_conic_traits_2} is a model of the
-\ccc{ArrangementTraits_2} concept and of the the
-\ccc{ArrangementLandmarkTraits_2} concept (that is, it supports
-the landmarks point-location strategy). Its \ccc{Point_2} type is
+The \ccc{Arr_conic_traits_2} models the \ccc{ArrangementTraits_2} and
+the \ccc{ArrangementLandmarkTraits_2} concepts. (It supports
+the landmark point-location strategy). Its \ccc{Point_2} type is
 derived from \ccc{AlgKernel::Point_2}, while the \ccc{Curve_2}
-type represents a bounded, not necessarily $x$-monotone conic arc.
+type represents a bounded, not necessarily $x$-monotone, conic arc.
 The \ccc{X_monotone_curve_2} type is derived from \ccc{Curve_2},
 but its constructors are to be used only by the traits class.
 Users should therefore construct only \ccc{Curve_2} objects and
@@ -1979,7 +1973,7 @@ also support basic access functions such as \ccc{source()},
   <img src="./fig/ex_13.gif" border=0 alt="Example 13">
   </center>
 \end{ccHtmlOnly}
-\caption{An arrangement of three circles, as constructed in
+\caption{An arrangement of three circles constructed in
 \ccc{example13.C}. Each circle is split into two $x$-monotone
 circular arcs, whose endpoints are drawn as disks. Circles
 mark vertices that correspond to intersection points. The vertex
@@ -1989,11 +1983,11 @@ circles.}
 \end{figure}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-In the following example we construct an arrangement of three full
-circles, as shown in Figure~\ref{arr_fig:ex_13}. We then look for
-the vertex of maximal degree, which is the vertex associated with
-the point $(4,3)$, as all three circles intersect at this point
-and it has six incident edges:
+In the following example an arrangement of three full circles is
+constructed, as shown in Figure~\ref{arr_fig:ex_13}. Then, the vertex
+of maximal degree is searched for. The geometric mapping of this
+vertex is the point $(4,3)$, as all three circles intersect at this point
+and the associated vertex has six incident edges:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example13.C}
 
@@ -2015,8 +2009,8 @@ and it has six incident edges:
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example demonstrates the usage of the various
-constructors for conic arcs. The resulting arrangement is drawn in
-Figure~\ref{arr_fig:ex_14}. Especially note the constructor of a
+constructors for conic arcs. The resulting arrangement is illustrated
+in Figure~\ref{arr_fig:ex_14}. Especially note the constructor of a
 circular arc that accepts three points and the constructor that
 allows specifying endpoints as intersections of the supporting
 conic with two other conic curves. Note that as the preconditions
