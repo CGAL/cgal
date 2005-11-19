@@ -1507,11 +1507,6 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
     return v1;
   }
   
-  if ( deg2 == 2 ) {
-    remove_degree_2(v2);
-    return v1;
-  }
-
   /*
   // The following drawing corrsponds to the variables
   // used in this part...

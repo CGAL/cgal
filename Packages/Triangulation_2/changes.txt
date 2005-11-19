@@ -1,3 +1,6 @@
+19 November 2005 Menelaos Karavelas
+- removed unreachable code in the join_vertices method of the TDS
+
 17 November 2005 Menelaos Karavelas
 - fixed typo found by chance in ref manual for triangulation hierarchy
 - added constructor in Triangulation_hierarchy_2 class that takes an
