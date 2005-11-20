@@ -26,14 +26,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits_>
-class Bso_sym_diff_functor : public Bso_base_functor<Traits_>
+class Bso_sym_diff_functor 
 {
 public:
 
   typedef Traits_                        Traits;
-  typedef Bso_dcel<Traits>              Dcel;
+  typedef Bso_dcel<Traits>               Dcel;
   typedef Arrangement_2<Traits, Dcel>    Bso_arrangement;
-  typedef Bso_base_functor<Traits_>     Base; 
+  typedef Bso_base_functor<Traits_>      Base; 
 
 
   typedef typename Bso_arrangement::Face_const_handle       Face_const_handle;
@@ -44,30 +44,72 @@ public:
   typedef typename Bso_arrangement::Halfedge_handle    Halfedge_handle;
   typedef typename Bso_arrangement::Vertex_handle      Vertex_handle;
 
+protected:
 
+  std::vector<Halfedge_handle>  m_remove_edges;
 
-  // default constructor
-  Bso_sym_diff_functor(Traits* tr) : Bso_base_functor<Traits>(tr)
+public:
+
+  void create_face (Face_const_handle f1,
+                    Face_const_handle f2,
+                    Face_handle res_f)
+  {
+    if((f1->contained() && !f2->contained()) ||
+       (!f1->contained() && f2->contained()))
+       res_f->set_contained(true);
+  }
+
+  void create_vertex(Halfedge_const_handle h1,
+                     Halfedge_const_handle h2,
+                     Vertex_handle res_v)
   {}
+
+  void create_vertex(Vertex_const_handle v1,
+                     Vertex_const_handle v2,
+                     Vertex_handle  res_v)
+  {}
+
+  void create_vertex(Vertex_const_handle v1,
+                     Halfedge_const_handle h2,
+                     Vertex_handle res_v)
+  {}
+
+  void create_vertex(Halfedge_const_handle h1,
+                     Vertex_const_handle v2,
+                     Vertex_handle res_v)
+  {}
+
+  void create_vertex(Face_const_handle f1,
+                     Vertex_const_handle v2,
+                     Vertex_handle res_v)
+  {}
+
+  void create_vertex(Vertex_const_handle v1,
+                     Face_const_handle f2,
+                     Vertex_handle res_v)
+  {}
+
+  void create_edge(Halfedge_const_handle h1,
+                   Halfedge_const_handle h2,
+                   Halfedge_handle res_h)
+  {
+    m_remove_edges.push_back(res_h);
+  }
 
   void create_edge(Halfedge_const_handle h1,
                    Face_const_handle f2,
                    Halfedge_handle res_h)
-  {
-    this ->insert_edge(res_h, !( h1->face()->contained() && f2->contained()));
-  }
+  {}
 
   void create_edge(Face_const_handle f1,
                    Halfedge_const_handle h2,
                    Halfedge_handle res_h)
-  {
-    this ->insert_edge(res_h, !( h2->face()->contained() && f1->contained()));
-  }
-
-   void create_edge(Halfedge_const_handle h1,
-                    Halfedge_const_handle h2,
-                    Halfedge_handle res_h)
   {}
+
+  std::vector<Halfedge_handle>& get_spare_edges() 
+  {
+    return m_remove_edges;
+  }
 
 };
 

@@ -140,7 +140,12 @@ public:
   // or polygons with holes
   // precondition: the polygons are disjoint and simple
   template <class PolygonIterator>
-  General_polygon_set_2(PolygonIterator pgn_begin, PolygonIterator pgn_end);
+    General_polygon_set_2(PolygonIterator pgn_begin,
+                          PolygonIterator pgn_end): 
+    m_traits(new Traits_2()),
+    m_traits_owner(true),
+    m_arr(new Arrangement_2(m_traits)) 
+  {}
 
 
   // constructor of two ranges of : the first one for simple polygons,
@@ -149,9 +154,13 @@ public:
   //               the second range is fisjoint polygons with holes
   template <class PolygonIterator, class PolygonWithHolesIterator>
   General_polygon_set_2(PolygonIterator pgn_begin,
-                       PolygonIterator pgn_end,
-                       PolygonWithHolesIterator  pgn_with_holes_begin,
-                       PolygonWithHolesIterator  pgn_with_holes_end);
+                        PolygonIterator pgn_end,
+                        PolygonWithHolesIterator  pgn_with_holes_begin,
+                        PolygonWithHolesIterator  pgn_with_holes_end):
+    m_traits(new Traits_2()),
+    m_traits_owner(true),
+    m_arr(new Arrangement_2(m_traits)) 
+ {}
 
 
   //destructor
@@ -267,17 +276,17 @@ public:
     }
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
-    pgn_with_holes2arr(pgn.vertices_begin(), pgn.vertices_end(), second_arr);
-    if(second_arr->is_empty())
+    pgn_with_holes2arr(pgn_with_holes, second_arr);
+    if(second_arr.is_empty())
     {
-      if(! second_arr->unbounded_face()->contained())
+      if(! second_arr.unbounded_face()->contained())
         this ->clear();
      
       return;
     }
 
 
-    Bso_intersection_functor<Traits_2>  func;
+    Bso_intersection_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
     delete m_arr; // delete the previous arrangement
     
@@ -323,7 +332,29 @@ public:
   }
 
   // join with a polygon with holes
-  void join(const Polygon_with_holes_2& pgn_with_holes);
+  void join(const Polygon_with_holes_2& pgn_with_holes)
+  {
+     if(this->is_plane())
+    {
+      return;
+    }
+
+    if(this->is_empty())
+    {
+      pgn_with_holes2arr(pgn_with_holes, *m_arr);
+      return;
+    }
+
+    Arrangement_2 second_arr;
+    Arrangement_2 res_arr;
+    pgn_with_holes2arr(pgn_with_holes, second_arr);
+
+    Bso_join_functor<Traits_2>  func(m_traits);
+    overlay(*m_arr, second_arr, res_arr, func);
+    delete m_arr; // delete the previous arrangement
+    
+    m_arr = func.result_arr();
+  }
 
   //join with another General_polygon_set_2 object
   void join(const General_polygon_set_2& bops)
@@ -341,11 +372,48 @@ public:
    // difference with a simple polygon
   void difference (const Polygon_2& pgn)
   {
-    boolean_operation<Bso_difference_functor<Traits_2> >(pgn);
+    if(this->is_empty())
+    {
+      return;
+    }
+
+    Arrangement_2 second_arr;
+    Arrangement_2 res_arr;
+    pgn2arr(pgn, second_arr);
+    if(second_arr.is_empty())
+    {
+      return;
+    }
+
+    Bso_difference_functor<Traits_2>  func(m_traits);
+    overlay(*m_arr, second_arr, res_arr, func);
+    delete m_arr; // delete the previous arrangement
+    
+    m_arr = func.result_arr();
   }
 
   // difference with a polygon with holes
-  void difference (const Polygon_with_holes_2& pgn_with_holes);
+  void difference (const Polygon_with_holes_2& pgn_with_holes)
+  {
+    if(this->is_empty())
+    {
+      return;
+    }
+
+    Arrangement_2 second_arr;
+    Arrangement_2 res_arr;
+    pgn_with_holes2arr(pgn_with_holes, second_arr);
+    if(second_arr.is_empty())
+    {
+      return;
+    }
+
+    Bso_difference_functor<Traits_2>  func(m_traits);
+    overlay(*m_arr, second_arr, res_arr, func);
+    delete m_arr; // delete the previous arrangement
+    
+    m_arr = func.result_arr();
+  }
 
   //difference with another General_polygon_set_2 object
   void difference (const General_polygon_set_2& bops)
@@ -363,16 +431,55 @@ public:
   // symmetric_difference with a simple polygon
   void symmetric_difference(const Polygon_2& pgn)
   {
-    boolean_operation<Bso_sym_diff_functor<Traits_2> >(pgn);
+    Arrangement_2 second_arr;
+    Arrangement_2* res_arr = new Arrangement_2(m_traits);
+    pgn2arr(pgn, second_arr);
+    Bso_sym_diff_functor<Traits_2>  func;
+    overlay(*m_arr, second_arr, *res_arr, func);
+    std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
+    for(unsigned int i=0; i<he_vec.size(); ++i)
+    {
+      res_arr->remove_edge(he_vec[i]);
+    }
+
+    delete m_arr; // delete the previous arrangement
+    m_arr = res_arr;
   }
 
   // symmetric_difference with a polygon with holes
-  void symmetric_difference(const Polygon_with_holes_2& pgn_with_holes);
+  void symmetric_difference(const Polygon_with_holes_2& pgn_with_holes)
+  {
+    Arrangement_2 second_arr;
+    Arrangement_2* res_arr = new Arrangement_2(m_traits);
+    pgn_with_holes2arr(pgn_with_holes, second_arr);
+
+    Bso_sym_diff_functor<Traits_2>  func;
+   
+    overlay(*m_arr, second_arr, *res_arr, func);
+    std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
+    for(unsigned int i=0; i<he_vec.size(); ++i)
+    {
+      res_arr->remove_edge(he_vec[i]);
+    }
+    
+    delete m_arr; // delete the previous arrangement
+    m_arr = res_arr;
+  }
 
   //symmetric_difference with another General_polygon_set_2 object
   void symmetric_difference(const General_polygon_set_2& bops)
   {
-    boolean_operation<Bso_sym_diff_functor<Traits_2> >(bops);
+    Arrangement_2* res_arr = new Arrangement_2(m_traits);
+    Bso_sym_diff_functor<Traits_2>  func;
+    overlay(*m_arr, *(bops.m_arr), *res_arr, func);
+    std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
+    for(unsigned int i=0; i<he_vec.size(); ++i)
+    {
+      res_arr->remove_edge(he_vec[i]);
+    }
+
+    delete m_arr; // delete the previous arrangement
+    m_arr = res_arr;
   }
 
   void complement()
@@ -390,7 +497,7 @@ public:
 
   // get the simple polygons, takes O(n)
   template <class OutputIterator>
-  OutputIterator polygons(OutputIterator out);
+  OutputIterator polygons_with_holes(OutputIterator out);
 
   
   Size number_of_polygons_with_holes() const;
@@ -465,43 +572,13 @@ public:
     return true;
   }
 
-  private:
-  
-  template <class Bops_functor>
-  void boolean_operation(const Polygon_2& pgn)
-  {
-    Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    pgn2arr(pgn, second_arr);
-
-    Bops_functor  func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
-  }
-
-
-  template <class Bops_functor>
-  void boolean_operation(const General_polygon_set_2& bops)
-  {
-    Arrangement_2 res_arr;
-
-    Bops_functor  func(m_traits);
-    overlay(*m_arr, *(bops.m_arr), res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
-  }
-
-  public:
 
   static void pgn2arr (const Polygon_2& pgn, Arrangement_2& arr);
 
   template< class PolygonIter >
   void pgns2arr(PolygonIter p_begin, PolygonIter p_end, Arrangement_2& arr);
   
-  void pgn_with_holes2arr (const Polygon_2& pgn, Arrangement_2& arr);
+  void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr);
 
   
   template< class InputIterator >
@@ -511,10 +588,9 @@ public:
 
 
 
-  public:
   static void construct_polygon(Ccb_halfedge_circulator ccb,
-                         Polygon_2& pgn,
-                         Traits_2* tr);
+                                Polygon_2& pgn,
+                                Traits_2* tr);
 
 };
 

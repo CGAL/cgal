@@ -22,6 +22,8 @@
 
 #include <CGAL/Bso_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
+#include <CGAL/General_polygon_2.h>
+#include <CGAL/Bso_traits_adaptor_2.h>
 #include <CGAL/iterator.h> 
 
 CGAL_BEGIN_NAMESPACE
@@ -43,6 +45,12 @@ template <class Polygon>
 struct Default_bso_traits<CGAL::General_polygon_with_holes_2<Polygon> >
 {
   typedef typename Default_bso_traits<Polygon>::Traits Traits;
+};
+
+template <class Arr_traits>
+struct Default_bso_traits<CGAL::General_polygon_2<Arr_traits> >
+{
+  typedef Bso_traits_adaptor_2<Arr_traits>    Traits;
 };
 
 
@@ -116,7 +124,7 @@ inline OutputIterator intersection(const typename Traits::Polygon_2& pgn1,
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Traits, class OutputIterator>
@@ -127,7 +135,7 @@ inline OutputIterator intersection(const typename Traits::Polygon_2& pgn1,
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Traits, class OutputIterator>
@@ -147,7 +155,7 @@ inline OutputIterator intersection(const typename Traits::Polygon_with_holes_2& 
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 
@@ -177,7 +185,7 @@ inline bool join(const typename Traits::Polygon_2& pgn1,
   if(gps.number_of_polygons_with_holes() == 1)
   {
     Oneset_iterator<typename Traits::Polygon_with_holes_2> oi (res);
-    gps.polygons(oi);
+    gps.polygons_with_holes(oi);
     return true;
   }
 
@@ -196,7 +204,7 @@ inline bool join(const typename Traits::Polygon_2& pgn1,
   if(gps.number_of_polygons_with_holes() == 1)
   {
     Oneset_iterator<typename Traits::Polygon_with_holes_2> oi (res);
-    gps.polygons(oi);
+    gps.polygons_with_holes(oi);
     return true;
   }
 
@@ -224,7 +232,7 @@ inline bool join(const typename Traits::Polygon_with_holes_2& pgn1,
   if(gps.number_of_polygons_with_holes() == 1)
   {
     Oneset_iterator<typename Traits::Polygon_with_holes_2> oi (res);
-    gps.polygons(oi);
+    gps.polygons_with_holes(oi);
     return true;
   }
 
@@ -256,7 +264,7 @@ inline OutputIterator difference(const typename Traits::Polygon_2& pgn1,
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.difference(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Traits, class OutputIterator>
@@ -267,7 +275,7 @@ inline OutputIterator difference(const typename Traits::Polygon_2& pgn1,
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.difference(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Traits, class OutputIterator>
@@ -287,7 +295,7 @@ inline OutputIterator difference(const typename Traits::Polygon_with_holes_2& pg
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.difference(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 
@@ -314,7 +322,7 @@ inline OutputIterator symmetric_difference(const typename Traits::Polygon_2& pgn
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.symmetric_difference(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Traits, class OutputIterator>
@@ -325,7 +333,7 @@ inline OutputIterator symmetric_difference(const typename Traits::Polygon_2& pgn
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.symmetric_difference(pgn2);
-  return (gps.symmetric_difference(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Traits, class OutputIterator>
@@ -345,7 +353,7 @@ inline OutputIterator symmetric_difference(const typename Traits::Polygon_with_h
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.symmetric_difference(pgn2);
-  return (gps.polygons(oi));
+  return (gps.polygons_with_holes(oi));
 }
 
 CGAL_END_NAMESPACE

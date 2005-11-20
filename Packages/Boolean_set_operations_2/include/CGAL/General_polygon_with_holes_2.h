@@ -73,7 +73,7 @@ public:
     return m_holes.end();
   }
 
-  bool is_unbounded()
+  bool is_unbounded() const
   {
     return m_pgn.is_empty();
   }

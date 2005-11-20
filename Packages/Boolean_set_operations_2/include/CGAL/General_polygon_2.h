@@ -62,28 +62,28 @@ public:
     return m_xcurves.size();
   }
 
-  Edge_iterator curves_begin()
+  Curve_iterator curves_begin()
   {
     return m_xcurves.begin();
   }
 
-  Edge_iterator curves_end()
+  Curve_iterator curves_end()
   {
     return m_xcurves.end();
   }
 
-  Edge_const_iterator curves_begin() const
+  Curve_const_iterator curves_begin() const
   {
     return m_xcurves.begin();
   }
 
-  Edge_const_iterator curves_end() const
+  Curve_const_iterator curves_end() const
   {
     return m_xcurves.end();
   }
  
 };
 
-CGAL_BEGIN_NAMESPACE
+CGAL_END_NAMESPACE
 
 #endif
