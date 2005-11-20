@@ -84,7 +84,7 @@ public:
 
   Construct_polygon_2 construct_polygon_2_object() const
   {
-    return Construct_general_polygon_2();
+    return Construct_polygon_2();
   }
 
 

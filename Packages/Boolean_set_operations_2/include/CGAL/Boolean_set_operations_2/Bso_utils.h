@@ -314,8 +314,6 @@ public:
       return;
     }
 
-
-    
     *m_out = Polygon_with_holes_2(m_boundary, m_holes.begin(), m_holes.end());
     ++m_out;
     m_boundary = Polygon_2();  // clear the old polygon boundary
@@ -325,13 +323,54 @@ public:
   {
     return m_out;
   }
-
-
 };
 
 
+template <class Arrangement>
+class Count_polygons_visitor : public Base_visitor<Arrangement>
+{
+public:
+
+  typedef typename Arrangement::Traits_2          Traits_2;
+  typedef typename Arrangement::Ccb_halfedge_circulator
+                                                  Ccb_halfedge_circulator;
+  typedef typename Arrangement::Halfedge_handle   Halfedge_handle;
+  typedef typename Arrangement::Face_iterator     Face_iterator;
+  typedef typename Arrangement::Holes_iterator    Holes_iterator;
+  typedef typename Traits_2::Polygon_with_holes_2 
+                                                  Polygon_with_holes_2;
+  typedef typename Traits_2::Polygon_2    Polygon_2;
+
+  Count_polygons_visitor(): m_num_of_p(0)
+  {}
+
+protected:
+  unsigned int m_num_of_p;
+
+public:
+
+  void finish_ccb(Ccb_halfedge_circulator ccb, bool is_inf_ccb = false)
+  {
+    if(is_inf_ccb)
+      return;
+    Halfedge_handle he = ccb;
+    if(he->face()->contained())
+    {
+      //its a hole inside a polygon
+      return;
+    }
+
+    ++m_num_of_p;
+  }
+
+  unsigned int number_of_pgns() const
+  {
+    return m_num_of_p;
+  }
+};
+  
 template < class Traits_ >
- void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn,
+void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn,
                                               Arrangement_2& arr)
 {
   Compare_endpoints_xy_2  cmp_ends = 
@@ -543,6 +582,20 @@ template < class Traits_ >
   scanner.scan(*m_arr);
 
   return (v.output_iterator());
+}
+
+template < class Traits_ >
+typename  General_polygon_set_2<Traits_>::Size 
+General_polygon_set_2<Traits_>::number_of_polygons_with_holes() const
+{
+  typedef Count_polygons_visitor<Arrangement_2>          My_visitor;
+  typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
+
+  My_visitor v;
+  Arr_bfs_scanner scanner(v);
+  scanner.scan(*m_arr);
+  
+  return (v.number_of_pgns());
 }
 
 

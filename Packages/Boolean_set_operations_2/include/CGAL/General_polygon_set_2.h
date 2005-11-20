@@ -393,41 +393,7 @@ public:
   OutputIterator polygons(OutputIterator out);
 
   
-  Size number_of_curved_polygons_with_holes() const
-  {
-    Size i = 0;
-    for(Face_const_iterator fit = m_arr->faces_begin();
-        fit != m_arr->faces_end();
-        ++fit)
-    {
-      if(fit->contained())
-        ++i;
-    }
-
-    return i;
-  }
-
-  std::pair<Size, Size> number_of_polygons() const
-  {
-    Size i1 = 0;
-    Size i2 = 0;
-
-    for(Face_const_iterator fit = m_arr->faces_begin();
-        fit != m_arr->faces_end();
-        ++fit)
-    {
-      if(fit->contained())
-      {
-        if(is_simple(fit))
-          ++i1;
-        else
-          ++i2;
-      }
-    }
-
-    return std::make_pair(i1, i2);
-  }
-
+  Size number_of_polygons_with_holes() const;
 
   Traits_2& traits()
   {
