@@ -1803,10 +1803,10 @@ points (or overlapping sections) between two polylines can also
 numerous. 
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The polyline traits-class is a model of the
+The polyline-traits class is a model of the
 \ccc{ArrangementTraits_2} concept and of the
 \ccc{ArrangementLandmarkTraits_2} concept. It inherits its point
-type from the segment traits-class, and define the polyline type,
+type from the segment-traits class, and define the polyline type,
 which serves as its \ccc{Curve_2}. Polyline curve objects can be
 constructed from a range of points. They also enable the traversal
 over the range of defining points, whose first and past-the-end
@@ -1838,7 +1838,7 @@ overlapping sections.}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example program constructs an arrangement of three
-polylines, as illustrated in Figure~\ref{arr_fig:ex_12}. Note that
+polylines, as depicted in Figure~\ref{arr_fig:ex_12}. Note that
 most points defining the polylines are not associated with arrangement
 vertices:
 
@@ -2009,7 +2009,7 @@ and the associated vertex has six incident edges:
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example demonstrates the usage of the various
-constructors for conic arcs. The resulting arrangement is illustrated
+constructors for conic arcs. The resulting arrangement is depicted
 in Figure~\ref{arr_fig:ex_14}. Especially note the constructor of a
 circular arc that accepts three points and the constructor that
 allows specifying endpoints as intersections of the supporting
@@ -2044,22 +2044,21 @@ multiplicity $1$:
 %
 A {\em rational function} is given by the equation $y =
 \frac{P(x)}{Q(x)}$, where $P$ and $Q$ are polynomials of arbitrary
-degrees. In particular, if $Q(x) = 1$ then the function is a
+degrees. In particular, if $Q(x) = 1$, then the function is a
 simple polynomial function. A bounded {\em rational arc} is
-defined by the graph of a rational function over some internal
+defined by the graph of a rational function over some interval
 $[x_{\rm min}, x_{\rm max}]$, where $Q$ does not have any real
-roots in this interval (thus the arc does not contain any poles).
+roots in this interval (Thus, the arc does not contain any poles).
 Rational functions, and polynomial functions in particular, are
 not only interesting in their own right, they are also very useful
 for approximating or interpolating more complicated curves; see,
 e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-In order to allow robust and exact computations with rational
-arcs, we require that the coefficient of the polynomials $P$ and
-$Q$ are rational numbers. The $x$-values that determine the
-interval over which the arc is defined can however be arbitrary
-algebraic numbers.
+The computations with rational arcs are guaranteed to be robust and 
+exact, if the coefficient of the polynomials $P$ and $Q$ are rational 
+numbers. The $x$-values that determine the interval over which the 
+arc is defined can however be an arbitrary algebraic-numbers.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Using the \ccc{Arr_rational_traits_2<AlgKernel, NtTraits>} class
@@ -2075,13 +2074,13 @@ by its \ccc{Algebraic} type.
 The \ccc{Arr_rational_traits_2} is a model of the
 \ccc{ArrangementTraits_2} concept (but not of the
 \ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
-to use the landmarks point-location strategy for arrangements of
+to use the landmark point-location strategy for arrangements of
 rational arcs). Its \ccc{Point_2} type is derived from
 \ccc{AlgKernel::Point_2}, while the \ccc{Curve_2} and
 \ccc{X_monotone_curve_2} types refer to the same class (note that
 a rational arc is always $x$-monotone). The traits class also
-defined the \ccc{Rat_vector} type, representing a vector of
-rational coefficients (whose type is \ccc{NtTraits::Rational}). A
+defines the \ccc{Rat_vector} type, representing a vector of
+rational coefficients, (whose type is \ccc{NtTraits::Rational}). A
 rational arc can be constructed from a single vector of
 coefficients, specifying the polynomial $P$ alone (and $Q(x) =
 1$), or from two vectors of coefficients, specifying both $P$ and
@@ -2115,13 +2114,12 @@ constructors, for polynomial arcs and for rational arcs:
 \label{arr_ssec:meta_tr}
 %-----------------------------------
 %
-Geometric traits-class decorators allow user to attach of auxiliary
-data to curves (and to points), where the decorators automatically
-manipulate this data, distributing it to the geometric entities that
-are constructed. We note that additional information can also be maintained
-by extending the vertex, halfedge, or face types provided of the
-\dcel\ class used by the arrangement; see the details in
-Section~\ref{arr_sec:ex_dcel}.
+Geometric traits-class decorators allow users to attach auxiliary
+data to curves (and to points). The data is automatically manipulated 
+by the decorators, distributed to the constructed geometric entities. 
+Note that additional information can also be maintained by extending 
+the vertex, halfedge, or face types provided by the \dcel\ class used 
+by the arrangement; see the details in Section~\ref{arr_sec:ex_dcel}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The arrangement package includes a generic traits-class decorator
@@ -2131,7 +2129,7 @@ This decorator is used to attach a data field to curves and to
 $x$-monotone curves. It is parameterized by a base-traits class, which is
 one of the geometric traits classes described in the previous subsections, or
 a user-defined traits class. The curve-data decorator derives itself from the
-base-traits class, and in particular inherits it \ccc{Point_2} type.
+base-traits class, and in particular inherits its \ccc{Point_2} type.
 In addition:
 \begin{itemize}
 \item \ccc{Curve_2} is derived from the basic \ccc{BaseTraits::Curve_2}
@@ -2143,8 +2141,8 @@ type \ccc{XMonotoneCurveData}.
 \end{itemize}
 Note that the \ccc{Curve_2} and \ccc{X_monotone_curve_2} are not
 the same, even if the \ccc{BaseTraits::Curve_2} and
-\ccc{BaseTraits::X_monotone_curve_2} are identical (e.g., in case
-of the segment-traits class). The extended curve types support the
+\ccc{BaseTraits::X_monotone_curve_2} are (as in the case of the 
+segment-traits class for example). The extended curve types support the
 additional methods \ccc{data()} and \ccc{set_data()} for
 accessing and modifying the data field.
 
@@ -2162,12 +2160,11 @@ with each of the resulting $x$-monotone subcurves.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note that by default, the \ccc{CurveData} type is identical to the
 \ccc{XMonotoneCurveData} type (and the conversion functor \ccc{Convert}
-is trivially defined), thus the data field associated with the original
+is trivially defined). Thus, the data field associated with the original
 curve is just duplicated and stored with the $x$-monotone subcurves.
 %
 \item When an $x$-monotone curve is split into two, the decorator
-class automatically copies its data field(s) to both resulting
-subcurves.
+class automatically copies its data field to both resulting subcurves.
 %
 \item When intersecting two $x$-monotone curves $c_1$ and $c_2$, the
 result may include overlapping sections, represented as
@@ -2177,18 +2174,19 @@ using the \ccc{Merge} functor, which is supplied as a
 parameter to the traits class-template. The resulting object is
 assigned to the data field of the overlapping subcurves.
 %
-\item Merging two $x$-monotone curves is allowed only if they are
-geometrically mergeable (that is, the base-traits class allows to merge
-them) and store the same data field.
+\item Merging two $x$-monotone curves is allowed only 1. if they are
+geometrically mergeable. That is, the base-traits class allows to merge
+them, and 2. the two $x$-monotone curves store the same data field.
 \end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arr_consolidated_curve_data_traits_2<BaseTraits, Data>} decorator
 specializes the generic curve-data decorator. It extends the basic
 \ccc{BaseTraits::Curve_2} a single \ccc{Data} field, and the basic
-\ccc{BaseTraits::X_monotone_curve_2} with a {\em set} of data objects.
-The \ccc{Data} type is assumed to support the equality operator, such that
-each set contains only unique data objects with no duplicates.
+\ccc{BaseTraits::X_monotone_curve_2} with a {\em set} of (unique) data 
+objects. The \ccc{Data} type is required to support the equality operator, 
+used to ensure that each set contains only unique data objects with no 
+duplicates.
 When a curve with a data field $d$ is subdivided into $x$-monotone subcurves,
 each subcurve is associated with a set $S = \{ d \}$. In case of an overlap
 between two $x$-monotone curves $c_1$ and $c_2$ with associated data sets
@@ -2221,9 +2219,9 @@ In the following example, we use \ccc{Arr_segment_traits_2} as our
 base-traits class, attaching an additional {\em color} field to
 the segments using the consolidated curve-data traits class. A
 color may be either {\em blue} or {\em red}. Having constructed
-the arrangement of colored segments, as illustrated in
-Figure~\ref{arr_fig:ex_17}, we detect the vertices that have both
-incident blue edges and incident red edges, thus they correspond
+the arrangement of colored segments, as depicted in
+Figure~\ref{arr_fig:ex_17}, we detect the vertices that have incident 
+edges mapped to both, blue and red, segments. Thus, they correspond
 to red--blue intersection points. We also locate the edge that
 corresponds to overlaps between red and blue line segments:
 
@@ -2624,7 +2622,7 @@ marked faces is denoted as $\hat{f}$.}
 \end{figure}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The next program constructs two simple arrangements, as illustrated in
+The next program constructs two simple arrangements, as depicted in
 Figure~\ref{arr_fig:ex_22} and computes their overlay:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example22.C}
@@ -2850,7 +2848,7 @@ arrangement, with all 18 edges it induces.}
 The following example demonstrates the usage of the global \ccc{remove()}
 function. We construct an arrangement of nine circles, while keeping a handle
 to each inserted circle. We then remove the large circle $C_0$, which induces
-$18$ halfedges, as illustrated in Figure~\ref{arr_fig:ex_25} (note the 
+$18$ halfedges, as depicted in Figure~\ref{arr_fig:ex_25} (note the 
 vertical tangency points that are marked as red dots). The example also shows
 how to use the \ccc{split_edge()} and \ccc{merge_edge()} functions when
 operating on an arrangement-with-history instance:
