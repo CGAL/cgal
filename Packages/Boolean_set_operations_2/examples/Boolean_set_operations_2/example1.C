@@ -17,6 +17,7 @@ int main ()
   p2.push_back(Point(-1,-1));
   p2.push_back(Point(1,-1));
   p2.push_back(Point(0,1));
-  std::cout << CGAL::do_intersect(p1, p2) ? "TRUE" : "FALSE";
+  std::cout << (CGAL::do_intersect(p1, p2) ? "TRUE" : "FALSE") << std::endl;
+  
   return 0;
 }
