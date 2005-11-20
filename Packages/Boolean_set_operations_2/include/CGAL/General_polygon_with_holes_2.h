@@ -42,7 +42,7 @@ public:
   {}
 
 
-  General_polygon_with_holes_2(const General_polygon_2& pgn_boundary) : m_pgn(pgn_boundary)
+  explicit General_polygon_with_holes_2(const General_polygon_2& pgn_boundary) : m_pgn(pgn_boundary)
   {}
 
 

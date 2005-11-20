@@ -119,7 +119,7 @@ public:
 
 
 
-  General_polygon_set_2(const Polygon_2& pgn) : 
+  explicit General_polygon_set_2(const Polygon_2& pgn) : 
     m_traits(new Traits_2()),
     m_traits_owner(true),
     m_arr(new Arrangement_2(m_traits)) 
@@ -127,7 +127,7 @@ public:
     pgn2arr(pgn, *m_arr);
   }
 
-  General_polygon_set_2(const Polygon_with_holes_2& pgn_with_holes): 
+  explicit General_polygon_set_2(const Polygon_with_holes_2& pgn_with_holes): 
     m_traits(new Traits_2()),
     m_traits_owner(true),
     m_arr(new Arrangement_2(m_traits))
@@ -191,10 +191,15 @@ public:
    // test for intersection with a simple polygon
   bool do_intersect(const Polygon_2 &pgn) const
   {
+    if(this->is_empty())
+      return false;
+    
     Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    pgn2arr(pgn.vertices_begin(), pgn.vertices_end(), second_arr);
+    pgn2arr(pgn, second_arr);
+    if(second_arr.is_empty())
+      return false;
 
+    Arrangement_2 res_arr;
     Bso_do_intersect_functor<Traits_2>  func;
     overlay(*m_arr, second_arr, res_arr, func);
     return func.found_intersection();
@@ -203,10 +208,14 @@ public:
   // test for intersection with a polygon with holes
   bool do_intersect(const Polygon_with_holes_2& pgn_with_holes)
   {
+    if(this->is_empty())
+      return false;
     Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
     pgn_with_holes2arr(pgn_with_holes, second_arr);
+    if(second_arr.is_empty())
+      return false;
 
+    Arrangement_2 res_arr;
     Bso_do_intersect_functor<Traits_2>  func;
     overlay(*m_arr, second_arr, res_arr, func);
     return func.found_intersection();
@@ -215,12 +224,14 @@ public:
   //test for intersection with another General_polygon_set_2 object
   bool do_intersect(const General_polygon_set_2& bops)
   {
+    if(this->is_empty() || bops.is_empty())
+      return false;
+    
     Arrangement_2 res_arr;
 
     Bso_do_intersect_functor<Traits_2>  func;
     overlay(*m_arr, *(bops.m_arr), res_arr, func);
     return func.found_intersection();
-
   }
 
 
@@ -479,8 +490,8 @@ public:
         eci != m_arr->edges_end();
         ++eci)
     {
-      Haldedge_handle he = eci;
-      if(he->face() == he->twin()->face()
+      Halfedge_handle he = eci;
+      if(he->face() == he->twin()->face())
         return false;
       if(he->face()->contained() == he->twin()->face()->contained)
         return false;
