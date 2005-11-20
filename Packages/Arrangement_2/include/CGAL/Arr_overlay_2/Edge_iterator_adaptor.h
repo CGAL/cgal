@@ -58,12 +58,21 @@ public:
                         Arr_B>(Edge_iterator_A curr,
                                Edge_iterator_A a_end,
                                Edge_iterator_B b_begin):
-    m_a_iter(curr),
     m_b_iter(b_begin),
-    m_is_b(false),
     m_a_end(a_end),
     m_b_begin(b_begin)
-  {}
+  {
+    if(curr != a_end)
+    {
+      m_a_iter = curr;
+      m_is_b = false;
+    }
+    else // first range is empty
+    {
+      m_b_iter = b_begin;
+      m_is_b = true;
+    }
+  }
 
   Edge_iterator_adaptor<Base_X_monotone_curve_2,
                         X_monotone_curve_2,
