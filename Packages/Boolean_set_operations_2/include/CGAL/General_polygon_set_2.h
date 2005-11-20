@@ -232,8 +232,13 @@ public:
       return;
     }
     Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
     pgn2arr(pgn, second_arr);
+    if(second_arr.is_empty())
+    {
+      this->clear();
+      return;
+    }
+    Arrangement_2 res_arr;
 
     Bso_intersection_functor<Traits_2> func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
@@ -245,9 +250,21 @@ public:
   // intersection with a polygon with holes
   void intersection(const Polygon_with_holes_2& pgn_with_holes)
   {
+    if(this->is_empty())
+    {
+      return;
+    }
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
     pgn_with_holes2arr(pgn.vertices_begin(), pgn.vertices_end(), second_arr);
+    if(second_arr->is_empty())
+    {
+      if(! second_arr->unbounded_face()->contained())
+        this ->clear();
+     
+      return;
+    }
+
 
     Bso_intersection_functor<Traits_2>  func;
     overlay(*m_arr, second_arr, res_arr, func);
@@ -451,6 +468,24 @@ public:
   const Arrangement_2& arrangement() const
   {
     return *m_arr;
+  }
+
+  bool is_valid() const
+  {
+    if(! m_arr->is_valid())
+      return false;
+
+    for(Edge_const_iterator eci = m_arr->edges_begin();
+        eci != m_arr->edges_end();
+        ++eci)
+    {
+      Haldedge_handle he = eci;
+      if(he->face() == he->twin()->face()
+        return false;
+      if(he->face()->contained() == he->twin()->face()->contained)
+        return false;
+    }
+    return true;
   }
 
   private:
