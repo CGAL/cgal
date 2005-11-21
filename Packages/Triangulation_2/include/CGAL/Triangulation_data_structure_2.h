@@ -1503,7 +1503,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   CGAL_triangulation_precondition( deg2 >= 3 );
 
   if ( deg2 == 3 ) {
-    remove_degree_3(v2, f);
+    remove_degree_3(v2, f->neighbor(ccw(i)));
     return v1;
   }
   
