@@ -58,7 +58,7 @@ apollonius_graph_2$(EXE_EXT): apollonius_graph_2$(OBJ_EXT)
 	apollonius_graph_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   apollonius_graph_2.clean ; rm -f *.moc
+                   apollonius_graph_2.clean ; rm -fr *.moc *.app
 
 #---------------------------------------------------------------------#
 #                    suffix rules

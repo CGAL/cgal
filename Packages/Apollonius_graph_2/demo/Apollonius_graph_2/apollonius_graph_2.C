@@ -170,9 +170,9 @@ public:
 					this, this, FALSE,
 					"Geometric Operations");
 
-    this->addToolBar(stoolbar,Top,FALSE);
-    this->addToolBar(file_toolbar,Top,FALSE);
-    this->addToolBar(layers_toolbar,Top,FALSE);
+    this->addToolBar(stoolbar, Top, FALSE);
+    this->addToolBar(file_toolbar, Top, FALSE);
+    this->addToolBar(layers_toolbar, Top, FALSE);
 
     connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)), 
 	    this, SLOT(get_object(CGAL::Object)));
@@ -212,8 +212,6 @@ public:
 
     // file menu
     QPopupMenu* file = new QPopupMenu(this);
-    QPopupMenu* view = new QPopupMenu(this);
-    QPopupMenu* bcolor = new QPopupMenu(view);
     menuBar()->insertItem("&File", file);
     file->insertItem("&Clear", this, SLOT(remove_all()), CTRL+Key_C);
     file->insertSeparator();
@@ -232,6 +230,8 @@ public:
     //    file->insertItem("&Quit",this,SLOT(closeAll()),CTRL+Key_Q);
 
     // view menu
+    QPopupMenu* view = new QPopupMenu(this);
+    QPopupMenu* bcolor = new QPopupMenu(view);
     menuBar()->insertItem("&View", view);
     view->insertItem("Background Color", bcolor);
     bcolor->insertItem("White", this, SLOT(change_bcolor_to_white()));
