@@ -1,3 +1,7 @@
+21 November 2005:  Menelaos Karavelas
+- fixed problem with toolbars under linux. The toolbars stopped being
+  visible once the menus where added. This has now been fixed.
+
 6 August 2005:  Menelaos Karavelas
 - fixed unreachable statement warnings produced by pgCC
 - fixed bug in construction of bisector ray

@@ -80,7 +80,7 @@ class Layout_widget
   {
     QBoxLayout* topLayout = new QVBoxLayout(this, QBoxLayout::TopToBottom);
 
-      // create/initialize the label
+    // create/initialize the label
     label = new QLabel(this, "label");
     label->setText("");
 
@@ -169,6 +169,10 @@ public:
 					"Geometric Operations",
 					this, this, FALSE,
 					"Geometric Operations");
+
+    this->addToolBar(stoolbar,Top,FALSE);
+    this->addToolBar(file_toolbar,Top,FALSE);
+    this->addToolBar(layers_toolbar,Top,FALSE);
 
     connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)), 
 	    this, SLOT(get_object(CGAL::Object)));
