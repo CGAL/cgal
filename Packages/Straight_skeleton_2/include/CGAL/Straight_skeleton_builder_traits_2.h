@@ -136,6 +136,28 @@ struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
 };
 
 template<class K>
+struct Are_events_simultaneous_2 : Sls_functor_base_2<K>
+{
+  typedef Sls_functor_base_2<K> Base ;
+
+  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::LineC2      LineC2 ;
+
+  typedef Uncertain<bool> result_type ;
+  typedef Arity_tag<2>    Arity ;
+
+  Uncertain<bool> operator() ( Edge_triple const& aE, Edge_triple const& aO ) const
+  {
+    LineC2 l0,l1,l2,r0,r1,r2 ;
+    tie(l0,l1,l2) = toLineC2_triple(aE);
+    tie(r0,r1,r2) = toLineC2_triple(aO);
+
+    return are_events_simultaneousC2(l0,l1,l2,r0,r1,r2);
+   }
+};
+
+
+template<class K>
 struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
@@ -174,8 +196,8 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGALi::Compare_sls_event_times_2           <K> Compare_sls_event_times_2 ;
   typedef CGALi::Compare_sls_event_distance_to_seed_2<K> Compare_sls_event_distance_to_seed_2 ;
   typedef CGALi::Is_sls_event_inside_offset_zone_2   <K> Is_sls_event_inside_offset_zone_2 ;
+  typedef CGALi::Are_events_simultaneous_2           <K> Are_events_simultaneous_2 ;
   typedef CGALi::Construct_sls_event_time_and_point_2<K> Construct_sls_event_time_and_point_2 ;
-
 } ;
 
 template<class K>
@@ -210,6 +232,9 @@ public:
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_sls_event_inside_offset_zone_2>
     Is_sls_event_inside_offset_zone_2 ;
+
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_events_simultaneous_2>
+    Are_events_simultaneous_2 ;
 
   typedef typename Unfiltering::Construct_sls_event_time_and_point_2 Construct_sls_event_time_and_point_2 ;
 
@@ -260,6 +285,13 @@ public:
                             >
     Is_sls_event_inside_offset_zone_2 ;
 
+  typedef Filtered_predicate< typename Exact    ::Are_events_simultaneous_2
+                            , typename Filtering::Are_events_simultaneous_2
+                            , C2E
+                            , C2F
+                            >
+    Are_events_simultaneous_2 ;
+
   typedef typename Unfiltering::Construct_sls_event_time_and_point_2 Construct_sls_event_time_and_point_2 ;
 
   template<class F> F get() const { return F(); }
@@ -276,6 +308,7 @@ SLS_CREATE_FUNCTOR_ADAPTER(Compare_sls_event_times_2);
 SLS_CREATE_FUNCTOR_ADAPTER(Compare_sls_event_distance_to_seed_2);
 SLS_CREATE_FUNCTOR_ADAPTER(Is_sls_event_inside_offset_zone_2);
 SLS_CREATE_FUNCTOR_ADAPTER(Construct_sls_event_time_and_point_2);
+SLS_CREATE_FUNCTOR_ADAPTER(Are_events_simultaneous_2);
 
 CGAL_END_NAMESPACE
 

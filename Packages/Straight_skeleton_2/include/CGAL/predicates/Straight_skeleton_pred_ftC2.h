@@ -41,7 +41,7 @@ exist_offset_lines_isec2 ( tuple<FT,FT,FT> const& l0
   tie(n,d) = compute_offset_lines_isec_timeC2(l0,l1,l2);
 
   Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(d) ;
-  
+
   if ( is_indeterminate(d_is_zero) )
   {
     CGAL_SSTRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." )
@@ -52,7 +52,7 @@ exist_offset_lines_isec2 ( tuple<FT,FT,FT> const& l0
     CGAL_SSTRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." )
     return make_uncertain(false);
   }
-  else  
+  else
   {
     FT t = n/d ;
     bool rExist = CGAL_NTS certified_is_finite(t) && CGAL_NTS certified_is_positive(t) ;
@@ -78,19 +78,19 @@ compare_offset_lines_isec_timesC2 ( tuple<FT,FT,FT> const& m0
                                   )
 {
   FT mn, md, nn, nd ;
-  
+
   tie(mn,md) = compute_offset_lines_isec_timeC2(m0,m1,m2);
   tie(nn,nd) = compute_offset_lines_isec_timeC2(n0,n1,n2);
-           
+
   typedef Quotient<FT> QFT ;
   QFT mt(mn,md);
   QFT nt(nn,nd);
-   
-  CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;  
-  CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;  
-  
-  return CGAL_NTS certified_compare(mt,nt);                                                                
-                                                                
+
+  CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
+  CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
+
+  return CGAL_NTS certified_compare(mt,nt);
+
 }
 
 // Given a point (px,py) and 2 triples of oriented lines in _normalized_ implicit form: (m0,m1,m2) and (n0,n1,n2),
@@ -111,8 +111,8 @@ compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>    const& p
 {
   FT dm = compute_offset_lines_isec_sdist_to_pointC2(p,m0,m1,m2);
   FT dn = compute_offset_lines_isec_sdist_to_pointC2(p,n0,n1,n2);
-                                                               
-  return CGAL_NTS certified_compare(dm,dn);                                                                
+
+  return CGAL_NTS certified_compare(dm,dn);
 }
 
 // Given 3 triples of oriented lines in _normalized_ implicit form: (s0,s1,s2), (m0,m1,m2) and (n0,n1,n2),
@@ -133,11 +133,11 @@ compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT,FT> const& s0
                                            , tuple<FT,FT,FT> const& n2
                                            )
 {
-  return compare_offset_lines_isec_sdist_to_pointC2(construct_offset_lines_isecC2(s0,s1,s2),m0,m1,m2,n0,n1,n2); 
+  return compare_offset_lines_isec_sdist_to_pointC2(construct_offset_lines_isecC2(s0,s1,s2),m0,m1,m2,n0,n1,n2);
 }
 
-// Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that their offsets 
-// at a distance 't intersects in a point (x,y); and another triple of oriented lines in _normalized_ implicit form: 
+// Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that their offsets
+// at a distance 't intersects in a point (x,y); and another triple of oriented lines in _normalized_ implicit form:
 // (el,ec,er); returns true if the intersection point (x,y) is inside the offset zone of 'ec' w.r.t 'el' and 'er';
 // that is, the locus of points to the left of 'ec', to the right of the bisector (el,ec) and to the left of the bisector
 // (ec,er).
@@ -157,21 +157,21 @@ is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT> const& e0
                                           )
 {
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
-  
+
   FT x, y, ela, elb, elc, eca, ecb, ecc, era, erb, erc ;
-  
-  tie(ela,elb,elc) = el ;       
-  tie(eca,ecb,ecc) = ec ;       
-  tie(era,erb,erc) = er ;       
-  
+
+  tie(ela,elb,elc) = el ;
+  tie(eca,ecb,ecc) = ec ;
+  tie(era,erb,erc) = er ;
+
   // Construct intersection point (x,y)
   tie(x,y) = construct_offset_lines_isecC2(e0,e1,e2);
 
   // Calculate scaled (signed) distance from (x,y) to 'ec'
   FT sdc = eca * x + ecb * y + ecc ;
-  
+
   CGAL_SSTRAITS_TRACE("\nsdc=" << sdc ) ;
-  
+
   // NOTE:
   //   if (x,y) is not on the positive side of 'ec' it isn't on it's offset zone.
   //   Also, if (x,y) is over 'ec' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
@@ -180,14 +180,14 @@ is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT> const& e0
   if ( !is_indeterminate(cok) && !!cok )
   {
     CGAL_SSTRAITS_TRACE("\nright side of ec." ) ;
-    
+
     // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
     FT sdl = ela * x + elb * y + elc ;
     FT sdr = era * x + erb * y + erc ;
-  
+
     CGAL_SSTRAITS_TRACE("\nsdl=" << sdl ) ;
     CGAL_SSTRAITS_TRACE("\nsdr=" << sdr ) ;
-    
+
     // Determine if the vertices (el,ec) and (ec,er) are reflex.
     Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(ela*ecb,eca*elb);
     Uncertain<bool> crx = CGAL_NTS certified_is_smaller(eca*erb,era*ecb);
@@ -195,36 +195,60 @@ is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT> const& e0
     {
       CGAL_SSTRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
       CGAL_SSTRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
-      
+
       // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
       //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
       //  If it is reflex, then (x,y) is to the right|left of the bisector if sdl|sdr <= sdc; otherwise, if sdc <= sdl|srd
-      
+
       Uncertain<bool> lok = lcx ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
                                 : CGAL_NTS certified_is_smaller_or_equal(sdc,sdl) ;
-      
+
       Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
                                 : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
-                                
+
       CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
       CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
-      
-      r = lok && rok ;                                
+
+      r = lok && rok ;
     }
-    
+
   }
   else
   {
     CGAL_SSTRAITS_TRACE("\nWRONG side of ec." ) ;
   }
-  
-  
-  
+
+
+
   return r ;
+}
+
+template<class FT>
+Uncertain<bool>
+are_events_simultaneousC2 ( tuple<FT,FT,FT> const& l0
+                          , tuple<FT,FT,FT> const& l1
+                          , tuple<FT,FT,FT> const& l2
+                          , tuple<FT,FT,FT> const& r0
+                          , tuple<FT,FT,FT> const& r1
+                          , tuple<FT,FT,FT> const& r2
+                          )
+{
+  Uncertain<bool> rResult = certified_is_equal(compare_offset_lines_isec_timesC2(l0,l1,l2,r0,r1,r2));
+
+  if ( !is_indeterminate(rResult) && rResult == true )
+  {
+    FT lx, ly, rx, ry ;
+    tie(lx,ly) = construct_offset_lines_isecC2(l0,l1,l2);
+    tie(rx,ry) = construct_offset_lines_isecC2(r0,r1,r2);
+
+    rResult = CGAL_NTS certified_is_equal(lx,rx) && CGAL_NTS certified_is_equal(ly,ry) ;
+  }
+
+  return rResult;
 }
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H //
 // EOF //
- 
+

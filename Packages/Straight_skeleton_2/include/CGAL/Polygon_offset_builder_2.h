@@ -24,9 +24,9 @@
 #define CGAL_POLYGON_OFFSET_BUILDER_2_H 1
 
 #include <vector>
+#include <algorithm>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/dynamic_bitset.hpp>
 
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
@@ -75,9 +75,9 @@ private:
 
   Halfedge_const_handle LocateSeed( FT aTime ) ;
 
-  bool IsVisited( Halfedge_const_handle aBisector ) { return mVisitedBisectors[aBisector->id()]; }
+  bool IsVisited( Halfedge_const_handle aBisector ) { return mVisitedBisectors[aBisector->id()] != 0 ; }
 
-  void Visit( Halfedge_const_handle aBisector ) { mVisitedBisectors[aBisector->id()] = true ; }
+  void Visit( Halfedge_const_handle aBisector ) { mVisitedBisectors[aBisector->id()] = 1 ; }
 
   static inline Edge GetEdge ( Halfedge_const_handle aH )
   {
@@ -120,9 +120,11 @@ private:
     return Construct_offset_point_2<Traits>(mTraits)()(aT,GetEdge(lBorderA),GetEdge(lBorderB));
   }
 
-  Traits const&           mTraits ;
-  boost::dynamic_bitset<> mVisitedBisectors;
-  Halfedge_vector         mBorders ;
+  void ResetVisitedBisectorsMap();
+
+  Traits const&    mTraits ;
+  std::vector<int> mVisitedBisectors;
+  Halfedge_vector  mBorders ;
 };
 
 CGAL_END_NAMESPACE

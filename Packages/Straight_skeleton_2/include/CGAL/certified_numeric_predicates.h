@@ -70,36 +70,59 @@ inline Uncertain<Comparison_result> certified_compare(const NT1& n1, const NT2& 
   return make_uncertain(CGAL_NTS compare(n1,n2)); 
 }
 
+inline Uncertain<bool> certified_is_smaller( Uncertain<Comparison_result> c )
+{ 
+  return c == make_uncertain(SMALLER); 
+}
+
+inline Uncertain<bool> certified_is_equal( Uncertain<Comparison_result> c )
+{ 
+  return c == make_uncertain(EQUAL); 
+}
+
+inline Uncertain<bool> certified_is_larger( Uncertain<Comparison_result> c )
+{ 
+  return c == make_uncertain(LARGER); 
+}
+
+inline Uncertain<bool> certified_is_smaller_or_equal( Uncertain<Comparison_result> c )
+{ 
+  return c == make_uncertain(SMALLER) || c == make_uncertain(EQUAL) ;
+}
+
+inline Uncertain<bool> certified_is_larger_or_equal( Uncertain<Comparison_result> c )
+{ 
+  return c == make_uncertain(LARGER) || c == make_uncertain(EQUAL) ;
+}
+
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_smaller(const NT1& n1, const NT2& n2)
 { 
-  return certified_compare(n1,n2) == make_uncertain(SMALLER); 
+  return certified_is_smaller(certified_compare(n1,n2)); 
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_equal(const NT1& n1, const NT2& n2)
 { 
-  return certified_compare(n1,n2) == make_uncertain(EQUAL); 
+  return certified_is_equal(certified_compare(n1,n2)); 
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_larger(const NT1& n1, const NT2& n2)
 { 
-  return certified_compare(n1,n2) == make_uncertain(LARGER); 
+  return certified_is_larger(certified_compare(n1,n2)); 
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_smaller_or_equal(const NT1& n1, const NT2& n2)
 { 
-  Uncertain<Comparison_result> r = certified_compare(n1,n2) ;
-  return r == make_uncertain(SMALLER) || r == make_uncertain(EQUAL) ;
+  return certified_is_smaller_or_equal(certified_compare(n1,n2)) ;
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_larger_or_equal(const NT1& n1, const NT2& n2)
 { 
-  Uncertain<Comparison_result> r = certified_compare(n1,n2) ;
-  return r == make_uncertain(LARGER) || r == make_uncertain(EQUAL) ;
+  return certified_is_larger_or_equal(certified_compare(n1,n2)) ;
 }
 
 

@@ -33,6 +33,8 @@ Polygon_offset_builder_2<Sls,Gt,Poly>::Polygon_offset_builder_2( Sls const& aSls
   for ( Halfedge_const_handle lHE = aSls.halfedges_begin() ; lHE != aSls.halfedges_end() ; ++ lHE )
     if ( !lHE->is_bisector() )
       mBorders.push_back(lHE);
+
+  ResetVisitedBisectorsMap();
 }
 
 template<class Sls, class Gt, class Poly>
@@ -124,10 +126,17 @@ OutputIterator Polygon_offset_builder_2<Sls,Gt,Poly>::TraceOffsetPolygon( FT aTi
 }
 
 template<class Sls, class Gt, class Poly>
+void Polygon_offset_builder_2<Sls,Gt,Poly>::ResetVisitedBisectorsMap()
+{
+  std::fill(mVisitedBisectors.begin(),mVisitedBisectors.end(),0);
+}
+
+template<class Sls, class Gt, class Poly>
 template<class OutputIterator>
 OutputIterator Polygon_offset_builder_2<Sls,Gt,Poly>::Create( FT aTime, OutputIterator aOut )
 {
-  mVisitedBisectors.clear();
+  ResetVisitedBisectorsMap();
+
   CGAL_SSBUILDER_TRACE("Constructing offset polygons for offset: " << aTime ) ;
   for ( Halfedge_const_handle lSeed = LocateSeed(aTime); handle_assigned(lSeed); lSeed = LocateSeed(aTime) )
     aOut = TraceOffsetPolygon(aTime,lSeed,aOut);

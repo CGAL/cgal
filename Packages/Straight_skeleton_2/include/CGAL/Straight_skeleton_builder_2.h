@@ -80,20 +80,22 @@ private :
 
   typedef std::vector<EventPtr> EventPtr_Vector ;
 
+  typedef typename EventPtr_Vector::iterator event_iterator ;
+
   typedef tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
   typedef tuple<Point_2,Point_2> Edge ;
-  
+
   typedef tuple<Edge,Edge,Edge> Edge_triple ;
-  
+
   typedef typename Halfedge::SSBase SSBase;
   typedef typename Halfedge::Base   HBase;
   typedef typename Vertex::Base     VBase;
   typedef typename Face::Base       FBase;
   typedef typename Ssds::Base       SBase ;
-  
+
   typedef Straight_skeleton_builder_2<Traits,Ssds> Self ;
-  
+
 public:
 
   Straight_skeleton_builder_2 ( Traits const& = Traits() ) ;
@@ -113,7 +115,7 @@ private :
 
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
-      return mBuilder.CompareEvents(aA,aB) == SMALLER ; 
+      return mBuilder.CompareEvents(aA,aB) == SMALLER ;
     }
 
   private:
@@ -150,12 +152,11 @@ private :
   struct HalfedgeWrapper
   {
     HalfedgeWrapper( Halfedge_handle aHalfedge)
-        : mHalfedge(aHalfedge), mPrevInCCB(-1), mNextInCCB(-1), mIsExcluded(false) {}
+        : mHalfedge(aHalfedge), mPrevInCCB(-1), mNextInCCB(-1) {}
 
     Halfedge_handle mHalfedge ;
     int  mPrevInCCB ;
     int  mNextInCCB ;
-    bool mIsExcluded ;
   } ;
 
 private :
@@ -164,55 +165,55 @@ private :
   {
     return aV->halfedge()->face()->halfedge();
   }
-  
+
   static inline Halfedge_handle HasDefiningBorder1 ( Vertex_handle aV )
   {
     return handle_assigned(aV->halfedge()->opposite()->prev()->face()) ;
   }
-  
+
   static inline Halfedge_handle GetDefiningBorder1 ( Vertex_handle aV )
   {
     return aV->halfedge()->opposite()->prev()->face()->halfedge();
   }
-  
+
   static inline Halfedge_handle GetDefiningBorder2 ( Vertex_handle aV )
   {
     return aV->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
   }
-  
+
   static inline Edge GetEdge ( Halfedge_const_handle aH )
   {
     return make_tuple(aH->opposite()->vertex()->point(),aH->vertex()->point());
   }
-  
-  static inline Edge_triple GetEdgeTriple ( Halfedge_const_handle aE0 
-                                          , Halfedge_const_handle aE1 
-                                          , Halfedge_const_handle aE2 
+
+  static inline Edge_triple GetEdgeTriple ( Halfedge_const_handle aE0
+                                          , Halfedge_const_handle aE1
+                                          , Halfedge_const_handle aE2
                                           )
   {
     return make_tuple(GetEdge(aE0),GetEdge(aE1),GetEdge(aE2));
   }
-  
+
   Vertex_handle GetVertex ( int aIdx )
   {
     return mWrappedVertices[aIdx].mVertex ;
   }
-  
+
   Vertex_handle GetPrevInLAV ( Vertex_handle aV )
   {
     return GetVertex ( mWrappedVertices[aV->id()].mPrev ) ;
   }
-  
+
   Vertex_handle GetNextInLAV ( Vertex_handle aV )
   {
     return GetVertex ( mWrappedVertices[aV->id()].mNext ) ;
   }
-  
+
   void SetPrevInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
     mWrappedVertices[aV->id()].mPrev = aPrev->id();
   }
-  
+
   void SetNextInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
     mWrappedVertices[aV->id()].mNext = aPrev->id();
@@ -223,16 +224,11 @@ private :
     mWrappedVertices[aVertex->id()].mIsExcluded = true ;
   }
 
-  void Exclude ( Halfedge_handle aHalfedge )
-  {
-    mWrappedHalfedges[aHalfedge->id()].mIsExcluded = true ;
-  }
-
   void SetIsReflex ( Vertex_handle aVertex )
   {
     mWrappedVertices[aVertex->id()].mIsReflex = true ;
   }
-  
+
   bool IsReflex ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsReflex ;
@@ -242,7 +238,7 @@ private :
   {
     mWrappedVertices[aVertex->id()].mIsProcessed = true ;
   }
-  
+
   bool IsProcessed ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
@@ -280,8 +276,8 @@ private :
   {
     return Exist_sls_event_2<Traits>(mTraits)()(GetEdgeTriple(aE0, aE1, aE2));
   }
-  
-  bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL     
+
+  bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL
                               , Halfedge_const_handle aReflexR
                               , Halfedge_const_handle aOpposite
                               , Halfedge_const_handle aOppositePrev
@@ -292,17 +288,17 @@ private :
                                                                , GetEdgeTriple(aOppositePrev,aOpposite, aOppositeNext)
                                                                ) ;
   }
-  
+
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
     return Compare_sls_event_times_2<Traits>(mTraits)()( GetEdgeTriple(aA->border_a(), aA->border_b(), aA->border_c())
                                                        , GetEdgeTriple(aB->border_a(), aB->border_b(), aB->border_c())
                                                        ) ;
   }
-  
+
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
                                                 , EventPtr const& aA
-                                                , EventPtr const& aB 
+                                                , EventPtr const& aB
                                                 ) const
   {
     if ( aSeed->is_inner() )
@@ -320,13 +316,47 @@ private :
                                                                     ) ;
   }
 
+  bool IsBorderInTriple( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
+  {
+    return aE == aA || aE == aB || aE == aC ;
+  }
+
+  bool TwoInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
+                  , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
+                  ) const
+  {
+    int lC = IsBorderInTriple(aXA,aYA,aYB,aYC) ? 1 :0 ;
+    lC    += IsBorderInTriple(aXB,aYA,aYB,aYC) ? 1 :0 ;
+    lC    += IsBorderInTriple(aXC,aYA,aYB,aYC) ? 1 :0 ;
+    return lC == 2 ;
+  }
+
+  bool AreEventsSimultaneous( EventPtr const& aX, EventPtr const& aY ) const
+  {
+    Halfedge_handle xa = aX->border_a() ;
+    Halfedge_handle xb = aX->border_b() ;
+    Halfedge_handle xc = aX->border_c() ;
+    Halfedge_handle ya = aY->border_a() ;
+    Halfedge_handle yb = aY->border_b() ;
+    Halfedge_handle yc = aY->border_c() ;
+
+    if ( TwoInCommon(xa,xb,xc,ya,yb,yc) )
+         return Are_events_simultaneous_2<Traits>(mTraits)()( GetEdgeTriple(xa,xb,xc), GetEdgeTriple(ya,yb,yc)) ;
+    else return false ;
+  }
+
   void SetEventTimeAndPoint( Event& aE )
   {
     FT lTime ; Point_2 lP ;
-    tie(lTime,lP) = Construct_sls_event_time_and_point_2<Traits>(mTraits)()( GetEdgeTriple(aE.border_a(), aE.border_b(), aE.border_c()) ); 
+    tie(lTime,lP) = Construct_sls_event_time_and_point_2<Traits>(mTraits)()( GetEdgeTriple(aE.border_a(), aE.border_b(), aE.border_c()) );
     aE.SetTimeAndPoint(lTime,lP);
   }
-     
+
+  void EraseBisector( Halfedge_handle aB )
+  {
+    mSS.SBase::edges_erase(aB);
+  }
+
   BorderTriple GetDefiningBorders( Vertex_handle aA, Vertex_handle aB ) ;
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
@@ -346,6 +376,8 @@ private :
 
   EventPtr FindBestNewEvent( Vertex_handle aNode ) ;
 
+  void FindVertexEvents();
+
   void HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB ) ;
 
   void CollectNewEvents( Vertex_handle aNode, EventPtr_Vector& aEvents ) ;
@@ -361,9 +393,8 @@ private :
 
   Vertex_handle_pair ConstructSplitEventNodes( SplitEvent& aEvent ) ;
 
-  void HandleEdgeEvent       ( EdgeEvent&  aEvent ) ;
-  void HandleSplitEvent      ( SplitEvent& aEvent ) ;
-  void HandleMultiSplitEvent ( SplitEvent* aEvent ) ;
+  void HandleEdgeEvent ( EdgeEvent&  aEvent ) ;
+  void HandleSplitEvent( SplitEvent& aEvent ) ;
 
   void Propagate();
 
@@ -393,18 +424,21 @@ private:
 
   //Input
   Traits mTraits ;
-  
+
   typename Traits::Left_turn_2 Left_turn ;
-  
+
 
   //Internal
 
-  typedef std::vector<Halfedge_handle> HalfedgeCollection ;
-  
+  typedef std::vector<Halfedge_handle> Halfedge_handle_vector ;
+
+  typedef typename Halfedge_handle_vector::iterator Halfedge_handle_vector_iterator ;
+
   std::vector<Vertex_handle>   mReflexVertices ;
   std::vector<VertexWrapper>   mWrappedVertices ;
   std::vector<HalfedgeWrapper> mWrappedHalfedges ;
-  HalfedgeCollection           mBorderHalfedges ;
+  Halfedge_handle_vector       mBorderHalfedges ;
+  Halfedge_handle_vector       mDanglingBisectors ;
 
   EventPtr_Vector  mSplitEvents ;
   SplitNodesVector mSplitNodes ;
@@ -417,7 +451,7 @@ private:
   int mEdgeID   ;
   int mEventID  ;
   int mStepID   ;
-  
+
   //Output
   Ssds mSS ;
 } ;

@@ -205,9 +205,9 @@ private:
 };
 
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
+#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
+#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
 void Straight_skeleton_external_trace ( std::string s )
@@ -333,6 +333,7 @@ public slots:
     widget->lock();
     widget->clear();
     sls.clear();
+    offset_region.clear();
     input_region.clear();
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
