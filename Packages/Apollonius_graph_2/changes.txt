@@ -1,6 +1,8 @@
 21 November 2005:  Menelaos Karavelas
 - fixed problem with toolbars under linux. The toolbars stopped being
   visible once the menus where added. This has now been fixed.
+- added view menu; the user can now choose the background color among
+  three: white, black, yellow.
 
 6 August 2005:  Menelaos Karavelas
 - fixed unreachable statement warnings produced by pgCC
