@@ -139,6 +139,10 @@ public:
 					this, this, FALSE,
 					"Geometric Operations", 0, is_pvd_);
 
+    this->addToolBar(stoolbar, Top, FALSE);
+    this->addToolBar(file_toolbar, Top, FALSE);
+    this->addToolBar(layers_toolbar, Top, FALSE);
+
     connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)),
 	    this, SLOT(get_object(CGAL::Object)));
 
@@ -209,6 +213,15 @@ public:
     file->insertItem("Print", this, SLOT(print_screen()), CTRL+Key_P);
     //    file->insertSeparator();
     //    file->insertItem("&Quit",this,SLOT(closeAll()),CTRL+Key_Q);
+
+    // view menu
+    QPopupMenu* view = new QPopupMenu(this);
+    QPopupMenu* bcolor = new QPopupMenu(view);
+    menuBar()->insertItem("&View", view);
+    view->insertItem("Background Color", bcolor);
+    bcolor->insertItem("White", this, SLOT(change_bcolor_to_white()));
+    bcolor->insertItem("Black", this, SLOT(change_bcolor_to_black()));
+    bcolor->insertItem("Yellow", this, SLOT(change_bcolor_to_yellow()));
 
     // about menu
     QPopupMenu* about = new QPopupMenu(this);
@@ -699,6 +712,16 @@ private slots:
   void aboutQt()
   {
     QMessageBox::aboutQt( this, get_title() );
+  }
+
+  void change_bcolor_to_white()  { change_bcolor(CGAL::WHITE); }
+  void change_bcolor_to_black()  { change_bcolor(CGAL::BLACK); }
+  void change_bcolor_to_yellow() { change_bcolor(CGAL::YELLOW); }
+
+  void change_bcolor(const CGAL::Color& c)
+  {
+    *widget << CGAL::BackgroundColor(c);
+    widget->redraw();
   }
 
 };

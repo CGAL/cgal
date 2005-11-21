@@ -68,7 +68,7 @@ segment_Delaunay_graph_2$(EXE_EXT): segment_Delaunay_graph_2$(OBJ_EXT)
 
 clean: \
                    polygon_Delaunay_graph_2.clean \
-                   segment_Delaunay_graph_2.clean ; rm -f *.moc
+                   segment_Delaunay_graph_2.clean ; rm -fr *.moc *.app
 
 #---------------------------------------------------------------------#
 #                    suffix rules

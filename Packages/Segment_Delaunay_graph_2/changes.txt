@@ -2,6 +2,10 @@
 - this is the first version of the Segment_Delaunay_graph_2 package
   which is the successor of the Segment_Voronoi_diagram_2 package;
   segment Voronoi diagrams in CGAL are now called segment Delaunay graphs
+- fixed problem with toolbars under linux. The toolbars stopped being
+  visible once the menus where added. This has now been fixed.
+- added view menu; the user can now choose the background color among
+  three: white, black, yellow.
 
 20 August 2005:  Menelaos Karavelas
 - added proper #ifdef's for the various number types (concerning
