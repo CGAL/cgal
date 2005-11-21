@@ -169,6 +169,10 @@ class My_Window : public QMainWindow
 					this, this, FALSE,
 					"Geometric Operations");
 
+    this->addToolBar(stoolbar,Top,FALSE);
+    this->addToolBar(file_toolbar,Top,FALSE);
+    this->addToolBar(layers_toolbar,Top,FALSE);
+
     connect(widget->get_qt_widget(),
 	    SIGNAL(new_cgal_object(CGAL::Object)), this,
 	    SLOT(get_object(CGAL::Object)));
@@ -208,7 +212,10 @@ class My_Window : public QMainWindow
 
     // file menu
     QPopupMenu* file = new QPopupMenu(this);
+    QPopupMenu* view = new QPopupMenu(this);
+    QPopupMenu* bcolor = new QPopupMenu(view);
     menuBar()->insertItem("&File", file);
+    menuBar()->insertItem("&View", view);
     file->insertItem("&Clear", this, SLOT(remove_all()), CTRL+Key_C);
     file->insertSeparator();
     file->insertItem("&Load Delaunay graph", this,
@@ -224,6 +231,12 @@ class My_Window : public QMainWindow
     file->insertItem("Print", this, SLOT(print_screen()), CTRL+Key_P);
     file->insertSeparator();
     //    file->insertItem("&Quit",this,SLOT(closeAll()),CTRL+Key_Q);
+
+    // view menu
+    view->insertItem("Background Color", bcolor);
+    bcolor->insertItem("White", this, SLOT(change_bcolor_to_white()));
+    bcolor->insertItem("Black", this, SLOT(change_bcolor_to_black()));
+    bcolor->insertItem("Yellow", this, SLOT(change_bcolor_to_yellow()));
 
     // about menu
     QPopupMenu* about = new QPopupMenu(this);
@@ -569,6 +582,16 @@ private slots:
   void aboutQt()
   {
     QMessageBox::aboutQt( this, title() );
+  }
+
+  void change_bcolor_to_white()  { change_bcolor(CGAL::WHITE); }
+  void change_bcolor_to_black()  { change_bcolor(CGAL::BLACK); }
+  void change_bcolor_to_yellow() { change_bcolor(CGAL::YELLOW); }
+
+  void change_bcolor(const CGAL::Color& c)
+  {
+    *widget << CGAL::BackgroundColor(c);
+    widget->redraw();
   }
 
 };

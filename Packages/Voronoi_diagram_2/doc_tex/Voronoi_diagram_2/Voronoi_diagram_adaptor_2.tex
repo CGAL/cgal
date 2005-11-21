@@ -17,8 +17,9 @@
 %%
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-This chapter describes an adaptor that adapts two-dimensional Delaunay
-graphs to the corresponding Voronoi diagrams. We start with a few
+This chapter describes an adaptor that adapts two-dimensional
+triangulated Delaunay graphs to the corresponding Voronoi diagrams.
+We start with a few
 definitions and a description of the issues that this adaptor
 addresses in Section~\ref{sec:vda2-intro}. The software design
 of the Voronoi diagram adaptor package is described in
@@ -30,37 +31,146 @@ this adaptor.
 \section{Introduction}
 \label{sec:vda2-intro}
 
-In this chapter when we refer to Voronoi diagrams (or their dual
-graphs) we actually refer to instances of abstract Voronoi diagrams \cite{}.
-A typical approach when we want to compute abstract Voronoi diagrams is to
-actually compute their dual graphs, which we will call {\em Delaunay
-graphs}. In general these graphs have faces with three or more
-edges. However, when the generators of the Voronoi diagram are in
-general position, the dual Delaunay graph is actually a graph with
-triangular faces, which is often referred to as a Delaunay
-triangulation if it can be embedded with straight line segments. In
-fact, in many applications it is desirable to have triangulations, so
-even in the cases where the actual Delaunay graph contains
-non-triangular faces, these faces are triangulated.
+A Voronoi diagram is typically defined for a set of objects or sites
+that lie in some space $\Sigma$ and a distance function that measures
+the distance of a point $x$ in $\Sigma$ from an object in the object
+set. In this package we are interested in planar Voronoi diagrams, so
+in the sequel the space $\Sigma$ will be the space $\mathbb{R}^2$. Let
+$\mathcal{S}=\{S_1,S_2,\ldots,S_n\}$ be our set of sites and let
+$\delta(x,S_i)$ denote the distance of a point $x\in\mathbb{R}^2$ from
+the site $S_i$. Given two sites $S_i$ and $S_j$, the set $V_{ij}$
+of points that are closer to $S_i$ than to $S_j$ with respect to the
+distance function $\delta(x,\cdot)$ is simply the set:
+\[   V_{ij} = \{x\in\mathbb{R}^2:\, \delta(x,S_i)<\delta(x,S_j)\}. \]
+We can then define the set $V_i$ of points on the plane that are closer to
+$S_i$ than to any other object in $\mathcal{S}$ as:
+\[  V_i = \bigcap_{i\ne j} V_{ij}. \]
+The set $V_i$ is said to be the \emph{Voronoi cell} or \emph{Voronoi face} 
+of the site $S_i$. The locus of points on the plane that are
+equidistant from exactly two sites $S_i$ and $S_j$ is called a
+\emph{Voronoi bisector}, whereas a simply connected subset of a
+Voronoi bisector is called a \emph{Voronoi edge}. Points that are
+equidistant from three or more objects in $\mathcal{S}$ is called a
+\emph{Voronoi vertex}.
+The collection of Voronoi faces, edges and vertices is called the
+\emph{Voronoi diagram} of the set $\mathcal{S}$ with respect to the
+distance function $\delta(x,\cdot)$, and it turns out that it is a
+subdivision of the plane, i.e., it is a planar graph.
 
-One drawback of computing triangulated Delaunay graphs is that their
-dual graphs are not always the original Voronoi diagrams. If the
-original generating data contain subsets in degenerate positions, the
-Voronoi diagrams, that are duals of triangulated Delaunay graphs,
-contain certain degenerate features, namely edges with zero
-length or faces with zero area. Another drawback is that users
-typically want to view Voronoi diagrams as planar subdivisions,
-instead of graphs with triangular faces which is the typical API
-provided.
+We typically think of faces as 2-dimensional objects, edges as
+1-dimensional objects and vertices as 0-dimensional objects. However,
+this may not be the case for several combinations of sites and
+distance fuctions (for example points in $\mathbb{R}^2$ under the
+$L_1$ or the $L_\infty$ distance can produce 2-dimensional Voronoi
+edges). We call a Voronoi diagram \emph{nice} if no such artifacts
+exist, i.e., if all vertices edges and faces are 0-, 1- and
+2-dimensional, respectively.
 
-The purpose of this package is to provide an adaptor that
-addresses the above-mentioned issues. Firstly, it adapts
-triangulated Delaunay graphs to look like planar subdivisions or
-arrangements, and secondly it removes the degenerate features that
-where artificially introduced by the requirement to produce
-triangulated Delaunay graphs.
+Even nice Voronoi diagrams can end up being not so nice. The cell of a
+site can in general consist of several disconnected components. Such a
+case can happen, for example, when we consider weighted points
+$Q_i=(p_i,\lambda_i)$, where $p_i\in\mathbb{R}^2$,
+$\lambda_i\in\mathbb{R}$, and the distance function is 
+the Euclidean distance multiplied by the weight of each site, i.e.,
+$\delta_M(x,Q_i)=\lambda_i\,\|x-p_i\|$, where $\|\cdot\|$ denotes the
+Euclidean norm. In this package we are going to restrict ourselves to
+nice Voronoi diagrams that have the property that each site has as
+Voronoi cell a simply connected region of the plane. We are going to
+call such Voronoi diagrams \emph{simple Voronoi diagrams}. Examples of
+single Voronoi diagrams include the usual Euclidean Voronoi diagram of
+points, the Voronoi diagram of a set of disks on the plane (i.e., the
+Apollonius diagram), the Euclidean Voronoi diagram of a set of
+disjoint convex objects on the plane, or the power or (Laguerre)
+diagram for a set of circles on the plane. In fact every instance of
+an \emph{abstract Voronoi diagram} in the sense of Klein \cite{} is a
+simple Voronoi diagram in our setting. In the sequel when we refer to
+Voronoi diagrams we will refer to simple Voronoi diagrams.
 
-The adaptor that this package offers is a non-mutable one. Once
+In many cases we are not really interested in computing the
+Voronoi diagram itself, but rather its dual graph, called the
+\emph{Delaunay graph}. In general the Delaunay graph is a planar
+graph, each face of which consists of at least three edges.
+Under the non-degeneracy assumption that no point on the plane is
+equidistant, under the distance function, to more than three sites, 
+the Delaunay graph is a planar graph of triangular faces.
+In certain cases this graph can actually be embedded with straight
+line segments in which case we talk about a triangulation. This is the
+case, for example, for the Euclidean Voronoi diagram of points, or the
+power diagram for a set of circles. The dual graphs are, respectively,
+the Delaunay triangulation and the regular triangulation of the
+corresponding site sets. Graphs of non-constant non-uniform face
+complexity can be undesirable in many applications, so typically we
+end up triangulating the non-triangular faces of the Delaunay
+graph. Intuitively this amounts to imposing an implicit or explicit
+perturbation scheme during the construction of the Delaunay graph,
+that perturbs the input sites in such a way so as not to have
+degenerate configurations.
+
+Choosing between computing the Voronoi diagram or the (triangulated)
+Delaunay graph is a major decision while implementing an algorithm. It
+heavily affects the design and choice of the different data structures
+involved. Although in theory the two approaches are entirely
+equivalent, it is not so straightforward to go from one representation
+to the other. The objective of this package is to provide a generic
+way of going from triangulated Delaunay graphs to planar
+subdivisions represented through a DCEL data structure. The goal is to
+provide an adaptor that, although internally it keeps a graph data
+structure representing triangular graphs, the look and feel of the
+interface is that of a DCEL data structure.
+
+The adaptation might seem straightforward at a first glance, and more
+or less this is case; after all one graph is the dual of the
+other. The situation becomes complicated whenever we want to treat
+artifacts of the representation used. Suppose for example that we have
+a set of sites that contains subsets of sites in degenerate
+positions. The computed triangulated Delaunay graph has triangular
+faces that may be the result of an implicit or explicit perturbation
+scheme. The dual of such a triangulated Delaunay graph is a Voronoi
+diagram that has all its vertices of degree 3, and for that purpose we
+are going to call it a \emph{degree-3 Voronoi diagram} in order to
+distinguish it from the true Voronoi diagram of the input sites. A
+degree-3 Voronoi diagram can have degenerate features, namely Voronoi
+edges of zero length, and/or Voronoi faces of zero area. Athough we
+can potentially treat such artifacts, they are nontheless artifacts of
+the algorithm we used and do not correspond to the true geometry of
+the Voronoi diagram.
+
+The manner that we treat such issues in this package in a generic way
+is by defining an \emph{adaptation policy}. The adaptation policy is
+reponsible for determining which features in the degree-3 Voronoi
+diagram are to be rejected and which not. The policy to be used can
+vary depending on the application or the intended usage of the
+resulting Voronoi diagram. What we care about is that firstly the
+policy itself is consistent and, secondly, that the adaptation is also
+done in a consistent manner. The latter is the responsibility of the
+adaptor provided by this package, whereas the former is the
+responsibility of the implementor of a policy.
+
+In this package we currently provide two types of adaptation
+policies. The first one is the simplest: we reject no feature of the
+degree-3 Voronoi diagram; we call such a policy an
+\emph{identity policy} since the Voronoi diagram produced is identical
+to the degree-3 Voronoi diagram. The second type of policy eliminates
+the degenerate features from the degree-3 Voronoi diagram yielding
+the true geometry of the Voronoi diagram of the input sites; we call
+such policies \emph{degeneracy removal policies}.
+
+%Of course, there are other policies that a user could potentially
+%envision. Such policies may involve merging Voronoi regions or
+%even eliminating Voronoi vertices. Such policies may be 
+%helpful when we want, for example, to compute the medial axis of a
+%polygon, by first computing the Delaunay graph of the set of segments
+%that define it, and then eliminate the Voronoi edges that do not
+%belong to the medial axis. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The adaptor that this package offers can be a mutable or a non-mutable one.
+
+is a non-mutable one. Once
 the adaptor has been constructed using a Delaunay graph, the Delaunay
 graph stored internally cannot be modified any longer, nor its internals
 can be accessed in a modifiable way. Although this could be
@@ -125,7 +235,7 @@ For example, in the case of the Delaunay triangulation, determining
 whether the dual Delaunay edge has zero length amounts to performing
 an incircle test.
 
-On a more technical level, the \ccc{Voronoi_diagram_adaptor_2<DG,VT>}
+On a more technical level, the \ccc{Voronoi_diagram_2<DG,VT,AP>}
 class imitates the representation of the Voronoi diagram (seen as a
 planar subdivision) by a DCEL (Doubly Connected Edge List) data
 structure. We have vertices (the Voronoi vertices), halfedges
@@ -149,10 +259,11 @@ traverse the following features through iterators:
 \item the vertices of the Voronoi diagram;
 \item the edges or halfedges of the Voronoi diagram;
 \item the faces of the Voronoi diagram;
-\item the bounded faces of the Voronoi diagram.
-\item the bounded halfedges of the Voronoi diagram.
+\item the bounded faces of the Voronoi diagram;
+\item the bounded halfedges of the Voronoi diagram;
 \item the unbounded faces of the Voronoi diagram;
 \item the unbounded halfedges of the Voronoi diagram;
+\item the sites defining the Voronoi diagram.
 \end{itemize}
 
 
@@ -188,3 +299,7 @@ returned. This way of abstracting the point location mechanism allows
 for multiple different point location strategies, which are passed to
 the Voronoi diagram adaptor through different models of the Voronoi
 traits concept.
+
+
+\section{The adaptation policy}
+\label{sec:vda2-policy}
