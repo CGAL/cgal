@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Object_color_map.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Object_color_map<Handle>}
+    
+\ccDefinition
+%============
+
+The class implements the BOOST ReadWritePropertyMap concept for CGAL handles 
+to return and set a value of type \ccc{boost::default_color_type} from the 
+object refferenced by the handle. The map just return and sets the color 
+directly from the refferenced object.
+
+The arrangement template has one parameter:
+\begin{itemize}
+\item The \ccc{Handle} template-parameter should be instantiated with
+a class that is a handle. This parameter is the handle to the object that has
+the color.
+\end{itemize}
+
+The object refferenced by the handle should have these two functions:
+\begin{itemize}
+\item data() --- to return a value of type \ccc{boost::default_color_type} that 
+is the color of the object.
+\item \ccc{set_data(boost::default_color_type)} --- to set the color of the 
+object.
+\end{itemize}
+
+This object is mainly used combined with the \ccc{Arr_face_graph_adator}
+in different BOOST algorithms, such as BFS and DFS.
+
+\ccInclude{CGAL/Object_color_map.h}
+
+\ccCreation
+\ccCreationVariable{arr}
+%=======================
+    
+\ccConstructor{Object_color_map();}
+    {default constructor.}
+    
+\ccAccessFunctions
+%=================
+
+\ccMethod{boost::default_color_type get(Handle handle) const;}
+    {returns the color of the object refferenced by the given handle.}
+    
+\ccModifiers
+%===========
+
+\ccMethod{void put(Handle& handle, const boost::default_color_type &color);}
+   {sets the given color to be the color of the object refferenced by the 
+handle.}
+    
+\ccSeeAlso
+    \ccc{Arr_face_graph_adator}\lcTex{ 
+      (\ccRefPage{Arr_face_graph_adator})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

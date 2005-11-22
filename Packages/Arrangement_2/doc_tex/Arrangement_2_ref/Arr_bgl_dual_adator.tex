@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_face_graph_adaptor.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_face_graph_adator<PlanarMap>}
+    
+\ccDefinition
+%============
+
+The class uses as a adaptor from \ccc{Arrangement_2} to a BOOST graph. It 
+defines various 
+types and methods needed for a graph to adapted into boost. \ccc{Arrangement_2} 
+faces are considered as the verticies of the graph. More particulary, 
+\ccc{Arrangement_2::Face_handle} are the graph verticies and 
+\ccc{Arrangement_2::Halfedge_handle} are the edges of the graph.
+
+The arrangement template has one parameter:
+\begin{itemize}
+\item The \ccc{PlanarMap} template-parameter should be instantiated with
+a class that is a model of the \ccc{ArranagementDcel} concept. This parameter 
+is the planar map to be adapted.
+\end{itemize}
+
+The adaptor implements three of BOOST graph concepts:
+\begin{itemize}
+\item Graph.
+\item Incidence Graph.
+\item Vertex List Graph.
+\end{itemize}
+
+\ccInclude{CGAL/Arr_face_graph_adator.h}
+
+\ccCreation
+\ccCreationVariable{arr}
+%=======================
+    
+\ccConstructor{Arr_face_graph_adator(Planar_map_2& in_planar_map);}
+    {constructs an adaptor to BOOST graph for the given \ccc{in_planar_map}.}
+    
+\ccSeeAlso
+    \ccc{ArrangementDcel}\lcTex{ 
+      (\ccRefPage{ArrangementDcel})}\\
+    \ccc{make_arr_face_graph_adaptor()}\lcTex{ 
+      (\ccRefPage{make_arr_face_graph_adaptor})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

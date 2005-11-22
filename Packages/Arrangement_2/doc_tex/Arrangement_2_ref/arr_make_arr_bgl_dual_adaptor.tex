@@ -1,0 +1,27 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: arr_make_arr_face_graph_adaptor.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{make_arr_face_graph_adaptor}
+
+\ccInclude{CGAL/Arr_face_graph_adator.h}
+
+\ccFunction{template <typename PlanarMap>
+Arr_face_graph_adator<PlanarMap>
+make_arr_face_graph_adaptor(PlanarMap& in_planar_map);}
+  {Create an \ccc{Arr_face_graph_adator} object to adapt the givan planar map 
+   into BOOST graph whose verticies are the planar map faces.}
+
+\ccSeeAlso
+    \ccc{Arr_face_graph_adator}\lcTex{ 
+      (\ccRefPage{Arr_face_graph_adator})}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd
