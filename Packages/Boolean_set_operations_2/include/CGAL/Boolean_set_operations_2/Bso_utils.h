@@ -259,9 +259,9 @@ public:
   typedef typename Traits_2::Polygon_2    Polygon_2;
   typedef General_polygon_set_2<Traits_2>         Gps;
 
-  Construct_polygons_visitor(Traits_2 & tr, OutputIterator out) : 
+  Construct_polygons_visitor(Arrangement* arr, OutputIterator out) : 
     m_boundary(),
-    m_traits(&tr),
+    m_arr(arr),
     m_out(out)
   {}
 
@@ -270,8 +270,9 @@ public:
 protected:
   Polygon_2               m_boundary;
   std::list<Polygon_2>    m_holes;
-  Traits_2*                       m_traits;
-  OutputIterator                  m_out;
+  Arrangement*            m_arr; 
+  OutputIterator          m_out;
+         
 
 public:
 
@@ -288,7 +289,7 @@ public:
       return;
     }
 
-    General_polygon_set_2<Traits_2>::construct_polygon(ccb, m_boundary, m_traits);
+    General_polygon_set_2<Traits_2>::construct_polygon(ccb, m_boundary, m_arr->get_traits());
   }
 
   void found_hole(Face_iterator f, Holes_iterator hit)
@@ -300,16 +301,40 @@ public:
     }
     
     m_holes.push_back(Polygon_2());
-    General_polygon_set_2<Traits_2>::construct_polygon(*hit, m_holes.back(), m_traits);
+    General_polygon_set_2<Traits_2>::construct_polygon(*hit, m_holes.back(), m_arr->get_traits());
+  }
+
+  void flip_face(Face_iterator s_face, Face_iterator f)
+  {
+    if(f->contained())
+    {
+      // its a polygon inside a non-contained area 
+      return;
+    }
+    m_holes.push_back(Polygon_2());
+    General_polygon_set_2<Traits_2>::construct_polygon(f->outer_ccb(),
+                                                       m_holes.back(),
+                                                       m_arr->get_traits());
   }
 
   void finish_ccb(Ccb_halfedge_circulator ccb, bool is_inf_ccb = false)
   {
     if(is_inf_ccb)
+    {
+      if(m_arr->unbounded_face()->contained())
+      {
+        // its an unbounded polygon (has no outer boundary)
+        *m_out = Polygon_with_holes_2(m_boundary, m_holes.begin(), m_holes.end());
+        ++m_out;
+        m_boundary = Polygon_2();  // clear the old polygon boundary
+        m_holes.clear(); //clear the old holes
+      }
       return;
+    }
     Halfedge_handle he = ccb;
     if(he->face()->contained())
     {
+       m_holes.clear(); //clear the old holes
       //its a hole inside a polygon
       return;
     }
@@ -317,6 +342,7 @@ public:
     *m_out = Polygon_with_holes_2(m_boundary, m_holes.begin(), m_holes.end());
     ++m_out;
     m_boundary = Polygon_2();  // clear the old polygon boundary
+    m_holes.clear(); //clear the old holes
   }
 
   OutputIterator output_iterator()
@@ -341,18 +367,27 @@ public:
                                                   Polygon_with_holes_2;
   typedef typename Traits_2::Polygon_2    Polygon_2;
 
-  Count_polygons_visitor(): m_num_of_p(0)
+  Count_polygons_visitor(Arrangement* arr): m_num_of_p(0),
+                                            m_arr(arr)
   {}
 
 protected:
   unsigned int m_num_of_p;
+  Arrangement* m_arr;
 
 public:
 
   void finish_ccb(Ccb_halfedge_circulator ccb, bool is_inf_ccb = false)
   {
     if(is_inf_ccb)
+    {
+     if(m_arr->unbounded_face()->contained())
+      {
+        // its an unbounded polygon (has no outer boundary)
+         ++m_num_of_p;
+      }
       return;
+    }
     Halfedge_handle he = ccb;
     if(he->face()->contained())
     {
@@ -370,8 +405,8 @@ public:
 };
   
 template < class Traits_ >
-void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn,
-                                              Arrangement_2& arr)
+void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn, 
+                                             Arrangement_2& arr)
 {
   Compare_endpoints_xy_2  cmp_ends = 
     arr.get_traits()->compare_endpoints_xy_2_object();
@@ -581,7 +616,7 @@ template < class Traits_ >
                                      OutputIterator>     My_visitor;
   typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
-  My_visitor v(*(this->m_traits), out1);
+  My_visitor v(this->m_arr, out1);
   Arr_bfs_scanner scanner(v);
   scanner.scan(*m_arr);
 
@@ -595,7 +630,7 @@ General_polygon_set_2<Traits_>::number_of_polygons_with_holes() const
   typedef Count_polygons_visitor<Arrangement_2>          My_visitor;
   typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
-  My_visitor v;
+  My_visitor v(this->m_arr);
   Arr_bfs_scanner scanner(v);
   scanner.scan(*m_arr);
   

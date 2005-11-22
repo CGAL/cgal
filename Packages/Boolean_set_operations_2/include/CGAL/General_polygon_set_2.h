@@ -118,6 +118,22 @@ public:
   {}
 
 
+  General_polygon_set_2(const General_polygon_set_2& ps):  m_traits(new Traits_2(*(ps.m_traits))),
+                                                           m_traits_owner(true),
+                                                           m_arr(new Arrangement_2(*(ps.m_arr)))
+  {}
+
+  General_polygon_set_2& operator=(const General_polygon_set_2& ps)
+  {
+    if(m_traits_owner)
+      delete m_traits;
+    delete m_arr;
+    m_traits = new Traits_2(*(ps.m_traits));
+    m_traits_owner = true;
+    m_arr = new Arrangement_2(*(ps.m_arr));
+    return (*this);
+  }
+
 
   explicit General_polygon_set_2(const Polygon_2& pgn) : 
     m_traits(new Traits_2()),
@@ -167,12 +183,17 @@ public:
   ~General_polygon_set_2()
   {
     if(m_traits_owner)
-      delete m_arr;
+      delete m_traits;
+
+    delete m_arr;
   }
 
 
   // insert a simple polygon
-  void insert(const Polygon_2& pgn);
+  void insert(const Polygon_2& pgn)
+  {
+    pgn2arr(pgn, *m_arr);
+  }
 
   // insert a polygon with holes
   void insert(const Polygon_with_holes_2& pgn_with_holes);
@@ -299,7 +320,7 @@ public:
     Arrangement_2 res_arr;
 
     Bso_intersection_functor<Traits_2> func(m_traits);
-    overlay(*m_arr, second_arr, *(bops.m_arr), func);
+    overlay(*m_arr, *(bops.m_arr), res_arr, func);
     delete m_arr; // delete the previous arrangement
     
     m_arr = func.result_arr();
@@ -362,7 +383,7 @@ public:
     Arrangement_2 res_arr;
 
     Bso_join_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, *(bops.m_arr), func);
+    overlay(*m_arr, *(bops.m_arr), res_arr, func);
     delete m_arr; // delete the previous arrangement
     
     m_arr = func.result_arr();
@@ -421,7 +442,7 @@ public:
    Arrangement_2 res_arr;
 
     Bso_difference_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, *(bops.m_arr), func);
+    overlay(*m_arr,  *(bops.m_arr), res_arr, func);
     delete m_arr; // delete the previous arrangement
     
     m_arr = func.result_arr();
@@ -563,11 +584,17 @@ public:
         eci != m_arr->edges_end();
         ++eci)
     {
-      Halfedge_handle he = eci;
+      Halfedge_const_handle he = eci;
       if(he->face() == he->twin()->face())
+      {
+        std::cout<<"1111\n";
         return false;
-      if(he->face()->contained() == he->twin()->face()->contained)
+      }
+      if(he->face()->contained() == he->twin()->face()->contained())
+      {
+        std::cout<<"2222\n";
         return false;
+      }
     }
     return true;
   }

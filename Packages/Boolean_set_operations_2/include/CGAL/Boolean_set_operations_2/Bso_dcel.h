@@ -42,9 +42,18 @@ public:
   
   //Constructor
   Bso_face() : Arr_face_base(),
-                m_info(0)
+               m_info(0)
   {}
 
+   /*! Assign from another face. */
+  virtual void assign (const Arr_face_base& f)
+  {
+    Arr_face_base::assign (f);
+
+    const Bso_face&  ex_f = static_cast<const Bso_face&>(f);
+    m_info = ex_f.m_info;
+  }
+  
   bool contained() const
   {
     return (m_info & CONTAINED) != 0;

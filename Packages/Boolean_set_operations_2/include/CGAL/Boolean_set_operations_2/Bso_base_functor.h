@@ -201,8 +201,7 @@ public:
       }
     }
 
-    
-
+ 
   Bso_arrangement* result_arr()
   {
     return m_res_arr;

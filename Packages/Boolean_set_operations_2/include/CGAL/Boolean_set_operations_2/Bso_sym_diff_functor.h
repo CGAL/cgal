@@ -56,7 +56,9 @@ public:
   {
     if((f1->contained() && !f2->contained()) ||
        (!f1->contained() && f2->contained()))
-       res_f->set_contained(true);
+    {
+     res_f->set_contained(true);
+    }
   }
 
   void create_vertex(Halfedge_const_handle h1,

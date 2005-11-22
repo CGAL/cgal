@@ -50,6 +50,21 @@ public:
   Bso_difference_functor(Traits* tr) : Base(tr)
   {}
 
+  void create_face (Face_const_handle f1,
+                    Face_const_handle f2,
+                    Face_handle res_f)
+  {
+    if(f1->is_unbounded() && f2->is_unbounded())
+    {
+      // mark the unbounded face 
+      //( all other faces will be marked by 'insert_edge' method)
+      if(f1->contained() && !f2->contained())
+      {
+        this->m_res_arr->unbounded_face()->set_contained(true);
+      }
+    }
+  }
+
   void create_edge(Halfedge_const_handle h1,
                    Face_const_handle f2,
                    Halfedge_handle res_h)
@@ -63,7 +78,7 @@ public:
                    Halfedge_handle res_h)
   {
     if(f1->contained())
-      this ->insert_edge(res_h, h2->face()->contained());
+      this ->insert_edge(res_h, !h2->face()->contained());
   }
 
    void create_edge(Halfedge_const_handle h1,
@@ -71,9 +86,9 @@ public:
                     Halfedge_handle res_h)
   {
     if(h1->face()->contained() && !h2->face()->contained() ||
-       !h1->twin()->face()->contained() && h2->twin()->face()->contained())
-       // in that case, the face incident to the overlap Halfedge do not belogn to
-       // difference face (at the result arr)
+       !h1->face()->contained() && h2->face()->contained())
+       // in that case, the face incident to the overlap Halfedge  belong to
+       // the difference face (at the result arr)
 
        //        _________
        //        |       |
@@ -83,7 +98,9 @@ public:
        //        |       |
        //        ---------
 
-       this->insert_edge(res_h, h1->face()->contained());
+    {
+      this->insert_edge(res_h, h1->face()->contained());
+    }
        
   }
 

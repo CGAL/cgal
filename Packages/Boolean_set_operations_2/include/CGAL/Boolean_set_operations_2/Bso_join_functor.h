@@ -49,6 +49,21 @@ public:
   Bso_join_functor(Traits* tr) : Base(tr)
   {}
 
+  void create_face (Face_const_handle f1,
+                    Face_const_handle f2,
+                    Face_handle res_f)
+  {
+    if(f1->is_unbounded() && f2->is_unbounded())
+    {
+      // mark the unbounded face 
+      //( all other faces will be marked by 'insert_edge' method)
+      if(f1->contained() || f2->contained())
+      {
+        this->m_res_arr->unbounded_face()->set_contained(true);
+      }
+    }
+  }
+
   void create_edge(Halfedge_const_handle h1,
                    Face_const_handle f2,
                    Halfedge_handle res_h)
