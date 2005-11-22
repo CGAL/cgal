@@ -58,9 +58,9 @@ int main ()
   typedef std::map<Face_handle, long, less_face_handle> Face_map;
   Face_map face_2_index_map;
   long i = 0;
-  for(Face_iterator it = arr.faces_begin(); it != arr.faces_end(); it++) {
+  for (Face_iterator it = arr.faces_begin(); it != arr.faces_end(); ++it) {
     face_2_index_map.insert(std::make_pair(it, i));
-    i++;
+    ++i;
   }
 
   // run the breadth first search.
