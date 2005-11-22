@@ -397,7 +397,7 @@ template <typename T_Arrangement_2>
 /////////////////////////////////////////////////////////////////////////
 template <typename T_Arrangement_2>
 Arr_bgl_dual_adator<T_Arrangement_2>
-make_arr_face_graph_adaptor(T_Arrangement_2 & in_planar_map)
+make_arr_bgl_dual_adaptor(T_Arrangement_2 & in_planar_map)
 {
   return Arr_bgl_dual_adator<T_Arrangement_2>(in_planar_map);
 }

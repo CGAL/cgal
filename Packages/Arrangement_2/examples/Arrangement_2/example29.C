@@ -68,7 +68,7 @@ int main ()
   boost::associative_property_map<Face_map> numbering_map(face_2_index_map);
   CGAL::Object_color_map<Face_handle> my_map;
   
-  boost::breadth_first_search(make_arr_face_graph_adaptor(arr),
+  boost::breadth_first_search(make_arr_bgl_dual_adaptor(arr),
                               arr.faces_begin(), 
                               boost::color_map(my_map).visitor
                               (boost::make_bfs_visitor
