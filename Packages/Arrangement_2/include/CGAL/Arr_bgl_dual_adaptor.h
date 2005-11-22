@@ -34,11 +34,11 @@ CGAL_BEGIN_NAMESPACE
 /************************************************************************
 * Template functions and classes
 *************************************************************************/
-template <typename T_Arrangement_2>
+template <typename T_Arrangement>
 class Arr_bgl_dual_adator
 {
 public:
-  typedef T_Arrangement_2                       Arr_2;
+  typedef T_Arrangement                       Arr_2;
 
   /////////////////////////////////////////////////////////////////////////
   // Requirments for GraphConcept
@@ -261,19 +261,19 @@ private:
  * @param in_graph The planar map graph of the vertex.
  * @return iterator range of out-edges iterators.
  */
-template <typename T_Arrangement_2>
+template <typename T_Arrangement>
   std::pair<
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
         out_edge_iterator,
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
         out_edge_iterator>
   out_edges( 
-    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
         vertex_descriptor in_vertex, 
-    const Arr_bgl_dual_adator<T_Arrangement_2> & in_graph)
+    const Arr_bgl_dual_adator<T_Arrangement> & in_graph)
 {
   // typedefs for making the next lines smaller and READABLE.
-  typedef typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+  typedef typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
     out_edge_iterator
     out_edge_iterator;
 
@@ -292,16 +292,16 @@ template <typename T_Arrangement_2>
  * @param in_graph The planar map graph of the vertex.
  * @return Number of out-edges.
  */
-template <typename T_Arrangement_2>
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+template <typename T_Arrangement>
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
         degree_size_type
   out_degree(
-    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
       vertex_descriptor in_vertex, 
-    const Arr_bgl_dual_adator<T_Arrangement_2> & in_graph)
+    const Arr_bgl_dual_adator<T_Arrangement> & in_graph)
 {
   typedef typename
-    boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::out_edge_iterator
+    boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::out_edge_iterator
     out_edge_iterator;
 
   std::pair<out_edge_iterator,out_edge_iterator> edges =
@@ -316,13 +316,13 @@ template <typename T_Arrangement_2>
  * @param in_graph The planar map graph of the edge.
  * @return The source.
  */
-template <typename T_Arrangement_2>
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+template <typename T_Arrangement>
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
         vertex_descriptor
   source(
-    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
       edge_descriptor in_edge,
-    const Arr_bgl_dual_adator<T_Arrangement_2> & in_graph)
+    const Arr_bgl_dual_adator<T_Arrangement> & in_graph)
 {
   // the source face is face of the halfedge (arbitrary).
   return (*in_edge).face();
@@ -335,13 +335,13 @@ template <typename T_Arrangement_2>
  * @param in_graph The planar map graph of the edge.
  * @return The target.
  */
-template <typename T_Arrangement_2>
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+template <typename T_Arrangement>
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
     vertex_descriptor
   target(
-    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+    typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
       edge_descriptor in_edge,
-    const Arr_bgl_dual_adator<T_Arrangement_2> & in_graph)
+    const Arr_bgl_dual_adator<T_Arrangement> & in_graph)
 {
   // the target face is face of the opposite halfedge.
   return (*((*in_edge).twin())).face();
@@ -359,22 +359,22 @@ template <typename T_Arrangement_2>
   @param in_graph The planar map graph.
   @return Iterator range of the planar map faces.
 */
-template <typename T_Arrangement_2>
+template <typename T_Arrangement>
   std::pair<
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
     vertex_iterator,
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
     vertex_iterator>
-  vertices(const Arr_bgl_dual_adator<T_Arrangement_2> & in_graph)
+  vertices(const Arr_bgl_dual_adator<T_Arrangement> & in_graph)
 {
-  typedef typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+  typedef typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
     vertex_descriptor    vertex_descriptor;
 
   // we need the const cast since vertex_descriptor is non-const, but the given
   // graph needs to
   // be const.
-  Arr_bgl_dual_adator<T_Arrangement_2> & graph =
-    const_cast<Arr_bgl_dual_adator<T_Arrangement_2>&>(in_graph);
+  Arr_bgl_dual_adator<T_Arrangement> & graph =
+    const_cast<Arr_bgl_dual_adator<T_Arrangement>&>(in_graph);
   return std::make_pair( vertex_descriptor(graph.faces_begin()), 
     vertex_descriptor(graph.faces_end()) );
 }
@@ -384,10 +384,10 @@ template <typename T_Arrangement_2>
  * @param in_graph The planar map graph.
  * @return Number of vertices.
  */
-template <typename T_Arrangement_2>
-  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement_2> >::
+template <typename T_Arrangement>
+  typename boost::graph_traits<Arr_bgl_dual_adator<T_Arrangement> >::
     vertices_size_type
-  num_vertices(const Arr_bgl_dual_adator<T_Arrangement_2> & in_graph)
+  num_vertices(const Arr_bgl_dual_adator<T_Arrangement> & in_graph)
 {
   return in_graph.number_of_faces(); 
 }
@@ -395,11 +395,11 @@ template <typename T_Arrangement_2>
 /////////////////////////////////////////////////////////////////////////
 // Generate function for the adaptor
 /////////////////////////////////////////////////////////////////////////
-template <typename T_Arrangement_2>
-Arr_bgl_dual_adator<T_Arrangement_2>
-make_arr_bgl_dual_adaptor(T_Arrangement_2 & in_planar_map)
+template <typename T_Arrangement>
+Arr_bgl_dual_adator<T_Arrangement>
+make_arr_bgl_dual_adaptor(T_Arrangement & in_planar_map)
 {
-  return Arr_bgl_dual_adator<T_Arrangement_2>(in_planar_map);
+  return Arr_bgl_dual_adator<T_Arrangement>(in_planar_map);
 }
 
 CGAL_END_NAMESPACE

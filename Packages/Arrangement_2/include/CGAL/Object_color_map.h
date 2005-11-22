@@ -20,8 +20,8 @@
 /*! \file
  * This file handles the color property_map for running certain boost
  * algorithms (e.g., BFS and DFS) on data structures that use handles to
- * store incident relations. The map values, that are the colors, are stored
- * at the handled object, and directly accessed through the handle.
+ * reference objects. The map values, that are the colors, are and directly
+ * accessed through the handles. They are stored at the referenced objects.
  */
 
 #ifndef CGAL_OBJECT_COLOR_MAP_H
@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 /*! \class
  * This class can be used as the color property-map when using certain boost
  * algorithms (e.g., BFS and DFS) on data structures that use handles to
- * store incident relations. Given a handle, this property map stores and
+ * reference objects. Given a handle, this property map stores and
  * retrieves its color property in constant time. It assumes that the property
  * can be stored and retrieved through the handle with the data() and
  * set_data() methods respectively.

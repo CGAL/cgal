@@ -8,19 +8,19 @@
 
 \ccRefPageBegin
 
-\begin{ccRefFunction}{make_arr_face_graph_adaptor}
+\begin{ccRefFunction}{make_arr_bgl_dual_adaptor}
 
-\ccInclude{CGAL/Arr_face_graph_adator.h}
+\ccInclude{CGAL/Arr_bgl_dual_adator.h}
 
-\ccFunction{template <typename PlanarMap>
-Arr_face_graph_adator<PlanarMap>
-make_arr_face_graph_adaptor(PlanarMap& in_planar_map);}
-  {Create an \ccc{Arr_face_graph_adator} object to adapt the givan planar map 
-   into BOOST graph whose verticies are the planar map faces.}
+\ccFunction{template <typename Arrangement>
+Arr_bgl_dual_adator<Arrangement>
+make_arr_bgl_dual_adaptor(Arrangement& in_arrangement);}
+  {Create an \ccc{Arr_bgl_dual_adator} object to adapt the givan arrangement 
+   into a BGL graph, whose verticies are the arrangement faces.}
 
 \ccSeeAlso
-    \ccc{Arr_face_graph_adator}\lcTex{ 
-      (\ccRefPage{Arr_face_graph_adator})}
+    \ccc{Arr_bgl_dual_adator}\lcTex{ 
+      (\ccRefPage{Arr_bgl_dual_adator})}
 
 \end{ccRefFunction}
 

@@ -6,6 +6,7 @@
 \newcommand{\naive}{na\"{\i}ve}
 \newcommand{\kdtree}{{\sc Kd}-tree}
 \newcommand{\boost}{{\sc Boost}}
+\newcommand{\Cpp}{{C}{\tt ++}}
 
 \newcommand{\htmlP}{\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}}
 
@@ -2993,37 +2994,66 @@ and defines a simple textual input/output format.
 \label{arr_sec:bgl}
 %=======================================
 %
-\boost\ is a collection of portable c++ libraries (to become standard). 
-One of the libraries is a template-based graph library - BGL (BOOST Graph 
-Library). The BGL offers an extensive collection of graph algorithms 
-that are parameterized through templates. This section describes how to 
-adapt \ccc{Arrangement_2} into a BGL graph thus enabling us to use the 
-BGL algorithms. (For more information, see \boost\ documentation on 
-www.boost.org).
+\boost\ is a collection of portable \Cpp\ libraries that work well with,
+and are in the same spirit as, the Standard Template Library. The
+\boost\ Graph Library (BGL), one of the libraries in the collection,
+offers an extensive set of generic graph algorithms parameterized through
+templates. As our arrangements are embedded as planar graphs, it is only 
+natural to extend the undelying data structure with the interface that the 
+BGL expects, and gain the ability to perform the operations that the BGL 
+supports, such as shortest-path computation. This sections describes how to 
+adapt \ccc{Arrangement_2} to BGL graphs, so that an \ccc{Arrangement_2}
+instance can be passed as input to a generic algorithm already implemented 
+in the BGL. Thus, enabling the use of BGL algorithms instantly. (For more 
+information about \boost, visit {\tt www.boost.org}).
+
+An instance of \ccc{Arrangement_2} is adapted to a \boost\ graph through the
+provision of a set of free functions that operate on the arrangement features
+and conform with the relevant BGL concepts. Besides the straightforward 
+adaptation, which associates a vertex with each \dcel\ vertex and an edge 
+with each \dcel\ halfedge, the package also offer a {\em dual} adaptor, which 
+associates a graph vertex with each \dcel\ face, such that two vertices are 
+connected, iff there is a \dcel\ halfedge that connects the two corresponding
+faces. 
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The class \ccc{Arr_face_graph_adaptor} is the adaptor class of 
-\ccc{Arrangement_2} into a BGL graph that implements the Graph, Incidence Graph 
-and Vertex List Graph \boost\ concepts. The PlanarMap template parameter in 
-\ccc{Arr_face_graph_adaptor<PlanarMap>} is the type of the planar map to adapt. 
-It defines various types and methods to be used by \boost\ algorithms. 
-\ccc{Arr_face_graph_adaptor} considers the \ccc{Arrangement_2} faces as 
-the verticies of the \boost\ graph. More precisely, 
-\ccc{Arrangement_2::Face_handle} are the graph verticies and 
-\ccc{Arrangement_2::Halfedge_handle} are the edges of the graph.
-Use the \ccc{make_arr_face_graph_adaptor()} function.
+The class templates \ccc{Arr_bgl_adaptor<Arrangement>} and
+\ccc{Arr_bgl_dual_adaptor<Arrangement>} adapt \ccc{Arrangement_2} to BGL 
+graphs, when instanciated with \ccc{Arrangement_2}. An instance of any one
+these two types models the \ccc{Graph}, \ccc{IncidenceGraph}, and 
+\ccc{VertexListGraph} \boost\ concepts. It defines the necessary types and 
+methods required by these concepts. The \ccc{Arr_bgl_adaptor} adaptor 
+considers the \ccc{Arrangement_2} vertices as the vertices of the BGL graph. 
+More precisely, \ccc{Arrangement_2::Vertex_handle} is the graph-vertex type,
+and \ccc{Arrangement_2::Halfedge_handle} is the graph-edge type. 
+The \ccc{Arr_bgl_dual_adaptor}, on the other hand, considers the 
+\ccc{Arrangement_2} faces as the vertices of the BGL graph. More precisely, 
+\ccc{Arrangement_2::Face_handle} is the graph-vertex type.
+(\ccc{Arrangement_2::Halfedge_handle} is the graph-edge type as above.)
+You can use the the \ccc{make_arr_bgl_adaptor(Arrangement & arr)} and
+\ccc{make_arr_bgl_dual_adaptor(Arrangement & arr)} function templates
+to conveniently generate an appropriate adapted arrangement out of a given 
+one.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The next example shows how to use the \ccc{Arr_face_graph_adaptor} to use 
-\boost\ algorithms. In this example we construct an \ccc{Arrangement_2} and 
-run breadth first search on the faces. The \ccc{breadth_first_search} 
-\boost\ function needs a color map in order to work (see 
-\boost\ documantation). In order to do this we also extend each face to store 
-its color during the breadth first search algorithm (see 
-Section~\ref{arr_sec:ex_dcel}), and use the \ccc{Object_color_map} to create 
-the color map.
+The next example shows how to adapt an arrangement instance to a BGL
+graph using the \ccc{Arr_bgl_dual_adaptor}. In this example an 
+\ccc{Arrangement_2} instance is constructed, adapted to a BGL graph, and
+subjected to the BGL Breadth First Search (BFS) algorithm, where the faces
+of the arrangement are considered as the BGL graph vertices. The 
+\ccc{breadth_first_search} \boost\ function requires a color map in order 
+to work (see \boost\ documantation). To this end, each \dcel\ face is 
+extended to store its color (see Section~\ref{arr_sec:ex_dcel}), 
+The \ccc{Object_color_map} is used to construct and maintain the required 
+\boost\ color property-map. This property-map is parameterized with a
+handle that references an object, and can be used for other \boost\ algorithms. 
+In such a property-map handles are used as the keys, and 
+\boost\ \ccc{default_color_map} objects are used as values. Given a handle this
+particular implementation stores and retrieves the color property of the 
+handled object in constant time, but requires a space holder for the value
+to exists in the referenced object. 
 
-% \ccIncludeExampleCode{../examples/Arrangement_2/example29.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/example29.C}
 
 \section*{Design and Implementation History}
 %===========================================
