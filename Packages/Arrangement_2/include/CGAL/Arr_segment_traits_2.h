@@ -153,8 +153,12 @@ public:
     {
       Kernel   kernel;
 
-      CGAL_precondition (kernel.has_on_2_object() (l, source) &&
-                         kernel.has_on_2_object() (l, target));
+      CGAL_precondition(
+        Segment_assertions::_assert_is_point_on(source, l,
+                                                Has_exact_division()) &&
+        Segment_assertions::_assert_is_point_on(target,l,
+                                                Has_exact_division())
+        );
 
       is_vert = kernel.is_vertical_2_object()(l);
 
