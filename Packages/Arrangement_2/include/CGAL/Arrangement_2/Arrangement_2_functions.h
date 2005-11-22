@@ -2040,40 +2040,44 @@ void Arrangement_2<Traits,Dcel>::_relocate_in_new_face (DHalfedge *new_he)
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace        *new_face = new_he->face();
-  DFace        *old_face = new_he->opposite()->face();
+  DHalfedge    *opp_he = new_he->opposite();
+  DFace        *old_face = opp_he->face();
 
   CGAL_assertion (new_face != old_face);
 
   // Examine the holes inside the existing old face and move the relevant
   // ones into the new face.
-  // Note that if the face contains a single hole, then the new face that
-  // has been created is necessarily connected to this hole, hence it is not
-  // possible to relocate the hole inside the new face.
   DHoles_iter    holes_it = old_face->holes_begin();
-  DHoles_iter    next_it = holes_it;
   DHoles_iter    hole_to_move;
 
-  ++next_it;
-  if (next_it != old_face->holes_end())   // More than a single hole?
-  {
-    // Go over the holes.
-    next_it = holes_it;
-    while (holes_it != old_face->holes_end())
-    {   
-      // We increment the next itrator before moving the hole, because
-      // this operation invalidates the iterator.
-      ++next_it;
+  while (holes_it != old_face->holes_end())
+  {  
+    // In case the new edge represents the current hole in the old face
+    // (note we take the opposite halfedge, as it is incident to the old face),
+    // then the new face already forms a hole in the old face, and we do not
+    // need to move it.
+    if (*holes_it == opp_he)
+    {
+      ++holes_it;
+      continue;
+    }
 
-      // Check whether the current hole is inside new face.
-      if (_point_is_in ((*holes_it)->vertex()->point(), 
-                        (*holes_it)->vertex(),
-                        new_he))
-      {
-        // Move the hole.
-        _move_hole (old_face, new_face, holes_it);
-      }
+    // Check whether the current hole is inside new face.
+    if (_point_is_in ((*holes_it)->vertex()->point(), 
+                      (*holes_it)->vertex(),
+                      new_he))
+    {
+      // We increment the itrator before moving the hole, because this
+      // operation invalidates the iterator.
+      hole_to_move = holes_it;
+      ++holes_it;
 
-      holes_it = next_it;
+      // Move the hole.
+      _move_hole (old_face, new_face, hole_to_move);
+    }
+    else
+    {
+      ++holes_it;
     }
   }
 
