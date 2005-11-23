@@ -351,6 +351,10 @@ private:
 template < class K, class C >
 struct Cartesian_converter <K, K, C>
 {
+  typedef K Source_kernel;
+  typedef K Target_kernel;
+  typedef C Number_type_converter;
+
   template < typename T >
   const T& operator()(const T&t) const { return t; }
 };

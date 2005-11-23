@@ -1,3 +1,6 @@
+23 November 2005 Sylvain Pion
+- Cartesian_converter : add missing typedefs in the specialization for <K,K,C>.
+
 14 September 2005 Sylvain Pion
 - Remove qualified_result_type from functors.
 
