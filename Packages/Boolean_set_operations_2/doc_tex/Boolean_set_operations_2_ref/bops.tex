@@ -117,22 +117,22 @@ given general polygons \ccc{p1} and \ccc{p2}. If the two given
 polygons overlap, it returns \ccc{true} and places the resulting
 polygon in \ccc{p}. Otherwise, it returns \ccc{false}.
 
-\ccGlobalFunction{template <class Traits, class OutPolygon>
+\ccGlobalFunction{template <class Traits>
 bool join(const Traits::General_polygon_2 & p1,
           const Traits::General_polygon_2 & p2,
 	  const Traits::General_polygon_with_holes_2 & p);}
 
-\ccGlobalFunction{template <class Traits, class OutPolygon>
+\ccGlobalFunction{template <class Traits>
 bool join(const Traits::General_polygon_2 & p1,
           const Traits::General_polygon_with_holes_2 & p2,
 	  const Traits::General_polygon_with_holes_2 & p);}
 
-\ccGlobalFunction{template <class Traits, class OutPolygon>
+\ccGlobalFunction{template <class Traits>
 bool join(const Traits::General_polygon_with_holes_2 & p2,
           const Traits::General_polygon_2 & p1,
 	  const Traits::General_polygon_with_holes_2 & p);}
 
-\ccGlobalFunction{template <class Traits, class OutPolygon>
+\ccGlobalFunction{template <class Traits>
 bool join(const Traits::General_polygon_with_holes_2 & p1,
           const Traits::General_polygon_with_holes_2 & p2,
 	  const Traits::General_polygon_with_holes_2 & p);}

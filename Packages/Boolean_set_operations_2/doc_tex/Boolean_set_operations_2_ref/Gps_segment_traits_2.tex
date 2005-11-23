@@ -1,0 +1,22 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Gps_segment_traits_2<Kernel,Container,ArrSegTraits>}
+
+\ccThree{Gps_segment_traits_2<Kernel>}{stuff()}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+The traits class \ccRefName\ models the \ccc{GeneralPolygonSetTraits_2}
+concept. It enables Boolean set-operations on (linear) polygons.
+It should be parameterized with a kernel, which is used in turn to
+define the exposed type \ccc{General_polygon_2} to be of type
+\ccc{Polygon_2<Kernel>}.
+
+\ccInclude{CGAL/Gps_segment_traits_2.h}
+ 
+\ccIsModel
+    \ccc{GeneralPolygonSetTraits_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

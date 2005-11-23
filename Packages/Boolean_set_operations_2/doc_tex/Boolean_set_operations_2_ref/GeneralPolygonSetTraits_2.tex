@@ -21,9 +21,9 @@ types.
 \ccTypes
 % ======
 
-\ccNestedType{General_polygon_2}{represents a general polygon.}
+\ccNestedType{Polygon_2}{represents a (general) polygon.}
 \ccGlue
-\ccNestedType{General_polygon_with_holes_2}{represents a general polygon
+\ccNestedType{Polygon_with_holes_2}{represents a (general) polygon
   with holes.}
 
 \ccNestedType{Curve_const_iterator}
@@ -33,23 +33,23 @@ types.
 \ccHeading{Functor Types}
 % =======================
 
-\ccThree{Construct_general_polygon_2}{}{\hspace*{\ccwComment}}
+\ccThree{Construct_polygon_2}{}{\hspace*{\ccwComment}}
 \ccThreeToTwo
 
 \ccNestedType{Construct_general_polygon_2}
-{a functor that constructs a general polygon from a range of
+{a functor that constructs a (general) polygon from a range of
 $x$-monotone curves. It uses the operator\\
  \ccc{void operator() (InputIterator begin, Input iterator end,
-                       General_polygon_2 & pgn)}, \\
+                       Polygon_2 & pgn)}, \\
  parameterized by the \ccc{InputIterator} type.}
 
 \ccNestedType{Construct_curves_2}
 {a functor that returns a pair that consists of the begin and
  past-the-end iterators of the $x$ monotone curves of the boundary of
- a given general polygon. It uses the operator\\
+ a given (general) polygon. It uses the operator\\
  \ccc{std:pair<Curve_const_iterator,
                Curve_const_iterator>
-  operator() (const General_polygon_2 & pgn)}.}
+  operator() (const Polygon_2 & pgn)}.}
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -66,16 +66,16 @@ $x$-monotone curves. It uses the operator\\
 \ccHeading{Accessing Functor Objects}
 %====================================
 
-\ccMethod{Construct_general_polygon_2 construct_general_polygon_2_object();}
-{returns a functor that constructs a general polygon.}
+\ccMethod{Construct_polygon_2 construct_polygon_2_object();}
+{returns a functor that constructs a (general) polygon.}
 
 \ccMethod{Construct_curves_2 construct_curves_2_object();}
-{returns a functor that obtains the curves of a general polygon.}
+{returns a functor that obtains the curves of a (general) polygon.}
 
 \ccPredicates
 % ===========
-\ccMethod{bool is_simple(General_polygon_2 & pgn);}
-{returns \ccc{true} if the general polygon \ccc{pgn} is simple, and
+\ccMethod{bool is_simple(Polygon_2 & pgn);}
+{returns \ccc{true} if the (general) polygon \ccc{pgn} is simple, and
 \ccc{false} otherwise. Used as precondition for some of the operations.}
 
 \ccHasModels
