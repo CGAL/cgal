@@ -1,9 +1,12 @@
+23 Nov 2005:  Menelaos Karavelas
+- fixed error in documentation: the LaTeX to HTML converter does not
+  recognize the \ne macro. I believe it recognizes the \neq macro.
+
 21 Nov 2005:  Menelaos Karavelas
 - fixed problem with toolbars under linux. The toolbars stopped being
   visible once the menus where added. This has now been fixed.
 - added view menu; the user can now choose the background color among
   three: white, black, yellow.
-
 
 17 Nov 2005:  Menelaos Karavelas
 - added site removers in code and adaptation policies but have neither
