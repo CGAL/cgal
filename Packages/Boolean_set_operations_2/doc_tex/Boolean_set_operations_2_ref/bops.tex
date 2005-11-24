@@ -17,21 +17,28 @@ and \ccc{false} otherwise.
 
 \ccInclude{CGAL/IO/Boolean_set_operations.h}
 
-\ccGlobalFunction{template <class Traits>
-bool do_intersect(const Traits::General_polygon_2 & p1,
-                  const Traits::General_polygon_2 & p2);}
+\ccGlobalFunction{template <class Kernel>
+bool do_intersect(const Polygon_2<Kernel> & p1,
+                  const Polygon_2<Kernel> & p2);}
 
 \ccGlobalFunction{template <class Traits>
-bool do_intersect(const Traits::General_polygon_2 & p1,
-                  const Traits::General_polygon_with_holes_2 & p2);}
+bool do_intersect(const General_polygon_2<Traits> & p1,
+                  const General_polygon_2<Traits> & p2);}
 
 \ccGlobalFunction{template <class Traits>
-bool do_intersect(const Traits::General_polygon_with_holes_2 & p2,
-                  const Traits::General_polygon_2 & p1);}
+bool do_intersect(const Traits::Polygon_2 & p1,
+                  const Traits::Polygon_2 & p2);}
 
 \ccGlobalFunction{template <class Traits>
-bool do_intersect(const Traits::General_polygon_with_holes_2 & p1,
-                  const Traits::General_polygon_with_holes_2 & p2);}
+bool do_intersect(const Traits::Polygon_2 & p1,
+                  const Traits::Polygon_with_holes_2 & p2);}
+
+\ccGlobalFunction{template <class Traits>
+bool do_intersect(const Traits::Polygon_with_holes_2 & p2);}
+
+\ccGlobalFunction{template <class Traits>
+bool do_intersect(const Traits::Polygon_with_holes_2 & p1,
+                  const Traits::Polygon_with_holes_2 & p2);}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::intersection}\\
@@ -53,29 +60,40 @@ type of the \ccc{OutputIterator} is \ccc{General_polygon_with_holes_2}.
 
 \ccInclude{CGAL/IO/Boolean_set_operations.h}
 
-\ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator intersection(const Traits::General_polygon_2 & p1,
-                            const Traits::General_polygon_2 & p2,
+\ccGlobalFunction{template <class Kernel, class OutputIterator>
+OutputIterator intersection(const Polygon_2<Kernel> & p1,
+                            const Polygon_2<Kernel> & p2,
                             OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator intersection(const Traits::General_polygon_2 & p1,
-                            const Traits::General_polygon_with_holes_2 & p2,
+OutputIterator intersection(const General_polygon_2<Traits> & p1,
+                            const General_polygon_2<Traits> & p2,
+                            OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const Traits::Polygon_2 & p1,
+                            const Traits::Polygon_2 & p2,
+                            OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const Traits::Polygon_2 & p1,
+                            const Traits::Polygon_with_holes_2 & p2,
                             OutputIterator oi);}
   
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator intersection(const Traits::General_polygon_with_holes_2 & p2,
-                            const Traits::General_polygon_2 & p1,
+OutputIterator intersection(const Traits::Polygon_with_holes_2 & p2,
+                            const Traits::Polygon_2 & p1,
                             OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator intersection(const Traits::General_polygon_with_holes_2 & p1,
-                            const Traits::General_polygon_with_holes_2 & p2,
+OutputIterator intersection(const Traits::Polygon_with_holes_2 & p1,
+                            const Traits::Polygon_with_holes_2 & p2,
                             OutputIterator oi);}
   
 \ccGlobalFunction{template <class InputIterator, class OutputIterator>
 OutputIterator intersection(InputIterator & begin, InputIterator & end,
-                            OutputIterator oi);}
+                            OutputIterator oi,
+                            Traits & traits);}
 {Computes the intersection of the general polygons (or general polygons with
 holes) in the given range. (The value type of the input iterator is
 used to distinguish between the two.) The result, represented by a set
@@ -117,25 +135,35 @@ given general polygons \ccc{p1} and \ccc{p2}. If the two given
 polygons overlap, it returns \ccc{true} and places the resulting
 polygon in \ccc{p}. Otherwise, it returns \ccc{false}.
 
-\ccGlobalFunction{template <class Traits>
-bool join(const Traits::General_polygon_2 & p1,
-          const Traits::General_polygon_2 & p2,
-	  const Traits::General_polygon_with_holes_2 & p);}
+\ccGlobalFunction{template <class Kernel>
+bool join(const Polygon_2<Kernel> & p1,
+          const Polygon_2<Kernel> & p2,
+	  const Traits::Polygon_with_holes_2 & p);}
 
 \ccGlobalFunction{template <class Traits>
-bool join(const Traits::General_polygon_2 & p1,
-          const Traits::General_polygon_with_holes_2 & p2,
-	  const Traits::General_polygon_with_holes_2 & p);}
+bool join(const General_polygon_2<Traits> & p1,
+          const General_polygon_2<Traits> & p2,
+	  const Traits::Polygon_with_holes_2 & p);}
 
 \ccGlobalFunction{template <class Traits>
-bool join(const Traits::General_polygon_with_holes_2 & p2,
-          const Traits::General_polygon_2 & p1,
-	  const Traits::General_polygon_with_holes_2 & p);}
+bool join(const Traits::Polygon_2 & p1,
+          const Traits::Polygon_2 & p2,
+	  const Traits::Polygon_with_holes_2 & p);}
 
 \ccGlobalFunction{template <class Traits>
-bool join(const Traits::General_polygon_with_holes_2 & p1,
-          const Traits::General_polygon_with_holes_2 & p2,
-	  const Traits::General_polygon_with_holes_2 & p);}
+bool join(const Traits::Polygon_2 & p1,
+          const Traits::Polygon_with_holes_2 & p2,
+	  const Traits::Polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class Traits>
+bool join(const Traits::Polygon_with_holes_2 & p2,
+          const Traits::Polygon_2 & p1,
+	  const Traits::Polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class Traits>
+bool join(const Traits::Polygon_with_holes_2 & p1,
+          const Traits::Polygon_with_holes_2 & p2,
+	  const Traits::Polygon_with_holes_2 & p);}
 
 \ccGlobalFunction{template <class InputIterator, class OutputIterator>
 OutputIterator join(InputIterator & begin, InputIterator & end,
@@ -181,24 +209,32 @@ the resulting polygons with holes into an output container through the
 output iterator \ccc{oi}. The value type of the \ccc{OutputIterator}
 is \ccc{General_polygon_with_holes_2}.
 
+\ccGlobalFunction{template <class Kernel, class OutputIterator>
+OutputIterator difference(const Polygon_2<Kernel> & p1,
+                          const Polygon_2<Kernel> & p2);}
+
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator difference(const Traits::General_polygon_2 & p1,
-                          const Traits::General_polygon_2 & p2,
+OutputIterator difference(const General_polygon_2<Traits> & p1,
+                          const General_polygon_2<Traits> & p2);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator difference(const Traits::Polygon_2 & p1,
+                          const Traits::Polygon_2 & p2,
                           OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator difference(const Traits::General_polygon_2 & p1,
-                          const Traits::General_polygon_with_holes_2 & p2,
+OutputIterator difference(const Traits::Polygon_2 & p1,
+                          const Traits::Polygon_with_holes_2 & p2,
                           OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator difference(const Traits::General_polygon_with_holes_2 & p2,
-                          const Traits::General_polygon_2 & p1,
+OutputIterator difference(const Traits::Polygon_with_holes_2 & p2,
+                          const Traits::Polygon_2 & p1,
                           OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator difference(const Traits::General_polygon_with_holes_2 & p1,
-                          const Traits::General_polygon_with_holes_2 & p2,
+OutputIterator difference(const Traits::Polygon_with_holes_2 & p1,
+                          const Traits::Polygon_with_holes_2 & p2,
                           OutputIterator oi);}
 
 \ccSeeAlso
@@ -221,28 +257,35 @@ and inserts the resulting polygons with holes into an output container
 through the output iterator \ccc{oi}. The value type of the
 \ccc{OutputIterator} is \ccc{General_polygon_with_holes_2}.
 
-\ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator symmetric_difference(const Traits::General_polygon_2 & p1,
-                                   const Traits::General_polygon_2 & p2,
-                                   OutputIterator oi);}
+\ccGlobalFunction{template <class Kernel, class OutputIterator>
+OutputIterator symmetric_difference(const Polygon_2<Kernel> & p1,
+                                    const Polygon_2<Kernel> & p2,
+                                    OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator
-symmetric_difference(const Traits::General_polygon_2 & p1,
-                     const Traits::General_polygon_with_holes_2 & p2,
-                     OutputIterator oi);}
+OutputIterator symmetric_difference(const General_polygon_2<Traits> & p1,
+                                    const General_polygon_2<Traits> & p2,
+                                    OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator
-symmetric_difference(const Traits::General_polygon_with_holes_2 & p2,
-                     const Traits::General_polygon_2 & p1,
-                     OutputIterator oi);}
+OutputIterator symmetric_difference(const Traits::Polygon_2 & p1,
+                                    const Traits::Polygon_2 & p2,
+                                    OutputIterator oi);}
 
 \ccGlobalFunction{template <class Traits, class OutputIterator>
-OutputIterator
-symmetric_difference(const Traits::General_polygon_with_holes_2 & p1,
-                     const Traits::General_polygon_with_holes_2 & p2,
-                     OutputIterator oi);}
+OutputIterator symmetric_difference(const Traits::Polygon_2 & p1,
+                                    const Traits::Polygon_with_holes_2 & p2,
+                                    OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator symmetric_difference(const Traits::Polygon_with_holes_2 & p2,
+                                    const Traits::Polygon_2 & p1,
+                                    OutputIterator oi);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator symmetric_difference(const Traits::Polygon_with_holes_2 & p1,
+                                    const Traits::Polygon_with_holes_2 & p2,
+                                    OutputIterator oi);}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::do_intersect}\\
