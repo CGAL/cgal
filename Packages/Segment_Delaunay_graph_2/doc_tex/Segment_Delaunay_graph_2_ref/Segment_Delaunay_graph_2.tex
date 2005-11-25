@@ -191,8 +191,8 @@ Gt gt=Gt());}
 %%   Segment_Delaunay_graph_2<Gt,DS>& other)}
 %% {Copy constructor. All faces and vertices are duplicated. After the
 %%   construction, 
-%%   \ccVar\ and \ccc{other} refer to two different segment Voronoi
-%%   diagrams~: if \ccc{other} is modified, \ccVar\ is not.}
+%%   \ccVar\ and \ccc{other} refer to two different segment Delaunay
+%%   graphs~: if \ccc{other} is modified, \ccVar\ is not.}
 %% %
 %% \ccMethod{Segment_Delaunay_graph_2<Gt,DS>
 %% operator=(const Segment_Delaunay_graph_2<Gt,DS>& other);}
@@ -642,8 +642,7 @@ The following operators must be defined:\\
 \ccHeading{Miscellaneous}
 \ccThree{void}{sdg.swap(& other)+}{}
 %
-\ccMethod{void clear();}{Clears all contents of the segment Voronoi
-  diagram.}
+\ccMethod{void clear();}{Clears all contents of the segment Delaunay graph.}
 \ccGlue
 % MK:: add this method make copy(...) protected and see doc of TDS
 \ccMethod{void swap(Segment_Delaunay_graph_2<Gt,DS>
