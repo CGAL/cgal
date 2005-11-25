@@ -433,7 +433,6 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
     vh[0]->point(), vh[1]->point(),
     vh[2]->point(), vh[3]->point());
   if (((orient) &&(o!=POSITIVE))||((!orient)&&(o!=NEGATIVE)))  {
-    std::cout << "Orient: " << o;
     Rt_Vertex_handle  r_vh;
     Rt_Edge           r_e;
     Rt_Facet          r_f;
@@ -469,7 +468,6 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
       }
     }
     o = orientation(vert[0],vert[1],vert[2],vert[3]);
-    std::cout << " -- " << orient << " -- " << o << std::endl;
   }
 
   if (orient) {

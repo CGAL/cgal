@@ -56,7 +56,7 @@ public:
   }
 
   void after_vertex_insertion(
-    Rt_Simplex &sDel, Rt_Simplex &sVor, Sc_Vertex_handle &vh) 
+    Rt_Simplex const &sDel, Rt_Simplex const &sVor, Sc_Vertex_handle const &vh) 
   {
   }
 

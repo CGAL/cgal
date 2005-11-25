@@ -38,9 +38,9 @@ void skin_surface_3(InputIterator first, InputIterator last,
   if (first != last) {
     // Construct regular triangulation ...
     Bbox_3 bbox = (*first).bbox();
-    double max_weight=1;
+    typename Regular_traits::RT max_weight=1;
     while (first != last) {
-      max_weight = std::max(max_weight, (*first).weight());
+      if (max_weight < (*first).weight()) max_weight = (*first).weight();
       bbox = bbox + (*first).bbox();
       regular.insert((*first));
       first++;
@@ -50,9 +50,10 @@ void skin_surface_3(InputIterator first, InputIterator last,
     Reg_point mid((bbox.xmin() + bbox.xmax())/2,
                   (bbox.ymin() + bbox.ymax())/2,
                   (bbox.zmin() + bbox.zmax())/2);
-    double size = 1.5*((bbox.xmax() - bbox.xmin() +
-		        bbox.ymax() - bbox.ymin() +
-		        bbox.zmax() - bbox.zmin())/2 + max_weight);
+    typename Regular_traits::RT size =
+      1.5*((bbox.xmax() - bbox.xmin() +
+	     bbox.ymax() - bbox.ymin() +
+	     bbox.zmax() - bbox.zmin())/2 + max_weight);
     regular.insert(
       Reg_weighted_point(Reg_point(mid.x()+size,mid.y(),mid.z()),-1));
     regular.insert(

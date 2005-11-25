@@ -34,25 +34,25 @@ public:
     CGAL_assertion (ch != Cell_handle());
   }
 
-  operator Vertex_handle ()
+  operator Vertex_handle () const
   {
     assert(dimension() == 0);
     return ch->vertex(index(0));
   }
 
-  operator Edge ()
+  operator Edge () const
   {
     assert(dimension() == 1);
     return Edge(ch,index(0),index(1));
   }
 
-  operator Facet ()
+  operator Facet () const
   {
     assert(dimension() == 2);
     return Facet(ch,index(0));
   }
 
-  operator Cell_handle ()
+  operator Cell_handle () const
   {
     assert(dimension() == 3);
     return ch;
@@ -79,6 +79,12 @@ private:
 ///////////////////////////////
 // Simplex functions
 ///////////////////////////////
+template < class T >
+bool
+operator!=(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
+  return !(s0==s1);
+}
+
 template < class T >
 bool
 operator==(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
@@ -166,6 +172,53 @@ operator<(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
   CGAL_assertion(0);
   return false;
 }
+
+// NGHK: Remove
+template < class Triangulation >
+std::ostream &
+operator<< (std::ostream& os, const Triangulation_simplex_3<Triangulation> &s)
+{
+  typename Triangulation::Vertex_handle vh;
+  typename Triangulation::Edge e;
+  typename Triangulation::Facet f;
+  typename Triangulation::Cell_handle ch;
+  switch (s.dimension()) {
+    case 0:
+      vh = s;
+      os << &*vh << std::endl
+	 << "pt: " << vh->point();
+      break;
+    case 1:
+      e = s;
+      os << &*(e.first->vertex(e.second)) << " "
+	 << &*(e.first->vertex(e.third)) << std::endl
+	 << "pt: " << (e.first->vertex(e.second))->point() << std::endl
+	 << "pt: " << (e.first->vertex(e.third))->point();
+      break;
+    case 2:
+      f = s;
+      os << &*(f.first->vertex((f.second+1)&3)) << " "
+	 << &*(f.first->vertex((f.second+2)&3)) << " "
+	 << &*(f.first->vertex((f.second+3)&3)) << std::endl
+	 << "pt: " << (f.first->vertex((f.second+1)&3))->point() << std::endl
+	 << "pt: " << (f.first->vertex((f.second+2)&3))->point() << std::endl
+	 << "pt: " << (f.first->vertex((f.second+3)&3))->point();
+      break;
+    case 3:
+      ch = s;
+      os << &*(ch->vertex(0)) << " "
+	 << &*(ch->vertex(1)) << " "
+	 << &*(ch->vertex(2)) << " "
+	 << &*(ch->vertex(3)) << std::endl
+	 << "pt: " << ch->vertex(0)->point() << std::endl
+	 << "pt: " << ch->vertex(1)->point() << std::endl
+	 << "pt: " << ch->vertex(2)->point() << std::endl
+	 << "pt: " << ch->vertex(3)->point();
+      break;
+  }
+  return os;
+}
+
 
 CGAL_END_NAMESPACE
 
