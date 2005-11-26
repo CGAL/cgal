@@ -1,4 +1,4 @@
-// file: svd-filtered-traits.C
+// file: sdg-filtered-traits.C
 #include <CGAL/basic.h>
 
 // standard includes
@@ -7,7 +7,7 @@
 #include <cassert>
 
 // example that uses the filtered traits and
-// the segment Voronoi diagram hierarchy
+// the segment Delaunay graph hierarchy
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
@@ -15,13 +15,13 @@
 struct Rep : public CGAL::Simple_cartesian<double> {};
 
 // typedefs for the traits and the algorithm
-#include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
-#include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
+#include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
 struct Gt
-  : public CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep> {};
+  : public CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep> {};
 
-typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>  SVD2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt>  SDG2;
 
 
 int main()
@@ -29,16 +29,16 @@ int main()
   std::ifstream ifs("data/sites.cin");
   assert( ifs );
 
-  SVD2          svd;
-  SVD2::Site_2  site;
+  SDG2          sdg;
+  SDG2::Site_2  site;
 
-  // read the sites and insert them in the segment Voronoi diagram
+  // read the sites and insert them in the segment Delaunay graph
   while ( ifs >> site ) {
-    svd.insert(site);
+    sdg.insert(site);
   }
 
-  // validate the segment Voronoi diagram
-  assert( svd.is_valid(true, 1) );
+  // validate the segment Delaunay graph
+  assert( sdg.is_valid(true, 1) );
 
   return 0;
 }

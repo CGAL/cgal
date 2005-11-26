@@ -1,4 +1,4 @@
-// file: svd-voronoi-vertices.C
+// file: sdg-voronoi-vertices.C
 #include <CGAL/basic.h>
 
 // standard includes
@@ -15,11 +15,11 @@ typedef CGAL::Simple_cartesian<double>    CK;
 typedef CGAL::Filtered_kernel<CK>         Kernel;
 
 // typedefs for the traits and the algorithm
-#include <CGAL/Segment_Voronoi_diagram_traits_2.h>
-#include <CGAL/Segment_Voronoi_diagram_2.h>
+#include <CGAL/Segment_Delaunay_graph_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_2.h>
 
-typedef CGAL::Segment_Voronoi_diagram_traits_2<Kernel>  Gt;
-typedef CGAL::Segment_Voronoi_diagram_2<Gt>             SVD2;
+typedef CGAL::Segment_Delaunay_graph_traits_2<Kernel>  Gt;
+typedef CGAL::Segment_Delaunay_graph_2<Gt>             SDG2;
 
 using namespace std;
 
@@ -28,22 +28,22 @@ int main()
   ifstream ifs("data/sites2.cin");
   assert( ifs );
 
-  SVD2          svd;
-  SVD2::Site_2  site;
+  SDG2          sdg;
+  SDG2::Site_2  site;
 
   // read the sites from the stream and insert them in the diagram
-  while ( ifs >> site ) { svd.insert( site ); }
+  while ( ifs >> site ) { sdg.insert( site ); }
 
   ifs.close();
 
   // validate the diagram
-  assert( svd.is_valid(true, 1) );
+  assert( sdg.is_valid(true, 1) );
   cout << endl << endl;
 
   /*
-  // now walk through the non-infinite edges of the dual (which are
-  // dual to the edges in the Voronoi diagram) and print the sites
-  // defining each Voronoi edge.
+  // now walk through the non-infinite edges of the segment Delaunay
+  // graphs (which are dual to the edges in the Voronoi diagram) and
+  // print the sites defining each Voronoi edge.
   //
   // Each oriented Voronoi edge (horizontal segment in the figure
   // below) is defined by four sites A, B, C and D.
@@ -69,20 +69,20 @@ int main()
   string inf_vertex("infinite vertex");
   char vid[] = {'A', 'B', 'C', 'D'};
 
-  SVD2::Finite_edges_iterator eit = svd.finite_edges_begin();
-  for (int k = 1; eit != svd.finite_edges_end(); ++eit, ++k) {
-    SVD2::Edge e = *eit;
+  SDG2::Finite_edges_iterator eit = sdg.finite_edges_begin();
+  for (int k = 1; eit != sdg.finite_edges_end(); ++eit, ++k) {
+    SDG2::Edge e = *eit;
     // get the vertices defining the Voronoi edge
-    SVD2::Vertex_handle v[] = { e.first->vertex( svd.ccw(e.second) ),
-                                e.first->vertex( svd.cw(e.second) ),
+    SDG2::Vertex_handle v[] = { e.first->vertex( sdg.ccw(e.second) ),
+                                e.first->vertex( sdg.cw(e.second) ),
                                 e.first->vertex( e.second ),
-                                svd.tds().mirror_vertex(e.first, e.second) };
+                                sdg.tds().mirror_vertex(e.first, e.second) };
 
     cout << "--- Edge " << k << " ---" << endl;
     for (int i = 0; i < 4; i++) {
       // check if the vertex is the vertex at infinity; if yes, print
       // the corresponding string, otherwise print the site
-      if ( svd.is_infinite(v[i]) ) {
+      if ( sdg.is_infinite(v[i]) ) {
         cout << vid[i] << ": " << inf_vertex << endl;
       } else {
         cout << vid[i] << ": " << v[i]->site() << endl;
