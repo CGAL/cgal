@@ -17,14 +17,14 @@
 %%
 %% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-This chapter describes the two-dimensional segment Voronoi diagram
+This chapter describes the two-dimensional segment Delaunay graph
 package of \cgal. We start with a few definitions in 
 Section~\ref{sec:sdg2-definitions}.
-The software design of the 2D segment Voronoi diagram package is
+The software design of the 2D segment Delaunay graph package is
 described in Section~\ref{sec:sdg2-design}.
 In Section~\ref{sec:sdg2-traits} we discuss the geometric
-traits of the 2D segment Voronoi diagram package and in Section
-\ref{sec:sdg2-hierarchy} the segment Voronoi diagram hierarchy, a
+traits of the 2D segment Delaunay graph package and in Section
+\ref{sec:sdg2-hierarchy} the segment Delaunay graph hierarchy, a
 data structure suitable for fast nearest neighbor queries, is briefly
 described.
 
@@ -58,18 +58,18 @@ described.
 \end{ccHtmlOnly}
 \begin{center}
 \caption{The segment Voronoi diagram for a set of weakly (left) and
-  strongly (right) intersecting sites.}\label{fig-sdg}
+  strongly (right) intersecting sites.}\label{fig-svd}
 \end{center}
 \begin{ccHtmlOnly}
 </font>
 \end{ccHtmlOnly}
 \end{figure}
 
-The 2D segment Voronoi diagram package of \cgal\ is designed to
-compute the dual of the Voronoi diagram of a set of possibly
-intersecting segments on the plane. Although we compute the dual, we
-will often refer to the diagram itself, since it is easier to
-explain an d understand. The algorithm that has been
+The 2D segment Delaunay graph package of \cgal\ is designed to
+compute the Delaunay graph of a set of possibly intersecting segments
+on the plane. Although we compute the Delaunay graph, we 
+will often refer to its dual, the segment Voronoi diagram, since it is
+easier to explain and understand. The algorithm that has been
 implemented is incremental. The corresponding \cgal\ class is called
 \ccc{Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphStructure_2>}
 and will be discussed in more detail in the sequel. The interested
@@ -79,14 +79,16 @@ the algorithm implemented.
 
 \paragraph{Definitions.}
 Before describing the details of the implementation we make a brief
-introduction to the theory of segment Voronoi diagrams.
+introduction to the theory of segment Delaunay graphs and segment
+Voronoi diagrams.
 The segment Voronoi diagram is defined over a set of non-intersecting
 sites, which can either be points or linear segments, which we assume
 that are given through their endpoints. The segment Voronoi diagram a
 subdivision of the plane into connected regions, called {\em cells},
-associated with the sites. The cell of a site $t_i$ is the locus of
-points on the plane that are closer to $t_i$ than any other site
-$t_j$, $j\neq i$.
+associated with the sites. The dual graph of the segment Voronoi
+diagram is called the segment Delaunay graph. The cell of a site $t_i$
+is the locus of points on the plane that are closer to $t_i$ than any
+other site $t_j$, $j\neq i$.
 The distance $\delta(x, t_i)$ of a point $x$ in the plane to a 
 site $t_i$ is defined as the minimum of the Euclidean distances of $x$
 from the points in $t_i$. Hence, if $t_i$ is a point $p_i$, then
@@ -100,7 +102,7 @@ diagram for points.
 In many applications the restriction that sites are non-intersecting
 is too strict. Often we want to allow segments that touch at their
 endpoints, or even segments that overlap or intersect properly at
-their interior (for example, see Fig. \ref{fig-sdg}). Allowing such
+their interior (for example, see Fig. \ref{fig-svd}). Allowing such
 configurations poses certain problems. More specifically, when we allow
 segments to touch at their endpoints we may end up with pairs of
 segments whose bisector is two-dimensional. If we allow pairs of
@@ -126,49 +128,48 @@ as well as they require a somehow different treatment on how the
 predicates are evaluated. Having made the distinction between weakly
 and strongly intersecting sites, and having said that segment sites
 are treated as three objects, we are now ready to precisely define the
-Voronoi diagram we compute. Given a set $\mathcal{S}$ of input sites,
+Delaunay graph we compute. Given a set $\mathcal{S}$ of input sites,
 let $\mathcal{S}_{\mathcal{A}}$ be the set of points and
 (open) segments in the arrangement $\mathcal{A}(\mathcal{S})$ of
-$\mathcal{S}$. The 2D segment Voronoi diagram package of \cgal\
-computes the dual of the Voronoi diagram of the sites in the set 
-$\mathcal{S}_{\mathcal{A}}$.
+$\mathcal{S}$. The 2D segment Delaunay graph package of \cgal\
+computes the (triangulated) Delaunay graph that is dual to the
+Euclidean Voronoi diagram of the sites in the set $\mathcal{S}_{\mathcal{A}}$.
 
-The dual of the segment Voronoi diagram is uniquely defined once we
+The segment Delaunay graph is uniquely defined once we
 have the segment Voronoi diagram. If the all sites are in
-\emph{general position}, then dual graph is a graph with triangular
+\emph{general position}, then Delaunay graph is a graph with triangular
 faces away from the convex hull of the set of sites. To unify our approach
-and handling of the dual graph we add to the set of (finite) sites
+and handling of the Delaunay graph we add to the set of (finite) sites
 a fictitious site at infinity, which we call the
 {\em site at infinity}. We can then connect all vertices of the outer
-face of the dual graph to the site at infinity which gives us
+face of the Delaunay graph to the site at infinity which gives us
 a graph with the property that all of its faces are now
-triangular. However, the dual graph is not a triangulation for
+triangular. However, the Delaunay graph is not a triangulation for
 two main reasons: we cannot always embed it on the plane with straight
 line segments that yield a triangulation and, moreover, we may have two
 faces of the graph that have two edges in common, which is not allowed
 in a triangulation.
 
 We would like to finish our brief introduction to the theory of
-segment Voronoi diagrams by discussing the concept of general
-position. We say that a set of sites is in general position if no two
-triplets of sites have the same tritangent Voronoi circle. This
-statement is rather technical and it is best understood in the context
-of points. The equivalent statement for points is that we have no two
-triplets of points that define the same circumcircle, or equivalently
-that no four points are co-circular. The statement about general
-position made above is a direct generalization of the (much simpler to
-understand) statement about points. On the contrary, when we have
-sites in degenerate position, the dual graph has faces with more than
-three edges on their boundary. We can get a triangulated version of
-the graph by simply {\em triangulating} the corresponding faces in an
-arbitrary way. In fact the algorithm that has been implemented in
-\cgal\ has the property that it always returns a valid
-{\em triangulated} version of the dual graph of the segment Voronoi
-diagram. By valid we mean that it contains the actual dual graph
-(i.e., the actual dual of the segment Voronoi diagram) and whenever
-there are faces with more than three faces then they are
-triangulated. The way that they are triangulated depends on the order
-of insertion of the sites in the diagram.
+segment Delaunay graphs and segment Voronoi diagrams by discussing the
+concept of general position. We say that a set of sites is in general
+position if no two triplets of sites have the same tritangent Voronoi
+circle. This statement is rather technical and it is best understood
+in the context of points. The equivalent statement for points is that
+we have no two triplets of points that define the same circumcircle,
+or equivalently that no four points are co-circular. The statement
+about general position made above is a direct generalization of the
+(much simpler to understand) statement about points. On the contrary,
+when we have sites in degenerate position, the Delaunay graph has faces
+with more than three edges on their boundary. We can get a
+triangulated version of the Delaunay graph by simply {\em triangulating}
+the corresponding faces in an arbitrary way. In fact the algorithm
+that has been implemented in \cgal\ has the property that it always
+returns a valid {\em triangulated} version of the segment Delaunay graph.
+By valid we mean that it contains the actual (non-triangulated)
+Delaunay graph, and whenever there are faces with more than three faces
+then they are triangulated. The way that they are triangulated depends
+on the order of insertion of the sites in the diagram.
 
 One final remark has to be made with respect to the difference between
 the set of \emph{input sites} and the set of \emph{output sites}. The
@@ -177,18 +178,18 @@ in the diagram. Since segment sites are treated as three objects,
 internally our algorithm sees only points and open segments. As a
 result, from the point of view of the algorithm, the input sites have
 no real meaning. What has real meaning is the set of sites that
-correspond to cells of the Voronoi diagrams and this is the set of
+correspond to cells of the Voronoi diagram and this is the set of
 output sites.
 
 \paragraph{Degenerate dimensions.}
-The dimension of the segment Voronoi diagram is in general 2. The
+The dimension of the segment Delaunay graph is in general 2. The
 exceptions to this rule are as follows:
 \begin{itemize}
-\item The dimension is $-1$ if the segment Voronoi diagram contains no
+\item The dimension is $-1$ if the segment Delaunay graph contains no
   sites.
-\item The dimension is $0$ if the segment Voronoi diagram contains exactly
+\item The dimension is $0$ if the segment Delaunay graph contains exactly
   one (output) site.
-\item The dimension is $1$ is the segment Voronoi diagram contains exactly
+\item The dimension is $1$ is the segment Delaunay graph contains exactly
   two (output) sites.
 \end{itemize}
 
@@ -196,7 +197,7 @@ exceptions to this rule are as follows:
 \section{Software Design}
 \label{sec:sdg2-design}
 
-The 2D segment Voronoi diagram class
+The 2D segment Delaunay graph class
 \ccc{Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>}
 follows the design of the triangulation package of \cgal. It is
 parametrized by two arguments:
@@ -204,11 +205,11 @@ parametrized by two arguments:
 \item the {\bf geometric traits} class. It provides the basic
   geometric objects involved in the algorithm, such as sites, points
   etc. It also provides the geometric predicates for the computation
-  of the segment Voronoi diagram, as well as some basic constructions
+  of the segment Delaunay graph, as well as some basic constructions
   that can be used, for example, to visualize the diagram.
-  The geometric traits for the segment Voronoi diagram will be
+  The geometric traits for the segment Delaunay graph will be
   discussed in more detail in the next section.
-\item the {\bf segment Voronoi diagram data structure}. This is
+\item the {\bf segment Delaunay graph data structure}. This is
   essentially the same as the Apollonius graph data structure (discussed
   in Chapter \ref{sec:apollonius2-design}), augmented with some
   additional operations that are specific to segment Voronoi
@@ -223,7 +224,7 @@ parametrized by two arguments:
 
 
 \paragraph{Strongly intersecting sites and their representation.}
-As we have mentioned above, the segment Voronoi diagram package of
+As we have mentioned above, the segment Delaunay graph package of
 \cgal\ is designed to support the computation of the segment Voronoi
 diagram even when the input segment sites are intersecting. This
 choice poses certain issues for the design of the software
@@ -232,7 +233,7 @@ that appear in the arrangement of the these sites, because the sites
 in the arrangement are the ones over which the diagram is actually
 defined. A direct consequence of the choice of representation is the
 algebraic degree of the predicates involved in the computation of the
-segment Voronoi diagram, as well as the storage requirements for the
+segment Delaunay graph, as well as the storage requirements for the
 subsegments and points on intersection in the arrangement.
 
 The case of weakly intersecting sites does not require any special
@@ -424,7 +425,7 @@ discuss them in detail. The interested reader may refer to Burnikel's
 thesis \cite{b-ecvdl-96}, where it is shown that in the case of weakly
 intersecting sites represented in homogeneous coordinates of bit size
 $b$, the maximum bit size of the algebraic expressions involved in the
-predicates is $40b+O(1)$. Given our site representation given above we
+predicates is $40 b+O(1)$. Given our site representation given above we
 can guarantee that even in the case of strongly intersecting sites,
 the algebraic degree of the predicates remains $O(b)$, independently
 of the size of the input. What we want to focus in the remainder of
@@ -467,7 +468,7 @@ usual. Testing the defining segments for equality does not involve any
 arithmetic operations on the input, but rather only comparisons on
 \ccc{double}s. By performing this very simple test we avoid a
 numerically difficult computation, which could be performed
-thousands of times during the computation of a Voronoi diagram.
+thousands of times during the computation of a Delaunay graph.
 
 Geometric filtering has been implemented in all our models of the
 \ccc{SegmentDelaunayGraphTraits_2} concept. These models are the
@@ -485,7 +486,7 @@ can be very costly. For this reason we have devoted considerable
 effort in implementing different kinds of arithmetic filtering
 mechanisms. Presently, there two ways of performing arithmetic
 filtering for the predicates involved in the computation of
-segment Voronoi diagrams:
+segment Delaunay graphs:
 \begin{enumerate}
 \item The user can define his/her kernel using as number type, a
   number type of the form \ccc{CGAL::Filtered_exact<CT,ET>}. Then this
@@ -552,7 +553,7 @@ class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
 
 
 
-\section{The segment Voronoi diagram hierarchy}
+\section{The segment Delaunay graph hierarchy}
 \label{sec:sdg2-hierarchy}
 
 
@@ -561,8 +562,8 @@ The
   SSTag, SegmentDelaunayGraphDataStructure_2>} class is the analogue
 of the \ccc{Triangulation_hierarchy_2} or the
 \ccc{Apollonius_graph_hierarchy_2} classes, applied to the segment
-Voronoi diagram. It consists of a hierarchy of
-segment Voronoi diagrams constructed in a manner analogous to the
+Delaunay graph. It consists of a hierarchy of
+segment Delaunay graphs constructed in a manner analogous to the
 Delaunay hierarchy by Devillers \cite{cgal:d-dh-02}. Unlike the
 triangulation hierarchy or the Apollonius graph hierarchy, the
 situation here is more complicated because of two factors: firstly,
@@ -573,26 +574,26 @@ way the hierarchy is constructed. The interested reader may refer to
 the paper by Karavelas \cite{cgal:k-reisv-04} for the details of the
 construction of the hierarchy.
 Another alternative is to have a hybrid hierarchy that consists of the
-segment Voronoi diagram at the bottom-most level and point Voronoi
+segment Delaunay graph at the bottom-most level and point Voronoi
 diagrams at all other levels. This choice seems to work very well in
 practice , primarily because it avoids the overhead of maintaining a
-Voronoi diagram for segments at the upper levels of the
+Delaunay graph for segments at the upper levels of the
 hierarchy. However, it seems much less likely to be possible to give
 any theoretical guarantees for its performance, in contrast to the
-hierarchy with segment Voronoi diagrams at all levels
+hierarchy with segment Delaunay graphs at all levels
 (cf. \cite{cgal:k-reisv-04}). The user can choose between the two
 types of hierarchies by means of the template parameter
 \ccc{SSTag}. If \ccc{SSTag} is set to \ccc{false} (which is also the
 default value), the upper levels of the hierarchy consist of point
-Voronoi diagrams. If \ccc{SSTag} is set to \ccc{true}, we have segment
-Voronoi diagrams at all levels of the hierarchy.
+Delaunay graphs. If \ccc{SSTag} is set to \ccc{true}, we have segment
+Delaunay graphs at all levels of the hierarchy.
 
 The class
 \ccc{Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2,
   SSTag, SegmentDelaunayGraphDataStructure_2>}
 has exactly the same interface and functionality as the
 \ccc{Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>}
-class. Using the segment Voronoi diagram hierarchy involves an
+class. Using the segment Delaunay graph hierarchy involves an
 additional cost in space and time for maintaining the hierarchy. Our
 experiments have shown that it usually pays off to use the hierarchy
 for inputs consisting of more than about 1,000 sites. 

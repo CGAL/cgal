@@ -1,3 +1,7 @@
+26 November 2005:  Menelaos Karavelas
+- user manual has been corrected in order to reflect the change in the
+  name of the package.
+
 25 November 2005:  Menelaos Karavelas
 - changed doc to reflect the change of the name of the package; it
   still remains to fix the user manual.
