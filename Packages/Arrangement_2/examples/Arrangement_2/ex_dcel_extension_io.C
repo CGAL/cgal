@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example27.C
+//! \file examples/Arrangement_2/ex_dcel_extension_io.C
 // Using the I/O operators for arrangements with extended DCEL records.
 
 #include <CGAL/Gmpq.h>

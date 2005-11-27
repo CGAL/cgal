@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example15.C
+//! \file examples/Arrangement_2/ex_conic_multiplicities.C
 // Handling intersection points with multiplicity between conic arcs.
 
 #include <CGAL/Cartesian.h>

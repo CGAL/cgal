@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example28.C
+//! \file examples/Arrangement_2/ex_io_curve_history.C
 // Using the arrangement-with-history I/O operators.
 
 #include <CGAL/Cartesian.h>

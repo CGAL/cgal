@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example7.C
+//! \file examples/Arrangement_2/ex_batched_point_location.C
 // Answering a batched point-location query.
 
 #include <CGAL/MP_Float.h>

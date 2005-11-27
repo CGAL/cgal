@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example20.C
+//! \file examples/Arrangement_2/ex_face_extension.C
 // Extending the arrangement-face records.
 
 #include <CGAL/Cartesian.h>

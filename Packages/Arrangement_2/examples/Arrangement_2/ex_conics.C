@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example14.C
+//! \file examples/Arrangement_2/ex_conics.C
 // Constructing an arrangement of various conic arcs.
 
 #include <CGAL/Cartesian.h>

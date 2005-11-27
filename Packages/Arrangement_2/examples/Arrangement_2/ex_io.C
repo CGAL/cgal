@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example26.C
+//! \file examples/Arrangement_2/ex_io.C
 // Using the arrangement I/O operators.
 
 #include <CGAL/Gmpq.h>

@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example25.C
+//! \file examples/Arrangement_2/ex_edge_manipulation_curve_history.C
 // Removing curves and manipulating edges in an arrangement with history.
 
 #include <CGAL/Cartesian.h>

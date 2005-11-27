@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example22.C
+//! \file examples/Arrangement_2/ex_bgl_dual_adaptor.C
 // Dualy adapting an arrangement to a BGL graph
 
 #include <CGAL/Simple_cartesian.h>

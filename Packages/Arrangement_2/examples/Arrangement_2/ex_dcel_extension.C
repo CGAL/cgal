@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example21.C
+//! \file examples/Arrangement_2/ex_dcel_extension.C
 // Extending all DCEL records (vertices, edges and faces).
 
 #include <CGAL/Cartesian.h>

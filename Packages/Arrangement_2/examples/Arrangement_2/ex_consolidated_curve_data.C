@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example17.C
+//! \file examples/Arrangement_2/ex_consolidated_curve_data.C
 // Associating a color attribute with segments using the consolidated
 // curve-data traits.
 

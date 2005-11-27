@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example23.C
+//! \file examples/Arrangement_2/ex_face_extension_overlay.C
 // A face overlay of two arrangement with extended face records.
 
 #include <CGAL/Cartesian.h>

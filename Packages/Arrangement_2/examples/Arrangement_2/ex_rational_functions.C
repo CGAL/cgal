@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example16.C
+//! \file examples/Arrangement_2/ex_rational_functions.C
 // Constructing an arrangement of arcs of rational functions.
 
 #include <CGAL/Cartesian.h>

@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example22.C
+//! \file examples/Arrangement_2/ex_overlay.C
 // A simple overlay of two arrangements.
 
 #include <CGAL/Cartesian.h>

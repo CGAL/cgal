@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example3.C
+//! \file examples/Arrangement_2/ex_edge_manipulation.C
 // Using the edge-manipulation functions.
 
 #include <CGAL/Gmpz.h>

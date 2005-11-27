@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example19.C
+//! \file examples/Arrangement_2/ex_observer.C
 // Using a simple arrangement observer.
 
 #include <CGAL/Cartesian.h>

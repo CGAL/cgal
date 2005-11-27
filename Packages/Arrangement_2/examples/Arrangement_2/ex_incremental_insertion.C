@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example8.C
+//! \file examples/Arrangement_2/ex_incremental_insertion.C
 // Using the global incremental insertion functions.
 
 #include <CGAL/Cartesian.h>

@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/example24.C
+// file: examples/Arrangement_2/ex_curve_history.C
 // Constructing an arrangement with curve history.
 
 #include <CGAL/Cartesian.h>

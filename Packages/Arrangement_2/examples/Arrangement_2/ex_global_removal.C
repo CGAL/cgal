@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example11.C
+//! \file examples/Arrangement_2/ex_global_removal.C
 // Using the global removal functions.
 
 #include <CGAL/Cartesian.h>

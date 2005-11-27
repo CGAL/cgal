@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example4.C
+//! \file examples/Arrangement_2/ex_special_edge_insertion.C
 // Constructing an arrangement using the specialized edge-insertion functions.
 
 #include <CGAL/Simple_cartesian.h>

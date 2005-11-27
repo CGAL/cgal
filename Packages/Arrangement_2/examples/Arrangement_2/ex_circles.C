@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/example13.C
+//! \file examples/Arrangement_2/ex_circles.C
 // Constructing an arrangement of circles using the conic-arc traits.
 
 #include <CGAL/Cartesian.h>
