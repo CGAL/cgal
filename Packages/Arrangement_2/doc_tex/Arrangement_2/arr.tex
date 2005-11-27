@@ -646,7 +646,7 @@ from $v_1$ to $v_2$.
   </center>
 \end{ccHtmlOnly}
 \caption{The arrangement of the line segments $s_1, \ldots, s_5$
-constructed in \ccc{example1.C}. The arrows mark the direction of
+constructed in \ccc{ex_edge_insertion.C}. The arrows mark the direction of
 the halfedges returned from the various insertion functions.}
 \label{arr_fig:ex_1}
 \end{figure}
@@ -661,7 +661,7 @@ coordinates for the segment endpoints. We used the
 maintenance of arrangements of line segments; see more details on
 this traits class in Section~\ref{arr_sec:traits}:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example1.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_edge_insertion.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note that the first line segment is inserted in the interior of
@@ -705,7 +705,7 @@ an isolated vertex and removes it from the arrangement.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments containing three isolated
-vertices, as constructed in \ccc{example2.C}. The vertices $u_2$
+vertices, as constructed in \ccc{ex_isolated_vertices.C}. The vertices $u_2$
 and $u_3$ are eventually removed from the arrangement.}
 \label{arr_fig:ex_2}
 \end{figure}
@@ -720,7 +720,7 @@ illustration). Finally, it traverses the vertices and removes those
 isolated vertices that are still contained in the unbounded face
 ($u_2$ and $u_3$ in this case):
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example2.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_isolated_vertices.C}
 
 \subsubsection{Manipulating Halfedges}
 \label{arr_sssec:mf_halfedges}
@@ -781,7 +781,7 @@ isolated vertices.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments as constructed
-in \ccc{example3.C}. Note that the edges $e_7$ and $e_8$ and the
+in \ccc{ex_edge_manipulation.C}. Note that the edges $e_7$ and $e_8$ and the
 vertices $w_1$ and $w_2$, introduced in step~(b) are eventually
 removed in step~(c).}
 \label{arr_fig:ex_3}
@@ -802,7 +802,7 @@ representable integer value.}. We also use the standard Cartesian
 kernel of \cgal\ as our kernel. This is recommended when the
 kernel is instantiated with a more complex number type:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example3.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_edge_manipulation.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note how we use the halfedge handles returned from
@@ -886,7 +886,7 @@ vertex.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments, as constructed in
-\ccc{example4.C}. Note that $p_0$ is initially inserted as an
+\ccc{ex_special_edge_insertion.C}. Note that $p_0$ is initially inserted as an
 isolated point and later on connected to the other four vertices.}
 \label{arr_fig:ex_4}
 \end{figure}
@@ -896,7 +896,7 @@ The following program shows how to construct the arrangement
 depicted in Figure~\ref{arr_fig:ex_4} using the specialized
 insertion functions that accept predecessor halfedges:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example4.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_special_edge_insertion.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 It is possible to perform even more refined operations on an
@@ -1113,7 +1113,8 @@ selected point-location strategy.
   </center>
 \end{ccHtmlOnly}
 \caption{The arrangement of line segments, as constructed in
-\ccc{example5.C}, \ccc{example6.C} and \ccc{example7.C}. The
+\ccc{ex_point_location.C}, \ccc{ex_vertical_ray_shooting.C}, and
+\ccc{ex_batched_point_location.C}. The
 arrangement vertices are drawn in light dots, while the query
 points $q_1, \ldots, q_6$ are marked with crosses.}
 \label{arr_fig:ex_5}
@@ -1128,7 +1129,7 @@ main program, and can be found in \ccc{point_location_utils.h}).
 It then employs the \naive\ and the landmark strategies to issue
 several point-location queries on this arrangement:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example5.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_point_location.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note that the program uses the auxiliary
@@ -1212,9 +1213,9 @@ void vertical_ray_shooting_query
 The following program uses the auxiliary function listed above to
 perform vertical ray-shooting queries on an arrangement. Note that
 the arrangement and the query points are exactly the same as in
-\ccc{example5.C} (see Figure~\ref{arr_fig:ex_5}):
+\ccc{ex_point_location.C} (see Figure~\ref{arr_fig:ex_5}):
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example6.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_vertical_ray_shooting.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The number type we use in this example is \cgal's built-in
@@ -1261,9 +1262,9 @@ additional data structures.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following program issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-\ccc{example5.C} (see Section~\ref{arr_ssec:pl}):
+\ccc{ex_point_location.C} (see Section~\ref{arr_ssec:pl}):
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example7.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_batched_point_location.C}
 
 \section{Free Arrangement Functions}
 \label{arr_sec:gl_funcs}
@@ -1449,7 +1450,8 @@ insertion operation may involve splitting curves.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of five intersecting line segments, as
-constructed in \ccc{example8.C} and \ccc{example9.C}. The segment
+constructed in \ccc{exincrementa_insertion.C} and
+\ccc{ex_aggregated_insertion.C}. The segment
 endpoints are marked with disks and the arrangement vertices
 that correspond to intersection points are marked by circles.
 The query point $q$ is marked with a cross and the face that
@@ -1476,7 +1478,7 @@ the input coordinates are rational (or integer). Therefore,
 the \ccc{Quotient<int>} number type is used to represent the
 coordinates:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example8.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_incremental_insertion.C}
 
 \subsection{Aggregated Insertion Functions}
 \label{arr_ssec:agg_insert}
@@ -1529,13 +1531,13 @@ in case of aggregated insertion.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The example below shows how to construct the arrangement of
 line segments depicted in Figure~\ref{arr_fig:ex_8} and built
-incrementally in \ccc{example8.C}, as shown in the previous
+incrementally in \ccc{ex_incremental_insertion.C}, as shown in the previous
 section. We use the aggregated insertion function
 \ccc{insert_x_monotone_curves()} as we deal with line segments.
 Note that no point-location object is defined and attached to the
 arrangement:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example9.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_aggregated_insertion.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 In case we have to insert a set of $m$ curves into an existing
@@ -1555,7 +1557,7 @@ one. For larger input sets, we use the aggregated insertion procedures.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of eleven intersecting line segments, as
-constructed in \ccc{example10.C}. The segments of ${\mathcal S}_1$
+constructed in \ccc{ex_global_insertion.C}. The segments of ${\mathcal S}_1$
 are drawn in solid lines and the segments of ${\mathcal S}_2$ are
 drawn in dark dashed lines. Note that the segment $s$ (light
 dashed line) overlaps one of the ${\mathcal S}_1$ segments.}
@@ -1575,7 +1577,7 @@ but as they intersect the existing arrangement, we have to use
 single segment $s$ we insert incrementally overlaps an existing
 arrangement edge:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example10.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_global_insertion.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The number type used in the example above,
@@ -1620,7 +1622,7 @@ horizontal edges and clears all redundant vertices, such that the
 final arrangement consists of just two edges associated with the
 vertical line segments:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example11.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_global_removal.C}
 
 \section{Traits Classes}
 \label{arr_sec:traits}
@@ -1829,7 +1831,7 @@ coordinates.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of three polylines, as constructed in
-\ccc{example12.C}. Disks mark vertices associated with
+\ccc{ex_polylines.C}. Disks mark vertices associated with
 polyline endpoints, while circles mark vertices that correspond
 to intersection points. Note that $\pi_2$ is split into three
 $x$-monotone polylines, and that $\pi_1$ and $\pi_3$ have two
@@ -1843,7 +1845,7 @@ polylines, as depicted in Figure~\ref{arr_fig:ex_12}. Note that
 most points defining the polylines are not associated with arrangement
 vertices:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example12.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_polylines.C}
 
 \subsection{The Conic Traits Class}
 \label{arr_ssec:tr_conic}
@@ -1975,7 +1977,7 @@ also support basic access functions such as \ccc{source()},
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of three circles constructed in
-\ccc{example13.C}. Each circle is split into two $x$-monotone
+\ccc{ex_circles.C}. Each circle is split into two $x$-monotone
 circular arcs, whose endpoints are drawn as disks. Circles
 mark vertices that correspond to intersection points. The vertex
 $v_{\rm max}$ is a common intersection point of all three
@@ -1990,7 +1992,7 @@ of maximal degree is searched for. The geometric mapping of this
 vertex is the point $(4,3)$, as all three circles intersect at this point
 and the associated vertex has six incident edges:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example13.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_circles.C}
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
@@ -2004,7 +2006,7 @@ and the associated vertex has six incident edges:
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of mixed conic arcs, as constructed in
-\ccc{example14.C}.}
+\ccc{ex_conics.C}.}
 \label{arr_fig:ex_14}
 \end{figure}
 
@@ -2022,7 +2024,7 @@ invalid} arc is created. We can verify the validity of an arc by
 using the \ccc{is_valid()} method. Needless to say, inserting
 invalid arcs into an arrangement is not allowed.
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example14.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_conics.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The last example in this section demonstrates how the conic-traits
@@ -2037,7 +2039,7 @@ tangent at $(0,0)$ and the same curvature $1$). In addition, they
 have another intersection point at $(\frac{1}{2},\frac{1}{2})$ of
 multiplicity $1$:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example15.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_conic_multiplicities.C}
 
 \subsection{Traits Class for Arcs of Rational Functions}
 \label{arr_ssec:tr_ratfunc}
@@ -2099,7 +2101,7 @@ $Q$.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of four arcs of rational functions, as
-constructed in \ccc{example16.C}.}
+constructed in \ccc{ex_rational_functions.C}.}
 \label{arr_fig:ex_16}
 \end{figure}
 
@@ -2109,7 +2111,7 @@ arrangement of rational arcs depicted in
 Figure~\ref{arr_fig:ex_16}. Note the usage of the two
 constructors, for polynomial arcs and for rational arcs:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example16.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_rational_functions.C}
 
 \subsection{Traits-Class Decorators}
 \label{arr_ssec:meta_tr}
@@ -2209,7 +2211,7 @@ the consolidated set $S_1 \cup S_2$.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of six red and blue segments, as
-constructed in \ccc{example17.C}. Disks correspond to
+constructed in \ccc{ex_consolidated_curve_data.C}. Disks correspond to
 red--blue intersection points, while circles mark the endpoints
 of red--blue overlaps.}
 \label{arr_fig:ex_17}
@@ -2226,7 +2228,7 @@ edges mapped to both, blue and red, segments. Thus, they correspond
 to red--blue intersection points. We also locate the edge that
 corresponds to overlaps between red and blue line segments:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example17.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_consolidated_curve_data.C}
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
@@ -2240,7 +2242,7 @@ corresponds to overlaps between red and blue line segments:
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of four polylines, named A--D, as
-constructed in \ccc{example18.C}.}
+constructed in \ccc{ex_generic_curve_data.C}.}
 \label{arr_fig:ex_18}
 \end{figure}
 
@@ -2253,7 +2255,7 @@ polylines. Also notice how we replace the curve associated with
 the edges that correspond to overlapping polylines with 
 geometrically equivalent curves, but with a different data fields:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example18.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_generic_curve_data.C}
 
 \section{The Notification Mechanism}
 \label{arr_sec:notif}
@@ -2372,7 +2374,7 @@ applications.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of five line segments, as constructed in
-\ccc{example19.C}. The halfedge $e_v$ (dashed) is eventually
+\ccc{ex_observer.C}. The halfedge $e_v$ (dashed) is eventually
 removed, so that the final arrangement consists of four faces (one
 unbounded and three bounded ones).}
 \label{arr_fig:ex_19}
@@ -2386,7 +2388,7 @@ to the insertion of an edge, and whenever two faces merge into one
 due to the removal of an edge. The layout of the arrangement is
 depicted in Figure~\ref{arr_fig:ex_19}:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example19.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_observer.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Observers are especially useful when the \dcel\ records are
@@ -2458,10 +2460,11 @@ modified and sets its data field accordingly.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of six line segments, as constructed in
-\ccc{example20.C} and \ccc{example21.C} (in \ccc{example21.C} we treat
+\ccc{ex_face_extension.C} and \ccc{ex_dcel_extension.C}
+(in \ccc{ex_dcel_extension.C} we treat
 the segments as directed, so they are drawn as arrows directed from the
 source to the target). The indices associated with the halfedges in
-\ccc{example20.C} are shown in brackets.}
+\ccc{ex_face_extension.C} are shown in brackets.}
 \label{arr_fig:ex_20}
 \end{figure}
 
@@ -2476,7 +2479,7 @@ segments:\footnote{For simplicity, the particular observer used must be
 attached to an empty arrangement. It is not difficult however to modify 
 the program to handle the general case.}
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example20.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_face_extension.C}
 
 \subsection{Extending All \dcel\ Records}
 \label{arr_ssec:ex_dcel_all}
@@ -2511,7 +2514,7 @@ Note that all auxiliary data fields are set during the construction phase.
 Also note that the data fields are properly maintained when the arrangement
 is copied to another arrangement instance:
  
-\ccIncludeExampleCode{../examples/Arrangement_2/example21.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_dcel_extension.C}
 
 \section{Overlaying Arrangements}
 \label{arr_sec:overlay}
@@ -2611,7 +2614,8 @@ concept. The details of this concept are given in the reference manual.
   </center>
 \end{ccHtmlOnly}
 \caption{Overlaying two simple arrangements of line segments, as done
-in \ccc{example22.C} and \ccc{example23.C}. In \ccc{example23.C} we 
+in \ccc{ex_overlay.C} and \ccc{ex_face_extension_overlay.C}.
+In \ccc{ex_face_extension_overlay.C} we concider
 the two bounded faces as {\em marked}, were the intersection of the two
 marked faces is denoted as $\hat{f}$.}
 \label{arr_fig:ex_22}
@@ -2621,7 +2625,7 @@ marked faces is denoted as $\hat{f}$.}
 The next program constructs two simple arrangements, as depicted in
 Figure~\ref{arr_fig:ex_22} and computes their overlay:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example22.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_overlay.C}
 
 \subsection{Example for a Face Overlay}
 \label{arr_ssec:face_ovl}
@@ -2642,7 +2646,7 @@ The example computes the intersection between a square and a rhombus, (which is
 actually also a square). The resulting polygon is an octagon, represented 
 by the shape $\hat{f}$ in Figure~\ref{arr_fig:ex_22}:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example23.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_face_extension_overlay.C}
 
 \section{Storing the Curve History}
 \label{arr_sec:arr_with_hist}
@@ -2809,7 +2813,8 @@ the details).
   <img src="./fig/ex_24.gif" border=0 alt="Example 24">
   </center>
 \end{ccHtmlOnly}
-\caption{An arrangement with history as constructed in \ccc{example24.C}. 
+\caption{An arrangement with history as constructed in
+\ccc{ex_curve_history.C}. 
 Note that $s_1$ and $s_3$ overlap over two edges. The point-location query
 points are drawn as lightly shaded dots.}
 \label{arr_fig:ex_24}
@@ -2822,7 +2827,7 @@ the curve history. The example demonstrates the usage of the special
 traversal functions. It also shows how to issue point-location queries
 on the resulting arrangement:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example24.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_curve_history.C}
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
@@ -2836,8 +2841,8 @@ on the resulting arrangement:
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement with history of nine circle as constructed in 
-\ccc{example25.C}. The large circle $C_0$ is eventually removed from the
-arrangement, with all 18 edges it induces.}
+\ccc{ex_edge_manipulation_curve_history.C}. The large circle $C_0$ is
+eventually removed from the arrangement, with all 18 edges it induces.}
 \label{arr_fig:ex_25}
 \end{figure}
 
@@ -2850,7 +2855,7 @@ vertical tangency points that are marked as red dots). The example also shows
 how to use the \ccc{split_edge()} and \ccc{merge_edge()} functions when
 operating on an arrangement-with-history instance:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example25.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_edge_manipulation_curve_history.C}
 
 \section{Input/Output Functions}
 \label{arr_sec:io}
@@ -2889,7 +2894,7 @@ The following example constructs the arrangement depicted in
 Figure~\ref{arr_fig:ex_5} and writes it to an output file. It also
 demonstrates how to re-read the arrangement from a file:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example26.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_io.C}
 
 \begin{ccAdvanced}
 \subsection{Arrangements with Auxiliary Data}
@@ -2936,12 +2941,13 @@ and faces, providing that the \ccc{VertexData}, \ccc{HalfedgeData} and
 \end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The following example constructs the same arrangement as example~21
+The following example constructs the same arrangement as the
+example \ccc{ex_dcel_extension} does
 (see Section~\ref{arr_ssec:ex_dcel_all}) which is depicted in
 Figure~\ref{arr_fig:ex_20}, and writes it to an output file. It also
 demonstrates how to re-read the arrangement from a file:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example27.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_dcel_extension_io.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 External users may write their own formatter classes by implementing
@@ -2972,12 +2978,13 @@ the \ccc{Curve_2} type defined by the traits class (as well as the
 the \ccc{<<} and\ccc{>>} operators.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The following example constructs the same arrangement as example~24
+The following example constructs the same arrangement as example
+\ccc{ex_curve_history} does
 (see Section~\ref{arr_ssec:arr_ssec:arr_hist_ex}) which is depicted in
 Figure~\ref{arr_fig:ex_24}, and writes it to an output file. It also
 demonstrates how to re-read the arrangement-with-history from a file:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example28.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_io_curve_history.C}
 
 \begin{ccAdvanced}
 The arrangement package also includes the free functions
@@ -3053,7 +3060,7 @@ particular implementation stores and retrieves the color property of the
 handled object in constant time, but requires a space holder for the value
 to exists in the referenced object. 
 
-\ccIncludeExampleCode{../examples/Arrangement_2/example29.C}
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_bgl_dual_adaptor.C}
 
 \section*{Design and Implementation History}
 %===========================================
