@@ -152,14 +152,14 @@ public:
   typedef CGALi::Sdg_arrangement_enum::Arrangement_type Arrangement_type;
 
 private:
-  typedef typename CK_traits::Construct_sdg_vertex_2
-  CK_Construct_sdg_vertex_2;
+  typedef typename CK_traits::Construct_svd_vertex_2
+  CK_Construct_svd_vertex_2;
 
-  typedef typename FK_traits::Construct_sdg_vertex_2
-  FK_Construct_sdg_vertex_2;
+  typedef typename FK_traits::Construct_svd_vertex_2
+  FK_Construct_svd_vertex_2;
 
-  typedef typename EK_traits::Construct_sdg_vertex_2
-  EK_Construct_sdg_vertex_2;
+  typedef typename EK_traits::Construct_svd_vertex_2
+  EK_Construct_svd_vertex_2;
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
@@ -171,11 +171,11 @@ public:
   //--------------
   // vertex and Voronoi circle
   typedef
-  Filtered_construction<CK_Construct_sdg_vertex_2,
-			EK_Construct_sdg_vertex_2,
-			FK_Construct_sdg_vertex_2,
+  Filtered_construction<CK_Construct_svd_vertex_2,
+			EK_Construct_svd_vertex_2,
+			FK_Construct_svd_vertex_2,
 			C2E, C2F, E2C, F2C>
-  Construct_sdg_vertex_2;
+  Construct_svd_vertex_2;
 
   //  typedef typename CK::Construct_site_2   Construct_site_2;
 
@@ -361,9 +361,9 @@ public:
 
   // CONSTRUCTIONS
   //--------------
-  Construct_sdg_vertex_2
-  construct_sdg_vertex_2_object() const { 
-    return Construct_sdg_vertex_2();
+  Construct_svd_vertex_2
+  construct_svd_vertex_2_object() const { 
+    return Construct_svd_vertex_2();
   }
 
   /*

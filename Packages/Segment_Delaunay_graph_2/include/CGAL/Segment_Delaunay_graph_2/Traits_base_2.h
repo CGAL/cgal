@@ -363,8 +363,8 @@ public:
   // CONSTRUCTIONS
   //--------------
   // vertex and Voronoi circle
-  typedef CGAL::Construct_sdg_vertex_2<K,MTag>  Construct_sdg_vertex_2;
-  //  typedef CGAL::Construct_sdg_circle_2<K,MTag>  Construct_sdg_circle_2;
+  typedef CGAL::Construct_svd_vertex_2<K,MTag>  Construct_svd_vertex_2;
+  //  typedef CGAL::Construct_svd_circle_2<K,MTag>  Construct_svd_circle_2;
 
   // PREDICATES
   //-----------
@@ -403,15 +403,15 @@ public:
 
   // CONSTRUCTIONS
   //--------------
-  Construct_sdg_vertex_2
-  construct_sdg_vertex_2_object() const { 
-    return Construct_sdg_vertex_2();
+  Construct_svd_vertex_2
+  construct_svd_vertex_2_object() const { 
+    return Construct_svd_vertex_2();
   }
 
   /*
-  Construct_sdg_circle_2
-  construct_sdg_circle_2_object() const {
-    return Construct_sdg_circle_2();
+  Construct_svd_circle_2
+  construct_svd_circle_2_object() const {
+    return Construct_svd_circle_2();
   }
   */
 

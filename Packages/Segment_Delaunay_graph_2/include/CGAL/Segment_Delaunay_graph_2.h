@@ -1115,7 +1115,7 @@ public:
   inline Point_2 circumcenter(const Site_2& t0, const Site_2& t1, 
 			      const Site_2& t2) const {
     return
-    geom_traits().construct_sdg_vertex_2_object()(t0, t1, t2);
+    geom_traits().construct_svd_vertex_2_object()(t0, t1, t2);
   }
 
 protected:

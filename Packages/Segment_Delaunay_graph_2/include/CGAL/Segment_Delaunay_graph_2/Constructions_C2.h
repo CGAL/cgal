@@ -111,7 +111,7 @@ public:
 //-----------------------------------------------------------------------
 
 template<class K, class M>
-class Construct_sdg_vertex_2
+class Construct_svd_vertex_2
 {
 public:
   typedef typename K::Site_2                Site_2;
@@ -206,7 +206,7 @@ public:
   typedef typename Gt::Point_2                  Point_2;
   typedef typename Gt::Line_2                   Line_2;
   typedef typename Gt::Ray_2                    Ray_2;
-  typedef typename Gt::Construct_sdg_vertex_2   Construct_sdg_vertex_2;
+  typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
   typedef typename Gt::Equal_2                  Equal_2;
   typedef Ray_2                                 result_type;
   typedef Arity_tag<3>                          Arity;
@@ -218,7 +218,7 @@ public:
 
     Equal_2 are_same_points;
 
-    Point_2 v = Construct_sdg_vertex_2()(p, q, r);
+    Point_2 v = Construct_svd_vertex_2()(p, q, r);
     Point_2 p1, p2;
     if ( p.is_point() && q.is_point() ) {
       p1 = q.point();
@@ -256,7 +256,7 @@ public:
   typedef typename Gt::Segment_2               Segment_2;
   typedef CGAL::Parabola_segment_2<Gt>         Parabola_segment_2;
 
-  typedef typename Gt::Construct_sdg_vertex_2  Construct_sdg_vertex_2;
+  typedef typename Gt::Construct_svd_vertex_2  Construct_svd_vertex_2;
   typedef typename Gt::Equal_2                 Equal_2;
 
   typedef CGAL::Object                         Object_2;
@@ -266,7 +266,7 @@ public:
   result_type operator()(const Site_2& p, const Site_2& q,
 			 const Site_2& r, const Site_2& s) const
   {
-    Construct_sdg_vertex_2 circumcenter;
+    Construct_svd_vertex_2 circumcenter;
     Point_2 vpqr = circumcenter(p, q, r);
     Point_2 vqps = circumcenter(q, p, s);
 

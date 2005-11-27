@@ -1,3 +1,7 @@
+27 November 2005:  Menelaos Karavelas
+- renamed the construct_sdg_vertex_2 related types and methods to
+  construct_svd_vertex_2 in order to conform with the doc.
+
 26 November 2005:  Menelaos Karavelas
 - user manual has been corrected in order to reflect the change in the
   name of the package.
