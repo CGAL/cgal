@@ -7,6 +7,12 @@
 - added testing for newly added constructors and adaptation policy's
   is_valid method that takes a Delaunay graph.
 - removed some unused code
+- added testsuite for segment Delaunay graph; it is going to replace
+  the testsuite for the segment Voronoi diagram (change in package name).
+- added Voronoi traits and adaptation policies for the segment
+  Delaunay graph; the Voronoi traits and adaptation policies for the
+  segment Voronoi diagram should be removed once the package is
+  removed from the release.
 
 23 November 2005:  Menelaos Karavelas
 - fixed error in documentation: the LaTeX to HTML converter does not

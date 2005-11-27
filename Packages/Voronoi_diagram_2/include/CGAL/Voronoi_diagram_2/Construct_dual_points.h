@@ -101,6 +101,23 @@ public:
   }
 };
 
+template<class SDG2>
+class Segment_Delaunay_graph_Voronoi_point_2
+{
+private:
+  typedef typename SDG2::Geom_traits   Geom_traits;
+
+public:
+  typedef typename SDG2::Point_2       result_type;
+  typedef typename SDG2::Face_handle   Face_handle;
+  typedef Arity_tag<1>                 Arity;
+
+  result_type operator()(const Face_handle& f) const {
+    return Geom_traits().construct_svd_vertex_2_object()
+      (f->vertex(0)->site(), f->vertex(1)->site(), f->vertex(2)->site());
+  }
+};
+
 //=========================================================================
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
