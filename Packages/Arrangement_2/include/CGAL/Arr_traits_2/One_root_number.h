@@ -196,6 +196,26 @@ public:
   template<class NT_> friend 
   CGAL::Comparison_result compare (const _One_root_number<NT_>& x,
                                    const _One_root_number<NT_>& y);
+
+  NT get_alpha() const
+  {
+    return (alpha);
+  }
+
+  NT get_beta() const
+  {
+    return (beta);
+  }
+
+  NT get_gamma() const
+  {
+    return (gamma);
+  }
+
+  bool is_rat() const
+  {
+    return (is_rational);
+  }
 };
 
 /*!
@@ -287,9 +307,6 @@ template <class NT>
   //
   //   (a + b*sqrt(c))^2 = (a^2 + b^2*c) + 2ab*sqrt(c)
   //
-  const NT          A = x.alpha*x.alpha + x.beta*x.beta * x.gamma;
-  const NT          B = 2 * x.alpha * x.beta;
-
   return (_One_root_number<NT> (x.alpha*x.alpha + x.beta*x.beta * x.gamma,
                                 2 * x.alpha * x.beta,
                                 x.gamma));
@@ -301,17 +318,6 @@ template <class NT>
 template <class NT>
 CGAL::Sign sign (const _One_root_number<NT>& x)
 {
-  /* RWRW: FILTER
-  const double   dx = CGAL::to_double(x);
-  if (::fabs (dx) > 0.1)
-  {
-    if (dx > 0)
-      return (POSITIVE);
-    else
-      return (NEGATIVE);
-  }
-  */
-
   const CGAL::Sign    sign_alpha = CGAL::sign (x.alpha);
 
   if (x.is_rational)
@@ -389,18 +395,6 @@ CGAL::Comparison_result compare (const _One_root_number<NT>& x,
     return (CGAL::compare (x.alpha, y));
   else if (y.is_rational)
     return (CGAL::compare (x, y.alpha));
-
-  /* RWRW: FILTER
-  const double   dx = CGAL::to_double(x);
-  const double   dy = CGAL::to_double(y);
-  if (::fabs (dx - dy) > 0.1)
-  {
-    if (dx > dy)
-      return (LARGER);
-    else
-      return (SMALLER);
-  }
-  */
 
   // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
   // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
