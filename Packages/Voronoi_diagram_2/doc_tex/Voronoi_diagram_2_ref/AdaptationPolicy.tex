@@ -71,7 +71,8 @@ graph they take as an argument, the last ones does.
 \ccTwo{AdaptationPolicy_2::Edge_rejector+}{}
 \ccGlue
 \ccNestedType{Edge_rejector}{A type for the predicate functor that is
-  responsible for rejecting an edge of the Delaunay graph. It must be
+  responsible for rejecting an edge of the Delaunay graph (or
+  equivalently rejecting its dual edge in the Voronoi diagram). It must be
   model of the concepts \ccc{DefaultConstructible},
   \ccc{CopyConstructible}, \ccc{Assignable}, and \ccc{AdaptableFunctor} 
   (with two arguments). It must provide the following operators:\\
@@ -85,8 +86,9 @@ graph they take as an argument, the last ones does.
   The functor returns \ccStyle{true} iff the edge is rejected.}
 \ccGlue
 \ccNestedType{Face_rejector}{A type for the predicate functor that is
-  responsible for rejecting a face of the Delaunay graph. It must be
-  model of the concepts \ccc{DefaultConstructible},
+  responsible for rejecting a vertex of the Delaunay graph (or
+  equivalently its dual face in the Voronoi diagram -- hence the name
+  of the functor). It must be model of the concepts \ccc{DefaultConstructible},
   \ccc{CopyConstructible}, \ccc{Assignable}, \ccc{AdaptableFunctor}
   (with two arguments). It must provide the following operator:\\
   \centerline{\ccc{bool operator()(Delaunay graph dg, Vertex_handle v)}}\\

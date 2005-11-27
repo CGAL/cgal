@@ -1,21 +1,25 @@
-23 Nov 2005:  Menelaos Karavelas
+27 November 2005:  Menelaos Karavelas
+- new version of the user manual; some text changes in the
+  AdaptationPolicy_2 manual page
+
+23 November 2005:  Menelaos Karavelas
 - fixed error in documentation: the LaTeX to HTML converter does not
   recognize the \ne macro. I believe it recognizes the \neq macro.
 
-21 Nov 2005:  Menelaos Karavelas
+21 November 2005:  Menelaos Karavelas
 - fixed problem with toolbars under linux. The toolbars stopped being
   visible once the menus where added. This has now been fixed.
 - added view menu; the user can now choose the background color among
   three: white, black, yellow.
 
-17 Nov 2005:  Menelaos Karavelas
+17 November 2005:  Menelaos Karavelas
 - added site removers in code and adaptation policies but have neither
   updated the doc, nor added testing for this functionality
 - re-added testing of constructor that takes an iterator range (fixed
   the problem with this constructor in the triangulation hierarchy)
 - finalized reference manual according to new design
 
-6 Nov 2005:  Menelaos Karavelas
+6 November 2005:  Menelaos Karavelas
 - more changes in doc: added AdaptationPolicy_2 concept and modified
   other parts of doc according to new design. Still to do: models for
   adaptation policies and user manual.
@@ -29,7 +33,7 @@
 - in demo makefile: added deletion of MacOSX application when "make clean"
   is called
 
-4 Nov 2005:  Menelaos Karavelas
+4 November 2005:  Menelaos Karavelas
 - changes to the doc towards the new design of the traits class and
   the introduction of the adaptation policy class
 - changed the result type of the Nearest_site_2 to boost::variant
@@ -40,7 +44,7 @@
 - insertions are now done through site inserters
 - changed test files according to changes in design
 
-16 Oct 2005:  Menelaos Karavelas
+16 October 2005:  Menelaos Karavelas
 - more changes towards the new design of the traits
 - in point location example: replaced the old Voronoi traits by the
   new caching Voronoi traits class
@@ -55,10 +59,10 @@
   problem in the copy constructor and assignment operator for the
   caching traits
 
-15 Oct 2005:  Menelaos Karavelas
+15 October 2005:  Menelaos Karavelas
 - changes towards the new design of the traits
 
-13 Oct 2005:  Menelaos Karavelas
+13 October 2005:  Menelaos Karavelas
 Testing:
 - removed unnecessary function and added testing for non-default
   constructors for the Voronoi_diagram_2 class
@@ -70,16 +74,16 @@ Documentation:
 - added afore-mentioned changes in constructors and type for the
   Voronoi_diagram_2 class.
 
-12 Oct 2005:  Menelaos Karavelas
+12 October 2005:  Menelaos Karavelas
 - modified doc according to new design
 
-11 Oct 2005:  Menelaos Karavelas
+11 October 2005:  Menelaos Karavelas
 - added more testing for the Delaunay graph concept.
 
-10 Oct 2005:  Menelaos Karavelas
+10 October 2005:  Menelaos Karavelas
 - fixed bug in demo
 
-6 Oct 2005:  Menelaos Karavelas
+6 October 2005:  Menelaos Karavelas
 - modified doc to match the code; changes in the concepts according to
   Mariette's suggestions/comments
 - modified testing accordingly
@@ -89,7 +93,7 @@ Documentation:
 - added generator iterator in testsuites; generator iterator may need some
   more work. Open question: should sites be renamed to generators?
 
-4 Oct 2005:  Menelaos Karavelas
+4 October 2005:  Menelaos Karavelas
 - renamed namespace Voronoi_diagram_2_namespace to VoronoiDiagram_2
 - added short names for publicly visible classes
 - added Internal namespace and moved all internal code to this namespace
