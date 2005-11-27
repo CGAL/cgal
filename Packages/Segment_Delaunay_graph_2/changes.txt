@@ -5,6 +5,9 @@
   instead of SEGMENT_DELAUNAY_GRAPH_2
 - in Sqrt_extension_{1,2}: replaced some preconditions/assertions + 
   CGAL_CHECK_PRECONDITIONS macro by CGAL_exactness_{precondition,assertion}
+- patched edge_list.h so that it does not conflicts with its old version
+  in the now obsolete package Segment_Voronoi_diagram_2. The patch should
+  be removed once the old package is removed from the release.
 
 26 November 2005:  Menelaos Karavelas
 - user manual has been corrected in order to reflect the change in the
