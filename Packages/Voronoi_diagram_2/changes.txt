@@ -1,6 +1,12 @@
 27 November 2005:  Menelaos Karavelas
 - new version of the user manual; some text changes in the
   AdaptationPolicy_2 manual page
+- added constructors in Voronoi_diagram_2 that take an adaptation policy
+- the is_valid() method of Voronoi_diagram_2 now passes the Delaunay
+  graph to the adaptation policy for testing.
+- added testing for newly added constructors and adaptation policy's
+  is_valid method that takes a Delaunay graph.
+- removed some unused code
 
 23 November 2005:  Menelaos Karavelas
 - fixed error in documentation: the LaTeX to HTML converter does not

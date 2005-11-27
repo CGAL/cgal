@@ -74,8 +74,7 @@ public:
   }
 
   bool is_valid(const Delaunay_graph& dg) const {
-    // to be implemented
-    return true;
+    return e_rejector_.is_valid() && f_rejector_.is_valid();
   }
 
 protected:
@@ -136,12 +135,22 @@ public:
   typedef typename Functor_exists<Site_inserter>::Value   Has_site_inserter;
   typedef typename Functor_exists<Site_remover>::Value    Has_site_remover;
 
+  typedef DG  Delaunay_graph;
+
   Site_inserter site_inserter_object() const {
     return Site_inserter(this);
   }
 
   Site_remover site_remover_object() const {
     return Site_remover(this);
+  }
+
+  bool is_valid() const {
+    return this->e_rejector_.is_valid() && this->f_rejector_.is_valid();
+  }
+
+  bool is_valid(const Delaunay_graph& dg) const {
+    return this->e_rejector_.is_valid(dg) && this->f_rejector_.is_valid(dg);
   }
 };
 

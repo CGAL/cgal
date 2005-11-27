@@ -285,24 +285,28 @@ public:
   // CONSTRUCTORS
   //--------------
   Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits(),
+		    const Adaptation_policy& ap = Adaptation_policy(),
 		    const Geom_traits& gt = Geom_traits())
-    : dual_(gt), tr_(tr) {}
+    : dual_(gt), ap_(ap), tr_(tr) {}
 
   Voronoi_diagram_2(const Delaunay_graph& dg,
-		    const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(dg), tr_(tr) {}
+		    const Voronoi_traits& tr = Voronoi_traits(),
+		    const Adaptation_policy& ap = Adaptation_policy())
+    : dual_(dg), ap_(ap), tr_(tr) {}
 
   template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond,
 		    const Voronoi_traits& tr = Voronoi_traits(),
+		    const Adaptation_policy& ap = Adaptation_policy(),
 		    const Geom_traits& gt = Geom_traits())
-    : dual_(first, beyond, gt), tr_(tr) {}
+    : dual_(first, beyond, gt), ap_(ap), tr_(tr) {}
 
   Voronoi_diagram_2(const Voronoi_diagram_2& other)
-    : dual_(other.dual_), tr_(other.tr_) {}
+    : dual_(other.dual_), ap_(other.ap_), tr_(other.tr_) {}
 
   Self& operator=(const Self& other) {
     dual_ = other.dual_;
+    ap_ = other.ap_;
     tr_ = other.tr_;
     return *this;
   }
@@ -628,33 +632,6 @@ public:
     CGAL_precondition( dual_.number_of_vertices() > 0 );
 
     typedef typename Voronoi_traits::Nearest_site_2    Nearest_site_2;
-#if 0
-    typedef typename Nearest_site_2::Query_result      Query_result;
-
-    Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
-    Query_result ns_qr = nearest_site(dual_, p);
-
-    if ( ns_qr.is_vertex() ) {
-      Face_handle f( Face(this, ns_qr) );
-      return Locate_result_accessor::make_locate_result(f);
-    } else if ( ns_qr.is_face() ) {
-      Find_valid_vertex vertex_finder;
-      Dual_face_handle dfvalid = vertex_finder(this, ns_qr);
-      Vertex_handle v( Vertex(this, dfvalid) );
-      return Locate_result_accessor::make_locate_result(v);
-    } else if ( ns_qr.is_edge() ) {
-      Dual_edge de = ns_qr;
-      CGAL_assertion(  !edge_tester()(dual_, de)  );
-      if ( dual_.dimension() == 1 ) {
-	Dual_vertex_handle v1 = de.first->vertex(CW_CCW_2::ccw(de.second));
-	Dual_vertex_handle v2 =	de.first->vertex(CW_CCW_2::cw(de.second) );
-	Halfedge_handle e( Halfedge(this, v1, v2) );
-	return Locate_result_accessor::make_locate_result(e);
-      }
-      Halfedge_handle e( Halfedge(this, de.first, de.second) );
-      return Locate_result_accessor::make_locate_result(e);
-    }
-#else
     typedef typename Nearest_site_2::result_type      Query_result;
 
     Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
@@ -684,7 +661,6 @@ public:
       Halfedge_handle e( Halfedge(this, de->first, de->second) );
       return Locate_result_accessor::make_locate_result(e);
     }
-#endif
 
     // I should never have reached this line;
     CGAL_assertion( false );
@@ -702,6 +678,7 @@ public:
   bool is_valid() const {
     bool valid = dual_.is_valid();
     valid = valid && ap_.is_valid();
+    valid = valid && ap_.is_valid(dual_);
 
     for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
       valid = valid && it->is_valid();

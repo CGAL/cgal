@@ -305,16 +305,20 @@ void test_adaptation_policy_concept(const DG& dg, const VT& vt, const AP& ap)
     AP ap2(ap);
     ap2.clear();
     CGAL_assertion( ap2.is_valid() );
+    CGAL_assertion( ap2.is_valid(dg) );
 
     AP ap3(ap);
     ap2.swap(ap3);
 
     CGAL_assertion( ap2.is_valid() );
+    CGAL_assertion( ap2.is_valid(dg) );
     CGAL_assertion( ap3.is_valid() );
+    CGAL_assertion( ap3.is_valid(dg) );
   }
 
   // testing validity method
   bool b = ap.is_valid();
+  b = ap.is_valid(dg);
   kill_warning( b );
   CGAL_assertion( b );
 

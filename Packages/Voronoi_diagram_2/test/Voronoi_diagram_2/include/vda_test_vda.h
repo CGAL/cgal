@@ -220,6 +220,7 @@ void test_vda(const VDA& vda)
   //--------------
   typedef typename VDA::Delaunay_graph                DG;
   typedef typename VDA::Voronoi_traits                VT;
+  typedef typename VDA::Adaptation_policy             AP;
 
   typedef typename VDA::size_type                     size_type;
 
@@ -257,6 +258,7 @@ void test_vda(const VDA& vda)
   //-----------------------
   const DG& dg = vda.dual();
   const VT& vt = vda.voronoi_traits();
+  const AP& ap = vda.adaptation_policy();
   kill_warning(dg);
   kill_warning(vt);
 
@@ -392,8 +394,9 @@ void test_vda(const VDA& vda)
 
   // testing existence of non-default constructors
   {
-    VDA vda2(vda.voronoi_traits());
-    VDA vda3(vda.voronoi_traits(), vda.dual().geom_traits());
+    VDA vda2(vt);
+    VDA vda3(vt, ap);
+    VDA vda4(vt, ap, vda.dual().geom_traits());
 
     std::vector<typename VT::Site_2> vs;
     for (Site_iterator sit = vda.sites_begin();
@@ -401,10 +404,10 @@ void test_vda(const VDA& vda)
       vs.push_back(*sit);
     }
 
-    VDA vda4(vs.begin(), vs.end());
-    VDA vda5(vs.begin(), vs.end(), vda.voronoi_traits());
-    VDA vda6(vs.begin(), vs.end(), vda.voronoi_traits(),
-	     vda.dual().geom_traits());
+    VDA vda5(vs.begin(), vs.end());
+    VDA vda6(vs.begin(), vs.end(), vt);
+    VDA vda7(vs.begin(), vs.end(), vt, ap);
+    VDA vda8(vs.begin(), vs.end(), vt, ap, vda.dual().geom_traits());
   }
 
   // testing copy constructor
