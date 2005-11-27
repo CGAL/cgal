@@ -149,20 +149,23 @@ corresponding handles.
 \ccThreeToTwo
 %
 \ccConstructor{Voronoi_diagram_2(Voronoi_traits
-  tr = Voronoi_traits());}{Creates a Voronoi diagram using \ccc{tr} as
-  Voronoi traits.}
+  tr = Voronoi_traits(), Adaptation_policy ap = Adaptation_policy());}
+{Creates a Voronoi diagram using \ccc{tr} as Voronoi traits and
+  \ccc{ap} as adaptation policy.}
 %
 \ccConstructor{Voronoi_diagram_2(Delaunay_graph dg, Voronoi_traits
-  tr = Voronoi_traits());}{Creates a Voronoi diagram from the
-  Delaunay graph \ccc{dg} and using \ccc{tr} as Voronoi traits. The
+  tr = Voronoi_traits(), Adaptation_policy ap = Adaptation_policy());}
+{Creates a Voronoi diagram from the Delaunay graph \ccc{dg} and using
+  \ccc{tr} as Voronoi traits and \ccc{ap} ad adaptation policy. The 
   Delaunay graph \ccc{dg} is fully copied.}
 %
 \ccConstructor{template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond, Voronoi_traits
-  tr = Voronoi_traits());}{Creates a Voronoi diagram using as
-  sites the sites in the iterator range \ccStyle{[first, beyond)}
-  and using \ccc{tr} as Voronoi traits. The value type of
-  \ccc{Iterator} must be \ccc{Site_2}.}
+  tr = Voronoi_traits(), Adaptation_policy ap = Adaptation_policy());}
+{Creates a Voronoi diagram using as sites the sites in the iterator
+  range \ccStyle{[first, beyond)}, \ccc{tr} as Voronoi traits and
+  \ccc{ap} as adaptation policy. The value type of \ccc{Iterator} must
+  be \ccc{Site_2}.}
 
 
 \ccHeading{Access Methods}
