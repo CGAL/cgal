@@ -1,6 +1,10 @@
 27 November 2005:  Menelaos Karavelas
 - renamed the construct_sdg_vertex_2 related types and methods to
   construct_svd_vertex_2 in order to conform with the doc.
+- renamed some file macros: they contained SEGMENT_VORONOI_DIAGRAM_2
+  instead of SEGMENT_DELAUNAY_GRAPH_2
+- in Sqrt_extension_{1,2}: replaced some preconditions/assertions + 
+  CGAL_CHECK_PRECONDITIONS macro by CGAL_exactness_{precondition,assertion}
 
 26 November 2005:  Menelaos Karavelas
 - user manual has been corrected in order to reflect the change in the

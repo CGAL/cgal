@@ -56,10 +56,8 @@ public:
 		   const NT& a3, const NT& A, const NT& B)
     : a0_(a0), a1_(a1), a2_(a2), a3_(a3), A_(A), B_(B)
   {
-#if CHECK_CGAL_PRECONDITIONS
-    CGAL_precondition( !(CGAL::is_negative(A_)) );
-    CGAL_precondition( !(CGAL::is_negative(B_)) );
-#endif
+    CGAL_exactness_precondition( !(CGAL::is_negative(A_)) );
+    CGAL_exactness_precondition( !(CGAL::is_negative(B_)) );
   }
 
   Sqrt_extension_2(const Sqrt_extension_2<NT>& other)
@@ -77,10 +75,8 @@ public:
 
   Self operator*(const Self& b) const
   {
-#if CHECK_CGAL_PRECONDITIONS
-    CGAL_precondition( CGAL::compare(A_, b.A_) == EQUAL );
-    CGAL_precondition( CGAL::compare(B_, b.B_) == EQUAL );
-#endif
+    CGAL_exactness_precondition( CGAL::compare(A_, b.A_) == EQUAL );
+    CGAL_exactness_precondition( CGAL::compare(B_, b.B_) == EQUAL );
 
     NT a0 = a0_ * b.a0_ + a1_ * b.a1_ * A_ + a2_ * b.a2_ * B_
       + a3_ * b.a3_ * A_ * B_;
@@ -203,10 +199,8 @@ inline
 Sqrt_extension_2<NT>
 operator+(const Sqrt_extension_2<NT>& x, const Sqrt_extension_2<NT>& y)
 {
-#if CHECK_CGAL_PRECONDITIONS
-  CGAL_precondition( CGAL::compare(x.e(), y.e()) == EQUAL );
-  CGAL_precondition( CGAL::compare(x.f(), y.f()) == EQUAL );
-#endif
+  CGAL_exactness_precondition( CGAL::compare(x.e(), y.e()) == EQUAL );
+  CGAL_exactness_precondition( CGAL::compare(x.f(), y.f()) == EQUAL );
 
   return Sqrt_extension_2<NT>(x.a() + y.a(), x.b() + y.b(),
 			      x.c() + y.c(), x.d() + y.d(),
@@ -273,10 +267,8 @@ struct Number_type_traits< Sqrt_extension_2<NT> >
   Comparison_result compare(const Sqrt_extension_2<NT>& x,
 			    const Sqrt_extension_2<NT>& y)
   {
-#if CHECK_CGAL_PRECONDITIONS
-    CGAL_precondition( CGAL::compare(x.e(), y.e()) == EQUAL );
-    CGAL_precondition( CGAL::compare(x.f(), y.f()) == EQUAL );
-#endif
+    CGAL_exactness_precondition( CGAL::compare(x.e(), y.e()) == EQUAL );
+    CGAL_exactness_precondition( CGAL::compare(x.f(), y.f()) == EQUAL );
 
     //  Sign s = CGAL::sign(x - y);
     Sign s = (x - y).sign();

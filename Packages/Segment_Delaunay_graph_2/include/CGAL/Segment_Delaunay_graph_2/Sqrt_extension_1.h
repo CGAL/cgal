@@ -26,8 +26,6 @@
 
 #include <iostream>
 
-#define CHECK_CGAL_PRECONDITIONS 0
-
 CGAL_BEGIN_NAMESPACE
 
 template<class NT>
@@ -59,9 +57,7 @@ public:
   Sqrt_extension_1(const NT& a, const NT& b, const NT& c)
     : x(a), y(b), r(c)
   {
-#if CHECK_CGAL_PRECONDITIONS
-    CGAL_assertion( !(CGAL::is_negative(r)) );
-#endif
+    CGAL_exactness_assertion( !(CGAL::is_negative(r)) );
   }
 
   Sqrt_extension_1(const Sqrt_extension_1<NT>& other)
@@ -159,9 +155,7 @@ inline
 Sqrt_extension_1<NT>
 operator*(const Sqrt_extension_1<NT>& x, const Sqrt_extension_1<NT>& y)
 {
-#if CHECK_CGAL_PRECONDITIONS
-  CGAL_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
-#endif
+  CGAL_exactness_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
 
   NT a = x.a() * y.a() + x.b() * y.b() * x.c();
   NT b = x.a() * y.b() + x.b() * y.a();
@@ -193,9 +187,7 @@ inline
 Sqrt_extension_1<NT>
 operator+(const Sqrt_extension_1<NT>& x, const Sqrt_extension_1<NT>& y)
 {
-#if CHECK_CGAL_PRECONDITIONS
-  CGAL_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
-#endif
+  CGAL_exactness_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
 
   return Sqrt_extension_1<NT>(x.a() + y.a(), x.b() + y.b(), x.c());
 }
@@ -263,9 +255,7 @@ struct Number_type_traits< Sqrt_extension_1<NT> >
   static inline
   Comparison_result compare(const Sqrt_extension_1<NT>& x,
 			    const Sqrt_extension_1<NT>& y) {
-#if CHECK_CGAL_PRECONDITIONS
-    CGAL_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
-#endif
+    CGAL_exactness_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
 
     //  Sign s = CGAL::sign(x - y);
     Sign s = (x - y).sign();
