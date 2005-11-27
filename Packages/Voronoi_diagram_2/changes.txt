@@ -13,6 +13,8 @@
   Delaunay graph; the Voronoi traits and adaptation policies for the
   segment Voronoi diagram should be removed once the package is
   removed from the release.
+- renamed Segment_Voronoi_diagram_2 to Segment_Delaunay_graph_2 in the ref
+  manual.
 
 23 November 2005:  Menelaos Karavelas
 - fixed error in documentation: the LaTeX to HTML converter does not
