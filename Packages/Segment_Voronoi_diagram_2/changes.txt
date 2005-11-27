@@ -1,3 +1,8 @@
+27 November 2005:  Menelaos Karavelas
+- added additional check before inclusion of edge_list.h because it conflicts
+  with the edge_list.h file in the Segment_Delaunay_graph_2 package.
+  This is temporary solution anyway since this package will become obsolete
+
 20 August 2005:  Menelaos Karavelas
 - added proper #ifdef's for the various number types (concerning
   whether or not they are defined in CGAL) in the test suite of traits

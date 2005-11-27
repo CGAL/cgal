@@ -19,9 +19,10 @@
 
 
 
+#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
+
 #ifndef CGAL_EDGE_LIST_H
 #define CGAL_EDGE_LIST_H
-
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/circulator_bases.h>
@@ -478,5 +479,6 @@ public:
 
 CGAL_END_NAMESPACE
 
-
 #endif // CGAL_EDGE_LIST_H
+
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
