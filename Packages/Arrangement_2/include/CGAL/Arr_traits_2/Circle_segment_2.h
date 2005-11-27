@@ -357,6 +357,93 @@ public:
   }
 
   /*!
+   * Constructor of a circular arc, from the given three points, in case of
+   * three collinear points, a segment will be constructed.            
+   * \param p1 The arc source.
+   * \param p2 A point in the interior of the arc.
+   * \param p3 The arc target.
+   * \pre p1 and p3 are not equal.
+   */
+   _Circle_segment_2 (const typename Kernel::Point_2& p1,
+                      const typename Kernel::Point_2& p2,
+                      const typename Kernel::Point_2& p3):
+     _has_radius(false),
+     _source(p1.x(), p1.y()),
+     _target(p3.x(), p3.y()),
+     _is_full(false)
+  {
+    // Set the source and target.
+    NT          x1 = p1.x();
+    NT          y1 = p1.y();
+    NT          x2 = p2.x();
+    NT          y2 = p2.y();
+    NT          x3 = p3.x();
+    NT          y3 = p3.y();
+
+  
+    // Make sure that the source and the taget are not the same.
+    CGAL_precondition (Kernel().compare_xy_2_object() (p1, p3) != EQUAL);
+
+    // Compute the lines: A1*x + B1*y + C1 = 0,
+    //               and: A2*x + B2*y + C2 = 0,
+    // where:
+    const NT  _two  = 2;
+
+    const NT  A1 = _two*(x1 - x2);
+    const NT  B1 = _two*(y1 - y2);
+    const NT  C1 = CGAL::square(y2) - CGAL::square(y1) + CGAL::square(x2) - CGAL::square(x1);
+
+    const NT  A2 = _two*(x2 - x3);
+    const NT  B2 = _two*(y2 - y3);
+    const NT  C2 = CGAL::square(y3) - CGAL::square(y2) + CGAL::square(x3) - CGAL::square(x2);
+
+    // Compute the coordinates of the intersection point between the
+    // two lines, given by (Nx / D, Ny / D), where:
+    const NT  Nx = B1*C2 - B2*C1;
+    const NT  Ny = A2*C1 - A1*C2;
+    const NT  D = A1*B2 - A2*B1;
+
+    // Make sure the three points are not collinear.
+    const bool  points_collinear = (CGAL::sign (D) == ZERO);
+
+    if (points_collinear)
+    {
+      _line  = Line_2(p1, p3);
+      _orient = COLLINEAR;
+      return;
+    }
+
+    // The equation of the underlying circle is given by:
+    
+    NT x_center = Nx / D;
+    NT y_center = Ny / D;
+
+    typename Kernel::Point_2 circ_center(x_center, y_center);
+
+
+    
+    NT sqr_rad = (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) / CGAL::square(D);
+
+    // Determine the orientation: If the mid-point forms a left-turn with
+    // the source and the target points, the orientation is positive (going
+    // counterclockwise).
+    // Otherwise, it is negative (going clockwise).
+    Kernel                         ker;
+    typename Kernel::Orientation_2 orient_f = ker.orientation_2_object();
+ 
+    if (orient_f(p1, p2, p3) == LEFT_TURN)
+      _orient = COUNTERCLOCKWISE;
+    else
+      _orient = CLOCKWISE;
+
+     _circ = Circle_2(circ_center, sqr_rad, _orient);
+  }
+
+
+
+
+
+  /*!
    * Get the orientation of the curve. 
    * \return COLLINEAR in case of a line segment,
    *         CLOCKWISE or COUNTERCLOCKWISE for circular curves.
@@ -411,6 +498,7 @@ public:
     CGAL_precondition (! _is_full);
     return (_target);
   }
+
 
   /*!
    * Get the vertical tangency points the arc contains.
@@ -677,6 +765,42 @@ public:
     _dir_right = (res == SMALLER);
   }
 
+  /*!
+   * Construct a segment arc from two kernel points
+   * \param source the source point.
+   * \ param target the target point.
+   * \pre source and target are not equal.
+   */
+  _X_monotone_circle_segment_2(const typename Kernel::Point_2& source,
+                               const typename Kernel::Point_2& target) :
+    _source(source.x(), source.y()),
+    _target(target.x(), target.y()),
+    _orient (COLLINEAR),
+    _is_vert(false)
+  {
+    Line_2 line(source, target);
+    _first  = line.a();
+    _second = line.b();
+    _third  = line.c();
+    
+    // Check if the segment is directed left or right:
+    Comparison_result   res = CGAL::compare (source.x(), target.x());
+
+    if (res == EQUAL)
+    {
+      CGAL_precondition (CGAL::sign(_second) == ZERO);
+
+      // We have a vertical segment - compare the points by their
+      // y-coordinates:
+      _is_vert = true;
+      res = CGAL::compare (source.y(), target.y());
+    }
+
+    CGAL_precondition (res != EQUAL);
+    _dir_right = (res == SMALLER);
+  }
+     
+
   /*! 
    * Construct a circular arc.
    * \param line The supporting line.
@@ -767,6 +891,11 @@ public:
   inline bool is_vertical () const
   {
     return (_is_vert);
+  }
+
+  Orientation orientation() const
+  {
+    return (_orient);
   }
 
   /*!
@@ -1087,7 +1216,7 @@ protected:
   {
     CGAL_precondition (_orient != COLLINEAR);
 
-    return ((_orient == COUNTERCLOCKWISE && !_dir_right) |
+    return ((_orient == COUNTERCLOCKWISE && !_dir_right) ||
             (_orient == CLOCKWISE && _dir_right));
   }
   //@}
@@ -1821,7 +1950,7 @@ protected:
     }
     else if (CGAL::sign (cv.a()) == ZERO)
     {
-      // The equation of the vertical line is y = -c / b.
+      // The equation of the horizontal line is y = -c / b.
       // The y-coordinates of the intersection points are:
       //   x =  x0 +/- sqrt(r^2 - (y - y0)^2)
       //
@@ -1862,8 +1991,8 @@ protected:
  
     // Compare the square-free part of the solution:
     const NT   aux = cv.b()*x0() - cv.a()*y0();
-    const NT   x_base = (aux - cv.a()*cv.c()) / line_factor;
-    const NT   y_base = (-aux - cv.b()*cv.c()) / line_factor;
+    const NT   x_base = (aux*cv.b() - cv.a()*cv.c()) / line_factor;
+    const NT   y_base = (-aux*cv.a() - cv.b()*cv.c()) / line_factor;
     Point_2    p1, p2;
 
     if (sign_disc == ZERO)
@@ -2095,6 +2224,55 @@ protected:
 
     // If we reached here, there are no overlaps:
     return (false);
+  }
+
+  public:
+  template <class OutputIterator>
+  void approximate(OutputIterator oi, unsigned int n) const
+  {
+    const double x_left = CGAL::to_double(this->source().x());
+    const double y_left = CGAL::to_double(this->source().y());
+
+    const double x_right = CGAL::to_double(this->target().x());
+    const double y_right = CGAL::to_double(this->target().y());
+    if(this->is_linear())
+    {
+      *oi = std::make_pair(x_left, y_left);
+      ++oi;
+
+      *oi = std::make_pair(x_right, y_right);
+      ++oi;
+      return;
+    }
+
+    // Otherwise, sample (n - 1) equally-spaced points in between.
+    const double  app_xcenter = CGAL::to_double (this->_first);
+    const double  app_ycenter = CGAL::to_double (this->_second);
+    const double  app_sqr_rad = CGAL::to_double (this->_third);
+   
+    const double  x_jump = (x_right - x_left) / n;
+    double        x, y;
+    double        disc;
+    unsigned int        i;
+
+    const bool is_up = this->_is_upper();
+    *oi = std::make_pair (x_left, y_left);   // The left point.
+    ++oi;
+    for (i = 1; i < n; i++)
+    {
+      x = x_left + x_jump*i;
+      disc = app_sqr_rad - CGAL::square(x - app_xcenter);
+      CGAL_precondition(disc >= 0);
+      if(is_up)
+        y = app_ycenter + CGAL::sqrt(disc);
+      else
+        y = app_ycenter - CGAL::sqrt(disc);
+
+      *oi = std::make_pair(x, y);
+      ++oi;
+    }
+    *oi = std::make_pair(x_right, y_right);   // The right point.
+    ++oi;
   }
 
   //@}
