@@ -25,7 +25,7 @@
  * Defintion of the Arrangement_zone_2 class.
  */
 
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <list>
 #include <map>
 #include <set>
@@ -70,7 +70,7 @@ public:
                    
 protected:
 
-  typedef Arr_traits_wrapper_2<Traits_2>          Traits_wrapper_2;
+  typedef Arr_traits_adaptor_2<Traits_2>          Traits_adaptor_2;
 
   // Types used for caching intersection points:
   typedef std::pair<Point_2, unsigned int>        Intersect_point_2;
@@ -84,7 +84,7 @@ protected:
 
   // Data members:
   Arrangement_2&          arr;         // The associated arrangement.
-  Traits_wrapper_2       *traits;      // Its associated traits object.
+  Traits_adaptor_2       *traits;      // Its associated traits object.
                                        
   Visitor                *visitor;     // The zone visitor.
 
@@ -145,7 +145,7 @@ public:
     invalid_v (),
     invalid_he ()
   {
-    traits = static_cast<Traits_wrapper_2*> (arr.get_traits());
+    traits = static_cast<Traits_adaptor_2*> (arr.get_traits());
 
     CGAL_assertion (visitor != NULL);
 

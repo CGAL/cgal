@@ -25,7 +25,7 @@
 
 //#define CGAL_LM_DEBUG
 
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>
 #include <time.h>
 
@@ -74,11 +74,11 @@ public:
 
 protected:
 
-  typedef Arr_traits_basic_wrapper_2<Traits_2>      Traits_wrapper_2;
+  typedef Arr_traits_basic_adaptor_2<Traits_2>      Traits_adaptor_2;
 
   // Data members:
   const Arrangement_2     *p_arr;      // The associated arrangement.
-  const Traits_wrapper_2  *traits;     // Its associated traits object.
+  const Traits_adaptor_2  *traits;     // Its associated traits object.
   Arr_landmarks_generator *lm_gen;     // The associated generator of landmarks
   mutable Edge_list	   m_flipped_edges;// The list of edges that were
                                        // flipped during this point location
@@ -102,7 +102,7 @@ public:
     p_arr (&arr), 
     m_start_edge(NULL)
   {
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+    traits = static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
     lm_gen = new Arr_landmarks_generator(arr);
     delete_generator = true;
   }
@@ -115,7 +115,7 @@ public:
     m_start_edge(NULL),
     delete_generator (false)
   {
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+    traits = static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
   }
 
   /*! Destructor. */
@@ -129,7 +129,7 @@ public:
   void attach (const Arrangement_2& arr, Arr_landmarks_generator *gen = NULL)
   {
     p_arr = &arr;
-    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+    traits = static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
 
     if (gen)
     {

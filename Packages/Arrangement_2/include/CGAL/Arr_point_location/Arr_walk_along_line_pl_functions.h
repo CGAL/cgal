@@ -37,7 +37,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 {
   // Start from the unbounded face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
-  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+  typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
   Holes_const_iterator   holes_it;
   Face_const_handle      face = p_arr->unbounded_face();
   Halfedge_const_handle  closest_he;
@@ -207,7 +207,7 @@ _vertical_ray_shoot (const Point_2& p,
 {
   // Start from the unbounded face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
-  typename Traits_wrapper_2::Is_vertical_2        is_vertical =
+  typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                             traits->is_vertical_2_object();
 
   Holes_const_iterator   holes_it;
@@ -320,11 +320,11 @@ _vertical_ray_shoot (const Point_2& p,
 
   // Check whether one of the isolated vertices in the face containing p lies
   // above (or below) it, closer than the closest halfdge we have located.
-  typename Traits_wrapper_2::Compare_x_2          compare_x =
+  typename Traits_adaptor_2::Compare_x_2          compare_x =
                                              traits->compare_x_2_object();
-  typename Traits_wrapper_2::Compare_xy_2         compare_xy =
+  typename Traits_adaptor_2::Compare_xy_2         compare_xy =
                                              traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
                                              traits->compare_y_at_x_2_object();
 
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
@@ -444,19 +444,19 @@ _is_in_connected_component (const Point_2& p,
   // cases that are explained below).
   unsigned int              n_ray_intersections = 0;
 
-  typename Traits_wrapper_2::Equal_2              equal =
+  typename Traits_adaptor_2::Equal_2              equal =
                                             traits->equal_2_object();
-  typename Traits_wrapper_2::Is_vertical_2        is_vertical =
+  typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                             traits->is_vertical_2_object();
-  typename Traits_wrapper_2::Compare_x_2          compare_x =
+  typename Traits_adaptor_2::Compare_x_2          compare_x =
                                             traits->compare_x_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
                                             traits->compare_y_at_x_2_object();
-  typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
+  typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
                                        traits->compare_y_position_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_right_2  compare_y_at_x_right =
+  typename Traits_adaptor_2::Compare_y_at_x_right_2  compare_y_at_x_right =
                                        traits->compare_y_at_x_right_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_left_2   compare_y_at_x_left =
+  typename Traits_adaptor_2::Compare_y_at_x_left_2   compare_y_at_x_left =
                                        traits->compare_y_at_x_left_2_object();
 
   // Start from the first non-vertical segment in the connected component.
@@ -742,9 +742,9 @@ _first_around_vertex (Vertex_const_handle v,
 {
   // Travrse the incident halfedges of the current vertex and locate the
   // lowest one to its left and the topmost to its right.
-  typename Traits_wrapper_2::Compare_y_at_x_right_2 compare_y_at_x_right =
+  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right =
                                       traits->compare_y_at_x_right_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_left_2  compare_y_at_x_left =
+  typename Traits_adaptor_2::Compare_y_at_x_left_2  compare_y_at_x_left =
                                       traits->compare_y_at_x_left_2_object();
 
   Halfedge_const_handle   invalid_handle;

@@ -23,7 +23,7 @@
  * Definition of the Arr_triangulation_point_location<Arrangement> template.
  */
 
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -102,10 +102,10 @@ public:
 
 protected:
 
-  typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
+  typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Traits_wrapper_2  *traits;     // Its associated traits object.
+  const Traits_adaptor_2  *traits;     // Its associated traits object.
   bool                    ignore_notifications;  
   CDT                     cdt;
   bool                    updated_cdt;
@@ -140,7 +140,7 @@ public:
     /*! Attach an arrangement object. */
     virtual void before_attach (const Arrangement_2& arr)
     {
-	    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+	    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
     }
 
     virtual void after_attach ()

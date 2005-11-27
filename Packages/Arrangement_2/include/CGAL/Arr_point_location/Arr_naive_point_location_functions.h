@@ -35,7 +35,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
 {
   // Go over the arrangement vertices and check whether one of them equals
   // the query point.
-  typename Traits_wrapper_2::Equal_2            equal = 
+  typename Traits_adaptor_2::Equal_2            equal = 
                                             traits->equal_2_object();
   typename Arrangement::Vertex_const_iterator   vit;
   typename Arrangement::Vertex_const_handle     vh;
@@ -49,9 +49,9 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
 
   // Go over arrangement halfedges and check whether one of them contains
   // the query point in its interior.
-  typename Traits_wrapper_2::Is_in_x_range_2    is_in_x_range = 
+  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range = 
                                             traits->is_in_x_range_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2   compare_y_at_x = 
+  typename Traits_adaptor_2::Compare_y_at_x_2   compare_y_at_x = 
                                             traits->compare_y_at_x_2_object();
   typename Arrangement::Edge_const_iterator     eit;
   typename Arrangement::Halfedge_const_handle   hh;
@@ -119,17 +119,17 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
   // Go over all halfedges in the arrangement.
-  typename Traits_wrapper_2::Is_in_x_range_2      is_in_x_range =
+  typename Traits_adaptor_2::Is_in_x_range_2      is_in_x_range =
                                        traits->is_in_x_range_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
                                        traits->compare_y_at_x_2_object();
-  typename Traits_wrapper_2::Is_vertical_2        is_vertical =
+  typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                        traits->is_vertical_2_object();
-  typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
+  typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
                                        traits->compare_y_position_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_right_2  compare_y_at_x_right =
+  typename Traits_adaptor_2::Compare_y_at_x_right_2  compare_y_at_x_right =
                                        traits->compare_y_at_x_right_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_left_2   compare_y_at_x_left =
+  typename Traits_adaptor_2::Compare_y_at_x_left_2   compare_y_at_x_left =
                                        traits->compare_y_at_x_left_2_object();
 
   typename Arrangement::Edge_const_iterator    eit = p_arr->edges_begin();
@@ -290,11 +290,11 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
 
   // Go over all isolated vertices in the arrangement.
-  typename Traits_wrapper_2::Compare_x_2          compare_x =
+  typename Traits_adaptor_2::Compare_x_2          compare_x =
                                         traits->compare_x_2_object();
-  typename Traits_wrapper_2::Compare_xy_2         compare_xy =
+  typename Traits_adaptor_2::Compare_xy_2         compare_xy =
                                         traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
                                         traits->compare_y_at_x_2_object();
 
   typename Arrangement::Vertex_const_iterator  vit;
@@ -353,9 +353,9 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
 {
   // Travrse the incident halfedges of the current vertex and locate the
   // lowest one to its left and the topmost to its right.
-  typename Traits_wrapper_2::Compare_y_at_x_right_2 compare_y_at_x_right =
+  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right =
                                       traits->compare_y_at_x_right_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_left_2  compare_y_at_x_left =
+  typename Traits_adaptor_2::Compare_y_at_x_left_2  compare_y_at_x_left =
                                       traits->compare_y_at_x_left_2_object();
 
   Halfedge_const_handle   invalid_handle;

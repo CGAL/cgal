@@ -130,7 +130,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     // However, we first have to check whether the query point coincides with
     // any of the isolated vertices contained inside this face.
     Isolated_vertices_const_iterator   iso_verts_it;
-    typename Traits_wrapper_2::Equal_2 equal = traits->equal_2_object();
+    typename Traits_adaptor_2::Equal_2 equal = traits->equal_2_object();
 
     for (iso_verts_it = (*fh)->isolated_vertices_begin();
          iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
@@ -259,10 +259,10 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   Halfedge_around_vertex_const_circulator circ_done (circ);
   Halfedge_around_vertex_const_circulator prev = circ;
   
-  typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
+  typename Traits_adaptor_2::Compare_xy_2           compare_xy = 
     traits->compare_xy_2_object();
   
-  typename Traits_wrapper_2::Compare_cw_around_point_2 compare_cw_around_point =
+  typename Traits_adaptor_2::Compare_cw_around_point_2 compare_cw_around_point =
     traits->compare_cw_around_point_2_object();
   
   //check if cv_other_point is to the left of v,  to the right, 
@@ -764,10 +764,10 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   Ccb_halfedge_const_circulator curr = face;
   Ccb_halfedge_const_circulator last =  curr;
 
-  typename Traits_wrapper_2::Equal_2 equal = traits->equal_2_object();
-  typename Traits_wrapper_2::Compare_xy_2     compare_xy = 
+  typename Traits_adaptor_2::Equal_2 equal = traits->equal_2_object();
+  typename Traits_adaptor_2::Compare_xy_2     compare_xy = 
                                        traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x = 
+  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x = 
                                        traits->compare_y_at_x_2_object();
 
 
@@ -866,7 +866,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   Ccb_halfedge_const_circulator last =  curr;
   bool p_in_x_range, v_in_x_range, p1_in_x_range, p2_in_x_range;  
 
-  typename Traits_wrapper_2::Is_in_x_range_2         is_in_x_range = 
+  typename Traits_adaptor_2::Is_in_x_range_2         is_in_x_range = 
                                       traits->is_in_x_range_2_object();
 
 
@@ -950,17 +950,17 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
                   const X_monotone_curve_2 & cv,
                   bool & intersect) const 
 {
-  typename Traits_wrapper_2::Equal_2              equal = 
+  typename Traits_adaptor_2::Equal_2              equal = 
                                             traits->equal_2_object();
-  typename Traits_wrapper_2::Compare_xy_2          compare_xy = 
+  typename Traits_adaptor_2::Compare_xy_2          compare_xy = 
                                             traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x = 
+  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x = 
                                             traits->compare_y_at_x_2_object();
-  typename Traits_wrapper_2::Is_in_x_range_2      is_in_x_range = 
+  typename Traits_adaptor_2::Is_in_x_range_2      is_in_x_range = 
                                             traits->is_in_x_range_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_right_2 compare_y_at_x_right = 
+  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right = 
                                       traits->compare_y_at_x_right_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_left_2 compare_y_at_x_left = 
+  typename Traits_adaptor_2::Compare_y_at_x_left_2 compare_y_at_x_left = 
                                       traits->compare_y_at_x_left_2_object();
 
   const Point_2& seg_right = traits->construct_max_vertex_2_object()(seg);

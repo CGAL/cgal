@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 //                 (based on old version by: Iddo Hanniel,
 //                                           Eyal Flato,
 //                                           Oren Nechushtan,
@@ -47,7 +48,7 @@ Arrangement_2<Traits,Dcel>::Arrangement_2 () :
   un_face->set_halfedge(NULL);
 
   // Allocate the traits.
-  traits = new Traits_wrapper_2;
+  traits = new Traits_adaptor_2;
   own_traits = true;
 }
 
@@ -75,7 +76,7 @@ Arrangement_2<Traits,Dcel>::Arrangement_2 (Traits_2 *tr) :
   un_face->set_halfedge(NULL);
 
   // Set the traits.
-  traits = static_cast<Traits_wrapper_2*>(tr);
+  traits = static_cast<Traits_adaptor_2*>(tr);
   own_traits = false;
 }
 
@@ -147,7 +148,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
     delete traits;
 
   if (arr.own_traits)
-    traits = new Traits_wrapper_2;
+    traits = new Traits_adaptor_2;
   else
     traits = arr.traits;
   own_traits = arr.own_traits;
@@ -1129,7 +1130,7 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
     // points at the new hole in order to send it to _remove_hole().
     // We begin by locating the leftmost point along the path from he1 to he2
     // and the leftmost point along the path from he2 to he1.
-    typename Traits_wrapper_2::Compare_xy_2  compare_xy =
+    typename Traits_adaptor_2::Compare_xy_2  compare_xy =
                                                  traits->compare_xy_2_object();
     DHalfedge      *ccb1 = he1->next();
     DHalfedge      *ccb2 = he2->next();
@@ -1201,7 +1202,7 @@ Arrangement_2<Traits,Dcel>::_locate_around_vertex
 
   // Otherwise, we traverse the halfedges around v until we find the pair
   // of adjacent halfedges between which we should insert cv.
-  typename Traits_wrapper_2::Is_between_cw_2  is_between_cw =
+  typename Traits_adaptor_2::Is_between_cw_2  is_between_cw =
                                               traits->is_between_cw_2_object();
 
   bool       eq_curr, eq_next;
@@ -1279,7 +1280,7 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   // smallest target vertex, which is also the first halfedge we encounter
   // if we go around this vertex in a counterclockwise direction, starting
   // from - and not including - "6 o'clock").
-  typename Traits_wrapper_2::Compare_xy_2  compare_xy =
+  typename Traits_adaptor_2::Compare_xy_2  compare_xy =
                                                  traits->compare_xy_2_object();
 
   const DHalfedge   *left_edge = NULL;
@@ -1368,13 +1369,13 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
 
   // Find the first halfedge whose associated curve is non-vertical along the
   // boundary of the given connected component.
-  typename Traits_wrapper_2::Is_vertical_2    is_vertical =
+  typename Traits_adaptor_2::Is_vertical_2    is_vertical =
                                             traits->is_vertical_2_object();
-  typename Traits_wrapper_2::Equal_2          equal =
+  typename Traits_adaptor_2::Equal_2          equal =
                                             traits->equal_2_object();
-  typename Traits_wrapper_2::Compare_x_2      compare_x =
+  typename Traits_adaptor_2::Compare_x_2      compare_x =
                                             traits->compare_x_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2 compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
                                             traits->compare_y_at_x_2_object();
 
   const DHalfedge    *curr = he;
@@ -2799,7 +2800,7 @@ bool Arrangement_2<Traits,Dcel>::_is_valid (Halfedge_const_handle he) const
   const Point_2& he_s  = he->source()->point();
   const Point_2& he_t  = he->target()->point();
 
-  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+  typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
 
   Comparison_result res = traits->compare_xy_2_object() (he_s, he_t);
 
@@ -2888,9 +2889,9 @@ bool Arrangement_2<Traits,Dcel>::_are_vertices_unique() const
 
   // Sort the vector of points and make sure no two adjacent points in the
   // sorted vector are equal.
-  typedef typename Traits_wrapper_2::Compare_xy_2    Compare_xy_2; 
+  typedef typename Traits_adaptor_2::Compare_xy_2    Compare_xy_2; 
   
-  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+  typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
   Compare_xy_2                  compare_xy = traits->compare_xy_2_object();
   Compare_to_less<Compare_xy_2> cmp = compare_to_less (compare_xy);
   
@@ -2914,7 +2915,7 @@ bool Arrangement_2<Traits,Dcel>::_are_curves_ordered_cw_around_vertrex
   if(v->degree() < 3)
     return (true);
 
-  typename Traits_wrapper_2::Is_between_cw_2  is_between_cw =
+  typename Traits_adaptor_2::Is_between_cw_2  is_between_cw =
                                               traits->is_between_cw_2_object();
 
   Halfedge_around_vertex_const_circulator circ = v->incident_halfedges();

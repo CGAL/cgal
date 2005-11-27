@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
 
 #ifndef CGAL_ARRANGEMENT_ZONE_2_FUNCTIONS_H
@@ -226,7 +227,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
   }
 
   // Find the face containing cv around the vertex.
-  typename Traits_wrapper_2::Is_between_cw_2  is_between_cw =
+  typename Traits_adaptor_2::Is_between_cw_2  is_between_cw =
                                              traits->is_between_cw_2_object();
 
   do
@@ -545,15 +546,15 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
   // Go over the outer boundary of the face (if one exists), and try to
   // locate intersections of cv with the edges along the boundary.
-  typename Traits_wrapper_2::Compare_xy_2            compare_xy =
+  typename Traits_adaptor_2::Compare_xy_2            compare_xy =
                                       traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Is_in_x_range_2         is_in_x_range =
+  typename Traits_adaptor_2::Is_in_x_range_2         is_in_x_range =
                                       traits->is_in_x_range_2_object();
-  typename Traits_wrapper_2::Construct_min_vertex_2  min_vertex =
+  typename Traits_adaptor_2::Construct_min_vertex_2  min_vertex =
                                       traits->construct_min_vertex_2_object();
-  typename Traits_wrapper_2::Construct_max_vertex_2  max_vertex =
+  typename Traits_adaptor_2::Construct_max_vertex_2  max_vertex =
                                       traits->construct_max_vertex_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2        compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2        compare_y_at_x =
                                       traits->compare_y_at_x_2_object();
 
   typename Arrangement_2::Ccb_halfedge_circulator  he_first;

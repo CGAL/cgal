@@ -24,7 +24,7 @@
 */
 #include <CGAL/basic.h>
 #include <CGAL/Arr_point_location/ANN.h>"
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 //#define CGAL_LM_ANN_DEBUG
 #ifdef CGAL_LM_ANN_DEBUG

@@ -17,6 +17,7 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
 #ifndef CGAL_ARRANGEMENT_2_INSERT_H
 #define CGAL_ARRANGEMENT_2_INSERT_H
@@ -29,7 +30,7 @@
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_construction.h>
 #include <CGAL/Sweep_line_2/Arr_addition.h>
@@ -62,10 +63,10 @@ void insert_curve (Arrangement_2<Traits,Dcel>& arr,
   Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Break the input curve into x-monotone subcurves and isolated points.
-  typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
+  typedef Arr_traits_adaptor_2<Traits>                   Traits_adaptor_2;
 
-  Traits_wrapper_2   *traits =
-                        static_cast<Traits_wrapper_2*> (arr.get_traits());
+  Traits_adaptor_2   *traits =
+                        static_cast<Traits_adaptor_2*> (arr.get_traits());
 
   std::list<CGAL::Object>                     x_objects;
   std::list<CGAL::Object>::const_iterator     obj_iter;
@@ -504,10 +505,10 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   // Examine the end-vertices: If a vertex has now two incident edges, and the
   // curves associated with these edges can be merged, merge the two edges and
   // remove the vertex.
-  typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
+  typedef Arr_traits_adaptor_2<Traits>                   Traits_adaptor_2;
 
-  Traits_wrapper_2                *traits =
-                         static_cast<Traits_wrapper_2*>(arr.get_traits());
+  Traits_adaptor_2                *traits =
+                         static_cast<Traits_adaptor_2*>(arr.get_traits());
 
   typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
   typename Arrangement_2::Halfedge_handle                    e1, e2;
@@ -644,7 +645,7 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
   // Notify the arrangement observers that a global operation is about to 
   // take place.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
-  typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
+  typedef Arr_traits_adaptor_2<Traits>                   Traits_adaptor_2;
 
   Arr_accessor<Arrangement_2>                      arr_access (arr);
 
@@ -664,8 +665,8 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
     // If the vertex has now two incident edges, and the curves associated
     // with these edges can be merged, merge the two edges and remove the
     // vertex.
-    Traits_wrapper_2                *traits =
-                        static_cast<Traits_wrapper_2*>(arr.get_traits());
+    Traits_adaptor_2                *traits =
+                        static_cast<Traits_adaptor_2*>(arr.get_traits());
 
     typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
     typename Arrangement_2::Halfedge_handle                    e1, e2;

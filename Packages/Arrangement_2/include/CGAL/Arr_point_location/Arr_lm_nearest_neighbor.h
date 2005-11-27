@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

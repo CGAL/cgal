@@ -25,7 +25,7 @@
  * Definition of the Arr_trapezoid_ric_point_location<Arrangement> template.
  */
 
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/Arr_point_location/Td_traits.h>
 
@@ -127,8 +127,8 @@ public:
 
   typedef PL_X_curve_plus<Arrangement_2>                  X_curve_plus;
 
-  typedef Arr_traits_basic_wrapper_2<Traits_2>            Traits_wrapper_2;
-  typedef CGAL::Td_traits<Traits_wrapper_2, X_curve_plus> Td_traits;
+  typedef Arr_traits_basic_adaptor_2<Traits_2>            Traits_adaptor_2;
+  typedef CGAL::Td_traits<Traits_adaptor_2, X_curve_plus> Td_traits;
   typedef Trapezoidal_decomposition_2<Td_traits>    Trapezoidal_decomposition;
   typedef std::vector<Halfedge_const_handle>        Halfedge_handle_container;
   typedef typename Halfedge_handle_container::iterator 
@@ -139,7 +139,7 @@ protected:
   typedef Trapezoidal_decomposition             TD;
 
   // Data members:
-  const Traits_wrapper_2    *traits;  // Its associated traits object.
+  const Traits_adaptor_2    *traits;  // Its associated traits object.
 
   TD                        td;       // instance of trapezoidal decomposition
   const Td_traits*          td_traits;// instance of the TD traits
@@ -163,7 +163,7 @@ public:
   Arr_trapezoid_ric_point_location (const Arrangement_2& arr) :
     Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr))
   {
-    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
     td_traits = new Td_traits(*traits);
     td.init_traits(td_traits);
 
@@ -219,7 +219,7 @@ public:
   virtual void before_assign (const Arrangement_2& arr)
   {
     clear_trapezoid_ric();
-	  traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+	  traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
   }
 
   virtual void after_assign ()
@@ -240,7 +240,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_trapezoid_ric();
-	  traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+	  traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
     td_traits = new Td_traits(*traits);
     td.init_traits(td_traits);
   }

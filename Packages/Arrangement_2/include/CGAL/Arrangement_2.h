@@ -15,13 +15,14 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 (based on old version by: Iddo Hanniel,
-//                                           Eyal Flato,
-//                                           Oren Nechushtan,
-//                                           Ester Ezra,
-//                                           Shai Hirsch,
-//                                           and Eugene Lipovetsky)
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
+//            (based on old version by: Iddo Hanniel,
+//                                      Eyal Flato,
+//                                      Oren Nechushtan,
+//                                      Ester Ezra,
+//                                      Shai Hirsch,
+//                                      and Eugene Lipovetsky)
 #ifndef CGAL_ARRANGEMENT_2_H
 #define CGAL_ARRANGEMENT_2_H
 
@@ -34,7 +35,7 @@
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arr_accessor.h>
-#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -71,7 +72,7 @@ protected:
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   
-  typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
+  typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Internal DCEL types:
   typedef typename Dcel::Vertex                      DVertex;
@@ -674,7 +675,7 @@ protected:
                                     // that correspond to the edges.
   Curves_alloc        curves_alloc; // Allocator for the curves.
   Observers_container observers;    // Storing pointers to existing observers.
-  Traits_wrapper_2   *traits;       // The traits wrapper.
+  Traits_adaptor_2   *traits;       // The traits adaptor.
   bool                own_traits;   // Inidicate whether we should evetually
                                     // free the traits object.
 
