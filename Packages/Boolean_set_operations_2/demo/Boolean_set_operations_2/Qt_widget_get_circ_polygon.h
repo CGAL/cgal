@@ -110,9 +110,11 @@ namespace CGAL
       FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
-      m_is_circ_mode = true;
+     
        if (m_last_of_poly == Point_2(x,y)) 
           return;
+
+       m_is_circ_mode = true;
       CircModeEvent(e);
       return;
     }
