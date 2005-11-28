@@ -158,10 +158,7 @@ public:
   class Handle
   {
     // Give the red-black tree class template access to the Handle's members.
-
     friend class Red_black_tree<TYPE,COMP,Alloc>;
-
-
 
   private:
 
