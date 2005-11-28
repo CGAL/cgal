@@ -29,7 +29,8 @@ class General_polygon_2
 {
 public:
 
-  typedef typename Arr_traits::X_monotone_curve_2    X_monotone_curve_2;
+  typedef Arr_traits                                 Traits_2;
+  typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
   typedef std::list<X_monotone_curve_2>              Containter;
   typedef typename Containter::iterator              Curve_iterator;
   typedef typename Containter::const_iterator        Curve_const_iterator;
@@ -49,7 +50,7 @@ public:
   template <class CurveIterator>
   void insert(CurveIterator begin, CurveIterator end)
   {
-    m_xcurves.insert(begin, end, m_xcurves.end());
+    m_xcurves.insert(m_xcurves.end(), begin, end);
   }
 
   bool is_empty() const
@@ -81,8 +82,95 @@ public:
   {
     return m_xcurves.end();
   }
+
+  void push_back(const X_monotone_curve_2& cv)
+  {
+    m_xcurves.push_back(cv);
+  }
+
+  void clear()
+  {
+    m_xcurves.clear();
+  }
+
+  Curve_iterator erase(Curve_iterator it)
+  {
+    return (m_xcurves.erase(it));
+  }
+
+
+  template <class OutputIterator>
+  void approximate(OutputIterator oi, unsigned int n) const
+  {
+    for(Curve_const_iterator itr = m_xcurves.begin();
+        itr != m_xcurves.end();
+        ++itr)
+    {
+      itr->approximate(oi, n);
+    }
+  }
+    
  
 };
+
+
+//-----------------------------------------------------------------------//
+//                          operator>>
+//-----------------------------------------------------------------------//
+
+template <class Traits>
+std::istream &operator>>(std::istream &is, General_polygon_2<Traits>& p)
+{
+  int n; // number of edges
+  is >> n;
+  typename Traits::X_monotone_curve_2 cv;
+ 
+  if (is) {
+      p.clear();
+      for (int i=0; i<n; i++) {
+        is >> cv;
+        p.push_back(cv);
+      }
+  }
+ 
+  return is;
+}
+
+//-----------------------------------------------------------------------//
+//                          operator<<
+//-----------------------------------------------------------------------//
+
+template <class Traits>
+std::ostream
+&operator<<(std::ostream &os, const General_polygon_2<Traits>& p)
+{
+  typename General_polygon_2<Traits>::Curve_const_iterator i;
+
+  switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+      os << p.size() << ' ';
+      for (i = p.curves_begin(); i != p.curves_end(); ++i) {
+        os << *i << ' ';
+      }
+      return os;
+
+    case IO::BINARY :
+      os << p.size();
+      for (i = p.curves_begin(); i != p.curves_end(); ++i) {
+        os << *i;
+      }
+      return os;
+
+    default:
+      os << "Polygon_2(" << std::endl;
+      for (i = p.curves_begin(); i != p.curves_end(); ++i) {
+        os << "  " << *i << std::endl;
+      }
+      os << ")" << std::endl;
+      return os;
+  }
+}
+
 
 CGAL_END_NAMESPACE
 
