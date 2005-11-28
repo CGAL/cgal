@@ -6,7 +6,6 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
-#include <CGAL/General_polygon_with_holes_iostream_2.h>
 
 #include <list>
 

@@ -4,10 +4,9 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Gps_segment_traits_2.h
+#include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
-#include <CGAL/General_polygon_with_holes_iostream_2.h>
 
 #include <list>
 
