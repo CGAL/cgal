@@ -116,7 +116,19 @@ public slots :
   	std::ifstream infile(s, std::ios::in);
   	double iXSize, iYSize;
 		iXSize = iYSize = 512;
-		regular_grid = new Field(infile, iXSize, iYSize);
+		unsigned int x_samples, y_samples;
+		infile >> x_samples;
+		infile >> y_samples;
+		regular_grid = new Field(x_samples, y_samples, iXSize, iYSize);
+	/*fill the grid with the appropreate values*/
+		for (unsigned int i=0;i<x_samples;i++)
+			for (unsigned int j=0;j<y_samples;j++)
+				{
+					double xval, yval;
+					infile >> xval;
+					infile >> yval;
+					regular_grid->set_field(i, j, xval, yval);
+				}
 		infile.close();
 		completed = false;
 		number_of_lines_ = 0;

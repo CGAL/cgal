@@ -18,19 +18,16 @@
 \ccCreationVariable{regular_grid_2}
 \ccDefinition
   
-The class \ccRefName\ can be used to instantiate the \ccc{VectorField_2} parameter of
-the \ccc{Stream_lines_2<VectorField_2, Integrator_2>} class.  The templated parameter \ccc{StreamLinesTraits_2} has to be
+The template parameter \ccc{StreamLinesTraits_2} has to be
 instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
-This class provides an empty 2D vector field defined on a regular
-grid, with a bilinear interpolation over its cells.
+This class provides a 2D vector field specified by a set of sample points defined on a regular
+grid, with a bilinear interpolation scheme over its cells (i.e. for each point \ccc{p} in a cell \ccc{c}, the vector value is interpolated from the vertices of \ccc{c}).
 
 \ccCreation
-\ccCreationVariable{regular_grid_2}  %% choose variable name
+\ccCreationVariable{rgrid}  %% choose variable name
 
-\ccThree{Regular_grid_2<StreamLinesTraits_2>}{r = Regular_grid_2 regular_grid_2}{}
+\ccThree{Regular_grid_2<StreamLinesTraits_2>}{r = Regular_grid_2 rgrid}{}
 \ccThreeToTwo
-\ccConstructor{Regular_grid_2();}
-{Generate an empty regular grid \ccVar.}
 
 \ccThree{Regular_grid_2<StreamLinesTraits>}{r = Regular_grid_2 regular_grid_2}{}
 \ccThreeToTwo

@@ -50,11 +50,10 @@ protected:
   bool is_in_samples(const int & i,const int & j) const;
 public:
   Regular_grid_2(const int & m, const int & n,const FT & x, const FT & y);
-  Regular_grid_2();
-	Regular_grid_2(std::ifstream & f, const FT & x, const FT & y){fill(f, x, y);}
+//   Regular_grid_2();
   ~Regular_grid_2(){delete [] vector_field;}
 	void fill(std::ifstream & f, const FT & x, const FT & y);
-  inline typename Geom_traits::Iso_rectangle_2 iso_rectangle() const;
+  inline typename Geom_traits::Iso_rectangle_2 bbox() const;
   std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
   inline bool is_in_domain(const Point_2 & p) const;
   inline FT get_integration_step(const Point_2 &) const;
@@ -64,7 +63,7 @@ public:
 template <class StreamLinesTraits_2>
 inline
 typename Regular_grid_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
-Regular_grid_2<StreamLinesTraits_2>::iso_rectangle() const{
+Regular_grid_2<StreamLinesTraits_2>::bbox() const{
 	return typename Geom_traits::Iso_rectangle_2(0.0, 0.0, domain_size_x, domain_size_y);};
 
 template <class StreamLinesTraits_2>
@@ -80,30 +79,13 @@ Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(const int & m, const int & n
   domain_size_y = y;
   vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];}
 
-template <class StreamLinesTraits_2>
-void Regular_grid_2<StreamLinesTraits_2>::fill(std::ifstream & f, const FT & x, const FT & y){
-	std::cout << " reading file... " << "\n";
-	f >> number_of_samples_x;
-	f >> number_of_samples_y;
-  domain_size_x = x;
-  domain_size_y = y;
-  vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];
-	for (int i=0;i<number_of_samples_x;i++)
-		for (int j=0;j<number_of_samples_y;j++)
-			{
-				double xval, yval;
-				f >> xval;
-				f >> yval;
-				set_field(i, j, xval, yval);
-			}}
-
-template <class StreamLinesTraits_2>
-Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(){
-  number_of_samples_x = 0;
-  number_of_samples_y = 0;
-  domain_size_x = 0.0;
-  domain_size_y = 0.0;
-  vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];}
+// template <class StreamLinesTraits_2>
+// Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(){
+//   number_of_samples_x = 0;
+//   number_of_samples_y = 0;
+//   domain_size_x = 0.0;
+//   domain_size_y = 0.0;
+//   vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];}
 
 template <class StreamLinesTraits_2>
 inline void

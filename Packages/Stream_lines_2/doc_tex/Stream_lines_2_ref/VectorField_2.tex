@@ -19,7 +19,7 @@
 \ccDefinition
   
 The concept \ccRefName\ describes the set of requirements to be
-fulfilled by any class used to instantiate the second template
+fulfilled by any class used to instantiate the first template
 parameter of the class \ccc{Stream_lines_2<VectorField_2,Integrator_2>}.
 This concept provides the types of the geometric primitives used in
 the placement of streamlines and some functions for answering
@@ -39,13 +39,13 @@ different queries.
 
 
 \ccCreation
-\ccCreationVariable{vector_field_2}  %% choose variable name
-\ccConstructor{VectorField_2();}{only a default constructor.}
-\ccGlue
+\ccCreationVariable{vfield}  %% choose variable name
+\ccConstructor{VectorField_2();}{Any constructor has to allow the user to fill the vector values.}
+% \ccGlue
 
 \ccHeading{Query Functions}
 
-\ccMethod{CGAL::Iso_rectangle_2<Geom_traits> iso_rectangle();}{return
+\ccMethod{CGAL::Iso_rectangle_2<Geom_traits> bbox();}{return
 the bounding box of the whole domain.}
 \ccGlue
 \ccMethod{std::pair<Vector_2,FT> get_field(Point_2 p);}
@@ -56,7 +56,7 @@ the bounding box of the whole domain.}
 is inside the domain boundaries, false otherwise.}
 \ccGlue
 \ccMethod{FT get_integration_step(Point_2 p);}
-{returns the integration step at the point p.
+{returns the integration step at the point p (i.e. the distance between \ccc{p} and the next point in the polyli ne.).
 \ccPrecond \ccc{is_in_domain(p)} must be true.}
 \ccGlue
 

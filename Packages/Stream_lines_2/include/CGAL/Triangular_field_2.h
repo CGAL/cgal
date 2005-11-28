@@ -89,7 +89,7 @@ public:
 	template <class PointInputIterator, class VectorInputIterator>
 	Triangular_field_2(PointInputIterator pBegin, PointInputIterator pEnd, VectorInputIterator vBegin){
 		fill(pBegin, pEnd, vBegin);}
-	inline typename Geom_traits::Iso_rectangle_2 iso_rectangle() const;
+	inline typename Geom_traits::Iso_rectangle_2 bbox() const;
 	std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
 	bool is_in_domain(const Point_2 & p) const;
 	FT get_integration_step(const Point_2 &) const;
@@ -108,7 +108,7 @@ protected:
 template <class StreamLinesTraits_2> 
 inline
 typename Triangular_field_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
-Triangular_field_2<StreamLinesTraits_2>::iso_rectangle() const{
+Triangular_field_2<StreamLinesTraits_2>::bbox() const{
 	return typename Geom_traits::Iso_rectangle_2(minx, miny, maxx, maxy);};
 
 template <class StreamLinesTraits_2>

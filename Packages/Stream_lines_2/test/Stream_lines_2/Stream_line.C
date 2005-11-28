@@ -28,8 +28,11 @@ int main()
 		sprintf(namer, "data/%d.stl", i);
 		std::ifstream infile(name, std::ios::in);
 		double iXSize, iYSize;
+		unsigned int x_samples, y_samples;
 		iXSize = iYSize = 512;
-		Field regular_grid_2(infile, iXSize, iYSize);
+		infile >> x_samples;
+		infile >> y_samples;
+		Field regular_grid_2(x_samples, y_samples, iXSize, iYSize);
 		infile.close();
 		/* the placement of streamlines */
 		double dSep = 3.5;

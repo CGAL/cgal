@@ -19,11 +19,25 @@ typedef Stl::Stream_line_iterator_2 Stl_iterator;
 int main()
 {
 	Runge_kutta_integrator runge_kutta_integrator;
-  
-	std::ifstream infile("data/vnoise.vec.cin", std::ios::in);
+
+	/*data.vec.cin is an ASCII file containing the vector field values*/  
+	std::ifstream infile("data/data.vec.cin", std::ios::in);
 	double iXSize, iYSize;
+	unsigned int x_samples, y_samples;
 	iXSize = iYSize = 512;
-	Field regular_grid_2(infile, iXSize, iYSize);
+	infile >> x_samples;
+	infile >> y_samples;
+	Field regular_grid_2(x_samples, y_samples, iXSize, iYSize);
+	/*fill the grid with the appropreate values*/
+	for (unsigned int i=0;i<x_samples;i++)
+		for (unsigned int j=0;j<y_samples;j++)
+			{
+				double xval, yval;
+				infile >> xval;
+				infile >> yval;
+				regular_grid_2.set_field(i, j, xval, yval);
+			}
+
 	infile.close();
   
 	/* the placement of streamlines */  

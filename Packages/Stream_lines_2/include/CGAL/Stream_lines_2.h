@@ -160,10 +160,10 @@ vector_field_2, const Integrator_2 & m_integrator, const FT & m_separating_dista
 	saturation_ratio = m_saturation_ratio;
 	ir = il = 0; // initialization
 	fSepStl_seed = separating_distance*saturation_ratio;
-	max_x = vector_field_2.iso_rectangle().xmax();
-	min_x = vector_field_2.iso_rectangle().xmin();
-	max_y = vector_field_2.iso_rectangle().ymax();
-	min_y = vector_field_2.iso_rectangle().ymin();
+	max_x = vector_field_2.bbox().xmax();
+	min_x = vector_field_2.bbox().xmin();
+	max_y = vector_field_2.bbox().ymax();
+	min_y = vector_field_2.bbox().ymin();
 	m_DT.clear();
 	Point_2 pPoint;
 	pPoint = Point_2(min_x-separating_distance,min_y-separating_distance);
@@ -580,7 +580,7 @@ template <class VectorField_2, class Integrator_2>
 void Stream_lines_2<VectorField_2, Integrator_2>::
 pq_elements(const Vector_field_2 & vector_field_2, Vertex_container_2 stl_vertices, int i,
 		const Vertex_handle & m_Vertex_handle, int size_){
-	if ((i!=0) && (i!=(size_)) && (std::div(i,10).rem!=0)){
+	if ((i!=0) && (i!=(size_))){// && (std::div(i,10).rem!=0)){
 			Vertex_handle pVertex_handle = stl_vertices.front();
 			Face_handle pFace_handle;
 			int iIndex;
