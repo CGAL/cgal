@@ -18,6 +18,7 @@ int main(int, char*){
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h> 
+#include "Qt_widget_circ_polygon.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -43,6 +44,8 @@ int main(int, char*){
 #include <qiconset.h>
 #include <qpixmap.h> 
 #include <qpainter.h> 
+
+#include "Qt_widget_X_monotone_circle_segment_2.h"
 
 
 
@@ -129,7 +132,7 @@ public:
        }
        else  
          *widget << outer_boundary;
-      widget->setFillColor ( CGAL::BLACK);
+      //widget->setFillColor ( CGAL::BLACK);
       for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
@@ -139,7 +142,7 @@ public:
       ++itpgn2;
     }
     widget->get_painter().setRasterOp(old_rasterop);
-   
+    widget->setFilled (false);
     widget->unlock(); // widget have to be unlocked when finished drawing
   };    
   
@@ -503,7 +506,7 @@ public slots:
     
   void new_instance()
   {
-    
+    newtoolbar->deactivate();
     widget->lock();
     file_name = QString::null;
     
@@ -640,6 +643,31 @@ private slots:
       else
         blue_set.join(pgn);
       something_changed();
+    }
+    else
+    {
+      Circle circ;
+      if(CGAL::assign(circ, obj))
+      {
+        std::vector<CGAL::Object> xcurves;
+        xcurves.reserve(2);
+        Traits tr;
+        Curve full_circ(circ);
+        tr.make_x_monotone_2_object()(full_circ, std::back_inserter(xcurves));
+        
+        CGAL_assertion(xcurves.size() == 2);
+        XCurve half_circ1;
+        XCurve half_circ2;
+        CGAL::assign(half_circ1, xcurves[0]); 
+        CGAL::assign(half_circ2, xcurves[1]); 
+        pgn.push_back(half_circ1);
+        pgn.push_back(half_circ2);
+        if(red_active)
+          red_set.join(pgn);
+        else
+          blue_set.join(pgn);
+        something_changed();
+      }
     }
   }
 

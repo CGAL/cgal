@@ -9,8 +9,10 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
-#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
-#include"Qt_widget_delete_list_polygon.h"
+//#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
+#include "Qt_widget_get_circ_polygon.h"
+#include <CGAL/IO/Qt_widget_get_circle.h> 
+#include <CGAL/IO/pixmaps/circle.xpm>
 
 
 #include <qobject.h>
@@ -36,6 +38,14 @@ class Tools_toolbar : public QToolBar
 public:
 	Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
   ~Tools_toolbar(){};
+
+  void deactivate()
+  {
+    getsimplebut.deactivate();
+    getcirclebut.deactivate();
+    but[0]->toggle(); // toggle the 'deactivate layer button'
+  }
+
 private:
   QToolButton     *but[10];
   QButtonGroup    *button_group;
@@ -46,7 +56,8 @@ private:
   //Qt_widget_deletepolygon<Kernel>	            delete_polygon;
   
 
-  CGAL::Qt_widget_get_simple_polygon<Polygon> getsimplebut;
+  CGAL::Qt_widget_get_circ_polygon<Kernel>     getsimplebut;
+  CGAL::Qt_widget_get_circle<Kernel>           getcirclebut;
   
 };//end class
 

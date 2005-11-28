@@ -27,11 +27,13 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
    
     w->attach(&getsimplebut);
+    w->attach(&getcirclebut);
     /*w->attach(delete_red_but);
     w->attach(delete_blue_but);*/
     //w->attach(&delete_polygon);
     
     getsimplebut.deactivate();
+    getcirclebut.deactivate();
     /*delete_red_but->deactivate();
     delete_blue_but->deactivate();*/
     //delete_polygon.deactivate();
@@ -48,6 +50,8 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
                   QPixmap( (const char**)polygon_xpm ));
     QIconSet set4(QPixmap( (const char**)notool_small_xpm ),
                   QPixmap( (const char**)notool_xpm ));
+    QIconSet set5(QPixmap( (const char**)circle_xpm ),
+                  QPixmap( (const char**)circle_small_xpm ));
     
 
 
@@ -58,9 +62,12 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   but[1] = new QToolButton(this, "polygontool");
   but[1]->setIconSet(set3);
   but[1]->setTextLabel("Input Polygon");
+  but[2] = new QToolButton(this, "circletool");
+  but[2]->setIconSet(set5);
+  but[2]->setTextLabel("Input Circle");
  
    
-  nr_of_buttons = 2;
+  nr_of_buttons = 3;
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i < nr_of_buttons; i++)
   {
@@ -72,6 +79,9 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
  
   connect(but[1], SIGNAL(stateChanged(int)),
         &getsimplebut, SLOT(stateChanged(int)));
+
+  connect(but[2], SIGNAL(stateChanged(int)),
+        &getcirclebut, SLOT(stateChanged(int)));
   
   /*connect(but[2], SIGNAL(stateChanged(int)),
         delete_red_but, SLOT(stateChanged(int)));
