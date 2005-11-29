@@ -55,7 +55,8 @@ all:            \
                 gausian_map_test$(EXE_EXT) \
                 gausian_map_viewer$(EXE_EXT) \
                 generate_convex$(EXE_EXT) \
-                minkowski_sum$(EXE_EXT)
+                minkowski_sum$(EXE_EXT) \
+                top_bottom_test$(EXE_EXT)
 
 
 convex$(EXE_EXT): convex$(OBJ_EXT)
@@ -79,6 +80,9 @@ generate_convex$(EXE_EXT): generate_convex$(OBJ_EXT)
 minkowski_sum$(EXE_EXT): minkowski_sum$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)minkowski_sum minkowski_sum$(OBJ_EXT) $(LDFLAGS)
 
+top_bottom_test$(EXE_EXT): top_bottom_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)top_bottom_test top_bottom_test$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    convex.clean \
                    mixed.clean \
@@ -86,7 +90,8 @@ clean: \
 	           gausian_map_test.clean \
 	           gausian_map_viewer.clean \
 	           generate_convex.clean \
-	           minkowski_sum.clean
+	           minkowski_sum.clean \
+	           top_bottom_test.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
