@@ -17,17 +17,17 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_CIRCLE_SEGMENT_TRAITS_2_H
-#define BSO_CIRCLE_SEGMENT_TRAITS_2_H
+#ifndef GPS_CIRCLE_SEGMENT_TRAITS_2_H
+#define GPS_CIRCLE_SEGMENT_TRAITS_2_H
 
-#include <CGAL/Bso_traits_adaptor_2.h>
+#include <CGAL/Gps_traits_adaptor_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_>
-class Bso_circle_segment_traits_2 : 
-  public Bso_traits_adaptor_2<Arr_circle_segment_traits_2<Kernel_> >
+class Gps_circle_segment_traits_2 : 
+  public Gps_traits_adaptor_2<Arr_circle_segment_traits_2<Kernel_> >
 {};
 
 CGAL_END_NAMESPACE

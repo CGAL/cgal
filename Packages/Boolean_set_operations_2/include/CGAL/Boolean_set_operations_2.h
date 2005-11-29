@@ -20,37 +20,37 @@
 #ifndef BOOLEAN_SET_OPERATIONS_H
 #define BOOLEAN_SET_OPERATIONS_H
 
-#include <CGAL/Bso_segment_traits_2.h>
+#include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_2.h>
-#include <CGAL/Bso_traits_adaptor_2.h>
+#include <CGAL/Gps_traits_adaptor_2.h>
 #include <CGAL/iterator.h> 
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Polygon>
-struct Default_bso_traits
+struct Gps_default_traits
 {};
 
 
 template <class Kernel, class Container>
-struct Default_bso_traits<CGAL::Polygon_2<Kernel, Container> >
+struct Gps_default_traits<CGAL::Polygon_2<Kernel, Container> >
 {
-  typedef Bso_segment_traits_2<Kernel,
+  typedef Gps_segment_traits_2<Kernel,
                                Container,
                                Arr_segment_traits_2<Kernel> >    Traits;
 };
 
 template <class Polygon>
-struct Default_bso_traits<CGAL::General_polygon_with_holes_2<Polygon> >
+struct Gps_default_traits<CGAL::General_polygon_with_holes_2<Polygon> >
 {
-  typedef typename Default_bso_traits<Polygon>::Traits Traits;
+  typedef typename Gps_default_traits<Polygon>::Traits Traits;
 };
 
 template <class Arr_traits>
-struct Default_bso_traits<CGAL::General_polygon_2<Arr_traits> >
+struct Gps_default_traits<CGAL::General_polygon_2<Arr_traits> >
 {
-  typedef Bso_traits_adaptor_2<Arr_traits>    Traits;
+  typedef Gps_traits_adaptor_2<Arr_traits>    Traits;
 };
 
 
@@ -60,7 +60,7 @@ struct Default_bso_traits<CGAL::General_polygon_2<Arr_traits> >
 template <class Polygon_A, class Polygon_B>
 inline bool do_intersect(const Polygon_A& pgn1, const Polygon_B& pgn2)
 {
-  typedef typename Default_bso_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
   
   Traits tr;
   return (do_intersect(pgn1, pgn2, tr));
@@ -110,7 +110,7 @@ inline OutputIterator intersection(const Polygon_A& pgn1,
                                    const Polygon_B& pgn2,
                                    OutputIterator oi)
 {
-  typedef typename Default_bso_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
   
   Traits tr;
   return (intersection(pgn1, pgn2, oi, tr));
@@ -168,7 +168,7 @@ inline bool join(const Polygon_A& pgn1,
                  const Polygon_B& pgn2,
                  OutputPolygon&   res)
 {
-  typedef typename Default_bso_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
   
   Traits tr;
   return (join(pgn1, pgn2, res, tr));
@@ -250,7 +250,7 @@ inline OutputIterator difference(const Polygon_A& pgn1,
                                  const Polygon_B& pgn2,
                                  OutputIterator oi)
 {
-  typedef typename Default_bso_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
   
   Traits tr;
   return (difference(pgn1, pgn2, oi, tr));
@@ -308,7 +308,7 @@ inline OutputIterator symmetric_difference(const Polygon_A& pgn1,
                                            const Polygon_B& pgn2,
                                            OutputIterator oi)
 {
-  typedef typename Default_bso_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
   
   Traits tr;
   return (symmetric_difference(pgn1, pgn2, oi, tr));

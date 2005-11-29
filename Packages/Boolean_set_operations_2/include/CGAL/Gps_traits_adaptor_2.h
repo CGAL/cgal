@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_TRAITS_ADAPTOR_2_H
-#define BSO_TRAITS_ADAPTOR_2_H
+#ifndef GPS_TRAITS_ADAPTOR_2_H
+#define GPS_TRAITS_ADAPTOR_2_H
 
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
@@ -27,10 +27,10 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Arr_traits,
           class Gen_polygon_ = General_polygon_2<Arr_traits> >
-class Bso_traits_adaptor_2 : public Arr_traits
+class Gps_traits_adaptor_2 : public Arr_traits
 {
   typedef Arr_traits                          Base;
-  typedef Bso_traits_adaptor_2<Arr_traits>    Self;
+  typedef Gps_traits_adaptor_2<Arr_traits>    Self;
 
   public:
     typedef Gen_polygon_                                 Polygon_2;

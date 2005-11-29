@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_SEGMENT_TRAITS_2_H
-#define BSO_SEGMENT_TRAITS_2_H
+#ifndef GPS_SEGMENT_TRAITS_2_H
+#define GPS_SEGMENT_TRAITS_2_H
 
 
 #include <CGAL/Arr_segment_traits_2.h>
@@ -31,10 +31,10 @@ CGAL_BEGIN_NAMESPACE
 template < class Kernel_, 
            class Container_ = std::vector<typename Kernel_::Point_2>,
            class Arr_seg_traits_ = Arr_segment_traits_2<Kernel_> >
-class Bso_segment_traits_2 : public Arr_seg_traits_
+class Gps_segment_traits_2 : public Arr_seg_traits_
 {
   typedef Arr_seg_traits_                               Base;
-  typedef Bso_segment_traits_2<Kernel_>                 Self;
+  typedef Gps_segment_traits_2<Kernel_>                 Self;
 
 public:
 
