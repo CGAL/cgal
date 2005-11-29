@@ -649,6 +649,9 @@ private slots:
       Circle circ;
       if(CGAL::assign(circ, obj))
       {
+        if(circ.is_degenerate()) // radius == 0
+          return;
+        
         std::vector<CGAL::Object> xcurves;
         xcurves.reserve(2);
         Traits tr;
