@@ -1,0 +1,6 @@
+example1 - (ex_do_intersect) Determining whether two polygons intersect.
+example2 - (ex_intersection) Computing the intersection of two triangles.
+example3 - (ex_sequence) Computing a sequence of Boolean Set-Operations.
+example4 - (ex_circle_segment) Handling circles and linear segments concurrently.
+example5 - (ex_traits_adaptor) Using the traits adaptor.
+example6 - (ex_set_union) Computing the union of two sets of general polygons.

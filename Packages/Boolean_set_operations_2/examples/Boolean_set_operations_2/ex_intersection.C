@@ -1,5 +1,5 @@
-//! \file examples/Boolean_set_operations_2/example2.C
-// Computing the intersection of two triangles.
+//! \file examples/Boolean_set_operations_2/ex_intersection.C
+// Computing the intersection of two hard coded polygons.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -27,8 +27,7 @@ int main(int argc, char * argv[])
   std::list<Polygon_with_holes> result;
   CGAL::intersection(p1, p2, std::back_inserter(result));
 
-  // Export to standard output:
-  std::copy(result.begin(), result.end(),
+  std::copy(result.begin(), result.end(),       // export to standard output
             std::ostream_iterator<Polygon_with_holes>(std::cout, "\n"));
   std::cout << std::endl;
   

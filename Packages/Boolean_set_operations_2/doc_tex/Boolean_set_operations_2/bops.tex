@@ -20,6 +20,8 @@
     \pscircle*[linecolor=gray](0,1){1}
     \pscircle(0,-1){1}
     \pscircle(0,1){1}
+    \psline{->}(0,0)(0,1)
+    \psline{->}(0,0)(1,0)
   \endpspicture &
   \pspicture[](-2,-2.3)(2,2)
     \psset{unit=1cm,linewidth=1pt}
@@ -27,6 +29,8 @@
     \pscircle*[linecolor=gray](1,0){1}
     \pscircle(-1,0){1}
     \pscircle(1,0){1}
+    \psline{->}(0,0)(0,1)
+    \psline{->}(0,0)(1,0)
   \endpspicture &
   \pspicture[](-2,-2.3)(2,2)
     \psset{unit=1cm,linewidth=1pt}
@@ -190,19 +194,21 @@ planar arrangement; see Chapter~\ref{chapterArrangement_2}.
 An instance of the \ccc{General_polygon_set_2} class-template can be
 constructed from general polygons or general polygons with holes. The
 precise definitions of these polygons are provided in the following
-subsections. It provides methods to apply regularized Boolean 
-set-operations on pairs of \ccc{General_polygon_set_2} objects or general
-polygon (or general polygon with holes) directly, and a few other utility
-methods. The input and output of these methods consist of one or more
-general polygons, some of which may have holes.
+subsections. The class template provides methods to apply regularized 
+Boolean set-operations on pairs of instances of \ccc{General_polygon_set_2} 
+or general polygon (or general polygon with holes) directly, and a few
+other utility methods, with the method to compute the complement being 
+an exception, as it accepts a single instance of one of the types above. 
+The input and output of these methods consist of one or more general 
+polygons, some of which may have holes.
 
 The package also contains free functions that perform common operations,
 and are provided for convenience. A typical such function constructs a pair
 of \ccc{General_polygon_set_2} instances, invokes the appropriate method to
-apply the desired boolean operation, and results with a boolean value, or at
-least one general polygons. When several operations are performed in a 
+apply the desired Boolean operation, and results with a Boolean value, or at
+least one general polygon. When several operations are performed in a 
 sequence, it is much more efficient to use the member functions of
-\ccc{General_polygon_set_2} directly, as the extraction of the general
+\ccc{General_polygon_set_2} type directly, as the extraction of the general
 polygons from the internal representation for some operation, and the
 reconstruction of the internal representation for the succeeding operation
 could be time consuming.
@@ -225,16 +231,12 @@ could be time consuming.
 \label{fig:example}
 \vspace{-2cm}
 \end{wrapfigure}
-Many free functions that implement the regularized Boolean set-operations
-are parameterized by the two abstract types of the polygons used to represent
-the operands of the operation. Testing whether two polygons intersect result
-with a boolean value, and does not require any additional data beyond the
-provision of the two polygons.
+Testing whether two polygons intersect result with a Boolean value, 
+and does not require any additional data beyond the provision of the 
+two polygons. The example listed below tests whether two hard coded 
+triangles depicted on the right intersect.
 
-The example listed below tests whether two triangles depicted on the
-right intersect.
-
-\ccIncludeExampleCode{../examples/Boolean_set_operations_2/example1.C}
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_do_intersect.C}
 
 %
 % \begin{alltt}
@@ -272,8 +274,8 @@ the package operate on two polygons and accept them as two separate
 parameters. However, even a simple operation, such as the union of two
 strictly simple polygons with no holes, may result with a polygon with
 holes, see Figure~\ref{fig:simple}~(a). Moreover, a simple operation,
-such as the intersection of two strictly simple polygons with no
-holes, may result with a set of disjoint polygons; see
+such as the intersection of two strictly simple polygons with no holes, 
+may result with a set of disjoint polygons; see
 Figure~\ref{fig:simple}~(b). Finally, only a polygon with holes can
 represent the complement of a polygon without holes. Notice that this
 polygon has no outer boundary; see Figure~\ref{fig:simple}~(c).
@@ -313,6 +315,9 @@ polygons. (c) The complement of a strictly simple polygon.}
 \end{center}
 \end{figure}
 
+Many free functions that implement the regularized Boolean 
+set-operations are parameterized by the two abstract types of the polygons 
+used to represent the operands of the operation. 
 If the result of an operation is not a Boolean value, as in the case of 
 computing the intersection of two polygons, it is provided through a single 
 general polygon with holes or an output iterator of a range of general
@@ -321,7 +326,7 @@ additional template parameter, as in the following example. It
 computes the intersection of two general polygons depicted in 
 Figure~\ref{fig:simple}~(b).
 
-\ccIncludeExampleCode{../examples/Boolean_set_operations_2/example2.C}
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_intersection.C}
 
 Suppose that you need to compute the union of two general polygons. If the
 two polygons are disjoint, the result is a pair that consists of the two 
@@ -337,8 +342,9 @@ parameterized with a traits class instead of the type of the general
 polygon types they operate on. The latter are extracted from the injected
 traits class, which must model the concept 
 \ccc{GeneralPolygonSetTraits_2} (see below for more details).
-These functions also accept an instance of the traits class as an actual 
-argument.
+These functions come in two flavors. Some accept an instance of the traits 
+class as an actual argument. The other, must be instantiated with the 
+traits type.
 
 % ---------------------------------------------------------------
 \subsection{A Sequence of Boolean Set Operations}
@@ -348,11 +354,13 @@ As mentioned above, when several operations are performed in a
 sequence, it is much more efficient to use the member functions of
 \ccc{General_polygon_set_2} directly.
 These methods come in two flavors as follows. Some of the methods accept two
-parameters that represent two operands. These methods store the result
+arguments that represent two operands. These methods store the result
 in a third instance, the current object. Their counterpart methods
-accept only a single parameter that represents one of the operands.
-The other one is provided by the current object, which is replaced by
-the result.
+accept only a single argument that represents one of the operands.
+The other one is provided by the current instance, which is replaced by
+the result. Similarly, one flavor of the \ccc{complement()} method
+accepts a single argument that represents the (single) operand, and the 
+other one applies the operation on the current instance.
 
 The next example performs a sequence of three Bollean set-operations.
 First, it computes the union of two simple polygons depicted in
@@ -361,7 +369,7 @@ of the union operation. Finally, it computes the intersection of the result
 of the complement operation with a rectangle, confining the final result to 
 the area of the rectangle.
 
-\ccIncludeExampleCode{../examples/Boolean_set_operations_2/example3.C}
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_sequence.C}
 
 % ---------------------------------------------------------------
 \subsection{Inserting non Intersecting Polygons}
@@ -396,15 +404,13 @@ general polygons. In case of the \ccc{insert} method, all the general
 polygons in the input range and the general polygons represented by
 $R$ must be pairwise disjoint in their interiors.
 
-The next example 
-
 % ===============================================================
 \subsection{The Traits}
 \label{bobs_ssec:traits}
 % ===============================================================
 \begin{wrapfigure}{r}{2.5cm}
-\begin{center}
 \vspace{-3ex}
+\begin{center}
 \pspicture[](-1,-1)(1,1)
 \psset{unit=1cm,linewidth=1pt}
 \pscircle[fillstyle=solid,fillcolor=lightgray](0,0){1}
@@ -431,7 +437,7 @@ the \ccc{ArrangementXMonotoneTraits_2} concept. Thus, a model of this
 concepts must define the type \ccc{X_monotone_curve_2}, which
 represents an $x$-monotone curve, and the type of the curve endpoint 
 \ccc{Point_2}, which represents a planar point. It also must provide
-various operations on these types listed by the refined concept.
+various operations on these types listed by the base concept.
 Just as with the case of computations using models of the 
 \ccc{ArrangementXMonotoneTraits_2} concept, operations are robust only
 when exact arithmetic is used. When inexact arithmetic is used,
@@ -462,13 +468,53 @@ below.
 % We plan to increase the set of general-polygon type for which a default
 % traits is obtained in the future.
 
+\begin{wrapfigure}{r}{3cm}
+\vspace{-3ex}
+\begin{center}
+\pspicture[](0,0)(3,3)
+\psset{unit=1cm,linewidth=1pt}
+  \pspolygon*[linecolor=lightgray](0.5,0)(2.5,0)(2.5,1)(0.5,1)
+  \pspolygon*[linecolor=lightgray](0.5,2)(2.5,2)(2.5,3)(0.5,3)
+  \pspolygon*[linecolor=lightgray](0,0.5)(1,0.5)(1,2.5)(0,2.5)
+  \pspolygon*[linecolor=lightgray](2,0.5)(3,0.5)(3,2.5)(2,2.5)
+  \pscircle*[linecolor=gray](0.5,0.5){0.5}  
+  \pscircle*[linecolor=gray](2.5,0.5){0.5}  
+  \pscircle*[linecolor=gray](0.5,2.5){0.5}  
+  \pscircle*[linecolor=gray](2.5,2.5){0.5}  
+  \pspolygon(0.5,0)(2.5,0)(2.5,1)(0.5,1)
+  \pspolygon(0.5,2)(2.5,2)(2.5,3)(0.5,3)
+  \pspolygon(0,0.5)(1,0.5)(1,2.5)(0,2.5)
+  \pspolygon(2,0.5)(3,0.5)(3,2.5)(2,2.5)
+  \pscircle(0.5,0.5){0.5}  
+  \pscircle(2.5,0.5){0.5}  
+  \pscircle(0.5,2.5){0.5}  
+  \pscircle(2.5,2.5){0.5}  
+\endpspicture
+\caption{The union of four rectangles and four circles.}
+\label{fig:circle_segment}
+\end{center}
+\end{wrapfigure}
+Two traits classes are distributed with \cgal, namely 
+\ccc{Gps_segment_traits_2} and \ccc{Gps_circle_segment_traits_2}. 
+The former handles linear segments, and uses the \ccc{Polygon_2} type,
+which is defined in the Polygons and Polygon Operations package of 
+\cgal; see Chapter~\ref{Polygon}. The latter handles circular arcs
+and linear segments concurrently. It is parameterized by a rational 
+kernel, which makes it extremely efficient. The details are provided in the 
+reference manual. The following example uses this traits class to compute
+the union of four rectangles and four circles incrementally resulting with 
+a single polygon with a single holes, as depicted in 
+Figure~\ref{fig:circle_segment}.
+
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_circle_segment.C}
+
 % ===============================================================
 \subsection{General Polygons with Holes}
 \label{bobs_ssec:general_polygons_with_holes}
 % ===============================================================
 \begin{wrapfigure}{r}{2.5cm}
-\begin{center}
 \vspace{-3ex}
+\begin{center}
 \pspicture[](-1,-1)(1,1)
 \psset{unit=1cm,linewidth=1pt}
 \pscircle[fillstyle=solid,fillcolor=lightgray](0,0){1}
@@ -480,19 +526,14 @@ below.
 \label{fig:general_polygon_with_holes}
 \end{center}
 \end{wrapfigure}
-% The \ccc{Triangle_2} and \ccc{Iso_rectangle_2} classes for example,
-% which represent a triangle and a parallel-axis rectangle in
-% $\mathrm{E}^2$ are special cases of convex general polygon. The apriori
-% knowledge of whether the input polygons are convex may sometimes expedite
-% the operation or simplify the representation of the result. For example,
-% the intersection of two convex polygons is either an empty polygon or a
-% convex polygon.
+Bug in latex?
+
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may output, general
 polygons with holes. The concept \ccc{GeneralPolygonSetTraits_2}
 requires a type of polygon with holes that corresponds to the concept
 \ccc{GeneralPolygonWithHoles_2} to be defined. This concept requires 
-access to the outer boundary, which is of \ccc{Polygon_2} type,
+access to the outer boundary, which is of type \ccc{Polygon_2},
 and to the holes, where each hole is also of type \ccc{Polygon_2}.
 The outer boundary could be empty, and the number of holes could be
 zero. Vertices of holes and vertices of the boundary may coincide.
@@ -500,12 +541,14 @@ Conceptually, the order of vertices is irrelevant, but for the results
 of all operations, we guarantee counterclockwise order for the general
 polygon that represents the outer boundary, and clockwise order for
 the general polygons that represent the holes.
+% The \ccc{Triangle_2} and \ccc{Iso_rectangle_2} classes for example,
+% which represent a triangle and a parallel-axis rectangle in
+% $\mathrm{E}^2$ are special cases of convex general polygon. The apriori
+% knowledge of whether the input polygons are convex may sometimes expedite
+% the operation or simplify the representation of the result. For example,
+% the intersection of two convex polygons is either an empty polygon or a
+% convex polygon.
 
-The exact definition of the obtained general polygon with holes as a
-result of a Boolean set-operation or a sequence of such operations is
-closely related to the definition of regularized Boolean 
-set-operations, being the colsure of the interior of the corresponding
-ordinary operation as explained next.
 \begin{wrapfigure}{l}{2.5cm}
 \begin{center}
 \vspace{-4ex}
@@ -522,6 +565,11 @@ ordinary operation as explained next.
 \label{fig:unique}
 \end{center}
 \end{wrapfigure}
+The exact definition of the obtained general polygon with holes as a
+result of a Boolean set-operation or a sequence of such operations is
+closely related to the definition of regularized Boolean 
+set-operations, being the closure of the interior of the corresponding
+ordinary operation as explained next.
 There are many ways to arrive at a particual regular set. For
 rexample, the regular set depicted in Figure~\ref{fig:unique} is the
 result of the union of three small triangles translated
@@ -550,7 +598,7 @@ must be strictly simple.
 
 % ===============================================================
 \subsection{General Polygon Concept}
-\label{bobs_ssec:extended_general_polygons}
+\label{bobs_ssec:general_polygon_concept}
 % ===============================================================
 The \ccc{GeneralPolygon_2} is a concept that facilitates the
 production of general-polygon set traits classes. A model of this
@@ -584,19 +632,18 @@ represents the boundary of the general polygon.
 The code excerpt listed below defines a general-polygon set type that
 can be used to perform Boolean set-operations on point sets bounded by
 linear segments used by the \ccc{Arrangement_2} class by default. A
-model of the \ccc{ExtendedGeneralPolygon_2} concept that represents a
+model of the \ccc{GeneralPolygon_2} concept that represents a
 (linear) polygon bounded by curves of type \ccc{Arr_segment_2} is
 generated. The later is obtained from the instantiated parameter
 \ccc{Arr_segment_traits_2}, which defines \ccc{Arr_segment_2} to be
 its exposed type \ccc{X_monotone_curve_2}.
 \begin{alltt}
-typedef CGAL::Gmpq                                      Number_type;
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Arr_traits;
-typedef CGAL::General_polygon_2<Arr_traits>             General_polygon;
-typedef CGAL::Gps_traits_adaptor_2<Arr_traits,General_polygon>
-                                                        Traits;
-typedef CGAL::General_polygon_set_2<Traits>             General_polygon_set;
+typedef CGAL::Gmpq                                             Number_type;
+typedef CGAL::Cartesian<Number_type>                           Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>                     Arr_traits;
+typedef CGAL::General_polygon_2<Arr_traits>                    General_polygon;
+typedef CGAL::Gps_traits_adaptor_2<Arr_traits,General_polygon> Traits;
+typedef CGAL::General_polygon_set_2<Traits>                    General_polygon_set;
 \end{alltt}
 
 Swapping the linear arrangement traits \ccc{Arr_segment_traits_2}
@@ -604,4 +651,11 @@ above with a traits class that handle conic arcs, such as
 \ccc{Arr_conic_traits_2}, results with the definition of a
 general-polygon set type that can be used to perform Boolean 
 set-operations on point sets bounded by conic arcs of type
-\ccc{Arr_conic_2}.
+\ccc{Arr_conic_2}. The next example computes the intersection of the
+two general polygons depicted in Figure~\ref{fig:simple} (b). As opposed
+to the example in \ccc{ex_intersection.C}, this example defines the
+polygons as point sets bounded by polylines, and it adapts the traits 
+model that handles polylines included with the \ccc{Arrangement_2}
+package.
+
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_circle_segment.C}
