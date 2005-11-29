@@ -38,9 +38,10 @@ namespace CGAL {
       typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
     protected:
-      std::set<Vertex_handle> bad_vertices;
-
+      mutable std::set<Vertex_handle> bad_vertices;
+      mutable bool bad_vertices_initialized;
     private:
+
       Facet facet_with_smallest_cell_handle(const Facet& f) const {
 	Cell_handle c = f.first;
 	int i = f.second;
@@ -69,14 +70,15 @@ namespace CGAL {
 	  if (i != j) {
 	    Vertex_handle v = c->vertex(j);
 	    
-	    if ( SMREB::c2t3.complex_subface_type(v) != 
-		 SMREB::C2t3::NOT_IN_COMPLEX) {
-	      bad_vertices.erase(v);
+	    if(bad_vertices_initialized){
+	      if ( SMREB::c2t3.is_in_complex(v) ) {
+		bad_vertices.erase(v);
+	      }
 	    }
 	  }
 	}
       }
-
+      /*
       Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) 
       const {
 	Graph& g = sommet->get_umbrellas_dual();
@@ -97,26 +99,54 @@ namespace CGAL {
 	}
 	return biggest_facet;
       }
+      */
 
+      Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) const {
+
+	std::list<Facet> facets;
+	SMREB::c2t3.incident_facets(sommet, std::back_inserter(facets));
+
+	std::list<Facet>::iterator it = facets.begin();
+	Facet first_facet = *it;
+	Facet biggest_facet = first_facet;
+	
+	for (++it;
+	     it != facets.end();
+	     ++it) {
+	  Facet current_facet = *it;
+	  // is the current facet bigger than the current biggest one	  
+	  if ( SMREB::c2t3.compute_squared_distance(current_facet, sommet) > 
+	       SMREB::c2t3.compute_squared_distance(biggest_facet, sommet) ) {
+	    biggest_facet = current_facet;
+	  }
+	}
+	return biggest_facet;
+      }
     public:
       Surface_mesher_manifold_base (Tr& t, 
 						     C2t3& co, 
 						     Surface& s, 
 						     Criteria& c)
-      :SMREB(t, co, s, c){}
+	: SMREB(t, co, s, c), bad_vertices_initialized(false)
+      {}
 
 
     public:
+
       // Tells whether there remain elements to refine
       bool no_longer_element_to_refine_impl() const {
-	return (SMREB::no_longer_element_to_refine_impl() && 
-		bad_vertices.empty());
+	if(SMREB::no_longer_element_to_refine_impl()){
+	  if(! bad_vertices_initialized){
+	    initialize_bad_vertices();
+	  }
+	  return bad_vertices.empty();
+	} 
+	return false;       
       }
 
-      // Initialization function
-      void scan_triangulation_impl() {
-	SMREB::scan_triangulation_impl();
-	std::cout << "scanning vertices..." << std::endl;
+      void initialize_bad_vertices() const
+      {
+	std::cout << "scanning vertices" << std::endl;
 	int n = 0;
 	for (Finite_vertices_iterator vit = SMREB::tr.finite_vertices_begin(); 
 	     vit != SMREB::tr.finite_vertices_end();
@@ -127,7 +157,14 @@ namespace CGAL {
 	    ++n;
 	  }
 	}
-	std::cout << "   -> found " << n << "bad vertices\n";
+	bad_vertices_initialized = true;
+	std::cout << "   -> found " << n << " bad vertices\n";
+      }
+
+      // Lazy initialization function
+      void scan_triangulation_impl() {
+	SMREB::scan_triangulation_impl();
+	std::cout << "scanning vertices (lazy)" << std::endl;
       }
 
       // Returns the next element to refine
@@ -136,6 +173,7 @@ namespace CGAL {
 	  return SMREB::get_next_element_impl();
 	}
 	else {
+	  assert(bad_vertices_initialized);
 	  Vertex_handle first_bad_vertex = *(bad_vertices.begin());
 	  return biggest_incident_facet_in_complex(first_bad_vertex);
 	}
@@ -153,25 +191,26 @@ namespace CGAL {
 
       void after_insertion_impl(const Vertex_handle v) {
 	SMREB::after_insertion_impl(v);
-	
-	// foreach v' in star of v
-	Vertices vertices;
-	SMREB::c2t3.incident_vertices(v, std::back_inserter(vertices));
 
-	for (Vertices_iterator vit = vertices.begin();
-	     vit != vertices.end();
-	     ++vit) {
-	  if ( SMREB::c2t3.complex_subface_type(*vit) == 
-	       SMREB::C2t3::SINGULAR ) {
-	    bad_vertices.insert(*vit);
+	if(bad_vertices_initialized){
+	  // foreach v' in star of v
+	  Vertices vertices;
+	  SMREB::c2t3.incident_vertices(v, std::back_inserter(vertices));
+	  
+	  for (Vertices_iterator vit = vertices.begin();
+	       vit != vertices.end();
+	       ++vit) {
+	    if ( SMREB::c2t3.complex_subface_type(*vit) == 
+		 SMREB::C2t3::SINGULAR ) {
+	      bad_vertices.insert(*vit);
+	    }
 	  }
-	}
-
-	if ( SMREB::c2t3.complex_subface_type(v) !=
-	     SMREB::C2t3::NOT_IN_COMPLEX ) {
-	  if ( SMREB::c2t3.complex_subface_type(v) == 
-	       SMREB::C2t3::SINGULAR ) {
-	    bad_vertices.insert(v);
+	  
+	  if ( SMREB::c2t3.is_in_complex(v) ) {
+	    if ( SMREB::c2t3.complex_subface_type(v) == 
+		 SMREB::C2t3::SINGULAR ) {
+	      bad_vertices.insert(v);
+	    }
 	  }
 	}
       }

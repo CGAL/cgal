@@ -325,7 +325,6 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_AFTER_INSERTION
       std::cerr << "Inserted\n";
 #endif
-      //std::cout << "X";
       restore_restricted_Delaunay(v);
     }
 

@@ -83,8 +83,7 @@ public Complex_2_in_triangulation_3 <Tr> {
     for (Vertices_iterator vit = vertices.begin(); 
     	 vit != vertices.end(); 
     	 vit++) {
-      if ( Base::complex_subface_type(*vit) != 
-	   Base::NOT_IN_COMPLEX )
+      if ( Base::is_in_complex(*vit) )
     	*voit++ = *vit;
     }
 
@@ -120,6 +119,36 @@ public Complex_2_in_triangulation_3 <Tr> {
     assert(loaf.size() > 0);
     return loaf;
   }
+  
+  // af: added
+  // af: I do not understand why one facets gets added to what the base class computes 
+  template <typename OutputIterator>
+  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const {
+    // search for one of the incident facets of v in the complex
+    Cell_handle c = v->cell();
+    int i = c->index(v);
+    Facet f;
+    if (i == 0) {
+      f = std::make_pair(c, 1);
+    }
+    else {
+      f = std::make_pair(c, 0);
+    }
+    
+    Base::incident_facets(v, it);
+
+    Facet autre_cote = other_side(f);
+    if (Base::complex_subface_type(f) != 
+	Base::NOT_IN_COMPLEX){
+      *it = f; ++it;
+    } else if (Base::complex_subface_type(autre_cote) != 
+	     Base::NOT_IN_COMPLEX){
+            *it = autre_cote; ++it;
+    }
+    
+    return it;
+  }
+  
 
   FT compute_squared_distance(const Facet& f, const Vertex_handle v) const {
     Point fcenter = get_facet_center(f);

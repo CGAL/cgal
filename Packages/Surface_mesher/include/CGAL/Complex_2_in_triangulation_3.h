@@ -2,7 +2,9 @@
 #define _COMPLEX_2_IN_TRIANGULATION_3_H
 
 #include <CGAL/circulator.h>
+#include <CGAL/Union_find.h>
 #include <set>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +41,19 @@ class Complex_2_in_triangulation_3 {
 
   enum Face_type{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
 
- protected:
+
+  struct Not_in_complex {
+    
+    bool operator()(const Facet& f) const
+    { 
+      return ! f.first->is_facet_on_surface(f.second) ;
+    }
+  };
+
+
+
+
+protected:
   Triangulation_3& tri3;
   Edge_facet_counter  edge_facet_counter;
 
@@ -115,12 +129,65 @@ class Complex_2_in_triangulation_3 {
 
   Face_type complex_subface_type (const Vertex_handle v) const {
     if ( v->is_visited() ) {
-      if ( v->is_graph_connected() )
+      if ( is_regular(v) )
       	return REGULAR;
       else return SINGULAR;
     }
     else return NOT_IN_COMPLEX;
   }
+
+
+  bool is_regular(const Vertex_handle v) const {
+#ifdef USE_GRAPH
+    return v->is_graph_connected();
+#else 
+    if(v->regular_is_cached){
+      return v->regular;
+    } else {
+      // We have to find out if there is more than one umbrella with apex v.
+      // We exploit the fact that the umbrellas do not share any edge.
+      // Two facets are in the same umbrella, if they share an edge.
+      // We can hence use a union find data structure to compute the sets
+      // of facets that build umbrellas
+      // At the end we are only interested in the number of umbrellas
+      Union_find<Facet> facets;
+      triangulation().incident_facets(v, filter_output_iterator(std::back_inserter(facets), Not_in_complex()));
+      
+      typedef std::map<Vertex_handle, Union_find<Facet>::handle>  Vertex_Set_map; 
+      typedef typename Vertex_Set_map::iterator Vertex_Set_map_iterator;
+
+      Vertex_Set_map vsmap;
+
+      for(Union_find<Facet>::iterator it = facets.begin();
+	  it != facets.end();
+	  ++it){
+	Cell_handle ch = (*it).first;
+	int i = (*it).second;
+	for(int j=0; j < 3; j++){
+	  Vertex_handle w = ch->vertex(triangulation().vertex_triple_index(i,j));
+	  if(w != v){
+	    Vertex_Set_map_iterator vsm_it = vsmap.find(w);
+	    if(vsm_it != vsmap.end()){
+	      facets.unify_sets(vsm_it->second, it);
+	    } else {
+	      vsmap.insert(std::make_pair(w, it));
+	    }
+	  }
+	}
+      }
+      v->regular = (facets.number_of_sets() == 1);
+      v->regular_is_cached = true;
+      return v->regular;
+    }
+#endif
+  }
+
+  // af : added this function as calling complex_subface_type triggers update of cache
+  bool is_in_complex(Vertex_handle v) const
+  {
+    return v->is_visited();
+  }
+
 
   Facet_circulator incident_facets (const Edge& e) {
     // position the circulator on the first element of the facets list
@@ -135,6 +202,8 @@ class Complex_2_in_triangulation_3 {
 
   // computes and returns the list of incident facets of v
   // in the complex
+  // af: Triangluation_3 also has such a function
+  // af: Question: Is it important that the smaller cell handle is taken. What does Triangulation_3
   Facets incident_facets(const Vertex_handle v) const {
     std::set<Facet> soif;
 
@@ -169,6 +238,44 @@ class Complex_2_in_triangulation_3 {
 
     return lof;
   }
+
+
+template <typename OutputIterator>
+  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const {
+    std::set<Facet> soif;
+
+    Cells loic;
+    tri3.incident_cells(v, back_inserter(loic));
+
+    for (Cells_iterator cit = loic.begin();
+	 cit != loic.end();
+	 ++cit) {
+      Cell_handle c = (*cit);
+      int i = c->index(v);
+
+      for (int j = 0; j < 4; j++) {
+	if (i != j) {
+	  Facet f = std::make_pair(c, j);
+	  soif.insert(facet_with_smallest_cell_handle(f));
+	}
+      }
+    }
+
+    // keep only facets in the complex and put eveything in a list
+    //  instead of a set
+    for (typename std::set<Facet>::iterator fit = soif.begin();
+	 fit != soif.end();
+	 ++fit) {
+      Facet f = *fit;
+      if ( complex_subface_type(f) != NOT_IN_COMPLEX) {
+	*it = f; ++it;
+      }
+    }
+
+    return it;
+  }
+
+
 
   // computes and returns the list of adjacent facets of f
   // with the common Vertex_handle v
@@ -227,6 +334,8 @@ class Complex_2_in_triangulation_3 {
     v->set_visited(true);
   }
 
+
+
   void set_in_complex (const Facet& f) {
     set_in_complex (f.first, f.second);
   }
@@ -264,7 +373,9 @@ class Complex_2_in_triangulation_3 {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    set_in_complex(v);
+#ifdef USE_GRAPH
 	    v->add_in_graph(f, adjacent_facets(f, v));
+#endif
 	  }
 	}
       }
@@ -293,7 +404,14 @@ class Complex_2_in_triangulation_3 {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    set_in_complex(v);
+#ifdef USE_GRAPH
 	    v->add_in_graph(f, adjacent_facets(f, v));
+#endif
+            // when it was singular before it is also singular now, or no longer in the complex
+	    // so we only have to update the regular/singular field when it was regular
+	    if((v->regular_is_cached) && (v->regular)){
+	      v->regular_is_cached = false; 
+	    }
 	  }
 	}
       }
@@ -302,6 +420,7 @@ class Complex_2_in_triangulation_3 {
 
   void remove_from_complex (const Vertex_handle v) {
     v->set_visited(false);
+    v->regular_is_cached = false; 
   }
 
   void remove_from_complex (const Facet& f) {
@@ -340,7 +459,14 @@ class Complex_2_in_triangulation_3 {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    remove_from_complex(v);
+#ifdef USE_GRAPH
 	    v->remove_from_graph(f);
+#endif
+	    // when it was regular before it is also regular now, or no longer in the complex
+	    // so we only have to update the regular/singular field when it was singular
+	    if((v->regular_is_cached) && (! v->regular)){
+	      v->regular_is_cached = false; 
+	    }
 	  }
 	}
       }
@@ -372,7 +498,15 @@ class Complex_2_in_triangulation_3 {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    remove_from_complex(v);
+#ifdef USE_GRAPH
 	    v->remove_from_graph(f);
+#endif
+
+	    // when it was regular before it is also regular now, or no longer in the complex
+	    // so we only have to update the regular/singular field when it was singular
+	    if((v->regular_is_cached) && (! v->regular)){
+	      v->regular_is_cached = false; 
+	    }
 	  }
 	}
       }
