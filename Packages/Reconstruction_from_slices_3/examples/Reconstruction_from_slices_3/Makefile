@@ -14,12 +14,13 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	-I ../../include $(DEBUG_OPT)\
+	-I ../../include\
 	-O2 -DNDEBUG \
 	$(CGAL_CXXFLAGS) \
 	$(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #	$(DEBUG_OPT) -DTRACE\
+#
 #	-O2 -DNDEBUG \
 #---------------------------------------------------------------------#
 #                    linker flags
