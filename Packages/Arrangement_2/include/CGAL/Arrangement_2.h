@@ -1541,6 +1541,12 @@ protected:
    */
   bool _are_vertices_unique() const;
   
+
+  /*!
+   * Check that all curves are disjoint interior.
+   */
+  bool _are_curves_disjoint_interior() const;
+ 
   /*! Check that the curves around a given vertex are ordered clockwise. */
   bool _are_curves_ordered_cw_around_vertrex (Vertex_const_handle v) const;
   

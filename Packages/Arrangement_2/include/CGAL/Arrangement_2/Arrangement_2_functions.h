@@ -2725,6 +2725,9 @@ bool Arrangement_2<Traits,Dcel>::is_valid() const
   if (!_are_vertices_unique())
     return (false);
 
+  if(!_are_curves_disjoint_interior())
+    return (false);
+
   // If we reached here, the arrangement is valid.
   return (true);
 }
@@ -2904,6 +2907,24 @@ bool Arrangement_2<Traits,Dcel>::_are_vertices_unique() const
   
   return (true);
 }
+
+ //---------------------------------------------------------------------------
+ // Check that the arrangement curves are disjoint interior 
+ //
+ template<class Traits, class Dcel>
+ bool Arrangement_2<Traits,Dcel>::_are_curves_disjoint_interior() const
+ {
+  // Define the sweep-line types:
+  typedef Sweep_line_do_curves_x_visitor<Traits>      Visitor;
+  typedef Sweep_line_2<Traits, Visitor>               Sweep_line ;
+  
+  // Perform the sweep.
+  Visitor     visitor;
+  Sweep_line  sweep_line (traits, &visitor);
+  visitor.sweep_xcurves(curves.begin(), curves.end());
+  
+  return (!visitor.found_x());
+ }
 
 //---------------------------------------------------------------------------
 // Check that the curves around a given vertex are ordered clockwise .
