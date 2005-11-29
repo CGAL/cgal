@@ -108,6 +108,12 @@ public:
     return m_holes.size();
   }
 
+  void clear()
+  {
+    m_pgn.clear();
+    m_holes.clear();
+  }
+
 
 protected:
 
@@ -150,6 +156,31 @@ std::ostream
       }
       return os;
   }
+}
+
+//-----------------------------------------------------------------------//
+//                          operator>>
+//-----------------------------------------------------------------------//
+
+template <class Polygon_>
+std::istream &operator>>(std::istream &is, Polygon_2<Polygon_>& p)
+{
+  p.clear();
+  is >> p.outer_boundary();
+
+  unsigned int n_holes;
+  is >> n_holes;
+  if (is) 
+  {
+    Polygon_ pgn_hole;
+    for (unsigned int i=0; i<n_holes; i++) 
+    {
+      is >> pgn_hole;
+      p.push_back(pgn_hole);
+    }
+  }
+ 
+  return is;
 }
 
 
