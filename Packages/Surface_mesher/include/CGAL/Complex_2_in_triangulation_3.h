@@ -46,6 +46,7 @@ class Complex_2_in_triangulation_3 {
     
     bool operator()(const Facet& f) const
     { 
+      assert(f.first < f.first->neighbor(f.second));
       return ! f.first->is_facet_on_surface(f.second) ;
     }
   };
@@ -189,46 +190,14 @@ protected:
     return fcirc;
   }
 
-  // computes and returns the list of incident facets of v
-  // in the complex
-  // af: Triangluation_3 also has such a function
-  // af: Question: Is it important that the smaller cell handle is taken. What does Triangulation_3
 
-
-template <typename OutputIterator>
-  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const {
-    std::set<Facet> soif;
-
-    Cells loic;
-    tri3.incident_cells(v, back_inserter(loic));
-
-    for (Cells_iterator cit = loic.begin();
-	 cit != loic.end();
-	 ++cit) {
-      Cell_handle c = (*cit);
-      int i = c->index(v);
-
-      for (int j = 0; j < 4; j++) {
-	if (i != j) {
-	  soif.insert(facet_with_smallest_cell_handle(c,j));
-	}
-      }
-    }
-
-    // keep only facets in the complex and put eveything in a list
-    //  instead of a set
-    for (typename std::set<Facet>::iterator fit = soif.begin();
-	 fit != soif.end();
-	 ++fit) {
-      Facet f = *fit;
-      if ( complex_subface_type(f) != NOT_IN_COMPLEX) {
-	*it = f; ++it;
-      }
-    }
-
+  template <typename OutputIterator>
+  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const 
+  {
+    // We assume that for the generated facets the Cell_handle is smaller than the opposite one
+    triangulation().incident_facets(v, filter_output_iterator(it, Not_in_complex()));
     return it;
   }
-
 
 
   // computes and returns the list of adjacent facets of f
