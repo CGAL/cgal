@@ -68,25 +68,14 @@ protected:
       return std::make_pair(vh2, vh1);
     }
   }
-
-  // computes and return the semi-facet with the smallest cell_handle
-  Facet facet_with_smallest_cell_handle(const Facet& f) const {
-    Cell_handle c = f.first;
-    int i = f.second;
+  
+  Facet facet_with_smallest_cell_handle(Cell_handle c, int i) const {
     Cell_handle c2 = c->neighbor(i);
-    int i2 = c2->index(c);
-    
-    Cell_handle cmin = c;
-    int imin = i;
-
-    if (c2 < cmin) {
-      cmin = c2;
-      imin = i2;
+    if(c2 < c){
+      return  std::make_pair(c2,c2->index(c));
     }
-
-    return std::make_pair(cmin, imin);
+    return std::make_pair(c,i);
   }
-
  public:
 
   // Constructors
@@ -218,8 +207,7 @@ protected:
 
       for (int j = 0; j < 4; j++) {
 	if (i != j) {
-	  Facet f = std::make_pair(c, j);
-	  soif.insert(facet_with_smallest_cell_handle(f));
+	  soif.insert(facet_with_smallest_cell_handle(c,j));
 	}
       }
     }
@@ -255,8 +243,7 @@ template <typename OutputIterator>
 
       for (int j = 0; j < 4; j++) {
 	if (i != j) {
-	  Facet f = std::make_pair(c, j);
-	  soif.insert(facet_with_smallest_cell_handle(f));
+	  soif.insert(facet_with_smallest_cell_handle(c,j));
 	}
       }
     }
@@ -344,7 +331,7 @@ template <typename OutputIterator>
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
     Facet f = 
-      facet_with_smallest_cell_handle(std::make_pair(c, i));
+      facet_with_smallest_cell_handle(c, i);
 
     if (tri3.dimension() == 3) {
       // if not already in the complex
@@ -431,7 +418,7 @@ template <typename OutputIterator>
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
     Facet f = 
-      facet_with_smallest_cell_handle(std::make_pair(c, i));
+      facet_with_smallest_cell_handle(c, i);
 
     if (tri3.dimension() == 3) {
       // if in the complex
