@@ -74,19 +74,11 @@ public Complex_2_in_triangulation_3 <Tr> {
   }
   
   template <class OutputIterator>
-    OutputIterator
-    incident_vertices(const Vertex_handle& v, OutputIterator voit) const {
+  OutputIterator
+  incident_vertices(const Vertex_handle& v, OutputIterator voit) const {
     
-    Vertices vertices;
-    Base::tri3.incident_vertices(v, std::back_inserter(vertices));
+    triangulation().incident_vertices(v, filter_output_iterator(voit, Not_in_complex()));
     
-    for (Vertices_iterator vit = vertices.begin(); 
-    	 vit != vertices.end(); 
-    	 vit++) {
-      if ( Base::is_in_complex(*vit) )
-    	*voit++ = *vit;
-    }
-
     return voit;
   }
 
