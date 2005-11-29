@@ -23,7 +23,6 @@
 #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
 #include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-#include <CGAL/Timer.h>
 
 #ifndef SURFACE_MESHER_POLYHEDRAL
 #include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
@@ -73,7 +72,6 @@ typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria,
 CGAL::Surface_mesher::Surface_mesher_manifold_base <Del, Oracle, Criteria, SMREWBB> 
 > SMMWB;
 
-typedef CGAL::Timer Timer;
 
 //  typedef SM Surface;  // basic mesher
 //typedef SMM Surface;  // manifold with boundary
@@ -135,15 +133,12 @@ int main(int argc, char **argv) {
   std::cout << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;
   
-  Timer timer;
-  timer.start();
   // 2D-complex in 3D-Delaunay triangulation
   C2t3 Co2 (T);
   // Surface meshing
   Surface mesher (T, Co2, O, C);
 //   Surface mesher (T, O, a_r_crit);
-  mesher.refine_mesh(false); // false == non verbose 
-  timer.stop();
+  mesher.refine_mesh(true);
   std::cout << "Final number of points: " << T.number_of_vertices() 
             << std::endl;
 
@@ -162,5 +157,4 @@ int main(int argc, char **argv) {
     std::cout << " done\n";
   }
 
-  std::cout << "t = " << timer.time() << " seconds" << std::endl;
 }
