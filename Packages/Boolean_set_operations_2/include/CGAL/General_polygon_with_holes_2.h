@@ -163,7 +163,7 @@ std::ostream
 //-----------------------------------------------------------------------//
 
 template <class Polygon_>
-std::istream &operator>>(std::istream &is, Polygon_2<Polygon_>& p)
+std::istream &operator>>(std::istream &is, General_polygon_with_holes_2<Polygon_>& p)
 {
   p.clear();
   is >> p.outer_boundary();
