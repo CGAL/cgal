@@ -193,39 +193,6 @@ protected:
   // in the complex
   // af: Triangluation_3 also has such a function
   // af: Question: Is it important that the smaller cell handle is taken. What does Triangulation_3
-  Facets incident_facets(const Vertex_handle v) const {
-    std::set<Facet> soif;
-
-    Cells loic;
-    tri3.incident_cells(v, back_inserter(loic));
-
-    for (Cells_iterator cit = loic.begin();
-	 cit != loic.end();
-	 ++cit) {
-      Cell_handle c = (*cit);
-      int i = c->index(v);
-
-      for (int j = 0; j < 4; j++) {
-	if (i != j) {
-	  soif.insert(facet_with_smallest_cell_handle(c,j));
-	}
-      }
-    }
-
-    // keep only facets in the complex and put eveything in a list
-    //  instead of a set
-    Facets lof = Facets();
-    for (typename std::set<Facet>::iterator fit = soif.begin();
-	 fit != soif.end();
-	 ++fit) {
-      Facet f = *fit;
-      if ( complex_subface_type(f) != NOT_IN_COMPLEX) {
-	lof.push_back(f);
-      }
-    }
-
-    return lof;
-  }
 
 
 template <typename OutputIterator>
