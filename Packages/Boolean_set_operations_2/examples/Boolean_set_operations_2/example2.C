@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
 
   // Export to standard output:
   std::copy(result.begin(), result.end(),
-            std::ostream_iterator<Polygon_with_holes>(std::cout, ","));
+            std::ostream_iterator<Polygon_with_holes>(std::cout, "\n"));
   std::cout << std::endl;
   
   return 0;
