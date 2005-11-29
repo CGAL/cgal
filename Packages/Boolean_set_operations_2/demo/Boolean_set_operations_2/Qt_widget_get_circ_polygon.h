@@ -25,6 +25,7 @@ namespace CGAL
     typedef typename Kernel::FT                          FT;
     typedef typename Kernel::Point_2                     Point_2;
     typedef typename Kernel::Segment_2                   Segment_2;
+    typedef typename Kernel::Circle_2                    Circle_2;
     typedef Cartesian<double>                            Double_kernel;
     typedef Double_kernel::Point_2                       Double_point_2;
     typedef Double_kernel::Segment_2                     Double_segment_2;
@@ -201,6 +202,7 @@ namespace CGAL
           if(m_pgn.is_empty())
             return;
           const Arc_point_2& first_point = m_pgn.curves_begin()->source();
+          CGAL_assertion(first_point.x().is_rat() && first_point.y().is_rat());
           FT xs = first_point.x().get_alpha();
           FT ys = first_point.y().get_alpha();
           m_pgn.push_back(X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys))); 
@@ -257,17 +259,79 @@ namespace CGAL
            Curve_iterator last = m_pgn.curves_end();
            --last;
 
-           *widget << *last;
-           *widget << CGAL::WHITE;
-           *widget << Segment_2(m_rubber, m_last_of_poly);
-           const Arc_point_2& last_point = last->source();
-           FT xs = last_point.x().get_alpha();
-           FT ys = last_point.y().get_alpha();
-           *widget << Segment_2(m_rubber, Point_2(xs, ys));
-           widget->setRasterOp(old_rasterop);
-           widget->unlock();
-           m_last_of_poly = Point_2(xs, ys); 
-           m_pgn.erase(last);
+           if(last->is_linear())
+           {
+            *widget << *last;
+            *widget << CGAL::WHITE;
+            *widget << Segment_2(m_rubber, m_last_of_poly);
+            const Arc_point_2& last_point = last->source();
+             
+            CGAL_assertion(last_point.x().is_rat() && last_point.y().is_rat());      
+            FT xs = last_point.x().get_alpha();
+            FT ys = last_point.y().get_alpha();
+                
+            *widget << Segment_2(m_rubber, Point_2(xs, ys));
+            widget->setRasterOp(old_rasterop);
+            widget->unlock();
+            m_last_of_poly = Point_2(xs, ys); 
+            m_pgn.erase(last);
+           }
+           else
+           {
+             //circular arc, remove all original xcurves
+
+             Curve_iterator curr = last;
+             Curve_iterator prev = curr;
+             while(curr != m_pgn.curves_begin())
+             {
+               --curr;
+               if(curr->has_same_supporting_curve(*prev))
+               {
+                 prev = curr;
+               }
+               else
+                 break;
+             }
+             Curve_iterator first; 
+             if(curr == m_pgn.curves_begin())
+             {
+               Curve_iterator next = curr;
+               ++next;
+               if(curr->has_same_supporting_curve(*next))
+                 first = curr;
+               else
+                 first = ++curr;
+             }
+             else
+             {
+               first = ++curr;
+             }
+             Curve_iterator itr;
+             for(itr = first; itr != m_pgn.curves_end(); ++itr)
+             {
+               *widget << *itr;
+             }
+             *widget << CGAL::WHITE;
+             *widget << Segment_2(m_rubber, m_last_of_poly);
+             const Arc_point_2& last_point = first->source();
+             
+             CGAL_assertion(last_point.x().is_rat() && last_point.y().is_rat());      
+             FT xs = last_point.x().get_alpha();
+             FT ys = last_point.y().get_alpha();
+                
+             *widget << Segment_2(m_rubber, Point_2(xs, ys));
+             widget->setRasterOp(old_rasterop);
+             widget->unlock();
+             m_last_of_poly = Point_2(xs, ys);
+             itr = first;
+             while(itr != m_pgn.curves_end())
+             {
+               Curve_iterator temp = itr;
+               ++itr;
+               m_pgn.erase(temp);
+             }
+
+           }
          }
         break;
     }//endswitch
@@ -404,6 +468,7 @@ namespace CGAL
         if(is_last_curve)
         {
           const Arc_point_2& first_point = m_pgn.curves_begin()->source();
+          CGAL_assertion(first_point.x().is_rat() && first_point.y().is_rat());
           FT xs = first_point.x().get_alpha();
           FT ys = first_point.y().get_alpha();
           rubber_curve = X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys)); 
@@ -504,9 +569,8 @@ namespace CGAL
       }
       return false;
   }
-  
-
 
   };
+
 } // namespace CGAL
 #endif
