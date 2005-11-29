@@ -122,7 +122,7 @@ namespace CGAL {
       return visits[facet];
     }
     
-    Point get_facet_center(const int facet) const {
+    const Point& get_facet_center(const int facet) const {
       CGAL_assertion (facet>=0 && facet <4);
       return(tab_surface_center_facets[facet]);
   }
