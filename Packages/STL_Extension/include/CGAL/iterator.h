@@ -1126,6 +1126,48 @@ public:
   }
 };
 
+template<typename _Iterator, typename Predicate>
+    class Filter_output_iterator
+    : public std::iterator<std::output_iterator_tag, void, void, void, void>
+    {
+    protected:
+      _Iterator iterator;
+      Predicate predicate;
+
+    public:
+      typedef _Iterator          iterator_type;
+
+      explicit Filter_output_iterator(_Iterator& __x, const Predicate& pred) 
+	: iterator(__x), predicate(pred) 
+      {}
+
+      template <typename T>
+      Filter_output_iterator&
+      operator=(const T& t)
+      {
+	if(! predicate(t))
+	  iterator = t;
+	return *this;
+      }
+
+      Filter_output_iterator&
+      operator*()
+      { return *this; }
+
+      Filter_output_iterator&
+      operator++()
+      { return *this; }
+
+      Filter_output_iterator
+      operator++(int)
+      { return *this; }
+    };
+
+template < class I, class P >
+inline Filter_output_iterator< I, P >
+filter_output_iterator(I e, const P& p)
+{ return Filter_output_iterator< I, P >(e, p); }
+
 CGAL_END_NAMESPACE
 #endif // CGAL_ITERATOR_H //
 // EOF //
