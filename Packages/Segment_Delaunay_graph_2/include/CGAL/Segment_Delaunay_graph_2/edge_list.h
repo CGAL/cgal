@@ -17,9 +17,6 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-#ifndef CGAL_EDGE_LIST_H // this should be removed once the
-// Segment_Voronoi_diagram_2 package is removed from the release
-
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
 
@@ -481,6 +478,3 @@ CGAL_END_NAMESPACE
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
-
-
-#endif // CGAL_EGDE_LIST_H

@@ -1,6 +1,9 @@
 30 November 2005:  Menelaos Karavelas
 - documentation: rephrased the description of the Oriented_side_2
   predicate functor of the segment Delaunay graph traits.
+- edge_list.h: removed macro checking that was added for the
+  transition from the Segment_Voronoi_diagram_2 to the
+  Segment_Delaunay_graph_2 package.
 
 27 November 2005:  Menelaos Karavelas
 - renamed the construct_sdg_vertex_2 related types and methods to
