@@ -75,6 +75,7 @@ void run_tests()
   test("data/data4.ag.cin");
   test("data/data5.ag.cin");
   test("data/degenerate.ag.cin");
+  test("data/multiple-edges.ag.cin");
 
   test.print_times();
 
@@ -86,6 +87,10 @@ void run_tests()
   test("data/singleton.ag.cin", "data/queries1.cin");
   test("data/1D.ag.cin", "data/queries1.cin");
   test("data/data5.ag.cin", "data/queries1.cin");
+  test("data/multiple-edges.ag.cin", "data/queries7.cin", true);
+  test("data/data6.ag.cin", "data/queries8.cin", true);
+  test("data/data7.ag.cin", "data/queries8.cin", true);
+  test("data/data8.ag.cin", "data/queries8.cin", true);
 
   test.print_loc_times();
 }

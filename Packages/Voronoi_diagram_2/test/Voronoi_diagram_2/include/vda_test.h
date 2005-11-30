@@ -134,7 +134,7 @@ class VDA_Tester
     print_report(vd, project_, dp_project_, nos);
   }
 
-  void test_loc(char* fname, char* qfname, const CGAL::Tag_false&) const
+  void test_loc(char* fname, char* qfname, const CGAL::Tag_false&, bool) const
   {
     static int i = 0;
     if ( i == 0 ) {
@@ -148,7 +148,8 @@ class VDA_Tester
 
   }
 
-  void test_loc(char* fname, char* qfname, const CGAL::Tag_true&) const
+  void test_loc(char* fname, char* qfname, const CGAL::Tag_true&,
+		bool print_sites) const
   {
     std::cout << "*** Testing data file (for point location): "
 	      << fname << std::endl << std::endl;
@@ -165,7 +166,8 @@ class VDA_Tester
 
     loc_timer_.start();
     std::ifstream qfs(qfname);
-    test_locate(vd, project_, qfs, std::cout);
+    assert( qfname );
+    test_locate(vd, project_, qfs, std::cout, print_sites);
     loc_timer_.stop();
     print_separators();
   }
@@ -233,10 +235,10 @@ class VDA_Tester
     print_separators();
   }
 
-  void operator()(char* fname, char* qfname) const
+  void operator()(char* fname, char* qfname, bool print_sites = false) const
   {
     typename VD::Voronoi_traits::Has_nearest_site_2 has_ns;
-    test_loc(fname, qfname, has_ns);
+    test_loc(fname, qfname, has_ns, print_sites);
   }
 
   double dg_time() const { return dg_timer_.time(); }

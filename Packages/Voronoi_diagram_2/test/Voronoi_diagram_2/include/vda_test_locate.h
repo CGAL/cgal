@@ -29,7 +29,8 @@
 
 template<class VDA, class Projector, class QStream, class OStream>
 void test_locate(const VDA& vda, const Projector& project,
-		 QStream& isq, OStream& os = std::cout)
+		 QStream& isq, OStream& os = std::cout,
+		 bool print_sites)
 {
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
@@ -56,7 +57,7 @@ void test_locate(const VDA& vda, const Projector& project,
   }
 
   test_locate_dg(vda, project, vecp, os);
-  test_locate_vd(vda, vecp, os);
+  test_locate_vd(vda, vecp, os, print_sites);
 }
 
 template<class VDA, class Projector, class Point_vector, class OStream>
@@ -96,25 +97,54 @@ void test_locate_dg(const VDA& vda, const Projector& project,
 }
 
 template<class VDA, class Point_vector, class OStream>
-void test_locate_vd(const VDA& vda, const Point_vector& vecp, OStream& os)
+void test_locate_vd(const VDA& vda, const Point_vector& vecp,
+		    OStream& os, bool print_sites)
 {
   typename VDA::Locate_result lr;
+  typename VDA::Voronoi_traits::Access_site_2 get_site =
+    vda.voronoi_traits().access_site_2_object();
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
     lr = vda.locate(vecp[i]);
     if ( lr.is_edge() ) {
-      os << "VORONOI EDGE";
       typename VDA::Halfedge_handle e = lr;
+      os << "VORONOI EDGE";
+      if ( print_sites ) {
+	os << " ---> ";
+	os << " up: " << get_site(e->up());
+	os << " down: " << get_site(e->down());
+	os << " left: ";
+	if ( e->has_source() ) {
+	  os << get_site(e->left());
+	} else {
+	  os << "inf";
+	}
+	os << " right: ";
+	if ( e->has_target() ) {
+	  os << get_site(e->right());
+	} else {
+	  os << "inf";
+	}
+      } // if ( print_sites )
       kill_warning( e );
     } else if ( lr.is_vertex() ) {
       os << "VORONOI VERTEX";
       typename VDA::Vertex_handle v = lr;
+      if ( print_sites ) {
+	os << " ---> ";
+	for (int i = 0; i < 3; ++i) {
+	  os << get_site(v->dual()->vertex(i)) << " ";
+	}
+      }
       kill_warning( v );
     } else if ( lr.is_face() ) {
       typename VDA::Face_handle f = lr;
       kill_warning( f );
       os << "VORONOI FACE";
+      if ( print_sites ) {
+	os << " ---> " << get_site(f->dual());
+      }
     } else {
       os << " *** NOT READY YET *** ";
       CGAL_assertion( false );

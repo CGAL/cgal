@@ -22,6 +22,7 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/predicates/Ag2_orientation_2.h>
 
 #include <boost/variant.hpp>
 
@@ -49,6 +50,7 @@ class Apollonius_graph_nearest_site_2
   typedef typename Delaunay_graph::Face_handle        Face_handle;
   typedef typename Delaunay_graph::Edge               Edge;
   typedef typename Delaunay_graph::Face_circulator    Face_circulator;
+  typedef typename Delaunay_graph::Edge_circulator    Edge_circulator;
 
 public:
   typedef boost::variant<Vertex_handle,Edge,Face_handle> result_type;
@@ -110,38 +112,106 @@ public:
     } while ( fc != fc_start );
 
     // now check if the point lies on a Voronoi edge
-    fc_start = dg.incident_faces(v);
-    fc = fc_start;
+    Edge_circulator ec_start = dg.incident_edges(v);
+    Edge_circulator ec = ec_start;
     do {
-      int index = fc->index(v);
-      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
-      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
+      Face_handle f = ec->first;
+      int idx = ec->second;
+      CGAL_assertion( f->vertex(CW_CCW_2::cw(idx)) == v );
+      Vertex_handle v1 = f->vertex(CW_CCW_2::ccw(idx));
 
-      Oriented_side os1 = ON_POSITIVE_SIDE, os2 = ON_POSITIVE_SIDE;
+      Oriented_side os1 = ON_POSITIVE_SIDE;
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
 	os1 = side_of_bisector(v->site(), v1->site(), p);
       }
-      if ( !dg.is_infinite(v2) ) {
-	os2 = side_of_bisector(v->site(), v2->site(), p);
-      }
 
       CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
-      CGAL_assertion( os2 != ON_NEGATIVE_SIDE );
-      CGAL_assertion( os1 != ON_ORIENTED_BOUNDARY ||
-		      os2 != ON_ORIENTED_BOUNDARY );
 
-      if ( os1 == ON_ORIENTED_BOUNDARY ) {
-	Face_handle f(fc);
-	return Edge(f, CW_CCW_2::cw(index));
-      } else if ( os2 == ON_ORIENTED_BOUNDARY ) {
-	Face_handle f(fc);
-	return Edge(f, CW_CCW_2::ccw(index));
+      if ( os1 != ON_ORIENTED_BOUNDARY ) {
+	++ec;
+	continue;
+      }
+      Vertex_handle v2 = f->vertex(idx);
+      Vertex_handle v3 = dg.tds().mirror_vertex(f, idx);
+
+      bool is_inf2 = dg.is_infinite(v2);
+      bool is_inf3 = dg.is_infinite(v3);
+
+      typename Geom_traits::Orientation_2 vv_orientation =
+	dg.geom_traits().orientation_2_object();
+
+      Orientation o2 = LEFT_TURN, o3 = RIGHT_TURN;
+      if ( is_inf2 && is_inf3 ) { return *ec; }
+
+      Site_2 sp(p, 0);
+
+      if ( !is_inf2 && is_inf3 ) {
+	Orientation vo2 =
+	  vv_orientation(v->site(), v2->site(), v1->site(),
+			 v->site(), v1->site());
+	Orientation op = vv_orientation(v->site(), v1->site(), sp);
+
+	if ( vo2 != LEFT_TURN && op == LEFT_TURN ) { return *ec; }
+
+	o2 = vv_orientation(v->site(), v2->site(), v1->site(),
+			    v->site().point(), sp);
+	CGAL_assertion( o2 != COLLINEAR );
+	if ( o2 == RIGHT_TURN ) { return *ec; }
       }
 
-      ++fc;
-    } while ( fc != fc_start );
+      if ( is_inf2 && !is_inf3 ) {
+	Orientation vo3 =
+	  vv_orientation(v->site(), v1->site(), v3->site(),
+			 v->site(), v1->site());
+	Orientation op = vv_orientation(v->site(), v1->site(), sp);
+
+	if ( vo3 != RIGHT_TURN && op == RIGHT_TURN ) { return *ec; }
+
+	o3 = vv_orientation(v->site(), v1->site(), v3->site(),
+			    v->site().point(), sp);
+	CGAL_assertion( o3 != COLLINEAR );
+	if ( o3 == LEFT_TURN ) { return *ec; }
+      }
+
+      if ( !is_inf2 && !is_inf3 ) {
+	Orientation vo2 =
+	  vv_orientation(v->site(), v2->site(), v1->site(),
+			 v->site(), v1->site());
+	Orientation vo3 =
+	  vv_orientation(v->site(), v1->site(), v3->site(),
+			 v->site(), v1->site());
+
+	if ( (vo3 == LEFT_TURN && vo2 != RIGHT_TURN) ||
+	     (vo3 != LEFT_TURN && vo2 == RIGHT_TURN) ) {
+	  o2 = vv_orientation(v->site(), v2->site(), v1->site(),
+			      v->site(), sp);
+	  o3 = vv_orientation(v->site(), v1->site(), v3->site(),
+			      v->site(), sp);
+	  CGAL_assertion( o2 != COLLINEAR && o3 != COLLINEAR );
+	  if ( o2 == RIGHT_TURN && o3 == LEFT_TURN ) { return *ec; }
+	} else {
+	  CGAL_assertion( vo2 == RIGHT_TURN && vo3 == LEFT_TURN );
+
+	  Orientation op = vv_orientation(v->site(), v1->site().point(), sp);
+
+	  if ( op == COLLINEAR ) { return *ec; }
+	  else if ( op == LEFT_TURN ) {
+	    o3 = vv_orientation(v->site(), v1->site(), v3->site(),
+				v->site(), sp);
+	    CGAL_assertion( o3 != COLLINEAR );
+	    if ( o3 == LEFT_TURN ) { return *ec; }
+	  } else {
+	    o2 = vv_orientation(v->site(), v2->site(), v1->site(),
+				v->site(), sp);
+	    CGAL_assertion( o2 != COLLINEAR );
+	    if ( o2 == RIGHT_TURN ) { return *ec; }
+	  }
+	}
+      }
+      ++ec;
+    } while ( ec != ec_start );
 
     return v;
   }
