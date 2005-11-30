@@ -15,7 +15,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
+
+
 
 
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_VERTEX_BASE_3_H

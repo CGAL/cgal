@@ -18,8 +18,8 @@
 // Author(s)     : Steve OUDOT
 
 
-#ifndef _STANDARD_CRITERIA_H
-#define _STANDARD_CRITERIA_H
+#ifndef CGAL__STANDARD_CRITERIA_H
+#define CGAL__STANDARD_CRITERIA_H
 
 #include <cmath>
 #include <vector>
@@ -331,5 +331,5 @@ namespace CGAL {
 }  // namespace CGAL
 
 
-#endif  // end _REFINE_CRITERIA_H
+#endif  // end CGAL__STANDARD_CRITERIA_H
 
