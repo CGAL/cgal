@@ -1,3 +1,16 @@
+30 November 2005 Andreas Fabri
+- Introduced lazy initialization of treatment of singular vertices
+- Introduced a method for determining if a vertex is in the complex, 
+  as face_type computation would trigger the lazy initialization
+- Removed the graph in the vertices for computing whether the vertex is singular
+- Removed the facet status field and its set/get method
+- Renamed complex_subface_type by face_type
+- Replaced functions that return a list with functions that write in output iterators
+- Replaced the "visits" that counted with a visited that only stores a bool
+  as there was only an inc and reset method, and the comparison with 0
+- Lots of small cleanup as proposed in TODO
+
+
 4 november 2005 Laurent Rineau
 - new output/input operators in:
     include/CGAL/Complex_2_in_triangulation_cell_base_3.h
