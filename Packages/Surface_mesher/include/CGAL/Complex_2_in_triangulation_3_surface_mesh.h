@@ -69,8 +69,8 @@ public Complex_2_in_triangulation_3 <Tr> {
     return (f.first)->is_facet_visited(f.second);
   }
   
-  int nb_visits (const Facet& f) const {
-    return f.first->nb_visits(f.second);
+  bool visited (const Facet& f) const {
+    return f.first->visited(f.second);
   }
   
   Point get_facet_surface_center (const Facet& f) const {
@@ -115,12 +115,12 @@ public Complex_2_in_triangulation_3 <Tr> {
     (f.first)->set_facet_visited(f.second);
   }
   
-  void inc_visits (const Facet& f) {
-    (f.first)->inc_visits(f.second);
+  void set_visited (const Facet& f) {
+    (f.first)->set_visited(f.second);
   }
   
-  void reset_visits (const Facet& f) {
-    (f.first)->reset_visits(f.second);
+  void reset_visited (const Facet& f) {
+    (f.first)->reset_visited(f.second);
   }
   
   void set_facet_surface_center(const Facet& f, const Point& p, const int status=0) {

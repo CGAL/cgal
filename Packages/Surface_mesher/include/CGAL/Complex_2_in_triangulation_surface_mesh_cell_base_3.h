@@ -57,7 +57,7 @@ namespace CGAL {
     Point tab_surface_center_facets [4];
     int tab_surface_status_facets [4];
     bool facet_visited [4];
-    int visits [4];
+    bool visits [4];
     
     
   public:
@@ -72,7 +72,7 @@ namespace CGAL {
       tab_surface_status_facets[0] = tab_surface_status_facets[1] = 
 	tab_surface_status_facets[2] = tab_surface_status_facets[3] = 0;
       
-      visits[0] = visits[1] = visits[2] = visits[3] = 0;
+      visits[0] = visits[1] = visits[2] = visits[3] = false;
     }
     
     Complex_2_in_triangulation_surface_mesh_cell_base_3 (Vertex_handle v0,
@@ -87,7 +87,7 @@ namespace CGAL {
       tab_surface_status_facets[0] = tab_surface_status_facets[1] = 
 	tab_surface_status_facets[2] = tab_surface_status_facets[3] = 0;
       
-      visits[0] = visits[1] = visits[2] = visits[3] = 0;
+      visits[0] = visits[1] = visits[2] = visits[3] = false;
     }
     
     Complex_2_in_triangulation_surface_mesh_cell_base_3 (Vertex_handle v0,
@@ -106,7 +106,7 @@ namespace CGAL {
       tab_surface_status_facets[0] = tab_surface_status_facets[1] = 
 	tab_surface_status_facets[2] = tab_surface_status_facets[3] = 0;
       
-      visits[0] = visits[1] = visits[2] = visits[3] = 0;
+      visits[0] = visits[1] = visits[2] = visits[3] = false;
     }
     
     
@@ -119,8 +119,8 @@ namespace CGAL {
       CGAL_assertion (facet>=0 && facet <4);
       return facet_visited[facet];
     }
-    
-    int nb_visits (const int facet) const {
+
+    bool visited (const int facet) const {
       CGAL_assertion (facet>=0 && facet <4);
       return visits[facet];
     }
@@ -146,14 +146,14 @@ namespace CGAL {
       facet_visited[facet] = true;
     }
     
-    void inc_visits (const int facet) {
+    void set_visited (const int facet) {
       CGAL_assertion (facet>=0 && facet <4);
-      ++visits[facet];
+      visits[facet] = true;
     }
     
-    void reset_visits (const int facet) {
+    void reset_visited (const int facet) {
       CGAL_assertion (facet>=0 && facet <4);
-      visits[facet] = 0;
+      visits[facet] = false;
       facet_visited [facet] = false;
     }
     

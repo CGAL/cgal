@@ -387,8 +387,8 @@ namespace CGAL {
       facets_to_refine.erase(other_side);
 
       // Le compteur des visites est remis a zero
-       c2t3.reset_visits(f);
-       c2t3.reset_visits (other_side);
+       c2t3.reset_visited(f);
+       c2t3.reset_visited (other_side);
 
       // On retire la facette du complexe (car on doit etre
       // independant de l'implementation du complexe)
@@ -472,18 +472,18 @@ namespace CGAL {
       typename GT::Line_3 l;
       
       if (check_visits) {
-	CGAL_assertion (c2t3.nb_visits(f) == 0);
-	//CGAL_assertion (f.first->nb_visits (f.second) == 0);
-	c2t3.inc_visits(f);
-	//f.first->inc_visits (f.second);
+	CGAL_assertion (! c2t3.visited(f));
+	//CGAL_assertion (! f.first->visited(f.second));
+	c2t3.set_visited(f);
+	//f.first->set_visited (f.second);
 	Cell_handle c=f.first->neighbor(f.second);
 	Facet other_side(c, c->index(f.first));
 	//Cell_handle other_side = f.first->neighbor (f.second);
 	//int index_f = other_side->index (f.first);
-	CGAL_assertion (c2t3.nb_visits(other_side) == 0);
-	//CGAL_assertion (other_side->nb_visits (index_f) == 0);
-	c2t3.inc_visits(other_side);
-	//other_side->inc_visits (index_f);
+	CGAL_assertion (! c2t3.visited(other_side));
+	//CGAL_assertion (! other_side->nb_visited (index_f));
+	c2t3.set_visited(other_side);
+	//other_side->set_visited(index_f);
       }
       
       
