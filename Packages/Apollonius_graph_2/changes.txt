@@ -1,4 +1,4 @@
-29 November 2005:  Menelaos Karavelas
+30 November 2005:  Menelaos Karavelas
 - added one more version of the orientation predicate, needed for
   locating on edges of the Apollonius graph (addition in
   code/predicates/traits and doc).
