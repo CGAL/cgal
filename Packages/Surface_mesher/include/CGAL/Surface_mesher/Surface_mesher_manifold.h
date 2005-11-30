@@ -42,26 +42,16 @@ namespace CGAL {
       mutable bool bad_vertices_initialized;
     private:
 
-      Facet facet_with_smallest_cell_handle(const Facet& f) const {
-	Cell_handle c = f.first;
-	int i = f.second;
-	Cell_handle c2 = c->neighbor(i);
-	int i2 = c2->index(c);
-	
-	Cell_handle cmin = c;
-	int imin = i;
-	
-	if (c2 < cmin) {
-	  cmin = c2;
-	  imin = i2;
-	}
-	
-	return std::make_pair(cmin, imin);
+
+      Facet canonical_facet(const Facet& f) const {
+	Cell_handle c = f.first
+	Cell_handle c2 = c->neighbor(f.second);
+	return (c2 < c) ? std::make_pair(c2,c2->index(c)) : f;
       }
     
       // Action to perform on a facet on the boundary of the conflict zone
       void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
-	Facet f1 = facet_with_smallest_cell_handle(f);
+	Facet f1 = canonical_facet(f);
 	Cell_handle c = f1.first;
 	int i = f1.second;
 

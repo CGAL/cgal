@@ -49,6 +49,13 @@ class Complex_2_in_triangulation_3 {
       assert(f.first < f.first->neighbor(f.second));
       return ! f.first->is_facet_on_surface(f.second) ;
     }
+
+    
+    bool operator()(Vertex_handle v) const
+    { 
+      return ! v->is_visited();
+    }
+    
   };
 
 
@@ -70,12 +77,9 @@ protected:
     }
   }
   
-  Facet facet_with_smallest_cell_handle(Cell_handle c, int i) const {
+  Facet canonical_facet(Cell_handle c, int i) const {
     Cell_handle c2 = c->neighbor(i);
-    if(c2 < c){
-      return  std::make_pair(c2,c2->index(c));
-    }
-    return std::make_pair(c,i);
+    return (c2 < c) ? std::make_pair(c2,c2->index(c)) : std::make_pair(c,i);
   }
  public:
 
@@ -266,8 +270,7 @@ protected:
   void set_in_complex (const Cell_handle c, const int i) {
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
-    Facet f = 
-      facet_with_smallest_cell_handle(c, i);
+    Facet f = canonical_facet(c, i);
 
     if (tri3.dimension() == 3) {
       // if not already in the complex
@@ -353,8 +356,7 @@ protected:
   void remove_from_complex (const Cell_handle c, const int i) {
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
-    Facet f = 
-      facet_with_smallest_cell_handle(c, i);
+    Facet f = canonical_facet(c, i);
 
     if (tri3.dimension() == 3) {
       // if in the complex

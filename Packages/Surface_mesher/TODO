@@ -36,11 +36,7 @@ incident_facets qui donne un iterateur sur les facettes incidente
 incident_facets retourne un iterateur sur des facettes
 
 
- 
-changer le nom pour canonical_facet
-Facet facet_with_smallest_cell_handle(const Facet& f) const
-code trop long
-return ( f.first < tri3.mirror_facet(f).first ? f : tri3.mirror_facet(f));
+
 
 Avoir une autre foction oriented_facet ?
 Facet oriented_facet(const Facet& f) const;
