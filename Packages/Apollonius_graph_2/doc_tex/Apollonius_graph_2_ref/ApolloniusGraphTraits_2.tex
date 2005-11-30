@@ -113,7 +113,14 @@ and \ccc{s2}.}
 provide \ccc{Orientation operator()(Site_2 s1,
 Site_2 s2, Site_2 s3)}, which performs the
 usual orientation test for the centers of the three sites
-\ccc{s1}, \ccc{s2} and \ccc{s3}.}
+\ccc{s1}, \ccc{s2} and \ccc{s3}.\\
+Must also provide \ccc{Orientation operator()(Site_2 s1, Site_2 s2,
+  Site_2 s3, Site_2 p1, Site_2 p2)}, 
+which performs the usual orientation test for the Apollonius vertex of
+\ccc{s1}, \ccc{s2}, \ccc{s3} and the centers of \ccc{p1} and
+\ccc{p2}.
+\ccPrecond{the Apollonius vertex of \ccc{s1}, \ccc{s2}
+and \ccc{s3} must exist.}}
 %
 \ccGlue
 \ccNestedType{Is_hidden_2}{A predicate object type. Must

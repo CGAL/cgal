@@ -49,7 +49,7 @@ CGAL_BEGIN_NAMESPACE
 //                        Orientation
 //-----------------------------------------------------------------------
 
-template< class K >
+template< class K, class Method_tag >
 class AG2_Orientation_test_2
 {
  public:
@@ -57,12 +57,46 @@ class AG2_Orientation_test_2
   typedef Orientation          result_type;
   typedef Arity_tag<3>         Arity;
 
+private:
+  inline Orientation vv_orientation(const Site_2& s1, const Site_2& s2,
+				    const Site_2& s3,
+				    const Site_2& p1, const Site_2& p2,
+				    const Ring_tag&) const
+  {
+    return ag2_orientation_test_ring_C2(s1.x(), s1.y(), s1.weight(),
+					s2.x(), s2.y(), s2.weight(),
+					s3.x(), s3.y(), s3.weight(),
+					p1.x(), p1.y(), p1.weight(),
+					p2.x(), p2.y(), p2.weight());
+  }
+
+  inline Orientation vv_orientation(const Site_2& s1, const Site_2& s2,
+				    const Site_2& s3,
+				    const Site_2& p1, const Site_2& p2,
+				    const Sqrt_field_tag&) const
+  {
+    return ag2_orientation_test_sqrtf_C2(s1.x(), s1.y(), s1.weight(),
+					 s2.x(), s2.y(), s2.weight(),
+					 s3.x(), s3.y(), s3.weight(),
+					 p1.x(), p1.y(), p1.weight(),
+					 p2.x(), p2.y(), p2.weight());
+  }
+
+public:
   inline Orientation operator()(const Site_2 &p, const Site_2 &q,
 				const Site_2 &r) const
   {
     return ag2_orientation_test_C2(p.x(), p.y(), p.weight(),
 				   q.x(), q.y(), q.weight(),
 				   r.x(), r.y(), r.weight());
+  }
+
+
+  inline Orientation operator()(const Site_2& s1, const Site_2& s2,
+				const Site_2& s3, const Site_2& p1,
+				const Site_2& p2) const
+  {
+    return vv_orientation(s1, s2, s3, p1, p2, Method_tag());
   }
 };
 
@@ -493,7 +527,7 @@ public:
   typedef CGAL::Ag2_compare_x_2<Kernel>                 Compare_x_2;
   typedef CGAL::Ag2_compare_y_2<Kernel>                 Compare_y_2;
   typedef CGAL::Ag2_compare_weight_2<Kernel>            Compare_weight_2;
-  typedef CGAL::AG2_Orientation_test_2<Kernel>          Orientation_2;
+  typedef CGAL::AG2_Orientation_test_2<Kernel,MTag>     Orientation_2;
   typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
   typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;

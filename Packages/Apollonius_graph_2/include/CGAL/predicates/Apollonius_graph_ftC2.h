@@ -52,8 +52,64 @@ ag2_orientation_test_C2(const RT &x1, const RT &y1, const RT &w1,
   Site_2 p2(Point_2(x2, y2), w2);
   Site_2 p3(Point_2(x3, y3), w3);
 
-  Ag2_orientation_2<Kernel> f;
+  Ag2_orientation_2<Kernel,Ring_tag> f;
   return f(p1, p2, p3);
+}
+
+//--------------------------------------------------------------------
+
+template< class RT >
+inline
+Orientation
+ag2_orientation_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
+			     const RT &x2, const RT &y2, const RT &w2,
+			     const RT &x3, const RT &y3, const RT &w3,
+			     const RT &x4, const RT &y4, const RT &w4,
+			     const RT &x5, const RT &y5, const RT &w5)
+{
+  must_be_filtered(x1);
+
+  typedef Simple_cartesian<RT>                    Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
+  typedef typename Kernel::Point_2                Point_2;
+  typedef typename Kernel::Site_2                 Site_2;
+
+  Site_2 p1(Point_2(x1, y1), w1);
+  Site_2 p2(Point_2(x2, y2), w2);
+  Site_2 p3(Point_2(x3, y3), w3);
+  Site_2 p4(Point_2(x4, y4), w4);
+  Site_2 p5(Point_2(x5, y5), w5);
+
+  Ag2_orientation_2<Kernel,Ring_tag> f;
+  return f(p1, p2, p3, p4, p5);
+}
+
+//--------------------------------------------------------------------
+
+template< class RT >
+inline
+Orientation
+ag2_orientation_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
+			      const RT &x2, const RT &y2, const RT &w2,
+			      const RT &x3, const RT &y3, const RT &w3,
+			      const RT &x4, const RT &y4, const RT &w4,
+			      const RT &x5, const RT &y5, const RT &w5)
+{
+  must_be_filtered(x1);
+
+  typedef Simple_cartesian<RT>                    Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
+  typedef typename Kernel::Point_2                Point_2;
+  typedef typename Kernel::Site_2                 Site_2;
+
+  Site_2 p1(Point_2(x1, y1), w1);
+  Site_2 p2(Point_2(x2, y2), w2);
+  Site_2 p3(Point_2(x3, y3), w3);
+  Site_2 p4(Point_2(x4, y4), w4);
+  Site_2 p5(Point_2(x5, y5), w5);
+
+  Ag2_orientation_2<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, p3, p4, p5);
 }
 
 //--------------------------------------------------------------------

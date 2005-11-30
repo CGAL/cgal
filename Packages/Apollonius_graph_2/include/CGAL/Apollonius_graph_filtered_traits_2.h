@@ -288,7 +288,7 @@ private:
   typedef Ag2_compare_x_2<FK>                    FK_Compare_x_2;
   typedef Ag2_compare_y_2<FK>                    FK_Compare_y_2;
   typedef Ag2_compare_weight_2<FK>               FK_Compare_weight_2;
-  typedef Ag2_orientation_2<FK>                  FK_Orientation_2;
+  typedef Ag2_orientation_2<FK,FK_MTag>          FK_Orientation_2;
   typedef Ag2_is_hidden_C2<FK,FK_MTag>           FK_Is_hidden_2;
   typedef Incircle_test<FK,FK_MTag>              FK_Vertex_conflict_2;
   typedef Ag2_oriented_side_of_bisector_C2<FK,FK_MTag>
@@ -303,7 +303,7 @@ private:
   typedef Ag2_compare_x_2<EK>                    EK_Compare_x_2;
   typedef Ag2_compare_y_2<EK>                    EK_Compare_y_2;
   typedef Ag2_compare_weight_2<EK>               EK_Compare_weight_2;
-  typedef Ag2_orientation_2<EK>                  EK_Orientation_2;
+  typedef Ag2_orientation_2<EK,EK_MTag>          EK_Orientation_2;
   typedef Ag2_is_hidden_C2<EK,EK_MTag>           EK_Is_hidden_2;
   typedef Incircle_test<EK,EK_MTag>              EK_Vertex_conflict_2;
   typedef Ag2_oriented_side_of_bisector_C2<EK,EK_MTag>
