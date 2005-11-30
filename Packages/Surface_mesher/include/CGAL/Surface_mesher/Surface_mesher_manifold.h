@@ -44,7 +44,7 @@ namespace CGAL {
 
 
       Facet canonical_facet(const Facet& f) const {
-	Cell_handle c = f.first
+	Cell_handle c = f.first;
 	Cell_handle c2 = c->neighbor(f.second);
 	return (c2 < c) ? std::make_pair(c2,c2->index(c)) : f;
       }
