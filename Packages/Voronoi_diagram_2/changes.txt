@@ -1,4 +1,4 @@
-29 November 2005:  Menelaos Karavelas
+30 November 2005:  Menelaos Karavelas
 - fixed bug in point location of the Apollonius diagram, when the
   point lies on an Apollonius edge; added testing for that.
 
