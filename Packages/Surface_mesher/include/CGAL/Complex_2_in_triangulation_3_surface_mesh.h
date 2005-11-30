@@ -39,17 +39,6 @@ public Complex_2_in_triangulation_3 <Tr> {
 
   typedef typename Vertices::iterator Vertices_iterator;
 
- private:
-  // computes and returns the opposite side of a given Facet side
-  Facet other_side(const Facet& cote) const {
-    return Facet
-      ((cote.first)->neighbor(cote.second),
-       (cote.first)->neighbor(cote.second)->
-       index(cote.first));
-  }
-  
- public:
-  
   // Constructors
   Complex_2_in_triangulation_3_surface_mesh(Triangulation_3& t3)
     :Complex_2_in_triangulation_3<Triangulation_3>(t3){
@@ -100,7 +89,7 @@ public Complex_2_in_triangulation_3 <Tr> {
     
     Facets loaf = Base::incident_facets(v);
 
-    Facet autre_cote = other_side(f);
+    Facet autre_cote = triangulation().mirror_facet(f);
     if (Base::complex_subface_type(f) != 
 	Base::NOT_IN_COMPLEX)
       loaf.push_back(f);
@@ -129,7 +118,7 @@ public Complex_2_in_triangulation_3 <Tr> {
     
     Base::incident_facets(v, it);
 
-    Facet autre_cote = other_side(f);
+    Facet autre_cote = triangulation().mirror_facet(f);
     if (Base::complex_subface_type(f) != 
 	Base::NOT_IN_COMPLEX){
       *it = f; ++it;
