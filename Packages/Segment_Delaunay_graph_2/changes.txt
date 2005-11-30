@@ -4,6 +4,8 @@
 - edge_list.h: removed macro checking that was added for the
   transition from the Segment_Voronoi_diagram_2 to the
   Segment_Delaunay_graph_2 package.
+- moved the edge hash function (to be used for a unique hash map of edges) in
+  a separate file and in the CGAL:: namespace
 
 27 November 2005:  Menelaos Karavelas
 - renamed the construct_sdg_vertex_2 related types and methods to

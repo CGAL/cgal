@@ -22,29 +22,13 @@
 
 
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Edge_hash_function.h>
 #include <CGAL/circulator_bases.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 namespace CGALi {
-
-  class Edge_hash_function
-    : public Handle_hash_function
-  {
-  private:
-    typedef Handle_hash_function     Base;
-
-  public:
-    typedef Base::result_type        result_type;
-
-    template<class Edge>
-    result_type operator()(const Edge& e) const
-    {
-      return (Base::operator()(e.first)) << e.second;
-    }
-  };
-
 
   template<class Edge_t>
   class Edge_list_item
@@ -122,7 +106,7 @@ namespace CGALi {
   {
     typedef E_t                         Edge;
     typedef ListItem                    List_item;
-    typedef CGALi::Edge_hash_function   Hash_function;
+    typedef CGAL::Edge_hash_function    Hash_function;
 
     typedef Unique_hash_map<Edge,List_item,Hash_function>  Edge_map;
   };
