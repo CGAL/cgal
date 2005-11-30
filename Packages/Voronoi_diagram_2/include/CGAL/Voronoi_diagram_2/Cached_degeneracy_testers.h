@@ -26,7 +26,7 @@
 #include <map>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/edge_list.h>
+#include <CGAL/Edge_hash_function.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -181,7 +181,7 @@ public:
 private:
   enum Three_valued { UNDEFINED = -1, False, True };
 
-  typedef Unique_hash_map<Edge,Three_valued,CGALi::Edge_hash_function>
+  typedef Unique_hash_map<Edge,Three_valued,Edge_hash_function>
   Edge_map;
 
   Edge opposite(const Delaunay_graph& dual, const Edge& e) const {

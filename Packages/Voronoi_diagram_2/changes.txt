@@ -1,6 +1,10 @@
 30 November 2005:  Menelaos Karavelas
 - fixed bug in point location of the Apollonius diagram, when the
   point lies on an Apollonius edge; added testing for that.
+- fixed broken file inclusion: problem due to change of name in
+  segment Delaunay graph package.
+- removed testing for segment Voronoi diagram (package replaced by
+  Segment_Delaunay_graph package).
 
 27 November 2005:  Menelaos Karavelas
 - new version of the user manual; some text changes in the
