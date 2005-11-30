@@ -1,4 +1,0 @@
-#!/bin/bash
-for (( i=2; $i<20; i=$i+1 )); do
-  nice -19 labrun -v --nocvs --log ACIS/Tetrahedra_and_grid ./tetrahedra_and_grid cube.nef3 $i $i $i 12345
-done

@@ -40,7 +40,8 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_QT_LDFLAGS)  \
+          $(OPENGL_LIBS)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -63,7 +64,11 @@ all:            \
                 point_location$(EXE_EXT) \
 		point_location2$(EXE_EXT) \
 		create_complex_sphere_map_data$(EXE_EXT) \
-	  	binary_operation$(EXE_EXT)
+		gaussian_map_overlay$(EXE_EXT) \
+		move_x_half$(EXE_EXT) \
+	  	binary_operation$(EXE_EXT) \
+	  	minkowski_sum$(EXE_EXT) \
+	  	incremental$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
@@ -97,8 +102,16 @@ point_location2$(EXE_EXT): point_location2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location2 point_location2$(OBJ_EXT) $(LDFLAGS)
 create_complex_sphere_map_data$(EXE_EXT): create_complex_sphere_map_data$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)create_complex_sphere_map_data create_complex_sphere_map_data$(OBJ_EXT) $(LDFLAGS)
+gaussian_map_overlay$(EXE_EXT): gaussian_map_overlay$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gaussian_map_overlay gaussian_map_overlay$(OBJ_EXT) $(LDFLAGS)
+move_x_half$(EXE_EXT): move_x_half$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)move_x_half move_x_half$(OBJ_EXT) $(LDFLAGS)
 binary_operation$(EXE_EXT): binary_operation$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)binary_operation binary_operation$(OBJ_EXT) $(LDFLAGS)
+minkowski_sum$(EXE_EXT): minkowski_sum$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)minkowski_sum minkowski_sum$(OBJ_EXT) $(LDFLAGS)
+incremental$(EXE_EXT): incremental$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)incremental incremental$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
@@ -117,7 +130,11 @@ clean: \
 	           point_location.clean \
 	           point_location2.clean \
 	           create_complex_sphere_map_data.clean \
-	           binary_operation.clean
+	           gaussian_map_overlay.clean \
+                   move_x_half.clean \
+	           binary_operation.clean \
+	           minkowski_sum.clean \
+	           incremental.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
