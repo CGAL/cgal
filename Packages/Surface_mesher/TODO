@@ -200,9 +200,7 @@ utilisant  tri3.dimension()+1 comme borne sur les indices ?
 void remove_from_complex (const Cell_handle c, const int i)
 Pourquoi on fait un remove des sommets ?
 
-Class Complex_2_in_triangulation_vertex_base_3
-Facet facet_with_smallest_cell_handle(const Facet& f) const
-ne sert a rien ici ?
+
 
 ------------------------------------------------------
 

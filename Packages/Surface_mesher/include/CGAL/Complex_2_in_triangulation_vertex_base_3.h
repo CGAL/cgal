@@ -63,24 +63,6 @@ namespace CGAL {
     public: // AF: todo: make private and wrap in functions
       bool regular_is_cached;
       bool regular;
-  private:
-    // computes and return the semi-facet with the smallest cell_handle
-    Facet facet_with_smallest_cell_handle(const Facet& f) const {
-      Cell_handle c = f.first;
-      int i = f.second;
-      Cell_handle c2 = c->neighbor(i);
-      int i2 = c2->index(c);
-      
-      Cell_handle cmin = c;
-      int imin = i;
-      
-      if (c2 < cmin) {
-	cmin = c2;
-	imin = i2;
-      }
-      
-      return std::make_pair(cmin, imin);
-    }
 
   public:  
     // Constructors
