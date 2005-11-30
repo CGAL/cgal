@@ -163,8 +163,7 @@ public:
      */
     bool operator() (const X_monotone_curve_2& cv) const
     {
-      // A circular arc can never be vertical:
-      return (false);
+      return (cv.is_vertical());
     }
   };
 
