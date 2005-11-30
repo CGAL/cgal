@@ -1,6 +1,6 @@
 // Use the default kernels and the default conversions:
 #include <CGAL/Skin_surface_traits_3.h>
-typedef CGAL::Skin_surface_traits_3<>     Skin_traits;
+typedef CGAL::Skin_surface_traits_3<>                     Skin_traits;
 
 // *********************
 // Regular triangulation

@@ -428,16 +428,14 @@ compute_anchor_vor (Vertex_handle const v) {
 	       adj_vertex != adj_vertices.end();
 	       adj_vertex++) {
             if (v_other != (*adj_vertex)) {
-              if (collinear(v->point(), v_other->point(), (*adj_vertex)->point())) {
-                side = test_anchor(v->point(), v_other->point(),
-                                   (*adj_vertex)->point());
-                if (side==ZERO) {
-                  Edge e2;
-                  if (!reg.is_edge(v, *adj_vertex, e2.first, e2.second, e2.third)) {
-                    CGAL_assertion(false);
-                  }
-                  equiv_anchors.push_back(e2);
+              side = test_anchor(v->point(), v_other->point(),
+                                 (*adj_vertex)->point());
+              if (side==ZERO) {
+                Edge e2;
+                if (!reg.is_edge(v, *adj_vertex, e2.first, e2.second, e2.third)) {
+                  CGAL_assertion(false);
                 }
+                equiv_anchors.push_back(e2);
               }
             }
           }          
@@ -447,6 +445,7 @@ compute_anchor_vor (Vertex_handle const v) {
       s = tmp;
     }
   }
+  return Simplex();
 }
 
 template < class RegularTriangulation3 >
@@ -518,16 +517,12 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
               int index2 = 6 - (*fcir).second
                              - (*fcir).first->index(v0) 
                              - (*fcir).first->index(v1);
-              if (!(f.first->vertex(index) == (*fcir).first->vertex(index2))) {
-                if (coplanar(v0->point(), v1->point(),
-                             f.first->vertex(index)->point(), 
-                             (*fcir).first->vertex(index2)->point())) {
-                  side = test_anchor(v0->point(), v1->point(),
-                                     f.first->vertex(index)->point(), 
-                                     (*fcir).first->vertex(index2)->point());
-                  if (side == ZERO) {
-                    equiv_anchors.push_back(Facet(*fcir));
-                  }
+            if (!(f.first->vertex(index) == (*fcir).first->vertex(index2))) {
+                side = test_anchor(v0->point(), v1->point(),
+                                   f.first->vertex(index)->point(), 
+                                   (*fcir).first->vertex(index2)->point());
+                if (side == ZERO) {
+                  equiv_anchors.push_back(Facet(*fcir));
                 }
               }
             }
@@ -551,15 +546,6 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
   if (!reg.is_infinite(f.first)) {
     side = test_anchor(f.first, f.second);
     if (side==NEGATIVE) {
-      // NGHK: remove test:
-      {
-	Cell_handle neighbor = f.first->neighbor(f.second);
-	if (!reg.is_infinite(neighbor)) {
-	  int n_index = neighbor->index(f.first);
-	  side = test_anchor(neighbor, n_index);
-	  CGAL_assertion(side==POSITIVE);
-	}
-      }
       return Simplex(f.first);
     } else if (side == ZERO) {
       equiv_anchors.push_back(f.first);

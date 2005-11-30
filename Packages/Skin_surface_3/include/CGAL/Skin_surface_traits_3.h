@@ -54,6 +54,7 @@ public:
 
   typedef Regular_triangulation_euclidean_traits_3<Regular_kernel>
                                              Regular_traits;
+  typedef typename Regular_kernel::RT        Regular_RT;
 
   typedef Regular_triangulation_euclidean_traits_3<
            Triangulated_mixed_complex_kernel> Triangulated_mixed_complex_traits;
@@ -74,7 +75,7 @@ public:
     Cartesian_converter<Polyhedron_kernel,Triangulated_mixed_complex_kernel> >
                                               P2T_converter; 
 
-  Skin_surface_traits_3(typename Regular_kernel::RT shrink = .5) :
+  Skin_surface_traits_3(Regular_RT shrink = .5) :
     shrink(shrink) {}
   
   // Function objects:
@@ -111,11 +112,11 @@ public:
   construct_weighted_circumcenter_3_object() const {
     return Construct_anchor_point_3<Triangulated_mixed_complex_kernel>(shrink);
   }
-  typename Regular_kernel::RT shrink_factor() const {
+  Regular_RT shrink_factor() const {
     return shrink;
   }
 
-  typename Regular_kernel::RT shrink;
+  Regular_RT shrink;
 };
 
 CGAL_END_NAMESPACE

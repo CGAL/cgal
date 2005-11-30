@@ -26,7 +26,6 @@ public:
   virtual ~Skin_surface_quadratic_surface_3() {};
   // Construct the intersection point with the segment (p0,p1)
   Point to_surface(Point const &p0, Point const &p1) {
-    CGAL_assertion (Sign(value(p1) * value(p0)) != POSITIVE);
     RT sq_d = squared_distance(p0,p1);
     Point pp0=p0, pp1=p1, mid;
 
