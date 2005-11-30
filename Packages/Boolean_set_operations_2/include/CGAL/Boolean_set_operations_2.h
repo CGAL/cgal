@@ -23,6 +23,7 @@
 #include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_2.h>
+#include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Gps_traits_adaptor_2.h>
 #include <CGAL/iterator.h> 
 
@@ -57,11 +58,68 @@ struct Gps_default_traits<CGAL::General_polygon_2<Arr_traits> >
 /////////////////////
 //  do_intersect  //
 ///////////////////
-template <class Polygon_A, class Polygon_B>
-inline bool do_intersect(const Polygon_A& pgn1, const Polygon_B& pgn2)
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1, 
+                         const Polygon_2<Kernel, Container>& pgn2)
 {
-  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
+  Traits tr;
+  return (do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1, 
+                         const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn2)
+{
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
+  
+  Traits tr;
+  return (do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline bool do_intersect(const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2)
+{
+  return (do_intersect(pgn2, pgn1));
+}
+
+template <class Arr_traits>
+inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_2<Arr_traits>& pgn2)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Arr_traits>
+inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Arr_traits>
+inline bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
+                         const General_polygon_2<Arr_traits>& pgn2)
+{
+  return (do_intersect(pgn2, pgn1));
+}
+
+template <class Polygon_>
+inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                         const General_polygon_with_holes_2<Polygon_>& pgn2)
+{
+  typedef typename Gps_default_traits<Polygon_>::Traits    Traits;
+
   Traits tr;
   return (do_intersect(pgn1, pgn2, tr));
 }
@@ -105,16 +163,79 @@ inline bool do_intersect(const typename Traits::Polygon_with_holes_2& pgn1,
 //  intersection  //
 ///////////////////
 
-template <class Polygon_A, class Polygon_B, class OutputIterator>
-inline OutputIterator intersection(const Polygon_A& pgn1,
-                                   const Polygon_B& pgn2,
-                                   OutputIterator oi)
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1, 
+                                   const Polygon_2<Kernel, Container>& pgn2,
+                                   OutputIterator out)
 {
-  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
   Traits tr;
-  return (intersection(pgn1, pgn2, oi, tr));
+  return (intersection(pgn1, pgn2, out, tr));
 }
+
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1, 
+                         const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn2,
+                           OutputIterator out)
+{
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
+  
+  Traits tr;
+  return (intersection(pgn1, pgn2, out, tr));
+}
+
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator intersection(const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         OutputIterator out)
+{
+  return (intersection(pgn2, pgn1, out));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator intersection(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_2<Arr_traits>& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (intersection(pgn1, pgn2, out, tr));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator intersection(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (intersection(pgn1, pgn2, out, tr));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator intersection(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
+                         const General_polygon_2<Arr_traits>& pgn2,
+                         OutputIterator out)
+{
+  return (intersection(pgn2, pgn1, out));
+}
+
+template <class Polygon_, class OutputIterator>
+inline OutputIterator intersection(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                         const General_polygon_with_holes_2<Polygon_>& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<Polygon_>::Traits    Traits;
+
+  Traits tr;
+  return (intersection(pgn1, pgn2, out, tr));
+}
+
 
 template <class Traits, class OutputIterator>
 inline OutputIterator intersection(const typename Traits::Polygon_2& pgn1,
@@ -163,13 +284,75 @@ inline OutputIterator intersection(const typename Traits::Polygon_with_holes_2& 
 //      join      //
 ///////////////////
 
-template <class Polygon_A, class Polygon_B, class OutputPolygon>
-inline bool join(const Polygon_A& pgn1,
-                 const Polygon_B& pgn2,
-                 OutputPolygon&   res)
+template <class Kernel, class Container>
+inline bool join(const Polygon_2<Kernel, Container>& pgn1, 
+                 const Polygon_2<Kernel, Container>& pgn2,
+                 General_polygon_with_holes_2<Polygon_2<Kernel, Container> >& res)
 {
-  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
+  Traits tr;
+  return (join(pgn1, pgn2, res, tr));
+}
+
+template <class Kernel, class Container>
+inline bool join(const Polygon_2<Kernel, Container>& pgn1, 
+                 const General_polygon_with_holes_2
+                    <Polygon_2<Kernel, Container> >& pgn2,
+                 General_polygon_with_holes_2<Polygon_2<Kernel, Container> >& res )
+{
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
+  
+  Traits tr;
+  return (join(pgn1, pgn2, res, tr));
+}
+
+template <class Kernel, class Container>
+inline bool join(const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn1,
+                 const Polygon_2<Kernel, Container>& pgn2,
+                 General_polygon_with_holes_2<Polygon_2<Kernel, Container> >& res )
+{
+  return (join(pgn2, pgn1, res));
+}
+
+template <class Arr_traits>
+inline bool join(const General_polygon_2<Arr_traits>& pgn1, 
+                 const General_polygon_2<Arr_traits>& pgn2,
+                 General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (join(pgn1, pgn2, res, tr));
+}
+
+template <class Arr_traits>
+inline bool join(const General_polygon_2<Arr_traits>& pgn1, 
+                 const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
+                 General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (join(pgn1, pgn2, res, tr));
+}
+
+template <class Arr_traits>
+inline bool join(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
+                 const General_polygon_2<Arr_traits>& pgn2,
+                 General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res)
+{
+  return (join(pgn2, pgn1, res));
+}
+
+template <class Polygon_>
+inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                 const General_polygon_with_holes_2<Polygon_>& pgn2,
+                 General_polygon_with_holes_2<Polygon_>& res)
+{
+  typedef typename Gps_default_traits<Polygon_>::Traits    Traits;
+
   Traits tr;
   return (join(pgn1, pgn2, res, tr));
 }
@@ -245,16 +428,79 @@ inline bool join(const typename Traits::Polygon_with_holes_2& pgn1,
 //  difference    //
 ///////////////////
 
-template <class Polygon_A, class Polygon_B, class OutputIterator>
-inline OutputIterator difference(const Polygon_A& pgn1,
-                                 const Polygon_B& pgn2,
-                                 OutputIterator oi)
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1, 
+                                   const Polygon_2<Kernel, Container>& pgn2,
+                                   OutputIterator out)
 {
-  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
   Traits tr;
-  return (difference(pgn1, pgn2, oi, tr));
+  return (difference(pgn1, pgn2, out, tr));
 }
+
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1, 
+                         const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn2,
+                           OutputIterator out)
+{
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
+  
+  Traits tr;
+  return (difference(pgn1, pgn2, out, tr));
+}
+
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator difference(const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         OutputIterator out)
+{
+  return (difference(pgn2, pgn1, out));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator difference(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_2<Arr_traits>& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (difference(pgn1, pgn2, out, tr));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator difference(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (difference(pgn1, pgn2, out, tr));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator difference(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
+                         const General_polygon_2<Arr_traits>& pgn2,
+                         OutputIterator out)
+{
+  return (difference(pgn2, pgn1, out));
+}
+
+template <class Polygon_, class OutputIterator>
+inline OutputIterator difference(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                         const General_polygon_with_holes_2<Polygon_>& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<Polygon_>::Traits    Traits;
+
+  Traits tr;
+  return (difference(pgn1, pgn2, out, tr));
+}
+
 
 template <class Traits, class OutputIterator>
 inline OutputIterator difference(const typename Traits::Polygon_2& pgn1,
@@ -303,16 +549,79 @@ inline OutputIterator difference(const typename Traits::Polygon_with_holes_2& pg
 //  symmetric_difference  //
 ///////////////////////////
 
-template <class Polygon_A, class Polygon_B, class OutputIterator>
-inline OutputIterator symmetric_difference(const Polygon_A& pgn1,
-                                           const Polygon_B& pgn2,
-                                           OutputIterator oi)
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& pgn1, 
+                                   const Polygon_2<Kernel, Container>& pgn2,
+                                   OutputIterator out)
 {
-  typedef typename Gps_default_traits<Polygon_A>::Traits    Traits;
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
   Traits tr;
-  return (symmetric_difference(pgn1, pgn2, oi, tr));
+  return (symmetric_difference(pgn1, pgn2, out, tr));
 }
+
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& pgn1, 
+                         const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn2,
+                           OutputIterator out)
+{
+  typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
+  
+  Traits tr;
+  return (symmetric_difference(pgn1, pgn2, out, tr));
+}
+
+template <class Kernel, class Container, class OutputIterator>
+inline OutputIterator symmetric_difference(const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         OutputIterator out)
+{
+  return (symmetric_difference(pgn2, pgn1, out));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator symmetric_difference(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_2<Arr_traits>& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (symmetric_difference(pgn1, pgn2, out, tr));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator symmetric_difference(const General_polygon_2<Arr_traits>& pgn1, 
+                         const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
+  
+  Traits tr;
+  return (symmetric_difference(pgn1, pgn2, out, tr));
+}
+
+template <class Arr_traits, class OutputIterator>
+inline OutputIterator symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
+                         const General_polygon_2<Arr_traits>& pgn2,
+                         OutputIterator out)
+{
+  return (symmetric_difference(pgn2, pgn1, out));
+}
+
+template <class Polygon_, class OutputIterator>
+inline OutputIterator symmetric_difference(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                         const General_polygon_with_holes_2<Polygon_>& pgn2,
+                         OutputIterator out)
+{
+  typedef typename Gps_default_traits<Polygon_>::Traits    Traits;
+
+  Traits tr;
+  return (symmetric_difference(pgn1, pgn2, out, tr));
+}
+
 
 template <class Traits, class OutputIterator>
 inline OutputIterator symmetric_difference(const typename Traits::Polygon_2& pgn1,
