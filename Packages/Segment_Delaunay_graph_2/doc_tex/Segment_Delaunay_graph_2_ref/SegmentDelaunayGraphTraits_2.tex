@@ -239,10 +239,10 @@ is not in conflict with the Voronoi edge.}
 \ccGlue
 \ccNestedType{Oriented_side_2}{A predicate object type. Must provide
   \ccc{Oriented_side operator(Site_1 s1, Site_2 s2, Site_2 s3, Site_2
-    s, Site_2 p)}. Determines the oriented side of the line $\ell$,
+    s, Site_2 p)}. Determines the oriented side of the line $\ell$
+  that contains the point site \ccc{p}, where $\ell$ is the line
   that passes through the Voronoi vertex of the sites \ccc{s1},
-  \ccc{s2}, \ccc{s3} and is perpendicular to the segment site \ccc{s},
-  that contains the point site \ccc{p}.
+  \ccc{s2}, \ccc{s3} and is perpendicular to the segment site \ccc{s}.
   \ccPrecond{\ccc{s} must be a segment and \ccc{p} must be a point.}}
 %
 \ccNestedType{Arrangement_type_2}{A predicate object type. Must
