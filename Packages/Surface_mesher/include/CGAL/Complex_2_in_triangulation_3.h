@@ -151,9 +151,6 @@ protected:
 
 
   bool is_regular(const Vertex_handle v) const {
-#ifdef USE_GRAPH
-    return v->is_graph_connected();
-#else 
     if(v->regular_is_cached){
       return v->regular;
     } else {
@@ -318,9 +315,6 @@ protected:
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    set_in_complex(v);
-#ifdef USE_GRAPH
-	    v->add_in_graph(f, adjacent_facets(f, v));
-#endif
 	  }
 	}
       }
@@ -349,9 +343,6 @@ protected:
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    set_in_complex(v);
-#ifdef USE_GRAPH
-	    v->add_in_graph(f, adjacent_facets(f, v));
-#endif
             // when it was singular before it is also singular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was regular
 	    if((v->regular_is_cached) && (v->regular)){
@@ -403,9 +394,6 @@ protected:
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    remove_from_complex(v);
-#ifdef USE_GRAPH
-	    v->remove_from_graph(f);
-#endif
 	    // when it was regular before it is also regular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was singular
 	    if((v->regular_is_cached) && (! v->regular)){
@@ -442,9 +430,6 @@ protected:
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    remove_from_complex(v);
-#ifdef USE_GRAPH
-	    v->remove_from_graph(f);
-#endif
 
 	    // when it was regular before it is also regular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was singular

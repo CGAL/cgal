@@ -77,10 +77,12 @@ public Complex_2_in_triangulation_3 <Tr> {
     return (f.first)->get_facet_surface_center(f.second);
   }
   
+  /*
   int get_facet_surface_status(const Facet& f) const {
     return (f.first)->get_facet_surface_status(f.second);
   }
-  
+  */
+
   template <class OutputIterator>
   OutputIterator
   incident_vertices(const Vertex_handle& v, OutputIterator voit) const {
@@ -123,8 +125,8 @@ public Complex_2_in_triangulation_3 <Tr> {
     (f.first)->reset_visited(f.second);
   }
   
-  void set_facet_surface_center(const Facet& f, const Point& p, const int status=0) {
-    (f.first)->set_facet_surface_center(f.second, p, status);
+  void set_facet_surface_center(const Facet& f, const Point& p) {
+    (f.first)->set_facet_surface_center(f.second, p);
   }
 };
 

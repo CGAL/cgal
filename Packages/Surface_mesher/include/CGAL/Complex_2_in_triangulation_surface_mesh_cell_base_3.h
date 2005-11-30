@@ -55,7 +55,6 @@ namespace CGAL {
     
     // Facets
     Point tab_surface_center_facets [4];
-    int tab_surface_status_facets [4];
     bool facet_visited [4];
     bool visits [4];
     
@@ -68,10 +67,6 @@ namespace CGAL {
       
       facet_visited[0] = facet_visited[1] = facet_visited[2] = 
 	facet_visited[3] = false;
-      
-      tab_surface_status_facets[0] = tab_surface_status_facets[1] = 
-	tab_surface_status_facets[2] = tab_surface_status_facets[3] = 0;
-      
       visits[0] = visits[1] = visits[2] = visits[3] = false;
     }
     
@@ -83,10 +78,6 @@ namespace CGAL {
       
       facet_visited[0] = facet_visited[1] = facet_visited[2] = 
 	facet_visited[3] = false;
-      
-      tab_surface_status_facets[0] = tab_surface_status_facets[1] = 
-	tab_surface_status_facets[2] = tab_surface_status_facets[3] = 0;
-      
       visits[0] = visits[1] = visits[2] = visits[3] = false;
     }
     
@@ -102,10 +93,6 @@ namespace CGAL {
       
       facet_visited[0] = facet_visited[1] = facet_visited[2] = 
 	facet_visited[3] = false;
-      
-      tab_surface_status_facets[0] = tab_surface_status_facets[1] = 
-	tab_surface_status_facets[2] = tab_surface_status_facets[3] = 0;
-      
       visits[0] = visits[1] = visits[2] = visits[3] = false;
     }
     
@@ -130,13 +117,6 @@ namespace CGAL {
       return(tab_surface_center_facets[facet]);
   }
     
-    int get_facet_surface_status(const int facet) const {
-      CGAL_assertion (facet>=0 && facet <4);
-      return(tab_surface_status_facets[facet]);
-    }
-    
-    
-    
     // Setting functions
     
     // Facets
@@ -158,11 +138,9 @@ namespace CGAL {
     }
     
     void set_facet_surface_center(const int facet, 
-			  const Point& p, 
-			  const int status=0) {
+			  const Point& p) {
       CGAL_assertion (facet>=0 && facet <4);
       tab_surface_center_facets[facet]=p;
-      tab_surface_status_facets[facet]=status;
     }
 
   };  // end Complex_2_in_triangulation_surface_mesh_cell_base_3
