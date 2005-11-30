@@ -111,12 +111,12 @@ namespace CGAL {
 	  
 	  if (is_facet_on_surface(*fit, center)) {
 	    c2t3.set_in_complex(*fit);
-	    c2t3.set_facet_center((*fit), center);
-	    c2t3.set_facet_center(other_side, center);
-	    //(*fit).first->set_surface_facet((*fit).second,true);
+	    c2t3.set_facet_surface_center((*fit), center);
+	    c2t3.set_facet_surface_center(other_side, center);
+	    //(*fit).first->set_facet_on_surface((*fit).second,true);
 	    //(*fit).first->set_surface_center_facet((*fit).second,center);
 	    
-	    //c->set_surface_facet(other_side.second,true);
+	    //c->set_facet_on_surface(other_side.second,true);
 	    //c->set_surface_center_facet(other_side.second,center);
 	    
 	    if (criteria.is_bad (*fit)) {
@@ -128,8 +128,8 @@ namespace CGAL {
 	  
 	  else {
 	    c2t3.remove_from_complex(*fit);
-	    //(*fit).first->set_surface_facet((*fit).second,false);
-	    //c->set_surface_facet(other_side.second,false);
+	    //(*fit).first->set_facet_on_surface((*fit).second,false);
+	    //c->set_facet_on_surface(other_side.second,false);
 	  }
 	}
 	else {
@@ -137,10 +137,10 @@ namespace CGAL {
 	  if (is_facet_on_surface(*fit, center)) { 
 	    //Cell_handle c;
 	    c2t3.set_in_complex(*fit);
-	    c2t3.set_facet_center((*fit),center);
+	    c2t3.set_facet_surface_center((*fit),center);
 	    //c=(*fit).first;
-	    //c->set_surface_facet((*fit).second,true);
-	    //c->set_facet_center((*fit).second,center);
+	    //c->set_facet_on_surface((*fit).second,true);
+	    //c->set_facet_surface_center((*fit).second,center);
 	    
 	    if (criteria.is_bad (*fit)) {
 	      Quality a_r = criteria.quality (*fit);
@@ -149,7 +149,7 @@ namespace CGAL {
 	  }
 	  else
 	    c2t3.remove_from_complex(*fit);
-	  //	    (*fit).first->set_surface_facet((*fit).second,false);
+	  //	    (*fit).first->set_facet_on_surface((*fit).second,false);
 	}	  
       }
     } // scan_triangulation_impl end
@@ -172,10 +172,10 @@ namespace CGAL {
     // From the element to refine, gets the point to insert
     Point refinement_point_impl(const Facet& f) const
       {
-	CGAL_assertion (c2t3.complex_subface_type(f) == C2t3::REGULAR);
+	CGAL_assertion (c2t3.face_type(f) == C2t3::REGULAR);
 	//CGAL_assertion (f.first->is_facet_on_surface (f.second));
-	return c2t3.get_facet_center (f);
-	//return f.first->get_facet_center (f.second);
+	return c2t3.get_facet_surface_center (f);
+	//return f.first->get_facet_surface_center (f.second);
       }
     
     // Useless here
@@ -232,7 +232,7 @@ namespace CGAL {
       if( tr.is_infinite(f.first) ) 
 	return false;
 
-      if (c2t3.complex_subface_type(f) == C2t3::REGULAR)
+      if (c2t3.face_type(f) == C2t3::REGULAR)
 	{
 	  const Cell_handle& c = f.first;
 	  const int index = f.second;
@@ -242,7 +242,7 @@ namespace CGAL {
 		
 // 	  std::cerr << "testing conflict... \n";
 	  // test Delaunay surfacique
-	  Point center = c2t3.get_facet_center (f);
+	  Point center = c2t3.get_facet_surface_center(f);
 	  if( distance(center, p) <
 	      distance(center, c->vertex((index+1)&3)->point()) )
 	    {
@@ -431,11 +431,11 @@ namespace CGAL {
 	// consider both sides of the facet at once
 	c2t3.set_in_complex(f);
 
-	// NB: set_facet_center() is implementation dependant
+	// NB: set_facet_surface_center() is implementation dependant
 	// and each side of the real facet has to be considered
 	// separately
-	c2t3.set_facet_center(f, center);
-	c2t3.set_facet_center(other_side, center);
+	c2t3.set_facet_surface_center(f, center);
+	c2t3.set_facet_surface_center(other_side, center);
 	    
 	// On regarde alors si la facette est bonne
 	if (criteria.is_bad (f)) {
@@ -530,8 +530,8 @@ namespace CGAL {
 	     tr.finite_facets_end(); ++fit) {
 	Cell_handle c=(*fit).first->neighbor((*fit).second);
 	Facet other_side(c, c->index((*fit).first));
-	CGAL_assertion (c2t3.complex_subface_type(*fit) ==
-			c2t3.complex_subface_type(other_side));
+	CGAL_assertion (c2t3.face_type(*fit) ==
+			c2t3.face_type(other_side));
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
 	//		other_side.first->is_facet_on_surface 
 	//		(other_side.second));
@@ -540,19 +540,19 @@ namespace CGAL {
 	restr = is_facet_on_surface(*fit, center, false);
 	restr_bis = is_facet_on_surface(other_side, center, false);
 	CGAL_assertion (restr == restr_bis);
-	CGAL_assertion ((c2t3.complex_subface_type(*fit)
+	CGAL_assertion ((c2t3.face_type(*fit)
 			 == C2t3::REGULAR) == restr);
-	CGAL_assertion ((c2t3.complex_subface_type(other_side)
+	CGAL_assertion ((c2t3.face_type(other_side)
 			 == C2t3::REGULAR) == restr_bis);
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) == 
 	//		restr);
 	//CGAL_assertion (other_side.first->is_facet_on_surface 
 	//		(other_side.second) == restr_bis);
 	
-	if ( (c2t3.complex_subface_type(*fit) == C2t3::REGULAR) !=
+	if ( (c2t3.face_type(*fit) == C2t3::REGULAR) !=
 	    is_facet_on_surface(*fit, center, false)) {
 	  std::cerr << "Error in restricted Delaunay triangulation: ("
-		    << (c2t3.complex_subface_type(*fit) == C2t3::REGULAR) 
+		    << (c2t3.face_type(*fit) == C2t3::REGULAR) 
 		    << "/"
 		    << is_facet_on_surface(*fit, center, false) 
 		    << ")"

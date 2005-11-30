@@ -41,7 +41,7 @@ namespace CGAL {
 
     protected:
       bool is_in_complex(const C2t3& c, const Facet& f) const {
-	return (c.complex_subface_type(f) != C2t3::NOT_IN_COMPLEX);
+	return (c.face_type(f) != C2t3::NOT_IN_COMPLEX);
       }
 
       // computes and return an ordered pair of Vertex
@@ -113,15 +113,15 @@ namespace CGAL {
 	     ++fcirc) {
 	  Vertex_handle fev = edge_to_edgevv(arete).first;
 	  // is the current facet bigger than the current biggest one
-	  if ( SMB::c2t3.compute_squared_distance(*fcirc, fev) > 
-	       SMB::c2t3.compute_squared_distance(biggest_facet, fev) ) {
+	  if ( SMB::c2t3.compute_distance_to_facet_center(*fcirc, fev) > 
+	       SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
 	    biggest_facet = *fcirc;
 	  }
 	  else {
 	    Facet autre_cote = other_side(*fcirc);
 	    // is the current facet bigger than the current biggest one
-	    if ( SMB::c2t3.compute_squared_distance(autre_cote, fev) > 
-		 SMB::c2t3.compute_squared_distance(biggest_facet, fev) ) {
+	    if ( SMB::c2t3.compute_distance_to_facet_center(autre_cote, fev) > 
+		 SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
 	      biggest_facet = autre_cote;
 	    }
 	  }
@@ -137,7 +137,7 @@ namespace CGAL {
 	Facet cote = f;
 	Facet autre_cote = other_side(cote);
 	
-	if ( SMB::c2t3.complex_subface_type(cote) != 
+	if ( SMB::c2t3.face_type(cote) != 
 	     C2t3::NOT_IN_COMPLEX ) {
 	  
 	  Edges loe = edges_in_facet(cote);
@@ -170,10 +170,10 @@ namespace CGAL {
       std::cout << "scanning edges..." << std::endl;
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit != 
 	     SMB::tr.finite_edges_end(); ++eit) {
-	if ( (SMB::c2t3.complex_subface_type(*eit) 
+	if ( (SMB::c2t3.face_type(*eit) 
 	      == C2t3::SINGULAR) || 
 	     ( (!withBoundary) && 
-	       (SMB::c2t3.complex_subface_type(*eit) 
+	       (SMB::c2t3.face_type(*eit) 
 		== C2t3::BOUNDARY) ) ) {
 	  bad_edges.insert( edge_to_edgevv(*eit) );
 	}
@@ -233,7 +233,7 @@ namespace CGAL {
 	      eit != loe.end();
 	      ++eit ) {
 	  // test if edge is in Complex
-	  if ( SMB::c2t3.complex_subface_type(*eit) 
+	  if ( SMB::c2t3.face_type(*eit) 
 	       != C2t3::NOT_IN_COMPLEX ) {
 	    // test if edge is not regular to store it as a "bad_edge"
 	    // e.g. more than or equal to 3 incident facets (SINGULAR) 
@@ -242,10 +242,10 @@ namespace CGAL {
 	    // This test is not efficient because
 	    // edges are tried to be inserted several times
 	    // TODO one day: test if the edge is still singular
-	    if ( (SMB::c2t3.complex_subface_type(*eit) 
+	    if ( (SMB::c2t3.face_type(*eit) 
 		  == C2t3::SINGULAR) || 
 		 ( (!withBoundary) && 
-		   (SMB::c2t3.complex_subface_type(*eit) 
+		   (SMB::c2t3.face_type(*eit) 
 		    == C2t3::BOUNDARY) ) ) {
 	      bad_edges.insert( edge_to_edgevv(*eit) );
 	    }

@@ -54,12 +54,12 @@ public Complex_2_in_triangulation_3 <Tr> {
     return f.first->nb_visits(f.second);
   }
   
-  Point get_facet_center (const Facet& f) const {
-    return (f.first)->get_facet_center(f.second);
+  Point get_facet_surface_center (const Facet& f) const {
+    return (f.first)->get_facet_surface_center(f.second);
   }
   
-  int get_surface_status_facet(const Facet& f) const {
-    return (f.first)->get_surface_status_facet(f.second);
+  int get_facet_surface_status(const Facet& f) const {
+    return (f.first)->get_facet_surface_status(f.second);
   }
   
   template <class OutputIterator>
@@ -75,64 +75,14 @@ public Complex_2_in_triangulation_3 <Tr> {
     return Base::incident_facets(e);
   }
 
-  Facets incident_facets(const Vertex_handle v) const {
-    // search for one of the incident facets of v in the complex
-    Cell_handle c = v->cell();
-    int i = c->index(v);
-    Facet f;
-    if (i == 0) {
-      f = std::make_pair(c, 1);
-    }
-    else {
-      f = std::make_pair(c, 0);
-    }
-    
-    Facets loaf = Base::incident_facets(v);
-
-    Facet autre_cote = triangulation().mirror_facet(f);
-    if (Base::complex_subface_type(f) != 
-	Base::NOT_IN_COMPLEX)
-      loaf.push_back(f);
-    else if (Base::complex_subface_type(autre_cote) != 
-	     Base::NOT_IN_COMPLEX)
-      loaf.push_back(autre_cote);
-    
-    assert(loaf.size() > 0);
-    return loaf;
-  }
-  
-  // af: added
-  // af: I do not understand why one facets gets added to what the base class computes 
   template <typename OutputIterator>
   OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const {
-    // search for one of the incident facets of v in the complex
-    Cell_handle c = v->cell();
-    int i = c->index(v);
-    Facet f;
-    if (i == 0) {
-      f = std::make_pair(c, 1);
-    }
-    else {
-      f = std::make_pair(c, 0);
-    }
-    
-    Base::incident_facets(v, it);
-
-    Facet autre_cote = triangulation().mirror_facet(f);
-    if (Base::complex_subface_type(f) != 
-	Base::NOT_IN_COMPLEX){
-      *it = f; ++it;
-    } else if (Base::complex_subface_type(autre_cote) != 
-	     Base::NOT_IN_COMPLEX){
-            *it = autre_cote; ++it;
-    }
-    
-    return it;
+    return Base::incident_facets(v,it);
   }
   
 
-  FT compute_squared_distance(const Facet& f, const Vertex_handle v) const {
-    Point fcenter = get_facet_center(f);
+  FT compute_distance_to_facet_center(const Facet& f, const Vertex_handle v) const {
+    Point fcenter = get_facet_surface_center(f);
     Point vpoint = v->point();
 
     GT gt = Base::tri3.geom_traits();
@@ -154,8 +104,8 @@ public Complex_2_in_triangulation_3 <Tr> {
     (f.first)->reset_visits(f.second);
   }
   
-  void set_facet_center(const Facet& f, const Point& p, const int status=0) {
-    (f.first)->set_facet_center(f.second, p, status);
+  void set_facet_surface_center(const Facet& f, const Point& p, const int status=0) {
+    (f.first)->set_facet_surface_center(f.second, p, status);
   }
 };
 

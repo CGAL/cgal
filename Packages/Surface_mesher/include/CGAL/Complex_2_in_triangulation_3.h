@@ -1,5 +1,5 @@
-#ifndef _COMPLEX_2_IN_TRIANGULATION_3_H
-#define _COMPLEX_2_IN_TRIANGULATION_3_H
+#ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
+#define CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 
 #include <CGAL/circulator.h>
 #include <CGAL/Union_find.h>
@@ -100,15 +100,15 @@ protected:
     return tri3;
   }
 
-  Face_type complex_subface_type (const Facet& f) const {
-    return complex_subface_type (f.first, f.second);
+  Face_type face_type (const Facet& f) const {
+    return face_type (f.first, f.second);
   }
 
-  Face_type complex_subface_type (const Cell_handle c, const int i) const {
+  Face_type face_type (const Cell_handle c, const int i) const {
     return (c->is_facet_on_surface(i)) ? REGULAR : NOT_IN_COMPLEX;
   }
 
-  Face_type complex_subface_type (const Edge& e) {
+  Face_type face_type (const Edge& e) {
     typename Edge_facet_counter::iterator it = 
       edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
 						e.first->vertex(e.third)));
@@ -121,7 +121,7 @@ protected:
     }
   }
 
-  Face_type complex_subface_type (const Vertex_handle v) const {
+  Face_type face_type (const Vertex_handle v) const {
     if ( v->is_visited() ) {
       if ( is_regular(v) )
       	return REGULAR;
@@ -176,7 +176,7 @@ protected:
 #endif
   }
 
-  // af : added this function as calling complex_subface_type triggers update of cache
+  // af : added this function as calling face_type triggers update of cache
   bool is_in_complex(Vertex_handle v) const
   {
     return v->is_visited();
@@ -274,10 +274,10 @@ protected:
 
     if (tri3.dimension() == 3) {
       // if not already in the complex
-      if ( complex_subface_type (c, i) == NOT_IN_COMPLEX ) {
+      if ( face_type (c, i) == NOT_IN_COMPLEX ) {
 
-	c->set_surface_facet(i,true);
-	c2->set_surface_facet(i2,true);
+	c->set_facet_on_surface(i,true);
+	c2->set_facet_on_surface(i2,true);
 
 	// We consider only pairs made by vertices without i
 	for (int j = 0; j < 4; j++) {
@@ -308,9 +308,9 @@ protected:
     }
     else if (tri3.dimension() == 2) {
       // if not already in the complex
-      if ( complex_subface_type (c, i) == NOT_IN_COMPLEX ) {
+      if ( face_type (c, i) == NOT_IN_COMPLEX ) {
 
-	c->set_surface_facet(i,true);
+	c->set_facet_on_surface(i,true);
 
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
@@ -360,10 +360,10 @@ protected:
 
     if (tri3.dimension() == 3) {
       // if in the complex
-      if ( complex_subface_type (c, i) != NOT_IN_COMPLEX ) {
+      if ( face_type (c, i) != NOT_IN_COMPLEX ) {
 
-	c->set_surface_facet(i,false);
-	c2->set_surface_facet(i2,false);
+	c->set_facet_on_surface(i,false);
+	c2->set_facet_on_surface(i2,false);
 
 	// update the edge counter
 	for (int j = 0; j < 4; j++) {
@@ -398,9 +398,9 @@ protected:
     }
     else if (tri3.dimension() == 2){
       // if in the complex
-      if ( complex_subface_type (c, i) != NOT_IN_COMPLEX ) {	
+      if ( face_type (c, i) != NOT_IN_COMPLEX ) {	
 
-	c->set_surface_facet(i,false);
+	c->set_facet_on_surface(i,false);
 
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
@@ -441,4 +441,4 @@ protected:
 
 CGAL_END_NAMESPACE
 
-#endif // COMPLEX_2_IN_TRIANGULATION_3_H
+#endif // CGAL_COMPLEX_2_IN_TRIANGULATION_3_H

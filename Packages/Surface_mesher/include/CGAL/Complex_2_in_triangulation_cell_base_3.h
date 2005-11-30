@@ -98,7 +98,7 @@ namespace CGAL {
   // Setting functions
   
   // Facets
-  void set_surface_facet(const int facet, const bool f) {
+  void set_facet_on_surface(const int facet, const bool f) {
     CGAL_assertion (facet>=0 && facet <4);
     tab_surface_facets[facet]=f;
   }
@@ -123,7 +123,7 @@ operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
     if( ! is )
       std:: cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
                  << i << " bad\n";
-    c.set_surface_facet(i, b);
+    c.set_facet_on_surface(i, b);
   }
   return is;
 }

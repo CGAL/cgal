@@ -82,8 +82,8 @@ namespace CGAL {
 	     ++nit) {
 	  Facet current_facet = (*nit).first;
 	  // is the current facet bigger than the current biggest one	  
-	  if ( SMREB::c2t3.compute_squared_distance(current_facet, sommet) > 
-	       SMREB::c2t3.compute_squared_distance(biggest_facet, sommet) ) {
+	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) > 
+	       SMREB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
 	    biggest_facet = current_facet;
 	  }
 	}
@@ -105,8 +105,8 @@ namespace CGAL {
 	     ++it) {
 	  Facet current_facet = *it;
 	  // is the current facet bigger than the current biggest one	  
-	  if ( SMREB::c2t3.compute_squared_distance(current_facet, sommet) > 
-	       SMREB::c2t3.compute_squared_distance(biggest_facet, sommet) ) {
+	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) > 
+	       SMREB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
 	    biggest_facet = current_facet;
 	  }
 	}
@@ -141,7 +141,7 @@ namespace CGAL {
 	for (Finite_vertices_iterator vit = SMREB::tr.finite_vertices_begin(); 
 	     vit != SMREB::tr.finite_vertices_end();
 	     ++vit) {
-	  if ( (SMREB::c2t3.complex_subface_type(vit)
+	  if ( (SMREB::c2t3.face_type(vit)
 		== C2t3::SINGULAR) ) {
 	    bad_vertices.insert( vit );
 	    ++n;
@@ -190,14 +190,14 @@ namespace CGAL {
 	  for (Vertices_iterator vit = vertices.begin();
 	       vit != vertices.end();
 	       ++vit) {
-	    if ( SMREB::c2t3.complex_subface_type(*vit) == 
+	    if ( SMREB::c2t3.face_type(*vit) == 
 		 SMREB::C2t3::SINGULAR ) {
 	      bad_vertices.insert(*vit);
 	    }
 	  }
 	  
 	  if ( SMREB::c2t3.is_in_complex(v) ) {
-	    if ( SMREB::c2t3.complex_subface_type(v) == 
+	    if ( SMREB::c2t3.face_type(v) == 
 		 SMREB::C2t3::SINGULAR ) {
 	      bad_vertices.insert(v);
 	    }

@@ -219,7 +219,7 @@ namespace CGAL {
       
       return gt.compute_squared_distance_3_object()
 	(gt.construct_circumcenter_3_object()(p1,p2,p3),
-	 fh.first->get_facet_center (fh.second));
+	 fh.first->get_facet_surface_center(fh.second));
     }
     
   };  // end Curvature_size_criterion
@@ -264,7 +264,7 @@ namespace CGAL {
       Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
       
       return gt.compute_squared_distance_3_object() 
-	(p1, fh.first->get_facet_center (fh.second));
+	(p1, fh.first->get_facet_surface_center (fh.second));
     }
     
   };  // end Uniform_size_criterion
