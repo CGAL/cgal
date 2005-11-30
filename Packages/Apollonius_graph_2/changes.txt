@@ -2,6 +2,8 @@
 - added one more version of the orientation predicate, needed for
   locating on edges of the Apollonius graph (addition in
   code/predicates/traits and doc).
+- fixed broken file inclusion: the error was due to the
+  renaming/rearranging of the segment Delaunay graph package.
 
 21 November 2005:  Menelaos Karavelas
 - fixed problem with toolbars under linux. The toolbars stopped being
