@@ -1,5 +1,6 @@
  1 December 2005 Andreas Fabri
 - Putting const& in the Implicit_oracle
+- Made Implicit_oracle::intersect_segment_surface_rec(Point p1, Point p2) non-recursive
 
 30 November 2005 Andreas Fabri
 - Introduced lazy initialization of treatment of singular vertices
