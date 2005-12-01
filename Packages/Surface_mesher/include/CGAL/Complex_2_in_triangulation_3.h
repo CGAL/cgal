@@ -189,7 +189,7 @@ protected:
       v->regular_is_cached = true;
       return v->regular;
     }
-#endif
+
   }
 
   // af : added this function as calling face_type triggers update of cache
