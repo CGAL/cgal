@@ -444,29 +444,24 @@ when exact arithmetic is used. When inexact arithmetic is used,
 (nearly) degenerate configurations may result in abnormal termination
 of the program or even incorrect results.
 
-Every model of the traits-class concept must also define the types
-\ccc{Polygon_2} and \ccc{Polygon_with_holes_2}, and it
-must provide operations on objects of these types sufficient to enable
-the boolean-set operations.  The type \ccc{Polygon_2} represents a
-simple point-set in the plane, whose boundary curves are $x$-monotone.
-This type could be plain, as it does not necessarily provide methods
-to access the curves boundary, nor does it necessarily provide a
-constructor from a range of curves. Instead, the traits concept
-requires these operations. Conceptually, the vertices of such a
-general polygon can be ordered clockwise or counterclockwise, but we
-guaranty counterclockwise order for the results of all
-operations. Operations that operate on general polygons may result
-with one or more general polygons with holes, which is described
-below.
-
-% The traits parameter in \ccc{General_polygon_set_2<Traits>}
-% is optional when \ccc{General_polygon}
-% is instantiated with the type \ccc{Polygon_2}. In this case the
-% traits is obtained through the utility class
-% \ccc{Default_general_polygon_set_traits_2<General_polygon>}. For others
-% instantiated values of \ccc{General_polygon}, it must be specified.
-% We plan to increase the set of general-polygon type for which a default
-% traits is obtained in the future.
+The traits concept lists two operations on $x$-monotone curves listed below
+in addition to those required by base concept 
+\ccc{ArrangementXMonotoneTraits_2}:
+\begin{itemize}
+\item Given an $x$-monotone curve, contstruct its opposite curve.
+\item Given an $x$-monotone curve, compare its two endpoints lexigoraphically.
+\end{itemize}
+We refer to the refined concept that includes these two additional 
+requirements as \ccc{ArrangementDirectionalXMonotoneTraits}. The traits 
+classes \ccc{Arr_segment_traits_2}, \ccc{Arr_non_caching_segment_traits}, 
+and \ccc{Arr_conic_traits_2}, which are part of the \ccc{Arrangement_2} 
+package distributed with \cgal, model the concept 
+\ccc{ArrangementDirectionalXMonotoneTraits}, as they are enhanced with members
+functions that implement these two operations.
+The \ccc{Arr_polyline_traits_2} cannot be made a model of the, 
+\ccc{ArrangementDirectionalXMonotoneTraits} concept, as the
+$x$-monotone curve it defines are always directed from left to right. Thus, an
+opposite curve cannot be constructed.
 
 \begin{wrapfigure}{r}{3cm}
 \vspace{-3ex}
@@ -494,6 +489,30 @@ below.
 \label{fig:circle_segment}
 \end{center}
 \end{wrapfigure}
+Every model of the traits-class concept must also define the types
+\ccc{Polygon_2} and \ccc{Polygon_with_holes_2}, and it
+must provide operations on objects of these types sufficient to enable
+the boolean-set operations.  The type \ccc{Polygon_2} represents a
+simple point-set in the plane, whose boundary curves are $x$-monotone.
+This type could be plain, as it does not necessarily provide methods
+to access the curves boundary, nor does it necessarily provide a
+constructor from a range of curves. Instead, the traits concept
+requires these operations. Conceptually, the vertices of such a
+general polygon can be ordered clockwise or counterclockwise, but we
+guaranty counterclockwise order for the results of all
+operations. Operations that operate on general polygons may result
+with one or more general polygons with holes, which is described
+below.
+
+% The traits parameter in \ccc{General_polygon_set_2<Traits>}
+% is optional when \ccc{General_polygon}
+% is instantiated with the type \ccc{Polygon_2}. In this case the
+% traits is obtained through the utility class
+% \ccc{Default_general_polygon_set_traits_2<General_polygon>}. For others
+% instantiated values of \ccc{General_polygon}, it must be specified.
+% We plan to increase the set of general-polygon type for which a default
+% traits is obtained in the future.
+
 Two traits classes are distributed with \cgal, namely 
 \ccc{Gps_segment_traits_2} and \ccc{Gps_circle_segment_traits_2}. 
 The former handles linear segments, and uses the \ccc{Polygon_2} type,
@@ -526,8 +545,6 @@ Figure~\ref{fig:circle_segment}.
 \label{fig:general_polygon_with_holes}
 \end{center}
 \end{wrapfigure}
-Bug in latex?
-
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may output, general
 polygons with holes. The concept \ccc{GeneralPolygonSetTraits_2}
@@ -658,4 +675,4 @@ polygons as point sets bounded by polylines, and it adapts the traits
 model that handles polylines included with the \ccc{Arrangement_2}
 package.
 
-\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_circle_segment.C}
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_traits_adaptor.C}
