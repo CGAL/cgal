@@ -1,3 +1,6 @@
+ 1 December 2005 Andreas Fabri
+- Putting const& in the Implicit_oracle
+
 30 November 2005 Andreas Fabri
 - Introduced lazy initialization of treatment of singular vertices
 - Introduced a method for determining if a vertex is in the complex, 
