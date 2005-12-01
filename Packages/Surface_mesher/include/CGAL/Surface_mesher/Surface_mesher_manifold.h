@@ -115,7 +115,7 @@ namespace CGAL {
 	std::list<Facet> facets;
 	SMREB::c2t3.incident_facets(sommet, std::back_inserter(facets));
 
-	std::list<Facet>::iterator it = facets.begin();
+	typename std::list<Facet>::iterator it = facets.begin();
 	Facet first_facet = *it;
 	Facet biggest_facet = first_facet;
 	

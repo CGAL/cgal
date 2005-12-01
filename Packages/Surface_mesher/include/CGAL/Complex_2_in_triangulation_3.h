@@ -163,12 +163,12 @@ protected:
       Union_find<Facet> facets;
       triangulation().incident_facets(v, filter_output_iterator(std::back_inserter(facets), Not_in_complex()));
       
-      typedef std::map<Vertex_handle, Union_find<Facet>::handle>  Vertex_Set_map; 
+      typedef std::map<Vertex_handle, typename Union_find<Facet>::handle>  Vertex_Set_map; 
       typedef typename Vertex_Set_map::iterator Vertex_Set_map_iterator;
 
       Vertex_Set_map vsmap;
 
-      for(Union_find<Facet>::iterator it = facets.begin();
+      for(typename Union_find<Facet>::iterator it = facets.begin();
 	  it != facets.end();
 	  ++it){
 	Cell_handle ch = (*it).first;

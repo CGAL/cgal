@@ -87,7 +87,7 @@ public Complex_2_in_triangulation_3 <Tr> {
   OutputIterator
   incident_vertices(const Vertex_handle& v, OutputIterator voit) const {
     
-    triangulation().incident_vertices(v, filter_output_iterator(voit, Not_in_complex()));
+    Base::triangulation().incident_vertices(v, filter_output_iterator(voit, typename Base::Not_in_complex()));
     
     return voit;
   }
