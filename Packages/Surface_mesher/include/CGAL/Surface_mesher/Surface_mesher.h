@@ -80,7 +80,13 @@ namespace CGAL {
     
     
   public:
-    
+
+    // Helper functions
+    Facet mirror_facet(const Facet& f) const
+    {
+      return c2t3.triangulation().mirror_facet(f);
+    }
+
     // Remains unchanged
     Tr& triangulation_ref_impl()
       {
@@ -102,8 +108,7 @@ namespace CGAL {
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit != 
 	     tr.finite_facets_end(); ++fit) {
 	if (tr.dimension() == 3) {
-	  Cell_handle c=(*fit).first->neighbor((*fit).second);
-	  Facet other_side (c, c->index((*fit).first));
+	  Facet other_side = mirror_facet(*fit);
 	  
 	  c2t3.set_facet_visited(*fit);
 	  c2t3.set_facet_visited(other_side);
@@ -379,8 +384,7 @@ namespace CGAL {
 
     // Actions to perform on a facet inside the conflict zone
     void handle_facet_inside_conflict_zone (Facet f) {
-      Facet other_side ((f.first)->neighbor(f.second),
-			(f.first)->neighbor(f.second)->index(f.first));
+      Facet other_side = mirror_facet(f);
 	  
       // On enleve la facette de la liste des mauvaises facettes
       facets_to_refine.erase(f);
@@ -414,8 +418,7 @@ namespace CGAL {
       if (tr.is_infinite(f) || c2t3.is_facet_visited(f))
 	return;
 
-      Facet other_side ((f.first)->neighbor(f.second),
-			(f.first)->neighbor(f.second)->index(f.first));
+      Facet other_side = mirror_facet(f);
 	        
       // NB: set_facet_visited() is implementation dependant
       // and each side of the real facet has to be considered
@@ -473,17 +476,10 @@ namespace CGAL {
       
       if (check_visits) {
 	CGAL_assertion (! c2t3.visited(f));
-	//CGAL_assertion (! f.first->visited(f.second));
 	c2t3.set_visited(f);
-	//f.first->set_visited (f.second);
-	Cell_handle c=f.first->neighbor(f.second);
-	Facet other_side(c, c->index(f.first));
-	//Cell_handle other_side = f.first->neighbor (f.second);
-	//int index_f = other_side->index (f.first);
+	Facet other_side = mirror_facet(f);
 	CGAL_assertion (! c2t3.visited(other_side));
-	//CGAL_assertion (! other_side->nb_visited (index_f));
 	c2t3.set_visited(other_side);
-	//other_side->set_visited(index_f);
       }
       
       
@@ -529,8 +525,7 @@ namespace CGAL {
     void check_restricted_delaunay () {
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit != 
 	     tr.finite_facets_end(); ++fit) {
-	Cell_handle c=(*fit).first->neighbor((*fit).second);
-	Facet other_side(c, c->index((*fit).first));
+	Facet other_side = mirror_facet(*fit);
 	CGAL_assertion (c2t3.face_type(*fit) ==
 			c2t3.face_type(other_side));
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==

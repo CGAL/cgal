@@ -93,13 +93,7 @@ namespace CGAL {
 			   arete.first->vertex(arete.third) );
       }
 
-      // computes and returns the opposite side of a given Facet side
-      Facet other_side(const Facet& cote) const {
-	return Facet
-	  ((cote.first)->neighbor(cote.second),
-	   (cote.first)->neighbor(cote.second)->
-	   index(cote.first));
-      }
+
 
       // computes and returns the list of Edges in a given Facet side
       Edges edges_in_facet(const Facet& cote) const {
@@ -128,7 +122,7 @@ namespace CGAL {
 	
 	for (++fcirc; 
 	     (*fcirc != first_facet) && 
-	       (*fcirc != other_side(first_facet)); 
+	       (*fcirc != SMB::mirror_facet(first_facet)); 
 	     ++fcirc) {
 	  Vertex_handle fev = edge_to_edgevv(arete).first;
 	  // is the current facet bigger than the current biggest one
@@ -137,7 +131,7 @@ namespace CGAL {
 	    biggest_facet = *fcirc;
 	  }
 	  else {
-	    Facet autre_cote = other_side(*fcirc);
+	    Facet autre_cote = SMB::mirror_facet(*fcirc);
 	    // is the current facet bigger than the current biggest one
 	    if ( SMB::c2t3.compute_distance_to_facet_center(autre_cote, fev) > 
 		 SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
@@ -154,7 +148,7 @@ namespace CGAL {
       // Actions to perform on a facet inside the conflict zone
       void handle_facet_inside_conflict_zone (const Facet& f) {
 	Facet cote = f;
-	Facet autre_cote = other_side(cote);
+	Facet autre_cote = SMB::mirror_facet(cote);
 	
 	if ( SMB::c2t3.face_type(cote) != 
 	     C2t3::NOT_IN_COMPLEX ) {
