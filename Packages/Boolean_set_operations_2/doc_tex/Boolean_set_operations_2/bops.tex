@@ -628,6 +628,31 @@ constructor from a range of such curves, and a pair of methods, namely
 \ccc{begin_curves()} and \ccc{end_curves()}, that can be used to
 iterate over the point-set boundary curves.
  
+\begin{wrapfigure}{r}{5cm}
+\vspace{-3ex}
+\pspicture[](-2.5,-2.5)(2.5,2.5)
+\psset{unit=1cm,linewidth=1pt}
+\psellipse*[linecolor=lightgray](0,0)(2,1)
+\psclip{%
+  \pscustom[linestyle=none]{%
+    \psplot{-2}{2}{2 x x mul sub}
+    \lineto(-2,-2)
+   }
+   \pscustom[linestyle=none]{%
+     \psplot{-2}{2}{x x mul 2 sub}
+     \lineto(2,2)
+   }
+}
+\psframe*[linecolor=gray](-1.414,-2.0)(1.414,2.0)
+\endpsclip
+\psplot{-1.414}{1.414}{2 x x mul sub}
+\psplot{-1.414}{1.414}{x x mul 2 sub}
+\psellipse(0,0)(2,1)
+\psaxes{<->}(0,0)(-2.5,-2.5)(2.5,2.5)
+\endpspicture
+\caption{General polygons bounded by conic arcs.}
+\label{fig:conics}
+\end{wrapfigure}
 The \ccc{Gps_traits_adaptor_2<ArrXMonotoneTraits,GeneralPolygon,>}
 class template is a model of the \ccc{GeneralPolygonSetTraits_2}
 concept. Its implementation is rather simple, as it exploits the
@@ -663,16 +688,17 @@ typedef CGAL::Gps_traits_adaptor_2<Arr_traits,General_polygon> Traits;
 typedef CGAL::General_polygon_set_2<Traits>                    General_polygon_set;
 \end{alltt}
 
-Swapping the linear arrangement traits \ccc{Arr_segment_traits_2}
+Swapping the linear arrangement-traits \ccc{Arr_segment_traits_2}
 above with a traits class that handle conic arcs, such as
 \ccc{Arr_conic_traits_2}, results with the definition of a
 general-polygon set type that can be used to perform Boolean 
 set-operations on point sets bounded by conic arcs of type
 \ccc{Arr_conic_2}. The next example computes the intersection of the
-two general polygons depicted in Figure~\ref{fig:simple} (b). As opposed
-to the example in \ccc{ex_intersection.C}, this example defines the
-polygons as point sets bounded by polylines, and it adapts the traits 
-model that handles polylines included with the \ccc{Arrangement_2}
+two general polygons depicted in Figure~\ref{fig:conics}. One is an ellipse
+given by $x^2 + 4y^2 - 4 = 0$, and the other is bounded by the two
+parabolic arcs whose underlying parabola are given by 
+$x^2 + y - 4 = 0$, and $x^2 - y - 4 = 0$. The code in the example adapts
+the traits model that handles conics included with the \ccc{Arrangement_2}
 package.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_traits_adaptor.C}
