@@ -117,7 +117,7 @@ namespace CGAL {
       // extremities are on the same side of the surface, return no
       // intersection
       if(parity_oracle && 
-	 surf_equation(s.vertex(0)) * surf_equation(s.vertex(1))>0)
+	 (surf_equation(s.source()) * surf_equation(s.target())>0))
 	return Object();
       
       
@@ -127,20 +127,16 @@ namespace CGAL {
       f.push_back(s);
       
 
-      Point p1, p2;
-      bool diff=false;
       while(!f.empty()) {
-	s=f.front();
+	const Segment sf = f.front();
 	f.pop_front();
-	p1=s.vertex(0);
-	p2=s.vertex(1);
+	const Point& p1 = sf.source();
+	const Point& p2 = sf.target();
 
 	if (surf_equation(p1) * surf_equation(p2) < 0) {
-	  diff=true;
-	  break;
+	  return intersect_segment_surface_rec(p1,p2);
 	}
 	
-
 	if (ker.compute_squared_distance_3_object()
 	    (p1,p2) >= min_squared_length)
 	  {
@@ -149,17 +145,13 @@ namespace CGAL {
 	    f.push_back(Segment(mid,p2));
 	  }
       }
-      
-      if (!diff)
-	return Object();
-      else
-	return intersect_segment_surface_rec(p1,p2);
+      return Object();	
     }      
 
 
 
 
-    Object intersect_ray_surface(Ray r) {      
+    Object intersect_ray_surface(const Ray& r) {      
       GT ker;
       Point p1,p2;
       
@@ -180,7 +172,7 @@ namespace CGAL {
     }
     
     
-    Object intersect_line_surface(Line l) {      
+    Object intersect_line_surface(const Line& l) {      
       GT ker;
 
       Point p1=l.point(0);
@@ -264,7 +256,7 @@ namespace CGAL {
     // Private functions
     
     
-    Object intersect_segment_surface_rec(Point& p1, Point& p2) {      
+    Object intersect_segment_surface_rec(const Point& p1, const Point& p2) {      
       GT ker;
       Point mid=ker.construct_midpoint_3_object()(p1,p2);
       
@@ -287,19 +279,19 @@ namespace CGAL {
     }
     
   private:
-    double surf_equation (Point p) {
+    double surf_equation (const Point& p) {
       return func(p.x(), p.y(), p.z());
     }
     
     
   private:
     // Rescale segment according to bounding sphere
-    Object rescale_seg_bounding_sphere(Segment s)
+    Object rescale_seg_bounding_sphere(const Segment& s)
       {
 	GT ker;
 	
-	Point p1=s.vertex(0);
-	Point p2=s.vertex(1);
+	Point p1=s.source();
+	Point p2=s.target();
 	
 	// If both points are too far away from each other, then replace them
 	if (ker.compute_squared_distance_3_object()(p1,p2) >
@@ -363,7 +355,7 @@ namespace CGAL {
       }
     
     Object intersect_segment_sphere
-    (Point a, Point b) {
+    (const Point& a, const Point& b) {
       FT cosine, deltaprime, root1, root2;
       GT ker;
       
