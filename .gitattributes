@@ -1736,7 +1736,8 @@ Packages/Parameterization/doc_tex/Parameterization/authalic.eps -text
 Packages/Parameterization/doc_tex/Parameterization/authalic.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/floater.eps -text
 Packages/Parameterization/doc_tex/Parameterization/floater.png -text svneol=unset#unset
-Packages/Parameterization/doc_tex/Parameterization/foo.eps -text
+Packages/Parameterization/doc_tex/Parameterization/foo.eps -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/foo2.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/parametizer_class_diagram.eps -text
 Packages/Parameterization/doc_tex/Parameterization/parametizer_class_diagram.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/parametizers_class_hierarchy.eps -text
