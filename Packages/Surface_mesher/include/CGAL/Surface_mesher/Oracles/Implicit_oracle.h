@@ -256,25 +256,24 @@ namespace CGAL {
     // Private functions
     
     
-    Object intersect_segment_surface_rec(const Point& p1, const Point& p2) {      
+    Object intersect_segment_surface_rec(Point p1, Point p2) {      
       GT ker;
-      Point mid=ker.construct_midpoint_3_object()(p1,p2);
       
-      
-      // If the two points are close, then we must decide
-      if (ker.compute_squared_distance_3_object()
-	  (p1,p2) < min_squared_length)
-        {
-          visitor.new_point(mid);
-          return make_object(mid);
-        }
-      
-      // Else we must go on
-      else {
+      while(true){
+	Point mid = ker.construct_midpoint_3_object()(p1,p2);
+	// If the two points are close, then we must decide
+	if (ker.compute_squared_distance_3_object()
+	    (p1,p2) < min_squared_length)
+	  {
+	    visitor.new_point(mid);
+	    return make_object(mid);
+	  }
+	
+	// Else we must go on
 	if (surf_equation(p1) * surf_equation(mid) < 0)
-	  return intersect_segment_surface_rec (p1,mid);
+	  p2 = mid;
 	else
-	  return intersect_segment_surface_rec (mid, p2);
+	  p1 = mid;
       }
     }
     
