@@ -1,10 +1,9 @@
 //! \file examples/Boolean_set_operations_2/ex_traits_adaptor.C
-// Using the traits adaptor to generate a traits of polylines.
+// Using the traits adaptor to generate a traits of conics.
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
@@ -12,10 +11,16 @@
 
 #include <list>
 
-typedef CGAL::Gmpq                                      NT;
-typedef CGAL::Cartesian<NT>                             Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Arr_segment_traits;
-typedef CGAL::Arr_polyline_traits_2<Arr_segment_traits> Arr_traits;
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef Rat_kernel::Point_2                             Rat_point_2;
+typedef Rat_kernel::Segment_2                           Rat_segment_2;
+typedef Rat_kernel::Circle_2                            Rat_circle_2;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
+                                                        Arr_traits;
 typedef CGAL::General_polygon_2<Arr_traits>             Polygon;
 typedef CGAL::Gps_traits_adaptor_2<Arr_traits,Polygon>  Traits;
 typedef CGAL::General_polygon_set_2<Traits>             Polygon_set;
@@ -24,11 +29,11 @@ typedef Traits::Curve_2                                 Curve;
 typedef Traits::X_monotone_curve_2                      X_monotone_curve;
 typedef Traits::Point_2                                 Point;
 
-void polyline_2_polygon(Curve polyline, Polygon & polygon)
+void conic_2_polygon(Curve & conic, Polygon & polygon)
 {
   Traits traits;
   std::list<CGAL::Object> objects;
-  traits.make_x_monotone_2_object()(polyline, std::back_inserter(objects));
+  traits.make_x_monotone_2_object()(conic, std::back_inserter(objects));
   std::list<CGAL::Object>::iterator i;
   for (i = objects.begin(); i != objects.begin(); ++i) {
     X_monotone_curve xcurve;
@@ -39,20 +44,31 @@ void polyline_2_polygon(Curve polyline, Polygon & polygon)
 
 int main(int argc, char * argv[])
 {
-  Polygon pn1, pn2;
-  Curve pl1, pl2;
-
-  pl1.push_back(Point(0,0));     pl1.push_back(Point(1.5,1.5));
-  pl1.push_back(Point(2.5,0.5)); pl1.push_back(Point(3.5,1.5));
-  pl1.push_back(Point(5,0));
-  pl2.push_back(Point(0,2));     pl2.push_back(Point(5,2));
-  pl2.push_back(Point(3.5,0.5)); pl2.push_back(Point(2.5,1.5));
-  pl2.push_back(Point(1.5,0.5));
+  // Construct a parabolic arc supported by a parabola: x^2 + y - 2 = 0),
+  // and whose endpoints are on the line y = 0
+  Curve parabola1 =
+    Curve(1, 0, 0, 0, 1, -2, CGAL::COUNTERCLOCKWISE,
+          Point(1.41, 0),       // Approximation of the source.
+          0, 0, 0, 0, 1, 0,     // The line: y = 0.
+          Point(-1.41, 0),      // Approximation of the target.
+          0, 0, 0, 0, 1, 0);
+  // Construct a parabolic arc supported by a parabola: x^2 - y - 2 = 0),
+  // and whose endpoints are on the line y = 0
+  Curve parabola2 =
+    Curve(1, 0, 0, 0, -1, -2, CGAL::COUNTERCLOCKWISE,
+          Point(-1.41, 0),      // Approximation of the source.
+          0, 0, 0, 0, 1, 0,     // The line: y = 0.
+          Point(1.41, 0),       // Approximation of the target.
+          0, 0, 0, 0, 1, 0);
   
-  polyline_2_polygon(pl1, pn1);
-  polyline_2_polygon(pl2, pn2);
+  Polygon p1, p2;
+  conic_2_polygon(parabola1, p1);
+  conic_2_polygon(parabola2, p1);
+
+  Curve ellipse = Curve(1, 4, 0, 0, 0, -4);
+  conic_2_polygon(ellipse, p2);
   std::list<Polygon_with_holes> result;
-  CGAL::intersection(pn1, pn2, std::back_inserter(result));
+  CGAL::intersection(p1, p2, std::back_inserter(result));
 
   std::copy(result.begin(), result.end(),       // export to standard output
             std::ostream_iterator<Polygon_with_holes>(std::cout, "\n"));
