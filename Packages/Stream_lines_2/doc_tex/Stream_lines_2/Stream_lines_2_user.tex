@@ -37,7 +37,7 @@ or a vector is assigned to each point inside a domain (such as the magnitude and
 direction of the force at each point in a magnetic field).\\
 Streamlines are very important tools for visualizing those entities. A
 \ccc{streamline} is a curve everywhere tangent to the field. In practice, 
-a streamline is often represented as a polyline iteratively elongated by 
+a streamline is often represented as a polyline (series of points) iteratively elongated by 
 bidirectional numerical integration started from a \ccc{seed point}, until 
 it comes close to another streamline (according to a specified distance called 
 the \ccc{the separating distance}), hits the domain boundary, reaches a 
@@ -112,10 +112,10 @@ allow for an evaluation at each point coordinate within the domain).\\The
 The core idea of our algorithm consists of placing one streamline at a time by
 numerical integration seeded at the farthest point from all previously placed
 streamlines.\\The streamlines are approximated by polylines, whose points are
-inserted in a 2D Delaunay triangulation. The empty circumscribed circles of the
+inserted in a 2D Delaunay triangulation~(see~figure~\ref{illustration}). The empty circumscribed circles of the
 Delaunay triangles provide us with a good approximation of the cavities in the
-domain.\\After each streamline integration, all incident triangles which
-circumcircle diameter is larger (within the saturation ratio) than the desired
+domain.\\After each streamline integration, all incident triangles whose circumcircle
+ diameter is larger (within the saturation ratio) than the desired
 spacing distance are pushed to a priority queue sorted by the triangle
 circumcircle diameter. To start each new streamline integration, the triangle
 with largest circumcircle diameter (and hence the biggest cavity) is popped out
