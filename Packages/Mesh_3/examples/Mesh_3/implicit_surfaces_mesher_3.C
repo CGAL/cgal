@@ -28,6 +28,7 @@
 #include "parameters.h"
 
 #include "debug.h"
+#include <CGAL/Timer.h>
 
 #include <iostream>
 #include <fstream>
@@ -518,6 +519,8 @@ int main(int argc, char **argv) {
   // 2D-complex in 3D-Delaunay triangulation
   Tr tr;
 
+  CGAL::Timer timer;
+
   // Initial point sample
   std::string read_initial_points = string_options["read_initial_points"];
   if( read_initial_points != "")     
@@ -585,14 +588,21 @@ int main(int argc, char **argv) {
                   double_options["tets_aspect_ratio_bound"],
                   double_options["tets_size_bound"]);
 
-  std::cerr << "Initial number of points: " << tr.number_of_vertices() 
+  std::cerr << "\nInitial number of points: " << tr.number_of_vertices() 
             << std::endl;
 
+  
 
 
   // Surface meshing
   Mesher mesher (tr, O, C, tets_criteria);
+  timer.start();
   mesher.refine_surface();
+  timer.stop();
+  std::cerr << "\nNumber of points after refine_surface(): "
+            << tr.number_of_vertices() << std::endl
+            << "Elapsed time: " << timer.time() << std::endl;
+  
   {
     std::string dump_initial_surface_filename = 
       string_options["initial_surface_off"];
@@ -630,10 +640,13 @@ int main(int argc, char **argv) {
 			  dump_initial_surface_filename).c_str());
       }
   }
+  timer.start();
   mesher.refine_mesh();
+  timer.stop();
 
-  std::cerr << "Final number of points: " << tr.number_of_vertices() 
-            << std::endl;
+  std::cerr << "\nFinal number of points: " << tr.number_of_vertices() 
+            << std::endl
+            << "Total time: " << timer.time() << std::endl;
 
   if( output_to_file )
     {
