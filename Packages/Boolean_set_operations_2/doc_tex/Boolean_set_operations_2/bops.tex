@@ -23,6 +23,7 @@
 \caption{Examples of Boolean Set Operations.} 
 \label{fig:teaser}
 \end{figure}
+
 This package consists of the implementation of Boolean set-operations
 on point sets bounded by $x$-monotone curves in 2-dimensional
 Euclidean space. In particular, it contains the implementation of
@@ -68,7 +69,8 @@ Chapter~\ref{Polygon}.
 }
 \begin{ccHtmlOnly}
   <p><center>
-    <img src="./fig/non_strictly_simple.gif" border=0 alt="A non strictly simple polygon">
+    <img src="./fig/non_strictly_simple.gif" border=0 alt="A non strictly simple polygon" align=right>
+  <a name="fig:non_strictly_simple_polygon"></a>
   </center>
 \end{ccHtmlOnly}
 A polygon $P$ is said to be {\em simple} (or Jordan) if the
@@ -79,7 +81,7 @@ a disk. A polygon in our context must be simple. The cyclic
 sequence of alternating polygon edges and polygon vertices is referred
 to as the polygon {\em boundary}. A polygon whose boundary contains the
 same vertex twice or more is connected and simple but not
-necessary strictly simple; see figure~\ref{fig:non_strictly_simple_polygon}. 
+necessary strictly simple; see Figure~\ref{fig:non_strictly_simple_polygon}. 
 We extend the notion of a polygon to a point set in $\mathrm{E}^2$ that has 
 a topology of a polygon and its boundary edges must map to $x$-monotone
 curves, and refer to it as a {\em general polygon}. We sometimes use
@@ -100,7 +102,10 @@ defined as follows:
 \item [Difference] computes the difference $R = P \setminus Q$ 
 \item [Symmetric Difference] computes the symmetric difference
   $P = (P \setminus Q) \cup (Q \setminus P)$
-\item[Complement] computes the complement $R = \overline{P}$.
+\item[Complement] computes the complement
+\lcTex{$R = \overline{P}$}
+\lcRawHtml{<i>R = <span style="text-decoration: overline;">P</span></i>}
+.
 \end{description}
 
 % ===============================================================
