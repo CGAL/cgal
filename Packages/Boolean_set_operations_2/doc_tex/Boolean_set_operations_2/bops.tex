@@ -12,85 +12,16 @@
 % ===============================================================
 %
 \begin{figure}[!htp]
-\begin{center}
-\begin{tabular}{cccc}
-  \pspicture[](-1,-2.3)(1,2)
-    \psset{unit=1cm,linewidth=1pt}
-    \pscircle*[linecolor=gray](0,-1){1}
-    \pscircle*[linecolor=gray](0,1){1}
-    \pscircle(0,-1){1}
-    \pscircle(0,1){1}
-    \psline{->}(0,0)(0,1)
-    \psline{->}(0,0)(1,0)
-  \endpspicture &
-  \pspicture[](-2,-2.3)(2,2)
-    \psset{unit=1cm,linewidth=1pt}
-    \pscircle*[linecolor=gray](-1,0){1}
-    \pscircle*[linecolor=gray](1,0){1}
-    \pscircle(-1,0){1}
-    \pscircle(1,0){1}
-    \psline{->}(0,0)(0,1)
-    \psline{->}(0,0)(1,0)
-  \endpspicture &
-  \pspicture[](-2,-2.3)(2,2)
-    \psset{unit=1cm,linewidth=1pt}
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
-      \psarc(0,1){1}{270}{360}
-      \psarc(1,0){1}{90}{180}
-    }
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
-      \psarc(1,0){1}{180}{270}
-      \psarc(0,-1){1}{0}{90}
-    }
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
-      \psarc(0,-1){1}{90}{180}
-      \psarc(-1,0){1}{270}{360}
-    }
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
-      \psarc(-1,0){1}{0}{90}
-      \psarc(0,1){1}{180}{270}
-    }
-    \psarc(0,1){1}{270}{360}
-    \psarc{c}(1,0){1}{90}{180}
-    \psarc(1,0){1}{180}{270}
-    \psarc{c}(0,-1){1}{0}{90}
-    \psarc(0,-1){1}{90}{180}
-    \psarc{c}(-1,0){1}{270}{360}
-    \psarc{-c}(-1,0){1}{0}{90}
-    \psarc(0,1){1}{180}{270}
-  \endpspicture &
-  \pspicture[](-2,-2.3)(2,2)
-    \psset{unit=1cm,linewidth=1pt}
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
-      \psarc(0,1){1}{360}{180}
-      \psarc(1,0){1}{90}{180}
-      \psarc(-1,0){1}{0}{90}
-    }
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
-      \psarc(1,0){1}{270}{90}
-      \psarc(0,-1){1}{0}{90}
-      \psarc(0,1){1}{270}{0}
-    }
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
-      \psarc(0,-1){1}{180}{0}
-      \psarc(-1,0){1}{270}{360}
-      \psarc(1,0){1}{180}{270}
-    }
-    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
-      \psarc(-1,0){1}{90}{270}
-      \psarc(0,1){1}{180}{270}
-      \psarc(0,-1){1}{90}{180}
-    }
-    \pscircle(0,-1){1}
-    \pscircle(0,1){1}
-    \pscircle(-1,0){1}
-    \pscircle(1,0){1}
-  \endpspicture\\
-  & & intersection & symmetric difference
-\end{tabular}
+\begin{ccTexOnly}
+\input{Boolean_set_operations_2/fig/teaser}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/teaser.gif" border=0 alt="Boolean Set Operations">
+  </center>
+\end{ccHtmlOnly}
 \caption{Examples of Boolean Set Operations.} 
 \label{fig:teaser}
-\end{center}
 \end{figure}
 This package consists of the implementation of Boolean set-operations
 on point sets bounded by $x$-monotone curves in 2-dimensional
@@ -100,6 +31,7 @@ point containment predicates. Figure~\ref{fig:teaser} shows simple examples
 of such operations.
 % and Minkowski sum computations.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 A regularized Boolean set-operation $\mbox{op}^*$ can be obtained by
 first taking the interior of the resultant point set of an {\em ordinary}
 Boolean set-operation $(P\ \mbox{op}\ Q)$ and then by taking the
@@ -124,18 +56,21 @@ provision, and point containment predicates on a single (linear)
 polygon are provided by the \ccc{Polygon_2} class; see
 Chapter~\ref{Polygon}.
 
-\begin{wrapfigure}{r}{4cm}
-\vspace{-3ex}
-\pspicture[](0,0)(2,2)
-\psset{unit=1cm,linewidth=1pt}
-  \pspolygon*[linecolor=gray](0,2)(0,0)(2,0)
-  \pspolygon*[linecolor=gray](2,0)(4,0)(4,2)
-  \pspolygon(0,2)(0,0)(2,0)
-  \pspolygon(2,0)(4,0)(4,2)
-\endpspicture
-\caption{A non strictly simple polygon.}
-\label{fig:non_strictly_simple_polygon}
-\end{wrapfigure}
+\lcTex{%
+  \begin{wrapfigure}{r}{4cm}
+  \vspace{-2ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/non_strictly_simple}
+  \end{center}
+  \caption{A non strictly simple polygon.}
+  \label{fig:non_strictly_simple_polygon}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/non_strictly_simple.gif" border=0 alt="A non strictly simple polygon">
+  </center>
+\end{ccHtmlOnly}
 A polygon $P$ is said to be {\em simple} (or Jordan) if the
 only points of the plane belonging to two polygon edges of $P$ are the
 polygon vertices of $P$. Such a polygon has a well-defined interior
@@ -170,7 +105,7 @@ defined as follows:
 
 % ===============================================================
 % \subsection{Regularized Boolean-Set Operations on General Polygons}
-% \laabel{bobs_ssec:regularized_bops}
+% \laabel{bso_ssec:regularized_bops}
 % ===============================================================
 A general polygon, which is an operand or a result of a regularized
 Boolean set-operation is considered as being a closed point-set (that
@@ -202,6 +137,7 @@ an exception, as it accepts a single instance of one of the types above.
 The input and output of these methods consist of one or more general 
 polygons, some of which may have holes.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The package also contains free functions that perform common operations,
 and are provided for convenience. A typical such function constructs a pair
 of \ccc{General_polygon_set_2} instances, invokes the appropriate method to
@@ -215,22 +151,24 @@ could be time consuming.
 
 % ---------------------------------------------------------------
 \subsection{A Simple Example}
-\label{bobs_ssec:simple_example}
+\label{bso_ssec:simple_example}
 % ---------------------------------------------------------------
-\begin{wrapfigure}{r}{2cm}
-\vspace{-2.5ex}
-\pspicture[](-1,-2)(1,1)
-\psset{unit=1cm,linewidth=1pt}
-  \pspolygon*[linecolor=lightgray](-1,1)(0,-1)(1,1)
-  \pspolygon*[linecolor=lightgray](-1,-1)(1,-1)(0,1)
-  \pspolygon*[linecolor=gray](-0.5,0)(0,-1)(0.5,0)(0,1)
-  \pspolygon(-1,1)(0,-1)(1,1)
-  \pspolygon(-1,-1)(1,-1)(0,1)
-\endpspicture
-% \caption{.} 
-\label{fig:example}
-\vspace{-2cm}
-\end{wrapfigure}
+\lcTex{%
+  \begin{wrapfigure}{r}{2cm}
+  \vspace{-5ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/triangles}
+  \end{center}
+  % \caption{.} 
+  \label{fig:example}
+  \vspace{-2cm}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/triangles.gif" border=0 alt="Two triangles">
+  </center>
+\end{ccHtmlOnly}
 Testing whether two polygons intersect result with a Boolean value, 
 and does not require any additional data beyond the provision of the 
 two polygons. The example listed below tests whether two hard coded 
@@ -238,35 +176,9 @@ triangles depicted on the right intersect.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_do_intersect.C}
 
-%
-% \begin{alltt}
-% #include <CGAL/Cartesian.h>
-% #include <CGAL/CORE_algebraic_number_traits.h>
-% #include <CGAL/Arr_conic_traits_2.h>
-% #include <CGAL/Boolean_set_operations_2.h>
-% 
-% typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-% typedef Nt_traits::Rational                           Rational;
-% typedef Nt_traits::Algebraic                          Algebraic;
-% typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-% typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-%                                                       Arr_traits_2;
-% typedef CGAL::Circular_polygon_traits<Arr_traits_2>   Traits;
-% typedef Traits_2::Point_2                             Point_2;
-% 
-% int main ()
-% \{
-%   Point_2 center1(0,0), center2(0,1);
-%   CGAL::Conic_polygon_2<Traits> circ1(center1, 1), circ2(center1, 1), res;
-%   CGAL::reg_intersection(circ1, circ2, res);
-%   return 0;
-% \}
-% \end{alltt}
-%
-
 % ---------------------------------------------------------------
 \subsection{Free Functions}
-\label{bobs_ssec:free_functions}
+\label{bso_ssec:free_functions}
 % ---------------------------------------------------------------
 In many cases a simple operation that operates on two strictly simple
 polygons that have no holes are required. The most simple functions in
@@ -281,38 +193,19 @@ represent the complement of a polygon without holes. Notice that this
 polygon has no outer boundary; see Figure~\ref{fig:simple}~(c).
 
 \begin{figure}[!htp]
-\begin{center}
-\begin{tabular}{ccc}
-\pspicture[](0,0)(3,2)
-\psset{unit=1cm,linewidth=1pt}
-  \pspolygon*[linecolor=gray](0,1)(2,0)(1,1)(2,2)
-  \pspolygon*[linecolor=gray](3,1)(1,2)(2,1)(1,0)
-  \pspolygon(0,1)(2,0)(1,1)(2,2)
-  \pspolygon(3,1)(1,2)(2,1)(1,0)
-\endpspicture &
-\pspicture[](0,0)(5,2)
-\psset{unit=1cm,linewidth=1pt}
-  \pspolygon*[linecolor=lightgray](0,0)(1.5,1.5)(2.5,0.5)(3.5,1.5)(5,0)
-  \pspolygon*[linecolor=lightgray](0,2)(5,2)(3.5,0.5)(2.5,1.5)(1.5,0.5)
-  \pspolygon*[linecolor=gray](1,1)(1.5,1.5)(2,1)(1.5,0.5)
-  \pspolygon*[linecolor=gray](3,1)(3.5,1.5)(4,1)(3.5,0.5)
-  \pspolygon(0,0)(1.5,1.5)(2.5,0.5)(3.5,1.5)(5,0)
-  \pspolygon(0,2)(5,2)(3.5,0.5)(2.5,1.5)(1.5,0.5)
-\endpspicture &
-\pspicture[](0,0)(3,2)
-\psset{unit=1cm,linewidth=1pt}
-  \pspolygon*[linecolor=gray](0,2)(0,0)(3,0)(3,2)
-  \pspolygon*[linecolor=lightgray](1,0.67)(2,0.67)(2,1.34)(1,1.34)
-  \pspolygon[linecolor=black](1,0.67)(2,0.67)(2,1.34)(1,1.34)
-\endpspicture
-\\
-(a) & (b) & (c)
-\end{tabular}
+\begin{ccTexOnly}
+\input{Boolean_set_operations_2/fig/simple}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/simple.gif" border=0 alt="Operations on Strictly
+    simple polygons">
+  </center>
+\end{ccHtmlOnly}
 \caption{Operations on strictly simple polygons. (a) The union of two
 strictly simple polygons. (b) The intersection of two strictly simple
 polygons. (c) The complement of a strictly simple polygon.} 
 \label{fig:simple}
-\end{center}
 \end{figure}
 
 Many free functions that implement the regularized Boolean 
@@ -337,6 +230,7 @@ return \ccc{false} iff the polygons are disjoint, and \ccc{true} otherwise,
 in which case the resulting general polygon is placed in a third argument 
 passed by reference.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Many free functions that implement the Boolean set-operations are
 parameterized with a traits class instead of the type of the general
 polygon types they operate on. The latter are extracted from the injected
@@ -348,7 +242,7 @@ traits type.
 
 % ---------------------------------------------------------------
 \subsection{A Sequence of Boolean Set Operations}
-\label{bobs_ssec:sequence}
+\label{bso_ssec:sequence}
 % ---------------------------------------------------------------
 As mentioned above, when several operations are performed in a 
 sequence, it is much more efficient to use the member functions of
@@ -362,6 +256,7 @@ the result. Similarly, one flavor of the \ccc{complement()} method
 accepts a single argument that represents the (single) operand, and the 
 other one applies the operation on the current instance.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The next example performs a sequence of three Bollean set-operations.
 First, it computes the union of two simple polygons depicted in
 Figure~\ref{fig:simple}~(a). Then, it computes the complement of the result
@@ -373,7 +268,7 @@ the area of the rectangle.
 
 % ---------------------------------------------------------------
 \subsection{Inserting non Intersecting Polygons}
-\label{bobs_ssec:insert}
+\label{bso_ssec:insert}
 % ---------------------------------------------------------------
 If you want to compute the union of a general polygon $P$ with a
 general-polygon set $R$, and store the result in $R$, you can construct
@@ -399,6 +294,7 @@ polygons represented by $R$, you can use the more efficient method
 R.insert(P);
 \end{alltt}
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Both methods, like many others, are overloaded, and accept a range of
 general polygons. In case of the \ccc{insert} method, all the general
 polygons in the input range and the general polygons represented by
@@ -406,21 +302,23 @@ $R$ must be pairwise disjoint in their interiors.
 
 % ===============================================================
 \subsection{The Traits}
-\label{bobs_ssec:traits}
+\label{bso_ssec:traits}
 % ===============================================================
-\begin{wrapfigure}{r}{2.5cm}
-\vspace{-3ex}
-\begin{center}
-\pspicture[](-1,-1)(1,1)
-\psset{unit=1cm,linewidth=1pt}
-\pscircle[fillstyle=solid,fillcolor=lightgray](0,0){1}
-\qdisk(-1,0){2pt}
-\qdisk(1,0){2pt}
-\endpspicture
-\caption{A general polygon.}
-\label{fig:general_polygon}
-\end{center}
-\end{wrapfigure}
+\lcTex{%
+  \begin{wrapfigure}{r}{2.5cm}
+  \vspace{-4ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/general_polygon}
+  \end{center}
+  \caption{A general polygon.}
+  \label{fig:general_polygon}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/general_polygon.gif" border=0 alt="A general polygon">
+  </center>
+\end{ccHtmlOnly}
 A polygon is a closed point set bounded by a piecewise lienar curve, such
 as the entities represented by \cgal 's \ccc{Polygon_2} type. However,
 the geometric mapping of the polygon edges in our context is not
@@ -444,6 +342,7 @@ when exact arithmetic is used. When inexact arithmetic is used,
 (nearly) degenerate configurations may result in abnormal termination
 of the program or even incorrect results.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The traits concept lists two operations on $x$-monotone curves listed below
 in addition to those required by base concept 
 \ccc{ArrangementXMonotoneTraits_2}:
@@ -463,32 +362,22 @@ The \ccc{Arr_polyline_traits_2} cannot be made a model of the,
 $x$-monotone curve it defines are always directed from left to right. Thus, an
 opposite curve cannot be constructed.
 
-\begin{wrapfigure}{r}{3cm}
-\vspace{-3ex}
-\begin{center}
-\pspicture[](0,0)(3,3)
-\psset{unit=1cm,linewidth=1pt}
-  \pspolygon*[linecolor=lightgray](0.5,0)(2.5,0)(2.5,1)(0.5,1)
-  \pspolygon*[linecolor=lightgray](0.5,2)(2.5,2)(2.5,3)(0.5,3)
-  \pspolygon*[linecolor=lightgray](0,0.5)(1,0.5)(1,2.5)(0,2.5)
-  \pspolygon*[linecolor=lightgray](2,0.5)(3,0.5)(3,2.5)(2,2.5)
-  \pscircle*[linecolor=gray](0.5,0.5){0.5}  
-  \pscircle*[linecolor=gray](2.5,0.5){0.5}  
-  \pscircle*[linecolor=gray](0.5,2.5){0.5}  
-  \pscircle*[linecolor=gray](2.5,2.5){0.5}  
-  \pspolygon(0.5,0)(2.5,0)(2.5,1)(0.5,1)
-  \pspolygon(0.5,2)(2.5,2)(2.5,3)(0.5,3)
-  \pspolygon(0,0.5)(1,0.5)(1,2.5)(0,2.5)
-  \pspolygon(2,0.5)(3,0.5)(3,2.5)(2,2.5)
-  \pscircle(0.5,0.5){0.5}  
-  \pscircle(2.5,0.5){0.5}  
-  \pscircle(0.5,2.5){0.5}  
-  \pscircle(2.5,2.5){0.5}  
-\endpspicture
-\caption{The union of four rectangles and four circles.}
-\label{fig:circle_segment}
-\end{center}
-\end{wrapfigure}
+\lcTex{%
+  \begin{wrapfigure}{r}{3cm}
+  \vspace{-4ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/circles_rects}
+  \end{center}
+  \caption{The union of four rectangles and four circles.}
+  \label{fig:circle_segment}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/circles_rects.gif" border=0 alt="Union of circles
+    and rectangles">
+  </center>
+\end{ccHtmlOnly}
 Every model of the traits-class concept must also define the types
 \ccc{Polygon_2} and \ccc{Polygon_with_holes_2}, and it
 must provide operations on objects of these types sufficient to enable
@@ -513,6 +402,7 @@ below.
 % We plan to increase the set of general-polygon type for which a default
 % traits is obtained in the future.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Two traits classes are distributed with \cgal, namely 
 \ccc{Gps_segment_traits_2} and \ccc{Gps_circle_segment_traits_2}. 
 The former handles linear segments, and uses the \ccc{Polygon_2} type,
@@ -529,22 +419,24 @@ Figure~\ref{fig:circle_segment}.
 
 % ===============================================================
 \subsection{General Polygons with Holes}
-\label{bobs_ssec:general_polygons_with_holes}
+\label{bso_ssec:general_polygons_with_holes}
 % ===============================================================
-\begin{wrapfigure}{r}{2.5cm}
-\vspace{-3ex}
-\begin{center}
-\pspicture[](-1,-1)(1,1)
-\psset{unit=1cm,linewidth=1pt}
-\pscircle[fillstyle=solid,fillcolor=lightgray](0,0){1}
-\pscircle[fillstyle=solid,fillcolor=white](0,0){0.5}
-\qdisk(-1,0){2pt}\qdisk(1,0){2pt}
-\qdisk(-0.5,0){2pt}\qdisk(0.5,0){2pt}
-\endpspicture
-\caption{A general polygon with holes.}
-\label{fig:general_polygon_with_holes}
-\end{center}
-\end{wrapfigure}
+\lcTex{%
+  \begin{wrapfigure}{r}{2.5cm}
+  \vspace{-4ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/general_polygon_with_holes}
+  \end{center}
+  \caption{A general polygon with holes.}
+  \label{fig:general_polygon_with_holes}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/general_polygon_with_holes.gif" border=0 alt="A
+    general polygon with holes">
+  </center>
+\end{ccHtmlOnly}
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may output, general
 polygons with holes. The concept \ccc{GeneralPolygonSetTraits_2}
@@ -566,22 +458,21 @@ the general polygons that represent the holes.
 % the intersection of two convex polygons is either an empty polygon or a
 % convex polygon.
 
-\begin{wrapfigure}{l}{2.5cm}
-\begin{center}
-\vspace{-4ex}
-\pspicture[](0,0)(2,1.732)
-\psset{unit=1cm,linewidth=1pt}
-\pspolygon*[linecolor=gray](0,0)(1,0)(0.5,0.866)
-\pspolygon*[linecolor=gray](1,0)(2,0)(1.5,0.866)
-\pspolygon*[linecolor=gray](0.5,0.866)(1.5,0.866)(1,1.732)
-\pspolygon(0,0)(1,0)(0.5,0.866)
-\pspolygon(1,0)(2,0)(1.5,0.866)
-\pspolygon(0.5,0.866)(1.5,0.866)(1,1.732)
-\endpspicture
-\caption{Triangles.}
-\label{fig:unique}
-\end{center}
-\end{wrapfigure}
+\lcTex{%
+  \begin{wrapfigure}{l}{2.5cm}
+  \vspace{-4ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/unique}
+  \end{center}
+  \caption{Triangles.}
+  \label{fig:unique}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/unique.gif" border=0 alt="Unique">
+  </center>
+\end{ccHtmlOnly}
 The exact definition of the obtained general polygon with holes as a
 result of a Boolean set-operation or a sequence of such operations is
 closely related to the definition of regularized Boolean 
@@ -606,6 +497,7 @@ of the holes in a general polygon with holes are parts of the polygon
 (and not the holes), and as a general rule, if two point sets are
 connected, then they belong to the same polygon with holes.
  
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Instances of \ccc{Traits::Polygon_2} used as input must be strictly simple
 as a precondition. Instances of \ccc{Traits::Polygon_2} obtained as output
 are guaranteed to be stritcly simple. On the other hand, neither the outer
@@ -615,7 +507,7 @@ must be strictly simple.
 
 % ===============================================================
 \subsection{General Polygon Concept}
-\label{bobs_ssec:general_polygon_concept}
+\label{bso_ssec:general_polygon_concept}
 % ===============================================================
 The \ccc{GeneralPolygon_2} is a concept that facilitates the
 production of general-polygon set traits classes. A model of this
@@ -628,31 +520,21 @@ constructor from a range of such curves, and a pair of methods, namely
 \ccc{begin_curves()} and \ccc{end_curves()}, that can be used to
 iterate over the point-set boundary curves.
  
-\begin{wrapfigure}{r}{5cm}
-\vspace{-3ex}
-\pspicture[](-2.5,-2.5)(2.5,2.5)
-\psset{unit=1cm,linewidth=1pt}
-\psellipse*[linecolor=lightgray](0,0)(2,1)
-\psclip{%
-  \pscustom[linestyle=none]{%
-    \psplot{-2}{2}{2 x x mul sub}
-    \lineto(-2,-2)
-   }
-   \pscustom[linestyle=none]{%
-     \psplot{-2}{2}{x x mul 2 sub}
-     \lineto(2,2)
-   }
+\lcTex{%
+  \begin{wrapfigure}{r}{5cm}
+  \vspace{-4ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/conic_arcs}
+  \end{center}
+  \caption{General polygons bounded by conic arcs.}
+  \label{fig:conics}
+  \end{wrapfigure}
 }
-\psframe*[linecolor=gray](-1.414,-2.0)(1.414,2.0)
-\endpsclip
-\psplot{-1.414}{1.414}{2 x x mul sub}
-\psplot{-1.414}{1.414}{x x mul 2 sub}
-\psellipse(0,0)(2,1)
-\psaxes{<->}(0,0)(-2.5,-2.5)(2.5,2.5)
-\endpspicture
-\caption{General polygons bounded by conic arcs.}
-\label{fig:conics}
-\end{wrapfigure}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/conic_arcs.gif" border=0 alt="Conic arcs">
+  </center>
+\end{ccHtmlOnly}
 The \ccc{Gps_traits_adaptor_2<ArrXMonotoneTraits,GeneralPolygon,>}
 class template is a model of the \ccc{GeneralPolygonSetTraits_2}
 concept. Its implementation is rather simple, as it exploits the
@@ -662,6 +544,7 @@ methods provided by the instantiated parameter
 parameter \ccc{ArrXMonotoneTraits} inheriting its necessary types
 and methods. 
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 A second class-template
 \ccc{General_polygon_2<ArrXMonotoneTraits>}
 generates models of the \ccc{GeneralPolygon_2} concept. It is
@@ -671,6 +554,7 @@ it uses the necessary operations on this type provided by such a model
 to maintain a container of \ccc{X_monotone_curve_2} objects, which
 represents the boundary of the general polygon.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The code excerpt listed below defines a general-polygon set type that
 can be used to perform Boolean set-operations on point sets bounded by
 linear segments used by the \ccc{Arrangement_2} class by default. A
@@ -702,3 +586,51 @@ the traits model that handles conics included with the \ccc{Arrangement_2}
 package.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_traits_adaptor.C}
+
+% ===============================================================
+\subsection{Aggregated Operations}
+\label{bso_ssec:}
+% ===============================================================
+\lcTex{%
+  \begin{wrapfigure}{r}{4.6cm}
+  \vspace{-4ex}
+  \begin{center}
+  \input{Boolean_set_operations_2/fig/disks}
+  \end{center}
+  \caption{The union of eight disks.}
+  \label{fig:disks}
+  \end{wrapfigure}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/disks.gif" border=0 alt="Union of disks">
+  </center>
+\end{ccHtmlOnly}
+If you wish to compute the union of a set of general polygons, you can
+do it incrementally, computing the union of pairs of polygons one at a
+time, until you arrive at the final solution. However, this operation
+can be done much more efficiently, if all the polygons in the entire
+set are operated at once. The package provides a free function that
+aggregately computes the union of a set of polygons. There is no
+restriction on the polygons in the set. Naturally, they may intersect
+each other. Similarly, the package provides a free function that
+determines whether a set of general polygons intersect, a function
+that computes the intersection of a set of general polygons, and
+functions that computes the difference and symmetric difference between
+the union of two sets of general polygons. The class
+\ccc{General_polygon_set_2} has the equivalent member functions. When
+such a member function is called, the general polygons represented by
+the current object are considered operands as well. In case of
+aggregetaly computing the difference or symmetric difference, the
+general polygons represented by the current object comprise the first
+set. The aggregated operations are based on the sweep-line
+paradigm. 
+
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+The next example computes the union of eight disks represented by
+eight circles respectively depicted in Figure~\ref{fig:disks}. Each
+circle is split into two $x$-monotone circular arcs that represent a
+general polygon. The union operation is applied to the range of
+general polygons spaning the list of the eight disks.
+
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_set_union.C}

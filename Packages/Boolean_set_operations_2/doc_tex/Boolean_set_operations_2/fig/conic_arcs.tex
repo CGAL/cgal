@@ -1,0 +1,20 @@
+\pspicture[](-2.5,-2.5)(2.5,2.5)
+\psset{unit=1cm,linewidth=1pt}
+\psellipse*[linecolor=lightgray](0,0)(2,1)
+\psclip{%
+  \pscustom[linestyle=none]{%
+    \psplot{-2}{2}{2 x x mul sub}
+    \lineto(-2,-2)
+   }
+   \pscustom[linestyle=none]{%
+     \psplot{-2}{2}{x x mul 2 sub}
+     \lineto(2,2)
+   }
+}
+\psframe*[linecolor=gray](-1.414,-2.0)(1.414,2.0)
+\endpsclip
+\psplot{-1.414}{1.414}{2 x x mul sub}
+\psplot{-1.414}{1.414}{x x mul 2 sub}
+\psellipse(0,0)(2,1)
+\psaxes{<->}(0,0)(-2.5,-2.5)(2.5,2.5)
+\endpspicture

@@ -1,0 +1,29 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{General_polygon_2<ArrTraits>}
+
+\ccThree{General_polygon_2<AirTraits>}{begin_holes()}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+The class \ccRefName\ models the concept \ccc{GeneralPolygon_2}.
+It represents a simple general polygon. It is parameterized with the type
+\ccc{ArrTraits} that models the concept
+\ccc{ArrangementDirectionalXMonotoneTraits}. The latter is a refinment
+of the concept \ccc{ArrangementXMonotoneTraits_2}. In addition to the
+requirements of the concept \ccc{ArrangementXMonotoneTraits_2}, a
+model of the concept \ccc{ArrangementDirectionalXMonotoneTraits} must
+support the following functions:
+\begin{itemize}
+\item Given an $x$-monotone curve, contstruct its opposite curve.
+\item Given an $x$-monotone curve, compare its two endpoints lexigoraphically.
+\end{itemize}
+
+\ccInclude{CGAL/General_polygon_2.h}
+ 
+\ccIsModel
+    \ccc{GeneralPolygon_2}
+
+\end{ccRefClass}
+\ccRefPageEnd
