@@ -1027,6 +1027,16 @@ Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/mpfr.dll -text svneol=unset#u
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/mpfr.lib -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/remove.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/removecircle.xpm -text
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#unset
 Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.eps -text
 Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.gif -text svneol=unset#unset
 Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#unset
