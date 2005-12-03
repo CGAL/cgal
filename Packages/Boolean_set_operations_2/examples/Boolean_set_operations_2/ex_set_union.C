@@ -19,7 +19,6 @@ typedef Traits::Curve_2                                 Curve;
 typedef Traits::X_monotone_curve_2                      X_monotone_curve;
 typedef Kernel::Point_2                                 Point;
 typedef Kernel::Circle_2                                Circle;
-typedef Kernel::Line_2                                  Line;
 
 void circle_2_polygon(Circle circle, Polygon & polygon)
 {
@@ -41,13 +40,13 @@ int main(int argc, char * argv[])
   if (argc > 1) circles_num = atoi(argv[1]);
 
   double circles_num_reciep = 1 / circles_num;
-  float radius = 1;
+  double radius = 1;
   double frac = 2 * pi * circles_num_reciep;
   std::list<Polygon> polygons;
   for (unsigned int i = 0; i < circles_num; ++i) {
     double angle = frac * i;
-    float x = radius * sin(angle);
-    float y = radius * cos(angle);
+    double x = radius * sin(angle);
+    double y = radius * cos(angle);
     Point center = Point(x, y);
     Circle circle(center, radius);
     Polygon polygon;
