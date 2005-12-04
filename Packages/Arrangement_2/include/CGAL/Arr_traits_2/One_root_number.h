@@ -298,7 +298,7 @@ double to_double (const _One_root_number<NT>& x)
  * Compute the square of a one-root number.
  */
 template <class NT>
- _One_root_number<NT> square (const _One_root_number<NT>& x)
+_One_root_number<NT> square (const _One_root_number<NT>& x)
 {
   if (x.is_rational)
     return _One_root_number<NT> (x.alpha * x.alpha);

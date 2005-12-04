@@ -217,13 +217,15 @@ public:
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {
   public:
+
     typedef  Base_X_monotone_curve_2     Base;
     typedef  Base_Point_2                Point_2;
 
-    friend class Overlay_meta_traits<Traits,
-                                     Arrangement1, 
-                                     Arrangement2>;
-    friend class Intersect_2;
+  protected:
+    
+     Curve_info    m_curve_info;
+
+  public:
 
     My_X_monotone_curve_2(): Base(),
                              m_curve_info()
@@ -259,10 +261,7 @@ public:
     }
 
     Color get_color() const { return m_curve_info.get_color(); }
-
     
-    protected:
-     Curve_info    m_curve_info;
   }; // nested class My_X_monotone_curve_2 - END
 
   
@@ -272,13 +271,12 @@ public:
 
   class My_Point_2 : public Base_Point_2
   {
+  public:
+
     typedef typename Traits::Point_2    Base;
 
-    friend class Overlay_meta_traits<Traits,
-                                     Arrangement1, 
-                                     Arrangement2>;
-
   protected:
+
     Point_info    m_info;
 
   public:

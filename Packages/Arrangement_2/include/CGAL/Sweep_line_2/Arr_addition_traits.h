@@ -26,45 +26,46 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Traits, class Arrangement_>
-class Arr_addition_traits : public Traits
+template <class Traits_, class Arrangement_>
+class Arr_addition_traits : public Traits_
 {
+public:
+
+  typedef Traits_                                  Traits_2;
+  typedef Arrangement_                             Arrangement_2;
+
+  typedef typename Arrangement_2::Halfedge_handle  Halfedge_handle;
+  typedef typename Arrangement_2::Vertex_handle    Vertex_handle;
+  typedef typename Traits_2::X_monotone_curve_2    Base_X_monotone_curve_2;
+  typedef typename Traits_2::Point_2               Base_Point_2;
+  typedef typename Traits_2::Intersect_2           Base_Intersect_2;
+  typedef typename Traits_2::Split_2               Base_Split_2;
+  typedef typename Traits_2::Make_x_monotone_2     Base_Make_x_monotone_2;
+  typedef typename Traits_2::Construct_min_vertex_2
+                                                   Base_Construct_min_vertex_2;
+  typedef typename Traits_2::Construct_max_vertex_2
+                                                   Base_Construct_max_vertex_2;
+  typedef typename Traits_2::Compare_xy_2          Base_Compare_xy_2;
+
 protected:
-  Traits*    m_base_traits;
+
+  Traits_2*    m_base_traits;
 
 public:
 
-  typedef Arrangement_                              Arrangement;
-
-  typedef typename Arrangement::Halfedge_handle     Halfedge_handle;
-  typedef typename Arrangement::Vertex_handle       Vertex_handle;
-  typedef typename Traits::X_monotone_curve_2       Base_X_monotone_curve_2;
-  typedef typename Traits::Point_2                  Base_Point_2;
-  typedef typename Traits::Curve_2                  Curve_2;
-  typedef typename Traits::Intersect_2              Base_Intersect_2;
-  typedef typename Traits::Split_2                  Base_Split_2;
-  typedef typename Traits::Make_x_monotone_2        Base_Make_x_monotone_2;
-  typedef typename Traits::Construct_min_vertex_2   Base_Construct_min_vertex_2;
-  typedef typename Traits::Construct_max_vertex_2   Base_Construct_max_vertex_2;
-  typedef typename Traits::Compare_xy_2             Base_Compare_xy_2;
-
   //Constructor
-  Arr_addition_traits()
-  {}
-
-  Arr_addition_traits(Traits& tr): Traits(tr),
-                                   m_base_traits(&tr)
+  Arr_addition_traits (Traits_2& tr):
+    Traits_2 (tr),
+    m_base_traits (&tr)
   {}
 
   // nested class My_X_monotone_curve_2
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {
   public:
+
     typedef  Base_X_monotone_curve_2 Base;
     typedef  Base_Point_2            Point_2;
-
-    friend class Arr_addition_traits<Traits, Halfedge_handle>;
-    friend class Intersect_2;
 
     My_X_monotone_curve_2():Base(),
                             m_he_handle(NULL)
@@ -96,7 +97,9 @@ public:
     }
 
   protected:
+
      Halfedge_handle m_he_handle;
+
   }; // nested class My_X_monotone_curve_2 - END
 
 
@@ -126,9 +129,11 @@ public:
     {
       m_v = v;
     }
+    
+  protected:
 
-    protected:
     Vertex_handle    m_v;
+
   }; // nested class My_Point_2 - END
 
   
@@ -246,7 +251,8 @@ public:
     {}
 
     template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) 
+    OutputIterator operator() (const typename Traits_2::Curve_2& cv,
+                               OutputIterator oi) 
     {
       const Base_X_monotone_curve_2   *xcv;
       const Base_Point_2              *pt;
