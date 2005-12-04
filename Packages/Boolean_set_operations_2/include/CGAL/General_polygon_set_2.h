@@ -513,14 +513,6 @@ public:
     }
   }
 
-
-
-
-  // get the simple polygons, takes O(n)
-  template <class OutputIterator>
-  OutputIterator polygons_with_holes(OutputIterator out);
-
-  
   Size number_of_polygons_with_holes() const;
 
   Traits_2& traits()
@@ -587,12 +579,10 @@ public:
       Halfedge_const_handle he = eci;
       if(he->face() == he->twin()->face())
       {
-        std::cout<<"1111\n";
         return false;
       }
       if(he->face()->contained() == he->twin()->face()->contained())
       {
-        std::cout<<"2222\n";
         return false;
       }
     }
@@ -600,12 +590,12 @@ public:
   }
 
 
-  static void pgn2arr (const Polygon_2& pgn, Arrangement_2& arr);
+  //static void pgn2arr (const Polygon_2& pgn, Arrangement_2& arr);
 
   template< class PolygonIter >
   void pgns2arr(PolygonIter p_begin, PolygonIter p_end, Arrangement_2& arr);
   
-  void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr);
+  //void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr);
 
   
   template< class InputIterator >
@@ -615,85 +605,96 @@ public:
 
 
 
-  static void construct_polygon(Ccb_halfedge_circulator ccb,
+  /*static void construct_polygon(Ccb_halfedge_circulator ccb,
                                 Polygon_2& pgn,
-                                Traits_2* tr);
+                                Traits_2* tr);*/
 
-};
+  // get the simple polygons, takes O(n)
+  template <class OutputIterator>
+  OutputIterator polygons_with_holes(OutputIterator out);
 
-#include <CGAL/Boolean_set_operations_2/Bso_utils.h>
-
-template <class PolygonIter, class OutputIterator, class Traits>
-OutputIterator aggregate_union(PolygonIter begin,
-                               PolygonIter end,
-                               OutputIterator out,
-                               Traits tr)
+ // join a range of polygons
+ template <class InputIterator>
+ void join(InputIterator begin, InputIterator end)
 {
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Polygon_2            Polygon_2;
-  typedef typename Traits::Polygon_with_holes_2  
-                                                 Polygon_with_holes_2;
-  typedef typename Polygon_with_holes_2::Holes_const_iterator  
-                                                 GP_Holes_const_iterator;
+  typename std::iterator_traits<InputIterator>::value_type pgn;
+  this->join(begin, end, pgn);
+}
 
-  typedef Bso_dcel<Traits>                                Bso_dcel;  
-  typedef Arrangement_2<Traits, Bso_dcel>                 Arrangement_2;
-  typedef typename Arrangement_2::Edge_iterator            Edge_iterator;
-  typedef typename Arrangement_2::Face_iterator            Face_iterator;
 
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end));
+// join range of simple polygons
+template <class InputIterator>
+inline void join(InputIterator begin,
+                 InputIterator end,
+                 Polygon_2& pgn)
+{
+  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
  
-  unsigned int i = 0;
-  for(PolygonIter itr = begin; itr!=end; ++itr, ++i)
+  arr_vec[0] = this->m_arr;
+  unsigned int i = 1;
+  for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(&tr);
-    General_polygon_set_2<Traits>::pgn2arr(*itr, *arr_vec[i]);
+    pgn2arr(*itr, *arr_vec[i]);
   }
 
   aggregate_union_rec(0, arr_vec.size()-1, arr_vec);
-
-  std::cout<<"|V| = " <<arr_vec[0]->number_of_vertices()<<"\n";
-  std::cout<<"|E| = " <<arr_vec[0]->number_of_edges()<<"\n";
-  std::cout<<"|F| = " <<arr_vec[0]->number_of_faces()<<"\n";
-  
-  std::ofstream outFile("union.arr");
-  // Creates an ofstream object named outFile
-  if (! outFile.is_open()) // Always test file open
-  {
-    std::cout << "Error opening input file" << std::endl;
-    return out;
-  }
-  outFile << (*arr_vec[0]);
-  return out;
-  /*typedef Construct_polygons_visitor<Arrangement_2,
-                                     OutputIterator>     My_visitor;
-  typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
-
-  My_visitor v(tr, out);
-  Arr_bfs_scanner scanner(v);
-  scanner.scan(*arr_vec[0]);
-
-  return (v.output_iterator());*/
-
-
 }
 
-template <class Arrangement>
-void aggregate_union_rec(unsigned int lower,
-                         unsigned int upper,
-                         std::vector<Arrangement*>& arr_vec)
+//join range of polygons with holes
+template <class InputIterator>
+inline void join(InputIterator begin,
+                 InputIterator end,
+                 Polygon_with_holes_2& pgn)
 {
-  if(lower == upper)
+  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0] = this->m_arr;
+ 
+  unsigned int i = 1;
+  for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    return;
+    arr_vec[i] = new Arrangement_2(&tr);
+    pgn_with_holes2arr(*itr, *arr_vec[i]);
   }
 
-  if(upper - lower == 1)
+  aggregate_union_rec(0, arr_vec.size()-1, arr_vec);
+}
+
+template <class InputIterator1, class InputIterator2>
+inline void join(InputIterator1 begin1,
+                 InputIterator1 end1,
+                 InputIterator2 begin2,
+                 InputIterator2 end2)
+{
+  std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
+                                       std::distance(begin2, end2)+1);
+ 
+  arr_vec[0] = this->m_arr;
+  unsigned int i = 1;
+
+  for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
-    union_merge(lower, upper, arr_vec);
-    return;
+    arr_vec[i] = new Arrangement_2(&tr);
+    pgn2arr(*itr1, *arr_vec[i]);
   }
+
+  for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
+  {
+    arr_vec[i] = new Arrangement_2(&tr);
+    pgn_with_holes2arr(*itr2, *arr_vec[i]);
+  }
+
+  aggregate_union_rec(0, arr_vec.size()-1, arr_vec);
+}
+
+
+void aggregate_union_rec(unsigned int lower,
+                         unsigned int upper,
+                         std::vector<Arrangement_2*>& arr_vec)
+{
+  if(lower == upper)
+    return;
+
   unsigned int mid = (upper + lower)/2;
   aggregate_union_rec(lower, mid, arr_vec);
   aggregate_union_rec(mid + 1, upper, arr_vec);
@@ -703,90 +704,73 @@ void aggregate_union_rec(unsigned int lower,
   return;
 }
 
-
-template <class Arrangement>
-void union_merge(unsigned int i,
-                 unsigned int j,
-                 std::vector<Arrangement*>& arr_vec)
+inline void union_merge(unsigned int i,
+                        unsigned int j,
+                        std::vector<Arrangement_2*>& arr_vec)
 {
-  typedef typename Arrangement::Traits_2    Traits_2;
   Bso_join_functor<Traits_2>  func(arr_vec[i]->get_traits());
-  Arrangement res;
+  Arrangement_2 res;
   overlay(*(arr_vec[i]), *(arr_vec[j]), res, func);
   delete arr_vec[i]; // delete the previous arrangement
   delete arr_vec[j]; // delete the previous arrangement
 
   arr_vec[i] = func.result_arr();
 }
- 
 
-//////////////////////////////////////////////////////////////////////
-
-
-
-template <class PolygonIter, class OutputIterator, class Traits>
-OutputIterator aggregate_intersection(PolygonIter begin,
-                                       PolygonIter end,
-                                       OutputIterator out,
-                                       Traits tr)
+// intersect range of polygins
+template <class InputIterator>
+inline void intersection(InputIterator begin, InputIterator end)
 {
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Polygon_2            Polygon_2;
-  typedef typename Traits::Polygon_with_holes_2  
-                                                 Polygon_with_holes_2;
-  typedef typename Polygon_with_holes_2::Holes_const_iterator  
-                                                 GP_Holes_const_iterator;
+  typename std::iterator_traits<InputIterator>::value_type pgn;
+  this->intersection(begin, end, pgn);
+}
 
-  typedef Bso_dcel<Traits>                                Bso_dcel;  
-  typedef Arrangement_2<Traits, Bso_dcel>                 Arrangement_2;
-  typedef typename Arrangement_2::Edge_iterator            Edge_iterator;
-  typedef typename Arrangement_2::Face_iterator            Face_iterator;
 
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end));
+// intersect range of simple polygons
+template <class InputIterator>
+inline void intersection(InputIterator begin,
+                         InputIterator end,
+                         Polygon_2& pgn)
+{
+  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0] = this->m_arr;
+  unsigned int i = 1;
  
-  unsigned int i = 0;
-  for(PolygonIter itr = begin; itr!=end; ++itr, ++i)
+  for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(&tr);
-    General_polygon_set_2<Traits>::pgn2arr(*itr, *arr_vec[i]);
+    pgn2arr(*itr, *arr_vec[i]);
   }
 
   aggregate_intersection_rec(0, arr_vec.size()-1, arr_vec);
-
-  std::cout<<"|V| = " <<arr_vec[0]->number_of_vertices()<<"\n";
-  std::cout<<"|E| = " <<arr_vec[0]->number_of_edges()<<"\n";
-  std::cout<<"|F| = " <<arr_vec[0]->number_of_faces()<<"\n";
-  
-  return out;
-  /*typedef Construct_polygons_visitor<Arrangement_2,
-                                     OutputIterator>     My_visitor;
-  typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
-
-  My_visitor v(tr, out);
-  Arr_bfs_scanner scanner(v);
-  scanner.scan(*arr_vec[0]);
-
-  return (v.output_iterator());*/
-
-
 }
 
-template <class Arrangement>
+//join range of polygons with holes
+template <class InputIterator>
+inline void intersection(InputIterator begin,
+                         InputIterator end,
+                         Polygon_with_holes_2& pgn)
+{
+  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0] = this->m_arr;
+  unsigned int i = 1;
+ 
+  for(InputIterator itr = begin; itr!=end; ++itr, ++i)
+  {
+    arr_vec[i] = new Arrangement_2(&tr);
+    pgn_with_holes2arr(*itr, *arr_vec[i]);
+  }
+  aggregate_intersection_rec(0, arr_vec.size()-1, arr_vec);
+}
+
+
 void aggregate_intersection_rec(unsigned int lower,
-                                 unsigned int upper,
-                                 std::vector<Arrangement*>& arr_vec)
+                                unsigned int upper,
+                                std::vector<Arrangement_2*>& arr_vec)
 {
   if(lower == upper)
-  {
     return;
-  }
 
-  if(upper - lower == 1)
-  {
-    intersection_merge(lower, upper, arr_vec);
-    return;
-  }
   unsigned int mid = (upper + lower)/2;
   aggregate_intersection_rec(lower, mid, arr_vec);
   aggregate_intersection_rec(mid + 1, upper, arr_vec);
@@ -797,25 +781,59 @@ void aggregate_intersection_rec(unsigned int lower,
 }
 
 
-template <class Arrangement>
-void intersection_merge(unsigned int i,
-                        unsigned int j,
-                        std::vector<Arrangement*>& arr_vec)
-{
-  typedef typename Arrangement::Traits_2    Traits_2;
-  
+inline void intersection_merge(unsigned int i,
+                               unsigned int j,
+                               std::vector<Arrangement_2*>& arr_vec)
+{  
   if(arr_vec[i]->is_empty() || arr_vec[j]->is_empty())
     delete arr_vec[j];
   else
   {
     Bso_intersection_functor<Traits_2>  func(arr_vec[i]->get_traits());
-    Arrangement res;
+    Arrangement_2 res;
     overlay(*(arr_vec[i]), *(arr_vec[j]), res, func);
     delete arr_vec[i]; // delete the previous arrangement
     delete arr_vec[j]; // delete the previous arrangement
     arr_vec[i] = func.result_arr();
   }
 }
+
+template <class InputIterator1, class InputIterator2>
+inline void intersection(InputIterator1 begin1,
+                         InputIterator1 end1,
+                         InputIterator2 begin2,
+                         InputIterator2 end2)
+{
+  std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
+                                       std::distance(begin2, end2)+1);
+  arr_vec[0] = this->m_arr;
+  unsigned int i = 1;
+ 
+  for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
+  {
+    arr_vec[i] = new Arrangement_2(&tr);
+    pgn2arr(*itr1, *arr_vec[i]);
+  }
+
+  for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
+  {
+    arr_vec[i] = new Arrangement_2(&tr);
+    pgn_with_holes2arr(*itr2, *arr_vec[i]);
+  }
+
+  aggregate_intersection_rec(0, arr_vec.size()-1, arr_vec);
+}
+
+
+
+static void construct_polygon(Ccb_halfedge_circulator ccb,
+                              Polygon_2&              pgn,
+                              Traits_2*               tr);
+
+
+};
+
+#include <CGAL/Boolean_set_operations_2/Bso_utils.h>
 
 
 CGAL_END_NAMESPACE

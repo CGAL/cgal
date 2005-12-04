@@ -20,19 +20,17 @@
 #ifndef BSO_UTILS
 #define BSO_UTILS
 
-
-#include <list>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h> 
-
+#include <queue>
 
 
 
 template <class Arrangement>
 class Curve_creator : 
-  public Creator_1<typename Arrangement::Halfedge,
+  public CGAL::Creator_1<typename Arrangement::Halfedge,
                    typename Arrangement::X_monotone_curve_2>
 {
 public:
@@ -40,7 +38,7 @@ public:
   typedef typename Arrangement::Halfedge              Halfedge;
   typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
   typedef typename Arrangement::Traits_2              Traits_2;   
-  typedef Creator_1<Halfedge, X_monotone_curve_2>     Base;
+  typedef CGAL::Creator_1<Halfedge, X_monotone_curve_2>     Base;
 
 protected:
   Traits_2*    m_traits;
@@ -62,17 +60,17 @@ public:
   }
 };
 
-template < class Traits_ >
-void General_polygon_set_2<Traits_>::
+template <class Traits_>
+ void General_polygon_set_2<Traits_>::
   construct_polygon(Ccb_halfedge_circulator ccb,
-                    Polygon_2&      pgn,
+                    Polygon_2&              pgn,
                     Traits_*                tr)
 {
-  typedef Container_from_circulator<Ccb_halfedge_circulator> Ccb_container;
+  typedef CGAL::Container_from_circulator<Ccb_halfedge_circulator> Ccb_container;
   typedef typename Ccb_container::iterator                   Ccb_iterator;
   Ccb_container container(ccb);
 
-  typedef Join_input_iterator_1<Ccb_iterator, Curve_creator<Arrangement_2> > Curve_iterator;
+  typedef CGAL::Join_input_iterator_1<Ccb_iterator, Curve_creator<Arrangement_2> > Curve_iterator;
   Curve_creator<Arrangement_2> cv_creator(tr);
 
   Curve_iterator  begin(container.begin(), cv_creator);
@@ -257,7 +255,6 @@ public:
   typedef typename Traits_2::Polygon_with_holes_2 
                                                   Polygon_with_holes_2;
   typedef typename Traits_2::Polygon_2    Polygon_2;
-  typedef General_polygon_set_2<Traits_2>         Gps;
 
   Construct_polygons_visitor(Arrangement* arr, OutputIterator out) : 
     m_boundary(),
@@ -301,7 +298,9 @@ public:
     }
     
     m_holes.push_back(Polygon_2());
-    General_polygon_set_2<Traits_2>::construct_polygon(*hit, m_holes.back(), m_arr->get_traits());
+    General_polygon_set_2<Traits_2>::construct_polygon(*hit,
+                                                       m_holes.back(),
+                                                       m_arr->get_traits());
   }
 
   void flip_face(Face_iterator s_face, Face_iterator f)
@@ -404,10 +403,15 @@ public:
   }
 };
   
-template < class Traits_ >
-void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn, 
-                                             Arrangement_2& arr)
+template < class Polygon_2, class Arrangement_2>
+void pgn2arr(const Polygon_2& pgn, Arrangement_2& arr)
 {
+  typedef typename Arrangement_2::Traits_2             Traits_2;
+  typedef typename Traits_2::Compare_endpoints_xy_2    Compare_endpoints_xy_2;
+  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
+  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
+
   Compare_endpoints_xy_2  cmp_ends = 
     arr.get_traits()->compare_endpoints_xy_2_object();
 
@@ -426,7 +430,7 @@ void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn,
   //first_he is directed from left to right (see insert_in_face_interior)
   
   Halfedge_handle curr_he;
-  if(cmp_ends(*curr) == SMALLER)
+  if(cmp_ends(*curr) == CGAL::SMALLER)
   {
     // curr curve and first_he have the same direction
     curr_he = first_he;
@@ -435,7 +439,7 @@ void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn,
   else
   {
     // curr curve and first_he have opposite directions
-    CGAL_assertion(cmp_ends(*curr) == LARGER);
+    CGAL_assertion(cmp_ends(*curr) == CGAL::LARGER);
     curr_he = first_he->twin();
   }
 
@@ -459,11 +463,11 @@ void General_polygon_set_2<Traits_>::pgn2arr(const Polygon_2& pgn,
   for(++curr ; curr != last; ++curr)
   {
     const X_monotone_curve_2& curr_cv = *curr;
-    if(cmp_ends(curr_cv) == SMALLER)
+    if(cmp_ends(curr_cv) == CGAL::SMALLER)
       curr_he = arr.insert_from_left_vertex(curr_cv, curr_he);
     else
     {
-      CGAL_assertion(cmp_ends(curr_cv) == LARGER);
+      CGAL_assertion(cmp_ends(curr_cv) == CGAL::LARGER);
       curr_he = arr.insert_from_right_vertex(curr_cv, curr_he);
     }
   }
@@ -512,14 +516,23 @@ void General_polygon_set_2<Traits_>::pgns2arr(PolygonIter p_begin,
 
 
 
+
  //insert non-sipmle poloygons with holes (non incident edges may have
 // common vertex,  but they dont intersect at their interior
-template < class Traits_ >
-void General_polygon_set_2<Traits_>::pgn_with_holes2arr (const Polygon_with_holes_2& pgn,
-                                                         Arrangement_2& arr)
+template < class Polygon_with_holes_2, class Arrangement_2 >
+void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
 {
-  typedef std::list<X_monotone_curve_2>                XCurveList;
+  typedef typename Arrangement_2::Traits_2             Traits_2;
+  typedef typename Traits_2::Polygon_2                 Polygon_2;
+  typedef typename Traits_2::Compare_endpoints_xy_2    Compare_endpoints_xy_2;
+  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
+  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
+  
+  typedef typename Polygon_with_holes_2::GP_Holes_const_iterator
+                                                       GP_Holes_const_iterator;
 
+  typedef std::list<X_monotone_curve_2>                XCurveList;
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
   typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
@@ -555,6 +568,7 @@ void General_polygon_set_2<Traits_>::pgn_with_holes2arr (const Polygon_with_hole
   Arr_bfs_scanner scanner(v);
   scanner.scan(arr);
 }
+
 
 
  //insert a range of  non-sipmle poloygons with holes (as decribed above)
@@ -606,22 +620,22 @@ void General_polygon_set_2<Traits_>::pgns_with_holes2arr (InputIterator begin,
 }
 
 
-
-template < class Traits_ >
-  template< class OutputIterator>
-  OutputIterator  General_polygon_set_2<Traits_>::
-    polygons_with_holes(OutputIterator out1)
+template <class Traits_>
+  template< class OutputIterator >
+  OutputIterator
+  General_polygon_set_2<Traits_>::polygons_with_holes(OutputIterator out1)
 {
   typedef Construct_polygons_visitor<Arrangement_2,
                                      OutputIterator>     My_visitor;
   typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
-  My_visitor v(this->m_arr, out1);
+  My_visitor v(m_arr, out1);
   Arr_bfs_scanner scanner(v);
   scanner.scan(*m_arr);
 
   return (v.output_iterator());
 }
+
 
 template < class Traits_ >
 typename  General_polygon_set_2<Traits_>::Size 
@@ -636,6 +650,9 @@ General_polygon_set_2<Traits_>::number_of_polygons_with_holes() const
   
   return (v.number_of_pgns());
 }
+
+
+
 
 
 #endif
