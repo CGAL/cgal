@@ -1030,6 +1030,14 @@ Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/removecircle.xpm
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#unset
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#unset
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_circles_rects.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_conic_arcs.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_disks.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_general_polygon.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_general_polygon_with_holes.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_non_strictly_simple.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_triangles.gif -text svneol=unset#unset
+Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/fig_unique.gif -text svneol=unset#unset
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#unset
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#unset
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#unset
