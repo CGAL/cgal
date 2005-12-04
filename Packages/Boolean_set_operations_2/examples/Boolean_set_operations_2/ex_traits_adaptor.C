@@ -5,9 +5,9 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/General_polygon_2.h>
-#include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Gps_traits_adaptor_2.h>
+#include <CGAL/Boolean_set_operations_2.h>
 
 #include <list>
 
@@ -23,7 +23,6 @@ typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
                                                         Arr_traits;
 typedef CGAL::General_polygon_2<Arr_traits>             Polygon;
 typedef CGAL::Gps_traits_adaptor_2<Arr_traits,Polygon>  Traits;
-typedef CGAL::General_polygon_set_2<Traits>             Polygon_set;
 typedef Traits::Polygon_with_holes_2                    Polygon_with_holes;
 typedef Traits::Curve_2                                 Curve;
 typedef Traits::X_monotone_curve_2                      X_monotone_curve;
@@ -35,7 +34,7 @@ void conic_2_polygon(Curve & conic, Polygon & polygon)
   std::list<CGAL::Object> objects;
   traits.make_x_monotone_2_object()(conic, std::back_inserter(objects));
   std::list<CGAL::Object>::iterator i;
-  for (i = objects.begin(); i != objects.begin(); ++i) {
+  for (i = objects.begin(); i != objects.end(); ++i) {
     X_monotone_curve xcurve;
     CGAL::assign(xcurve, *i);
     polygon.push_back(xcurve);
