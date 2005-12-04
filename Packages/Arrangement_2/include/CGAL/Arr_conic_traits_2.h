@@ -738,7 +738,41 @@ public:
   {
     return Construct_x_monotone_curve_2();
   }
+
+
   //@}
+
+
+  class Compare_endpoints_xy_2 
+  {
+  public:
+
+    Comparison_result operator()(const X_monotone_curve_2& cv)
+    {
+      if(cv.is_directed_right())
+        return SMALLER;
+      return LARGER;
+    }
+  };
+
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
+  {
+    return Compare_endpoints_xy_2();
+  }
+
+  class Construct_opposite_2
+  {
+  public:
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv)
+    {
+      return cv.construct_opposite();
+    }
+  };
+
+  Construct_opposite_2 construct_opposite_2_object() const
+  {
+    return Construct_opposite_2();
+  }
 };
 
 CGAL_END_NAMESPACE

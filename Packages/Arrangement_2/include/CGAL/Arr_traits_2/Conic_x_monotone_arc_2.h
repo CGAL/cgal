@@ -317,6 +317,32 @@ public:
   }
 
   /*!
+   * Return true iff the conic arc is directed right iexicographically.
+   */
+  bool is_directed_right() const
+  {
+    return ((this->_info & IS_DIRECTED_RIGHT) != 0);
+  }
+
+  Self construct_opposite() const
+  {
+    Self opp_cv(*this);
+    if(is_directed_right())
+      opp_cv._info &= (~IS_DIRECTED_RIGHT);
+    else
+      opp_cv._info |= (IS_DIRECTED_RIGHT);
+
+    if(this->_orient == CLOCKWISE)
+      opp_cv._orient = COUNTERCLOCKWISE;
+    else
+      if(this->_orient == COUNTERCLOCKWISE)
+        opp_cv._orient = CLOCKWISE;
+
+    std::swap(opp_cv._source, opp_cv._target);
+    return (opp_cv);
+  }
+
+  /*!
    * Get a bounding box for the conic arc.
    * \return The bounding box.
    */
