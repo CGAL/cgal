@@ -86,14 +86,14 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon> & p1,
                   const General_polygon_with_holes_2<Polygon> & p2);}
 
 \ccGlobalFunction{template <class InputIterator>
-bool intersection(InputIterator & begin, InputIterator & end);}
+bool do_intersect(InputIterator & begin, InputIterator & end);}
 {Return \ccc{true}, if the set the general polygons (or general
 polygons with holes) in the given range intersect in their interior,
 and \ccc{false} otherwise. (The value type of the input iterator is
 used to distinguish between the two.)}
 
 \ccGlobalFunction{template <class InputIterator1, class InputIterator2>
-bool intersection(InputIterator1 & pgn_begin1,
+bool do_intersect(InputIterator1 & pgn_begin1,
                   InputIterator1 & pgn_end1,
                   InputIterator2 & pgn_begin2,
 	          InputIterator2 & pgn_end2);}
