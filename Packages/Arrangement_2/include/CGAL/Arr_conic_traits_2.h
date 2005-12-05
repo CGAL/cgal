@@ -65,6 +65,8 @@ public:
 
   typedef typename Nt_traits::Integer     Integer;
 
+  typedef Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>  Self;
+
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
@@ -82,8 +84,6 @@ private:
                                                           Intersection_point_2;
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
-  unsigned int      conic_index; // The serial number of the last conic
-                                 // curve that was handled.
   Intersection_map  inter_map;   // Mapping conic pairs to their intersection
                                  // points.
 
@@ -92,9 +92,15 @@ public:
   /*!
    * Default constructor.
    */
-  Arr_conic_traits_2 () :
-    conic_index (0)
+  Arr_conic_traits_2 ()
   {}
+
+  /*! Get the next conic index. */
+  static unsigned int get_index () 
+  {
+    static unsigned int index = 0;
+    return (++index);
+  }
 
   /// \name Basic functor definitions.
   //@{
@@ -435,24 +441,7 @@ public:
 
   class Make_x_monotone_2
   {
-  private:
-
-    const Arr_conic_traits_2<Rat_kernel,
-                             Alg_kernel,
-                             Nt_traits>   *p_traits;
-                             
-    unsigned int       *p_conic_index;         // The current conic index.
-
   public:
-
-    /*! Constructor. */
-    Make_x_monotone_2 (const Arr_conic_traits_2<Rat_kernel,
-                                                Alg_kernel,
-                                                Nt_traits> *traits,
-                       unsigned int *index) :
-      p_traits (traits),
-      p_conic_index (index)
-    {}
 
     /*!
      * Cut the given conic curve (or conic arc) into x-monotone subcurves 
@@ -467,9 +456,8 @@ public:
     {
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      (*p_conic_index)++;
-      
-      Conic_id      conic_id (p_traits, *p_conic_index);
+      unsigned int  index = Self::get_index();
+      Conic_id      conic_id (index);
       
       // Find the points of vertical tangency to cv and act accordingly.
       typename Curve_2::Point_2  vtan_ps[2];
@@ -563,7 +551,7 @@ public:
   /*! Get a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object ()
   {
-    return (Make_x_monotone_2 (this, &conic_index));
+    return Make_x_monotone_2();
   }
 
   class Split_2
