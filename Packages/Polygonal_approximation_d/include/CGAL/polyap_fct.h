@@ -1,9 +1,7 @@
-// Header
-
-
 
 #ifndef CGAL_POLYAP_FCT
 #define CGAL_POLYAP_FCT
+
 
 #include <assert.h>
 #include <CGAL/basic.h>
@@ -11,74 +9,124 @@
 CGAL_BEGIN_NAMESPACE
 
 
-
-//////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 //			Dynamic Programming
-//
-/////////////
-//
-//  MIN E
-//
+
+//  Bounded-# (min-E) local error assessment 
 
 template<class InputIterator,class OutputIterator, class DistTraits>
-OutputIterator dynProgApprox(	InputIterator begin, 
-								InputIterator beyond, 
-								unsigned long nr_pct, 
-								typename DistTraits::DataT *SmallestError, 
-								OutputIterator result,
-								DistTraits error)
+OutputIterator polygonal_approximation_DP_bnp_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t n_pt_bound, 
+													typename DistTraits::FT &approx_error, 
+													OutputIterator result,
+													DistTraits error )
 {
-	typedef typename DistTraits::DataT DataT;
-	
-	unsigned long n,m,i;
+	typedef typename DistTraits::FT FT;
+
+	typename std::size_t n,m,i;
 	
 	InputIterator c_n,c_i,c_m;
 
-	n=0;
-	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
 		n++;
-	if(nr_pct>n)
-		nr_pct=n;
-
-	unsigned long N=n+1;
 	
-	DataT **ApproxError;
-	unsigned long **SplitPoints;
-	DataT **Err;
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
 
-	assert(ApproxError=new DataT*[N]);
+		for(c_i=begin;c_i!=beyond;c_i++)
+			*result++=*c_i;
+
+		return result;
+	}
+
+	typename std::size_t N=n+1;
+	
+	FT **ApproxError;
+	typename std::size_t **SplitPoints;
+	FT **Err;
+
+	ApproxError=new FT*[N];
+	assert(ApproxError);
 	for(m=0;m<N;m++)
-		assert(ApproxError[m]=new DataT[nr_pct]);
+	{
+		ApproxError[m]=new FT[n_pt_bound];
+		assert(ApproxError[m]);
+	}
 
-	assert(SplitPoints=new unsigned long*[N]);
+	SplitPoints=new typename std::size_t*[N];
+	assert(SplitPoints);
 	for(m=0;m<N;m++)
-		assert(SplitPoints[m]=new unsigned long[nr_pct]);
+	{
+		SplitPoints[m]=new typename std::size_t[n_pt_bound];
+		assert(SplitPoints[m]);
+	}
 
-	assert(Err=new DataT*[N]);
+	Err=new FT*[N];
+	assert(Err);
 	for(m=0;m<N;m++)
-		assert(Err[m]=new DataT[N]);
+	{
+		Err[m]=new FT[N];
+		assert(Err[m]);
+	}
 
-	Err[0][0]=DataT(0);
-	Err[N-1][N-1]=DataT(0);
+	Err[0][0]=FT(0);
+	Err[N-1][N-1]=FT(0);
 	for(n=1;n<N-1;n++)
-		Err[n][n]=Err[n][n-1]=Err[n][n+1]=Err[n-1][n]=Err[n+1][n]=DataT(0);
+		Err[n][n]=Err[n][n-1]=Err[n][n+1]=Err[n-1][n]=Err[n+1][n]=FT(0);
+	
 	for(n=0,c_n=begin;n<N-2;n++,c_n++)
-		for(m=n+2,c_m=c_n,c_m++,c_m++;c_m!=beyond;m++,c_m++)
-		{	
-			Err[n][m]=error(c_n,c_m);
-			Err[m][n]=Err[n][m];
-		}
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Err[m][n]=Err[n][m]=error(c_n,c_m);
+
+	if(n_pt_bound==2)
+	{
+		approx_error=Err[0][N-1];
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
 
 	for(n=1;n<N;n++)
 		ApproxError[n][1]=Err[n][0];
 
-	DataT epsilon;
+	FT err_crt;
 	
-	for(m=2;m<nr_pct;m++)
+	for(m=2;m<n_pt_bound;m++)
 	{
-		ApproxError[m][m]=DataT(0);
+		ApproxError[m][m]=FT(0);
 		SplitPoints[m][m]=m-1;
 
 		for(n=m+1;n<N;n++)
@@ -87,52 +135,431 @@ OutputIterator dynProgApprox(	InputIterator begin,
 			SplitPoints[n][m]=n-1;
 			for(i=n-2;i>=m;i--)
 			{
-				epsilon=error.cumulate(ApproxError[i][m-1],Err[i][n]); 
-				if(epsilon<ApproxError[n][m])
+				if(ApproxError[i][m-1]>Err[i][n])
+					err_crt=ApproxError[i][m-1]; 
+				else
+					err_crt=Err[i][n];
+
+				if(err_crt<ApproxError[n][m])
 				{
-					ApproxError[n][m]=epsilon;
+					ApproxError[n][m]=err_crt;
 					SplitPoints[n][m]=i;
 				}
 			}
-			epsilon=Err[m-1][n];
-			if(epsilon<ApproxError[n][m])
+			err_crt=Err[m-1][n];
+			if(err_crt<ApproxError[n][m])
 			{
-				ApproxError[n][m]=epsilon;
+				ApproxError[n][m]=err_crt;
 				SplitPoints[n][m]=m-1;
 			}
 			
 		}
 	}
 	
-	*SmallestError=ApproxError[N-1][nr_pct-1];
+	approx_error=ApproxError[N-1][n_pt_bound-1];
 
 	c_i=beyond;
 	c_i--;
 
-	typename std::list<InputIterator> result1;
+	typename std::list<InputIterator> local_container;
 	typename std::list<InputIterator>::iterator cri;
 
-	result1.push_front(c_i);
+	local_container.push_front(c_i);
 
 	n=N-1;
 	
-	unsigned long nn=N-1;
+	typename std::size_t nn=N-1;
 
-	for(m=nr_pct-1;m>=2;m--)
+	for(m=n_pt_bound-1;m>=2;m--)
 	{
 		n=SplitPoints[n][m];
 
-		for(unsigned long ii=nn;ii>n;ii--)
+		for(typename std::size_t ii=nn;ii>n;ii--)
+			c_i--;
+		nn=n;
+
+		local_container.push_front(c_i);
+	}
+
+	local_container.push_front(begin);
+	
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
+		*result++=**cri;
+
+	for(m=0;m<N;m++)
+		delete[] ApproxError[m];
+	delete[] ApproxError;
+
+	for(m=0;m<N;m++)
+		delete[] SplitPoints[m];
+	delete[] SplitPoints;
+
+	for(m=0;m<N;m++)
+		delete[] Err[m];
+	delete[] Err;
+
+	return result;
+};
+
+
+//  Bounded-E (min-#) local error assessment 
+
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_DP_be_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
+{
+	typedef typename DistTraits::FT FT;
+
+	typename std::size_t n,m,i;
+	FT err_crt;
+	InputIterator c_n,c_i,c_m;
+
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	typename std::size_t N=n+1;
+	
+	FT **ApproxError;
+	typename std::size_t **SplitPoints;
+	FT **Err;
+
+	ApproxError=new FT*[N];
+	assert(ApproxError);
+	for(m=0;m<N;m++)
+	{
+		ApproxError[m]=new FT[N];
+		assert(ApproxError[m]);
+	}
+
+	Err=new FT*[N];
+	assert(Err);
+	for(m=0;m<N;m++)
+	{
+		Err[m]=new FT[N];
+		assert(Err[m]);
+	}
+
+	Err[0][0]=Err[0][1]=Err[1][0]=FT(0);
+
+	if(N>2)
+		for(n=2,c_n=begin,c_n++,c_n++,c_n++;n<N;n++,c_n++)
+			ApproxError[n][1]=Err[n][0]=Err[0][n]=error(begin,c_n);
+
+	if(ApproxError[N-1][1]<=error_bound)
+	{
+		approx_n_pt=2;
+	
+		c_i=beyond;
+		c_i--;
+
+		*result++=*begin;
+		*result=*c_i;
+	
+		for(m=0;m<N;m++)
+			delete[] ApproxError[m];
+		delete[] ApproxError;
+
+		for(m=0;m<N;m++)
+			delete[] Err[m];
+		delete[] Err;
+
+		return result;
+	}
+
+	SplitPoints=new typename std::size_t*[N];
+	assert(SplitPoints);
+	for(m=0;m<N;m++)
+	{
+		SplitPoints[m]=new typename std::size_t[N];
+		assert(SplitPoints[m]);
+	}
+
+	Err[N-1][N-1]=FT(0);
+	for(n=1;n<N-1;n++)
+		Err[n][n]=Err[n][n-1]=Err[n][n+1]=Err[n-1][n]=Err[n+1][n]=FT(0);
+
+	for(n=1,c_n=begin,c_n++;n<N-2;n++,c_n++)
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Err[m][n]=Err[n][m]=error(c_n,c_m);
+
+	for(m=2;m<N;m++)
+	{
+		ApproxError[m][m]=FT(0);
+		SplitPoints[m][m]=m-1;
+
+		for(n=m+1;n<N;n++)
+		{
+			ApproxError[n][m]=ApproxError[n-1][m-1];
+			SplitPoints[n][m]=n-1;
+			for(i=n-2;i>=m;i--)
+			{
+				if(ApproxError[i][m-1]>Err[i][n])
+					err_crt=ApproxError[i][m-1]; 
+				else
+					err_crt=Err[i][n];
+
+				if(err_crt<ApproxError[n][m])
+				{
+					ApproxError[n][m]=err_crt;
+					SplitPoints[n][m]=i;
+				}
+			}
+			err_crt=Err[m-1][n];
+			if(err_crt<ApproxError[n][m])
+			{
+				ApproxError[n][m]=err_crt;
+				SplitPoints[n][m]=m-1;
+			}
+		}
+
+		if(ApproxError[N-1][m]<=error_bound)
+		{
+			approx_n_pt=m+1;
+			break;
+		}
+	}
+	
+	c_i=beyond;
+	c_i--;
+
+	typename std::list<InputIterator> local_container;
+	typename std::list<InputIterator>::iterator cri;
+	
+	local_container.push_front(c_i);
+
+	n=N-1;
+	
+	typename std::size_t nn=N-1;
+
+	for(m=approx_n_pt-1;m>=2;m--)
+	{
+		n=SplitPoints[n][m];
+
+		for(typename std::size_t ii=nn;ii>n;ii--)
 			c_i--;
 
 		nn=n;
-
-		result1.push_front(c_i);
+		local_container.push_front(c_i);
 	}
 
-	result1.push_front(begin);
+	local_container.push_front(begin);
 
-	for(cri=result1.begin();cri!=result1.end();cri++)
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
+		*result++=**cri;
+	
+	for(m=0;m<N;m++)
+		delete[] ApproxError[m];
+	delete[] ApproxError;
+
+	for(m=0;m<N;m++)
+		delete[] SplitPoints[m];
+	delete[] SplitPoints;
+
+	for(m=0;m<N;m++)
+		delete[] Err[m];
+	delete[] Err;
+ 
+	return result;
+};
+
+
+//  Bounded-# (min-E) global error assessment 
+
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_DP_bnp_gea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t n_pt_bound, 
+													typename DistTraits::FT &approx_error, 
+													OutputIterator result,
+													DistTraits error )
+{
+	typedef typename DistTraits::FT FT;
+
+	typename std::size_t n,m,i;
+	
+	InputIterator c_n,c_i,c_m;
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
+	n=0;
+	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_i=begin;c_i!=beyond;c_i++)
+			*result++=*c_i;
+
+		return result;
+	}
+
+	typename std::size_t N=n+1;
+	
+	FT **ApproxError;
+	typename std::size_t **SplitPoints;
+	FT **Err;
+
+	ApproxError=new FT*[N];
+	assert(ApproxError);
+	for(m=0;m<N;m++)
+	{
+		ApproxError[m]=new FT[n_pt_bound];
+		assert(ApproxError[m]);
+	}
+
+	SplitPoints=new typename std::size_t*[N];
+	assert(SplitPoints);
+	for(m=0;m<N;m++)
+	{
+		SplitPoints[m]=new typename std::size_t[n_pt_bound];
+		assert(SplitPoints[m]);
+	}
+
+	Err=new FT*[N];
+	assert(Err);
+	for(m=0;m<N;m++)
+	{
+		Err[m]=new FT[N];
+		assert(Err[m]);
+	}
+
+	Err[0][0]=FT(0);
+	Err[N-1][N-1]=FT(0);
+	for(n=1;n<N-1;n++)
+		Err[n][n]=Err[n][n-1]=Err[n][n+1]=Err[n-1][n]=Err[n+1][n]=FT(0);
+	
+	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Err[m][n]=Err[n][m]=error(c_n,c_m);;
+
+	if(n_pt_bound==2)
+	{
+		approx_error=Err[0][N-1];
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=1;n<N;n++)
+		ApproxError[n][1]=Err[n][0];
+
+	FT err_crt;
+	
+	for(m=2;m<n_pt_bound;m++)
+	{
+		ApproxError[m][m]=FT(0);
+		SplitPoints[m][m]=m-1;
+
+		for(n=m+1;n<N;n++)
+		{
+			ApproxError[n][m]=ApproxError[n-1][m-1];
+			SplitPoints[n][m]=n-1;
+			for(i=n-2;i>=m;i--)
+			{
+				err_crt=ApproxError[i][m-1]+Err[i][n]; 
+				if(err_crt<ApproxError[n][m])
+				{
+					ApproxError[n][m]=err_crt;
+					SplitPoints[n][m]=i;
+				}
+			}
+			err_crt=Err[m-1][n];
+			if(err_crt<ApproxError[n][m])
+			{
+				ApproxError[n][m]=err_crt;
+				SplitPoints[n][m]=m-1;
+			}
+		}
+	}
+	
+	approx_error=ApproxError[N-1][n_pt_bound-1];
+
+	c_i=beyond;
+	c_i--;
+
+
+	typename std::list<InputIterator> local_container;
+	typename std::list<InputIterator>::iterator cri;
+
+	local_container.push_front(c_i);
+
+	n=N-1;
+	
+	typename std::size_t nn=N-1;
+
+	for(m=n_pt_bound-1;m>=2;m--)
+	{
+		n=SplitPoints[n][m];
+
+		for(typename std::size_t ii=nn;ii>n;ii--)
+			c_i--;
+		nn=n;
+
+		local_container.push_front(c_i);
+	}
+
+	local_container.push_front(begin);
+	
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
 		*result++=**cri;
 
 	for(m=0;m<N;m++)
@@ -152,59 +579,88 @@ OutputIterator dynProgApprox(	InputIterator begin,
 
 
 
-//////////////
-//
-//  MIN #
-//
+//  Bounded-E (min-#) global error assessment 
+
 template<class InputIterator,class OutputIterator, class DistTraits>
-
-OutputIterator dynProgApprox(	InputIterator begin, 
-								InputIterator beyond, 
-								unsigned long *nr_pct, 
-								typename DistTraits::DataT epsi, 
-								OutputIterator result,
-								DistTraits error)
+OutputIterator polygonal_approximation_DP_be_gea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
 {
-	typedef typename DistTraits::DataT DataT;
+	typedef typename DistTraits::FT FT;
 
-	unsigned long n,m,i;
-	DataT epsilon;
+	typename std::size_t n,m,i;
+	FT err_crt;
 	InputIterator c_n,c_i,c_m;
 
-	n=0;
-	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
 		n++;
 
-	unsigned long N=n+1;
+	typename std::size_t N=n+1;
 	
-	DataT **ApproxError;
-	unsigned long **SplitPoints;
-	DataT **Err;
+	FT **ApproxError;
+	typename std::size_t **SplitPoints;
+	FT **Err;
 
-	assert(ApproxError=new DataT*[N]);
+	ApproxError=new FT*[N];
+	assert(ApproxError);
 	for(m=0;m<N;m++)
-		assert(ApproxError[m]=new DataT[N]);
+	{
+		ApproxError[m]=new FT[N];
+		assert(ApproxError[m]);
+	}
 
-	assert(Err=new DataT*[N]);
+	Err=new FT*[N];
+	assert(Err);
 	for(m=0;m<N;m++)
-		assert(Err[m]=new DataT[N]);
+	{
+		Err[m]=new FT[N];
+		assert(Err[m]);
+	}
 
-	Err[0][0]=Err[0][1]=Err[1][0]=DataT(0);
+	Err[0][0]=Err[0][1]=Err[1][0]=FT(0);
 
 	if(N>2)
-		for(n=2,c_n=begin,c_n++,c_n++;n<N;n++,c_n++)
+		for(n=2,c_n=begin,c_n++,c_n++,c_n++;n<N;n++,c_n++)
 			ApproxError[n][1]=Err[n][0]=Err[0][n]=error(begin,c_n);
 
-	if(ApproxError[N-1][1]<=epsi)
+	if(ApproxError[N-1][1]<=error_bound)
 	{
-		*nr_pct=2;
+		approx_n_pt=2;
 	
 		c_i=beyond;
 		c_i--;
 
 		*result++=*begin;
 		*result=*c_i;
-
+	
 		for(m=0;m<N;m++)
 			delete[] ApproxError[m];
 		delete[] ApproxError;
@@ -216,23 +672,25 @@ OutputIterator dynProgApprox(	InputIterator begin,
 		return result;
 	}
 
-	assert(SplitPoints=new unsigned long*[N]);
+	SplitPoints=new typename std::size_t*[N];
+	assert(SplitPoints);
 	for(m=0;m<N;m++)
-		assert(SplitPoints[m]=new unsigned long[N]);
+	{
+		SplitPoints[m]=new typename std::size_t[N];
+		assert(SplitPoints[m]);
+	}
 
-	Err[N-1][N-1]=DataT(0);
+	Err[N-1][N-1]=FT(0);
 	for(n=1;n<N-1;n++)
-		Err[n][n]=Err[n][n-1]=Err[n][n+1]=Err[n-1][n]=Err[n+1][n]=DataT(0);
+		Err[n][n]=Err[n][n-1]=Err[n][n+1]=Err[n-1][n]=Err[n+1][n]=FT(0);
 
 	for(n=1,c_n=begin,c_n++;n<N-2;n++,c_n++)
-		for(m=n+2,c_m=c_n,c_m++,c_m++;c_m!=beyond;m++,c_m++)
-		{	Err[n][m]=error(c_n,c_m);
-			Err[m][n]=Err[n][m];
-		}
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Err[m][n]=Err[n][m]=error(c_n,c_m);
 
 	for(m=2;m<N;m++)
 	{
-		ApproxError[m][m]=DataT(0);
+		ApproxError[m][m]=FT(0);
 		SplitPoints[m][m]=m-1;
 
 		for(n=m+1;n<N;n++)
@@ -241,24 +699,24 @@ OutputIterator dynProgApprox(	InputIterator begin,
 			SplitPoints[n][m]=n-1;
 			for(i=n-2;i>=m;i--)
 			{
-				epsilon=error.cumulate(ApproxError[i][m-1],Err[i][n]); 
-				if(epsilon<ApproxError[n][m])
+				err_crt=ApproxError[i][m-1]+Err[i][n]; 
+				if(err_crt<ApproxError[n][m])
 				{
-					ApproxError[n][m]=epsilon;
+					ApproxError[n][m]=err_crt;
 					SplitPoints[n][m]=i;
 				}
 			}
-			epsilon=Err[m-1][n];
-			if(epsilon<ApproxError[n][m])
+			err_crt=Err[m-1][n];
+			if(err_crt<ApproxError[n][m])
 			{
-				ApproxError[n][m]=epsilon;
+				ApproxError[n][m]=err_crt;
 				SplitPoints[n][m]=m-1;
 			}
 		}
 
-		if(ApproxError[N-1][m]<=epsi)
+		if(ApproxError[N-1][m]<=error_bound)
 		{
-			*nr_pct=m+1;
+			approx_n_pt=m+1;
 			break;
 		}
 	}
@@ -266,29 +724,29 @@ OutputIterator dynProgApprox(	InputIterator begin,
 	c_i=beyond;
 	c_i--;
 
-	typename std::list<InputIterator> result1;
+	typename std::list<InputIterator> local_container;
 	typename std::list<InputIterator>::iterator cri;
 	
-	result1.push_front(c_i);
+	local_container.push_front(c_i);
 
 	n=N-1;
 	
-	unsigned long nn=N-1;
+	typename std::size_t nn=N-1;
 
-	for(m=*nr_pct-1;m>=2;m--)
+	for(m=approx_n_pt-1;m>=2;m--)
 	{
 		n=SplitPoints[n][m];
 
-		for(unsigned long ii=nn;ii>n;ii--)
+		for(typename std::size_t ii=nn;ii>n;ii--)
 			c_i--;
 
 		nn=n;
-		result1.push_front(c_i);
+		local_container.push_front(c_i);
 	}
 
-	result1.push_front(begin);
+	local_container.push_front(begin);
 
-	for(cri=result1.begin();cri!=result1.end();cri++)
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
 		*result++=**cri;
 	
 	for(m=0;m<N;m++)
@@ -308,133 +766,299 @@ OutputIterator dynProgApprox(	InputIterator begin,
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
 //
 //				Recursive Split
-//
-/////////////////
-//
-//  Min # recursive implementation
-//
+
+//  Bounded-E local error assessment recursive implementation
 
 template<class InputIterator,class OutputIterator, class DistTraits>
-OutputIterator recSplitApprox(	InputIterator begin, 
-								InputIterator end, 
-								unsigned long *nr_pct, 
-								typename DistTraits::DataT epsi, 
-								OutputIterator result,
-								DistTraits error)
+OutputIterator polygonal_approximation_RSr_be_lea(	InputIterator begin, 
+													InputIterator beyond,
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
 {
-	typedef typename DistTraits::DataT DataT;
+	typedef typename DistTraits::FT FT;
 
-	static unsigned long fl;
-	DataT d;
-	InputIterator b,e,p_max;
+	static bool fl;
+	FT crt_err;
+	InputIterator split_pt,temp_it;
 
-	fl++;
-
-	if(fl==1)
+	if(fl==0)
 	{
-		end--;					// put the correct value of end point
-		*nr_pct=1;
+		if(begin==beyond)
+		{
+			approx_n_pt=0;
+			return result;
+		}
 
-		d=error(begin,end,&p_max);
+		temp_it=begin;
+		temp_it++;
+		if(temp_it==beyond)
+		{
+			approx_n_pt=1;
+			*result++=*begin;
+			return result;
+		}
+		
+		temp_it++;
+		if(temp_it==beyond)
+		{
+			approx_n_pt=2;
+			*result++=*begin;
+			temp_it--;
+			*result++=*temp_it;
+			return result;
+		}
+
+		fl=1;
+		approx_n_pt=1;
 		*result++=*begin;		// save begin as the first point of the result
 	}
-	else
-		d=error(begin,end,&p_max);
+
+	crt_err=error(begin,beyond,split_pt);
 	
-	if(d>epsi)
+	if(crt_err>error_bound)
 	{
-		recSplitApprox(begin,p_max,nr_pct,epsi,result,error);
-		recSplitApprox(p_max,end,nr_pct,epsi,result,error);
+		temp_it=split_pt;
+		temp_it++;
+		polygonal_approximation_RSr_be_lea(begin,temp_it,approx_n_pt,error_bound,result,error);
+		polygonal_approximation_RSr_be_lea(split_pt,beyond,approx_n_pt,error_bound,result,error);
 	}	
 	else
 	{
-		*result++=*end;
-		(*nr_pct)++;
+		temp_it=beyond;
+		temp_it--;
+		*result++=*temp_it;
+		approx_n_pt++;
 	}
-
-	fl--;
 
 	return result;
 }
 
 
-
-
-/////////////////
-//
-//  Min E
-//
 template<class InputIterator>
 struct Sp_List
-{	InputIterator bg;
-	InputIterator ed;
-	InputIterator pm;
+{	InputIterator begin;
+	InputIterator beyond;
+	InputIterator split_pt;
 	Sp_List *next;
 };	
 
-
-template<class InputIterator,class DataTp>		
+template<class InputIterator,class FTp>		
 struct WaitList
-{	DataTp err;
+{	FTp err;
 	Sp_List<InputIterator> *adr_el;
 	WaitList *next;
 };
 
 
+//  Bounded-E local error assessment 
+
 template<class InputIterator,class OutputIterator, class DistTraits>
-OutputIterator recSplitApprox(	InputIterator begin, 
-								InputIterator end, 
-								unsigned long nr_pct, 
-								typename DistTraits::DataT* SmallestError, 
-								OutputIterator result,
-								DistTraits error)
+OutputIterator polygonal_approximation_RS_be_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
 {
-	typedef typename DistTraits::DataT DataT;
+	typedef typename DistTraits::FT FT;
 
 	Sp_List<InputIterator> *l_sp,*sp_cr,*sp_new;
-	WaitList<InputIterator,DataT> *l_wt,*wt_cr,*wt_new;
-	InputIterator cr,p_max;
+	InputIterator split_pt,c_n;
+	FT crt_err;
+
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
 
 	l_sp=new Sp_List<InputIterator>;
 	assert(l_sp);
-	l_wt=new WaitList<InputIterator,DataT>;
-	assert(l_wt);
 
-	cr=end;
-	cr--;
 	l_sp->next=NULL;
-	l_sp->bg=begin;
-	l_sp->ed=cr;
+	l_sp->begin=begin;
+	l_sp->beyond=beyond;
 
-	l_wt->next=NULL;
-	l_wt->adr_el=l_sp;
-	l_wt->err=error(begin,cr,&p_max);
+	crt_err=error(begin,beyond,split_pt);
 
-	l_sp->pm=p_max;
+	l_sp->split_pt=split_pt;
 
-	unsigned long m=2;
+	sp_cr=l_sp;
 
-	while(m<nr_pct)
+	approx_n_pt=2;
+
+	while(crt_err>error_bound)
 	{
-		sp_cr=l_wt->adr_el;
-		
-		assert(sp_new=new Sp_List<InputIterator>);
+		sp_new=new Sp_List<InputIterator>;
+		assert(sp_new);
+
+		approx_n_pt++;
 
 		sp_new->next=sp_cr->next;
 		sp_cr->next=sp_new;
 
-		sp_new->ed=sp_cr->ed;
-		sp_new->bg=sp_cr->pm;
-		sp_cr->ed=sp_cr->pm;
+		sp_new->beyond=sp_cr->beyond;
+		sp_new->begin=sp_cr->split_pt;
+		sp_cr->beyond=sp_cr->split_pt;
+		sp_cr->beyond++;
 
-		wt_new=new WaitList<InputIterator,DataT>;
+		crt_err=error(sp_cr->begin,sp_cr->beyond,split_pt);
+
+		while(sp_cr->next && crt_err<=error_bound)
+		{
+			sp_cr=sp_cr->next;
+			crt_err=error(sp_cr->begin,sp_cr->beyond,split_pt);
+		}
+		
+		sp_cr->split_pt=split_pt;
+	}
+
+	*result++=*begin;
+
+	while(l_sp!=NULL)
+	{
+		sp_cr=l_sp;
+		l_sp->beyond--;
+		*result++=*l_sp->beyond;
+		l_sp=l_sp->next;
+		delete sp_cr;
+	}
+
+	return result;
+};
+
+
+//  Bounded-# local error assessment 
+
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_RS_bnp_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t n_pt_bound, 
+													typename DistTraits::FT &approx_error, 
+													OutputIterator result,
+													DistTraits error )
+{
+	typedef typename DistTraits::FT FT;
+
+	InputIterator c_n;
+	typename std::size_t n=0;
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
+	if(n_pt_bound==2)
+	{
+		approx_error=error(begin,beyond,c_n);
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_n=begin;c_n!=beyond;c_n++)
+			*result++=*c_n;
+
+		return result;
+	}
+
+
+	Sp_List<InputIterator> *l_sp,*sp_cr,*sp_new;
+	WaitList<InputIterator,FT> *l_wt,*wt_cr,*wt_new;
+	InputIterator split_pt;
+
+	l_sp=new Sp_List<InputIterator>;
+	assert(l_sp);
+	l_wt=new WaitList<InputIterator,FT>;
+	assert(l_wt);
+
+	l_sp->next=NULL;
+	l_sp->begin=begin;
+	l_sp->beyond=beyond;
+
+	l_wt->next=NULL;
+	l_wt->adr_el=l_sp;
+	l_wt->err=error(begin,beyond,split_pt);
+
+	l_sp->split_pt=split_pt;
+
+	typename std::size_t m=2;
+
+	while(m<n_pt_bound)
+	{
+		sp_cr=l_wt->adr_el;
+		
+		sp_new=new Sp_List<InputIterator>;
+		assert(sp_new);
+
+		sp_new->next=sp_cr->next;
+		sp_cr->next=sp_new;
+
+		sp_new->beyond=sp_cr->beyond;
+		sp_new->begin=sp_cr->split_pt;
+		sp_cr->beyond=sp_cr->split_pt;
+		sp_cr->beyond++;
+
+		wt_new=new WaitList<InputIterator,FT>;
 		assert(wt_new);
 
-		wt_new->err=error(sp_cr->bg,sp_cr->ed,&p_max);
-		sp_cr->pm=p_max;
+		wt_new->err=error(sp_cr->begin,sp_cr->beyond,split_pt);
+		sp_cr->split_pt=split_pt;
 		wt_new->adr_el=sp_cr;
 
 		wt_cr=l_wt;
@@ -443,12 +1067,12 @@ OutputIterator recSplitApprox(	InputIterator begin,
 		wt_new->next=wt_cr->next;
 		wt_cr->next=wt_new;
 
-		wt_new=new WaitList<InputIterator,DataT>;
+		wt_new=new WaitList<InputIterator,FT>;
 		assert(wt_new);
 
-		wt_new->err=error(sp_new->bg,sp_new->ed,&p_max);
+		wt_new->err=error(sp_new->begin,sp_new->beyond,split_pt);
 		wt_new->adr_el=sp_new;
-		sp_new->pm=p_max;
+		sp_new->split_pt=split_pt;
 
 		wt_cr=l_wt;
 		while(wt_cr->next!=NULL && wt_cr->next->err>wt_new->err)
@@ -463,14 +1087,15 @@ OutputIterator recSplitApprox(	InputIterator begin,
 		m++;
 	}
 
-	*SmallestError=l_wt->err;
+	approx_error=l_wt->err;
 
 	*result++=*begin;
 
 	while(l_sp!=NULL)
 	{
 		sp_cr=l_sp;
-		*result++=*l_sp->ed;
+		l_sp->beyond--;
+		*result++=*l_sp->beyond;
 		l_sp=l_sp->next;
 		delete sp_cr;
 	}
@@ -486,115 +1111,363 @@ OutputIterator recSplitApprox(	InputIterator begin,
 };
 
 
-
-////////////////////////
-//
-//	 Min # iterativ implementation
+//  Bounded-E global error assessment 
 
 template<class InputIterator,class OutputIterator, class DistTraits>
-OutputIterator recSplitApprox_itr(	InputIterator begin, 
-									InputIterator beyond, 
-									unsigned long* nr_pct, 
-									typename DistTraits::DataT epsi, 
-									OutputIterator result,
-									DistTraits error)
+OutputIterator polygonal_approximation_RS_be_gea(	InputIterator begin, 
+													InputIterator beyond,
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
 {
-	typedef typename DistTraits::DataT DataT;
+	typedef typename DistTraits::FT FT;
 
 	Sp_List<InputIterator> *l_sp,*sp_cr,*sp_new;
-	InputIterator cr,p_max;
-	DataT err;
+	WaitList<InputIterator,FT> *l_wt,*wt_cr,*wt_new;
+	InputIterator split_pt,c_n;
+	FT crt_err;
 
-	assert(l_sp=new Sp_List<InputIterator>);
-
-	cr=beyond;
-	cr--;
-	l_sp->next=NULL;
-	l_sp->bg=begin;
-	l_sp->ed=cr;
-
-	err=error(begin,cr,&p_max);
-
-	l_sp->pm=p_max;
-
-	sp_cr=l_sp;
-
-	*nr_pct=2;
-
-	while(err>epsi)
+	if(begin==beyond)
 	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	l_sp=new Sp_List<InputIterator>;
+	assert(l_sp);
+	l_wt=new WaitList<InputIterator,FT>;
+	assert(l_wt);
+
+	l_sp->next=NULL;
+	l_sp->begin=begin;
+	l_sp->beyond=beyond;
+
+	l_wt->next=NULL;
+	l_wt->adr_el=l_sp;
+	l_wt->err=error(begin,beyond,split_pt);
+
+	l_sp->split_pt=split_pt;
+
+	typename std::size_t m=2;
+
+	crt_err=l_wt->err;
+
+	while(crt_err>error_bound)
+	{
+		sp_cr=l_wt->adr_el;
+
+		crt_err-=l_wt->err; 
+		
 		sp_new=new Sp_List<InputIterator>;
-		(*nr_pct)++;
+		assert(sp_new);
 
 		sp_new->next=sp_cr->next;
 		sp_cr->next=sp_new;
 
-		sp_new->ed=sp_cr->ed;
-		sp_new->bg=sp_cr->pm;
-		sp_cr->ed=sp_cr->pm;
+		sp_new->beyond=sp_cr->beyond;
+		sp_new->begin=sp_cr->split_pt;
+		sp_cr->beyond=sp_cr->split_pt;
+		sp_cr->beyond++;
 
-		err=error(sp_cr->bg,sp_cr->ed,&p_max);
+		wt_new=new WaitList<InputIterator,FT>;
+		assert(wt_new);
 
-		while(sp_cr->next && err<=epsi)
-		{
-			sp_cr=sp_cr->next;
-			err=error(sp_cr->bg,sp_cr->ed,&p_max);
-		}
-		
-		sp_cr->pm=p_max;
+		wt_new->err=error(sp_cr->begin,sp_cr->beyond,split_pt);
+		crt_err+=wt_new->err;
+		sp_cr->split_pt=split_pt;
+		wt_new->adr_el=sp_cr;
+
+		wt_cr=l_wt;
+		while(wt_cr->next!=NULL && wt_cr->next->err>wt_new->err)
+			wt_cr=wt_cr->next;
+		wt_new->next=wt_cr->next;
+		wt_cr->next=wt_new;
+
+		wt_new=new WaitList<InputIterator,FT>;
+		assert(wt_new);
+
+		wt_new->err=error(sp_new->begin,sp_new->beyond,split_pt);
+		crt_err+=wt_new->err;
+		wt_new->adr_el=sp_new;
+		sp_new->split_pt=split_pt;
+
+		wt_cr=l_wt;
+		while(wt_cr->next!=NULL && wt_cr->next->err>wt_new->err)
+			wt_cr=wt_cr->next;
+		wt_new->next=wt_cr->next;
+		wt_cr->next=wt_new;
+
+		wt_cr=l_wt;
+		l_wt=l_wt->next;
+		delete wt_cr;
+
+		m++;
 	}
+
+	approx_n_pt=m;
 
 	*result++=*begin;
 
 	while(l_sp!=NULL)
 	{
 		sp_cr=l_sp;
-		*result++=*l_sp->ed;
+		l_sp->beyond--;
+		*result++=*l_sp->beyond;
 		l_sp=l_sp->next;
 		delete sp_cr;
+	}
+
+	while(l_wt!=NULL)
+	{
+		wt_cr=l_wt;
+		l_wt=l_wt->next;
+		delete wt_cr;
 	}
 
 	return result;
 };
 
 
+//  Bounded-# global error assessment 
 
-
-
-////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-//
-//		Graph Search
-//
-
-//////////////
-//
-//  MIN # 
-//
-template<class DistTraits,class InputIterator,class OutputIterator>
-OutputIterator GraphSearchApprox(	InputIterator begin, 
-									InputIterator beyond, 
-									unsigned long *nr_pct, 
-									typename DistTraits::DataT epsi, 
-									OutputIterator result,
-									DistTraits error
-								)
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_RS_bnp_gea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t n_pt_bound, 
+													typename DistTraits::FT &approx_error, 
+													OutputIterator result,
+													DistTraits error )
 {
-	typedef typename DistTraits::DataT DataT;
-	unsigned long path;
+	typedef typename DistTraits::FT FT;
 
-	unsigned long n,m,m_pt,i,n_vis,m_crt;
-	typename DistTraits::DataT err_crt,max,vm,err_max;
-	InputIterator c_n,c_i,c_m;
-	
-	n=0;
+	InputIterator c_n;
+	typename std::size_t n=0;
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
+	if(n_pt_bound==2)
+	{
+		approx_error=error(begin,beyond,c_n);
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
 	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
 		n++;
 
-	unsigned long N=n+1;
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_n=begin;c_n!=beyond;c_n++)
+			*result++=*c_n;
+
+		return result;
+	}
+
+
+	Sp_List<InputIterator> *l_sp,*sp_cr,*sp_new;
+	WaitList<InputIterator,FT> *l_wt,*wt_cr,*wt_new;
+	InputIterator split_pt;
+	FT crt_err; 
+
+	l_sp=new Sp_List<InputIterator>;
+	assert(l_sp);
+	l_wt=new WaitList<InputIterator,FT>;
+	assert(l_wt);
+
+	l_sp->next=NULL;
+	l_sp->begin=begin;
+	l_sp->beyond=beyond;
+
+	l_wt->next=NULL;
+	l_wt->adr_el=l_sp;
+	l_wt->err=error(begin,beyond,split_pt);
+
+	l_sp->split_pt=split_pt;
+
+	typename std::size_t m=2;
+
+	crt_err=l_wt->err; 
+
+	while(m<n_pt_bound)
+	{
+		sp_cr=l_wt->adr_el;
+
+		crt_err-=l_wt->err;
+		
+		sp_new=new Sp_List<InputIterator>;
+		assert(sp_new);
+
+		sp_new->next=sp_cr->next;
+		sp_cr->next=sp_new;
+
+		sp_new->beyond=sp_cr->beyond;
+		sp_new->begin=sp_cr->split_pt;
+		sp_cr->beyond=sp_cr->split_pt;
+		sp_cr->beyond++;
+
+		wt_new=new WaitList<InputIterator,FT>;
+		assert(wt_new);
+
+		wt_new->err=error(sp_cr->begin,sp_cr->beyond,split_pt);
+		crt_err+=wt_new->err;
+		sp_cr->split_pt=split_pt;
+		wt_new->adr_el=sp_cr;
+
+		wt_cr=l_wt;
+		while(wt_cr->next!=NULL && wt_cr->next->err>wt_new->err)
+			wt_cr=wt_cr->next;
+		wt_new->next=wt_cr->next;
+		wt_cr->next=wt_new;
+
+		wt_new=new WaitList<InputIterator,FT>;
+		assert(wt_new);
+
+		wt_new->err=error(sp_new->begin,sp_new->beyond,split_pt);
+		crt_err+=wt_new->err;
+		wt_new->adr_el=sp_new;
+		sp_new->split_pt=split_pt;
+
+		wt_cr=l_wt;
+		while(wt_cr->next!=NULL && wt_cr->next->err>wt_new->err)
+			wt_cr=wt_cr->next;
+		wt_new->next=wt_cr->next;
+		wt_cr->next=wt_new;
+
+		wt_cr=l_wt;
+		l_wt=l_wt->next;
+		delete wt_cr;
+
+		m++;
+	}
+
+	approx_error=crt_err;
+
+	*result++=*begin;
+
+	while(l_sp!=NULL)
+	{
+		sp_cr=l_sp;
+		l_sp->beyond--;
+		*result++=*l_sp->beyond;
+		l_sp=l_sp->next;
+		delete sp_cr;
+	}
+
+	while(l_wt!=NULL)
+	{
+		wt_cr=l_wt;
+		l_wt=l_wt->next;
+		delete wt_cr;
+	}
+
+	return result;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////
+//
+//		Graph Search
+
+//  Bounded-E local error assessment 
+
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_GS_be_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
+{
+	typedef typename DistTraits::FT FT;
+
+	typename std::size_t path;
+	typename std::size_t n,m,m_pt,i,n_vis,m_crt;
+	typename DistTraits::FT err_crt,max,vm,err_max;
+	InputIterator c_n,c_i,c_m;
+	
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	typename std::size_t N=n+1;
 
 	typedef struct cel
-	{	unsigned long pt_crt;
+	{	typename std::size_t pt_crt;
 		struct cel *next;
 	} CEL;
 
@@ -605,41 +1478,55 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	breadth_crt=NULL;
 
 	m_crt=N+1;
-	err_crt=epsi+1;
+	err_crt=error_bound+1;
 	
-	DataT **Graph;
+	FT **Graph;
 	CEL **visited;
 
-	assert(visited=new CEL*[N]);
+	visited=new CEL*[N];
+	assert(visited);
 	for(m=0;m<N;m++)
 		visited[m]=NULL;
 
-	assert(Graph=new DataT*[N]);
+	Graph=new FT*[N];
+	assert(Graph);
 	for(m=0;m<N;m++)
-		assert(Graph[m]=new DataT[N]);
-
-	Graph[0][0]=Graph[0][1]=Graph[1][0]=DataT(0);
-	Graph[N-1][N-1]=DataT(0);
-
-	for(n=1;n<N-1;n++)
-		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=DataT(0);
-
-	for(n=0,c_n=begin;n<N-2;n++,c_n++)
 	{
-		for(m=n+2,c_m=c_n,c_m++,c_m++;c_m!=beyond;m++,c_m++)
-		{
-			Graph[n][m]=Graph[m][n]=error(c_n,c_m);
-		}
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
 	}
 
-	if(Graph[0][N-1]<=epsi)
-		Graph[0][N-1]=Graph[N-1][0]=epsi+1;
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+	Graph[N-1][N-1]=FT(0);
+
+	for(n=1;n<N-1;n++)
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
+
+	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Graph[n][m]=Graph[m][n]=error(c_n,c_m);
+
+	if(Graph[0][N-1]<=error_bound)
+	{
+		approx_n_pt=2;
+
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(Graph[0][N-1]<=error_bound)
+		Graph[0][N-1]=Graph[N-1][0]=error_bound+1;
 	
-	assert(queue_b=queue_e=new CEL);
+	queue_b=queue_e=new CEL;
+	assert(queue_b);
 	queue_b->next=NULL;
 	queue_b->pt_crt=0;
 
-	assert(breadth_crt=new CEL);
+	breadth_crt=new CEL;
+	assert(breadth_crt);
 	breadth_crt->pt_crt=0;
 	breadth_crt->next=NULL;
 
@@ -650,7 +1537,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	{
 		for(i=queue_b->pt_crt+1;i<N;i++)
 		{
-				if(Graph[queue_b->pt_crt][i]<=epsi)
+				if(Graph[queue_b->pt_crt][i]<=error_bound)
 				{
 					if(i==N-1)
 					{
@@ -675,12 +1562,17 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 
 					if(visited[i]==0)
 					{
-						assert(breadth_crt=new CEL);
+						breadth_crt=new CEL;
+						assert(breadth_crt);
+
 						breadth_crt->pt_crt=i;
 						breadth_crt->next=visited[queue_b->pt_crt];
 						visited[i]=breadth_crt;
 						n_vis++;
-						assert(queue_e->next=new CEL);
+
+						queue_e->next=new CEL;
+						assert(queue_e->next);
+
 						queue_e=queue_e->next;
 						queue_e->next=NULL;
 						queue_e->pt_crt=i;
@@ -696,7 +1588,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	while(queue_b)
 	{
 		if(queue_b->pt_crt!=N-1)
-			if(Graph[queue_b->pt_crt][N-1]<=epsi)
+			if(Graph[queue_b->pt_crt][N-1]<=error_bound)
 			{
 				max=Graph[queue_b->pt_crt][N-1];
 				breadth_crt=visited[queue_b->pt_crt];
@@ -721,7 +1613,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 		delete queue_crt;
 	}
 
-	*nr_pct=m_crt;
+	approx_n_pt=m_crt;
 
 	delete visited[N-1];
 	visited[N-1]=NULL;
@@ -741,13 +1633,8 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	}
 
 	for(c_n=begin,i=0;c_n!=beyond;c_n++,i++)
-	{
 		if(visited[i]==NULL)
-		{
 			*result++=*c_n;
-
-		}
-	}
 
 	for(i=0;i<N;i++)
 		if(visited[i])
@@ -764,11 +1651,10 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 
 
 
-template<class DistTraits>
-
-void ordonare_qs(typename DistTraits::DataT* p,unsigned long n)  //quick sort
+template<class FT>
+void QuickSort(FT* p,typename std::size_t n)  //quick sort
 {
-	typename DistTraits::DataT tmp,pivot;
+	FT tmp,pivot;
 
 	if(n<2)
 		return;
@@ -783,10 +1669,9 @@ void ordonare_qs(typename DistTraits::DataT* p,unsigned long n)  //quick sort
 		}
 		return;
 	}
-	
 
     pivot=p[n/2];
-	int i=0,j=n-1;
+	std::size_t i=0,j=n-1;
 
 	while(i<j)
 	{
@@ -813,44 +1698,76 @@ void ordonare_qs(typename DistTraits::DataT* p,unsigned long n)  //quick sort
 	}
 	else if(j<i)
 		i=j;
-//	if(i>0)
-		ordonare_qs<DistTraits>(p,i+1);
+	QuickSort<FT>(p,i+1);
 	j=n-i-1;
-//	if(j>1)
-		ordonare_qs<DistTraits>(&p[i+1],j);
+	QuickSort<FT>(&p[i+1],j);
 }
 
 
+//  Bounded-# local error assessment 
 
-
-//////////////
-//
-//  MIN E - based on Binary search and MIN # 
-//
-template<class DistTraits,class InputIterator,class OutputIterator>
-OutputIterator GraphSearchApprox(	InputIterator begin, 
-									InputIterator beyond, 
-									unsigned long nr_pct, 
-									typename DistTraits::DataT *SmallestError, 
-									OutputIterator result,
-									DistTraits error)
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_GS_bnp_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t n_pt_bound, 
+													typename DistTraits::FT &approx_error, 
+													OutputIterator result,
+													DistTraits error )
 {
 
-	typedef typename DistTraits::DataT DataT;
-	unsigned long path;
+	typedef typename DistTraits::FT FT;
 
-	unsigned long n,m,m_pt,i,n_vis,m_crt;
-	typename DistTraits::DataT err_crt,max,vm,err_max;
+	typename std::size_t path;
+	typename std::size_t n,m,m_pt,i,n_vis,m_crt;
+	typename DistTraits::FT err_crt,max,vm,err_max;
 	InputIterator c_n,c_i,c_m;
-	
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
 	n=0;
 	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
 		n++;
 
-	unsigned long N=n+1;
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_n=begin;c_n!=beyond;c_n++)
+			*result++=*c_n;
+
+		return result;
+	}
+
+	typename std::size_t N=n+1;
 
 	typedef struct cel
-	{	unsigned long pt_crt;
+	{	typename std::size_t pt_crt;
 		struct cel *next;
 	} CEL;
 
@@ -860,61 +1777,67 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	CEL *breadth_crt;
 	breadth_crt=NULL;
 
-//	m_crt=N+1;
-//	err_crt=epsi+1;
-	
-	DataT **Graph;
+	FT **Graph;
 	CEL **visited;
 
-	assert(visited=new CEL*[N]);
+	visited=new CEL*[N];
+	assert(visited);
 	for(m=0;m<N;m++)
 		visited[m]=NULL;
 
-	assert(Graph=new DataT*[N]);
+	Graph=new FT*[N];
+	assert(Graph);
 	for(m=0;m<N;m++)
-		assert(Graph[m]=new DataT[N]);
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
 
-	Graph[0][0]=Graph[0][1]=Graph[1][0]=DataT(0);
-	Graph[N-1][N-1]=DataT(0);
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+	Graph[N-1][N-1]=FT(0);
 
 	for(n=1;n<N-1;n++)
-		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=DataT(0);
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
 
-	long index1=0;
-	unsigned long N_err=(N-1)*(N-2)/2;
-	DataT *List_err;
-	assert(List_err=new DataT[N_err]);
+	typename std::size_t N_err=(N-1)*(N-2)/2;
+	FT *List_err;
+	List_err=new FT[N_err];
+	assert(List_err);
+
+	typename std::size_t idx=0;
 
 	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Graph[n][m]=Graph[m][n]=List_err[idx++]=error(c_n,c_m);
+
+	if(n_pt_bound==2)
 	{
-		for(m=n+2,c_m=c_n,c_m++,c_m++;c_m!=beyond;m++,c_m++)
-		{
-			Graph[n][m]=Graph[m][n]=error(c_n,c_m);
-			List_err[index1]=Graph[m][n];
-			index1++;
-		}
+		approx_error=Graph[0][N-1];
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
 	}
-	
-	
-	DataT epsi;
+
+	FT cr_err_bound;
 	bool fl_circ=false;
 
-	unsigned long N_crt,N_mf;
+	typename std::size_t N_crt,N_mf;
 	double delta_N,nc;
 	
-
 	if(Graph[0][N-1]<=0)
 		fl_circ=true;
 
-	ordonare_qs<DistTraits>(List_err,N_err);
+	QuickSort<FT>(List_err,N_err);
 
 	delta_N=N_err/2.;
 	nc=0;
-	m=nr_pct+1;
+	m=n_pt_bound+1;
 
 	while(delta_N>0.4)
 	{
-		if(m>nr_pct)
+		if(m>n_pt_bound)
 			nc+=delta_N;
 		else
 			nc-=delta_N;
@@ -925,21 +1848,25 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 		if(N_crt>=N_err)
 			N_crt=N_err;
 
-		epsi=List_err[N_crt];
+		cr_err_bound=List_err[N_crt];
 		m_crt=N+1;
-		err_crt=epsi+1;
+		err_crt=cr_err_bound+1;
 
 		if(fl_circ)									
-			Graph[0][N-1]=Graph[N-1][0]=epsi+1;
+			Graph[0][N-1]=Graph[N-1][0]=cr_err_bound+1;
 
 		for(m=0;m<N;m++)
 			visited[m]=NULL;
 		
-		assert(queue_b=queue_e=new CEL);
+		queue_b=queue_e=new CEL;
+		assert(queue_b);
+
 		queue_b->next=NULL;
 		queue_b->pt_crt=0;
 
-		assert(breadth_crt=new CEL);
+		breadth_crt=new CEL;
+		assert(breadth_crt);
+
 		breadth_crt->pt_crt=0;
 		breadth_crt->next=NULL;
 
@@ -950,7 +1877,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 		{
 			for(i=(queue_b->pt_crt+1);i<N;i++)
 			{
-					if(Graph[queue_b->pt_crt][i]<=epsi)
+					if(Graph[queue_b->pt_crt][i]<=cr_err_bound)
 					{
 						if(i==N-1)
 						{
@@ -975,12 +1902,14 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 
 						if(visited[i]==0)
 						{
-							assert(breadth_crt=new CEL);
+							breadth_crt=new CEL;
+							assert(breadth_crt);
 							breadth_crt->pt_crt=i;
 							breadth_crt->next=visited[queue_b->pt_crt];
 							visited[i]=breadth_crt;
 							n_vis++;
-							assert(queue_e->next=new CEL);
+							queue_e->next=new CEL;
+							assert(queue_e->next);
 							queue_e=queue_e->next;
 							queue_e->next=NULL;
 							queue_e->pt_crt=i;
@@ -996,7 +1925,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 		while(queue_b)
 		{
 			if(queue_b->pt_crt!=N-1)
-				if(Graph[queue_b->pt_crt][N-1]<=epsi)
+				if(Graph[queue_b->pt_crt][N-1]<=cr_err_bound)
 				{
 					max=Graph[queue_b->pt_crt][N-1];
 					breadth_crt=visited[queue_b->pt_crt];
@@ -1044,32 +1973,36 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 			if(visited[i])
 				delete visited[i];
 
-		*SmallestError=epsi;
+		approx_error=cr_err_bound;
 	
 		delta_N/=2.;
 
-		if(m<=nr_pct)
+		if(m<=n_pt_bound)
 			N_mf=N_crt;
 	}
 
-	if(m!=nr_pct)
+	if(m!=n_pt_bound)
 		N_crt=N_mf;
 	
-	epsi=List_err[N_crt];
+	cr_err_bound=List_err[N_crt];
 	m_crt=N+1;
-	err_crt=epsi+1;
+	err_crt=cr_err_bound+1;
 
 	if(fl_circ)									
-		Graph[0][N-1]=Graph[N-1][0]=epsi+1;
+		Graph[0][N-1]=Graph[N-1][0]=cr_err_bound+1;
 
 	for(m=0;m<N;m++)
 		visited[m]=NULL;
 		
-	assert(queue_b=queue_e=new CEL);
+	queue_b=queue_e=new CEL;
+	assert(queue_b);
+
 	queue_b->next=NULL;
 	queue_b->pt_crt=0;
 
-	assert(breadth_crt=new CEL);
+	breadth_crt=new CEL;
+	assert(breadth_crt);
+
 	breadth_crt->pt_crt=0;
 	breadth_crt->next=NULL;
 
@@ -1080,7 +2013,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	{
 		for(i=queue_b->pt_crt+1;i<N;i++) 
 		{
-				if(Graph[queue_b->pt_crt][i]<=epsi)
+				if(Graph[queue_b->pt_crt][i]<=cr_err_bound)
 				{
 					if(i==N-1)
 					{
@@ -1106,11 +2039,16 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 					if(visited[i]==0)
 					{
 						breadth_crt=new CEL;
+						assert(breadth_crt);
+
 						breadth_crt->pt_crt=i;
 						breadth_crt->next=visited[queue_b->pt_crt];
 						visited[i]=breadth_crt;
 						n_vis++;
-						assert(queue_e->next=new CEL);
+
+						queue_e->next=new CEL;
+						assert(queue_e->next);
+
 						queue_e=queue_e->next;
 						queue_e->next=NULL;
 						queue_e->pt_crt=i;
@@ -1126,7 +2064,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	while(queue_b)
 	{
 		if(queue_b->pt_crt!=N-1)
-			if(Graph[queue_b->pt_crt][N-1]<=epsi)
+			if(Graph[queue_b->pt_crt][N-1]<=cr_err_bound)
 			{
 				max=Graph[queue_b->pt_crt][N-1];
 				breadth_crt=visited[queue_b->pt_crt];
@@ -1153,7 +2091,7 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	}
 
 	m=m_crt;
-	nr_pct=m;
+	n_pt_bound=m;
 
 	delete visited[N-1];
 	visited[N-1]=NULL;
@@ -1173,18 +2111,14 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 	}
 
 	for(c_n=begin,i=0;c_n!=beyond;c_n++,i++)
-	{
 		if(visited[i]==NULL)
-		{
 			*result++=*c_n;
-		}
-	}
 
 	for(i=0;i<N;i++)
 		if(visited[i])
 			delete visited[i];
 
-	*SmallestError=epsi;
+	approx_error=cr_err_bound;
 
 	delete[] visited;
 
@@ -1198,95 +2132,468 @@ OutputIterator GraphSearchApprox(	InputIterator begin,
 }
 
 
+//  Bounded-E global error assessment 
+
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_GS_be_gea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													typename DistTraits::FT error_bound, 
+													OutputIterator result,
+													DistTraits error )
+{
+	typedef typename DistTraits::FT FT;
+
+	typename std::size_t n,m,i,j;
+	InputIterator c_n,c_i,c_m;
+
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	typename std::size_t N=n+1;
+
+	FT **Graph;
+
+	Graph=new FT*[N];
+	assert(Graph);
+	for(m=0;m<N;m++)
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
+
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+	Graph[N-1][N-1]=FT(0);
+
+	for(n=1;n<N-1;n++)
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
+
+	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Graph[n][m]=Graph[m][n]=error(c_n,c_m);
+
+	if(Graph[0][N-1]<=error_bound)
+	{
+		approx_n_pt=2;
+
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(Graph[0][N-1]<=error_bound)
+		Graph[0][N-1]=Graph[N-1][0]=error_bound+1;
+	
+	bool fl_find=false;
+	FT err_crt;
+	FT* ApproxError;
+	typename std::size_t **SplitPoints;
+
+	SplitPoints=new typename std::size_t*[N+1];
+	assert(SplitPoints);
+
+	ApproxError=new FT[N+1];
+	assert(ApproxError);
+
+	m=2;
+
+	for(i=0;i<=N-1;i++)
+		ApproxError[i]=Graph[i][0];
+
+	while(!fl_find)
+	{
+		m++;
+		SplitPoints[m]=new typename std::size_t[N];
+		assert(SplitPoints[m]);
+
+		ApproxError[N-1]=ApproxError[N-2];
+		SplitPoints[m][N-1]=N-2;
+		if(ApproxError[N-1]<=error_bound)
+			fl_find=true;
+		else
+			for(j=N-3;j>=m-2;j--)
+			{
+				if(ApproxError[j]<=error_bound && Graph[j][N-1]<=error_bound)
+				{
+					err_crt=ApproxError[j]+Graph[j][N-1];
+
+					if(err_crt<ApproxError[N-1])
+					{
+						ApproxError[N-1]=err_crt;
+						SplitPoints[m][N-1]=j;
+						if(ApproxError[N-1]<=error_bound)
+						{
+							fl_find=true;
+							break;
+						}
+					}
+				}
+			}
+
+		if(!fl_find)
+			for(i=N-2;i>=m-1;i--)
+			{
+				ApproxError[i]=ApproxError[i-1];
+				SplitPoints[m][i]=i-1;
+				for(j=i-2;j>=m-2;j--)
+				{
+					if(ApproxError[j]<=error_bound && Graph[j][i]<=error_bound)
+					{
+						err_crt=ApproxError[j]+Graph[j][i];
+						if(err_crt<ApproxError[i])
+						{
+							ApproxError[i]=err_crt;
+							SplitPoints[m][i]=j;
+						}
+					}
+				}
+			}
+	}
+
+	approx_n_pt=m;
+
+	c_i=beyond;
+	c_i--;
+
+	typename std::list<InputIterator> local_container;
+	typename std::list<InputIterator>::iterator cri;
+	
+	local_container.push_front(c_i);
+
+	n=N-1;
+	
+	typename std::size_t nn=N-1;
+
+	for(m=approx_n_pt;m>2;m--)
+	{
+		n=SplitPoints[m][n];
+
+		for(typename std::size_t ii=nn;ii>n;ii--)
+			c_i--;
+
+		nn=n;
+		local_container.push_front(c_i);
+	}
+
+	local_container.push_front(begin);
+
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
+		*result++=**cri;
+
+	delete[] ApproxError;
+
+	for(m=3;m<=approx_n_pt;m++)
+		delete[] SplitPoints[m];
+	delete[] SplitPoints;
+
+	for(m=0;m<N;m++)
+		delete[] Graph[m];
+	delete[] Graph;
+ 
+	return result;
+};
 
 
+//  Bounded-# global error assessment 
+
+template<class InputIterator,class OutputIterator, class DistTraits>
+OutputIterator polygonal_approximation_GS_bnp_gea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t n_pt_bound, 
+													typename DistTraits::FT &approx_error, 
+													OutputIterator result,
+													DistTraits error )
+{
+	typedef typename DistTraits::FT FT;
+
+	typename std::size_t n,m,i,j;
+	InputIterator c_n,c_i,c_m;
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
+	n=0;
+	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_n=begin;c_n!=beyond;c_n++)
+			*result++=*c_n;
+
+		return result;
+	}
+
+	typename std::size_t N=n+1;
+
+	FT **Graph;
+
+	Graph=new FT*[N];
+	assert(Graph);
+	for(m=0;m<N;m++)
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
+
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+	Graph[N-1][N-1]=FT(0);
+
+	for(n=1;n<N-1;n++)
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
+
+	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+		for(m=n+2,c_m=c_n,c_m++,c_m++,c_m++;m<N;m++,c_m++)
+			Graph[n][m]=Graph[m][n]=error(c_n,c_m);
+
+	if(n_pt_bound==2)
+	{
+		approx_error=Graph[0][N-1];
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	typename std::size_t mm;
+
+	FT err_crt;
+	FT* ApproxError;
+	typename std::size_t **SplitPoints;
+
+	SplitPoints=new typename std::size_t*[N+1];
+	assert(SplitPoints);
+
+	ApproxError=new FT[N+1];
+	assert(ApproxError);
+
+	for(i=0;i<=N-1;i++)
+		ApproxError[i]=Graph[i][0];
+
+	FT epsi_crt;
+
+	mm=2;
+
+	while(mm<n_pt_bound)
+	{
+		mm++;
+		SplitPoints[mm]=new typename std::size_t[N];
+		assert(SplitPoints[mm]);
+
+		epsi_crt=ApproxError[N-1]=ApproxError[N-2];
+		SplitPoints[mm][N-1]=N-2;
+		
+		for(j=N-3;j>=mm-2;j--)
+		{
+			if(ApproxError[j]<=epsi_crt && Graph[j][N-1]<=epsi_crt)
+			{
+				err_crt=ApproxError[j]+Graph[j][N-1];
+
+				if(err_crt<ApproxError[N-1])
+				{
+					epsi_crt=ApproxError[N-1]=err_crt;
+					SplitPoints[mm][N-1]=j;
+				}
+			}
+		}
+	
+		if(mm<n_pt_bound)
+			for(i=N-2;i>=mm-1;i--)
+			{
+				epsi_crt=ApproxError[i]=ApproxError[i-1];
+				SplitPoints[mm][i]=i-1;
+				for(j=i-2;j>=mm-2;j--)
+				{
+					if(ApproxError[j]<=epsi_crt && Graph[j][i]<=epsi_crt)
+					{
+						err_crt=ApproxError[j]+Graph[j][i];
+						if(err_crt<ApproxError[i])
+						{
+							epsi_crt=ApproxError[i]=err_crt;
+							SplitPoints[mm][i]=j;
+						}
+					}
+				}
+			}
+	}
+
+	approx_error=ApproxError[N-1];
+
+	c_i=beyond;
+	c_i--;
+
+	typename std::list<InputIterator> local_container;
+	typename std::list<InputIterator>::iterator cri;
+	
+	local_container.push_front(c_i);
+
+	n=N-1;
+	
+	typename std::size_t nn=N-1;
+
+	for(m=n_pt_bound;m>2;m--)
+	{
+		n=SplitPoints[m][n];
+
+		for(typename std::size_t ii=nn;ii>n;ii--)
+			c_i--;
+
+		nn=n;
+		local_container.push_front(c_i);
+	}
+
+	local_container.push_front(begin);
+
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
+		*result++=**cri;
+
+	delete[] ApproxError;
+
+	for(m=3;m<=mm;m++)
+		delete[] SplitPoints[m];
+	delete[] SplitPoints;
+
+	for(m=0;m<N;m++)
+		delete[] Graph[m];
+	delete[] Graph;
+ 
+	return result;
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 //
-//		Optimal algorithms for Max Euclidean distance
-//
+//		Optimal algorithms for Squared Euclidean distance
 
-template<class InputIterator, class DistTraits>
-bool SLOPE_SIGN1(InputIterator p,InputIterator q,InputIterator begin,InputIterator end)  
+template<class InputIterator, class FT>
+bool slope_sign(InputIterator p,InputIterator q,InputIterator begin,InputIterator end)  
 { 
-	typedef typename DistTraits::DataT DataT;
-	
-	DataT sHomogX,sHomogY,deltaXpq,deltaYpq,slopeVal;
+	FT sHomogX,sHomogY,deltaXpq,deltaYpq,slopeVal;
  
 	sHomogX=begin->y()-end->y();
 	sHomogY=end->x()-begin->x();
 
-	if(sHomogX==DataT(0) && sHomogY==DataT(0))
-		sHomogX=DataT(1);
+	if(sHomogX==FT(0) && sHomogY==FT(0))
+		sHomogX=FT(1);
 
 	deltaXpq=q->x()-p->x();
 	deltaYpq=q->y()-p->y();
 	slopeVal=sHomogX*deltaXpq+sHomogY*deltaYpq;
  
-	return (slopeVal>=DataT(0) );
+	return (slopeVal>=FT(0) );
 }
 
 
-//////////////
-//
-//  MIN # - Based on the online convex hull (Toussaint)
-//
-template<class DistTraits,class InputIterator,class OutputIterator>
-OutputIterator GraphToussaintApprox(	InputIterator begin, 
-										InputIterator beyond, 
-										unsigned long *nr_pct, 
-										typename DistTraits::DataT epsi, 
-										OutputIterator result
-										//,DistTraits error
-										)
+//  Bounded-E local error assessment; Based on the online convex hull (Toussaint)
+
+template<class InputIterator,class OutputIterator, class FT>
+OutputIterator polygonal_approximation_CHGS_be_lea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													FT error_bound, 
+													OutputIterator result )
 {
-	typedef typename DistTraits::DataT DataT;
+	typename std::size_t path;
 
-	unsigned long path;
-
-	unsigned long n,m,m_pt,i,n_vis,m_crt;
-	typename DistTraits::DataT err_crt,max,vm,err_max;
+	typename std::size_t n,m,m_pt,i,n_vis,m_crt;
+	FT err_crt,max,vm,err_max;
 	InputIterator c_n,c_i,c_m;
 	
-	n=0;
-	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
 		n++;
 
-	unsigned long N=n+1;
+	typename std::size_t N=n+1;
 
 
 	// build the double stack
 
-
-	long 			top;			//Top end of elt.
-	long			bot;			//Bottom end of elt.
+	typename std::size_t top;			//Top end of elt.
+	typename std::size_t bot;			//Bottom end of elt.
 	InputIterator*	elt;			//Double ended queue storing a convex hull. dim=TWICE_HULL_MAX
 
-	long HULL_MAX;
-	long TWICE_HULL_MAX;
-	long THRICE_HULL_MAX;
+	typename std::size_t HULL_MAX;
+	typename std::size_t TWICE_HULL_MAX;
+	typename std::size_t THRICE_HULL_MAX;
 
 	bool topflag,botflag;
 
@@ -1294,13 +2601,14 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 	TWICE_HULL_MAX=2*HULL_MAX;
 	THRICE_HULL_MAX=3*HULL_MAX;
 
-	assert(elt=new InputIterator[TWICE_HULL_MAX]);
+	elt=new InputIterator[TWICE_HULL_MAX];
+	assert(elt);
 
-	for (long j=0;j<TWICE_HULL_MAX;j++)
+	for (typename std::size_t j=0;j<TWICE_HULL_MAX;j++)
 		elt[j]=NULL;
 
 	typedef struct cel
-	{	unsigned long pt_crt;
+	{	typename std::size_t pt_crt;
 		struct cel *next;
 	} CEL;
 
@@ -1311,25 +2619,31 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 	breadth_crt=NULL;
 
 	m_crt=N+1;
-	err_crt=epsi+1;
+	err_crt=error_bound+1;
 	
-	DataT **Graph;
+	FT **Graph;
 	CEL **visited;
 
 	visited=new CEL*[N];
+	assert(visited);
+
 	for(m=0;m<N;m++)
 		visited[m]=NULL;
 
-	assert(Graph=new DataT*[N]);
+	Graph=new FT*[N];
+	assert(Graph);
 	for(m=0;m<N;m++)
-		assert(Graph[m]=new DataT[N]);
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
 
-	Graph[0][0]=Graph[0][1]=Graph[1][0]=DataT(0);
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
 
-	Graph[N-1][N-1]=DataT(0);
+	Graph[N-1][N-1]=FT(0);
 	for(n=1;n<N-1;n++)
-		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=DataT(0);
-
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
+	
 	for(n=0,c_n=begin;n<N-2;n++,c_n++)
 	{
 		top=0;
@@ -1370,23 +2684,23 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 
 			// find the furthest point
 
-			long mid,lo,m1,brk,m2,hi;
+			typename std::size_t mid,lo,m1,brk,m2,hi;
 			bool sbase, sbrk;
-			DataT d1,d2,dx,dy,d,tr_y;
+			FT d1,d2,dx,dy,d,tr_y;
 
 			if((top-bot)>6)						//If there are > 6  points on the hull 
 			{									//(otherwise we will just look at them all.
 				lo=bot; 
 				hi=top-1;	
-				sbase = SLOPE_SIGN1<InputIterator,DistTraits>(elt[hi],elt[lo],c_n,c_m); //The sign of the base edge.    
-			
+				sbase = slope_sign<InputIterator,FT>(elt[hi],elt[lo],c_n,c_m); //The sign of the base edge.    
+
 				do
 				{ 
 					brk = (lo + hi) / 2;		//Binary search for an edge with opposite sign.
-					sbrk = SLOPE_SIGN1<InputIterator,DistTraits>(elt[brk], elt[brk+1], c_n,c_m);
+					sbrk = slope_sign<InputIterator,FT>(elt[brk], elt[brk+1], c_n,c_m);
 				
 					if(sbase == sbrk )
-						if(sbase == (SLOPE_SIGN1<InputIterator,DistTraits>(elt[lo], elt[brk+1], c_n,c_m)) ) 
+						if(sbase == (slope_sign<InputIterator,FT>(elt[lo], elt[brk+1], c_n,c_m)) ) 
 							lo = brk + 1;
 						else 
 							hi = brk;
@@ -1398,7 +2712,7 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 				{
 					mid=(lo+ m1)/2;
 				
-					if(sbase==(SLOPE_SIGN1<InputIterator,DistTraits>(elt[mid],elt[mid+1],c_n,c_m)) ) 
+					if(sbase==(slope_sign<InputIterator,FT>(elt[mid],elt[mid+1],c_n,c_m)) ) 
 						lo=mid+1;
 					else 
 						m1=mid;
@@ -1409,7 +2723,7 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 				{
 					mid=(m2+hi)/2;
 				
-					if(sbase==SLOPE_SIGN1<InputIterator,DistTraits>(elt[mid],elt[mid+1],c_n,c_m) ) 
+					if(sbase==slope_sign<InputIterator,FT>(elt[mid],elt[mid+1],c_n,c_m) ) 
 						hi = mid;
 					else 
 						m2=mid+1;
@@ -1420,7 +2734,6 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 				d=dx*dx+dy*dy;
 				if(d==0)
 				{			
-
 					d1=(elt[lo]->x()-c_n->x())*(elt[lo]->x()-c_n->x())+(elt[lo]->y()-c_n->y())*(elt[lo]->y()-c_n->y());
 					d2=(elt[hi]->x()-c_n->x())*(elt[hi]->x()-c_n->x())+(elt[hi]->y()-c_n->y())*(elt[hi]->y()-c_n->y());
 				}
@@ -1440,7 +2753,7 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 			}
 			else 								//Few points in hull--search by brute force.
 			{
-				d2=DataT(0);
+				d2=FT(0);
 				for(mid=bot;mid<top;mid++)
 				{
 					//d1=squared_distance(begin,end,elt[mid]); 
@@ -1461,20 +2774,35 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 						d2=d1; 
 				}
 			}
-			
 			Graph[n][m]=Graph[m][n]=d2;
-
 		}
 	}
 
-	if(Graph[0][N-1]<=epsi)
-		Graph[0][N-1]=Graph[N-1][0]=epsi+1;
+	delete[] elt;
+	elt=NULL;
+
+	if(Graph[0][N-1]<=error_bound)
+	{
+		approx_n_pt=2;
+
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(Graph[0][N-1]<=error_bound)
+		Graph[0][N-1]=Graph[N-1][0]=error_bound+1;
 	
-	assert(queue_b=queue_e=new CEL);
+	queue_b=queue_e=new CEL;
+	assert(queue_b);
+
 	queue_b->next=NULL;
 	queue_b->pt_crt=0;
 
-	assert(breadth_crt=new CEL);
+	breadth_crt=new CEL;
+	assert(breadth_crt);
 	breadth_crt->pt_crt=0;
 	breadth_crt->next=NULL;
 
@@ -1485,7 +2813,7 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 	{
 		for(i=queue_b->pt_crt+1;i<N;i++)
 		{
-				if(Graph[queue_b->pt_crt][i]<=epsi)
+				if(Graph[queue_b->pt_crt][i]<=error_bound)
 				{
 					if(i==N-1)
 					{
@@ -1510,12 +2838,17 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 
 					if(visited[i]==0)
 					{
-						assert(breadth_crt=new CEL);
+						breadth_crt=new CEL;
+						assert(breadth_crt);
+
 						breadth_crt->pt_crt=i;
 						breadth_crt->next=visited[queue_b->pt_crt];
 						visited[i]=breadth_crt;
 						n_vis++;
-						assert(queue_e->next=new CEL);
+
+						queue_e->next=new CEL;
+						assert(queue_e->next);
+
 						queue_e=queue_e->next;
 						queue_e->next=NULL;
 						queue_e->pt_crt=i;
@@ -1531,7 +2864,7 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 	while(queue_b)
 	{
 		if(queue_b->pt_crt!=N-1)
-			if(Graph[queue_b->pt_crt][N-1]<=epsi)
+			if(Graph[queue_b->pt_crt][N-1]<=error_bound)
 			{
 				max=Graph[queue_b->pt_crt][N-1];
 				breadth_crt=visited[queue_b->pt_crt];
@@ -1556,7 +2889,7 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 		delete queue_crt;
 	}
 
-	*nr_pct=m_crt;
+	approx_n_pt=m_crt;
 
 	delete visited[N-1];
 	visited[N-1]=NULL;
@@ -1576,13 +2909,8 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 	}
 
 	for(c_n=begin,i=0;c_n!=beyond;c_n++,i++)
-	{
 		if(visited[i]==NULL)
-		{
 			*result++=*c_n;
-
-		}
-	}
 
 	for(i=0;i<N;i++)
 		if(visited[i])
@@ -1597,107 +2925,82 @@ OutputIterator GraphToussaintApprox(	InputIterator begin,
 	return result;
 };
 
-/*
-template<class DistTraits>
-void ordonare_qs(typename DistTraits::DataT* p,unsigned long n)  //quick sort
+
+//  Bounded-# local error assessment; Based on the online convex hull (Toussaint)
+
+template<class InputIterator,class OutputIterator, class FT>
+OutputIterator polygonal_approximation_CHGS_bnp_lea(	InputIterator begin, 
+														InputIterator beyond, 
+														typename std::size_t n_pt_bound, 
+														FT &approx_error, 
+														OutputIterator result )
 {
-	typename DistTraits::DataT tmp,pivot;
-
-	if(n<2)
-		return;
-
-	if(n==2)
-	{
-		if(p[0]>p[1])
-		{
-			tmp=p[0];
-			p[0]=p[1];
-			p[1]=tmp;
-		}
-		return;
-	}
-	
-
-    pivot=p[n/2];
-	int i=0,j=n-1;
-
-	while(i<j)
-	{
-		while(p[i]<pivot)
-			i++;
-		while(p[j]>pivot)
-			j--;
-		if(i<j)
-		{
-			tmp=p[i];
-			p[i]=p[j];
-			p[j]=tmp;
-			if(p[i]==p[j])
-			{
-				i++;
-				j--;
-			}
-		}
-	}
-
-	if(i==j)
-	{	if(p[i]>pivot)
-			i=i-1;
-	}
-	else if(j<i)
-		i=j;
-//	if(i>0)
-		ordonare_qs<DistTraits>(p,i+1);
-	j=n-i-1;
-//	if(j>1)
-		ordonare_qs<DistTraits>(&p[i+1],j);
-}
-
-*/
-
-
-//////////////
-//
-//  MIN E - based on Binary search and MIN # (Toussaint)
-//
-template<class DistTraits,class InputIterator,class OutputIterator>
-OutputIterator BinarySearchApprox(	InputIterator begin, 
-									InputIterator beyond, 
-									unsigned long nr_pct, 
-									typename DistTraits::DataT *SmallestError, 
-									OutputIterator result)
-//									DistTraits error)
-{
-	typedef typename DistTraits::DataT DataT;
-	unsigned long path;
-
-	unsigned long n,m;
-	unsigned long i;
-	unsigned long m_pt,n_vis,m_crt;
-	DataT err_crt,max,vm,err_max;
+	typename std::size_t path;
+	typename std::size_t n,m,i;
+	typename std::size_t m_pt,n_vis,m_crt;
+	FT err_crt,max,vm,err_max;
 	InputIterator c_n,c_i,c_m;
-	DataT epsi;
+	FT cr_err_bound;
 	bool fl_circ=false;
-	
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
 	n=0;
 	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
 		n++;
 
-	unsigned long N=n+1;
-	unsigned long N_err=(N-1)*(N-2)/2;
-	unsigned long N_crt,N_mf;
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_n=begin;c_n!=beyond;c_n++)
+			*result++=*c_n;
+
+		return result;
+	}
+
+
+	typename std::size_t N=n+1;
+	typename std::size_t N_err=(N-1)*(N-2)/2;
+	typename std::size_t N_crt,N_mf;
 	double delta_N,nc;
 
 
 	// build the double stack
 
-	long 			top;			//Top end of elt.
-	long			bot;			//Bottom end of elt.
+	typename std::size_t top;			//Top end of elt.
+	typename std::size_t bot;			//Bottom end of elt.
 	InputIterator*	elt;			//Double ended queue storing a convex hull. dim=TWICE_HULL_MAX
 
-	long HULL_MAX;
-	long TWICE_HULL_MAX;
-	long THRICE_HULL_MAX;
+	typename std::size_t HULL_MAX;
+	typename std::size_t TWICE_HULL_MAX;
+	typename std::size_t THRICE_HULL_MAX;
 
 	bool topflag,botflag;
 
@@ -1705,14 +3008,14 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 	TWICE_HULL_MAX=2*HULL_MAX;
 	THRICE_HULL_MAX=3*HULL_MAX;
 
-	assert(elt=new InputIterator[TWICE_HULL_MAX]);
+	elt=new InputIterator[TWICE_HULL_MAX];
+	assert(elt);
 
-	for (long j=0;j<TWICE_HULL_MAX;j++)
+	for (typename std::size_t j=0;j<TWICE_HULL_MAX;j++)
 		elt[j]=NULL;
-
 	
 	typedef struct cel
-	{	unsigned long pt_crt;
+	{	typename std::size_t pt_crt;
 		struct cel *next;
 	} CEL;
 
@@ -1724,25 +3027,32 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 	
 	CEL **visited;
 
-	assert(visited=new CEL*[N]);
+	visited=new CEL*[N];
+	assert(visited);
+
 	for(m=0;m<N;m++)
 		visited[m]=NULL;
 
-	DataT *List_err;
-	DataT **Graph;
+	FT *List_err;
+	FT **Graph;
 
-	assert(List_err=new DataT[N_err]);
+	List_err=new FT[N_err];
+	assert(List_err);
 
-	assert(Graph=new DataT*[N]);
-	for(m=0;m<N;m++)
-		assert(Graph[m]=new DataT[N]);
+	Graph=new FT*[N];
+	assert(Graph);
+    for(m=0;m<N;m++)
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
 
-	Graph[0][0]=Graph[0][1]=Graph[1][0]=DataT(0);
-	Graph[N-1][N-1]=DataT(0);
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+	Graph[N-1][N-1]=FT(0);
 	for(n=1;n<N-1;n++)
-		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=DataT(0);
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
 
-	long index1=0;
+	typename std::size_t index1=0;
 
 	for(n=0,c_n=begin;n<N-2;n++,c_n++)
 	{
@@ -1784,23 +3094,23 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 
 			// find the furthest point
 
-			long mid,lo,m1,brk,m2,hi;
+			typename std::size_t mid,lo,m1,brk,m2,hi;
 			bool sbase, sbrk;
-			DataT d1,d2,dx,dy,d,tr_y;
+			FT d1,d2,dx,dy,d,tr_y;
 
 			if((top-bot)>6)						//If there are > 6  points on the hull 
 			{									//(otherwise we will just look at them all.
 				lo=bot; 
 				hi=top-1;	
-				sbase = SLOPE_SIGN1<InputIterator,DistTraits>(elt[hi],elt[lo],c_n,c_m); //The sign of the base edge.    
+				sbase = slope_sign<InputIterator,FT>(elt[hi],elt[lo],c_n,c_m); //The sign of the base edge.    
 			
 				do
 				{ 
 					brk = (lo + hi) / 2;		//Binary search for an edge with opposite sign.
-					sbrk = SLOPE_SIGN1<InputIterator,DistTraits>(elt[brk], elt[brk+1], c_n,c_m);
+					sbrk = slope_sign<InputIterator,FT>(elt[brk], elt[brk+1], c_n,c_m);
 				
 					if(sbase == sbrk )
-						if(sbase == (SLOPE_SIGN1<InputIterator,DistTraits>(elt[lo], elt[brk+1], c_n,c_m)) ) 
+						if(sbase == (slope_sign<InputIterator,FT>(elt[lo], elt[brk+1], c_n,c_m)) ) 
 							lo = brk + 1;
 						else 
 							hi = brk;
@@ -1812,7 +3122,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 				{
 					mid=(lo+ m1)/2;
 				
-					if(sbase==(SLOPE_SIGN1<InputIterator,DistTraits>(elt[mid],elt[mid+1],c_n,c_m)) ) 
+					if(sbase==(slope_sign<InputIterator,FT>(elt[mid],elt[mid+1],c_n,c_m)) ) 
 						lo=mid+1;
 					else 
 						m1=mid;
@@ -1823,7 +3133,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 				{
 					mid=(m2+hi)/2;
 				
-					if(sbase==SLOPE_SIGN1<InputIterator,DistTraits>(elt[mid],elt[mid+1],c_n,c_m) ) 
+					if(sbase==slope_sign<InputIterator,FT>(elt[mid],elt[mid+1],c_n,c_m) ) 
 						hi = mid;
 					else 
 						m2=mid+1;
@@ -1853,7 +3163,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 			}
 			else 								//Few points in hull--search by brute force.
 			{
-				d2=DataT(0);
+				d2=FT(0);
 				for(mid=bot;mid<top;mid++)
 				{
 					//d1=squared_distance(begin,end,elt[mid]); 
@@ -1878,18 +3188,31 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 		}
 	}
 
-	if(Graph[0][N-1]<=0)
+	delete[] elt;
+	elt=NULL;
+
+	if(n_pt_bound==2)
+	{
+		approx_error=Graph[0][N-1];
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(Graph[0][N-1]<=0)									
 		fl_circ=true;
 
-	ordonare_qs<DistTraits>(List_err,N_err);
+	QuickSort<FT>(List_err,N_err);
 
 	delta_N=N_err/2.;
 	nc=0;
-	m=nr_pct+1;
+	m=n_pt_bound+1;
 
 	while(delta_N>0.4)
 	{
-		if(m>nr_pct)
+		if(m>n_pt_bound)
 			nc+=delta_N;
 		else
 			nc-=delta_N;
@@ -1900,21 +3223,24 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 		if(N_crt>=N_err)
 			N_crt=N_err;
 
-		epsi=List_err[N_crt];
+		cr_err_bound=List_err[N_crt];
 		m_crt=N+1;
-		err_crt=epsi+1;
+		err_crt=cr_err_bound+1;
 
 		if(fl_circ)									
-			Graph[0][N-1]=Graph[N-1][0]=epsi+1;
+			Graph[0][N-1]=Graph[N-1][0]=cr_err_bound+1;
 
 		for(m=0;m<N;m++)
 			visited[m]=NULL;
-		
-		assert(queue_b=queue_e=new CEL);
+
+		queue_b=queue_e=new CEL;
+		assert(queue_b);
 		queue_b->next=NULL;
 		queue_b->pt_crt=0;
 
-		assert(breadth_crt=new CEL);
+		breadth_crt=new CEL;
+		assert(breadth_crt);
+
 		breadth_crt->pt_crt=0;
 		breadth_crt->next=NULL;
 
@@ -1925,7 +3251,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 		{
 			for(i=(queue_b->pt_crt+1);i<N;i++)
 			{
-					if(Graph[queue_b->pt_crt][i]<=epsi)
+					if(Graph[queue_b->pt_crt][i]<=cr_err_bound)
 					{
 						if(i==N-1)
 						{
@@ -1950,12 +3276,17 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 
 						if(visited[i]==0)
 						{
-							assert(breadth_crt=new CEL);
+							breadth_crt=new CEL;
+							assert(breadth_crt);
+
 							breadth_crt->pt_crt=i;
 							breadth_crt->next=visited[queue_b->pt_crt];
 							visited[i]=breadth_crt;
 							n_vis++;
-							assert(queue_e->next=new CEL);
+							
+							queue_e->next=new CEL;
+							assert(queue_e->next);
+
 							queue_e=queue_e->next;
 							queue_e->next=NULL;
 							queue_e->pt_crt=i;
@@ -1971,7 +3302,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 		while(queue_b)
 		{
 			if(queue_b->pt_crt!=N-1)
-				if(Graph[queue_b->pt_crt][N-1]<=epsi)
+				if(Graph[queue_b->pt_crt][N-1]<=cr_err_bound)
 				{
 					max=Graph[queue_b->pt_crt][N-1];
 					breadth_crt=visited[queue_b->pt_crt];
@@ -2019,32 +3350,35 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 			if(visited[i])
 				delete visited[i];
 
-		*SmallestError=epsi;
+		approx_error=cr_err_bound;
 	
 		delta_N/=2.;
 
-		if(m<=nr_pct)
+		if(m<=n_pt_bound)
 			N_mf=N_crt;
 	}
 
-	if(m!=nr_pct)
+	if(m!=n_pt_bound)
 		N_crt=N_mf;
 	
-	epsi=List_err[N_crt];
+	cr_err_bound=List_err[N_crt];
 	m_crt=N+1;
-	err_crt=epsi+1;
+	err_crt=cr_err_bound+1;
 
 	if(fl_circ)									
-		Graph[0][N-1]=Graph[N-1][0]=epsi+1;
+		Graph[0][N-1]=Graph[N-1][0]=cr_err_bound+1;
 
 	for(m=0;m<N;m++)
 		visited[m]=NULL;
-		
-	assert(queue_b=queue_e=new CEL);
+	
+	queue_b=queue_e=new CEL;
+	assert(queue_b);
+
 	queue_b->next=NULL;
 	queue_b->pt_crt=0;
 
-	assert(breadth_crt=new CEL);
+	breadth_crt=new CEL;
+	assert(breadth_crt);
 	breadth_crt->pt_crt=0;
 	breadth_crt->next=NULL;
 
@@ -2055,7 +3389,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 	{
 		for(i=queue_b->pt_crt+1;i<N;i++) 
 		{
-				if(Graph[queue_b->pt_crt][i]<=epsi)
+				if(Graph[queue_b->pt_crt][i]<=cr_err_bound)
 				{
 					if(i==N-1)
 					{
@@ -2081,11 +3415,16 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 					if(visited[i]==0)
 					{
 						breadth_crt=new CEL;
+						assert(breadth_crt);
+
 						breadth_crt->pt_crt=i;
 						breadth_crt->next=visited[queue_b->pt_crt];
 						visited[i]=breadth_crt;
 						n_vis++;
-						assert(queue_e->next=new CEL);
+					
+						queue_e->next=new CEL;
+						assert(queue_e->next);
+
 						queue_e=queue_e->next;
 						queue_e->next=NULL;
 						queue_e->pt_crt=i;
@@ -2101,7 +3440,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 	while(queue_b)
 	{
 		if(queue_b->pt_crt!=N-1)
-			if(Graph[queue_b->pt_crt][N-1]<=epsi)
+			if(Graph[queue_b->pt_crt][N-1]<=cr_err_bound)
 			{
 				max=Graph[queue_b->pt_crt][N-1];
 				breadth_crt=visited[queue_b->pt_crt];
@@ -2128,7 +3467,7 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 	}
 
 	m=m_crt;
-	nr_pct=m;
+	n_pt_bound=m;
 
 	delete visited[N-1];
 	visited[N-1]=NULL;
@@ -2148,18 +3487,14 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 	}
 
 	for(c_n=begin,i=0;c_n!=beyond;c_n++,i++)
-	{
 		if(visited[i]==NULL)
-		{
 			*result++=*c_n;
-		}
-	}
+
+	approx_error=cr_err_bound;
 
 	for(i=0;i<N;i++)
 		if(visited[i])
 			delete visited[i];
-
-	*SmallestError=epsi;
 
 	delete[] visited;
 
@@ -2173,8 +3508,500 @@ OutputIterator BinarySearchApprox(	InputIterator begin,
 }
 
 
+//  Bounded-E global error assessment; Based on the incremental technique (Perez and Vidal)
+
+template<class InputIterator,class OutputIterator, class FT>
+OutputIterator polygonal_approximation_ITGS_be_gea(	InputIterator begin, 
+													InputIterator beyond, 
+													typename std::size_t &approx_n_pt, 
+													FT error_bound, 
+													OutputIterator result )
+{
+	typename std::size_t n,m,i,j;
+	InputIterator c_n,c_i,c_m;
+	
+	if(begin==beyond)
+	{
+		approx_n_pt=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=1;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_n_pt=2;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	for(n=0,c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	typename std::size_t N=n+1;
+
+	FT x_sum,y_sum,x2_sum,y2_sum,xy_sum,xx;
+	FT nr_p;
+	FT ssvdErr,ssedErr,xk,yk,yValY,dir_coef,dif;
+
+	FT **Graph;
+
+	Graph=new FT*[N];
+	assert(Graph);
+	for(m=0;m<N;m++)
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
+
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+
+	Graph[N-1][N-1]=FT(0);
+	for(n=1;n<N-1;n++)
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
+	
+	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+	{
+		x_sum=0;
+		y_sum=0;
+		x2_sum=0;
+		y2_sum=0;
+		xy_sum=0;
+		nr_p=FT(0);
+
+		for(m=n+2,c_m=c_n,c_m++;m<N;m++) 
+		{
+			nr_p+=FT(1);
+			xk=c_m->x();
+			yk=c_m->y();
+
+			c_m++;
+
+			x_sum += xk;
+			y_sum += yk;
+			x2_sum += (xk * xk);
+			y2_sum += (yk * yk); 
+			xy_sum += (xk * yk);
+
+			//Compute the direction coefficient and the y-value at the y-axis of approx. curve.
+		
+			dif=(c_m->x()-c_n->x());
+
+			if(dif!=FT(0))
+			{
+				dir_coef=(c_m->y()-c_n->y())/dif;
+				yValY=c_n->y()-dir_coef*c_n->x();
+
+				ssvdErr=yValY*yValY*nr_p+FT(2)*yValY*dir_coef*x_sum-FT(2)*yValY*y_sum+dir_coef*dir_coef*x2_sum+y2_sum-FT(2)*dir_coef*xy_sum;
+				ssedErr=(FT(1)/(dir_coef*dir_coef+FT(1)))*ssvdErr;
+			}
+			else
+			{
+				if((c_m->y()-c_n->y())==FT(0))				// Closed curve case (*begin==*end)
+				{	
+					xx=c_n->x();
+					yValY=c_n->y();
+
+					ssedErr=xx*xx*nr_p+yValY*yValY*nr_p-FT(2)*yValY*y_sum+y2_sum+x2_sum-FT(2)*xx*x_sum;
+				}
+				else
+				{
+					xx=c_n->x();
+					ssedErr=x2_sum-FT(2)*xx*x_sum+nr_p*xx*xx;
+				}
+			}
+
+			if(ssedErr<FT(0))
+				ssedErr=-ssedErr;
+
+			Graph[n][m]=Graph[m][n]=ssedErr;
+		}
+	}
+	
+	if(Graph[0][N-1]<=error_bound)
+	{
+		approx_n_pt=2;
+
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	bool fl_find=false;
+	FT err_crt;
+	FT* ApproxError;
+	typename std::size_t **SplitPoints;
+
+	SplitPoints=new typename std::size_t*[N+1];
+	assert(SplitPoints);
+
+	ApproxError=new FT[N+1];
+	assert(ApproxError);
+
+	m=2;
+
+	for(i=0;i<=N-1;i++)
+		ApproxError[i]=Graph[i][0];
+
+	while(!fl_find)
+	{
+		m++;
+		SplitPoints[m]=new typename std::size_t[N];
+		assert(SplitPoints[m]);
+
+		ApproxError[N-1]=ApproxError[N-2];
+		SplitPoints[m][N-1]=N-2;
+		if(ApproxError[N-1]<=error_bound)
+			fl_find=true;
+		else
+			for(j=N-3;j>=m-2;j--)
+			{
+				if(ApproxError[j]<=error_bound && Graph[j][N-1]<=error_bound)
+				{
+					err_crt=ApproxError[j]+Graph[j][N-1];
+
+					if(err_crt<ApproxError[N-1])
+					{
+						ApproxError[N-1]=err_crt;
+						SplitPoints[m][N-1]=j;
+						if(ApproxError[N-1]<=error_bound)
+						{
+							fl_find=true;
+							break;
+						}
+					}
+				}
+			}
+
+		if(!fl_find)
+			for(i=N-2;i>=m-1;i--)
+			{
+				ApproxError[i]=ApproxError[i-1];
+				SplitPoints[m][i]=i-1;
+				for(j=i-2;j>=m-2;j--)
+				{
+					if(ApproxError[j]<=error_bound && Graph[j][i]<=error_bound)
+					{
+						err_crt=ApproxError[j]+Graph[j][i];
+						if(err_crt<ApproxError[i])
+						{
+							ApproxError[i]=err_crt;
+							SplitPoints[m][i]=j;
+						}
+					}
+				}
+			}
+	}
+
+	approx_n_pt=m;
+
+	c_i=beyond;
+	c_i--;
+
+	typename std::list<InputIterator> local_container;
+	typename std::list<InputIterator>::iterator cri;
+	
+	local_container.push_front(c_i);
+
+	n=N-1;
+	
+	typename std::size_t nn=N-1;
+
+	for(m=approx_n_pt;m>2;m--)
+	{
+		n=SplitPoints[m][n];
+
+		for(typename std::size_t ii=nn;ii>n;ii--)
+			c_i--;
+
+		nn=n;
+		local_container.push_front(c_i);
+	}
+
+	local_container.push_front(begin);
+
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
+		*result++=**cri;
+
+	delete[] ApproxError;
+
+	for(m=3;m<=approx_n_pt;m++)
+		delete[] SplitPoints[m];
+	delete[] SplitPoints;
+
+	for(m=0;m<N;m++)
+		delete[] Graph[m];
+	delete[] Graph;
+
+ 
+	return result;
+};
+
+
+//  Bounded-# global error assessment; Based on the incremental technique (Perez and Vidal)
+
+template<class InputIterator,class OutputIterator, class FT>
+OutputIterator polygonal_approximation_ITGS_bnp_gea(	InputIterator begin, 
+														InputIterator beyond, 
+														typename std::size_t n_pt_bound, 
+														FT &approx_error, 
+														OutputIterator result )
+{
+	typename std::size_t n,m,i,j;
+	InputIterator c_n,c_i,c_m;
+
+	if(begin==beyond)
+	{
+		approx_error=0;
+		return result;
+	}
+
+	c_n=begin;
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		return result;
+	}
+
+	c_n++;
+	if(c_n==beyond)
+	{
+		approx_error=0;
+		*result++=*begin;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+	if(n_pt_bound<2)
+		return result;
+
+	n=0;
+	for(c_n=begin,c_n++;c_n!=beyond;c_n++)
+		n++;
+
+	if(n_pt_bound>n)
+	{
+		approx_error=0;
+
+		for(c_n=begin;c_n!=beyond;c_n++)
+			*result++=*c_n;
+
+		return result;
+	}
+
+	typename std::size_t N=n+1;
+
+	FT x_sum,y_sum,x2_sum,y2_sum,xy_sum,xx;
+	FT nr_p;
+	FT ssvdErr,ssedErr,xk,yk,yValY,dir_coef,dif;
+
+	FT **Graph;
+
+	Graph=new FT*[N];
+	assert(Graph);
+	for(m=0;m<N;m++)
+	{
+		Graph[m]=new FT[N];
+		assert(Graph[m]);
+	}
+
+	Graph[0][0]=Graph[0][1]=Graph[1][0]=FT(0);
+
+	Graph[N-1][N-1]=FT(0);
+	for(n=1;n<N-1;n++)
+		Graph[n][n]=Graph[n][n-1]=Graph[n][n+1]=Graph[n-1][n]=Graph[n+1][n]=FT(0);
+	
+	for(n=0,c_n=begin;n<N-2;n++,c_n++)
+	{
+		x_sum=0;
+		y_sum=0;
+		x2_sum=0;
+		y2_sum=0;
+		xy_sum=0;
+		nr_p=FT(0);
+
+		for(m=n+2,c_m=c_n,c_m++;m<N;m++) 
+		{
+			nr_p+=FT(1);
+			xk=c_m->x();
+			yk=c_m->y();
+
+			c_m++;
+
+			x_sum += xk;
+			y_sum += yk;
+			x2_sum += (xk * xk);
+			y2_sum += (yk * yk); 
+			xy_sum += (xk * yk);
+
+			//Compute the direction coefficient and the y-value at the y-axis of approx. curve.
+		
+			dif=(c_m->x()-c_n->x());
+
+			if(dif!=FT(0))
+			{
+				dir_coef=(c_m->y()-c_n->y())/dif;
+				yValY=c_n->y()-dir_coef*c_n->x();
+
+				ssvdErr=yValY*yValY*nr_p+FT(2)*yValY*dir_coef*x_sum-FT(2)*yValY*y_sum+dir_coef*dir_coef*x2_sum+y2_sum-FT(2)*dir_coef*xy_sum;
+				ssedErr=(FT(1)/(dir_coef*dir_coef+FT(1)))*ssvdErr;
+			}
+			else
+			{
+				if((c_m->y()-c_n->y())==FT(0))				// Closed curve case (*begin==*end)
+				{	
+					xx=c_n->x();
+					yValY=c_n->y();
+
+					ssedErr=xx*xx*nr_p+yValY*yValY*nr_p-FT(2)*yValY*y_sum+y2_sum+x2_sum-FT(2)*xx*x_sum;
+				}
+				else
+				{
+					xx=c_n->x();
+					ssedErr=x2_sum-FT(2)*xx*x_sum+nr_p*xx*xx;
+				}
+			}
+
+			if(ssedErr<FT(0))
+				ssedErr=-ssedErr;
+
+			Graph[n][m]=Graph[m][n]=ssedErr;
+		}
+	}
+	
+	if(n_pt_bound==2)
+	{
+		approx_error=Graph[0][N-1];
+		*result++=*begin;
+		c_n=beyond;
+		c_n--;
+		*result++=*c_n;
+		return result;
+	}
+
+
+	typename std::size_t mm;
+
+	FT err_crt;
+	FT* ApproxError;
+	typename std::size_t **SplitPoints;
+
+	SplitPoints=new typename std::size_t*[N+1];
+	assert(SplitPoints);
+
+	ApproxError=new FT[N+1];
+	assert(ApproxError);
+
+	for(i=0;i<=N-1;i++)
+		ApproxError[i]=Graph[i][0];
+
+	FT epsi_crt;
+
+	mm=2;
+
+	while(mm<n_pt_bound)
+	{
+		mm++;
+		SplitPoints[mm]=new typename std::size_t[N];
+		assert(SplitPoints[mm]);
+
+		epsi_crt=ApproxError[N-1]=ApproxError[N-2];
+		SplitPoints[mm][N-1]=N-2;
+		
+		for(j=N-3;j>=mm-2;j--)
+		{
+			if(ApproxError[j]<=epsi_crt && Graph[j][N-1]<=epsi_crt)
+			{
+				err_crt=ApproxError[j]+Graph[j][N-1];
+
+				if(err_crt<ApproxError[N-1])
+				{
+					epsi_crt=ApproxError[N-1]=err_crt;
+					SplitPoints[mm][N-1]=j;
+				}
+			}
+		}
+	
+		if(mm<n_pt_bound)
+			for(i=N-2;i>=mm-1;i--)
+			{
+				epsi_crt=ApproxError[i]=ApproxError[i-1];
+				SplitPoints[mm][i]=i-1;
+				for(j=i-2;j>=mm-2;j--)
+				{
+					if(ApproxError[j]<=epsi_crt && Graph[j][i]<=epsi_crt)
+					{
+						err_crt=ApproxError[j]+Graph[j][i];
+						if(err_crt<ApproxError[i])
+						{
+							epsi_crt=ApproxError[i]=err_crt;
+							SplitPoints[mm][i]=j;
+						}
+					}
+				}
+			}
+	}
+
+	approx_error=ApproxError[N-1];
+
+	c_i=beyond;
+	c_i--;
+
+	typename std::list<InputIterator> local_container;
+	typename std::list<InputIterator>::iterator cri;
+	
+	local_container.push_front(c_i);
+
+	n=N-1;
+	
+	typename std::size_t nn=N-1;
+
+	for(m=n_pt_bound;m>2;m--)
+	{
+		n=SplitPoints[m][n];
+
+		for(typename std::size_t ii=nn;ii>n;ii--)
+			c_i--;
+
+		nn=n;
+		local_container.push_front(c_i);
+	}
+
+	local_container.push_front(begin);
+
+	for(cri=local_container.begin();cri!=local_container.end();cri++)
+		*result++=**cri;
+
+	delete[] ApproxError;
+
+	for(m=3;m<=mm;m++)
+		delete[] SplitPoints[m];
+	delete[] SplitPoints;
+
+
+	for(m=0;m<N;m++)
+		delete[] Graph[m];
+	delete[] Graph;
+ 
+	return result;
+}
+
+
 CGAL_END_NAMESPACE
 
-
-
-#endif
+#endif // CGAL_POLYAP_FCT
