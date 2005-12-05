@@ -517,8 +517,17 @@ namespace CGAL
       intersect_func(rubber_curve, *it, std::back_inserter(obj_list));
       if(is_last_curve)
       {
-        //the last curve will intersect the forst one at their common
+        //the last curve will intersect the first one at their common
         // end point.
+
+        if(m_pgn.size() == 1)
+        {
+          if(m_pgn.curves_begin()->is_linear())
+            return false;
+          //the polygon can have one circular arc (and now we close it)
+          CGAL_assertion(obj_list.size() == 2);
+          return true;
+        }
         if(obj_list.size() > 1)
           return false;
         std::pair<Arc_point_2, unsigned int> inter_point;
@@ -534,17 +543,26 @@ namespace CGAL
           // its the second curve,
           //can intersect the first one at the common end point.
 
-          if(obj_list.size() <= 1)
+          if(obj_list.empty())
+            return true; // no intersections at all
+          if(obj_list.size() == 1)
           {
-             return true;
+            std::pair<Arc_point_2, unsigned int> inter_pt;
+            bool succ = CGAL::assign(inter_pt, obj_list.front());
+            if(!succ)
+              return false; // overlap curves!!
+
+            Traits_2 tr;
+            // make sure that the intersection point is equal to the curve target
+            return (tr.equal_2_object()(inter_pt.first, it->target())); 
           }
           return false;
         }
-        // its not the last curve, cannot intersect the first curve.
-         if(!obj_list.empty())
-         {
-          return false;
-         }
+        // its not the last curve (or the secind), cannot intersect the first curve.
+        if(!obj_list.empty())
+        {
+         return false;
+        }
       }
       ++it;
       for(; it != before_last_cv; ++it)
