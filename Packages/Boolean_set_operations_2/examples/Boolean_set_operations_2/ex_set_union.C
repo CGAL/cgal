@@ -8,7 +8,7 @@
 
 #include <list>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 typedef CGAL::Gmpq                                      NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
@@ -34,19 +34,19 @@ void circle_2_polygon(Circle circle, Polygon & polygon)
 
 int main(int argc, char * argv[])
 {
-  const double pi = atan(1) * 4;
+  const double pi = std::atan(1.0) * 4;
 
   unsigned int circles_num = 8;
   if (argc > 1) circles_num = atoi(argv[1]);
 
-  double circles_num_reciep = 1 / static_cast<double>(circles_num);
+  double circles_num_reciep = 1.0 / circles_num;
   double radius = 1;
   double frac = 2 * pi * circles_num_reciep;
   std::list<Polygon> polygons;
   for (unsigned int i = 0; i < circles_num; ++i) {
     double angle = frac * i;
-    double x = radius * sin(angle);
-    double y = radius * cos(angle);
+    double x = radius * std::sin(angle);
+    double y = radius * std::cos(angle);
     Point center = Point(x, y);
     Circle circle(center, radius);
     Polygon polygon;
