@@ -19,26 +19,26 @@ typedef Stl::Stream_line_iterator_2                                 stl_iterator
 
 int main()
 {
-	Runge_kutta_integrator runge_kutta_integrator(1);
+  Runge_kutta_integrator runge_kutta_integrator(1);
 
-	/*datap.tri.cin and datav.tri.cin are ascii files where are stored the vector velues*/
-	std::ifstream inp("data/datap.tri.cin");
-	std::ifstream inv("data/datav.tri.cin");
+  /*datap.tri.cin and datav.tri.cin are ascii files where are stored the vector velues*/
+  std::ifstream inp("data/datap.tri.cin");
+  std::ifstream inv("data/datav.tri.cin");
   std::istream_iterator<Point> beginp(inp);
   std::istream_iterator<Vector> beginv(inv);
   std::istream_iterator<Point> endp;
-	
-	Field triangular_field(beginp, endp, beginv);
+  
+  Field triangular_field(beginp, endp, beginv);
 
-	/* the placement of streamlines */
-	std::cout << "processing...\n";
-	double dSep = 30.0;
-	double dRat = 1.6;
-	Stl Stream_lines(triangular_field, runge_kutta_integrator,dSep,dRat);
-	std::cout << "placement generated\n";
+  /* the placement of streamlines */
+  std::cout << "processing...\n";
+  double dSep = 30.0;
+  double dRat = 1.6;
+  Stl Stream_lines(triangular_field, runge_kutta_integrator,dSep,dRat);
+  std::cout << "placement generated\n";
 
-	/*writing streamlines to streamlines.stl */
-	std::cout << "streamlines.stl\n";
-	std::ofstream fw("streamlines.stl",std::ios::out);
-	Stream_lines.print_stream_lines(fw);
+  /*writing streamlines to streamlines.stl */
+  std::cout << "streamlines.stl\n";
+  std::ofstream fw("streamlines.stl",std::ios::out);
+  Stream_lines.print_stream_lines(fw);
 }
