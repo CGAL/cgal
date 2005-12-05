@@ -61,7 +61,7 @@ public:
 // ======================================================================
 /// Bi-linear geometry mask for PQQ, PTQ, and Sqrt(3) scheme 
 template <class Poly>
-class Linear_stencil_3 : public PQQ_stencil_3<Poly> {
+class Linear_mask_3 : public PQQ_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
 
@@ -113,7 +113,7 @@ public:
 // ======================================================================
 /// The geometry mask of Catmull-Clark subdivision 
 template <class Poly>
-class CatmullClark_stencil_3 : public Linear_stencil_3<Poly> {
+class CatmullClark_mask_3 : public Linear_mask_3<Poly> {
 public:
   typedef Poly                                         Polyhedron;
 
@@ -191,7 +191,7 @@ public:
 // ======================================================================
 /// The geometry mask of Loop subdivision
 template <class Poly>
-class Loop_stencil_3 : public PQQ_stencil_3<Poly> {
+class Loop_mask_3 : public PQQ_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
 
@@ -287,7 +287,7 @@ public:
 // ======================================================================
 /// The geometry mask of Doo-Sabin subdivision
 template <class Poly>
-class DooSabin_stencil_3 : public DQQ_stencil_3<Poly> {
+class DooSabin_mask_3 : public DQQ_stencil_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
   
@@ -330,7 +330,7 @@ public:
 // ======================================================================
 // The geometry mask of Sqrt(3) subdivision
 template <class Poly>
-class Sqrt3_stencil_3 : public Linear_stencil_3<Poly> {
+class Sqrt3_mask_3 : public Linear_mask_3<Poly> {
 public:
   typedef Poly                                        Polyhedron;
   

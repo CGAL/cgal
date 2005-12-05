@@ -43,7 +43,7 @@ be used to derive geometry masks for the PTQ and the $\sqrt{3}$ refinement.
 %%     </CENTER>
 %% \end{ccHtmlOnly}
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -141,10 +141,10 @@ based on the PQQ, the PTQ and the $\sqrt{3}$ refinement.
 
 \ccRefIdfierPage{CGAL::Subdivision_surfaces_3<Poly>}\\
 \ccRefIdfierPage{CGAL::DQQ_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Linear_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::CatmullClark_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Loop_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Sqrt3_stencil_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Linear_mask_3<Poly>}\\
+\ccRefIdfierPage{CGAL::CatmullClark_mask_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Loop_mask_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Sqrt3_mask_3<Poly>}\\
 
 %\ccExample
 %This example program instantiates a polyhedron using the default
@@ -176,7 +176,7 @@ mesh. \ccClassTemplateName\ defines the policy interface of
 stencils of the DQQ refinement. Served as the programming guideline,
 \ccClassTemplateName\ does not realize any specific geometry mask.
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -217,7 +217,7 @@ that usually has the dominate mask weight.
 
 \ccRefIdfierPage{CGAL::Subdivision_surfaces_3<Poly>}\\
 \ccRefIdfierPage{CGAL::PQQ_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::DooSabin_stencil_3<Poly>}\\
+\ccRefIdfierPage{CGAL::DooSabin_mask_3<Poly>}\\
 
 \end{ccRefClass}
 
@@ -231,7 +231,7 @@ that usually has the dominate mask weight.
 
 % +------------------------------------------------------------------------+
 % +------------------------------------------------------------------------+
-\begin{ccRefClass}{Linear_stencil_3<Poly>}
+\begin{ccRefClass}{Linear_mask_3<Poly>}
 
 \ccDefinition
 
@@ -239,7 +239,7 @@ that usually has the dominate mask weight.
 \ccc{PQQ_stencil_3}, realizes the geometry masks as bi-linear 
 averaging of nodes collected from the stencils.
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -247,7 +247,7 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameter:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Linear_stencil_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Linear_mask_3;}
 \end{tabbing}
    
 The only parameter requires a model of 
@@ -288,9 +288,9 @@ assign the point on \ccc{v} to \ccc{pt}.
 
 \ccRefIdfierPage{CGAL::Subdivision_surfaces_3<Poly>}\\
 \ccRefIdfierPage{CGAL::PQQ_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::CatmullClark_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Loop_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Sqrt3_stencil_3<Poly>}\\
+\ccRefIdfierPage{CGAL::CatmullClark_mask_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Loop_mask_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Sqrt3_mask_3<Poly>}\\
 
 \end{ccRefClass}
 
@@ -304,14 +304,14 @@ assign the point on \ccc{v} to \ccc{pt}.
 
 % +------------------------------------------------------------------------+
 % +------------------------------------------------------------------------+
-\begin{ccRefClass}{CatmullClark_stencil_3<Poly>}
+\begin{ccRefClass}{CatmullClark_mask_3<Poly>}
 
 \ccDefinition
 
 \ccClassTemplateName\ implements the geometry masks of 
 Catmull-Clark subdivision. 
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -319,7 +319,7 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameter:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class CatmullClark_stencil_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class CatmullClark_mask_3;}
 \end{tabbing}
    
 The only parameter requires a model of 
@@ -363,7 +363,7 @@ compute the Catmull-Clark vertex-point based on the
 
 \ccRefIdfierPage{CGAL::Subdivision_surfaces_3<Poly>}\\
 \ccRefIdfierPage{CGAL::PQQ_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Linear_stencil_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Linear_mask_3<Poly>}\\
 
 \end{ccRefClass}
 
@@ -376,13 +376,13 @@ compute the Catmull-Clark vertex-point based on the
 
 % +------------------------------------------------------------------------+
 % +------------------------------------------------------------------------+
-\begin{ccRefClass}{Loop_stencil_3<Poly>}
+\begin{ccRefClass}{Loop_mask_3<Poly>}
 
 \ccDefinition
 
 \ccClassTemplateName\ implements the geometry masks of Loop subdivision. 
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -390,7 +390,7 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameter:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Loop_stencil_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Loop_mask_3;}
 \end{tabbing}
    
 The only parameter requires a model of 
@@ -438,14 +438,14 @@ and assign the smoothed point to \ccc{pt}.
 
 % +------------------------------------------------------------------------+
 % +------------------------------------------------------------------------+
-\begin{ccRefClass}{DooSabin_stencil_3<Poly>}
+\begin{ccRefClass}{DooSabin_mask_3<Poly>}
 
 \ccDefinition
 
 \ccClassTemplateName\ implements the geometry masks of 
 Doo-Sabin subdivision. 
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -453,7 +453,7 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameter:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class DooSabin_stencil_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class DooSabin_mask_3;}
 \end{tabbing}
    
 The only parameter requires a model of 
@@ -496,14 +496,14 @@ points to the dominate vertex in the geometry mask.
 
 % +------------------------------------------------------------------------+
 % +------------------------------------------------------------------------+
-\begin{ccRefClass}{Sqrt3_stencil_3<Poly>}
+\begin{ccRefClass}{Sqrt3_mask_3<Poly>}
 
 \ccDefinition
 
 \ccClassTemplateName\ implements the geometry masks 
 of $\sqrt{3}$ subdivision. 
 
-\ccInclude{CGAL/Subdivision_surfaces_rules_3.h}
+\ccInclude{CGAL/Subdivision_surfaces_masks_3.h}
 
 \ccParameters
 
@@ -511,7 +511,7 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameter:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Sqrt3_stencil_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Sqrt3_mask_3;}
 \end{tabbing}
    
 The only parameter requires a model of 
@@ -549,7 +549,7 @@ and assign the smoothed point to \ccc{pt}.
 
 \ccRefIdfierPage{CGAL::Subdivision_surfaces_3<Poly>}\\
 \ccRefIdfierPage{CGAL::PQQ_stencil_3<Poly>}\\
-\ccRefIdfierPage{CGAL::Linear_stencil_3<Poly>}\\
+\ccRefIdfierPage{CGAL::Linear_mask_3<Poly>}\\
 
 \end{ccRefClass}
 

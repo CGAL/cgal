@@ -31,7 +31,7 @@
 #include <CGAL/circulator.h>
 
 #include <CGAL/Polyhedron_decorator_3.h>
-#include <CGAL/Subdivision_surfaces_rules_3.h>
+#include <CGAL/Subdivision_surfaces_masks_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -70,28 +70,28 @@ class Subdivision_surfaces_3 : public Polyhedron_decorator_3<Poly> {
 public:
   //
   static void CatmullClark_subdivision(Polyhedron& p, int step = 1) {
-    PQQ(p, CatmullClark_stencil_3<Polyhedron>(), step);
+    PQQ(p, CatmullClark_mask_3<Polyhedron>(), step);
   }
   //static void PQQ_subdivision(Polyhedron& p, int step = 1) {
-  //  PQQ(p, Linear_stencil_3<Polyhedron>(), step);
+  //  PQQ(p, Linear_mask_3<Polyhedron>(), step);
   //}
 
   //
   static void Loop_subdivision(Polyhedron& p, int step = 1) {
-    PTQ(p, Loop_stencil_3<Polyhedron>() , step);
+    PTQ(p, Loop_mask_3<Polyhedron>() , step);
   }
   //static void PTQ_subdivision(Polyhedron& p, int step = 1) {
-  //  PTQ(p, Linear_stencil_3<Polyhedron>(), step);
+  //  PTQ(p, Linear_mask_3<Polyhedron>(), step);
   //}
 
   //
   static void DooSabin_subdivision(Polyhedron& p, int step = 1) {
-    DQQ(p, DooSabin_stencil_3<Polyhedron>(), step);
+    DQQ(p, DooSabin_mask_3<Polyhedron>(), step);
   }
 
   //
   static void Sqrt3_subdivision(Polyhedron& p, int step = 1) {
-    Sqrt3(p, Sqrt3_stencil_3<Polyhedron>(), step);
+    Sqrt3(p, Sqrt3_mask_3<Polyhedron>(), step);
   }
 
 public:
