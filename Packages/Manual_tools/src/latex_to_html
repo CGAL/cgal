@@ -342,9 +342,15 @@ run_command() {
 
 build_anchor_filter() {
     if [ ! -r cc_anchor_rules.$1 ]; then touch cc_anchor_rules.$1 ; fi
+    # catchall rule only applies on stage 3! avoid false warnings 
+    # on lower stages
+    local maybe_catchall="";    
+    if [ $1 == "stage_3" ]; then
+      maybe_catchall="${ConfigHtml}/cc_anchor_ref_catchall";
+    fi
     \cat ${ConfigHtml}/cc_anchor_header.$1 \
          cc_anchor_rules.$1 \
-         ${ConfigHtml}/cc_anchor_ref_catchall \
+         $maybe_catchall \
          ${ConfigHtml}/cc_anchor_footer.$1 \
       | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_filter.yy
     ${Flex} cc_anchor_filter.yy > cc_anchor_filter.c
@@ -540,8 +546,12 @@ convert() {
     for dir in ${AllSubDirs} ; do
         vout -n " "$dir
         cd ${OutDir}/$dir
+        if [ "`find . -name "*.html"`" == "" ]; then
+            continue;
+        fi
         # copy user images first
         ImageFiles=`\cat *.html | cc_extract_images | \sort | \uniq`
+        
         for f in $ImageFiles ; do
             ImageSearchPath="."
             if [ ! -r ${CurrentDir}/${dir}/${f} ]; then
