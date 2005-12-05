@@ -213,6 +213,7 @@ public:
   {
     if(is_built()){
       nodes.clear();
+      data.clear();
       delete bbox;
       built_ = false;
     }
