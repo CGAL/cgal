@@ -40,7 +40,7 @@ Streamlines are very important tools for visualizing those entities. A
 a streamline is often represented as a polyline (series of points) iteratively elongated by 
 bidirectional numerical integration started from a \ccc{seed point}, until 
 it comes close to another streamline (according to a specified distance called 
-the \ccc{the separating distance}), hits the domain boundary, reaches a 
+\ccc{the separating distance}), hits the domain boundary, reaches a 
 critical point or generates a closed path.\\
 A \ccc{valid} placement of streamlines consists of saturating the domain with a set of tangential streamlines  in accordance with a specified \ccc{density}, determined by the \ccc{separating distance} between the streamlines.
 
@@ -49,7 +49,7 @@ A \ccc{valid} placement of streamlines consists of saturating the domain with a 
 A streamline can be considered as the path traced by an imaginary massless particle dropped into a steady fluid flow described by the field. The construction of this path consists in the resolution of an ordinary differential equation for different successive time intervals. In this way, we obtain series of points $p_k, 0<k<n$ that allows the visualization of the streamline.
 This equation is defined as follows : $$\frac{dp}{dt} = v(p(t)), p(0) = p_0$$ where \ccc{p(t)} is the position of the particle at time \ccc{t}, \ccc{v} is a function that gives the vector value in each point in the domain (even by interpolation), and $p_0$ is the initial position.
 The position after a given interval $\Delta t$ is given by : $$p(t + \Delta t) = p(t) + \int_t^{t+\Delta t} v(p(t)) dt$$
-Several numeric methods has been proposed to solve this equation, in this package, two methods are implemented : Euler algorithm, and Second Order Runge Kutta algorithm.
+Several numeric methods have been proposed to solve this equation. In this package, two methods are implemented : the Euler algorithm, and the Second Order Runge Kutta algorithm.
 
 \subsection{Euler integrator}
 
@@ -87,9 +87,17 @@ This algorithm approximates the point computation by this formula $$p_{k+1} = p_
 \end{ccHtmlOnly}
 \end{figure}
 
-This method introduce an intermediate point \ccc{p'} to have more precision in the computation (see~figure~\ref{runge_kutta_fig})
+This method introduces an intermediate point \ccc{p'} to have more precision in the computation (see~figure~\ref{runge_kutta_fig})
 
-$$\{ \begin{array}{ccc} p`_k & = & p_k + \frac{1}{2}hv(p_k) \\ p_{k+1} & = & p_k + hv(p`_k) \end{array}$$
+% $$\{ \begin{array}{ccc} \\  \end{array}$$
+
+$$
+\left\{ \begin{array}{ccccc}
+    p'_k    & = & p_k & + & \frac{1}{2}hv(p_k) \\
+    p_{k+1} & = & p_k & + & hv(p'_k)        \\
+   \end{array}
+\right.
+$$
 
 See~\cite{cgal:ptvf-nrcpp-02} for further information.
 
@@ -98,7 +106,7 @@ See~\cite{cgal:ptvf-nrcpp-02} for further information.
 \label{Section_2D_Streamlines_Strategy}
 The algorithm implemented in this package~\cite{cgal:mad-fpsep-05} consists of
 placing one streamline at
-a time by numerical integration starting at the furthest away from all
+a time by numerical integration starting at the farthest away from all
 previously placed streamlines.\\The input of our algorithm is given by
 (i) a flow field, (ii) a \textit{density} specified either globally, by the
 inverse of the ideal spacing distance, or locally by a density field, and (iii)
