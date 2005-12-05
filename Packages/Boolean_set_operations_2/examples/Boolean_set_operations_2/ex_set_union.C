@@ -39,7 +39,7 @@ int main(int argc, char * argv[])
   unsigned int circles_num = 8;
   if (argc > 1) circles_num = atoi(argv[1]);
 
-  double circles_num_reciep = 1 / circles_num;
+  double circles_num_reciep = 1 / static_cast<double>(circles_num);
   double radius = 1;
   double frac = 2 * pi * circles_num_reciep;
   std::list<Polygon> polygons;
