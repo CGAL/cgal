@@ -21,10 +21,9 @@
 The concept \ccRefName\ describes the set of requirements to be
 fulfilled by any function object used to instantiate the second
 template parameter of the class
-\ccc{Stream_lines_2<VectorField_2,Integrator_2>}.  This concept provides
-the operation that integrates a new point from a given point with a
-predefined step, and according to a specified vector.
-
+\ccc{Stream_lines_2<VectorField_2,Integrator_2>}.  This concept
+provides the operation that integrates a new point from a given point
+with a predefined step, and according to a specified vector.
 
 \ccTypes
 \ccNestedType{FT}{The scalar type.}
@@ -43,7 +42,7 @@ predefined step, and according to a specified vector.
 
 \ccOperations
 {}
-The following operations return the new integrated point.
+The following operations return the newly integrated point.
 \ccMemberFunction{Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2);}
 {\ccPrecond \ccc{vector_field_2.is_in_domain(p)} must be true.}
 \ccGlue

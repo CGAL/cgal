@@ -20,8 +20,10 @@
   
 The template parameter \ccc{StreamLinesTraits_2} has to be
 instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
-This class provides a 2D vector field specified by a set of sample points defined on a regular
-grid, with a bilinear interpolation scheme over its cells (i.e. for each point \ccc{p} in a cell \ccc{c}, the vector value is interpolated from the vertices of \ccc{c}).
+This class provides a 2D vector field specified by a set of sample
+points defined on a regular grid, with a bilinear interpolation scheme
+over its cells (i.e. for each point \ccc{p} in a cell \ccc{c}, the
+vector value is interpolated from the vertices of \ccc{c}).
 
 \ccCreation
 \ccCreationVariable{rgrid}  %% choose variable name
@@ -32,11 +34,14 @@ grid, with a bilinear interpolation scheme over its cells (i.e. for each point \
 \ccThree{Regular_grid_2<StreamLinesTraits>}{r = Regular_grid_2 regular_grid_2}{}
 \ccThreeToTwo
 \ccConstructor{Regular_grid_2(int x_size, int y_size, int x_step, int y_step);}
-{Generate the regular grid \ccVar (the \ccc{x_size} and \ccc{y_size} parameters specify the size of the grid, while \ccc{x_step} and \ccc{y_step} parameters specify the sampling step on the grid).}
+{Generate the regular grid \ccVar (the \ccc{x_size} and \ccc{y_size}
+parameters specify the size of the grid, while \ccc{x_step} and
+\ccc{y_step} parameters specify the sampling step on the grid).}
 
 \ccHeading{Modifiers}
+
 In addition to the minimum interface required by the concept
-definition, the class \ccRefName  provides the following function to
+definition, the class \ccRefName provides the following function to
 fill the vector field with the user data.
 
 \ccMethod{void set_xy(int i, int j, FT x, FT y);}{Attribute the vector 
