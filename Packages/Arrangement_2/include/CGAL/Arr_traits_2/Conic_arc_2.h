@@ -691,12 +691,12 @@ public:
 	    if (k == 1)
 	    {
 	      dx = CGAL::to_double (xs[i] - app_source.x());
-	      dy = CGAL::to_double (ys[i] - app_source.y());
+	      dy = CGAL::to_double (ys[j] - app_source.y());
 	    }
 	    else
 	    {
 	      dx = CGAL::to_double (xs[i] - app_target.x());
-	      dy = CGAL::to_double (ys[i] - app_target.y());
+	      dy = CGAL::to_double (ys[j] - app_target.y());
 	    }
 
 	    curr_dist = dx*dx + dy*dy;
@@ -947,7 +947,12 @@ public:
    */
   void set_source (const Point_2& ps)
   {
+    CGAL_precondition (! is_full_conic());
     CGAL_precondition (_is_on_supporting_conic (ps));
+    CGAL_precondition (Alg_kernel().orientation_2_object()
+                       (_source, ps, _target) == _orient ||
+                       Alg_kernel().orientation_2_object()
+                       (ps, _source, _target) == _orient);
 
     _source = ps;
     return;
@@ -961,7 +966,12 @@ public:
    */
   void set_target (const Point_2& pt)
   {
+    CGAL_precondition (! is_full_conic());
     CGAL_precondition (_is_on_supporting_conic (pt));
+    CGAL_precondition (Alg_kernel().orientation_2_object()
+                       (_source, pt, _target) == _orient ||
+                       Alg_kernel().orientation_2_object()
+                       (_source, _target, pt) == _orient);
 
     _target = pt;
     return;
