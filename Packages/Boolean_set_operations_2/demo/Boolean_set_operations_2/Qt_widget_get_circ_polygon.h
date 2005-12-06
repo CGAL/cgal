@@ -338,6 +338,24 @@ namespace CGAL
 
            }
          }
+         else
+         {
+           // the polygon is empty. if m_first_time is false,
+           // erase the rubber segment and m_active becomes false
+           if(!m_first_time)
+           {
+            widget->lock();
+            RasterOp old_rasterop=widget->rasterOp();
+            widget->get_painter().setRasterOp(XorROP);
+            *widget << CGAL::WHITE;
+            *widget << Segment_2(m_rubber, m_last_of_poly);
+            widget->setRasterOp(old_rasterop);
+            widget->unlock();
+            m_first_time = true;
+            m_active = false;
+           }
+
+         }
         break;
     }//endswitch
   }//end keyPressEvent
