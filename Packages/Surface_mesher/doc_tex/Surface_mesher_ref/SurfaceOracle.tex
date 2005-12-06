@@ -1,0 +1,105 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceOracle.tex
+% +------------------------------------------------------------------------+
+% | 02.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfaceOracleRev}{$Revision$}
+\RCSdefDate{\RCSSurfaceOracleDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SurfaceOracle}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the required knowledge on the
+surface to be meshed.
+
+%\ccGeneralizes
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+
+\ccNestedType{Point}{The type of points. This type is required to be
+the type of points of the triangulation pointed to by the complex
+storing the mesh.}
+\ccNestedType{Segment}{The type of segments.}
+\ccNestedType{Ray}{The type of rays.}
+\ccNestedType{Line}{The type of lines.}
+
+
+
+\ccCreation
+\ccCreationVariable{surf}  %% choose variable name
+
+\ccConstructor{SurfaceOracle();}{default constructor.}
+
+\ccOperations
+
+
+\ccMethod{Object intersect_segment_surface(Segment s);}
+{ Returns an \ccc{Object}  which is an intersection \ccc{Point}
+between the surface and the segment \ccc{s} or
+a trivial \ccc{Object} if the intersection is empty.}
+\ccGlue
+\ccMethod{Object intersect_ray_surface(Ray r);}
+{ Returns an \ccc{Object}  which is an intersection \ccc{Point}
+between the surface and the ray \ccc{r} or
+a trivial \ccc{Object} if the intersection is empty.}
+\ccGlue
+\ccMethod{Object intersect_line_surface(Line r);}
+{ Returns an \ccc{Object}  which is an intersection \ccc{Point}
+between the surface and the line \ccc{l} or
+a trivial \ccc{Object} if the intersection is empty.}
+
+\ccMethod{template <class OutputIteratorPoints>
+OutputIteratorPoints
+initial_points(OutputIteratorPoints pts);}
+{Outpust a set of points on the surface.}
+\ccGlue
+\ccMethod{template <class OutputIteratorPoints>
+OutputIteratorPoints
+initial_points(OutputIteratorPoints pts, int n);}
+{Outpust a set of \ccc{n} points on the surface.}
+
+
+\ccHasModels
+
+\ccc{Implicit_surface_oracle<Gt>}
+
+
+%\ccSeeAlso
+
+%Some\_other\_concept,
+%\ccc{some_other_function}.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceOracle.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/SurfaceOracle.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
