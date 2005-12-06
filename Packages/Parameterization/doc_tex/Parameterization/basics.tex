@@ -20,23 +20,6 @@ parameterization, and using OpenNL sparse linear solver \cite{cgal:l-nmdgp-05}.
 
 The result is stored in the (u,v) fields of the mesh's vertices and/or halfedges.
 
-% Include floater.png/eps figure with title = "Floater Mean Value Coordinates parameterization"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/floater} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./floater.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-floater}
-
-        % Title
-        \caption{Floater Mean Value Coordinates}
-    \end{center}
-\end{figure}
-
 
 \subsection{Supported Meshes List and Concept}
 
@@ -95,11 +78,11 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>         
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                                         Parameterization_polyhedron_adaptor;
 
 // Defines the error codes
-typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor> 
+typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor>
                                                         Parameterizer;
 
 int main(int argc,char * argv[])

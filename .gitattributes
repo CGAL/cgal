@@ -1752,12 +1752,18 @@ Packages/Parameterization/doc_tex/Parameterization/LSCM.eps -text
 Packages/Parameterization/doc_tex/Parameterization/LSCM.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/authalic.eps -text
 Packages/Parameterization/doc_tex/Parameterization/authalic.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/conformal.eps -text
+Packages/Parameterization/doc_tex/Parameterization/conformal.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/floater.eps -text
 Packages/Parameterization/doc_tex/Parameterization/floater.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/introduction.eps -text
+Packages/Parameterization/doc_tex/Parameterization/introduction.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/parameterizer_class_diagram.eps -text
 Packages/Parameterization/doc_tex/Parameterization/parameterizer_class_diagram.png -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/parameterizers_class_hierarchy.eps -text
 Packages/Parameterization/doc_tex/Parameterization/parameterizers_class_hierarchy.png -text svneol=unset#unset
+Packages/Parameterization/doc_tex/Parameterization/uniform.eps -text
+Packages/Parameterization/doc_tex/Parameterization/uniform.png -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/grid512.bmp -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/holes.off -text
 Packages/Parameterization/examples/Parameterization/data/mannequin-devil.off -text
