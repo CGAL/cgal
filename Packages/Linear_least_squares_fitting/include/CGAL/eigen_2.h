@@ -24,32 +24,32 @@ void eigen_symmetric_2(typename K::FT *matrix, // a b c
   FT c = matrix[2];
   FT p = c*c - 2*a*c + 4*b*b + a*a;
   if(p == 0) // isotropic case
-    {
-      eigen_values.first = (FT)1;
-      eigen_values.second = (FT)1;
-      // any vector is eigen vector
-      eigen_vectors.first = Vector((FT)1,(FT)0);
-      eigen_vectors.second = Vector((FT)0,(FT)1);
-    }
+  {
+    eigen_values.first  = (FT)1;
+    eigen_values.second = (FT)1;
+    // any vector is eigen vector
+    eigen_vectors.first = Vector((FT)1,(FT)0);
+    eigen_vectors.second = Vector((FT)0,(FT)1);
+  }
   else
+  {
+    FT l1 = 0.5 * (-std::sqrt(p)+c+a);
+    FT l2 = 0.5 * (std::sqrt(p)+c+a);
+    if(l1 >= l2) // todo: handle case b = 0
     {
-      FT l1 = 0.5 * (-std::sqrt(p)+c+a);
-      FT l2 = 0.5 * (std::sqrt(p)+c+a);
-      if(l1 >= l2) // todo: check case where b = 0
-	{
-	  eigen_values.first = l1;
-	  eigen_values.second = l2;
-	  eigen_vectors.first = Vector((FT)1,-(std::sqrt(p)-c+a)/(b*2));
-	  eigen_vectors.second = Vector((FT)1,(std::sqrt(p)+c-a)/(b*2));
-	}
-      else
-	{
-	  eigen_values.first = l2;
-	  eigen_values.second = l1;
-	  eigen_vectors.first = Vector((FT)1,(std::sqrt(p)+c-a)/(b*2));
-	  eigen_vectors.second = Vector((FT)1,-(std::sqrt(p)-c+a)/(b*2));
-	}
+      eigen_values.first = l1;
+      eigen_values.second = l2;
+      eigen_vectors.first = Vector((FT)1,-(std::sqrt(p)-c+a)/(b*2));
+      eigen_vectors.second = Vector((FT)1,(std::sqrt(p)+c-a)/(b*2));
     }
+    else
+    {
+      eigen_values.first = l2;
+      eigen_values.second = l1;
+      eigen_vectors.first = Vector((FT)1,(std::sqrt(p)+c-a)/(b*2));
+      eigen_vectors.second = Vector((FT)1,-(std::sqrt(p)-c+a)/(b*2));
+    }
+  }
 }
 
 #endif // __EIGEN_2__
