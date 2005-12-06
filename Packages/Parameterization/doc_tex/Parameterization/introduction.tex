@@ -3,36 +3,39 @@
 Parameterizing a surface amounts to finding a one-to-one mapping from
 a suitable domain to the surface. A good mapping is the one which
 minimizes either angle distortions (conformal parameterization) or
-area distortions (equiareal parameterization) in some sense.
+area distortions (equiareal parameterization) in some sense.  In this
+package, we focus on parameterizing triangulated surfaces which are
+homeomorphic to a disk, and on piecewise linear mappings onto a planar
+domain.
 
-In this package, we focus on triangulated surfaces that are homeomorphic to a
-disk and on piecewise linear mappings into a planar domain.
+Although the main motivation behind the first parameterization methods
+was the application to texture mapping, it is now frequently used for
+mapping more sophisticated modulation signals (such as normal,
+transparency, reflection or light modulation maps), fitting scattered
+data, re-parameterizing spline surfaces, repairing CAD models,
+approximating surfaces and remeshing.
 
-Although
-the main motivation behind the first parameterization methods was the
-application to texture mapping, it is now frequently used for mapping
-more sophisticated modulation signals (such as normal, transparency,
-reflection or light modulation maps), fitting scattered data,
-re-parameterizing spline surfaces, repairing CAD models, approximating
-surfaces and remeshing.
+This \cgal\ package implements some of the state-of-the-art
+parameterization methods, such as Least Squares Conformal Maps,
+Discrete Conformal Map, Natural Conformal Map, Discrete Authalic
+Parameterization, Floater Mean Value Coordinates or Tutte Barycentric
+Mapping. These methods mainly distinguish by the distortion they
+minimize (angles vs areas), by the constrained boundary onto the
+planar domain (convex polygon vs free boundary) and by the guarantees
+provided in terms of bijective mapping.
 
-This \cgal\ package implements some of
-the state-of-the-art parameterization methods, such as
-Least Squares Conformal Maps, Discrete Conformal Map, Natural Conformal Map,
-Discrete Authalic Parameterization, Floater Mean Value Coordinates or
-Tutte Barycentric Mapping.
+The package proposes an interface with both the 2D Triangulation Data
+Structure enriched with 3D points and the Polyhedron.
 
-The package proposes
-an interface with both the 2D Triangulation Data Structure enriched
-with 3D points and the Polyhedron.
+Since parameterizing meshes require efficient representation of sparse
+matrices and efficient iterative or direct linear solvers, we provide
+an interface common to standard linear solver packages ({\sc Taucs},
+SuperLU) and propose a separate package devoted to OpenNL sparse
+linear solver.
 
-Since parameterizing meshes require
-efficient representation of sparse matrices and efficient iterative or
-direct linear solvers, we provide link to standard packages ({\sc Taucs}, SuperLU)
-and propose a separate package devoted to OpenNL sparse linear solver.
-
-Please note that linear solvers use doubles to represent numbers, thus this
-package is intended to be used with a \cgal\ cartesian kernel with doubles.
+Note that linear solvers commonly use double precision floating point
+numbers. This package is thus intended to be used with a \cgal\
+cartesian kernel with doubles.
 
 The intended audience of this package is researchers, developers or
 students developing algorithms around parameterization of triangle
