@@ -9,14 +9,15 @@ apparently assuming that there is only one possible concept...}
 
 \ccParameters
 
-The curved kernel is parameterized by a \ccc{BasicGeometricKernel} parameter
+The circular kernel is parameterized by a \ccc{BasicGeometricKernel} parameter
 (and derives from it), in order to reuse all needed functionalities on
 basic linear objects provided by one of the CGAL kernels. It also
 allows other implementations of these basic functionalities.
 
 The second parameter, \ccc{AlgebraicKernel}, is meant to provide the
-curved kernel with all the algebraic functionalities required for the
+circular kernel with all the algebraic functionalities required for the
 manipulation of algebraic curves. 
+It must be a model of concept \ccc{AlgebraicKernel_2_2}. 
 \footnote{default arguments?}
 
 \ccInheritsFrom
@@ -28,7 +29,7 @@ manipulation of algebraic curves.
 \ccThree{typedef Circular_arc_point_2<Circular-Kernel>}{Root_of_4xxx}{}
 \ccThreeToTwo
 
-The curved kernel takes its basic number types from the algebraic kernel. 
+The circular kernel takes its basic number types from the algebraic kernel. 
 \ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type RT.}
 \ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type FT.}
 In fact, the two number types \ccc{AlgebraicKernel::RT} and
@@ -37,7 +38,7 @@ In fact, the two number types \ccc{AlgebraicKernel::RT} and
 \footnote{how to avoid inconsistencies? a user might take an AK and a
 BGK with different RTs...}. 
 
-The types of \ccc{BasicGeometricKernel} are inherited by the curved kernel.
+The types of \ccc{BasicGeometricKernel} are inherited by the circular kernel.
 Some types are taken from the \ccc{AlgebraicKernel} parameter, and
 some types are defined by the \ccc{Circular_kernel} itself.
 
