@@ -464,8 +464,8 @@ public:
     // Return true if a vertex belongs to the UNIQUE mesh's main border,
     // ie the mesh's LONGEST border
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
-        return std::find(m_main_border.begin(), 
-                         m_main_border.end(), 
+        return std::find(m_main_border.begin(),
+                         m_main_border.end(),
                          (Vertex*)&*vertex) != m_main_border.end();
     }
 
@@ -811,7 +811,7 @@ private:
             nb++;
         }
 
-        std::cerr << "  " << nb << " border(ies) found" << std::endl;
+        std::cerr << "  " << nb << " border(s) found" << std::endl;
 
         return longest_border;
     }
@@ -864,7 +864,7 @@ private:
     // Utility class to generate the Vertex_around_facet_circulator type
     struct Project_halfedge_vertex {
         typedef Halfedge                            argument_type;
-        typedef Parameterization_polyhedron_adaptor_ex::Vertex  
+        typedef Parameterization_polyhedron_adaptor_ex::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
         typedef CGAL::Arity_tag<1>                  Arity;
@@ -881,7 +881,7 @@ private:
     // Utility class to generate the Border_vertex_iterator type
     struct Project_vertex_handle_vertex {
         typedef Vertex_handle                       argument_type;
-        typedef Parameterization_polyhedron_adaptor_ex::Vertex    
+        typedef Parameterization_polyhedron_adaptor_ex::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
         typedef CGAL::Arity_tag<1>                  Arity;
@@ -894,7 +894,7 @@ private:
     // This class is used to generate the Vertex_around_vertex_circulator type
     struct Project_opposite_halfedge_vertex {
         typedef Halfedge                            argument_type;
-        typedef Parameterization_polyhedron_adaptor_ex::Vertex    
+        typedef Parameterization_polyhedron_adaptor_ex::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
         typedef CGAL::Arity_tag<1>                  Arity;

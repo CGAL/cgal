@@ -104,7 +104,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
 int main(int argc,char * argv[])
 {
-    std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  circle border" << std::endl;
     std::cerr << "  OpenNL solver" << std::endl;
@@ -126,7 +126,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // read the mesh
+    // Read the mesh
     //***************************************
 
     fprintf(stderr, "\n  read file...%s...", input_filename);

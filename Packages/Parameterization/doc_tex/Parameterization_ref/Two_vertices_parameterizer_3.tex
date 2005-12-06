@@ -146,6 +146,7 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    // The mesh must be a topological disk
     Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
     Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());

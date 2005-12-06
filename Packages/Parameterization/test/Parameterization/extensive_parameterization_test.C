@@ -1,21 +1,4 @@
-// Copyright (c) 2005  INRIA (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $Source$
-// $Revision$
-// $Name$
-//
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// extensive_parameterization_test.C
 
 
 // ----------------------------------------------------------------------------
@@ -110,11 +93,12 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
     // Helper class to compute genus or extract borders
     typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor_ex>
                                             Mesh_feature_extractor;
-    typedef Mesh_feature_extractor::Border Border;
+    typedef Mesh_feature_extractor::Border  Border;
     typedef Mesh_cutter::Backbone           Backbone;
 
     Seam seam;              // returned list
 
+    // Get pointer to Polyhedron_3 mesh
     assert(mesh_adaptor != NULL);
     Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
     assert(mesh != NULL);
@@ -131,7 +115,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
         const Border* pBorder = feature_extractor.get_longest_border();
         seam = *pBorder;
     }
-    else // if mesh is NOT a topological disk
+    else // if mesh is NOT a topological disk, create a virtual cut
     {
         Backbone seamingBackbone;           // result of cutting
         Backbone::iterator he;
@@ -215,7 +199,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
 int main(int argc,char * argv[])
 {
-    std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "Test all parameterization methods and all solvers" << std::endl;
     std::cerr << "No output" << std::endl;
 

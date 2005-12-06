@@ -198,13 +198,13 @@ Packages/Parameterization/examples/Parameterization/*.kdev*
 Packages/Parameterization/examples/Parameterization/*.ncb
 Packages/Parameterization/examples/Parameterization/*.suo
 Packages/Parameterization/examples/Parameterization/*_extra.*
+Packages/Parameterization/examples/Parameterization/*_parameterization
+Packages/Parameterization/examples/Parameterization/Complete_parameterization_example
 Packages/Parameterization/examples/Parameterization/Debug
-Packages/Parameterization/examples/Parameterization/Polyhedron_parameterization?
 Packages/Parameterization/examples/Parameterization/ProgramOutput.*
 Packages/Parameterization/examples/Parameterization/Release
 Packages/Parameterization/examples/Parameterization/data/extras
 Packages/Parameterization/examples/Parameterization/error.txt
-Packages/Parameterization/examples/Parameterization/polyhedron_ex_parameterization
 Packages/Parameterization/examples/Parameterization/test
 Packages/Parameterization/test/Parameterization/*.kdev*
 Packages/Parameterization/test/Parameterization/*.ncb

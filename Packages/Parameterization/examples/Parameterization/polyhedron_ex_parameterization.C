@@ -1,21 +1,4 @@
-// Copyright (c) 2005  INRIA (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $Source$
-// $Revision$
-// $Name$
-//
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// polyhedron_ex_parameterization.C
 
 
 // ----------------------------------------------------------------------------
@@ -115,9 +98,9 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 // Private functions
 // ----------------------------------------------------------------------------
 
-// If the mesh is a topological disk, extract its longest border,
+// Cut the mesh to make it homeomorphic to a disk
 // or extract a region homeomorphic to a disc.
-// Return the border/seam (empty on error)
+// Return the border of this region (empty on error)
 //
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
@@ -388,7 +371,7 @@ where type is:   floater (default), conformal, natural, barycentric, authalic or
 
 int main(int argc,char * argv[])
 {
-    std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "PARAMETERIZATION" << std::endl;
 
     // options
     const char *type = "floater";       // default: Floater param
@@ -475,7 +458,7 @@ int main(int argc,char * argv[])
                                                                       : NULL;
 
     //***************************************
-    // read the mesh
+    // Read the mesh
     //***************************************
 
     fprintf(stderr, "\n  read file...%s...", input_filename);
@@ -502,16 +485,18 @@ int main(int argc,char * argv[])
     Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
     // The parameterization methods support only meshes that
-    // are topological disks => we need to compute a "cutting" of the mesh
-    // that makes it it homeomorphic to a disk
+    // are topological disks => we need to virtually "cut" the mesh
+    // to make it homeomorphic to a disk
+    //
+    // 1) Cut the mesh
     Seam seam = cut_mesh(&mesh_adaptor);
     if (seam.empty())
     {
         fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
         return EXIT_FAILURE;
     }
-
-    // Create adaptor that virtually "cuts" the mesh following the 'seam' path
+    //
+    // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
     Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
                                        seam.begin(),
                                        seam.end());
@@ -547,7 +532,7 @@ int main(int argc,char * argv[])
     }
 
     //***************************************
-    // output
+    // Output
     //***************************************
 
     // Save mesh

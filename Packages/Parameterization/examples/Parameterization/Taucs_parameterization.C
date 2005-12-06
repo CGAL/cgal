@@ -29,7 +29,7 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                                         Parameterization_polyhedron_adaptor;
 
 // Circular border parameterizer (the default)
@@ -134,7 +134,7 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
 
 int main(int argc,char * argv[])
 {
-    std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  circle border" << std::endl;
     std::cerr << "  TAUCS solver" << std::endl;
@@ -157,7 +157,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // read the mesh
+    // Read the mesh
     //***************************************
 
     fprintf(stderr, "\n  read file...%s...", input_filename);
@@ -194,7 +194,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // output
+    // Output
     //***************************************
 
     // Write Postscript file

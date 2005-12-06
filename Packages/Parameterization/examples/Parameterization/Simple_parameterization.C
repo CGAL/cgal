@@ -24,11 +24,11 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>         
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                                         Parameterization_polyhedron_adaptor;
 
 // Defines the error codes
-typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor> 
+typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor>
                                                         Parameterizer;
 
 
@@ -38,7 +38,7 @@ typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor>
 
 int main(int argc,char * argv[])
 {
-    std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  circle border" << std::endl;
     std::cerr << "  OpenNL solver" << std::endl;
@@ -59,7 +59,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // read the mesh
+    // Read the mesh
     //***************************************
 
     fprintf(stderr, "\n  read file...%s...", input_filename);
@@ -93,6 +93,25 @@ int main(int argc,char * argv[])
     if (err != Parameterizer::OK)
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 
+
+    //***************************************
+    // Output
+    //***************************************
+
+    if (err == Parameterizer::OK)
+    {
+        // Raw output: dump (u,v) pairs
+        Polyhedron::Vertex_const_iterator pVertex;
+        for (pVertex = mesh.vertices_begin();
+            pVertex != mesh.vertices_end();
+            pVertex++)
+        {
+            // (u,v) pair is stored in any halfedge
+            double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
+            double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
+            printf("(u,v) = (%lf,%lf)\n", u, v);
+        }
+    }
 
     fprintf(stderr, "\n");
 

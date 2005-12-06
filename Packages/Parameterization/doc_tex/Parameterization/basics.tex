@@ -77,7 +77,8 @@ class in \ccc{polyhedron_ex_parameterization.C} example.
 \subsection{Default Parameterization Example}
 
 The code below applies the default parameterization to a
-\ccc{Polyhedron_3} mesh:
+\ccc{Polyhedron_3} mesh (must be a topological disk).
+Eventually, it extracts the result from halfedges and prints it.
 
 \begin{ccExampleCode}
 
@@ -96,14 +97,33 @@ typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor>
 int main(int argc,char * argv[])
 {
     Polyhedron mesh;
+
+    // read the mesh
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    // The mesh must be a topological disk
     Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
     // Floater Mean Value Coordinates parameterization
     Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor);
-    ...
+    if (err != Parameterizer::OK)
+        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
+
+    if (err == Parameterizer::OK)
+    {
+        // Raw output: dump (u,v) pairs
+        Polyhedron::Vertex_const_iterator pVertex;
+        for (pVertex = mesh.vertices_begin();
+            pVertex != mesh.vertices_end();
+            pVertex++)
+        {
+            // (u,v) pair is stored in any halfedge
+            double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
+            double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
+            printf("(u,v) = (%lf,%lf)\n", u, v);
+        }
+    }
 }
 
 \end{ccExampleCode}

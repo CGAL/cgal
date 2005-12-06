@@ -193,7 +193,7 @@ static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
 
 int main(int argc,char * argv[])
 {
-    std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Discrete Authalic Parameterization" << std::endl;
     std::cerr << "  square border" << std::endl;
     std::cerr << "  TAUCS solver" << std::endl;
@@ -217,7 +217,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // read the mesh
+    // Read the mesh
     //***************************************
 
     fprintf(stderr, "\n  read file...%s...", input_filename);
@@ -255,6 +255,7 @@ int main(int argc,char * argv[])
                                        seam.begin(),
                                        seam.end());
 
+
     //***************************************
     // Discrete Authalic Parameterization
     // with square border.
@@ -267,7 +268,7 @@ int main(int argc,char * argv[])
 
 
     //***************************************
-    // output
+    // Output
     //***************************************
 
     // Write Wavefront OBJ file
