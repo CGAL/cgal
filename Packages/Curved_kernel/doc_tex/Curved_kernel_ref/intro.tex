@@ -1,13 +1,13 @@
-\chapter{Curved Kernel}
+\chapter{Circular Kernel}
 
 \textbf{Submission - Monique - with Sylvain's help...}
 
-\begin{ccAdvanced}
-I use the ``Advanced'' environment in this document to distinguish
-between my current submission to the CGAL editorial board and plans
-for the future, related to ACS. The ``Advanced'' parts will disappear
-if/when this is released. 
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%I use the ``Advanced'' environment in this document to distinguish
+%between my current submission to the CGAL editorial board and plans
+%for the future, related to ACS. The ``Advanced'' parts will disappear
+%if/when this is released. 
+%\end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Concepts}
@@ -22,9 +22,9 @@ written that way.}
 
 \ccRefConceptPage{BasicGeometricKernel}
 
-\begin{ccAdvanced}
-\ccRefConceptPage{ConicKernel_2}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccRefConceptPage{ConicKernel_2}
+%\end{ccAdvanced}
 
 	\subsubsection*{Functors} 
 
@@ -42,31 +42,26 @@ written that way.}
 
 \ccRefConceptPage{CircularKernel::GetEquation}\\
 
-\begin{ccAdvanced}
-\ccRefConceptPage{ConicKernel::CompareX_2}\\
-\ccRefConceptPage{ConicKernel::CompareY_2}\\
-\ccRefConceptPage{ConicKernel::CompareXY_2}
+%\begin{ccAdvanced}
+%\ccRefConceptPage{ConicKernel::CompareX_2}\\
+%\ccRefConceptPage{ConicKernel::CompareY_2}\\
+%\ccRefConceptPage{ConicKernel::CompareXY_2}
 
-\ccRefConceptPage{ConicKernel::ConstructConic_2}\\
-\ccRefConceptPage{ConicKernel::ConstructConicArc_2}\\
-\ccRefConceptPage{ConicKernel::ConstructConicArcPoint_2}
+%\ccRefConceptPage{ConicKernel::ConstructConic_2}\\
+%\ccRefConceptPage{ConicKernel::ConstructConicArc_2}\\
+%\ccRefConceptPage{ConicKernel::ConstructConicArcPoint_2}
 
-\ccRefConceptPage{ConicKernel::IsXMonotone_2}\\
-\ccRefConceptPage{ConicKernel::MakeXMonotone_2}\\
-\ccRefConceptPage{ConicKernel::Intersect_2}
+%\ccRefConceptPage{ConicKernel::IsXMonotone_2}\\
+%\ccRefConceptPage{ConicKernel::MakeXMonotone_2}\\
+%\ccRefConceptPage{ConicKernel::Intersect_2}
 
-\ccRefConceptPage{ConicKernel::GetEquation}
-\end{ccAdvanced}
+%\ccRefConceptPage{ConicKernel::GetEquation}
+%\end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Classes}
 
-\footnote{same big question here about concept/class for the
-kernel. the lazy stuff is a good reason to document the kernel as a
-concept. But again this does not help the reader...}
-
-\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
-\footnote{????????????? Circular\_kernel or Curved\_kernel ???????????????}
+\ccRefIdfierPage{CGAL::Circular_kernel<BasicGeometricKernel,AlgebraicKernel>}
 \\
 \ccRefIdfierPage{CGAL::Lazy_curved_kernel<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\
@@ -75,29 +70,29 @@ concept. But again this does not help the reader...}
 	\subsubsection*{Curves and Surfaces}
 \ccRefIdfierPage{CGAL::Circle_2<CircularKernel>}\\
 
-\begin{ccAdvanced}
-\ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
-\ccRefIdfierPage{CGAL::Ellipse_2<ConicKernel>}\footnote{useful for ETH? and for visibility package?}\\
-\ccRefIdfierPage{CGAL::Sphere_3<SphericalKernel>}\\
-\ccRefIdfierPage{CGAL::Quadric_3<QuadricKernel>}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
+%\ccRefIdfierPage{CGAL::Ellipse_2<ConicKernel>}\footnote{useful for ETH? and for visibility package?}\\
+%\ccRefIdfierPage{CGAL::Sphere_3<SphericalKernel>}\\
+%\ccRefIdfierPage{CGAL::Quadric_3<QuadricKernel>}
+%\end{ccAdvanced}
 
 	\subsubsection*{Arcs}
 \ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Line_arc_2<CircularKernel>}
 
-\begin{ccAdvanced}
-\ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}\\
-\ccRefIdfierPage{CGAL::Sphere_patch_3<SphericalKernel>}\\
-\ccRefIdfierPage{CGAL::Quadric_patch_3<SphericalKernel>}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}\\
+%\ccRefIdfierPage{CGAL::Sphere_patch_3<SphericalKernel>}\\
+%\ccRefIdfierPage{CGAL::Quadric_patch_3<SphericalKernel>}
+%\end{ccAdvanced}
 
 	\subsubsection*{Points}
 \ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}
 
-\begin{ccAdvanced}
-\ccRefIdfierPage{CGAL::Conic_arc_point_2<ConicKernel>}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccRefIdfierPage{CGAL::Conic_arc_point_2<ConicKernel>}
+%\end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Functions}
@@ -121,9 +116,9 @@ concept. But again this does not help the reader...}
 
 \ccRefIdfierPage{CGAL::Circular_arc_traits}
 
-\begin{ccAdvanced}
-\ccRefIdfierPage{CGAL::Conic_arc_traits}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccRefIdfierPage{CGAL::Conic_arc_traits}
+%\end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section*{Enums}
