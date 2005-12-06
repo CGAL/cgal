@@ -39,13 +39,13 @@ defined by the intersections has non-zero length.}}
 \ccMethod{CircularKernel::Circle_2 supporting_circle();}{}
 
 A circular arc is supposed to be oriented counterclockwise, from 
-\ccc{begin} to \ccc{end}. 
+\ccc{source} to \ccc{target}. 
 
-\ccMethod{CircularKernel::Circular_arc_point_2 begin();}{}
+\ccMethod{CircularKernel::Circular_arc_point_2 source();}{}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_point_2 end();}{}
+\ccMethod{CircularKernel::Circular_arc_point_2 target();}{}
 
-When the methods \ccc{begin} and \ccc{end} return the same point, then 
+When the methods \ccc{source} and \ccc{target} return the same point, then 
 the arc is in fact a full circle. \footnote{arcs of zero length are
 points, not arcs}
 
