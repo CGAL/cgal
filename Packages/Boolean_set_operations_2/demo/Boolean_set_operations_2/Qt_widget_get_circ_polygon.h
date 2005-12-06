@@ -297,10 +297,15 @@ namespace CGAL
              {
                Curve_iterator next = curr;
                ++next;
-               if(curr->has_same_supporting_curve(*next))
+               if(next == m_pgn.curves_end())
+               {
                  first = curr;
+               }
                else
-                 first = ++curr;
+                 if(curr->has_same_supporting_curve(*next))
+                   first = curr;
+                 else
+                   first = ++curr;
              }
              else
              {
