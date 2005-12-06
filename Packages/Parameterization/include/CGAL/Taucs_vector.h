@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Class Taucs_vector
+/// The class Taucs_vector
 /// is a C++ wrapper around TAUCS' vector type, which is a simple array.
 ///
 /// Concept: Model of the SparseLinearAlgebraTraits_d::Vector concept.
@@ -43,7 +43,7 @@ public:
 // Public operations
 public:
 
-    /// Create a vector initialized with zeros
+    /// Create a vector initialized with zeros.
     Taucs_vector(int dimension)
     {
         m_dimension = dimension;
@@ -54,7 +54,7 @@ public:
             m_element[i] = 0;
     }
 
-    /// Copy constructor
+    /// Copy constructor.
     Taucs_vector(const Taucs_vector& toCopy)
     {
         m_dimension = toCopy.m_dimension;
@@ -82,7 +82,7 @@ public:
         m_element = NULL;
     }
 
-    /// Return the vector's number of coefficients
+    /// Return the vector's number of coefficients.
     int dimension() const {
         return m_dimension;
     }
@@ -100,7 +100,7 @@ public:
         return m_element[i];
     }
 
-    /// Get TAUCS vector wrapped by this object
+    /// Get TAUCS vector wrapped by this object.
     const T* get_taucs_vector() const {
         return m_element;
     }
@@ -111,8 +111,8 @@ public:
 // Fields
 private:
 
-    int m_dimension;    ///< Vector size
-    T* m_element;       ///< Array of m_dimension T elements
+    int m_dimension;    ///< Vector size.
+    T* m_element;       ///< Array of m_dimension T elements.
 };
 
 

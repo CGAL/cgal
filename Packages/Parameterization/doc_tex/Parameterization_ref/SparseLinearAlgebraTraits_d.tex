@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The concept SparseLinearAlgebraTraits\_d is used to solve sparse linear systems "A$\ast$X = B".
+The concept SparseLinearAlgebraTraits\_d is used to solve sparse linear systems {\em A$\ast$X = B}.
 
 \begin{description}
 \item[Todo]Add to SparseLinearAlgebraTraits\_d the ability to solve linear systems in the least squares sense.\end{description}
@@ -48,28 +48,21 @@ This is a sub-concept of LinearAlgebraTraits\_d.
 \ccNestedType{Matrix}
 {
 }
+\ccGlue
 \ccNestedType{Vector}
 {
 }
+\ccGlue
 \ccNestedType{NT}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
 
-\ccConstants
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccConstants)
-
-None.
-
-%END-AUTO(\ccConstants)
-
-
 \ccCreation
-\ccCreationVariable{sparse_LA}  % variable name for \ccMethod
+\ccCreationVariable{sparse_LA}  %% variable name for \ccMethod
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -78,6 +71,7 @@ None.
 {
 Default constructor.
 }
+\ccGlue
 
 %END-AUTO(\ccCreation)
 
@@ -89,16 +83,18 @@ Default constructor.
 
 \ccMethod{bool linear_solver (const Matrix & A, const Vector & B, Vector & X, NT & D);}
 {
-Solve the sparse linear system "A$\ast$X = B". Return true on success. The solution is then (1/D) $\ast$ X.
+Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
 Preconditions:\begin{itemize}
-\item A.row\_dimension() == B.dimension()\item A.column\_dimension() == X.dimension() \end{itemize}
+\item A.row\_dimension() == B.dimension().\item A.column\_dimension() == X.dimension(). \end{itemize}
 }
+\ccGlue
 \ccMethod{bool is_solvable (const Matrix & A, const Vector & B);}
 {
 Indicate if the linear system can be solved and if the matrix conditioning is good.
 Preconditions:\begin{itemize}
-\item A.row\_dimension() == B.dimension() \end{itemize}
+\item A.row\_dimension() == B.dimension(). \end{itemize}
 }
+\ccGlue
 
 %END-AUTO(\ccOperations)
 
@@ -107,8 +103,8 @@ Preconditions:\begin{itemize}
 
 \ccRefIdfierPage{CGAL::Taucs_solver_traits}  \\
 \ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits}  \\
-OpenNL::DefaultLinearSolverTraits  \\
-OpenNL::SymmetricLinearSolverTraits  \\
+\ccc{OpenNL::DefaultLinearSolverTraits}  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
 
 
 \ccSeeAlso

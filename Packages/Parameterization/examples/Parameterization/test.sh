@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Utility script to run the surface parameterization example without knowing the executable name
-# Usage: test.sh parameterization-method boundary-parameterization solver output-format source-file-root
+# Usage: test.sh parameterization-method border-parameterization solver output-format source-file-root
 # Example: test.sh floater circle opennl obj sphere966 
 # Example: test.sh lscm 2pts taucs eps sphere966 
 

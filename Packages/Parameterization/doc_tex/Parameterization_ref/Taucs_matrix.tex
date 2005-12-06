@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Struct Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
+The class Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
 
 This kind of matrix can be either symmetric or not. Symmetric matrices store only the lower triangle.
 
@@ -53,8 +53,8 @@ The full template declaration is:
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-template$<$
-class T$>$ 
+template$<$  \\
+class T$>$   \\
 struct Taucs\_matrix;
 
 %END-AUTO(\ccParameters)
@@ -68,22 +68,13 @@ struct Taucs\_matrix;
 \ccNestedType{NT}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
 
-\ccConstants
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccConstants)
-
-None.
-
-%END-AUTO(\ccConstants)
-
-
 \ccCreation
-\ccCreationVariable{m}  % choose variable name for \ccMethod
+\ccCreationVariable{M}  %% choose variable name for \ccMethod
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -92,20 +83,24 @@ None.
 {
 Create a square matrix initialized with zeros.
 }
+\ccGlue
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[dim]Matrix dimension \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0) \end{description}
+\item[dim]Matrix dimension. \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0). \end{description}
 \end{description}
+\ccGlue
 \ccConstructor{Taucs_matrix (int rows, int columns, bool is_symmetric = false, int nb_max_elements = 0);}
 {
 Create a rectangular matrix initialized with zeros.
 }
+\ccGlue
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[rows]Matrix dimensions \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0) \end{description}
+\item[rows]Matrix dimensions. \item[is\_symmetric]Symmetric/hermitian? \item[nb\_max\_elements]Max number of non 0 elements in the matrix (automatically computed if 0). \end{description}
 \end{description}
+\ccGlue
 
 %END-AUTO(\ccCreation)
 
@@ -117,39 +112,46 @@ Create a rectangular matrix initialized with zeros.
 
 \ccMethod{int row_dimension () const;}
 {
-Return the matrix number of rows.
+Return the matrix' number of rows.
 }
+\ccGlue
 \ccMethod{int column_dimension () const;}
 {
-Return the matrix number of columns.
+Return the matrix' number of columns.
 }
+\ccGlue
 \ccMethod{T get_coef (int i, int j) const;}
 {
-Read access to 1 matrix coefficient
+Read access to 1 matrix coefficient.
 Preconditions:\begin{itemize}
-\item 0 $<$= i $<$ row\_dimension()\item 0 $<$= j $<$ column\_dimension() \end{itemize}
+\item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
 }
+\ccGlue
 \ccMethod{void set_coef (int i, int j, T val);}
 {
-Write access to 1 matrix coefficient: aij $<$- val
-Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle set\_coef() does nothing if (i,j) belongs to the upper triangle
+Write access to 1 matrix coefficient: a\_ij $<$- val.
+Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle set\_coef() does nothing if (i,j) belongs to the upper triangle.
 Preconditions:\begin{itemize}
-\item 0 $<$= i $<$ row\_dimension()\item 0 $<$= j $<$ column\_dimension() \end{itemize}
+\item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
 }
+\ccGlue
 \ccMethod{void add_coef (int i, int j, T val);}
 {
-Write access to 1 matrix coefficient: aij $<$- aij + val
-Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle add\_coef() does nothing if (i,j) belongs to the upper triangle
+Write access to 1 matrix coefficient: a\_ij $<$- a\_ij + val.
+Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle add\_coef() does nothing if (i,j) belongs to the upper triangle.
 Preconditions:\begin{itemize}
-\item 0 $<$= i $<$ row\_dimension()\item 0 $<$= j $<$ column\_dimension() \end{itemize}
+\item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
 }
+\ccGlue
 \ccMethod{const taucs_ccs_matrix* get_taucs_matrix () const;}
 {
 Get TAUCS matrix wrapped by this object.
 }
+\ccGlue
 \ccMethod{taucs_ccs_matrix* get_taucs_matrix ();}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccOperations)
 

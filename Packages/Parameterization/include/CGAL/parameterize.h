@@ -26,13 +26,13 @@
 #ifndef CGAL_PARAMETERIZE_H
 #define CGAL_PARAMETERIZE_H
 
-#include <CGAL/Mean_value_coordinates_parametizer_3.h>
+#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle,
-/// using Floater's mean value coordinates algorithm.
+/// using Floater Mean Value Coordinates algorithm.
 /// 1 to 1 mapping is guaranteed.
 ///
 /// The mapping is linear by pieces (linear in each triangle).
@@ -42,12 +42,12 @@ CGAL_BEGIN_NAMESPACE
 /// - 'mesh' must be a surface with 1 connected component.
 /// - 'mesh' must be a triangular mesh.
 ///
-template <class MeshAdaptor_3>
-typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
-parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
+template <class ParameterizationMesh_3>
+typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
+parameterize(ParameterizationMesh_3* mesh)  ///< 3D mesh, model of ParameterizationMesh_3 concept
 {
-    Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
-    return parametizer.parameterize(mesh);
+    Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3> parameterizer;
+    return parameterizer.parameterize(mesh);
 }
 
 
@@ -57,7 +57,7 @@ parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
 /// The result is the (u,v) pair image of each vertex of the 3D surface.
 ///
 /// 1 to 1 mapping may be guaranteed or not, depending of
-/// ParametizerTraits_3 algorithm chosen.
+/// ParameterizerTraits_3 algorithm chosen.
 ///
 /// Preconditions:
 /// - 'mesh' must be a surface with 1 connected component.
@@ -65,12 +65,12 @@ parameterize(MeshAdaptor_3* mesh)   ///< 3D mesh, model of MeshAdaptor_3 concept
 /// - the mesh border must be mapped onto a convex polygon
 /// (for fixed border parameterizations).
 ///
-template <class MeshAdaptor_3, class ParametizerTraits_3>
-typename Parametizer_traits_3<MeshAdaptor_3>::Error_code
-parameterize(MeshAdaptor_3* mesh,               ///< 3D mesh, model of MeshAdaptor_3
-             ParametizerTraits_3 parametizer)   ///< Parameterization method for 'mesh'
+template <class ParameterizationMesh_3, class ParameterizerTraits_3>
+typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
+parameterize(ParameterizationMesh_3* mesh,          ///< 3D mesh, model of ParameterizationMesh_3
+             ParameterizerTraits_3 parameterizer)   ///< Parameterization method for 'mesh'
 {
-    return parametizer.parameterize(mesh);
+    return parameterizer.parameterize(mesh);
 }
 
 

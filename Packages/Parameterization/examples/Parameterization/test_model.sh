@@ -7,7 +7,7 @@
 echo "                    ***********************************"
 date
 
-./test.sh uniform square opennl obj "$1"
+./test.sh barycentric square opennl obj "$1"
 ./test.sh floater circle taucs obj "$1"
 ./test.sh conformal circle taucs obj "$1"
 ./test.sh authalic square taucs obj "$1"

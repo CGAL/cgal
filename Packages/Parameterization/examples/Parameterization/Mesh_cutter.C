@@ -14,8 +14,7 @@
  ***************************************************************************/
 
 #include "short_names.h"                    // must be included first
-#include <CGAL/basic.h>                     // must be included second
-#include <CGAL/Cartesian.h>                 // must be included third
+#include <CGAL/Cartesian.h>
 
 #include "Mesh_cutter.h"
 
@@ -205,7 +204,7 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
         if(pFacet->tag() == DONE)
             continue;
 
-        // no boundary vertex
+        // no border vertex
         Polyhedron_ex::Vertex_handle pVertex = opposite->next()->vertex();
         if(m_pPolyhedron->is_border(pVertex))
             continue;

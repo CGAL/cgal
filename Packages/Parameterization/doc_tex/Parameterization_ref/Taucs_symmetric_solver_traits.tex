@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Class Taucs\_symmetric\_solver\_traits is a traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
+The class Taucs\_symmetric\_solver\_traits is a traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
 
 \begin{description}
 \item[Todo]Add to Taucs\_symmetric\_solver\_traits the ability to solve linear systems in the least squares sense.\end{description}
@@ -42,16 +42,6 @@ Model of the SparseLinearAlgebraTraits\_d concept.
 %END-AUTO(\ccIsModel)
 
 
-\ccHeading{Design pattern}
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccHeading\{Design pattern\})
-
-None.
-
-%END-AUTO(\ccHeading\{Design pattern\})
-
-
 \ccParameters
 
 The full template declaration is:
@@ -59,8 +49,8 @@ The full template declaration is:
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-template$<$
-class T$>$ 
+template$<$  \\
+class T$>$   \\
 class Taucs\_symmetric\_solver\_traits;
 
 %END-AUTO(\ccParameters)
@@ -74,28 +64,21 @@ class Taucs\_symmetric\_solver\_traits;
 \ccNestedType{Matrix}
 {
 }
+\ccGlue
 \ccNestedType{Vector}
 {
 }
+\ccGlue
 \ccNestedType{NT}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
 
-\ccConstants
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccConstants)
-
-None.
-
-%END-AUTO(\ccConstants)
-
-
 \ccCreation
-\ccCreationVariable{a}  % choose variable name for \ccMethod
+\ccCreationVariable{solver}  %% choose variable name for \ccMethod
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -104,11 +87,13 @@ None.
 {
 Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See taucs\_linsolve() documentation for the meaning of the 'options' and 'arguments' parameters. 
 }
+\ccGlue
 \begin{description}
 \item[Parameters: ]
 \begin{description}
 \item[options]must be persistent \item[arguments]must be persistent \end{description}
 \end{description}
+\ccGlue
 
 %END-AUTO(\ccCreation)
 
@@ -120,18 +105,21 @@ Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices. The
 
 \ccMethod{bool linear_solver (const Matrix & A, const Vector & B, Vector & X, NT & D);}
 {
-Solve the sparse linear system "A$\ast$X = B". Return true on success. The solution is then (1/D) $\ast$ X.
+Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
 Preconditions:\begin{itemize}
 \item A.row\_dimension() == B.dimension().\item A.column\_dimension() == X.dimension(). \end{itemize}
 }
+\ccGlue
 \ccMethod{bool is_solvable (const Matrix & A, const Vector & B);}
 {
 Indicate if the linear system can be solved and if the matrix conditioning is good.
 Preconditions:\begin{itemize}
 \item A.row\_dimension() == B.dimension().\end{itemize}
 }
+\ccGlue
 \begin{description}
-\item[Todo]Implement Taucs\_symmetric\_solver\_traits::is\_solvable() by solving the system, then checking that $|$ $|$$|$A$\ast$X$|$$|$/$|$$|$B$|$$|$ - 1 $|$ $<$ epsilon \end{description}
+\item[Todo]Implement Taucs\_symmetric\_solver\_traits::is\_solvable() by solving the system, then checking that $|$ $|$$|$A$\ast$X$|$$|$/$|$$|$B$|$$|$ - 1 $|$ $<$ epsilon. \end{description}
+\ccGlue
 
 %END-AUTO(\ccOperations)
 
@@ -142,8 +130,8 @@ Preconditions:\begin{itemize}
 \ccRefIdfierPage{CGAL::Taucs_matrix}  \\
 \ccRefIdfierPage{CGAL::Taucs_symmetric_matrix}  \\
 \ccRefIdfierPage{CGAL::Taucs_vector}  \\
-OpenNL::DefaultLinearSolverTraits  \\
-OpenNL::SymmetricLinearSolverTraits  \\
+\ccc{OpenNL::DefaultLinearSolverTraits}  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
 
 
 \ccExample

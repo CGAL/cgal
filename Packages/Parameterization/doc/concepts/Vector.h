@@ -18,8 +18,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// Concept SparseLinearAlgebraTraits_d::Vector
-/// is a concept of a vector that can be multiplied by a sparse matrix. 
+/// SparseLinearAlgebraTraits_d::Vector
+/// is a concept of a vector that can be multiplied by a sparse matrix.
 ///
 /// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Vector.
 ///
@@ -37,7 +37,7 @@ public:
 // Public operations
 public:
 
-    /// Create a vector initialized with zeros
+    /// Create a vector initialized with zeros.
     Vector (int rows);
 
     /// Copy constructor
@@ -46,7 +46,7 @@ public:
     /// operator =()
     Vector& operator=(const Vector& toCopy);
 
-    /// Return the vector's number of coefficients
+    /// Return the vector's number of coefficients.
     int  dimension () const;
 
     /// Read/write access to 1 vector coefficient.

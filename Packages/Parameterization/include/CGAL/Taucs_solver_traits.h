@@ -27,10 +27,14 @@
 #include <cassert>
 #include <stdio.h>
 
+#ifdef WIN32
+    #include <Windows.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 
-/// Class Taucs_symmetric_solver_traits
+/// The class Taucs_symmetric_solver_traits
 /// is a traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems
 /// using TAUCS solvers family.
 /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
@@ -62,6 +66,14 @@ public:
                     const char*  options[]   = NULL,  ///< must be persistent
 		    const void*  arguments[] = NULL)  ///< must be persistent
     {
+#if _WIN32_WINNT >= 0x0400
+        // Trick to be prompted by VisualC++ debugger when an assertion
+        // fails even though we use NON debug runtime libraries
+        // (the only ones compatible with TAUCS)
+        if (IsDebuggerPresent())
+            _set_error_mode(_OUT_TO_MSGBOX);
+#endif
+
         static const char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
                                                  "taucs.factor.mf=true",
                                                  "taucs.factor.ordering=metis",
@@ -147,7 +159,7 @@ public:
     /// - A.row_dimension() == B.dimension().
     ///
     /// @todo Implement Taucs_symmetric_solver_traits::is_solvable() by solving the system,
-    /// then checking that | ||A*X||/||B|| - 1 | < epsilon
+    /// then checking that | ||A*X||/||B|| - 1 | < epsilon.
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in TAUCS => we do only basic checking
@@ -159,7 +171,7 @@ public:
 
 private:
 
-    /// Test if a floating point number is (close to) 0.0
+    /// Test if a floating point number is (close to) 0.0.
     static inline bool IsZero(NT a)
     {
         return (CGAL_CLIB_STD::fabs(a) < 10.0 * std::numeric_limits<NT>::min());
@@ -172,7 +184,7 @@ private:
 };
 
 
-/// Class Taucs_solver_traits
+/// The class Taucs_solver_traits
 /// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
 /// using TAUCS out-of-core LU factorization.
 ///
@@ -191,6 +203,18 @@ public:
 
 // Public operations
 public:
+
+    /// Create a TAUCS sparse linear solver for GENERAL (aka unsymmetric) matrices.
+    Taucs_solver_traits()
+    {
+#if _WIN32_WINNT >= 0x0400
+        // Trick to be prompted by VisualC++ debugger when an assertion
+        // fails even though we use NON debug runtime libraries
+        // (the only ones compatible with TAUCS)
+        if (IsDebuggerPresent())
+            _set_error_mode(_OUT_TO_MSGBOX);
+#endif
+    }
 
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
@@ -307,7 +331,7 @@ public:
     /// - A.row_dimension() == B.dimension().
     ///
     /// @todo Implement Taucs_solver_traits::is_solvable() by solving the system,
-    /// then checking that | ||A*X||/||B|| - 1 | < epsilon
+    /// then checking that | ||A*X||/||B|| - 1 | < epsilon.
     bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in TAUCS => we do only basic checking
@@ -319,7 +343,7 @@ public:
 
 private:
 
-    /// Test if a floating point number is (close to) 0.0
+    /// Test if a floating point number is (close to) 0.0.
     static inline bool IsZero(NT a)
     {
         return (CGAL_CLIB_STD::fabs(a) < 10.0 * std::numeric_limits<NT>::min());

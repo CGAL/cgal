@@ -1,15 +1,18 @@
 \section{Output}
 
 Parameterizations store the result in the (u,v) fields of the input mesh's vertices
-and/or halfedges. The package user must traverse the mesh to get the output.
+and halfedges: a (u,v) pair per inner vertex and a (u,v) pair per border halfedge.
+The package user must traverse the mesh to get the output.
 
-Note: (u,v) fields do not exist in the standard Polyhedron and TDS, thus
+Note: (u,v) fields do not exist in CGAL \ccc{Polyhedron_3} and
+\ccc{Triangulation_data_structure_2}, thus
 the output traversal is specific to the way the (u,v) fields are implemented.
 
 \subsection{EPS Output Example}
 
 The code below gets the (u,v) fields computed by a parameterization method
-in a Polyhedron\_3 mesh with a Mesh\_adaptor\_polyhedron\_3 adaptor:
+in a \ccc{Polyhedron_3} mesh with a \ccc{Parameterization_polyhedron_adaptor_3} adaptor.
+Note that \ccc{Parameterization_polyhedron_adaptor_3} stores (u,v) pairs in halfedges (inner and border).
 
 \begin{ccExampleCode}
 
@@ -18,11 +21,12 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
+                                                        Parameterization_polyhedron_adaptor;
 ...
 
 // Dump parameterized mesh to an eps file
-static bool write_file_eps(const Mesh_adaptor_polyhedron& mesh_adaptor,
+static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adaptor,
                            const char *pFilename,
                            double scale = 500.0)
 {
@@ -32,7 +36,7 @@ static bool write_file_eps(const Mesh_adaptor_polyhedron& mesh_adaptor,
     FILE *pFile = fopen(pFilename,"wt");
     ...
 
-    // for each halfedge
+    // Get (u,v) pair of each halfedge (either inner or border)
     for (pHalfedge = mesh->halfedges_begin();
          pHalfedge != mesh->halfedges_end();
          pHalfedge++)
@@ -54,7 +58,7 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
     // Parameterization
     ...
@@ -65,4 +69,4 @@ int main(int argc,char * argv[])
 
 \end{ccExampleCode}
 
-See the complete code in Polyhedron\_parameterization4.C example.
+See the complete code in \ccc{Taucs_parameterization.C} example.

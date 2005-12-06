@@ -43,14 +43,14 @@ public:
     /// Return true on success. The solution is then (1/D) * X.
     ///
     /// Preconditions:
-    /// - A.row_dimension()    == B.dimension()
-    /// - A.column_dimension() == X.dimension()
+    /// - A.row_dimension() == B.dimension().
+    /// - A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D);
 
     /// Indicate if the linear system can be solved and if the matrix conditioning is good.
     ///
     /// Preconditions:
-    /// - A.row_dimension() == B.dimension()
+    /// - A.row_dimension() == B.dimension().
     bool is_solvable (const Matrix& A, const Vector& B);
 };
 

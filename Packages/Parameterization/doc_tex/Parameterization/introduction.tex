@@ -18,8 +18,9 @@ surfaces and remeshing.
 
 This \cgal\ package implements some of
 the state-of-the-art parameterization methods, such as
-Least Square Conformal Maps, fixed or free boundary conformal maps,
-Authalic, Floater Mean value coordinates or Tutte uniform weights.
+Least Squares Conformal Maps, Discrete Conformal Map, Natural Conformal Map,
+Discrete Authalic Parameterization, Floater Mean Value Coordinates or
+Tutte Barycentric Mapping.
 
 The package proposes
 an interface with both the 2D Triangulation Data Structure enriched
@@ -27,15 +28,18 @@ with 3D points and the Polyhedron.
 
 Since parameterizing meshes require
 efficient representation of sparse matrices and efficient iterative or
-direct linear solvers, we provide link to standard packages (TAUCS, SuperLU)
-and propose a separate package devoted to OpenNL sparse linear solver (Levy).
+direct linear solvers, we provide link to standard packages ({\sc Taucs}, SuperLU)
+and propose a separate package devoted to OpenNL sparse linear solver.
+
+Please note that linear solvers use doubles to represent numbers, thus this
+package is intended to be used with a \cgal\ cartesian kernel with doubles.
 
 The intended audience of this package is researchers, developers or
 students developing algorithms around parameterization of triangle
 meshes for geometry processing as well as for signal mapping on
 triangulated surfaces.
 
-% Include LSCM.png/eps figure with title = "LSCM parameterization"
+% Include LSCM.png/eps figure with title = "Least Squares Conformal Maps parameterization"
 \begin{figure}[bht]
     \begin{center}
         % Image
@@ -48,7 +52,7 @@ triangulated surfaces.
         \label{parameterization-fig-LSCM}
 
         % Title
-        \caption{LSCM parameterization}
+        \caption{Least Squares Conformal Maps parameterization}
     \end{center}
 \end{figure}
 

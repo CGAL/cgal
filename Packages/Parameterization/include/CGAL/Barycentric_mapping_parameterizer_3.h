@@ -1,0 +1,171 @@
+// Copyright (c) 2005  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$
+// $Name$
+//
+// Author(s)     : Laurent Saboret, Pierre Alliez
+
+
+#ifndef CGAL_BARYCENTRIC_MAPPING_PARAMETERIZER_3_H
+#define CGAL_BARYCENTRIC_MAPPING_PARAMETERIZER_3_H
+
+#include <CGAL/Fixed_border_parameterizer_3.h>
+#include <CGAL/parameterization_assertions.h>
+
+CGAL_BEGIN_NAMESPACE
+
+
+/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm [FH05].
+/// This algorithm is also called "Tutte Uniform Weights" by other authors.
+///
+/// 1 to 1 mapping is guaranteed if the surface's border is mapped to a convex polygon.
+///
+/// As all parameterization algorithms of the package, this class
+/// is usually called via the global function parameterize().
+///
+/// This class is a Strategy [GHJV95] called by the main
+/// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
+/// Barycentric_mapping_parameterizer_3:
+/// - provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
+///   parameters that make sense.
+/// - implements compute_w_ij() to compute w_ij = (i,j) coefficient of matrix A
+///   for j neighbor vertex of i based on Tutte Barycentric Mapping method.
+/// - implements an optimized version of is_one_to_one_mapping().
+///
+/// Concept: Model of the ParameterizerTraits_3 concept.
+///
+/// Design Pattern:
+/// Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, ...> class is a
+/// Strategy [GHJV95]: it implements a strategy of surface parameterization
+/// for models of ParameterizationMesh_3.
+
+template
+<
+    class ParameterizationMesh_3,     ///< 3D surface mesh
+    class BorderParameterizer_3       ///< Strategy to parameterize the surface border
+                = Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
+    class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
+                = OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>
+                                      ///< Note: the sparse linear system is symmetric iff
+                                      ///< Fixed_border_parameterizer_3 removes fixed vertices.
+>
+class Barycentric_mapping_parameterizer_3
+    : public Fixed_border_parameterizer_3<ParameterizationMesh_3,
+                                        BorderParameterizer_3,
+                                        SparseLinearAlgebraTraits_d>
+{
+// Private types
+private:
+    /// Superclass
+    typedef Fixed_border_parameterizer_3<ParameterizationMesh_3,
+                                        BorderParameterizer_3,
+                                        SparseLinearAlgebraTraits_d>
+                                            Base;
+
+// Public types
+public:
+    // We have to repeat the types exported by superclass
+    /// @cond SKIP_IN_MANUAL
+    typedef typename Base::Error_code       Error_code;
+    typedef ParameterizationMesh_3          Adaptor;
+    typedef BorderParameterizer_3           Border_param;
+    typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+    /// @endcond
+
+// Private types
+private:
+    // Mesh_Adaptor_3 subtypes:
+    typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Facet         Facet;
+    typedef typename Adaptor::Facet_handle  Facet_handle;
+    typedef typename Adaptor::Facet_const_handle
+                                            Facet_const_handle;
+    typedef typename Adaptor::Facet_iterator Facet_iterator;
+    typedef typename Adaptor::Facet_const_iterator
+                                            Facet_const_iterator;
+    typedef typename Adaptor::Vertex        Vertex;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
+    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
+    typedef typename Adaptor::Vertex_const_iterator
+                                            Vertex_const_iterator;
+    typedef typename Adaptor::Border_vertex_iterator
+                                            Border_vertex_iterator;
+    typedef typename Adaptor::Border_vertex_const_iterator
+                                            Border_vertex_const_iterator;
+    typedef typename Adaptor::Vertex_around_facet_circulator
+                                            Vertex_around_facet_circulator;
+    typedef typename Adaptor::Vertex_around_facet_const_circulator
+                                            Vertex_around_facet_const_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_circulator
+                                            Vertex_around_vertex_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_const_circulator
+                                            Vertex_around_vertex_const_circulator;
+
+    // SparseLinearAlgebraTraits_d subtypes:
+    typedef typename Sparse_LA::Vector      Vector;
+    typedef typename Sparse_LA::Matrix      Matrix;
+
+// Public operations
+public:
+    /// Constructor
+    Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(),
+                                        ///< Object that maps the surface's border to 2D space.
+                                        Sparse_LA sparse_la = Sparse_LA())
+                                        ///< Traits object to access a sparse linear system.
+    :   Fixed_border_parameterizer_3<Adaptor,
+                                   Border_param,
+                                   Sparse_LA>(border_param, sparse_la)
+    {}
+
+    // Default copy constructor and operator =() are fine
+
+// Protected operations
+protected:
+    /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+    virtual NT compute_w_ij(const Adaptor& mesh,
+                            Vertex_const_handle main_vertex_v_i,
+                            Vertex_around_vertex_const_circulator neighbor_vertex_v_j)
+    {
+        /// Tutte Barycentric Mapping algorithm is the most simple one:
+        /// w_ij = 1 for j neighbor vertex of i.
+        return 1;
+    }
+
+    /// Check if 3D -> 2D mapping is 1 to 1.
+    virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
+                                         const Matrix& A,
+                                         const Vector& Bu,
+                                         const Vector& Bv)
+    {
+        /// Theorem: 1 to 1 mapping is guaranteed if all w_ij coefficients
+        ///          are > 0 (for j vertex neighbor of i) and if the surface
+        ///          border is mapped onto a 2D convex polygon.
+        /// All w_ij coefficients = 1 (for j vertex neighbor of i), thus mapping
+        /// is guaranteed if the surface border is mapped onto a 2D convex polygon.
+        return Base::get_border_parameterizer().is_border_convex ();
+    }
+};
+
+
+CGAL_END_NAMESPACE
+
+#endif //CGAL_BARYCENTRIC_MAPPING_PARAMETERIZER_3_H
+

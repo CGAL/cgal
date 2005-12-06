@@ -18,7 +18,7 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// Concept SparseLinearAlgebraTraits_d::Matrix
+/// SparseLinearAlgebraTraits_d::Matrix
 /// is a concept of a sparse matrix class.
 ///
 /// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
@@ -35,16 +35,16 @@ public:
 
 // Public operations
 public:
-    /// Create a square matrix initialized with zeros
+    /// Create a square matrix initialized with zeros.
     Matrix(int dimension);
 
-    /// Create a rectangular matrix initialized with zeros
+    /// Create a rectangular matrix initialized with zeros.
     Matrix (int rows, int columns);
 
-    /// Return the matrix number of rows
+    /// Return the matrix number of rows.
     int  row_dimension () const;
 
-    /// Return the matrix number of columns
+    /// Return the matrix number of columns.
     int  column_dimension () const;
 
     /// Read access to 1 matrix coefficient.
@@ -54,7 +54,7 @@ public:
     /// - 0 <= column < column_dimension().
     NT  get_coef (int row, int column) const;
 
-    /// Write access to 1 matrix coefficient: aij <- aij + val.
+    /// Write access to 1 matrix coefficient: a_ij <- a_ij + val.
     ///
     /// Preconditions:
     /// - 0 <= row < row_dimension().

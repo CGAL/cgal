@@ -6,8 +6,9 @@ surfaces that are homeomorphic to a disk and on piecewise linear mappings
 into a planar domain.
 
 This CGAL package implements some of the state-of-the-art parameterization
-methods, such as Least Square Conformal Maps, fixed or free boundary conformal
-maps, Authalic, Floater Mean value coordinates or Tutte uniform weights.
+methods, such as Least Squares Conformal Maps, Discrete Conformal Map, Natural Conformal Map,
+Discrete Authalic Parameterization, Floater Mean Value Coordinates or
+Tutte Barycentric Mapping.
 
 The package proposes an interface with both the 2D Triangulation Data Structure
 enriched with 3D points and the Polyhedron.

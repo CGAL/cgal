@@ -1,21 +1,26 @@
 \section{Sparse Linear Algebra}
 
+Since parameterizing meshes require
+efficient representation of sparse matrices and efficient iterative or
+direct linear solvers, we provide link to standard packages ({\sc Taucs}, SuperLU)
+and propose a separate package devoted to OpenNL sparse linear solver.
+
 \subsection{Solvers List and Concept}
 
 We provide an interface to several state-of-the-art
-sparse linear solvers, as models of the SparseLinearAlgebraTraits\_d concept:
+sparse linear solvers, as models of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
 \begin{itemize}
 
-\item OpenNL (Bruno L{\'e}vy) is shipped with \cgal. This is the default solver.
+\item OpenNL \cite{cgal:l-nmdgp-05} is shipped with \cgal. This is the default solver:
 
-OpenNL::DefaultLinearSolverTraits  \\
-OpenNL::SymmetricLinearSolverTraits  \\
+\ccc{OpenNL::DefaultLinearSolverTraits}  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
 
-\item TAUCS is a reference direct solver for sparse symmetric matrices.
+\item {\sc Taucs} is a reference direct solver for sparse symmetric matrices.
 
-\ccRefIdfierPage{CGAL::Taucs_solver_traits}  \\
-\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits}  \\
+\ccc{CGAL::Taucs_solver_traits}  \\
+\ccc{CGAL::Taucs_symmetric_solver_traits}  \\
 
 \item SuperLU is a reference direct solver for sparse unsymmetric matrices.
 
@@ -24,13 +29,13 @@ OpenNL::SymmetricLinearSolverTraits  \\
 \end{itemize}
 
 
-\subsection{TAUCS Solver Example}
+\subsection{{\sc Taucs} Solver Example}
 
-The code above uses the default sparse linear solver: OpenNL.
+The examples given so far use the default sparse linear solver: OpenNL.
 
 The code below applies the default parameterization method
-(Floater's mean value coordinates with a circular border),
-but specifically instantiates TAUCS solver:
+(Floater Mean Value Coordinates with a circular border),
+but specifically instantiates {\sc Taucs} solver:
 
 \begin{ccExampleCode}
 
@@ -39,20 +44,21 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
+                                                        Parameterization_polyhedron_adaptor;
 
-// Circular border parametizer (the default)
-typedef CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron>
-                                                        Border_parametizer;
+// Circular border parameterizer (the default)
+typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
+                                                        Border_parameterizer;
 // TAUCS solver
 typedef CGAL::Taucs_solver_traits<double>               Solver;
 
-// Floater's mean value coordinates parametizer (circular border)
+// Floater Mean Value Coordinates parameterizer (circular border)
 // with TAUCS solver
-typedef CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron,
-                                                   Border_parametizer,
+typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
+                                                   Border_parameterizer,
                                                    Solver>
-                                                        Parametizer;
+                                                        Parameterizer;
 
 int main(int argc,char * argv[])
 {
@@ -60,15 +66,15 @@ int main(int argc,char * argv[])
     ...
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
-    // Floater's mean value coordinates parametizer (circular border)
+    // Floater Mean Value Coordinates parameterizer (circular border)
     // with TAUCS solver
-    Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parametizer());
+    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
     ...
 }
 
 \end{ccExampleCode}
 
-See the complete code in Polyhedron\_parameterization4.C example.
+See the complete code in \ccc{Taucs_parameterization.C} example.
 

@@ -50,7 +50,7 @@ CGAL_BEGIN_NAMESPACE
 template<class T> struct Taucs_number;
 
 
-/// Struct Taucs_matrix
+/// The class Taucs_matrix
 /// is a C++ wrapper around TAUCS' matrix type taucs_ccs_matrix.
 ///
 /// This kind of matrix can be either symmetric or not. Symmetric
@@ -73,45 +73,45 @@ public:
 // Public operations
 public:
 
-    /// Create a square matrix initialized with zeros
-    Taucs_matrix(int  dim,                  ///< Matrix dimension
+    /// Create a square matrix initialized with zeros.
+    Taucs_matrix(int  dim,                  ///< Matrix dimension.
                  bool is_symmetric = false, ///< Symmetric/hermitian?
                  int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                            ///< matrix (automatically computed if 0)
+                                            ///< matrix (automatically computed if 0).
     {
         init(dim, dim, is_symmetric, nb_max_elements);
     }
 
-    /// Create a rectangular matrix initialized with zeros
-    Taucs_matrix(int  rows,                 ///< Matrix dimensions
+    /// Create a rectangular matrix initialized with zeros.
+    Taucs_matrix(int  rows,                 ///< Matrix dimensions.
                  int  columns,
                  bool is_symmetric = false, ///< Symmetric/hermitian?
                  int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                            ///< matrix (automatically computed if 0)
+                                            ///< matrix (automatically computed if 0).
     {
         init(rows, columns, is_symmetric, nb_max_elements);
     }
 
+    /// Delete TAUCS matrix wrapped by this object.
     ~Taucs_matrix() {
-        /// Delete TAUCS matrix wrapped by this object
         taucs_ccs_free(m_matrix);
         m_matrix = NULL;
     }
 
-    /// Return the matrix number of rows
+    /// Return the matrix' number of rows.
     inline int row_dimension() const    {
         return m_matrix->m;
     }
-    /// Return the matrix number of columns
+    /// Return the matrix' number of columns.
     inline int column_dimension() const {
         return m_matrix->n;
     }
 
-    /// Read access to 1 matrix coefficient
+    /// Read access to 1 matrix coefficient.
     ///
     /// Preconditions:
-    /// - 0 <= i < row_dimension()
-    /// - 0 <= j < column_dimension()
+    /// - 0 <= i < row_dimension().
+    /// - 0 <= j < column_dimension().
     T  get_coef (int i, int j) const
     {
         // For symmetric matrices, we store only the lower triangle
@@ -132,15 +132,15 @@ public:
         return (element == NULL) ? 0 : (*element);
     }
 
-    /// Write access to 1 matrix coefficient: aij <- val
+    /// Write access to 1 matrix coefficient: a_ij <- val.
     ///
     /// Optimization:
     /// For symmetric matrices, Taucs_matrix stores only the lower triangle
-    /// set_coef() does nothing if (i,j) belongs to the upper triangle
+    /// set_coef() does nothing if (i,j) belongs to the upper triangle.
     ///
     /// Preconditions:
-    /// - 0 <= i < row_dimension()
-    /// - 0 <= j < column_dimension()
+    /// - 0 <= i < row_dimension().
+    /// - 0 <= j < column_dimension().
     void set_coef(int i, int j, T  val)
     {
         if (m_matrix->flags & TAUCS_SYMMETRIC)
@@ -160,15 +160,15 @@ public:
         *element = val;                     // =
     }
 
-    /// Write access to 1 matrix coefficient: aij <- aij + val
+    /// Write access to 1 matrix coefficient: a_ij <- a_ij + val.
     ///
     /// Optimization:
     /// For symmetric matrices, Taucs_matrix stores only the lower triangle
-    /// add_coef() does nothing if (i,j) belongs to the upper triangle
+    /// add_coef() does nothing if (i,j) belongs to the upper triangle.
     ///
     /// Preconditions:
-    /// - 0 <= i < row_dimension()
-    /// - 0 <= j < column_dimension()
+    /// - 0 <= i < row_dimension().
+    /// - 0 <= j < column_dimension().
     void add_coef(int i, int j, T val)
     {
         if (m_matrix->flags & TAUCS_SYMMETRIC)
@@ -188,7 +188,7 @@ public:
         *element += val;                     // +=
     }
 
-    /// Get TAUCS matrix wrapped by this object
+    /// Get TAUCS matrix wrapped by this object.
     const taucs_ccs_matrix* get_taucs_matrix() const {
         return m_matrix;
     }
@@ -199,7 +199,7 @@ public:
 // Private operations
 private:
 
-    /// Create a matrix initialized with zeros
+    /// Create a matrix initialized with zeros.
     void init(int  rows,                    ///< Matrix dimensions
               int  columns,
               bool is_symmetric,            ///< Symmetric/hermitian?
@@ -249,12 +249,12 @@ private:
 
     /// Read/write access to 1 matrix coefficient:
     /// Get a pointer to a matrix element. Optionaly create it.
-    /// Return NULL if it doesn't exist (cannot happen if 'create' is true)
+    /// Return NULL if it doesn't exist (cannot happen if 'create' is true).
     ///
     /// Preconditions:
-    /// - 0 <= i < row_dimension()
-    /// - 0 <= j < column_dimension()
-    /// - j <= i for symmetric matrices (we store only the lower triangle)
+    /// - 0 <= i < row_dimension().
+    /// - 0 <= j < column_dimension().
+    /// - j <= i for symmetric matrices (we store only the lower triangle).
     T* find_element(int i, int j, bool create)
     {
         T* element = NULL;                          // returned value
@@ -323,15 +323,15 @@ private:
     /// Get a pointer to a matrix element. Return NULL if it doesn't exist.
     ///
     /// Preconditions:
-    /// - 0 <= i < row_dimension()
-    /// - 0 <= j < column_dimension()
-    /// - j <= i for symmetric matrices (we store only the lower triangle)
+    /// - 0 <= i < row_dimension().
+    /// - 0 <= j < column_dimension().
+    /// - j <= i for symmetric matrices (we store only the lower triangle).
     const T* find_element(int i, int j) const
     {
         return ((Taucs_matrix<T>*)this)->find_element(i, j, false);
     }
 
-    /// Taucs_matrix cannot be copied
+    /// Taucs_matrix cannot be copied.
     /// (for the moment, could be implemented if needed).
     Taucs_matrix(const Taucs_matrix& rhs);
     Taucs_matrix& operator=(const Taucs_matrix& rhs);
@@ -339,18 +339,17 @@ private:
 // Fields
 private:
 
-    /// The actual TAUCS matrix wrapped by this object
+    /// The actual TAUCS matrix wrapped by this object.
     taucs_ccs_matrix* m_matrix;
 
-    /// Current and max number of non null elements in m_matrix
+    /// Current and max number of non null elements in m_matrix.
     int m_nb_elements;
     int m_nb_max_elements;
 };
 
 
-/// Struct Taucs_symmetric_matrix
-/// is a C++ wrapper around a TAUCS *symmetric* matrix
-/// (type taucs_ccs_matrix).
+/// The class Taucs_symmetric_matrix is a C++ wrapper
+/// around a TAUCS *symmetric* matrix (type taucs_ccs_matrix).
 ///
 /// Symmetric matrices store only the lower triangle.
 ///
@@ -371,16 +370,16 @@ public:
 
     /// Create a square SYMMETRIC matrix initialized with zeros.
     /// The max number of non 0 elements in the matrix is automatically computed.
-    Taucs_symmetric_matrix(int  dim)                  ///< Matrix dimension
+    Taucs_symmetric_matrix(int  dim)                  ///< Matrix dimension.
         : Taucs_matrix<T>(dim, true)
     {
     }
 
-    /// Create a square SYMMETRIC matrix initialized with zeros
-    Taucs_symmetric_matrix(int  rows,                 ///< Matrix dimensions
+    /// Create a square SYMMETRIC matrix initialized with zeros.
+    Taucs_symmetric_matrix(int  rows,                 ///< Matrix dimensions.
                            int  columns,
                            int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                                      ///< matrix (automatically computed if 0)
+                                                      ///< matrix (automatically computed if 0).
         : Taucs_matrix<T>(rows, columns, true, nb_max_elements)
     {
     }

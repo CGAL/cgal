@@ -188,7 +188,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\include\Mesh_adaptor_polyhedron_ex.h">
+				RelativePath=".\include\Parameterization_polyhedron_adaptor_ex.h">
 			</File>
 			<File
 				RelativePath=".\include\Mesh_cutter.h">
@@ -207,10 +207,10 @@
 			Name="Parameterization package"
 			Filter="">
 			<File
-				RelativePath="..\..\include\Cgal\Barycentric_mapping_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Barycentric_mapping_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Circular_Border_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Circular_Border_parameterizer_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Convertible_circulator_project.h">
@@ -222,34 +222,34 @@
 				RelativePath="..\..\include\Cgal\Convertible_iterator_project.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Discrete_authalic_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Discrete_authalic_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Discrete_conformal_map_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Discrete_conformal_map_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Fixed_border_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Fixed_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\LSCM_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\LSCM_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mesh_adaptor_feature_extractor.h">
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_3.h">
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_circulators.h">
+				RelativePath="..\..\include\Cgal\Param_mesh_patch_circulators.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_iterators.h">
+				RelativePath="..\..\include\Cgal\Param_mesh_patch_iterators.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_vertex.h">
+				RelativePath="..\..\include\Cgal\Param_mesh_patch_vertex.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterize.h">
@@ -258,10 +258,10 @@
 				RelativePath="..\..\include\Cgal\parameterization_assertions.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parametizer_traits_3.h">
+				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Square_border_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Square_border_parameterizer_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Taucs_matrix.h">
@@ -273,7 +273,7 @@
 				RelativePath="..\..\include\Cgal\Taucs_vector.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Two_vertices_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Two_vertices_parameterizer_3.h">
 			</File>
 		</Filter>
 		<Filter

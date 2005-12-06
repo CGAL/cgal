@@ -41,23 +41,23 @@ LDFLAGS = \
 
 # General targets:
 
-all:      \
+all: \
           polyhedron_ex_parameterization$(EXE_EXT) \
-          Polyhedron_parameterization1$(EXE_EXT) \
-          Polyhedron_parameterization2$(EXE_EXT) \
-          Polyhedron_parameterization3$(EXE_EXT) \
-          Polyhedron_parameterization4$(EXE_EXT) \
-          Polyhedron_parameterization5$(EXE_EXT) \
-          Polyhedron_parameterization6$(EXE_EXT)
+          Simple_parameterization$(EXE_EXT) \
+          Authalic_parameterization$(EXE_EXT) \
+          Square_border_parameterization$(EXE_EXT) \
+          Taucs_parameterization$(EXE_EXT) \
+          Mesh_cutting_parameterization$(EXE_EXT) \
+          Complete_parameterization_example$(EXE_EXT)
 
-clean:    \
+clean: \
           polyhedron_ex_parameterization.clean \
-          Polyhedron_parameterization1.clean \
-          Polyhedron_parameterization2.clean \
-          Polyhedron_parameterization3.clean \
-          Polyhedron_parameterization4.clean \
-          Polyhedron_parameterization5.clean \
-          Polyhedron_parameterization6.clean
+          Simple_parameterization.clean \
+          Authalic_parameterization.clean \
+          Square_border_parameterization.clean \
+          Taucs_parameterization.clean \
+          Mesh_cutting_parameterization.clean \
+          Complete_parameterization_example.clean
 
 # polyhedron_ex_parameterization:
 
@@ -74,23 +74,23 @@ polyhedron_ex_parameterization.clean:
 
 # Tutorial:
 
-Polyhedron_parameterization1$(EXE_EXT): Polyhedron_parameterization1$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization1 Polyhedron_parameterization1$(OBJ_EXT) $(LDFLAGS)
+Simple_parameterization$(EXE_EXT): Simple_parameterization$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Simple_parameterization Simple_parameterization$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization2$(EXE_EXT): Polyhedron_parameterization2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization2 Polyhedron_parameterization2$(OBJ_EXT) $(LDFLAGS)
+Authalic_parameterization$(EXE_EXT): Authalic_parameterization$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Authalic_parameterization Authalic_parameterization$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization3$(EXE_EXT): Polyhedron_parameterization3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization3 Polyhedron_parameterization3$(OBJ_EXT) $(LDFLAGS)
+Square_border_parameterization$(EXE_EXT): Square_border_parameterization$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Square_border_parameterization Square_border_parameterization$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization4$(EXE_EXT): Polyhedron_parameterization4$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization4 Polyhedron_parameterization4$(OBJ_EXT) $(LDFLAGS)
+Taucs_parameterization$(EXE_EXT): Taucs_parameterization$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Taucs_parameterization Taucs_parameterization$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization5$(EXE_EXT): Polyhedron_parameterization5$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization5 Polyhedron_parameterization5$(OBJ_EXT) $(LDFLAGS)
+Mesh_cutting_parameterization$(EXE_EXT): Mesh_cutting_parameterization$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Mesh_cutting_parameterization Mesh_cutting_parameterization$(OBJ_EXT) $(LDFLAGS)
 
-Polyhedron_parameterization6$(EXE_EXT): Polyhedron_parameterization6$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization6 Polyhedron_parameterization6$(OBJ_EXT) $(LDFLAGS)
+Complete_parameterization_example$(EXE_EXT): Complete_parameterization_example$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Complete_parameterization_example Complete_parameterization_example$(OBJ_EXT) $(LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    suffix rules

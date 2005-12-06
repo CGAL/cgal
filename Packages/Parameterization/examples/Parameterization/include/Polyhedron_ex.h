@@ -18,11 +18,9 @@ email                : pierre.alliez@sophia.inria.fr
 #ifndef POLYHEDRON_EX_H_INCLUDED
 #define POLYHEDRON_EX_H_INCLUDED
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Cartesian.h>
 
 #include <algorithm>
 #include <vector>

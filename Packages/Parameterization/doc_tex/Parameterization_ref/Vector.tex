@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Concept SparseLinearAlgebraTraits\_d::Vector is a concept of a vector that can be multiplied by a sparse matrix.
+SparseLinearAlgebraTraits\_d::Vector is a concept of a vector that can be multiplied by a sparse matrix.
 
 %END-AUTO(\ccDefinition)
 
@@ -44,18 +44,9 @@ This is a sub-concept of LinearAlgebraTraits\_d::Vector.
 \ccNestedType{NT}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccTypes)
-
-
-\ccConstants
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccConstants)
-
-None.
-
-%END-AUTO(\ccConstants)
 
 
 \ccCreation
@@ -68,10 +59,12 @@ None.
 {
 Create a vector initialized with zeros.
 }
+\ccGlue
 \ccConstructor{Vector (const Vector & toCopy);}
 {
 Copy constructor.
 }
+\ccGlue
 
 %END-AUTO(\ccCreation)
 
@@ -85,18 +78,22 @@ Copy constructor.
 {
 operator =()
 }
+\ccGlue
 \ccMethod{int dimension () const;}
 {
 Return the vector's number of coefficients.
 }
+\ccGlue
 \ccMethod{NT operator[] (int row) const;}
 {
 Read/write access to 1 vector coefficient.
 Precondition: 0 $<$= row $<$ dimension().
 }
+\ccGlue
 \ccMethod{NT& operator[] (int row);}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccOperations)
 
@@ -104,7 +101,7 @@ Precondition: 0 $<$= row $<$ dimension().
 \ccHasModels
 
 \ccRefIdfierPage{CGAL::Taucs_vector}  \\
-OpenNL::FullVector  \\
+\ccc{OpenNL::FullVector}  \\
 
 
 \ccSeeAlso

@@ -23,8 +23,8 @@
 // ----------------------------------------------------------------------------
 
 //----------------------------------------------------------
-// conformal parameterization
-// circle boundary
+// Discrete Conformal Map parameterization
+// circle border
 // OpenNL solver
 // output is a eps map
 // input file is mesh.off
@@ -33,7 +33,7 @@
 
 //----------------------------------------------------------
 // floater parameterization
-// square boundary
+// square border
 // TAUCS solver
 // output is a eps map
 // input file is mesh.off
@@ -41,7 +41,7 @@
 // polyhedron_ex_parameterization -t floater -b square -s taucs -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
-// natural parameterization
+// Natural Conformal Map parameterization
 // no explicitly pinned vertices
 // OpenNL solver
 // output is a eps map
@@ -50,7 +50,7 @@
 // polyhedron_ex_parameterization -t natural -s opennl -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
-// LSCM parameterization
+// Least Squares Conformal Maps parameterization
 // 2 pinned vertices (automatically picked)
 // OpenNL solver
 // output is a .obj
@@ -60,20 +60,19 @@
 
 
 #include "short_names.h"                    // must be included first
-#include <CGAL/basic.h>                     // must be included second
-#include <CGAL/Cartesian.h>                 // must be included third
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/parameterize.h>
-#include <CGAL/Mesh_adaptor_patch_3.h>
-#include <CGAL/Circular_border_parametizer_3.h>
-#include <CGAL/Square_border_parametizer_3.h>
-#include <CGAL/Two_vertices_parametizer_3.h>
-#include <CGAL/Barycentric_mapping_parametizer_3.h>
-#include <CGAL/Discrete_conformal_map_parametizer_3.h>
-#include <CGAL/Discrete_authalic_parametizer_3.h>
-#include <CGAL/Mean_value_coordinates_parametizer_3.h>
-#include <CGAL/LSCM_parametizer_3.h>
-#include <CGAL/Mesh_adaptor_feature_extractor.h>
+#include <CGAL/Parameterization_mesh_patch_3.h>
+#include <CGAL/Circular_border_parameterizer_3.h>
+#include <CGAL/Square_border_parameterizer_3.h>
+#include <CGAL/Two_vertices_parameterizer_3.h>
+#include <CGAL/Barycentric_mapping_parameterizer_3.h>
+#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
+#include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/Parameterization_mesh_feature_extractor.h>
 
 #include <OpenNL/linear_solver.h>
 #ifdef CGAL_USE_TAUCS
@@ -83,7 +82,7 @@
 #include "options.h"
 #include "Polyhedron_ex.h"
 #include "Mesh_cutter.h"
-#include "Mesh_adaptor_polyhedron_ex.h"
+#include "Parameterization_polyhedron_adaptor_ex.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -92,9 +91,6 @@
 #include <ctype.h>
 #include <fstream>
 #include <cassert>
-#ifdef WIN32
-    #include <Windows.h>
-#endif
 
 
 // ----------------------------------------------------------------------------
@@ -103,33 +99,35 @@
 
 // Mesh true type and parameterization adaptors
 typedef Polyhedron_ex                                       Polyhedron;
-typedef Mesh_adaptor_polyhedron_ex                          Mesh_adaptor_polyhedron;
-typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
+typedef Parameterization_polyhedron_adaptor_ex              Parameterization_polyhedron_adaptor;
+typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
+                                                            Mesh_patch_polyhedron;
 
 // Defines the error codes
-typedef CGAL::Parametizer_traits_3<Mesh_patch_polyhedron>   Parametizer;
+typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
 
 // Type describing a border or seam as a vertex list
-typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
+typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>   
+                                                            Seam;
 
 
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
 
-// If the mesh is a topological disk, extract its longest boundary,
+// If the mesh is a topological disk, extract its longest border,
 // or extract a region homeomorphic to a disc.
 // Return the border/seam (empty on error)
 //
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
 // Developers using this package should implement a more robust cut algorithm!
-static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
+static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 {
-    // Helper class to compute genus or extract boundaries
-    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex>
+    // Helper class to compute genus or extract borders
+    typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor_ex>
                                             Mesh_feature_extractor;
-    typedef Mesh_feature_extractor::Boundary Boundary;
+    typedef Mesh_feature_extractor::Border  Border;
     typedef Mesh_cutter::Backbone           Backbone;
 
     Seam seam;              // returned list
@@ -139,17 +137,17 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
     Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
     assert(mesh != NULL);
 
-    // Extract mesh boundaries and compute genus
+    // Extract mesh borders and compute genus
     Mesh_feature_extractor feature_extractor(mesh_adaptor);
-    int nb_boundaries = feature_extractor.get_nb_boundaries();
+    int nb_borders = feature_extractor.get_nb_borders();
     int genus = feature_extractor.get_genus();
 
     // If mesh is a topological disk
-    if (genus == 0 && nb_boundaries > 0)
+    if (genus == 0 && nb_borders > 0)
     {
-        // Pick the longest boundary
-        const Boundary* pBoundary = feature_extractor.get_longest_boundary();
-        seam = *pBoundary;
+        // Pick the longest border
+        const Border* pBorder = feature_extractor.get_longest_border();
+        seam = *pBorder;
     }
     else // if mesh is NOT a topological disk, create a virtual cut
     {
@@ -161,8 +159,8 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
         Mesh_cutter cutter(mesh);
         if (genus == 0)
         {
-            // no boundary, we need to cut the mesh
-            assert (nb_boundaries == 0);
+            // no border, we need to cut the mesh
+            assert (nb_borders == 0);
             cutter.cut(&seamingBackbone);   // simple cut
         }
         else // genus > 0 -> cut the mesh
@@ -229,110 +227,110 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 }
 
 // Call appropriate parameterization method based on application parameters
-template<class MeshAdaptor_3,       // 3D surface
+template<class ParameterizationMesh_3,       // 3D surface
          class SparseLinearAlgebraTraits_d>
                                     // Traits class to solve a sparse linear system
-typename CGAL::Parametizer_traits_3<MeshAdaptor_3>::Error_code
-parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
+typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
+parameterize(ParameterizationMesh_3* mesh,   // Mesh parameterization adaptor
              const char *type,      // type of parameterization (see usage)
-             const char *boundary)  // type of boundary parameterization (see usage)
+             const char *border)    // type of border parameterization (see usage)
 {
-    typename CGAL::Parametizer_traits_3<MeshAdaptor_3>::Error_code err;
+    typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code err;
 
-    if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
+    if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Mean_value_coordinates_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
+            CGAL::Mean_value_coordinates_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Mean_value_coordinates_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Square_border_arc_length_parametizer_3<MeshAdaptor_3>,
+            CGAL::Mean_value_coordinates_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"uniform") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"barycentric") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Barycentric_mapping_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Circular_border_uniform_parametizer_3<MeshAdaptor_3>,
+            CGAL::Barycentric_mapping_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"uniform") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"barycentric") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Barycentric_mapping_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Square_border_uniform_parametizer_3<MeshAdaptor_3>,
+            CGAL::Barycentric_mapping_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Discrete_conformal_map_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
+            CGAL::Discrete_conformal_map_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Discrete_conformal_map_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Square_border_arc_length_parametizer_3<MeshAdaptor_3>,
+            CGAL::Discrete_conformal_map_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"circle") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Discrete_authalic_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
+            CGAL::Discrete_authalic_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"square") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::Discrete_authalic_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Square_border_arc_length_parametizer_3<MeshAdaptor_3>,
+            CGAL::Discrete_authalic_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"lscm") == 0) && (CGAL_CLIB_STD::strcmp(boundary,"2pts") == 0) )
+    else if ( (CGAL_CLIB_STD::strcmp(type,"lscm") == 0) && (CGAL_CLIB_STD::strcmp(border,"2pts") == 0) )
     {
         err = CGAL::parameterize(
             mesh,
-            CGAL::LSCM_parametizer_3<
-                MeshAdaptor_3,
-                CGAL::Two_vertices_parametizer_3<MeshAdaptor_3>,
+            CGAL::LSCM_parameterizer_3<
+                ParameterizationMesh_3,
+                CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else
     {
-        fprintf(stderr, "\nFATAL ERROR: invalid parameters combination %s + %s\n", type, boundary);
-        err = CGAL::Parametizer_traits_3<MeshAdaptor_3>::ERROR_WRONG_PARAMETER;
+        fprintf(stderr, "\nFATAL ERROR: invalid parameters combination %s + %s\n", type, border);
+        err = CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::ERROR_WRONG_PARAMETER;
     }
 
     return err;
@@ -353,17 +351,17 @@ static const char *  optv[] =
     //     '+' -- indicates that the option takes 1 or more arguments;
 
     "t:type <string>", // -t or --type
-    // -t    floater     -> mean value coordinates (default)
-    //       conformal   -> conformal
-    //       natural     -> free boundaries
-    //       uniform     -> weight = 1
-    //       authalic    -> weak area-preserving
+    // -t    floater     -> Floater Mean Value Coordinates (default)
+    //       conformal   -> Discrete Conformal Map
+    //       natural     -> Natural Conformal Map (free border)
+    //       barycentric -> Tutte Barycentric Mapping (weight = 1)
+    //       authalic    -> Discrete Authalic Parameterization (weak area-preserving)
     //       lscm        -> Least Squares Conformal Maps
 
 
-    "b:boundary <string>", // -b or --boundary (for fixed border param.)
-    // -b circle        -> map mesh boundary onto a circle
-    //    square        -> map mesh boundary onto a square
+    "b:border <string>", // -b or --border (for fixed border param.)
+    // -b circle        -> map mesh border onto a circle
+    //    square        -> map mesh border onto a square
 
     "s:solver <string>", // -s or --solver
     // -s opennl        -> OpenNL solver (GPL)
@@ -378,10 +376,10 @@ static const char *  optv[] =
 
 // Parameters description for usage
 static const char * usage = "off-input-file [output-file]\n\
-where type is:     floater (default), conformal, natural, uniform, authalic or lscm\n\
-      boundary is: circle (default) or square\n\
-      solver is:   opennl (default) or taucs\n\
-      output is:   eps or obj (default is no output)";
+where type is:   floater (default), conformal, natural, barycentric, authalic or lscm\n\
+      border is: circle (default) or square\n\
+      solver is: opennl (default) or taucs\n\
+      output is: eps or obj (default is no output)";
 
 
 // ----------------------------------------------------------------------------
@@ -390,19 +388,11 @@ where type is:     floater (default), conformal, natural, uniform, authalic or l
 
 int main(int argc,char * argv[])
 {
-#if _WIN32_WINNT >= 0x0400
-    // Trick to be prompted by VisualC++ debugger when an assertion
-    // fails even though we use NON debug runtime libraries
-    // (the only ones compatible with TAUCS)
-    if (IsDebuggerPresent())
-        _set_error_mode(_OUT_TO_MSGBOX);
-#endif
-
     std::cerr << "\nPARAMETERIZATION" << std::endl;
 
     // options
     const char *type = "floater";       // default: Floater param
-    const char *boundary = "circle";    // default: circular boundary param.
+    const char *border = "circle";      // default: circular border param.
     const char *solver = "opennl";      // default: OpenNL solver
     const char *output = "";            // default: no output
 
@@ -434,10 +424,10 @@ int main(int argc,char * argv[])
             std::cerr << "  " << "output: " << output << std::endl;
             break;
 
-        // boundary parameterization (for fixed border algorithms)
+        // border parameterization (for fixed border algorithms)
         case 'b' :
-            boundary = optarg;
-            std::cerr << "  " << boundary << " boundary" << std::endl;
+            border = optarg;
+            std::cerr << "  " << border << " border" << std::endl;
             break;
 
         // solver
@@ -509,7 +499,7 @@ int main(int argc,char * argv[])
     //***************************************
 
     // The parameterization package needs an adaptor to handle Polyhedron_ex meshes
-    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
@@ -530,30 +520,30 @@ int main(int argc,char * argv[])
     // switch parameterization
     //***************************************
 
-    Parametizer::Error_code err;
+    Parameterizer::Error_code err;
     if (CGAL_CLIB_STD::strcmp(solver,"opennl") == 0)
     {
         err = parameterize<Mesh_patch_polyhedron,
-                           OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, boundary);
-        if (err != Parametizer::OK)
+                           OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, border);
+        if (err != Parameterizer::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
     else if (CGAL_CLIB_STD::strcmp(solver,"taucs") == 0)
     {
 #ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
-                           CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, boundary);
-        if (err != Parametizer::OK)
+                           CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, border);
+        if (err != Parameterizer::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 #else
         fprintf(stderr, "\nFATAL ERROR: TAUCS is not installed\n");
-        err = Parametizer::ERROR_WRONG_PARAMETER;
+        err = Parameterizer::ERROR_WRONG_PARAMETER;
 #endif
     }
     else
     {
         fprintf(stderr, "\nFATAL ERROR: invalid solver parameter %s\n", solver);
-        err = Parametizer::ERROR_WRONG_PARAMETER;
+        err = Parameterizer::ERROR_WRONG_PARAMETER;
     }
 
     //***************************************
@@ -561,7 +551,7 @@ int main(int argc,char * argv[])
     //***************************************
 
     // Save mesh
-    if (err == Parametizer::OK)
+    if (err == Parameterizer::OK)
     {
         if(CGAL_CLIB_STD::strcmp(output,"") == 0)
         {
@@ -578,13 +568,13 @@ int main(int argc,char * argv[])
         else
         {
             fprintf(stderr, "\nFATAL ERROR: cannot write to file %s\n", output);
-            err = Parametizer::ERROR_WRONG_PARAMETER;
+            err = Parameterizer::ERROR_WRONG_PARAMETER;
         }
     }
 
     fprintf(stderr, "\n");
 
-    return (err == Parametizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 

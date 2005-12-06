@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Class Taucs\_vector is a C++ wrapper around TAUCS' vector type, which is a simple array.
+The class Taucs\_vector is a C++ wrapper around TAUCS' vector type, which is a simple array.
 
 %END-AUTO(\ccDefinition)
 
@@ -46,8 +46,8 @@ The full template declaration is:
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-template$<$
-class T$>$ 
+template$<$  \\
+class T$>$   \\
 class Taucs\_vector;
 
 %END-AUTO(\ccParameters)
@@ -61,22 +61,13 @@ class Taucs\_vector;
 \ccNestedType{NT}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
 
-\ccConstants
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccConstants)
-
-None.
-
-%END-AUTO(\ccConstants)
-
-
 \ccCreation
-\ccCreationVariable{a}  % choose variable name for \ccMethod
+\ccCreationVariable{v}  %% choose variable name for \ccMethod
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -85,10 +76,12 @@ None.
 {
 Create a vector initialized with zeros.
 }
+\ccGlue
 \ccConstructor{Taucs_vector (const Taucs_vector< T > & toCopy);}
 {
 Copy constructor.
 }
+\ccGlue
 
 %END-AUTO(\ccCreation)
 
@@ -102,25 +95,31 @@ Copy constructor.
 {
 operator =()
 }
+\ccGlue
 \ccMethod{int dimension () const;}
 {
 Return the vector's number of coefficients.
 }
+\ccGlue
 \ccMethod{T operator[] (int i) const;}
 {
 Read/write access to 1 vector coefficient.
 Preconditions: 0 $<$= i $<$ dimension().
 }
+\ccGlue
 \ccMethod{T& operator[] (int i);}
 {
 }
+\ccGlue
 \ccMethod{const T* get_taucs_vector () const;}
 {
 Get TAUCS vector wrapped by this object.
 }
+\ccGlue
 \ccMethod{T* get_taucs_vector ();}
 {
 }
+\ccGlue
 
 %END-AUTO(\ccOperations)
 
@@ -131,8 +130,8 @@ Get TAUCS vector wrapped by this object.
 \ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits}  \\
 \ccRefIdfierPage{CGAL::Taucs_matrix}  \\
 \ccRefIdfierPage{CGAL::Taucs_symmetric_matrix}  \\
-OpenNL::DefaultLinearSolverTraits  \\
-OpenNL::SymmetricLinearSolverTraits  \\
+\ccc{OpenNL::DefaultLinearSolverTraits}  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
 
 
 \ccExample
