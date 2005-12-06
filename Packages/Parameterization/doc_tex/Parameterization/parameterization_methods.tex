@@ -5,20 +5,24 @@ This package provides a second \ccc{parameterize()} entry point
 where the user can specify a parameterization method:
 
 \ccFunction{Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (ParameterizationMesh_3 * mesh, ParameterizerTraits_3 parameterizer);}
-{
-Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
-1 to 1 mapping may be guaranteed or not, depending of ParametizerTraits\_3 algorithm chosen.
+{ Compute a ont-to-one mapping from a 3D triangle surface 'mesh' to a
+simple 2D domain. The mapping is piecewise linear on the triangle
+mesh. The result is a pair (u,v) of parameter coordinates for each
+vertex of the input mesh.  One-to-one mapping may be guaranteed or
+not, depending on the chosen ParametizerTraits\_3 algorithm.
 Preconditions:\begin{itemize}
-\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon (for fixed border parameterizations).\end{itemize}
+\item 'mesh' must be a surface with one connected component.\item
+'mesh' must be a triangle mesh.\item the mesh boundary must be mapped onto a convex polygon (for fixed border parameterizations).\end{itemize}
 }
 
 
 This \cgal\ package implements some of the state-of-the-art surface
-parameterization methods that can be used as \ccc{ParameterizerTraits_3} parameter.
+parameterization methods which can be used as
+\ccc{ParameterizerTraits_3} parameter.
 
-This package provides also classic border parameterization methods
-that are used as traits classes modifying the behavior of
-\ccc{ParameterizerTraits_3} methods.
+This package also provides common parameterization methods for
+boundaries which are used as traits classes modifying the behavior of
+the \ccc{ParameterizerTraits_3} methods.
 
 
 \subsection{Fixed Border Surface Parameterizations}
@@ -30,16 +34,17 @@ set of constraints: two u,v coordinates for each vertex along the border.
 
 \ccc{CGAL::Barycentric_mapping_parameterizer_3}  \\
 
-The Barycentric Mapping parameterization, by Tutte \cite{cgal:fh-survey-05},
-is the most simple parameterization method. Each image point is forced to be
-the barycentre of its neighbours.
+The Barycentric Mapping parameterization method has been introduced by
+Tutte~\cite{cgal:fh-survey-05}. In parameter space, each vertex is
+placed at the barycenter of its neighbors. This amounts to solve one
+sparse linear solver for each set of parameter coordinates, with a
+\#vertices x \#vertices sparse matrix. A coefficient $(i,j)$ of the
+matrix is set to 1 for an edge linking the vertex $i$ to the vertex
+$j$, to the degree of . It is
 
-One-to-one mapping is guaranteed for a convex border.
-
-This method solves two \#vertices x \#vertices sparse linear systems. Coefficients
-are quickly computed (non diagonal coefficients are either 1 or 0). The matrix
-(the same for both systems) is symmetric definite positive, thus can be
-efficiently solved.
+Coefficients are quickly computed (non diagonal coefficients
+are either 1 or 0). The matrix (the same for both systems) is
+symmetric definite positive, thus can be efficiently solved.
 
 Tutte Barycentric Mapping is the fastest method, but results are not visually pretty.
 Usage is recommended when the caller wishes any one-to-one mapping and is
