@@ -21,7 +21,7 @@ int main()
   Runge_kutta_integrator runge_kutta_integrator;
 
   /*data.vec.cin is an ASCII file containing the vector field values*/  
-  std::ifstream infile("data/data.vec.cin", std::ios::in);
+  std::ifstream infile("data/vnoise.vec.cin", std::ios::in);
   double iXSize, iYSize;
   unsigned int x_samples, y_samples;
   iXSize = iYSize = 512;
