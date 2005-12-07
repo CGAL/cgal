@@ -11,9 +11,9 @@
 #include <list>
 #include <boost/variant.hpp>
 
-//Comment define JUJU_CAST to don't use static_cast<int>
-#define COEF_MULT 1000000
-#define CGAL_CAST_INT
+//Comment define CGAL_CAST_INT to don't use static_cast<int>
+#define COEF_MULT 100000
+//#define CGAL_CAST_INT
 namespace CGAL {
 
 
