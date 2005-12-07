@@ -18,8 +18,13 @@
 
 \ccDefinition
   
-The concept \ccRefName\ describes the required knowledge on the
-surface to be meshed.
+The concept \ccRefName\ describes the knowledge that is required on the
+surface to be meshed. Basically a model of \ccRefName
+implements an oracle that is able to tell if a segment
+(ray or line) intersects the surface or not
+and to compute the intersections
+points if any. The concept \ccRefName also include methods  to provide
+a small set of initial points on the surface.
 
 %\ccGeneralizes
 %ThisConcept \\
@@ -72,7 +77,7 @@ initial_points(OutputIteratorPoints pts, int n);}
 
 \ccHasModels
 
-\ccc{Implicit_surface_oracle<Gt>}
+\ccc{Implicit_surface_oracle<Func>}
 
 
 %\ccSeeAlso
