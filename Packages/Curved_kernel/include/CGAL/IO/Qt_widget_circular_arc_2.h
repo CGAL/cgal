@@ -1,5 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France) and
-//                     Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France) 
 // All rights reserved.
 //
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -8,7 +7,9 @@
 // 
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (CGAL - Effective Computational Geometry for Curves and Surfaces) 
+// (ECG - Effective Computational Geometry for Curves and Surfaces) 
+// and a STREP (FET Open) Project under Contract No  IST-006413 
+// (ACS -- Algorithms for Complex Shapes)
 
 // file : include/CGAL/IO/Qt_widget_circular_arc_2.h
 
