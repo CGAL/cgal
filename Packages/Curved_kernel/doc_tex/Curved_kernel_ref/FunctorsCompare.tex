@@ -76,3 +76,73 @@ An object \ccVar\ of this type must provide in addition:
 \ccRefIdfierPage{CGAL::compare_xy}
 
 \end{ccRefConcept}
+
+\begin{ccRefConcept}{CircularKernel::CompareYatX_2}
+
+\ccDefinition
+
+\ccCreationVariable{cmpyatx}
+
+An object \ccVar\ of this type must provide two operators that compare 
+a point $p$ and an arc $a$ on the vertical line passing through $p$.
+
+\ccMethod{Comparison_result operator()
+	(const CircularKernel::Circular_arc_point_2 &p,
+                const CircularKernel::Circular_arc_2 &a);}
+{}
+
+\ccMethod{Comparison_result operator()
+	(const CircularKernel::Circular_arc_point_2 &p,
+                const CircularKernel::Line_arc_2 &a);}
+{}
+
+\ccHasModels
+
+\ccc{Circular_kernel::Compare_y_at_x_2;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_y_at_x}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{CircularKernel::CompareYtoRight_2}
+
+\ccCreationVariable{cmpright}
+
+An object \ccVar\ of this type must provide operators that compare vertically 
+two arcs on the right side of a common point $p$:
+
+\ccMethod{Comparison_result operator()
+	(const Circular_arc_2 &a1,
+               const Circular_arc_2 &a2,
+               const Circular_arc_point_2 &p);}
+{}
+
+\ccMethod{Comparison_result operator()
+	(const Line_arc_2 &a1,
+               const Line_arc_2 &a2,
+               const Circular_arc_point_2 &p);}
+{}
+
+\ccMethod{Comparison_result operator()
+	(const Line_arc_2 &a1,
+               const Circular_arc_2 &a2,
+               const Circular_arc_point_2 &p);}
+{}
+
+\ccMethod{Comparison_result operator()
+	(const Circular_arc_2 &a1,
+               const Line_arc_2 &a2,
+               const Circular_arc_point_2 &p);}
+{}
+
+\ccHasModels
+
+\ccc{Circular_kernel::Compare_y_to_right_2;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_y_to_right}
+
+\end{ccRefConcept}
