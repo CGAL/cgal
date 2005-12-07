@@ -61,7 +61,7 @@ protected:
 	CGAL::Quadruple<Vertex_handle,Vertex_handle,Vertex_handle,Circle>                       Pq_element;
 	Pq_element                                                                              Biggest_circle;
 	FT distance(Point_2 p, Point_2 q){
-		return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));};
+		return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));}
 	int          ir;
 	int          il;
 	Pq_element   Pq_element_max_r;
@@ -121,7 +121,7 @@ public:
 	void print_stream_lines(std::ofstream & fw);
 	void print_stream_lines_eps(std::ofstream & fw);
 	std::list<Point_2> get_pq();
-	unsigned int number_of_lines(){return _number_of_lines;};
+	unsigned int number_of_lines(){return _number_of_lines;}
 	std::list< std::pair<Point_2, Point_2> > get_tr()
 	{
 		std::list< std::pair<Point_2, Point_2> > _list;
@@ -736,7 +736,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstrea
 			j = p.y() - min_y;
 				fw << i_prec << " " << j_prec << " " << i << " " << j << " L\n";
 			i_prec = i;
-			j_prec = j;}};
+			j_prec = j;}}
 	fw << "grestore\n";
 	fw << "showpage\n";
 	fw.close();}
@@ -760,7 +760,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(std::ofstream & 
 			Point_2 p = *begin_point_iterator;
 			i = p.x() - min_x;
 			j = p.y() - min_y;
-				fw << i << " " << j << "\n";}};
+				fw << i << " " << j << "\n";}}
 	fw.close();}
 
 template <class VectorField_2, class Integrator_2>

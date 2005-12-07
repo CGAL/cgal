@@ -64,7 +64,7 @@ template <class StreamLinesTraits_2>
 inline
 typename Regular_grid_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
 Regular_grid_2<StreamLinesTraits_2>::bbox() const{
-	return typename Geom_traits::Iso_rectangle_2(0.0, 0.0, domain_size_x, domain_size_y);};
+	return typename Geom_traits::Iso_rectangle_2(0.0, 0.0, domain_size_x, domain_size_y);}
 
 template <class StreamLinesTraits_2>
 inline int 
@@ -78,14 +78,6 @@ Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(const int & m, const int & n
   domain_size_x = x;
   domain_size_y = y;
   vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];}
-
-// template <class StreamLinesTraits_2>
-// Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(){
-//   number_of_samples_x = 0;
-//   number_of_samples_y = 0;
-//   domain_size_x = 0.0;
-//   domain_size_y = 0.0;
-//   vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];}
 
 template <class StreamLinesTraits_2>
 inline void

@@ -102,14 +102,14 @@ protected:
 protected:
 	mutable std::map<Point_2, Vector_2> field_map;
 	FT distance(const Point_2 & p, const Point_2 & q){
-		return sqrt(((p.x() - q.x()) * (p.x() - q.x())) + ((p.y() - q.y()) * (p.y() - q.y())));};
+		return sqrt(((p.x() - q.x()) * (p.x() - q.x())) + ((p.y() - q.y()) * (p.y() - q.y())));}
 };
 
 template <class StreamLinesTraits_2> 
 inline
 typename Triangular_field_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
 Triangular_field_2<StreamLinesTraits_2>::bbox() const{
-	return typename Geom_traits::Iso_rectangle_2(minx, miny, maxx, maxy);};
+	return typename Geom_traits::Iso_rectangle_2(minx, miny, maxx, maxy);}
 
 template <class StreamLinesTraits_2>
 bool 

@@ -78,7 +78,7 @@ Euler_integrator_2<Vector_field>::operator()
      v.x()*integration_step,
      v.y()*integration_step);
   return Point_2(p.x() + Euler_step.x(), p.y() + Euler_step.y());
-};
+}
 
 template <class Vector_field>
 inline typename Euler_integrator_2<Vector_field>::Point_2 
@@ -89,7 +89,7 @@ Euler_integrator_2<Vector_field>::operator()
   v = vector_field_2.get_field(p).first;
   Euler_integrator_2<Vector_field> euler_integrator(integration_step);
   return  euler_integrator(p, vector_field_2, integration_step, v, index);
-};
+}
 
 template <class Vector_field>
 inline typename Euler_integrator_2<Vector_field>::Point_2 
@@ -98,7 +98,7 @@ Euler_integrator_2<Vector_field>::operator()
 {
   Euler_integrator_2<Vector_field> euler_integrator(default_integration_step);
   return euler_integrator(p, vector_field_2, default_integration_step,index);
-};
+}
 
 CGAL_END_NAMESPACE
 

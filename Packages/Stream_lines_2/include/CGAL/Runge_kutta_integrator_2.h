@@ -50,7 +50,7 @@ public:
   inline FT get_default_integration_step(){return default_integration_step;}
   Euler_integrator_2 * get_euler_integrator_2(){return euler_integrator_2;}
   inline FT distance(const Point_2 & p, const Point_2 & q){
-		return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));};
+		return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));}
 };
 
 template <class VectorField_2>
@@ -90,7 +90,7 @@ Point_2 Runge_kutta_integrator_2<VectorField_2>::operator()
   v = vector_field_2.get_field(p1).first;
   Point_2 p2 = (*euler_integrator_2)(p, vector_field_2, integration_step,v, index);
   return p2;
-};
+}
 
 template <class VectorField_2>
 inline
@@ -101,7 +101,7 @@ typename Runge_kutta_integrator_2<VectorField_2>::Point_2 Runge_kutta_integrator
   Runge_kutta_integrator_2<VectorField_2>
     runge_kutta_integrator_2(default_integration_step);
   return runge_kutta_integrator_2(p, vector_field_2, integration_step, v, index);
-};
+}
 
 template <class VectorField_2>
 inline
@@ -112,7 +112,7 @@ typename Runge_kutta_integrator_2<VectorField_2>::Point_2 Runge_kutta_integrator
   v = vector_field_2.get_field(p).first;
   Runge_kutta_integrator_2<VectorField_2> runge_kutta_integrator_2(default_integration_step);
   return runge_kutta_integrator_2(p, vector_field_2, default_integration_step, v, index);
-};
+}
 
 CGAL_END_NAMESPACE
 
