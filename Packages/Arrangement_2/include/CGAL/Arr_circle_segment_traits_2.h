@@ -46,12 +46,32 @@ public:
   typedef typename Point_2::CoordNT             CoorNT;
   typedef _Circle_segment_2<Kernel>             Curve_2;
   typedef _X_monotone_circle_segment_2<Kernel>  X_monotone_curve_2;
+  typedef Arr_circle_segment_traits_2<Kernel>   Self;
 
   // Category tags:
   typedef Tag_true                              Has_left_category;
   typedef Tag_false                             Has_merge_category;
 
+private:
+
+  // Type definition for the intersection points mapping.
+  typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
+
+  Intersection_map  inter_map;   // Mapping pairs of curve IDs to their
+                                 // intersection points.
+
 public:
+
+  /*! Default constructor. */
+  Arr_circle_segment_traits_2 ()
+  {}
+
+  /*! Get the next curve index. */
+  static unsigned int get_index () 
+  {
+    static unsigned int index = 0;
+    return (++index);
+  }
 
   /// \name Basic functor definitions.
   //@{
@@ -329,11 +349,16 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi)
     {
+      // Increment the serial number of the curve cv, which will serve as its
+      // unique identifier.
+      unsigned int  index = Self::get_index();
+
       if (cv.orientation() == COLLINEAR)
       {
         // The curve is a line segment.
         *oi = make_object (X_monotone_curve_2 (cv.line(),
-                                               cv.source(), cv.target()));
+                                               cv.source(), cv.target(),
+                                               index));
         ++oi;
         return (oi);
       }
@@ -363,12 +388,14 @@ public:
         // Subdivide the circle into two arcs (an upper and a lower half).
         *oi = make_object (X_monotone_curve_2 (circ,
                                                vpts[0], vpts[1],
-                                               cv.orientation()));
+                                               cv.orientation(),
+                                               index));
         ++oi;
         
         *oi = make_object (X_monotone_curve_2 (circ,
                                                vpts[1], vpts[0],
-                                               cv.orientation()));
+                                               cv.orientation(),
+                                               index));
         ++oi;
       }
       else
@@ -379,17 +406,20 @@ public:
           // Subdivide the circular arc into three x-monotone arcs.
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  cv.source(), vpts[0],
-                                                 cv.orientation()));
+                                                 cv.orientation(),
+                                                 index));
           ++oi;
         
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[0], vpts[1],
-                                                 cv.orientation()));
+                                                 cv.orientation(),
+                                                 index));
           ++oi;
 
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[1], cv.target(),
-                                                 cv.orientation()));
+                                                 cv.orientation(),
+                                                 index));
           ++oi;
         }
         else if (n_vpts == 1)
@@ -397,12 +427,14 @@ public:
           // Subdivide the circular arc into two x-monotone arcs.
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  cv.source(), vpts[0],
-                                                 cv.orientation()));
+                                                 cv.orientation(),
+                                                 index));
           ++oi;
         
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[0], cv.target(),
-                                                 cv.orientation()));
+                                                 cv.orientation(),
+                                                 index));
           ++oi;
         }
         else
@@ -412,7 +444,8 @@ public:
           // The arc is already x-monotone:
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  cv.source(), cv.target(),
-                                                 cv.orientation()));
+                                                 cv.orientation(),
+                                                 index));
           ++oi;
         }
       }
@@ -458,7 +491,16 @@ public:
 
   class Intersect_2
   {
+  private:
+
+    Intersection_map&  _inter_map;       // The map of intersection points.
+
   public:
+
+    /*! Constructor. */
+    Intersect_2 (Intersection_map& map) :
+      _inter_map (map)
+    {}
 
     /*!
      * Find the intersections of the two given curves and insert them to the
@@ -474,14 +516,14 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi)
     {
-      return (cv1.intersect (cv2, oi));
+      return (cv1.intersect (cv2, oi, &_inter_map));
     }
   };
 
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object ()
   {
-    return Intersect_2();
+    return (Intersect_2 (inter_map));
   }
 
   class Are_mergeable_2

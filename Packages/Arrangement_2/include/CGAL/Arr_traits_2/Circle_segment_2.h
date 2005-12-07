@@ -27,6 +27,7 @@
 #include <CGAL/Arr_traits_2/One_root_number.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Handle_for.h>
+#include <map>
 #include <ostream>
 
 CGAL_BEGIN_NAMESPACE
@@ -366,7 +367,7 @@ public:
    */
    _Circle_segment_2 (const typename Kernel::Point_2& p1,
                       const typename Kernel::Point_2& p2,
-                      const typename Kernel::Point_2& p3):
+                      const typename Kernel::Point_2& p3) :
      _has_radius(false),
      _source(p1.x(), p1.y()),
      _target(p3.x(), p3.y()),
@@ -391,11 +392,13 @@ public:
 
     const NT  A1 = _two*(x1 - x2);
     const NT  B1 = _two*(y1 - y2);
-    const NT  C1 = CGAL::square(y2) - CGAL::square(y1) + CGAL::square(x2) - CGAL::square(x1);
+    const NT  C1 = CGAL::square(y2) - CGAL::square(y1) + 
+                   CGAL::square(x2) - CGAL::square(x1);
 
     const NT  A2 = _two*(x2 - x3);
     const NT  B2 = _two*(y2 - y3);
-    const NT  C2 = CGAL::square(y3) - CGAL::square(y2) + CGAL::square(x3) - CGAL::square(x2);
+    const NT  C2 = CGAL::square(y3) - CGAL::square(y2) +
+                   CGAL::square(x3) - CGAL::square(x2);
 
     // Compute the coordinates of the intersection point between the
     // two lines, given by (Nx / D, Ny / D), where:
@@ -422,7 +425,8 @@ public:
 
 
     
-    NT sqr_rad = (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) / CGAL::square(D);
+    NT sqr_rad = (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) / 
+                 CGAL::square(D);
 
     // Determine the orientation: If the mid-point forms a left-turn with
     // the source and the target points, the orientation is positive (going
@@ -438,10 +442,6 @@ public:
 
      _circ = Circle_2(circ_center, sqr_rad, _orient);
   }
-
-
-
-
 
   /*!
    * Get the orientation of the curve. 
@@ -498,7 +498,6 @@ public:
     CGAL_precondition (! _is_full);
     return (_target);
   }
-
 
   /*!
    * Get the vertical tangency points the arc contains.
@@ -664,28 +663,29 @@ private:
 };
 
 /*!
- * Exporter for conic arcs.
+ * Exporter for line segments and circular arcs.
  */
 template <class Kernel_>
 std::ostream& 
 operator<< (std::ostream& os, 
             const _Circle_segment_2<Kernel_>& c)
 {
-  if(c.orientation() == COLLINEAR)
+  if (c.orientation() == COLLINEAR)
   {
-    os<< "segment: " << c.source() << " -> " << c.target()<<std::endl;
+    os<< "segment: " << c.source() << " -> " << c.target() << std::endl;
   }
   else
   {
-    os<< "circ arc: " <<c.circle()<<" "<<c.source() << " -> " << c.target()<<std::endl;
+    os << "circular arc: " << c.circle() << ' '
+       << c.source() << " -> " << c.target() << std::endl;
   }
 
   return (os);
 }
+
 /*! \class
  * Representation of an x-monotone circular arc.
  */
-
 template <class Kernel_>
 class _X_monotone_circle_segment_2
 {
@@ -698,6 +698,30 @@ public:
   typedef typename Kernel::Circle_2                        Circle_2;
   typedef typename Kernel::Line_2                          Line_2;
   typedef typename Point_2::CoordNT                        CoordNT;
+
+  // Type definition for the intersection points mapping.
+  typedef std::pair<unsigned int, unsigned int>   Curve_id_pair;
+  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+  typedef std::list<Intersection_point_2>         Intersection_list;
+
+  /*!
+   * \struct Less functor for Curve_id_pair.
+   */
+  struct Less_id_pair
+  {
+    bool operator() (const Curve_id_pair& ip1, const Curve_id_pair& ip2) const
+    {
+      // Compare the pairs of IDs lexicographically.
+      return (ip1.first < ip2.first ||
+              (ip1.first == ip2.first && ip1.second < ip2.second));
+    }
+  };
+
+  typedef std::map<Curve_id_pair,
+                   Intersection_list,
+                   Less_id_pair>                  Intersection_map;
+  typedef typename Intersection_map::value_type   Intersection_map_entry;
+  typedef typename Intersection_map::iterator     Intersection_map_iterator;
 
 protected:
 
@@ -716,6 +740,7 @@ protected:
                              // segments).
   bool         _dir_right;   // Is the arc directed from left to right.
   bool         _is_vert;     // Is this a vertical segment.
+  unsigned int _index;       // The index of the supporting curve (may be 0).
 
 public:
 
@@ -729,7 +754,8 @@ public:
     _source(), _target(),
     _orient (COLLINEAR),
     _dir_right (false),
-    _is_vert (false)
+    _is_vert (false),
+    _index (0)
   {}
 
   /*!
@@ -739,14 +765,16 @@ public:
    * \param target The target point.
    */
   _X_monotone_circle_segment_2 (const Line_2& line,
-                                const Point_2& source, const Point_2& target) :
+                                const Point_2& source, const Point_2& target,
+                                unsigned int index = 0) :
     _first (line.a()),
     _second (line.b()),
     _third (line.c()),
     _source (source), 
     _target(target),
     _orient (COLLINEAR),
-    _is_vert (false)
+    _is_vert (false),
+    _index (index)
   {
     // Check if the segment is directed left or right:
     Comparison_result   res = CGAL::compare (source.x(), target.x());
@@ -771,12 +799,13 @@ public:
    * \ param target the target point.
    * \pre source and target are not equal.
    */
-  _X_monotone_circle_segment_2(const typename Kernel::Point_2& source,
-                               const typename Kernel::Point_2& target) :
+  _X_monotone_circle_segment_2 (const typename Kernel::Point_2& source,
+                                const typename Kernel::Point_2& target) :
     _source(source.x(), source.y()),
     _target(target.x(), target.y()),
     _orient (COLLINEAR),
-    _is_vert(false)
+    _is_vert(false),
+    _index (0)
   {
     Line_2 line(source, target);
     _first  = line.a();
@@ -810,14 +839,16 @@ public:
    */
   _X_monotone_circle_segment_2 (const Circle_2& circ,
                                 const Point_2& source, const Point_2& target,
-                                Orientation orient) :
+                                Orientation orient,
+                                unsigned int index = 0) :
     _first (circ.center().x()),
     _second (circ.center().y()),
     _third (circ.squared_radius()),
     _source (source), 
     _target(target),
     _orient (orient),
-    _is_vert (false)
+    _is_vert (false),
+    _index (index)
   {
     // Check if the segment is directed left or right:
     Comparison_result   res = CGAL::compare (source.x(), target.x());
@@ -893,7 +924,8 @@ public:
     return (_is_vert);
   }
 
-  Orientation orientation() const
+  /*! Get the orientation of the arc. */ 
+  inline Orientation orientation() const
   {
     return (_orient);
   }
@@ -966,6 +998,10 @@ public:
    */
   bool has_same_supporting_curve (const Self& cv) const
   {
+    // Check if the curve indices are the same.
+    if (_index != 0 && _index == cv._index)
+      return (true);
+
     // Make sure that the supporting curves are of the same type.
     if (is_linear() && ! cv.is_linear())
       return (false);
@@ -1052,10 +1088,11 @@ public:
   }
 
   /*!
-   * Compute the intersections between the two circles.
+   * Compute the intersections between the two arcs or segments.
    */
   template <class OutputIterator>
-  OutputIterator intersect (const Self& cv, OutputIterator oi) const
+  OutputIterator intersect (const Self& cv, OutputIterator oi,
+                            Intersection_map *inter_map = NULL) const
   {
     // First check whether the two arcs have the same supporting curve.
     if (has_same_supporting_curve (cv))
@@ -1092,21 +1129,74 @@ public:
       return (oi);
     }
 
-    // Compute the intersections between the two arcs.
-    if (is_linear())
+    // Before computing the intersection points between the two supporting
+    // curves, check if their intersection has already been computed and
+    // cached.
+    Curve_id_pair                id_pair;
+    Intersection_map_iterator    map_iter;
+    Intersection_list            inter_list;
+    bool                         invalid_ids = false;
+
+    if (inter_map != NULL && _index != 0 && cv._index != 0)
     {
-      if (cv.is_linear())
-        return (_lines_intersect (cv, oi));
+      if (_index < cv._index)
+        id_pair = Curve_id_pair (_index, cv._index);
+      else
+        id_pair = Curve_id_pair (cv._index, _index);
       
-      return (cv._circ_line_intersect (*this, oi, true));
+      map_iter = inter_map->find (id_pair);
     }
     else
     {
-      if (cv.is_linear())
-        return (_circ_line_intersect (cv, oi, false));
-
-      return (_circs_intersect (cv, oi));
+      // In case one of the IDs is invalid, we do not look in the map neither
+      // we cache the results.
+      if (inter_map != NULL)
+        map_iter = inter_map->end();
+      invalid_ids = true;
     }
+
+    if (inter_map == NULL || map_iter == inter_map->end())
+    {
+      // Compute the intersections points between the two supporting curves.
+      if (is_linear())
+      {
+        if (cv.is_linear())
+          _lines_intersect (cv, inter_list);
+        else
+          cv._circ_line_intersect (*this, inter_list);
+      }
+      else
+      {
+        if (cv.is_linear())
+          _circ_line_intersect (cv, inter_list);
+        else
+          _circs_intersect (cv, inter_list);
+      }
+
+      // Cache the result.
+      if (! invalid_ids)
+        (*inter_map)[id_pair] = inter_list;
+    }
+    else
+    {
+      // Obtain the precomputed intersection points from the map.
+      inter_list = (*map_iter).second;
+    }
+
+    // Report only the intersection points that lie on both arcs.
+    typename Intersection_list::const_iterator   iter;
+
+    for (iter = inter_list.begin(); iter != inter_list.end(); ++iter)
+    {
+      if (this->_is_between_endpoints (iter->first) &&
+          cv._is_between_endpoints (iter->first))
+      {
+        *oi = CGAL::make_object (*iter);
+        ++oi;
+      }
+    }
+
+    return (oi);
   }
 
   /*!
@@ -1331,6 +1421,9 @@ protected:
   Comparison_result _lines_compare_to_right (const Self& cv,
                                              const Point_2& p) const
   {
+    if (_index != 0 && _index == cv._index)
+      return (EQUAL);
+
     // Special treatment for vertical segments: a vertical segment is larger
     // than any other non-vertical segment.
     if (is_vertical())
@@ -1405,6 +1498,19 @@ protected:
   Comparison_result _circs_compare_to_right (const Self& cv,
                                              const Point_2& p) const
   {
+    if (_index != 0 && _index == cv._index)
+    {
+      // Check the case of comparing two circular arcs that originate from the
+      // same supporting circle. Their comparison result is not EQUAL only if
+      // one is an upper arc and the other is a lower arc.
+      if (_is_upper() && ! cv._is_upper())
+        return (LARGER);
+      else if (! _is_upper() && cv._is_upper())
+        return (SMALLER);
+      else
+        return (EQUAL);
+    }
+
     // We have to compare the slopes of the two supporting circles at p:
     //
     //    p.x() - x0(1)         p.x() - x0(2)
@@ -1552,6 +1658,9 @@ protected:
   Comparison_result _lines_compare_to_left (const Self& cv,
                                              const Point_2& p) const
   {
+    if (_index != 0 && _index == cv._index)
+      return (EQUAL);
+
     // Special treatment for vertical segments: a vertical segment is smaller
     // than any other non-vertical segment.
     if (is_vertical())
@@ -1627,6 +1736,19 @@ protected:
   Comparison_result _circs_compare_to_left (const Self& cv, 
                                             const Point_2& p) const
   {
+    if (_index != 0 && _index == cv._index)
+    {
+      // Check the case of comparing two circular arcs that originate from the
+      // same supporting circle. Their comparison result is not EQUAL only if
+      // one is an upper arc and the other is a lower arc.
+      if (_is_upper() && ! cv._is_upper())
+        return (LARGER);
+      else if (! _is_upper() && cv._is_upper())
+        return (SMALLER);
+      else
+        return (EQUAL);
+    }
+
     // We have to compare the slopes of the two supporting circles at p:
     //
     //    p.x() - x0(1)         p.x() - x0(2)
@@ -1774,12 +1896,12 @@ protected:
   /*!
    * Compute the intersections between two line segments.
    */
-  template <class OutputIterator>
-  OutputIterator _lines_intersect (const Self& cv, OutputIterator oi) const
+  void _lines_intersect (const Self& cv,
+                         Intersection_list& inter_list) const
   {
     // The intersection of the lines:
-    //   a1*x + b1*y + c1 = 0   and   a2*x + b2*y + c2 = 0 
-    // Is given by:
+    //   a1*x + b1*y + c1 = 0   and   a2*x + b2*y + c2 = 0 ,
+    // is given by:
     //
     //      b1*c2 - c1*b2     c1*a2 - a1*c2
     //   ( --------------- , --------------- )
@@ -1788,136 +1910,28 @@ protected:
     unsigned int  mult = 1;
     const NT      denom = a()*cv.b() - b()*cv.a();
 
+    // Make sure the supporting lines are not parallel.
     if (CGAL::sign(denom) == ZERO)
-    {
-      // The supporting lines are parallel - no intersections.
-      return (oi);
-    }
+      return;
 
     const NT      x_numer = b()*cv.c() - c()*cv.b();
     const NT      y_numer = c()*cv.a() - a()*cv.c();
     Point_2       p (x_numer / denom, y_numer / denom);
 
-    // Check if the point lies on both segments. If so, we found an
-    // intersection point of multiplicity 1.
-    if (this->_is_between_endpoints (p) &&
-        cv._is_between_endpoints (p))
-    {
-      *oi = CGAL::make_object (std::make_pair (p, mult));
-      ++oi;
-    }
-
-    return (oi);
+    inter_list.push_back (Intersection_point_2 (p, mult));
+    return;
   }
 
   /*!
-   * Compute the intersections between a circular arc (this) and a line
-   * segment (cv).
+   * Compute the intersections between the supporting circle of (*this) and 
+   * the supporting line of the segement cv.
    */
-  template <class OutputIterator>
-  OutputIterator _circ_line_intersect (const Self& cv, OutputIterator oi,
-                                       bool roles_swapped) const
+  void _circ_line_intersect (const Self& cv,
+                             Intersection_list& inter_list) const
   {
-    // Intersect the supporting circle and the supporting line.
-    unsigned int    mult;
-    Point_2         ps[2];
-    unsigned int    n_ps = _intersect_supporting_circ_line (cv, ps);
-    unsigned int    k;
+    Point_2       p;
+    unsigned int  mult;
 
-    if (n_ps == 0)
-      return (oi);
-    
-    if (n_ps == 1)
-    {
-      // We found a single tangency point, with multiplicity 2:
-      mult = 2;
-    }
-    else
-    {
-      CGAL_assertion (n_ps == 2);
-
-      // We found two intersection points with multiplicity 1 each:
-      mult = 1;
-    }
-
-    // Report just the points that lies on both arcs.
-    for (k = 0; k < n_ps; k++)
-    {
-      // Note that we check the first curve sent to intersect() first.
-      // This is why we keep track whether the roles of the curves have
-      // been swapped.
-      if (! roles_swapped)
-      {
-        if (this->_is_between_endpoints (ps[k]) &&
-            cv._is_between_endpoints (ps[k]))
-        {
-          *oi = CGAL::make_object (std::make_pair (ps[k], mult));
-          ++oi;
-        }
-      }
-      else
-      {
-        if (cv._is_between_endpoints (ps[k]) &&
-            this->_is_between_endpoints (ps[k]))
-        {
-          *oi = CGAL::make_object (std::make_pair (ps[k], mult));
-          ++oi;
-        }
-      }
-    }
-
-    return (oi);
-  }
-
-  /*!
-   * Compute the intersections between two circular arcs.
-   */
-  template <class OutputIterator>
-  OutputIterator _circs_intersect (const Self& cv, OutputIterator oi) const
-  {
-    // Intersect the two supporting circles.
-    unsigned int    mult;
-    Point_2         ps[2];
-    unsigned int    n_ps = _intersect_supporting_circles (cv, ps);
-    unsigned int    k;
-
-    if (n_ps == 0)
-      return (oi);
-    
-    if (n_ps == 1)
-    {
-      // We found a single tangency point, with multiplicity 2:
-      mult = 2;
-    }
-    else
-    {
-      CGAL_assertion (n_ps == 2);
-
-      // We found two intersection points with multiplicity 1 each:
-      mult = 1;
-    }
-
-    // Report just the points that lies on both arcs.
-    for (k = 0; k < n_ps; k++)
-    {
-      if (this->_is_between_endpoints (ps[k]) &&
-          cv._is_between_endpoints (ps[k]))
-      {
-        *oi = CGAL::make_object (std::make_pair (ps[k], mult));
-        ++oi;
-      }
-    }
-
-    return (oi);
-  }
-
-  /*!
-   * Compute the intersection points between the supporting circle of (*this)
-   * and the supporting line of cv.
-   */
-  unsigned int _intersect_supporting_circ_line (const Self& cv,
-                                                Point_2* ps) const
-  {
     // First check the special cases of vertical and horizontal lines.
     if (cv.is_vertical())
     {
@@ -1932,21 +1946,30 @@ protected:
       if (sign_vdisc == NEGATIVE)
       {
         // The circle and the vertical line do not intersect.
-        return (0);
+        return;
       }
       else if (sign_vdisc == ZERO)
       {
         // A single tangency point, given by:
-        ps[0] = Point_2 (vx, y0());
-        return (1);
+        mult = 2;
+        p = Point_2 (vx, y0());
+        inter_list.push_back (Intersection_point_2 (p, mult));
+        
+        return;
       }
       
       // Compute the two intersection points:
-      ps[0] = Point_2 (CoordNT (vx),
-                       CoordNT (y0(), -1, vdisc));
-      ps[1] = Point_2 (CoordNT (vx),
-                       CoordNT (y0(), 1, vdisc));
-      return (2);
+      mult = 1;
+
+      p = Point_2 (CoordNT (vx),
+                   CoordNT (y0(), -1, vdisc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+      
+      p = Point_2 (CoordNT (vx),
+                   CoordNT (y0(), 1, vdisc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      return;
     }
     else if (CGAL::sign (cv.a()) == ZERO)
     {
@@ -1961,21 +1984,30 @@ protected:
       if (sign_hdisc == NEGATIVE)
       {
         // The circle and the vertical line do not intersect.
-        return (0);
+        return;
       }
       else if (sign_hdisc == ZERO)
       {
         // A single tangency point, given by:
-        ps[0] = Point_2 (x0(), hy);
-        return (1);
+        mult = 2;
+        p = Point_2 (x0(), hy);
+        inter_list.push_back (Intersection_point_2 (p, mult));
+
+        return;
       }
       
       // Compute the two intersection points:
-      ps[0] = Point_2 (CoordNT (x0(), -1, hdisc),
-                       CoordNT (hy));
-      ps[1] = Point_2 (CoordNT (x0(), 1, hdisc),
-                       CoordNT (hy));
-      return (2);
+      mult = 1;
+
+      p = Point_2 (CoordNT (x0(), -1, hdisc),
+                   CoordNT (hy));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      p = Point_2 (CoordNT (x0(), 1, hdisc),
+                   CoordNT (hy));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      return;
     }
 
     // Compute the squared distance between the line and the circle center,
@@ -1986,20 +2018,24 @@ protected:
     CGAL::Sign sign_disc = CGAL::sign (disc);
 
     if (sign_disc == NEGATIVE)
+    {
       // The circle and the line do not intersect:
-      return (0);
- 
+      return;
+    }
+
     // Compare the square-free part of the solution:
     const NT   aux = cv.b()*x0() - cv.a()*y0();
     const NT   x_base = (aux*cv.b() - cv.a()*cv.c()) / line_factor;
     const NT   y_base = (-aux*cv.a() - cv.b()*cv.c()) / line_factor;
-    Point_2    p1, p2;
 
     if (sign_disc == ZERO)
     {
       // A single tangency point, given by:
-      ps[0] = Point_2 (x_base, y_base);
-      return (1);
+      mult = 2;
+      p = Point_2 (x_base, y_base);
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      return;
     }
 
     // We have two intersection points, whose coordinates are one-root numbers.
@@ -2007,31 +2043,40 @@ protected:
     const NT   x_root_coeff = cv.b() / line_factor;
     const NT   y_root_coeff = cv.a() / line_factor;
 
+    mult = 1;
     if (minus_root_first)
     {
-      ps[0] = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
-                       CoordNT (y_base, y_root_coeff, disc));
-      ps[1] = Point_2 (CoordNT (x_base, x_root_coeff, disc),
-                       CoordNT (y_base, -y_root_coeff, disc));
+      p = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
+                   CoordNT (y_base, y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      p = Point_2 (CoordNT (x_base, x_root_coeff, disc),
+                   CoordNT (y_base, -y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
     }
     else
     {
-      ps[0] = Point_2 (CoordNT (x_base, x_root_coeff, disc),
-                       CoordNT (y_base, -y_root_coeff, disc));
-      ps[1] = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
-                       CoordNT (y_base, y_root_coeff, disc));
+      p = Point_2 (CoordNT (x_base, x_root_coeff, disc),
+                   CoordNT (y_base, -y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      p = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
+                   CoordNT (y_base, y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
     }
 
-    return (2);
+    return;
   }
 
   /*!
-   * Compute the intersection points between the supporting circles of the
-   * two arcs.
+   * Compute the intersections between two circles.
    */
-  unsigned int _intersect_supporting_circles (const Self& cv,
-                                              Point_2* ps) const
+  void _circs_intersect (const Self& cv,
+                         Intersection_list& inter_list) const
   {
+    Point_2       p;
+    unsigned int  mult;
+
     // Compute the squared distance between the circle centers, inducing the
     // discriminant of the quadratic equations we have to solve.
     const NT   diff_x = cv.x0() - x0();
@@ -2043,19 +2088,23 @@ protected:
     CGAL::Sign sign_disc = CGAL::sign (disc);
 
     if (sign_disc == NEGATIVE)
+    {
       // The two circles do not intersect.
-      return (0);
- 
+      return;
+    }
+
     // Compare the square-free part of the solution:
     const NT   x_base = ((x0() + cv.x0()) + diff_x*diff_sqr_rad/sqr_dist) / 2;
     const NT   y_base = ((y0() + cv.y0()) + diff_y*diff_sqr_rad/sqr_dist) / 2;
-    Point_2    p1, p2;
 
     if (sign_disc == ZERO)
     {
       // A single tangency point, given by:
-      ps[0] = Point_2 (x_base, y_base);
-      return (1);
+      mult = 2;
+      p = Point_2 (x_base, y_base);
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      return;
     }
 
     // We have two intersection points, whose coordinates are one-root numbers.
@@ -2070,22 +2119,29 @@ protected:
     const NT   x_root_coeff = diff_y / (2 * sqr_dist);
     const NT   y_root_coeff = diff_x / (2 * sqr_dist);
 
+    mult = 1;
     if (minus_root_first)
     {
-      ps[0] = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
-                       CoordNT (y_base, y_root_coeff, disc));
-      ps[1] = Point_2 (CoordNT (x_base, x_root_coeff, disc),
-                       CoordNT (y_base, -y_root_coeff, disc));
+      p = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
+                   CoordNT (y_base, y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      p = Point_2 (CoordNT (x_base, x_root_coeff, disc),
+                   CoordNT (y_base, -y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
     }
     else
     {
-      ps[0] = Point_2 (CoordNT (x_base, x_root_coeff, disc),
-                       CoordNT (y_base, -y_root_coeff, disc));
-      ps[1] = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
-                       CoordNT (y_base, y_root_coeff, disc));
+      p = Point_2 (CoordNT (x_base, x_root_coeff, disc),
+                   CoordNT (y_base, -y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
+
+      p = Point_2 (CoordNT (x_base, -x_root_coeff, disc),
+                   CoordNT (y_base, y_root_coeff, disc));
+      inter_list.push_back (Intersection_point_2 (p, mult));
     }
 
-    return (2);
+    return;
   }
 
   /*!
