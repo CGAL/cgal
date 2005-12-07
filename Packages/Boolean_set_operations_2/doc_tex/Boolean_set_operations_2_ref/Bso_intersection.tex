@@ -97,7 +97,7 @@ OutputIterator intersection(const General_polygon_with_holes_2<Polygon> & p1,
                             OutputIterator oi);}
 
 \ccGlobalFunction{template <class InputIterator, class OutputIterator>
-OutputIterator intersection(InputIterator & begin, InputIterator & end,
+OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi);}
 {Computes the intersection of the general polygons (or general polygons with
 holes) in the given range. (The value type of the input iterator is
@@ -106,13 +106,13 @@ of general poygon with holes, is inserted into an output container
 through a given output iterator \ccc{oi}. The output iterator is
 returned. The value type of the \ccc{OutputIterator} is
 \ccc{General_polygon_with_holes_2}.}
-
+\ccGlue
 \ccGlobalFunction{template <class InputIterator1, class InputIterator2,
 		  class OutputIterator>
-OutputIterator intersection(InputIterator1 & pgn_begin1,
-                            InputIterator1 & pgn_end1,
-                            InputIterator2 & pgn_begin2,
-	                    InputIterator2 & pgn_end2,
+OutputIterator intersection(InputIterator1 pgn_begin1,
+                            InputIterator1 pgn_end1,
+                            InputIterator2 pgn_begin2,
+	                    InputIterator2 pgn_end2,
 		            OutputIterator oi);}
 {Computes the intersection of the general polygons and general polygons
 with holes in the given two ranges. The result, represented by a set

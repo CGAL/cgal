@@ -52,11 +52,12 @@ interior and the boundary of a polygon, are not implemented yet. These
 operations operate on, and result with, general polygons, which
 include isolated curves and points, and open shapes. The \ccc{Nef_2}
 package supports these operation for (linear) polygons; see
-Chapter~\ref{chap:nef_2}. Bounding box constructions, extreme vertex
-provision, and point containment predicates on a single (linear)
-polygon are provided by the \ccc{Polygon_2} class; see
-Chapter~\ref{Polygon}.
+Chapter~\ref{chap:nef_2}. 
+% Bounding box constructions, extreme vertex provision, and point containment 
+% predicates on a single (linear) polygon are provided by the 
+% \ccc{Polygon_2} class; see Chapter~\ref{Polygon}.
 
+\pagebreak
 \lcTex{%
   \begin{wrapfigure}{r}{4cm}
   \vspace{-2ex}
@@ -114,9 +115,10 @@ defined as follows:
 % ===============================================================
 A general polygon, which is an operand or a result of a regularized
 Boolean set-operation is considered as being a closed point-set (that
-consist of its interior and its boundary). The distinction between the
-interior and  the exterior of a polygon is determined by the order of
-its vertices. The definition of the regularized Boolean set-operations 
+consist of its interior and its boundary). The distinction between the 
+interior and  the exterior of a polygon that results from a regularized 
+Boolean set-operation is determined by the order of its vertices. 
+The definition of the regularized Boolean set-operations 
 is slightly different than the definition of the ordinary as mentioned
 above. For example, the intersection predicate tests whether the
 interior of two polygons $P$ and $Q$ overlap. Thus, if two polygons
@@ -234,16 +236,6 @@ functions that compute the union of two general polygons. These functions
 return \ccc{false} iff the polygons are disjoint, and \ccc{true} otherwise,
 in which case the resulting general polygon is placed in a third argument 
 passed by reference.
-
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-Many free functions that implement the Boolean set-operations are
-parameterized with a traits class instead of the type of the general
-polygon types they operate on. The latter are extracted from the injected
-traits class, which must model the concept 
-\ccc{GeneralPolygonSetTraits_2} (see below for more details).
-These functions come in two flavors. Some accept an instance of the traits 
-class as an actual argument. The other, must be instantiated with the 
-traits type.
 
 % ---------------------------------------------------------------
 \subsection{A Sequence of Boolean Set Operations}
@@ -448,17 +440,24 @@ Figure~\ref{fig:circle_segment}.
 \end{ccHtmlOnly}
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may output, general
-polygons with holes. The concept \ccc{GeneralPolygonSetTraits_2}
-requires a type of polygon with holes that corresponds to the concept
-\ccc{GeneralPolygonWithHoles_2} to be defined. This concept requires 
-access to the outer boundary, which is of type \ccc{Polygon_2},
-and to the holes, where each hole is also of type \ccc{Polygon_2}.
-The outer boundary could be empty, and the number of holes could be
-zero. Vertices of holes and vertices of the boundary may coincide.
-Conceptually, the order of vertices is irrelevant, but for the results
-of all operations, we guarantee counterclockwise order for the general
-polygon that represents the outer boundary, and clockwise order for
-the general polygons that represent the holes.
+polygons with holes, which model the concept 
+\ccc{GeneralPolygonWithHoles_2} described next. 
+
+
+The traits concept \ccc{GeneralPolygonSetTraits_2} requires, among the 
+other, a type of a simple polygon, namely \ccc{Polygon_2}, and a type of 
+a polygon with holes, namely \ccc{Polygon_with_holes_2}, to be defined.
+The latter corresponds to the concept \ccc{GeneralPolygonWithHoles_2}. 
+This concept requires access to the outer boundary, which is of type 
+\ccc{Polygon_2}, and to the holes, where each hole is also of type 
+\ccc{Polygon_2}. The outer boundary could be empty, in which case the 
+polygon is unbounded, and the number of holes could be zero. An unbounded
+polygon without holes spans the entire plane. Vertices of holes and 
+vertices of the boundary may coincide. Conceptually, the order of vertices 
+is irrelevant, but for the results of all operations, we guarantee 
+counterclockwise order for the general polygon that represents the outer 
+boundary, and clockwise order for the general polygons that represent the 
+holes.
 % The \ccc{Triangle_2} and \ccc{Iso_rectangle_2} classes for example,
 % which represent a triangle and a parallel-axis rectangle in
 % $\mathrm{E}^2$ are special cases of convex general polygon. The apriori
@@ -497,7 +496,7 @@ represented by an instance $R$ of the \ccc{Gnereal_polygon_set_2} type
 has a unique internal representation as a (unique) planar arrangement
 regardless of the particular sequence of operations that were applied
 to arrive at $R$. Moreover, the set of
-\ccc{General_polygon_with_holes_2} instances that represent $R$, and
+\ccc{polygon_with_holes_2} instances that represent $R$, and
 can be obtained by the user through the
 \ccc{general_polygon_with_holes()} method is also unique. The point
 set deipcted in Figure~\ref{fig:unique} is represented as a single
@@ -527,7 +526,7 @@ by $x$-monotone curves. As opposed to the plain
 define the type \ccc{X_monotone_curve_2}, which represents an
 $x$-monotone curve of the point-set boundary. It must provide a
 constructor from a range of such curves, and a pair of methods, namely
-\ccc{begin_curves()} and \ccc{end_curves()}, that can be used to
+\ccc{curves_begin()} and \ccc{curves_end()}, that can be used to
 iterate over the point-set boundary curves.
  
 \lcTex{%

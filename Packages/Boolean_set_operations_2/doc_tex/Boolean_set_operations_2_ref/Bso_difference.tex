@@ -95,36 +95,19 @@ OutputIterator difference(const General_polygon_2<Traits> & p1,
 OutputIterator difference(const General_polygon_with_holes_2<Polygon> & p1,
                           const General_polygon_with_holes_2<Polygon> & p2);}
 
-\ccGlobalFunction{template <class InputIterator, class OutputIterator>
-OutputIterator difference(InputIterator & begin1, InputIterator & end1,
-                          InputIterator & begin2, InputIterator & end2,
-                          OutputIterator oi);}
-{Computes the difference between the union of one set of general
-polygons (or general polygons with holes) given in the first range, and
-another set given in the second range. (The value type of the input iterator
-is used to distinguish between the two types.) The result, represented
-by a set of general poygon with holes, is inserted into an output container
-through a given output iterator \ccc{oi}. The output iterator is
-returned. The value type of the \ccc{OutputIterator} is
-\ccc{General_polygon_with_holes_2}.}
-
-\ccGlobalFunction{template <class InputIterator1, class InputIterator2,
-		  class OutputIterator>
-OutputIterator difference(InputIterator1 & begin11, InputIterator1 & end11,
-                          InputIterator1 & begin12, InputIterator2 & end12,
-			  InputIterator2 & begin21, InputIterator1 & end21,
-			  InputIterator2 & begin22, InputIterator1 & end22,
-		          OutputIterator oi);}
-{Computes the difference between the union of a set of general polygons
-and general polygons with holes given in the first two ranges
-<\ccc{begin11},\ccc{end11}> and <\ccc{begin12},\ccc{end12}> and another
-set given in two succeeding ranges <\ccc{begin21},\ccc{end21}> and
-<\ccc{begin22},\ccc{end22}>. The result, represented by a set
-of general poygon with holes, is inserted into an output container
-through a given output iterator \ccc{oi}. The output iterator is
-returned. The value type of the \ccc{OutputIterator} is
-\ccc{General_polygon_with_holes_2}.}
-
+% \ccGlobalFunction{template <class InputIterator, class OutputIterator>
+% OutputIterator difference(InputIterator begin1, InputIterator end1,
+%                           InputIterator begin2, InputIterator end2,
+%                           OutputIterator oi);}
+% {Computes the difference between the union of one set of general
+% polygons (or general polygons with holes) given in the first range, and
+% another set given in the second range. (The value type of the input iterator
+% is used to distinguish between the two types.) The result, represented
+% by a set of general poygon with holes, is inserted into an output container
+% through a given output iterator \ccc{oi}. The output iterator is
+% returned. The value type of the \ccc{OutputIterator} is
+% \ccc{General_polygon_with_holes_2}.}
+ 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::do_intersect}\\
 \ccRefIdfierPage{CGAL::intersection}\\
