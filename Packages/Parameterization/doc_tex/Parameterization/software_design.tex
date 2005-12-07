@@ -84,46 +84,46 @@ On the other hand, there are several differences among methods:
 Eventually, the software design chosen is:
 \begin{itemize}
 \item Each \ccc{ParameterizerTraits_3} model implements its own version
-      of the parameterization algorithm as a parameterize() method
+      of the parameterization algorithm as a parameterize() method.
 \item Each \ccc{ParameterizerTraits_3} model has template arguments
       defining the border parameterization and sparse linear solver to use,
-      with default values adapted to the method
+      with default values adapted to the method.
 \item Code factorization is achieved using a class hierarchy and (few) virtual methods.
 \end{itemize}
 
-% Include parameterizer_class_diagram.png/eps figure
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/parameterizer_class_diagram}
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./parameterizer_class_diagram.png" align=center WIDTH="80%">
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-parameterizer_class_diagram}
-
-        % Title
+% Insert image parameterizer_class_diagram.png/eps with
+% title "A parameterizer's UML class diagram (main types and methods only)"
+\begin{center}
+    \label{parameterization-fig-parameterizer_class_diagram}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=1.1\textwidth]{Parameterization/parameterizer_class_diagram}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="100%" border=0 src="./parameterizer_class_diagram.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{A parameterizer's UML class diagram (main types and methods only)}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
-% Include parameterizers_class_hierarchy.png/eps figure
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/parameterizers_class_hierarchy}
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./parameterizers_class_hierarchy.png" align=center WIDTH="80%">
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-parameterizers_class_hierarchy}
-
-        % Title
+% Insert image parameterizers_class_hierarchy.png/eps with
+% title "Parameterizers class hierarchy"
+\begin{center}
+    \label{parameterization-fig-parameterizers_class_hierarchy}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=1.1\textwidth]{Parameterization/parameterizers_class_hierarchy}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="100%" border=0 src="./parameterizers_class_hierarchy.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Parameterizers class hierarchy}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 
 \subsection{Fixed\_border\_parameterizer\_3 Class}

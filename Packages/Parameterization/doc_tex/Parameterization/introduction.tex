@@ -29,7 +29,7 @@ Structure enriched with 3D points and the Polyhedron.
 
 Since parameterizing meshes require efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-an interface common to standard linear solver packages ({\sc Taucs},
+an interface common to state-of-the-art linear solver libraries ({\sc Taucs},
 SuperLU) and propose a separate package devoted to OpenNL sparse
 linear solver.
 
@@ -42,21 +42,20 @@ students developing algorithms around parameterization of triangle
 meshes for geometry processing as well as for signal mapping on
 triangulated surfaces.
 
-% Include introduction.png/eps figure with title = "Least Squares Conformal Maps parameterization"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/introduction} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./introduction.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-introduction}
-
-        % Title
+% Insert image introduction.png/eps with title "Least Squares Conformal Maps parameterization"
+\begin{center}
+    \label{parameterization-fig-introduction}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Parameterization/introduction} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./introduction.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Least Squares Conformal Maps parameterization}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 

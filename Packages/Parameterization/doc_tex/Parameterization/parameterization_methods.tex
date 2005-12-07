@@ -10,7 +10,7 @@ simple 2D domain. The mapping is piecewise linear on the triangle
 mesh. The result is a pair (u,v) of parameter coordinates for each
 vertex of the input mesh.  One-to-one mapping may be guaranteed or
 not, depending on the chosen ParametizerTraits\_3 algorithm.
-Preconditions:\begin{itemize} 
+Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with one connected component.\item
 'mesh' must be a triangle mesh.\item the mesh boundary must be mapped
 onto a convex polygon (for fixed border
@@ -43,7 +43,7 @@ Tutte~\cite{cgal:fh-survey-05}. In parameter space, each vertex is
 placed at the barycenter of its neighbors to achieve the so-called
 convex combination condition. This amounts to solve one
 sparse linear solver for each set of parameter coordinates, with a
-\#vertices x \#vertices sparse and symmetric positive definite matrix. 
+\#vertices x \#vertices sparse and symmetric positive definite matrix.
 A coefficient $(i,j)$ of the matrix is set to 1 for an edge linking
 the vertex $v_i$ to the vertex $v_j$, to minus the degree of the
 vertex $v_i$ for a diagonal element, and to zero for any other matrix
@@ -53,23 +53,22 @@ distortion.
 
 % pierre: reference Tutte's paper, not survey
 
-% Include uniform.png/eps figure with title =
-% "Tutte Barycentric Mapping (the red line emphasizes the cutting path)"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/uniform} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./uniform.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-uniform}
-
-        % Title
+% Insert image uniform.png/eps with
+% title "Tutte Barycentric Mapping (the red line emphasizes the cutting path)"
+\begin{center}
+    \label{parameterization-fig-uniform}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Parameterization/uniform} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./uniform.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Tutte Barycentric Mapping (the red line emphasizes the cutting path)}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 
 \subsubsection{Discrete Conformal Map}
@@ -77,7 +76,7 @@ distortion.
 \ccc{CGAL::Discrete_conformal_map_parameterizer_3}  \\
 
 Discrete Conformal Map parameterization has been introduced by Eck et
-al. to he graphics community~\cite{cgal:fh-survey-05}. It attempts to
+al. to the graphics community~\cite{cgal:fh-survey-05}. It attempts to
 lower angle deformation by minimizing a discrete version of the
 Dirichlet energy as derived by Pinkall and
 Polthier~\cite{cgal:fh-survey-05}.
@@ -97,22 +96,21 @@ systems. The matrix (the same for both systems) is symmetric definite
 positive, thus can be efficiently solved using dedicated linear
 solvers (x s for the example shown).
 
-% Include conformal.png/eps figure with title = "Discrete Conformal Map"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/conformal} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./conformal.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-conformal}
-
-        % Title
+% Insert image conformal.png/eps with title "Discrete Conformal Map"
+\begin{center}
+    \label{parameterization-fig-conformal}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Parameterization/conformal} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./conformal.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Discrete Conformal Map}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 
 \subsubsection{Floater Mean Value Coordinates}
@@ -129,22 +127,21 @@ Maps, with a one-to-one mapping always guaranteed. This method solves
 two \#vertices x \#vertices sparse linear systems. The matrix (the
 same for both systems) is asymmetric.
 
-% Include floater.png/eps figure with title = "Floater Mean Value Coordinates"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/floater} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./floater.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-floater}
-
-        % Title
+% Insert image floater.png/eps with title "Floater Mean Value Coordinates"
+\begin{center}
+    \label{parameterization-fig-floater}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Parameterization/floater} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./floater.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Floater Mean Value Coordinates}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 
 \subsubsection{Discrete Authalic parameterization}
@@ -160,22 +157,21 @@ the boundary is convex.  This method solves two
 \#vertices x \#vertices sparse linear systems. The matrix (the same
 for both systems) is asymmetric.
 
-% Include authalic.png/eps figure with title = "Discrete Authalic Parameterization"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/authalic} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./authalic.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-authalic}
-
-        % Title
+% Insert image authalic.png/eps with title "Discrete Authalic Parameterization"
+\begin{center}
+    \label{parameterization-fig-authalic}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Parameterization/authalic} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./authalic.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Discrete Authalic Parameterization}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 
 \subsubsection{Associated Border Parameterization}
@@ -227,22 +223,21 @@ allows further lowering of the angle distortion. A one-to-one mapping
 is not guaranteed by this method. It solves a (2 $\times$
 \#triangles) $\times$ \#vertices sparse linear system in the least squares sense.
 
-% Include LSCM.png/eps figure with title = "Least Squares Conformal Maps"
-\begin{figure}[bht]
-    \begin{center}
-        % Image
-        \begin{ccTexOnly}
-            \includegraphics{Parameterization/LSCM} % omit suffix to support PS and PDF
-        \end{ccTexOnly}
-        \begin{ccHtmlOnly}
-            <img border=0 src="./LSCM.png" align=center>
-        \end{ccHtmlOnly}
-        \label{parameterization-fig-LSCM}
-
-        % Title
+% Insert image LSCM.png/eps with title "Least Squares Conformal Maps"
+\begin{center}
+    \label{parameterization-fig-LSCM}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Parameterization/LSCM} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./LSCM.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
         \caption{Least Squares Conformal Maps}
-    \end{center}
-\end{figure}
+    \end{figure}
+\end{center}
 
 
 \subsubsection{Natural Conformal Map}
