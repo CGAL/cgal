@@ -13,6 +13,8 @@
 \label{chap:parameterization_ref}
 \ccChapterAuthor{Laurent Saboret \and Pierre Alliez}
 
+% pierre: replace border by boundary
+
 
 Parameterizing a surface amounts to finding a one-to-one mapping from
 a suitable domain to the surface. A good mapping is the one which
@@ -64,10 +66,10 @@ Border parameterization methods define a
 set of constraints (a constraint specifies two u,v coordinates for
 each instance of a vertex along the border).
 
-This package implements classic border parameterization methods:
+This package implements all common border parameterization methods:
 \begin{itemize}
 
-\item For free border methods: only two constraints (the pinned
+\item For free border methods: at least two constraints (the pinned
 vertices). They have to be on the specified border.
 
 \item For fixed border methods:
