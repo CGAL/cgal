@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// The class Discrete_conformal_map_parameterizer_3
-/// implements the Discrete Conformal Map (DCM) parameterization [FH05].
+/// implements the Discrete Conformal Map (DCM) parameterization [EDD+95].
 /// This algorithm is also called "Discrete Conformal Parameterization (DCP)",
 /// "Discrete Harmonic Map" or "Fixed Conformal Parameterization" by other authors.
 ///

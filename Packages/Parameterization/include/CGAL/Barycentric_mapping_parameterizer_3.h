@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm [FH05].
+/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm [Tut63].
 /// This algorithm is also called "Tutte Uniform Weights" by other authors.
 ///
 /// 1 to 1 mapping is guaranteed if the surface's border is mapped to a convex polygon.

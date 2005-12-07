@@ -27,19 +27,19 @@ the \ccc{ParameterizerTraits_3} methods.
 \subsection{Fixed Border Surface Parameterizations}
 
 % pierre: I would replace border by boundary everywhere
+% laurent: Andreas asked to replace boundary by border everywhere...
 
 Fixed Border Surface Parameterizations need a set of constraints: two
 u,v coordinates for each vertex along the boundary. Some helper
-functions to achieve this goal are described in Section xxx.
-
-% pierre: add ref
+classes to achieve this goal are described in Section
+\ref{sec:Border-Parameterizations-for-Fixed-Methods}.
 
 \subsubsection{Tutte Barycentric Mapping}
 
 \ccc{CGAL::Barycentric_mapping_parameterizer_3}  \\
 
 The Barycentric Mapping parameterization method has been introduced by
-Tutte~\cite{cgal:fh-survey-05}. In parameter space, each vertex is
+Tutte~\cite{t-hdg-63}. In parameter space, each vertex is
 placed at the barycenter of its neighbors to achieve the so-called
 convex combination condition. This amounts to solve one
 sparse linear solver for each set of parameter coordinates, with a
@@ -50,8 +50,6 @@ vertex $v_i$ for a diagonal element, and to zero for any other matrix
 entry. Although Tutte Barycentric Mapping method is fast and
 guaranteed to be bijective, it does not minimize angle nor area
 distortion.
-
-% pierre: reference Tutte's paper, not survey
 
 % Insert image uniform.png/eps with
 % title "Tutte Barycentric Mapping (the red line emphasizes the cutting path)"
@@ -76,7 +74,7 @@ distortion.
 \ccc{CGAL::Discrete_conformal_map_parameterizer_3}  \\
 
 Discrete Conformal Map parameterization has been introduced by Eck et
-al. to the graphics community~\cite{cgal:fh-survey-05}. It attempts to
+al. to the graphics community~\cite{cgal:eddhls-maam-95}. It attempts to
 lower angle deformation by minimizing a discrete version of the
 Dirichlet energy as derived by Pinkall and
 Polthier~\cite{cgal:fh-survey-05}.
@@ -174,7 +172,8 @@ for both systems) is asymmetric.
 \end{center}
 
 
-\subsubsection{Associated Border Parameterization}
+\subsubsection{Border Parameterizations for Fixed Methods}
+\label{sec:Border-Parameterizations-for-Fixed-Methods}
 
 Border Parameterizations for Fixed Border Surface Parameterizations
 are a family of methods to define a set of constraints, namely two
@@ -256,7 +255,7 @@ positive, thus can be efficiently solved.
 % pierre: double check that it is indeed symmetric!
 
 
-\subsubsection{Associated Border Parameterization}
+\subsubsection{Border Parameterizations for Free Methods}
 
 \ccc{CGAL::Two_vertices_parameterizer_3}  \\
 
