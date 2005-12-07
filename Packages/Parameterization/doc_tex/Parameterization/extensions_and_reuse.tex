@@ -2,40 +2,40 @@
 
 \subsection{Reusing Mesh Adaptors}
 
-\ccc{ParameterizationMesh_3} defines a concept to access to a general polyhedral mesh.
-The current interface is optimized for the parameterization package,
-but may be easily generalized.
+\ccc{ParameterizationMesh_3} defines a concept to access to a
+general polyhedral mesh.  The current interface is optimized for the
+parameterization package, but may be easily generalized.
 
-The package proposes
-a \ccc{ParameterizationMesh_3} interface with both the 2D Triangulation Data Structure enriched
-with 3D points and the Polyhedron.
-
-Any algorithm that must work on both \ccc{Triangulation_data_structure_2} with 3D points
-and \ccc{Polyhedron_3} may take advantage of these adaptors.
+The package proposes a \ccc{ParameterizationMesh_3} interface with
+both the 2D Triangulation Data Structure enriched with 3D points and
+the Polyhedron. Any algorithm that makes use of both
+\ccc{Triangulation_data_structure_2} with 3D points and
+\ccc{Polyhedron_3} may take advantage of these adaptors.
 
 
 \subsection{Reusing Sparse Linear Algebra}
 
-The \ccc{SparseLinearAlgebraTraits_d} concept and the traits classes for OpenNL,
-{\sc Taucs} and SuperLU are totaly independent of the rest of the package,
-and may be reused directly by CGAL developers.
+The \ccc{SparseLinearAlgebraTraits_d} concept and the traits classes
+for OpenNL, {\sc Taucs} and SuperLU are independent from the
+parameterization package, and may be reused by CGAL developers for
+other purposes.
 
 
 \subsection{Adding New Parameterization Methods}
 
-Implementing a new fixed border linear parameterization is very easy.
-Most of the code of the fixed border methods
-is factorized in the \ccc{Fixed_border_parameterizer_3} class.
-Subclasses must mainly implement a \ccc{compute_w_ij}() method
-that computes $w_{ij}$ = (i,j) coefficient of matrix A for $v_j$ neighbor vertex of $v_i$.
+Implementing a new fixed border linear parameterization is easy.  Most
+of the code of the fixed border methods is factorized in the
+\ccc{Fixed_border_parameterizer_3} class.  Subclasses must mainly
+implement a \ccc{compute_w_ij}() method which computes each
+coefficient $w_{ij}$ = (i,j) of a matrix $A$ for $v_j$ neighbouring
+vertices of $v_i$.
 
-Implementing a new free border linear parameterization is more complex.
-Anyway, Least Squares Conformal Maps and Natural Conformal Map
-are good starting points.
+Although implementing a new free boundary linear parameterization
+method is more involved, the Least Squares Conformal Maps and Natural
+Conformal Map parameterization methods are good starting points.
 
-Implementing \ccc{non} linear parameterizations would be a nice improvement
-of this package. In the other hand, most of the work remains to do.
-Only the mesh adaptors can be directly reused.
+Implementing \ccc{non} linear parameterizations is a natural extension
+to this package, although only the mesh adaptors can be reused.
 
 
 \subsection{Adding New Border Parameterization Methods}
@@ -46,5 +46,7 @@ Square, Circular and 2-Points border parameterizations are good starting points.
 
 \subsection{Mesh Cutting}
 
-Obviously, this package would benefit of robust algorithms that transform
-a closed mesh of arbitrary genus into a topological disk.
+Obviously, this package would benefit of having robust algorithms
+which transform arbitrary meshes into topological disks.
+
+% references ?

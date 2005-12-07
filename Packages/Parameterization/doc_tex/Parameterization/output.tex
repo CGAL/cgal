@@ -1,18 +1,21 @@
 \section{Output}
 
-Parameterizations store the result in the (u,v) fields of the input mesh's vertices
-and halfedges: a (u,v) pair per inner vertex and a (u,v) pair per border halfedge.
-The package user must traverse the mesh to get the output.
+All parameterization methods store the result in the $(u,v)$ fields of
+the input mesh vertices and halfedges. A $(u,v)$ pair is provided for
+each inner vertex, while a $(u,v)$ pair is provided for each boundary
+halfedge (possibly a seam in the mesh). The user has to iterate over
+the corresponding mesh elements to get the result.
 
-Note: (u,v) fields do not exist in CGAL \ccc{Polyhedron_3} and
-\ccc{Triangulation_data_structure_2}, thus
-the output traversal is specific to the way the (u,v) fields are implemented.
+Note: $(u,v)$ fields do not exist in CGAL \ccc{Polyhedron_3} and
+\ccc{Triangulation_data_structure_2}, thus the output traversal is specific to the way the (u,v) fields are implemented.
 
 \subsection{EPS Output Example}
 
-The code below gets the (u,v) fields computed by a parameterization method
-in a \ccc{Polyhedron_3} mesh with a \ccc{Parameterization_polyhedron_adaptor_3} adaptor.
-Note that \ccc{Parameterization_polyhedron_adaptor_3} stores (u,v) pairs in halfedges (inner and border).
+The C++ code below gets the $(u,v)$ fields computed by a
+parameterization method in a \ccc{Polyhedron_3} mesh with a
+\ccc{Parameterization_polyhedron_adaptor_3} adaptor.  Note that
+\ccc{Parameterization_polyhedron_adaptor_3} stores $(u,v)$ pairs in
+halfedges (both inner and border).
 
 \begin{ccExampleCode}
 
@@ -69,4 +72,4 @@ int main(int argc,char * argv[])
 
 \end{ccExampleCode}
 
-See the complete code in \ccc{Taucs_parameterization.C} example.
+See the complete example in \ccc{Taucs_parameterization.C}.

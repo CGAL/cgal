@@ -1,11 +1,11 @@
 \section{Sparse Linear Algebra}
 
-Since parameterizing meshes require
-efficient representation of sparse matrices and efficient iterative or
-direct linear solvers, we provide link to standard packages ({\sc Taucs}, SuperLU)
-and propose a separate package devoted to OpenNL sparse linear solver.
+Parameterizing triangle meshe require both efficient representations
+of sparse matrices and efficient iterative or direct linear
+solvers. We provide links to standard packages ({\sc Taucs}, SuperLU)
+and include a separate package devoted to OpenNL sparse linear solver.
 
-\subsection{Solvers List and Concept}
+\subsection{List of Solvers and Concept}
 
 We provide an interface to several sparse linear solvers, as models
 of the \ccc{SparseLinearAlgebraTraits_d} concept:
@@ -31,11 +31,10 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
 \subsection{{\sc Taucs} Solver Example}
 
-The examples given so far use the default sparse linear solver: OpenNL.
-
-The code below applies the default parameterization method
-(Floater Mean Value Coordinates with a circular border),
-but specifically instantiates {\sc Taucs} solver:
+The examples provided so far use the default sparse linear solver
+OpenNL. The following C++ code computes the default parameterization
+method (Floater Mean Value Coordinates with a circular boundary), but
+specifically instantiates the {\sc Taucs} solver:
 
 \begin{ccExampleCode}
 
@@ -77,5 +76,5 @@ int main(int argc,char * argv[])
 
 \end{ccExampleCode}
 
-See the complete code in \ccc{Taucs_parameterization.C} example.
+See the complete example in \ccc{Taucs_parameterization.C}.
 

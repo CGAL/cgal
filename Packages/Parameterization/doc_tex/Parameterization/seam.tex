@@ -2,46 +2,52 @@
 
 \subsection{Computing a Cut}
 
-Surface parameterization methods deal only with topological discs.
-The input mesh can be of any genus and have any number of connected components.
-If it is not a topological disc, it has to come with a description of a border
-(a list of vertices) which is the border of a topological disc.
-If no border is given, we assume that the surface border
-is the longest border already in the input mesh (the other borders will
-be considered as holes).
+All surface parameterization methods proposed in this package only
+deal with topological discs.  The input mesh can be of any genus and
+have any number of connected components, but if it is not a topological
+disc, it has to come with a description of a boundary (an oriented list of
+vertices) which is the border of a topological disc.  If no boundary  is
+given as input, we assume that the surface border is the longest border already
+in the input mesh (the other borders will be considered as holes).
 
-This package does not provide algorithms that transform
-a closed mesh of arbitrary genus into a topological disk.
-The package user is responsible for computing such a cut.
+% pierre: big contradiction here - it can be seomthing else than a
+% disk then!
 
-We provide in \ccc{polyhedron_ex_parameterization.C} a simple cutting algorithm as example.
-Serious users will have to use a more robust method.
+This package does not provide any algorithm to transform a closed mesh
+of arbitrary genus into a topological disk, the user being responsible
+for computing such a cut. Nevertheless we provide in
+\ccc{polyhedron_ex_parameterization.C} a simple cutting algorithm for
+the sake of completeness.
 
 
 \subsection{Applying a Cut}
 
-Parameterization methods in this package support only
-triangulated surfaces that are homeomorphic to a
-disk (models of \ccc{ParameterizationMesh_3}). This software design simplifies the implementation of new
-parameterization methods.
+Parameterization methods in this package only support triangulated
+surfaces that are homeomorphic to a disk (models of
+\ccc{ParameterizationMesh_3}). This software design simplifies the
+implementation of all new parameterization methods based on linear
+solvers.
 
-\ccc{Parameterization_mesh_patch_3} class is responsible of virtually {\em cutting}
-a patch in a \ccc{ParameterizationPatchableMesh_3} mesh, to make it appear as a topological disk
-with a \ccc{ParameterizationMesh_3} interface.
+\ccc{Parameterization_mesh_patch_3} class is responsible for virtually
+{\em cutting} a patch to a \ccc{ParameterizationPatchableMesh_3} mesh,
+to make it similar ffromt he interface point of view to a topological
+disk with a \ccc{ParameterizationMesh_3} interface.
 
 \ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3}, thus is a concept for a 3D surface mesh.
 \ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability to behave exactly as if the surface was {\em cut} following a certain path.
 
-The \ccc{ParameterizationMesh_3} interfaces with both the 2D Triangulation Data Structure enriched
-with 3D points (not yet implemented) and the Polyhedron are also models of \ccc{ParameterizationPatchableMesh_3}:
+The \ccc{ParameterizationMesh_3} interfaces with both the 2D
+Triangulation Data Structure enriched with 3D points (not yet
+implemented) and the Polyhedron are also models of
+\ccc{ParameterizationPatchableMesh_3}:
 
 \ccc{CGAL::Parameterization_polyhedron_adaptor_3}  \\
 
 
 \subsection{Cutting a Mesh Example}
 
-The code below virtually {\em cuts} a \ccc{Polyhedron_3} mesh to make it a topological disk,
-then applies the default parameterization:
+The code below virtually {\em cuts} a \ccc{Polyhedron_3} mesh to make
+it a topological disk, then applies the default parameterization:
 
 \begin{ccExampleCode}
 
@@ -96,6 +102,7 @@ int main(int argc,char * argv[])
 
 \end{ccExampleCode}
 
-See the complete code in \ccc{Mesh_cutting_parameterization.C} example.
+See the complete example in \ccc{Mesh_cutting_parameterization.C}
+example.
 
 
