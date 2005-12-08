@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Surface_mesh_C2T3<T3>}  %% add template arg's if necessary
+\begin{ccRefClass}{Surface_mesh_C2T3<Tr>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,8 +21,13 @@
 The class \ccRefName\  implements a data structure to store
 a two dimensional pure  complex 
 embedded in a three dimensional triangulation.
-The template parameter \ccc{T3} has to be instanciated
-with one of the three dimensional triangulation of \cgal.
+The template parameter \ccc{Tr} has to be instanciated
+with a model of the concept \ccc{Triangulation_3}.
+(Any three dimensional   triangulation of
+\cgal\ is a model of \ccc{Triangulation_3}.)
+
+The class \ccRefName\  can be plugged as template parameter
+in the global function \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
 
 
@@ -30,41 +35,48 @@ with one of the three dimensional triangulation of \cgal.
 
 \ccIsModel
 
-Concept \ccc{SurfaceMeshC2T3}
+\ccc{SurfaceMeshC2T3}
 
-\ccTypes
+WARNING :
+Currently the class  \ccRefName\  does not implement the
+whole concept \ccc{SurfaceMeshC2T3}
+but can stll be used as the first  parameter class
+of  \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
-\ccNestedType{TYPE}{some nested types}
 
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
+%\ccTypes
 
-\ccConstructor{Surface_mesh_C2T3();}{default constructor.}
+%\ccNestedType{TYPE}{some nested types}
 
-\ccOperations
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
 
-\ccMethod{void foo();}{some member functions}
+%\ccConstructor{Surface_mesh_C2T3();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
-\ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Package/Surface_mesh_C2T3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+%\ccExample
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Surface_mesh_C2T3.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-%% \ccIncludeExampleCode{Package/Surface_mesh_C2T3.C}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Surface_mesh_C2T3.C}
 
 \end{ccRefClass}
 

@@ -18,49 +18,339 @@
 
 \ccDefinition
   
-The concept \ccRefName\ does this and that.
+The concept \ccRefName\ describes a data structure
+designed  to represent a  two dimensional pure complex 
+embedded in a three dimensional triangulation.
+The complex is a  formed by a subset  of the  faces 
+of the triangulation.
+ This subset is a complex
+meaning that each subface of a face in the complex is a face of the
+complex. Being two dimensional the complex
+ including only faces with dimension at most two,
+that is vertices, edges or facets. 
+Furthermore the complex is pure which means that
+every vertex or edge in the complex belong to at least one facet of the
+complex, there is no isolated vertices or antenna edges.
+This complex is a simplification of the more general concept
+\ccc{Complex2InTriangulation3} designed to represent any
+two dimensional complex 
+embedded in a three dimensional triangulation.
+The concept \ccRefName\  is specially suited to handled
+surface meshes obtained as a Delaunay triangulations
+restricted to a surface.
+A model of this concept can be used as first parameter in the global
+function \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
-\ccGeneralizes
 
-ThisConcept \\
-ThatConcept
+ 
+
+%\ccGeneralizes
+
+%ThisConcept \\
+%ThatConcept
 
 \ccTypes
+\ccRefName\ provides the following types.
 
-\ccNestedType{TYPE}{some nested types}
+\ccNestedType{Triangulation_3}{The type of the
+underlying 3D triangulation.}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Vertex_handle Vertex_handle;}{ The type of
+the underlying triangulation vertex handles.}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Cell_handle  Cell_handle;}{ The  type of
+the  underlying triangulation cell handles.}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Facet Facet;}{The  type of
+the  underlying triangulation facets.}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Edge Edge;} {The  type of
+the  underlying triangulation edges.}
+
+
+\ccEnum{enum Face_type {NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR,
+SINGULAR};}
+{A type to describe the type of a face (facet, edge or vertex) with respect to 
+the 2D complex. A \ccc{NOT_IN_COMPLEX} face does not belong to the 2D complex.
+Facets can only be  \ccc{NOT_IN_COMPLEX}  or \ccc{REGULAR}
+depending on wether they belong to the 2D complex on not.
+An edge in the complex is said to be respectively \ccc{ISOLATED}, 
+\ccc{BOUNDARY},
+\ccc{REGULAR} or \ccc{SINGULAR}
+ if it is incident to respectively 0, 1, 2  or 3 or
+more facets in the complex. A vertex of the complex is
+\ccc{ISOLATED} if it is incident incident to no edge of the complex.
+It is said to be \ccc{BOUNDARY}  
+if the adjacency graph of incidents facets 
+is a simple path  and \ccc{REGULAR} if this graph is  a cycle.
+Any other vertex of the complex is \ccc{SINGULAR}.
+In the present concept which described only pure two dimensional
+complex,
+there is no \ccc{ISOLATED} vertices or edges. Nevertheless for generality
+we maintain
+this value in the \ccc{Face_type}.}
+
+
+\ccNestedType{Facets_iterator}{An iterator type to visit the facets
+of the 2D complex around a boundary or regular vertex.}
+\ccGlue
+\ccNestedType{Edges_iterator}{An iterator type to visit  the
+edges of the 2D complex around a boundary or regular vertex.}
+\ccGlue
+\ccNestedType{Vertices_iterator}{An iterator type to visit 
+vertices of the 2D complex around a boundary or regular vertex.}
+
+\ccNestedType{Facets_circulator}{An iterator type to visit the facets
+of the 2D complex around a boundary or regular vertex.}
+\ccGlue
+\ccNestedType{Edges_circulator}{An iterator type to visit  the
+edges of the 2D complex around a boundary or regular vertex.}
+\ccGlue
+\ccNestedType{Vertices_circulator}{An iterator type to visit 
+vertices of the 2D complex around a boundary or regular vertex.}
+
+
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{c2t3}  %% choose variable name
 
 \ccConstructor{SurfaceMeshC2T3();}{default constructor.}
+\ccGlue
+\ccConstructor{SurfaceMeshC2T3((Triangulation_3& t3));}
+ {Build an empty 2D complex embedded in the triangulation \ccc{t3}}
+\ccGlue
+\ccConstructor{template < class FacetSelector>
+SurfaceMeshC2T3((Triangulation_3& t3), FacetSelector select);}
+{Build an empty 2D complex embedded in the triangulation \ccc{t3}
+including the facets of \ccc{t3} which passes the test \ccc{select}.
+The type \ccc{FacetSelector} supposed to be 
+a function object with an operator to select facets~:
+\ccc{bool operator()(Facet f);}.}
 
-\ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccHeading{Modifications}
+\ccMethod{void set_in_complex(Facet f);}{Sets facet \ccc{f} in the 2D complex.}
+\ccGlue
+\ccMethod{void set_in_complex(Cell_handle c, int i);}
+{Sets facet \ccc{(c,i)} in the 2D complex.}
+\ccGlue
+\ccMethod{void remove_from_complex(Facet f);}
+{Removes facet \ccc{f} from  the 2D complex.}
+\ccGlue
+\ccMethod{void remove_from_complex(Cell_handle c, int i);}
+{Removes facet \ccc{(c,i)} in the 2D complex.}
+
+\ccHeading{Queries}
+Queries on the type of individual face with respect to the 2D complex.
+\ccMethod{Face_type  complex_subface_type(Facet f);}
+{Returns the type of the facet \ccc{f}  with respect to  the 2D complex.}
+\ccGlue
+\ccMethod{Face_type  face_type(Cell_handle c, int i);}
+{Returns the type of the facet \ccc{(c,i)} with respect to  the 2D complex.}
+\ccGlue
+\ccMethod{Face_type  face_type(Edge e);}
+{Returns the type of edge \ccc{e} in the 2D complex.}
+\ccGlue
+\ccMethod{Face_type  face_type(Cell_handle c, int
+i, int j);}
+{Returns the type of edge \ccc{(c,i,j)}  in the 2D complex.}
+\ccGlue
+\ccMethod{Face_type  face_type(Vertex_handle v);}
+{Returns the type of vertex \ccc{v} in the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Facet f);}
+{returns \ccc{true} if the facet \ccc{f} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Cell_handle c, int i);}
+{returns \ccc{true} if the facet \ccc{(c,i)} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Edge e);}
+{returns \ccc{true} if the edge  \ccc{e} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Cell_handle c, int i, int j);}
+{returns \ccc{true} if the edge \ccc{(c,i,j)} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Vertex_handle v);}
+{returns \ccc{true} if the vertex \ccc{v} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_regular(Edge e);}
+{returns \ccc{true} if the edge  \ccc{e} is regular.
+\ccPrecond{\ccc{e} is an edge of the complex.} }
+\ccGlue
+\ccMethod{bool is_regular(Cell_handle c, int i, int j);}
+{returns \ccc{true} if the edge \ccc{(c,i,j)} is regular.
+\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
+\ccGlue
+\ccMethod{bool is_regular(Vertex_handle v);}
+{returns \ccc{true} if the vertex \ccc{v} is regular.
+\ccPrecond{\ccc{v} is a vertex of the complex.} }
+\ccGlue
+\ccMethod{bool is_on_boundary(Edge e);}
+{returns \ccc{true} if the edge  \ccc{e} is on boundary.
+\ccPrecond{\ccc{e} is an edge of the complex.} }
+\ccGlue
+\ccMethod{bool is_on_boundary(Cell_handle c, int i, int j);}
+{returns \ccc{true} if the edge \ccc{(c,i,j)} is on boundary.
+\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
+\ccGlue
+\ccMethod{bool is_on_boundary(Vertex_handle v);}
+{returns \ccc{true} if the vertex \ccc{v} is on boundary.
+\ccPrecond{\ccc{v} is a vertex of the complex.} }
+
+Queries on the 2D complex. 
+
+\ccMethod{bool is_manifold();}
+{returns \ccc{true} if the complex is manifold.}
+\ccGlue
+\ccMethod{bool is_connected_component_manifold(Facet f);}
+{Returns true if the   
+connected component including  facet \ccc{f} is manifold.}
+\ccGlue
+\ccMethod{std::size_type number_of_connected_components();}
+{Returns the number of connected components of the
+complex.}
+\ccGlue
+\ccMethod{std::size_type 
+number_of_connected_components_of_boundary();}
+{Returns the number of connected components of the boundary
+  the complex.}
+\ccGlue
+\ccMethod{std::size_type
+number_of_connected_components_of_boundary(Facet f);}
+{Returns the number of connected components of the boundary
+of connected component of the complex including facet \ccc{f}.}
+\ccGlue
+\ccMethod{std::size_type
+number_of_connected_components_of_boundary(Cell_handle c, int i);}
+{Returns the number of connected components of the boundary
+of connected component of the complex including facet
+\ccc{(c,i)}}
+\ccGlue
+\ccMethod{std::size_type
+genus(Facet f);}
+{Returns the topological genus 
+of the connected component of the complex including facet \ccc{f}.}
+\ccGlue
+\ccMethod{std::size_type
+genus(Cell_handle c, int i);}
+{Returns the topological genus 
+of connected component of the complex including facet \ccc{(c,i)}.}
+
+
+
+
+
+\ccHeading{Traversal of the complex}
+
+The data structures provides iterators  to visit  
+various faces of the complex and circulators to visit the faces
+incident to a given vertex of the complex.
+All those iterators and circulators are bidirectional and
+non mutable.
+
+\ccMethod{Facets_iterator facets_begin();}
+{Returns an iterator with value type \ccc{Facet} to visit the facets
+of the 2D complex.}
+\ccGlue
+\ccMethod{Facets_iterator facets_end();}
+{Returns past the end value for the above iterator.}
+
+\ccMethod{Edges_iterator edges_begin();}
+{Returns an iterator with value type \ccc{Edge} to visit the
+edges of the 2D complex which are not isolated.}
+\ccGlue
+\ccMethod{Edges_iterator edges_end();}
+{Returns past the end value for the above iterator.}
+\ccGlue
+\ccMethod{Boundary_edges_iterator boundary_edges_begin();}
+{Returns an iterator with value type \ccc{Edge} to visit the
+boundary  edges of the complex..}
+\ccGlue
+\ccMethod{Boundary_edges_iterator boundary_edges_end();}
+{Returns past the end value for the above iterator.}
+\ccGlue
+\ccMethod{Vertices_iterator vertices_begin();}
+{Returns an iterator with value type \ccc{Vertex_handle} to visit the
+vertices of the 2D complex which are not isolated.}
+\ccGlue
+\ccMethod{Vertices_iterator vertices_end();}
+{Returns past the end value for the above iterator.}
+\ccGlue
+\ccMethod{Boundary_vertices_iterator 
+         boundary_vertices_begin();}
+{Returns an iterator with value type \ccc{Vertex_handle} to visit the 
+vertices of the 2D complex that are  boundary vertices.}
+\ccGlue
+\ccMethod{Boundary__vertices_iterator 
+ boundary_vertices_end();}
+{Returns past the end value for the above iterator.}
+
+
+\ccMethod{Facets_circulator
+incident_facets(Vertex_handle v);}
+{Returns a circulator to visit the facets of the complex incident to
+vertex \ccc{v}. Returns an empty circulator if the vertex is 
+singular. For a boundary  vertex,  the circulator will wrap from the last
+incident facet  to the first one.}
+\ccGlue
+\ccMethod{Egdes_circulator
+incident_edges(Vertex_handle v);}
+{Returns a circulator to visit the edges of the complex incident to
+vertex \ccc{v}. Returns an empty circulator if the vertex is 
+singular. For a boundary  vertex,  the circulator will wrap from the last
+incident edge  to the first one.}
+\ccGlue
+\ccMethod{Vertices_circulator
+incident_vertices(Vertex_handle v);}
+{Returns a circulator to visit the vertices of the complex adjacent to
+vertex \ccc{v}. Returns an empty circulator if the vertex  or
+singular. For a boundary  vertex,  the circulator will wrap from the last
+incident vertex  to the first one.}
+
+The following function is the basic function to walk on the 2D
+complex
+\ccMethod{Facet neighbor(Facet f, int j);}
+{Returns the facet of the complex which is the neighbor of 
+the facet \ccc{f} opposite to the vertex with index \ccc{j} of
+\ccc{f} .
+The vertices of the facet \ccc{f = (cell  c, i)} are numbered
+(0,1,2) (according to the \ccc{vertex_triple_index(i,j)} member function
+of \ccc{Triangulation_3})
+in such a way that facet \ccc{f} is oriented by the
+outward normal of tetraedra \ccc{c}.}
+\ccGlue
+\ccMethod{Facet neighbor(Cell_handle c, int i, int j);}
+{Returns the facet of the complex which is the neighbor of 
+the facet \ccc{f} opposite to the vertex with index \ccc{j} of \ccc{f}.
+See above.}
+
+
+
 
 \ccHasModels
 
-\ccc{Some_class},
-\ccc{Some_other_class}.
+\ccc{Surface_mesh_C2T3<Tr>}
+
 
 \ccSeeAlso
 
-Some\_other\_concept,
-\ccc{some_other_function}.
+{Complex2InTriangulation\_3}, \\
+\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
-\ccExample
+%\ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Package/SurfaceMeshC2T3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceMeshC2T3.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Package/SurfaceMeshC2T3.C}
 
