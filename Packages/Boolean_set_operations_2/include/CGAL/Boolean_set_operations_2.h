@@ -628,9 +628,10 @@ inline OutputIterator symmetric_difference(const General_polygon_with_holes_2
 }
 
 template <class Arr_traits, class OutputIterator>
-inline OutputIterator symmetric_difference(const General_polygon_2<Arr_traits>& pgn1, 
-                         const General_polygon_2<Arr_traits>& pgn2,
-                         OutputIterator out)
+inline OutputIterator 
+  symmetric_difference(const General_polygon_2<Arr_traits>& pgn1, 
+                       const General_polygon_2<Arr_traits>& pgn2,
+                       OutputIterator out)
 {
   typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
   
@@ -742,7 +743,7 @@ inline OutputIterator join(InputIterator begin,
 
   General_polygon_set_2<Traits> gps(*begin);
   gps.join(++begin, end);
-  return (gps.polygons_with_holes(out));
+  return (gps.polygons_with_holes(oi));
 }
 
 
@@ -772,7 +773,7 @@ inline OutputIterator join(InputIterator1 begin1,
 
   General_polygon_set_2<Traits> gps(*begin1);
   gps.join(++begin1, end1, begin2, end2);
-  return (gps.polygons_with_holes(out));
+  return (gps.polygons_with_holes(oi));
 }
 
 
@@ -799,7 +800,7 @@ inline OutputIterator intersection(InputIterator begin,
 
   General_polygon_set_2<Traits> gps(*begin);
   gps.intersection(++begin, end);
-  return (gps.polygons_with_holes(out));
+  return (gps.polygons_with_holes(oi));
 }
 
 
@@ -829,7 +830,7 @@ inline OutputIterator intersection(InputIterator1 begin1,
 
   General_polygon_set_2<Traits> gps(*begin1);
   gps.intersection(++begin1, end1, begin2, end2);
-  return (gps.polygons_with_holes(out));
+  return (gps.polygons_with_holes(oi));
  
 }
 
