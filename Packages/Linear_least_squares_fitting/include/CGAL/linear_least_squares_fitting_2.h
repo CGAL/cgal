@@ -35,8 +35,8 @@ namespace CGALi {
 template < typename InputIterator, 
            typename K >
 typename K::FT
-linear_least_squares_fitting_2(InputIterator begin,
-                               InputIterator end, 
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
                                const K& k,                 // kernel
@@ -48,10 +48,10 @@ linear_least_squares_fitting_2(InputIterator begin,
   typedef typename K::Line_2   Line;
 
   // precondition: at least one element in the container.
-  CGAL_precondition(begin != end);
+  CGAL_precondition(first != beyond);
 
   // compute centroid
-  c = centroid(begin,end,K());
+  c = centroid(first,beyond,K());
 
   // assemble covariance matrix as a
   // semi-definite matrix. 
