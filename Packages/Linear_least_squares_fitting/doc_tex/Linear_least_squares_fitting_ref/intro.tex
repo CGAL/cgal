@@ -2,13 +2,14 @@
 % | Reference manual page: PCA/intro.tex
 % +------------------------------------------------------------------------+
 % | March 2005  Pierre Alliez and Sylvain Pion
-% | Package: Principal Component Analysis
+% | Package: Linear Least Squares Fitting
 % | 
 % |
 % +------------------------------------------------------------------------+
 
-\chapter{Principal Component Analysis}
-\label{chap:PCA}
+\chapter{Linear Least Squares Fitting}
+\label{chap:pca}
+
 \ccChapterAuthor{Pierre Alliez and Sylvain Pion}
 
 Given a point set in $R^d$, linear least squares fitting amounts to
@@ -22,10 +23,10 @@ directions in which the data has strong component, or equivalently
 large variance. If eigenvalues are the same there is no preferable
 sub-space.\\
 
-This \cgal\ package implements the linear least squares fitting not
-only for point sets, but for several objects of a CGAL 2D or 3D
+This \cgal\ package implements the linear least squares fitting 
+for several objects of a CGAL 2D or 3D
 kernel: the best fit 2D line for 2D point, segment and triangle sets,
-and the best fit 3D line/plane for point, segment, triangle and even
+and the best fit 3D line/plane for point, segment, triangle and
 tetrahedral sets. The interface is similar in spirit to that of the
 convex hull. It allows fitting a set of kernel primitive elements
 which are stored in an iterator range of a container.
@@ -37,8 +38,6 @@ which are stored in an iterator range of a container.
 \ccRefIdfierPage{CGAL::linear_least_squares_fitting}\\
 \ccRefIdfierPage{CGAL::centroid}\\
 \ccRefIdfierPage{CGAL::barycenter}\\
-\ccRefIdfierPage{CGAL::bounding_box}\\
-\ccRefIdfierPage{CGAL::local_frame}\\
 \clearpage
 
 \lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}
