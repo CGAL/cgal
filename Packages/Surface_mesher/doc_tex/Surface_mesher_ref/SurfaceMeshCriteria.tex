@@ -18,25 +18,53 @@
 
 \ccDefinition
   
-The concept \ccRefName\ does this and that.
+The Delaunay refinement process involved in  the surface mesher 
+is guided by a set of refinement criteria.
+The concept \ccRefName\ described the interface which
+allow the mesher to take these criteria into account.
 
-\ccGeneralizes
+Typically the meshing criteria is a set
+of elementary criterion, each of which
+ the facet is required to meet.
+The meshing algorithm will eliminate bad facets
+which do not meet the criteria.
 
-ThisConcept \\
-ThatConcept
+Furthemore final mesh depends upon the order according to which bad facets
+are handled and the meshing algorithm 
+needs to be able to quantify the facet qualities and to compare
+the qualities of different faces.
+Therefore the concept \ccRefName\ 
+define a type \ccc{Quality} designed to measure
+the quality of a mesh facet. 
+Typically this quality
+is a multicomponent variable, each component being
+a numerical value associated with a given criterion
+and the comparison operator is just a lexicographic 
+comparison.
+
+
+%\ccGeneralizes
+
+%ThisConcept \\
+%ThatConcept
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+\ccNestedType{Quality}{A type to value the quality of mesh facets.
+    This type is required have a comprison operator}
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{criteria}  %% choose variable name
 
 \ccConstructor{SurfaceMeshCriteria();}{default constructor.}
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{bool  is_bad(Facet f);}{return true if facet \ccc{f}
+do not satisfy the required  criteria.}
+
+\ccMethod{Quality quality(Facet f);}{Compute the quality
+of facet \ccc{f}.}
 
 \ccHasModels
 
@@ -48,19 +76,19 @@ ThatConcept
 Some\_other\_concept,
 \ccc{some_other_function}.
 
-\ccExample
+%\ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Package/SurfaceMeshCriteria.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceMeshCriteria.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Package/SurfaceMeshCriteria.C}
 
