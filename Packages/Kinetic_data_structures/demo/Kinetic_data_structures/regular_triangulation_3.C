@@ -30,26 +30,26 @@ int main(int argc, char *argv[]){
   CoinKDel::Pointer cd= new CoinKDel(kdel, qtsim, qtmpt);
   
   typedef Traits::Simulator::Time Time;
-  typedef CGAL::KDS::Insert_event<Traits::Moving_point_table> MOI;
+  typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> MOI;
 
   Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();
 
   tr.simulator_pointer()->new_event(Time(0.000000), MOI(MP(MPP(cf(10, 1),
 							       cf(0, .1),  
-							       cf(0)), cf(.1)) , tr.moving_point_table_pointer()));
+							       cf(0)), cf(.1)) , tr.active_objects_table_pointer()));
   tr.simulator_pointer()->new_event(Time(0.000001), MOI(MP(MPP(cf(10), 
 							       cf(0),  
-							       cf(2)), cf(.1)) , tr.moving_point_table_pointer()));
+							       cf(2)), cf(.1)) , tr.active_objects_table_pointer()));
   tr.simulator_pointer()->new_event(Time(0.000002), MOI(MP(MPP(cf(12), 
 							       cf(0),  
-							       cf(0)), cf(.1)) , tr.moving_point_table_pointer()));
+							       cf(0)), cf(.1)) , tr.active_objects_table_pointer()));
   tr.simulator_pointer()->new_event(Time(0.000003), MOI(MP(MPP(cf(10), 
 							    cf(2),  
-							       cf(0)), cf(.1)), tr.moving_point_table_pointer()));
-  tr.simulator_pointer()->new_event(Time(0.000000035), MOI(MP(MPP(cf(1), cf(10),  cf(0)), cf(.1)) , tr.moving_point_table_pointer()));
+							       cf(0)), cf(.1)), tr.active_objects_table_pointer()));
+  tr.simulator_pointer()->new_event(Time(0.000000035), MOI(MP(MPP(cf(1), cf(10),  cf(0)), cf(.1)) , tr.active_objects_table_pointer()));
   tr.simulator_pointer()->new_event(Time(0.000004),MOI(MP(MPP(cf(10.5, .05), 
 							      cf(.5),  
-							      cf(.5)), cf(.1)), tr.moving_point_table_pointer()));
+							      cf(.5)), cf(.1)), tr.active_objects_table_pointer()));
   
   /*tr.simulator_pointer()->new_event(Time(0.000005), MOI(MPP(cf(0,1,-2), 
 					  cf(2,5),  

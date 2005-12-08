@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
       }
       Traits::Kinetic_kernel::Point_2 mp(Traits::Function_kernel::Function(coefsx.begin(), coefsx.end()),
 					 Traits::Function_kernel::Function(coefsy.begin(), coefsy.end()));
-      tr.moving_point_table_pointer()->insert(mp);
+      tr.active_objects_table_pointer()->insert(mp);
       //std::cout << mp << std::endl;
     }
   } else {
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
       std::istringstream il(buf);
       Traits::Kinetic_kernel::Point_2 p;
       il >> p;
-      tr.moving_point_table_pointer()->insert(p);
+      tr.active_objects_table_pointer()->insert(p);
       ++nread;
     }
     std::cout << nread << " points read.\n";

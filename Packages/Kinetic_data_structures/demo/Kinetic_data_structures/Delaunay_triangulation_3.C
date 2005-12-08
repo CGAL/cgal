@@ -38,8 +38,8 @@ int main(int argc, char *argv[]){
   typedef CGAL::KDS::Exact_simulation_traits_3 Traits;
   typedef CGAL::KDS::Delaunay_triangulation_3<Traits> KDel;
   typedef Traits::Simulator::Time Time;
-  typedef CGAL::KDS::Insert_event<Traits::Moving_point_table> IE;
-  typedef Traits::Moving_point_table::Data MP;
+  typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> IE;
+  typedef Traits::Active_objects_table::Data MP;
   typedef Traits::Kinetic_kernel::Motion_function MF;
   typedef Traits::Kinetic_kernel::Point_3 MP;
   typedef CGAL::KDS::Qt_widget_3<Traits::Simulator> Qt_gui;
@@ -59,12 +59,12 @@ int main(int argc, char *argv[]){
   
   
   typedef Traits::Simulator::Time Time;
-  typedef CGAL::KDS::Insert_event<Traits::Moving_point_table> MOI;
+  typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> MOI;
   
   Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();
   //sim->end_time();
   Traits::Simulator::Pointer sim= tr.simulator_pointer();
-  Traits::Moving_point_table::Pointer mpt= tr.moving_point_table_pointer();
+  Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
   CGAL::KDS::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
 
   if (verbose) {
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
       Traits::Kinetic_kernel::Point_3 mp(Traits::Function_kernel::Function(coefsx.begin(), coefsx.end()),
 					 Traits::Function_kernel::Function(coefsy.begin(), coefsy.end()),
 					 Traits::Function_kernel::Function(coefsz.begin(), coefsz.end()));
-      tr.moving_point_table_pointer()->insert(mp);
+      tr.active_objects_table_pointer()->insert(mp);
     }
   } else {
     std::ifstream in(file.c_str());
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]){
       std::istringstream il(buf);
       Traits::Kinetic_kernel::Point_3 p;
       il >> p;
-      tr.moving_point_table_pointer()->insert(p);
+      tr.active_objects_table_pointer()->insert(p);
       ++nread;
     }
     std::cout << nread << " points read.\n";

@@ -61,7 +61,7 @@ class Qt_moving_weighted_points_3: public Ref_counted< Qt_moving_weighted_points
 protected:
   typedef Qt_moving_weighted_points_3<Traits, GUI> This;
   typedef typename Traits::Instantaneous_kernel IK;
-  typedef typename Traits::Moving_point_table MPT;
+  typedef typename Traits::Active_objects_table MPT;
   typedef typename Traits::Simulator Simulator;
   typedef typename GUI::Listener Gui_listener;
   typedef typename Simulator::Listener Simulator_listener;
@@ -106,7 +106,7 @@ public:
   Qt_moving_weighted_points_3( Traits tr,  
 			       typename GUI::Pointer sim ): tr_(tr),
 							    ik_(tr.instantaneous_kernel_object()), 
-							    listener_(tr_.moving_point_table_pointer(), this),
+							    listener_(tr_.active_objects_table_pointer(), this),
 							    guil_(sim, this),
 							    siml_(sim->simulator(), this),
 							    rt_(tr_.kinetic_kernel_object().reverse_time_object()){
@@ -234,10 +234,10 @@ protected:
   
   unsigned int size() {
     /*unsigned int ct=0;
-    for (typename MPT::Keys_iterator it= tr_.moving_point_table_pointer()->keys_begin();
-	 it != tr_.moving_point_table_pointer()->keys_end(); ++it, ++ct);
+    for (typename MPT::Keys_iterator it= tr_.active_objects_table_pointer()->keys_begin();
+	 it != tr_.active_objects_table_pointer()->keys_end(); ++it, ++ct);
 	 return ct;*/
-    return tr_.moving_point_table_pointer()->size();
+    return tr_.active_objects_table_pointer()->size();
   }
 
  
@@ -277,8 +277,8 @@ void Qt_moving_weighted_points_3<T,G>::update_coordinates(){
   }
   
   int cp=0;
-  for (typename MPT::Keys_iterator it= tr_.moving_point_table_pointer()->keys_begin();
-       it != tr_.moving_point_table_pointer()->keys_end(); ++it, ++cp){
+  for (typename MPT::Keys_iterator it= tr_.active_objects_table_pointer()->keys_begin();
+       it != tr_.active_objects_table_pointer()->keys_end(); ++it, ++cp){
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
     typename IK::Static_kernel::Weighted_point pt= ik_.static_object(*it);
     double w= CGAL::to_double(pt.weight());
@@ -327,7 +327,7 @@ void Qt_moving_weighted_points_3<T,G>::update_tree(){
   //if (parent_==NULL) return; 
   int maxl=-1;
   int num=0;
-  for (typename MPT::Keys_iterator it= tr_.moving_point_table_pointer()->keys_begin(); it != tr_.moving_point_table_pointer()->keys_end(); ++it){
+  for (typename MPT::Keys_iterator it= tr_.active_objects_table_pointer()->keys_begin(); it != tr_.active_objects_table_pointer()->keys_end(); ++it){
     if (it->index() > maxl) maxl= it->index();
     ++num;
   }
@@ -390,8 +390,8 @@ void Qt_moving_weighted_points_3<T,G>::update_tree(){
     mat->diffuseColor.setValue(1,1,1);
     mat->emissiveColor.setValue(1,1,1);
     labels_= new SoGroup;
-    for (typename MPT::Keys_iterator kit = tr_.moving_point_table_pointer()->keys_begin();
-	 kit != tr_.moving_point_table_pointer()->keys_end(); ++kit){
+    for (typename MPT::Keys_iterator kit = tr_.active_objects_table_pointer()->keys_begin();
+	 kit != tr_.active_objects_table_pointer()->keys_end(); ++kit){
       Coin_pointer<SoShapeKit> k = new SoShapeKit;
       labels_->addChild(k.get());
       Coin_pointer<SoText2> s= new SoText2;
@@ -431,12 +431,12 @@ void Qt_moving_weighted_points_3<T,G>::reverse_time(){
   if (direction_of_time_== CGAL::POSITIVE) direction_of_time_=CGAL::NEGATIVE;
   else  direction_of_time_=CGAL::POSITIVE;
 
-  tr_.moving_point_table_pointer()->set_is_editing(true);
-  //typename MP::Traits::Reverse_time rt= tr_.moving_point_table_pointer()->traits_object().reverse_time_object();
-  for (typename MPT::Keys_iterator kit= tr_.moving_point_table_pointer()->keys_begin(); kit != tr_.moving_point_table_pointer()->keys_end(); ++kit){
-    tr_.moving_point_table_pointer()->set(*kit, rt_(tr_.moving_point_table_pointer()->at(*kit)));
+  tr_.active_objects_table_pointer()->set_is_editing(true);
+  //typename MP::Traits::Reverse_time rt= tr_.active_objects_table_pointer()->traits_object().reverse_time_object();
+  for (typename MPT::Keys_iterator kit= tr_.active_objects_table_pointer()->keys_begin(); kit != tr_.active_objects_table_pointer()->keys_end(); ++kit){
+    tr_.active_objects_table_pointer()->set(*kit, rt_(tr_.active_objects_table_pointer()->at(*kit)));
   }
-  tr_.moving_point_table_pointer()->set_is_editing(false);
+  tr_.active_objects_table_pointer()->set_is_editing(false);
 }
 
 
@@ -451,8 +451,8 @@ void Qt_moving_weighted_points_3<T,G>::set_point_size(double ps){
 template <class T, class G>
 void Qt_moving_weighted_points_3<T,G>::write(std::ostream &out) const {
   ik_.set_time(guil_.notifier()->current_time());
-  for (typename MPT::Keys_iterator it= tr_.moving_point_table_pointer()->keys_begin(); 
-       it != tr_.moving_point_table_pointer()->keys_end(); ++it){
+  for (typename MPT::Keys_iterator it= tr_.active_objects_table_pointer()->keys_begin(); 
+       it != tr_.active_objects_table_pointer()->keys_end(); ++it){
     out << *it;
     out << ": " << ik_.static_object(*it) << std::endl;
   }

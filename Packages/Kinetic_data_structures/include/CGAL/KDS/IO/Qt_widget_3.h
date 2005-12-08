@@ -27,6 +27,7 @@
 #include <CGAL/KDS/Listener.h>
 #include <CGAL/KDS/Ref_counted.h>
 #include <Inventor/Qt/SoQt.h>
+#include <Inventor/nodes/SoSeparator.h>
 
 class SoSeparator;
 

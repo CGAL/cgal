@@ -25,6 +25,7 @@
 //#ifdef HAVE_INVENTOR_QT_SOQT_H
 //#include <Inventor/Qt/SoQt.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/nodes/SoNode.h>
 //#include <Inventor/nodes/SoSeparator.h>
 //#else
 //#ifdef HAVE_COIN2_INVENTOR_QT_SOQT_H

@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
     Qt_mpt::Pointer qtmpt= new Qt_mpt(tr, qtsim);
 
     Traits::Simulator::Pointer sim= tr.simulator_pointer();
-    Traits::Moving_point_table::Pointer mpt= tr.moving_point_table_pointer();
+    Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
     
     typedef Traits::Function_kernel::Function Fn;
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
 										    Fn(coefsy.begin(), coefsy.end()),
 										    Fn(coefsz.begin(), coefsz.end())),
 						     Fn(coefsw.begin(), coefsw.end()));
-	tr.moving_point_table_pointer()->insert(mp);
+	tr.active_objects_table_pointer()->insert(mp);
       }
     } else {
       std::ifstream in(file.c_str());
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
 	std::istringstream il(buf);
 	Traits::Kinetic_kernel::Weighted_point_3 p;
 	il >> p;
-	tr.moving_point_table_pointer()->insert(p);
+	tr.active_objects_table_pointer()->insert(p);
 	++nread;
       }
       std::cout << nread << " points read.\n";
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]){
   
     typedef Traits::Function_kernel::Function Fn;
     Traits::Simulator::Pointer sim= tr.simulator_pointer();
-    Traits::Moving_point_table::Pointer mpt= tr.moving_point_table_pointer();
+    Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
     CGAL::KDS::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
 
     if (file.empty()) {
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]){
 	Traits::Kinetic_kernel::Point_3 mp(Fn(coefsx.begin(), coefsx.end()),
 					   Fn(coefsy.begin(), coefsy.end()),
 					   Fn(coefsz.begin(), coefsz.end()));
-	tr.moving_point_table_pointer()->insert(mp);
+	tr.active_objects_table_pointer()->insert(mp);
       }
     } else {
       std::ifstream in(file.c_str());
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]){
       
 	Traits::Kinetic_kernel::Point_3 p;
 	il >> p;
-	tr.moving_point_table_pointer()->insert(p);
+	tr.active_objects_table_pointer()->insert(p);
 	++nread;
       }
       std::cout << nread << " points read.\n";

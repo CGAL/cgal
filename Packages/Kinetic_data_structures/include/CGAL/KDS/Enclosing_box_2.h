@@ -21,7 +21,7 @@
 #define CGAL_KDS_ENCLOSING_BOX_2_H
 #include <CGAL/basic.h>
 #include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Notifying_table_listener_helper.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 #include <CGAL/KDS/Simulator_kds_listener.h>
 
 CGAL_KDS_BEGIN_NAMESPACE
@@ -63,12 +63,12 @@ class  Enclosing_box_2: public Ref_counted<Enclosing_box_2<Traits> > {
 
   typedef Enclosing_box_2<Traits> This;
   typedef typename Traits::Simulator Simulator;
-  typedef typename Traits::Moving_point_table Moving_point_table;
+  typedef typename Traits::Active_objects_table Active_objects_table;
 
   typedef typename CGAL::KDS::Simulator_kds_listener<typename Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::KDS::Simulator_kds_listener<typename Simulator::Listener, This>;
-  typedef typename CGAL::KDS::Notifying_table_listener_helper<typename Moving_point_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::KDS::Notifying_table_listener_helper<typename Moving_point_table::Listener, This>;
+  typedef typename CGAL::KDS::Active_objects_listener_helper<typename Active_objects_table::Listener, This> Active_objects_table_listener;
+  friend class CGAL::KDS::Active_objects_listener_helper<typename Active_objects_table::Listener, This>;
 
   typedef typename Simulator::Event_key Event_key;
   typedef typename Simulator::Time Time;
@@ -79,13 +79,13 @@ class  Enclosing_box_2: public Ref_counted<Enclosing_box_2<Traits> > {
 public:
   enum Side {INVALID=-1, TOP=0, BOTTOM=1, LEFT=2, RIGHT=3};
 
-  typedef typename Moving_point_table::Data Point;
-  typedef typename Moving_point_table::Key Point_key;
+  typedef typename Active_objects_table::Data Point;
+  typedef typename Active_objects_table::Key Point_key;
 
   typedef typename Traits::Simulator::NT NT;
   //typedef double NT;
   Enclosing_box_2( Traits tr, NT xmin=-10, NT xmax=10, NT ymin=-10, NT ymax=10):traits_(tr), 
-								 motl_(tr.moving_point_table_pointer(), this) {
+								 motl_(tr.active_objects_table_pointer(), this) {
     CGAL_assertion(xmin<xmax);
     CGAL_assertion(ymin<ymax);
     bounds_[LEFT]=xmin;
@@ -119,7 +119,7 @@ public:
     } else {
       CGAL_postcondition(bs == INVALID);
     }
-    /*std::cout << "Scheduled event for point " << k << " with motion " << traits_.moving_point_table_pointer()->at(k) 
+    /*std::cout << "Scheduled event for point " << k << " with motion " << traits_.active_objects_table_pointer()->at(k) 
 	      << " for time " << tb << " on wall " << bs << std::endl;*/
   }
 
@@ -135,14 +135,14 @@ public:
     std::vector<NT> coefs[2];
     if (s==TOP || s== BOTTOM){
       coefs[0].insert(coefs[0].end(), 
-		      traits_.moving_point_table_pointer()->at(k).x().begin(),
-		      traits_.moving_point_table_pointer()->at(k).x().end());
-      compute_bounce(traits_.moving_point_table_pointer()->at(k).y(),time, coefs[1]);
+		      traits_.active_objects_table_pointer()->at(k).x().begin(),
+		      traits_.active_objects_table_pointer()->at(k).x().end());
+      compute_bounce(traits_.active_objects_table_pointer()->at(k).y(),time, coefs[1]);
     } else {
-      compute_bounce(traits_.moving_point_table_pointer()->at(k).x(),time, coefs[0]);
+      compute_bounce(traits_.active_objects_table_pointer()->at(k).x(),time, coefs[0]);
       coefs[1].insert(coefs[1].end(), 
-		      traits_.moving_point_table_pointer()->at(k).y().begin(),
-		      traits_.moving_point_table_pointer()->at(k).y().end());
+		      traits_.active_objects_table_pointer()->at(k).y().begin(),
+		      traits_.active_objects_table_pointer()->at(k).y().end());
     }
     
     /*typename Traits::Simulator::Function_kernel::Create_function cf
@@ -151,10 +151,10 @@ public:
     Function fx(coefs[0].begin(), coefs[0].end());
     Function fy(coefs[1].begin(), coefs[1].end());
     Point pt(fx,fy);
-    /*std::cout << "Changing motion from " << traits_.moving_point_table_pointer()->at(k) << " to " 
+    /*std::cout << "Changing motion from " << traits_.active_objects_table_pointer()->at(k) << " to " 
       << pt << " at " << time <<  std::endl;*/
-    traits_.moving_point_table_pointer()->set(k, pt);
-    CGAL_assertion(traits_.moving_point_table_pointer()->at(k) == pt);
+    traits_.active_objects_table_pointer()->set(k, pt);
+    CGAL_assertion(traits_.active_objects_table_pointer()->at(k) == pt);
   }
   
 protected:
@@ -167,9 +167,9 @@ protected:
     Function nf;
     NT bound=bounds_[try_side];
     if (try_side== TOP || try_side==BOTTOM){
-      nf=traits_.moving_point_table_pointer()->at(k).y()-bound;
+      nf=traits_.active_objects_table_pointer()->at(k).y()-bound;
     } else {
-      nf=traits_.moving_point_table_pointer()->at(k).x()-bound;
+      nf=traits_.active_objects_table_pointer()->at(k).x()-bound;
     }
     if (try_side == BOTTOM || try_side == RIGHT) {
       nf=-nf;
@@ -249,7 +249,7 @@ protected:
   NT bounds_[4];
   Traits traits_;
   std::map<Point_key, Event_key> certs_;
-  Moving_point_table_listener motl_;
+  Active_objects_table_listener motl_;
 
 };
 
