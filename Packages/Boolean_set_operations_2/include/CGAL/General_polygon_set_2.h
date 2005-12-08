@@ -88,6 +88,9 @@ public:
   typedef typename Arrangement_2::Halfedge_const_handle      Halfedge_const_handle;
   typedef typename Arrangement_2::Vertex_const_handle        Vertex_const_handle;
 
+  typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
+                                            Halfedge_around_vertex_const_circulator;
+
   typedef Arr_walk_along_line_point_location<Arrangement_2>  Walk_pl;
 
   typedef unsigned int                                       Size;
@@ -559,7 +562,7 @@ public:
 
 
   // returns the location of the query point
-  Object locate(const Point_2& q);
+  bool locate(const Point_2& q, Polygon_with_holes_2& pgn) const;
 
   //advanced function: get const reference to the arrangement
   const Arrangement_2& arrangement() const
@@ -605,13 +608,9 @@ public:
 
 
 
-  /*static void construct_polygon(Ccb_halfedge_circulator ccb,
-                                Polygon_2& pgn,
-                                Traits_2* tr);*/
-
   // get the simple polygons, takes O(n)
   template <class OutputIterator>
-  OutputIterator polygons_with_holes(OutputIterator out);
+  OutputIterator polygons_with_holes(OutputIterator out) const;
 
  // join a range of polygons
  template <class InputIterator>
@@ -634,11 +633,14 @@ inline void join(InputIterator begin,
   unsigned int i = 1;
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn2arr(*itr, *arr_vec[i]);
   }
 
   aggregate_union_rec(0, arr_vec.size()-1, arr_vec);
+  
+  //the result arrangement is at index 0
+  this->m_arr = arr_vec[0];
 }
 
 //join range of polygons with holes
@@ -653,11 +655,14 @@ inline void join(InputIterator begin,
   unsigned int i = 1;
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr, *arr_vec[i]);
   }
 
   aggregate_union_rec(0, arr_vec.size()-1, arr_vec);
+
+  //the result arrangement is at index 0
+  this->m_arr = arr_vec[0];
 }
 
 template <class InputIterator1, class InputIterator2>
@@ -674,17 +679,20 @@ inline void join(InputIterator1 begin1,
 
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn2arr(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr2, *arr_vec[i]);
   }
 
   aggregate_union_rec(0, arr_vec.size()-1, arr_vec);
+
+  //the result arrangement is at index 0
+  this->m_arr = arr_vec[0];
 }
 
 
@@ -738,14 +746,17 @@ inline void intersection(InputIterator begin,
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn2arr(*itr, *arr_vec[i]);
   }
 
   aggregate_intersection_rec(0, arr_vec.size()-1, arr_vec);
+
+  //the result arrangement is at index 0
+  this->m_arr = arr_vec[0];
 }
 
-//join range of polygons with holes
+//intersect range of polygons with holes
 template <class InputIterator>
 inline void intersection(InputIterator begin,
                          InputIterator end,
@@ -757,10 +768,13 @@ inline void intersection(InputIterator begin,
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr, *arr_vec[i]);
   }
   aggregate_intersection_rec(0, arr_vec.size()-1, arr_vec);
+
+  //the result arrangement is at index 0
+  this->m_arr = arr_vec[0];
 }
 
 
@@ -811,24 +825,33 @@ inline void intersection(InputIterator1 begin1,
  
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn2arr(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
   {
-    arr_vec[i] = new Arrangement_2(&tr);
+    arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr2, *arr_vec[i]);
   }
 
   aggregate_intersection_rec(0, arr_vec.size()-1, arr_vec);
+
+  //the result arrangement is at index 0
+  this->m_arr = arr_vec[0];
 }
 
 
 
-static void construct_polygon(Ccb_halfedge_circulator ccb,
+static void construct_polygon(Ccb_halfedge_const_circulator ccb,
                               Polygon_2&              pgn,
                               Traits_2*               tr);
+
+
+bool is_hole_of_face(Face_const_handle f,
+                     Halfedge_const_handle he) const;
+
+Ccb_halfedge_const_circulator get_boundary_of_polygon(Face_const_iterator f) const;
 
 
 };

@@ -52,8 +52,6 @@ int main(int, char*){
 //global flags and variables
 int current_state;
 bool red_active = true; 
-//std::list<Polygon>                        red_pgns;
-//std::list<Polygon>                        blue_pgns;
 Polygon_set                       red_set;
 Polygon_set                       blue_set;
 Polygon_set                       res_set;
@@ -65,16 +63,13 @@ class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
     
-
     // default constructor
   Qt_layer_show_ch(){};
-
 
   // this method overrides the virtual method 'draw()' of Qt_widget_layer
   void draw()
   {
     widget->lock(); // widget have to be locked before drawing 
-   
     widget->setFilled (true);
     widget->setFillColor ( CGAL::RED) ;
     *widget << CGAL::PointSize(2); // size of point
@@ -220,6 +215,9 @@ public:
             this, SLOT(radio_selected()));
 
 
+    //layers
+    widget->attach(&testlayer);  
+
     //the new tools toolbar
     newtoolbar = new Tools_toolbar(widget, this);    
 
@@ -331,10 +329,6 @@ public:
 
     //application flag stuff
     old_state = 0;
-
-
-    //layers
-    widget->attach(&testlayer);  
   };
 
   
@@ -718,6 +712,7 @@ private slots:
 private:
   CGAL::Qt_widget*                     widget;
   CGAL::Qt_widget_standard_toolbar*    stoolbar;
+  Qt_layer_show_ch                     testlayer;
   QToolBar*                            radiotoolbar;
   QRadioButton*                        red_pgn;
   QRadioButton*                        blue_pgn;
@@ -738,7 +733,6 @@ private:
   QToolButton*                         delete_blue_but;
 
   int                                  old_state;
-  Qt_layer_show_ch                     testlayer;
   QString                              file_name;
 };
 
@@ -749,7 +743,7 @@ private:
 int main(int argc, char **argv)
 {
   QApplication app( argc, argv );
-  MyWindow widget(500,500); // physical window size
+  MyWindow widget(512,512); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);

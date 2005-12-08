@@ -13,6 +13,7 @@
 #include <CGAL/IO/pixmaps/polygon.xpm>
 #include <CGAL/IO/pixmaps/notool.xpm>
 #include <CGAL/IO/pixmaps/voronoi.xpm>
+#include "demo_pointlocation.xpm"
 
 
 
@@ -28,12 +29,14 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
    
     w->attach(&getsimplebut);
     w->attach(&getcirclebut);
+    w->attach(&locatebut);
     /*w->attach(delete_red_but);
     w->attach(delete_blue_but);*/
     //w->attach(&delete_polygon);
     
     getsimplebut.deactivate();
     getcirclebut.deactivate();
+    locatebut.deactivate();
     /*delete_red_but->deactivate();
     delete_blue_but->deactivate();*/
     //delete_polygon.deactivate();
@@ -48,8 +51,8 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
                   QPixmap( (const char**)movepoint_xpm ));
     QIconSet set3(QPixmap( (const char**)polygon_small_xpm ),
                   QPixmap( (const char**)polygon_xpm ));
-    QIconSet set4(QPixmap( (const char**)notool_small_xpm ),
-                  QPixmap( (const char**)notool_xpm ));
+    QIconSet set4(QPixmap( (const char**)pointlocation_xpm ),
+                  QPixmap( (const char**)pointlocation_xpm ));
     QIconSet set5(QPixmap( (const char**)circle_xpm ),
                   QPixmap( (const char**)circle_small_xpm ));
     
@@ -65,9 +68,12 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   but[2] = new QToolButton(this, "circletool");
   but[2]->setIconSet(set5);
   but[2]->setTextLabel("Input Circle");
+  but[3] = new QToolButton(this, "locatetool");
+  but[3]->setIconSet(set4);
+  but[3]->setTextLabel("Locate Polygon");
  
    
-  nr_of_buttons = 3;
+  int nr_of_buttons = 4;
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i < nr_of_buttons; i++)
   {
@@ -82,13 +88,9 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
   connect(but[2], SIGNAL(stateChanged(int)),
         &getcirclebut, SLOT(stateChanged(int)));
-  
-  /*connect(but[2], SIGNAL(stateChanged(int)),
-        delete_red_but, SLOT(stateChanged(int)));
+
   connect(but[3], SIGNAL(stateChanged(int)),
-        delete_blue_but, SLOT(stateChanged(int)));*/
-  /*connect(but[2],SIGNAL(stateChanged(int)),
-      &delete_polygon , SLOT(stateChanged(int)));*/
+        &locatebut, SLOT(stateChanged(int)));
 }
 
 

@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 class Bso_face : public Arr_face_base
 {
   protected:
-  char m_info;
+  mutable char m_info;
   
   enum
   {
@@ -72,7 +72,7 @@ public:
     return (m_info & VISITED) != 0;
   }
 
-  void set_visited(bool b)
+  void set_visited(bool b) const
   {
     if(b)
       m_info |= VISITED;
