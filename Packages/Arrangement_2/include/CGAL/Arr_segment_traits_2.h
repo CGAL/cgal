@@ -988,19 +988,26 @@ public:
   {
     return Construct_x_monotone_curve_2();
   }
+  //@}
 
+  /// \name Functor definitions for the Boolean set-operations.
+  //@{
   class Compare_endpoints_xy_2 
   {
   public:
-
+    /*!
+     * Compare the two endpoints of a given curve lexigoraphically.
+     * \param cv The curve.
+     * \return SMALLER if cv is directed from left to right and LARGER
+     * otherwise.
+     */
     Comparison_result operator()(const X_monotone_curve_2& cv)
     {
-      if(cv.is_directed_right())
-        return SMALLER;
-      return LARGER;
+      return (cv.is_directed_right()) ? SMALLER : LARGER;
     }
   };
 
+  /*! Get a Compare_endpoints_xy_2 functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   {
     return Compare_endpoints_xy_2();
@@ -1010,20 +1017,23 @@ public:
   class Construct_opposite_2
   {
   public:
+    /*!
+     * Construct a curve opposite
+     * \param cv The curve.
+     * \return the x-monotone curve that is the opposite of cv.
+     */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& cv)
     {
       return cv.construct_opposite();
     }
   };
 
+  /*! Get a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();
   }
   //@}
-
- 
-
 };
 
 /*!
