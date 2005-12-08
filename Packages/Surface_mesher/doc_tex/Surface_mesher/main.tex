@@ -8,5 +8,209 @@ and Mariette Yvinec}
 \vspace*{30mm}
 
 \section{Introduction}
-\label{section_SurfaceMesher_Intro}
-This package provides...
+\label{SurfaceMesher_section_intro}
+
+This package provides mainly a global function
+to compute a triangular mesh approximating a surface.
+
+The input surface is only required to be described
+ through an oracle able to  tell whether a
+given segment, line or ray intersects the surface
+and to compute the intersection points if any.
+This feature makes the package generic enough to be
+applied in a wide variety of situations. For instance it can be
+used to mesh implicit surfaces described as the zero level set
+of some function. It may also be used in the field of medical imaging
+to mesh surfaces described as a gray
+level set in a three dimensional image.
+
+
+The meshing algorithm is based on the notion of restricted
+Delaunay triangulation. Basically the algorithm  computes a set of
+sample points on the surface and extract an interpolating 
+surface mesh  from the three dimensional triangulation of these 
+sample poinst. Points are iteratively added to the sample,
+as in a Delaunay refinement process, until some size and shape
+criteria on mesh elements are satisfied. 
+
+The algorithm guarantees that the output mesh is homeomorphic to the
+surface
+if the size criteria is small enough compared to the surface features
+(namely to the so-called \ccc{lfs}, least feature size, of the
+surface).
+The size criteria also conditions the Hausdorff distance achieved
+between the surface and the output mesh.  Standard criteria,
+customizable through of a few input values are available.
+%These standard criteria ensures that the algorithm terminates.
+The user can also easily add his own criteria.  
+
+
+
+\section{The surface mesher interface}
+\label{SurfaceMesher_section_interface}
+
+The meshing process is launched through a call to a global function
+whose signature is the following ~:
+
+\ccGlobalFunction{template <class C2T3,
+                            class Oracle,
+                            class Criteria,
+                            class Tag >
+void surface_mesher(C2T3& c2t3,
+                    Oracle surf,
+                    Criteria criteria,
+                    Tag = Non_manifold());}
+
+The first template parameter \ccc{C2T3} describes 
+the data structure
+used to compute and store the mesh. This data structure
+has a pointer to a three dimensional mesh and encode
+the surface mesh as a subset of facets in this triangulation.
+The data structure is described in the concept
+\ccc{SurfaceMeshC2T3} which is a specialized version
+of a more general concept called  \ccc{Complex2InTriangulation_3}.
+More precisely the concept \ccc{Complex2InTriangulation_3}
+encodes a two dimensional complex embedded  in a three dimensional
+triangulation, which means that the complex  faces form a subset
+of the triangulation faces. The concept \ccc{SurfaceMeshC2T3} is 
+specialized to the case where the complex is pure which means that it
+is a set of facets (i.e two dimensional faces) with  their subfaces.
+An object of this class is passed by reference to the meshing
+function. This object describes the output mesh at the end of the
+process.
+
+The second parameter \ccc{Oracle} handles the surface
+description. This parameter  has to be a model of
+the concept \ccc{SurfaceOracle} which describes the
+required oracles on the surface. The actual surface to mesh is
+passed through the parameter \ccc{surf} of the class \ccc{Oracle}.
+
+The third parameter handles the description of the size and shape
+criteria driving the meshing process. The parameter \ccc{Criteria}
+has to be instantiated by a model of the concept \ccc{MeshCriteria}.
+
+
+The last parameter is optional, it is a tag 
+whose type precises the behavior of the
+meshing algorithm, see section~\ref{SurfaceMesher_section_variations}
+
+A call to 
+\ccc{surface_mesher(c2t3,surf,criteria) } launches 
+the meshing process with an initial 
+set of points which is the union
+of the vertices in the triangulation pointed to be \ccc{c2t3}
+and a set of points provide by the \ccc{initial_points} method 
+of the oracle \ccc{surf}.
+
+
+\section{Example}
+\label{SurfaceMesher_section_example}
+
+The following code meshes an implicit surface described as the zero level
+set of some function $f : \R^3 \longrightarrow \R$.
+The \ccc{SurfaceOracle}  is build from 
+a function object
+the type \ccc{MyFunction <K::FT>} whose operator()
+takes three numerical value of type \ccc{FT}
+and returns the value of the fonction.
+
+The meshing criteria are the standard ones
+and they are determined  by three numerical
+values~: \\ 
+\ccc{distance_bound} is an upper bound on the distance 
+between the circumcenter of a mesh facet and the surface.
+The value \\
+\ccc{radius_bound} is an upper bound on the radii of surface Delaunay
+balls. A surface Delaunay ball is the circumball of  a mesh facet
+that is centered on the surface. \\
+\ccc{angular_bound} is a lower bound in degrees on the angles of mes facets.
+
+\begin{ccExampleCode}
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Surface_mesher/Surface_mesher.h>
+#include <CGAL/Implicit_surface_oracle.h>
+#include ``My_function.h''
+
+struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Surface_mesher_vertex_base_3<K> Vb;
+typedef CGAL::Surface_mesher_cell_base_3<K> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
+typedef CGAL::Delaunay_triangulation_3<K, Tds> Triangulation;
+typedef CGAL::Surface_mesh_C2T3<Del> C2t3;
+typedef MyFunction <K::FT> Func;
+typedef CGAL::Implicit_surface_oracle<Func>  Oracle;
+typedef  CGAL::Surface_mesher_standard_criteria<K::FT> Criteria;
+
+int main() {
+     Triangulation tr;
+     C2t3      c2t3(tr);
+     Oracle    surf;
+     K::FT     angular_bound(30);
+     K::FT     radius_bound(0.1);
+     K::FT     distance_bound(10000);
+     Criteria  criteria(angular_bound, angular_bound,distance_bound);
+     surface_mesher(c2t3, surf, criteria);
+     assert(c3t3.is_manifold());
+}
+
+\end{ccExampleCode}
+
+
+\section{Meshing criteria, guarantees and variations}
+\label{SurfaceMesher_section_criteria}
+
+The guarantees on the output mesh are dependent on the mesh criteria.
+Theoretical guarantees are given in cite{Oudot-and-co}
+First, the meshing algorithm is proved to terminate 
+if the angular bound is
+not smaller than $20,7^0$. 
+Furthermore, if the radius bound is everywhere smaller than 
+the $\epsilon$ times lfs  (where $\epsilon$ is a constant
+less than 0.16),  the output mesh 
+is guaranteed to be homeomorphic to the surface
+and at a bounded distance (Hausdorff and even Frechet distance)
+from the mesh.
+Note that the radius bound need not be uniform,
+although it is a uniform bound in the standard criteria.
+
+Of course, such a theoretical guarantee can be only achieved
+for smooth surfaces which have a finite, non nul
+reach value. (The reach of a surface is the minimum value of lfs on
+this surface).
+
+The value of lfs on any point of the surface
+or its minimum on the surface it usually not known
+although it can sometimes be guessed. Also it happens frequently
+that setting the meshing criteria so as to fulfill the theoretical
+conditions yield an over refined mesh.
+On the other hand, when the size criteria are relaxed,
+no homeomorphism with the input surface is granted
+and the output mesh is not even guaranteed to be manifold.
+To remedy this problem and give a more flexible
+meshing algorithm, the global function 
+\ccc{surface_mesh} has a Tag template parameter
+allowing to slightly change the behavior of the refinement process.
+This feature allows for instance to run the meshing
+algorithm with a relaxed size criteria, more coherent
+with the size of the mesh expected by the user,
+and still have a guarantee that
+the output mesh form a manifold surface.
+The function \ccc{surface_mesh} has specialized versions
+for the following  tag types~: \\
+\ccc{Manifold} : the output mesh is guaranteed to be a manifold
+surface without boundary.\\
+\ccc{Manifold_with_boundary}~:the output mesh is guaranteed to be
+manifold but may have boundaries.\\
+\ccc{Non_manifold} : the algorithm relies on the given criteria and
+guarantees nothing else.
+
+\section{Implementation}
+
+The meshing algorithm is implemented using the design of mesher levels
+described in cite{Rineau-and-co}. 
+
+
+
+

@@ -6,7 +6,7 @@ and Mariette Yvinec}
 The surface mesher package offers mainly a global function
 to build a triangular mesh approximating a surface.
 
-The surface is described through an oracle that can tell wether a
+The surface is described through an oracle that can tell whether a
 given segment it intersects or not and that can compute the
 intersections points if any. Several implementation of
 the \ccc{SurfaceOracle} concept are provided. They allow to mesh
@@ -43,11 +43,11 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 
 
 \subsection*{Classes}
-\ccRefIdfierPage{Surface_mesh_C2T3} \\
-\ccRefIdfierPage{Surface_mesh_vertex_base_3} \\
-\ccRefIdfierPage{Surface_mesh_cell_base_3} \\
-\ccRefIdfierPage{Surface_mesh_criteria} \\
-\ccRefIdfierPage{Implicit_surface_oracle}
+\ccRefIdfierPage{Surface_mesh_C2T3<Tr>} \\
+\ccRefIdfierPage{Surface_mesh_vertex_base_3<Gt,Vb>} \\
+\ccRefIdfierPage{Surface_mesh_cell_base_3<Gt,Vb>} \\
+\ccRefIdfierPage{Surface_mesh_standard_criteria<FT>} \\
+\ccRefIdfierPage{Implicit_surface_oracle<Func>}
 
 \subsection*{Tag classes}
 \ccRefIdfierPage{Manifold} \\
@@ -55,7 +55,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 \ccRefIdfierPage{Non_manifold} \\
 
 \subsection*{Global Functions}
-\ccRefIdfierPage{CGAL::surface_mesher}
+\ccRefIdfierPage{surface_mesher<C2t3,Oracle,Criteria,Tag>}
 
 
 \subsection*{Enums}
