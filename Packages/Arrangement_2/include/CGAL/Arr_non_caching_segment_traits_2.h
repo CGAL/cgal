@@ -328,10 +328,13 @@ public:
   {
     return Merge_2();
   }
+  //@}
 
-  // required for Boolean_set_operations_2 package
+  //! \name Functor definitions for the Boolean set-operations.
+  //@{
   typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2; 
 
+  /*! Obtain a Construct_opposite_2 functor object */
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();
@@ -340,7 +343,12 @@ public:
   class Compare_endpoints_xy_2 
   {
   public:
-
+    /*!
+     * Compare the two endpoints of a given curve lexigoraphically.
+     * \param cv The curve.
+     * \return SMALLER if cv is directed from left to right and LARGER
+     * otherwise.
+     */
     Comparison_result operator()(const X_monotone_curve_2& cv)
     {
       typedef typename Kernel::Construct_vertex_2     Construct_vertex_2;
@@ -353,6 +361,7 @@ public:
     }
   };
 
+  /*! Obtain a Compare_endpoints_xy_2 functor object */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   {
     return Compare_endpoints_xy_2();
