@@ -21,24 +21,29 @@
 The concept \ccRefName\ describes a data structure
 designed  to represent a  two dimensional pure complex 
 embedded in a three dimensional triangulation.
-The complex is a  formed by a subset  of the  faces 
-of the triangulation.
- This subset is a complex
-meaning that each subface of a face in the complex is a face of the
-complex. Being two dimensional the complex
- including only faces with dimension at most two,
-that is vertices, edges or facets. 
-Furthermore the complex is pure which means that
-every vertex or edge in the complex belong to at least one facet of the
-complex, there is no isolated vertices or antenna edges.
-This complex is a simplification of the more general concept
+
+A complex is a set $C$ of faces such that~:\\
+- any subface of a face in $C$ is a face of $C$ \\
+- two faces of $C$ are disjoint or share a common subface \\
+The complex is two dimensional if its faces have dimension at most
+two. It is pure if any face in the complex is a subface
+of some face of maximal dimension.
+Thus a two dimensional pure complex is just a set of facets
+together with their edges and vertices.
+A  two dimensional pure complex  embedded 
+in a three dimensional triangulation
+it is just a subset of the  facets 
+of this triangulation.
+
+This complex is a simplification of a more general concept called
 \ccc{Complex2InTriangulation3} designed to represent any
 two dimensional complex 
 embedded in a three dimensional triangulation.
+
 The concept \ccRefName\  is specially suited to handled
-surface meshes obtained as a Delaunay triangulations
-restricted to a surface.
-A model of this concept can be used as first parameter in the global
+surface meshes obtained as the restriction to a surface of 
+a  three dimensional Delaunay triangulation.
+A model of this concept is to  be used as first parameter in the global
 function \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
 
@@ -143,7 +148,7 @@ a function object with an operator to select facets~:
 
 \ccHeading{Queries}
 Queries on the type of individual face with respect to the 2D complex.
-\ccMethod{Face_type  complex_subface_type(Facet f);}
+\ccMethod{Face_type  face_type(Facet f);}
 {Returns the type of the facet \ccc{f}  with respect to  the 2D complex.}
 \ccGlue
 \ccMethod{Face_type  face_type(Cell_handle c, int i);}

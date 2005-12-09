@@ -18,29 +18,31 @@
 
 \ccDefinition
   
-The Delaunay refinement process involved in  the surface mesher 
+The Delaunay refinement process involved in  the 
+global function \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>} 
 is guided by a set of refinement criteria.
 The concept \ccRefName\ described the interface which
-allow the mesher to take these criteria into account.
+allow the surface mesher to take these criteria into account.
 
 Typically the meshing criteria is a set
 of elementary criterion, each of which
- the facet is required to meet.
-The meshing algorithm will eliminate bad facets
-which do not meet the criteria.
+has to be met by  the facet of the final mesh.
+The meshing algorithm eliminates in turn  bad facets, i.e.
+facets that do not meet all the criteria.
 
-Furthemore final mesh depends upon the order according to which bad facets
-are handled and the meshing algorithm 
+The size and quality of the final mesh 
+depends upon the order according to which bad facets
+are handled. Therefore the meshing algorithm 
 needs to be able to quantify the facet qualities and to compare
 the qualities of different faces.
-Therefore the concept \ccRefName\ 
-define a type \ccc{Quality} designed to measure
+The concept \ccRefName\ 
+defines a type \ccc{Quality} designed to measure
 the quality of a mesh facet. 
 Typically this quality
-is a multicomponent variable, each component being
-a numerical value associated with a given criterion
-and the comparison operator is just a lexicographic 
-comparison.
+is a multicomponent variable.  Each component corresponds to
+one criterion and measures how much the facets departs from
+meeting this criterion. Then, the  comparison operator on qualities
+is just a lexicographic comparison.
 
 
 %\ccGeneralizes
@@ -50,8 +52,8 @@ comparison.
 
 \ccTypes
 
-\ccNestedType{Quality}{A type to value the quality of mesh facets.
-    This type is required have a comprison operator}
+\ccNestedType{Quality}{A type to measure the quality of mesh facets.
+    This type is required have a comparison operator}
 
 \ccCreation
 \ccCreationVariable{criteria}  %% choose variable name
@@ -60,21 +62,21 @@ comparison.
 
 \ccOperations
 
-\ccMethod{bool  is_bad(Facet f);}{return true if facet \ccc{f}
-do not satisfy the required  criteria.}
+\ccMethod{bool  is_bad(Facet f);}{returns true if facet \ccc{f}
+do not meet all the  criteria.}
 
-\ccMethod{Quality quality(Facet f);}{Compute the quality
+\ccMethod{Quality quality(Facet f);}{Computes the quality
 of facet \ccc{f}.}
 
 \ccHasModels
 
-\ccc{Some_class},
-\ccc{Some_other_class}.
+\ccc{Surface_mesher_standard_quality<FT>}
 
-\ccSeeAlso
 
-Some\_other\_concept,
-\ccc{some_other_function}.
+%\ccSeeAlso
+
+%Some\_other\_concept,
+%\ccc{some_other_function}.
 
 %\ccExample
 

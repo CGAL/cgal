@@ -23,8 +23,8 @@ The function \ccRefName\ computes a two dimensional mesh
 approximating  a surface.
 
 The template parameter \ccc{Oracle} describes the type of the 
-surface  to be meshed.
-The plug-in class 
+surface  to be meshed. 
+The plugged in class 
 has to be a model of the concept \ccc{SurfaceOracle}.
 
 The output mesh satifies the requirements specified by the user
@@ -35,22 +35,26 @@ a model of the concept \ccc{SurfaceMeshCriteria}.
  The class \ccc{C2T3}
 is required to be a model of the concept
 \ccc{SurfaceMeshC2T3}.
-The  computed  mesh is output as an object \ccc{c2t3} of the class \ccc{C2T3}
-which is passed by reference.
-The Delaunay refinement
-process is started with a set of points which is the union of the
-set of vertices in the initial complex \ccc{c2t3} and the set of
-points output by the method \ccc{surf.initial_points()}.
-The class \ccc{C2T3} has a pointer to 
-a \ccc{Delaunay_triangulation_3} class.
-The vertex and cell base classes plugged 
-in the \ccc{Triangulation_data_structure_3} of the
-\ccc{Delaunay_triangulation_3} pointed to by the \ccc{C2T3}
-complex are required  to be repectively  models  of the concepts 
+The object \ccc{c2t3} of type \ccc{C2T3} which is passed by reference
+is used to maintain  the current surface mesh and stores
+the final mesh at the end of the procedure.
+Each object of type \ccc{C2T3} has a pointer to 
+a three dimensional  Delaunay triangulation.
+The vertex and cell base classes of this triangulation
+have  to be repectively  models  of the concepts 
 \ccc{SurfaceMeshVertexBase_3} and 
 \ccc{SurfaceMeshCellBase_3}.
 
-The fourth template parameter is a tag whose type precises the behaviour of the
+The Delaunay refinement
+process is started with an initial set of points which is the union 
+of two sets : the
+set of vertices in the initial  triangulation pointed to by 
+\ccc{c2t3} and a set of
+points output by the method \ccc{surf.initial_points()}.
+This initial set of points is required to include at least one point
+on each connected components of the surface to meshed.
+
+The fourth template parameter is a tag whose type influences the behaviour of the
 meshing algorithm. The function \ccRefName\  has specialized versions
 for the following  tag types~: \\
 \ccc{Manifold} : the output mesh is guaranteed to be a manifold

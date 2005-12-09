@@ -10,12 +10,12 @@ and Mariette Yvinec}
 \section{Introduction}
 \label{SurfaceMesher_section_intro}
 
-This package provides mainly a global function
+This package provides a global function
 to compute a triangular mesh approximating a surface.
 
 The input surface is only required to be described
  through an oracle able to  tell whether a
-given segment, line or ray intersects the surface
+given segment, line or ray intersects the surface or not
 and to compute the intersection points if any.
 This feature makes the package generic enough to be
 applied in a wide variety of situations. For instance it can be
@@ -29,20 +29,31 @@ The meshing algorithm is based on the notion of restricted
 Delaunay triangulation. Basically the algorithm  computes a set of
 sample points on the surface and extract an interpolating 
 surface mesh  from the three dimensional triangulation of these 
-sample poinst. Points are iteratively added to the sample,
+sample points. Points are iteratively added to the sample,
 as in a Delaunay refinement process, until some size and shape
 criteria on mesh elements are satisfied. 
 
-The algorithm guarantees that the output mesh is homeomorphic to the
-surface
-if the size criteria is small enough compared to the surface features
-(namely to the so-called \ccc{lfs}, least feature size, of the
-surface).
-The size criteria also conditions the Hausdorff distance achieved
-between the surface and the output mesh.  Standard criteria,
-customizable through of a few input values are available.
-%These standard criteria ensures that the algorithm terminates.
-The user can also easily add his own criteria.  
+
+The size and shape criteria control not only the  behaviour of
+the refinement process and condition its termination
+but they also condition  the size and shape of elements in the final
+mesh. Of course those criteria can be customized to satisfy
+the user needs. The \ccc{Surface mesher} package offers
+a set of standard criteria that can be scaled through
+three numerical values. Also the user can plug in its own 
+set of refinement criteria.
+
+There is no restriction on the toplogy and number of compoments
+of the surface provided that the oracle (or the user)
+is able to provide one starting sample point on each connected component.
+If the surface is smooth enough and the size criteria
+small enough, the algorithm guarantees 
+that the output mesh is homeomorphic to the
+surface and within a small bounded distance
+(Hausdorf or eeven Frechet distance) from the surface.
+The algorithm can also be used for non smooth surfaces
+but then there is no guarantee. 
+
 
 
 
@@ -63,8 +74,8 @@ void surface_mesher(C2T3& c2t3,
 
 The first template parameter \ccc{C2T3} describes 
 the data structure
-used to compute and store the mesh. This data structure
-has a pointer to a three dimensional mesh and encode
+used to store  the surface mesh. This data structure
+has a pointer to a three dimensional triangulation and encodes
 the surface mesh as a subset of facets in this triangulation.
 The data structure is described in the concept
 \ccc{SurfaceMeshC2T3} which is a specialized version
@@ -82,8 +93,8 @@ process.
 The second parameter \ccc{Oracle} handles the surface
 description. This parameter  has to be a model of
 the concept \ccc{SurfaceOracle} which describes the
-required oracles on the surface. The actual surface to mesh is
-passed through the parameter \ccc{surf} of the class \ccc{Oracle}.
+required oracle on the surface. The actual surface to be meshed is
+passed  to the global function through an object of the class \ccc{Oracle}.
 
 The third parameter handles the description of the size and shape
 criteria driving the meshing process. The parameter \ccc{Criteria}
@@ -91,16 +102,18 @@ has to be instantiated by a model of the concept \ccc{MeshCriteria}.
 
 
 The last parameter is optional, it is a tag 
-whose type precises the behavior of the
+whose type influences the behavior of the
 meshing algorithm, see section~\ref{SurfaceMesher_section_variations}
 
 A call to 
 \ccc{surface_mesher(c2t3,surf,criteria) } launches 
 the meshing process with an initial 
-set of points which is the union
-of the vertices in the triangulation pointed to be \ccc{c2t3}
-and a set of points provide by the \ccc{initial_points} method 
-of the oracle \ccc{surf}.
+set of points which is the union of two subsets :
+the set of vertices in the  initial triangulation pointed to be \ccc{c2t3}
+and a set of points provided by the \ccc{initial_points()} method 
+of the oracle \ccc{surf}. This initial set of points is required 
+to include at least one point on each connected component of the surface
+to be meshed.
 
 
 \section{Example}
@@ -111,19 +124,20 @@ set of some function $f : \R^3 \longrightarrow \R$.
 The \ccc{SurfaceOracle}  is build from 
 a function object
 the type \ccc{MyFunction <K::FT>} whose operator()
-takes three numerical value of type \ccc{FT}
-and returns the value of the fonction.
+takes three numerical values \ccc{(x,y,z)} of type \ccc{FT}
+and returns a value of type \ccc{FT} which is the fonction $f(x,y,z)$.
 
 The meshing criteria are the standard ones
 and they are determined  by three numerical
 values~: \\ 
-\ccc{distance_bound} is an upper bound on the distance 
-between the circumcenter of a mesh facet and the surface.
-The value \\
+\ccc{angular_bound} is a lower bound in degrees for the angles 
+     of mesh facets.\\
 \ccc{radius_bound} is an upper bound on the radii of surface Delaunay
-balls. A surface Delaunay ball is the circumball of  a mesh facet
-that is centered on the surface. \\
-\ccc{angular_bound} is a lower bound in degrees on the angles of mes facets.
+balls. A surface Delaunay ball is ball circumscribed to  a mesh facet
+and centered on the surface. \\
+\ccc{distance_bound} is an upper bound for the distance 
+between the circumcenter of a mesh facet and a surface
+Delaunay ball of the same facet..
 
 \begin{ccExampleCode}
 
@@ -160,6 +174,7 @@ int main() {
 
 \section{Meshing criteria, guarantees and variations}
 \label{SurfaceMesher_section_criteria}
+\label{SurfaceMesher_section_variations}
 
 The guarantees on the output mesh are dependent on the mesh criteria.
 Theoretical guarantees are given in cite{Oudot-and-co}
@@ -196,7 +211,7 @@ This feature allows for instance to run the meshing
 algorithm with a relaxed size criteria, more coherent
 with the size of the mesh expected by the user,
 and still have a guarantee that
-the output mesh form a manifold surface.
+the output mesh forms a manifold surface.
 The function \ccc{surface_mesh} has specialized versions
 for the following  tag types~: \\
 \ccc{Manifold} : the output mesh is guaranteed to be a manifold
