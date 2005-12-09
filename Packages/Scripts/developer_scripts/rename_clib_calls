@@ -1,4 +1,4 @@
-#!/sw/bin/perl5 -pi.bak -w
+#!/usr/bin/perl -pi.bak -w
 
 my @clib_names = (
   'fabs', 'log', 'cos', 'sin', 'ceil', 'floor',

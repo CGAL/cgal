@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 # Perl script that computes an encrypted password.
 # Taken from the book "Open Source development with CVS" by Karl Fogel.
