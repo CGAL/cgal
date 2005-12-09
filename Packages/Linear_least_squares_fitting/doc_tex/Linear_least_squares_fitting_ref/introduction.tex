@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: PCA/intro.tex
+% | Reference manual page
 % +------------------------------------------------------------------------+
 % | March 2005  Pierre Alliez and Sylvain Pion
 % | Package: Linear Least Squares Fitting
@@ -8,9 +8,11 @@
 % +------------------------------------------------------------------------+
 
 \chapter{Linear Least Squares Fitting}
-\label{chap:pca}
+\label{ref_chapter_pca}
 
 \ccChapterAuthor{Pierre Alliez and Sylvain Pion}
+
+\subsection*{Definition}
 
 Given a point set in $R^d$, linear least squares fitting amounts to
 find the linear sub-space of $R^d$ which minimizes the sum of squared
@@ -23,11 +25,10 @@ directions in which the data has strong component, or equivalently
 large variance. If eigenvalues are the same there is no preferable
 sub-space.\\
 
-This \cgal\ package implements the linear least squares fitting 
-for several objects of a CGAL 2D or 3D
-kernel: the best fit 2D line for 2D point, segment and triangle sets,
-and the best fit 3D line/plane for point, segment, triangle and
-tetrahedral sets. The interface is similar in spirit to that of the
+This \cgal\ package implements the linear least squares fitting for
+several objects of a CGAL 2D or 3D kernel: the best fit 2D line for 2D
+point and triangle sets, and the best fit 3D line/plane for point and
+triangle sets. The interface is similar in spirit to that of the
 convex hull. It allows fitting a set of kernel primitive elements
 which are stored in an iterator range of a container.
 
@@ -35,9 +36,10 @@ which are stored in an iterator range of a container.
 \ccRefConceptPage{FittingTraits}\\
 
 \ccHeading{Functions}
+
 \ccRefIdfierPage{CGAL::linear_least_squares_fitting}\\
-\ccRefIdfierPage{CGAL::centroid}\\
-\ccRefIdfierPage{CGAL::barycenter}\\
+%\ccRefIdfierPage{CGAL::centroid}\\
+%\ccRefIdfierPage{CGAL::barycenter}\\
 \clearpage
 
 \lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}
