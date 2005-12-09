@@ -133,7 +133,7 @@ linear_least_squares_fitting_2(InputIterator begin,
 }
 
 
-// these ones deduce the kernel from the 
+// deduces the kernel from the 
 // points in container
 
 template < typename InputIterator, 
@@ -150,6 +150,8 @@ linear_least_squares_fitting_2(InputIterator begin,
   typedef typename Kernel_traits<Value_type>::Kernel K;
   return CGAL::linear_least_squares_fitting_2(begin,end,line,centroid,K());
 }
+
+// does not return the centroid
 
 template < typename InputIterator, 
            typename Line >
