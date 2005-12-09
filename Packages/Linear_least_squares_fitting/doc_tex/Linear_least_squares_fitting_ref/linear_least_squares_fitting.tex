@@ -11,7 +11,7 @@
 \begin{ccRefFunction}{linear_least_squares_fitting_2}  
 %% add template arg's if necessary
 
-\ccIndexMainItemBegin{linear_least_squares_fitting_2}
+\ccIndexMainItemBegin{linear least squares fitting, 2D}
 
 \ccDefinition
   
@@ -22,13 +22,12 @@ from the points to their projections onto the line.
 \ccInclude{CGAL/linear_least_squares_fitting_2.h}
 
 \ccFunction{template < typename InputIterator, typename K> 
-typename K::FT 
-linear_least_squares_fitting_2(InputIterator first,
-                               InputIterator beyond,
-                               typename K::Line_2& line,
-                               typename K::Point_2& centroid,     
-                               const K& k);}
-
+            typename K::FT 
+             linear_least_squares_fitting_2(InputIterator first,
+                                            InputIterator beyond,
+                                            typename K::Line_2 & line,
+                                            typename K::Point_2 & centroid,     
+                                            const K & k);}
 { computes the best fitting 2D line of a 2D point set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same
@@ -42,12 +41,9 @@ deduced automatically from the value type.
 \ccHeading{Requirements}
 
 \begin{enumerate}
-   \item  \ccc{InputIterator::value_type} are equivalent to \ccc{K::Point_2}.
+   \item  \ccc{InputIterator::value_type} is equivalent to \ccc{K::Point_2}.
    \item  \ccc{line} is the best fitting line computed.
    \item  \ccc{centroid} is the centroid computed.
 \end{enumerate}
-
-
-  % \ccIndexMainItemEnd{linear_interpolation}
 
 \end{ccRefFunction}
