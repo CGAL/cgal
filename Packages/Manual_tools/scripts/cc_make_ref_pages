@@ -39,7 +39,8 @@ foreach file ( $1/*.tex)
         echo "${prefix}\input{${prepath}${file}}${postfix}" >> $reftmp
     endif
 end
-cc_index_sort -ger $reftmp >> $reffile
+# -f ==> ignore case
+sort -f $reftmp >> $reffile
 echo "" >> $reffile
 echo "%% EOF" >> $reffile
 
