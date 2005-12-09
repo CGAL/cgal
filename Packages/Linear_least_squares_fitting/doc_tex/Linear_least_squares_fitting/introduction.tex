@@ -1,0 +1,18 @@
+Given a point set in $R^d$, linear least squares fitting amounts to
+find the linear sub-space of $R^d$ which minimizes the sum of squared
+distances from the points to their projection onto this linear
+sub-space. This problem is equivalent to search for the linear
+sub-space which maximizes the variance of projected points, the latter
+being obtained by eigen decomposition of the covariance
+matrix. Eigenvectors corresponding to large eigenvalues are the
+directions in which the data has strong component, or equivalently
+large variance. If eigenvalues are the same there is no preferable
+sub-space.\\
+
+This \cgal\ package implements the linear least squares fitting for
+several objects of a CGAL 2D or 3D kernel: the best fit 2D line for 2D
+point and triangle sets, and the best fit 3D line/plane for point and
+triangle sets. The interface is similar in spirit to that of the
+convex hull. It allows fitting a set of kernel primitive elements
+which are stored in an iterator range of a container.
+
