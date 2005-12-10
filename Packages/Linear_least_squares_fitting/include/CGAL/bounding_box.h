@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 
 // TODO :
 // - Generalize to d-dimension.
-// - Maybe the internal code itself could be factorized against dimensions...
+// - Maybe the internal code itself could be factorized across dimensions...
 
 namespace CGALi {
 
@@ -84,7 +84,7 @@ bounding_box_3(ForwardIterator f, ForwardIterator l, const Traits& t)
 
   Less_x_3 lessx = t.less_x_3_object();
   Less_y_3 lessy = t.less_y_3_object();
-  Less_z_3 lessy = t.less_z_3_object();
+  Less_z_3 lessz = t.less_z_3_object();
   Cub      cub  = t.construct_iso_cuboid_3_object();
 
   ForwardIterator xmin = f;
@@ -162,22 +162,22 @@ struct bbox<0>
 
 }
 
-template < class ForwardIterator >
+template < class ForwardIterator, class K >
 inline
-typename Same_dimension_iso_box<typename std::iterator_traits< ForwardIterator >
-                                ::value_type>::type
-bounding_box(ForwardIterator f, ForwardIterator l)
+typename Iso_box<Dimension<typename std::iterator_traits<ForwardIterator>
+                                    ::value_type, K>::value, K >::type
+bounding_box(ForwardIterator f, ForwardIterator l, const K& k)
 {
   typedef typename std::iterator_traits< ForwardIterator >::value_type Pt;
-  typedef typename Kernel_traits<Pt>::Kernel Kernel;
-  return bounding_box(f, l, Kernel());
+  return CGALi::bbox<Dimension<Pt>::value>()(f, l, k);
 }
 
-template < class ForwardIterator, class Traits >
+template < class ForwardIterator >
 inline
-typename Same_dimension_iso_box<typename std::iterator_traits< ForwardIterator >
-                                ::value_type, Traits>::type
-bounding_box(ForwardIterator f, ForwardIterator l, const Traits& t)
+typename Iso_box<Dimension<typename std::iterator_traits<ForwardIterator>::value_type,
+                           typename Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel>::value,
+                 typename Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel >::type
+bounding_box(ForwardIterator f, ForwardIterator l)
 {
   typedef typename std::iterator_traits< ForwardIterator >::value_type Pt;
   typedef typename Kernel_traits<Pt>::Kernel Kernel;

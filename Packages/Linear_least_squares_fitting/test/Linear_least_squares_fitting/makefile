@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = /proj/geometrica/home/CGAL/makefiles/internal-Linux
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           -I$(HOME)/CGAL/kernel/Kernel_23/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -39,18 +38,23 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-		pca$(EXE_EXT) \
-                barycenter$(EXE_EXT)\
+                barycenter$(EXE_EXT) \
+                bounding_box$(EXE_EXT) \
+                pca$(EXE_EXT) 
 
 barycenter$(EXE_EXT): barycenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)barycenter barycenter$(OBJ_EXT) $(LDFLAGS)
+
+bounding_box$(EXE_EXT): bounding_box$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bounding_box bounding_box$(OBJ_EXT) $(LDFLAGS)
 
 pca$(EXE_EXT): pca$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)pca pca$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                barycenter.clean\
-		pca.clean
+                   barycenter.clean \
+                   bounding_box.clean \
+                   pca.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
