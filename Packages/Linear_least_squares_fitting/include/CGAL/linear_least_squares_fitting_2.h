@@ -13,8 +13,8 @@
 //
 // Author(s)     : Pierre Alliez and Sylvain Pion
 
-#ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_2
-#define CGAL_LINEAR_LEAST_SQUARES_FITTING_2
+#ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
+#define CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
@@ -61,8 +61,8 @@ linear_least_squares_fitting_2(InputIterator first,
   FT covariance[3] = {0,0,0};
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  for(InputIterator it = begin;
-      it != end;
+  for(InputIterator it = first;
+      it != beyond;
       it++)
   {
     const Point& p = *it;
@@ -75,7 +75,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
+  CGALi::eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
 
   // assert eigen values are positives or null
   CGAL_assertion(eigen_values.first >= 0 && 
@@ -168,6 +168,4 @@ linear_least_squares_fitting_2(InputIterator begin,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_2
-
-
+#endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H

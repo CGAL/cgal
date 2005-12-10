@@ -1,5 +1,29 @@
-#ifndef __EIGEN__
-#define __EIGEN__
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Pierre Alliez
+
+#ifndef CGAL_EIGEN_H
+#define CGAL_EIGEN_H
+
+CGAL_BEGIN_NAMESPACE
+
+namespace CGALi {
 
 template <class FT>
 void eigen_semi_definite_symmetric(const FT *mat, 
@@ -216,7 +240,10 @@ void eigen_semi_definite_symmetric(const FT *mat,
   
   delete [] v;
   delete [] index;
-  return;
 }
 
-#endif
+} // namespace CGALi
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_EIGEN_H
