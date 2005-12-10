@@ -7,7 +7,7 @@
 % |
 % +------------------------------------------------------------------------+
 
-\chapter{Linear Least Squares Fitting}
+\chapter{Principal Component Analysis}
 \label{ref_chapter_pca}
 
 \ccChapterAuthor{Pierre Alliez and Sylvain Pion}
@@ -28,18 +28,19 @@ sub-space.\\
 This \cgal\ package implements the linear least squares fitting for
 several objects of a CGAL 2D or 3D kernel: the best fit 2D line for 2D
 point and triangle sets, and the best fit 3D line/plane for point and
-triangle sets. The interface is similar in spirit to that of the
-convex hull. It allows fitting a set of kernel primitive elements
+triangle sets.
+It allows fitting a set of kernel primitive elements
 which are stored in an iterator range of a container.
+Centroid and barycenter computations are also provided.
 
-\ccHeading{Concepts}
-\ccRefConceptPage{FittingTraits}\\
+%\ccHeading{Concepts}
+%\ccRefConceptPage{FittingTraits}\\
 
 \ccHeading{Functions}
 
+\ccRefIdfierPage{CGAL::barycenter}\\
+\ccRefIdfierPage{CGAL::centroid}\\
 \ccRefIdfierPage{CGAL::linear_least_squares_fitting}\\
-%\ccRefIdfierPage{CGAL::centroid}\\
-%\ccRefIdfierPage{CGAL::barycenter}\\
 \clearpage
 
 \lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}
