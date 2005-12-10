@@ -32,6 +32,8 @@ Intersections_3
 Interval_arithmetic
 Interval_skip_list
 Inventor
+iostream
+kdtree
 Kernel_23
 Kernel_d
 Kinetic_data_structures
@@ -52,8 +54,8 @@ Min_sphere_d_new
 Min_sphere_of_spheres_d
 Modifier
 Nef_2
-Nef_S2
 Nef_3
+Nef_S2
 Number_types
 OpenNL
 Optimisation_basic
@@ -68,17 +70,18 @@ Polyhedron
 Polyhedron_IO
 Polynomial
 Polytope_distance_d
+_QP_solver
 QP_solver
 Qt_widget
 Random_numbers
 Robustness
-STL_Extension
 Scripts
 SearchStructures
 Segment_Delaunay_graph_2
 Skin_surface_3
 Snap_rounding_2
 Spatial_searching
+STL_Extension
 Stream_lines_2
 Stream_support
 Subdivision_surfaces_3
@@ -89,8 +92,5 @@ Triangulation_3
 Union_find
 Voronoi_diagram_2
 Width_3
-_QP_solver
-iostream
-kdtree
 window
 wininst
