@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: centroid.tex
+% +------------------------------------------------------------------------+
+% | 
+% | March 2005  Pierre Alliez and Sylvain Pion
+% | Package:   Linear Least Squares Fitting
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{centroid}  
+%% add template arg's if necessary
+
+\ccIndexMainItemBegin{centroid}
+
+\ccDefinition
+  
+The function \ccRefName\ computes the centroid (center of mass) of a set
+of 2D or 3D objects.
+
+\ccInclude{CGAL/centroid.h}
+
+There is a set of overloaded \ccc{centroid} functions for 2D and 3D objects.
+The user can also optionally pass an explicit kernel, in case the default,
+based on \ccc{Kernel_traits} is not sufficient.
+The dimension is also deduced automatically.
+
+\ccFunction{template < typename InputIterator >
+            K::Point_2
+            centroid(InputIterator first, InputIterator beyond);}
+{ computes the centroid of a non-empty set of 2D points.
+  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.  The value type must be \ccc{K::Point_2}.
+\ccPrecond{first != beyond.} }
+
+\ccFunction{template < typename InputIterator, typename K >
+            K::Point_2
+            centroid(InputIterator first, InputIterator beyond, const K & k);}
+{ computes the centroid of a non-empty set of 2D points.
+  The value type must be \ccc{K::Point_2}.
+\ccPrecond{first != beyond.} }
+
+\ccFunction{template < typename InputIterator >
+            K::Point_3
+            centroid(InputIterator first, InputIterator beyond);}
+{ computes the centroid of a non-empty set of 3D points.
+  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
+  The value type must be \ccc{K::Point_3}.
+\ccPrecond{first != beyond.} }
+
+\ccFunction{template < typename InputIterator, typename K >
+            K::Point_3
+            centroid(InputIterator first, InputIterator beyond, const K & k);}
+{ computes the centroid of a non-empty set of 3D points.
+  The value type must be \ccc{K::Point_3}.
+\ccPrecond{first != beyond.} }
+
+
+\ccExample
+
+In the following example we use \stl\ containers of 2D and 3D points, and
+compute their centroids. The kernel from which the input points
+come is automatically deduced by the function.
+
+\ccIncludeExampleCode{Linear_least_squares_fitting/centroid.C}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::barycenter}
+
+\end{ccRefFunction}
