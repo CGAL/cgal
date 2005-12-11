@@ -214,7 +214,7 @@ public:
   {}
 
   // nested class My_X_monotone_curve_2
-  class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
+  class My_X_monotone_curve_2   
   {
   public:
 
@@ -223,28 +223,49 @@ public:
 
   protected:
     
-     Curve_info    m_curve_info;
+    Base_X_monotone_curve_2 m_base_cv;
+    Curve_info              m_curve_info;
 
   public:
 
-    My_X_monotone_curve_2(): Base(),
+    My_X_monotone_curve_2(): m_base_cv(),
                              m_curve_info()
     {}
 
-    My_X_monotone_curve_2(const Base& cv): Base(cv),
+    My_X_monotone_curve_2(const Base& cv): m_base_cv(cv),
                                            m_curve_info()
     {}
 
     My_X_monotone_curve_2(const Base& cv, const Curve_info& info):
-      Base(cv),
+      m_base_cv(cv),
       m_curve_info(info)
     {}
 
     My_X_monotone_curve_2(const Base&cv, Halfedge_handle_red  he1,
                                          Halfedge_handle_blue he2): 
-      Base(cv),
+      m_base_cv(cv),
       m_curve_info(he1, he2)
     {}
+
+    const Base_X_monotone_curve_2& base_curve() const
+    {
+      return (m_base_cv);
+    }
+
+    Base_X_monotone_curve_2& base_curve()
+    {
+      return (m_base_cv);
+    }
+
+    operator const Base_X_monotone_curve_2&()const
+    {
+      return (m_base_cv);
+    }
+
+    operator Base_X_monotone_curve_2&()
+    {
+      return (m_base_cv);
+    }
 
     const Curve_info& get_curve_info() const { return m_curve_info; }
 
@@ -269,7 +290,7 @@ public:
 
 
 
-  class My_Point_2 : public Base_Point_2
+  class My_Point_2 
   {
   public:
 
@@ -277,20 +298,41 @@ public:
 
   protected:
 
+    Base_Point_2  m_base_pt;
     Point_info    m_info;
 
   public:
 
     My_Point_2() {}
 
-    My_Point_2(const Base& pt) : Base(pt),
+    My_Point_2(const Base& pt) : m_base_pt(pt),
                                  m_info()
     {}
 
-    My_Point_2(const Base& pt, const Object& red, const Object& blue) : Base(pt)
+    My_Point_2(const Base& pt, const Object& red, const Object& blue) : m_base_pt(pt)
     {
       m_info.set_red_object(red);
       m_info.set_blue_object(blue);
+    }
+
+    const Base_Point_2& base_point() const
+    {
+      return (m_base_pt);
+    }
+
+    Base_Point_2& base_point()
+    {
+      return (m_base_pt);
+    }
+
+    operator const Base_Point_2&()const
+    {
+      return (m_base_pt);
+    }
+
+    operator  Base_Point_2&()
+    {
+      return (m_base_pt);
     }
 
    
@@ -369,11 +411,13 @@ public:
       const Base_X_monotone_curve_2                 *overlap_cv;
       OutputIterator oi_end;
       if(m_base_tr->compare_xy_2_object()
-          (m_base_tr->construct_min_vertex_2_object()(cv1),
-           m_base_tr->construct_min_vertex_2_object()(cv2)) == LARGER)
-        oi_end = m_base_tr->intersect_2_object()(cv1, cv2, oi);
+          (m_base_tr->construct_min_vertex_2_object()(cv1.base_curve()),
+           m_base_tr->construct_min_vertex_2_object()(cv2.base_curve())) == LARGER)
+        oi_end = m_base_tr->intersect_2_object()(cv1.base_curve(),
+                                                 cv2.base_curve(), oi);
       else
-        oi_end = m_base_tr->intersect_2_object()(cv2, cv1, oi);
+        oi_end = m_base_tr->intersect_2_object()(cv2.base_curve(),
+                                                 cv1.base_curve(), oi);
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
       // the extenede X_monotone_curve_2 
@@ -461,7 +505,10 @@ public:
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2)
     {
-      m_base_split(cv,p,c1,c2);
+      m_base_split(cv.base_curve(),
+                   p.base_point(),
+                   c1.base_curve(),
+                   c2.base_curve());
       c1.set_curve_info(cv.get_curve_info());
       c2.set_curve_info(cv.get_curve_info());
     }
@@ -511,7 +558,7 @@ public:
           blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
         }
 
-      return Point_2 (m_base_min_v(cv), red, blue);
+      return Point_2 (m_base_min_v(cv.base_curve()), red, blue);
     }
   };
 
@@ -559,7 +606,7 @@ public:
           blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
         }
 
-      return Point_2 (m_base_max_v(cv), red, blue);
+      return Point_2 (m_base_max_v(cv.base_curve()), red, blue);
     }
   };
 
@@ -603,14 +650,14 @@ public:
 
       if((did_assign_v1_red && did_assign_v1_blue) ||
          (did_assign_v2_red && did_assign_v2_blue))
-         return (m_base_cmp_xy(p1, p2));
+         return (m_base_cmp_xy(p1.base_point(), p2.base_point()));
 
       if(did_assign_v1_red && did_assign_v2_red)
       {
         if(vr1 == vr2)
           return EQUAL;
 
-        return (m_base_cmp_xy(p1, p2));
+        return (m_base_cmp_xy(p1.base_point(), p2.base_point()));
       }
 
       if(did_assign_v1_blue && did_assign_v2_blue)
@@ -618,9 +665,9 @@ public:
         if(vb1 == vb2)
           return EQUAL;
 
-        return (m_base_cmp_xy(p1, p2));
+        return (m_base_cmp_xy(p1.base_point(), p2.base_point()));
       }
-      return (m_base_cmp_xy(p1, p2));
+      return (m_base_cmp_xy(p1.base_point(), p2.base_point()));
     }
   };
 
@@ -655,7 +702,7 @@ public:
     Comparison_result operator() (const Point_2 & p,
                                   const X_monotone_curve_2 & cv) const
     {
-      return (m_base_cmp_y_at_x(p, cv));
+      return (m_base_cmp_y_at_x(p.base_point(), cv.base_curve()));
     }
   };
 
@@ -688,7 +735,9 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
-      return (m_base_cmp_y_at_x_right(cv1, cv2, p));
+      return (m_base_cmp_y_at_x_right(cv1.base_curve(),
+                                      cv2.base_curve(),
+                                      p.base_point()));
     }
   };
 
