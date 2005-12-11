@@ -599,6 +599,7 @@ public slots:
   {
     red_set = res_set;
     res_set.clear();
+    blue_set.clear();
     something_changed();
   }
 
@@ -606,6 +607,7 @@ public slots:
   {
     blue_set = res_set;
     res_set.clear();
+    red_set.clear();
     something_changed();
   }
 
