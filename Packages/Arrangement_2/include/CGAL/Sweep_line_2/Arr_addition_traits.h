@@ -60,28 +60,48 @@ public:
   {}
 
   // nested class My_X_monotone_curve_2
-  class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
+  class My_X_monotone_curve_2 
   {
   public:
 
     typedef  Base_X_monotone_curve_2 Base;
     typedef  Base_Point_2            Point_2;
 
-    My_X_monotone_curve_2():Base(),
+    My_X_monotone_curve_2():m_base_cv(),
                             m_he_handle(NULL)
     {}
 
-    My_X_monotone_curve_2(const Base& cv):Base(cv),
+    My_X_monotone_curve_2(const Base& cv):m_base_cv(cv),
                                           m_he_handle(NULL)
     {}
 
-    My_X_monotone_curve_2(const Base& cv, Halfedge_handle he):Base(cv),
+    My_X_monotone_curve_2(const Base& cv, Halfedge_handle he):m_base_cv(cv),
                                                               m_he_handle(he)
     {}
 
+    const Base& base_curve() const
+    {
+      return (m_base_cv);
+    }
+
+    Base& base_curve()
+    {
+      return (m_base_cv);
+    }
+
+    operator const Base&() const
+    {
+      return (m_base_cv);
+    }
+
+    operator Base&()
+    {
+      return (m_base_cv);
+    }
+
     My_X_monotone_curve_2& operator=(const Base& cv)
     {
-      Base::operator=(cv);
+      m_base_cv = cv;
       m_he_handle = Halfedge_handle();
       return (*this);
     }
@@ -97,28 +117,48 @@ public:
     }
 
   protected:
-
-     Halfedge_handle m_he_handle;
+    Base                m_base_cv;
+    Halfedge_handle     m_he_handle;
 
   }; // nested class My_X_monotone_curve_2 - END
 
 
-  class My_Point_2 : public Base_Point_2
+  class My_Point_2 
   {
   public:
     typedef  Base_Point_2            Base;
 
-    My_Point_2(): Base(),
+    My_Point_2(): m_base_pt(),
                   m_v(NULL)
     {}
 
-    My_Point_2(const Base& pt): Base(pt),
+    My_Point_2(const Base& pt): m_base_pt(pt),
                                 m_v(NULL)
     {}
 
-    My_Point_2(const Base& pt, Vertex_handle v): Base(pt),
+    My_Point_2(const Base& pt, Vertex_handle v): m_base_pt(pt),
                                                  m_v(v)
     {}
+
+    const Base& base_point() const
+    {
+      return (m_base_pt);
+    }
+
+    Base& base_point()
+    {
+      return (m_base_pt);
+    }
+
+    operator const Base&() const
+    {
+      return (m_base_pt);
+    }
+
+    operator Base&()
+    {
+      return (m_base_pt);
+    }
 
     Vertex_handle get_vertex_handle() const
     {
@@ -131,7 +171,7 @@ public:
     }
     
   protected:
-
+    Base             m_base_pt;
     Vertex_handle    m_v;
 
   }; // nested class My_Point_2 - END
@@ -164,7 +204,8 @@ public:
         return (oi); // the curves are disjoint-interior because they
                      // are already at the Arrangement
 
-      OutputIterator           oi_end = m_base_intersect(cv1, cv2, oi);
+      OutputIterator           oi_end = m_base_intersect(cv1.base_curve(),
+                                                         cv2.base_curve(), oi);
       const Base_X_monotone_curve_2                *overlap_cv;
       const std::pair<Base_Point_2, unsigned int>  *intersect_p;
 
@@ -223,7 +264,10 @@ public:
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2)
     {
-      m_base_split(cv,p,c1,c2);
+      m_base_split(cv.base_curve(),
+                   p.base_point(),
+                   c1.base_curve(),
+                   c2.base_curve());
       c1.set_halfedge_handle(cv.get_halfedge_handle());
       c2.set_halfedge_handle(cv.get_halfedge_handle());
     }
@@ -310,9 +354,9 @@ public:
     {
 
       if(cv.get_halfedge_handle() == Halfedge_handle())
-        return (Point_2(m_base_min_v(cv), Vertex_handle()));
+        return (Point_2(m_base_min_v(cv.base_curve()), Vertex_handle()));
       Vertex_handle vh = cv.get_halfedge_handle()->target();
-      return (Point_2(m_base_min_v(cv), vh));
+      return (Point_2(m_base_min_v(cv.base_curve()), vh));
     }
   };
 
@@ -344,9 +388,9 @@ public:
     Point_2 operator() (const X_monotone_curve_2 & cv) 
     {
       if(cv.get_halfedge_handle() == Halfedge_handle())
-        return (Point_2(m_base_max_v(cv), Vertex_handle()));
+        return (Point_2(m_base_max_v(cv.base_curve()), Vertex_handle()));
       Vertex_handle vh = cv.get_halfedge_handle()->source();
-      return (Point_2(m_base_max_v(cv), vh));
+      return (Point_2(m_base_max_v(cv.base_curve()), vh));
     }
   };
 
@@ -381,7 +425,7 @@ public:
          p1.get_vertex_handle() != Vertex_handle())
         return EQUAL;
 
-      return (m_base_cmp_xy(p1, p2));
+      return (m_base_cmp_xy(p1.base_point(), p2.base_point()));
     }
   };
 
@@ -398,4 +442,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif
-

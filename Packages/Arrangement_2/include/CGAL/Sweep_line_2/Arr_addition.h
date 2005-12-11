@@ -86,10 +86,10 @@ public:
     std::vector<Point_2>                 iso_points;
 
     make_x_monotone (begin,
-		     end,
-		     std::back_inserter(xcurves_vec),
-		     std::back_inserter(iso_points),
-		     m_traits);
+                     end,
+                     std::back_inserter(xcurves_vec),
+                     std::back_inserter(iso_points),
+                     m_traits);
 
     Edge_iterator                  eit;
     Halfedge_handle                he;
