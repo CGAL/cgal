@@ -1,4 +1,4 @@
-// Example program for the bounding_box() function on 2D and 3D points.
+// Example program for the bounding_box() function for 2D and 3D points.
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/bounding_box.h>

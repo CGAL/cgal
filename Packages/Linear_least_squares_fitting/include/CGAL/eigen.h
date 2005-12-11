@@ -16,7 +16,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Pierre Alliez
+// Author(s)     : Bruno Levy, Pierre Alliez
 
 #ifndef CGAL_EIGEN_H
 #define CGAL_EIGEN_H

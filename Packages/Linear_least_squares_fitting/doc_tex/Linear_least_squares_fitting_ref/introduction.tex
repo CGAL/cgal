@@ -2,7 +2,7 @@
 % | Reference manual page
 % +------------------------------------------------------------------------+
 % | March 2005  Pierre Alliez and Sylvain Pion
-% | Package: Linear Least Squares Fitting
+% | Package: Principal Component Analysis
 % | 
 % |
 % +------------------------------------------------------------------------+
@@ -28,10 +28,15 @@ sub-space.\\
 This \cgal\ package implements the linear least squares fitting for
 several objects of a CGAL 2D or 3D kernel: the best fit 2D line for 2D
 point and triangle sets, and the best fit 3D line/plane for point and
-triangle sets.
-It allows fitting a set of kernel primitive elements
-which are stored in an iterator range of a container.
-Bounding box, centroid and barycenter computations are also provided.
+triangle sets. It assumes the set of kernel primitive elements to be stored into an
+iterator range of a container. Bounding box, centroid and barycenter
+computations are provided as well. 
+
+% pierre: I think barycenter and centroid are confusing. we do not see
+% exactly the difference by reading the names. a centroid (center of mass)
+% with a non uniform density corresponds to your barycenter. what if 
+% they are both called centroid ? the objects are different, so the
+% indirection should go smoothly, right?
 
 %\ccHeading{Concepts}
 %\ccRefConceptPage{FittingTraits}\\

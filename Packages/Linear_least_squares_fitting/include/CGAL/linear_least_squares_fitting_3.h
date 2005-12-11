@@ -39,7 +39,7 @@ template < typename InputIterator,
 linear_least_squares_fitting_3(InputIterator begin,
                                InputIterator end, 
                                typename K::Plane_3& plane, // best fit plane
-                               typename K::Point_2& c,     // centroid
+                               typename K::Point_3& c,     // centroid
                                const K& k,                 // kernel
                                const typename K::Point_3*)
 {
@@ -100,22 +100,22 @@ linear_least_squares_fitting_3(InputIterator begin,
   } // end isotropic case
 } // end linear_least_squares_fitting_3 for point set
 
-// fits a line to a 3D triangle set
+// fits a plane to a 3D triangle set
 template < typename InputIterator, 
            typename K >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator begin,
                                InputIterator end, 
-                               typename K::Line_2& line, // best fit line
-                               typename K::Point_2& c,   // centroid
-                               const K& k,               // kernel
-                               const typename K::Triangle_2*)
+                               typename K::Plane_3& plane, // best fit plane
+                               typename K::Point_3& c,     // centroid
+                               const K& k,                 // kernel
+                               const typename K::Triangle_3*)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_2     Point;
-  typedef typename K::Vector_2    Vector;
-  typedef typename K::Triangle_2  Triangle;
-  typedef typename K::Line_2      Line;
+  typedef typename K::Point_3     Point;
+  typedef typename K::Vector_3    Vector;
+  typedef typename K::Triangle_3  Triangle;
+  typedef typename K::Line_3      Line;
 
   // precondition: at least one element in the container.
   CGAL_precondition(begin != end);
@@ -128,11 +128,13 @@ linear_least_squares_fitting_3(InputIterator begin,
   // Matrix numbering:
   // 0          
   // 1 2
-  FT covariance[3] = {0,0,0};
-  FT eigen_values[2] = {0,0};
-  // these should be typed Vector_2
+  // 3 4 5          
+  FT covariance[6] = {0,0,0,0,0,0};
+  FT eigen_values[3] = {0,0,0};
+  
+  // these should be typed Vector_3
   // but it requires working more on eigen.h
-  FT eigen_vectors[4] = {0,0,0,0};
+  FT eigen_vectors[9] = {0,0,0,0,0,0,0,0,0};
   FT sum_areas = 0;
   for(InputIterator it = begin;
         it != end;
@@ -168,7 +170,6 @@ linear_least_squares_fitting_3(InputIterator begin,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  // TODO: use explicit formula instead.
   //eigen_semi_definite_symmetric(covariance,2,eigen_vectors,eigen_values);
 
   // assert eigen values are positives
@@ -202,14 +203,14 @@ template < typename InputIterator,
            typename K >
 inline
 typename K::FT
-linear_least_squares_fitting_2(InputIterator begin,
+linear_least_squares_fitting_3(InputIterator begin,
                                InputIterator end, 
-                               typename K::Line_2& line,
-                               typename K::Point_2& centroid,
+                               typename K::Plane_3& plane,
+                               typename K::Point_3& centroid,
                                const K& k)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return CGALi::linear_least_squares_fitting_2(begin, end, line,
+  return CGALi::linear_least_squares_fitting_3(begin, end, plane,
                                                centroid, k, (Value_type*) NULL);
 }
 
@@ -218,14 +219,14 @@ template < typename InputIterator,
            typename K >
 inline
 typename K::FT
-linear_least_squares_fitting_2(InputIterator begin,
+linear_least_squares_fitting_3(InputIterator begin,
                                InputIterator end, 
-                               typename K::Plane_2& plane,
+                               typename K::Plane_3& plane,
                                const K& k)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typename K::Point_2 centroid;
-  return CGALi::linear_least_squares_fitting_2(begin, end, line,
+  typename K::Point_3 centroid;
+  return CGALi::linear_least_squares_fitting_3(begin, end, line,
                                                centroid, k,(Value_type*) NULL);
 }
 
