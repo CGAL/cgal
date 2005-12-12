@@ -372,22 +372,21 @@ bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
     Comparison_result c4 = compare_y(trg, p_up);
 
     if (c1 == EQUAL)
-      return(seg_dir == SEG_UP_RIGHT && c3 != EQUAL ||
-             seg_dir == SEG_DOWN_LEFT && c4 != EQUAL);
+      return (seg_dir == SEG_UP_RIGHT && c3 != EQUAL ||
+              seg_dir == SEG_DOWN_LEFT && c4 != EQUAL);
     else if (c2 == EQUAL)
-      return(false);// was checked
-    else {
-      Compare_x_2 compare_x = m_gt.compare_x_2_object();
-      Comparison_result c_target = compare_x(p_right, trg);
-      Comparison_result c_source = compare_x(p_right, src);
+      return false;// was checked
+
+    Compare_x_2 compare_x = m_gt.compare_x_2_object();
+    Comparison_result c_target = compare_x(p_right, trg);
+    Comparison_result c_source = compare_x(p_right, src);
       
-      return((seg_dir == SEG_LEFT || seg_dir == SEG_DOWN_LEFT ||
-              seg_dir == SEG_UP_LEFT) && c_target != EQUAL ||
-             (seg_dir == SEG_RIGHT || seg_dir == SEG_DOWN_RIGHT ||
-              seg_dir == SEG_UP_RIGHT) && c_source != EQUAL);
-    }
-  } else
-    return(false);
+    return ((seg_dir == SEG_LEFT || seg_dir == SEG_DOWN_LEFT ||
+             seg_dir == SEG_UP_LEFT) && c_target != EQUAL ||
+            (seg_dir == SEG_RIGHT || seg_dir == SEG_DOWN_RIGHT ||
+             seg_dir == SEG_UP_RIGHT) && c_source != EQUAL);
+  }
+  return false;
 }
 
 /*! */
