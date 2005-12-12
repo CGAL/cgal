@@ -672,7 +672,7 @@ namespace {
     char const *get_directivename(boost::wave::token_id id)
     {
         using namespace boost::wave;
-        switch (id) {
+        switch (static_cast<unsigned int>(id)) {
         case T_PP_QHEADER:
         case T_PP_HHEADER:
         case T_PP_INCLUDE:  return "#include";

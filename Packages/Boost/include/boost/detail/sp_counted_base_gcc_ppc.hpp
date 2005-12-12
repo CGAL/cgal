@@ -32,11 +32,11 @@ namespace boost
 namespace detail
 {
 
-inline void atomic_increment( long * pw )
+inline void atomic_increment( int * pw )
 {
     // ++*pw;
 
-    long tmp;
+    int tmp;
 
     __asm__
     (
@@ -52,11 +52,11 @@ inline void atomic_increment( long * pw )
     );
 }
 
-inline long atomic_decrement( long * pw )
+inline int atomic_decrement( int * pw )
 {
     // return --*pw;
 
-    long rv;
+    int rv;
 
     __asm__ __volatile__
     (
@@ -76,12 +76,12 @@ inline long atomic_decrement( long * pw )
     return rv;
 }
 
-inline long atomic_conditional_increment( long * pw )
+inline int atomic_conditional_increment( int * pw )
 {
     // if( *pw != 0 ) ++*pw;
     // return *pw;
 
-    long rv;
+    int rv;
 
     __asm__
     (
@@ -109,8 +109,8 @@ private:
     sp_counted_base( sp_counted_base const & );
     sp_counted_base & operator= ( sp_counted_base const & );
 
-    long use_count_;        // #shared
-    long weak_count_;       // #weak + (#shared != 0)
+    int use_count_;        // #shared
+    int weak_count_;       // #weak + (#shared != 0)
 
 public:
 
@@ -170,7 +170,7 @@ public:
 
     long use_count() const // nothrow
     {
-        return static_cast<long const volatile &>( use_count_ );
+        return static_cast<int const volatile &>( use_count_ );
     }
 };
 

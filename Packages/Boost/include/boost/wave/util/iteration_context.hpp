@@ -12,6 +12,7 @@
 #define ITERATION_CONTEXT_HPP_9556CD16_F11E_4ADC_AC8B_FB9A174BE664_INCLUDED
 
 #include <cstdlib>
+#include <cstdio>
 #include <stack>
 
 #include <boost/wave/wave_config.hpp>

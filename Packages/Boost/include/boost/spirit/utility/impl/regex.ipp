@@ -62,7 +62,11 @@ public:
     }
 
 private:
+#if BOOST_VERSION >= 013300
+    boost::basic_regex<CharT> rxstr;       // regular expression to match
+#else
     boost::reg_expression<CharT> rxstr;    // regular expression to match
+#endif
 };
 
 }   // namespace impl

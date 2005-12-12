@@ -125,8 +125,7 @@ class lex_iterator
     typedef 
         boost::spirit::multi_pass<input_policy_type, 
                 boost::wave::util::functor_input>
-        base_t;
-    typedef lex_iterator<TokenT>                    self_type;
+        base_type;
     
 public:
     typedef TokenT token_type;
@@ -138,8 +137,29 @@ public:
     lex_iterator(IteratorT const &first, IteratorT const &last, 
             typename TokenT::position_type const &pos, 
             boost::wave::language_support language)
-    :   base_t(input_policy_type(first, last, pos, language))
+    :   base_type(input_policy_type(first, last, pos, language))
     {}
+
+    void set_position(typename TokenT::position_type const &pos)
+    {
+        typedef typename TokenT::position_type position_type;
+        
+    // set the new position in the current token
+    token_type& currtoken = base_type::get_input();
+    position_type currpos = currtoken.get_position();
+
+        currpos.set_file(pos.get_file());
+        currpos.set_line(pos.get_line());
+        currtoken.set_position(currpos);
+        
+    // set the new position for future tokens as well
+        if (token_type::string_type::npos != 
+            currtoken.get_value().find_first_of('\n'))
+        {
+            currpos.set_line(pos.get_line() + 1);
+        }
+        base_type::get_functor().set_position(currpos);
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////

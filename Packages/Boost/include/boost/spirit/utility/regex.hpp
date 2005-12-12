@@ -9,6 +9,8 @@
 #ifndef BOOST_SPIRIT_REGEX_HPP
 #define BOOST_SPIRIT_REGEX_HPP
 
+#include <boost/version.hpp>
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  Include the regular expression library of boost (Boost.Regex)
@@ -17,7 +19,7 @@
 //  obtain a separate copy from http://www.boost.org.
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if defined(BOOST_SPIRIT_NO_REGEX_LIB)
+#if defined(BOOST_SPIRIT_NO_REGEX_LIB) && BOOST_VERSION < 103300
 //
 //  Include all the Boost.regex library. Please note that this will not work,
 //  if you are using the boost/spirit/regex.hpp header from more than one
@@ -34,6 +36,7 @@
 //  Include the Boost.Regex headers only. Note, that you will have to link your
 //  application against the Boost.Regex library as described in the related
 //  documentation.
+//  This is the only way for Boost newer than V1.32.0
 //
 #include <boost/regex.hpp>
 #endif // defined(BOOST_SPIRIT_NO_REGEX_LIB)

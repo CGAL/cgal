@@ -13,6 +13,7 @@
 #if !defined(CPP_MACROMAP_PREDEF_HPP_HK041119)
 #define CPP_MACROMAP_PREDEF_HPP_HK041119
 
+#include <cstdio>
 #include <boost/assert.hpp>
 
 #include <boost/wave/wave_config.hpp>

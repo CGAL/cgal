@@ -12,7 +12,7 @@
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/preprocessor/cat.hpp>
-#if BOOST_WORKAROUND(BOOST_MSVC,==1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 #include <boost/mpl/bool.hpp>
 #endif
 
@@ -79,7 +79,7 @@ namespace boost { namespace fusion { namespace borland_only {
 //
 ///////////////////////////////////////////////////////////////////////////////
 #if BOOST_WORKAROUND(__BORLANDC__, <= 0x551)                                    \
-    || BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+    || BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 namespace boost { namespace fusion { namespace detail
 {
     template <typename T>
@@ -88,7 +88,7 @@ namespace boost { namespace fusion { namespace detail
         BOOST_STATIC_CONSTANT(int, value = T::value);
     };
 
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
     // VC6 ETI (early template instantiation) bug workaround.
     template <>
@@ -101,7 +101,7 @@ namespace boost { namespace fusion { namespace detail
 #endif
 
 #if BOOST_WORKAROUND(__BORLANDC__, <= 0x551)                                    \
-    || BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+    || BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 # define FUSION_GET_VALUE(T) ::boost::fusion::detail::get_value<T>::value
 #else
 # define FUSION_GET_VALUE(T) T::value
@@ -249,7 +249,7 @@ FUSION_MSVC_ETI_WRAPPER(type)
 //  T::types wrapper
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 FUSION_MSVC_ETI_WRAPPER(types)
 # define FUSION_GET_TYPES(T) ::boost::fusion::detail::get_types<T>::type
 #else
@@ -261,7 +261,7 @@ FUSION_MSVC_ETI_WRAPPER(types)
 //  T::index wrapper
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 FUSION_MSVC_ETI_WRAPPER(index)
 # define FUSION_GET_INDEX(T) ::boost::fusion::detail::get_index<T>::type
 #else
@@ -273,7 +273,7 @@ FUSION_MSVC_ETI_WRAPPER(index)
 //  T::tuple wrapper
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 FUSION_MSVC_ETI_WRAPPER(tuple)
 # define FUSION_GET_TUPLE(T) ::boost::fusion::detail::get_tuple<T>::type
 #else
@@ -285,7 +285,7 @@ FUSION_MSVC_ETI_WRAPPER(tuple)
 //  T::size wrapper
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 FUSION_MSVC_ETI_WRAPPER(size)
 # define FUSION_GET_SIZE(T) ::boost::fusion::detail::get_size<T>::type
 #else
@@ -297,7 +297,7 @@ FUSION_MSVC_ETI_WRAPPER(size)
 //  T::value_type wrapper
 //
 ///////////////////////////////////////////////////////////////////////////////
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 FUSION_MSVC_ETI_WRAPPER(value_type)
 # define FUSION_GET_VALUE_TYPE(T) ::boost::fusion::detail::get_value_type<T>::type
 #else
@@ -360,7 +360,7 @@ struct fusion_apply2
 }} //namespace boost::fusion
 
 namespace boost {namespace fusion {namespace detail {
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
     template<typename T>
     struct bool_base {};
     template<>
@@ -377,7 +377,7 @@ namespace boost {namespace fusion {namespace detail {
 //It ICEs because operator int() const on mpl::int_ is inlined. 
 //At the same time, another test using integral_c<T,N> ICEs because operator int() is not inlined. 
 //Only solution seems to be to define a special msvc_fusion_int for VC 6 to be used in tuple_iterator_base
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 namespace boost {namespace fusion {namespace detail{
 
 template<int N>

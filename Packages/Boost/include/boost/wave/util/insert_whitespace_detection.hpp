@@ -81,7 +81,7 @@ namespace impl {
     handle_intlit(boost::wave::token_id prev, boost::wave::token_id before)
     {
         using namespace boost::wave;
-        switch(prev) {
+        switch (static_cast<unsigned int>(prev)) {
         case T_IDENTIFIER:
         case T_NONREPLACABLE_IDENTIFIER:
         case T_INTLIT:
@@ -97,7 +97,7 @@ namespace impl {
         boost::wave::token_id before)
     {
         using namespace boost::wave;
-        switch(prev) {
+        switch (static_cast<unsigned int>(prev)) {
         case T_IDENTIFIER:
         case T_NONREPLACABLE_IDENTIFIER:
         case T_INTLIT:
@@ -113,7 +113,7 @@ namespace impl {
         boost::wave::token_id before)
     {
         using namespace boost::wave;
-        switch(prev) {
+        switch (static_cast<unsigned int>(prev)) {
         case T_LESS:        // <<%
         case T_SHIFTLEFT:   // <<<%
             return true;
@@ -126,7 +126,7 @@ namespace impl {
         boost::wave::token_id before)
     {
         using namespace boost::wave;
-        switch(prev) {
+        switch (static_cast<unsigned int>(prev)) {
         case T_LESS:        // <<:
         case T_SHIFTLEFT:   // <<<:
             return true;
@@ -139,7 +139,7 @@ namespace impl {
         boost::wave::token_id before)
     {
         using namespace boost::wave;
-        switch(prev) {
+        switch (static_cast<unsigned int>(prev)) {
         case T_IDENTIFIER:
         case T_NONREPLACABLE_IDENTIFIER:
         case T_INTLIT:
@@ -154,7 +154,7 @@ namespace impl {
     handle_dot(boost::wave::token_id prev, boost::wave::token_id before)
     {
         using namespace boost::wave;
-        switch(prev) {
+        switch (static_cast<unsigned int>(prev)) {
         case T_DOT:
             if (T_DOT == before)
                 return true;    // ...
@@ -236,7 +236,7 @@ public:
         case T_SEMICOLON:
         case T_COMMA:
         case T_COLON:
-            switch (prev) {
+            switch (static_cast<unsigned int>(prev)) {
             case T_LEFTPAREN:
             case T_RIGHTPAREN:
             case T_LEFTBRACKET:
@@ -252,7 +252,7 @@ public:
             
         case T_LEFTBRACE:
         case T_RIGHTBRACE:
-            switch (prev) {
+            switch (static_cast<unsigned int>(prev)) {
             case T_LEFTPAREN:
             case T_RIGHTPAREN:
             case T_LEFTBRACKET:

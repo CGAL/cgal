@@ -50,17 +50,17 @@ public:
 
 // accessors
     string_type const &get_file() const { return file; }
-    int get_line() const { return line; }
-    int get_column() const { return column; }
+    unsigned int get_line() const { return line; }
+    unsigned int get_column() const { return column; }
     
     void set_file(string_type const &file_) { file = file_; }
-    void set_line(int line_) { line = line_; }
-    void set_column(int column_) { column = column_; }
+    void set_line(unsigned int line_) { line = line_; }
+    void set_column(unsigned int column_) { column = column_; }
     
 private:
     string_type file;
-    int line;
-    int column;
+    unsigned int line;
+    unsigned int column;
 };
 
 template <typename StringT>

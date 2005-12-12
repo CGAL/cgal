@@ -232,7 +232,7 @@ private:
 }} /* namespace boost::spirit */
 
 ///////////////////////////////////////////////////////////////////////////////
-#include "impl/file_iterator.ipp"  /* implementation */
+#include <boost/spirit/iterator/impl/file_iterator.ipp> /* implementation */
 
 #endif /* BOOST_SPIRIT_FILE_ITERATOR_HPP */
 

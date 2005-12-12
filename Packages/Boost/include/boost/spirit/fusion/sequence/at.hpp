@@ -40,7 +40,7 @@ namespace boost { namespace fusion
         template <typename Sequence, typename N>
         struct at : at_c<Sequence, N::value> {};
     }
-#if! BOOST_WORKAROUND(BOOST_MSVC,<=1200)
+#if! BOOST_WORKAROUND(BOOST_MSVC, < 1300)
     template <int N, typename Sequence>
     inline typename meta::at_c<Sequence const, N>::type
     at(sequence_base<Sequence> const& seq FUSION_GET_MSVC_WORKAROUND)

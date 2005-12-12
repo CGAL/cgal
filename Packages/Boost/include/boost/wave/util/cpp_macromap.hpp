@@ -14,6 +14,7 @@
 #define CPP_MACROMAP_HPP_CB8F51B0_A3F0_411C_AEF4_6FF631B8B414_INCLUDED
 
 #include <cstdlib>
+#include <cstdio>
 #include <ctime>
 
 #include <list>
@@ -279,8 +280,8 @@ typename defined_macros_type::iterator it = current_scope->find(name.get_value()
     std::swap((*p.first).second->macrodefinition, definition);
     
 // call the context supplied preprocessing hook
-    ctx.defined_macro(name, has_parameters, parameters, definition, 
-        is_predefined);
+    ctx.defined_macro(name, has_parameters, (*p.first).second->macroparameters, 
+        (*p.first).second->macrodefinition, is_predefined);
     return true;
 }
 
@@ -583,7 +584,7 @@ token_type startof_argument_list = *next;
                 curr_token.get_value().c_str(), main_pos);
         }
         
-        switch (id) {
+        switch (static_cast<unsigned int>(id)) {
         case T_LEFTPAREN:
             ++nested_parenthesis_level;
             argument->push_back(*next);

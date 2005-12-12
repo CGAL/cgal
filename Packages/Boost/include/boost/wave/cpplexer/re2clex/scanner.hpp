@@ -22,7 +22,7 @@ namespace re2clex {
 
 struct Scanner;
 typedef unsigned char uchar;
-typedef int (* ReportErrorProc)(struct Scanner *, char *, ...);
+typedef int (* ReportErrorProc)(struct Scanner const *, char const *, ...);
 
 typedef struct Scanner {
     int    fd;  /* file descriptor */

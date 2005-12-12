@@ -30,8 +30,7 @@
 
 #if defined(BOOST_NO_STRINGSTREAM) || \
     defined(BOOST_NO_STD_WSTRING) || \
-    defined(BOOST_NO_STD_LOCALE) || \
-    defined(BOOST_NO_INTRINSIC_WCHAR_T)
+    defined(BOOST_NO_STD_LOCALE) 
 #define DISABLE_WIDE_CHAR_SUPPORT
 #endif
 
@@ -81,11 +80,13 @@ namespace boost
         };
 
         #ifndef DISABLE_WIDE_CHAR_SUPPORT
+#if !defined(BOOST_NO_INTRINSIC_WCHAR_T)
         template<>
         struct stream_char<wchar_t>
         {
             typedef wchar_t type;
         };
+#endif
 
         template<>
         struct stream_char<wchar_t *>

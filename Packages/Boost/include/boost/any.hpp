@@ -88,7 +88,7 @@ namespace boost
         class placeholder
         {
         public: // structors
-    
+
             virtual ~placeholder()
             {
             }
@@ -98,7 +98,7 @@ namespace boost
             virtual const std::type_info & type() const = 0;
 
             virtual placeholder * clone() const = 0;
-    
+
         };
 
         template<typename ValueType>
@@ -135,6 +135,9 @@ namespace boost
 
         template<typename ValueType>
         friend ValueType * any_cast(any *);
+
+        template<typename ValueType>
+        friend ValueType * unsafe_any_cast(any *);
 
 #else
 
@@ -208,7 +211,22 @@ namespace boost
         return *result;
     }
 
+    // Note: The "unsafe" versions of any_cast are not part of the
+    // public interface and may be removed at any time. They are
+    // required where we know what type is stored in the any and can't
+    // use typeid() comparison, e.g., when our types may travel across
+    // different shared libraries.
+    template<typename ValueType>
+    ValueType * unsafe_any_cast(any * operand)
+    {
+        return &static_cast<any::holder<ValueType> *>(operand->content)->held;
+    }
 
+    template<typename ValueType>
+    const ValueType * unsafe_any_cast(const any * operand)
+    {
+        return any_cast<ValueType>(const_cast<any *>(operand));
+    }
 }
 
 // Copyright Kevlin Henney, 2000, 2001, 2002. All rights reserved.

@@ -349,8 +349,12 @@ namespace detail
 #else
         BOOST_STATIC_CONSTANT( least, sig_bits = (~( ~(least( 0u )) << Bits )) );
 #endif
+#if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 2
+        // Work around a weird bug that ICEs the compiler in build_c_cast
+        BOOST_STATIC_CONSTANT( fast, sig_bits_fast = static_cast<fast>(sig_bits) );
+#else
         BOOST_STATIC_CONSTANT( fast, sig_bits_fast = fast(sig_bits) );
-
+#endif
     };  // boost::detail::mask_uint_t
 
     template <  >
@@ -458,7 +462,7 @@ namespace detail
         typedef typename masking_type::fast  value_type;
 #if defined(__BORLANDC__) && defined(_M_IX86) && (__BORLANDC__ == 0x560)
         // for some reason Borland's command line compiler (version 0x560)
-        // chokes over this unless we do the calculation for it: 
+        // chokes over this unless we do the calculation for it:
         typedef value_type                   table_type[ 0x100 ];
 #else
         typedef value_type                   table_type[ byte_combos ];
@@ -732,7 +736,7 @@ crc_basic<Bits>::process_bit
     // a full polynominal division step is done when the highest bit is one
     bool const  do_poly_div = static_cast<bool>( rem_ & high_bit_mask );
 
-    // shift out the highest bit 
+    // shift out the highest bit
     rem_ <<= 1;
 
     // carry out the division, if needed

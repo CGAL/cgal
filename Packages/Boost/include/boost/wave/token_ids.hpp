@@ -36,14 +36,6 @@ namespace wave {
 #define TOKEN_FROM_ID(id, cat)   ((id) | (cat))
 #define ID_FROM_TOKEN(tok)       ((tok) & ~TokenTypeMask)
 #define BASEID_FROM_TOKEN(tok)   ((tok) & ~ExtTokenTypeMask)
-#define CATEGORY_FROM_TOKEN(tok) ((tok) & TokenTypeMask)
-#define EXTCATEGORY_FROM_TOKEN(tok) ((tok) & ExtTokenTypeMask)
-#define IS_CATEGORY(tok, cat)    \
-    ((CATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false) \
-    /**/
-#define IS_EXTCATEGORY(tok, cat)    \
-    ((EXTCATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false) \
-    /**/
 
 ///////////////////////////////////////////////////////////////////////////////
 //  the token_category helps to classify the different token types 
@@ -301,13 +293,25 @@ enum token_id {
 //  redefine the TOKEN_FROM_ID macro to be more type safe
 #undef TOKEN_FROM_ID
 #define TOKEN_FROM_ID(id, cat)   boost::wave::token_id((id) | (cat))
-#define BASE_TOKEN(tok)                                                       \
-    boost::wave::token_id((tok) & MainTokenMask)                              \
-  /**/
+
+#undef ID_FROM_TOKEN
+#define ID_FROM_TOKEN(tok)       ((tok) & ~boost::wave::TokenTypeMask)
+
 #undef BASEID_FROM_TOKEN
 #define BASEID_FROM_TOKEN(tok)                                                \
-    boost::wave::token_id(((tok) & ~ExtTokenTypeMask))                        \
+    boost::wave::token_id(((tok) & ~boost::wave::ExtTokenTypeMask))           \
   /**/
+#define BASE_TOKEN(tok)                                                       \
+    boost::wave::token_id((tok) & boost::wave::MainTokenMask)                 \
+  /**/
+#define CATEGORY_FROM_TOKEN(tok) ((tok) & boost::wave::TokenTypeMask)
+#define EXTCATEGORY_FROM_TOKEN(tok) ((tok) & boost::wave::ExtTokenTypeMask)
+#define IS_CATEGORY(tok, cat)    \
+    ((CATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false) \
+    /**/
+#define IS_EXTCATEGORY(tok, cat)    \
+    ((EXTCATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false) \
+    /**/
 
 ///////////////////////////////////////////////////////////////////////////////
 //  return a token name

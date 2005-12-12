@@ -51,6 +51,37 @@
 
 # endif
 
+#ifdef __QNX__
+
+// QNX (Dinkumware stdlib) defines these as non-standard names.
+// Reflect to the standard names.
+
+typedef ::intleast8_t int_least8_t;
+typedef ::intfast8_t int_fast8_t;
+typedef ::uintleast8_t uint_least8_t;
+typedef ::uintfast8_t uint_fast8_t;
+
+typedef ::intleast16_t int_least16_t;
+typedef ::intfast16_t int_fast16_t;
+typedef ::uintleast16_t uint_least16_t;
+typedef ::uintfast16_t uint_fast16_t;
+
+typedef ::intleast32_t int_least32_t;
+typedef ::intfast32_t int_fast32_t;
+typedef ::uintleast32_t uint_least32_t;
+typedef ::uintfast32_t uint_fast32_t;
+
+# ifndef BOOST_NO_INT64_T
+
+typedef ::intleast64_t int_least64_t;
+typedef ::intfast64_t int_fast64_t;
+typedef ::uintleast64_t uint_least64_t;
+typedef ::uintfast64_t uint_fast64_t;
+
+# endif
+
+#endif
+
 namespace boost
 {
 

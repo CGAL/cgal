@@ -32,8 +32,26 @@ namespace is_incrementable_
   struct any { template <class T> any(T const&); };
 
   // This is a last-resort operator++ for when none other is found
+# if BOOST_WORKAROUND(__GNUC__, == 4) && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 2
+  
+}
+
+namespace is_incrementable_2
+{
+  is_incrementable_::tag operator++(is_incrementable_::any const&);
+  is_incrementable_::tag operator++(is_incrementable_::any const&,int);
+}
+using namespace is_incrementable_2;
+
+namespace is_incrementable_
+{
+  
+# else
+  
   tag operator++(any const&);
   tag operator++(any const&,int);
+  
+# endif 
 
 # if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3202)) \
     || BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
@@ -78,7 +96,7 @@ namespace is_incrementable_
 
 template<typename T> 
 struct is_incrementable 
-   BOOST_TT_AUX_BOOL_C_BASE(::boost::detail::is_incrementable_::impl<T>::value)
+BOOST_TT_AUX_BOOL_C_BASE(::boost::detail::is_incrementable_::impl<T>::value)
 { 
     BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(::boost::detail::is_incrementable_::impl<T>::value)
     BOOST_MPL_AUX_LAMBDA_SUPPORT(1,is_incrementable,(T))
@@ -86,7 +104,7 @@ struct is_incrementable
 
 template<typename T> 
 struct is_postfix_incrementable 
-    BOOST_TT_AUX_BOOL_C_BASE(::boost::detail::is_incrementable_::impl<T>::value)
+BOOST_TT_AUX_BOOL_C_BASE(::boost::detail::is_incrementable_::impl<T>::value)
 { 
     BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(::boost::detail::is_incrementable_::postfix_impl<T>::value)
     BOOST_MPL_AUX_LAMBDA_SUPPORT(1,is_postfix_incrementable,(T))

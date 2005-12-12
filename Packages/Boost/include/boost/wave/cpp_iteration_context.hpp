@@ -153,10 +153,10 @@ public:
 // the actual input stream
     IteratorT first;            // actual input stream position 
     IteratorT last;             // end of input stream
-    BOOST_WAVE_STRINGTYPE real_filename;    // real name of the current file
-    BOOST_WAVE_STRINGTYPE filename;         // actual processed file
-    int line;                   // line counter of underlying stream
-    int emitted_lines;          // count of emitted newlines
+    BOOST_WAVE_STRINGTYPE real_filename;  // real name of the current file
+    BOOST_WAVE_STRINGTYPE filename;       // actual processed file
+    unsigned int line;                    // line counter of underlying stream
+    unsigned int emitted_lines;           // count of emitted newlines
     std::size_t if_block_depth; // depth of #if block recursion
 };
 

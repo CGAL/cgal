@@ -634,28 +634,41 @@ expression_grammar_gen<TokenT>::evaluate(
     
     typedef typename token_sequence_type::const_iterator iterator_type;
     typedef typename token_sequence_type::value_type::string_type string_type;
-    
-expression_grammar g;             // expression grammar
-closure_value result;             // expression result
-parse_info<iterator_type> hit = 
-    parse (first, last, g[spirit_assign_actor(result)], 
-        ch_p(T_SPACE) | ch_p(T_CCOMMENT) | ch_p(T_CPPCOMMENT));
 
-    if (!hit.hit) {
+    parse_info<iterator_type> hit(first);
+    closure_value result;             // expression result
+    
+    try {
+        expression_grammar g;             // expression grammar
+        hit = parse (first, last, g[spirit_assign_actor(result)], 
+                     ch_p(T_SPACE) | ch_p(T_CCOMMENT) | ch_p(T_CPPCOMMENT));
+
+        if (!hit.hit) {
+        // expression is illformed
+            if (if_block_status) {
+                string_type expression = as_string<string_type>(first, last);
+                if (0 == expression.size()) 
+                    expression = "empty expression";
+                BOOST_WAVE_THROW(preprocess_exception, ill_formed_expression, 
+                    expression.c_str(), act_pos);
+            }
+            else {
+            //  as the if_block_status is false no errors will be reported
+                return false;
+            }
+        }
+    }
+    catch (wave::preprocess_exception const& e) {
     // expression is illformed
         if (if_block_status) {
-            string_type expression = as_string<string_type>(first, last);
-            if (0 == expression.size()) 
-                expression = "empty expression";
-            BOOST_WAVE_THROW(preprocess_exception, ill_formed_expression, 
-                expression.c_str(), act_pos);
+            throw e;
         }
         else {
-        //  as the if_block_status is false no errors will not reported
+        //  as the if_block_status is false no errors will be reported
             return false;
         }
     }
-    
+        
     if (!hit.full) {
     // The token list starts with a valid expression, but there remains 
     // something. If the remainder consists out of whitespace only, the 
@@ -663,7 +676,7 @@ parse_info<iterator_type> hit =
     iterator_type next = hit.stop;
     
         while (next != last) {
-            switch (token_id(*next)) {
+            switch (static_cast<unsigned int>(token_id(*next))) {
             case T_SPACE:
             case T_SPACE2:
             case T_CCOMMENT:

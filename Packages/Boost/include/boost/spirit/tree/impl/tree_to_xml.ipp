@@ -20,7 +20,7 @@
 #ifdef BOOST_NO_STRINGSTREAM
 #include <strstream>
 #define BOOST_SPIRIT_OSSTREAM std::ostrstream
-std::string BOOST_SPIRIT_GETSTRING(std::ostrstream& ss)
+inline std::string BOOST_SPIRIT_GETSTRING(std::ostrstream& ss)
 {
     ss << ends;
     std::string rval = ss.str();

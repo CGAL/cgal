@@ -251,7 +251,7 @@ public:
                 pos_.get_file().c_str()
             )), 
         seen_newline(true), must_emit_line_directive(false),
-        act_pos(ctx_.get_main_pos()), last_line(0),
+        act_pos(ctx_.get_main_pos()), //last_line(0),
         eater(need_preserve_comments(ctx_.get_language()))
     {
         act_pos.set_file(pos_.get_file());
@@ -322,7 +322,7 @@ private:
     bool must_emit_line_directive;  // must emit a line directive
     result_type act_token;          // current token
     typename result_type::position_type &act_pos;   // current fileposition (references the macromap)
-    int last_line;                  // line number of the previous token
+//    unsigned int last_line;         // line number of the previous token
         
     token_sequence_type unput_queue;     // tokens to be preprocessed again
     token_sequence_type pending_queue;   // tokens already preprocessed
@@ -365,7 +365,7 @@ pp_iterator_functor<ContextT>::returned_from_include()
         
         iter_ctx = ctx.pop_iteration_context();
 
-    // ensure the itegrity of the #if/#endif stack
+    // ensure the integrity of the #if/#endif stack
         if (iter_ctx->if_block_depth != ctx.get_if_block_depth()) {
             using boost::wave::util::impl::escape_lit;
             BOOST_WAVE_THROW(preprocess_exception, unbalanced_if_endif, 
@@ -381,8 +381,8 @@ pp_iterator_functor<ContextT>::returned_from_include()
         ctx.set_current_filename(iter_ctx->real_filename.c_str());
 #endif 
 
-        last_line = iter_ctx->line;
-        act_pos.set_line(last_line);
+//        last_line = iter_ctx->line;
+        act_pos.set_line(iter_ctx->line);
         act_pos.set_column(0);
         
     // restore the actual current directory 
@@ -405,7 +405,7 @@ pp_iterator_functor<ContextT>::operator()()
 {
     using namespace boost::wave;
 
-// loop over skippable whitespace until something significant is found
+// loop over skipable whitespace until something significant is found
 bool skipped_newline = false;
 bool was_seen_newline = seen_newline;
 token_id id = T_ANY;
@@ -427,7 +427,7 @@ token_id id = T_ANY;
         
     } while (eater.may_skip(act_token, skipped_newline));
     
-// if there were skipped any newline, we must emit a #line directive
+// if there were skipped any newlines, we must emit a #line directive
     if ((must_emit_line_directive || (was_seen_newline && skipped_newline)) && 
         !IS_CATEGORY(id, WhiteSpaceTokenType) && 
         !IS_CATEGORY(id, EOLTokenType) && !IS_CATEGORY(id, EOFTokenType)) 
@@ -440,7 +440,7 @@ token_id id = T_ANY;
     
 // cleanup of certain tokens required
     seen_newline = skipped_newline;
-    switch (id) {
+    switch (static_cast<unsigned int>(id)) {
     case T_NONREPLACABLE_IDENTIFIER:
         act_token.set_token_id(T_IDENTIFIER);
         break;
@@ -507,12 +507,15 @@ bool returned_from_include_file = returned_from_include();
 
         // adjust the current position (line and column)
         bool was_seen_newline = seen_newline || returned_from_include_file;
-        int current_line = act_token.get_position().get_line();
-        
-            act_pos.set_line(act_pos.get_line() + current_line - last_line);
-            act_pos.set_column(act_token.get_position().get_column());
-            last_line = current_line;
+//        int current_line = act_token.get_position().get_line();
+//        
+//            act_pos.set_line(act_pos.get_line() + current_line - last_line);
+//            act_pos.set_column(act_token.get_position().get_column());
+//            last_line = current_line;
 
+            act_pos = act_token.get_position();
+//            last_line = act_pos.get_line();
+            
         // act accordingly on the current token
         token_id id = token_id(act_token);
         
@@ -625,36 +628,50 @@ typename ContextT::position_type pos = act_token.get_position();
             act_token = result_type(T_NEWLINE, "\n", pos);
         }
         else {
-        // account for the here emitted newline
+        // account for the newline emitted here
             act_pos.set_line(act_pos.get_line()-1);
             iter_ctx->emitted_lines = act_pos.get_line();
-            --last_line;
+//            --last_line;
         
         // the #line directive has to be pushed back into the pending queue in 
         // reverse order
 
-        // unput the complete #line directive
+        // unput the complete #line directive in reverse order
         std::string file("\"");
         boost::filesystem::path filename(act_pos.get_file().c_str(), 
             boost::filesystem::native);
         
             using boost::wave::util::impl::escape_lit;
             file += escape_lit(filename.native_file_string()) + "\"";
-            pending_queue.push_front(result_type(T_NEWLINE, "\n", pos));
-            pending_queue.push_front(result_type(T_STRINGLIT, file.c_str(), pos));
-            pending_queue.push_front(result_type(T_SPACE, " ", pos));
-            
+
         // 21 is the max required size for a 64 bit integer represented as a 
         // string
         char buffer[22];
 
             using namespace std;    // for some systems sprintf is in namespace std
             sprintf (buffer, "%d", pos.get_line());
+
+        // adjust the generated column numbers accordingly
+        // #line<space>number<space>filename<newline>
+        unsigned int filenamelen = (unsigned int)file.size();
+        unsigned int column = 7 + (unsigned int)strlen(buffer) + filenamelen;
+
+            pos.set_line(pos.get_line() - 1);         // adjust line number
+            
+            pos.set_column(column);
+            pending_queue.push_front(result_type(T_NEWLINE, "\n", pos));
+            pos.set_column(column -= filenamelen);    // account for filename
+            pending_queue.push_front(result_type(T_STRINGLIT, file.c_str(), pos));
+            pos.set_column(--column);                 // account for ' '
+            pending_queue.push_front(result_type(T_SPACE, " ", pos));
+            pos.set_column(column -= (unsigned int)strlen(buffer)); // account for <number>
             pending_queue.push_front(result_type(T_INTLIT, buffer, pos));
+            pos.set_column(--column);                 // account for ' '
             pending_queue.push_front(result_type(T_SPACE, " ", pos));
             
         // return the #line token itself
             whitespace.shift_tokens(T_PP_LINE);
+            pos.set_column(1);
             act_token = result_type(T_PP_LINE, "#line", pos);
         }
     }
@@ -862,7 +879,7 @@ const_child_iterator_t end_child_it = (*root.begin()).children.end();
 
 token_id id = cpp_grammar_type::found_directive;
 
-    switch (id) {
+    switch (static_cast<unsigned int>(id)) {
     case T_PP_QHEADER:      // #include "..."
 #if BOOST_WAVE_SUPPORT_INCLUDE_NEXT != 0
     case T_PP_QHEADER_NEXT: // #include_next "..."
@@ -1048,8 +1065,8 @@ fs::path native_path(file_path, fs::native);
         ctx.set_current_filename(iter_ctx->real_filename.c_str());
 #endif 
 
-        last_line = iter_ctx->line;
-        act_pos.set_line(last_line);
+//        last_line = iter_ctx->line;
+        act_pos.set_line(iter_ctx->line);
         act_pos.set_column(0);
     }
 }
@@ -1485,7 +1502,7 @@ get_token_value<result_type, parse_node_type> get_value;
 const_tree_iterator_t first = make_ref_transform_iterator(begin, get_value);
 const_tree_iterator_t last = make_ref_transform_iterator(end, get_value);
     
-// try to interprete the #line body as a number followed by an optional
+// try to interpret the #line body as a number followed by an optional
 // string literal
 int line = 0;
 string_type file_name;
@@ -1515,9 +1532,13 @@ string_type file_name;
 
     if (!file_name.empty())     // reuse current file name 
         act_pos.set_file(file_name.c_str());
-    act_pos.set_line(line-1);
-    last_line = act_token.get_position().get_line();
+    act_pos.set_line(line);
+//    last_line = act_token.get_position().get_line();
     
+//typename result_type::position_type nextline_pos = act_pos;
+//    
+//    nextline_pos.set_line(nextline_pos.get_line() + 1);
+    iter_ctx->first.set_position(act_pos);
     must_emit_line_directive = true;
 }
 

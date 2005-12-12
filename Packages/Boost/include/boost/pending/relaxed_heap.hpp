@@ -11,7 +11,6 @@
 
 #include <functional>
 #include <boost/property_map.hpp>
-#include <cmath>
 #include <boost/optional.hpp>
 #include <vector>
 
@@ -87,23 +86,38 @@ private:
     group**               children;
   };
 
+  size_type log2(size_type n)
+  {
+    size_type leading_zeroes = 0;
+    do {
+      size_type next = n << 1;
+      if (n == (next >> 1)) {
+        ++leading_zeroes;
+        n = next;
+      } else {
+        break;
+      }
+    } while (true);
+    return sizeof(size_type) * CHAR_BIT - leading_zeroes - 1;
+  }
+
 public:
   relaxed_heap(size_type n, const Compare& compare = Compare(),
                const ID& id = ID())
     : compare(compare), id(id), root(smallest_key), groups(n),
       smallest_value(0)
   {
-#ifndef BOOST_NO_STDC_NAMESPACE
-    using std::log;
-#endif // BOOST_NO_STDC_NAMESPACE
+    if (n == 0) {
+      root.children = new group*[1];
+      return;
+    }
 
-    if (n == 0) return;
+    log_n = log2(n);
 
-    log_n = static_cast<size_type>(log((double)n) / log(2.0));
     if (log_n == 0) log_n = 1;
     size_type g = n / log_n;
     if (n % log_n > 0) ++g;
-    size_type log_g = static_cast<size_type>(log((double)g) / log(2.0));
+    size_type log_g = log2(g);
     size_type r = log_g;
 
     // Reserve an appropriate amount of space for data structures, so
@@ -120,7 +134,7 @@ public:
       root.children[r] = &index_to_group[idx];
       idx = build_tree(root, idx, r, log_g + 1);
       if (idx != g)
-        r = static_cast<size_type>(log((double)(g - idx)) / log(2.0));
+        r = static_cast<size_type>(log2(g-idx));
     }
   }
 

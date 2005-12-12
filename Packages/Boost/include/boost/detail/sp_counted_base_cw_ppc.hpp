@@ -34,55 +34,61 @@ namespace detail
 
 inline void atomic_increment( register long * pw )
 {
+    register int a;
+
     asm
     {
 loop:
 
-    lwarx   r4, 0, r3
-    addi    r4, r4, 1
-    stwcx.  r4, 0, r3
+    lwarx   a, 0, pw
+    addi    a, a, 1
+    stwcx.  a, 0, pw
     bne-    loop
     }
 }
 
 inline long atomic_decrement( register long * pw )
 {
+    register int a;
+
     asm
     {
     sync
 
 loop:
 
-    lwarx   r4, 0, r3
-    addi    r4, r4, -1
-    stwcx.  r4, 0, r3
+    lwarx   a, 0, pw
+    addi    a, a, -1
+    stwcx.  a, 0, pw
     bne-    loop
-
-    mr      r3, r4
 
     isync
     }
+
+    return a;
 }
 
 inline long atomic_conditional_increment( register long * pw )
 {
+    register int a;
+
     asm
     {
 loop:
 
-    lwarx   r4, 0, r3
-    cmpwi   r4, 0
+    lwarx   a, 0, pw
+    cmpwi   a, 0
     beq     store
 
-    addi    r4, r4, 1
+    addi    a, a, 1
 
 store:
 
-    stwcx.  r4, 0, r3
+    stwcx.  a, 0, pw
     bne-    loop
-
-    mr      r3, r4
     }
+
+    return a;
 }
 
 class sp_counted_base
