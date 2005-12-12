@@ -1,1 +1,57 @@
-{\huge user manual TBD}
+\chapter{Circular kernel}
+\label{chapter-circular-kernel}
+
+\ccChapterAuthor{Monique Teillaud, Sylvain Pion}
+
+\section{Introduction}
+
+The CGAL kernel provide the user mainly with \textit{linear} objects
+(points, line segments, lines...) and predicates on them. It also
+defines circles but does not offer a lot of functionalities of them
+
+The goal of this circular kernel is to offer to the user a large set
+of functionalities on circles and circular arcs, with an interface
+that is similar to the CGAL kernel interface. 
+
+Two new main geometric objects are introduced: circular arcs, points
+of circular arcs (used in particular for endpoints and intersection
+points) and line segments whose endpoints are these new points.  
+
+In fact, the circular kernel is documented as a concept, and several
+models are provided: \ccc{Circular_kernel} is the basic kernel, and
+several filtered kernels are built on top of this basic kernel to
+increase effciency: \footnote{to be written}
+
+In this first release, all functionalities necessary for computing an
+arrangement of circular arcs and these line segments are
+defined. Three traits classes are provided for the CGAL arrangement
+package. 
+
+\section{Software design}
+
+The design is done in such a way that the algebraic concepts and the
+geometric concepts are clearly separated: the \ccc{Circular_kernel}
+has two template parameters: 
+\begin{itemize}
+\item {} the \ccc{BasicGeometricKernel}, from which the circular kernel derives,
+provides all basic geometric objects like points, lines, circles, and
+elementary functionality on them. In fact it is meant to be
+instantiated by a CGAL kernel. 
+\item {} the \ccc{AlgebraicKernel} is responsible for computations on
+polynomials and algebraic numbers. It has to be a model of concept 
+\ccc{AlgebraicKernel_2_2} described in a separate chapter. The
+robustness of the package relies on the fact that the algebraic kernel
+provides exact computations on algebraic objects.
+\end{itemize}
+
+The types of \ccc{BasicGeometricKernel} are inherited by the circular kernel.
+Some types are taken from the \ccc{AlgebraicKernel} parameter, and
+some types are defined by the \ccc{Circular_kernel} itself.
+
+\end{itemize} 
+
+\section{Examples}
+
+to be included
+
+\section{Design and Implementation History}

@@ -1,10 +1,16 @@
-\begin{ccRefConcept}{CircularKernel::GetEquation}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::GetEquation}
 
 \ccDefinition
+
+To get the equation of a curve.
 
 \ccCreationVariable{geteq}
 
 A model \ccVar\ of this type must provide:
+
+\ccMethod{CircularKernel::AlgebraicKernel_2_2::Polynomial_1_2
+    operator()(const CircularKernel::Line_2 & c);}
+{Returns the equation of the line.}
 
 \ccMethod{CircularKernel::AlgebraicKernel_2_2::PolynomialForCircles_2_2
     operator()(const CircularKernel::Circle_2 & c);}
@@ -14,4 +20,5 @@ A model \ccVar\ of this type must provide:
 
 \ccc{Circular_kernel::Get_equation;}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}
+

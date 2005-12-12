@@ -1,25 +1,27 @@
 \begin{ccRefConcept}{BasicGeometricKernel} 
 
-\footnote{To be written}
+\ccDefinition
 
-Two things to do
-\begin{itemize}
-\item {} refer to Kernel concept
-\item {} list minimal requirements used in CK
-\end{itemize}
+The \ccc{BasicGeometricKernel} parameter of \ccc{CGAL::Circular_kernel} is
+supposed to be a model of the \ccc{CGAL::Kernel} concept, so that the
+circular kernel provides all functionalities of a CGAL kernel.  
 
 \ccTypes
 
-A model of \ccc{BasicGeometricKernel} must provide
+In fact, only the following types are explicitly required by
+\ccc{Circular_kernel} and can thus be considered as minimal requirements:
 
 \ccNestedType{RT}{A model of \ccc{RingNumberType}.}
 \ccNestedType{FT}{A model of \ccc{FieldNumberType<RT>}.} \footnote{concept template...?}
 
-other types (Line\_2, etc ?)\footnote{To be done}
+\ccNestedType{Point_2}{A model of \ccc{Point_2}.}
+\ccNestedType{Line_2}{A model of \ccc{Line_2}.}
+\ccNestedType{Circle_2}{A model of \ccc{Circle_2}.}
+\ccNestedType{Object_2}{A model of \ccc{Object_2}.}
 
 \ccHasModels
 
-\ccc{CGAL:: all kernels}
+all CGAL kernels
 
 \ccSeeAlso
 

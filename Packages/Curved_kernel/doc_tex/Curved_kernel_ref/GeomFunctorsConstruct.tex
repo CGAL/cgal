@@ -1,12 +1,14 @@
-\begin{ccRefConcept}{CircularKernel::MakeXMonotone_2}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXMonotone_2}
 
 \ccDefinition
+
+To split curves into monotone pieces. 
 
 \ccCreationVariable{mkxmon}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{template < class OutputIterator >
+\ccMemberFunction{template < class OutputIterator >
     OutputIterator
     operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator res);}
 {Splits the arc \ccc{ca} into monotone arcs that are returned into the 
@@ -20,16 +22,18 @@ output iterator.}
 
 \ccRefIdfierPage{CGAL::make_x_monotone}
 
-\end{ccRefConcept}
-\begin{ccRefConcept}{CircularKernel::Intersect_2}
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::Intersect_2}
 
 \ccDefinition
+
+To compute intersections of objects.
 
 \ccCreationVariable{inters}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{template < class OutputIterator >
+\ccMemberFunction{template < class OutputIterator >
     OutputIterator
     operator()(const CircularKernel::Circle_2 &c1, 
 	const CircularKernel::Circle_2 &c2, 
@@ -37,14 +41,50 @@ A model \ccVar\ of this type must provide:
 {Copies in the output iterators the intersections between the two circles, sorted lexicographically. \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
 \ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
 
-\ccMethod{template < class OutputIteratorPoints, class OutputIteratorArcs >
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Circle_2 &c, 
+	const CircularKernel::Line_arc_2 &l, 
+	OutputIterator points);}
+{Same as previous, for a circle and a line arc.}
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Line_arc_2 &c, 
+	const CircularKernel::Circle_2 &l, 
+	OutputIterator points);}
+{Same as previous.}
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Circular_arc_2 &c, 
+	const CircularKernel::Line_arc_2 &l, 
+	OutputIterator points);}
+{Same as previous, for a circular arc and a line arc.}
+
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Line_arc_2 &c, 
+	const CircularKernel::Circular_arc_2 &l, 
+	OutputIterator points);}
+{Same as previous.}
+
+\ccMemberFunction{template < class OutputIteratorPoints, class OutputIteratorArcs >
     std::pair< OutputIteratorPoints, OutputIteratorArcs >
     operator()(const CircularKernel::Circular_arc_2 &ca1, 
 	const CircularKernel::Circular_arc_2 &ca2, 
 	OutputIteratorPoints points, OutputIteratorArcs arcs);}
 {Copies in the output iterators the intersections between the two arcs, sorted lexicographically. \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CircularKernel::Circular_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
 
-\footnote{not that the multiplicity is not defined for the case of a point that is a common endpoint of the two arcs. Does it make sense to decide a convention: multiplicity=0...? to be discussed}
+\footnote{note that the multiplicity is not defined for the case of a point that is a common endpoint of the two arcs. Does it make sense to decide a convention: multiplicity=0...? to be discussed}
+
+\ccMemberFunction{template < class OutputIteratorPoints, class OutputIteratorArcs >
+    std::pair< OutputIteratorPoints, OutputIteratorArcs >
+    operator()(const CircularKernel::Line_arc_2 &ca1, 
+	const CircularKernel::Line_arc_2 &ca2, 
+	OutputIteratorPoints points, OutputIteratorArcs arcs);}
+{Same as previous, for line arcs.}
 
 \ccHasModels
 
@@ -54,4 +94,38 @@ A model \ccVar\ of this type must provide:
 
 \ccRefIdfierPage{CGAL::intersect}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{CircularKernel::Split_2}
+
+\ccDefinition
+
+To split curves at a given point.
+
+\ccCreationVariable{sp}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{void operator()
+	(const CircularKernel::Circular_arc_2 &a, 
+	const CircularKernel::Circular_arc_point_2 &p,
+	CircularKernel::Circular_arc_2 &a1, 
+	CircularKernel::Circular_arc_2 &a2);}
+{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.
+\ccPrecond{$a$ is $x$-monotone, and $p$ lies on $a$.}}
+
+\ccMemberFunction{void operator()
+	(const CircularKernel::Line_arc_2 &l, 
+	 const CircularKernel::Circular_arc_point_2 &p,
+	 CircularKernel::Line_arc_2 &l1, CircularKernel::Line_arc_2 &l2)
+{Same for a line arc.}
+
+\ccHasModels
+
+\ccc{Circular_kernel::Split_2}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::split}
+
+\end{ccRefFunctionObjectConcept}

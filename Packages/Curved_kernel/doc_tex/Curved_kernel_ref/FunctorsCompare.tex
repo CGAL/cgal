@@ -1,6 +1,4 @@
-\begin{ccRefConcept}{CircularKernel::CompareX_2} 
-
-\ccDefinition
+\begin{ccRefFunctionObjectConcept}{CircularKernel::CompareX_2} 
 
 \ccRefines
 
@@ -10,10 +8,20 @@
 
 An object \ccVar\ of this type must provide in addition: 
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const CircularKernel::Circular_arc_point_2 &p,
          const CircularKernel::Circular_arc_point_2 &q );}
 {Compares the $x$-coordinates of $p$ and $q$.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const CircularKernel::Point_2 &p,
+         const CircularKernel::Circular_arc_point_2 &q );}
+{same.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const CircularKernel::Circular_arc_point_2 &p,
+         const CircularKernel::Point_2 &q );}
+{same.}
 
 \ccHasModels
 
@@ -23,10 +31,8 @@ An object \ccVar\ of this type must provide in addition:
 
 \ccRefIdfierPage{CGAL::compare_x}
 
-\end{ccRefConcept}
-\begin{ccRefConcept}{CircularKernel::CompareY_2} 
-
-\ccDefinition
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::CompareY_2} 
 
 \ccRefines
 
@@ -36,10 +42,20 @@ An object \ccVar\ of this type must provide in addition:
 
 An object \ccVar\ of this type must provide in addition: 
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const CircularKernel::Circular_arc_point_2 &p,
          const CircularKernel::Circular_arc_point_2 &q );}
 {Compares the $y$-coordinates of $p$ and $q$.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const CircularKernel::Point_2 &p,
+         const CircularKernel::Circular_arc_point_2 &q );}
+{same.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const CircularKernel::Circular_arc_point_2 &p,
+         const CircularKernel::Point_2 &q );}
+{same.}
 
 \ccHasModels
 
@@ -49,10 +65,8 @@ An object \ccVar\ of this type must provide in addition:
 
 \ccRefIdfierPage{CGAL::compare_y}
 
-\end{ccRefConcept}
-\begin{ccRefConcept}{CircularKernel::CompareXY_2} 
-
-\ccDefinition
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::CompareXY_2} 
 
 \ccRefines
 
@@ -62,10 +76,20 @@ An object \ccVar\ of this type must provide in addition:
 
 An object \ccVar\ of this type must provide in addition: 
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const CircularKernel::Circular_arc_point_2 &p,
          const CircularKernel::Circular_arc_point_2 &q );}
 {Compares $p$ and $q$ according to the lexicographic ordering on $x$- and $y$-coordinates.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const CircularKernel::Point_2 &p,
+         const CircularKernel::Circular_arc_point_2 &q );}
+{same.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const CircularKernel::Circular_arc_point_2 &p,
+         const CircularKernel::Point_2 &q );}
+{same.}
 
 \ccHasModels
 
@@ -75,26 +99,24 @@ An object \ccVar\ of this type must provide in addition:
 
 \ccRefIdfierPage{CGAL::compare_xy}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}
 
-\begin{ccRefConcept}{CircularKernel::CompareYatX_2}
-
-\ccDefinition
+\begin{ccRefFunctionObjectConcept}{CircularKernel::CompareYatX_2}
 
 \ccCreationVariable{cmpyatx}
 
 An object \ccVar\ of this type must provide two operators that compare 
 a point $p$ and an arc $a$ on the vertical line passing through $p$.
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const CircularKernel::Circular_arc_point_2 &p,
                 const CircularKernel::Circular_arc_2 &a);}
-{}
+{For a circular arc.}
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const CircularKernel::Circular_arc_point_2 &p,
                 const CircularKernel::Line_arc_2 &a);}
-{}
+{For a segment.}
 
 \ccHasModels
 
@@ -104,38 +126,38 @@ a point $p$ and an arc $a$ on the vertical line passing through $p$.
 
 \ccRefIdfierPage{CGAL::compare_y_at_x}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}
 
-\begin{ccRefConcept}{CircularKernel::CompareYtoRight_2}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::CompareYtoRight_2}
 
 \ccCreationVariable{cmpright}
 
 An object \ccVar\ of this type must provide operators that compare vertically 
 two arcs on the right side of a common point $p$:
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const Circular_arc_2 &a1,
                const Circular_arc_2 &a2,
                const Circular_arc_point_2 &p);}
-{}
+{For two circular arcs.}
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const Line_arc_2 &a1,
                const Line_arc_2 &a2,
                const Circular_arc_point_2 &p);}
-{}
+{For two segments.}
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const Line_arc_2 &a1,
                const Circular_arc_2 &a2,
                const Circular_arc_point_2 &p);}
-{}
+{For a segment and an arc.}
 
-\ccMethod{Comparison_result operator()
+\ccMemberFunction{Comparison_result operator()
 	(const Circular_arc_2 &a1,
                const Line_arc_2 &a2,
                const Circular_arc_point_2 &p);}
-{}
+{Same as previous.}
 
 \ccHasModels
 
@@ -145,4 +167,4 @@ two arcs on the right side of a common point $p$:
 
 \ccRefIdfierPage{CGAL::compare_y_to_right}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}
