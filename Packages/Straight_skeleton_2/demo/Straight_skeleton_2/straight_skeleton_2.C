@@ -370,9 +370,9 @@ private slots:
 
     for( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
     {
-      builder.insert_CCB((*bit)->vertices_begin(),(*bit)->vertices_end());
+      builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
     }
-    sls = builder.proceed() ;
+    sls = builder.construct_skeleton() ;
     widget->redraw();
     something_changed();
   }
@@ -385,7 +385,7 @@ private slots:
       for ( int i = 1 ; i <= offset_steps ; ++ i )
       {
         OffsetBuilder lOffsetBuilder(sls);
-        lOffsetBuilder.Create(i*offset_val, std::back_inserter(offset_region) );
+        lOffsetBuilder.construct_offset_polygons(i*offset_val, std::back_inserter(offset_region) );
       }
       widget->redraw();
       something_changed();

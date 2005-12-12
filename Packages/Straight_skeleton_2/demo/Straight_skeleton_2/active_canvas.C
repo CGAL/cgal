@@ -86,12 +86,12 @@ private slots:
     void readClient()
     {
         QTextStream ts( this );
-        while ( canReadLine() ) 
+        while ( canReadLine() )
           emit Command(ts.readLine());
     }
     void deleteLater()
     {
-sLog << "Connection closed" << std::endl << std::flush ;    
+sLog << "Connection closed" << std::endl << std::flush ;
     }
 };
 
@@ -137,16 +137,16 @@ class Layer : public CGAL::Qt_widget_layer
 public:
 
   Layer(FigureList const& aFigures) : mFigures(aFigures) {};
-  
+
   void draw()
   {
     widget->lock();
-    
+
 sLog << "drawing " << mFigures.size() << " figures" << std::endl ;
-    
+
     for ( FigureList::const_iterator it = mFigures.begin(), eit = mFigures.end(); it != eit ; ++ it )
       (*it)->render(widget);
-      
+
     widget->unlock();
   }
 private:
@@ -187,7 +187,7 @@ public:
 
     //QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Clear", this, SLOT(clear_figures()), CTRL+Key_C );
-    
+
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
 
@@ -199,9 +199,9 @@ public:
     old_state = 0;
 
     mLayer.reset ( new Layer(mFigures) );
-    
+
     widget->attach(boost::get_pointer(mLayer));
-    
+
     ActiveCanvasServer *server = new ActiveCanvasServer( this );
 
     connect( server, SIGNAL(newConnect(ActiveCanvasClientSocket*)),
@@ -215,8 +215,8 @@ public slots:
 
 
 private slots:
-  
-    
+
+
   void newConnect( ActiveCanvasClientSocket *s )
   {
 sLog << "handling new connection" << std::endl << std::flush ;
@@ -240,36 +240,36 @@ sLog << "recieved:" << aCmd << std::endl << std::flush ;
     {
       QString     lRawArgs = aCmd.right(aCmd.length()-1);
       QStringList lArgs    = QStringList::split(' ',lRawArgs);
-      
+
       bool lOK = false  ;
-      
+
       switch(aCmd[0])
       {
         case 'P' : lOK = AddPoint    (lArgs); break ;
         case 'S' : lOK = AddSegment  (lArgs); break ;
         case '~' : lOK = RemoveFigure(lArgs); break ;
       }
-      
+
       if ( !lOK )
       {
         QString lMsg ;
         QTextOStream(&lMsg) << "Command syntax error: " << aCmd ;
         Error(lMsg);
       }
-        
+
       widget->redraw();
     }
   }
-   
+
   static CGAL::Color toColor ( int aC )
   {
     int r = (aC & 0xFF0000) >> 16 ;
     int g = (aC & 0x00FF00) >> 8 ;
     int b = (aC & 0x0000FF) ;
-sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " b:" << b << std::endl ;    
+sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " b:" << b << std::endl ;
     return CGAL::Color(r,g,b);
   }
-  
+
   bool AddPoint( const QStringList& aDesc )
   {
     bool rOK = false ;
@@ -287,12 +287,12 @@ sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " 
     }
     return rOK ;
   }
-  
+
   bool AddSegment( const QStringList& aDesc )
   {
     bool rOK = false ;
     if ( aDesc.size() == 6 )
-    { 
+    {
       std::size_t id = aDesc[0].toUInt  (&rOK);
       int         c  = aDesc[1].toInt   (&rOK);
       double      sx = aDesc[2].toDouble(&rOK);
@@ -309,7 +309,7 @@ sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " 
     }
     return rOK ;
   }
-  
+
   bool RemoveFigure( const QStringList& aDesc )
   {
     bool rOK = false ;
@@ -325,9 +325,9 @@ sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " 
         else
         {
           QString lMsg;
-          QTextOStream(&lMsg) << "There is no figure with ID " << lID << ". Cannot remove it." ;   
+          QTextOStream(&lMsg) << "There is no figure with ID " << lID << ". Cannot remove it." ;
           Error(lMsg);
-        }  
+        }
       }
     }
     return rOK ;
@@ -342,17 +342,17 @@ sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " 
     else if ( aID < mFigures.size() )
     {
       QString lMsg;
-      QTextOStream(&lMsg) << "Figure IDs must be unique, and " << aID << " was used already.";   
+      QTextOStream(&lMsg) << "Figure IDs must be unique, and " << aID << " was used already.";
       Error(lMsg);
     }
     else
     {
       QString lMsg;
       QTextOStream(&lMsg) << "Sorry, in this implementation Figure IDs must be consecutive, and "
-                         << aID << " is not since the last ID recieved was " << mFigures.size() << ".";   
+                         << aID << " is not since the last ID recieved was " << mFigures.size() << ".";
       Error(lMsg);
     }
-  }  
+  }
   void Error( const QString& aA0 )
   {
     sLog << "ERROR:" << aA0 << std::endl << std::flush ;
@@ -360,12 +360,12 @@ sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " 
     QTextOStream(&lMsg) << "E" << aA0 ;
     SendClient(lMsg);
   }
-  
+
   void SendClient ( const QString& aMessage )
   {
     if ( mClient != 0 )
       QTextStream(mClient) << aMessage << "\n";
-  }   
+  }
   void about()
   {
     QMessageBox::about( this, my_title_string,
@@ -394,13 +394,13 @@ sLog << "color=" << std::hex << aC << std::dec << " r:" << r << " g:" << g << " 
     mFigures.clear();
     widget->redraw();
   }
-  
+
   void new_window()
   {
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("View");
     ed->stoolbar->clear_history();
-    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->widget->set_window(-1, 15, -1, 15);
     ed->show();
     something_changed();
   }

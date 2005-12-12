@@ -1,4 +1,4 @@
-%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%% Copyright (c) 2006  SciSoft.  All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
 %% the terms of the Q Public License version 1.0.
@@ -15,38 +15,76 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_builder_2<Gt_,Ssds_>}
+\begin{ccRefClass}{Straight_skeleton_builder_2<Gt,Ssds>}
 
 \ccDefinition
-The class \ccRefName\  encapsulates the algorithm to construct the 2D straight skeleton in the interior of a simple polygon. The class \ccRefName\  has two template arguments: the first is model of the \ccc{StraightSkeletonBuilderTraits_2} concept and the second is a model of the \ccc{StraightSkeleton_2} concept.
-
+The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a simple polygon. Its first template parameter, \ccc{Gt}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, and its second template parameter, \ccc{Ssds}, must be a model of the \ccc{StraightSkeleton_2} concept.
+ 
 \ccTypes
-  \ccTypedef{Gt_ Gt;}{The geometric traits (first template parameter)}{}
+  \ccNestedType{Gt}{The geometric traits (first template parameter)}{}
 \ccGlue
-  \ccTypedef{Ssds_ Ssds;}{The straight skeleton data structure (second template parameter)}{}
+  \ccNestedType{Ssds}{The straight skeleton data structure (second template parameter)}{}
+\ccGlue
+  \ccNestedType{Point_2}{The 2D point type as defined by the geometric traits}{}
 
 \ccCreation
-\ccCreationVariable{b}  %% choose variable name
+\ccCreationVariable{b}
 
-\ccConstructor{StraightSkeletonBuilder_2();}{Default constructs the builder.}
+\ccConstructor{StraightSkeletonBuilder_2();}{Default constructs the builder class.}
 
 \ccHeading{Methods}
-\ccMethod{template<class InputPointIterator>
-  Straight_skeleton_builder_2& insert_CCB ( InputPointIterator aBegin, InputPointIterator aEnd );} {Inserts one Connected Component of the Boundary (CCB) in the resulting straight skeleton. One CCB corresponds to one cycle of border halfedges in the underlying Halfedge Data Structure.\\ This method does not update the straight skeleton (as the algorithm is not incremental), it just sets up the underlying data structure with border halfedges defining the boundaries of the input polygon. Once all the CCBs that make up the input polygon have been inserted, v.proceed() must be called.\\
-  Note: It is possible to insert unconnected CCBs, that is, boundaries which define separate regions in the plane; however, doing so will be much less efficient than constructing the straight skeleton separately for each CCB because in this case the edges in one CCB do not interact at all with those on the other, yet the algorithm cannot assume that and will waste time finding those non-existing interactions.}
+\ccMethod{template<class InputPointIterator>  Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd );}
+{Defines the \textit{Contours} that form the \textit{Simple Polygon} whose \textit{Straight Skeleton} is to be built. Each contour must be input in turn starting with the \textit{Outer Contour} and following with the holes (if any). The order of the holes is unimportant but the outer contour must be entered first. The outer contour must be oriented counter-clockwise while holes must be oriented clockwise.\\
+The sequence [aBegin,aEnd) must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident or collinear and the contour cannot intersect or touch itself (it must be strictly planar).\\
+InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.}
+   
 \ccGlue
-\ccMethod{Ssds proceed();}{Constructs the straight skeleton in the interior of polygon as defined by the CCBs inserted previously and returns it.}
+\ccMethod{Ssds construct_skeleton();}
+{Constructs and returns the 2D straight skeleton in the interior of the simple polygon defined by the contours entered first by calling \ccc{enter_contour}. All the contours of the polygon must be entered before calling \ccc{construct_skeleton}.\\
+After \ccc{construct_skeleton} completes, the builder resets itself to the initial state before the contours were entered. Thus, you can reuse the builder to construct another straight skeleton for another polygon by simply starting over entering its contours. (if you call \ccc{enter_contour} after \ccc{construct_skeleton} you won't be inserting a new contour into the recently created straight skeleton; instead, you will be entering the contours for a new polygon. In other words, straight skeletons are not constructed incrementally and cannot be updated.)\\
+If the entered contours corresponds to more than just one simple polygon, that is, if you enter more that one outer contour, the builder will successfully construct the straight skeleton inside each of the unconnected polygons but it will return just 1 single instance of the \ccc{Ssds}. Such a \ccc{Ssds} will contain disjoint sets of connected faces instead of one single set of connected faces. The performance of the construction process will be compromised if you enter more than one simple polygon at once, and there won't be any benefit in doing so except for the fact that you get a single \ccc{Ssds} corresponding to the interior of all entered polygons. Therefore, unless there is a very good reason, you should always construct the straight skeleton in the interior of one simple polygon at a time (reusing the builder if you like but calling \ccc{construct_skeleton} after each polygon has been entered).}
 
 \ccInclude{CGAL/Straight_skeleton_builder_2.h}
+
+\ccHeading{Algorithm}
+
+The implemented algorithm is closely based on:
+
+"Straight Skeleton Implementation", Petr Felkel, Stepán Obdrzálek
+
+with the addition of "vertex events" as described in
+
+"Raising roofs, crashing cycles, and playing pool: Applications of a data structure
+for finding pairwise interactions", Dave Eppstein
+
+It simulates  a grassfire propagation of moving polygon edges as they move inward at constant
+and equal speed. That is, the continuous inward offsetting of the polygon.\\
+Since edges move at equal speed their movement can be characterized in a simpler setup as the movement of vertices. Vertices move along the angular bisector of adjacent edges.\\
+The trace of a moving vertex is described by the algorithm as a \textbf{bisector}. 
+Every position along a bisector corresponds to the vertex between two offset (moved) edges. Since edges move at constant speed, every position along a bisector also corresponds to the distance those two edges moved so far.\\
+From the perspective of a dynamic system of moving edges, such a distance can be regarded as an 
+\textbf{instant} (in time). Therefore, every distinct position along a bisector corresponds to a distinct instant in the offsetting process.\\
+As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex. If a vertex has an internal angle $<pi$, its incident edges will contract but if its internal angle $>pi$, they will expand. The movement of the edges, along with their extent change, result in collisions between non-adjacent edges. These collisions are called \textbf{events}, and they occur when the colliding edges have moved a certain distance, that is, at certain \textit{instants}.\\
+If non-consecutive edges \ccc{E(j),E(k)} move while edge \ccc{E(i)} contracts, they can collide at the point when \ccc{E(i)} shrinks to nothing (that is, the three edges might meet at a certain offset). This introduces a \textit{topological change} in the polygon: Edges \ccc{E(j),E(k)} are now adjacent, edge \ccc{E(i)} disappears, and a new vertex appears. This topological change is called an \textbf{Edge Event}.\\
+Similarly, consecutive expanding edges \ccc{E(i),E(i+1)} sharing a reflex vertex (internal angle $>=pi$) might collide with any edge \ccc{E(j)} on the rest of the same connected component of the polygon boundary (even far away from the initial edge's position). This also introduces a topological change: \ccc{E(j)} gets split in two edges and the connected component having \ccc{E(i),E(i+1) and E(j)} is split in two unconnected parts: one having \ccc{E(i)} and the corresponding subsegment of \ccc{E(j)} and the other with \ccc{E(i+1)} and the rest of \ccc{E(j)}. This is called a \textbf{Split Event}.\\ If a reflex vertex hits not an edge \ccc{E(j)} but another reflex vertex \ccc{E(j),E(j+1)}, and viceversa (the reflex vertex V(j) hits V(i)), there is no actual split and the two unconnected parts have \ccc{E(i),E(j)} and \ccc{E(i+1),E(j+1)} (or \ccc{E(i),E(j+1)} and \ccc{E(i+1),E(j)}). This topological change is called a \textbf{Vertex Event}. Although similar to a Split Event in the sense that two new unconnected contours emerge introducing two new contour vertices, in the case of a vertex event one of the new contour vertices might be reflex; that is, a Vertex Event \textit{may} result in one of the offset polygons having a \textit{reflex} contour vertex which was not in the original polygon.
+
+Edges movement is described by vertices movement, and these by bisectors. Therefore, the collision between edges \ccc{E(j),E(i),E(k)} (all in the same connected component) occurs when the moving vertices \ccc{E(j)->E(i)} and \ccc{E(i)->E(k)} meet ; that is, when the two bisectors describing the moving vertices 
+\textbf{intersect} (NOTE: as the edges move inward and events occur, a vertex between edges A and B might exist even if A and B are not consecutive; that is, j and k are not necessarily i-1 and i+1 respectively, although initially they are).\\
+Similarly, the collision between \ccc{E(i),E(i+1)} with \ccc{E(j)} (all in the same connected component) occurs when the bisector corresponding to the moving vertex \ccc{E(i)->E(i+1)} hits the moving edge \ccc{E(j)}.\\
+Since each event changes the topology of the moving polygon, it is not possible or practical to forsee all events at once. Rather, the algorithm starts by estimating an initial set of potential events and from there it computes one next event at a time based on the previous one. The chaining of events is governed by their relative instants: events that occur first are processed first.\\
+An initial set of \textit{potential} Split Events is first computed independently (the computation of a potential split event is based solely on a reflex vertex and all other edges in the same connected component); and an initial set of \textit{potential} Edge Events between initially consecutive bisectors is first computed independently (based solely on each bisector pair under consideration).\\
+Events occur at certain instants and the algorithm must be able to order them
+accordingly. The correctness of the algorithm is uniquely and directly governed by the correct computation and ordering of the events. Any potential event might no longer be applicable after the topological change introduced by a prior event.\\
+A grassfire propagation picks the next unprocessed event (starting from the first) and if it is still applicable processes it. Processing an event involves connecting edges, adding a new skeleton vertex (which corresponds the a contour vertex of the offset polygon) and calculating one new potential future event (which can be either an edge event or a split event -because of a prior vertex event-), based on the topological change just introduced. The propagation finishes when there are no new future events.
 
 \ccSeeAlso
 \ccc{StraightSkeletonBuilderTraits_2}\\
 \ccc{StraightSkeletonVertex_2}\\
 \ccc{StraightSkeletonHalfedge_2}\\
 \ccc{StraightSkeleton_2}\\
-\ccc{CGAL::Straight_skeleton_builder_traits_2<R>}\\
-\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Segment>}\\
-\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs,Segment>}\\
+\ccc{CGAL::Straight_skeleton_builder_traits_2<K>}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,P,FT>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs>}\\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

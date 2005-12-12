@@ -42,7 +42,7 @@ public:
 
   typedef typename R::Halfedge_handle Halfedge_handle ;
 
-  enum Type { cEdgeEvent, cSplitEvent } ;
+  enum Type { cEdgeEvent, cSplitEvent, cVertexEvent } ;
 
 public:
 
@@ -68,9 +68,6 @@ public:
 
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
-  SelfPtr next() { return mNext ; }
-  void    SetNext ( SelfPtr aNext ) { mNext = aNext ; }
-
   friend std::ostream& operator<< ( std::ostream& ss
                                    ,Straight_skeleton_builder_event_2<R> const& e
                                   )
@@ -95,7 +92,6 @@ private :
   Halfedge_handle mBorderC ;
   Point_2         mP ;
   FT              mTime ;
-  SelfPtr         mNext ;
 } ;
 
 template<class R>
@@ -195,6 +191,61 @@ private :
   Vertex_handle   mSeed ;
   Halfedge_handle mOppositeBorder ;
 } ;
+
+template<class R>
+class Straight_skeleton_builder_vertex_event_2 : public Straight_skeleton_builder_event_2<R>
+{
+
+  typedef Straight_skeleton_builder_event_2<R> Base ;
+
+  typedef typename R::Rep Rep ;
+
+  typedef typename Rep::Point_2 Point_2 ;
+  typedef typename Rep::FT      FT ;
+
+  typedef typename R::Halfedge_handle Halfedge_handle ;
+  typedef typename R::Vertex_handle   Vertex_handle ;
+
+  typedef typename Base::Type Type ;
+
+public:
+
+  Straight_skeleton_builder_vertex_event_2 ( Halfedge_handle aBorderA
+                                           , Halfedge_handle aBorderB
+                                           , Halfedge_handle aBorderC
+                                           , Halfedge_handle aBorderD
+                                           , Vertex_handle   aLSeed
+                                           , Vertex_handle   aRSeed
+                                           )
+    :
+      Base(aBorderA,aBorderB,aBorderC)
+    , mBorderD(aBorderD)
+    , mLSeed(aLSeed)
+    , mRSeed(aRSeed)
+  {}
+
+  virtual Type type() const { return cVertexEvent ; }
+
+  Halfedge_handle border_d() const { return mBorderD ; }
+
+  Vertex_handle left_seed () const { return mLSeed ; }
+  Vertex_handle right_seed() const { return mRSeed ; }
+
+private :
+
+  virtual void dump ( std::ostream& ss ) const
+  {
+    this->Base::dump(ss);
+    ss << " (LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << " BorderD=" << mBorderD->id() << ')' ;
+  }
+
+private :
+
+  Halfedge_handle mBorderD ;
+  Vertex_handle   mLSeed ;
+  Vertex_handle   mRSeed ;
+} ;
+
 
 CGAL_END_NAMESPACE
 

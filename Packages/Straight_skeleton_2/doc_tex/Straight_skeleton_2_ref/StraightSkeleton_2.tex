@@ -1,4 +1,4 @@
-%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%% Copyright (c) 2006  SciSoft.  All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
 %% the terms of the Q Public License version 1.0.
@@ -21,15 +21,14 @@
 
 \begin{ccRefConcept}{StraightSkeleton_2}
 
+\ccHeading{Introduction}
+
    A model for the \ccRefName\ concept defines the underlying
    combinatorial data structure (halfedge data structure) used to
    represent the 2D straight skeleton of a simple polygon.
 
-The \ccRefName\ concept is a refinement of the \ccc{HalfedgeDS} concept. Hence, the requirements for the latter are requirements for the former.
-The difference in requirements is that the
-\ccHtmlNoLinksFrom{\ccStyle{Vertex} and \ccStyle{Halfedge}}
-types should be models of the more refined concepts
-\ccc{StraightSkeletonVertex_2} and \ccc{StraightSkeletonHalfedge_2}.
+\ccRefines
+\ccc{HalfedgeDS}
 
 \ccTypes
     \ccNestedType{Vertex}{
@@ -40,6 +39,10 @@ types should be models of the more refined concepts
        The halfedge type. Should be a model of the
        \ccc{StraightSkeletonHalfedge_2} concept.}
 
+\ccHasModels
+
+There is no package-specific class serving as a model for this concept. Any model of the 
+\ccc{HalfedgeDS} concept whose \ccc{HalfedgeDSItems} match the \ccc{StraightSkeletonVertex_2} and \ccc{StraightSkeletonHalfedge_2} concepts (fore the Vertex and Halfedge resp.) can be used.
 
 \end{ccRefConcept} % StraightSkeleton_2
 % +------------------------------------------------------------------------+

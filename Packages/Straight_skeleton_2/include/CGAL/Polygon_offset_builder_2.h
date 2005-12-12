@@ -32,25 +32,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Sls_, class Traits_, class Polygon_2_>
+template<class Sls_, class Traits_, class Container_>
 class Polygon_offset_builder_2
 {
 public :
 
   typedef Sls_       Sls ;
   typedef Traits_    Traits ;
-  typedef Polygon_2_ Polygon_2 ;
+  typedef Container_ Container ;
 
   typedef typename Traits::FT FT ;
 
-  typedef typename Polygon_2::Point_2 Point_2 ;
+  typedef typename Traits::Point_2 Point_2 ;
 
-  typedef boost::shared_ptr<Polygon_2> Polygon_2_Ptr ;
+  typedef boost::shared_ptr<Container> ContainerPtr ;
 
   Polygon_offset_builder_2( Sls const& aSls, Traits const& aTraits = Traits() )  ;
 
   template<class OutputIterator>
-  OutputIterator Create ( FT aTime, OutputIterator aOut ) ;
+  OutputIterator construct_offset_polygons( FT aTime, OutputIterator aOut ) ;
 
 private:
 
@@ -101,9 +101,9 @@ private:
     CGAL_assertion(handle_assigned(aNextBisector->opposite()));
     CGAL_assertion(aNextBisector->opposite()->is_bisector());
 
-    Halfedge_const_handle lBorderA = aBisector->defining_border();
-    Halfedge_const_handle lBorderB = aBisector->opposite()->defining_border();
-    Halfedge_const_handle lBorderC = aNextBisector->opposite()->defining_border();
+    Halfedge_const_handle lBorderA = aBisector->defining_contour_edge();
+    Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
+    Halfedge_const_handle lBorderC = aNextBisector->opposite()->defining_contour_edge();
 
     return Compare_offset_against_event_time_2<Traits>(mTraits)()(aT,GetEdgeTriple(lBorderA,lBorderB,lBorderC));
   }
@@ -114,8 +114,8 @@ private:
     CGAL_assertion(handle_assigned(aBisector->opposite()));
     CGAL_assertion(aBisector->opposite()->is_bisector());
 
-    Halfedge_const_handle lBorderA = aBisector->defining_border();
-    Halfedge_const_handle lBorderB = aBisector->opposite()->defining_border();
+    Halfedge_const_handle lBorderA = aBisector->defining_contour_edge();
+    Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
 
     return Construct_offset_point_2<Traits>(mTraits)()(aT,GetEdge(lBorderA),GetEdge(lBorderB));
   }

@@ -72,9 +72,10 @@ private :
 
   typedef typename Ssds::size_type size_type ;
 
-  typedef Straight_skeleton_builder_event_2<Ssds>       Event ;
-  typedef Straight_skeleton_builder_edge_event_2<Ssds>  EdgeEvent ;
-  typedef Straight_skeleton_builder_split_event_2<Ssds> SplitEvent ;
+  typedef Straight_skeleton_builder_event_2<Ssds>        Event ;
+  typedef Straight_skeleton_builder_edge_event_2<Ssds>   EdgeEvent ;
+  typedef Straight_skeleton_builder_split_event_2<Ssds>  SplitEvent ;
+  typedef Straight_skeleton_builder_vertex_event_2<Ssds> VertexEvent ;
 
   typedef boost::intrusive_ptr<Event> EventPtr ;
 
@@ -101,9 +102,9 @@ public:
   Straight_skeleton_builder_2 ( Traits const& = Traits() ) ;
 
   template<class InputPointIterator>
-  Straight_skeleton_builder_2& insert_CCB ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
+  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
 
-  Ssds proceed() ;
+  Ssds construct_skeleton() ;
 
 private :
 
@@ -161,24 +162,16 @@ private :
 
 private :
 
-  static inline Halfedge_handle GetDefiningBorder0 ( Vertex_handle aV )
+  static inline Halfedge_handle GetDefiningBorderA ( Vertex_handle aV )
   {
     return aV->halfedge()->face()->halfedge();
   }
 
-  static inline Halfedge_handle HasDefiningBorder1 ( Vertex_handle aV )
+  static inline Halfedge_handle GetDefiningBorderB ( Vertex_handle aV )
   {
-    return handle_assigned(aV->halfedge()->opposite()->prev()->face()) ;
-  }
-
-  static inline Halfedge_handle GetDefiningBorder1 ( Vertex_handle aV )
-  {
-    return aV->halfedge()->opposite()->prev()->face()->halfedge();
-  }
-
-  static inline Halfedge_handle GetDefiningBorder2 ( Vertex_handle aV )
-  {
-    return aV->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
+    return handle_assigned(aV->halfedge()->opposite()->prev()->face())
+      ? aV->halfedge()->opposite()->prev()->face()->halfedge()
+      : aV->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
   }
 
   static inline Edge GetEdge ( Halfedge_const_handle aH )
@@ -301,34 +294,66 @@ private :
                                                 , EventPtr const& aB
                                                 ) const
   {
-    if ( aSeed->is_inner() )
-      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( GetEdgeTriple(GetDefiningBorder0(aSeed)
-                                                                                   ,GetDefiningBorder1(aSeed)
-                                                                                   ,GetDefiningBorder2(aSeed)
-                                                                                   )
+    if ( aSeed->is_skeleton() )
+    {
+      Halfedge_handle lBorder0 = aSeed->halfedge()->face()->halfedge();
+      Halfedge_handle lBorder1 = aSeed->halfedge()->opposite()->prev()->face()->halfedge();
+      Halfedge_handle lBorder2 = aSeed->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
+
+      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( GetEdgeTriple(lBorder0,lBorder1,lBorder2)
                                                                     , GetEdgeTriple(aA->border_a(), aA->border_b(), aA->border_c())
                                                                     , GetEdgeTriple(aB->border_a(), aB->border_b(), aB->border_c())
                                                                     ) ;
+    }
     else
+    {
       return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
                                                                     , GetEdgeTriple(aA->border_a(), aA->border_b(), aA->border_c())
                                                                     , GetEdgeTriple(aB->border_a(), aB->border_b(), aB->border_c())
                                                                     ) ;
+    }
   }
 
+  // Returns true if aE is in the set (aA,aB,aC)
   bool IsBorderInTriple( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
   {
     return aE == aA || aE == aB || aE == aC ;
   }
 
-  bool TwoInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
-                  , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
-                  ) const
+  // Returns true if the intersection of the sets (aXA,aXB,aXC) and (aYA,aYB,aYC) has size exactly 2
+  // (that is, both sets have 2 elements in common)
+  bool HaveTwoInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
+                      , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
+                      ) const
   {
     int lC = IsBorderInTriple(aXA,aYA,aYB,aYC) ? 1 :0 ;
     lC    += IsBorderInTriple(aXB,aYA,aYB,aYC) ? 1 :0 ;
     lC    += IsBorderInTriple(aXC,aYA,aYB,aYC) ? 1 :0 ;
     return lC == 2 ;
+  }
+
+  // Returns the 0-base index of the one element from (aX[3]) NOT IN (aY[3])
+  // NOTE: This function shall be called only when it is known that such an element exists
+  // as 2 is returned by default without proper testing. That is, this function is for vertex-event analysis only.
+  int GetUnique( Halfedge_handle aX[], Halfedge_handle aY[] ) const
+  {
+    return !IsBorderInTriple(aX[0],aY[0],aY[1],aY[2]) ? 0
+             : !IsBorderInTriple(aX[1],aY[0],aY[1],aY[2]) ? 1
+               : 2 ;
+  }
+
+  // Sorts the elements in the sets aX[2] and aY[3] returing (D0,D1,E0,E1)
+  // where D0,D1 are unique elements in aX and aY respectively and E0,E1 are elements in common.
+  // NOTE: This function shall only be called when it is known that thet sets aX and aY can indeed be sorted this way.
+  // That is, this function is for vertex-event analysis only.
+  tuple<Halfedge_handle,Halfedge_handle,Halfedge_handle,Halfedge_handle>
+    SortTwoDistinctAndTwoEqual( Halfedge_handle aX[], Halfedge_handle aY[] ) const
+  {
+     int lUniqueX = GetUnique(aX,aY) ;
+     int lUniqueY = GetUnique(aY,aX) ;
+     int lCommon1 = ( lUniqueX + 1 ) % 3 ;
+     int lCommon2 = ( lUniqueX + 2 ) % 3 ;
+     return make_tuple(aX[lUniqueX],aY[lUniqueY],aX[lCommon1],aX[lCommon2]);
   }
 
   bool AreEventsSimultaneous( EventPtr const& aX, EventPtr const& aY ) const
@@ -340,8 +365,8 @@ private :
     Halfedge_handle yb = aY->border_b() ;
     Halfedge_handle yc = aY->border_c() ;
 
-    if ( TwoInCommon(xa,xb,xc,ya,yb,yc) )
-         return Are_events_simultaneous_2<Traits>(mTraits)()( GetEdgeTriple(xa,xb,xc), GetEdgeTriple(ya,yb,yc)) ;
+    if ( HaveTwoInCommon(xa,xb,xc,ya,yb,yc) )
+         return Are_sls_events_simultaneous_2<Traits>(mTraits)()( GetEdgeTriple(xa,xb,xc), GetEdgeTriple(ya,yb,yc)) ;
     else return false ;
   }
 
@@ -389,12 +414,13 @@ private :
 
   Vertex_handle LookupOnSLAV ( Halfedge_handle aOBorder, Event const& aEvent ) ;
 
-  Vertex_handle ConstructEdgeEventNode( EdgeEvent& aEvent ) ;
+  Vertex_handle      ConstructEdgeEventNode   ( EdgeEvent&   aEvent ) ;
+  Vertex_handle_pair ConstructSplitEventNodes ( SplitEvent&  aEvent ) ;
+  Vertex_handle_pair ConstructVertexEventNodes( VertexEvent& aEvent ) ;
 
-  Vertex_handle_pair ConstructSplitEventNodes( SplitEvent& aEvent ) ;
-
-  void HandleEdgeEvent ( EdgeEvent&  aEvent ) ;
-  void HandleSplitEvent( SplitEvent& aEvent ) ;
+  void HandleEdgeEvent  ( EdgeEvent&   aEvent ) ;
+  void HandleSplitEvent ( SplitEvent&  aEvent ) ;
+  void HandleVertexEvent( VertexEvent& aEvent ) ;
 
   void Propagate();
 
@@ -412,8 +438,8 @@ private:
   {
     SS_IO_AUX::ScopedSegmentDrawing draw_( aHalfedge->opposite()->vertex()->point()
                                          , aHalfedge->vertex()->point()
-                                         , aHalfedge->is_contour_bisector() ? CGAL::GREEN : CGAL::BLUE
-                                         , aHalfedge->is_contour_bisector() ? "CBisector" : "IBisector"
+                                         , aHalfedge->is_inner_bisector() ? CGAL::BLUE  : CGAL::GREEN
+                                         , aHalfedge->is_inner_bisector() ? "IBisector" : "CBisector"
                                          ) ;
     draw_.Release();
   }

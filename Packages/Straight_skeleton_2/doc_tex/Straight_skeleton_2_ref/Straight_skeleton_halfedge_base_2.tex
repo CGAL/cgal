@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_halfedge_base_2<Refs,S>}
+\begin{ccRefClass}{Straight_skeleton_halfedge_base_2<Refs>}
 
 %% add template arg's if necessary
 
@@ -26,14 +26,10 @@
 
 The class \ccRefName\ provides a model for the
 \ccc{StraightSkeletonHalfedge_2} concept which is the halfedge
-required by the \ccc{StraightSkeleton_2}
-concept. The class \ccRefName\ has two template arguments: the first is
-a model of the \ccc{StraightSkeleton_2} concept (the halfedge container) and the second is
-a segment type.
+type required by the \ccc{StraightSkeleton_2}
+concept. The class \ccRefName\ has only one template arguments: a model of the \ccc{StraightSkeleton_2} concept (the halfedge container).
 
-This class can be used as a base class allowing users of the straight skeleton data structure to decorate a halfedge with additional data. The concrete halfedge class must be given in the \ccc{HalfedgeDSItems} template parameter of the instantiation of \ccc{HalfedgeDS_default} used as the straight skeleton class.
-
-NOTE: This class inherits from \ccc{Straight_skeleton_halfedge_base_base_2<Refs,S>} which provides the actual implementation and interface but hides the modifiers which are exclusively used by the algorithm.
+This class can be used as a base class allowing users of the straight skeleton data structure to decorate a halfedge with additional data. The concrete halfedge class must be given in the \ccc{HalfedgeDSItems} template parameter of the instantiation of the \ccc{HalfedgeDS_default} class used as the model for the \ccc{Straight_skeleton_2} concept.
 
 \ccInclude{CGAL/Straight_skeleton_halfedge_base_2.h}
 
@@ -47,7 +43,7 @@ NOTE: This class inherits from \ccc{Straight_skeleton_halfedge_base_base_2<Refs,
 \ccc{StraightSkeletonHalfedge_2}\\
 \ccc{StraightSkeletonVertex_2}\\
 \ccc{StraightSkeleton_2}\\
-\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,RT>}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>}\\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

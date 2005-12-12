@@ -15,19 +15,19 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_builder_traits_2<R>}
+\begin{ccRefClass}{Straight_skeleton_builder_traits_2<Kernel>}
 
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{v}
 \ccDefinition
 
 The class \ccRefName\ provides a model for the
 \ccc{StraightSkeletonBuilderTraits_2} concept which is the traits class
 required by the \ccc{Straight_skeleton_builder_2} algorithm class. The class 
-\ccRefName\ has one template argument: a geometric kernel for 2D computations.
+\ccRefName\ has one template argument: a geometric kernel for 2D computations. This parameter must be a model for the \ccc{Kernel} concept, such as the \ccc{Exact_predicates_inexact_constructions_kernel}, which is the recommended one.\\
+It is unspecified which subset of the kernel is used in this traits class (and by extension in the builder class). This is to avoid restricting the choices in the implementation.
 
 \ccInclude{CGAL/Straight_skeleton_builder_traits_2.h}
 

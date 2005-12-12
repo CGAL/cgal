@@ -24,8 +24,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Sls, class Gt, class Poly>
-Polygon_offset_builder_2<Sls,Gt,Poly>::Polygon_offset_builder_2( Sls const& aSls, Traits const& aTraits )
+template<class Sls, class Gt, class Cont>
+Polygon_offset_builder_2<Sls,Gt,Cont>::Polygon_offset_builder_2( Sls const& aSls, Traits const& aTraits )
   :
   mTraits(aTraits)
  ,mVisitedBisectors(aSls.size_of_halfedges())
@@ -37,9 +37,9 @@ Polygon_offset_builder_2<Sls,Gt,Poly>::Polygon_offset_builder_2( Sls const& aSls
   ResetVisitedBisectorsMap();
 }
 
-template<class Sls, class Gt, class Poly>
-typename Polygon_offset_builder_2<Sls,Gt,Poly>::Halfedge_const_handle
-Polygon_offset_builder_2<Sls,Gt,Poly>::LocateHook( FT aTime, Halfedge_const_handle aBisector, bool aAbove )
+template<class Sls, class Gt, class Cont>
+typename Polygon_offset_builder_2<Sls,Gt,Cont>::Halfedge_const_handle
+Polygon_offset_builder_2<Sls,Gt,Cont>::LocateHook( FT aTime, Halfedge_const_handle aBisector, bool aAbove )
 {
   Halfedge_const_handle rHook ;
 
@@ -71,9 +71,9 @@ Polygon_offset_builder_2<Sls,Gt,Poly>::LocateHook( FT aTime, Halfedge_const_hand
   return rHook;
 }
 
-template<class Sls, class Gt, class Poly>
-typename Polygon_offset_builder_2<Sls,Gt,Poly>::Halfedge_const_handle
-Polygon_offset_builder_2<Sls,Gt,Poly>::LocateSeed( FT aTime )
+template<class Sls, class Gt, class Cont>
+typename Polygon_offset_builder_2<Sls,Gt,Cont>::Halfedge_const_handle
+Polygon_offset_builder_2<Sls,Gt,Cont>::LocateSeed( FT aTime )
 {
   Halfedge_const_handle rSeed ;
 
@@ -86,11 +86,11 @@ Polygon_offset_builder_2<Sls,Gt,Poly>::LocateSeed( FT aTime )
   return rSeed;
 }
 
-template<class Sls, class Gt, class Poly>
+template<class Sls, class Gt, class Cont>
 template<class OutputIterator>
-OutputIterator Polygon_offset_builder_2<Sls,Gt,Poly>::TraceOffsetPolygon( FT aTime, Halfedge_const_handle aSeed, OutputIterator aOut )
+OutputIterator Polygon_offset_builder_2<Sls,Gt,Cont>::TraceOffsetPolygon( FT aTime, Halfedge_const_handle aSeed, OutputIterator aOut )
 {
-  Polygon_2_Ptr lPoly( new Polygon_2() ) ;
+  ContainerPtr lPoly( new Container() ) ;
 
   Halfedge_const_handle lHookL = aSeed ;
 
@@ -125,15 +125,15 @@ OutputIterator Polygon_offset_builder_2<Sls,Gt,Poly>::TraceOffsetPolygon( FT aTi
   return aOut ;
 }
 
-template<class Sls, class Gt, class Poly>
-void Polygon_offset_builder_2<Sls,Gt,Poly>::ResetVisitedBisectorsMap()
+template<class Sls, class Gt, class Cont>
+void Polygon_offset_builder_2<Sls,Gt,Cont>::ResetVisitedBisectorsMap()
 {
   std::fill(mVisitedBisectors.begin(),mVisitedBisectors.end(),0);
 }
 
-template<class Sls, class Gt, class Poly>
+template<class Sls, class Gt, class Cont>
 template<class OutputIterator>
-OutputIterator Polygon_offset_builder_2<Sls,Gt,Poly>::Create( FT aTime, OutputIterator aOut )
+OutputIterator Polygon_offset_builder_2<Sls,Gt,Cont>::construct_offset_polygons( FT aTime, OutputIterator aOut )
 {
   ResetVisitedBisectorsMap();
 

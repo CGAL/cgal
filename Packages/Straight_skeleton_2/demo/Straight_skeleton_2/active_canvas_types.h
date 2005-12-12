@@ -17,7 +17,6 @@
 //
 // Author(s)     : Radu Ursu
 
-#include "cgal_types.h"
 #include<vector>
 #include<boost/shared_ptr.hpp>
 

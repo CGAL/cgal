@@ -45,7 +45,7 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Straight_skeleton_halfedge_2<HalfEdge>}
+\begin{ccRefClass} {Straight_skeleton_halfedge_2<Halfedge>}
 
 \ccDefinition
 
@@ -55,7 +55,7 @@ A straight skeleton contains two kinds of halfedges: borders and bisectors. Bord
 Each face of the straight skeleton contains exactly 1 border halfedge and 2 or more bisector halfedges.
 \ccInheritsFrom
 
-\ccc{HalfEdge}
+\ccc{Halfedge}
 
 This class is the underlying halfedge class.
 
@@ -91,6 +91,7 @@ If this is a bisector-halfedge: the border-halfedge associated with this bisecto
 {Returns \ccc{true} if this is a border halfedge (an edge of the input polygon).}
 
 \ccMethod{bool is_bisector() const;}
-{Returns \ccc(true) if this is a bisector halfedge (a segment of the skeleton).} 
+{Returns \ccc(true) if this is a bisector halfedge (a segment of the skeleton).
+\textbf{Very Important: To determine if a halfedge corresponds to a bisector is\_bisector() can be called on any of the halfedges of the pair (because both halfedges will return the same answer). However, to determine if a halfedge corresponds to a border, it must be tested that it is not a bisector. The reason is that calling is\_border () would return true in only one of the halfedges of the pair.}} 
 \end{ccRefClass}
 

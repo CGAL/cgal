@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_vertex_base_2<Refs,P,N>}
+\begin{ccRefClass}{Straight_skeleton_vertex_base_2<Refs,Point,FT>}
 
 %% add template arg's if necessary
 
@@ -26,13 +26,11 @@
 
 The class \ccRefName\ provides a model for the
 \ccc{StraightSkeletonVertex_2} concept which is the vertex
-required by the \ccc{StraightSkeleton_2}
+type required by the \ccc{StraightSkeleton_2}
 concept. The class \ccRefName\ has three template arguments: the first is 
-the model of the \ccc{StraightSkeleton_2} concept (the vertex container), the second is a Point type, and the third the numeric field type used to represent the time of a vertex (a square distance).
+the model of the \ccc{StraightSkeleton_2} concept (the vertex container), the second is a Point type, and the third is a model of the \ccc{SqrtFieldNumberType}, which is the numeric type used to represent the time of a vertex (a Euclidean distance).
 
-This class can be used as a base class allowing users of the straight skeleton data structure to decorate a vertex with additional data. The concrete vertex class must be given in the \ccc{HalfedgeDSItems} template parameter of the instantiation of \ccc{HalfedgeDS_default} used as the straight skeleton class.
-
-NOTE: This class inherits from \ccc{Straight_skeleton_vertex_base_base_2<Refs,P,N>} which provides the actual implementation and interface but hides the modifiers which are exclusively used by the algorithm.
+This class can be used as a base class allowing users of the straight skeleton data structure to decorate a vertex with additional data. The concrete vertex class must be given in the \ccc{HalfedgeDSItems} template parameter of the instantiation of the \ccc{HalfedgeDS_default} class used as the model for the \ccc{Straight_skeleton_2} concept.
 
 \ccInclude{CGAL/Straight_skeleton_vertex_base_2.h}
 
@@ -46,7 +44,7 @@ NOTE: This class inherits from \ccc{Straight_skeleton_vertex_base_base_2<Refs,P,
 \ccc{StraightSkeletonVertex_2}\\
 \ccc{StraightSkeletonHalfedge_2}\\
 \ccc{StraightSkeleton_2}\\
-\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs,Segment>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs>}\\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

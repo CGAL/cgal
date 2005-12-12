@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.11_CL.EXE-1310
+CGAL_MAKEFILE=/home/fcacciola/dev/CGAL/make/makefile_i686_Linux-2.6.8-2-386_g++-3.3.5 
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -41,7 +41,7 @@ all:            \
                 straight_skeleton_2$(EXE_EXT) 
 
 straight_skeleton_2$(EXE_EXT): straight_skeleton_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)straight_skeleton_2 straight_skeleton_2$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Straight_skeleton_2.C straight_skeleton_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    straight_skeleton_2.clean 
