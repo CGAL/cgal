@@ -21,8 +21,8 @@
 #include <typeinfo>
 #include <stdexcept>                            // logic_error, out_of_range.
 #include <boost/checked_delete.hpp>
-#include <boost/config.hpp>                     // BOOST_MSVC, template friends.
-#include <boost/detail/workaround.hpp>
+#include <boost/config.hpp>                     // BOOST_MSVC, template friends,
+#include <boost/detail/workaround.hpp>          // BOOST_NESTED_TEMPLATE 
 #include <boost/iostreams/constants.hpp>
 #include <boost/iostreams/detail/access_control.hpp>
 #include <boost/iostreams/detail/char_traits.hpp>
@@ -37,8 +37,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/type.hpp>
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-# include <boost/type.hpp>
 # include <boost/mpl/int.hpp>
 #endif
 
@@ -56,19 +56,18 @@
 # define BOOST_IOSTREAMS_COMPARE_TYPE_ID(X,Y) ((X)==(Y))
 #endif
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-# define BOOST_IOSTREAMS_COMPONENT_TYPE(chain, index) \
-    chain.component_type< index >() \
+// Deprecated
+#define BOOST_IOSTREAMS_COMPONENT_TYPE(chain, index) \
+    chain.component_type( index ) \
     /**/
+
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
 # define BOOST_IOSTREAMS_COMPONENT(chain, index, target) \
-    chain.component< index, target >() \
+    chain.component< target >( index ) \
     /**/
 #else
-# define BOOST_IOSTREAMS_COMPONENT_TYPE(chain, index) \
-    chain.component_type( ::boost::mpl::int_< index >() ) \
-    /**/
 # define BOOST_IOSTREAMS_COMPONENT(chain, index, target) \
-    chain.component( ::boost::mpl::int_< index >(), ::boost::type< target >() ) \
+    chain.component( index, ::boost::type< target >() ) \
     /**/
 #endif
 
@@ -161,51 +160,17 @@ public:
 
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek(stream_offset off, BOOST_IOS::seekdir way);
+    std::streampos seek(stream_offset off, BOOST_IOS::seekdir way);
 
-    //----------Direct component access---------------------------------------//
+    //----------Additional i/o functions--------------------------------------//
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-    template<int N>
-    const std::type_info& component_type() const
-    {
-        if (N >= size())
-            throw std::out_of_range("bad chain offset");
-        return (*boost::next(list().begin(), N))->component_type();
-    }
-
-    template<int N, typename T>
-    T* component() const
-    {
-        if (N >= size())
-            throw std::out_of_range("bad chain offset");
-        streambuf_type* link = *boost::next(list().begin(), N);
-        if (BOOST_IOSTREAMS_COMPARE_TYPE_ID(link->component_type(), typeid(T)))
-            return static_cast<T*>(link->component_impl());
-        else
-            return 0;
-    }
-#else
-    template<int N>
-    const std::type_info& component_type(mpl::int_<N>) const
-    {
-        if (N >= size())
-            throw std::out_of_range("bad chain offset");
-        return (*boost::next(list().begin(), N))->component_type();
-    }
-
-    template<int N, typename T>
-    T* component(mpl::int_<N>, boost::type<T>) const
-    {
-        if (N >= size())
-            throw std::out_of_range("bad chain offset");
-        streambuf_type* link = *boost::next(list().begin(), N);
-        if (BOOST_IOSTREAMS_COMPARE_TYPE_ID(link->component_type(), typeid(T)))
-            return static_cast<T*>(link->component_impl());
-        else
-            return 0;
-    }
-#endif
+    // Returns true if this chain is non-empty and its final link
+    // is a source or sink, i.e., if it is ready to perform i/o.
+    bool is_complete() const;
+    bool auto_close() const;
+    void set_auto_close(bool close);
+    bool sync() { return front().BOOST_IOSTREAMS_PUBSYNC() != -1; }
+    bool strict_sync();
 
     //----------Container-like interface--------------------------------------//
 
@@ -217,13 +182,42 @@ public:
     size_type size() const { return list().size(); }
     void reset();
 
-    // Returns true if this chain is non-empty and its final link
-    // is a source or sink, i.e., if it is ready to perform i/o.
-    bool is_complete() const;
-    bool auto_close() const;
-    void set_auto_close(bool close);
-    bool sync() { return front().BOOST_IOSTREAMS_PUBSYNC() != -1; }
-    bool strict_sync();
+    //----------Direct component access---------------------------------------//
+
+    const std::type_info& component_type(int n) const
+    {
+        if (static_cast<size_type>(n) >= size())
+            throw std::out_of_range("bad chain offset");
+        return (*boost::next(list().begin(), n))->component_type();
+    }
+
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
+    // Deprecated.
+    template<int N>
+    const std::type_info& component_type() const { return component_type(N); }
+
+    template<typename T>
+    T* component(int n) const { return component(n, boost::type<T>()); }
+
+    // Deprecated.
+    template<int N, typename T> 
+    T* component() const { return component<T>(N); }
+#endif
+
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
+    private:
+#endif
+    template<typename T>
+    T* component(int n, boost::type<T>) const
+    {
+        if (static_cast<size_type>(n) >= size())
+            throw std::out_of_range("bad chain offset");
+        streambuf_type* link = *boost::next(list().begin(), n);
+        if (BOOST_IOSTREAMS_COMPARE_TYPE_ID(link->component_type(), typeid(T)))
+            return static_cast<T*>(link->component_impl());
+        else
+            return 0;
+    }
 private:
     template<typename T>
     void push_impl(const T& t, int buffer_size = -1, int pback_size = -1)
@@ -423,22 +417,47 @@ public:
     chain_client(chain_client* client) : chain_(client->chain_) { }
     virtual ~chain_client() { }
 
+    const std::type_info& component_type(int n) const
+    { return chain_->component_type(n); }
+
+//#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
+//    // Deprecated.
+//    template<int N>
+//    const std::type_info& component_type() const
+//    { return chain_->component_type(N); }
+//
+//    template<typename T>
+//    T* component(int n) const   // Tru64 needs boost::type.
+//    { return chain_->component(n, boost::type<T>()); } 
+//
+//    // Deprecated.
+//    template<int N, typename T>
+//    T* component() const        // Tru64 needs boost::type.
+//    { return chain_->component(N, boost::type<T>()); }
+//#else
+//    template<typename T>
+//    T* component(int n, boost::type<T> t) const
+//    { return chain_->component(n, t); }
+//#endif
+
 #if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
+    // Deprecated.
     template<int N>
     const std::type_info& component_type() const
-    { return chain_->component_type<N>(); }
+    { return chain_->BOOST_NESTED_TEMPLATE component_type<N>(); }
 
+    template<typename T>
+    T* component(int n) const
+    { return chain_->BOOST_NESTED_TEMPLATE component<T>(n); }
+
+    // Deprecated.
     template<int N, typename T>
     T* component() const
-    { return chain_->component<N, T>(); }
+    { return chain_->BOOST_NESTED_TEMPLATE component<N, T>(); }
 #else
-    template<int N>
-    const std::type_info& component_type(mpl::int_<N> i) const
-    { return chain_->component_type(i); }
-
-    template<int N, typename T>
-    T* component(mpl::int_<N> i, boost::type<T> t) const
-    { return chain_->component(i, t); }
+    template<typename T>
+    T* component(int n, boost::type<T> t) const
+    { return chain_->component(n, t); }
 #endif
 
     bool is_complete() const { return chain_->is_complete(); }
@@ -491,7 +510,7 @@ inline std::streamsize chain_base<Self, Ch, Tr, Alloc, Mode>::write
 { return iostreams::write(*list().front(), s, n); }
 
 template<typename Self, typename Ch, typename Tr, typename Alloc, typename Mode>
-inline stream_offset chain_base<Self, Ch, Tr, Alloc, Mode>::seek
+inline std::streampos chain_base<Self, Ch, Tr, Alloc, Mode>::seek
     (stream_offset off, BOOST_IOS::seekdir way)
 { return iostreams::seek(*list().front(), off, way); }
 
@@ -547,7 +566,7 @@ void chain_base<Self, Ch, Tr, Alloc, Mode>::pop()
         pimpl_->close();
     streambuf_type* buf = 0;
     std::swap(buf, list().back());
-    buf->set_auto_close(auto_close());
+    buf->set_auto_close(false);
     buf->set_next(0);
     delete buf;
     list().pop_back();

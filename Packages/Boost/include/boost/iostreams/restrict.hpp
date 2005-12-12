@@ -61,7 +61,7 @@ public:
                                 stream_offset len = -1 );
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek(stream_offset off, BOOST_IOS::seekdir way);
+    std::streampos seek(stream_offset off, BOOST_IOS::seekdir way);
 private:
     stream_offset beg_, pos_, end_;
 };
@@ -145,7 +145,7 @@ public:
     }
 
     template<typename Device>
-    stream_offset seek(Device& dev, stream_offset off, BOOST_IOS::seekdir way)
+    std::streampos seek(Device& dev, stream_offset off, BOOST_IOS::seekdir way)
     {
         stream_offset next;
         if (way == BOOST_IOS::beg) {
@@ -159,12 +159,12 @@ public:
             pos_ = this->component().seek(dev, off, BOOST_IOS::end);
             if (pos_ < beg_)
                 bad_seek();
-            return pos_ - beg_;
+            return offset_to_position(pos_ - beg_);
         }
         if (next < beg_ || end_ != -1 && next >= end_)
             bad_seek();
         pos_ = this->component().seek(dev, next, BOOST_IOS::cur);
-        return pos_ - beg_;
+        return offset_to_position(pos_ - beg_);
     }
 private:
     template<typename Device>
@@ -329,7 +329,7 @@ inline std::streamsize restricted_indirect_device<Device>::write
 }
 
 template<typename Device>
-stream_offset restricted_indirect_device<Device>::seek
+std::streampos restricted_indirect_device<Device>::seek
     (stream_offset off, BOOST_IOS::seekdir way)
 {
     stream_offset next;
@@ -344,12 +344,12 @@ stream_offset restricted_indirect_device<Device>::seek
         pos_ = iostreams::seek(this->component(), off, BOOST_IOS::end);
         if (pos_ < beg_)
             bad_seek();
-        return pos_ - beg_;
+        return offset_to_position(pos_ - beg_);
     }
     if (next < beg_ || end_ != -1 && next >= end_)
         bad_seek();
     pos_ = iostreams::seek(this->component(), next - pos_, BOOST_IOS::cur);
-    return pos_ - beg_;
+    return offset_to_position(pos_ - beg_);
 }
 
 //--------------Implementation of restricted_direct_device--------------------//

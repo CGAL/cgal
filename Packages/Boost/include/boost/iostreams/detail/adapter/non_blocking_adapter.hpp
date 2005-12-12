@@ -44,9 +44,9 @@ public:
         }
         return result;    
     }
-    stream_offset seek( stream_offset off, BOOST_IOS::seekdir way,
-                        BOOST_IOS::openmode which = 
-                            BOOST_IOS::in | BOOST_IOS::out )
+    std::streampos seek( stream_offset off, BOOST_IOS::seekdir way,
+                         BOOST_IOS::openmode which = 
+                             BOOST_IOS::in | BOOST_IOS::out )
     { return iostreams::seek(device_, off, way, which); }
 public:
     Device& device_;

@@ -58,7 +58,7 @@ public:
     indirect_streambuf();
 
     void open(const T& t BOOST_IOSTREAMS_PUSH_PARAMS());
-    bool is_open();
+    bool is_open() const;
     void close();
     bool auto_close() const;
     void set_auto_close(bool close);
@@ -118,7 +118,7 @@ private:
     void sync_impl();
     void close_impl(BOOST_IOS::openmode);
 
-    enum {
+    enum flag_type {
         f_open             = 1,
         f_input_closed     = f_open << 1,
         f_output_closed    = f_input_closed << 1,
@@ -189,7 +189,7 @@ void indirect_streambuf<T, Tr, Alloc, Mode>::open
 }
 
 template<typename T, typename Tr, typename Alloc, typename Mode>
-inline bool indirect_streambuf<T, Tr, Alloc, Mode>::is_open()
+inline bool indirect_streambuf<T, Tr, Alloc, Mode>::is_open() const
 { return (flags_ & f_open) != 0; }
 
 template<typename T, typename Tr, typename Alloc, typename Mode>
@@ -328,7 +328,10 @@ template<typename T, typename Tr, typename Alloc, typename Mode>
 inline typename indirect_streambuf<T, Tr, Alloc, Mode>::pos_type
 indirect_streambuf<T, Tr, Alloc, Mode>::seekpos
     (pos_type sp, BOOST_IOS::openmode)
-{ return seek_impl(sp, BOOST_IOS::beg, BOOST_IOS::in | BOOST_IOS::out); }
+{ 
+    return seek_impl( position_to_offset(sp), BOOST_IOS::beg, 
+                      BOOST_IOS::in | BOOST_IOS::out ); 
+}
 
 template<typename T, typename Tr, typename Alloc, typename Mode>
 typename indirect_streambuf<T, Tr, Alloc, Mode>::pos_type

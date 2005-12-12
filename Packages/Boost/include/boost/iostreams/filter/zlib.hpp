@@ -332,7 +332,7 @@ zlib_compressor_impl<Alloc>::zlib_compressor_impl(const zlib_params& p)
 
 template<typename Alloc>
 zlib_compressor_impl<Alloc>::~zlib_compressor_impl()
-{ /*reset(true, false);*/ }
+{ reset(true, false); }
 
 template<typename Alloc>
 bool zlib_compressor_impl<Alloc>::filter
@@ -357,7 +357,7 @@ zlib_decompressor_impl<Alloc>::zlib_decompressor_impl(const zlib_params& p)
 
 template<typename Alloc>
 zlib_decompressor_impl<Alloc>::~zlib_decompressor_impl()
-{ /*reset(false, false);*/ }
+{ reset(false, false); }
 
 template<typename Alloc>
 zlib_decompressor_impl<Alloc>::zlib_decompressor_impl(int window_bits)

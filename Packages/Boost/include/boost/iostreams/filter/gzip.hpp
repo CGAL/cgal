@@ -234,14 +234,20 @@ public:
     template<typename Sink>
     void close(Sink& snk, BOOST_IOS::openmode m)
     {
+        namespace io = boost::iostreams;
+
         if (m & BOOST_IOS::out) {
 
-            // Close zlib compressor.
-            base_type::close(snk, BOOST_IOS::out);
+                // Close zlib compressor.
+                base_type::close(snk, BOOST_IOS::out);
 
-            // Write final fields of gzip file format.
-            write_long(this->crc(), snk);
-            write_long(this->total_in(), snk);
+            if (flags_ & f_header_done) {
+
+                // Write final fields of gzip file format.
+                write_long(this->crc(), snk);
+                write_long(this->total_in(), snk);
+            }
+
         }
         #if BOOST_WORKAROUND(__GNUC__, == 2) && defined(__STL_CONFIG_H) || \
             BOOST_WORKAROUND(BOOST_DINKUMWARE_STDLIB, == 1) \
@@ -267,7 +273,7 @@ private:
         boost::iostreams::put(next, static_cast<char>(0xFF & (n >> 24)));
     }
 
-    enum {
+    enum flag_type {
         f_header_done = 1,
         f_body_done = f_header_done << 1,
         f_footer_done = f_body_done << 1
@@ -456,7 +462,7 @@ private:
         if (static_cast<int>(read_uint32(rng, gzip::bad_footer)) != this->total_out())
             throw gzip_error(gzip::bad_length);
     }
-    enum {
+    enum flag_type {
         f_header_read  = 1,
         f_footer_read  = f_header_read << 1,
         f_text         = f_footer_read << 1
@@ -547,11 +553,11 @@ std::streamsize basic_gzip_compressor<Alloc>::read_string
         static_cast<streamsize>(str.size() - offset_);
     streamsize amt = (std::min)(avail, n);
     std::copy( str.data() + offset_,
-                str.data() + offset_ + amt,
-                s );
+               str.data() + offset_ + amt,
+               s );
     offset_ += amt;
     if ( !(flags_ & f_header_done) &&
-            offset_ == static_cast<std::size_t>(str.size()) )
+         offset_ == static_cast<std::size_t>(str.size()) )
     {
         flags_ |= f_header_done;
     }

@@ -51,9 +51,15 @@ public:
                     BOOST_IOS::in | BOOST_IOS::out );
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek( stream_offset off, BOOST_IOS::seekdir way, 
-                        BOOST_IOS::openmode which = 
-                            BOOST_IOS::in | BOOST_IOS::out );
+    std::streampos seek( stream_offset off, BOOST_IOS::seekdir way, 
+                         BOOST_IOS::openmode which = 
+                             BOOST_IOS::in | BOOST_IOS::out );
+    void open( const std::string& path,
+               BOOST_IOS::openmode mode =
+                   BOOST_IOS::in | BOOST_IOS::out,
+               BOOST_IOS::openmode base_mode =
+                   BOOST_IOS::in | BOOST_IOS::out );
+    bool is_open() const;
     void close();
 #ifndef BOOST_IOSTREAMS_NO_LOCALE
     void imbue(const std::locale& loc) { pimpl_->file_.pubimbue(loc);  }
@@ -81,12 +87,18 @@ struct basic_file_source : private basic_file<Ch> {
         { };
     using basic_file<Ch>::read;
     using basic_file<Ch>::seek;
+    using basic_file<Ch>::is_open;
     using basic_file<Ch>::close;
     basic_file_source( const std::string& path,
                        BOOST_IOS::openmode mode = 
                            BOOST_IOS::in )
-        : basic_file<Ch>(path, mode & ~BOOST_IOS::out, BOOST_IOS::in) 
+        : basic_file<Ch>(path, mode & ~BOOST_IOS::out, BOOST_IOS::in)
         { }
+    void open( const std::string& path,
+               BOOST_IOS::openmode mode = BOOST_IOS::in )
+    {
+        basic_file<Ch>::open(path, mode & ~BOOST_IOS::out, BOOST_IOS::in);
+    }
 };
 
 typedef basic_file_source<char>     file_source;
@@ -102,11 +114,17 @@ struct basic_file_sink : private basic_file<Ch> {
         { };
     using basic_file<Ch>::write;
     using basic_file<Ch>::seek;
+    using basic_file<Ch>::is_open;
     using basic_file<Ch>::close;
     basic_file_sink( const std::string& path,
                      BOOST_IOS::openmode mode = BOOST_IOS::out )
-        : basic_file<Ch>(path, mode & ~BOOST_IOS::in, BOOST_IOS::out) 
+        : basic_file<Ch>(path, mode & ~BOOST_IOS::in, BOOST_IOS::out)
         { }
+    void open( const std::string& path,
+               BOOST_IOS::openmode mode = BOOST_IOS::out )
+    {
+        basic_file<Ch>::open(path, mode & ~BOOST_IOS::in, BOOST_IOS::out);
+    }
 };
 
 typedef basic_file_sink<char>     file_sink;
@@ -118,7 +136,9 @@ template<typename Ch>
 basic_file<Ch>::basic_file
     ( const std::string& path, BOOST_IOS::openmode mode, 
       BOOST_IOS::openmode base_mode )
-    : pimpl_(new impl(path, mode | base_mode)) { }
+{ 
+    open(path, mode, base_mode);
+}
 
 template<typename Ch>
 inline std::streamsize basic_file<Ch>::read
@@ -134,10 +154,21 @@ inline std::streamsize basic_file<Ch>::write
 { return pimpl_->file_.sputn(s, n); }
 
 template<typename Ch>
-stream_offset basic_file<Ch>::seek
+std::streampos basic_file<Ch>::seek
     ( stream_offset off, BOOST_IOS::seekdir way, 
       BOOST_IOS::openmode )
 { return iostreams::seek(pimpl_->file_, off, way); }
+
+template<typename Ch>
+void basic_file<Ch>::open
+    ( const std::string& path, BOOST_IOS::openmode mode, 
+      BOOST_IOS::openmode base_mode )
+{ 
+    pimpl_.reset(new impl(path, mode | base_mode));
+}
+
+template<typename Ch>
+bool basic_file<Ch>::is_open() const { return pimpl_->file_.is_open(); }
 
 template<typename Ch>
 void basic_file<Ch>::close() { pimpl_->file_.close(); }

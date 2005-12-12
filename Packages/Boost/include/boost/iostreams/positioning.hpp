@@ -35,6 +35,7 @@ inline stream_offset position_to_offset(PosType pos)
 
 #if ((defined(_YVALS) && !defined(__IBMCPP__)) || defined(_CPPLIB_VER)) && \
      !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION) \
+     && !defined(__QNX__) \
    /**/
 
         /* Dinkumware */

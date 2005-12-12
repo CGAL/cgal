@@ -193,7 +193,7 @@ private:
         pos_ = string_type::npos;
     }
 
-    enum {
+    enum flag_type {
         f_read   = 1,
         f_write  = f_read << 1
     };

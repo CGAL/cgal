@@ -137,7 +137,7 @@ private:
 
 //------------------Definition of mapped_file---------------------------------//
 
-class mapped_file {
+class BOOST_IOSTREAMS_DECL mapped_file {
 private:
     typedef mapped_file_source delegate_type;
     delegate_type delegate_;
@@ -202,7 +202,7 @@ public:
     static int alignment() { return mapped_file_source::alignment(); }
 };
 
-struct mapped_file_sink : private mapped_file {
+struct BOOST_IOSTREAMS_DECL mapped_file_sink : private mapped_file {
     friend struct operations<mapped_file_sink>;
     typedef char char_type;
     struct category

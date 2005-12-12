@@ -22,29 +22,31 @@
 
 namespace boost
 {
-    
+
 #ifdef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
 
 template< class C >
-inline BOOST_DEDUCED_TYPENAME range_reverse_result_iterator<C>::type 
+inline BOOST_DEDUCED_TYPENAME range_reverse_result_iterator<C>::type
 rend( C& c )
 {
     return BOOST_DEDUCED_TYPENAME range_reverse_result_iterator<C>::type( begin( c ) );
 }
 
 #else
-    
+
 template< class C >
-inline BOOST_DEDUCED_TYPENAME range_reverse_iterator<C>::type 
+inline BOOST_DEDUCED_TYPENAME range_reverse_iterator<
+                                                                typename remove_const<C>::type >::type
 rend( C& c )
 {
-    typedef BOOST_DEDUCED_TYPENAME range_reverse_iterator<C>::type 
+        typedef BOOST_DEDUCED_TYPENAME range_reverse_iterator<
+                                                                typename remove_const<C>::type >::type
                iter_type;
     return iter_type( begin( c ) );
 }
 
 template< class C >
-inline BOOST_DEDUCED_TYPENAME range_const_reverse_iterator<C>::type 
+inline BOOST_DEDUCED_TYPENAME range_const_reverse_iterator<C>::type
 rend( const C& c )
 {
     typedef BOOST_DEDUCED_TYPENAME range_const_reverse_iterator<C>::type

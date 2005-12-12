@@ -80,16 +80,16 @@ public:
     std::streamsize write(const char_type* s, std::streamsize n, Sink* snk)
     { return output_impl::write(t_, snk, s, n); }
 
-    stream_offset seek( stream_offset off, BOOST_IOS::seekdir way,
-                        BOOST_IOS::openmode which )
+    std::streampos seek( stream_offset off, BOOST_IOS::seekdir way,
+                         BOOST_IOS::openmode which )
     { 
         return this->seek( off, way, which, 
                            (basic_null_device<char_type, seekable>*) 0); 
     }
 
     template<typename Device>
-    stream_offset seek( stream_offset off, BOOST_IOS::seekdir way,
-                        BOOST_IOS::openmode which, Device* dev )
+    std::streampos seek( stream_offset off, BOOST_IOS::seekdir way,
+                         BOOST_IOS::openmode which, Device* dev )
     { return any_impl::seek(t_, dev, off, way, which); }
 
     void close(BOOST_IOS::openmode which)
@@ -122,7 +122,7 @@ public:
 template<>
 struct device_wrapper_impl<any_tag> {
     template<typename Device, typename Dummy>
-    static stream_offset 
+    static std::streampos 
     seek( Device& dev, Dummy*, stream_offset off, 
           BOOST_IOS::seekdir way, BOOST_IOS::openmode which )
     { 
@@ -131,7 +131,7 @@ struct device_wrapper_impl<any_tag> {
     }
 
     template<typename Device>
-    static stream_offset 
+    static std::streampos 
     seek( Device&, stream_offset, BOOST_IOS::seekdir, 
           BOOST_IOS::openmode, any_tag )
     { 
@@ -139,7 +139,7 @@ struct device_wrapper_impl<any_tag> {
     }
 
     template<typename Device>
-    static stream_offset 
+    static std::streampos 
     seek( Device& dev, stream_offset off, 
           BOOST_IOS::seekdir way, BOOST_IOS::openmode which, 
           random_access )
@@ -191,7 +191,7 @@ struct device_wrapper_impl<output> {
 template<>
 struct flt_wrapper_impl<any_tag> {
     template<typename Filter, typename Device>
-    static stream_offset
+    static std::streampos
     seek( Filter& f, Device* dev, stream_offset off,
           BOOST_IOS::seekdir way, BOOST_IOS::openmode which )
     {
@@ -200,13 +200,13 @@ struct flt_wrapper_impl<any_tag> {
     }
 
     template<typename Filter, typename Device>
-    static stream_offset
+    static std::streampos
     seek( Filter&, Device*, stream_offset,
           BOOST_IOS::seekdir, BOOST_IOS::openmode, any_tag )
     { throw cant_seek(); }
 
     template<typename Filter, typename Device>
-    static stream_offset
+    static std::streampos
     seek( Filter& f, Device* dev, stream_offset off,
           BOOST_IOS::seekdir way, BOOST_IOS::openmode which,
           random_access tag )
@@ -216,14 +216,14 @@ struct flt_wrapper_impl<any_tag> {
     }
 
     template<typename Filter, typename Device>
-    static stream_offset
+    static std::streampos
     seek( Filter& f, Device* dev, stream_offset off,
           BOOST_IOS::seekdir way, BOOST_IOS::openmode which,
           random_access, any_tag )
     { return f.seek(*dev, off, way); }
 
     template<typename Filter, typename Device>
-    static stream_offset
+    static std::streampos
     seek( Filter& f, Device* dev, stream_offset off,
           BOOST_IOS::seekdir way, BOOST_IOS::openmode which,
           random_access, two_sequence )

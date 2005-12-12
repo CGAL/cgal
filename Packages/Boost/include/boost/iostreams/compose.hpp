@@ -78,9 +78,9 @@ public:
     composite_device(const Filter& flt, param_type dev);
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek( stream_offset off, BOOST_IOS::seekdir way,
-                        BOOST_IOS::openmode which =
-                            BOOST_IOS::in | BOOST_IOS::out );
+    std::streampos seek( stream_offset off, BOOST_IOS::seekdir way,
+                         BOOST_IOS::openmode which =
+                             BOOST_IOS::in | BOOST_IOS::out );
 
     void close();
     void close(BOOST_IOS::openmode which);
@@ -142,9 +142,9 @@ public:
     }
 
     template<typename Device>
-    stream_offset seek( Device& dev, stream_offset off, BOOST_IOS::seekdir way,
-                        BOOST_IOS::openmode which =
-                            BOOST_IOS::in | BOOST_IOS::out )
+    std::streampos seek( Device& dev, stream_offset off, BOOST_IOS::seekdir way,
+                         BOOST_IOS::openmode which =
+                             BOOST_IOS::in | BOOST_IOS::out )
     {
         composite_device<filter_ref, Device> cmp(boost::ref(filter2_), dev);
         return iostreams::seek(filter1_, cmp, off, way, which);
@@ -325,7 +325,7 @@ inline std::streamsize composite_device<Filter, Device, Mode>::write
 { return iostreams::write(filter_, device_, s, n); }
 
 template<typename Filter, typename Device, typename Mode>
-stream_offset composite_device<Filter, Device, Mode>::seek
+std::streampos composite_device<Filter, Device, Mode>::seek
     (stream_offset off, BOOST_IOS::seekdir way, BOOST_IOS::openmode which)
 { return iostreams::seek(filter_, device_, off, way, which); }
 

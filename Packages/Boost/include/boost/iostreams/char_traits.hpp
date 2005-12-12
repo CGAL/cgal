@@ -27,6 +27,13 @@ namespace std { using ::wint_t; }
 
 namespace boost { namespace iostreams {
 
+// Dinkumware that comes with QNX Momentics 6.3.0, 4.0.2, incorrectly defines the
+// EOF and WEOF macros to not std:: qualify the wint_t type.
+// Fix by placing the def in this scope.
+#if defined(__QNX__) && defined(BOOST_DINKUMWARE_STDLIB)
+using ::std::wint_t;
+#endif
+
 const int WOULD_BLOCK = (int) (EOF - 1);
 
 #ifndef BOOST_IOSTREAMS_NO_WIDE_STREAMS

@@ -111,8 +111,8 @@ public:
 
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek( stream_offset, BOOST_IOS::seekdir,
-                        BOOST_IOS::openmode = BOOST_IOS::in | BOOST_IOS::out );
+    std::streampos seek( stream_offset, BOOST_IOS::seekdir,
+                         BOOST_IOS::openmode = BOOST_IOS::in | BOOST_IOS::out );
     void close();
     void close(BOOST_IOS::openmode which);
 #ifndef BOOST_IOSTREAMS_NO_LOCALE
@@ -214,7 +214,7 @@ inline std::streamsize direct_adapter<Direct>::write
 }
 
 template<typename Direct>
-inline stream_offset direct_adapter<Direct>::seek
+inline std::streampos direct_adapter<Direct>::seek
     ( stream_offset off, BOOST_IOS::seekdir way, 
       BOOST_IOS::openmode which )
 {
@@ -248,7 +248,7 @@ inline stream_offset direct_adapter<Direct>::seek
         else
             bad_seek();
     }
-    return static_cast<stream_offset>(next);
+    return offset_to_position(next);
 }
 
 template<typename Direct>

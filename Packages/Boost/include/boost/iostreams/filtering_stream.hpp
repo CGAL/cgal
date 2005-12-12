@@ -83,7 +83,7 @@ private:
 } // End namespace detail.
 
 //
-// Macro: BOOST_IOSTREAMS_DEFINE_FILTER_STERAM(name_, chain_type_, default_char_)
+// Macro: BOOST_IOSTREAMS_DEFINE_FILTER_STREAM(name_, chain_type_, default_char_)
 // Description: Defines a template derived from std::basic_streambuf which uses
 //      a chain to perform i/o. The template has the following parameters:
 //      Mode - the i/o mode.

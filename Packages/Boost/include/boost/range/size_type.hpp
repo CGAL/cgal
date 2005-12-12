@@ -16,6 +16,54 @@
 #endif
 
 #include <boost/range/config.hpp>
+/*
+#include <boost/range/difference_type.hpp>
+
+namespace boost
+{
+        namespace range_detail
+        {
+                template< class T >
+                struct add_unsigned;
+
+                template<>
+                struct add_unsigned<short>
+                {
+                        typedef unsigned short type;
+                };
+
+                template<>
+                struct add_unsigned<int>
+                {
+                        typedef unsigned int type;
+                };
+
+                template<>
+                struct add_unsigned<long>
+                {
+                        typedef unsigned long type;
+                };
+
+#ifdef BOOST_HAS_LONG_LONG
+
+                template<>
+                struct add_unsigned<long long>
+                {
+                        typedef unsigned long long type;
+                };
+#endif
+
+        }
+
+        template< class T >
+        struct range_size
+        {
+                typedef BOOST_DEDUCED_TYPENAME range_detail::add_unsigned<
+                                        BOOST_DEDUCED_TYPENAME range_difference<T>::type >::type
+                        type;
+        };
+}
+*/
 
 #ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 #include <boost/range/detail/size_type.hpp>
@@ -29,13 +77,13 @@ namespace boost
     //////////////////////////////////////////////////////////////////////////
     // default
     //////////////////////////////////////////////////////////////////////////
-    
+
     template< typename C >
     struct range_size
     {
         typedef BOOST_DEDUCED_TYPENAME C::size_type type;
     };
-    
+
     //////////////////////////////////////////////////////////////////////////
     // pair
     //////////////////////////////////////////////////////////////////////////
@@ -45,7 +93,7 @@ namespace boost
     {
         typedef std::size_t type;
     };
-    
+
     template< typename Iterator >
     struct range_size< const std::pair<Iterator,Iterator> >
     {
@@ -123,5 +171,6 @@ namespace boost
 } // namespace boost
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
 
 #endif

@@ -60,9 +60,10 @@ public:
                    BOOST_IOS::in | BOOST_IOS::out,
                BOOST_IOS::openmode base_mode =
                    BOOST_IOS::in | BOOST_IOS::out );
+    bool is_open() const { return pimpl_->flags_ != 0; }
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek(stream_offset off, BOOST_IOS::seekdir way);
+    std::streampos seek(stream_offset off, BOOST_IOS::seekdir way);
     void close();
 private:
     struct impl {
@@ -104,6 +105,7 @@ struct file_descriptor_source : private file_descriptor {
     struct category : public source_tag, closable_tag { };
     using file_descriptor::read;
     using file_descriptor::open;
+    using file_descriptor::is_open;
     using file_descriptor::close;
     file_descriptor_source() { }
     explicit file_descriptor_source(int fd, bool close_on_exit = false)
@@ -129,6 +131,7 @@ struct file_descriptor_sink : private file_descriptor {
     struct category : public sink_tag, closable_tag { };
     using file_descriptor::write;
     using file_descriptor::open;
+    using file_descriptor::is_open;
     using file_descriptor::close;
     file_descriptor_sink() { }
     explicit file_descriptor_sink(int fd, bool close_on_exit = false)

@@ -62,7 +62,7 @@ public:
     range_adapter(iterator first, iterator last);
     std::streamsize read(char_type* s, std::streamsize n);
     std::streamsize write(const char_type* s, std::streamsize n);
-    stream_offset seek(stream_offset off, BOOST_IOS::seekdir way);
+    std::streampos seek(stream_offset off, BOOST_IOS::seekdir way);
 private:
     iterator first_, cur_, last_;
 };
@@ -89,11 +89,11 @@ inline std::streamsize range_adapter<Mode, Range>::write
 
 
 template<typename Mode, typename Range>
-stream_offset range_adapter<Mode, Range>::seek
+std::streampos range_adapter<Mode, Range>::seek
     (stream_offset off, BOOST_IOS::seekdir way)
 { 
     impl::seek(first_, cur_, last_, off, way); 
-    return static_cast<stream_offset>(cur_ - first_);
+    return offset_to_position(cur_ - first_);
 }
 
 //------------------Implementation of range_adapter_impl----------------------//

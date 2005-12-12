@@ -15,6 +15,7 @@
 # pragma once
 #endif
 
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/range/config.hpp>
 
 #ifdef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
@@ -46,7 +47,8 @@ namespace range_detail
     }
 
     template< typename C >
-    inline BOOST_DEDUCED_TYPENAME range_iterator<C>::type
+    inline BOOST_DEDUCED_TYPENAME range_iterator<
+                                                                        typename remove_const<C>::type >::type
     boost_range_begin( C& c )
     {
         return c.begin();
@@ -140,7 +142,8 @@ namespace range_detail
 
 
 template< class T >
-inline BOOST_DEDUCED_TYPENAME range_iterator<T>::type begin( T& r )
+inline BOOST_DEDUCED_TYPENAME range_iterator<
+                        typename remove_const<T>::type >::type begin( T& r )
 {
 #if !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) && \
     !BOOST_WORKAROUND(__GNUC__, < 3) \

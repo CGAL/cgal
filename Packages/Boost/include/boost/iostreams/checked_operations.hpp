@@ -127,7 +127,7 @@ struct read_write_if_impl<output> {
 template<>
 struct seek_if_impl<random_access> {
     template<typename T>
-    static stream_offset 
+    static std::streampos 
     seek( T& t, stream_offset off, BOOST_IOS::seekdir way, 
           BOOST_IOS::openmode which )
     { return iostreams::seek(t, off, way, which); }
@@ -136,7 +136,7 @@ struct seek_if_impl<random_access> {
 template<>
 struct seek_if_impl<any_tag> {
     template<typename T>
-    static stream_offset 
+    static std::streampos 
     seek(T&, stream_offset, BOOST_IOS::seekdir, BOOST_IOS::openmode)
     { throw cant_seek(); }
 };

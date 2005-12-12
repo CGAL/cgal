@@ -20,6 +20,11 @@
 // Description: Used to generate the traits classes is_istream, is_ostream,
 //      etc.
 //
+#if BOOST_WORKAROUND(__BORLANDC__, <= 0x564)
+# define BOOST_IOSTREAMS_TRAIT_NAMESPACE(trait)
+#else
+# define BOOST_IOSTREAMS_TRAIT_NAMESPACE(trait) BOOST_PP_CAT(trait, _impl_):: 
+#endif
 #define BOOST_IOSTREAMS_BOOL_TRAIT_DEF(trait, type, arity) \
     namespace BOOST_PP_CAT(trait, _impl_) { \
       BOOST_IOSTREAMS_TEMPLATE_PARAMS(arity, T) \
@@ -29,7 +34,8 @@
       template<typename T> \
       struct impl { \
            BOOST_STATIC_CONSTANT(bool, value = \
-               (sizeof(helper(static_cast<T*>(0))) == \
+           (sizeof(BOOST_IOSTREAMS_TRAIT_NAMESPACE(trait) \
+              helper(static_cast<T*>(0))) == \
                 sizeof(type_traits::yes_type))); \
       }; \
     } \
