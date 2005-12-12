@@ -57,7 +57,10 @@ class Simple_interval_root
     typedef typename Traits::Isolating_interval Interval;
 //typedef internal::Isolating_interval_tools<Polynomial, NT, Interval> IIT;
     public:
-        Simple_interval_root(){set_type(INF|EVEN); assert(is_null());}
+        Simple_interval_root(){
+	  set_type(INF|EVEN); 
+	  CGAL_Polynomial_assertion(is_null());
+	}
 /*template <class RNT>
 Simple_interval_root(const RNT &nt): ii_(nt){
   bool is_this_used;
