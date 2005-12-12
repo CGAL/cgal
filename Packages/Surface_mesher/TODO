@@ -5,10 +5,7 @@ Laurent Rineau, 2005/10/02:
 
 Complex_2_in_triangulation_3
 
--Manque la banniere CGAL
-
 -Manque les include  poir list, set, map etc
--Manque les std:: devant list, set, map, make_pair  ...
 
 
 Facets_iterator n'est par conforme aux specifications.
@@ -129,19 +126,6 @@ a quoi sert cette function ?????
 
 Surface_mesher.h
 
- void scan_triangulation_impl()
-
-il y aurait pas une erreur la  ? 
-for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit != 
-	     tr.finite_facets_end(); ++fit) {
-	if (tr.dimension() == 3) {
-	  Cell_handle c=(*fit).first->neighbor((*fit).second);
-	  Facet other_side (c, c->index((*fit).first)); 
-// il me semble que ohther_side == *fit
-// ce qui n'est visiblement pas le but
-ok ca marche, other_side ici est une variable 
-et pas l'appel a la fonction other_side(Facet ) qui traine
-dans Complex_2_in_triangulation_3_surface_mesh  BEURK
 
 
 - en cas d'encroachement d'une facette du Delaunay restreint pau un centre de tet, n'importe qu'elle facette de Delaunay restreint encrochee est raffinee
