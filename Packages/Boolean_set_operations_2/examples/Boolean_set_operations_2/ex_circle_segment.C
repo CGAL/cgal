@@ -59,10 +59,10 @@ int main(int argc, char * argv[])
   points_2_polygon(Point(1,4), Point(5,4), Point(5,6), Point(1,6), pr2);
   ps.join(pr2);
 
-  points_2_polygon(Point(0,1), Point(0,5), Point(2,5), Point(2,1), pr2);
+  points_2_polygon(Point(0,1), Point(0,5), Point(2,5), Point(2,1), pr3);
   ps.join(pr3);
 
-  points_2_polygon(Point(4,1), Point(4,5), Point(6,5), Point(6,1), pr2);
+  points_2_polygon(Point(4,1), Point(4,5), Point(6,5), Point(6,1), pr4);
   ps.join(pr4);
 
   // Output:
