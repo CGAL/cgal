@@ -50,27 +50,22 @@ namespace CGAL {
     // Champs ajoutes a la classe
     
     // Facets
-    bool tab_surface_facets [4];    
+    char c_surface_facets;
     
   public:
     
     // Constructors
 
-    Complex_2_in_triangulation_cell_base_3() : Cb() {
-      
-      tab_surface_facets[0] = tab_surface_facets[1] = 
-	tab_surface_facets[2] = tab_surface_facets[3] = false;
-    }
+    Complex_2_in_triangulation_cell_base_3() 
+      : Cb(), c_surface_facets(0) 
+    {}
     
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
-					    Vertex_handle v3) : 
-      Cb (v0, v1, v2, v3) {
-      
-      tab_surface_facets[0] = tab_surface_facets[1] = 
-	tab_surface_facets[2] = tab_surface_facets[3] = false;
-    }
+					    Vertex_handle v3) 
+      : Cb (v0, v1, v2, v3), c_surface_facets(0) 
+    {}
     
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
@@ -79,12 +74,9 @@ namespace CGAL {
 					    Cell_handle n0,
 					    Cell_handle n1,
 					    Cell_handle n2,
-					    Cell_handle n3) : 
-      Cb (v0, v1, v2, v3, n0, n1, n2, n3) {
-      
-      tab_surface_facets[0] = tab_surface_facets[1] = 
-	tab_surface_facets[2] = tab_surface_facets[3] = false;
-    }
+					    Cell_handle n3) 
+      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), c_surface_facets(0) 
+    {}
     
     
     
@@ -93,7 +85,7 @@ namespace CGAL {
     // Facets
   bool is_facet_on_surface(const int facet) const {
     CGAL_assertion (facet>=0 && facet <4);
-    return(tab_surface_facets[facet]);
+    return c_surface_facets & (1 << facet);
   }
   
   // Setting functions
@@ -101,7 +93,11 @@ namespace CGAL {
   // Facets
   void set_facet_on_surface(const int facet, const bool f) {
     CGAL_assertion (facet>=0 && facet <4);
-    tab_surface_facets[facet]=f;
+    if(f){
+      c_surface_facets |= (1 << facet);
+    }else {
+      c_surface_facets &= (15  & ~(1 << facet));
+    }
   }
   };  // end Complex_2_in_triangulation_cell_base_3
 
