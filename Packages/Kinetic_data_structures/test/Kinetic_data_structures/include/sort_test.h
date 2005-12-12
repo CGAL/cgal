@@ -3,46 +3,47 @@
 #include <CGAL/KDS/Sort.h>
 
 template <class Traits>
-bool sort_test(Traits &tr){
-  typedef CGAL::KDS::Sort<Traits> Sort;
-  Sort sort(tr);
-  
-  while (tr.simulator_pointer()->next_event_time() != tr.simulator_pointer()->end_time()){
-    //std::cout << *tr.simulator_pointer() << std::endl;
-    tr.simulator_pointer()->set_current_event_number(tr.simulator_pointer()->current_event_number()+1);
-  }
+bool sort_test(Traits &tr)
+{
+    typedef CGAL::KDS::Sort<Traits> Sort;
+    Sort sort(tr);
 
-  std::cout << tr.simulator_pointer()->current_event_number() << " events processed.\n";
-
-  typedef typename Sort::Key_iterator Kit;
-  Kit c= sort.begin();
-  Kit b=c;
-  ++c;
-  bool error =false;
-
-  typename Traits::NT ratt;
-  if (tr.simulator_pointer()->has_rational_current_time()){
-    ratt=tr.simulator_pointer()->rational_current_time();
-  } else {
-    std::cerr << "ERROR Out of events, but the time is not rational." << std::endl;
-    std::cerr << "Current time is " << tr.simulator_pointer()->current_time() 
-	      << " the end time is " << tr.simulator_pointer()->end_time() << std::endl;
-    ratt= CGAL::to_interval(tr.simulator_pointer()->end_time()).second;
-  }
-
-  while (c != sort.end()){
-    if (tr.active_objects_table_pointer()->at(*c).x()(ratt) 
-	< tr.active_objects_table_pointer()->at(*b).x()(ratt)){
-      std::cerr << "ERROR Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and " 
-		<< *b << " = " << tr.active_objects_table_pointer()->at(*b).x() << " out of order at end of time " 
-		<<ratt << std::endl;
-      error=true;
+    while (tr.simulator_pointer()->next_event_time() != tr.simulator_pointer()->end_time()) {
+//std::cout << *tr.simulator_pointer() << std::endl;
+        tr.simulator_pointer()->set_current_event_number(tr.simulator_pointer()->current_event_number()+1);
     }
-    
-    ++b;
-    ++c;
-  }
-  return error;
-}
 
+    std::cout << tr.simulator_pointer()->current_event_number() << " events processed.\n";
+
+    typedef typename Sort::Key_iterator Kit;
+    Kit c= sort.begin();
+    Kit b=c;
+    ++c;
+    bool error =false;
+
+    typename Traits::NT ratt;
+    if (tr.simulator_pointer()->has_rational_current_time()) {
+        ratt=tr.simulator_pointer()->rational_current_time();
+    }
+    else {
+        std::cerr << "ERROR Out of events, but the time is not rational." << std::endl;
+        std::cerr << "Current time is " << tr.simulator_pointer()->current_time()
+            << " the end time is " << tr.simulator_pointer()->end_time() << std::endl;
+        ratt= CGAL::to_interval(tr.simulator_pointer()->end_time()).second;
+    }
+
+    while (c != sort.end()) {
+        if (tr.active_objects_table_pointer()->at(*c).x()(ratt)
+        < tr.active_objects_table_pointer()->at(*b).x()(ratt)) {
+            std::cerr << "ERROR Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and "
+                << *b << " = " << tr.active_objects_table_pointer()->at(*b).x() << " out of order at end of time "
+                <<ratt << std::endl;
+            error=true;
+        }
+
+        ++b;
+        ++c;
+    }
+    return error;
+}
 #endif

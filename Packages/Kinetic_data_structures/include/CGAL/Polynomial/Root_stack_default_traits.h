@@ -26,13 +26,13 @@
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
 template <class Polynomial>
-class Root_stack_default_traits: public internal::Root_stack_traits_base<Polynomial>{
-private:
-  typedef internal::Root_stack_traits_base<Polynomial> Base;
+class Root_stack_default_traits: public internal::Root_stack_traits_base<Polynomial>
+{
+    private:
+        typedef internal::Root_stack_traits_base<Polynomial> Base;
 
-public:
+    public:
 };
 
 CGAL_POLYNOMIAL_END_NAMESPACE
-
 #endif

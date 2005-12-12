@@ -28,7 +28,6 @@
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-
 //! A basic polynomial class
 /*!  The implementation is proved by internal::Polynomial_impl. This
   strips leading 0s. When debugging is on, a string representation of
@@ -36,101 +35,101 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
   rather slow.
 */
 template <class NTT>
-class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT> {
-  typedef Polynomial<NTT> This;
-  typedef internal::Polynomial_impl<This, NTT>  Parent;
+class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
+{
+    typedef Polynomial<NTT> This;
+    typedef internal::Polynomial_impl<This, NTT>  Parent;
 
-  // friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
+// friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
 
 #ifndef NDEBUG
-  typedef std::string Approximation;
-  void generate_approximation() const  {
-    std::ostringstream s;
-    this->write(s);
-    approximation_= s.str();
-    //return s.str();
-  }
-
+    typedef std::string Approximation;
+    void generate_approximation() const
+    {
+        std::ostringstream s;
+        this->write(s);
+        approximation_= s.str();
+//return s.str();
+    }
 #endif
 
-  void approximate() const {
+    void approximate() const
+    {
 #ifndef NDEBUG
-    generate_approximation();
+        generate_approximation();
 #endif
-  }
-public:
+    }
+    public:
 
-  // hack to try to fix pgCC
-  //using typename Parent::iterator;
-  typedef typename Parent::iterator iterator;
+// hack to try to fix pgCC
+//using typename Parent::iterator;
+        typedef typename Parent::iterator iterator;
 
-  //================
-  // CONSTRUCTORS
-  //================
+//================
+// CONSTRUCTORS
+//================
 
-  //! Default
-  Polynomial(){
+//! Default
+        Polynomial() {
 #ifndef NDEBUG
-    approximation_="Not initialized.";
+            approximation_="Not initialized.";
 #endif
-  }
+        }
 
-  //! Make a constant polynomial
-  Polynomial(const NTT& c): Parent(c){
+//! Make a constant polynomial
+        Polynomial(const NTT& c): Parent(c) {
 #ifndef NDEBUG
-    approximate();
+            approximate();
 #endif
-    strip_leading_zeros();
-  }
+            strip_leading_zeros();
+        }
 
-  //! Make a polynomial from an iterator range
-  template<typename Iterator>
-  Polynomial(Iterator first, Iterator beyond)
-    : Parent(first,beyond) {
+//! Make a polynomial from an iterator range
+        template<typename Iterator>
+            Polynomial(Iterator first, Iterator beyond)
+        : Parent(first,beyond) {
 #ifndef NDEBUG
-    approximate();
+            approximate();
 #endif
-    strip_leading_zeros();
-  }
+            strip_leading_zeros();
+        }
 
-
-  Polynomial(const Parent &p): Parent(p){
+        Polynomial(const Parent &p): Parent(p) {
 #ifndef NDEBUG
-    approximate();
+            approximate();
 #endif
-    strip_leading_zeros();
-  }
+            strip_leading_zeros();
+        }
 
-protected:
+    protected:
 
-  void strip_leading_zeros() {
-    if ( this->is_zero() ) { return; }
+        void strip_leading_zeros() {
+            if ( this->is_zero() ) { return; }
 
-    do {
-      Sign s = CGAL::sign( this->coefs_[this->degree()] );
-      if ( s == ZERO ) {
-	CGAL_Polynomial_assertion( this->coefs_.size() > 0 );
-	this->coefs_.resize(this->coefs_.size() - 1);
-      } else {
-	break;
-      }
-    } while ( !this->is_zero() );
-  }
+            do {
+                Sign s = CGAL::sign( this->coefs_[this->degree()] );
+                if ( s == ZERO ) {
+                    CGAL_Polynomial_assertion( this->coefs_.size() > 0 );
+                    this->coefs_.resize(this->coefs_.size() - 1);
+                }
+                else {
+                    break;
+                }
+            } while ( !this->is_zero() );
+        }
 
-public:
-  void finalize() {
-    strip_leading_zeros();
-  }
+    public:
+        void finalize() {
+            strip_leading_zeros();
+        }
 
-private:
+    private:
 #ifndef NDEBUG
-  /*! A string represneting the approximation of the polynomial. For
-    inspection in the debugger.*/
-  mutable Approximation approximation_;
+/*! A string represneting the approximation of the polynomial. For
+  inspection in the debugger.*/
+        mutable Approximation approximation_;
 #endif
 };
 
-
 CGAL_POLYNOMIAL_END_NAMESPACE
-
 #endif

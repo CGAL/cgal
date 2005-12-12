@@ -1,26 +1,24 @@
 /*
-*
-* Template Numerical Toolkit (TNT)
-*
-* Mathematical and Computational Sciences Division
-* National Institute of Technology,
-* Gaithersburg, MD USA
-*
-*
-* This software was developed at the National Institute of Standards and
-* Technology (NIST) by employees of the Federal Government in the course
-* of their official duties. Pursuant to title 17 Section 105 of the
-* United States Code, this software is not subject to copyright protection
-* and is in the public domain. NIST assumes no responsibility whatsoever for
-* its use by other parties, and makes no guarantees, expressed or implied,
-* about its quality, reliability, or any other characteristic.
-*
-*/
-
+ *
+ * Template Numerical Toolkit (TNT)
+ *
+ * Mathematical and Computational Sciences Division
+ * National Institute of Technology,
+ * Gaithersburg, MD USA
+ *
+ *
+ * This software was developed at the National Institute of Standards and
+ * Technology (NIST) by employees of the Federal Government in the course
+ * of their official duties. Pursuant to title 17 Section 105 of the
+ * United States Code, this software is not subject to copyright protection
+ * and is in the public domain. NIST assumes no responsibility whatsoever for
+ * its use by other parties, and makes no guarantees, expressed or implied,
+ * about its quality, reliability, or any other characteristic.
+ *
+ */
 
 #ifndef TNT_SUBSCRPT_H
 #define TNT_SUBSCRPT_H
-
 
 //---------------------------------------------------------------------
 // This definition describes the default TNT data type used for
@@ -28,7 +26,7 @@
 // be wide enough to index into large arrays.  It defaults to an
 // "int", but can be overriden at compile time redefining TNT_SUBSCRIPT_TYPE,
 // e.g.
-// 
+//
 //      c++ -DTNT_SUBSCRIPT_TYPE='unsigned int'  ...
 //
 //---------------------------------------------------------------------
@@ -41,7 +39,7 @@
 namespace TNT
 {
     typedef TNT_SUBSCRIPT_TYPE Subscript;
-} /* namespace TNT */
+}                                                 /* namespace TNT */
 
 
 // () indexing in TNT means 1-offset, i.e. x(1) and A(1,1) are the
@@ -50,5 +48,4 @@ namespace TNT
 //
 //
 #define TNT_BASE_OFFSET (1)
-
 #endif

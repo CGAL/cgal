@@ -22,17 +22,14 @@
 
 #include <CGAL/KDS/Simulation_traits.h>
 
-
-
-
 CGAL_KDS_BEGIN_NAMESPACE
 
-struct Inexact_simulation_traits_2: 
-  public internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_2> {
-  typedef internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_2> P;
-  Inexact_simulation_traits_2(P::Time st=0, P::Time et=1000.0): P(st, et){}
+struct Inexact_simulation_traits_2:
+public internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_2>
+{
+    typedef internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_2> P;
+    Inexact_simulation_traits_2(P::Time st=0, P::Time et=1000.0): P(st, et){}
 };
 
 CGAL_KDS_END_NAMESPACE
-
 #endif

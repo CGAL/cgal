@@ -25,20 +25,18 @@
 #include <CGAL/Polynomial/internal/Isolating_interval.h>
 #include <CGAL/Polynomial/internal/Rational/Rational_traits_base.h>
 
-
-
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 template <class Poly>
-class Root_stack_traits_base: public Rational_traits_base<Poly> {
-private:
-  typedef Root_stack_traits_base<Poly> This;
-  typedef Rational_traits_base<Poly> P;
+class Root_stack_traits_base: public Rational_traits_base<Poly>
+{
+    private:
+        typedef Root_stack_traits_base<Poly> This;
+        typedef Rational_traits_base<Poly> P;
 
-public:
-  typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
+    public:
+        typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
-
 #endif

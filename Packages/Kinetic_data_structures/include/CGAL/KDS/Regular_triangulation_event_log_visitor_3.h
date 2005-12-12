@@ -24,78 +24,76 @@
 
 CGAL_KDS_BEGIN_NAMESPACE
 
-struct Regular_triangulation_event_log_visitor_3: 
-  public Delaunay_triangulation_event_log_visitor_3  {
-  typedef Delaunay_triangulation_event_log_visitor_3 P;
-  Regular_triangulation_event_log_visitor_3(){}
+struct Regular_triangulation_event_log_visitor_3:
+public Delaunay_triangulation_event_log_visitor_3
+{
+    typedef Delaunay_triangulation_event_log_visitor_3 P;
+    Regular_triangulation_event_log_visitor_3(){}
 
-  
-  template <class Key, class Cell>
-  void pre_move(Key k, Cell c){
-    std::ostringstream out;
-    out << "Moving " << k << " from ";
-    write_cell(c, out);
-    log_.push_back(out.str());
-    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-  }
-
-  template <class Key, class Cell>
-  void post_move(Key k, Cell c){
-    std::ostringstream out;
-    out << "Moved " << k << " from ";
-    write_cell(c, out);
-    log_.push_back(out.str());
-    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-  }
-  
-  template <class Key, class Cell>
-  void pre_push(Key k, Cell c){
-    std::ostringstream out;
-    out << "Pushing " << k << " into ";
-    write_cell(c, out);
-    log_.push_back(out.str());
-    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-  }
-
-  template <class Vertex_handle>
-  void post_push(Vertex_handle vh){
-    std::ostringstream out;
-    out << "Pushed " << vh->point();
-    log_.push_back(out.str());
-    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-  }
-
-  template <class Vertex_handle>
-  void pre_pop(Vertex_handle vh){
-    std::ostringstream out;
-    out << "Popping " << vh->point();
-    log_.push_back(out.str());
-    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-  }
-
-  template <class Key, class Cell>
-  void post_pop(Key k, Cell c){
-    std::ostringstream out;
-    out << "Popped " << k << " from ";
-    write_cell(c, out);
-    log_.push_back(out.str());
-    CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-  }
-
-
-  template <class Cell>
-  void write_cell(Cell c, std::ostream &out){
-    out << "{";
-    for (unsigned int i=0; i< 4; ++i){
-      out << c->vertex(i)->point();
-      if (i != 3){
-	out << " ";
-      }
+    template <class Cell, class Str>
+    void log_cell(Cell c, Str &out) const {
+        typedef typename Cell::value_type::Vertex_handle::value_type::Point Point;
+        Point pts[4];
+        for (unsigned int i=0; i< 4; ++i){
+            pts[i]= c->vertex(i)->point();
+        }
+        std::sort(&pts[0], &pts[0]+4);
+        out << "{" << pts[0] << ", " << pts[1] << ", " 
+	    << pts[2] << ", " << pts[3] << "}";
     }
-    out << "}";
-  }
+
+    template <class Key, class Cell>
+    void pre_move(Key k, Cell c) {
+        std::ostringstream out;
+        out << "Moving " << k << " from ";
+        log_cell(c, out);
+        log_.push_back(out.str());
+        CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    }
+
+    template <class Key, class Cell>
+    void post_move(Key k, Cell c) {
+        std::ostringstream out;
+        out << "Moved " << k << " from ";
+        log_cell(c, out);
+        log_.push_back(out.str());
+        CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    }
+
+    template <class Key, class Cell>
+    void pre_push(Key k, Cell c) {
+        std::ostringstream out;
+        out << "Pushing " << k << " into ";
+        log_cell(c, out);
+        log_.push_back(out.str());
+        CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    }
+
+    template <class Vertex_handle>
+    void post_push(Vertex_handle vh) {
+        std::ostringstream out;
+        out << "Pushed " << vh->point();
+        log_.push_back(out.str());
+        CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    }
+
+    template <class Vertex_handle>
+    void pre_pop(Vertex_handle vh) {
+        std::ostringstream out;
+        out << "Popping " << vh->point();
+        log_.push_back(out.str());
+        CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    }
+
+    template <class Key, class Cell>
+    void post_pop(Key k, Cell c) {
+        std::ostringstream out;
+        out << "Popped " << k << " from ";
+        log_cell(c, out);
+        log_.push_back(out.str());
+        CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    }
 };
 
 CGAL_KDS_END_NAMESPACE
-
 #endif

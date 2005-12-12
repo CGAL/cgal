@@ -31,67 +31,64 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 template<class Kernel_t>
 class Sturm_sequence
-  : public Sturm_sequence_base<Kernel_t>
+: public Sturm_sequence_base<Kernel_t>
 {
-protected:
-  typedef Sturm_sequence_base<Kernel_t>    Base;
+    protected:
+        typedef Sturm_sequence_base<Kernel_t>    Base;
 
- public:
-  typedef typename Base::Kernel            Kernel;
+    public:
+        typedef typename Base::Kernel            Kernel;
 
-  typedef typename Base::Polynomial        Polynomial;
-  typedef typename Base::NT                NT;
+        typedef typename Base::Polynomial        Polynomial;
+        typedef typename Base::NT                NT;
 
- protected:
-  void compute_sequence(const Polynomial& p, const Polynomial& q)
-  {
-    // I HAVE TO FIX THE BUG THAT EXISTS HERE; THE FOLLOWING CODE MAY
-    // NOT WORK CORRECTLY IF p IS THE ZERO POLYNOMIAL AND q IS NOT
-    // IN GENERAL I HAVE TO CONSIDER ALL THE LIMITING CASES
-    if ( p.degree() >= 0 ) {
-      add( p );
-      this->size_++;
-    }
+    protected:
+        void compute_sequence(const Polynomial& p, const Polynomial& q) {
+// I HAVE TO FIX THE BUG THAT EXISTS HERE; THE FOLLOWING CODE MAY
+// NOT WORK CORRECTLY IF p IS THE ZERO POLYNOMIAL AND q IS NOT
+// IN GENERAL I HAVE TO CONSIDER ALL THE LIMITING CASES
+            if ( p.degree() >= 0 ) {
+                add( p );
+                this->size_++;
+            }
 
-    if ( q.degree() == -1 ) { return; }
+            if ( q.degree() == -1 ) { return; }
 
-    this->add( q );
-    this->size_++;
+            this->add( q );
+            this->size_++;
 
-    if ( p.degree() < q.degree() ) {
-      Polynomial r = -p;
-      this->add( r );
-      this->size_++;
-    }
+            if ( p.degree() < q.degree() ) {
+                Polynomial r = -p;
+                this->add( r );
+                this->size_++;
+            }
 
-    Polynomial r;
+            Polynomial r;
 
-    while ( true ) {
-      r = -this->k_.remainder_object()(this->seq_[this->size_ - 2],
-				       this->seq_[this->size_ - 1]);
-      if ( r.is_zero() ) { break; }
+            while ( true ) {
+                r = -this->k_.remainder_object()(this->seq_[this->size_ - 2],
+                    this->seq_[this->size_ - 1]);
+                if ( r.is_zero() ) { break; }
 
-      // THE FOLLOWING HACK HAS BEEN DONE SO THAT MP_Float HOPEFULLY
-      // DOES NOT RUN OUT OF EXPONENT BITS WHEN THE STURM SEQUENCE IS
-      // COMPUTED
-      this->normalize(r, NT());
+// THE FOLLOWING HACK HAS BEEN DONE SO THAT MP_Float HOPEFULLY
+// DOES NOT RUN OUT OF EXPONENT BITS WHEN THE STURM SEQUENCE IS
+// COMPUTED
+                this->normalize(r, NT());
 
-      this->add( r );
-      this->size_++;
-    }
+                this->add( r );
+                this->size_++;
+            }
 
-  }
+        }
 
-public:
-  Sturm_sequence() : Base() {}
+    public:
+        Sturm_sequence() : Base() {}
 
-  Sturm_sequence(const Polynomial& p, const Polynomial& q, const Kernel &k)
-    : Base(p, q, k)
-  {
-    compute_sequence(p, q);
-  }
+        Sturm_sequence(const Polynomial& p, const Polynomial& q, const Kernel &k)
+        : Base(p, q, k) {
+            compute_sequence(p, q);
+        }
 };
 
-
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
-#endif // CGAL_POLYNOMIAL_INTERNAL_STURM_SEQUENCE_H
+#endif                                            // CGAL_POLYNOMIAL_INTERNAL_STURM_SEQUENCE_H

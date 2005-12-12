@@ -25,102 +25,114 @@
 
 CGAL_KDS_BEGIN_INTERNAL_NAMESPACE;
 
-
 template <class Coordinate_t>
-class Cartesian_moving_weighted_point_3 {
-protected:
-  typedef Cartesian_moving_weighted_point_3<Coordinate_t> This;
-  typedef Cartesian_moving_point_3<Coordinate_t> Point;
-public:
-  typedef Point Bare_point;
-  typedef typename Point::Coordinate Coordinate;
-  //! initialize it from polys
-  Cartesian_moving_weighted_point_3(const Point &pt, 
-				    const Coordinate &w): point_(pt), weight_(w){
-  }
+class Cartesian_moving_weighted_point_3
+{
+    protected:
+        typedef Cartesian_moving_weighted_point_3<Coordinate_t> This;
+        typedef Cartesian_moving_point_3<Coordinate_t> Point;
+    public:
+        typedef Point Bare_point;
+        typedef typename Point::Coordinate Coordinate;
+//! initialize it from polys
+        Cartesian_moving_weighted_point_3(const Point &pt,
+        const Coordinate &w): point_(pt), weight_(w) {
+        }
 
-  //! initialize it from a still point
-  template <class Static_point>
-  Cartesian_moving_weighted_point_3(const Static_point &pt): point_(pt.point()), 
-							     weight_(pt.weight()){
-  }
-   
-  //! null
-  Cartesian_moving_weighted_point_3(){}
+//! initialize it from a still point
+        template <class Static_point>
+            Cartesian_moving_weighted_point_3(const Static_point &pt): point_(pt.point()),
+        weight_(pt.weight()) {
+        }
 
-  const Coordinate &weight() const {
-    return weight_;
-  }
+//! null
+        Cartesian_moving_weighted_point_3(){}
 
-  const Point &point() const {
-    return point_;
-  }
- 
-  bool is_constant() const {
-    if (weight_.degree() >0) return false;
-    return point_.is_constant();
-  }
+        const Coordinate &weight() const
+        {
+            return weight_;
+        }
 
-  //! Reverse the motion
-  template <class NV>
-  This transformed_coordinates(const NV &nv) const {
-    This ret(point_.transformed_coordinates(nv), nv(weight_));
-    return ret;
-  }
+        const Point &point() const
+        {
+            return point_;
+        }
 
-  template <class SK>
-  struct Static_traits {
-    typedef typename SK::Weighted_point Static_type;
-    static Static_type to_static(const This &o, const typename Coordinate_t::NT &t, const SK&) {
-      //typedef Bare_point::Static_traits<SK> BPST;
-      return Static_type(typename SK::Bare_point(o.point().x()(t), 
-						 o.point().y()(t),
-						 o.point().z()(t)),
-			 o.weight()(t));
-    }
-  };
+        bool is_constant() const
+        {
+            if (weight_.degree() >0) return false;
+            return point_.is_constant();
+        }
 
-  template <class Converter>
-  struct Coordinate_converter {
-    Coordinate_converter(const Converter &c): c_(c), pc_(c){}
-    typedef Cartesian_moving_weighted_point_3<typename Converter::argument_type> argument_type;
-    typedef Cartesian_moving_weighted_point_3<typename Converter::result_type> result_type;
-    
-    result_type operator()(const argument_type &i) const {
-      return result_type(pc_(i.point()), c_(i.weight()));
-    }
+//! Reverse the motion
+        template <class NV>
+            This transformed_coordinates(const NV &nv) const
+        {
+            This ret(point_.transformed_coordinates(nv), nv(weight_));
+            return ret;
+        }
 
-    Converter c_;
-    typename Bare_point::template Coordinate_converter<Converter> pc_;
-  };
+        template <class SK>
+            struct Static_traits
+        {
+            typedef typename SK::Weighted_point Static_type;
+            static Static_type to_static(const This &o, const typename Coordinate_t::NT &t, const SK&) {
+//typedef Bare_point::Static_traits<SK> BPST;
+                return Static_type(typename SK::Bare_point(o.point().x()(t),
+                    o.point().y()(t),
+                    o.point().z()(t)),
+                    o.weight()(t));
+            }
+        };
 
-protected:
-  Point point_;
-  Coordinate weight_;
+        template <class Converter>
+            struct Coordinate_converter
+        {
+            Coordinate_converter(const Converter &c): c_(c), pc_(c){}
+            typedef Cartesian_moving_weighted_point_3<typename Converter::argument_type> argument_type;
+            typedef Cartesian_moving_weighted_point_3<typename Converter::result_type> result_type;
+
+            result_type operator()(const argument_type &i) const
+            {
+                return result_type(pc_(i.point()), c_(i.weight()));
+            }
+
+            Converter c_;
+            typename Bare_point::template Coordinate_converter<Converter> pc_;
+        };
+
+    protected:
+        Point point_;
+        Coordinate weight_;
 };
 
 template <class Coordinate>
-std::ostream &operator<<(std::ostream &out, const Cartesian_moving_weighted_point_3<Coordinate> &point){
-  out << point.point() << ":" << point.weight();
-  return out;
+std::ostream &operator<<(std::ostream &out, const Cartesian_moving_weighted_point_3<Coordinate> &point)
+{
+    out << point.point() << ":" << point.weight();
+    return out;
 }
+
 
 template <class Coordinate>
 std::istream &operator>>(std::istream &in,
-			 Cartesian_moving_weighted_point_3<Coordinate> &point){
-  Coordinate w;
-  typename Cartesian_moving_weighted_point_3<Coordinate>::Bare_point p;
-  in >> p;
-  char c;
-  in >> c; 
-  if (c != ',') {
-    in.setstate(std::ios_base::failbit);
+Cartesian_moving_weighted_point_3<Coordinate> &point)
+{
+    Coordinate w;
+    typename Cartesian_moving_weighted_point_3<Coordinate>::Bare_point p;
+    in >> p;
+    char c;
+    in >> c;
+    if (c != ',') {
+        in.setstate(std::ios_base::failbit);
+        return in;
+    }
+    in >> w;
+    point= Cartesian_moving_weighted_point_3<Coordinate>(p,w);
     return in;
-  }
-  in >> w;
-  point= Cartesian_moving_weighted_point_3<Coordinate>(p,w);
-  return in;
 }
+
+
 CGAL_KDS_END_INTERNAL_NAMESPACE;
 
 /*CGAL_KDS_BEGIN_NAMESPACE;
@@ -128,20 +140,20 @@ CGAL_KDS_END_INTERNAL_NAMESPACE;
 template <>
 template <class Coord, class SK>
 class To_static<typename internal::Cartesian_moving_weighted_point_3<Coord>, typename SK::Weighted_point>:
-  public To_static_base<typename Coord::NT, 
-			typename internal::Cartesian_moving_weighted_point_3<Coord>,
-			typename SK::Weighted_point> {
-  typedef To_static_base<typename Coord::NT, 
-			 typename internal::Cartesian_moving_weighted_point_3<Coord>,
-			 typename SK::Weighted_point>  P;
+  public To_static_base<typename Coord::NT,
+            typename internal::Cartesian_moving_weighted_point_3<Coord>,
+            typename SK::Weighted_point> {
+  typedef To_static_base<typename Coord::NT,
+             typename internal::Cartesian_moving_weighted_point_3<Coord>,
+             typename SK::Weighted_point>  P;
 public:
-  To_static(){}
-  typename P::result_type operator()(const typename P::argument_type &arg) const {
-    return typename P::result_type(typename SK::Bare_point(arg.point().x()(P::time()),
-							   arg.point().y()(P::time()),
-							   arg.point().z()(P::time())),
-				   arg.weight()(t_));
-  }
+To_static(){}
+typename P::result_type operator()(const typename P::argument_type &arg) const {
+return typename P::result_type(typename SK::Bare_point(arg.point().x()(P::time()),
+arg.point().y()(P::time()),
+arg.point().z()(P::time())),
+arg.weight()(t_));
+}
 };
 CGAL_KDS_END_NAMESPACE*/
 #endif

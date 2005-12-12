@@ -33,19 +33,18 @@
 #include <CGAL/double.h>
 #include <CGAL/int.h>
 
-
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 //! The class we use for interval arithmetic.
 /*!
   This class is not protected, so the Interval_arithmetic_guard must be used when calculations
-  are peformed. This is not checked. 
+  are peformed. This is not checked.
 */
 typedef CGAL::Interval_nt_advanced Interval_nt;
 
 //! This class sets the rounding modes for interval arithmetic.
 /*!
   Create an instance of this class when you want to perform interval arithmetic.
-  When the destructor is called, the mode will be automatically cleaned up. 
+  When the destructor is called, the mode will be automatically cleaned up.
 */
 struct Interval_arithmetic_guard: public CGAL::Protect_FPU_rounding<true>{};
 /*struct Interval_arithmetic_guard {
@@ -59,26 +58,27 @@ struct Interval_arithmetic_guard: public CGAL::Protect_FPU_rounding<true>{};
     } else {
       bk_= CGAL_FE_UPWARD;
     }
-  }
-  ~Interval_arithmetic_guard(){
-    FPU_set_cw(bk_);
-  }
-  bool enabled() const {
-    return bk_== CGAL_FE_UPWARD;
-  }
-  void set_enabled(bool ft) {
-    if (ft != enabled()) {
-      bk_= FPU_get_and_set_cw(bk_);
-    }
-  }
+}
+~Interval_arithmetic_guard(){
+FPU_set_cw(bk_);
+}
+bool enabled() const {
+return bk_== CGAL_FE_UPWARD;
+}
+void set_enabled(bool ft) {
+if (ft != enabled()) {
+bk_= FPU_get_and_set_cw(bk_);
+}
+}
 protected:
-  FPU_CW_t bk_;
+FPU_CW_t bk_;
 };*/
 
 template <class NT>
-class To_interval: public CGAL::To_interval<NT> {
-public:
-  To_interval(){}
+class To_interval: public CGAL::To_interval<NT>
+{
+    public:
+        To_interval(){}
 };
 
 /*template <class NT>
@@ -90,7 +90,6 @@ std::pair<double,double> to_interval(double d){
   return CGAL::to_interval(d);
   }*/
 
-
 #define CGAL_POLYNOMIAL_TO_INTERVAL(nt) CGAL::to_interval(nt)
 /*template <class NT>
 std::pair<double, double> to_interval(const NT &nt){
@@ -99,22 +98,23 @@ std::pair<double, double> to_interval(const NT &nt){
   }*/
 //using CGAL::to_interval;
 
-namespace internal {
-  template <class Traits> class Simple_interval_root;
-  template <class R1, class R2> class Lazy_upper_bound_root_stack_root;
-  template <class R> class Explicit_root;
+namespace internal
+{
+    template <class Traits> class Simple_interval_root;
+    template <class R1, class R2> class Lazy_upper_bound_root_stack_root;
+    template <class R> class Explicit_root;
 }
 
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE 
+CGAL_BEGIN_NAMESPACE
 
-template <class Traits> 
+template <class Traits>
 std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Traits> &r);
-template <class R1, class R2> 
+template <class R1, class R2>
 std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<R1, R2> &lr);
-template <class R> 
+template <class R>
 std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Explicit_root<R> &r);
 
 CGAL_END_NAMESPACE
@@ -126,21 +126,24 @@ Not implemented yet.
 #else
 
 No interval arithmetic support.
-
 #endif
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-inline Extended_sign extended_sign(const Interval_nt &i) {
-  if (i.inf() == 0 && i.sup() ==0) return EXTENDED_ZERO;
-  else if (i.inf() <=0 && i.sup() >=0) {
-    return EXTENDED_UNKNOWN;
-  } else if (i.inf() >0 ){
-    return EXTENDED_POSITIVE;
-  } else {
-    return EXTENDED_NEGATIVE;
-  }
+inline Extended_sign extended_sign(const Interval_nt &i)
+{
+    if (i.inf() == 0 && i.sup() ==0) return EXTENDED_ZERO;
+    else if (i.inf() <=0 && i.sup() >=0) {
+        return EXTENDED_UNKNOWN;
+    }
+    else if (i.inf() >0 ) {
+        return EXTENDED_POSITIVE;
+    }
+    else {
+        return EXTENDED_NEGATIVE;
+    }
 }
+
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 #endif

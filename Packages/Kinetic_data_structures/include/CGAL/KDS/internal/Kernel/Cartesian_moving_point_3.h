@@ -25,151 +25,169 @@
 CGAL_KDS_BEGIN_INTERNAL_NAMESPACE;
 
 template <class Coordinate_t>
-class Cartesian_moving_point_3 {
-protected:
-  typedef Cartesian_moving_point_3<Coordinate_t> This;
+class Cartesian_moving_point_3
+{
+    protected:
+        typedef Cartesian_moving_point_3<Coordinate_t> This;
 
-  //! What should I do for this
-  typedef typename Coordinate_t::NT NT;
-public:
-  //typedef Static_point_t Static_point;
-    
-  //! The cartesian coordinate type
-  typedef Coordinate_t Coordinate;
-    
- 
-  //! initialize it from polys
-  Cartesian_moving_point_3(const Coordinate &x, const Coordinate &y,
-			   const Coordinate &z){
-    _coords[0]=x;
-    _coords[1]=y;
-    _coords[2]=z;
-  }
+//! What should I do for this
+        typedef typename Coordinate_t::NT NT;
+    public:
+//typedef Static_point_t Static_point;
 
-  //! initialize it from a still point
-  template <class Static_point>
-  explicit Cartesian_moving_point_3(const Static_point &pt){
-    _coords[0]=Coordinate(typename Coordinate::NT(pt.x()));
-    _coords[1]=Coordinate(typename Coordinate::NT(pt.y()));
-    _coords[2]=Coordinate(typename Coordinate::NT(pt.z()));
-  }
-   
-  //! null
-  Cartesian_moving_point_3(){}
+//! The cartesian coordinate type
+        typedef Coordinate_t Coordinate;
 
-  //! homogeneous x
-  const Coordinate &hx() const {
-    return _coords[0];
-  }
+//! initialize it from polys
+        Cartesian_moving_point_3(const Coordinate &x, const Coordinate &y,
+        const Coordinate &z) {
+            _coords[0]=x;
+            _coords[1]=y;
+            _coords[2]=z;
+        }
 
-  //! homogeneous y
-  const Coordinate &hy() const {
-    return _coords[1];
-  }
+//! initialize it from a still point
+        template <class Static_point>
+        explicit Cartesian_moving_point_3(const Static_point &pt) {
+            _coords[0]=Coordinate(typename Coordinate::NT(pt.x()));
+            _coords[1]=Coordinate(typename Coordinate::NT(pt.y()));
+            _coords[2]=Coordinate(typename Coordinate::NT(pt.z()));
+        }
 
-  //! homogeneous z
-  const Coordinate &hz() const {
-    return _coords[2];
-  }
+//! null
+        Cartesian_moving_point_3(){}
 
-  //! homogeneous w
-  const Coordinate hw() const {
-    return Coordinate(1);
-  }
+//! homogeneous x
+        const Coordinate &hx() const
+        {
+            return _coords[0];
+        }
 
-  //! x
-  const Coordinate &x() const {
-    return _coords[0];
-  }
+//! homogeneous y
+        const Coordinate &hy() const
+        {
+            return _coords[1];
+        }
 
-  //! y
-  const Coordinate &y() const {
-    return _coords[1];
-  }
+//! homogeneous z
+        const Coordinate &hz() const
+        {
+            return _coords[2];
+        }
 
-  //! z
-  const Coordinate &z() const {
-    return _coords[2];
-  }
+//! homogeneous w
+        const Coordinate hw() const
+        {
+            return Coordinate(1);
+        }
 
-  bool is_constant() const {
-    for (unsigned int i=0; i< 3; ++i){
-      if (_coords[i].degree()>0) return false;
-    }
-    return true;
-  }
-  bool operator==(const This &o) const {
-    return x()==o.x() && y()==o.y() && z()==o.z();
-  }
+//! x
+        const Coordinate &x() const
+        {
+            return _coords[0];
+        }
+
+//! y
+        const Coordinate &y() const
+        {
+            return _coords[1];
+        }
+
+//! z
+        const Coordinate &z() const
+        {
+            return _coords[2];
+        }
+
+        bool is_constant() const
+        {
+            for (unsigned int i=0; i< 3; ++i) {
+                if (_coords[i].degree()>0) return false;
+            }
+            return true;
+        }
+        bool operator==(const This &o) const
+        {
+            return x()==o.x() && y()==o.y() && z()==o.z();
+        }
 #if 0
-  //! Returns the value at time t. 
-  /*!
-   */
-  Static_point operator()(const NT &t) const {
-    return Static_point(hx(t), hy(t), hz(t));
-  }
+//! Returns the value at time t.
+/*!
+ */
+        Static_point operator()(const NT &t) const
+        {
+            return Static_point(hx(t), hy(t), hz(t));
+        }
 
-  //! Non-operator version of operator()
-  Static_point value_at( NT time){
-    return operator()(time);
-  }
+//! Non-operator version of operator()
+        Static_point value_at( NT time) {
+            return operator()(time);
+        }
 #endif
-  //! Reverse the motion
-  template <class NV>
-  This transformed_coordinates(const NV &nv) const {
-    return This(nv(_coords[0]), nv(_coords[1]), nv(_coords[2]));
-  }
+//! Reverse the motion
+        template <class NV>
+            This transformed_coordinates(const NV &nv) const
+        {
+            return This(nv(_coords[0]), nv(_coords[1]), nv(_coords[2]));
+        }
 
-  template <class SK>
-  struct Static_traits {
-    typedef typename SK::Point_3 Static_type;
-    static Static_type to_static(const This &o, const NT &t, const SK &) {
-      return Static_type(o.x()(t), o.y()(t), o.z()(t));
-    }
-  };
-  template <class Converter>
-  struct Coordinate_converter {
-    Coordinate_converter(const Converter &c): c_(c){}
-    typedef Cartesian_moving_point_3<typename Converter::argument_type> argument_type;
-    typedef Cartesian_moving_point_3<typename Converter::result_type> result_type;
-    
-    result_type operator()(const argument_type &i) const {
-      return result_type(c_(i.x()), c_(i.y()), c_(i.z()));
-    }
+        template <class SK>
+            struct Static_traits
+        {
+            typedef typename SK::Point_3 Static_type;
+            static Static_type to_static(const This &o, const NT &t, const SK &) {
+                return Static_type(o.x()(t), o.y()(t), o.z()(t));
+            }
+        };
+        template <class Converter>
+            struct Coordinate_converter
+        {
+            Coordinate_converter(const Converter &c): c_(c){}
+            typedef Cartesian_moving_point_3<typename Converter::argument_type> argument_type;
+            typedef Cartesian_moving_point_3<typename Converter::result_type> result_type;
 
-    Converter c_;
-  };
-protected:
-  Coordinate _coords[3];
+            result_type operator()(const argument_type &i) const
+            {
+                return result_type(c_(i.x()), c_(i.y()), c_(i.z()));
+            }
+
+            Converter c_;
+        };
+    protected:
+        Coordinate _coords[3];
 };
 
 template <class Coordinate>
-std::ostream &operator<<(std::ostream &out, const Cartesian_moving_point_3<Coordinate> &point){
-  out << point.x() << ", " << point.y() << ", " << point.z();
-  return out;
+std::ostream &operator<<(std::ostream &out, const Cartesian_moving_point_3<Coordinate> &point)
+{
+    out << point.x() << ", " << point.y() << ", " << point.z();
+    return out;
 }
+
 
 template <class Coordinate>
 std::istream &operator>>(std::istream &in,
-			 Cartesian_moving_point_3<Coordinate> &point){
-  Coordinate x, y, z;
-  in >> x;
-  char c;
-  in >> c; 
-  if (c != ',') {
-    in.setstate(std::ios_base::failbit);
+Cartesian_moving_point_3<Coordinate> &point)
+{
+    Coordinate x, y, z;
+    in >> x;
+    char c;
+    in >> c;
+    if (c != ',') {
+        in.setstate(std::ios_base::failbit);
+        return in;
+    }
+    in >> y;
+    in >> c;
+    if (c != ',') {
+        in.setstate(std::ios_base::failbit);
+        return in;
+    }
+    in >> z;
+    point= Cartesian_moving_point_3<Coordinate>(x,y,z);
     return in;
-  }
-  in >> y;
-  in >> c; 
-  if (c != ',') {
-    in.setstate(std::ios_base::failbit);
-    return in;
-  }
-  in >> z;
-  point= Cartesian_moving_point_3<Coordinate>(x,y,z);
-  return in;
 }
+
 
 CGAL_KDS_END_INTERNAL_NAMESPACE;
 

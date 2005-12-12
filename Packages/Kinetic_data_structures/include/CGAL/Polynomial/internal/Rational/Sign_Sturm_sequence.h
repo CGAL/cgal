@@ -25,101 +25,91 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-
-
 template<class Sturm_sequence_t>
 class Sign_Sturm_sequence : public Sturm_sequence_t
 {
- public:
-  typedef Sturm_sequence_t                       Sturm_sequence;
-  typedef typename Sturm_sequence::Kernel        Kernel;
-  typedef typename Sturm_sequence::Polynomial    Polynomial;
-  typedef int                                    result_type;
+    public:
+        typedef Sturm_sequence_t                       Sturm_sequence;
+        typedef typename Sturm_sequence::Kernel        Kernel;
+        typedef typename Sturm_sequence::Polynomial    Polynomial;
+        typedef int                                    result_type;
 
- protected:
-  typedef Sturm_sequence                         Base;
-  typedef CGAL_POLYNOMIAL_NS::Sign                    Sign;
-  typedef typename Kernel::Sign_at               Sign_at;
+    protected:
+        typedef Sturm_sequence                         Base;
+        typedef CGAL_POLYNOMIAL_NS::Sign                    Sign;
+        typedef typename Kernel::Sign_at               Sign_at;
 
-public:
-  Sign_Sturm_sequence() : Base() {}
-  Sign_Sturm_sequence(const Polynomial& p, const Polynomial& q,
-		      const Kernel &k)
-    : Base(p, k.differentiate_object()(p) * q, k),
-      pder_(k.differentiate_object()(p)), q_(q) {}
+    public:
+        Sign_Sturm_sequence() : Base() {}
+        Sign_Sturm_sequence(const Polynomial& p, const Polynomial& q,
+            const Kernel &k)
+            : Base(p, k.differentiate_object()(p) * q, k),
+            pder_(k.differentiate_object()(p)), q_(q) {}
 
+    protected:
+        template<class NTRep>
+            unsigned int sign_variations_base(const NTRep& x) const
+        {
+            Sign s0 = Sign_at( this->seq_[0] )(x);
 
+            CGAL_Polynomial_precondition( s0 != CGAL::ZERO );
 
-protected:
-  template<class NTRep>
-  unsigned int sign_variations_base(const NTRep& x) const
-  {
-    Sign s0 = Sign_at( this->seq_[0] )(x);
+            std::vector<Sign> signs(this->size_);
+            signs[0] = s0;
 
-    CGAL_Polynomial_precondition( s0 != CGAL::ZERO );
+            if ( this->size_ > 1 ) {
+                Sign s1 = Sign_at( pder_ )(x);
+                Sign s2 = Sign_at( q_ )(x);
+                signs[1] = Sign(s1 * s2);
+            }
 
-    std::vector<Sign> signs(this->size_);
-    signs[0] = s0;
+            for (unsigned int i = 2; i < this->size_; i++) {
+                signs[i] = Sign_at( this->seq_[i] )(x);
+            }
+            return Sign_variations_counter::sign_variations(signs.begin(), signs.end());
+        }
 
-    if ( this->size_ > 1 ) {
-      Sign s1 = Sign_at( pder_ )(x);
-      Sign s2 = Sign_at( q_ )(x);
-      signs[1] = Sign(s1 * s2);
-    }
+        template<class NTRep>
+            int sum_of_signs_base(const NTRep& a, const NTRep& b) const
+        {
+            CGAL_Polynomial_precondition( b >= a );
 
-    for (unsigned int i = 2; i < this->size_; i++) {
-      signs[i] = Sign_at( this->seq_[i] )(x);
-    }
-    return Sign_variations_counter::sign_variations(signs.begin(), signs.end());
-  }
+            unsigned int Va = sign_variations_base(a);
+            if ( Va == 0 ) { return 0; }
 
-  template<class NTRep>
-  int sum_of_signs_base(const NTRep& a, const NTRep& b) const
-  {
-    CGAL_Polynomial_precondition( b >= a );
+            unsigned int Vb = sign_variations_base(b);
 
-    unsigned int Va = sign_variations_base(a);
-    if ( Va == 0 ) { return 0; }
+            int diff = static_cast<int>(Va) - static_cast<int>(Vb);
 
-    unsigned int Vb = sign_variations_base(b);
+            return diff;
+        }
 
-    int diff = static_cast<int>(Va) - static_cast<int>(Vb);
+    public:
 
-    return diff;
-  }
+        template<class T>
+            unsigned int sign_variations(const T& x) const
+        {
+            return sign_variations_base(x);
+        }
 
- public:
-  
-  template<class T>
-  unsigned int sign_variations(const T& x) const
-  {
-    return sign_variations_base(x);
-  }
+// the following operator() should go away; the only reason it is
+// there is to be able to apply the sum_of_signs method to an
+// interval using the apply functions (see Isolating_interval.h)
+        template<class T>
+            int operator()(const T& a, const T& b) const
+        {
+            return sum_of_signs(a, b);
+        }
 
+        template<class T>
+            int sum_of_signs(const T& a, const T& b) const
+        {
+            return sum_of_signs_base(a, b);
+        }
 
-  // the following operator() should go away; the only reason it is
-  // there is to be able to apply the sum_of_signs method to an
-  // interval using the apply functions (see Isolating_interval.h)
-  template<class T>
-  int operator()(const T& a, const T& b) const
-  {
-    return sum_of_signs(a, b);
-  }  
-
-  template<class T>
-  int sum_of_signs(const T& a, const T& b) const
-  {
-    return sum_of_signs_base(a, b);
-  }
-
-protected:
-  Polynomial pder_, q_;
+    protected:
+        Polynomial pder_, q_;
 };
 
-
-
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
-
-
-
-#endif // CGAL_SIGN_STURM_SEQUENCE_H
+#endif                                            // CGAL_SIGN_STURM_SEQUENCE_H

@@ -22,8 +22,6 @@
 #include <CGAL/KDS/basic.h>
 #include <CGAL/KDS/internal/Kernel/Cartesian_kinetic_kernel_base.h>
 
-
-
 CGAL_KDS_BEGIN_NAMESPACE
 
 //! A kinetic kernel using cartesian coordinates
@@ -32,14 +30,15 @@ CGAL_KDS_BEGIN_NAMESPACE
   Certificate_function.
 */
 template <class Polynomial_k>
-class Cartesian_kinetic_kernel: 
-  public internal::Cartesian_kinetic_kernel_base<Polynomial_k, 
-						 Cartesian_kinetic_kernel<Polynomial_k> > {
-  typedef internal::Cartesian_kinetic_kernel_base<Polynomial_k, 
-						  Cartesian_kinetic_kernel<Polynomial_k> > P;
-public:
-  Cartesian_kinetic_kernel(Polynomial_k pk): P(pk){}
-  Cartesian_kinetic_kernel(){}
+class Cartesian_kinetic_kernel:
+public internal::Cartesian_kinetic_kernel_base<Polynomial_k,
+Cartesian_kinetic_kernel<Polynomial_k> >
+{
+    typedef internal::Cartesian_kinetic_kernel_base<Polynomial_k,
+        Cartesian_kinetic_kernel<Polynomial_k> > P;
+    public:
+        Cartesian_kinetic_kernel(Polynomial_k pk): P(pk){}
+        Cartesian_kinetic_kernel(){}
 };
 
 CGAL_KDS_END_NAMESPACE

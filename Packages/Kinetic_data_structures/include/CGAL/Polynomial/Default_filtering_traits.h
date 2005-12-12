@@ -31,12 +31,13 @@
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 template <class NT CGAL_DEFAULT_FILTERING_DEFAULT_NT>
-struct Default_filtering_traits {
-  typedef Polynomial<NT> Exact_function;
-  typedef Interval_polynomial Interval_function;
-  typedef Polynomial_converter<Exact_function, 
-			       Interval_function, 
-			       To_interval<NT> > Exact_to_interval_converter;
+struct Default_filtering_traits
+{
+    typedef Polynomial<NT> Exact_function;
+    typedef Interval_polynomial Interval_function;
+    typedef Polynomial_converter<Exact_function,
+        Interval_function,
+        To_interval<NT> > Exact_to_interval_converter;
 };
 
 CGAL_POLYNOMIAL_END_NAMESPACE

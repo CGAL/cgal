@@ -305,10 +305,10 @@ Flipping in facet {(5), (15), (19)}
 Flipping away edge {(2), (13)}
 Flipping in facet {(5), (11), (15)}
 Popping (2)
-Popped (2) from {(11) (5) (15) (8)}
+Popped (2) from {(5) (8) (11) (15)}
 Flipping away facet {(1), (3), (5)}
 Flipping in edge {(10), (12)}
-Moving (2) from {(11) (5) (15) (8)}
+Moving (2) from {(5) (8) (11) (15)}
 Moved (2) from {(1) (5) (8) (15)}
 Flipping away facet {(5), (10), (18)}
 Flipping in edge {(7), (13)}
@@ -330,13 +330,13 @@ Flipping away edge {(5), (12)}
 Flipping in facet {(1), (10), (14)}
 Flipping away edge {(13), (15)}
 Flipping in facet {(5), (17), (19)}
-Moving (2) from {(5) (1) (14) (15)}
-Moved (2) from {(14) (1) (5) (10)}
+Moving (2) from {(1) (5) (14) (15)}
+Moved (2) from {(1) (5) (10) (14)}
 Flipping away facet {(3), (6), (19)}
 Flipping in edge {(N), (10)}
 Flipping away edge {(7), (19)}
 Flipping in facet {(6), (10), (18)}
-Pushing (2) into {(14) (1) (5) (10)}
+Pushing (2) into {(1) (5) (10) (14)}
 Pushed (2)
 Flipping away facet {(7), (9), (11)}
 Flipping in edge {(8), (16)}

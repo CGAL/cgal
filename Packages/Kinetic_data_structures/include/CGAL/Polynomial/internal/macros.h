@@ -28,13 +28,12 @@
 */
 #include <CGAL/basic.h>
 
-
 #define CGAL_POLYNOMIAL_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE \
-namespace POLYNOMIAL {
+namespace POLYNOMIAL \
+{ \
 
-#define CGAL_POLYNOMIAL_END_NAMESPACE } \
+    #define CGAL_POLYNOMIAL_END_NAMESPACE } \
 CGAL_END_NAMESPACE
-
 
 #define CGAL_POLYNOMIAL_NS CGAL::POLYNOMIAL
 #define CGAL_Polynomial_assertion(x) CGAL_assertion(x)
@@ -60,41 +59,32 @@ CGAL_END_NAMESPACE
   When no CGAL is present
 */
 
-
 #define CGAL_POLYNOMIAL_BEGIN_NAMESPACE \
-namespace Polynomial {
+namespace Polynomial \
+{ \
 
-#define CGAL_POLYNOMIAL_END_NAMESPACE }
+    #define CGAL_POLYNOMIAL_END_NAMESPACE }
 
 #define POLYNOMIAL_NS Polynomial
-
 
 #include <assert.h>
 
 #define CGAL_Polynomial_assertion(x) assert(x)
 // This does not work
-#define CGAL_Polynomial_assertion_code(x) x 
+#define CGAL_Polynomial_assertion_code(x) x
 #define CGAL_Polynomial_precondition(x) assert(x)
 #define CGAL_Polynomial_postcondition(x) assert(x)
-#define CGAL_Polynomial_expensive_precondition(x) 
+#define CGAL_Polynomial_expensive_precondition(x)
 #define CGAL_Polynomial_expensive_assertion(x)
 #define CGAL_Polynomial_expensive_postcondition(x)
-#define CGAL_Polynomial_exactness_postcondition(x) 
-#define CGAL_Polynomial_exactness_precondition(x) 
-
-
-
-
-
+#define CGAL_Polynomial_exactness_postcondition(x)
+#define CGAL_Polynomial_exactness_precondition(x)
 #endif
-
 
 #define CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE CGAL_POLYNOMIAL_BEGIN_NAMESPACE \
-namespace internal {
+namespace internal \
+{ \
 
-#define CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE } \
+    #define CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE } \
 CGAL_POLYNOMIAL_END_NAMESPACE
-
-
 #endif
-
