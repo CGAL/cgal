@@ -23,15 +23,9 @@
 #  include <boost/regex/config.hpp>
 #endif
 
-#ifdef BOOST_REGEX_V3
-#  ifndef BOOST_REGEX_TRAITS_HPP_INCLUDED
-#     include <boost/regex/v3/regex_traits.hpp>
-#  endif
-#else
 #  ifndef BOOST_REGEX_TRAITS_HPP_INCLUDED
 #     include <boost/regex/v4/regex_traits.hpp>
 #  endif
-#endif
 
 #endif // include
 

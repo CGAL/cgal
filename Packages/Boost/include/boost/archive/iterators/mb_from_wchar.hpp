@@ -84,7 +84,11 @@ class mb_from_wchar
 
     void fill(){
         wchar_t value = * this->base_reference();
+        #if (defined(__MINGW32__) && ((__MINGW32_MAJOR_VERSION > 3) || ((__MINGW32_MAJOR_VERSION == 3) && (__MINGW32_MINOR_VERSION >= 8))))
+        m_bend = std::wcrtomb(m_buffer, value, 0);
+        #else
         m_bend = std::wctomb(m_buffer, value);
+        #endif
         assert(-1 != m_bend);
         assert((std::size_t)m_bend <= sizeof(m_buffer));
         assert(m_bend > 0);

@@ -30,7 +30,7 @@ namespace gregorian {
 
   //! Converts a date to a tm struct. Throws out_of_range exception if date is a special value
   inline
-  tm to_tm(const date& d) 
+  std::tm to_tm(const date& d) 
   {
     if(d.is_pos_infinity() || d.is_neg_infinity() || d.is_not_a_date()){
 #if defined(USE_DATE_TIME_PRE_1_33_FACET_IO)
@@ -42,7 +42,7 @@ namespace gregorian {
       throw std::out_of_range(ss.str());
 #endif // USE_DATE_TIME_PRE_1_33_FACET_IO
     }
-    tm datetm;
+    std::tm datetm;
     boost::gregorian::date::ymd_type ymd = d.year_month_day();
     datetm.tm_year = ymd.year-1900; 
     datetm.tm_mon = ymd.month-1; 
@@ -56,7 +56,7 @@ namespace gregorian {
 
   //! Converts a tm structure into a date dropping the any time values.
   inline
-  date date_from_tm(const tm& datetm) 
+  date date_from_tm(const std::tm& datetm) 
   {
     return date(static_cast<unsigned short>(datetm.tm_year+1900), 
                 static_cast<unsigned short>(datetm.tm_mon+1), 

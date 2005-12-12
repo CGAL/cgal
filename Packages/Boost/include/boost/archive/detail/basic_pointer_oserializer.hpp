@@ -16,7 +16,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org for updates, documentation, and revision history.
-
+#include <boost/config.hpp>
 #include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/detail/basic_serializer.hpp>
 
@@ -40,7 +40,11 @@ protected:
     explicit basic_pointer_oserializer(
         const boost::serialization::extended_type_info & type_
     );
-    virtual ~basic_pointer_oserializer();
+    // account for bogus gcc warning
+    #if defined(__GNUC__)
+    virtual
+    #endif
+    ~basic_pointer_oserializer();
 public:
     virtual const basic_oserializer & get_basic_serializer() const = 0;
     virtual void save_object_ptr(

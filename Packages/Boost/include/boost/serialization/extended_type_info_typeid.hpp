@@ -18,6 +18,7 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <typeinfo>
+#include <boost/config.hpp>
 
 //#include <boost/static_warning.hpp>
 #include <boost/static_assert.hpp>
@@ -48,6 +49,10 @@ protected:
     static const extended_type_info *
     get_derived_extended_type_info(const std::type_info & ti);
     extended_type_info_typeid_0();
+    // account for bogus gcc warning
+    #if defined(__GNUC__)
+    virtual
+    #endif
     ~extended_type_info_typeid_0();
 public:
     virtual const std::type_info & get_eti() const = 0;

@@ -386,7 +386,7 @@ namespace boost {
     template <class EdgeIterator>
     inline adjacency_list(EdgeIterator first, EdgeIterator last,
                           vertices_size_type n,
-                          edges_size_type m = 0,
+                          edges_size_type = 0,
                           const GraphProperty& p = GraphProperty())
       : Base(n, first, last), m_property(p) { }
 
@@ -394,7 +394,7 @@ namespace boost {
     inline adjacency_list(EdgeIterator first, EdgeIterator last,
                           EdgePropertyIterator ep_iter,
                           vertices_size_type n,
-                          edges_size_type m = 0,
+                          edges_size_type = 0,
                           const GraphProperty& p = GraphProperty())
       : Base(n, first, last, ep_iter), m_property(p) { }
 #endif

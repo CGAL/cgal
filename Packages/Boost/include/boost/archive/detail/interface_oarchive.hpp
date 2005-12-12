@@ -41,15 +41,8 @@ protected:
 public:
     /////////////////////////////////////////////////////////
     // archive public interface
-
-    struct is_loading {
-        typedef mpl::bool_<false> type;
-        BOOST_STATIC_CONSTANT(bool, value=false);
-    };
-    struct is_saving {
-        typedef mpl::bool_<true> type;
-        BOOST_STATIC_CONSTANT(bool, value=true);
-    };
+    typedef mpl::bool_<false> is_loading;
+    typedef mpl::bool_<true> is_saving;
 
     // return a pointer to the most derived class
     Archive * This(){
@@ -57,7 +50,7 @@ public:
     }
 
     template<class T>
-    const basic_pointer_oserializer * register_type(const T * t = NULL){
+    const basic_pointer_oserializer * register_type(const T * = NULL){
         const basic_pointer_oserializer & bpos =
             instantiate_pointer_oserializer(
                 static_cast<Archive *>(NULL),
@@ -69,16 +62,16 @@ public:
 
     void lookup_helper(
         const boost::serialization::extended_type_info * const eti,
-        shared_ptr<void> & sph
+        boost::shared_ptr<void> & sph
     ){
-        this->This()->basic_oarchive::lookup_basic_helper(eti, sph);
+        this->This()->lookup_basic_helper(eti, sph);
     }
 
     void insert_helper(
         const boost::serialization::extended_type_info * const eti,
         shared_ptr<void> & sph
     ){
-        this->This()->basic_oarchive::insert_basic_helper(eti, sph);
+        this->This()->insert_basic_helper(eti, sph);
     }
     template<class T>
     Archive & operator<<(T & t){

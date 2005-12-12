@@ -53,6 +53,7 @@ class regex_token_iterator_implementation
    typedef sub_match<BidirectionalIterator>      value_type;
 
    match_results<BidirectionalIterator> what;   // current match
+   BidirectionalIterator                base;    // start of search area
    BidirectionalIterator                end;    // end of search area
    const regex_type                     re;    // the expression
    match_flag_type                      flags;  // match flags
@@ -97,7 +98,8 @@ public:
    bool init(BidirectionalIterator first)
    {
       N = 0;
-      if(regex_search(first, end, what, re, flags) == true)
+      base = first;
+      if(regex_search(first, end, what, re, flags, base) == true)
       {
          N = 0;
          result = ((subs[N] == -1) ? what.prefix() : what[(int)subs[N]]);
@@ -134,10 +136,10 @@ public:
          result =((subs[N] == -1) ? what.prefix() : what[subs[N]]);
          return true;
       }
-      if(what.prefix().first != what[0].second)
-         flags |= match_prev_avail | regex_constants::match_not_bob;
+      //if(what.prefix().first != what[0].second)
+      //   flags |= /*match_prev_avail |*/ regex_constants::match_not_bob;
       BidirectionalIterator last_end(what[0].second);
-      if(regex_search(last_end, end, what, re, ((what[0].first == what[0].second) ? flags | regex_constants::match_not_initial_null : flags)))
+      if(regex_search(last_end, end, what, re, ((what[0].first == what[0].second) ? flags | regex_constants::match_not_initial_null : flags), base))
       {
          N =0;
          result =((subs[N] == -1) ? what.prefix() : what[subs[N]]);
@@ -286,7 +288,7 @@ inline regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_ite
 {
    return regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits>(p.begin(), p.end(), e, submatch, m);
 }
-#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 template <class charT, class traits, std::size_t N>
 inline regex_token_iterator<const charT*, charT, traits> make_regex_token_iterator(const charT* p, const basic_regex<charT, traits>& e, const int (&submatch)[N], regex_constants::match_flag_type m = regex_constants::match_default)
 {

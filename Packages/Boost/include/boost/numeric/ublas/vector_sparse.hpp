@@ -62,7 +62,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
         BOOST_UBLAS_INLINE
         sparse_vector_element (const sparse_vector_element &p):
-            container_reference<vector_type> (p), i_ (p.i_), d_ (p.d_) {}
+            container_reference<vector_type> (p), i_ (p.i_) {}
         BOOST_UBLAS_INLINE
         ~sparse_vector_element () {
         }
@@ -447,7 +447,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         mapped_vector &operator = (const vector_container<C> &v) {
-            resize (v.size (), false);
+            resize (v ().size (), false);
             assign (v);
             return *this;
         }
@@ -997,7 +997,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         compressed_vector &operator = (const vector_container<C> &v) {
-            resize (v.size (), false);
+            resize (v ().size (), false);
             assign (v);
             return *this;
         }
@@ -1615,7 +1615,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         coordinate_vector &operator = (const vector_container<C> &v) {
-            resize (v.size (), false);
+            resize (v ().size (), false);
             assign (v);
             return *this;
         }
@@ -1757,7 +1757,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (filled_ > 0, external_logic ());
             -- filled_;
             sorted_filled_ = (std::min) (sorted_filled_, filled_);
-            sorted_ = sorted_filled_ = filled;
+            sorted_ = sorted_filled_ = filled_;
             storage_invariants ();
         }
 

@@ -23,7 +23,7 @@ namespace gregorian {
   /*! Return special_value from string argument. If argument is 
    * not one of the special value names (defined in src/gregorian/names.hpp), 
    * return 'not_special' */
-  special_values special_value_from_string(const std::string& s);
+  BOOST_DATE_TIME_DECL special_values special_value_from_string(const std::string& s);
 
   //! Deprecated: Use from_simple_string
   inline date from_string(std::string s) {

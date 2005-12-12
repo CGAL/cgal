@@ -66,6 +66,7 @@
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/void_cast.hpp>
 
 #include <boost/archive/archive_exception.hpp>
 
@@ -115,8 +116,8 @@ public:
             >= boost::serialization::object_class_info;
     }
     virtual bool tracking(const unsigned int flags) const {
-        if(0 != (flags &  no_tracking))
-            return false;
+//        if(0 != (flags &  no_tracking))
+//            return false;
         return boost::serialization::tracking_level<T>::value == boost::serialization::track_always
             || boost::serialization::tracking_level<T>::value == boost::serialization::track_selectivly
             && serialized_as_pointer();
@@ -328,10 +329,10 @@ struct save_pointer_type {
     struct abstract
     {
         static const basic_pointer_oserializer * register_type(Archive & /* ar */){
-            typedef BOOST_DEDUCED_TYPENAME 
-                boost::serialization::type_info_implementation<T>::type::is_polymorphic typex;
             // it has? to be polymorphic
-            BOOST_STATIC_ASSERT(typex::value);
+            BOOST_STATIC_ASSERT(
+                boost::serialization::type_info_implementation<T>::type::is_polymorphic::value
+            );
             return static_cast<const basic_pointer_oserializer *>(NULL);
         }
     };

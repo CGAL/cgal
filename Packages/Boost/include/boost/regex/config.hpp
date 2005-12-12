@@ -80,6 +80,14 @@
 #endif
 
 /*
+ * Intel C++ before 8.0 ends up with unresolved externals unless we turn off
+ * extern template support:
+ */
+#if defined(BOOST_INTEL) && defined(__cplusplus) && (BOOST_INTEL <= 800)
+#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
+#endif
+
+/*
  * If there isn't good enough wide character support then there will
  * be no wide character regular expressions:
  */
@@ -144,7 +152,7 @@
  * of the non-inline functions in the library, so that users can still link to the lib,
  * irrespective of whether their own code is built with /Zc:wchar_t.
  */
-#if defined(__cplusplus) && (defined(BOOST_MSVC) || defined(__ICL)) && !defined(BOOST_NO_INTRINSIC_WCHAR_T) && defined(BOOST_WINDOWS)
+#if defined(__cplusplus) && (defined(BOOST_MSVC) || defined(__ICL)) && !defined(BOOST_NO_INTRINSIC_WCHAR_T) && defined(BOOST_WINDOWS) && !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION)
 #  define BOOST_REGEX_HAS_OTHER_WCHAR_T
 #  ifdef BOOST_MSVC
 #     pragma warning(push)

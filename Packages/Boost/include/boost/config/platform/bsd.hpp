@@ -9,7 +9,7 @@
 
 //  generic BSD config options:
 
-#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
 #error "This platform is not BSD"
 #endif
 
@@ -19,6 +19,8 @@
 #define BOOST_PLATFORM "NetBSD " BOOST_STRINGIZE(__NetBSD__)
 #elif defined(__OpenBSD__)
 #define BOOST_PLATFORM "OpenBSD " BOOST_STRINGIZE(__OpenBSD__)
+#elif defined(__DragonFly__)
+#define BOOST_PLATFORM "DragonFly " BOOST_STRINGIZE(__DragonFly__)
 #endif
 
 //
@@ -26,7 +28,7 @@
 // FreeBSD has <nl_types.h> but does not
 // advertise the fact in <unistd.h>:
 //
-#if defined(__FreeBSD__) && (__FreeBSD__ >= 3)
+#if (defined(__FreeBSD__) && (__FreeBSD__ >= 3)) || defined(__DragonFly__)
 #  define BOOST_HAS_NL_TYPES_H
 #endif
 

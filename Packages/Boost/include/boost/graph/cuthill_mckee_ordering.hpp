@@ -164,7 +164,7 @@ namespace boost {
 
     // Find one vertex from each connected component 
     BGL_FORALL_VERTICES_T(v, G, Graph) {
-      if (get(color, v) != Color::white()) {
+      if (get(color, v) == Color::white()) {
         depth_first_visit(G, v, dfs_visitor<>(), color);
         vertex_queue.push_back(v);
       }

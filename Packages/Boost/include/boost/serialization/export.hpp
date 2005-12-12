@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // export.hpp: set traits of classes to be serialized
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -25,7 +25,7 @@
 #include <boost/config.hpp>
 
 // if no archive headers have been included this is a no op
-// this is to permit BOOST_EXPORT etc to be included in a 
+// this is to permit BOOST_EXPORT etc to be included in a
 // file declaration header
 #if ! defined(BOOST_ARCHIVE_BASIC_ARCHIVE_HPP)
 #define BOOST_CLASS_EXPORT_GUID_ARCHIVE_LIST(T, K, ASEQ)
@@ -44,7 +44,6 @@
 #include <boost/archive/detail/known_archive_types.hpp>
 #include <boost/serialization/force_include.hpp>
 #include <boost/serialization/type_info_implementation.hpp>
-#include <boost/serialization/extended_type_info.hpp>
 #include <boost/serialization/is_abstract.hpp>
 
 namespace boost {
@@ -136,7 +135,7 @@ struct export_generator {
 };
 
 template<class T, class ASeq>
-const export_generator<T, ASeq> 
+const export_generator<T, ASeq>
     export_generator<T, ASeq>::instance;
 
 // instantiation of this template creates a static object.
@@ -147,12 +146,12 @@ struct guid_initializer {
         eti_type::export_register(key);
     }
     static const guid_initializer instance;
-    guid_initializer(const char *key = NULL) BOOST_USED ;
+    guid_initializer(const char *key = 0) BOOST_USED ;
 };
 
 template<class T>
 guid_initializer<T>::guid_initializer(const char *key){
-    if(NULL != key)
+    if(0 != key)
         export_register(key);
 }
 
@@ -167,56 +166,63 @@ const guid_initializer<T> guid_initializer<T>::instance;
 template<class T, class ASeq>
 struct export_instance {
     struct abstract {
-        static const void *
+        static const export_generator<T, ASeq> *
         invoke(){
-            return NULL;
+            return 0;
         }
     };
     struct not_abstract {
-        static const void *
+        static const export_generator<T, ASeq> *
         invoke(){
             return & export_generator<T, ASeq>::instance;
         }
     };
-    static BOOST_DLLEXPORT std::pair<const void *, const void *> 
-    #if ! (defined(BOOST_MSVC) && (_MSC_VER <= 1300))
-    invoke() BOOST_USED;
-    #else
-    invoke() {
-        typedef BOOST_DEDUCED_TYPENAME mpl::eval_if<
-            serialization::is_abstract<T>,
-            mpl::identity<abstract>,
-            mpl::identity<not_abstract>
-        >::type typex;
-        return std::pair<const void *, const void *>(
-            typex::invoke(),
-            & guid_initializer<T>::instance
-        );
-    }
-    #endif
 };
 
-#if ! (defined(BOOST_MSVC) && (_MSC_VER <= 1300))
-    template<class T, class ASeq>
-    BOOST_DLLEXPORT 
-    std::pair<const void *, const void *> 
-    export_instance<T, ASeq>::invoke() {
-        typedef BOOST_DEDUCED_TYPENAME mpl::eval_if<
-            serialization::is_abstract<T>,
-            mpl::identity<abstract>,
-            mpl::identity<not_abstract>
-        >::type typex;
-        return std::pair<const void *, const void *>(
-            typex::invoke(),
-            & guid_initializer<T>::instance
-        );
-    }
-#endif
+template<class T, class ASeq>
+BOOST_DLLEXPORT
+std::pair<const export_generator<T, ASeq> *, const guid_initializer<T> *>
+export_instance_invoke() {
+    typedef BOOST_DEDUCED_TYPENAME mpl::eval_if<
+        serialization::is_abstract<T>,
+        mpl::identity<BOOST_DEDUCED_TYPENAME export_instance<T, ASeq>::abstract>,
+        mpl::identity<BOOST_DEDUCED_TYPENAME export_instance<T, ASeq>::not_abstract>
+    >::type typex;
+    return std::pair<const export_generator<T, ASeq> *, const guid_initializer<T> *>(
+        typex::invoke(),
+        & guid_initializer<T>::instance
+    );
+}
 
 template<class T, class ASeq>
-std::pair<const void *, const void *>
-export_instantiate(T &, ASeq &){
-    return export_instance<T, ASeq>::invoke();
+struct export_archives {
+    struct empty_archive_list {
+        static BOOST_DLLEXPORT
+        std::pair<const export_generator<T, ASeq> *, const guid_initializer<T> *>
+        invoke(){
+            return std::pair<const export_generator<T, ASeq> *,
+                             const guid_initializer<T> *>(0, 0);
+        }
+    };
+    struct non_empty_archive_list {
+        static BOOST_DLLEXPORT
+        std::pair<const export_generator<T, ASeq> *, const guid_initializer<T> *>
+        invoke(){
+            return export_instance_invoke<T, ASeq>();
+        }
+    };
+};
+
+template<class T, class ASeq>
+BOOST_DLLEXPORT
+std::pair<const export_generator<T, ASeq> *, const guid_initializer<T> *>
+export_archives_invoke(T &, ASeq &){
+    typedef BOOST_DEDUCED_TYPENAME mpl::eval_if<
+        mpl::empty<ASeq>,
+        mpl::identity<BOOST_DEDUCED_TYPENAME export_archives<T, ASeq>::empty_archive_list>,
+        mpl::identity<BOOST_DEDUCED_TYPENAME export_archives<T, ASeq>::non_empty_archive_list>
+    >::type typex;
+    return typex::invoke();
 }
 
 } // namespace detail
@@ -231,14 +237,15 @@ export_instantiate(T &, ASeq &){
     const guid_initializer< T >                                  \
         guid_initializer< T >::instance(K);                      \
     template                                                     \
-    BOOST_DLLEXPORT std::pair<const void *, const void *>        \
-    export_instantiate(T &, ASEQ &);                             \
+    BOOST_DLLEXPORT                                              \
+    std::pair<const export_generator<T, ASEQ> *, const guid_initializer< T > *> \
+    export_archives_invoke<T, ASEQ>(T &, ASEQ &);                \
     } } }                                                        \
     /**/
 
 #endif
 
-// check for unnecessary export.  T isn't polymorphic so there is no 
+// check for unnecessary export.  T isn't polymorphic so there is no
 // need to export it.
 #define BOOST_CLASS_EXPORT_CHECK(T)                              \
     BOOST_STATIC_WARNING(                                        \
@@ -257,7 +264,7 @@ export_instantiate(T &, ASeq &){
     /**/
 
 // the default exportable class identifier is the class name
-#define BOOST_CLASS_EXPORT_ARCHIVE_LIST(T, ASEQ)   \
+#define BOOST_CLASS_EXPORT_ARCHIVE_LIST(T, ASEQ)                 \
     BOOST_CLASS_EXPORT_GUID_ARCHIVE_LIST(T, BOOST_PP_STRINGIZE(T), A)
 
 // the default exportable class identifier is the class name

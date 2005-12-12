@@ -8,7 +8,6 @@
 #if !defined(FUSION_ALGORITHM_PUSH_BACK_HPP)
 #define FUSION_ALGORITHM_PUSH_BACK_HPP
 
-#include <boost/spirit/fusion/sequence/single_view.hpp>
 #include <boost/spirit/fusion/sequence/append_view.hpp>
 
 namespace boost { namespace fusion

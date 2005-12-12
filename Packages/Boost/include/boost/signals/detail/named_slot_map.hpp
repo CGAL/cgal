@@ -13,8 +13,8 @@
 #include <boost/signals/detail/config.hpp>
 #include <boost/signals/detail/signals_common.hpp>
 #include <boost/signals/connection.hpp>
-#include <boost/any.hpp>
 #include <boost/utility.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/function/function2.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <map>
@@ -27,39 +27,50 @@ enum connect_position { at_back, at_front };
 
 namespace detail {
 
-typedef function2<bool, any, any> compare_type;
+class stored_group
+{
+ public:
+  enum storage_kind { sk_empty, sk_front, sk_back, sk_group };
 
-// Used to delimit the front and back of the list for O(1) insertion.
-struct front_type {};
-struct back_type {};
+  stored_group(storage_kind kind = sk_empty) : kind(kind), group() { }
+
+  template<typename T>
+  stored_group(const T& group) : kind(sk_group), group(new T(group)) { }
+
+  bool is_front() const { return kind == sk_front; }
+  bool is_back() const { return kind == sk_back; }
+  bool empty() const { return kind == sk_empty; }
+
+  void* get() const { return group.get(); }
+
+ private:
+  storage_kind kind;
+  shared_ptr<void> group;
+};
+
+typedef function2<bool, stored_group, stored_group> compare_type;
 
 // This function object bridges from a pair of any objects that hold
 // values of type Key to the underlying function object that compares
 // values of type Key.
 template<typename Compare, typename Key>
-class any_bridge_compare {
+class group_bridge_compare {
 public:
   typedef bool result_type;
-  typedef const any& first_argument_type;
-  typedef const any& second_argument_type;
+  typedef const stored_group& first_argument_type;
+  typedef const stored_group& second_argument_type;
 
-  any_bridge_compare(const Compare& c) : comp(c) {}
+  group_bridge_compare(const Compare& c) : comp(c) {}
 
-  bool operator()(const any& k1, const any& k2) const
+  bool operator()(const stored_group& k1, const stored_group& k2) const
   {
-    if (k1.type() == typeid(front_type))
-      return !(k2.type() == typeid(front_type));
-    if (k1.type() == typeid(back_type))
-      return false;
-    if (k2.type() == typeid(front_type))
-      return false;
-    if (k2.type() == typeid(back_type))
-      return true;
+    if (k1.is_front()) return !k2.is_front();
+    if (k1.is_back()) return false;
+    if (k2.is_front()) return false;
+    if (k2.is_back()) return true;
 
     // Neither is empty, so compare their values to order them
-    // The strange */& is so that we will get a reference to the
-    // value stored in the any object instead of a copy
-    return comp(*any_cast<Key>(&k1), *any_cast<Key>(&k2));
+    return comp(*static_cast<Key*>(k1.get()), *static_cast<Key*>(k2.get()));
   }
 
 private:
@@ -73,10 +84,10 @@ class BOOST_SIGNALS_DECL named_slot_map_iterator :
 {
   typedef std::list<connection_slot_pair> group_list;
   typedef group_list::iterator slot_pair_iterator;
-  typedef std::map<any, group_list, compare_type> slot_container_type;
+  typedef std::map<stored_group, group_list, compare_type> slot_container_type;
   typedef slot_container_type::iterator group_iterator;
   typedef slot_container_type::const_iterator const_group_iterator;
-  
+
   typedef iterator_facade<named_slot_map_iterator,
                           connection_slot_pair,
                           forward_traversal_tag> inherited;
@@ -89,7 +100,7 @@ public:
   void increment();
   bool equal(const named_slot_map_iterator& other) const;
 
-#if BOOST_WORKAROUND(_MSC_VER, <= 0x1701)
+#if BOOST_WORKAROUND(_MSC_VER, <= 1400)
   void decrement();
   void advance(difference_type);
 #endif
@@ -130,15 +141,15 @@ public:
   void clear();
   iterator begin();
   iterator end();
-  iterator insert(const any& name, const connection& con, const any& slot,
-                  connect_position at);
-  void disconnect(const any& name);
+  iterator insert(const stored_group& name, const connection& con,
+                  const any& slot, connect_position at);
+  void disconnect(const stored_group& name);
   void erase(iterator pos);
   void remove_disconnected_slots();
 
 private:
   typedef std::list<connection_slot_pair> group_list;
-  typedef std::map<any, group_list, compare_type> slot_container_type;
+  typedef std::map<stored_group, group_list, compare_type> slot_container_type;
   typedef slot_container_type::iterator group_iterator;
   typedef slot_container_type::const_iterator const_group_iterator;
 

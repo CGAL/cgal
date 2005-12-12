@@ -1,7 +1,7 @@
-//  (C) Copyright John Maddock 2001. 
-//  (C) Copyright Jens Maurer 2001. 
-//  Use, modification and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
+//  (C) Copyright John Maddock 2001.
+//  (C) Copyright Jens Maurer 2001.
+//  Use, modification and distribution are subject to the
+//  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org for most recent version.
@@ -30,28 +30,31 @@
 #endif
 
 #ifdef __GLIBCXX__ // gcc 3.4 and greater:
-#  ifdef _GLIBCXX_HAVE_GTHR_DEFAULT
-      // 
+#  if defined(_GLIBCXX_HAVE_GTHR_DEFAULT) \
+        || defined(_GLIBCXX__PTHREADS)
+      //
       // If the std lib has thread support turned on, then turn it on in Boost
       // as well.  We do this because some gcc-3.4 std lib headers define _REENTANT
       // while others do not...
-      // 
+      //
 #     define BOOST_HAS_THREADS
 #  else
 #     define BOOST_DISABLE_THREADS
 #  endif
-#elif defined(__GLIBCPP__) && !defined(_GLIBCPP_HAVE_GTHR_DEFAULT)
+#elif defined(__GLIBCPP__) \
+        && !defined(_GLIBCPP_HAVE_GTHR_DEFAULT) \
+        && !defined(_GLIBCPP__PTHREADS)
    // disable thread support if the std lib was built single threaded:
 #  define BOOST_DISABLE_THREADS
 #endif
 
 #if (defined(linux) || defined(__linux) || defined(__linux__)) && defined(__arm__) && defined(_GLIBCPP_HAVE_GTHR_DEFAULT)
-// linux on arm apparently doesn't define _REENTRANT 
+// linux on arm apparently doesn't define _REENTRANT
 // so just turn on threading support whenever the std lib is thread safe:
 #  define BOOST_HAS_THREADS
 #endif
 
- 
+
 #if !defined(_GLIBCPP_USE_LONG_LONG) \
     && !defined(_GLIBCXX_USE_LONG_LONG)\
     && defined(BOOST_HAS_LONG_LONG)

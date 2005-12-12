@@ -1,7 +1,7 @@
 #ifndef _DATE_TIME_WRAPPING_INT_HPP__
 #define _DATE_TIME_WRAPPING_INT_HPP__
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002,2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
@@ -13,10 +13,19 @@
 namespace boost {
 namespace date_time {
 
-//! A wrapping integer used to support time durations 
+//! A wrapping integer used to support time durations (WARNING: only instantiate with a signed type)
 /*! In composite date and time types this type is used to
  *  wrap at the day boundary.
+ *  Ex: 
+ *  A wrapping_int<short, 10> will roll over after nine, and 
+ *  roll under below zero. This gives a range of [0,9]
  *
+ * NOTE: it is strongly recommended that wrapping_int2 be used 
+ * instead of wrapping_int as wrapping_int is to be depricated 
+ * at some point soon.
+ *
+ * Also Note that warnings will occur if instantiated with an 
+ * unsigned type. Only a signed type should be used!
  */
 template<typename int_type_, int_type_ wrap_val>
 class wrapping_int {
@@ -29,54 +38,55 @@ public:
   //! Explicit converion method
   int_type as_int()   const   {return value_;}
   operator int_type() const   {return value_;}
+  //!Add, return number of wraps performed
+  /*! The sign of the returned value will indicate which direction the 
+   * wraps went. Ex: add a negative number and wrapping under could occur,
+   * this would be indicated by a negative return value. If wrapping over 
+   * took place, a positive value would be returned */
   int_type add(int_type v) 
   {
-    //take the mod here and assign it....
-    int_type remainder = static_cast<int_type>(v % wrap_val);
-    int_type overflow = static_cast<int_type>(v / wrap_val);
+    int_type remainder = static_cast<int_type>(v % (wrap_val));
+    int_type overflow = static_cast<int_type>(v / (wrap_val));
     value_ = static_cast<int_type>(value_ + remainder);
-    if ((value_) >= wrap_val) {
-      value_ -= wrap_val;
-      overflow++;
-    }
-    return overflow;
+    return calculate_wrap(overflow);
   }
+  //! Subtract will return '+d' if wrapping under took place ('d' is the number of wraps)
+  /*! The sign of the returned value will indicate which direction the
+   * wraps went (positive indicates wrap under, negative indicates wrap over). 
+   * Ex: subtract a negative number and wrapping over could 
+   * occur, this would be indicated by a negative return value. If 
+   * wrapping under took place, a positive value would be returned. */
   int_type subtract(int_type v) 
   {
-    //take the mod here and assign it....
-    int_type remainder = v % wrap_val;
-    int_type underflow = v / wrap_val;
-    
-//     std::cout << "wi :" << value_ << "|"
-//               << v << "|"
-//               << underflow << "|" 
-//               << remainder << "|" 
-//               << wrap_val  << std::endl;
-    if (remainder > value_) {
-      underflow++;
-      //      value_ = remainder - value_;
-      value_ = wrap_val - (remainder-value_);
-    }
-    else {
-      value_ -= remainder;
-      //value_ = wrap_val-(remainder-value_);
-      //      value_ = wrap_val -(value_-remainder);
-    }
-//     std::cout << "wi final uf: " << underflow 
-//               << " value: "  << value_ << std::endl;
-    return underflow;
+    int_type remainder = static_cast<int_type>(v % (wrap_val));
+    int_type underflow = static_cast<int_type>(-(v / (wrap_val)));
+    value_ = static_cast<int_type>(value_ - remainder);
+    return calculate_wrap(underflow) * -1;
   }
-            
 private:
   int_type value_;
+
+  int_type calculate_wrap(int_type wrap)
+  {
+    if ((value_) >= wrap_val) 
+    {
+      wrap++;
+      value_ -= (wrap_val);
+    }
+    else if(value_ < 0) 
+    {
+      wrap--;
+      value_ += (wrap_val);
+    }
+    return wrap;
+  }
                   
 };
 
 
-//! A wrapping integer used to wrap around at the top
+//! A wrapping integer used to wrap around at the top (WARNING: only instantiate with a signed type)
 /*! Bad name, quick impl to fix a bug -- fix later!!
  *  This allows the wrap to restart at a value other than 0.
- *  Currently this only works if wrap_min == 1 
  */
 template<typename int_type_, int_type_ wrap_min, int_type_ wrap_max>
 class wrapping_int2 {
@@ -99,36 +109,48 @@ public:
   //! Explicit converion method
   int_type as_int()   const   {return value_;}
   operator int_type() const {return value_;}
-  //!Add, return number of wraps performed 
+  //!Add, return number of wraps performed
+  /*! The sign of the returned value will indicate which direction the 
+   * wraps went. Ex: add a negative number and wrapping under could occur,
+   * this would be indicated by a negative return value. If wrapping over 
+   * took place, a positive value would be returned */
   int_type add(int_type v) 
   {
     int_type remainder = static_cast<int_type>(v % (wrap_max - wrap_min + 1));
     int_type overflow = static_cast<int_type>(v / (wrap_max - wrap_min + 1));
     value_ = static_cast<int_type>(value_ + remainder);
-    if ((value_) > wrap_max) 
-    {
-      overflow++;
-      value_ -= (wrap_max - wrap_min + 1);
-    }
-    return overflow;
+    return calculate_wrap(overflow);
   }
-  //! Subtract will return '-d' if wrapping took place ('d' is the number of wraps)
+  //! Subtract will return '-d' if wrapping under took place ('d' is the number of wraps)
+  /*! The sign of the returned value will indicate which direction the
+   * wraps went. Ex: subtract a negative number and wrapping over could 
+   * occur, this would be indicated by a positive return value. If 
+   * wrapping under took place, a negative value would be returned */
   int_type subtract(int_type v) 
   {
     int_type remainder = static_cast<int_type>(v % (wrap_max - wrap_min + 1));
     int_type underflow = static_cast<int_type>(-(v / (wrap_max - wrap_min + 1)));
     value_ = static_cast<int_type>(value_ - remainder);
-    if ((value_) < wrap_min) 
-    {
-      underflow--;
-      value_ += (wrap_max - wrap_min + 1);
-    }
-    return underflow;
+    return calculate_wrap(underflow);
   }
             
 private:
   int_type value_;
-                  
+
+  int_type calculate_wrap(int_type wrap)
+  {
+    if ((value_) > wrap_max) 
+    {
+      wrap++;
+      value_ -= (wrap_max - wrap_min + 1);
+    }
+    else if((value_) < wrap_min) 
+    {
+      wrap--;
+      value_ += (wrap_max - wrap_min + 1);
+    }
+    return wrap;
+  }
 };
 
 

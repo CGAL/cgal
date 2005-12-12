@@ -76,6 +76,24 @@ namespace boost { namespace program_options {
         return *this;
     }
 
+    template<class charT>
+    basic_command_line_parser<charT>& 
+    basic_command_line_parser<charT>::allow_unregistered()
+    {
+        detail::cmdline::allow_unregistered();
+        return *this;
+    }
+
+    template<class charT>
+    basic_command_line_parser<charT>& 
+    basic_command_line_parser<charT>::extra_style_parser(style_parser s)
+    {
+        detail::cmdline::extra_style_parser(s);
+        return *this;
+    }
+
+
+
     template<class charT>    
     basic_parsed_options<charT>
     basic_command_line_parser<charT>::run()
@@ -100,6 +118,26 @@ namespace boost { namespace program_options {
         return basic_command_line_parser<charT>(argc, argv).options(desc).
             style(style).extra_parser(ext).run();
     }
+
+    template<class charT>
+    std::vector< std::basic_string<charT> > 
+    collect_unrecognized(const std::vector< basic_option<charT> >& options,
+                         enum collect_unrecognized_mode mode)
+    {
+        std::vector< std::basic_string<charT> >  result;
+        for(unsigned i = 0; i < options.size(); ++i)
+        {
+            if (options[i].unregistered ||
+                (mode == include_positional && options[i].position_key != -1))
+            {
+                copy(options[i].original_tokens.begin(),
+                     options[i].original_tokens.end(),
+                     back_inserter(result));
+            }
+        }
+        return result;
+    }
+
 
 }}
 

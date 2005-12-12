@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cassert>
+#include <cstdio>
 #include <string>
 #include <stdexcept>
 #include <iterator>

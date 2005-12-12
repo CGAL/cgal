@@ -41,10 +41,16 @@ namespace boost { namespace program_options {
         int position_key;
         /** Option's value */
         std::vector< std::basic_string<charT> > value;
+        /** The original unchanged tokens this option was
+            created from. */
+        std::vector< std::basic_string<charT> > original_tokens;
         /** True if option was not recognized. In that case,
             'string_key' and 'value' are results of purely
-            syntactic parsing of source. */
+            syntactic parsing of source. The original tokens can be
+            recovered from the "original_tokens" member.
+        */
         bool unregistered;
+
     };
     typedef basic_option<char> option;
     typedef basic_option<wchar_t> woption;

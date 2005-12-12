@@ -268,23 +268,14 @@ public:
     for(;first!=last;++first)hint=insert(hint,*first);
   }
 
-  void erase(iterator position)
+  iterator erase(iterator position)
   {
     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(position);
     BOOST_MULTI_INDEX_CHECK_DEREFERENCEABLE_ITERATOR(position);
     BOOST_MULTI_INDEX_CHECK_IS_OWNER(position,*this);
     BOOST_MULTI_INDEX_ORD_INDEX_CHECK_INVARIANT;
-
-#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
-    /* MSVC++ 6.0 optimizer on safe mode code chokes if this
-     * this is not added. Left it for all compilers as it does no
-     * harm.
-     */
-
-    position.detach();
-#endif
-
-    this->final_erase_(static_cast<final_node_type*>(position.get_node()));
+    this->final_erase_(static_cast<final_node_type*>(position++.get_node()));
+    return position;
   }
   
   size_type erase(key_param_type x)
@@ -293,13 +284,13 @@ public:
     std::pair<iterator,iterator> p=equal_range(x);
     size_type s=0;
     while(p.first!=p.second){
-      erase(p.first++);
+      p.first=erase(p.first);
       ++s;
     }
     return s;
   }
 
-  void erase(iterator first,iterator last)
+  iterator erase(iterator first,iterator last)
   {
     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(first);
     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(last);
@@ -308,8 +299,9 @@ public:
     BOOST_MULTI_INDEX_CHECK_VALID_RANGE(first,last);
     BOOST_MULTI_INDEX_ORD_INDEX_CHECK_INVARIANT;
     while(first!=last){
-      erase(first++);
+      first=erase(first);
     }
+    return first;
   }
 
   bool replace(iterator position,value_param_type x)

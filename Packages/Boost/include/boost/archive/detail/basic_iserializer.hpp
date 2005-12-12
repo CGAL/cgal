@@ -18,6 +18,8 @@
 
 #include <cassert>
 #include <cstdlib> // NULL
+#include <boost/config.hpp>
+
 #include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/detail/basic_serializer.hpp>
 
@@ -45,7 +47,11 @@ protected:
     explicit basic_iserializer(
         const boost::serialization::extended_type_info & type_
     );
-    virtual ~basic_iserializer();
+    // account for bogus gcc warning
+    #if defined(__GNUC__)
+    virtual
+    #endif
+    ~basic_iserializer();
 public:
     bool serialized_as_pointer() const {
         return bpis != NULL;
@@ -56,15 +62,6 @@ public:
     const basic_pointer_iserializer * get_bpis_ptr() const {
         return bpis;
     }
-#if 0
-    virtual void load_object_data(
-        basic_iarchive & ar, 
-        void *x,
-        const unsigned int file_version
-    ) const {
-        assert(false);
-    };
-#endif
     virtual void load_object_data(
         basic_iarchive & ar, 
         void *x,

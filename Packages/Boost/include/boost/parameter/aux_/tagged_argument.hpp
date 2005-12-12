@@ -8,6 +8,7 @@
 
 #include <boost/parameter/aux_/void.hpp>
 #include <boost/parameter/aux_/arg_list.hpp>
+#include <boost/detail/is_xxx.hpp>
 
 namespace boost { namespace parameter { namespace aux {
 
@@ -46,7 +47,7 @@ struct tagged_argument
 
 // Defines a metafunction, is_tagged_argument, that identifies
 // tagged_argument specializations.
-BOOST_PYTHON_IS_XXX_DEF(tagged_argument,tagged_argument,2)
+BOOST_DETAIL_IS_XXX_DEF(tagged_argument,tagged_argument,2)
 
 }}} // namespace boost::parameter::aux
 

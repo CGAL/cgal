@@ -65,7 +65,6 @@ protected:
     BOOST_ARCHIVE_DECL(void) 
     save(const std::wstring &ws);
     #endif
-protected:
     BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
     text_oarchive_impl(std::ostream & os, unsigned int flags);
     BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 

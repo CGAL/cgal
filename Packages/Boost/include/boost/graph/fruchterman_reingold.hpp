@@ -131,41 +131,21 @@ struct grid_force_pairs
             apply_force(*v, *u);
           }
 
-          // Repulse vertices in the bucket to the right
-          if (column < columns - 1) {
-            bucket_t& r_bucket = buckets[row * columns + column + 1];
-            for (v = r_bucket.begin(); v != r_bucket.end(); ++v) {
-              apply_force(*u, *v);
-              apply_force(*v, *u);
-            }
-          }
-
-          // Repulse vertices in bucket below
-          if (row < rows - 1) {
-            bucket_t& b_bucket = buckets[(row + 1) * columns + column];
-            for (v = b_bucket.begin(); v != b_bucket.end(); ++v) {
-              apply_force(*u, *v);
-              apply_force(*v, *u);
-            }
-          }
-
-          // Repulse vertices in bucket below and to the right
-          if (column < columns - 1 && row < rows - 1) {
-            bucket_t& br_bucket = buckets[(row + 1) * columns + column + 1];
-            for (v = br_bucket.begin(); v != br_bucket.end(); ++v) {
-              apply_force(*u, *v);
-              apply_force(*v, *u);
-            }
-          }
-          
-          // Repulse vertices in bucket above and to the right
-          if (column < columns - 1 && row > 0) {
-            bucket_t& ur_bucket = buckets[(row - 1) * columns + column + 1];
-            for (v = ur_bucket.begin(); v != ur_bucket.end(); ++v) {
-              apply_force(*u, *v);
-              apply_force(*v, *u);
-            }
-          }
+          std::size_t adj_start_row = row == 0? 0 : row - 1;
+          std::size_t adj_end_row = row == rows - 1? row : row + 1;
+          std::size_t adj_start_column = column == 0? 0 : column - 1;
+          std::size_t adj_end_column = column == columns - 1? column : column + 1;
+          for (std::size_t other_row = adj_start_row; other_row <= adj_end_row;
+               ++other_row)
+            for (std::size_t other_column = adj_start_column; 
+                 other_column <= adj_end_column; ++other_column)
+              if (other_row != row || other_column != column) {
+                // Repulse vertices in this bucket
+                bucket_t& other_bucket 
+                  = buckets[other_row * columns + other_column];
+                for (v = other_bucket.begin(); v != other_bucket.end(); ++v)
+                  apply_force(*u, *v);
+              }
         }
       }
   }

@@ -8,9 +8,7 @@
 #if !defined(FUSION_ALGORITHM_PUSH_FRONT_HPP)
 #define FUSION_ALGORITHM_PUSH_FRONT_HPP
 
-#include <boost/spirit/fusion/sequence/single_view.hpp>
-#include <boost/spirit/fusion/sequence/joint_view.hpp>
-#include <boost/spirit/fusion/sequence/detail/sequence_base.hpp>
+#include <boost/spirit/fusion/sequence/prepend_view.hpp>
 
 namespace boost { namespace fusion
 {
@@ -19,7 +17,7 @@ namespace boost { namespace fusion
         template <typename Sequence, typename T>
         struct push_front
         {
-            typedef joint_view<single_view<T>, Sequence> type;
+            typedef prepend_view<Sequence, T> type;
         };
     }
 
@@ -34,18 +32,16 @@ namespace boost { namespace fusion
             inline typename apply<Sequence const, T>::type
             operator()(Sequence const& seq, T const& x) const
             {
-                typedef joint_view<single_view<T>, Sequence const> result;
-                single_view<T> val(x);
-                return result(val, seq);
+                typedef prepend_view<Sequence const, T> result;
+                return result(seq, x);
             }
 
             template <typename Sequence, typename T>
             inline typename apply<Sequence, T>::type
             operator()(Sequence& seq, T const& x) const
             {
-                typedef joint_view<single_view<T>, Sequence> result;
-                single_view<T> val(x);
-                return result(val, seq);
+                typedef prepend_view<Sequence, T> result;
+                return result(seq, x);
             }
         };
     }

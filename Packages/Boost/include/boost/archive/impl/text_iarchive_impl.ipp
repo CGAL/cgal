@@ -92,6 +92,18 @@ text_iarchive_impl<Archive>::load(std::wstring &ws)
 #endif // BOOST_NO_CWCHAR
 
 template<class Archive>
+BOOST_ARCHIVE_DECL(void)
+text_iarchive_impl<Archive>::load_override(class_name_type & t, int){
+    basic_text_iarchive<Archive>::load_override(t, 0);
+}
+
+template<class Archive>
+BOOST_ARCHIVE_DECL(void)
+text_iarchive_impl<Archive>::init(){
+    basic_text_iarchive<Archive>::init();
+}
+
+template<class Archive>
 BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
 text_iarchive_impl<Archive>::text_iarchive_impl(
     std::istream & is, 

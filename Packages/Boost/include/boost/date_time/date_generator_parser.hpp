@@ -7,7 +7,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 
+ * $Date$
  */
 
 
@@ -20,7 +20,11 @@
 namespace boost { namespace date_time {
 
   //! Class for date_generator parsing 
-  /*! The elements of a date_generator "phrase" are parsed from the input stream in a particular order. All elements are required and the order in which they appear cannot change, however, the elements themselves can be changed. The default elements and their order are as follows:
+  /*! The elements of a date_generator "phrase" are parsed from the input stream in a 
+   *  particular order. All elements are required and the order in which they appear 
+   *  cannot change, however, the elements themselves can be changed. The default 
+   *  elements and their order are as follows:
+   *
    * - partial_date                     => "dd Month"
    * - nth_day_of_the_week_in_month     => "nth weekday of month"
    * - first_day_of_the_week_in_month   => "first weekday of month"
@@ -30,24 +34,22 @@ namespace boost { namespace date_time {
    *
    * Weekday and Month names and formats are handled via the date_input_facet. 
    *
-   * TODO: add doc-comments for which elements can be changed
    */
   template<class date_type, typename charT>
   class date_generator_parser
   {
    public:
     typedef std::basic_string<charT>        string_type;
-    //typedef std::basic_stringstream<charT>  stringstream_type;
     typedef std::istreambuf_iterator<charT> stream_itr_type;
-    //typedef typename string_type::const_iterator const_itr;
-    //typedef typename date_type::year_type  year_type;
-    typedef typename date_type::month_type month_type;
-    //typedef typename date_type::duration_type duration_type;
+
+    typedef typename date_type::month_type       month_type;
     typedef typename date_type::day_of_week_type day_of_week_type;
-    typedef typename date_type::day_type day_type;
-    typedef string_parse_tree<charT> parse_tree_type;
+    typedef typename date_type::day_type         day_type;
+
+    typedef string_parse_tree<charT>                          parse_tree_type;
     typedef typename parse_tree_type::parse_match_result_type match_results;
-    typedef std::vector<std::basic_string<charT> > collection_type;
+    typedef std::vector<std::basic_string<charT> >            collection_type;
+
     typedef partial_date<date_type>          partial_date_type;
     typedef nth_kday_of_month<date_type>     nth_kday_type;
     typedef first_kday_of_month<date_type>   first_kday_type;
@@ -73,56 +75,52 @@ namespace boost { namespace date_time {
     date_generator_parser()
     {
       element_strings(string_type(first_string),
-                  string_type(second_string),
-                  string_type(third_string),
-                  string_type(fourth_string),
-                  string_type(fifth_string),
-                  string_type(last_string),
-                  string_type(before_string),
-                  string_type(after_string),
-                  string_type(of_string));
+                      string_type(second_string),
+                      string_type(third_string),
+                      string_type(fourth_string),
+                      string_type(fifth_string),
+                      string_type(last_string),
+                      string_type(before_string),
+                      string_type(after_string),
+                      string_type(of_string));
     }
 
     //! Creates a date_generator_parser using a user defined set of element strings
-    date_generator_parser(const string_type& first,
-                          const string_type& second,
-                          const string_type& third,
-                          const string_type& fourth,
-                          const string_type& fifth,
-                          const string_type& last,
-                          const string_type& before,
-                          const string_type& after,
-                          const string_type& of)
+    date_generator_parser(const string_type& first_str,
+                          const string_type& second_str,
+                          const string_type& third_str,
+                          const string_type& fourth_str,
+                          const string_type& fifth_str,
+                          const string_type& last_str,
+                          const string_type& before_str,
+                          const string_type& after_str,
+                          const string_type& of_str)
     {
-      element_strings(first, second, third, fourth, fifth, last, before, after, of);
-    }
-
-    date_generator_parser(const date_generator_parser<date_type,charT>* dgp)
-    {
-      this->m_element_strings = dgp.m_element_strings;
+      element_strings(first_str, second_str, third_str, fourth_str, fifth_str, 
+                      last_str, before_str, after_str, of_str);
     }
 
     //! Replace strings that determine nth week for generator
-    void element_strings(const string_type& first,
-                     const string_type& second,
-                     const string_type& third,
-                     const string_type& fourth,
-                     const string_type& fifth,
-                     const string_type& last,
-                     const string_type& before,
-                     const string_type& after,
-                     const string_type& of)
+    void element_strings(const string_type& first_str,
+                         const string_type& second_str,
+                         const string_type& third_str,
+                         const string_type& fourth_str,
+                         const string_type& fifth_str,
+                         const string_type& last_str,
+                         const string_type& before_str,
+                         const string_type& after_str,
+                         const string_type& of_str)
     {
       collection_type phrases;
-      phrases.push_back(first);
-      phrases.push_back(second);
-      phrases.push_back(third);
-      phrases.push_back(fourth);
-      phrases.push_back(fifth);
-      phrases.push_back(last);
-      phrases.push_back(before);
-      phrases.push_back(after);
-      phrases.push_back(of);
+      phrases.push_back(first_str);
+      phrases.push_back(second_str);
+      phrases.push_back(third_str);
+      phrases.push_back(fourth_str);
+      phrases.push_back(fifth_str);
+      phrases.push_back(last_str);
+      phrases.push_back(before_str);
+      phrases.push_back(after_str);
+      phrases.push_back(of_str);
       m_element_strings = parse_tree_type(phrases, this->first); // enum first
     }
 

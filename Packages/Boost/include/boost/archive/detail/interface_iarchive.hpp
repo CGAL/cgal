@@ -18,7 +18,6 @@
 #include <string>
 #include <boost/cstdint.hpp>
 #include <boost/mpl/bool.hpp>
-
 #include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
@@ -41,14 +40,8 @@ protected:
 public:
     /////////////////////////////////////////////////////////
     // archive public interface
-    struct is_loading {
-        typedef mpl::bool_<true> type;
-        BOOST_STATIC_CONSTANT(bool, value=true);
-    };
-    struct is_saving {
-        typedef mpl::bool_<false> type;
-        BOOST_STATIC_CONSTANT(bool, value=false);
-    };
+    typedef mpl::bool_<true> is_loading;
+    typedef mpl::bool_<false> is_saving;
 
     // return a pointer to the most derived class
     Archive * This(){
@@ -56,7 +49,7 @@ public:
     }
 
     template<class T>
-    const basic_pointer_iserializer * register_type(T * t = NULL){
+    const basic_pointer_iserializer * register_type(T * = NULL){
         const basic_pointer_iserializer & bpis =
             archive::detail::instantiate_pointer_iserializer(
                 static_cast<Archive *>(NULL),
@@ -65,19 +58,18 @@ public:
         this->This()->register_basic_serializer(bpis.get_basic_serializer());
         return & bpis;
     }
-
     void lookup_helper(
         const boost::serialization::extended_type_info * const eti,
-        shared_ptr<void> & sph
+        boost::shared_ptr<void> & sph
     ){
-        this->This()->basic_iarchive::lookup_basic_helper(eti, sph);
+        this->This()->lookup_basic_helper(eti, sph);
     }
 
     void insert_helper(
         const boost::serialization::extended_type_info * const eti,
         shared_ptr<void> & sph
     ){
-        this->This()->basic_iarchive::insert_basic_helper(eti, sph);
+        this->This()->insert_basic_helper(eti, sph);
     }
     template<class T>
     Archive & operator>>(T & t){

@@ -201,12 +201,12 @@ namespace boost {
     template<typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type&
     operator[](Descriptor x)
-    { return this->m_g[local_to_global(x)]; }
+    { return const_cast<Graph&>(this->m_g)[x]; }
 
     template<typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type const&
     operator[](Descriptor x) const
-    { return this->m_g[local_to_global(x)]; }
+    { return this->m_g[x]; }
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
     //private:

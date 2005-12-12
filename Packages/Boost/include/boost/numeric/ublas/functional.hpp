@@ -36,6 +36,8 @@ namespace boost { namespace numeric { namespace ublas { namespace raw {
 #include <boost/numeric/bindings/atlas/cblas.hpp>
 #endif
 
+#include <boost/numeric/ublas/detail/definitions.hpp>
+
 
 
 namespace boost { namespace numeric { namespace ublas {
@@ -1390,6 +1392,7 @@ namespace boost { namespace numeric { namespace ublas {
         size_type element (size_type i, size_type size1, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (i < size1, bad_index ());
             BOOST_UBLAS_CHECK (j < size2, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
             // Guard against size_type overflow
             BOOST_UBLAS_CHECK (i <= ((std::numeric_limits<size_type>::max) () - j) / size2, bad_index ());
             return i * size2 + j;
@@ -1401,6 +1404,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (j <= size2, bad_index ());
             // Guard against size_type overflow - address may be size2 past end of storage
             BOOST_UBLAS_CHECK (size2 == 0 || i <= ((std::numeric_limits<size_type>::max) () - j) / size2, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
             return i * size2 + j;
         }
         static
@@ -1458,6 +1462,8 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (i < size1, bad_index ());
             BOOST_UBLAS_CHECK (j < size2, bad_index ());
             BOOST_UBLAS_CHECK (i >= j, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
+            detail::ignore_unused_variable_warning(size2);
             // FIXME size_type overflow
             // sigma_i (i + 1) = (i + 1) * i / 2
             // i = 0 1 2 3, sigma = 0 1 3 6
@@ -1479,24 +1485,28 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         size_type element1 (size_type i, size_type size1, size_type /* j */, size_type /* size2 */) {
             BOOST_UBLAS_CHECK (i < size1, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
             return i;
         }
         static
         BOOST_UBLAS_INLINE
         size_type element2 (size_type /* i */, size_type /* size1 */, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (j < size2, bad_index ());
+            detail::ignore_unused_variable_warning(size2);
             return j;
         }
         static
         BOOST_UBLAS_INLINE
         size_type address1 (size_type i, size_type size1, size_type /* j */, size_type /* size2 */) {
             BOOST_UBLAS_CHECK (i <= size1, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
             return i;
         }
         static
         BOOST_UBLAS_INLINE
         size_type address2 (size_type /* i */, size_type /* size1 */, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (j <= size2, bad_index ());
+            detail::ignore_unused_variable_warning(size2);
             return j;
         }
         static
@@ -1569,6 +1579,7 @@ namespace boost { namespace numeric { namespace ublas {
         size_type element (size_type i, size_type size1, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (i < size1, bad_index ());
             BOOST_UBLAS_CHECK (j < size2, bad_index ());
+            detail::ignore_unused_variable_warning(size2);
             // Guard against size_type overflow
             BOOST_UBLAS_CHECK (j <= ((std::numeric_limits<size_type>::max) () - i) / size1, bad_index ());
             return i + j * size1;
@@ -1578,6 +1589,7 @@ namespace boost { namespace numeric { namespace ublas {
         size_type address (size_type i, size_type size1, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (i <= size1, bad_index ());
             BOOST_UBLAS_CHECK (j <= size2, bad_index ());
+            detail::ignore_unused_variable_warning(size2);
             // Guard against size_type overflow - address may be size1 past end of storage
             BOOST_UBLAS_CHECK (size1 == 0 || j <= ((std::numeric_limits<size_type>::max) () - i) / size1, bad_index ());
             return i + j * size1;
@@ -1658,24 +1670,28 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         size_type element1 (size_type /* i */, size_type /* size1 */, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (j < size2, bad_index ());
+            detail::ignore_unused_variable_warning(size2);
             return j;
         }
         static
         BOOST_UBLAS_INLINE
         size_type element2 (size_type i, size_type size1, size_type /* j */, size_type /* size2 */) {
             BOOST_UBLAS_CHECK (i < size1, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
             return i;
         }
         static
         BOOST_UBLAS_INLINE
         size_type address1 (size_type /* i */, size_type /* size1 */, size_type j, size_type size2) {
             BOOST_UBLAS_CHECK (j <= size2, bad_index ());
+            detail::ignore_unused_variable_warning(size2);
             return j;
         }
         static
         BOOST_UBLAS_INLINE
         size_type address2 (size_type i, size_type size1, size_type /* j */, size_type /* size2 */) {
             BOOST_UBLAS_CHECK (i <= size1, bad_index ());
+            detail::ignore_unused_variable_warning(size1);
             return i;
         }
         static

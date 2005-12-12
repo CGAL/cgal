@@ -24,6 +24,8 @@
 namespace std{ 
     #if defined(__LIBCOMO__)
         using ::mbstate_t;
+    #elif defined(_QNXNTO_)
+        using std::mbstate_t;
     #elif defined(BOOST_DINKUMWARE_STDLIB)
         using ::mbstate_t;
     #elif defined(__SGI_STL_PORT)

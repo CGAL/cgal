@@ -20,10 +20,6 @@
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 
-///////////////////////////////////////////////////////////////////////////////
-// If no other implementation has been designated as default, 
-// use extended_type_info_typeid.hpp
-
 namespace boost {
 namespace serialization {
 template<class T>

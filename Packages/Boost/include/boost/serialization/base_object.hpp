@@ -32,29 +32,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/force_include.hpp>
-
-// if no archive headers have been included
-// skip inclusion of void_cast.hpp .  This is to avoid auto-link when
-// a module doesn't doesn't actually invoke serializaton but rather
-// just declares it.
-
-#if ! defined(BOOST_ARCHIVE_BASIC_ARCHIVE_HPP)
-    namespace boost {
-    namespace serialization {
-    namespace void_cast_detail{
-    class void_caster;
-    } // namespace void_cast_detail
-    template<class Derived, class Base>
-    BOOST_DLLEXPORT 
-    inline const void_cast_detail::void_caster & void_cast_register(
-        const Derived * /* dnull = NULL */, 
-        const Base * /* bnull = NULL */
-    ) BOOST_USED;
-    } // namespace serialization
-    } // namespace boost
-#else
-    #include <boost/serialization/void_cast.hpp>
-#endif
+#include <boost/serialization/void_cast_fwd.hpp>
 
 namespace boost {
 namespace serialization {

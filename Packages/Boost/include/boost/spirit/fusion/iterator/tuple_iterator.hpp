@@ -60,7 +60,7 @@ namespace boost { namespace fusion
             >::type
         type;
 
-#if BOOST_WORKAROUND(BOOST_MSVC,==1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
         tuple_iterator(tuple_iterator const& i);
 #else
         template <int N2, typename Tuple2>
@@ -76,7 +76,7 @@ namespace boost { namespace fusion
         tuple& t;
     };
 
-#if BOOST_WORKAROUND(BOOST_MSVC,==1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
     template <int N, typename Tuple>
     tuple_iterator<N,Tuple>::tuple_iterator(tuple_iterator const& i)
     : t(static_cast<tuple&>(i.get_tuple())) {}

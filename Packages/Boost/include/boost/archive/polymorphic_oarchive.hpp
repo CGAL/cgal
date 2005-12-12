@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // polymorphic_oarchive.hpp
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -21,8 +21,8 @@
 
 #include <boost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
-    using ::size_t; 
+namespace std{
+    using ::size_t;
 } // namespace std
 #endif
 
@@ -41,7 +41,12 @@ namespace std{
 #   define BOOST_NO_INTRINSIC_INT64_T
 #endif
 
-namespace boost { 
+namespace boost {
+template<class T>
+class shared_ptr;
+namespace serialization {
+    class extended_type_info;
+} // namespace serialization
 namespace archive {
 namespace detail {
     class basic_oarchive;
@@ -92,6 +97,14 @@ public:
     virtual void save_start(const char * name) = 0;
     virtual void save_end(const char * name) = 0;
     virtual void register_basic_serializer(const detail::basic_oserializer & bos) = 0;
+    virtual void lookup_basic_helper(
+        const boost::serialization::extended_type_info * const eti,
+                boost::shared_ptr<void> & sph
+    ) = 0;
+    virtual void insert_basic_helper(
+        const boost::serialization::extended_type_info * const eti,
+                shared_ptr<void> & sph
+    ) = 0;
 
     virtual unsigned int get_library_version() const = 0;
     virtual void end_preamble() = 0;
@@ -121,7 +134,7 @@ public:
     virtual void save_binary(const void * t, std::size_t size) = 0;
 
     virtual void save_object(
-        const void *x, 
+        const void *x,
         const detail::basic_oserializer & bos
     ) = 0;
     virtual void save_pointer(
@@ -133,7 +146,7 @@ public:
 } // namespace archive
 } // namespace boost
 
-// required by smart_cast for compilers not implementing 
+// required by smart_cast for compilers not implementing
 // partial template specialization
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(boost::archive::polymorphic_oarchive)
 

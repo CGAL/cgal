@@ -17,7 +17,6 @@
 #include <boost/signals/trackable.hpp>
 #include <boost/signals/slot.hpp>
 #include <boost/smart_ptr.hpp>
-#include <boost/any.hpp>
 #include <boost/utility.hpp>
 #include <boost/function/function2.hpp>
 #include <utility>
@@ -46,7 +45,7 @@ namespace boost {
       public:
         friend class call_notification;
 
-        typedef function2<bool, any, any> compare_type;
+        typedef function2<bool, stored_group, stored_group> compare_type;
 
         // Make sure that an exception does not cause the "clearing" flag to
         // remain set
@@ -81,13 +80,13 @@ namespace boost {
         std::size_t num_slots() const;
 
         // Disconnect all slots in the given group
-        void disconnect(const any&);
+        void disconnect(const stored_group&);
 
         // We're being notified that a slot has disconnected
         static void slot_disconnected(void* obj, void* data);
 
         connection connect_slot(const any& slot,
-                                const any& name,
+                                const stored_group& name,
                                 shared_ptr<slot_base::data_t> data,
                                 connect_position at);
 
@@ -138,7 +137,7 @@ namespace boost {
 
       protected:
         connection connect_slot(const any& slot,
-                                const any& name,
+                                const stored_group& name,
                                 shared_ptr<slot_base::data_t> data,
                                 connect_position at)
         {

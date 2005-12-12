@@ -29,14 +29,14 @@
 # endif
 
 # if defined(BOOST_MSVC)
-#  if _MSC_VER <= 1200
+#  if _MSC_VER < 1300
 #   define BOOST_MSVC6_OR_EARLIER 1
 #  endif
 
-# pragma warning (disable : 4786) // disable truncated debug symbols
-# pragma warning (disable : 4251) // disable exported dll function
-# pragma warning (disable : 4800) //'int' : forcing value to bool 'true' or 'false'
-# pragma warning (disable : 4275) // non dll-interface class
+#  pragma warning (disable : 4786) // disable truncated debug symbols
+#  pragma warning (disable : 4251) // disable exported dll function
+#  pragma warning (disable : 4800) //'int' : forcing value to bool 'true' or 'false'
+#  pragma warning (disable : 4275) // non dll-interface class
 
 # elif defined(__ICL) && __ICL < 600 // Intel C++ 5
 
@@ -68,13 +68,13 @@
 
 #if defined(BOOST_PYTHON_DYNAMIC_LIB)
 
-#  if !defined(_WIN32) && !defined(__CYGWIN__)                  \
-    && defined(__GNUC__) && __GNUC__ >= 3 && __GNUC_MINOR__ >=5 \
-    && !defined(BOOST_PYTHON_GCC_SYMBOL_VISIBILITY)
-#    define BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY
+#  if !defined(_WIN32) && !defined(__CYGWIN__)                                  \
+    && !defined(BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY)                         \
+    && BOOST_WORKAROUND(__GNUC__, >= 3) && (__GNUC_MINOR__ >=5 || __GNUC__ > 3)
+#    define BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY 1
 #  endif 
 
-#  if defined(BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY)
+#  if BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY
 #     if defined(BOOST_PYTHON_SOURCE)
 #        define BOOST_PYTHON_DECL __attribute__ ((visibility("default")))
 #        define BOOST_PYTHON_BUILD_DLL

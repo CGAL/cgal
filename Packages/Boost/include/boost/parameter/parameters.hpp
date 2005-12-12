@@ -6,6 +6,8 @@
 #ifndef BOOST_PARAMETERS_031014_HPP
 #define BOOST_PARAMETERS_031014_HPP
 
+#include <boost/detail/is_xxx.hpp>
+
 #include <boost/mpl/lambda.hpp>
 #include <boost/mpl/apply.hpp>
 #include <boost/mpl/always.hpp>
@@ -18,8 +20,6 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/iterator/detail/config_def.hpp>
-#include <boost/python/detail/is_xxx.hpp>
 
 #include <boost/preprocessor/repetition/enum.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
@@ -41,6 +41,7 @@
 #include <boost/parameter/aux_/tagged_argument.hpp>
 #include <boost/parameter/aux_/tag.hpp>
 #include <boost/parameter/config.hpp>
+
 
 namespace boost {
 
@@ -89,8 +90,8 @@ namespace aux
 {
   // Defines metafunctions, is_required and is_optional, that
   // identify required<...> and optional<...> specializations.
-  BOOST_PYTHON_IS_XXX_DEF(required, required, 2)
-  BOOST_PYTHON_IS_XXX_DEF(optional, optional, 2)
+  BOOST_DETAIL_IS_XXX_DEF(required, required, 2)
+  BOOST_DETAIL_IS_XXX_DEF(optional, optional, 2)
 
   //
   // key_type, has_default, and predicate --
@@ -450,7 +451,5 @@ struct parameters
 
 } // namespace boost
 
-#include <boost/iterator/detail/config_undef.hpp>
- 
 #endif // BOOST_PARAMETERS_031014_HPP
 

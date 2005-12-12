@@ -973,13 +973,13 @@ namespace boost { namespace numeric { namespace ublas {
     // Simple Projections
     template<class V>
     BOOST_UBLAS_INLINE
-    vector_slice<V> subslice (V &data, typename V::size_type_t start, typename V::differenece_type stride, typename V::size_type size) {
+    vector_slice<V> subslice (V &data, typename V::size_type start, typename V::difference_type stride, typename V::size_type size) {
         typedef basic_slice<typename V::size_type, typename V::difference_type> slice_type;
         return vector_slice<V> (data, slice_type (start, stride, size));
     }
     template<class V>
     BOOST_UBLAS_INLINE
-    vector_slice<const V> subslice (const V &data, typename V::size_type start, typename V::differenece_type stride, typename V::size_type size)  {
+    vector_slice<const V> subslice (const V &data, typename V::size_type start, typename V::difference_type stride, typename V::size_type size)  {
         typedef basic_slice<typename V::size_type, typename V::difference_type> slice_type;
         return vector_slice<const V> (data, slice_type (start, stride, size));
     }

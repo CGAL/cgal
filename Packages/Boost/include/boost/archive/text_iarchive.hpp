@@ -63,6 +63,10 @@ protected:
     void load_override(T & t, BOOST_PFTO int){
         basic_text_iarchive<Archive>::load_override(t, 0);
     }
+    BOOST_ARCHIVE_DECL(void)
+    load_override(class_name_type & t, int);
+    BOOST_ARCHIVE_DECL(void)
+    init();
     BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
     text_iarchive_impl(std::istream & is, unsigned int flags);
     BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 

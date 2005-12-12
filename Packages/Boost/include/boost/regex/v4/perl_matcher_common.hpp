@@ -35,10 +35,17 @@ template <class BidiIterator, class Allocator, class traits>
 perl_matcher<BidiIterator, Allocator, traits>::perl_matcher(BidiIterator first, BidiIterator end, 
    match_results<BidiIterator, Allocator>& what, 
    const basic_regex<char_type, traits>& e,
-   match_flag_type f)
+   match_flag_type f,
+   BidiIterator b)
    :  m_result(what), base(first), last(end), 
-      position(first), re(e), traits_inst(e.get_traits()), 
+      position(first), backstop(b), re(e), traits_inst(e.get_traits()), 
       m_independent(false), next_count(&rep_obj), rep_obj(&next_count)
+{
+   construct_init(e, f);
+}
+
+template <class BidiIterator, class Allocator, class traits>
+void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_regex<char_type, traits>& e, match_flag_type f)
 { 
    typedef typename regex_iterator_traits<BidiIterator>::iterator_category category;
    
@@ -152,7 +159,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_imp()
    search_base = base;
    state_count = 0;
    m_match_flags |= regex_constants::match_all;
-   m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), base, last);
+   m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), search_base, last);
    m_presult->set_base(base);
    if(m_match_flags & match_posix)
       m_result = *m_presult;
@@ -211,8 +218,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_imp()
    if((m_match_flags & regex_constants::match_init) == 0)
    {
       // reset our state machine:
-      position = base;
-      search_base = base;
+      search_base = position = base;
       pstate = re.get_first_state();
       m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), base, last);
       m_presult->set_base(base);
@@ -233,8 +239,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_imp()
       }
       // reset $` start:
       m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), search_base, last);
-      if(base != search_base)
-         m_match_flags |= match_prev_avail;
+      //if((base != search_base) && (base == backstop))
+      //   m_match_flags |= match_prev_avail;
    }
    if(m_match_flags & match_posix)
    {
@@ -337,7 +343,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_literal()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_start_line()
 {
-   if(position == base)
+   if(position == backstop)
    {
       if((m_match_flags & match_prev_avail) == 0)
       {
@@ -381,7 +387,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_end_line()
       // we're not yet at the end so *first is always valid:
       if(is_separator(*position))
       {
-         if((position != base) || (m_match_flags & match_prev_avail))
+         if((position != backstop) || (m_match_flags & match_prev_avail))
          {
             // check that we're not in the middle of \r\n sequence
             BidiIterator t(position);
@@ -463,7 +469,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary()
    {
       b = (m_match_flags & match_not_eow) ? true : false;
    }
-   if((position == base)  && ((m_match_flags & match_prev_avail) == 0))
+   if((position == backstop) && ((m_match_flags & match_prev_avail) == 0))
    {
       if(m_match_flags & match_not_bow)
          b ^= true;
@@ -493,7 +499,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_within_word()
    if(traits_inst.isctype(*position, m_word_mask))
    {
       bool b;
-      if((position == base) && ((m_match_flags & match_prev_avail) == 0))
+      if((position == backstop) && ((m_match_flags & match_prev_avail) == 0)) 
          return false;
       else
       {
@@ -517,7 +523,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_start()
       return false; // can't be starting a word if we're already at the end of input
    if(!traits_inst.isctype(*position, m_word_mask))
       return false; // next character isn't a word character
-   if((position == base) && ((m_match_flags & match_prev_avail) == 0))
+   if((position == backstop) && ((m_match_flags & match_prev_avail) == 0))
    {
       if(m_match_flags & match_not_bow)
          return false; // no previous input
@@ -538,7 +544,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_start()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_word_end()
 {
-   if((position == base) && ((m_match_flags & match_prev_avail) == 0))
+   if((position == backstop) && ((m_match_flags & match_prev_avail) == 0))
       return false;  // start of buffer can't be end of word
    BidiIterator t(position);
    --t;
@@ -563,7 +569,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_end()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_buffer_start()
 {
-   if((position != base) || (m_match_flags & match_not_bob))
+   if((position != backstop) || (m_match_flags & match_not_bob))
       return false;
    // OK match:
    pstate = pstate->next.p;
@@ -676,12 +682,32 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_restart_continue()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
 {
-   std::ptrdiff_t maxlen = ::boost::re_detail::distance(search_base, position);
-   if(maxlen < static_cast<const re_brace*>(pstate)->index)
-      return false;
-   std::advance(position, -static_cast<const re_brace*>(pstate)->index);
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4127)
+#endif
+   if( ::boost::is_random_access_iterator<BidiIterator>::value)
+   {
+      std::ptrdiff_t maxlen = ::boost::re_detail::distance(backstop, position);
+      if(maxlen < static_cast<const re_brace*>(pstate)->index)
+         return false;
+      std::advance(position, -static_cast<const re_brace*>(pstate)->index);
+   }
+   else
+   {
+      int c = static_cast<const re_brace*>(pstate)->index;
+      while(c--)
+      {
+         if(position == backstop)
+            return false;
+         --position;
+      }
+   }
    pstate = pstate->next.p;
    return true;
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 }
 
 template <class BidiIterator, class Allocator, class traits>

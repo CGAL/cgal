@@ -17,7 +17,7 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 #include <cassert>
-
+#include <boost/config.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_const.hpp>
 
@@ -42,10 +42,14 @@ namespace detail {
 class BOOST_SERIALIZATION_DECL(BOOST_PP_EMPTY()) extended_type_info_no_rtti_0 : 
     public extended_type_info
 {
-protected:
     virtual bool
     less_than(const boost::serialization::extended_type_info &rhs) const ;
+protected:
     extended_type_info_no_rtti_0();
+    // account for bogus gcc warning
+    #if defined(__GNUC__)
+    virtual
+    #endif
     ~extended_type_info_no_rtti_0();
 public:
     struct is_polymorphic
@@ -59,11 +63,11 @@ template<class T>
 class extended_type_info_no_rtti_1 : 
     public extended_type_info_no_rtti_0
 {
-private:
-    // private constructor to inhibit any existence other than the 
-    // static one
+protected:
     extended_type_info_no_rtti_1(){}
 public:
+    // note borland complains at making this destructor protected
+    ~extended_type_info_no_rtti_1(){};
     static const boost::serialization::extended_type_info *
     get_derived_extended_type_info(const T & t){
         // find the type that corresponds to the most derived type.
@@ -93,7 +97,12 @@ public:
 template<class T>
 class extended_type_info_no_rtti : 
     public detail::extended_type_info_no_rtti_1<const T>
-{};
+{
+    // private constructor to inhibit any existence other than the 
+    // static one
+    extended_type_info_no_rtti(){}
+    ~extended_type_info_no_rtti(){};
+};
 
 } // namespace serialization
 } // namespace boost

@@ -20,6 +20,10 @@
 #include <boost/multi_index/safe_mode_errors.hpp>
 #include <boost/noncopyable.hpp>
 
+#if defined(BOOST_HAS_THREADS)
+#include <boost/detail/lightweight_mutex.hpp>
+#endif
+
 namespace boost{
 
 namespace multi_index{
@@ -172,12 +176,20 @@ BOOST_MULTI_INDEX_PRIVATE_IF_MEMBER_TEMPLATE_FRIENDS:
 #endif
 
   safe_iterator_base header;
+
+#if defined(BOOST_HAS_THREADS)
+  boost::detail::lightweight_mutex mutex;
+#endif
 };
 
 void safe_iterator_base::attach(safe_container_base* cont_)
 {
   cont=cont_;
   if(cont){
+#if defined(BOOST_HAS_THREADS)
+    boost::detail::lightweight_mutex::scoped_lock lock(cont->mutex);
+#endif
+
     next=cont->header.next;
     cont->header.next=this;
   }
@@ -186,6 +198,10 @@ void safe_iterator_base::attach(safe_container_base* cont_)
 void safe_iterator_base::detach()
 {
   if(cont){
+#if defined(BOOST_HAS_THREADS)
+    boost::detail::lightweight_mutex::scoped_lock lock(cont->mutex);
+#endif
+
     safe_iterator_base *prev_,*next_;
     for(prev_=&cont->header;(next_=prev_->next)!=this;prev_=next_){}
     prev_->next=next;

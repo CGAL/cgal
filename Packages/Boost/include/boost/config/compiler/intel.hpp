@@ -88,6 +88,15 @@
 #  endif
 #endif
 
+#if defined(__GNUC__) && !defined(BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL)
+//
+// Figure out when Intel is emulating this gcc bug:
+//
+#  if ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)) || (BOOST_INTEL <= 900)
+#     define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
+#  endif
+#endif
+
 //
 // Verify that we have actually got BOOST_NO_INTRINSIC_WCHAR_T
 // set correctly, if we don't do this now, we will get errors later

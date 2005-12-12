@@ -63,6 +63,22 @@ namespace boost { namespace fusion
     }
 }}
 
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+
+namespace boost { namespace mpl
+{
+    template <typename Iterator>
+    struct next;
+
+    template <typename Cons>
+    struct next<fusion::cons_iterator<Cons> >
+        : fusion::cons_detail::next_traits_impl<fusion::cons_iterator<Cons> >
+    {
+    };
+}}
+
+#endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
 #endif
 
 

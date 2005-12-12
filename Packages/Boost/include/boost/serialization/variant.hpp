@@ -98,10 +98,11 @@ struct variant_impl {
                 // necessary has to copy the value.  This wouldn't be necessary
                 // with an implementation that de-serialized to the address of the
                 // aligned storage included in the variant.
-                BOOST_DEDUCED_TYPENAME mpl::front<S>::type value;
+                typedef BOOST_DEDUCED_TYPENAME mpl::front<S>::type head_type;
+                head_type value;
                 ar >> BOOST_SERIALIZATION_NVP(value);
                 v = value;
-                ar.reset_object_address(& v, & value);
+                ar.reset_object_address(& boost::get<head_type>(v), & value);
                 return;
             }
             typedef BOOST_DEDUCED_TYPENAME mpl::pop_front<S>::type type;

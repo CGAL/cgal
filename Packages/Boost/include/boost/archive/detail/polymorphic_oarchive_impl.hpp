@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // polymorphic_oarchive_impl.hpp
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -24,15 +24,20 @@
 
 #include <boost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
-    using ::size_t; 
+namespace std{
+    using ::size_t;
 } // namespace std
 #endif
 
 #include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
-namespace boost { 
+namespace boost {
+template<class T>
+class shared_ptr;
+namespace serialization {
+    class extended_type_info;
+} // namespace serialization
 namespace archive {
 namespace detail{
 
@@ -40,9 +45,9 @@ class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_oserializer;
 class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_oserializer;
 
 template<class ArchiveImplementation>
-class polymorphic_oarchive_impl : 
+class polymorphic_oarchive_impl :
     public polymorphic_oarchive,
-    // note: gcc dynamic cross cast fails if the the derivation below is 
+    // note: gcc dynamic cross cast fails if the the derivation below is
     // not public.  I think this is a mistake.
     public /*protected*/ ArchiveImplementation,
     private boost::noncopyable
@@ -50,13 +55,13 @@ class polymorphic_oarchive_impl :
 private:
     // these are used by the serialization library.
     virtual void save_object(
-        const void *x, 
+        const void *x,
         const detail::basic_oserializer & bos
     ){
         ArchiveImplementation::save_object(x, bos);
     }
     virtual void save_pointer(
-        const void * t, 
+        const void * t,
         const detail::basic_pointer_oserializer * bpos_ptr
     ){
         ArchiveImplementation::save_pointer(t, bpos_ptr);
@@ -146,13 +151,25 @@ private:
     virtual void register_basic_serializer(const detail::basic_oserializer & bos){
         ArchiveImplementation::register_basic_serializer(bos);
     }
+    virtual void lookup_basic_helper(
+        const boost::serialization::extended_type_info * const eti,
+                shared_ptr<void> & sph
+        ){
+                ArchiveImplementation::lookup_basic_helper(eti, sph);
+        }
+    virtual void insert_basic_helper(
+        const boost::serialization::extended_type_info * const eti,
+                shared_ptr<void> & sph
+        ){
+                ArchiveImplementation::insert_basic_helper(eti, sph);
+        }
 public:
     // the << operator
     template<class T>
     polymorphic_oarchive & operator<<(T & t){
         return polymorphic_oarchive::operator<<(t);
     }
-    // the & operator 
+    // the & operator
     template<class T>
     polymorphic_oarchive & operator&(T & t){
         return polymorphic_oarchive::operator&(t);
@@ -160,7 +177,7 @@ public:
     // all current archives take a stream as constructor argument
     template <class _Elem, class _Tr>
     polymorphic_oarchive_impl(
-        std::basic_ostream<_Elem, _Tr> & os, 
+        std::basic_ostream<_Elem, _Tr> & os,
         unsigned int flags = 0
     ) :
         ArchiveImplementation(os, flags)

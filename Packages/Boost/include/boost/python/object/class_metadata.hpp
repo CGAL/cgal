@@ -30,6 +30,10 @@
 # include <boost/mpl/for_each.hpp>
 # include <boost/mpl/placeholders.hpp>
 # include <boost/mpl/single_view.hpp>
+
+# include <boost/mpl/assert.hpp>
+# include <boost/type_traits/is_same.hpp>
+
 # include <boost/type_traits/is_convertible.hpp>
 
 # include <boost/noncopyable.hpp>
@@ -49,6 +53,12 @@ struct register_base_of
     template <class Base>
     inline void operator()(Base*) const
     {
+# if !BOOST_WORKAROUND(BOOST_MSVC, == 1200)
+        BOOST_MPL_ASSERT_NOT((is_same<Base,Derived>));
+# else
+        BOOST_STATIC_ASSERT(!(is_same<Base,Derived>::value));
+# endif 
+        
         // Register the Base class
         register_dynamic_id<Base>();
 
@@ -58,7 +68,7 @@ struct register_base_of
         // Register the down-cast, if appropriate.
         this->register_downcast((Base*)0, is_polymorphic<Base>());
     }
-    
+
  private:
     static inline void register_downcast(void*, mpl::false_) {}
     
@@ -186,7 +196,7 @@ struct class_metadata
       , mpl::if_<
             use_value_holder
           , value_holder<T>
-          , pointer_holder<held_type,T>
+          , pointer_holder<held_type,wrapped>
         >
     >::type holder;
     
@@ -199,7 +209,8 @@ struct class_metadata
     template <class T2>
     inline static void register_aux(python::wrapper<T2>*) 
     {
-        class_metadata::register_aux2((T2*)0, mpl::true_());
+        typedef typename mpl::not_<is_same<T2,wrapped> >::type use_callback;
+        class_metadata::register_aux2((T2*)0, use_callback());
     }
 
     inline static void register_aux(void*) 
@@ -242,6 +253,7 @@ struct class_metadata
     //
     inline static void maybe_register_class_to_python(void*, mpl::true_) {}
     
+
     template <class T2>
     inline static void maybe_register_class_to_python(T2*, mpl::false_)
     {

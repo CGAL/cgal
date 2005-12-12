@@ -164,7 +164,10 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
                raise_error(traits_inst, regex_constants::error_space);
             if((m_match_flags & match_partial) && (position == last) && (position != search_base))
                m_has_partial_match = true;
-            if(false == unwind(false))
+            bool successful_unwind = unwind(false);
+            if((m_match_flags & match_partial) && (position == last) && (position != search_base))
+               m_has_partial_match = true;
+            if(false == successful_unwind)
                return m_recursive_result;
          }
       }
@@ -517,8 +520,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
       // try and skip the repeat if we can:
       if(take_second)
       {
-         // store position in case we fail:
-         push_non_greedy_repeat(rep->next.p);
+         if((next_count->get_count() < rep->max) && take_first)
+         {
+            // store position in case we fail:
+            push_non_greedy_repeat(rep->next.p);
+         }
          pstate = rep->alt.p;
          return true;
       }

@@ -168,20 +168,30 @@ xml_iarchive_impl<Archive>::xml_iarchive_impl(
     basic_xml_iarchive<Archive>(flags),
     gimpl(new xml_grammar())
 {
-    if(0 == (flags & no_header))
-        init();
+    if(0 == (flags & no_header)){
+        BOOST_TRY{
+            init();
+        }
+        BOOST_CATCH(...){
+            delete gimpl;
+            #ifndef BOOST_NO_EXCEPTIONS
+                throw; // re-throw
+            #endif
+        }
+        BOOST_CATCH_END
+    }
 }
 
 template<class Archive>
 BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY())
 xml_iarchive_impl<Archive>::~xml_iarchive_impl(){
     if(0 == (this->get_flags() & no_header)){
-                BOOST_TRY{
-                        gimpl->windup(is);
-                }
-                BOOST_CATCH(...){}
-            BOOST_CATCH_END
+        BOOST_TRY{
+            gimpl->windup(is);
         }
+        BOOST_CATCH(...){}
+        BOOST_CATCH_END
+    }
     delete gimpl;
 }
 } // namespace archive

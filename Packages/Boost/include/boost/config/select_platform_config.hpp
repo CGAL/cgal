@@ -17,7 +17,7 @@
 // linux:
 #  define BOOST_PLATFORM_CONFIG "boost/config/platform/linux.hpp"
 
-#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 // BSD:
 #  define BOOST_PLATFORM_CONFIG "boost/config/platform/bsd.hpp"
 

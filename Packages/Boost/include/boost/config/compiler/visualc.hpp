@@ -17,8 +17,8 @@
 // turn off the warnings before we #include anything
 #pragma warning( disable : 4503 ) // warning: decorated name length exceeded
 
-#if _MSC_VER < 1300  // 1200 == VC++ 6.0, 1201 == EVC4.2
-#pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
+#if _MSC_VER < 1300  // 1200 == VC++ 6.0, 1200-1202 == eVC++4
+#  pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #  define BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
 #  define BOOST_NO_VOID_RETURNS
 #  define BOOST_NO_EXCEPTION_STD_NAMESPACE
@@ -28,9 +28,9 @@
 
 #if (_MSC_VER <= 1300)  // 1300 == VC++ 7.0
 
-#if !defined(_MSC_EXTENSIONS) && !defined(BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS)      // VC7 bug with /Za
-#  define BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
-#endif
+#  if !defined(_MSC_EXTENSIONS) && !defined(BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS)      // VC7 bug with /Za
+#    define BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
+#  endif
 
 #  define BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
 #  define BOOST_NO_INCLASS_MEMBER_INITIALIZATION
@@ -56,6 +56,7 @@
 #  define BOOST_NO_SFINAE
 #  define BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
 #  define BOOST_NO_IS_ABSTRACT
+// TODO: what version is meant here? Have there really been any fixes in cl 12.01 (as e.g. shipped with eVC4)?
 #  if (_MSC_VER > 1200)
 #     define BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS
 #  endif
@@ -116,16 +117,36 @@
 #  define BOOST_ABI_SUFFIX "boost/config/abi/msvc_suffix.hpp"
 #endif
 
-# if _MSC_VER == 1200
-#   define BOOST_COMPILER_VERSION 6.0
-# elif _MSC_VER == 1300
-#   define BOOST_COMPILER_VERSION 7.0
-# elif _MSC_VER == 1310
-#   define BOOST_COMPILER_VERSION 7.1
-# elif _MSC_VER == 1400
-#   define BOOST_COMPILER_VERSION 8.0
+// TODO:
+// these things are mostly bogus. 1200 means version 12.0 of the compiler. The 
+// artificial versions assigned to them only refer to the versions of some IDE
+// these compilers have been shipped with, and even that is not all of it. Some
+// were shipped with freely downloadable SDKs, others as crosscompilers in eVC.
+// IOW, you can't use these 'versions' in any sensible way. Sorry.
+# if defined(UNDER_CE)
+#   if _MSC_VER < 1200
+      // Note: these are so far off, they are not really supported
+#   elif _MSC_VER < 1300 // eVC++ 4 comes with 1200-1202
+#     define BOOST_COMPILER_VERSION evc4.0
+#     error unknown CE compiler
+#   else
+#     error unknown CE compiler
+#   endif
 # else
-#   define BOOST_COMPILER_VERSION _MSC_VER
+#   if _MSC_VER < 1200
+      // Note: these are so far off, they are not really supported
+#     define BOOST_COMPILER_VERSION 5.0
+#   elif _MSC_VER < 1300
+#       define BOOST_COMPILER_VERSION 6.0
+#   elif _MSC_VER == 1300
+#     define BOOST_COMPILER_VERSION 7.0
+#   elif _MSC_VER == 1310
+#     define BOOST_COMPILER_VERSION 7.1
+#   elif _MSC_VER == 1400
+#     define BOOST_COMPILER_VERSION 8.0
+#   else
+#     define BOOST_COMPILER_VERSION _MSC_VER
+#   endif
 # endif
 
 #define BOOST_COMPILER "Microsoft Visual C++ version " BOOST_STRINGIZE(BOOST_COMPILER_VERSION)
@@ -137,7 +158,7 @@
 #error "Compiler not supported or configured - please reconfigure"
 #endif
 //
-// last known and checked version is 1310:
+// last known and checked version is 1400 (VC8):
 #if (_MSC_VER > 1400)
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"

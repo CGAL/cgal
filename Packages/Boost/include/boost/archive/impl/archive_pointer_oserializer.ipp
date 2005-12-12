@@ -18,10 +18,11 @@ namespace archive {
 namespace detail {
 
 template<class Archive>
-basic_serializer_map & 
+basic_serializer_map *
 oserializer_map(){
-    static basic_serializer_map map;
-    return map;
+    static bool deleted = false;
+    static basic_serializer_map map(deleted);
+    return deleted ? NULL : & map;
 }
 
 template<class Archive>
@@ -29,9 +30,11 @@ BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 archive_pointer_oserializer<Archive>::archive_pointer_oserializer(
     const boost::serialization::extended_type_info & eti
 ) :
-        basic_pointer_oserializer(eti)
+    basic_pointer_oserializer(eti)
 {
-    oserializer_map<Archive>().insert(this);
+    basic_serializer_map *mp = oserializer_map<Archive>();
+    assert(NULL != mp);
+    mp->insert(this);
 }
 
 template<class Archive>
@@ -39,9 +42,20 @@ BOOST_ARCHIVE_OR_WARCHIVE_DECL(const basic_pointer_oserializer *)
 archive_pointer_oserializer<Archive>::find(
     const boost::serialization::extended_type_info & eti
 ){
-    return static_cast<const basic_pointer_oserializer *>(
-        oserializer_map<Archive>().tfind(eti)
-    );
+    basic_serializer_map *mp = oserializer_map<Archive>();
+    assert(NULL != mp);
+    return static_cast<const basic_pointer_oserializer *>(mp->tfind(eti));
+}
+
+template<class Archive>
+BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
+archive_pointer_oserializer<Archive>::~archive_pointer_oserializer(){
+    // note: we need to check that the map still exists as we can't depend
+    // on static variables being constructed in a specific sequence
+    basic_serializer_map *mp = oserializer_map<Archive>();
+    if(NULL == mp)
+        return;
+    mp->erase(this);
 }
 
 } // namespace detail

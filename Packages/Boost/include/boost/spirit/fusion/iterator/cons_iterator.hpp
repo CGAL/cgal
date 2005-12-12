@@ -10,6 +10,8 @@
 #if !defined(FUSION_ITERATOR_CONS_ITERATOR_HPP)
 #define FUSION_ITERATOR_CONS_ITERATOR_HPP
 
+#include <boost/mpl/aux_/na_fwd.hpp>
+#include <boost/mpl/iterator_tags.hpp>
 #include <boost/spirit/fusion/iterator/as_fusion_iterator.hpp>
 #include <boost/spirit/fusion/iterator/detail/iterator_base.hpp>
 #include <boost/spirit/fusion/sequence/detail/sequence_base.hpp>
@@ -28,11 +30,19 @@ namespace boost { namespace fusion
     {
         typedef cons_iterator_tag tag;
         typedef Cons cons_type;
-        
+        typedef mpl::forward_iterator_tag category;
+
+        #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        typedef typename cons_detail::next_traits_impl<cons_iterator>::type next;
+        typedef typename cons_detail::value_traits_impl<cons_iterator>::type type;
+        #endif
+
         explicit cons_iterator(cons_type& cons_)
             : cons(cons_) {}
 
         cons_type& cons;
+    private:
+        cons_iterator& operator=(cons_iterator const&);
     };
 
     template <>
@@ -40,6 +50,13 @@ namespace boost { namespace fusion
     {
         typedef cons_iterator_tag tag;
         typedef nil cons_type;
+        typedef mpl::forward_iterator_tag category;
+
+        #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        typedef cons_iterator next;
+        typedef mpl::na type;
+        #endif
+
         cons_iterator() {}
         explicit cons_iterator(nil const&) {}
     };
@@ -49,6 +66,13 @@ namespace boost { namespace fusion
     {
         typedef cons_iterator_tag tag;
         typedef nil const cons_type;
+        typedef mpl::forward_iterator_tag category;
+
+        #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        typedef cons_iterator next;
+        typedef mpl::na type;
+        #endif
+
         cons_iterator() {}
         explicit cons_iterator(nil const&) {}
     };

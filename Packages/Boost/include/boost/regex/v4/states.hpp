@@ -197,6 +197,7 @@ struct re_set_long : public re_syntax_base
 {
    unsigned int            csingles, cranges, cequivalents;
    mask_type               cclasses;
+   mask_type               cnclasses;
    bool                    isnot;
    bool                    singleton;
 };

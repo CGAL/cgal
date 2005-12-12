@@ -13,6 +13,7 @@
 
 #include <map> // for vertex_map in copy_impl
 #include <boost/config.hpp>
+#include <boost/detail/workaround.hpp>
 #include <boost/operators.hpp>
 #include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
@@ -2669,12 +2670,16 @@ namespace boost {
 #if !defined(BOOST_NO_HASH) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 namespace BOOST_STD_EXTENSION_NAMESPACE {
 
+  #if BOOST_WORKAROUND( _STLPORT_VERSION, >= 0x500 )
+  // STLport 5 already defines a hash<void*> specialization.
+  #else
   template <>
   struct hash< void* > // Need this when vertex_descriptor=void*
   {
     std::size_t
     operator()(void* v) const { return (std::size_t)v; }
   };
+  #endif
 
   template <typename V>
   struct hash< boost::detail::stored_edge<V> > 

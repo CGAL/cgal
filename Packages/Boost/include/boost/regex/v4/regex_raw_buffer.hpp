@@ -26,6 +26,7 @@
 #endif
 
 #include <algorithm>
+#include <cstddef>
 
 namespace boost{
    namespace re_detail{

@@ -165,7 +165,7 @@ namespace boost { namespace numeric { namespace ublas {
             return (at_element (i, j) = t);
         }
         void erase_element (size_type i, size_type j) {
-            return (at_element (i, j) = value_type/*zero*/());
+            at_element (i, j) = value_type/*zero*/();
         }
 
         // Zeroing
@@ -185,7 +185,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         matrix &operator = (const matrix_container<C> &m) {
-            resize (m.size1 (), m.size2 ());
+            resize (m ().size1 (), m ().size2 (), false);
             assign (m);
             return *this;
         }
@@ -1100,7 +1100,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
         BOOST_UBLAS_INLINE
         void erase_element (size_type i, size_type j) {
-            return (at_element (i, j) = value_type/*zero*/()); 
+            at_element (i, j) = value_type/*zero*/(); 
         }
         
         // Zeroing
@@ -1132,7 +1132,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         vector_of_vector &operator = (const matrix_container<C> &m) {
-            resize (m.size1 (), m.size2 ());
+            resize (m ().size1 (), m ().size2 (), false);
             assign (m);
             return *this;
         }
@@ -1989,7 +1989,7 @@ namespace boost { namespace numeric { namespace ublas {
             size2_ = size;
         }
         BOOST_UBLAS_INLINE
-        void resize (size_type size1, size_type size2, bool preserve = true) {
+        void resize (size_type size1, size_type size2, bool /*preserve*/ = true) {
             size1_ = size1;
             size2_ = size2;
         }
@@ -2347,7 +2347,7 @@ namespace boost { namespace numeric { namespace ublas {
             size2_ = size;
         }
         BOOST_UBLAS_INLINE
-        void resize (size_type size1, size_type size2, bool preserve = true) {
+        void resize (size_type size1, size_type size2, bool /*preserve*/ = true) {
             size1_ = size1;
             size2_ = size2;
         }
@@ -2721,14 +2721,14 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Resizing
         BOOST_UBLAS_INLINE
-        void resize (size_type size1, size_type size2, bool preserve = true) {
+        void resize (size_type size1, size_type size2, bool /*preserve*/ = true) {
             size1_ = size1;
             size2_ = size2;
         }
 
         // Element access
         BOOST_UBLAS_INLINE
-        const_reference operator () (size_type i, size_type j) const {
+        const_reference operator () (size_type /*i*/, size_type /*j*/) const {
             return value_; 
         }
 
@@ -3236,7 +3236,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         c_matrix &operator = (const matrix_container<C> &m) {
-            resize (m.size1 (), m.size2 ());
+            resize (m ().size1 (), m ().size2 (), false);
             assign (m);
             return *this;
         }

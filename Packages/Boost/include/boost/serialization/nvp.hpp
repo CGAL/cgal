@@ -28,7 +28,7 @@
 #include <boost/mpl/integral_c.hpp>
 #include <boost/mpl/integral_c_tag.hpp>
 
-#include <boost/serialization/traits.hpp>
+//#include <boost/serialization/traits.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/split_member.hpp>

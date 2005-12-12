@@ -30,8 +30,8 @@ namespace posix_time {
 
   //! Convert a time to a tm structure truncating any fractional seconds 
   inline
-  tm to_tm(const boost::posix_time::ptime& t) {
-    tm timetm = boost::gregorian::to_tm(t.date());
+  std::tm to_tm(const boost::posix_time::ptime& t) {
+    std::tm timetm = boost::gregorian::to_tm(t.date());
     boost::posix_time::time_duration td = t.time_of_day();
     timetm.tm_hour = td.hours(); 
     timetm.tm_min = td.minutes(); 
@@ -41,8 +41,8 @@ namespace posix_time {
   }
   //! Convert a time_duration to a tm structure truncating any fractional seconds and zeroing fields for date components 
   inline
-  tm to_tm(const boost::posix_time::time_duration& td) {
-    tm timetm;
+  std::tm to_tm(const boost::posix_time::time_duration& td) {
+    std::tm timetm;
     timetm.tm_year = 0;
     timetm.tm_mon = 0;
     timetm.tm_mday = 0;
@@ -58,7 +58,7 @@ namespace posix_time {
 
   //! Convert a tm struct to a ptime ignoring is_dst flag
   inline
-  ptime ptime_from_tm(const tm& timetm) {
+  ptime ptime_from_tm(const std::tm& timetm) {
     boost::gregorian::date d = boost::gregorian::date_from_tm(timetm);
     return ptime(d, time_duration(timetm.tm_hour, timetm.tm_min, timetm.tm_sec));
   }

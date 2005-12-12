@@ -6,17 +6,19 @@
 #ifndef ARG_LIST_050329_HPP
 #define ARG_LIST_050329_HPP
 
-#include <boost/mpl/apply.hpp>
-#include <boost/type_traits/add_reference.hpp>
-
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/facilities/intercept.hpp>
-
 #include <boost/parameter/aux_/void.hpp>
 #include <boost/parameter/aux_/result_of0.hpp>
 #include <boost/parameter/aux_/default.hpp>
 #include <boost/parameter/aux_/parameter_requirements.hpp>
 #include <boost/parameter/config.hpp>
+
+#include <boost/mpl/apply.hpp>
+
+#include <boost/type_traits/add_reference.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/facilities/intercept.hpp>
 
 namespace boost { namespace parameter { 
 
@@ -134,6 +136,7 @@ struct tagged_argument;
 template <class TaggedArg, class Next = empty_arg_list>
 struct arg_list : Next
 {
+    typedef arg_list<TaggedArg,Next> self;
     typedef typename TaggedArg::key_type key_type;
     typedef typename TaggedArg::value_type value_type;
     typedef typename TaggedArg::reference reference;
@@ -240,38 +243,38 @@ struct arg_list : Next
     // reached, indicating no matching argument was passed, the
     // default is returned, or if no default_ or lazy_default was
     // passed, compilation fails.
-    reference get(keyword<key_type> const& x) const
+    reference get(keyword<key_type> const&) const
     {
         return arg.value;
     }
 
     template <class Default>
-    reference get(default_<key_type,Default> x) const
+    reference get(default_<key_type,Default>) const
     {
         return arg.value;
     }
 
     template <class Default>
-    reference get(lazy_default<key_type, Default> x) const
+    reference get(lazy_default<key_type, Default>) const
     {
         return arg.value;
     }
     
 #else
 
-    reference operator[](keyword<key_type> const& x) const
+    reference operator[](keyword<key_type> const&) const
     {
         return arg.value;
     }
 
     template <class Default>
-    reference operator[](default_<key_type, Default> x) const
+    reference operator[](default_<key_type, Default>) const
     {
         return arg.value;
     }
 
     template <class Default>
-    reference operator[](lazy_default<key_type, Default> x) const
+    reference operator[](lazy_default<key_type, Default>) const
     {
         return arg.value;
     }
@@ -303,16 +306,14 @@ struct arg_list : Next
     using Next::satisfies;
 #endif
 
-#if !BOOST_WORKAROUND(__BORLANDC__,BOOST_TESTED_AT(0x564))
     // Comma operator to compose argument list without using parameters<>.
     // Useful for argument lists with undetermined length.
     template <class KW, class T2>
-    arg_list<tagged_argument<KW, T2>, arg_list> 
-    operator,(tagged_argument<KW, T2> x) const
+    arg_list<tagged_argument<KW, T2>, self> 
+    operator,(tagged_argument<KW,T2> x)
     {
-        return arg_list<tagged_argument<KW, T2>, arg_list>(x, *this);
+        return arg_list<tagged_argument<KW,T2>, self>(x, *this);
     }
-#endif 
 };
 
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)  // ETI workaround

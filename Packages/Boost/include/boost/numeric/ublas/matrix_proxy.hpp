@@ -4010,13 +4010,13 @@ namespace boost { namespace numeric { namespace ublas {
     // Simple Projections
     template<class M>
     BOOST_UBLAS_INLINE
-    matrix_slice<M> subslice (M &data, typename M::size_type start1, typename M::differenece_type stride1, typename M::size_type size1, typename M::size_type start2, typename M::differenece_type stride2, typename M::size_type size2) {
+    matrix_slice<M> subslice (M &data, typename M::size_type start1, typename M::difference_type stride1, typename M::size_type size1, typename M::size_type start2, typename M::difference_type stride2, typename M::size_type size2) {
         typedef basic_slice<typename M::size_type, typename M::difference_type> slice_type;
         return matrix_slice<M> (data, slice_type (start1, stride1, size1), slice_type (start2, stride2, size2));
     }
     template<class M>
     BOOST_UBLAS_INLINE
-    matrix_slice<const M> subslice (const M &data, typename M::size_type start1, typename M::differenece_type stride1, typename M::size_type size1, typename M::size_type start2, typename M::differenece_type stride2, typename M::size_type size2) {
+    matrix_slice<const M> subslice (const M &data, typename M::size_type start1, typename M::difference_type stride1, typename M::size_type size1, typename M::size_type start2, typename M::difference_type stride2, typename M::size_type size2) {
         typedef basic_slice<typename M::size_type, typename M::difference_type> slice_type;
         return matrix_slice<const M> (data (), slice_type (start1, stride1, size1), slice_type (start2, stride2, size2));
     }

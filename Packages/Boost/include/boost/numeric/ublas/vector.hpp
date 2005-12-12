@@ -30,10 +30,10 @@ namespace boost { namespace numeric { namespace ublas {
     class vector:
         public vector_container<vector<T, A> > {
 
-        typedef T *pointer;
-        typedef const T *const_pointer;
         typedef vector<T, A> self_type;
     public:
+        typedef T *pointer;
+        typedef const T *const_pointer;
 #ifdef BOOST_UBLAS_ENABLE_PROXY_SHORTCUTS
         using vector_container<self_type>::operator ();
 #endif
@@ -153,7 +153,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         vector &operator = (const vector_container<C> &v) {
-            resize (v.size (), false);
+            resize (v ().size (), false);
             assign (v);
             return *this;
         }
@@ -592,7 +592,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Resizing
         BOOST_UBLAS_INLINE
-        void resize (size_type size, bool preserve = true) {
+        void resize (size_type size, bool /*preserve*/ = true) {
             size_ = size;
         }
 
@@ -702,6 +702,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             bool operator == (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK (&(*this) () == &it (), external_logic ());
+                detail::ignore_unused_variable_warning(it);
                 return true;
             }
         };
@@ -785,7 +786,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Resizing
         BOOST_UBLAS_INLINE
-        void resize (size_type size, bool preserve = true) {
+        void resize (size_type size, bool /*preserve*/ = true) {
             size_ = size;
         }
 
@@ -1285,7 +1286,7 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         void erase_element (size_type i) {
             BOOST_UBLAS_CHECK (i < size_, bad_index ());
-            return (data_ [i] = value_type/*zero*/());
+            data_ [i] = value_type/*zero*/();
         }
         
         // Zeroing
@@ -1304,7 +1305,7 @@ namespace boost { namespace numeric { namespace ublas {
         template<class C>          // Container assignment without temporary
         BOOST_UBLAS_INLINE
         c_vector &operator = (const vector_container<C> &v) {
-            resize (v.size (), false);
+            resize (v ().size (), false);
             assign (v);
             return *this;
         }

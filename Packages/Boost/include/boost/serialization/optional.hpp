@@ -20,7 +20,7 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/collections_load_imp.hpp>
+#include <boost/serialization/detail/stack_constructor.hpp>
 
 // function specializations must be defined in the appropriate
 // namespace - boost::serialization
@@ -48,7 +48,7 @@ void load(
     bool tflag;
     ar >> boost::serialization::make_nvp("initialized", tflag);
     if (tflag){
-        stack_construct<Archive, T> aux(ar);
+        detail::stack_construct<Archive, T> aux(ar);
         ar >> boost::serialization::make_nvp("value", aux.reference());
         t.reset(aux.reference());
     }

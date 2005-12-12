@@ -71,6 +71,17 @@ template<>
 struct regex_iterator_traits<wchar_t*> : pointer_iterator_traits<wchar_t>{};
 template<>
 struct regex_iterator_traits<const wchar_t*> : const_pointer_iterator_traits<wchar_t>{};
+//
+// the follwoing are needed for ICU support:
+//
+template<>
+struct regex_iterator_traits<unsigned char*> : pointer_iterator_traits<char>{};
+template<>
+struct regex_iterator_traits<const unsigned char*> : const_pointer_iterator_traits<char>{};
+template<>
+struct regex_iterator_traits<int*> : pointer_iterator_traits<int>{};
+template<>
+struct regex_iterator_traits<const int*> : const_pointer_iterator_traits<int>{};
 
 #ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
 template<>

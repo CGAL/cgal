@@ -172,7 +172,7 @@ class counting_iterator
 # if 0
     template<class OtherIncrementable>
     counting_iterator(
-        counting_iterator<OtherIncrementable> const& t
+        counting_iterator<OtherIncrementable, CategoryOrTraversal, Difference> const& t
       , typename enable_if_convertible<OtherIncrementable, Incrementable>::type* = 0
     )
       : super_t(t.base())
@@ -188,7 +188,7 @@ class counting_iterator
 
     template <class OtherIncrementable>
     difference_type
-    distance_to(counting_iterator<OtherIncrementable> const& y) const
+    distance_to(counting_iterator<OtherIncrementable, CategoryOrTraversal, Difference> const& y) const
     {
       typedef typename mpl::if_<
           detail::is_numeric<Incrementable>

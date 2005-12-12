@@ -68,6 +68,7 @@ inline bool can_start(wchar_t c, const unsigned char* map, unsigned char mask)
 // which succeeds when it should not.
 //
 #ifndef _RWSTD_VER
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
 template <class C, class T, class A>
 inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
 { 
@@ -78,7 +79,9 @@ inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
    }
    return s.compare(p); 
 }
+#endif
 #else
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
 template <class C, class T, class A>
 inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
 { 
@@ -89,6 +92,7 @@ inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
    }
    return s.compare(p); 
 }
+#endif
 inline int string_compare(const std::string& s, const char* p)
 { return std::strcmp(s.c_str(), p); }
 # ifndef BOOST_NO_WREGEX
@@ -96,7 +100,6 @@ inline int string_compare(const std::wstring& s, const wchar_t* p)
 { return std::wcscmp(s.c_str(), p); }
 #endif
 #endif
-#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
 template <class Seq, class C>
 inline int string_compare(const Seq& s, const C* p)
 {
@@ -107,7 +110,6 @@ inline int string_compare(const Seq& s, const C* p)
    }
    return (i == s.size()) ? -p[i] : s[i] - p[i];
 }
-#endif
 # define STR_COMP(s,p) string_compare(s,p)
 
 template<class charT>
@@ -224,6 +226,8 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
    }
    if(traits_inst.isctype(col, set_->cclasses) == true)
       return set_->isnot ? next : ++next;
+   if((set_->cnclasses != 0) && (traits_inst.isctype(col, set_->cnclasses) == false))
+      return set_->isnot ? next : ++next;
    return set_->isnot ? ++next : next;
 }
 
@@ -322,16 +326,11 @@ public:
    perl_matcher(BidiIterator first, BidiIterator end, 
       match_results<BidiIterator, Allocator>& what, 
       const basic_regex<char_type, traits>& e,
-      match_flag_type f);
+      match_flag_type f,
+      BidiIterator base);
 
    bool match();
-   bool match_imp();
    bool find();
-   bool find_imp();
-#ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
-   typedef bool (perl_matcher::*protected_proc_type)();
-   bool protected_call(protected_proc_type);
-#endif
 
    void setf(match_flag_type f)
    { m_match_flags |= f; }
@@ -339,6 +338,13 @@ public:
    { m_match_flags &= ~f; }
 
 private:
+   void construct_init(const basic_regex<char_type, traits>& e, match_flag_type f);
+   bool find_imp();
+   bool match_imp();
+#ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
+   typedef bool (perl_matcher::*protected_proc_type)();
+   bool protected_call(protected_proc_type);
+#endif
    void estimate_max_state_count(std::random_access_iterator_tag*);
    void estimate_max_state_count(void*);
    bool match_prefix();
@@ -403,6 +409,8 @@ private:
    BidiIterator restart;
    // where the current search started from, acts as base for $` during grep:
    BidiIterator search_base;
+   // how far we can go back when matching lookbehind:
+   BidiIterator backstop;
    // the expression being examined:
    const basic_regex<char_type, traits>& re;
    // the expression's traits class:

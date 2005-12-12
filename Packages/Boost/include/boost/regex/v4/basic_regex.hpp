@@ -49,9 +49,9 @@ struct regex_data
 
    regex_data(const ::boost::shared_ptr<
       ::boost::regex_traits_wrapper<traits> >& t) 
-      : m_ptraits(t) {}
+      : m_ptraits(t), m_expression(0), m_expression_len(0) {}
    regex_data() 
-      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()) {}
+      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_expression(0), m_expression_len(0) {}
 
    ::boost::shared_ptr<
       ::boost::regex_traits_wrapper<traits>
@@ -242,10 +242,17 @@ public:
    {
       return assign(p, p + len, f);
    }
-
+private:
+   basic_regex& do_assign(const charT* p1,
+                          const charT* p2,
+                          flag_type f);
+public:
    basic_regex& assign(const charT* p1,
                           const charT* p2,
-                          flag_type f = regex_constants::normal);
+                          flag_type f = regex_constants::normal)
+   {
+      return do_assign(p1, p2, f);
+   }
 #if !defined(BOOST_NO_MEMBER_TEMPLATES) && !defined(__IBMCPP__)
 
    template <class ST, class SA>
@@ -265,7 +272,10 @@ public:
    {
       typedef typename traits::string_type seq_type;
       seq_type a(arg_first, arg_last);
-      assign(&*a.begin(), &*a.begin() + a.size(), f);
+      if(a.size())
+         assign(&*a.begin(), &*a.begin() + a.size(), f);
+      else
+         assign(static_cast<const charT*>(0), static_cast<const charT*>(0), f);
    }
 
    template <class ST, class SA>
@@ -289,9 +299,13 @@ public:
    {
       typedef typename traits::string_type seq_type;
       seq_type a(arg_first, arg_last);
-      const charT* p1 = &*a.begin();
-      const charT* p2 = &*a.begin() + a.size();
-      return assign(p1, p2, f);
+      if(a.size())
+      {
+         const charT* p1 = &*a.begin();
+         const charT* p2 = &*a.begin() + a.size();
+         return assign(p1, p2, f);
+      }
+      return assign(static_cast<const charT*>(0), static_cast<const charT*>(0), f);
    }
 #else
    unsigned int BOOST_REGEX_CALL set_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
@@ -375,7 +389,7 @@ public:
    // empty:
    bool BOOST_REGEX_CALL empty()const
    { 
-      return (m_pimpl.get() ? 0 != m_pimpl->status() : 0); 
+      return (m_pimpl.get() ? 0 != m_pimpl->status() : true); 
    }
 
    size_type BOOST_REGEX_CALL mark_count()const 
@@ -493,7 +507,7 @@ private:
 // (in the event of a throw, the state of the object remains unchanged).
 //
 template <class charT, class traits>
-basic_regex<charT, traits>& basic_regex<charT, traits>::assign(const charT* p1,
+basic_regex<charT, traits>& basic_regex<charT, traits>::do_assign(const charT* p1,
                         const charT* p2,
                         flag_type f)
 {

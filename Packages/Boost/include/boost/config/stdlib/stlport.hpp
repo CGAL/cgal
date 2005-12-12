@@ -52,7 +52,7 @@
 // then the io stream facets are not available in namespace std::
 //
 #ifdef _STLPORT_VERSION
-#  if !defined(_STLP_OWN_IOSTREAMS) && defined(_STLP_USE_NAMESPACES) && defined(BOOST_NO_USING_TEMPLATE) && !defined(__BORLANDC__)
+#  if !(_STLPORT_VERSION >= 0x500) && !defined(_STLP_OWN_IOSTREAMS) && defined(_STLP_USE_NAMESPACES) && defined(BOOST_NO_USING_TEMPLATE) && !defined(__BORLANDC__)
 #     define BOOST_NO_STD_LOCALE
 #  endif
 #else
@@ -74,7 +74,7 @@
 //
 #define BOOST_HAS_PARTIAL_STD_ALLOCATOR
 
-#if !defined(_STLP_MEMBER_TEMPLATE_CLASSES)
+#if !defined(_STLP_MEMBER_TEMPLATE_CLASSES) || defined(_STLP_DONT_SUPPORT_REBIND_MEMBER_TEMPLATE)
 #  define BOOST_NO_STD_ALLOCATOR
 #endif
 

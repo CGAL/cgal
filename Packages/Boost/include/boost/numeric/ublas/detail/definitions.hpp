@@ -20,6 +20,15 @@
 
 namespace boost { namespace numeric { namespace ublas {
 
+    namespace detail {
+        /* Borrowed from boost/concept_checks.hpp
+           "inline" is used for ignore_unused_variable_warning()
+           to make sure there is no overhead with g++.
+         */
+        template <class T> inline
+        void ignore_unused_variable_warning(const T&) {}
+    } // namespace detail
+
     // Borrowed from Dave Abraham's noncopyable.
     // I believe this should be part of utility.hpp one day...
     namespace nonassignable_  // protection from unintended ADL

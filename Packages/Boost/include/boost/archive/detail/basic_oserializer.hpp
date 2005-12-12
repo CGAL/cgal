@@ -17,6 +17,8 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <cstdlib> // NULL
+#include <boost/config.hpp>
+
 #include <boost/archive/detail/auto_link_archive.hpp>
 #include <boost/archive/detail/basic_serializer.hpp>
 
@@ -44,7 +46,11 @@ protected:
     explicit basic_oserializer(
         const boost::serialization::extended_type_info & type_
     );
-    virtual ~basic_oserializer();
+    // account for bogus gcc warning
+    #if defined(__GNUC__)
+    virtual
+    #endif
+    ~basic_oserializer();
 public:
     bool serialized_as_pointer() const {
         return bpos != NULL;

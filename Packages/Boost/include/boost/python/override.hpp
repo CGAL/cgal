@@ -55,12 +55,15 @@ namespace detail
       }
 #  endif 
       
-#  if !defined(BOOST_MSVC) || BOOST_WORKAROUND(_MSC_FULL_VER, > 140040607)
+#  if defined(BOOST_MSVC) && BOOST_WORKAROUND(_MSC_FULL_VER, <= 140040607) || BOOST_WORKAROUND(BOOST_INTEL_WIN, >= 900)
+      // No operator T&
+#  else
+      
       template <class T>
       operator T&() const
       {
           converter::return_from_python<T&> converter;
-          return converter(m_obj.release());
+          return converter(const_cast<handle<>&>(m_obj).release());
       }
 #  endif 
 

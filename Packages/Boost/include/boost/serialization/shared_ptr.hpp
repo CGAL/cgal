@@ -28,15 +28,18 @@
 
 #include <boost/archive/archive_exception.hpp>
 
+// no extended type info system has been selected, use the typeid based one
+#ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
+    #include <boost/serialization/extended_type_info_typeid.hpp>
+#endif
+#include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/static_assert.hpp>
 
-#include <boost/serialization/extended_type_info.hpp>
-#include <boost/serialization/type_info_implementation.hpp>
-#include <boost/serialization/void_cast.hpp>
+#include <boost/serialization/void_cast_fwd.hpp>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // shared_ptr serialization traits
@@ -47,17 +50,33 @@
     namespace boost {
     namespace serialization{
         template<class T>
-        struct version< ::boost::shared_ptr<T> > {                                                                      \
+        struct version< ::boost::shared_ptr<T> > {
             typedef mpl::integral_c_tag tag;
+#if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
+            typedef BOOST_DEDUCED_TYPENAME mpl::int_<1> type;
+#else
             typedef mpl::int_<1> type;
+#endif
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570))
+            BOOST_STATIC_CONSTANT(unsigned int, value = 1);
+#else
             BOOST_STATIC_CONSTANT(unsigned int, value = type::value);
+#endif
         };
         // don't track shared pointers
         template<class T>
         struct tracking_level< ::boost::shared_ptr<T> > { 
             typedef mpl::integral_c_tag tag;
+#if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
+            typedef BOOST_DEDUCED_TYPENAME mpl::int_< ::boost::serialization::track_never> type;
+#else
             typedef mpl::int_< ::boost::serialization::track_never> type;
+#endif
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570))
+            BOOST_STATIC_CONSTANT(int, value = ::boost::serialization::track_never);
+#else
             BOOST_STATIC_CONSTANT(int, value = type::value);
+#endif
         };
     }}
     #define BOOST_SERIALIZATION_SHARED_PTR(T)
@@ -77,6 +96,9 @@
 
 namespace boost {
 namespace serialization{
+
+class extended_type_info;
+
 namespace detail {
 
 struct null_deleter {
@@ -141,32 +163,18 @@ public:
 // utility function for creating/getting a helper - could be useful in general
 // but shared_ptr is the only class (so far that needs it) and I don't have a
 // convenient header to place it into.
-template<class Archive, class T>
-T &
-get_helper(Archive & ar){
-    extended_type_info * eti = type_info_implementation<T>::type::get_instance();
-    shared_ptr<void> sph;
-    ar.lookup_helper(eti, sph);
-    if(NULL == sph.get()){
-        sph = shared_ptr<T>(new T);
-        ar.insert_helper(eti, sph);
-    }
-    return * static_cast<T *>(sph.get());
-}
-
-#if 0
 template<class Archive, class H>
 H &
 get_helper(Archive & ar){
-    shared_ptr<H> sph;
-    ar.lookup_helper(sph);
+    extended_type_info * eti = type_info_implementation<H>::type::get_instance();
+    shared_ptr<void> sph;
+    ar.lookup_helper(eti, sph);
     if(NULL == sph.get()){
         sph = shared_ptr<H>(new H);
-        ar.insert_helper(sph);
+        ar.insert_helper(eti, sph);
     }
-    return * static_cast<T *>(sph.get());
+    return * static_cast<H *>(sph.get());
 }
-#endif
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // serialization for shared_ptr
@@ -211,7 +219,7 @@ inline void load(
     else    
     #endif
     {
-            ar >> boost::serialization::make_nvp("px", r);
+        ar >> boost::serialization::make_nvp("px", r);
     }
     get_helper<Archive, detail::shared_ptr_helper >(ar).reset(t,r);
 }

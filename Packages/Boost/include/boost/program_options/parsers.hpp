@@ -73,13 +73,16 @@ namespace boost { namespace program_options {
     /** Command line parser.
 
         The class allows one to specify all the information needed for parsing
-        and to parser the parse the command line. It is primarily needed to
+        and to parse the command line. It is primarily needed to
         emulate named function parameters -- a regular function with 5
         parameters will be hard to use and creating overloads with a smaller
         nuber of parameters will be confusing.
 
         For the most common case, the function parse_command_line is a better 
         alternative.        
+
+        There are two typedefs -- command_line_parser and wcommand_line_parser,
+        for charT == char and charT == wchar_t cases.
     */
     template<class charT>
     class basic_command_line_parser : private detail::cmdline {
@@ -90,7 +93,7 @@ namespace boost { namespace program_options {
         basic_command_line_parser(const std::vector<
                                   std::basic_string<charT> >& args);
         /** Creates a command line parser for the specified arguments
-            list. The parameter should be the same as passes to 'main'.
+            list. The parameters should be the same as passed to 'main'.
         */
         basic_command_line_parser(int argc, charT* argv[]);
 
@@ -104,8 +107,26 @@ namespace boost { namespace program_options {
         basic_command_line_parser& style(int);
         /** Sets the extra parsers. */
         basic_command_line_parser& extra_parser(ext_parser);
-        
+
+        /** Parses the options and returns the result of parsing.
+            Throws on error.
+        */
         basic_parsed_options<charT> run();
+
+        /** Specifies that unregistered options are allowed and should
+            be passed though. For each command like token that looks
+            like an option but does not contain a recognized name, an
+            instance of basic_option<charT> will be added to result,
+            with 'unrecognized' field set to 'true'. It's possible to
+            collect all unrecognized options with the 'collect_unrecognized'
+            funciton. 
+        */
+        basic_command_line_parser& allow_unregistered();
+        
+        using detail::cmdline::style_parser;
+
+        basic_command_line_parser& extra_style_parser(style_parser s);
+
     private:
         const options_description* m_desc;
     };
@@ -133,6 +154,22 @@ namespace boost { namespace program_options {
 #endif
     basic_parsed_options<charT>
     parse_config_file(std::basic_istream<charT>&, const options_description&);
+
+    /** Controls if the 'collect_unregistered' function should
+        include positional options, or not. */
+    enum collect_unrecognized_mode 
+    { include_positional, exclude_positional };
+
+    /** Collects the original tokens for all named options with
+        'unregistered' flag set. If 'mode' is 'include_positional'
+        also collects all positional options.
+        Returns the vector of origianl tokens for all collected
+        options.
+    */
+    template<class charT>
+    std::vector< std::basic_string<charT> > 
+    collect_unrecognized(const std::vector< basic_option<charT> >& options,
+                         enum collect_unrecognized_mode mode);
 
     /** Parse environment. 
 
@@ -180,6 +217,7 @@ namespace boost { namespace program_options {
     split_winmain(const std::wstring& cmdline);
     #endif
 #endif
+    
 
 }}
 

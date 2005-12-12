@@ -39,6 +39,9 @@
 #include <boost/regex/pending/object_cache.hpp>
 #endif
 
+#include <istream>
+#include <ios>
+
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
@@ -813,7 +816,7 @@ bool cpp_regex_traits_implementation<charT>::isctype(const charT c, char_class_t
 
 
 template <class charT>
-boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
+inline boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
    cpp_regex_traits_base<charT> key(l);
    return ::boost::object_cache<cpp_regex_traits_base<charT>, cpp_regex_traits_implementation<charT> >::get(key, 5);

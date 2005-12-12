@@ -53,7 +53,7 @@ struct keyword : noncopyable
         return aux::lazy_default<Tag, Default>(default_);
     }
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)  // avoid partial ordering bugs
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)  // avoid partial ordering bugs
     template <class T>
     typename aux::tag<Tag, T const>::type
     operator=(T const& x) const
@@ -63,7 +63,7 @@ struct keyword : noncopyable
     }
 #endif 
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, == 1200)  // avoid partial ordering bugs
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)  // avoid partial ordering bugs
     template <class Default>
     aux::default_<Tag, const Default>
     operator|(const Default& default_) const
@@ -105,13 +105,28 @@ struct keyword : noncopyable
 
 // Reduces boilerplate required to declare and initialize keywords
 // without violating ODR.  Declares a keyword tag type with the given
-// name in namespace tag_namespace, and declares and initializes a 
-// 
-#define BOOST_PARAMETER_KEYWORD(tag_namespace,name)             \
-   namespace tag_namespace { struct name; }                     \
-   ::boost::parameter::keyword<tag_namespace::name>& name       \
-   = ::boost::parameter::keyword<tag_namespace::name>::get();
+// name in namespace tag_namespace, and declares and initializes a
+// reference in an anonymous namespace to a singleton instance of that
+// type.
 
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+
+# define BOOST_PARAMETER_KEYWORD(tag_namespace,name)                \
+    namespace tag_namespace { struct name; }                        \
+    static ::boost::parameter::keyword<tag_namespace::name>& name   \
+       = ::boost::parameter::keyword<tag_namespace::name>::get();
+
+#else
+
+#define BOOST_PARAMETER_KEYWORD(tag_namespace,name)                 \
+    namespace tag_namespace { struct name; }                        \
+    namespace                                                       \
+    {                                                               \
+       ::boost::parameter::keyword<tag_namespace::name>& name       \
+       = ::boost::parameter::keyword<tag_namespace::name>::get();   \
+    }
+
+#endif
 
 }} // namespace boost::parameter
 

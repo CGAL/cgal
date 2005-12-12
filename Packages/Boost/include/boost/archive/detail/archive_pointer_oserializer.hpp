@@ -17,6 +17,7 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
+#include <boost/config.hpp>
 #include <boost/archive/detail/basic_serializer.hpp>
 #include <boost/archive/detail/basic_pointer_oserializer.hpp>
 
@@ -39,6 +40,12 @@ protected:
     archive_pointer_oserializer(
         const boost::serialization::extended_type_info & eti
     );
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    // account for bogus gcc warning
+    #if defined(__GNUC__)
+    virtual
+    #endif
+    ~archive_pointer_oserializer();
 public:
     // return the type_extended save pointer corresponding to a give
     // type_info.  returns NULL, if there is no such instance. This
@@ -49,7 +56,6 @@ public:
     find(
         const boost::serialization::extended_type_info & eti
     );
-    virtual ~archive_pointer_oserializer(){}
 };
 
 } // namespace detail

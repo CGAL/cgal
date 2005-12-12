@@ -91,7 +91,7 @@ namespace boost {
           template<typename Pair>
           R operator()(const Pair& slot) const
           {
-            F* target = const_cast<F*>(any_cast<F>(&slot.second));
+            F* target = const_cast<F*>(unsafe_any_cast<F>(&slot.second));
             return (*target)(BOOST_SIGNALS_BOUND_ARGS);
           }
         };
@@ -115,7 +115,7 @@ namespace boost {
           template<typename Pair>
           unusable operator()(const Pair& slot) const
           {
-            F* target = const_cast<F*>(any_cast<F>(&slot.second));
+            F* target = const_cast<F*>(unsafe_any_cast<F>(&slot.second));
             (*target)(BOOST_SIGNALS_BOUND_ARGS);
             return unusable();
           }
@@ -160,7 +160,7 @@ namespace boost {
 
   private:
     // The real slot name comparison object type
-    typedef BOOST_SIGNALS_NAMESPACE::detail::any_bridge_compare<GroupCompare, Group>
+    typedef BOOST_SIGNALS_NAMESPACE::detail::group_bridge_compare<GroupCompare, Group>
       real_group_compare_type;
 
     // The function object passed to the slot call iterator that will call
@@ -238,7 +238,7 @@ namespace boost {
       BOOST_SIGNALS_NAMESPACE::detail::call_notification notification(this->impl);
 
       for (iterator i = impl->slots_.begin(); i != impl->slots_.end(); ++i) {
-        slot_function_type& s = *any_cast<slot_function_type>(&i->second);
+        slot_function_type& s = *unsafe_any_cast<slot_function_type>(&i->second);
         if (s == f) i->first.disconnect();
       }
     }
@@ -251,10 +251,10 @@ namespace boost {
     result_type operator()(BOOST_SIGNALS_PARMS) const;
 
     Combiner& combiner()
-    { return *any_cast<Combiner>(&impl->combiner_); }
+    { return *unsafe_any_cast<Combiner>(&impl->combiner_); }
 
     const Combiner& combiner() const
-    { return *any_cast<const Combiner>(&impl->combiner_); }
+    { return *unsafe_any_cast<const Combiner>(&impl->combiner_); }
   };
 
   template<
@@ -274,13 +274,15 @@ namespace boost {
   >::connect(const slot_type& in_slot,
              BOOST_SIGNALS_NAMESPACE::connect_position at)
   {
+    using boost::BOOST_SIGNALS_NAMESPACE::detail::stored_group;
+
     // If the slot has been disconnected, just return a disconnected
     // connection
     if (!in_slot.is_active()) {
       return BOOST_SIGNALS_NAMESPACE::connection();
     }
 
-    return impl->connect_slot(in_slot.get_slot_function(), any(), 
+    return impl->connect_slot(in_slot.get_slot_function(), stored_group(),
                               in_slot.get_data(), at);
   }
 
@@ -308,7 +310,7 @@ namespace boost {
       return BOOST_SIGNALS_NAMESPACE::connection();
     }
 
-    return impl->connect_slot(in_slot.get_slot_function(), group, 
+    return impl->connect_slot(in_slot.get_slot_function(), group,
                               in_slot.get_data(), at);
   }
 

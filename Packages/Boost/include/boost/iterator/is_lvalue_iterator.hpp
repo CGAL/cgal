@@ -33,7 +33,7 @@ namespace detail
   template <class U>
   not_an_lvalue lvalue_preserver(U const&, ...);
   
-# define BOOST_LVALUE_PRESERVER(expr) lvalue_preserver(expr,0)
+# define BOOST_LVALUE_PRESERVER(expr) detail::lvalue_preserver(expr,0)
   
 #else
   

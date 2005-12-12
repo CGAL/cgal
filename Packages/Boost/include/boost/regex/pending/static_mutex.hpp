@@ -52,8 +52,14 @@ class BOOST_REGEX_DECL scoped_static_mutex_lock
 public:
    scoped_static_mutex_lock(static_mutex& mut, bool lk = true);
    ~scoped_static_mutex_lock();
-   operator void const*()const;
-   bool locked()const;
+   inline bool locked()const
+   {
+      return m_have_lock;
+   }
+   inline operator void const*()const
+   {
+      return locked() ? this : 0;
+   }
    void lock();
    void unlock();
 private:
@@ -61,15 +67,6 @@ private:
    bool m_have_lock;
 };
 
-inline scoped_static_mutex_lock::operator void const*()const
-{
-   return locked() ? this : 0;
-}
-
-inline bool scoped_static_mutex_lock::locked()const
-{
-   return m_have_lock;
-}
 
 } // namespace boost
 #elif defined(BOOST_HAS_WINTHREADS)

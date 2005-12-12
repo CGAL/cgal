@@ -42,7 +42,7 @@ extern "C"                                                              \
 }                                                                       \
 void init_module_##name()
 
-# elif (defined(__GNUC__) && __GNUC__ >= 3 && __GNUC_MINOR__ >=5)
+# elif BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY
 
 #   define BOOST_PYTHON_MODULE_INIT(name)                               \
 void init_module_##name();                                              \

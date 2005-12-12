@@ -21,7 +21,7 @@
 
 #include <boost/spirit/fusion/detail/config.hpp>
 
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 FUSION_MSVC_ETI_WRAPPER(char_type)
 FUSION_MSVC_ETI_WRAPPER(traits_type)
 # define FUSION_GET_CHAR_TYPE(T) get_char_type<T>::type

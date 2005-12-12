@@ -124,6 +124,10 @@ public:
         os << std::setprecision(std::numeric_limits<double>::digits10 + 2);
         os << t;
     }
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
+    basic_text_oprimitive(OStream & os, bool no_codecvt);
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    ~basic_text_oprimitive();
 public:
     // unformatted append of one character
     void put(int c){
@@ -131,7 +135,6 @@ public:
             boost::throw_exception(archive_exception(archive_exception::stream_error));
         os.put(c);
     }
-
     // unformatted append of null terminated string
     void put(const char * s){
         if(os.fail())
@@ -139,12 +142,6 @@ public:
         while('\0' != *s)
             os.put(*s++);
     }
-
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
-    basic_text_oprimitive(OStream & os, bool no_codecvt);
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
-    ~basic_text_oprimitive();
-public:
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(void) 
     save_binary(const void *address, std::size_t count);
 };

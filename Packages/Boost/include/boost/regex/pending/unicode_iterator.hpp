@@ -196,10 +196,14 @@ public:
    // construct:
    u32_to_u16_iterator() : m_position(), m_current(0)
    {
+      m_values[0] = 0;
+      m_values[1] = 0;
       m_values[2] = 0;
    }
    u32_to_u16_iterator(BaseIterator b) : m_position(b), m_current(2)
    {
+      m_values[0] = 0;
+      m_values[1] = 0;
       m_values[2] = 0;
    }
 private:
@@ -284,6 +288,7 @@ public:
    // construct:
    u16_to_u32_iterator() : m_position()
    {
+      m_value = pending_read;
    }
    u16_to_u32_iterator(BaseIterator b) : m_position(b)
    {
@@ -393,10 +398,18 @@ public:
    // construct:
    u32_to_u8_iterator() : m_position(), m_current(0)
    {
+      m_values[0] = 0;
+      m_values[1] = 0;
+      m_values[2] = 0;
+      m_values[3] = 0;
       m_values[4] = 0;
    }
    u32_to_u8_iterator(BaseIterator b) : m_position(b), m_current(4)
    {
+      m_values[0] = 0;
+      m_values[1] = 0;
+      m_values[2] = 0;
+      m_values[3] = 0;
       m_values[4] = 0;
    }
 private:
