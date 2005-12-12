@@ -24,6 +24,7 @@
 //#include <CGAL/Polynomial/Tools/Isolating_interval.h>
 //#include <CGAL/Polynomial/Tools/Simple_interval_root.h>
 #include <CGAL/Polynomial/internal/Descartes_root_count.h>
+#include <vector>
 
 #define CGAL_DSPRINT(x)
 
