@@ -539,25 +539,15 @@ public:
   }
 
   
-  // Returns the symbolic constant ON_BOUNDED_SIDE, ON_BOUNDARY or
-  // ON_UNBOUNDED_SIDE, depending on where point q is.
-  Bounded_side  bounded_side(const Point_2& q)
+  bool is_inside(const Point_2& q)
   {
     Walk_pl pl(*m_arr);
 
     Object obj = pl.locate(q);
     Face_const_iterator f;
     if(CGAL::assign(f, obj))
-    {
-      if(f->contained())
-        return ON_BOUNDED_SIDE;
-      else
-        return ON_UNBOUNDED_SIDE;
-    }
-    else
-    {
-      return ON_BOUNDARY;
-    }
+      return (f->contained());
+    return true;
   }
 
 

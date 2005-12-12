@@ -25,6 +25,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Boolean_set_operations_2/Polygon_2_curve_iterator.h>
 #include <CGAL/General_polygon_with_holes_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -105,6 +106,13 @@ public:
   Construct_curves_2 construct_curves_2_object()
   {
     return Construct_curves_2();
+  }
+
+   typedef Is_valid_2<Self>    Is_valid_2;
+ 
+  Is_valid_2 is_valid_2_object()
+  {
+    return Is_valid_2();
   }
 };
 
