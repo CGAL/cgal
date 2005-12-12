@@ -18,21 +18,22 @@
 
 \ccDefinition
   
-The class \ccRefName\  implements  the most common combination
+The class \ccRefName\  implements  the most commonly used combination
 of meshing criteria. It involves mainly three criteria which are
 in order~: \\
 - a lower bound on the minimum angle of a facet. \\
 - an upper bound on the radius of surface Delaunay balls.
- A surface Delaunay ball of a facet is a circumball of a
-facet  centered on the surface. Such a ball exists because the
-current surface mesh, 
-which is  the restricted Delaunay triangulation of surface sampling
-is just the set of facets in the three dimensional triangulation of
+ A surface Delaunay ball is a  ball circumscribed to a mesh facet 
+and  centered on the surface. Such a ball exists for each facet
+of the current mesh.
+Indeed  the current surface mesh, 
+is  the restricted Delaunay triangulation of the current sampling
+which is just the set of facets in the Delaunay triangulation of
 the sampling  which do have a Delaunay surfacic ball. \\
-- an upper bound on the center-center  distance 
-which is the distance between the facet circumcenter and the 
- center of its  surface Delaunay ball (the farthest one if more
-than one).
+- an upper bound on the center-center distances of mesh facets.
+  The center-center distances of a mesh facet 
+  is the distances between the facet circumcenter and the 
+ centers of its  surface Delaunay balls. 
 
 
 \ccInclude{Surface_mesh_standard_criteria.h}
@@ -41,20 +42,21 @@ than one).
 
 \ccc{SurfaceMeshCriteria}
 
-\ccTypes
+%\ccTypess
 
-\ccNestedType{TYPE}{some nested types}
+%\ccTypedef{FT}{some nested types}
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{criteria}  %% choose variable name
 
 \ccConstructor{Surface_mesh_standard_criteria();}{default constructor.}
 \ccConstructor{Surface_mesh_standard_criteria(FT angle_bound, 
                                               FT radius_bound
                                               FT distance_bound);}
-{return a \ccRefName\ with \ccc{angle_bound}, \ccc{radius_bound},
-\ccc{distance_bound} as bounds for respectively the minimum angle
-the radius of the surface Delaunay ball, or center-center distance.}
+{returns a \ccRefName\ with \ccc{angle_bound}, \ccc{radius_bound},
+\ccc{distance_bound} as repective bounds for the minimum angle,
+the radius of the surface Delaunay balls 
+and the center-center distances.}
 
 
 %\ccOperations
@@ -63,7 +65,7 @@ the radius of the surface Delaunay ball, or center-center distance.}
 
 \ccSeeAlso
 
-\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag}
+\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>}
 
 
 %\ccExample

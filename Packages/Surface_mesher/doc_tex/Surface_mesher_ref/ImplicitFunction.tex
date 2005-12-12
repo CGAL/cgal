@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ImplicitFunction.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSImplicitFunctionRev}{$Revision$}
+\RCSdefDate{\RCSImplicitFunctionDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ImplicitFunction}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes a function object
+whose \ccc{operator()} computes the values of a fonction
+$f : \R^3 \longrightarrow R$.
+
+%\ccGeneralizes
+
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+
+\ccNestedType{FT}{Number type}
+
+\ccCreation
+\ccCreationVariable{function}  %% choose variable name
+
+\ccConstructor{ImplicitFunction();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{FT operator()(FT x, FT y, FT z);}{returns the value $f(x,y,z)$.}
+
+\ccHasModels
+
+\ccc{Gray_level_image_function}
+%\ccc{Some_other_class}.
+
+\ccSeeAlso
+\ccc{Implicit_surface_oracle<Func>},\\
+\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/ImplicitFunction.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/ImplicitFunction.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

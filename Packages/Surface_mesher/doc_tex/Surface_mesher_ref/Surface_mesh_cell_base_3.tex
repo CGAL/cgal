@@ -1,48 +1,34 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Surface_mesh_C2T3.tex
+% | Reference manual page: Surface_mesh_cell_base_3.tex
 % +------------------------------------------------------------------------+
-% | 07.12.2005   Author
+% | 09.12.2005   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSSurfacemeshCTRev}{$Revision$}
-\RCSdefDate{\RCSSurfacemeshCTDate}{$Date$}
+\RCSdef{\RCSSurfacemeshcellbaseRev}{$Revision$}
+\RCSdefDate{\RCSSurfacemeshcellbaseDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Surface_mesh_C2T3<Tr>}  %% add template arg's if necessary
+\begin{ccRefClass}{Surface_mesh_cell_base_3<Gt,Vb>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\  implements a data structure to store
-a two dimensional pure  complex 
-embedded in a three dimensional triangulation.
-The template parameter \ccc{Tr} has to be instanciated
-with a model of the concept \ccc{Triangulation_3}.
-(Any three dimensional   triangulation of
-\cgal\ is a model of \ccc{Triangulation_3}.)
+The class \ccRefName\ is a model of the concept
+\ccc{SurfaceMeshCellBase_3}.
+It is designed to serve  as vertex base  class
+in a  triangulation class \ccc{Tr} 
+plugged in a  \ccc{Surface_mesh_c2t3<Tr>} class.
 
-The class \ccRefName\  can be plugged as template parameter
-in the global function \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
-
-
-
-\ccInclude{Surface_mesh_C2T3.h}
+\ccInclude{Surface_mesh_cell_base_3.h}
 
 \ccIsModel
 
-\ccc{SurfaceMeshC2T3}
-
-WARNING :
-Currently the class  \ccRefName\  does not implement the
-whole concept \ccc{SurfaceMeshC2T3}
-but just what is needed to  be used as the first  parameter 
-of  \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
-
+\ccc{SurfaceMeshCellBase_3}
 
 %\ccTypes
 
@@ -51,7 +37,7 @@ of  \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 %\ccCreation
 %\ccCreationVariable{a}  %% choose variable name
 
-%\ccConstructor{Surface_mesh_C2T3();}{default constructor.}
+%\ccConstructor{Surface_mesh_cell_base_3();}{default constructor.}
 
 %\ccOperations
 
@@ -59,7 +45,7 @@ of  \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 
 \ccSeeAlso
 
-\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
+\ccc{Surface_mesh_c2t3<Tr>} 
 
 
 %\ccExample
@@ -67,7 +53,7 @@ of  \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 %A short example program.
 %Instead of a short program fragment, a full running program can be
 %included using the 
-%\verb|\ccIncludeExampleCode{Package/Surface_mesh_C2T3.C}| 
+%\verb|\ccIncludeExampleCode{Package/Surface_mesh_cell_base_3.C}| 
 %macro. The program example would be part of the source code distribution and
 %also part of the automatic test suite.
 
@@ -76,7 +62,7 @@ of  \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}.
 %}
 %\end{ccExampleCode}
 
-%%% \ccIncludeExampleCode{Package/Surface_mesh_C2T3.C}
+%%% \ccIncludeExampleCode{Package/Surface_mesh_cell_base_3.C}
 
 \end{ccRefClass}
 

@@ -1,0 +1,100 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceMeshVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfaceMeshVertexBaseRev}{$Revision$}
+\RCSdefDate{\RCSSurfaceMeshVertexBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SurfaceMeshVertexBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The \ccc{Surface_mesh_C2t3<Tr>} data structure is able to store
+a pure two dimensional complex embedded in a triangulation.
+The concept \ccRefName\ describes the base vertex type to be
+used  in the  triangulation class \ccc{Tr}  plugged in a
+\ccc{Surface_mesh_C2t3<Tr>} data structure.
+
+
+
+\ccGeneralizes
+
+\ccc{TriangulationVertexBase_3} \\
+The concept \ccRefName\ adds a boolean \ccc{visited} marker 
+and a caching mecanism to store the 
+answer of an \ccc{is_regular()} query.
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{vb}  %% choose variable name
+
+\ccConstructor{SurfaceMeshVertexBase_3();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{bool is_visited();}{returns true if the visited mark is
+set.}
+\ccGlue
+\ccMethod{void  set_visited(bool b);}{sets the visited mark as b.}
+
+
+
+\ccMethod{bool is_regular_cached();}{returns true if the regular mark
+is valid.}
+\ccGlue
+\ccMethod{bool is_regular();}{returns true if the regular mark is
+set.}
+\ccGlue
+\ccMethod{void set_regular_cached(bool b);}{sets the validity of
+regular mark as b.}
+\ccGlue
+\ccMethod{vois set_regular(bool b);}{sets the regular mark as \ccc{b}.}
+
+
+
+
+\ccHasModels
+
+\ccc{Surface_mesh_vertex_base_3<Gt,Vb>}
+
+
+\ccSeeAlso
+
+\ccc{SurfaceMeshC2T3} \\
+\ccc{Surface_mesh_C2T3<Tr>}.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceMeshVertexBase_3.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/SurfaceMeshVertexBase_3.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

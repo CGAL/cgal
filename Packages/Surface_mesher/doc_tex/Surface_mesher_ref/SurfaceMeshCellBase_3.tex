@@ -1,0 +1,118 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceMeshCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfaceMeshCellBaseRev}{$Revision$}
+\RCSdefDate{\RCSSurfaceMeshCellBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SurfaceMeshCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The \ccc{Surface_mesh_C2t3<Tr>} data structure is able to store
+a pure two dimensional complex embedded in a triangulation.
+The concept \ccRefName\ describes the cell base type
+to be used  in the  triangulation class  \ccc{Tr}  plugged in 
+\ccc{Surface_mesh_C2t3<Tr>} data structure.
+
+
+\ccGeneralizes
+\ccc{TriangulationCellBase_3} \\
+The concept \ccRefName\ adds four boolean marker to mark the facets
+of the triangulation that belong to the two dimensional complex,
+four boolean to mark the visited facets.
+This class is also able to store the center of a Delaunay surfacic
+ball for each facet.  In the following we call \ccc{surface center}
+of a facet, the center of its biggest Delaunay surfacic ball.
+
+\ccTypes
+
+\ccNestedType{Point}{The point type, required to be the point type
+of the three dimensional
+triangulation in which the surface mesh is embedded.}
+
+\ccCreation
+\ccCreationVariable{cell}  %% choose variable name
+
+
+
+\ccOperations
+
+\ccMethod
+{bool is_facet_on_surface(int i);}
+{returns true if \ccc{facet(i)} is in the 2D complex. }
+\ccGlue
+\ccMethod
+{void set_facet_on_surface(int i, bool b );}
+{sets \ccc{facet(i)} in the complex if \ccc{b} is true,
+and \ccc{NOT_IN_COMPLEX} if \ccc{b} is false.}
+
+
+\ccMethod
+{bool is_facet_visited (int i);}
+{returns true if \ccc{facet(i)} has been visited,
+false otherwise.}
+\ccGlue
+\ccMethod
+{void set_facet_visited (int i, bool b);} 
+{marks \ccc{facet(i)} as visited if \ccc{b} is true
+ and non visited otherwise.}
+
+
+\ccMethod
+{const Point&   get_facet_surface_center(int i);}
+{returns a reference to the surface center of \ccc{facet(i).}}
+\ccGlue
+\ccMethod
+{void set_facet_surface_center (int i, Point p);} 
+{sets point \ccc{p} as the surface center of \ccc{facet(i)}}.
+
+
+    
+
+
+
+
+\ccHasModels
+
+\ccc{Surface_mesh_cell_base_3<Gt,Vb>}
+
+
+\ccSeeAlso
+
+\ccc{SurfaceMeshC2T3} \\
+\ccc{Surface_mesh_C2T3<Tr>}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceMeshCellBase_3.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/SurfaceMeshCellBase_3.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

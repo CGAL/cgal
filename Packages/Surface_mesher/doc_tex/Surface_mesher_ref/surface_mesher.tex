@@ -57,11 +57,11 @@ on each connected components of the surface to meshed.
 The fourth template parameter is a tag whose type influences the behaviour of the
 meshing algorithm. The function \ccRefName\  has specialized versions
 for the following  tag types~: \\
-\ccc{Manifold} : the output mesh is guaranteed to be a manifold
+\ccc{Tag_manifold} : the output mesh is guaranteed to be a manifold
 surface without boundary.\\
-\ccc{Manifold_with_boundary}~:the output mesh is guaranteed to be
+\ccc{Tag_manifold_with_boundary}~:the output mesh is guaranteed to be
 manifold but may have boundaries.\\
-\ccc{Non_manifold} : the algorithm relies on the given criteria and
+\ccc{Tag_non_manifold} : the algorithm relies on the given criteria and
 guarantees nothing else.
 
 
@@ -75,7 +75,7 @@ guarantees nothing else.
 void surface_mesher(C2T3& c2t3,
                     Oracle surf,
                     Criteria criteria,
-                    Tag = Non_manifold());}
+                    Tag = Tag_non_manifold());}
 
 
  

@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Tag_manifold.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTagmanifoldRev}{$Revision$}
+\RCSdefDate{\RCSTagmanifoldDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Tag_manifold}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a tag class used to monitor the
+surface meshing algorithm. When instantiated with the tag
+\ccRefName\ , the global function 
+\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}
+ensures that the output mesh  is a  manifold surface
+without boundary.
+
+
+\ccInclude{Surface_mesher.h}
+
+%\ccIsModel
+
+%Concept
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{Tag_manifold();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>}\\
+%\ccc{Tag_manifold} \\
+\ccc{Tag_manifold_with_boundary} \\
+\ccc{Tag_non_manifold}
+%\ccc{Some_other_class},
+%\ccc{some_other_function}.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Tag_manifold.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Tag_manifold.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

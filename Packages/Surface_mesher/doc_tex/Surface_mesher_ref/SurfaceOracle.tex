@@ -19,11 +19,11 @@
 \ccDefinition
   
 The concept \ccRefName\ describes the knowledge that is required on the
-surface to be meshed. Basically a model of \ccRefName
+surface to be meshed. Basically a model of this concept
 implements an oracle that is able to tell if a segment
 (ray or line) intersects the surface or not
-and to compute the intersections
-points if any. The concept \ccRefName also include methods  to provide
+and to compute the intersection
+points if any. The concept \ccRefName\ also include methods  to provide
 a small set of initial points on the surface.
 
 %\ccGeneralizes
@@ -33,8 +33,8 @@ a small set of initial points on the surface.
 \ccTypes
 
 \ccNestedType{Point}{The type of points. This type is required to be
-the type of points of the triangulation pointed to by the complex
-storing the mesh.}
+the type of points of the triangulation pointed to by the 
+object (whose type is a model of \ccc{SurfaceMeshC2T3}) storing the mesh.}
 \ccNestedType{Segment}{The type of segments.}
 \ccNestedType{Ray}{The type of rays.}
 \ccNestedType{Line}{The type of lines.}
@@ -50,29 +50,29 @@ storing the mesh.}
 
 
 \ccMethod{Object intersect_segment_surface(Segment s);}
-{ Returns an \ccc{Object}  which is an intersection \ccc{Point}
-between the surface and the segment \ccc{s} or
+{ Returns an \ccc{Object}  which is either a \ccc{Point} where
+the surface and the segment \ccc{s} intersect or
 a trivial \ccc{Object} if the intersection is empty.}
 \ccGlue
 \ccMethod{Object intersect_ray_surface(Ray r);}
-{ Returns an \ccc{Object}  which is an intersection \ccc{Point}
-between the surface and the ray \ccc{r} or
+{ Returns an \ccc{Object}  which is is either a \ccc{Point} where
+the surface and the ray \ccc{r} intersect or
 a trivial \ccc{Object} if the intersection is empty.}
 \ccGlue
 \ccMethod{Object intersect_line_surface(Line r);}
-{ Returns an \ccc{Object}  which is an intersection \ccc{Point}
-between the surface and the line \ccc{l} or
+{ Returns an \ccc{Object}  which is is either a \ccc{Point} where
+ the surface and the line \ccc{l} intersect or
 a trivial \ccc{Object} if the intersection is empty.}
 
 \ccMethod{template <class OutputIteratorPoints>
 OutputIteratorPoints
 initial_points(OutputIteratorPoints pts);}
-{Outpust a set of points on the surface.}
+{Outputs a set of points on the surface.}
 \ccGlue
 \ccMethod{template <class OutputIteratorPoints>
 OutputIteratorPoints
 initial_points(OutputIteratorPoints pts, int n);}
-{Outpust a set of \ccc{n} points on the surface.}
+{Outputs a set of \ccc{n} points on the surface.}
 
 
 \ccHasModels

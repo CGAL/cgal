@@ -3,12 +3,13 @@
 and Mariette Yvinec}
 
 
-The surface mesher package offers mainly a global function
+The surface mesher package offers a global function
 to build a triangular mesh approximating a surface.
 
 The surface is described through an oracle that can tell whether a
-given segment it intersects or not and that can compute the
-intersections points if any. Several implementation of
+given segment,ray or line intersects the surface 
+or not and  compute the
+intersection  points if any. Several implementation of
 the \ccc{SurfaceOracle} concept are provided. They allow to mesh
 implicit surfaces as well as  surfaces described as a gray level in a three
 dimensional image.
@@ -21,7 +22,7 @@ concept \ccc{SurfaceMeshCriteria}.
 
 The meshing algorithm is a Delaunay refinement process
 which is mainly guided by the criteria. 
-The output mesh may offer some guarantees, as being manifold,
+grepThe output mesh may offer some guarantees, as being manifold,
 homeomorphic to the surface or within a given
 Hausdorff distance.  However these guarantees depend 
 from the quality of the input surface (smoothness, with or without
@@ -50,9 +51,9 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 \ccRefIdfierPage{Implicit_surface_oracle<Func>}
 
 \subsection*{Tag classes}
-\ccRefIdfierPage{Manifold} \\
-\ccRefIdfierPage{Manifold_with_boundary} \\
-\ccRefIdfierPage{Non_manifold} \\
+\ccRefIdfierPage{Tag_manifold} \\
+\ccRefIdfierPage{Tag_manifold_with_boundary} \\
+\ccRefIdfierPage{Tag_non_manifold} \\
 
 \subsection*{Global Functions}
 \ccRefIdfierPage{surface_mesher<C2t3,Oracle,Criteria,Tag>}
