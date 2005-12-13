@@ -27,12 +27,13 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits_, class Arrangement_>
-class Arr_addition_traits : public Traits_
+class Arr_addition_traits 
 {
 public:
 
   typedef Traits_                                  Traits_2;
   typedef Arrangement_                             Arrangement_2;
+  typedef typename Traits_2::Curve_2               Curve_2;
 
   typedef typename Arrangement_2::Halfedge_handle  Halfedge_handle;
   typedef typename Arrangement_2::Vertex_handle    Vertex_handle;
@@ -46,6 +47,12 @@ public:
   typedef typename Traits_2::Construct_max_vertex_2
                                                    Base_Construct_max_vertex_2;
   typedef typename Traits_2::Compare_xy_2          Base_Compare_xy_2;
+  typedef typename Traits_2::Compare_y_at_x_2      Base_Compare_y_at_x_2;
+  typedef typename Traits_2::Compare_y_at_x_right_2 
+                                                   Base_Compare_y_at_x_right_2;
+  typedef typename Traits_2::Equal_2               Base_Equal_2;
+  typedef typename Traits_2::Compare_x_2           Base_Compare_x_2;
+  typedef typename Traits_2::Is_vertical_2         Base_Is_vertical_2;
 
 protected:
 
@@ -55,7 +62,6 @@ public:
 
   //Constructor
   Arr_addition_traits (Traits_2& tr):
-    Traits_2 (tr),
     m_base_traits (&tr)
   {}
 
@@ -436,6 +442,132 @@ public:
     return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
 
+
+  class Compare_y_at_x_2
+  {
+  private:
+    Base_Compare_y_at_x_2 m_base_cmp_y_at_x;
+
+  public:
+    Compare_y_at_x_2(const Base_Compare_y_at_x_2& base):
+        m_base_cmp_y_at_x(base)
+    {}
+
+    Comparison_result operator() (const Point_2& p,
+                                  const X_monotone_curve_2& cv) const
+    {
+      return (m_base_cmp_y_at_x(p.base_point(), cv.base_curve()));
+    }
+  };
+
+  Compare_y_at_x_2 compare_y_at_x_2_object () 
+  {
+    return Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object());
+  }
+
+
+  class Compare_y_at_x_right_2
+  {
+  private:
+    Base_Compare_y_at_x_right_2 m_base_cmp_y_at_x_right;
+
+  public:
+    Compare_y_at_x_right_2(const Base_Compare_y_at_x_right_2& base):
+        m_base_cmp_y_at_x_right(base)
+    {}
+
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2,
+                                  const Point_2& p) const
+    {
+      return (m_base_cmp_y_at_x_right(cv1.base_curve(),
+                                      cv2.base_curve(),
+                                      p.base_point()));
+    }
+  };
+
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () 
+  {
+    return Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object());
+  }
+
+
+  class Equal_2
+  {
+  private:
+    Base_Equal_2 m_base_eq;
+
+  public:
+    Equal_2(const Base_Equal_2& base):
+        m_base_eq(base)
+    {}
+
+     bool operator() (const X_monotone_curve_2& cv1,
+                      const X_monotone_curve_2& cv2) const
+    {
+      return (m_base_eq(cv1.base_curve(), cv2.base_curve()));
+    }
+
+    /*!
+     * Check if the two points are the same.
+     * \param p1 The first point.
+     * \param p2 The second point.
+     * \return (true) if the two point are the same; (false) otherwise.
+     */
+    bool operator() (const Point_2& p1, const Point_2& p2) const
+    {
+      return (m_base_eq(p1.base_point(), p2.base_point()));
+    }
+  };
+
+  Equal_2 equal_2_object () 
+  {
+    return Equal_2(m_base_traits->equal_2_object());
+  }
+
+
+  class Compare_x_2
+  {
+  private:
+    Base_Compare_x_2 m_base_cmp_x;
+
+  public:
+    Compare_x_2(const Base_Compare_x_2& base):
+        m_base_cmp_x(base)
+    {}
+
+     bool operator() (const Point_2& p1, const Point_2& p2) const
+    {
+      return (m_base_cmp_x(p1.base_point(), p2.base_point()));
+    }
+  };
+
+  Compare_x_2 compare_x_2_object () 
+  {
+    return Compare_x_2(m_base_traits->compare_x_2_object());
+  }
+
+
+  class Is_vertical_2
+  {
+  private:
+    Base_Is_vertical_2 m_base_is_vert;
+
+  public:
+    Is_vertical_2(const Base_Is_vertical_2& base):
+        m_base_is_vert(base)
+    {}
+
+     bool operator() (const X_monotone_curve_2& cv) const
+    {
+      return (m_base_is_vert(cv.base_curve()));
+    }
+  };
+
+  Is_vertical_2 is_vertical_2_object() 
+  {
+    return Is_vertical_2(m_base_traits->is_vertical_2_object());
+  }
 };
 
 
