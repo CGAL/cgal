@@ -187,6 +187,9 @@ template < class Traits > void test_del(const char *nm)
 
 int main(int argc, char *argv[])
 {
+    std::cout << "Delaunay\n";
+    test_del < CGAL::KDS::Inexact_simulation_traits_3 > ("Numeric");
+    test_del < CGAL::KDS::Exact_simulation_traits_3 > ("Upper bound");
     std::cout << "Sort\n";
     test_sort < CGAL::KDS::Exact_simulation_traits_1 > ("Upper bound");
     test_sort < CGAL::KDS::Inexact_simulation_traits_1 > ("Numeric");
@@ -196,9 +199,7 @@ int main(int argc, char *argv[])
         << CGAL::POLYNOMIAL::internal::lazy_stats.refine_attempted_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.
         refine_succeeded_ << std::endl;
-    std::cout << "Delaunay\n";
-    test_del < CGAL::KDS::Exact_simulation_traits_3 > ("Upper bound");
-    test_del < CGAL::KDS::Inexact_simulation_traits_3 > ("Numeric");
+    
 /*test_del<Lazy_exact_traits_3>("Lazy upper bound");
    std::cout << CGAL::POLYNOMIAL::lazy_stats.created_ << " "
    << CGAL::POLYNOMIAL::lazy_stats.isolated_ << " "

@@ -156,7 +156,7 @@ return lb| ub;
         }
 
         bool refine_bottom(double lb) {
-            CGAL_assertion(0);
+            CGAL_Polynomial_assertion(0);
             return false;
         }
 
@@ -329,15 +329,15 @@ return lb| ub;
         }
 
         void count_singular_top() {
-            assert(intervals_.back().num_roots.is_unknown());
+            CGAL_Polynomial_assertion(intervals_.back().num_roots.is_unknown());
             int deg=intervals_.back().interval.apply_to_endpoint(kernel_.multiplicity_object(f_), Interval::LOWER);
             intervals_.back().num_roots=deg;
         }
 
         Interval_classification classify_top() {
-            CGAL_assertion(intervals_.back().left_sign
+            CGAL_Polynomial_assertion(intervals_.back().left_sign
                 == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER));
-            CGAL_assertion(intervals_.back().right_sign
+            CGAL_Polynomial_assertion(intervals_.back().right_sign
                 == intervals_.back().interval.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::UPPER));
 
 // compute a root count
@@ -422,19 +422,6 @@ return lb| ub;
                 CGAL_POLYNOMIAL_NS::Sign rs):
             num_roots(Root_count::UNKNOWN), left_sign(ls), right_sign(rs), interval(in){}
             Interval interval;
-/*bool is_good(){
-  if (is_small(typename Traits::Function::NT(0), interval.approximate_width())) {
-assert(0);
-if (left_sign == right_sign) num_roots=Root_count::even(); //single_even
-else num_roots=Root_count::odd(); //single_odd
-interval=interval.upper_endpoint_interval();
-return true;
-  }
-  if (interval.is_singular()) return true;
-  else if (left_sign != POLYNOMIAL_NS::ZERO && right_sign != POLYNOMIAL_NS::ZERO){
-return num_roots.is_single();
-} else return false;
-}*/
         };
 
         Traits kernel_;
@@ -448,9 +435,4 @@ return num_roots.is_single();
 };
 CGAL_POLYNOMIAL_END_NAMESPACE
 
-/*namespace std {
-  template <class Traits>
-  class numeric_limits<typename CGAL::POLYNOMIAL::Upper_bound_root_stack<Traits>::Root>:
-    public numeric_limits<typename Traits::Root> {};
-    };*/
 #endif

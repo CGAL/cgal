@@ -26,7 +26,7 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 # define FLOAT double
 
-static const int MAXN= 55;
+static const unsigned int MAXN= 55;
 //# define PARAMFLOAT double_t
 
 /*******************************************************************************
@@ -114,7 +114,7 @@ long            maxiter,                          /* Maximum number of iteration
 long            fig                               /* The number of decimal figures to be computed */
 )
 {
-    CGAL_precondition(fig < MAXN);
+    CGAL_precondition(static_cast<unsigned int>(fig) < MAXN);
     int i;
     register int j;
     FLOAT h[MAXN + 3], b[MAXN + 3], c[MAXN + 3], d[MAXN + 3], e[MAXN + 3];
@@ -302,9 +302,10 @@ long            fig                               /* The number of decimal figur
 #undef MAXN
 
 template <bool CLEAN>
-static void Turkowski_polynomial_compute_roots_t(const double *begin, const double *end,
-double lb, double ub,
-std::vector<double> &roots)
+static void Turkowski_polynomial_compute_roots_t(const double *begin, 
+						 const double *end,
+						 double lb, double ub,
+						 std::vector<double> &roots)
 {
     std::size_t numc= end-begin;
     double rp[MAXN];
@@ -315,13 +316,19 @@ std::vector<double> &roots)
   rp[i]= std::numeric_limits<double>::infinity();
   }*/
 
+    for (unsigned int i=0; i< MAXN; ++i){
+      cc[i]=std::numeric_limits<double>::infinity();
+      rp[i]=std::numeric_limits<double>::infinity();
+      cc[i]=std::numeric_limits<double>::infinity();
+    }
+
     FindPolynomialRoots(begin, rp, cp, cc, numc-1, 10*numc, 40);
 
     if (CLEAN) {
         lb-= .000005;
     }
 
-    for (std::size_t i=0; i< numc; ++i) {
+    for (std::size_t i=0; i< numc-1; ++i) {
 /* std::cout << "Trying " <<  rp[i] << "+" << std::setprecision(10) <<  cp[i] << "i "
    << cc[i] << "\n";*/
         if (cc[i] > 10000 && root_is_good(rp[i], cp[i], lb, ub)) {
@@ -338,8 +345,9 @@ std::vector<double> &roots)
 }
 
 
-void Turkowski_polynomial_compute_roots(const double *begin, const double *end,  double lb,
-double ub, std::vector<double> &roots)
+void Turkowski_polynomial_compute_roots(const double *begin, const double *end, 
+					double lb, double ub, 
+					std::vector<double> &roots)
 {
 
     int degree= end-begin-1;

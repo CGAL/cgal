@@ -410,7 +410,7 @@ Simple_interval_root(const RNT &nt): ii_(nt){
                 std::pair<double,double> before= CGAL_POLYNOMIAL_TO_INTERVAL(isolating_interval());
                 refine();
                 std::pair<double,double> after= CGAL_POLYNOMIAL_TO_INTERVAL(isolating_interval());
-                CGAL_assertion(oaw != isolating_interval().approximate_width());
+                CGAL_Polynomial_assertion(oaw != isolating_interval().approximate_width());
 /*if (oaw == isolating_interval().approximate_width()){
 break;
 }*/
