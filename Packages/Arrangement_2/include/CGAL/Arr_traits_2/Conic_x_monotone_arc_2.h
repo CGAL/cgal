@@ -666,8 +666,7 @@ public:
 
       if ((this->_info & FACING_UP) != 0)
         return (LARGER);
-      else
-        return (SMALLER);
+      return (SMALLER);
     }
     else if (!is_vertical_slope1)
     {
@@ -677,51 +676,45 @@ public:
 
       if ((arc._info & FACING_UP) != 0)
         return (SMALLER);
-      else
-        return (LARGER);
+      return (LARGER);
     }
-    else
+
+    // The two arcs have vertical slopes at p_int:
+    // First check whether one is facing up and one down. In this case the
+    // comparison result is trivial.
+    if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+      return (LARGER);
+    else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+      return (SMALLER);
+
+    // Compute the second-order derivative by y and act according to it.
+    _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
+    arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
+
+    Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom,
+                                                 slope2_numer*slope1_denom);
+
+    // If necessary, use the third-order derivative by y.
+    if (slope_res == EQUAL)
     {
-      // The two arcs have vertical slopes at p_int:
-      // First check whether one is facing up and one down. In this case the
-      // comparison result is trivial.
-      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
-        return (LARGER);
-      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
-        return (SMALLER);
-
-      // Compute the second-order derivative by y and act according to it.
-      _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
-      arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
-
-      Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom,
-                                                   slope2_numer*slope1_denom);
-
-      // If necessary, use the third-order derivative by y.
-      if (slope_res == EQUAL)
-      {
-        // \todo Check this!
-        _derive_by_y_at (p, 3, slope1_numer, slope1_denom);
-        arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
-
-        slope_res = CGAL::compare (slope2_numer*slope1_denom,
-                                   slope1_numer*slope2_denom);
-      }
-
-      // \todo Handle higher-order derivatives:
-      CGAL_assertion(slope_res != EQUAL);
-
-      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
-      {
-        // Both are facing up.
-        return ((slope_res == LARGER) ? SMALLER : LARGER);
-      }
-      else
-      {
-        // Both are facing down.
-        return (slope_res);
-      }
+      // \todo Check this!
+      _derive_by_y_at (p, 3, slope1_numer, slope1_denom);
+      arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
+      
+      slope_res = CGAL::compare (slope2_numer*slope1_denom,
+                                 slope1_numer*slope2_denom);
     }
+
+    // \todo Handle higher-order derivatives:
+    CGAL_assertion(slope_res != EQUAL);
+
+    if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
+    {
+      // Both are facing up.
+      return ((slope_res == LARGER) ? SMALLER : LARGER);
+    }
+    // Both are facing down.
+    return (slope_res);
   }
 
   /*!
@@ -806,8 +799,7 @@ public:
 
       if ((this->_info & FACING_UP) != 0)
         return (LARGER);
-      else
-        return (SMALLER);
+      return (SMALLER);
     }
     else if (!is_vertical_slope1)
     {
@@ -817,51 +809,45 @@ public:
 
       if ((arc._info & FACING_UP) != 0)
         return (SMALLER);
-      else
-        return (LARGER);
+      return (LARGER);
     }
-    else
+
+    // The two arcs have vertical slopes at p_int:
+    // First check whether one is facing up and one down. In this case the
+    // comparison result is trivial.
+    if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+      return (LARGER);
+    else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+      return (SMALLER);
+
+    // Compute the second-order derivative by y and act according to it.
+    _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
+    arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
+
+    Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom,
+                                                 slope1_numer*slope2_denom);
+
+    // If necessary, use the third-order derivative by y.
+    if (slope_res == EQUAL)
     {
-      // The two arcs have vertical slopes at p_int:
-      // First check whether one is facing up and one down. In this case the
-      // comparison result is trivial.
-      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
-        return (LARGER);
-      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
-        return (SMALLER);
+      // \todo Check this!
+      _derive_by_y_at (p, 3, slope1_numer, slope1_denom);
+      arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
 
-      // Compute the second-order derivative by y and act according to it.
-      _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
-      arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
-
-      Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom,
-                                                   slope1_numer*slope2_denom);
-
-      // If necessary, use the third-order derivative by y.
-      if (slope_res == EQUAL)
-      {
-        // \todo Check this!
-        _derive_by_y_at (p, 3, slope1_numer, slope1_denom);
-        arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
-
-        slope_res = CGAL::compare (slope2_numer*slope1_denom,
-                                   slope1_numer*slope2_denom);
-      }
-
-      // \todo Handle higher-order derivatives:
-      CGAL_assertion(slope_res != EQUAL);
-
-      if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
-      {
-        // Both are facing up.
-        return ((slope_res == LARGER) ? SMALLER : LARGER);
-      }
-      else
-      {
-        // Both are facing down.
-        return (slope_res);
-      }
+      slope_res = CGAL::compare (slope2_numer*slope1_denom,
+                                 slope1_numer*slope2_denom);
     }
+
+    // \todo Handle higher-order derivatives:
+    CGAL_assertion(slope_res != EQUAL);
+
+    if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
+    {
+      // Both are facing up.
+      return ((slope_res == LARGER) ? SMALLER : LARGER);
+    }
+    // Both are facing down.
+    return (slope_res);
   }
 
   /*!
