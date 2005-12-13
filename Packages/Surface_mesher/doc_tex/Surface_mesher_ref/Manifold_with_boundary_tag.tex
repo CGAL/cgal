@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Tag_non_manifold.tex
+% | Reference manual page: Manifold_with_boundary_tag.tex
 % +------------------------------------------------------------------------+
 % | 09.12.2005   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSTagnonmanifoldRev}{$Revision$}
-\RCSdefDate{\RCSTagnonmanifoldDate}{$Date$}
+\RCSdef{\RCSTagmanifoldwithboundaryRev}{$Revision$}
+\RCSdefDate{\RCSTagmanifoldwithboundaryDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Tag_non_manifold}  %% add template arg's if necessary
+\begin{ccRefClass}{Manifold_with_boundary_tag}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -20,14 +20,12 @@
   
 The class \ccRefName\ is a tag class used to monitor the
 surface meshing algorithm. When instantiated with the tag
-\ccRefName\ , the global function 
-\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}
-does not ensure that the output mesh  is a  manifold surface.
-This properties may nevertheless results from the choice of
-appropriate meshing criteria.
+\ccRefName, the global function 
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}
+ensures that the output mesh  is a  manifold surface
+but it may have boundaries.
 
-
-\ccInclude{Surface_mesher.h}
+\ccInclude{CGAL/Surface_mesher.h}
 
 %\ccIsModel
 
@@ -40,7 +38,7 @@ appropriate meshing criteria.
 %\ccCreation
 %\ccCreationVariable{a}  %% choose variable name
 
-%\ccConstructor{Tag_manifold();}{default constructor.}
+%\ccConstructor{Manifold_with_boundary_tag();}{default constructor.}
 
 %\ccOperations
 
@@ -48,19 +46,16 @@ appropriate meshing criteria.
 
 \ccSeeAlso
 
-\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>}\\
-\ccc{Tag_manifold} \\
-\ccc{Tag_manifold_with_boundary} \\
-%\ccc{Tag_non_manifold} 
-%\ccc{Some_other_class},
-%\ccc{some_other_function}.
-
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>} \\
+\ccc{Manifold_tag} \\
+%\ccc{Manifold_with_boundary_tag}
+\ccc{Non_manifold_tag}
 %\ccExample
 
 %A short example program.
 %Instead of a short program fragment, a full running program can be
 %included using the 
-%\verb|\ccIncludeExampleCode{Package/Tag_manifold.C}| 
+%\verb|\ccIncludeExampleCode{Package/Manifold_with_boundary_tag.C}| 
 %macro. The program example would be part of the source code distribution and
 %also part of the automatic test suite.
 
@@ -68,6 +63,8 @@ appropriate meshing criteria.
 %void your_example_code() {
 %}
 %\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Manifold_with_boundary_tag.C}
 
 \end{ccRefClass}
 

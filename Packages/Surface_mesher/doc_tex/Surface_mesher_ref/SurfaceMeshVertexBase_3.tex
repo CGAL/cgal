@@ -18,19 +18,20 @@
 
 \ccDefinition
   
-The \ccc{Surface_mesh_C2t3<Tr>} data structure is able to store
+The \ccc{Pure_complex_2_in_triangulation_3<Tr>} data structure is able to store
 a pure two dimensional complex embedded in a triangulation.
 The concept \ccRefName\ describes the base vertex type to be
 used  in the  triangulation class \ccc{Tr}  plugged in a
-\ccc{Surface_mesh_C2t3<Tr>} data structure.
+\ccc{Pure_complex_2_in_triangulation_3<Tr>} data structure.
 
 
 
 \ccGeneralizes
 
-\ccc{TriangulationVertexBase_3} \\
+\ccc{TriangulationVertexBase_3}
+
 The concept \ccRefName\ adds a boolean \ccc{visited} marker 
-and a caching mecanism to store the 
+and a caching mechanism to store the 
 answer of an \ccc{is_regular()} query.
 
 %\ccTypes
@@ -72,8 +73,8 @@ regular mark as b.}
 
 \ccSeeAlso
 
-\ccc{SurfaceMeshC2T3} \\
-\ccc{Surface_mesh_C2T3<Tr>}.
+\ccc{PureComplex_2InTriangulation_3} \\
+\ccc{Pure_complex_2_in_triangulation_3<Tr>}.
 
 %\ccExample
 

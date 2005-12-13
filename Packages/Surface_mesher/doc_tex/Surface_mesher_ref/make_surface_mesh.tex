@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{surface_mesher<C2T3, Oracle,
+\begin{ccRefFunction}{make_surface_mesh<C2T3, Oracle,
 Criteria, Tag>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -34,20 +34,20 @@ a model of the concept \ccc{SurfaceMeshCriteria}.
 
  The class \ccc{C2T3}
 is required to be a model of the concept
-\ccc{SurfaceMeshC2T3}.
+\ccc{PureComplex_2InTriangulation_3}.
 The object \ccc{c2t3} of type \ccc{C2T3} which is passed by reference
 is used to maintain  the current surface mesh and stores
 the final mesh at the end of the procedure.
 Each object of type \ccc{C2T3} has a pointer to 
 a three dimensional  Delaunay triangulation.
 The vertex and cell base classes of this triangulation
-have  to be repectively  models  of the concepts 
+have  to be  models  of the concepts 
 \ccc{SurfaceMeshVertexBase_3} and 
-\ccc{SurfaceMeshCellBase_3}.
+\ccc{SurfaceMeshCellBase_3}, respectively.
 
 The Delaunay refinement
 process is started with an initial set of points which is the union 
-of two sets : the
+of two sets: the
 set of vertices in the initial  triangulation pointed to by 
 \ccc{c2t3} and a set of
 points output by the method \ccc{surf.initial_points()}.
@@ -57,25 +57,25 @@ on each connected components of the surface to meshed.
 The fourth template parameter is a tag whose type influences the behaviour of the
 meshing algorithm. The function \ccRefName\  has specialized versions
 for the following  tag types~: \\
-\ccc{Tag_manifold} : the output mesh is guaranteed to be a manifold
+\ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
 surface without boundary.\\
-\ccc{Tag_manifold_with_boundary}~:the output mesh is guaranteed to be
+\ccc{Manifold_with_boundary_tag}~:the output mesh is guaranteed to be
 manifold but may have boundaries.\\
-\ccc{Tag_non_manifold} : the algorithm relies on the given criteria and
+\ccc{Non_manifold_tag} : the algorithm relies on the given criteria and
 guarantees nothing else.
 
 
 
-\ccInclude{CGAL/surface_mesher.h}
+\ccInclude{CGAL/make_surface_mesh.h}
 
 \ccGlobalFunction{template <class C2T3,
                             class Oracle,
                             class Criteria,
                             class Tag >
-void surface_mesher(C2T3& c2t3,
-                    Oracle surf,
-                    Criteria criteria,
-                    Tag = Tag_non_manifold());}
+void make_surface_mesh(C2T3& c2t3,
+                       Oracle surf,
+                       Criteria criteria,
+                       Tag = Non_manifold_tag());}
 
 
  
@@ -86,7 +86,7 @@ void surface_mesher(C2T3& c2t3,
 
 \ccSeeAlso
 %\ccc{Complex2InTriangulation3} \\
-\ccc{SurfaceMeshC2T3} \\
+\ccc{PureComplex_2InTriangulation_3} \\
 \ccc{SurfaceMeshCellBase_3} \\
 \ccc{SurfaceMeshVertexBase_3} \\
 \ccc{SurfaceOracle} \\
@@ -108,7 +108,7 @@ void surface_mesher(C2T3& c2t3,
 %}
 %\end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Package/surface_mesher.C}
+%% \ccIncludeExampleCode{Package/make_surface_mesh.C}
 
 \end{ccRefFunction}
 

@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Surface_mesh_standard_criteria.tex
+% | Reference manual page: Surface_mesh_default_criteria.tex
 % +------------------------------------------------------------------------+
 % | 08.12.2005   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSSurfacemeshstandardcriteriaRev}{$Revision$}
-\RCSdefDate{\RCSSurfacemeshstandardcriteriaDate}{$Date$}
+\RCSdef{\RCSSurfacemeshdefaultcriteriaRev}{$Revision$}
+\RCSdefDate{\RCSSurfacemeshdefaultcriteriaDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Surface_mesh_standard_criteria<FT>}  %% add template arg's if necessary
+\begin{ccRefClass}{Surface_mesh_default_criteria<FT>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,17 +26,17 @@ in order~: \\
  A surface Delaunay ball is a  ball circumscribed to a mesh facet 
 and  centered on the surface. Such a ball exists for each facet
 of the current mesh.
-Indeed  the current surface mesh, 
+Indeed  the current surface mesh
 is  the restricted Delaunay triangulation of the current sampling
 which is just the set of facets in the Delaunay triangulation of
-the sampling  which do have a Delaunay surfacic ball. \\
+the sampling  which do have a Delaunay surface ball. \\
 - an upper bound on the center-center distances of mesh facets.
   The center-center distances of a mesh facet 
   is the distances between the facet circumcenter and the 
  centers of its  surface Delaunay balls. 
 
 
-\ccInclude{Surface_mesh_standard_criteria.h}
+\ccInclude{CGAL/Surface_mesh_default_criteria.h}
 
 \ccIsModel
 
@@ -49,12 +49,12 @@ the sampling  which do have a Delaunay surfacic ball. \\
 \ccCreation
 \ccCreationVariable{criteria}  %% choose variable name
 
-\ccConstructor{Surface_mesh_standard_criteria();}{default constructor.}
-\ccConstructor{Surface_mesh_standard_criteria(FT angle_bound, 
+\ccConstructor{Surface_mesh_default_criteria();}{default constructor.}
+\ccConstructor{Surface_mesh_default_criteria(FT angle_bound, 
                                               FT radius_bound
                                               FT distance_bound);}
 {returns a \ccRefName\ with \ccc{angle_bound}, \ccc{radius_bound},
-\ccc{distance_bound} as repective bounds for the minimum angle,
+\ccc{distance_bound} as respective bounds for the minimum angle,
 the radius of the surface Delaunay balls 
 and the center-center distances.}
 
@@ -65,7 +65,7 @@ and the center-center distances.}
 
 \ccSeeAlso
 
-\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>}
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}
 
 
 %\ccExample
@@ -73,7 +73,7 @@ and the center-center distances.}
 %A short example program.
 %Instead of a short program fragment, a full running program can be
 %included using the 
-%\verb|\ccIncludeExampleCode{Package/Surface_mesh_standard_criteria.C}| 
+%\verb|\ccIncludeExampleCode{Package/Surface_mesh_default_criteria.C}| 
 %macro. The program example would be part of the source code distribution and
 %also part of the automatic test suite.
 
@@ -82,7 +82,7 @@ and the center-center distances.}
 %}
 %\end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Package/Surface_mesh_standard_criteria.C}
+%% \ccIncludeExampleCode{Package/Surface_mesh_default_criteria.C}
 
 \end{ccRefClass}
 

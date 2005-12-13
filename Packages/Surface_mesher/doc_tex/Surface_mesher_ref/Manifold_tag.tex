@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Tag_manifold_with_boundary.tex
+% | Reference manual page: Manifold_tag.tex
 % +------------------------------------------------------------------------+
 % | 09.12.2005   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSTagmanifoldwithboundaryRev}{$Revision$}
-\RCSdefDate{\RCSTagmanifoldwithboundaryDate}{$Date$}
+\RCSdef{\RCSTagmanifoldRev}{$Revision$}
+\RCSdefDate{\RCSTagmanifoldDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Tag_manifold_with_boundary}  %% add template arg's if necessary
+\begin{ccRefClass}{Manifold_tag}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,11 +21,12 @@
 The class \ccRefName\ is a tag class used to monitor the
 surface meshing algorithm. When instantiated with the tag
 \ccRefName\ , the global function 
-\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}
 ensures that the output mesh  is a  manifold surface
-but it may have boundaries.
+without boundary.
 
-\ccInclude{Surface_mesher.h}
+
+\ccInclude{CGAL/Surface_mesher.h}
 
 %\ccIsModel
 
@@ -38,7 +39,7 @@ but it may have boundaries.
 %\ccCreation
 %\ccCreationVariable{a}  %% choose variable name
 
-%\ccConstructor{Tag_manifold_with_boundary();}{default constructor.}
+%\ccConstructor{Manifold_tag();}{default constructor.}
 
 %\ccOperations
 
@@ -46,16 +47,19 @@ but it may have boundaries.
 
 \ccSeeAlso
 
-\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>} \\
-\ccc{Tag_manifold} \\
-%\ccc{Tag_manifold_with_boundary}
-\ccc{Tag_non_manifold}
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}\\
+%\ccc{Manifold_tag} \\
+\ccc{Manifold_with_boundary_tag} \\
+\ccc{Non_manifold_tag}
+%\ccc{Some_other_class},
+%\ccc{some_other_function}.
+
 %\ccExample
 
 %A short example program.
 %Instead of a short program fragment, a full running program can be
 %included using the 
-%\verb|\ccIncludeExampleCode{Package/Tag_manifold_with_boundary.C}| 
+%\verb|\ccIncludeExampleCode{Package/Manifold_tag.C}| 
 %macro. The program example would be part of the source code distribution and
 %also part of the automatic test suite.
 
@@ -64,7 +68,7 @@ but it may have boundaries.
 %}
 %\end{ccExampleCode}
 
-%%% \ccIncludeExampleCode{Package/Tag_manifold_with_boundary.C}
+%%% \ccIncludeExampleCode{Package/Manifold_tag.C}
 
 \end{ccRefClass}
 

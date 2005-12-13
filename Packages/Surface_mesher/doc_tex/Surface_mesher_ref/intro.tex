@@ -7,9 +7,8 @@ The surface mesher package offers a global function
 to build a triangular mesh approximating a surface.
 
 The surface is described through an oracle that can tell whether a
-given segment,ray or line intersects the surface 
-or not and  compute the
-intersection  points if any. Several implementation of
+given segment, ray or line  intersects the surface or not, and that can compute the
+intersections point if any. Several implementations of
 the \ccc{SurfaceOracle} concept are provided. They allow to mesh
 implicit surfaces as well as  surfaces described as a gray level in a three
 dimensional image.
@@ -22,10 +21,10 @@ concept \ccc{SurfaceMeshCriteria}.
 
 The meshing algorithm is a Delaunay refinement process
 which is mainly guided by the criteria. 
-grepThe output mesh may offer some guarantees, as being manifold,
+The output mesh may offer some guarantees, as being manifold,
 homeomorphic to the surface or within a given
-Hausdorff distance.  However these guarantees depend 
-from the quality of the input surface (smoothness, with or without
+Hausdorff distance.  However, these guarantees depend 
+on the quality of the input surface (smoothness, with or without
 boundary, manifold or  not),
 the type and values of the given criteria. 
 The behavior of the refinement process can also be influenced through
@@ -35,7 +34,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 
 \subsection*{Concepts}
 
-\ccRefConceptPage{SurfaceMeshC2T3}\\
+\ccRefConceptPage{PureComplex_2InTriangulation_3}\\
 \ccRefConceptPage{SurfaceMeshCriteria} \\
 \ccRefConceptPage{SurfaceOracle} \\
 \ccRefConceptPage{SurfaceMeshCellBase_3} \\
@@ -44,21 +43,22 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 
 
 \subsection*{Classes}
-\ccRefIdfierPage{Surface_mesh_C2T3<Tr>} \\
+\ccRefIdfierPage{Pure_complex_2_in_triangulation_3<Tr>} \\
 \ccRefIdfierPage{Surface_mesh_vertex_base_3<Gt,Vb>} \\
 \ccRefIdfierPage{Surface_mesh_cell_base_3<Gt,Vb>} \\
 \ccRefIdfierPage{Surface_mesh_standard_criteria<FT>} \\
 \ccRefIdfierPage{Implicit_surface_oracle<Func>}
 
 \subsection*{Tag classes}
-\ccRefIdfierPage{Tag_manifold} \\
-\ccRefIdfierPage{Tag_manifold_with_boundary} \\
-\ccRefIdfierPage{Tag_non_manifold} \\
+\ccRefIdfierPage{Manifold_tag} \\
+\ccRefIdfierPage{Manifold_with_boundary_tag} \\
+\ccRefIdfierPage{Non_manifold_tag} \\
+
 
 \subsection*{Global Functions}
-\ccRefIdfierPage{surface_mesher<C2t3,Oracle,Criteria,Tag>}
+\ccRefIdfierPage{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}
 
 
-\subsection*{Enums}
+%\subsection*{Enums}
 
 \lcHtml{\subsection*{Links to the Reference Sections}}

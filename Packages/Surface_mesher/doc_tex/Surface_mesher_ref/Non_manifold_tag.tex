@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Tag_manifold.tex
+% | Reference manual page: Non_manifold_tag.tex
 % +------------------------------------------------------------------------+
 % | 09.12.2005   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSTagmanifoldRev}{$Revision$}
-\RCSdefDate{\RCSTagmanifoldDate}{$Date$}
+\RCSdef{\RCSTagnonmanifoldRev}{$Revision$}
+\RCSdefDate{\RCSTagnonmanifoldDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Tag_manifold}  %% add template arg's if necessary
+\begin{ccRefClass}{Non_manifold_tag}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,12 +21,13 @@
 The class \ccRefName\ is a tag class used to monitor the
 surface meshing algorithm. When instantiated with the tag
 \ccRefName\ , the global function 
-\ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>}
-ensures that the output mesh  is a  manifold surface
-without boundary.
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}
+does not ensure that the output mesh  is a  manifold surface.
+This properties may nevertheless result from the choice of
+appropriate meshing criteria.
 
 
-\ccInclude{Surface_mesher.h}
+\ccInclude{CGAL/Surface_mesher.h}
 
 %\ccIsModel
 
@@ -47,10 +48,10 @@ without boundary.
 
 \ccSeeAlso
 
-\ccc{surface_mesher<C2t3,Oracle,Criteria,Tag>}\\
-%\ccc{Tag_manifold} \\
-\ccc{Tag_manifold_with_boundary} \\
-\ccc{Tag_non_manifold}
+\ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}\\
+\ccc{Manifold_tag} \\
+\ccc{Manifold_with_boundary_tag} \\
+%\ccc{Non_manifold_tag} 
 %\ccc{Some_other_class},
 %\ccc{some_other_function}.
 
@@ -67,8 +68,6 @@ without boundary.
 %void your_example_code() {
 %}
 %\end{ccExampleCode}
-
-%%% \ccIncludeExampleCode{Package/Tag_manifold.C}
 
 \end{ccRefClass}
 

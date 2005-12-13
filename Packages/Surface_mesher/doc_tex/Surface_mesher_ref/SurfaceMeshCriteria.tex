@@ -19,15 +19,15 @@
 \ccDefinition
   
 The Delaunay refinement process involved in  the 
-global function \ccc{surface_mesher<C2T3,Oracle,Criteria,Tag>} 
+global function \ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>} 
 is guided by a set of refinement criteria.
-The concept \ccRefName\ described the interface which
-allow the surface mesher to take these criteria into account.
+The concept \ccRefName\ describes the interface which
+allows the surface mesher to take these criteria into account.
 
 Typically the meshing criteria is a set
 of elementary criterion, each of which
-has to be met by  the facet of the final mesh.
-The meshing algorithm eliminates in turn  bad facets, i.e.
+has to be met by  the facets of the final mesh.
+The meshing algorithm eliminates in turn  {\em bad} facets, i.e.,
 facets that do not meet all the criteria.
 
 The size and quality of the final mesh 
@@ -40,9 +40,9 @@ defines a type \ccc{Quality} designed to measure
 the quality of a mesh facet. 
 Typically this quality
 is a multicomponent variable.  Each component corresponds to
-one criterion and measures how much the facets departs from
+one criterion and measures how much the facets deviates from
 meeting this criterion. Then, the  comparison operator on qualities
-is just a lexicographic comparison.
+is just a lexicographical comparison.
 
 
 %\ccGeneralizes
@@ -53,7 +53,7 @@ is just a lexicographic comparison.
 \ccTypes
 
 \ccNestedType{Quality}{A type to measure the quality of mesh facets.
-    This type is required have a comparison operator}
+    This type is required to have a comparison operator.}
 
 \ccCreation
 \ccCreationVariable{criteria}  %% choose variable name
@@ -63,14 +63,14 @@ is just a lexicographic comparison.
 \ccOperations
 
 \ccMethod{bool  is_bad(Facet f);}{returns true if facet \ccc{f}
-do not meet all the  criteria.}
+does not meet the criteria.}
 
 \ccMethod{Quality quality(Facet f);}{Computes the quality
 of facet \ccc{f}.}
 
 \ccHasModels
 
-\ccc{Surface_mesher_standard_quality<FT>}
+\ccc{Surface_mesher_default_criteria<FT>}
 
 
 %\ccSeeAlso
