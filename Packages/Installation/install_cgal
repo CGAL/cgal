@@ -41,6 +41,8 @@ CGAL_INSTALL_CGAL="`basename ${0}`"
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
 CGAL_DIR="`pwd`"
+# ---------------------------------------------
+CGAL_INSTALL_DIR=''
 
 # ---------------------------------------------
 # set to non-empty, if you want to view the logs of
@@ -217,6 +219,10 @@ CGAL_SUPPORT_COMPILER=''
 # (used for naming makefiles and lib directories)
 CGAL_OS_COMPILER=''
 
+# this is woven into CGAL_OS_COMPILER; allows to run different installations
+# for the same os/compiler combination
+CUSTOM_OS_COMPILER_TAG=''
+
 # can we start building the libs?
 SETUP_COMPLETE=''
 
@@ -268,11 +274,12 @@ print_usage_information()
 {
 	${_printf} "%s\n\n" \
 "Usage: ${CGAL_INSTALL_CGAL}
-      [--help | --version | -i | --interactive | -u <dir> |
-       --upgrade <dir> | --build-all | --rebuild-all |
+      [--help | --version | -i | --interactive | 
+       -u <dir> | --upgrade <dir> | --build-all | --rebuild-all |
        --build <config> | --rebuild <config> | --disable-shared |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
       [-leda] [-core] [-gmp] [-gmpxx] [-qt] [-qt_mt] [--verbose]
+      [--prefix <dir>]
       [--CGAL_DIR <dir>]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
@@ -280,6 +287,7 @@ print_usage_information()
       [--QT_DIR <dir>] [--QT_INCL_DIR <dir>]
       [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
       [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
+      [--custom_ostype_tag <tag>]
 
   -leda        enables support for LEDA
   -core        enables support for CORE
@@ -291,6 +299,8 @@ print_usage_information()
                (not generally recommended)
   --help       gives this message
   --version    prints ${CGAL_INSTALL_CGAL} version number
+  --prefix <dir>
+               specifies an installation directory 
   --CGAL_DIR <dir>
                specifies an explicit path to use for the CGAL directory
   --interactive or -i
@@ -329,7 +339,9 @@ print_usage_information()
   --CUSTOM_CXXFLAGS <flags>
                pass the specified <flags> to the compiler
   --CUSTOM_LDFLAGS  <flags>
-               pass the specified <flags> to the linker"
+               pass the specified <flags> to the linker
+  --custom_ostype_tag <tag>
+               weave this tag into architecture/os/compiler specification"
 }
 
 # ---------------------------------------------------------------------
@@ -619,6 +631,7 @@ check_for_utils()
     _check_for_sysutil awk y
     _check_for_sysutil tee y
     _check_for_sysutil find y
+    _check_for_sysutil tar y
 
     # test whether sed respects newline (I have seen at least one
     # Darwin version that does not...)
@@ -656,8 +669,28 @@ guess_os()
     else
 	$1 "WARNING: Could not determine architecture."
     fi
-    SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} -e 's/(.*)//g' -e 's/_/-/g' | ${_awk} '{print $1}'`"
+    _tmpx="`${_uname} -s | ${_sed} 's/_//g'`"
+    # if there is already a minus in `uname -s` (as, e.g., on Cygwin)
+    # we don't append `uname -r`
+    case "${_tmpx}" in
+	*-*) SYST="${_tmp}${_tmpx}";;
+	*) SYST="${_tmp}${_tmpx}-`${_uname} -r | ${_awk} 'BEGIN {FS=\".\"}{printf \"%d.%d\n\",$1,$2}' | ${_sed} -e 's/(.*)//g' -e 's/_/-/g' | ${_awk} '{print $1}'`";;
+    esac
     $1 "OS is \"${SYST}\"."
+}
+
+# the old version, used for transition...
+# to be removed at some point
+old_guess_os()
+{
+    _tmp=`${_uname} -p | ${_sed} 's/_/-/g' 2>/dev/null`
+    if [ -z "${_tmp}" -o "${_tmp}" = 'unknown' -o "`${_uname}`" = "Linux" ]; then
+	_tmp=`${_uname} -m | ${_sed} 's/_/-/g' 2>/dev/null`
+    fi
+    if [ -n "${_tmp}" ]; then
+	_tmp=${_tmp}"_"
+    fi
+    OLD_SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} -e 's/(.*)//g' -e 's/_/-/g' | ${_awk} '{print $1}'`"
 }
 
 # -------------------------------------------------------
@@ -2162,6 +2195,7 @@ search_for_compilers()
     _set_compiler 1
     write_buffer "\n\n${_LEFTSPACE}Choosing compiler `extended_compiler_description`.\n"
     flush_buffer
+    CUSTOM_OS_COMPILER_TAG=''
     _choose_compiler
 }
 
@@ -3440,10 +3474,12 @@ test_qt()
 # compiler settings
 set_ostype()
 {
+    CGAL_OS_COMPILER="${SYST}_`compiler_basename`"
     if [ -n "`compiler_version`" ]; then
-	CGAL_OS_COMPILER="${SYST}_`compiler_basename`-`compiler_version`"
-    else
-	CGAL_OS_COMPILER="${SYST}_`compiler_basename`"
+	CGAL_OS_COMPILER="${CGAL_OS_COMPILER}-`compiler_version`"
+    fi
+    if [ -n "${CUSTOM_OS_COMPILER_TAG}" ]; then
+	CGAL_OS_COMPILER="${CGAL_OS_COMPILER}_${CUSTOM_OS_COMPILER_TAG}"
     fi
 }
 
@@ -3575,10 +3611,11 @@ retrieve_compiler_settings()
 	GMP_SUPPORT=''
 	SETUP_COMPLETE=''
     fi
-    if [ -n "${GMP_SUPPORT}" ]; then
-        if try_to_get_var_from_file GMPXX_SUPPORT "${_file}"; then
-	    GMPXX_SUPPORT=''
-	fi
+    if try_to_get_var_from_file GMPXX_SUPPORT "${_file}"; then
+	GMPXX_SUPPORT=''
+    fi
+    if [ -z "${GMP_SUPPORT}" ]; then
+	GMPXX_SUPPORT=''
     fi
     if try_to_get_var_from_file GMP_INCL_DIR "${_file}"; then
 	if [ -n "${GMP_SUPPORT}" ]; then
@@ -4175,6 +4212,7 @@ compiler_choose_menu()
 		COMPILER="`basename ${COMPILER_NAME}`@`compiler_basename \"${_tmp3}\"`@${COMPILER_NAME}@${COMPILER_NAME}@`compiler_description \"${_tmp3}\"`@"
 		_check_and_register_compiler "${COMPILER}"
 		reset_all_test_variables
+                CUSTOM_OS_COMPILER_TAG=''
 		_choose_compiler
 		_set_support
 		SETUP_COMPLETE=''
@@ -4191,6 +4229,12 @@ compiler_choose_menu()
 # compiler_menu : setup compiler options.
 #
 
+check_CUSTOM_OS_COMPILER_TAG()
+{
+    # throw out potentially troublesome special characters
+    CUSTOM_OS_COMPILER_TAG="`echo ${CUSTOM_OS_COMPILER_TAG} | ${_sed} 's/ //g;s/-//g;s/_//g;s/@//g;s/(//g;s/)//g;s/*//g;s/&//g;s/?//g;s/$//g;s/!//g'`"  
+}
+
 compiler_menu()
 {
     while [ 0 ]; do
@@ -4206,6 +4250,8 @@ compiler_menu()
         else
 	    print_multi_line "<disabled>"
         fi
+	print_line "${_bold_on}<O>${_bold_off}  Set custom ostype tag"
+	print_multi_line "${CUSTOM_OS_COMPILER_TAG:-<none>}"
 	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Main Menu'
 
@@ -4221,6 +4267,12 @@ compiler_menu()
 	    l|L)
 		change_value CUSTOM_LDFLAGS
 		reset_all_test_variables
+		SETUP_COMPLETE=''
+		;;
+	    o|O)
+		change_value CUSTOM_OS_COMPILER_TAG
+		check_CUSTOM_OS_COMPILER_TAG
+                reset_all_test_variables
 		SETUP_COMPLETE=''
 		;;
             s|S)
@@ -4908,7 +4960,6 @@ install_gmp_sub()
 	_check_read ${gmpfile}
 	_check_write ${CGAL_AUX_DIR}
 	_check_for_sysutil gunzip y
-	_check_for_sysutil tar y
 	_do_command "${_gunzip} -c ${gmpfile} | ${_tar} xf -" "Unzip/Untar"
     fi
 
@@ -5700,7 +5751,7 @@ create_include_makefile()
   #
   ${_printf} "%s\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_OBJ_PREFIX = ${CGAL_OBJ_PREFIX}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_LIB_DESTINATION = ${CGAL_LIB_DIR}/\$(CGAL_OS_COMPILER)" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DESTINATION = \$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)" >> ${FILE}
 
   #
   # CGAL_SHARED_LIB
@@ -5853,6 +5904,7 @@ make_lib_dir()
     _libname=${CGAL_LIB_DIR}/`full_ostype`
     _check_dir_exists_create ${_libname}
     _libname=`${_basename} ${_libname}`
+    CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
 }
 
 # create appropriate dirs and makefiles
@@ -5860,7 +5912,6 @@ make_makefiles()
 {
     # generate directoryfile and makefile:
     ${_printf} "%s" "${_LEFTSPACE}Generating Makefiles ..."
-    CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
     generatemakefiles log_print
     ${_printf} "%s\n" " done."
 }
@@ -5930,6 +5981,82 @@ lib_menu()
     build_cgal
 }
 
+install_menu()
+{
+    write_menu_information "Installing"
+    set_lib_compiled_flag
+    if [ -z "${LIB_COMPILED}" ]; then
+  	log_print "CGAL library not found, hence no installation."
+	${_printf} "\n%s\n%s\n\n" \
+         "${_LEFTSPACE}Error: Could not find any CGAL library for this OS/compiler." \
+         "${_LEFTSPACE}  You have to build the CGAL library first."
+	print_filled_line
+	wait_for_enter
+	return 1
+    fi
+    if [ "${CGAL_DIR}" = "${CGAL_INSTALL_DIR}" ]; then
+  	log_print "CGAL_DIR == CGAL_INSTALL_DIR, hence no installation."
+	${_printf} "\n%s\n\n" \
+         "${_LEFTSPACE}Remark: No need to install, as CGAL_DIR == CGAL_INSTALL_DIR." 
+	print_filled_line
+	wait_for_enter
+	return 1
+    fi
+    print_filled_line
+    print_empty_line
+    print_empty_line
+    print_empty_line
+    print_empty_line
+    print_filled_line
+    go_up_lines 4
+    print_line "Target Directory: ${CGAL_INSTALL_DIR}."
+    print_prompt "Do you want to install CGAL into this directory (y/N)? "
+    _read
+    if [ "${KEY}" != 'y' ]; then
+        return
+    fi
+
+    # ok, go ahead...
+    go_down_lines 3; flush_buffer
+    _check_dir_exists_create ${CGAL_INSTALL_DIR}
+    # this sets $CGAL_MAKEFILE:
+    make_lib_dir
+
+    # install header files
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/include"
+    _check_dir_exists_create "${_CGAL_IDIR}"
+    _do_command \
+      "cd ${CGAL_INCL_DIR}; ${_tar} cf - . | (cd ${_CGAL_IDIR}; ${_tar} xf -)" \
+      "Install CGAL headers"
+ 
+    # install libraries
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/lib/`full_ostype`"
+    _check_dir_exists_create "${_CGAL_IDIR}"
+    _do_command \
+      "cd ${CGAL_LIB_DIR}/`full_ostype`; ${_tar} cf - . | (cd ${_CGAL_IDIR}; ${_tar} xf -)" \
+      "Install CGAL libraries"
+
+    # install binaries
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/bin"
+    _check_dir_exists_create "${_CGAL_IDIR}"
+    _do_command \
+      "cd ${CGAL_DIR}/scripts; ${_tar} cf - . | (cd ${_CGAL_IDIR}; ${_tar} xf -)" \
+      "Install CGAL programs"
+
+   # install makefile
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/make"
+    _check_dir_exists_create "${_CGAL_IDIR}"
+    CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/`${_basename} \"${CGAL_MAKEFILE}\"`"
+    _do_command \
+      "(${_sed} \"s${CGAL_DIR}${CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" >${CGAL_INSTALL_MAKEFILE})" \
+      "Install CGAL Makefile"
+
+    write_buffer "\n"
+    print_filled_line
+    wait_for_enter
+    cd ${CGAL_DIR}
+}
+
 
 # ---------------------------------------------------------------------
 # $1 is the full name of a config file in config/install/*
@@ -5949,7 +6076,21 @@ _build_one()
     if [ -n "${COMPILER}" ]; then
         set_ostype
         set_compiler_flags
-        retrieve_compiler_settings
+        # do transition from old config files
+        if [ ! -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`" ]; then
+            NEW_SYST="${SYST}"
+            old_guess_os
+            SYST="${OLD_SYST}"
+            set_ostype
+            OLD_LIBDIR="${CGAL_LIB_DIR}/`full_ostype`"
+            retrieve_compiler_settings
+            SYST="${NEW_SYST}"
+            set_ostype
+           # copy (potential) GMP libs
+            cp -r "${OLD_LIBDIR}" "${CGAL_LIB_DIR}/`full_ostype`" 
+        else
+            retrieve_compiler_settings
+        fi
         case ${_WHAT_TO_DO} in
 	    *rebuild*)
 	        test_compiler_specifica "${INSTALL_VERBOSE}";;
@@ -6097,6 +6238,10 @@ upgrade()
     print_filled_line
     flush_buffer
     log_print "copy config install files ... "
+    #for i in ${UPGRADE_FROM}/config/install/*; do
+    #    # check for old format
+    #    case "`awk 'BEGIN{FS=\".\"}/install_cgal/{print $0}' $i`"
+    #done
     ${_cp} -r ${UPGRADE_FROM}/config/install ${CGAL_DIR}/config
     log_print "done."
 
@@ -6205,6 +6350,7 @@ main_menu()
 	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)"
 	print_empty_line
 	print_line     "${_bold_on}<B>${_bold_off}  Build CGAL Libraries"
+	print_line     "${_bold_on}<I>${_bold_off}  Install CGAL Libraries"
 	if [ -n "${INTERNAL_RELEASE}" -a -n "${LIB_COMPILED}" ]; then
 	    print_line     "${_bold_on}<R>${_bold_off}  Run CGAL testsuite"
 	fi
@@ -6216,6 +6362,7 @@ main_menu()
 	case $KEY in
 	    c|C) compiler_menu;;
 	    s|S) support_menu;;
+	    i|I) install_menu;;
 	    b|B)
 		if [ -z "${SETUP_COMPLETE}" ]; then
 		    test_setup
@@ -6314,7 +6461,7 @@ startup_interactive()
 	${_printf} "\n%s\n" \
 	    "WARNING: In interactive mode all command line options"
 	${_printf} "%s\n\n" \
-	    "  except for \"-i\" and \"--CGAL_DIR\" are ignored."
+	    "  except for \"-i\", \"--prefix\", and \"--CGAL_DIR\" are ignored."
 	clear_buffer
     fi
     init_logfiles
@@ -6350,9 +6497,13 @@ finish_interactive()
     print_center_line "If something went wrong, (or maybe also, if not:)"
     print_center_line "have a look at `${_basename} ${INSTALL_LOGFILE}`."
     print_filled_line
-    write_buffer "\nCGAL_LIB_DIR is\n${CGAL_LIB_DIR}/`full_ostype`\n"
-    write_buffer "\nRemember to set the CGAL_MAKEFILE environment "
-    write_buffer "variable, e.g. to\n${CGAL_MAKEFILE}\n\n"
+    #write_buffer "\nCGAL_LIB_DIR is\n${CGAL_LIB_DIR}/`full_ostype`\n"
+    write_buffer "\nRemember to set the CGAL_MAKEFILE environment variable, "
+    if [ -n "${CGAL_INSTALL_MAKEFILE}" ]; then
+        write_buffer "e.g., to\n${CGAL_INSTALL_MAKEFILE}\n\n"
+    else
+        write_buffer "e.g., to\n${CGAL_MAKEFILE}\n\n"
+    fi
     flush_buffer
 }
 
@@ -6397,6 +6548,11 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    set_dirs_dependant_on_cgal_dir
 	    initial_check
+	    ;;
+	--prefix*|--PREFIX*|-prefix*|-PREFIX*)
+	    if set_variable_from_command_line 'CGAL_INSTALL_DIR' "$1" "$2"; then
+		shift
+	    fi
 	    ;;
 	--leda_incl_dir*|--LEDA_INCL_DIR*|-LEDA_INCL_DIR*|-leda_incl_dir*)
 	    _ANY_OPT='y'
@@ -6488,6 +6644,13 @@ while [ ${#} -gt 0 ]; do
 		shift
 	    fi
 	    ;;
+	--custom_ostype_tag*|--CUSTOM_OSTYPE_TAG*|-custom_ostype_tag*|-CUSTOM_OSTYPE_TAG*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CUSTOM_OS_COMPILER_TAG' "$1" "$2"; then
+		shift
+	    fi
+	    check_CUSTOM_OS_COMPILER_TAG
+            ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
 	    _ANY_OPT='y'
 	    LEDA_SUPPORT='_LEDA'
@@ -6604,6 +6767,10 @@ if [ -n "${_CONFLICT}" ]; then
     _WHAT_TO_DO='help'
 fi
 
+if [ -z "${CGAL_INSTALL_DIR}" ]; then
+    CGAL_INSTALL_DIR="${CGAL_DIR}"
+fi
+
 case ${_WHAT_TO_DO} in
     *non-interactive*)
         get_cgal_version
@@ -6654,7 +6821,6 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s\n" \
 	    "--------------------------------------------------------"
 	make_lib_dir
-	CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_`full_ostype`
 	generatemakefiles 'print_with_indent'
 	store_compiler_settings
 
