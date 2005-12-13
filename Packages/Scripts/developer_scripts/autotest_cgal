@@ -507,7 +507,7 @@ main_procedure()
 if [ "${BUILD_HOSTS}" = "localhost" ]; then
   TEXT="`value_of COMPILERS_localhost`"
   if [ -z "${TEXT}" ]; then
-    printf "\nWARNING: Only installing on localhost\n";
+    # printf "\nWARNING: Only installing on localhost\n";
     get_cgal
     unzip_cgal
     copy_old_stuff
