@@ -200,6 +200,11 @@ Projects
 -- HTML: Once \includonly works, we might think about a script to gray out 
    unused TOC entries (using a different CSS class for the link)
 
+-- SRC: Look into doxygon how they create the nice (clickable) inheritance
+   diagrams (using an external graph drawing packe). Assuming this
+   package was installed, can we also create such diagrams? Also for
+   concept refinement hierarchies?
+
 -- Doc: revise the existing documentation to reflect the state
    of the converter.
 
