@@ -57,7 +57,7 @@ int main ()
 
   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
-    // Go over the incident edges of the current vertex and examine their
+    // Go over the incident halfedges of the current vertex and examine their
     // colors.
     bool       has_red = false;
     bool       has_blue = false;
@@ -89,7 +89,7 @@ int main ()
     }
   }
 
-  // Locate the edges that corrspond to a red-blue overlap.
+  // Locate the edges that correspond to a red-blue overlap.
   Arrangement_2::Edge_iterator   eit;
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)

@@ -62,7 +62,8 @@ int main ()
   insert_curves (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 

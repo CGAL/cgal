@@ -36,7 +36,8 @@ int main ()
   insert_curve (arr, s5, pl);
 
   // Print the size of the arrangement.
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 

@@ -26,7 +26,7 @@ int main ()
   Arrangement_2    arr;
 
   // Insert a hyperbolic arc, supported by the hyperbola y = 1/x
-  // (or: xy - 1 = 0) with the end-points (1/5, 4) and (2, 1/2).
+  // (or: xy - 1 = 0) with the endpoints (1/5, 4) and (2, 1/2).
   // Note that the arc is counterclockwise oriented.
   Point_2       ps1 (Rational(1,4), 4);
   Point_2       pt1 (2, Rational(1,2));
@@ -66,9 +66,9 @@ int main ()
   insert_curve (arr, c5);
 
   // Insert a parabolic arc that is supported by a parabola y = -x^2
-  // (or: x^2 + y = 0) and whose end-points are (-sqrt(3), -3) ~ (-1.73, -3)
+  // (or: x^2 + y = 0) and whose endpoints are (-sqrt(3), -3) ~ (-1.73, -3)
   // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates 
-  // of the end-points cannot be acccurately represented, we specify them
+  // of the endpoints cannot be acccurately represented, we specify them
   // as the intersections of the parabola with the lines y = -3 and y = -2.
   // Note that the arc is clockwise oriented.
   Conic_arc_2   c6 =
@@ -92,7 +92,8 @@ int main ()
   insert_curve (arr, c7);
 
   // Print out the size of the resulting arrangement.
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 

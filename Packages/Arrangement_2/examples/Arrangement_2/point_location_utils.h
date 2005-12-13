@@ -16,26 +16,27 @@ void point_location_query
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
 
+  std::cout << "The point (" << q << ") is located ";
   if (CGAL::assign (f, obj))
   {
     // q is located inside a face:
     if (f->is_unbounded())
-      std::cout << "Inside the unbounded face." << std::endl;
+      std::cout << "inside the unbounded face." << std::endl;
     else
-      std::cout << "Inside a bounded face." << std::endl;
+      std::cout << "inside a bounded face." << std::endl;
   }
   else if (CGAL::assign (e, obj))
   {
     // q is located on an edge:
-    std::cout << "On an edge: " << e->curve() << std::endl;
+    std::cout << "on an edge: " << e->curve() << std::endl;
   }
   else if (CGAL::assign (v, obj))
   {
     // q is located on a vertex:
     if (v->is_isolated())
-      std::cout << "On an isolated vertex: " << v->point() << std::endl;
+      std::cout << "on an isolated vertex: " << v->point() << std::endl;
     else
-      std::cout << "On a vertex: " << v->point() << std::endl;
+      std::cout << "on a vertex: " << v->point() << std::endl;
   }
   else
   {
@@ -63,25 +64,26 @@ void vertical_ray_shooting_query
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
 
+  std::cout << "Shooting up from (" << q << ") : ";
   if (CGAL::assign (e, obj))
   {
     // We hit an edge:
-    std::cout << "Hit an edge: " << e->curve() << std::endl;
+    std::cout << "hit an edge: " << e->curve() << std::endl;
   }
   else if (CGAL::assign (v, obj))
   {
     // We hit a vertex:
     if (v->is_isolated())
-      std::cout << "Hit an isolated vertex: " << v->point() << std::endl;
+      std::cout << "hit an isolated vertex: " << v->point() << std::endl;
     else
-      std::cout << "Hit a vertex: " << v->point() << std::endl;
+      std::cout << "hit a vertex: " << v->point() << std::endl;
   }
   else if (CGAL::assign (f, obj))
   {
     // We did not hit anything:
     CGAL_assertion (f->is_unbounded());
     
-    std::cout << "Hit nothing." << std::endl; 
+    std::cout << "hit nothing." << std::endl; 
   }
   else
   {

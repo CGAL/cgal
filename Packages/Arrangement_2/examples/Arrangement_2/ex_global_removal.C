@@ -37,15 +37,16 @@ int main ()
   std::cout << "The initial arrangement:" << std::endl;
   print_arrangement (arr);
 
-  // Remove the horizontal edge e1 from both arrangements and remove its
-  // end vertices.
+  // Remove the horizontal edge e1 from the arrangement using the member
+  // function remove_edge(), then remove its end vertices.
   Vertex_handle   v1 = e1->source(), v2 = e1->target();
 
   arr.remove_edge (e1);
   remove_vertex (arr, v1);
   remove_vertex (arr, v2);
 
-  // Remove the second horizontal edge e2.
+  // Remove the second horizontal edge e2 from the arrangement using the
+  // free remove_edge() function.
   remove_edge (arr, e2);
 
   std::cout << "The final arrangement:" << std::endl;

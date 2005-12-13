@@ -20,28 +20,27 @@ $\calA(\calC)$ is the subdivision of the plane into zero-dimensional,
 one-dimensional and two-dimensional cells, called {\em vertices}, {\em
 edges} and {\em faces}, respectively induced by the curves in $\calC$.
 Arrangements are ubiquitous in the computational-geometry
-literature and have many applications in a range of fields;
+literature and have many applications;
 see, e.g.,~\cite{as-aa-00,cgal:h-a-04}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The curves in $\calC$ can intersect each other (a single curve may also
-by self-intersecting or may be comprised of several disconnected branches)
+be self-intersecting or may be comprised of several disconnected branches)
 and are not necessarily $x$-monotone.\footnote{A continuous planar curve $C$
 is {\em $x$-monotone} if every vertical line intersects it at
 most once. For example, a non-vertical line segment is always
-$x$-monotone and so is the graph of any continuous function $y = f(x)$
-(for convenience, we treat vertical line segments as {\em weakly
-$x$-monotone}, as there exists a single vertical line that overlaps them).
-A circle centered or radius $r$ at $(x_0, y_0)$ is not $x$-monotone, as
+$x$-monotone and so is the graph of any continuous function $y = f(x)$.
+For convenience, we treat vertical line segments as {\em weakly
+$x$-monotone}, as there exists a single vertical line that overlaps them.
+A circle of radius $r$ centered at $(x_0, y_0)$ is not $x$-monotone, as
 the vertical line $x = x_0$ intersects it at $(x_0, y_0 - r)$ and at
 $(x_0, y_0 + r)$.}
 We construct a collection $\calC''$ of
 $x$-monotone subcurves that are pairwise disjoint in their interiors
 in two steps as follows. First, we decompose each curve in $\calC$
 into maximal $x$-monotone subcurves (and possibly isolated points),
-obtaining the collection $\calC'$. Note that it immediately follows
-from the definition that an $x$-monotone curve cannot be
-self-intersecting. Then, we decompose each curve in $\calC'$ into
+obtaining the collection $\calC'$. Note that an $x$-monotone curve cannot
+be self-intersecting. Then, we decompose each curve in $\calC'$ into
 maximal connected subcurves not intersecting any other
 curve (or point) in $\calC'$. The collection $\calC''$ may also
 contain isolated points, if the curves of $\calC$ contain such
@@ -57,9 +56,11 @@ maintains the incidence relations among these objects.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The main idea behind the \dcel\ data-structure is to represent
 each edge using a pair of directed {\em halfedges}, one going from
-the (lexicographically) left endpoint of the curve toward its right
-endpoint, and the other, known as its {\em twin} halfedge, going in
-the opposite direction. Halfedges are used to separate faces, and to
+the left (the $xy$-lexicographically smaller) endpoint of the curve toward
+its right (the $xy$-lexicographically larger) endpoint, and the other,
+known as its {\em twin} halfedge, going in the opposite direction. As each
+halfedge is directed, we say it has a {\em source} vertex and a {\em target}
+vertex. Halfedges are used to separate faces, and to
 connect vertices (with the exception of {\em isolated vertices}, which
 are unconnected).
 
@@ -67,8 +68,7 @@ are unconnected).
 If a vertex $v$ is the target of a halfedge $e$, we say that $v$
 and $e$ are {\em incident} to each other. The halfedges incident
 to a vertex $v$ form a circular list oriented in a clockwise order
-around this vertex (we assume $v$ is not an isolated vertex, as
-isolated vertices have no incident halfedges).
+around this vertex. (An isolated vertex has no incident halfedges.)
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Each halfedge $e$ stores a pointer to its {\it incident face},
@@ -89,8 +89,8 @@ arrangement package supports only bounded curves at this point. The
 unbounded face does not have an outer boundary. Any other connected
 component of the boundary of the face is called a {\em hole} (or {\em
 inner CCB}), and can be represented as a circular chain of halfedges
-winding in a clockwise orientation around its outer boundary. Note
-that a hole is not necessarily a single face, as it may have no area,
+winding in a clockwise orientation around it. Note that a hole does not
+necessarily correspond to a single face, as it may have no area,
 or alternatively it may consist of several connected faces.  Every
 face can have several holes contained in its interior (or no holes at
 all). In addition, every face may contain isolated vertices in its
@@ -109,12 +109,14 @@ see~\cite[Chapter~2]{bkos-cgaa-00}.
   <img src="./fig/arr_segs.gif" border=0 alt="Arrangement of sgements">
   </center>
 \end{ccHtmlOnly}
-\caption{An arrangement of interior-disjoint line segment, which
-consists of a single connected component inside the unbounded face
-$f_0$, with some of the \dcel\ records that represent it.
-The half-edge $e$ (and its twin $e'$) correspond to a line segment
-that connects the vertices $v_1$ and $v_2$ and separates the face
-$f_1$ from $f_2$. The predecessor $e_{\rm prev}$ and successor
+\caption{An arrangement of interior-disjoint line segments with some
+of the \dcel\ records that represent it. The unbounded face $f_0$ has
+a single connected component that forms a hole inside it, and this hole
+is comprised if several faces. The half-edge $e$ is directed from its
+source vertex $v_1$ to its target vertex $v_2$. This edge, together with
+its twin $e'$, correspond to a line segment that connects the points
+associated with $v_1$ and $v_2$ and separates the face $f_1$ from $f_2$.
+The predecessor $e_{\rm prev}$ and successor
 $e_{\rm next}$ of $e$ are part of the chain that form the outer
 boundary of the face $f_2$. The face $f_1$ has a more complicated
 structure as it contains two holes in its interior: One hole
@@ -168,7 +170,7 @@ and to operate on it.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The design of the arrangement package is guided by the need to
 separate between the representation of the arrangements and the
-various geometric algorithms that operate on them, and be the need to
+various geometric algorithms that operate on them, and by the need to
 separate between the topological and geometric aspects of the planar
 subdivision. The separation is exhibited by the two template
 parameters of the \ccc{Arrangement_2} template:
@@ -182,15 +184,15 @@ supports basic geometric predicates on them.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 In the first sections of this chapter we always use
 \ccc{Arr_segment_traits_2} as our traits class, to construct
-arrangements of line segments. However, the arrangement package is
-shipped with several other traits classes that can handle also
+arrangements of line segments. However, the arrangement package 
+contains several other traits classes that can handle also
 polylines (continuous piecewise-linear curves), conic arcs, and arcs
 of rational functions. We exemplify the usage of these traits classes
 in Section~\ref{arr_sec:traits}.
 \item The \ccc{Dcel} template-parameter should be instantiated with
 a class that is a model of the \ccc{ArrangementDcel} concept. The
-value of this parameter is by default
-\ccc{Arr_default_dcel<Traits>}. In many applications it is necessary
+value of this parameter is \ccc{Arr_default_dcel<Traits>} by default.
+However, in many applications it is necessary
 to extend the \dcel\ features; see Section~\ref{arr_sec:ex_dcel} for
 further explanations and examples.
 \end{itemize}
@@ -247,7 +249,7 @@ over the relevant features of the arrangement at hand.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 As mentioned above, the arrangement is represented as a \dcel,
-that stores three containers of vertices, halfedges and faces. Thus,
+which stores three containers of vertices, halfedges and faces. Thus,
 the \ccc{Arrangement_2} class supplies iterators for these
 containers. For example, the methods \ccc{vertices_begin()} and
 \ccc{vertices_end()} return \ccc{Arrangement_2::Vertex_iterator}
@@ -269,20 +271,25 @@ arrangement edges. Note that the value type of this iterator is
 halfedges that represent the edge.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-All iterator, circulator and handle types also have non-mutable
-({\em const}) counterparts. For example, the arrangement has a
+All iterator, circulator\footnote{A {\em circulator} is used to
+traverse a circular list, such as the list of halfedges incident to
+a vertex --- see below.} and handle types also have non-mutable
+({\em const}) counterparts. These non-mutable iterators are useful
+to traverse an arrangement without changing it. For example,
+the arrangement has a
 non-constant member function called \ccc{vertices_begin()} that
 returns a \ccc{Vertex_iterator} object and another const member
 function that returns a \ccc{Vertex_const_iterator} object. In fact,
 all methods listed in this section that return an iterator, a
 circulator or a handle have non-mutable counterparts. It should be
 noted that, for example, \ccc{Vertex_handle} can be readily converted
-to a \ccc{Vertex_const_handle}, but not vice-versa.
+into a \ccc{Vertex_const_handle}, but not vice-versa.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Conversion of a non-mutable handle to a corresponding mutable
 handle are nevertheless possible, and can be performed using the
-static function \ccc{Arrangement_2::non_const_handle()}. There are
+static function \ccc{Arrangement_2::non_const_handle()} (see, e.g.,
+Section~\ref{arr_ssec:pl}). There are
 three variant of this function, one for each type of handle.
 
 \subsubsection{Traversal Methods for an Arrangement Vertex}
@@ -291,22 +298,22 @@ three variant of this function, one for each type of handle.
 %
 A vertex is always associated with a geometric entity, namely with
 a \ccc{Point_2} object, which can be obtained by the \ccc{point()}
-method of the nested \ccc{Vertex} class.
+method of the \ccc{Vertex} class nested within \ccc{Arrangement_2}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{is_isolated()} method determines whether a vertex is isolated
-or not. Recall that the halfedges incident to a non-isolated vertex
-form a circular list around this vertex. The
-\ccc{incident_halfedges()} method returns a circulator of type
-\ccc{Arrangement_2::Halfedge_around_vertex_circulator} that
-enables the traversal of this circular list in a clockwise
+or not. Recall that the halfedges incident to a non-isolated vertex,
+namely the halfedges that share a common target vertex, form a circular
+list around this vertex. The \ccc{incident_halfedges()} method returns
+a circulator of type \ccc{Arrangement_2::Halfedge_around_vertex_circulator}
+that enables the traversal of this circular list in a clockwise
 direction. The value type of this circulator is \ccc{Halfedge}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following function prints all the neighbors of a given
-arrangement vertex (assuming the \ccc{Point_2} type can be
+arrangement vertex (assuming that the \ccc{Point_2} type can be
 inserted into the standard output using the \ccc{<<} operator). The
-arrangement type is borrowed from the simple example above.
+arrangement type is the same as in the simple example above.
 \begin{alltt}
 void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
 \{
@@ -320,7 +327,7 @@ void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
 
   std::cout << "The neighbors of the vertex (" << v->point() << ") are:";
   do \{
-    // Note that the current halfedge is (u -> v):
+    // Note that the current halfedge is directed from u to v:
     Arrangement_2::Vertex_const_handle u = curr->source();
     std::cout << " (" << u->point() << ")";
   \} while (++curr != first);
@@ -338,18 +345,18 @@ that contains this vertex using the \ccc{face()} method.
 %
 Each arrangement edge, realized as a pair of twin halfedges,
 is associated with an \ccc{X_monotone_curve_2} object, which
-can be obtained by the \ccc{curve()} method of the nested
-\ccc{Halfedge} class.
+can be obtained by the \ccc{curve()} method of the \ccc{Halfedge}
+class nested in the \ccc{Arrangement_2} class.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{source()} and \ccc{target()} methods return handles to
-the halfedge source and target vertices respectively. You can
+the halfedge source and target vertices respectively. We can
 obtain a handle to the twin halfedge using the \ccc{twin()}
 method. From the definition of halfedges, it follows that if
 \ccc{he} is a halfedge handle, then:
 \begin{itemize}
-\item \ccc{he->curve()} is equivalent to \ccc{he->twin()->curve()}.
-\item \ccc{he->source()} is equivalent to \ccc{he->twin()->target()}.
+\item \ccc{he->curve()} is equivalent to \ccc{he->twin()->curve()},
+\item \ccc{he->source()} is equivalent to \ccc{he->twin()->target()}, and
 \item \ccc{he->target()} is equivalent to \ccc{he->twin()->source()}.
 \end{itemize}
 
@@ -359,21 +366,21 @@ can be obtained by the \ccc{face()} method. Recall that a
 halfedge is always one link in a connected chain of halfedges that
 share the same incident face, known as a {\em CCB}. The
 \ccc{prev()} and \ccc{next()} methods return handles to the
-previous and next halfedges in the CCB respectively (note that
-\ccc{he->prev()} is not necessarily equivalent to
-\ccc{he->twin()->next()}).
+previous and next halfedges in the CCB respectively. 
+%(note that \ccc{he->prev()} is not necessarily equivalent to
+%\ccc{he->twin()->next()}).
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-It is natural to traverse the CCB using a circulator, as it is
-actually a circular list. The \ccc{ccb()} method returns a 
+As the CCB is a circular list of halfedges, it is only natural to 
+traverse it using a circulator. The \ccc{ccb()} method returns a 
 \ccc{Arrangement_2::Ccb_halfedge_circulator} object for the
 halfedges along the CCB.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The function listed below prints all $x$-monotone curves along a CCB
-(assuming that the \ccc{Point_2} and the \ccc{X_monotone_curve_2}
-types can be inserted into the standard output using the \ccc{<<}
-operator).
+The function \ccc{print_ccb()} listed below prints all $x$-monotone
+curves along a given CCB (assuming that the \ccc{Point_2} and the
+\ccc{X_monotone_curve_2} types can be inserted into the standard output
+using the \ccc{<<} operator).
 \begin{alltt}
 void print_ccb (Arrangement_2::Ccb_halfedge_const_circulator circ)
 \{
@@ -392,14 +399,13 @@ void print_ccb (Arrangement_2::Ccb_halfedge_const_circulator circ)
 \label{arr_sssec:tr_face}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-An arrangement has a single unbounded face, where all other
-arrangement features form holes (or isolated vertices) inside this
-face. The function \ccc{unbounded_face()} returns a handle to this
-face. (Note that an empty arrangement contains nothing 
-{\em but} the unbounded face.)
+An arrangement of bounded curves always has a single unbounded face.
+The function \ccc{unbounded_face()} returns a handle to this face.
+(Note that an empty arrangement contains nothing {\em but} the
+unbounded face.)
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-Given a \ccc{Face} object, you can use the \ccc{is_unbounded()}
+Given a \ccc{Face} object, we can use the \ccc{is_unbounded()}
 method to determine whether it is unbounded. Bounded faces have an
 outer CCB, and the \ccc{outer_ccb()} method returns a circulator
 for the halfedges along this CCB. Note that the halfedges along
@@ -423,9 +429,9 @@ type of this iterator is \ccc{Vertex}.
 \end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The function listed below prints the outer and inner boundaries of a
-given face, using the function \ccc{print_ccb()} that was
-introduced in the previous subsection.
+The function \ccc{print_face()} listed below prints the outer and
+inner boundaries of a given face, using the function \ccc{print_ccb()},
+which was introduced in the previous subsection.
 \begin{alltt}
 void print_face (Arrangement_2::Face_const_handle f)
 \{
@@ -462,13 +468,13 @@ void print_face (Arrangement_2::Face_const_handle f)
 %
 The function listed below prints the current setting of a given
 arrangement. This concludes the preview of the various traversal
-methods\footnote{The file \ccc{arr_print.h}, which can be
+methods.\footnote{The file \ccc{arr_print.h}, which can be
 found under the examples folder, includes this function and the
 rest of the functions listed in this section. Over there they are
 written in a more generic fashion, where the arrangement type
 serves as a template parameter for these functions, so different
 instantiations of the \ccc{Arrangement_2<Traits,Dcel>} template
-can be provided to the same function templates.}.
+can be provided to the same function templates.}
 \begin{alltt}
 void print_arrangement (const Arrangement_2& arr)
 \{
@@ -504,16 +510,14 @@ void print_arrangement (const Arrangement_2& arr)
 In this section we review the various member functions of the
 \ccc{Arrangement_2} class that allow users to modify the
 topological structure of the arrangement by introducing new edges
-and vertices, modifying them, and removing them.
+or vertices, modifying them, or removing them.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The arrangement member-functions that insert new curves into the
-arrangement, thus enabling the construction of planar subdivision, are
+arrangement, thus enabling the construction of a planar subdivision, are
 rather specialized, as they require a-priori knowledge on the location of
 the inserted curve. Indeed, for most purposes it is more convenient to
-construct an arrangement using the free insertion-functions. You may
-skip to Section~\ref{arr_sec:gl_funcs}, and return to this subsection at
-a later point in time.
+construct an arrangement using the free (global) insertion-functions.
 
 \subsubsection{Inserting Non-Intersecting $x$-Monotone Curves}
 \label{arr_sssec:mf_insert_cv}
@@ -524,7 +528,8 @@ arrangement, and perhaps the most frequently used ones, are the
 specialized insertion functions of $x$-monotone curves whose
 interior is disjoint from any other curve in the existing
 arrangement and do not contain any vertex of the arrangement. In
-addition the location of the curve in the arrangement must be known.
+addition, these function require that the location of the curve in the
+arrangement is known.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The motivation behind these rather harsh restrictions on the nature of
@@ -532,12 +537,14 @@ the inserted curves is the decoupling of the topological arrangement
 representation from the various algorithms that operate on it. While
 the insertion of an $x$-monotone curve whose interior is disjoint from
 all existing arrangement features is quite straightforward (as we show
-next), inserting curves that intersect with the arrangement is much
-more complicated and requires the application of non-trivial
-geometric algorithms. These insertion operations are therefore
-implemented as free functions that operate on the arrangement and
-the inserted curve(s); see Section~\ref{arr_sec:gl_funcs} for more
-details and examples.
+next), inserting curves that intersect with the curves already inserted
+into the arrangement is much more complicated and requires the
+application of non-trivial geometric algorithms.
+These insertion operations are therefore implemented as free functions
+that operate on the arrangement and the inserted curve(s); see
+Section~\ref{arr_sec:gl_funcs} for more details and
+examples.\footnote{You may skip to Section~\ref{arr_sec:gl_funcs},
+and return to this subsection at a later point in time.}
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
@@ -564,7 +571,7 @@ half-edges that are affected by the insertion operations are drawn
 as dashed arrows. (a) Inserting a curve as a new hole inside the
 face $f$. (b) Inserting a curve from an existing vertex $u$ that
 corresponds to one of its endpoints. (c) Inserting an $x$-monotone
-curve whose endpoints are already represented by the vertices
+curve whose endpoints are the already existing vertices
 $u_1$ and $u_2$. In our case, the new pair of half-edges close a
 new face $f'$, where the hole $h_1$, which used to belong to $f$,
 now becomes an enclave in this new face.} \label{arr_fig:insert}
@@ -596,13 +603,13 @@ a new hole inside the face that contains this vertex).
 \item If both endpoints correspond to existing arrangement
 vertices, we connect these vertices using a pair of twin halfedges.
 (If one or both vertices are isolated this case reduces to one of
-the two previous cases respectively.) The two following sub cases may
+the two previous cases respectively.) The two following subcases may
 occur:
 \begin{itemize}
 \item Two disconnected components are merged into a single connected
 component.
 %
-\item A new face is created --- actually, it is split from an existing
+\item A new face is created, a face that splits from an existing
 arrangement face. In this case we also have to examine the holes and
 isolated vertices in the existing face and move the relevant ones
 inside the new face.
@@ -614,11 +621,11 @@ The \ccc{Arrangement_2} class offers insertion functions named
 \ccc{insert_in_face_interior()}, \ccc{insert_from_left_vertex()},
 \ccc{insert_from_right_vertex()} and \ccc{insert_at_vertices()}
 that perform the special insertion procedures listed above. The
-first function accepts an $x$-monotone curve and an arrangement
-face that contains this curve in its interior, while the other
-function accept an $x$-monotone curve and handles to the existing
-vertices that correspond to the curve endpoints. Each of the four
-functions return a handle to one of the twin halfedges that have
+first function accepts an $x$-monotone curve $c$ and an arrangement
+face $f$ that contains this curve in its interior. The other
+functions accept an $x$-monotone curve $c$ and handles to the existing
+vertices that correspond to the curve endpoint(s). Each of the four
+functions returns a handle to one of the twin halfedges that have
 been created, where:
 \begin{itemize}
 \item \ccc{insert_in_face_interior(c, f)} returns a halfedge directed
@@ -654,18 +661,24 @@ the halfedges returned from the various insertion functions.}
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following program demonstrates the usage of the four insertion
 functions. It creates an arrangement of five line segments, as
-depicted in Figure~\ref{arr_fig:ex_1}. As the arrangement is very
+depicted in Figure~\ref{arr_fig:ex_1}.\footnote{Notice that in all
+figures in the rest of this chapter the coordinate axes are drawn
+only for illustrative purposes and are {\em not} part of the
+arrangement.} As the arrangement is very
 simple, we use the simple Cartesian kernel of \cgal\ with integer
-coordinates for the segment endpoints. We used the 
+coordinates for the segment endpoints. We also use the 
 \ccc{Arr_segment_traits_2} class that enables the efficient
 maintenance of arrangements of line segments; see more details on
-this traits class in Section~\ref{arr_sec:traits}:
+this traits class in Section~\ref{arr_sec:traits}. This example, as
+many others in this chapter, uses some print-utility functions from
+the file \ccc{print_arr.h}; these functions are also listed in
+Section~\ref{arr_ssec:traverse}.
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_edge_insertion.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-Note that the first line segment is inserted in the interior of
-the unbounded face, while the other line segments are inserted
+Observe that the first line segment is inserted in the interior of
+the unbounded face. The other line segments are inserted
 using the vertices created by the insertion of previous segments.
 The resulting arrangement consists of three faces, where the two
 bounded faces form together a hole in the unbounded face.
@@ -726,8 +739,8 @@ isolated vertices that are still contained in the unbounded face
 \label{arr_sssec:mf_halfedges}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-In the previous subsection we showed how you can introduce new isolated
-vertices in the arrangement. But how do you create a vertex that
+In the previous subsection we showed how to introduce new isolated
+vertices in the arrangement. But how does one create a vertex that
 lies on an existing arrangement edge (more precisely, on an
 $x$-monotone curve that is associated with an arrangement edge)?
 
@@ -735,21 +748,23 @@ $x$-monotone curve that is associated with an arrangement edge)?
 It should be noted that such an operation involves the splitting
 of a curve at a given point in its interior, while the traits
 class used by \ccc{Arrangement_2} does not necessarily have the
-ability to perform such a split operation. However, if users know
-how to split an $x$-monotone curve into two at a given point $p$,
-they can use the \ccc{split_edge(e, p, c1, c2)} function, were
+ability to perform such a split operation. However, if users have
+the ability to split an $x$-monotone curve into two at a given point
+$p$ (this is usually the case when employing a more sophisticated
+traits class; see Section~\ref{arr_sec:traits} for more details)
+they can use the \ccc{split_edge(e, c1, c2)} function, were
 $c_1$ and $c_2$ are the two subcurves resulting from splitting the
-$x$-monotone curve associated with the halfedge $e$ at a point $p$
-in its interior. The function splits the halfedge pair into two
+$x$-monotone curve associated with the halfedge $e$ at some point
+(call it $p$) in its interior. The function splits the halfedge pair into two
 pairs, both incident to a new vertex $v$ associated with $p$, and
 returns a handle to a halfedge whose source equals $e$'s source
 vertex and whose target is the new vertex $v$.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The reverse operation is also possible. Suppose that you have a
+The reverse operation is also possible. Suppose that we have a
 vertex $v$ of degree $2$, whose two incident halfedges, $e_1$ and
 $e_2$, are associated with the curves $c_1$ and $c_2$. Suppose
-further that you know how to merge these two curves into a single
+further that it is possible to merge these two curves into a single
 continuous $x$-monotone curve $c$. Calling \ccc{merge_edge(e1, e2, c)}
 will merge the two edges into a single edge associated with the curve
 $c$, essentially removing the vertex $v$ from the arrangement.
@@ -757,12 +772,14 @@ $c$, essentially removing the vertex $v$ from the arrangement.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Finally, the function \ccc{remove_edge(e)} removes the edge $e$
 from the arrangement. Note that this operation is the reverse of
-the any insertion operation, so it may cause a connected
+an insertion operation, so it may cause a connected
 component to split into two, or two faces to merge into one, or a
 hole to disappear. By default, if the removal of \ccc{e} causes one
 of its end-vertices to become isolated, we remove this vertex as well.
 However, users can control this behavior and choose to keep the
-isolated vertices.
+isolated vertices by supplying additional Boolean flags to
+\ccc{remove_edge()} indicating whether the source and the target vertices
+are to be removed should they become isolated.
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
@@ -789,18 +806,21 @@ removed in step~(c).}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 In the following example program we show how the edge-manipulation
-functions can be used. The program can be separated into three
+functions can be used. The program works in three
 steps, as demonstrated in Figure~\ref{arr_fig:ex_3}. Note that
 here we still stick to integer coordinates, but as we work on a
 larger scale we use an unbounded integer number-type (in this
 case, the \ccc{Gmpz} type taken from the {\sc Gmp} library)
-instead of the built-in \ccc{int} type\footnote{As a rule of
+instead of the built-in \ccc{int} type.\footnote{As a rule of
 thumb, one can use a bounded integer type for representing line
 segments whose coordinates are bounded by
 $\lfloor\sqrt[3]{M}\rfloor$, where $M$ is the maximal
-representable integer value.}. We also use the standard Cartesian
+representable integer value. This guarantees that no overflows occur
+in the computations carried out by the traits class, hence all traits-class
+predicates always return correct results.} We also use the standard Cartesian
 kernel of \cgal\ as our kernel. This is recommended when the
-kernel is instantiated with a more complex number type:
+kernel is instantiated with a more complex number type, as we
+demonstrate in other examples in this chapter.
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_edge_manipulation.C}
 
@@ -821,14 +841,14 @@ geometrically equivalent to \ccc{v->point()} and $c$ is equivalent
 to \ccc{e->curve()} (i.e., the two curves have the same graph),
 respectively, to avoid the invalidation of the geometric structure of
 the arrangement. At a first glance it may seen as these two functions
-are of little use. However, you should keep in mind that there may be
+are of little use. However, we should keep in mind that there may be
 extraneous data (probably non-geometric) associated with the point
 objects or with the curve objects, as defined by the traits class. With
-these two functions you can modify this data; see more details in
+these two functions we can modify this data; see more details in
 Section~\ref{arr_sec:traits}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-In addition, you can use these functions to replace a geometric
+In addition, we can use these functions to replace a geometric
 object (a point or a curve) with an equivalent object that has a
 more compact representation. For example, we can replace the point
 $(\frac{20}{40}, \frac{99}{33})$ associated with some vertex $v$,
@@ -841,7 +861,7 @@ by $(\frac{1}{2}, 3)$.
 %
 Assume that the specialized insertion function
 \ccc{insert_from_left_vertex(c,v)} is invoked for a curve $c$,
-whose right endpoint is already associated with a non-isolated
+whose left endpoint is already associated with a non-isolated
 vertex $v$.  Namely, $v$ has already several incident halfedges. It
 is necessary in this case to locate the exact place for the
 new halfedge mapped to the inserted new curve $c$ in the circular
@@ -856,8 +876,9 @@ be carried out in constant time.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arrangement_2} class provides the advanced versions of
-\ccc{insert_from_left_vertex()} and
-\ccc{insert_from_right_vertex()} that accept a halfedge \ccc{pred}
+the specialized insertion functions for a curve $c$ --- namely we have
+\ccc{insert_from_left_vertex(c,pred)} and
+\ccc{insert_from_right_vertex(c,pred)} that accept a halfedge \ccc{pred}
 as specified above, instead of a vertex $v$. These functions are
 more efficient, as they take constant time and do not perform any
 geometric operations. Thus, they should be used when the halfedge
@@ -871,7 +892,7 @@ Similarly, there exist two overrides of the
 \ccc{insert_at_vertices()} function: One that accept the two
 predecessor halfedges around the two vertices $v_1$ and $v_2$ that
 correspond to the curve endpoints, and one that accepts a handle
-for one vertex and a predecessor halfedge around the second
+for one vertex and a predecessor halfedge around the other
 vertex.
 
 \begin{figure}[!htp]
@@ -901,9 +922,9 @@ insertion functions that accept predecessor halfedges:
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 It is possible to perform even more refined operations on an
 \ccc{Arrangement_2} instance given specific topological information.
-As most of these operations are very fragile and perform no preconditions
-on their input in order to gain efficiency, they are not included in the
-public interface of the arrangement class. Instead, the
+As most of these operations are very fragile and perform no precondition
+testing on their input in order to gain efficiency, they are not included
+in the public interface of the arrangement class. Instead, the
 \ccc{Arr_accessor<Arrangement>} class allows access to these internal
 arrangement operations --- see more details in the Reference Manual.
 \end{ccAdvanced}
@@ -937,7 +958,9 @@ have a member function called \ccc{locate(q)} that accepts a query
 point $q$ and result with a \cgal\ \ccc{Object} that wraps a handle
 to the arrangement cell containing the query point. This object can
 be assigned to either a \ccc{Face_const_handle},
-\ccc{Halfedge_const_handle} or a \ccc{Vertex_const_handle}.
+\ccc{Halfedge_const_handle} or a \ccc{Vertex_const_handle}, depending
+on whether the query point is located inside a face, on an edge or
+on a vertex.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note that the handles returned by the \ccc{locate()} functions are
@@ -947,11 +970,12 @@ be casted to mutable handles using the static functions
 arrangement class.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-An instance of any point-location class is always attached to an
-\ccc{Arrangement_2} instance. This attachment can be performed
-when the point-location instance is constructed, or at a later
-time, using the \ccc{init(arr)} method, where \ccc{arr} is the
-attached \ccc{Arrangement_2} instance.
+An instance of any point-location class must be attached to an
+\ccc{Arrangement_2} instance so we can use it to issue point-location
+queries. This attachment can be performed when the point-location
+instance is constructed, or at a later time, using the \ccc{init(arr)}
+method, where \ccc{arr} is the attached \ccc{Arrangement_2} instance.
+In this chapter we always use the first option.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following function template, which can be found in the example
@@ -959,7 +983,9 @@ file \ccc{point_location_utils.h}, accepts a point-location object
 (whose type can be any of the models to the
 \ccc{ArrangementPointLocation_2} concept) and a query point, and
 prints out the result of the point-location query for the given
-point. The point-location object \ccc{pl} is assumed to be already
+point. Observe how we use the function \ccc{CGAL::assign()} is order
+to cast the resulting \ccc{CGAL::Object} into a handle to an arrangement
+feature. The point-location object \ccc{pl} is assumed to be already
 associated with an arrangement:
 
 \begin{alltt}
@@ -978,23 +1004,24 @@ void point_location_query
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
 
+  std::cout << "The point " << q << " is located ";
   if (CGAL::assign (f, obj)) \{
     // q is located inside a face:
     if (f->is_unbounded())
-      std::cout << "Inside the unbounded face." << std::endl;
+      std::cout << "inside the unbounded face." << std::endl;
     else
-      std::cout << "Inside a bounded face." << std::endl;
+      std::cout << "inside a bounded face." << std::endl;
   \}
   else if (CGAL::assign (e, obj)) \{
     // q is located on an edge:
-    std::cout << "On an edge: " << e->curve() << std::endl;
+    std::cout << "on an edge: " << e->curve() << std::endl;
   \}
   else if (CGAL::assign (v, obj)) \{
     // q is located on a vertex:
     if (v->is_isolated())
-      std::cout << "On an isolated vertex: " << v->point() << std::endl;
+      std::cout << "on an isolated vertex: " << v->point() << std::endl;
     else
-      std::cout << "On a vertex: " << v->point() << std::endl;
+      std::cout << "on a vertex: " << v->point() << std::endl;
   \}
   else \{
     CGAL_assertion_msg (false, "Invalid object.");
@@ -1007,13 +1034,16 @@ void point_location_query
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
 Each of the various point-location classes employs a different
-algorithm or {\em strategy} for answering queries:
+algorithm or {\em strategy}\footnote{We use the term {\em strategy}
+following the design pattern taxonomy~\cite{cgal:ghjv-dpero-95}.}
+for answering queries:
 \begin{itemize}
-\item \ccc{Arr_naive_point_location<Arrangement>} locate the query
+\item \ccc{Arr_naive_point_location<Arrangement>} locates the query
 point \naive ly, by exhaustively scanning all arrangement cells.
 %
 \item \ccc{Arr_walk_along_a_line_point_location<Arrangement>}
-simulates a traversal along an imaginary vertical ray emanating
+simulates a traversal, in reverse order, along an imaginary vertical
+ray emanating
 from the query point: It starts from the unbounded face of the
 arrangement and moves downward toward the query point until
 locating the arrangement cell containing it.
@@ -1025,12 +1055,12 @@ find the nearest landmark and then traverses the straight line
 segment connecting this landmark to the query point.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-There are various strategies to select the landmark set in the
-arrangement, where the strategy is determined by the
-\ccc{Generator} template parameter. By default, the generator
+There are various ways to select the landmark set in the
+arrangement, determined by the \ccc{Generator} template parameter.
+By default, the generator
 class \ccc{Arr_landmarks_vertices_generator} is used and the
 arrangement vertices are the selected landmarks, but other
-landmark-generating strategies, such as sampling random points or
+landmark generators, such as sampling random points or
 choosing points on a grid, are also available; see the
 reference manual for more details.
 %
@@ -1052,7 +1082,7 @@ Attaching such point-location objects to an existing arrangement
 has virtually no running-time cost at all, but the query time is
 linear in the size of the arrangement (the performance of the
 ``walk'' strategy is much better in practice, but its worst-case
-performance is linear). Using these strategies are therefore
+performance is linear). Using these strategies is therefore
 recommended only when a relatively small number of point-location
 queries are issued by the application, or when the arrangement is
 constantly changing (i.e., changes in the arrangement structure
@@ -1061,23 +1091,26 @@ are more frequent than point-location queries).
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 On the other hand, the landmarks and the trapezoid RIC strategies
 require auxiliary data structures on top of the arrangement, which
-they need to construct once they are attached to arrangement
+they need to construct once they are attached to an arrangement
 object and need to keep up-to-date as this arrangement changes.
 The data structures needed by both strategies can be constructed
-in $O(n \log n)$ time (where $n$ is the size of the arrangement),
+in $O(N \log N)$ time (where $N$ is the overall number of edges in
+the arrangement),
 but the construction needed by the landmark algorithm is in
-practice one order of magnitude faster. In addition, although both
+practice significantly faster. In addition, although both
 resulting data structures are asymptotically linear in size, the
 \kdtree\ that the landmark algorithm stores needs significantly
 less memory. We note that Mulmuley's algorithm guarantees a
 logarithmic query time, while the query time for the landmark
 strategy is only logarithmic on average --- and we may have
 scenarios where the query time can be linear. In practice however,
-the query times of both strategies are competitive.
+the query times of both strategies are competitive. For a detailed
+experimental comparison, see \cite{idit-alenex}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The main drawback in the current implementation of the landmark
-strategy is that while the updating the auxiliary data structures
+strategy, compared to the trapezoidal RIC strategy, is that while
+the updating the auxiliary data structures
 related to the trapezoidal decomposition is done very efficiently,
 the \kdtree\ maintained by the landmark algorithm needs to be
 frequently rebuilt as the arrangement changes. In addition, using
@@ -1091,7 +1124,7 @@ support these extra operations.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 It is therefore recommended to use the
 \ccc{Arr_landmarks_point_location} class when the application
-frequently issues point-location queries on a rather static
+frequently issues point-location queries on an
 arrangement that only seldom changes. If the arrangement is more
 dynamic and is frequently going through changes, the
 \ccc{Arr_trapezoid_ric_point_location} class should be the
@@ -1115,7 +1148,7 @@ selected point-location strategy.
 \caption{The arrangement of line segments, as constructed in
 \ccc{ex_point_location.C}, \ccc{ex_vertical_ray_shooting.C}, and
 \ccc{ex_batched_point_location.C}. The
-arrangement vertices are drawn in light dots, while the query
+arrangement vertices are drawn as small discs, while the query
 points $q_1, \ldots, q_6$ are marked with crosses.}
 \label{arr_fig:ex_5}
 \end{figure}
@@ -1124,8 +1157,9 @@ points $q_1, \ldots, q_6$ are marked with crosses.}
 The following program constructs a simple arrangement of five line
 segments that form a pentagonal face, with a single isolated
 vertex in its interior, as depicted in Figure~\ref{arr_fig:ex_5}
-(the details of the arrangement construction are omitted from the
-main program, and can be found in \ccc{point_location_utils.h}).
+(the arrangement construction is performed by the function
+\ccc{construct_segment_arr()} whose listing is omitted here and
+can be found in \ccc{point_location_utils.h}).
 It then employs the \naive\ and the landmark strategies to issue
 several point-location queries on this arrangement:
 
@@ -1134,7 +1168,8 @@ several point-location queries on this arrangement:
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note that the program uses the auxiliary
 \ccc{point_location_query()} function template to nicely print the
-result of each query.
+result of each query. This function can be found in the header file
+\ccc{point_location_utils.h}.
 
 \subsection{Vertical Ray Shooting}
 \label{arr_ssec:ray_shoot}
@@ -1149,10 +1184,8 @@ arrangement does not have any feature lying directly above (or
 below) the query point.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The \ccc{Arr_naive_point_location}, the
-\ccc{Arr_walk_along_a_line_point_location} and the
-\ccc{Arr_trapezoid_ric_point_location} classes are also models of
-the \ccc{ArrangementVerticalRayShoot_2} concept. That is, they all
+All point-location classes listed in the previous section are also models
+of the \ccc{ArrangementVerticalRayShoot_2} concept. That is, they all
 have member functions called \ccc{ray_shoot_up(q)} and
 \ccc{ray_shoot_down(q)} that accept a query point $q$ and output a
 \cgal\ \ccc{Object}. This can be assigned to either a
@@ -1162,8 +1195,9 @@ for the unbounded face of the arrangement, in case there is no edge
 or vertex lying directly above (or below) $q$.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The following function template, also located in the example file
-\ccc{point_location_utils.h}, accepts a vertical ray-shooting
+The following function template, \ccc{vertical_ray_shooting_query()},
+which also located in the header file \ccc{point_location_utils.h},
+accepts a vertical ray-shooting
 object, whose type can be any of the models to the
 \ccc{ArrangementVerticalRayShoot_2} concept and prints out the
 result of the upward vertical ray-shooting operations from a given
@@ -1186,22 +1220,23 @@ void vertical_ray_shooting_query
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
 
+  std::cout << "Shooting up from " << q << " : "; 
   if (CGAL::assign (e, obj)) \{
     // We hit an edge:
-    std::cout << "Hit an edge: " << e->curve() << std::endl;
+    std::cout << "hit an edge: " << e->curve() << std::endl;
   \}
   else if (CGAL::assign (v, obj)) \{
     // We hit a vertex:
     if (v->is_isolated())
-      std::cout << "Hit an isolated vertex: " << v->point() << std::endl;
+      std::cout << "hit an isolated vertex: " << v->point() << std::endl;
     else
-      std::cout << "Hit a vertex: " << v->point() << std::endl;
+      std::cout << "hit a vertex: " << v->point() << std::endl;
   \}
   else if (CGAL::assign (f, obj)) \{
     // We did not hit anything:
     CGAL_assertion (f->is_unbounded());
     
-    std::cout << "Hit nothing." << std::endl; 
+    std::cout << "hit nothing." << std::endl; 
   \}
   else \{
     CGAL_assertion_msg (false, "Invalid object.");
@@ -1211,8 +1246,8 @@ void vertical_ray_shooting_query
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following program uses the auxiliary function listed above to
-perform vertical ray-shooting queries on an arrangement. Note that
-the arrangement and the query points are exactly the same as in
+perform vertical ray-shooting queries on an arrangement.
+The arrangement and the query points are exactly the same as in
 \ccc{ex_point_location.C} (see Figure~\ref{arr_fig:ex_5}):
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_vertical_ray_shooting.C}
@@ -1220,8 +1255,8 @@ the arrangement and the query points are exactly the same as in
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The number type we use in this example is \cgal's built-in
 \ccc{MP_Float} type which is a floating-point number with an
-unbounded mantissa. It supports construction from an integer or
-from a machine \ccc{float} or \ccc{double} and performs additions,
+unbounded mantissa and a 32-bit exponent. It supports construction from an
+integer or from a machine \ccc{float} or \ccc{double} and performs additions,
 subtractions and multiplications in an exact number.
 
 \subsection{Batched Point-Location}
@@ -1236,25 +1271,25 @@ arrangement. However, as explained in Section~\ref{arr_ssec:pl},
 choosing a simple point-location strategy (either the \naive\ or
 the walk strategy) means inefficient queries, while the more
 sophisticated strategies need to construct auxiliary structures
-that incur extra running times.
+that incur considerable overhead in running time.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 On the other hand, the arrangement package includes a free
 \ccc{locate()} function that accepts an arrangement a range of
 query points as its input and sweeps through the arrangement to
-locate the points simultaneously. The function outputs the query
+locate all query points in one pass. The function outputs the query
 results as pairs, where each pair is comprised of a query point
 and a \cgal\ \ccc{Object} that represents the cell containing the
-point (see also Section~\ref{arr_ssec:pl}). The output pairs are
-sorted in increasing $xy$-lexicographical order.
+point (see Section~\ref{arr_ssec:pl}). The output pairs are
+sorted in increasing $xy$-lexicographical order of the query point.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The batched point-location operation can be performed in
-$O\left((m+n)\log{(m+n)}\right)$ time, where $n$ is the size of
-the arrangement. This means that when the number $m$ of
-point-location queries is of the same order of magnitude as $n$,
+$O\left((m+N)\log{(m+N)}\right)$ time, where $N$ is the number of
+edges in the arrangement. This means that when the number $m$ of
+point-location queries is of the same order of magnitude as $N$,
 this operation is more efficient than issuing separate queries.
-Experimental results also backup the theoretical time bounds.
+This suggestion is also backed up by experimental results.
 Moreover, the batched point-location operation is also
 advantageous as it does not have to construct and maintain
 additional data structures.
@@ -1266,18 +1301,18 @@ is essentially equivalent to the six separate queries performed in
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_batched_point_location.C}
 
-\section{Free Arrangement Functions}
+\section{Free Functions in the Arrangement Package}
 \label{arr_sec:gl_funcs}
-%=====================================
+%==================================================
 %
-In Section~\ref{arr_sec:arr_class} we review in details the
+In Section~\ref{arr_sec:arr_class} we reviewed in details the
 \ccc{Arrangement_2} class, which represents two-dimensional
-subdivisions of bounded planar curves, and mention that its
+subdivisions induced by bounded planar curves, and mentioned that its
 interface is minimal in the sense that the member functions hardly
 perform any geometric algorithms and are mainly used for
 maintaining the topological structure of the subdivision. In this
-section we explain how to utilize the free functions that operate on
-arrangements. The implementation of these operations typically require
+section we explain how to utilize the free (global) functions that operate
+on arrangements. The implementation of these operations typically require
 non-trivial geometric algorithms or load some extra requirements on
 the traits class.
 
@@ -1294,14 +1329,14 @@ arrangements of $x$-monotone curves that are pairwise disjoint in
 their interior, when the location of the segment endpoints in the
 arrangement is known. Here we relax this constraint, and allow the
 location of the inserted $x$-monotone curve endpoints to be arbitrary,
-as it may be unknown at the time of insertion. We retain the
-requirement that the interior of the inserted curve is disjoint from
+as it may be unknown at the time of insertion. We retain, for the moment,
+the requirement that the interior of the inserted curve is disjoint from
 all existing arrangement edges and vertices.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The free function \ccc{insert_non_intersecting_curve(arr, c, pl)}
-inserts the $x$-monotone curve \ccc{c} into the arrangement \ccc{arr},
-with the precondition that the interior of \ccc{arr} is disjoint from
+inserts the $x$-monotone curve $c$ into the arrangement \ccc{arr},
+with the precondition that the interior of $c$ is disjoint from
 all \ccc{arr}'s existing edges and vertices. The third argument
 \ccc{pl} is a point-location object attached to the arrangement,
 which is used for performing the insertion. It locates both curve
@@ -1309,11 +1344,11 @@ endpoints in the arrangement, where each endpoint is expected to
 either coincide with an existing vertex or lie inside a face.
 It is possible to invoke one of the specialized insertion functions
 (see Section~\ref{arr_sec:arr_class}), based on the query results, and
-insert $c$ at its proper position\footnote{The
+insert $c$ at its proper position.\footnote{The
 \ccc{insert_non_intersecting_curve()} function, as all other functions
 reviewed in this section, is a function template, parameterized by an
 arrangement class and a point-location class (a model of the
-\ccc{ArrangementPointLocation_2} concept).}. The insertion operation
+\ccc{ArrangementPointLocation_2} concept).} The insertion operation
 thus hardly requires any geometric operations on top on the ones
 needed to answer the point-location queries. Moreover, it is
 sufficient that the arrangement class is instantiated with a
@@ -1323,7 +1358,7 @@ landmark point-location strategy is used), which does not have to
 support the computation of intersection points between curves.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The free function \ccc{insert_non_intersecting_curve(arr, c)} is also
+The variant \ccc{insert_non_intersecting_curve(arr, c)} is also
 available. Instead of accepting a user-defined point-location
 object, it defines a local instance of the walk point-location
 class and uses it to insert the curve.
@@ -1345,18 +1380,19 @@ until the right endpoint is reached. Each time the new curve $c$
 crosses an existing vertex or an edge, the curve is split into
 subcurves (in the latter case, we have to split the curve 
 associated with the existing halfedge as well) and associate new
-edges with the resulting subcurves.
+edges with the resulting subcurves. Recall that an edge is represented
+by a pair of twin halfedges, so we split it into two halfedge pairs.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The free function \ccc{insert_x_monotone_curve(arr, c, pl)} performs
-this insertion operation. It accepts an $x$-monotone curve \ccc{c},
-which may intersect the arrangement \ccc{arr}, and inserts it into
-the arrangement by computing its zone. Users may supply a
-point-location object \ccc{pl}, or use the default walk
-point-location strategy (namely, the function
+this insertion operation. It accepts an $x$-monotone curve $c$,
+which may intersect some of the curves already in the arrangement
+\ccc{arr}, and inserts it into the arrangement by computing its zone.
+Users may supply a point-location object \ccc{pl}, or use the default
+walk point-location strategy (namely, the variant
 \ccc{insert_x_monotone_curve(arr, c)} is also available). The
 running-time of this insertion function is proportional to the
-complexity of the inserted-curve zone.
+complexity of the zone of the curve $c$.
 
 \begin{ccAdvanced}
 In some cases users may have a prior knowledge of the location of the
@@ -1385,10 +1421,10 @@ $x$-monotone).
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Suppose that we construct an arrangement of circles. A circle is
 obviously not $x$-monotone, so we cannot use
-\ccc{insert_x_monotone_curve()} in this case\footnote{Note that a key
-operation when inserting an $x$-monotone curve is to locate its
-left endpoint in the arrangement. A circle, however, does not have
-any endpoints!}. However, it is possible to subdivide each circle
+\ccc{insert_x_monotone_curve()} in this case.\footnote{Note that a key
+operation performed by \ccc{insert_x_monotone_curve()} is to locate the
+left endpoint of the curve in the arrangement. A circle, however, does
+not have any endpoints!} However, it is possible to subdivide each circle
 into two $x$-monotone circular arcs (its upper half and its lower
 half) and to insert each $x$-monotone arc separately.
 
@@ -1411,8 +1447,8 @@ walk point-location strategy by calling \ccc{insert_curve(arr, c)}.
 \label{arr_sssec:insert_point}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-The arrangement class enables you to insert a point as an isolated
-vertex in a given face. However, the free function
+The arrangement class enables us to insert a point as an isolated
+vertex in a given face. The free function
 \ccc{insert_point(arr, p, pl)} inserts a vertex into \ccc{arr} that
 corresponds to the point \ccc{p} at an arbitrary location. It uses
 the point-location object \ccc{pl} to locate the point in the
@@ -1452,7 +1488,7 @@ insertion operation may involve splitting curves.
 \caption{An arrangement of five intersecting line segments, as
 constructed in \ccc{exincrementa_insertion.C} and
 \ccc{ex_aggregated_insertion.C}. The segment
-endpoints are marked with disks and the arrangement vertices
+endpoints are marked by black disks and the arrangement vertices
 that correspond to intersection points are marked by circles.
 The query point $q$ is marked with a cross and the face that
 contains it is shaded.}
@@ -1470,8 +1506,8 @@ of $13$ vertices, $16$ edges, and $5$ faces, as can be seen in
 Figure~\ref{arr_fig:ex_8}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-In the previous examples, all arrangement vertices correspond to
-segment endpoints. In this case we have additional vertices that
+In the earlier examples, all arrangement vertices corresponded to
+segment endpoints. In this example we have additional vertices that
 correspond to intersection points between two segments. The
 coordinates of these intersection points are rational numbers, if
 the input coordinates are rational (or integer). Therefore,
@@ -1485,19 +1521,26 @@ coordinates:
 %------------------------------------------
 %
 Let us assume that we have to insert a set of $m$ input curves into an
-arrangement. It is possible of course to do this incrementally, 
+arrangement. It is possible to do this incrementally, 
 inserting the curves one by one, as shown in the previous section.
-However, the arrangement package provides three free functions
-\ccc{insert_non_intersecting_curves(arr, begin, end)},
-\ccc{insert_x_monotone_curves(arr, begin, end)} and
-\ccc{insert_curves(arr, begin, end)} that insert a range of curves,
-given by the input iterators \ccc{[begin, end)} into an arrangement
-\ccc{arr}. The different functions accept a set of pairwise
-interior-disjoint $x$-monotone curves that are also interior-disjoint
-from all existing arrangement edges and vertices, a set of $x$-monotone
-curves that may intersect one another, or a set of general (not
-necessarily $x$-monotone) curves of type \ccc{Curve_2} --- exactly as their
-counterpart incremental versions.
+However, the arrangement package provides three free functions that
+aggregately insert a range of curves into an arrangement:
+%
+\begin{itemize}
+\item \ccc{insert_non_intersecting_curves(arr, begin, end)} inserts 
+a range of $x$-monotone curves given by the input iterators
+\ccc{[begin, end)} into an arrangement \ccc{arr}. The $x$-monotone
+curves should be pairwise disjoint in their interior and also
+interior-disjoint from all existing edges and vertices of \ccc{arr}.
+%
+\item \ccc{insert_x_monotone_curves(arr, begin, end)} operates on
+a range of $x$-monotone curves that may intersect one another.
+%
+\item \ccc{insert_curves(arr, begin, end)} inserts a range of
+of general (not necessarily $x$-monotone) curves of type \ccc{Curve_2},
+given by the input iterators \ccc{[begin, end)}, into the arrangement
+\ccc{arr}.
+\end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 We distinguish between two cases: (i) The given arrangement
@@ -1506,7 +1549,7 @@ construct it from scratch. (ii) We have to insert $m$ input curves
 to a non-empty arrangement \ccc{arr}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-In the first case, we have to sweep over the input curves, compute
+In the first case, we sweep over the input curves, compute
 their intersection points and construct the \dcel\ that represents
 their planar arrangement. This process is performed in
 $O\left((m + k)\log m\right)$ time, where $k$ is the total number
@@ -1516,7 +1559,8 @@ is relatively sparse (when $k$ is bounded by $\frac{m^2}{\log
 m}$), but in practice it is recommended to use this aggregated
 construction process even for dense arrangements, since the
 sweep-line algorithm needs less geometric operations compared to
-the incremental insertion algorithms.
+the incremental insertion algorithms and hence typically runs 
+much faster in practice.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Another important advantage the aggregated insertion functions
@@ -1526,7 +1570,7 @@ explained in Section~\ref{arr_ssec:pl}, there is a trade-off
 between construction time and query time in each of the
 point-location strategies, which affects the running times of the
 incremental insertion process. Naturally, this trade-off is irrelevant
-in case of aggregated insertion.
+in case of aggregated insertion as above.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The example below shows how to construct the arrangement of
@@ -1534,15 +1578,15 @@ line segments depicted in Figure~\ref{arr_fig:ex_8} and built
 incrementally in \ccc{ex_incremental_insertion.C}, as shown in the previous
 section. We use the aggregated insertion function
 \ccc{insert_x_monotone_curves()} as we deal with line segments.
-Note that no point-location object is defined and attached to the
+Note that no point-location object needs to be defined and attached to the
 arrangement:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_aggregated_insertion.C}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 In case we have to insert a set of $m$ curves into an existing
-arrangement, we consider the size of the arrangement to be $n$.
-As a rule of thumb, if $m = o(\sqrt{n})$, we insert the curves one by
+arrangement, where we denote the number of edges in the arrangement by $N$.
+As a rule of thumb, if $m = o(\sqrt{N})$, we insert the curves one by
 one. For larger input sets, we use the aggregated insertion procedures.
 
 \begin{figure}[!htp]
@@ -1556,20 +1600,20 @@ one. For larger input sets, we use the aggregated insertion procedures.
   <img src="./fig/ex_10.gif" border=0 alt="Example 10">
   </center>
 \end{ccHtmlOnly}
-\caption{An arrangement of eleven intersecting line segments, as
+\caption{An arrangement of intersecting line segments, as
 constructed in \ccc{ex_global_insertion.C}. The segments of ${\mathcal S}_1$
 are drawn in solid lines and the segments of ${\mathcal S}_2$ are
 drawn in dark dashed lines. Note that the segment $s$ (light
-dashed line) overlaps one of the ${\mathcal S}_1$ segments.}
+dashed line) overlaps one of the segments in ${\mathcal S}_1$.}
 \label{arr_fig:ex_10}
 \end{figure}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 In the example below we aggregately construct an arrangement of a set
 ${\mathcal S}_1$ containing five line segments. Then we insert a single
-segment incrementally. Finally, we add a set ${\mathcal S}_2$ with
-five more line segments in an aggregated fashion. Note 
-that the line segments of ${\mathcal S}_1$ are pairwise
+segment using the incremental insertion function. Finally, we add a set
+${\mathcal S}_2$ with five more line segments in an aggregated fashion.
+Notice that the line segments of ${\mathcal S}_1$ are pairwise
 interior-disjoint, so we use \ccc{insert_non_intersecting_curves()}.
 ${\mathcal S}_2$ also contain pairwise interior-disjoint segments,
 but as they intersect the existing arrangement, we have to use
@@ -1589,13 +1633,13 @@ floating-point numbers.
 \label{arr_ssec:gl_remove}
 %---------------------------------------
 %
-The two following free functions handle the removal of vertices
-and edges from an arrangement. The difference between them and the
-member functions of the \ccc{Arrangement_2} template is that they
-allow the merger of two curves associated with adjacent edges to
-form a single edge. Thus, they require that the traits class that
-instantiates the arrangement instance is a model of the refined
-\ccc{ArrangementXMonotoneTraits_2} concept (see
+The free functions \ccc{remove_vertex()} and \ccc{remove_edge()} handle
+the removal of vertices and edges from an arrangement. The difference
+between these functions and the member functions of the \ccc{Arrangement_2}
+template having the same name is that they allow the merger of two curves
+associated with adjacent edges to form a single edge. Thus, they require
+that the traits class that instantiates the arrangement instance is a model
+of the refined \ccc{ArrangementXMonotoneTraits_2} concept (see
 Section~\ref{arr_sec:traits}).
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
@@ -1611,8 +1655,8 @@ indication that it has failed to remove the vertex.
 The function \ccc{remove_edge(arr, e)} removes the edge \ccc{e}
 from the arrangement by simply calling \ccc{arr.remove_edge(e)}
 (see Section~\ref{arr_ssec:modify}). In addition, if either of the
-end vertices of \ccc{e} becomes redundant after the removal of the
-edge, it is removed as well.
+end vertices of \ccc{e} becomes isolated or redundant after the removal
+of the edge, it is removed as well.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example demonstrates the usage of the free removal
@@ -1631,10 +1675,10 @@ vertical line segments:
 As mentioned in the introduction of this chapter, the traits class
 encapsulates the definitions of the geometric entities and
 implements the geometric predicates and constructions needed by
-the \ccc{Arrangement_2} and by its peripheral algorithms. We also
+the \ccc{Arrangement_2} class and by its peripheral algorithms. We also
 mention throughout the chapter that there are different levels of
 requirements from the traits class, namely the traits class can model
-different concepts refinement-levels.
+different concept refinement-levels.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 A model of the basic concept, \ccc{ArrangementBasicTraits_2},
@@ -1668,11 +1712,14 @@ The landmark point-location strategy (see
 Section~\ref{arr_ssec:pl}) needs its associated arrangement to be
 instantiated with a model of the refined
 \ccc{ArrangementLandmarkTraits_2} traits concept. A model of this
-concept must define an approximated number type (typically
+concept must define a fixed precision number type (typically
 \ccc{double}) and support the additional operations:
 \begin{itemize}
 \item Given a point \ccc{p}, approximate the $x$ and $y$-coordinates
-of \ccc{p} using the approximated number type.
+of \ccc{p} using the fixed precision number type. We use this operation
+for approximate computations --- there are certain operations in the
+search for the location of the point that need not be exact and we can
+perform them faster than other operations. 
 \item Given two points $p_1$ and $p_2$, construct an $x$-monotone
 curve connecting $p_1$ and $p_2$.
 \end{itemize}
@@ -1695,12 +1742,13 @@ $p$ lying in the interior of $c$.
 \item Given two $x$-monotone curve $c_1$ and $c_2$ that share a
 common endpoint, determine whether $c_1$ and $c_2$ are {\em
 mergeable}, that is, whether they can be merged to form a
-single continuous $x$-monotone curve.
+single continuous $x$-monotone curve of the type supported by the
+traits class.
 \item Merge two mergeable $x$-monotone curve $c_1$ and $c_2$.
 \end{itemize}
 Using a model of the \ccc{ArrangementXMonotoneTraits_2}, it is
 possible to construct arrangements of sets of $x$-monotone curves
-(and points) in general settings.
+(and points) in that may intersect one another.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The concept \ccc{ArrangementTraits_2} refines the
@@ -1722,6 +1770,8 @@ only when using the free \ccc{insert_curve()} and
 \ccc{insert_curves()} functions (see Section~\ref{arr_sec:gl_funcs}),
 which accept a \ccc{Curve_2} object in the incremental version,
 or a range of \ccc{Curve_2} objects in the aggregated version.
+In all other cases it is sufficient to use a model of the
+\ccc{ArrangementXMonotoneTraits_2} concept.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 In the rest of this section we review the traits classes
@@ -1741,7 +1791,7 @@ geometric kernel and uses the \ccc{Kernel::Point_2} type as it
 point type. However, nor the \ccc{Curve_2} neither the
 \ccc{X_monotone_curve_2} types are identical to the
 \ccc{Kernel::Segment_2} type. A kernel segment is typically
-represented by its two endpoints, and these may have a large
+represented by its two endpoints, and these may have a large bit-size
 representation, if the segment is intersected and split several
 times (in comparison with the representation of its original
 endpoints). The large representation may significantly slow down the
@@ -1767,10 +1817,10 @@ the \ccc{ArrangementBasicTraits_2} concept. It uses
 traits class does not support intersecting and splitting segments,
 the kernel representation is sufficient. It is still less
 efficient than \ccc{Arr_segment_traits_2} for constructing
-arrangements of pairwise disjoint line segments in many cases, but
-using this traits class may be preferable as it reduces the memory
-consumption a bit, since no extra data is stored with the line
-segments.
+arrangements of pairwise disjoint line segments in many cases, as
+it performs no caching at all, but using this traits class may be
+preferable as it reduces the memory consumption a bit, since no extra
+data is stored with the line segments.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The class \ccc{Arr_non_caching_segment_traits<Kernel>} inherits
@@ -1803,18 +1853,17 @@ to construct an arrangement of polylines is an exact and robust
 manner. Note, however, that a single polyline can be split into
 many $x$-monotone polylines, and that the number of intersection
 points (or overlapping sections) between two polylines can also
-numerous. 
+be large. 
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The polyline-traits class is a model of the
-\ccc{ArrangementTraits_2} concept and of the
-\ccc{ArrangementLandmarkTraits_2} concept. It inherits its point
-type from the segment-traits class, and define the polyline type,
-which serves as its \ccc{Curve_2}. Polyline curve objects can be
-constructed from a range of points. They also enable the traversal
-over the range of defining points, whose first and past-the-end
-iterators can be obtained through the methods \ccc{begin()} and
-\ccc{end()}. The nested \ccc{X_monotone_curve_2} type inherits
+The polyline-traits class is a model of the \ccc{ArrangementTraits_2}
+concept and of the \ccc{ArrangementLandmarkTraits_2} concept.
+It inherits its point type from the segment-traits class, and defines
+the polyline type, which serves as its \ccc{Curve_2}. Polyline curve
+objects can be constructed from a range of points. They also enable
+the traversal over the range of defining points, whose first and
+past-the-end iterators can be obtained through the methods \ccc{begin()}
+and \ccc{end()}. The nested \ccc{X_monotone_curve_2} type inherits
 from \ccc{Curve_2}. The points in an $x$-monotone curve are
 always stored in lexicographically increasing order of their
 coordinates.
@@ -1843,7 +1892,9 @@ overlapping sections.}
 The following example program constructs an arrangement of three
 polylines, as depicted in Figure~\ref{arr_fig:ex_12}. Note that
 most points defining the polylines are not associated with arrangement
-vertices:
+vertices. The arrangement vertices are either the extreme points of
+each $x$-monotone polyline or the intersection points between two
+polylines:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_polylines.C}
 
@@ -1863,8 +1914,7 @@ special case of an ellipse, where $r = s$ and $t = 0$.
 %
 \item If $\Delta_{C} = 0$ the curve is a parabola --- an unbounded
 conic curve with a single connected branch. When $r = s = t = 0$
-we have a line, which can be considered as a type of a degenerate
-parabola.
+we have a line, which can be considered as a degenerate parabola.
 %
 \item If $\Delta_{C} < 0$ the curve is a hyperbola. That is, it
 is comprised of two disconnected unbounded branches.
@@ -1899,14 +1949,14 @@ circular arcs, the coordinates of the intersection points are only
 of degree $2$, namely they are solutions of quadratic equations.}
 In addition, conic arcs may not necessarily be $x$-monotone, and
 must be split at points where the tangent to the arc is vertical.
-Such points typically have coordinates that are algebraic numbers
-of degree $2$.
+In the general case, such points typically have coordinates that
+are algebraic numbers of degree $2$.
 It is therefore clear that we have to use different number types
 to represent the conic coefficients and the point coordinates.
 Note that as arrangement vertices induced by intersection points
 and points with vertical tangents are likely to have algebraic
 coordinates, we also allow the original endpoints of the input arcs
-$p_s$ and $p_t$ have algebraic coordinates.
+$p_s$ and $p_t$ to have algebraic coordinates.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>} class
@@ -1956,7 +2006,7 @@ or \ccc{insert_curves()} functions.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Conic arcs can be constructed from full ellipses or by specifying
 a supporting curve, two endpoints and an orientation. However,
-several constructors of \ccc{Curve_2} are available to allow some
+several constructors of \ccc{Curve_2} are available to allow for some
 special cases, such as circular arcs or line segments. The
 \ccc{Curve_2} (and the derived \ccc{X_monotone_curve_2}) classes
 also support basic access functions such as \ccc{source()},
@@ -2013,15 +2063,16 @@ and the associated vertex has six incident edges:
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example demonstrates the usage of the various
 constructors for conic arcs. The resulting arrangement is depicted
-in Figure~\ref{arr_fig:ex_14}. Especially note the constructor of a
-circular arc that accepts three points and the constructor that
-allows specifying endpoints as intersections of the supporting
-conic with two other conic curves. Note that as the preconditions
-required by some of these constructors are rather complicated (see
-the reference manual for the details), a precondition violation
-does not cause the program to terminate --- instead, an {\em
-invalid} arc is created. We can verify the validity of an arc by
-using the \ccc{is_valid()} method. Needless to say, inserting
+in Figure~\ref{arr_fig:ex_14}. Especially noteworthy are the
+constructor of a circular arc that accepts three points and the
+constructor that allows specifying approximate endpoints, where the
+exact endpoints are given explicitly as intersections of
+the supporting conic with two other conic curves. Also note that as the
+preconditions required by some of these constructors are rather
+complicated (see the reference manual for the details), a
+precondition violation does not cause the program to terminate ---
+instead, an {\em invalid} arc is created. We can verify the validity
+of an arc by using the \ccc{is_valid()} method. Needless to say, inserting
 invalid arcs into an arrangement is not allowed.
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_conics.C}
@@ -2031,7 +2082,7 @@ The last example in this section demonstrates how the conic-traits
 class can handle intersection points with multiplicity. The
 supporting curves of the two arcs, a circle centered at
 $(0,\frac{1}{2})$ with radius $\frac{1}{2}$, and the hyperbola $y
-= \frac{x^2}{1-x}$,\footnote{This curve can be also written as $C:
+= \frac{x^2}{1-x}$,\footnote{This curve can also be written as $C:
 x^2 + xy - y = 0$. It is a hyperbola since $\Delta_{C} = -1$.}
 intersect at the origin such that the intersection point has
 multiplicity $3$ (note that they both have the same horizontal
@@ -2059,9 +2110,10 @@ e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The computations with rational arcs are guaranteed to be robust and 
-exact, if the coefficient of the polynomials $P$ and $Q$ are rational 
-numbers. The $x$-values that determine the interval over which the 
-arc is defined can however be an arbitrary algebraic-numbers.
+exact, assuming that the coefficient of the polynomials $P$ and $Q$
+are rational  numbers. The $x$-values that determine the interval
+over which the arc is defined can however be arbitrary algebraic
+numbers.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Using the \ccc{Arr_rational_traits_2<AlgKernel, NtTraits>} class
@@ -2071,7 +2123,7 @@ ones used by the \ccc{Arr_conic_traits_2} class template; see
 the previous section. However, no rational kernel is needed. Also
 in this case it is recommended to use the
 \ccc{CORE_algebraic_number_traits} class, with a kernel templated
-by its \ccc{Algebraic} type.
+by the \ccc{Algebraic} type defined by this class.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arr_rational_traits_2} is a model of the
@@ -2118,9 +2170,9 @@ constructors, for polynomial arcs and for rational arcs:
 %-----------------------------------
 %
 Geometric traits-class decorators allow users to attach auxiliary
-data to curves (and to points). The data is automatically manipulated 
-by the decorators, distributed to the constructed geometric entities. 
-Note that additional information can also be maintained by extending 
+data to curves and to points. The data is automatically manipulated 
+by the decorators and distributed to the constructed geometric entities. 
+Note that additional information can alternatively be maintained by extending 
 the vertex, halfedge, or face types provided by the \dcel\ class used 
 by the arrangement; see the details in Section~\ref{arr_sec:ex_dcel}.
 
@@ -2157,8 +2209,8 @@ decorator handles their data fields automatically:
 \begin{itemize}
 \item When a curve is subdivided into $x$-monotone subcurves, its
 data field of type \ccc{CurveData} is converted to an \ccc{XMonotoneCurveData}
-object using the \ccc{Convert} functor, which is automatically associated
-with each of the resulting $x$-monotone subcurves.
+object $d$ using the \ccc{Convert} functor. The object $d$ is automatically
+associated with each of the resulting $x$-monotone subcurves.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Note that by default, the \ccc{CurveData} type is identical to the
@@ -2177,18 +2229,18 @@ using the \ccc{Merge} functor, which is supplied as a
 parameter to the traits class-template. The resulting object is
 assigned to the data field of the overlapping subcurves.
 %
-\item Merging two $x$-monotone curves is allowed only 1. if they are
-geometrically mergeable. That is, the base-traits class allows to merge
-them, and 2. the two $x$-monotone curves store the same data field.
+\item Merging two $x$-monotone curves is allowed only when (i)~the two
+curves are geometrically mergeable --- that is, the base-traits class
+allows to merge them --- and (ii)~the two curves store the same data field.
 \end{itemize}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arr_consolidated_curve_data_traits_2<BaseTraits, Data>} decorator
 specializes the generic curve-data decorator. It extends the basic
-\ccc{BaseTraits::Curve_2} a single \ccc{Data} field, and the basic
-\ccc{BaseTraits::X_monotone_curve_2} with a {\em set} of (unique) data 
+\ccc{BaseTraits::Curve_2} by a single \ccc{Data} field, and the basic
+\ccc{BaseTraits::X_monotone_curve_2} with a {\em set} of (distinct) data 
 objects. The \ccc{Data} type is required to support the equality operator, 
-used to ensure that each set contains only unique data objects with no 
+used to ensure that each set contains only distinct data objects with no 
 duplicates.
 When a curve with a data field $d$ is subdivided into $x$-monotone subcurves,
 each subcurve is associated with a set $S = \{ d \}$. In case of an overlap
@@ -2224,7 +2276,7 @@ the segments using the consolidated curve-data traits class. A
 color may be either {\em blue} or {\em red}. Having constructed
 the arrangement of colored segments, as depicted in
 Figure~\ref{arr_fig:ex_17}, we detect the vertices that have incident 
-edges mapped to both, blue and red, segments. Thus, they correspond
+edges mapped to both blue and red segments. Thus, they correspond
 to red--blue intersection points. We also locate the edge that
 corresponds to overlaps between red and blue line segments:
 
@@ -2261,7 +2313,7 @@ geometrically equivalent curves, but with a different data fields:
 \label{arr_sec:notif}
 %===================================
 %
-For some applications it is extremely important to know exactly what
+For some applications it is essential to know exactly what
 happens inside a specific arrangement-instance. For example, when
 a new curve is inserted into an arrangement, it might be desired to keep
 track of the faces that are split due to this insertion operation.
@@ -2269,7 +2321,8 @@ Other important examples are the point-location strategies that
 require auxiliary data-structures (see Section~\ref{arr_ssec:pl}),
 which must be notified on various local changes in the arrangement,
 in order to keep their data structures up-to-date. The arrangement
-package offers a mechanism that uses {\em observers} that can be
+package offers a mechanism that uses {\em observers} 
+(see~\cite{cgal:ghjv-dpero-95}) that can be
 attached to an arrangement instance and receive notifications
 about the changes this arrangement goes through.
 
@@ -2297,10 +2350,10 @@ arrangement.
 \end{itemize}
 \item Pairs of notifiers of a local change that occurs in the
 topological structure. Most notifier functions belong to this
-category, were the relevant local changes include:
+category. The relevant local changes include:
 \begin{itemize}
 \item A new vertex is constructed and associated with a point.
-\item An edge\footnote{The term ``edge'' refers to a pair of twin
+\item An edge\footnote{The term ``edge'' refers here to a pair of twin
 half-edges.} is constructed and associated with an $x$-monotone
 curve.
 \item An edge is split into two edges.
@@ -2309,8 +2362,8 @@ insertion of a new edge.
 \item A hole is created in the interior of a face.
 \item Two holes are merged to form a single hole, as a consequence of the
 insertion of a new edge.
-\item A hole is moved from one face to another (as a consequence of a
-a face split).
+\item A hole is moved from one face to another, as a consequence of
+a face split.
 \item Two edges are merged into one edge.
 \item Two faces are merged into one face, as a consequence of the
 removal of an edge that used to separate them.
@@ -2320,11 +2373,11 @@ edge that used to connect the two components.
 \item An edge is removed.
 \item A hole is deleted from the interior of a face.
 \end{itemize}
-\item Notifiers about a free change applied by a free function.
+\item Notifiers about a change applied by a free (global) function.
 This category consists of a single pair of notifiers, namely
 \ccc{before_global_change()} and \ccc{after_global_change()}. Neither of
-the pair functions is called by methods of the \ccc{Arrangement_2} class. 
-Instead, the are called by the free functions themselves. It is implied 
+these functions is invoked by methods of the \ccc{Arrangement_2} class. 
+Instead, they are called by the free functions themselves. It is implied 
 that no point-location queries (or any other queries for that matter)
 are issued between the calls to the notification functions above.
 \end{enumerate}
@@ -2333,7 +2386,7 @@ See the reference manual for a detailed specification of the
 notification functions.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-Each arrangement object stores a list of pointers to
+Each arrangement object stores a (possibly empty) list of pointers to
 \ccc{Arr_observer} objects, and whenever one of the structural
 changes listed in the first two categories above is about to take
 place, the arrangement object performs a {\em forward} traversal
@@ -2356,7 +2409,7 @@ this list just before it is destroyed.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The trapezoidal RIC and the landmark point-location strategies
-both use observer to keep their auxiliary data structures
+both use observers to keep their auxiliary data structures
 up-to-date. Besides them, users can define their own observer
 classes, by inheriting from the base observer class and overriding
 the relevant notification functions, as required by their
@@ -2416,7 +2469,7 @@ of fact, it is possible to conveniently extend all \dcel\ records
 for some applications.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-All examples till this point use the default \ccc{Arr_default_dcel<Traits>}. 
+All examples presented so far use the default \ccc{Arr_default_dcel<Traits>}. 
 This is done implicitly, as this class serves as a default parameter for 
 the \ccc{Arrangement_2} template. The default \dcel\ class just associates 
 points with vertices and $x$-monotone curves with halfedge, but nothing more. 
@@ -2471,13 +2524,14 @@ source to the target). The indices associated with the halfedges in
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The next example constructs an arrangement that contains seven bounded 
 faces induced by six line segments (see Figure~\ref{arr_fig:ex_20}). An 
-observer gets notified each time a new face is created and it associates 
-it with a running index, (where the index of the unbounded face
+observer gets notified each time a new face $f$ is created and it associates 
+$f$ with a running index, (where the index of the unbounded face
 is 0). As a result, the faces are numbered according to their creation
-order, as one can easily verify by examining the order of the inserted
+order, as one can easily verify by examining the insertion order of the
 segments:\footnote{For simplicity, the particular observer used must be
 attached to an empty arrangement. It is not difficult however to modify 
-the program to handle the general case.}
+the program to handle the general case of attaching a similar observer
+to a non-empty arrangement.}
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_face_extension.C}
 
@@ -2491,7 +2545,7 @@ types \ccc{VertexData} \ccc{HalfedgeData}, and \ccc{FaceData} to
 each \dcel\ vertex, halfedge, and face record types, respectively.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-When an \ccc{Arrangement_2} object is injected by this
+When an \ccc{Arrangement_2} object is injected with this
 \dcel\ class, each one of its nested \ccc{Vertex}, \ccc{Halfedge} and
 \ccc{Face} classes is extended by the access function \ccc{data()}
 and by the modifier \ccc{set_data()}.
@@ -2526,10 +2580,12 @@ representing some geographic information --- for example, a map of
 the annual precipitation in some country and a map of the vegetation
 in the same country. It is interesting to overlay the two maps to
 locate, for example, the regions where there is a pine forest and
-the annual precipitation is between 1000\,mm and 1500\,mm. Computing
-the overlay of two planar arrangement is also useful for supporting
-Boolean operations on polygons (or generalized polygons,
-see~\cite{behsms-cbcab-02}).
+the annual precipitation is between 1000\,mm and 1500\,mm. 
+
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+Computing the overlay of two planar arrangement is also useful for
+supporting Boolean set operations on polygons (or generalized polygons,
+see, e.g.,~\cite{behsms-cbcab-02}).
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The function \ccc{overlay (arr_a, arr_b, ovl_arr, ovl_traits)} accepts
@@ -2555,10 +2611,11 @@ arrangement in this case stores no extra data with its \dcel\ records as
 well (or if it does, the additional data fields cannot be computed by
 the overlay operation), so by overlaying the two arrangement we just
 compute the arrangement of all curves that induce \ccc{arr_a} and \ccc{arr_b}.
-Note that the same result can be obtained using the normal-insertion
+Note that the same result can be obtained using the standard insertion
 operations, but users may choose to use overlay computation in order to
 achieve better running times.
 
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arr_default_overlay_traits} class should be used as an overlay
 traits-class for such simple overlay operations.
 %
@@ -2916,7 +2973,7 @@ The arrangement package includes the free functions
 to an output stream \ccc{os}, and \ccc{read(arr, os, formatter)}, which
 reads the arrangement \ccc{arr} from an input stream \ccc{is}. Both
 operations are performed using a \ccc{formatter} object, which define
-the I/O format. The package is shipped with three formatter classes:
+the I/O format. The package contains three formatter classes:
 \begin{itemize}
 \item \ccc{Arr_text_formatter<Arrangement>} defines a simple textual
 I/O format for the arrangement topology and geometry, disregarding any
@@ -2991,7 +3048,7 @@ The arrangement package also includes the free functions
 \ccc{write(arr, os, formatter)} and \ccc{read(arr, os, formatter)} that
 operate on a given arrangement-with-history instance \ccc{arr}.
 Both functions are templated by a \ccc{formatter} object, which define
-the I/O format. The package is shipped with a template called,
+the I/O format. The package contains a template called,
 \ccc{Arr_with_hist_text_formatter<ArranagmentFormatter>}, which extends
 an arrangement formatter class (see Section~\ref{arr_ssec:arr_io_aux_data})
 and defines a simple textual input/output format.
@@ -3037,7 +3094,7 @@ The \ccc{Arr_bgl_dual_adaptor}, on the other hand, considers the
 \ccc{Arrangement_2} faces as the vertices of the BGL graph. More precisely, 
 \ccc{Arrangement_2::Face_handle} is the graph-vertex type.
 (\ccc{Arrangement_2::Halfedge_handle} is the graph-edge type as above.)
-You can use the the \ccc{make_arr_bgl_adaptor(Arrangement & arr)} and
+We can use the the \ccc{make_arr_bgl_adaptor(Arrangement & arr)} and
 \ccc{make_arr_bgl_dual_adaptor(Arrangement & arr)} function templates
 to conveniently generate an appropriate adapted arrangement out of a given 
 one.

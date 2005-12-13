@@ -46,27 +46,27 @@ int main ()
 
   for (res_iter = results.begin(); res_iter != results.end(); ++res_iter)
   {
-    std::cout << "(" << res_iter->first << ") : ";
+    std::cout << "The point (" << res_iter->first << ") is located ";
     if (CGAL::assign (f, res_iter->second))
     {
       // The current qeury point is located inside a face:
       if (f->is_unbounded())
-        std::cout << "Inside the unbounded face." << std::endl;
+        std::cout << "inside the unbounded face." << std::endl;
       else
-        std::cout << "Inside a bounded face." << std::endl;
+        std::cout << "inside a bounded face." << std::endl;
     }
     else if (CGAL::assign (e, res_iter->second))
     {
       // The current qeury point is located on an edge:
-      std::cout << "On an edge: " << e->curve() << std::endl;
+      std::cout << "on an edge: " << e->curve() << std::endl;
     }
     else if (CGAL::assign (v, res_iter->second))
     {
       // The current qeury point is located on a vertex:
       if (v->is_isolated())
-        std::cout << "On an isolated vertex: " << v->point() << std::endl;
+        std::cout << "on an isolated vertex: " << v->point() << std::endl;
       else
-        std::cout << "On a vertex: " << v->point() << std::endl;
+        std::cout << "on a vertex: " << v->point() << std::endl;
     }
   }
 

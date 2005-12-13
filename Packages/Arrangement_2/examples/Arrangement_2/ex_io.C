@@ -22,24 +22,26 @@ int main ()
 
   construct_segments_arr (arr);
 
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "Writing an arrangement of size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Write the arrangement to a file.
-  std::ofstream    out_file ("arr_ex26.dat");
+  std::ofstream    out_file ("arr_ex_io.dat");
 
   out_file << arr;
   out_file.close();
 
   // Read the arrangement from the file.
   Arrangement_2    arr2;  
-  std::ifstream    in_file ("arr_ex26.dat");
+  std::ifstream    in_file ("arr_ex_io.dat");
 
   in_file >> arr2;
   in_file.close();
   
-  std::cout << "V = " << arr2.number_of_vertices()
+  std::cout << "Read an arrangement of size:" << std::endl
+            << "   V = " << arr2.number_of_vertices()
             << ",  E = " << arr2.number_of_edges() 
             << ",  F = " << arr2.number_of_faces() << std::endl;
 

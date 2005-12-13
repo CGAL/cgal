@@ -61,7 +61,8 @@ int main ()
     }
   }
 
-  std::cout << "v_max = (" << v_max->point() << ") "
+  std::cout << "The vertex with maximal degree in the arrangement is: "
+            << "v_max = (" << v_max->point() << ") "
             << "with degree " << max_degree << "." << std::endl;
 
   return (0);

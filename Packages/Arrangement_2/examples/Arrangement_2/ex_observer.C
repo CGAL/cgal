@@ -68,14 +68,16 @@ int main ()
 
   insert_curve (arr, s_horiz);
 
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The initial arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Now remove a portion of the vertical segment.
   remove_edge (arr, e_vert);
  
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The final arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 

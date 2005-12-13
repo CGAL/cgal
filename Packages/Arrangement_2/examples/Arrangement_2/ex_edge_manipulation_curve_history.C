@@ -46,7 +46,8 @@ int main ()
   for (k = 0; k < 9; k++)
     handles[k] = insert_curve (arr, C[k]);
 
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The initial arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 
@@ -55,7 +56,8 @@ int main ()
   std::cout << remove_curve (arr, handles[0]) 
             << " edges have been removed." << std::endl;
 
-  std::cout << "V = " << arr.number_of_vertices()
+  std::cout << "The arrangement size:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 

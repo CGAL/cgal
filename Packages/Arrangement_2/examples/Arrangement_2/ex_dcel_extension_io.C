@@ -117,7 +117,7 @@ int main ()
   }
 
   // Write the arrangement to a file.
-  std::ofstream    out_file ("arr_ex27.dat");
+  std::ofstream    out_file ("arr_ex_dcel_io.dat");
   Formatter        formatter;
 
   write (arr, out_file, formatter);
@@ -125,7 +125,7 @@ int main ()
 
   // Read the arrangement from the file.
   Arrangement_2    arr2;
-  std::ifstream    in_file ("arr_ex27.dat");
+  std::ifstream    in_file ("arr_ex_dcel_io.dat");
 
   read (arr2, in_file, formatter);
   in_file.close();

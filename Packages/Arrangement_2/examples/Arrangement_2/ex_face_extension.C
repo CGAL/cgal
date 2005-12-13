@@ -64,7 +64,8 @@ int main ()
   insert_x_monotone_curve (arr, s5);
   insert_x_monotone_curve (arr, s6);
 
-  // Go over all arrangement faces and print their outer boundary and indices.
+  // Go over all arrangement faces and print the index of each face and it
+  // outer boundary. The face index is stored in its data field in our case.
   Arrangement_2::Face_const_iterator            fit;
   Arrangement_2::Ccb_halfedge_const_circulator  curr;
 

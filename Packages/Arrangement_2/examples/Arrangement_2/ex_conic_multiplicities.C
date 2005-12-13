@@ -31,7 +31,7 @@ int main ()
   Naive_pl       pl (arr);
 
   // Insert a hyperbolic arc, supported by the hyperbola y = x^2/(1-x)
-  // (or: x^2 + xy - y = 0) with the end-points (-1, 1/2) and (1/2, 1/2).
+  // (or: x^2 + xy - y = 0) with the endpoints (-1, 1/2) and (1/2, 1/2).
   // Note that the arc is counterclockwise oriented.
   Point_2        ps1 (-1, Rational(1,2));
   Point_2        pt1 (Rational(1,2), Rational(1,2));

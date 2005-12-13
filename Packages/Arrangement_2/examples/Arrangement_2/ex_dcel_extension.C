@@ -37,7 +37,8 @@ int main ()
   insert_x_monotone_curve (arr, s5);
   insert_x_monotone_curve (arr, s6);
 
-  // Go over all arrangement vertices and set their colors.
+  // Go over all arrangement vertices and set their colors according to our
+  // coloring convention.
   Arrangement_2::Vertex_iterator            vit;
   unsigned int                              degree;
 
@@ -65,7 +66,7 @@ int main ()
     eit->twin()->set_data (!flag);
   }
 
-  // Go over all arrangement faces and print their outer boundary and indices.
+  // For each arrangement face, print the outer boundary and its size.
   Arrangement_2::Face_iterator              fit;
   Arrangement_2::Ccb_halfedge_circulator    curr;
   int                                       boundary_size;
@@ -88,6 +89,7 @@ int main ()
   // Copy the arrangement and print the vertices.
   Arrangement_2    arr2 = arr;
 
+  std::cout << "The arrangement vertices:" << std::endl;
   for (vit = arr2.vertices_begin(); vit != arr2.vertices_end(); ++vit)
   {
     std::cout << '(' << vit->point() << ") - ";

@@ -29,26 +29,28 @@ int main ()
   segs[5] = Segment_2 (Point_2 (3, 4), Point_2 (6, 4));
   insert_curves (arr, segs, segs + 6);
 
-  std::cout << arr.number_of_curves() << " input segments"
-            << ",  V = " << arr.number_of_vertices()
+  std::cout << "Writing an arrangement of "
+            << arr.number_of_curves() << " input segments:" << std::endl
+            << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Write the arrangement to a file.
-  std::ofstream     out_file ("arr_ex28.dat");
+  std::ofstream     out_file ("arr_ex_io_hist.dat");
 
   out_file << arr;
   out_file.close();
 
   // Read the arrangement from the file.
   Arr_with_hist_2   arr2;
-  std::ifstream     in_file ("arr_ex28.dat");
+  std::ifstream     in_file ("arr_ex_io_hist.dat");
 
   in_file >> arr2;
   in_file.close();
   
-  std::cout << arr2.number_of_curves() << " input segments"
-            << ",  V = " << arr.number_of_vertices()
+  std::cout << "Read an arrangement of "
+            << arr2.number_of_curves() << " input segments:" << std::endl
+            << "   V = " << arr2.number_of_vertices()
             << ",  E = " << arr2.number_of_edges() 
             << ",  F = " << arr2.number_of_faces() << std::endl;
 
