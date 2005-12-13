@@ -199,8 +199,22 @@ further explanations and examples.
 
 \subsection{A Simple Program}
 %----------------------------
+
+\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+\begin{wrapfigure}[5]{r}{2.5cm}
+\vspace{-2.8ex}
+  \input{Arrangement_2/fig/triangle.pstex_t}
+\vspace{-1.8ex}
+\end{wrapfigure}
 %
-The simple program listed below constructs a planar map of three segments
+The simple program listed below constructs a planar map of three line
+segments forming a triangle. The constructed arrangement is instantiated
+with the \ccc{Arr_segment_traits_2} traits class to handle segments only.
+The resulting arrangement consists of two faces, a bounded triangular face
+and the unbounded face.
+The program is not very useful as it is, since it ends immediately
+after the arrangement is constructed. We give more enhanced examples
+in the rest of this chapter.
 
 \begin{alltt}
 #include <CGAL/Cartesian.h>
@@ -218,26 +232,18 @@ typedef CGAL::Arrangement_2<Traits,>       Arrangement_2;
 
 int main()
 \{
-  Arrangement_2 arr;
-  X_monotone_curve_2 cv[3];
-  Point_2 a1(0,0), a2(0,4), a3(4,0);
+  Arrangement_2       arr;
+  X_monotone_curve_2  cv[3];
+  Point_2             p1 (0, 0), p2 (0, 4), p3 (4, 0);
  
-  cv[0] = X_monotone_curve_2(a1,a2);
-  cv[1] = X_monotone_curve_2(a2,a3);
-  cv[2] = X_monotone_curve_2(a3,a1);
+  cv[0] = X_monotone_curve_2 (p1, p2);
+  cv[1] = X_monotone_curve_2 (p2, p3);
+  cv[2] = X_monotone_curve_2 (p3, p1);
   insert(arr, &cv[0], &cv[3]);
 
-  return 0;
+  return (0);
 \}
 \end{alltt}
-
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The constructed arrangement is instantiated with the
-\ccc{Arr_segment_traits_2} traits class to handle segments only. It
-consists of two faces, a triangular face and the unbounded face.
-This program is not very useful, as it ends immediately after the
-arrangement is constructed. We will enhance it in the following
-sections to demonstrate various features.
 
 \subsection{Traversing the Arrangement}
 \label{arr_ssec:traverse}
@@ -599,20 +605,32 @@ twin halfedges that form an ``antenna'' emanating from the boundary
 of an existing connected component (note that if the existing vertex
 used to be isolated, this operation is actually equivalent to forming
 a new hole inside the face that contains this vertex).
+\end{enumerate}
+
+\begin{wrapfigure}{r}{4.5cm}
+\vspace{-1.2ex}
+  \input{Arrangement_2/fig/connect_comp.pstex_t}
+\vspace{-1.8ex}
+\end{wrapfigure}
 %
-\item If both endpoints correspond to existing arrangement
+~~~~
+\vspace{-8ex}
+\begin{enumerate}
+\item[3.] If both endpoints correspond to existing arrangement
 vertices, we connect these vertices using a pair of twin halfedges.
 (If one or both vertices are isolated this case reduces to one of
 the two previous cases respectively.) The two following subcases may
 occur:
 \begin{itemize}
 \item Two disconnected components are merged into a single connected
-component.
+component (as is the case with the segment $s_1$ in the figure to the
+left).
 %
 \item A new face is created, a face that splits from an existing
 arrangement face. In this case we also have to examine the holes and
 isolated vertices in the existing face and move the relevant ones
-inside the new face.
+inside the new face (as is the case with the segment $s_2$ in the
+figure to the left).
 \end{itemize}
 \end{enumerate}
 
@@ -858,6 +876,12 @@ by $(\frac{1}{2}, 3)$.
 \subsubsection{Advanced Insertion Functions}
 \label{arr_sssec:adv_insert}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%
+\begin{wrapfigure}{r}{4.5cm}
+\vspace{-1.2ex}
+  \input{Arrangement_2/fig/pred_around_vertex.pstex_t}
+\vspace{-1.8ex}
+\end{wrapfigure}
 %
 Assume that the specialized insertion function
 \ccc{insert_from_left_vertex(c,v)} is invoked for a curve $c$,
@@ -1659,6 +1683,12 @@ end vertices of \ccc{e} becomes isolated or redundant after the removal
 of the edge, it is removed as well.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+\begin{wrapfigure}[5]{r}{2.5cm}
+\vspace{-2.8ex}
+  \input{Arrangement_2/fig/h_shape.pstex_t}
+\vspace{-1.8ex}
+\end{wrapfigure}
+%
 The following example demonstrates the usage of the free removal
 functions. In creates an arrangement of four line segment forming
 an H-shape with a double horizontal line. Then it removes the two
