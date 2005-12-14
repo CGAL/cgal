@@ -1,3 +1,7 @@
+14 December 2005 Sylvain Pion
+- Attempt to change CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP.C into the "positive"
+  test program CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.C .
+
 12 September 2005 Sylvain Pion
 - New config macro CGAL_CFG_COMMA_BUG for g++ 3.3.
 

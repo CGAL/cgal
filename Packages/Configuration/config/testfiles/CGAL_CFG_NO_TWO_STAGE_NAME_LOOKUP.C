@@ -21,27 +21,30 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP.C
+// CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| The flag CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP is set,
-//| if a compiler supports the two stage name lookup.
-//| This is a feature of G++ >= 3.4.
+//| The flag CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP is set,
+//| if a compiler does not support the two stage name lookup.
+//| This is a bug of G++ < 3.4 for example.
 //| Note that the program fails when the feature works,
 //| which is different from the other test programs.
 
 namespace A {
 
 template < typename T >
-void f(const T&t)
-{ A::g(t); }
+int g(const T&)
+{ return 0; }
 
 template < typename T >
-void g(const T&)
+void f(const T&t)
+{ (int) A::g(t); }
+
+void g(int)
 {}
 
 } // namespace A
