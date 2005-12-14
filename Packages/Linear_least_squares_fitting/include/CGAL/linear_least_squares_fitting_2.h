@@ -40,7 +40,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
                                const K& k,                 // kernel
-                               const typename K::Point_2*)
+                               const typename K::Point_2*) // used for indirection
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_2  Point;
@@ -66,7 +66,7 @@ linear_least_squares_fitting_2(InputIterator first,
       it++)
   {
     const Point& p = *it;
-    Vector d = p - c;
+    Vector d = p - c; // centered data point
     covariance[0] += d.x() * d.x();
     covariance[1] += d.x() * d.y();
     covariance[2] += d.y() * d.y();
@@ -78,7 +78,7 @@ linear_least_squares_fitting_2(InputIterator first,
   CGALi::eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
 
   // assert eigen values are positives or null
-  CGAL_assertion(eigen_values.first >= 0 && 
+  CGAL_assertion(eigen_values.first  >= 0 && 
                  eigen_values.second >= 0);
 
   // check unicity and build fitting line accordingly
@@ -96,9 +96,9 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c,Vector(1,0));
     return (FT)0.0;
   } // end isotropic case
-  // end linear_least_squares_fitting_2 for point set
+} // end linear_least_squares_fitting_2 for point set
 
-} // namespace CGALi
+} // end namespace CGALi
 
 
 template < typename InputIterator, 
@@ -133,9 +133,7 @@ linear_least_squares_fitting_2(InputIterator begin,
 }
 
 
-// deduces the kernel from the 
-// points in container
-
+// deduces the kernel from the points in container
 template < typename InputIterator, 
            typename Line,
            typename Point>
@@ -151,8 +149,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   return CGAL::linear_least_squares_fitting_2(begin,end,line,centroid,K());
 }
 
-// does not return the centroid
-
+// does not return the centroid and deduces the kernel as well
 template < typename InputIterator, 
            typename Line >
 inline
