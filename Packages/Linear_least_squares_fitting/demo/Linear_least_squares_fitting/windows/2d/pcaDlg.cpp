@@ -324,6 +324,7 @@ void CpcaDlg::draw_disc(const Point_2& c,
 {
   GLUquadricObj *pQuadric = gluNewQuadric();
   glPushMatrix();
+  glColor3ub(r,g,b);
   glTranslated(c.x(),c.y(),0.0);
   gluDisk(pQuadric,0,radius,30,1);
   glPopMatrix();
@@ -403,7 +404,7 @@ bool CpcaDlg::inside(const CPoint& point)
 
 void CpcaDlg::OnFitLine()
 {
-  FT quality = linear_least_squares_fitting_2(m_points.begin(),
+  linear_least_squares_fitting_2(m_points.begin(),
                                               m_points.end(),
                                               m_fitting_line,
                                               m_centroid);

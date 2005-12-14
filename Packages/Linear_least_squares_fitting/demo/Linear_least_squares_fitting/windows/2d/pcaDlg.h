@@ -28,6 +28,7 @@ public:
 	std::list<Point_2> m_points;
   Point_2 m_centroid;
   Line_2 m_fitting_line;
+  FT m_quality;
 
 	// OpenGL
 	HGLRC m_hGLContext;
