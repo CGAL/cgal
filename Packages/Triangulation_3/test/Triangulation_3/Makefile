@@ -46,6 +46,7 @@ all:            \
                 test_regular_3$(EXE_EXT) \
                 test_regular_as_delaunay_3$(EXE_EXT) \
                 test_regular_traits_3$(EXE_EXT) \
+                test_regular_remove_3$(EXE_EXT) \
                 test_triangulation_3$(EXE_EXT) \
                 test_triangulation_tds$(EXE_EXT) 
 
@@ -67,6 +68,9 @@ test_regular_as_delaunay_3$(EXE_EXT): test_regular_as_delaunay_3$(OBJ_EXT)
 test_regular_traits_3$(EXE_EXT): test_regular_traits_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_regular_traits_3 test_regular_traits_3$(OBJ_EXT) $(LDFLAGS)
 
+test_regular_remove_3$(EXE_EXT): test_regular_remove_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_regular_remove_3 test_regular_remove_3$(OBJ_EXT) $(LDFLAGS)
+
 test_triangulation_3$(EXE_EXT): test_triangulation_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_triangulation_3 test_triangulation_3$(OBJ_EXT) $(LDFLAGS)
 
@@ -80,6 +84,7 @@ clean: \
                    test_regular_3.clean \
                    test_regular_as_delaunay_3.clean \
                    test_regular_traits_3.clean \
+                   test_regular_remove_3.clean \
                    test_triangulation_3.clean \
                    test_triangulation_tds.clean 
 

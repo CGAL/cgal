@@ -425,15 +425,6 @@ int main()
   assert(T5.is_Gabriel(v3));
   assert(!T5.is_Gabriel(v0));
 
-  // test remove
-  // TODO: this does not test all the paths remove() can go through.
-  std::cout << " test remove" << std::endl;
-  assert (T4.is_vertex (v01));
-  T4.remove (v01);
-  Vertex_handle remove_v;
-  // check that wq0 was really reinserted.
-  assert (T4.is_vertex (wq0, remove_v));
-
   std::cout << " quit " << std::endl;
   return 0;
 }

@@ -493,7 +493,11 @@ private:
   Cell_handle remove_degree_2(const Vertex_handle& v);
 public:
   Cell_handle remove_from_maximal_dimension_simplex(const Vertex_handle& v);
-  void remove_decrease_dimension(const Vertex_handle& v);
+  void remove_decrease_dimension(const Vertex_handle& v)
+  {
+      remove_decrease_dimension (v, v);
+  }
+  void remove_decrease_dimension(const Vertex_handle& v, const Vertex_handle &w);
 
   // Change orientation of the whole TDS.
   void reorient()
@@ -2126,7 +2130,7 @@ insert_increase_dimension(Vertex_handle star)
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-remove_decrease_dimension(const Vertex_handle& v)
+remove_decrease_dimension(const Vertex_handle& v, const Vertex_handle &w)
 {
     CGAL_triangulation_expensive_precondition( is_valid() );
     CGAL_triangulation_precondition( dimension() >= -1 );
@@ -2140,13 +2144,13 @@ remove_decrease_dimension(const Vertex_handle& v)
 	delete_cell(v->cell());
     }
     else {
-        // the cells incident to v are down graded one dimension
+        // the cells incident to w are down graded one dimension
         // the other cells are deleted
         std::vector<Cell_handle> to_delete, to_downgrade;
 
         for (Cell_iterator ib = cell_container().begin();
             ib != cell_container().end(); ++ib) {
-            if ( ib->has_vertex(v) )
+            if ( ib->has_vertex(w) )
 	        to_downgrade.push_back(ib);
             else
 	        to_delete.push_back(ib);
@@ -2155,7 +2159,8 @@ remove_decrease_dimension(const Vertex_handle& v)
         typename std::vector<Cell_handle>::iterator lfit=to_downgrade.begin();
         for( ; lfit != to_downgrade.end(); ++lfit) {
 	    Cell_handle f = *lfit;
-	    int j = f->index(v);
+	    int j = f->index(w);
+	    int k; if (f->has_vertex(v, k)) f->set_vertex(k, w);
             if (j != dimension()) {
 	        f->set_vertex(j, f->vertex(dimension()));
 	        f->set_neighbor(j, f->neighbor(dimension()));

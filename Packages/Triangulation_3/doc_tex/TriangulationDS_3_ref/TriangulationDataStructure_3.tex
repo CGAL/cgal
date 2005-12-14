@@ -418,13 +418,13 @@ is connected, and its boundary is connected.}}
 
 \ccHeading{Removal}
 
-\ccMethod{void remove_decrease_dimension(Vertex_handle v);}
+\ccMethod{void remove_decrease_dimension(Vertex_handle v, Vertex_handle w = v);}
 {This operation is the reciprocal of \ccc{insert_increase_dimension()}.
 It transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
 triangulation of the sphere $S^{d-1}$ of $\R^{d}$ by removing the vertex
-\ccc{v}.
+\ccc{v}. Delete the cells incident to \ccc{w}, keep the others.
 \ccPrecond{\ccVar.\ccc{dimension()} $= d \geq -1$.
-\ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{number_of_vertices()} $-1$.}
+\ccVar.\ccc{degree(v)} $=$ \ccc{degree(w)} $=$ \ccVar.\ccc{number_of_vertices()} $-1$.}
 }
 
 \ccMethod{Cell_handle remove_from_maximal_dimension_simplex(Vertex_handle v);}
