@@ -24,7 +24,7 @@
 #include <CGAL/Voronoi_diagram_2/Segment_Delaunay_graph_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Policy_base.h>
 #include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
 #include <CGAL/Identity_policy_2.h>
 

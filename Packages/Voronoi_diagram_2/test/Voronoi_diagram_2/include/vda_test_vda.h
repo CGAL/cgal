@@ -217,7 +217,7 @@ void test_vda(const VDA& vda)
   // testing types
   //--------------
   typedef typename VDA::Delaunay_graph                DG;
-  typedef typename VDA::Voronoi_traits                VT;
+  typedef typename VDA::Adaptation_traits             AT;
   typedef typename VDA::Adaptation_policy             AP;
 
   typedef typename VDA::size_type                     size_type;
@@ -255,10 +255,10 @@ void test_vda(const VDA& vda)
   // testing access methods
   //-----------------------
   const DG& dg = vda.dual();
-  const VT& vt = vda.voronoi_traits();
+  const AT& at = vda.adaptation_traits();
   const AP& ap = vda.adaptation_policy();
   kill_warning(dg);
-  kill_warning(vt);
+  kill_warning(at);
 
   size_type t;
   t = vda.number_of_vertices();
@@ -392,32 +392,32 @@ void test_vda(const VDA& vda)
 
   // testing existence of non-default constructors
   {
-    VDA vda2(vt);
-    VDA vda3(vt, ap);
-    VDA vda4(vt, ap, vda.dual().geom_traits());
+    VDA vda2(at);
+    VDA vda3(at, ap);
+    VDA vda4(at, ap, vda.dual().geom_traits());
 
     DG dg2(dg);
 
     VDA vda5(dg2);
     VDA vda6(dg2, false);
-    VDA vda7(dg2, false, vt);
-    VDA vda8(dg2, false, vt, ap);
+    VDA vda7(dg2, false, at);
+    VDA vda8(dg2, false, at, ap);
     int n_dg2 = dg2.number_of_vertices();
     VDA vda9(dg2, true);
     if ( n_dg2 != 0 ) {
       CGAL_assertion( dg2.number_of_vertices() == 0 );
     }
 
-    std::vector<typename VT::Site_2> vs;
+    std::vector<typename AT::Site_2> vs;
     for (Site_iterator sit = vda.sites_begin();
 	 sit != vda.sites_end(); ++sit) {
       vs.push_back(*sit);
     }
 
     VDA vda10(vs.begin(), vs.end());
-    VDA vda11(vs.begin(), vs.end(), vt);
-    VDA vda12(vs.begin(), vs.end(), vt, ap);
-    VDA vda13(vs.begin(), vs.end(), vt, ap, vda.dual().geom_traits());
+    VDA vda11(vs.begin(), vs.end(), at);
+    VDA vda12(vs.begin(), vs.end(), at, ap);
+    VDA vda13(vs.begin(), vs.end(), at, ap, vda.dual().geom_traits());
   }
 
   // testing copy constructor
@@ -562,12 +562,12 @@ void test_vda(const VDA& vda)
   // testing generator iterator
   Site_iterator sit;
   for (sit = vda.sites_begin(); sit != vda.sites_end(); ++sit) {
-    typename VT::Site_2 s = *sit;
+    typename AT::Site_2 s = *sit;
   }
 
   if ( vda.sites_begin() != vda.sites_end() ) {
     for (sit = --vda.sites_end(); sit != vda.sites_begin(); --sit) {
-      typename VT::Site_2 s = *sit;
+      typename AT::Site_2 s = *sit;
     }
   }
 }
@@ -576,7 +576,7 @@ void test_vda(const VDA& vda)
 template<class VDA>
 void test_vdqr_concept(const VDA& vda)
 {
-  test_vdqr_concept(vda, typename VDA::Voronoi_traits::Has_nearest_site_2());
+  test_vdqr_concept(vda, typename VDA::Adaptation_traits::Has_nearest_site_2());
 }
 
 template<class VDA>

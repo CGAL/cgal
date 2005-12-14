@@ -123,9 +123,9 @@ class VDA_Tester
 
   void test_vd(const VD& vd) const
   {
-    test_dual_graph_concept( vd.dual(), vd.voronoi_traits() );
-    test_voronoi_traits_concept( vd.dual(), vd.voronoi_traits() );
-    test_adaptation_policy_concept( vd.dual(), vd.voronoi_traits(),
+    test_dual_graph_concept( vd.dual(), vd.adaptation_traits() );
+    test_adaptation_traits_concept( vd.dual(), vd.adaptation_traits() );
+    test_adaptation_policy_concept( vd.dual(), vd.adaptation_traits(),
 				    vd.adaptation_policy() );
 
     std::ofstream nos("");
@@ -154,7 +154,7 @@ class VDA_Tester
     std::cout << "*** Testing data file (for point location): "
 	      << fname << std::endl << std::endl;
 
-    std::vector<typename VD::Voronoi_traits::Site_2> vec_s;
+    std::vector<typename VD::Adaptation_traits::Site_2> vec_s;
     read_from_file(fname, std::back_inserter(vec_s));
 
     dg_timer_.start();
@@ -193,7 +193,7 @@ class VDA_Tester
     std::cout << "*** Testing data file: " << fname << std::endl
 	      << std::endl;
 
-    std::vector<typename VD::Voronoi_traits::Site_2> vec_s;
+    std::vector<typename VD::Adaptation_traits::Site_2> vec_s;
     read_from_file(fname, std::back_inserter(vec_s));
 
     dg_timer_.start();
@@ -206,7 +206,7 @@ class VDA_Tester
 
     vda_timer_.start();
     VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
-			typename VD::Voronoi_traits::Has_insert());
+			typename VD::Adaptation_traits::Has_insert());
     vda_timer_.stop();
 
     std::cout << std::endl << std::endl;
@@ -237,7 +237,7 @@ class VDA_Tester
 
   void operator()(char* fname, char* qfname, bool print_sites = false) const
   {
-    typename VD::Voronoi_traits::Has_nearest_site_2 has_ns;
+    typename VD::Adaptation_traits::Has_nearest_site_2 has_ns;
     test_loc(fname, qfname, has_ns, print_sites);
   }
 

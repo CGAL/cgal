@@ -29,7 +29,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_Voronoi_traits_2.h>
+#include <CGAL/Regular_triangulation_adaptation_traits_2.h>
 #include <CGAL/Regular_triangulation_adaptation_policies_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
@@ -52,13 +52,13 @@ typedef CGAL::Triangulation_hierarchy_2<RTB>                       RT;
 typedef CGAL::Regular_triangulation_2<Gt>                          RT;
 #endif
 
-typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>           VT;
-typedef CGAL::Identity_policy_2<RT,VT>                             IP;
+typedef CGAL::Regular_triangulation_adaptation_traits_2<RT>        AT;
+typedef CGAL::Identity_policy_2<RT,AT>                             IP;
 typedef CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT>
 CDRP;
 
-typedef CGAL::Voronoi_diagram_2<RT,VT,IP>                          IVDA;
-typedef CGAL::Voronoi_diagram_2<RT,VT,CDRP>                        CDRVDA;
+typedef CGAL::Voronoi_diagram_2<RT,AT,IP>                          IVDA;
+typedef CGAL::Voronoi_diagram_2<RT,AT,CDRP>                        CDRVDA;
 
 
 template<class VD>

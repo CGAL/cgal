@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Voronoi_diagram_2/Policy_base.h>
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
 CGAL_BEGIN_NAMESPACE
 

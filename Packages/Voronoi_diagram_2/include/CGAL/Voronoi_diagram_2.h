@@ -52,11 +52,11 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class DG, class VT, class AP = Identity_policy_2<DG,VT> >
+template<class DG, class AT, class AP = Identity_policy_2<DG,AT> >
 class Voronoi_diagram_2
 {
  private:
-  typedef Voronoi_diagram_2<DG,VT,AP>        Self;
+  typedef Voronoi_diagram_2<DG,AT,AP>        Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
 
   friend struct CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>;
@@ -69,7 +69,7 @@ class Voronoi_diagram_2
 
   // the (triangulated) dual graph
   typedef DG                                          Delaunay_graph;
-  typedef VT                                          Voronoi_traits;
+  typedef AT                                          Adaptation_traits;
   typedef AP                                          Adaptation_policy;
 
   typedef typename Delaunay_graph::Geom_traits        Geom_traits;
@@ -246,13 +246,15 @@ class Voronoi_diagram_2
  protected:
   struct Project_site_2
   {
-    typedef typename Voronoi_traits::Site_2  Site_2;
-    typedef Face                             argument_type;
-    typedef Site_2                           result_type;
+    typedef typename Adaptation_traits::Site_2  Site_2;
+    typedef Face                                argument_type;
+    typedef Site_2                              result_type;
 
     Site_2& operator()(const Face& f) const {
       static Site_2 s;
-      s = Voronoi_traits().access_site_2_object()(f.dual());
+      // here we construct an adaptation traits; ideally we should get
+      // the adaptation traits from the outer class
+      s = Adaptation_traits().access_site_2_object()(f.dual());
       return s;
     }
   };
@@ -266,9 +268,9 @@ class Voronoi_diagram_2
 
 protected:
   // POINT LOCATION RELATED TYPES
-  typedef typename Voronoi_traits::Has_nearest_site_2  Has_nearest_site_2;
+  typedef typename Adaptation_traits::Has_nearest_site_2  Has_nearest_site_2;
 public:
-  typedef typename Voronoi_traits::Point_2             Point_2;
+  typedef typename Adaptation_traits::Point_2             Point_2;
 
   typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
   Locate_result;
@@ -281,13 +283,13 @@ public:
   //--------------
   // CONSTRUCTORS
   //--------------
-  Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits(),
+  Voronoi_diagram_2(const Adaptation_traits& tr = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy(),
 		    const Geom_traits& gt = Geom_traits())
     : dual_(gt), ap_(ap), tr_(tr) {}
 
   Voronoi_diagram_2(const Delaunay_graph& dg, bool swap_dg = false,
-		    const Voronoi_traits& tr = Voronoi_traits(),
+		    const Adaptation_traits& tr = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy())
     : dual_(), ap_(ap), tr_(tr) {
     if ( swap_dg ) {
@@ -299,7 +301,7 @@ public:
 
   template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond,
-		    const Voronoi_traits& tr = Voronoi_traits(),
+		    const Adaptation_traits& tr = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy(),
 		    const Geom_traits& gt = Geom_traits())
     : dual_(first, beyond, gt), ap_(ap), tr_(tr) {}
@@ -336,7 +338,7 @@ public:
   const Delaunay_graph& dual() const { return dual_; }
 
   // VORONOI TRAITS
-  const Voronoi_traits& voronoi_traits() const { return tr_; }
+  const Adaptation_traits& adaptation_traits() const { return tr_; }
 
   // ADAPTATION POLICY
   const Adaptation_policy& adaptation_policy() const { return ap_; }
@@ -634,8 +636,8 @@ public:
   {
     CGAL_precondition( dual_.number_of_vertices() > 0 );
 
-    typedef typename Voronoi_traits::Nearest_site_2    Nearest_site_2;
-    typedef typename Nearest_site_2::result_type      Query_result;
+    typedef typename Adaptation_traits::Nearest_site_2  Nearest_site_2;
+    typedef typename Nearest_site_2::result_type        Query_result;
 
     Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
     Query_result ns_qr = nearest_site(dual_, p);
@@ -722,7 +724,7 @@ public:
  private:
   Delaunay_graph  dual_;
   Adaptation_policy ap_;
-  Voronoi_traits tr_;
+  Adaptation_traits tr_;
 
  protected:
   Delaunay_edge opposite(const Delaunay_edge& e) const {
@@ -731,7 +733,7 @@ public:
   }
 
  public:
-  typedef typename Voronoi_traits::Site_2     Site_2;
+  typedef typename Adaptation_traits::Site_2     Site_2;
 
  protected:
   // insert is supported...

@@ -29,7 +29,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_Voronoi_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_adaptation_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_adaptation_policies_2.h>
 
 typedef CGAL::MP_Float  NT;
@@ -50,21 +50,21 @@ typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt>                 SDG;
 #else
 typedef CGAL::Segment_Delaunay_graph_2<Gt>                           SDG;
 #endif
-typedef CGAL::Segment_Delaunay_graph_Voronoi_traits_2<SDG>           VT;
-typedef CGAL::Identity_policy_2<SDG,VT>                               IP;
+typedef CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG>         AT;
+typedef CGAL::Identity_policy_2<SDG,AT>                               IP;
 
 typedef CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG>
 CDRP;
 
-typedef CGAL::Voronoi_diagram_2<SDG,VT,IP>                            IVDA;
-typedef CGAL::Voronoi_diagram_2<SDG,VT,CDRP>                          CDRVDA;
+typedef CGAL::Voronoi_diagram_2<SDG,AT,IP>                            IVDA;
+typedef CGAL::Voronoi_diagram_2<SDG,AT,CDRP>                          CDRVDA;
 
 template<class VD>
 void run_tests()
 {
   typedef typename VD::Delaunay_graph                       DG;
-  typedef typename VD::Voronoi_traits::Site_2               Site_2;
-  typedef typename VD::Voronoi_traits::Point_2              Point_2;
+  typedef typename VD::Adaptation_traits::Site_2            Site_2;
+  typedef typename VD::Adaptation_traits::Point_2           Point_2;
   typedef Project_site<typename DG::Vertex_handle,Site_2>   Project_site;
   typedef Project_primal<VD,Point_2>                        Project_primal;
   typedef VDA_Tester<VD,Project_site,Project_primal>        Tester;

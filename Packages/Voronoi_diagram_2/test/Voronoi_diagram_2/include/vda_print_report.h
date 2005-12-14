@@ -252,7 +252,7 @@ void print_report(const VDA& vda, const Projector& project,
     os << "Voronoi edges:" << std::endl;
     for (typename VDA::Edge_iterator eit = vda.edges_begin();
 	 eit != vda.edges_end(); ++eit) {
-      typename VDA::Voronoi_traits::Point_2 p_src, p_trg;
+      typename VDA::Adaptation_traits::Point_2 p_src, p_trg;
       if ( eit->is_bisector() ) {
 	os << "inf - inf" << std::endl;
       } else if ( eit->is_ray() ) {

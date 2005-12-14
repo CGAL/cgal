@@ -17,32 +17,32 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_REGULAR_TRIANGULATION_VORONOI_TRAITS_2_H
-#define CGAL_REGULAR_TRIANGULATION_VORONOI_TRAITS_2_H 1
+#ifndef CGAL_APOLLONIUS_GRAPH_ADAPTATION_TRAITS_2_H
+#define CGAL_APOLLONIUS_GRAPH_ADAPTATION_TRAITS_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <CGAL/Voronoi_diagram_2/Regular_triangulation_nearest_site_2.h>
-#include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_2/Apollonius_graph_nearest_site_2.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
-template<class RT2>
-struct Regular_triangulation_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
-  <RT2,
-   CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
-   <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
+template<class AG2>
+struct Apollonius_graph_adaptation_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Adaptation_traits_base_2
+  <AG2,
+   CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename AG2::Site_2,AG2,Tag_true>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_Voronoi_point_2<AG2>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Apollonius_graph_nearest_site_2<AG2> >
 {
-  typedef typename RT2::Geom_traits::Point_2           Point_2;
-  typedef typename RT2::Geom_traits::Weighted_point_2  Site_2;
+  typedef typename AG2::Point_2                   Point_2;
+  typedef typename AG2::Site_2                    Site_2;
 };
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_REGULAR_TRIANGULATION_VORONOI_TRAITS_2_H
+#endif // CGAL_APOLLONIUS_GRAPH_ADAPTATION_TRAITS_2_H

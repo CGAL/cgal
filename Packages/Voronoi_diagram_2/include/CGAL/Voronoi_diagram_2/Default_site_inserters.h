@@ -21,7 +21,7 @@
 #define CGAL_VORONOI_DIAGRAM_2_DEFAULT_SITE_INSERTERS_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
@@ -58,21 +58,21 @@ struct Default_site_inserter
 
 //===========================================================================
 
-template<class VT, class SI>
+template<class AT, class SI>
 class Default_caching_site_inserter
 {
 private:
-  typedef VT  Voronoi_traits;
+  typedef AT  Adaptation_traits;
   typedef SI  Site_inserter;
 
 public:
-  typedef typename Voronoi_traits::Delaunay_graph   Delaunay_graph;
-  typedef typename Site_inserter::Site_2            Site_2;
-  typedef typename Delaunay_graph::Vertex_handle    result_type;
-  typedef Arity_tag<2>                              Arity;
+  typedef typename Adaptation_traits::Delaunay_graph  Delaunay_graph;
+  typedef typename Site_inserter::Site_2              Site_2;
+  typedef typename Delaunay_graph::Vertex_handle      result_type;
+  typedef Arity_tag<2>                                Arity;
 
 public:
-  Default_caching_site_inserter(const Voronoi_traits* vt = NULL) : vt_(vt) {}
+  Default_caching_site_inserter(const Adaptation_traits* at = NULL) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Site_2& t) const
   {
@@ -96,7 +96,7 @@ public:
 
     for (typename Edge_list::iterator it = e_list.begin();
 	 it != e_list.end(); ++it) {
-      vt_->edge_rejector_object().erase(*it);
+      at_->edge_rejector_object().erase(*it);
     }
 
     for (typename Face_handle_list::iterator it = f_list.begin();
@@ -104,7 +104,7 @@ public:
       Face_handle f = *it;
       for (int j = 0; j < 3; j++) {
 	Edge e(f, j);
-	vt_->edge_rejector_object().erase(e);
+	at_->edge_rejector_object().erase(e);
       }
     }
     return Site_inserter()(dg, t);
@@ -118,13 +118,13 @@ public:
   }
 
 private:
-  const Voronoi_traits* vt_;
+  const Adaptation_traits* at_;
 };
 
 //===========================================================================
 
-template<class VT>
-struct Default_caching_site_inserter<VT,Null_functor>
+template<class AT>
+struct Default_caching_site_inserter<AT,Null_functor>
 {
   Default_caching_site_inserter() {}
   template<typename T> Default_caching_site_inserter(T t) {}
@@ -133,23 +133,23 @@ struct Default_caching_site_inserter<VT,Null_functor>
 //===========================================================================
 //===========================================================================
 
-template<class VT, class Site_inserter = Default_site_inserter<VT,int> >
+template<class AT, class Site_inserter = Default_site_inserter<AT,int> >
 class Default_aggregate_site_inserter
 {
 private:
-  typedef VT  Voronoi_traits;
+  typedef AT  Adaptation_traits;
 
 public:
-  typedef typename Voronoi_traits::Delaunay_graph   Delaunay_graph;
-  typedef typename Voronoi_traits::Site_2           Site_2;
-  typedef int                                       result_type;
-  typedef Arity_tag<3>                              Arity;
+  typedef typename Adaptation_traits::Delaunay_graph   Delaunay_graph;
+  typedef typename Adaptation_traits::Site_2           Site_2;
+  typedef int                                          result_type;
+  typedef Arity_tag<3>                                 Arity;
 
 public:
   Default_aggregate_site_inserter() : site_inserter() {}
 
-  Default_aggregate_site_inserter(const Voronoi_traits* vt)
-    : site_inserter(vt) {}
+  Default_aggregate_site_inserter(const Adaptation_traits* at)
+    : site_inserter(at) {}
 
   template<class Iterator>
   int operator()(Delaunay_graph& dg,

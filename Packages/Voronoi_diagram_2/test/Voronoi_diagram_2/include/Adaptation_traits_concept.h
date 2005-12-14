@@ -17,12 +17,12 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_VORONOI_TRAITS_CONCEPT_H
-#define CGAL_VORONOI_TRAITS_CONCEPT_H 1
+#ifndef CGAL_ADAPTATION_TRAITS_CONCEPT_H
+#define CGAL_ADAPTATION_TRAITS_CONCEPT_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -30,10 +30,10 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class DG>
-class Voronoi_traits_concept
+class Adaptation_traits_concept
 {
 private:
-  typedef Voronoi_traits_concept<DG>       Self;
+  typedef Adaptation_traits_concept<DG>       Self;
 
 public:
   typedef DG                               Delaunay_graph;
@@ -90,4 +90,4 @@ public:
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_VORONOI_TRAITS_CONCEPT_H
+#endif // CGAL_ADAPTATION_TRAITS_CONCEPT_H

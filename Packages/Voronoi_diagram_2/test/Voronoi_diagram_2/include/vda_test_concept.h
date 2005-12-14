@@ -41,8 +41,8 @@ void test_edge_as_pair(const E&, const std::pair<F_handle,int>&)
 //============================================================================
 //============================================================================
 
-template<class DG, class VT>
-void test_dual_graph_concept(const DG& dg, const VT& vt)
+template<class DG, class AT>
+void test_dual_graph_concept(const DG& dg, const AT& at)
 {
   // testing types
   typedef typename DG::size_type                      size_type;
@@ -87,10 +87,10 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
     dg3 = dg2;
 
     // constructors that take an iterator range
-    std::vector<typename VT::Site_2> v;
+    std::vector<typename AT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
-      v.push_back(vt.access_site_2_object()(vit));
+      v.push_back(at.access_site_2_object()(vit));
     }
     DG dg4(v.begin(), v.end());
     DG dg5(v.begin(), v.end(), Geom_traits());
@@ -194,15 +194,15 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
   // testing insertion
   if ( dg.number_of_vertices() > 0 ) {
     DG dg1;
-    std::vector<typename VT::Site_2> v;
+    std::vector<typename AT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
 	 vit != dg.finite_vertices_end(); ++vit) {
-      v.push_back(vt.access_site_2_object()(vit));
+      v.push_back(at.access_site_2_object()(vit));
     }
     CGAL_assertion( v.size() > 0 );
 
     // one-site insertion
-    typename VT::Site_2 s = v[0];
+    typename AT::Site_2 s = v[0];
     dg1.insert(s);
 
     // insertion that take an iterator range
@@ -216,67 +216,67 @@ void test_dual_graph_concept(const DG& dg, const VT& vt)
 //============================================================================
 //============================================================================
 
-template<class DG, class VT>
-void test_voronoi_traits_concept(const DG& dg, const VT& vt)
+template<class DG, class AT>
+void test_adaptation_traits_concept(const DG& dg, const AT& at)
 {
-  typedef typename VT::Point_2                    Point_2;
-  typedef typename VT::Site_2                     Site_2;
-  typedef typename VT::Delaunay_graph             Delaunay_graph;
-  typedef typename VT::Delaunay_vertex_handle     Vertex_handle;
-  typedef typename VT::Delaunay_face_handle       Face_handle;
-  typedef typename VT::Delaunay_edge              Edge;
-  //  typedef typename VT::Edge_degeneracy_tester     EDT;
-  //  typedef typename VT::Face_degeneracy_tester     FDT;
-  typedef typename VT::Access_site_2              Access_site_2;
-  typedef typename VT::Construct_Voronoi_point_2  Construct_Voronoi_point_2;
-  typedef typename VT::Has_nearest_site_2         Has_ns;
-  //  typedef typename VT::Has_site_inserter          Has_si;
+  typedef typename AT::Point_2                    Point_2;
+  typedef typename AT::Site_2                     Site_2;
+  typedef typename AT::Delaunay_graph             Delaunay_graph;
+  typedef typename AT::Delaunay_vertex_handle     Vertex_handle;
+  typedef typename AT::Delaunay_face_handle       Face_handle;
+  typedef typename AT::Delaunay_edge              Edge;
+  //  typedef typename AT::Edge_degeneracy_tester     EDT;
+  //  typedef typename AT::Face_degeneracy_tester     FDT;
+  typedef typename AT::Access_site_2              Access_site_2;
+  typedef typename AT::Construct_Voronoi_point_2  Construct_Voronoi_point_2;
+  typedef typename AT::Has_nearest_site_2         Has_ns;
+  //  typedef typename AT::Has_site_inserter          Has_si;
 
   // testing copy constructor and assignment operator
   {
-    VT vt2(vt);
-    //    CGAL_assertion( vt2.is_valid() );
+    AT at2(at);
+    //    CGAL_assertion( at2.is_valid() );
 
-    VT vt3;
-    vt3 = vt;
-    //    CGAL_assertion( vt3.is_valid() );
+    AT at3;
+    at3 = at;
+    //    CGAL_assertion( at3.is_valid() );
   }
 
   // testing clear and swap methods
 #if 0
   {
-    VT vt2(vt);
-    vt2.clear();
-    CGAL_assertion( vt2.is_valid() );
+    AT at2(at);
+    at2.clear();
+    CGAL_assertion( at2.is_valid() );
 
-    VT vt3(vt);
-    vt2.swap(vt3);
+    AT at3(at);
+    at2.swap(at3);
 
-    CGAL_assertion( vt2.is_valid() );
-    CGAL_assertion( vt3.is_valid() );
+    CGAL_assertion( at2.is_valid() );
+    CGAL_assertion( at3.is_valid() );
   }
 
   // testing validity method
-  bool b = vt.is_valid();
+  bool b = at.is_valid();
   kill_warning( b );
   CGAL_assertion( b );
 #endif
 
   // test nested concepts
-  //  test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
-  //  test_fdt_concept( dg, vt.face_degeneracy_tester_object() );
-  test_as_concept( dg, vt.access_site_2_object() );
-  test_cvp_concept( dg, vt.construct_Voronoi_point_2_object() );
-  test_ns_concept( dg, vt, Has_ns() );
-  //  test_si_concept( dg, vt, Has_si() );
+  //  test_edt_concept( dg, at.edge_degeneracy_tester_object() );
+  //  test_fdt_concept( dg, at.face_degeneracy_tester_object() );
+  test_as_concept( dg, at.access_site_2_object() );
+  test_cvp_concept( dg, at.construct_Voronoi_point_2_object() );
+  test_ns_concept( dg, at, Has_ns() );
+  //  test_si_concept( dg, at, Has_si() );
 }
 
 
 //============================================================================
 //============================================================================
 
-template<class DG, class VT, class AP>
-void test_adaptation_policy_concept(const DG& dg, const VT& vt, const AP& ap)
+template<class DG, class AT, class AP>
+void test_adaptation_policy_concept(const DG& dg, const AT& at, const AP& ap)
 {
   typedef typename AP::Site_2                          Site_2;
   typedef typename AP::Delaunay_graph                  Delaunay_graph;
@@ -325,10 +325,10 @@ void test_adaptation_policy_concept(const DG& dg, const VT& vt, const AP& ap)
   // test nested concepts
   test_er_concept( dg, ap.edge_rejector_object() );
   test_fr_concept( dg, ap.face_rejector_object() );
-  //  test_as_concept( dg, vt.access_site_2_object() );
-  //  test_cvp_concept( dg, vt.construct_Voronoi_point_2_object() );
-  //  test_ns_concept( dg, vt, Has_ns() );
-  test_si_concept( dg, vt, ap, Has_si() );
+  //  test_as_concept( dg, at.access_site_2_object() );
+  //  test_cvp_concept( dg, at.construct_Voronoi_point_2_object() );
+  //  test_ns_concept( dg, at, Has_ns() );
+  test_si_concept( dg, at, ap, Has_si() );
 }
 
 
@@ -470,11 +470,11 @@ void test_cvp_concept(const DG& dg, const CVP& cvp)
 //============================================================================
 //============================================================================
 
-template<class DG, class VT, class AP>
-void test_si_concept(const DG&, const VT&, const AP&, CGAL::Tag_false) {}
+template<class DG, class AT, class AP>
+void test_si_concept(const DG&, const AT&, const AP&, CGAL::Tag_false) {}
 
-template<class DG, class VT, class AP>
-void test_si_concept(const DG& dg, const VT& vt, const AP& ap, CGAL::Tag_true)
+template<class DG, class AT, class AP>
+void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
 {
   typedef typename AP::Site_inserter               Site_inserter;
   typedef typename Site_inserter::Delaunay_graph   Delaunay_graph;
@@ -492,7 +492,7 @@ void test_si_concept(const DG& dg, const VT& vt, const AP& ap, CGAL::Tag_true)
 
   CGAL_assertion( dg2.number_of_vertices() == 0 );
 
-  Site_2 t = vt.access_site_2_object()(dg.finite_vertices_begin());
+  Site_2 t = at.access_site_2_object()(dg.finite_vertices_begin());
   result_type v = si(dg2, t);
   kill_warning( v );
 
@@ -518,13 +518,13 @@ void test_si_concept(const DG& dg, const VT& vt, const AP& ap, CGAL::Tag_true)
 //============================================================================
 //============================================================================
 
-template<class DG, class VT>
-void test_ns_concept(const DG&, const VT&, CGAL::Tag_false) {}
+template<class DG, class AT>
+void test_ns_concept(const DG&, const AT&, CGAL::Tag_false) {}
 
-template<class DG, class VT>
-void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
+template<class DG, class AT>
+void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
 {
-  typedef typename VT::Nearest_site_2             Nearest_site_2;
+  typedef typename AT::Nearest_site_2             Nearest_site_2;
   typedef typename Nearest_site_2::Delaunay_graph Delaunay_graph;
   typedef typename Nearest_site_2::Point_2        Point_2;
 
@@ -532,13 +532,13 @@ void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
   typedef typename Nearest_site_2::Arity          Arity;
   typedef typename Nearest_site_2::result_type    result_type;
 
-  typedef typename VT::Delaunay_vertex_handle     Vertex_handle;
-  typedef typename VT::Delaunay_face_handle       Face_handle;
-  typedef typename VT::Delaunay_edge              Edge;
+  typedef typename AT::Delaunay_vertex_handle     Vertex_handle;
+  typedef typename AT::Delaunay_face_handle       Face_handle;
+  typedef typename AT::Delaunay_edge              Edge;
 
   if ( dg.dimension() < 0 ) { return; }
 
-  Nearest_site_2 ns = vt.nearest_site_2_object();
+  Nearest_site_2 ns = at.nearest_site_2_object();
   Point_2 p(0,0);
 
   result_type qr = ns(dg, p);

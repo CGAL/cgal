@@ -47,7 +47,7 @@ class Vertex
   Halfedge_around_vertex_circulator;
 
   typedef typename VDA::Delaunay_graph               Delaunay_graph;
-  typedef typename VDA::Voronoi_traits::Point_2      Point_2;
+  typedef typename VDA::Adaptation_traits::Point_2   Point_2;
   typedef typename Delaunay_graph::Face_handle       Delaunay_face_handle;
   typedef typename Delaunay_graph::Vertex_handle     Delaunay_vertex_handle;
 
@@ -168,7 +168,7 @@ class Vertex
     Delaunay_face_handle fvalid = find_valid_vertex(f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
 
-    return vda_->voronoi_traits().construct_Voronoi_point_2_object()(fvalid);
+    return vda_->adaptation_traits().construct_Voronoi_point_2_object()(fvalid);
   }
 
   // DUAL FEATURE

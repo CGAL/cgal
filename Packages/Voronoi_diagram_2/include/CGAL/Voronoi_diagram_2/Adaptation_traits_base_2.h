@@ -17,11 +17,11 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_VORONOI_DIAGRAM_2_DEFAULT_VORONOI_TRAITS_2_H
-#define CGAL_VORONOI_DIAGRAM_2_DEFAULT_VORONOI_TRAITS_2_H 1
+#ifndef CGAL_VORONOI_DIAGRAM_2_ADAPTATION_TRAITS_BASE_2_H
+#define CGAL_VORONOI_DIAGRAM_2_ADAPTATION_TRAITS_BASE_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 #include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
@@ -33,10 +33,10 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class DG, class AS, class CVP, class NS>
-class Voronoi_traits_base_2
+class Adaptation_traits_base_2
 {
 private:
-  typedef Voronoi_traits_base_2<DG,AS,CVP,NS>  Self;
+  typedef Adaptation_traits_base_2<DG,AS,CVP,NS>  Self;
 
 public:
   typedef DG   Delaunay_graph;
@@ -72,4 +72,4 @@ CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_VORONOI_DIAGRAM_2_DEFAULT_VORONOI_TRAITS_2_H
+#endif // CGAL_VORONOI_DIAGRAM_2_ADAPTATION_TRAITS_BASE_2_H

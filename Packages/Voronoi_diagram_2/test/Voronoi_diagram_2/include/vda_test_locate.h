@@ -48,7 +48,7 @@ void test_locate(const VDA& vda, const Projector& project,
   }
   os << std::endl;
 
-  typedef typename VDA::Voronoi_traits::Point_2  Point_2;
+  typedef typename VDA::Adaptation_traits::Point_2  Point_2;
   Point_2 p;
   std::vector<Point_2>  vecp;
 
@@ -64,14 +64,14 @@ template<class VDA, class Projector, class Point_vector, class OStream>
 void test_locate_dg(const VDA& vda, const Projector& project,
 		    const Point_vector& vecp, OStream& os)
 {
-  typedef typename VDA::Voronoi_traits                     Voronoi_traits;
-  typedef typename Voronoi_traits::Nearest_site_2          Nearest_site_2;
-  typedef typename Voronoi_traits::Delaunay_vertex_handle  Vertex_handle;
-  typedef typename Voronoi_traits::Delaunay_face_handle    Face_handle;
-  typedef typename Voronoi_traits::Delaunay_edge           Edge;
-  typedef typename Nearest_site_2::result_type             result_type;
+  typedef typename VDA::Adaptation_traits                     Adaptation_traits;
+  typedef typename Adaptation_traits::Nearest_site_2          Nearest_site_2;
+  typedef typename Adaptation_traits::Delaunay_vertex_handle  Vertex_handle;
+  typedef typename Adaptation_traits::Delaunay_face_handle    Face_handle;
+  typedef typename Adaptation_traits::Delaunay_edge           Edge;
+  typedef typename Nearest_site_2::result_type                result_type;
 
-  Nearest_site_2 nearest_site = vda.voronoi_traits().nearest_site_2_object();
+  Nearest_site_2 nearest_site = vda.adaptation_traits().nearest_site_2_object();
 
   result_type ns_qr;
 
@@ -106,8 +106,8 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
   typedef typename VDA::Halfedge_handle    Halfedge_handle;
 
   Locate_result lr;
-  typename VDA::Voronoi_traits::Access_site_2 get_site =
-    vda.voronoi_traits().access_site_2_object();
+  typename VDA::Adaptation_traits::Access_site_2 get_site =
+    vda.adaptation_traits().access_site_2_object();
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;

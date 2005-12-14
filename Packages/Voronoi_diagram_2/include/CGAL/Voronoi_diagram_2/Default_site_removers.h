@@ -21,7 +21,7 @@
 #define CGAL_VORONOI_DIAGRAM_2_SITE_REMOVERS_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,23 +49,23 @@ struct Default_site_remover
 
 //===========================================================================
 
-template<class VT, class SR>
+template<class AT, class SR>
 class Default_caching_site_remover
 {
 private:
-  typedef VT  Voronoi_traits;
+  typedef AT  Adaptation_traits;
   typedef SR  Site_remover;
 
   typedef Triangulation_cw_ccw_2                    CW_CCW_2;
 
 public:
-  typedef typename Voronoi_traits::Delaunay_graph   Delaunay_graph;
-  typedef typename Site_remover::Vertex_handle      Vertex_handle;
-  typedef typename Site_remover::result_type        result_type;
-  typedef Arity_tag<2>                              Arity;
+  typedef typename Adaptation_traits::Delaunay_graph   Delaunay_graph;
+  typedef typename Site_remover::Vertex_handle         Vertex_handle;
+  typedef typename Site_remover::result_type           result_type;
+  typedef Arity_tag<2>                                 Arity;
 
 public:
-  Default_caching_site_remover(const Voronoi_traits* vt = NULL) : vt_(vt) {}
+  Default_caching_site_remover(const Adaptation_traits* at = NULL) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Vertex_handle& v) const
   {
@@ -82,21 +82,21 @@ public:
       int id = fc->index(v);
       Edge e_opp(fc, id);
       Edge e_other(fc, CW_CCW_2::ccw(id));
-      vt_->edge_rejector_object().erase(e_opp);
-      vt_->edge_rejector_object().erase(e_other);
+      at_->edge_rejector_object().erase(e_opp);
+      at_->edge_rejector_object().erase(e_other);
     } while ( ++fc != fc_start );
 
     Vertex_circulator vc_start = dg.incident_vertices(v);
     Vertex_circulator vc = vc_start;
     do {
-      vt_->face_rejector_object().erase(vc);
+      at_->face_rejector_object().erase(vc);
     } while ( ++fc != fc_start );
 
     Site_remover()(dg, v);
   }
 
 private:
-  const Voronoi_traits* vt_;
+  const Adaptation_traits* at_;
 };
 
 //===========================================================================

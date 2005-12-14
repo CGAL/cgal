@@ -17,22 +17,22 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_VORONOI_TRAITS_2_H
-#define CGAL_SEGMENT_DELAUNAY_GRAPH_VORONOI_TRAITS_2_H 1
+#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_ADAPTATION_TRAITS_2_H
+#define CGAL_SEGMENT_DELAUNAY_GRAPH_ADAPTATION_TRAITS_2_H 1
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Segment_Delaunay_graph_nearest_site_2.h>
-#include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_traits_functors.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
 template<class SDG2>
-struct Segment_Delaunay_graph_Voronoi_traits_2
-  : public CGAL_VORONOI_DIAGRAM_2_INS::Voronoi_traits_base_2
+struct Segment_Delaunay_graph_adaptation_traits_2
+  : public CGAL_VORONOI_DIAGRAM_2_INS::Adaptation_traits_base_2
   <SDG2,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SDG2::Site_2,
 					     SDG2,Tag_false>,
@@ -48,4 +48,4 @@ struct Segment_Delaunay_graph_Voronoi_traits_2
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_VORONOI_TRAITS_2_H
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_ADAPTATION_TRAITS_2_H

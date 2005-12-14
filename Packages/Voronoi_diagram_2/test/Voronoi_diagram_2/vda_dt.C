@@ -26,7 +26,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_Voronoi_traits_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_traits_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
 
 
@@ -45,14 +45,14 @@ typedef CGAL::Triangulation_hierarchy_2<DTB>                        DT;
 typedef CGAL::Delaunay_triangulation_2<K>                           DT;
 #endif
 
-typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>           VT;
-typedef CGAL::Identity_policy_2<DT,VT>                              IP;
+typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DT>        AT;
+typedef CGAL::Identity_policy_2<DT,AT>                              IP;
 
 typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT>
 CDRP;
 
-typedef CGAL::Voronoi_diagram_2<DT,VT,IP>                           IVDA;
-typedef CGAL::Voronoi_diagram_2<DT,VT,CDRP>                         CDRVDA;
+typedef CGAL::Voronoi_diagram_2<DT,AT,IP>                           IVDA;
+typedef CGAL::Voronoi_diagram_2<DT,AT,CDRP>                         CDRVDA;
 
 
 template<class VD>
