@@ -18,20 +18,22 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
+#include <CGAL/centroid.h>
+#include <CGAL/eigen_2.h>
+
 #include <iterator>
 #include <list>
 #include <string>
-#include <CGAL/eigen_2.h>
-#include <CGAL/centroid.h>
 
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-// fits a line to a 2D point set
-// returns a fitting quality (1 - lambda_min/lambda_max):
-//  1 is best (zero variance orthogonally to the fitting line)
-//  0 is worst (isotropic case, returns a line with default direction)
+// Fits a line to a 2D point set.
+// Returns a fitting quality (1 - lambda_min/lambda_max):
+//  1 is best  (zero variance orthogonally to the fitting line)
+//  0 is worst (isotropic case, returns a line with horizontal
+//              direction by default)
 template < typename InputIterator, 
            typename K >
 typename K::FT
@@ -39,13 +41,14 @@ linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
-                               const K& k,                 // kernel
+                               const K&,                   // kernel
                                const typename K::Point_2*) // used for indirection
 {
+  // types
   typedef typename K::FT       FT;
+  typedef typename K::Line_2   Line;
   typedef typename K::Point_2  Point;
   typedef typename K::Vector_2 Vector;
-  typedef typename K::Line_2   Line;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -53,8 +56,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // compute centroid
   c = centroid(first,beyond,K());
 
-  // assemble covariance matrix as a
-  // semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
   // 0
   // 1 2
@@ -75,17 +77,17 @@ linear_least_squares_fitting_2(InputIterator first,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  CGALi::eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
+  CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
 
-  // assert eigen values are positives or null
+  // assert eigen values are positive or null.
   CGAL_assertion(eigen_values.first  >= 0 && 
                  eigen_values.second >= 0);
 
-  // check unicity and build fitting line accordingly
+  // check unicity and build fitting line accordingly.
   if(eigen_values.first != eigen_values.second)
   {
     // regular case
-    line = Line(c,eigen_vectors.first);
+    line = Line(c, eigen_vectors.first);
     return (FT)1.0 - eigen_values.second / eigen_values.first;
   } // end regular case
   else
@@ -93,7 +95,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through 
     // the centroid and with a default horizontal vector.
-    line = Line(c,Vector(1,0));
+    line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } // end isotropic case
 } // end linear_least_squares_fitting_2 for point set
@@ -116,7 +118,6 @@ linear_least_squares_fitting_2(InputIterator begin,
                                                centroid, k, (Value_type*) NULL);
 }
 
-
 template < typename InputIterator, 
            typename K >
 inline
@@ -133,7 +134,7 @@ linear_least_squares_fitting_2(InputIterator begin,
 }
 
 
-// deduces the kernel from the points in container
+// deduces the kernel from the points in container.
 template < typename InputIterator, 
            typename Line,
            typename Point>
@@ -149,7 +150,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   return CGAL::linear_least_squares_fitting_2(begin,end,line,centroid,K());
 }
 
-// does not return the centroid and deduces the kernel as well
+// does not return the centroid and deduces the kernel as well.
 template < typename InputIterator, 
            typename Line >
 inline

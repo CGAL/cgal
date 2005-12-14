@@ -25,13 +25,12 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-  // extract eigenvalues and eigenvectors from a 
-  // 2x2 symmetric matrix. 
-  // Note: involves a square root
+  // extract eigenvalues and eigenvectors from a 2x2 symmetric matrix. 
+  // Note: involves a square root.
   // Matrix numbering:
   // a b
   // b c 
-  // eigen values and vectors are sorted in descendent order
+  // Eigen values and vectors are sorted in descendent order.
   template <typename K>
   void eigen_symmetric_2(typename K::FT *matrix, // a b c
                          std::pair<typename K::Vector_2,
@@ -52,17 +51,18 @@ namespace CGALi {
     // degenerate or isotropic case
     if(p == 0.0 || p == 0.0) 
     {
+      // unit eigen values
       eigen_values.first  = eigen_values.second = (FT)1.0;
+
       // any vector is eigen vector
       eigen_vectors.first  = Vector((FT)1.0,(FT)0.0);
       eigen_vectors.second = Vector((FT)0.0,(FT)1.0);
     }
     else // generic case
     {
+      // sort eigen values and vectors
       FT l1 = 0.5 * ( -std::sqrt(p) + c + a);
       FT l2 = 0.5 * (  std::sqrt(p) + c + a);
-
-      // sort eigen values and eigen vectors
       if(l1 >= l2)
       {
         eigen_values.first  = l1;

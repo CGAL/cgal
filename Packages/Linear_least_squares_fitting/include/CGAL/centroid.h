@@ -45,7 +45,7 @@ template < typename InputIterator,
 typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
-         const K& k,
+         const K&,
          const typename K::Point_2*)
 {
   typedef typename K::Vector_2 Vector;

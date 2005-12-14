@@ -365,7 +365,7 @@ void CpcaDlg::OnMouseMove(UINT nFlags, CPoint point)
 	if(m_LeftButtonDown)
 	{
 		m_points.push_back(convert(point));
-    //OnFitLine();
+    OnFitLine();
 		InvalidateRect(NULL,FALSE);
 	}
 
