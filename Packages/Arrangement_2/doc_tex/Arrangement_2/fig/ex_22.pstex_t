@@ -1,5 +1,5 @@
 \begin{picture}(0,0)%
-\includegraphics{Arrangement_2/fig/ex_22.pstex}%
+\includegraphics{ex_22.pstex}%
 \end{picture}%
 \setlength{\unitlength}{2072sp}%
 %
@@ -10,6 +10,6 @@
   \selectfont}%
 \fi\endgroup%
 \begin{picture}(5596,5144)(1928,-6908)
-\put(4816,-4156){\makebox(0,0)[lb]{\smash{{\SetFigFont{10}{12.0}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\hat{f}$}%
+\put(4816,-4156){\makebox(0,0)[lb]{\smash{{\SetFigFont{10}{12.0}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$f_0$}%
 }}}}
 \end{picture}%
