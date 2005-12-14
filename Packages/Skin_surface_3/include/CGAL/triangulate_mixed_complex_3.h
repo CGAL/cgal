@@ -11,9 +11,6 @@
 #include <CGAL/Compute_anchor_3.h>
 
 #include <CGAL/Union_find.h>
-// #include <CGAL/Marching_tetrahedra.h>
-
-// #include <map>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -178,25 +175,6 @@ private:
 
   // index to vertex
   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
-  //   // index to edge
-  //   Unique_hash_map < Rt_Cell_handle, Index_c6 > index_13;
-  //   // index to facet
-  //   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_23;
-  // first index points to facet, second to vertex
-  //Unique_hash_map < Rt_Cell_handle, Index_c44 > index_02;
-  // From the vertex to the adjacent vertex
-  //Unique_hash_map < Rt_Vertex_handle, Index_v > index_01;
-  //   // One for every cell
-  //   Unique_hash_map < Rt_Cell_handle, Tmc_Vertex_handle > index_33;
-  // One for every vertex
-  //Unique_hash_map < Rt_Vertex_handle, Tmc_Vertex_handle > index_00;
-  //   // First index points to the facet,
-  //   // the second to the vertex that is removed to obtain the edge
-  //   Unique_hash_map < Rt_Cell_handle, Index_c44 > index_12;
-  //   // index to the facet
-  //   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_22;
-  //   // index to the vertex
-  //   Unique_hash_map < Rt_Vertex_handle, Index_v > index_11;
   
   typedef Union_find<Rt_Simplex>                 Union_find_anchor;
   typedef typename Union_find_anchor::handle     Union_find_anchor_handle;
@@ -812,76 +790,6 @@ Mixed_complex_triangulator_3<SkinSurfaceTraits_3, TriangulatedMixedComplex,
   Tmc_Vertex_handle vh = anchors[Symb_anchor(sDel2,sVor2)];
   CGAL_assertion(vh != Tmc_Vertex_handle());
   return vh;
-  //   Rt_Vertex_handle vh;
-  //   Rt_Edge e;
-  //   Rt_Facet f;
-  //   Rt_Cell_handle ch;
-  //   if (sDel.dimension() == 0) {
-  //     vh = sDel;
-  //     switch (sVor.dimension()) {
-  //       case 0:
-  // 	assert(sDel == sVor);
-  // 	return index_00[vh];
-  //       case 1:
-  // 	e=sVor;
-  // 	if (e.first->vertex(e.second) == vh) {
-  // 	  return index_01[vh].V[e.first->vertex(e.third)];
-  // 	} else {
-  // 	  return index_01[vh].V[e.first->vertex(e.second)];
-  // 	}
-  //       case 2:
-  // 	f=sVor;
-  // 	return index_02[f.first].V[f.second][f.first->index(vh)];
-  //       case 3:
-  // 	ch=sVor;
-  // 	return index_03[ch].V[ch->index(vh)];
-  //       default:
-  // 	assert(false);
-  //     }
-  //   } else if (sDel.dimension() == 1) {
-  //     e=sDel;
-  //     switch (sVor.dimension()) {
-  //       case 1:
-  // 	assert(sDel == sVor);
-  // 	return index_11[e.first->vertex(e.second)].V[e.first->vertex(e.third)];
-  //       case 2:
-  // 	f=sVor;
-  // 	return index_12[f.first].V[f.second][6 - f.second -
-  // 	  f.first->index(e.first->vertex(e.second)) -
-  // 	  f.first->index(e.first->vertex(e.third))];
-  //       case 3:
-  // 	ch=sVor;
-  // 	assert(index_13.is_defined(ch));
-  // 	return index_13[ch].V[edge_index
-  // 	  [ch->index(e.first->vertex(e.third))]
-  // 	  [ch->index(e.first->vertex(e.second))]];
-  //       default:
-  // 	assert(false);
-  //     }
-  //   } else if (sDel.dimension() == 2) {
-  //     f=sDel;
-  //     switch (sVor.dimension()) {
-  //       case 2:
-  // 	assert(sDel == sVor);
-  // 	return index_22[f.first].V[f.second];
-  //       case 3:
-  // 	ch=sVor;
-  // 	if (f.first == ch) {
-  // 	  return index_23[ch].V[f.second];
-  // 	} else {
-  // 	  assert(f.first->neighbor(f.second) == ch);
-  // 	  return index_23[ch].V[f.first->neighbor(f.second)->index(f.first)];
-  // 	}
-  //       default:
-  // 	assert(false);
-  //     }
-  //   } else if (sDel.dimension() == 3) {
-  //     assert(sDel == sVor);
-  //     ch=sDel;
-  //     return index_33[ch];
-  //   }
-  //   assert(false);
-  //   return Tmc_Vertex_handle();
 }
 
 // Adds a cell to the simplicial complex

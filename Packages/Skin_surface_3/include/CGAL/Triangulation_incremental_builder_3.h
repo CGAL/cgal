@@ -27,7 +27,7 @@ public:
   void begin_triangulation(int dim) {
     t.clear();
     t.tds().delete_cell(t.infinite_vertex()->cell());
-      // t.infinite = add_vertex();
+    // t.infinite = add_vertex();
     t.tds().set_dimension(dim); 
   }
 

@@ -34,67 +34,39 @@ typedef CGAL::Skin_surface_refinement_traits_3<
 
 int main(int argc, char *argv[]) {
   std::list<Reg_weighted_point> l;
+  Skin_surface_traits           skin_surface_traits(.5);
+  Regular                       regular;
+  Triangulated_mixed_complex    triangulated_mixed_complex;
+  Polyhedron                    polyhedron;
   
   l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1.1));
   l.push_front(Reg_weighted_point(Reg_point(0,1,0), 2));
   l.push_front(Reg_weighted_point(Reg_point(0,0,2), 1));
 
-  // Code
-  Skin_surface_traits skin_surface_traits(.5);
-  Regular regular;
-  Triangulated_mixed_complex triangulated_mixed_complex;
-  Polyhedron polyhedron;
-  
-  // Construct regular triangulation ...
-  CGAL::Bbox_3 bbox = (*l.begin()).bbox();
-  double max_weight=1;
-  for (std::list<Reg_weighted_point>::iterator it= l.begin();
-       it != l.end(); it++) {
-    max_weight = std::max(max_weight, (*it).weight());
-    bbox = bbox + (*it).bbox();
-    regular.insert((*it));
-  }
+  // Construct regular triangulation and bounding box
+  regular.insert(l.begin(), l.end());
+  CGAL::skin_surface_construct_bounding_box_3(regular, skin_surface_traits);
 
-  // add a bounding octahedron:
-  Reg_point mid((bbox.xmin() + bbox.xmax())/2,
-                (bbox.ymin() + bbox.ymax())/2,
-                (bbox.zmin() + bbox.zmax())/2);
-  double size = 1.5*((bbox.xmax() - bbox.xmin() +
-                bbox.ymax() - bbox.ymin() +
-	        bbox.zmax() - bbox.zmin())/2 + max_weight);
-  regular.insert(
-    Reg_weighted_point(Reg_point(mid.x()+size,mid.y(),mid.z()),-1));
-  regular.insert(
-    Reg_weighted_point(Reg_point(mid.x()-size,mid.y(),mid.z()),-1));
-  regular.insert(
-    Reg_weighted_point(Reg_point(mid.x(),mid.y()+size,mid.z()),-1));
-  regular.insert(
-    Reg_weighted_point(Reg_point(mid.x(),mid.y()-size,mid.z()),-1));
-  regular.insert(
-    Reg_weighted_point(Reg_point(mid.x(),mid.y(),mid.z()+size),-1));
-  regular.insert(
-    Reg_weighted_point(Reg_point(mid.x(),mid.y(),mid.z()-size),-1));
-
-  // Construct the triangulated mixed complex:
+  // Construct the triangulated mixed complex
   CGAL::triangulate_mixed_complex_3(
     regular, triangulated_mixed_complex, skin_surface_traits);
 
   // Extract the coarse mesh using marching_tetrahedra
   Marching_tetrahedra_traits marching_traits;
   Marching_tetrahedra_observer marching_observer;
-  
   CGAL::marching_tetrahedra_3(
     triangulated_mixed_complex, polyhedron, marching_traits, marching_observer);
 
-  { 
+  { // Write coarse mesh
     std::ofstream out("coarse.off");
     out << polyhedron;
   }
 
+  // Subdivide mesh:
   Skin_surface_refinement_traits refinement_traits(triangulated_mixed_complex);
   CGAL::skin_surface_sqrt3(polyhedron, refinement_traits);
   
-  { 
+  { // Write subdivided mesh
     std::ofstream out("mesh.off");
     out << polyhedron;
   }

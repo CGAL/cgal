@@ -41,8 +41,8 @@ public:
 template <
   class RegularKernel = Exact_predicates_inexact_constructions_kernel,
   class TriangulatedMixedComplexKernel =
-  Exact_predicates_inexact_constructions_kernel,
-//     Exact_predicates_exact_constructions_kernel,
+  //Exact_predicates_inexact_constructions_kernel,
+  Exact_predicates_exact_constructions_kernel,
   class PolyhedronKernel = Simple_cartesian<double> >  
 class Skin_surface_traits_3 {
 public:

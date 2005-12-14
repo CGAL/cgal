@@ -11,10 +11,57 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Regular_3, class SkinSurfaceTraits_3>
+void skin_surface_construct_bounding_box_3(
+  Regular_3 &reg,
+  SkinSurfaceTraits_3 const& traits) {
+  typedef typename Regular_3::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Regular_3::Geom_traits     GT;
+  typedef typename GT::Bare_point             Point;
+  typedef typename GT::Point_3                Weighted_point;
+  typedef typename GT::RT                     RT;
+  
+  Finite_vertices_iterator vit = reg.finite_vertices_begin();
+  if (vit != reg.finite_vertices_end()) {
+    Bbox_3 bbox = vit->point().bbox();
+    RT max_weight=vit->point().weight();
+    while (++vit != reg.finite_vertices_end()) {
+      bbox = bbox + vit->point().bbox();
+      if (max_weight < vit->point().weight())
+	max_weight = vit->point().weight();
+    }
+
+    // add a bounding octahedron:
+    RT dx = bbox.xmax() - bbox.xmin();
+    RT dy = bbox.ymax() - bbox.ymin();
+    RT dz = bbox.zmax() - bbox.zmin();
+  
+    Point mid(bbox.xmin() + dx/2, bbox.ymin() + dy/2, bbox.zmin() + dz/2);
+    RT dr = sqrt(CGAL::to_double(max_weight)) + .001;
+  
+    reg.insert(Weighted_point(
+      Point(bbox.xmax()+(dy+dz+dr)/traits.shrink_factor(),mid.y(),mid.z()),-1));
+    reg.insert(Weighted_point(
+      Point(bbox.xmin()-(dy+dz+dr)/traits.shrink_factor(),mid.y(),mid.z()),-1));
+    reg.insert(Weighted_point(
+      Point(mid.x(),bbox.ymax()+(dx+dz+dr)/traits.shrink_factor(),mid.z()),-1));
+    reg.insert(Weighted_point(
+      Point(mid.x(),bbox.ymin()-(dx+dz+dr)/traits.shrink_factor(),mid.z()),-1));
+    reg.insert(Weighted_point(
+      Point(mid.x(),mid.y(),bbox.zmax()+(dx+dy+dr)/traits.shrink_factor()),-1));
+    reg.insert(Weighted_point(
+      Point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/traits.shrink_factor()),-1));
+  }
+}
+
 template <class InputIterator, class Polyhedron_3, class SkinSurfaceTraits_3>
 void skin_surface_3(InputIterator first, InputIterator last,
   Polyhedron_3 &polyhedron, const SkinSurfaceTraits_3 &skin_surface_traits,
   bool verbose = false) {
+  if (first == last) {
+    std::cout << " No input balls" << std::endl;
+    return;
+  }
 
   // Types
   typedef SkinSurfaceTraits_3                              Skin_surface_traits;
@@ -36,39 +83,13 @@ void skin_surface_3(InputIterator first, InputIterator last,
   Regular regular;
   Triangulated_mixed_complex triangulated_mixed_complex;
 
-  if (first != last) {
-    // Construct regular triangulation ...
-    Bbox_3 bbox = (*first).bbox();
-    typename Regular_traits::RT max_weight=0;
-    while (first != last) {
-      if (max_weight < (*first).weight()) max_weight = (*first).weight();
-      bbox = bbox + (*first).bbox();
-      regular.insert((*first));
-      first++;
-    }
-
-    // add a bounding octahedron:
-    Reg_point mid((bbox.xmin() + bbox.xmax())/2,
-                  (bbox.ymin() + bbox.ymax())/2,
-                  (bbox.zmin() + bbox.zmax())/2);
-    typename Regular_traits::RT size =
-      1.5*((bbox.xmax() - bbox.xmin() +
-	     bbox.ymax() - bbox.ymin() +
-	     bbox.zmax() - bbox.zmin())/2 + sqrt(CGAL::to_double(max_weight)));
-    regular.insert(
-      Reg_weighted_point(Reg_point(mid.x()+size,mid.y(),mid.z()),-1));
-    regular.insert(
-      Reg_weighted_point(Reg_point(mid.x()-size,mid.y(),mid.z()),-1));
-    regular.insert(
-      Reg_weighted_point(Reg_point(mid.x(),mid.y()+size,mid.z()),-1));
-    regular.insert(
-      Reg_weighted_point(Reg_point(mid.x(),mid.y()-size,mid.z()),-1));
-    regular.insert(
-      Reg_weighted_point(Reg_point(mid.x(),mid.y(),mid.z()+size),-1));
-    regular.insert(
-      Reg_weighted_point(Reg_point(mid.x(),mid.y(),mid.z()-size),-1));
+  while (first != last) {
+    regular.insert((*first));
+    first++;
   }
 
+  skin_surface_construct_bounding_box_3(regular,skin_surface_traits);
+  
   if (verbose) {
     std::cerr << "Triangulation ready" << std::endl;
   }
