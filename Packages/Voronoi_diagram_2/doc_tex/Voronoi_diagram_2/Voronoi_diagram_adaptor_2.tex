@@ -181,7 +181,7 @@ Section~\ref{sec:vda2-ap} we discuss the issue in more detail.
 \section{Software design}
 \label{sec:vda2-design}
 
-The \ccc{Voronoi_diagram_2<DG,VT,AP>} class is parameterized by
+The \ccc{Voronoi_diagram_2<DG,AT,AP>} class is parameterized by
 three template parameters. The first one must be a model of the
 \ccc{DelaunayGraph_2} concept. It corresponds to the API required by
 an object representing a Delaunay graph. All classes of \cgal{} that
@@ -190,14 +190,14 @@ Delaunay triangulations, regular triangulations, Apollonius
 graphs and segment Delaunay graphs.
 %
 The second template parameter must be a model of the
-\ccc{VoronoiTraits_2} concept. We discuss this concept in detail in
+\ccc{AdaptationTraits_2} concept. We discuss this concept in detail in
 Section~\ref{sec:vda2-traits}.
 %
 The third template parameter must be model of the
 \ccc{AdaptationPolicy_2} concept, which we discuss in detail in
 Section~\ref{sec:vda2-ap}.
 
-The \ccc{Voronoi_diagram_2<DG,VT,AP>} class has been
+The \ccc{Voronoi_diagram_2<DG,AT,AP>} class has been
 intentionally designed to provide an API similar to the arrangements
 class in \cgal: Voronoi diagrams are special cases of arrangements
 after all. The API of the two classes, however, could not be
@@ -206,7 +206,7 @@ more than one unbounded faces, or equivalently, cannot handle
 unbounded curves. On the contrary, a Voronoi diagram defined over at
 least two generating sites, has at least two unbounded faces.
 
-On a more technical level, the \ccc{Voronoi_diagram_2<DG,VT,AP>}
+On a more technical level, the \ccc{Voronoi_diagram_2<DG,AT,AP>}
 class imitates the representation of the Voronoi diagram (seen as a
 planar subdivision) by a DCEL (Doubly Connected Edge List) data
 structure. We have vertices (the Voronoi vertices), halfedges
@@ -237,7 +237,7 @@ traverse the following features through iterators:
 \item the sites defining the Voronoi diagram.
 \end{itemize}
 
-Finally, depending on the Voronoi traits passed to the Voronoi diagram
+Finally, depending on the adaptation traits passed to the Voronoi diagram
 adaptor, we can perform certain types of queries, namely:
 \begin{itemize}
 \item given a point $p$ we can determine the feature of the Voronoi
@@ -275,13 +275,13 @@ adaptor, we can perform certain types of queries, namely:
 %an incircle test.
 
 
-\section{The Voronoi traits}
+\section{The adaptation traits}
 \label{sec:vda2-traits}
 
-The \ccc{VoronoiTraits_2} concept defines the types and
+The \ccc{AdaptationTraits_2} concept defines the types and
 functor required by the adaptor in order to access geometric
 information in the Delaunay graph that is needed by the
-\ccc{Voronoi_diagram_2<DG,VT,AP>} class.
+\ccc{Voronoi_diagram_2<DG,AT,AP>} class.
 In particular, it provides functors for accessing sites in the Delaunay
 graph and constructing Voronoi vertices from their dual faces in the
 Delaunay graph.
@@ -302,26 +302,26 @@ Voronoi diagram, and the face handle of the face in the Delaunay graph
 that is dual to the Voronoi vertex is returned.
 This way of abstracting the point location mechanism allows
 for multiple different point location strategies, which are passed to
-the Voronoi diagram adaptor through different models of the Voronoi
-traits concept. The point location and nearest sites queries of the
-\ccc{Voronoi_diagram_2<DG,VT,AP>} class use internally this nearest
-site query functor.
+the Voronoi diagram adaptor through different models of the
+\ccc{AdaptationTraits_2} concept. The point location and nearest sites
+queries of the \ccc{Voronoi_diagram_2<DG,AT,AP>} class use internally
+this nearest site query functor.
 
-In this package we provide four Voronoi traits classes, all of which
+In this package we provide four adaptation traits classes, all of which
 support nearest site queries:
 \begin{itemize}
 \item
-  The \ccc{Apollonius_graph_Voronoi_traits_2<AG2>} class: it
-  provides the Voronoi traits for adapting Apollonius graphs.
+  The \ccc{Apollonius_graph_adaptation_traits_2<AG2>} class: it
+  provides the adaptation traits for Apollonius graphs.
 \item
-  The \ccc{Delaunay_triangulation_Voronoi_traits_2<DT2>} class: it
-  provides the Voronoi traits for adapting Delaunay triangulations.
+  The \ccc{Delaunay_triangulation_adaptation_traits_2<DT2>} class: it
+  provides the adaptation traits for Delaunay triangulations.
 \item
-  The \ccc{Regular_triangulation_Voronoi_traits_2<RT2>} class: it
-  provides the Voronoi traits for adapting regular triangulations.
+  The \ccc{Regular_triangulation_adaptation_traits_2<RT2>} class: it
+  provides the adaptation traits for regular triangulations.
 \item
-  The \ccc{Segment_Delaunay_graph_Voronoi_traits_2<SDG2>} class: it
-  provides the Voronoi traits for adapting segment Delaunay graphs.
+  The \ccc{Segment_Delaunay_graph_adaptation_traits_2<SDG2>} class: it
+  provides the adaptation traits for segment Delaunay graphs.
 \end{itemize}
 
 \section{The adaptation policy}
@@ -516,10 +516,11 @@ One last item that merits some discussion are the different choices
 from the point of view of time- and space-efficiency.
 
 As far as the Voronoi diagram adaptor is concerned, only a copy of the
-Voronoi traits and a copy of the adaptation policy are stored in it.
-The various Voronoi traits we provide are empty classes. The major
-time and space efficiency issues arise from the various
-implementations of the adaptation policies.
+adaptation traits and a copy of the adaptation policy are stored in it.
+The various adaptation traits classes we provide are empty
+classes (i.e., they do not store anything). The major time and space
+efficiency issues arise from the various implementations of the
+adaptation policies.
 %
 Clearly, the identity policy has no dominant effect on neither the
 time or space efficiency. The costs when choosing this policy are due

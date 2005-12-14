@@ -14,6 +14,7 @@
   AdaptationTraits_2.
 - renamed Voronoi_traits to Adaptation_traits in the code
 - fixed problem with Object assigning in demo
+- doc: renamed Voronoi traits to adaptation traits
 
 30 November 2005:  Menelaos Karavelas
 - fixed bug in point location of the Apollonius diagram, when the
