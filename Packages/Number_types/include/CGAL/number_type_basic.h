@@ -55,7 +55,7 @@ CGAL_END_NAMESPACE
 // two-stage name lookup (like g++ >= 3.4).
 // A nicer solution needs more thought.
 
-#ifdef CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
+#ifndef CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
 
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
@@ -123,7 +123,7 @@ Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
+#endif // CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
 
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>

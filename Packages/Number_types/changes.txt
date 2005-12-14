@@ -1,3 +1,7 @@
+14 December 2005 Sylvain Pion
+- Change CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP into
+  CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.
+
 10 September 2005 Sylvain Pion
 - missing forward declaration of io_tag(CORE::Expr) required by g++ 4.1.
 
