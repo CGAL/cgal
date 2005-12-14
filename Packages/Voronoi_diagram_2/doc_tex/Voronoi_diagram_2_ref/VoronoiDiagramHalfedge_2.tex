@@ -22,8 +22,9 @@
 \begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>::Halfedge}
 
 \ccDefinition
-The class \ccRefName\ is the Voronoi halfedge class provided by the
-\ccc{Voronoi_diagram_2<DG,VT,AP>} class. Below we present its interface.
+The class \ccRefName\ is the class provided by the
+\ccc{Voronoi_diagram_2<DG,VT,AP>} class for Voronoi halfedges.
+Below we present its interface.
 
 \ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
@@ -146,10 +147,11 @@ the Voronoi edge.
   in other words it is a bisecting ray.}
 \ccGlue
 \ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
-  conditions are met: the dual edge of the halfedge is not a rejected
+  conditions are met: the halfedge is not a rejected
   edge with respect to the chosen adaptation policy;
-  the twin edge of its twin edge is itself; its adjacent face does not
-  have zero area; its source and target vertices are valid (provided
+  the twin edge of its twin edge is itself; its adjacent face is not a
+  rejected face with respect to the chosen adaptation policy;
+  its source and target vertices are valid (provided
   they exist, of course); the previous of its next halfedge is itself
   and the next of its previous halfedge is itself.}
 

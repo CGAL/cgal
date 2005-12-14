@@ -44,9 +44,9 @@ public:
   typedef CVP  Construct_Voronoi_point_2;
   typedef NS   Nearest_site_2;
 
-  typedef typename Delaunay_graph::Vertex_handle    Vertex_handle;
-  typedef typename Delaunay_graph::Face_handle      Face_handle;
-  typedef typename Delaunay_graph::Edge             Edge;
+  typedef typename Delaunay_graph::Vertex_handle    Delaunay_vertex_handle;
+  typedef typename Delaunay_graph::Face_handle      Delaunay_face_handle;
+  typedef typename Delaunay_graph::Edge             Delaunay_edge;
 
   typedef typename Functor_exists<Nearest_site_2>::Value  Has_nearest_site_2;
 

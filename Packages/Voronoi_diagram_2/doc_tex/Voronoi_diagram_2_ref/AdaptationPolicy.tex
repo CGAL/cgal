@@ -49,23 +49,25 @@ graph they take as an argument, the last ones does.
 {Finite_edges_iterator+}{}
 \ccThreeToTwo
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Vertex_handle Vertex_handle;}{}
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}{}
 %{Type for the vertex handles of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Face_handle Face_handle;}{}
+\ccTypedef{typedef Delaunay_graph::Face_handle Delaunay_face_handle;}{}
 %{Type for the face handles of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Edge Edge;}{}
+\ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}{}
 %{Type for the edges of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::All_edges_iterator All_edges_iterator;}{}
+\ccTypedef{typedef Delaunay_graph::All_edges_iterator
+  All_Delaunay_edges_iterator;}{}
 %{Type for the iterator over all edges of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Finite_edges_iterator Finite_edges_iterator;}
+\ccTypedef{typedef Delaunay_graph::Finite_edges_iterator
+  Finite_Delaunay_edges_iterator;}
 {}
 %{Type for the iterator over the finite edges of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Edge_circulator Edge_circulator;}{}
+\ccTypedef{typedef Delaunay_graph::Edge_circulator Delaunay_edge_circulator;}{}
 %{Type for the edge circulator of the Delaunay graph.}
 %%
 \ccTwo{AdaptationPolicy_2::Edge_rejector+}{}
@@ -76,13 +78,15 @@ graph they take as an argument, the last ones does.
   model of the concepts \ccc{DefaultConstructible},
   \ccc{CopyConstructible}, \ccc{Assignable}, and \ccc{AdaptableFunctor} 
   (with two arguments). It must provide the following operators:\\
-  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg, Edge e)}\\
-  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg, Face_handle f, int i)}\\
-  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg, Edge_circulator ec)}\\
-  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg,
-    All_edges_iterator eit)}\\
-  \hspace*{7mm}\ccc{bool operator()(Delaunay_graph dg,
-    Finite_edges_iterator eit)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg, Delaunay_edge e)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,
+    Delaunay_face_handle f, int i)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,
+    Delaunay_edge_circulator ec)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,}\\
+    \hspace*{25mm}\ccc{All_Delaunay_edges_iterator eit)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,}\\
+    \hspace*{25mm}\ccc{Finite_Delaunay_edges_iterator eit)}\\
   The functor returns \ccStyle{true} iff the edge is rejected.}
 \ccGlue
 \ccNestedType{Face_rejector}{A type for the predicate functor that is
@@ -91,7 +95,8 @@ graph they take as an argument, the last ones does.
   of the functor). It must be model of the concepts \ccc{DefaultConstructible},
   \ccc{CopyConstructible}, \ccc{Assignable}, \ccc{AdaptableFunctor}
   (with two arguments). It must provide the following operator:\\
-  \centerline{\ccc{bool operator()(Delaunay graph dg, Vertex_handle v)}}\\
+  \centerline{\ccc{bool operator()(Delaunay graph dg,
+      Delaunay_vertex_handle v)}}\\
   The functor returns \ccStyle{true} iff the face is rejected.}
 \ccGlue
 \ccNestedType{Has_inserter}{A tag for determining if the adaptation
@@ -105,7 +110,8 @@ graph they take as an argument, the last ones does.
   \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}, 
   \ccc{AdaptableFunctor} (with two arguments). It must provide the
   following operator\\
-  \centerline{\ccc{Vertex_handle operator()(Delaunay_graph& dg, Site_2 t)}}\\
+  \centerline{\ccc{Delaunay_vertex_handle
+      operator()(Delaunay_graph& dg, Site_2 t)}}\\
   The vertex handle returned either points to the vertex of the
   Delaunay graph corresponding to the site just inserted or is the
   default constructed vertex handle. The latter case can happen if the

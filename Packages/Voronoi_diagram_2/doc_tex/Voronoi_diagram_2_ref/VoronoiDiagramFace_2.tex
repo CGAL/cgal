@@ -25,8 +25,9 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ is the Voronoi face class provided by the
-\ccc{Voronoi_diagram_2<DG,VT,AP>} class. Below we present its interface.
+The class \ccRefName\ is the class provided by the
+\ccc{Voronoi_diagram_2<DG,VT,AP>} class for Voronoi faces. Below we
+present its interface.
 
 \ccIsModel
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
@@ -79,15 +80,15 @@ The class \ccRefName\ is the Voronoi face class provided by the
 
 \ccHeading{Predicate Methods}
 \ccThree{bool}{f.is_halfedge_on_ccb(Halfedge e)+}{}
-\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} iff the face in
+\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} iff the face is
   an unbounded face in the Voronoi diagram.}
 \ccMethod{bool is_halfedge_on_ccb(Halfedge e);}{Returns
   \ccStyle{true} iff \ccc{e} is a halfedge of the boundary of
   \ccc{f}.}
 \ccGlue
 \ccMethod{bool is_valid();}{Returns \ccStyle{true} iff the following
-  conditions are met: the dual vertex of the face is not rejected by
-  the chosen adaptation policy;
+  conditions are met: the face is not rejected by the chosen
+  adaptation policy;
   all its adjacent halfedges do not have zero length; all its adjacent
   halfedges return the face as their adjacent face.}
 

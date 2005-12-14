@@ -70,7 +70,7 @@ The class \ccRefName\ is the Voronoi vertex class provided by the class
 \ccCreationVariable{v}  %% choose variable name
 
 \ccHeading{Access Methods}
-\ccThree{Delaunay_vertex_handle}{v[unsigned int i]+}{}
+\ccThree{Delaunay_vertex_handle}{v.site(unsigned int i)+}{}
 \ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge
   that has \ccc{v} as its target.}
 \ccGlue
@@ -83,19 +83,7 @@ The class \ccRefName\ is the Voronoi vertex class provided by the class
 {Returns a handle to the corresponding dual face in the
   Delaunay graph.}
 \ccGlue
-\ccMethod{Delaunay_vertex_handle first();}{Returns a handle to the vertex in
-the Delaunay graph corresponding to the first generating site of the
-Voronoi vertex.}
-\ccGlue
-\ccMethod{Delaunay_vertex_handle second();}{Returns a handle to the vertex
-in the Delaunay graph corresponding to the second generating site of the
-Voronoi vertex.}
-\ccGlue
-\ccMethod{Delaunay_vertex_handle third();}{Returns a handle to the vertex
-in the Delaunay graph corresponding to the third generating site of the
-Voronoi vertex.}
-\ccGlue
-\ccMethod{Delaunay_vertex_handle operator[](unsigned int i);}
+\ccMethod{Delaunay_vertex_handle site(unsigned int i);}
 {Returns a handle to the vertex in the Delaunay graph corresponding to 
 the $(i+1)$-th generating site of the Voronoi vertex.
 \ccPrecond{\ccc{i} must be smaller or equal to 2.}}

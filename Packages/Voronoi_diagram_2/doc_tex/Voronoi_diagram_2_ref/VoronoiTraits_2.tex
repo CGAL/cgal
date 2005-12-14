@@ -44,15 +44,15 @@ tag is provided for determining whether this functor is defined or not.
   graph. The type \ccc{Delaunay_graph} must be a model of the
   \ccc{DelaunayGraph_2} concept.}
 %%
-\ccThree{typedef Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
-\ccTypedef{typedef Delaunay_graph::Edge Edge;}{The type of the edges
-  of the Delaunay graph}
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_Vertex_handle+}{}
+\ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}
+{The type of the edges of the Delaunay graph}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Face_handle Face_handle;}{The type
-  of the face handles of the Delaunay graph}
+\ccTypedef{typedef Delaunay_graph::Face_handle Delaunay_face_handle;}
+{The type of the face handles of the Delaunay graph}
 \ccGlue
-\ccTypedef{typedef Delaunay_graph::Vertex_handle Vertex_handle;}{The
-  type of the vertex handles of the Delaunay graph.}
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
+{The type of the vertex handles of the Delaunay graph.}
 %%
 \ccTwo{VoronoiDiagram_2::Construct_Voronoi_point_2}{}
 \ccNestedType{Access_site_2}{A type for a functor that accesses the
@@ -60,7 +60,7 @@ tag is provided for determining whether this functor is defined or not.
   concepts \ccc{DefaultConstructible}, \ccc{CopyConstructible},
   \ccc{Assignable} and \ccc{AdaptableFunctor} (with one argument). The
   functor must provide the following operator:\\
-  \centerline{\ccc{result_type operator()(Vertex_handle v)}}\\
+  \centerline{\ccc{result_type operator()(Delaunay_vertex_handle v)}}\\
   where the result type \ccc{result_type} must be either \ccc{Site} or
   \ccc{const Site_2&}.}
 \ccGlue
@@ -71,7 +71,7 @@ tag is provided for determining whether this functor is defined or not.
   concepts \ccc{DefaultConstructible}, \ccc{CopyConstructible},
   \ccc{Assignable}, \ccc{AdaptableFunctor} (with one argument). It
   must provide the following operator:\\
-  \centerline{\ccc{Point_2 operator()(Face_handle f)}}.
+  \centerline{\ccc{Point_2 operator()(Delaunay_face_handle f)}}.
   The face handle \ccc{f} must not correspond to an infinite face.}
 \ccGlue
 \ccNestedType{Has_nearest_site_2}{A tag for determining if the Voronoi
@@ -94,7 +94,7 @@ tag is provided for determining whether this functor is defined or not.
   (with two arguments). It must provide the following operator:\\
   \centerline{\ccc{result_type operator()(Delaunay_graph dg, Point_2 p)}}\\
   where the result type \ccc{result_type} is
-  \ccc{boost::variant<Vertex_handle,Edge,Face_handle>}.\\
+  \ccc{boost::variant<Delaunay_vertex_handle,Delaunay_edge,Delaunay_face_handle>}.\\
   This type is required only if
   \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
 

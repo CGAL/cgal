@@ -64,12 +64,12 @@ template<class VDA, class Projector, class Point_vector, class OStream>
 void test_locate_dg(const VDA& vda, const Projector& project,
 		    const Point_vector& vecp, OStream& os)
 {
-  typedef typename VDA::Voronoi_traits                Voronoi_traits;
-  typedef typename Voronoi_traits::Nearest_site_2     Nearest_site_2;
-  typedef typename Voronoi_traits::Vertex_handle      Vertex_handle;
-  typedef typename Voronoi_traits::Face_handle        Face_handle;
-  typedef typename Voronoi_traits::Edge               Edge;
-  typedef typename Nearest_site_2::result_type        result_type;
+  typedef typename VDA::Voronoi_traits                     Voronoi_traits;
+  typedef typename Voronoi_traits::Nearest_site_2          Nearest_site_2;
+  typedef typename Voronoi_traits::Delaunay_vertex_handle  Vertex_handle;
+  typedef typename Voronoi_traits::Delaunay_face_handle    Face_handle;
+  typedef typename Voronoi_traits::Delaunay_edge           Edge;
+  typedef typename Nearest_site_2::result_type             result_type;
 
   Nearest_site_2 nearest_site = vda.voronoi_traits().nearest_site_2_object();
 
@@ -100,15 +100,20 @@ template<class VDA, class Point_vector, class OStream>
 void test_locate_vd(const VDA& vda, const Point_vector& vecp,
 		    OStream& os, bool print_sites)
 {
-  typename VDA::Locate_result lr;
+  typedef typename VDA::Locate_result      Locate_result;
+  typedef typename VDA::Face_handle        Face_handle;
+  typedef typename VDA::Vertex_handle      Vertex_handle;
+  typedef typename VDA::Halfedge_handle    Halfedge_handle;
+
+  Locate_result lr;
   typename VDA::Voronoi_traits::Access_site_2 get_site =
     vda.voronoi_traits().access_site_2_object();
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
     lr = vda.locate(vecp[i]);
-    if ( lr.is_edge() ) {
-      typename VDA::Halfedge_handle e = lr;
+    if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
+      Halfedge_handle e = *ee;
       os << "VORONOI EDGE";
       if ( print_sites ) {
 	os << " ---> ";
@@ -128,9 +133,9 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
 	}
       } // if ( print_sites )
       kill_warning( e );
-    } else if ( lr.is_vertex() ) {
+    } else if ( Vertex_handle* vv = boost::get<Vertex_handle>(&lr) ) {
       os << "VORONOI VERTEX";
-      typename VDA::Vertex_handle v = lr;
+      Vertex_handle v = *vv;
       if ( print_sites ) {
 	os << " ---> ";
 	for (int i = 0; i < 3; ++i) {
@@ -138,8 +143,8 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
 	}
       }
       kill_warning( v );
-    } else if ( lr.is_face() ) {
-      typename VDA::Face_handle f = lr;
+    } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
+      typename VDA::Face_handle f = *ff;
       kill_warning( f );
       os << "VORONOI FACE";
       if ( print_sites ) {

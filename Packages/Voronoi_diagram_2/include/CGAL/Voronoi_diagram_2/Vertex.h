@@ -156,11 +156,7 @@ class Vertex
 
   // ACCESS TO DUAL DEFINING VERTICES
   //---------------------------------
-  Delaunay_vertex_handle first()  const { return (*this)[0]; }
-  Delaunay_vertex_handle second() const { return (*this)[1]; }
-  Delaunay_vertex_handle third()  const { return (*this)[2]; }
-
-  Delaunay_vertex_handle operator[](unsigned int i) const {
+  Delaunay_vertex_handle site(unsigned int i) const {
     CGAL_precondition( i <= 2 );
     CGAL_precondition( vda_->dual().dimension() == 2 );
     return f_->vertex(i);

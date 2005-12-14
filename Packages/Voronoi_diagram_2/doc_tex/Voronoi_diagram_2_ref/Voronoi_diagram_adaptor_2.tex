@@ -47,7 +47,6 @@ third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,VT>}.
 %
 \ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle+}{}
 \ccThreeToTwo
-\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Locate_result+}{}
 %
 \ccTypedef{typedef DG Delaunay_graph;}{A type for the dual Delaunay graph.}
 \ccGlue
@@ -72,11 +71,9 @@ third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,VT>}.
 \ccGlue
 \ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}
 {A type for the edges of the Delaunay graph.}
+\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Halfedge+}{}
 \ccGlue
-\ccNestedType{Locate_result}{The result type of the point location
-  queries.}
 %  It must be a model of the \ccc{VoronoiDiagramLocateResult_2} concept.}
-\ccGlue
 \ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
 %  It is a model of the \ccc{VoronoiDiagramHalfedge_2} concept.}
 \ccGlue
@@ -141,6 +138,12 @@ corresponding handles.
 \ccGlue
 \ccNestedType{Site_iterator}{A type for an iterator over the
   sites of the Voronoi diagram. Its value type is \ccc{Site_2}.}
+%\ccGlue
+\ccThree{typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>}
+{Locate_result+}{}
+\ccThreeToTwo
+\ccTypedef{typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+Locate_result;}{The result type of the point location queries.}
 
 \ccCreationVariable{vd}
 
@@ -153,11 +156,14 @@ corresponding handles.
 {Creates a Voronoi diagram using \ccc{tr} as Voronoi traits and
   \ccc{ap} as adaptation policy.}
 %
-\ccConstructor{Voronoi_diagram_2(Delaunay_graph dg, Voronoi_traits
-  tr = Voronoi_traits(), Adaptation_policy ap = Adaptation_policy());}
+\ccConstructor{Voronoi_diagram_2(Delaunay_graph dg, bool swap_dg = false,
+  Voronoi_traits tr = Voronoi_traits(), Adaptation_policy ap =
+  Adaptation_policy());}
 {Creates a Voronoi diagram from the Delaunay graph \ccc{dg} and using
   \ccc{tr} as Voronoi traits and \ccc{ap} ad adaptation policy. The 
-  Delaunay graph \ccc{dg} is fully copied.}
+  Delaunay graph \ccc{dg} is fully copied if \ccc{swap_dg} is set to
+  \ccStyle{false}, or swapped with the one stored internally if
+  \ccc{swap_dg} is set to \ccStyle{true}.}
 %
 \ccConstructor{template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond, Voronoi_traits
@@ -173,7 +179,7 @@ corresponding handles.
 \ccThree{Adaptation_policy}{vd.number_of_connected_components()+}{}
 %
 \ccMethod{Delaunay_graph dual();}
-{Returns a reference to the dual graph, i.e., the Delaunay graph.}
+{Returns a const reference to the dual graph, i.e., the Delaunay graph.}
 \ccGlue
 \ccMethod{Halfedge_handle dual(Delaunay_edge e);}
 {Returns a handle to the halfedge in the Voronoi diagram that is dual
@@ -310,28 +316,40 @@ invalidated by any change in the Voronoi diagram.
 \ccHeading{Circulators}
 
 The Voronoi diagram adaptor also provides circulators that allow to visit 
-all halfedges incident to a given vertex and all halfedges on the
-boundary of a Voronoi face. These circulators are non-mutable and
-bidirectional.
+all halfedges whose target is a given vertex -- this is the
+\ccc{Halfedge_around_vertex_circulator}, as well as all halfedges on
+the boundary of a Voronoi face -- this is the
+\ccc{Ccb_halfedge_circulator}. These circulators are non-mutable  
+and bidirectional.
 The operator \ccc{operator++} moves the former circulator counterclockwise
 around the vertex while the \ccc{operator--} moves clockwise.
 The latter circulator is moved by the operator \ccc{operator++} to the
 next halfedge on the boundary in the counterclockwise sense, while
 \ccc{operator--} moves clockwise.
+When the \ccc{Ccb_halfedge_circulator} is defined over an infinite
+Voronoi face \ccc{f}, then applying \ccc{operator++} to a circulator
+corresponding to a halfedge whose target is not finite moves to the
+next infinite (or semi-infinite) halfedge of \ccc{f} in the
+counterclockwise sense. Similarly, applying \ccc{operator++} to a
+circulator corresponding to a halfedge whose source is not finite,
+moves to the previous infinite (or semi-infinite) halfedge of \ccc{f}
+in the clockwise sense.
 The \ccc{Halfedge_around_vertex_circulator} circulator is
 invalidated by any modification in the faces adjacent to the vertex
 over which it is defined. The \ccc{Ccb_halfedge_circulator} is
 invalidated by any modification in the face over which it is defined.
 
+
 \ccThree{Ccb_halfedge_circulator}{vd.ccb_halfedges(Face_handle f)+}{}
 \ccThreeToTwo
 %
 \ccMethod{Ccb_halfedge_circulator ccb_halfedges(Face_handle f);}
-{Starts at an arbitrary halfedge on the boundary of the Voronoi face
-  \ccc{f}.}
+{Returns a circulator over the halfedges on the boundary of \ccc{f}.
+  The circulator is initialized to an arbitrary halfedge on the
+  boundary of the Voronoi face \ccc{f}.}
 \ccGlue
 \ccMethod{Ccb_halfedge_circulator ccb_halfedges(Face_handle f,
-  Halfedge_handle h);} 
+  Halfedge_handle h);}
 {Returns a circulator over the halfedges on the boundary of
   \ccc{f}. The circulator is initialized with the halfedge \ccc{h}.
   \ccPrecond{The halfedge \ccc{h} must lie on the boundary of \ccc{f}.}}
@@ -341,11 +359,13 @@ invalidated by any modification in the face over which it is defined.
 %
 \ccMethod{Halfedge_around_vertex_circulator
   incident_halfedges(Vertex_handle v);}
-{Starts at an arbitrary halfedge incident to Voronoi vertex \ccc{v}.}
+{Returns a circulator over the halfedges whose target is the Voronoi
+  vertex \ccc{v}. The circulator is initialized to an arbitrary
+  halfedge incident to \ccc{v}.}
 \ccGlue
 \ccMethod{Halfedge_around_vertex_circulator
   incident_halfedges(Vertex_handle v, Halfedge_handle h);}
-{Returns a circulator over the halfedges incident to the Voronoi
+{Returns a circulator over the halfedges whose target is the Voronoi
   vertex \ccc{v}. The circulator is initialized with the halfedge
   \ccc{h}.
   \ccPrecond{The vertex \ccc{v} must be the target vertex of the

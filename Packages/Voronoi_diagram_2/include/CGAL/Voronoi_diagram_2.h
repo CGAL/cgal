@@ -39,7 +39,6 @@
 #include <CGAL/Voronoi_diagram_2/Unbounded_faces.h>
 #include <CGAL/Voronoi_diagram_2/Unbounded_edges.h>
 #include <CGAL/Voronoi_diagram_2/Degeneracy_tester_binders.h>
-#include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <CGAL/Voronoi_diagram_2/Connected_components.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 
@@ -59,9 +58,6 @@ class Voronoi_diagram_2
  private:
   typedef Voronoi_diagram_2<DG,VT,AP>        Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result_accessor<Self,true>
-  Locate_result_accessor;
 
   friend struct CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>;
  public:
@@ -99,14 +95,6 @@ class Voronoi_diagram_2
   Dual_edges_iterator;
   typedef typename Delaunay_graph::All_edges_iterator
   All_dual_edges_iterator;
-
- protected:
-  // POINT LOCATION RELATED TYPES
-  typedef typename Voronoi_traits::Has_nearest_site_2  Has_nearest_site_2;
- public:
-  typedef typename Voronoi_traits::Point_2             Point_2;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Locate_result<Self,true>  Locate_result;
 
  protected:
   // TYPES FOR THE DEGENERACY TESTERS
@@ -276,6 +264,15 @@ class Voronoi_diagram_2
   // ACCESSOR
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>  Accessor;
 
+protected:
+  // POINT LOCATION RELATED TYPES
+  typedef typename Voronoi_traits::Has_nearest_site_2  Has_nearest_site_2;
+public:
+  typedef typename Voronoi_traits::Point_2             Point_2;
+
+  typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+  Locate_result;
+
 private:
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Find_valid_vertex<Self>
   Find_valid_vertex;
@@ -289,10 +286,16 @@ public:
 		    const Geom_traits& gt = Geom_traits())
     : dual_(gt), ap_(ap), tr_(tr) {}
 
-  Voronoi_diagram_2(const Delaunay_graph& dg,
+  Voronoi_diagram_2(const Delaunay_graph& dg, bool swap_dg = false,
 		    const Voronoi_traits& tr = Voronoi_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy())
-    : dual_(dg), ap_(ap), tr_(tr) {}
+    : dual_(), ap_(ap), tr_(tr) {
+    if ( swap_dg ) {
+      dual_.swap(const_cast<Delaunay_graph&>(dg));
+    } else {
+      dual_ = dg;
+    }
+  }
 
   template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond,
@@ -639,14 +642,12 @@ public:
 
     if ( const Delaunay_vertex_handle* dv =
 	 boost::get<Delaunay_vertex_handle>(&ns_qr) ) {
-      Face_handle f( Face(this, *dv) );
-      return Locate_result_accessor::make_locate_result(f);
+      return Face_handle( Face(this, *dv) );
     } else if ( const Delaunay_face_handle *df =
 		boost::get<Delaunay_face_handle>(&ns_qr) ) {
       Find_valid_vertex vertex_finder;
       Delaunay_face_handle dfvalid = vertex_finder(this, *df);
-      Vertex_handle v( Vertex(this, dfvalid) );
-      return Locate_result_accessor::make_locate_result(v);
+      return Vertex_handle( Vertex(this, dfvalid) );
     } else if ( const Delaunay_edge* de =
 		boost::get<Delaunay_edge>(&ns_qr) ) {
       CGAL_assertion(  !edge_rejector()(dual_, *de)  );
@@ -655,11 +656,9 @@ public:
 	  de->first->vertex(CW_CCW_2::ccw(de->second));
 	Delaunay_vertex_handle v2 =
 	  de->first->vertex(CW_CCW_2::cw(de->second) );
-	Halfedge_handle e( Halfedge(this, v1, v2) );
-	return Locate_result_accessor::make_locate_result(e);
+	return Halfedge_handle( Halfedge(this, v1, v2) );
       }
-      Halfedge_handle e( Halfedge(this, de->first, de->second) );
-      return Locate_result_accessor::make_locate_result(e);
+      return Halfedge_handle( Halfedge(this, de->first, de->second) );
     }
 
     // I should never have reached this line;

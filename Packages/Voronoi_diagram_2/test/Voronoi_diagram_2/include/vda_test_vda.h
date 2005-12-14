@@ -120,11 +120,9 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   CGAL_assertion( d == deg );
   kill_warning( d );
 
-  Delaunay_vertex_handle vv = v->first();
-  vv = v->second();
-  vv = v->third();
+  Delaunay_vertex_handle vv;
   Vertex vertex = *v;
-  for (unsigned int i = 0; i < 3; i++) { vv = vertex[i]; }
+  for (unsigned int i = 0; i < 3; i++) { vv = vertex.site(i); }
   kill_warning(vv);
   kill_warning(vertex);
 
@@ -398,16 +396,28 @@ void test_vda(const VDA& vda)
     VDA vda3(vt, ap);
     VDA vda4(vt, ap, vda.dual().geom_traits());
 
+    DG dg2(dg);
+
+    VDA vda5(dg2);
+    VDA vda6(dg2, false);
+    VDA vda7(dg2, false, vt);
+    VDA vda8(dg2, false, vt, ap);
+    int n_dg2 = dg2.number_of_vertices();
+    VDA vda9(dg2, true);
+    if ( n_dg2 != 0 ) {
+      CGAL_assertion( dg2.number_of_vertices() == 0 );
+    }
+
     std::vector<typename VT::Site_2> vs;
     for (Site_iterator sit = vda.sites_begin();
 	 sit != vda.sites_end(); ++sit) {
       vs.push_back(*sit);
     }
 
-    VDA vda5(vs.begin(), vs.end());
-    VDA vda6(vs.begin(), vs.end(), vt);
-    VDA vda7(vs.begin(), vs.end(), vt, ap);
-    VDA vda8(vs.begin(), vs.end(), vt, ap, vda.dual().geom_traits());
+    VDA vda10(vs.begin(), vs.end());
+    VDA vda11(vs.begin(), vs.end(), vt);
+    VDA vda12(vs.begin(), vs.end(), vt, ap);
+    VDA vda13(vs.begin(), vs.end(), vt, ap, vda.dual().geom_traits());
   }
 
   // testing copy constructor
@@ -577,9 +587,9 @@ void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
 {
   typedef typename VDA::Locate_result              Locate_result;
   typedef typename VDA::Point_2                    Point_2;
-  typedef typename Locate_result::Vertex_handle    Vertex_handle;
-  typedef typename Locate_result::Halfedge_handle  Halfedge_handle;
-  typedef typename Locate_result::Face_handle      Face_handle;
+  typedef typename VDA::Vertex_handle              Vertex_handle;
+  typedef typename VDA::Halfedge_handle            Halfedge_handle;
+  typedef typename VDA::Face_handle                Face_handle;
 
   // nothing to do if the Voronoi diagram is empty
   if ( vda.dual().number_of_vertices() == 0 ) { return; }
@@ -587,14 +597,14 @@ void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
   Point_2 p(0,0);
   Locate_result lr = vda.locate(p);
 
-  if ( lr.is_vertex() ) {
-    Vertex_handle v = lr;
+  if ( Vertex_handle* vv = boost::get<Vertex_handle>(&lr) ) {
+    Vertex_handle v = *vv;
     kill_warning(v);
-  } else if ( lr.is_edge() ) {
-    Halfedge_handle e = lr;
+  } else if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
+    Halfedge_handle e = *ee;
     kill_warning(e);    
-  } else if ( lr.is_face() ) {
-    Face_handle f = lr;
+  } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
+    Face_handle f = *ff;
     kill_warning(f);
   }
 }

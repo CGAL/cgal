@@ -222,9 +222,9 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   typedef typename VT::Point_2                    Point_2;
   typedef typename VT::Site_2                     Site_2;
   typedef typename VT::Delaunay_graph             Delaunay_graph;
-  typedef typename VT::Vertex_handle              Vertex_handle;
-  typedef typename VT::Face_handle                Face_handle;
-  typedef typename VT::Edge                       Edge;
+  typedef typename VT::Delaunay_vertex_handle     Vertex_handle;
+  typedef typename VT::Delaunay_face_handle       Face_handle;
+  typedef typename VT::Delaunay_edge              Edge;
   //  typedef typename VT::Edge_degeneracy_tester     EDT;
   //  typedef typename VT::Face_degeneracy_tester     FDT;
   typedef typename VT::Access_site_2              Access_site_2;
@@ -278,17 +278,17 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
 template<class DG, class VT, class AP>
 void test_adaptation_policy_concept(const DG& dg, const VT& vt, const AP& ap)
 {
-  typedef typename AP::Site_2                     Site_2;
-  typedef typename AP::Delaunay_graph             Delaunay_graph;
-  typedef typename AP::Vertex_handle              Vertex_handle;
-  typedef typename AP::Face_handle                Face_handle;
-  typedef typename AP::Edge                       Edge;
-  typedef typename AP::All_edges_iterator         All_edges_iterator;
-  typedef typename AP::Finite_edges_iterator      Finite_edges_iterator;
-  typedef typename AP::Edge_circulator            Edge_circulator;
-  typedef typename AP::Edge_rejector              ER;
-  typedef typename AP::Face_rejector              FR;
-  typedef typename AP::Has_site_inserter          Has_si;
+  typedef typename AP::Site_2                          Site_2;
+  typedef typename AP::Delaunay_graph                  Delaunay_graph;
+  typedef typename AP::Delaunay_vertex_handle          Vertex_handle;
+  typedef typename AP::Delaunay_face_handle            Face_handle;
+  typedef typename AP::Delaunay_edge                   Edge;
+  typedef typename AP::All_Delaunay_edges_iterator     All_edges_iterator;
+  typedef typename AP::Finite_Delaunay_edges_iterator  Finite_edges_iterator;
+  typedef typename AP::Delaunay_edge_circulator        Edge_circulator;
+  typedef typename AP::Edge_rejector                   ER;
+  typedef typename AP::Face_rejector                   FR;
+  typedef typename AP::Has_site_inserter               Has_si;
 
   // testing copy constructor and assignment operator
   {
@@ -532,9 +532,9 @@ void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
   typedef typename Nearest_site_2::Arity          Arity;
   typedef typename Nearest_site_2::result_type    result_type;
 
-  typedef typename VT::Vertex_handle              Vertex_handle;
-  typedef typename VT::Face_handle                Face_handle;
-  typedef typename VT::Edge                       Edge;
+  typedef typename VT::Delaunay_vertex_handle     Vertex_handle;
+  typedef typename VT::Delaunay_face_handle       Face_handle;
+  typedef typename VT::Delaunay_edge              Edge;
 
   if ( dg.dimension() < 0 ) { return; }
 

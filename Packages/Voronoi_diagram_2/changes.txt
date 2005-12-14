@@ -1,3 +1,18 @@
+14 December 2005:  Menelaos Karavelas
+- fixed doc, testsuite and code according to Mariette's latest
+  comments:
+  * in Voronoi traits and Adaptation policy the Edge, Face_handle and
+    Vertex_handle are now named Delaunay_*. Same for the appropriate
+    iterators/circulators.
+  * fixed phrases/typos in the doc
+  * modified constructor that takes a Delaunay graph: a boolean was
+    added to allow for swapping instead of copying the Delaunay graph.
+  * changed the interface for accessing the defining sites of a
+    Voronoi vertex.
+  * testsuite now checks for the new types and interface.
+  To be done: add a figure in Halfedge; rename VoronoiTraits_2 to
+  AdaptationTraits_2.
+
 30 November 2005:  Menelaos Karavelas
 - fixed bug in point location of the Apollonius diagram, when the
   point lies on an Apollonius edge; added testing for that.

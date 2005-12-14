@@ -40,13 +40,17 @@ private:
   typedef Policy_base_base<DG,ER,FR>  Self;
 
 public:
-  typedef DG                                              Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_handle          Vertex_handle;
-  typedef typename Delaunay_graph::Face_handle            Face_handle;
-  typedef typename Delaunay_graph::Edge                   Edge;
-  typedef typename Delaunay_graph::All_edges_iterator     All_edges_iterator;
-  typedef typename Delaunay_graph::Finite_edges_iterator  Finite_edges_iterator;
-  typedef typename Delaunay_graph::Edge_circulator        Edge_circulator;
+  typedef DG                                          Delaunay_graph;
+  typedef typename Delaunay_graph::Vertex_handle      Delaunay_vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Delaunay_face_handle;
+  typedef typename Delaunay_graph::Edge               Delaunay_edge;
+  typedef typename Delaunay_graph::Edge_circulator    Delaunay_edge_circulator;
+
+  typedef typename Delaunay_graph::All_edges_iterator
+  All_Delaunay_edges_iterator;
+  typedef typename Delaunay_graph::Finite_edges_iterator
+  Finite_Delaunay_edges_iterator;
+
 
   typedef ER   Edge_rejector;
   typedef FR   Face_rejector;

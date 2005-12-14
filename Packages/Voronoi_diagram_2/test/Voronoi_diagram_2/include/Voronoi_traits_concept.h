@@ -46,9 +46,9 @@ public:
 
   typedef typename DG::Point_2        Point_2;
   typedef typename DG::Site_2         Site_2;
-  typedef typename DG::Vertex_handle  Vertex_handle;
-  typedef typename DG::Face_handle    Face_handle;
-  typedef typename DG::Edge           Edge;
+  typedef typename DG::Vertex_handle  Delaunay_vertex_handle;
+  typedef typename DG::Face_handle    Delaunay_face_handle;
+  typedef typename DG::Edge           Delaunay_edge;
 
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<Site_2,DG,Tag_false>
   Access_site_2;
