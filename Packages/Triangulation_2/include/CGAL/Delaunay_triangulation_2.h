@@ -57,7 +57,14 @@ public:
   typedef typename Triangulation::Finite_vertices_iterator 
                                                      Finite_vertices_iterator;
 
-  Delaunay_triangulation_2(const Gt& gt = Gt())
+ 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Triangulation::side_of_oriented_circle;
+  using Triangulation::circumcenter;
+#endif
+
+
+ Delaunay_triangulation_2(const Gt& gt = Gt())
   : Triangulation_2<Gt,Tds>(gt) {}
   
   Delaunay_triangulation_2(

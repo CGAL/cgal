@@ -1,3 +1,7 @@
+14 december 2005 Mariette
+- add using in  Delaunay_triangulation_2.h to please g++4.1
+
+
 21 November 2005 Menelaos Karavelas
 - fixed a bug in the join_vertices method pointed out by Jean-Philippe Pons
   <Jean-Philippe.Pons@sophia.inria.fr>: when the degree of the vertex to be
