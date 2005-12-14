@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 //=========================================================================
 
-template<class DG, class VT>
+template<class DG, class AT>
 struct Adaptation_policy_concept
   : public CGAL_VORONOI_DIAGRAM_2_INS::Policy_base
   <DG,
@@ -38,7 +38,7 @@ struct Adaptation_policy_concept
    CGAL_VORONOI_DIAGRAM_2_INS::Null_functor,
    CGAL_VORONOI_DIAGRAM_2_INS::Null_functor>
 {
-  typedef typename VT::Site_2   Site_2;
+  typedef typename AT::Site_2   Site_2;
 };
 
 

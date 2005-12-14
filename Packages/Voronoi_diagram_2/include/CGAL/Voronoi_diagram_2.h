@@ -803,18 +803,18 @@ public:
 
 // I/O OPERATORS
 //--------------
-template<class DG, class VT, class AP>
+template<class DG, class AT, class AP>
 std::ostream& operator<<(std::ostream& os,
-			 const Voronoi_diagram_2<DG,VT,AP>& vd)
+			 const Voronoi_diagram_2<DG,AT,AP>& vd)
 {
   vd.file_output(os);
   return os;
 }
 
 
-template<class DG, class VT, class AP>
+template<class DG, class AT, class AP>
 std::istream& operator>>(std::istream& is,
-			 Voronoi_diagram_2<DG,VT,AP>& vd)
+			 Voronoi_diagram_2<DG,AT,AP>& vd)
 {
   vd.file_input(is);
   return is;

@@ -29,16 +29,16 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template<class DG, class VT>
+template<class DG, class AT>
 struct Identity_policy_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Policy_base
   <DG,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_edge_rejector<DG>,
    CGAL_VORONOI_DIAGRAM_2_INS::Identity_face_rejector<DG>,
-   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename VT::Site_2,DG>,
+   CGAL_VORONOI_DIAGRAM_2_INS::Default_site_inserter<typename AT::Site_2,DG>,
    CGAL_VORONOI_DIAGRAM_2_INS::Default_site_remover<DG> >
 {
-  typedef typename VT::Site_2     Site_2;
+  typedef typename AT::Site_2     Site_2;
 };
 
 

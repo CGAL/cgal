@@ -101,8 +101,8 @@ private:
 
 //===========================================================================
 
-template<class VT>
-struct Default_caching_site_remover<VT,Null_functor>
+template<class AT>
+struct Default_caching_site_remover<AT,Null_functor>
 {
   Default_caching_site_remover() {}
   template<typename T> Default_caching_site_remover(T t) {}

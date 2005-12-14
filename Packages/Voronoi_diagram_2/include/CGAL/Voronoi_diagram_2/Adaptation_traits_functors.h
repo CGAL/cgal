@@ -49,10 +49,10 @@ struct Functor_exists<Null_functor>
   typedef Tag_false Value;
 };
 
-template<class VT, class SI> class Default_caching_site_inserter;
+template<class AT, class SI> class Default_caching_site_inserter;
 
-template<class VT>
-struct Functor_exists< Default_caching_site_inserter<VT,Null_functor> >
+template<class AT>
+struct Functor_exists< Default_caching_site_inserter<AT,Null_functor> >
 {
   typedef Tag_false Value;
 };
