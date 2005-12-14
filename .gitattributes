@@ -876,7 +876,10 @@ Packages/Arrangement_2/doc_tex/Arrangement_2/fig/arr_segs.gif -text svneol=unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/arr_segs.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/arr_segs.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/arr_segs.pstex_t -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/connect_comp.eps -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/connect_comp.fig -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/connect_comp.gif -text svneol=unset#unset
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/connect_comp.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/connect_comp.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/connect_comp.pstex_t -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/ex_1.eps -text
@@ -998,7 +1001,10 @@ Packages/Arrangement_2/doc_tex/Arrangement_2/fig/ex_8.gif -text svneol=unset#uns
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/ex_8.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/ex_8.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/ex_8.pstex_t -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/h_shape.eps -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/h_shape.fig -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/h_shape.gif -text svneol=unset#unset
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/h_shape.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/h_shape.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/h_shape.pstex_t -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/insert.eps -text
@@ -1021,10 +1027,16 @@ Packages/Arrangement_2/doc_tex/Arrangement_2/fig/insert_in_face.fig -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/insert_in_face.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/insert_in_face.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/insert_in_face.pstex_t -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/pred_around_vertex.eps -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/pred_around_vertex.fig -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/pred_around_vertex.gif -text svneol=unset#unset
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/pred_around_vertex.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/pred_around_vertex.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/pred_around_vertex.pstex_t -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.eps -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.fig -text
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.gif -text svneol=unset#unset
+Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Packages/Auxiliary/auxiliary/cgal_app.icns -text svneol=unset#unset
