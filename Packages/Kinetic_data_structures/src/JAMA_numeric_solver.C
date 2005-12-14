@@ -1,9 +1,11 @@
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
+#ifdef CGAL_HAVE_TNT
 #include <TNT/tnt_array2d.h>
 #include <TNT/tnt_array1d.h>
 #include <TNT/jama_eig.h>
+#endif
 
 #include <algorithm>
 #include <functional>
@@ -12,7 +14,7 @@
 //#include <iomanip>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
-
+#if CGAL_HAVE_TNT
 //static const double max_error_value =0.00005;
 
 template <bool CLEAN, class NT>
@@ -28,19 +30,6 @@ NT ub, std::vector<NT> &roots)
         arr[i+1][i]=1;
     }
 
-/*std::cout << begin << std::endl;
-  std::cout << "[";
-  for (int i=0; i< arr.dim1(); ++i){
-  std::cout << "[";
-  for (int j=0; j< arr.dim2(); ++j){
-  std::cout << arr[i][j];
-  if (j != arr.dim2()-1) std::cout << ',';
-  }
-  std::cout <<"]," << std::endl;
-  }
-  std::cout << "]" << std::endl;*/
-//std::cout << arr << std::endl;
-
     JAMA::Eigenvalue<NT> ev(arr);
     TNT::Array1D<NT> real, imag;
     ev.getImagEigenvalues(imag);
@@ -52,18 +41,17 @@ NT ub, std::vector<NT> &roots)
     else tol=0;
 
     for (int i=0; i< real.dim1(); ++i) {
-//std::cout << "Testing " << real[i] << "+" << imag[i] << "i" << std::endl;
         if (root_is_good(real[i], imag[i], lb-tol, ub)) {
             roots.push_back(real[i]/*polish_root(begin, end, real[i])*/);
-//std::cout << "Good was " <<  real[i] << "+" <<  imag[i] << "i\n";
-        }
-        else {
-//std::cout << "Rejected " << real[i] << "+" << imag[i] << "i\n";
+        } else {
         }
     }
     std::sort(roots.begin(), roots.end(), std::greater<NT>());
     if (CLEAN) check_first_root(begin, end, lb, roots);
 }
+
+#endif
+
 
 
 void jama_polynomial_compute_roots(const double *begin, const double *end,
@@ -82,7 +70,12 @@ std::vector<double> &roots)
             compute_quadratic_roots(begin, end, lb, ub, roots);
             break;
         default:
-            jama_compute_roots<false>(begin, end, lb, ub, roots);
+#ifdef CGAL_HAVE_TNT
+	  jama_compute_roots<false>(begin, end, lb, ub, roots);
+#else
+	  CGAL_assertion(0);
+#endif
+	  //jama_compute_roots<false>(begin, end, lb, ub, roots);
     }
 }
 
@@ -103,7 +96,11 @@ std::vector<double> &roots)
             compute_quadratic_cleaned_roots(begin, end, lb, ub, roots);
             break;
         default:
-            jama_compute_roots<true>(begin, end, lb, ub, roots);
+#ifdef CGAL_HAVE_TNT
+	  jama_compute_roots<true>(begin, end, lb, ub, roots);
+#else
+	  CGAL_assertion(0);
+#endif
     }
 }
 
