@@ -3,7 +3,6 @@ Alpha_shapes_2
 Alpha_shapes_3
 Apollonius_graph_2
 Arrangement_2
-Auxiliary
 Boolean_set_operations_2
 Boost
 Box_intersection_d
@@ -41,6 +40,7 @@ Kinetic_data_structures
 Largest_empty_rect_2
 LEDA
 Linear_least_squares_fitting
+MacOSX
 Manual
 Matrix_search
 Mesh_2
