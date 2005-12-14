@@ -142,7 +142,7 @@ we cache the results of the edge and face rejectors.
 \ccGlue
 \ccMethod{void swap(AdaptationPolicy_2 other);}{The adaptation policies
   \ccc{ap} and \ccc{other} are swapped. This method should be
-  preferred to \ccStyle{vt=other} or \ccStyle{vt(other)} if
+  preferred to \ccStyle{ap=other} or \ccStyle{ap(other)} if
   \ccc{other} is deleted afterwards.}
 \ccGlue
 \ccMethod{bool is_valid();}{Tests the validity of the adaptation policy.}
@@ -164,8 +164,8 @@ we cache the results of the edge and face rejectors.
 
 \ccSeeAlso
 \ccc{DelaunayGraph_2}\\
-\ccc{VoronoiTraits_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}
+\ccc{AdaptationTraits_2}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

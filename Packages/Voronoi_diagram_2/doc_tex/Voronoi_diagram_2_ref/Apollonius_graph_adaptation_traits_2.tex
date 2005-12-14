@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-\begin{ccRefClass}{Apollonius_graph_Voronoi_traits_2<AG2>}
+\begin{ccRefClass}{Apollonius_graph_adaptation_traits_2<AG2>}
 
 %% add template arg's if necessary
 
@@ -27,25 +27,25 @@
 \ccCreationVariable{traits}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
+The class \ccRefName\ provides a model for the \ccc{AdaptationTraits_2}
 concept. The template parameter of the \ccRefName\ class must be a
 model of the \ccc{DelaunayGraph_2} concept, and in particular it has
 the semantics of a (triangulated) 2D Apollonius graph.
 
 
-\ccInclude{CGAL/Apollonius_graph_Voronoi_traits_2.h}
+\ccInclude{CGAL/Apollonius_graph_adaptation_traits_2.h}
 
 \ccIsModel
-\ccc{VoronoiTraits_2}
+\ccc{AdaptationTraits_2}
 
 \ccTypes
 \ccThree{typedef CGAL::Tag_true}{Has_nearest_site_2+}{}
 \ccTypedef{typedef CGAL::Tag_true Has_nearest_site_2;}{}
 
 \ccSeeAlso
-\ccc{VoronoiTraits_2}\\
+\ccc{AdaptationTraits_2}\\
 \ccc{DelaunayGraph_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}\\
 \ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
 \ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}
 \end{ccRefClass}

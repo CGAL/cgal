@@ -18,15 +18,15 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-\begin{ccRefConcept}{VoronoiTraits_2}
+\begin{ccRefConcept}{AdaptationTraits_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The concept \ccc{VoronoiTraits_2} defines the functors required for
+The concept \ccc{AdaptationTraits_2} defines the functors required for
 accessing geometric information in the Delaunay graph that is needed by the
-\ccc{Voronoi_diagram_2<DG,VT,AP>} class.
+\ccc{Voronoi_diagram_2<DG,AT,AP>} class.
 It optionally defines a functor for performing nearest site queries. A
 tag is provided for determining whether this functor is defined or not.
 
@@ -34,7 +34,7 @@ tag is provided for determining whether this functor is defined or not.
 \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}
 
 \ccTypes
-\ccTwo{VoronoiTraits_2::Delaunay_graph+}{}
+\ccTwo{AdaptationTraits_2::Delaunay_graph+}{}
 %
 \ccNestedType{Point_2}{A type for a point.}
 \ccGlue
@@ -54,7 +54,7 @@ tag is provided for determining whether this functor is defined or not.
 \ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
 {The type of the vertex handles of the Delaunay graph.}
 %%
-\ccTwo{VoronoiDiagram_2::Construct_Voronoi_point_2}{}
+\ccTwo{AdaptationDiagram_2::Construct_Voronoi_point_2}{}
 \ccNestedType{Access_site_2}{A type for a functor that accesses the
   site associated with a vertex. The functor should be a model of the
   concepts \ccc{DefaultConstructible}, \ccc{CopyConstructible},
@@ -74,7 +74,7 @@ tag is provided for determining whether this functor is defined or not.
   \centerline{\ccc{Point_2 operator()(Delaunay_face_handle f)}}.
   The face handle \ccc{f} must not correspond to an infinite face.}
 \ccGlue
-\ccNestedType{Has_nearest_site_2}{A tag for determining if the Voronoi
+\ccNestedType{Has_nearest_site_2}{A tag for determining if the adaptation
   traits class provides a functor for performing nearest site queries.
   This tag is equal to either \ccc{CGAL::Tag_true} (a nearest site
   query functor is available) or \ccc{CGAL::Tag_false} (a nearest site
@@ -87,7 +87,7 @@ tag is provided for determining whether this functor is defined or not.
   has closest sites as vertices. It is an edge if the query point is
   equidistant to exactly two vertices of the Delaunay graph, which are
   the source and target vertices of the edge. In all other cases, the
-  search result is a vertex, namely, the unique vertex of the 
+  search result is a vertex, namely, the unique vertex of the
   Delaunay graph closest to the query point. The functor must be a
   model of the concepts \ccc{DefaultConstructible},
   \ccc{CopyConstructible}, \ccc{Assignable}, \ccc{AdaptableFunctor}
@@ -100,10 +100,10 @@ tag is provided for determining whether this functor is defined or not.
 
 
 
-\ccCreationVariable{vt}  %% choose variable name
+\ccCreationVariable{at}  %% choose variable name
 
 \ccHeading{Access to objects}
-\ccThree{Construct_Voronoi_point_2}{vt.construct_Voronoi_point_2_object()+}{}
+\ccThree{Construct_Voronoi_point_2}{at.construct_Voronoi_point_2_object()+}{}
 \ccMethod{Access_site_2 access_site_2_object();}{}
 \ccGlue
 \ccMethod{Construct_Voronoi_point_2 construct_Voronoi_point_2_object();}{}
@@ -113,14 +113,14 @@ tag is provided for determining whether this functor is defined or not.
 
 %
 \ccHasModels
-\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
-\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
-\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Segment_Delaunay_graph_Voronoi_traits_2<SDG2>}
+\ccc{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}\\
+\ccc{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}
 
 \ccSeeAlso
 \ccc{DelaunayGraph_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

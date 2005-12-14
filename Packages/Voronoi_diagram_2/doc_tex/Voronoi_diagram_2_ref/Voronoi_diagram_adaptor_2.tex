@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-\begin{ccRefClass}{Voronoi_diagram_2<DG,VT,AP>}
+\begin{ccRefClass}{Voronoi_diagram_2<DG,AT,AP>}
 
 %% add template arg's if necessary
 
@@ -34,9 +34,9 @@ that is similar to that of \cgal's arrangements.\\
 The first template parameter of the \ccRefName\ class corresponds to the
 triangulated Delaunay graph and must be a model of the
 \ccc{DelaunayGraph_2} concept. The second template parameter must be a
-model of the \ccc{VoronoiTraits_2} concept. The third template
+model of the \ccc{AdaptationTraits_2} concept. The third template
 parameter must be a model of the \ccc{AdaptationPolicy_2} concept. The
-third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,VT>}.
+third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,AT>}.
 
 \ccInclude{CGAL/Voronoi_diagram_2.h}
 
@@ -45,20 +45,20 @@ third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,VT>}.
 
 \ccTypes
 %
-\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle+}{}
+\ccThree{typedef Adaptation_traits::Vertex_handle}{Delaunay_vertex_handle+}{}
 \ccThreeToTwo
 %
 \ccTypedef{typedef DG Delaunay_graph;}{A type for the dual Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef VT Voronoi_traits;}{A type for the traits needed by
-  the Voronoi diagram adaptor.}
+\ccTypedef{typedef AT Adaptation_traits;}{A type for the adaptation
+  traits needed by the Voronoi diagram adaptor.}
 \ccGlue
 \ccTypedef{typedef AP Adaptation_policy;}{A type for the adaptation
   policy used.}
 \ccGlue
-\ccTypedef{typedef Voronoi_traits::Point_2 Point_2;}{A type a point.}
+\ccTypedef{typedef Adaptation_traits::Point_2 Point_2;}{A type a point.}
 \ccGlue
-\ccTypedef{typedef Voronoi_traits::Site_2 Site_2;}{A type
+\ccTypedef{typedef Adaptation_traits::Site_2 Site_2;}{A type
   for the sites of the Voronoi diagram.}
 \ccGlue
 \ccTypedef{typedef Delaunay_graph::size_type size_type;}{A type for sizes.}
@@ -71,7 +71,7 @@ third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,VT>}.
 \ccGlue
 \ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}
 {A type for the edges of the Delaunay graph.}
-\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Halfedge+}{}
+\ccTwo{Voronoi_diagram_2<DG,AT,AP>::Halfedge+}{}
 \ccGlue
 %  It must be a model of the \ccc{VoronoiDiagramLocateResult_2} concept.}
 \ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
@@ -90,7 +90,7 @@ The circulators and iterators are assignable to the
 corresponding handle types, and they are also convertible to the
 corresponding handles.
 
-\ccTwo{Voronoi_diagram_2<DG,VT,AP>::Unbounded_halfedges_iterator+}{}
+\ccTwo{Voronoi_diagram_2<DG,AT,AP>::Unbounded_halfedges_iterator+}{}
 %
 \ccNestedType{Halfedge_handle}{Handle for halfedges.}
 \ccGlue
@@ -148,28 +148,28 @@ Locate_result;}{The result type of the point location queries.}
 \ccCreationVariable{vd}
 
 \ccCreation
-\ccThree{Voronoi_diagram_2<DG,VT,AP>}{vd}{}
+\ccThree{Voronoi_diagram_2<DG,AT,AP>}{vd}{}
 \ccThreeToTwo
 %
-\ccConstructor{Voronoi_diagram_2(Voronoi_traits
-  tr = Voronoi_traits(), Adaptation_policy ap = Adaptation_policy());}
-{Creates a Voronoi diagram using \ccc{tr} as Voronoi traits and
+\ccConstructor{Voronoi_diagram_2(Adaptation_traits
+  tr = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy());}
+{Creates a Voronoi diagram using \ccc{tr} as adaptation traits and
   \ccc{ap} as adaptation policy.}
 %
 \ccConstructor{Voronoi_diagram_2(Delaunay_graph dg, bool swap_dg = false,
-  Voronoi_traits tr = Voronoi_traits(), Adaptation_policy ap =
+  Adaptation_traits tr = Adaptation_traits(), Adaptation_policy ap =
   Adaptation_policy());}
 {Creates a Voronoi diagram from the Delaunay graph \ccc{dg} and using
-  \ccc{tr} as Voronoi traits and \ccc{ap} ad adaptation policy. The 
+  \ccc{tr} as adaptation traits and \ccc{ap} as adaptation policy. The 
   Delaunay graph \ccc{dg} is fully copied if \ccc{swap_dg} is set to
   \ccStyle{false}, or swapped with the one stored internally if
   \ccc{swap_dg} is set to \ccStyle{true}.}
 %
 \ccConstructor{template<class Iterator>
-  Voronoi_diagram_2(Iterator first, Iterator beyond, Voronoi_traits
-  tr = Voronoi_traits(), Adaptation_policy ap = Adaptation_policy());}
+  Voronoi_diagram_2(Iterator first, Iterator beyond, Adaptation_traits
+  tr = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy());}
 {Creates a Voronoi diagram using as sites the sites in the iterator
-  range \ccStyle{[first, beyond)}, \ccc{tr} as Voronoi traits and
+  range \ccStyle{[first, beyond)}, \ccc{tr} as adaptation traits and
   \ccc{ap} as adaptation policy. The value type of \ccc{Iterator} must
   be \ccc{Site_2}.}
 
@@ -194,7 +194,7 @@ Locate_result;}{The result type of the point location queries.}
 {Returns a handle to the vertex in the Voronoi diagram that is dual to
   the face corresponding to the face handle \ccc{f} in the Delaunay graph.}
 \ccGlue
-\ccMethod{Voronoi_traits voronoi_traits();}
+\ccMethod{Adaptation_traits adaptation_traits();}
 {Returns a reference to the Voronoi traits.}
 \ccGlue
 \ccMethod{Adaptation_policy adaptation_policy();}
@@ -433,7 +433,7 @@ invalidated by any modification in the face over which it is defined.
   \ccc{std::istream& operator>>(std::istream&, Delaunay_graph)}
 }
 \ccFunction{
-std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,VT,AP> vd);}
+std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,AT,AP> vd);}
 {Writes the current state of the Voronoi diagram to the output
   stream \ccc{os}.\\
   The following operator must be defined:\\
@@ -441,7 +441,7 @@ std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,VT,AP> vd);}
 }
 \ccGlue
 \ccFunction{
-std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT,AP> vd);}
+std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,AT,AP> vd);}
 {Reads the current state of the Voronoi diagram from the input
   stream \ccc{is}.\\
   The following operator must be defined:\\
@@ -459,7 +459,7 @@ std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT,AP> vd);}
 %
 \ccMethod{void clear();}{Clears all contents of the Voronoi diagram.}
 \ccGlue
-\ccMethod{void swap(Voronoi_diagram_2<DG,VT,AP> other);}{The Voronoi
+\ccMethod{void swap(Voronoi_diagram_2<DG,AT,AP> other);}{The Voronoi
   diagrams \ccc{other} and \ccVar\ are
   swapped. \ccVar.\ccc{swap(other)} should be preferred to
   \ccVar\ccc{ = other} or to 
@@ -467,11 +467,11 @@ std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,VT,AP> vd);}
 
 \ccSeeAlso
 \ccc{DelaunayGraph_2}\\
-\ccc{VoronoiTraits_2}\\
+\ccc{AdaptationTraits_2}\\
 \ccc{AdaptationPolicy_2}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Face}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge}\\
-\ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Face}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex}\\
 \ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Regular_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Triangulation_hierarchy_2<Tr>} provided that \ccc{Tr} is a
@@ -480,11 +480,11 @@ model of \ccc{DelaunayGraph_2}\\
 \ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
 \ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
 \ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}\\
-\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
-\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
-\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
-\ccc{CGAL::Segment_Delaunay_graph_Voronoi_traits_2<SDG2>}\\
-\ccc{CGAL::Identity_policy_2<DG,VT>}\\
+\ccc{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}\\
+\ccc{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}\\
+\ccc{CGAL::Identity_policy_2<DG,AT>}\\
 \ccc{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
 \ccc{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}\\
 \ccc{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}\\

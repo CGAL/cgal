@@ -24,10 +24,10 @@
 
 \ccHeading{Definition}
 
-\cgal\ provides the class \ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>} for
+\cgal\ provides the class \ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>} for
 adapting the various (triangulated) Delaunay graphs to Voronoi
 diagrams according to some adaptation policy.
-In particular, the class \ccc{CGAL::Voronoi_diagram_2<DG,VT,AP>}
+In particular, the class \ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
 provides an API for the duals of (triangulated) Delaunay graphs, that
 makes them look like planar subdivisions. The adaptation policy is
 responsible for deciding which edges and faces of these duals should
@@ -37,7 +37,7 @@ the result of the fact that Delaunay graphs are always triangulated
 and are due to degenerate configurations in the generating data.
 
 The three template parameters must be models of the
-\ccc{DelaunayGraph_2}, \ccc{VoronoiTraits_2} and
+\ccc{DelaunayGraph_2}, \ccc{AdaptationTraits_2} and
 \ccc{AdaptationPolicy_2} concepts, respectively.
 The first concept is related to the Delaunay graphs that are to be
 adapted, whereas the second one is responsible for
@@ -49,19 +49,19 @@ performing this adaptation.
 
 \ccHeading{Concepts}
 \ccRefConceptPage{DelaunayGraph_2}\\
-\ccRefConceptPage{VoronoiTraits_2}\\
+\ccRefConceptPage{AdaptationTraits_2}\\
 \ccRefConceptPage{AdaptationPolicy_2}
 
 \ccHeading{Classes}
-\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,VT,AP>}\\
-\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,VT,AP>::Halfedge}\\
-\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,VT,AP>::Vertex}\\
-\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,VT,AP>::Face}\\
-\ccRefIdfierPage{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
-\ccRefIdfierPage{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
-\ccRefIdfierPage{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
-\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_Voronoi_traits_2<SDG2>}\\
-\ccRefIdfierPage{CGAL::Identity_policy_2<DG,VT>}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>::Face}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}\\
+\ccRefIdfierPage{CGAL::Identity_policy_2<DG,AT>}\\
 \ccRefIdfierPage{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
 \ccRefIdfierPage{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}\\
 \ccRefIdfierPage{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}\\

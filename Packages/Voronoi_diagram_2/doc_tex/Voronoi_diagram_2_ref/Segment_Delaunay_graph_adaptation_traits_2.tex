@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-\begin{ccRefClass}{Regular_triangulation_Voronoi_traits_2<RT2>}
+\begin{ccRefClass}{Segment_Delaunay_graph_adaptation_traits_2<SDG2>}
 
 %% add template arg's if necessary
 
@@ -27,26 +27,27 @@
 \ccCreationVariable{tr}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
+The class \ccRefName\ provides a model for the \ccc{AdaptationTraits_2}
 concept. The template parameter of the \ccRefName\ class must be a
 model of the \ccc{DelaunayGraph_2} concept, and in particular it has
-the semantics of a 2D regular triangulation.
+the semantics of the 2D (triangulated) segment Delaunay graph.
 
 
-\ccInclude{CGAL/Regular_triangulation_Voronoi_traits_2.h}
+\ccInclude{CGAL/Segment_Delaunay_graph_adaptation_traits_2.h}
 
 \ccIsModel
-\ccc{VoronoiTraits_2}
+\ccc{AdaptationTraits_2}
 
 \ccTypes
-\ccThree{typedef CGAL::Tag_true}{Has_nearest_site_2+}{}
+\ccThree{typedef CGAL::Tag_false}{Has_nearest_site_2+}{}
 \ccTypedef{typedef CGAL::Tag_true Has_nearest_site_2;}{}
 
 \ccSeeAlso
-\ccc{VoronoiTraits_2}\\
+\ccc{AdaptationTraits_2}\\
 \ccc{DelaunayGraph_2}\\
-\ccc{Voronoi_diagram_2<DG,VT,AP>}\\
-\ccc{CGAL::Regular_triangulation_2<Traits,Tds>}
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}\\
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+
