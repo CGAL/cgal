@@ -53,7 +53,7 @@ endef
 %.gif : %.dvi
 	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
 	$(toeps) > $(basename $@).eps2
-	convert $(basename $@).eps2 $@;
+	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
 %.ps : %.dvi
 	dvips -P cmz $< -o
