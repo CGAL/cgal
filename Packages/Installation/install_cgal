@@ -93,9 +93,6 @@ LEDA_TEST_PASSED=''
 # GMP specific:
 #
 
-# version of gmp shipped with CGAL:
-GMP_VERSION='gmp-4.1.3'
-
 # toggles use of GMP ('' - no, '_GMP' - use it)
 GMP_SUPPORT=''
 # toggles use of GMP's C++ wrapper ('' - no, '_GMPXX' - use it)
@@ -106,8 +103,6 @@ GMPXX_SUPPORT=''
 # 's' - in sysdirs, no flags necessary,
 # 'e' - we need compiler/linker flags and GMP_INCL_DIR/GMP_LIB_DIR for this,
 # 'x' - in sysdirs, but specify GMP_INCL_DIR/GMP_LIB_DIR anyway
-# 'c' - in the cgal tree,
-# 'z' - in the cgal tree, but specify GMP_INCL_DIR/GMP_LIB_DIR anyway)
 GMP_INSTALLATION=''
 GMP_INCL_DIR=''
 GMP_LIB_DIR=''
@@ -708,7 +703,6 @@ set_dirs_dependant_on_cgal_dir()
     CGAL_SRC_DIR=${CGAL_DIR}/src
     CGAL_TEST_DIR=${CGAL_DIR}/test
     CGAL_CONF_DIR=${CGAL_DIR}/config
-    CGAL_AUX_DIR=${CGAL_DIR}/auxiliary
     CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
     CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
     CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
@@ -1549,9 +1543,7 @@ compiler_test_ldflags()
 
 gmp_cxxflags()
 {
-    if [ -n "${GMP_SUPPORT}" -a \
-	"${GMP_INSTALLATION}" != 'c' -a \
-	"${GMP_INSTALLATION}" != 's' ]; then
+    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" != 's' ]; then
 	tmp_dir_name=`_where_is 'GMP_INCL_DIR'`
 	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
     fi
@@ -1560,8 +1552,7 @@ gmp_cxxflags()
 gmp_libpathflags()
 {
     if [ -n "${SEPARATE_LIBPATH}" -a -n "${GMP_SUPPORT}" ]; then
-	if [ "${GMP_INSTALLATION}" != 'c' -a \
-	     "${GMP_INSTALLATION}" != 's' ]; then
+	if [ "${GMP_INSTALLATION}" != 's' ]; then
 	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
@@ -1571,8 +1562,7 @@ gmp_libpathflags()
 gmp_ldflags()
 {
     if [ -n "${GMP_SUPPORT}" ]; then
-	if [ -z "${SEPARATE_LIBPATH}" -a "${GMP_INSTALLATION}" != 'c' -a \
-             "${GMP_INSTALLATION}" != 's' ]; then
+	if [ -z "${SEPARATE_LIBPATH}" -a "${GMP_INSTALLATION}" != 's' ]; then
 	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
@@ -1587,9 +1577,6 @@ gmp_ldflags()
 gmp_test_cxxflags()
 {
     compiler_test_cxxflags
-    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
-	cgal_cxxflags
-    fi
     gmp_cxxflags
 }
 
@@ -1597,9 +1584,6 @@ gmp_test_libpathflags()
 {
     compiler_test_libpathflags
     gmp_libpathflags
-    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
-	cgal_ldflags
-    fi
 }
 
 gmp_test_ldflags()
@@ -2575,15 +2559,18 @@ check_GMPXX_SUPPORT()
 
 check_GMP_INSTALLATION()
 {
-    if [ -n "${GMP_INSTALLATION}" -a \
-	"${GMP_INSTALLATION}" != 'x' -a \
-	"${GMP_INSTALLATION}" != 'c' -a \
-	"${GMP_INSTALLATION}" != 'z' -a \
-	"${GMP_INSTALLATION}" != 'e' -a \
-	"${GMP_INSTALLATION}" != 's' ]; then
-	$1 "WARNING: GMP_INSTALLATION should be \"e\", \"z\","
-	$1 "   \"c\", \"x\", \"s\" or empty."
-	return 0
+    if [ -n "${GMP_INSTALLATION}" ]; then
+        # for backwards-compatibility, we used to support GMP installation 
+        # within the CGAL tree
+        if [ "${GMP_INSTALLATION}" = 'c' -o "${GMP_INSTALLATION}" = 'z' ]; then
+            GMP_INSTALLATION='e'
+        fi
+	if [ "${GMP_INSTALLATION}" != 'x' -a \
+	     "${GMP_INSTALLATION}" != 'e' -a \
+	     "${GMP_INSTALLATION}" != 's' ]; then
+	  $1 "WARNING: GMP_INSTALLATION should be \"e\", \"x\", \"s\", or empty."
+	  return 0
+        fi
     fi
     return 1
 }
@@ -3519,9 +3506,8 @@ set_lib_compiled_flag()
 }
 
 # set GMP_INSTALLATION
-# first check for sysdir installation, then in CGAL tree,
-# finally an external installation
-# return 0, iff one of these test succeeded
+# first check for sysdir installation, then for an external installation
+# return 0, iff one of these tests succeeded
 # ($1 non-empty indicates verbosity)
 search_gmp()
 {
@@ -3529,15 +3515,9 @@ search_gmp()
     if test_gmp 'GMP syslib' "$1"; then
 	log_print "remark: GMP is installed in sysdirs."
     else
-	make_lib_dir
-	GMP_INSTALLATION='c'
-	if test_gmp 'GMP CGAL' "$1"; then
-	    log_print "remark: GMP is installed in CGAL tree."
-	else
-	    GMP_INSTALLATION='e'
-	    log_print "remark: GMP is not installed."
-	    return 1
-	fi
+	GMP_INSTALLATION='e'
+	log_print "remark: GMP is not installed."
+	return 1
     fi
     return 0
 }
@@ -3619,18 +3599,14 @@ retrieve_compiler_settings()
     fi
     if try_to_get_var_from_file GMP_INCL_DIR "${_file}"; then
 	if [ -n "${GMP_SUPPORT}" ]; then
-	    if [ "${GMP_INSTALLATION}" = 'x' -o \
-		 "${GMP_INSTALLATION}" = 'z' -o \
-		 "${GMP_INSTALLATION}" = 'e' ]; then
+	    if [ "${GMP_INSTALLATION}" = 'x' -o "${GMP_INSTALLATION}" = 'e' ]; then
 		SETUP_COMPLETE=''
 	    fi
 	fi
     fi
     if try_to_get_var_from_file GMP_LIB_DIR "${_file}"; then
 	if [ -n "${GMP_SUPPORT}" ]; then
-	    if [ "${GMP_INSTALLATION}" = 'x' -o \
-		 "${GMP_INSTALLATION}" = 'z' -o \
-		 "${GMP_INSTALLATION}" = 'e' ]; then
+	    if [ "${GMP_INSTALLATION}" = 'x' -o "${GMP_INSTALLATION}" = 'e' ]; then
 		SETUP_COMPLETE=''
 	    fi
 	fi
@@ -3820,8 +3796,6 @@ test_setup()
 {
     SETUP_COMPLETE=''
     make_lib_dir
-    link_gmp
-    link_gmpxx
 
     # COMPILER
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
@@ -4325,10 +4299,6 @@ leda_menu()
 		    LEDA_SUPPORT=''
 		    reassemble_compiler
 		fi
-		# check, if libgmp can be linked
-		link_gmp
-		# check, if libgmpxx can be linked
-		link_gmpxx
 		;;
 	    i|I)
 		if [ -n "${LEDA_SUPPORT}" ]; then
@@ -4366,28 +4336,21 @@ gmp_menu()
 {
     while [ 0 ]; do
 	menu_header 'GMP'
-	print_line "${_bold_on}<C>${_bold_off}  Install GMP in CGAL tree"
 	print_line "${_bold_on}<G>${_bold_off}  Toggle GMP support"
 	if [ -n "${GMP_SUPPORT}" ]; then
 	    print_line "${_bold_on}<X>${_bold_off}  Toggle GMP built-in C++ interface support"
 	    print_line "${_bold_on}<I>${_bold_off}  GMP  include directory"
 	    case ${GMP_INSTALLATION} in
-		c) _tmp='<CGAL include directory>';;
 		s) _tmp='<system include directory>';;
 		*) _tmp="${GMP_INCL_DIR}";;
 	    esac
 	    print_line "     ${_tmp:-<undefined>}"
 	    print_line "${_bold_on}<L>${_bold_off}  GMP  lib directory"
 	    case ${GMP_INSTALLATION} in
-		c) _tmp='<CGAL lib directory>';;
 		s) _tmp='<system lib directory>';;
 		*) _tmp="${GMP_LIB_DIR}";;
 	    esac
 	    print_line "     ${_tmp:-<undefined>}"
-	    if [ "${GMP_INSTALLATION}" = 'z' ]; then
-		print_line \
-		    "${_bold_on}<Z>${_bold_off}  Use GMP installation in CGAL tree"
-	    fi
 	    if [ "${GMP_INSTALLATION}" = 'x' ]; then
 		print_line \
 		    "${_bold_on}<S>${_bold_off}  Use GMP installation in system dirs"
@@ -4397,7 +4360,6 @@ gmp_menu()
 	menu_tailer 'Support Menu'
 
 	case $KEY in
-	    c|C) install_gmp;;
 	    g|G)
 		if [ -z "${GMP_SUPPORT}" ]; then
 		    SETUP_COMPLETE=''
@@ -4434,7 +4396,6 @@ gmp_menu()
 			GMP_TEST_PASSED=''
 			SETUP_COMPLETE=''
 			case ${GMP_INSTALLATION} in
-			    c|z) GMP_INSTALLATION='z';;
 			    s|x) GMP_INSTALLATION='x';;
 			    *) GMP_INSTALLATION='e';;
 			esac
@@ -4447,18 +4408,10 @@ gmp_menu()
 			GMP_TEST_PASSED=''
 			SETUP_COMPLETE=''
 			case ${GMP_INSTALLATION} in
-			    c|z) GMP_INSTALLATION='z';;
 			    s|x) GMP_INSTALLATION='x';;
 			    *) GMP_INSTALLATION='e';;
 			esac
 		    fi
-		fi
-		;;
-	   z|Z)
-		if [ -n "${GMP_SUPPORT}" -a \
-		     "${GMP_INSTALLATION}" = 'z' ]; then
-		    GMP_TEST_PASSED='y'
-		    GMP_INSTALLATION='c'
 		fi
 		;;
 	    t|T)
@@ -4902,200 +4855,6 @@ _do_command_may_fail()
     fi
 }
 
-# used by install_gmp to create symbolic links of libgmp.a
-# in the CGAL tree
-link_gmp()
-{
-    for i in ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER} \
-      ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}_LEDA; do
-	if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME} -a \
-	    -r ${i}/${GMP_LIBNAME} ]
-	then
-	    case ${CGAL_OS_COMPILER} in
-		*CYGWIN*)
-		    ${_cp} ${i}/${GMP_LIBNAME} \
-			${CGAL_LIB_DIR}/`full_ostype`
-		    log_print "remark: copied libgmp from ${i}"
-		    ;;
-		*)
-		    ${_ln} -s ${i}/libgmp.* ${CGAL_LIB_DIR}/`full_ostype`
-		    log_print "remark: linked libgmp from ${i}"
-		    ;;
-	    esac
-	    log_print "  to ${CGAL_LIB_DIR}/`full_ostype`."
-	fi
-    done
-}
-
-link_gmpxx()
-{
-    for i in ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER} \
-      ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}_LEDA; do
-        if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/${GMPXX_LIBNAME} -a \
-	    -r ${i}/${GMPXX_LIBNAME} ]
-	then
-	    case ${CGAL_OS_COMPILER} in
-		*CYGWIN*)
-		    ${_cp} ${i}/${GMPXX_LIBNAME} \
-			${CGAL_LIB_DIR}/`full_ostype`
-		    log_print "remark: copied libgmpxx from ${i}"
-		    ;;
-		*)
-		    ${_ln} -s ${i}/libgmpxx.* ${CGAL_LIB_DIR}/`full_ostype`
-		    log_print "remark: linked libgmpxx from ${i}"
-		    ;;
-	    esac
-	    log_print "  to ${CGAL_LIB_DIR}/`full_ostype`."
-	fi
-    done
-}
-
-# used by install_gmp
-install_gmp_sub()
-{
-    cd ${CGAL_AUX_DIR}
-    if [ ! -d ${GMP_VERSION} ]; then
-	# unzip/untar
-	gmpfile=${GMP_VERSION}.tar.gz
-	_check_read ${gmpfile}
-	_check_write ${CGAL_AUX_DIR}
-	_check_for_sysutil gunzip y
-	_do_command "${_gunzip} -c ${gmpfile} | ${_tar} xf -" "Unzip/Untar"
-    fi
-
-    cd ${GMP_VERSION}
-    _preopts=""
-    _opts="--prefix=${CGAL_DIR}/GMP"
-    _opts="${_opts} --libdir=\"${CGAL_LIB_DIR}/`full_ostype`\""
-    _opts="${_opts} --includedir=\"${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}\""
-    case ${SYST} in
-	*Darwin*)
-	    _opts="${_opts} --disable-shared"
-        ;;
-        *SunOS*)
-	    if [ "`uname -r`" != "5.6" ]; then
-	        _opts="${_opts} ABI=32"
-	    fi
-            case `compiler_description` in
-	        *SUNPRO*) _preopts="${_preopts} CFLAGS=\"-xarch=v8plus\"";;
-            esac
-	;;
-        *IRIX*)
-            case `compiler_description` in
-		*MIPSPRO*n32*) _opts="${_opts} ABI=n32";;
-		*MIPSPRO*64*) _opts="${_opts} ABI=64";;
-            esac
-	;;
-    esac
-    if [ -n "${GMPXX_SUPPORT}" ]; then
-        _preopts="${_preopts} CXX=\"`compiler_bin`\""
-        _opts="${_opts} --enable-cxx"
-    fi
-    if _do_command_may_fail "${_preopts} ./configure ${_opts} --enable-mpfr" Configuring; then
-	if _do_command_may_fail "make" Building
-	then
-	    _do_command "make install" "Installing"
-	    _do_command "make clean" "Cleaning"
-            _do_command "cp ${CGAL_DIR}/GMP/include/*.h ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
-	    GMP_INSTALLATION='c'
-	fi
-    fi
-    cd ../..
-}
-
-
-# install GNU GMP in the CGAL directory tree
-install_gmp()
-{
-    make_lib_dir
-    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${GMP_LIBNAME} -o \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp${SHARED_LIB_EXT} ]; then
-	if [ "${GMP_INSTALLATION}" != "c" ]; then
-	    GMP_INSTALLATION='c'
-	    GMP_TEST_PASSED=''
-	fi
-	go_down_lines 2
-	print_line "There already exists a GMP installation"
-	print_line "for this os/compiler in the CGAL tree."
-	print_empty_line
-	print_empty_line
-	print_filled_line
-	go_up_lines 2
-	print_prompt "Do you want to proceed anyway (y/N)? "
-	_read
-	if [ "${KEY}" != 'y' ]; then
-	    return
-	fi
-    fi
-
-    # remove all os/compiler specific stuff
-    SAVE_LEDA="${LEDA_SUPPORT}"
-    LEDA_SUPPORT=''
-    make_lib_dir
-
-    clear_screen
-    print_filled_line
-    print_empty_line
-    print_headline "Installing GNU GMP in the CGAL tree"
-    print_filled_line
-    write_buffer "\n"
-    flush_buffer
-    ${_printf} "%s\t\t%s\n" "${_LEFTSPACE}OS:" "${SYST}"
-    ${_printf} "%s\t%s\n\n" \
-	"${_LEFTSPACE}COMPILER:" "`extended_compiler_description`"
-
-    if [ -n "${GMPXX_SUPPORT}" ]; then
-        ${_printf} "%s\t%s\n\n" "${_LEFTSPACE}GMP C++ interface:  supported"
-    else
-        ${_printf} "%s\t%s\n\n" "${_LEFTSPACE}GMP C++ interface:  not supported"
-    fi
-
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
-    _check_dir_exists_create ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}
-    case ${CGAL_OS_COMPILER} in
-	*CYGWIN*)
-	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-4.1.3"
-	    case `compiler_description` in
-		*VC++*)    _tmp_name=msvc
-			   _tmp_lib=gmp.lib
-                           _tmp_mpfr_lib=mpfr.lib
-			   ;;
-		*Intel*)    _tmp_name=msvc
-			   _tmp_lib=gmp.lib
-                           _tmp_mpfr_lib=mpfr.lib
-			   ;;
-		*Borland*) _tmp_name=bcc
-			   _tmp_lib=gmp.lib
-                           _tmp_mpfr_lib=mpfr.lib
-			   ;;
-		*)         _tmp_name=gcc
-			   _tmp_lib=libgmp.a
-                           _tmp_mpfr_lib=libmpfr.a
-			   ;;
-	    esac
-	    ${_cp} "${gmpdir}/${_tmp_name}/gmp.h" \
-               "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
-            ${_cp} "${gmpdir}/${_tmp_name}/mpfr.h" \
-               "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
-            ${_cp} "${gmpdir}/${_tmp_name}/mpf2mpfr.h" \
-               "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
-	    ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_lib}" \
-	       "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
-            ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_mpfr_lib}" \
-               "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
-	    GMP_INSTALLATION='c'
-	    ;;
-	*) install_gmp_sub;;
-    esac
-    write_buffer "\n"
-    print_filled_line
-    wait_for_enter
-
-    # restore os/compiler stuff
-    LEDA_SUPPORT="${SAVE_LEDA}"
-    link_gmp
-    link_gmpxx
-}
 
 # ---------------------------------------------------------------------
 # lib menu
@@ -5183,9 +4942,7 @@ write_compiler_flags()
   # GMP_INCL_DIR
   #
   if [ -n "${GMP_SUPPORT}" ]; then
-    if [ "${GMP_INSTALLATION}" = 'x' -o \
-	 "${GMP_INSTALLATION}" = 'z' -o \
-	 "${GMP_INSTALLATION}" = 'e' ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o "${GMP_INSTALLATION}" = 'e' ]; then
 	print_as_shell_comment \
 	  "*** Fill in your GMP include directory ***" \
 	  >> ${FILE}
@@ -5285,9 +5042,7 @@ write_compiler_flags()
   ${_printf} "\t%s" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
 
   if [ -n "${GMP_SUPPORT}" ]; then
-    if [ "${GMP_INSTALLATION}" = 'x' -o \
-	 "${GMP_INSTALLATION}" = 'z' -o \
-	 "${GMP_INSTALLATION}" = 'e' ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o "${GMP_INSTALLATION}" = 'e' ]; then
 	 ${_printf} "\t%s" "'-I\$(GMP_INCL_DIR)'" >> ${FILE}
     fi
   fi
@@ -5345,9 +5100,7 @@ write_linker_flags()
   # GMP_LIB_DIR
   #
   if [ -n "${GMP_SUPPORT}" ]; then
-    if [ "${GMP_INSTALLATION}" = 'x' -o \
-	 "${GMP_INSTALLATION}" = 'z' -o \
-	 "${GMP_INSTALLATION}" = 'e' ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o "${GMP_INSTALLATION}" = 'e' ]; then
 	print_as_shell_comment \
 	  "*** Fill in your GMP lib directory ***" \
 	  >> ${FILE}
@@ -5470,9 +5223,7 @@ write_linker_flags()
   fi
 
   if [ -n "${GMP_SUPPORT}" ]; then
-    if [ "${GMP_INSTALLATION}" = 'x' -o \
-	 "${GMP_INSTALLATION}" = 'z' -o \
-	 "${GMP_INSTALLATION}" = 'e' ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o "${GMP_INSTALLATION}" = 'e' ]; then
 	if [ -n "${CYGWIN_COMPILER}" ]; then
 	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
 	else
@@ -6084,10 +5835,13 @@ _build_one()
             set_ostype
             OLD_LIBDIR="${CGAL_LIB_DIR}/`full_ostype`"
             retrieve_compiler_settings
+            # rename old config file to not match os in the future
+            ${_mv} "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`" \
+              "${CGAL_INSTALL_CONF_DIR}/old_${CGAL_OS_COMPILER}`leda_support`"
             SYST="${NEW_SYST}"
             set_ostype
-           # copy (potential) GMP libs
-            cp -r "${OLD_LIBDIR}" "${CGAL_LIB_DIR}/`full_ostype`" 
+            # copy (potential) GMP libs
+            ${_cp} -r "${OLD_LIBDIR}" "${CGAL_LIB_DIR}/`full_ostype`" 
         else
             retrieve_compiler_settings
         fi
@@ -6181,35 +5935,6 @@ test_menu()
 # upgrade menu
 #
 
-# search for files in ${UPGRADE_DIR} that should be copied into the
-# ${CGAL_DIR} tree
-# $1 = descriptive string of file type
-# $2 = subdirectory (of UPGRADE_DIR) to search (must not match .../CGAL/file)
-# $3 = directory to copy files to
-# $4 = list of filenames patterns to search for
-upgrade_copy()
-{
-    go_up_lines 1
-    print_line "${1}"
-    print_filled_line
-    flush_buffer
-    log_print "${1}"
-    for j in ${4}; do
-	for i in `${_find} ${UPGRADE_FROM}/${2} -follow -name "${j}" -print`; do
-            tmpdir=`${_dirname} $i`
-            if [ `${_basename} $tmpdir` != "CGAL" ]; then
-	        go_up_lines 1
-	        print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {printf "%s/%s\n",$(NF-1),$(NF)}'`"
-	        print_filled_line
-	        flush_buffer
-	        newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/${2}${3}g"`
-	        _check_dir_exists_create ${newdir}
-	        cp ${i} ${newdir}
-            fi
-	done
-    done
-}
-
 run_ranlib_for_libs()
 {
     case ${SYST} in
@@ -6246,9 +5971,16 @@ upgrade()
     log_print "done."
 
     # copy gmp header and libs
-    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h gmpxx.h mpfr.h mpf2mpfr.h"
-    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* libgmpxx.* gmp.lib libmpfr.* mpfr.lib"
-    run_ranlib_for_libs "lib" "${CGAL_LIB_DIR}" "libgmp.a libgmpxx.a libmpfr.a"
+    if [ -r "${UPGRADE_FROM}/include/gmp.h" ]; then 
+        print_filled_line
+        print_line "!!! ATTENTION !!!"
+        print_line "You seem to have GMP installed in the CGAL directories."
+        print_line "This setup is no longer supported."
+        print_line "Please install gmp separately from CGAL."
+        print_filled_line
+        log_print "Error: GMP installation in CGAL directories is no longer supported."
+        log_print "  You have to re-configure GMP support manually."
+    fi    
     print_headline "D O N E"
     go_up_lines 1
     print_filled_line
