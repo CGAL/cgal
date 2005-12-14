@@ -11,19 +11,19 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Voronoi_diagram_2.h>
-#include <CGAL/Delaunay_triangulation_Voronoi_traits_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_traits_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
 
 // typedefs for defining the adaptor
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                  K;
 typedef CGAL::Delaunay_triangulation_2<K>                                    DT;
-typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>                    VT;
+typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DT>                 AT;
 typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT> AP;
-typedef CGAL::Voronoi_diagram_2<DT,VT,AP>                                    VD;
+typedef CGAL::Voronoi_diagram_2<DT,AT,AP>                                    VD;
 
 // typedef for the result type of the point location
-typedef VT::Site_2                    Site_2;
-typedef VT::Point_2                   Point_2;
+typedef AT::Site_2                    Site_2;
+typedef AT::Point_2                   Point_2;
 
 typedef VD::Locate_result             Locate_result;
 typedef VD::Vertex_handle             Vertex_handle;
@@ -64,24 +64,21 @@ int main()
               << ") lies on a Voronoi " << std::flush;
 
     Locate_result lr = vd.locate(p);
-    if ( lr.is_vertex() ) {
-      Vertex_handle v = lr;
+    if ( Vertex_handle* v = boost::get<Vertex_handle>(&lr) ) {
       std::cout << "vertex." << std::endl;
       std::cout << "The Voronoi vertex is:" << std::endl;
-      std::cout << "\t" << v->point() << std::endl;
-    } else if ( lr.is_edge() ) {
-      Halfedge_handle e = lr;
+      std::cout << "\t" << (*v)->point() << std::endl;
+    } else if ( Halfedge_handle* e = boost::get<Halfedge_handle>(&lr) ) {
       std::cout << "edge." << std::endl;
       std::cout << "The source and target vertices "
                 << "of the Voronoi edge are:" << std::endl;
-      print_endpoint(e, true);
-      print_endpoint(e, false);
-    } else if ( lr.is_face() ) {
-      Face_handle f = lr;
+      print_endpoint(*e, true);
+      print_endpoint(*e, false);
+    } else if ( Face_handle* f = boost::get<Face_handle>(&lr) ) {
       std::cout << "face." << std::endl;
       std::cout << "The vertices of the Voronoi face are"
                 << " (in counterclockwise order):" << std::endl;
-      Ccb_halfedge_circulator ec_start = f->outer_ccb();
+      Ccb_halfedge_circulator ec_start = (*f)->outer_ccb();
       Ccb_halfedge_circulator ec = ec_start;
       do {
         print_endpoint(ec, false);
