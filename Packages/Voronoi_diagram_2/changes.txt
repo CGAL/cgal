@@ -12,6 +12,8 @@
   * testsuite now checks for the new types and interface.
   To be done: add a figure in Halfedge; rename VoronoiTraits_2 to
   AdaptationTraits_2.
+- renamed Voronoi_traits to Adaptation_traits in the code
+- fixed problem with Object assigning in demo
 
 30 November 2005:  Menelaos Karavelas
 - fixed bug in point location of the Apollonius diagram, when the

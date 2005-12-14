@@ -65,13 +65,14 @@ class Virtual_Voronoi_diagram_base_2
   typedef typename VBase::Point_2      Point_2;
   typedef typename VBase::Circle_2     Circle_2;
 
-  typedef typename Base::Locate_result            Locate_result;
   typedef typename Base::Halfedge                 Halfedge;
   typedef typename Base::Halfedge_handle          Halfedge_handle;
   typedef typename Base::Face_handle              Face_handle;
   typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
   typedef typename Base::Edge_iterator            Edge_iterator;
   typedef typename Base::Site_iterator            Site_iterator;
+
+  typedef typename Base::Locate_result            Locate_result;
 
   typedef Halfedge_with_draw_t                    Halfedge_with_draw;
 
@@ -80,7 +81,7 @@ class Virtual_Voronoi_diagram_base_2
   typedef typename Delaunay_graph::Vertex_handle  Delaunay_vertex_handle;
   typedef typename Delaunay_graph::Face_handle    Delaunay_face_handle;
 
-  typedef typename Base::Voronoi_traits::Site_2   Site_2;
+  typedef typename Base::Adaptation_traits::Site_2   Site_2;
 
   typedef Triangulation_cw_ccw_2                  CW_CCW_2;
 
@@ -210,11 +211,21 @@ class Virtual_Voronoi_diagram_base_2
 
   virtual void draw_feature(const Object& o, Qt_widget& widget) const {
     Locate_result lr;
-    if ( !assign(lr, o) ) { return; }
+    //    if ( !CGAL::assign(lr, o) ) { return; }
+#if 1
+    const Locate_result* lrp0 = CGAL::object_cast<Locate_result>(&o);
+    Locate_result* lrp = const_cast<Locate_result*>(lrp0);
+    if ( lrp == NULL ) { return; }
+#else
+    try {
+      lr = CGAL::object_cast<Locate_result>(o);
+    } catch ( CGAL::Bad_object_cast ) {
+      return;
+    }
+#endif
 
-    if ( lr.is_face() ) {
-      Face_handle f = lr;
-      Ccb_halfedge_circulator ccb_start = f->outer_ccb();
+    if ( Face_handle* f = boost::get<Face_handle>(lrp) ) {
+      Ccb_halfedge_circulator ccb_start = (*f)->outer_ccb();
       Ccb_halfedge_circulator ccb = ccb_start;
       do {
 	draw_edge(*ccb, widget);
@@ -251,7 +262,7 @@ class Virtual_Voronoi_diagram_base_2
     if ( Base::number_of_faces() == 0 ) {
       return CGAL::make_object(int(0));
     }
-    typename Base::Voronoi_traits::Point_2 p(q.x(), q.y());
+    typename Base::Adaptation_traits::Point_2 p(q.x(), q.y());
     Locate_result lr = Base::locate(p);
     return CGAL::make_object(lr);
   }
@@ -289,8 +300,8 @@ class Concrete_Voronoi_diagram_2
   typedef VBase::Base     Base;
   typedef VBase::Point_2  Point_2;
 
-  Base::Voronoi_traits::Site_2 to_site(const Point_2& p) const {
-    return Base::Voronoi_traits::Site_2(p.x(), p.y());
+  Base::Adaptation_traits::Site_2 to_site(const Point_2& p) const {
+    return Base::Adaptation_traits::Site_2(p.x(), p.y());
   }
 
  public:
@@ -302,8 +313,12 @@ class Concrete_Voronoi_diagram_2
   }
 
   virtual Object get_conflicts(const Point_2& q) const {
-    Base::Voronoi_traits::Point_2 p = to_site(q);
+    Base::Adaptation_traits::Point_2 p = to_site(q);
     return conflicts( to_site(q) );
+  }
+
+  virtual Object get_conflicts(const Circle_2& q) const {
+    return CGAL::make_object( (int)0 );
   }
 
 #ifdef CGAL_USE_QT
@@ -315,10 +330,7 @@ class Concrete_Voronoi_diagram_2
 
   virtual void draw_conflicts(const Circle_2& c, const Object& o,
 			      Qt_widget& widget) const {
-#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
-    bool THIS_METHOD_SHOULD_NEVER_BE_CALLED = false;
-    CGAL_assertion( THIS_METHOD_SHOULD_NEVER_BE_CALLED );
-#endif
+    return;
   }
 #endif
 

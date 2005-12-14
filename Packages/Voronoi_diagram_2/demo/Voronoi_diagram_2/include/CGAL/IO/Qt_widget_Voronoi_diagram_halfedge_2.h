@@ -36,7 +36,7 @@ class Voronoi_diagram_halfedge_2
   typedef typename Voronoi_diagram::Halfedge         Base;
   typedef typename Base::Delaunay_edge               Delaunay_edge;
 
-  typedef typename Voronoi_diagram::Voronoi_traits::Site_2  Site_2;
+  typedef typename Voronoi_diagram::Adaptation_traits::Site_2  Site_2;
 
  public:
   Voronoi_diagram_halfedge_2() : Base() {}

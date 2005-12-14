@@ -11,9 +11,6 @@
 #include <list>
 #include <vector>
 
-//#include "svd_insert.h"
-//#include "svd_draw.h"
-
 #include "typedefs.h"
 
 //************************************

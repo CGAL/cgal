@@ -40,8 +40,8 @@ class Apollonius_diagram_halfedge_2
   typedef typename Voronoi_diagram::Halfedge         Base;
   typedef typename Base::Delaunay_edge               Delaunay_edge;
 
-  typedef typename Voronoi_diagram::Voronoi_traits::Site_2   Site_2;
-  typedef typename Voronoi_diagram::Voronoi_traits::Point_2  Point_2;
+  typedef typename Voronoi_diagram::Adaptation_traits::Site_2   Site_2;
+  typedef typename Voronoi_diagram::Adaptation_traits::Point_2  Point_2;
  public:
   Apollonius_diagram_halfedge_2() : Base() {}
   Apollonius_diagram_halfedge_2(const Base& e)

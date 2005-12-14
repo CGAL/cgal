@@ -16,9 +16,9 @@
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
 
 #include <CGAL/Voronoi_diagram_2.h>
-#include <CGAL/Delaunay_triangulation_Voronoi_traits_2.h>
-#include <CGAL/Regular_triangulation_Voronoi_traits_2.h>
-#include <CGAL/Apollonius_graph_Voronoi_traits_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_traits_2.h>
+#include <CGAL/Regular_triangulation_adaptation_traits_2.h>
+#include <CGAL/Apollonius_graph_adaptation_traits_2.h>
 
 struct CK : public CGAL::Simple_cartesian<double> {};
 typedef CK Rep;
@@ -36,13 +36,13 @@ typedef CGAL::Delaunay_triangulation_2<DT_GT>        DT2;
 typedef CGAL::Regular_triangulation_2<RT_GT>         RT2;
 typedef CGAL::Apollonius_graph_2<AG_GT>              AG2;
 
-typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>  DT_VT2;
-typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT2>   RT_VT2;
-typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG2>        AG_VT2;
+typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>  DT_AT2;
+typedef CGAL::Regular_triangulation_adaptation_traits_2<RT2>   RT_AT2;
+typedef CGAL::Apollonius_graph_adaptation_traits_2<AG2>        AG_AT2;
 
-typedef CGAL::Voronoi_diagram_2<DT2,DT_VT2>          VD2;
-typedef CGAL::Voronoi_diagram_2<RT2,RT_VT2>          PD2;
-typedef CGAL::Voronoi_diagram_2<AG2,AG_VT2>          AD2;
+typedef CGAL::Voronoi_diagram_2<DT2,DT_AT2>          VD2;
+typedef CGAL::Voronoi_diagram_2<RT2,RT_AT2>          PD2;
+typedef CGAL::Voronoi_diagram_2<AG2,AG_AT2>          AD2;
 
 #include "Virtual_Voronoi_diagram_2.h"
 
