@@ -1,0 +1,5 @@
+15 December 2005:  Menelaos Karavelas
+initial revision of the package:
+- added cgal_app.icns: icons file needed for MacOSX applications
+- added make_macosx_app script: needed for creating demos in MacOSX
+
