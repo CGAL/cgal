@@ -13,7 +13,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <class InputIterator, class Polyhedron_3, class SkinSurfaceTraits_3>
 void skin_surface_3(InputIterator first, InputIterator last,
-  Polyhedron_3 &polyhedron, const SkinSurfaceTraits_3 &skin_surface_traits) {
+  Polyhedron_3 &polyhedron, const SkinSurfaceTraits_3 &skin_surface_traits,
+  bool verbose = false) {
 
   // Types
   typedef SkinSurfaceTraits_3                              Skin_surface_traits;
@@ -34,11 +35,11 @@ void skin_surface_3(InputIterator first, InputIterator last,
   // Code
   Regular regular;
   Triangulated_mixed_complex triangulated_mixed_complex;
-  
+
   if (first != last) {
     // Construct regular triangulation ...
     Bbox_3 bbox = (*first).bbox();
-    typename Regular_traits::RT max_weight=1;
+    typename Regular_traits::RT max_weight=0;
     while (first != last) {
       if (max_weight < (*first).weight()) max_weight = (*first).weight();
       bbox = bbox + (*first).bbox();
@@ -53,7 +54,7 @@ void skin_surface_3(InputIterator first, InputIterator last,
     typename Regular_traits::RT size =
       1.5*((bbox.xmax() - bbox.xmin() +
 	     bbox.ymax() - bbox.ymin() +
-	     bbox.zmax() - bbox.zmin())/2 + max_weight);
+	     bbox.zmax() - bbox.zmin())/2 + sqrt(CGAL::to_double(max_weight)));
     regular.insert(
       Reg_weighted_point(Reg_point(mid.x()+size,mid.y(),mid.z()),-1));
     regular.insert(
@@ -68,9 +69,18 @@ void skin_surface_3(InputIterator first, InputIterator last,
       Reg_weighted_point(Reg_point(mid.x(),mid.y(),mid.z()-size),-1));
   }
 
+  if (verbose) {
+    std::cerr << "Triangulation ready" << std::endl;
+  }
+
   // Construct the triangulated mixed complex:
   triangulate_mixed_complex_3(
     regular, triangulated_mixed_complex, skin_surface_traits);
+
+  CGAL_assertion(triangulated_mixed_complex.is_valid());
+  if (verbose) {
+    std::cerr << "Triangulated mixed complex ready" << std::endl;
+  }
 
   // Extract the coarse mesh using marching_tetrahedra
   Marching_tetrahedra_traits marching_traits;
@@ -78,6 +88,11 @@ void skin_surface_3(InputIterator first, InputIterator last,
   
   marching_tetrahedra_3(
     triangulated_mixed_complex, polyhedron, marching_traits, marching_observer);
+
+  if (verbose) {
+    std::cerr << "Mesh ready" << std::endl;
+  }
+  
 }
 
 

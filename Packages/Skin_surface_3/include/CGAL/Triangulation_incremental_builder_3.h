@@ -13,9 +13,9 @@ template < class Triangulation_3 >
 class Triangulation_incremental_builder_3 {
 public:
   typedef Triangulation_3                    T;
-  typedef typename T::Vertex_handle     Vertex_handle;
-  typedef typename T::Cell_handle       Cell_handle;
-  typedef typename T::Facet             Facet;
+  typedef typename T::Vertex_handle          Vertex_handle;
+  typedef typename T::Cell_handle            Cell_handle;
+  typedef typename T::Facet                  Facet;
 
 public:
   Triangulation_incremental_builder_3( T &t, bool verbose = false)

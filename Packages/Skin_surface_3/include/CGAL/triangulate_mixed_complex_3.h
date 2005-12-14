@@ -73,18 +73,12 @@ private:
   typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel          Tmc_Geom_traits;
   typedef typename Tmc_Geom_traits::Point_3              Tmc_Point;
   typedef typename Tmc_Geom_traits::RT                   Tmc_RT;
-  //   typedef Weighted_point<Tmc_Point>                Tmc_Weighted_point;
 
   typedef Triangulation_incremental_builder_3<Triangulated_mixed_complex>
   Triangulation_incremental_builder;
 
   typedef Compute_anchor_3<Regular>                       Compute_anchor;
   typedef std::pair<Rt_Simplex,Rt_Simplex>                Symb_anchor;
-  //   typedef typename Skin_Traits::Mesh_K               M_traits;
-  //   typedef Skin_surface_quadratic_surface_3< M_traits > Quadratic_surface;
-  //   typedef Skin_surface_sphere_3< M_traits >            Sphere_surface;
-  //   typedef Skin_surface_hyperboloid_3< M_traits >       Hyperboloid_surface;
-  //   typedef typename M_traits::RT                        M_RT;
 public:
 
   Mixed_complex_triangulator_3(
@@ -119,7 +113,6 @@ public:
 
 private:
   void build() {
-
     triangulation_incr_builder.begin_triangulation(3);
 
     construct_vertices();
@@ -460,6 +453,7 @@ construct_vertices() {
     }
   }
 
+
   // anchor dimDel=0, dimVor=0
   for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
     sDel = get_anchor_del(Rt_Simplex(vit));
@@ -794,7 +788,8 @@ Mixed_complex_triangulator_3<SkinSurfaceTraits_3, TriangulatedMixedComplex,
 			     Regular_TDS, Mixed_complex_observer_>::
 add_vertex (Symb_anchor const &anchor)
 {
-  Tmc_Vertex_handle vh = triangulation_incr_builder.add_vertex();
+  Tmc_Vertex_handle vh;
+  vh = triangulation_incr_builder.add_vertex();
   vh->point() = get_anchor(anchor.first, anchor.second);
   observer.after_vertex_insertion(anchor.first, anchor.second, vh); 
 
@@ -974,7 +969,7 @@ get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor)
   Tmc_Point dfoc = get_orthocenter(sDel);
   Tmc_Point vfoc = get_orthocenter(sVor);
 	
-  return dfoc + skin_traits.shrink_factor()*(vfoc - dfoc);
+  return skin_traits.construct_anchor_point_3_object()(dfoc, vfoc);
 }
 
 template < 
@@ -985,7 +980,7 @@ template <
 void triangulate_mixed_complex_3(
   Regular_3 &rt, TriangulatedMixedComplex_3 &sc,
   SkinSurfaceTraits_3 &traits,
-  MixedComplexObserver_3 &observer ) {
+  MixedComplexObserver_3 &observer) {
 
   typedef Mixed_complex_triangulator_3<
     SkinSurfaceTraits_3,

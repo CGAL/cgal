@@ -23,12 +23,12 @@ public:
   typedef typename Kernel::RT            RT;
   typedef typename Kernel::Point_3       Point;
   
-  Construct_anchor_point_3(RT &shrink) : shrink(shrink) {}
+  Construct_anchor_point_3(RT const &shrink) : shrink(shrink) {}
   
   Point operator()(const Point &anchor_del, const Point &anchor_vor) {
     return anchor_del + shrink*(anchor_vor - anchor_del);
   }
-  RT shrink;
+  RT const shrink;
 };
 
 // The following four converters convert geometric objects between the
@@ -41,7 +41,8 @@ public:
 template <
   class RegularKernel = Exact_predicates_inexact_constructions_kernel,
   class TriangulatedMixedComplexKernel =
-    Exact_predicates_exact_constructions_kernel,
+  Exact_predicates_inexact_constructions_kernel,
+//     Exact_predicates_exact_constructions_kernel,
   class PolyhedronKernel = Simple_cartesian<double> >  
 class Skin_surface_traits_3 {
 public:
@@ -109,8 +110,9 @@ public:
   }
 
   Construct_anchor_point_3<Triangulated_mixed_complex_kernel>
-  construct_weighted_circumcenter_3_object() const {
-    return Construct_anchor_point_3<Triangulated_mixed_complex_kernel>(shrink);
+  construct_anchor_point_3_object() const {
+    return Construct_anchor_point_3<Triangulated_mixed_complex_kernel>(
+      r2t_converter_object()(shrink) );
   }
   Regular_RT shrink_factor() const {
     return shrink;
