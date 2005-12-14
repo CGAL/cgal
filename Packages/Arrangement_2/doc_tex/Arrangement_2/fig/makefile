@@ -1,37 +1,40 @@
 include $(ROOT)/include/make/comdef.mak
 
-TARGET0 = arr_segs.gif
-TARGET0+= ex_1.gif
-TARGET0+= ex_2.gif
-TARGET0+= ex_4.gif
-TARGET0+= ex_5.gif
-TARGET0+= ex_8.gif
-TARGET0+= ex_10.gif
-TARGET0+= ex_12.gif
-TARGET0+= ex_13.gif
-TARGET0+= ex_14.gif
-TARGET0+= ex_16.gif
-TARGET0+= ex_17.gif
-TARGET0+= ex_18.gif
-TARGET0+= ex_19.gif
-TARGET0+= ex_20.gif
-TARGET0+= ex_22.gif
-TARGET0+= ex_24.gif
-TARGET0+= ex_25.gif
+TARGET_GIFS = triangle.gif
+TARGET_GIFS+= connect_comp.gif
+TARGET_GIFS+= pred_around_vertex.gif
+TARGET_GIFS+= h_shape.gif
 
-# wrapfigure:
-TARGET0+= triangle.gif
-TARGET0+= connect_comp.gif
-TARGET0+= pred_around_vertex.gif
-TARGET0+= h_shape.gif
+TARGET_PDFS = $(TARGET_GIFS:.gif=.pdf)
 
-TARGET1 = $(TARGET0:.gif=.pdf)
-TARGET1+= ex_3a.pdf
-TARGET1+= ex_3b.pdf
-TARGET1+= ex_3c.pdf
-TARGET1+= insert_in_face.pdf
-TARGET1+= insert_from_vertex.pdf
-TARGET1+= insert_at_vertices.pdf
+TARGET_PDFS+= arr_segs.pdf
+TARGET_PDFS+= ex_1.pdf
+TARGET_PDFS+= ex_2.pdf
+TARGET_PDFS+= ex_4.pdf
+TARGET_PDFS+= ex_5.pdf
+TARGET_PDFS+= ex_8.pdf
+TARGET_PDFS+= ex_10.pdf
+TARGET_PDFS+= ex_12.pdf
+TARGET_PDFS+= ex_13.pdf
+TARGET_PDFS+= ex_14.pdf
+TARGET_PDFS+= ex_16.pdf
+TARGET_PDFS+= ex_17.pdf
+TARGET_PDFS+= ex_18.pdf
+TARGET_PDFS+= ex_19.pdf
+TARGET_PDFS+= ex_20.pdf
+TARGET_PDFS+= ex_22.pdf
+TARGET_PDFS+= ex_24.pdf
+TARGET_PDFS+= ex_25.pdf
+
+TARGET_PDFS+= ex_3a.pdf
+TARGET_PDFS+= ex_3b.pdf
+TARGET_PDFS+= ex_3c.pdf
+TARGET_PDFS+= insert_in_face.pdf
+TARGET_PDFS+= insert_from_vertex.pdf
+TARGET_PDFS+= insert_at_vertices.pdf
+
+TARGET0 = $(TARGET_GIFS)
+TARGET1 = $(TARGET_PDFS)
 
 include $(MAKEINCDIR)/comrul.mak
 
@@ -83,9 +86,13 @@ ex_3.gif: ex_3.tex \
 	eps2eps $(basename $@).ps $(basename $@).eps
 	convert $(basename $@).eps $@
 
+.PHONY :: gif pdf
 gif :
-	$(MAKE) $(TARGET0)
+	$(MAKE) $(TARGET_GIFS)
 
-.SECONDARY: $(TARGET1:.pdf=.eps) $(TARGET0:.pdf=.eps)
+pdf :
+	$(MAKE) $(TARGET_PDFS)
 
-LDIRT = tmp.pstex_t tmp.dvi tmp.aux tmp.log $(TARGET1:.pdf=.eps) $(TARGET0:.gif=.eps2)
+.SECONDARY: $(TARGET_PDFS:.pdf=.eps)
+
+LDIRT = tmp.pstex_t tmp.dvi tmp.aux tmp.log $(TARGET_PDFS:.pdf=.eps2) $(TARGET_PDFS:.pdf=.ps)
