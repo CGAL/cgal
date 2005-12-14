@@ -285,6 +285,9 @@ void CpcaDlg::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  if(m_points.size() == 0)
+    return;
+
 	// draw point set
 	glColor3ub(0,0,0);
 	glPointSize(5.0f);
@@ -294,11 +297,12 @@ void CpcaDlg::render()
 			it++)
 	{
 		const Point_2& p = *it;
-    draw_disc(p,0.003,0,0,0);
+    draw_disc(p,0.005,0,0,0);
 	}
 
   // draw fitting line
-	glColor3ub(150,0,0);
+	glColor3ub(255,0,0);
+  glLineWidth(2.0f);
   const Point_2& a = m_fitting_line.point(-100);
   const Point_2& b = m_fitting_line.point(100);
 	glBegin(GL_LINES);
@@ -306,7 +310,8 @@ void CpcaDlg::render()
 		glVertex2d((double)b.x(),(double)b.y());
 	glEnd();
 
-  draw_disc(m_centroid,0.01,150,0,0);
+  // draw centroid
+  draw_disc(m_centroid,0.01,255,0,0);
 
 	glFlush();
 }
