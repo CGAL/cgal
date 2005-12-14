@@ -1,10 +1,10 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: h_shape.pstex
-%%Creator: fig2dev Version 3.2 Patchlevel 3d
-%%CreationDate: Tue Dec 13 12:50:50 2005
-%%For: wein@localhost.localdomain (Ron Wein)
-%%BoundingBox: 0 0 76 76
-%%Magnification: 0.7000
+%%Title: h_shape.fig
+%%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
+%%CreationDate: Wed Dec 14 16:02:48 2005
+%%For: efif@lap-eye (Efraim Fogel,,,)
+%%BoundingBox: 0 0 77 77
+%Magnification: 0.7000
 %%EndComments
 /$F2psDict 200 dict def
 $F2psDict begin
@@ -45,8 +45,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 76 moveto 0 0 lineto 76 0 lineto 76 76 lineto closepath clip newpath
--132.3 182.7 translate
+newpath 0 77 moveto 0 0 lineto 77 0 lineto 77 77 lineto closepath clip newpath
+-132.0 183.0 translate
 1 -1 scale
 
 /cp {closepath} bind def
@@ -98,11 +98,26 @@ newpath 0 76 moveto 0 0 lineto 76 0 lineto 76 76 lineto closepath clip newpath
 
 $F2psBegin
 10 setmiterlimit
+0 slj 0 slc
  0.04200 0.04200 sc
 %
 % Fig objects follow
 %
+% 
+% here starts figure with depth 55
+% Ellipse
+7.500 slw
+n 3300 2700 150 150 0 360 DrawEllipse gs col7 s gr
+
+% Ellipse
+n 4800 4200 150 150 0 360 DrawEllipse gs col7 s gr
+
+% here ends figure;
+% 
+% here starts figure with depth 50
 % Polyline
+0 slj
+0 slc
 15.000 slw
 n 3600 4200 m
  3600 2700 l gs col8 s gr 
@@ -119,8 +134,11 @@ n 3600 3600 m
 0.000 slw
 n 3150 2550 m 4950 2550 l 4950 4350 l 3150 4350 l
  cp 
-7.500 slw
+% here ends figure;
+% 
+% here starts figure with depth 40
 % Ellipse
+7.500 slw
 n 3600 4200 45 45 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
@@ -144,5 +162,9 @@ n 4500 3600 45 45 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 % Ellipse
 n 4500 4200 45 45 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
+% here ends figure;
 $F2psEnd
 rs
+showpage
+%%Trailer
+%EOF

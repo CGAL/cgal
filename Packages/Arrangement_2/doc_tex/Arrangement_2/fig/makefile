@@ -19,6 +19,12 @@ TARGET0+= ex_22.gif
 TARGET0+= ex_24.gif
 TARGET0+= ex_25.gif
 
+# wrapfigure:
+TARGET0+= triangle.gif
+TARGET0+= connect_comp.gif
+TARGET0+= pred_around_vertex.gif
+TARGET0+= h_shape.gif
+
 TARGET1 = $(TARGET0:.gif=.pdf)
 TARGET1+= ex_3a.pdf
 TARGET1+= ex_3b.pdf
@@ -34,14 +40,23 @@ include $(MAKEINCDIR)/comrul.mak
 	latex tmp.tex
 	mv tmp.dvi $@
 
+define toeps
+sed -e "s/%%BoundingBox.*$$/`gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $(basename $@).ps 2>&1 | tr "\n" "\^"`/" $(basename $@).ps | tr "\^" "\n"
+endef
+
+%.bbox : %.ps
+	gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $<
+
 %.gif : %.dvi
 	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
-	eps2eps $(basename $@).ps $(basename $@).eps; rm $(basename $@).ps
-	convert $(basename $@).eps $@; rm $(basename $@).eps
+	$(toeps) > $(basename $@).eps2
+	convert $(basename $@).eps2 $@;
 
-%.eps : %.dvi
+%.ps : %.dvi
 	dvips -P cmz $< -o
-	eps2eps $(basename $@).ps $@
+
+%.eps : %.ps
+	$(toeps) > $(basename $@).eps
 
 %.pdf : %.eps
 	epstopdf --hires $<
@@ -68,6 +83,9 @@ ex_3.gif: ex_3.tex \
 	eps2eps $(basename $@).ps $(basename $@).eps
 	convert $(basename $@).eps $@
 
-.SECONDARY: $(TARGET1:.pdf=.eps)
+gif :
+	$(MAKE) $(TARGET0)
 
-LDIRT = tmp.pstex_t tmp.dvi tmp.aux tmp.log $(TARGET1:.pdf=.eps)
+.SECONDARY: $(TARGET1:.pdf=.eps) $(TARGET0:.pdf=.eps)
+
+LDIRT = tmp.pstex_t tmp.dvi tmp.aux tmp.log $(TARGET1:.pdf=.eps) $(TARGET0:.gif=.eps2)

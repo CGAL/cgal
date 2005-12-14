@@ -1,10 +1,10 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: triangle.pstex
-%%Creator: fig2dev Version 3.2 Patchlevel 3d
-%%CreationDate: Tue Dec 13 13:06:20 2005
-%%For: wein@localhost.localdomain (Ron Wein)
-%%BoundingBox: 0 0 76 76
-%%Magnification: 0.7000
+%%Title: triangle.fig
+%%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
+%%CreationDate: Wed Dec 14 14:59:07 2005
+%%For: efif@lap-eye (Efraim Fogel,,,)
+%%BoundingBox: 0 0 74 77
+%Magnification: 0.7000
 %%EndComments
 /$F2psDict 200 dict def
 $F2psDict begin
@@ -45,8 +45,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 76 moveto 0 0 lineto 76 0 lineto 76 76 lineto closepath clip newpath
--132.3 179.6 translate
+newpath 0 77 moveto 0 0 lineto 74 0 lineto 74 77 lineto closepath clip newpath
+-135.1 179.9 translate
 1 -1 scale
 
 /cp {closepath} bind def
@@ -98,12 +98,28 @@ newpath 0 76 moveto 0 0 lineto 76 0 lineto 76 76 lineto closepath clip newpath
 
 $F2psBegin
 10 setmiterlimit
+0 slj 0 slc
  0.04200 0.04200 sc
 %
 % Fig objects follow
 %
+% 
+% here starts figure with depth 55
+% Ellipse
+7.500 slw
+n 4875 4200 75 75 0 360 DrawEllipse gs col7 s gr
+
+% Ellipse
+n 3300 2550 75 75 0 360 DrawEllipse gs col7 s gr
+
+% here ends figure;
+% 
+% here starts figure with depth 50
 % Polyline
-n 3150 2475 m 4950 2475 l 4950 4275 l 3150 4275 l
+0 slj
+0 slc
+0.000 slw
+n 3300 2550 m 4950 2550 l 4950 4200 l 3300 4200 l
  cp 
 % Polyline
 15.000 slw
@@ -115,8 +131,11 @@ n 3450 2700 m
 % Polyline
 n 3450 3900 m
  4650 3900 l gs col8 s gr 
-7.500 slw
+% here ends figure;
+% 
+% here starts figure with depth 40
 % Ellipse
+7.500 slw
 n 3450 3900 45 45 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
@@ -125,5 +144,9 @@ n 4650 3900 45 45 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 % Ellipse
 n 3450 2700 45 45 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
+% here ends figure;
 $F2psEnd
 rs
+showpage
+%%Trailer
+%EOF

@@ -1,3 +1,13 @@
+\lcTex{%
+  \newlength{\widthExtra}\setlength{\widthExtra}{1.1cm}
+  \newlength{\widthLineReal}\setlength{\widthLineReal}{\linewidth}
+  \addtolength{\widthLineReal}{-\widthExtra}
+  \newlength{\minipageSpace}\setlength{\minipageSpace}{0.2cm}
+
+  \newlength{\widthLeft}
+  \newlength{\widthRight}
+}
+
 \newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
 \newcommand{\calC}{{\cal C}}
 \newcommand{\calA}{{\cal A}}
@@ -200,13 +210,17 @@ further explanations and examples.
 \subsection{A Simple Program}
 %----------------------------
 
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-\begin{wrapfigure}[5]{r}{2.5cm}
-\vspace{-2.8ex}
-  \input{Arrangement_2/fig/triangle.pstex_t}
-\vspace{-1.8ex}
-\end{wrapfigure}
-%
+\lcTex{%
+  \setlength{\widthRight}{1.6cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/triangle.gif" border=0 alt="triangle" align=right>
+  </center>
+\end{ccHtmlOnly}
 The simple program listed below constructs a planar map of three line
 segments forming a triangle. The constructed arrangement is instantiated
 with the \ccc{Arr_segment_traits_2} traits class to handle segments only.
@@ -215,6 +229,14 @@ and the unbounded face.
 The program is not very useful as it is, since it ends immediately
 after the arrangement is constructed. We give more enhanced examples
 in the rest of this chapter.
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Arrangement_2/fig/triangle}
+    \end{center}
+  \end{minipage}
+}
 
 \begin{alltt}
 #include <CGAL/Cartesian.h>
@@ -605,18 +627,20 @@ twin halfedges that form an ``antenna'' emanating from the boundary
 of an existing connected component (note that if the existing vertex
 used to be isolated, this operation is actually equivalent to forming
 a new hole inside the face that contains this vertex).
-\end{enumerate}
 
-\begin{wrapfigure}{r}{4.5cm}
-\vspace{-1.2ex}
-  \input{Arrangement_2/fig/connect_comp.pstex_t}
-\vspace{-1.8ex}
-\end{wrapfigure}
-%
-~~~~
-\vspace{-8ex}
-\begin{enumerate}
-\item[3.] If both endpoints correspond to existing arrangement
+\lcTex{%
+  \setlength{\widthRight}{4.1cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
+}
+\item
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/connect_comp.gif" border=0 alt="connect_comp" align=right>
+  </center>
+\end{ccHtmlOnly}
+If both endpoints correspond to existing arrangement
 vertices, we connect these vertices using a pair of twin halfedges.
 (If one or both vertices are isolated this case reduces to one of
 the two previous cases respectively.) The two following subcases may
@@ -632,6 +656,14 @@ isolated vertices in the existing face and move the relevant ones
 inside the new face (as is the case with the segment $s_2$ in the
 figure to the left).
 \end{itemize}
+\lcTex{%
+  \end{minipage}%\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}\hspace{\minipageSpace}
+    \includegraphics{Arrangement_2/fig/connect_comp}
+    \end{center}
+  \end{minipage}
+}
 \end{enumerate}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
@@ -872,17 +904,23 @@ more compact representation. For example, we can replace the point
 $(\frac{20}{40}, \frac{99}{33})$ associated with some vertex $v$,
 by $(\frac{1}{2}, 3)$.
 
+\newpage
 \begin{ccAdvanced}
 \subsubsection{Advanced Insertion Functions}
 \label{arr_sssec:adv_insert}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{wrapfigure}{r}{4.5cm}
-\vspace{-1.2ex}
-  \input{Arrangement_2/fig/pred_around_vertex.pstex_t}
-\vspace{-1.8ex}
-\end{wrapfigure}
-%
+\lcTex{%
+  \setlength{\widthRight}{2.5cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/pred_around_vertex.gif" border=0 alt="pred_around_vertex" align=right>
+  </center>
+\end{ccHtmlOnly}
 Assume that the specialized insertion function
 \ccc{insert_from_left_vertex(c,v)} is invoked for a curve $c$,
 whose left endpoint is already associated with a non-isolated
@@ -897,6 +935,14 @@ clockwise order around $v$, in order to complete the insertion
 take $O(d)$ time where $d$ is the degree of the vertex. However,
 if the halfedge \ccc{pred} is known in advance, the insertion can
 be carried out in constant time.
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Arrangement_2/fig/pred_around_vertex}
+    \end{center}
+  \end{minipage}
+}
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The \ccc{Arrangement_2} class provides the advanced versions of
@@ -1682,19 +1728,31 @@ from the arrangement by simply calling \ccc{arr.remove_edge(e)}
 end vertices of \ccc{e} becomes isolated or redundant after the removal
 of the edge, it is removed as well.
 
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-\begin{wrapfigure}[5]{r}{2.5cm}
-\vspace{-2.8ex}
-  \input{Arrangement_2/fig/h_shape.pstex_t}
-\vspace{-1.8ex}
-\end{wrapfigure}
-%
+\lcTex{%
+  \setlength{\widthRight}{1.5cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
+}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/h_shape.gif" border=0 alt="h_shape" align=right>
+  </center>
+\end{ccHtmlOnly}
 The following example demonstrates the usage of the free removal
 functions. In creates an arrangement of four line segment forming
 an H-shape with a double horizontal line. Then it removes the two
 horizontal edges and clears all redundant vertices, such that the
 final arrangement consists of just two edges associated with the
 vertical line segments:
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Arrangement_2/fig/h_shape}
+    \end{center}
+  \end{minipage}
+}
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_global_removal.C}
 
@@ -3067,7 +3125,7 @@ the \ccc{<<} and\ccc{>>} operators.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 The following example constructs the same arrangement as example
 \ccc{ex_curve_history} does
-(see Section~\ref{arr_ssec:arr_ssec:arr_hist_ex}) which is depicted in
+(see Section~\ref{arr_ssec:arr_hist_ex}) which is depicted in
 Figure~\ref{arr_fig:ex_24}, and writes it to an output file. It also
 demonstrates how to re-read the arrangement-with-history from a file:
 

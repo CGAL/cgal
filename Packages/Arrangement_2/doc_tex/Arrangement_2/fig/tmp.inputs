@@ -7,5 +7,4 @@
 \usepackage{pst-eps}
 \usepackage{multido}
 \usepackage{pst-node}
-\usepackage{pst-eps}
 \usepackage{graphicx}        % for PostScript figures
