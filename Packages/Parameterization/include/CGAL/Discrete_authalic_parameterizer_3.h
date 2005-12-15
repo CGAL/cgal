@@ -64,15 +64,15 @@ template
 >
 class Discrete_authalic_parameterizer_3
     : public Fixed_border_parameterizer_3<ParameterizationMesh_3,
-                                        BorderParameterizer_3,
-                                        SparseLinearAlgebraTraits_d>
+                                          BorderParameterizer_3,
+                                          SparseLinearAlgebraTraits_d>
 {
 // Private types
 private:
     // Superclass
     typedef Fixed_border_parameterizer_3<ParameterizationMesh_3,
-                                        BorderParameterizer_3,
-                                        SparseLinearAlgebraTraits_d>
+                                         BorderParameterizer_3,
+                                         SparseLinearAlgebraTraits_d>
                                             Base;
 
 // Public types
@@ -127,13 +127,13 @@ private:
 // Public operations
 public:
     /// Constructor
-    Discrete_authalic_parameterizer_3 (Border_param border_param = Border_param(),
+    Discrete_authalic_parameterizer_3(Border_param border_param = Border_param(),
                                         ///< Object that maps the surface's border to 2D space.
-                                     Sparse_LA sparse_la = Sparse_LA())
+                                      Sparse_LA sparse_la = Sparse_LA())
                                         ///< Traits object to access a sparse linear system.
     :   Fixed_border_parameterizer_3<Adaptor,
-                                   Border_param,
-                                   Sparse_LA>(border_param, sparse_la)
+                                     Border_param,
+                                     Sparse_LA>(border_param, sparse_la)
     {}
 
     // Default copy constructor and operator =() are fine
