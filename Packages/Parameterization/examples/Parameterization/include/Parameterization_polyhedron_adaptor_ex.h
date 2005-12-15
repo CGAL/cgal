@@ -877,6 +877,7 @@ private:
             return *(h.vertex());
         }
     };
+    friend struct Project_halfedge_vertex; // SUN's CC 5.50 requires that
 
     // Utility class to generate the Border_vertex_iterator type
     struct Project_vertex_handle_vertex {
@@ -890,6 +891,7 @@ private:
         Vertex&       operator()(Vertex_handle& vh)       const { return *vh; }
         const Vertex& operator()(const Vertex_handle& vh) const { return *vh; }
     };
+    friend struct Project_vertex_handle_vertex; // SUN's CC 5.50 requires that
 
     // This class is used to generate the Vertex_around_vertex_circulator type
     struct Project_opposite_halfedge_vertex {
@@ -907,6 +909,7 @@ private:
             return *(h.opposite()->vertex());
         }
     };
+    friend struct Project_opposite_halfedge_vertex; // SUN's CC 5.50 requires that
 
 }; // Parameterization_polyhedron_adaptor_ex
 
