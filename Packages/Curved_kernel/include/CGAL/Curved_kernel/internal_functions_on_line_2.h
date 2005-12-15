@@ -34,6 +34,16 @@ namespace LinearFunctors {
     return typename CK::Line_2(eq[2],eq[1],eq[0]); 
   }
   
+ template < class CK >
+  bool
+ has_on(const typename CK::Line_2 & l,
+	const typename CK::Circular_arc_point_2 &p)
+ {
+    typedef typename CK::Polynomial_1_2 Polynomial_1_2;
+    Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(l);
+    return(CGAL::sign_at<typename CK::Algebraic_kernel>
+	   (equation,p.coordinates())= ZERO);
+ }
 
   template< class CK, class OutputIterator>
     OutputIterator

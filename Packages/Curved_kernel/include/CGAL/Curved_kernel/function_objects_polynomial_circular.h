@@ -143,6 +143,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2    Circular_arc_point_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
     typedef typename CK::Circle_2                Circle_2;
+    typedef typename CK::Line_2                Line_2;
 
   public:
     typedef bool result_type;
@@ -150,6 +151,10 @@ namespace CircularFunctors {
     
     result_type
     operator()(const Circle_2 &a, const Circular_arc_point_2 &p) const
+    { return has_on<CK>(a, p); }
+    
+    result_type
+    operator()(const Line_2 &a, const Circular_arc_point_2 &p) const
     { return has_on<CK>(a, p); }
     
     result_type
@@ -281,14 +286,6 @@ namespace CircularFunctors {
     result_type
     operator() (const Line_arc_2 &A1, const Line_arc_2 &A2) const
     { return do_overlap<CK>(A1, A2); }
-
-    result_type
-      operator() (const Line_arc_2 &A1, const Circular_arc_2 &A2) const
-    {return false; }
-
-     result_type
-    operator() (const Circular_arc_2 &A1, const Line_arc_2 &A2) const
-    {return false; }
 
   };
 
