@@ -55,7 +55,7 @@ event, and has six main methods. The methods are:
 \end{itemize}
 
 The first three methods are called in response to notifications from
-the \ccc{MovingObjectTable}. The fourth method is called by
+the \ccc{ActiveObjectsTable}. The fourth method is called by
 \ccc{Event} objects. The last method is called in response to a
 notification from the \ccc{Simulator}.
 
@@ -65,7 +65,7 @@ notification from the \ccc{Simulator}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 On initialization the \ccc{CGAL::KDS::Sort<Traits>} registers for
-notifications with a \ccc{MovingObjectTable} and a \ccc{Simulator}. It
+notifications with a \ccc{ActiveObjectsTable} and a \ccc{Simulator}. It
 receives notifications through two proxy objects,
 \ccc{mot_listener_} and \ccc{sim_listener_}, which implement the
 notification interface and call functions on the kinetic data
@@ -81,10 +81,10 @@ is a rational time value at which verification can be performed. See
 Section~\ref{sec:simulator} for an explanation of when this occurs.
 
 The proxy objects store the (reference counted) pointers to the
-\ccc{MovingObjectTable} and \ccc{Simulator} objects for later use. The
+\ccc{ActiveObjectsTable} and \ccc{Simulator} objects for later use. The
 \ccc{Simulator} pointer is used by the kinetic data structure to
 request the current time and schedule and deschedule events. The
-\ccc{MovingObjectTable} pointer is used to access the actual
+\ccc{ActiveObjectsTable} pointer is used to access the actual
 coordinates of the kinetic objects. The use of reference counted
 pointers guarantees that there will be no dangling pointers in the
 code.
@@ -93,9 +93,9 @@ code.
 structure is entirely event driven.
 
 The first thing that will occur is the addition of a point to the
-\ccc{MovingObjectTable} which results in the \ccc{insert} method being
+\ccc{ActiveObjectsTable} which results in the \ccc{insert} method being
 called. This method is passed a \ccc{Key} which uniquely identifies a
-point in the \ccc{MovingObjectTable}. The
+point in the \ccc{ActiveObjectsTable}. The
 \ccc{CGAL::KDS::Sort<Traits>} makes use of the \ccc{InstantaneousKernel} to properly
 handle the insertion by using a \ccc{InstantenousKernel}-provided
 functor which compares the $x$ coordinates of two objects at the

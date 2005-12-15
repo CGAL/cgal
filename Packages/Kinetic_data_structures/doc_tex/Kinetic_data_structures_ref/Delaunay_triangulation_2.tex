@@ -19,7 +19,7 @@
 \ccDefinition
   
 The class \ccRefName\ maintains a Delaunay triangulation on top of the
-points contained in a \ccc{MovingObjectTable}. It has one main method
+points contained in a \ccc{ActiveObjectsTable}. It has one main method
 of interest. \ccc{triangulation()} which returns the triangulation it
 is maintaining. 
 
@@ -46,7 +46,7 @@ whenever the triangulation changes.
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
 
-\ccConstructor{Delaunay_triangulation_2(Simulator::Pointer sp, MovingObjectTable::Pointer mot);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
+\ccConstructor{Delaunay_triangulation_2(Simulator::Pointer sp, ActiveObjectsTable::Pointer mot);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
 
 \ccOperations
 
