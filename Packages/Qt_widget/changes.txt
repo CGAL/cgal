@@ -1,3 +1,7 @@
+15 December 2005 Menelaos Karavelas
+- added this-> to a call of the is_pure method of
+  Qt_widget_get_simple_polygon to please g++ 4.1.0
+
 8 August 2005 Sylvain Pion
 - Fix bug (?) in Qt_widget << Segment_2.
 

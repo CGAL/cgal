@@ -49,7 +49,7 @@ protected:
 
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == Qt::RightButton && is_pure(e->state()))
+    if(e->button() == Qt::RightButton && this->is_pure(e->state()))
     {
       if (this->active) {
         if(!this->poly.is_simple()) return;
