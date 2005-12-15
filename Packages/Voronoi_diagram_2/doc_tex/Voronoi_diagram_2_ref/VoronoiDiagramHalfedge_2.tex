@@ -102,7 +102,10 @@ Below we present its interface.
 \ccGlue
 \ccMethod{Delaunay_edge dual();}{Returns the
   corresponding dual edge in the Delaunay graph.}
-\ccGlue
+
+In the four methods below we consider Voronoi halfedges to be ``parallel''
+to the $x$-axis, oriented from left to right.
+
 \ccMethod{Delaunay_vertex_handle up();}{Returns a handle to the vertex in
 the Delaunay graph corresponding to the defining site above
 the Voronoi edge.}
