@@ -127,13 +127,13 @@ usual orientation test for three points.
 %
 \ccGlue
 \ccNestedType{Equal_2}{A predicate object type. Must provide
-  \ccc{bool operator(Site_2 s1, Site_2 s2)}, which determines is the
+  \ccc{bool operator()(Site_2 s1, Site_2 s2)}, which determines is the
   points represented by the sites \ccc{s1} and \ccc{s2} are identical.
   \ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
 %
 \ccGlue
 \ccNestedType{Are_parallel_2}{A predicate object type. Must provide
-  \ccc{bool operator(Site_2 s1, Site_2 s2)}, which determines is the
+  \ccc{bool operator()(Site_2 s1, Site_2 s2)}, which determines is the
   segments represented by the sites \ccc{s1} and \ccc{s2} are
   parallel.
   \ccPrecond{\ccc{s1} and \ccc{s2} must be segments.}}
@@ -238,7 +238,7 @@ is not in conflict with the Voronoi edge.}
 %
 \ccGlue
 \ccNestedType{Oriented_side_2}{A predicate object type. Must provide
-  \ccc{Oriented_side operator(Site_1 s1, Site_2 s2, Site_2 s3, Site_2
+  \ccc{Oriented_side operator()(Site_1 s1, Site_2 s2, Site_2 s3, Site_2
     s, Site_2 p)}. Determines the oriented side of the line $\ell$
   that contains the point site \ccc{p}, where $\ell$ is the line
   that passes through the Voronoi vertex of the sites \ccc{s1},

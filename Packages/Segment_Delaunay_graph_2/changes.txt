@@ -1,3 +1,8 @@
+15 December 2005:  Menelaos Karavelas
+- doc: fixed errors in the presentation of some predicate functors
+- in Sqrt_extension_1: unary operator+() now return a const reference to
+  the object instead of a copy
+
 30 November 2005:  Menelaos Karavelas
 - documentation: rephrased the description of the Oriented_side_2
   predicate functor of the segment Delaunay graph traits.

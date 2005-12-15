@@ -93,7 +93,7 @@ public:
 		 );
   }
 
-  Self operator+() const
+  const Self& operator+() const
   {
     return (*this);
   }
