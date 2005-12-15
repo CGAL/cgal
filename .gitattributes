@@ -1039,16 +1039,6 @@ Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.gif -text svneol=unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex -text
 Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
-Packages/Auxiliary/auxiliary/cgal_app.icns -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/gmp-4.1.3.tar.gz -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libgmp.a -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libmpfr.a -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/libgmp-3.dll -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/gcc.lib -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/gmp.lib -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/gmp_p4.dll -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/mpfr.dll -text svneol=unset#unset
-Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/msvc/mpfr.lib -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/demo_pointlocation.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/remove.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/removecircle.xpm -text
