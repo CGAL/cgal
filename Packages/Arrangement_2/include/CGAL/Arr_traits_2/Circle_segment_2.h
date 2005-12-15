@@ -118,13 +118,13 @@ public:
   /*! Get the x-coordinate. */
   const CoordNT& x () const
   {
-    return (ptr()->_x);
+    return (this->ptr()->_x);
   }
 
   /*! Get the y-coordinate. */
   const CoordNT& y () const
   {
-    return (ptr()->_y);
+    return (this->ptr()->_y);
   }
 
   /*! Check for equality. */
@@ -133,25 +133,25 @@ public:
     if (this->identical (p))
       return (true);
 
-    return (CGAL::compare (ptr()->_x, p.ptr()->_x) == EQUAL &&
-            CGAL::compare (ptr()->_y, p.ptr()->_y) == EQUAL);
+    return (CGAL::compare (this->ptr()->_x, p.ptr()->_x) == EQUAL &&
+            CGAL::compare (this->ptr()->_y, p.ptr()->_y) == EQUAL);
   }
 
   /*! Set the point coordinates. */
   void set (const NT& x, const NT& y)
   {
-    copy_on_write();
-    ptr()->_x = CoordNT (x);
-    ptr()->_y = CoordNT (y);
+    this->copy_on_write();
+    this->ptr()->_x = CoordNT (x);
+    this->ptr()->_y = CoordNT (y);
     return;
   }
 
   /*! Set the point coordinates. */
   void set (const CoordNT& x, const CoordNT& y)
   {
-    copy_on_write();
-    ptr()->_x = x;
-    ptr()->_y = y;
+    this->copy_on_write();
+    this->ptr()->_x = x;
+    this->ptr()->_y = y;
     return;
   }
 };

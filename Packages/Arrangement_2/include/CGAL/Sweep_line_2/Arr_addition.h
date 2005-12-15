@@ -50,7 +50,6 @@ class Arr_addition
                                  Subcurve,
                                  Halfedge_handle>          Event;
   
-  typedef typename Traits::Curve_2                         Curve_2;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
   typedef Arr_addition_visitor <Traits,
@@ -58,8 +57,6 @@ class Arr_addition
                                 Event,
                                 Subcurve>                  Visitor;
 
-  
- 
   typedef Sweep_line_2<Traits,
                        Visitor,
                        Subcurve,
@@ -69,56 +66,81 @@ class Arr_addition
 
 public:
 
-  Arr_addition(Arrangement &arr):
-      m_traits(new Traits(*(arr.get_traits()))),
-      m_arr(&arr),
-      m_visitor(&arr),
-      m_sweep_line(m_traits, &m_visitor)
-      {}
-
-
+  Arr_addition(Arrangement &arr) :
+    m_arr(&arr),
+    m_traits(new Traits(*(arr.get_traits()))),
+    m_visitor(&arr),
+    m_sweep_line(m_traits, &m_visitor)
+  {}
 
   template<class CurveInputIterator>
   void insert_curves(CurveInputIterator begin, 
                      CurveInputIterator end)
   {
-    std::vector<X_monotone_curve_2>      xcurves_vec;
-    std::vector<Point_2>                 iso_points;
+    // Subdivide all input curves into basic x-monotone curves and isolated
+    // points.
+    std::list<typename Base_traits::X_monotone_curve_2>   base_xcurves;
+    std::list<typename Base_traits::Point_2>              base_points;
 
     make_x_monotone (begin,
                      end,
-                     std::back_inserter(xcurves_vec),
-                     std::back_inserter(iso_points),
-                     m_traits);
+                     std::back_inserter(base_xcurves),
+                     std::back_inserter(base_points),
+                     m_arr->get_traits());
 
+    // Covert the basic objects to the types defined by the addition traits.
+    typename std::list<typename Base_traits::X_monotone_curve_2>::iterator xit;
+    typename std::list<typename Base_traits::Point_2>::iterator            pit;
+    std::vector<X_monotone_curve_2>   xcurves_vec (base_xcurves.size() +
+						   m_arr->number_of_edges());
+    std::vector<Point_2>              iso_points (base_points.size() +
+				         m_arr->number_of_isolated_vertices());
+    int                               i_cv = 0, i_pt = 0;
+
+    for (xit = base_xcurves.begin();
+	 xit != base_xcurves.end(); ++xit, i_cv++)
+    {
+      xcurves_vec[i_cv] = X_monotone_curve_2 (*xit);
+    }
+
+    for (pit = base_points.begin();
+	 pit != base_points.end(); ++pit, i_pt++)
+    {
+      iso_points[i_pt] = Point_2 (*pit);
+    }
+
+    // Add the x-montone curves and the isolated points from the arrangement.
     Edge_iterator                  eit;
     Halfedge_handle                he;
 
-    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit, i_cv++) 
     {
       if (eit->direction() == SMALLER)
         he = eit->twin();
       else
         he = eit;
 
-      xcurves_vec.push_back(X_monotone_curve_2(he->curve(), he));
+      xcurves_vec[i_cv] = X_monotone_curve_2 (he->curve(), he);
     }
 
     Vertex_iterator                vit;
 
     for(vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
     {
-      if(vit->is_isolated())
-        iso_points.push_back(Point_2(vit->point(), vit));
+      if (vit->is_isolated())
+      {
+        iso_points[i_pt] = Point_2 (vit->point(), vit);
+	i_pt++;
+      }
     }
 
+    // Perform the sweep.
     m_sweep_line.sweep(xcurves_vec.begin(),
                        xcurves_vec.end(),
                        iso_points.begin(),
                        iso_points.end());
+    return;
   }
-
-
 
   template<class XCurveInputIterator>
   void insert_x_curves(XCurveInputIterator begin,
@@ -155,19 +177,15 @@ public:
                        iso_points.end());
   }
 
- 
-
   ~Arr_addition()
   {
     delete m_traits;
   }
-
-
               
 protected:
 
-  Traits*              m_traits;
   Arrangement*         m_arr;
+  Traits*              m_traits;
   Visitor              m_visitor;
   Sweep_line           m_sweep_line;
 };

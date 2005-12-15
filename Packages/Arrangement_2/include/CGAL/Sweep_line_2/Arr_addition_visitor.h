@@ -51,8 +51,6 @@ protected:
   typedef typename Arrangement::Face_handle                Face_handle;
   typedef typename Arrangement::Face_const_handle          Face_const_handle;
   
-  using Base::m_arr;
-
 public:
 
   Arr_addition_visitor(Arrangement *arr): Base(arr)
@@ -167,9 +165,10 @@ public:
       // which means that the edeg will have to be modified
       if (sc->get_orig_subcurve1())
       {
-        m_arr->modify_edge (this->current_event()->get_halfedge_handle()->
-                            next()->twin(),
-                            cv);
+        this->m_arr->modify_edge
+	  (this->current_event()->get_halfedge_handle()->
+	   next()->twin(),
+	   cv.base());
       }
 
       Halfedge_handle next_ccw_he = 
@@ -185,22 +184,25 @@ public:
   }
 
 
-   Halfedge_handle _insert_in_face_interior(const X_monotone_curve_2& cv,
+  Halfedge_handle _insert_in_face_interior (const X_monotone_curve_2& cv,
                                             Subcurve* sc)
   {
     Halfedge_handle he_above = ray_shoot_up(sc);
     if(he_above == Halfedge_handle(NULL))
-      return m_arr->insert_in_face_interior(cv,  m_arr->unbounded_face());
-    return m_arr->insert_in_face_interior(cv, he_above->face());
+      return (this->m_arr->insert_in_face_interior
+	      (cv.base(), this->m_arr->unbounded_face()));
+
+    return (this->m_arr->insert_in_face_interior 
+	    (cv.base(), he_above->face()));
   }
 
-  Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
-                                     Halfedge_handle hhandle,
-                                     Halfedge_handle prev,
-                                     Subcurve* sc,
-                                     bool &new_face_created)
+  Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv,
+				      Halfedge_handle hhandle,
+				      Halfedge_handle prev,
+				      Subcurve* sc,
+				      bool &new_face_created)
   {
-    return (m_arr->insert_at_vertices(cv,hhandle,prev));
+    return (this->m_arr->insert_at_vertices (cv.base(), hhandle, prev));
   }
 
   Halfedge_handle split_edge(Halfedge_handle he , const Point_2& pt)
@@ -209,9 +211,10 @@ public:
     // right to left , since we always 'look' above , and the incident face 
     //is on the left of the  halfedge
     CGAL_assertion (he->direction() == LARGER);
-
+    
     this->traits()->split_2_object()(he->curve(), pt, sub_cv2, sub_cv1);
-    return (this->m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));
+    return (this->m_arr_access.split_edge_ex (he, pt.base(),
+					      sub_cv1.base(), sub_cv2.base()));
   }
 
   // check if the halfedge associated with 'sc' will be splitted at the given
@@ -244,10 +247,15 @@ public:
       return res;
     
     Halfedge_handle he = ray_shoot_up(*iter);
-    if(he == Halfedge_handle(NULL))
-      res = m_arr->insert_in_face_interior (pt, m_arr->unbounded_face());
+    if (he == Halfedge_handle(NULL))
+    {
+      res = this->m_arr->insert_in_face_interior
+	(pt.base(), this->m_arr->unbounded_face());
+    }
     else
-      res = m_arr->insert_in_face_interior (pt, he->face());
+    {
+      res = this->m_arr->insert_in_face_interior (pt.base(), he->face());
+    }
 
     return (res);
   }
@@ -300,8 +308,9 @@ public:
       e->get_point().set_vertex_handle(pt.get_vertex_handle());
   }
 
-  virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
-                                          Subcurve* sc)
+  virtual Halfedge_handle
+    insert_in_face_interior(const X_monotone_curve_2& cv,
+			    Subcurve* sc)
   {
     Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
@@ -313,48 +322,48 @@ public:
       return (this->_insert_in_face_interior(cv, sc));
     if(last_v == null_v && curr_v != null_v)
     {
-      Halfedge_handle he = m_arr->insert_from_right_vertex(cv, curr_v);
+      Halfedge_handle he = this->m_arr->insert_from_right_vertex (cv.base(),
+								  curr_v);
       return (he->twin());
     }
     if(last_v != null_v && curr_v == null_v)
-      return (m_arr->insert_from_left_vertex(cv, last_v));
+      return (this->m_arr->insert_from_left_vertex (cv.base(), last_v));
 
     CGAL_assertion(last_v != null_v && curr_v != null_v);
-    return (m_arr->insert_at_vertices(cv,last_v,curr_v));
+    return (this->m_arr->insert_at_vertices (cv.base(), last_v, curr_v));
 
   }
 
 
-  virtual Halfedge_handle insert_from_right_vertex
-                          (const X_monotone_curve_2& cv,
-                           Halfedge_handle he,
-                           Subcurve* sc)
+  virtual Halfedge_handle
+    insert_from_right_vertex (const X_monotone_curve_2& cv,
+			      Halfedge_handle he,
+			      Subcurve* sc)
   {
     Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
 
     if(last_v != Vertex_handle())
-      return (m_arr->insert_at_vertices(cv,he, last_v));
+      return (this->m_arr->insert_at_vertices (cv.base(), he, last_v));
     
-    return (m_arr->insert_from_right_vertex(cv, he));
+    return (this->m_arr->insert_from_right_vertex (cv.base(), he));
   }
 
-  virtual Halfedge_handle insert_from_left_vertex
-                          (const X_monotone_curve_2& cv,
-                           Halfedge_handle he,
-                           Subcurve* sc)
+  virtual Halfedge_handle
+    insert_from_left_vertex (const X_monotone_curve_2& cv,
+			     Halfedge_handle he,
+			     Subcurve* sc)
   {
     Vertex_handle curr_v =
       this->current_event()->get_point().get_vertex_handle();
 
      if(curr_v != Vertex_handle())
-       return (m_arr->insert_at_vertices(cv,he, curr_v));
+       return (this->m_arr->insert_at_vertices (cv.base(), he, curr_v));
 
-    return m_arr->insert_from_left_vertex(cv, he);
+    return (this->m_arr->insert_from_left_vertex (cv.base(), he));
   }
 
-
- protected:
+protected:
 
   X_monotone_curve_2   sub_cv1;         // Auxiliary variable (for splitting).
   X_monotone_curve_2   sub_cv2;         // Auxiliary variable (for splitting).

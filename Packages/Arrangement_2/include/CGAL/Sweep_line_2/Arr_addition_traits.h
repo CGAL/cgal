@@ -33,7 +33,6 @@ public:
 
   typedef Traits_                                  Traits_2;
   typedef Arrangement_                             Arrangement_2;
-  typedef typename Traits_2::Curve_2               Curve_2;
 
   typedef typename Arrangement_2::Halfedge_handle  Halfedge_handle;
   typedef typename Arrangement_2::Vertex_handle    Vertex_handle;
@@ -41,7 +40,6 @@ public:
   typedef typename Traits_2::Point_2               Base_point_2;
   typedef typename Traits_2::Intersect_2           Base_Intersect_2;
   typedef typename Traits_2::Split_2               Base_Split_2;
-  typedef typename Traits_2::Make_x_monotone_2     Base_Make_x_monotone_2;
   typedef typename Traits_2::Construct_min_vertex_2
                                                    Base_Construct_min_vertex_2;
   typedef typename Traits_2::Construct_max_vertex_2
@@ -275,58 +273,6 @@ public:
   Split_2 split_2_object () 
   {
     return (Split_2 (m_base_traits->split_2_object()));
-  }
-
-  /*! \class
-   * The Make_x_monotone_2 functor.
-   */
-  class Make_x_monotone_2
-  {
-  private:
-    Base_Make_x_monotone_2    m_base_make_x;
-    std::list<Object>         m_objects;
-
-  public:
-
-    /*! Constructor. */
-    Make_x_monotone_2 (const Base_Make_x_monotone_2& base) :
-        m_base_make_x (base)
-    {}
-
-    template<class OutputIterator>
-    OutputIterator operator() (const typename Traits_2::Curve_2& cv,
-                               OutputIterator oi) 
-    {
-      const Base_x_monotone_curve_2   *xcv;
-      const Base_point_2              *pt;
-
-      m_base_make_x(cv, std::back_inserter(m_objects));
-      for(std::list<Object>::iterator iter = m_objects.begin();
-          iter != m_objects.end();
-          ++iter)
-      {
-        if ((xcv = object_cast<Base_x_monotone_curve_2> (&(*iter))) != NULL)
-        {
-          *oi = make_object (X_monotone_curve_2 (*xcv));
-        }
-        else
-        {
-          pt = object_cast<Base_point_2> (&(*iter));
-          CGAL_assertion (pt != NULL);
-
-          *oi = make_object (Point_2 (*pt));
-        }
-        ++oi;
-      }
-      m_objects.clear();
-      return oi;
-    }
-
-  };
-
-  Make_x_monotone_2 make_x_monotone_2_object () 
-  {
-    return (Make_x_monotone_2 (m_base_traits->make_x_monotone_2_object()));
   }
 
   /*! \class

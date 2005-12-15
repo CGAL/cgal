@@ -51,7 +51,7 @@ protected:
   typedef Empty_visitor<Traits,
                         Subcurve,
                         Event >                        Base;
-   
+ 
   typedef typename Base::SubCurveIter                  SubCurveIter;
   typedef typename Base::SubCurveRevIter               SubCurveRevIter;
   typedef typename Base::SL_iterator                   SL_iterator;
@@ -164,10 +164,12 @@ public:
  
 
 
-  virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
-                                          Subcurve* sc)
+  virtual Halfedge_handle
+    insert_in_face_interior(const X_monotone_curve_2& cv,
+			    Subcurve* sc)
   {
-    return m_arr->insert_in_face_interior(cv, m_arr->unbounded_face());
+    return (m_arr->insert_in_face_interior (_curve(cv),
+					    m_arr->unbounded_face()));
   }
 
   virtual Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
@@ -177,7 +179,8 @@ public:
                                              bool &new_face_created)
   {
     Halfedge_handle res =
-      m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
+      m_arr_access.insert_at_vertices_ex (_curve(cv),
+					  hhandle, prev,
                                           LARGER,
                                           new_face_created);
 
@@ -198,7 +201,7 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    return m_arr->insert_from_right_vertex(cv, he);
+    return (m_arr->insert_from_right_vertex (_curve(cv), he));
   }
 
   virtual Halfedge_handle insert_from_left_vertex
@@ -206,25 +209,46 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    return m_arr->insert_from_left_vertex(cv, he);
+    return (m_arr->insert_from_left_vertex (_curve(cv), he));
   }
 
 
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                SL_iterator iter)
   {
-    return (m_arr->insert_in_face_interior (pt, m_arr->unbounded_face()));
+    return (m_arr->insert_in_face_interior (_point(pt),
+					    m_arr->unbounded_face()));
   }
 
+private:
 
-   protected:
-     
-     
+  /*!
+   * Cast a Traits::Point_2 into an Arrangement::Point_2 object.
+   * These two types may not be the same when the addition visitor inherits
+   * from this base class.
+   */
+  const typename Arrangement::Point_2& _point (const Point_2& p) const
+  {
+    return (static_cast<const typename Arrangement::Point_2&> (p));
+  }
+
+  /*!
+   * Cast a Traits::X_monotone_curve_2 into an Arrangement::X_monotone_curve_2
+   * object.
+   * These two types may not be the same when the addition visitor inherits
+   * from this base class.
+   */
+  const typename Arrangement::X_monotone_curve_2&
+    _curve (const X_monotone_curve_2& cv) const
+  {
+    return (static_cast<const typename Arrangement::X_monotone_curve_2&> (cv));
+  }
+
+protected:
+          
   Arrangement*               m_arr;
   Arr_accessor<Arrangement>  m_arr_access;
 };
-
-
 
 CGAL_END_NAMESPACE
 

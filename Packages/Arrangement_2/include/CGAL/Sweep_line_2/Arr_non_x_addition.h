@@ -58,7 +58,6 @@ class Arr_non_x_addition
                                  Subcurve,
                                  Halfedge_handle>          Event;
   
-  typedef typename Traits::Curve_2                         Curve_2;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
   typedef Arr_addition_visitor <Traits,
@@ -66,8 +65,6 @@ class Arr_non_x_addition
                                 Event,
                                 Subcurve>                  Visitor;
 
-  
- 
   typedef Basic_sweep_line_2<Traits,
                              Visitor,
                              Subcurve,

@@ -69,11 +69,11 @@ int main ()
   Point_location   pl (arr);
 
   Point_2          p1 (4, 6);
-  std::cout << "(" << p1 << "): "; point_location_query (pl, p1);
+  point_location_query (pl, p1);
   Point_2          p2 (6, 2);
-  std::cout << "(" << p1 << "): "; point_location_query (pl, p2);
+  point_location_query (pl, p2);
   Point_2          p3 (2, 4);
-  std::cout << "(" << p1 << "): "; point_location_query (pl, p3);
+  point_location_query (pl, p3);
 
   return (0);
 }
