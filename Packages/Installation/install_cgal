@@ -199,7 +199,7 @@ INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 
 # compiler to be used
 # This is a string defined as follows:
-# <BASENAME>@<DESCRIPTION>@<CC_EXECUTABLE>@<CXX_EXECUTABLE>@<VERSION_ID>@<LEDA>
+# <BASENAME>@<DESCRIPTION>@<CC_EXECUTABLE>@<CXX_EXECUTABLE>@<VERSION_ID>@<CUSTOM_TAG>
 # The components can be accessed using the functions:
 #   compiler_basename, (extended_)compiler_description,
 #   c_compiler_bin, compiler_bin and compiler_version
@@ -216,7 +216,7 @@ CGAL_OS_COMPILER=''
 
 # this is woven into CGAL_OS_COMPILER; allows to run different installations
 # for the same os/compiler combination
-CUSTOM_OS_COMPILER_TAG=''
+CUSTOM_OSTYPE_TAG=''
 
 # can we start building the libs?
 SETUP_COMPLETE=''
@@ -2026,17 +2026,17 @@ compiler_version()
 }
 
 # $1 is a compiler string
-# print leda support
-leda_support()
+# print custom os tag
+custom_ostype_tag()
 {
     ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s",$6}'
 }
 
-# reassemble compiler string, i.e. adjust to LEDA_SUPPORT
+# reassemble compiler string, i.e. adjust to CUSTOM_OSTYPE_TAG
 reassemble_compiler()
 {
-    COMPILER="`compiler_basename`@`compiler_description`@`c_compiler_bin`@`compiler_bin`@`compiler_version`@${LEDA_SUPPORT}"
+    COMPILER="`compiler_basename`@`compiler_description`@`c_compiler_bin`@`compiler_bin`@`compiler_version`@${CUSTOM_OSTYPE_TAG}"
 }
 
 # $1 is a compiler string
@@ -2130,17 +2130,11 @@ search_for_compilers()
     do
 	try_to_get_var_from_file COMPILER ${i}
 	if [ ${?} != 0 ]; then
-	    # now we have to check for old config files
-	    # where the leda token was not included in COMPILER
-	    if [ "5" = "`${_printf} \"%s\n\" \"${*:-${COMPILER}}\" | \
-		${_awk} 'BEGIN {FS=\"@\"} {printf \"%d\",NF}'`" ]
-	    then
-		COMPILER="${COMPILER}@OLD"
-	    fi
 	    _register_compiler "${COMPILER}"
 	fi
     done
 
+    CUSTOM_OSTYPE_TAG=''
     _search_compiler gcc g++ ''
     case ${SYST} in
 	*IRIX64*)
@@ -2179,7 +2173,6 @@ search_for_compilers()
     _set_compiler 1
     write_buffer "\n\n${_LEFTSPACE}Choosing compiler `extended_compiler_description`.\n"
     flush_buffer
-    CUSTOM_OS_COMPILER_TAG=''
     _choose_compiler
 }
 
@@ -2217,7 +2210,7 @@ compiler_absolute()
     fi
     ${_printf} "%s" "@${_args}@"
     compiler_description "${_tmp3}"
-    ${_printf} "%s" "@${LEDA_SUPPORT}"
+    ${_printf} "%s" "@${CUSTOM_OSTYPE_TAG}"
 }
 
 
@@ -2539,6 +2532,7 @@ set_terminal_variables()
 
 # some confidence test for the directories
 # (return 0, iff problem - output with command $1)
+
 check_GMP_SUPPORT()
 {
     if [ "${GMP_SUPPORT}" != "" -a "${GMP_SUPPORT}" != "_GMP" ]; then
@@ -2889,6 +2883,13 @@ check_CGAL_INSTALL_VERSION()
 check_COMPILER()
 {
     #_check_comp_executable "`compiler_bin`"
+    return 1
+}
+
+check_CUSTOM_OSTYPE_TAG()
+{
+    # throw out potentially troublesome special characters
+    CUSTOM_OSTYPE_TAG="`echo ${CUSTOM_OSTYPE_TAG} | ${_sed} 's/ //g;s/-//g;s/_//g;s/@//g;s/(//g;s/)//g;s/*//g;s/&//g;s/?//g;s/$//g;s/!//g'`"  
     return 1
 }
 
@@ -3465,8 +3466,8 @@ set_ostype()
     if [ -n "`compiler_version`" ]; then
 	CGAL_OS_COMPILER="${CGAL_OS_COMPILER}-`compiler_version`"
     fi
-    if [ -n "${CUSTOM_OS_COMPILER_TAG}" ]; then
-	CGAL_OS_COMPILER="${CGAL_OS_COMPILER}_${CUSTOM_OS_COMPILER_TAG}"
+    if [ -n "${CUSTOM_OSTYPE_TAG}" ]; then
+	CGAL_OS_COMPILER="${CGAL_OS_COMPILER}_${CUSTOM_OSTYPE_TAG}"
     fi
 }
 
@@ -3474,7 +3475,7 @@ set_ostype()
 # (i.e. including LEDA extension)
 full_ostype()
 {
-    ${_printf} "%s" "${CGAL_OS_COMPILER}${LEDA_SUPPORT}"
+    ${_printf} "%s" "${CGAL_OS_COMPILER}"
 }
 
 # print the current os/compiler in a readable fashion
@@ -3527,25 +3528,10 @@ search_gmp()
 #
 
 # try to retrieve the compiler specific settings from
-# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`
+# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}
 retrieve_compiler_settings()
 {
-    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`"
-    # old config file names have been always without _LEDA
-    case `leda_support` in
-	OLD*)
-	    # maybe someone hacked an _LEDA file ...
-	    if [ -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA" ]; then
-		_file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA"
-	    else
-		_file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
-	    fi
-	    if try_to_get_var_from_file LEDA_SUPPORT "${_file}"; then
-	        LEDA_SUPPORT=''
-	    fi
-	    reassemble_compiler
-	    ;;
-    esac
+    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
     _tmp_version=${CGAL_INSTALL_VERSION}
     if try_to_get_var_from_file CGAL_INSTALL_VERSION "${_file}"; then
 	SETUP_COMPLETE=''
@@ -3745,7 +3731,6 @@ store_compiler_settings()
     ${_printf} "%s\n\n" \
 	"*/" \
 	>>${_file}
-    reassemble_compiler
     _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
     _store_install_config_variable LEDA_SUPPORT >>${_file}
@@ -3895,8 +3880,8 @@ reset_all_test_variables()
 # if a config file exists, otherwise check for STL
 _choose_compiler()
 {
-    log_print \
-	"Choosing `extended_compiler_description` as compiler."
+    log_print "Choosing `extended_compiler_description` as compiler."
+    CUSTOM_OSTYPE_TAG="`custom_ostype_tag`"
     set_ostype
     set_compiler_flags
     retrieve_compiler_settings
@@ -4184,9 +4169,9 @@ compiler_choose_menu()
 		    return
 		fi
 		COMPILER="`basename ${COMPILER_NAME}`@`compiler_basename \"${_tmp3}\"`@${COMPILER_NAME}@${COMPILER_NAME}@`compiler_description \"${_tmp3}\"`@"
+                CUSTOM_OSTYPE_TAG=''
 		_check_and_register_compiler "${COMPILER}"
 		reset_all_test_variables
-                CUSTOM_OS_COMPILER_TAG=''
 		_choose_compiler
 		_set_support
 		SETUP_COMPLETE=''
@@ -4202,12 +4187,6 @@ compiler_choose_menu()
 # ---------------------------------------------------------------------
 # compiler_menu : setup compiler options.
 #
-
-check_CUSTOM_OS_COMPILER_TAG()
-{
-    # throw out potentially troublesome special characters
-    CUSTOM_OS_COMPILER_TAG="`echo ${CUSTOM_OS_COMPILER_TAG} | ${_sed} 's/ //g;s/-//g;s/_//g;s/@//g;s/(//g;s/)//g;s/*//g;s/&//g;s/?//g;s/$//g;s/!//g'`"  
-}
 
 compiler_menu()
 {
@@ -4225,7 +4204,7 @@ compiler_menu()
 	    print_multi_line "<disabled>"
         fi
 	print_line "${_bold_on}<O>${_bold_off}  Set custom ostype tag"
-	print_multi_line "${CUSTOM_OS_COMPILER_TAG:-<none>}"
+	print_multi_line "${CUSTOM_OSTYPE_TAG:-<none>}"
 	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Main Menu'
 
@@ -4244,8 +4223,11 @@ compiler_menu()
 		SETUP_COMPLETE=''
 		;;
 	    o|O)
-		change_value CUSTOM_OS_COMPILER_TAG
-		check_CUSTOM_OS_COMPILER_TAG
+		change_value CUSTOM_OSTYPE_TAG
+		check_CUSTOM_OSTYPE_TAG
+                reassemble_compiler
+                _register_compiler "${COMPILER}"
+		_choose_compiler
                 reset_all_test_variables
 		SETUP_COMPLETE=''
 		;;
@@ -4292,12 +4274,9 @@ leda_menu()
 	    e|E)
 		if [ -z "${LEDA_SUPPORT}" ]; then
 		    LEDA_SUPPORT='_LEDA'
-		    reassemble_compiler
 		    SETUP_COMPLETE=''
-		    make_lib_dir
 		else
 		    LEDA_SUPPORT=''
-		    reassemble_compiler
 		fi
 		;;
 	    i|I)
@@ -5732,19 +5711,18 @@ lib_menu()
     build_cgal
 }
 
-install_menu()
+print_lib_information()
+{
+    if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIBNAME} ]; then
+	print_line "Libs built:          `_get_timestamp ${CGAL_LIB_DIR}/\`full_ostype\`/${CGAL_LIBNAME}`"
+    else
+	print_line "There are no libs for this os/compiler."
+    fi
+}
+
+installation()
 {
     write_menu_information "Installing"
-    set_lib_compiled_flag
-    if [ -z "${LIB_COMPILED}" ]; then
-  	log_print "CGAL library not found, hence no installation."
-	${_printf} "\n%s\n%s\n\n" \
-         "${_LEFTSPACE}Error: Could not find any CGAL library for this OS/compiler." \
-         "${_LEFTSPACE}  You have to build the CGAL library first."
-	print_filled_line
-	wait_for_enter
-	return 1
-    fi
     if [ "${CGAL_DIR}" = "${CGAL_INSTALL_DIR}" ]; then
   	log_print "CGAL_DIR == CGAL_INSTALL_DIR, hence no installation."
 	${_printf} "\n%s\n\n" \
@@ -5808,6 +5786,43 @@ install_menu()
     cd ${CGAL_DIR}
 }
 
+install_menu()
+{
+    set_lib_compiled_flag
+    if [ -z "${LIB_COMPILED}" ]; then
+  	log_print "CGAL library not found, hence no installation."
+	${_printf} "\n%s\n%s\n\n" \
+         "${_LEFTSPACE}Error: Could not find any CGAL library for this OS/compiler." \
+         "${_LEFTSPACE}  You have to build the CGAL library first."
+	print_filled_line
+	wait_for_enter
+	return 1
+    fi
+    while [ 0 ]; do
+	menu_header 'Install'
+	print_lib_information
+	print_empty_line
+        print_line "${_bold_on}<D>${_bold_off}  Change Installation root directory"
+	print_multi_line "${CGAL_INSTALL_DIR}"
+	print_line "${_bold_on}<I>${_bold_off}  Install CGAL"
+	menu_tailer 'Main Menu'
+
+	case ${KEY} in
+	    d|D)
+                OLD_INSTALL_DIR="${CGAL_INSTALL_DIR}"
+		change_value CGAL_INSTALL_DIR
+
+		;;
+	    i|I)
+		installation
+		;;
+	    q|Q|b|B)
+		return
+		;;
+	esac
+    done
+}
+
 
 # ---------------------------------------------------------------------
 # $1 is the full name of a config file in config/install/*
@@ -5825,10 +5840,11 @@ _build_one()
     INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
     try_to_get_var_from_file COMPILER $1
     if [ -n "${COMPILER}" ]; then
+        CUSTOM_OSTYPE_TAG="`custom_ostype_tag`"
         set_ostype
         set_compiler_flags
-        # do transition from old config files
-        if [ ! -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`" ]; then
+        # do transition from old config files (where the OS part was very verbose)
+        if [ ! -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}" ]; then
             NEW_SYST="${SYST}"
             old_guess_os
             SYST="${OLD_SYST}"
@@ -5836,12 +5852,10 @@ _build_one()
             OLD_LIBDIR="${CGAL_LIB_DIR}/`full_ostype`"
             retrieve_compiler_settings
             # rename old config file to not match os in the future
-            ${_mv} "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`" \
-              "${CGAL_INSTALL_CONF_DIR}/old_${CGAL_OS_COMPILER}`leda_support`"
+            ${_mv} "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}" \
+              "${CGAL_INSTALL_CONF_DIR}/old_${CGAL_OS_COMPILER}"
             SYST="${NEW_SYST}"
             set_ostype
-            # copy (potential) GMP libs
-            ${_cp} -r "${OLD_LIBDIR}" "${CGAL_LIB_DIR}/`full_ostype`" 
         else
             retrieve_compiler_settings
         fi
@@ -5934,21 +5948,6 @@ test_menu()
 # ---------------------------------------------------------------------
 # upgrade menu
 #
-
-run_ranlib_for_libs()
-{
-    case ${SYST} in
-	*Darwin*)
-	    RANLIB="ranlib"
-	    for j in ${3}; do
-		for i in `${_find} ${UPGRADE_FROM}/${1} -follow -name "${j}" -print`; do
-		    newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/${1}${2}g"`
-		    if [ -e "${newdir}/${j}" ]; then `${RANLIB} ${newdir}/${j}`; fi
-		done
-	    done
-	;;
-    esac
-}
 
 upgrade()
 {
@@ -6070,11 +6069,7 @@ main_menu()
 {
     while [ 0 ]; do
 	menu_header 'Main'
-	if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIBNAME} ]; then
-	    print_line "Libs built:          `_get_timestamp ${CGAL_LIB_DIR}/\`full_ostype\`/${CGAL_LIBNAME}`"
-	else
-	    print_line "There are no libs for this os/compiler."
-	fi
+        print_lib_information
 	print_empty_line
 	print_line     "${_bold_on}<C>${_bold_off}  Compiler Menu"
 	print_line     "${_bold_on}<S>${_bold_off}  Support Menu"
@@ -6378,10 +6373,10 @@ while [ ${#} -gt 0 ]; do
 	    ;;
 	--custom_ostype_tag*|--CUSTOM_OSTYPE_TAG*|-custom_ostype_tag*|-CUSTOM_OSTYPE_TAG*)
 	    _ANY_OPT='y'
-	    if set_variable_from_command_line 'CUSTOM_OS_COMPILER_TAG' "$1" "$2"; then
+	    if set_variable_from_command_line 'CUSTOM_OSTYPE_TAG' "$1" "$2"; then
 		shift
 	    fi
-	    check_CUSTOM_OS_COMPILER_TAG
+	    check_CUSTOM_OSTYPE_TAG
             ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
 	    _ANY_OPT='y'
