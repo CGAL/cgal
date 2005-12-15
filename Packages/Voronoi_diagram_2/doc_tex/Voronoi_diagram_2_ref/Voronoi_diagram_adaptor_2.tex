@@ -63,6 +63,9 @@ third template parameter defaults to \ccc{CGAL::Identity_policy_2<DG,AT>}.
 \ccGlue
 \ccTypedef{typedef Delaunay_graph::size_type size_type;}{A type for sizes.}
 \ccGlue
+\ccTypedef{typedef Delaunay_graph::Geom_traits Delaunay_geom_traits;}
+{A type for the geometric traits of the Delaunay graph.}
+\ccGlue
 \ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
 {A type for the vertex handles of the Delaunay graph.}
 \ccGlue
@@ -152,26 +155,33 @@ Locate_result;}{The result type of the point location queries.}
 \ccThreeToTwo
 %
 \ccConstructor{Voronoi_diagram_2(Adaptation_traits
-  tr = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy());}
-{Creates a Voronoi diagram using \ccc{tr} as adaptation traits and
-  \ccc{ap} as adaptation policy.}
+  at = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy(),
+  Delaunay_geom_traits gt = Delaunay_geom_traits());}
+{Creates a Voronoi diagram using \ccc{at} as adaptation traits and
+  \ccc{ap} as adaptation policy; the underlying Delaunay graph is
+  created using \ccc{gt} as geometric traits.}
 %
+\ccGlue
 \ccConstructor{Voronoi_diagram_2(Delaunay_graph dg, bool swap_dg = false,
-  Adaptation_traits tr = Adaptation_traits(), Adaptation_policy ap =
+  Adaptation_traits at = Adaptation_traits(), Adaptation_policy ap =
   Adaptation_policy());}
 {Creates a Voronoi diagram from the Delaunay graph \ccc{dg} and using
-  \ccc{tr} as adaptation traits and \ccc{ap} as adaptation policy. The 
+  \ccc{at} as adaptation traits and \ccc{ap} as adaptation policy. The 
   Delaunay graph \ccc{dg} is fully copied if \ccc{swap_dg} is set to
   \ccStyle{false}, or swapped with the one stored internally if
   \ccc{swap_dg} is set to \ccStyle{true}.}
 %
+\ccGlue
 \ccConstructor{template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond, Adaptation_traits
-  tr = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy());}
+  at = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy(),
+  Delaunay_geom_traits gt = Delaunay_geom_traits());}
 {Creates a Voronoi diagram using as sites the sites in the iterator
-  range \ccStyle{[first, beyond)}, \ccc{tr} as adaptation traits and
-  \ccc{ap} as adaptation policy. The value type of \ccc{Iterator} must
-  be \ccc{Site_2}.}
+  range \ccStyle{[first, beyond)}, \ccc{at} as adaptation traits and
+  \ccc{ap} as adaptation policy; the underlying Delaunay graph is
+  created using \ccc{gt} as geometric traits. \ccc{Iterator} must be a
+  model of the \ccc{InputIterator} concept and its value type must be
+  \ccc{Site_2}.}
 
 
 \ccHeading{Access Methods}
@@ -372,9 +382,9 @@ invalidated by any modification in the face over which it is defined.
     halfedge \ccc{h}.}}
 
 
-%\begin{ccTexOnly}
-%\newpage
-%\end{ccTexOnly}
+\begin{ccTexOnly}
+\newpage
+\end{ccTexOnly}
 
 
 \ccHeading{Insertion}
@@ -405,13 +415,13 @@ invalidated by any modification in the face over which it is defined.
   \ccStyle{Voronoi_traits::Has_nearest_site_2} is set to
   \ccStyle{CGAL::Tag_true}.
   \ccPrecond{The Voronoi diagram must contain at least one face.}}
-\ccGlue
-\ccMethod{template<class OutputIt> OutputIt nearest_sites(Point_2 p,
-  OutputIt oit);}{\ccc{OutputIt} is an output iterator with
-  \ccc{Face_handle} as value type. This methods outputs in the
-  container pointed to by \ccc{oit} the face handles corresponding to
-  the nearest site(s) of \ccc{p} in the Voronoi diagram. The resulting
-  output iterator is returned.}
+%\ccGlue
+%\ccMethod{template<class OutputIt> OutputIt nearest_sites(Point_2 p,
+%  OutputIt oit);}{\ccc{OutputIt} is an output iterator with
+%  \ccc{Face_handle} as value type. This methods outputs in the
+%  container pointed to by \ccc{oit} the face handles corresponding to
+%  the nearest site(s) of \ccc{p} in the Voronoi diagram. The resulting
+%  output iterator is returned.}
 
 
 

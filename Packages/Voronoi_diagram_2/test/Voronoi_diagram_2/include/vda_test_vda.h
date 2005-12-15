@@ -234,6 +234,7 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Face_handle                   Face_handle;
   typedef typename VDA::Vertex_handle                 Vertex_handle;
 
+  typedef typename VDA::Delaunay_geom_traits          Delaunay_geom_traits;
   typedef typename VDA::Delaunay_edge                 Delaunay_edge;
   typedef typename VDA::Delaunay_face_handle          Delaunay_face_handle;
   typedef typename VDA::Delaunay_vertex_handle        Delaunay_vertex_handle;

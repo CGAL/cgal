@@ -237,15 +237,21 @@ traverse the following features through iterators:
 \item the sites defining the Voronoi diagram.
 \end{itemize}
 
+%Finally, depending on the adaptation traits passed to the Voronoi diagram
+%adaptor, we can perform certain types of queries, namely:
+%\begin{itemize}
+%\item given a point $p$ we can determine the feature of the Voronoi
+%  diagram (vertex, edge, face) on which $p$ lies, and
+%\item given a point $p$ determine all nearest sites of $p$ in the
+%  Voronoi diagram, i.e., determine all sites $S_i$ in the Voronoi
+%  diagram such that the distance $\delta(S_i,p)$ is minimal.
+%\end{itemize}
+%% SINCE I DON'T WANT TO SUPPORT THE 2ND QUERY YET, THE TEXT IS FOR
+%% NOW THE FOLLOWING:
 Finally, depending on the adaptation traits passed to the Voronoi diagram
-adaptor, we can perform certain types of queries, namely:
-\begin{itemize}
-\item given a point $p$ we can determine the feature of the Voronoi
-  diagram (vertex, edge, face) on which $p$ lies, and
-\item given a point $p$ determine all nearest sites of $p$ in the
-  Voronoi diagram, i.e., determine all sites $S_i$ in the Voronoi
-  diagram such that the distance $\delta(S_i,p)$ is minimal.
-\end{itemize}
+adaptor, we can perform point location queries, namely given a point
+$p$ we can determine the feature of the Voronoi diagram (vertex, edge,
+face) on which $p$ lies.
 
 %On a more practical basis, arrangements in \cgal require as input a
 %set of curves. In the case of Voronoi diagrams these curves lie on

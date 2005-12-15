@@ -1,3 +1,8 @@
+15 December 2005:  Menelaos Karavelas
+- added Delaunay_geom_traits type in adaptor class, and added the
+  corresponding argument in the constructor section of the Voronoi
+  diagram adaptor ref manual.
+
 14 December 2005:  Menelaos Karavelas
 - fixed doc, testsuite and code according to Mariette's latest
   comments:

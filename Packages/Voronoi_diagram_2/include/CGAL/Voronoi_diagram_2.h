@@ -72,7 +72,7 @@ class Voronoi_diagram_2
   typedef AT                                          Adaptation_traits;
   typedef AP                                          Adaptation_policy;
 
-  typedef typename Delaunay_graph::Geom_traits        Geom_traits;
+  typedef typename Delaunay_graph::Geom_traits        Delaunay_geom_traits;
 
   typedef typename Delaunay_graph::size_type          size_type;
 
@@ -285,7 +285,7 @@ public:
   //--------------
   Voronoi_diagram_2(const Adaptation_traits& tr = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy(),
-		    const Geom_traits& gt = Geom_traits())
+		    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
     : dual_(gt), ap_(ap), tr_(tr) {}
 
   Voronoi_diagram_2(const Delaunay_graph& dg, bool swap_dg = false,
@@ -303,7 +303,7 @@ public:
   Voronoi_diagram_2(Iterator first, Iterator beyond,
 		    const Adaptation_traits& tr = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy(),
-		    const Geom_traits& gt = Geom_traits())
+		    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
     : dual_(first, beyond, gt), ap_(ap), tr_(tr) {}
 
   Voronoi_diagram_2(const Voronoi_diagram_2& other)
