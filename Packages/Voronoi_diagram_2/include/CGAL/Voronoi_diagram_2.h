@@ -283,15 +283,15 @@ public:
   //--------------
   // CONSTRUCTORS
   //--------------
-  Voronoi_diagram_2(const Adaptation_traits& tr = Adaptation_traits(),
+  Voronoi_diagram_2(const Adaptation_traits& at = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy(),
 		    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
-    : dual_(gt), ap_(ap), tr_(tr) {}
+    : dual_(gt), ap_(ap), at_(at) {}
 
   Voronoi_diagram_2(const Delaunay_graph& dg, bool swap_dg = false,
-		    const Adaptation_traits& tr = Adaptation_traits(),
+		    const Adaptation_traits& at = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy())
-    : dual_(), ap_(ap), tr_(tr) {
+    : dual_(), ap_(ap), at_(at) {
     if ( swap_dg ) {
       dual_.swap(const_cast<Delaunay_graph&>(dg));
     } else {
@@ -301,18 +301,18 @@ public:
 
   template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond,
-		    const Adaptation_traits& tr = Adaptation_traits(),
+		    const Adaptation_traits& at = Adaptation_traits(),
 		    const Adaptation_policy& ap = Adaptation_policy(),
 		    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
-    : dual_(first, beyond, gt), ap_(ap), tr_(tr) {}
+    : dual_(first, beyond, gt), ap_(ap), at_(at) {}
 
   Voronoi_diagram_2(const Voronoi_diagram_2& other)
-    : dual_(other.dual_), ap_(other.ap_), tr_(other.tr_) {}
+    : dual_(other.dual_), ap_(other.ap_), at_(other.at_) {}
 
   Self& operator=(const Self& other) {
     dual_ = other.dual_;
     ap_ = other.ap_;
-    tr_ = other.tr_;
+    at_ = other.at_;
     return *this;
   }
 
@@ -338,7 +338,7 @@ public:
   const Delaunay_graph& dual() const { return dual_; }
 
   // VORONOI TRAITS
-  const Adaptation_traits& adaptation_traits() const { return tr_; }
+  const Adaptation_traits& adaptation_traits() const { return at_; }
 
   // ADAPTATION POLICY
   const Adaptation_policy& adaptation_policy() const { return ap_; }
@@ -639,7 +639,7 @@ public:
     typedef typename Adaptation_traits::Nearest_site_2  Nearest_site_2;
     typedef typename Nearest_site_2::result_type        Query_result;
 
-    Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
+    Nearest_site_2 nearest_site = at_.nearest_site_2_object();
     Query_result ns_qr = nearest_site(dual_, p);
 
     if ( const Delaunay_vertex_handle* dv =
@@ -724,7 +724,7 @@ public:
  private:
   Delaunay_graph  dual_;
   Adaptation_policy ap_;
-  Adaptation_traits tr_;
+  Adaptation_traits at_;
 
  protected:
   Delaunay_edge opposite(const Delaunay_edge& e) const {
