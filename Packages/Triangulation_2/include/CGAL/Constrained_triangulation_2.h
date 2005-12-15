@@ -72,6 +72,7 @@ public:
   using Triangulation::geom_traits;
   using Triangulation::all_faces_begin;
   using Triangulation::all_faces_end;
+  using Triangulation::side_of_oriented_circle;
 #endif
 
   typedef Gt                                 Geom_traits;

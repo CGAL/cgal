@@ -65,6 +65,7 @@ public:
   using Ctr::cw;
   using Ctr::ccw;
   using Ctr::infinite_vertex;
+  using Ctr::side_of_oriented_circle;
 #endif
 
   typedef typename Geom_traits::Point_2  Point;

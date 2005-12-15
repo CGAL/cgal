@@ -1,3 +1,7 @@
+15 december 2005 Mariette
+- add using in  Constrained_triangulation_2.h 
+   and Constrained_Delaunay_triangulation_2.h to please g++4.1
+
 14 december 2005 Mariette
 - add using in  Delaunay_triangulation_2.h to please g++4.1
 
