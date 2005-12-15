@@ -29,8 +29,7 @@
 
 template<class VDA, class Projector, class QStream, class OStream>
 void test_locate(const VDA& vda, const Projector& project,
-		 QStream& isq, OStream& os = std::cout,
-		 bool print_sites)
+		 QStream& isq, OStream& os, bool print_sites)
 {
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "

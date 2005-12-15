@@ -5,6 +5,7 @@
 - added comment in doc of Halfedge for explaining the convension for
   accessing the defining sites of the Voronoi halfedge.
 - change to please g++ 4.1.0
+- change to please pgCC
 
 14 December 2005:  Menelaos Karavelas
 - fixed doc, testsuite and code according to Mariette's latest
