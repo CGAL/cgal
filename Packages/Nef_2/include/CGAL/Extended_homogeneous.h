@@ -33,7 +33,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<class Kernel>
+struct Is_extended_kernel;
+
 template <class T> class Extended_homogeneous;
+
+template<class T>
+struct Is_extended_kernel<Extended_homogeneous<T> > {
+       typedef Tag_true value_type;
+};
 
 /*{\Moptions outfile=ExtendedKernelTraits_2.man}*/
 /*{\Moptions print_title=yes }*/ 

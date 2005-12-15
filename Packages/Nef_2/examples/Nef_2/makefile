@@ -5,8 +5,8 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.17_g++-3.4.4
+#CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.11_CL.EXE-1310
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -37,11 +37,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+		bounded \
                 construction \
                 simple_intersection 
 
 construction$(EXE_EXT): construction$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)construction construction$(OBJ_EXT) $(LDFLAGS)
+
+bounded$(EXE_EXT): bounded$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bounded bounded$(OBJ_EXT) $(LDFLAGS)
+
+segment$(EXE_EXT): segment$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)segment segment$(OBJ_EXT) $(LDFLAGS)
 
 simple_intersection$(EXE_EXT): simple_intersection$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simple_intersection simple_intersection$(OBJ_EXT) $(LDFLAGS)

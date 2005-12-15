@@ -31,7 +31,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<class Kernel>
+struct Is_extended_kernel;
+
 template <class T> class Extended_cartesian;
+
+template<class T>
+struct Is_extended_kernel<Extended_cartesian<T> > {
+       typedef Tag_true value_type;
+};
 
 /*{\Xanpage {Extended_cartesian}{}{An extended geometric kernel model}{K}}*/
 

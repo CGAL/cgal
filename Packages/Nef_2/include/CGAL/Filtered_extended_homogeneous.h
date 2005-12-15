@@ -56,6 +56,7 @@ std::cout << #c##" " << c##_exception << "/" << c##_total << std::endl
 #endif
 
 CGAL_BEGIN_NAMESPACE
+
 template <typename RT>
 class SPolynomial {
   RT _m,_n;
@@ -953,6 +954,18 @@ bool operator<(const Extended_direction<RT>& d1,
   return (d0d1eq && !d0d2eq) ||
          strictly_ordered_ccw(d0,d1,d2) && !d0d2eq;
 }
+
+
+
+template<class Kernel>
+struct Is_extended_kernel;
+template <typename RT_>
+class Filtered_extended_homogeneous;
+
+template<class T>
+struct Is_extended_kernel<Filtered_extended_homogeneous<T> > {
+       typedef Tag_true value_type;
+};
 
 
 template <typename RT_>

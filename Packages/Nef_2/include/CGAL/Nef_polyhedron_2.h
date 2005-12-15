@@ -43,6 +43,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<class Kernel>
+struct Is_extended_kernel {
+       typedef Tag_false value_type;
+};
+
+
 template <typename T> class Nef_polyhedron_2;
 template <typename T> class Nef_polyhedron_2_rep;
 
@@ -199,10 +205,30 @@ protected:
                                                     Face_const_iterator;
 
   struct Except_frame_box_edges {
-  Decorator D_; Face_handle f_;
-  Except_frame_box_edges(Plane_map& P) : D_(P), f_(D_.faces_begin()) {}
-  bool operator()(Halfedge_handle e) const
-  { return D_.face(e)==f_ || D_.face(D_.twin(e))==f_; }
+    Decorator D_; 
+    Face_handle f_;
+
+    Except_frame_box_edges(Plane_map& P) 
+      : D_(P), f_(D_.faces_begin()) 
+    {}
+    
+    bool 
+    operator()(Halfedge_handle e, const Tag_true& ) const
+    { 
+      return D_.face(e)==f_ || D_.face(D_.twin(e))==f_; 
+    }
+
+    bool 
+    operator()(Halfedge_handle e, const Tag_false& ) const
+    { 
+      return false;
+    }
+    bool
+    operator()(Halfedge_handle e) const
+    {
+      return this->operator()(e, typename Is_extended_kernel<Extended_kernel>::value_type());
+    }
+
   };
 
   friend struct Except_frame_box_edges;
@@ -210,13 +236,22 @@ protected:
   typedef std::list<Extended_segment>      ES_list;
   typedef typename ES_list::const_iterator ES_iterator;
 
-  void fill_with_frame_segs(ES_list& L) const
+  void fill_with_frame_segs(ES_list& L, const Tag_true& ) const
   /*{\Xop fills the list with the four segments which span our frame,
      the convex hull of SW,SE,NW,NE.}*/
   { L.push_back(Extended_segment(EK.SW(),EK.NW()));
     L.push_back(Extended_segment(EK.SW(),EK.SE()));
     L.push_back(Extended_segment(EK.NW(),EK.NE()));
     L.push_back(Extended_segment(EK.SE(),EK.NE()));
+  }
+
+  void fill_with_frame_segs(ES_list& L, const Tag_false& ) const
+  {}
+
+  void fill_with_frame_segs(ES_list& L) const
+  { 
+
+    fill_with_frame_segs(L, typename Is_extended_kernel<Extended_kernel>::value_type());
   }
 
   struct Link_to_iterator {
@@ -243,13 +278,21 @@ protected:
 
   friend struct Link_to_iterator;
 
-  void clear_outer_face_cycle_marks() 
+  void clear_outer_face_cycle_marks(const Tag_true&) 
   { // unset all frame marks
     Decorator D(pm());
     Face_iterator f = D.faces_begin(); 
     D.mark(f) = false;
     Halfedge_handle e = D.holes_begin(f);
     D.set_marks_in_face_cycle(e, false);
+  }
+
+  void clear_outer_face_cycle_marks(const Tag_false&)
+  {}
+
+  void clear_outer_face_cycle_marks()
+  {
+    clear_outer_face_cycle_marks(typename Is_extended_kernel<Extended_kernel>::value_type());
   }
 
 public:
@@ -264,7 +307,7 @@ public:
     Overlayer D(pm());
     Link_to_iterator I(D, --L.end(), false);
     D.create(L.begin(),L.end(),I);
-    D.mark(++D.faces_begin()) = bool(plane);
+    D.mark(--D.faces_end()) = bool(plane);
   }
 
 
@@ -275,18 +318,26 @@ public:
   {   CGAL_NEF_TRACEN("Nconstruction from line "<<l);
     ES_list L;
     fill_with_frame_segs(L);
-    Extended_point ep1 = EK.construct_opposite_point(l);
-    Extended_point ep2 = EK.construct_point(l);
-    L.push_back(EK.construct_segment(ep1,ep2));
+    if(check_tag(typename Is_extended_kernel<Extended_kernel>::value_type())) {
+      Extended_point ep1 = EK.construct_opposite_point(l);
+      Extended_point ep2 = EK.construct_point(l);
+      L.push_back(EK.construct_segment(ep1,ep2));
+    }
     Overlayer D(pm());
     Link_to_iterator I(D, --L.end(), false);
     D.create(L.begin(),L.end(),I);
-    CGAL_assertion( I._e != Halfedge_handle() );
-    Halfedge_handle el = I._e;
-    if ( D.point(D.target(el)) != EK.target(L.back()) )
-      el = D.twin(el);
-    D.mark(D.face(el)) = true;
-    D.mark(el) = bool(line);
+    if(check_tag(typename Is_extended_kernel<Extended_kernel>::value_type())) {
+      CGAL_assertion( I._e != Halfedge_handle() );
+      Halfedge_handle el = I._e;
+      if ( D.point(D.target(el)) != EK.target(L.back()) )
+	el = D.twin(el);
+      D.mark(D.face(el)) = true;
+      D.mark(el) = bool(line);
+    } else {
+      D.mark(--D.faces_end()) = bool(EMPTY);
+      std::cerr << "Constructor not available with standard kernel. "
+                   " Returned empty polygon!" << std::endl;
+    }
   }
 
 
@@ -328,22 +379,25 @@ public:
     Link_to_iterator I(D, --L.end(), true);
     D.create(L.begin(),L.end(),I);
     if ( empty ) {
-      D.mark(++D.faces_begin()) = !bool(b); return; }
+      D.mark(--D.faces_end()) = !bool(b); return; }
     CGAL_assertion( I._e != Halfedge_handle() || I._v != Vertex_handle() );
+
     if ( EK.is_degenerate(L.back()) ) {
+      // its a point
       CGAL_assertion(I._v != Vertex_handle());
       D.mark(D.face(I._v)) = !bool(b); D.mark(I._v) = b;
     } else {
+      // at least one segment
       Halfedge_handle el = I._e;
       if ( D.point(D.target(el)) != EK.target(L.back()) )
-        el = D.twin(el);  
+	el = D.twin(el);  
       D.set_marks_in_face_cycle(el,bool(b));
-      if ( D.number_of_faces() > 2 ) D.mark(D.face(el)) = true;
+      int n = check_tag(typename Is_extended_kernel<Extended_kernel>::value_type()) ? 2 : 1;
+      if ( D.number_of_faces() > n ) D.mark(D.face(el)) = true;
       else                           D.mark(D.face(el)) = !bool(b);
     }
+
     clear_outer_face_cycle_marks();
-
-
   }
 
   Nef_polyhedron_2(const Nef_polyhedron_2<T>& N1) : Base(N1) {}

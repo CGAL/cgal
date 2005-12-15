@@ -1,3 +1,6 @@
+15 December Andreas Fabri, Peter Hachenberger
+- introduced a Bounded_kernel 
+
 13 March 2005 Sylvain Pion
 - Nef_polynomial : use boost/operators, and remove specializations for
   int and double.
