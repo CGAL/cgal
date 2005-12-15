@@ -298,6 +298,8 @@ public:
   #undef USEMARK
   #undef USECMARK
 
+    enum Creation {POLYGON=0, POLYLINE=1};
+
   /*{\Moperations 1.1 1}*/
 
   struct Seg_info { // to transport information from input to output
@@ -330,7 +332,7 @@ PM_overlayer(Plane_map& P, const Geometry& g = Geometry()) :
 
 template <typename Forward_iterator, typename Object_data_accessor>
 void create(Forward_iterator start, Forward_iterator end, 
-            Object_data_accessor& A) const
+            Object_data_accessor& A, Creation cr = POLYGON) const
 /*{\Mop produces in |P| the plane map consistent with the overlay
 of the segments from the iterator range |[start,end)|. The data accessor 
 |A| allows to initialize created vertices and edges with respect to the
@@ -349,6 +351,7 @@ created vertex |v|.
 \precond |Forward_iterator| has value type |Segment|.}*/
 {
   CGAL_NEF_TRACEN("creating from iterator range");
+  CGAL_assertion(cr == POLYGON || cr == POLYLINE);
   typedef PMO_from_segs<Self,Forward_iterator,Object_data_accessor> 
     Output_from_segments;
   typedef Segment_overlay_traits<
@@ -358,10 +361,12 @@ created vertex |v|.
   Output_from_segments Out(*this, A);
   seg_overlay_sweep SOS( input_range(start, end), Out, K);
   SOS.sweep();
-  create_face_objects(Out);
+  if(cr==POLYGON)
+    create_face_objects(Out);
+  else
+    create_face_objects_pl(Out);
   Out.clear_temporary_vertex_info();
 }
-
 
 void subdivide(const Plane_map& P0, const Plane_map& P1) const
 /*{\Mop constructs the overlay of the plane maps |P0| and |P1| in
@@ -744,6 +749,59 @@ void create_face_objects(const Below_info& D) const
       link_as_isolated_vertex(face(e_below),v);    
   }
 
+}
+
+template <typename Below_info>
+void create_face_objects_pl(const Below_info& D) const
+{
+  CGAL_NEF_TRACEN("create_face_objects_pl()");
+  CGAL::Unique_hash_map<Halfedge_handle,int> FaceCycle(-1);
+  std::vector<Halfedge_handle>  MinimalHalfedge;
+  int i=0;
+  Halfedge_iterator e, eend = this->halfedges_end();
+  for (e=this->halfedges_begin(); e != eend; ++e) {
+    if ( FaceCycle[e] >= 0 ) continue; // already assigned
+    Halfedge_around_face_circulator hfc(e),hend(hfc);
+    Halfedge_handle e_min = e;
+    CGAL_NEF_TRACE("face cycle "<<i<<"\n");
+    CGAL_For_all(hfc,hend) {
+      FaceCycle[hfc]=i; // assign face cycle number
+      int comp = K.compare_xy(point(target(hfc)), point(target(e_min)));
+      if ( comp < 0 )
+        e_min = hfc;
+      else if(comp == 0) {
+	Point p1 = point(source(e_min)), 
+          p2 = point(target(e_min)), 
+          p3 = point(target(next(e_min)));
+	if(K.left_turn(p1,p2,p3))
+	   e_min = hfc;
+      }
+      CGAL_NEF_TRACE(PE(hfc));
+    } 
+    CGAL_NEF_TRACEN("");
+    MinimalHalfedge.push_back(e_min); ++i;
+  }
+
+  Face_handle f_outer = this->new_face();
+  for (int j=0; j<i; ++j) {
+    Halfedge_handle e = MinimalHalfedge[j];
+      CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
+    Point p1 = point(source(e)), 
+          p2 = point(target(e)), 
+          p3 = point(target(next(e)));
+    if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
+        CGAL_NEF_TRACEN("  creating new face object");
+      Face_handle f = this->new_face();
+      link_as_outer_face_cycle(f,e);
+    }
+  }
+
+  for (e = this->halfedges_begin(); e != eend; ++e) {
+    if ( face(e) != Face_handle() ) continue;
+    CGAL_NEF_TRACEN("linking hole "<<PE(e));
+    Face_handle f = determine_face(e,MinimalHalfedge,FaceCycle,D);
+    link_as_hole(f,e);
+  }
 }
 
 template <typename Below_info>

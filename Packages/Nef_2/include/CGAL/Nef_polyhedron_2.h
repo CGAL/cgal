@@ -49,28 +49,28 @@ struct Is_extended_kernel {
 };
 
 
-template <typename T> class Nef_polyhedron_2;
-template <typename T> class Nef_polyhedron_2_rep;
+template <typename T, typename I, typename M> class Nef_polyhedron_2;
+template <typename T, typename I, typename M> class Nef_polyhedron_2_rep;
 
-template <typename T>
-std::ostream& operator<<(std::ostream&, const Nef_polyhedron_2<T>&); 
+template <typename T, typename I, typename M>
+std::ostream& operator<<(std::ostream&, const Nef_polyhedron_2<T,I,M>&); 
 
-template <typename T>
-std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&);
+template <typename T, typename I, typename M>
+std::istream& operator>>(std::istream&, Nef_polyhedron_2<T,I,M>&);
 
-template <typename T>
+template <typename T, typename Items, typename Mark_>
 class Nef_polyhedron_2_rep 
 { 
-  typedef Nef_polyhedron_2_rep<T> Self;
-  friend class Nef_polyhedron_2<T>;
+  typedef Nef_polyhedron_2_rep<T,Items,Mark_> Self;
+  friend class Nef_polyhedron_2<T,Items,Mark_>;
 
   struct HDS_traits {
     typedef typename T::Point_2 Point;
-    typedef bool                Mark;
+    typedef Mark_                Mark;
   };
 
 public: // gcc-3.3 otherwise claims that Decorator in Polyhedron_2 is private
-  typedef CGAL_HALFEDGEDS_DEFAULT<HDS_traits,HDS_items> Plane_map;
+  typedef CGAL_HALFEDGEDS_DEFAULT<HDS_traits,Items> Plane_map;
   typedef CGAL::PM_const_decorator<Plane_map>           Const_decorator;
   typedef CGAL::PM_decorator<Plane_map>                 Decorator;
   typedef CGAL::PM_naive_point_locator<Decorator,T>     Slocator;
@@ -127,16 +127,20 @@ The template parameter |T| is specified via an extended kernel
 concept. |T| must be a model of the concept |ExtendedKernelTraits_2|.
 }*/
 
-template <typename T>
-class Nef_polyhedron_2 : public Handle_for< Nef_polyhedron_2_rep<T> >
+template <typename T, typename Items_=HDS_items, typename Mark_=bool>
+class Nef_polyhedron_2 
+  : public Handle_for< Nef_polyhedron_2_rep<T,Items_,Mark_> >
 { 
 public:
 typedef T Extended_kernel;
 static  T EK; // static extended kernel
 
   /*{\Mtypes 7}*/
-  typedef Nef_polyhedron_2<T> Self;
-  typedef Handle_for< Nef_polyhedron_2_rep<T> > Base;
+  typedef Mark_ Mark;
+  /*{\Xtypemember marking set membership or exclusion.}*/
+  typedef Items_ Items;
+  typedef Nef_polyhedron_2<T,Items,Mark> Self;
+  typedef Handle_for< Nef_polyhedron_2_rep<T,Items,Mark> > Base;
   typedef typename T::Point_2   Extended_point;
   typedef typename T::Segment_2 Extended_segment;
 
@@ -149,8 +153,7 @@ static  T EK; // static extended kernel
   typedef typename T::Standard_aff_transformation_2  Aff_transformation;
   /*{\Mtypemember affine transformations of the plane.}*/
 
-  typedef bool Mark;
-  /*{\Xtypemember marking set membership or exclusion.}*/
+  enum Binary { UNION=0, INTERSECTION=1 };
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   /*{\Menum construction selection.}*/
@@ -165,7 +168,7 @@ protected:
   struct XOR { bool operator()(bool b1, bool b2)  const 
                                            { return (b1&&!b2)||(!b1&&b2); } };
 
-  typedef Nef_polyhedron_2_rep<T>           Nef_rep;
+  typedef Nef_polyhedron_2_rep<T,Items,Mark>           Nef_rep;
   typedef typename Nef_rep::Plane_map       Plane_map;
   typedef typename Nef_rep::Decorator       Decorator;
   typedef typename Nef_rep::Const_decorator Const_decorator;
@@ -183,9 +186,9 @@ protected:
   const Plane_map& pm() const { return ptr()->pm_; } 
 
   friend std::ostream& operator<< <>
-      (std::ostream& os, const Nef_polyhedron_2<T>& NP);
+      (std::ostream& os, const Nef_polyhedron_2<T,Items,Mark>& NP);
   friend std::istream& operator>> <>
-      (std::istream& is, Nef_polyhedron_2<T>& NP);
+      (std::istream& is, Nef_polyhedron_2<T,Items,Mark>& NP);
 
   typedef typename Decorator::Vertex_handle         Vertex_handle;
   typedef typename Decorator::Halfedge_handle       Halfedge_handle;
@@ -275,6 +278,31 @@ protected:
     { D.mark(v) = _m; }
 
   };
+
+  template<typename IT>
+  struct From_intersecting_polygons {
+
+    Unique_hash_map<Halfedge_handle,IT>& halfedge2iterator;
+
+    From_intersecting_polygons(Unique_hash_map<Halfedge_handle,IT>& e2i) 
+      : halfedge2iterator(e2i) {}
+
+    void supporting_segment(Halfedge_handle e, IT it) 
+    { 
+      //      std::cerr << e->opposite()->vertex()->point() 
+      //		<< "->" << e->vertex()->point() << std::endl;
+      halfedge2iterator[e->opposite()] = 
+	halfedge2iterator[e] = it; e->mark() = true;}      
+
+    void trivial_segment(Vertex_handle v, IT) 
+    { v->mark() = true; }
+    void starting_segment(Vertex_handle v, IT) 
+    { v->mark() = true; }
+    void passing_segment(Vertex_handle v, IT) 
+    { v->mark() = true; }
+    void ending_segment(Vertex_handle v, IT) 
+    { v->mark() = true; }
+  };  
 
   friend struct Link_to_iterator;
 
@@ -392,7 +420,8 @@ public:
       if ( D.point(D.target(el)) != EK.target(L.back()) )
 	el = D.twin(el);  
       D.set_marks_in_face_cycle(el,bool(b));
-      int n = check_tag(typename Is_extended_kernel<Extended_kernel>::value_type()) ? 2 : 1;
+      unsigned int n = 
+        check_tag(typename Is_extended_kernel<Extended_kernel>::value_type()) ? 2 : 1;
       if ( D.number_of_faces() > n ) D.mark(D.face(el)) = true;
       else                           D.mark(D.face(el)) = !bool(b);
     }
@@ -400,8 +429,111 @@ public:
     clear_outer_face_cycle_marks();
   }
 
-  Nef_polyhedron_2(const Nef_polyhedron_2<T>& N1) : Base(N1) {}
-  Nef_polyhedron_2& operator=(const Nef_polyhedron_2<T>& N1)
+  template <class Forward_iterator>
+  Nef_polyhedron_2(Forward_iterator pit, Forward_iterator pend,	      
+		   Binary b = UNION) : Base(Nef_rep()) { 
+
+    CGAL_assertion(b==UNION);
+
+    typedef typename std::iterator_traits<Forward_iterator>::value_type 
+      iterator_pair;
+    typedef typename iterator_pair::first_type point_iterator;
+    point_iterator it, itl, end;
+
+    ES_list L;
+
+    fill_with_frame_segs(L);
+    for(;pit != pend; ++pit) {
+      it = pit->first;
+      end = pit->second;
+      if (it != end) {
+        Extended_point ef, ep = ef = EK.construct_point(*it);
+        itl=it; ++itl;
+        if (itl == end) // case only one point
+          L.push_back(EK.construct_segment(ep,ep));
+        else { // at least one segment
+          while( itl != end ) {
+            Extended_point en = EK.construct_point(*itl);
+            L.push_back(EK.construct_segment(ep,en));
+            ep = en; ++itl;
+          }
+          L.push_back(EK.construct_segment(ep,ef));
+        }
+      }
+    }
+
+    Overlayer D(pm());
+    Unique_hash_map<Halfedge_handle,ES_iterator> e2i;
+    From_intersecting_polygons<ES_iterator> fip(e2i);
+    D.create(L.begin(),L.end(),fip);
+
+    Face_handle outer_face;
+    if(check_tag(typename Is_extended_kernel<Extended_kernel>::value_type()))
+      outer_face = ++D.faces_begin();
+    else
+      outer_face = D.faces_begin();
+    Halfedge_handle e;
+    for(e=D.halfedges_begin(); e!=D.halfedges_end(); ++e) {
+      if(&*e < &*(D.twin(e)) && EK.is_standard(D.source(e)->point())) {
+	ES_iterator eit = e2i[e];
+	if(lexicographically_xy_smaller(EK.standard_point(eit->source()),
+					EK.standard_point(eit->target()))) {
+	  if(lexicographically_xy_smaller(EK.standard_point(D.source(D.twin(e))->point()),
+					  EK.standard_point(D.source(e)->point())))
+	    e = D.twin(e);
+	} else
+	  if(lexicographically_xy_smaller(EK.standard_point(D.source(e)->point()),
+					  EK.standard_point(D.source(D.twin(e))->point())))
+	    e = D.twin(e);
+	if(D.face(e) != outer_face)
+	  D.mark(D.face(e)) = true;
+      }
+    }
+    
+    D.simplify(Except_frame_box_edges(pm()));
+    clear_outer_face_cycle_marks();
+  }
+
+
+  template <class Forward_iterator>
+  Nef_polyhedron_2(Forward_iterator pit, Forward_iterator pend,	      
+		   bool m) : Base(Nef_rep()) { 
+
+    typedef typename std::iterator_traits<Forward_iterator>::value_type 
+      iterator_pair;
+    typedef typename iterator_pair::first_type point_iterator;
+    point_iterator it, itl, end;
+
+    ES_list L;
+
+    fill_with_frame_segs(L);
+    for(;pit != pend; ++pit) {
+      it = pit->first;
+      end = pit->second;
+      if (it != end) {
+        Extended_point ep  = EK.construct_point(*it);
+        itl=it; ++itl;
+        if (itl == end) // case only one point
+          L.push_back(EK.construct_segment(ep,ep));
+        else { // at least one segment
+          while( itl != end ) {
+            Extended_point en = EK.construct_point(*itl);
+            L.push_back(EK.construct_segment(ep,en));
+            ep = en; ++itl;
+          }
+        }
+      }
+    }
+
+    Overlayer D(pm());
+    Link_to_iterator I(D, --L.end(), true);
+    D.create(L.begin(),L.end(),I, Overlayer::POLYLINE);
+    
+    clear_outer_face_cycle_marks();
+  }
+
+  Nef_polyhedron_2(const Nef_polyhedron_2<T,Items,Mark>& N1) : Base(N1) {}
+  Nef_polyhedron_2& operator=(const Nef_polyhedron_2<T,Items,Mark>& N1)
   { Base::operator=(N1); return (*this); }
   ~Nef_polyhedron_2() {}
 
@@ -447,7 +579,7 @@ public:
       D.clone(H);        // cloning H into pm()
     }
   }
-  void clone_rep() { *this = Nef_polyhedron_2<T>(pm()); }
+  void clone_rep() { *this = Nef_polyhedron_2<T,Items,Mark>(pm()); }
 
   /*{\Moperations 4 3 }*/
   public:
@@ -535,46 +667,46 @@ public:
 
   /*{\Mtext \headerline{Constructive Operations}}*/
 
-  Nef_polyhedron_2<T> complement() const
+  Nef_polyhedron_2<T,Items,Mark> complement() const
   /*{\Mop returns the complement of |\Mvar| in the plane.}*/
-  { Nef_polyhedron_2<T> res = *this;
+  { Nef_polyhedron_2<T,Items,Mark> res = *this;
     res.extract_complement();
     return res;
   }
 
 
-  Nef_polyhedron_2<T> interior() const
+  Nef_polyhedron_2<T,Items,Mark> interior() const
   /*{\Mop returns the interior of |\Mvar|.}*/
-  { Nef_polyhedron_2<T> res = *this;
+  { Nef_polyhedron_2<T,Items,Mark> res = *this;
     res.extract_interior();
     return res;
   }
 
-  Nef_polyhedron_2<T> closure() const
+  Nef_polyhedron_2<T,Items,Mark> closure() const
   /*{\Mop returns the closure of |\Mvar|.}*/
-  { Nef_polyhedron_2<T> res = *this;
+  { Nef_polyhedron_2<T,Items,Mark> res = *this;
     res.extract_closure();
     return res;
   }
 
-  Nef_polyhedron_2<T> boundary() const
+  Nef_polyhedron_2<T,Items,Mark> boundary() const
   /*{\Mop returns the boundary of |\Mvar|.}*/
-  { Nef_polyhedron_2<T> res = *this;
+  { Nef_polyhedron_2<T,Items,Mark> res = *this;
     res.extract_boundary();
     return res;
   }
 
-  Nef_polyhedron_2<T> regularization() const
+  Nef_polyhedron_2<T,Items,Mark> regularization() const
   /*{\Mop returns the regularized polyhedron (closure of interior).}*/
-  { Nef_polyhedron_2<T> res = *this;
+  { Nef_polyhedron_2<T,Items,Mark> res = *this;
     res.extract_regularization();
     return res;
   }
 
 
-  Nef_polyhedron_2<T> intersection(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark> intersection(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
-  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+  { Nef_polyhedron_2<T,Items,Mark> res(pm(),false); // empty, no frame
     Overlayer D(res.pm());
     D.subdivide(pm(),N1.pm());
     AND _and; D.select(_and);
@@ -584,9 +716,9 @@ public:
   }
 
 
-  Nef_polyhedron_2<T> join(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark> join(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
-  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+  { Nef_polyhedron_2<T,Items,Mark> res(pm(),false); // empty, no frame
     Overlayer D(res.pm());
     D.subdivide(pm(),N1.pm());
     OR _or; D.select(_or);
@@ -595,9 +727,9 @@ public:
     return res;
   }
 
-  Nef_polyhedron_2<T> difference(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark> difference(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/
-  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+  { Nef_polyhedron_2<T,Items,Mark> res(pm(),false); // empty, no frame
     Overlayer D(res.pm());
     D.subdivide(pm(),N1.pm());
     DIFF _diff; D.select(_diff);
@@ -606,11 +738,11 @@ public:
     return res;
   }    
 
-  Nef_polyhedron_2<T> symmetric_difference(
-    const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark> symmetric_difference(
+    const Nef_polyhedron_2<T,Items,Mark>& N1) const
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/
-  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+  { Nef_polyhedron_2<T,Items,Mark> res(pm(),false); // empty, no frame
     Overlayer D(res.pm());
     D.subdivide(pm(),N1.pm());
     XOR _xor; D.select(_xor);
@@ -620,9 +752,9 @@ public:
   }
 
   #if 0
-  Nef_polyhedron_2<T> transform(const Aff_transformation& t) const
+  Nef_polyhedron_2<T,Items,Mark> transform(const Aff_transformation& t) const
   /*{\Mop returns $t(|\Mvar|)$.}*/
-  { Nef_polyhedron_2<T> res(pm()); // cloned
+  { Nef_polyhedron_2<T,Items,Mark> res(pm()); // cloned
     Transformer PMT(res.pm());
     PMT.transform(t);
     return res;
@@ -636,53 +768,53 @@ public:
   operation \emph{complement} respectively. There are also the
   corresponding modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_2<T>  operator*(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark>  operator*(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return intersection(N1); }
 
-  Nef_polyhedron_2<T>  operator+(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark>  operator+(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return join(N1); }
 
-  Nef_polyhedron_2<T>  operator-(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark>  operator-(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return difference(N1); }
 
-  Nef_polyhedron_2<T>  operator^(const Nef_polyhedron_2<T>& N1) const
+  Nef_polyhedron_2<T,Items,Mark>  operator^(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return symmetric_difference(N1); }
 
-  Nef_polyhedron_2<T>  operator!() const
+  Nef_polyhedron_2<T,Items,Mark>  operator!() const
   { return complement(); }
    
-  Nef_polyhedron_2<T>& operator*=(const Nef_polyhedron_2<T>& N1)
+  Nef_polyhedron_2<T,Items,Mark>& operator*=(const Nef_polyhedron_2<T,Items,Mark>& N1)
   { *this = intersection(N1); return *this; }
 
-  Nef_polyhedron_2<T>& operator+=(const Nef_polyhedron_2<T>& N1)
+  Nef_polyhedron_2<T,Items,Mark>& operator+=(const Nef_polyhedron_2<T,Items,Mark>& N1)
   { *this = join(N1); return *this; }
 
-  Nef_polyhedron_2<T>& operator-=(const Nef_polyhedron_2<T>& N1)
+  Nef_polyhedron_2<T,Items,Mark>& operator-=(const Nef_polyhedron_2<T,Items,Mark>& N1)
   { *this = difference(N1); return *this; }
 
-  Nef_polyhedron_2<T>& operator^=(const Nef_polyhedron_2<T>& N1)
+  Nef_polyhedron_2<T,Items,Mark>& operator^=(const Nef_polyhedron_2<T,Items,Mark>& N1)
   { *this = symmetric_difference(N1); return *this; }
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
   or equal, equality, inequality, respectively.}*/
 
-  bool operator==(const Nef_polyhedron_2<T>& N1) const
+  bool operator==(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return symmetric_difference(N1).is_empty(); }
 
-  bool operator!=(const Nef_polyhedron_2<T>& N1) const
+  bool operator!=(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return !operator==(N1); }  
 
-  bool operator<=(const Nef_polyhedron_2<T>& N1) const
+  bool operator<=(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return difference(N1).is_empty(); } 
 
-  bool operator<(const Nef_polyhedron_2<T>& N1) const
+  bool operator<(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return difference(N1).is_empty() && !N1.difference(*this).is_empty(); } 
 
-  bool operator>=(const Nef_polyhedron_2<T>& N1) const
+  bool operator>=(const Nef_polyhedron_2<T,Items,Mark>& N1) const
   { return N1.difference(*this).is_empty(); } 
 
-  bool operator>(const Nef_polyhedron_2<T>& N1) const   
+  bool operator>(const Nef_polyhedron_2<T,Items,Mark>& N1) const   
   { return N1.difference(*this).is_empty() && !difference(N1).is_empty(); } 
 
 
@@ -907,34 +1039,34 @@ public:
 
 }; // end of Nef_polyhedron_2
 
-template <typename T>
-T Nef_polyhedron_2<T>::EK;
+template <typename T, typename Items, typename Mark>
+T Nef_polyhedron_2<T,Items,Mark>::EK;
 
 
-template <typename T>
+template <typename T, typename Items, typename Mark>
 std::ostream& operator<<
- (std::ostream& os, const Nef_polyhedron_2<T>& NP)
+ (std::ostream& os, const Nef_polyhedron_2<T,Items,Mark>& NP)
 {
   os << "Nef_polyhedron_2<" << NP.EK.output_identifier() << ">\n";
-  typedef typename Nef_polyhedron_2<T>::Decorator Decorator;
+  typedef typename Nef_polyhedron_2<T,Items,Mark>::Decorator Decorator;
   CGAL::PM_io_parser<Decorator> O(os, NP.pm()); O.print();
   return os;
 }
 
-template <typename T>
+template <typename T, typename Items, typename Mark>
 std::istream& operator>>
-  (std::istream& is, Nef_polyhedron_2<T>& NP)
+  (std::istream& is, Nef_polyhedron_2<T,Items,Mark>& NP)
 {
-  typedef typename Nef_polyhedron_2<T>::Decorator Decorator;
+  typedef typename Nef_polyhedron_2<T,Items,Mark>::Decorator Decorator;
   CGAL::PM_io_parser<Decorator> I(is, NP.pm()); 
   if (I.check_sep("Nef_polyhedron_2<") &&
       I.check_sep(NP.EK.output_identifier()) &&
       I.check_sep(">")) I.read();
   else {
     std::cerr << "Nef_polyhedron_2 input corrupted." << std::endl;
-    NP = Nef_polyhedron_2<T>();
+    NP = Nef_polyhedron_2<T,Items,Mark>();
   }
-  typename Nef_polyhedron_2<T>::Topological_explorer D(NP.explorer());
+  typename Nef_polyhedron_2<T,Items,Mark>::Topological_explorer D(NP.explorer());
   D.check_integrity_and_topological_planarity();
   return is;
 }
