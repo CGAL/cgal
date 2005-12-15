@@ -1,3 +1,8 @@
+15 December Peter Hachenberger
+- added to template parameters for items (default HDS_items) and lables (default bool)
+- added constructor for the union of multiple potentially intersecting polygons
+- added constructor for the union of multiple polylines
+
 15 December Andreas Fabri, Peter Hachenberger
 - introduced a Bounded_kernel 
 
