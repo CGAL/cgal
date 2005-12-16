@@ -16,16 +16,13 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            -I../../../Algebraic_kernel/include \
-           -I../../../synaps \
-           -I../../../Arrangement_2/include \
-	   -I../../../Interval_arithmetic/include \
-	   -I../../../Kernel_23/include \
 	   -g \
 	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
+           # -I../../../synaps \
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -52,19 +49,19 @@ all:            \
 		test_Lazy_Line_arc$(EXE_EXT)
 
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Circular_kernel test_Circular_kernel$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Circular_kernel test_Circular_kernel$(OBJ_EXT) $(LDFLAGS)
 
 test_Filtered_hexagon_kernel$(EXE_EXT): test_Filtered_hexagon_kernel$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Filtered_hexagon_kernel test_Filtered_hexagon_kernel$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Filtered_hexagon_kernel test_Filtered_hexagon_kernel$(OBJ_EXT) $(LDFLAGS)
 
 test_Lazy_curved_kernel$(EXE_EXT): test_Lazy_curved_kernel$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Lazy_curved_kernel test_Lazy_curved_kernel$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_curved_kernel test_Lazy_curved_kernel$(OBJ_EXT) $(LDFLAGS)
 
 test_Line_arc$(EXE_EXT): test_Line_arc$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Line_arc test_Line_arc$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Line_arc test_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
 test_Lazy_Line_arc$(EXE_EXT): test_Lazy_Line_arc$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)test_Lazy_Line_arc test_Lazy_Line_arc$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Line_arc test_Lazy_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    test_Circular_kernel.clean \
