@@ -3,10 +3,8 @@ CGAL_HOME/README
 
 This distribution of CGAL includes:
 
-   auxiliary/         - directory containing additional things distributed
-                        with CGAL but not part of the library (in particular,
-                        the GNU multi-precision number type). The gmp library
-                        has its own license.
+   auxiliary/         - directory containing miscelaneous things, currently
+                        only the icons needed for the demos on MacOCX.
    CHANGES            - file recording the history of changes for the library
    config/            - directory containing several test programs used in
                         installation and configuration and into which
@@ -29,10 +27,9 @@ This distribution of CGAL includes:
    examples/          - a directory containing programs illustrating the
                         library's functionality.  These programs do not produce
                         visual output.
-                        Makefiles and project files for MSVC 6.0 IDE
+                        Makefiles and project files for MSVC IDE
                         (experimental) are provided for all programs.
    include/CGAL       - the include files for the library
-   include/boost      - the include files for the Boost library
    install_cgal       - the script with which you can install CGAL
    INSTALL            - file containing information about the installation
                         process
@@ -43,7 +40,6 @@ This distribution of CGAL includes:
    LICENSE            - A file describing the license of CGAL
    LICENSE.LGPL       - A file containing the LGPL v2.1 license
    LICENSE.QPL        - A file containing the QPL v1.0 license
-   LICENSE.BSL        - A file containing the Boost Software License v1.0
    make/              - directory containing CGAL include makefiles, which
                         are generated during installation
    makefile           - a makefile that can be used for instaling the CGAL
