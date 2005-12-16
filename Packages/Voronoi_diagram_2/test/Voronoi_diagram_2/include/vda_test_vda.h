@@ -25,8 +25,6 @@
 #include <cassert>
 #include "helper_functions.h"
 
-template<class VDA> void test_vdqr_concept(const VDA&);
-
 //==========================================================================
 //==========================================================================
 //==========================================================================
@@ -210,6 +208,48 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
 //==========================================================================
 //==========================================================================
 //==========================================================================
+
+template<class VDA>
+void test_vdqr_concept(const VDA&, const CGAL::Tag_false&) {}
+
+template<class VDA>
+void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
+{
+  typedef typename VDA::Locate_result              Locate_result;
+  typedef typename VDA::Point_2                    Point_2;
+  typedef typename VDA::Vertex_handle              Vertex_handle;
+  typedef typename VDA::Halfedge_handle            Halfedge_handle;
+  typedef typename VDA::Face_handle                Face_handle;
+
+  // nothing to do if the Voronoi diagram is empty
+  if ( vda.dual().number_of_vertices() == 0 ) { return; }
+
+  Point_2 p(0,0);
+  Locate_result lr = vda.locate(p);
+
+  if ( Vertex_handle* vv = boost::get<Vertex_handle>(&lr) ) {
+    Vertex_handle v = *vv;
+    kill_warning(v);
+  } else if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
+    Halfedge_handle e = *ee;
+    kill_warning(e);    
+  } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
+    Face_handle f = *ff;
+    kill_warning(f);
+  }
+}
+
+template<class VDA>
+void test_vdqr_concept(const VDA& vda)
+{
+  test_vdqr_concept(vda, typename VDA::Adaptation_traits::Has_nearest_site_2());
+}
+
+//==========================================================================
+//==========================================================================
+//==========================================================================
+
+
 
 template<class VDA>
 void test_vda(const VDA& vda)
@@ -574,43 +614,5 @@ void test_vda(const VDA& vda)
     }
   }
 }
-
-
-template<class VDA>
-void test_vdqr_concept(const VDA& vda)
-{
-  test_vdqr_concept(vda, typename VDA::Adaptation_traits::Has_nearest_site_2());
-}
-
-template<class VDA>
-void test_vdqr_concept(const VDA&, const CGAL::Tag_false&) {}
-
-template<class VDA>
-void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
-{
-  typedef typename VDA::Locate_result              Locate_result;
-  typedef typename VDA::Point_2                    Point_2;
-  typedef typename VDA::Vertex_handle              Vertex_handle;
-  typedef typename VDA::Halfedge_handle            Halfedge_handle;
-  typedef typename VDA::Face_handle                Face_handle;
-
-  // nothing to do if the Voronoi diagram is empty
-  if ( vda.dual().number_of_vertices() == 0 ) { return; }
-
-  Point_2 p(0,0);
-  Locate_result lr = vda.locate(p);
-
-  if ( Vertex_handle* vv = boost::get<Vertex_handle>(&lr) ) {
-    Vertex_handle v = *vv;
-    kill_warning(v);
-  } else if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
-    Halfedge_handle e = *ee;
-    kill_warning(e);    
-  } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
-    Face_handle f = *ff;
-    kill_warning(f);
-  }
-}
-
 
 #endif // VDA_TEST_VDA_H

@@ -1,3 +1,6 @@
+16 December 2005:  Menelaos Karavelas
+- another attempt to please g++ 4.1.0 wrt the test suite
+
 15 December 2005:  Menelaos Karavelas
 - added Delaunay_geom_traits type in adaptor class, and added the
   corresponding argument in the constructor section of the Voronoi
