@@ -2,14 +2,18 @@
 #include <CGAL/KDS/Exact_simulation_traits_3.h>
 #include <algorithm>
 #include <CGAL/KDS/Delaunay_triangulation_3.h>
+
+#ifdef CGAL_USE_COIN
 #include <CGAL/KDS/IO/Qt_widget_3.h>
 #include <CGAL/KDS/IO/Qt_moving_points_3.h>
 #include <CGAL/KDS/IO/Qt_triangulation_3.h>
 #include <boost/program_options.hpp>
 #include <CGAL/KDS/Enclosing_box_3.h>
+#endif
 
 int main(int argc, char *argv[])
 {
+#ifdef CGAL_USE_COIN
     int n=10;
     int d=2;
     bool print_help=false;
@@ -103,4 +107,8 @@ int main(int argc, char *argv[])
 
     kdel->set_has_certificates(true);
     return qtsim->begin_event_loop();
+#else
+    return EXIT_FAILURE;
+#endif
+
 };

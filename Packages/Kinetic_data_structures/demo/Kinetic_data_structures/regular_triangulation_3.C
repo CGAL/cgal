@@ -1,13 +1,17 @@
 #include <CGAL/KDS/Regular_triangulation_3.h>
 #include <CGAL/KDS/Regular_triangulation_exact_simulation_traits_3.h>
+
+#ifdef CGAL_USE_COIN
 #include <CGAL/KDS/IO/Qt_moving_points_3.h>
 #include <CGAL/KDS/IO/Qt_triangulation_3.h>
 #include <CGAL/KDS/IO/Qt_widget_3.h>
 #include <CGAL/KDS/Insert_event.h>
+#endif
+
 
 int main(int argc, char *argv[])
 {
-
+#ifdef CGAL_USE_COIN
     typedef CGAL::KDS::Regular_triangulation_exact_simulation_traits_3 Traits;
     typedef CGAL::KDS::Qt_widget_3<Traits::Simulator> Qt_gui;
     typedef CGAL::KDS::Qt_moving_points_3<Traits, Qt_gui> Qt_mpt;
@@ -69,4 +73,7 @@ tr.simulator_pointer()->end_time();*/
     kdel->set_has_certificates(true);
 
     return qtsim->begin_event_loop();
+#else
+    return EXIT_FAILURE;
+#endif
 };
