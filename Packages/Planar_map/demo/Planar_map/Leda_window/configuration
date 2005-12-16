@@ -1,6 +1,0 @@
-//#define USE_NAIVE_POINT_LOCATION  //for naive strategy
-//#define USE_WALK_POINT_LOCATION  //for naive strategy
-//#define USE_RATIONAL              //for leda_rational coordinates
-//#define USE_LEDA_RAT_KERNEL              //for rational kernel (rat_point,etc..)
-//#define CGAL_PM_DEBUG				// internal debug flag
-//#define CGAL_PM_TIMER				// internal timing flag

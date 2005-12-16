@@ -1,3 +1,0 @@
-The Trapezoidal decomposition package.
-This package is used by the default point location 
-strategy of the Planar nap.

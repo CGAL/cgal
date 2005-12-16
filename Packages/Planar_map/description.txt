@@ -1,1 +1,0 @@
-The Planar map and Topological map packages. 
