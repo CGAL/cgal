@@ -105,10 +105,8 @@ void skin_surface_3(InputIterator first, InputIterator last,
 
   // Extract the coarse mesh using marching_tetrahedra
   Marching_tetrahedra_traits marching_traits;
-  Marching_tetrahedra_observer marching_observer;
-  
   marching_tetrahedra_3(
-    triangulated_mixed_complex, polyhedron, marching_traits, marching_observer);
+    triangulated_mixed_complex, polyhedron, marching_traits);
 
   if (verbose) {
     std::cerr << "Mesh ready" << std::endl;

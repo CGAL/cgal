@@ -18,15 +18,12 @@ template <class Triangulation_3,
 	  class MarchingTetrahedraObserver_3 >
 class Marching_tetrahedra_builder : public Modifier_base<HalfedgeDS_3> {
 public:
-//   typedef TriangulationCellIterator             T_cell_iterator;
   typedef Triangulation_3                       Triangulation;
   typedef HalfedgeDS_3                          HDS;
   typedef MarchingTetrahedraTraits_3            Traits;
   typedef MarchingTetrahedraObserver_3          Observer;
 
 private:
-//   typedef typename T_cell_iterator::value_type          T_cell;
-//   typedef typename T_cell::Vertex_handle                T_vertex_handle;
   typedef typename Triangulation::Finite_cells_iterator T_cell_iterator;
   typedef typename Triangulation::Vertex_handle         T_vertex_handle;
 
@@ -44,12 +41,9 @@ private:
   typedef Polyhedron_incremental_builder_3<HDS>         Polyh_incr_builder;
 public:
   Marching_tetrahedra_builder(
-//     TriangulationCellIterator first, TriangulationCellIterator last,
     const Triangulation &triang,
     const Traits &traits, Observer &observer)
-    : triang(triang), //first(first), last(last),
-      traits(traits), observer(observer),
-      nVertices(0) {
+    : triang(triang), traits(traits), observer(observer), nVertices(0) {
   }
 
   void operator()( HDS& hds) {
@@ -108,7 +102,7 @@ public:
   }
 
 
-  bool is_inside(T_cell_iterator ch, int i) {
+  bool is_inside(T_cell_iterator const ch, int i) {
     T_vertex_map_it it = triang_vertex_signs.find(ch->vertex(i));
     
     if (it == triang_vertex_signs.end()) {
@@ -162,7 +156,6 @@ public:
   }
 
 private:
-//   T_cell_iterator first, last;
   const Triangulation &triang;
   const Traits &traits;
   Observer &observer;
@@ -171,29 +164,6 @@ private:
   int nVertices;
 };
 
-// template <class Triangulation_3,
-// 	  class Polyhedron_3,
-// 	  class MarchingTetrahedraTraits_3,
-// 	  class MarchingTetrahedraObserver_3>
-// void marching_tetrahedra_3(
-//   const Triangulation_3 &triangulation,
-//   Polyhedron_3 &polyhedron,
-//   const MarchingTetrahedraTraits_3 &traits,
-//   MarchingTetrahedraObserver_3 &observer) {
-
-//   typedef typename Triangulation_3::Cell_iterator             Cell_iterator;
-//   typedef typename Polyhedron_3::HalfedgeDS                   HDS;
-//   typedef MarchingTetrahedraTraits_3                          Traits;
-//   typedef MarchingTetrahedraObserver_3                        Observer;
-//   typedef Marching_tetrahedra_builder<Cell_iterator,HDS, Traits, Observer>
-//                                                               Builder;
-  
-//   Builder builder(
-//     triangulation.finite_cells_begin(),
-//     triangulation.finite_cells_end(),
-//     traits, observer);
-//   polyhedron.delegate(builder);
-// }
 
 template <class Triangulation_3,
 	  class Polyhedron_3,
@@ -203,12 +173,11 @@ void marching_tetrahedra_3(
   Polyhedron_3 &polyhedron,
   const MarchingTetrahedraTraits_3 &traits) {
   
-  typedef typename Polyhedron_3::HalfedgeDS                    HDS;
-  typedef MarchingTetrahedraTraits_3                           Traits;
-  typedef Marching_tetrahedra_observer_default_3<Triangulation_3,Polyhedron_3>
-                                                               Observer; 
-  typedef Marching_tetrahedra_builder<Triangulation_3,HDS,Traits,Observer>
-                                                               Builder;
+  typedef typename Polyhedron_3::HalfedgeDS                     HDS;
+  typedef Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>
+                                                                Observer; 
+  typedef Marching_tetrahedra_builder<
+    Triangulation_3, HDS, MarchingTetrahedraTraits_3, Observer> Builder;
 
   Observer observer;
   Builder builder(triangulation, traits, observer);
@@ -227,35 +196,13 @@ void marching_tetrahedra_3(
   MarchingTetrahedraObserver_3 &observer) {
   
   typedef typename Polyhedron_3::HalfedgeDS                   HDS;
-  typedef MarchingTetrahedraTraits_3                          Traits;
-  typedef MarchingTetrahedraObserver_3                        Observer;
-  typedef Marching_tetrahedra_builder<Triangulation_3,HDS,Traits,Observer>
-                                                              Builder;
+  typedef Marching_tetrahedra_builder<
+    Triangulation_3,HDS,
+    MarchingTetrahedraTraits_3, MarchingTetrahedraObserver_3> Builder;
   
   Builder builder(triangulation, traits, observer);
   polyhedron.delegate(builder);
 }
-
-// template <class Triangulation_3,
-// 	  class Polyhedron_3,
-// 	  class MarchingTetrahedraTraits_3>
-// void marching_tetrahedra_3(
-//   const Triangulation_3 &triangulation,
-//   Polyhedron_3 &polyhedron,
-//   const MarchingTetrahedraTraits_3 &traits) {
-  
-//   typedef typename Polyhedron_3::HalfedgeDS                    HDS;
-//   typedef typename Triangulation_3::Cell_handle                Cell_handle;
-//   typedef MarchingTetrahedraTraits_3                           Traits;
-//   typedef Marching_tetrahedra_observer_default_3<Cell_handle, Polyhedron_3>
-//                                                                Observer; 
-//   typedef Marching_tetrahedra_builder<Triangulation_3,HDS,Traits,Observer>
-//                                                                Builder;
-
-//   Observer observer;
-//   Builder builder(triangulation, traits, observer);
-//   polyhedron.delegate(builder);
-// }
 
 CGAL_END_NAMESPACE 
 

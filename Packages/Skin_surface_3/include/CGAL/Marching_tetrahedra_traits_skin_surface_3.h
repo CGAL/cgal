@@ -6,27 +6,31 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template <class Triangulation_3, class HalfedgeDS, class Converter >
+template <class Triangulation_3, class HalfedgeDS, class Converter_ >
 class Marching_tetrahedra_traits_skin_surface_3 {
 public:
-  typedef typename Triangulation_3::Vertex_handle            Vertex_handle;
-  typedef typename Triangulation_3::Edge                     Edge;
-  typedef typename Triangulation_3::Cell_handle              Cell_handle;
-  typedef typename Triangulation_3::Geom_traits::Point_3     Triang_point;
+  typedef Triangulation_3                              Triangulation;
+  typedef HalfedgeDS                                   Halfedge_DS;
+  typedef Converter_                                   Converter;
 
-  typedef typename HalfedgeDS::Traits                 HDS_K;
-  typedef typename HDS_K::Point_3                     HDS_point;
-  typedef typename HDS_point::R::RT                   HDS_rt;
+  typedef typename Triangulation::Vertex_handle        Vertex_handle;
+  typedef typename Triangulation::Edge                 Edge;
+  typedef typename Triangulation_3::Cell_handle Cell_handle;
+  //   typedef typename Triangulation::Geom_traits::Point_3 Triang_point;
+
+  typedef typename HalfedgeDS::Traits                  HDS_K;
+  typedef typename HDS_K::Point_3                      HDS_point;
+//   typedef typename HDS_point::R::RT                    HDS_rt;
 
   Marching_tetrahedra_traits_skin_surface_3(HDS_rt iso_value=0)
     : iso_value(iso_value) {
   }
 
   // These two functions are required by the marching tetrahedra algorithm
-  Sign sign(Cell_handle ch, int i) const {
+  Sign sign(Cell_handle const ch, int i) const {
     return CGAL_NTS sign(value(ch,ch->vertex(i)->point()) - iso_value);
   }
-  HDS_point intersection(Cell_handle ch, int i, int j) const {
+  HDS_point intersection(Cell_handle const ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
     return ch->surf->to_surface(
       converter(ch->vertex(i)->point()),

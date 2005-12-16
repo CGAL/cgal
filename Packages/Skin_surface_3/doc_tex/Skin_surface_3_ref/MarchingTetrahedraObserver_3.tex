@@ -15,6 +15,7 @@
 
 
 \begin{ccRefConcept}{MarchingTetrahedraObserver_3}
+\label{pageMarchingTetrahedraObserver}
 
   Required types and member functions for the \ccRefName\ concept.
   This concept is used to customize the behavior of the marching
@@ -24,14 +25,13 @@
   functions \ccc{after_vertex_insertion} and
   \ccc{after_facet_insertion} are called respectively.
 
-\ccRefines
-\ccc{CopyConstructable}, \ccc{Assignable}.
+%\ccRefines
+%\ccc{CopyConstructable}, \ccc{Assignable}.
 
 \ccTypes
 
 \ccNestedType{Triangulation_cell_handle;}{handle to the Cell type of
   the triangulation}
-
 \ccNestedType{Polyhedron_vertex_handle;}{handle to the Vertex type of
   the polyhedron}
 \ccGlue
@@ -51,17 +51,17 @@
 
 \ccMethod{void after_vertex_insertion(Triangulation_cell_handle ch,
   int i, int j, Polyhedron_vertex_handle vh);}{ this function is
-  called after the insertion of a new vertex to the mesh. }
+  called after the insertion of a new vertex to the mesh.
+  \ccPrecond{\ccc{ch} is finite.}}
 \ccMethod{void after_facet_insertion(Triangulation_cell_handle ch,
   Polyhedron_facet_handle fh);}{this function is called after the
-  insertion of a facet vertex to the mesh. Note that this function can
-  be called twice with the same face if two vertices of the cell lie
-  inside and two outside the mesh. }
+  insertion of a vertex to the mesh. 
+  \ccPrecond{\ccc{ch} is finite.}}
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}
-
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3< MarchingTetrahedraTraits_3 >}
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_skin_surface_3< MarchingTetrahedraTraits_3 >}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

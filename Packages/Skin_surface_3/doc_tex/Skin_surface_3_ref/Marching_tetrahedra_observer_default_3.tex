@@ -11,10 +11,11 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Marching_tetrahedra_observer_default_3<Triangulation_3,
-    Polyhedron_3>}
+\begin{ccRefClass}{Marching_tetrahedra_observer_default_3< MarchingTetrahedraTraits_3 >}
 
-Bla bla bla ...
+  A default implementation of the concept
+  \ccc{MarchingTetrahedraObserver_3} that defines the necessary
+  functions.
 
 \ccDefinition
   
@@ -26,15 +27,29 @@ Bla bla bla ...
 
 \ccTypes
 
+\ccTypedef{typedef MarchingTetrahedraTraits_3 Traits;}{}
+\ccGlue
+\ccTypedef{typedef typename Traits::Triangulation Triangulation;}{}
+\ccGlue
+\ccTypedef{typedef typename Traits::Halfedge_DS Halfedge_DS;}{}
+\ccTypedef{typedef typename Triangulation::Cell_handle Triangulation_cell_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Halfedge_DS::Vertex_handle Polyhedron_vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Halfedge_DS::Facet_handle Polyhedron_facet_handle;}{}
+
+
 \ccCreation
 \ccCreationVariable{observer}
 
-\ccConstructor{Marching_tetrahedra_observer_skin_surface_3();}{}
+\ccConstructor{Marching_tetrahedra_observer_default_3();}{}
+
 
 \ccOperations
-
-%\ccMethod{Sign sign(const Vertex_handle vh) const;}{ }
-%\ccMethod{HDS_point intersection(const Edge &e) const;}{ }
+\ccMethod{void after_vertex_insertion(Triangulation_cell_handle ch,
+  int i, int j, Polyhedron_vertex_handle vh);}{Empty function.}
+\ccMethod{void after_facet_insertion(Triangulation_cell_handle ch,
+  Polyhedron_facet_handle fh);}{Empty function.}
 
 \end{ccRefClass}
 

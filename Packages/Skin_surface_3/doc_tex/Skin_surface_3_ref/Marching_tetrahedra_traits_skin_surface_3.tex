@@ -26,16 +26,14 @@
 \ccRefConceptPage{MarchingTetrahedraTraits_3}
 
 \ccTypes
+\ccThree{typedef typename Triangulation_3::Cell_handle}{xxx}{ }
+\ccThreeToTwo
 
 \ccTypedef{typedef Converter_              Converter;}{}
-
-\ccTypedef{typedef typename Triangulation_3::Vertex_handle Vertex_handle;}{}
 \ccGlue
-\ccTypedef{typedef typename Triangulation_3::Edge          Edge;}{}
-
+\ccTypedef{typedef Triangulation_3 Triangulation;}{}
+\ccTypedef{typedef typename Triangulation_3::Cell_handle Cell_handle;}{}
 \ccTypedef{typedef typename HalfedgeDS::Traits             HDS_K;}{}
-\ccGlue
-\ccTypedef{typedef typename HDS_K::RT                   HDS_rt;}{}
 \ccGlue
 \ccTypedef{typedef typename HDS_K::Point_3              HDS_point;}{}
 
@@ -46,11 +44,12 @@
 
 \ccOperations
 
-\ccMethod{  Sign sign(const Vertex_handle vh) const;}{ }
-\ccMethod{HDS_point intersection(const Edge &e) const;}{ }
+\ccMethod{  Sign sign(Cell_handle const ch, int i) const;}{ }
+\ccMethod{HDS_point intersection(Cell_handle const ch, int i, int j) const;}{ }
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::marching_tetrahedra_3}
+\ccRefIdfierPage{CGAL::marching_tetrahedra_3}\\
+\ccRefIdfierPage{MarchingTetrahedraTraits_3}
 
 
 \end{ccRefClass}

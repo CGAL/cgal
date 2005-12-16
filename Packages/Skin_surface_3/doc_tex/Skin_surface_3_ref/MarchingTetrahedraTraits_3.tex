@@ -15,43 +15,47 @@
 
 
 \begin{ccRefConcept}{MarchingTetrahedraTraits_3}
-%\label{pageMarchingTetrahedraTraits}
+\label{pageMarchingTetrahedraTraits}
 
-  Required types and member functions for the \ccRefName\ concept.
-  This geometric traits concept is the by the function
-  \ccc{CGAL::marching_tetrahedra_3} for the extraction of a mesh from
-  a triangulation.
+Required types and member functions for the \ccRefName\ concept.  This
+geometric traits concept is used by the function
+\ccc{CGAL::marching_tetrahedra_3} for the extraction of a mesh from a
+triangulation.
 
-\ccRefines
+%\ccRefines
   
 \ccTypes
 
-\ccNestedType{Converter;}{Function object that can convert points defined by
-  the \ccc{triangulation} to points defined by the \ccc{HDS}}
+%\ccNestedType{Converter;}{Function object that can convert points defined by
+%  the \ccc{triangulation} to points defined by the \ccc{HDS}}
 
-\ccNestedType{Vertex_handle;}{handle to the Vertex type of the triangulation}
-\ccGlue
 \ccNestedType{Cell_handle;}{handle to the Cell type of the triangulation}
+\ccNestedType{Triangulation;}{The type of the triangulation}
+\ccNestedType{Halfedge_DS;}{The type of the halfedge data structure}
 
-\ccNestedType{HDS_rt;}{}
-\ccGlue
+%\ccNestedType{HDS_rt;}{}
+%\ccGlue
 \ccNestedType{HDS_point;}{the point type defined by the kernel of the
   polyhedron}
 
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{MarchingTetrahedraTraits_3(HDS_rt iso_value=0);}{}
+\ccConstructor{MarchingTetrahedraTraits_3();}{}
 
 \ccOperations
 
-\ccMethod{Sign sign(const Vertex_handle vh) const;}{returns whether a
-  vertex lies inside or outside the surface. The value
-  \ccc{CGAL::POSITIVE} implies outside the surface, all other values
-  inside the surface.}
+\ccMethod{Sign sign(Cell_handle const ch, int i) const;}{returns
+  whether a vertex $i$ lies inside or outside the surface. The value
+  \ccc{CGAL::POSITIVE} implies outside the surface, \ccc{CGAL::ZERO}
+  and \ccc{CGAL::NEGATIVE} inside the surface. \ccPrecond{\ccc{ch} is
+    a finite tetrahedron.}  }
+
 \ccMethod{HDS_point intersection(Cell_handle ch, int i, int j)
-  const;}{Returns the point of the polyhedral vertex lying on the edge
-  between \ccc{ch->vertex(i)} and \ccc{ch->vertex(j)}.}
+  const;}{Returns the intersection point of the surface with the edge
+  between \ccc{ch->vertex(i)} and \ccc{ch->vertex(j)}.
+  \ccPrecond{\ccc{ch} is a finite tetrahedron and the two vertices lie
+    on different sides of the surface.}}
 
 \ccHasModels
 

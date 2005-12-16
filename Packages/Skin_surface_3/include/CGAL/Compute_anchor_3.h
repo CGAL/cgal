@@ -31,9 +31,96 @@ public:
   Compute_anchor_3(const RegularTriangulation_3 &reg) : reg(reg) {
   }
 
+  Simplex anchor_del( const Vertex_handle v ) {
+    equiv_anchors.clear();
+    return v;
+  }
+  Simplex anchor_del( const Edge &e ) {
+    return compute_anchor_del(e);
+  }
+  Simplex anchor_del( const Facet &f ) {
+    return compute_anchor_del(f);
+  }
+  Simplex anchor_del( const Cell_handle ch ) {
+    return compute_anchor_del(ch);
+  }
+  Simplex anchor_del( const Simplex &s ) {
+    int dim = s.dimension();
+    if (dim == 0) {
+      Vertex_handle vh = s;
+      return anchor_del(vh);
+    } else if (dim == 1) {
+      Edge e = s;
+      return anchor_del(e);
+    } else if (dim == 2) {
+      Facet f = s;
+      return anchor_del(f);
+    } else if (dim == 3) {
+      Cell_handle ch = s;
+      return anchor_del(ch);
+    }
+    CGAL_assertion(false);
+    return Simplex();
+  }
+  Simplex anchor_vor( const Vertex_handle v ) {
+    return compute_anchor_vor(v);
+  }
+  Simplex anchor_vor( const Edge &e ) {
+    return compute_anchor_vor(e);
+  }
+  Simplex anchor_vor( const Facet &f ) {
+    return compute_anchor_vor(f);
+  }
+  Simplex anchor_vor( const Cell_handle ch ) {
+    equiv_anchors.clear();
+    for (int i=0; i<4; i++) {
+      Cell_handle ch2 = ch->neighbor(i);
+      if (!reg.is_infinite(ch2)) {
+	Sign side = test_anchor(ch,ch2);
+	CGAL_assertion(test_anchor(ch2,ch)==side);
+	if (side==ZERO) {
+	  equiv_anchors.push_back(ch2);
+	} else {
+	  CGAL_assertion(side==POSITIVE);
+	}
+      }
+    }
+    return ch;
+  }
+  Simplex anchor_vor( const Simplex &s ) {
+    int dim = s.dimension();
+    if (dim == 0) {
+      return anchor_vor(Vertex_handle(s));
+    } else if (dim == 1) {
+      return anchor_vor(Edge(s));
+    } else if (dim == 2) {
+      return anchor_vor(Facet(s));
+    } else if (dim == 3) {
+      return anchor_vor(Cell_handle(s));
+    }
+    return Simplex();
+  }
+
+  bool is_degenerate() {
+    return !equiv_anchors.empty();
+  }
+  Simplex_iterator equivalent_anchors_begin() {
+    return equiv_anchors.begin();
+  }
+  Simplex_iterator equivalent_anchors_end() {
+    return equiv_anchors.end();
+  }
+private:
   ///////////////////////////////
   // Anchor functions
   ///////////////////////////////
+  Simplex compute_anchor_del( Edge const &e );
+  Simplex compute_anchor_del( Facet const &f );
+  Simplex compute_anchor_del( Cell_handle const ch );
+  
+  Simplex compute_anchor_vor( Vertex_handle const v );
+  Simplex compute_anchor_vor( Edge const &e );
+  Simplex compute_anchor_vor( Facet const &f );
 
   // Test whether the anchor of edge (wp1,wp2) and wp2 are equal
   Sign test_anchor(Weighted_point &wp1, Weighted_point &wp2) {
@@ -123,94 +210,6 @@ public:
       wp1, wp2, wp3, wp4, wp5);		
   }
 
-  Simplex compute_anchor_del( Edge const &e );
-  Simplex compute_anchor_del( Facet const &f );
-  Simplex compute_anchor_del( Cell_handle const ch );
-  
-  Simplex compute_anchor_vor( Vertex_handle const v );
-  Simplex compute_anchor_vor( Edge const &e );
-  Simplex compute_anchor_vor( Facet const &f );
-
-  Simplex anchor_del( const Vertex_handle v ) {
-    equiv_anchors.clear();
-    return v;
-  }
-  Simplex anchor_del( const Edge &e ) {
-    return compute_anchor_del(e);
-  }
-  Simplex anchor_del( const Facet &f ) {
-    return compute_anchor_del(f);
-  }
-  Simplex anchor_del( const Cell_handle ch ) {
-    return compute_anchor_del(ch);
-  }
-  Simplex anchor_del( const Simplex &s ) {
-    int dim = s.dimension();
-    if (dim == 0) {
-      Vertex_handle vh = s;
-      return anchor_del(vh);
-    } else if (dim == 1) {
-      Edge e = s;
-      return anchor_del(e);
-    } else if (dim == 2) {
-      Facet f = s;
-      return anchor_del(f);
-    } else if (dim == 3) {
-      Cell_handle ch = s;
-      return anchor_del(ch);
-    }
-    CGAL_assertion(false);
-    return Simplex();
-  }
-  Simplex anchor_vor( const Vertex_handle v ) {
-    return compute_anchor_vor(v);
-  }
-  Simplex anchor_vor( const Edge &e ) {
-    return compute_anchor_vor(e);
-  }
-  Simplex anchor_vor( const Facet &f ) {
-    return compute_anchor_vor(f);
-  }
-  Simplex anchor_vor( const Cell_handle ch ) {
-    equiv_anchors.clear();
-    for (int i=0; i<4; i++) {
-      Cell_handle ch2 = ch->neighbor(i);
-      if (!reg.is_infinite(ch2)) {
-	Sign side = test_anchor(ch,ch2);
-	CGAL_assertion(test_anchor(ch2,ch)==side);
-	if (side==ZERO) {
-	  equiv_anchors.push_back(ch2);
-	} else {
-	  CGAL_assertion(side==POSITIVE);
-	}
-      }
-    }
-    return ch;
-  }
-  Simplex anchor_vor( const Simplex &s ) {
-    int dim = s.dimension();
-    if (dim == 0) {
-      return anchor_vor(Vertex_handle(s));
-    } else if (dim == 1) {
-      return anchor_vor(Edge(s));
-    } else if (dim == 2) {
-      return anchor_vor(Facet(s));
-    } else if (dim == 3) {
-      return anchor_vor(Cell_handle(s));
-    }
-    return Simplex();
-  }
-
-  bool is_degenerate() {
-    return !equiv_anchors.empty();
-  }
-  Simplex_iterator equivalent_anchors_begin() {
-    return equiv_anchors.begin();
-  }
-  Simplex_iterator equivalent_anchors_end() {
-    return equiv_anchors.end();
-  }
-private:
   const Regular_triangulation &reg;
   std::list<Simplex> equiv_anchors;
 };
