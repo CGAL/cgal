@@ -20,6 +20,7 @@
 #ifndef CGAL_INSTANTANEOUS_ADAPTOR_H
 #define CGAL_INSTANTANEOUS_ADAPTOR_H
 #include <CGAL/KDS/basic.h>
+#include <CGAL/functional_base.h>
 
 CGAL_KDS_BEGIN_NAMESPACE;
 
@@ -44,6 +45,7 @@ class Instantaneous_adaptor
         typedef argument_type third_argument_type;
         typedef argument_type fourth_argument_type;
         typedef argument_type fifth_argument_type;
+        typedef typename Arity_traits<Predicate>::Arity Arity;
 
         result_type operator()(const first_argument_type &arg0) const
         {
