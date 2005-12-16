@@ -34,11 +34,11 @@ void eigen_semi_definite_symmetric(const FT *mat,
   static const FT EPS = 0.00001;
   static int MAX_ITER = 100;
   static const FT PPI = 3.14159265358;
-  FT *a,*v;
+  FT *v;
   FT a_norm,a_normEPS,thr,thr_nn;
   int nb_iter = 0;
   int jj;
-  int i,j,k,ij,ik,l,m,lm,mq,lq,ll,mm,imv,im,iq,ilv,il,nn;
+  int i,j,k,ij,ik,l,m,lm,mq,lq,ll,mm,imv,im,iq,ilv,il;
   int *index;
   FT a_ij,a_lm,a_ll,a_mm,a_im,a_il;
   FT a_lm_2;
@@ -48,22 +48,18 @@ void eigen_semi_definite_symmetric(const FT *mat,
   FT delta;
       
   // Number of entries in mat
-      
-  nn = (n*(n+1))/2;
+  int nn = (n*(n+1))/2;
       
   // Step 1: Copy mat to a
-      
-  a = new FT[nn];
-      
-  for( ij=0; ij<nn; ij++ ) {
+  FT *a = new FT[nn];
+  for( ij=0; ij<nn; ij++ ) 
       a[ij] = mat[ij];
-  }
       
-  // Ugly Fortran-porting trick: indices for a are between 1 and n
+  // Fortran-porting
   a--;
       
   // Step 2 : Init diagonalization matrix as the unit matrix
-  v = new FT[n*n];
+  FT *v = new FT[n*n];
       
   ij = 0;
   for( i=0; i<n; i++ ) {
@@ -76,11 +72,11 @@ void eigen_semi_definite_symmetric(const FT *mat,
       }
   }
       
-  // Ugly Fortran-porting trick: indices for v are between 1 and n
+  // Fortran-porting
   v--;
       
   // Step 3 : compute the weight of the non diagonal terms 
-  ij     = 1  ;
+  ij = 1;
   a_norm = 0.0;
   for( i=1; i<=n; i++ ) {
       for( j=1; j<=i; j++ ) {
@@ -188,19 +184,15 @@ void eigen_semi_definite_symmetric(const FT *mat,
   }
       
   // Step 5: index conversion and copy eigen values 
-      
-  // back from Fortran to C++
   a++;
-      
   for( i=0; i<n; i++ ) {
       k = i + (i*(i+1))/2;
       eigen_val[i] = a[k];
   }
     
-  delete[] a;
+  delete [] a;
       
-  // Step 6: sort the eigen values and eigen vectors 
-      
+  // Step 6: sort eigen values and vectors 
   index = new int[n];
   for( i=0; i<n; i++ ) {
       index[i] = i;
@@ -226,9 +218,9 @@ void eigen_semi_definite_symmetric(const FT *mat,
   }
 
 
-  // Step 7: save the eigen vectors 
+  // Step 7: save eigen vectors 
   
-  v++; // back from Fortran to to C++
+  v++; // back to C++
       
   ij = 0;
   for( k=0; k<n; k++ ) 
