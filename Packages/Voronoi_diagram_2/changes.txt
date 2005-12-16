@@ -1,5 +1,6 @@
 16 December 2005:  Menelaos Karavelas
 - another attempt to please g++ 4.1.0 wrt the test suite
+- attempt to fix warnings in test suite produced by pgCC
 
 15 December 2005:  Menelaos Karavelas
 - added Delaunay_geom_traits type in adaptor class, and added the

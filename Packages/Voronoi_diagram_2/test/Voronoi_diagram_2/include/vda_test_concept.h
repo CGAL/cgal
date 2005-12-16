@@ -235,10 +235,12 @@ void test_adaptation_traits_concept(const DG& dg, const AT& at)
   // testing copy constructor and assignment operator
   {
     AT at2(at);
+    kill_warning(at2);
     //    CGAL_assertion( at2.is_valid() );
 
     AT at3;
     at3 = at;
+    kill_warning(at3);
     //    CGAL_assertion( at3.is_valid() );
   }
 
@@ -375,6 +377,8 @@ void test_er_concept(const DG& dg, const ER& er)
     ER er2(er);
     ER er3;
     er3 = er;
+    kill_warning(er2);
+    kill_warning(er3);
   }
 
   // testing clear and swap
@@ -383,6 +387,8 @@ void test_er_concept(const DG& dg, const ER& er)
     ER er3(er);
     er2.clear();
     er2.swap(er3);
+    kill_warning(er2);
+    kill_warning(er3);
   }
 
   // validity testing
@@ -414,6 +420,8 @@ void test_fr_concept(const DG& dg, const FR& fr)
     FR fr2(fr);
     FR fr3;
     fr3 = fr;
+    kill_warning(fr2);
+    kill_warning(fr3);
   }
 
   // testing clear and swap
@@ -422,6 +430,8 @@ void test_fr_concept(const DG& dg, const FR& fr)
     FR fr3(fr);
     fr2.clear();
     fr2.swap(fr3);
+    kill_warning(fr2);
+    kill_warning(fr3);
   }
 
   // validity testing
