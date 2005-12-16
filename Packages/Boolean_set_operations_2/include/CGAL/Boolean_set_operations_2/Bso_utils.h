@@ -109,15 +109,17 @@ public:
 
   void scan(Arrangement& arr)
   {
-    Face_const_iterator ubf = arr.unbounded_face();    
+    Face_const_iterator   ubf = arr.unbounded_face();  
+    Holes_const_iterator  holes_it;
+    Face_const_iterator   fit;
+
     if(!ubf->contained())
     {
       ubf->set_visited(true);
-      for(Holes_const_iterator hit = ubf->holes_begin();
-          hit != ubf->holes_end();
-          ++hit)
+      for (holes_it = ubf->holes_begin();
+	   holes_it != ubf->holes_end(); ++holes_it)
       {
-        scan_ccb(*hit);
+        scan_ccb (*holes_it);
       }
     }
     else
@@ -132,17 +134,16 @@ public:
       Face_const_iterator top_f = m_holes_q.front();
       m_holes_q.pop();
       top_f->set_visited(true);
-      for(Holes_const_iterator hit = top_f->holes_begin();
-          hit != top_f->holes_end();
-          ++hit)
+      for (holes_it = top_f->holes_begin();
+	   holes_it != top_f->holes_end(); ++holes_it)
       {
-        scan_ccb(*hit);
+        scan_ccb(*holes_it);
       }
 
       //scan_uncontained_face(top_f->outer_ccb());
     }
- 
-    for(Face_const_iterator fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+
+    for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     {
       fit->set_visited(false);
     }
@@ -213,7 +214,8 @@ public:
       while(ccb_circ != ccb_end);
     }
 
-    for(Holes_const_iterator hit = f->holes_begin(); hit != f->holes_end(); ++hit)
+    Holes_const_iterator hit;
+    for(hit = f->holes_begin(); hit != f->holes_end(); ++hit)
     {
       Ccb_halfedge_const_circulator ccb_of_hole = *hit;
       Halfedge_const_iterator he = ccb_of_hole;
@@ -222,7 +224,8 @@ public:
         if(!he->twin()->face()->contained())
         {
           m_pgn_holes.push_back(Polygon_2());
-          General_polygon_set_2<Gps_traits>::construct_polygon(he->twin()->face()->outer_ccb(), m_pgn_holes.back(), m_traits);
+          General_polygon_set_2<Gps_traits>::construct_polygon
+	    (he->twin()->face()->outer_ccb(), m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());
         }
       }
@@ -413,18 +416,19 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair = 
               arr.get_traits()->construct_curves_2_object()(pgn_boundary);
-    std::copy(itr_pair.first, itr_pair.second, std::back_inserter(xcurve_list));
+    std::copy (itr_pair.first, itr_pair.second, 
+	       std::back_inserter(xcurve_list));
   }
 
-  for(GP_Holes_const_iterator hit = pgn.holes_begin();
-      hit != pgn.holes_end();
-      ++hit)
+  GP_Holes_const_iterator hit;
+  for (hit = pgn.holes_begin(); hit != pgn.holes_end(); ++hit)
   {
     const Polygon_2& pgn_hole = *hit;
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair =
               arr.get_traits()->construct_curves_2_object()(pgn_hole);
-    std::copy(itr_pair.first, itr_pair.second, std::back_inserter(xcurve_list));
+    std::copy (itr_pair.first, itr_pair.second,
+	       std::back_inserter(xcurve_list));
   }
   
   insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
@@ -439,7 +443,7 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
 
 
 
- //insert a range of  non-sipmle poloygons with holes (as decribed above)
+//insert a range of  non-sipmle poloygons with holes (as decribed above)
 template < class Traits_ >
   template< class InputIterator >
 void General_polygon_set_2<Traits_>::pgns_with_holes2arr (InputIterator begin,
@@ -451,10 +455,11 @@ void General_polygon_set_2<Traits_>::pgns_with_holes2arr (InputIterator begin,
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
   typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
-  XCurveList xcurve_list;
-
-  bool is_bounded = true;
-  InputIterator itr; 
+  XCurveList              xcurve_list;
+  GP_Holes_const_iterator holes_it;
+  bool                    is_bounded = true;
+  InputIterator           itr;
+ 
   for(itr = begin; itr != end; ++itr)
   {
     if(!itr->is_unbounded())
@@ -467,13 +472,13 @@ void General_polygon_set_2<Traits_>::pgns_with_holes2arr (InputIterator begin,
       is_bounded = false;
 
 
-    for(GP_Holes_const_iterator hit = pgn.holes_begin;
-        hit != pgn.holes_end();
-        ++hit)
+    for(holes_it = itr->holes_begin();
+        holes_it != itr->holes_end();
+        ++holes_it)
     {
-      const Polygon_2& pgn_hole = *hit;
-     arr.get_traits()->construct_curves_2_object()
-      (pgn_hole, std::back_inserter(xcurve_list));
+      const Polygon_2& pgn_hole = *holes_it;
+      arr.get_traits()->construct_curves_2_object()
+	(pgn_hole, std::back_inserter(xcurve_list));
     }
   }
 
@@ -631,11 +636,10 @@ bool General_polygon_set_2<Traits_>::
   is_hole_of_face(Face_const_handle f,
                   Halfedge_const_handle he) const
 {
-  for(Holes_const_iterator hit = f->holes_begin();
-      hit!= f->holes_end();
-      ++hit)
+  Holes_const_iterator   holes_it;
+  for (holes_it = f->holes_begin(); holes_it != f->holes_end(); ++holes_it)
   {
-    Ccb_halfedge_const_circulator ccb = *hit;
+    Ccb_halfedge_const_circulator ccb = *holes_it;
     Ccb_halfedge_const_circulator ccb_end = ccb;
     do
     {
