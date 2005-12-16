@@ -341,20 +341,20 @@ public:
     _radius (r),
     _source (source),
     _target (target),
-    _orient (circ.orientation()),
+    _orient (orient),
     _is_full (false)
   {
     CGAL_assertion (orient != COLLINEAR);
 
     CGAL_precondition
-      (CGAL::compare (CGAL::square (source.x() - circ.center().x()),
-                      circ.squared_radius() -
-                      CGAL::square (source.y() - circ.center().y())) == EQUAL);
+      (CGAL::compare (CGAL::square (source.x() - c.x()),
+                      CGAL::square (r) -
+                      CGAL::square (source.y() - c.y())) == EQUAL);
 
     CGAL_precondition
-      (CGAL::compare (CGAL::square (target.x() - circ.center().x()),
-                      circ.squared_radius() -
-                      CGAL::square (target.y() - circ.center().y())) == EQUAL);
+      (CGAL::compare (CGAL::square (target.x() - c.x()),
+                      CGAL::square (r) -
+                      CGAL::square (target.y() - c.y())) == EQUAL);
   }
 
   /*!
