@@ -1,8 +1,4 @@
-//
 //file: examples/Interpolation/nn_coordinates_2.C 
-//
-#include <CGAL/basic.h>
-#include <utility>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>

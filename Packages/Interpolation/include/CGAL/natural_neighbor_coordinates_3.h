@@ -85,7 +85,7 @@ Triple< OutputIterator,  // iterator with value type std::pair<Dt::Vertex_handle
 laplace_natural_neighbor_coordinates_3(const Dt& dt,
 				       const typename Dt::Geom_traits::Point_3& Q,
 				       OutputIterator nn_out, typename Dt::Geom_traits::FT & norm_coeff,
-				       const typename Dt::Cell_handle start = typename Dt::Cell_handle())
+				       const typename Dt::Cell_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Cell_handle())
 {
   typedef typename Dt::Geom_traits Gt;
   typedef typename Gt::Point_3 Point;
@@ -177,7 +177,7 @@ Triple< OutputIterator,  // iterator with value type std::pair<Dt::Vertex_handle
 sibson_natural_neighbor_coordinates_3(const Dt& dt,
 				      const typename Dt::Geom_traits::Point_3& Q,
 				      OutputIterator nn_out, typename Dt::Geom_traits::FT & norm_coeff,
-				      const typename Dt::Cell_handle start = typename Dt::Cell_handle())
+				      const typename Dt::Cell_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Cell_handle())
 {
   typedef typename Dt::Geom_traits Gt;
   typedef typename Gt::Point_3 Point;

@@ -1,3 +1,6 @@
+16 December 2005 Andreas Fabri
+- Cleaned the #includes in the demos
+
 31 August 2005 Raphaelle Chaine
 add files 
 include/CGAL/natural_neighbor_coordinates_3.h

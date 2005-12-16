@@ -1,9 +1,6 @@
 //
 //file: examples/Interpolation/rn_coordinates_2.C 
 //
-#include <CGAL/basic.h>
-#include <utility>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>

@@ -1,41 +1,7 @@
-
-// ======================================================================
-//
-// Copyright (c) 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------
-//
-// release       : 
-// release_date  : 
-//
-// file          : testNatural_coordinates_3.h
-// package       : Interpolation
-// maintainer    : Raphaelle Chaine
-// revision      : 
+//file: examples/Interpolation/nn_coordinates_3.C 
 // author(s)     : Raphaelle Chaine <Raphaelle.Chaine@sophia.inria.fr, raphaelle.chaine@liris.cnrs.fr>
-//
-// coordinator   : INRIA Sophia Antipolis 
-//                 
-//
-// ======================================================================
 
-// I/O include
-#include <iostream>
-#include <fstream>
-
-// CGAL include
-#include <CGAL/basic.h>
-#include <CGAL/tags.h>
-
-#include <CGAL/Simple_cartesian.h>
-//#include <CGAL/Static_filters.h>
-#include <CGAL/Filtered_kernel.h>
-
-//#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
@@ -47,16 +13,10 @@
 
 #include <CGAL/natural_neighbor_coordinates_3.h>
 
-/*---------------------------------------------------------------*/
+
 typedef double NT; //Number Type 
 
-typedef CGAL::Simple_cartesian<NT> Rep; // Coordinate type
-
-//typedef CGAL::Static_filters<Rep> K;
-typedef CGAL::Filtered_kernel<Rep> K;
-
-// typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-// typedef K::FT NT;
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef K::Point_3 Point3;
 typedef K::Vector_3 Vector3;

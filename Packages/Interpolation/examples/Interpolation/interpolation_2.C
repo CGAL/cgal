@@ -1,9 +1,6 @@
 //file: examples/Interpolation/interpolation_2.C
 // compares the result of several interpolation methods  
 // Author: Julia
-#include <CGAL/basic.h>
-#include <cstdio>
-#include <utility>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
