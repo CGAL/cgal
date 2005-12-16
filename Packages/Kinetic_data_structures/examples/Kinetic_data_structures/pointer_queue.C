@@ -19,6 +19,10 @@ class Event
         {
             std::cout << "Event at " << i_ << "\n";
             proc_time_=i_;
+	    if (t != i_) {
+	      std::cerr << "ERROR: Times do not match. Got " << t 
+			<< " expected " << i_ <<std::endl;
+	    }
             assert(t==i_);
         }
     protected:
@@ -40,7 +44,7 @@ int main(int, char *[])
     std::vector<Key>  items;
 
     for (unsigned int i=0; i< 10000; ++i) {
-        Time t(std::rand());
+        Time t(std::rand()/100000.0);
         items.push_back(pq.insert(t,Event(t)));
     }
     for (unsigned int i=0; i< 5000; ++i) {
@@ -50,9 +54,17 @@ int main(int, char *[])
     Time last_time = -1;
     while (!pq.empty()) {
         Time t= pq.front_priority();
+	if (t < last_time) {
+	  std::cerr << "ERROR: priority of next event (" << pq.front_priority() 
+		    << ") is before the last one (" << last_time << ")." << std::cerr;
+	}
         assert(t >= last_time);
         last_time=t;
         pq.process_front();
+	if (t < last_time) {
+	  std::cerr << "ERROR: wrong event processed (" << pq.front_priority() 
+		    << ") instead of (" << proc_time_ << ")." << std::cerr;
+	}
         assert(proc_time_==t);
     }
     return EXIT_SUCCESS;
