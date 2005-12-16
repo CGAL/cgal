@@ -1,3 +1,6 @@
+16 December 2005:  Menelaos Karavelas
+- added installation instructions for MacOSX
+
 15 December 2005:  Menelaos Karavelas
 initial revision of the package:
 - added cgal_app.icns: icons file needed for MacOSX applications
