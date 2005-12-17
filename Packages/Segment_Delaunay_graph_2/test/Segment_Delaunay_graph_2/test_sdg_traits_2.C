@@ -217,8 +217,21 @@ FE_Gmpq_Field_Gt;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
+#define CGAL_SDG2_NS CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS
+
 namespace CGAL {
+  template<class T> void kill_warning(const T&) {}
+
   unsigned int get_failures() {
+    kill_warning(CGAL_SDG2_NS::num_failures_are_same_points);
+    kill_warning(CGAL_SDG2_NS::num_failures_side_of_bisector);
+    kill_warning(CGAL_SDG2_NS::num_failures_finite_edge_conflict);
+    kill_warning(CGAL_SDG2_NS::num_failures_infinite_edge_conflict);
+    kill_warning(CGAL_SDG2_NS::num_failures_is_degenerate_edge);
+    kill_warning(CGAL_SDG2_NS::num_failures_arrangement_type);
+    kill_warning(CGAL_SDG2_NS::num_failures_are_parallel);
+    kill_warning(CGAL_SDG2_NS::num_failures_oriented_side);
+
     return
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_vertex_conflict;
   }
