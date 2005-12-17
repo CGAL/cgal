@@ -1,3 +1,6 @@
+17 December 2005:  Menelaos Karavelas
+- fixed chapter names in doc
+
 16 December 2005:  Menelaos Karavelas
 - another attempt to please g++ 4.1.0 wrt the test suite
 - attempt to fix warnings in test suite produced by pgCC

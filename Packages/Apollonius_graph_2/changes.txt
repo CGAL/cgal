@@ -1,3 +1,6 @@
+17 December 2005:  Menelaos Karavelas
+- fixed chapter names in doc
+
 30 November 2005:  Menelaos Karavelas
 - added one more version of the orientation predicate, needed for
   locating on edges of the Apollonius graph (addition in
