@@ -1,8 +1,5 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -30,10 +27,7 @@
 //TODO : More if-else's with object cast for all the possible 
 //       types that could be returned by object-returning functions
 
-
 CGAL_BEGIN_NAMESPACE
-
-
 
 template <typename LK>
 Object
@@ -42,9 +36,7 @@ make_lazy_CK(const Object& eto)
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename LK::E2A E2A;
-  
 
-  
   const std::pair<typename EK::Circular_arc_point_2, unsigned> *ptr;
 
   if((     ptr = 
@@ -281,8 +273,9 @@ public:
       ec(CGAL::exact(l1), std::back_inserter(exact_objects));
       for (std::vector<Object>::iterator oit = exact_objects.begin();
 	   oit != exact_objects.end();
-	   oit++){
-	*it = std::make_pair(make_lazy_CK<LK>((*oit).first),(*oit).second);
+	   ++oit){
+        CGAL_assertion_msg(false, "Unfinished code !!!");  abort();
+	//*it = std::make_pair(make_lazy_CK<LK>((*oit).first),(*oit).second);
 	++it;
       }
     }
@@ -419,9 +412,4 @@ template <typename L1>
 
 CGAL_END_NAMESPACE
 
-
 #endif // CGAL_LAZY_CURVED_KERNEL_CONSTRUCTIONS_H
-
-
-
-
