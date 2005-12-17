@@ -16,19 +16,15 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-	   -I../../../Arrangement_2/include \
-	   -I../../../Curved_kernel/include \
            -I../../../Algebraic_kernel/include \
-           -I$(HOME)/synaps/include \
 	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            -fmessage-length=0 \
 	   $(DEBUG_OPT) \
-	   -O2 -DNDEBUG \
-	   -DHAVE_CONFIG_H #-DCGAL_CURVED_KERNEL_DEBUG
-#	   -DCGAL_CURVED_KERNEL_DEBUG \
+	   # -O2 -DNDEBUG \
+           # -DCGAL_CURVED_KERNEL_DEBUG \
            # -I$(HOME)/CGAL/Interval_arithmetic.RootOf_2/include \
-
+           # -I$(HOME)/synaps/include -DHAVE_CONFIG_H \
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -39,8 +35,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) \
-	  -lgmpxx -lmpfr
+          $(CGAL_QT_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
