@@ -1,5 +1,6 @@
 17 December 2005:  Menelaos Karavelas
 - attempt to eliminate warning messages in Linux-2.4_g++-3.3.3 platform
+- fixed chapter name in doc
 
 15 December 2005:  Menelaos Karavelas
 - doc: fixed errors in the presentation of some predicate functors
