@@ -12,6 +12,7 @@
 
 #ifndef CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 #define CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
+
 #include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -76,8 +77,9 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 & c2,
 	       OutputIterator res )
   {
-    typedef typename CK::Polynomial_for_circles_2_2 Equation; 
-    typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename CK::Algebraic_kernel            AK;
+    typedef typename CK::Polynomial_for_circles_2_2  Equation; 
+    typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
     Equation e1 = get_equation<CK>(c1);
     Equation e2 = get_equation<CK>(c2);
     
@@ -89,9 +91,8 @@ namespace CircularFunctors {
     typedef std::vector< std::pair < Root_for_circles_2_2, unsigned > > 
       solutions_container;
     solutions_container solutions;
-    
-    CGAL::solve<typename CK::Algebraic_kernel>
-      ( e1,e2, std::back_inserter(solutions) ); // to be optimized
+
+    AK().solve_object()(e1, e2, std::back_inserter(solutions)); // to be optimized
 
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     
