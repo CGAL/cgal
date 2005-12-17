@@ -1,3 +1,6 @@
+#include <CGAL/basic.h>
+#include <CGAL/Algebraic_kernel/basic.h>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Circular_kernel.h>

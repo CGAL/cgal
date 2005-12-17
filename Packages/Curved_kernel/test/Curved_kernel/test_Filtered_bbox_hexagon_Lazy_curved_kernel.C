@@ -1,25 +1,6 @@
-#include <utility>
-namespace CGAL {
-class MP_Float;
-template < typename T > class Root_of_2;
-template < typename T > class Lazy_exact_nt;
-template < typename T >
-std::pair<double,double> to_interval(const Root_of_2<T>&);
-
-#if 0
-template < typename T >
-void operator-(Lazy_exact_nt<Root_of_2<T> > a, Lazy_exact_nt< Root_of_2<T> > b) { f(a); }
-void operator-(Lazy_exact_nt<Root_of_2<MP_Float> > a, Lazy_exact_nt< Root_of_2<MP_Float> > b);
-
-template < typename T1, typename T2 >
-struct Binary_operator_result;
-
-template < typename T1, typename T2 >
-struct Binary_operator_result <Root_of_2<T1>, Root_of_2<T2> >;
-#endif
-}
-
 #include <CGAL/basic.h>
+#include <CGAL/Algebraic_kernel/basic.h>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
