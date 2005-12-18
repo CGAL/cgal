@@ -2110,8 +2110,8 @@ rational arcs. The template parameters are very similar to the
 ones used by the \ccc{Arr_conic_traits_2} class template; see
 the previous section. However, no rational kernel is needed. Also
 in this case it is recommended to use the
-\ccc{CORE_algebraic_number_traits} class, with a kernel templated
-by the \ccc{Algebraic} type defined by this class.
+\ccc{CORE_algebraic_number_traits} class, with a kernel instantiated
+with the \ccc{Algebraic} type defined by this class.
 
 The \ccc{Arr_rational_traits_2} is a model of the
 \ccc{ArrangementTraits_2} concept (but not of the
@@ -2313,7 +2313,7 @@ just before} a structural change occurs in the arrangement and
 {\em immediately after} such a change takes place.
 \ccc{Arr_observer} serves as a base class for other observer
 classes and defines a set of virtual notification functions,
-giving them all a default empty implementation.
+with default empty implementations.
 
 The set of functions can be divided into three categories, as
 follows:
@@ -2360,7 +2360,7 @@ that no point-location queries (or any other queries for that matter)
 are issued between the calls to the notification functions above.
 \end{enumerate}
 See the reference manual for a detailed specification of the
-\ccc{Arr_observer} class, along with the exact prototypes of all
+\ccc{Arr_observer} class along with the exact prototypes of all
 notification functions.
 
 Each arrangement object stores a (possibly empty) list of pointers to
@@ -2369,7 +2369,7 @@ changes listed in the first two categories above is about to take
 place, the arrangement object performs a {\em forward} traversal
 on this list and invokes the appropriate function of each
 observer. After the change takes place the observer list is
-traversed in a {\em backward} manner (from tail to head) and the
+traversed in a {\em backward} manner (from tail to head), and the
 appropriate notification function is invoked for each observer.
 This allows the nesting of observer objects.
 
@@ -2377,7 +2377,7 @@ Concrete arrangement-observer classes should inherit from
 \ccc{Arr_observer}. When an observer is constructed, it is attached to
 a valid arrangement supplied to the observed constructor, or alternatively 
 the observer can be attached to the arrangement at a later time.
-When this happens, the observer instance adds itself to the
+When this happens, the observer instance inserts itself into the
 observer list of the associated arrangement and starts receiving
 notifications whenever this arrangement changes tehreafter. Naturally,
 the observer object unregisters itself by removing itself from
@@ -2540,7 +2540,7 @@ is copied to another arrangement instance:
 \label{arr_sec:overlay}
 %================================
 %
-Assume that we are given two geographic maps, represented as
+Assume that we are given two geographic maps represented as
 arrangements with some data objects attached to their faces,
 representing some geographic information --- for example, a map of
 the annual precipitation in some country and a map of the vegetation
@@ -2632,8 +2632,8 @@ concept. The details of this concept are given in the reference manual.
 \end{ccHtmlOnly}
 \caption{Overlaying two simple arrangements of line segments, as done
 in \ccc{ex_overlay.C} and \ccc{ex_face_extension_overlay.C}.
-In \ccc{ex_face_extension_overlay.C} we concider
-the two bounded faces as {\em marked}, were the intersection of the two
+In \ccc{ex_face_extension_overlay.C} the two bounded faces are
+concidered as {\em marked}, and the intersection of the two
 marked faces is denoted as $f_0$.}
 \label{arr_fig:ex_22}
 \end{figure}
@@ -2736,14 +2736,13 @@ in case of overlaps), while \ccc{arr.originating_curves_begin(e)} and
 define the range of curves that induce \ccc{e}. The value type of these
 iterator is of course \ccc{Arrangement_with_history_2::Curve_with_edges_2}.
 
-In this context we mention that it is possible to overlay two 
-arrangement-with-history instances that are templated by the same traits
-class. In this case, the resulting arrangement will store a consolidated
-container of input curves and automatically preserve the cross-mapping
-between the arrangement edges and the consolidated curve set. Needless to
-say, users can employ and overlay-traits class to maintain any type of
-auxiliary data kept with the \dcel\ features (see 
-Section~\ref{arr_sec:overlay}).
+It is possible to overlay two \ccc{Arrangement_with_history_2} instances 
+instanciated by the same traits class. In this case, the resulting 
+arrangement will store a consolidated container of input curves, and 
+automatically preserve the cross-mapping between the arrangement edges 
+and the consolidated curve set. Needless to say, users can employ an 
+overlay-traits class to maintain any type of auxiliary data kept with 
+the \dcel\ features (see Section~\ref{arr_sec:overlay}).
 
 \subsection{Modifying an Arrangement with History}
 \label{arr_ssec:modif_traverse}
@@ -2986,7 +2985,7 @@ demonstrates how to re-read the arrangement-with-history from a file:
 The arrangement package also includes the free functions
 \ccc{write(arr, os, formatter)} and \ccc{read(arr, os, formatter)} that
 operate on a given arrangement-with-history instance \ccc{arr}.
-Both functions are templated by a \ccc{formatter} object, which define
+Both functions are parameterized by a \ccc{formatter} object, which define
 the I/O format. The package contains a template called,
 \ccc{Arr_with_hist_text_formatter<ArranagmentFormatter>}, which extends
 an arrangement formatter class (see Section~\ref{arr_ssec:arr_io_aux_data})
@@ -3068,7 +3067,7 @@ Ester Ezra, Eyal Flato, Efi Fogel, Dan Halperin, Iddo Hanniel, Idit Haran,
 Sariel Har-Peled, Shai Hirsch, Eugene Lipovetsky, Oren Nechushtan, Ron Wein,
 Baruch Zukerman and Tali Zvi.
 
-In version~3.2, as part of the ACS project, the packages have done through
+In version~3.2, as part of the ACS project, the packages have gone through
 a major re-design, resulting in an improved \ccc{Arrangement_2} package.
 The code of the new package was restructured and developed by~: \newline
 Efi Fogel, Idit Haran, Ron Wein and Baruch Zukerman.

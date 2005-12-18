@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Arr_face_graph_adaptor.tex
+% | Reference manual page: Arr_bgl_dual_adaptor.tex
 % +------------------------------------------------------------------------+
 % | 
 % | Package: Arrangement_2
@@ -8,7 +8,7 @@
 
 \ccRefPageBegin
 
-\begin{ccRefClass}{Arr_bgl_dual_adator<Arrangement>}
+\begin{ccRefClass}{Arr_bgl_dual_adaptor<Arrangement>}
     
 \ccDefinition
 %============
@@ -32,20 +32,20 @@ The adaptor models three BGL concepts:
 \item \ccc{VertexListGraph}
 \end{itemize}
 
-\ccInclude{CGAL/Arr_bgl_dual_adator.h}
+\ccInclude{CGAL/Arr_bgl_dual_adaptor.h}
 
 \ccCreation
 \ccCreationVariable{arr}
 %=======================
     
-\ccConstructor{Arr_bgl_dual_adator(Planar_map_2& in_arrangement);}
+\ccConstructor{Arr_bgl_dual_adaptor(Planar_map_2& in_arrangement);}
     {constructs an adaptor to BOOST graph for the given \ccc{in_arrangement}.}
     
 \ccSeeAlso
-    \ccc{ArrangementDcel}\lcTex{ 
+    \ccc{ArrangementDcel}\lcTex{
       (\ccRefPage{ArrangementDcel})}\\
     \ccc{make_arr_bgl_dual_adaptor()}\lcTex{ 
-      (\ccRefPage{make_arr_bgl_dual_adaptor})}
+      (\ccRefPage{CGAL::make_arr_bgl_dual_adaptor})}
 
 \end{ccRefClass}
 

@@ -59,7 +59,7 @@ int main ()
   insert_non_intersecting_curve (arr, s4);
 
   // Insert a vertical segment dividing the diamond into two, and a
-  // a horizontal segment dividing the diamond into four:
+  // a horizontal segment further dividing the diamond into four:
   Segment_2      s_vert (Point_2(0, -1), Point_2(0, 1));
   Arrangement_2::Halfedge_handle
                  e_vert = insert_non_intersecting_curve (arr, s_vert);
