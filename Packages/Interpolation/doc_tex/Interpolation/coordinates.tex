@@ -41,7 +41,7 @@ is depicted in Figure \ref{fig:nn_coords}.
 
 
 Various papers (\cite{s-vidt-80}, \cite{f-sodt-90},
-\cite{cgal:p-plcbd-93}, \cite{b-scaps-97},\cite{hs-vbihc-00}) show that
+\cite{cgal:p-plcbd-93}, \cite{b-scaps-97}, \cite{hs-vbihc-00}) show that
 the natural neighbor coordinates have the following properties:
   \begin{itemize}
   \item[(i)] $\mathbf{x} = \sum_{i=1}^n \lambda_i(\mathbf{x}) \mathbf{p_i}$
@@ -71,7 +71,7 @@ the natural neighbor coordinates have the following properties:
 
 \subsection{Implementation}
 Given a Delaunay triangulation or a Regular triangulation, the
-vertices in conflict with the query point are determined. The area
+vertices in conflict with the query point are determined. The areas
 $\pi_i(\mathbf{x})$ are computed by triangulating the Voronoi
 sub-cells.  The normalization factor $\pi(\mathbf{x})$ is also
 returned. If the query point is already located and/or the boundary

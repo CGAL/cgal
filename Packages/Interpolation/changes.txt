@@ -1,3 +1,6 @@
+18 December 2005 Andreas Fabri
+- Fixed typos
+
 16 December 2005 Andreas Fabri
 - Cleaned the #includes in the demos
 
