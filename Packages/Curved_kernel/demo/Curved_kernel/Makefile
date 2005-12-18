@@ -53,6 +53,12 @@ all:            \
 demo.moc: demo.C
 	${QT_MOC} -o demo.moc $<
 
+demo_line.moc: demo_line.C
+	${QT_MOC} -o demo_line.moc $<
+
+demo_Lazy_line_circle.moc: demo_Lazy_line_circle.C
+	${QT_MOC} -o demo_Lazy_line_circle.moc $<
+
 #demo_elias.moc: demo_elias.C
 #	${QT_MOC} -o demo_elias.moc $<
 
@@ -61,9 +67,6 @@ demo_line_circle.moc: demo_line_circle.C
 
 demo_viewer.moc: demo_viewer.C
 	${QT_MOC} -o demo_viewer.moc $<
-
-demo_Lazy_line_circle.moc: demo_Lazy_line_circle.C
-	${QT_MOC} -o demo_Lazy_line_circle.moc $<
 
 #demo_conic.moc: demo_conic.C
 #	${QT_MOC} -o demo_conic.moc $<
@@ -80,10 +83,13 @@ Qt_widget_get_segment.moc: Qt_widget_get_segment.h
 demo$(EXE_EXT): demo.moc demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
+demo_Lazy_line_circle$(EXE_EXT): demo_Lazy_line_circle.moc demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Lazy_line_circle demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
+
 #demo_elias$(EXE_EXT): demo_elias.moc demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 #	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_elias demo_elias$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
-demo_line$(EXE_EXT): demo.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT)
+demo_line$(EXE_EXT): demo_line.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) $(LDFLAGS)
 
 demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
@@ -91,9 +97,6 @@ demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_w
 
 demo_viewer$(EXE_EXT): demo_viewer.moc demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_viewer demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
-
-demo_Lazy_line_circle$(EXE_EXT): demo_Lazy_line_circle.moc demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Lazy_line_circle demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
 #demo_conic$(EXE_EXT): demo_conic.moc demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT)
 #	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_conic demo_conic$(OBJ_EXT) Qt_widget_get_conic_2$(OBJ_EXT) $(LDFLAGS)

@@ -478,7 +478,7 @@ private:
   CGAL::Qt_widget_get_segment<Curved_k>     *get_arc_layer;
 };
 
-#include "demo.moc"
+#include "demo_line.moc"
 
 int
 main(int argc, char **argv)
