@@ -30,6 +30,8 @@
 
 //| Tests if QT is available.
 
+#include <iostream>
+#include <qglobal.h>
 #include <qarray.h>
 
 QArray<int> fib( int num )                  // returns fibonacci array
@@ -46,6 +48,8 @@ QArray<int> fib( int num )                  // returns fibonacci array
 
 int main()
 {
+    std::cout << "version=" << QT_VERSION_STR << std::endl;
+
     QArray<int> a = fib( 6 );               // get 6 first fibonaccis
 
     if(4==a.find(5))

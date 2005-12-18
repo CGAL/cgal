@@ -30,6 +30,9 @@
 
 //| Tests if LEDA is available.
 
+#include <iostream>
+
+#include <LEDA/basic.h>
 #include <LEDA/integer.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__)
 #ifndef LEDA_STD_HEADERS
@@ -54,6 +57,8 @@ int main()
     return 1;
   if (a - b != I(-333333))
     return 1;
+
+  std::cout << "version=" << __LEDA__ << std::endl;
 
   return 0;
 }

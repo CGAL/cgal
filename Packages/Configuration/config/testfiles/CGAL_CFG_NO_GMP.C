@@ -30,16 +30,7 @@
 
 //| Tests if GMP is available.
 
-#include <cstdio>
-#ifdef __SUNPRO_CC
-using std::printf;
-#endif
-#ifdef __BORLANDC__
-#include <cstddef>
-using std::size_t;
-using std::printf;
-#endif 
-
+#include <iostream>
 #include "gmp.h"
 
 int main()
@@ -48,9 +39,15 @@ int main()
     mpz_init (p);
     mpz_init_set_str (b, "31", 0);
     mpz_mul_ui (p, b, 75);          /* generate product */
+
     char *str = new char[mpz_sizeinbase(p, 10) + 2];
     str = mpz_get_str(str, 10, p);
-    printf("%s\n", str);
+    std::cout << str << std::endl;
     delete[] str;
+
+    std::cout << "version=" << __GNU_MP_VERSION << "."
+                            << __GNU_MP_VERSION_MINOR << "."
+                            << __GNU_MP_VERSION_PATCHLEVEL << std::endl;
+
     return 0;
 }

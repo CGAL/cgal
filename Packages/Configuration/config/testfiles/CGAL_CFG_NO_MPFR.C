@@ -1,4 +1,4 @@
-// Copyright (c) 2004  Utrecht University (The Netherlands),
+// Copyright (c) 2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,28 +19,42 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : various
 
-// CGAL_CFG_NO_GMPXX.C
+// CGAL_CFG_NO_MPFR.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| Tests if GMPXX is available.
+//| Tests if MPFR is available.
 
 #include <iostream>
-#include <gmpxx.h>
+#include "gmp.h"
+#include "mpfr.h"
 
 int main()
 {
-    mpz_class a = 1;
-    mpq_class b = 2/a;
+    mpfr_t b, p;
+    mpfr_init (p);
+    mpfr_init_set_str (b, "31", 10, GMP_RNDN);
+    mpfr_mul_ui (p, b, 75, GMP_RNDU);          /* generate product */
 
-    std::cout << "version=" << __GNU_MP_VERSION << "."
-                            << __GNU_MP_VERSION_MINOR << "."
-                            << __GNU_MP_VERSION_PATCHLEVEL << std::endl;
+    char *str = new char[50]; // 50 should be enough
+    mp_exp_t exp;
+    str = mpfr_get_str(str, &exp, 10, 0, p, GMP_RNDU);
+    std::cout << str << " E " << exp << std::endl;
+    delete[] str;
+
+#ifdef MPFR_VERSION
+    std::cout << "version=" << MPFR_VERSION_MAJOR << "."
+                            << MPFR_VERSION_MINOR << "."
+                            << MPFR_VERSION_PATCHLEVEL << std::endl;
+#else
+    // MPFR versions < 2.2.0 did not have version strings
+    std::cout << "version=unknown" << std::endl;
+#endif
 
     return 0;
 }

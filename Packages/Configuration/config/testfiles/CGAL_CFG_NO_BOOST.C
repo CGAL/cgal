@@ -1,4 +1,4 @@
-// Copyright (c) 2004  Utrecht University (The Netherlands),
+// Copyright (c) 2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -21,26 +21,42 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_NO_GMPXX.C
+// CGAL_CFG_NO_BOOST.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| Tests if GMPXX is available.
+//| Tests if BOOST is available.
 
 #include <iostream>
-#include <gmpxx.h>
+#include <boost/version.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
+
+using boost::tuple;
+using boost::make_tuple;
+using boost::tie;
+using boost::get;
 
 int main()
 {
-    mpz_class a = 1;
-    mpq_class b = 2/a;
+    tuple<int, double> a, b, c;
+    a = tuple<int, double>();
+    b = tuple<int, double>(1);
+    c = tuple<int, double>(1, 3.14);
+    a = make_tuple(1, 2.57);
 
-    std::cout << "version=" << __GNU_MP_VERSION << "."
-                            << __GNU_MP_VERSION_MINOR << "."
-                            << __GNU_MP_VERSION_PATCHLEVEL << std::endl;
+    int i;
+    double d;
+    tie(i, d) = a;
+    i = a.get<0>();
+    d = a.get<1>();
+
+    std::cout << "version=" << BOOST_VERSION/100000 << "."
+                            << ((BOOST_VERSION / 100) % 100) << "."
+                            << BOOST_VERSION % 100 << std::endl;
 
     return 0;
 }

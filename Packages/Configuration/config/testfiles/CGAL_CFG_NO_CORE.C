@@ -37,5 +37,9 @@ int main()
 {
   Expr x = 2, y = 3;
   std::cout << x << " * " << y  << " = " << x*y << std::endl;
+
+  // CORE does not have VERSION macros yet (as of december 2005).
+  std::cout << "version=unknown" << std::endl;
+
   return 0;
 }

@@ -1,3 +1,8 @@
+18 December 2005 Sylvain Pion
+- Add CGAL_CFG_NO_BOOST.C and CGAL_CFG_NO_MPFR.C test programs.
+- Make the test programs for GMP, GMPXX, MPFR, BOOST, CORE, LEDA and QT
+  dump the version number.
+
 14 December 2005 Sylvain Pion
 - Attempt to change CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP.C into the "positive"
   test program CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.C .
