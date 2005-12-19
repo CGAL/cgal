@@ -123,7 +123,7 @@ template < class Traits > void test_sort(const char *nm)
 {
     std::cout << "Solver: " << nm << std::endl;
     for (unsigned int i = 1; i < 9; ++i) {
-        printf("%6f\t", test_sort < Traits > (i, 50));
+      printf("%6f\t", test_sort < Traits > (i, static_cast<int>(std::ceil(50/std::sqrt(i)))));
         std::cout << std::flush;
         if (i > 4)
             ++i;
@@ -176,7 +176,7 @@ template < class Traits > void test_del(const char *nm)
 {
     std::cout << "Solver: " << nm << std::endl;
     for (unsigned int i = 1; i < 9; ++i) {
-        printf("%6f\t", test_del < Traits > (i, 20));
+      printf("%6f\t", test_del < Traits > (i,static_cast<int>( std::ceil(20/std::sqrt(i)))));
         std::cout << std::flush;
         if (i > 4)
             ++i;
