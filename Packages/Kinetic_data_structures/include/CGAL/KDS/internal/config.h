@@ -17,4 +17,4 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#define CGAL_USE_COIN
+//#define CGAL_USE_COIN
