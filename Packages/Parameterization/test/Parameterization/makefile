@@ -16,7 +16,7 @@ include $(CGAL_MAKEFILE)
 
 CGAL = $(CGAL_INCL_DIR)/..
 
-EXAMPLES = `$(CGAL)/scripts/find_first ../../examples/Parameterization $(CGAL)/examples/Parameterization`
+EXAMPLES = `./find_first ../../examples/Parameterization $(CGAL)/examples/Parameterization`
 
 #---------------------------------------------------------------------#
 #                    compiler flags
