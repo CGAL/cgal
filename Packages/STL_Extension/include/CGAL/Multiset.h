@@ -547,6 +547,28 @@ public:
    * \param tree The copied tree.
    */
   Self& operator= (const Self& tree);
+
+  /*!
+   * Swap two trees. [takes O(1) operations]
+   * \param tree The copied tree.
+   */
+  void swap (Self& tree);
+  //@}
+
+  /// \name Comparison operations.
+  //@{
+  
+  /*!
+   * Test two trees for equality. [takes O(n) operations]
+   * \param tree The compared tree.
+   */
+  bool operator== (const Self& tree) const;
+
+  /*!
+   * Check if our tree is lexicographically smaller. [takes O(n) operations]
+   * \param tree The compared tree.
+   */
+  bool operator< (const Self& tree) const;
   //@}
 
   /// \name Access functions.
@@ -641,6 +663,14 @@ public:
    * \return The number of objects stored in the tree.
    */
   size_t size () const;
+
+  /*!
+   * Get the maximal possible size (equivalent to size()).
+   */
+  size_t max_size () const
+  {
+    return (size());
+  }
   //@}
 
   /// \name Insertion functions.
@@ -1525,6 +1555,116 @@ Multiset<Type, Compare, Allocator>::operator= (const Self& tree)
   }
 
   return (*this);
+}
+
+//---------------------------------------------------------
+// Swap two trees (replace their contents).
+//
+template <class Type, class Compare, typename Allocator>
+void Multiset<Type, Compare, Allocator>::swap (Self& tree)
+{
+  // Avoid self-swapping.
+  if (this == &tree)
+    return;
+
+  // Replace the contents of the trees.
+  Node            *tempP = rootP; 
+  rootP = tree.rootP;
+  tree.rootP = tempP;
+
+  size_t           iTemp = iSize;
+  iSize = tree.iSize;
+  tree.iSize = iTemp;
+
+  iTemp = iBlackHeight;
+  iBlackHeight = tree.iBlackHeight;
+  tree.iBlackHeight = iTemp;
+  
+  // Update the fictitious begin and end nodes.
+  tempP = beginNode.parentP;
+  beginNode.parentP = tree.beginNode.parentP;
+  if (beginNode.parentP != NULL)
+    beginNode.parentP->leftP = &beginNode;
+  tree.beginNode.parentP = tempP;
+  if (tree.beginNode.parentP != NULL)
+    tree.beginNode.parentP->leftP = &(tree.beginNode);
+
+  tempP = endNode.parentP;
+  endNode.parentP = tree.endNode.parentP;
+  if (endNode.parentP != NULL)
+    endNode.parentP->rightP = &endNode;
+  tree.endNode.parentP = tempP;
+  if (tree.endNode.parentP != NULL)
+    tree.endNode.parentP->rightP = &(tree.endNode);
+
+  return;
+}
+
+//---------------------------------------------------------
+// Test two trees for equality.
+//
+template <class Type, class Compare, typename Allocator>
+bool Multiset<Type,Compare,Allocator>::operator== (const Self& tree) const
+{
+  // The sizes of the two trees must be the same.
+  if (size() != tree.size())
+    return (false);
+
+  // Go over all elements in both tree and compare them pairwise.
+  const_iterator   it1 = this->begin();
+  const_iterator   it2 = tree.begin();
+
+  while (it1 != this->end() && it2 != tree.end())
+  {
+    if (comp_f (*it1, *it2) != EQUAL)
+      return (false);
+
+    ++it1;
+    ++it2;
+  }
+
+  // If we reached here, the two trees are equal.
+  return (true);
+}
+
+//---------------------------------------------------------
+// Check if our tree is lexicographically smaller that a given tree.
+//
+template <class Type, class Compare, typename Allocator>
+bool Multiset<Type,Compare,Allocator>::operator< (const Self& tree) const
+{
+  // Go over all elements in both tree and compare them pairwise.
+  const_iterator   it1 = this->begin();
+  const_iterator   it2 = tree.begin();
+
+  while (it1 != this->end() && it2 != tree.end())
+  {
+    const Comparison_result   res = comp_f (*it1, *it2);
+
+    if (res == SMALLER)
+      return (true);
+    if (res == LARGER)
+      return (false);
+
+    ++it1;
+    ++it2;
+  }
+
+  // If we reached here, one tree is the prefix of the other tree. We now
+  // check which tree contains more elements.
+  if (it1 != this->end())
+  {
+    // Our tree contains the other tree as a prefix, so it is not smaller.
+    return (false);
+  }
+  else if (it2 != tree.end())
+  {
+    // The other tree contains our tree as a prefix, so our tree is smaller.
+    return (true);
+  }
+
+  // The two trees are equal:
+  return (false);
 }
 
 //---------------------------------------------------------

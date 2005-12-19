@@ -42,6 +42,7 @@ int main() {
 void test_massive_insert_and_erase();
 void test_iterators();
 void test_lookup();
+void test_comparison();
 void test_catenate();
 void test_split();
 void test_swap_and_replace();
@@ -50,32 +51,37 @@ int main ()
 {
   std::cout << std::endl
 	    << "Testing insert and erase:" << std::endl
-	    << "=========================" << std::endl <<  std::endl;
+	    << "=========================" << std::endl << std::endl;
   test_massive_insert_and_erase();
 
   std::cout << std::endl
 	    << "Testing the iterators:" << std::endl
-	    << "======================" << std::endl <<  std::endl;
+	    << "======================" << std::endl << std::endl;
   test_iterators();
 
   std::cout << std::endl
 	    << "Testing the lookup methods:" << std::endl
-	    << "===========================" << std::endl <<  std::endl;
+	    << "===========================" << std::endl << std::endl;
   test_lookup();
 
   std::cout << std::endl
+	    << "Testing the comparison functions:" << std::endl
+	    << "=================================" << std::endl << std::endl;
+  test_comparison();
+
+  std::cout << std::endl
 	    << "Testing catenate:" << std::endl
-	    << "=================" << std::endl <<  std::endl;
+	    << "=================" << std::endl << std::endl;
   test_catenate();
 
   std::cout << std::endl
 	    << "Testing split:" << std::endl
-	    << "==============" << std::endl <<  std::endl;
+	    << "==============" << std::endl << std::endl;
   test_split();
 
   std::cout << std::endl
 	    << "Testing swap and replace:" << std::endl
-	    << "=========================" << std::endl <<  std::endl;
+	    << "=========================" << std::endl << std::endl;
   test_swap_and_replace();
 
   return (0);
@@ -301,6 +307,62 @@ void test_lookup ()
       std::cout << std::endl;
     }
   }
+
+  return;
+}
+
+// ---------------------------------------------------------------------------
+
+void test_comparison ()
+{
+  typedef CGAL::Multiset<int>                Set;
+
+  // Construct a random set.
+  const int   n = 10; 
+  Set         set1;
+  int         k;
+
+  for (k = 1; k <= n; k++)
+    set1.insert (10*k);
+
+  Set          set2 = set1;
+
+  CGAL_assertion (set1 == set2);
+
+  // Add elements, then compare.
+  set2.insert (200);
+
+  std::cout << "After first insertion: ";
+  if (set1 == set2)
+    std::cout << "S1 == S2" << std::endl;
+  else if (set1 < set2)
+    std::cout << "S1 < S2" << std::endl;
+  else
+    std::cout << "S1 > S2" << std::endl;
+
+  set1.insert (25);
+
+  std::cout << "After second insertion: ";
+  if (set1 == set2)
+    std::cout << "S1 == S2" << std::endl;
+  else if (set1 < set2)
+    std::cout << "S1 < S2" << std::endl;
+  else
+    std::cout << "S1 > S2" << std::endl;
+
+  // Swap the two sets.
+  set1.swap (set2);
+
+  CGAL_assertion (set1.is_valid());
+  CGAL_assertion (set2.is_valid());
+  
+  std::cout << "After swapping the sets: ";
+  if (set1 == set2)
+    std::cout << "S1 == S2" << std::endl;
+  else if (set1 < set2)
+    std::cout << "S1 < S2" << std::endl;
+  else
+    std::cout << "S1 > S2" << std::endl;
 
   return;
 }

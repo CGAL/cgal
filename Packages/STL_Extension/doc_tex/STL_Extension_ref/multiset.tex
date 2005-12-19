@@ -27,10 +27,13 @@ The main difference between \ccRefName\ and \stl's \ccc{multiset} is that
 the latter uses a less-than functor with a Boolean return type, while our
 \ccRefName\ class is parameterized by a comparison functor \ccc{Compare} that
 returns the three-valued \ccc{Comparison_result} (namely it returns either
-\ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}). Thus, it is possible to maintain
-the underlying red-black tree with less invocations of the comparison functor,
-which can considerably decrease running times, especially when comparing
-elements of type \ccc{Type} is an expensive operation.
+\ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}). It is thus possible to maintain
+the underlying red-black tree with less invocations of the comparison functor.
+This leads to a speedup of about 5\% even if we maintain a set of integers.
+When each comparison of two elements of type \ccc{Type} is an expensive
+operation (for example, when they are geometric entities represented using
+exact arithmetic), the usage of a three-valued comparison functor can lead to
+considerable decrease in the running times.
 
 Moreover, \ccRefName\ allows the insertion of an element into the set given
 its {\em exact} position, and not just using an insertion hint, as done by 
@@ -50,9 +53,10 @@ comparison predicates.
 where \ccc{CompareKey() (key, y)} returns the three-valued
 \ccc{Comparison_result} (\ccc{key} is the look-up key and \ccc{y} is an
 element of type \ccc{Type}). Indeed, it is very convenient to look-up
-equivalent objects in the set given just by their key. In all cases, it is
-possible to use a key of type \ccc{Type} and to employ the default
-\ccc{Compare} functor for the look-up.
+equivalent objects in the set given just by their key. We note however that
+it is also possible to use a key of type \ccc{Type} and to employ the default
+\ccc{Compare} functor for the look-up, as done when using the
+\ccc{std::multiset} class.
 
 \begin{ccAdvanced}
 
@@ -72,8 +76,12 @@ elements greater than (or equal to) this key.
 The \ccc{Multiset} class-template has three parameters:
 \begin{itemize}
 \item \ccc{Type} --- the type of the stored elements.
-\item \ccc{Compare} --- the comparison-functor type. \\
-    The \ccc{CGAL::Compare<Type>} functor is used by default.
+\item \ccc{Compare} --- the comparison-functor type. This type should provide
+    the following opeator for comparing two \ccc{Type} elements, namely: \\
+  \ccc{Comparison_result operator() (const Type& t1, const Type& t2) const;}\\
+    The \ccc{CGAL::Compare<Type>} functor is used by default. In this case,
+    \ccc{Type} must support an equality operator (\ccc{operator==}) and a
+    less-than operator (\ccc{operator<}).
 \item \ccc{Allocator} --- the allocator type. \\
     \ccc{CGAL_ALLOCATOR} is used by default.
 \end{itemize}
@@ -84,17 +92,19 @@ The \ccc{Multiset} class-template has three parameters:
 %-------
 
 In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
-(both equivalent to \ccc{Type}), \ccc{key_compare} and \ccc{value_compare}
-(both equivalent to \ccc{Compare}), and \ccc{size_type} are defined as well.
+(both equivalent to \ccc{Type}), \ccc{reference} and \ccc{const_reference}
+(reference to a value-type), \ccc{key_compare} and \ccc{value_compare}
+(both equivalent to \ccc{Compare}), \ccc{size_type} and \ccc{difference_type}
+are defined as well.
 
 \ccNestedType{iterator}{}
 \ccGlue
-\ccNestedType{const_iterator}{}
+\ccNestedType{const_iterator}
 {bi-directional iterators for the elements stored in the set.}
 
 \ccNestedType{reverse_iterator}{}
 \ccGlue
-\ccNestedType{const_reverse_iterator}{}
+\ccNestedType{const_reverse_iterator}
 {reverse bi-directional iterators for the elements stored in the set.}
 
 \ccCreation
@@ -117,6 +127,14 @@ In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
     \ccc{[first, last)}, that uses the comparison
     functor \ccc{comp}.}
 
+\ccConstructor{Multiset<Type,Compare,Allocator>(
+	       const Multiset<Type,Compare,Allocator>& other);}{ 
+    copy constructor.}
+
+\ccMethod{const Multiset<Type,Compare,Allocator>& operator= (
+	  const Multiset<Type,Compare,Allocator>& other);}{ 
+    assignment operator.}
+
 \ccHeading{Access Member Functions}
 %----------------------------------
 
@@ -134,6 +152,10 @@ In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
 \ccMethod{size_t size ();}{
     returns the number of elements stored in the set.}
 
+\ccMethod{size_t max_size ();}{
+    returns the maximal number of elements the set can store
+    (same as \ccc{size()}).}
+
 \ccMethod{iterator begin();}{
     returns an iterator pointing to the first element stored in the set
     (a \ccc{const} version is also available).}
@@ -149,6 +171,19 @@ In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
 \ccMethod{reverse_iterator rend();}{
     returns a reverse iterator pointing to the first element stored in the set
     (a \ccc{const} version is also available).}
+
+\ccHeading{Comparison Operations}
+%--------------------------------
+
+\ccMethod{bool operator== (
+	  const Multiset<Type,Compare,Allocator>& other) const;}{ 
+    returns \ccc{true} if the sequences of elements in the two sets are
+    pairwise equal (using the comparison functor).}
+
+\ccMethod{bool operator< (
+	  const Multiset<Type,Compare,Allocator>& other) const;}{ 
+    returns \ccc{true} if the element sequence in \ccVar{} is
+    lexicographically smaller than the element sequence of \ccc{other}.}
 
 \ccHeading{Insertion Methods}
 %----------------------------
