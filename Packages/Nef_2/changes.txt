@@ -1,8 +1,9 @@
 19 December Andreas Fabri
 - Added tags for the constructors with an iterator range of polygons/polylines
+- Moved code in include/CGAL/Nef_2/HDS_items.h inside the namespace CGAL
 
 15 December Peter Hachenberger
-- added to template parameters for items (default HDS_items) and lables (default bool)
+- added two template parameters for items (default HDS_items) and labels (default bool)
 - added constructor for the union of multiple potentially intersecting polygons
 - added constructor for the union of multiple polylines
 
