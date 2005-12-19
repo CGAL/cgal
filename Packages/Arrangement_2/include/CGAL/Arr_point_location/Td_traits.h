@@ -19,6 +19,8 @@
 #ifndef CGAL_TD_TRAITS_H
 #define CGAL_TD_TRAITS_H
 
+#include <CGAL/Arr_point_location/Td_X_trapezoid.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Pm_traits_,class X_curve_> class Td_traits : public Pm_traits_
