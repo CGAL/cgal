@@ -24,6 +24,8 @@
 #include <CGAL/tags.h>
 #include <list>
 
+namespace CGAL {
+
 template <typename Refs >
 struct Halfedge__base {
     typedef typename Refs::Halfedge_handle Halfedge_handle;
@@ -405,6 +407,7 @@ public:
     };
 };
 
+} // namespace CGAL
 
 #endif // CGAL_HDS_ITEMS_H
 
