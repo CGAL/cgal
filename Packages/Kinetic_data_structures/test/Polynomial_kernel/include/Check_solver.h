@@ -69,7 +69,7 @@ class Check_solver
                     if (reps==0  && verbose) {
 //comp.push_back(CGAL::to_double(r));
                         if (last_root > s.top()) {
-                            std::cerr << "ERROR last root was " << last_root << " and current root is "
+                            std::cerr << "WARNING last root was " << last_root << " and current root is "
                                 << s.top() << std::endl;
                         }
                         CGAL_assertion(last_root<= s.top());
@@ -129,11 +129,11 @@ class Check_solver
                         std::cout << std::endl;
                         for (unsigned int i=0; i< taken_maple.size(); ++i) {
                             if (!taken_maple[i])
-                                std::cerr << "ERROR Missing " << roots_b[i] << std::endl;
+                                std::cerr << "WARNING Missing " << roots_b[i] << std::endl;
                         }
 
                         for (unsigned int i=0; i< taken_solver.size(); ++i) {
-                            if (!taken_solver[i]) std::cerr << "ERROR Extra " << roots[i] << std::endl;
+                            if (!taken_solver[i]) std::cerr << "WARNING Extra " << roots[i] << std::endl;
                         }
                     }
 
