@@ -1,3 +1,6 @@
+19 December Andreas Fabri
+- Added tags for the constructors with an iterator range of polygons/polylines
+
 15 December Peter Hachenberger
 - added to template parameters for items (default HDS_items) and lables (default bool)
 - added constructor for the union of multiple potentially intersecting polygons

@@ -153,7 +153,12 @@ static  T EK; // static extended kernel
   typedef typename T::Standard_aff_transformation_2  Aff_transformation;
   /*{\Mtypemember affine transformations of the plane.}*/
 
-  enum Binary { UNION=0, INTERSECTION=1 };
+
+  // types for choosing the right constructor
+  struct Polylines {};
+  struct Polygons {};
+
+  enum Operation { JOIN=0 };
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   /*{\Menum construction selection.}*/
@@ -161,6 +166,8 @@ static  T EK; // static extended kernel
   enum Content { EMPTY=0, COMPLETE=1 };
   /*{\Menum construction selection}*/
 
+  static const Polylines POLYLINES;
+  static const Polygons POLYGONS;
 protected:
   struct AND { bool operator()(bool b1, bool b2)  const { return b1&&b2; }  };
   struct OR { bool operator()(bool b1, bool b2)   const { return b1||b2; }  };
@@ -429,11 +436,12 @@ public:
     clear_outer_face_cycle_marks();
   }
 
+  // The constructor which takes an iterator range of polygons
   template <class Forward_iterator>
   Nef_polyhedron_2(Forward_iterator pit, Forward_iterator pend,	      
-		   Binary b = UNION) : Base(Nef_rep()) { 
+		   Polygons, Operation op = JOIN) : Base(Nef_rep()) { 
 
-    CGAL_assertion(b==UNION);
+    CGAL_assertion(op==JOIN);
 
     typedef typename std::iterator_traits<Forward_iterator>::value_type 
       iterator_pair;
@@ -495,9 +503,10 @@ public:
   }
 
 
+  // The constructor which takes an iterator range of polylines
   template <class Forward_iterator>
   Nef_polyhedron_2(Forward_iterator pit, Forward_iterator pend,	      
-		   bool m) : Base(Nef_rep()) { 
+		   Polylines) : Base(Nef_rep()) { 
 
     typedef typename std::iterator_traits<Forward_iterator>::value_type 
       iterator_pair;
@@ -1044,6 +1053,12 @@ T Nef_polyhedron_2<T,Items,Mark>::EK;
 
 
 template <typename T, typename Items, typename Mark>
+const typename Nef_polyhedron_2<T,Items,Mark>::Polygons Nef_polyhedron_2<T,Items,Mark>::POLYGONS = typename Nef_polyhedron_2<T,Items,Mark>::Polygons();
+
+template <typename T, typename Items, typename Mark>
+const typename Nef_polyhedron_2<T,Items,Mark>::Polylines Nef_polyhedron_2<T,Items,Mark>::POLYLINES = typename Nef_polyhedron_2<T,Items,Mark>::Polylines();
+
+template <typename T, typename Items, typename Mark>
 std::ostream& operator<<
  (std::ostream& os, const Nef_polyhedron_2<T,Items,Mark>& NP)
 {
@@ -1070,6 +1085,7 @@ std::istream& operator>>
   D.check_integrity_and_topological_planarity();
   return is;
 }
+
 
 
 CGAL_END_NAMESPACE
