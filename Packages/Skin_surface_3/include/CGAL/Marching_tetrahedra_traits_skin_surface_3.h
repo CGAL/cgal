@@ -15,12 +15,12 @@ public:
 
   typedef typename Triangulation::Vertex_handle        Vertex_handle;
   typedef typename Triangulation::Edge                 Edge;
-  typedef typename Triangulation_3::Cell_handle Cell_handle;
-  //   typedef typename Triangulation::Geom_traits::Point_3 Triang_point;
+  typedef typename Triangulation_3::Cell_handle        Cell_handle;
+  typedef typename Triangulation::Geom_traits::Point_3 Triang_point;
 
   typedef typename HalfedgeDS::Traits                  HDS_K;
   typedef typename HDS_K::Point_3                      HDS_point;
-//   typedef typename HDS_point::R::RT                    HDS_rt;
+  typedef typename HDS_point::R::RT                    HDS_rt;
 
   Marching_tetrahedra_traits_skin_surface_3(HDS_rt iso_value=0)
     : iso_value(iso_value) {
@@ -37,6 +37,7 @@ public:
       converter(ch->vertex(j)->point()));
   }
 
+private:
   // Additional functions, not belonging to the traits concept:
   HDS_rt value(const Cell_handle &ch, const HDS_point &p) const {
     return ch->surf->value(p);
@@ -44,7 +45,7 @@ public:
   HDS_rt value(const Cell_handle &ch, const Triang_point &p) const {
     return ch->surf->value(converter(p));
   }
-private:
+
   Converter converter;
   HDS_rt iso_value;
 };

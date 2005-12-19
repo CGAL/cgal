@@ -13,9 +13,9 @@ class Triangulated_mixed_complex_observer_3 {
 public:
   typedef SkinSurfaceTraits_3                        Skin_traits_3;
   typedef typename Skin_traits_3::Regular_traits     Regular_traits;
-  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel
+  typedef typename Skin_traits_3::Triangulated_mixed_complex_traits
                                               Triangulated_mixed_complex_kernel;
-  typedef typename Skin_traits_3::Polyhedron_kernel  Polyhedron_kernel;
+  typedef typename Skin_traits_3::Polyhedron_traits  Polyhedron_kernel;
 
   typedef RegularTriangulation_3                     Regular;
   typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;

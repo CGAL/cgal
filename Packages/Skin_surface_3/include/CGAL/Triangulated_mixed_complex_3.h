@@ -10,8 +10,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <
   class SkinSurfaceTraits_3,
-  class GT=typename SkinSurfaceTraits_3::Triangulated_mixed_complex_kernel,
-  class PolyhedronKernel_3=typename SkinSurfaceTraits_3::Polyhedron_kernel,
+  class GT=typename SkinSurfaceTraits_3::Triangulated_mixed_complex_traits,
+  class PolyhedronKernel_3=typename SkinSurfaceTraits_3::Polyhedron_traits,
   class Tds = Triangulation_data_structure_3 <
     Triangulation_vertex_base_3<GT>,
     Triangulated_mixed_complex_cell_3<GT, PolyhedronKernel_3> > >

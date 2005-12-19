@@ -19,38 +19,51 @@
   This geometric traits concept is used for the construction of a
   polyhedral mesh approximating a skin surface
   \ccc{CGAL::skin_surface_3<Traits>}.  It defines three \cgal\ kernels
-  and the appropriate converters.
+  and appropriate converters.
 
-\ccRefines
-
+%\ccRefines
 %\ccc{CopyConstructable}, \ccc{Assignable}.
 
 \ccTypes
 
-\ccNestedType{Regular_traits}{This is the \ccc{kernel} used in the
-  regular triangulation.}
+\ccNestedType{Regular_traits}{The traits class is used for the
+  regular triangulation. It is a model of the
+  \ccc{RegularTriangulationTraits_3} concept.}
 
-\ccNestedType{Triangulated_mixed_complex_traits}{This is the
-  \ccc{kernel} used in the \ccc{Triangulated_mixed_complex}.}
+\ccNestedType{Triangulated_mixed_complex_traits}{The traits
+  class used in the \ccc{Triangulated_mixed_complex}. It is a model of
+  the \ccc{TriangulationTraits_3} concept and has to be able to store
+  the constructed vertices exactly.}
 
-\ccNestedType{Polyhedron_traits}{This is the \ccc{kernel} used for the
+\ccNestedType{Polyhedron_traits}{The traits class used for the
   geometric objects defined by the mesh.}
 
-\ccNestedType{R2T_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_kernel} to objects defined within
-  \ccc{Triangulated_mixed_complex_kernel}.}
+\ccNestedType{R2T_converter}{Converter for geometric objects
+  defined within \ccc{Regular_traits} to objects defined within
+  \ccc{Triangulated_mixed_complex_traits}.}
 
-\ccNestedType{R2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_kernel} to objects defined within
-  \ccc{Polyhedron_kernel}.}
+\ccNestedType{R2P_converter}{Converter for geometric objects
+  defined within \ccc{Regular_traits} to objects defined within
+  \ccc{Polyhedron_traits}.}
 
-\ccNestedType{T2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Triangulated_mixed_complex_kernel} to objects
-  defined within \ccc{Polyhedron_kernel}.}
+\ccNestedType{T2P_converter}{Converter for geometric objects
+  defined within \ccc{Triangulated_mixed_complex_traits} to objects
+  defined within \ccc{Polyhedron_traits}.}
 
-\ccNestedType{T2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Polyhedron_kernel} to objects
-  defined within \ccc{Triangulated_mixed_complex_kernel}.}
+\ccNestedType{T2P_converter}{Converter for geometric objects
+  defined within \ccc{Polyhedron_traits} to objects
+  defined within \ccc{Triangulated_mixed_complex_traits}.}
+
+\ccNestedType{Compute_anchor_3}{A predicate object which must
+  provide the function operators defined for
+  \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
+
+\ccNestedType{Construct_anchor_point_3}{A predicate object which must
+  provide the following function operator:\\
+  \ccc{TMC_Point operator()(const TMC_Point &center_del, const
+    TMC_Point &center_vor);}\\
+  Constructs the anchor point in between the Delaunay and Voronoi
+  centers.}
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -60,30 +73,42 @@
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularTraits_3,TriangulatedMixedComplexTraits_3,PolyhedronTraits_3>}
+\ccRefIdfierPage{Skin_surface_traits_3<RegularTriangulationTraits_3, TriangulationTraits_3, PolyhedronTraits_3>}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::skin_surface_3}
 
-\ccHeading{Access Member Functions}
+\ccThree{Construct_anchor_point_3}{xxx}{}
+\ccThreeToTwo
 
+\ccOperations
+The following functions give access to the predicate objects:
+
+\ccMethod{
+Construct_anchor_point_3 construct_anchor_point_3_object() const;
+}{}
+\ccMethod{
+  Regular_RT shrink_factor() const;}{Returns the shrink factor.}
+
+\ccHeading{Converters:}
 \ccMethod{R2T_converter r2t_converter_object() const;}{returns a
   converter of geometric objects from the \ccc{Regular_traits} to the
-  \ccc{Triangulated_mixed_complex_kernel}.}
+  \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccMethod{R2P_converter r2p_converter_object() const;}{returns a
   converter of geometric objects from the \ccc{Regular_traits} to the
-  \ccc{Polyhedron_kernel}.}
+  \ccc{Polyhedron_traits}.}
 
 \ccMethod{T2P_converter t2p_converter_object() const;}{returns a
   converter of geometric objects from the
-  \ccc{Triangulated_mixed_complex_kernel} to the
-  \ccc{Polyhedron_kernel}.}
+  \ccc{Triangulated_mixed_complex_traits} to the
+  \ccc{Polyhedron_traits}.}
 
 \ccMethod{P2T_converter p2t_converter_object() const;}{returns a
   converter of geometric objects from the
-  \ccc{Triangulated_mixed_complex_kernel} to the
-  \ccc{Polyhedron_kernel}.}
+  \ccc{Triangulated_mixed_complex_traits} to the
+  \ccc{Polyhedron_traits}.}
+
 
 \end{ccRefConcept}
 

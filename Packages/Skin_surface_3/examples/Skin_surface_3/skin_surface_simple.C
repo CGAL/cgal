@@ -9,7 +9,7 @@ typedef CGAL::Skin_surface_traits_3<>                    Skin_surface_traits;
 typedef Skin_surface_traits::Regular_traits              Regular_traits;
 typedef Regular_traits::Bare_point                       Reg_point;
 typedef Regular_traits::Weighted_point                   Reg_weighted_point;
-typedef CGAL::Polyhedron_3<Skin_surface_traits::Polyhedron_kernel> Polyhedron;
+typedef CGAL::Polyhedron_3<Skin_surface_traits::Polyhedron_traits> Polyhedron;
 
 int main(int argc, char *argv[]) {
   std::list<Reg_weighted_point> l;

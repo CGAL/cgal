@@ -25,9 +25,11 @@ template <
 					RegularTriangulation_3> >
 class Mixed_complex_triangulator_3 {
 public:
-  typedef SkinSurfaceTraits_3                                         Skin_traits_3;
-  typedef typename SkinSurfaceTraits_3::Regular_traits                Regular_traits;
-  typedef typename SkinSurfaceTraits_3::Triangulated_mixed_complex_kernel                  Triangulated_mixed_complex_kernel;
+  typedef SkinSurfaceTraits_3                 Skin_traits_3;
+  typedef typename SkinSurfaceTraits_3::Regular_traits
+                                              Regular_traits;
+  typedef typename SkinSurfaceTraits_3::Triangulated_mixed_complex_traits
+                                              Triangulated_mixed_complex_kernel;
 
   typedef RegularTriangulation_3                   Regular;
   typedef TriangulatedMixedComplex_3               Triangulated_mixed_complex;
@@ -60,14 +62,21 @@ private:
   typedef typename Triangulated_mixed_complex::Facet            Tmc_Facet;
   typedef typename Triangulated_mixed_complex::Cell_handle      Tmc_Cell_handle;
 
-  typedef typename Triangulated_mixed_complex::Finite_vertices_iterator Tmc_Finite_vertices_iterator;
-  typedef typename Triangulated_mixed_complex::Finite_edges_iterator    Tmc_Finite_edges_iterator;
-  typedef typename Triangulated_mixed_complex::Finite_facets_iterator   Tmc_Finite_facets_iterator;
-  typedef typename Triangulated_mixed_complex::All_cells_iterator       Tmc_All_cells_iterator;
-  typedef typename Triangulated_mixed_complex::Finite_cells_iterator    Tmc_Finite_cells_iterator;
-  typedef typename Triangulated_mixed_complex::Cell_circulator          Tmc_Cell_circulator;
+  typedef typename Triangulated_mixed_complex::Finite_vertices_iterator
+    Tmc_Finite_vertices_iterator;
+  typedef typename Triangulated_mixed_complex::Finite_edges_iterator
+    Tmc_Finite_edges_iterator;
+  typedef typename Triangulated_mixed_complex::Finite_facets_iterator
+    Tmc_Finite_facets_iterator;
+  typedef typename Triangulated_mixed_complex::All_cells_iterator
+    Tmc_All_cells_iterator;
+  typedef typename Triangulated_mixed_complex::Finite_cells_iterator
+    Tmc_Finite_cells_iterator;
+  typedef typename Triangulated_mixed_complex::Cell_circulator
+    Tmc_Cell_circulator;
 	
-  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel          Tmc_Geom_traits;
+  typedef typename Skin_traits_3::Triangulated_mixed_complex_traits
+    Tmc_Geom_traits;
   typedef typename Tmc_Geom_traits::Point_3              Tmc_Point;
   typedef typename Tmc_Geom_traits::RT                   Tmc_RT;
 
@@ -824,7 +833,7 @@ add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s) {
 
 template < class SkinSurfaceTraits_3, class TriangulatedMixedComplex,
 	   class Regular_TDS, class Mixed_complex_observer_>
-typename SkinSurfaceTraits_3::Triangulated_mixed_complex_kernel::Point_3
+typename SkinSurfaceTraits_3::Triangulated_mixed_complex_traits::Point_3
 Mixed_complex_triangulator_3<SkinSurfaceTraits_3, TriangulatedMixedComplex,
 			     Regular_TDS, Mixed_complex_observer_>::
 get_orthocenter(Rt_Simplex const &s) {
@@ -869,7 +878,7 @@ get_orthocenter(Rt_Simplex const &s) {
 
 template < class SkinSurfaceTraits_3, class TriangulatedMixedComplex,
 	   class Regular_TDS, class Mixed_complex_observer_>
-typename SkinSurfaceTraits_3::Triangulated_mixed_complex_kernel::Point_3
+typename SkinSurfaceTraits_3::Triangulated_mixed_complex_traits::Point_3
 Mixed_complex_triangulator_3<SkinSurfaceTraits_3, TriangulatedMixedComplex,
 			     Regular_TDS, Mixed_complex_observer_>::
 get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor)

@@ -20,7 +20,7 @@ typedef Tr2::Cell_handle                       Tr2_cell_handle;
 typedef Tr2::Finite_cells_iterator             Tr2_Fin_cells_it;
 typedef Tr2::Finite_vertices_iterator          Tr2_Fin_vertices_it;
 
-typedef Skin_traits::Polyhedron_kernel         Polyhedron_kernel;
+typedef Skin_traits::Polyhedron_traits         Polyhedron_kernel;
 typedef CGAL::Polyhedron_3<Polyhedron_kernel>  Polyhedron;
 typedef Polyhedron_kernel::RT                  Polyhedron_rt;
 
@@ -70,27 +70,27 @@ int main(int argc, char *argv[]) {
     // Triangulate mixed complex:
     Tr2 triangulated_mixed_complex;
     triangulate_mixed_complex_3(regular, triangulated_mixed_complex,skin_traits);
-    for (Tr2_Fin_vertices_it vit = triangulated_mixed_complex.finite_vertices_begin();
-	 vit != triangulated_mixed_complex.finite_vertices_end(); vit++) {
-      if (triangulated_mixed_complex.is_infinite(vit->cell())) {
-	std::cerr << "ERROR: is_infinite (main)" << std::endl;
-      }
-      Polyhedron_rt val = marching_traits.value(vit->cell(), vit->point());
-      std::cout << vit->cell()->surf->dimension() << " - "
-		<< val
-		<< std::endl;
-      std::list<Tr2_cell_handle> cells;
-      triangulated_mixed_complex.incident_cells(vit, std::back_inserter(cells));
-      for (std::list<Tr2_cell_handle>::iterator cell = cells.begin();
-	   cell != cells.end(); cell++) {
-	Polyhedron_rt val2 = marching_traits.value(*cell, vit->point());
-	if (!triangulated_mixed_complex.is_infinite(*cell)) {
-	  std::cout << vit->cell()->surf->dimension() << " "
-		    << (*cell)->surf->dimension() << " - "
-		    << (val2/val) << std::endl;
-	}
-      }
-    }
+//     for (Tr2_Fin_vertices_it vit = triangulated_mixed_complex.finite_vertices_begin();
+// 	 vit != triangulated_mixed_complex.finite_vertices_end(); vit++) {
+//       if (triangulated_mixed_complex.is_infinite(vit->cell())) {
+// 	std::cerr << "ERROR: is_infinite (main)" << std::endl;
+//       }
+//       Polyhedron_rt val = marching_traits.value(vit->cell(), vit->point());
+//       std::cout << vit->cell()->surf->dimension() << " - "
+// 		<< val
+// 		<< std::endl;
+//       std::list<Tr2_cell_handle> cells;
+//       triangulated_mixed_complex.incident_cells(vit, std::back_inserter(cells));
+//       for (std::list<Tr2_cell_handle>::iterator cell = cells.begin();
+// 	   cell != cells.end(); cell++) {
+// 	Polyhedron_rt val2 = marching_traits.value(*cell, vit->point());
+// 	if (!triangulated_mixed_complex.is_infinite(*cell)) {
+// 	  std::cout << vit->cell()->surf->dimension() << " "
+// 		    << (*cell)->surf->dimension() << " - "
+// 		    << (val2/val) << std::endl;
+// 	}
+//       }
+//     }
   }
 
   return 0;

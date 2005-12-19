@@ -16,7 +16,7 @@ typedef Regular_traits::Bare_point                       Reg_point;
 typedef Regular_traits::Weighted_point                   Reg_weighted_point;
 typedef CGAL::Triangulated_mixed_complex_3<Skin_surface_traits>
                                                      Triangulated_mixed_complex;
-typedef Skin_surface_traits::Polyhedron_kernel       Polyhedron_kernel;
+typedef Skin_surface_traits::Polyhedron_traits       Polyhedron_kernel;
 typedef CGAL::Polyhedron_3<Polyhedron_kernel>        Polyhedron;
 
 typedef CGAL::Marching_tetrahedra_traits_skin_surface_3<

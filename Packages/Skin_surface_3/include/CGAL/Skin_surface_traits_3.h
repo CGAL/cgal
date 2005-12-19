@@ -25,8 +25,8 @@ public:
   
   Construct_anchor_point_3(RT const &shrink) : shrink(shrink) {}
   
-  Point operator()(const Point &anchor_del, const Point &anchor_vor) {
-    return anchor_del + shrink*(anchor_vor - anchor_del);
+  Point operator()(const Point &center_del, const Point &center_vor) {
+    return center_del + shrink*(center_vor - center_del);
   }
   RT const shrink;
 };
@@ -50,30 +50,30 @@ public:
 				PolyhedronKernel>                         Self;
   // Kernel definitions and converters
   typedef RegularKernel                      Regular_kernel;
-  typedef TriangulatedMixedComplexKernel     Triangulated_mixed_complex_kernel;
-  typedef PolyhedronKernel                   Polyhedron_kernel;
-
   typedef Regular_triangulation_euclidean_traits_3<Regular_kernel>
                                              Regular_traits;
+  typedef TriangulatedMixedComplexKernel     Triangulated_mixed_complex_traits;
+  typedef PolyhedronKernel                   Polyhedron_traits;
+
   typedef typename Regular_kernel::RT        Regular_RT;
 
   typedef Regular_triangulation_euclidean_traits_3<
-           Triangulated_mixed_complex_kernel> Triangulated_mixed_complex_traits;
+           Triangulated_mixed_complex_traits> Weighted_triangulated_mixed_complex_traits;
 
-  typedef typename Triangulated_mixed_complex_traits::Construct_weighted_circumcenter_3
-                                              Construct_weighted_circumcenter_3;
+  typedef typename Weighted_triangulated_mixed_complex_traits::
+    Construct_weighted_circumcenter_3         Construct_weighted_circumcenter_3;
 
   typedef Weighted_converter_3 <
-    Cartesian_converter<Regular_kernel,Triangulated_mixed_complex_kernel> >
+    Cartesian_converter<Regular_kernel,Triangulated_mixed_complex_traits> >
                                               R2T_converter;
   typedef Weighted_converter_3 <
-    Cartesian_converter<Regular_kernel, Polyhedron_kernel> >
+    Cartesian_converter<Regular_kernel, Polyhedron_traits> >
                                               R2P_converter;
   typedef Weighted_converter_3 <
-    Cartesian_converter<Triangulated_mixed_complex_kernel,Polyhedron_kernel> >
+    Cartesian_converter<Triangulated_mixed_complex_traits,Polyhedron_traits> >
                                               T2P_converter; 
   typedef Weighted_converter_3 <
-    Cartesian_converter<Polyhedron_kernel,Triangulated_mixed_complex_kernel> >
+    Cartesian_converter<Polyhedron_traits,Triangulated_mixed_complex_traits> >
                                               P2T_converter; 
 
   Skin_surface_traits_3(Regular_RT shrink = .5) :
@@ -109,9 +109,9 @@ public:
       in_smallest_orthogonal_sphere_3_object();
   }
 
-  Construct_anchor_point_3<Triangulated_mixed_complex_kernel>
+  Construct_anchor_point_3<Triangulated_mixed_complex_traits>
   construct_anchor_point_3_object() const {
-    return Construct_anchor_point_3<Triangulated_mixed_complex_kernel>(
+    return Construct_anchor_point_3<Triangulated_mixed_complex_traits>(
       r2t_converter_object()(shrink) );
   }
   Regular_RT shrink_factor() const {
