@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
 #endif
-
+#ifdef CGAL_USE_TNT
     {
         if (verbose) std::cout <<"JAMA______________________________________\n";
         else std::cout << "JAMA &\t";
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
         cg.all();
         std::cout << std::endl;
     }
-
+#endif
     {
         if (verbose) std::cout <<"Turk______________________________________\n";
         else std::cout << "Turk &\t";
@@ -78,6 +78,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
+#ifdef CGAL_USE_TNT
     {
         if (verbose) std::cout <<"CleanJAMA________________________________\n";
         else std::cout << "CleanJAMA &\t";
@@ -89,7 +90,7 @@ int main(int argc, char* argv[])
         cg.cleaned();
         std::cout << std::endl;
     }
-
+#endif
     {
         if (verbose) std::cout <<"CleanTurk________________________________\n";
         else std::cout << "CleanTurk &\t";
