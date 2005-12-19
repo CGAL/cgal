@@ -283,9 +283,9 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
       typedef CGAL::Rational_traits< FT > Rational;
 
       Rational r;
-      CGAL_assertion( r.denominator(a) > 0 );
-      CGAL_assertion( r.denominator(b) > 0 );
-      CGAL_assertion( r.denominator(c) > 0 );
+      // CGAL_assertion( r.denominator(a) > 0 );
+      // CGAL_assertion( r.denominator(b) > 0 );
+      // CGAL_assertion( r.denominator(c) > 0 );
 
 /*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
                ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
