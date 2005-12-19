@@ -2011,30 +2011,6 @@ Packages/Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
 Packages/Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
 Packages/Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
 Packages/Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
-Packages/Taucs/auxiliary/Taucs/doc/cilk-mf.pdf -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/doc/taucs.pdf -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/darwin/libf2c.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/irix/libmetis32.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/irix/libmetis64.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/linux/blas_aux.o -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/linux/libatlas.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/linux/libcblas.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/linux/libf77blas.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/linux/liblapack.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/linux/libmetis.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/solaris/libatlas.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/solaris/libcblas.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/solaris/libf77blas.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/solaris/liblapack.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/solaris/libmetis.a -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/blas_win32.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/lapack_win32.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/libatlas.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/libcblas.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/libf77blas.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/liblapack.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/libmetis.lib -text svneol=unset#unset
-Packages/Taucs/auxiliary/Taucs/external/lib/win32/vcf2c.lib -text svneol=unset#unset
 Packages/Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj -text
 Packages/Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj -text
 Packages/Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
