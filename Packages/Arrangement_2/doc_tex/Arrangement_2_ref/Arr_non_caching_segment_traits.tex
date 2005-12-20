@@ -14,9 +14,9 @@
 
 The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
 concept that allows the construction and maintenance of arrangements of
-line segments. It is templated with a \cgal-Kernel model, and it is derived
-from it. This traits class is a thin layer above the parameterized kernel.
-It inherits the \ccc{Point_2} from the kernel and its
+line segments. It is parameterized with a \cgal-Kernel type, and it
+is derived from it. This traits class is a thin layer above the
+parameterized kernel. It inherits the \ccc{Point_2} from the kernel and its
 \ccc{X_monotone_curve_2} and \ccc{Curve_2} types are both defined as
 \ccc{Kernel::Segment_2}. Most traits-class functor are inherited from the
 kernel functor, and the traits class only supplies the necessary functors
