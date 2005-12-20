@@ -3443,12 +3443,12 @@ protected:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_TD_X_TRAPEZOID_H
-#include <CGAL/Td_X_trapezoid.h>
+#include <CGAL/Arr_point_location/Td_X_trapezoid.h>
 #endif
 
 #ifdef CGAL_TD_DEBUG
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H
-#include <CGAL/IO/Trapezoidal_decomposition_2_iostream.h>
+#include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_iostream.h>
 #endif
 #endif
 
