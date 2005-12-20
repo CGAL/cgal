@@ -1,3 +1,10 @@
+20 December 2005 Sylvain Pion
+- Add some using declarations in Delaunay_3 (spotted by the Kernel_checker
+  test-suite).
+
+?? December 2005 Christophe Delage
+- Add remove() in Regular.
+
 4 November 2005 Laurent Rineau
 (I am new in commiters of Triangulation_3.)
 - another patch of the output operator of Triangulation_3: add a

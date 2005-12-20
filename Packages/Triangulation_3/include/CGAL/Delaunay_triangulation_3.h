@@ -112,6 +112,9 @@ public:
   using Tr_Base::next_around_edge;
   using Tr_Base::vertex_triple_index;
   using Tr_Base::mirror_vertex;
+  using Tr_Base::coplanar;
+  using Tr_Base::coplanar_orientation;
+  using Tr_Base::orientation;
 #endif
 
 protected:
