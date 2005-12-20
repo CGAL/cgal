@@ -31,20 +31,20 @@ namespace AlgebraicFunctors {
     template < class OutputIterator >
     OutputIterator
     operator()
-      (const Equation_Circle & e1, const Equation_Circle & e2, OutputIterator res)
-    { return solve<AK> ( e1, e2, res); }
+      (const Equation_Circle & e1, const Equation_Circle & e2, OutputIterator res) const
+    { return AlgebraicFunctors::solve<AK> ( e1, e2, res); }
     
     template < class OutputIterator >
     OutputIterator
     operator()
-      (const Equation_Line & e1, const Equation_Circle & e2, OutputIterator res)
-    { return solve<AK> ( e1, e2, res); }
+      (const Equation_Line & e1, const Equation_Circle & e2, OutputIterator res) const
+    { return AlgebraicFunctors::solve<AK> ( e1, e2, res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()
-      (const Equation_Line & e1, const Equation_Line & e2, OutputIterator res)
-    { return solve<AK> ( e1, e2, res); }
+      (const Equation_Line & e1, const Equation_Line & e2, OutputIterator res) const
+    { return AlgebraicFunctors::solve<AK> ( e1, e2, res); }
   };
 
   template < class AK >
@@ -55,7 +55,7 @@ namespace AlgebraicFunctors {
     
   public:
     Polynomial_for_circles_2_2
-    operator()(const RT& xc, const RT& yc, const RT& r_sq)
+    operator()(const RT& xc, const RT& yc, const RT& r_sq) const
     { return Polynomial_for_circles_2_2(xc, yc, r_sq); }
   };
 
@@ -67,7 +67,7 @@ namespace AlgebraicFunctors {
     
   public:
     Polynomial_1_2
-    operator()( const RT& a, const RT& b, const RT& c)
+    operator()( const RT& a, const RT& b, const RT& c) const
       { return Polynomial_1_2(a, b, c); }
   };
 
@@ -78,13 +78,13 @@ namespace AlgebraicFunctors {
     
     Sign 
     operator()( const typename AK::Polynomial_for_circles_2_2 & equation,
-	      const typename AK::Root_for_circles_2_2 r )
-    { return sign_at<AK>(equation, r); }
+	      const typename AK::Root_for_circles_2_2 r ) const
+    { return AlgebraicFunctors::sign_at<AK>(equation, r); }
 
     Sign 
     operator()( const typename AK::Polynomial_1_2 & equation,
-	      const typename AK::Root_for_circles_2_2 r )
-    { return sign_at<AK>(equation, r); }
+	      const typename AK::Root_for_circles_2_2 r ) const
+    { return AlgebraicFunctors::sign_at<AK>(equation, r); }
   };
     
   template < class AK >
@@ -93,14 +93,14 @@ namespace AlgebraicFunctors {
   public:
     
     typename AK::Root_for_circles_2_2
-    operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
-    { return x_critical_point<AK>(c,i); }
+    operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i) const
+    { return AlgebraicFunctors::x_critical_point<AK>(c,i); }
 
     template <class OutputIterator>
     OutputIterator
     operator()(const typename AK::Polynomial_for_circles_2_2 & c, 
-	     OutputIterator res)
-    { return x_critical_points<AK>(c,res); }
+	     OutputIterator res) const
+    { return AlgebraicFunctors::x_critical_points<AK>(c,res); }
   };
 
   template < class AK >
@@ -109,14 +109,14 @@ namespace AlgebraicFunctors {
   public:
     
     typename AK::Root_for_circles_2_2
-    operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
-    { return y_critical_point<AK>(c,i); }
+    operator()(const typename AK::Polynomial_for_circles_2_2 & c, bool i) const
+    { return AlgebraicFunctors::y_critical_point<AK>(c,i); }
 
     template <class OutputIterator>
     OutputIterator
     operator()(const typename AK::Polynomial_for_circles_2_2 & c, 
-	     OutputIterator res)
-    { return y_critical_points<AK>(c,res); }
+	     OutputIterator res) const
+    { return AlgebraicFunctors::y_critical_points<AK>(c,res); }
   };
 
   template <typename RT>
@@ -125,7 +125,7 @@ namespace AlgebraicFunctors {
   public:
     Comparison_result 
     operator()(const Root_for_circles_2_2<RT>& r1, 
-	     const Root_for_circles_2_2<RT>& r2)
+	     const Root_for_circles_2_2<RT>& r2) const
     { return compare_x<RT>(r1, r2); }
   };
 
@@ -135,7 +135,7 @@ namespace AlgebraicFunctors {
   public:
     Comparison_result 
     operator()(const Root_for_circles_2_2<RT>& r1, 
-	     const Root_for_circles_2_2<RT>& r2)
+	     const Root_for_circles_2_2<RT>& r2) const
     { return compare_y<RT>(r1, r2); }
   };
 
@@ -145,7 +145,7 @@ namespace AlgebraicFunctors {
   public:
     Comparison_result 
     operator()(const Root_for_circles_2_2<RT>& r1, 
-	     const Root_for_circles_2_2<RT>& r2)
+	     const Root_for_circles_2_2<RT>& r2) const
     { return compare_xy<RT>(r1, r2); }
   };
 
