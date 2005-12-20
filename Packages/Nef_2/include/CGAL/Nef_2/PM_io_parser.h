@@ -106,12 +106,12 @@ PM_io_parser(std::ostream& os, const Plane_map& H)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to output |H| to |os|.}*/
 : Base(const_cast<Plane_map&>(H)), in(std::cin), out(os), 
-  VI(this->vertices_begin(),this->vertices_end(),'v'),
-  EI(this->halfedges_begin(),this->halfedges_end(),'e'),
-  FI(this->faces_begin(),this->faces_end(),'f'),
-  vn(this->number_of_vertices()), 
-  en(this->number_of_halfedges()), 
-  fn(this->number_of_faces())
+  VI(Base::vertices_begin(), Base::vertices_end(),'v'),
+  EI(Base::halfedges_begin(),Base::halfedges_end(),'e'),
+  FI(Base::faces_begin(),Base::faces_end(),'f'),
+  vn(Base::number_of_vertices()), 
+  en(Base::number_of_halfedges()), 
+  fn(Base::number_of_faces())
 { verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
              out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
 }
@@ -119,12 +119,12 @@ to output |H| to |os|.}*/
 
 PM_io_parser(std::ostream& os, const PMDEC& D)
 : Base(D), in(std::cin), out(os), 
-  VI(this->vertices_begin(),this->vertices_end(),'v'),
-  EI(this->halfedges_begin(),this->halfedges_end(),'e'),
-  FI(this->faces_begin(),this->faces_end(),'f'),
-  vn(this->number_of_vertices()), 
-  en(this->number_of_halfedges()), 
-  fn(this->number_of_faces())
+  VI(Base::vertices_begin(),Base::vertices_end(),'v'),
+  EI(Base::halfedges_begin(),Base::halfedges_end(),'e'),
+  FI(Base::faces_begin(),Base::faces_end(),'f'),
+  vn(Base::number_of_vertices()), 
+  en(Base::number_of_halfedges()), 
+  fn(Base::number_of_faces())
 { verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
              out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
 }

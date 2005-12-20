@@ -1,3 +1,6 @@
+20 December Andreas Fabri
+- Replaced this-> in member initialization with Base:: in order to avoid warning for VC7
+
 19 December Andreas Fabri
 - Added tags for the constructors with an iterator range of polygons/polylines
 - Moved code in include/CGAL/Nef_2/HDS_items.h inside the namespace CGAL
