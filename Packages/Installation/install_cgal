@@ -2889,7 +2889,7 @@ check_COMPILER()
 check_CUSTOM_OSTYPE_TAG()
 {
     # throw out potentially troublesome special characters
-    CUSTOM_OSTYPE_TAG="`echo ${CUSTOM_OSTYPE_TAG} | ${_sed} 's/ //g;s/-//g;s/_//g;s/@//g;s/(//g;s/)//g;s/*//g;s/&//g;s/?//g;s/$//g;s/!//g'`"  
+    CUSTOM_OSTYPE_TAG="`echo ${CUSTOM_OSTYPE_TAG} | sed 's/ //g;s/-//g;s/_//g;s/@//g;s/(//g;s/)//g;s/*//g;s/&//g;s/?//g;s/$//g;s/!//g'`"  
     return 1
 }
 
