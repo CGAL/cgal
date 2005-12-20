@@ -11,6 +11,9 @@
 \begin{ccRefClass}[Arrangement_2<Traits,Dcel>::]{Halfedge}
 \ccRefLabel{arr_ref:halfedge}
 
+\ccThree{Ccb_halfedge_circulator}{e.direction()~}{}
+\ccThreeToTwo
+
 \ccDefinition
 An object $e$ of the class \ccRefName\ represents a halfedge in the
 arrangement. A halfedge is directed from its \emph{source} vertex
@@ -53,7 +56,8 @@ that return constant handles, iterators or circulators:
      from right to left).}
 
 \ccMethod{Face_handle face();}
-    {returns the face that \ccVar{} is incident to (lying to its left).}
+    {returns the face that \ccVar{} is incident to (The face lies to
+    the left of \ccc{e}).}
 
 \ccMethod{Halfedge_handle twin();}
     {returns the twin halfedge.}
@@ -65,7 +69,7 @@ that return constant handles, iterators or circulators:
     {returns \ccVar{}'s successor in the connected component it belongs to.}
 
 \ccMethod{Ccb_halfedge_circulator ccb();}
-    {returns a circulator that allows going over the halfedges of the
+    {returns a circulator that allows traversing the halfedges of the
      connected component boundary (CCB) that contains \ccVar{}.
      The circulator is initialized to point to \ccVar{}.}
 

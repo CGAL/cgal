@@ -10,7 +10,7 @@
 
 \begin{ccRefClass}{Arrangement_2<Traits,Dcel>}
 \label{arr_ref:arr}
-    
+
 \ccDefinition
 %============
 
@@ -44,21 +44,27 @@ The available traits classes and {\sc Dcel} classes are described below.
 \ccTypes
 %=======
 
+\ccThree{Arrangement_2<Traits,Dcel>::Halfedge_iterator}{}{}
+\ccThreeToTwo
 \ccNestedType{Traits_2}{the traits class in use.}
 \ccGlue
 \ccNestedType{Dcel}{the {\sc Dcel} representation of the arrangement.}
 
+\ccThree{typedef typename Traits_2::X_monotone_curve_2}{Point_2;}{}
+\ccThreeToTwo
 \ccTypedef{typedef Arrangement_2<Traits_2,Dcel> Self;}{}
 
 \ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
   {the point type, as defined by the traits class.}
-
+\ccGlue
 \ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
   {the $x$-monotone curve type, as defined by the traits class.}
 
 \ccTypedef{typedef typename Dcel::Size Size;}
   {the size type (equivalent to \ccc{size_t}).}
 
+\ccThree{Arrangement_2<Traits,Dcel>::Halfedge_iterator}{}{}
+\ccThreeToTwo
 \ccNestedType{Vertex}{represents a $0$-dimensional cell in the subdivision.
                       A vertex is always associated with a point.}
 \ccGlue
@@ -68,18 +74,18 @@ The available traits classes and {\sc Dcel} classes are described below.
 \ccGlue
 \ccNestedType{Face}{represents a $2$-dimensional cell in the subdivision.}
 
-The following handles, iterators and circulators all have respective
+The following handles, iterators, and circulators all have respective
 constant counterparts (for example, in addition to \ccc{Vertex_iterator}
 the type \ccc{Vertex_const_iterator} is also defined).
 See~\cite{cgal:ms-strg-96} for a discussion of constant versus mutable
 iterator types. The mutable types are assignable to their constant
 counterparts. 
 
-We also mention that \ccc{Vertex_iterator}, \ccc{Halfedge_iterator} and
+\ccc{Vertex_iterator}, \ccc{Halfedge_iterator}, and
 \ccc{Face_iterator} are equivalent to the respective handle types (namely,
-\ccc{Vertex_handle}, \ccc{Halfedge_handle} and \ccc{Face_handle}). Thus,
-wherever the handles appear in function parameter lists, the appropriate
-iterators can be used as well.
+\ccc{Vertex_handle}, \ccc{Halfedge_handle}, and \ccc{Face_handle}). Thus,
+wherever the handles appear in function parameter lists, the respective
+iterators can be passed as well.
    
 \ccNestedType{Vertex_handle}{a handle for an arrangement vertex.}
 \ccGlue
@@ -95,7 +101,7 @@ iterators can be used as well.
        halfedges of the arrangement.  Its value-type is \ccc{Halfedge}.}
 \ccGlue    
 \ccNestedType{Edge_iterator}{a bidirectional iterator over the
-       edges of the arrangement (that is, it skips every other halfedge).
+       edges of the arrangement. (That is, it skips every other halfedge.)
        Its value-type is \ccc{Halfedge}.}
 \ccGlue    
 \ccNestedType{Face_iterator}{a bidirectional iterator over the
@@ -126,7 +132,7 @@ iterators can be used as well.
 \ccConstructor{Arrangement_2<Traits, Dcel>();} 
     {constructs an empty arrangement containing one unbounded face,
      which corresponds to the
-     whole plane.}
+     entire plane.}
     
 \ccConstructor{Arrangement_2<Traits, Dcel>(const Self& other);}
     {copy constructor.}
@@ -136,6 +142,8 @@ iterators can be used as well.
      instance for performing the geometric predicates.}
 
 
+\ccThree{Halfedge_iterator}{arr.number_of_halfedges()~}{}
+\ccThreeToTwo
 \ccHeading{Assignment Methods}
 %=============================
 
@@ -153,8 +161,8 @@ iterators can be used as well.
 %=================
 
 \ccMethod{Traits_2* get_traits();}
-    {returns the traits object used by the arrangement instance
-     (a \ccc{const} version is also available).}
+    {returns the traits object used by the arrangement instance.
+    A \ccc{const} version is also available.}
 
 \ccMethod{bool is_empty() const;}
     {determines whether the arrangement is empty (contains only the unbounded
@@ -240,7 +248,7 @@ $\bullet$ {\sl Specialized Insertion Methods:}
 
 \ccMethod{Vertex_handle insert_in_face_interior (const Point_2& p,
                                                  Face_handle f);}
-   {inserts the point \ccc{p} to the arrangement as an isolated vertex in
+   {inserts the point \ccc{p} into the arrangement as an isolated vertex in
     the interior of the face \ccc{f} and returns a handle for the newly
     created vertex.
     \ccPrecond{\ccc{p} lies in the interior of the face \ccc{f}.}}
@@ -252,8 +260,8 @@ $\bullet$ {\sl Specialized Insertion Methods:}
     \ccc{f}. As a result, two new vertices that correspond to \ccc{c}'s
     endpoints are created and connected with a newly created halfedge pair.
     The function returns a handle for one of the new halfedges
-    corresponding to the inserted curve, directed (lexicographically)
-    from left to right.
+    corresponding to the inserted curve, directed in lexicographic
+    increasing order (from left to right).
     \ccPrecond{\ccc{c} lies entirely in the interior of the face \ccc{f} and
     is disjoint from all existing arrangement vertices and edges (in
     particular, both its endpoints are not already associated with existing
@@ -267,8 +275,8 @@ $\bullet$ {\sl Specialized Insertion Methods:}
    vertex that correspond to \ccc{c}'s right endpoint is created and
    connected to \ccc{v} with a newly created halfedge pair. 
    The function returns a handle for one of the new halfedges corresponding
-   to the inserted curve, directed to the newly created vertex --- that is,
-   directed (lexicographically) from left to right.
+   to the inserted curve, directed towards the newly created vertex ---
+   that is, directed in lexicographic increasing order (from left to right).
    \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
    vertices and edges.}
    \ccPrecond{\ccc{v} is associated with the left endpoint of \ccc{c}.}
@@ -283,8 +291,8 @@ $\bullet$ {\sl Specialized Insertion Methods:}
    vertex that correspond to \ccc{c}'s left endpoint is created and
    connected to \ccc{v} with a newly created halfedge pair. 
    The function returns a handle for one of the new halfedges corresponding
-   to the inserted curve, directed to the newly created vertex --- that is,
-   directed (lexicographically) from right to left.
+   to the inserted curve, directed to the newly created vertex ---
+   that is, directed in lexicographic decreasing order (from right to left).
    \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
    vertices and edges.}
    \ccPrecond{\ccc{v} is associated with the right endpoint of \ccc{c}.}
@@ -392,7 +400,7 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
 
 \ccMethod{Face_handle remove_isolated_vertex (Vertex_handle v);}
    {removes the isolated vertex \ccc{v} from the arrangement. The function
-    returned the face \ccc{f} that used to contain the isolated vertex.
+    returns the face \ccc{f} that used to contain the isolated vertex.
     \ccPrecond{\ccc{v} is an isolated vertex (has no incident edges).}}
 
 \ccMethod{Halfedge_handle modify_edge (Halfedge_handle e,
@@ -408,7 +416,7 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
   {splits the edge \ccc{e} into two edges (more precisely, into two halfedge
    pairs), associated with the given subcurves \ccc{c1} and \ccc{c2}, and
    creates a vertex that corresponds to the split point. 
-   The function returns a handle for the halfedge whose source is the same
+   The function returns a handle for the halfedge, whose source is the same
    as \ccc{e->source()} and whose target vertex is the split point.
    \ccPrecond{Either \ccc{c1}'s left endpoint and \ccc{c2}'s right endpoint
    correspond to \ccc{e}'s end-vertices such that \ccc{c1}'s right endpoint

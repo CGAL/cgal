@@ -53,18 +53,18 @@ their endpoints are representable as \ccc{Point_2} objects.
 \ccNestedType{Compare_xy_2}
 {provides the operator~: \\
  \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
- which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
- lexicographic $xy$-ordering of points \ccc{p1} and \ccc{p2}.}
+ which returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER} according to the
+ lexicographic $xy$-order of the points \ccc{p1} and \ccc{p2}.}
 
 \ccNestedType{Construct_min_vertex_2}
 {provides the operator~: \\
  \ccc{Point_2 operator() (X_monotone_curve_2 c)} \\
- which returns the left (lexicographically smaller) endpoint of \ccc{c}.}
+ which returns the lexicographically smaller (left) endpoint of \ccc{c}.}
 
 \ccNestedType{Construct_max_vertex_2}
 {provides the operator~: \\
  \ccc{Point_2 operator() (X_monotone_curve_2 c)} \\
- which returns the right (lexicographically larger) endpoint of \ccc{c}.}
+ which returns the lexicographically larger (right) endpoint of \ccc{c}.}
 
 \ccNestedType{Is_vertical_2}
 {provides the operator~: \\

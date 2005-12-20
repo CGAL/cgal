@@ -10,6 +10,9 @@
 
 \begin{ccRefConcept}{ArrangementXMonotoneTraits_2}
 
+\ccThree{ArrangementXMonotoneTraits::Has_merge_category}{}{}}
+\ccThreeToTwo
+
 \ccDefinition
 
 This refined traits concept refines the basic arrangement-traits concept
@@ -34,6 +37,12 @@ curve splitting. The reverse merge operation is optionally supported.
                                   \ccc{Are_mergeable_2} and \ccc{Merge_2}
                                   are provided.}
 
+\ccTypes
+%=======
+
+\ccNestedType{Multiplicity}{the multiplicity type.}
+
+
 \ccHeading{Functor Types}
 %========================
 
@@ -45,9 +54,9 @@ curve splitting. The reverse merge operation is optionally supported.
  \ccc{OutputIterator operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
                                  OutputIterator oi)} \\
  which computes the intersections of \ccc{c1} and \ccc{c2} and inserts them
- {\sl in an ascending lexicographical $xy$-order} into the output iterator.
+ {\sl in an ascending lexicographic $xy$-order} into the output iterator.
  The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
- \ccc{Object} either wraps a \ccc{pair<Point_2,unsigned int>} instance, which
+ \ccc{Object} either wraps a \ccc{pair<Point_2,Multiplicity>} instance, which
  represents an intersection point with its multiplicity (in case the
  multiplicity is undefined or not known, it should be set to $0$) or an
  \ccc{X_monotone_curve_2} instance, representing an overlapping subcurve of

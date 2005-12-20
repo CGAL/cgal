@@ -14,16 +14,16 @@
 
 \ccFunction{template<class Traits, class Dcel, class PointLocation>
             void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c,
+                         const typename Traits::X_monotone_curve_2& xc,
                          const PointLocation& pl = walk_pl);}
-   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
+   {Inserts the given $x$-monotone curve \ccc{xc} into the arrangement
     \ccc{arr}. The \ccc{Traits} parameter must be a model of the
-    \ccc{ArrangementXMonotoneTraits_2} concept. \ccc{c} is inserted
+    \ccc{ArrangementXMonotoneTraits_2} concept. \ccc{xc} is inserted
     into the arrangement by locating its left endpoint and computing its
     zone until reaching the right endpoint.
     The point-location object \ccc{pl}, which must be a model of the
     \ccc{ArrangementPointLocation_2} concept, is used for locating the
-    left endpoint of \ccc{c} in the exising arrangemnt.
+    left endpoint of \ccc{xc} in the exising arrangemnt.
     By default, the function uses the ``walk along line'' point-location
     strategy --- namely an instance of the class
     \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
@@ -32,22 +32,22 @@
 
 %\ccFunction{template<class Traits, class Dcel>
 %            void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-%                         const typename Traits::X_monotone_curve_2& c);}
-%   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
+%                         const typename Traits::X_monotone_curve_2& xc);}
+%   {Inserts the given $x$-monotone curve \ccc{xc} into the arrangement
 %    \ccc{arr}. The function operates as the function listed above, but it
 %    uses the default ``walk along line'' point-location strategy, so users
 %    need not provide a point-location object.}
 
 \ccFunction{template<class Traits, class Dcel>
             void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                         const typename Traits::X_monotone_curve_2& c,
+                         const typename Traits::X_monotone_curve_2& xc,
                          const Object& obj);}
-   {Inserts the given $x$-monotone curve \ccc{c} into the arrangement
+   {Inserts the given $x$-monotone curve \ccc{xc} into the arrangement
     \ccc{arr}. The \ccc{Traits} parameter must be a model of the
     \ccc{ArrangementXMonotoneTraits_2} concept. The object \ccc{obj}, which
     either wraps a \ccc{Vertex_const_handle}, a \ccc{Halfedge_const_handle}
-    or a \ccc{Face_const_handle}, represents the location of \ccc{c}'s left
-    endpoint in the arrangement. \ccc{c} is thus inserted
+    or a \ccc{Face_const_handle}, represents the location of \ccc{xc}'s left
+    endpoint in the arrangement. \ccc{xc} is thus inserted
     into the arrangement from the feature represented by \ccc{obj} by
     computing its zone until reaching the right endpoint (no point-location
     query is issued).}

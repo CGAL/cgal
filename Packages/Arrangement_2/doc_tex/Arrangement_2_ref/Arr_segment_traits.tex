@@ -38,14 +38,15 @@ the default \ccc{Exact_predicates_exact_constructions_kernel} provided by
 only a minor overhead (in comparison to working with a fast, inexact number
 type) for most inputs.
 
-\ccRefName\ uses \ccc{Kernel::Point_2} as its point type. However, it
-does {\sl not} use \ccc{Kernel::Segment_2} as its curve type, as one can
-expect. The reason is that the kernel segment is represented using just
-its two endpoints, while the traits class needs to store extra data with
-its segments in order to efficiently operate on them. Nevertheless, the
-nested \ccc{X_monotone_curve_2} and \ccc{Curve_2} types (in this case both
-types refer to the same class, as {\sl every} line segement is (weakly)
-$x$-monotone) are however fully convertable to the \ccc{Kernel::Segment_2}.
+\ccRefName\ defines \ccc{Kernel::Point_2} as its point type. However, it
+does {\sl not} define \ccc{Kernel::Segment_2} as its curve type, as one may
+expect. The reason is that the kernel segment is represented by its
+two endpoints only, while the traits class needs to store extra data
+with its segments, in order to efficiently operate on them. Nevertheless,
+the nested \ccc{X_monotone_curve_2} and \ccc{Curve_2} types (in this
+case both types refer to the same class, as {\sl every} line segement
+is (weakly) $x$-monotone) are however convertable to the
+\ccc{Kernel::Segment_2}.
 
 \ccRefName\ achieves faster running times than the
 \ccStyle{Arr_non_caching_segment_traits_2<Kernel>} traits-class, when

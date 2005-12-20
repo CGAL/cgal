@@ -134,7 +134,7 @@ to represent $x$-monotone piecewise linear curves. It inherits from the
 range of points, just like the \ccc{Curve_2} class. However, there is
 precondition that the point range define an $x$-monotone polyline.
 
-We note that the points that define the $x$-monotone polyline are
+The points that define the $x$-monotone polyline are
 always stored in an ascending lexicographical $xy$-order, so their order may
 be reversed with respect to the input sequence. Also note that the
 $x$-monotonicity ensures that an $x$-monotone polyline is never
@@ -143,6 +143,10 @@ to several interior-disjoint $x$-monotone subcurves).
 
 \begin{ccClass}{Arr_polyline_traits_2<SegmentTraits>::X_monotone_curve_2}
 \end{ccClass}
+
+\ccSeeAlso
+    \ccc{Arr_segment_traits_2<Kernel>}\\
+    \ccc{Arr_non_caching_segment_traits_2<Kernel>}\\
 
 \end{ccRefClass}
 \ccRefPageEnd

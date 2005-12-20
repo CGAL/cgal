@@ -18,6 +18,9 @@ that is --- a $0$-dimensional cell, associated with a point on the plane.
 \ccInheritsFrom
     \ccHtmlNoLinksFrom{\ccc{typename Dcel::Vertex}}
 
+\ccThree{typename Traits::Point_2}{v.is_isolated()~}{}
+\ccThreeToTwo
+
 \ccCreation
 \ccCreationVariable{v}
 %=====================
@@ -32,16 +35,22 @@ All non-const methods listed below also have \ccc{const} counterparts
 that return constant handles, iterators or circulators:
 
 \ccMethod{bool is_isolated() const;}
-    {checks if the vertex is isolated (has no incident edges).}
+    {checks whether the vertex is isolated. (It has no incident edges.)}
 
 \ccMethod{typename Dcel::Size degree() const;}
     {returns the number of edges incident to \ccVar{}.}
+
+% \ccThree{Halfedge_around_vertex_circulator}{incident_halfedges();~}{}
+% \ccThreeToTwo
 
 \ccMethod{Halfedge_around_vertex_circulator incident_halfedges();}
     {returns a circulator circulator that allows going over the halfedges
      incident to \ccVar{} (that have \ccVar{} as their target).
      The edges are traversed in a clockwise direction around \ccVar{}.
      \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
+
+% \ccThree{typename Traits::Point_2}{v.is_isolated()~}{}
+% \ccThreeToTwo
 
 \ccMethod{Face_handle face();}
     {returns a handle to the face that contains \ccVar{} in its interior.
