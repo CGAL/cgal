@@ -38,10 +38,11 @@ int main ()
   segs[2] = Segment_2 (Point_2 (3, 4), Point_2 (6, 4));
   insert_curves (arr, segs, segs + 3);
 
-  // Print out the curves and the number edges each one induces.
+  // Print out the curves and the number of edges each one induces.
   Arr_with_hist_2::Curve_iterator            cit;
 
-  std::cout << arr.number_of_curves() << " curves:" << std::endl;
+  std::cout << "The arrangement contains "
+            << arr.number_of_curves() << " curves:" << std::endl;
   for (cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
   {
     std::cout << "Curve [" << *cit << "] induces "
@@ -53,7 +54,8 @@ int main ()
   Arr_with_hist_2::Edge_iterator                  eit;
   Arr_with_hist_2::Originating_curve_iterator     ocit;
 
-  std::cout << arr.number_of_edges() << " edges:" << std::endl;
+  std::cout << "The arrangement is comprised of "
+            << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
   {
     std::cout << "[" << eit->curve() << "]. Originating curves: ";

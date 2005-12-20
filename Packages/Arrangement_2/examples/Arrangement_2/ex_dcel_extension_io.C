@@ -130,6 +130,7 @@ int main ()
   read (arr2, in_file, formatter);
   in_file.close();
 
+  std::cout << "The arrangement vertices: " << std::endl;
   for (vit = arr2.vertices_begin(); vit != arr2.vertices_end(); ++vit)
     std::cout << '(' << vit->point() << ") - " << vit->data() << std::endl;
 

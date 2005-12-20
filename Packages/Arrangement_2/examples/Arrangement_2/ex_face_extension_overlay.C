@@ -61,8 +61,8 @@ int main ()
   for (fit = arr2.faces_begin(); fit != arr2.faces_end(); ++fit)
     fit->set_data (fit != arr2.unbounded_face());
 
-  // Compute the overlay of the two arrangements, marking the only the faces
-  // that are intersections of two marked faces in arr1 and arr2, respectively.
+  // Compute the overlay of the two arrangements, marking only the faces that
+  // are intersections of two marked faces in arr1 and arr2, respectively.
   Arrangement_2          overlay_arr;
   Overlay_traits         overlay_traits;
 
@@ -72,6 +72,7 @@ int main ()
   // ones.
   Arrangement_2::Ccb_halfedge_circulator    curr;
 
+  std::cout << "The union is: ";
   for (fit = overlay_arr.faces_begin(); fit != overlay_arr.faces_end(); ++fit)
   {
     if (! fit->data())

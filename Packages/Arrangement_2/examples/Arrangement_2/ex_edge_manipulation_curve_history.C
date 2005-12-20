@@ -25,7 +25,7 @@ typedef CGAL::Arr_walk_along_line_point_location<Arr_with_hist_2>
 
 int main ()
 {
-  // Construct an arrangement containing nine circle: C[0] of radius 2 and
+  // Construct an arrangement containing nine circles: C[0] of radius 2 and
   // C[1], ..., C[8] of radius 1.
   const Rational    _7_halves = Rational (7, 2); 
   Arr_with_hist_2   arr;

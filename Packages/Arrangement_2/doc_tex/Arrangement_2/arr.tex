@@ -2633,8 +2633,8 @@ concept. The details of this concept are given in the reference manual.
 \caption{Overlaying two simple arrangements of line segments, as done
 in \ccc{ex_overlay.C} and \ccc{ex_face_extension_overlay.C}.
 In \ccc{ex_face_extension_overlay.C} the two bounded faces are
-concidered as {\em marked}, and the intersection of the two
-marked faces is denoted as $f_0$.}
+concidered as {\em marked}, and the octagonal face which is the intersection
+of the two marked faces is denoted by $f_0$.}
 \label{arr_fig:ex_22}
 \end{figure}
 
@@ -2651,15 +2651,15 @@ The following example shows how to compute the intersection of two polygons
 using the \ccc{overlay()} function. It uses a face-extended \dcel\ class
 to define our arrangement class. The \dcel\ extends each face with a Boolean 
 flag. A polygon is represented as a {\sl marked} arrangement face, (whose
-flag is set). The example uses a face-overlay traits class, instanciated with 
+flag is set). The example uses a face-overlay traits class, instantiated with 
 a functor that simply performs a logical {\em and} operations on Boolean flags.
-As a result, a face in the overlaid arrangement is marked only, when it
+As a result, a face in the overlaid arrangement is marked only when it
 corresponds to an overlapping region of two marked cells in the input
 arrangements. Namely, it is part of the intersection of the two polygons.
 
 The example computes the intersection between a square and a rhombus, (which is
-actually also a square). The resulting polygon is an octagon, represented 
-by the shape $f_0$ in Figure~\ref{arr_fig:ex_22}:
+actually also a square). The resulting polygon is an octagon, denoted
+by $f_0$ in Figure~\ref{arr_fig:ex_22}:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_face_extension_overlay.C}
 
@@ -2667,7 +2667,7 @@ by the shape $f_0$ in Figure~\ref{arr_fig:ex_22}:
 \label{arr_sec:arr_with_hist}
 %==================================
 %
-As states at the beginning of this chapter (see Section~\ref{arr_sec:intro}), 
+As stated at the beginning of this chapter (Section~\ref{arr_sec:intro}), 
 when one constructs an arrangement induced by a set $\calC$ of arbitrary 
 planar curves, she or he constructs a collection $\calC''$ of $x$-monotone 
 subcurves of $\calC$ that are pairwise disjoint in their interior, and these 
@@ -2675,7 +2675,7 @@ subcurves are associated with the arrangement edges (more precisely, with the
 \dcel\ halfedges). Doing so, the connection between the originating input 
 curves and the arrangement edges is lost. This loss might be acceptable for 
 some applications. However, in many practical cases it is important to 
-determine the input curves that originate final subcurves.
+determine the input curves that give rise to the final subcurves.
 
 The \ccc{Arrangement_with_history_2<Traits,Dcel>} class-template extends
 the \ccc{Arrangement_2} class by keeping an additional container of input
@@ -2721,7 +2721,7 @@ valid range of edges induced by \ccc{ch}. The value type of these iterators
 is \ccc{Halfedge_handle}. It is thus possible to traverse all arrangement
 edges induced by an input curve.
 
-It is also important to be able to perform the inverse mapping: given an
+It is also important to be able to perform the inverse mapping. Given an
 arrangement edge, we would like to be able to determine which input curve
 induces it. In case the edge represents an overlap of several curves, we
 should be able to trace all input curves that overlap over this edge.
@@ -2734,15 +2734,15 @@ in case of overlaps), while \ccc{arr.originating_curves_begin(e)} and
 \ccc{arr.originating_curves_end(e)} return 
 \ccc{Arrangement_with_history_2::Originating_curve_iterator} objects that
 define the range of curves that induce \ccc{e}. The value type of these
-iterator is of course \ccc{Arrangement_with_history_2::Curve_with_edges_2}.
+iterator is \ccc{Curve_2}.
 
 It is possible to overlay two \ccc{Arrangement_with_history_2} instances 
 instanciated by the same traits class. In this case, the resulting 
 arrangement will store a consolidated container of input curves, and 
 automatically preserve the cross-mapping between the arrangement edges 
-and the consolidated curve set. Needless to say, users can employ an 
-overlay-traits class to maintain any type of auxiliary data kept with 
-the \dcel\ features (see Section~\ref{arr_sec:overlay}).
+and the consolidated curve set. Users can employ an overlay-traits class
+to maintain any type of auxiliary data stored with the \dcel\ features
+(see Section~\ref{arr_sec:overlay}).
 
 \subsection{Modifying an Arrangement with History}
 \label{arr_ssec:modif_traverse}
@@ -2774,7 +2774,7 @@ the corresponding arrangement-with-history function returns a
 As we are able to keep track of all edges induced by an input curve, we also
 provide a free function that removes a curve from an arrangement. By calling
 \ccc{remove(arr,ch)}, where \ccc{ch} is a valid curve handle, the given curve
-is deleted from the curve container, and all its edges induced solely by
+is deleted from the curve container, and all edges induced solely by
 this curve (i.e., excluding overlapping edges) are removed from the 
 arrangement. The function returns the number of edges that have been removed.
 
@@ -2795,7 +2795,7 @@ mergeable.
 \item It is possible to remove an edge by simply invoking
 \ccc{remove_edge(e)}.
 \end{itemize}
-In all cases, the maintenance of cross-pointers for appropriate input
+In all cases, the maintenance of cross-pointers for the appropriate input
 curves will be done automatically.
 
 It should be noted that it is possible to attach observers to an 
@@ -2829,7 +2829,9 @@ In the following example we construct a simple arrangement of six line
 segments, as depicted in Figure~\ref{arr_fig:ex_24}, while maintaining 
 the curve history. The example demonstrates the usage of the special
 traversal functions. It also shows how to issue point-location queries
-on the resulting arrangement:
+on the resulting arrangement, using the auxiliary function 
+\ccc{point_location_query()} defined in the header file 
+\ccc{point_location_utils.h} (see also Section~\ref{arr_ssec:pl}).
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_curve_history.C}
 
@@ -2845,7 +2847,9 @@ on the resulting arrangement:
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement with history of nine circle as constructed in 
-\ccc{ex_edge_manipulation_curve_history.C}. The large circle $C_0$ is
+\ccc{ex_edge_manipulation_curve_history.C}. Note the vertical tangency points
+of $C_0$, marked as dark dots, which subdivide this circle into an upper half
+and a lower half, each consists of 9 edges. The large circle $C_0$ is
 eventually removed from the arrangement, with all 18 edges it induces.}
 \label{arr_fig:ex_25}
 \end{figure}
@@ -2853,8 +2857,7 @@ eventually removed from the arrangement, with all 18 edges it induces.}
 The following example demonstrates the usage of the free \ccc{remove()}
 function. We construct an arrangement of nine circles, while keeping a handle
 to each inserted circle. We then remove the large circle $C_0$, which induces
-$18$ halfedges, as depicted in Figure~\ref{arr_fig:ex_25} (note the 
-vertical tangency points that are marked as red dots). The example also shows
+$18$ edges, as depicted in Figure~\ref{arr_fig:ex_25}. The example also shows
 how to use the \ccc{split_edge()} and \ccc{merge_edge()} functions when
 operating on an arrangement-with-history instance:
 
@@ -2914,7 +2917,7 @@ The arrangement package includes the free functions
 \ccc{write(arr, os, formatter)}, which writes the arrangement \ccc{arr}
 to an output stream \ccc{os}, and \ccc{read(arr, os, formatter)}, which
 reads the arrangement \ccc{arr} from an input stream \ccc{is}. Both
-operations are performed using a \ccc{formatter} object, which define
+operations are performed using a \ccc{formatter} object, which defines
 the I/O format. The package contains three formatter classes:
 \begin{itemize}
 \item \ccc{Arr_text_formatter<Arrangement>} defines a simple textual
@@ -2927,7 +2930,7 @@ arrangement extractor, as defined above.
 arrangements whose \dcel\ representation is based on the
 \ccc{Arr_face_extended_dcel<Traits,FaceData>} class (see
 Section~\ref{arr_ssec:ex_dcel_face}). It supports reading and writing
-the auxiliary data objects stored with the arrangement faces providing
+the auxiliary data objects stored with the arrangement faces provided
 that the \ccc{FaceData} class supports an inserter and an extractor.
 %
 \item \ccc{Arr_extended_dcel_text_formatter<Arrangement>} operates on
@@ -2935,7 +2938,7 @@ arrangements whose \dcel\ representation is based on the
 \ccc{Arr_extended_dcel<Traits,VertexData,HalfedgeData,FaceData>} class
 (see Section~\ref{arr_ssec:ex_dcel_all}). It supports reading and writing
 the auxiliary data objects stored with the arrangement vertices, edges
-and faces, providing that the \ccc{VertexData}, \ccc{HalfedgeData} and
+and faces, provided that the \ccc{VertexData}, \ccc{HalfedgeData} and
 \ccc{FaceData} classed all have inserters and extractors.
 \end{itemize}
 
@@ -2969,8 +2972,8 @@ with the basic arrangement structure.
 The arrangement package supplies an inserter and an extractor for the
 \ccc{Arrangement_with_history_2<Traits,Dcel>} class. The arrangement is
 represented using a simple predefined textual format, where we require that
-the \ccc{Curve_2} type defined by the traits class (as well as the
-\ccc{Point_2} type and the \ccc{X_monotone_curve_2} types) supports
+the \ccc{Curve_2} type defined by the traits class --- as well as the
+\ccc{Point_2} type and the \ccc{X_monotone_curve_2} types --- support
 the \ccc{<<} and\ccc{>>} operators.
 
 The following example constructs the same arrangement as example
@@ -3064,7 +3067,7 @@ packages, namely \ccc{Topological_map}, \ccc{Planar_map_2},
 \ccc{Planar_map_with_intersections_2} and \ccc{Arrangement_2}, that were
 developed by~: \newline
 Ester Ezra, Eyal Flato, Efi Fogel, Dan Halperin, Iddo Hanniel, Idit Haran,
-Sariel Har-Peled, Shai Hirsch, Eugene Lipovetsky, Oren Nechushtan, Ron Wein,
+Shai Hirsch, Eugene Lipovetsky, Oren Nechushtan, Sigal Raab, Ron Wein,
 Baruch Zukerman and Tali Zvi.
 
 In version~3.2, as part of the ACS project, the packages have gone through
