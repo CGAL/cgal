@@ -1,3 +1,7 @@
+21 December 2005 Sylvain Pion
+- Add #include <CGAL/config.h> early in <CGAL/number_type_basic.h>
+  to avoid the need to #include <CGAL/basic.h> in Algebraic_kernel/basic.h.
+
 14 December 2005 Sylvain Pion
 - Change CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP into
   CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.

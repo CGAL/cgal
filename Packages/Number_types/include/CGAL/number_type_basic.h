@@ -33,6 +33,8 @@
 // CGAL uses std::min and std::max
 #include <algorithm>
 
+#include <CGAL/config.h>
+
 CGAL_BEGIN_NAMESPACE
 
 using std::min;
