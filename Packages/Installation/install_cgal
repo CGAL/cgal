@@ -623,6 +623,7 @@ check_for_utils()
     _check_for_sysutil chmod y
     _check_for_sysutil mkdir y
     _check_for_sysutil sed y
+    _check_for_sysutil tr y
     _check_for_sysutil awk y
     _check_for_sysutil tee y
     _check_for_sysutil find y
@@ -2029,8 +2030,11 @@ compiler_version()
 # print custom os tag
 custom_ostype_tag()
 {
+    # the tag should not start with underscore
+    # (consistent treatment of old _LEDA suffix)
     ${_printf} "%s\n" "${*:-${COMPILER}}" | \
-	${_awk} 'BEGIN {FS="@"} {printf "%s",$6}'
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$6}' | \
+	${_sed} 's/^_//'
 }
 
 # reassemble compiler string, i.e. adjust to CUSTOM_OSTYPE_TAG
@@ -2889,7 +2893,7 @@ check_COMPILER()
 check_CUSTOM_OSTYPE_TAG()
 {
     # throw out potentially troublesome special characters
-    CUSTOM_OSTYPE_TAG="`echo ${CUSTOM_OSTYPE_TAG} | sed 's/ //g;s/-//g;s/_//g;s/@//g;s/(//g;s/)//g;s/*//g;s/&//g;s/?//g;s/$//g;s/!//g'`"  
+    CUSTOM_OSTYPE_TAG=`echo ${CUSTOM_OSTYPE_TAG} | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}[]\`/ ' | ${_tr} -d "'"`
     return 1
 }
 
@@ -6264,6 +6268,8 @@ _WHAT_TO_DO=''
 _CONFLICT=''
 _ANY_OPT=''
 _awk=awk
+_sed=sed
+_tr=tr
 _printf=printf
 _rm=rm
 initial_check
@@ -6587,6 +6593,7 @@ case ${_WHAT_TO_DO} in
 	_dirname=dirname
 	_which=real_which
 	_sed=sed
+	_tr=tr
 	_cat=cat
 	_tee=tee
 	eval "guess_os ${_printf}" >/dev/null
