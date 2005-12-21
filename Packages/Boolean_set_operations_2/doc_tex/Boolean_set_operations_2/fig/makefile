@@ -1,46 +1,72 @@
 include $(ROOT)/include/make/comdef.mak
 
-TARGET0 =
-# TARGET0+= circles_rects.gif
-# TARGET0+= conic_arcs.gif
-# TARGET0+= disks.gif
-# TARGET0+= general_polygon.gif
-# TARGET0+= general_polygon_with_holes.gif
-# TARGET0+= non_strictly_simple.gif
-TARGET0+= simple.gif
-TARGET0+= teaser.gif
-# TARGET0+= triangles.gif
-# TARGET0+= unique.gif
+GIFS = simple.gif
+GIFS+= teaser.gif
+# GIFS+= circles_rects.gif
+# GIFS+= conic_arcs.gif
+# GIFS+= disks.gif
+# GIFS+= general_polygon.gif
+# GIFS+= general_polygon_with_holes.gif
+# GIFS+= non_strictly_simple.gif
+# GIFS+= triangles.gif
+# GIFS+= unique.gif
 
-TARGET1 = fig_non_strictly_simple.gif
-TARGET1+= fig_circles_rects.gif
-TARGET1+= fig_conic_arcs.gif
-TARGET1+= fig_disks.gif
-TARGET1+= fig_general_polygon.gif
-TARGET1+= fig_general_polygon_with_holes.gif
-TARGET1+= fig_triangles.gif
-TARGET1+= fig_unique.gif
+TARGET_GIFS = $(GIFS)
+TARGET_GIFS+= fig_non_strictly_simple.gif
+TARGET_GIFS+= fig_circles_rects.gif
+TARGET_GIFS+= fig_conic_arcs.gif
+TARGET_GIFS+= fig_disks.gif
+TARGET_GIFS+= fig_general_polygon.gif
+TARGET_GIFS+= fig_general_polygon_with_holes.gif
+TARGET_GIFS+= fig_triangles.gif
+TARGET_GIFS+= fig_unique.gif
+
+TARGET_PDFS+= $(GIFS:.gif=.pdf)
+TARGET_PDFS+= non_strictly_simple.pdf
+TARGET_PDFS+= circles_rects.pdf
+TARGET_PDFS+= conic_arcs.pdf
+TARGET_PDFS+= disks.pdf
+TARGET_PDFS+= general_polygon.pdf
+TARGET_PDFS+= general_polygon_with_holes.pdf
+TARGET_PDFS+= triangles.pdf
+TARGET_PDFS+= unique.pdf
+
+TARGET_EPSS = $(TARGET_PDFS:.pdf=.eps)
+
+TARGET0 = $(TARGET_GIFS)
+TARGET1 = $(TARGET_PDFS)
+TARGET2 = $(TARGET_EPSS)
+
+default:: $(TARGET0) $(TARGET1) $(TARGET2)
 
 include $(MAKEINCDIR)/comrul.mak
+
+define toeps
+sed -e "s/%%BoundingBox.*$$/`gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $(basename $@).ps 2>&1 | tr "\n" "\^"`/" $(basename $@).ps | tr "\^" "\n"
+endef
 
 %.dvi : %.tex
 	cp $< tmp.tex
 	latex fig.tex
 	mv fig.dvi $@
 
+%.bbox : %.ps
+	gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $<
 %.gif : %.dvi
 	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
-	eps2eps $(basename $@).ps $(basename $@).eps;
-	convert $(basename $@).eps $@;
+	$(toeps) > $(basename $@).eps2 && rm $(basename $@).ps
+	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
-%.eps : %.dvi
+%.ps : %.dvi
 	dvips -P cmz $< -o
-	eps2eps $(basename $@).ps $@
+
+%.eps : %.ps
+	$(toeps) > $(basename $@).eps
 
 %.pdf : %.eps
 	epstopdf --hires $<
 
-.SECONDARY: $(TARGET1:.gif=.eps)
+.SECONDARY: $(TARGET_PDFS:.pdf=.eps)
 
 fig_non_strictly_simple.dvi: fig_non_strictly_simple.tex
 	latex $<
@@ -54,7 +80,7 @@ fig_conic_arcs.dvi: fig_conic_arcs.tex
 fig_disks.dvi: fig_disks.tex
 	latex $<
 
-fig_general_polygon.vi: fig_general_polygon.tex
+fig_general_polygon.dvi: fig_general_polygon.tex
 	latex $<
 
 fig_general_polygon_with_holes.dvi: fig_general_polygon_with_holes.tex
@@ -66,4 +92,6 @@ fig_triangles.dvi: fig_triangles.tex
 fig_unique.dvi: fig_unique.tex
 	latex $<
 
-LDIRT = fig.dvi fig.aux fig.log $(TARGET1:.pdf=.eps)
+LDIRT = fig.dvi fig.aux fig.log $(TARGET_PDFS:.pdf=.ps) \
+$(TARGET_GIFS:.gif=.eps2) $(TARGET_GIFS:.gif=.ps) $(TARGET_GIFS:.gif=.dvi) \
+$(TARGET_GIFS:.gif=.log) $(TARGET_GIFS:.gif=.aux)

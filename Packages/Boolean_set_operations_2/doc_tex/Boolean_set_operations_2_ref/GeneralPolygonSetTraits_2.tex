@@ -21,9 +21,9 @@ types.
 \ccTypes
 % ======
 
-\ccNestedType{Polygon_2}{represents a (general) polygon.}
+\ccNestedType{Polygon_2}{represents a general polygon.}
 \ccGlue
-\ccNestedType{Polygon_with_holes_2}{represents a (general) polygon
+\ccNestedType{Polygon_with_holes_2}{represents a general polygon
   with holes.}
 
 \ccNestedType{Curve_const_iterator}
@@ -37,7 +37,7 @@ types.
 \ccThreeToTwo
 
 \ccNestedType{Construct_polygon_2}
-{a functor that constructs a (general) polygon from a range of
+{a functor that constructs a general polygon from a range of
 $x$-monotone curves. It uses the operator\\
  \ccc{void operator() (InputIterator begin, Input iterator end,
                        Polygon_2 & pgn)}, \\
@@ -46,7 +46,7 @@ $x$-monotone curves. It uses the operator\\
 \ccNestedType{Construct_curves_2}
 {a functor that returns a pair that consists of the begin and
  past-the-end iterators of the $x$ monotone curves of the boundary of
- a given (general) polygon. It uses the operator\\
+ a given general polygon. It uses the operator\\
  \ccc{std:pair<Curve_const_iterator,
                Curve_const_iterator>
   operator() (const Polygon_2 & pgn)}.}
@@ -67,15 +67,15 @@ $x$-monotone curves. It uses the operator\\
 %====================================
 
 \ccMethod{Construct_polygon_2 construct_polygon_2_object();}
-{returns a functor that constructs a (general) polygon.}
+{returns a functor that constructs a general polygon.}
 
 \ccMethod{Construct_curves_2 construct_curves_2_object();}
-{returns a functor that obtains the curves of a (general) polygon.}
+{returns a functor that obtains the curves of a general polygon.}
 
 \ccPredicates
 % ===========
 \ccMethod{bool is_simple(Polygon_2 & pgn);}
-{returns \ccc{true} if the (general) polygon \ccc{pgn} is strictly simple, 
+{returns \ccc{true} if the general polygon \ccc{pgn} is strictly simple, 
 and \ccc{false} otherwise. Used as precondition for some of the operations.}
 
 \ccHasModels

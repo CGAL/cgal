@@ -165,7 +165,19 @@ void insert(InputIterator1 pgn_begin, InputIterator1 pgn_end,
   general polygon with holes in the second range, and the point set
   represented by \ccVar\ do not intersect pairwise.}}
 % , except maybe at the vertices
+
+\ccMethod{void complement();}
+  {computes the complement of \ccVar.}
+
+\ccMethod{void complement(const General_polygon_set_2 & cps);}
+  {computes the complement of \ccc{cps}.}
+
+\ccMethod{void complement(const General_polygon_2 & pgn);}
+  {computes the complement of \ccc{pgn}.}
   
+\ccMethod{void complement(const General_polygon_with-holes_2 & pgn);}
+  {computes the complement of \ccc{pgn}.}
+
 \ccHeading{Univariate Operations}
 % ===============================
 In the following univariate and bivariate methods the result is placed in

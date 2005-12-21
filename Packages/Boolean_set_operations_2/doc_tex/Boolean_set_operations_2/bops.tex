@@ -1,3 +1,13 @@
+\lcTex{%
+  \newlength{\widthExtra}\setlength{\widthExtra}{1.1cm}
+  \newlength{\widthLineReal}\setlength{\widthLineReal}{\linewidth}
+  \addtolength{\widthLineReal}{-\widthExtra}
+  \newlength{\minipageSpace}\setlength{\minipageSpace}{0.2cm}
+
+  \newlength{\widthLeft}
+  \newlength{\widthRight}
+}
+
 \newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
 \newcommand{\calC}{{\cal C}}
 \newcommand{\calA}{{\cal A}}
@@ -57,18 +67,14 @@ Chapter~\ref{chap:nef_2}.
 % predicates on a single (linear) polygon are provided by the 
 % \ccc{Polygon_2} class; see Chapter~\ref{Polygon}.
 
-\pagebreak
+\newpage
 \lcTex{%
-  \begin{wrapfigure}{r}{4cm}
-  \vspace{-2ex}
-  \begin{center}
-  \input{Boolean_set_operations_2/fig/non_strictly_simple}
-  \end{center}
-  \caption{A non strictly simple polygon.}
-  \label{fig:non_strictly_simple_polygon}
-  \end{wrapfigure}
+  \setlength{\widthRight}{4cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
 }
-\lcHtml{\label{fig:non_strictly_simple_polygon}}
+\label{fig:non_strictly_simple_polygon}
 \begin{ccHtmlOnly}
   <p><center>
     <img src="./fig/fig_non_strictly_simple.gif" border=0 alt="A non strictly simple polygon" align=right>
@@ -86,18 +92,26 @@ necessary strictly simple; see Figure~\ref{fig:non_strictly_simple_polygon}.
 We extend the notion of a polygon to a point set in $\mathrm{E}^2$ that has 
 a topology of a polygon and its boundary edges must map to $x$-monotone
 curves, and refer to it as a {\em general polygon}. We sometimes use
-the term {\em polygon} instead of general polygon for simplicity here
-after.
+the term {\em polygon} instead of general polygon for simplicity hereafter.
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Boolean_set_operations_2/fig/non_strictly_simple}
+    \end{center}
+    A non strictly simple polygon.
+  \end{minipage}
+}
 
 % ===============================================================
 \section{Boolean Set-Operations on General Polygons}
 \label{bobs_sec:bops}
 % ===============================================================
-For two point sets $P$ and $Q$, the (ordinary) Boolean set-operations are
+For two point sets $P$ and $Q$, the ordinary Boolean set-operations are
 defined as follows:
 \begin{description}
 \item [Intersection predicate] tests whether the two polygons $P$ and $Q$
-  overlap without explicitly computing the overlapping cell (or cells).     
+  overlap without explicitly computing the overlapping polygon if exists.
 \item[Intersection] computes the intersection $R = P \cap Q$.
 \item[Join] computes the union $R = P \cup Q$.
 \item [Difference] computes the difference $R = P \setminus Q$ 
@@ -118,11 +132,11 @@ consist of its interior and its boundary). The distinction between the
 interior and  the exterior of a polygon that results from a regularized 
 Boolean set-operation is determined by the order of its vertices. 
 The definition of the regularized Boolean set-operations 
-is slightly different than the definition of the ordinary as mentioned
-above. For example, the intersection predicate tests whether the
-interior of two polygons $P$ and $Q$ overlap. Thus, if two polygons
-have a finite set of points, or even a boundary curve, in common, they
-are concidered non-intersecting.
+is slightly different from the definition of the ordinary set operations
+given above. For example, the intersection predicate tests whether the 
+interior of two polygons $P$ and $Q$ overlap. Thus, if two polygons have 
+a finite set of points, or even a boundary curve, in common, they are 
+considered non-intersecting.
 
 % ===============================================================
 \section{The Main Components}
@@ -149,7 +163,7 @@ and are provided for convenience. A typical such function constructs a pair
 of \ccc{General_polygon_set_2} instances, invokes the appropriate method to
 apply the desired Boolean operation, and results with a Boolean value, or at
 least one general polygon. When several operations are performed in a 
-sequence, it is much more efficient to use the member functions of
+sequence, it is much more efficient to use the member functions of the
 \ccc{General_polygon_set_2} type directly, as the extraction of the general
 polygons from the internal representation for some operation, and the
 reconstruction of the internal representation for the succeeding operation
@@ -160,26 +174,29 @@ could be time consuming.
 \label{bso_ssec:simple_example}
 % ---------------------------------------------------------------
 \lcTex{%
-  \begin{wrapfigure}{r}{2cm}
-  \vspace{-5ex}
-  \begin{center}
-  \input{Boolean_set_operations_2/fig/triangles}
-  \end{center}
-  % \caption{.} 
-  \label{fig:example}
-  \vspace{-2cm}
-  \end{wrapfigure}
+  \setlength{\widthRight}{2cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
 }
-\lcHtml{\label{fig:example}}
+\label{fig:example}
 \begin{ccHtmlOnly}
   <p><center>
     <img src="./fig/fig_triangles.gif" border=0 alt="Two triangles" align=right>
   </center>
 \end{ccHtmlOnly}
-Testing whether two polygons intersect result with a Boolean value, 
+Testing whether two polygons intersect results with a Boolean value, 
 and does not require any additional data beyond the provision of the 
-two polygons. The example listed below tests whether two hard coded 
-triangles depicted on the right intersect.
+two polygons. The example listed below tests whether the two triangles 
+depicted on the right intersect.
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Boolean_set_operations_2/fig/triangles}
+    \end{center}
+  \end{minipage}
+}
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_do_intersect.C}
 
@@ -243,17 +260,17 @@ passed by reference.
 As mentioned above, when several operations are performed in a 
 sequence, it is much more efficient to use the member functions of
 \ccc{General_polygon_set_2} directly.
-These methods come in two flavors as follows. Some of the methods accept two
+These methods come in two flavours as follows. Some of the methods accept two
 arguments that represent two operands. These methods store the result
 in a third instance, the current object. Their counterpart methods
 accept only a single argument that represents one of the operands.
 The other one is provided by the current instance, which is replaced by
-the result. Similarly, one flavor of the \ccc{complement()} method
+the result. Similarly, one flavour of the \ccc{complement()} method
 accepts a single argument that represents the (single) operand, and the 
 other one applies the operation on the current instance.
 
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
-The next example performs a sequence of three Bollean set-operations.
+The next example performs a sequence of three Boolean set-operations.
 First, it computes the union of two simple polygons depicted in
 Figure~\ref{fig:simple}~(a). Then, it computes the complement of the result
 of the union operation. Finally, it computes the intersection of the result
@@ -317,7 +334,7 @@ $R$ must be pairwise disjoint in their interiors.
   <a name="fig:general_polygon"></a>
   </center>
 \end{ccHtmlOnly}
-A polygon is a closed point set bounded by a piecewise lienar curve, such
+A polygon is a closed point set bounded by a piecewise linear curve, such
 as the entities represented by \cgal 's \ccc{Polygon_2} type. However,
 the geometric mapping of the polygon edges in our context is not
 necessarily linear. The operations provided by this package operate on
@@ -345,8 +362,9 @@ The traits concept lists two operations on $x$-monotone curves listed below
 in addition to those required by base concept 
 \ccc{ArrangementXMonotoneTraits_2}:
 \begin{itemize}
-\item Given an $x$-monotone curve, contstruct its opposite curve.
-\item Given an $x$-monotone curve, compare its two endpoints lexigoraphically.
+\item Given an $x$-monotone curve, construct its opposite curve.
+\item Given an $x$-monotone curve, compare its two endpoints 
+lexicographically.
 \end{itemize}
 We refer to the refined concept that includes these two additional 
 requirements as \ccc{ArrangementDirectionalXMonotoneTraits}. The traits 
@@ -357,7 +375,7 @@ package distributed with \cgal, model the concept
 functions that implement these two operations.
 The \ccc{Arr_polyline_traits_2} cannot be made a model of the, 
 \ccc{ArrangementDirectionalXMonotoneTraits} concept, as the
-$x$-monotone curve it defines are always directed from left to right. Thus, an
+$x$-monotone curve it defines is always directed from left to right. Thus, an
 opposite curve cannot be constructed.
 
 \lcTex{%
@@ -379,15 +397,15 @@ opposite curve cannot be constructed.
 \end{ccHtmlOnly}
 Every model of the traits-class concept must also define the types
 \ccc{Polygon_2} and \ccc{Polygon_with_holes_2}, and it
-must provide operations on objects of these types sufficient to enable
-the boolean-set operations.  The type \ccc{Polygon_2} represents a
+must provide sufficient operations on objects of these types to enable
+the Boolean setboperations.  The type \ccc{Polygon_2} represents a
 simple point-set in the plane, whose boundary curves are $x$-monotone.
-This type could be plain, as it does not necessarily provide methods
+This type can be plain, as it does not necessarily provide methods
 to access the curves boundary, nor does it necessarily provide a
 constructor from a range of curves. Instead, the traits concept
 requires these operations. Conceptually, the vertices of such a
 general polygon can be ordered clockwise or counterclockwise, but we
-guaranty counterclockwise order for the results of all
+guarantee counterclockwise order for the results of all
 operations. Operations that operate on general polygons may result
 with one or more general polygons with holes, which is described
 below.
@@ -444,13 +462,13 @@ polygons with holes, which model the concept
 
 
 The traits concept \ccc{GeneralPolygonSetTraits_2} requires, among the 
-other, a type of a simple polygon, namely \ccc{Polygon_2}, and a type of 
+others, a type of a simple polygon, namely \ccc{Polygon_2}, and a type of 
 a polygon with holes, namely \ccc{Polygon_with_holes_2}, to be defined.
 The latter corresponds to the concept \ccc{GeneralPolygonWithHoles_2}. 
 This concept requires access to the outer boundary, which is of type 
 \ccc{Polygon_2}, and to the holes, where each hole is also of type 
-\ccc{Polygon_2}. The outer boundary could be empty, in which case the 
-polygon is unbounded, and the number of holes could be zero. An unbounded
+\ccc{Polygon_2}. The outer boundary can be empty, in which case the 
+polygon is unbounded, and the number of holes can be zero. An unbounded
 polygon without holes spans the entire plane. Vertices of holes and 
 vertices of the boundary may coincide. Conceptually, the order of vertices 
 is irrelevant, but for the results of all operations, we guarantee 
@@ -459,7 +477,7 @@ boundary, and clockwise order for the general polygons that represent the
 holes.
 % The \ccc{Triangle_2} and \ccc{Iso_rectangle_2} classes for example,
 % which represent a triangle and a parallel-axis rectangle in
-% $\mathrm{E}^2$ are special cases of convex general polygon. The apriori
+% $\mathrm{E}^2$ are special cases of convex general polygon. The a-priori
 % knowledge of whether the input polygons are convex may sometimes expedite
 % the operation or simplify the representation of the result. For example,
 % the intersection of two convex polygons is either an empty polygon or a
@@ -486,19 +504,19 @@ result of a Boolean set-operation or a sequence of such operations is
 closely related to the definition of regularized Boolean 
 set-operations, being the closure of the interior of the corresponding
 ordinary operation as explained next.
-There are many ways to arrive at a particual regular set. For
-rexample, the regular set depicted in Figure~\ref{fig:unique} is the
+There are many ways to arrive at a particular regular set. For
+example, the regular set depicted in Figure~\ref{fig:unique} is the
 result of the union of three small triangles translated
 appropriately. It is also the result of the difference between a large
-triangle and a small upside down triangle. Every point set that can
-represented by an instance $R$ of the \ccc{Gnereal_polygon_set_2} type
+triangle and a small upside down triangle. Every point set that can be
+represented by an instance $R$ of the \ccc{General_polygon_set_2} type
 has a unique internal representation as a (unique) planar arrangement
 regardless of the particular sequence of operations that were applied
 to arrive at $R$. Moreover, the set of
-\ccc{polygon_with_holes_2} instances that represent $R$, and
-can be obtained by the user through the
-\ccc{general_polygon_with_holes()} method is also unique. The point
-set deipcted in Figure~\ref{fig:unique} is represented as a single
+\ccc{Polygon_with_holes_2} instances that represent $R$, and
+may be obtained by the user through the
+\ccc{general_polygon_with_holes()} method, is also unique. The point
+set depicted in Figure~\ref{fig:unique} is represented as a single
 general polygon with holes that has a single hole (and not as a triple
 general polygons with holes that have no holes at all). The boundaries
 of the holes in a general polygon with holes are parts of the polygon
@@ -508,7 +526,7 @@ connected, then they belong to the same polygon with holes.
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 Instances of \ccc{Traits::Polygon_2} used as input must be strictly simple
 as a precondition. Instances of \ccc{Traits::Polygon_2} obtained as output
-are guaranteed to be stritcly simple. On the other hand, neither the outer
+are guaranteed to be strictly simple. On the other hand, neither the outer
 boundary, nor any one of the holes, of an instance of
 \ccc{General_polygon_with_holes_2} used as input, or obtained as output,
 must be strictly simple.
@@ -631,7 +649,7 @@ the union of two sets of general polygons. The class
 \ccc{General_polygon_set_2} has the equivalent member functions. When
 such a member function is called, the general polygons represented by
 the current object are considered operands as well. In case of
-aggregetaly computing the difference or symmetric difference, the
+aggregately computing the difference or symmetric difference, the
 general polygons represented by the current object comprise the first
 set. The aggregated operations are based on the sweep-line
 paradigm. 
@@ -641,6 +659,6 @@ The next example computes the union of eight disks represented by
 eight circles respectively depicted in Figure~\ref{fig:disks}. Each
 circle is split into two $x$-monotone circular arcs that represent a
 general polygon. The union operation is applied to the range of
-general polygons spaning the list of the eight disks.
+general polygons spanning the list of the eight disks.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_set_union.C}
