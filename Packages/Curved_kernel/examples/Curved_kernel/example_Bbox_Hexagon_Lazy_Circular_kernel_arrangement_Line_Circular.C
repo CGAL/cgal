@@ -1,15 +1,8 @@
 #include <utility>
-namespace CGAL {
-class MP_Float;
-template < typename T > class Root_of_2;
-template < typename T > class Lazy_exact_nt;
-template < typename T >
-std::pair<double,double> to_interval(const Root_of_2<T>&);
-
-}
 
 //#include <fstream>
 
+#include <CGAL/Algebraic_kernel/basic.h>
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>

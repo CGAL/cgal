@@ -16,14 +16,8 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            -I../../../Algebraic_kernel/include \
-           -I../../../synaps \
-           -I../../../Arrangement_2/include \
-	   -I../../../Interval_arithmetic/include \
-           -DNDEBUG \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
+           -I../../../Number_types/include \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
@@ -31,11 +25,9 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -44,25 +36,25 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
                 example_Circular_kernel_arrangement$(EXE_EXT) \
                 example_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
                 example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
-                example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+                example_Lazy_Circular_kernel_arrangement$(EXE_EXT) \
                 example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
-                example_Lazy_Circular_kernel_arrangement$(EXE_EXT)
+                example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) 
 
+example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
 example_Circular_kernel_arrangement$(EXE_EXT): example_Circular_kernel_arrangement$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement example_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement example_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
 
 example_Circular_kernel_arrangement_Line_arc$(EXE_EXT): example_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement_Line_arc example_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement_Line_arc example_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
 example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
-	$(CGAL_CXX) -pg $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement_Line_Circular example_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
-
-example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_Circular example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement_Line_Circular example_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
 example_Lazy_Circular_kernel_arrangement$(EXE_EXT): example_Lazy_Circular_kernel_arrangement$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement example_Lazy_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
@@ -70,13 +62,17 @@ example_Lazy_Circular_kernel_arrangement$(EXE_EXT): example_Lazy_Circular_kernel
 example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT): example_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_arc example_Lazy_Circular_kernel_arrangement_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
+example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_Circular example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
+                   example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
                    example_Circular_kernel_arrangement.clean \
                    example_Circular_kernel_arrangement_Line_arc.clean \
                    example_Circular_kernel_arrangement_Line_Circular.clean \
-                   example_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
+                   example_Lazy_Circular_kernel_arrangement.clean \
                    example_Lazy_Circular_kernel_arrangement_Line_arc.clean \
-                   example_Lazy_Circular_kernel_arrangement.clean
+                   example_Lazy_Circular_kernel_arrangement_Line_Circular.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
