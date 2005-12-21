@@ -16,8 +16,8 @@
 // This file currently gathers function declarations.
 // This is needed by the way the current NT interface works.
 
-#include <CGAL/number_type_basic.h>
 #include <utility>
+#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 
