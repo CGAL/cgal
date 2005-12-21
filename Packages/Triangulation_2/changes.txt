@@ -1,3 +1,7 @@
+21 December 2005 Sylvain Pion
+- Add "using Base::orientation" in Regular_2, needed for g++ 4.1
+  (spotted by Interpolation test-suite)
+
 15 december 2005 Mariette
 - add using in  Constrained_triangulation_2.h 
    and Constrained_Delaunay_triangulation_2.h to please g++4.1

@@ -89,6 +89,7 @@ public:
   using Base::FACE;
   using Base::EDGE;
   using Base::OUTSIDE_CONVEX_HULL;
+  using Base::orientation;
 #endif
 
 private:
