@@ -40,8 +40,8 @@ that return constant handles, iterators or circulators:
 \ccMethod{typename Dcel::Size degree() const;}
     {returns the number of edges incident to \ccVar{}.}
 
-% \ccThree{Halfedge_around_vertex_circulator}{incident_halfedges();~}{}
-% \ccThreeToTwo
+\ccThree{Halfedge_around_vertex_circulator}{}{\hspace*{\ccwComment}}
+\ccThreeToTwo
 
 \ccMethod{Halfedge_around_vertex_circulator incident_halfedges();}
     {returns a circulator circulator that allows going over the halfedges
@@ -49,8 +49,8 @@ that return constant handles, iterators or circulators:
      The edges are traversed in a clockwise direction around \ccVar{}.
      \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
 
-% \ccThree{typename Traits::Point_2}{v.is_isolated()~}{}
-% \ccThreeToTwo
+\ccThree{typename Traits::Point_2}{v.is_isolated()~}{}
+\ccThreeToTwo
 
 \ccMethod{Face_handle face();}
     {returns a handle to the face that contains \ccVar{} in its interior.
