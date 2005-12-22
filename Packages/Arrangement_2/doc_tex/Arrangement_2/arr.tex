@@ -299,7 +299,7 @@ function that returns a \ccc{Vertex_const_iterator} object. In fact,
 all methods listed in this section that return an iterator, a
 circulator or a handle have non-mutable counterparts. It should be
 noted that, for example, \ccc{Vertex_handle} can be readily converted
-into a \ccc{Vertex_const_handle}, but not vice-versa.
+into a \ccc{Vertex_const_handle}, but not vice-verse.
 
 Conversion of a non-mutable handle to a corresponding mutable
 handle are nevertheless possible, and can be performed using the
@@ -2380,7 +2380,7 @@ a valid arrangement supplied to the observed constructor, or alternatively
 the observer can be attached to the arrangement at a later time.
 When this happens, the observer instance inserts itself into the
 observer list of the associated arrangement and starts receiving
-notifications whenever this arrangement changes tehreafter. Naturally,
+notifications whenever this arrangement changes thereafter. Naturally,
 the observer object unregisters itself by removing itself from
 this list just before it is destroyed.
 
@@ -2437,7 +2437,7 @@ decorator, as explained in Section~\ref{arr_ssec:meta_tr}, which may
 be a sufficient solution for some applications.
 However, the \dcel\ faces are not associated with any geometric object, 
 so it is impossible to extend them using a traits-class decorator. 
-Extending the \dcel\ face records comes handy is such caes. As a matter
+Extending the \dcel\ face records comes handy is such cases. As a matter
 of fact, it is possible to conveniently extend all \dcel\ records
 (namely vertices, halfedges and faces), which can also be advantageous
 for some applications.
@@ -2634,7 +2634,7 @@ concept. The details of this concept are given in the reference manual.
 \caption{Overlaying two simple arrangements of line segments, as done
 in \ccc{ex_overlay.C} and \ccc{ex_face_extension_overlay.C}.
 In \ccc{ex_face_extension_overlay.C} the two bounded faces are
-concidered as {\em marked}, and the octagonal face which is the intersection
+considered as {\em marked}, and the octagonal face which is the intersection
 of the two marked faces is denoted by $f_0$.}
 \label{arr_fig:ex_22}
 \end{figure}
@@ -2738,7 +2738,7 @@ define the range of curves that induce \ccc{e}. The value type of these
 iterator is \ccc{Curve_2}.
 
 It is possible to overlay two \ccc{Arrangement_with_history_2} instances 
-instanciated by the same traits class. In this case, the resulting 
+instantiated by the same traits class. In this case, the resulting 
 arrangement will store a consolidated container of input curves, and 
 automatically preserve the cross-mapping between the arrangement edges 
 and the consolidated curve set. Users can employ an overlay-traits class
@@ -3006,7 +3006,7 @@ libraries that extend the Standard Template Library ({\sc Stl}). The \boost\
 Graph Library (\bgl), which one of the libraries in the collection, offers an
 extensive set of generic graph algorithms parameterized through templates.
 As our arrangements are embedded as planar graphs, it is only 
-natural to extend the undelying data structure with the interface that the 
+natural to extend the underlying data structure with the interface that the 
 \bgl\ expects, and gain the ability to perform the operations that the \bgl\
 supports, such as shortest-path computation. This section describes how apply
 the graph algorithms implemented in the \bgl\ to \ccc{Arrangement_2} instances.
@@ -3080,13 +3080,13 @@ is modified in between these calls.
 \begin{figure}[!htp]
 \begin{ccTexOnly}
   \begin{center}
-  \input{Arrangement_2/fig/ex_bgl.pstex_t}
+  \includegraphics{Arrangement_2/fig/ex_bgl}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
-%  <p><center>
-%  <img src="./fig/ex_bgl.gif" border=0 alt="Example BGL">
-%  </center>
+  <p><center>
+  <img src="./fig/ex_bgl.gif" border=0 alt="Example BGL">
+  </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of 7 line segments, as constructed by
 \ccc{ex_bgl_primal_adapter.C} and \ccc{ex_bgl_dual_adapter.C}.
@@ -3117,7 +3117,7 @@ boundaries. This is done by specializing the
 where \ccc{Dual<Arrangement_2>} is a template specialization that gives a
 dual interpretation to an arrangement instance.
 
-In dual represnetation, \ccc{Arrangement_2::Face_handle}
+In dual representation, \ccc{Arrangement_2::Face_handle}
 is the graph-vertex type, while \ccc{Arrangement_2::Halfedge_handle} is the
 graph-edge type. We treat the graph edges as directed, such that a halfedge
 \ccc{e} is directed from $f_1$, which is its incident face, to $f_2$, which
