@@ -803,6 +803,26 @@ public:
   const Integer& w () const {return (_w);}
 
   /*!
+   * Check whether the arc is x-monotone.
+   */
+  bool is_x_monotone () const
+  {
+    // Check if the arc contains no vertical tangency points.
+    Point_2      vtan_ps[2];
+    return (vertical_tangency_points (vtan_ps) == 0);
+  }
+
+  /*!
+   * Check whether the arc is y-monotone.
+   */
+  bool is_y_monotone () const
+  {
+    // Check if the arc contains no horizontal tangency points.
+    Point_2      htan_ps[2];
+    return (horizontal_tangency_points (htan_ps) == 0);
+  }
+
+  /*!
    * Check whether the arc represents a full conic curve.
    */
   bool is_full_conic () const

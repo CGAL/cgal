@@ -16,8 +16,8 @@
 // $Name$
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-#ifndef CGAL_ARR_VERTEX_INDEX_MAP_H
-#define CGAL_ARR_VERTEX_INDEX_MAP_H
+#ifndef CGAL_ARR_VERTEX_MAP_H
+#define CGAL_ARR_VERTEX_MAP_H
 
 /*! \file
  * Definition of the Arr_vertex_index_map<Arrangement> class.

@@ -228,6 +228,13 @@ $\bullet$ {\sl Accessing the Arrangement Faces:}
 
 \ccHeading{Casting away Constness}
 %=================================
+
+It is sometime necessary to convert a constant (non-mutable) handle to
+a mutable handle. For example, the result of a point-location query is
+a non-mutable handle for the arrangement cell containing the query point.
+Assume that the query point lies on a edge, so we obtain a
+\ccc{Halfedge_const_handle}; if we wish to use this handle and remove the
+edge, we first need to cast away its ``constness''.
  
 \ccMethod{Vertex_handle non_const_handle (Vertex_const_handle v);}
     {casts the given constant vertex handle to an equivalent mutable handle.}
@@ -427,15 +434,18 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
                                       Halfedge_handle e2, 
                                       const X_monotone_curve_2& c);}
   {merges the edges represented by \ccStyle{e1} and \ccStyle{e2} into
-   a single edge, associated with the given merged curve \ccc{c}. 
-   The function returns a handle for one of the merged halfedges.
+   a single edge, associated with the given merged curve \ccc{c}.
+   Denote \ccc{e1}'s end-vertices as $u_1$ and $v$, while \ccc{e2}'s
+   end-vertices are denoted $u_2$ and $v$. The function removes the
+   common vertex $v$ returns a handle for one of the merged halfedges,
+   directed from $u_1$ to $u_2$.
    \ccPrecond{\ccc{e1} and \ccc{e2} share a common end-vertex, such that the
    two other end-vertices of the two edges are associated with \ccc{c}'s
    endpoints.}}
 
-\ccMethod{Face_handle remove_edge(Halfedge_handle e,
-                                  bool remove_source = true,
-                                  bool remove_target = true);}
+\ccMethod{Face_handle remove_edge (Halfedge_handle e,
+                                   bool remove_source = true,
+                                   bool remove_target = true);}
   {removes the edge \ccStyle{e} from the arrangement. Since the \ccc{e} may
    be the only edge incident to its source vertex (or its target vertex),
    this vertex can be removed as well. The flags \ccc{remove_source} and

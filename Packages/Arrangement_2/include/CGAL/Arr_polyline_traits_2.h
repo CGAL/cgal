@@ -61,7 +61,7 @@ public:
   typedef typename Segment_traits_2::Point_2            Point_2;
   typedef typename Segment_traits_2::Curve_2            Segment_2;
 
-  typedef Polyline_2<Segment_traits_2>                  Curve_2;
+  typedef _Polyline_2<Segment_traits_2>                 Curve_2;
   typedef _X_monotone_polyline_2<Segment_traits_2>      X_monotone_curve_2;
 
   /*! Compare the x-coordinates of two points. */

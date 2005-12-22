@@ -69,8 +69,9 @@ private:
 
   Polynomial        pnum;       // The polynomial in the numerator.
   Polynomial        pden;       // The polynomial in the denominator.
-  Point_2           left_pt;    // The left endpoint.
-  Point_2           right_pt;   // The right endpoint.
+  Point_2           src;        // The source point.
+  Point_2           trg;        // The target point.
+  bool              dir_right;  // Is the arc directed right.
   bool              valid;      // Is the arc valid.
 
 public:
@@ -88,16 +89,23 @@ public:
   /*!
    * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
-   * \param x_min The minimum of the x-range.
-   * \param x_max The maximum of the x-range.
-   * \pre The following should hold: x_min < x_max.
+   * \param x_s The x-coordinate of the source point.
+   * \param x_t The x-coordinate of the target point.
+   * \pre The two x-coordinate must not be equal.
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs,
-		   const Algebraic& x_min, const Algebraic& x_max) :
+		   const Algebraic& x_s, const Algebraic& x_t) :
     valid (false)
   {
-    CGAL_precondition (CGAL::compare (x_min, x_max) == SMALLER);
-    
+    // Compare the x-coordinates and determine the direction.
+    Comparison_result   x_res = CGAL::compare (x_s, x_t);
+
+    CGAL_precondition (x_res != EQUAL);
+    if (x_res == EQUAL)
+      return;
+
+    dir_right = (x_res == SMALLER);
+
     // Set the numerator polynomial.
     Nt_traits    nt_traits;
     Integer      p_factor;
@@ -117,8 +125,8 @@ public:
     pden = nt_traits.construct_polynomial (denom_coeffs, 0);
     
     // Set the endpoints.
-    left_pt = Point_2 (x_min, nt_traits.evaluate_at (pnum, x_min));
-    right_pt = Point_2 (x_max, nt_traits.evaluate_at (pnum, x_max));
+    src = Point_2 (x_s, nt_traits.evaluate_at (pnum, x_s));
+    trg = Point_2 (x_t, nt_traits.evaluate_at (pnum, x_t));
 
     // Mark that the arc is valid.
     valid = true;
@@ -129,16 +137,23 @@ public:
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
-   * \param x_min The minimum of the x-range.
-   * \param x_max The maximum of the x-range.
-   * \pre The following should hold: x_min < x_max,
+   * \param x_s The x-coordinate of the source point.
+   * \param x_t The x-coordinate of the target point.
+   * \pre The two x-coordinate must not be equal,
    *      and q(x) != 0 for all x_min <= x <= x_max.
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
-		   const Algebraic& x_min, const Algebraic& x_max) :
+		   const Algebraic& x_s, const Algebraic& x_t) :
     valid (false)
   {
-    CGAL_precondition (CGAL::compare (x_min, x_max) == SMALLER);
+    // Compare the x-coordinates and determine the direction.
+    Comparison_result   x_res = CGAL::compare (x_s, x_t);
+
+    CGAL_precondition (x_res != EQUAL);
+    if (x_res == EQUAL)
+      return;
+
+    dir_right = (x_res == SMALLER);
     
     // Set the numerator and denominator polynomials.
     Nt_traits    nt_traits;
@@ -170,9 +185,11 @@ public:
     // Make sure that q has no real roots between x_min and x_max.
     if (nt_traits.degree (pden) > 0)
     {
-      std::list<Algebraic>                          q_roots;
-      typename std::list<Algebraic>::const_iterator x_iter;
-      bool                                 q_has_no_roots_in_the_interval;
+      std::list<Algebraic>  q_roots;
+      const Algebraic&      x_min = (x_res == SMALLER) ? x_s : x_t;
+      const Algebraic&      x_max = (x_res == SMALLER) ? x_t : x_s;
+      bool                  q_has_no_roots_in_the_interval;
+      typename std::list<Algebraic>::const_iterator  x_iter;
 
       nt_traits.compute_polynomial_roots (pden,
 					  std::back_inserter (q_roots));
@@ -196,10 +213,10 @@ public:
     }
 
     // Set the endpoints.
-    left_pt = Point_2 (x_min, nt_traits.evaluate_at (pnum, x_min) /
-		              nt_traits.evaluate_at (pden, x_min));
-    right_pt = Point_2 (x_max, nt_traits.evaluate_at (pnum, x_max) /
-                               nt_traits.evaluate_at (pden, x_max));
+    src = Point_2 (x_s, nt_traits.evaluate_at (pnum, x_s) /
+		        nt_traits.evaluate_at (pden, x_s));
+    trg = Point_2 (x_t, nt_traits.evaluate_at (pnum, x_t) /
+                        nt_traits.evaluate_at (pden, x_t));
 
     // Mark that the arc is valid.
     valid = true;
@@ -222,24 +239,44 @@ public:
     return (pden);
   }
 
+  /*! Get the source point. */
+  const Point_2& source () const
+  {
+    CGAL_precondition (valid);
+    return (src);
+  }
+
+  /*! Get the target point. */
+  const Point_2& target () const
+  {
+    CGAL_precondition (valid);
+    return (trg);
+  }
+
   /*! Get the left endpoint. */
   const Point_2& left () const
   {
     CGAL_precondition (valid);
-    return (left_pt);
+    return (dir_right ? src : trg);
   }
 
   /*! Get the right endpoint. */
   const Point_2& right () const
   {
     CGAL_precondition (valid);
-    return (right_pt);
+    return (dir_right ? trg : src);
   }
 
   /*! Check if the arc is valid. */
   bool is_valid () const
   {
     return (valid);
+  }
+
+  /*! Check if the arc is directed right. */
+  bool is_directed_right () const
+  {
+    return (dir_right);
   }
   //@}
 
@@ -370,8 +407,8 @@ public:
     // Check that the arc endpoints are the same.
     Alg_kernel   ker;
 
-    return (ker.equal_2_object() (left_pt, arc.left_pt) &&
-	    ker.equal_2_object() (right_pt, arc.right_pt));
+    return (ker.equal_2_object() (left(), arc.left()) &&
+	    ker.equal_2_object() (right(), arc.right()));
   }
 
   /*!
@@ -393,8 +430,8 @@ public:
     // other.
     Alg_kernel   ker;
 
-    return (ker.equal_2_object() (right_pt, arc.left_pt) ||
-            ker.equal_2_object() (left_pt, arc.right_pt));
+    return (ker.equal_2_object() (right(), arc.left()) ||
+            ker.equal_2_object() (left(), arc.right()));
   }
   //@}
 
@@ -421,11 +458,11 @@ public:
       Alg_kernel   ker;
 
       const Point_2&    p1 = 
-	(ker.compare_x_2_object() (left_pt, arc.left_pt) == LARGER) ?
-	left_pt : arc.left_pt;
+	(ker.compare_x_2_object() (left(), arc.left()) == LARGER) ?
+	left() : arc.left();
       const Point_2&    p2 = 
-	(ker.compare_x_2_object() (right_pt, arc.right_pt) == SMALLER) ?
-	right_pt : arc.right_pt;
+	(ker.compare_x_2_object() (right(), arc.right()) == SMALLER) ?
+	right() : arc.right();
       Comparison_result res = ker.compare_x_2_object() (p1, p2);
 
       if (res == SMALLER)
@@ -434,8 +471,8 @@ public:
 	// segment.
 	Self      overlap_arc (*this);
 
-	overlap_arc.left_pt = p1;
-	overlap_arc.right_pt = p2;
+	overlap_arc.src = p1;
+	overlap_arc.trg = p2;
 
 	*oi = make_object (overlap_arc);
 	++oi;
@@ -508,15 +545,24 @@ public:
       Alg_kernel   ker;
     );
     CGAL_precondition (this->point_position(p) == EQUAL &&
-                       ! ker.equal_2_object() (p, left_pt) &&
-                       ! ker.equal_2_object() (p, right_pt));
+                       ! ker.equal_2_object() (p, src) &&
+                       ! ker.equal_2_object() (p, trg));
 
     // Make copies of the current arc.
     c1 = *this;
     c2 = *this;
 
-    c1.right_pt = p;
-    c2.left_pt = p;
+    // Split the arc, such that c1 lies to the left of c2.
+    if (dir_right)
+    {
+      c1.trg = p;
+      c2.src = p;
+    }
+    else
+    {
+      c1.src = p;
+      c2.trg = p;
+    }
 
     return;
   }
@@ -535,21 +581,49 @@ public:
     // Check if we should extend the arc to the left or to the right.
     Alg_kernel   ker;
 
-    if (ker.equal_2_object() (right_pt, arc.left_pt))
+    if (ker.equal_2_object() (right(), arc.left()))
     {
       // Extend the arc to the right.
-      right_pt = arc.right_pt;
+      if (dir_right)
+	trg = arc.right();
+      else
+	src = arc.right();
     }
     else
     {
-      CGAL_precondition (ker.equal_2_object() (left_pt, arc.right_pt));
+      CGAL_precondition (ker.equal_2_object() (left(), arc.right()));
 
       // Extend the arc to the left.
-      left_pt = arc.left_pt;
+      if (dir_right)
+	src = arc.left();
+      else
+	trg = arc.left();
     }
 
     return;
   }
+
+  /*!
+   * Flip the arc (swap its source and target).
+   * \return The flipped arc.
+   */
+  Self flip () const
+  {
+    CGAL_precondition (valid);
+
+    // Create the flipped arc.
+    Self   arc;
+
+    arc.pnum = pnum;
+    arc.pden = pden;
+    arc.src = trg;
+    arc.trg = src;
+    arc.dir_right = ! dir_right;
+    arc.valid = true;
+
+    return (c);
+  }
+
   //@}
 
 private:
@@ -562,8 +636,8 @@ private:
    */
   bool _is_in_x_range (const Algebraic& x) const
   {
-    Comparison_result  res1 = CGAL::compare (left_pt.x(), x);
-    Comparison_result  res2 = CGAL::compare (x, right_pt.x());
+    Comparison_result  res1 = CGAL::compare (left().x(), x);
+    Comparison_result  res2 = CGAL::compare (x, right().x());
 
     return (res1 != LARGER && res2 != LARGER);
   }
@@ -591,8 +665,8 @@ std::ostream& operator<< (std::ostream& os,
 {
   // Output the supporting rational function and the x-range of the arc.
   os << "y = (" << arc.numerator() << ") / (" << arc.denominator() << ") : ["
-     << CGAL::to_double(arc.left().x()) << " -- " 
-     << CGAL::to_double(arc.right().x()) << "]";
+     << CGAL::to_double(arc.source().x()) << " --> " 
+     << CGAL::to_double(arc.target().x()) << "]";
 
   return (os);
 }

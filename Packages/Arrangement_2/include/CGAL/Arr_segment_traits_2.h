@@ -990,20 +990,27 @@ public:
   }
   //@}
 
-  /// \name Functor definitions for the Boolean set-operations.
+
+  /// \name Functor definitions for the Boolean set-operation traits.
   //@{
-  class Compare_endpoints_xy_2 
+ 
+  class Compare_endpoints_xy_2
   {
   public:
+
     /*!
-     * Compare the two endpoints of a given curve lexigoraphically.
+     * Compare the endpoints of an $x$-monotone curve lexicographically.
+     * (assuming the curve has a designated source and target points).
      * \param cv The curve.
-     * \return SMALLER if cv is directed from left to right and LARGER
-     * otherwise.
+     * \return SMALLER if the curve is directed right;
+     *         LARGER if the curve is directed left.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv)
+    Comparison_result operator() (const X_monotone_curve_2& cv)
     {
-      return (cv.is_directed_right()) ? SMALLER : LARGER;
+      if (cv.is_directed_right())
+        return (SMALLER);
+      else
+	return (LARGER);
     }
   };
 
@@ -1013,18 +1020,18 @@ public:
     return Compare_endpoints_xy_2();
   }
 
-
   class Construct_opposite_2
   {
   public:
+
     /*!
-     * Construct a curve opposite
+     * Construct an opposite x-monotone (with swapped source and target).
      * \param cv The curve.
-     * \return the x-monotone curve that is the opposite of cv.
+     * \return The opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv)
+    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv)
     {
-      return cv.construct_opposite();
+      return (cv.flip());
     }
   };
 
@@ -1124,10 +1131,10 @@ public:
     return (this->pt);
   }
 
-  /*! Construct an opposite curve */
-  Arr_segment_2 construct_opposite() const
+  /*! Flip the segment (swap it source and target). */
+  Arr_segment_2 flip () const
   {
-    Arr_segment_2 opp;
+    Arr_segment_2   opp;
     opp.l = this->l;
     opp.ps = this->pt;
     opp.pt = this->ps;

@@ -483,6 +483,58 @@ public:
   }
 
   //@}
+
+  /// \name Functor definitions for the Boolean set-operation traits.
+  //@{
+ 
+  class Compare_endpoints_xy_2
+  {
+  public:
+
+    /*!
+     * Compare the endpoints of an $x$-monotone curve lexicographically.
+     * (assuming the curve has a designated source and target points).
+     * \param cv The curve.
+     * \return SMALLER if the curve is directed right;
+     *         LARGER if the curve is directed left.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv)
+    {
+      if (cv.is_directed_right())
+        return (SMALLER);
+      else
+	return (LARGER);
+    }
+  };
+
+  /*! Get a Compare_endpoints_xy_2 functor object. */
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
+  {
+    return Compare_endpoints_xy_2();
+  }
+
+  class Construct_opposite_2
+  {
+  public:
+
+    /*!
+     * Construct an opposite x-monotone (with swapped source and target).
+     * \param cv The curve.
+     * \return The opposite curve.
+     */
+    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv)
+    {
+      return (cv.flip());
+    }
+  };
+
+  /*! Get a Construct_opposite_2 functor object. */
+  Construct_opposite_2 construct_opposite_2_object() const
+  {
+    return Construct_opposite_2();
+  }
+
+  //@}
 };
 
 CGAL_END_NAMESPACE

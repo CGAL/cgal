@@ -9,7 +9,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/graph_traits_Arrangement_2.h>
-#include <CGAL/Arr_index_map.h>
+#include <CGAL/Arr_vertex_map.h>
 
 typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;

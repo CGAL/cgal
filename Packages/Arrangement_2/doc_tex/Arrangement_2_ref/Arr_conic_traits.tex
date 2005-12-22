@@ -213,6 +213,16 @@ for the curves is defined for standard output streams.
    inserting it to an arrangement, as this operation {\sl will} cause the
    program to abort.}
 
+\ccMethod{bool is_x_monotone() const;}
+  {determines whether the arc is $x$-monotone, namely each vertical line
+   intersects it at most once. A vertical line segment is also considered
+   (weakly) $x$-monotone.}
+
+\ccMethod{bool is_y_monotone() const;}
+  {determines whether the arc is $y$-monotone, namely each horizontal line
+   intersects it at most once. A horizontal line segment is also considered
+   (weakly) $x$-monotone.}
+
 \ccMethod{bool is_full_conic() const;}
   {indicates whether the arc represents a full conic curve (en ellipse or
    a circle).}
@@ -279,15 +289,31 @@ The \ccc{X_monotone_curve_2} class nested within the conic-arc traits is
 used to represent $x$-monotone conic arcs. It inherits from the \ccc{Curve_2}
 type, therefore supports the access methods and the operations listed above.
 
-Note that the \ccc{X_monotone_curve_2} is mainly used internally by the
-traits class. It therefore has no public constructors (except the default
-constructor and the copy constructor), and therefore cannot be constructed
-by external users. If necessary, users may use the \ccc{Make_x_monotone_2}
-functor supplied by the conic-arc traits class to convert conic curves to
+For efficiency reasons, we recommend users not to construct $x$-monotone
+conic arc directly, but rather use the \ccc{Make_x_monotone_2} functor
+supplied by the conic-arc traits class to convert conic curves to
 $x$-monotone curves.
 
 \begin{ccClass}{Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>::
                 X_monotone_curve_2}
+
+\ccCreation
+\ccCreationVariable{xa}
+%---------------------
+
+\ccConstructor{X_monotone_curve_2 (const Curve_2& arc);}
+    {converts the given arc to an $x$-monotone arc.
+     \ccPrecond{\ccc{arc} is $x$-monotone.}}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{const Point_2& left() const;}
+  {returns the left (lexicographically smaller) endpoint of \ccVar{}.}
+\ccGlue
+\ccMethod{const Point_2& right() const;}
+  {returns the right (lexicographically larger) endpoint of \ccVar{}.}
+
 \end{ccClass}
 
 \end{ccRefClass}

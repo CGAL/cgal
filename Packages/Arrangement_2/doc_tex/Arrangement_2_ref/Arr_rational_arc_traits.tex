@@ -87,20 +87,22 @@ defined for standard output streams.
   {default constructor.}
 
 \ccConstructor{Curve_2 (const Rat_vector& p_coeffs,
-                        const typename NtTraits::Algebraic& x_min,
-                        const typename NtTraits::Algebraic& x_max);}
+                        const typename NtTraits::Algebraic& s_x,
+                        const typename NtTraits::Algebraic& t_x);}
   {constructs an arc supported by the polynomial $y = P(x)$, defined over
-   the internal \ccc{[x_min, x_max]}. The vector \ccc{p_coeffs} specifies
+   the interval \ccc{[x_s, x_t]}, given by the $x$-coordinates of the arc's
+   source and target. The vector \ccc{p_coeffs} specifies
    the coefficients of $P(x)$, where the polynomial degree is
    \ccc{p_coeffs.size() - 1} and \ccc{p[k]} is the coefficient of $x^k$ in $P$.
-   \ccPrecond{\ccc{x_min < x_max}.}}
+   \ccPrecond{\ccc{s_x != t_x}.}}
 
 \ccConstructor{Curve_2 (const Rat_vector& p_coeffs,
                         const Rat_vector& q_coeffs,
-                        const typename NtTraits::Algebraic& x_min,
-                        const typename NtTraits::Algebraic& x_max);}
+                        const typename NtTraits::Algebraic& s_x,
+                        const typename NtTraits::Algebraic& t_x);}
   {constructs an arc supported by the rational function
-   $y = \frac{P(x)}{Q(x)}$, defined over the internal \ccc{[x_min, x_max]}.
+   $y = \frac{P(x)}{Q(x)}$, defined over the internal \ccc{[s_x, t_x]},
+   given by the $x$-coordinates of the arc's source and target.
    The vectors \ccc{p_coeffs} and \ccc{q_coeffs} specify the coefficients
    of $P(x)$ and $Q(x)$, respectively (see above).
    \ccPrecond{\ccc{x_min < x_max}.}
@@ -125,8 +127,19 @@ defined for standard output streams.
 \ccMethod{const Polynomial& denominator () const;}
   {returns a polynomial with integer coefficients equivalent to $Q(x)$.}
 
-%\ccMethod{Bbox_2 bbox() const;}
-%  {return a bounding box of the polyline \ccVar{}.}
+\ccMethod{const Point_2& source() const;}
+  {returns the source point of the arc.
+   \ccPrecond{\ccVar{} is not a full conic curve.}}
+\ccGlue
+\ccMethod{const Point_2& target() const;}
+  {returns the target point of the arc.
+   \ccPrecond{\ccVar{} is not a full conic curve.}}
+
+\ccMethod{const Point_2& left() const;}
+  {returns the left (lexicographically smaller) endpoint of \ccVar{}.}
+\ccGlue
+\ccMethod{const Point_2& right() const;}
+  {returns the right (lexicographically larger) endpoint of \ccVar{}.}
 
 \end{ccClass}
 

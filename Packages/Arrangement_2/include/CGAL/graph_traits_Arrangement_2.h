@@ -117,7 +117,7 @@ public:
       _hh (out_edges ? circ->twin() : circ)
     {}
 
-    /*! Equality operator. */
+    /*! Equality operators. */
     bool operator== (const Self& it) const
     {
       return (_circ == it._circ && _out == it._out && _counter == it._counter);
