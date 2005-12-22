@@ -1,3 +1,6 @@
+22 December 2005 Sylvain Pion
+- Add "using Base_class::orientation_2" needed by g++ 4.1.
+
 5 August 2005 Sylvain Pion
 - Remove traces of CGAL_CFG_NO_NAMESPACE and CGAL_STD.
 

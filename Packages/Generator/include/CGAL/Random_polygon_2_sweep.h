@@ -107,6 +107,7 @@ public:
     using Base_class::point;
     using Base_class::index_at_rank;
     using Base_class::ordered_left_to_right;
+    using Base_class::orientation_2;
 
     std::vector<Edge_data> edges;
     Vertex_index conflict1, conflict2; // Intersecting edges.
