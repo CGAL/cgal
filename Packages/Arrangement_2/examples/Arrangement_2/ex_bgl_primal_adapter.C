@@ -52,24 +52,27 @@ int main ()
   Arrangement_2   arr;
  
   // Construct an arrangement of seven intersecting line segments.
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (4, 6)));
+  // We keep a handle for the vertex v_0 that corresponds to the point (1,1).
+  Arrangement_2::Halfedge_handle  e =
+    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1), 
+                                                   Point_2 (7, 1)));
+  Arrangement_2::Vertex_handle    v0 = e->source();
+  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
   insert_curve (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
   insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
   insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
   insert_curve (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (4, 6), Point_2 (9, 3)));
+  insert_curve (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
 
   // Create a mapping of the arrangement vertices to indices.
   CGAL::Arr_vertex_index_map<Arrangement_2>    index_map (arr);
   
-  // Perform Dijkstra's algorithm from the first vertex of the graph.
+  // Perform Dijkstra's algorithm from the vertex v0.
   Edge_length_func                             edge_length;
   CGAL::Arr_vertex_property_map<Arrangement_2,
                                 double>        dist_map (index_map);
-  Arrangement_2::Vertex_handle                 v = arr.vertices_begin();
   
-  boost::dijkstra_shortest_paths (arr, v,
+  boost::dijkstra_shortest_paths (arr, v0,
                                   boost::vertex_index_map (index_map).
                                   weight_map (edge_length).
                                   distance_map (dist_map));
@@ -78,8 +81,8 @@ int main ()
   Arrangement_2::Vertex_iterator      vit;
 
   std::cout << "The distances of the arrangement vertices from ("
-            << v->point() << ") :" << std::endl;
-  for (vit = ++v; vit != arr.vertices_end(); ++vit)
+            << v0->point() << ") :" << std::endl;
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
     std::cout << "(" << vit->point() << ") at distance "
               << dist_map[vit] << std::endl;
