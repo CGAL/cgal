@@ -3165,15 +3165,15 @@ _link_run_test()
 # LEDA TEST:
 
 # test if LEDA setting works (return 0, iff ok)
-# ($1 nonzero indicates verbosity)
+# ($2 nonzero indicates verbosity)
 test_LEDA()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_LEDA.C ${TMP_CXX_FILE}.C
-	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
+	if _compile_test LEDA "`leda_test_cxxflags`" $2 && \
 	    _link_run_test LEDA \
 		"`leda_libpathflags`" "`leda_test_ldflags`" \
-                $1 no LEDA_VERSION
+                $2 no LEDA_VERSION
 	then
 	    LEDA_TEST_PASSED='y'
 	    return 0
@@ -3238,15 +3238,15 @@ test_GMPXX()
 # CORE TEST:
 
 # core test program (return 0, iff it works)
-# ($1 nonzero indicates verbosity)
+# ($2 nonzero indicates verbosity)
 test_CORE()
 {
     if [ -n "${CORE_SUPPORT}" -a "${CORE_INSTALLATION}" != 'c' ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_CORE.C ${TMP_CXX_FILE}.C
-	if _compile_test "CORE" "`core_test_cxxflags`" "$1" && \
+	if _compile_test "CORE" "`core_test_cxxflags`" "$2" && \
 	    _link_run_test "CORE" \
 		"`core_test_libpathflags`" "`core_test_ldflags`" \
-                "$1" no CORE_VERSION
+                "$2" no CORE_VERSION
 	then
 	    CORE_TEST_PASSED='y'
 	    return 0
@@ -3486,14 +3486,14 @@ int main( int argc, char **argv )
 }
 
 # test if Qt setting works (return 0, iff ok)
-# ($1 nonzero indicates verbosity)
+# ($2 nonzero indicates verbosity)
 test_QT()
 {
     if [ -n "${QT_SUPPORT}" ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_QT.C ${TMP_CXX_FILE}.C
-	if _compile_test Qt "`qt_test_cxxflags`" $1 && \
+	if _compile_test Qt "`qt_test_cxxflags`" $2 && \
            _link_run_test Qt \
-		"`qt_libpathflags`" "`qt_test_ldflags`" $1 no QT_VERSION
+		"`qt_libpathflags`" "`qt_test_ldflags`" $2 no QT_VERSION
 	then
 	    QT_TEST_PASSED='y'
 	    return 0
@@ -3899,7 +3899,7 @@ test_setup()
         # run test
         _tmp="${totest}_TEST_PASSED"
         if [ -z "`value_of ${_tmp}`" ]; then
-	    if eval "test_${totest} 'v'"; then
+	    if eval "test_${totest} \"${totest}\" 'v'"; then
 
                 # set CGAL_USE in compiler_config file
                 _tmp="${totest}_SUPPORT"
@@ -6185,7 +6185,7 @@ main_menu()
 		go_down_lines 3
 		flush_buffer
 		if [ -n "${LEDA_SUPPORT}" ]; then
-                    test_LEDA "${INSTALL_VERBOSE}"
+                    test_LEDA "notused" "${INSTALL_VERBOSE}"
 		fi
 		if [ -n "${GMP_SUPPORT}" ]; then
 		    search_gmp "${INSTALL_VERBOSE}"
