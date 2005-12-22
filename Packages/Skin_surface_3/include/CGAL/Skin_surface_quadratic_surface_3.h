@@ -1,3 +1,22 @@
+// Copyright (c) 2005 RuG (Netherlands)
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
+
 #ifndef SKIN_SURFACE_QUADRATIC_SURFACE_H
 #define SKIN_SURFACE_QUADRATIC_SURFACE_H
 
@@ -12,28 +31,28 @@ CGAL_BEGIN_NAMESPACE
 //  skin surfaces                              //
 //                                             //
 /////////////////////////////////////////////////
-template < class K >
+template < class Kernel >
 class Skin_surface_quadratic_surface_3 {
 public:
-  typedef typename K::Point_3             Point;
-  typedef typename K::Vector_3            Vector;
-  typedef typename K::Segment_3           Segment;
-  typedef typename K::RT                  RT;
+  typedef typename Kernel::Point_3             Point;
+  typedef typename Kernel::Vector_3            Vector;
+  typedef typename Kernel::Segment_3           Segment;
+  typedef typename Kernel::RT                  RT;
   typedef Weighted_point<Point, RT> Weighted_point;
 
-  Skin_surface_quadratic_surface_3(RT eps=10e-10) : eps(eps) {
+  Skin_surface_quadratic_surface_3() {
   }
-  virtual ~Skin_surface_quadratic_surface_3() {};
-  // Construct the intersection point with the segment (p0,p1)
+//   virtual ~Skin_surface_quadratic_surface_3() {};
+//   // Construct the intersection point with the segment (p0,p1)
   Point to_surface(Point const &p0, Point const &p1) {
     RT sq_d = squared_distance(p0,p1);
     Point pp0=p0, pp1=p1, mid;
-
+    
     if (value(p1) < value(p0)) {
       std::swap(pp0, pp1);
     }
-
-    while (sq_d > eps) {
+    
+    while (sq_d > 10e-15) {
       mid = midpoint(pp0,pp1);
       if (value(mid) > 0) {
 	pp1 = mid;
@@ -44,23 +63,18 @@ public:
     }
     return mid;
   };
-  virtual Point to_surface(Point const &p, Vector const &v) = 0;
+//   virtual Point to_surface(Point const &p, Vector const &v) = 0;
   inline Point to_surface(Segment const &s) {
     return to_surface(s.source(), s.target());
   }
 
-  // Gradient descent
-  virtual Point to_surface(Point const &p0) = 0;
+//   // Gradient descent
+//   virtual Point to_surface(Point const &p0) = 0;
 
   // compute the function value of p
   virtual RT value(Point const &p) const = 0;
   // Compute the gradient in p
   virtual Vector gradient(Point const &p) = 0; 
-  // Compute the normal in p (normalized gradient)
-  Vector normal(Point const &p) {
-    Vector n = gradient(p);
-    return n/sqrt(n*n);
-  }
 
   // return the dimension of the delaunay simplex:
   virtual int dimension() const = 0;
@@ -68,7 +82,6 @@ public:
   // return a continuous density function on the skin surface:
   virtual RT sq_density(Point const &p) = 0;
 
-  RT eps;
 };
 
 /////////////////////////////////////////////////
@@ -83,17 +96,17 @@ public:
 //  orient: orientation of the sphere          //
 //                                             //
 /////////////////////////////////////////////////
-template < class K >
-class Skin_surface_sphere_3 : public Skin_surface_quadratic_surface_3<K> {
+template < class Kernel >
+class Skin_surface_sphere_3 : public Skin_surface_quadratic_surface_3<Kernel> {
 public:
-  typedef Skin_surface_quadratic_surface_3<K> Parent; 
+  typedef Skin_surface_quadratic_surface_3<Kernel> Parent; 
   typedef typename Parent::Point              Point;
   typedef typename Parent::Vector             Vector;
   typedef typename Parent::RT                 RT;
   typedef typename Parent::Weighted_point     Weighted_point;
 
-  Skin_surface_sphere_3(Weighted_point wp, RT s, int orient, RT eps=10e-10)
-    : Skin_surface_quadratic_surface_3<K>(eps),
+  Skin_surface_sphere_3(Weighted_point wp, RT s, int orient)
+    : Skin_surface_quadratic_surface_3<Kernel>(),
       wp(wp), s(s), orient(orient) {
     assert((orient == -1) || (orient == 1));
   }
@@ -140,13 +153,6 @@ public:
 
   RT sq_density(Point const &p) {
     assert(wp.weight() > 0);
-    // #ifdef WRITE_DEBUG
-    // 		if ( std::abs(s*wp.weight() - squared_distance(wp, p)) > 1e-10) {
-    // 			std::cerr << __FILE__ << " l" << __LINE__ << " dist: "
-    // 								<< std::abs(s*wp.weight() - squared_distance(wp, p))
-    // 								<< std::endl;
-    // 		}
-    // #endif
     return s*wp.weight();
   }
 private:
@@ -167,18 +173,17 @@ private:
  *
  ***************************************************/
 
-template < class K >
-class Skin_surface_hyperboloid_3 : public Skin_surface_quadratic_surface_3<K> {
+template < class Kernel >
+class Skin_surface_hyperboloid_3 : public Skin_surface_quadratic_surface_3<Kernel> {
 public:
-  typedef Skin_surface_quadratic_surface_3<K> Parent; 
+  typedef Skin_surface_quadratic_surface_3<Kernel> Parent; 
   typedef typename Parent::Point              Point;
   typedef typename Parent::Vector             Vector;
   typedef typename Parent::RT                 RT;
   typedef typename Parent::Weighted_point     Weighted_point;
 
-  Skin_surface_hyperboloid_3(Weighted_point wp, Vector t, RT s, int orient,
-    RT eps=10e-10)
-    : Skin_surface_quadratic_surface_3<K>(eps), wp(wp), t(t), s(s), orient(orient) {
+  Skin_surface_hyperboloid_3(Weighted_point wp, Vector t, RT s, int orient)
+    : Skin_surface_quadratic_surface_3<Kernel>(), wp(wp), t(t), s(s), orient(orient) {
     assert((orient == -1) || (orient == 1));
     sq_t = t*t;
   }
@@ -261,7 +266,7 @@ public:
     return p + t*v;
   }
   Point to_surface(Point const &p0) {
-    return to_surface(p0, normal(p0));
+    return to_surface(p0, gradient(p0));
   }
   Vector gradient(Point const &p) {
     // -s x + (1-s) y 

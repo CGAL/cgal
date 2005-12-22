@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     for (VCI vit = polyhedron.vertices_begin();
 	 vit != polyhedron.vertices_end(); vit ++) {
       out << vit->point() << " "
-	  << refinement_traits.normal(vit->point())
+	  << refinement_traits.gradient(vit->point())
 	  << std::endl;
     }
     CGAL::Inverse_index<VCI> index(
