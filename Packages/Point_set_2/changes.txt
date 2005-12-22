@@ -1,3 +1,8 @@
+22 December 2005 Sylvain Pion
+- Add some "using Base::member" to please g++ 4.1.
+
+==================================== CGAL 3.1 =============================
+
 24 September 2004 Andreas Fabri
 - fixed the testsuite
 - Changes for g++-3.4.0

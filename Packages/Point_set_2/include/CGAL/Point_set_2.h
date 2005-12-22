@@ -97,6 +97,8 @@ public:
   using Base::finite_vertices_end;
   using Base::number_of_vertices;
   using Base::VERTEX;
+  using Base::insert;
+  using Base::remove;
 #endif
 
    Comparedist                   tr_comparedist;
