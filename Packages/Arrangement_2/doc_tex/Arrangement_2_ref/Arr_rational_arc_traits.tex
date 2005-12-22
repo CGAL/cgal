@@ -14,16 +14,16 @@
 
 The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
 concept. It handles bounded segments of rational functions, referred to as
-{\sl rational arcs}, and enables the construction of maintenance of arrangements
-of such arcs. A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two
-polynomials $P$ and $Q$ of arbitrary degrees. In particular, if $Q(x) = 1$
-then the function is a simple polynomial function. A bounded rational arc is
-defined by the graph of a rational function over some internal
-$[x_{\rm min}, x_{\rm max}]$, where $Q$ does not have any real roots in this
-interval (thus the arc does not contain any poles).
-Rational functions, and polynomial functions in particular, are
-not only interesting in their own right, they are also very useful
-for approximating or interpolating more complicated curves.
+{\sl rational arcs}, and enables the construction and maintenance of
+arrangements of such arcs. A rational function $y = \frac{P(x)}{Q(x)}$
+is defined by two polynomials $P$ and $Q$ of arbitrary degrees. In
+particular, if $Q(x) = 1$ then the function is a simple polynomial
+function. A bounded rational arc is defined by the graph of a rational
+function over some internal $[x_{\rm min}, x_{\rm max}]$, where $Q$
+does not have any real roots in this interval (thus the arc does not
+contain any poles). Rational functions, and polynomial functions in
+particular, are not only interesting in their own right, they are also
+very useful for approximating or interpolating more complicated curves.
 
 In our representation, all polynomial coefficients (the coefficients of $P$
 and $Q$) must be rational numbers. This guarantees that the
@@ -59,11 +59,13 @@ a rational arc is always $x$-monotone by definition) as detailed below.
          Arr\_rational\_arc\_traits\_2$<$AlgKernel,NtTraits$>$::Curve\_2}
 %========================================================================
 
-The \ccc{Curve_2} class nested within the rational-arc traits is used to
-represent (general) piecewise linear curves and support their construction
-from any range of points. The copy and default constructor as well as 
-the assignment operator are provided for polyline curves. In addition, 
-an \ccc{operator<<} for the curves is defined for standard output streams.
+The \ccc{Curve_2} class nested within the rational-arc traits is used
+to represent rational arcs and support their construction from a
+single polynomial and the range where the arc is defined or a pair of
+polynomials and a pair of corresponding ranges. The copy and default
+constructor as well as the assignment operator are provided for
+polyline curves. In addition, an \ccc{operator<<} for the curves is
+defined for standard output streams.
 
 \begin{ccClass}{Arr_rational_arc_traits_2<AlgKernel,NtTraits>::Curve_2}
 %======================================================================

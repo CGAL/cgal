@@ -17,9 +17,9 @@ The default \dcel\ class used by the \ccc{Arrangement_2} class-template
 is parameterized by a traits class, which is a model of the
 \ccc{ArrangementBasicTraits_2} concept. It simply uses the nested
 \ccc{Traits::Point_2} and \ccc{Traits::X_monotone_curve_2} to instantiate
-the base vertex and halfedge types, respectively. Thus, the default \dcel\
-records store no other information but the topological incidence relations
-and the geometric data attached to vertices and edges.
+the base vertex and halfedge types, respectively. Thus, the default
+\dcel\ records store no other information, except for the topological
+incidence relations and the geometric data attached to vertices and edges.
 
 \ccInclude{CGAL/Arr_default_dcel.h}
 

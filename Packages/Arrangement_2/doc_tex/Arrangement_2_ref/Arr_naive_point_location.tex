@@ -14,11 +14,12 @@
 \ccDefinition
 %============
 
-The \ccRefName\ class implements a na\"{\i}ve algorithm that goes over
-all the vertices and halfedges in the arrangement in answer queries.
+The \ccRefName\ class implements a na\"{\i}ve algorithm that traverses
+all the vertices and halfedges in the arrangement in search for an
+answer to a point-location query.
 The query time is therefore linear in the complexity of the arrangement.
-It is thus recommended to use this point-location strategy only for relatively
-small arrangements.
+Naturally, this point-location strategy could turn into a heavy
+time-consuming process when applied to dense arrangements.
 
 \ccInclude{CGAL/Arr_naive_point_location.h}
 

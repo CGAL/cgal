@@ -14,9 +14,15 @@
 \ccDefinition
 %============
 
-The base \dcel\ class for instatiating the \ccc{Arrangement_2} template.
-The \ccClassTemplateName\ serves as a basis for extending the basic vertex,
-halfedge or face types and attaching auxiliary data to them.
+The \ccClassTemplateName\ class is an inportant ingredient in the
+definition of \dcel\ data structures. It serves as a basis class for
+any instance of the \ccc{Dcel} template parameter of the
+\ccc{Arrangement_2} template. In particular it is the basis class of
+the default \ccc{Dcel} template parameter, and the basis class of any
+extended \dcel. The template parameters \ccc{V}, \ccc{H}, and \ccc{F}
+must be instantiated with models of the concepts
+\ccc{ArrangementDcelVertex}, \ccc{ArrangementDcelHalfedge},
+and \ccc{ArrangementDcelFace} respectively.
 
 \ccInclude{CGAL/Arr_dcel_base.h}
  
@@ -33,9 +39,9 @@ halfedge or face types and attaching auxiliary data to them.
 \ccDefinition
 %============
 
-The basic \dcel\ vertex type. Serves as a basis for extending the basic
-vertex record with auxiliary data fields. The \ccc{Point} parameter is used
-to instantiate the type of points associated with the vertices.
+The basic \dcel\ vertex type. Serves as a basis class for an extended
+vertex record with auxiliary data fields. The \ccc{Point} parameter is
+the type of points associated with the vertices.
 
 \ccIsModel
     \ccc{ArrangementDcelVertex}
@@ -52,9 +58,9 @@ to instantiate the type of points associated with the vertices.
 \ccDefinition
 %============
 
-The basic \dcel\ halfedge type. Serves as a basis for extending the basic
-halfedge record with auxiliary data fields. The \ccc{Curve} parameter is used
-to instantiate the type of $x$-monotone curves associated with the vertices.
+The basic \dcel\ halfedge type. Serves as a basis class for an
+extended halfedge record with auxiliary data fields. The \ccc{Curve}
+parameter is the type of $x$-monotone curves associated with the vertices.
 
 \ccIsModel
     \ccc{ArrangementDcelHalfedge}
@@ -71,7 +77,7 @@ to instantiate the type of $x$-monotone curves associated with the vertices.
 \ccDefinition
 %============
 
-The basic \dcel\ face type. Serves as a basis for extending the basic
+The basic \dcel\ face type. Serves as a basis class for an extended
 face record with auxiliary data fields.
 
 \ccIsModel

@@ -10,12 +10,13 @@
 
 \begin{ccRefConcept}{ArrangementDcel}
 
-A doubly-connected edge-list (\dcel\ for short) data-structure consists
-of three containers of records: vertices $V$, halfedges $E$ and faces $F$
-and maintains the incidence relation among them. The halfedges are ordered
-in pairs, such that each halfedge pair form an edge.
+A doubly-connected edge-list (\dcel\ for short) data-structure. It consists
+of three containers of records: vertices $V$, halfedges $E$, and faces $F$.
+It maintains the incidence relation among them. The halfedges are ordered
+in pairs sometimes referred to as twins, such that each halfedge pair
+represent an edge.
 
-A model for the \ccRefName\ concept must provide the following types and 
+A model of the \ccRefName\ concept must provide the following types and 
 operations. (In addition to the requirements here, the local types 
 \ccHtmlNoLinksFrom{\ccStyle{Vertex},\ccStyle{Halfedge} and \ccStyle{Face}}
 must be models of the concepts 
@@ -35,7 +36,7 @@ must be models of the concepts
 \ccGlue
 \ccNestedType{Face}{the face type.}
 
-\ccNestedType{Size}{used to represent size values (equivalent to \ccc{size_t}.}
+\ccNestedType{Size}{used to represent size values (e.g., \ccc{size_t}).}
 
 \ccNestedType{Vertex_iterator}{a bidirectional iterator over the
 	       vertices. Its value-type is \ccStyle{Vertex*}.}

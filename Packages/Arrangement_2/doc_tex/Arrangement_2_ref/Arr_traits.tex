@@ -12,14 +12,14 @@
 
 \ccDefinition
 
-The refined arrangement-traits concept allows the construction of arrangement
+This refined arrangement-traits concept allows the construction of arrangement
 of {\sl general} planar curves. Models of this concept are used
 by the free \ccc{insert()} functions of the arrangement package and
 by the \ccc{Arrangement_with_history_2} class.
 
-A model of this concept must define nested \ccc{Curve_2} types, which
+A model of this concept must define the nested \ccc{Curve_2} type, which
 represents a general planar curve that is not necessarily $x$-monotone
-and not necessarily connected. Such curves are eventually subdivided into
+and is not necessarily connected. Such curves are eventually subdivided into
 $x$-monotone subcurves and isolated points (represented by the \ccc{Point_2}
 and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 
@@ -38,14 +38,14 @@ and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 \ccThreeToTwo
 
 \ccNestedType{Make_x_monotone_2}
-{provides the operator (templated by the \ccc{OutputIterator} type)~: \\
+{provides the operator (parameterized by the \ccc{OutputIterator} type)~: \\
  \ccc{OutputIterator operator() (Curve_2 c, OutputIterator oi)} \\
  which subdivides the input curve \ccc{c} into $x$-monotone subcurves and
- isolated points, and outputs the results using the output iterator.
- The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
- \ccc{Object} either wraps an \ccc{X_monotone_curve_2} instance or a
- \ccc{Point_2} instance. The operator returns a past-the-end iterator
- for the output sequence.}
+ isolated points, and inserts the results into a container through the
+ given output iterator. The value type of \ccc{OutputIterator} is
+ \ccc{CGAL::Object}, where each \ccc{Object} wraps either an
+ \ccc{X_monotone_curve_2} instance or a \ccc{Point_2} instance. The
+ operator returns a past-the-end iterator for the output sequence.}
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -73,6 +73,7 @@ and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 \ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
 \ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>} \\
 \ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
@@ -84,7 +85,9 @@ and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 \ccc{ArrangementBasicTraits_2}\lcTex{ 
       (\ccRefPage{ArrangementBasicTraits_2})} \\
 \ccc{ArrangementXMonotoneTraits_2}\lcTex{ 
-      (\ccRefPage{ArrangementXMonotoneTraits_2})}
+      (\ccRefPage{ArrangementXMonotoneTraits_2})}\\
+\ccc{ArrangementLandmarkTraits_2}\lcTex{ 
+      (\ccRefPage{ArrangementLandmarkTraits_2})}
 
 \end{ccRefConcept}
 

@@ -15,13 +15,14 @@
 
 \ccDefinition
 
-This refined traits concept refines the basic arrangement-traits concept
-by allowing the $x$-monotone curves to intersect in their interior (and
-allowing points to conincide with curve interiors). This is necessary for
-constructing arrangements of sets of intersecting $x$-monotone curves.
+This concept refines the basic arrangement-traits concept. A model of
+this concept is able to handle $x$-monotone curves that intersect in
+their interior (and points that conincide with curve interiors). This
+is necessary for constructing arrangements of sets of intersecting
+$x$-monotone curves.
 
-As the resulting structure, represented by the \ccc{Arrangement_2} class
-stores pairwise interior-disjoint curves, the inpur curves are split at
+As the resulting structure, represented by the \ccc{Arrangement_2} class,
+stores pairwise interior-disjoint curves, the input curves are split at
 the intersection points before being inserted into the arrangement. 
 A model of this refined concept therefore needs to compute the intersections
 (and possibly overlaps) between two $x$-monotone curves and to support
@@ -88,7 +89,7 @@ The two following functor types are optional. If they are supported, the
  \ccc{void operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
                        X_monotone_curve_2& c)} \\
  which accepts two {\sl mergeable} $x$-monotone curves \ccc{c1} and \ccc{c2}
- (see above), and sets \ccc{c} to be the result of their merger.} 
+ (see above), and sets \ccc{c} to be the merged curve.} 
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -122,8 +123,11 @@ The two following functor types are optional. If they are supported, the
 \ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_polyine_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
 \ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>} \\
+\ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
 
 \ccSeeAlso
 %=========
