@@ -81,6 +81,7 @@ ENABLE_SHARED='y'
 # suffix for include makefile:
 # toggles the use of LEDA: ('' - no LEDA, '_LEDA' - LEDA)
 LEDA_SUPPORT=''
+LEDA_VERSION=''
 
 # directories for LEDA
 LEDA_INCL_DIR=''
@@ -95,8 +96,7 @@ LEDA_TEST_PASSED=''
 
 # toggles use of GMP ('' - no, '_GMP' - use it)
 GMP_SUPPORT=''
-# toggles use of GMP's C++ wrapper ('' - no, '_GMPXX' - use it)
-GMPXX_SUPPORT=''
+GMP_VERSION=''
 
 # indicate whether GMP is installed
 # ('' - didn't try,
@@ -109,6 +109,12 @@ GMP_LIB_DIR=''
 
 # did GMP tests succeed ('' - no, 'y' - yep)
 GMP_TEST_PASSED=''
+
+# toggles use of GMP's C++ wrapper ('' - no, '_GMPXX' - use it)
+GMPXX_SUPPORT=''
+GMPXX_VERSION=''
+
+# did GMPXX test succeed ('' - no, 'y' - yep)
 GMPXX_TEST_PASSED=''
 
 # ---------------------------------------------
@@ -117,6 +123,7 @@ GMPXX_TEST_PASSED=''
 
 # toggles use of CORE ('' - no, '_CORE' - use it)
 CORE_SUPPORT=''
+CORE_VERSION=''
 
 # indicate whether and where CORE is installed
 # ('' - didn't try,
@@ -136,6 +143,7 @@ CORE_TEST_PASSED=''
 
 # toggles use of QT ('' - no, '_QT' - use it)
 QT_SUPPORT=''
+QT_VERSION=''
 
 # directories for QT
 QT_DIR=''
@@ -281,8 +289,8 @@ print_usage_information()
       [--CORE_INCL_DIR <dir>] [--CORE_LIB_DIR <dir>]
       [--QT_DIR <dir>] [--QT_INCL_DIR <dir>]
       [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
-      [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
-      [--custom_ostype_tag <tag>]
+      [--CXXFLAGS <flags>] [--LDFLAGS <flags>]
+      [--ostype_tag <tag>]
 
   -leda        enables support for LEDA
   -core        enables support for CORE
@@ -331,11 +339,11 @@ print_usage_information()
                For the rest you are on your own.
                (Have a look at the README file.)
   -os <comp>   prints architecture/os/compiler specifications
-  --CUSTOM_CXXFLAGS <flags>
+  --CXXFLAGS <flags>
                pass the specified <flags> to the compiler
-  --CUSTOM_LDFLAGS  <flags>
+  --LDFLAGS  <flags>
                pass the specified <flags> to the linker
-  --custom_ostype_tag <tag>
+  --ostype_tag <tag>
                weave this tag into architecture/os/compiler specification"
 }
 
@@ -1314,11 +1322,6 @@ EOF2
 # ($1 nonzero indicates verbosity)
 test_compiler_specifica()
 {
-    cd ${CGAL_TEST_CONF_DIR}
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
-    create_standard_header_replacements
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
-    _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
     ${_cat} <<EOF5 >${_file}
 $LGPL_LICENSE_HEADER
 //
@@ -1378,8 +1381,6 @@ EOF5
 	cleanup_after_compile
 	cleanup_after_link_run
     done
-    cd ${CGAL_DIR}
-    CONFIG_TEST_PASSED='y'
 }
 
 
@@ -2322,6 +2323,12 @@ write_buffer()
 # ---------------------------------------------------------------------
 # STRING FUNCTIONS:
 
+remove_special_chars()
+{
+    _read
+    echo "$KEY" | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}[]\`/ ' | ${_tr} -d "'"
+}
+
 print_with_indent()
 {
     if [ -z "$*" ]; then
@@ -2484,6 +2491,8 @@ wait_for_enter()
 # setup two strings for printing the menu
 set_menu_lines()
 {
+    # save buffer
+    _tmp3=${_BUF}
     _MENU_LINE_FILLED="${_LEFTSPACE}**"
     _MENU_LINE_EMPTY="${_LEFTSPACE}**"
     clear_buffer
@@ -2496,6 +2505,7 @@ set_menu_lines()
     eval "${_EXPR} ${_MENU_WIDTH} \* 10"
     eval "${_EXPR} ${_result} - 10"
     _MULTILINE_LAYOUT_AWK_PROG="'{ for (i=1; i <= length(\$0); i+=${_result}) printf \"${_MENU_LINE_EMPTY}"'\\r'"${_LEFTSPACE}**       "'%%s''\\''\\n'"\",substr(\$0,i,${_result})}'"
+    _BUF=${_tmp3}
 }
 
 # set some variables for output
@@ -2892,8 +2902,32 @@ check_COMPILER()
 
 check_CUSTOM_OSTYPE_TAG()
 {
-    # throw out potentially troublesome special characters
-    CUSTOM_OSTYPE_TAG=`echo ${CUSTOM_OSTYPE_TAG} | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}[]\`/ ' | ${_tr} -d "'"`
+    CUSTOM_OSTYPE_TAG=`echo ${CUSTOM_OSTYPE_TAG} | remove_special_chars`
+    return 1
+}
+
+check_GMP_VERSION()
+{
+    return 1
+}
+
+check_GMPXX_VERSION()
+{
+    return 1
+}
+
+check_LEDA_VERSION()
+{
+    return 1
+}
+
+check_CORE_VERSION()
+{
+    return 1
+}
+
+check_QT_VERSION()
+{
     return 1
 }
 
@@ -3031,6 +3065,10 @@ cleanup_after_link_run()
 # if $3 is empty, use standard linker flags
 # if $3 is non-empty, use it as linker flags
 # if $4 is non-zero, inform about eventually occurring problems
+# $5 is message to print ("no" or "unfortunately") in case of failure.
+# The program output is scanned for a line starting with the string
+# version=
+# and whatever comes after this is assigned to $6.
 _link_run_test()
 {
     # set flags
@@ -3065,10 +3103,17 @@ _link_run_test()
 	    "----------------------" >>${TMP_LOGFILE}
 	${_printf} "%s\n" "Got the following output:" >>${TMP_LOGFILE}
 	${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-	eval "${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1"
+	_tmp=`eval "${TMP_CXX_FILE} 2>&1 | ${_tee} -a ${TMP_LOGFILE} | ${_awk} 'BEGIN{FS=\"=\"} /^version=/{print \\$2}' | remove_special_chars"`
 	j=$?
 	if [ $j = 0 ]; then
 	    log_print "$1 test execution succeeded."
+	    if [ -n "${6}" ]; then
+                if [ -n "${_tmp}" ]; then 
+		    eval "$6=\"${_tmp}\""
+                else
+		    eval "$6=0"
+                fi
+	    fi
 	else
 	    if [ -n "${4}" ]; then
 		log_print "ERROR: $1 test execution FAILED."
@@ -3121,13 +3166,14 @@ _link_run_test()
 
 # test if LEDA setting works (return 0, iff ok)
 # ($1 nonzero indicates verbosity)
-test_leda()
+test_LEDA()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_LEDA.C ${TMP_CXX_FILE}.C
 	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
 	    _link_run_test LEDA \
-		"`leda_libpathflags`" "`leda_test_ldflags`" $1
+		"`leda_libpathflags`" "`leda_test_ldflags`" \
+                $1 no LEDA_VERSION
 	then
 	    LEDA_TEST_PASSED='y'
 	    return 0
@@ -3147,13 +3193,14 @@ test_leda()
 # (return 0, iff it works)
 # ($1 is either 'GMP' or 'GMP syslib')
 # ($2 nonzero indicates verbosity)
-test_gmp()
+test_GMP()
 {
     if [ -n "${GMP_SUPPORT}" ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_GMP.C ${TMP_CXX_FILE}.C
 	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
 	    _link_run_test "$1" \
-		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" "$2"
+		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" \
+                "$2" no GMP_VERSION
 	then
 	    GMP_TEST_PASSED='y'
 	    return 0
@@ -3167,13 +3214,14 @@ test_gmp()
 }
 
 # test GMP's built-in C++ interface.
-test_gmpxx()
+test_GMPXX()
 {
     if [ -n "${GMPXX_SUPPORT}" ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_GMPXX.C ${TMP_CXX_FILE}.C
 	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
 	    _link_run_test "$1" \
-		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" "$2"
+		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" \
+                "$2" no GMPXX_VERSION
 	then
 	    GMPXX_TEST_PASSED='y'
 	    return 0
@@ -3191,13 +3239,14 @@ test_gmpxx()
 
 # core test program (return 0, iff it works)
 # ($1 nonzero indicates verbosity)
-test_core()
+test_CORE()
 {
     if [ -n "${CORE_SUPPORT}" -a "${CORE_INSTALLATION}" != 'c' ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_CORE.C ${TMP_CXX_FILE}.C
 	if _compile_test "CORE" "`core_test_cxxflags`" "$1" && \
 	    _link_run_test "CORE" \
-		"`core_test_libpathflags`" "`core_test_ldflags`" "$1"
+		"`core_test_libpathflags`" "`core_test_ldflags`" \
+                "$1" no CORE_VERSION
 	then
 	    CORE_TEST_PASSED='y'
 	    return 0
@@ -3325,14 +3374,9 @@ test_for_qt_moc_in_path()
 	return 0
     else
 	if [ -n "$1" ];then
-	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
-		log_print "ERROR: moc${EXE_EXT} is not in path directories."
-		write_buffer "\n"
-		wait_for_enter
-	    else
-		${_printf} "%s\n\n" \
-		    "ERROR: moc${EXE_EXT} is in path directories."
-	    fi
+	    log_print "ERROR: moc${EXE_EXT} is not in path directories."
+	    write_buffer "\n"
+	    wait_for_enter
 	else
 	    log_print "remark: moc${EXE_EXT} is in path directories."
 	fi
@@ -3344,7 +3388,7 @@ test_for_qt_moc_in_path()
 
 # test if Qt Meta Object Compiler setting works (return 0, iff ok)
 # ($1 nonzero indicates verbosity)
-test_qt_moc()
+test_QT_MOC()
 {
     if [ -n "${QT_SUPPORT}" ]; then
 	${_printf} "%s\n" '
@@ -3443,13 +3487,13 @@ int main( int argc, char **argv )
 
 # test if Qt setting works (return 0, iff ok)
 # ($1 nonzero indicates verbosity)
-test_qt()
+test_QT()
 {
     if [ -n "${QT_SUPPORT}" ]; then
         ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_QT.C ${TMP_CXX_FILE}.C
 	if _compile_test Qt "`qt_test_cxxflags`" $1 && \
            _link_run_test Qt \
-		"`qt_libpathflags`" "`qt_test_ldflags`" $1
+		"`qt_libpathflags`" "`qt_test_ldflags`" $1 no QT_VERSION
 	then
 	    QT_TEST_PASSED='y'
 	    return 0
@@ -3517,7 +3561,7 @@ set_lib_compiled_flag()
 search_gmp()
 {
     GMP_INSTALLATION='s'
-    if test_gmp 'GMP syslib' "$1"; then
+    if test_GMP 'GMP syslib' "$1"; then
 	log_print "remark: GMP is installed in sysdirs."
     else
 	GMP_INSTALLATION='e'
@@ -3575,14 +3619,26 @@ retrieve_compiler_settings()
     fi
 
     # GMP specific stuff:
-    if try_to_get_var_from_file GMP_SUPPORT "${_file}" ||\
+    if try_to_get_var_from_file GMP_SUPPORT "${_file}" || \
 	try_to_get_var_from_file GMP_INSTALLATION "${_file}"; then
 	GMP_INSTALLATION=''
 	GMP_SUPPORT=''
 	SETUP_COMPLETE=''
     fi
+    if try_to_get_var_from_file GMP_VERSION "${_file}"; then
+	GMP_VERSION=''
+        if [ -n "${GMP_SUPPORT}" ]; then
+            SETUP_COMPLETE=''
+        fi
+    fi
     if try_to_get_var_from_file GMPXX_SUPPORT "${_file}"; then
 	GMPXX_SUPPORT=''
+    fi
+    if try_to_get_var_from_file GMPXX_VERSION "${_file}"; then
+	GMPXX_VERSION=''
+        if [ -n "${GMPXX_SUPPORT}" ]; then
+            SETUP_COMPLETE=''
+        fi
     fi
     if [ -z "${GMP_SUPPORT}" ]; then
 	GMPXX_SUPPORT=''
@@ -3609,6 +3665,14 @@ retrieve_compiler_settings()
 	CORE_SUPPORT=''
 	SETUP_COMPLETE=''
     fi
+    if try_to_get_var_from_file CORE_VERSION "${_file}"; then
+	CORE_VERSION=''
+# As we do not have it yet and core had to be built before CGAL,
+# let's not be too picky about it...
+#        if [ -n "${CORE_SUPPORT}" ]; then
+#            SETUP_COMPLETE=''
+#        fi
+    fi
     if try_to_get_var_from_file CORE_INCL_DIR "${_file}"; then
 	if [ -n "${CORE_SUPPORT}" ]; then
 	    if [ "${CORE_INSTALLATION}" = 'z' -o \
@@ -3633,6 +3697,12 @@ retrieve_compiler_settings()
 	try_to_get_var_from_file QT_SECOND_LIB "${_file}"
 	try_to_get_var_from_file QT_T_SUPPORT "${_file}"
 	try_to_get_var_from_file QT_DLL "${_file}"
+    fi
+    if try_to_get_var_from_file QT_VERSION "${_file}"; then
+	QT_VERSION=''
+        if [ -n "${QT_SUPPORT}" ]; then
+            SETUP_COMPLETE=''
+        fi
     fi
     if try_to_get_var_from_file QT_ADVANCED_MODE "${_file}"; then
         QT_ADVANCED_MODE=''
@@ -3738,18 +3808,23 @@ store_compiler_settings()
     _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
     _store_install_config_variable LEDA_SUPPORT >>${_file}
+    _store_install_config_variable LEDA_VERSION >>${_file}
     _store_install_config_variable LEDA_INCL_DIR >>${_file}
     _store_install_config_variable LEDA_LIB_DIR >>${_file}
     _store_install_config_variable GMP_SUPPORT >>${_file}
+    _store_install_config_variable GMP_VERSION >>${_file}
     _store_install_config_variable GMPXX_SUPPORT >>${_file}
+    _store_install_config_variable GMPXX_VERSION >>${_file}
     _store_install_config_variable GMP_INSTALLATION >>${_file}
     _store_install_config_variable GMP_INCL_DIR >>${_file}
     _store_install_config_variable GMP_LIB_DIR >>${_file}
     _store_install_config_variable CORE_SUPPORT >>${_file}
+    _store_install_config_variable CORE_VERSION >>${_file}
     _store_install_config_variable CORE_INSTALLATION >>${_file}
     _store_install_config_variable CORE_INCL_DIR >>${_file}
     _store_install_config_variable CORE_LIB_DIR >>${_file}
     _store_install_config_variable QT_SUPPORT >>${_file}
+    _store_install_config_variable QT_VERSION >>${_file}
     _store_install_config_variable QT_SECOND_LIB >>${_file}
     _store_install_config_variable QT_T_SUPPORT >>${_file}
     _store_install_config_variable QT_DLL >>${_file}
@@ -3772,13 +3847,6 @@ store_compiler_settings()
     log_print "Settings stored in ${_file}."
 }
 
-# just a tiny message template for test_setup
-_passed_message()
-{
-    ${_printf} "%s\n" \
-	"${_LEFTSPACE}$1 test has already been passed."
-}
-
 # test current setup and set SETUP_COMPLETE
 # return 0, iff setup is ok
 test_setup()
@@ -3786,7 +3854,12 @@ test_setup()
     SETUP_COMPLETE=''
     make_lib_dir
 
-    # COMPILER
+    cd ${CGAL_TEST_CONF_DIR}
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
+    create_standard_header_replacements
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
+    _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
+    
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
 	print_filled_line
 	print_line "The following lines show results of configuration tests."
@@ -3798,70 +3871,64 @@ test_setup()
 	print_line "regardless of the outcome of these tests."
 	print_filled_line
 	flush_buffer
+
 	test_compiler_specifica "${INSTALL_VERBOSE}"
-    fi
 
-    # LEDA
-    if [ -z "${LEDA_TEST_PASSED}" ]; then
-	test_leda 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'LEDA'
+        for totest in LEDA GMP GMPXX CORE QT; do
+	    ${_printf} "%s%s\n" \
+	        "//+----------------------------------------------------------" \
+	        "----------------" \
+	        >> ${_file}
+	    ${_printf} "%s\n" "//| Is CGAL compiled with support for ${totest}?" \
+                >> ${_file}
+	    ${_printf} "%s%s\n" \
+	        "//+----------------------------------------------------------" \
+	        "----------------" \
+	        >> ${_file}
+	    ${_printf} "%s\n" "#ifndef CGAL_NO_${totest}" >> ${_file}
+	    ${_printf} "%s\n" "//#define CGAL_USE_${totest} 1" >> ${_file}
+	    ${_printf} "%s\n" "#define CGAL_${totest}_VERSION 0" >> ${_file}
+	    ${_printf} "%s\n\n" "#endif // ! CGAL_NO_${totest}" >> ${_file}
+        done
+        CONFIG_TEST_PASSED='y'
     fi
-
-    # GMP
-    if [ -z "${GMP_TEST_PASSED}" ]; then
-	test_gmp 'GMP' 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'GMP'
-    fi
-
-    # GMPXX
-    if [ -z "${GMPXX_TEST_PASSED}" ]; then
-	test_gmpxx 'GMPXX' 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'GMPXX'
-    fi
-
-    # CORE
-    if [ -z "${CORE_TEST_PASSED}" ]; then
-	test_core 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'CORE'
-    fi
-
-    # QT MOC
-    if [ -z "${QT_MOC_TEST_PASSED}" ]; then
-	test_qt_moc 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'Qt MOC'
-    fi
-
-    # QT
-    if [ -z "${QT_TEST_PASSED}" ]; then
-	test_qt 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'Qt'
-    fi
-
+ 
     SETUP_COMPLETE='y'
+    for totest in LEDA GMP GMPXX CORE QT; do
+
+        # run test
+        _tmp="${totest}_TEST_PASSED"
+        if [ -z "`value_of ${_tmp}`" ]; then
+	    if eval "test_${totest} 'v'"; then
+
+                # set CGAL_USE in compiler_config file
+                _tmp="${totest}_SUPPORT"
+                _tmp2="#define CGAL_USE_${totest} 1"
+                _tmp3="//#define CGAL_USE_${totest} 1"
+                if [ -n "`value_of ${_tmp}`" ]; then
+                    replace_line "${_file}" "${_tmp3}" "${_tmp2}" 
+                else
+                    replace_line "${_file}" "${_tmp2}" "${_tmp3}" 
+                fi
+
+                # set VERSION in compiler_config file
+                _tmp2="${totest}_VERSION"
+                _tmp3="`value_of ${_tmp2}`"
+                replace_line "${_file}" "#define CGAL_${_tmp2}" \
+                  "#define CGAL_${_tmp2} ${_tmp3:-0}"
+
+	    else
+                SETUP_COMPLETE=''
+            fi
+        else
+	    ${_printf} "%s\n" "${_LEFTSPACE}${totest} test has already been passed."
+        fi
+        
+    done
+
+    cd ${CGAL_DIR}
+    if [ -z "${SETUP_COMPLETE}" ]; then return 1; fi
+
     ${_printf} "%s" "${_LEFTSPACE}Saving current setup ..."
     store_compiler_settings
     ${_printf} "%s\n" " done."
@@ -4241,7 +4308,7 @@ compiler_menu()
                 else
                     ENABLE_SHARED='y'
                 fi
-		reset_all_test_variables
+		#reset_all_test_variables
 		SETUP_COMPLETE=''
 		;;
 	    t|T)
@@ -5540,7 +5607,7 @@ replace_line()
     ${_printf} "%s\n" "Error: could not open file $1 in replace_line()"
     return
   fi
-  if eval '${_sed} -e "/^$2/c\\
+  if eval '${_sed} "\\^$2c\\
 $3${_EXTRA_NEWLINE}" $1 > $1.TEMP' ; then
     ${_mv} $1.TEMP $1
   else
@@ -5706,13 +5773,20 @@ build_cgal()
 
 lib_menu()
 {
-    write_menu_information "Compiling"
-
-    make_lib_dir
-    make_makefiles
-
-    # build the libs:
-    build_cgal
+    if [ -n "${SETUP_COMPLETE}" ]; then
+        write_menu_information "Compiling"
+        make_lib_dir
+        make_makefiles
+        build_cgal
+    else
+       	log_print "The setup tests failed."
+        log_print "Therefore, no CGAL library is compiled."
+	${_printf} "\n%s\n%s\n\n" \
+         "${_LEFTSPACE}Error: Setup tests failed." \
+         "${_LEFTSPACE}  Please correct your setup."
+	print_filled_line
+        wait_for_enter
+    fi
 }
 
 print_lib_information()
@@ -5733,7 +5807,7 @@ installation()
          "${_LEFTSPACE}Remark: No need to install, as CGAL_DIR == CGAL_INSTALL_DIR." 
 	print_filled_line
 	wait_for_enter
-	return 1
+        return 1
     fi
     print_filled_line
     print_empty_line
@@ -5743,10 +5817,12 @@ installation()
     print_filled_line
     go_up_lines 4
     print_line "Target Directory: ${CGAL_INSTALL_DIR}."
-    print_prompt "Do you want to install CGAL into this directory (y/N)? "
-    _read
-    if [ "${KEY}" != 'y' ]; then
-        return
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+        print_prompt "Do you want to install CGAL into this directory (y/N)? "
+        _read
+        if [ "${KEY}" != 'y' ]; then
+            return
+        fi
     fi
 
     # ok, go ahead...
@@ -5864,11 +5940,10 @@ _build_one()
             retrieve_compiler_settings
         fi
         case ${_WHAT_TO_DO} in
-	    *rebuild*)
-	        test_compiler_specifica "${INSTALL_VERBOSE}";;
+	    *rebuild*) test_setup;;
         esac
         lib_menu
-        store_compiler_settings
+        installation
     else
         log_print "Cannot rebuild the library."
         print_filled_line
@@ -6110,7 +6185,7 @@ main_menu()
 		go_down_lines 3
 		flush_buffer
 		if [ -n "${LEDA_SUPPORT}" ]; then
-                    test_leda "${INSTALL_VERBOSE}"
+                    test_LEDA "${INSTALL_VERBOSE}"
 		fi
 		if [ -n "${GMP_SUPPORT}" ]; then
 		    search_gmp "${INSTALL_VERBOSE}"
@@ -6184,11 +6259,10 @@ cgal_install_header()
 # functions for interactive modes:
 #
 
-startup_interactive()
+startup()
 {
     ${_printf} "%s\n" " one moment, please"
-    INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
-    if [ -n "${_ANY_OPT}" ]; then
+    if [ -n "${_ANY_OPT}" -a -n "${INSTALL_INTERACTIVE}" ]; then
 	${_printf} "\n%s\n" \
 	    "WARNING: In interactive mode all command line options"
 	${_printf} "%s\n\n" \
@@ -6196,22 +6270,27 @@ startup_interactive()
 	clear_buffer
     fi
     init_logfiles
-    ${_printf} "."
-    check_for_utils
-    ${_printf} "."
-    check_conf_dir
-    ${_printf} "."
-    set_expr
-    ${_printf} "."
-    set_menu_lines
-    ${_printf} "."
     if [ -n "${INSTALL_INTERACTIVE}" ]; then
+        ${_printf} "."
+        INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+    else
+        INSTALL_LOGFILE_REDIRECTION="| print_with_indent"
+    fi
+    check_for_utils
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
+    check_conf_dir
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
+    set_expr
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
+    set_menu_lines
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+        ${_printf} "."
         set_terminal_variables
         ${_printf} "."
     fi
 }
 
-finish_interactive()
+finish()
 {
     if [ -z "${ANY_LIB_COMPILED}" ]; then
 	go_down_lines 1
@@ -6365,19 +6444,19 @@ while [ ${#} -gt 0 ]; do
 	    QT_SUPPORT='_QT'
 	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
 	    ;;
-	--custom_cxxflags*|--CUSTOM_CXXFLAGS*|-CUSTOM_CXXFLAGS*|-custom_cxxflags*)
+	--cxxflags*|--CXXFLAGS*|-CXXFLAGS*|-cxxflags*|--custom_cxxflags*|--CUSTOM_CXXFLAGS*|-CUSTOM_CXXFLAGS*|-custom_cxxflags*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'CUSTOM_CXXFLAGS' "$1" "$2"; then
 		shift
 	    fi
 	    ;;
-	--custom_ldflags*|--CUSTOM_LDFLAGS*|-CUSTOM_LDFLAGS*|-custom_ldflags*)
+	--ldflags*|--LDFLAGS*|-LDFLAGS*|-ldflags*|--custom_ldflags*|--CUSTOM_LDFLAGS*|-CUSTOM_LDFLAGS*|-custom_ldflags*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'CUSTOM_LDFLAGS' "$1" "$2"; then
 		shift
 	    fi
 	    ;;
-	--custom_ostype_tag*|--CUSTOM_OSTYPE_TAG*|-custom_ostype_tag*|-CUSTOM_OSTYPE_TAG*)
+	--ostype_tag*|--OSTYPE_TAG*|-ostype_tag*|-OSTYPE_TAG*|--custom_ostype_tag*|--CUSTOM_OSTYPE_TAG*|-custom_ostype_tag*|-CUSTOM_OSTYPE_TAG*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'CUSTOM_OSTYPE_TAG' "$1" "$2"; then
 		shift
@@ -6392,7 +6471,6 @@ while [ ${#} -gt 0 ]; do
 	-gmpxx*|-GMPXX*|--gmpxx*|--GMPXX*)
 	    _ANY_OPT='y'
 	    GMP_SUPPORT='_GMP'
-	    write_buffer "${_LEFTSPACE}Enable GMP support.\n"
 	    GMPXX_SUPPORT='_GMPXX'
 	    write_buffer "${_LEFTSPACE}Enable GMP C++ interface support.\n"
 	    ;;
@@ -6510,13 +6588,12 @@ case ${_WHAT_TO_DO} in
 	cgal_install_header
 	${_printf} "%s\n" "running non interactive mode ..."
 	INSTALL_INTERACTIVE=''
-	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
 	${_printf} "\n%s\n" \
 	    "--------------------------------------------------------"
 	${_printf} "%s\n" "Locating Utilities:"
 	${_printf} "%s\n" \
 	    "--------------------------------------------------------"
-	check_for_utils
+	startup
 	check_conf_dir
 	guess_os 'print_with_indent'
 	case ${SYST} in
@@ -6527,53 +6604,28 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s\n" "Settings from Command Line:"
 	${_printf} "%s\n" \
 	    "--------------------------------------------------------"
+	flush_buffer
 	_check_comp_executable "${COMPILER}"
-	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
+        INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
 	COMPILER="`compiler_absolute ${COMPILER}`"
 	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
 	set_ostype
 	set_compiler_flags
 	flush_buffer
-	${_printf} "\n%s\n" \
-	    "--------------------------------------------------------"
-	${_printf} "%s\n" "Determining Compiler Specs:"
-	${_printf} "%s\n" \
-	    "--------------------------------------------------------"
-	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
-	test_compiler_specifica "${INSTALL_VERBOSE}"
-	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
-	${_printf} "\n%s\n" \
-	    "--------------------------------------------------------"
-	${_printf} "%s\n" "Show Setup:"
-	${_printf} "%s\n" \
-	    "--------------------------------------------------------"
-	print_os_setting 'print_with_indent'
-	${_printf} "\n%s\n" \
-	    "--------------------------------------------------------"
-	${_printf} "%s\n" "Creating Directories and Makefiles:"
-	${_printf} "%s\n" \
-	    "--------------------------------------------------------"
-	make_lib_dir
-	generatemakefiles 'print_with_indent'
-	store_compiler_settings
-
-	${_printf} "\n%s\n" \
-	    "--------------------------------------------------------"
-	${_printf} "%s\n" \
-	    "--         DONE, please read the documentation        --"
-	${_printf} "%s\n" \
-	    "--                 on how to proceed                  --"
-	${_printf} "%s\n" \
-	    "--------------------------------------------------------"
+        INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+	test_setup
+        lib_menu
+        installation
+	finish
 	;;
     *upgrade*)
         get_cgal_version
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
-	startup_interactive
+	startup
 	guess_os log_print
 	upgrade
-	finish_interactive
+	finish
 	;;
     *interactive*)
         get_cgal_version
@@ -6581,10 +6633,10 @@ case ${_WHAT_TO_DO} in
 	# start interactive part
 	${_printf} "%s" "starting interactive mode -"
 	INSTALL_INTERACTIVE='y'
-	startup_interactive
+	startup
 	search_for_compilers
 	main_menu
-	finish_interactive
+	finish
 	;;
     *ostype*)
 	# architecture/os key
@@ -6608,17 +6660,17 @@ case ${_WHAT_TO_DO} in
         get_cgal_version
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
-	startup_interactive
+	startup
 	build_all
-	finish_interactive
+	finish
 	;;
     *build*)
         get_cgal_version
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
-	startup_interactive
+	startup
 	build_one
-	finish_interactive
+	finish
 	;;
     *help*)
         get_cgal_version
