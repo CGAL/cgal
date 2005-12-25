@@ -308,6 +308,7 @@ public:
           m_arr_access.move_hole (he_on_face->twin()->face(),
                                   new_face,
                                   he_on_face->twin()->ccb());
+          relocate_holes_in_new_face(he_on_face->twin());
         }
       }
       curr_he = curr_he->next();
