@@ -13,8 +13,15 @@
 \ccDefinition
 
 A vertex record in a \dcel\ data structure. A vertex is always associated
-with a point. However, the vertex record only sotres a pointer to the
+with a point. However, the vertex record only stores a pointer to the
 associated point, and the actual \ccc{Point} object is stored elsewhere.
+
+A vertex usually has several halfedges incident to it, such that it is
+possible to access one of these halfedges directly and to traverse all
+incident halfedges around the vertex. However, the \dcel\ may also contain
+isolated vertices that have no incident halfedges. In this case, the vertex
+stores an isolated vertex-information record, indicating the face that
+contains this vertex in its interior.
 
 \ccCreationVariable{v}
 
@@ -23,7 +30,8 @@ associated point, and the actual \ccc{Point} object is stored elsewhere.
 
 \ccNestedType{Halfedge}{the corresponding \dcel\ halfedge type.}
 \ccGlue
-\ccNestedType{Face}{the corresponding \dcel\ face type.}
+\ccNestedType{Isolated_vertex}{the corresponding \dcel\ isolated
+                               vertex-information type.}
 
 \ccNestedType{Point}{the point type associated with the vertex.} 
 
@@ -51,8 +59,8 @@ pointers or references:
     {returns an incident halfedge that has \ccVar{} as its target.
      \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
 
-\ccMethod{Face* face();}
-    {returns the face that conatins \ccVar{} in its interior.
+\ccMethod{Isolated_vertex* isolated_vertex();}
+    {returns the isolated vertex-information record.
      \ccPrecond{\ccVar{} is an isolated vertex.}}
 
 \ccMethod{Point& point();}
@@ -64,8 +72,8 @@ pointers or references:
 \ccMethod{void set_halfedge (Halfedge* e);}
     {sets the incident halfedge, marking \ccVar{} as a regular vertex.}
 
-\ccMethod{void set_face (Face* f);}
-    {sets the face that contains \ccVar{} in its interior, marking \ccVar{}
+\ccMethod{void set_isolated_vertex (Isolated_vertex* iv);}
+    {sets the isolated vertex-information record, marking \ccVar{}
      as an isolated vertex.}
 
 \ccMethod{void set_point (Point* p);}
@@ -79,8 +87,8 @@ pointers or references:
      (\ccRefPage{ArrangementDcel})}\\
 \ccc{ArrangementDcelHalfedge}\lcTex{
      (\ccRefPage{ArrangementDcelHalfedge})}\\
-\ccc{ArrangementDcelFace}\lcTex{
-     (\ccRefPage{ArrangementDcelFace})}
+\ccc{ArrangementDcelIsolatedVertex}\lcTex{
+     (\ccRefPage{ArrangementDcelIsolatedVertex})}
 
 \end{ccRefConcept}  
 

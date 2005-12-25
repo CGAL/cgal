@@ -108,15 +108,14 @@ topological input may invalidate the arrangement.
      \ccc{he->face()} (but not on its boundary), or inside one of the holes inside this
      face, or it may coincide with an isolated vertex in this face.}
 
-\ccMethod{bool is_on_outer_boundary (Face_const_handle f,
-                                     Halfedge_const_handle he) const;}
-    {determined whether \ccc{he} lies on the outer boundary of \ccc{f}.}
+\ccMethod{bool is_on_outer_boundary (Halfedge_const_handle he) const;}
+    {determines whether \ccc{he} lies on the outer boundary of its incident
+     face.}
 
-\ccMethod{bool s_on_inner_boundary (Face_const_handle f,
-                                    Halfedge_const_handle he) const;}
-    {determines whether \ccc{he} lies on the inner boundary of \ccc{f}
-     (that is, if it lies on the outer boundary of one of \ccc{f}'s holes).}
-
+\ccMethod{bool is_on_inner_boundary (Halfedge_const_handle he) const;}
+    {determines whether \ccc{he} lies on the inner boundary of its incident
+     face (that is, whether it lies on the boundary of one of the holes
+     in this face).}
 
 \ccHeading{Arrangement Modifiers}
 %================================
@@ -137,8 +136,8 @@ topological input may invalidate the arrangement.
     The function returns a handle for one of the new halfedges
     corresponding to the inserted curve, directed from \ccc{v1} to \ccc{v2}.
     \ccPrecond{It is the user's responsibility that \ccc{v1} and \ccc{v2} 
-    are associated with \ccc{c}'s endpoints, that they lie of \ccc{f}'s interior
-    and that and that they have no incident edges.}}
+    are associated with \ccc{c}'s endpoints, that they lie of \ccc{f}'s
+    interior and that and that they have no incident edges.}}
 
 \ccMethod{Halfedge_handle insert_from_vertex_ex (const X_monotone_curve_2& c,
                                                  Halfedge_handle pred,
@@ -181,48 +180,52 @@ topological input may invalidate the arrangement.
      \ccPrecond{It is the user's responsibility that \ccc{v->point()} is
      contained in the interior of the given face.}}
 
-\ccMethod{bool move_hole (Face_handle f1, Face_handle f2,
+\ccMethod{void move_hole (Face_handle f1, Face_handle f2,
                           Ccb_halfedge_circulator hole);}
-    {moves the given hole from the interior of the face \ccc{f1} inside the face \ccc{f2}.
-     The function returns \ccc{true} if \ccc{hole} used to be contained inside
-     \ccc{f1} and has been successfully moved, and \ccc{false} otherwise.
-     \ccPrecond{It is the user's responsibility that \ccc{hole} is contained in \ccc{f2}.}}
+    {moves the given hole from the interior of the face \ccc{f1} inside the
+     face \ccc{f2}.
+     \ccPrecond{It is the user's responsibility that \ccc{hole} is currenly
+     contained in \ccc{f1} and should be moved to \ccc{f2}.}}
 
 \ccMethod{bool move_isolated_vertex (Face_handle f1, Face_handle f2,
                                      Vertex_handle v);}
-    {moves the given isolated vertex from the interior of the face \ccc{f1} inside the
-     face \ccc{f2}. The function returns \ccc{true} if \ccc{v} used to be contained inside
-     \ccc{f1} and has been successfully moved, and \ccc{false} otherwise.
-     \ccPrecond{It is the user's responsibility that \ccc{v} is contained in \ccc{f2}.}}
-
-\ccMethod{bool find_and_erase_isolated_vertex (Face_handle f, Vertex_handle v);}
-    {finds \ccc{v} among the isolated vertices inside the face \ccc{f} and erases it from
-     there. The function returns \ccc{true} if \ccc{v} used to be contained inside
-     \ccc{f1} and has been successfully erased, and \ccc{false} otherwise.}
+    {moves the given isolated vertex from the interior of the face \ccc{f1}
+     inside the face \ccc{f2}.
+     \ccPrecond{It is the user's responsibility that \ccc{v} is indeed an
+     isolated vertex currently contained in \ccc{f1} and should be moved
+     to \ccc{f2}.}}
 
 \ccMethod{void relocate_in_new_face (Halfedge_handle he);}
     {relocates all holes and isolated vertices to their proper position
      immediately after a face has split due to the insertion of a new halfedge,
-     namely after \ccc{insert_at_vertices_ex()} was invoked and indicated that a new face
-     has been created. \ccc{he} is the halfegde returned by \ccc{insert_at_vertices_ex()},
+     namely after \ccc{insert_at_vertices_ex()} was invoked and indicated that
+     a new face has been created. \ccc{he} is the halfegde returned by
+     \ccc{insert_at_vertices_ex()},
      such that \ccc{he->twin()->face} is the face that has just been split and
      \ccc{he->face()} is the newly created face.}
+
+\ccMethod{void relocate_holes_in_new_face (Halfedge_handle he);}
+    {relocates all holes in a new face, as detailed above.}
+
+\ccMethod{void relocate_isolated_vertices_in_new_face (Halfedge_handle he);}
+    {relocates all isolated vertices in a new face, as detailed above.}
 
 \ccMethod{Vertex_handle modify_vertex_ex (Vertex_handle v,
                                           const Point_2& p);}
     {modifies the point associated with the vertex \ccc{v} (the point may be
      geometrically different than the one currently associated with \ccc{v}).
      The function returns a handle to the modified vertex (same as \ccc{v}).
-     \ccPrecond{It is the user's responsibility that no other arrangement vertex is already
-     associated with \ccc{p}.}}
+     \ccPrecond{It is the user's responsibility that no other arrangement
+     vertex is already associated with \ccc{p}.}}
 
 \ccMethod{Halfedge_handle modify_edge_ex (Halfedge_handle e,
                                           const X_monotone_curve_2& c);}
-    {modifies the $x$-monotone curve associated with the edge \ccc{e} (the curve may be
-     geometrically different than the one currently associated with \ccc{e}).
+    {modifies the $x$-monotone curve associated with the edge \ccc{e} (the
+     curve \ccc{c} may be geometrically different than the one currently
+     associated with \ccc{e}).
      The function returns a handle to the modified edge (same as \ccc{e}).
-     \ccPrecond{It is the user's responsibility that the interior of \ccc{c} is disjoint
-     from all existing arrangement vertices and edges.}}
+     \ccPrecond{It is the user's responsibility that the interior of \ccc{c}
+     is disjoint from all existing arrangement vertices and edges.}}
  
 \ccMethod{Halfedge_handle split_edge_ex (Halfedge_handle he,
                                          const Point_2& p,
