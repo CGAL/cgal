@@ -621,7 +621,7 @@ public:
     arc.dir_right = ! dir_right;
     arc.valid = true;
 
-    return (c);
+    return (arc);
   }
 
   //@}
