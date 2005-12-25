@@ -54,11 +54,13 @@ public:
 
 
   Arr_construction_curve(): Base(),
-                            m_lastEvent(0)                         
+                            m_lastEvent(0),
+                            m_index(0)
   {}
 
   Arr_construction_curve(X_monotone_curve_2 &curve): Base( curve),
-                                                     m_lastEvent(0)
+                                                     m_lastEvent(0),
+                                                     m_index(0)
   {}
 
   
@@ -80,11 +82,54 @@ public:
     return m_lastEvent;
   }
 
+  unsigned int index() const
+  {
+    return (m_index);
+  }
+
+  void set_index(unsigned int i)
+  {
+    m_index = i;
+  }
+
+  bool has_valid_index() const
+  {
+    return (m_index != 0);
+  }
+
+  void push_back_halfedge_index(unsigned int i)
+  {
+    m_haldedges_indexes.push_back(i);
+  }
+
+  void clear_haldedges_indexes()
+  {
+    m_haldedges_indexes.clear();
+  }
+
+  bool has_haldedges_indexes() const
+  {
+    return (!m_haldedges_indexes.empty());
+  }
+
+  std::list<unsigned int>& get_haldedges_indexes_list()
+  {
+    return (m_haldedges_indexes);
+  }
 
 protected:
 
   /*! the last event that was handled on the curve */
   Event_ptr  m_lastEvent;
+
+  /*! index for a subcurve that may represent a hole (emarge from the left
+   * most vertex of a hole, and its the upper most curve). other subcurves
+   * will have 0 value  (invalid index)
+   */
+  unsigned int m_index;
+
+  /*! indxes of all haldedges below that may represent a hole */
+  std::list<unsigned int>  m_haldedges_indexes;
   
 };
 
