@@ -65,7 +65,9 @@ protected:
   typedef typename Arr_accessor::Dcel_vertex              DVertex;
   typedef typename Arr_accessor::Dcel_halfedge            DHalfedge;
   typedef typename Arr_accessor::Dcel_face                DFace;
-
+  typedef typename Arr_accessor::Dcel_hole                DHole;
+  typedef typename Arr_accessor::Dcel_isolated_vertex     DIso_vert;
+  
   // Data members:
   Arrangement_2&           m_arr;
   Arr_accessor             m_arr_access;
@@ -226,7 +228,7 @@ protected:
     {
       // Allocate a new DCEL face and read its outer CCB.
       new_f = m_arr_access.new_face();
-      he = _read_ccb (formatter, new_f, outer_size);
+      he = _read_ccb (formatter, new_f, outer_size, NULL);
       new_f->set_halfedge (he);
     }
     formatter.read_outer_ccb_end();
@@ -234,22 +236,28 @@ protected:
     // Read the holes inside the face.
     formatter.read_holes_begin();
 
+    DHole      *new_hole;
     const Size  n_holes = formatter.read_size ("number_of_holes");
     Size        inner_size;
     Size        k;
 
     for (k = 0; k < n_holes; k++)
     {
+      // Allocate a new hole record and set its incident face.
+      new_hole = m_arr_access.new_hole();
+      new_hole->set_face (new_f);
+
       // Read the current hole.
       inner_size = formatter.read_size ("halfedges_on_inner_CCB");
-      he = _read_ccb (formatter, new_f, inner_size);
-      new_f->add_hole (he);
+      he = _read_ccb (formatter, new_f, inner_size, new_hole);
+      new_hole->set_iterator (new_f->add_hole (he));
     }
     formatter.read_holes_end();
 
     // Read the isolated vertices inside the face.
     formatter.read_isolated_vertices_begin();
 
+    DIso_vert   *new_iso_vert;
     Size         n_isolated_vertices = 
                           formatter.read_size ("number_of_isolated_vertices");
     std::size_t  v_idx;
@@ -257,17 +265,17 @@ protected:
 
     for (k = 0; k < n_isolated_vertices; k++)
     {
-      // Read the current isolated vertices.
+      // Allocate a new isolated vertex record and set its incident face.
+      new_iso_vert = m_arr_access.new_isolated_vertex();
+      new_iso_vert->set_face (new_f);
+
+      // Read the current isolated vertex.
       v_idx = formatter.read_vertex_index ();
       iso_v = m_vertices[v_idx];
-      iso_v->set_face (new_f);
-      new_f->add_isolated_vertex (iso_v);
+      iso_v->set_isolated_vertex (new_iso_vert);
+      new_iso_vert->set_iterator (new_f->add_isolated_vertex (iso_v));
     }
     formatter.read_isolated_vertices_end();
-
-    // Update the total number of isolated vertices in the arrangement.
-    m_arr_access.set_number_of_isolated_vertices
-      (m_arr.number_of_isolated_vertices() + n_isolated_vertices);
 
     // Read any auxiliary data associated with the face.
     formatter.read_face_data (Face_handle (new_f));
@@ -281,12 +289,15 @@ protected:
    * \param formatter The formatter.
    * \param f The incident DCEL face.
    * \param boundary_size The number of halfedges along the boundary.
+   * \param p_hole If NULL, the CCB corresponds to the outer boundary of f;
+   *               otherwise, it corresponds to an inner component (hole).
    * \return A pointer to the first halfedge read.
    */
   template <class Formatter>
   DHalfedge* _read_ccb (Formatter& formatter, 
                         DFace *f,
-                        Size boundary_size)
+                        Size boundary_size,
+                        DHole *p_hole)
   {
     formatter.read_ccb_halfedges_begin();
  
@@ -294,7 +305,10 @@ protected:
     std::size_t   first_idx = formatter.read_halfedge_index();
     DHalfedge    *first_he = m_halfedges [first_idx];
 
-    first_he->set_face (f);
+    if (p_hole == NULL)
+      first_he->set_face (f);
+    else
+      first_he->set_hole (p_hole);
 
     // Read the rest of the halfedge along the boundary.
     std::size_t   curr_idx;
@@ -311,7 +325,10 @@ protected:
       prev_he->set_next (curr_he);
 
       // Set the incident face.
-      curr_he->set_face (f);
+      if (p_hole == NULL)
+        curr_he->set_face (f);
+      else
+        curr_he->set_hole (p_hole);
 
       prev_he = curr_he;
     }

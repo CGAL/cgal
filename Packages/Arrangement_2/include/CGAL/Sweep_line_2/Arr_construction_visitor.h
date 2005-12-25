@@ -23,6 +23,8 @@
 
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Sweep_line_2_empty_visitor.h>
+#include <CGAL/Unique_hash_map.h> 
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,6 +38,9 @@ protected:
   typedef typename Arrangement::Halfedge_handle        Halfedge_handle;
   typedef typename Arrangement::Vertex_handle          Vertex_handle;
   typedef typename Arrangement::Face_handle            Face_handle;
+  typedef typename Arrangement::Ccb_halfedge_circulator 
+    Ccb_halfedge_circulator;
+  typedef typename Arrangement::Holes_iterator         Holes_iterator;
   typedef Arr_construction_visitor<Traits_,
                                    Arrangement,
                                    Event_,
@@ -56,7 +61,6 @@ protected:
   typedef typename Base::SubCurveRevIter               SubCurveRevIter;
   typedef typename Base::SL_iterator                   SL_iterator;
 
-
 private:
 
   Arr_construction_visitor (const Self& );
@@ -66,7 +70,9 @@ public:
 
   Arr_construction_visitor(Arrangement *arr):
       m_arr(arr),
-      m_arr_access (*arr)
+      m_arr_access (*arr),
+      m_sc_counter (0),
+      m_sc_he_table(1)
   {}
 
   virtual ~Arr_construction_visitor(){}
@@ -79,6 +85,18 @@ public:
       //isolated event (no curves)
       insert_isolated_vertex(event->get_point(), iter);
       return true;
+    }
+
+    if(!event->has_left_curves())
+    {
+      CGAL_assertion(event->has_right_curves());
+      //its an event that may represent a hole
+      (*(event->right_curves_rbegin()))->set_index(++m_sc_counter);
+      if(iter != this->status_line_end())
+      {
+        Subcurve *sc_above = *iter;
+        sc_above->push_back_halfedge_index(m_sc_counter);
+      }
     }
 
     for(SubCurveIter itr = event->left_curves_begin();
@@ -152,6 +170,14 @@ public:
       lastEvent->is_curve_largest((Subcurve*)sc) )
     {
       lastEvent->set_halfedge_handle(res->twin());
+
+      // if sc has valid index, insert his index to m_sc_he_table
+      if(sc->has_valid_index())
+      {
+        CGAL_assertion(res->twin()->direction() == LARGER);
+        insert_index_to_sc_he_table(sc->index(), res->twin());
+      }
+      
     }
     this->current_event()->set_halfedge_handle(res);
 
@@ -159,17 +185,27 @@ public:
     {
       (this ->deallocate_event(lastEvent));
     }
+
+    //clear the list of indexes of sc
+    sc->clear_haldedges_indexes();
   }
 
  
-
-
   virtual Halfedge_handle
     insert_in_face_interior(const X_monotone_curve_2& cv,
 			    Subcurve* sc)
   {
-    return (m_arr->insert_in_face_interior (_curve(cv),
-					    m_arr->unbounded_face()));
+    Halfedge_handle res =  m_arr->insert_in_face_interior (_curve(cv),
+					    m_arr->unbounded_face());
+    if(sc->has_haldedges_indexes())
+    {
+      CGAL_assertion(res->twin()->direction() == LARGER);
+      std::list<unsigned int>& list_ref = 
+        (m_he_indexes_table[res->twin()] = std::list<unsigned int>());
+      list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
+    }
+    return (res);
+
   }
 
   virtual Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
@@ -180,17 +216,29 @@ public:
   {
     Halfedge_handle res =
       m_arr_access.insert_at_vertices_ex (_curve(cv),
-					  hhandle, prev,
+                                          hhandle, prev,
                                           LARGER,
                                           new_face_created);
-
+   
     if (new_face_created)
     {
       // In case a new face has been created (pointed by the new halfedge
       // we obtained), we have to examine the holes and isolated vertices
       // in the existing face (pointed be the twin halfedge) and relocate
       // the relevant features in the new face.
-      m_arr_access.relocate_in_new_face (res);
+      //m_arr_access.relocate_in_new_face (res);
+      CGAL_assertion(res->face() != res->twin()->face());
+      CGAL_assertion(res->face() != m_arr->unbounded_face());
+       // map the halfedge to the indexes list of all subcurves that are below him
+      if(sc->has_haldedges_indexes())
+      {
+        CGAL_assertion(res->direction() == LARGER);
+        std::list<unsigned int>& list_ref = 
+          (m_he_indexes_table[res] = std::list<unsigned int>());
+        list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
+      }
+      this->relocate_holes_in_new_face(res);
+      m_arr_access.relocate_isolated_vertices_in_new_face(res);
     }
 
     return res;
@@ -201,7 +249,15 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    return (m_arr->insert_from_right_vertex (_curve(cv), he));
+    Halfedge_handle res = m_arr->insert_from_right_vertex (_curve(cv), he);
+    if(sc->has_haldedges_indexes())
+    {
+      CGAL_assertion(res->direction() == LARGER);
+      std::list<unsigned int>& list_ref = 
+        (m_he_indexes_table[res] = std::list<unsigned int>());
+      list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
+    }
+    return (res);
   }
 
   virtual Halfedge_handle insert_from_left_vertex
@@ -209,7 +265,16 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    return (m_arr->insert_from_left_vertex (_curve(cv), he));
+    Halfedge_handle res = m_arr->insert_from_left_vertex (_curve(cv), he);
+    if(sc->has_haldedges_indexes())
+    {
+      CGAL_assertion(res->twin()->direction() == LARGER);
+      std::list<unsigned int>& list_ref = 
+        (m_he_indexes_table[res->twin()] = std::list<unsigned int>());
+      list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
+    }
+    
+    return (res);
   }
 
 
@@ -220,6 +285,36 @@ public:
 					    m_arr->unbounded_face()));
   }
 
+  void relocate_holes_in_new_face(Halfedge_handle he)
+  {
+    Face_handle new_face = he->face();
+    Halfedge_handle curr_he = he;
+    do
+    {
+      // we are intreseted only in halfedges directed from right to left.
+      if(curr_he->direction() == LARGER)
+      {
+        std::list<unsigned int>& indexes_list = m_he_indexes_table[curr_he];
+        for(std::list<unsigned int>::iterator itr = indexes_list.begin();
+            itr != indexes_list.end();
+            ++itr)
+        {
+          CGAL_assertion(*itr != 0);
+          Halfedge_handle he_on_face = m_sc_he_table[*itr];
+          if(he_on_face->twin()->face() == new_face)
+            //this hole was already relocated
+            continue;
+
+          m_arr_access.move_hole (he_on_face->twin()->face(),
+                                  new_face,
+                                  he_on_face->twin()->ccb());
+        }
+      }
+      curr_he = curr_he->next();
+    }
+    while(curr_he != he);
+
+  }
 private:
 
   /*!
@@ -244,10 +339,31 @@ private:
     return (static_cast<const typename Arrangement::X_monotone_curve_2&> (cv));
   }
 
+  void insert_index_to_sc_he_table(unsigned int i, Halfedge_handle he)
+  {
+    CGAL_assertion(i!=0);
+    if(i >= m_sc_he_table.size())
+    {
+      m_sc_he_table.resize(2*i);
+    }
+
+    m_sc_he_table[i] = he;
+  }
+
+
+
 protected:
           
   Arrangement*               m_arr;
   Arr_accessor<Arrangement>  m_arr_access;
+  // counter for Subcurves that may  represent a hole (the upper sc 
+  //emarge from  an event with only right curves
+  unsigned int               m_sc_counter; 
+  std::vector<Halfedge_handle>  m_sc_he_table;  //a table that maps index of a 
+                                             // subcurve to his halfedhe handle
+                                             // directed from right ot left.
+
+  Unique_hash_map<Halfedge_handle, std::list<unsigned int> >  m_he_indexes_table;
 };
 
 CGAL_END_NAMESPACE

@@ -80,9 +80,9 @@ public:
 protected:
 
   void       *p_inc;  // An incident halfedge pointing at the vertex,
-                      // or the face containing the vertex (in case it is
-                      // isolated). The LSB for the pointer indicates whether
-                      // the vertex is isolated).
+                      // or the isolated vertex information (in case it is
+                      // isolated). The LSB of the pointer indicates whether
+                      // the vertex is isolated.
   Point      *p_pt;   // The point associated with the vertex.
 
 public:
@@ -148,7 +148,10 @@ protected:
   void       *p_v;     // The incident vertex (the target of the halfedge).
                        // The LSB of this pointer is used to store the
                        // direction of the halfedge.
-  void       *p_f;     // The incident face (to the left of the halfedge).
+  void       *p_comp;  // The component this halfedge belongs to: the incident
+                       // face for outer CCBs and the hole information for
+                       // inner CCBs. The LSB of the pointer indicates whether
+                       // the halfedge lies on a hole boundary (inner CCB).
   
   X_monotone_curve *p_cv; // The associated x-monotone curve.
 
@@ -160,7 +163,7 @@ public:
     p_prev (NULL),
     p_next (NULL),
     p_v (NULL),
-    p_f (NULL),
+    p_comp (NULL),
     p_cv (NULL)
   {}
 
@@ -244,6 +247,8 @@ public:
 template <class V, class H, class F> class Arr_vertex;
 template <class V, class H, class F> class Arr_halfedge;
 template <class V, class H, class F> class Arr_face;
+template <class V, class H, class F> class Arr_hole;
+template <class V, class H, class F> class Arr_isolated_vertex;
 
 /*! \class
  * The default arrangement DCEL vertex class.
@@ -254,10 +259,10 @@ class Arr_vertex : public V,
 {
 public:
 
-  typedef V                     Base;
-  typedef Arr_vertex<V,H,F>     Vertex;
-  typedef Arr_halfedge<V,H,F>   Halfedge;
-  typedef Arr_face<V,H,F>       Face;
+  typedef V                           Base;
+  typedef Arr_vertex<V,H,F>           Vertex;
+  typedef Arr_halfedge<V,H,F>         Halfedge;
+  typedef Arr_isolated_vertex<V,H,F>  Isolated_vertex;
 
   /*! Default constructor. */
   Arr_vertex() 
@@ -291,25 +296,26 @@ public:
     this->p_inc = he;
   }
 
-  /*! Get the containing face (const version). */
-  const Face* face () const
+  /*! Get the isolated vertex information (const version). */
+  const Isolated_vertex* isolated_vertex () const
   {
     CGAL_precondition (is_isolated());
-    return (reinterpret_cast<const Face*>(_clean_pointer (this->p_inc)));
+    return (reinterpret_cast<const Isolated_vertex*>(_clean_pointer 
+                                                     (this->p_inc)));
   }
 
-  /*! Get an containing face (non-const version). */
-  Face* face ()
+  /*! Get the isolated vertex information (non-const version). */
+  Isolated_vertex* isolated_vertex ()
   {
     CGAL_precondition (is_isolated());
-    return (reinterpret_cast<Face*>(_clean_pointer (this->p_inc)));
+    return (reinterpret_cast<Isolated_vertex*>(_clean_pointer (this->p_inc)));
   }
 
-  /*! Set the containing face (for isolated vertices). */
-  void set_face (Face* f)
+  /*! Set the isolated vertex information. */
+  void set_isolated_vertex (Isolated_vertex* iv)
   { 
-    // Set the face pointer and set the LSB.
-    this->p_inc = _set_lsb (f);
+    // Set the isolated vertex-information pointer and set its LSB.
+    this->p_inc = _set_lsb (iv);
   }
 };
 
@@ -326,6 +332,7 @@ public:
   typedef Arr_vertex<V,H,F>     Vertex;
   typedef Arr_halfedge<V,H,F>   Halfedge;
   typedef Arr_face<V,H,F>       Face;
+  typedef Arr_hole<V,H,F>       Hole;
 
   /*! Default constructor. */
   Arr_halfedge()
@@ -443,22 +450,51 @@ public:
       this->p_v = v;
   }
 
-  /*! Get the incident face (const version). */
-  const Face* face () const 
-  {     
-    return (reinterpret_cast<const Face*>(this->p_f));
-  }
-
-  /*! Get the incident face (non-const version). */
-  Face* face () 
+  /*! Check whether the halfedge lies on the boundary of a hole. */
+  bool is_on_hole () const
   {
-    return (reinterpret_cast<Face*>(this->p_f));
+    return (_is_lsb_set (this->p_comp));
   }
 
-  /*! Set the incident face. */
+  /*! Get an incident face (const version). */
+  const Face* face () const
+  {
+    CGAL_precondition (! is_on_hole());
+    return (reinterpret_cast<const Face*>(this->p_comp));
+  }
+
+  /*! Get an incident face (non-const version). */
+  Face* face ()
+  {
+    CGAL_precondition (! is_on_hole());
+    return (reinterpret_cast<Face*>(this->p_comp));
+  }
+
+  /*! Set the incident facee (for halfedges that lie on an outer CCB). */
   void set_face (Face* f)
   { 
-    this->p_f = f;
+    // Set the face pointer and reset the LSB.
+    this->p_comp = f;
+  }
+
+  /*! Get the incident hole (const version). */
+  const Hole* hole () const 
+  {     
+    CGAL_precondition (is_on_hole());
+    return (reinterpret_cast<const Hole*> (_clean_pointer (this->p_comp)));
+  }
+
+  /*! Get the incident hole (non-const version). */
+  Hole* hole () 
+  {
+    CGAL_precondition (is_on_hole());
+    return (reinterpret_cast<Hole*> (_clean_pointer (this->p_comp)));
+  }
+
+  /*! Set the incident hole. */
+  void set_hole (Hole *hole)
+  { 
+    this->p_comp = _set_lsb (hole);
   }
 };
 
@@ -519,9 +555,9 @@ public:
   }
 
   /*! Add a hole inside the face. */
-  void add_hole (Halfedge* h)
+  Holes_iterator add_hole (Halfedge* h)
   {
-    this->holes.push_back (h);
+    return (this->holes.insert (this->holes.end(), h));
   }
 
   /*! Erase a hole from the face. */
@@ -577,9 +613,9 @@ public:
   }
 
   /*! Add an isloated vertex inside the face. */
-  void add_isolated_vertex (Vertex* v)
+  Isolated_vertices_iterator add_isolated_vertex (Vertex* v)
   {
-    this->iso_verts.push_back (v);
+    return (this->iso_verts.insert (this->iso_verts.end(), v));
   }
 
   /*! Erase an isloated vertex from the face. */
@@ -614,6 +650,126 @@ public:
   }
 };
 
+template <class V, class H, class F>
+class Arr_hole : public In_place_list_base<Arr_hole<V,H,F> >
+{
+public:
+
+  typedef Arr_hole<V,H,F>                Self;
+  typedef Arr_face<V,H,F>                Face;
+  typedef typename Face::Holes_iterator  Holes_iterator;
+
+private:
+
+  Face            *p_f;      // The face the contains the hole in its interior.
+  Holes_iterator   hole_it;  // The hole identifier.
+
+public:
+
+  /*! Default constructor. */
+  Arr_hole () 
+  {}
+
+  /*! Get the incident face (const version). */
+  const Face* face () const
+  {
+    return (p_f);
+  }
+
+  /*! Get the incident face (non-const version). */
+  Face* face ()
+  {
+    return (p_f);
+  }
+
+  /*! Set the incident face, the one that contains the hole. */
+  void set_face (Face* f)
+  {
+    p_f = f;
+    return;
+  }
+
+  /*! Get the hole iterator (const version). */
+  Holes_iterator iterator () const
+  {
+    return (hole_it);
+  }
+
+  /*! Get the hole iterator (non-const version). */
+  Holes_iterator iterator ()
+  {
+    return (hole_it);
+  }
+
+  /*! Set the hole iterator. */
+  void set_iterator (Holes_iterator hole)
+  {
+    hole_it = hole;
+    return;
+  }
+
+};
+
+template <class V, class H, class F>
+class Arr_isolated_vertex : 
+public In_place_list_base<Arr_isolated_vertex<V,H,F> >
+{
+public:
+
+  typedef Arr_isolated_vertex<V,H,F>                Self;
+  typedef Arr_face<V,H,F>                           Face;
+  typedef typename Face::Isolated_vertices_iterator Isolated_vertices_iterator;
+
+private:
+
+  Face                        *p_f;   // The face containing the hole.
+  Isolated_vertices_iterator   iv_it; // The isolated vertex identifier.
+
+public:
+
+  /*! Default constructor. */
+  Arr_isolated_vertex () 
+  {}
+
+  /*! Get the containing face (const version). */
+  const Face* face () const
+  {
+    return (p_f);
+  }
+
+  /*! Get the containing face (non-const version). */
+  Face* face ()
+  {
+    return (p_f);
+  }
+
+  /*! Set the incident face, the one that contains the isolated vertex. */
+  void set_face (Face* f)
+  {
+    p_f = f;
+    return;
+  }
+
+  /*! Get the isolated vertex iterator (const version). */
+  Isolated_vertices_iterator iterator () const
+  {
+    return (iv_it);
+  }
+
+  /*! Get the isolated vertex iterator (non-const version). */
+  Isolated_vertices_iterator iterator ()
+  {
+    return (iv_it);
+  }
+
+  /*! Set the isolated vertex iterator. */
+  void set_iterator (Isolated_vertices_iterator iv)
+  {
+    iv_it = iv;
+    return;
+  }
+};
+
 /*! \class
  * The arrangement DCEL class.
  */
@@ -624,17 +780,21 @@ class Arr_dcel_base
 public:
 
   // Define the vertex, halfedge and face types.
-  typedef Arr_dcel_base<V,H,F>       Self;
-  typedef Arr_vertex<V,H,F>          Vertex;
-  typedef Arr_halfedge<V,H,F>        Halfedge;
-  typedef Arr_face<V,H,F>            Face;
-  
+  typedef Arr_dcel_base<V,H,F>        Self;
+  typedef Arr_vertex<V,H,F>           Vertex;
+  typedef Arr_halfedge<V,H,F>         Halfedge;
+  typedef Arr_face<V,H,F>             Face;
+  typedef Arr_hole<V,H,F>             Hole;
+  typedef Arr_isolated_vertex<V,H,F>  Isolated_vertex;
+
 protected:
 
   // The vetices, halfedges and faces are stored in three in-place lists.
-  typedef In_place_list<Vertex, false>   Vertex_list;
-  typedef In_place_list<Halfedge, false> Halfedge_list;
-  typedef In_place_list<Face, false>     Face_list;
+  typedef In_place_list<Vertex, false>          Vertex_list;
+  typedef In_place_list<Halfedge, false>        Halfedge_list;
+  typedef In_place_list<Face, false>            Face_list;
+  typedef In_place_list<Hole, false>            Hole_list;
+  typedef In_place_list<Isolated_vertex, false> Iso_vert_list;
 
   // Vertex allocator.
   typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
@@ -647,6 +807,15 @@ protected:
   // Face allocator.
   typedef typename Allocator::template rebind<Face>      Face_alloc_rebind;
   typedef typename Face_alloc_rebind::other              Face_allocator;
+  
+  // Hole allocator.
+  typedef typename Allocator::template rebind<Hole>      Hole_alloc_rebind;
+  typedef typename Hole_alloc_rebind::other              Hole_allocator;
+
+  // Isolated vertex allocator.
+  typedef typename Allocator::template rebind<Isolated_vertex>
+                                                         Iso_vert_alloc_rebind;
+  typedef typename Iso_vert_alloc_rebind::other          Iso_vert_allocator;
 
 public:
 
@@ -661,10 +830,14 @@ protected:
   Vertex_list         vertices;             // The vertices container.
   Halfedge_list       halfedges;            // The halfedges container.
   Face_list           faces;                // The faces container.
+  Hole_list           holes;                // The holes (inner components).
+  Iso_vert_list       iso_verts;            // The isolated vertices.
 
   Vertex_allocator    vertex_alloc;         // An allocator for vertices.
   Halfedge_allocator  halfedge_alloc;       // An allocator for halfedges.
   Face_allocator      face_alloc;           // An allocator for faces.
+  Hole_allocator      hole_alloc;           // An allocator for holes.
+  Iso_vert_allocator  iso_vert_alloc;       // Allocator for isolated vertices.
 
 public:
 
@@ -723,6 +896,18 @@ public:
   Size size_of_faces() const
   {
     return (faces.size());
+  }
+
+  /*! Get the number of holes. */
+  Size size_of_holes() const
+  {
+    return (holes.size());
+  }
+
+  /*! Get the number of isolated vertices. */
+  Size size_of_isolated_vertices () const
+  {
+    return (iso_verts.size());
   }
   //@}
 
@@ -785,6 +970,26 @@ public:
     faces.push_back (*f);
     return (f);
   }
+
+  /*! Create a new hole. */
+  Hole* new_hole ()
+  {
+    Hole       *h = hole_alloc.allocate (1);
+    
+    hole_alloc.construct (h, Hole());
+    holes.push_back (*h);
+    return (h);
+  }
+
+  /*! Create a new isolated vertex. */
+  Isolated_vertex* new_isolated_vertex ()
+  {
+    Isolated_vertex  *iv = iso_vert_alloc.allocate (1);
+    
+    iso_vert_alloc.construct (iv, Isolated_vertex());
+    iso_verts.push_back (*iv);
+    return (iv);
+  }
   //@}
 
   /// \name Deletion of DCEL features.
@@ -812,6 +1017,22 @@ public:
     faces.erase (f);
     face_alloc.destroy (f);
     face_alloc.deallocate (f, 1);
+  }
+
+  /*! Delete an existing hole. */
+  void delete_hole (Hole * h)
+  {
+    holes.erase (h);
+    hole_alloc.destroy (h);
+    hole_alloc.deallocate (h, 1);
+  }
+
+  /*! Delete an existing isolated vertex. */
+  void delete_isolated_vertex (Isolated_vertex * iv)
+  {
+    iso_verts.erase (iv);
+    iso_vert_alloc.destroy (iv);
+    iso_vert_alloc.deallocate (iv, 1);
   }
   
   /*! Delete all DCEL features. */
@@ -846,6 +1067,26 @@ public:
       ++fit;
       delete_face (&(*f_curr));
     }
+
+    // Free all holes.
+    typename Hole_list::iterator   hoit = holes.begin(), ho_curr;
+
+    while (hoit != holes.end())
+    {
+      ho_curr = hoit;
+      ++hoit;
+      delete_hole (&(*ho_curr));
+    }
+
+    // Free all isolated vertices.
+    typename Iso_vert_list::iterator   ivit = iso_verts.begin(), iv_curr;
+
+    while (ivit != iso_verts.end())
+    {
+      iv_curr = ivit;
+      ++ivit;
+      delete_isolated_vertex (&(*iv_curr));
+    }
   }
   //@}
 
@@ -865,6 +1106,9 @@ public:
     typedef std::map<const Vertex*, Vertex*>     Vertex_map;
     typedef std::map<const Halfedge*, Halfedge*> Halfedge_map;
     typedef std::map<const Face*, Face*>         Face_map;
+    typedef std::map<const Hole*, Hole*>         Hole_map;
+    typedef std::map<const Isolated_vertex*,
+                     Isolated_vertex*>           Iso_vert_map;
 
     Vertex_map                v_map;
     Vertex_const_iterator     vit;
@@ -899,10 +1143,32 @@ public:
       f_map.insert (typename Face_map::value_type(&(*fit), dup_f));
     }
 
+    Hole_map                            ho_map;
+    typename Hole_list::const_iterator  hoit;
+    Hole                               *dup_ho;
+
+    for (hoit = dcel.holes.begin(); hoit != dcel.holes.end(); ++hoit)
+    {
+      dup_ho = new_hole();
+      ho_map.insert (typename Hole_map::value_type(&(*hoit), dup_ho));
+    }
+
+    Iso_vert_map                            iv_map;
+    typename Iso_vert_list::const_iterator  ivit;
+    Isolated_vertex                        *dup_iv;
+
+    for (ivit = dcel.iso_verts.begin(); ivit != dcel.iso_verts.end(); ++ivit)
+    {
+      dup_iv = new_isolated_vertex();
+      iv_map.insert (typename Iso_vert_map::value_type(&(*ivit), dup_iv));
+    }
+
     // Update the vertex records.
     const Vertex             *v;
     const Halfedge           *h;
     const Face               *f;
+    const Hole               *ho;
+    const Isolated_vertex    *iv;
     
     for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
     {
@@ -911,11 +1177,11 @@ public:
 
       if (v->is_isolated())
       {
-        // Isolated vertex - set it containing face.
-        f = v->face();
-        dup_f = (f_map.find (f))->second;
+        // Isolated vertex - set its information.
+        iv = v->isolated_vertex();
+        dup_iv = (iv_map.find (iv))->second;
 
-        dup_v->set_face (dup_f);
+        dup_v->set_isolated_vertex (dup_iv);
       }
       else
       {
@@ -935,27 +1201,40 @@ public:
     {
       h = &(*hit);
       v = h->vertex();
-      f = h->face();
       opp = h->opposite();
       prev = h->prev();
       next = h->next();
 
       dup_h = (he_map.find (h))->second;
       dup_v = (v_map.find (v))->second;
-      dup_f = (f_map.find (f))->second;
       dup_opp = (he_map.find (opp))->second;
       dup_prev = (he_map.find (prev))->second;
       dup_next = (he_map.find (next))->second;
 
       dup_h->set_vertex (dup_v);
-      dup_h->set_face (dup_f);
       dup_h->set_opposite (dup_opp);
       dup_h->set_prev (dup_prev);
       dup_h->set_next (dup_next);
       dup_h->set_direction (h->direction());
+
+      if (h->is_on_hole())
+      {
+        // The halfedge lies on a hole (inner CCB) - set its hole record.
+        ho = h->hole();
+        dup_ho = (ho_map.find (ho))->second;
+        dup_h->set_hole (dup_ho);
+      }
+      else
+      {
+        // The halfedge lies on an outer CCB - set its incident face.
+        f = h->face();
+        dup_f = (f_map.find (f))->second;
+        dup_h->set_face (dup_f);
+      }
     }
 
-    // Update the face records.
+    // Update the face records, along with the hole and isolated vertex
+    // records.
     typename Face::Holes_const_iterator              holes_it;
     typename Face::Isolated_vertices_const_iterator  iso_verts_it;
     const Halfedge                      *hole;
@@ -985,7 +1264,10 @@ public:
         hole = *holes_it;
 
         dup_hole = (he_map.find (hole))->second;
-        dup_f->add_hole (dup_hole);
+        dup_ho = dup_hole->hole();
+
+        dup_ho->set_face (dup_f);
+        dup_ho->set_iterator (dup_f->add_hole (dup_hole));
       }
 
       // Assign the isolated vertices.
@@ -995,7 +1277,10 @@ public:
         iso_vert = &(*iso_verts_it);
 
         dup_iso_vert = (v_map.find (iso_vert))->second;
-        dup_f->add_isolated_vertex (dup_iso_vert);
+        dup_iv = dup_iso_vert->isolated_vertex();
+
+        dup_iv->set_face (dup_f);
+        dup_iv->set_iterator (dup_f->add_isolated_vertex (dup_iso_vert));
       }
     }
 

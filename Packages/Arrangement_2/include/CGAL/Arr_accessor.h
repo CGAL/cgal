@@ -51,13 +51,15 @@ public:
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                        Ccb_halfedge_circulator;
+                                                       Ccb_halfedge_circulator;
 
 private:
 
   typedef typename Arrangement_2::DVertex               DVertex;
   typedef typename Arrangement_2::DHalfedge             DHalfedge;
   typedef typename Arrangement_2::DFace                 DFace;
+  typedef typename Arrangement_2::DHole                 DHole;
+  typedef typename Arrangement_2::DIso_vert             DIso_vert;
 
   Arrangement_2  *p_arr;           // The associated arrangement.
 
@@ -116,8 +118,24 @@ public:
   int halfedge_distance (Halfedge_const_handle e1,
                          Halfedge_const_handle e2) const
   {
-    return (p_arr->_halfedge_distance (p_arr->_halfedge (e1),
-                                       p_arr->_halfedge(e2)));
+    // If the two halfedges do not belong to the same component, return (-1).
+    const DHalfedge     *he1 = p_arr->_halfedge (e1);
+    const DHalfedge     *he2 = p_arr->_halfedge (e2);
+    
+    if (he1 == he2)
+      return (0);
+
+    const DHole         *hole1 = (he1->is_on_hole()) ? he1->hole() : NULL;
+    const DHole         *hole2 = (he2->is_on_hole()) ? he2->hole() : NULL;
+    const DFace         *f1 = (hole1 == NULL) ? he1->face() : hole1->face();
+    const DFace         *f2 = (hole2 == NULL) ? he2->face() : hole2->face();
+
+    if (f1 != f2 || hole1 != hole2)
+      return (-1);
+
+    // Compute the distance between the two halfedges.
+    unsigned int         dist = p_arr->_halfedge_distance (he1, he2);
+    return (static_cast<int> (dist));
   }
 
   /*!
@@ -157,33 +175,31 @@ public:
   }
 
   /*!
-   * Check whether the given halfedge lies on the outer boundary of the given
-   * face.
-   * \param f A handle for the given face.
+   * Check whether the given halfedge lies on the outer boundary of its
+   * incident face.
    * \param he The given halfedge.
-   * \return (true) in case he lies on the outer boundary of f;
-   *         (false) otherwise.
+   * \return (true) in case he lies on the outer boundary of its incident face;
+   *         (false) if he lies on a hole inside this face.
    */
-  bool is_on_outer_boundary (Face_const_handle f,
-                             Halfedge_const_handle he) const
+  bool is_on_outer_boundary (Halfedge_const_handle he) const
   {
-    return (p_arr->_is_on_outer_boundary (p_arr->_face (f),
-                                          p_arr->_halfedge (he)) != NULL);
+    const DHalfedge    *p_he = p_arr->_halfedge (he);
+
+    return (! p_he->is_on_hole());
   }
 
   /*!
-   * Check whether the given halfedge lies on the inner boundary of the given
-   * face.
-   * \param f A handle for the given face.
+   * Check whether the given halfedge lies on the inner boundary of its
+   * incident face.
    * \param he The given halfedge.
-   * \return (true) in case he lies on the outer boundary of f;
-   *         (false) otherwise.
+   * \return (true) in case he lies on a hole inside its incident face;
+   *         (false) if he lies on the outer boundary of this face.
    */
-  bool is_on_inner_boundary (Face_const_handle f,
-                             Halfedge_const_handle he) const
+  bool is_on_inner_boundary (Halfedge_const_handle he) const
   {
-    return (p_arr->_is_on_inner_boundary (p_arr->_face (f),
-                                          p_arr->_halfedge (he)) != NULL);
+    const DHalfedge    *p_he = p_arr->_halfedge (he);
+
+    return (p_he->is_on_hole());
   }
 
   /*!
@@ -317,43 +333,35 @@ public:
     return;
   }
 
+  void relocate_isolated_vertices_in_new_face (Halfedge_handle new_he)
+  {
+    p_arr->_relocate_isolated_vertices_in_new_face (p_arr->_halfedge(new_he));
+    return;
+  }
+
+  void relocate_holes_in_new_face (Halfedge_handle new_he)
+  {
+    p_arr->_relocate_holes_in_new_face (p_arr->_halfedge(new_he));
+    return;
+  }
+
   /*!
    * Move a hole from one face to another.
    * \param from_face The source face.
    * \param to_face The destination face.
    * \param hole A CCB circulator that corresponds to the outer boundary
    *             of the hole to move.
-   * \return Whether the hole was successfully moved.
    */
-  bool move_hole (Face_handle from_face, Face_handle to_face,
+  void move_hole (Face_handle from_face, Face_handle to_face,
                   Ccb_halfedge_circulator hole)
   {
-    typename Arrangement_2::DHoles_iter   it;
-    DFace            *from_f =  p_arr->_face (from_face);
     DHalfedge        *he = p_arr->_halfedge (hole);
-    DHalfedge        *he_first;
-    DHalfedge        *he_curr;
-    
-    for (it = from_f->holes_begin(); it != from_f->holes_end(); ++it)
-    {
-      // Go around the boundary of the current hole and check whether he
-      // is on this boundary.
-      he_first = he_curr = *it;
-      do
-      {
-        if (he_curr == he)
-        {
-          // Move the current holes which contains he.
-          p_arr->_move_hole (from_f, p_arr->_face (to_face), it);
-          return (true);
-        }
-        
-        he_curr = he_curr->next();
-      } while (he_curr != he_first);
-    }
 
-    // If we reached here, the vertex is not contained in from_face.
-    return (false);
+    p_arr->_move_hole (p_arr->_face (from_face),
+                       p_arr->_face (to_face),
+                       he->hole()->iterator());
+    
+    return;
   }
   
   /*!
@@ -361,42 +369,18 @@ public:
    * \param from_face The source face.
    * \param to_face The destination face.
    * \param v The isolated vertex to move.
-   * \return Whether the vertex was successfully moved.
    */
   bool move_isolated_vertex (Face_handle from_face, Face_handle to_face,
                              Vertex_handle v)
   {
-    typename Arrangement_2::DIsolated_vertices_iter   it;
-    DFace            *from_f =  p_arr->_face (from_face);
     DVertex          *iso_v = p_arr->_vertex (v);
      
-    for (it = from_f->isolated_vertices_begin();
-         it != from_f->isolated_vertices_end(); ++it)
-    {
-      if (&(*it) == iso_v)
-      {
-        p_arr->_move_isolated_vertex (from_f, p_arr->_face (to_face), it);
-        return (true);
-      }
-    }
-
-    // If we reached here, the vertex is not contained in from_face.
-    return (false);
+    p_arr->_move_isolated_vertex (p_arr->_face (from_face),
+                                  p_arr->_face (to_face),
+                                  iso_v->isolated_vertex()->iterator());
+    return;
   }
 
-  /*!
-   * Find the vertex in the isolated vertices container of a given face and
-   * earse this vertex once it is found.
-   * \param f The given face.
-   * \param v The isolated vertex.
-   * \return Whether the vertex was found and erased or not.
-   */
-  bool find_and_erase_isolated_vertex (Face_handle f, Vertex_handle v)
-  {
-    return p_arr->_find_and_erase_isolated_vertex (p_arr->_face (f),
-                                                   p_arr->_vertex (v));
-  }
- 
   /*!
    * Modify the point associated with a given vertex. The point may be
    * geometrically different than the one currently associated with the vertex.
@@ -493,11 +477,11 @@ public:
    * \return A handle for the remaining face.
    */
   Face_handle remove_edge_ex (Halfedge_handle e,
-			      bool remove_source = true,
-			      bool remove_target = true)
+                              bool remove_source = true,
+                              bool remove_target = true)
   {
     DFace*      f = p_arr->_remove_edge (p_arr->_halfedge (e),
-					 remove_source, remove_target);
+                                         remove_source, remove_target);
     
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));
@@ -509,6 +493,8 @@ public:
   typedef DVertex                         Dcel_vertex;
   typedef DHalfedge                       Dcel_halfedge;
   typedef DFace                           Dcel_face;
+  typedef DHole                           Dcel_hole;
+  typedef DIso_vert                       Dcel_isolated_vertex;
 
   /*!
    * Create a new vertex, associated with the given point.
@@ -557,13 +543,21 @@ public:
   }
 
   /*!
-   * Update the total number of isolated vertices in the arrangement.
-   * \param n The new number of isolated vertices.
+   * Create a new hole.
+   * \return A pointer to the created DCEL hole.
    */
-  void set_number_of_isolated_vertices (Size n)
+  Dcel_hole* new_hole ()
   {
-    p_arr->n_iso_verts = n;
-    return;
+    return (p_arr->dcel.new_hole());
+  }
+
+  /*!
+   * Create a new isolated vertex.
+   * \return A pointer to the created DCEL isolated vertex.
+   */
+  Dcel_isolated_vertex* new_isolated_vertex ()
+  {
+    return (p_arr->dcel.new_isolated_vertex());
   }
   //@}
 };

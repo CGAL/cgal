@@ -78,6 +78,8 @@ protected:
   typedef typename Dcel::Vertex                      DVertex;
   typedef typename Dcel::Halfedge                    DHalfedge;
   typedef typename Dcel::Face                        DFace;
+  typedef typename Dcel::Hole                        DHole;
+  typedef typename Dcel::Isolated_vertex             DIso_vert;
 
   typedef typename Dcel::difference_type             DDifference;  
 
@@ -371,7 +373,7 @@ public:
     {
       CGAL_precondition (this->is_isolated());
 
-      return (DFace_iter (Base::face()));
+      return (DFace_iter (Base::isolated_vertex()->face()));
     }
 
     /*! 
@@ -382,7 +384,7 @@ public:
     {
       CGAL_precondition (this->is_isolated());
 
-      return (DFace_const_iter (Base::face()));
+      return (DFace_const_iter (Base::isolated_vertex()->face()));
     }
 
   private:
@@ -392,8 +394,9 @@ public:
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
-    void set_face (DFace* );
-
+    const DIso_vert* isolated_vertex () const;
+    DIso_vert* isolated_vertex ();
+    void set_isolated_vertex (DIso_vert* );
   };
 
   /*!
@@ -436,13 +439,19 @@ public:
     /*! Get the incident face (non-const version). */
     Face_handle face()
     {
-      return (DFace_iter (Base::face()));
+      if (! Base::is_on_hole())
+        return (DFace_iter (Base::face()));
+      else
+        return (DFace_iter (Base::hole()->face()));
     }
 
     /*! Get the incident face (const version). */
     Face_const_handle face() const
     {
-      return (DFace_const_iter (Base::face()));
+      if (! Base::is_on_hole())
+        return (DFace_const_iter (Base::face()));
+      else
+        return (DFace_const_iter (Base::hole()->face()));
     }
 
     /*! Get the twin halfedge (non-const version). */
@@ -502,12 +511,15 @@ public:
     DHalfedge* opposite ();
     void set_opposite (DHalfedge* );
     void set_direction (Comparison_result );
-    void set_prev (DHalfedge* he);
-    void set_next (DHalfedge* he);
+    void set_prev (DHalfedge* );
+    void set_next (DHalfedge* );
     const DVertex* vertex () const ;
     DVertex* vertex ();
-    void set_vertex (DVertex* v);
-    void set_face (DFace* f);
+    void set_vertex (DVertex* );
+    const DHole* hole () const;
+    DHole* hole ();
+    void set_hole (DHole* );
+    void set_face (DFace* );
   };
 
   /*!
@@ -603,9 +615,9 @@ public:
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
-    void add_hole (DHalfedge* );
+    DHoles_iter add_hole (DHalfedge* );
     void erase_hole (DHoles_iter );
-    void add_isolated_vertex (DVertex* );
+    DIsolated_vertices_iter add_isolated_vertex (DVertex* );
     void erase_isolated_vertex (DIsolated_vertices_iter );
   };
 
@@ -666,7 +678,6 @@ protected:
   // Data members:
   Dcel                dcel;         // The DCEL representing the arrangement.
   DFace              *un_face;      // The unbounded face of the DCEL.
-  Size                n_iso_verts;  // Number of isolated vertices.
   Points_container    points;       // Container for the points that
                                     // correspond to the vertices.
   Points_alloc        points_alloc; // Allocator for the points.
@@ -752,7 +763,7 @@ public:
   /*! Get the number of isolated arrangement vertices. */
   Size number_of_isolated_vertices () const
   {
-    return (n_iso_verts);
+    return (dcel.size_of_isolated_vertices());
   }
 
   /*! Get the number of arrangement halfedges (the result is always even). */
@@ -1123,7 +1134,7 @@ public:
    */
   Face_handle remove_edge (Halfedge_handle e,
                            bool remove_source = true,
-			   bool remove_target = true);
+                           bool remove_target = true);
   
   //@}
 
@@ -1275,11 +1286,12 @@ protected:
    * Compute the distance (in halfedges) between two halfedges.
    * \param e1 The source halfedge.
    * \param e2 The destination halfedge.
-   * \return In case e1 and e2 belong to the same connected component, the 
-   *         function returns number of boundary halfedges between the two 
-   *         halfedges. Otherwise, it returns (-1).
+   * \pre e1 and e2 belong to the same connected component
+   * \return The number of halfedges along the component boundary between the
+   *         two halfedges.
    */
-  int _halfedge_distance (const DHalfedge *e1, const DHalfedge *e2) const;
+  unsigned int _halfedge_distance (const DHalfedge *e1,
+                                   const DHalfedge *e2) const;
 
   /*!
    * Determine whether a given query halfedge lies in the interior of a new
@@ -1327,7 +1339,7 @@ protected:
    * \param v The isolated vertex.
    */
   void _insert_isolated_vertex (DFace *f,
-				DVertex *v);
+                                DVertex *v);
 
   /*!
    * Move a given isolated vertex from one face to another.
@@ -1336,46 +1348,8 @@ protected:
    * \param vit A DCEL isolated vertices iterator pointing at the vertex.
    */
   void _move_isolated_vertex (DFace *from_face,
-			      DFace *to_face,
-			      DIsolated_vertices_iter vit);
-
-  /*!
-   * Check whether the given halfedge lies on the outer boundary of the given
-   * face.
-   * \param f The given face.
-   * \param e The given halfedge.
-   * \return A pointer to a halfedge on the outer boundary of f in case e lies
-   *         on this outer boundary, or NULL if it does not.
-   */
-  DHalfedge* _is_on_outer_boundary (DFace *f, DHalfedge *e) const;
-
-  /*!
-   * Check whether the given halfedge lies on the inner boundary of the given
-   * face.
-   * \param f The given face.
-   * \param e The given halfedge.
-   * \return A pointer to a halfedge on the inner boundary of f in case e lies
-   *         on this outer boundary, or NULL if it does not.
-   */
-  DHalfedge* _is_on_inner_boundary (DFace *f, DHalfedge *e) const;
-
-  /*!
-   * Find the hole represented by a given halfedge from the holes container
-   * of a given face and earse this hole once it is found.
-   * \param f The given face.
-   * \param e The given halfedge.
-   * \return Whether the hole was found and erased or not.
-   */
-  bool _find_and_erase_hole (DFace *f, DHalfedge* e);
-
-  /*!
-   * Find the vertex in the isolated vertices container of a given face and
-   * earse this vertex once it is found.
-   * \param f The given face.
-   * \param v The isolated vertex.
-   * \return Whether the vertex was found and erased or not.
-   */
-  bool _find_and_erase_isolated_vertex (DFace *f, DVertex* v);
+                              DFace *to_face,
+                              DIsolated_vertices_iter vit);
 
   /*!
    * Create a new vertex and associate it with the given point.
@@ -1454,6 +1428,22 @@ protected:
   void _relocate_in_new_face (DHalfedge *new_he);
 
   /*!
+   * Relocate all holes to their proper position,
+   * immediately after a face has split due to the insertion of a new halfedge.
+   * \param new_he The new halfedge that caused the split, such that the new
+   *               face lies to its left and the old face to its right.
+   */
+  void _relocate_holes_in_new_face (DHalfedge *new_he);
+
+  /*!
+   * Relocate all  vertices to their proper position,
+   * immediately after a face has split due to the insertion of a new halfedge.
+   * \param new_he The new halfedge that caused the split, such that the new
+   *               face lies to its left and the old face to its right.
+   */
+  void _relocate_isolated_vertices_in_new_face (DHalfedge *new_he);
+
+  /*!
    * Replace the point associated with the given vertex.
    * \param v The vertex to modify.
    * \param p The point that should be associated with the edge.
@@ -1515,7 +1505,7 @@ protected:
    * \return A pointer to the remaining face.
    */
   DFace *_remove_edge (DHalfedge *e,
-		       bool remove_source, bool remove_target);
+                       bool remove_source, bool remove_target);
 
   //@}
 
@@ -1771,7 +1761,7 @@ private:
   }
 
   void _notify_before_split_hole (Face_handle f,
-				  Ccb_halfedge_circulator h,
+                                  Ccb_halfedge_circulator h,
                                   Halfedge_handle e)
   {
     Observers_iterator   iter;
@@ -1871,7 +1861,7 @@ private:
   }
 
   void _notify_before_merge_hole (Face_handle f,
-				  Ccb_halfedge_circulator h1,
+                                  Ccb_halfedge_circulator h1,
                                   Ccb_halfedge_circulator h2,
                                   Halfedge_handle e)
   {
@@ -1883,7 +1873,7 @@ private:
   }
 
   void _notify_after_merge_hole (Face_handle f,
-				 Ccb_halfedge_circulator h)
+                                 Ccb_halfedge_circulator h)
   {
     Observers_rev_iterator   iter;
     Observers_rev_iterator   end = observers.rend();
