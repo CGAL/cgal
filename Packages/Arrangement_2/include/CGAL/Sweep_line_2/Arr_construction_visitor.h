@@ -219,6 +219,14 @@ public:
                                           hhandle, prev,
                                           LARGER,
                                           new_face_created);
+     // map the halfedge to the indexes list of all subcurves that are below him
+      if(sc->has_haldedges_indexes())
+      {
+        CGAL_assertion(res->direction() == LARGER);
+        std::list<unsigned int>& list_ref = 
+          (m_he_indexes_table[res] = std::list<unsigned int>());
+        list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
+      }
    
     if (new_face_created)
     {
@@ -229,14 +237,7 @@ public:
       //m_arr_access.relocate_in_new_face (res);
       CGAL_assertion(res->face() != res->twin()->face());
       CGAL_assertion(res->face() != m_arr->unbounded_face());
-       // map the halfedge to the indexes list of all subcurves that are below him
-      if(sc->has_haldedges_indexes())
-      {
-        CGAL_assertion(res->direction() == LARGER);
-        std::list<unsigned int>& list_ref = 
-          (m_he_indexes_table[res] = std::list<unsigned int>());
-        list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
-      }
+      
       this->relocate_holes_in_new_face(res);
       m_arr_access.relocate_isolated_vertices_in_new_face(res);
     }
