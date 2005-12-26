@@ -131,6 +131,8 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
                                        traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2   compare_y_at_x_left =
                                        traits->compare_y_at_x_left_2_object();
+  typename Traits_adaptor_2::Compare_xy_2            compare_xy =
+                                       traits->compare_xy_2_object();
 
   typename Arrangement::Edge_const_iterator    eit = p_arr->edges_begin();
   typename Arrangement::Halfedge_const_handle  closest_edge;
@@ -218,9 +220,19 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
     if (in_x_range && res == EQUAL &&
         is_vertical(eit->curve()))
     {
-      // The vertical ray overlaps an existing vertical edge containing p.
-      // In this case simply return this edge.
-      return (CGAL::make_object (eit));
+      // Check if the query point is one of the end-vertices of the vertical
+      // edge.
+      Comparison_result  res1 = compare_xy (p, eit->source()->point());
+      Comparison_result  res2 = compare_xy (p, eit->target()->point());
+
+      if (! ((res1 == EQUAL && res2 == curve_above_under) ||
+             (res1 == curve_above_under && res2 == EQUAL)))
+      {
+        // The vertical ray overlaps an existing vertical edge containing p.
+        // In this case simply return this edge.
+        closest_edge = eit;
+        return (CGAL::make_object (closest_edge));
+      }
     }
 
     // Move to the next edge.
@@ -233,15 +245,31 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
 
   // If one of the closest edge's end vertices has the same x-coordinate
   // as the query point, return this vertex.
-  if (traits->compare_x_2_object() (closest_edge->source()->point(),
-                                    p) == EQUAL)
+  if (! is_vertical (closest_edge->curve()))
   {
-    return (CGAL::make_object (closest_edge->source()));
+    if (traits->compare_x_2_object() (closest_edge->source()->point(),
+                                      p) == EQUAL)
+    {
+      return (CGAL::make_object (closest_edge->source()));
+    }
+    else if (traits->compare_x_2_object() (closest_edge->target()->point(),
+                                           p) == EQUAL)
+    {
+      return (CGAL::make_object (closest_edge->target()));
+    }
   }
-  else if (traits->compare_x_2_object() (closest_edge->target()->point(),
-                                         p) == EQUAL)
+  else
   {
-    return (CGAL::make_object (closest_edge->target()));
+    Comparison_result  res1 = compare_xy (p, closest_edge->source()->point());
+    Comparison_result  res2 = compare_xy (p, closest_edge->target()->point());
+
+    CGAL_assertion (res1 == res2);
+    CGAL_assertion (res1 = point_above_under);
+
+    if (closest_edge->direction() == point_above_under)
+      return (CGAL::make_object (closest_edge->source()));
+    else
+      return (CGAL::make_object (closest_edge->target()));
   }
 
   // Otherwise, return the closest edge.
