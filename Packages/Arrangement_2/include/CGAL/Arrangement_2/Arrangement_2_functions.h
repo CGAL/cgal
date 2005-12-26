@@ -1957,7 +1957,8 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 // immediately after a face has split due to the insertion of a new halfedge.
 //
 template<class Traits, class Dcel>
-void Arrangement_2<Traits,Dcel>::_relocate_holes_in_new_face (DHalfedge *new_he)
+void Arrangement_2<Traits,Dcel>::
+_relocate_holes_in_new_face (DHalfedge *new_he)
 {
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
@@ -2723,9 +2724,6 @@ bool Arrangement_2<Traits,Dcel>::is_valid() const
   }
 
   if (!_are_vertices_unique())
-    return (false);
-
-  if(!_are_curves_disjoint_interior())
     return (false);
 
   // If we reached here, the arrangement is valid.
