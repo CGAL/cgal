@@ -1531,12 +1531,6 @@ protected:
    */
   bool _are_vertices_unique() const;
   
-
-  /*!
-   * Check that all curves are disjoint interior.
-   */
-  bool _are_curves_disjoint_interior() const;
- 
   /*! Check that the curves around a given vertex are ordered clockwise. */
   bool _are_curves_ordered_cw_around_vertrex (Vertex_const_handle v) const;
   
@@ -2172,6 +2166,17 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel>
 bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
                     typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
+
+
+/*!
+ * Check the validity of the arrangement, In particular, check that the
+ * edegs are disjoint-interior, and the holes are located in their proper
+ * position.
+ * \param arr The arrangement.
+ * \return true iff the arrangement is valid.
+ */
+template <class Traits, class Dcel>
+bool is_valid (const Arrangement_2<Traits,Dcel>& arr);
 
 CGAL_END_NAMESPACE
 
