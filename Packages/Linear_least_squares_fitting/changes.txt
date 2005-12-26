@@ -12,3 +12,6 @@
 
 11 March 2005 Pierre Alliez
 - initial version
+
+26 Dec 2006
+- added demo for Windows

@@ -1177,6 +1177,18 @@ Packages/Kinetic_data_structures/src/CGALQt/KDS_stop.xpm -text
 Packages/Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/2d/res/pca.ico -text svneol=unset#unset
 Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/2d/res/pca.rc2 -text
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/Mesh.ico -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/MeshDoc.ico -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/Toolbar.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb0.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb1.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb2.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb3.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb4.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb5.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb6.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb7.bmp -text svneol=unset#unset
+Packages/Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb8.bmp -text svneol=unset#unset
 Packages/MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Packages/Manual/doc_tex/Manual/fig/a-simp.eps -text
 Packages/Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
