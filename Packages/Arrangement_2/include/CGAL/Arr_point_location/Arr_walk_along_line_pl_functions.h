@@ -450,6 +450,8 @@ _is_in_connected_component (const Point_2& p,
                                             traits->is_vertical_2_object();
   typename Traits_adaptor_2::Compare_x_2          compare_x =
                                             traits->compare_x_2_object();
+  typename Traits_adaptor_2::Compare_xy_2         compare_xy =
+                                            traits->compare_xy_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
                                             traits->compare_y_at_x_2_object();
   typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
@@ -460,6 +462,7 @@ _is_in_connected_component (const Point_2& p,
                                        traits->compare_y_at_x_left_2_object();
 
   // Start from the first non-vertical segment in the connected component.
+  const Halfedge_const_handle    invalid_he;
   Ccb_halfedge_const_circulator  first = circ;
   bool                           found_non_vertical = false;
 
@@ -486,15 +489,39 @@ _is_in_connected_component (const Point_2& p,
     else
     {
       // Check if the current vertical curve contains the query point in its
-      // interior.
-      if (compare_x (first->source()->point(), p) == EQUAL &&
-          compare_y_at_x (p, first->curve()) == EQUAL &&
-          ! equal (first->source()->point(), p) &&
-          ! equal (first->target()->point(), p))
+      // x-range.
+      if (compare_x (first->source()->point(), p) == EQUAL)
       {
-        closest_he = first;
-        is_on_edge = true;
-        return (true);
+        // Check if the current vertical curve contains the query point in its
+        // iterior.
+        Comparison_result   res1 = compare_xy (p, first->source()->point());
+        Comparison_result   res2 = compare_xy (p, first->target()->point());
+        
+        if (res1 != res2)
+        {
+          if (! ((res1 == EQUAL && res2 == curve_above_under) ||
+                 (res1 == curve_above_under && res2 == EQUAL)))
+          {
+            closest_he = first;
+            is_on_edge = true;
+            return (true);
+          }
+        }
+        else if (res1 == point_above_under)
+        {
+          // Check if the vertical segment is the closest to the query point so
+          // far.
+          if (closest_he == invalid_he ||
+              (closest_he != first->twin() &&
+               ((compare_y_at_x (first->source()->point(),
+                                 closest_he->curve()) == point_above_under) ||
+                (compare_y_at_x (first->target()->point(),
+                                 closest_he->curve()) == point_above_under))))
+          {
+            closest_he = first;
+            closest_to_target = (first->direction() == curve_above_under);
+          }
+        }
       }
     }
 
@@ -512,7 +539,6 @@ _is_in_connected_component (const Point_2& p,
 
   // Go over all curves of the boundary, starting from the non-vertical curve
   // we have located, and count those which are above p.
-  const Halfedge_const_handle    invalid_he;
   Ccb_halfedge_const_circulator  curr = first;
   Comparison_result   source_res, target_res;
   Comparison_result   res;
@@ -715,7 +741,7 @@ _is_in_connected_component (const Point_2& p,
       {
         closest_he = curr;
         closest_in_ccb = true;
-        closest_to_target = (curr->direction() != point_above_under);
+        closest_to_target = (curr->direction() == curve_above_under);
       }
     }
 
