@@ -22,6 +22,7 @@
 % ===============================================================
 %
 \begin{figure}[!htp]
+\begin{center}
 \begin{ccTexOnly}
   \includegraphics{Boolean_set_operations_2/fig/teaser}
 \end{ccTexOnly}
@@ -32,6 +33,7 @@
 \end{ccHtmlOnly}
 \caption{Examples of Boolean Set Operations.} 
 \label{fig:teaser}
+\end{center}
 \end{figure}
 
 This package consists of the implementation of Boolean set-operations
@@ -189,7 +191,7 @@ result of a Boolean set-operation or a sequence of such operations is
 closely related to the definition of regularized Boolean 
 set-operations, being the closure of the interior of the corresponding
 ordinary operation as explained next. There are many ways to arrive at a 
-particular regular set. For example, the regular set depicted to the left 
+particular regular set. For example, the regular set depicted to the right 
 is the result of the union of three small triangles translated 
 appropriately. It is also the result of the difference between
 \lcTex{%
@@ -200,14 +202,11 @@ appropriately. It is also the result of the difference between
 }
 \label{fig:unique}
 \begin{ccHtmlOnly}
-  <p><center>
-    <img src="./fig/unique.gif" border=0 alt="Unique" align=left>
-  </center>
+  <img src="./fig/unique.gif" border=0 alt="Unique" align=right>
 \end{ccHtmlOnly}
-a large
-triangle and a small upside down triangle. However the set of polygons
-with holes obtained by the user through the application of any sequence
-of operations is unique. 
+a large triangle and a small upside down triangle. However the set of 
+polygons with holes obtained by the user through the application of any 
+sequence of operations is unique. 
 The point set depicted to the left is represented 
 as a single general polygon with holes that has a single hole 
 (and not as three polygons with holes that have no holes at all). The
@@ -249,7 +248,9 @@ polygon has no outer boundary; see Figure~\ref{fig:simple}~(c).
 
 \begin{figure}[!htp]
 \begin{ccTexOnly}
+  \begin{center}
   \includegraphics{Boolean_set_operations_2/fig/simple}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
@@ -332,12 +333,33 @@ replaced by the result. Similarly, one flavour of the \ccc{complement()}
 method accepts a single argument that represents the (single) operand, 
 and the other one applies the operation on the current instance.
 
+\lcTex{%
+  \setlength{\widthRight}{2.3cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
+}
+\label{fig:sequence}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/sequence.gif" border=0 alt="A sequence of operation" align=right>
+  </center>
+\end{ccHtmlOnly}
 The next example performs a sequence of three Boolean set-operations.
 First, it computes the union of two simple polygons depicted in
 Figure~\ref{fig:simple}~(a). Then, it computes the complement of the result
 of the union operation. Finally, it computes the intersection of the result
 of the complement operation with a rectangle, confining the final result to 
 the area of the rectangle.
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Boolean_set_operations_2/fig/sequence}
+    \end{center}
+  \end{minipage}
+  \vspace{2pt}
+}
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_sequence.C}
 
@@ -371,9 +393,9 @@ R.insert(P);
 
 Both methods \ccc{insert()} and \ccc{join()}, like many others, are 
 overloaded, as there exist methods that accept a range of polygons. 
-In case of the \ccc{insert} method, all the general polygons in the 
-input range and the general polygons represented by
-$R$ must be pairwise disjoint in their interiors.
+When a range of general polygons are inserted into a general polygons
+set $R$, all the general polygons in the range and the general polygons 
+represented by $R$ must be pairwise disjoint in their interiors.
 
 % ===============================================================
 \section{The Traits}
@@ -389,7 +411,6 @@ $R$ must be pairwise disjoint in their interiors.
 \begin{ccHtmlOnly}
   <p><center>
     <img src="./fig/general_polygon.gif" border=0 alt="A general polygon" align=right>
-  <a name="fig:general_polygon"></a>
   </center>
 \end{ccHtmlOnly}
 An ordinary polygon is a closed point set bounded by a piecewise linear 
@@ -573,7 +594,7 @@ of directed curves of type \ccc{X_monotone_curve_2}, which represents the
 boundary of the general polygon.
 
 The class-template 
-\ccc{Gps_traits_adaptor_2<ArrDirectionalXMonotoneTraits,GeneralPolygon>}
+\ccc{Gps_traits_2<ArrDirectionalXMonotoneTraits,GeneralPolygon>}
 models the concept \ccc{GeneralPolygonSetTraits_2}. Its implementation is 
 rather simple, as it is derived from the instantiated template-parameter 
 \ccc{ArrXMonotoneTraits} inheriting its necessary types and methods, 
@@ -591,16 +612,16 @@ generated. The later is obtained from the instantiated parameter
 \ccc{Arr_segment_traits_2}, which defines \ccc{Arr_segment_2} to be
 its exposed type \ccc{X_monotone_curve_2}.
 \begin{alltt}
-typedef CGAL::Gmpq                                             Number_type;
-typedef CGAL::Cartesian<Number_type>                           Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>                     Arr_traits;
-typedef CGAL::General_polygon_2<Arr_traits>                    General_polygon;
-typedef CGAL::Gps_traits_adaptor_2<Arr_traits,General_polygon> Traits;
-typedef CGAL::General_polygon_set_2<Traits>                    General_polygon_set;
+typedef CGAL::Gmpq                                      Number_type;
+typedef CGAL::Cartesian<Number_type>                    Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Arr_traits;
+typedef CGAL::General_polygon_2<Arr_traits>             General_polygon;
+typedef CGAL::Gps_traits_2<Arr_traits,General_polygon>  Traits;
+typedef CGAL::General_polygon_set_2<Traits>             General_polygon_set;
 \end{alltt}
 
 \lcTex{%
-  \setlength{\widthRight}{4.4cm}
+  \setlength{\widthRight}{5.4cm}
   \setlength{\widthLeft}{\widthLineReal}
   \addtolength{\widthLeft}{-\widthRight}
   \begin{minipage}{\widthLeft}
@@ -617,10 +638,10 @@ above with a traits class that handle conic arcs, such as
 general-polygon set type that can be used to perform Boolean 
 set-operations on point sets bounded by conic arcs of type
 \ccc{Arr_conic_2}. The next example computes the intersection of the
-two general polygons depicted in Figure~\ref{fig:conics}. One is an ellipse
-given by $x^2 + 4y^2 - 4 = 0$, and the other is bounded by the two
+two general polygons depicted on the right. One is an ellipse
+given by $x^2 + 9y^2 - 9 = 0$, and the other is bounded by the two
 parabolic arcs whose underlying parabola are given by 
-$x^2 + y - 4 = 0$, and $x^2 - y - 4 = 0$. The code in the example adapts
+$x^2 + 2y - 4 = 0$, and $x^2 - 2y - 4 = 0$. The code in the example adapts
 the traits model that handles conics included with the \ccc{Arrangement_2}
 package.
 \lcTex{%
@@ -636,8 +657,8 @@ package.
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_traits_adaptor.C}
 
 % ===============================================================
-\subsection{Aggregated Operations}
-\label{bso_ssec:}
+\section{Aggregated Operations}
+\label{bso_sec:aggregated_ops}
 % ===============================================================
 \lcTex{%
   \setlength{\widthRight}{3.4cm}
@@ -654,15 +675,15 @@ package.
 If you wish to compute the union of a set of general polygons, you can
 do it incrementally, computing the union of pairs of polygons one at a
 time, until you arrive at the final solution. However, this operation
-can be done much more efficiently, if all the polygons in the entire
-set are operated at once. The package provides a free function that
-aggregately computes the union of a set of polygons. There is no
-restriction on the polygons in the set. Naturally, they may intersect
-each other. Similarly, the package provides a free function that
-determines whether a set of general polygons intersect, a function
-that computes the intersection of a set of general polygons, and
-functions that computes the difference and symmetric difference between 
-the union of two sets of general
+can be done more efficiently for sparse polygons with a relatively small
+number of intersections utilizing a sweep-line algorithm. The package 
+provides a free function that aggregately computes the union of a set of 
+polygons. There is no restriction on the polygons in the set. Naturally, 
+they may intersect each other. Similarly, the package provides a free 
+function that determines whether a set of general polygons intersect, a 
+function that computes the intersection and the symmetric difference of 
+a set of general polygons respectively. The symmetric difference of a set
+of
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
@@ -673,7 +694,9 @@ the union of two sets of general
   \end{minipage}
 \vspace{2pt}
 }\\
-polygons. The class \ccc{General_polygon_set_2} has the equivalent 
+general polygons is defined as the point set $R$, such that a point
+$p$ is in $R$, if and only if it is contained in odd number of 
+general polygons. The class \ccc{General_polygon_set_2} has the equivalent 
 member functions. When such a member function is called, the general 
 polygons represented by the current object are considered operands as 
 well. In case of aggregately computing the difference or symmetric 
@@ -682,9 +705,11 @@ comprise the first set. The aggregated operations are based on the
 sweep-line paradigm. 
 
 The next example computes the union of eight disks represented by
-eight circles respectively depicted in Figure~\ref{fig:disks}. Each
+eight circles respectively depicted on the right. Each
 circle is split into two $x$-monotone circular arcs that represent a
 general polygon. The union operation is applied to the range of
-general polygons spanning the list of the eight disks.
+general polygons spanning the list of the eight unit disks, whose
+centers are a unit distance from the origin. The example allows the user
+to provide a different number of disks through the command line.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_set_union.C}

@@ -72,17 +72,27 @@ $x$-monotone curves. It uses the operator\\
 \ccMethod{Construct_curves_2 construct_curves_2_object();}
 {returns a functor that obtains the curves of a general polygon.}
 
-\ccPredicates
-% ===========
-\ccMethod{bool is_simple(Polygon_2 & pgn);}
-{returns \ccc{true} if the general polygon \ccc{pgn} is strictly simple, 
-and \ccc{false} otherwise. Used as precondition for some of the operations.}
+\ccHeading{Miscellaneous}
+% =======================
+\ccMethod{bool is_valid(Polygon_2 & pgn);}
+{returns \ccc{true} if the general polygon \ccc{pgn} is valid, 
+and \ccc{false} otherwise. \ccc{pgm} is valid, if it is strictly simple.
+Used as precondition for some of the operations.}
+\ccGlue
+\ccMethod{bool is_valid(Polygon_with_holes_2 & pgn_with_holes);}
+{returns \ccc{true} if the general polygon with holes \ccc{pgn_with_holes} 
+is valid, and \ccc{false} otherwise. \ccc{pgn_with_holes} is valid, if
+its outer boundary is simple and oriented counterclockwise, each one of 
+its holes is simple, oriented clockwise, and contained inside the outer 
+boundary, and the outer boundary and the outer boundary of the holes are 
+pairwise disjoint, except perhaps at the vertices. Used as precondition 
+for some of the operations.}
 
 \ccHasModels
 %===========
 \ccc{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}\\
 \ccc{CGAL::Gps_circle_segment_traits_2<Kernel>}\\
-\ccc{CGAL::Gps_traits_adaptor_2<ArrTraits,GeneralPolygon>}
+\ccc{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
 
 \ccSeeAlso
 % ========

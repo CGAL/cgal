@@ -7,32 +7,37 @@
     
 \ccDefinition
 %============
-An instance of the \ccClassTemplateName\ class-template represents a
-point set in the plane. An \ccc{Arrangement_2} data structure is used
-internally to represent the point set. An instance of the
-\ccc{General_polygon_set_2} class-template can be constructed from 
-\ccc{General_polygon_2} or \ccc{General_polygon_with_holes_2} objects.
-The \ccc{General_polygon_2} and \ccc{General_polygon_with_holes_2} must
-be defined in the traits class among the other.
-
-The class template provides methods to apply regularized Boolean 
-set-operations on pairs of \ccc{General_polygon_set_2} objects, or 
-\ccc{General_polygon_2} (or \ccc{General_polygon_with_holes_2}) directly, 
-and a few other utility methods. 
-% At this point only regularized Boolean-set operations are implemented. 
-The input and output of these methods consist of one or more general 
-polygons, some of which may have holes.
+An object of the \ccClassTemplateName\ class-template represents a
+point set in the plane. bounded by $x$ monotone curves. Points in the set
+lie on the boundary or on the positive side of the curves. This class 
+template provides methods to apply regularized Boolean set-operations and 
+few other utility methods. An \ccc{Arrangement_2} data structure is 
+internally used to represent the point set. 
 
 The \ccc{Traits} template-parameter should be instantiated with a
-model of the \ccc{GeneralPolygonSetTraits} concept. The traits class
+model of the concept \ccc{GeneralPolygonSetTraits_2}. The traits class
 defines the types of points, $x$-monotone curves, general polygons,
-and general polygons with holes, that is \ccc{Point_2},
-\ccc{X_monotone_curve_2}, \ccc{General_polygon_2}, and
-\ccc{General_polygon_with_holes_2} respectively. \ccc{Point_2} must
-be the type of the endpoints of \ccc{X_monotone_curve_2}, and
-\ccc{X_monotone_curve_2} must be the type of the curves that comprise
-the boundaries of the general polygons. The traits class supports
-geometric operations on the types above.
+and general polygons with holes, that is \ccc{Traits::Point_2},
+\ccc{Traits::X_monotone_curve_2}, \ccc{Traits::Polygon_2}, and 
+\ccc{Traits::Polygon_with_holes_2} respectively. \ccc{Traits::Point_2} must 
+be the type of the endpoints of \ccc{Traits::X_monotone_curve_2}, and 
+\ccc{Traits::X_monotone_curve_2} must be the type of the curves that comprise
+the boundaries of the general polygons. The traits class supports geometric 
+operations on the types above.
+
+The input and output of the Boolean set-operations methods consist of one 
+or more general polygons, some of which may have holes. In particular, 
+these methods operate on pairs of objects of type \ccClassTemplateName, or
+directly on objects of type \ccc{Traits::Polygon_2} or 
+\ccc{Traits::Polygon_with_holes_2}. An object of type 
+\ccc{Traits::Polygon_2} is a valid operand, only if it is strictly simple 
+and its boundary is oriented counterclockwise. An object of type
+\ccc{Traits::Polygon_with_holes_2} is valid, only if its outer boundary
+and each one of its holes represnt a simple polygon, its holes are contained 
+insize the outer boundary, its outer boundary and the outer boundary of its 
+holes are pairwise disjoint, except perhaps at the vertices, its outer boundary
+is oriented counterclockwise, and the outer boundary of its holes are 
+oriented clockwise.
 
 \ccTypes
 %=======
@@ -46,7 +51,7 @@ with holes type.}
 \ccNestedType{Arrangement_2}{the arrangement type used internally.}
 
 \ccCreation
-\ccCreationVariable{ps}
+\ccCreationVariable{gps}
 %=======================
 
 \ccThree{General_polygon_set_2<Traits>}{0pt}{}
@@ -64,12 +69,12 @@ with holes type.}
   \ccc{traits} instance for performing the geometric operations.}
 
 \ccConstructor{General_polygon_set_2<Traits>(const Traits::Polygon_2 & pgn);}
-  {constructs a set of general polygons from the input general polygon
-  \ccc{pgn}.}
+  {constructs a set of general polygons that consists of the single general 
+   polygon \ccc{pgn}.}
 
 \ccConstructor{General_polygon_set_2<Traits>(const Traits::Polygon_with_holes_2 & pgn_with_holes);}
-  {constructs a set of general polygons from the input general polygon
-  with holes \ccc{pgn_with_holes}.}
+  {constructs a set of general polygons that consists of the single
+   general polygon with holes \ccc{pgn_with_holes}.}
 
 % \ccConstructor{template <class InputIterator>
 % General_polygon_set_2<General_polygon,Traits>(InputIterator begin,
@@ -79,7 +84,7 @@ with holes type.}
 %   \ccc{General_polygon_2}. (The value type of the input iterator is
 %   used to distinguish between the two.)
 %   \ccPrecond{All general polygons (resp. general polygons with holes)
-%   in the given range do not intersect pairwise, except maybe at the
+%   in the given range are pairwise disjoint, except maybe at the
 %   vertices.}}
 %   
 % \ccConstructor{template <class InputIterator1, class InputIterator2>
@@ -91,8 +96,8 @@ with holes type.}
 %   \ccc{General_polygon_2} and the range of
 %   \ccc{General_polygon_with_holes_2} instances.
 %   \ccPrecond{All general polygons in the first range, all
-%   general polygon with holes in the second range do not intersect
-%   pairwise, except maybe at the vertices.}}
+%   general polygon with holes in the second range are pairwise disjoint,
+%   except maybe at the vertices.}}
 
 \ccAccessFunctions
 % ================
@@ -117,6 +122,12 @@ with holes type.}
 % \ccMethod{std::pair<Size,Size> number_of_general_polygons() const;}
 %   {computes the number of general polygons without holes and those with holes
 %   represented by \ccVar, and returns as a pair in this order.}
+
+\ccMethod{bool is_empty() const;}
+  {returns \ccc{true} if \ccVar\ represents an empty set.}
+
+\ccMethod{bool is_plane() const;}
+  {returns \ccc{true} if \ccVar\ represents the entire plane.}
 
 \ccMethod{Traits & traits() const;}
   {obtains an instance of the traits. If the traits was passed as a
@@ -151,8 +162,8 @@ void insert(InputIterator begin, InputIterator end);}
   holes) into \ccVar. (The value type of the input iterator is used to
   distinguish between the two.)
   \ccPrecond{All general polygons (resp. general polygons with holes)
-  in the given range and the point set represented by \ccVar\ do not
-  intersect pairwise.}}
+  in the given range and the point set represented by \ccVar\ are
+  pairwise disjoint.}}
 % , except maybe at the vertices
 
 \ccMethod{template <class InputIterator1, class InputIterator2>
@@ -163,14 +174,14 @@ void insert(InputIterator1 pgn_begin, InputIterator1 pgn_end,
   into \ccVar.
   \ccPrecond{All general polygons in the first range, all
   general polygon with holes in the second range, and the point set
-  represented by \ccVar\ do not intersect pairwise.}}
+  represented by \ccVar\ are pairwise disjoint.}}
 % , except maybe at the vertices
 
 \ccMethod{void complement();}
   {computes the complement of \ccVar.}
 
-\ccMethod{void complement(const General_polygon_set_2 & cps);}
-  {computes the complement of \ccc{cps}.}
+\ccMethod{void complement(const General_polygon_set_2 & other);}
+  {computes the complement of \ccc{other}.}
 
 \ccMethod{void complement(const General_polygon_2 & pgn);}
   {computes the complement of \ccc{pgn}.}
@@ -185,8 +196,8 @@ In the following univariate and bivariate methods the result is placed in
 
 % intersection
 % ------------
-\ccMethod{void intersection(const General_polygon_set_2 & cps);}
-  {computes the intersection of \ccVar\ and \ccc{cps}.}
+\ccMethod{void intersection(const General_polygon_set_2 & other);}
+  {computes the intersection of \ccVar\ and \ccc{other}.}
 \ccGlue
 \ccMethod{void intersection(const General_polygon_2 & pgn);}
   {computes the intersection of \ccVar\ and \ccc{pgn}.}
@@ -198,7 +209,7 @@ In the following univariate and bivariate methods the result is placed in
 void intersection(InputIterator begin, InputIterator end);}
   {Computes the intersection of the general polygons (or general
   polygons with holes) in the given range. (The value type of the
-  input iterator is used to distinguish between the two.)}
+  input iterator is used to distinguish between the two options.)}
 \ccGlue
 \ccMethod{template <class InputIterator1, class InputIterator2>
 void intersection(InputIterator1 pgn_begin, InputIterator1 pgn_end,
@@ -209,8 +220,8 @@ with holes in the given two ranges.}
 
 % Union
 % -----
-\ccMethod{void join(const General_polygon_set_2 & cps);}
-  {computes the union of \ccVar\ and \ccc{cps}.}
+\ccMethod{void join(const General_polygon_set_2 & other);}
+  {computes the union of \ccVar\ and \ccc{other}.}
 \ccGlue
 \ccMethod{void join(const General_polygon_2 & pgn);}
   {computes the union of \ccVar\ and \ccc{pgn}.}
@@ -222,7 +233,7 @@ with holes in the given two ranges.}
 void join(InputIterator begin, InputIterator end);}
   {Computes the union of the general polygons (or general
   polygons with holes) in the given range. (The value type of the
-  input iterator is used to distinguish between the two.)}
+  input iterator is used to distinguish between the two options.)}
 \ccGlue
 \ccMethod{template <class InputIterator1, class InputIterator2>
 void join(InputIterator1 pgn_begin, InputIterator1 pgn_end,
@@ -233,8 +244,8 @@ with holes in the given two ranges.}
 
 % Difference
 % ----------
-\ccMethod{void difference(const General_polygon_set_2 & cps);}
-  {computes the difference between \ccVar\ and \ccc{cps}.}
+\ccMethod{void difference(const General_polygon_set_2 & other);}
+  {computes the difference between \ccVar\ and \ccc{other}.}
 \ccGlue
 \ccMethod{void difference(const General_polygon_2 & pgn);}
   {computes the difference between \ccVar\ and \ccc{pgn}.}
@@ -242,8 +253,8 @@ with holes in the given two ranges.}
 \ccMethod{void difference(const General_polygon_with_holes_2 & pgn);}
   {computes the difference between \ccVar\ and \ccc{pgn}.}
 
-\ccMethod{void symmetric_difference(const General_polygon_set_2 & cps);}
-  {computes the symmetric difference between \ccVar\ and \ccc{cps}.}
+\ccMethod{void symmetric_difference(const General_polygon_set_2 & other);}
+  {computes the symmetric difference between \ccVar\ and \ccc{other}.}
 \ccGlue
 \ccMethod{void symmetric_difference(const General_polygon_2 & pgn);}
   {computes the symmetric difference between \ccVar\ and \ccc{pgn}.}
@@ -255,30 +266,30 @@ with holes in the given two ranges.}
 % ===============================
 The following bibariate function replace this with the result.
 
-\ccMethod{void intersection(const General_polygon_set_2 & cps1,
-                            const General_polygon_set_2 & cps2);}
-  {computes the intersection of \ccc{cps1} and \ccc{cps2}.}
+\ccMethod{void intersection(const General_polygon_set_2 & gps1,
+                            const General_polygon_set_2 & gps2);}
+  {computes the intersection of \ccc{gps1} and \ccc{gps2}.}
 
-\ccMethod{void join(const General_polygon_set_2 & cps1,
-                     const General_polygon_set_2 & cps2);}
-  {computes the union of \ccc{cps1} and \ccc{cps2}.}
+\ccMethod{void join(const General_polygon_set_2 & gps1,
+                     const General_polygon_set_2 & gps2);}
+  {computes the union of \ccc{gps1} and \ccc{gps2}.}
 
-\ccMethod{void difference(const General_polygon_set_2 & cps1,
-                          const General_polygon_set_2 & cps2);}
-  {computes the difference between \ccc{cps1} and \ccc{cps2}.}
+\ccMethod{void difference(const General_polygon_set_2 & gps1,
+                          const General_polygon_set_2 & gps2);}
+  {computes the difference between \ccc{gps1} and \ccc{gps2}.}
 
-\ccMethod{void symmetric_difference(const General_polygon_set_2 & cps1,
-                                   const General_polygon_set_2 & cps2);}
-  {computes the symmetric difference between \ccc{cps1} and \ccc{cps2}.}
+\ccMethod{void symmetric_difference(const General_polygon_set_2 & gps1,
+                                   const General_polygon_set_2 & gps2);}
+  {computes the symmetric difference between \ccc{gps1} and \ccc{gps2}.}
   
-\ccPredicates
-% ===========
+\ccQueryFunctions
+% ===============
 
-\ccThree{OutputIterator\&}{ps.do_intersect(General_polygon_set_2 & cps)}{}
+\ccThree{OutputIterator\&}{ps.do_intersect(General_polygon_set_2 & other)}{}
 \ccThreeToTwo
 
-\ccMethod{bool do_intersect(const General_polygon_set_2 & cps);}
-  {returns \ccc{true} if \ccVar\ and \ccc{cps} intersect in their
+\ccMethod{bool do_intersect(const General_polygon_set_2 & other);}
+  {returns \ccc{true} if \ccVar\ and \ccc{other} intersect in their
   interior, and \ccc{false} otherwise.}
 \ccGlue
 \ccMethod{bool do_intersect(const General_polygon_2 & pgn);}
@@ -289,30 +300,22 @@ The following bibariate function replace this with the result.
   {returns \ccc{true} if \ccVar\ and \ccc{pgn} intersect in their
   interior, and \ccc{false} otherwise.}
   
-\ccMethod{bool is_empty() const;}
-  {returns \ccc{true} if \ccVar\ represents an empty set.}
+\ccMethod{bool oriented_side(const Point_2 & q);}
+  {returns either the constant \ccc{ON_ORIENTED_BOUNDARY}, 
+   \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE}, iff \ccc{p} lies on 
+   the boundary, properly on the positive side, or properly on the negative 
+   side of \ccVar\ respectively.}
 
-\ccMethod{bool is_plane() const;}
-  {returns \ccc{true} if \ccVar\ represents the entire plane.}
-
-\ccMethod{bool is_inside(const Point_2 & q);}
-  {returns \ccc{true} if the point \ccc{q} is contained in the point set
-   represented by \ccVar. Recall that the point set represented by \ccc{q}
-   is closed and includes its boundary.}
-
-\ccMethod{bool is_valid() const;}
-  {returns \ccc{true} if \ccVar\ represents a valid point set.}
-
-% \ccMethod{Object locate(const Point_2 & p);}
-%   {returns a general polygon that contains the query point \ccc{p}, if
-%   exists. Object can represent either \ccc{General_polygon_2} or
-%   \ccc{General_polygon_with_holes_2}, or it can be empty, in case
-%   \ccc{p} is not contained in any general polygon.}
-% 
 \ccMethod{bool locate(const Point_2 & p, General_polygon_with_holes_2 & pgn);}
   {obtains a general polygon with holes that contains the query point
   \ccc{p}, if exists, through \ccc{pgn}, and returns
   \ccc{true}. Otherwise, returns \ccc{flase}.}
+
+\ccHeading{Miscellaneous}
+% =======================
+
+\ccMethod{bool is_valid() const;}
+  {returns \ccc{true} if \ccVar\ represents a valid point set.}
 
 \ccSeeAlso
   \ccc{Arrangement_2}\lcTex{(\ccRefPage{Arrangement_2})}\\

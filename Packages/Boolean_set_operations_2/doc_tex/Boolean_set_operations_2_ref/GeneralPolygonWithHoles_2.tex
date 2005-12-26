@@ -10,10 +10,10 @@
 
 % \ccNestedType{Size}{number of holes size type.}
 
-\ccNestedType{General_polygon_2}{general-polygon type used to
+\ccNestedType{General_polygon_2}{the general-polygon type used to
 represent the outer boundary and each hole.}
 
-\ccNestedType{Hole_const_iterator}{bidirectional iterator
+\ccNestedType{Hole_const_iterator}{a bidirectional iterator
   over the polygonal holes. Its value type is
   \ccc{General_polygon_2}.}
 
@@ -43,20 +43,9 @@ GeneralPolygonWithHoles_2(General_polygon_2 & outer,
                           InputIterator begin, InputIterator end);}
 {constructs a general polygon with holes using a given general polygon
 as the outer boundary and a given range of holes. The holes must be
-pairwise disjoint in their interiors.}
-
-\ccAccessFunctions
-% ================
-
-\ccMethod{Hole_const_iterator holes_begin() const;}
-{returns the begin iterator of the holes.}
-\ccGlue
-\ccMethod{Hole_const_iterator holes_end() const;}
-{returns the past-the-end iterator of the holes.}
-
-\ccMethod{const General_polygon_2 & outer_boundary() const;}
-{returns the general polygon that represents the outer boundary.
-\ccPrecond{The polygon must not be unbounded.}}
+contained inside the outer boundary, and the outer boundary and the outer 
+boundary of the holes must be pairwise disjoint, except perhaps at the 
+vertices.}
 
 \ccPredicates
 % ===========
@@ -64,9 +53,25 @@ pairwise disjoint in their interiors.}
 {returns \ccc{true} if the outer boundary exists, and \ccc{false}
 otherwise.}
 
+\ccAccessFunctions
+% ================
+
+\ccMethod{const General_polygon_2 & outer_boundary() const;}
+{returns the general polygon that represents the outer boundary.
+\ccPrecond{The polygon must not be unbounded.}}
+
+\ccMethod{Hole_const_iterator holes_begin() const;}
+{returns the begin iterator of the holes.}
+\ccGlue
+\ccMethod{Hole_const_iterator holes_end() const;}
+{returns the past-the-end iterator of the holes.}
+
 \ccHasModels
 %===========
-\ccc{CGAL::General_polygon_with_holes_2<General_polygon>}
+\ccc{CGAL::General_polygon_with_holes_2<General_polygon>}\\
+\ccc{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>::Polygon_with_holes_2}\\
+\ccc{CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2}\\
+\ccc{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_with_holes_2}
 
 \end{ccRefConcept}
 

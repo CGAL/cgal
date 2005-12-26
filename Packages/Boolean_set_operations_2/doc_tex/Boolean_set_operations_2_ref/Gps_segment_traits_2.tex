@@ -7,16 +7,19 @@
 
 \ccDefinition
 %============
-The traits class \ccRefName\ models the \ccc{GeneralPolygonSetTraits_2}
-concept. It enables Boolean set-operations on (linear) polygons.
-It should be parameterized with a kernel, which is used in turn to
-define the exposed type \ccc{General_polygon_2} to be of type
-\ccc{Polygon_2<Kernel>}.
+The traits class \ccRefName\ models the concept 
+\ccc{GeneralPolygonSetTraits_2}. It enables Boolean set-operations on 
+(linear) polygons. It defines the exposed type \ccc{Polygon_2} to be 
+\ccc{CGAL::Polygon_2<Kernel,Container>}. By default, the template 
+parameter \ccc{Container} is instantiated by 
+\ccc{std::vector<Kernel::Point_2>} and the template parameter
+\ccc{ArrSegmentTraits} is instantiated by 
+\ccc{CGAL::Arr_segment_traits_2<Kernel>}.
 
 \ccInclude{CGAL/Gps_segment_traits_2.h}
  
 \ccIsModel
-    \ccc{GeneralPolygonSetTraits_2}
+  \ccc{GeneralPolygonSetTraits_2}
 
 \end{ccRefClass}
 \ccRefPageEnd

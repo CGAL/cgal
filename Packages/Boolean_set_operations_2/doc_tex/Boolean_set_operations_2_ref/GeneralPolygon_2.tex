@@ -24,7 +24,8 @@ only points of the plane belonging to two curves are the geometric mapping
 of the polygon vertices. In addition, the vertices of the represented 
 polygon must be ordered consistently, and the curved must be directed 
 accordingly. Only counterclockwise orientated polygons are valid operands
-of Boolean set-operations.
+of Boolean set-operations. General polygon that represent holes must be
+clockwise orientated.
 
 \ccCreation
 \ccCreationVariable{polygon}
@@ -72,6 +73,7 @@ The value type of \ccc{Iterator} must be \ccc{X_monotone_curve_2}.
 
 \ccMethod{bool is_simple();}{returns \ccc{true} if the polygon is simple, 
 and \ccc{false} otherwise. Used as precondition for some of the operations.}
+\ccGlue
 \ccMethod{bool is_strictly_simple();}{returns \ccc{true} if the polygon
 is strictly simple, and \ccc{false} otherwise. Used as precondition for
 some of the operations.
