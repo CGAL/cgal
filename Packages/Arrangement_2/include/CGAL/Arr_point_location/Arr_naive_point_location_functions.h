@@ -260,8 +260,9 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   }
   else
   {
-    Comparison_result  res1 = compare_xy (p, closest_edge->source()->point());
-    Comparison_result  res2 = compare_xy (p, closest_edge->target()->point());
+    CGAL_assertion_code(
+      Comparison_result  res1 = compare_xy (p, closest_edge->source()->point());
+      Comparison_result  res2 = compare_xy (p, closest_edge->target()->point()));
 
     CGAL_assertion (res1 == res2);
     CGAL_assertion (res1 = point_above_under);
