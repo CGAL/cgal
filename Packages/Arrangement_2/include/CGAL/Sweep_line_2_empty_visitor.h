@@ -84,10 +84,10 @@ private:
     }
 
     //override operator->
-    //pointer operator-> ()
-    //{
-    //  return (reinterpret_cast<pointer>(StatusLineIter::operator->()));
-    //}
+    pointer operator-> ()
+    {
+      return (reinterpret_cast<pointer>(StatusLineIter::operator->()));
+    }
 
   };
 
