@@ -3121,6 +3121,9 @@ bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
           }
           while(circ != circ_end);
 
+          CGAL_assertion(l2r != Halfedge_const_handle() || 
+                         r2l != Halfedge_const_handle()); 
+
            if((l2r != Halfedge_const_handle()) &&
               (r2l != Halfedge_const_handle()))
           {
@@ -3143,9 +3146,9 @@ bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
                 l2r = temp_he;
                 temp_he = l2r->next()->twin();
                 res =
-                  tr->compare_y_at_x_right_2_object()(temp_he->curve(),
-                                                      l2r->curve(),
-                                                      vertex_below->point());
+                  tr->compare_y_at_x_left_2_object()(temp_he->curve(),
+                                                     l2r->curve(),
+                                                     vertex_below->point());
               }
               while(res == LARGER);
               contining_face = l2r->face();           
@@ -3160,9 +3163,9 @@ bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
                 r2l = temp_he;
                 temp_he = r2l->next()->twin();
                 res =
-                  tr->compare_y_at_x_left_2_object()(temp_he->curve(),
-                                                     r2l->curve(),
-                                                     vertex_below->point());
+                  tr->compare_y_at_x_right_2_object()(temp_he->curve(),
+                                                      r2l->curve(),
+                                                      vertex_below->point());
               }
               while(res == SMALLER);
               contining_face = r2l->face();  
