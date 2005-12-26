@@ -123,6 +123,12 @@ public:
 
   };
 
+  friend std::ostream& operator<< (std::ostream& os, const Ex_x_monotone_curve_2 & cv)
+  {
+    os << cv.base();
+    return (os);
+  }
+
   /*! \class
    * Nested extension of the point type.
    */
@@ -169,6 +175,11 @@ public:
 
   };
 
+  friend std::ostream& operator<< (std::ostream& os, const Ex_point_2 & p)
+  {
+    os << p.base();
+    return (os);
+  }
   
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2;
   typedef Ex_point_2                                Point_2;

@@ -287,6 +287,12 @@ public:
 
   
   typedef My_X_monotone_curve_2                     X_monotone_curve_2;
+ 
+  friend std::ostream& operator<< (std::ostream& os, const My_X_monotone_curve_2 & cv)
+  {
+    os << cv.base_curve();
+    return (os);
+  }
 
 
 
@@ -752,9 +758,6 @@ public:
   {
     return  (cv1.get_color() == cv2.get_color());
   }
-
- 
-
 };
 
 
