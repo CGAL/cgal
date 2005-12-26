@@ -24,7 +24,7 @@
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
-#include <CGAL/Gps_traits_adaptor_2.h>
+#include <CGAL/Gps_traits_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
 #include <CGAL/iterator.h> 
 #include <queue>

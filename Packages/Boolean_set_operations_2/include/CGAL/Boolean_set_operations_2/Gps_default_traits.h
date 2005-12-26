@@ -6,7 +6,7 @@
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
-#include <CGAL/Gps_traits_adaptor_2.h>
+#include <CGAL/Gps_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -32,7 +32,7 @@ struct Gps_default_traits<CGAL::General_polygon_with_holes_2<Polygon> >
 template <class Arr_traits>
 struct Gps_default_traits<CGAL::General_polygon_2<Arr_traits> >
 {
-  typedef Gps_traits_adaptor_2<Arr_traits>    Traits;
+  typedef Gps_traits_2<Arr_traits>    Traits;
 };
 
 CGAL_END_NAMESPACE

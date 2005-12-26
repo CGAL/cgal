@@ -20,14 +20,14 @@
 #ifndef GPS_CIRCLE_SEGMENT_TRAITS_2_H
 #define GPS_CIRCLE_SEGMENT_TRAITS_2_H
 
-#include <CGAL/Gps_traits_adaptor_2.h>
+#include <CGAL/Gps_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_>
 class Gps_circle_segment_traits_2 : 
-  public Gps_traits_adaptor_2<Arr_circle_segment_traits_2<Kernel_> >
+  public Gps_traits_2<Arr_circle_segment_traits_2<Kernel_> >
 {};
 
 CGAL_END_NAMESPACE
