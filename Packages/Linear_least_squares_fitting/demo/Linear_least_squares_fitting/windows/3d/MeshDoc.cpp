@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include "DialogOptions.h"
+#include ".\meshdoc.h"
 
 #ifdef _DEBUG
 	#define new DEBUG_NEW
@@ -20,6 +21,7 @@ IMPLEMENT_DYNCREATE(CMeshDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CMeshDoc, CDocument)
 	ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
+  ON_COMMAND(ID_FIT_PLANE, OnFitPlane)
 END_MESSAGE_MAP()
 
 
@@ -90,6 +92,13 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			return false;
 		}
 		stream >> m_mesh;
+
+    // add mesh points to point set
+    Mesh::Point_iterator it;
+    for(it = m_mesh.points_begin();
+        it != m_mesh.points_end();
+        it++)
+      m_points.push_back(*it);
 	}
 	else
 		{
@@ -181,4 +190,12 @@ void CMeshDoc::OnEditOptions()
 	{
 		// update variable options here
 	}
+}
+
+void CMeshDoc::OnFitPlane()
+{
+  linear_least_squares_fitting_3(m_points.begin(),
+                                 m_points.end(),
+                                 m_fitting_plane,
+                                 m_centroid);
 }

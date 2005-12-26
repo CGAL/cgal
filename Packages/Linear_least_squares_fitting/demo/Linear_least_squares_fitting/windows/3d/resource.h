@@ -103,13 +103,17 @@
 #define ID_RENDER_VORONOISITES          32887
 #define ID_EDIT_OPTIONS                 32888
 #define ID_BUTTON32889                  32889
+#define ID_FIT_LINE                     32890
+#define ID_FIT_PLANE                    32891
+#define ID_DATASET_RANDOM               32892
+#define ID_RANDOM_ONAPLANE              32893
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
-#define _APS_NEXT_COMMAND_VALUE         32890
+#define _APS_NEXT_COMMAND_VALUE         32894
 #define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           105
 #endif

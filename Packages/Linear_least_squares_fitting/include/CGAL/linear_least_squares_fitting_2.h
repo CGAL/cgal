@@ -107,14 +107,14 @@ template < typename InputIterator,
            typename K >
 inline
 typename K::FT
-linear_least_squares_fitting_2(InputIterator begin,
-                               InputIterator end, 
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
                                typename K::Line_2& line,
                                typename K::Point_2& centroid,
                                const K& k)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return CGALi::linear_least_squares_fitting_2(begin, end, line,
+  return CGALi::linear_least_squares_fitting_2(first, beyond, line,
                                                centroid, k, (Value_type*) NULL);
 }
 
@@ -122,14 +122,14 @@ template < typename InputIterator,
            typename K >
 inline
 typename K::FT
-linear_least_squares_fitting_2(InputIterator begin,
-                               InputIterator end, 
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
                                typename K::Line_2& line,
                                const K& k)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typename K::Point_2 centroid;
-  return CGALi::linear_least_squares_fitting_2(begin, end, line,
+  return CGALi::linear_least_squares_fitting_2(first, beyond, line,
                                                centroid, k,(Value_type*) NULL);
 }
 
@@ -140,14 +140,14 @@ template < typename InputIterator,
            typename Point>
 inline
 typename Kernel_traits<Line>::Kernel::FT
-linear_least_squares_fitting_2(InputIterator begin,
-                               InputIterator end, 
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
                                Line& line,
                                Point& centroid)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_2(begin,end,line,centroid,K());
+  return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,K());
 }
 
 // does not return the centroid and deduces the kernel as well.
@@ -155,13 +155,13 @@ template < typename InputIterator,
            typename Line >
 inline
 typename Kernel_traits<Line>::Kernel::FT
-linear_least_squares_fitting_2(InputIterator begin,
-                               InputIterator end, 
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
                                Line& line)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_2(begin,end,line,K());
+  return CGAL::linear_least_squares_fitting_2(first,beyond,line,K());
 }
 
 CGAL_END_NAMESPACE

@@ -83,7 +83,7 @@
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(PCA)&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"

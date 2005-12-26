@@ -109,7 +109,18 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Options...",                  ID_EDIT_OPTIONS
     END
-    MENUITEM "Data",                        ID_POINTS
+    POPUP "&Data set"
+    BEGIN
+        POPUP "Random"
+        BEGIN
+            MENUITEM "On a plane",                  ID_RANDOM_ONAPLANE
+        END
+    END
+    POPUP "&Fit"
+    BEGIN
+        MENUITEM "Line",                        ID_FIT_LINE
+        MENUITEM "Plane",                       ID_FIT_PLANE
+    END
     POPUP "Camer&a"
     BEGIN
         MENUITEM "View all",                    ID_VIEW_ALL

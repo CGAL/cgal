@@ -190,7 +190,7 @@ IDR_MAINFRAME           ICON                    "res\\pca.ico"
 
 IDR_MENU1 MENU 
 BEGIN
-    POPUP "&Set"
+    POPUP "&Data set"
     BEGIN
         MENUITEM "&Load",                       ID_SET_LOAD
         MENUITEM "&Save...",                    ID_SET_7SAVE

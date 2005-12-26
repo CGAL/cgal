@@ -214,7 +214,7 @@ void eigen_semi_definite_symmetric(const FT *mat,
   delete [] index;
 }
 
-} // namespace CGALi
+} // end namespace CGALi
 
 CGAL_END_NAMESPACE
 
