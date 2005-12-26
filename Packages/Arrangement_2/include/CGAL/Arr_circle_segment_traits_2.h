@@ -59,11 +59,13 @@ private:
 
   Intersection_map  inter_map;   // Mapping pairs of curve IDs to their
                                  // intersection points.
+  bool m_use_cache;
 
 public:
 
   /*! Default constructor. */
-  Arr_circle_segment_traits_2 ()
+  Arr_circle_segment_traits_2 (bool use_intersection_caching = true) :
+      m_use_cache(use_intersection_caching)
   {}
 
   /*! Get the next curve index. */
@@ -336,7 +338,13 @@ public:
 
   class Make_x_monotone_2
   {
+  private:
+    bool m_use_cache;
+
   public:
+
+    Make_x_monotone_2(bool use_cache = true) : m_use_cache(use_cache)
+    {}
 
     /*!
      * Cut the given conic curve (or conic arc) into x-monotone subcurves 
@@ -351,7 +359,9 @@ public:
     {
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      unsigned int  index = Self::get_index();
+      unsigned int  index = 0;
+      if(m_use_cache)
+        index = Self::get_index();
 
       if (cv.orientation() == COLLINEAR)
       {
@@ -457,7 +467,7 @@ public:
   /*! Get a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object ()
   {
-    return Make_x_monotone_2();
+    return Make_x_monotone_2(m_use_cache);
   }
 
   class Split_2
