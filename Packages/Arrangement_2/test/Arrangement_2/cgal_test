@@ -258,5 +258,9 @@ else
   test_non_caching_polyline_traits
   test_conic_traits
 
+  compile_and_run test_insertion
+  compile_and_run test_removal
+  compile_and_run test_iso_verts
+
 #  compile_and_run point_location
 fi
