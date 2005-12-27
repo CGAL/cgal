@@ -222,16 +222,6 @@ $\bullet$ {\sl Accessing the Arrangement Faces:}
     
 \ccMethod{Face_iterator faces_end();}
     {returns the past-the-end iterator of the faces in the arrangement.}
-    
-\ccHeading{Queries}
-%==================
-
-\ccMethod{bool is_valid() const;}
-   {checks the topological structure of the arrangement and makes sure it is
-    valid. In addition, the function performs several simple geometric test
-    to ensure some of the geometric properties of the arrangement, namely it
-    checks that there all arrangement vertices are associated with distinct
-    points and that the halfedges around every vertex are ordered clockwise.}
 
 \begin{ccAdvanced}
 
@@ -468,10 +458,13 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
 % =======================
 
 \ccMethod{bool is_valid() const;}
-  {returns \ccc{true} if \ccVar\ represents a valid instance of 
-   \ccClassTemplateName. In particular, the functions checks the
-   validity of each vertex, halfedge, and face, their incidence relations,
-   and the geometric properties of the arrangement.}
+   {returns \ccc{true} if \ccVar\ represents a valid instance of 
+   \ccClassTemplateName. In particular, the functions checks the topological 
+    structure of the arrangement and assures that it is valid. In addition, 
+    the function performs several simple geometric tests to ensure the 
+    validity of some of the geometric properties of the arrangement. Namely, 
+    it checks that all arrangement vertices are associated with distinct
+    points, and that the halfedges around every vertex are ordered clockwise.}
 
 \ccSeeAlso
     \ccc{ArrangementDcel}\lcTex{ 
