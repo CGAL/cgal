@@ -464,6 +464,15 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
    If the operation causes two faces to merge, the merged face is returned.
    Otherwise, the face to which the edge was incident is returned.}
 
+\ccHeading{Miscellaneous}
+% =======================
+
+\ccMethod{bool is_valid() const;}
+  {returns \ccc{true} if \ccVar\ represents a valid instance of 
+   \ccClassTemplateName. In particular, the functions checks the
+   validity of each vertex, halfedge, and face, their incidence relations,
+   and the geometric properties of the arrangement.}
+
 \ccSeeAlso
     \ccc{ArrangementDcel}\lcTex{ 
       (\ccRefPage{ArrangementDcel})}\\
