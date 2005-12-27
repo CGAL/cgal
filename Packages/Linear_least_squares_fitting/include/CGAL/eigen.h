@@ -26,11 +26,11 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 template <class FT>
-void eigen_semi_definite_symmetric(const FT *mat, 
-                                   int n, 
-                                   FT *eigen_vec, 
-                                   FT *eigen_val,
-                                   const int MAX_ITER = 100) 
+void eigen_symmetric(const FT *mat, 
+                     int n, 
+                     FT *eigen_vectors, 
+                     FT *eigen_values,
+                     const int MAX_ITER = 100) 
 {
   static const FT EPS = 0.00001;
   static const FT PPI = 3.14159265358;
@@ -49,7 +49,7 @@ void eigen_semi_definite_symmetric(const FT *mat,
   FT *v = new FT[n*n];
   ij = 0;
   for(int i=0; i<n; i++)
-    for(j=0; j<n; j++) 
+    for(int j=0; j<n; j++) 
       if(i==j)
         v[ij++] = 1.0;
       else
@@ -60,12 +60,12 @@ void eigen_semi_definite_symmetric(const FT *mat,
   // compute weight of the non diagonal terms 
   ij = 1;
   FT a_norm = 0.0;
-  for(i=1; i<=n; i++)
-    for(j=1; j<=i; j++) 
+  for(int i=1; i<=n; i++)
+    for(int j=1; j<=i; j++) 
     {
       if( i!=j ) 
       {
-        a_ij = a[ij];
+        FT a_ij = a[ij];
         a_norm += a_ij * a_ij;
       }
       ij++;
@@ -88,55 +88,58 @@ void eigen_semi_definite_symmetric(const FT *mat,
         for(int m=l+1; m<=n; m++) 
         {
           // compute sinx and cosx 
-          lq = (l*l-l)/2;
-          mq = (m*m-m)/2;
+          int lq = (l*l-l)/2;
+          int mq = (m*m-m)/2;
           
-          lm = l + mq;
-          a_lm = a[lm];
-          a_lm_2 = a_lm * a_lm;
+          int lm = l + mq;
+          FT a_lm = a[lm];
+          FT a_lm_2 = a_lm * a_lm;
           
           if(a_lm_2 < thr_nn)
             continue;
           
-          ll   = l+lq;
-          mm   = m+mq;
-          a_ll = a[ll];
-          a_mm = a[mm];
+          int ll   = l + lq;
+          int mm   = m + mq;
+          FT a_ll = a[ll];
+          FT a_mm = a[mm];
           
           FT delta = a_ll - a_mm;
           
+          FT x;
           if(delta == 0.0)
             x = - PPI/4 ; 
           else 
             x = - atan( (a_lm+a_lm) / delta ) / 2.0;
 
-          sinx    = sin(x);
-          cosx    = cos(x);
-          sinx_2  = sinx * sinx;
-          cosx_2  = cosx * cosx;
-          sincos  = sinx * cosx;
+          FT sinx    = sin(x);
+          FT cosx    = cos(x);
+          FT sinx_2  = sinx * sinx;
+          FT cosx_2  = cosx * cosx;
+          FT sincos  = sinx * cosx;
           
           // rotate L and M columns 
-          ilv = n*(l-1);
-          imv = n*(m-1);
+          int ilv = n*(l-1);
+          int imv = n*(m-1);
           
           for( i=1; i<=n;i++ ) 
           {
             if( (i!=l) && (i!=m) ) 
             {
-              iq = (i*i-i)/2;
+              int iq = (i*i-i)/2;
               
+              int im;
               if( i<m )  
                 im = i + mq; 
               else
                 im = m + iq;
-              a_im = a[im];
+              FT a_im = a[im];
               
+              int il;
               if( i<l ) 
                 il = i + lq; 
               else 
                 il = l + iq;
-              a_il = a[il];
+              FT a_il = a[il];
               
               a[il] = a_il * cosx - a_im * sinx;
               a[im] = a_il * sinx + a_im * cosx;
@@ -145,8 +148,8 @@ void eigen_semi_definite_symmetric(const FT *mat,
             ilv++;
             imv++;
             
-            v_ilv = v[ilv];
-            v_imv = v[imv];
+            FT v_ilv = v[ilv];
+            FT v_imv = v[imv];
             
             v[ilv] = cosx * v_ilv - sinx * v_imv;
             v[imv] = sinx * v_ilv + cosx * v_imv;
@@ -169,30 +172,30 @@ void eigen_semi_definite_symmetric(const FT *mat,
   a++;
   for(i=0; i<n; i++) 
   {
-    k = i + (i*(i+1))/2;
-    eigen_val[i] = a[k];
+    int k = i + (i*(i+1))/2;
+    eigen_values[i] = a[k];
   }
   delete [] a;
       
   // sort eigen values and vectors 
-  index = new int[n];
+  int *index = new int[n];
   for(int i=0; i<n; i++)
     index[i] = i;
       
   for(int i=0; i<(n-1); i++)
   {
-    FT x = eigen_val[i];
+    FT x = eigen_values[i];
     int k = i;
         
-    for(j=i+1; j<n; j++) 
-      if(x < eigen_val[j]) 
+    for(int j=i+1; j<n; j++) 
+      if(x < eigen_values[j]) 
       {
         k = j;
-        x = eigen_val[j];
+        x = eigen_values[j];
       }
         
-    eigen_val[k] = eigen_val[i];
-    eigen_val[i] = x;
+    eigen_values[k] = eigen_values[i];
+    eigen_values[i] = x;
       
     int jj = index[k];
     index[k] = index[i];
@@ -207,7 +210,7 @@ void eigen_semi_definite_symmetric(const FT *mat,
   {
     int ik = index[k]*n;
     for(int i=0; i<n; i++) 
-      eigen_vec[ij++] = v[ik++];
+      eigen_vectors[ij++] = v[ik++];
   }
   
   delete [] v;

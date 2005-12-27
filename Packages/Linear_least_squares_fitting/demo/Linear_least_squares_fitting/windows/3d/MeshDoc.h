@@ -16,6 +16,7 @@ typedef Kernel::FT FT;
 typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Plane_3 Plane;
+typedef Kernel::Vector_3 Vector;
 typedef Enriched_polyhedron<Kernel,Enriched_items> Mesh;
 
 class CMeshDoc : public CDocument
@@ -36,6 +37,8 @@ public:
 
   // triangle mesh represented as a polyhedron
   Mesh m_mesh;
+
+  void gl_draw_fitting_primitive();
 
 // Operations
 public:

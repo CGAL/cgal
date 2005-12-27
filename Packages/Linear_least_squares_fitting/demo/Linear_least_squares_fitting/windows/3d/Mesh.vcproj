@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/GR /Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(PCA)&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"

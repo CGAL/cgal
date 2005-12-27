@@ -61,8 +61,6 @@ linear_least_squares_fitting_2(InputIterator first,
   // 0
   // 1 2
   FT covariance[3] = {0,0,0};
-  std::pair<FT,FT> eigen_values;
-  std::pair<Vector,Vector> eigen_vectors;
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -77,11 +75,10 @@ linear_least_squares_fitting_2(InputIterator first,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
+  std::pair<FT,FT> eigen_values;
+  std::pair<Vector,Vector> eigen_vectors;
   CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
-
-  // assert eigen values are positive or null.
-  CGAL_assertion(eigen_values.first  >= 0 && 
-                 eigen_values.second >= 0);
+  CGAL_assertion(eigen_values.first  >= 0 && eigen_values.second >= 0);
 
   // check unicity and build fitting line accordingly.
   if(eigen_values.first != eigen_values.second)
@@ -89,7 +86,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // regular case
     line = Line(c, eigen_vectors.first);
     return (FT)1.0 - eigen_values.second / eigen_values.first;
-  } // end regular case
+  } 
   else
   {
     // isotropic case (infinite number of directions)
@@ -97,7 +94,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // the centroid and with a default horizontal vector.
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
-  } // end isotropic case
+  } 
 } // end linear_least_squares_fitting_2 for point set
 
 } // end namespace CGALi

@@ -199,3 +199,28 @@ void CMeshDoc::OnFitPlane()
                                  m_fitting_plane,
                                  m_centroid);
 }
+
+void CMeshDoc::gl_draw_fitting_primitive()
+{
+  Vector b1 = m_fitting_plane.base1();
+  Vector b2 = m_fitting_plane.base2();
+  Point c = m_centroid;
+  Point p1 = c - b1 - b2;
+  Point p2 = c + b1 - b2;
+  Point p3 = c + b1 + b2;
+  Point p4 = c - b1 + b2;
+
+  ::glLineWidth(2.0f);
+  ::glColor3ub(255,0,0);
+
+  ::glBegin(GL_LINE_LOOP);
+
+    ::glVertex3d(p1.x(),p1.y(),p1.z());
+    ::glVertex3d(p2.x(),p2.y(),p2.z());
+    ::glVertex3d(p3.x(),p3.y(),p3.z());
+    ::glVertex3d(p4.x(),p4.y(),p4.z());
+
+  ::glEnd();
+}
+
+

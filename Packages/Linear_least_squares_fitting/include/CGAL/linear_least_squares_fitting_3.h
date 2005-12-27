@@ -60,9 +60,8 @@ linear_least_squares_fitting_3(InputIterator first,
   // Matrix numbering:
   // 0
   // 1 2
-  FT covariance[3] = {0,0,0};
-  std::pair<FT,FT> eigen_values;
-  std::pair<Vector,Vector> eigen_vectors;
+  // 3 4 5
+  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -72,34 +71,41 @@ linear_least_squares_fitting_3(InputIterator first,
     covariance[0] += d.x() * d.x();
     covariance[1] += d.x() * d.y();
     covariance[2] += d.y() * d.y();
+    covariance[3] += d.x() * d.z();
+    covariance[4] += d.y() * d.z();
+    covariance[5] += d.z() * d.z();
   }
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
-
-  // assert eigen values are positives or null
-  CGAL_assertion(eigen_values.first >= 0 && 
-                 eigen_values.second >= 0);
+  FT eigen_values[3];
+  FT eigen_vectors[9];
+  eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  CGAL_assertion(eigen_values[0] >= 0.0 && 
+                 eigen_values[1] >= 0.0 &&
+                 eigen_values[2] >= 0.0);
 
   // check unicity and build fitting line accordingly
-  if(eigen_values.first != eigen_values.second)
+  if(eigen_values[0] != eigen_values[1] &&
+     eigen_values[0] != eigen_values[2])
   {
     // regular case
-    line = Line(c,eigen_vectors.first);
-    return (FT)1.0 - eigen_values.second / eigen_values.first;
+    Vector normal(eigen_vectors[6],
+                  eigen_vectors[7],
+                  eigen_vectors[8]);
+    plane = Plane(c,normal);
+    return (FT)1.0 - eigen_values[2] / eigen_values[0];
   } // end regular case
   else
   {
     // isotropic case (infinite number of directions)
-    // by default: assemble a line that goes through 
-    // the centroid and with a default horizontal vector.
-    line = Line(c,Vector(1,0));
+    // by default: assemble a plane that goes through 
+    // the centroid and with a default vertical normal.
+    plane = Plane(c,Vector(0.0,0.0,1.0));
     return (FT)0.0;
-  } // end isotropic case
+  } 
 } // end linear_least_squares_fitting_3 for point set
-*/
 
 /*
 // fits a plane to a 3D triangle set
@@ -235,7 +241,7 @@ template < typename InputIterator,
            typename Plane,
            typename Point>
 inline
-typename Kernel_traits<Line>::Kernel::FT
+typename Kernel_traits<Plane>::Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                Plane& plane,
@@ -250,7 +256,7 @@ linear_least_squares_fitting_3(InputIterator first,
 template < typename InputIterator, 
            typename Plane >
 inline
-typename Kernel_traits<Line>::Kernel::FT
+typename Kernel_traits<Plane>::Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                Plane& plane)
