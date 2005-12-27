@@ -223,6 +223,15 @@ $\bullet$ {\sl Accessing the Arrangement Faces:}
 \ccMethod{Face_iterator faces_end();}
     {returns the past-the-end iterator of the faces in the arrangement.}
     
+\ccHeading{Queries}
+%==================
+
+\ccMethod{bool is_valid() const;}
+   {checks the topological structure of the arrangement and makes sure it is
+    valid. In addition, the function performs several simple geometric test
+    to ensure some of the geometric properties of the arrangement, namely it
+    checks that there all arrangement vertices are associated with distinct
+    points and that the halfedges around every vertex are ordered clockwise.}
 
 \begin{ccAdvanced}
 
@@ -462,6 +471,8 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
       (\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
     \ccc{ArrangementBasicTraits_2}\lcTex{ 
       (\ccRefPage{ArrangementBasicTraits_2})} \\
+    \ccc{checking validity}\lcTex{ 
+      (\ccRefPage{CGAL::is_valid})} \\
     \ccc{insertion functions}\lcTex{ 
       (\ccRefPage{CGAL::insert_curve}, \ccRefPage{CGAL::insert_curves}, 
        \ccRefPage{CGAL::insert_x_monotone_curve},

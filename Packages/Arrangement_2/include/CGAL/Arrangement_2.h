@@ -2176,11 +2176,11 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
- * Check the validity of the arrangement, In particular, check that the
+ * Check the validity of the arrangement. In particular, check that the
  * edegs are disjoint-interior, and the holes are located in their proper
  * position.
  * \param arr The arrangement.
- * \return true iff the arrangement is valid.
+ * \return Whether the arrangement is valid.
  */
 template <class Traits, class Dcel>
 bool is_valid (const Arrangement_2<Traits,Dcel>& arr);

@@ -18,7 +18,7 @@
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
-//                 (based on old version by Eyal Flato)
+//
 #ifndef CGAL_ARRANGEMENT_2_INSERT_H
 #define CGAL_ARRANGEMENT_2_INSERT_H
 
@@ -36,6 +36,10 @@
 #include <CGAL/Sweep_line_2/Arr_addition.h>
 #include <CGAL/Sweep_line_2/Arr_non_x_construction.h>
 #include <CGAL/Sweep_line_2/Arr_non_x_addition.h>
+#include <CGAL/Sweep_line_2/Sweep_line_2_visitors.h>
+#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Arr_naive_point_location.h>
+#include <set>
 #include <list>
 #include <map>
 
@@ -695,6 +699,255 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
 
   // Return an indication whether the vertex has been removed or not.
   return (removed);
+}
+
+/*!
+ * Check the validity of the arrangement. In particular, check that the
+ * edegs are disjoint-interior, and the holes are located in their proper
+ * position.
+ */
+template <class Traits_, class Dcel_>
+bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
+{
+  // First use the internal validity check.
+  if(!arr.is_valid())
+    return (false);
+
+  typedef Traits_                                       Traits_2;
+  typedef Arrangement_2<Traits_,Dcel_>                  Arrangement_2;
+  typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
+  
+  // Define the sweep-line types:
+  typedef Sweep_line_do_curves_x_visitor<Traits_2>      Visitor;
+  typedef Sweep_line_2<Traits_2, Visitor>               Sweep_line_2;
+
+  // Define the arrangement iterator and circulator types:
+  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Holes_const_iterator  Holes_const_iterator;
+  typedef typename Arrangement_2::Face_const_iterator   Face_const_iterator;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Isolated_vertices_const_iterator
+                                              Isolated_vertices_const_iterator;
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+                                                 Ccb_halfedge_const_circulator;
+  typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
+                                       Halfedge_around_vertex_const_circulator;
+  
+  // Perform a sweep over all subcurves associated with arrangement edges.
+  std::vector<X_monotone_curve_2>   curves_vec(arr.number_of_edges());
+  Edge_const_iterator               eit;
+  unsigned int                      i = 0;
+  
+  for(eit = arr.edges_begin(); eit != arr.edges_end(); ++eit, i++)
+  {
+    curves_vec[i] = eit->curve();
+  }
+
+  Visitor       visitor;
+  Traits_2     *traits = const_cast<Traits_2 *> (arr.get_traits());
+  Sweep_line_2  sweep_line (traits, &visitor);
+
+  visitor.sweep_xcurves (curves_vec.begin(), curves_vec.end());
+  
+  bool          are_edges_disjoint = !visitor.found_x();
+
+  if (!are_edges_disjoint)
+  {
+    CGAL_warning_msg (are_edges_disjoint,
+                      "Edges are not disjoint in their interior.");
+    return (false);
+  }
+
+  // Check that the holes and isolated vertices are located where they should.
+  // At the same time, we prepare a vector that consists of all isolated
+  // vertices and all leftmost vertices from every hole. 
+  std::list<std::pair<Vertex_const_handle, Face_const_handle> >  vf_list;
+
+  typename Traits_2::Compare_xy_2   compare_xy = traits->compare_xy_2_object();
+  Face_const_iterator               fit;
+  Face_const_handle                 fh;
+  Holes_const_iterator              hoit;
+  Halfedge_const_handle             ccb;
+  Isolated_vertices_const_iterator  ivit;
+  Vertex_const_handle               left_v;
+  bool                              is_first;
+
+  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+  {
+    // Check all holes in the current face.
+    fh = fit;
+    for(hoit = fh->holes_begin(); hoit != fh->holes_end(); ++hoit)
+    {
+      ccb = *hoit;
+      is_first = true;
+
+      do
+      {
+        if (ccb->face() != fit)
+          return (false);
+
+        if (is_first ||
+            compare_xy (ccb->target()->point(), left_v->point()) == SMALLER)
+        {
+          left_v = ccb->target();
+          is_first = false;
+        }
+
+        ccb = ccb->next();
+
+      } while (ccb != *hoit);
+
+      vf_list.push_back(std::make_pair (left_v, fh));
+    }
+
+    // Check all isolated vertices in the current face.
+    for(ivit = fh->isolated_vertices_begin();
+        ivit != fh->isolated_vertices_end(); ++ivit)
+    {
+      if (ivit->face() != fit)
+        return (false);
+
+      vf_list.push_back (std::make_pair (Vertex_const_handle(ivit), fh));
+    }
+  }
+
+  // Shoot a vertical ray from each vertex we have collected downward, and
+  // check that this vertex is really contained in the proper face.
+  typename Traits_2::Compare_y_at_x_right_2  comp_y_at_x_right =
+                                      traits->compare_y_at_x_right_2_object();
+  typename Traits_2::Compare_y_at_x_left_2   comp_y_at_x_left =
+                                      traits->compare_y_at_x_left_2_object();
+
+  typename std::list<std::pair<Vertex_const_handle,
+                               Face_const_handle> >::iterator    vf_iter;
+  Arr_naive_point_location<Arrangement_2>                        pl(arr);
+  Vertex_const_handle                                            curr_v;
+  Object                                                         obj;
+  Halfedge_const_handle                                          he_below;
+  Vertex_const_handle                                            v_below;
+  Face_const_handle                                              in_face;
+  Halfedge_around_vertex_const_circulator                        first, circ;
+  bool                                                           assign_ok;
+
+  for (vf_iter = vf_list.begin(); vf_iter != vf_list.end(); ++vf_iter)
+  {
+    // Perform ray-shooting from the current vertex.
+    curr_v = vf_iter->first;
+    obj = pl.ray_shoot_down(curr_v->point());
+
+    if (CGAL::assign(he_below, obj))
+    {
+      // Hit an edge - take the incident face of the halfedge directed to the
+      // right.
+      if (he_below->direction() == LARGER)
+        he_below = he_below->twin();
+      
+      in_face = he_below->face();
+    }
+    else if (CGAL::assign(v_below, obj))
+    {
+      // Hit a vertex.
+      if(v_below->is_isolated())
+      {
+        in_face = v_below->face();
+      }
+      else
+      {    
+        // Get the first halfedge aroung v_below that is directed from left to
+        // right and the first halfedge that is directed from right to left.
+        first = circ = v_below->incident_halfedges();
+        Halfedge_const_handle he_left;  // A halfedge to the left of v_below.
+        Halfedge_const_handle he_right; // A halfedge to the right of v_below.
+
+        do
+        {
+          if (circ->direction() == SMALLER)
+          {
+            he_left = circ;
+          }
+          else
+          {
+            he_right = circ;
+            if((he_left != Halfedge_const_handle()) &&
+               (he_right != Halfedge_const_handle()))
+              break;
+          }
+          ++circ;
+        
+        } while(circ != first);
+
+        CGAL_assertion (he_left != Halfedge_const_handle() || 
+                        he_right != Halfedge_const_handle()); 
+
+        if ((he_left != Halfedge_const_handle()) &&
+            (he_right != Halfedge_const_handle()))
+        {
+          while (he_left -> direction() == SMALLER)
+          {
+            he_left = he_left->next()->twin();
+          }
+          he_left = he_left->twin()->prev();
+          CGAL_assertion(he_left->direction() == SMALLER);
+          in_face = he_left->face();
+        }
+        else
+        {
+          if (he_left != Halfedge_const_handle())
+          {
+            Comparison_result     res;
+            Halfedge_const_handle he_curr = he_left;
+             
+            do // as long as we have next he_left halfedge which is above
+            {
+              he_left = he_curr;
+              he_curr = he_left->next()->twin();
+              res = comp_y_at_x_left (he_curr->curve(),
+                                      he_left->curve(),
+                                      v_below->point());
+            } while(res == LARGER);
+            in_face = he_left->face();           
+          }
+          else
+          {
+            Comparison_result     res;
+            Halfedge_const_handle he_curr = he_right;
+             
+            do // as long as we have he_right halfedge which is below
+            {
+              he_right = he_curr;
+              he_curr = he_right->next()->twin();
+              res = comp_y_at_x_right (he_curr->curve(),
+                                       he_right->curve(),
+                                       v_below->point());
+            } while(res == SMALLER);
+            in_face = he_right->face();  
+          }
+        }
+      }
+    }
+    else
+    {
+      // Hit nothing (the unbounded face is returned).
+      assign_ok = CGAL::assign(in_face, obj);
+
+      CGAL_assertion (assign_ok && in_face == arr.unbounded_face());
+
+      if (! assign_ok)
+        return (false);
+    }
+
+    if (vf_iter->second != in_face)
+    {
+      CGAL_warning_msg (false,
+                        "Found a hole that is located in the wrong face.");
+      return (false);
+    }
+  }
+
+  // If we reached here, the arrangement is valid:
+  return true;
 }
 
 CGAL_END_NAMESPACE

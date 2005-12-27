@@ -1,11 +1,12 @@
 // Testing the insertion functions, covering all possible scenarios.
 
+#include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/IO/Arr_iostream.h>
 
-typedef int                                           Number_type;
+typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
@@ -64,7 +65,12 @@ int main ()
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
- 
+
+  // Check the validity more thoroughly.
+  valid = is_valid(arr);
+  std::cout << "Arrangement is "
+              << (valid ? "valid." : "NOT valid!") << std::endl;
+    
   return (0);
 }
 
