@@ -360,8 +360,6 @@ public:
     p_arr->_move_hole (p_arr->_face (from_face),
                        p_arr->_face (to_face),
                        he->hole()->iterator());
-    
-    return;
   }
   
   /*!
@@ -370,7 +368,7 @@ public:
    * \param to_face The destination face.
    * \param v The isolated vertex to move.
    */
-  bool move_isolated_vertex (Face_handle from_face, Face_handle to_face,
+  void move_isolated_vertex (Face_handle from_face, Face_handle to_face,
                              Vertex_handle v)
   {
     DVertex          *iso_v = p_arr->_vertex (v);
@@ -378,7 +376,18 @@ public:
     p_arr->_move_isolated_vertex (p_arr->_face (from_face),
                                   p_arr->_face (to_face),
                                   iso_v->isolated_vertex()->iterator());
-    return;
+  }
+
+  /*!
+   * Remove an isolated vertex from its face.
+   * \param v The isolated vertex to remove.
+   */
+  void remove_isolated_vertex_ex (Vertex_handle v)
+  {
+    CGAL_assertion(v->is_isolated());
+    DVertex *iso_v = p_arr->_vertex (v);
+
+    p_arr->_remove_isolated_vertex (iso_v);
   }
 
   /*!
