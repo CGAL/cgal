@@ -149,7 +149,8 @@ public:
    * \pre The conic C must be an ellipse (so 4rs - t^2 > 0).
    */
   _Conic_arc_2 (const Rational& r, const Rational& s, const Rational& t,
-                const Rational& u, const Rational& v, const Rational& w)
+                const Rational& u, const Rational& v, const Rational& w) :
+    _extra_data_P (NULL)
   {
     // Make sure the given curve is an ellipse (4rs - t^2 should be positive).
     CGAL_precondition (CGAL::sign (4*r*s - t*t) == POSITIVE);
@@ -182,7 +183,8 @@ public:
                 const Point_2& source, const Point_2& target) :
     _orient (orient),
     _source (source),
-    _target (target)
+    _target (target),
+    _extra_data_P (NULL)
   {
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
@@ -206,7 +208,8 @@ public:
    * \param seg The line segment with rational endpoints.
    */
   _Conic_arc_2 (const Rat_segment_2& seg) :
-    _orient (COLLINEAR)
+    _orient (COLLINEAR),
+    _extra_data_P (NULL)
   {
     // Set the source and target.
     Rat_kernel        ker;
@@ -262,7 +265,8 @@ public:
    * \param circ The circle (with rational center and rational squared radius).
    */ 
   _Conic_arc_2 (const Rat_circle_2& circ) :
-    _orient (CLOCKWISE)
+    _orient (CLOCKWISE),
+    _extra_data_P (NULL)
   {
     // Get the circle properties.
     Rat_kernel        ker;
@@ -306,7 +310,8 @@ public:
                 const Point_2& source, const Point_2& target) :
     _orient(orient),
     _source(source),
-    _target(target)
+    _target(target),
+    _extra_data_P (NULL)
   {
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
@@ -367,7 +372,8 @@ public:
    */
   _Conic_arc_2 (const Rat_point_2& p1,
                 const Rat_point_2& p2,
-                const Rat_point_2& p3):_extra_data_P(NULL)
+                const Rat_point_2& p3):
+    _extra_data_P (NULL)
   {
     // Set the source and target.
     Rational          x1 = p1.x();
@@ -455,7 +461,8 @@ public:
 		const Rat_point_2& p2,
 		const Rat_point_2& p3,
 		const Rat_point_2& p4,
-		const Rat_point_2& p5):_extra_data_P(NULL)
+		const Rat_point_2& p5) :
+    _extra_data_P(NULL)
   {
     // Make sure that no three points are collinear.
     Rat_kernel                         ker;
