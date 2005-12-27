@@ -1507,6 +1507,13 @@ protected:
   DFace *_remove_edge (DHalfedge *e,
                        bool remove_source, bool remove_target);
 
+  /*!
+   * Remove an isolated vertex from the interior of its face (but not from
+   * the dcel)
+   * \param v The isolated vertex to remove.
+   */
+  void _remove_isolated_vertex (DVertex* v);
+
   //@}
 
   /// \name Auxiliary (protected) functions for validity checking.

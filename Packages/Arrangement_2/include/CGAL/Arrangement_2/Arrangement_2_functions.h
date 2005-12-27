@@ -2692,6 +2692,18 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
   return (f1);
 }
 
+//-----------------------------------------------------------------------------
+// Remove an isolated vertex from the interior of a given face (but not from
+// the dcel)
+//
+template<class Traits, class Dcel>
+void Arrangement_2<Traits,Dcel>::_remove_isolated_vertex(DVertex* v)
+{
+  DIso_vert  *iv = v->isolated_vertex();
+  iv->face()->erase_isolated_vertex (iv->iterator());
+  dcel.delete_isolated_vertex (iv);
+}
+
 //---------------------------------------------------------------------------
 // Check whether the arrangement is valid. In particular, check the
 // validity of each vertex, halfedge, and face.
