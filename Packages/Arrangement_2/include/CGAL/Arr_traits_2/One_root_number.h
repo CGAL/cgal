@@ -15,16 +15,16 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-
+// Author(s)     : Ron Wein        <wein@post.tau.ac.il>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+               
 #ifndef CGAL_ONE_ROOT_NUMBER_H
 #define CGAL_ONE_ROOT_NUMBER_H
 
 /*! \file
  * Header file for the One_root_number<NT> class.
  */
-
-#include <list>
+#include <CGAL/Interval_arithmetic.h> 
 
 CGAL_BEGIN_NAMESPACE
 
@@ -34,13 +34,13 @@ CGAL_BEGIN_NAMESPACE
  * numbers (actually they should be represented by a number type that supports
  * the operators +, -, * and / in an exact manner).
  */
-template <class NumberType_>
+template <class NumberType_, bool Filter_ = true>
 class _One_root_number
 {
 public:
 
   typedef NumberType_                       NT;
-  typedef _One_root_number<NT>              Self;
+  typedef _One_root_number<NT, Filter_>     Self;
 
 private:
 
@@ -159,43 +159,46 @@ public:
   }
 
   // Friend operators:
-  template<class NT_> friend 
-  _One_root_number<NT_> operator+ (const NT_& val,
-                                   const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  _One_root_number<NT_, FL_> operator+ (const NT_& val,
+                                        const _One_root_number<NT_, FL_>& x);
   
-  template<class NT_> friend 
-  _One_root_number<NT_> operator- (const NT_& val,
-                                   const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  _One_root_number<NT_, FL_> operator- (const NT_& val,
+                                        const _One_root_number<NT_, FL_>& x);
   
-  template<class NT_> friend 
-  _One_root_number<NT_> operator* (const NT_& val,
-                                   const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  _One_root_number<NT_, FL_> operator* (const NT_& val,
+                                        const _One_root_number<NT_, FL_>& x);
   
-  template<class NT_> friend 
-  _One_root_number<NT_> operator/ (const NT_& val,
-                                   const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  _One_root_number<NT_, FL_> operator/ (const NT_& val,
+                                        const _One_root_number<NT_, FL_>& x);
 
   // Friend functions:
-  template<class NT_> friend 
-  double to_double (const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  double to_double (const _One_root_number<NT_, FL_>& x);
 
-  template<class NT_> friend 
-  _One_root_number<NT_> square (const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  _One_root_number<NT_, FL_> square (const _One_root_number<NT_, FL_>& x);
 
-  template<class NT_> friend 
-  CGAL::Sign sign (const _One_root_number<NT_>& x);
+  template<class NT_, bool FL_> friend 
+  CGAL::Sign sign (const _One_root_number<NT_, FL_>& x);
 
-  template<class NT_> friend 
+  template<class NT_, bool FL_> friend 
   CGAL::Comparison_result compare (const NT_& val,
-                                   const _One_root_number<NT_>& x);
+                                   const _One_root_number<NT_, FL_>& x);
   
-  template<class NT_> friend 
-  CGAL::Comparison_result compare (const _One_root_number<NT_>& x,
+  template<class NT_, bool FL_> friend 
+  CGAL::Comparison_result compare (const _One_root_number<NT_, FL_>& x,
                                    const NT_& val);
 
-  template<class NT_> friend 
-  CGAL::Comparison_result compare (const _One_root_number<NT_>& x,
-                                   const _One_root_number<NT_>& y);
+  template<class NT_, bool FL_> friend 
+  CGAL::Comparison_result compare (const _One_root_number<NT_, FL_>& x,
+                                   const _One_root_number<NT_, FL_>& y);
+
+  template<class NT_, bool FL_> friend
+  std::pair<double, double> to_interval (const _One_root_number<NT_, FL_>& x);
 
   NT get_alpha() const
   {
@@ -216,55 +219,89 @@ public:
   {
     return (is_rational);
   }
+
+private:
+
+  CGAL::Sign _sign () const
+  {
+    const CGAL::Sign    sign_alpha = CGAL::sign (alpha);
+
+    if (is_rational)
+      return (sign_alpha);
+
+    // If alpha and beta have the same sign, return this sign.
+    const CGAL::Sign    sign_beta = CGAL::sign (beta);
+
+    if (sign_alpha == sign_beta)
+      return (sign_alpha);
+
+    if (sign_alpha == ZERO)
+      return (sign_beta);
+
+    // Compare the squared values of alpha and of beta*sqrt(gamma):
+    const Comparison_result  res = CGAL::compare (alpha*alpha,
+                                                  beta*beta * gamma);
+
+    if (res == LARGER)
+      return (sign_alpha);
+    else if (res == SMALLER)
+      return (sign_beta);
+    else
+      return (ZERO);
+  }
 };
 
 /*!
  * Add a rational number and a one-root number.
  */
-template <class NT>
-_One_root_number<NT> operator+ (const NT& val, const _One_root_number<NT>& x)
+template <class NT, bool FL>
+_One_root_number<NT, FL> operator+ (const NT& val,
+                                    const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
-    return _One_root_number<NT> (val + x.alpha);
+    return _One_root_number<NT, FL> (val + x.alpha);
   else
-    return _One_root_number<NT> (val + x.alpha, x.beta, x.gamma);
+    return _One_root_number<NT, FL> (val + x.alpha, x.beta, x.gamma);
 }
 
 /*!
  * Subtract a one-root number from a rational number.
  */
-template <class NT>
-_One_root_number<NT> operator- (const NT& val, const _One_root_number<NT>& x)
+template <class NT, bool FL>
+_One_root_number<NT, FL> operator- (const NT& val,
+                                    const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
-    return _One_root_number<NT> (val - x.alpha);
+    return _One_root_number<NT, FL> (val - x.alpha);
   else
-    return _One_root_number<NT> (val - x.alpha, -x.beta, x.gamma);
+    return _One_root_number<NT, FL> (val - x.alpha, -x.beta, x.gamma);
 }
 
 /*!
  * Multiply a rational number and a one-root number.
  */
-template <class NT>
-_One_root_number<NT> operator* (const NT& val, const _One_root_number<NT>& x)
+template <class NT, bool FL>
+_One_root_number<NT, FL> operator* (const NT& val, 
+                                    const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
-    return _One_root_number<NT> (val * x.alpha);
+    return _One_root_number<NT, FL> (val * x.alpha);
   else
-    return _One_root_number<NT> (val * x.alpha, val * x.beta, x.gamma);
+    return _One_root_number<NT, FL> (val * x.alpha, val * x.beta, x.gamma);
 }
 
 /*!
  * Divide a rational number by a one-root number.
  */
-template <class NT>
-_One_root_number<NT> operator/ (const NT& val, const _One_root_number<NT>& x)
+template <class NT, bool FL>
+_One_root_number<NT, FL> operator/ (const NT& val,
+                                    const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
   {
     // Simple rational division:
     CGAL_precondition (CGAL::sign (x.alpha) != ZERO);
-    return _One_root_number<NT> (val / x.alpha);
+    return _One_root_number<NT, FL> (val / x.alpha);
   }
 
   // Use the fact that:
@@ -277,15 +314,15 @@ _One_root_number<NT> operator/ (const NT& val, const _One_root_number<NT>& x)
 
   CGAL_precondition (CGAL::sign(denom) != ZERO);
 
-  return _One_root_number<NT> (val * x.alpha / denom,
+  return _One_root_number<NT, FL> (val * x.alpha / denom,
                                -val * x.beta / denom, x.gamma);
 }
 
 /*!
  * Get a double-precision approximation of the one-root number.
  */
-template <class NT>
-double to_double (const _One_root_number<NT>& x)
+template <class NT, bool FL>
+double to_double (const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
     return (CGAL::to_double(x.alpha));
@@ -297,17 +334,17 @@ double to_double (const _One_root_number<NT>& x)
 /*!
  * Compute the square of a one-root number.
  */
-template <class NT>
-_One_root_number<NT> square (const _One_root_number<NT>& x)
+template <class NT, bool FL>
+_One_root_number<NT, FL> square (const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
-    return _One_root_number<NT> (x.alpha * x.alpha);
+    return _One_root_number<NT, FL> (x.alpha * x.alpha);
 
   // Use the equation:
   //
   //   (a + b*sqrt(c))^2 = (a^2 + b^2*c) + 2ab*sqrt(c)
   //
-  return (_One_root_number<NT> (x.alpha*x.alpha + x.beta*x.beta * x.gamma,
+  return (_One_root_number<NT, FL> (x.alpha*x.alpha + x.beta*x.beta * x.gamma,
                                 2 * x.alpha * x.beta,
                                 x.gamma));
 }
@@ -315,46 +352,48 @@ _One_root_number<NT> square (const _One_root_number<NT>& x)
 /*!
  * Evaluate the sign of a one-root number.
  */
-template <class NT>
-CGAL::Sign sign (const _One_root_number<NT>& x)
+template <class NT, bool FL>
+CGAL::Sign sign (const _One_root_number<NT, FL>& x)
 {
-  const CGAL::Sign    sign_alpha = CGAL::sign (x.alpha);
+  if (FL)
+  {
+    // Try to filter the sign computation using interval arithmetic.
+    const std::pair<double, double>&  x_in = CGAL::to_interval (x); 
 
-  if (x.is_rational)
-    return (sign_alpha);
+    if (x_in.first > 0)
+      return (CGAL::POSITIVE);
+    else if (x_in.second < 0)
+      return (CGAL::NEGATIVE);
+  }
 
-  // If alpha and beta have the same sign, return this sign.
-  const CGAL::Sign    sign_beta = CGAL::sign (x.beta);
-
-  if (sign_alpha == sign_beta)
-    return (sign_alpha);
-
-  if (sign_alpha == ZERO)
-    return (sign_beta);
-
-  // Compare the squared values of alpha and of beta*sqrt(gamma):
-  const Comparison_result  res = CGAL::compare (x.alpha*x.alpha,
-                                                x.beta*x.beta * x.gamma);
-
-  if (res == LARGER)
-    return (sign_alpha);
-  else if (res == SMALLER)
-    return (sign_beta);
-  else
-    return (ZERO);
+  // Perform the exact sign computation.
+  return (x._sign());
 }
 
 /*!
  * Compare a rational number and a one-root number.
  */
-template <class NT>
+template <class NT, bool FL>
 CGAL::Comparison_result compare (const NT& val,
-                                 const _One_root_number<NT>& x)
+                                 const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational)
     return (CGAL::compare (val, x.alpha));
 
-  const CGAL::Sign   sgn = CGAL::sign (val - x);
+  if (FL)
+  {
+    // Try to filter the comparison using interval arithmetic.
+    const std::pair<double, double>&  x_in = CGAL::to_interval (val); 
+    const std::pair<double, double>&  y_in = CGAL::to_interval (x); 
+    
+    if (x_in.second < y_in.first)
+      return (SMALLER);
+    else if (x_in.first > y_in.second)
+      return (LARGER);
+  }
+
+  // Perform the exact comparison.
+  const CGAL::Sign   sgn = (val - x)._sign();
 
   if (sgn == POSITIVE)
     return (LARGER);
@@ -367,14 +406,27 @@ CGAL::Comparison_result compare (const NT& val,
 /*!
  * Compare a rational number and a one-root number.
  */
-template <class NT>
-CGAL::Comparison_result compare (const _One_root_number<NT>& x,
+template <class NT, bool FL>
+CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
                                  const NT& val)
 {
   if (x.is_rational)
     return (CGAL::compare (x.alpha, val));
 
-  const CGAL::Sign   sgn = CGAL::sign (x - val);
+  if (FL)
+  {
+    // Try to filter the comparison using interval arithmetic.
+    const std::pair<double, double>&  x_in = CGAL::to_interval (x); 
+    const std::pair<double, double>&  y_in = CGAL::to_interval (val); 
+
+    if (x_in.second < y_in.first)
+      return (SMALLER);
+    else if (x_in.first > y_in.second)
+      return (LARGER);
+  }
+
+  // Perform the exact comparison.
+  const CGAL::Sign   sgn = (x - val)._sign();
 
   if (sgn == POSITIVE)
     return (LARGER);
@@ -387,15 +439,28 @@ CGAL::Comparison_result compare (const _One_root_number<NT>& x,
 /*!
  * Compare two one-root numbers.
  */
-template <class NT>
-CGAL::Comparison_result compare (const _One_root_number<NT>& x,
-                                 const _One_root_number<NT>& y)
+template <class NT, bool FL>
+CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
+                                 const _One_root_number<NT, FL>& y)
 {
   if (x.is_rational)
     return (CGAL::compare (x.alpha, y));
   else if (y.is_rational)
     return (CGAL::compare (x, y.alpha));
 
+  if (FL)
+  {
+    // Try to filter the comparison using interval arithmetic.
+    const std::pair<double, double>&  x_in = CGAL::to_interval (x); 
+    const std::pair<double, double>&  y_in = CGAL::to_interval (y); 
+    
+    if (x_in.second < y_in.first)
+      return (SMALLER);
+    else if (x_in.first > y_in.second)
+      return (LARGER);
+  }
+
+  // Perform the exact comparison:
   // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
   // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
   // We first determine the signs of these terms.
@@ -478,7 +543,7 @@ CGAL::Comparison_result compare (const _One_root_number<NT>& x,
   const NT          A = diff_alpha*diff_alpha - (x_sqr + y_sqr);
   const NT          B = 2 * x.beta * y.beta;
   const NT          C = x.gamma * y.gamma;
-  const CGAL::Sign  sgn = CGAL::sign (_One_root_number<NT> (A, B, C));
+  const CGAL::Sign  sgn = (_One_root_number<NT, FL> (A, B, C))._sign();
   const bool        swap_res = (sign_left == NEGATIVE);
 
   if (sgn == POSITIVE)
@@ -487,6 +552,21 @@ CGAL::Comparison_result compare (const _One_root_number<NT>& x,
     return (swap_res ? LARGER : SMALLER);
   else
     return (EQUAL);
+}
+
+/*!
+ * Compute an isolating interval for the one-root number.
+ */
+template <class NT, bool FL>
+std::pair<double, double> to_interval (const _One_root_number<NT, FL>& x)
+{
+  const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha);
+  const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta);
+  const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma);
+  const CGAL::Interval_nt<true>&  x_in = alpha_in + 
+                                         (beta_in * CGAL::sqrt(gamma_in));
+
+  return (std::make_pair (x_in.inf(), x_in.sup()));
 }
 
 CGAL_END_NAMESPACE

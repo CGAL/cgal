@@ -15,39 +15,40 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein        <wein@post.tau.ac.il>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_CIRCULAR_ARC_2_H
 #define CGAL_CIRCULAR_ARC_2_H
 
 /*! \file
- * Header file for the _Circle_segment_2<Kernel> class.
+ * Header file for the _Circle_segment_2<Kernel, Filter> class.
  */
-
 #include <CGAL/Arr_traits_2/One_root_number.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Handle_for.h>
+#include <list>
 #include <map>
 #include <ostream>
 
 CGAL_BEGIN_NAMESPACE
 
 // Forward declaration:
-template <class NumberType_> class _One_root_point_2;
+template <class NumberType_, bool Filter_> class _One_root_point_2;
 
 /*! \class
  * Representation of a point whose coordinates are one-root numbers.
  */
-template <class NumberType_>
+template <class NumberType_, bool Filter_>
 class _One_root_point_2_rep //: public Ref_counted
 {
-  friend class _One_root_point_2<NumberType_>;
+  friend class _One_root_point_2<NumberType_, Filter_>;
 
 public:
 
-  typedef NumberType_                 NT;
-  typedef _One_root_point_2_rep<NT>   Self;
-  typedef _One_root_number<NT>        CoordNT;
+  typedef NumberType_                             NT;
+  typedef _One_root_point_2_rep<NT, Filter_>      Self;
+  typedef _One_root_number<NT, Filter_>           CoordNT;
 
 private:
 
@@ -78,22 +79,23 @@ public:
 /*! \class
  * A handle for a point whose coordinates are one-root numbers.
  */
-template <class NumberType_>
+template <class NumberType_, bool Filter_>
 class _One_root_point_2 :
-  public Handle_for<_One_root_point_2_rep<NumberType_> >
+  public Handle_for<_One_root_point_2_rep<NumberType_, Filter_> >
 {
 public:
 
-  typedef NumberType_                 NT;
-  typedef _One_root_point_2<NT>       Self;
-  typedef _One_root_number<NT>        CoordNT;
+  typedef NumberType_                           NT;
+  typedef _One_root_point_2<NT, Filter_>        Self;
 
 private:
 
-  typedef _One_root_point_2_rep<NT>   Point_rep;
-  typedef Handle_for<Point_rep>       Point_handle;
+  typedef _One_root_point_2_rep<NT, Filter_>    Point_rep;
+  typedef Handle_for<Point_rep>                 Point_handle;
 
 public:
+
+  typedef typename Point_rep::CoordNT           CoordNT;
 
   /*! Default constructor. */
   _One_root_point_2 () :
@@ -159,10 +161,10 @@ public:
 /*!
  * Exporter for conic arcs.
  */
-template <class NT>
+template <class NT, bool Filter>
 std::ostream& 
 operator<< (std::ostream& os, 
-            const _One_root_point_2<NT>& p)
+            const _One_root_point_2<NT, Filter>& p)
 {
   os << CGAL::to_double(p.x()) << ' ' << CGAL::to_double(p.y());
   return (os);
@@ -171,14 +173,14 @@ operator<< (std::ostream& os,
 /*! \class
  * Representation of a circle, a circular arc or a line segment.
  */
-template <class Kernel_>
+template <class Kernel_, bool Filter_>
 class _Circle_segment_2
 {
 public:
 
   typedef Kernel_                                          Kernel;
   typedef typename Kernel::FT                              NT;
-  typedef _One_root_point_2<NT>                            Point_2;
+  typedef _One_root_point_2<NT, Filter_>                   Point_2;
   typedef typename Kernel::Circle_2                        Circle_2;
   typedef typename Kernel::Segment_2                       Segment_2;
   typedef typename Kernel::Line_2                          Line_2;
@@ -665,10 +667,10 @@ private:
 /*!
  * Exporter for line segments and circular arcs.
  */
-template <class Kernel_>
+template <class Kernel, bool Filter>
 std::ostream& 
 operator<< (std::ostream& os, 
-            const _Circle_segment_2<Kernel_>& c)
+            const _Circle_segment_2<Kernel, Filter>& c)
 {
   if (c.orientation() == COLLINEAR)
   {
@@ -686,15 +688,15 @@ operator<< (std::ostream& os,
 /*! \class
  * Representation of an x-monotone circular arc.
  */
-template <class Kernel_>
+template <class Kernel_, bool Filter_>
 class _X_monotone_circle_segment_2
 {
 public:
 
   typedef Kernel_                                          Kernel;
-  typedef _X_monotone_circle_segment_2<Kernel>             Self;
+  typedef _X_monotone_circle_segment_2<Kernel, Filter_>    Self;
   typedef typename Kernel::FT                              NT;
-  typedef _One_root_point_2<NT>                            Point_2;
+  typedef _One_root_point_2<NT, Filter_>                   Point_2;
   typedef typename Kernel::Circle_2                        Circle_2;
   typedef typename Kernel::Line_2                          Line_2;
   typedef typename Point_2::CoordNT                        CoordNT;
@@ -2338,10 +2340,10 @@ protected:
 /*!
  * Exporter for circular arcs (or line segments).
  */
-template <class Kernel>
+template <class Kernel, bool Filter>
 std::ostream& 
 operator<< (std::ostream& os, 
-            const _X_monotone_circle_segment_2<Kernel> & arc)
+            const _X_monotone_circle_segment_2<Kernel, Filter> & arc)
 {
   if (! arc.is_linear())
     os << "(" << arc.supporting_circle() << ") ";

@@ -35,22 +35,22 @@ CGAL_BEGIN_NAMESPACE
 /*! \class
  * A traits class for maintaining an arrangement of circles.
  */
-template <class Kernel_>
+template <class Kernel_, bool Filter_ = true>
 class Arr_circle_segment_traits_2 
 {
 public:
 
-  typedef Kernel_                               Kernel;
-  typedef typename Kernel::FT                   NT;
-  typedef _One_root_point_2<NT>                 Point_2;
-  typedef typename Point_2::CoordNT             CoorNT;
-  typedef _Circle_segment_2<Kernel>             Curve_2;
-  typedef _X_monotone_circle_segment_2<Kernel>  X_monotone_curve_2;
-  typedef Arr_circle_segment_traits_2<Kernel>   Self;
+  typedef Kernel_                                        Kernel;
+  typedef typename Kernel::FT                            NT;
+  typedef _One_root_point_2<NT, Filter_>                 Point_2;
+  typedef typename Point_2::CoordNT                      CoordNT;
+  typedef _Circle_segment_2<Kernel, Filter_>             Curve_2;
+  typedef _X_monotone_circle_segment_2<Kernel, Filter_>  X_monotone_curve_2;
+  typedef Arr_circle_segment_traits_2<Kernel, Filter_>   Self;
 
   // Category tags:
-  typedef Tag_true                              Has_left_category;
-  typedef Tag_false                             Has_merge_category;
+  typedef Tag_true                                       Has_left_category;
+  typedef Tag_false                                      Has_merge_category;
 
 private:
 
