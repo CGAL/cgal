@@ -1,5 +1,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+
+#include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/MP_Float.h>
@@ -14,8 +16,6 @@
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-
-#include <CGAL/Random.h>
 
 
 typedef CGAL::Quotient<CGAL::MP_Float>                      NT;
@@ -43,8 +43,8 @@ int main(){
   int random_max = 128;
   int random_min = -128;
   ArcContainer ac;
-  int x;
-  int y;
+  int x, y;
+
   for (int i = 0; i < 10; i++) {
     x = theRandom.get_int(random_min,random_max);
     y = theRandom.get_int(random_min,random_max);
