@@ -16,7 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            -I../../../Algebraic_kernel/include \
-           -I../../../Number_types/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -36,6 +35,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+	example_arrangement_random_circles \
                 example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
                 example_Circular_kernel_arrangement$(EXE_EXT) \
                 example_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
@@ -43,6 +43,9 @@ all:            \
                 example_Lazy_Circular_kernel_arrangement$(EXE_EXT) \
                 example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
                 example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) 
+
+example_arrangement_random_circles$(EXE_EXT): example_arrangement_random_circles$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_arrangement_random_circles example_arrangement_random_circles$(OBJ_EXT) $(LDFLAGS)
 
 example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
@@ -66,6 +69,7 @@ example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Lazy_C
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_Circular example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+	   example_arrangement_random_circles \
                    example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
                    example_Circular_kernel_arrangement.clean \
                    example_Circular_kernel_arrangement_Line_arc.clean \
