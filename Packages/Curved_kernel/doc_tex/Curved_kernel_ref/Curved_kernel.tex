@@ -20,7 +20,6 @@ The second parameter, \ccc{AlgebraicKernel}, is meant to provide the
 circular kernel with all the algebraic functionalities required for the
 manipulation of algebraic curves. 
 It must be a model of concept \ccc{AlgebraicKernel_2_2}. 
-\footnote{default arguments?}
 
 \ccInheritsFrom
 
@@ -31,14 +30,15 @@ It must be a model of concept \ccc{AlgebraicKernel_2_2}.
 \ccThree{typedef Circular_arc_point_2<Circular-Kernel>}{Root_of_4xxx}{}
 \ccThreeToTwo
 
-The circular kernel takes its basic number types from the algebraic kernel. 
-\ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type RT.}
-\ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type FT.}
+The circular kernel takes its basic number types from the algebraic kernel:
+\ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type.}
+\ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type.}
 In fact, the two number types \ccc{AlgebraicKernel::RT} and
 \ccc{BasicGeometricKernel::RT} must coincide, as well as
 \ccc{AlgebraicKernel::FT} and \ccc{BasicGeometricKernel::FT}.
 \footnote{how to avoid inconsistencies? a user might take an AK and a
-BGK with different RTs...}. 
+BGK with different RTs... this is not a problem specific tio CK, it occurs 
+in many places in CGAL...}. 
 
 The types of \ccc{BasicGeometricKernel} are inherited by the circular kernel.
 Some types are taken from the \ccc{AlgebraicKernel} parameter, and
@@ -61,46 +61,8 @@ usable, as well as all the functioanlity on them described in the
 \footnote{Here I do as if that Circle\_2 would be moved to Circular
 kernel, which would in fact raise several issues:
 backwards compatibility of the code, and also of the license if CK is
-not released as the CGAL kernel. I guess it won't be moved...}
-
-\footnote{
-what about the future...? shall we have a different class for each
-type of curve (circles, conics, and so on...) or everything in the
-same kernel (then how would it work...? several solutions are
-possible)
-}
-
-\ccCreationVariable{ck}
-
-\ccPredicates
-
-\ccMethod{Compare_x_2 compare_x_2_object() const;}{}
-\ccGlue
-\ccMethod{Compare_y_2 compare_y_2_object() const;}{}
-\ccGlue
-\ccMethod{Compare_xy_2 compare_xy_2_object() const;}{}
-
-\ccHeading{Constructions}
-
-\ccMethod{Construct_circle_2 construct_circle_2_object() const;}{}
-\ccGlue
-\ccMethod{Construct_circular_arc_2 construct_circular_arc_2_object() const;}{}
-\ccGlue
-\ccMethod{Construct_circular_arc_endpoint_2 construct_circular_arc_endpoint_2_object() const;}{}
-
-\ccMethod{Construct_conic_2 construct_conic_2_object() const;}{}
-\ccGlue
-\ccMethod{Construct_conic_arc_2 construct_conic_arc_2_object() const;}{}
-\ccGlue
-\ccMethod{Construct_conic_arc_endpoint_2 construct_conic_arc_endpoint_2_object() const;}{}
-
-\ccMethod{Make_x_monotone_2 make_x_monotone_2_object() const;}{}
-\ccGlue
-\ccMethod{Construct_intersections_2 construct_intersections_2_object() const;}{}
-
-\ccHeading{Link with the algebraic kernel}
-
-\ccMethod{Get_equation get_equation_object() const;}{}
+not released as the CGAL kernel. I guess it won't be moved... I'll change this in the 
+manual, to be done}
 
 \ccSeeAlso
 
