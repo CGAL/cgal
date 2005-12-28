@@ -26,13 +26,13 @@
 \begin{ccTexOnly}
   \includegraphics{Boolean_set_operations_2/fig/teaser}
 \end{ccTexOnly}
+\label{fig:teaser}
 \begin{ccHtmlOnly}
   <p><center>
     <img src="./fig/teaser.gif" border=0 alt="Boolean Set Operations">
   </center>
 \end{ccHtmlOnly}
 \caption{Examples of Boolean Set Operations.} 
-\label{fig:teaser}
 \end{center}
 \end{figure}
 
@@ -118,8 +118,8 @@ defined as follows:
 \item[Intersection] computes the intersection $R = P \cap Q$.
 \item[Join] computes the union $R = P \cup Q$.
 \item [Difference] computes the difference $R = P \setminus Q$ 
-\item [Symmetric Difference] computes the symmetric difference
-  $P = (P \setminus Q) \cup (Q \setminus P)$
+\item [Symmetric Difference] computes the symmetric
+\ccHtmlNoLinksFrom{difference} $P = (P \setminus Q) \cup (Q \setminus P)$
 \item[Complement] computes the complement
 \lcTex{$R = \overline{P}$}
 \lcRawHtml{<i>R = <span style="text-decoration: overline;">P</span></i>}
@@ -193,7 +193,8 @@ set-operations, being the closure of the interior of the corresponding
 ordinary operation as explained next. There are many ways to arrive at a 
 particular regular set. For example, the regular set depicted to the right 
 is the result of the union of three small triangles translated 
-appropriately. It is also the result of the difference between
+appropriately. It is also the result of the
+\ccHtmlNoLinksFrom{difference} between
 \lcTex{%
   \setlength{\widthRight}{1.4cm}
   \setlength{\widthLeft}{\widthLineReal}
@@ -252,13 +253,14 @@ polygon has no outer boundary; see Figure~\ref{fig:simple}~(c).
   \includegraphics{Boolean_set_operations_2/fig/simple}
   \end{center}
 \end{ccTexOnly}
+\label{fig:simple}
 \begin{ccHtmlOnly}
   <p><center>
     <img src="./fig/simple.gif" border=0 alt="Operations on Strictly
     simple polygons">
   </center>
 \end{ccHtmlOnly}
-\caption{\label{fig:simple}Operations on strictly simple polygons. (a) The union of two
+\caption{Operations on strictly simple polygons. (a) The union of two
 strictly simple polygons. (b) The intersection of two strictly simple
 polygons. (c) The complement of a strictly simple polygon.} 
 \end{figure}
@@ -455,8 +457,9 @@ required by base concept \ccc{ArrangementXMonotoneTraits_2}:
 \item Given an $x$-monotone curve, compare its two endpoints 
 lexicographically.
 \end{itemize}
-The main difference between the \ccc{ArrangementXMonotoneTraits_2}
-and \ccc{ArrangementDirectionalXMonotoneTraits} concepts  is that a curve
+The main \ccHtmlNoLinksFrom{difference} between the
+\ccc{ArrangementXMonotoneTraits_2} and
+\ccc{ArrangementDirectionalXMonotoneTraits} concepts  is that a curve
 of type \ccc{X_monotone_curve_2} type is considered to be directed by
 the former. Namely, it has a source and a target points.
 
@@ -681,9 +684,9 @@ provides a free function that aggregately computes the union of a set of
 polygons. There is no restriction on the polygons in the set. Naturally, 
 they may intersect each other. Similarly, the package provides a free 
 function that determines whether a set of general polygons intersect, a 
-function that computes the intersection and the symmetric difference of 
-a set of general polygons respectively. The symmetric difference of a set
-of
+function that computes the intersection and the symmetric
+\ccHtmlNoLinksFrom{difference} of a set of general polygons
+respectively. The symmetric \ccHtmlNoLinksFrom{difference} of a set of
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
@@ -699,10 +702,10 @@ $p$ is in $R$, if and only if it is contained in odd number of
 general polygons. The class \ccc{General_polygon_set_2} has the equivalent 
 member functions. When such a member function is called, the general 
 polygons represented by the current object are considered operands as 
-well. In case of aggregately computing the difference or symmetric 
-difference, the general polygons represented by the current object 
-comprise the first set. The aggregated operations are based on the 
-sweep-line paradigm. 
+well. In case of aggregately computing the difference or symmetric
+\ccHtmlNoLinksFrom{difference}, the general polygons represented by
+the current object comprise the first set. The aggregated operations
+are based on the sweep-line paradigm. 
 
 The next example computes the union of eight disks represented by
 eight circles respectively depicted on the right. Each
