@@ -288,6 +288,8 @@ public:
 
   void relocate_holes_in_new_face(Halfedge_handle he)
   {
+    const Unique_hash_map<Halfedge_handle, std::list<unsigned int> >& 
+      const_he_indexes_table = m_he_indexes_table;
     Face_handle new_face = he->face();
     Halfedge_handle curr_he = he;
     do
@@ -295,12 +297,15 @@ public:
       // we are intreseted only in halfedges directed from right to left.
       if(curr_he->direction() == LARGER)
       {
-        std::list<unsigned int>& indexes_list = m_he_indexes_table[curr_he];
-        for(std::list<unsigned int>::iterator itr = indexes_list.begin();
-            itr != indexes_list.end();
-            ++itr)
+        const std::list<unsigned int>&    indexes_list = 
+                                         const_he_indexes_table[curr_he];
+        std::list<unsigned int>::const_iterator itr;
+
+        for (itr = indexes_list.begin();
+             itr != indexes_list.end();
+             ++itr)
         {
-          CGAL_assertion(*itr != 0);
+          CGAL_assertion(*itr != 0 && *itr < m_sc_he_table.size());
           Halfedge_handle he_on_face = m_sc_he_table[*itr];
           if(he_on_face->twin()->face() == new_face)
             //this hole was already relocated
