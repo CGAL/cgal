@@ -15,12 +15,6 @@ choices (interface, robustness, representation, and so on) made here
 are consistent with the choices made in the CGAL kernel, for which we
 refer the user to the 2D kernel manual. 
 
-The circular kernel uses the extensibility of the 2D kernel. 
-Three new main geometric objects are introduced: circular arcs, points
-of circular arcs (used in particular for endpoints of arcs and
-intersection points between arcs) and line segments whose endpoints
-are points of this new type.
-
 In this first release, all functionalities necessary for computing an
 arrangement of circular arcs and these line segments are
 defined. Three traits classes are provided for the CGAL arrangement
@@ -44,9 +38,14 @@ robustness of the package relies on the fact that the algebraic kernel
 provides exact computations on algebraic objects.
 \end{itemize}
 
-The types of \ccc{BasicGeometricKernel} are inherited by the circular kernel.
-Some types are taken from the \ccc{AlgebraicKernel} parameter, and
-some types are defined by the \ccc{Circular_kernel} itself.
+The circular kernel uses the extensibility scheme presented in the 2D
+kernel manual. The types of \ccc{BasicGeometricKernel} are inherited
+by the circular kernel and some types are taken from the
+\ccc{AlgebraicKernel} parameter. Three new main geometric objects are
+introduced by the \ccc{Circular_kernel}: circular arcs, points of
+circular arcs (used in particular for endpoints of arcs and
+intersection points between arcs) and line segments whose endpoints
+are points of this new type.  
 
 In fact, the circular kernel is documented as a concept, and several
 models are provided: \ccc{Circular_kernel} is the basic kernel, and
