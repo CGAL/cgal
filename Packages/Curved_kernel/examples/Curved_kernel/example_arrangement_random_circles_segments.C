@@ -1,0 +1,81 @@
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/point_generators_2.h>
+
+#include <CGAL/MP_Float.h>
+
+#include <CGAL/Algebraic_kernel_2_2.h>
+
+#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
+
+#include <CGAL/Circular_kernel.h>
+
+#include <CGAL/Variant_traits.h>
+
+#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_naive_point_location.h>
+
+typedef CGAL::Gmpq                                                        NT;
+typedef CGAL::Cartesian<NT>                                          Linear_k;
+
+typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
+typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>     Curved_k;
+
+typedef Curved_k::Point_2                                                 Point_2;
+typedef Curved_k::Circle_2                                               Circle_2;
+typedef Curved_k::Circular_arc_2                                    Circular_arc_2;
+typedef Curved_k::Line_arc_2                                          Line_arc_2;
+
+typedef boost::variant< Circular_arc_2, Line_arc_2>       Arc;
+typedef std::vector< Arc> ArcContainer;
+
+typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>  Traits;
+
+typedef CGAL::Arrangement_2<Traits>                            Arr;
+typedef CGAL::Arr_naive_point_location<Arr>                 Point_location;
+
+int main(){
+  
+  CGAL::Random generatorOfgenerator;
+  int random_seed = generatorOfgenerator.get_int(0, 123456);
+  std::cout << "random_seed = " << random_seed << std::endl;
+  CGAL::Random theRandom(random_seed);
+  int random_max = 128;
+  int random_min = -128;
+  ArcContainer ac;
+  int x1, y1, x2, y2;
+
+  for (int i = 0; i < 10; i++) {
+    x1 = theRandom.get_int(random_min,random_max);
+    y1 = theRandom.get_int(random_min,random_max);
+    do{
+      x2 = theRandom.get_int(random_min,random_max);
+      y2 = theRandom.get_int(random_min,random_max);
+    } while((x1 == x2) && (y1 == y2));
+    std::cout << x1 << " " << y1 << " " << x2 << " " << y2 << std::endl;
+
+    boost::variant< Circular_arc_2, Line_arc_2 > 
+      v =  Line_arc_2(Point_2(x1,y1), Point_2(x2,y2));
+    ac.push_back( v);
+  }
+  
+   for (int i = 0; i < 10; i++) {
+    x1 = theRandom.get_int(random_min,random_max);
+    y1 = theRandom.get_int(random_min,random_max);
+    
+    boost::variant< Circular_arc_2, Line_arc_2 > 
+      v = Circle_2( Point_2(x1,y1), x1*x1 + y1*y1);
+    ac.push_back(v);
+   }
+  
+  Arr _pm;
+  Point_location _pl(_pm);
+  for (ArcContainer::const_iterator it=ac.begin(); it != ac.end(); ++it) {
+    insert_curve(_pm,*it,_pl);
+  };
+  
+  return 0;
+};
+
