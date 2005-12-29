@@ -52,7 +52,7 @@ public:
   typedef Tag_true                                       Has_left_category;
   typedef Tag_false                                      Has_merge_category;
 
-private:
+protected:
 
   // Type definition for the intersection points mapping.
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
