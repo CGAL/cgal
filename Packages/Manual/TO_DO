@@ -16,6 +16,24 @@ Bug Fixes
 Feature Requests
 ============================================================================
 
+-- DOC: Add to Chapter 2 of Developers Manual a section on the way how
+   to build the manuals manually, i.e., without the use of cgal_manual.
+   It would a commented version of the output one gets from
+   cgal_manual -cmdlog.
+
+-- DOC: Add to Chapter 2 of Developers Manual a section on how to handle
+   chapters in CGAL Manuals that are assembled from several CGAL packages.
+   The problem is the question, whether a package author can test
+   his/her package alone. There are some examples in the curren cgal_manual,
+   Handle, and STL_Extensions.
+
+-- All: Packages can be assembled into different manuals, i.e., cross 
+   references to other packages might exist or not. In principle, one
+   could use the multi-pass assembly of packages in the current way how
+   CGAL manuals are built to declare the exisiting packages first and then
+   include them, such that packages can check for the existence of other 
+   packages. Some help can be provided with additional macros.
+
 -- TeX: Change page numbers of printed manual to <Part-Num>-<Chapter-Num> 
    + page per chapter. It simplifies packaging of individual manuals. 
    Try just to redefine \thepage. It might not work as smooth as expected 

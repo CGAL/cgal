@@ -91,6 +91,11 @@ OPEN:
 Feature Requests
 ============================================================================
 
+-- License: decide upon the license (I suggest QPL to be in line with
+   CGAL, but not to make it arbitrarily free), apply the license
+   on all source and style files. Think also about the documentation,
+   how to license it.
+
 -- DOC: Provide manuals online (done once Manual_tools is in the internal 
    release).
 
