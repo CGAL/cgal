@@ -196,7 +196,7 @@ public:
         return row(i).get_coef(j) ;
     }
 
-    // Write access to 1 matrix coefficient: aij <- aij + val
+    // Write access to 1 matrix coefficient: a_ij <- a_ij + val
     //
     // Preconditions:
     // * 0 <= i < row_dimension()
@@ -207,7 +207,7 @@ public:
         row(i).add_coef(j, val) ;
     }
 
-    // Write access to 1 matrix coefficient: aij <- val
+    // Write access to 1 matrix coefficient: a_ij <- val
     //(added for SparseLinearAlgebraTraits_d::Matrix concept)
     //
     // Preconditions:
