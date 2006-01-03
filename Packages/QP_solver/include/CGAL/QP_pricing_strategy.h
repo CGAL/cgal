@@ -125,6 +125,7 @@ QP_pricing_strategy( const std::string& strategy_name)
 template < class Rep_ >  inline
 QP_pricing_strategy<Rep_>::
 QP_pricing_strategy( )
+  : et0(0)
 {
     CGAL_qpe_assertion_msg( false, "call to 'QP_pricing_strategy<Rep>::\n'" \
 	"QP_pricing_strategy( const std::string&  strategy_name)'\n" \
