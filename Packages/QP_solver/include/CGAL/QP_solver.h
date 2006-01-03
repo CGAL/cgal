@@ -125,9 +125,9 @@ private: // private types
   // The following two types are used to (conceptually) add to the matrix A
   // additional columns that model the constraints "x_s>=0" for the slack
   // variables x_s.  Of course, we do not store the column (which is just
-  // +-1), so we just maintain a pair (int,bool):: the first entry says in
-  // which column the +-1 is and the second entry of the pair says whether it
-  // is +1 (false) or -1 (true).
+  // plus/minus a unit vector), but maintain a pair (int,bool): the first
+  // entry says in which column the +-1 is and the second entry of the pair
+  // says whether it is +1 (false) or -1 (true).
   typedef  std::pair<int,bool>        Slack_column;
   typedef  std::vector<Slack_column>  A_slack;
 

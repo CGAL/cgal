@@ -315,10 +315,6 @@ public: // methods:
   // and you set the upper bound of a variable to exactly zero and do
   // not specify a lower bound then the lower bound will be set to
   // -infinity.
-  //
-  // The argument strategy is a pointer to a pricing strategy (allocated
-  // via operator new).  When QP_MPS_instance's destructor gets called,
-  // it will call delete strategy.
   QP_MPS_instance(std::istream& in,bool use_CPLEX_convention=true,
 		  int verbosity=0);
 
