@@ -37,8 +37,6 @@
 #include <iostream>
 #include <deque>
 
-//#define INCIDENT_FACES_CHECK
-
 #define CGAL_ENVELOPE_USE_COMPARE_CACHE
 #define CGAL_ENVELOPE_USE_INTERSECTIONS_CACHE
 
@@ -204,10 +202,6 @@ public:
       std::cout << "compared surfaces are:" << surf1 << std::endl << surf2 << std::endl;
     #endif
 
-#ifdef INCIDENT_FACES_CHECK
-    incident_faces_check(face);
-#endif
-
     // find the projected intersections of the surfaces. if none - we have a simple case:
     // need only resolve non-intersecting and return
     std::list<Object> inter_objs;
@@ -300,6 +294,7 @@ public:
     //      intersections, and have common aux data with the face
     //    all these vertices should have their data set as "EQUAL"
     Vertices_list  result_special_vertices;
+
 
 
 
@@ -838,6 +833,7 @@ public:
     // set envelope data on the last part (cur_part)
     // if the last part is a special edge, and no verticals are involved
 
+
     // we can set both aux data on it. otherwise we should use the traits
     // compare method.
     Comparison_result cur_part_res;
@@ -953,10 +949,6 @@ public:
 //    copy_from_face_missings = 0;
 //    compare_num = 0;
 //    compare_intersection_hit_successful = 0;
-#ifdef INCIDENT_FACES_CHECK
-    copies_from_incident_face = 0;
-    copies_from_incident_halfedge = 0;    
-#endif
   }
   
   void print_times()
@@ -985,14 +977,6 @@ public:
 //                << " times the intersection information was there" << std::endl;
     #endif
     
-#ifdef INCIDENT_FACES_CHECK
-      std::cout << std::endl;
-      std::cout << "could copy from incident face " << copies_from_incident_face
-                << " times" << std::endl;
-      std::cout << "could copy from incident halfedge " << copies_from_incident_halfedge
-                << " times" << std::endl;
-
-#endif
   }
 
   void print_bench() const
@@ -1323,26 +1307,46 @@ protected:
       else if (!hh->is_decision_set() && can_copy_decision_from_face_to_edge(hh))
       {
         // copy the decision from face to the edge
-//        set_data_by_comparison_result(hh, res);
         #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
           std::cout << "copy from face to edge " << hh->curve() << std::endl;
         #endif
         hh->set_decision(face->get_decision());
         hh->twin()->set_decision(hh->get_decision());
       }
-      
+      // if the first map is continous, but the second isn't (i.e. when we move
+      // from the face to the edge, the envelope goes closer), then if the
+      // second map wins on the face, it wins on the edge also
+      else if (!hh->is_decision_set() &&
+               face->get_decision() == SECOND &&
+               hh->get_has_equal_aux_data_in_face(0) &&
+               !hh->get_has_equal_aux_data_in_face(1))
+      {
+        hh->set_decision(SECOND);
+        hh->twin()->set_decision(SECOND);
+      }
+      // if the second map is continous, but the first isn't, then if the
+      // first map wins on the face, it wins on the edge also
+      else if (!hh->is_decision_set() &&
+               face->get_decision() == FIRST &&
+               !hh->get_has_equal_aux_data_in_face(0) &&
+               hh->get_has_equal_aux_data_in_face(1))
+      {
+        hh->set_decision(FIRST);
+        hh->twin()->set_decision(FIRST);
+      }
+
       // for vertices, need only check target (or source) since it is
       // a circular list
       Vertex_handle vh = hh->target();
-//      if (!vh->is_decision_set() && vh->get_is_fake())
-//      {
-//        // don't set anything, since it is fake, and it might be special
-////        CGAL_assertion(false);
-////        vh->set_data(face->begin_data(), face->end_data());
-//      }
-//      else 
+      // first, we try to copy decision from edge, then from face
       if (!vh->is_decision_set() &&
-          has_equal_aux_data(vh, face)) 
+          hh->is_decision_set() &&
+          can_copy_decision_from_edge_to_vertex(hh))
+      {
+        vh->set_decision(hh->get_decision());
+      }      
+      else if (!vh->is_decision_set() &&
+               has_equal_aux_data(vh, face)) 
 //               can_copy_decision_from_edge_to_vertex(hh) &&
 //               can_copy_decision_from_face_to_edge(hh))
         // todo - have a problem here?
@@ -1357,7 +1361,6 @@ protected:
         // can copy the data from the face, since we already took care of
         // the vertices of projected intersections
         vh->set_decision(face->get_decision());
-        //set_data_by_comparison_result(vh, res);
       }
         
                 
@@ -1377,6 +1380,7 @@ protected:
     std::set<Xy_monotone_surface_3> second(begin2, end2);
     std::list<Xy_monotone_surface_3> intersection;
     std::set_intersection(first.begin(), first.end(),
+
                           second.begin(), second.end(),
                           std::back_inserter(intersection));
     return (intersection.size() > 0);
@@ -1477,7 +1481,27 @@ protected:
         res = convert_decision_to_comparison_result(hh->get_decision());
         result = true;
       }
-
+      // if the first map is continous, but the second isn't (i.e. when we move
+      // from the edge to the face, the envelope goes farther), then if the
+      // first map wins on the edge, it wins on the face also
+      else if (hh->is_decision_set() &&
+               hh->get_decision() == FIRST &&
+               hh->get_has_equal_aux_data_in_face(0) &&
+               !hh->get_has_equal_aux_data_in_face(1))
+      {
+        res = convert_decision_to_comparison_result(FIRST);
+        result = true;
+      } 
+      // if the second map is continous, but the first isn't, then if the
+      // second map wins on the edge, it wins on the face also
+      else if (hh->is_decision_set() &&
+               hh->get_decision() == SECOND &&
+               !hh->get_has_equal_aux_data_in_face(0) &&
+               hh->get_has_equal_aux_data_in_face(1))
+      {
+        res = convert_decision_to_comparison_result(SECOND);
+        result = true;
+      }           
       hec++;
     } while(hec != hec_begin && !result);
     if (result) return true;
@@ -1497,7 +1521,28 @@ protected:
           res = convert_decision_to_comparison_result(hh->get_decision());
           result = true;
         }
-
+        // if the first map is continous, but the second isn't (i.e. when we move
+        // from the edge to the face, the envelope goes farther), then if the
+        // first map wins on the edge, it wins on the face also
+        else if (hh->is_decision_set() &&
+                 hh->get_decision() == FIRST &&
+                 hh->get_has_equal_aux_data_in_face(0) &&
+                 !hh->get_has_equal_aux_data_in_face(1))
+        {
+          res = convert_decision_to_comparison_result(FIRST);
+          result = true;
+        }
+        // if the second map is continous, but the first isn't, then if the
+        // second map wins on the edge, it wins on the face also
+        else if (hh->is_decision_set() &&
+                 hh->get_decision() == SECOND &&
+                 !hh->get_has_equal_aux_data_in_face(0) &&
+                 hh->get_has_equal_aux_data_in_face(1))
+        {
+          res = convert_decision_to_comparison_result(SECOND);
+          result = true;
+        }
+  
         hec++;
       } while(hec != hec_begin && !result);
       if (result) return true;
@@ -1828,57 +1873,6 @@ protected:
     return res;
   }
 
-#ifdef INCIDENT_FACES_CHECK
-  // check if incident face has equal aux data as face, and we can copy
-  // the envelope decision
-  // also check if we can copy envelope decision from incident edges
-  void incident_faces_check(Face_handle face)
-  {
-    Ccb_halfedge_circulator hec = face->outer_ccb();
-    incident_faces_check(hec);
-
-    Holes_iterator hole_iter = face->holes_begin();
-    for (; hole_iter != face->holes_end(); ++hole_iter)
-    {
-      Ccb_halfedge_circulator he = (*hole_iter);
-      incident_faces_check(he);
-    }
-  }
-  void incident_faces_check(Ccb_halfedge_circulator hec_begin)
-  {
-    Ccb_halfedge_circulator hec = hec_begin;
-    do {
-      Halfedge_handle hh = hec;
-      if (has_equal_aux_data(hh->face(), hh->twin()->face()) &&
-          !hh->twin()->face()->is_decision_set())
-        ++copies_from_incident_face;
-      if (!hh->twin()->face()->is_decision_set() &&
-          has_equal_aux_data(hh, hh->face()) &&
-          has_equal_aux_data(hh, hh->twin()->face()))
-      {
-        ++copies_from_incident_halfedge;
-        //std::cout << "copies_from_incident_halfedge: " << hh->curve() << std::endl;
-      }
-      ++hec;
-    } while (hec != hec_begin);
-  }
-
-  bool has_equal_aux_data(Face_handle f1, Face_handle f2)
-  {
-    if (!f1->has_equal_aux_data(0, f2->begin_aux_data(0), f2->end_aux_data(0)))
-      return false;
-    return (f1->has_equal_aux_data(1, f2->begin_aux_data(1), f2->end_aux_data(1)));
-  }
-
-  bool has_equal_aux_data(Halfedge_handle h, Face_handle f)
-  {
-    if (!h->has_equal_aux_data(0, f->begin_aux_data(0), f->end_aux_data(0)))
-      return false;
-    return (h->has_equal_aux_data(1, f->begin_aux_data(1), f->end_aux_data(1)));
-  }
-
-#endif
-
   // check if the point is on the curve
   // left and right should be the left and right endpoints of the curve cv
   bool is_point_on_curve(const Point_2& p, const X_monotone_curve_2& cv,
@@ -1886,6 +1880,7 @@ protected:
   {
     CGAL_precondition(traits->equal_2_object()
                         (left, traits->construct_min_vertex_2_object()(cv)));
+
     CGAL_precondition(traits->equal_2_object()
                         (right, traits->construct_max_vertex_2_object()(cv)));
                         
@@ -3012,6 +3007,7 @@ protected:
 
   // this minimization diagram observer updates data in new faces created
   class New_faces_observer : public Md_observer
+
   {
   public:
     typedef typename Minimization_diagram_2::Face_handle Face_handle;
@@ -3028,6 +3024,7 @@ protected:
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
         std::cout << "in New_faces_observer::after_split_face" << std::endl;
       #endif
+
 
       // update the new face's aux_data from original face
       if (org_f->get_aux_is_set(0))
@@ -3063,10 +3060,6 @@ protected:
 //  mutable unsigned int compare_num;
 //  mutable unsigned int compare_intersection_hit_successful;
 
-#ifdef INCIDENT_FACES_CHECK
-  int copies_from_incident_face;
-  int copies_from_incident_halfedge;  
-#endif  
 };
 
 CGAL_END_NAMESPACE
