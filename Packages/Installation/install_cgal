@@ -5940,7 +5940,8 @@ _build_one()
             retrieve_compiler_settings
         fi
         case ${_WHAT_TO_DO} in
-	    *rebuild*) test_setup;;
+	    *rebuild*) reset_all_test_variables
+                       test_setup;;
         esac
         lib_menu
         installation
