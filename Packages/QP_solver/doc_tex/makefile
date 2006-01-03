@@ -6,6 +6,7 @@ wrapper.ps:	wrapper.dvi
 
 wrapper.dvi:	wrapper.tex makefile \
 		Optimisation_ref/QP__filtered_base.tex \
+		Optimisation_ref/MPS.tex \
 		Optimisation_ref/QP_full_exact_pricing.tex \
 		Optimisation_ref/QP_full_filtered_pricing.tex \
 		Optimisation_ref/QP_full_filtered_pricing_strategy_example.C \
@@ -17,6 +18,7 @@ wrapper.dvi:	wrapper.tex makefile \
 		Optimisation_ref/QP_solver.tex \
 		Optimisation_ref/QP_solver_example.C \
 		Optimisation_ref/Traits.tex \
+		Optimisation_ref/QP_solver_MPS_traits_d.tex \
 		Optimisation_ref/main_QP_solver.tex
 		latex wrapper.tex
 

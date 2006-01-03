@@ -1,101 +1,192 @@
-% =============================================================================
+ =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
 % Section: Smallest Enclosing Sphere
 % =============================================================================
 
 \begin{ccRefClass}{QP_solver<Traits>}
-\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
-\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
-\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
-\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
 
 % -----------------------------------------------------------------------------
-\ccDefinition
-An object of the class \ccRefName\ is a data structure that represents
-a vector $x$ attaining the minimum of the convex quadratic objective
-function $f(x)=c^{T}x+x^{T}Dx$, $x \in \R^{n}$, on a domain $R \subset
-\R^{n}$ given as the intersection $R=\{ x\in\R^n \mid \mbox{$Ax\leq b,
-x\ge 0$}\}$ of halfspaces and hyperplanes,
+\ccDefinition An object of class \ccRefName\ is a data structure
+that represents a point $\tilde{x}$ attaining the minimum of a convex
+quadratic objective function $f(x)=c^{T}x+x^{T}Dx$ on
+a domain $R \subseteq \R^{n}$ given as the intersection $R=\{ x\in\R^n
+\mid \mbox{$Ax\gtreqless b$, $l \le x \le u$}\}$ of halfspaces and
+hyperplanes. In other words, an object of class \ccRefName\ represents
+a solution to the convex mathematical program
 \begin{eqnarray*}
 \mbox{(QP)}&\mbox{minimize} & c^{T}x+x^{T}Dx \\
-&\mbox{subject to}   & Ax \leq b \\
-&& x \geq 0.
+&\mbox{subject to}   & Ax \gtreqless b, \\
+&& l \leq x \leq u,
 \end{eqnarray*}
+over the $n$ variables $x=(x_0,\ldots,x_{n-1})$.
+
 Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$, and in
 addition, the matrix $D \in \R^{n \times n}$ is positive-semidefinite.
-A vector $x \in \R^{n}$ is said to be a \emph{feasible solution} if $x
-\in R$; a feasible solution $x$ is called an \emph{optimal feasible
-solution} if $f(x')\geq f(x)$ for all $x'\in R$.  If $R=\emptyset$ the
-quadratic program is said to be \emph{infeasible}; it is
-\emph{feasible} if $\R\not=\emptyset$.  If $f$ is bounded from below
-on $R$, the quadratic program is called \emph{bounded}, otherwise
-\emph{unbounded}.  A quadratic program that is feasible and bounded
-has an optimal feasible solution (which need not be unique), and we
-call the program \emph{optimally solvable} (\emph{optimal} for short).
-Corresponding to this, an object of the class \ccRefName\ has a
-\emph{status} that indicates whether the quadratic program (QP) is
-infeasible, unbounded, or optimal.  A \emph{feasible solution} of (QP)
-can be specified by a subset $B\subseteq\{1,\ldots,n\}$ of the
-variables and their values $x_{B}$ in such a way that all variables
-$\{1,\ldots,n\}\setminus B$ have value zero; in this case, the
-variables in $B$ are said to be \emph{basic} and the variables in
-$\{1,\ldots,n\}\setminus B$ are called \emph{nonbasic}.  (Nonbasic
-variables always have value zero; a basic variable might have value
-zero.)
-%
-%An optimal feasible solution need not be unique.
+The symbol ``$\gtreqless$'' in the program's constraint $Ax \gtreqless
+b$ means that any row of this may either be an inequality $(Ax)_i \leq b_i$ or
+$(Ax)_i \geq b_i$, or an equality $(Ax)_i = b_i$.  Furthermore, $l\in
+(\R\cup\{-\infty\})^n$ and $r\in (\R\cup\{\infty\})^n$, so that each
+variable $x_i$, $i\in\{0,\ldots,n-1\}$, can be \emph{free} (if
+$l_i=-\infty$ and $r_i=\infty$), \emph{bounded from above} (if
+$u_i\not=\infty$) and/or \emph{bounded from below} (if
+$l_i\not=-\infty)$.  In case $l$ is the zero vector and all entries of
+$u$ are $\infty$, the program (QP) is said to be in \emph{standard
+form}.
 
-The algorithm determines the status of the quadratic program; if the
-status is solvable, an optimal feasible solution $\tilde{x}$ is
-computed together with the value $f(\tilde{x})$.  The optimal feasible
-solution $\tilde{x}$ is, as described above, characterized by some set
-$B \subseteq \{1,\ldots,n\}$ and the values $\tilde{x}_{B}$.  In order
-to improve performance, the algorithm can be tailored to specific
-instances of the quadratic program.  In particular, if the program is
-known to be linear (i.e., $D=0$) or symmetric (meaning $D^{T}=D$), or
-if the constraint matrix $A$ is known to have full row rank then
-compile-time flags in the traits class \ccc{Traits} can be used to
-specialize the algorithm; the examples below illustrate this.
+A point $x \in \R^{n}$ with $x\in R$ is called a \emph{feasible
+solution}; a feasible solution $x$ is said to be an \emph{optimal
+feasible solution} if $f(x')\geq f(x)$ for all $x'\in R$.  If
+$R=\emptyset$, the program (QP) is said to be \emph{infeasible};
+it is \emph{feasible} if $\R\not=\emptyset$.  If $f$ is bounded from
+below on $R$, the quadratic program (QP) is called \emph{bounded},
+otherwise \emph{unbounded}.  A quadratic program that is feasible and
+bounded always has an optimal feasible solution (which need not be
+unique), and we call such a program \emph{optimally solvable}.
 
-The solver's underlying algorithm is an \emph{iterative method}; after
-having found an initial feasible solution the algorithm steps from
-feasible solution to feasible solution, always improving the solution.
-An internal aspect of the algorithm that can be tailored to specific
-situations is the \emph{pricing strategy}.  The \emph{pricing step} of
-the solver's algorithm determines whether or not the current solution
-is optimal; if the current solution is not optimal, the pricing step
-finds a way of improving the current solution. The pricing strategy
-determines which improved solution is taken for the next iteration.
+While a feasible solution $\tilde{x}$ can be specified by listing its
+entries $\tilde{x}_i$, $i\in\{0,\ldots,n-1\}$, it can also be
+described by specifying for each variable $x_i$ which of the
+constraints $l_i\leq \tilde{x}_i$ and $\tilde{x}_i\leq u_i$ is tight,
+and in case none is, by explicitly stating the value $\tilde{x}_i$.
+Along these lines, the algorithm will represent a feasible solution
+$\tilde{x}$ by a certain
+\begin{itemize}
+\item subset $B\subseteq \{0,\ldots,n-1\}$,
+\item the values $\tilde{x}_i$ for all $i\in B$, and
+\item for all $i\in \{0,\ldots,n-1\}\setminus B$ whether
+(a)~$\tilde{x}_i=0$, (b)~the \emph{lower bound} $l_i \leq \tilde{x}_i$
+holds with equality, or (c)~the \emph{upper bound} $\tilde{x}_i\leq
+u_i$ holds with equality.
+\end{itemize}
+The variables $x_i$, $i\in B$, are called \emph{basic} and the
+remaining variables \emph{nonbasic} (with respect to $\tilde{x}$ and
+$B$).  Notice that in case of a problem in standard form, all nonbasic
+variables are zero (and therefore need not be queried).
+
+\paragraph{Usage.}
+An object of class \ccRefName\ is constructed by specifing $A, b, c,
+D, l, u$, and for each constraint from $Ax \gtreqless b$ whether it
+needs to hold with inequality ($\leq$ or $\geq$) or with equality.
+The algorithm then determines the object's \emph{status}, which
+reflects whether the quadratic program (QP) is infeasible, unbounded,
+or optimally solvable.  You can query the status by calling
+\ccc{status()}.  If according to this the program is optimally
+solvable, an optimal feasible solution $\tilde{x}$ is computed
+together with the value $f(\tilde{x})$, which you can query using the
+access functions \ccc{solution_numerator()},
+\ccc{solution_denominator()},
+\ccc{basic_original_variables_numerator_begin()},
+\ccc{nonbasic_original_variables_numerator_begin()}, and
+\ccc{variables_common_denominator()}.  The value $f(\tilde{x})$ and
+entries $\tilde{x}_i$ of the computed optimally
+feasible solution $\tilde{x}$ are represented as quotients over the
+number type \ccc{Traits::ET}.  The routines
+\ccc{solution_numerator()},
+\ccc{basic_original_variables_numerator_begin()} and
+\ccc{nonbasic_original_variables_numerator_begin()} return the
+respective numerators; the denominator of $f(\tilde{x})$ is
+\ccc{solution_denominator()}, and all entries $\tilde{x}_i$ have
+(identical) denominator \ccc{variables_common_denominator()}.
+Alternatively, you can also invoke the routines \ccc{solution()} and
+\ccc{variables_value_begin()} to query $f(\tilde{x})$ and $\tilde{x}$;
+the result of these routines are quotients, i.e., numbers of type
+\ccc{CGAL::Quotient<Traits::ET>}.
+
+
+In case of a problem (QP) in standard form it suffices to query the
+values of the basic variables of $\tilde{x}$ (as returned by
+\ccc{basic_original_variables_numerator_begin()}); the values
+$\tilde{x}_i$ of all other (nonbasic) variables are, as explained
+above, zero in this case.
+
+In case the algorithm determines that the program (QP) is unbounded,
+it computes a feasible solution $\tilde{x}$ and an \emph{unbounded
+direction} $w\in\R^n$ such that $\tilde{x}-\alpha w$ is a feasible
+solution of (QP) for any real $\alpha\geq 0$ with the property that
+$g(\alpha):= f(\tilde{x}-\alpha w)$ is not bounded from below on
+$\R_+$.  The feasible solution $\tilde{x}$ is queried in the same way
+as the optimal feasible solution in the case when the program is
+optimally solvable; the unbounded direction $w$ can be accessed using
+\ccc{unbounded_direction_begin()}.
+
+When (QP) is either unbounded or optimally solvable, the feasible
+solution $\tilde{x}$ computed in this way is called the instance's
+\emph{current solution}.
+
+\paragraph{Specializations.}
+In order to improve performance, the algorithm can be tailored to
+specific variants of the quadratic program.  In particular, if the
+program is (at compile time) known to be linear (i.e., $D=0$), or in
+standard form, or symmetric (meaning $D^{T}=D$), or if the constraint
+matrix $A$ is known to have full row rank and $Ax \gtreqless b$
+consists of equalities only then compile-time flags in the traits
+class \ccc{Traits} can be used to specialize the algorithm.  The
+resulting code will take advantage of the given additional knowledge
+and therefore run (much) faster. The examples below illustrate this.
+
+\paragraph{Exactness of the solution.}
+In contrast to many other quadratic programming solvers, the
+algorithm's output (\ccc{status()}, \ccc{solution()}, etc.)\ is
+\emph{correct} for all inputs.  (In other words, the optimal feasible
+solution computed by the algorithm is not a point $\tilde{x}'$ that is
+\emph{close}, $\|\tilde{x}'-\tilde{x}\|\le \epsilon$, to an actual
+optimal feasible solution $\tilde{x}$ of the input program, but it
+computes an optimal feasible solution.  In contrast to this, many
+solvers merely compute \emph{floating-point approximations} to optimal
+feasible solutions and cannot correctly decide for all possible input
+programs (QP) whether they are infeasible or not.)
+
+For this to work, the algorithm requires that the number type
+\ccc{Traits::ET}, which is used for internal calculations, is an
+\emph{exact number type}, meaning that it correctly models the
+rational numbers (in particular, without rounding errors).
+(Technically,
+\ccc{Number_type_traits<Traits::ET>::Has_exact_ring_operations} must
+be \ccc{CGAL::Tag_true}, see the documentation of concept
+\ccc{QPSolverTraits}.)
+
+\paragraph{Pricing strategies.}
+The solver's underlying algorithm is an \emph{iterative method}.
+After having found an initial feasible solution the algorithm steps
+from feasible solution to feasible solution, always improving the
+solution.  The performance of the algorithm is greatly influenced by
+the \emph{pricing strategy} that is used during the so-called
+\emph{pricing step}. In this repeatedly occurding phase, the algorithm
+determines whether or not the current solution is optimal, and if it
+is not, selects one from (usually) many possible \emph{improved
+solutions}. The pricing strategy determines \emph{which} improved
+solution is taken for the next iteration.
 
 Four ready-to-use pricing strategies are provided: \emph{full exact
-pricing}, \emph{full filtered pricing}, \emph{partial exact pricing}
-and \emph{partial filtered pricing}; the first one is the default
-strategy and the last one the most sophisticated one.  This set of
-pricing strategies can be extended by user-provided, customized
-pricing strategies, see the documentation of class
-\ccc{QP_pricing_stratgey<Traits>}.
+pricing}, \emph{full filtered pricing}, \emph{partial exact pricing},
+and \emph{partial filtered pricing}.  (Currently, it is not possible
+to run the algorithm with a user-defined pricing strategy.)
 
-Technically, the entries $x_i$, $i\in\{1,\ldots,n\}$, of a feasible
-solution $x$ are represented as quotients over the number type
-\ccc{ET}; if the (implicit) conversion from the element types of $A$,
-$b$, $c$ and $D$ to \ccc{ET} is lossless then feasible solutions
-represent exact values (and in particular, the optimal feasible
-solution computed by the solver is an exact optimal feasible solution
-to the original problem).
+The two filtered pricing strategy allow for an \emph{inexact} number
+type \ccc{Traits::NT} like e.g.\ \ccc{double} to be used during the
+pricing step: instead of running expensive exact arithmetic
+internally, the algorithm will then use the fast number-type
+\ccc{Traits::NT} to determine the next improved solution --- still in
+such a way that exact solutions are obtained in the end. If the
+inexact number type \ccc{Traits::NT} is considerable faster than
+\ccc{Traits::ET}, filtered pricing can result in increased performance
+of the algorithm.
 
-For the two filtered pricing strategies, an inexact (fast) number type
-\ccc{NT} can be specified, such that performance of the pricing step
-is substantially increased and still exact solutions are obtained.
-Partial pricing strategies work best for quadratic programs with high
-\emph{variables-to-constraints} ratio.  If, in addition, the inexact
-number type \ccc{NT} is considerably faster than the number type
-\ccc{ET}, the \emph{partial filtered} pricing strategy, which combines
-filtered and partial pricing, is the pricing strategy of choice.
-   
+The two partial pricing strategies incorporate the techniques of
+\emph{random sampling} to speed up the pricing step.  They work best
+for quadratic programs with high \emph{variables-to-constraints ratio}
+$n/m$.
+
+%Any feasible solution of (QP) can be specified by a
+%subset $B\subseteq\{1,\ldots,n\}$ of the variables and their values
+%$x_{B}$ in such a way that all variables $\{1,\ldots,n\}\setminus B$
+%have value zero; in this case, the variables in $B$ are said to be
+%\emph{basic} and the variables in $\{1,\ldots,n\}\setminus B$ are
+%called \emph{nonbasic}.  (Nonbasic variables always have value zero; a
+%basic variable might have value zero.)
 
 \ccInclude{CGAL/QP_solver.h}
-
 
 \ccRequirements
 \ccIndexRequirements
@@ -107,13 +198,23 @@ The class \ccRefName\ expects a model of the concept
 
 \ccNestedType{ET}{a typedef to \ccc{Traits::ET}.}
 
-\ccNestedType{A_iterator}{a typedef to \ccc{Traits::A_iterator}.}
+\ccNestedType{A_iterator}{a typedef to \ccc{Traits::A_iterator}.\\
+Note: as described in the documentation of concept
+\ccc{QPSolverTraits}, \ccc{A_iterator} iterates over the
+\emph{columns} of the matrix $A$.}
 
 \ccNestedType{B_iterator}{a typedef to \ccc{Traits::B_iterator}.}
 
 \ccNestedType{C_iterator}{a typedef to \ccc{Traits::C_iterator}.}
 
-\ccNestedType{D_iterator}{a typedef to \ccc{Traits::D_iterator}.}
+\ccNestedType{D_iterator}{a typedef to \ccc{Traits::D_iterator}. \\
+Note: as described in the documentation of concept
+\ccc{QPSolverTraits}, \ccc{D_iterator} iterates over the
+\emph{rows} of the matrix $D$.}
+\ccNestedType{L_iterator}{a typedef to \ccc{Traits::L_iterator}.}
+\ccNestedType{U_iterator}{a typedef to \ccc{Traits::U_iterator}.}
+\ccNestedType{FL_iterator}{a typedef to \ccc{Traits::FL_iterator}.}
+\ccNestedType{FU_iterator}{a typedef to \ccc{Traits::FU_iterator}.}
 
 \ccNestedType{Row_type}{is a typedef to \ccc{Traits::Row_type}.}
 
@@ -124,62 +225,105 @@ The class \ccRefName\ expects a model of the concept
 
 \ccNestedType{Is_symmetric}{a typedef to \ccc{Traits::Is_symmetric}.}
 
-\ccNestedType{Has_full_row_rank}{is a typedef to
-\ccc{Traits::Has_full_row_rank}.}
+\ccNestedType{Has_equalities_only_and_full_rank}{is a typedef to
+\ccc{Traits::Has_equalities_only_and_full_rank}.}
 
-\ccNestedType{Use_perturbation}{is a typedef to
-\ccc{Traits::Use_perturbation}.}
+\ccNestedType{Is_in_standard_form}{a typedef to \ccc{Traits::Is_in_standard_form}.}
 
-\ccNestedType{Pricing_strategy}{a typedef to
-\ccc{QP_pricing_strategy<Traits>}. \ccc{Pricing_strategy} is a base
-class of all read-to-use pricing strategies, and also of all
-user-provided pricing strategies.}
+%\ccNestedType{Use_perturbation}{is a typedef to
+%\ccc{Traits::Use_perturbation}.}
 
-\ccNestedType{Quotient}{a typedef to \ccc{CGAL::Quotient<Traits::ET>}}
+%\ccNestedType{Pricing_strategy}{a typedef to
+%\ccc{QP_pricing_strategy<Traits>}. \ccc{Pricing_strategy} is a base
+%class of all four ready-to-use pricing strategies.}
 
-\ccNestedType{Basic_variable_value_iterator}{}
+\ccNestedType{Basic_variable_value_iterator}{a STL random access
+  iterator with value type \ccc{ET} used to access the numerators of
+  the basic variables of a feasible (or optimal feasible) solution,
+  see \ccc{basic_original_variables_numerator_begin()} below.}
 
-\ccNestedType{Basic_variable_index_iterator}{}
+\ccNestedType{Basic_variable_index_iterator}{a STL random access
+  iterator with value type \ccc{int} used to access the indices of the
+  basic variables of a feasible (or optimal feasible) solution, see
+  \ccc{basic_original_variables_numerator_begin()} below.}
 
-\ccNestedType{Variable_value_iterator}{}
+\ccNestedType{Nonbasic_variable_iterator}{a STL random access iterator
+  with value type \ccc{ET} used to access the nonbasic variables of a
+  feasible (or optimal feasible) solution, see
+  \ccc{nonbasic_original_variables_begin()} below.}
 
-\ccNestedType{Lambda_value_iterator}{}
+\ccNestedType{Nonbasic_variable_index_iterator}{a STL random access
+  iterator with value type \ccc{int} used to access the indices of the
+  nonbasic variables of a feasible (or optimal feasible) solution, see
+  \ccc{nonbasic_original_variables_begin()} below.}
 
+\ccNestedType{Variable_value_iterator}{a STL random access iterator
+with value type \ccc{CGAL::Quotient<ET>} used to access all (i.e.,
+basic and nonbasic) variables of a feasible (or optimal feasible)
+solution, see \ccc{variables_value_begin()} below.}
+
+%KKT
+%\ccNestedType{Lambda_value_iterator}{a STL random access iterator with value type}
 
 %The following enum type is provided by the the class \ccRefName\ :
+
+\ccEnum{enum Strategy { FULL_EXACT_PRICING, FULL_FILTERED_PRICING,
+PARTIAL_EXACT_PRICING, PARTIAL_FILTERED_PRICING };}{enumeration used
+to specify one of the four pricing strategies to use.}
 
 \ccEnum{enum Status { INFEASIBLE, UNBOUNDED, OPTIMAL };}{enumeration used to
 indicate the status of a quadratic program.}
 
+\ccEnum{enum Bound_identifier { ZERO, LOWER, UPPER };}{enumeration
+used to describe the assignment of a nonbasic variable $x_i$ of a
+feasible solution to either the value zero, to its lower bound $l_i$,
+or to its upper bound $u_i$, see \ccc{nonbasic_variables_begin()}.}
 
 \ccCreation
 \ccIndexClassCreation
 \ccCreationVariable{qp}
 
-\ccConstructor{( int n, int m, A_iterator a_it,
-B_iterator b_it, C_iterator c_it, D_iterator d_it,
-Row_type_iterator r_it,
-Pricing_strategy& strategy = QP_full_exact_pricing<Traits>());}
-{creates a variable of type \ccRefName\ and solves the quadratic program.
-\ccRequire $(m,n)$ is the dimension of the constraint matrix $A$,
-$(n,n)$ is the dimension of $D$ and $D$ is
-positive-semidefinite. Furthermore, $n >0$ is required.
-See also \ccc{QPSolverTraits}.}
+\ccConstructor{( int n, int m, A_iterator a_it, B_iterator b_it,
+C_iterator c_it, D_iterator d_it, Row_type_iterator r_it =
+CGAL::Const_oneset_iterator<Row_type>( Rep::EQUAL), Strategy
+strategy = FULL_EXACT_PRICING)} {creates a variable of type \ccRefName\ and solves the
+quadratic program (QP) assuming the vector $l$ is the zero vector and
+all entries of $u$ are $\infty$ (i.e., (QP) is assumed to be in
+standard form).  The matrix $A$ of (QP) is given by \ccc{a_it}, which
+is an iterator over the columns of $A$.  Similarly, \ccc{d_it}
+iterates over the rows of $D$. The iterator \ccc{r_it} specifies for
+each row of $Ax \gtreqless b$ whether it is an inequality ($\leq$ or
+$\geq$) or an equality constraint.  \ccRequire
+\ccc{a_it} iterates over $n$ columns each of which has $m$ elements,
+\ccc{d_it} iterates over $n$ rows each of which having $n$ elements,
+and similarly \ccc{c_it} and \ccc{r_it} iterate over $n$ elements, and
+\ccc{b_it} iterates over $m$ elements.  Furthermore, the matrix $D$
+specified by \ccc{d_it} must be positive-semidefinite, and $n>0$.}
 
-\ccConstructor{( A_iterator a_it, B_iterator b_f_it,
-B_iterator b_e_it, C_iterator c_f_it, C_iterator c_e_it, D_iterator d_it,
-Row_type_iterator r_it,
-Pricing_strategy& strategy = QP_full_exact_pricing<Traits>());}
-{creates a variable of type \ccRefName\ and solves the quadratic program.
-\ccRequire $\left|\right.\left[\right.$
-\ccc{b_f_it, b_e_it}$)\left|\right.=m$ and 
-$\left|\right.\left[\right.$
-\ccc{c_f_it, c_e_it}$)\left|\right.=n$.
-The dimension of the constraint matrix $A$ is $(m,n)$, the dimension of
-$D$ is $(n,n)$ and $D$ is 
-positive-semidefinite. Furthermore, $n >0$ is required.
-See also \ccc{QPSolverTraits}.}
-
+\ccConstructor{( int n, int m, A_iterator a_it, B_iterator b_it,
+C_iterator c_it, D_iterator d_it, Row_type_iterator r_it, FL_iterator
+fl_it, L_iterator lb_it, FU_iterator fu_it, U_iterator ub_it,
+Strategy
+strategy = FULL_EXACT_PRICING)}
+{creates a variable of type \ccRefName\ and solves the quadratic
+program (QP).  The matrix $A$ of (QP) is given by \ccc{a_it}, which is
+an iterator over the columns of $A$.  Similarly, \ccc{d_it} iterates
+over the rows of $D$. The iterator \ccc{r_it} specifies for each row
+of $Ax \gtreqless b$ whether it is an inequality ($\leq$ or $\geq$) or
+an equality constraint. \ccc{fl_it} iterates over $n$ Boolean values,
+one for each variable $x_i$, $i\in\{0,\ldots,n-1\}$, and specifies
+whether $l_i>-\infty$.  If so, the corresponding entry from the
+iterator \ccc{lb_it} is taken as $l_i$; otherwise $l_i$ is set to
+$-\infty$. Similarly, \ccc{fu_it} iterates over $n$ Boolean values
+specifying whether $u_i$ is finite or not; if it is, the corresponding
+entry from the iterator \ccc{ub_it} is taken as $u_i$, otherwise
+$u_i:=\infty$.  \ccRequire \ccc{a_it} iterates
+over $n$ columns each of which has $m$ elements, \ccc{d_it} iterates
+over $n$ rows each of which having $n$ elements, and similarly
+\ccc{c_it}, \ccc{r_it}, \ccc{fl_it}, \ccc{lb_it}, \ccc{fu_it}, and
+\ccc{ub_it} iterate over $n$ elements, and \ccc{b_it} iterates over
+$m$ elements.  Furthermore, the matrix $D$ specified by \ccc{d_it}
+must be positive-semidefinite, and $n>0$.}
 
 \ccUnchecked
 
@@ -187,99 +331,152 @@ See also \ccc{QPSolverTraits}.}
 \begin{ccIndexMemberFunctions}
 \ccIndexMemberFunctionGroup{access}
 
-\ccMemberFunction{Status status() const;}{returns the status of the quadratic
-program.}
+\ccMemberFunction{Status status() const;}{returns the status of the
+quadratic program, that is, whether (QP) is infeasible, unbounded, or
+optimally solvable.}
 
-\ccMemberFunction{Quotient  solution( ) const;}{ returns the optimal value
-of the quadratic program as a quotient over \ccc{ET}.}
+\ccMemberFunction{CGAL::Quotient<ET> solution( ) const;}{ returns the
+ value $f(\tilde{x})$ where $\tilde{x}$ is the instance's current
+ solution (i.e., some feasible solution in case (QP) is unbounded and
+ an optimal feasible solution in case the program is optimally
+ solvable).  The number $f(\tilde{x})$ is returned as a quotient over
+ \ccc{ET}. \ccPrecond \ccc{status()} returns \ccc{UNBOUNDED} or
+ \ccc{OPTIMAL}.}
 
-\ccMemberFunction{Basic_variable_value_iterator 
-basic_variables_value_begin( ) const;}{returns a const-iterator referring
-to the first value of the vector $x_{B}$.}
+\ccMemberFunction{Basic_variable_value_iterator
+basic_variables_value_begin( ) const;}{returns a const-iterator
+referring to the numerator of the first basic variable of the current
+solution $\tilde{x}$.  Normally, you use the resulting iterator
+together with the iterator returned by
+\ccc{basic_variables_index_begin()}; while the former iterates over
+the numerators of the basic variables, the latter iterates over the
+indices (i.e., numbers in $\{0,\ldots,n-1\}$) of the corresponding
+variables. \ccPrecond \ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
 
-\ccMemberFunction{Basic_variable_value_iterator 
-basic_variables_value_end( ) const;}{returns the corresponding
-past-the-end const-iterator.}
+\ccMemberFunction{Basic_variable_value_iterator
+basic_variables_value_end( ) const;}{returns the past-the-end
+const-iterator corresponding to \ccc{basic_variables_value_begin()}.
+\ccPrecond \ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
 
 \ccMemberFunction{Basic_variable_index_iterator
 basic_variables_index_begin( ) const;}{returns a const-iterator referring
-to the first index in the set $B$.}
+to the first index in the list of basic variables.
+\ccPrecond \ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
 
 \ccMemberFunction{Basic_variable_index_iterator
-basic_variables_index_end  ( ) const;}{returns the corresponding
-past-the-end const-iterator.}
+basic_variables_index_end ( ) const;}{returns the past-the-end
+const-iterator corresponding to
+\ccc{basic_variables_index_begin()}. \ccPrecond \ccc{status()} returns
+\ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
 
-\ccMemberFunction{Variable_value_iterator
-variables_value_begin() const;}{returns a const-iterator referring to the first
-variable in the user defined order.}
+\ccMemberFunction{Nonbasic_variable_value_iterator
+nonbasic_variables_begin( ) const;}{returns a const-iterator referring
+to the first nonbasic variable of the current solution $\tilde{x}$.
+The value type of the iterator is \ccc{Bound_identifier}; a value of
+\ccc{ZERO} means that the corresponding nonbasic variable $x_i$ is
+zero in the current solution $\tilde{x}$, a value of
+\ccc{LOWER} means that $\tilde{x}_i=l_i$, and a value of \ccc{UPPER}
+implies $\tilde{x}_i=u_i$. Normally, you use the resulting iterator
+together with the iterator returned by
+\ccc{nonbasic_variables_index_begin()}; while the former iterates over
+the nonbasic variables, the latter iterates over the indices (i.e.,
+numbers in $\{0,\ldots,n-1\}$) of the corresponding variables. \\
+Note: in case of a program (QP) in standard form, this iterator will
+have yield \ccc{ZERO} for all nonbasic variables. \ccPrecond
+\ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
 
-\ccMemberFunction{Variable_value_iterator
-variables_value_end() const;}{returns the corresponding
-past-the-end const-iterator.}
+\ccMemberFunction{Nonbasic_variable_value_iterator
+nonbasic_variables_end( ) const;}{returns the past-the-end
+const-iterator corresponding to \ccc{nonbasic_variables_begin()}.
+\ccPrecond \ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
+
+\ccMemberFunction{Nonbasic_variable_index_iterator
+nonbasic_variables_index_begin( ) const;}{returns a const-iterator referring
+to the first index in the list of nonbasic variables.
+\ccPrecond \ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
+
+\ccMemberFunction{Nonasic_variable_index_iterator
+nonbasic_variables_index_end ( ) const;}{returns the past-the-end
+const-iterator corresponding to
+\ccc{nonbasic_variables_index_begin()}. \ccPrecond \ccc{status()}
+returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
+
+\ccMemberFunction{Variable_value_iterator variables_value_begin()
+const;}{returns a const-iterator referring to the entry $\tilde{x}_0$
+of the current solution $\tilde{x}$. \ccPrecond
+\ccc{status()} returns \ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
+
+\ccMemberFunction{Variable_value_iterator variables_value_end()
+const;}{returns the past-the-end const-iterator corresponding to
+\ccc{variables_value_begin()}. \ccPrecond \ccc{status()} returns
+\ccc{UNBOUNDED} or \ccc{OPTIMAL}.}
 
 
-\begin{ccAdvanced}    
-\ccHeading{Access to $\lambda$}
+%KKT
+%% \begin{ccAdvanced}    
+%% \ccHeading{Access to $\lambda$}
 
-\ccMemberFunction{Lambda_value_iterator
-    lambda_value_begin( ) const;}{returns a const-iterator referring to the
-    $\lambda$ associated with the first constraint in user defined order of the
-    constraints.}
+%% \ccMemberFunction{Lambda_value_iterator
+%%     lambda_value_begin( ) const;}{returns a const-iterator referring to the
+%%     $\lambda$ associated with the first constraint in user defined order of the
+%%     constraints.}
 
-\ccMemberFunction{Lambda_value_iterator
-    lambda_value_end( ) const;}{returns the corresponding pas-the-end
-    const-iterator.}
-\end{ccAdvanced}
+%% \ccMemberFunction{Lambda_value_iterator
+%%     lambda_value_end( ) const;}{returns the corresponding pas-the-end
+%%     const-iterator.}
+%% \end{ccAdvanced}
     
 \ccHeading{Access to quadratic program}
 
 \ccMemberFunction{int  number_of_variables  ( ) const;}{returns the number of
-variables of the quadratic program as specified in constructor.}
+variables of the quadratic program as specified in the constructor call.}
 
 \ccMemberFunction{int  number_of_constraints( ) const;}{returns the number of
-constraints of the quadratic program as specified in constructor.}
+constraints of the quadratic program as specified in the constructor call.}
 
-\ccMemberFunction{A_iterator  a_begin( ) const;}{returns a const-random access
-iterator referring to the first column of the matrix $A$.}
+\ccMemberFunction{A_iterator  a_begin( ) const;}{returns a random access
+const-iterator referring to the first column of the matrix $A$.}
 
-\ccMemberFunction{A_iterator  a_end( ) const;}{returns a const-random access
-iterator referring to the last column of of the matrix $A$.}
+\ccMemberFunction{A_iterator  a_end( ) const;}{returns a random access
+const-iterator referring to the last column of of the matrix $A$.}
 
-\ccMemberFunction{B_iterator  b_begin( ) const;}{returns a const-random access
-iterator referring to the first entry of the vector $b$.}
+\ccMemberFunction{B_iterator b_begin( ) const;}{returns a random
+access const-iterator referring to the first entry of the vector $b$.}
 
-\ccMemberFunction{B_iterator  b_end( ) const;}{returns a const-random access
-iterator referring to the last entry of the vector $b$.}
+\ccMemberFunction{B_iterator  b_end( ) const;}{returns a random access
+const-iterator referring to the last entry of the vector $b$.}
 
-\ccMemberFunction{C_iterator  c_begin( ) const;}{returns a const-random access
-iterator referring to the first entry of the vector $c$.}
+\ccMemberFunction{C_iterator  c_begin( ) const;}{returns a random access
+const-iterator referring to the first entry of the vector $c$.}
 
-\ccMemberFunction{C_iterator  c_end( ) const;}{returns a const-random access
-iterator referring to the last entry of the vector $c$.}
+\ccMemberFunction{C_iterator  c_end( ) const;}{returns a random access
+const-iterator referring to the last entry of the vector $c$.}
 
-\ccMemberFunction{D_iterator  d_begin( ) const;}{returns a const-random access
-iterator referring to the first row of the matrix $D$.}
+\ccMemberFunction{D_iterator  d_begin( ) const;}{returns a random access
+const-iterator referring to the first row of the matrix $D$.}
 
-\ccMemberFunction{D_iterator  d_end( ) const;}{returns a const-random access
-iterator referring to the last row of the matrix $D$.}
+\ccMemberFunction{D_iterator  d_end( ) const;}{returns a random access
+const-iterator referring to the last row of the matrix $D$.}
 
 \ccMemberFunction{Row_type_iterator  row_type_begin( ) const;}{returns a
-const-random access iterator referring to the first entry of the row
-type vector.}
+random access const-iterator referring to the first entry of the row
+type vector (see \ccc{r_it} in the documentation of the constructor).}
 
 \ccMemberFunction{Row_type_iterator  row_type_end( ) const;}{returns a
-const-random access iterator referring to the last entry of the row
-type vector.}
+random access const-iterator referring to the last entry of the row
+type vector  (see \ccc{r_it} in the documentation of the constructor).}
 % -----------------------------------------------------------------------------
 \ccPredicates
 \ccIndexMemberFunctionGroup{predicates}
 
-\ccMemberFunction{bool  is_basic( int j) const;}{returns \ccc{true} if
-variable $x_{j}$, $j \in \left[n\right]$ is basic.}
+\ccMemberFunction{bool is_basic( int i) const;}{returns \ccc{true} if
+and only if variable $x_{i}$, $i \in \{0,\ldots,n-1\}$, is basic in
+the current solution.\ccPrecond \ccc{status()} returns \ccc{UNBOUNDED}
+or \ccc{OPTIMAL}}
 
 % -----------------------------------------------------------------------------
-\ccModifiers
-\ccIndexMemberFunctionGroup{modifiers}
+%\ccModifiers
+%\ccIndexMemberFunctionGroup{modifiers}
 
 
 
@@ -287,30 +484,28 @@ variable $x_{j}$, $j \in \left[n\right]$ is basic.}
 \ccHeading{Validity Check}
 \ccIndexMemberFunctionGroup{validity check}
 %\ccIndexSubitem[t]{validity check}{\ccc{Min_sphere_d}}
-An object \ccVar\ is valid, iff \ccc{qp.status} is one of the following
-three values and their corresponding requirements are met. Let
-$R:=\{x \in \R^{n}\left|\right. Ax \leq b\}$.
-\begin{description}
-\item[OPTIMAL:] Let $x^{*}$ denote the solvers solution, then 
-$Ax^{*} \leq b$ and $f(x^{*}) \leq f(x)$ for all $x \in R$ must hold.
-\item[INFEASIBLE:] $R = \emptyset$.
-\item[UNBOUNDED:] There exists a feasible solution $x \in \R^{n}$ such that
-$Ax \leq b$ and there exists $q \in \R^{n}$ such that
-  \begin{itemize}
-    \item $q \leq 0$
-    \item $Aq = 0$
-    \item $q^{T}Dq=0$
-    \item $(c^{T} + 2x^{T}D)q > 0$
-  \end{itemize}
-holds.
-\end{description}
+An object \ccVar\ is valid if and only if \ccc{qp.status()} returns
+one of the following three values and their corresponding requirements
+are met.
+\begin{itemize}
+\item \ccc{OPTIMAL}: The feasible solution $\tilde{x}$ computed by the
+algorithm fulfills $f(\tilde{x}) \leq f(x)$ for all $x \in R$.
+\item \ccc{INFEASIBLE}: $R = \emptyset$.
+\item \ccc{UNBOUNDED}: The feasible solution $\tilde{x}$ and the
+unbounded direction $w$ computed by the algorithm fulfill
+\begin{itemize}
+\item[(i)] $\tilde{x}-\alpha w$ is feasible for all $\alpha\ge 0$, and
+\item[(ii)] the function $g(\alpha):= f(\tilde{x}-\alpha w)$ is not
+bounded from below on the interval $[0,\infty)$.
+\end{itemize}
+\end{itemize}
 
-\ccMemberFunction{ bool is_solution_valid() const;}{ returns \ccc{true}, iff
+\ccMemberFunction{ bool is_solution_valid() const;}{ returns \ccc{true} iff
   \ccVar\ is valid.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Miscellaneous}
-\ccIndexMemberFunctionGroup{miscellaneous}
+%\ccHeading{Miscellaneous}
+%\ccIndexMemberFunctionGroup{miscellaneous}
 
 
 \end{ccIndexMemberFunctions}
@@ -319,10 +514,11 @@ holds.
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 %
-    \ccRefIdfierPage{CGAL::QP_full_exact_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QP_full_filtered_pricing<Traits, NT, ET2NT>}\\
-    \ccRefIdfierPage{CGAL::QP_partial_exact_pricing<Traits>}\\
-    \ccRefIdfierPage{CGAL::QP_partial_filtered_pricing<Traits, NT, ET2NT>}\\
+    \ccRefIdfierPage{CGAL::QP_MPS_instance<IT,ET>}
+%    \ccRefIdfierPage{CGAL::QP_full_exact_pricing<Traits>}\\
+%    \ccRefIdfierPage{CGAL::QP_full_filtered_pricing<Traits, NT, ET2NT>}\\
+%    \ccRefIdfierPage{CGAL::QP_partial_exact_pricing<Traits>}\\
+%    \ccRefIdfierPage{CGAL::QP_partial_filtered_pricing<Traits, NT, ET2NT>}\\
 % -----------------------------------------------------------------------------
 
 \ccImplementation
@@ -336,8 +532,18 @@ can always be guaranteed by using symbolic perturbation, and this
 feature will be added in a future release.)
 
 \ccExample
-\ccIncludeVerbatim{Optimisation_ref/QP_solver_example.C}
 
+The following example solves the quadratic programming problem
+\begin{eqnarray*}
+\mbox{(QP)}&\mbox{minimize} & x_0^2 + 3x_1 \\
+&\mbox{subject to}   & x_0+2x_1=1, \\
+&& 0 \le  x_0 \le \infty, \\
+&& 0 \le  x_1 \le 1.
+\end{eqnarray*}
+\ccIncludeExampleCode{../examples/QP_solver/small_example.C}
+Please refer also to the documentation of class
+\ccc{CGAL::QP_MPS_instance<IT,ET>}; using it, you can read programs of
+the form (QP) from MPS-files.
 \end{ccRefClass}
 
 % ===== EOF ===================================================================

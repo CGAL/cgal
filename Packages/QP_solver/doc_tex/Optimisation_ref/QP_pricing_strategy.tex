@@ -11,18 +11,20 @@
 \ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
 
 % -----------------------------------------------------------------------------
-\ccDefinition
-The class \ccRefName\ is the base class for the pricing strategies.
-The pricing step of the solvers algorithm consists of determining  whether the
-current solution is optimal, if not the pricing step then determines the an
-\emph{entering variable}.
-The pricing
-strategy is the part of the solvers pricing step that selects a variable among
-the nonbasic variables, denoted by $N$, 
-that qualify as entering variable. A nonbasic variable
-$x_{j}$ qualifies as an entering variable if its associated $\mu_{j}$, which
-coincides with the notion of reduced cost in the linear case, is strictly
-negative.
+\ccDefinition The class \ccRefName\ is the base class for the
+ready-to-use and for the user-defined, customized pricing strategies.
+The pricing step of the algorithm consists of determining whether the
+current solution is optimal. If not, the pricing step determines an
+\emph{entering variable}.  The pricing strategy is the part of the
+solver's pricing step that selects a variable among the nonbasic
+variables, denoted by $N$, that qualify as entering variables. A
+nonbasic variable $x_{j}$ qualifies as an entering variable iff its
+associated number $\mu_{j}$, which coincides with the notion of
+reduced cost in the linear case, is strictly negative.\footnote{This
+only holds for the standard-form case; I, Kaspar, suggest to drop
+support for user-defined pricing-strategies as this is really
+low-level stuff that requires a deeper knowledge of the solver's
+internals.}
 
 %Two basic strategies are \emph{filtered pricing} and \emph{partial pricing}. 
 %With filtered pricing the $\mu_{j}$, $j \in N$, where $N$ denotes the set of
