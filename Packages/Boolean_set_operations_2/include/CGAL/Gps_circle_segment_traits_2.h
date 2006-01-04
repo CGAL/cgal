@@ -25,10 +25,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Kernel_>
+template <class Kernel_, bool Filer_ = true>
 class Gps_circle_segment_traits_2 : 
-  public Gps_traits_2<Arr_circle_segment_traits_2<Kernel_> >
-{};
+  public Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >
+{
+public:
+  Gps_circle_segment_traits_2<Kernel_, Filer_>(bool use_cache = false): 
+      Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >()
+  {
+    this->m_use_cache = use_cache;
+  }
+
+};
 
 CGAL_END_NAMESPACE
 
