@@ -64,7 +64,7 @@ protected:
 public:
 
   /*! Default constructor. */
-  Arr_circle_segment_traits_2 (bool use_intersection_caching = true) :
+  Arr_circle_segment_traits_2 (bool use_intersection_caching = false) :
       m_use_cache(use_intersection_caching)
   {}
 
@@ -343,7 +343,7 @@ public:
 
   public:
 
-    Make_x_monotone_2(bool use_cache = true) : m_use_cache(use_cache)
+    Make_x_monotone_2(bool use_cache = false) : m_use_cache(use_cache)
     {}
 
     /*!
