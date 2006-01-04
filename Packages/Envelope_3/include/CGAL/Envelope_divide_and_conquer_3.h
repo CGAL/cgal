@@ -20,6 +20,8 @@
 #ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H
 
+#define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
+
 #include "CGAL/Envelope_base.h"
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
@@ -28,6 +30,12 @@
 #include "CGAL/Envelope_element_visitor_3.h"
 #include "CGAL/No_vertical_decomposition_2.h"
 #include <CGAL/Timer.h>
+
+#ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/graph_traits_Dual_Arrangement_2.h>
+#include <CGAL/Arr_face_map.h>
+#endif
 
 #include <iostream>
 #include <cassert>
@@ -101,6 +109,7 @@
 //#define CGAL_DEBUG_ENVELOPE_DEQ_3
 //#define CGAL_BENCH_ENVELOPE_DAC
 
+
 CGAL_BEGIN_NAMESPACE
 
 // The algorithm has 4 template parameters:
@@ -160,6 +169,11 @@ protected:
 
   typedef Arr_observer<Minimization_diagram_2>                      Md_observer;
   typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator Envelope_data_iterator;
+
+#ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
+  typedef CGAL::Dual<Minimization_diagram_2>                        Dual_Minimization_diagram_2;
+#endif
+
 public:
   // c'tor
   Envelope_divide_and_conquer_3()
@@ -671,38 +685,65 @@ public:
     CGAL_assertion_msg(result.is_valid(), 
                        "after decomposition result is not valid");
 
-    // compute the surface on the envelope for each face, splitting faces if needed
-    Face_iterator fi = result.faces_begin();
+    // compute the surface on the envelope for each face,
+    // splitting faces if needed
+    
     std::list<Face_handle> faces_to_split;
-    for (; fi != result.faces_end(); ++fi)
-    {
-      Face_handle fh = fi;
-      // if a surface of one map doesn't exist, then we set the second surface
-      if (aux_has_no_data(fh, 0) && !aux_has_no_data(fh, 1))
-      {
-//        fh->set_data(fh->begin_aux_data(1), fh->end_aux_data(1));
-        fh->set_decision(SECOND);
-        continue;
-      }
-      else if (aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
-      {
-        fh->set_decision(EQUAL);
-        fh->set_no_data();
-        continue;
-      }
-      else if (!aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
-      {
-//        fh->set_data(fh->begin_aux_data(0), fh->end_aux_data(0));
-        fh->set_decision(FIRST);
-        continue;
-      }
 
-      // here, we have both surfaces.
-      // we save the face in a list for a later treatment, because the face can change
-      // and destroy the iterator
-      faces_to_split.push_back(fh);           
-    }
+    #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 
+      // we traverse the faces of result in BFS order to maximize the
+      // efficiency gain by the conclusion mechanism of
+      // compare_distance_to_envelope results
+      // Create a mapping of result faces to indices.
+      CGAL::Arr_face_index_map<Minimization_diagram_2> index_map (result);
+
+      // Perform breadth-first search from the unbounded face, and use the BFS
+      // visitor to associate each arrangement face with its discover time.
+      Faces_order_bfs_visitor<CGAL::Arr_face_index_map<Minimization_diagram_2> >
+                                      bfs_visitor (index_map, faces_to_split, this);
+      Face_handle first_face = result.faces_begin();
+      if (result.number_of_faces() > 1)
+        first_face = ++(result.faces_begin());
+
+      boost::breadth_first_search (Dual_Minimization_diagram_2(result),
+                                   first_face,
+                                   boost::vertex_index_map(index_map).
+                                   visitor (bfs_visitor));
+      index_map.detach();
+
+    #else
+
+      // traverse the faces in arbitrary order  
+      Face_iterator fi = result.faces_begin();
+      for (; fi != result.faces_end(); ++fi)
+      {
+        Face_handle fh = fi;
+        // if a surface of one map doesn't exist, then we set the second surface
+        if (aux_has_no_data(fh, 0) && !aux_has_no_data(fh, 1))
+        {
+          fh->set_decision(SECOND);
+          continue;
+        }
+        else if (aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
+        {
+          fh->set_decision(EQUAL);
+          fh->set_no_data();
+          continue;
+        }
+        else if (!aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
+        {
+          fh->set_decision(FIRST);
+          continue;
+        }
+
+        // here, we have both surfaces.
+        // we save the face in a list for a later treatment, because the face can change
+        // and destroy the iterator
+        faces_to_split.push_back(fh);
+      }
+    #endif
+    
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << " before deal with faces to split" << std::endl;
       std::cout << "number of faces in the list = " << faces_to_split.size() << std::endl;
@@ -826,6 +867,7 @@ protected:
   }
 
   template <class InputIterator>
+
   bool is_equal_data(const InputIterator & begin1,
                      const InputIterator & end1,
                      const InputIterator & begin2,
@@ -1491,6 +1533,7 @@ protected:
         begin = h->begin_data();
         end = h->end_data();
       }
+
     	else
     	{
     	  CGAL_assertion(assign(f, o));
@@ -2360,6 +2403,7 @@ protected:
         e->set_is_equal_aux_data_in_target(0, prev->get_is_equal_aux_data_in_face(0) &&
         				      prev->get_is_equal_aux_data_in_target(0));
         e->set_is_equal_aux_data_in_target(1, prev->get_is_equal_aux_data_in_face(1) &&
+
         				      prev->get_is_equal_aux_data_in_target(1));
   	
       }
@@ -2395,6 +2439,7 @@ protected:
       // TODO: if we set correctly all has_equal falgs, maybe we can get rid
       // of "fake" flags
       // TODO: if a fake edge overlaps a projected intersection, and thus
+
       // becomes not fake (and we will not want to remove it at the end) -
       // what happens in the code? check and fix!
 
@@ -2540,6 +2585,66 @@ protected:
     unsigned int counter;
   };
 
+#ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
+
+  // A BFS visitor class which collects the faces that need resolving
+  // in a list according to the discover time
+  // In our case graph vertices represent minimization diagram faces
+  template <class IndexMap>
+  class Faces_order_bfs_visitor : public boost::default_bfs_visitor
+  {
+  public:
+    typedef typename Envelope_divide_and_conquer_3<Traits,
+                                                 Minimization_diagram_2,
+                                                 Vertical_decomposition_2,
+                                                 EnvelopeResolver_3,
+                                                 Overlay_2>::Self Self;
+
+  protected:
+    const IndexMap          *index_map; // Mapping vertices to indices
+    std::list<Face_handle>& faces;      // The ordered faces list
+    Self                    *base;
+
+  public:
+
+    // Constructor.
+    Faces_order_bfs_visitor(const IndexMap& imap,
+                            std::list<Face_handle>& f,
+                            Self* b = NULL) :
+      index_map (&imap),
+      faces(f),
+      base(b)
+    {
+      CGAL_assertion(base);
+    }
+
+    // Write the discover time for a given vertex.
+    template <typename Vertex, typename Graph>
+    void discover_vertex (Vertex fh, const Graph& g)
+    {
+      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
+        std::cout << "in BFS - found a face" << std::endl;
+      #endif
+      // first we check if we can set the decision immediately
+      // if a surface of one map doesn't exist, then we set the second surface
+      if (base->aux_has_no_data(fh, 0) && !base->aux_has_no_data(fh, 1))
+        fh->set_decision(SECOND);
+      else if (base->aux_has_no_data(fh, 0) && base->aux_has_no_data(fh, 1))
+      {
+        fh->set_decision(EQUAL);
+        fh->set_no_data();
+      }
+      else if (!base->aux_has_no_data(fh, 0) && base->aux_has_no_data(fh, 1))
+        fh->set_decision(FIRST);
+      else
+        // here, we have both surfaces.
+        // we save the face in a list for a later treatment, because the face can change
+        // and destroy the iterator
+        faces.push_back(fh);
+    }
+  };
+#endif
+  
 protected:
   Overlay_2                 overlay;
   Vertical_decomposition_2  vertical_decomposition;
