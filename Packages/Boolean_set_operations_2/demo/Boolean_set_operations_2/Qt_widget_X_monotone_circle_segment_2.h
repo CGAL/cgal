@@ -9,10 +9,10 @@
 
 namespace CGAL {
 
-template < class Kernel >
+template < class Kernel, bool Filter >
 CGAL::Qt_widget &
 operator<<(CGAL::Qt_widget & widget,
-           const CGAL::_X_monotone_circle_segment_2<Kernel> &arc)
+           const CGAL::_X_monotone_circle_segment_2<Kernel, Filter> &arc)
 {
   if(arc.is_linear())
   {
@@ -31,7 +31,7 @@ operator<<(CGAL::Qt_widget & widget,
   
   const typename Kernel::Circle_2 & circ = arc.supporting_circle();
   const typename Kernel::Point_2 & center = circ.center();
-  typedef typename _X_monotone_circle_segment_2<Kernel>::Point_2 Arc_point_2;
+  typedef typename _X_monotone_circle_segment_2<Kernel, Filter>::Point_2 Arc_point_2;
   Arc_point_2 source;
   Arc_point_2 target;
   if(arc.orientation() == COUNTERCLOCKWISE)

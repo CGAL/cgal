@@ -13,12 +13,15 @@ int main(int, char*){
 #include <string>
 
 #include "typedefs.h"
+
+#include <CGAL/IO/Qt_widget.h>
+#include "Qt_widget_circ_polygon.h"
+#include "readdxf.h"
 #include <CGAL/Bbox_2.h> 
 
 
-#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h> 
-#include "Qt_widget_circ_polygon.h"
+
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -71,7 +74,7 @@ public:
   {
     widget->lock(); // widget have to be locked before drawing 
     widget->setFilled (true);
-    widget->setFillColor ( CGAL::RED) ;
+    widget->setFillColor (CGAL::RED);
     *widget << CGAL::PointSize(2); // size of point
     *widget <<  CGAL::RED; // color for the polygons
     std::list<Polygon_with_holes_2> red_pgns_list;
@@ -92,7 +95,7 @@ public:
        }
        else  
          *widget << outer_boundary;
-      widget->setFillColor ( CGAL::BLACK);
+      widget->setFillColor (CGAL::BLACK);
       for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
@@ -105,7 +108,7 @@ public:
     RasterOp old_rasterop = widget->rasterOp();
     widget->get_painter().setRasterOp(XorROP);
     widget->setFilled (true);
-    widget->setFillColor ( CGAL::BLUE) ;
+    widget->setFillColor (CGAL::BLUE);
     *widget << CGAL::PointSize(2);
     *widget << CGAL::BLUE; // color of circle
 
@@ -127,7 +130,7 @@ public:
        }
        else  
          *widget << outer_boundary;
-      //widget->setFillColor ( CGAL::BLACK);
+      widget->setFillColor ( CGAL::BLUE);
       for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
@@ -409,26 +412,27 @@ public slots:
     void open_file()
     {
 
-      //QString s = QFileDialog::getOpenFileName("./",
-      //                                         QString::null,
-      //                                         this,
-      //                                         "open file dialog",
-      //                                         "Choose a file" );
-      //if(s==QString::null)
-      //  return;
+      QString s = QFileDialog::getOpenFileName("./",
+                                               QString::null,
+                                               this,
+                                               "open file dialog",
+                                               "Choose a file" );
+      if(s==QString::null)
+        return;
 
-      //std::ifstream in_file(s);
-      //if(!in_file.is_open())
-      //{
-      //  QMessageBox::warning( widget,"Open","Can't open file");
-      //  return ;
-      //}
-      //widget->lock();
-      //red_set.clear();
-      //blue_set.clear();
-      //widget->clear_history();
-      //
-      //CGAL::Bbox_2 box;
+      std::ifstream in_file(s);
+      if(!in_file.is_open())
+      {
+        QMessageBox::warning( widget,"Open","Can't open file");
+        return ;
+      }
+      widget->lock();
+      red_set.clear();
+      blue_set.clear();
+      widget->clear_history();
+      
+      CGAL::Bbox_2 box;
+      readdxf(in_file, &red_set, widget);
       //int num_of_red_pgns;
       //in_file >> num_of_red_pgns;
       //
@@ -461,7 +465,7 @@ public slots:
       //                   box.xmax() + width/10,
       //                   box.ymin() - height/10,
       //                   box.ymax() + height/10);
-      //widget->unlock();
+      widget->unlock();
       //something_changed(); 
     }
 
