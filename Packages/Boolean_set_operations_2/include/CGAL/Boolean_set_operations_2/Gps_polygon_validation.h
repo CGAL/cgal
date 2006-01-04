@@ -134,11 +134,21 @@ protected:
     
     for(Curve_const_iterator itr = begin; itr != last; )
     {
+      if(tr.equal_2_object()(source(*itr), target(*itr)))
+      {
+        std::cout<<"ERROR!!!\n";
+        return false;
+      }
       Curve_const_iterator next = itr;
       ++next;
       if(!tr.equal_2_object()(target(*itr), source(*next)))
         return false;
       itr = next;
+    }
+    if(tr.equal_2_object()(source(*last), target(*last)))
+    {
+      std::cout<<"ERROR!!!\n";
+      return false;
     }
     if(!tr.equal_2_object()(target(*last), source(*begin)))
       return false;

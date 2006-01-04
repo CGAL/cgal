@@ -48,7 +48,7 @@ inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container, class Traits>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1, 
                          const Polygon_2<Kernel, Container>& pgn2,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -69,7 +69,7 @@ template <class Kernel, class Container, class Traits>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1, 
                          const General_polygon_with_holes_2
                            <Polygon_2<Kernel, Container> >& pgn2,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -87,7 +87,7 @@ template <class Kernel, class Container, class Traits>
 inline bool do_intersect(const General_polygon_with_holes_2
                            <Polygon_2<Kernel, Container> >& pgn1,
                          const Polygon_2<Kernel, Container>& pgn2,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -106,7 +106,7 @@ inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1,
 template <class Arr_traits, class Gps_traits>
 inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1, 
                          const General_polygon_2<Arr_traits>& pgn2,
-						 Gps_traits& tr)
+                         Gps_traits& tr)
 {
   General_polygon_set_2<Gps_traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -125,7 +125,7 @@ inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1,
 template <class Arr_traits, class Gps_traits>
 inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1, 
                          const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
-						 Gps_traits& tr)
+                         Gps_traits& tr)
 {
   General_polygon_set_2<Gps_traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -143,7 +143,7 @@ inline bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<Ar
 template <class Arr_traits, class Gps_traits>
 inline bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
                          const General_polygon_2<Arr_traits>& pgn2,
-						 Gps_traits& tr)
+                         Gps_traits& tr)
 {
   General_polygon_set_2<Gps_traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -162,7 +162,7 @@ inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
 template <class Polygon_, class Traits>
 inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
                          const General_polygon_with_holes_2<Polygon_>& pgn2,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   return (gps.do_intersect(pgn2));
@@ -188,7 +188,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1, 
                                    const Polygon_2<Kernel, Container>& pgn2,
                                    OutputIterator out,
-								   Traits& tr)
+                                   Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -212,7 +212,7 @@ inline OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
                                    const General_polygon_with_holes_2
                            <Polygon_2<Kernel, Container> >& pgn2,
                                    OutputIterator out,
-								   Traits& tr)
+                                   Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -233,7 +233,7 @@ inline OutputIterator intersection(const General_polygon_with_holes_2
                            <Polygon_2<Kernel, Container> >& pgn1,
                          const Polygon_2<Kernel, Container>& pgn2,
                          OutputIterator out,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -255,7 +255,7 @@ template <class Arr_traits, class OutputIterator, class Traits>
 inline OutputIterator intersection(const General_polygon_2<Arr_traits>& pgn1, 
                                    const General_polygon_2<Arr_traits>& pgn2,
                                    OutputIterator out,
-						                       Traits& tr)
+                                               Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -277,7 +277,7 @@ template <class Arr_traits, class OutputIterator, class Traits>
 inline OutputIterator intersection(const General_polygon_2<Arr_traits>& pgn1, 
                          const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
                          OutputIterator out,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -296,7 +296,7 @@ template <class Arr_traits, class OutputIterator, class Traits>
 inline OutputIterator intersection(const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn1,
                          const General_polygon_2<Arr_traits>& pgn2,
                          OutputIterator out,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -318,7 +318,7 @@ template <class Polygon_, class OutputIterator, class Traits>
 inline OutputIterator intersection(const General_polygon_with_holes_2<Polygon_>& pgn1,
                          const General_polygon_with_holes_2<Polygon_>& pgn2,
                          OutputIterator out,
-						 Traits& tr)
+                         Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.intersection(pgn2);
@@ -338,7 +338,16 @@ inline bool join(const Polygon_2<Kernel, Container>& pgn1,
   typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
   Traits tr;
-  return (join(pgn1, pgn2, res, tr));
+  return (_join(pgn1, pgn2, res, tr));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool join(const Polygon_2<Kernel, Container>& pgn1, 
+                 const Polygon_2<Kernel, Container>& pgn2,
+                 General_polygon_with_holes_2<Polygon_2<Kernel, Container> >& res,
+                 Traits& tr)
+{
+  return (_join(pgn1, pgn2, res, tr));
 }
 
 template <class Kernel, class Container>
@@ -350,7 +359,17 @@ inline bool join(const Polygon_2<Kernel, Container>& pgn1,
   typedef typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits    Traits;
   
   Traits tr;
-  return (join(pgn1, pgn2, res, tr));
+  return (_join(pgn1, pgn2, res, tr));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool join(const Polygon_2<Kernel, Container>& pgn1, 
+                 const General_polygon_with_holes_2
+                    <Polygon_2<Kernel, Container> >& pgn2,
+                 General_polygon_with_holes_2<Polygon_2<Kernel, Container> >& res,
+                 Traits& tr)
+{
+  return (_join(pgn1, pgn2, res, tr));
 }
 
 template <class Kernel, class Container>
@@ -362,6 +381,16 @@ inline bool join(const General_polygon_with_holes_2
   return (join(pgn2, pgn1, res));
 }
 
+template <class Kernel, class Container, class Traits>
+inline bool join(const General_polygon_with_holes_2
+                           <Polygon_2<Kernel, Container> >& pgn1,
+                 const Polygon_2<Kernel, Container>& pgn2,
+                 General_polygon_with_holes_2<Polygon_2<Kernel, Container> >& res,
+                 Traits& tr)
+{
+  return (_join(pgn1, pgn2, res, tr));
+}
+
 template <class Arr_traits>
 inline bool join(const General_polygon_2<Arr_traits>& pgn1, 
                  const General_polygon_2<Arr_traits>& pgn2,
@@ -370,7 +399,16 @@ inline bool join(const General_polygon_2<Arr_traits>& pgn1,
   typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
   
   Traits tr;
-  return (join(pgn1, pgn2, res, tr));
+  return (_join(pgn1, pgn2, res, tr));
+}
+
+template <class Arr_traits, class Traits>
+inline bool join(const General_polygon_2<Arr_traits>& pgn1, 
+                 const General_polygon_2<Arr_traits>& pgn2,
+                 General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res,
+                 Traits& tr)
+{
+  return (_join(pgn1, pgn2, res, tr));
 }
 
 template <class Arr_traits>
@@ -381,7 +419,16 @@ inline bool join(const General_polygon_2<Arr_traits>& pgn1,
   typedef typename Gps_default_traits<General_polygon_2<Arr_traits> >::Traits    Traits;
   
   Traits tr;
-  return (join(pgn1, pgn2, res, tr));
+  return (_join(pgn1, pgn2, res, tr));
+}
+
+template <class Arr_traits, class Traits>
+inline bool join(const General_polygon_2<Arr_traits>& pgn1, 
+                 const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn2,
+                 General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res,
+                 Traits& tr)
+{
+  return (_join(pgn1, pgn2, res, tr));
 }
 
 template <class Arr_traits>
@@ -400,61 +447,23 @@ inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
   typedef typename Gps_default_traits<Polygon_>::Traits    Traits;
 
   Traits tr;
-  return (join(pgn1, pgn2, res, tr));
+  return (_join(pgn1, pgn2, res, tr));
 }
 
-template <class Traits>
-inline bool join(const typename Traits::Polygon_2& pgn1,
-                 const typename Traits::Polygon_2& pgn2,
-                 typename Traits::Polygon_with_holes_2&   res,
+template <class Polygon_, class Traits>
+inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                 const General_polygon_with_holes_2<Polygon_>& pgn2,
+                 General_polygon_with_holes_2<Polygon_>& res,
                  Traits& tr)
 {
-  General_polygon_set_2<Traits> gps(pgn1);
-  gps.join(pgn2);
-  if(gps.number_of_polygons_with_holes() == 1)
-  {
-    Oneset_iterator<typename Traits::Polygon_with_holes_2> oi (res);
-    gps.polygons_with_holes(oi);
-    return true;
-  }
-
-  // the polygon doesnt intersect, the original pgn1, pgn2 contain the union
-  return false;
+  return (_join(pgn1, pgn2, res, tr));
 }
 
-template <class Traits>
-inline bool join(const typename Traits::Polygon_2& pgn1,
-                 const typename Traits::Polygon_with_holes_2& pgn2,
-                 typename Traits::Polygon_with_holes_2&   res,
-                 Traits& tr)
-{
-  General_polygon_set_2<Traits> gps(pgn1);
-  gps.join(pgn2);
-  if(gps.number_of_polygons_with_holes() == 1)
-  {
-    Oneset_iterator<typename Traits::Polygon_with_holes_2> oi (res);
-    gps.polygons_with_holes(oi);
-    return true;
-  }
-
-  // the polygon doesnt intersect, the original pgn1, pgn2 contain the union
-  return false;
-}
-
-template <class Traits>
-inline bool join(const typename Traits::Polygon_with_holes_2& pgn1,
-                 const typename Traits::Polygon_2& pgn2,
-                 typename Traits::Polygon_with_holes_2&   res,
-                 Traits& tr)
-{
-  return join(pgn2, pgn1, res, tr);
-}
-
-template <class Traits>
-inline bool join(const typename Traits::Polygon_with_holes_2& pgn1,
-                 const typename Traits::Polygon_with_holes_2& pgn2,
-                 typename Traits::Polygon_with_holes_2&   res,
-                 Traits& tr)
+template <class Pgn1, class Pgn2, class Traits>
+inline bool _join(const Pgn1& pgn1,
+                  const Pgn2& pgn2,
+                  typename Traits::Polygon_with_holes_2&   res,
+                  Traits& tr)
 {
   General_polygon_set_2<Traits> gps(pgn1);
   gps.join(pgn2);
@@ -743,6 +752,9 @@ inline OutputIterator join(InputIterator begin,
 
   General_polygon_set_2<Traits> gps(*begin);
   gps.join(++begin, end);
+  std::cout<<"|V| = " << gps.arrangement().number_of_vertices()<<"\n";
+  std::cout<<"|E| = " << gps.arrangement().number_of_edges()<<"\n";
+  std::cout<<"|F| = " << gps.arrangement().number_of_faces()<<"\n";
   return (gps.polygons_with_holes(oi));
 }
 
