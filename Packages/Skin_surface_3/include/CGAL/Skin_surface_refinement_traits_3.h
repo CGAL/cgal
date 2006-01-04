@@ -69,7 +69,7 @@ public:
   }
   Polyhedron_vector normal(Polyhedron_point const &p) {
     Triang_cell_handle ch = t.locate(p2t_converter(p));
-    return ch->surf->normal(p);
+    return ch->surf->gradient(p);
   }
   int dimension(Polyhedron_point const &p) {
     Triang_cell_handle ch = t.locate(p2t_converter(p));
