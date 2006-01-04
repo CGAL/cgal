@@ -4,7 +4,7 @@
 \ccc{Kernel}
 
 \ccHasModels
-\ccc{CGAL::Circular_kernel<BasicGeometricKernel,AlgebraicKernel_2_2>}\\
+\ccc{CGAL::Circular_kernel<LinearKernel,AlgebraicKernel_2_2>}\\
 \ccc{CGAL::Lazy_curved_kernel<CircularKernel>}\\
 \ccc{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\
 \ccc{CGAL::Filtered_bbox_curved_kernel<CircularKernel>}
@@ -13,7 +13,7 @@
 
 A model of \ccc{CircularKernel} is supposed to provide some basic types
 
-\ccNestedType{Linear_kernel}{Model of \ccc{BasicGeometricKernel}.}
+\ccNestedType{Linear_kernel}{Model of \ccc{LinearKernel}.}
 \ccGlue
 \ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernel_2_2}.}
 
@@ -31,9 +31,11 @@ A model of \ccc{CircularKernel} is supposed to provide some basic types
 
 and to define the following geometric objects
 
-\ccNestedType{Line_arc_2}{Model of \ccc{CircularKernel::LineArc_2}.}
+\ccNestedType{Point_2}{Model of \ccc{Kernel::Point_2}.}
 \ccGlue
-\ccNestedType{Circle_2}{Model of \ccc{CircularKernel::Circle_2}.}
+\ccNestedType{Circle_2}{Model of \ccc{Kernel::Circle_2}.}
+\ccGlue
+\ccNestedType{Line_arc_2}{Model of \ccc{CircularKernel::LineArc_2}.}
 \ccGlue
 \ccNestedType{Circular_arc_2}{Model of \ccc{CircularKernel::CircularArc_2}.}
 \ccGlue
@@ -60,7 +62,9 @@ constructions and other functionalities.
 
 \ccNestedType{Do_overlap}{Model of \ccc{CircularKernel::DoOverlap_2}.}
 
-\ccNestedType{In_range_2}{Model of \ccc{CircularKernel::InRange_2}.}
+\ccNestedType{In_x_range_2}{Model of \ccc{CircularKernel::InXRange_2}.}
+\ccGlue
+\ccNestedType{In_y_range_2}{Model of \ccc{CircularKernel::InYRange_2}.}
 
 \ccNestedType{Is_vertical_2}{Model of \ccc{CircularKernel::IsVertical_2}.}
 
@@ -70,7 +74,6 @@ constructions and other functionalities.
 
 \ccHeading{Constructions}
 
-\ccNestedType{Construct_circle_2;}{Model of \ccc{CircularKernel::ConstructCircle_2}.}
 \ccNestedType{Construct_circular_arc_2}{Model of \ccc{CircularKernel::ConstructCircularArc_2}.}
 \ccNestedType{Construct_line_arc_2}{Model of \ccc{CircularKernel::ConstructLineArc_2}.}
 \ccNestedType{Construct_circular_arc_point_2}{Model of \ccc{CircularKernel::ConstructCircularArcPoint_2}.}

@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Circular_kernel<BasicGeometricKernel,AlgebraicKernel>}
+\begin{ccRefClass}{Circular_kernel<LinearKernel,AlgebraicKernel>}
 
 \ccDefinition
 
@@ -11,7 +11,7 @@ apparently assuming that there is only one possible concept...}
 
 \ccParameters
 
-The circular kernel is parameterized by a \ccc{BasicGeometricKernel} parameter
+The circular kernel is parameterized by a \ccc{LinearKernel} parameter
 (and derives from it), in order to reuse all needed functionalities on
 basic linear objects provided by one of the CGAL kernels. It also
 allows other implementations of these basic functionalities.
@@ -23,24 +23,24 @@ It must be a model of concept \ccc{AlgebraicKernel_2_2}.
 
 \ccInheritsFrom
 
-\ccc{BasicGeometricKernel}
+\ccc{LinearKernel}
 
 \ccTypes
 
 \ccThree{typedef Circular_arc_point_2<Circular-Kernel>}{Root_of_4xxx}{}
 \ccThreeToTwo
 
-The circular kernel takes its basic number types from the algebraic kernel:
+The circular kernel inherits its basic number types from the algebraic kernel:
 \ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type.}
 \ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type.}
 In fact, the two number types \ccc{AlgebraicKernel::RT} and
-\ccc{BasicGeometricKernel::RT} must coincide, as well as
-\ccc{AlgebraicKernel::FT} and \ccc{BasicGeometricKernel::FT}.
+\ccc{LinearKernel::RT} must coincide, as well as
+\ccc{AlgebraicKernel::FT} and \ccc{LinearKernel::FT}.
 \footnote{how to avoid inconsistencies? a user might take an AK and a
-BGK with different RTs... this is not a problem specific tio CK, it occurs 
+BGK with different RTs... this is not a problem specific to CK, it already occurs 
 in many places in CGAL...}. 
 
-The types of \ccc{BasicGeometricKernel} are inherited by the circular kernel.
+The types of \ccc{LinearKernel} are inherited by the circular kernel.
 Some types are taken from the \ccc{AlgebraicKernel} parameter, and
 some types are defined by the \ccc{Circular_kernel} itself.
 
@@ -52,21 +52,13 @@ usable, as well as all the functioanlity on them described in the
 
 \ccTypedef{typedef Line_arc_2<Circular_kernel> Line_arc_2;}{}
 \ccGlue
-\ccTypedef{typedef Circle_2<Circular_kernel> Circle_2;}{} 
-\ccGlue
 \ccTypedef{typedef Circular_arc_2<Circular_kernel> Circular_arc_2;}{}
 \ccGlue
 \ccTypedef{typedef Circular_arc_point_2<Circular_kernel> Circular_arc_point_2;}{}
 
-\footnote{Here I do as if that Circle\_2 would be moved to Circular
-kernel, which would in fact raise several issues:
-backwards compatibility of the code, and also of the license if CK is
-not released as the CGAL kernel. I guess it won't be moved... I'll change this in the 
-manual, to be done}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{BasicGeometricKernel}\\
+\ccRefIdfierPage{LinearKernel}\\
 \ccRefIdfierPage{AlgebraicKernel_2_2}
 
 \end{ccRefClass}

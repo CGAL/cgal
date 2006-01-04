@@ -31,7 +31,6 @@ is the intersection of \ccc{c} and \ccc{c2} of index $i2$, where
 intersections are ordered lexicographically.
 \ccPrecond{\ccc{c} intersects both \ccc{c1} and \ccc{c2}, and the arc
 defined by the intersections has non-zero length.}} 
-\footnote{there will be variants in the class...}
 
 \ccAccessFunctions
 
@@ -48,8 +47,9 @@ A circular arc is supposed to be oriented counterclockwise, from
 \ccMethod{CircularKernel::Circular_arc_point_2 target();}{}
 
 When the methods \ccc{source} and \ccc{target} return the same point, then 
-the arc is in fact a full circle. \footnote{arcs of zero length are
-points, not arcs}
+the arc is in fact a full circle. \footnote{so far, arcs of zero length are
+points, not arcs. But see Menelaos' remark: add functors to test whether an
+arc is degenerate... to be fixed}
 
 When an arc is x-monotone, its left and right points can be accessed
 directly:
@@ -57,8 +57,6 @@ directly:
 \ccMethod{CircularKernel::Circular_arc_point_2 left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 \ccGlue
 \ccMethod{CircularKernel::Circular_arc_point_2 right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
-\footnote{names for associated functors in CK...? similar to
-\textit{ConstructVertex\_2} in kernel, whose name is not perfect...}
 
 \ccQueryFunctions
 

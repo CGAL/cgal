@@ -42,7 +42,7 @@ An object \ccVar\ of this type must provide:
 
 \ccDefinition
 
-To test whether two curves overlap.
+Testing whether the interiors of two curves overlap.
 
 \ccCreationVariable{fo}
 
@@ -68,7 +68,7 @@ An object \ccVar\ of this type must provide:
 	
 \end{ccRefFunctionObjectConcept}
 
-\begin{ccRefFunctionObjectConcept}{CircularKernel::InRange_2}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::InXRange_2}
 
 \ccDefinition
 
@@ -90,11 +90,40 @@ An object \ccVar\ of this type must provide:
 
 \ccHasModels
 
-\ccc{Circular_kernel::In_range_2;}
+\ccc{Circular_kernel::In_x_range_2;}
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::in_range}
+\ccRefIdfierPage{CGAL::in_x_range}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::InYRange_2}
+
+\ccDefinition
+
+To test whether a point lies in the horizontal range of a curve.
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l,
+	const CircularKernel::Circular_arc_point_2 & p);}
+{For a line arc.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & c,
+	const CircularKernel::Circular_arc_point_2 & p);}
+{For a circular arc. \ccPrecond{$c$ is $y$-monotone.}}
+
+\ccHasModels
+
+\ccc{Circular_kernel::In_y_range_2;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::in_y_range}
 
 \end{ccRefFunctionObjectConcept}
 

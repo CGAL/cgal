@@ -12,16 +12,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Concepts}
 
-\footnote{Note that I have a big question here. Should the kernel here
-be described as a concept, as is done currently in CGAL? formally, it
-must be, since the CK appears as a template parameter of geometric
-object classes. However, it is hard for a user to browse the manual
-written that way.}
-
 \ccRefConceptPage{CircularKernel}
 
-\ccRefConceptPage{BasicGeometricKernel}
-
+\ccRefConceptPage{LinearKernel}\\
+\ccRefConceptPage{AlgebraicKernel}
 %\begin{ccAdvanced}
 %\ccRefConceptPage{ConicKernel_2}
 %\end{ccAdvanced}
@@ -41,21 +35,23 @@ written that way.}
 
 \ccRefConceptPage{CircularKernel::DoOverlap_2}
 
-\ccRefConceptPage{CircularKernel::InRange_2}
+\ccRefConceptPage{CircularKernel::InXRange_2}\\
+\ccRefConceptPage{CircularKernel::InYRange_2}
 
 \ccRefConceptPage{CircularKernel::IsVertical_2}
 
 \ccRefConceptPage{CircularKernel::IsXMonotone_2}\\
-\ccRefConceptPage{CircularKernel::IsYMonotone_2}\\
+\ccRefConceptPage{CircularKernel::IsYMonotone_2}
 
 \ccRefConceptPage{CircularKernel::ConstructCircularMinVertex_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularMaxVertex_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularSourceVertex_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularTargetVertex_2}
 
-\footnote{technical questions: the previous functors have a different name 
+\footnote{technical remark: the previous functors have a different name 
 ``Circular'' because the operators() don't have the same return type 
-as the existing CGAL functors... is it possible to solve this unpleasant problem?}
+as the existing CGAL functors... it would be nice to find a way to avoid 
+this, but I don't know any technique for this.} 
 
 \ccRefConceptPage{CircularKernel::ConstructCircle_2}\\
 \ccRefConceptPage{CircularKernel::ConstructCircularArc_2}\\
@@ -89,7 +85,9 @@ as the existing CGAL functors... is it possible to solve this unpleasant problem
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Classes}
 
-\ccRefIdfierPage{CGAL::Circular_kernel<BasicGeometricKernel,AlgebraicKernel>}
+	\subsubsection*{Kernels}
+
+\ccRefIdfierPage{CGAL::Circular_kernel<LinearKernel,AlgebraicKernel>}
 \\
 \ccRefIdfierPage{CGAL::Lazy_curved_kernel<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\

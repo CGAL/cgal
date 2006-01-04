@@ -15,12 +15,13 @@
 \ccc{Default Constructible}, \ccc{CopyConstructible}
 
 \ccCreation
-\ccCreationVariable{cae}
+\ccCreationVariable{p}
 
 \ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
 \footnote{quid of a constructor from a Point\_2 ?}
+\ccConstructor{Circular_arc_point_2(const CircularKernel::Point_2 &q)}{}
 
 \ccConstructor{Circular_arc_point_2(
 		const CircularKernel::Circle_2 & c1, 
@@ -52,6 +53,33 @@ the arrangements (?) to access edges from vertices. To be discussed.}
 \ccMethod{int index();}{Returns the index (in lexicographic order)
 of the point among the intersections between the two circles
 defining it.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Test for equality. Two points are equal, iff their $x$ and $y$ coordinates are equal.} 
+
+\ccFunction{bool operator!=(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Test for nonequality.} 
+
+\ccFunction{bool operator<(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically smaller than $q$, i.e. either if $p.x() < q.x()$
+ or if $p.x() == q.x()$ and $p.y() < q.y()$.}
+
+\ccFunction{bool operator>(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically greater than $q$.}
+
+\ccFunction{bool operator<=(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically smaller than or equal to $q$.}
+
+\ccFunction{bool operator>=(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically greater than or equal to $q$.}
 
 \ccHeading{I/O}
 

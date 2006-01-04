@@ -2,16 +2,16 @@
 
 \ccDefinition
 
-To split curves into monotone pieces. 
+Splitting curves into monotone pieces. 
 
-\ccCreationVariable{mkxmon}
+\ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{template < class OutputIterator >
     OutputIterator
-    operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator res);}
-{Splits the arc \ccc{ca} into monotone arcs that are returned into the 
+    operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit);}
+{Splits the arc \ccc{ca} into monotone arcs that are returned through the 
 output iterator.}
 
 \ccHasModels
@@ -29,62 +29,47 @@ output iterator.}
 
 To compute intersections of objects.
 
-\ccCreationVariable{inters}
+\ccRefines
+
+\ccc{CGAL::Kernel::Intersect_2}
+
+\ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{template < class OutputIterator >
     OutputIterator
-    operator()(const CircularKernel::Circle_2 &c1, 
-	const CircularKernel::Circle_2 &c2, 
-	OutputIterator points);}
-{Copies in the output iterators the intersections between the two circles, sorted lexicographically. \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
-\ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
-
+    operator()(const CircularKernel::Line_arc_2 &l, const Type &c);}
+{Copies in the output iterators the intersection points between the
+two objects, sorted lexicographically. \ccc{points} iterates on
+elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2,
+int>}, where the integer is the multiplicity of the corresponding
+intersection point between \ccc{obj1} and \ccc{obj2}. }
+and
 \ccMemberFunction{template < class OutputIterator >
     OutputIterator
-    operator()(const CircularKernel::Circle_2 &c, 
-	const CircularKernel::Line_arc_2 &l, 
-	OutputIterator points);}
-{Same as previous, for a circle and a line arc.}
+    operator()(const Type &c, const CircularKernel::Line_arc_2 &l);}
+{same}
 
-\ccMemberFunction{template < class OutputIterator >
-    OutputIterator
-    operator()(const CircularKernel::Line_arc_2 &c, 
-	const CircularKernel::Circle_2 &l, 
-	OutputIterator points);}
-{Same as previous.}
-
-\ccMemberFunction{template < class OutputIterator >
-    OutputIterator
-    operator()(const CircularKernel::Circular_arc_2 &c, 
-	const CircularKernel::Line_arc_2 &l, 
-	OutputIterator points);}
-{Same as previous, for a circular arc and a line arc.}
-
-
-\ccMemberFunction{template < class OutputIterator >
-    OutputIterator
-    operator()(const CircularKernel::Line_arc_2 &c, 
-	const CircularKernel::Circular_arc_2 &l, 
-	OutputIterator points);}
-{Same as previous.}
+where \ccc{Type} is either \ccc{CircularKernel::Circle_2} or
+\ccc{CircularKernel::Circular_arc_2}. 
 
 \ccMemberFunction{template < class OutputIteratorPoints, class OutputIteratorArcs >
     std::pair< OutputIteratorPoints, OutputIteratorArcs >
-    operator()(const CircularKernel::Circular_arc_2 &ca1, 
-	const CircularKernel::Circular_arc_2 &ca2, 
+    operator()(const Type1 &obj1, const Type2 &obj2, 
 	OutputIteratorPoints points, OutputIteratorArcs arcs);}
-{Copies in the output iterators the intersections between the two arcs, sorted lexicographically. \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CircularKernel::Circular_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
+{Copies in the output iterators the intersections between the two
+objects, sorted lexicographically. \ccc{points} iterates on elements
+of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>},
+where the integer is the multiplicity of the corresponding
+intersection point between \ccc{obj1} and \ccc{obj2}, and \ccc{arcs}
+iterates on elements of type \ccc{CircularKernel::Circular_arc_2} (or
+\ccc{CircularKernel::Circle_2} in the special case of two equal input circles)
+that are arcs on which \ccc{obj1} and \ccc{obj2} overlap.} 
 
-\footnote{note that the multiplicity is not defined for the case of a point that is a common endpoint of the two arcs. Does it make sense to decide a convention: multiplicity=0...? to be discussed}
-
-\ccMemberFunction{template < class OutputIteratorPoints, class OutputIteratorArcs >
-    std::pair< OutputIteratorPoints, OutputIteratorArcs >
-    operator()(const CircularKernel::Line_arc_2 &ca1, 
-	const CircularKernel::Line_arc_2 &ca2, 
-	OutputIteratorPoints points, OutputIteratorArcs arcs);}
-{Same as previous, for line arcs.}
+where \ccc{Type1} and \ccc{Type2} can both be either
+\ccc{CircularKernel::Circle_2} or
+\ccc{CircularKernel::Circular_arc_2}. 
 
 \ccHasModels
 
@@ -102,7 +87,7 @@ A model \ccVar\ of this type must provide:
 
 To split curves at a given point.
 
-\ccCreationVariable{sp}
+\ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 

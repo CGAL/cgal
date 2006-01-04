@@ -26,11 +26,11 @@ The design is done in such a way that the algebraic concepts and the
 geometric concepts are clearly separated. The \ccc{Circular_kernel}
 has therefore two template parameters: 
 \begin{itemize}
-\item {} the \ccc{BasicGeometricKernel}, from which the circular kernel derives,
-provides all basic geometric objects like points, lines, circles, and
+\item {} the \ccc{LinearKernel}, from which the circular kernel derives,
+provides all elementary geometric objects like points, lines, circles, and
 elementary functionality on them. In fact it is meant to be
 instantiated by a CGAL kernel,  but the user may plug his own kernel
-instead, as long at it follows the CGAL kernel concept. 
+instead, as long as it follows the CGAL kernel concept. 
 \item {} the \ccc{AlgebraicKernel} is responsible for computations on
 polynomials and algebraic numbers. It has to be a model of concept 
 \ccc{AlgebraicKernel_2_2} described in a separate chapter. The
@@ -39,7 +39,7 @@ provides exact computations on algebraic objects.
 \end{itemize}
 
 The circular kernel uses the extensibility scheme presented in the 2D
-kernel manual. The types of \ccc{BasicGeometricKernel} are inherited
+kernel manual. The types of \ccc{LinearKernel} are inherited
 by the circular kernel and some types are taken from the
 \ccc{AlgebraicKernel} parameter. Three new main geometric objects are
 introduced by the \ccc{Circular_kernel}: circular arcs, points of
