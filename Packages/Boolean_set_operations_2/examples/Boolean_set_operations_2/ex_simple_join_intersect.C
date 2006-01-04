@@ -1,0 +1,54 @@
+//! \file examples/Boolean_set_operations_2/ex_simple_join_intersect.C
+// Computing the union and the intersection of two simple polygons.
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/General_polygon_with_holes_2.h>
+
+#include <list>
+
+typedef CGAL::Gmpq                                      Number_type;
+typedef CGAL::Cartesian<Number_type>                    Kernel;
+typedef Kernel::Point_2                                 Point_2;
+typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
+typedef CGAL::General_polygon_with_holes_2<Polygon_2>   Polygon_with_holes_2;
+typedef std::list<Polygon_with_holes_2>                 Pwh_list_2;
+
+int main ()
+{
+  // Construct the two input polygons.
+  Polygon_2   P;
+  P.push_back (Point_2 (0, 0));       P.push_back (Point_2 (1.5, 1.5));
+  P.push_back (Point_2 (2.5, 0.5));   P.push_back (Point_2 (3.5, 1.5));
+  P.push_back (Point_2 (5, 0));
+  std::cout << "P = " << P << std::endl;
+
+  Polygon_2   Q;
+  Q.push_back (Point_2 (0, 2));       Q.push_back (Point_2 (5, 2));
+  Q.push_back (Point_2 (3.5, 0.5));   Q.push_back (Point_2 (2.5, 1.5));
+  Q.push_back (Point_2 (1.5, 0.5));
+  std::cout << "Q = " << Q << std::endl;
+
+  // Compute the union of P and Q.
+  Polygon_with_holes_2  unionR;
+
+  if (CGAL::join (P, Q, unionR))
+    std::cout << "The union: " << unionR << std::endl;
+  else
+    std::cout << "P and Q are disjoint and their union is trivial." 
+              << std::endl;
+
+  // Compute the intersection of P and Q.
+  Pwh_list_2                  intR;
+  Pwh_list_2::const_iterator  it;
+
+  CGAL::intersection (P, Q, std::back_inserter(intR));
+
+  std::cout << "The intersection:" << std::endl;
+  for (it = intR.begin(); it != intR.end(); ++it)
+    std::cout << "--> " << *it << std::endl;
+  
+  return (0);
+}
