@@ -44,7 +44,7 @@ public:
   }
 //   virtual ~Skin_surface_quadratic_surface_3() {};
 //   // Construct the intersection point with the segment (p0,p1)
-  Point to_surface(Point const &p0, Point const &p1) {
+  Point to_surface(const Point &p0, const Point &p1) {
     RT sq_d = squared_distance(p0,p1);
     Point pp0=p0, pp1=p1, mid;
     
@@ -64,7 +64,7 @@ public:
     return mid;
   };
 //   virtual Point to_surface(Point const &p, Vector const &v) = 0;
-  inline Point to_surface(Segment const &s) {
+  inline Point to_surface(const Segment &s) {
     return to_surface(s.source(), s.target());
   }
 
@@ -72,15 +72,15 @@ public:
 //   virtual Point to_surface(Point const &p0) = 0;
 
   // compute the function value of p
-  virtual RT value(Point const &p) const = 0;
+  virtual RT value(const Point &p) const = 0;
   // Compute the gradient in p
-  virtual Vector gradient(Point const &p) = 0; 
+  virtual Vector gradient(const Point &p) = 0; 
 
   // return the dimension of the delaunay simplex:
   virtual int dimension() const = 0;
 
   // return a continuous density function on the skin surface:
-  virtual RT sq_density(Point const &p) = 0;
+  virtual RT sq_density(const Point &p) = 0;
 
 };
 
@@ -115,7 +115,7 @@ public:
     return orient * (squared_distance(x, wp)/s - wp.weight());
   }
 
-  Point to_surface(Point const &p, Vector const &v) {
+  Point to_surface(const Point &p, const Vector &v) {
     Vector pc = p-wp;
     RT sq_d = v*v;
     RT top = -pc*v/sq_d; 
