@@ -3,7 +3,6 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Polygon_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 
 typedef CGAL::Gmpq                                      Number_type;

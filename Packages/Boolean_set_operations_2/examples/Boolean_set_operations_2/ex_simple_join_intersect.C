@@ -3,9 +3,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Polygon_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
 #include <list>
 
 typedef CGAL::Gmpq                                 Number_type;
@@ -43,6 +41,7 @@ int main ()
   else
     std::cout << "P and Q are disjoint and their union is trivial." 
               << std::endl;
+  std::cout << std::endl;
 
   // Compute the intersection of P and Q.
   Pwh_list_2                  intR;

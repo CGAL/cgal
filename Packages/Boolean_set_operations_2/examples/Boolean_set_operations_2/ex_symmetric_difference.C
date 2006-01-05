@@ -3,9 +3,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Polygon_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
 #include <list>
 
 typedef CGAL::Gmpq                                 Number_type;

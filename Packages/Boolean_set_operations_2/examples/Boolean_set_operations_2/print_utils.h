@@ -1,6 +1,7 @@
 #ifndef _PRINT_UTILS_H_
 #define _PRINT_UTILS_H_
 
+#include <CGAL/Polygon_with_holes_2.h>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -26,7 +27,7 @@ template<class Kernel, class Container>
 void print_polygon_with_holes
     (const CGAL::Polygon_with_holes_2<Kernel, Container>& pwh)
 {
-  if (pwh.is_bounded())
+  if (! pwh.is_unbounded())
   {
     std::cout << "{ Outer boundary = "; 
     print_polygon (pwh.outer_boundary());
@@ -38,7 +39,7 @@ void print_polygon_with_holes
                                              Holes_const_iterator  hit;
   unsigned int                                                     k = 1;
 
-  std::cout << "  " << pwh.number_of_holes() << " holes." << std::endl;
+  std::cout << "  " << pwh.number_of_holes() << " holes:" << std::endl;
   for (hit = pwh.holes_begin(); hit != pwh.holes_end(); ++hit, ++k)
   {
     std::cout << "    Hole #" << k << " = ";
