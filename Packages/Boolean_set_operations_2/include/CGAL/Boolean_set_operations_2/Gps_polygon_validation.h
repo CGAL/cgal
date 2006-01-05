@@ -136,7 +136,6 @@ protected:
     {
       if(tr.equal_2_object()(source(*itr), target(*itr)))
       {
-        std::cout<<"ERROR!!!\n";
         return false;
       }
       Curve_const_iterator next = itr;
@@ -147,7 +146,6 @@ protected:
     }
     if(tr.equal_2_object()(source(*last), target(*last)))
     {
-      std::cout<<"ERROR!!!\n";
       return false;
     }
     if(!tr.equal_2_object()(target(*last), source(*begin)))
