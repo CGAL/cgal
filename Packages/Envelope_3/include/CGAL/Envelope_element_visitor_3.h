@@ -343,6 +343,8 @@ public:
       else
         CGAL_assertion_msg(false, "wrong projected intersection type");
     }
+
+
     zone_visitor.finish();
     zone_timer.stop();
 
@@ -392,6 +394,7 @@ public:
           }
           ++hec;
         } while (hec != hec_begin && !can_finish);
+
       }
 
     }
@@ -598,6 +601,7 @@ public:
 
     // we want to work on the halfedge going from left to right
     if (original_left != edge->source()->point())
+
       edge = edge->twin();
       
     Vertex_handle original_src = edge->source();
@@ -863,6 +867,7 @@ public:
       if (source_is_special)
         set_data_by_comparison_result(original_src, EQUAL);
       else
+
         set_data_by_comparison_result(original_src, first_part_res);
     }
     // the incident edge part to target should be cur_part (the last part)
@@ -1049,10 +1054,16 @@ protected:
       #endif
       // compare the surfaces over the halfedge's curve
       X_monotone_curve_2 cv = (*he)->curve();
-      bool same_dir = (traits->construct_min_vertex_2_object()(cv) == 
-                       (*he)->source()->point());
+
+      CGAL_assertion_code(
+        bool same_dir = (traits->construct_min_vertex_2_object()(cv) ==
+                         (*he)->source()->point());
+        bool left_to_right = ((*he)->direction() == SMALLER);
+      );
+      CGAL_assertion(same_dir == left_to_right);
+
       // a face is always to the left of its halfedge
-      if (same_dir)
+      if ((*he)->direction() == SMALLER)
         res = traits->compare_distance_to_envelope_above_3_object()
                                                    (cv,surf1,surf2);
       else
@@ -1060,6 +1071,7 @@ protected:
                                                    (cv,surf1,surf2);
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
         std::cout << "resolve_minimal_face check " 
+
                   << (same_dir ? "left " : "right ") 
                   << "of curve " << cv << std::endl << "got " << res 
                   << std::endl;
@@ -1313,6 +1325,12 @@ protected:
         hh->set_decision(face->get_decision());
         hh->twin()->set_decision(hh->get_decision());
       }
+      // TODO: is this correct? shouldn't we split the edge first?
+      // I think it is correct, because there is no intersection (of
+      // the edges aux sources) over the edge, as if there was such
+      // intersection, there would also be intersection between the surfaces
+      // over the face, and we know now that there isn't.
+      
       // if the first map is continous, but the second isn't (i.e. when we move
       // from the face to the edge, the envelope goes closer), then if the
       // second map wins on the face, it wins on the edge also
@@ -1612,6 +1630,10 @@ protected:
                 Vertices_map&  map_orig_to_copied_vertices,
                 bool& fakes_exist) // this bool is assumed to be initialized already
   {
+    // TODO: the insert methods we use here use some geometric operations
+    // which can be avoided since we have that knowledge from the original map
+    // this is seen when using a filtered kernel.
+    
     Ccb_halfedge_circulator hec_begin = hec;
     bool first_he = true;
     Halfedge_handle copied_prev_he;
@@ -1643,8 +1665,11 @@ protected:
           copied_prev_he = to.insert_in_face_interior(current_cv, inside_face);
           // make prev_he the same direction as hh (the original halfedge
           // it was copied from)
-          if (copied_prev_he->target()->point() != hh->target()->point())
+          if (hh->direction() != copied_prev_he->direction())
+          {
+            CGAL_assertion(copied_prev_he->target()->point() != hh->target()->point());
             copied_prev_he = copied_prev_he->twin();
+          }
 
           map_copied_to_orig_halfedges[copied_prev_he] = hh;
           map_orig_to_copied_halfedges[hh] = copied_prev_he;
@@ -1674,13 +1699,26 @@ protected:
           Halfedge_handle copied_new_he;
           if (!use_2_vertices)
           {
+            // we should know if the existing vertex is the left or right
+            // endpoint of the curve "current_cv" - we can use the direction
+            // of the edge in the original arrangement, since its source is the
+            // existing vertex.
+            if (hh->direction() == SMALLER)
+            {
+              CGAL_assertion(traits->equal_2_object()(copied_prev_he->target()->point(),
+                                                      traits->construct_min_vertex_2_object()(current_cv)));
+              copied_new_he = to.insert_from_left_vertex(current_cv, copied_prev_he);
+            }
+            else
+            {
+              CGAL_assertion(hh->direction() == LARGER);
+              CGAL_assertion(!traits->equal_2_object()(copied_prev_he->target()->point(),
+                                                      traits->construct_min_vertex_2_object()(current_cv)));
+              copied_new_he = to.insert_from_right_vertex(current_cv, copied_prev_he);
+            }
+            
             // the target of copied_new_he is the new vertex, so it is directed
             // the same way as hh in "from"
-            if (traits->equal_2_object()(copied_prev_he->target()->point(),
-                                         traits->construct_min_vertex_2_object()(current_cv)))
-              copied_new_he = to.insert_from_left_vertex(current_cv, copied_prev_he);
-            else
-              copied_new_he = to.insert_from_right_vertex(current_cv, copied_prev_he);
 
             // update the vertices maps:
             map_copied_to_orig_vertices[copied_new_he->target()] = hh->target();
@@ -1898,6 +1936,7 @@ protected:
   // so we can later identify all the faces that form the original given face
   // it also should remember the edges of the face, that are also projected intersections
   class Copied_face_observer : public Md_observer
+
   {
   public:
     typedef typename Minimization_diagram_2::Face_handle         Face_handle;
@@ -2048,6 +2087,7 @@ protected:
         map_halfedges(map_h),
         map_vertices(map_v),
         map_faces(map_f)
+
     {
     }
     
@@ -2465,6 +2505,7 @@ protected:
       md_observer.attach(copied_arr);
     }
 
+
     virtual ~Copied_face_zone_visitor() { }
 
     // the zone visitor functions
@@ -2659,6 +2700,7 @@ protected:
         #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
     		  std::cout << "set halfedge-vertex flags:"
     			          << std::endl;
+
     		  std::cout << "is equal(0) = " << result_new_he->get_is_equal_aux_data_in_target(0)
     			          << " is_equal(1) = " << result_new_he->get_is_equal_aux_data_in_target(1)
     			          << " has_equal(0) = " << result_new_he->get_has_equal_aux_data_in_target(0)
@@ -2794,6 +2836,7 @@ protected:
       X_monotone_curve_2  sub_cv1, sub_cv2;
       Halfedge_handle     split_he;
       copied_arr.get_traits()->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
+
 
       split_he = copied_arr.split_edge (he, sub_cv1, sub_cv2);
 
