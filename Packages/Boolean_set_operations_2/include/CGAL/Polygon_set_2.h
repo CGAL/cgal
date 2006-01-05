@@ -20,22 +20,21 @@
 #ifndef CGAL_POLYGON_SET_2_H
 #define CGAL_POLYGON_SET_2_H
 
-CGAL_BEGIN_NAMESPACE
-
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
-#include <verctor>
+#include <vector>
+
+CGAL_BEGIN_NAMESPACE
 
 template <class Kernel,
-          class Containter = std:vector<typename Kernel::Point_2> >
+          class Containter = std::vector<typename Kernel::Point_2> >
 class Polygon_set_2 :
   public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> >
 {  
 public:
 
-  typedef Gps_segment_traits_2<Kernel, Containter>::Traits_2  Traits_2;
+  typedef  Gps_segment_traits_2<Kernel, Containter>       Traits_2;
 
 private:
 

@@ -625,6 +625,7 @@ public:
   typename std::iterator_traits<InputIterator>::value_type pgn;
   this->join(begin, end, pgn, k);
   this->remove_redundant_edges();
+  this->_reset_faces();
 }
 
 // join range of simple polygons
@@ -707,6 +708,7 @@ inline void join(InputIterator1 begin1,
   //the result arrangement is at index 0
   this->m_arr = arr_vec[0];
   this->remove_redundant_edges();
+  this->_reset_faces();
 }
 
 
@@ -717,6 +719,7 @@ inline void intersection(InputIterator begin, InputIterator end)
   typename std::iterator_traits<InputIterator>::value_type pgn;
   this->intersection(begin, end, pgn);
   this->remove_redundant_edges();
+  this->_reset_faces();
 }
 
 
@@ -796,6 +799,7 @@ inline void intersection(InputIterator1 begin1,
   //the result arrangement is at index 0
   this->m_arr = arr_vec[0];
   this->remove_redundant_edges();
+  this->_reset_faces();
 }
 
 
@@ -807,6 +811,7 @@ inline void symmetric_difference(InputIterator begin, InputIterator end)
   typename std::iterator_traits<InputIterator>::value_type pgn;
   this->symmetric_difference(begin, end, pgn);
   this->remove_redundant_edges();
+  this->_reset_faces();
 }
 
 
@@ -886,6 +891,7 @@ inline void symmetric_difference(InputIterator1 begin1,
   //the result arrangement is at index 0
   this->m_arr = arr_vec[0];
   this->remove_redundant_edges();
+  this->_reset_faces();
 }
 
 
@@ -949,6 +955,16 @@ void divide_and_conquer(unsigned int lower,
   merge_func(lower, curr_lower, sub_size ,arr_vec);
 
   return;
+}
+
+// mark all faces as non-visited
+void _reset_faces()
+{
+  Face_const_iterator fit = m_arr->faces_begin();
+  for( ; fit != m_arr->faces_end(); ++fit)
+  {
+    fit->set_visited(false);
+  }
 }
 
 };

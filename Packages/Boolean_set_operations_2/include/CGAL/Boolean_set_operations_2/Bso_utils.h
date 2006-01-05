@@ -24,6 +24,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h> 
+#include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
 #include <queue>
 
 
@@ -95,10 +96,10 @@ public:
 
 protected:
 
-  Gps_traits*                      m_traits;
+  Gps_traits*                            m_traits;
   std::queue<Face_const_iterator>        m_holes_q;
-  std::list<Polygon_2>  m_pgn_holes;
-  OutputIterator                   m_oi;
+  std::list<Polygon_2>                   m_pgn_holes;
+  OutputIterator                         m_oi;
 
 public:
 
@@ -117,7 +118,7 @@ public:
     {
       ubf->set_visited(true);
       for (holes_it = ubf->holes_begin();
-	   holes_it != ubf->holes_end(); ++holes_it)
+	    holes_it != ubf->holes_end(); ++holes_it)
       {
         scan_ccb (*holes_it);
       }
@@ -260,17 +261,14 @@ public:
 template<class Arrangement>
 class Init_faces_visitor
 {
-  typedef typename Arrangement::Traits_2             Traits_2;
-  typedef typename Arrangement::Ccb_halfedge_const_circulator 
-                                                     Ccb_halfedge_const_circulator;
-  typedef typename Arrangement::Face_const_iterator        Face_const_iterator;
-  typedef typename Arrangement::Halfedge_const_iterator    Halfedge_const_iterator;
-  typedef typename Arrangement::Holes_const_iterator       Holes_const_iterator;
-
+  typedef typename Arrangement::Face_iterator             Face_iterator;
+  typedef typename Arrangement::Halfedge_iterator         Halfedge_iterator;
+ 
 public:
 
-  void init(Arrangement& arr)
+  void flip_face(Face_iterator f1, Face_iterator f2, Halfedge_iterator /*he*/)
   {
+    f2->set_contained(!f1->contained());
   }
 };
   
@@ -365,7 +363,7 @@ void General_polygon_set_2<Traits_>::pgns2arr(PolygonIter p_begin,
   typedef std::list<X_monotone_curve_2>                XCurveList;
 
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
-  typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
+  typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
 
   XCurveList xcurve_list;
@@ -405,7 +403,7 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
 
   typedef std::list<X_monotone_curve_2>                XCurveList;
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
-  typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
+  typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
   XCurveList xcurve_list;
   
@@ -453,7 +451,7 @@ void General_polygon_set_2<Traits_>::pgns_with_holes2arr (InputIterator begin,
   typedef std::list<X_monotone_curve_2>                XCurveList;
 
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
-  typedef Arr_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
+  typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
   XCurveList              xcurve_list;
   GP_Holes_const_iterator holes_it;
@@ -566,12 +564,7 @@ bool General_polygon_set_2<Traits_>::locate(const Point_2& q, Polygon_with_holes
   
   
   Ccb_halfedge_const_circulator ccb_of_pgn = get_boundary_of_polygon(f);
-  for(Face_const_iterator fit = m_arr->faces_begin();
-      fit != m_arr->faces_end();
-      ++fit)
-  {
-    fit->set_visited(false);
-  }
+  this->_reset_faces();
   if(ccb_of_pgn == Ccb_halfedge_const_circulator()) // the polygon has no boundary
   {
     // f is unbounded 
@@ -580,22 +573,12 @@ bool General_polygon_set_2<Traits_>::locate(const Point_2& q, Polygon_with_holes
   else
   {
     Halfedge_const_handle he_of_pgn = ccb_of_pgn;
-    for(Face_const_iterator fit = m_arr->faces_begin();
-      fit != m_arr->faces_end();
-      ++fit)
-    {
-      fit->set_visited(false);
-    }
+    this->_reset_faces();
     he_of_pgn->face()->set_visited(true);
     scanner.scan_ccb(ccb_of_pgn);
   }
 
-  for(Face_const_iterator fit = m_arr->faces_begin();
-      fit != m_arr->faces_end();
-      ++fit)
-  {
-    fit->set_visited(false);
-  }
+  this->_reset_faces();
   return true;
 }
 
