@@ -61,9 +61,11 @@ general $x$-monotone curves, rather than being simple line segments.
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
 package. The \ccc{Nef_2} package supports these operations for (linear)
-polygons; see Chapter~\ref{chap:nef_2}. In the rest of this chapter we
-use the traditional notation to designate regularized operations; e.g.,
-$P \cap Q$ means the regularized intersection of $P$ and $Q$.
+polygons; see Chapter~\ref{chap:nef_2}.
+
+In the rest of this chapter we use --- unless otherwise stated --- the
+traditional notation to designate regularized operations; e.g., $P \cap Q$
+means the {\em regularized} intersection of $P$ and $Q$.
 
 A polygon $P$ is said to be {\em simple} (or Jordan) if the only
 points of the plane belonging to two polygon edges of $P$ are the
@@ -146,6 +148,24 @@ its vertices, where its edges are line segments (\ccc{Kenrel::Segment_2}
 objects) between adjacent points in the container. By default, the
 \ccc{Container} paramters is a vector of \ccc{Kernel::Point_2} objects.
 
+The following function illustrates how to use the basic access functions
+of the \ccc{Polygon_2} class. It accepts a polygon $P$ and prints it in
+a readable format:
+\begin{alltt}
+template<class Kernel, class Container>
+void print_polygon (const CGAL::Polygon_2<Kernel, Container>& P)
+\{
+  typename CGAL::Polygon_2<Kernel, Container>::Vertex_const_iterator  vit;
+
+  std::cout << "[ " << P.size() << " vertices:";
+  for (vit = P.vertices_begin(); vit != P.vertices_end(); ++vit)
+    std::cout << " (" << *vit << ')';
+  std::cout << " ]" << std::endl;
+
+  return;
+\}
+\end{alltt}
+
 In this section we use the term {\em polygon} to designate a \ccc{Polygon_2}
 instance, namely a polygon having linear edges. General polygons are only
 discussed in Section~\ref{bops_sec:bops_gen}.
@@ -179,7 +199,9 @@ explain how these functions should be used throught several examples.
 Testing whether two polygons intersect results with a Boolean value, 
 and does not require any additional data beyond the provision of the 
 two input polygons. The example listed below tests whether the two
-triangles depicted on the right intersect.
+triangles depicted on the right intersect. It uses the function
+\ccc{print_polygon.h} listed above, which is located in the header file
+\ccc{print_utils.h}.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
@@ -228,20 +250,18 @@ polygons). Moreover, the complement of a simple polygon is an unbounded set
 that contains a hole; see Figure~\ref{fig:simple}~(c).
 
 Regular sets are closed under regularized Boolean set-operations.
-These operations accept as input, and may result as output, general
-polygons with holes, which model the concept 
-\ccc{GeneralPolygonWithHoles_2}. A model of this concept represents a
-set that may be bounded or unbounded. In case of a bounded set, its
-{\em outer boundary} is represented as a simple (but not necessarily
-strictly simple) polygon, whose vertices are oriented in a
-counterclockwise order around the interior of the set. In addition,
-the set may contain {\em holes}, where each hole is represented as a
-strictly simple polygon, whose vertices are oriented in a clockwise
+These operations accept as input, and may result as output, polygons
+with holes. A {\em polygon with holes} represents a point set that may be bounded
+or unbounded. In case of a bounded set, its {\em outer boundary} is represented
+as a simple (but not necessarily strictly simple) polygon, whose vertices
+are oriented in a counterclockwise order around the interior of the set.
+In addition, the set may contain {\em holes}, where each hole is represented
+as a strictly simple polygon, whose vertices are oriented in a clockwise
 order around the interior of the hole. Note that an unbounded polygon
 without holes spans the entire plane. Vertices of holes may coincide
-with vertices of the boundary.
+with vertices of the boundary; see below for an example.
 
-The point set represented by a polygons with holes is considered to be
+A point set represented by a polygon with holes is considered to be
 closed. Therefore, the boundaries of the holes are parts of the set
 (and not part of the holes).
 The exact definition of the obtained polygon with holes as a result of
@@ -249,6 +269,7 @@ a Boolean set-operation or a sequence of such operations is closely
 related to the definition of regularized Boolean set-operations, being
 the closure of the interior of the corresponding ordinary operation as
 explained next.
+\newpage
 \lcTex{%
   \setlength{\widthRight}{1.4cm}
   \setlength{\widthLeft}{\widthLineReal}
@@ -280,15 +301,14 @@ connected, then they belong to the same polygon with holes.
   \end{minipage}
 }
 
-The class template \ccc{General_polygon_with_holes_2<Polygon>} represents
+The class template \ccc{Polygon_with_holes_2<Kernel,Container>} represents
 polygons with holes as described above, where the outer boundary and the
-holes boundaries are realized as \ccc{Polygon} objects. In our context,
-the \ccc{Polygon} parameter corresponds to an instantiation of the
-\ccc{Polygon_2<Kenrel,Container>} template. Given an instance $P$ of a
-\ccc{General_polygon_with_holes_2} class, we can use the predicate 
-\ccc{is_bounded()} to check whether $P$ is a bounded set. If it is,
-we can obtain the counterclockwise-oriented polygon that represents its
-outer boundary by calling the member function \ccc{outer_boundary()}.
+holes boundaries are realized as \ccc{Polygon_2<Kernel,Container>} objects.
+Given an instance $P$ of the \ccc{Polygon_with_holes_2} class, we can use
+the predicate \ccc{is_unbounded()} to check whether $P$ is a unbounded set.
+If it is bounded, we can obtain the counterclockwise-oriented polygon that
+represents its outer boundary by calling the member function
+\ccc{outer_boundary()}.
 It is also possible to traverse the holes of $P$ by invoking
 \ccc{holes_begin()} and \ccc{holes_end()}. The two functions return
 iterators of the nested type
@@ -296,7 +316,40 @@ iterators of the nested type
 defined the valid range of $P$'s holes. The value type of this iterator
 is \ccc{Polygon_2}.
 
-The simple version of the free functions we have mentioned therefore
+The following function demonstrates how to traverse a polygon with holes.
+It accepts a \ccc{Polygon_with_holes_2} instance and uses the auxiliary
+function \ccc{print_polygon()} to prints all its components in a readable
+format:
+\begin{alltt}
+template<class Kernel, class Container>
+void print_polygon_with_holes
+    (const CGAL::Polygon_with_holes_2<Kernel, Container>& pwh)
+\{
+  if (! pwh.is_unbounded())
+  \{
+    std::cout << "{ Outer boundary = "; 
+    print_polygon (pwh.outer_boundary());
+  \}
+  else
+    std::cout << "\{ Unbounded polygon." << std::endl;
+
+  typename CGAL::Polygon_with_holes_2<Kernel,Container>::
+                                             Holes_const_iterator  hit;
+  unsigned int                                                   k = 1;
+
+  std::cout << "  " << pwh.number_of_holes() << " holes:" << std::endl;
+  for (hit = pwh.holes_begin(); hit != pwh.holes_end(); ++hit, ++k)
+  \{
+    std::cout << "    Hole #" << k << " = ";
+    print_polygon (*hit);
+  \}
+  std::cout << " \}" << std::endl;
+
+  return;
+\}
+\end{alltt}
+
+The simple versions of the free functions we have mentioned therefore
 accept two \ccc{Polygon_2} instances $P$ and $Q$ as their input, while
 their output is given using polygon with holes instances:
 \begin{itemize}
@@ -315,29 +368,21 @@ $P \cup Q$.
 \ccc{difference(P, Q, oi)} and \ccc{symmetric_difference(P, Q, oi)}, all
 have a similar interface. As the result of these operation may consist of
 several disconnected components, they all accept an output iterator \ccc{oi},
-whose value type is \ccc{General_polygon_with_holes_2}, and write the
+whose value type is \ccc{Polygon_with_holes_2}, and write the
 output polygons to it.
 \end{itemize}
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{Example --- Joining an Intersecting Simple Polygons}
+\subsubsection{Example --- Joining and Intersecting Simple Polygons}
 \label{bops_sssec:ex_simple_bops}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following example demonstartes the usage of the free functions
 \ccc{join()} and \ccc{intersect()} for computing the union and the
 intersection of the two simple polygons depicted in
-Figure~\ref{fig:simple}~(b).
-
-
-Suppose that you need to compute the union of two general polygons. If the
-two polygons are disjoint, the result is a pair that consists of the two 
-original polygons. Otherwise, it is a single general polygon perhaps with 
-holes. This observation is used to simplify the interface of the free
-functions that compute the union of two general polygons. These functions
-return \ccc{false} iff the polygons are disjoint, and \ccc{true} otherwise,
-in which case the resulting general polygon is placed in a third argument 
-passed by reference.
+Figure~\ref{fig:simple}~(b). The example uses the auxiliary function
+\ccc{print_polygon_with_holes()} listed above, which is located in
+the header file \ccc{print_utils.h} under the examples folder.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_simple_join_intersect.C}
 
@@ -358,6 +403,7 @@ on simple polygon. The only exception is \ccc{complement(P, oi)}, which
 outputs a range of polygons with holes that represent the complement of the
 polygon with holes $P$.
 
+% RWRW - Add the symm_diff figure here!
 In the following example we demonstrate how to compute the symmetric
 difference between two sets that contain holes. Each set is a rectangle that
 contains a rectangular hole in its interior, such that the symmetric
@@ -368,7 +414,7 @@ holes:
 
 % ------------------------------------
 \subsection{Operating on Polygon Sets}
-\label{bops_sec:main_component}
+\label{bops_ssec:main_component}
 % ------------------------------------
 
 We have argued that the result of a regularized operations on two polygons
@@ -377,14 +423,14 @@ disconnected polygons with holes. It is only natural to represent such a
 collection in terms of a class, making it possible to operate on the set
 resulting from computing, for example, $P \setminus Q$.
 
-The central component in the Boolean set-operations package is the
-\ccc{General_polygon_set_2} class-template. An instance of this class
-represents a point set formed by the collection of several disconnected
+A central component in the Boolean set-operations package is the
+\ccc{Polygon_set_2<Kernel, Container>} class-template. An instance of this
+class represents a point set formed by the collection of several disconnected
 polygons with holes. It employs the \ccc{Arrangement_2} class to represent
 this point set in the plane as a planar arrangement; see
 Chapter~\ref{chapterArrangement_2}. 
 
-An instance $S$ of a \ccc{General_polygon_set_2} class usually represents
+An instance $S$ of a \ccc{Polygon_set_2} class usually represents
 the result of a sequence of operations that were applied on some input
 polygons. The representation of $S$ is unique, regardless of the particular
 sequence of operations that were applied in order to arrive at it.
@@ -394,7 +440,7 @@ instance or from a polygon-with-holes instance. Once constructed, it is
 possible to add new polygons (or polygons with holes)
 into the set using the \ccc{insert()} method, as long as the inserted
 polygons are disjoint from the existing polygons in the set. 
-The \ccc{General_polygon_set_2} class also provide access functions for
+The \ccc{Polygon_set_2} class also provide access functions for
 the polygons with holes it contains, and a few queries. The most improtant
 query is $\ccc{S.oriented_side(q)}$ which determined whether the query point
 $q$ lies in the interior of the set $S$, on the boundary of the set, or
@@ -451,7 +497,9 @@ First, it computes the union of two simple polygons depicted in
 Figure~\ref{fig:simple}~(a). It then computes the complement of the result
 of the union operation. Finally, it computes the intersection of the result
 of the complement operation with a rectangle, confining the final result to 
-the area of the rectangle.
+the area of the rectangle. The resulting set $S$ is comprised of two
+components: a polygon with a hole, and a simple polygon contained in the
+interior of this hole.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
@@ -550,6 +598,7 @@ writing:
   S.join (begin, end);
 \end{alltt} 
 
+% RWRW : A separate section about Circular_polygon_2<Kernel> ?
 
 % ==================================================
 \section{Boolean Set-Operations on General Polygons}
@@ -574,7 +623,8 @@ a more general geometric mapping of the polygon edges. The operations provided
 by the package operate on point sets bounded by $x$-monotone segments of
 general curves (e.g., conic arcs and segments of polynomial functions).
 For example, the point set depicted on the right is general polygon bounded
-by two $x$-monotone circular arcs.
+by two $x$-monotone circular arcs that correspond to the lower half and the
+upper half of a circle.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
@@ -586,18 +636,77 @@ by two $x$-monotone circular arcs.
   \vspace{2pt}
 }\\
 
-The central class \ccc{General_polygon_set_2} that offers
-methods that implement these operations is parameterized by a {\em traits}
+Using the topological terminology, a general polygon can represent any
+simply-connected point set whose boundary is a strictly simple curve.
+Such a polygon is a model of the \ccc{GeneralPolygon_2} concept. A model
+of this concept must fulfill the following requirements:
+\begin{itemize}
+\item A general polygon is constructible from a range of pairwise interior
+disjoint $x$-monotone curves $c_1, \ldots, c_n$. The target point of the $k$th
+curve $c_k$ and the source point of the next curve in the range (in a cyclic
+order) must coincide, such that this point defines the $k$th polygon vertex.
+\item It is possible to traverse the $x$-monotone curves that form the edges
+of a general polygon.
+\end{itemize}
+
+\lcTex{%
+  \setlength{\widthRight}{1.4cm}
+  \setlength{\widthLeft}{\widthLineReal}
+  \addtolength{\widthLeft}{-\widthRight}
+  \begin{minipage}{\widthLeft}
+}
+\label{fig:general_polygon_with_holes}
+\begin{ccHtmlOnly}
+  <p><center>
+    <img src="./fig/general_polygon_with_holes.gif" border=0 alt="A general polygon with holes" align=right>
+  </center>
+\end{ccHtmlOnly}
+In an analogous way to the definition of linear polygons with holes, we can
+also define the \ccc{GeneralPolygonWithHoles_2} concept. A model of this
+concept represent a bounded or an unbounded set that may not be simply
+connected, and must provide the following operations:
+\lcTex{%
+  \end{minipage}\hspace{\minipageSpace}
+  \begin{minipage}{\widthRight}
+    \begin{center}
+    \includegraphics{Boolean_set_operations_2/fig/general_polygon_with_holes}
+    \end{center}
+%    A general polygon with holes.
+  \end{minipage}
+  \vspace{1pt}
+}\\
+\begin{itemize}
+\item Construction for a general polygon that represent the outer boundary
+and a range of general polygons that represent the holes.
+\item Accessing the general polygons that represents the outer boundary
+(in case of a bounded set).
+\item Traversing the holes.
+\end{itemize}
+In the Section~\ref{bops_sec:bops_lin} we used the classes \ccc{Polygon_2} and
+\ccc{Polygon_with_holes_2} that model the \ccc{GeneralPolygon_2} concept
+and \ccc{GeneralPolygonWithHoles_2} concept, respectively. In this section
+we introduce other models of these two concepts.
+
+The central class-template \ccc{General_polygon_set_2<Traits>} is used to
+represent point sets that are comprised of a finite number of general polygons
+with holes that are pairwise disjoint, and implements various Boolean
+set-operations on such sets. It is parameterized by a {\em traits}
 class that defines the type points used to represent polygon vertices and
 the of $x$-monotone curves that represent the polygon edges. The traits
 class also the primitive geometric operations on objects of these types.
+An instatiated \ccc{General_polygon_set_2} class defines the nested types
+\ccc{General_polygon_set_2<Traits>::Polygon_2} and
+\ccc{General_polygon_set_2<Traits>::Polygon_with_holes_2}, which are models
+of the \ccc{GeneralPolygon_2} concept and \ccc{GeneralPolygonWithHoles_2}
+concept, respectively.
 
 % ------------------------------------
 \subsection{The Traits-Class Concepts}
 \label{bops_ssec:traits_concepts}
 % ------------------------------------
 
-The traits class must be a model of the concept
+The traits class used to instantiate the \ccc{General_polygon_set_2}
+template must be a model of the concept
 \ccc{GeneralPolygonSetTraits_2}, and is tailored to handle a specific 
 family of curves. The concept \ccc{GeneralPolygonSetTraits_2} refines the 
 concept \ccc{ArrangementDirectionalXMonotoneTraits} specified next.
@@ -647,58 +756,28 @@ when exact arithmetic is used. When inexact arithmetic is used,
 (nearly) degenerate configurations may result in abnormal termination
 of the program or even incorrect results.
 
-% ---------------------------------------------------------------
-\subsection{The Traits Polygons}
-\label{bso_ssec:traits_polygons}
-% ---------------------------------------------------------------
-\lcTex{%
-  \setlength{\widthRight}{1.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
-}
-\label{fig:general_polygon_with_holes}
-\begin{ccHtmlOnly}
-  <p><center>
-    <img src="./fig/general_polygon_with_holes.gif" border=0 alt="A general polygon with holes" align=right>
-  </center>
-\end{ccHtmlOnly}
-Every model of the traits-class concept must also define the types
-\ccc{Polygon_2} and \ccc{Polygon_with_holes_2}, and it must provide
-sufficient operations on objects of these types to enable the Boolean 
-set-operations.  The type \ccc{Polygon_2} represents a simple point-set 
-in the plane, whose boundary curves are $x$-monotone. There are no 
-requirements on this type besides being default and copy constructible and
-assignable. In other words, the type \ccc{Polygon_2} does not necessari-
-\lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
-    \begin{center}
-    \includegraphics{Boolean_set_operations_2/fig/general_polygon_with_holes}
-    \end{center}
-%    A general polygon with holes.
-  \end{minipage}
-  \vspace{1pt}
-}\\
-ly provide methods to access the curves of the polygon boundary, nor 
-does it necessarily provide a constructor from a range of curves. Instead, 
-the traits concept requires these operations. The type 
-\ccc{Polygon_with_holes_2} corresponds to the concept 
-\ccc{GeneralPolygonWithHoles_2}. Recall, that this concept 
-requires access to the outer boundary, which is of type \ccc{Polygon_2}, 
-and to the holes, where each hole is also of type \ccc{Polygon_2}.
-% The \ccc{Triangle_2} and \ccc{Iso_rectangle_2} classes for example,
-% which represent a triangle and a parallel-axis rectangle in
-% $\mathrm{E}^2$ are special cases of convex general polygon. The a-priori
-% knowledge of whether the input polygons are convex may sometimes expedite
-% the operation or simplify the representation of the result. For example,
-% the intersection of two convex polygons is either an empty polygon or a
-% convex polygon.
+% ---------------------------------------------------
+\subsection{Operating on Polygons with Circular Arcs}
+\label{bso_ssec:circ_seg}
+% ---------------------------------------------------
 
-% ---------------------------------------------------------------
-\subsection{Types of Traits}
-\label{bso_ssec:traits_types}
-% ---------------------------------------------------------------
+Two traits classes are distributed with \cgal. The first one is named
+\ccc{Gps_segment_traits_2} and is used to perform Boolean set-operations
+on oridnary polygons and polygons with holes. In fact, the class
+\ccc{Polygon_set_2} introduced in Section~\ref{bops_ssec:main_component}
+is a specialization of \ccc{General_polygon_set_2<Gps_segment_traits_2>}.
+This class defined its polygon and polygon with holes types, such that
+the usage of this traits class is encapsulated in the polygon-set class.
+
+The other predefined traits class is named
+\ccc{Gps_circle_segment_traits_2<Kernel>} and is parameterized by a
+geometric \cgal\ kernel. By instantiating the \ccc{General_polygon_set_2}
+with this traits class, we obtain the representation of a polygon whose
+boundary may be comprised of line segments and circular arcs.
+The circle--segment traits class provides predicates and constructions on
+non-linear objects, yet it used only rational arithmetic and is thus
+very efficient.
+
 \lcTex{%
   \setlength{\widthRight}{2.4cm}
   \setlength{\widthLeft}{\widthLineReal}
@@ -712,17 +791,13 @@ and to the holes, where each hole is also of type \ccc{Polygon_2}.
     and rectangles" align=right>
   </center>
 \end{ccHtmlOnly}
-Two traits classes are distributed with \cgal, namely 
-\ccc{Gps_segment_traits_2} and \ccc{Gps_circle_segment_traits_2}. 
-The former handles linear segments, and uses the \ccc{Polygon_2} type,
-which is defined in the Polygons and Polygon Operations package of 
-\cgal; see Chapter~\ref{Polygon}. The latter handles circular arcs
-and linear segments concurrently. It is parameterized by a rational 
-kernel, which makes it extremely efficient. The details are provided in the 
-reference manual. The following example uses this traits class to compute
-the union of four rectangles and four circles incrementally resulting with 
-a single polygon with a single hole, as depicted on the right. Note that as
-the four circles
+The following example uses the \ccc{Gps_circle_segment_traits_2} class
+to compute the union of four rectangles and four circles. Each circle
+is represented as a general polygon having two $x$-monotone circular arcs.
+The union is computed incrementally, resulting with a single polygon with
+a single hole, as depicted on the right. Note that as the four circles are
+disjoint, their union is computed with the \ccc{insert} method, while the
+union with the rectangles is computed with the \ccc{join} operator.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
@@ -733,15 +808,14 @@ the four circles
   \end{minipage}
   \vspace{2pt}
 }\\
-are disjoint, their union is computed with the \ccc{insert} method, 
-while the union of the rectangles is computed with the \ccc{join} operator.
 
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_circle_segment.C}
 
-% ===============================================================
-\subsection{General Polygon Set Traits Adaptor}
+% ---------------------------------------------
+\subsection{General Polygon Set Traits Adapter}
 \label{bso_ssec:general_polygon_concept}
-% ===============================================================
+% ---------------------------------------------
+
 The concept \ccc{GeneralPolygon_2} and its generic model 
 \ccc{General_polygon_2<ArrDirectionalXMonotoneTraits>} facilitate the 
 production of general-polygon set traits classes. A model of the concept 
@@ -782,12 +856,13 @@ generated. The later is obtained from the instantiated parameter
 \ccc{Arr_segment_traits_2}, which defines \ccc{Arr_segment_2} to be
 its exposed type \ccc{X_monotone_curve_2}.
 \begin{alltt}
-typedef CGAL::Gmpq                                      Number_type;
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Arr_traits;
-typedef CGAL::General_polygon_2<Arr_traits>             General_polygon;
-typedef CGAL::Gps_traits_2<Arr_traits,General_polygon>  Traits;
-typedef CGAL::General_polygon_set_2<Traits>             General_polygon_set;
+typedef CGAL::Gmpq                              Number_type;
+typedef CGAL::Cartesian<Number_type>            Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>      Arr_traits_2;
+typedef CGAL::General_polygon_2<Arr_traits_2>   General_polygon_2;
+typedef CGAL::Gps_traits_2<Arr_traits_2,
+                           General_polygon_2>   Traits_2;
+typedef CGAL::General_polygon_set_2<Traits_2>   General_polygon_set_2;
 \end{alltt}
 
 \lcTex{%
@@ -824,13 +899,22 @@ package.
   \end{minipage}
 }
 
-\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_traits_adaptor.C}
+\ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_traits_adapter.C}
 
 
 % ------------------------------------------
 \subsection{Example - Aggregated Operations}
 \label{bops_ssec:aggregated_gen_ops}
 % ------------------------------------------
+
+In Section~\ref{bops_ssec:agg_ops} we described how aggragated union and
+intersection operations can be applied to a collection of ordinary polygons
+or polygons with holes. The aggregated operations can of couse be applied also
+on collections of general polygons. As was the case with ordinary polygons,
+using aggregated operations is recommended when the number of intersections
+among the input polygons is of the same order of magnitude as the complexity
+of the result. If this is not the case, computing the result incrementally
+may prove faster.
 
 \lcTex{%
   \setlength{\widthRight}{3.4cm}
@@ -844,7 +928,10 @@ package.
     <img src="./fig/disks.gif" border=0 alt="Union of disks" align=right>
   </center>
 \end{ccHtmlOnly}
-
+The next example computes the union of eight unit discs whose centers are
+placed a unit distance from the origin, as depicted to the right. The example
+also allows users to provide a different number of discs through the command
+line.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
