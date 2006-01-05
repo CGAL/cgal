@@ -4,18 +4,19 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Gps_segment_traits_2.h>
-#include <CGAL/General_polygon_set_2.h>
-#include <CGAL/General_polygon_with_holes_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Polygon_set_2.h>
 
 #include <list>
 
-typedef CGAL::Gmpq                                      Number_type;
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef Kernel::Point_2                                 Point_2;
-typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
-typedef CGAL::General_polygon_with_holes_2<Polygon_2>   Polygon_with_holes_2;
-typedef CGAL::Polygon_set_2<Kernel>                     Polygon_set_2;
+typedef CGAL::Gmpq                                 Number_type;
+typedef CGAL::Cartesian<Number_type>               Kernel;
+typedef Kernel::Point_2                            Point_2;
+typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
+typedef CGAL::Polygon_set_2<Kernel>                Polygon_set_2;
+
+#include "print_utils.h"
 
 int main ()
 {
@@ -54,7 +55,10 @@ int main ()
 
   S.polygons_with_holes (std::back_inserter (res));
   for (it = res.begin(); it != res.end(); ++it)
-    std::cout << "--> " << *it << std::endl;
+  {
+    std::cout << "--> ";
+    print_polygon_with_holes (*it);
+  }
   
   return (0);
 }

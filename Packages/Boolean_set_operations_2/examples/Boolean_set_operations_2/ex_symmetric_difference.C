@@ -5,16 +5,17 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/General_polygon_with_holes_2.h>
-
+#include <CGAL/Polygon_with_holes_2.h>
 #include <list>
 
-typedef CGAL::Gmpq                                      Number_type;
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef Kernel::Point_2                                 Point_2;
-typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
-typedef CGAL::General_polygon_with_holes_2<Polygon_2>   Polygon_with_holes_2;
-typedef std::list<Polygon_with_holes_2>                 Pwh_list_2;
+typedef CGAL::Gmpq                                 Number_type;
+typedef CGAL::Cartesian<Number_type>               Kernel;
+typedef Kernel::Point_2                            Point_2;
+typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
+typedef std::list<Polygon_with_holes_2>            Pwh_list_2;
+
+#include "print_utils.h"
 
 int main ()
 {
@@ -30,7 +31,7 @@ int main ()
   holesP[0].push_back (Point_2 (1, -3));
 
   Polygon_with_holes_2  P (outP, holesP, holesP + 1); 
-  std::cout << "P = " << P << std::endl;
+  std::cout << "P = "; print_polygon_with_holes (P);
 
   // Construct Q - a bounded rectangle that contains a rectangular hole.
   Polygon_2   outQ;
@@ -43,8 +44,8 @@ int main ()
   holesQ[0].push_back (Point_2 (3, 1));
   holesQ[0].push_back (Point_2 (3, -1));
 
-  Polygon_with_holes_2  Q (outQ, holesQ, holesQ + 1); 
-  std::cout << "Q = " << Q << std::endl;
+  Polygon_with_holes_2  Q (outQ, holesQ, holesQ + 1);
+  std::cout << "Q = "; print_polygon_with_holes (Q);
 
   // Compute the symmetric difference of P and Q.
   Pwh_list_2                  symmR;
@@ -54,7 +55,10 @@ int main ()
 
   std::cout << "The symmetric difference:" << std::endl;
   for (it = symmR.begin(); it != symmR.end(); ++it)
-    std::cout << "--> " << *it << std::endl;
-  
+  {
+    std::cout << "--> "; 
+    print_polygon_with_holes (*it);
+  }
+
   return (0);
 }
