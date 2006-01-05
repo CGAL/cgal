@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef POLYGON_WITH_HOLES_2_H
-#define POLYGON_WITH_HOLES_2_H
+#ifndef CGAL_POLYGON_WITH_HOLES_2_H
+#define CGAL_POLYGON_WITH_HOLES_2_H
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
@@ -31,24 +31,35 @@ template <class Kernel,
 class Polygon_with_holes_2 : 
   public General_polygon_with_holes_2<CGAL::Polygon_2<Kernel, Containter> >
 {
-  typedef General_polygon_with_holes_2<CGAL::Polygon_2<Kernel, Containter> >
-    Base;
 public:
-  typedef CGAL::Polygon_2<Kernel, Containter>   Polygon_2;
 
-  Polygon_with_holes_2() : Base()
+  typedef CGAL::Polygon_2<Kernel, Containter>        Polygon_2;
+  typedef General_polygon_with_holes_2<Polygon_2>    Base;
+  typedef typename Base::Holes_const_iterator        Holes_const_iterator;
+  typedef typename Base::Size                        Size;
+
+  /*! Default constructor. */
+  Polygon_with_holes_2 () : 
+    Base()
   {}
 
-  explicit Polygon_with_holes_2(const Polygon_2& pgn_boundary) : Base(pgn_boundary)
+  /*! Constructor from the base class. */
+  Polygon_with_holes_2 (const Base& base) : 
+    Base (base)
   {}
 
+  /*! Constructor from a polygon. */
+  explicit Polygon_with_holes_2 (const Polygon_2& pgn_boundary) : 
+    Base (pgn_boundary)
+  {}
+
+  /*! Constructor from a polygon (outer boundary) and hole polygons. */
   template <class HolesInputIterator>
-  Polygon_with_holes_2(const Polygon_2& pgn_boundary,
-                       HolesInputIterator h_begin,
-                       HolesInputIterator h_end) : 
-    Base(pgn_boundary, h_begin, h_end)
+  Polygon_with_holes_2 (const Polygon_2& pgn_boundary,
+                        HolesInputIterator h_begin,
+                        HolesInputIterator h_end) : 
+    Base (pgn_boundary, h_begin, h_end)
   {}
-
 
 };
 

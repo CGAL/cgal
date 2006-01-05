@@ -17,11 +17,13 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef POLYGON_SET_2_H
-#define POLYGON_SET_2_H
+#ifndef CGAL_POLYGON_SET_2_H
+#define CGAL_POLYGON_SET_2_H
 
 CGAL_BEGIN_NAMESPACE
 
+#include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <verctor>
@@ -30,41 +32,61 @@ template <class Kernel,
           class Containter = std:vector<typename Kernel::Point_2> >
 class Polygon_set_2 :
   public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> >
-{
-  typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> > Base;
-  typedef Bso_dcel<Traits_2>                                Bso_dcel;  
-  
+{  
 public:
 
-  typedef Arrangement_2<Traits_2, Bso_dcel>                     Arrangement_2;
-  typedef Gps_segment_traits_2<Kernel, Containter>::Traits_2    Traits_2;
-  typedef typename Traits_2::Polygon_2                          Polygon_2;
-  typedef typename Traits_2::Polygon_with_holes_2               Polygon_with_holes_2;
+  typedef Gps_segment_traits_2<Kernel, Containter>::Traits_2  Traits_2;
 
-  Polygon_set_2() : Base()
+private:
+
+  typedef Bso_dcel<Traits_2>                              Bso_dcel;  
+
+public:
+
+  typedef Arrangement_2<Traits_2, Bso_dcel>               Arrangement_2;
+  typedef General_polygon_set_2<Traits_2>                 Base;
+  typedef typename Traits_2::Polygon_2                    Polygon_2;
+  typedef typename Traits_2::Polygon_with_holes_2         Polygon_with_holes_2;
+
+  /*! Default consturctor. */
+  Polygon_set_2 () :
+    Base()
   {}
 
-  // constructor with traits object
-  Polygon_set_2(Traits_2& tr) : Base(tr)
+  /*! Consturctor from the base class. */
+  Polygon_set_2 (const Base& base) :
+    Base (base)
   {}
 
-  explicit Polygon_set_2(const Polygon_2& pgn) : Base(pgn)
+  /*! Constructor with traits object. */
+  Polygon_set_2 (Traits_2& tr) :
+    Base(tr)
   {}
 
-  explicit Polygon_set_2(const Polygon_with_holes_2& pgn): Base(pgn)
+  /*! Constructor from a polygon. */
+  explicit Polygon_set_2 (const Polygon_2& pgn) :
+    Base (pgn)
   {}
 
+  /*! Constructor from a polygon with holes. */
+  explicit Polygon_set_2 (const Polygon_with_holes_2& pwh):
+    Base (pwh)
+  {}
+
+  /*! Constructor from a range of polygons. */
   template <class PolygonIterator>
-  Polygon_set_2(PolygonIterator pgn_begin, PolygonIterator pgn_end):
+  Polygon_set_2 (PolygonIterator pgn_begin, PolygonIterator pgn_end) :
     Base(pgn_begin, pgn_end)
   {} 
 
+  /*! Constructor from ranges of polygons and polygons with holes. */
   template <class PolygonIterator, class PolygonWithHolesIterator>
-  Polygon_set_2(PolygonIterator pgn_begin,
-                PolygonIterator pgn_end,
-                PolygonWithHolesIterator  pgn_with_holes_begin,
-                PolygonWithHolesIterator  pgn_with_holes_end):
-    Base(pgn_begin, pgn_end, pgn_with_holes_begin, pgn_with_holes_end)
+  Polygon_set_2 (PolygonIterator pgn_begin,
+                 PolygonIterator pgn_end,
+                 PolygonWithHolesIterator pgn_with_holes_begin,
+                 PolygonWithHolesIterator pgn_with_holes_end):
+    Base (pgn_begin, pgn_end, 
+          pgn_with_holes_begin, pgn_with_holes_end)
   {}
 
 };

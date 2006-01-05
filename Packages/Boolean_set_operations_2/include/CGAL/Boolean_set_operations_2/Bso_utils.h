@@ -400,7 +400,7 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
   typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
   typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
   
-  typedef typename Polygon_with_holes_2::GP_Holes_const_iterator
+  typedef typename Polygon_with_holes_2::Holes_const_iterator
                                                        GP_Holes_const_iterator;
 
   typedef std::list<X_monotone_curve_2>                XCurveList;
