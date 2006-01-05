@@ -65,13 +65,13 @@ polygons; see Chapter~\ref{chap:nef_2}. In the rest of this chapter we
 use the traditional notation to designate regularized operations; e.g.,
 $P \cap Q$ means the regularized intersection of $P$ and $Q$.
 
-A polygon $P$ is said to be {\em simple} (or Jordan) if the
-only points of the plane belonging to two polygon edges of $P$ are the
-polygon vertices of $P$ --- namely, the polygon edges are pairwise disjoint
-in their interior. Such a polygon has a well-defined interior
+A polygon $P$ is said to be {\em simple} (or Jordan) if the only
+points of the plane belonging to two polygon edges of $P$ are the
+polygon vertices of $P$. Namely, the polygon edges are pairwise
+disjoint in their interior. Such a polygon has a well-defined interior
 and exterior and is topologically equivalent to a disk. A polygon in our
-context must be simple and its vertices must be ordered in a counterclockwise
-direction around the interior of the polygon.
+context must be simple and its vertices must be ordered in a
+counterclockwise direction around the interior of the polygon.
  
 \lcTex{%
   \setlength{\widthRight}{1.4cm}
@@ -220,29 +220,35 @@ simple polygon (lightly shaded).}
 \end{figure}
 
 In many cases a binary operation that operates on two strictly simple
-polygons that have may result in more complicated sets, such as a polygon
-that contains holes in its interior (see Figure~\ref{fig:simple}~(a)), 
+polygons that have no holes may result in a set of polygon that
+contains holes in their interior (see Figure~\ref{fig:simple}~(a)), 
 or a set of disjoint polygons (see Figure~\ref{fig:simple}~(b); a similar
 set may result from the union, or the symmetric difference, of two disjoint
 polygons). Moreover, the complement of a simple polygon is an unbounded set
-that contains a polygons hole; see Figure~\ref{fig:simple}~(c).
+that contains a hole; see Figure~\ref{fig:simple}~(c).
 
-It is therefore clear that the free functions cannot output simple polygons.
-We therefore introduce the concept \ccc{GeneralPolygonWithHoles_2}. A type
-that models this concept represents a set that may be bounded or unbounded.
-In case of a bounded set, its {\em outer boundary} is represented as a simple
-(but not necessarily strictly simple) polygon whose vertices are oriented in
-a counterclockwise order around the interior of the set. In addition, the
-set may contain {\em holes}, where each hole is represented as a strictly simple
-polygon whose vertices are oriented in a clockwise order around the interior
-of the hole. We note that an unbounded polygon having no holes spans the
-entire plane. 
+Regular sets are closed under regularized Boolean set-operations.
+These operations accept as input, and may result as output, general
+polygons with holes, which model the concept 
+\ccc{GeneralPolygonWithHoles_2}. A model of this concept represents a
+set that may be bounded or unbounded. In case of a bounded set, its
+{\em outer boundary} is represented as a simple (but not necessarily
+strictly simple) polygon, whose vertices are oriented in a
+counterclockwise order around the interior of the set. In addition,
+the set may contain {\em holes}, where each hole is represented as a
+strictly simple polygon, whose vertices are oriented in a clockwise
+order around the interior of the hole. Note that an unbounded polygon
+without holes spans the entire plane. Vertices of holes may coincide
+with vertices of the boundary.
 
-Note that vertices of holes may coincide with vertices of the boundary, or may
-lie on boundary edges. As the point set represented by a polygon with holes is
-considered to be closed, the boundaries of the holes are parts of the set
-and are not contained in the holes --- thus, such vertices are considered to
-be included in the point set.
+The point set represented by a polygons with holes is considered to be
+closed. Therefore, the boundaries of the holes are parts of the set
+(and not part of the holes).
+The exact definition of the obtained polygon with holes as a result of
+a Boolean set-operation or a sequence of such operations is closely
+related to the definition of regularized Boolean set-operations, being
+the closure of the interior of the corresponding ordinary operation as
+explained next.
 \lcTex{%
   \setlength{\widthRight}{1.4cm}
   \setlength{\widthLeft}{\widthLineReal}
@@ -253,17 +259,18 @@ be included in the point set.
 \begin{ccHtmlOnly}
   <img src="./fig/unique.gif" border=0 alt="Unique" align=right>
 \end{ccHtmlOnly}
-Consider, for example, the regular set depicted to the right, which is the
-result of the union of three small triangles translated appropriately.
-(Alternatively, we can reach the same set by taking the
+Consider, for example, the regular set depicted to the right, which is
+the result of the union of three small triangles translated
+appropriately. Alternatively, we can reach the same set by taking the 
 \ccHtmlNoLinksFrom{difference} between a large triangle and a small
-upside-down triangle. In general, there are infinitely many ways to arrive at
-a particular point set, but we guarantee that the represntation of the
-resulting set in unique.) The set is represented as a single polygon having a
-triangular outer boundary with a single triangluar hole in its interior ---
-and not as three triangles that have no holes at all. As a general rule,
-if two point sets areconnected, then they belong to the same polygon with
-holes.
+upside-down triangle. In general, there are many ways to arrive at 
+a particular point set. However, the set of polygons with holes
+obtained by the user through the application of any sequence of
+operations is unique. The set depicted to the right is represented as
+a single polygon having a triangular outer boundary with a single
+triangluar hole in its interior --- and not as three triangles that
+have no holes at all. As a general rule, if two point sets are
+connected, then they belong to the same polygon with holes.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}
