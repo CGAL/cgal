@@ -131,6 +131,9 @@ public:
 
   General_polygon_set_2& operator=(const General_polygon_set_2& ps)
   {
+    if(this == &ps)
+      return (*this);
+
     if(m_traits_owner)
       delete m_traits;
     delete m_arr;
@@ -186,7 +189,7 @@ public:
 
 
   //destructor
-  ~General_polygon_set_2()
+  virtual ~General_polygon_set_2()
   {
     delete m_arr;
 
@@ -575,7 +578,7 @@ public:
 
   bool is_valid() const
   {
-    if(! m_arr->is_valid())
+    if(! is_valid(m_arr))
       return false;
 
     for(Edge_const_iterator eci = m_arr->edges_begin();
