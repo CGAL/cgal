@@ -188,6 +188,15 @@ Feature Requests
 Projects
 ============================================================================
 
+-- HTML: cross-linking of local types: Class and concept reference pages 
+   can become quite long. It would be useful of types that are local to 
+   the class or concept are also cross linked, such that their names in 
+   member function parameter lists are linked to their (local) definition
+   on the same page (like the names of global types are linked to their
+   respective reference page). The difficulty is that their cross-linking
+   rule must be limited to be only applied to this one reference page and 
+   nowhere else.
+
 -- SRC: move cc_check and cc_extract from src directory to a separate 
    directory, which implies
     - moving them from the src directory
