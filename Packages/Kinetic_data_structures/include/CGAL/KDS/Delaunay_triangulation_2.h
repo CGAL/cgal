@@ -119,12 +119,12 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
 
         Delaunay_triangulation_2(Simulation_traits st,
             Visitor w= Visitor()): traits_(st),
-            siml_(st.simulator_pointer(), this),
-            motl_(st.active_objects_table_pointer(), this),
-            del_(traits_.instantaneous_kernel_object()),
-            soc_(traits_.kinetic_kernel_object().side_of_oriented_circle_2_object()),
-            o2_(traits_.kinetic_kernel_object().orientation_2_object()),
-        watcher_(w) {
+				   del_(traits_.instantaneous_kernel_object()),
+				   soc_(traits_.kinetic_kernel_object().side_of_oriented_circle_2_object()),
+				   o2_(traits_.kinetic_kernel_object().orientation_2_object()),
+				   watcher_(w) {
+	  siml_ = Simulator_listener(st.simulator_pointer(), this);
+	  motl_= Moving_point_table_listener(st.active_objects_table_pointer(), this);
         }
 
 //! Just write the objects in order;

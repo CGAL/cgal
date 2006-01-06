@@ -67,10 +67,11 @@ public Ref_counted<Sort< Traits> >
         This> MOT_listener;
     public:
 // Register this KDS with the MovingObjectTable and the Simulator
-        Sort(Traits tr): sim_listener_(tr.simulator_pointer(), this),
-            mot_listener_(tr.active_objects_table_pointer(), this),
-            kk_(tr.kinetic_kernel_object()),
-            ik_(tr.instantaneous_kernel_object()){}
+        Sort(Traits tr): kk_(tr.kinetic_kernel_object()),
+            ik_(tr.instantaneous_kernel_object()){
+	  sim_listener_= Sim_listener(tr.simulator_pointer(), this);
+	  mot_listener_=MOT_listener(tr.active_objects_table_pointer(), this);
+	}
 
 /* Insert k and update the affected certificates. std::upper_bound
    returns the first place where an item can be inserted in a sorted

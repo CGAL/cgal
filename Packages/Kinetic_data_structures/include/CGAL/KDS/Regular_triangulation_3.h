@@ -336,9 +336,9 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
         typedef VisitorT Visitor;
 
         Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
-            siml_(tr.simulator_pointer(), this),
-            motl_(tr.active_objects_table_pointer(), this),
         listener_(NULL) {
+	  siml_= Simulator_listener(tr.simulator_pointer(), this);
+	  motl_= Moving_point_table_listener(tr.active_objects_table_pointer(), this);
         }
 
         const Visitor &visitor() const
