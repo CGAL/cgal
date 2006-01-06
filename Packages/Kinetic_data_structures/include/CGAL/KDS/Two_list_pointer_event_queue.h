@@ -29,6 +29,7 @@
 #include <CGAL/KDS/internal/infinity_or_max.h>
 #include <algorithm>
 #include <boost/utility.hpp>
+#include <boost/type_traits/remove_const.hpp>
 
 //int two_list_remaining=0;
 
@@ -128,7 +129,7 @@ class Two_list_event_queue_item_rep: public internal::Two_list_event_queue_item<
     typedef  Two_list_event_queue_item<Priority> P;
     public:
         Two_list_event_queue_item_rep(): internal::Two_list_event_queue_item<Priority>(){}
-        Two_list_event_queue_item_rep(const Priority &t, Event &e): Two_list_event_queue_item<Priority>(t),
+        Two_list_event_queue_item_rep(const Priority &t, const Event &e): Two_list_event_queue_item<Priority>(t),
             event_(e){}
 
         virtual void write(std::ostream &out) const
@@ -150,7 +151,7 @@ class Two_list_event_queue_item_rep: public internal::Two_list_event_queue_item<
 
     protected:
 // what the fuck? Why do I need this (gcc 3.4.1)
-        mutable Event event_;
+  /*mutable*/ Event event_;
 };
 
 template <class T>
@@ -536,9 +537,11 @@ step_= ub_- to_interval(t).first;
 
         template <class E>
         Item *make_event(const Priority &t, E &e) {
-            Item *ni= new internal::Two_list_event_queue_item_rep<Priority, E>(t, e);
-            intrusive_ptr_add_ref(ni);
-            return ni;
+	  typedef typename boost::remove_const<E>::type NCE;
+	  Item *ni
+	    = new internal::Two_list_event_queue_item_rep<Priority, NCE>(t, e);
+	  intrusive_ptr_add_ref(ni);
+	  return ni;
         }
 
         void unmake_event(Item *i) {
