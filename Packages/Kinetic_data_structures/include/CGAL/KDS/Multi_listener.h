@@ -35,7 +35,6 @@ class Multi_listener: public Interface
     public:
         typedef typename Interface::Notifier_pointer::element_type Notifier;
 
-//typedef typename Notifier::Handle Notifier_handle;
         Multi_listener(typename Interface::Notifier_pointer &nh): h_(nh) {
             h_->new_listener(this);
         }
@@ -44,28 +43,30 @@ class Multi_listener: public Interface
             h_->new_listener(this);
         }
 
+        Multi_listener(){}
+
         virtual ~Multi_listener() {
             h_->delete_listener(this);
         }
-//! The object doing the notifying
+
         typename Interface::Notifier_pointer::element_type* notifier() {
             return h_.get();
         }
-//! Constant access to the object doing the notifying
+
         const typename Interface::Notifier_pointer::element_type* notifier() const
         {
-//const typename Interface::Notifier_pointer p= h_.pointer();
+
             return h_.get();
         }
-//! This is called when there is a notification.
+
         virtual void new_notification(typename Interface::Notification_type nt)=0;
 
-//! Copy and subscribe the new object.
+
         Multi_listener(const This &o) {
             h_= o.h_;
             h_->new_listener(this);
         }
-//! Copy and subscribe the new object
+
         const This& operator=(const This &o) {
             h_= o.h_;
             h_->new_listener(this);

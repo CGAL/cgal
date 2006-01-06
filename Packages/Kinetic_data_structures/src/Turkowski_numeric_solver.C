@@ -19,6 +19,7 @@
 
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
+//#include "numeric_solvers_support.C"
 
 // Taken from http://www.worldserver.com/turk/opensource/
 
@@ -62,33 +63,33 @@ static const unsigned int MAXN= 55;
 static long
 FindCubicRoots(const FLOAT coeff[4], FLOAT x[3])
 {
-    FLOAT a1 = coeff[2] / coeff[3];
-    FLOAT a2 = coeff[1] / coeff[3];
-    FLOAT a3 = coeff[0] / coeff[3];
+  FLOAT a1 = coeff[2] / coeff[3];
+  FLOAT a2 = coeff[1] / coeff[3];
+  FLOAT a3 = coeff[0] / coeff[3];
 
-    double Q = (a1 * a1 - 3 * a2) / 9;
-    double R = (2 * a1 * a1 * a1 - 9 * a1 * a2 + 27 * a3) / 54;
-    double Qcubed = Q * Q * Q;
-    double d = Qcubed - R * R;
+  double Q = (a1 * a1 - 3 * a2) / 9;
+  double R = (2 * a1 * a1 * a1 - 9 * a1 * a2 + 27 * a3) / 54;
+  double Qcubed = Q * Q * Q;
+  double d = Qcubed - R * R;
 
-/* Three real roots */
-    if (d >= 0) {
-        double theta = std::acos(R / std::sqrt(Qcubed));
-        double sqrtQ = std::sqrt(Q);
-        x[0] = -2 * sqrtQ * std::cos( theta           / 3) - a1 / 3;
-        x[1] = -2 * sqrtQ * std::cos((theta + 2 * CGAL_PI) / 3) - a1 / 3;
-        x[2] = -2 * sqrtQ * std::cos((theta + 4 * CGAL_PI) / 3) - a1 / 3;
-        return (3);
-    }
+  /* Three real roots */
+  if (d >= 0) {
+    double theta = std::acos(R / std::sqrt(Qcubed));
+    double sqrtQ = std::sqrt(Q);
+    x[0] = -2 * sqrtQ * std::cos( theta           / 3) - a1 / 3;
+    x[1] = -2 * sqrtQ * std::cos((theta + 2 * CGAL_PI) / 3) - a1 / 3;
+    x[2] = -2 * sqrtQ * std::cos((theta + 4 * CGAL_PI) / 3) - a1 / 3;
+    return (3);
+  }
 
-/* One real root */
-    else {
-        double e = std::pow(std::sqrt(-d) + std::fabs(R), 1. / 3.);
-        if (R > 0)
-            e = -e;
-        x[0] = (e + Q / e) - a1 / 3.;
-        return (1);
-    }
+  /* One real root */
+  else {
+    double e = std::pow(std::sqrt(-d) + std::fabs(R), 1. / 3.);
+    if (R > 0)
+      e = -e;
+    x[0] = (e + Q / e) - a1 / 3.;
+    return (1);
+  }
 }
 
 
@@ -124,197 +125,197 @@ FindCubicRoots(const FLOAT coeff[4], FLOAT x[3])
 
 static void
 FindPolynomialRoots(
-const FLOAT     *a,                               /* Coefficients */
-FLOAT           *u,                               /* Real component of each root */
-FLOAT           *v,                               /* Imaginary component of each root */
-FLOAT           *conv,                            /* Convergence constant associated with each root */
-register long   n,                                /* Degree of polynomial (order-1) */
-long            maxiter,                          /* Maximum number of iterations */
-long            fig                               /* The number of decimal figures to be computed */
-)
+		    const FLOAT     *a,                               /* Coefficients */
+		    FLOAT           *u,                               /* Real component of each root */
+		    FLOAT           *v,                               /* Imaginary component of each root */
+		    FLOAT           *conv,                            /* Convergence constant associated with each root */
+		    register long   n,                                /* Degree of polynomial (order-1) */
+		    long            maxiter,                          /* Maximum number of iterations */
+		    long            fig                               /* The number of decimal figures to be computed */
+		    )
 {
-    CGAL_precondition(static_cast<unsigned int>(fig) < MAXN);
-    int i;
-    register int j;
-    FLOAT h[MAXN + 3], b[MAXN + 3], c[MAXN + 3], d[MAXN + 3], e[MAXN + 3];
-/* [-2 : n] */
-    FLOAT K, ps, qs, pt, qt, s, rev, r= std::numeric_limits<double>::infinity();
-    int t;
-    FLOAT p=std::numeric_limits<double>::infinity(), q=std::numeric_limits<double>::infinity();
+  CGAL_precondition(static_cast<unsigned int>(fig) < MAXN);
+  int i;
+  register int j;
+  FLOAT h[MAXN + 3], b[MAXN + 3], c[MAXN + 3], d[MAXN + 3], e[MAXN + 3];
+  /* [-2 : n] */
+  FLOAT K, ps, qs, pt, qt, s, rev, r= std::numeric_limits<double>::infinity();
+  int t;
+  FLOAT p=std::numeric_limits<double>::infinity(), q=std::numeric_limits<double>::infinity();
 
-/* Zero elements with negative indices */
-    b[2 + -1] = b[2 + -2] =
-        c[2 + -1] = c[2 + -2] =
-        d[2 + -1] = d[2 + -2] =
-        e[2 + -1] = e[2 + -2] =
-        h[2 + -1] = h[2 + -2] = 0.0;
+  /* Zero elements with negative indices */
+  b[2 + -1] = b[2 + -2] =
+    c[2 + -1] = c[2 + -2] =
+    d[2 + -1] = d[2 + -2] =
+    e[2 + -1] = e[2 + -2] =
+    h[2 + -1] = h[2 + -2] = 0.0;
 
-/* Copy polynomial coefficients to working storage */
-    for (j = n; j >= 0; j--)
-        h[2 + j] = *a++;                          /* Note reversal of coefficients */
+  /* Copy polynomial coefficients to working storage */
+  for (j = n; j >= 0; j--)
+    h[2 + j] = *a++;                          /* Note reversal of coefficients */
 
-    t = 1;
-    K = std::pow(10.0, (double)(fig));            /* Relative accuracy */
+  t = 1;
+  K = std::pow(10.0, (double)(fig));            /* Relative accuracy */
 
-    for (; h[2 + n] == 0.0; n--) {                /* Look for zero high-order coeff. */
-        *u++ = 0.0;
-        *v++ = 0.0;
-        *conv++ = K;
-    }
-
-    INIT:
-    if (n == 0)
-        return;
-
-    ps = qs = pt = qt = s = 0.0;
-    rev = 1.0;
-    K = std::pow(10.0, (double)(fig));
-
-    if (n == 1) {
-        r = -h[2 + 1] / h[2 + 0];
-        goto LINEAR;
-    }
-
-    for (j = n; j >= 0; j--)                      /* Find geometric mean of coeff's */
-        if (h[2 + j] != 0.0)
-            s += std::log(std::fabs(h[2 + j]));
-    s = std::exp(s / (n + 1));
-
-    for (j = n; j >= 0; j--)                      /* Normalize coeff's by mean */
-        h[2 + j] /= s;
-
-    if (std::fabs(h[2 + 1] / h[2 + 0]) < std::fabs(h[2 + n - 1] / h[2 + n])) {
-        REVERSE:
-        t = -t;
-        for (j = (n - 1) / 2; j >= 0; j--) {
-            s = h[2 + j];
-            h[2 + j] = h[2 + n - j];
-            h[2 + n - j] = s;
-        }
-    }
-    if (qs != 0.0) {
-        p = ps;
-        q = qs;
-    }
-    else {
-        if (h[2 + n - 2] == 0.0) {
-            q = 1.0;
-            p = -2.0;
-        }
-        else {
-            q = h[2 + n] / h[2 + n - 2];
-            p = (h[2 + n - 1] - q * h[2 + n - 3]) / h[2 + n - 2];
-        }
-        if (n == 2)
-            goto QADRTIC;
-        r = 0.0;
-    }
-    ITERATE:
-    for (i = maxiter; i > 0; i--) {
-
-        for (j = 0; j <= n; j++) {                /* BAIRSTOW */
-            b[2 + j] = h[2 + j] - p * b[2 + j - 1] - q * b[2 + j - 2];
-            c[2 + j] = b[2 + j] - p * c[2 + j - 1] - q * c[2 + j - 2];
-        }
-        if ((h[2 + n - 1] != 0.0) && (b[2 + n - 1] != 0.0)) {
-            if (std::fabs(h[2 + n - 1] / b[2 + n - 1]) >= K) {
-                b[2 + n] = h[2 + n] - q * b[2 + n - 2];
-            }
-            if (b[2 + n] == 0.0)
-                goto QADRTIC;
-            if (K < std::fabs(h[2 + n] / b[2 + n]))
-                goto QADRTIC;
-        }
-
-        for (j = 0; j <= n; j++) {                /* NEWTON */
-                                                  /* Calculate polynomial at r */
-            d[2 + j] = h[2 + j] + r * d[2 + j - 1];
-                                                  /* Calculate derivative at r */
-            e[2 + j] = d[2 + j] + r * e[2 + j - 1];
-        }
-        if (d[2 + n] == 0.0)
-            goto LINEAR;
-        if (K < std::fabs(h[2 + n] / d[2 + n]))
-            goto LINEAR;
-
-        c[2 + n - 1] = -p * c[2 + n - 2] - q * c[2 + n - 3];
-        s = c[2 + n - 2] * c[2 + n - 2] - c[2 + n - 1] * c[2 + n - 3];
-        if (s == 0.0) {
-            p -= 2.0;
-            q *= (q + 1.0);
-        }
-        else {
-            p += (b[2 + n - 1] * c[2 + n - 2] - b[2 + n] * c[2 + n - 3]) / s;
-            q += (-b[2 + n - 1] * c[2 + n - 1] + b[2 + n] * c[2 + n - 2]) / s;
-        }
-        if (e[2 + n - 1] == 0.0)
-            r -= 1.0;                             /* Minimum step */
-        else
-            r -= d[2 + n] / e[2 + n - 1];         /* Newton's iteration */
-    }
-    ps = pt;
-    qs = qt;
-    pt = p;
-    qt = q;
-    if (rev < 0.0)
-        K /= 10.0;
-    rev = -rev;
-    goto REVERSE;
-
-    LINEAR:
-    if (t < 0)
-        r = 1.0 / r;
-    n--;
-    *u++ = r;
+  for (; h[2 + n] == 0.0; n--) {                /* Look for zero high-order coeff. */
+    *u++ = 0.0;
     *v++ = 0.0;
     *conv++ = K;
+  }
 
-    for (j = n; j >= 0; j--) {                    /* Polynomial deflation by lin-nomial */
-        if ((d[2 + j] != 0.0) && (std::fabs(h[2 + j] / d[2 + j]) < K))
-            h[2 + j] = d[2 + j];
-        else
-            h[2 + j] = 0.0;
+ INIT:
+  if (n == 0)
+    return;
+
+  ps = qs = pt = qt = s = 0.0;
+  rev = 1.0;
+  K = std::pow(10.0, (double)(fig));
+
+  if (n == 1) {
+    r = -h[2 + 1] / h[2 + 0];
+    goto LINEAR;
+  }
+
+  for (j = n; j >= 0; j--)                      /* Find geometric mean of coeff's */
+    if (h[2 + j] != 0.0)
+      s += std::log(std::fabs(h[2 + j]));
+  s = std::exp(s / (n + 1));
+
+  for (j = n; j >= 0; j--)                      /* Normalize coeff's by mean */
+    h[2 + j] /= s;
+
+  if (std::fabs(h[2 + 1] / h[2 + 0]) < std::fabs(h[2 + n - 1] / h[2 + n])) {
+  REVERSE:
+    t = -t;
+    for (j = (n - 1) / 2; j >= 0; j--) {
+      s = h[2 + j];
+      h[2 + j] = h[2 + n - j];
+      h[2 + n - j] = s;
     }
-
-    if (n == 0)
-        return;
-    goto ITERATE;
-
-    QADRTIC:
-    if (t < 0) {
-        p /= q;
-        q = 1.0 / q;
+  }
+  if (qs != 0.0) {
+    p = ps;
+    q = qs;
+  }
+  else {
+    if (h[2 + n - 2] == 0.0) {
+      q = 1.0;
+      p = -2.0;
     }
-    n -= 2;
-
-    if (0.0 < (q - (p * p / 4.0))) {              /* Two complex roots */
-        *(u + 1) = *u = -p / 2.0;
-        u += 2;
-        s = sqrt(q - (p * p / 4.0));
-        *v++ = s;
-        *v++ = -s;
-    }                                             /* Two real roots */
     else {
-        s = std::sqrt(((p * p / 4.0)) - q);
-        if (p < 0.0)
-            *u++ = -p / 2.0 + s;
-        else
-            *u++ = -p / 2.0 - s;
-        *u = q / u[-1];
-        ++u;                                      // moved from lhs of before
-        *v++ = 0.0;
-        *v++ = 0.0;
+      q = h[2 + n] / h[2 + n - 2];
+      p = (h[2 + n - 1] - q * h[2 + n - 3]) / h[2 + n - 2];
     }
-    *conv++ = K;
-    *conv++ = K;
+    if (n == 2)
+      goto QADRTIC;
+    r = 0.0;
+  }
+ ITERATE:
+  for (i = maxiter; i > 0; i--) {
 
-    for (j = n; j >= 0; j--) {                    /* Polynomial deflation by quadratic */
-        if ((b[2 + j] != 0.0) && (std::fabs(h[2 + j] / b[2 + j]) < K))
-            h[2 + j] = b[2 + j];
-        else
-            h[2 + j] = 0.0;
+    for (j = 0; j <= n; j++) {                /* BAIRSTOW */
+      b[2 + j] = h[2 + j] - p * b[2 + j - 1] - q * b[2 + j - 2];
+      c[2 + j] = b[2 + j] - p * c[2 + j - 1] - q * c[2 + j - 2];
     }
-    goto INIT;
+    if ((h[2 + n - 1] != 0.0) && (b[2 + n - 1] != 0.0)) {
+      if (std::fabs(h[2 + n - 1] / b[2 + n - 1]) >= K) {
+	b[2 + n] = h[2 + n] - q * b[2 + n - 2];
+      }
+      if (b[2 + n] == 0.0)
+	goto QADRTIC;
+      if (K < std::fabs(h[2 + n] / b[2 + n]))
+	goto QADRTIC;
+    }
+
+    for (j = 0; j <= n; j++) {                /* NEWTON */
+      /* Calculate polynomial at r */
+      d[2 + j] = h[2 + j] + r * d[2 + j - 1];
+      /* Calculate derivative at r */
+      e[2 + j] = d[2 + j] + r * e[2 + j - 1];
+    }
+    if (d[2 + n] == 0.0)
+      goto LINEAR;
+    if (K < std::fabs(h[2 + n] / d[2 + n]))
+      goto LINEAR;
+
+    c[2 + n - 1] = -p * c[2 + n - 2] - q * c[2 + n - 3];
+    s = c[2 + n - 2] * c[2 + n - 2] - c[2 + n - 1] * c[2 + n - 3];
+    if (s == 0.0) {
+      p -= 2.0;
+      q *= (q + 1.0);
+    }
+    else {
+      p += (b[2 + n - 1] * c[2 + n - 2] - b[2 + n] * c[2 + n - 3]) / s;
+      q += (-b[2 + n - 1] * c[2 + n - 1] + b[2 + n] * c[2 + n - 2]) / s;
+    }
+    if (e[2 + n - 1] == 0.0)
+      r -= 1.0;                             /* Minimum step */
+    else
+      r -= d[2 + n] / e[2 + n - 1];         /* Newton's iteration */
+  }
+  ps = pt;
+  qs = qt;
+  pt = p;
+  qt = q;
+  if (rev < 0.0)
+    K /= 10.0;
+  rev = -rev;
+  goto REVERSE;
+
+ LINEAR:
+  if (t < 0)
+    r = 1.0 / r;
+  n--;
+  *u++ = r;
+  *v++ = 0.0;
+  *conv++ = K;
+
+  for (j = n; j >= 0; j--) {                    /* Polynomial deflation by lin-nomial */
+    if ((d[2 + j] != 0.0) && (std::fabs(h[2 + j] / d[2 + j]) < K))
+      h[2 + j] = d[2 + j];
+    else
+      h[2 + j] = 0.0;
+  }
+
+  if (n == 0)
+    return;
+  goto ITERATE;
+
+ QADRTIC:
+  if (t < 0) {
+    p /= q;
+    q = 1.0 / q;
+  }
+  n -= 2;
+
+  if (0.0 < (q - (p * p / 4.0))) {              /* Two complex roots */
+    *(u + 1) = *u = -p / 2.0;
+    u += 2;
+    s = sqrt(q - (p * p / 4.0));
+    *v++ = s;
+    *v++ = -s;
+  }                                             /* Two real roots */
+  else {
+    s = std::sqrt(((p * p / 4.0)) - q);
+    if (p < 0.0)
+      *u++ = -p / 2.0 + s;
+    else
+      *u++ = -p / 2.0 - s;
+    *u = q / u[-1];
+    ++u;                                      // moved from lhs of before
+    *v++ = 0.0;
+    *v++ = 0.0;
+  }
+  *conv++ = K;
+  *conv++ = K;
+
+  for (j = n; j >= 0; j--) {                    /* Polynomial deflation by quadratic */
+    if ((b[2 + j] != 0.0) && (std::fabs(h[2 + j] / b[2 + j]) < K))
+      h[2 + j] = b[2 + j];
+    else
+      h[2 + j] = 0.0;
+  }
+  goto INIT;
 }
 
 
@@ -326,41 +327,44 @@ static void Turkowski_polynomial_compute_roots_t(const double *begin,
 						 double lb, double ub,
 						 std::vector<double> &roots)
 {
-    std::size_t numc= end-begin;
-    double rp[MAXN];
-    double cp[MAXN];
-    double cc[MAXN];
+  std::size_t numc= end-begin;
+  double rp[MAXN];
+  double cp[MAXN];
+  double cc[MAXN];
 
-/*for (unsigned int i=0; i< numc; ++i){
-  rp[i]= std::numeric_limits<double>::infinity();
-  }*/
-
-    for (unsigned int i=0; i< MAXN; ++i){
-      cc[i]=std::numeric_limits<double>::infinity();
-      rp[i]=std::numeric_limits<double>::infinity();
-      cc[i]=std::numeric_limits<double>::infinity();
-    }
-
-    FindPolynomialRoots(begin, rp, cp, cc, numc-1, 10*numc, 40);
-
-    if (CLEAN) {
-        lb-= .000005;
-    }
-
-    for (std::size_t i=0; i< numc-1; ++i) {
-/* std::cout << "Trying " <<  rp[i] << "+" << std::setprecision(10) <<  cp[i] << "i "
-   << cc[i] << "\n";*/
-        if (cc[i] > 10000 && root_is_good(rp[i], cp[i], lb, ub)) {
-            roots.push_back(rp[i]);
-/*std::cout << "Good was " <<  rp[i] << "+" <<std::setprecision(10) <<  cp[i] << "i "
-<< cc[i] << "\n";*/
-        }
-/*else {
-    std::cout << "Rejected " << rp[i] << "+" << cp[i] << "i\n";
+  /*for (unsigned int i=0; i< numc; ++i){
+    rp[i]= std::numeric_limits<double>::infinity();
     }*/
+
+  for (unsigned int i=0; i< MAXN; ++i){
+    cc[i]=std::numeric_limits<double>::infinity();
+    rp[i]=std::numeric_limits<double>::infinity();
+    cc[i]=std::numeric_limits<double>::infinity();
+  }
+
+  FindPolynomialRoots(begin, rp, cp, cc, numc-1, 10*numc, 40);
+
+  /*if (CLEAN) {
+    lb-= .000005;
+    }*/
+  double last= -std::numeric_limits<double>::infinity();
+  for (std::size_t i=0; i< numc-1; ++i) {
+    /* std::cout << "Trying " <<  rp[i] << "+" << std::setprecision(10) <<  cp[i] << "i "
+       << cc[i] << "\n";*/
+    if (cc[i] > 10000 && root_is_good(rp[i], cp[i], lb, ub)) {
+      roots.push_back(rp[i]);
+      /*std::cout << "Good was " <<  rp[i] << "+" <<std::setprecision(10) <<  cp[i] << "i "
+	<< cc[i] << "\n";*/
+    } else if (CLEAN && root_is_good(rp[i], cp[i], last, ub)) {
+      last= rp[i];
     }
-    std::sort(roots.begin(), roots.end(), std::greater<double>());
-    if (CLEAN) check_first_root(begin, end, lb, roots);
+    /*else {
+      std::cout << "Rejected " << rp[i] << "+" << cp[i] << "i\n";
+      }*/
+  }
+  std::sort(roots.begin(), roots.end(), std::greater<double>());
+  
+  if (CLEAN) filter_solver_roots(begin, end, lb, ub, last, roots);
 }
 
 
@@ -369,63 +373,67 @@ void Turkowski_polynomial_compute_roots(const double *begin, const double *end,
 					std::vector<double> &roots)
 {
 
-    int degree= end-begin-1;
-    switch( degree) {
-        case -1:
-        case 0:
-            break;
-        case 1:
-            compute_linear_roots(begin,end, lb, ub, roots);
-            break;
-        case 2:
-            compute_quadratic_roots(begin, end, lb, ub, roots);
-            break;
-        case 3:
-        {
-            double rd[3];
-            int numr= FindCubicRoots(begin, rd);
-            for (int i=numr-1; i>=0; --i) {
-                if (root_is_good(rd[i], 0.0, lb, ub)) roots.push_back(rd[i]);
-            }
-            std::sort(roots.begin(), roots.end(), std::greater<double>());
-            break;
-        }
-        default:
-            Turkowski_polynomial_compute_roots_t<false>(begin, end, lb, ub, roots);
-
+  int degree= end-begin-1;
+  switch( degree) {
+  case -1:
+  case 0:
+    break;
+  case 1:
+    compute_linear_roots(begin,end, lb, ub, roots);
+    break;
+  case 2:
+    compute_quadratic_roots(begin, end, lb, ub, roots);
+    break;
+  case 3:
+    {
+      double rd[3];
+      int numr= FindCubicRoots(begin, rd);
+      for (int i=numr-1; i>=0; --i) {
+	if (rd[i] > lb && rd[i] < ub) roots.push_back(rd[i]);
+      }
+      std::sort(roots.begin(), roots.end(), std::greater<double>());
+      break;
     }
+  default:
+    Turkowski_polynomial_compute_roots_t<false>(begin, end, lb, ub, roots);
+
+  }
 
 }
 
 
 void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const double *end,  double lb,
-double ub, std::vector<double> &roots)
+						double ub, std::vector<double> &roots)
 {
-    int degree= end-begin-1;
-    switch( degree) {
-        case -1:
-        case 0:
-            break;
-        case 1:
-            compute_linear_cleaned_roots(begin,end, lb, ub, roots);
-            break;
-        case 2:
-            compute_quadratic_cleaned_roots(begin, end, lb, ub, roots);
-            break;
-        case 3:
-        {
-            double rd[3];
-            int numr= FindCubicRoots(begin, rd);
-            for (int i=numr-1; i>=0; --i) {
-                if (root_is_good(rd[i], 0.0, lb-.000005, ub)) roots.push_back(rd[i]);
-            }
-            std::sort(roots.begin(), roots.end(), std::greater<double>());
-            check_first_root(begin, end, lb, roots);
-            break;
-        }
-        default:
-            Turkowski_polynomial_compute_roots_t<true>(begin, end, lb, ub, roots);
+  int degree= end-begin-1;
+  switch( degree) {
+  case -1:
+  case 0:
+    break;
+  case 1:
+    compute_linear_cleaned_roots(begin,end, lb, ub, roots);
+    break;
+  case 2:
+    compute_quadratic_cleaned_roots(begin, end, lb, ub, roots);
+    break;
+  case 3:
+    {
+      double rd[3];
+      int numr= FindCubicRoots(begin, rd);
+      double last=-std::numeric_limits<double>::infinity();
+      for (int i=numr-1; i>=0; --i) {
+	if (rd[i]< ub && rd[i] > lb) roots.push_back(rd[i]);
+	if (rd[i] < lb && rd[i] > last){
+	  last=rd[i];
+	}
+      }
+      std::sort(roots.begin(), roots.end(), std::greater<double>());
+      filter_solver_roots(begin, end, lb, ub, last, roots);
+      break;
     }
+  default:
+    Turkowski_polynomial_compute_roots_t<true>(begin, end, lb, ub, roots);
+  }
 }
 
 

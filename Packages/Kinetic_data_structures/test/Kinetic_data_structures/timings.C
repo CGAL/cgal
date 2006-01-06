@@ -121,9 +121,10 @@ template < class Traits > double test_sort(unsigned int degree, unsigned int n)
 
 template < class Traits > void test_sort(const char *nm)
 {
+  unsigned int beg= 4, end=5;
     std::cout << "Solver: " << nm << std::endl;
-    for (unsigned int i = 1; i < 9; ++i) {
-      printf("%6f\t", test_sort < Traits > (i, static_cast<int>(std::ceil(50/std::sqrt(i)))));
+    for (unsigned int i = beg; i < end; ++i) {
+      printf("%6f\t", test_sort < Traits > (i, static_cast<int>(std::ceil(500/i))));
         std::cout << std::flush;
         if (i > 4)
             ++i;
@@ -176,7 +177,7 @@ template < class Traits > void test_del(const char *nm)
 {
     std::cout << "Solver: " << nm << std::endl;
     for (unsigned int i = 1; i < 9; ++i) {
-      printf("%6f\t", test_del < Traits > (i,static_cast<int>( std::ceil(20/std::sqrt(i)))));
+      printf("%6f\t", test_del < Traits > (i,static_cast<int>( std::ceil(20/std::sqrt(static_cast<double>(i))))));
         std::cout << std::flush;
         if (i > 4)
             ++i;
@@ -187,13 +188,14 @@ template < class Traits > void test_del(const char *nm)
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Delaunay\n";
-    test_del < CGAL::KDS::Inexact_simulation_traits_3 > ("Numeric");
-    test_del < CGAL::KDS::Exact_simulation_traits_3 > ("Upper bound");
+  //std::cout << "Delaunay\n";
+    //test_del < CGAL::KDS::Inexact_simulation_traits_3 > ("Numeric");
     std::cout << "Sort\n";
     test_sort < CGAL::KDS::Exact_simulation_traits_1 > ("Upper bound");
-    test_sort < CGAL::KDS::Inexact_simulation_traits_1 > ("Numeric");
-//test_sort<Lazy_exact_traits_1>("Lazy upper bound");
+   
+    //test_sort < CGAL::KDS::Exact_simulation_traits_1 > ("Upper bound");
+    //test_sort < CGAL::KDS::Inexact_simulation_traits_1 > ("Numeric");
+    //test_sort<Lazy_exact_traits_1>("Lazy upper bound");
     std::cout << CGAL::POLYNOMIAL::internal::lazy_stats.created_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.isolated_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.refine_attempted_ << " "

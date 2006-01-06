@@ -28,12 +28,12 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-template <bool CLEAN>
+/*template <bool CLEAN>
 inline double gsl_max_error()
 {
     if (CLEAN) return .0000005;
     else return 0;
-}
+    }*/
 
 
 template <bool CLEAN>
@@ -42,7 +42,7 @@ double lb, double ub,
 std::vector<double> &roots_)
 {
 
-    double max_error=gsl_max_error<CLEAN>();
+  //double max_error=gsl_max_error<CLEAN>();
 
     gsl_poly_complex_workspace *workspace;
     int degree= end-begin-1;
@@ -65,12 +65,15 @@ std::vector<double> &roots_)
         std::cerr << std::endl;
     }
 
+    double last= -std::numeric_limits<double>::infinity();
     for ( int i=degree-1; i>=0; --i) {
         double r= roots[2*i];
         double c= roots[2*i+1];
-        if (root_is_good(r, c, lb-max_error, ub)) {
+        if (root_is_good(r, c, lb, ub)) {
             roots_.push_back(r);
-        }
+        } else if (CLEAN && root_is_good(r,c, last, ub)) {
+	  last= r;
+	}
     }
 
     std::sort(roots_.begin(), roots_.end(), std::greater<double>() );
@@ -78,7 +81,7 @@ std::vector<double> &roots_)
 
     gsl_poly_complex_workspace_free(workspace);
 
-    if (CLEAN) check_first_root(begin,end, lb, roots_);
+    if (CLEAN) filter_solver_roots(begin,end, lb, ub, last, roots_);
     return;
 }
 
@@ -89,18 +92,22 @@ double lb, double ub,
 std::vector<double> &roots_)
 {
     CGAL_Polynomial_precondition(begin[3] != 0);
-    double max_error=gsl_max_error<CLEAN>();
+    //double max_error=gsl_max_error<CLEAN>();
 
     double r[3];
     int num_roots= gsl_poly_solve_cubic(begin[2]/begin[3],
         begin[1]/begin[3],
         begin[0]/begin[3], &r[0],&r[1],&r[2]);
     roots_.reserve(num_roots);
+    double last= -std::numeric_limits<double>::infinity();
 // I want reverse sorted roots
     for (int i=num_roots-1; i>=0; --i) {
-        if (r[i]>  lb- max_error && r[i] < ub) roots_.push_back(r[i]);
+        if (r[i]>  lb && r[i] < ub) roots_.push_back(r[i]);
+	else if (CLEAN && r[i] <lb && r[i] > last){
+	  last= r[i];
+	}
     }
-    if (CLEAN) check_first_root(begin, end, lb, roots_);
+    if (CLEAN) filter_solver_roots(begin, end, lb, ub, last, roots_);
 }
 
 

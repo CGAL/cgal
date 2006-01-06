@@ -55,9 +55,9 @@ NT ub, std::vector<NT> &roots)
     ev.getRealEigenvalues(real);
     CGAL_Polynomial_assertion(imag.dim1()== real.dim1());
 
-    NT tol;
+    /*NT tol;
     if (CLEAN) tol=.00005;
-    else tol=0;
+    else tol=0;*/
 
     for (int i=0; i< real.dim1(); ++i) {
         if (root_is_good(real[i], imag[i], lb-tol, ub)) {
@@ -66,7 +66,7 @@ NT ub, std::vector<NT> &roots)
         }
     }
     std::sort(roots.begin(), roots.end(), std::greater<NT>());
-    if (CLEAN) check_first_root(begin, end, lb, roots);
+    if (CLEAN) filter_roots(begin, end, lb, roots);
 }
 
 #endif

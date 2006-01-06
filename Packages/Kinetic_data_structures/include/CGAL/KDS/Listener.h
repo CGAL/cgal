@@ -78,6 +78,8 @@ class Listener: public Interface
             h_->set_listener(this);
         }
 
+        Listener(){}
+
         virtual ~Listener() {
             CGAL_precondition(h_->listener()==this);
             h_->set_listener(NULL);

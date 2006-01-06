@@ -53,6 +53,7 @@ class Active_objects_listener_helper: public Moving_object_table_listener
                 t_->insert(*it);
             }
         }
+        Active_objects_listener_helper(){}
 //! Pass EDITING notifications
 /*!  When editing changes to false, call new_object, changed_object,
   deleted_object for each new, changed or deleted object in the

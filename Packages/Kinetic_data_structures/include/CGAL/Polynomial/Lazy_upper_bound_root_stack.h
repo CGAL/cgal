@@ -274,7 +274,54 @@ class Lazy_upper_bound_root_stack
     protected:
         typedef Upper_bound_root_stack<Traits_t> Solver;
         struct Solver_rep;
-        struct Root_rep;
+        struct Root_rep: public CGAL::KDS::Ref_counted<Root_rep>
+	{
+	  typedef TRoot Root;
+	  typedef CGAL::KDS::Ref_counted<Root_rep> RC;
+	  Root_rep(): has_root_(false) {
+	    CGAL_Polynomial_postcondition(!has_root());
+	  }
+	  template <class NT>
+	  Root_rep(const NT &nt): root_(nt), has_root_(true){}
+	  
+	  Root_rep(double d): root_(d), has_root_(true){ /*CGAL_Polynomial_precondition(d != -std::numeric_limits<double>::infinity());*/}
+	  
+	  Root_rep(const Root_rep &o): RC(), root_(o.root_), has_root_(o.has_root_){}
+	  Root_rep(const TRoot &tr): root_(tr), has_root_(true) {
+	    //CGAL_Polynomial_precondition(tr != -std::numeric_limits<TRoot>::infinity());
+	  }
+	  
+	  void set_root(const TRoot &tr) {
+	    CGAL_Polynomial_precondition(tr != -std::numeric_limits<TRoot>::infinity());
+	    CGAL_Polynomial_precondition(!has_root());
+	    root_=tr;
+	    has_root_=true;
+	  }
+	  
+	  const TRoot& root() const
+	  {
+	    CGAL_Polynomial_precondition(has_root());
+	    return root_;
+	  }
+	  
+	  bool has_root() const
+	  {
+	    CGAL_precondition(std::numeric_limits<Root>::has_quiet_NaN);
+	    return has_root_;
+	  }
+	  
+	  /*std::pair<double,double> current_interval(typename Solver_rep::Pointer srep) const {
+	    if (is_isolated()){
+	    return root_.double_interval();
+	    } else {
+	    srep->check_current(this);
+	    return srep->double_interval();
+	    }
+	    }*/
+	  
+	  mutable TRoot root_;
+	  bool has_root_;
+	};
         typedef Lazy_upper_bound_root_stack<Traits_t> This;
     public:
         typedef Traits_t Traits;
@@ -462,8 +509,7 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Solver_rep: public CGAL::KDS::Ref_
         Solver solver_;
         typename Root_rep::Pointer cur_;
 };
-
-template <class Traits_t>
+/*template <class Traits_t>
 struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::KDS::Ref_counted<Root_rep>
 {
     typedef TRoot Root;
@@ -474,7 +520,7 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::KDS::Ref_co
     template <class NT>
         Root_rep(const NT &nt): root_(nt), has_root_(true){}
 
-    Root_rep(double d): root_(d), has_root_(true){ /*CGAL_Polynomial_precondition(d != -std::numeric_limits<double>::infinity());*/}
+	Root_rep(double d): root_(d), has_root_(true){}
 
     Root_rep(const Root_rep &o): RC(), root_(o.root_), has_root_(o.has_root_){}
     Root_rep(const TRoot &tr): root_(tr), has_root_(true) {
@@ -500,18 +546,11 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::KDS::Ref_co
         return has_root_;
     }
 
-/*std::pair<double,double> current_interval(typename Solver_rep::Pointer srep) const {
-  if (is_isolated()){
-  return root_.double_interval();
-  } else {
-  srep->check_current(this);
-  return srep->double_interval();
-  }
-  }*/
 
     mutable TRoot root_;
     bool has_root_;
-};
+};*/
+
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 

@@ -23,6 +23,7 @@
 
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Derivative.h>
+#include <CGAL/Polynomial/Interval_polynomial.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -32,48 +33,45 @@ template <bool CLEAN, class NT>
 static inline void compute_quadratic_roots_t(const NT *begin, const NT *end,  NT lb, NT ub,
 std::vector<NT> &roots)
 {
-    NT max_error=0;
-    if (CLEAN) max_error=max_error_value;
-    CGAL_Polynomial_assertion(begin[2] != 0);
-
-    NT desc= begin[1]*begin[1]-4*begin[0]*begin[2];
-    if (desc <= 0) return;
-
-    NT ur= (-begin[1]+sqrt(desc))/(2*begin[2]);
-    NT lr= (-begin[1]-sqrt(desc))/(2*begin[2]);
-    if (begin[2]< 0) std::swap(lr, ur);
-    if (lr > lb-max_error && lr < ub) {
-        roots.push_back(ur);
-        if (lr > lb-max_error && lr < ub && (!CLEAN || /*lr > lb+max_error ||*/ begin[2] >0)){
-        roots.push_back(lr);
-    }
-}
-
-
-else {
-// only upper
-    if (ur > lb-max_error && ur < ub && (!CLEAN || /*ur > lb+max_error ||*/ begin[2] <0)){
+  NT max_error=0;
+  if (CLEAN) max_error=max_error_value;
+  CGAL_Polynomial_assertion(begin[2] != 0);
+  
+  NT desc= begin[1]*begin[1]-4*begin[0]*begin[2];
+  if (desc <= 0) return;
+  
+  NT ur= (-begin[1]+sqrt(desc))/(2*begin[2]);
+  NT lr= (-begin[1]-sqrt(desc))/(2*begin[2]);
+  if (begin[2]< 0) std::swap(lr, ur);
+  if (lr > lb-max_error && lr < ub) {
     roots.push_back(ur);
-}
+    if (lr > lb-max_error && lr < ub && (!CLEAN || /*lr > lb+max_error ||*/ begin[2] >0)){
+      roots.push_back(lr);
+    }
+  } else {
+    // only upper
+    if (ur > lb-max_error && ur < ub && (!CLEAN || /*ur > lb+max_error ||*/ begin[2] <0)){
+      roots.push_back(ur);
+    }
 
 
-}
+  }
 
-// drop even roots
-/*if (ur >lb-max_error && ur < ub){
-  if (!CLEAN || sign(begin[2]) != POSITIVE){
+  // drop even roots
+  /*if (ur >lb-max_error && ur < ub){
+    if (!CLEAN || sign(begin[2]) != POSITIVE){
     roots.push_back(ur);
     if (lr >lb-max_error && lr < ub){
-  roots.push_back(lr);
+    roots.push_back(lr);
     }
-  }
-} else {
-  if (lr > lb-max_error && lr <ub){
+    }
+    } else {
+    if (lr > lb-max_error && lr <ub){
     if (!CLEAN || sign(begin[2]) != NEGATIVE){
-  roots.push_back(lr);
-}
-}
-}*/
+    roots.push_back(lr);
+    }
+    }
+    }*/
 }
 
 
@@ -93,14 +91,14 @@ double lb, double ub, std::vector<double> &roots)
 
 template <bool CLEAN, class NT>
 static inline void compute_linear_roots_t(const NT *begin, const NT *,
-NT lb, NT ub,
-std::vector<NT> &roots)
+					  NT lb, NT ub,
+					  std::vector<NT> &roots)
 {
     if (CLEAN &&  begin[1]>0 ) return;
-    NT max_error=0;
-    if (CLEAN) max_error=max_error_value;
+    //NT max_error=0;
+    //if (CLEAN) max_error=max_error_value;
     NT r= -to_double(begin[0]/begin[1]);
-    if (r > lb-max_error && r < ub) {
+    if ((CLEAN || r > lb) && r < ub) {
         roots.push_back(r);
     }
 }
@@ -114,42 +112,88 @@ double lb, double ub, std::vector<double> &roots)
 
 
 void compute_linear_cleaned_roots(const double *begin, const double *end,
-double lb, double ub, std::vector<double> &roots)
+				  double lb, double ub, std::vector<double> &roots)
 {
     return compute_linear_roots_t<true>(begin, end, lb, ub, roots);
 }
 
 
 template <class NT>
-static inline void check_first_root_t(const NT *begin, const NT *end,
-NT lb, std::vector<NT> &roots)
+static inline void filter_roots_t(const NT *begin, const NT *end,
+				  NT lb, NT ub, NT last_root, std::vector<NT> &roots)
 {
 // if we are not close to the current time, then we are fine
     if (roots.empty()) return;
-    if (roots.back() > lb+ .0005) return;
+    //if (roots.back() > lb+ .0005) return;
 
-    typedef CGAL_POLYNOMIAL_NS::Polynomial<NT> Fn;
-    typedef CGAL_POLYNOMIAL_NS::internal::Derivative<Fn> Diff;
+    //double eps= .0005;
+    /*double last_root=-std::numeric_limits<double>::infinity();
+
+    while (roots.back() < lb) {
+      last_root= roots.back();
+      roots.pop_back();
+      }*/
+    //if (roots.back() > lb+eps) return;
+
+    //typedef CGAL_POLYNOMIAL_NS::Polynomial<NT> Fn;
+
+    typedef CGAL_POLYNOMIAL_NS::Interval_polynomial IFn;
+    typedef CGAL_POLYNOMIAL_NS::internal::Derivative<IFn> Diff;
+    typedef typename IFn::NT INT;
+
+    // if the last valid root is closer than last, consider it as doubtful instead
+    if (lb-last_root > roots.back()-lb) {
+      last_root= roots.back();
+      roots.pop_back();
+    }
+
+    INT vi;
+    if (last_root== -std::numeric_limits<double>::infinity()){
+      if ((end-begin)%2==1) {
+	vi= std::numeric_limits<double>::infinity();
+      } else {
+	vi = -*(end-1);
+      }
+    } else {
+      IFn fi(begin, end);
+      if (roots.empty()) {
+	vi = fi((INT(lb)+INT(ub))/2.0);
+      } else {
+	vi = fi((INT(last_root)+INT(roots.back()))/2.0);
+      }
+    }
+    
+    if (vi.inf() > 0) {
+      return;
+    } else if (vi.sup() < 0){
+      roots.push_back(last_root);
+      return;
+    }
+
     Diff dx;
-    Fn f(begin, end);
-    Fn d= dx(f);
+    IFn f(begin, end);
+    IFn d= dx(f);
 
-// switch
-//while (sign(d(roots.back().representation()))== ZERO) d= dx_(d);
-    while (d(roots.back())==0) d= dx(d);
-
-// switch
-//if (sign(d(roots.back().representation()))==POSITIVE){
-    if (d(roots.back()) > 0) {
-        roots.pop_back();
+    INT dv= d(roots.back());
+    // switch
+    //while (sign(d(roots.back().representation()))== ZERO) d= dx_(d);
+    while (dv.inf() <= 0 && dv.sup() >= 0) {
+      d= dx(d);
+      dv= d(roots.back());
+    }
+    // switch
+    //if (sign(d(roots.back().representation()))==POSITIVE){
+    if (dv.sup() < 0) {
+        roots.push_back(last_root);
     }
 }
 
 
-void check_first_root(const double *begin, const double *end,
-double lb, std::vector<double> &roots)
+void filter_solver_roots(const double *begin, const double *end,
+			 double lb, double ub, double last,
+			 std::vector<double> &roots)
 {
-    check_first_root_t(begin, end, lb, roots);
+  filter_roots_t(begin, end, lb, ub, last, roots);
 }
 
 

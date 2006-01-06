@@ -590,8 +590,9 @@ This may do extra work, so check if the remaining facet is in the interior.
                                         Edge e2= triangulation_.edge(*fc, k);
 // have to make sure that the other edge has not gone away with this
                                         if (triangulation_.equal(e, e2)) continue;
+					// !! is because vc complains about ambiguity otherwise
                                         else if ( triangulation_.has_degree_3(e2)
-                                        && triangulation_.label(e2) ) {
+                                        && !!triangulation_.label(e2) ) {
                                             d3= true;
                                             break;
                                         }

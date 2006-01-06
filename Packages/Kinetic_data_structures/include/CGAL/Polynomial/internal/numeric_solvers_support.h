@@ -24,29 +24,36 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-void compute_quadratic_roots(const double *begin, const double *end,
-double lb, double ub, std::vector<double> &roots);
-
-void compute_quadratic_cleaned_roots(const double *begin, const double *end,
-double lb, double ub, std::vector<double> &roots);
-
-void compute_linear_roots(const double *begin, const double *end,
-double lb, double ub, std::vector<double> &roots);
-
-void compute_linear_cleaned_roots(const double *begin, const double *end,
-double lb, double ub, std::vector<double> &roots);
-
-void check_first_root(const double *begin, const double *end,
-double lb, std::vector<double> &roots);
-
 template <class NT>
 inline bool root_is_good(NT r, NT c, NT lb, NT ub, NT tol=.0000005)
 {
-    if (std::abs(c) < tol && r > lb && r < ub) {
+  if (std::abs(c) < tol && r > lb && r < ub) {
         return true;
     } else return false;
 }
 
+
+void compute_quadratic_roots(const double *begin, const double *end,
+			     double lb, double ub,
+			     std::vector<double> &roots);
+
+void compute_quadratic_cleaned_roots(const double *begin, const double *end,
+				     double lb, double ub, 
+				     std::vector<double> &roots);
+
+void compute_linear_roots(const double *begin, const double *end,
+			  double lb, double ub,
+			  std::vector<double> &roots);
+
+void compute_linear_cleaned_roots(const double *begin, const double *end,
+				  double lb, double ub, 
+				  std::vector<double> &roots);
+
+
+
+void filter_solver_roots(const double *begin, const double *end,
+			 double lb, double ub, double last,
+			 std::vector<double> &roots);
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 #endif

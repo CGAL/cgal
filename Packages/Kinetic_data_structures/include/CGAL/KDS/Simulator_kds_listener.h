@@ -43,6 +43,7 @@ class Simulator_kds_listener: public Simulator_listener
         KDS *kds): P(sim), t_(kds) {
             CGAL_precondition(kds != NULL);
         }
+        Simulator_kds_listener(){}
 //! Pass HAS_AUDIT_TIME notifications via a call to the audit() function
         void new_notification(typename P::Notification_type t) {
             if (t== P::HAS_AUDIT_TIME) {
