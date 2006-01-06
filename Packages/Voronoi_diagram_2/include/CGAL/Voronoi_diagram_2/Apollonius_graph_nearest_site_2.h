@@ -133,6 +133,10 @@ public:
 	++ec;
 	continue;
       }
+
+      // now find the correct part of the bisector on which the query
+      // point lies; this part is essential when the two sites have
+      // more than one Voronoi edge between them
       Vertex_handle v2 = f->vertex(idx);
       Vertex_handle v3 = dg.tds().mirror_vertex(f, idx);
 
@@ -213,6 +217,7 @@ public:
       ++ec;
     } while ( ec != ec_start );
 
+    // the point lies in a Voronoi face
     return v;
   }
 };
