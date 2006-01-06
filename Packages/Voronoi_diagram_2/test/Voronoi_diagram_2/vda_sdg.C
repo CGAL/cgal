@@ -75,7 +75,7 @@ void run_tests()
   Tester test(project_site, project_primal);
 
   test.reset_timers();
-#if 0
+
   test("data/empty.cin");
   test("data/singleton.sdg.cin");
   test("data/1D.sdg.cin");
@@ -97,7 +97,7 @@ void run_tests()
   test("data/degenerate2.sdg.cin");
 
   test.print_times();
-#endif
+
   test.print_separators();
   test.print_separators();
 
@@ -108,6 +108,7 @@ void run_tests()
   test("data/data10.sdg.cin", "data/queries2.cin");
   test("data/data11.sdg.cin", "data/queries3.cin");
   test("data/multiple-edges.sdg.cin", "data/queries9.cin", true);
+  test("data/multiple-edges2.sdg.cin", "data/queries10.cin", true);
 
   test.print_loc_times();
 }
