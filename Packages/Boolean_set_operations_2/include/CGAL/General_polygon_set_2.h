@@ -918,7 +918,7 @@ void remove_redundant_edges()
       itr != m_arr->edges_end(); )
   {
     Halfedge_handle he = itr;
-    if(he->face()->contained() && he->twin()->face()->contained())
+    if(he->face()->contained() == he->twin()->face()->contained())
     {
       Edge_iterator next = itr;
       ++next;
