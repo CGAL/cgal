@@ -1279,6 +1279,33 @@ public:
     return (opp_cv);
   }
 
+  Bbox_2 bbox() const
+  {
+    double x_min = to_double(left().x());
+    double x_max = to_double(right().x());   
+    double y_min = to_double(left().y()); 
+    double y_max = to_double(right().y());
+    if(y_min > y_max)
+      std::swap(y_min, y_max);
+    if(is_circular())
+    {
+      const Circle_2& circ = this->supporting_circle();
+      if(_is_upper())
+      {
+        y_max = to_double(circ.center().y())+ 
+                CGAL::sqrt(to_double(circ.squared_radius()));
+      }
+      else
+      {
+        y_min = to_double(circ.center().y()) - 
+                CGAL::sqrt(to_double(circ.squared_radius()));
+      }
+    }
+
+    
+    return Bbox_2(x_min, y_min, x_max, y_max);
+  }
+
 protected:
 
   /// \name Accessors for circular arcs.
