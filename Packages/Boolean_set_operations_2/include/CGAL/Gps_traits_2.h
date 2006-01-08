@@ -54,7 +54,7 @@ class Gps_traits_2 : public Arr_traits
                     XCurveIterator end,
                     Polygon_2& pgn)
     {
-      pgn.insert(begin, end);
+      pgn.init(begin, end);
     }
   };
 

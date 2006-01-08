@@ -50,6 +50,13 @@ public:
   {}
 
   template <class CurveIterator>
+  void init(CurveIterator begin, CurveIterator end)
+  {
+    m_xcurves.clear();
+    m_xcurves.insert(m_xcurves.end(), begin, end);
+  }
+
+  template <class CurveIterator>
   void insert(CurveIterator begin, CurveIterator end)
   {
     m_xcurves.insert(m_xcurves.end(), begin, end);
