@@ -555,15 +555,20 @@ public:
   }
 
   
-  bool is_inside(const Point_2& q)
+  Oriented_side oriented_side(const Point_2& q) const
   {
     Walk_pl pl(*m_arr);
 
     Object obj = pl.locate(q);
     Face_const_iterator f;
     if(CGAL::assign(f, obj))
-      return (f->contained());
-    return true;
+    {
+      if(f->contained())
+        return ON_POSITIVE_SIDE;
+
+      return ON_NEGATIVE_SIDE ;
+    }  
+    return ON_ORIENTED_BOUNDARY ;
   }
 
 
