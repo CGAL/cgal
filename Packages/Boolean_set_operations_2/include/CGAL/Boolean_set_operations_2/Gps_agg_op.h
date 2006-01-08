@@ -9,7 +9,7 @@
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_visitor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
-#include <CGAL/Boolean_set_operations_2/Gps_insertion_meta_traits.h>
+//#include <CGAL/Boolean_set_operations_2/Gps_insertion_meta_traits.h>
 #include <CGAL/Unique_hash_map.h> 
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/iterator.h> 
@@ -115,51 +115,52 @@ public:
 
     m_faces_hash[m_arr->unbounded_face()] = n_inf_pgn; 
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
+    visitor.visit_ubf(m_arr->unbounded_face(), n_inf_pgn);
     Bfs_scanner scanner(visitor);
     scanner.scan(*m_arr);
   }
 
-  Arrangement_2* create_clean_arr()
-  {
-    typedef Gps_insertion_meta_traits<Arrangement_2>  Insert_meta_traits;
-    typedef typename Insert_meta_traits::Curve_data            Curve_data;
-    typedef Arr_construction_curve<Insert_meta_traits>         Subcurve; 
-    typedef Arr_construction_event<Insert_meta_traits,
-                                   Subcurve,
-                                   Halfedge_handle>            Event;
-    typedef typename Insert_meta_traits::X_monotone_curve_2    Ex_X_monotone_curve_2;
-    typedef Arr_construction_visitor<Insert_meta_traits,
-                                     Arrangement_2,
-                                     Event,
-                                     Subcurve>                 Insertion_visitor;
-    typedef Basic_sweep_line_2<Insert_meta_traits,
-		                           Insertion_visitor,
-                               Subcurve,
-                               Event>                          Basic_sweep_line_2;
+  //Arrangement_2* create_clean_arr()
+  //{
+  //  typedef Gps_insertion_meta_traits<Arrangement_2>  Insert_meta_traits;
+  //  typedef typename Insert_meta_traits::Curve_data            Curve_data;
+  //  typedef Arr_construction_curve<Insert_meta_traits>         Subcurve; 
+  //  typedef Arr_construction_event<Insert_meta_traits,
+  //                                 Subcurve,
+  //                                 Halfedge_handle>            Event;
+  //  typedef typename Insert_meta_traits::X_monotone_curve_2    Ex_X_monotone_curve_2;
+  //  typedef Arr_construction_visitor<Insert_meta_traits,
+  //                                   Arrangement_2,
+  //                                   Event,
+  //                                   Subcurve>                 Insertion_visitor;
+  //  typedef Basic_sweep_line_2<Insert_meta_traits,
+		//                           Insertion_visitor,
+  //                             Subcurve,
+  //                             Event>                          Basic_sweep_line_2;
 
-   
-                                     
-    Arrangement_2* new_arr = new Arrangement_2();
-    std::vector<Ex_X_monotone_curve_2> xcurves_vec;
-    for(Edge_iterator itr = m_arr->edges_begin();
-        itr != m_arr->edges_end();
-        ++itr)
-    {
-      Halfedge_handle he = itr;
-      if(he->face()->contained() == he->twin()->face()->contained())
-        continue;  //redundent edge, continue.
+  // 
+  //                                   
+  //  Arrangement_2* new_arr = new Arrangement_2();
+  //  std::vector<Ex_X_monotone_curve_2> xcurves_vec;
+  //  for(Edge_iterator itr = m_arr->edges_begin();
+  //      itr != m_arr->edges_end();
+  //      ++itr)
+  //  {
+  //    Halfedge_handle he = itr;
+  //    if(he->face()->contained() == he->twin()->face()->contained())
+  //      continue;  //redundent edge, continue.
 
-      if(he->direction() == LARGER)
-        he = he->twin();
+  //    if(he->direction() == LARGER)
+  //      he = he->twin();
 
-      xcurves_vec.push_back(Ex_X_monotone_curve_2(he->curve(), Curve_data(he)));
-    }
+  //    xcurves_vec.push_back(Ex_X_monotone_curve_2(he->curve(), Curve_data(he)));
+  //  }
 
-    std::cout<<"number of edges in clear arr: " << xcurves_vec.size()<<"\n";
-    Insertion_visitor visitor(new_arr);
-    Basic_sweep_line_2  sl (&visitor);
-    sl.sweep(xcurves_vec.begin(), xcurves_vec.end());
-  }
+  //  std::cout<<"number of edges in clear arr: " << xcurves_vec.size()<<"\n";
+  //  Insertion_visitor visitor(new_arr);
+  //  Basic_sweep_line_2  sl (&visitor);
+  //  sl.sweep(xcurves_vec.begin(), xcurves_vec.end());
+  //}
        
   ~Gps_agg_op()
   {

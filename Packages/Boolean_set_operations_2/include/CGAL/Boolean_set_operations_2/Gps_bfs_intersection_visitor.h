@@ -16,24 +16,21 @@ class Gps_bfs_intersection_visitor : public Gps_bfs_base_visitor<Arrangement_>
   typedef typename Base::Edges_hash                      Edges_hash;
   typedef typename Base::Faces_hash                      Faces_hash;
  
-protected:
 
-  unsigned int m_num_of_polygons;
 public:
 
   Gps_bfs_intersection_visitor(Edges_hash* edges_hash,
                                Faces_hash* faces_hash,
                                unsigned int n_polygons): 
-    Base(edges_hash, faces_hash),
-    m_num_of_polygons(n_polygons)
+    Base(edges_hash, faces_hash, n_polygons)
   {}
 
 
   void flip_face(Face_iterator f1, Face_iterator f2, Halfedge_iterator he)
   {
     unsigned int ic_f2;
-    ic_f2 = compute_ic(f1, f2, he);
-    (*m_faces_hash)[f2] = ic_f2;
+    ic_f2 = this->compute_ic(f1, f2, he);
+    (*(this->m_faces_hash))[f2] = ic_f2;
       
     CGAL_assertion(ic_f2 <= m_num_of_polygons);
 
@@ -41,6 +38,14 @@ public:
     // which are intersectd, will be marked true (containted)
     if(ic_f2 == m_num_of_polygons)
       f2->set_contained(true);
+  }
+
+  // mark the unbounded_face (true iff contained)
+  void visit_ubf(Face_iterator ubf, unsigned int ubf_ic)
+  {
+    CGAL_assertion(ubf->is_unbounded());
+    if(ubf_ic == this->m_num_of_polygons)
+      ubf->set_contained(true);
   }
 
 

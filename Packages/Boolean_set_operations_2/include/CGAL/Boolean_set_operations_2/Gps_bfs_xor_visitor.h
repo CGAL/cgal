@@ -19,18 +19,26 @@ class Gps_bfs_xor_visitor : public Gps_bfs_base_visitor<Arrangement_>
 public:
 
   Gps_bfs_xor_visitor(Edges_hash* edges_hash, Faces_hash* faces_hash, unsigned int n_pgn): 
-    Base(edges_hash, faces_hash)
+    Base(edges_hash, faces_hash, n_pgn)
   {}
 
 
   void flip_face(Face_iterator f1, Face_iterator f2, Halfedge_iterator he)
   {
     unsigned int ic_f2;
-    ic_f2 = compute_ic(f1, f2, he);
-    (*m_faces_hash)[f2] = ic_f2;
+    ic_f2 = this->compute_ic(f1, f2, he);
+    (*(this->m_faces_hash))[f2] = ic_f2;
       
     if(ic_f2%2)
       f2->set_contained(true);
+  }
+
+   // mark the unbounded_face (true iff contained)
+  void visit_ubf(Face_iterator ubf, unsigned int ubf_ic)
+  {
+    CGAL_assertion(ubf->is_unbounded());
+    if(ubf_ic%2)
+      ubf->set_contained(true);
   }
 
 };

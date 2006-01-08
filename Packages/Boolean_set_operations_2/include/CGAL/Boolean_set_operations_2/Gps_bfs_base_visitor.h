@@ -19,12 +19,16 @@ public:
 protected:
   Edges_hash*    m_edges_hash;
   Faces_hash*    m_faces_hash;
+  unsigned int   m_num_of_polygons; // number of polygons
 
 public:
 
-  Gps_bfs_base_visitor(Edges_hash* edges_hash, Faces_hash* faces_hash): 
+  Gps_bfs_base_visitor(Edges_hash* edges_hash,
+                       Faces_hash* faces_hash,
+                       unsigned int n_pgn): 
     m_edges_hash(edges_hash),
-    m_faces_hash(faces_hash)
+    m_faces_hash(faces_hash),
+    m_num_of_polygons(n_pgn)
   {}
 
 
