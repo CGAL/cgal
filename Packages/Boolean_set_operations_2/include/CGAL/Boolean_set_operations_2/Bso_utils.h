@@ -31,31 +31,15 @@
 template <class Arrangement>
 class Curve_creator : 
   public CGAL::Creator_1<typename Arrangement::Halfedge,
-                   typename Arrangement::X_monotone_curve_2>
+                         typename Arrangement::X_monotone_curve_2>
 {
 public:
 
   typedef typename Arrangement::Halfedge              Halfedge;
   typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Arrangement::Traits_2              Traits_2;   
-  typedef CGAL::Creator_1<Halfedge, X_monotone_curve_2>     Base;
 
-protected:
-  Traits_2*    m_traits;
-
-
-
-public:
-  Curve_creator(Traits_2* tr): Base(),
-                               m_traits(tr)
-  {}
-
-
-  X_monotone_curve_2 operator()(Halfedge he) const
+  const X_monotone_curve_2& operator()(Halfedge he) const
   {
-    if(he.direction() != 
-       m_traits->compare_endpoints_xy_2_object()(he.curve()))
-       return (m_traits->construct_opposite_2_object()(he.curve()));
     return (he.curve());
   }
 };
@@ -71,7 +55,7 @@ template <class Traits_>
   Ccb_container container(ccb);
 
   typedef CGAL::Join_input_iterator_1<Ccb_iterator, Curve_creator<Arrangement_2> > Curve_iterator;
-  Curve_creator<Arrangement_2> cv_creator(tr);
+  Curve_creator<Arrangement_2> cv_creator;
 
   Curve_iterator  begin(container.begin(), cv_creator);
   Curve_iterator  end  (container.end()  , cv_creator);
