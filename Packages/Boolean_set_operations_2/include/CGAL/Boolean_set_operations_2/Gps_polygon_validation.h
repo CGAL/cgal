@@ -1,3 +1,21 @@
+// Copyright (c) 2005  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef GPS_POLYGON_VALIDATION_VISITOR
 #define GPS_POLYGON_VALIDATION_VISITOR
@@ -6,6 +24,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2_empty_visitor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -92,6 +111,8 @@ public:
       return false;
     if(!is_strictly_simple(pgn))
       return false;
+    if(!had_valid_orientation(pgn))
+      return false;
     return true;
   }
 
@@ -101,54 +122,42 @@ public:
       return false;
     if(!is_simple(pgn))
       return false;
+    if(!had_valid_orientation(pgn))
+      return false;
     return true;
   }
 
 protected:
 
-  Point_2 source(const X_monotone_curve_2& cv)
-  {
-    Traits tr;
-    if(tr.compare_endpoints_xy_2_object()(cv) == SMALLER)
-      return (tr.construct_min_vertex_2_object()(cv));
-    return (tr.construct_max_vertex_2_object()(cv));
-  }
-
-  Point_2 target(const X_monotone_curve_2& cv)
-  {
-    Traits tr;
-    if(tr.compare_endpoints_xy_2_object()(cv) == SMALLER)
-      return (tr.construct_max_vertex_2_object()(cv));
-    return (tr.construct_min_vertex_2_object()(cv));
-  }
-
   bool is_closed(const Polygon_2& pgn)
   {
-    Traits tr;
+    Gps_traits_adaptor<Traits>  tr;
+    typename Gps_traits_adaptor<Traits>::Construct_vertex_2 ctr_v = 
+      tr.construct_vertex_2_object();
     std::pair<Curve_const_iterator,
-            Curve_const_iterator> itr_pair =
-            tr.construct_curves_2_object()(pgn);
+              Curve_const_iterator> itr_pair =
+              tr.construct_curves_2_object()(pgn);
     Curve_const_iterator begin = itr_pair.first;
     Curve_const_iterator last = itr_pair.second;
     --last;
     
     for(Curve_const_iterator itr = begin; itr != last; )
     {
-      if(tr.equal_2_object()(source(*itr), target(*itr)))
+      if(tr.equal_2_object()(ctr_v(*itr, 0), ctr_v(*itr ,1)))
       {
         return false;
       }
       Curve_const_iterator next = itr;
       ++next;
-      if(!tr.equal_2_object()(target(*itr), source(*next)))
+      if(!tr.equal_2_object()(ctr_v(*itr ,1), ctr_v(*next, 0)))
         return false;
       itr = next;
     }
-    if(tr.equal_2_object()(source(*last), target(*last)))
+    if(tr.equal_2_object()(ctr_v(*last, 0), ctr_v(*last, 1)))
     {
       return false;
     }
-    if(!tr.equal_2_object()(target(*last), source(*begin)))
+    if(!tr.equal_2_object()(ctr_v(*last, 1), ctr_v(*begin, 0)))
       return false;
     return true;
   }
@@ -194,6 +203,29 @@ protected:
     Sweep_line  sweep_line (&tr, &visitor);
     visitor.sweep(itr_pair.first, itr_pair.second);
     return visitor.is_valid();
+  }
+
+  bool had_valid_orientation(const Polygon_2& pgn)
+  {
+    Gps_traits_adaptor<Traits>  tr;
+    return (tr.orientation_2_object()(pgn) == COUNTERCLOCKWISE);
+  }
+
+  bool had_valid_orientation(const Polygon_with_holes_2& pgn)
+  {
+    Gps_traits_adaptor<Traits>  tr;
+
+    if(tr.orientation_2_object()(pgn.outer_boundary()) != COUNTERCLOCKWISE)
+      return false;
+
+    typedef typename Polygon_with_holes_2::Holes_const_iterator    HCI;
+    for(HCI hit = pgn.holes_begin(); hit != pgn.holes_end(); ++hit)
+    {
+      if(tr.orientation_2_object()(*hit) != CLOCKWISE)
+        return false;
+    }
+
+    return true;
   }
 };
 
