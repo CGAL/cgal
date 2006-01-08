@@ -212,7 +212,9 @@ protected:
     Construct_curves_2 ctr_curves = tr.construct_curves_2_object();
     std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair = 
       ctr_curves(pgn);
-
+    
+    if(itr_pair.first == itr_pair.second)
+      return true; // empty polygon
 
     return (tr.orientation_2_object()(itr_pair.first,
                                       itr_pair.second) == COUNTERCLOCKWISE);
@@ -225,7 +227,8 @@ protected:
     Construct_curves_2 ctr_curves = tr.construct_curves_2_object();
     std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair = 
       ctr_curves(pgn.outer_boundary());
-    if(tr.orientation_2_object()(itr_pair.first,  
+    if((itr_pair.first != itr_pair.second) && 
+       tr.orientation_2_object()(itr_pair.first,  
                                  itr_pair.second) != COUNTERCLOCKWISE)
       return false;
 
@@ -233,7 +236,8 @@ protected:
     for(HCI hit = pgn.holes_begin(); hit != pgn.holes_end(); ++hit)
     {
       itr_pair = ctr_curves(*hit);
-      if(tr.orientation_2_object()(itr_pair.first,  
+      if((itr_pair.first !=itr_pair.second) &&
+         tr.orientation_2_object()(itr_pair.first,  
                                    itr_pair.second) != CLOCKWISE)
         return false;
     }
