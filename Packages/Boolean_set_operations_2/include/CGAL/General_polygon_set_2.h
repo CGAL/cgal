@@ -415,7 +415,10 @@ public:
       return;
     }
 
-    Bso_difference_functor<Traits_2>  func(m_traits);
+    // complement second_arr
+    _complement(second_arr);
+
+    Bso_intersection_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
     delete m_arr; // delete the previous arrangement
     
@@ -438,7 +441,9 @@ public:
       return;
     }
 
-    Bso_difference_functor<Traits_2>  func(m_traits);
+     // complement second_arr
+    _complement(second_arr);
+    Bso_intersection_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
     delete m_arr; // delete the previous arrangement
     
@@ -448,13 +453,14 @@ public:
   //difference with another General_polygon_set_2 object
   void difference (const General_polygon_set_2& bops)
   {
-   Arrangement_2 res_arr;
-
+    Arrangement_2 res_arr;
     Bso_difference_functor<Traits_2>  func(m_traits);
+
     overlay(*m_arr,  *(bops.m_arr), res_arr, func);
     delete m_arr; // delete the previous arrangement
     
     m_arr = func.result_arr();
+    _fix_curves_direction();
   }
 
 
@@ -471,9 +477,10 @@ public:
     {
       res_arr->remove_edge(he_vec[i]);
     }
-
+    
     delete m_arr; // delete the previous arrangement
     m_arr = res_arr;
+    _fix_curves_direction();
   }
 
   // symmetric_difference with a polygon with holes
@@ -491,9 +498,10 @@ public:
     {
       res_arr->remove_edge(he_vec[i]);
     }
-    
+   
     delete m_arr; // delete the previous arrangement
     m_arr = res_arr;
+    _fix_curves_direction();
   }
 
   //symmetric_difference with another General_polygon_set_2 object
@@ -507,31 +515,62 @@ public:
     {
       res_arr->remove_edge(he_vec[i]);
     }
+    
 
     delete m_arr; // delete the previous arrangement
     m_arr = res_arr;
+    _fix_curves_direction();
   }
+
 
   void complement()
   {
-    for(Face_iterator fit = m_arr->faces_begin();
-        fit != m_arr->faces_end();
+    this->_complement(m_arr);
+  }
+
+  // TODO: move to private (or prot. area)
+  void _complement(Arrangement_2* arr)
+  {
+    for(Face_iterator fit = arr->faces_begin();
+        fit != arr->faces_end();
         ++fit)
     {
       fit->set_contained(!fit->contained());
     }
 
     Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
+    for(Edge_iterator eit = arr->edges_begin();
+        eit != arr->edges_end();
+        ++eit)
+    {
+      Halfedge_handle he = eit;
+      const X_monotone_curve_2& cv = he->curve();
+      arr->modify_edge(he, ctr_opp(cv));
+    }
+  }
+
+  //fix the directions of the curves (given correct marked face)
+  // it should be called mostly after  symmetric_difference.
+  void _fix_curves_direction()
+  {
+    Compare_endpoints_xy_2 cmp_endpoints =
+      m_traits->compare_endpoints_xy_2_object();
+    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
+
     for(Edge_iterator eit = m_arr->edges_begin();
         eit != m_arr->edges_end();
         ++eit)
     {
       Halfedge_handle he = eit;
-      const X_monotone_curve_2& cv = he->curve();
-      m_arr->modify_edge(he, ctr_opp(cv));
+      X_monotone_curve_2&  cv = he->curve();
+      bool is_cont = he->face()->contained();
+      bool has_same_dir = (cmp_endpoints(cv) == he->direction());
+      if((is_cont && !has_same_dir) ||
+         (!is_cont && has_same_dir))
+        m_arr->modify_edge(he, ctr_opp(cv));
     }
   }
-
+         
   Size number_of_polygons_with_holes() const;
 
   Traits_2& traits()

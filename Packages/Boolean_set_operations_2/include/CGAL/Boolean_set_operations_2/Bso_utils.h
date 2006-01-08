@@ -28,39 +28,39 @@
 #include <queue>
 
 
-template <class Arrangement>
-class Curve_creator : 
-  public CGAL::Creator_1<typename Arrangement::Halfedge,
-                         typename Arrangement::X_monotone_curve_2>
-{
-public:
-
-  typedef typename Arrangement::Halfedge              Halfedge;
-  typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
-
-  const X_monotone_curve_2& operator()(Halfedge he) const
-  {
-    return (he.curve());
-  }
-};
-
 template <class Traits_>
  void General_polygon_set_2<Traits_>::
   construct_polygon(Ccb_halfedge_const_circulator ccb,
                     Polygon_2&              pgn,
                     Traits_*                tr)
 {
-  typedef CGAL::Container_from_circulator<Ccb_halfedge_const_circulator> Ccb_container;
-  typedef typename Ccb_container::iterator                   Ccb_iterator;
-  Ccb_container container(ccb);
+  std::vector<X_monotone_curve_2> xcurves(circulator_size(ccb));
+  Ccb_halfedge_const_circulator ccb_circ = ccb;
+  Ccb_halfedge_const_circulator ccb_end = ccb_circ;
+  unsigned int i=0;
 
-  typedef CGAL::Join_input_iterator_1<Ccb_iterator, Curve_creator<Arrangement_2> > Curve_iterator;
-  Curve_creator<Arrangement_2> cv_creator;
-
-  Curve_iterator  begin(container.begin(), cv_creator);
-  Curve_iterator  end  (container.end()  , cv_creator);
-
-  tr->construct_polygon_2_object()(begin, end, pgn);
+  if(!Halfedge_const_handle(ccb_circ)->face()->contained())
+  {
+    do
+    {
+      xcurves[i] = Halfedge_const_handle(ccb_circ)->curve();
+      ++i;
+      --ccb_circ;
+    }
+    while(ccb_circ != ccb_end);
+  }
+  else
+  {
+    do
+    {
+      xcurves[i] = Halfedge_const_handle(ccb_circ)->curve();
+      ++i;
+      ++ccb_circ;
+    }
+    while(ccb_circ != ccb_end);
+  }
+  
+  tr->construct_polygon_2_object()(xcurves.begin(), xcurves.end(), pgn);
 }
 
 template <class Arrangement, class OutputIterator>
