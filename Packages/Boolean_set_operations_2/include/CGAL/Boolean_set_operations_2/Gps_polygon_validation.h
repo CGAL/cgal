@@ -100,6 +100,7 @@ class Is_valid_2
   typedef typename Traits::X_monotone_curve_2      X_monotone_curve_2;
   typedef typename Traits::Point_2                 Point_2;
   typedef typename Traits::Curve_const_iterator    Curve_const_iterator;
+  typedef typename Traits::Construct_curves_2      Construct_curves_2;
   typedef Gps_polygon_validation_visitor<Traits>   Visitor;
   typedef Sweep_line_2<Traits, Visitor>            Sweep_line ;
 
@@ -208,20 +209,32 @@ protected:
   bool had_valid_orientation(const Polygon_2& pgn)
   {
     Gps_traits_adaptor<Traits>  tr;
-    return (tr.orientation_2_object()(pgn) == COUNTERCLOCKWISE);
+    Construct_curves_2 ctr_curves = tr.construct_curves_2_object();
+    std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair = 
+      ctr_curves(pgn);
+
+
+    return (tr.orientation_2_object()(itr_pair.first,
+                                      itr_pair.second) == COUNTERCLOCKWISE);
   }
 
   bool had_valid_orientation(const Polygon_with_holes_2& pgn)
   {
     Gps_traits_adaptor<Traits>  tr;
 
-    if(tr.orientation_2_object()(pgn.outer_boundary()) != COUNTERCLOCKWISE)
+    Construct_curves_2 ctr_curves = tr.construct_curves_2_object();
+    std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair = 
+      ctr_curves(pgn.outer_boundary());
+    if(tr.orientation_2_object()(itr_pair.first,  
+                                 itr_pair.second) != COUNTERCLOCKWISE)
       return false;
 
     typedef typename Polygon_with_holes_2::Holes_const_iterator    HCI;
     for(HCI hit = pgn.holes_begin(); hit != pgn.holes_end(); ++hit)
     {
-      if(tr.orientation_2_object()(*hit) != CLOCKWISE)
+      itr_pair = ctr_curves(*hit);
+      if(tr.orientation_2_object()(itr_pair.first,  
+                                   itr_pair.second) != CLOCKWISE)
         return false;
     }
 
