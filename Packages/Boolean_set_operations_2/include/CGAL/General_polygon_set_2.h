@@ -958,7 +958,7 @@ void divide_and_conquer(unsigned int lower,
 }
 
 // mark all faces as non-visited
-void _reset_faces()
+void _reset_faces() const
 {
   Face_const_iterator fit = m_arr->faces_begin();
   for( ; fit != m_arr->faces_end(); ++fit)
