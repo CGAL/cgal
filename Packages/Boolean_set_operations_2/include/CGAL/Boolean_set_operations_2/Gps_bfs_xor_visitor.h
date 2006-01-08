@@ -41,6 +41,31 @@ public:
       ubf->set_contained(true);
   }
 
+  void after_scan(Arrangement& arr)
+  {
+    typedef typename Arrangement::Traits_2  Traits;
+    typedef typename Traits::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
+    typedef typename Traits::Construct_opposite_2   Construct_opposite_2;
+    typedef typename Arrangement::Edge_iterator     Edge_iterator;
+
+    Compare_endpoints_xy_2 cmp_endpoints =
+      m_traits->compare_endpoints_xy_2_object();
+    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
+
+    for(Edge_iterator eit = arr.edges_begin();
+        eit != arr.edges_end();
+        ++eit)
+    {
+      Halfedge_iterator he = eit;
+      X_monotone_curve_2&  cv = he->curve();
+      bool is_cont = he->face()->contained();
+      bool has_same_dir = (cmp_endpoints(cv) == he->direction());
+      if((is_cont && !has_same_dir) ||
+         (!is_cont && has_same_dir))
+        arr.modify_edge(he, ctr_opp(cv));
+    }
+  }
+
 };
 
 CGAL_END_NAMESPACE

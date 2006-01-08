@@ -118,6 +118,7 @@ public:
     visitor.visit_ubf(m_arr->unbounded_face(), n_inf_pgn);
     Bfs_scanner scanner(visitor);
     scanner.scan(*m_arr);
+    visitor.after_scan(*m_arr);
   }
 
   //Arrangement_2* create_clean_arr()

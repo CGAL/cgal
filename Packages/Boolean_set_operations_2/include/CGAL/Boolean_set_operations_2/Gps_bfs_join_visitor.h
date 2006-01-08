@@ -41,6 +41,9 @@ public:
       ubf->set_contained(true);
   }
 
+  void after_scan(Arrangement& arr)
+  {}
+
 };
 
 CGAL_END_NAMESPACE
