@@ -67,7 +67,7 @@ int main(int, char*){
 
 //global flags and variables
 int current_state;
-bool red_active = true; 
+bool red_active = false; 
 Polygon_set                       red_set;
 Polygon_set                       blue_set;
 Polygon_set                       res_set;
@@ -217,18 +217,19 @@ public:
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
 
     radiotoolbar = new QToolBar(this, "polygon type");
-    red_pgn = new QRadioButton ("red", radiotoolbar);
-    red_pgn->toggle(); 
-    blue_pgn = new QRadioButton("blue", radiotoolbar);
+    blue_pgn = new QRadioButton ("Blue", radiotoolbar);
+    blue_pgn->toggle(); 
+    red_pgn = new QRadioButton("Red", radiotoolbar);
     radio_group = new QVButtonGroup(this,"Radios");
-    radio_group->insert(red_pgn);
     radio_group->insert(blue_pgn);
+    radio_group->insert(red_pgn);
     radio_group->setRadioButtonExclusive(true);
 
-    connect(red_pgn, SIGNAL(toggled (bool)), 
-             this, SLOT(radio_selected()));
+    
     connect(blue_pgn, SIGNAL(toggled (bool)), 
             this, SLOT(radio_selected()));
+    connect(red_pgn, SIGNAL(toggled (bool)), 
+             this, SLOT(radio_selected()));
 
 
     //layers
