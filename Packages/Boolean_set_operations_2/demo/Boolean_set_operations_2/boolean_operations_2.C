@@ -265,23 +265,23 @@ public:
                  QPixmap( (const char**)diff_PQ_xpm ));
 
     bops_toolbar->addSeparator();
-    QToolButton* diff_but = new QToolButton(bops_toolbar, "Boolean operations");
+    QToolButton* diff_but2 = new QToolButton(bops_toolbar, "Boolean operations");
     
-    diff_but->setIconSet(set2);
-    diff_but->setTextLabel("Red diff Blue ");
-    connect(diff_but, SIGNAL(pressed()),
-            this, SLOT(perform_diff()));
+    diff_but2->setIconSet(set2);
+    diff_but2->setTextLabel("Blue diff Red");
+    connect(diff_but2, SIGNAL(pressed()),
+            this, SLOT(perform_diff2()));
 
     QIconSet set3(QPixmap( (const char**)diff_QP_xpm ),
                  QPixmap( (const char**)diff_QP_xpm ));
 
     bops_toolbar->addSeparator();
-    QToolButton* diff_but2 = new QToolButton(bops_toolbar, "Boolean operations");
+    QToolButton* diff_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    diff_but2->setIconSet(set3);
-    diff_but2->setTextLabel("Blue diff Red ");
-    connect(diff_but2, SIGNAL(pressed()),
-            this, SLOT(perform_diff2()));
+    diff_but->setIconSet(set3);
+    diff_but->setTextLabel("Red diff Blue");
+    connect(diff_but, SIGNAL(pressed()),
+            this, SLOT(perform_diff()));
 
      QIconSet set4(QPixmap( (const char**)symm_diff_xpm ),
                   QPixmap( (const char**)symm_diff_xpm ));
@@ -320,24 +320,24 @@ public:
     QIconSet set7(QPixmap( (const char**)make_P_xpm ),
                  QPixmap( (const char**)make_P_xpm ));
     bops_toolbar->addSeparator();
-    QToolButton* make_res_red_but = new QToolButton(bops_toolbar, "Boolean operations");
+    QToolButton* make_res_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
     
     
-    make_res_red_but->setIconSet(set7);
-    make_res_red_but->setTextLabel("Make result Red");
-    connect(make_res_red_but,SIGNAL(pressed()),
-            this, SLOT(make_res_red()));
+    make_res_blue_but->setIconSet(set7);
+    make_res_blue_but->setTextLabel("Make result Blue");
+    connect(make_res_blue_but,SIGNAL(pressed()),
+            this, SLOT(make_res_blue()));
 
     QIconSet set8(QPixmap( (const char**)make_Q_xpm ),
                  QPixmap( (const char**)make_Q_xpm ));
     bops_toolbar->addSeparator();
-    QToolButton* make_res_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
+    QToolButton* make_res_red_but = new QToolButton(bops_toolbar, "Boolean operations");
     
 
-    make_res_blue_but->setIconSet(set8);
-    make_res_blue_but->setTextLabel("Make result Blue");
-    connect(make_res_blue_but,SIGNAL(pressed()),
-            this, SLOT(make_res_blue()));
+    make_res_red_but->setIconSet(set8);
+    make_res_red_but->setTextLabel("Make result Red");
+    connect(make_res_red_but,SIGNAL(pressed()),
+            this, SLOT(make_res_red()));
 
     QIconSet set9(QPixmap( (const char**)refresh_xpm ),
                  QPixmap( (const char**)refresh_xpm ));
@@ -354,24 +354,24 @@ public:
                   QPixmap( (const char**)del_P_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* delete_red_but = new QToolButton(bops_toolbar, "Boolean operations");
+    QToolButton* delete_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    delete_red_but->setIconSet(set10);
-    delete_red_but->setTextLabel("Delete Red Polygons");
-    connect(delete_red_but,SIGNAL(pressed()),
-            this, SLOT(delete_red_polygons()));
+    delete_blue_but->setIconSet(set10);
+    delete_blue_but->setTextLabel("Delete Blue Polygons");
+    connect(delete_blue_but,SIGNAL(pressed()),
+            this, SLOT(delete_blue_polygons()));
 
 
     QIconSet set11(QPixmap( (const char**)del_Q_xpm ),
                   QPixmap( (const char**)del_Q_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* delete_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
+    QToolButton* delete_red_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    delete_blue_but->setIconSet(set11);
-    delete_blue_but->setTextLabel("Delete Blue Polygons");
-    connect(delete_blue_but,SIGNAL(pressed()),
-            this, SLOT(delete_blue_polygons()));
+    delete_red_but->setIconSet(set11);
+    delete_red_but->setTextLabel("Delete Red Polygons");
+    connect(delete_red_but,SIGNAL(pressed()),
+            this, SLOT(delete_red_polygons()));
 
 
 
