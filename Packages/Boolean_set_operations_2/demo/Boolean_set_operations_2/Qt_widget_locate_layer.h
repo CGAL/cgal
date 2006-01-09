@@ -92,11 +92,18 @@ namespace CGAL
 
   void deactivating()
   {
-    m_pgn.clear();
+    reset();
     widget->setCursor(m_oldcursor);
     widget->setFocusPolicy(m_oldpolicy);
     widget->redraw();
   };
+
+  public:
+  void reset()
+  {
+    m_found_pgn = false;
+    m_pgn.clear();
+  }
 };
 
 } // namespace CGAL

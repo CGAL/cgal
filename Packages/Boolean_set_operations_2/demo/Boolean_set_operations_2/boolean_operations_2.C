@@ -501,6 +501,7 @@ public slots:
                           box.ymin(),
                           box.ymax());
       widget->unlock();
+      newtoolbar->reset();
       something_changed(); 
     }
 
@@ -570,7 +571,7 @@ public slots:
       res_set = red_set;
       res_set.intersection(blue_set);
       res_set.polygons_with_holes(std::back_inserter(res_pgns));
-   
+      newtoolbar->reset();
       draw_result(res_pgns.begin(), res_pgns.end());
   }
 
@@ -580,6 +581,7 @@ public slots:
     res_set = red_set;
     res_set.join(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
   }
@@ -590,6 +592,7 @@ public slots:
     res_set = red_set;
     res_set.difference(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
   }
@@ -600,6 +603,7 @@ public slots:
     res_set = blue_set;
     res_set.difference(red_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
   }
@@ -610,6 +614,7 @@ public slots:
     res_set = red_set;
     res_set.symmetric_difference(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
   }
@@ -620,6 +625,7 @@ public slots:
     res_set = red_set;
     res_set.complement();
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
   }
@@ -630,6 +636,7 @@ public slots:
     res_set = blue_set;
     res_set.complement();
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
   }
@@ -639,6 +646,7 @@ public slots:
     red_set = res_set;
     res_set.clear();
     blue_set.clear();
+    newtoolbar->reset();
     something_changed();
   }
 
@@ -647,23 +655,27 @@ public slots:
     blue_set = res_set;
     res_set.clear();
     red_set.clear();
+    newtoolbar->reset();
     something_changed();
   }
 
   void refresh()
   {
+    newtoolbar->reset();
     something_changed();
   }
 
   void delete_red_polygons()
   {
     red_set.clear();
+    newtoolbar->reset();
     something_changed();
   }
 
   void delete_blue_polygons()
   {
     blue_set.clear();
+    newtoolbar->reset();
     something_changed();
   }
 

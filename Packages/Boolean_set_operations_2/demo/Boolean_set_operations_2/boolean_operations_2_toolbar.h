@@ -48,14 +48,16 @@ public:
     but[0]->toggle(); // toggle the 'deactivate layer button'
   }
 
+  void reset()
+  {
+    locatebut.reset();
+  }
+
 private:
   QToolButton     *but[10];
   QButtonGroup    *button_group;
   CGAL::Qt_widget *widget;
   
-  //Qt_widget_deletepolygon<Kernel>	            delete_polygon;
-  
-
   CGAL::Qt_widget_get_circ_polygon<Kernel>     getsimplebut;
   CGAL::Qt_widget_get_circle<Kernel>           getcirclebut;
   CGAL::Qt_widget_locate_layer                 locatebut;
