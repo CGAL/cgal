@@ -1,0 +1,101 @@
+% -*- latex -*-
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Class  : CGAL::Min_ellipse_2_traits_2<K>
+% -----------------------------------------------------------------------------
+% file   : doc_tex/basic/Optimisation/..._ref/Min_ellipse_2_traits_2.tex
+% package: Min_ellipse_2
+% author : Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\ccAutoIndexingOff
+
+\begin{ccRefClass}{Approximate_min_ellipsoid_d_traits_d<K,ET>}
+\ccIndexTraitsClassBegin{Approximate_min_ellipsoid_d_traits_d}{Approximate_min_ellipsoid_d}{}
+
+\ccAutoIndexingOn
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a traits class for
+\ccc{CGAL::Approximate_min_ellipsoid_d<Traits>} using the
+$d$-di\-men\-sional \cgal\ kernel. In order to use this class, you
+have to provide an exact number-type \ccc{ET} which
+\ccc{Approximate_min_ellipsoid_d<Traits>} will use for its internal
+exact computations.
+
+\ccInclude{CGAL/Approximate_min_ellipsoid_d_traits_d.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{K} is a model for concept
+\ccc{Kernel}. The template parameter \ccc{ET} is a model for concept
+\ccc{RingNumberType} with exact arithmetic operations, i.e., the type
+\ccc{CGAL::Number_type_traits<ET>::Has_exact_ring_operations} must be
+\ccc{CGAL::Tag_true}. In addition, \ccc{ET} must be able to exactly
+represent any finite \ccc{double} value.  (An example of such a
+number-type is \ccc{CGAL::MP_Float}.)
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccRefConceptPage{ApproximateMinEllipsoid_d_Traits_d}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+%\ccSetTwoColumns{Min_ellipse_2_traits_2<K>:: Ellipse}{}
+
+\ccNestedType{FT}{typedef to \ccc{double}.  The kernel's number type
+\ccc{K::RT} must be convertible to \ccc{double}.}
+\ccNestedType{ET}{typedef to the second template argument, \ccc{ET}.}
+\ccNestedType{Point}{typedef to \ccc{K::Point_d}.}
+\ccNestedType{Cartesian_const_iterator}{typedef to
+\ccc{K::Cartesian_const_iterator}.}
+
+% -----------------------------------------------------------------------------
+
+\ccAccessFunctions
+
+The class provides the access functions required by the concept
+\ccc{ApproximateMinEllipsoid_d_Traits_d}; they simply map to the
+corresponding routines of class \ccc{K::Point_d}:
+
+\ccCreationVariable{traits}
+
+\ccMemberFunction{ int dimension(const Point& p);}{ maps to
+\ccc{p.dimension()}.}
+
+\ccMemberFunction{ Cartesian_const_iterator cartesian_begin(const
+Point& p);}{ maps to \ccc{p.cartesian_begin()}.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ApproximateMinEllipsoid_d_Traits_d();}{default constructor.}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>}\\%
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>}\\%
+\ccRefConceptPage{ApproximateMinEllipsoid_d_Traits_d}
+
+% -----------------------------------------------------------------------------
+
+\ccAutoIndexingOff
+
+\ccIndexTraitsClassEnd
+\end{ccRefClass}
+
+\ccAutoIndexingOn
+
+% ===== EOF ===================================================================

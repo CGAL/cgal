@@ -1,0 +1,2 @@
+Algorithm for a (1+eps)-approximation to the minimum-volume enclosing
+ellipsoid of points in arbitrary dimension
