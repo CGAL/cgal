@@ -442,7 +442,7 @@ public:
   {
     return Intersect_2(m_base_tr->intersect_2_object(),
                        m_base_tr->compare_xy_2_object(),
-                       m_Base_tr->construct_min_vertex_2_object());
+                       m_base_tr->construct_min_vertex_2_object());
   }
 
 

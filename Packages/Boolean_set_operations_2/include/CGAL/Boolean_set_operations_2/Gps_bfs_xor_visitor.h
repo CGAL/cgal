@@ -46,11 +46,13 @@ public:
     typedef typename Arrangement::Traits_2  Traits;
     typedef typename Traits::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
     typedef typename Traits::Construct_opposite_2   Construct_opposite_2;
+    typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
     typedef typename Arrangement::Edge_iterator     Edge_iterator;
 
+    Traits tr;
     Compare_endpoints_xy_2 cmp_endpoints =
-      m_traits->compare_endpoints_xy_2_object();
-    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
+      tr.compare_endpoints_xy_2_object();
+    Construct_opposite_2 ctr_opp = tr.construct_opposite_2_object();
 
     for(Edge_iterator eit = arr.edges_begin();
         eit != arr.edges_end();

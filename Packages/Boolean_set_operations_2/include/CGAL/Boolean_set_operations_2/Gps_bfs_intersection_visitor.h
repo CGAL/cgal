@@ -32,7 +32,7 @@ public:
     ic_f2 = this->compute_ic(f1, f2, he);
     (*(this->m_faces_hash))[f2] = ic_f2;
       
-    CGAL_assertion(ic_f2 <= m_num_of_polygons);
+    CGAL_assertion(ic_f2 <= this->m_num_of_polygons);
 
     // only faces that have inside counter equal to the number of polygons
     // which are intersectd, will be marked true (containted)

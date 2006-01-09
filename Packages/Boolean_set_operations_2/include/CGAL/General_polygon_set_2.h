@@ -740,7 +740,7 @@ inline void join(InputIterator1 begin1,
     pgn2arr(*itr1, *arr_vec[i]);
   }
 
-  for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
+  for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr2, *arr_vec[i]);
@@ -758,10 +758,10 @@ inline void join(InputIterator1 begin1,
 
 // intersect range of polygins
 template <class InputIterator>
-inline void intersection(InputIterator begin, InputIterator end)
+inline void intersection(InputIterator begin, InputIterator end, unsigned int k=5)
 {
   typename std::iterator_traits<InputIterator>::value_type pgn;
-  this->intersection(begin, end, pgn);
+  this->intersection(begin, end, pgn, k);
   this->remove_redundant_edges();
   this->_reset_faces();
 }
@@ -771,7 +771,8 @@ inline void intersection(InputIterator begin, InputIterator end)
 template <class InputIterator>
 inline void intersection(InputIterator begin,
                          InputIterator end,
-                         Polygon_2& pgn)
+                         Polygon_2& pgn,
+                         unsigned int k)
 {
   std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
   arr_vec[0] = this->m_arr;
@@ -794,7 +795,8 @@ inline void intersection(InputIterator begin,
 template <class InputIterator>
 inline void intersection(InputIterator begin,
                          InputIterator end,
-                         Polygon_with_holes_2& pgn)
+                         Polygon_with_holes_2& pgn,
+                         unsigned int k)
 {
   std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
   arr_vec[0] = this->m_arr;
@@ -818,7 +820,8 @@ template <class InputIterator1, class InputIterator2>
 inline void intersection(InputIterator1 begin1,
                          InputIterator1 end1,
                          InputIterator2 begin2,
-                         InputIterator2 end2)
+                         InputIterator2 end2,
+                         unsigned int k=5)
 {
   std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
                                        std::distance(begin2, end2)+1);
@@ -850,10 +853,11 @@ inline void intersection(InputIterator1 begin1,
 
 // symmetric_difference of a range of polygons (similar to xor)
 template <class InputIterator>
-inline void symmetric_difference(InputIterator begin, InputIterator end)
+inline void symmetric_difference(InputIterator begin, InputIterator end,
+                                 unsigned int k=5)
 {
   typename std::iterator_traits<InputIterator>::value_type pgn;
-  this->symmetric_difference(begin, end, pgn);
+  this->symmetric_difference(begin, end, pgn, k);
   this->remove_redundant_edges();
   this->_reset_faces();
 }
@@ -863,7 +867,8 @@ inline void symmetric_difference(InputIterator begin, InputIterator end)
 template <class InputIterator>
 inline void symmetric_difference(InputIterator begin,
                                  InputIterator end,
-                                 Polygon_2& pgn)
+                                 Polygon_2& pgn,
+                                 unsigned int k=5)
 {
   std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
   arr_vec[0] = this->m_arr;
@@ -886,7 +891,8 @@ inline void symmetric_difference(InputIterator begin,
 template <class InputIterator>
 inline void symmetric_difference(InputIterator begin,
                                  InputIterator end,
-                                 Polygon_with_holes_2& pgn)
+                                 Polygon_with_holes_2& pgn,
+                                 unsigned int k=5)
 {
   std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
   arr_vec[0] = this->m_arr;
@@ -910,7 +916,8 @@ template <class InputIterator1, class InputIterator2>
 inline void symmetric_difference(InputIterator1 begin1,
                                  InputIterator1 end1,
                                  InputIterator2 begin2,
-                                 InputIterator2 end2)
+                                 InputIterator2 end2,
+                                 unsigned int k=5)
 {
   std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
                                        std::distance(begin2, end2)+1);
