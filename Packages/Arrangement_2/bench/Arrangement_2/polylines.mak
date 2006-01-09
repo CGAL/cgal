@@ -63,7 +63,7 @@ leda_rat_simple_cartesian_non_caching_pol_inst:
 lazy_quotient_mp_float_non_caching_pol_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
 
-quotient_cgal_gmpz_cartesian_non_caching_pol_inst:
+quotient_cgal_gmpz_non_caching_pol_inst:
 	$(MAKEF) "BENCH_NT=$(QUOTIENT_CGAL_GMPZ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
 
 lazy_rat_non_caching_pol_inst:
@@ -99,5 +99,4 @@ pol_non_caching_inst: leda_rat_cartesian_non_caching_pol_inst \
 	lazy_cgal_gmpq_cartesian_non_caching_pol_inst \
 	double_non_caching_pol_inst
 
-#	leda_kernel_non_caching_pol_inst \
-
+#	leda_kernel_non_caching_pol_inst
