@@ -23,10 +23,13 @@ quotient_cgal_qmpz:
 lazy_quotient_mp_float_seg:
 	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
 
-cgal_gmpq_seg:
+cgal_gmpq_exact_seg:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
+
+cgal_gmpq_cartesian_seg:
 	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
 
-lazy_cgal_gmpq_seg:
+lazy_cgal_gmpq_cartesian_seg:
 	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
 
 double_seg:
@@ -40,7 +43,7 @@ leda_rat_cartesian_non_caching_seg:
 leda_rat_simple_cartesian_non_caching_seg:
 	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)"
 
-non_caching_seg_leda_kernel:
+non_caching_leda_kernel_seg:
 	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)"
 
 lazy_rat_non_caching_seg:
@@ -55,10 +58,13 @@ quotient_cgal_gmpz_non_caching_seg:
 lazy_quotient_mp_float_non_caching_seg:
 	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)"
 
-cgal_gmpq_non_caching_seg:
+cgal_gmpq_exact_non_caching_seg:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)"
+
+cgal_gmpq_cartesian_non_caching_seg:
 	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)"
 
-lazy_cgal_gmpq_non_caching_seg:
+lazy_cgal_gmpq_cartesian_non_caching_seg:
 	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)"
 
 double_non_caching_seg:
@@ -66,22 +72,26 @@ double_non_caching_seg:
 
 all_non_simple: leda_rat_cartesian_seg \
         leda_rat_simple_cartesian_seg \
-	leda_kernel_seg \
 	lazy_rat_seg \
 	quotient_mp_float_seg \
 	lazy_quotient_mp_float_seg \
-	cgal_gmpq_seg \
-	lazy_cgal_gmpq_seg \
+	cgal_gmpq_exact_seg \
+	cgal_gmpq_cartesian_seg \
+	lazy_cgal_gmpq_cartesian_seg \
 	double_seg
 
+#	leda_kernel_seg
+
 all_simple: leda_rat_cartesian_non_caching_seg \
-	non_caching_seg_leda_kernel \
 	quotient_mp_float_non_caching_seg \
 	lazy_rat_non_caching_seg \
 	lazy_quotient_mp_float_non_caching_seg \
-	cgal_gmpq_non_caching_seg \
-	lazy_cgal_gmpq_non_caching_seg \
+	cgal_gmpq_exact_non_caching_seg \
+	cgal_gmpq_cartesian_non_caching_seg \
+	lazy_cgal_gmpq_cartesian_non_caching_seg \
 	double_non_caching_seg
+
+#	non_caching_leda_kernel_seg
 
 # install:
 
@@ -109,10 +119,13 @@ quotient_cgal_gmpz_seg_inst:
 lazy_quotient_mp_float_seg_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
 
-cgal_gmpq_seg_inst:
+cgal_gmpq_exact_seg_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
+
+cgal_gmpq_cartesian_seg_inst:
 	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
 
-lazy_cgal_gmpq_seg_inst:
+lazy_cgal_gmpq_cartesian_seg_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
 
 double_seg_inst:
@@ -141,10 +154,13 @@ quotient_cgal_gmpz_non_caching_seg_inst:
 lazy_quotient_mp_float_non_caching_seg_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)" install
 
-cgal_gmpq_non_caching_seg_inst:
+cgal_gmpq_exact_non_caching_seg_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)" install
+
+cgal_gmpq_cartesian_non_caching_seg_inst:
 	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)" install
 
-lazy_cgal_gmpq_non_caching_seg_inst:
+lazy_cgal_gmpq_cartesian_non_caching_seg_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)" install
 
 double_non_caching_seg_inst:
@@ -152,15 +168,18 @@ double_non_caching_seg_inst:
 
 #
 seg_caching_inst: leda_rat_cartesian_seg_inst \
-	leda_kernel_seg_inst \
         leda_rat_simple_cartesian_seg_inst \
 	quotient_mp_float_seg_inst \
 	quotient_cgal_gmpz_seg_inst \
 	lazy_rat_seg_inst \
 	lazy_quotient_mp_float_seg_inst \
-	cgal_gmpq_seg_inst \
-	lazy_cgal_gmpq_seg_inst \
+	cgal_gmpq_exact_seg_inst \
+	cgal_gmpq_cartesian_seg_inst \
+	lazy_cgal_gmpq_cartesian_seg_inst \
 	double_seg_inst
+
+# The leda kernel is missing the Min_vertex_2 and Max_vertex_2 constructors
+#	leda_kernel_seg_inst
 
 seg_non_caching_inst: leda_rat_cartesian_non_caching_seg_inst \
         leda_rat_simple_cartesian_non_caching_seg_inst \
@@ -168,9 +187,10 @@ seg_non_caching_inst: leda_rat_cartesian_non_caching_seg_inst \
 	quotient_cgal_gmpz_non_caching_seg_inst \
 	lazy_rat_non_caching_seg_inst \
 	lazy_quotient_mp_float_non_caching_seg_inst \
-	cgal_gmpq_non_caching_seg_inst \
-	lazy_cgal_gmpq_non_caching_seg_inst \
+	cgal_gmpq_exact_non_caching_seg_inst \
+	cgal_gmpq_cartesian_non_caching_seg_inst \
+	lazy_cgal_gmpq_cartesian_non_caching_seg_inst \
 	double_non_caching_seg_inst
 
 # The leda kernel is missing the Min_vertex_2 and Max_vertex_2 constructors
-#	non_caching_seg_leda_kernel_inst \
+#	non_caching_seg_leda_kernel_inst

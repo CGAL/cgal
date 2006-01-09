@@ -46,8 +46,9 @@
   <bench samples="10" file="sines.dat" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline header="true"/>
+      <benchArrCgalGmpqExactNonCachingPolyline/>
       <benchArrDoubleCartesianNonCachingPolyline enable="false"/>
-      <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchArrLazyCgalGmpqCartesianNonCachingPolyline enable="false"/>
       <benchArrLazyQuotientCartesianNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
@@ -58,23 +59,25 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline header="true"/>
+      <benchArrCgalGmpqExactPolyline/>
       <benchArrDoubleCartesianPolyline enable="false"/>
-      <benchArrLazyCgalGmpqCartesianPolyline/>
-      <benchArrLazyQuotientCartesianPolyline/>
-      <benchArrLazyRatCartesianPolyline/>
-      <benchArrLedaRatCartesianPolyline/>
-      <benchArrLedaRatLedaPolyline/>
-      <benchArrLedaRatSimpleCartesianPolyline/>
-      <benchArrQuotientCartesianPolyline/>
-      <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchArrLazyCgalGmpqCartesianPolyline enable="false"/>
+      <benchArrLazyQuotientCartesianPolyline enable="false"/>
+      <benchArrLazyRatCartesianPolyline enable="false"/>
+      <benchArrLedaRatCartesianPolyline enable="false"/>
+      <benchArrLedaRatLedaPolyline enable="false"/>
+      <benchArrLedaRatSimpleCartesianPolyline enable="false"/>
+      <benchArrQuotientCartesianPolyline enable="false"/>
+      <benchArrQuotientCgalGmpzCartesianPolyline enable="false"/>
     </bench>
   </bench>
 
   <bench samples="10" file="ps_circs.dat" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline header="true"/>
+      <benchArrCgalGmpqExactNonCachingPolyline/>
       <benchArrDoubleCartesianNonCachingPolyline enable="false"/>
-      <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchArrLazyCgalGmpqCartesianNonCachingPolyline enable="false"/>
       <benchArrLazyQuotientCartesianNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
@@ -85,15 +88,16 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline header="true"/>
+      <benchArrCgalGmpqExactPolyline/>
       <benchArrDoubleCartesianPolyline enable="false"/>
-      <benchArrLazyCgalGmpqCartesianPolyline/>
-      <benchArrLazyQuotientCartesianPolyline/>
-      <benchArrLazyRatCartesianPolyline/>
-      <benchArrLedaRatCartesianPolyline/>
-      <benchArrLedaRatLedaPolyline/>
-      <benchArrLedaRatSimpleCartesianPolyline/>
-      <benchArrQuotientCartesianPolyline/>
-      <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchArrLazyCgalGmpqCartesianPolyline enable="false"/>
+      <benchArrLazyQuotientCartesianPolyline enable="false"/>
+      <benchArrLazyRatCartesianPolyline enable="false"/>
+      <benchArrLedaRatCartesianPolyline enable="false"/>
+      <benchArrLedaRatLedaPolyline enable="false"/>
+      <benchArrLedaRatSimpleCartesianPolyline enable="false"/>
+      <benchArrQuotientCartesianPolyline enable="false"/>
+      <benchArrQuotientCgalGmpzCartesianPolyline enable="false"/>
     </bench>
   </bench>
 </bench>

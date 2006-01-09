@@ -34,7 +34,10 @@ enum MaxFilesNumber {
 #undef TRIANGLE_SUPPORTED
 
 // Kernel:
-#if BENCH_KERNEL == LEDA_KERNEL
+#if BENCH_KERNEL == EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#elif BENCH_KERNEL == LEDA_KERNEL
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 
 #elif BENCH_KERNEL == MY_KERNEL
@@ -218,7 +221,11 @@ enum MaxFilesNumber {
 #endif
 
 // Kernel:
-#if BENCH_KERNEL == LEDA_KERNEL
+#if BENCH_KERNEL == EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
+#define KERNEL_TYPE "Exact"
+
+#elif BENCH_KERNEL == LEDA_KERNEL
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #define KERNEL_TYPE "Leda"
 
@@ -444,7 +451,7 @@ public:
     Curve_list::const_iterator i;
     Strategy strategy(arr);
     for (i = m_curve_list.begin(); i != m_curve_list.end(); ++i)
-      insert(arr, *i, strategy);
+      insert_curve(arr, *i, strategy);
     
     if (m_verbose) {      //print to cout
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -487,7 +494,7 @@ public:
   {
     if (m_verbose) std::cout << "Inserting Aggregate" << std::endl;
     Arr arr;
-    insert(arr, m_curve_list.begin(), m_curve_list.end());
+    insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose) {
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
@@ -512,7 +519,7 @@ public:
   void op()
   {
     Arr arr;
-    insert(arr, m_curve_list.begin(), m_curve_list.end());
+    insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose) {
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
