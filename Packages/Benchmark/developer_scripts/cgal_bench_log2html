@@ -16,8 +16,7 @@ my $logDir = $home . '/logs';
 $logDir =~ s/\/+/\//g;			# replace '//.../' with '/';
 
 my $root = $ENV{ROOT};
-my $benchDir = $root . '/bench';
-my $dataDir = $benchDir . '/data';
+my $dataDir = $root . '/data' . '/bench';
 my $databaseFile = $dataDir . '/benchDb.xml';
 
 $Getopt::Long::ignorecase = 0;
@@ -227,6 +226,7 @@ while ($line = <LOGFILE>) {
     foreach $classItem (keys %Classes) {
       $className = $Classes{$classItem}->{'name'};
       $key = $Classes{$classItem}->{'key'};
+      next unless ($key);
       if ($name =~ $key) {
 	$class = $className;
 	$time_class = $class . '_time';
@@ -236,7 +236,7 @@ while ($line = <LOGFILE>) {
     }
 
     next unless $found;
-    
+
     $time = substr($line, $offset, 8);		 $offset += 9;
     $ops = substr($line, $offset, 8);		 $offset += 9;
     $total = substr($line, $offset, 8);		 $offset += 9;
