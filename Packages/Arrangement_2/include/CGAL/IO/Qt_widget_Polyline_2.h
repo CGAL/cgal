@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
  * Export a polyline to a window stream 
  */
 template <class T_SegmentTraits>
-Qt_widget & operator<<(Qt_widget & ws, const Polyline_2<T_SegmentTraits> & cv)
+Qt_widget & operator<<(Qt_widget & ws, const _Polyline_2<T_SegmentTraits> & cv)
 {
   for (unsigned int i = 0; i < cv.size(); ++i) ws << cv[i];
   return ws;
