@@ -26,8 +26,12 @@ typedef std::vector<Polygon>                            Polygons_vec;
 typedef CGAL::_One_root_point_2<Coord_type, true>       One_root_point_2;
 
 extern Polygon_set                       red_set;
-int readdxf(std::istream& input_file, Polygon_set* pgn_set,CGAL::Qt_widget* w )
+int readdxf(std::istream& input_file,
+            Polygon_set* pgn_set,
+            CGAL::Qt_widget* w, 
+            CGAL::Bbox_2& box)
 {
+  bool first_curve = true;
   Polygons polygons;
   double_Circles circles;
   CGAL::Dxf_reader<SC> reader;
@@ -63,6 +67,14 @@ int readdxf(std::istream& input_file, Polygon_set* pgn_set,CGAL::Qt_widget* w )
     pgn.push_back(cv1);
     pgn.push_back(cv2);
     circ_polygons.push_back(pgn);
+    if(first_curve)
+    {
+      first_curve = false;
+      box = dbl_circ.bbox();
+    }
+    else
+      box = box + dbl_circ.bbox();
+
   }
 
   for(Polygons::iterator it = polygons.begin(); it != polygons.end(); it++)
@@ -87,15 +99,20 @@ int readdxf(std::istream& input_file, Polygon_set* pgn_set,CGAL::Qt_widget* w )
       
       if(pit->second) 
       {
-        Coord_type bulge(pit->second);
-        Coord_type common((1 - CGAL::square(bulge))/(4*(bulge)));
-        Coord_type x_coord((ps.x() + pt.x())/2 + common * (ps.x() - pt.x()));
-        Coord_type y_coord((ps.y() + pt.y())/2 + common * (pt.y() - ps.y()));
-        Coord_type sqr_rad(CGAL::squared_distance(ps, pt)*CGAL::square(1/(bulge)+ (bulge)) / 16);
+        const Coord_type bulge = (pit->second);
+        const Coord_type common = (1 - CGAL::square(bulge)) / (4*bulge);
+        const Coord_type x_coord = ((ps.x() + pt.x())/2) + common*(ps.y() - pt.y());
+        const Coord_type y_coord = ((ps.y() + pt.y())/2) + common*(pt.x() - ps.x());
+        const Coord_type sqr_bulge = CGAL::square(bulge);
+        const Coord_type sqr_rad = CGAL::squared_distance(ps, pt) * (1/sqr_bulge + 2 + sqr_bulge) / 16; 
 
         CGAL_assertion(ps != pt);
        
-        Circle supp_circ(Point(x_coord, y_coord), sqr_rad);
+        Circle supp_circ;
+        if(pit->second > 0)
+          supp_circ = Circle(Point(x_coord, y_coord), sqr_rad);
+        else
+          supp_circ = Circle(Point(x_coord, y_coord), sqr_rad, CGAL::CLOCKWISE);
         Curve circ_arc(supp_circ, 
                          One_root_point_2(ps.x(), ps.y()),
                          One_root_point_2(pt.x(), pt.y()));
@@ -106,6 +123,13 @@ int readdxf(std::istream& input_file, Polygon_set* pgn_set,CGAL::Qt_widget* w )
           XCurve cv;
           if(CGAL::assign(cv, obj_vec[i]))
             curr_pgn.push_back(cv);
+          if(first_curve)
+          {
+            first_curve = false;
+            box = cv.bbox();
+          }
+          else
+            box = box + cv.bbox();
         }
       }
       else
@@ -113,21 +137,29 @@ int readdxf(std::istream& input_file, Polygon_set* pgn_set,CGAL::Qt_widget* w )
         if( ps == pt)
           continue;
 
-        //curr_pgn.push_back(XCurve(ps, pt));
-        XCurve cv;
+        XCurve cv(ps, pt);
+        curr_pgn.push_back(cv);
+        if(first_curve)
+        {
+          first_curve = false;
+          box = cv.bbox();
+        }
+        else
+          box = box + cv.bbox();
+        /*XCurve cv;
         Curve curve_seg(ps, pt);
         std::vector<CGAL::Object> obj_vec;
         tr.make_x_monotone_2_object()(curve_seg, std::back_inserter(obj_vec));
         CGAL_assertion(obj_vec.size() == 1);
         if(CGAL::assign(cv, obj_vec[0]))
-          curr_pgn.push_back(cv);
+          curr_pgn.push_back(cv);*/
       }
     }
+    if(curr_pgn.orientation() == CGAL::CLOCKWISE)
+      curr_pgn.reverse_orientation();
     if(!tr.is_valid_2_object()(curr_pgn))
     {
       std::cout<<"invalid polygon!!!\n";
-      std::cout<<curr_pgn<<"\n";
-   red_set.join(curr_pgn);
       return(0);
     }
     circ_polygons.push_back(curr_pgn);

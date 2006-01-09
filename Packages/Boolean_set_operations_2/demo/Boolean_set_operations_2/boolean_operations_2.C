@@ -49,6 +49,19 @@ int main(int, char*){
 #include <qpainter.h> 
 
 #include "Qt_widget_X_monotone_circle_segment_2.h"
+#include "icons/union.xpm"
+#include "icons/intersection.xpm"
+#include "icons/diff_PQ.xpm"
+#include "icons/diff_QP.xpm"
+#include "icons/symm_diff.xpm"
+#include "icons/make_P.xpm"
+#include "icons/make_Q.xpm"
+#include "icons/comp_P.xpm"
+#include "icons/comp_Q.xpm"
+#include "icons/del_P.xpm"
+#include "icons/del_Q.xpm"
+#include "icons/refresh.xpm"
+
 
 
 
@@ -77,13 +90,13 @@ public:
     widget->setFillColor (CGAL::RED);
     *widget << CGAL::PointSize(2); // size of point
     *widget <<  CGAL::RED; // color for the polygons
-    std::list<Polygon_with_holes_2> red_pgns_list;
+    std::list<Polygon_with_holes> red_pgns_list;
     red_set.polygons_with_holes(std::back_inserter(red_pgns_list));
-    std::list<Polygon_with_holes_2>::iterator itpgn1 = red_pgns_list.begin();
+    std::list<Polygon_with_holes>::iterator itpgn1 = red_pgns_list.begin();
 
     while(itpgn1 != red_pgns_list.end())
     {
-      const Polygon_with_holes_2& pgn_with_hole = *itpgn1;
+      const Polygon_with_holes& pgn_with_hole = *itpgn1;
       const Polygon& outer_boundary = pgn_with_hole.outer_boundary();
       widget->setFillColor (CGAL::RED);
       if(outer_boundary.is_empty())
@@ -112,13 +125,13 @@ public:
     *widget << CGAL::PointSize(2);
     *widget << CGAL::BLUE; // color of circle
 
-    std::list<Polygon_with_holes_2> blue_pgns_list;
+    std::list<Polygon_with_holes> blue_pgns_list;
     blue_set.polygons_with_holes(std::back_inserter(blue_pgns_list));
-    std::list<Polygon_with_holes_2>::iterator itpgn2 = blue_pgns_list.begin();
+    std::list<Polygon_with_holes>::iterator itpgn2 = blue_pgns_list.begin();
 
     while(itpgn2 != blue_pgns_list.end())
     {
-      const Polygon_with_holes_2& pgn_with_hole = *itpgn2;
+      const Polygon_with_holes& pgn_with_hole = *itpgn2;
       const Polygon& outer_boundary = pgn_with_hole.outer_boundary();
       widget->setFillColor (CGAL::BLUE);
       if(outer_boundary.is_empty())
@@ -182,7 +195,7 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Open", this, SLOT(open_file()),CTRL+Key_O);
+    file->insertItem("&Open DXF file", this, SLOT(open_file()),CTRL+Key_O);
     file->insertSeparator();
     file->insertItem("&Save",this ,SLOT(save_file()),CTRL+Key_S);
     file->insertItem("&Save as",this ,SLOT(save_file_as()));
@@ -227,8 +240,8 @@ public:
     // voronoi toolbar
     bops_toolbar = new QToolBar(this, "Boolean operations");
 
-    QIconSet set0(QPixmap( (const char**)voronoi_small_xpm ),
-                  QPixmap( (const char**)voronoi_xpm ));
+    QIconSet set0(QPixmap( (const char**)intersection_xpm ),
+                  QPixmap( (const char**)intersection_xpm ));
 
     QToolButton* intersection_but = new QToolButton(bops_toolbar, "Boolean operations");
     
@@ -237,82 +250,125 @@ public:
     connect(intersection_but,SIGNAL(pressed()),
             this, SLOT(perform_intersection()));
 
+    QIconSet set1(QPixmap( (const char**)union_xpm ),
+                  QPixmap( (const char**)union_xpm ));
+
+    bops_toolbar->addSeparator();
     QToolButton* union_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    union_but->setIconSet(set0);
+    union_but->setIconSet(set1);
     union_but->setTextLabel("Union ");
     connect(union_but,SIGNAL(pressed()),
             this, SLOT(perform_union()));
 
+    QIconSet set2(QPixmap( (const char**)diff_PQ_xpm ),
+                 QPixmap( (const char**)diff_PQ_xpm ));
 
+    bops_toolbar->addSeparator();
     QToolButton* diff_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    diff_but->setIconSet(set0);
+    diff_but->setIconSet(set2);
     diff_but->setTextLabel("Red diff Blue ");
     connect(diff_but, SIGNAL(pressed()),
             this, SLOT(perform_diff()));
 
+    QIconSet set3(QPixmap( (const char**)diff_QP_xpm ),
+                 QPixmap( (const char**)diff_QP_xpm ));
+
+    bops_toolbar->addSeparator();
     QToolButton* diff_but2 = new QToolButton(bops_toolbar, "Boolean operations");
     
-    diff_but2->setIconSet(set0);
+    diff_but2->setIconSet(set3);
     diff_but2->setTextLabel("Blue diff Red ");
     connect(diff_but2, SIGNAL(pressed()),
             this, SLOT(perform_diff2()));
 
+     QIconSet set4(QPixmap( (const char**)symm_diff_xpm ),
+                  QPixmap( (const char**)symm_diff_xpm ));
+     bops_toolbar->addSeparator();
+
     QToolButton* symm_diff_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    symm_diff_but->setIconSet(set0);
+    symm_diff_but->setIconSet(set4);
     symm_diff_but->setTextLabel("Symmetric difference ");
     connect(symm_diff_but, SIGNAL(pressed()),
             this, SLOT(perform_symm_diff()));
 
+    QIconSet set5(QPixmap( (const char**)comp_p_xpm ),
+                 QPixmap( (const char**)comp_p_xpm ));
+    bops_toolbar->addSeparator();
+
     QToolButton* red_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    red_complement_but->setIconSet(set0);
+    red_complement_but->setIconSet(set5);
     red_complement_but->setTextLabel("Red Complement ");
     connect(red_complement_but, SIGNAL(pressed()),
             this, SLOT(perform_red_complement()));
 
+    QIconSet set6(QPixmap( (const char**)comp_Q_xpm ),
+                 QPixmap( (const char**)comp_Q_xpm ));
+    bops_toolbar->addSeparator();
+
     QToolButton* blue_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    blue_complement_but->setIconSet(set0);
+    blue_complement_but->setIconSet(set6);
     blue_complement_but->setTextLabel("Blue Complement ");
     connect(blue_complement_but, SIGNAL(pressed()),
             this, SLOT(perform_blue_complement()));
 
     
+    QIconSet set7(QPixmap( (const char**)make_P_xpm ),
+                 QPixmap( (const char**)make_P_xpm ));
+    bops_toolbar->addSeparator();
     QToolButton* make_res_red_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    make_res_red_but->setIconSet(set0);
+    
+    make_res_red_but->setIconSet(set7);
     make_res_red_but->setTextLabel("Make result Red");
     connect(make_res_red_but,SIGNAL(pressed()),
             this, SLOT(make_res_red()));
 
+    QIconSet set8(QPixmap( (const char**)make_Q_xpm ),
+                 QPixmap( (const char**)make_Q_xpm ));
+    bops_toolbar->addSeparator();
     QToolButton* make_res_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    make_res_blue_but->setIconSet(set0);
+
+    make_res_blue_but->setIconSet(set8);
     make_res_blue_but->setTextLabel("Make result Blue");
     connect(make_res_blue_but,SIGNAL(pressed()),
             this, SLOT(make_res_blue()));
 
+    QIconSet set9(QPixmap( (const char**)refresh_xpm ),
+                 QPixmap( (const char**)refresh_xpm ));
+    bops_toolbar->addSeparator();
+
     QToolButton* refresh_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    refresh_but->setIconSet(set0);
+    refresh_but->setIconSet(set9);
     refresh_but->setTextLabel("Refresh ");
     connect(refresh_but,SIGNAL(pressed()),
             this, SLOT(refresh()));
 
+    QIconSet set10(QPixmap( (const char**)del_P_xpm ),
+                  QPixmap( (const char**)del_P_xpm ));
+    bops_toolbar->addSeparator();
+
     QToolButton* delete_red_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    delete_red_but->setIconSet(set0);
+    delete_red_but->setIconSet(set10);
     delete_red_but->setTextLabel("Delete Red Polygons");
     connect(delete_red_but,SIGNAL(pressed()),
             this, SLOT(delete_red_polygons()));
 
 
+    QIconSet set11(QPixmap( (const char**)del_Q_xpm ),
+                  QPixmap( (const char**)del_Q_xpm ));
+    bops_toolbar->addSeparator();
+
     QToolButton* delete_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
     
-    delete_blue_but->setIconSet(set0);
+    delete_blue_but->setIconSet(set11);
     delete_blue_but->setTextLabel("Delete Blue Polygons");
     connect(delete_blue_but,SIGNAL(pressed()),
             this, SLOT(delete_blue_polygons()));
@@ -345,24 +401,24 @@ private:
       if(!out_file.is_open())
         return false;
      
-      std::list<Polygon_with_holes_2> red_pgns_list;
+      std::list<Polygon_with_holes> red_pgns_list;
       red_set.polygons_with_holes(std::back_inserter(red_pgns_list));
       int num_of_red_pgns = red_pgns_list.size();
       out_file << num_of_red_pgns << std::endl;
-      std::list<Polygon_with_holes_2>::iterator red_itr;
+      std::list<Polygon_with_holes>::iterator red_itr;
       for(red_itr = red_pgns_list.begin() ; red_itr != red_pgns_list.end() ; ++red_itr)
       {
-          const Polygon_with_holes_2& pgn = *red_itr;
+          const Polygon_with_holes& pgn = *red_itr;
           out_file<< pgn << std::endl;
       }
 
-      std::list<Polygon_with_holes_2> blue_pgns_list;
+      std::list<Polygon_with_holes> blue_pgns_list;
       int num_of_blue_pgns = blue_pgns_list.size();
       out_file << num_of_blue_pgns << std::endl;
-      std::list<Polygon_with_holes_2>::iterator blue_itr;
+      std::list<Polygon_with_holes>::iterator blue_itr;
       for(blue_itr = blue_pgns_list.begin() ; blue_itr != blue_pgns_list.end() ; ++blue_itr)
       {
-          const Polygon_with_holes_2& pgn = *blue_itr;
+          const Polygon_with_holes& pgn = *blue_itr;
           out_file<< pgn << std::endl;
       }
       out_file.close();
@@ -380,7 +436,7 @@ private:
 
      for(PgnItr itr = begin; itr != end; ++itr)
      {
-       const Polygon_with_holes_2& pgn_with_hole = *itr;
+       const Polygon_with_holes& pgn_with_hole = *itr;
        const Polygon& outer_boundary = pgn_with_hole.outer_boundary();
        widget->setFillColor (CGAL::ORANGE);
        if(outer_boundary.is_empty())
@@ -426,47 +482,25 @@ public slots:
         QMessageBox::warning( widget,"Open","Can't open file");
         return ;
       }
-      widget->lock();
-      red_set.clear();
-      blue_set.clear();
-      widget->clear_history();
-      
       CGAL::Bbox_2 box;
-      readdxf(in_file, &red_set, widget);
-      //int num_of_red_pgns;
-      //in_file >> num_of_red_pgns;
-      //
-      //// Reading the polygons from the input file.
-      //for(int i=0; i<num_of_red_pgns ; i++)
-      //{
-      //    Polygon pgn;
-      //    in_file>> pgn;
-      //    box = pgn.bbox() + box;
-      //    red_pgns.push_back(pgn);
-      //}
-
-
-      //int num_of_blue_pgns;
-      //in_file >> num_of_blue_pgns;
-      //
-      //// Reading the polygons from the input file.
-      //for(int i=0; i<num_of_blue_pgns ; i++)
-      //{
-      //    Polygon pgn;
-      //    in_file>> pgn;
-      //    box = pgn.bbox() + box;
-      //    blue_pgns.push_back(pgn);
-      //}
-
-      //double width = box.xmax() - box.xmin();
-      //double height = box.ymax() - box.ymin();
-
-      //widget->set_window(box.xmin() - width/10,
-      //                   box.xmax() + width/10,
-      //                   box.ymin() - height/10,
-      //                   box.ymax() + height/10);
+      widget->lock();
+      widget->clear_history();
+      if(red_active)
+      {
+        red_set.clear();
+        readdxf(in_file, &red_set, widget, box);
+      }
+      else  
+      {
+        blue_set.clear();
+        readdxf(in_file, &blue_set, widget, box);
+      }
+       widget->set_window(box.xmin(),
+                          box.xmax(),
+                          box.ymin(),
+                          box.ymax());
       widget->unlock();
-      //something_changed(); 
+      something_changed(); 
     }
 
 
@@ -531,7 +565,7 @@ public slots:
 
   void perform_intersection()
   {
-      std::list<Polygon_with_holes_2> res_pgns;
+      std::list<Polygon_with_holes> res_pgns;
       res_set = red_set;
       res_set.intersection(blue_set);
       res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -541,7 +575,7 @@ public slots:
 
   void perform_union()
   {
-    std::list<Polygon_with_holes_2> res_pgns;
+    std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.join(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -551,7 +585,7 @@ public slots:
 
   void perform_diff()
   {
-    std::list<Polygon_with_holes_2> res_pgns;
+    std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.difference(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -561,7 +595,7 @@ public slots:
 
   void perform_diff2()
   {
-    std::list<Polygon_with_holes_2> res_pgns;
+    std::list<Polygon_with_holes> res_pgns;
     res_set = blue_set;
     res_set.difference(red_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -571,7 +605,7 @@ public slots:
 
   void perform_symm_diff()
   {
-    std::list<Polygon_with_holes_2> res_pgns;
+    std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.symmetric_difference(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -581,7 +615,7 @@ public slots:
 
   void perform_red_complement()
   {
-    std::list<Polygon_with_holes_2> res_pgns;
+    std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.complement();
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -591,7 +625,7 @@ public slots:
 
   void perform_blue_complement()
   {
-    std::list<Polygon_with_holes_2> res_pgns;
+    std::list<Polygon_with_holes> res_pgns;
     res_set = blue_set;
     res_set.complement();
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
@@ -638,6 +672,8 @@ private slots:
     Polygon pgn;
     if(CGAL::assign(pgn,obj))
     {
+      if(pgn.orientation() == CGAL::CLOCKWISE)
+        pgn.reverse_orientation();
       if(red_active)
         red_set.join(pgn);
       else
@@ -651,6 +687,9 @@ private slots:
       {
         if(circ.is_degenerate()) // radius == 0
           return;
+
+        if(circ.orientation() == CGAL::CLOCKWISE)
+          circ = circ.opposite();
         
         std::vector<CGAL::Object> xcurves;
         xcurves.reserve(2);
@@ -749,7 +788,7 @@ private:
 int main(int argc, char **argv)
 {
   QApplication app( argc, argv );
-  MyWindow widget(512,512); // physical window size
+  MyWindow widget(532,532); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);

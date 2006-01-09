@@ -16,7 +16,7 @@ namespace CGAL
   {
 
     //Data members
-    Polygon_with_holes_2     m_pgn;
+    Polygon_with_holes     m_pgn;
   
     QWidget::FocusPolicy  m_oldpolicy;
     QCursor               m_oldcursor;
