@@ -202,9 +202,9 @@ namespace CGAL
           if(m_pgn.is_empty())
             return;
           const Arc_point_2& first_point = m_pgn.curves_begin()->source();
-          CGAL_assertion(first_point.x().is_rat() && first_point.y().is_rat());
-          FT xs = first_point.x().get_alpha();
-          FT ys = first_point.y().get_alpha();
+          CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
+          FT xs = first_point.x().alpha();
+          FT ys = first_point.y().alpha();
           m_pgn.push_back(X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys))); 
           widget->new_object(make_object(m_pgn));
           m_active = false;
@@ -266,9 +266,9 @@ namespace CGAL
             *widget << Segment_2(m_rubber, m_last_of_poly);
             const Arc_point_2& last_point = last->source();
              
-            CGAL_assertion(last_point.x().is_rat() && last_point.y().is_rat());      
-            FT xs = last_point.x().get_alpha();
-            FT ys = last_point.y().get_alpha();
+            CGAL_assertion(last_point.x().is_rational() && last_point.y().is_rational());      
+            FT xs = last_point.x().alpha();
+            FT ys = last_point.y().alpha();
                 
             *widget << Segment_2(m_rubber, Point_2(xs, ys));
             widget->setRasterOp(old_rasterop);
@@ -320,9 +320,9 @@ namespace CGAL
              *widget << Segment_2(m_rubber, m_last_of_poly);
              const Arc_point_2& last_point = first->source();
              
-             CGAL_assertion(last_point.x().is_rat() && last_point.y().is_rat());      
-             FT xs = last_point.x().get_alpha();
-             FT ys = last_point.y().get_alpha();
+             CGAL_assertion(last_point.x().is_rational() && last_point.y().is_rational());      
+             FT xs = last_point.x().alpha();
+             FT ys = last_point.y().alpha();
                 
              *widget << Segment_2(m_rubber, Point_2(xs, ys));
              widget->setRasterOp(old_rasterop);
@@ -491,9 +491,9 @@ namespace CGAL
         if(is_last_curve)
         {
           const Arc_point_2& first_point = m_pgn.curves_begin()->source();
-          CGAL_assertion(first_point.x().is_rat() && first_point.y().is_rat());
-          FT xs = first_point.x().get_alpha();
-          FT ys = first_point.y().get_alpha();
+          CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
+          FT xs = first_point.x().alpha();
+          FT ys = first_point.y().alpha();
           rubber_curve = X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys)); 
           return(does_curve_disjoint_interior(rubber_curve, is_last_curve));
         }
