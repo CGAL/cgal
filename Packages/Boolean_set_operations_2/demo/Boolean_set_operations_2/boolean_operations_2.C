@@ -47,6 +47,8 @@ int main(int, char*){
 #include <qiconset.h>
 #include <qpixmap.h> 
 #include <qpainter.h> 
+#include <qpushbutton.h> 
+
 
 #include "Qt_widget_X_monotone_circle_segment_2.h"
 #include "icons/union.xpm"
@@ -244,7 +246,8 @@ public:
     QIconSet set0(QPixmap( (const char**)intersection_xpm ),
                   QPixmap( (const char**)intersection_xpm ));
 
-    QToolButton* intersection_but = new QToolButton(bops_toolbar, "Boolean operations");
+    intersection_but = new QToolButton(bops_toolbar, "Boolean operations");
+    intersection_but->setAutoRaise(TRUE);
     
     intersection_but->setIconSet(set0);
     intersection_but->setTextLabel("Intersection ");
@@ -255,7 +258,8 @@ public:
                   QPixmap( (const char**)union_xpm ));
 
     bops_toolbar->addSeparator();
-    QToolButton* union_but = new QToolButton(bops_toolbar, "Boolean operations");
+    union_but = new QToolButton(bops_toolbar, "Boolean operations");
+    union_but->setAutoRaise(TRUE);
     
     union_but->setIconSet(set1);
     union_but->setTextLabel("Union ");
@@ -266,7 +270,8 @@ public:
                  QPixmap( (const char**)diff_PQ_xpm ));
 
     bops_toolbar->addSeparator();
-    QToolButton* diff_but2 = new QToolButton(bops_toolbar, "Boolean operations");
+    diff_but2 = new QToolButton(bops_toolbar, "Boolean operations");
+    diff_but2->setAutoRaise(TRUE);
     
     diff_but2->setIconSet(set2);
     diff_but2->setTextLabel("Blue diff Red");
@@ -277,7 +282,8 @@ public:
                  QPixmap( (const char**)diff_QP_xpm ));
 
     bops_toolbar->addSeparator();
-    QToolButton* diff_but = new QToolButton(bops_toolbar, "Boolean operations");
+    diff_but = new QToolButton(bops_toolbar, "Boolean operations");
+    diff_but->setAutoRaise(TRUE);
     
     diff_but->setIconSet(set3);
     diff_but->setTextLabel("Red diff Blue");
@@ -288,40 +294,44 @@ public:
                   QPixmap( (const char**)symm_diff_xpm ));
      bops_toolbar->addSeparator();
 
-    QToolButton* symm_diff_but = new QToolButton(bops_toolbar, "Boolean operations");
+    symm_diff_but = new QToolButton(bops_toolbar, "Boolean operations");
+    symm_diff_but->setAutoRaise(TRUE);
     
     symm_diff_but->setIconSet(set4);
     symm_diff_but->setTextLabel("Symmetric difference ");
     connect(symm_diff_but, SIGNAL(pressed()),
             this, SLOT(perform_symm_diff()));
 
-    QIconSet set5(QPixmap( (const char**)comp_p_xpm ),
-                 QPixmap( (const char**)comp_p_xpm ));
+    QIconSet set5(QPixmap( (const char**)comp_P_xpm ),
+                 QPixmap( (const char**)comp_P_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* red_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
+    blue_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
+    blue_complement_but->setAutoRaise(TRUE);
     
-    red_complement_but->setIconSet(set5);
-    red_complement_but->setTextLabel("Red Complement ");
-    connect(red_complement_but, SIGNAL(pressed()),
-            this, SLOT(perform_red_complement()));
+    blue_complement_but->setIconSet(set5);
+    blue_complement_but->setTextLabel("Blue Complement ");
+    connect(blue_complement_but, SIGNAL(pressed()),
+            this, SLOT(perform_blue_complement()));
 
     QIconSet set6(QPixmap( (const char**)comp_Q_xpm ),
                  QPixmap( (const char**)comp_Q_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* blue_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
+    red_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
+    red_complement_but->setAutoRaise(TRUE);
     
-    blue_complement_but->setIconSet(set6);
-    blue_complement_but->setTextLabel("Blue Complement ");
-    connect(blue_complement_but, SIGNAL(pressed()),
-            this, SLOT(perform_blue_complement()));
+    red_complement_but->setIconSet(set6);
+    red_complement_but->setTextLabel("Red Complement ");
+    connect(red_complement_but, SIGNAL(pressed()),
+            this, SLOT(perform_red_complement()));
 
     
     QIconSet set7(QPixmap( (const char**)make_P_xpm ),
                  QPixmap( (const char**)make_P_xpm ));
     bops_toolbar->addSeparator();
-    QToolButton* make_res_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
+    make_res_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
+    make_res_blue_but->setAutoRaise(TRUE);
     
     
     make_res_blue_but->setIconSet(set7);
@@ -332,8 +342,9 @@ public:
     QIconSet set8(QPixmap( (const char**)make_Q_xpm ),
                  QPixmap( (const char**)make_Q_xpm ));
     bops_toolbar->addSeparator();
-    QToolButton* make_res_red_but = new QToolButton(bops_toolbar, "Boolean operations");
-    
+    make_res_red_but = new QToolButton(bops_toolbar, "Boolean operations");
+    make_res_red_but->setAutoRaise(TRUE);
+
 
     make_res_red_but->setIconSet(set8);
     make_res_red_but->setTextLabel("Make result Red");
@@ -344,7 +355,8 @@ public:
                  QPixmap( (const char**)refresh_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* refresh_but = new QToolButton(bops_toolbar, "Boolean operations");
+    refresh_but = new QToolButton(bops_toolbar, "Boolean operations");
+    refresh_but->setAutoRaise(TRUE);
     
     refresh_but->setIconSet(set9);
     refresh_but->setTextLabel("Refresh ");
@@ -355,7 +367,8 @@ public:
                   QPixmap( (const char**)del_P_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* delete_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
+    delete_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
+    delete_blue_but->setAutoRaise(TRUE);
     
     delete_blue_but->setIconSet(set10);
     delete_blue_but->setTextLabel("Delete Blue Polygons");
@@ -367,7 +380,8 @@ public:
                   QPixmap( (const char**)del_Q_xpm ));
     bops_toolbar->addSeparator();
 
-    QToolButton* delete_red_but = new QToolButton(bops_toolbar, "Boolean operations");
+    delete_red_but = new QToolButton(bops_toolbar, "Boolean operations");
+    delete_red_but->setAutoRaise(TRUE);
     
     delete_red_but->setIconSet(set11);
     delete_red_but->setTextLabel("Delete Red Polygons");
@@ -643,6 +657,21 @@ public slots:
 
   void make_res_red()
   {
+    if(res_set.is_empty())
+    {
+      int answer = 0;
+      answer = QMessageBox::warning(NULL, "Store result",
+                                    QString( "Result is empty, all polygons will be deleted\n continue anyway?\n" ),
+                                    "&Yes", "&No", QString::null, 1, 1 );
+      if(answer == 1)
+      {
+        // answer in 'no'
+        make_res_red_but->setDown(FALSE);
+        return;
+      }
+      make_res_red_but->setDown(FALSE);
+    }
+    
     red_set = res_set;
     res_set.clear();
     blue_set.clear();
@@ -652,6 +681,20 @@ public slots:
 
   void make_res_blue()
   {
+    if(res_set.is_empty())
+    {
+      int answer = 0;
+      answer = QMessageBox::warning(NULL, "Store result",
+                                    QString( "Result is empty, all polygons will be deleted\n continue anyway?\n" ),
+                                    "&Yes", "&No", QString::null, 1, 1 );
+      if(answer == 1)
+      {
+        // answer in 'no'
+        make_res_blue_but->setDown(FALSE);
+        return;
+      }
+      make_res_blue_but->setDown(FALSE);
+    }
     blue_set = res_set;
     res_set.clear();
     red_set.clear();
@@ -777,18 +820,18 @@ private:
   QVButtonGroup*                       radio_group;
   Tools_toolbar*                       newtoolbar;
   QToolBar*                            bops_toolbar; 
-  QToolButton*                         intersection_but;
-  QToolButton*                         union_but;
-  QToolButton*                         diff_but;
-  QToolButton*                         diff_but2;
-  QToolButton*                         symm_diff_but;
-  QToolButton*                         red_complement_but;
-  QToolButton*                         blue_complement_but;
-  QToolButton*                         make_res_red_but;
-  QToolButton*                         make_res_blue_but;
-  QToolButton*                         refresh_but;
-  QToolButton*                         delete_red_but;
-  QToolButton*                         delete_blue_but;
+  QToolButton *                         intersection_but;
+  QToolButton *                         union_but;
+  QToolButton *                         diff_but;
+  QToolButton *                         diff_but2;
+  QToolButton *                         symm_diff_but;
+  QToolButton *                         red_complement_but;
+  QToolButton *                         blue_complement_but;
+  QToolButton *                         make_res_red_but;
+  QToolButton *                         make_res_blue_but;
+  QToolButton *                         refresh_but;
+  QToolButton *                         delete_red_but;
+  QToolButton *                         delete_blue_but;
 
   int                                  old_state;
   QString                              file_name;
