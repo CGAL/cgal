@@ -3,7 +3,6 @@ static char *make_P_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 15 1",
 /* colors */
-"& c None",
 "  c #D9D9FF",
 ". c #7C7CFF",
 "X c #B2B2FF",
@@ -14,6 +13,7 @@ static char *make_P_xpm[] = {
 "# c #8C8CFF",
 "$ c #A7A7FF",
 "% c #F8F8FF",
+"& c None",
 "* c #FFFFFF",
 "= c #9A9AFF",
 "- c #0000FF",

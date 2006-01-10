@@ -3,7 +3,6 @@ static char *make_Q_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 18 1",
 /* colors */
-"= c None",
 "  c #FFF0F0",
 ". c #FFE9E9",
 "X c #FF9A9A",
@@ -16,6 +15,7 @@ static char *make_Q_xpm[] = {
 "% c #FF0000",
 "& c #FF7C7C",
 "* c #FF6868",
+"= c None",
 "- c #FFFFFF",
 "; c #FFBDBD",
 ": c #FFF8F8",
