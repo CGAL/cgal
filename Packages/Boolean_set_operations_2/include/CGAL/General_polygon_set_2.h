@@ -834,7 +834,7 @@ inline void intersection(InputIterator1 begin1,
     pgn2arr(*itr1, *arr_vec[i]);
   }
 
-  for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
+  for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr2, *arr_vec[i]);
@@ -930,7 +930,7 @@ inline void symmetric_difference(InputIterator1 begin1,
     pgn2arr(*itr1, *arr_vec[i]);
   }
 
-  for(InputIterator2 itr = begin2; itr2!=end2; ++itr2, ++i)
+  for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
     pgn_with_holes2arr(*itr2, *arr_vec[i]);

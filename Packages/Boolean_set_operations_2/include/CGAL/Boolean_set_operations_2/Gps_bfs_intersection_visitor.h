@@ -36,7 +36,7 @@ public:
 
     // only faces that have inside counter equal to the number of polygons
     // which are intersectd, will be marked true (containted)
-    if(ic_f2 == m_num_of_polygons)
+    if(ic_f2 == this->m_num_of_polygons)
       f2->set_contained(true);
   }
 
