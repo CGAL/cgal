@@ -4,7 +4,6 @@
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Stream_lines_2.h>
-#include <CGAL/Euler_integrator_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Triangular_field_2.h>
 

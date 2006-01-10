@@ -4,7 +4,6 @@
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Stream_lines_2.h>
-#include <CGAL/Euler_integrator_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
 #include <CGAL/Triangular_field_2.h>
@@ -14,7 +13,10 @@ typedef CGAL::Cartesian<coord_type> K;
 typedef CGAL::Regular_grid_2<K> Field;
 typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
+typedef Stl::Point_iterator_2 Point_iterator;
 typedef Stl::Stream_line_iterator_2 Stl_iterator;
+typedef Stl::Point_2 Point_2;
+typedef Stl::Vector_2 Vector_2;
 
 int main()
 {
@@ -35,9 +37,8 @@ int main()
         double xval, yval;
         infile >> xval;
         infile >> yval;
-        regular_grid_2.set_field(i, j, xval, yval);
+        regular_grid_2.set_field(i, j, Vector_2(xval, yval));
       }
-
   infile.close();
   
   /* the placement of streamlines */  
@@ -50,6 +51,13 @@ int main()
   /*writing streamlines to streamlines_on_regular_grid.stl */
   std::cout << "streamlines_on_regular_grid.stl\n";
   std::ofstream fw("streamlines_on_regular_grid.stl",std::ios::out);
-  Stream_lines.print_stream_lines(fw);
-  
+
+  fw << Stream_lines.number_of_lines() << "\n";
+  for(Stl_iterator sit = Stream_lines.begin(); sit != Stream_lines.end(); sit++){
+    fw << "\n";
+    for(Point_iterator pit = sit->first; pit != sit->second; pit++){
+      Point_2 p = *pit;
+      fw << p.x() << " " << p.y() << "\n";}}
+  fw.close();
+
 }
