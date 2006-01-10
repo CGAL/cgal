@@ -498,6 +498,8 @@ public slots:
         return ;
       }
       CGAL::Bbox_2 box;
+      QCursor old = widget->cursor();
+      widget->setCursor(Qt::WaitCursor);
       widget->lock();
       widget->clear_history();
       if(red_active)
@@ -516,7 +518,8 @@ public slots:
                           box.ymax());
       widget->unlock();
       newtoolbar->reset();
-      something_changed(); 
+      something_changed();
+      widget->setCursor(old);
     }
 
 
@@ -581,38 +584,47 @@ public slots:
 
   void perform_intersection()
   {
-      std::list<Polygon_with_holes> res_pgns;
-      res_set = red_set;
-      res_set.intersection(blue_set);
-      res_set.polygons_with_holes(std::back_inserter(res_pgns));
-      newtoolbar->reset();
-      draw_result(res_pgns.begin(), res_pgns.end());
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
+    std::list<Polygon_with_holes> res_pgns;
+    res_set = red_set;
+    res_set.intersection(blue_set);
+    res_set.polygons_with_holes(std::back_inserter(res_pgns));
+    newtoolbar->reset();
+    draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void perform_union()
   {
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
     std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.join(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
-    newtoolbar->reset();
-  
+    newtoolbar->reset();  
     draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void perform_diff()
   {
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
     std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.difference(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
     newtoolbar->reset();
-  
     draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void perform_diff2()
   {
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
     std::list<Polygon_with_holes> res_pgns;
     res_set = blue_set;
     res_set.difference(red_set);
@@ -620,10 +632,13 @@ public slots:
     newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void perform_symm_diff()
   {
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
     std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.symmetric_difference(blue_set);
@@ -631,10 +646,13 @@ public slots:
     newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void perform_red_complement()
   {
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
     std::list<Polygon_with_holes> res_pgns;
     res_set = red_set;
     res_set.complement();
@@ -642,10 +660,13 @@ public slots:
     newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void perform_blue_complement()
   {
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
     std::list<Polygon_with_holes> res_pgns;
     res_set = blue_set;
     res_set.complement();
@@ -653,6 +674,7 @@ public slots:
     newtoolbar->reset();
   
     draw_result(res_pgns.begin(), res_pgns.end());
+    widget->setCursor(old);
   }
 
   void make_res_red()
