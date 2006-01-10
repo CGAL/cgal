@@ -999,8 +999,14 @@ Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.bm
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.bmp -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.xpm -text
+Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.bmp -text svneol=unset#unset
+Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.xpm -text
+Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.bmp -text svneol=unset#unset
+Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.bmp -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.xpm -text
+Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.bmp -text svneol=unset#unset
+Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.bmp -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.bmp -text svneol=unset#unset
