@@ -247,6 +247,8 @@ public:
                                         map_copied_to_orig_vertices,
                                         fakes_exist);
     copied_arr_timer.stop();
+    CGAL_assertion(is_valid(copied_face_arr));
+    
     map_copied_to_orig_faces[copied_face] = face;
     
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
@@ -343,6 +345,8 @@ public:
       else
         CGAL_assertion_msg(false, "wrong projected intersection type");
     }
+
+
 
 
     zone_visitor.finish();
@@ -1232,6 +1236,7 @@ protected:
             h->get_has_equal_aux_data_in_target(1));
   }
 
+
   template <class OutputIterator>
   OutputIterator find_ccb_unique_edges(Ccb_halfedge_circulator hec,
                                        OutputIterator o)
@@ -1293,6 +1298,7 @@ protected:
 
     Isolated_vertices_iterator iso_iter = face->isolated_vertices_begin();
     for (; iso_iter != face->isolated_vertices_end(); ++iso_iter)
+
     {
       Vertex_handle vh = iso_iter;
       if (!vh->is_decision_set() && has_equal_aux_data_with_face(vh))
@@ -1622,17 +1628,17 @@ protected:
   
   // copy the halfedges of a ccb (in from) to the md "to" inside the face inside_face
   void copy_ccb(Ccb_halfedge_circulator hec, // the circulator to insert
+                Minimization_diagram_2 &from,// the original arrangement
                 Face_handle inside_face,     // the face in which we insert it
                 Minimization_diagram_2 &to,  // the arrangement to which we insert
                 Halfedges_map& map_copied_to_orig_halfedges,
                 Vertices_map&  map_copied_to_orig_vertices,
                 Halfedges_map& map_orig_to_copied_halfedges,
                 Vertices_map&  map_orig_to_copied_vertices,
+                bool is_outer_ccb, // do we copy an outer (or inner) ccb
                 bool& fakes_exist) // this bool is assumed to be initialized already
   {
-    // TODO: the insert methods we use here use some geometric operations
-    // which can be avoided since we have that knowledge from the original map
-    // this is seen when using a filtered kernel.
+    Md_accessor to_accessor(to);
     
     Ccb_halfedge_circulator hec_begin = hec;
     bool first_he = true;
@@ -1661,16 +1667,16 @@ protected:
         if (first_he)
         {             
           first_he = false;
-          // prev_he is the halfedge that points to the curve's max (right) vertex
-          copied_prev_he = to.insert_in_face_interior(current_cv, inside_face);
-          // make prev_he the same direction as hh (the original halfedge
-          // it was copied from)
-          if (hh->direction() != copied_prev_he->direction())
-          {
-            CGAL_assertion(copied_prev_he->target()->point() != hh->target()->point());
-            copied_prev_he = copied_prev_he->twin();
-          }
-
+          // create the 2 vertices and connect them with the edge
+          // copied_prev_he should be directed from copied_source to copied_target
+          Vertex_handle copied_source = to_accessor.create_vertex(hh->source()->point());
+          Vertex_handle copied_target = to_accessor.create_vertex(hh->target()->point());
+          copied_prev_he = to_accessor.insert_in_face_interior_ex(current_cv,
+                                                                  inside_face,
+                                                                  copied_source,
+                                                                  copied_target,
+                                                                  hh->direction());
+                                                                          
           map_copied_to_orig_halfedges[copied_prev_he] = hh;
           map_orig_to_copied_halfedges[hh] = copied_prev_he;
           map_copied_to_orig_halfedges[copied_prev_he->twin()] = hh->twin();
@@ -1699,23 +1705,13 @@ protected:
           Halfedge_handle copied_new_he;
           if (!use_2_vertices)
           {
-            // we should know if the existing vertex is the left or right
-            // endpoint of the curve "current_cv" - we can use the direction
-            // of the edge in the original arrangement, since its source is the
-            // existing vertex.
-            if (hh->direction() == SMALLER)
-            {
-              CGAL_assertion(traits->equal_2_object()(copied_prev_he->target()->point(),
-                                                      traits->construct_min_vertex_2_object()(current_cv)));
-              copied_new_he = to.insert_from_left_vertex(current_cv, copied_prev_he);
-            }
-            else
-            {
-              CGAL_assertion(hh->direction() == LARGER);
-              CGAL_assertion(!traits->equal_2_object()(copied_prev_he->target()->point(),
-                                                      traits->construct_min_vertex_2_object()(current_cv)));
-              copied_new_he = to.insert_from_right_vertex(current_cv, copied_prev_he);
-            }
+            // create vertex for the new target, and insert the new edge
+            Vertex_handle copied_target = to_accessor.create_vertex(hh->target()->point());
+            copied_new_he = to_accessor.insert_from_vertex_ex(current_cv,
+                                                              copied_prev_he,
+                                                              copied_target,
+                                                              hh->direction());
+
             
             // the target of copied_new_he is the new vertex, so it is directed
             // the same way as hh in "from"
@@ -1732,10 +1728,116 @@ protected:
                         << std::endl;
             #endif
 
-            // copied_v2 is the target of copied_new_he, so copied_new_he is
-            // directed the same way as hh in "from"
-            copied_new_he = to.insert_at_vertices(current_cv,
-                                                  copied_prev_he, copied_v2);
+            // in order to insert the new edge we should determine the prev
+            // halfedge of copied_v2 - this is done be going backwards on the
+            // ccb (in the copied arrangement) until finding the first halfedge
+            // with target copied_v2
+            // (note that going on twin()->next() is problematic in case that
+            // the inner boundary we traverse is made of several faces)
+            Halfedge_handle copied_prev_v2 = copied_prev_he;
+            while(copied_prev_v2->source() != copied_v2)
+              copied_prev_v2 = copied_prev_v2->prev();
+            copied_prev_v2 = copied_prev_v2->twin();
+
+            CGAL_assertion_code(
+              Halfedge_handle tmp =
+                  to_accessor.locate_around_vertex(copied_v2, current_cv);
+            );
+            CGAL_assertion(tmp == copied_prev_v2);
+
+            bool new_face;
+            if (is_outer_ccb)
+            {
+              // TODO:can we use accessor method?
+              copied_new_he = to.insert_at_vertices(current_cv, copied_prev_he, copied_prev_v2);
+
+//              // in order to use the accessor version, we need to identify
+//              // the order in which to pass the halfedges
+//              // (we should be careful in cases like this:)
+//              //       _____
+//              //      /     \
+//              //      |/\   |
+//              //      |\/   |
+//              //      \     /
+//              //       -----
+//
+//              // we check copied_prev_v2->twin() (in the original arrangement):
+//              // -- if it is on hole, then we must close the copied face,
+//              //    and we keep the original order
+//              // -- if not, we start walking from it (by next()) and check that
+//              //    the twin() always points to the face that we copy. if we can
+//              //    make a whole loop and get back to the first halfedge with
+//              //    this condition, we close a face inside the copied face, and
+//              //    need to swap the order of halfedges. if the condition is
+//              //    false before we finish the loop, than we close the original
+//              //    face (and keep the halfedges order)
+//              CGAL_assertion(map_copied_to_orig_halfedges.is_defined(
+//                                                     copied_prev_v2->twin()));
+//              Halfedge_handle orig_prev2 =
+//                          map_copied_to_orig_halfedges[copied_prev_v2->twin()];
+//              Md_accessor from_accessor(from);
+//              if (from_accessor.is_on_inner_boundary(orig_prev2))
+//              {
+//                std::cout << "on inner boundary" << std::endl;
+//                copied_new_he = to_accessor.insert_at_vertices_ex
+//                                                     (current_cv,
+//                                                      copied_prev_he,
+//                                                      copied_prev_v2,
+//                                                      hh->direction(),
+//                                                      new_face);
+//              }
+//              else
+//              {
+//
+//                Face_handle original_face = hh->face();
+//                Halfedge_handle walk_he = orig_prev2->next();
+//                while (walk_he != orig_prev2 &&
+//                       walk_he->twin()->face() == original_face)
+//                  walk_he = walk_he->next();
+//                if (walk_he == orig_prev2)
+//                {
+//                  std::cout << "finish a loop - swap the order" << std::endl;
+//                  // finish a loop - swap the order
+//                  copied_new_he = to_accessor.insert_at_vertices_ex
+//                                                       (current_cv,
+//                                                        copied_prev_v2,
+//                                                        copied_prev_he,
+//                                                        hh->twin()->direction(),
+//                                                        new_face);
+//                  copied_new_he = copied_new_he->twin();
+//                }
+//                else
+//                {
+//                  std::cout << "not a loop - keep the order" << std::endl;
+//                   copied_new_he = to_accessor.insert_at_vertices_ex
+//                                                       (current_cv,
+//                                                        copied_prev_he,
+//                                                        copied_prev_v2,
+//                                                        hh->direction(),
+//                                                        new_face);
+//                 }
+//              }
+            }
+            else // copy inner boundary
+            {
+              // should always flip the side of the edge, because the face
+              // that we close is never the copied face, even in strane
+              // situations like this: (two faces thouch in vertex)
+              //     ------         |\  /|
+              //     | |\ |         | \/ |
+              //     | | \|         | /\ |
+              //     ---            |/  \|
+              //
+              //
+              copied_new_he = to_accessor.insert_at_vertices_ex(current_cv,
+                                                                copied_prev_v2,
+                                                                copied_prev_he,
+                                                                hh->twin()->direction(),
+                                                                new_face);
+              copied_new_he = copied_new_he->twin();
+            }
+
+            CGAL_assertion(copied_new_he->target() == copied_v2);
           }
           // update the halfedges maps:
           map_copied_to_orig_halfedges[copied_new_he] = hh;
@@ -1753,6 +1855,7 @@ protected:
         #endif
 
       }
+
       hec++;
     } while(hec != hec_begin);
 
@@ -1782,16 +1885,19 @@ protected:
 
     // first deal with outer boundary
     Ccb_halfedge_circulator hec = face->outer_ccb();
-    copy_ccb(hec, to_uf, to,
+    copy_ccb(hec, from, to_uf, to,
              map_copied_to_orig_halfedges,
              map_copied_to_orig_vertices,
              map_orig_to_copied_halfedges,
              map_orig_to_copied_vertices,
+             true,
              fakes_exist);
+    CGAL_assertion(is_valid(to));
 
     // we need to find the copied face
     Holes_iterator to_uf_hi = to_uf->holes_begin();
     Ccb_halfedge_circulator to_uf_hec = (*to_uf_hi);
+    CGAL_assertion(to_uf->number_of_holes() == 1);
     Halfedge_handle to_f_he = to_uf_hec->twin();
 
     // second, deal with inner boundaries
@@ -1805,12 +1911,14 @@ protected:
         std::cout << "copying hole" << std::endl;
       #endif
       Ccb_halfedge_circulator he = (*hole_iter);
-      copy_ccb(he, to_f_he->face(), to,
+      copy_ccb(he, from, to_f_he->face(), to,
                map_copied_to_orig_halfedges,
                map_copied_to_orig_vertices,
                map_orig_to_copied_halfedges,
                map_orig_to_copied_vertices,
+               false,
                fakes_exist);
+      CGAL_assertion(is_valid(to));
     }
 
     // find the face in "to"
@@ -2022,6 +2130,7 @@ protected:
           (*special_vertices)[org_he->target()] =
                               special_vertices->default_value();
 
+
         // update the boundary vertices collection
         (*boundary_vertices)[org_he->target()] =
                              boundary_vertices->default_value();
@@ -2111,6 +2220,7 @@ protected:
       new_vertices.push_back(v);
     }
 
+
     virtual void before_create_edge (const X_monotone_curve_2& /* c */,
   				                           Vertex_handle v1,
   				                           Vertex_handle v2)
@@ -2121,6 +2231,7 @@ protected:
 
       is_in_relocate = false;
     }
+
     virtual void after_create_edge (Halfedge_handle e)
 
     {
@@ -2506,6 +2617,7 @@ protected:
     }
 
 
+
     virtual ~Copied_face_zone_visitor() { }
 
     // the zone visitor functions
@@ -2838,6 +2950,7 @@ protected:
       copied_arr.get_traits()->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
 
 
+
       split_he = copied_arr.split_edge (he, sub_cv1, sub_cv2);
 
       // if the edge is a boundary edge, then the new vertex is a special vertex
@@ -2947,6 +3060,7 @@ protected:
 //              ((result_v->is_isolated() && parent->has_equal_aux_data_with_face(result_v)) ||
 //               (!result_v->is_isolated()))) // todo - have a problem here since we don't have the
 //                                            // halfedge pointing to result_v, and not sure, if it would suffice
+
               parent->has_equal_aux_data(result_v, result_original_face))
           {
             result_special_vertices.push_back(result_v); 
