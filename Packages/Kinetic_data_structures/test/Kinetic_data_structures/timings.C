@@ -177,7 +177,7 @@ template < class Traits > void test_del(const char *nm)
 {
     std::cout << "Solver: " << nm << std::endl;
     for (unsigned int i = 1; i < 9; ++i) {
-      printf("%6f\t", test_del < Traits > (i,static_cast<int>( std::ceil(20/std::sqrt(static_cast<double>(i))))));
+      printf("%6f\t", test_del < Traits > (i,static_cast<int>( std::ceil(20.0/std::sqrt(static_cast<double>(i))))));
         std::cout << std::flush;
         if (i > 4)
             ++i;
