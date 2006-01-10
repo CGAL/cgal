@@ -46,7 +46,7 @@ point in space. For example, a gravitational field assigns a
 gravitational potential to each point in space.\\
 
 Vector and direction fields are commonly used for modeling physical
-phenomena, where a direction and magnitude, or a vector is assigned to
+phenomena, where a direction and magnitude, namely a vector is assigned to
 each point inside a domain (such as the magnitude and direction of the
 force at each point in a magnetic field).\\
 
@@ -73,7 +73,7 @@ field. The construction of this path consists in the solving an
 ordinary differential equation for successive time intervals. In this
 way, we obtain a series of points $p_k, 0<k<n$ which allow visualizing
 the streamline. The differential equation is defined as follows :
-$$\frac{dp}{dt} = v(p(t)), p(0) = p_0$$ where \ccc{p(t)} is the
+$$\frac{dp}{dt} = v(p(t)), \ \ \ \ \ \ p(0) = p_0$$ where \ccc{p(t)} is the
 position of the particle at time \ccc{t}, \ccc{v} is a function which
 assigns a vector value at each point in the domain (possibly by
 interpolation), and $p_0$ is the initial position.  The position after
@@ -102,8 +102,8 @@ Second Order Runge Kutta algorithm are implemented.
 This algorithm approximates the point computation by this formula
 $$p_{k+1} = p_k + hv(p_k)$$ where \ccc{h} specifies the
 \ccc{integration step} (see~Figure~\ref{euler_fig}). The integration
-can be done forward, resp. backward by specifying a positive,
-resp. negative integration step \ccc{h}. The streamline is then
+can be done forward (resp. backward) by specifying a positive
+(resp. negative) integration step \ccc{h}. The streamline is then
 constructed by successive integration from a seed point both forward
 and backward.
 
@@ -124,8 +124,8 @@ and backward.
 \end{ccHtmlOnly}
 \end{figure}
 
-This method introduces an intermediate point \ccc{p'} to increase the
-precision of the computation (see~Figure~\ref{runge_kutta_fig}).
+This method introduces an intermediate point \ccc{p'_k} between $p_k$ and $p_{k+1}$ to increase the
+precision of the computation (see~Figure~\ref{runge_kutta_fig}), where:
 
 $$
 \left\{ \begin{array}{ccccc}
@@ -143,7 +143,7 @@ integration.
 
 The algorithm implemented in this package~\cite{cgal:mad-fpsep-05}
 consists of placing one streamline at a time by numerical integration
-starting at the farthest away from all previously placed
+starting farthest away from all previously placed
 streamlines.\\
 
 The input of our algorithm is given by (i) a flow field, (ii) a
@@ -154,7 +154,7 @@ the seeding of a new streamline.\\
 
 
 The input flow field is given by a discrete set of vectors or
-directions sampled within a domain, associated to an interpolation
+directions sampled within a domain, associated with an interpolation
 scheme (\textit{e.g.} bilinear interpolation over a regular grid, or
 natural neighbor interpolation over an irregular point set to allow
 for an evaluation at each point coordinate within the domain).\\
@@ -191,7 +191,7 @@ guarantees the domain saturation.
 \label{Section_2D_Streamlines_Implementation}
 
 Streamlines are represented as polylines, and are obtained by
-iterative integration from the seed point. The computation is
+iterative integration from the seed point. A polyline is represented as a range of points. The computation is
 processed via a list of Delaunay triangulation vertices.\\
 
 To implement the triangular grid, the \cgal\

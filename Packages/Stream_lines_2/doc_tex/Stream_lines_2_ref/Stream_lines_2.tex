@@ -55,7 +55,7 @@ streamlines:
 
 
 \ccCreation
-\ccCreationVariable{streamlines_2}  %% choose variable name
+\ccCreationVariable{stl}  %% choose variable name
 
 
 \ccThree{Stream_lines_2<>}{t = Streamlines__2 Streamlines}{}
@@ -66,16 +66,27 @@ separating_distance, FT saturation_ratio);}
 
 \ccHeading{Modifiers}
 
-\ccMethod{void change_separating_distance(FT new_value);}{Modify the
+\ccMethod{void set_separating_distance(FT new_value);}{Modify the
 separating distance.}
 \ccGlue
 
-\ccMethod{void change_saturation_ratio(FT new_value);}{Modify the
+\ccMethod{void set_saturation_ratio(FT new_value);}{Modify the
 saturation ratio.}
 \ccGlue
 
 \ccMethod{void update();}{Update the placement after changing the
 separating distance or the saturation ratio.}
+\ccGlue
+
+\ccHeading{Access Functions}
+
+\ccMethod{void get_separating_distance();}{returns the separating distance.}
+\ccGlue
+
+\ccMethod{void get_saturation_ratio();}{returns the saturation ratio.}
+\ccGlue
+
+\ccMethod{void print_stream_lines(std::ofstream & fw);}{prints the streamlines to an ASCII file : line by line, and point by point.}
 \ccGlue
 
 \ccHeading{Streamline iterators}
