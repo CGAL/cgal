@@ -7,13 +7,10 @@
 #include "boolean_operations_2_toolbar.h"
 
 // icons
-#include <CGAL/IO/pixmaps/movepoint.xpm>
-#include <CGAL/IO/pixmaps/point.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
-#include <CGAL/IO/pixmaps/polygon.xpm>
-#include <CGAL/IO/pixmaps/notool.xpm>
-#include <CGAL/IO/pixmaps/voronoi.xpm>
-#include "demo_pointlocation.xpm"
+#include "icons/insert_circle.xpm"
+#include "icons/insert_polygon.xpm"
+#include "icons/locate.xpm"
 
 
 
@@ -45,16 +42,12 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
-    QIconSet set1(QPixmap( (const char**)point_small_xpm ),
-                  QPixmap( (const char**)point_xpm ));
-    QIconSet set2(QPixmap( (const char**)movepoint_small_xpm ),
-                  QPixmap( (const char**)movepoint_xpm ));
-    QIconSet set3(QPixmap( (const char**)polygon_small_xpm ),
-                  QPixmap( (const char**)polygon_xpm ));
-    QIconSet set4(QPixmap( (const char**)pointlocation_xpm ),
-                  QPixmap( (const char**)pointlocation_xpm ));
-    QIconSet set5(QPixmap( (const char**)circle_xpm ),
-                  QPixmap( (const char**)circle_small_xpm ));
+    QIconSet set1(QPixmap( (const char**)insert_polygon_xpm ),
+                  QPixmap( (const char**)insert_polygon_xpm ));
+    QIconSet set2(QPixmap( (const char**)insert_circle_xpm ),
+                  QPixmap( (const char**)insert_circle_xpm ));
+    QIconSet set3(QPixmap( (const char**)locate_xpm ),
+                  QPixmap( (const char**)locate_xpm ));
     
 
 
@@ -63,13 +56,13 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
   but[1] = new QToolButton(this, "polygontool");
-  but[1]->setIconSet(set3);
-  but[1]->setTextLabel("Input Polygon");
+  but[1]->setIconSet(set1);
+  but[1]->setTextLabel("Insert Circluar Polygon");
   but[2] = new QToolButton(this, "circletool");
-  but[2]->setIconSet(set5);
-  but[2]->setTextLabel("Input Circle");
+  but[2]->setIconSet(set2);
+  but[2]->setTextLabel("Insert Circle");
   but[3] = new QToolButton(this, "locatetool");
-  but[3]->setIconSet(set4);
+  but[3]->setIconSet(set3);
   but[3]->setTextLabel("Locate Polygon");
  
    

@@ -67,6 +67,7 @@ int main(int, char*){
 
 
 
+
 //global flags and variables
 int current_state;
 bool red_active = false; 
@@ -90,12 +91,11 @@ public:
     widget->lock(); // widget have to be locked before drawing 
     widget->setFilled (true);
     widget->setFillColor (CGAL::RED);
-    *widget << CGAL::PointSize(2); // size of point
     *widget <<  CGAL::RED; // color for the polygons
     std::list<Polygon_with_holes> red_pgns_list;
     red_set.polygons_with_holes(std::back_inserter(red_pgns_list));
     std::list<Polygon_with_holes>::iterator itpgn1 = red_pgns_list.begin();
-
+    
     while(itpgn1 != red_pgns_list.end())
     {
       const Polygon_with_holes& pgn_with_hole = *itpgn1;
@@ -120,12 +120,12 @@ public:
       ++itpgn1;
     }
    
-    RasterOp old_rasterop = widget->rasterOp();
-    widget->get_painter().setRasterOp(XorROP);
+    
     widget->setFilled (true);
     widget->setFillColor (CGAL::BLUE);
-    *widget << CGAL::PointSize(2);
-    *widget << CGAL::BLUE; // color of circle
+    *widget << CGAL::BLUE; // color of polygon
+    RasterOp old_rasterop = widget->rasterOp();
+    widget->get_painter().setRasterOp(XorROP);
 
     std::list<Polygon_with_holes> blue_pgns_list;
     blue_set.polygons_with_holes(std::back_inserter(blue_pgns_list));
@@ -144,7 +144,9 @@ public:
          *widget << rect;
        }
        else  
+       {
          *widget << outer_boundary;
+       }
       widget->setFillColor ( CGAL::BLUE);
       for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
@@ -274,7 +276,7 @@ public:
     diff_but2->setAutoRaise(TRUE);
     
     diff_but2->setIconSet(set2);
-    diff_but2->setTextLabel("Blue diff Red");
+    diff_but2->setTextLabel("Difference between Blue and Red");
     connect(diff_but2, SIGNAL(pressed()),
             this, SLOT(perform_diff2()));
 
@@ -286,7 +288,7 @@ public:
     diff_but->setAutoRaise(TRUE);
     
     diff_but->setIconSet(set3);
-    diff_but->setTextLabel("Red diff Blue");
+    diff_but->setTextLabel("Difference between Red and Blue");
     connect(diff_but, SIGNAL(pressed()),
             this, SLOT(perform_diff()));
 
@@ -298,7 +300,7 @@ public:
     symm_diff_but->setAutoRaise(TRUE);
     
     symm_diff_but->setIconSet(set4);
-    symm_diff_but->setTextLabel("Symmetric difference ");
+    symm_diff_but->setTextLabel("Symmetric Difference ");
     connect(symm_diff_but, SIGNAL(pressed()),
             this, SLOT(perform_symm_diff()));
 
@@ -335,7 +337,7 @@ public:
     
     
     make_res_blue_but->setIconSet(set7);
-    make_res_blue_but->setTextLabel("Make result Blue");
+    make_res_blue_but->setTextLabel("Make Result Blue");
     connect(make_res_blue_but,SIGNAL(pressed()),
             this, SLOT(make_res_blue()));
 
@@ -347,7 +349,7 @@ public:
 
 
     make_res_red_but->setIconSet(set8);
-    make_res_red_but->setTextLabel("Make result Red");
+    make_res_red_but->setTextLabel("Make Result Red");
     connect(make_res_red_but,SIGNAL(pressed()),
             this, SLOT(make_res_red()));
 
@@ -404,8 +406,6 @@ public:
     //application flag stuff
     old_state = 0;
   };
-
-  
 
 private:
   void something_changed(){current_state++;};
@@ -660,7 +660,7 @@ public slots:
     if(res_set.is_empty())
     {
       int answer = 0;
-      answer = QMessageBox::warning(NULL, "Store result",
+      answer = QMessageBox::warning(this, "Store result",
                                     QString( "Result is empty, all polygons will be deleted\n continue anyway?\n" ),
                                     "&Yes", "&No", QString::null, 1, 1 );
       if(answer == 1)
@@ -684,7 +684,7 @@ public slots:
     if(res_set.is_empty())
     {
       int answer = 0;
-      answer = QMessageBox::warning(NULL, "Store result",
+      answer = QMessageBox::warning(this, "Store result",
                                     QString( "Result is empty, all polygons will be deleted\n continue anyway?\n" ),
                                     "&Yes", "&No", QString::null, 1, 1 );
       if(answer == 1)
@@ -844,7 +844,7 @@ private:
 int main(int argc, char **argv)
 {
   QApplication app( argc, argv );
-  MyWindow widget(532,532); // physical window size
+  MyWindow widget(600,400); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
