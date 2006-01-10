@@ -210,6 +210,21 @@ public:
 };
 
 /*!
+ * Compute an isolating interval for the one-root number.
+ */
+template <class NT, bool FL>
+std::pair<double, double> to_interval (const _One_root_number<NT, FL>& x)
+{
+  const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha());
+  const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta());
+  const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma());
+  const CGAL::Interval_nt<true>&  x_in = alpha_in + 
+                                         (beta_in * CGAL::sqrt(gamma_in));
+
+  return (std::make_pair (x_in.inf(), x_in.sup()));
+}
+
+/*!
  * Add a rational number and a one-root number.
  */
 template <class NT, bool FL>
@@ -510,21 +525,6 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
     return (swap_res ? LARGER : SMALLER);
   else
     return (EQUAL);
-}
-
-/*!
- * Compute an isolating interval for the one-root number.
- */
-template <class NT, bool FL>
-std::pair<double, double> to_interval (const _One_root_number<NT, FL>& x)
-{
-  const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha());
-  const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta());
-  const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma());
-  const CGAL::Interval_nt<true>&  x_in = alpha_in + 
-                                         (beta_in * CGAL::sqrt(gamma_in));
-
-  return (std::make_pair (x_in.inf(), x_in.sup()));
 }
 
 CGAL_END_NAMESPACE
