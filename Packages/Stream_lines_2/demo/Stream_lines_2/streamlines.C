@@ -1,3 +1,18 @@
+// if QT is not installed, a message will be issued in runtime.
+#ifndef CGAL_USE_QT
+#include <iostream>
+
+int main(int, char*)
+{
+
+  std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
+
 #include <qapplication.h>
 #include <qfont.h>
 #include <qpushbutton.h>
@@ -28,6 +43,7 @@ typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterator_2 Stl_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_iterator_2 Pt_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_2 Point;
+typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Vector_2 Vector;
 
 bool d_stl = true;
 bool d_pq  = false;
@@ -127,7 +143,7 @@ public slots :
 					double xval, yval;
 					infile >> xval;
 					infile >> yval;
-					regular_grid->set_field(i, j, xval, yval);
+					regular_grid->set_field(i, j, Vector(xval, yval));
 				}
 		infile.close();
 		completed = false;
@@ -611,3 +627,4 @@ int main(int argc, char *argv[])
 	return app.exec();
 }
 
+#endif
