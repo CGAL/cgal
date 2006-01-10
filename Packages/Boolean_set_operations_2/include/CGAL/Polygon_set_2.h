@@ -38,7 +38,7 @@ public:
 
 private:
 
-  typedef Bso_dcel<Traits_2>                              Bso_dcel;  
+  typedef Bso_dcel<Traits_2>                              Bso_dcel;
 
 public:
 

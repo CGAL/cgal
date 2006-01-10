@@ -63,7 +63,6 @@ public:
   typedef typename Traits_2::Construct_curves_2           Construct_curves_2;
   typedef typename Traits_2::Curve_const_iterator         Curve_const_iterator;
   typedef typename Traits_2::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
-  typedef typename Traits_2::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
   typedef typename Traits_2::Construct_opposite_2         Construct_opposite_2;
 
   typedef Bso_dcel<Traits_2>                                Bso_dcel;  
