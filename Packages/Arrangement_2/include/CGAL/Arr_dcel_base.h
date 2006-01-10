@@ -37,24 +37,24 @@ CGAL_BEGIN_NAMESPACE
 
 inline void* _clean_pointer (const void* p)
 {
-  const unsigned int  mask = ~1;
-  const unsigned int  val = (reinterpret_cast<unsigned int>(p) & mask);
+  const size_t  mask = ~1;
+  const size_t  val = (reinterpret_cast<size_t>(p) & mask);
 
   return (reinterpret_cast<void*> (val));
 }
 
 inline void* _set_lsb (const void* p)
 {
-  const unsigned int  mask = 1;
-  const unsigned int  val = (reinterpret_cast<unsigned int>(p) | mask);
+  const size_t  mask = 1;
+  const size_t  val = (reinterpret_cast<size_t>(p) | mask);
 
   return (reinterpret_cast<void*> (val));
 }
 
 inline bool _is_lsb_set (const void* p)
 {
-  const unsigned int  mask = 1;
-  const unsigned int  val = reinterpret_cast<unsigned int>(p);
+  const size_t  mask = 1;
+  const size_t  val = reinterpret_cast<size_t>(p);
 
   return ((val & mask) != 0); 
 }
@@ -549,7 +549,7 @@ public:
     typename F::Holes_const_iterator::iterator_category> Holes_const_iterator;
 
   /*! Get the number of holes inside the face. */
-  unsigned int number_of_holes() const
+  size_t number_of_holes() const
   {
     return (this->holes.size());
   }
@@ -607,7 +607,7 @@ public:
                                               Isolated_vertices_const_iterator;
 
   /*! Get the number of isloated vertices inside the face. */
-  unsigned int number_of_isolated_vertices() const
+  size_t number_of_isolated_vertices() const
   {
     return (this->iso_verts.size());
   }
