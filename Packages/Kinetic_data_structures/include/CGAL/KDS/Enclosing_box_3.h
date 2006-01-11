@@ -79,7 +79,7 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
 
     typedef Enclosing_box_bounce_event_3<This> Event;
     friend class Enclosing_box_bounce_event_3<This>;
-    typedef typename Simulator::Function_kernel::Function Function;
+    typedef typename Simulator::Function_kernel::Function Coordinate;
     public:
         enum Side {TOP=0, BOTTOM=1, LEFT=2, RIGHT=3, FRONT=4, BACK=5};
 
@@ -169,9 +169,9 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
 /*typename Traits::Simulator::Function_kernel::Create_function cf
   = traits_.simulator_pointer()->function_kernel().create_function_object();*/
 
-            Point pt(Function(coefs[0].begin(), coefs[0].end()),
-                Function(coefs[1].begin(), coefs[1].end()),
-                Function(coefs[2].begin(), coefs[2].end()));
+            Point pt(Coordinate(coefs[0].begin(), coefs[0].end()),
+		     Coordinate(coefs[1].begin(), coefs[1].end()),
+		     Coordinate(coefs[2].begin(), coefs[2].end()));
 //std::cout << "Changing motion from " << traits_.active_objects_table_pointer()->at(k) << " to " << pt << std::endl;
             traits_.active_objects_table_pointer()->set(k, pt);
 // CGAL_assertion(traits_.active_objects_table_pointer()->at(k) == pt);
@@ -186,7 +186,7 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
 
         Side try_bound(Side try_side, Point_key k,Side old_side,  double& old_time) const
         {
-            Function nf;
+            Coordinate nf;
             NT bound=bounds_[try_side];
             if (try_side== TOP || try_side==BOTTOM) {
                 nf=traits_.active_objects_table_pointer()->at(k).y()-bound;
@@ -233,7 +233,7 @@ if (!re.finished()){
             }
         }
 
-        void compute_bounce(const Function& f, NT t, std::vector<NT> &out) {
+        void compute_bounce(const Coordinate& f, NT t, std::vector<NT> &out) {
 // x is contant
 // v is negative v
 // higher order coefs on constant
@@ -246,8 +246,8 @@ if (!re.finished()){
                 std::vector<NT> hcoefs(f.begin(), f.end());
                 hcoefs[0]=0;
                 hcoefs[1]=0;
-                Function fh(hcoefs.begin(), hcoefs.end());
-                Function dfh= cd(fh);
+                Coordinate fh(hcoefs.begin(), hcoefs.end());
+                Coordinate dfh= cd(fh);
                 out.push_back(f[0]+2*f[1]*t+2*t*dfh(t));
                 out.push_back(-f[1]-2*dfh(t));
                 out.insert(out.end(), f.begin()+2, f.end());
@@ -267,7 +267,7 @@ if (!re.finished()){
   NT od= cd(f)(t);
   }*/
 
-            CGAL_exactness_assertion_code(Function ft(out.begin(), out.end()););
+            CGAL_exactness_assertion_code(Coordinate ft(out.begin(), out.end()););
             CGAL_exactness_assertion(ft(time) == f(time));
             CGAL_exactness_assertion(cd(ft)(time) == -cd(f)(time));
         }
