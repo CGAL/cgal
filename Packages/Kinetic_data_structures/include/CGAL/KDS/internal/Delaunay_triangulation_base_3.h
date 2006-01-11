@@ -53,10 +53,22 @@ class Delaunay_event_base_3
         {
             return s_;
         }
+        void write(std::ostream &out) const
+        {
+	  out << "Delaunay_event";
+        }
     protected:
         const Root_stack s_;
         KD *kdel_;
 };
+
+template <class K, class R>
+std::ostream& operator<<(std::ostream &out, const Delaunay_event_base_3<K, R> &e)
+{
+    e.write(out);
+    return out;
+}
+
 
 template <class KD, class Root_stack, class Edge>
 class Delaunay_3_edge_flip_event: public Delaunay_event_base_3<KD, Root_stack>
