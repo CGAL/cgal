@@ -28,6 +28,8 @@
 #include <CGAL/Boolean_set_operations_2/Bso_sym_diff_functor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_merge.h>
 
+#include <CGAL/Boolean_set_operations_2/Gps_polygon_simplifier.h>
+
 
 #include <CGAL/Arr_walk_along_line_point_location.h>
 
@@ -45,6 +47,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Traits_ >
 class General_polygon_set_2 
 {
+  typedef General_polygon_set_2<Traits_>                  Self;
 public:
 
   typedef Traits_                                         Traits_2;
@@ -186,6 +189,11 @@ public:
     m_arr(new Arrangement_2(m_traits)) 
  {}
 
+ General_polygon_set_2(const Arrangement_2& arr): m_traits(new Traits_2()),
+                                                  m_traits_owner(true),
+                                                  m_arr(new Arrangement_2(arr))
+ {}
+
 
   //destructor
   virtual ~General_polygon_set_2()
@@ -196,6 +204,24 @@ public:
       delete m_traits;
   }
 
+  void simplify(const Polygon_2& pgn, Polygon_with_holes_2& res)
+  {
+    typedef Gps_polygon_simplifier<Arrangement_2>  Simplifier;
+
+    Arrangement_2  arr;
+    Simplifier simp(arr, *m_traits);
+    simp.simplify(pgn);
+    _remove_redundant_edges(&arr);
+    Self gps(arr);
+    gps._reset_faces();
+  
+    typedef Oneset_iterator<Polygon_with_holes_2>    OutputItr;
+    OutputItr oi (res);
+    gps.polygons_with_holes(oi);
+    /*std::cout<<"|V| = " << gps.arrangement().number_of_vertices()<<"\n";
+    std::cout<<"|E| = " << gps.arrangement().number_of_edges()<<"\n";
+    std::cout<<"|F| = " << gps.arrangement().number_of_faces()<<"\n";*/
+  }
 
   // insert a simple polygon
   void insert(const Polygon_2& pgn)
@@ -959,15 +985,20 @@ Ccb_halfedge_const_circulator get_boundary_of_polygon(Face_const_iterator f) con
 
 void remove_redundant_edges()
 {
-    for(Edge_iterator itr = m_arr->edges_begin(); 
-      itr != m_arr->edges_end(); )
+  this->_remove_redundant_edges(m_arr);
+}
+
+void _remove_redundant_edges(Arrangement_2* arr)
+{
+  for(Edge_iterator itr = arr->edges_begin(); 
+      itr != arr->edges_end(); )
   {
     Halfedge_handle he = itr;
     if(he->face()->contained() == he->twin()->face()->contained())
     {
       Edge_iterator next = itr;
       ++next;
-      m_arr->remove_edge(he);
+      arr->remove_edge(he);
       itr = next;
     }
     else
