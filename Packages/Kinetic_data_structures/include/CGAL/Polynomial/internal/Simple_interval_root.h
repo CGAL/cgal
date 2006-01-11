@@ -460,6 +460,8 @@ break;
 
         void refine_using(const Interval &o) const
         {
+	  CGAL_assertion(!is_rational());
+	  CGAL_assertion(!o.is_rational());
             int noi= isolating_interval().number_overlap_intervals(o);
             if (noi == 1) return;
 
