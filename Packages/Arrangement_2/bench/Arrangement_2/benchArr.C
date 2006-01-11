@@ -43,11 +43,19 @@ enum MaxFilesNumber {
 #elif BENCH_KERNEL == MY_KERNEL
 #include <CGAL/Arr_segment_traits_leda_kernel_2.h>
 
+#elif BENCH_KERNEL == CARTESIAN_KERNEL
+#include <CGAL/Cartesian.h>
+
 #elif BENCH_KERNEL == SIMPLE_CARTESIAN_KERNEL
 #include <CGAL/Simple_cartesian.h>
 
-#elif BENCH_KERNEL == CARTESIAN_KERNEL
+#elif BENCH_KERNEL == LAZY_CARTESIAN_KERNEL
 #include <CGAL/Cartesian.h>
+#include <CGAL/Lazy_kernel.h>
+
+#elif BENCH_KERNEL == LAZY_SIMPLE_CARTESIAN_KERNEL
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Lazy_kernel.h>
 
 #else
 #error No kernel (KERNEL) specified!
@@ -233,13 +241,21 @@ typedef CGAL::leda_rat_kernel_traits                    Kernel;
 typedef CGAL::Arr_segment_traits_leda_kernel_2          Kernel;
 #define KERNEL_TYPE "Partial Leda"
 
+#elif BENCH_KERNEL == CARTESIAN_KERNEL
+typedef CGAL::Cartesian<WNT>                            Kernel;
+#define KERNEL_TYPE "Cartesian"
+
 #elif BENCH_KERNEL == SIMPLE_CARTESIAN_KERNEL
 typedef CGAL::Simple_cartesian<WNT>                     Kernel;
 #define KERNEL_TYPE "Simple Cartesian"
 
-#elif BENCH_KERNEL == CARTESIAN_KERNEL
-typedef CGAL::Cartesian<WNT>                            Kernel;
-#define KERNEL_TYPE "Cartesian"
+#elif BENCH_KERNEL == LAZY_CARTESIAN_KERNEL
+typedef CGAL::Lazy_kernel<CGAL::Cartesian<WNT> >         Kernel;
+#define KERNEL_TYPE "Lazy Cartesian"
+
+#elif BENCH_KERNEL == LAZY_SIMPLE_CARTESIAN_KERNEL
+typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<WNT> >  Kernel;
+#define KERNEL_TYPE "Lazy Simple Cartesian"
 
 #else
 #error No kernel (KERNEL) specified!
@@ -722,6 +738,9 @@ int main(int argc, char * argv[])
   type_id = CGAL::Bench_parse_args::TYPE_INCREMENT;
   if (type_mask & (0x1 << type_id)) {
     if (verbose) std::cout << "TYPE_INCREMENT " << std::endl;
+
+#if defined(RIC_SUPPORTED)
+    // Ric point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
     if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
@@ -736,6 +755,7 @@ int main(int argc, char * argv[])
                                                  samples, iterations,
                                                  verbose, postscript);
     }
+#endif
     
     // Naive point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_NAIVE;
@@ -752,7 +772,7 @@ int main(int argc, char * argv[])
                                                    samples, iterations,
                                                    verbose, postscript);
     }
-
+    
     // Walk point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_WALK;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -768,7 +788,7 @@ int main(int argc, char * argv[])
                                                  samples, iterations,
                                                  verbose, postscript);
     }
-
+    
 #if defined(LANDMARK_SUPPORTED)
     // Landmarks point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
@@ -821,7 +841,7 @@ int main(int argc, char * argv[])
                                            samples, iterations,
                                            verbose, postscript);
   }
-  
+
   // Construct and Display
   type_id = CGAL::Bench_parse_args::TYPE_DISPLAY;
   if (type_mask & (0x1 << type_id)) {
@@ -841,6 +861,6 @@ int main(int argc, char * argv[])
                                          samples, iterations,
                                          verbose, postscript);
   }
-
+  
   return 0;
 }

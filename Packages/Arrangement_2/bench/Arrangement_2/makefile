@@ -13,8 +13,10 @@ EXACT_PREDICATES_EXACT_CONSTRUCTIONS_WITH_SQRT_KERNEL = 1
 EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL =         2
 CARTESIAN_KERNEL =                                      3
 SIMPLE_CARTESIAN_KERNEL =                               4
-LEDA_KERNEL =                                           5
-MY_KERNEL =                                             6
+LAZY_CARTESIAN_KERNEL =                                 5
+LAZY_SIMPLE_CARTESIAN_KERNEL =                          6
+LEDA_KERNEL =                                           7
+MY_KERNEL =                                             8
 
 SEGMENT_TRAITS =                                        0
 NON_CACHING_SEGMENT_TRAITS =                            1
@@ -264,6 +266,14 @@ ifeq ($(BENCH_KERNEL), $(SIMPLE_CARTESIAN_KERNEL))
 TARGET0 := $(TARGET0)SimpleCartesian
 LOBJDIR :=$(LOBJDIR)_simple_cartesian
 else
+ifeq ($(BENCH_KERNEL), $(LAZY_CARTESIAN_KERNEL))
+TARGET0 := $(TARGET0)LazyCartesian
+LOBJDIR :=$(LOBJDIR)_lazy_cartesian
+else
+ifeq ($(BENCH_KERNEL), $(LAZY_SIMPLE_CARTESIAN_KERNEL))
+TARGET0 := $(TARGET0)LazySimpleCartesian
+LOBJDIR :=$(LOBJDIR)_lazy_simple_cartesian
+else
 ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
 TARGET0 := $(TARGET0)Leda
 LOBJDIR :=$(LOBJDIR)_leda
@@ -271,6 +281,8 @@ else
 ifeq ($(BENCH_KERNEL), $(MY_KERNEL))
 TARGET0 := $(TARGET0)My
 LOBJDIR :=$(LOBJDIR)_my
+endif
+endif
 endif
 endif
 endif

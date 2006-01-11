@@ -6,8 +6,10 @@
 #define EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL         2
 #define CARTESIAN_KERNEL                                      3
 #define SIMPLE_CARTESIAN_KERNEL                               4
-#define LEDA_KERNEL                                           5
-#define MY_KERNEL                                             6
+#define LAZY_CARTESIAN_KERNEL                                 5
+#define LAZY_SIMPLE_CARTESIAN_KERNEL                          6
+#define LEDA_KERNEL                                           7
+#define MY_KERNEL                                             8
 
 #define SEGMENT_TRAITS                                        0
 #define NON_CACHING_SEGMENT_TRAITS                            1

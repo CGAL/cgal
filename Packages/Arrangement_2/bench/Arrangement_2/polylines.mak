@@ -34,6 +34,15 @@ cgal_gmpq_exact_pol_inst:
 cgal_gmpq_cartesian_pol_inst:
 	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
 
+cgal_gmpq_simple_cartesian_pol_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
+
+cgal_gmpq_lazy_cartesian_pol_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(LAZY_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
+
+cgal_gmpq_lazy_simple_cartesian_pol_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(LAZY_SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
+
 lazy_cgal_gmpq_cartesian_pol_inst:
 	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
 
@@ -56,6 +65,15 @@ cgal_gmpq_exact_non_caching_pol_inst:
 
 cgal_gmpq_cartesian_non_caching_pol_inst:
 	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
+
+cgal_gmpq_simple_cartesian_non_caching_pol_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
+
+cgal_gmpq_lazy_cartesian_non_caching_pol_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(LAZY_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
+
+cgal_gmpq_lazy_simple_cartesian_non_caching_pol_inst:
+	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(LAZY_SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
 
 leda_rat_simple_cartesian_non_caching_pol_inst:
 	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_POLYLINE_TRAITS)" install
@@ -83,6 +101,9 @@ pol_std_inst: leda_rat_cartesian_pol_inst \
 	lazy_quotient_mp_float_pol_inst \
 	cgal_gmpq_exact_pol_inst \
 	cgal_gmpq_cartesian_pol_inst \
+	cgal_gmpq_simple_cartesian_pol_inst \
+	cgal_gmpq_lazy_cartesian_pol_inst \
+	cgal_gmpq_lazy_simple_cartesian_pol_inst \
 	lazy_cgal_gmpq_cartesian_pol_inst \
 	double_pol_inst
 
@@ -96,6 +117,9 @@ pol_non_caching_inst: leda_rat_cartesian_non_caching_pol_inst \
 	lazy_quotient_mp_float_non_caching_pol_inst \
 	cgal_gmpq_exact_non_caching_pol_inst \
 	cgal_gmpq_cartesian_non_caching_pol_inst \
+	cgal_gmpq_simple_cartesian_non_caching_pol_inst \
+	cgal_gmpq_lazy_cartesian_non_caching_pol_inst \
+	cgal_gmpq_lazy_simple_cartesian_non_caching_pol_inst \
 	lazy_cgal_gmpq_cartesian_non_caching_pol_inst \
 	double_non_caching_pol_inst
 

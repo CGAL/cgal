@@ -2,29 +2,29 @@
 <bench name_length="96" header="false" type_mask="0x3" strategy_mask="0x4">
   <class name="cls111" key="increment walk Non Caching Segments Cartesian Cgal Gmpq"/>
   <class name="cls112" key="aggregate Non Caching Segments Cartesian Cgal Gmpq"/>
-  <class name="cls121" key="increment walk Non Caching Segments Exact Cgal Gmpq"/>
-  <class name="cls122" key="aggregate Non Caching Segments Exact Cgal Gmpq"/>
-  <class name="cls131" key=""/>
-  <class name="cls132" key=""/>
-  <class name="cls141" key=""/>
-  <class name="cls142" key=""/>
-  <class name="cls151" key=""/>
-  <class name="cls152" key=""/>
+  <class name="cls121" key="increment walk Non Caching Segments Simple Cartesian Cgal Gmpq"/>
+  <class name="cls122" key="aggregate Non Caching Segments Simple Cartesian Cgal Gmpq"/>
+  <class name="cls131" key="increment walk Non Caching Segments Lazy Cartesian Cgal Gmpq"/>
+  <class name="cls132" key="aggregate Non Caching Segments Lazy Cartesian Cgal Gmpq"/>
+  <class name="cls141" key="increment walk Non Caching Segments Lazy Simple Cartesian Cgal Gmpq"/>
+  <class name="cls142" key="aggregate Non Caching Segments Lazy Simple Cartesian Cgal Gmpq"/>
+  <class name="cls151" key="increment walk Non Caching Segments Exact Cgal Gmpq"/>
+  <class name="cls152" key="aggregate Non Caching Segments Exact Cgal Gmpq"/>
   <class name="cls161" key=""/>
   <class name="cls162" key=""/>
   <class name="cls171" key=""/>
   <class name="cls172" key=""/>
 
-  <class name="cls211" key="increment walk Segments Cartesian Cgal Gmpq "/>
+  <class name="cls211" key="increment walk Segments Cartesian Cgal Gmpq"/>
   <class name="cls212" key="aggregate Segments Cartesian Cgal Gmpq"/>
-  <class name="cls221" key="increment walk Segments Exact Cgal Gmpq"/>
-  <class name="cls222" key="aggregate Segments Exact Cgal Gmpq"/>
-  <class name="cls231" key=""/>
-  <class name="cls232" key=""/>
-  <class name="cls241" key=""/>
-  <class name="cls242" key=""/>
-  <class name="cls251" key=""/>
-  <class name="cls252" key=""/>  
+  <class name="cls221" key="increment walk Segments Simple Cartesian Cgal Gmpq"/>
+  <class name="cls222" key="aggregate Segments Simple Cartesian Cgal Gmpq"/>
+  <class name="cls231" key="increment walk Segments Lazy Cartesian Cgal Gmp"/>
+  <class name="cls232" key="aggregate Segments Lazy Cartesian Cgal Gmpq"/>
+  <class name="cls241" key="increment walk Segments Lazy Simple Cartesian Cgal Gmpq"/>
+  <class name="cls242" key="aggregate Segments Lazy Simple Cartesian Cgal Gmpq"/>
+  <class name="cls251" key="increment walk Segments Exact Cgal Gmpq"/>
+  <class name="cls252" key="aggregate Segments Exact Cgal Gmpq"/>  
   <class name="cls261" key=""/>
   <class name="cls262" key=""/>
   <class name="cls271" key=""/>
@@ -52,12 +52,17 @@
     vertices="1129" halfedges="3916" faces="831"></file>
   <file name="onebig_250_x.dat" format="int" curves="104"
     vertices="1504" halfedges="5408" faces="1202"></file>
-  <file name="random_segments_500_x.dat" format="int" curves="100"
+  <file name="random_segments_500_x.dat" format="int" curves="500"
     vertices="1129" halfedges="3916" faces="831"></file>
+  <file name="random_segments_1000_x.dat" format="int" curves="1000"
+    vertices="1" halfedges="3" faces="8"></file>
 
   <bench samples="10" file="onebig_100_x.dat" enable="true">
-    <bench>
+    <bench enable="false">
       <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqExactNonCachingSegment/>
       <benchArrDoubleCartesianNonCachingSegment enable="false"/>
       <benchArrLazyCgalGmpqCartesianNonCachingSegment enable="false"/>
@@ -71,8 +76,11 @@
 
     <bench>
       <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianSegment/>
+      <benchArrCgalGmpqLazyCartesianSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianSegment/>
       <benchArrCgalGmpqExactSegment/>
-      <benchArrDoubleCartesianSegment enable="false"/>
+      <benchArrDoubleCartesianSegment/>
       <benchArrLazyCgalGmpqCartesianSegment enable="false"/>
       <benchArrLazyQuotientCartesianSegment enable="false"/>
       <benchArrLazyRatCartesianSegment enable="false"/>
@@ -84,11 +92,14 @@
     </bench>
   </bench>
 
-  <bench samples="10" file="random_segments_100_x.dat" enable="true">
+  <bench samples="10" file="random_segments_100_x.dat" enable="false">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqExactNonCachingSegment/>
-      <benchArrDoubleCartesianNonCachingSegment enable="false"/>
+      <benchArrDoubleCartesianNonCachingSegment/>
       <benchArrLazyCgalGmpqCartesianNonCachingSegment enable="false"/>
       <benchArrLazyQuotientCartesianNonCachingSegment enable="false"/>
       <benchArrLazyRatCartesianNonCachingSegment enable="false"/>
@@ -100,8 +111,11 @@
 
     <bench>
       <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianSegment/>
+      <benchArrCgalGmpqLazyCartesianSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianSegment/>
       <benchArrCgalGmpqExactSegment/>
-      <benchArrDoubleCartesianSegment enable="false"/>
+      <benchArrDoubleCartesianSegment/>
       <benchArrLazyCgalGmpqCartesianSegment enable="false"/>
       <benchArrLazyQuotientCartesianSegment enable="false"/>
       <benchArrLazyRatCartesianSegment enable="false"/>
@@ -114,10 +128,13 @@
   </bench>
 
   <bench samples="4" file="onebig_250_x.dat" enable="true">
-    <bench>
+    <bench enable="false">
       <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqExactNonCachingSegment/>
-      <benchArrDoubleCartesianNonCachingSegment enable="false"/>
+      <benchArrDoubleCartesianNonCachingSegment/>
       <benchArrLazyCgalGmpqCartesianNonCachingSegment enable="false"/>
       <benchArrLazyQuotientCartesianNonCachingSegment enable="false"/>
       <benchArrLazyRatCartesianNonCachingSegment enable="false"/>
@@ -129,8 +146,11 @@
 
     <bench>
       <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqCartesianSegment/>
+      <benchArrCgalGmpqLazyCartesianSegment/>
+      <benchArrCgalGmpqLazyCartesianSegment/>
       <benchArrCgalGmpqExactSegment/>
-      <benchArrDoubleCartesianSegment enable="false"/>
+      <benchArrDoubleCartesianSegment/>
       <benchArrLazyCgalGmpqCartesianSegment enable="false"/>
       <benchArrLazyQuotientCartesianSegment enable="false"/>
       <benchArrLazyRatCartesianSegment enable="false"/>
@@ -143,10 +163,13 @@
   </bench>
 
   <bench samples="4" file="random_segments_500_x.dat" enable="true">
-    <bench>
+    <bench enable="false">
       <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqExactNonCachingSegment/>
-      <benchArrDoubleCartesianNonCachingSegment enable="false"/>
+      <benchArrDoubleCartesianNonCachingSegment/>
       <benchArrLazyCgalGmpqCartesianNonCachingSegment enable="false"/>
       <benchArrLazyQuotientCartesianNonCachingSegment enable="false"/>
       <benchArrLazyRatCartesianNonCachingSegment enable="false"/>
@@ -158,8 +181,46 @@
 
     <bench>
       <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianSegment/>
+      <benchArrCgalGmpqLazyCartesianSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianSegment/>
       <benchArrCgalGmpqExactSegment/>
-      <benchArrDoubleCartesianSegment enable="false"/>
+      <benchArrDoubleCartesianSegment/>
+      <benchArrLazyCgalGmpqCartesianSegment enable="false"/>
+      <benchArrLazyQuotientCartesianSegment enable="false"/>
+      <benchArrLazyRatCartesianSegment enable="false"/>
+      <benchArrLedaRatCartesianSegment enable="false"/>
+      <benchArrLedaRatLedaSegment enable="false"/>
+      <benchArrLedaRatSimpleCartesianSegment enable="false"/>
+      <benchArrQuotientCartesianSegment enable="false"/>
+      <benchArrQuotientCgalGmpzCartesianSegment enable="false"/>
+    </bench>
+  </bench>
+
+  <bench samples="4" file="random_segments_1000_x.dat" enable="true">
+    <bench enable="false">
+      <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
+      <benchArrCgalGmpqExactNonCachingSegment/>
+      <benchArrDoubleCartesianNonCachingSegment/>
+      <benchArrLazyCgalGmpqCartesianNonCachingSegment enable="false"/>
+      <benchArrLazyQuotientCartesianNonCachingSegment enable="false"/>
+      <benchArrLazyRatCartesianNonCachingSegment enable="false"/>
+      <benchArrLedaRatCartesianNonCachingSegment enable="false"/>
+      <benchArrLedaRatSimpleCartesianNonCachingSegment enable="false"/>
+      <benchArrQuotientCartesianNonCachingSegment enable="false"/>
+      <benchArrQuotientCgalGmpzCartesianNonCachingSegment enable="false"/>
+    </bench>
+
+    <bench>
+      <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqSimpleCartesianSegment/>
+      <benchArrCgalGmpqLazyCartesianSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianSegment/>
+      <benchArrCgalGmpqExactSegment/>
+      <benchArrDoubleCartesianSegment/>
       <benchArrLazyCgalGmpqCartesianSegment enable="false"/>
       <benchArrLazyQuotientCartesianSegment enable="false"/>
       <benchArrLazyRatCartesianSegment enable="false"/>
