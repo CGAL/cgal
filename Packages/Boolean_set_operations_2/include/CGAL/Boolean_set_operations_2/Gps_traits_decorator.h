@@ -201,7 +201,7 @@ public:
     Base_Compare_xy_2 m_base;
 
   public:
-    Compare_xy_2(Base_Compare_x_2& base) :m_base(base)
+    Compare_xy_2(const Base_Compare_xy_2& base) :m_base(base)
     {}
 
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
@@ -223,7 +223,7 @@ public:
     Base_Construct_min_vertex_2 m_base;
 
   public:
-    Construct_min_vertex_2(Base_Construct_min_vertex_2& base) :m_base(base)
+    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base) :m_base(base)
     {}
 
     Point_2 operator() (const X_monotone_curve_2& cv) const
@@ -245,7 +245,7 @@ public:
     Base_Construct_max_vertex_2 m_base;
 
   public:
-    Construct_max_vertex_2(Base_Construct_max_vertex_2& base) :m_base(base)
+    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base) :m_base(base)
     {}
 
     Point_2 operator() (const X_monotone_curve_2& cv) const
@@ -268,7 +268,7 @@ public:
     Base_Is_vertical_2 m_base;
 
   public:
-    Is_vertical_2(Base_Is_vertical_2& base) :m_base(base)
+    Is_vertical_2(const Base_Is_vertical_2& base) :m_base(base)
     {}
 
     bool operator() (const X_monotone_curve_2& cv) const
@@ -340,7 +340,7 @@ public:
     Base_Equal_2 m_base;
 
   public:
-    Equal_2(Base_Equal_2& base) :m_base(base)
+    Equal_2(const Base_Equal_2& base) :m_base(base)
     {}
 
     bool operator() (const Point_2& p1, const Point_2& p2) const
@@ -363,7 +363,7 @@ public:
     Base_Split_2 m_base;
 
   public:
-    Split_2(Base_Split_2& base) :m_base(base)
+    Split_2(const Base_Split_2& base) :m_base(base)
     {}
 
     void operator() (const X_monotone_curve_2& cv,
