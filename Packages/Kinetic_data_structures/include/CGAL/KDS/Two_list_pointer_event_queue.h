@@ -573,7 +573,12 @@ step_= ub_- to_interval(t).first;
                 for (; it != front_.end(); ++it) {
                     Priority tc= it->time();
                     Priority tp= boost::prior(it)->time();
-                    CGAL_assertion(tc >= tp);
+#ifndef NDEBUG
+		    if (tc < tp) {
+		      std::cout << "ERROR: Out of order " << tc << std::endl << tp << std::endl << std::endl;
+		    }
+#endif
+			//CGAL_assertion(tc >= tp);
                 }
             }
             return true;
