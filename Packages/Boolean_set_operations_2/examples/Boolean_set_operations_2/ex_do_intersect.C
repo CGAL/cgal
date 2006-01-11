@@ -14,13 +14,13 @@ typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
 
 int main ()
 {
-  Polygon_2   P;
+  Polygon_2 P;
   P.push_back (Point_2 (-1,1));
   P.push_back (Point_2 (0,-1));
   P.push_back (Point_2 (1,1));
   std::cout << "P = "; print_polygon (P);
 
-  Polygon_2   Q;
+  Polygon_2 Q;
   Q.push_back(Point_2 (-1,-1));
   Q.push_back(Point_2 (1,-1));
   Q.push_back(Point_2 (0,1));
@@ -31,5 +31,5 @@ int main ()
   else
     std::cout << "The two polygons do not intersect." << std::endl;
 
-  return (0);
+  return 0;
 }

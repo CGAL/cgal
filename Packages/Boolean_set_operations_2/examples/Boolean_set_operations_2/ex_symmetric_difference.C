@@ -18,8 +18,8 @@ typedef std::list<Polygon_with_holes_2>            Pwh_list_2;
 int main ()
 {
   // Construct P - a bounded rectangle that contains a rectangular hole.
-  Polygon_2   outP;
-  Polygon_2   holesP[1];
+  Polygon_2 outP;
+  Polygon_2 holesP[1];
 
   outP.push_back (Point_2 (-3, -5));  outP.push_back (Point_2 (3, -5));
   outP.push_back (Point_2 (3, 5));    outP.push_back (Point_2 (-3, 5));
@@ -32,8 +32,8 @@ int main ()
   std::cout << "P = "; print_polygon_with_holes (P);
 
   // Construct Q - a bounded rectangle that contains a rectangular hole.
-  Polygon_2   outQ;
-  Polygon_2   holesQ[1];
+  Polygon_2 outQ;
+  Polygon_2 holesQ[1];
 
   outQ.push_back (Point_2 (-5, -3));  outQ.push_back (Point_2 (5, -3));
   outQ.push_back (Point_2 (5, 3));    outQ.push_back (Point_2 (-5, 3));
@@ -46,17 +46,16 @@ int main ()
   std::cout << "Q = "; print_polygon_with_holes (Q);
 
   // Compute the symmetric difference of P and Q.
-  Pwh_list_2                  symmR;
-  Pwh_list_2::const_iterator  it;
+  Pwh_list_2 symmR;
+  Pwh_list_2::const_iterator it;
 
   CGAL::symmetric_difference (P, Q, std::back_inserter(symmR));
 
   std::cout << "The symmetric difference:" << std::endl;
-  for (it = symmR.begin(); it != symmR.end(); ++it)
-  {
+  for (it = symmR.begin(); it != symmR.end(); ++it) {
     std::cout << "--> "; 
     print_polygon_with_holes (*it);
   }
 
-  return (0);
+  return 0;
 }

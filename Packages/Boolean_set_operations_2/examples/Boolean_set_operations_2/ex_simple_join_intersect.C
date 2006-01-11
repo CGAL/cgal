@@ -18,27 +18,25 @@ typedef std::list<Polygon_with_holes_2>            Pwh_list_2;
 int main ()
 {
   // Construct the two input polygons.
-  Polygon_2   P;
+  Polygon_2 P;
   P.push_back (Point_2 (0, 0));       P.push_back (Point_2 (1.5, 1.5));
   P.push_back (Point_2 (2.5, 0.5));   P.push_back (Point_2 (3.5, 1.5));
   P.push_back (Point_2 (5, 0));
   std::cout << "P = "; print_polygon (P);
 
-  Polygon_2   Q;
+  Polygon_2 Q;
   Q.push_back (Point_2 (0, 2));       Q.push_back (Point_2 (5, 2));
   Q.push_back (Point_2 (3.5, 0.5));   Q.push_back (Point_2 (2.5, 1.5));
   Q.push_back (Point_2 (1.5, 0.5));
   std::cout << "Q = "; print_polygon (Q);
 
   // Compute the union of P and Q.
-  Polygon_with_holes_2  unionR;
+  Polygon_with_holes_2 unionR;
 
-  if (CGAL::join (P, Q, unionR))
-  {
+  if (CGAL::join (P, Q, unionR)) {
     std::cout << "The union: ";
     print_polygon_with_holes (unionR);
-  }
-  else
+  } else
     std::cout << "P and Q are disjoint and their union is trivial." 
               << std::endl;
   std::cout << std::endl;
@@ -50,11 +48,10 @@ int main ()
   CGAL::intersection (P, Q, std::back_inserter(intR));
 
   std::cout << "The intersection:" << std::endl;
-  for (it = intR.begin(); it != intR.end(); ++it)
-  {
+  for (it = intR.begin(); it != intR.end(); ++it) {
     std::cout << "--> ";
     print_polygon_with_holes (*it);
   }
   
-  return (0);
+  return 0;
 }
