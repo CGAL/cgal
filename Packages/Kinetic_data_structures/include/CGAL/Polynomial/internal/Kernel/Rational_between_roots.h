@@ -33,13 +33,15 @@ struct Rational_between_roots
     typedef typename K::Root first_argument_type;
     typedef typename K::Root second_argument_type;
 
-    result_type operator()(const first_argument_type &r0, const first_argument_type &r1) const
+  template <class RT>
+    result_type operator()(const RT &r0, const RT &r1) const
     {
-        CGAL_precondition(r0<r1);
+        CGAL_exactness_precondition(r0<r1);
+	if (r0 > r1) return operator()(r1, r0);
         typedef std::pair<double, double> Ival;
 //Ival i0= to_interval(r0);
 //Ival i1= to_interval(r1);
-        if (r0== -infinity<first_argument_type>()) {
+        if (r0== -infinity<RT>()) {
             result_type ret(-33554432);
             while (r1 <= second_argument_type(ret)) {
                 ret= ret*1024;
@@ -71,10 +73,10 @@ struct Rational_between_roots
             result_type mid;
             while (true) {
                 mid = result_type(.5)*(lb+ub);
-                if (first_argument_type(mid) < r0) {
+                if (RT(mid) < r0) {
                     lb= mid;
                 }
-                else if (second_argument_type(mid) > r1) {
+                else if (RT(mid) > r1) {
                     ub= mid;
                 }
                 else {
@@ -86,6 +88,9 @@ struct Rational_between_roots
         CGAL_Polynomial_postcondition(0);
         return result_type(0);
     }
+  result_type operator()(double r0, double r1) const {
+    return (r0+r1)/2.0;
+  }
 
 };
 

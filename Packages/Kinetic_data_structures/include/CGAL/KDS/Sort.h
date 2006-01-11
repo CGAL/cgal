@@ -138,6 +138,8 @@ public Ref_counted<Sort< Traits> >
                 if (!less(*it, *next(it))) {
                     std::cerr << "ERROR: objects " << *it << " and "
                         << *next(it) << " are out of order.\n";
+		    std::cerr << object(*it) << " and " << object(*next(it)) << std::endl;
+		    std::cerr << "Time is " <<simulator()->rational_current_time() << std::endl; 
                     std::cerr << "ERROR: order is ";
                     write(std::cerr);
                     std::cerr << std::endl;

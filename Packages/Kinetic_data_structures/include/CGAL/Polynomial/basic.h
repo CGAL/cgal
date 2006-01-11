@@ -93,6 +93,7 @@ CGAL_POLYNOMIAL_END_NAMESPACE
 */
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+
 typedef int Sign;
 static const int ZERO =0;
 static const int POSITIVE=1;

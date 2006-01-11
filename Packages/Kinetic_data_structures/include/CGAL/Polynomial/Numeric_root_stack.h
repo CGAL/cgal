@@ -22,6 +22,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 #include <CGAL/Polynomial/Polynomial.h>
+#include <iterator>
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
@@ -57,9 +58,16 @@ class Numeric_root_stack
         typedef Solver_traits Traits;
         Numeric_root_stack(const typename Solver_traits::Function &f, Root lb, Root ub, const Solver_traits&) {
             initialize(f, lb, ub);
-            for (unsigned int i=1; i < roots_.size();  ++i) {
-                CGAL_Polynomial_postcondition(roots_[i] <= roots_[i-1]);
-            }
+#ifndef NDEBUG
+	    for (unsigned int i=1; i < roots_.size();  ++i) {
+	      if (roots_[i]>  roots_[i-1]){
+		std::cerr << "ERROR: roots out of order ";
+		std::copy(roots_.begin(), roots_.end(), std::ostream_iterator<double>(std::cerr, " "));
+		std::cerr << " for " << f << std::endl;
+	      }
+	    }
+#endif
+	      //CGAL_Polynomial_postcondition(roots_[i] <= roots_[i-1]);
         }
 
         Numeric_root_stack(){};

@@ -33,8 +33,8 @@ bool sort_test(Traits &tr)
     }
 
     while (c != sort.end()) {
-        if (tr.active_objects_table_pointer()->at(*c).x()(ratt)
-        < tr.active_objects_table_pointer()->at(*b).x()(ratt)) {
+      typename Traits::Simulator::Function_kernel::Function f= tr.active_objects_table_pointer()->at(*c).x() - tr.active_objects_table_pointer()->at(*b).x();
+      if ( f(ratt) < 0 ) {
             std::cerr << "ERROR Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and "
                 << *b << " = " << tr.active_objects_table_pointer()->at(*b).x() << " out of order at end of time "
                 <<ratt << std::endl;
