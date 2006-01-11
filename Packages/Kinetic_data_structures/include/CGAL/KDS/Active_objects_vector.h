@@ -65,7 +65,7 @@ public Ref_counted<Active_objects_vector<Value_t > >
         };
     public:
 //! How to refer to points
-        typedef typename CGAL::Label<This> Key;
+        typedef typename CGAL::Label<Value_t> Key;
 //! the type of the objects in the table
         typedef Value_t Data;
 

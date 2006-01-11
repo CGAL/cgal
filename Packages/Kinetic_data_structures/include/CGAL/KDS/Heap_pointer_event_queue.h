@@ -192,13 +192,17 @@ class Heap_pointer_event_queue
 */
         template <class E>
         Key insert(const Priority &t, const E & e) {
+	  if (t < end_) {
             Item_handle k= new internal::Heap_pointer_event_queue_item_rep<Priority, E>(t, e, queue_.size());
             queue_.push_back(k);
             bubble_up(queue_.size()-1);
-//std::push_heap(queue_.begin(), queue_.end());
+	    //std::push_heap(queue_.begin(), queue_.end());
             CGAL_expensive_postcondition(is_valid());
             CGAL_postcondition(k->bin() != -1);
             return Key(k);
+	  } else {
+	    return null_event_;
+	  }
         }
 
 //! remove the event referenced by item from the queue
@@ -306,7 +310,7 @@ typename Event_pointer<E>::Pointer event(const Key &item, const E &) const {
 */
         void process_front() {
             CGAL_precondition(!empty());
-            if (queue_.front()->time() < end_priority()) {
+            //if (queue_.front()->time() < end_priority()) {
 //CGAL_precondition_code(Item_handle k= queue_.front());
                 CGAL_KDS_LOG(LOG_LOTS, "Processing " << queue_.front() << std::endl);
                 Item_handle ih= queue_.front();
@@ -314,10 +318,10 @@ typename Event_pointer<E>::Pointer event(const Key &item, const E &) const {
 //std::pop_heap(queue_.begin(), queue_.end());
                 ih->process(ih->time());
                 CGAL_expensive_postcondition(is_valid());
-            }
+		/*}
             else {
                 clear();
-            }
+		}*/
         }
 
 //! debugging
