@@ -189,7 +189,7 @@ class Gui_base: public CGAL::KDS::Ref_counted<Gui_base<Simulator_t, Timer> >
             public:
                 Timer_listener(Timer *tm, This *t):Timer::Listener(tm),  t_(t) {
                 }
-                void new_notification(typename Timer_listener::Notification_type) {
+	  void new_notification(typename Timer::Listener::Notification_type) {
                     t_->timer_rang();
                 }
             protected:

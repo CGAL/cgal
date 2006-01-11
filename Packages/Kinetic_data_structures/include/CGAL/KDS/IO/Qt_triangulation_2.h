@@ -55,11 +55,11 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<Kinetic_Delaunay
 */
         class Listener: public Qt_gui::Listener
         {
-            typedef typename Qt_gui::Listener P;
+	  typedef typename Qt_gui::Listener P;
             public:
-                Listener(typename Qt_gui::Pointer &h, This *t): Qt_gui::Listener(h), t_(t){}
-                virtual void new_notification(typename Qt_gui::Listener::Notification_type nt) {
-                    if (nt == Qt_gui::Listener::PICTURE_IS_VALID) {
+                Listener(typename Qt_gui::Pointer &h, This *t): P(h), t_(t){}
+                virtual void new_notification(typename P::Notification_type nt) {
+                    if (nt == P::PICTURE_IS_VALID) {
                         t_->draw(*P::widget(), P::notifier()->current_time());
                     }
                 }
