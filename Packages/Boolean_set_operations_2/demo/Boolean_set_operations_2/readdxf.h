@@ -22,14 +22,15 @@ typedef SC::Circle_2 double_Circle_2;
 typedef std::list<std::pair<double_Point_2, double> > Dxf_Polygon;
 typedef std::list<Dxf_Polygon>                            Polygons;
 typedef std::list<double_Circle_2> double_Circles;
-typedef std::vector<Polygon>                            Polygons_vec;
+typedef std::vector<Polygon_with_holes>                 Polygons_vec;
 typedef CGAL::_One_root_point_2<Coord_type, true>       One_root_point_2;
 
 extern Polygon_set                       red_set;
 int readdxf(std::istream& input_file,
             Polygon_set* pgn_set,
             CGAL::Qt_widget* w, 
-            CGAL::Bbox_2& box)
+            CGAL::Bbox_2& box,
+            bool are_simple = true)
 {
   bool first_curve = true;
   Polygons polygons;
@@ -66,7 +67,7 @@ int readdxf(std::istream& input_file,
     Polygon pgn;
     pgn.push_back(cv1);
     pgn.push_back(cv2);
-    circ_polygons.push_back(pgn);
+    circ_polygons.push_back(Polygon_with_holes(pgn));
     if(first_curve)
     {
       first_curve = false;
@@ -146,23 +147,25 @@ int readdxf(std::istream& input_file,
         }
         else
           box = box + cv.bbox();
-        /*XCurve cv;
-        Curve curve_seg(ps, pt);
-        std::vector<CGAL::Object> obj_vec;
-        tr.make_x_monotone_2_object()(curve_seg, std::back_inserter(obj_vec));
-        CGAL_assertion(obj_vec.size() == 1);
-        if(CGAL::assign(cv, obj_vec[0]))
-          curr_pgn.push_back(cv);*/
       }
     }
     if(curr_pgn.orientation() == CGAL::CLOCKWISE)
       curr_pgn.reverse_orientation();
-    if(!tr.is_valid_2_object()(curr_pgn))
+   /* if(!tr.is_valid_2_object()(curr_pgn))
     {
       std::cout<<"invalid polygon!!!\n";
       return(0);
+    }*/
+    if(!are_simple)
+    {
+      Polygon_with_holes pgn_with_holes;
+      red_set.simplify(curr_pgn, pgn_with_holes);
+      circ_polygons.push_back(pgn_with_holes);
     }
-    circ_polygons.push_back(curr_pgn);
+    else
+    {
+      circ_polygons.push_back(Polygon_with_holes(curr_pgn));
+    } 
   }
 
   pgn_set->clear();

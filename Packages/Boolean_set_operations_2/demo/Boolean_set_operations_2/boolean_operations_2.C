@@ -497,6 +497,20 @@ public slots:
         QMessageBox::warning( widget,"Open","Can't open file");
         return ;
       }
+      bool are_simple;
+      int answer = 0;
+      answer = 
+        QMessageBox::question(this, QString("Open file"),
+                             QString("Are all polygons simple and without holes?"),
+                             QString("Yes"), QString("No"), QString::null, 0 , 0);
+      if(answer == 0)
+        are_simple = true;
+      else
+        are_simple = false;
+
+
+
+
       CGAL::Bbox_2 box;
       QCursor old = widget->cursor();
       widget->setCursor(Qt::WaitCursor);
@@ -505,12 +519,12 @@ public slots:
       if(red_active)
       {
         red_set.clear();
-        readdxf(in_file, &red_set, widget, box);
+        readdxf(in_file, &red_set, widget, box, are_simple);
       }
       else  
       {
         blue_set.clear();
-        readdxf(in_file, &blue_set, widget, box);
+        readdxf(in_file, &blue_set, widget, box, are_simple);
       }
        widget->set_window(box.xmin(),
                           box.xmax(),
