@@ -441,7 +441,7 @@ public:
     }
 
     // complement second_arr
-    _complement(second_arr);
+    _complement(&second_arr);
 
     Bso_intersection_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
@@ -467,7 +467,7 @@ public:
     }
 
      // complement second_arr
-    _complement(second_arr);
+    _complement(&second_arr);
     Bso_intersection_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
     delete m_arr; // delete the previous arrangement
