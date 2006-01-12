@@ -108,7 +108,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       Face_const_handle fh = h->face();
 
       //check isolated vertices
-      Isolated_vertices_const_iterator   iso_verts_it;
+      Isolated_vertex_const_iterator   iso_verts_it;
       for (iso_verts_it = fh->isolated_vertices_begin();
           iso_verts_it != fh->isolated_vertices_end(); ++iso_verts_it)
       {
@@ -215,7 +215,7 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   typename Traits_2::Compare_y_at_x_2     compare_y_at_x =
                 this->arrangement()->get_traits()->compare_y_at_x_2_object();
 
-  Isolated_vertices_const_iterator   iso_verts_it;
+  Isolated_vertex_const_iterator   iso_verts_it;
   Vertex_const_handle                closest_iso_v;
   const Vertex_const_handle          invalid_v;
   const Halfedge_const_handle        invalid_he;

@@ -129,7 +129,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     // face.
     // However, we first have to check whether the query point coincides with
     // any of the isolated vertices contained inside this face.
-    Isolated_vertices_const_iterator   iso_verts_it;
+    Isolated_vertex_const_iterator   iso_verts_it;
     typename Traits_adaptor_2::Equal_2 equal = traits->equal_2_object();
 
     for (iso_verts_it = (*fh)->isolated_vertices_begin();
@@ -667,8 +667,8 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     else if (p_in_face){
       //check holes
       PRINT_DEBUG(" p in face. go over holes" );
-      Holes_const_iterator hole_it  = face->holes_begin();
-      Holes_const_iterator hole_end = face->holes_end();  
+      Hole_const_iterator hole_it  = face->holes_begin();
+      Hole_const_iterator hole_end = face->holes_end();  
       bool p_in_hole;
       while (hole_it != hole_end) 
       {

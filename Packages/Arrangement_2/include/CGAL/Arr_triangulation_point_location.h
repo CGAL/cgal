@@ -58,7 +58,7 @@ public:
 
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Holes_const_iterator  Holes_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator  Hole_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator  
     Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
@@ -67,8 +67,8 @@ public:
     Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
-  typedef typename Arrangement_2::Isolated_vertices_const_iterator
-    Isolated_vertices_const_iterator;
+  typedef typename Arrangement_2::Isolated_vertex_const_iterator
+    Isolated_vertex_const_iterator;
 
   typedef typename Traits_2::Point_2                    Point_2;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;

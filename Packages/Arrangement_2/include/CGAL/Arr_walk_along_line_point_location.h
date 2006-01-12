@@ -56,10 +56,10 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                              Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_2::Holes_const_iterator
-                                             Holes_const_iterator;
-  typedef typename Arrangement_2::Isolated_vertices_const_iterator
-                                             Isolated_vertices_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator
+                                             Hole_const_iterator;
+  typedef typename Arrangement_2::Isolated_vertex_const_iterator
+                                             Isolated_vertex_const_iterator;
 
   // Data members:
   const Arrangement_2     *p_arr;     // The associated arrangement.

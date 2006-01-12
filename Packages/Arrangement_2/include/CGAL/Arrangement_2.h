@@ -97,12 +97,12 @@ protected:
   typedef typename Dcel::Face_iterator               DFace_iter;
   typedef typename Dcel::Face_const_iterator         DFace_const_iter;
 
-  typedef typename DFace::Holes_iterator             DHoles_iter;
-  typedef typename DFace::Holes_const_iterator       DHoles_const_iter;
+  typedef typename DFace::Hole_iterator             DHoles_iter;
+  typedef typename DFace::Hole_const_iterator       DHoles_const_iter;
 
-  typedef typename DFace::Isolated_vertices_iterator
+  typedef typename DFace::Isolated_vertex_iterator
                                                DIsolated_vertices_iter;
-  typedef typename DFace::Isolated_vertices_const_iterator
+  typedef typename DFace::Isolated_vertex_const_iterator
                                                DIsolated_vertices_const_iter;
 
 public:
@@ -224,19 +224,19 @@ public:
   typedef I_HalfedgeDS_iterator
     <DHoles_iter, Ccb_halfedge_circulator,
      DDifference,
-     DIterator_category>              Holes_iterator;
+     DIterator_category>              Hole_iterator;
   
   typedef I_HalfedgeDS_const_iterator
     <DHoles_const_iter, DHoles_iter,
      Ccb_halfedge_const_circulator,
      DDifference,
-     DIterator_category>              Holes_const_iterator;
+     DIterator_category>              Hole_const_iterator;
 
   /*! \class
    * Isolated vertices iterator - defined as a class to make it assignable
    * to the vertex iterator type.
    */
-  class Isolated_vertices_iterator :
+  class Isolated_vertex_iterator :
     public I_HalfedgeDS_iterator<DIsolated_vertices_iter,
                                  Vertex, DDifference,
                                  DIterator_category>
@@ -247,10 +247,10 @@ public:
 
   public:
 
-    Isolated_vertices_iterator ()
+    Isolated_vertex_iterator ()
     {}
 
-    Isolated_vertices_iterator (DIsolated_vertices_iter iter) :
+    Isolated_vertex_iterator (DIsolated_vertices_iter iter) :
       Base (iter)
     {}
 
@@ -266,7 +266,7 @@ public:
     }
   };
   
-  class Isolated_vertices_const_iterator :
+  class Isolated_vertex_const_iterator :
     public I_HalfedgeDS_const_iterator <DIsolated_vertices_const_iter,
                                         DIsolated_vertices_iter,
                                         Vertex, DDifference,
@@ -279,14 +279,14 @@ public:
 
   public:
 
-    Isolated_vertices_const_iterator ()
+    Isolated_vertex_const_iterator ()
     {}
 
-    Isolated_vertices_const_iterator (Isolated_vertices_iterator iter) :
+    Isolated_vertex_const_iterator (Isolated_vertex_iterator iter) :
       Base (iter)
     {}
 
-    Isolated_vertices_const_iterator (DIsolated_vertices_const_iter iter) :
+    Isolated_vertex_const_iterator (DIsolated_vertices_const_iter iter) :
       Base (iter)
     {}
 
@@ -543,53 +543,53 @@ public:
     }
 
     /*! Get an iterator for the holes inside the face (non-const version). */
-    Holes_iterator holes_begin() 
+    Hole_iterator holes_begin() 
     {
       return (DHoles_iter (Base::holes_begin()));
     }
 
     /*! Get an iterator for the holes inside the face (const version). */
-    Holes_const_iterator holes_begin() const
+    Hole_const_iterator holes_begin() const
     {
       return (DHoles_const_iter (Base::holes_begin()));
     }
     
     /*! Get a past-the-end iterator for the holes (non-const version). */
-    Holes_iterator holes_end() 
+    Hole_iterator holes_end() 
     {
       return (DHoles_iter (Base::holes_end()));
     }
 
     /*! Get a past-the-end iterator for the holes (const version). */
-    Holes_const_iterator holes_end() const 
+    Hole_const_iterator holes_end() const 
     {
       return (DHoles_const_iter (Base::holes_end()));
     }
 
     /*! Get an iterator for the isolated_vertices inside the face
      * (non-const version). */
-    Isolated_vertices_iterator isolated_vertices_begin ()
+    Isolated_vertex_iterator isolated_vertices_begin ()
     {
       return (DIsolated_vertices_iter (Base::isolated_vertices_begin()));
     }
 
     /*! Get an iterator for the isolated_vertices inside the face
      * (const version). */
-    Isolated_vertices_const_iterator isolated_vertices_begin () const
+    Isolated_vertex_const_iterator isolated_vertices_begin () const
     {
       return (DIsolated_vertices_const_iter (Base::isolated_vertices_begin()));
     }
     
     /*! Get a past-the-end iterator for the isolated_vertices 
      * (non-const version). */
-    Isolated_vertices_iterator isolated_vertices_end () 
+    Isolated_vertex_iterator isolated_vertices_end () 
     {
       return (DIsolated_vertices_iter (Base::isolated_vertices_end()));
     }
 
     /*! Get a past-the-end iterator for the isolated_vertices
      * (const version). */
-    Isolated_vertices_const_iterator isolated_vertices_end () const 
+    Isolated_vertex_const_iterator isolated_vertices_end () const 
     {
       return (DIsolated_vertices_const_iter (Base::isolated_vertices_end()));
     }

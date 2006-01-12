@@ -62,12 +62,12 @@ protected:
   typedef typename Arrangement_2::Face_const_handle   
                                                       Face_const_handle;
  
-  typedef typename Arrangement_2::Holes_const_iterator
-                                             Holes_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator
+                                             Hole_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                              Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_2::Isolated_vertices_const_iterator
-                                             Isolated_vertices_const_iterator;
+  typedef typename Arrangement_2::Isolated_vertex_const_iterator
+                                             Isolated_vertex_const_iterator;
   
   typedef Inverse_index<Halfedge_const_iterator>      Halfedges_index;
   typedef Inverse_index<Vertex_const_iterator>        Vertices_index;
@@ -206,7 +206,7 @@ protected:
                                                   f->holes_end());
     formatter.write_size ("number_of_holes", n_holes);
 
-    Holes_const_iterator  hole_it;
+    Hole_const_iterator  hole_it;
     for (hole_it = f->holes_begin(); hole_it != f->holes_end(); ++hole_it)
     {
       Ccb_halfedge_const_circulator  in_ccb = (*hole_it);      
@@ -223,7 +223,7 @@ protected:
                                              f->isolated_vertices_end());
     formatter.write_size ("number_of_isolated_vertices", n_isolated);
 
-    Isolated_vertices_const_iterator  iso_vit;
+    Isolated_vertex_const_iterator  iso_vit;
     for (iso_vit = f->isolated_vertices_begin();
          iso_vit != f->isolated_vertices_end(); ++iso_vit)
     {

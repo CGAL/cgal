@@ -57,7 +57,7 @@ protected:
   typedef typename Arrangement_2::Face_handle            Face_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
                                                       Ccb_halfedge_circulator;
-  typedef typename Arrangement_2::Holes_iterator         Holes_iterator;
+  typedef typename Arrangement_2::Hole_iterator         Hole_iterator;
 
   /*! \class
    * Iterator over the neighbors of a dual vertex (a face in the primal
@@ -82,7 +82,7 @@ protected:
     bool                     _has_outer_ccb;
     bool                     _ccb_incremented;
     Ccb_halfedge_circulator  _outer_ccb_circ;
-    Holes_iterator           _hole_iter;
+    Hole_iterator           _hole_iter;
     Ccb_halfedge_circulator  _curr_hole_circ;
     bool                     _curr_hole_incremented;
     Face_handle              _face;

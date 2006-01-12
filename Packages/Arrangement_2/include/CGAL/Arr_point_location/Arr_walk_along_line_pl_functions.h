@@ -38,7 +38,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
   // Start from the unbounded face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
   typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
-  Holes_const_iterator   holes_it;
+  Hole_const_iterator   holes_it;
   Face_const_handle      face = p_arr->unbounded_face();
   Halfedge_const_handle  closest_he;
   bool                   is_in_face;
@@ -180,7 +180,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
   // inside the current face, so we conclude it is contained in this face.
   // However, we first have to check whether the query point coincides with
   // any of the isolated vertices contained inside this face.
-  Isolated_vertices_const_iterator   iso_verts_it;
+  Isolated_vertex_const_iterator   iso_verts_it;
 
   for (iso_verts_it = face->isolated_vertices_begin();
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
@@ -210,7 +210,7 @@ _vertical_ray_shoot (const Point_2& p,
   typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                             traits->is_vertical_2_object();
 
-  Holes_const_iterator   holes_it;
+  Hole_const_iterator   holes_it;
   Face_const_handle      face = p_arr->unbounded_face();
   Halfedge_const_handle  closest_he;
   bool                   is_in_face;
@@ -329,7 +329,7 @@ _vertical_ray_shoot (const Point_2& p,
 
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
 
-  Isolated_vertices_const_iterator   iso_verts_it;
+  Isolated_vertex_const_iterator   iso_verts_it;
   Vertex_const_handle                closest_iso_v;
   const Vertex_const_handle          invalid_v;
   const Halfedge_const_handle        invalid_he;

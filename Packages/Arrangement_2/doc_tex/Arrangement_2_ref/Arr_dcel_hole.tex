@@ -23,7 +23,7 @@ container of this face.
 
 \ccNestedType{Face}{the corresponding \dcel\ face type.}
 
-\ccTypedef{typedef Face::Holes_iterator Holes_iterator;} {}
+\ccTypedef{typedef Face::Hole_iterator Hole_iterator;} {}
 
 \ccCreation
 %==========
@@ -42,7 +42,7 @@ pointers or iterators:
 \ccMethod{Face* face ();}
     {returns the incident face, which contains \ccVar{} in its interior.}
 
-\ccMethod{Holes_iterator iterator();}
+\ccMethod{Hole_iterator iterator();}
     {returns an iterator for the hole.}
 
 \ccModifiers
@@ -51,7 +51,7 @@ pointers or iterators:
   \ccMethod{void set_face (Face* f);}
     {sets the incident face.}
 
-  \ccMethod{void set_iterator (Holes_iterator it);}
+  \ccMethod{void set_iterator (Hole_iterator it);}
     {sets the hole iterator.}
 
 } % ccHtmlNoLinksFrom

@@ -24,7 +24,7 @@ face.
 
 \ccNestedType{Face}{the corresponding \dcel\ face type.}
 
-\ccTypedef{typedef Face::Isolated_vertices_iterator Isolated_vertices_iterator;}{}
+\ccTypedef{typedef Face::Isolated_vertex_iterator Isolated_vertex_iterator;}{}
 
 \ccCreation
 %==========
@@ -43,7 +43,7 @@ pointers or iterators:
 \ccMethod{Face* face ();}
     {returns the incident face, which contains \ccVar{} in its interior.}
 
-\ccMethod{Isolated_vertices_iterator iterator();}
+\ccMethod{Isolated_vertex_iterator iterator();}
     {returns an iterator for the isolated vertex.}
 
 \ccModifiers
@@ -52,7 +52,7 @@ pointers or iterators:
   \ccMethod{void set_face (Face* f);}
     {sets the incident face.}
 
-  \ccMethod{void set_iterator (Isolated_vertices_iterator it);}
+  \ccMethod{void set_iterator (Isolated_vertex_iterator it);}
     {sets the isolated vertex iterator.}
 
 } % ccHtmlNoLinksFrom

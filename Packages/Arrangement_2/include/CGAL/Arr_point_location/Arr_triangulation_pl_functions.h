@@ -62,7 +62,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
 
       // we still have to check whether the query point coincides with
       // any of the isolated vertices contained inside this face.
-      Isolated_vertices_const_iterator   iso_verts_it;
+      Isolated_vertex_const_iterator   iso_verts_it;
       typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
 
       for (iso_verts_it = face_found->isolated_vertices_begin();
@@ -199,7 +199,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
 
   // we still have to check whether the query point coincides with
   // any of the isolated vertices contained inside this face.
-  Isolated_vertices_const_iterator   iso_verts_it;
+  Isolated_vertex_const_iterator   iso_verts_it;
   typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
 
   for (iso_verts_it = face_found->isolated_vertices_begin();

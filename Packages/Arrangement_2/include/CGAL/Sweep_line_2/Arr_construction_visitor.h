@@ -40,7 +40,7 @@ protected:
   typedef typename Arrangement::Face_handle            Face_handle;
   typedef typename Arrangement::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
-  typedef typename Arrangement::Holes_iterator         Holes_iterator;
+  typedef typename Arrangement::Hole_iterator         Hole_iterator;
   typedef Arr_construction_visitor<Traits_,
                                    Arrangement,
                                    Event_,

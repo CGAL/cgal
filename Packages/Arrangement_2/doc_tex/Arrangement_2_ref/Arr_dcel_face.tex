@@ -26,14 +26,14 @@ interior.
 \ccGlue
 \ccNestedType{Halfedge}{the corresponding \dcel\ halfedge type.}
 
-\ccNestedType{Holes_iterator}{a bidirectional iterator over the holes in 
+\ccNestedType{Hole_iterator}{a bidirectional iterator over the holes in 
 inside the face. Its value-type is \ccStyle{Halfedge*}.}
 
-\ccNestedType{Isolated_vertices_iterator}{a bidirectional iterator over the
+\ccNestedType{Isolated_vertex_iterator}{a bidirectional iterator over the
 isolated vertices in inside the face. Its value-type is \ccStyle{Vertex*}.}
 
-The non-mutable iterators \ccc{Holes_const_iterator},
-and \ccc{Isolated_vertices_const_iterator} are also defined.
+The non-mutable iterators \ccc{Hole_const_iterator},
+and \ccc{Isolated_vertex_const_iterator} are also defined.
 
 \ccCreation
 %==========
@@ -59,19 +59,19 @@ pointers or iterators:
   \ccMethod{size_t number_of_holes() const;}
     {returns the number of holes inside \ccVar{}.}
   \ccGlue
-  \ccMethod{Holes_iterator holes_begin();}
+  \ccMethod{Hole_iterator holes_begin();}
     {returns a begin-iterator for the holes inside \ccVar{}.}
   \ccGlue
-  \ccMethod{Holes_iterator holes_end();}
+  \ccMethod{Hole_iterator holes_end();}
     {returns a past-the-end iterator for the holes inside \ccVar{}.}
 
   \ccMethod{size_t number_of_isolated_vertices() const;}
     {returns the number of isolated vertices inside \ccVar{}.}
   \ccGlue
-  \ccMethod{Isolated_vertices_iterator isolated_vertices_begin();}
+  \ccMethod{Isolated_vertex_iterator isolated_vertices_begin();}
     {returns a begin-iterator for the isolated vertices inside \ccVar{}.}
   \ccGlue
-  \ccMethod{Isolated_vertices_iterator isolated_vertices_end();}
+  \ccMethod{Isolated_vertex_iterator isolated_vertices_end();}
     {returns a past-the-end iterator for the isolated vertices inside 
      \ccVar{}.}
 
@@ -84,13 +84,13 @@ pointers or iterators:
   \ccMethod{void add_hole (Halfedge* e);}
     {adds \ccc{e} as a hole inside \ccVar{}.}
 
-  \ccMethod{void erase_hole (Holes_iterator it);}
+  \ccMethod{void erase_hole (Hole_iterator it);}
     {removes the hole that \ccc{it} points to from inside \ccVar{}.}
   
   \ccMethod{void add_isolated_vertex (Vertex* v);}
     {adds \ccc{v} as an isolated vertex inside \ccVar{}.}
 
-  \ccMethod{void erase_isolated_vertex (Isolated_vertices_iterator it);}
+  \ccMethod{void erase_isolated_vertex (Isolated_vertex_iterator it);}
     {removes the isolated vertex that \ccc{it} points to from inside \ccVar{}.}
 
 } % ccHtmlNoLinksFrom

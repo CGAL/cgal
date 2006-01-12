@@ -73,7 +73,7 @@ void print_face (typename Arrangement::Face_const_handle f)
   }
 
   // Print the boundary of each of the holes.
-  typename Arrangement::Holes_const_iterator  hole;
+  typename Arrangement::Hole_const_iterator  hole;
   int                                         index = 1;
 
   for (hole = f->holes_begin(); hole != f->holes_end(); ++hole, ++index)
@@ -83,7 +83,7 @@ void print_face (typename Arrangement::Face_const_handle f)
   }
 
   // Print the isolated vertices.
-  typename Arrangement::Isolated_vertices_const_iterator  iv;
+  typename Arrangement::Isolated_vertex_const_iterator  iv;
 
   for (iv = f->isolated_vertices_begin(), index = 1;
        iv != f->isolated_vertices_end(); ++iv, ++index)

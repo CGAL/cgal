@@ -210,14 +210,14 @@ class Arr_face_base
 public:
 
   typedef std::list<void*>                  Holes_container;
-  typedef Holes_container::iterator         Holes_iterator;
-  typedef Holes_container::const_iterator   Holes_const_iterator;
+  typedef Holes_container::iterator         Hole_iterator;
+  typedef Holes_container::const_iterator   Hole_const_iterator;
 
   typedef std::list<void*>                  Isolated_vertices_container;
   typedef Isolated_vertices_container::iterator
-                                            Isolated_vertices_iterator;
+                                            Isolated_vertex_iterator;
   typedef Isolated_vertices_container::const_iterator
-                                            Isolated_vertices_const_iterator;
+                                            Isolated_vertex_const_iterator;
 
 protected:
 
@@ -536,17 +536,17 @@ public:
 
   // Define the hole iterators:
   typedef I_HalfedgeDS_iterator<
-    typename F::Holes_iterator,
+    typename F::Hole_iterator,
     Halfedge*,
-    typename F::Holes_iterator::difference_type,
-    typename F::Holes_iterator::iterator_category>       Holes_iterator;
+    typename F::Hole_iterator::difference_type,
+    typename F::Hole_iterator::iterator_category>       Hole_iterator;
 
   typedef I_HalfedgeDS_const_iterator<
-    typename F::Holes_const_iterator,
-    typename F::Holes_iterator,
+    typename F::Hole_const_iterator,
+    typename F::Hole_iterator,
     const Halfedge*,
-    typename F::Holes_const_iterator::difference_type,
-    typename F::Holes_const_iterator::iterator_category> Holes_const_iterator;
+    typename F::Hole_const_iterator::difference_type,
+    typename F::Hole_const_iterator::iterator_category> Hole_const_iterator;
 
   /*! Get the number of holes inside the face. */
   size_t number_of_holes() const
@@ -555,56 +555,56 @@ public:
   }
 
   /*! Add a hole inside the face. */
-  Holes_iterator add_hole (Halfedge* h)
+  Hole_iterator add_hole (Halfedge* h)
   {
     return (this->holes.insert (this->holes.end(), h));
   }
 
   /*! Erase a hole from the face. */
-  void erase_hole (Holes_iterator hit)
+  void erase_hole (Hole_iterator hit)
   {
     this->holes.erase (hit.current_iterator());
   }
 
   /*! Get an iterator for the first hole inside the face. */
-  Holes_iterator holes_begin()
+  Hole_iterator holes_begin()
   {
     return (this->holes.begin());
   }
 
   /*! Get a past-the-end iterator for the holes inside the face. */
-  Holes_iterator holes_end()
+  Hole_iterator holes_end()
   {
     return (this->holes.end());
   }
 
   /*! Get an const iterator for the first hole inside the face. */
-  Holes_const_iterator holes_begin() const
+  Hole_const_iterator holes_begin() const
   {
     return (this->holes.begin());
   }
 
   /*! Get a const past-the-end iterator for the holes inside the face. */
-  Holes_const_iterator holes_end() const
+  Hole_const_iterator holes_end() const
   {
     return (this->holes.end());
   }
 
   // Define the isloated vertices iterators:
   typedef I_Dereference_iterator<
-    typename F::Isolated_vertices_iterator,
+    typename F::Isolated_vertex_iterator,
     Vertex,
-    typename F::Isolated_vertices_iterator::difference_type,
-    typename F::Isolated_vertices_iterator::iterator_category>
-                                              Isolated_vertices_iterator;
+    typename F::Isolated_vertex_iterator::difference_type,
+    typename F::Isolated_vertex_iterator::iterator_category>
+                                              Isolated_vertex_iterator;
   
   typedef I_Dereference_const_iterator<
-    typename F::Isolated_vertices_const_iterator,
-    typename F::Isolated_vertices_iterator,
+    typename F::Isolated_vertex_const_iterator,
+    typename F::Isolated_vertex_iterator,
     Vertex,
-    typename F::Isolated_vertices_iterator::difference_type,
-    typename F::Isolated_vertices_iterator::iterator_category>
-                                              Isolated_vertices_const_iterator;
+    typename F::Isolated_vertex_iterator::difference_type,
+    typename F::Isolated_vertex_iterator::iterator_category>
+                                              Isolated_vertex_const_iterator;
 
   /*! Get the number of isloated vertices inside the face. */
   size_t number_of_isolated_vertices() const
@@ -613,38 +613,38 @@ public:
   }
 
   /*! Add an isloated vertex inside the face. */
-  Isolated_vertices_iterator add_isolated_vertex (Vertex* v)
+  Isolated_vertex_iterator add_isolated_vertex (Vertex* v)
   {
     return (this->iso_verts.insert (this->iso_verts.end(), v));
   }
 
   /*! Erase an isloated vertex from the face. */
-  void erase_isolated_vertex (Isolated_vertices_iterator ivit)
+  void erase_isolated_vertex (Isolated_vertex_iterator ivit)
   {
     this->iso_verts.erase (ivit.current_iterator());
   }
 
   /*! Get an iterator for the first isloated vertex inside the face. */
-  Isolated_vertices_iterator isolated_vertices_begin()
+  Isolated_vertex_iterator isolated_vertices_begin()
   {
     return (this->iso_verts.begin());
   }
 
   /*! Get a past-the-end iterator for the isloated vertices inside the face. */
-  Isolated_vertices_iterator isolated_vertices_end()
+  Isolated_vertex_iterator isolated_vertices_end()
   {
     return (this->iso_verts.end());
   }
 
   /*! Get an const iterator for the first isloated vertex inside the face. */
-  Isolated_vertices_const_iterator isolated_vertices_begin() const
+  Isolated_vertex_const_iterator isolated_vertices_begin() const
   {
     return (this->iso_verts.begin());
   }
 
   /*! Get a const past-the-end iterator for the isloated vertices inside the
    * face. */
-  Isolated_vertices_const_iterator isolated_vertices_end() const
+  Isolated_vertex_const_iterator isolated_vertices_end() const
   {
     return (this->iso_verts.end());
   }
@@ -657,12 +657,12 @@ public:
 
   typedef Arr_hole<V,H,F>                Self;
   typedef Arr_face<V,H,F>                Face;
-  typedef typename Face::Holes_iterator  Holes_iterator;
+  typedef typename Face::Hole_iterator  Hole_iterator;
 
 private:
 
   Face            *p_f;      // The face the contains the hole in its interior.
-  Holes_iterator   hole_it;  // The hole identifier.
+  Hole_iterator   hole_it;  // The hole identifier.
 
 public:
 
@@ -690,19 +690,19 @@ public:
   }
 
   /*! Get the hole iterator (const version). */
-  Holes_iterator iterator () const
+  Hole_iterator iterator () const
   {
     return (hole_it);
   }
 
   /*! Get the hole iterator (non-const version). */
-  Holes_iterator iterator ()
+  Hole_iterator iterator ()
   {
     return (hole_it);
   }
 
   /*! Set the hole iterator. */
-  void set_iterator (Holes_iterator hole)
+  void set_iterator (Hole_iterator hole)
   {
     hole_it = hole;
     return;
@@ -718,12 +718,12 @@ public:
 
   typedef Arr_isolated_vertex<V,H,F>                Self;
   typedef Arr_face<V,H,F>                           Face;
-  typedef typename Face::Isolated_vertices_iterator Isolated_vertices_iterator;
+  typedef typename Face::Isolated_vertex_iterator Isolated_vertex_iterator;
 
 private:
 
   Face                        *p_f;   // The face containing the hole.
-  Isolated_vertices_iterator   iv_it; // The isolated vertex identifier.
+  Isolated_vertex_iterator   iv_it; // The isolated vertex identifier.
 
 public:
 
@@ -751,19 +751,19 @@ public:
   }
 
   /*! Get the isolated vertex iterator (const version). */
-  Isolated_vertices_iterator iterator () const
+  Isolated_vertex_iterator iterator () const
   {
     return (iv_it);
   }
 
   /*! Get the isolated vertex iterator (non-const version). */
-  Isolated_vertices_iterator iterator ()
+  Isolated_vertex_iterator iterator ()
   {
     return (iv_it);
   }
 
   /*! Set the isolated vertex iterator. */
-  void set_iterator (Isolated_vertices_iterator iv)
+  void set_iterator (Isolated_vertex_iterator iv)
   {
     iv_it = iv;
     return;
@@ -1235,8 +1235,8 @@ public:
 
     // Update the face records, along with the hole and isolated vertex
     // records.
-    typename Face::Holes_const_iterator              holes_it;
-    typename Face::Isolated_vertices_const_iterator  iso_verts_it;
+    typename Face::Hole_const_iterator              holes_it;
+    typename Face::Isolated_vertex_const_iterator  iso_verts_it;
     const Halfedge                      *hole;
     const Vertex                        *iso_vert;
     Halfedge                            *dup_hole;

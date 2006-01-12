@@ -423,13 +423,13 @@ A face can also contain disconnected components in its interior,
 namely holes and isolated vertices:
 \begin{itemize}
 \item The \ccc{holes_begin()} and \ccc{holes_end()} methods return
-\ccc{Arrangement_2::Holes_iterator} iterators that define the range
+\ccc{Arrangement_2::Hole_iterator} iterators that define the range
 of holes inside the face. The value type of this iterator is
 \ccc{Ccb_halfedge_circulator}, defining the CCB that winds in a
 clockwise orientation around a hole.
 \item The \ccc{isolated_vertices_begin()} and
 \ccc{isolated_vertices_end()} methods return
-\ccc{Arrangement_2::Isolated_vertices_iterator} iterators that
+\ccc{Arrangement_2::Isolated_vertex_iterator} iterators that
 define the range of isolated vertices inside the face. The value
 type of this iterator is \ccc{Vertex}.
 \end{itemize}
@@ -449,7 +449,7 @@ void print_face (Arrangement_2::Face_const_handle f)
   \}
 
   // Print the boundary of each of the holes.
-  Arrangement_2::Holes_const_iterator hi;
+  Arrangement_2::Hole_const_iterator hi;
   int                                 index = 1;
   for (hi = f->holes_begin(); hi != f->holes_end(); ++hi, ++index) \{
     std::cout << "    Hole #" << index << ": ";
@@ -457,7 +457,7 @@ void print_face (Arrangement_2::Face_const_handle f)
   \}
 
   // Print the isolated vertices.
-  Arrangement_2::Isolated_vertices_const_iterator iv;
+  Arrangement_2::Isolated_vertex_const_iterator iv;
   for (iv = f->isolated_vertices_begin(), index = 1;
        iv != f->isolated_vertices_end(); ++iv, ++index)
   \{
