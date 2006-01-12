@@ -25,6 +25,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h> 
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
+#include <CGAL/Arr_accessor.h>
 #include <queue>
 
 
@@ -264,7 +265,9 @@ void pgn2arr(const Polygon_2& pgn, Arrangement_2& arr)
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
   typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
+  typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
 
+  Arr_accessor  accessor(arr);
   Compare_endpoints_xy_2  cmp_ends = 
     arr.get_traits()->compare_endpoints_xy_2_object();
 
@@ -301,12 +304,19 @@ void pgn2arr(const Polygon_2& pgn, Arrangement_2& arr)
   if(temp == end) // a polygon with circular arcs may have only
                   // two edges (full circle for example)
   {
-    Halfedge_handle he = 
-      arr.insert_at_vertices(*temp, curr_he, first_he);
-    if(he->face() == arr.unbounded_face())
-      he->twin()->face()->set_contained(true);
-    else
-      he->face()->set_contained(true);
+    /*Halfedge_handle he = 
+      arr.insert_at_vertices(*temp, curr_he, first_he);*/
+    bool new_face_created;
+    Halfedge_handle he = accessor.insert_at_vertices_ex (*temp,
+                                                         curr_he,
+                                                         first_he,
+                                                         cmp_ends(*temp),
+                                                         new_face_created);
+    CGAL_assertion(new_face_created); 
+    CGAL_assertion((he->face() != he->twin()->face()) && 
+                   (he->face() != arr.unbounded_face()));
+    
+    he->face()->set_contained(true);
     return;
   }
 
@@ -326,13 +336,20 @@ void pgn2arr(const Polygon_2& pgn, Arrangement_2& arr)
   }
 
   const X_monotone_curve_2& last_cv = *last;
-  Halfedge_handle last_he =
-    arr.insert_at_vertices(last_cv, curr_he, first_he); 
-
-  if(last_he->face() == arr.unbounded_face())
-    last_he->twin()->face()->set_contained(true);
-  else
-    last_he->face()->set_contained(true);
+  /*Halfedge_handle last_he =
+    arr.insert_at_vertices(last_cv, curr_he, first_he); */
+  bool new_face_created;
+  Halfedge_handle last_he = 
+    accessor.insert_at_vertices_ex (last_cv,
+                                    curr_he,
+                                    first_he,
+                                    cmp_ends(last_cv),
+                                    new_face_created);
+  CGAL_assertion(new_face_created); 
+  CGAL_assertion((last_he->face() != last_he->twin()->face()) && 
+                 (last_he->face() != arr.unbounded_face()));
+  
+  last_he->face()->set_contained(true);
 }
 
 
