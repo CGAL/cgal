@@ -151,7 +151,7 @@ public:
     m_traits_owner(true),
     m_arr(new Arrangement_2(m_traits)) 
   {
-    pgn2arr(pgn, *m_arr);
+    _insert(pgn, *m_arr);
   }
 
   explicit General_polygon_set_2(const Polygon_with_holes_2& pgn_with_holes): 
@@ -159,7 +159,7 @@ public:
     m_traits_owner(true),
     m_arr(new Arrangement_2(m_traits))
   {
-    pgn_with_holes2arr(pgn_with_holes, *m_arr);
+    _insert(pgn_with_holes, *m_arr);
   }
 
 
@@ -226,11 +226,14 @@ public:
   // insert a simple polygon
   void insert(const Polygon_2& pgn)
   {
-    pgn2arr(pgn, *m_arr);
+    _insert(pgn, *m_arr);
   }
 
   // insert a polygon with holes
-  void insert(const Polygon_with_holes_2& pgn_with_holes);
+  void insert(const Polygon_with_holes_2& pgn_with_holes)
+  {
+    _insert(pgn_with_holes, *m_arr);
+  }
 
 
   // insert a range of polygons that can be either simple polygons
@@ -255,46 +258,27 @@ public:
    // test for intersection with a simple polygon
   bool do_intersect(const Polygon_2 &pgn) const
   {
-    if(this->is_empty())
-      return false;
-    
-    Arrangement_2 second_arr;
-    pgn2arr(pgn, second_arr);
-    if(second_arr.is_empty())
-      return false;
-
-    Arrangement_2 res_arr;
-    Bso_do_intersect_functor<Traits_2>  func;
-    overlay(*m_arr, second_arr, res_arr, func);
-    return func.found_intersection();
+    Self other(pgn);
+    return (do_intersect(other));
   }
 
   // test for intersection with a polygon with holes
-  bool do_intersect(const Polygon_with_holes_2& pgn_with_holes)
+  bool do_intersect(const Polygon_with_holes_2& pgn_with_holes) const
   {
-    if(this->is_empty())
-      return false;
-    Arrangement_2 second_arr;
-    pgn_with_holes2arr(pgn_with_holes, second_arr);
-    if(second_arr.is_empty())
-      return false;
-
-    Arrangement_2 res_arr;
-    Bso_do_intersect_functor<Traits_2>  func;
-    overlay(*m_arr, second_arr, res_arr, func);
-    return func.found_intersection();
+    Self other(pgn_with_holes);
+    return (do_intersect(other));
   }
 
   //test for intersection with another General_polygon_set_2 object
-  bool do_intersect(const General_polygon_set_2& bops)
+  bool do_intersect(const General_polygon_set_2& other) const
   {
-    if(this->is_empty() || bops.is_empty())
+    if(this->is_empty() || other.is_empty())
       return false;
     
     Arrangement_2 res_arr;
 
     Bso_do_intersect_functor<Traits_2>  func;
-    overlay(*m_arr, *(bops.m_arr), res_arr, func);
+    overlay(*m_arr, *(other.m_arr), res_arr, func);
     return func.found_intersection();
   }
 
@@ -307,7 +291,7 @@ public:
       return;
     }
     Arrangement_2 second_arr;
-    pgn2arr(pgn, second_arr);
+    _insert(pgn, second_arr);
     if(second_arr.is_empty())
     {
       this->clear();
@@ -331,7 +315,7 @@ public:
     }
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
-    pgn_with_holes2arr(pgn_with_holes, second_arr);
+    _insert(pgn_with_holes, second_arr);
     if(second_arr.is_empty())
     {
       if(! second_arr.unbounded_face()->contained())
@@ -371,13 +355,13 @@ public:
 
     if(this->is_empty())
     {
-      pgn2arr(pgn, *m_arr);
+      _insert(pgn, *m_arr);
       return;
     }
 
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
-    pgn2arr(pgn, second_arr);
+    _insert(pgn, second_arr);
 
     Bso_join_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
@@ -396,13 +380,13 @@ public:
 
     if(this->is_empty())
     {
-      pgn_with_holes2arr(pgn_with_holes, *m_arr);
+      _insert(pgn_with_holes, *m_arr);
       return;
     }
 
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
-    pgn_with_holes2arr(pgn_with_holes, second_arr);
+    _insert(pgn_with_holes, second_arr);
 
     Bso_join_functor<Traits_2>  func(m_traits);
     overlay(*m_arr, second_arr, res_arr, func);
@@ -434,7 +418,7 @@ public:
 
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
-    pgn2arr(pgn, second_arr);
+    _insert(pgn, second_arr);
     if(second_arr.is_empty())
     {
       return;
@@ -460,7 +444,7 @@ public:
 
     Arrangement_2 second_arr;
     Arrangement_2 res_arr;
-    pgn_with_holes2arr(pgn_with_holes, second_arr);
+    _insert(pgn_with_holes, second_arr);
     if(second_arr.is_empty())
     {
       return;
@@ -494,7 +478,7 @@ public:
   {
     Arrangement_2 second_arr;
     Arrangement_2* res_arr = new Arrangement_2(m_traits);
-    pgn2arr(pgn, second_arr);
+    _insert(pgn, second_arr);
     Bso_sym_diff_functor<Traits_2>  func;
     overlay(*m_arr, second_arr, *res_arr, func);
     std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
@@ -513,7 +497,7 @@ public:
   {
     Arrangement_2 second_arr;
     Arrangement_2* res_arr = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(pgn_with_holes, second_arr);
+    _insert(pgn_with_holes, second_arr);
 
     Bso_sym_diff_functor<Traits_2>  func;
    
@@ -667,13 +651,10 @@ public:
     return true;
   }
 
-
-  //static void pgn2arr (const Polygon_2& pgn, Arrangement_2& arr);
-
   template< class PolygonIter >
   void pgns2arr(PolygonIter p_begin, PolygonIter p_end, Arrangement_2& arr);
   
-  //void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr);
+  //void _insert (const Polygon_with_holes_2& pgn, Arrangement_2& arr);
 
   
   template< class InputIterator >
@@ -711,7 +692,7 @@ inline void join(InputIterator begin,
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn2arr(*itr, *arr_vec[i]);
+    _insert(*itr, *arr_vec[i]);
   }
 
   Join_merge<Arrangement_2> join_merge;
@@ -736,7 +717,7 @@ inline void join(InputIterator begin,
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(*itr, *arr_vec[i]);
+    _insert(*itr, *arr_vec[i]);
   }
 
   Join_merge<Arrangement_2> join_merge;
@@ -762,13 +743,13 @@ inline void join(InputIterator1 begin1,
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn2arr(*itr1, *arr_vec[i]);
+    _insert(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(*itr2, *arr_vec[i]);
+    _insert(*itr2, *arr_vec[i]);
   }
 
   Join_merge<Arrangement_2> join_merge;
@@ -806,7 +787,7 @@ inline void intersection(InputIterator begin,
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn2arr(*itr, *arr_vec[i]);
+    _insert(*itr, *arr_vec[i]);
   }
 
   Intersection_merge<Arrangement_2> intersection_merge;
@@ -830,7 +811,7 @@ inline void intersection(InputIterator begin,
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(*itr, *arr_vec[i]);
+    _insert(*itr, *arr_vec[i]);
   }
 
   Intersection_merge<Arrangement_2> intersection_merge;
@@ -856,13 +837,13 @@ inline void intersection(InputIterator1 begin1,
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn2arr(*itr1, *arr_vec[i]);
+    _insert(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(*itr2, *arr_vec[i]);
+    _insert(*itr2, *arr_vec[i]);
   }
 
   Intersection_merge<Arrangement_2> intersection_merge;
@@ -902,7 +883,7 @@ inline void symmetric_difference(InputIterator begin,
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn2arr(*itr, *arr_vec[i]);
+    _insert(*itr, *arr_vec[i]);
   }
 
   Xor_merge<Arrangement_2> xor_merge;
@@ -926,7 +907,7 @@ inline void symmetric_difference(InputIterator begin,
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(*itr, *arr_vec[i]);
+    _insert(*itr, *arr_vec[i]);
   }
 
   Xor_merge<Arrangement_2> xor_merge;
@@ -952,13 +933,13 @@ inline void symmetric_difference(InputIterator1 begin1,
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn2arr(*itr1, *arr_vec[i]);
+    _insert(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     arr_vec[i] = new Arrangement_2(m_traits);
-    pgn_with_holes2arr(*itr2, *arr_vec[i]);
+    _insert(*itr2, *arr_vec[i]);
   }
 
   Xor_merge<Arrangement_2> xor_merge;
@@ -1041,12 +1022,23 @@ void divide_and_conquer(unsigned int lower,
 // mark all faces as non-visited
 void _reset_faces() const
 {
-  Face_const_iterator fit = m_arr->faces_begin();
-  for( ; fit != m_arr->faces_end(); ++fit)
+  _reset_faces(m_arr);
+}
+
+void _reset_faces(Arrangement_2* arr) const
+{
+  Face_const_iterator fit = arr->faces_begin();
+  for( ; fit != arr->faces_end(); ++fit)
   {
     fit->set_visited(false);
   }
+
 }
+
+
+void _insert(const Polygon_2& pgn, Arrangement_2& arr);
+
+void _insert(const Polygon_with_holes_2& pgn, Arrangement_2& arr);
 
 };
 
