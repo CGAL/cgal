@@ -23,6 +23,7 @@
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Polygon_2_curve_iterator.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
@@ -44,7 +45,8 @@ public:
   //Polygon_with_holes_2 can be non-simple polygon, with holes that are 
   //entirely inside home , or some vertices of the polygon and its holes
   // may overlap.
-  typedef General_polygon_with_holes_2<Polygon_2> Polygon_with_holes_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel_, Container_>    
+                                                        Polygon_with_holes_2;
   
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
 

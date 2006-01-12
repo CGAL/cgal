@@ -162,8 +162,8 @@ public:
     all_incident_faces(ubf);
     Polygon_2 boundary;
     Polygon_with_holes_2 pgn(boundary,
-                              m_pgn_holes.begin(),
-                              m_pgn_holes.end());
+                             m_pgn_holes.begin(),
+                             m_pgn_holes.end());
     *m_oi = pgn;
     ++m_oi;
     m_pgn_holes.clear();
@@ -257,23 +257,23 @@ public:
   }
 };
   
-template < class Polygon_2, class Arrangement_2>
-void pgn2arr(const Polygon_2& pgn, Arrangement_2& arr)
+template < class Traits_>
+void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2& arr)
 {
-  typedef typename Arrangement_2::Traits_2             Traits_2;
+  /*typedef typename Arrangement_2::Traits_2             Traits_2;
   typedef typename Traits_2::Compare_endpoints_xy_2    Compare_endpoints_xy_2;
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
-  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
+  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;*/
   typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
 
   Arr_accessor  accessor(arr);
   Compare_endpoints_xy_2  cmp_ends = 
-    arr.get_traits()->compare_endpoints_xy_2_object();
+    m_traits->compare_endpoints_xy_2_object();
 
   std::pair<Curve_const_iterator,
             Curve_const_iterator> itr_pair =
-    arr.get_traits()->construct_curves_2_object()(pgn);
+    m_traits->construct_curves_2_object()(pgn);
 
   if(itr_pair.first == itr_pair.second)
     return;
@@ -389,20 +389,10 @@ void General_polygon_set_2<Traits_>::pgns2arr(PolygonIter p_begin,
 
  //insert non-sipmle poloygons with holes (non incident edges may have
 // common vertex,  but they dont intersect at their interior
-template < class Polygon_with_holes_2, class Arrangement_2 >
-void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
+template <class Traits_>
+void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
 {
-  typedef typename Arrangement_2::Traits_2             Traits_2;
-  typedef typename Traits_2::Polygon_2                 Polygon_2;
-  typedef typename Traits_2::Compare_endpoints_xy_2    Compare_endpoints_xy_2;
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
-  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
-  
-  typedef typename Polygon_with_holes_2::Holes_const_iterator
-                                                       GP_Holes_const_iterator;
-
-  typedef std::list<X_monotone_curve_2>                XCurveList;
+  typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
   typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
@@ -414,7 +404,7 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
     const Polygon_2& pgn_boundary = pgn.outer_boundary();
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair = 
-              arr.get_traits()->construct_curves_2_object()(pgn_boundary);
+              m_traits->construct_curves_2_object()(pgn_boundary);
     std::copy (itr_pair.first, itr_pair.second, 
 	       std::back_inserter(xcurve_list));
   }
@@ -425,7 +415,7 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
     const Polygon_2& pgn_hole = *hit;
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair =
-              arr.get_traits()->construct_curves_2_object()(pgn_hole);
+              m_traits->construct_curves_2_object()(pgn_hole);
     std::copy (itr_pair.first, itr_pair.second,
 	       std::back_inserter(xcurve_list));
   }
@@ -438,6 +428,7 @@ void pgn_with_holes2arr (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
   My_visitor v;
   Arr_bfs_scanner scanner(v);
   scanner.scan(arr);
+  _reset_faces(&arr);
 }
 
 
