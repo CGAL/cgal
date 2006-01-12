@@ -51,7 +51,7 @@ namespace CGAL
         }
         else  
           *widget << outer_boundary;
-        for(Holes_const_iterator hit = m_pgn.holes_begin();
+        for(Hole_const_iterator hit = m_pgn.holes_begin();
             hit != m_pgn.holes_end();
             ++hit)
         {

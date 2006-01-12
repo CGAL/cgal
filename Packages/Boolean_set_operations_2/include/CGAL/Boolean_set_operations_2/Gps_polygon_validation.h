@@ -166,7 +166,7 @@ protected:
   bool is_closed(const Polygon_with_holes_2& pgn)
   {
     Traits tr;
-    typedef typename Polygon_with_holes_2::Holes_const_iterator    HCI;
+    typedef typename Polygon_with_holes_2::Hole_const_iterator    HCI;
     if(!is_closed(pgn.outer_boundary()))
       return false;
 
@@ -232,7 +232,7 @@ protected:
                                  itr_pair.second) != COUNTERCLOCKWISE)
       return false;
 
-    typedef typename Polygon_with_holes_2::Holes_const_iterator    HCI;
+    typedef typename Polygon_with_holes_2::Hole_const_iterator    HCI;
     for(HCI hit = pgn.holes_begin(); hit != pgn.holes_end(); ++hit)
     {
       itr_pair = ctr_curves(*hit);

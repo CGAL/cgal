@@ -12,7 +12,7 @@ class Gps_bfs_scanner
 {
   typedef Arrangement_     Arrangement;
 
-  typedef typename Arrangement::Holes_iterator    Holes_iterator;
+  typedef typename Arrangement::Hole_iterator    Hole_iterator;
   typedef typename Arrangement::Ccb_halfedge_circulator 
                                                   Ccb_halfedge_circulator;
   typedef typename Arrangement::Face_iterator    Face_iterator;
@@ -22,7 +22,7 @@ class Gps_bfs_scanner
 
 protected:
   Visitor*                     m_visitor;
-  std::queue<Holes_iterator>   m_holes;
+  std::queue<Hole_iterator>   m_holes;
   std::stack<Ccb_halfedge_circulator>  m_ccb_stcak;
 
 public:
@@ -38,7 +38,7 @@ public:
     
     while(!m_holes.empty())
     {
-      Holes_iterator hole = m_holes.front();
+      Hole_iterator hole = m_holes.front();
       m_holes.pop();
       scan(*hole);
     }
@@ -81,7 +81,7 @@ public:
   
   void push_to_queue_holes_of_face(Face_iterator f)
   {
-    for(Holes_iterator hit = f->holes_begin(); hit!= f->holes_end(); ++hit)
+    for(Hole_iterator hit = f->holes_begin(); hit!= f->holes_end(); ++hit)
     {
       m_holes.push(hit);
     }

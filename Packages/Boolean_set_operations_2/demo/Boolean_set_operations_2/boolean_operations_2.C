@@ -111,7 +111,7 @@ public:
        else  
          *widget << outer_boundary;
       widget->setFillColor (CGAL::BLACK);
-      for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
+      for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
       {
@@ -148,7 +148,7 @@ public:
          *widget << outer_boundary;
        }
       widget->setFillColor ( CGAL::BLUE);
-      for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
+      for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
       {
@@ -465,7 +465,7 @@ private:
          *widget << outer_boundary;
        
        widget->setFillColor (CGAL::BLACK) ;
-       for(Holes_const_iterator hit = pgn_with_hole.holes_begin();
+       for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
            hit != pgn_with_hole.holes_end();
            ++hit)
        {

@@ -27,7 +27,7 @@ typedef Traits::X_monotone_curve_2                    XCurve;
 typedef Traits::Polygon_2                             Polygon;
 typedef CGAL::General_polygon_with_holes_2<Polygon>   Polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Traits>           Polygon_set;
-typedef Polygon_with_holes::Holes_const_iterator      Holes_const_iterator;
+typedef Polygon_with_holes::Hole_const_iterator      Hole_const_iterator;
 
 typedef CGAL::Iso_rectangle_2<Kernel>                 Iso_rectangle;
 #endif

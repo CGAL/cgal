@@ -56,7 +56,7 @@ public:
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Polygon_2                    Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2         Polygon_with_holes_2;
-  typedef typename Polygon_with_holes_2::Holes_const_iterator  
+  typedef typename Polygon_with_holes_2::Hole_const_iterator  
                                                  GP_Holes_const_iterator;
   typedef typename Traits_2::Equal_2                      Equal_2;
   typedef typename Traits_2::Compare_xy_2                 Compare_xy_2;
@@ -75,14 +75,14 @@ public:
   typedef typename Arrangement_2::Halfedge_const_iterator    Halfedge_const_iterator;
   typedef typename Arrangement_2::Vertex_const_iterator      Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator        Edge_const_iterator;
-  typedef typename Arrangement_2::Holes_const_iterator       Holes_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator       Hole_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
                                                       Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Face_iterator              Face_iterator;
   typedef typename Arrangement_2::Halfedge_iterator          Halfedge_iterator;
   typedef typename Arrangement_2::Vertex_iterator            Vertex_iterator;
   typedef typename Arrangement_2::Edge_iterator              Edge_iterator;
-  typedef typename Arrangement_2::Holes_iterator             Holes_iterator;
+  typedef typename Arrangement_2::Hole_iterator             Hole_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
                                                       Ccb_halfedge_circulator;
   typedef typename Arrangement_2::Face_handle                Face_handle;
@@ -236,22 +236,22 @@ public:
   }
 
 
-  // insert a range of polygons that can be either simple polygons
-  // or polygons with holes
-  // precondition: the polygons are disjoint and simple
-  template <class PolygonIterator>
-  void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
+  //// insert a range of polygons that can be either simple polygons
+  //// or polygons with holes
+  //// precondition: the polygons are disjoint and simple
+  //template <class PolygonIterator>
+  //void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
 
 
-  // insert two ranges of : the first one for simple polygons,
-  // the second one for polygons with holes
-  // precondition: the first range is disjoint simple polygons 
-  //               the second range is fisjoint polygons with holes
-  template <class PolygonIterator, class PolygonWithHolesIterator>
-  void insert(PolygonIterator pgn_begin,
-              PolygonIterator pgn_end,
-              PolygonWithHolesIterator  pgn_with_holes_begin,
-              PolygonWithHolesIterator  pgn_with_holes_end);
+  //// insert two ranges of : the first one for simple polygons,
+  //// the second one for polygons with holes
+  //// precondition: the first range is disjoint simple polygons 
+  ////               the second range is fisjoint polygons with holes
+  //template <class PolygonIterator, class PolygonWithHolesIterator>
+  //void insert(PolygonIterator pgn_begin,
+  //            PolygonIterator pgn_end,
+  //            PolygonWithHolesIterator  pgn_with_holes_begin,
+  //            PolygonWithHolesIterator  pgn_with_holes_end);
 
 
 
@@ -651,11 +651,9 @@ public:
     return true;
   }
 
-  template< class PolygonIter >
-  void pgns2arr(PolygonIter p_begin, PolygonIter p_end, Arrangement_2& arr);
+  /*template< class PolygonIter >
+  void _insert(PolygonIter p_begin, PolygonIter p_end, Arrangement_2& arr);*/
   
-  //void _insert (const Polygon_with_holes_2& pgn, Arrangement_2& arr);
-
   
   template< class InputIterator >
   void pgns_with_holes2arr (InputIterator begin, 

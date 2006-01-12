@@ -33,8 +33,8 @@ public:
     
   typedef std::list<Polygon_>                          Holes_containter;
 
-  typedef typename Holes_containter::iterator          Holes_iterator;
-  typedef typename Holes_containter::const_iterator    Holes_const_iterator;
+  typedef typename Holes_containter::iterator          Hole_iterator;
+  typedef typename Holes_containter::const_iterator    Hole_const_iterator;
 
   typedef unsigned int                                 Size;
 
@@ -53,22 +53,22 @@ public:
                                                    m_holes(h_begin, h_end)
   {}
 
-  Holes_iterator holes_begin()
+  Hole_iterator holes_begin()
   {
     return m_holes.begin();
   }
 
-  Holes_iterator holes_end()
+  Hole_iterator holes_end()
   {
     return m_holes.end();
   }
 
-  Holes_const_iterator holes_begin() const
+  Hole_const_iterator holes_begin() const
   {
     return m_holes.begin();
   }
 
-  Holes_const_iterator holes_end() const
+  Hole_const_iterator holes_end() const
   {
     return m_holes.end();
   }
@@ -93,7 +93,7 @@ public:
     m_holes.push_back(pgn_hole);
   }
 
-  void erase_hole(Holes_iterator hit)
+  void erase_hole(Hole_iterator hit)
   {
     m_holes.erase(hit);
   }
@@ -130,7 +130,7 @@ template <class Polygon_>
 std::ostream
 &operator<<(std::ostream &os, const General_polygon_with_holes_2<Polygon_>& p)
 {
-  typename General_polygon_with_holes_2<Polygon_>::Holes_const_iterator hit;
+  typename General_polygon_with_holes_2<Polygon_>::Hole_const_iterator hit;
 
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
