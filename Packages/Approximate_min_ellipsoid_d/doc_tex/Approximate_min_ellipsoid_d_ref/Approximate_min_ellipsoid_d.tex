@@ -29,7 +29,7 @@
 
 An object of class \ccRefName\ is an approximation to the
 ellipsoid of smallest volume enclosing a finite multiset of points
-in $d$-dimensional Euclidean space~$\E^d$.
+in $d$-dimensional Euclidean space~$\E^d$, $d\ge 2$.
 
 An \emph{ellipsoid} in $\E^d$ is a Cartesian pointset of the form $\{
 x\in\E^d \mid x^T E x + x^T e + \eta\leq 0 \}$, where $E$ is some
@@ -189,7 +189,8 @@ set $P$ and some nonnegative \ccc{double} value \ccc{eps}.
         $1+\epsilon$) can be queried by calling the routine
         \ccc{achieved_epsilon()} discussed below.  \ccRequire
         \ccc{Iterator} must be a model for concept \ccc{InputIterator}
-        with value type \ccc{Point}.}
+        with value type \ccc{Point}. \ccPrecond The dimension $d$ of
+        the input points must be at least $2$.}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
