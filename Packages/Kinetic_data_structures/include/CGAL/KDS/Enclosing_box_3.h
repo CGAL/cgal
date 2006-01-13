@@ -80,6 +80,11 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
     typedef Enclosing_box_bounce_event_3<This> Event;
     friend class Enclosing_box_bounce_event_3<This>;
     typedef typename Simulator::Function_kernel::Function Coordinate;
+
+  template <class It>
+  Coordinate make_coordinate(It b, It e) const {
+    return Coordinate(b,e);
+  }
     public:
         enum Side {TOP=0, BOTTOM=1, LEFT=2, RIGHT=3, FRONT=4, BACK=5};
 
@@ -169,15 +174,16 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
 /*typename Traits::Simulator::Function_kernel::Create_function cf
   = traits_.simulator_pointer()->function_kernel().create_function_object();*/
 
-            Point pt(Coordinate(coefs[0].begin(), coefs[0].end()),
-		     Coordinate(coefs[1].begin(), coefs[1].end()),
-		     Coordinate(coefs[2].begin(), coefs[2].end()));
+            Point pt(make_coordinate(coefs[0].begin(), coefs[0].end()),
+		     make_coordiante(coefs[1].begin(), coefs[1].end()),
+		     make_coordiante(coefs[2].begin(), coefs[2].end()));
 //std::cout << "Changing motion from " << traits_.active_objects_table_pointer()->at(k) << " to " << pt << std::endl;
             traits_.active_objects_table_pointer()->set(k, pt);
 // CGAL_assertion(traits_.active_objects_table_pointer()->at(k) == pt);
         }
 
     protected:
+
 
         typename Simulator::Function_kernel function_kernel_object() const
         {
