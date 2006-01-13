@@ -31,7 +31,41 @@ namespace CGAL {
 
   template<class Traits>
   void Approximate_min_ellipsoid_d<Traits>::
-  write_eps(const std::string& name) const
+  compute_center()
+  {
+    // At the moment, the computed ellipsoid is only available to us
+    // in the form E = { x | x^T M x + x^T m + mu <= 0}, while we need
+    // something in the form
+    //
+    //    E = { x | (x - c)^T M (x - c) + nu <= 0 }.
+    //
+    // Expanding the later and comparing with the original form we
+    // obtain
+    //
+    //    c = - 1/2 M^{-1} m
+    //
+    // as the formula for the ellipsoid's center.  In order to compute
+    // c, we use the fact that we
+
+    center_.push_back(0);
+    center_.push_back(0);
+
+    // remember that we have computed the center:
+    has_center = true;
+  }
+
+  template<class Traits>
+  void Approximate_min_ellipsoid_d<Traits>::
+  compute_axes_2_3()
+  {
+
+    // remember that we have computed the axes:
+    has_axes = true;
+  }
+
+  template<class Traits>
+  void Approximate_min_ellipsoid_d<Traits>::
+  write_eps(const std::string& name)
   {
     CGAL_APPEL_ASSERT(d==2 && !is_degenerate());
 
@@ -56,6 +90,12 @@ namespace CGAL {
 		       to_double(defining_vector(0)*alpha),
 		       to_double(defining_vector(1)*alpha),
 		       to_double(defining_scalar()*alpha-1.0));
+
+    // output center:
+    Center_coordinate_iterator c = center_cartesian_begin();
+    const double cx = *c;
+    const double cy = *++c;
+    epsf.write_circle(cx, cy, 0.0);
   }
 
 }

@@ -25,6 +25,7 @@
 #include <vector>
 #include <iostream>
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/Approximate_min_ellipsoid_d/Khachiyan_approximation.h>
 
 namespace CGAL {
@@ -80,13 +81,14 @@ namespace CGAL {
     // 
     // for all p in E.  Since this is equivalent to
     //
-    //     sqrt{alpha}p^T alpha M sqrt{alpha}p <= 1,
+    //     1/sqrt{alpha} p^T alpha M 1/sqrt{alpha} p <= 1,         (***)
     //
-    // for alpha = 1/((1+a_eps)(d+1)), we see that E' has alpha M as its
-    // defining matrix. Consequently, the routines defining_matrix(),
-    // defining_vector(), and defining_scalar() will return numbers that
-    // need to be scaled (by the user) with the factor alpha. (We do not
-    // perform the scaling ourselves because we cannot do it exactly.)
+    // for alpha = (1+a_eps)(d+1), we see that E' = sqrt{alpha} E has
+    // alpha M as its defining matrix. Consequently, the routines
+    // defining_matrix(), defining_vector(), and defining_scalar()
+    // will return numbers that need to be scaled (by the user) with
+    // the factor alpha. (We do not perform the scaling ourselves
+    // because we cannot do it exactly.)
 
   public: // construction & destruction:
 
@@ -96,7 +98,8 @@ namespace CGAL {
 			    const Traits& traits = Traits())
     // Given a range [first,last) of n points P, constructs an
     // (1+eps)-approximation of the smallest enclosing ellipsoid of P.
-      : tco(traits), P(first,last), eps(eps)
+      : tco(traits), P(first,last), eps(eps),
+	has_center(false), has_axes(false)
     {
       CGAL_APPEL_LOG("appel",
 		     "Entering Approximate_min_ellpsoid_d." << std::endl);
@@ -149,6 +152,7 @@ namespace CGAL {
     
     ~Approximate_min_ellipsoid_d()
     {
+      // dispose of approximation:
       if (E != static_cast<Khachiyan_approximation<true,Traits> *>(0))
 	delete E;
     }
@@ -180,6 +184,35 @@ namespace CGAL {
 
   public: // access:
 
+    // Here's how the routines defining_matrix(), defining_vector(),
+    // and defining_scalar() are implemented. From (***) we know that
+    // the ellipsoid E' = sqrt{alpha} E
+    //
+    //  (a) encloses all embedded points (p,1), p in P,
+    //  (b) has defining matrix alpha M, i.e.,
+    // 
+    //        E' = { x | x^T alpha M x <= 1 },
+    //
+    //      where alpha = (1+a_eps)(d+1) with a_eps the return value
+    //      of achieved_epsilon().
+    //
+    // The ellipsoid E* we actuallly want is the intersection of E' with
+    // the hyperplane { (y,z) in R^{d+1} | y = 1}.  Writing
+    //
+    //        [ M'  m ]                 [ y ]
+    //    M = [ m^T c ]      and    x = [ 1 ]
+    //
+    // we thus obtain
+    //
+    //    x^T alpha M x = y^T alpha M y + 2 alpha y^Tm + c.
+    //
+    // It follows
+    // 
+    //    E* = { y | y^T alpha M' y + 2 alpha y^Tm + (alpha c-1) <= 0 }. (****)
+    //
+    // This is what the routines defining_matrix(), defining_vector(),
+    // and defining_scalar() implement.
+
     bool is_full_dimensional() const
     // Returns !is_degenerate().
     {
@@ -190,7 +223,7 @@ namespace CGAL {
     // Returns the entry M(i,j) of the symmetric matrix M in the
     // representation
     //
-    //    E = { x | x^T M x + x^T m + mu <= 0 }
+    //    E* = { x | x^T M x + x^T m + mu <= 0 }
     //
     // of the computed approximation. More precisely, the routine does not
     // return M(i,j) but the number (1+achieved_epsilon())*(d+1)*M(i,j).
@@ -205,7 +238,7 @@ namespace CGAL {
     FT defining_vector(int i) const
     // Returns the entry m(i) of the vector m in the representation
     //
-    //    E = { x | x^T M x + x^T m + mu <= 0 }
+    //    E* = { x | x^T M x + x^T m + mu <= 0 }
     //
     // of the computed approximation. More precisely, the routine does not
     // return m(i) but the number (1+achieved_epsilon())*(d+1)*m(i).
@@ -220,7 +253,7 @@ namespace CGAL {
     FT defining_scalar() const
     // Returns the number mu in the representation
     //
-    //    E = { x | x^T M x + x^T m + mu <= 0}
+    //    E* = { x | x^T M x + x^T m + mu <= 0}
     //
     // of the computed approximation. More precisely, the routine does not
     // return mu but the number (1+achieved_epsilon())*(d+1)*mu+1.
@@ -283,31 +316,120 @@ namespace CGAL {
       return E->is_valid(verbose);
     }
       
-  public: // miscellaneous 3D support:
-
-    typedef double *Axis_length_iterator_3;
-    typedef double *Axis_direction_coordinates_iterator_3;
+  public: // miscellaneous 2D/3D support:
     
-    Axis_length_iterator_3 axis_length_begin_3();
-    // Returns an iterator of value type double to the first of the
-    // three lengths of the three axes of the computed ellipsoid.
-    //
-    // Note: the lengths you obtain this way are approximations to the
-    // real lengths and come without any guarantee on the relative
-    // error.
-    //
-    // Precondition: d==3 && !is_degenerate().
+    typedef std::vector<double>::const_iterator Center_coordinate_iterator;
+    typedef std::vector<double>::const_iterator Axes_lengths_iterator;
+    typedef std::vector<double>::const_iterator
+                                            Axes_direction_coordinate_iterator;
 
-    Axis_direction_coordinates_iterator_3 axis_direction_coordinates_begin_3();
-    // Returns an iterator to the first of three vectors the coordilengths of the 3 main axes of the
-    // computed ellipsoid.
+    Center_coordinate_iterator center_cartesian_begin()
+    // Returns a STL random-access iterator pointing to the first of the d
+    // Cartesian coordinates of the computed ellipsoid's center.  The center
+    // described in this way is a floating-point approximation to the
+    // ellipsoid's exact center; no guarantee is given w.r.t. the involved
+    // relative error.
     //
-    // Precondition: d==3 && !is_degenerate().
+    // Precondition: !is_degenerate()
+    {
+      CGAL_APPEL_ASSERT(!is_degenerate());
+      if (!has_center)
+	compute_center();
+
+      return center_.begin();
+    }
+
+    Center_coordinate_iterator center_cartesian_end()
+    // Returns the past-the-end iterator corresponding to
+    // center_cartesian_begin().
+    //
+    // Precondition: !is_degenerate()
+    {
+      CGAL_APPEL_ASSERT(!is_degenerate());
+      if (!has_center)
+	compute_center();
+
+      return center_.end();
+    }
+
+    Axes_lengths_iterator axes_lengths_begin()
+    // Returns a STL random-access iterator to the first of the d lengths of
+    // the computed ellipsoid's axes. The d lengths are floating-point
+    // approximations to the exact axes-lengths of the computed ellipsoid; no
+    // guarantee is given w.r.t. the involved relative error. (See also method
+    // axes_direction_cartesian_begin().)  The elements of the iterator are
+    // sorted descending.
+    //
+    // Precondition: !is_degenerate() && (d==2 || d==3)
+    {
+      CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3));
+      if (!has_axes)
+	compute_axes_2_3();
+
+      return lengths_.begin();
+    }
+
+    Axes_lengths_iterator axes_lengths_end()
+    // Returns the past-the-end iterator corresponding to
+    // center_cartesian_begin().
+    //
+    // Precondition: !is_degenerate() && (d==2 || d==3)
+    {
+      CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3));
+      if (!has_axes)
+	compute_axes_2_3();
+      
+      return lengths_.end();
+    }
     
+    Axes_direction_coordinate_iterator axis_direction_cartesian_begin(int i)
+    // Returns a STL random-access iterator pointing to the first of the d
+    // Cartesian coordinates of the computed ellipsoid's i-th axis direction
+    // (i.e., unit vector in direction of the ellipsoid's i-th axis).  The
+    // direction described by this iterator is a floating-point approximation
+    // to the exact axis direction of the computed ellipsoid; no guarantee is
+    // given w.r.t. the involved relative error.  An approximation to the
+    // length of axis i is given by the i-th entry of axes_lengths_begin().
+    //
+    // Precondition: !is_degenerate() && (d==2 || d==3) && (0 <= i < d)
+    {
+      CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3) &&
+			0 <= i && i < d);
+      if (!has_axes)
+	compute_axes_2_3();
+      
+      return directions_[i].begin();
+    }
+    
+    Axes_direction_coordinate_iterator axis_direction_cartesian_end(int i)
+    // Returns the past-the-end iterator corresponding to
+    // axis_direction_cartesian_begin().
+    //
+    // Precondition: !is_degenerate() && (d==2 || d==3) && (0 <= i < d)
+    {
+      CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3) &&
+			0 <= i && i < d);
+      if (!has_axes)
+	compute_axes_2_3();
+      
+      return directions_[i].begin();
+    }
 
-  public: // internal debugging routines:
+  public: // internal members for 2D/3D axis/center computation:
 
-    void write_eps(const std::string& name) const;
+    bool has_center, has_axes; // true iff the center or axes-directions and
+			       // -lengths, respectively, have already been
+			       // computed
+    std::vector<double>                center_;
+    std::vector<double>                lengths_;
+    std::vector< std::vector<double> > directions_;
+
+    void compute_center();
+    void compute_axes_2_3();
+    
+  public: // "debugging" routines:
+
+    void write_eps(const std::string& name);
     // Writes the and the point set P to an EPS file.  Returned is the
     // id under which the file was stored (filename 'id.eps').
     //
