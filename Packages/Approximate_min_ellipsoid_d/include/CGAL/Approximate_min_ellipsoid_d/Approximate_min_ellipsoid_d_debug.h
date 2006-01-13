@@ -359,12 +359,12 @@ namespace CGAL {
 	  << "	find-roots" << endl
 	  << "	% stack: a b h x1 x2" << endl
 	  << "	%" << endl
-	  << "	% build first eigenvector:" << endl
+	  << "	% build first Eigenvector:" << endl
 	  << "	2 index 2 index 6 index sub normalize" << endl
-	  << "	% build second eigenvector:" << endl
+	  << "	% build second Eigenvector:" << endl
 	  << "	% stack: a b h x1 x2 ev1x ev1y" << endl
 	  << "	4 index 3 index 8 index sub normalize" << endl
-	  << "	% build matrix containing eigenvectors:" << endl
+	  << "	% build matrix containing Eigenvectors:" << endl
 	  << "	% stack: a b h x1 x2 ev1x ev1y ev2x ev2y" << endl
 	  << "	6 array" << endl
 	  << "	dup 0 6 index put" << endl
@@ -422,6 +422,9 @@ namespace CGAL {
 	  << "  ea efactor div ed efactor div eb efactor div cellipse" << endl
 	  << "  setmatrix               % restore CTM" << endl
 	  << "} def" << endl
+	  << "/setcol { 193 255 div 152 255 div 159 255 div" << endl
+	  << "          setrgbcolor" << endl
+	  << "} def" << endl
 	  << "%" << endl
 	  << "%" << endl
 	  << "%%EndProlog" << endl
@@ -475,8 +478,12 @@ namespace CGAL {
       // Renders the circle with center (x,y) and radius r in
       // the current stroke and label mode.  All coordinates must be of
       // type double.
-      void write_circle(double x,double y,double r)
+      void write_circle(double x, double y, double r, bool colored = false)
       {
+	// set color:
+	if (colored)
+	  body << "gsave setcol" << std::endl;
+	
 	// output ball in appropriate mode:
 	adjust_bounding_box(x-r,y-r);
 	adjust_bounding_box(x+r,y+r);
@@ -494,6 +501,10 @@ namespace CGAL {
 	       << dist << ' ' << next_angle << " drawl" << std::endl;
 	}
 	
+	// restore color:
+	if (colored)
+	  body << "grestore" << std::endl;
+
 	// generate next angle (if needed):
 	if (lm == Random_angle)
 	  next_angle = static_cast<double>(std::rand());
@@ -574,8 +585,8 @@ namespace CGAL {
 	adjust_bounding_box(std::max(hw+hoff,-hw+hoff),
 			    std::max(vw+voff,-vw+voff));
 
-	// draw bounding box:
 	#if 0
+	// draw bounding box:
 	body << "newpath " << std::min(hw+hoff,-hw+hoff) << " "
 	     << std::min(vw+voff,-vw+voff) << " moveto "
 	     << std::max(hw+hoff,-hw+hoff) << " " 
@@ -586,19 +597,24 @@ namespace CGAL {
 	     << std::max(vw+voff,-vw+voff) << " lineto closepath stroke\n";
 	#endif
 
+	// begin drawing:
+	body << "gsave" << endl;
+
 	// draw the ellipse:
-	body << "gsave" << endl 
-	     << "  " << a << ' ' << h << ' ' << b
+	body << "  " << a << ' ' << h << ' ' << b
 	     << ' ' << u << ' ' << v << ' ' << mu
 	     << " ellipse" << endl;
 	if (bm == Solid_filled)
 	  body << "  gsave 0.6 setgray eofill grestore" << endl;
 	if (bm == Dashed)
 	  body << "  [dashlen] 0 setdash" << endl;
-	body << "  stroke" << endl << "grestore" << endl;
-	
+	body << "  stroke" << endl;
+
 	// output label:
 	// Todo: Not implemented yet.
+
+	// end drawing:
+	body << "grestore" << endl;
 
 	// generate next angle (if needed):
 	if (lm == Random_angle)
