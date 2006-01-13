@@ -184,12 +184,6 @@ void simple_test(int n, int d, int multiplicity, double eps)
 
 void test(int n, int multiplicity)
 {
-  // 1d
-  simple_test<K_d,T_d>(n, 1, multiplicity, 0.5);
-  simple_test<K_d,T_d>(n, 1, multiplicity, 0.1);
-  simple_test<K_d,T_d>(n, 1, multiplicity, 0.01);
-  simple_test<K_d,T_d>(n, 1, multiplicity, 0.001);
-
   // 2d
   simple_test<K_d,T_d>(n, 2, multiplicity, 0.5);
   simple_test<K_d,T_d>(n, 2, multiplicity, 0.1);
