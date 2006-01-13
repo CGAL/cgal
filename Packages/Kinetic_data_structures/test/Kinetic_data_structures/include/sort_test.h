@@ -5,6 +5,9 @@
 template <class Traits>
 bool sort_test(Traits &tr)
 {
+  std::string etag="WARNING: ";
+  CGAL_exactness_check_code(etag="ERROR: ");
+  
     typedef CGAL::KDS::Sort<Traits> Sort;
     Sort sort(tr);
 
@@ -26,7 +29,7 @@ bool sort_test(Traits &tr)
         ratt=tr.simulator_pointer()->rational_current_time();
     }
     else {
-        std::cerr << "ERROR Out of events, but the time is not rational." << std::endl;
+      std::cerr << etag << "Out of events, but the time is not rational." << std::endl;
         std::cerr << "Current time is " << tr.simulator_pointer()->current_time()
             << " the end time is " << tr.simulator_pointer()->end_time() << std::endl;
         ratt= CGAL::to_interval(tr.simulator_pointer()->end_time()).second;
@@ -35,7 +38,7 @@ bool sort_test(Traits &tr)
     while (c != sort.end()) {
       typename Traits::Simulator::Function_kernel::Function f= tr.active_objects_table_pointer()->at(*c).x() - tr.active_objects_table_pointer()->at(*b).x();
       if ( f(ratt) < 0 ) {
-            std::cerr << "ERROR Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and "
+	std::cerr << etag << "Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and "
                 << *b << " = " << tr.active_objects_table_pointer()->at(*b).x() << " out of order at end of time "
                 <<ratt << std::endl;
             error=true;
