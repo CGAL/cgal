@@ -65,6 +65,9 @@ int main(int, char *[])
 	  std::cerr << "ERROR: wrong event processed (" << pq.front_priority() 
 		    << ") instead of (" << proc_time_ << ")." << std::cerr;
 	}
+	if (proc_time_!= t) {
+	  std::cerr << "ERROR: wrong event time. Expected: " << t << " got " << proc_time_ <<std::endl;
+	}
         assert(proc_time_==t);
     }
     return EXIT_SUCCESS;
