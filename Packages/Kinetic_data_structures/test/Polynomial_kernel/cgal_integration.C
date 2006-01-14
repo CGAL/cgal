@@ -7,7 +7,6 @@
 
 #ifdef CGAL_USE_CORE
 #include <CGAL/Polynomial/CORE_Expr_root_stack.h>
-#include <CGAL/CORE/BigRat.h>
 #endif
 
 typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
