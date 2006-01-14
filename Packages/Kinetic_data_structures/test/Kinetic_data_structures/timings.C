@@ -4,7 +4,7 @@
 
 #include <CGAL/Polynomial/internal/Isolating_interval.h>
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
-#include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
+//#include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
 #include <CGAL/KDS/Inexact_simulation_traits_1.h>
 #include <CGAL/KDS/Inexact_simulation_traits_3.h>
 #include <CGAL/KDS/Exact_simulation_traits_1.h>
