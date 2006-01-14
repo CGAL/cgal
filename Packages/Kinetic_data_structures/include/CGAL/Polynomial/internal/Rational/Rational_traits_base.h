@@ -54,7 +54,7 @@ struct Rational_traits_base
     typedef typename Function::NT NT;
 
 //! The sign of a polynomial at a rational
-    typedef Sign_at_rational<Function> Sign_at;
+  typedef Sign_at_rational<Function> Sign_at;
     Sign_at sign_at_object(const Function &f) const
     {
         return Sign_at(f);
@@ -86,14 +86,14 @@ struct Rational_traits_base
 // constructions
 
 //! Compute the quotient
-    typedef internal::Quotient<Function> Quotient;
+    typedef CGAL::POLYNOMIAL::internal::Quotient<Function> Quotient;
     Quotient quotient_object() const
     {
         return Quotient();
     }
 
 //! Compute the remainder
-    typedef internal::Remainder<Function> Remainder;
+    typedef CGAL::POLYNOMIAL::internal::Remainder<Function> Remainder;
     Remainder remainder_object() const
     {
         return Remainder();
@@ -114,14 +114,14 @@ struct Rational_traits_base
     }
 
 //! Return true of two polynomials are negations of one another
-    typedef Are_negations<Function> Are_negations;
+    typedef CGAL::POLYNOMIAL::internal::Are_negations<Function> Are_negations;
     Are_negations are_negations_object() const
     {
         return Are_negations();
     }
 
 //! The the sturm sequence
-    typedef Sturm_sequence<This> Sturm_sequence;
+    typedef CGAL::POLYNOMIAL::internal::Sturm_sequence<This> Sturm_sequence;
     Sturm_sequence Sturm_sequence_object(const Function &f, const Function &g) const
     {
         return Sturm_sequence(f, g, *this);
@@ -135,14 +135,14 @@ struct Rational_traits_base
     }
 
 //! The the sturm sequence
-    typedef Sign_Sturm_sequence<Sturm_sequence> Sign_Sturm_sequence;
+    typedef CGAL::POLYNOMIAL::internal::Sign_Sturm_sequence<Sturm_sequence> Sign_Sturm_sequence;
     Sign_Sturm_sequence sign_Sturm_sequence_object(const Function &f, const Function &g) const
     {
         return Sign_Sturm_sequence(f, g, *this);
     }
 
 //! The the standard sequence
-    typedef Standard_sequence<Sturm_sequence> Standard_sequence;
+    typedef CGAL::POLYNOMIAL::internal::Standard_sequence<Sturm_sequence> Standard_sequence;
     Standard_sequence standard_sequence_object(const Function &f) const
     {
         return Standard_sequence(f, *this);
@@ -163,35 +163,35 @@ struct Rational_traits_base
     }
 
 //! f(x) -> x^d f(1/x)
-    typedef Invert_variable<Function> Invert_variable;
+    typedef CGAL::POLYNOMIAL::internal::Invert_variable<Function> Invert_variable;
     Invert_variable invert_variable_object() const
     {
         return Invert_variable();
     }
 
 //! f(x) -> f(-x)
-    typedef Negate_variable<Function> Negate_variable;
+    typedef CGAL::POLYNOMIAL::internal::Negate_variable<Function> Negate_variable;
     Negate_variable negate_variable_object() const
     {
         return Negate_variable();
     }
 
 //! Map an interval to positive reals
-    typedef Map_rational_interval_to_positive<This> Map_rational_interval_to_positive;
+    typedef CGAL::POLYNOMIAL::internal::Map_rational_interval_to_positive<This> Map_rational_interval_to_positive;
     Map_rational_interval_to_positive map_rational_interval_to_positive_object(const Function &f) const
     {
         return Map_rational_interval_to_positive(f, *this);
     }
 
 //! Map an interval to positive reals
-    typedef Map_rational_interval_to_positive_2<This> Map_rational_interval_to_positive_2;
+    typedef CGAL::POLYNOMIAL::internal::Map_rational_interval_to_positive_2<This> Map_rational_interval_to_positive_2;
     Map_rational_interval_to_positive_2 map_rational_interval_to_positive_2_object(const NT &a, const NT &b) const
     {
         return Map_rational_interval_to_positive_2(a,b, *this);
     }
 
 //! Translates zero by a rational number
-    typedef Rational_translate_zero<Function> Rational_translate_zero;
+    typedef CGAL::POLYNOMIAL::internal::Rational_translate_zero<Function> Rational_translate_zero;
     Rational_translate_zero rational_translate_zero_object(const NT &p) const
     {
         return Rational_translate_zero(p);
