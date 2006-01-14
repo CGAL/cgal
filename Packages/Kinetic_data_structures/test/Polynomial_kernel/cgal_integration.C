@@ -7,10 +7,15 @@
 
 #ifdef CGAL_USE_CORE
 #include <CGAL/Polynomial/CORE_Expr_root_stack.h>
+#include <CGAL/CORE/BigRat.h>
 #endif
 
 typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
+
+
+#ifdef CGAL_USE_CORE
 typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
+#endif
 
 int main(int, char *[])
 {

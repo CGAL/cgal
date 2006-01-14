@@ -16,7 +16,9 @@
 #include <CGAL/Polynomial/Default_filtering_traits.h>
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
 
+#if 0
 #include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
+#endif
 
 #include <CGAL/Gmpq.h>
 
@@ -42,6 +44,7 @@ int main(int argc, char* argv[])
         } else verbose = true;
     }
 
+#if 0
     {
         if (verbose) std::cout <<"Descartes_lazy______________________________\n";
         else std::cout << "DL&\t";
@@ -56,6 +59,7 @@ int main(int argc, char* argv[])
         if (!verbose) std::cout << " -- &";
         std::cout << std::endl;
     }
+#endif
     {
         if (verbose) std::cout <<"Descartes_exact_____________________________\n";
         else std::cout << "Descartes&\t";
