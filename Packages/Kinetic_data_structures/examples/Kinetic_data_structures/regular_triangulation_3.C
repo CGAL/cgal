@@ -1,11 +1,11 @@
-#include <CGAL/KDS/Regular_triangulation_inexact_simulation_traits_3.h>
+#include <CGAL/KDS/Regular_triangulation_exact_simulation_traits_3.h>
 #include <CGAL/KDS/Insert_event.h>
 #include <CGAL/KDS/Regular_triangulation_3.h>
 
 int main(int, char *[])
 {
 
-    typedef CGAL::KDS::Regular_triangulation_inexact_simulation_traits_3 Traits;
+    typedef CGAL::KDS::Regular_triangulation_exact_simulation_traits_3 Traits;
     typedef Traits::Kinetic_kernel::Point_3 MP;
     typedef Traits::Kinetic_kernel::Weighted_point_3 WMP;
 

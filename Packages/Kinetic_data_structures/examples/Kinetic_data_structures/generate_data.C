@@ -4,10 +4,8 @@
 #include <algorithm>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Gmpq.h>
-
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
-#endif
+
 
 template <class NT>
 void generate(int n, int d, int num_coords)
@@ -44,7 +42,7 @@ int main(int argc, char *argv[])
     bool inexact=true;
     bool weighted=false;
 
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
         ("help", boost::program_options::bool_switch(&print_help), "produce help message")
@@ -64,7 +62,6 @@ int main(int argc, char *argv[])
         std::cout << desc << "\n";
         return EXIT_FAILURE;
     }
-#endif
 
     int num_coords=2;
     if (weighted) ++num_coords;
