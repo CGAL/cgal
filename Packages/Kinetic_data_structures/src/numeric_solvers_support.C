@@ -25,6 +25,10 @@
 #include <CGAL/Polynomial/internal/Rational/Derivative.h>
 #include <CGAL/Polynomial/Interval_polynomial.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable:1572)
+#endif
+
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 static double max_error_value=.00005;

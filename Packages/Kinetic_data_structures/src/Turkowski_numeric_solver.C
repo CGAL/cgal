@@ -19,6 +19,12 @@
 
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
+
+#ifdef _MSC_VER
+#pragma warning(disable:1572)
+#endif
+
+
 //#include "numeric_solvers_support.C"
 
 // Taken from http://www.worldserver.com/turk/opensource/
