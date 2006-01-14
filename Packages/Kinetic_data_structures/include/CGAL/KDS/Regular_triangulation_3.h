@@ -378,7 +378,8 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
                 if (triangulation().degree(vit) == 4) {
                     Point_key k= vit->point();
                                                   // it could be infinite
-                    CGAL_assertion(vit->info() || !vit->point());
+		    // !! for VC
+                    CGAL_assertion(!!vit->info() || !vit->point());
                 }
                 else {
                     CGAL_assertion(!vit->info());
@@ -438,9 +439,10 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
             for (typename Delaunay::Finite_cells_iterator cit= dt.finite_cells_begin();
             cit != dt.finite_cells_end(); ++cit) {
                 std::vector<Point_key> ks;
-                for (unsigned int i=0; i<4; ++i) {
+		// extra braces for VC
+                {for (unsigned int i=0; i<4; ++i) {
                     ks.push_back(cit->vertex(i)->point());
-                }
+		  }}
                 std::vector<typename Delaunay::Vertex_handle> kvhs;
                 for (unsigned int i=0; i<4; ++i) {
                     kvhs.push_back(kdel_.vertex_handle(ks[i]));
@@ -459,9 +461,10 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
                     ks.push_back(cit->vertex(i)->point());
                 }
                 std::vector<typename Delaunay::Vertex_handle> kvhs;
-                for (unsigned int i=0; i<4; ++i) {
+		// extra braces for VC
+                {for (unsigned int i=0; i<4; ++i) {
                     kvhs.push_back(nvhs[ks[i].index()]);
-                }
+		  }}
                 typename Triangulation::Cell_handle h;
                 int i,j,k,l;
                 if (!dt.is_cell(kvhs[0], kvhs[1], kvhs[2], kvhs[3], h,i,j,k,l)) {

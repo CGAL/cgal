@@ -144,7 +144,8 @@ There is a specializated version for filtering included in
 template <class NT>
 inline Extended_sign extended_sign(const NT &nt)
 {
-  switch(sign(nt)) {
+  // for VC
+  switch(CGAL::POLYNOMIAL::sign(nt)) {
         case ZERO: return EXTENDED_ZERO;
         case POSITIVE: return EXTENDED_POSITIVE;
         default: return EXTENDED_NEGATIVE;

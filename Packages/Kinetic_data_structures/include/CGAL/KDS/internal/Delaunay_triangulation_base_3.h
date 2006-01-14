@@ -49,6 +49,10 @@ class Delaunay_event_base_3
         Delaunay_event_base_3() {
 
         }
+  void process(const typename Root_stack::Root&) {
+    // for some reason VC insists that this be there
+    CGAL_assertion(0 && "Process called in Delaunay_event_base_3");
+        }
         const Root_stack& root_stack() const
         {
             return s_;
