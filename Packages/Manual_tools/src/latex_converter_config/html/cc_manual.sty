@@ -188,7 +188,7 @@
 % | Formatting styles:
 % |
 % | The style of the C++ formatting can be customized by redefining the 
-% | following macros. But not in the latex converter, sorry.
+% | following macros. 
 % +--------------------------------------------------------------------------
 \newcommand{\ccFont}{\it}   % font or style changing command in which all C++
                         % tokens will be typeset, including the variable names.
@@ -230,14 +230,14 @@
 % +--------------------------------------------------------------------------
 % | A handy macro to include files in verbatim mode.
 % +--------------------------------------------------------------------------
-\newcommand{\ccIncludeVerbatim}[1]{\lciParseFile{\ccExampleXCodeX}{#1}}
+\newcommand{\ccIncludeVerbatim}[1]{[cccbegin]\lciParseFile{\ccExampleXCodeX}{#1}[cccend]}
 
 % +--------------------------------------------------------------------------
 % | C++ Program Examples
 % +--------------------------------------------------------------------------
 % Environment to format contents as C++ code
-\newenvironment{ccExampleCode}{%
-    \lciParseUntilEndToken{\ccExampleXCodeX}{ccExampleCode}}{}
+\newenvironment{ccExampleCode}{[cccbegin]%
+    \lciParseUntilEndToken{\ccExampleXCodeX}{ccExampleCode}}{[cccend]}
 \newcommand{\ccExampleXCodeX}[1]{%
     \lcRawHtml{<pre class="ExampleCode">}%
     \lciAsciiOutputN{#L1}#1\lcRawHtml{</pre>}}
@@ -372,7 +372,7 @@
 % +--------------------------------------------------------------------------
 % | \ccStyle
 % +--------------------------------------------------------------------------
-\newcommand{\ccc}{\lciParseCC{\lciCCStyle 1}}  %% the 1 is a dummy to keep it
+\newcommand{\ccc}[1]{[cccbegin]\lciParseCC{\lciCCStyle 1}{#1}[cccend]}  %% the 1 is a dummy to keep it
                                                %% from parsing spaces
 \newcommand{\ccStyle}{\ccc}
 
@@ -433,7 +433,7 @@
     \lciPopFootnotes
     % navigation footer
     \addtocounter{referencepage}{1}%
-    \lcRawHtml{<!Next_reference_link_}\thereferencepage\lcRawHtml{!>
+    \lcRawHtml{[internal:Next_reference_link_}\thereferencepage\lcRawHtml{]
 }
     \addtocounter{referencepage}{-1}%
     \lciHtmlNavigationBottom
@@ -446,24 +446,23 @@
     \refstepcounter{referencepage}%
     % Make a hyperlink in the chapter to the class file.
     \lcRawHtml{<UL><LI>
-<!Toc_reference_link_}\thereferencepage\lcRawHtml{!></UL>
+[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</UL>
 
 }
     \lciOpenReferenceFile
     % cross linking rules
     \lciPushOutput{anchor}%
-    \lcRawHtml{"<!Next_reference_link_}\thereferencepage
-    \lcRawHtml{!>"    }\{%
-    \lcRawHtml{ fputs( "<div class=\"NavNext\"><hr> <b>Next:</b> <a href=\"}%
+    \lcRawHtml{i Next_reference_link_}\thereferencepage
+    \lcRawHtml{	<div class="NavNext"><hr> <b>Next:</b> <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{\">}#1\lcRawHtml{</a> \n", stdout);}\}\lcRawHtml{
+    \lcRawHtml{">}#1\lcRawHtml{</a> 
 }%
-    \lcRawHtml{"<!Toc_reference_link_}\thereferencepage%
-    \lcRawHtml{!>"    }\{\lcRawHtml{ fputs( "<a href=\"}%
+    \lcRawHtml{i Toc_reference_link_}\thereferencepage%
+    \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{\">}#1\lcRawHtml{</a>", stdout);}\}\lcRawHtml{
+    \lcRawHtml{">}#1\lcRawHtml{</a>
 }%
     \lciPopOutput
     % file header

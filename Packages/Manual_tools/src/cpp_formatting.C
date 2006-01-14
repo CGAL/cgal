@@ -889,15 +889,16 @@ generate_substitution_rule( const char *formatted,
 {
     if( !name || strlen(name) == 0 )
         return;
-    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted
-                   << "\"    { ECHO; }" << endl;
-    *anchor_stream << '"' << formatted
-                   << "\"/{noCCchar}    { wrap_anchor( \""
-                   << REPLACE_WITH_CURRENT_PATH_TOKEN 
-                   << current_basename 
-                   << "#" << type << "_";
-    filter_for_index_anchor( *anchor_stream, name);
-    *anchor_stream << "\", yytext); }" << endl;
+    ostringstream replacement_text;
+
+    replacement_text << REPLACE_WITH_CURRENT_PATH_TOKEN 
+                     << current_basename 
+                     << "#" << type << "_"; 
+    filter_for_index_anchor( replacement_text, name );
+    
+    *anchor_stream << "c " << formatted << '\t';
+    wrap_anchor( replacement_text.str(), formatted, *anchor_stream );
+    *anchor_stream << endl;
 }
 
 bool
@@ -1849,6 +1850,7 @@ void format_constructor( const char* signature) {
 
 void handle_two_column_layout( char key, const char* decl) {
     if ( current_ostream) {
+        *current_ostream << "[cccbegin]";
         decl = handle_template_layout( *current_ostream, decl, false);
         switch ( key) {
         case 'A':
@@ -1869,11 +1871,13 @@ void handle_two_column_layout( char key, const char* decl) {
         default:
             printErrorMessage( UnknownKeyError);
         }
+        *current_ostream << "[cccend]";
     }
 }
 
 void handle_three_column_layout( char key, const char* decl, bool empty) {
     if ( current_ostream) {
+        *current_ostream << "[cccbegin]";
         decl = handle_template_layout( *current_ostream, decl, true);
         switch ( key) {
         case 'L':  // member function
@@ -1891,6 +1895,7 @@ void handle_three_column_layout( char key, const char* decl, bool empty) {
         default:
             printErrorMessage( UnknownKeyError);
         }
+        *current_ostream << "[cccend]";
     }
 }
 

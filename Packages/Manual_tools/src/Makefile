@@ -45,7 +45,7 @@ CPPFLAGS = -g
 # LDFLAGS = 
 
 # Flex and Bison Tools (not supposed to be set in the environment):
-FLEX    = flex -t -8
+FLEX    = flex -t -8 -Cfe
 BISON   = bison -d -t -v
 
 
@@ -60,13 +60,14 @@ BISON   = bison -d -t -v
 # Files that will be moved into LATEX_CONV_BIN upon installation:
 PROGRAM_FILES =		cc_extract_html			\
 			cc_index_link                   \
-	        	cc_extract_images		
+	        	cc_extract_images		\
+			cc_anchor_filter                \
+                        cc_remove_unwanted_links
 			
 
 # Files that will be copied into LATEX_CONV_BIN upon installation:
 SCRIPT_FILES  = 	latex_to_html			\
-			cc_extract_include		\
-                        cc_remove_unwanted_links
+			cc_extract_include		
 
 # Files that will be copied into LATEX_CONV_CONFIG upon installation:
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
@@ -108,8 +109,13 @@ buffer.o : buffer.C buffer.h config.h basic.h
 include Makefile_depend
 
 cc_extract_html.o : cc_extract_html.C
-	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
-	-c cc_extract_html.C
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_extract_html.C
+
+cc_anchor_filter.o : cc_anchor_filter.C
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_anchor_filter.C
+
+cc_remove_unwanted_links.o : cc_remove_unwanted_links.C
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_remove_unwanted_links.C
 
 # program
 # --------------------
@@ -143,6 +149,12 @@ cc_extract_images : $(OBJIMAGES)
 	${CXX} ${CXXFLAGS} -o $@ ${OBJIMAGES} ${LDFLAGS}
 
 cc_index_link : cc_index_link.o
+	${CXX} ${CXXFLAGS} -o $@ $@.o ${LD_FLAGS}
+
+cc_anchor_filter : cc_anchor_filter.o
+	${CXX} ${CXXFLAGS} -o $@ $@.o ${LD_FLAGS}
+
+cc_remove_unwanted_links : cc_remove_unwanted_links.o
 	${CXX} ${CXXFLAGS} -o $@ $@.o ${LD_FLAGS}
 
 # =====================================================================

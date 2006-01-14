@@ -41,10 +41,8 @@ const string prog_release = "$Revision$";
 
 /* Constant string used for referencing. */
 /* ===================================== */
-/* This constant must be doubly quoted since it is subject of another */
-/* C compiler pass during generation of the link generator.           */
-const string reference_icon = "<IMG SRC=\\\"cc_ref_up_arrow.gif\\\" "
-            "ALT=\\\"reference\\\" WIDTH=\\\"10\\\" HEIGHT=\\\"10\\\">";
+const string reference_icon = "<IMG SRC=\"cc_ref_up_arrow.gif\" "
+            "ALT=\"reference\" WIDTH=\"10\" HEIGHT=\"10\">";
 
 /* Configurable command line options */
 /* ================================= */

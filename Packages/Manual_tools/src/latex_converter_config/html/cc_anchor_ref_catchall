@@ -1,8 +1,0 @@
-[\[]ref[:][^\]]+[\]] { 
-   yytext [ yyleng - 1 ] = '\0'; // cut off trailing ]
-   yytext += 5; // skip [ref:
-   fputs( "\n", stderr);  
-   fputs (" !! Warning: unknown label \"", stderr );    
-   fputs( yytext, stderr);  
-   fputs( "\"\n", stderr);  
-}

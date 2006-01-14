@@ -25,6 +25,7 @@
 #include <config.h>
 #include <output.h>
 #include <sstream>
+#include <cassert>
 
 // ======================================================================
 // External visible functions
@@ -41,23 +42,23 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
 	printErrorMessage( EmptyCrossLinkError);
 	exit( 1);
     }
-
+    
     char *tmp_name = convert_fontified_ascii_to_html( key);
-    *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_name
-		   << "\"    { ECHO; }" << endl;
-    *anchor_stream << '"' << tmp_name
-		   << "\"/{noCCchar}    { wrap_anchor( \"" 
-                   << REPLACE_WITH_CURRENT_PATH_TOKEN << current_basename
-		   << "#Cross_link_anchor_" << cross_link_anchor_counter 
-		   << "\", yytext); }" << endl;
-    if ( tmpl_class) {
-        *anchor_stream << '"' << tmp_name
-		       << "\"{ws}\"&lt;\"{ws}{CCidfier}{ws}\"&gt;\"    {\n"
-		       << "        wrap_anchor( \""
-                       << REPLACE_WITH_CURRENT_PATH_TOKEN << current_basename
-		       << "#Cross_link_anchor_" << cross_link_anchor_counter 
-		       << "\", yytext); }" << endl;
-    }
+    
+      
+    ostringstream replacement_text;
+    replacement_text << REPLACE_WITH_CURRENT_PATH_TOKEN 
+                     << current_basename 
+                     << "#Cross_link_anchor_" << cross_link_anchor_counter;
+    
+    *anchor_stream << "c " << tmp_name << '\t';
+    wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
+    *anchor_stream << endl;
+    
+    /* TODO: is it required to have seperate dictionaries for 
+             tmpl_class == false | true ? 
+    */
+    
     delete[] tmp_name;
 
     return string("\n<A NAME=\"Cross_link_anchor_") 
@@ -1031,6 +1032,7 @@ handle_chapter( const string&, string param[], size_t n, size_t opt) {
     string chapter_title( param[0]);
     crop_string( chapter_title);
     remove_separator( chapter_title);
+        
     string new_main_filename;
     string new_main_filepath = macroX( "\\lciInputPath");
     if ( new_main_filepath[0] == '/' ) {
@@ -1050,6 +1052,7 @@ handle_chapter( const string&, string param[], size_t n, size_t opt) {
 	return string();
     }
     if ( main_stream != &cout && main_stream != pre_stream) {
+        assert( main_stream != 0 );
 	assert_file_write( *main_stream, main_filename);
 	delete   main_stream;
 	main_stream = 0;

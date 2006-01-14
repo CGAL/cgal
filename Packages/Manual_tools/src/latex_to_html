@@ -336,38 +336,18 @@ run_command() {
 }
 
 #---------------------------------------------------------------------#
-# build_anchor_filter <stage-name>
-#     - builds anchor filter in current directory for <stage-name>
-#---------------------------------------------------------------------#
-
-build_anchor_filter() {
-    if [ ! -r cc_anchor_rules.$1 ]; then touch cc_anchor_rules.$1 ; fi
-    # catchall rule only applies on stage 3! avoid false warnings 
-    # on lower stages
-    local maybe_catchall="";    
-    if [ $1 == "stage_3" ]; then
-      maybe_catchall="${ConfigHtml}/cc_anchor_ref_catchall";
-    fi
-    \cat ${ConfigHtml}/cc_anchor_header.$1 \
-         cc_anchor_rules.$1 \
-         $maybe_catchall \
-         ${ConfigHtml}/cc_anchor_footer.$1 \
-      | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_filter.yy
-    ${Flex} cc_anchor_filter.yy > cc_anchor_filter.c
-    ${CC} -o cc_anchor_filter.$1 cc_anchor_filter.c
-    #\rm cc_anchor_filter.c cc_anchor_filter.yy
-    if [ -r cc_anchor_filter.o ]; then \rm cc_anchor_filter.o; fi
-}
-
-#---------------------------------------------------------------------#
 # anchor_filter <file> <outfile>
 #     - transforms HTML <file> through all anchor filters and writes
 #       it to its <outfile> place in the output directory.
 #---------------------------------------------------------------------#
 
 anchor_filter() {
-    ./cc_anchor_filter.stage_1 < $1 | ./cc_anchor_filter.stage_2 \
-        | ./cc_anchor_filter.stage_3 | cc_remove_unwanted_links > $2
+    cat cc_anchor_rules.stage_1 \
+        cc_anchor_rules.stage_2 \
+        cc_anchor_rules.stage_3 \
+      | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_rules    
+
+    cc_anchor_filter cc_anchor_rules $1    
 }
 
 #---------------------------------------------------------------------#
@@ -427,6 +407,14 @@ convert() {
     done
     vout ""
 
+    # cleanup stage 1 crosslink rules
+    for dir in ${AllSubDirs} ; do
+      cd $dir
+      cat cc_anchor_rules.stage_1 | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > cc_anchor_rules.stage_1.tmp
+      mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1      
+      cd ${TmpDir}
+    done
+
     # Prepare stage 2 crosslink rules
     # -------------------------------------------------------------
     lgout -n ", "
@@ -477,52 +465,43 @@ convert() {
         vout ""
     done
     vout ""
-
-    # Compile the anchor filter for creating all crosslinks
-    # -------------------------------------------------------------
-    lgout -n ", "
-    lgout -n "[creating cross linker programs stage 1,2 and 3 "
-    for dir in ${AllSubDirs} ; do
-        lgout -n "[$dir"
-        cd $dir
-        run_command build_anchor_filter stage_1
-        run_command build_anchor_filter stage_2
-        run_command build_anchor_filter stage_3
-        cd ${TmpDir}
-        lgout -n "]"
-    done
-    lgout -n "]"
-
-    # Apply anchor filter to all HTML files creating the crosslinks
-    # ---------------------------------------------------------------------
-    lgout -n ", "
-    lgout -n "[applying cross linker programs "
-    for dir in ${AllSubDirs} ; do
-        lgout -n "[$dir"
-        cd $dir
-        for f in *.html ; do
-            vout -n " [${dir}/$f"
-            run_command anchor_filter "$f" "${AbsOutDir}/${dir}/$f"
-            if [ $ErrorInLogfile -eq 1 ]; then GlobalExitCode=1 ; fi
-            vout -n "]"
-        done
-        cd ${TmpDir}
-        lgout -n "]"
-    done
     cd $CurrentDir
 
     # Creating the index.
     # --------------------------
     lgout -n ", "
     lgout "creating the index"
-
+    cat ${TmpDir}/manual.hidx | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > ${TmpDir}/manual.hidx.tmp
+    mv ${TmpDir}/manual.hidx.tmp ${TmpDir}/manual.hidx
     vout "makeindex -s ${ConfigHtml}/html_index.mst ${TmpDir}/manual.hidx"
     run_command makeindex -s ${ConfigHtml}/html_index.mst ${TmpDir}/manual.hidx
 
     run_command cc_index_link ${TmpDir}/HREF ${TmpDir}/manual.ind ${TmpDir}/cc_index
-    \cat ${TmpDir}/cc_index_header ${TmpDir}/cc_index ${TmpDir}/cc_index_footer > ${OutDir}/manual_index.html
-    CurrentLen=0
+    \cat ${TmpDir}/cc_index_header ${TmpDir}/cc_index ${TmpDir}/cc_index_footer > ${TmpDir}/manual_index.html
 
+    CurrentLen=0
+    cd ${TmpDir}
+
+    # Apply anchor filter to all HTML files creating the crosslinks
+    # ---------------------------------------------------------------------
+    lgout -n ", "
+    lgout -n "[applying cross linker "
+    for dir in ${AllSubDirs} ; do
+        lgout -n "[$dir"
+        cd $dir
+        run_command anchor_filter "${AbsOutDir}/${dir}"
+        if [ $ErrorInLogfile -eq 1 ]; then GlobalExitCode=1 ; fi
+        cd ${AbsOutDir}/${dir}
+        for filename in *.html; do
+          cat $filename | cc_remove_unwanted_links > $filename.tmp
+          mv $filename.tmp $filename
+        done
+        cd ${TmpDir}
+        lgout -n "]"
+    done
+    
+    cd $CurrentDir
+    
     # Copy cascaded style sheet (CSS) file
     # -------------------------------------------------------
     lgout -n "copying CSS file"
@@ -870,6 +849,7 @@ fi
 for f in $InFiles; do
     convert $f
 done
+
 
 # Cleanup
 # -------

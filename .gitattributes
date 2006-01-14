@@ -1299,6 +1299,7 @@ Packages/Manual_tools/gif_makers/old_gifs/cc_Macro.gif -text svneol=unset#unset
 Packages/Manual_tools/gif_makers/old_gifs/cc_Variable.gif -text svneol=unset#unset
 Packages/Manual_tools/gif_makers/old_gifs/cc_advanced_begin.gif -text svneol=unset#unset
 Packages/Manual_tools/gif_makers/old_gifs/cc_advanced_end.gif -text svneol=unset#unset
+Packages/Manual_tools/src/cc_remove_unwanted_links svneol=native#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Box.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Class.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Concept.gif -text svneol=unset#unset

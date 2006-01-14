@@ -33,6 +33,8 @@ void crop_string( string& s);
 void compress_spaces_in_string( string& s);
 void remove_separator( string& s);
 
+void wrap_anchor( const string& url, const string& body, ostream& out );
+
 // Small Caps Conversion
 string convert_to_small_caps( string s);
 

@@ -16,7 +16,7 @@
 \newcommand{\aftercprogskip}{\lciSkipNonWhiteSpace}
 
 \newcommand{\lciLocalCProg}[1]{%
-    \lcRawHtml{<PRE>}\lciAsciiOutputN{#L1}#1\lcRawHtml{</PRE>}}
+    \lcRawHtml{<PRE>}[cccbegin]\lciAsciiOutputN{#L1}#1[cccend]\lcRawHtml{</PRE>}}
 \newenvironment{cprog}{%
     \lciParseUntilEndToken{\lciLocalCProg}{cprog}}{}
 

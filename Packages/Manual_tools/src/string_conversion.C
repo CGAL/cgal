@@ -339,6 +339,73 @@ string convert_to_C_printable( string s) {
     return s;
 }
 
+// the following functions are only needed for `wrap_anchor'
+
+/* find the next occurance of c in s or the '\0' character */
+const char* find_char( const char* s, char c) {
+    while( *s && *s != c )
+        ++s;
+    return s;
+}
+
+/* reverse find of the prev occurance of c in s or the begining position p */
+const char* rfind_char( const char* s, const char* p, char c) {
+    while( s != p && *s != c )
+        --s;
+    return s;
+}
+
+/* print a HTML tag up to and including the '>' */
+void print_tag( const char* s, ostream& out ) {    
+    while( *s && *s != '>' ) {
+        out << *s;
+        ++s;
+    }
+    if( *s )
+        out << *s;
+}   
+
+/* wraps an anchor around a body. Checks for font changing tags. */
+void wrap_anchor( const string& cc_url, const string& cc_body, ostream& out ) {
+    const char* url  =  cc_url.c_str();
+    const char* body = cc_body.c_str();
+    const char* tag_begin = 0;
+    const char* tag_end = 0;
+    const char* s = find_char( body, '<');
+    if( *s ) {
+        ++s;
+        if ( *s == '/')
+            tag_begin = s + 1;
+    }
+    s = find_char( body, '\0');
+    --s;
+    s = rfind_char( s, body, '<');
+    if( *s ==  '<' ) {
+        ++s;
+        if ( *s != '/')
+            tag_end = s;
+    }
+    if( tag_begin ) {
+        out << "</";
+        print_tag( tag_begin, out );
+    }
+    out << "<A HREF=\"" << url << "\">";
+    if( tag_begin ) {
+        out << '<';
+        print_tag( tag_begin, out );
+    }
+    out << body;
+    if( tag_end ) {
+        out << "</";
+        print_tag( tag_end, out );
+    }
+    out << "</A>";
+    if( tag_end ) {
+        out << '<';
+        print_tag( tag_end, out );
+    }
+}
+
 
 // Small Caps Conversion
 // ===========================

@@ -24,8 +24,6 @@
 #include <string_conversion.h>
 #include <cpp_formatting.h>
 
-
-
 struct Null_stream : std::ostream 
 { 
    struct Null_buf : std::streambuf { 
@@ -105,7 +103,7 @@ void assert_file_write( ostream& out, const string& name){
         cerr << ' ' << endl 
 	     << prog_name << ": error: cannot write to file `" 
 	     << name << "'." << endl;
-	exit(1);
+        exit(1);
     }
 }
 

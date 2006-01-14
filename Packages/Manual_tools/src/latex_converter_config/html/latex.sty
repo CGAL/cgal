@@ -712,6 +712,8 @@
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_cong.gif"> }}
 \newcommand{\neq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=27 ALIGN=MIDDLE SRC="cc_neq.gif"> }}
+\newcommand{\ne}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=27 ALIGN=MIDDLE SRC="cc_neq.gif"> }}
 \newcommand{\doteq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=9 ALIGN=BOTTOM SRC="cc_doteq.gif"> }}
 \newcommand{\notin}{\lcRawHtml%
@@ -1038,18 +1040,17 @@
     \lciChapter{#1}% does also a PushOutput
     % cross linking rules
     \lciPushOutput{anchor}%
-    \lcRawHtml{"<!Next_chapter_link_}\value{part}\_\value{chapter}%
-    \lcRawHtml{!>"    }\{%
-    \lcRawHtml{ fputs( "<div class=\"NavNext\"><hr> Next chapter: <a href=\"}%
+    \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{chapter}%
+    \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{\">}#1\lcRawHtml{</a> \n", stdout);}\}\lcRawHtml{
+    \lcRawHtml{">}#1\lcRawHtml{</a>
 }%
-    \lcRawHtml{"<!Up_chapter_link_}\value{part}\_\value{chapter}%
-    \lcRawHtml{!>"    }\{\lcRawHtml{ fputs( "<a href=\"}%
+    \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{chapter}%
+    \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{\">}Up\lcRawHtml{</a>, ", stdout);}\}\lcRawHtml{
+    \lcRawHtml{">}Up\lcRawHtml{</a>, 
 }%
     \lciPopOutput
     % file header
@@ -1072,7 +1073,7 @@
     \lciPopFootnotes
     % navigation footer
     \addtocounter{chapter}{1}%
-    \lcRawHtml{<!Next_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{!>
+    \lcRawHtml{[internal:Next_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{]
 }
     \addtocounter{chapter}{-1}%
     \lciHtmlNavigationBottom
@@ -1303,12 +1304,12 @@
 
 \newcommand{\lciLocalVerbatim}[1]{%
   \lcRawHtml{<pre class="Verbatim">}\lciAsciiOutputN{#L1}#1\lcRawHtml{</pre>}}
-\newenvironment{verbatim}{%
-    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim}}{}
-\newenvironment{verbatim*}{%
-    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim*}}{}
+\newenvironment{verbatim}{[cccbegin]%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim}}{[cccend]}
+\newenvironment{verbatim*}{[cccbegin]%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim*}}{[cccend]}
 
-\newcommand{\lciLocalVerb}[1]{{\tt\lciAsciiOutputN{#L1}#1}}
+\newcommand{\lciLocalVerb}[1]{[cccbegin]{\tt\lciAsciiOutputN{#L1}#1}[cccend]}
 \newcommand{\verb}{\lciParseUntilDelimiter{\lciLocalVerb}}
 \newcommand{\verb*}{\lciParseUntilDelimiter{\lciLocalVerb}}
 
@@ -1688,8 +1689,7 @@
     \lciPushOutput{anchor}%
     \lciLabel{#1}{\lciOutPath}{\lciOut}{\lciReferenceIcon}\lciPopOutput}
 
-%% Args: labelsymbol, output path, output filename, reference icon in HTML
-\newcommand{\lciLabel}[4]{\lciRawOutput{[\[]ref[:]"#C1"[\]]    { fputs( "<A HREF=\"#XC2#XC3###C1\">#X4</A>", stdout);}
+\newcommand{\lciLabel}[4]{\lciRawOutput{l #C1	<A HREF="#XC2#XC3###C1">#X4</A> 
 }}
 
 % +--------------------------------------------------------------------------
@@ -1727,14 +1727,8 @@
 
 %% Args: key, replacement text, bibliography filename
 \newcommand{\lciLocalBibCite}[3]{%
-    \lciRawOutput{"<A NAME="["]"Biblio_#C1"["]"></A><B>[#C1]</B>"    }%
-    \{\lciRawOutput{ fputs( "<A NAME=\"Biblio_#C1\"></A><B>[}#2%
-    \lciRawOutput{]</B>", stdout); }\}\lciRawOutput{
-}%
-    \lciRawOutput{<ANCHORMODE>"#XC3##Biblio_#C1"["]">#C1"    }%
-    \{\lciRawOutput{ fputs( "#XC3##Biblio_#C1\">}#2%
-    \lciRawOutput{", stdout); }\}\lciRawOutput{
-}}
+    \lciRawOutput{b #C1	}#C2
+}
 
 \newcommand{\bibitem}[1]{\lciFirstBibItem
     \newcommand{\lciFirstBibItem}{\lcNoLinkEnd\lcRawHtml{</TD></TR>}}%
