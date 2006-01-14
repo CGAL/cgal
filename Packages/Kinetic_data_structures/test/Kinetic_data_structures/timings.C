@@ -15,14 +15,14 @@
 #include <CGAL/Timer.h>
 
 //template <class AO>
-struct Slest_types
+/*struct Slest_types
 {
     typedef CGAL::Simple_cartesian < CGAL::Gmpq > Static_kernel;
     typedef Static_kernel::FT NT;
     typedef CGAL::POLYNOMIAL::Polynomial < NT > Function;
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits <
         Function > Root_stack_traits;
-    typedef CGAL::POLYNOMIAL::Lazy_upper_bound_root_stack < Root_stack_traits >
+  typedef CGAL::POLYNOMIAL::Lazy_upper_bound_root_stack < Root_stack_traits >
         Root_stack;
     typedef CGAL::POLYNOMIAL::Kernel < Function, Root_stack > Function_kernel;
     typedef CGAL::KDS::Handle_degeneracy_function_kernel < Function_kernel >
@@ -41,12 +41,10 @@ struct Slest_types
     typedef CGAL::KDS::Simulator < Simulator_function_kernel,
         Event_queue > Simulator;
 
-/*typedef CGAL::KDS::Notifying_table<ActiveObject> Active_objects_table;
-   typedef CGAL::KDS::Cartesian_instantaneous_kernel<Active_objects_table,
-   Static_kernel> Instantaneous_kernel; */
-};
 
-struct Lazy_exact_traits_1:public CGAL::KDS::Simulation_traits <
+};*/
+
+ /*struct Lazy_exact_traits_1:public CGAL::KDS::Simulation_traits <
 Slest_types::Static_kernel,
 CGAL::KDS::Cartesian_instantaneous_kernel <
 CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_1 >,
@@ -83,7 +81,7 @@ CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_3 >
         Slest_types::Kinetic_kernel::Point_3 > >P;
     Lazy_exact_traits_3(const P::NT & lb, const P::NT & ub):P(lb, ub) {
     }
-};
+};*/
 
 template < class Traits > double test_sort(unsigned int degree, unsigned int n)
 {
@@ -196,11 +194,11 @@ int main(int argc, char *argv[])
     //test_sort < CGAL::KDS::Exact_simulation_traits_1 > ("Upper bound");
     //test_sort < CGAL::KDS::Inexact_simulation_traits_1 > ("Numeric");
     //test_sort<Lazy_exact_traits_1>("Lazy upper bound");
-    std::cout << CGAL::POLYNOMIAL::internal::lazy_stats.created_ << " "
+    /*std::cout << CGAL::POLYNOMIAL::internal::lazy_stats.created_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.isolated_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.refine_attempted_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.
-        refine_succeeded_ << std::endl;
+        refine_succeeded_ << std::endl;*/
     
 /*test_del<Lazy_exact_traits_3>("Lazy upper bound");
    std::cout << CGAL::POLYNOMIAL::lazy_stats.created_ << " "

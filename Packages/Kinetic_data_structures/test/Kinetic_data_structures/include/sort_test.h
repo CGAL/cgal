@@ -6,7 +6,7 @@ template <class Traits>
 bool sort_test(Traits &tr)
 {
   std::string etag="WARNING: ";
-  CGAL_exactness_check_code(etag="ERROR: ");
+  CGAL_exactness_assertion_code(etag="ERROR: ");
   
     typedef CGAL::KDS::Sort<Traits> Sort;
     Sort sort(tr);
