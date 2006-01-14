@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 
-const int num_events=1000;
+const int num_events=300;
 
 template <class T, class Time>
 struct Test_event
