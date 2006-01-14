@@ -6,7 +6,9 @@ template <class Traits>
 bool sort_test(Traits &tr)
 {
   std::string etag="WARNING: ";
+  bool eret=false;
   CGAL_exactness_assertion_code(etag="ERROR: ");
+  CGAL_exactness_assertion_code(eret=true);
   
     typedef CGAL::KDS::Sort<Traits> Sort;
     Sort sort(tr);
@@ -33,6 +35,7 @@ bool sort_test(Traits &tr)
         std::cerr << "Current time is " << tr.simulator_pointer()->current_time()
             << " the end time is " << tr.simulator_pointer()->end_time() << std::endl;
         ratt= CGAL::to_interval(tr.simulator_pointer()->end_time()).second;
+	error=eret;
     }
 
     while (c != sort.end()) {
@@ -41,7 +44,7 @@ bool sort_test(Traits &tr)
 	std::cerr << etag << "Objects " << *c << " = " << tr.active_objects_table_pointer()->at(*c).x() << " and "
                 << *b << " = " << tr.active_objects_table_pointer()->at(*b).x() << " out of order at end of time "
                 <<ratt << std::endl;
-            error=true;
+            error=eret;
         }
 
         ++b;
