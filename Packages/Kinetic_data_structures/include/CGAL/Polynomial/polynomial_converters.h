@@ -22,6 +22,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/nt_converters.h>
+#include <iterator>
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
@@ -35,8 +36,9 @@ class Polynomial_converter
         public:
             Iterator(typename P1::iterator it, const Converter_t& fun): fun_(fun), it_(it){}
             Iterator(){}
-            typedef typename P1::iterator::iterator_category iterator_category;
-            typedef typename P1::iterator::difference_type difference_type;
+      typedef typename std::iterator_traits<typename P1::iterator> Traits;
+            typedef typename Traits::iterator_category iterator_category;
+            typedef typename Traits::difference_type difference_type;
             typedef typename Converter_t::result_type value_type;
             typedef value_type reference;
             typedef const value_type *pointer;
