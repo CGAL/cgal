@@ -40,7 +40,7 @@ class Filtered_rational_multiplicity
             h_.push_back(k.differentiate_object()(fh));
         }
 
-        typedef unsigned int result_type;
+        typedef int result_type;
 //typedef Bound_type argument_type;
         typedef NT argument_type;
 
