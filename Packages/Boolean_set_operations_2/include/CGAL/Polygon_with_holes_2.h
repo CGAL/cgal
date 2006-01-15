@@ -35,7 +35,7 @@ public:
 
   typedef CGAL::Polygon_2<Kernel, Containter>        Polygon_2;
   typedef General_polygon_with_holes_2<Polygon_2>    Base;
-  typedef typename Base::Holes_const_iterator        Holes_const_iterator;
+  typedef typename Base::Hole_const_iterator         Hole_const_iterator;
   typedef typename Base::Size                        Size;
 
   /*! Default constructor. */
