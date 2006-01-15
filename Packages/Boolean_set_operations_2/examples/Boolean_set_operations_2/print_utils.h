@@ -36,7 +36,7 @@ void print_polygon_with_holes
     std::cout << "{ Unbounded polygon." << std::endl;
 
   typename CGAL::Polygon_with_holes_2<Kernel,Container>::
-                                             Holes_const_iterator  hit;
+                                             Hole_const_iterator  hit;
   unsigned int                                                     k = 1;
 
   std::cout << "  " << pwh.number_of_holes() << " holes:" << std::endl;
