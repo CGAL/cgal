@@ -339,6 +339,8 @@ public:
   class Make_x_monotone_2
   {
   private:
+    typedef Arr_circle_segment_traits_2<Kernel_, Filter_> Self;
+
     bool m_use_cache;
 
   public:
