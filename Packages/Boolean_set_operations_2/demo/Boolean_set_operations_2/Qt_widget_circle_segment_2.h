@@ -29,7 +29,7 @@ operator<<(CGAL::Qt_widget & widget,
   }
 
   
-  const typename Kernel::Circle_2 & circ = arc.circle();
+  const typename Kernel::Circle_2 & circ = arc.supporting_circle();
   const typename Kernel::Point_2 & center = circ.center();
   typedef typename _X_monotone_circle_segment_2<Kernel, Filter>::Point_2 Arc_point_2;
   Arc_point_2 source;
