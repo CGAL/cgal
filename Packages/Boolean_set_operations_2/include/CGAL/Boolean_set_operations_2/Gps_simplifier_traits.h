@@ -29,14 +29,18 @@ class Gps_simplifier_curve_data
 protected:
   unsigned int m_bc;
   unsigned int m_twin_bc;
+  unsigned int m_index;
 
 public:
   Gps_simplifier_curve_data()
   {}
 
-  Gps_simplifier_curve_data(unsigned int bc, unsigned int twin_bc):
+  Gps_simplifier_curve_data(unsigned int bc,
+                            unsigned int twin_bc,
+                            unsigned int index):
     m_bc(bc),
-    m_twin_bc(twin_bc)
+    m_twin_bc(twin_bc),
+    m_index(index)
   {}
 
   unsigned int bc() const
@@ -49,9 +53,14 @@ public:
     return m_twin_bc;
   }
 
-  unsigned int& bc() 
+  unsigned int index() const
   {
-    return m_bc;
+    return m_index;
+  }
+
+  unsigned int& index() 
+  {
+    return m_index;
   }
 
   unsigned int& twin_bc() 
@@ -68,10 +77,34 @@ public:
   {
     m_twin_bc = twin_bc;
   }
+
+  void set_index(unsigned int index)
+  {
+    m_index = index;
+  }
 };
 
 struct Gps_simplifier_point_data
 {
+protected:
+  unsigned int m_index;
+
+public:
+  Gps_simplifier_point_data()
+  {}
+
+  Gps_simplifier_point_data(unsigned int index) : m_index(index)
+  {}
+
+  unsigned int index() const
+  {
+    return m_index;
+  }
+  
+  void set_index(unsigned int index)
+  {
+    m_index = index;
+  }
 };
 
 template <class Traits_>
@@ -80,6 +113,7 @@ class Gps_simplifier_traits :
                               Gps_simplifier_curve_data,
                               Gps_simplifier_point_data>
 {
+public:
   typedef Traits_    Traits;
   typedef Gps_traits_decorator<Traits_,
                                Gps_simplifier_curve_data,
@@ -96,6 +130,8 @@ class Gps_simplifier_traits :
   typedef typename Traits::Intersect_2            Base_Intersect_2;
   typedef typename Traits::Split_2                Base_Split_2;
 
+protected:
+  unsigned int m_pgn_size;
 
   
 public:
@@ -110,8 +146,28 @@ public:
   Gps_simplifier_traits(Traits& tr) : Base(tr)
   {}
 
+  unsigned int polygon_size() const
+  {
+    return m_pgn_size;
+  }
 
-   class Intersect_2
+  void set_polygon_size(unsigned int pgn_size)
+  {
+    m_pgn_size = pgn_size;
+  }
+
+  bool is_valid_index(unsigned int index) const
+  {
+    return (index < m_pgn_size);
+  }
+
+  unsigned int invalid_index() const
+  {
+    return (m_pgn_size);
+  }
+
+
+  class Intersect_2
   {
   private:
 
@@ -119,6 +175,7 @@ public:
     Base_Compare_endpoints_xy_2  m_base_cmp_endpoints;
     Base_Compare_xy_2            m_base_cmp_xy;
     Base_Construct_min_vertex_2  m_ctr_min_v;
+    const Self*                  m_self_tr;
 
   public:
    
@@ -126,10 +183,12 @@ public:
     Intersect_2 (const Base_Intersect_2& base,
                  const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
                  const Base_Compare_xy_2& base_cmp_xy,
-                 const Base_Construct_min_vertex_2& ctr_min_v) : 
+                 const Base_Construct_min_vertex_2& ctr_min_v,
+                 const Self*  tr) : 
       m_base(base),
       m_base_cmp_endpoints(m_base_cmp_endpoints),
-      m_base_cmp_xy(m_base_cmp_xy)
+      m_base_cmp_xy(m_base_cmp_xy),
+      m_self_tr(tr)
     {}
 
     template<class OutputIterator>
@@ -137,6 +196,20 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi)
     {
+      //// if the two curves are incident, do not intersect them
+      //if(m_self_tr->is_valid_index(cv1.data().index()) && 
+      //   m_self_tr->is_valid_index(cv2.data().index()))
+      //{
+      //  unsigned int index_diff = 
+      //    (cv1.data().index() > cv2.data().index()) ? 
+      //    (cv1.data().index() - cv2.data().index()):
+      //    (cv2.data().index() - cv1.data().index());
+
+      //  if(index_diff == 1 ||index_diff == m_self_tr->polygon_size() -1)
+      //  {
+      //    return (oi);
+      //  }
+      //}
       const std::pair<Base_Point_2, unsigned int>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
       OutputIterator oi_end;
@@ -154,7 +227,8 @@ public:
 
         if (base_pt != NULL)
         {
-          Point_2 point_plus (base_pt->first); // the extended point
+          Point_data pt_data(m_self_tr->invalid_index());
+          Point_2 point_plus (base_pt->first, pt_data); // the extended point
           *oi = CGAL::make_object(std::make_pair(point_plus, 
                                                  base_pt->second));
         }
@@ -185,8 +259,8 @@ public:
               std::swap(ov_bc, ov_twin_bc);
             }
 
-            Curve_data cv_data(ov_bc, ov_twin_bc);
-              *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_cv, cv_data));
+            Curve_data cv_data(ov_bc, ov_twin_bc, m_self_tr->invalid_index());
+            *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_cv, cv_data));
           }
         }
       }
@@ -201,18 +275,21 @@ public:
     return Intersect_2(this->m_base_tr->intersect_2_object(),
                        this->m_base_tr->compare_endpoints_xy_2_object(),
                        this->m_base_tr->compare_xy_2_object(),
-                       this->m_base_tr->construct_min_vertex_2_object());
+                       this->m_base_tr->construct_min_vertex_2_object(),
+                       this);
   }
 
   class Split_2
   {
   private:
     Base_Split_2      m_base_split;
+    const Self*       m_self_tr;
 
   public:
 
     /*! Constructor. */
-    Split_2 (const Base_Split_2& base) : m_base_split (base)
+    Split_2 (const Base_Split_2& base, const Self* tr) : m_base_split(base),
+                                                         m_self_tr(tr)
     {}
 
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
@@ -224,19 +301,172 @@ public:
                    c2.base());
       const Curve_data& cv_data = cv.data();
       c1.set_data(Curve_data(cv_data.bc(),
-                             cv_data.twin_bc()));
+                             cv_data.twin_bc(),
+                             m_self_tr->invalid_index()));
       
       c2.set_data(Curve_data(cv_data.bc(),
-                             cv_data.twin_bc()));
+                             cv_data.twin_bc(),
+                             m_self_tr->invalid_index()));
     }
   };
 
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object () 
   {
-    return Split_2(this->m_base_tr->split_2_object());
+    return Split_2(this->m_base_tr->split_2_object(),
+                   this);
   }
-};                                                          
+
+  class Construct_min_vertex_2
+  {
+  private:
+    Base_Construct_min_vertex_2 m_base;
+    Base_Compare_endpoints_xy_2 m_base_cmp_endpoints;
+    const Self*                 m_self_tr;
+
+  public:
+
+    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base,
+                          const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
+                          const Self* tr):
+        m_base(base),
+        m_base_cmp_endpoints(base_cmp_endpoints),
+        m_self_tr(tr)
+    {}
+
+    /*!
+      * Get the left endpoint of the x-monotone curve (segment).
+      * \param cv The curve.
+      * \return The left endpoint.
+      */
+    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    {
+      if(!m_self_tr->is_valid_index(cv.data().index()))
+      {
+        return Point_2 (m_base(cv.base()), m_self_tr->invalid_index());
+      }
+      
+      Comparison_result res = m_base_cmp_endpoints(cv);
+      Point_data pt_data;
+      if(res == SMALLER)
+      {
+        // min vertex is the source
+        pt_data.set_index(cv.data().index());
+      }
+      else
+      {
+        // min vertex is the target
+        pt_data.set_index((cv.data().index() + 1) % m_self_tr->polygon_size());
+      }
+      return Point_2 (m_base(cv.base()), pt_data);
+    }
+  };
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Construct_min_vertex_2 construct_min_vertex_2_object () const
+  {
+    return Construct_min_vertex_2(this->m_base_tr->construct_min_vertex_2_object(),
+                                  this->m_base_tr->compare_endpoints_xy_2_object(),
+                                  this);
+  }
+
+
+  class Construct_max_vertex_2
+  {
+  private:
+    Base_Construct_max_vertex_2      m_base;
+    Base_Compare_endpoints_xy_2      m_base_cmp_endpoints;
+    const Self*                      m_self_tr;
+
+  public:
+
+    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base,
+                          const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
+                          const Self* tr):
+        m_base(base),
+        m_base_cmp_endpoints(base_cmp_endpoints),
+        m_self_tr(tr)
+    {}
+
+    /*!
+      * Get the right endpoint of the x-monotone curve (segment).
+      * \param cv The curve.
+      * \return The left endpoint.
+      */
+    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    {
+      if(!m_self_tr->is_valid_index(cv.data().index()))
+      {
+        return Point_2 (m_base(cv.base()), m_self_tr->invalid_index());
+      }
+      Comparison_result res = m_base_cmp_endpoints(cv);
+      Point_data pt_data;
+      if(res == SMALLER)
+      {
+        // min vertex is the target
+        pt_data.set_index((cv.data().index() + 1) % m_self_tr->polygon_size());
+      }
+      else
+      {
+        // min vertex is the source
+        pt_data.set_index(cv.data().index());
+      }
+      return Point_2 (m_base(cv.base()), pt_data);
+    }
+  };
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Construct_max_vertex_2 construct_max_vertex_2_object () const
+  {
+    return Construct_max_vertex_2(this->m_base_tr->construct_max_vertex_2_object(),
+                                  this->m_base_tr->compare_endpoints_xy_2_object(),
+                                  this);
+  }
+
+  class Compare_xy_2
+  {
+  private:
+    Base_Compare_xy_2       m_base;
+    const Self*             m_self_tr;
+
+  public:
+
+    Compare_xy_2(const Base_Compare_xy_2& base,
+                const Self* tr ):
+        m_base(base),
+        m_self_tr(tr)
+    {}
+
+
+    /*!
+      * Get the left endpoint of the x-monotone curve (segment).
+      * \param cv The curve.
+      * \return The left endpoint.
+      */
+    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    {
+      //if one of the indexes is invalid, compare p1 and p2
+      if(! m_self_tr->is_valid_index(p1.data().index()) ||
+        ! m_self_tr->is_valid_index(p2.data().index()))
+        return (m_base(p1.base(), p2.base()));
+
+      // if the two point has the same index, return EQUAL
+      if(p1.data().index() == p2.data().index())
+      {
+        return EQUAL;
+      }
+
+      return (m_base(p1.base(), p2.base()));
+    }
+  };
+
+
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_xy_2 compare_xy_2_object () 
+  {
+    return Compare_xy_2(this->m_base_tr->compare_xy_2_object(), this);
+  }
+};
 
 CGAL_END_NAMESPACE
 

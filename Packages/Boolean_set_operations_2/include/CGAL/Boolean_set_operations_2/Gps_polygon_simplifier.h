@@ -88,13 +88,15 @@ public:
     std::pair<Curve_const_iterator,
               Curve_const_iterator>  itr_pair = ctr_curves(pgn);
 
+    unsigned int index = 0;
     for(Curve_const_iterator itr = itr_pair.first;
         itr != itr_pair.second;
-        ++itr)
+        ++itr, ++index)
     {
-      Curve_data cv_data(1, 0);
+      Curve_data cv_data(1, 0, index);
       curves_list.push_back(Meta_X_monotone_curve_2(*itr, cv_data));
     }
+    m_traits->set_polygon_size(curves_list.size());
    
     m_sweep_line.sweep(curves_list.begin(), curves_list.end());
 
