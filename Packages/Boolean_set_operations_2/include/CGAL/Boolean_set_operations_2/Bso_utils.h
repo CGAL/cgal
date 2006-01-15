@@ -260,11 +260,6 @@ public:
 template < class Traits_>
 void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2& arr)
 {
-  /*typedef typename Arrangement_2::Traits_2             Traits_2;
-  typedef typename Traits_2::Compare_endpoints_xy_2    Compare_endpoints_xy_2;
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Curve_const_iterator      Curve_const_iterator;
-  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;*/
   typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
 
   Arr_accessor  accessor(arr);
@@ -353,46 +348,92 @@ void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2
 }
 
 
-//template < class Traits_ >
-//  template< class PolygonIter >
-//void General_polygon_set_2<Traits_>::insert(PolygonIter      p_begin,
-//                                            PolygonIter      p_end)
-//{
-//  typename std::iterator_traits<InputIterator>::value_type pgn;
-//  _insert(p_begin, p_end, pgn);
-//}
+template < class Traits_ >
+  template< class PolygonIter >
+void General_polygon_set_2<Traits_>::insert(PolygonIter      p_begin,
+                                            PolygonIter      p_end)
+{
+  typename std::iterator_traits<PolygonIter>::value_type pgn;
+  _insert(p_begin, p_end, pgn);
+}
 
-//template < class Traits_ >
-//  template< class PolygonIter, class PolygonWithHolesIter>
-//void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
-//                                            PolygonIter          p_end,
-//                                            PolygonWithHolesIter pwh_begin,
-//                                            PolygonWithHolesIter pwh_end)
-//{
-//  //TODO: implement!!
-//}
+template < class Traits_ >
+  template< class PolygonIter, class PolygonWithHolesIter>
+void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
+                                            PolygonIter          p_end,
+                                            PolygonWithHolesIter pwh_begin,
+                                            PolygonWithHolesIter pwh_end)
+{
+  typedef std::list<X_monotone_curve_2>                  XCurveList;
+  typedef Init_faces_visitor<Arrangement_2>              My_visitor;
+  typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
+
+  XCurveList xcurve_list;
+  
+  for( ; p_begin != p_end; ++p_begin)
+  {
+    _construct_curves(*p_begin, std::back_inserter(xcurve_list));
+  }
+
+  bool is_unbounded = false;
+  for( ; pwh_begin != pwh_end; ++pwh_begin)
+  {
+    if(pwh_begin->is_unbounded())
+      is_unbounded = true;
+    _construct_curves(*pwh_begin, std::back_inserter(xcurve_list));
+  }
+  insert_non_intersecting_curves(*m_arr, xcurve_list.begin(), xcurve_list.end());
+
+  if(is_unbounded)
+    m_arr->unbounded_face()->set_contained(true);
+
+  My_visitor v;
+  Arr_bfs_scanner scanner(v);
+  scanner.scan(*m_arr);
+  _reset_faces(m_arr);
+}
 
 //insert a range of simple polygons to the arrangement
-//template < class Traits_ >
-//  template< class PolygonIter >
-//void General_polygon_set_2<Traits_>::_insert(PolygonIter      p_begin,
-//                                             PolygonIter      p_end,
-//                                             Polygon_2&       pgn)
-//{  
-//  for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
-//  {
-//    this->_insert(*pitr);
-//  }
-//}
-//
-//template < class Traits_ >
-//  template< class PolygonIter >
-//void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
-//                                             PolygonIter            p_end,
-//                                             Polygon_with_holes_2&  pgn)
-//{  
-//  // TODO: implement!!
-//}
+template < class Traits_ >
+  template< class PolygonIter >
+void General_polygon_set_2<Traits_>::_insert(PolygonIter      p_begin,
+                                             PolygonIter      p_end,
+                                             Polygon_2&       /*pgn*/)
+{  
+  for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
+  {
+    this->_insert(*pitr, *m_arr);
+  }
+}
+
+template < class Traits_ >
+  template< class PolygonIter >
+void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
+                                             PolygonIter            p_end,
+                                             Polygon_with_holes_2&  /*pgn*/)
+{  
+  typedef std::list<X_monotone_curve_2>                  XCurveList;
+  typedef Init_faces_visitor<Arrangement_2>              My_visitor;
+  typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
+
+  XCurveList xcurve_list;
+  bool is_unbounded = false;
+  for( ; p_begin != p_end; ++p_begin)
+  {
+    is_unbounded = p_begin->is_unbounded();
+    _construct_curves(*p_begin, std::back_inserter(xcurve_list));
+
+  }
+  insert_non_intersecting_curves(*m_arr, xcurve_list.begin(), xcurve_list.end());
+
+  if(is_unbounded)
+    m_arr->unbounded_face()->set_contained(true);
+
+  My_visitor v;
+  Arr_bfs_scanner scanner(v);
+  scanner.scan(*m_arr);
+  _reset_faces(m_arr);
+}
 
 
 
@@ -407,16 +448,43 @@ void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, A
   typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
 
   XCurveList xcurve_list;
-  
-  bool is_bounded = !pgn.is_unbounded();
-  if(is_bounded)
+  _construct_curves(pgn, std::back_inserter(xcurve_list));
+  insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
+
+  if(!pgn.is_unbounded())
+    arr.unbounded_face()->set_contained(true);
+
+  My_visitor v;
+  Arr_bfs_scanner scanner(v);
+  scanner.scan(arr);
+  _reset_faces(&arr);
+}
+
+template <class Traits_>
+  template <class OutputIterator>
+void 
+  General_polygon_set_2<Traits_>::_construct_curves(const Polygon_2& pgn,
+                                                    OutputIterator oi)
+{
+    std::pair<Curve_const_iterator,
+              Curve_const_iterator> itr_pair =
+              m_traits->construct_curves_2_object()(pgn);
+    std::copy (itr_pair.first, itr_pair.second, oi);
+}
+
+template <class Traits_>
+  template <class OutputIterator>
+void 
+General_polygon_set_2<Traits_>::_construct_curves(const Polygon_with_holes_2& pgn,
+                                                  OutputIterator oi)
+{
+  if(!pgn.is_unbounded())
   {
     const Polygon_2& pgn_boundary = pgn.outer_boundary();
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair = 
               m_traits->construct_curves_2_object()(pgn_boundary);
-    std::copy (itr_pair.first, itr_pair.second, 
-	       std::back_inserter(xcurve_list));
+    std::copy (itr_pair.first, itr_pair.second, oi);
   }
 
   GP_Holes_const_iterator hit;
@@ -426,72 +494,9 @@ void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, A
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair =
               m_traits->construct_curves_2_object()(pgn_hole);
-    std::copy (itr_pair.first, itr_pair.second,
-	       std::back_inserter(xcurve_list));
+    std::copy (itr_pair.first, itr_pair.second, oi);
   }
-  
-  insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
-
-  if(!is_bounded)
-    arr.unbounded_face()->set_contained(true);
-
-  My_visitor v;
-  Arr_bfs_scanner scanner(v);
-  scanner.scan(arr);
-  _reset_faces(&arr);
 }
-
-
-
-//insert a range of  non-sipmle poloygons with holes (as decribed above)
-template < class Traits_ >
-  template< class InputIterator >
-void General_polygon_set_2<Traits_>::pgns_with_holes2arr (InputIterator begin,
-                                                         InputIterator end,
-                                                         Arrangement_2& arr)
-{
-  typedef std::list<X_monotone_curve_2>                XCurveList;
-
-  typedef Init_faces_visitor<Arrangement_2>              My_visitor;
-  typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;
-
-  XCurveList              xcurve_list;
-  GP_Holes_const_iterator holes_it;
-  bool                    is_bounded = true;
-  InputIterator           itr;
- 
-  for(itr = begin; itr != end; ++itr)
-  {
-    if(!itr->is_unbounded())
-    {
-      const Polygon_2& pgn = itr->outer_boundary();
-      arr.get_traits()->construct_curves_2_object()
-        (pgn, std::back_inserter(xcurve_list));
-    }
-    else
-      is_bounded = false;
-
-
-    for(holes_it = itr->holes_begin();
-        holes_it != itr->holes_end();
-        ++holes_it)
-    {
-      const Polygon_2& pgn_hole = *holes_it;
-      arr.get_traits()->construct_curves_2_object()
-	(pgn_hole, std::back_inserter(xcurve_list));
-    }
-  }
-
-  insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
-
-  if(!is_bounded)
-    arr.unbounded_face()->set_contained(true);
-
-  My_visitor v;
-  Arr_bfs_scanner scanner(v);
-  scanner.scan(arr);
-}
-
 
 template <class Traits_>
   template< class OutputIterator >

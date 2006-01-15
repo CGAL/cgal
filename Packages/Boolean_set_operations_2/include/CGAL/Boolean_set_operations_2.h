@@ -883,7 +883,10 @@ OutputIterator complement(const General_polygon_with_holes_2<Arr_traits>& pgn,
                           OutputIterator oi,
                           Traits& tr)
 {
-  return (complement(pgn, oi, tr));
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(pgn);
+  gps.complement();
+  return (gps.polygons_with_holes(oi));
 }
 
 template <class Arr_traits, class OutputIterator>

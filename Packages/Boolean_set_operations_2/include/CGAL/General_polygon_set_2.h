@@ -163,38 +163,6 @@ public:
   }
 
 
-  // constructor of range of polygons that can be either simple polygons
-  // or polygons with holes
-  // precondition: the polygons are disjoint and simple
-  template <class PolygonIterator>
-    General_polygon_set_2(PolygonIterator pgn_begin,
-                          PolygonIterator pgn_end): 
-    m_traits(new Traits_2()),
-    m_traits_owner(true),
-    m_arr(new Arrangement_2(m_traits)) 
-  {}
-
-
-  // constructor of two ranges of : the first one for simple polygons,
-  // the second one for polygons with holes
-  // precondition: the first range is disjoint simple polygons 
-  //               the second range is fisjoint polygons with holes
-  template <class PolygonIterator, class PolygonWithHolesIterator>
-  General_polygon_set_2(PolygonIterator pgn_begin,
-                        PolygonIterator pgn_end,
-                        PolygonWithHolesIterator  pgn_with_holes_begin,
-                        PolygonWithHolesIterator  pgn_with_holes_end):
-    m_traits(new Traits_2()),
-    m_traits_owner(true),
-    m_arr(new Arrangement_2(m_traits)) 
- {}
-
- General_polygon_set_2(const Arrangement_2& arr): m_traits(new Traits_2()),
-                                                  m_traits_owner(true),
-                                                  m_arr(new Arrangement_2(arr))
- {}
-
-
   //destructor
   virtual ~General_polygon_set_2()
   {
@@ -236,22 +204,22 @@ public:
   }
 
 
-  //// insert a range of polygons that can be either simple polygons
-  //// or polygons with holes
-  //// precondition: the polygons are disjoint and simple
-  //template <class PolygonIterator>
-  //void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
+  // insert a range of polygons that can be either simple polygons
+  // or polygons with holes
+  // precondition: the polygons are disjoint and simple
+  template <class PolygonIterator>
+  void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
 
 
-  //// insert two ranges of : the first one for simple polygons,
-  //// the second one for polygons with holes
-  //// precondition: the first range is disjoint simple polygons 
-  ////               the second range is fisjoint polygons with holes
-  //template <class PolygonIterator, class PolygonWithHolesIterator>
-  //void insert(PolygonIterator pgn_begin,
-  //            PolygonIterator pgn_end,
-  //            PolygonWithHolesIterator  pgn_with_holes_begin,
-  //            PolygonWithHolesIterator  pgn_with_holes_end);
+  // insert two ranges of : the first one for simple polygons,
+  // the second one for polygons with holes
+  // precondition: the first range is disjoint simple polygons 
+  //               the second range is disjoint polygons with holes
+  template <class PolygonIterator, class PolygonWithHolesIterator>
+  void insert(PolygonIterator pgn_begin,
+              PolygonIterator pgn_end,
+              PolygonWithHolesIterator  pgn_with_holes_begin,
+              PolygonWithHolesIterator  pgn_with_holes_end);
 
 
 
@@ -1037,6 +1005,19 @@ void _reset_faces(Arrangement_2* arr) const
 void _insert(const Polygon_2& pgn, Arrangement_2& arr);
 
 void _insert(const Polygon_with_holes_2& pgn, Arrangement_2& arr);
+
+template< class PolygonIter >
+void _insert(PolygonIter p_begin, PolygonIter  p_end, Polygon_2& pgn);
+
+template< class PolygonIter >
+void _insert(PolygonIter p_begin, PolygonIter  p_end, Polygon_with_holes_2& pgn);
+
+template <class OutputIterator>
+void _construct_curves(const Polygon_2& pgn, OutputIterator oi);
+
+template <class OutputIterator>
+void _construct_curves(const Polygon_with_holes_2& pgn, OutputIterator oi);
+
 
 };
 
