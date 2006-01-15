@@ -254,13 +254,11 @@ public:
     _orient (COLLINEAR),
     _is_full (false)
   {
-    CGAL_precondition (CGAL::sign (line.a()*source.x() +
-                                   line.b()*source.y() +
-                                   line.c()) == ZERO);
+    CGAL_precondition (CGAL::compare (source.x()*line.a() + line.c(),
+                                      -source.y()*line.b()) == EQUAL);
 
-    CGAL_precondition (CGAL::sign (line.a()*target.x() +
-                                   line.b()*target.y() +
-                                   line.c()) == ZERO);
+    CGAL_precondition (CGAL::compare (target.x()*line.a() + line.c(),
+                                      -target.y()*line.b()) == EQUAL);
   }
 
   /*!

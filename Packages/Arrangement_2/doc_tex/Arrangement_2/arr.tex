@@ -1961,6 +1961,39 @@ and the associated vertex has six incident edges:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_circles.C}
 
+The \ccc{Curve_2} type nested in \ccc{Arr_circle_segment_traits_2} can be
+used to represent circles, circular arcs, or line segments. Curve objects
+can therefore be constructed from a \ccc{Kernel::Circle_2} object or from
+a \ccc{Kernel::Segment_2} object. A circular arc is typically defined by
+a supporting circle and two endpoints, where the endpoints are instances
+of the \ccc{Point_2} type, with rational or irrational coordinates. The
+orientation of the arc is determined by the orientation of the supporting
+circle. Similarly, we also support the construction of lines segments given
+their supporting line (of type \ccc{Kernel::Line_2}) and two endpoints, which
+may have irrational coordinates (unlike the \ccc{Kernel::Segment_2} type).
+
+Note that the \ccc{Kernel::Circle_2} type represents a circle whose
+\emph{squared radius} is rational, where the radius itself may be irrational.
+However, if the radius is known to be rational, it is advisable to use it,
+for efficiency reasons. It is therefore also possible to construct a circle,
+or a circular arc specifying the circle center (a \ccc{Kernel::Point_2}), its
+rational radius, and its orientation. Finally, we also support the construction
+of a circular arcs that is defined by two endpoints and an arbitrary midpoint
+that lies on the arc in between its endpoint. In this case, all three points
+are required to have rational coordinates (to be kernel points).
+
+The following example demonstrates the usage of the various construction
+methods for circular arcs and line segments. Note the usage of the constructor
+of \ccc{CoordNT (alpha, beta, gamma)}, which creates a degree-$2$ algebraic
+number whose value is $\alpha + \beta\sqrt{\gamma}$.
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_circular_arcs.C}
+
+It is also possible to construct $x$-monotone curve objects, which represent
+$x$-monotone circular arcs or line segments, using similar constructors.
+Construction from a full circle is obviously not supported. See the reference
+manual for more details.
+
 \subsection{A Traits Class for Conic arcs}
 \label{arr_ssec:tr_conic}
 %-----------------------------------------
