@@ -450,16 +450,28 @@ public:
    * \return COLLINEAR in case of a line segment,
    *         CLOCKWISE or COUNTERCLOCKWISE for circular curves.
    */
-  Orientation orientation () const
+  inline Orientation orientation () const
   {
     return (_orient);
+  }
+
+  /*! Check if the arc is linear. */
+  inline bool is_linear () const
+  {
+    return (_orient == COLLINEAR);
+  }
+
+  /*! Check if the arc is circular. */
+  inline bool is_circular () const
+  {
+    return (_orient != COLLINEAR);
   }
 
   /*!
    * Get the supporting line.
    * \pre The curve orientation is COLLINEAR.
    */
-  const Line_2& line () const
+  const Line_2& supporting_line () const
   {
     CGAL_precondition (_orient == COLLINEAR);
     return (_line);
@@ -469,7 +481,7 @@ public:
    * Get the supporting circle.
    * \pre The curve orientation is not COLLINEAR.
    */
-  const Circle_2& circle () const
+  const Circle_2& supporting_circle () const
   {
     CGAL_precondition (_orient != COLLINEAR);
     return (_circ);

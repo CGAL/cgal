@@ -1787,7 +1787,7 @@ data with the geometric objects.
 
 \subsection{Traits Classes for Line Segments}
 \label{arr_ssec:tr_segs}
-%-----------------------------------------
+%--------------------------------------------
 %
 The \ccc{Arr_segment_traits_2<Kernel>} class used so far
 in all example programs in this chapter is parameterized by a
@@ -1833,9 +1833,9 @@ segments, but as explained above, for efficiency reasons it is
 recommended to use it only when the arrangement is very sparse and
 contains hardly any intersection points.
 
-\subsection{The Polyline Traits Class}
+\subsection{The Polyline-Traits Class}
 \label{arr_ssec:tr_polylines}
-%-----------------------------------
+%-------------------------------------
 %
 The \ccc{Arr_polyline_traits_2<SegmentTraits>} class can be used
 to maintain arrangements of polylines (a.k.a. poly-segments),
@@ -1897,9 +1897,73 @@ polylines:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_polylines.C}
 
-\subsection{The Conic Traits Class}
+\subsection{A Traits Class for Circular Arcs and Line Segments}
+\label{arr_ssec:tr_circ_seg}
+%--------------------------------------------------------------
+%
+Circles and circular arcs are the simplest form of non-linear curves.
+We handle circles whose centers have rational coordinates and whose
+squared radii is also rational. If we denote the circle center by $(x_0,y_0)$
+and its radius by $r$, then the equation of the circle --- that is,
+$(x - x_0)^2 + (y - y_0)^2 = r^2$ --- has rational coefficients.
+The intersection points of two such circles are therefore solutions
+of a quadratic equation with rational coefficients, or algebraic numbers
+of degree $2$. The same applies for intersection points between such a
+rational circle and a line, or a line segment, with rational coefficients
+(a line whose equation is $ax + by + c = 0$, where $a$, $b$ and $c$ are
+rational). Such numbers can be expressed as $\alpha + \beta\sqrt{\gamma}$,
+where $\alpha$, $\beta$ and $\gamma$ are all rational numbers.
+
+Arrangement of circular arcs and of line segment are very useful, as they
+occur in many applications. For example, when dilating a polygon by some
+radius we obtain a shape whose boundary is comprised of line segments,
+which correspond to dilated polygon edges, and circular arc, which are
+originated by dilated polygon vertices. Using the arrangement of the
+boundary curves it is possible, for example, to compute the union of a set
+of dilated polygons.
+
+The \ccc{Arr_circle_segment_traits_2<Kernel>} class-template is designed
+for efficient handling of arrangements of circular arcs and line segments.
+It is parameterized by a geometric kernel, and can handle arrangements of
+segments of \ccc{Kernel::Circle_2} objects (full circles are also supported)
+or of \ccc{Kernel::Line_2} objects --- namely circular arcs and line segments.
+It is important to observe that the nested \ccc{Point_2} type defined by the
+traits class, whose coordiates are typically algerbraic numbers of degree 2,
+is {\em not} the same as the \ccc{Kernel::Point_2} type, which is capable of
+representing a point with rational coordinates. The coordinates of a
+point are represented using the nested \ccc{CoordNT} number-type.
+
+\begin{figure}[!htp]
+\begin{ccTexOnly}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_13}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/ex_13.gif" border=0 alt="Example 13">
+  </center>
+\end{ccHtmlOnly}
+\caption{An arrangement of three circles constructed in
+\ccc{ex_circles.C}. Each circle is split into two $x$-monotone
+circular arcs, whose endpoints are drawn as disks. Circles
+mark vertices that correspond to intersection points. The vertex
+$v_{\rm max}$ is a common intersection point of all three
+circles.}
+\label{arr_fig:ex_13}
+\end{figure}
+
+In the following example an arrangement of three full circles is
+constructed, as shown in Figure~\ref{arr_fig:ex_13}. Then, the vertex
+of maximal degree is searched for. The geometric mapping of this
+vertex is the point $(4,3)$, as all three circles intersect at this point
+and the associated vertex has six incident edges:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_circles.C}
+
+\subsection{A Traits Class for Conic arcs}
 \label{arr_ssec:tr_conic}
-%-------------------------------
+%-----------------------------------------
 %
 A {\em conic curve} is an algebraic curve of degree 2. Namely, it
 is the locus of all points $(x,y)$ satisfying the equation $C:\ r
@@ -2012,34 +2076,6 @@ also support basic access functions such as \ccc{source()},
 \begin{figure}[!htp]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_13}
-  \end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-  <p><center>
-  <img src="./fig/ex_13.gif" border=0 alt="Example 13">
-  </center>
-\end{ccHtmlOnly}
-\caption{An arrangement of three circles constructed in
-\ccc{ex_circles.C}. Each circle is split into two $x$-monotone
-circular arcs, whose endpoints are drawn as disks. Circles
-mark vertices that correspond to intersection points. The vertex
-$v_{\rm max}$ is a common intersection point of all three
-circles.}
-\label{arr_fig:ex_13}
-\end{figure}
-
-In the following example an arrangement of three full circles is
-constructed, as shown in Figure~\ref{arr_fig:ex_13}. Then, the vertex
-of maximal degree is searched for. The geometric mapping of this
-vertex is the point $(4,3)$, as all three circles intersect at this point
-and the associated vertex has six incident edges:
-
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_circles.C}
-
-\begin{figure}[!htp]
-\begin{ccTexOnly}
-  \begin{center}
   \includegraphics{Arrangement_2/fig/ex_14}
   \end{center}
 \end{ccTexOnly}
@@ -2083,9 +2119,9 @@ multiplicity $1$:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_conic_multiplicities.C}
 
-\subsection{Traits Class for Arcs of Rational Functions}
+\subsection{A Traits Class for Arcs of Rational Functions}
 \label{arr_ssec:tr_ratfunc}
-%-------------------------------------------------------
+%---------------------------------------------------------
 %
 A {\em rational function} is given by the equation $y =
 \frac{P(x)}{Q(x)}$, where $P$ and $Q$ are polynomials of arbitrary

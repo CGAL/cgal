@@ -2,43 +2,38 @@
 // Constructing an arrangement of circles using the conic-arc traits.
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point_2;
-typedef Rat_kernel::Circle_2                          Rat_circle_2;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-                                 Alg_kernel,
-                                 Nt_traits>           Traits_2;
+typedef CGAL::Gmpq                                    Number_type;
+typedef CGAL::Cartesian<Number_type>                  Kernel;
+typedef Kernel::Circle_2                              Circle_2;
+typedef CGAL::Arr_circle_segment_traits_2<Kernel>     Traits_2;
+typedef Traits_2::CoordNT                             CoordNT;
 typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::Curve_2                             Conic_arc_2;
+typedef Traits_2::Curve_2                             Curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 
 int main ()
 {
   // Create a circle centered at the origin with radius 5.
-  Rat_point_2      c1 = Rat_point_2 (0, 0);
-  Rational         sqr_r1 = Rational (25);       // = 5^2
-  Rat_circle_2     circ1 = Rat_circle_2 (c1, sqr_r1, CGAL::CLOCKWISE);
-  Conic_arc_2      cv1 = Conic_arc_2 (circ1);
+  Kernel::Point_2  c1 = Kernel::Point_2 (0, 0);
+  Number_type      sqr_r1 = Number_type (25);       // = 5^2
+  Circle_2         circ1 = Circle_2 (c1, sqr_r1, CGAL::CLOCKWISE);
+  Curve_2          cv1 = Curve_2 (circ1);
 
   // Create a circle centered at (7,7) with radius 5.
-  Rat_point_2      c2 = Rat_point_2 (7, 7);
-  Rational         sqr_r2 = Rational (25);       // = 5^2
-  Rat_circle_2     circ2 = Rat_circle_2 (c2, sqr_r2, CGAL::CLOCKWISE);
-  Conic_arc_2      cv2 = Conic_arc_2 (circ2);
+  Kernel::Point_2  c2 = Kernel::Point_2 (7, 7);
+  Number_type      sqr_r2 = Number_type (25);       // = 5^2
+  Circle_2         circ2 = Circle_2 (c2, sqr_r2, CGAL::CLOCKWISE);
+  Curve_2          cv2 = Curve_2 (circ2);
 
   // Create a circle centered at (4,-0.5) with radius 3.5 (= 7/2).
-  Rat_point_2      c3 = Rat_point_2 (4, Rational (-1,2));
-  Rational         sqr_r3 = Rational (49, 4);    // = 3.5^2
-  Rat_circle_2     circ3 = Rat_circle_2 (c3, sqr_r3, CGAL::CLOCKWISE);
-  Conic_arc_2      cv3 = Conic_arc_2 (circ3);
+  Kernel::Point_2  c3 = Kernel::Point_2 (4, Number_type (-1,2));
+  Number_type      sqr_r3 = Number_type (49, 4);    // = 3.5^2
+  Circle_2         circ3 = Circle_2 (c3, sqr_r3, CGAL::CLOCKWISE);
+  Curve_2          cv3 = Curve_2 (circ3);
 
   // Construct the arrangement of the three circles.
   Arrangement_2    arr;

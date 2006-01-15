@@ -13,7 +13,7 @@
 %============
 
 The class \ccRefName\ is a model of the \ccc{ArrangementTraits_2} concept
-and can be used to construct and maintain arrangement of bounded segments of
+and can be used to construct and maintain arrangements of bounded segments of
 algebraic curves of degree $2$ at most, also known as {\sl conic curves}.
 
 A general conic curve $C$ is the locus of all points $(x,y)$ satisfying the
@@ -46,7 +46,9 @@ disc robot, etc.). Circular arcs and line segment are simpler objects and can
 be dealt with more efficiently than arbitrary arcs. For these reasons, it is
 possible to construct conic arcs from segments and from circles. Using these
 constructors is highly recommended: It is more straightforward and also speeds 
-up the arrangement  construction.
+up the arrangement  construction. However, in case the set of input curves
+contain only circular arcs and line segments, it is recommended to use the
+\ccc{Arr\_circle\_segment\_2} class to achieve faster running times.
 
 In our representation, all conic coefficients (namely $r, s, t, u, v, w$)
 must be rational numbers. This guarantees that the coordinates of all

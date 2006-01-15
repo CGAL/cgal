@@ -366,7 +366,7 @@ public:
       if (cv.orientation() == COLLINEAR)
       {
         // The curve is a line segment.
-        *oi = make_object (X_monotone_curve_2 (cv.line(),
+        *oi = make_object (X_monotone_curve_2 (cv.supporting_line(),
                                                cv.source(), cv.target(),
                                                index));
         ++oi;
@@ -374,7 +374,7 @@ public:
       }
 
       // Check the case of a degenrate circle (a point).
-      const typename Kernel::Circle_2&  circ = cv.circle();
+      const typename Kernel::Circle_2&  circ = cv.supporting_circle();
       CGAL::Sign   sign_rad = CGAL::sign (circ.squared_radius());
       CGAL_precondition (sign_rad != NEGATIVE);
       

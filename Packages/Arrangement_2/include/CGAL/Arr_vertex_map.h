@@ -62,9 +62,6 @@ private:
 
   enum {MIN_REV_MAP_SIZE = 32};
 
-  /*! Assignment operator - not supported. */
-  Self& operator= (const Self& );
-
 public:
 
   /*! Default constructor. */
@@ -86,6 +83,18 @@ public:
     Base (const_cast<Arrangement_2&> (*(other.arrangement())))
   {
     _init();
+  }
+
+  /*! Assignment operator. */
+  Self& operator= (const Self& other)
+  {
+    if (this == &other)
+      return (*this);
+
+    this->detach();
+    this->attach (const_cast<Arrangement_2&> (*(other.arrangement())));
+
+    return (*this);
   }
 
   /*!
@@ -143,7 +152,8 @@ public:
    */
   virtual void after_detach ()
   {
-    _init();
+    n_vertices = 0;
+    index_map.clear();
   }
 
   /*!

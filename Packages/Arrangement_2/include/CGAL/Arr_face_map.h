@@ -56,14 +56,11 @@ private:
   typedef Unique_hash_map<Face_handle, unsigned int>     Index_map;
 
   // Data members:
-  unsigned int                n_faces;     // The current number of vertices.
+  unsigned int                n_faces;     // The current number of faces.
   Index_map                   index_map;   // Mapping faces to indices.
   std::vector<Face_handle>    rev_map;     // Mapping indices to faces.
 
   enum {MIN_REV_MAP_SIZE = 32};
-
-  /*! Assignment operator - not supported. */
-  Self& operator= (const Self& );
 
 public:
 
@@ -86,6 +83,18 @@ public:
     Base (const_cast<Arrangement_2&> (*(other.arrangement())))
   {
     _init();
+  }
+
+  /*! Assignment operator. */
+  Self& operator= (const Self& other)
+  {
+    if (this == &other)
+      return (*this);
+
+    this->detach();
+    this->attach (const_cast<Arrangement_2&> (*(other.arrangement())));
+
+    return (*this);
   }
 
   /*!
@@ -143,7 +152,8 @@ public:
    */
   virtual void after_detach ()
   {
-    _init();
+    n_faces = 0;
+    index_map.clear();
   }
 
   /*!
