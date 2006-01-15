@@ -39,7 +39,6 @@
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/iterator.h> 
-#include <queue>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,29 +46,24 @@ CGAL_BEGIN_NAMESPACE
 template < class Traits_ >
 class General_polygon_set_2 
 {
-  typedef General_polygon_set_2<Traits_>                  Self;
 public:
 
   typedef Traits_                                         Traits_2;
-
-  typedef typename Traits_2::Point_2                      Point_2;
-  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Polygon_2                    Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2         Polygon_with_holes_2;
+  typedef Arrangement_2<Traits_2, Bso_dcel<Traits_2> >    Arrangement_2;
+  typedef std::size_t                                     Size;
+
+private:
+  typedef General_polygon_set_2<Traits_>                  Self;
+  typedef typename Traits_2::Point_2                      Point_2;
+  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
+  
   typedef typename Polygon_with_holes_2::Hole_const_iterator  
                                                  GP_Holes_const_iterator;
-  typedef typename Traits_2::Equal_2                      Equal_2;
-  typedef typename Traits_2::Compare_xy_2                 Compare_xy_2;
-  typedef typename Traits_2::Construct_min_vertex_2       Construct_min_vertex_2;
-  typedef typename Traits_2::Construct_max_vertex_2       Construct_max_vertex_2;
-  typedef typename Traits_2::Construct_polygon_2          Construct_polygon_2;
-  typedef typename Traits_2::Construct_curves_2           Construct_curves_2;
   typedef typename Traits_2::Curve_const_iterator         Curve_const_iterator;
   typedef typename Traits_2::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
   typedef typename Traits_2::Construct_opposite_2         Construct_opposite_2;
-
-  typedef Bso_dcel<Traits_2>                                Bso_dcel;  
-  typedef Arrangement_2<Traits_2, Bso_dcel>                 Arrangement_2;
 
   typedef typename Arrangement_2::Face_const_iterator        Face_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator    Halfedge_const_iterator;
@@ -97,9 +91,6 @@ public:
                                             Halfedge_around_vertex_const_circulator;
 
   typedef Arr_walk_along_line_point_location<Arrangement_2>  Walk_pl;
-
-  typedef unsigned int                                       Size;
-
 
 protected:
 
@@ -186,9 +177,6 @@ public:
     typedef Oneset_iterator<Polygon_with_holes_2>    OutputItr;
     OutputItr oi (res);
     gps.polygons_with_holes(oi);
-    /*std::cout<<"|V| = " << gps.arrangement().number_of_vertices()<<"\n";
-    std::cout<<"|E| = " << gps.arrangement().number_of_edges()<<"\n";
-    std::cout<<"|F| = " << gps.arrangement().number_of_faces()<<"\n";*/
   }
 
   // insert a simple polygon
@@ -555,6 +543,11 @@ public:
     return *m_traits;
   }
 
+  const Traits_2& traits() const
+  {
+    return *m_traits;
+  }
+
   bool is_empty() const
   {
     return (m_arr->is_empty() && ! m_arr->unbounded_face()->contained());
@@ -618,16 +611,6 @@ public:
     }
     return true;
   }
-
-  /*template< class PolygonIter >
-  void _insert(PolygonIter p_begin, PolygonIter p_end, Arrangement_2& arr);*/
-  
-  
-  template< class InputIterator >
-  void pgns_with_holes2arr (InputIterator begin, 
-                            InputIterator end,
-                            Arrangement_2& arr);
-
 
 
   // get the simple polygons, takes O(n)
@@ -998,7 +981,6 @@ void _reset_faces(Arrangement_2* arr) const
   {
     fit->set_visited(false);
   }
-
 }
 
 
@@ -1017,12 +999,9 @@ void _construct_curves(const Polygon_2& pgn, OutputIterator oi);
 
 template <class OutputIterator>
 void _construct_curves(const Polygon_with_holes_2& pgn, OutputIterator oi);
-
-
 };
 
 #include <CGAL/Boolean_set_operations_2/Bso_utils.h>
-
 
 CGAL_END_NAMESPACE
 

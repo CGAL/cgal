@@ -32,20 +32,16 @@ template <class Kernel,
 class Polygon_set_2 :
   public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> >
 {  
-public:
-
-  typedef  Gps_segment_traits_2<Kernel, Containter>       Traits_2;
-
 private:
-
-  typedef Bso_dcel<Traits_2>                              Bso_dcel;
+  typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> >                 
+                                                          Base;
 
 public:
-
-  typedef Arrangement_2<Traits_2, Bso_dcel>               Arrangement_2;
-  typedef General_polygon_set_2<Traits_2>                 Base;
-  typedef typename Traits_2::Polygon_2                    Polygon_2;
-  typedef typename Traits_2::Polygon_with_holes_2         Polygon_with_holes_2;
+  typedef  typename Base::Traits_2                        Traits_2;    
+  typedef  typename Base::Polygon_2                       Polygon_2;
+  typedef  typename Base::Polygon_with_holes_2            Polygon_with_holes_2;
+  typedef  typename Base::Arrangement_2                   Arrangement_2;
+  typedef  typename Base::Size                            Size;
 
   /*! Default consturctor. */
   Polygon_set_2 () :
