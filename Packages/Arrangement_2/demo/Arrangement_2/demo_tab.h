@@ -221,7 +221,7 @@ private:
   typedef typename Tab_traits::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
   typedef typename Tab_traits::Holes_iterator          Holes_iterator;
-  typedef typename Arrangement_2::Holes_const_iterator Holes_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator  Holes_const_iterator;
   typedef typename Tab_traits::Halfedge_iterator       Halfedge_iterator;
   typedef typename Tab_traits::Hafledge_list           Hafledge_list;
   typedef typename Tab_traits::Hafledge_list_iterator 

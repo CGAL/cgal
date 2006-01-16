@@ -138,7 +138,7 @@ typedef Seg_arr::Halfedge_handle                        Seg_halfedge_handle;
 typedef Seg_arr::Face_handle                            Seg_face_handle;
 typedef Seg_arr::Ccb_halfedge_circulator                
   Seg_ccb_halfedge_circulator;
-typedef Seg_arr::Holes_iterator                         Seg_holes_iterator;
+typedef Seg_arr::Hole_iterator                          Seg_holes_iterator;
 typedef Seg_arr::Face_iterator                          Seg_face_iterator;
 typedef std::list<Arr_seg_2*>                           Arr_seg_list;
 typedef Arr_seg_list::const_iterator                    Arr_seg_const_iter;
@@ -173,7 +173,7 @@ typedef Pol_arr::Halfedge_handle                        Pol_halfedge_handle;
 typedef Pol_arr::Face_handle                            Pol_face_handle;
 typedef Pol_arr::Ccb_halfedge_circulator
   Pol_ccb_halfedge_circulator;
-typedef Pol_arr::Holes_iterator                         Pol_holes_iterator;
+typedef Pol_arr::Hole_iterator                          Pol_holes_iterator;
 typedef Pol_arr::Halfedge                               Pol_halfedge;
 typedef Pol_arr::Face_iterator                          Pol_face_iterator;
 
@@ -218,7 +218,7 @@ typedef Conic_arr::Halfedge_handle                      Conic_halfedge_handle;
 typedef Conic_arr::Face_handle                          Conic_face_handle;
 typedef Conic_arr::Ccb_halfedge_circulator
   Conic_ccb_halfedge_circulator;
-typedef Conic_arr::Holes_iterator                       Conic_holes_iterator;
+typedef Conic_arr::Hole_iterator                        Conic_holes_iterator;
 //typedef CGAL::Arr_file_scanner<Conic_arr>                Arr_scanner; 
 typedef Conic_arr::Halfedge                             Conic_halfedge;
 typedef Conic_arr::Face_iterator                        Conic_face_iterator;
