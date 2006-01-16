@@ -1218,7 +1218,7 @@ public:
   {
     // In order to merge the two arcs, they should have the same supporting
     // curve.
-    if (! _has_same_supporting_curve (cv))
+    if (! this->has_same_supporting_curve (cv))
       return (false);
 
     // Check if the left endpoint of one curve is the right endpoint of the

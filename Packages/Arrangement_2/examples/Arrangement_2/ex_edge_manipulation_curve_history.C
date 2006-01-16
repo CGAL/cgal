@@ -2,22 +2,17 @@
 // Removing curves and manipulating edges in an arrangement with history.
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point_2;
-typedef Rat_kernel::Circle_2                          Rat_circle_2;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-                                 Alg_kernel,
-                                 Nt_traits>           Traits_2;
+typedef CGAL::Gmpq                                    Rational;
+typedef CGAL::Cartesian<Rational>                     Kernel;
+typedef Kernel::Point_2                               Rat_point_2;
+typedef Kernel::Circle_2                              Circle_2;
+typedef CGAL::Arr_circle_segment_traits_2<Kernel>     Traits_2;
 typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::Curve_2                             Conic_arc_2;
+typedef Traits_2::Curve_2                             Curve_2;
 typedef CGAL::Arrangement_with_history_2<Traits_2>    Arr_with_hist_2;
 typedef Arr_with_hist_2::Curve_handle                 Curve_handle;
 typedef CGAL::Arr_walk_along_line_point_location<Arr_with_hist_2>  
@@ -29,19 +24,19 @@ int main ()
   // C[1], ..., C[8] of radius 1.
   const Rational    _7_halves = Rational (7, 2); 
   Arr_with_hist_2   arr;
-  Conic_arc_2       C[9];
+  Curve_2           C[9];
   Curve_handle      handles[9];
   int               k;
 
-  C[0] = Rat_circle_2 (Rat_point_2 (_7_halves, _7_halves), 4, CGAL::CLOCKWISE);
-  C[1] = Rat_circle_2 (Rat_point_2 (_7_halves, 6), 1, CGAL::CLOCKWISE);
-  C[2] = Rat_circle_2 (Rat_point_2 (5, 6), 1, CGAL::CLOCKWISE);
-  C[3] = Rat_circle_2 (Rat_point_2 (6, _7_halves), 1, CGAL::CLOCKWISE);
-  C[4] = Rat_circle_2 (Rat_point_2 (5, 2), 1, CGAL::CLOCKWISE);
-  C[5] = Rat_circle_2 (Rat_point_2 (_7_halves, 1), 1, CGAL::CLOCKWISE);
-  C[6] = Rat_circle_2 (Rat_point_2 (2, 2), 1, CGAL::CLOCKWISE);
-  C[7] = Rat_circle_2 (Rat_point_2 (1, _7_halves), 1, CGAL::CLOCKWISE);
-  C[8] = Rat_circle_2 (Rat_point_2 (2, 5), 1, CGAL::CLOCKWISE);
+  C[0] = Circle_2 (Rat_point_2 (_7_halves, _7_halves), 4, CGAL::CLOCKWISE);
+  C[1] = Circle_2 (Rat_point_2 (_7_halves, 6), 1, CGAL::CLOCKWISE);
+  C[2] = Circle_2 (Rat_point_2 (5, 6), 1, CGAL::CLOCKWISE);
+  C[3] = Circle_2 (Rat_point_2 (6, _7_halves), 1, CGAL::CLOCKWISE);
+  C[4] = Circle_2 (Rat_point_2 (5, 2), 1, CGAL::CLOCKWISE);
+  C[5] = Circle_2 (Rat_point_2 (_7_halves, 1), 1, CGAL::CLOCKWISE);
+  C[6] = Circle_2 (Rat_point_2 (2, 2), 1, CGAL::CLOCKWISE);
+  C[7] = Circle_2 (Rat_point_2 (1, _7_halves), 1, CGAL::CLOCKWISE);
+  C[8] = Circle_2 (Rat_point_2 (2, 5), 1, CGAL::CLOCKWISE);
 
   for (k = 0; k < 9; k++)
     handles[k] = insert_curve (arr, C[k]);

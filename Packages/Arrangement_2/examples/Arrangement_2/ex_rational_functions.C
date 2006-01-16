@@ -1,5 +1,13 @@
 //! \file examples/Arrangement_2/ex_rational_functions.C
 // Constructing an arrangement of arcs of rational functions.
+#ifndef CGAL_USE_CORE
+#include <iostream>
+int main ()
+{
+  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  return (0);
+}
+#else
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -70,3 +78,4 @@ int main ()
   return 0;
 }
 
+#endif

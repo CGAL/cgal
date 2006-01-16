@@ -1,5 +1,13 @@
 //! \file examples/Arrangement_2/ex_conic_multiplicities.C
 // Handling intersection points with multiplicity between conic arcs.
+#ifndef CGAL_USE_CORE
+#include <iostream>
+int main ()
+{
+  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  return (0);
+}
+#else
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -54,3 +62,4 @@ int main ()
   return (0);
 }
 
+#endif
