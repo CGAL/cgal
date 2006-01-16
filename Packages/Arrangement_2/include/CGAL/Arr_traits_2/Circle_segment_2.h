@@ -688,8 +688,15 @@ operator<< (std::ostream& os,
   }
   else
   {
-    os << "circular arc: " << c.circle() << ' '
-       << c.source() << " -> " << c.target() << std::endl;
+    if(!c.is_full())
+    {
+      os << "circular arc: " << c.supporting_circle() << ' '
+         << c.source() << " -> " << c.target() << std::endl;
+    }
+    else
+    {
+      os << "circular arc: " << c.supporting_circle()<<std::endl;
+    }
   }
 
   return (os);
