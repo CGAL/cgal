@@ -285,8 +285,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_right
      Halfedge_handle query_he)
 {
   // Make sure that the left endpoint of cv_ins lies on query_he.
-  CGAL_assertion (traits->compare_y_at_x_2_object()
-                    (cv_left_pt, query_he->curve()) == EQUAL);
+  CGAL_exactness_assertion (traits->compare_y_at_x_2_object()
+                            (cv_left_pt, query_he->curve()) == EQUAL);
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right = 
@@ -337,9 +337,9 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
      Halfedge_handle query_he)
 {
   // Make sure that the right endpoint of cv_ins lies on query_he.
-  CGAL_assertion (traits->compare_y_at_x_2_object()
-                  (traits->construct_max_vertex_2_object() (cv_ins),
-                   query_he->curve()) == EQUAL);
+  CGAL_exactness_assertion (traits->compare_y_at_x_2_object()
+                            (traits->construct_max_vertex_2_object() (cv_ins),
+                             query_he->curve()) == EQUAL);
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right =
