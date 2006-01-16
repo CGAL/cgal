@@ -44,7 +44,10 @@
 #  include <CGAL/leda_real.h>
 #endif
 #ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_Expr.h>
+// #  include <CGAL/CORE_Expr.h>
+namespace CORE {
+class Expr;
+}
 #endif
 
 CGAL_BEGIN_NAMESPACE

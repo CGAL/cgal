@@ -1,3 +1,7 @@
+16 January 2006 Sylvain Pion
+- Only declare CORE::Expr instead of #include <CGAL/CORE_Expr.h>
+  in Exact_type_selecter.h, to avoid dependency.
+
 16 September 2005 Andreas Fabri
 - Added rudimentary printing of the DAG to the Lazy  and Lazy_exact_nt class
 
