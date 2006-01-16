@@ -103,7 +103,7 @@ public:
     {
       ubf->set_visited(true);
       for (holes_it = ubf->holes_begin();
-	    holes_it != ubf->holes_end(); ++holes_it)
+            holes_it != ubf->holes_end(); ++holes_it)
       {
         scan_ccb (*holes_it);
       }
@@ -121,7 +121,7 @@ public:
       m_holes_q.pop();
       top_f->set_visited(true);
       for (holes_it = top_f->holes_begin();
-	   holes_it != top_f->holes_end(); ++holes_it)
+           holes_it != top_f->holes_end(); ++holes_it)
       {
         scan_ccb(*holes_it);
       }
@@ -211,7 +211,7 @@ public:
         {
           m_pgn_holes.push_back(Polygon_2());
           General_polygon_set_2<Gps_traits>::construct_polygon
-	    (he->twin()->face()->outer_ccb(), m_pgn_holes.back(), m_traits);
+            (he->twin()->face()->outer_ccb(), m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());
         }
       }
@@ -451,7 +451,7 @@ void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, A
   _construct_curves(pgn, std::back_inserter(xcurve_list));
   insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
 
-  if(!pgn.is_unbounded())
+  if(pgn.is_unbounded())
     arr.unbounded_face()->set_contained(true);
 
   My_visitor v;

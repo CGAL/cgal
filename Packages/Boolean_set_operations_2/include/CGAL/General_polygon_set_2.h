@@ -122,6 +122,11 @@ public:
                                                            m_arr(new Arrangement_2(*(ps.m_arr)))
   {}
 
+  General_polygon_set_2(Arrangement_2* arr) : m_traits(new Traits_2()),
+                                              m_traits_owner(true),
+                                              m_arr(arr)
+   {}
+
   General_polygon_set_2& operator=(const General_polygon_set_2& ps)
   {
     if(this == &ps)
@@ -167,10 +172,11 @@ public:
   {
     typedef Gps_polygon_simplifier<Arrangement_2>  Simplifier;
 
-    Arrangement_2  arr;
-    Simplifier simp(arr, *m_traits);
+    Arrangement_2*  arr = new Arrangement_2();
+
+    Simplifier simp(*arr, *m_traits);
     simp.simplify(pgn);
-    _remove_redundant_edges(&arr);
+    _remove_redundant_edges(arr);
     Self gps(arr);
     gps._reset_faces();
   
