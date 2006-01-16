@@ -109,13 +109,17 @@ public:
      * \param counter A counter associated with the iterator.
      */
     Halfedge_around_vertex_iterator (Halfedge_around_vertex_circulator circ,
-				     bool out_edges,
-				     int counter) :
+                                     bool out_edges,
+                                     int counter) :
       _circ (circ),
       _out (out_edges),
-      _counter (counter),
-      _hh (out_edges ? circ->twin() : circ)
-    {}
+      _counter (counter)
+    {
+      if (out_edges)
+        _hh = circ->twin();
+      else
+        _hh = circ;
+    }
 
     /*! Equality operators. */
     bool operator== (const Self& it) const
@@ -146,9 +150,9 @@ public:
       ++_counter;
 
       if (_out)
-	_hh = _circ->twin();
+        _hh = _circ->twin();
       else
-	_hh = _circ;
+        _hh = _circ;
 
       return (*this);
     }
@@ -160,9 +164,9 @@ public:
       ++_counter;
 
       if (_out)
-	_hh = _circ->twin();
+        _hh = _circ->twin();
       else
-	_hh = _circ;
+        _hh = _circ;
 
       return (tmp);
     }
@@ -275,7 +279,7 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::degree_size_type
 out_degree (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-	    const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+            const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
 {
   return (v->degree());
 }
@@ -294,12 +298,12 @@ std::pair<typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                              out_edge_iterator>
 out_edges (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-	   const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
+           const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
   graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
 
   return (std::make_pair (gt_arr.out_edges_begin (v),
-			  gt_arr.out_edges_end (v)));
+                          gt_arr.out_edges_end (v)));
 }
 
 /*!
@@ -312,7 +316,7 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::vertex_descriptor
 source (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            edge_descriptor e,
-	const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+        const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
 {
   return (e->source());
 }
@@ -327,7 +331,7 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::vertex_descriptor
 target (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            edge_descriptor e,
-	const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+        const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
 {
   return (e->target());
 }
@@ -364,12 +368,12 @@ std::pair<typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                              in_edge_iterator>
 in_edges (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-	  const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
+          const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
   graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
 
   return (std::make_pair (gt_arr.in_edges_begin (v),
-			  gt_arr.in_edges_end (v)));
+                          gt_arr.in_edges_end (v)));
 }
 
 /*!
@@ -382,7 +386,7 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::degree_size_type
 degree (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-	const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+        const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
 {
   return (2 * v->degree());
 }
@@ -417,7 +421,7 @@ vertices (const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
   graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
 
   return (std::make_pair (gt_arr.vertices_begin(),
-			  gt_arr.vertices_end()));
+                          gt_arr.vertices_end()));
 }
 
 // Functions required by the EdgeListGraph concept:
@@ -450,7 +454,7 @@ edge (const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
   graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
 
   return (std::make_pair (gt_arr.edges_begin(),
-			  gt_arr.edges_end()));
+                          gt_arr.edges_end()));
 }
 
 }; // namespace boost

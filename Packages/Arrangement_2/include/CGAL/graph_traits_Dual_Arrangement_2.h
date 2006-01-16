@@ -103,8 +103,8 @@ protected:
      *              If false, we construct a past-the-end iterator.
      */
     Face_neighbor_iterator (Face_handle face, 
-			    bool out_edges,
-			    bool start) :
+                            bool out_edges,
+                            bool start) :
       _face (face),
       _out (out_edges)
     {
@@ -122,7 +122,7 @@ protected:
         _hole_iter = face->holes_begin();
         _curr_hole_incremented = true;
         
-	if (_hole_iter != face->holes_end())
+        if (_hole_iter != face->holes_end())
         {
           _curr_hole_circ = *_hole_iter;
           _curr_hole_incremented = false;
@@ -180,11 +180,11 @@ protected:
     bool _equal (const Self& it) const
     {
       return (_out == it._out &&
-	      _has_outer_ccb == it._has_outer_ccb &&
-	      _ccb_incremented == it._ccb_incremented &&
-	      _outer_ccb_circ == it._outer_ccb_circ && 
-	      _hole_iter == it._hole_iter &&
-	      _face == it._face);
+              _has_outer_ccb == it._has_outer_ccb &&
+              _ccb_incremented == it._ccb_incremented &&
+              _outer_ccb_circ == it._outer_ccb_circ && 
+              _hole_iter == it._hole_iter &&
+              _face == it._face);
     }
 
     /*! Derefernce the current circulator. */
@@ -193,19 +193,19 @@ protected:
       if (_has_outer_ccb)
       {
         if (! _ccb_incremented ||
-	    _outer_ccb_circ != _face->outer_ccb())
+            _outer_ccb_circ != _face->outer_ccb())
         {
-	  if (_out)
-	    return (_outer_ccb_circ);
-	  else
-	    return (_outer_ccb_circ->twin());
+          if (_out)
+            return (_outer_ccb_circ);
+          else
+            return (_outer_ccb_circ->twin());
         }
       }
 
       if (_out)
-	return (_curr_hole_circ);
+        return (_curr_hole_circ);
       else
-	return (_curr_hole_circ->twin());
+        return (_curr_hole_circ->twin());
     }
 
     // Increments of the iterator.
@@ -458,7 +458,7 @@ out_edges
    const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
   return (std::make_pair (darr.out_edges_begin (v),
-			  darr.out_edges_end (v)));
+                          darr.out_edges_end (v)));
 }
 
 /*!
@@ -531,7 +531,7 @@ in_edges
    const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
   return (std::make_pair (darr.in_edges_begin (v),
-			  darr.in_edges_end (v)));
+                          darr.in_edges_end (v)));
 }
 
 /*!
@@ -580,7 +580,7 @@ std::pair<
 vertices (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
   return (std::make_pair (darr.vertices_begin(),
-			  darr.vertices_end()));
+                          darr.vertices_end()));
 }
 
 // Functions required by the EdgeListGraph concept:
@@ -613,7 +613,7 @@ std::pair<
 edge (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
   return (std::make_pair (darr.edges_begin(),
-			  darr.edges_end()));
+                          darr.edges_end()));
 }
 
 }; // namespace boost
