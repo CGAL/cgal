@@ -54,7 +54,8 @@ int readdxf(std::istream& input_file,
     Coord_type center_y = dbl_circ.center().y();
 
     
-    Curve circ(Point(center_x, center_y), sqr_rad);
+    Circle circle = Circle(Point(center_x, center_y), sqr_rad);
+    Curve circ(circle);
     std::vector<CGAL::Object> obj_vec;
     obj_vec.reserve(2);
 
