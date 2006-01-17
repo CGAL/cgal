@@ -441,6 +441,7 @@ public:
 
   class Make_x_monotone_2
   {
+    typedef Arr_conic_traits_2 <Rat_kernel_, Alg_kernel_, Nt_traits_>    Self;
   public:
 
     /*!
