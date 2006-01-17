@@ -68,20 +68,20 @@ GeneralPolygon_2(InputIterator begin, InputIterator end);}
 The value type of \ccc{Iterator} must be \ccc{X_monotone_curve_2}.
 \ccPrecond{The curves in the range must define a simple polygon.}}
  
-\ccPredicates
-% ===========
-
-\ccMethod{bool is_simple();}{returns \ccc{true} if the polygon is simple, 
-and \ccc{false} otherwise. Used as precondition for some of the operations.}
-\ccGlue
-\ccMethod{bool is_strictly_simple();}{returns \ccc{true} if the polygon
-is strictly simple, and \ccc{false} otherwise. Used as precondition for
-some of the operations.
-\ccPrecond{\ccStyle{is_simple()}.}}
+% \ccPredicates
+% % ===========
+% 
+% \ccMethod{bool is_simple();}{returns \ccc{true} if the polygon is simple, 
+% and \ccc{false} otherwise. Used as precondition for some of the operations.}
+% \ccGlue
+% \ccMethod{bool is_strictly_simple();}{returns \ccc{true} if the polygon
+% is strictly simple, and \ccc{false} otherwise. Used as precondition for
+% some of the operations.
+% \ccPrecond{\ccStyle{is_simple()}.}}
 
 \ccHasModels
 % ==========
-\ccc{CGAL::General_polygon_2<Kernel_2>}
+\ccc{CGAL::General_polygon_2<ArrTraits>}
 
 \end{ccRefConcept}
 
