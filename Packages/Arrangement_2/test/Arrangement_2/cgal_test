@@ -74,7 +74,9 @@ run_test()
   COMMAND="./$name"
   echo "Executing $name $datafile ... "
   echo
-  ulimit -t 1200
+  if [ "${OSTYPE}" != "cygwin" ]; then
+    ulimit -t 1200
+  fi
   if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
     echo "   succesful execution of $name $datafile" >> $ERRORFILE
   else
