@@ -5,12 +5,13 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #include <list>
 #include <stdlib.h>
 #include <math.h>
 
-typedef CGAL::Gmpq                                      NT;
+typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                 NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef Kernel::Point_2                                 Point_2;
 typedef Kernel::Circle_2                                Circle_2;
