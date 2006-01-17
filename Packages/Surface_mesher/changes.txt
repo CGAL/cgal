@@ -1,3 +1,8 @@
+
+17 janvier 2006 Mariette
+- changed in the doc PureComplex_2InTriangulation_3 to SurfaceMeshComplex_2InTriangulation_3
+  and Pure_complex_2_in_triangulation_3.tex to Surface_mesh_complex_2_in_triangulation_3.tex
+
  9 December 2005 Andreas Fabri
 - Replaced arrays of bool with a char and bit operations
 - Moved CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h
