@@ -40,13 +40,15 @@ template <typename K>
 class Dxf_reader {
 
 public:
-  typedef typename K::Point_2 Point_2;
+  typedef typename K::FT       FT;
+  typedef typename K::Point_2  Point_2;
   typedef typename K::Circle_2 Circle_2;
   
   
   typedef std::list<std::pair<Point_2, double> > Polygon;
   typedef std::list<Polygon> Polygons;
   typedef std::list<Circle_2> Circles;
+  typedef std::list<std::pair<Point_2, FT> > Centers_and_radii;
   
 private:
 
@@ -130,8 +132,33 @@ private:
   is >> n;
   assert(n == 40);
   is >> r;
+  FT rft(r);
+  circ = typename K::Construct_circle_2()(Point_2(cx,cy), rft);
+}
 
-  circ = typename K::Construct_circle_2()(Point_2(cx,cy), r*r);
+  void 
+  read_center_and_radius(std::istream& is, Point_2& center, FT& rft)
+  {
+    int n;
+    double cx, cy, r;
+    std::string str;
+    is >> n;
+    assert(n == 8);
+    is >> n;
+    assert(n == 0);
+  
+  is >> n;
+  assert(n == 10);
+  is >> cx;
+  is >> n;
+  assert(n == 20);
+  is >> cy;
+  is >> n;
+  assert(n == 40);
+  is >> r;
+
+  center = typename K::Construct_point_2()(cx,cy);
+  rft = FT(r);
 }
 
 
@@ -221,6 +248,45 @@ read_entities(std::istream& is, Polygons& polys, Circles& circles)
   assert(str == "EOF");
 }
 
+void
+read_entities(std::istream& is, Polygons& polys, Centers_and_radii& car)
+{
+  int n;
+  //double x, y;
+  std::string str;
+  is >> n;
+  assert(n == 0);
+  is >> str;
+  assert(str == "SECTION");
+  is >> n;
+  is >> str;
+  assert(str == "ENTITIES");
+  do {
+    is >> n;
+    assert(n == 0);
+    is >> str;
+    if(str == "POLYLINE"){
+      Polygon p;
+      polys.push_back(p);
+      read_polygon(is, polys.back());
+    } else if(str == "CIRCLE"){
+      Point_2 center;
+      FT radius;
+      read_center_and_radius(is,center, radius);      
+      car.push_back(std::make_pair(center, radius));
+    } else if(str == "ENDSEC"){
+      
+    } else {
+      std::cerr << "unknown entity" << std::endl;
+      exit(0);
+    }
+  } while(str != "ENDSEC");
+  is >> n;
+  assert(n == 0);
+  is >> str;
+  assert(str == "EOF");
+}
+
 public:
 
 void operator()(std::istream& is, Polygons& polygons, Circles& circles)
@@ -229,6 +295,11 @@ void operator()(std::istream& is, Polygons& polygons, Circles& circles)
   read_entities(is, polygons, circles);
 }
 
+void operator()(std::istream& is, Polygons& polygons, Centers_and_radii& car)
+{
+  skip_header(is);
+  read_entities(is, polygons, car);
+}
 };
 
 CGAL_END_NAMESPACE
