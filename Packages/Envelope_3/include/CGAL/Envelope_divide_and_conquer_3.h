@@ -94,6 +94,7 @@
 
 // the algorithm deals with some degenerate input including:
 // 1. more than one surface on faces, edges, vertices
+
 //    (the minimization diagram should also support this)
 // 2. all degenerate cases in 2d (the minimization diagram model is
 //    responsible for)
@@ -435,10 +436,8 @@ protected:
   // to create the envelope on this surface only
   void deal_with_one_surface(Xy_monotone_surface_3& surf, Minimization_diagram_2& result)
   {
+    one_surface_timer.start();
     std::list<Curve_2> boundary_curves;
-
-
-
     traits->construct_projected_boundary_curves_2_object()(surf, std::back_inserter(boundary_curves));
 
     typename std::list<Curve_2>::iterator boundary_it = boundary_curves.begin();
@@ -567,13 +566,15 @@ protected:
       }
     }
 
-	CGAL_assertion(verify_flags(result));
+	  CGAL_assertion(verify_flags(result));
+
 
     // some statistics
     sum_num_vertices += result.number_of_vertices();
     sum_num_edges += result.number_of_edges();
     sum_num_faces += result.number_of_faces();
 
+    one_surface_timer.stop();
   }
 
 public:
@@ -711,6 +712,7 @@ public:
                                    boost::vertex_index_map(index_map).
                                    visitor (bfs_visitor));
       index_map.detach();
+
 
     #else
 
@@ -1790,7 +1792,9 @@ protected:
       remove_unneccessary_elements_timer.stop();
     if (update_envelope_timer.is_running())
       update_envelope_timer.stop();
-
+    if (one_surface_timer.is_running())
+      one_surface_timer.stop();
+      
     // init timers
     envelope_timer.reset();
     overlay_timer.reset();
@@ -1800,7 +1804,8 @@ protected:
     resolve_vertex_timer.reset();
     remove_unneccessary_elements_timer.reset();
     update_envelope_timer.reset();
-
+    one_surface_timer.reset();
+    
     // init other measures
     number_of_removed_features = 0;
     number_of_saved_edges = 0;
@@ -1849,7 +1854,10 @@ public:
       std::cout << "total final envelope update time: "
                 << update_envelope_timer.time()
                 << " seconds" << std::endl;
-                
+      std::cout << "total dealing with one surface time: "
+                << one_surface_timer.time()
+                << " seconds" << std::endl;
+                          
       std::cout << std::endl;
       resolver->print_times();
       
@@ -1983,6 +1991,7 @@ protected:
       {
         #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
           std::cout << "inner ccb: " << std::endl;
+
         #endif
         face_hec = face_hec_begin = (*inner_iter);
         do {
@@ -2274,6 +2283,7 @@ protected:
       all_ok &= (vh->get_is_set());
       CGAL_assertion_msg(all_ok, "data not set over vertex");
       all_ok &= (!vh->has_no_data());
+
       CGAL_assertion_msg(all_ok, "data empty over vertex");      
       all_ok &= (!vh->get_is_fake());
       CGAL_assertion_msg(all_ok, "fake vertex in envelope");
@@ -2663,6 +2673,7 @@ protected:
   mutable Timer resolve_vertex_timer;
   mutable Timer remove_unneccessary_elements_timer;
   mutable Timer update_envelope_timer;
+  mutable Timer one_surface_timer;
   
   // other measures
   mutable unsigned int number_of_removed_features;
