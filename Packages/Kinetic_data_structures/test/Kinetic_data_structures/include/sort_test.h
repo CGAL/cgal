@@ -13,10 +13,18 @@ bool sort_test(Traits &tr)
     typedef CGAL::KDS::Sort<Traits> Sort;
     Sort sort(tr);
 
+#ifdef _MSC_VER
+#pragma warning(disable:1572)
+#endif
+
     while (tr.simulator_pointer()->next_event_time() != tr.simulator_pointer()->end_time()) {
 //std::cout << *tr.simulator_pointer() << std::endl;
         tr.simulator_pointer()->set_current_event_number(tr.simulator_pointer()->current_event_number()+1);
     }
+
+#ifdef _MSC_VER
+#pragma warning(enable:1572)
+#endif
 
     std::cout << tr.simulator_pointer()->current_event_number() << " events processed.\n";
 
