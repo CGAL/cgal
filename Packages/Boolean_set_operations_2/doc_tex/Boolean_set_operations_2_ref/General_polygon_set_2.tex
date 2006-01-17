@@ -330,16 +330,34 @@ void intersection(InputIterator1 pgn_begin, InputIterator1 pgn_end,
    polygons and polygons with holes in the given two ranges and the point 
    set represented by \ccVar.}
 
+\ccMethod{bool locate(const Point_2 & p, Polygon_with_holes_2 & pgn);}
+  {obtains a polygon with holes that contains the query point \ccc{p}, 
+   if exists, through \ccc{pgn}, and returns \ccc{true}. 
+   Otherwise, returns \ccc{flase}.}
+
 \ccMethod{Oriented_side oriented_side(const Point_2 & q);}
   {returns either the constant \ccc{ON_ORIENTED_BOUNDARY}, 
    \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE}, iff \ccc{p} lies on 
    the boundary, properly on the positive side, or properly on the negative 
    side of \ccVar\ respectively.}
 
-\ccMethod{bool locate(const Point_2 & p, Polygon_with_holes_2 & pgn);}
-  {obtains a polygon with holes that contains the query point \ccc{p}, 
-   if exists, through \ccc{pgn}, and returns \ccc{true}. 
-   Otherwise, returns \ccc{flase}.}
+\ccMethod{Oriented_side oriented_side(const General_polygon_set_2 & other);}
+  {returns either the constant \ccc{ON_NEGATIVE_SIDE},
+   \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, iff 
+   \ccc{other} and \ccVar\ are completely disjoint, in contact, or
+   intersect in their interior, respectively.}
+\ccGlue
+\ccMethod{Oriented_side oriented_side(const Polygon_2 & pgn);}
+  {returns either the constant \ccc{ON_NEGATIVE_SIDE},
+   \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, iff 
+   \ccc{pgn} and \ccVar\ are completely disjoint, in contact, or
+   intersect in their interior, respectively.}
+\ccGlue
+\ccMethod{Oriented_side oriented_side(const Polygon_with_holes_2 & pgn);}
+  {returns either the constant \ccc{ON_NEGATIVE_SIDE},
+   \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, iff 
+   \ccc{pgn} and \ccVar\ are completely disjoint, in contact, or
+   intersect in their interior, respectively.}
 
 \ccHeading{Miscellaneous}
 % =======================
