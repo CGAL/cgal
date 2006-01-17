@@ -28,82 +28,83 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class K>
 class Root_container
 {
-    private:
-        typedef Root_container<K> This;
-        typedef typename K::Root_stack RE;
+private:
+  typedef Root_container<K> This;
+  typedef typename K::Root_stack RE;
 
-    public:
-        typedef typename K::Root   Root;
-        Root_container(const typename K::Function &fn,
-            const Root &lb,
-            const Root &ub,
-            const K &k)
-            : begin_(RE(fn, lb,ub, k.root_stack_traits_object())){}
+public:
 
-        class iterator
-        {
-            public:
-                iterator(){}
-                iterator(const typename This::RE &re): renum_(re){}
+  class iterator
+  {
+  public:
+    iterator(){}
+    iterator(const RE &re): renum_(re){}
 
-                typedef Root value_type;
-                typedef const iterator& reference;
-                typedef const value_type * pointer;
-                typedef std::size_t difference_type;
-                typedef std::forward_iterator_tag iterator_category;
+    typedef Root value_type;
+    typedef const iterator& reference;
+    typedef const value_type * pointer;
+    typedef std::size_t difference_type;
+    typedef std::forward_iterator_tag iterator_category;
 
-                const value_type &operator*() const
-                {
-                    return renum_.top();
-                }
-                pointer operator->() const
-                {
-                    return &renum_.top();
-                }
-                reference operator++() {
-                    renum_.pop();
-                    return *this;
-                }
-                iterator operator++(int) {
-                    iterator it= *this;
-                    renum_.pop();
-                    return it;
-                }
-                const iterator& operator+(unsigned int i) {
-                    for (unsigned int j=0; j< i; ++j) {
-                        operator++();
-                    }
-                    return *this;
-                }
-                bool operator==(const iterator &o) const
-                {
-                    CGAL_Polynomial_precondition(renum_.empty()
-                        || o.renum_.empty());
-                    return renum_.empty() && o.renum_.empty();
-                }
-                bool operator!=(const iterator &o) const
-                {
-                    CGAL_Polynomial_precondition(renum_.empty()
-                        || o.renum_.empty());
-                    if ( renum_.empty() && o.renum_.empty() ) { return false; }
-                    return !renum_.empty() || !o.renum_.empty();
-                }
-            protected:
-                RE renum_;
-        };
+    const value_type &operator*() const
+    {
+      return renum_.top();
+    }
+    pointer operator->() const
+    {
+      return &renum_.top();
+    }
+    reference operator++() {
+      renum_.pop();
+      return *this;
+    }
+    iterator operator++(int) {
+      iterator it= *this;
+      renum_.pop();
+      return it;
+    }
+    const iterator& operator+(unsigned int i) {
+      for (unsigned int j=0; j< i; ++j) {
+	operator++();
+      }
+      return *this;
+    }
+    bool operator==(const iterator &o) const
+    {
+      CGAL_Polynomial_precondition(renum_.empty()
+				   || o.renum_.empty());
+      return renum_.empty() && o.renum_.empty();
+    }
+    bool operator!=(const iterator &o) const
+    {
+      CGAL_Polynomial_precondition(renum_.empty()
+				   || o.renum_.empty());
+      if ( renum_.empty() && o.renum_.empty() ) { return false; }
+      return !renum_.empty() || !o.renum_.empty();
+    }
+  protected:
+    RE renum_;
+  };
 
-        const iterator& begin() const
-        {
-            return begin_;
-        }
+  typedef typename K::Root   Root;
+  Root_container(const typename K::Function &fn,
+		 const Root &lb,
+		 const Root &ub,
+		 const K &k)
+    : begin_(RE(fn, lb,ub, k.root_stack_traits_object())){}
 
-        iterator end() const
-        {
-            return iterator();
-        }
+  const iterator& begin() const
+  {
+    return begin_;
+  }
 
-    protected:
-        iterator begin_;
+  iterator end() const
+  {
+    return iterator();
+  }
+
+protected:
+  iterator begin_;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
