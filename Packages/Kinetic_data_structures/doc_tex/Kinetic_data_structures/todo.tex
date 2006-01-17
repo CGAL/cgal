@@ -20,13 +20,6 @@
   the right solution. The better solution may just be to have the
   FunctionKernel (and RootStack) be fetched from the SimulationTraits.
 
-\item I use TNT which is currently put in a include/TNT (parallel to
-  include/CGAL). Exposing it like this is a bit problematic. I could
-  modify the headers to nest TNT in the CGAL namespace and hide it in
-  include/CGAL. I can actually just remove it now as I have another
-  solver which is better numerically, but slower, and does not need
-  TNT.
-
 \item The FunctionKernel numeric solver I implemented is not as good
   as the one provided by GSL which is shipped on most linux boxes. It
   is GPL, so the user does have to make a decision about using it.
@@ -42,8 +35,6 @@
   a) fetch a bunch of kernels and b) fetch pointers to the
   ActiveObjectsTable and simulator. I don't see an obvious way to keep
   its simplicity and have it make more sense.
-
-\item the bib entries has not been added yet (they have been emailed to the proper person)
 
 \item the Qt stuff is broken since I am waiting for the proper person to update the makefile
 
