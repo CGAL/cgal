@@ -23,8 +23,10 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
-#include <cstdlib>
+//#include <cstdlib>
 #include <set>
+
+#include <boost/random/linear_congruential.hpp>
 
 #include <CGAL/_test_types.h>
 //#include <CGAL/_test_cls_regular_3.C>
@@ -131,6 +133,8 @@ protected:
     }
 };
 
+static boost::rand48 randgen;
+
 // point_iterator_x generates points randomly on a grid (thus making lots of
 // degenerate cases), staying in dimension x.
 struct point_iterator_0 : public point_iterator
@@ -140,7 +144,7 @@ struct point_iterator_0 : public point_iterator
 
     void operator++ ()
     {
-        int w = lrand48() % 10;
+        int w = randgen() % 10;
         set_point (0, 0, 0, w);
         point_iterator::operator++();
     }
@@ -153,8 +157,8 @@ struct point_iterator_1 : public point_iterator
 
     void operator++ ()
     {
-        int x = lrand48() % 10;
-        int w = lrand48() % 10;
+        int x = randgen() % 10;
+        int w = randgen() % 10;
         set_point (x, 0, 0, w);
         point_iterator::operator++();
     }
@@ -167,9 +171,9 @@ struct point_iterator_2 : public point_iterator
 
     void operator++ ()
     {
-        int x = lrand48() % 10;
-        int y = lrand48() % 10;
-        int w = lrand48() % 10;
+        int x = randgen() % 10;
+        int y = randgen() % 10;
+        int w = randgen() % 10;
         set_point (x, y, 0, w);
         point_iterator::operator++();
     }
@@ -182,10 +186,10 @@ struct point_iterator_3 : public point_iterator
 
     void operator++ ()
     {
-        int x = lrand48() % 10;
-        int y = lrand48() % 10;
-        int z = lrand48() % 10;
-        int w = lrand48() % 10;
+        int x = randgen() % 10;
+        int y = randgen() % 10;
+        int z = randgen() % 10;
+        int w = randgen() % 10;
         set_point (x, y, z, w);
         point_iterator::operator++();
     }
@@ -309,7 +313,6 @@ bool test_case (std::istream &is)
     return true;
 }
 
-
 int main(int argc, char **argv)
 {
     std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
@@ -347,28 +350,28 @@ int main(int argc, char **argv)
     degeneracy_counter = 0;
 
     std::cout << " test dimension 0" << std::endl;
-    srand48(seed0);
+    randgen.seed(seed0);
 
     insert<point_iterator_0> (T, points, 10);
     dim_jump (T, Point (0, 0, 1), 0);
     remove (T, points, 10);
 
     std::cout << " test dimension 1" << std::endl;
-    srand48(seed1);
+    randgen.seed(seed1);
 
     insert<point_iterator_1> (T, points, 20);
     dim_jump (T, Point (0, 0, 1), 1);
     remove (T, points, 20);
 
     std::cout << " test dimension 2" << std::endl;
-    srand48(seed2);
+    randgen.seed(seed2);
 
     insert<point_iterator_2> (T, points, 100);
     dim_jump (T, Point (0, 0, 1), 2);
     remove (T, points, 100);
 
     std::cout << " test dimension 3" << std::endl;
-    srand48(seed3);
+    randgen.seed(seed3);
 
     insert<point_iterator_3> (T, points, 500);
     assert (T.dimension() == 3);
