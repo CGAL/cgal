@@ -104,8 +104,8 @@ public:
       if(outer_boundary.is_empty())
        {
          // no boundary -> unbounded polygon
-         Iso_rectangle rect(Point(widget->x_min(), widget->y_min()),
-                            Point(widget->x_max(), widget->y_max()));
+         Iso_rectangle rect(Point_2(widget->x_min(), widget->y_min()),
+                            Point_2(widget->x_max(), widget->y_max()));
          *widget << rect;
        }
        else  
@@ -139,8 +139,8 @@ public:
       if(outer_boundary.is_empty())
        {
          // no boundary -> unbounded polygon
-         Iso_rectangle rect(Point(widget->x_min(), widget->y_min()),
-                            Point(widget->x_max(), widget->y_max()));
+         Iso_rectangle rect(Point_2(widget->x_min(), widget->y_min()),
+                            Point_2(widget->x_max(), widget->y_max()));
          *widget << rect;
        }
        else  
@@ -457,8 +457,8 @@ private:
        if(outer_boundary.is_empty())
        {
          // no boundary -> unbounded polygon
-         Iso_rectangle rect(Point(widget->x_min(), widget->y_min()),
-                            Point(widget->x_max(), widget->y_max()));
+         Iso_rectangle rect(Point_2(widget->x_min(), widget->y_min()),
+                            Point_2(widget->x_max(), widget->y_max()));
          *widget << rect;
        }
        else  

@@ -60,7 +60,7 @@ private:
   
   CGAL::Qt_widget_get_circ_polygon<Kernel>     getsimplebut;
   CGAL::Qt_widget_get_circle<Kernel>           getcirclebut;
-  CGAL::Qt_widget_locate_layer                 locatebut;
+  Qt_widget_locate_layer                       locatebut;
   
 };//end class
 

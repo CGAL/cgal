@@ -10,9 +10,8 @@ extern bool                                      red_active;
 extern Polygon_set                               red_set;
 extern Polygon_set                               blue_set;
 
-namespace CGAL
-{
-  class  Qt_widget_locate_layer : public Qt_widget_layer
+
+class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
   {
 
     //Data members
@@ -28,9 +27,9 @@ namespace CGAL
   public:
 
     Qt_widget_locate_layer(const QCursor c=QCursor(Qt::crossCursor),
-                               QObject* parent = 0,
-                               const char* name = 0)
-      : Qt_widget_layer(parent, name),
+                           QObject* parent = 0,
+                           const char* name = 0)
+      : CGAL::Qt_widget_layer(parent, name),
         m_cursor(c),
         m_found_pgn(false)
     {}
@@ -45,8 +44,8 @@ namespace CGAL
         if(outer_boundary.is_empty())
         {
           // no boundary -> unbounded polygon
-          Iso_rectangle rect(Point(widget->x_min(), widget->y_min()),
-                            Point(widget->x_max(), widget->y_max()));
+          Iso_rectangle rect(Point_2(widget->x_min(), widget->y_min()),
+                            Point_2(widget->x_max(), widget->y_max()));
           *widget << rect;
         }
         else  
@@ -106,5 +105,5 @@ namespace CGAL
   }
 };
 
-} // namespace CGAL
+
 #endif

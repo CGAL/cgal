@@ -54,7 +54,7 @@ int readdxf(std::istream& input_file,
     Coord_type center_y = dbl_circ.center().y();
 
     
-    Circle circle = Circle(Point(center_x, center_y), sqr_rad);
+    Circle circle = Circle(Point_2(center_x, center_y), sqr_rad);
     Curve circ(circle);
     std::vector<CGAL::Object> obj_vec;
     obj_vec.reserve(2);
@@ -88,15 +88,15 @@ int readdxf(std::istream& input_file,
       Dxf_Polygon::iterator next = pit;
       ++next;
 
-      Point ps(pit->first.x(), pit->first.y());;
-      Point pt;
+      Point_2 ps(pit->first.x(), pit->first.y());;
+      Point_2 pt;
       if(next == it->end())
       {
-        pt = Point(it->begin()->first.x(), it->begin()->first.y());
+        pt = Point_2(it->begin()->first.x(), it->begin()->first.y());
       }
       else
       {
-        pt = Point(next->first.x(), next->first.y());
+        pt = Point_2(next->first.x(), next->first.y());
       }
       
       if(pit->second) 
@@ -112,9 +112,9 @@ int readdxf(std::istream& input_file,
        
         Circle supp_circ;
         if(pit->second > 0)
-          supp_circ = Circle(Point(x_coord, y_coord), sqr_rad);
+          supp_circ = Circle(Point_2(x_coord, y_coord), sqr_rad);
         else
-          supp_circ = Circle(Point(x_coord, y_coord), sqr_rad, CGAL::CLOCKWISE);
+          supp_circ = Circle(Point_2(x_coord, y_coord), sqr_rad, CGAL::CLOCKWISE);
         Curve circ_arc(supp_circ, 
                          One_root_point_2(ps.x(), ps.y()),
                          One_root_point_2(pt.x(), pt.y()));

@@ -18,7 +18,7 @@ typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >  Coord_type;
 typedef CGAL::Cartesian<Coord_type>		                Kernel;
 
 typedef Kernel::Segment_2						                  Segment;
-typedef Kernel::Point_2						                    Point;
+typedef Kernel::Point_2						                    Point_2;
 typedef Kernel::Circle_2                              Circle;
 
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>     Traits;
