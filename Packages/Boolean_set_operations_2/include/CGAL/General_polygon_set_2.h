@@ -117,17 +117,13 @@ public:
   {}
 
 
-  General_polygon_set_2(const General_polygon_set_2& ps):  m_traits(new Traits_2(*(ps.m_traits))),
+  General_polygon_set_2(const Self& ps):  m_traits(new Traits_2(*(ps.m_traits))),
                                                            m_traits_owner(true),
                                                            m_arr(new Arrangement_2(*(ps.m_arr)))
   {}
 
-  General_polygon_set_2(Arrangement_2* arr) : m_traits(new Traits_2()),
-                                              m_traits_owner(true),
-                                              m_arr(arr)
-   {}
-
-  General_polygon_set_2& operator=(const General_polygon_set_2& ps)
+  
+  General_polygon_set_2& operator=(const Self& ps)
   {
     if(this == &ps)
       return (*this);
@@ -157,6 +153,15 @@ public:
   {
     _insert(pgn_with_holes, *m_arr);
   }
+
+private:
+  General_polygon_set_2(Arrangement_2* arr) : m_traits(new Traits_2()),
+                                              m_traits_owner(true),
+                                              m_arr(arr)
+   {}
+
+ public:
+
 
 
   //destructor
@@ -232,271 +237,148 @@ public:
   }
 
   //test for intersection with another General_polygon_set_2 object
-  bool do_intersect(const General_polygon_set_2& other) const
+  bool do_intersect(const Self& other) const
   {
     if(this->is_empty() || other.is_empty())
       return false;
+
+    if(this->is_plane() || other.is_plane())
+      return true;
     
     Arrangement_2 res_arr;
 
-    Bso_do_intersect_functor<Traits_2>  func;
+    Bso_do_intersect_functor<Arrangement_2>  func;
     overlay(*m_arr, *(other.m_arr), res_arr, func);
-    return func.found_intersection();
+    return func.found_reg_intersection();
+  }
+
+  template <class InputIterator>
+  bool do_intersect(InputIterator begin, InputIterator end)
+  {
+    Self other(*this);
+    other.intersection(begin, end);
+    return (other.is_empty());
+  }
+
+  template <class InputIterator1, class InputIterator2>
+  bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                    InputIterator2 begin2, InputIterator2 end2)
+  {
+    Self other(*this);
+    other.intersection(begin1, end1, begin2, end2);
+    return (other.is_empty());
   }
 
 
   // intersection with a simple polygon
   void intersection(const Polygon_2& pgn)
   {
-    if(this->is_empty())
-    {
-      return;
-    }
-    Arrangement_2 second_arr;
-    _insert(pgn, second_arr);
-    if(second_arr.is_empty())
-    {
-      this->clear();
-      return;
-    }
-    Arrangement_2 res_arr;
-
-    Bso_intersection_functor<Traits_2> func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+    _intersection(pgn);
   }
 
   // intersection with a polygon with holes
-  void intersection(const Polygon_with_holes_2& pgn_with_holes)
+  void intersection(const Polygon_with_holes_2& pgn)
   {
-    if(this->is_empty())
-    {
-      return;
-    }
-    Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    _insert(pgn_with_holes, second_arr);
-    if(second_arr.is_empty())
-    {
-      if(! second_arr.unbounded_face()->contained())
-        this ->clear();
-     
-      return;
-    }
-
-
-    Bso_intersection_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+    _intersection(pgn);
   }
 
   //intersection with another General_polygon_set_2 object
-  void intersection(const General_polygon_set_2& bops)
+  void intersection(const Self& other)
   {
-    Arrangement_2 res_arr;
+    _intersection(other);
+  }
 
-    Bso_intersection_functor<Traits_2> func(m_traits);
-    overlay(*m_arr, *(bops.m_arr), res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+  void intersection(const Self& gps1, const Self& gps2)
+  {
+    this->clear();
+    _intersection(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
 
   // join with a simple polygon
   void join(const Polygon_2& pgn)
   {
-    if(this->is_plane())
-    {
-      return;
-    }
-
-    if(this->is_empty())
-    {
-      _insert(pgn, *m_arr);
-      return;
-    }
-
-    Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    _insert(pgn, second_arr);
-
-    Bso_join_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+    _join(pgn);
   }
 
   // join with a polygon with holes
-  void join(const Polygon_with_holes_2& pgn_with_holes)
+  void join(const Polygon_with_holes_2& pgn)
   {
-     if(this->is_plane())
-    {
-      return;
-    }
-
-    if(this->is_empty())
-    {
-      _insert(pgn_with_holes, *m_arr);
-      return;
-    }
-
-    Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    _insert(pgn_with_holes, second_arr);
-
-    Bso_join_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+    _join(pgn);
   }
 
   //join with another General_polygon_set_2 object
-  void join(const General_polygon_set_2& bops)
+  void join(const Self& other)
   {
-    Arrangement_2 res_arr;
+    _join(other);
+  }
 
-    Bso_join_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, *(bops.m_arr), res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+  void join(const Self& gps1, const Self& gps2)
+  {
+    this->clear();
+    _join(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
 
    // difference with a simple polygon
   void difference (const Polygon_2& pgn)
   {
-    if(this->is_empty())
-    {
-      return;
-    }
-
-    Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    _insert(pgn, second_arr);
-    if(second_arr.is_empty())
-    {
-      return;
-    }
-
-    // complement second_arr
-    _complement(&second_arr);
-
-    Bso_intersection_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+    _difference(pgn);
   }
 
   // difference with a polygon with holes
-  void difference (const Polygon_with_holes_2& pgn_with_holes)
+  void difference (const Polygon_with_holes_2& pgn)
   {
-    if(this->is_empty())
-    {
-      return;
-    }
-
-    Arrangement_2 second_arr;
-    Arrangement_2 res_arr;
-    _insert(pgn_with_holes, second_arr);
-    if(second_arr.is_empty())
-    {
-      return;
-    }
-
-     // complement second_arr
-    _complement(&second_arr);
-    Bso_intersection_functor<Traits_2>  func(m_traits);
-    overlay(*m_arr, second_arr, res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
+    _difference(pgn);
   }
 
   //difference with another General_polygon_set_2 object
-  void difference (const General_polygon_set_2& bops)
+  void difference (const Self& other)
   {
-    Arrangement_2 res_arr;
-    Bso_difference_functor<Traits_2>  func(m_traits);
+    _difference(other);
+  }
 
-    overlay(*m_arr,  *(bops.m_arr), res_arr, func);
-    delete m_arr; // delete the previous arrangement
-    
-    m_arr = func.result_arr();
-    _fix_curves_direction();
+  void difference(const Self& gps1, const Self& gps2)
+  {
+    this->clear();
+    _difference(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
 
   // symmetric_difference with a simple polygon
   void symmetric_difference(const Polygon_2& pgn)
   {
-    Arrangement_2 second_arr;
-    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-    _insert(pgn, second_arr);
-    Bso_sym_diff_functor<Traits_2>  func;
-    overlay(*m_arr, second_arr, *res_arr, func);
-    std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
-    for(unsigned int i=0; i<he_vec.size(); ++i)
-    {
-      res_arr->remove_edge(he_vec[i]);
-    }
-    
-    delete m_arr; // delete the previous arrangement
-    m_arr = res_arr;
-    _fix_curves_direction();
+    _symmetric_difference(pgn);
   }
 
   // symmetric_difference with a polygon with holes
-  void symmetric_difference(const Polygon_with_holes_2& pgn_with_holes)
+  void symmetric_difference(const Polygon_with_holes_2& pgn)
   {
-    Arrangement_2 second_arr;
-    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-    _insert(pgn_with_holes, second_arr);
-
-    Bso_sym_diff_functor<Traits_2>  func;
-   
-    overlay(*m_arr, second_arr, *res_arr, func);
-    std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
-    for(unsigned int i=0; i<he_vec.size(); ++i)
-    {
-      res_arr->remove_edge(he_vec[i]);
-    }
-   
-    delete m_arr; // delete the previous arrangement
-    m_arr = res_arr;
-    _fix_curves_direction();
+    _symmetric_difference(pgn);
   }
 
   //symmetric_difference with another General_polygon_set_2 object
-  void symmetric_difference(const General_polygon_set_2& bops)
+  void symmetric_difference(const Self& other)
   {
-    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-    Bso_sym_diff_functor<Traits_2>  func;
-    overlay(*m_arr, *(bops.m_arr), *res_arr, func);
-    std::vector<Halfedge_handle>& he_vec = func.get_spare_edges();
-    for(unsigned int i=0; i<he_vec.size(); ++i)
-    {
-      res_arr->remove_edge(he_vec[i]);
-    }
-    
+    _symmetric_difference(other);
+  }
 
-    delete m_arr; // delete the previous arrangement
-    m_arr = res_arr;
-    _fix_curves_direction();
+  void symmetric_difference(const Self& gps1, const Self& gps2)
+  {
+    this->clear();
+    _symmetric_difference(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
 
   void complement()
   {
     this->_complement(m_arr);
+  }
+
+  void complement(const Self& other)
+  {
+    *(this->m_arr) = *(other.m_arr);
+    this->complement();
   }
 
   // TODO: move to private (or prot. area)
@@ -522,14 +404,14 @@ public:
 
   //fix the directions of the curves (given correct marked face)
   // it should be called mostly after  symmetric_difference.
-  void _fix_curves_direction()
+  void _fix_curves_direction(Arrangement_2& arr)
   {
     Compare_endpoints_xy_2 cmp_endpoints =
       m_traits->compare_endpoints_xy_2_object();
     Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
 
-    for(Edge_iterator eit = m_arr->edges_begin();
-        eit != m_arr->edges_end();
+    for(Edge_iterator eit = arr.edges_begin();
+        eit != arr.edges_end();
         ++eit)
     {
       Halfedge_handle he = eit;
@@ -538,8 +420,13 @@ public:
       bool has_same_dir = (cmp_endpoints(cv) == he->direction());
       if((is_cont && !has_same_dir) ||
          (!is_cont && has_same_dir))
-        m_arr->modify_edge(he, ctr_opp(cv));
+        arr.modify_edge(he, ctr_opp(cv));
     }
+  }
+
+  void fix_curves_direction()
+  {
+    _fix_curves_direction(*m_arr);
   }
          
   Size number_of_polygons_with_holes() const;
@@ -907,7 +794,6 @@ inline void symmetric_difference(InputIterator1 begin1,
 }
 
 
-
 static void construct_polygon(Ccb_halfedge_const_circulator ccb,
                               Polygon_2&              pgn,
                               Traits_2*               tr);
@@ -1005,6 +891,329 @@ void _construct_curves(const Polygon_2& pgn, OutputIterator oi);
 
 template <class OutputIterator>
 void _construct_curves(const Polygon_with_holes_2& pgn, OutputIterator oi);
+
+
+bool _is_empty(const Polygon_2& pgn) const
+{
+  const std::pair<Curve_const_iterator, Curve_const_iterator>& itr_pair = 
+    m_traits->construct_curves_2_object()(pgn);
+  return (itr_pair.first == itr_pair.second);
+}
+
+bool _is_empty(const Polygon_with_holes_2& pgn) const
+{
+  return (false);
+}
+
+bool _is_plane(const Polygon_2& pgn) const
+{
+  return (false);
+}
+
+bool _is_plane(const Polygon_with_holes_2& pgn) const
+{
+  return (pgn.is_unbounded() && (pgn.holes_begin() == pgn.holes_end()));
+}
+
+void _intersection(const Arrangement_2& arr)
+{
+   Arrangement_2* res_arr = new Arrangement_2(m_traits);
+   Bso_intersection_functor<Arrangement_2> func;
+   overlay(*m_arr, arr, *res_arr, func);
+   delete m_arr; // delete the previous arrangement
+    
+   m_arr = res_arr;
+   remove_redundant_edges();
+}
+
+void _intersection(const Arrangement_2& arr1,
+                   const Arrangement_2& arr2,
+                   Arrangement_2& res) 
+{
+   Bso_intersection_functor<Arrangement_2> func;
+   overlay(arr1, arr2, res, func);
+   _remove_redundant_edges(&res);
+
+}
+
+template <class Polygon_>
+void _intersection(const Polygon_& pgn)
+{
+  if(_is_empty(pgn))
+    this->clear();
+  if(_is_plane(pgn))
+    return;
+  if(this->is_empty())
+    return;
+  
+  if(this->is_plane())
+  {
+    Arrangement_2* arr = new Arrangement_2(m_traits);
+    _insert(pgn, *arr);
+    delete (this->m_arr);
+    this->m_arr = arr;
+    return;
+  }
+
+  Arrangement_2 second_arr;
+   _insert(pgn, second_arr);
+   _intersection(second_arr);
+}
+
+ void _intersection(const Self& other)
+  {
+    if(other.is_empty())
+    {
+      m_arr->clear();
+      return;
+    }
+    
+    if(other.is_plane())
+      return;
+    
+    if(this->is_empty())
+      return;
+    
+    if(this->is_plane())
+    {
+      *(this->m_arr) = *(other.m_arr);
+      return;
+    }
+  
+    _intersection(*(other.m_arr));
+  }
+
+ void _join(const Arrangement_2& arr)
+{
+   Arrangement_2* res_arr = new Arrangement_2(m_traits);
+   Bso_join_functor<Arrangement_2> func;
+   overlay(*m_arr, arr, *res_arr, func);
+   delete m_arr; // delete the previous arrangement
+    
+   m_arr = res_arr;
+   remove_redundant_edges();
+}
+
+void _join(const Arrangement_2& arr1,
+           const Arrangement_2& arr2,
+           Arrangement_2& res) 
+{
+   Bso_join_functor<Arrangement_2> func;
+   overlay(arr1, arr2, res, func);
+   _remove_redundant_edges(&res);
+
+}
+
+template <class Polygon_>
+void _join(const Polygon_& pgn)
+{
+  if(_is_empty(pgn))
+    return;
+  if(_is_plane(pgn))
+  {
+    this->clear();
+    this->m_arr->unbounded_face()->set_contained(true);
+    return;
+  }
+  if(this->is_empty())
+  {
+    Arrangement_2* arr = new Arrangement_2(m_traits);
+    _insert(pgn, *arr);
+    delete (this->m_arr);
+    this->m_arr = arr;
+    return;
+  }
+  
+  if(this->is_plane())
+    return;
+
+  Arrangement_2 second_arr;
+   _insert(pgn, second_arr);
+   _join(second_arr);
+}
+
+
+void _join(const Self& other)
+{
+  if(other.is_empty())
+    return;
+  if(other.is_plane())
+  {
+    this->clear();
+    this->m_arr->unbounded_face()->set_contained(true);
+    return;
+  }
+  if(this->is_empty())
+  {
+    *(this->m_arr) = *(other.m_arr);
+     return;
+  }
+  if(this->is_plane())
+    return;
+
+   _join(*(other.m_arr));
+}
+
+void _difference(const Arrangement_2& arr)
+{
+   Arrangement_2* res_arr = new Arrangement_2(m_traits);
+   Bso_difference_functor<Arrangement_2> func;
+   overlay(*m_arr, arr, *res_arr, func);
+   delete m_arr; // delete the previous arrangement
+    
+   m_arr = res_arr;
+   remove_redundant_edges();
+   fix_curves_direction();
+}
+
+void _difference(const Arrangement_2& arr1,
+                 const Arrangement_2& arr2,
+                 Arrangement_2& res) 
+{
+   Bso_difference_functor<Arrangement_2> func;
+   overlay(arr1, arr2, res, func);
+   _remove_redundant_edges(&res);
+   _fix_curves_direction(res);
+
+}
+
+template <class Polygon_>
+void _difference(const Polygon_& pgn)
+{
+  if(_is_empty(pgn))
+    return;
+
+  if(_is_plane(pgn))
+  {
+    this->clear();
+    return;
+  }
+  if(this->is_empty())
+    return;
+  
+  if(this->is_plane())
+  {
+    Arrangement_2* arr = new Arrangement_2(m_traits);
+    _insert(pgn, *arr);
+    delete (this->m_arr);
+    this->m_arr = arr;
+    this->complement();
+    return;
+  }
+
+  Arrangement_2 second_arr;
+   _insert(pgn, second_arr);
+   _difference(second_arr);
+}
+
+
+void _difference(const Self& other)
+{
+  if(other.is_empty())
+    return;
+  if(other.is_plane())
+  {
+    this->clear();
+    return;
+  }
+  if(this->is_empty())
+  {
+    return;
+  }
+  if(this->is_plane())
+  {
+    *(this->m_arr) = *(other.m_arr);
+    this->complement();
+    return;
+  }
+
+   _difference(*(other.m_arr));
+}
+
+void _symmetric_difference(const Arrangement_2& arr)
+{
+   Arrangement_2* res_arr = new Arrangement_2(m_traits);
+   Bso_sym_diff_functor<Arrangement_2> func;
+   overlay(*m_arr, arr, *res_arr, func);
+   delete m_arr; // delete the previous arrangement
+    
+   m_arr = res_arr;
+   remove_redundant_edges();
+   fix_curves_direction();
+}
+
+void _symmetric_difference(const Arrangement_2& arr1,
+                           const Arrangement_2& arr2,
+                           Arrangement_2& res) 
+{
+   Bso_sym_diff_functor<Arrangement_2> func;
+   overlay(arr1, arr2, res, func);
+   _remove_redundant_edges(&res);
+   _fix_curves_direction(res);
+}
+
+template <class Polygon_>
+void _symmetric_difference(const Polygon_& pgn)
+{
+  if(_is_empty(pgn))
+    return;
+
+  if(_is_plane(pgn))
+  {
+    this->complement();
+    return;
+  }
+  if(this->is_empty())
+  {
+    Arrangement_2* arr = new Arrangement_2(m_traits);
+    _insert(pgn, *arr);
+    delete (this->m_arr);
+    this->m_arr = arr;
+    return;
+  }
+  
+  if(this->is_plane())
+  {
+    Arrangement_2* arr = new Arrangement_2(m_traits);
+    _insert(pgn, *arr);
+    delete (this->m_arr);
+    this->m_arr = arr;
+    this->complement();
+    return;
+  }
+
+  Arrangement_2 second_arr;
+   _insert(pgn, second_arr);
+   _symmetric_difference(second_arr);
+}
+
+
+void _symmetric_difference(const Self& other)
+{
+  if(other.is_empty())
+    return;
+
+  if(other.is_plane())
+  {
+    this->complement();
+    return;
+  }
+  if(this->is_empty())
+  {
+    *(this->m_arr) = *(other.m_arr);
+    return;
+  }
+  
+  if(this->is_plane())
+  {
+    *(this->m_arr) = *(other.m_arr);
+    this->complement();
+    return;
+  }
+
+   _symmetric_difference(*(other.m_arr));
+}
+
 };
 
 #include <CGAL/Boolean_set_operations_2/Bso_utils.h>

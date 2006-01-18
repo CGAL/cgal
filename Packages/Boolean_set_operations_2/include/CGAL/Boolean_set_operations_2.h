@@ -81,6 +81,21 @@ inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
   return (_do_intersect(pgn1, pgn2, tr));
 }
 
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2)
+{
+  return (_do_intersect(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                         Traits& tr)
+{
+  return (_do_intersect(pgn1, pgn2, tr));
+}
+
 template <class Arr_traits>
 inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1, 
                          const General_polygon_2<Arr_traits>& pgn2)
@@ -1100,6 +1115,49 @@ inline OutputIterator symmetric_difference(InputIterator1 begin1,
   gps.symmetric_difference(++begin1, end1, begin2, end2);
   return (gps.polygons_with_holes(oi));
  
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class InputIterator, class Traits>
+inline bool do_intersect(InputIterator begin, InputIterator end, Traits& tr)
+{
+  if(begin == end)
+    return false;
+
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(*begin);
+
+  return (gps.do_intersect(++begin, end));
+}
+
+template <class InputIterator>
+inline bool do_intersect(InputIterator begin, InputIterator end)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits  tr;
+  return do_intersect(begin, end, tr);
+}
+
+template <class InputIterator1, class InputIterator2, class Traits>
+inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                  InputIterator2 begin2, InputIterator2 end2,
+                  Traits& tr)
+{
+  if(begin1 == end1)
+    return (do_intersect(begin2, end2, tr));
+
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(*begin1);
+  return (gps.do_intersect(++begin1, end1, begin2, end2));
+}
+
+template <class InputIterator1, class InputIterator2>
+inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                         InputIterator2 begin2, InputIterator2 end2)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits  tr;
+  return do_intersect(begin1, end1, begin2, end2, tr);
 }
 
 
