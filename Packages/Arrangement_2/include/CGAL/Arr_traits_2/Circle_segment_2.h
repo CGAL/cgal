@@ -192,21 +192,21 @@ private:
   // Data members:
   Line_2        _line;        // The supporting line (for line segments).
   Circle_2      _circ;        // The supporting circle (for circular arcs).
+  bool          _is_full;     // Whether we have a full circle.
   bool          _has_radius;  // Is the radius (not just the squared radius)
                               // explicitly specified).
   NT            _radius;      // The radius, in case it is specified.
   Point_2       _source;      // The source point.
   Point_2       _target;      // The target point.
   Orientation   _orient;      // The orientation (COLLINEAR for line segments).
-  bool          _is_full;     // Whether we have a full circle.
 
 public:
 
   /*! Default constructor. */
   _Circle_segment_2 () :
+    _is_full (false),
     _has_radius (false),
-    _orient (COLLINEAR),
-    _is_full (false)
+    _orient (COLLINEAR)
   {}
 
   /*!
@@ -215,11 +215,11 @@ public:
    */
   _Circle_segment_2 (const Segment_2& seg) :
     _line (seg),
+    _is_full (false),
     _has_radius (false),
     _source (seg.source().x(), seg.source().y()),
     _target (seg.target().x(), seg.target().y()),
-    _orient (COLLINEAR),
-    _is_full (false)
+    _orient (COLLINEAR)
   {}
 
   /*!
@@ -230,11 +230,11 @@ public:
   _Circle_segment_2 (const typename Kernel::Point_2& ps,
                      const typename Kernel::Point_2& pt) :
     _line (ps, pt),
+    _is_full (false),
     _has_radius (false),
     _source (ps.x(), ps.y()),
     _target (pt.x(), pt.y()),
-    _orient (COLLINEAR),
-    _is_full (false)
+    _orient (COLLINEAR)
   {}
 
   /*!
@@ -248,11 +248,11 @@ public:
   _Circle_segment_2 (const Line_2& line,
                      const Point_2& source, const Point_2& target) :
     _line (line),
+    _is_full (false),
     _has_radius (false),
     _source (source),
     _target (target),
-    _orient (COLLINEAR),
-    _is_full (false)
+    _orient (COLLINEAR)
   {
     CGAL_precondition (CGAL::compare (source.x()*line.a() + line.c(),
                                       -source.y()*line.b()) == EQUAL);
@@ -267,9 +267,9 @@ public:
    */
   _Circle_segment_2 (const Circle_2& circ) :
     _circ (circ),
+    _is_full (true),
     _has_radius (false),
-    _orient (circ.orientation()),
-    _is_full (true)
+    _orient (circ.orientation())
   {
     CGAL_assertion (_orient != COLLINEAR);
   }
@@ -284,10 +284,10 @@ public:
                      const NT& r,
                      Orientation orient = COUNTERCLOCKWISE) :
     _circ (c, r*r, orient),
+    _is_full (true),
     _has_radius (true),
     _radius (r),
-    _orient (orient),
-    _is_full (true)
+    _orient (orient)
   {
     CGAL_assertion (orient != COLLINEAR);
   }
@@ -304,11 +304,11 @@ public:
   _Circle_segment_2 (const Circle_2& circ,
                      const Point_2& source, const Point_2& target) :
     _circ (circ),
+    _is_full (false),
     _has_radius (false),
     _source (source),
     _target (target),
-    _orient (circ.orientation()),
-    _is_full (false)
+    _orient (circ.orientation())
   {
     CGAL_assertion (_orient != COLLINEAR);
 
@@ -337,12 +337,12 @@ public:
                      const NT& r, Orientation orient,
                      const Point_2& source, const Point_2& target) :
     _circ (c, r*r, orient),
+    _is_full (false),
     _has_radius (true),
     _radius (r),
     _source (source),
     _target (target),
-    _orient (orient),
-    _is_full (false)
+    _orient (orient)
   {
     CGAL_assertion (orient != COLLINEAR);
 
@@ -368,10 +368,10 @@ public:
    _Circle_segment_2 (const typename Kernel::Point_2& p1,
                       const typename Kernel::Point_2& p2,
                       const typename Kernel::Point_2& p3) :
+     _is_full(false),
      _has_radius(false),
      _source(p1.x(), p1.y()),
-     _target(p3.x(), p3.y()),
-     _is_full(false)
+     _target(p3.x(), p3.y())
   {
     // Set the source and target.
     NT          x1 = p1.x();
@@ -755,11 +755,22 @@ protected:
   
   Point_2      _source;      // The source point.
   Point_2      _target;      // The target point.
-  Orientation  _orient;      // The orientation of the arc (COLLINEAR for line
-                             // segments).
-  bool         _dir_right;   // Is the arc directed from left to right.
-  bool         _is_vert;     // Is this a vertical segment.
-  unsigned int _index;       // The index of the supporting curve (may be 0).
+
+  enum {
+    IS_DIRECTED_RIGHT_MASK = 1,
+    IS_VERTICAL_SEGMENT_MASK = 2,
+    COUNTERCLOCKWISE_CODE = 4,
+    CLOCKWISE_CODE = 8,
+    ORIENTATION_MASK = 4 + 8,
+    INDEX_SHIFT_BITS = 4
+  };
+
+  unsigned int _info;        // A bit vector, where:
+                             // Bit 0 (the LSB): marks if the arc is directed
+                             //                  from left to right.
+                             // Bit 1: marks if the arc is a vertical segment.
+                             // Bits 2-3: mark the orientation.
+                             // The rest of the bits represent the curve index.
 
 public:
 
@@ -771,10 +782,7 @@ public:
     _second(),
     _third(),
     _source(), _target(),
-    _orient (COLLINEAR),
-    _dir_right (false),
-    _is_vert (false),
-    _index (0)
+    _info (0)
   {}
 
   /*!
@@ -791,9 +799,7 @@ public:
     _third (line.c()),
     _source (source), 
     _target(target),
-    _orient (COLLINEAR),
-    _is_vert (false),
-    _index (index)
+    _info (index << INDEX_SHIFT_BITS)
   {
     // Check if the segment is directed left or right:
     Comparison_result   res = CGAL::compare (source.x(), target.x());
@@ -804,12 +810,13 @@ public:
 
       // We have a vertical segment - compare the points by their
       // y-coordinates:
-      _is_vert = true;
+      _info = (_info | IS_VERTICAL_SEGMENT_MASK);
       res = CGAL::compare (source.y(), target.y());
     }
 
     CGAL_precondition (res != EQUAL);
-    _dir_right = (res == SMALLER);
+    if (res == SMALLER)
+      _info = (_info | IS_DIRECTED_RIGHT_MASK);
   }
 
   /*!
@@ -822,9 +829,7 @@ public:
                                 const typename Kernel::Point_2& target) :
     _source(source.x(), source.y()),
     _target(target.x(), target.y()),
-    _orient (COLLINEAR),
-    _is_vert(false),
-    _index (0)
+    _info (0)
   {
     Line_2 line(source, target);
     _first  = line.a();
@@ -840,12 +845,13 @@ public:
 
       // We have a vertical segment - compare the points by their
       // y-coordinates:
-      _is_vert = true;
+      _info = (_info | IS_VERTICAL_SEGMENT_MASK);
       res = CGAL::compare (source.y(), target.y());
     }
 
     CGAL_precondition (res != EQUAL);
-    _dir_right = (res == SMALLER);
+    if (res == SMALLER)
+      _info = (_info | IS_DIRECTED_RIGHT_MASK);
   }
      
 
@@ -865,27 +871,33 @@ public:
     _third (circ.squared_radius()),
     _source (source), 
     _target(target),
-    _orient (orient),
-    _is_vert (false),
-    _index (index)
+    _info (index << INDEX_SHIFT_BITS)
   {
     // Check if the segment is directed left or right:
     Comparison_result   res = CGAL::compare (source.x(), target.x());
 
     CGAL_precondition (res != EQUAL);
-    _dir_right = (res == SMALLER);
+    if (res == SMALLER)
+      _info = (_info | IS_DIRECTED_RIGHT_MASK);
+
+    // Set the orientation.
+    CGAL_precondition (orient != COLLINEAR);
+    if (orient == COUNTERCLOCKWISE)
+      _info = (_info | COUNTERCLOCKWISE_CODE);
+    else
+      _info = (_info | CLOCKWISE_CODE);
   }
 
   /*! Check if the arc is linear. */
   inline bool is_linear () const
   {
-    return (_orient == COLLINEAR);
+    return ((_info & ORIENTATION_MASK) == 0);
   }
 
   /*! Check if the arc is circular. */
   inline bool is_circular () const
   {
-    return (_orient != COLLINEAR);
+    return ((_info & ORIENTATION_MASK) != 0);
   }
 
   /*!
@@ -895,7 +907,7 @@ public:
   Circle_2 supporting_circle () const
   {
     typename Kernel::Point_2  center (x0(), y0());
-    return (Circle_2 (center , sqr_r(), _orient));
+    return (Circle_2 (center , sqr_r(), orientation()));
   }
 
   /*! Get the source point. */
@@ -913,13 +925,13 @@ public:
   /*! Get the left endpoint of the arc. */
   inline const Point_2& left () const
   {
-    return (_dir_right ? _source : _target);
+    return (((_info & IS_DIRECTED_RIGHT_MASK) != 0) ? _source : _target);
   }
 
   /*! Get the right endpoint of the arc. */
   inline const Point_2& right () const
   {
-    return (_dir_right ? _target : _source);
+    return (((_info & IS_DIRECTED_RIGHT_MASK) != 0) ? _target : _source);
   }
 
   /*!
@@ -940,13 +952,21 @@ public:
   /*! Check if the arc is a vertical segment. */
   inline bool is_vertical () const
   {
-    return (_is_vert);
+    return ((_info & IS_VERTICAL_SEGMENT_MASK) != 0);
   }
 
   /*! Get the orientation of the arc. */ 
   inline Orientation orientation() const
   {
-    return (_orient);
+    unsigned int   _or = (_info & ORIENTATION_MASK);
+
+    if (_or == COUNTERCLOCKWISE_CODE)
+      return (CGAL::COUNTERCLOCKWISE);
+    else if (_or == CLOCKWISE_CODE)
+      return (CGAL::CLOCKWISE);
+
+    CGAL_assertion (_or == 0);
+    return (CGAL::COLLINEAR);
   }
 
   /*!
@@ -1018,7 +1038,7 @@ public:
   bool has_same_supporting_curve (const Self& cv) const
   {
     // Check if the curve indices are the same.
-    if (_index != 0 && _index == cv._index)
+    if (_index() != 0 && _index() == cv._index())
       return (true);
 
     // Make sure that the supporting curves are of the same type.
@@ -1076,9 +1096,9 @@ public:
     }
 
     // Once again, opposite circular arcs are considered to be equal:
-    return ((_orient == cv._orient &&
+    return ((orientation() == cv.orientation() &&
              _source.equals (cv._source) && _target.equals (cv._target)) ||
-            (_orient != cv._orient &&
+            (orientation() != cv.orientation() &&
              _source.equals (cv._target) && _target.equals (cv._source)));
   }
 
@@ -1092,7 +1112,7 @@ public:
     c2 = *this;
 
     // Change the endpoint, such that c1 lies to the right of c2:
-    if (_dir_right)
+    if (is_directed_right())
     {
       c1._target = p;
       c2._source = p;
@@ -1156,12 +1176,12 @@ public:
     Intersection_list            inter_list;
     bool                         invalid_ids = false;
 
-    if (inter_map != NULL && _index != 0 && cv._index != 0)
+    if (inter_map != NULL && _index() != 0 && cv._index() != 0)
     {
-      if (_index < cv._index)
-        id_pair = Curve_id_pair (_index, cv._index);
+      if (_index() < cv._index())
+        id_pair = Curve_id_pair (_index(), cv._index());
       else
-        id_pair = Curve_id_pair (cv._index, _index);
+        id_pair = Curve_id_pair (cv._index(), _index());
       
       map_iter = inter_map->find (id_pair);
     }
@@ -1246,7 +1266,7 @@ public:
     if (right().equals (cv.left()))
     {
       // Extend the arc to the right.
-      if (_dir_right)
+      if (is_directed_right())
         this->_target = cv.right();
       else
         this->_source = cv.right();
@@ -1256,7 +1276,7 @@ public:
       CGAL_precondition (left().equals (cv.right()));
 
       // Extend the arc to the left.
-      if (_dir_right)
+      if (is_directed_right())
         this->_source = cv.left();
       else
         this->_target = cv.left();
@@ -1269,7 +1289,7 @@ public:
   /*! return true iff the arc is directed right lexicoraphically. */
   bool is_directed_right() const
   {
-    return (_dir_right);
+    return ((_info & IS_DIRECTED_RIGHT_MASK) != 0);
   }
 
 
@@ -1282,16 +1302,13 @@ public:
     opp_cv._third = this-> _third;
     opp_cv._source = this->_target;
     opp_cv._target = this->_source;
-    if(this->_orient == CLOCKWISE)
-      opp_cv._orient = COUNTERCLOCKWISE;
+
+    // Take care of the information bits: We flip the orientation bits and
+    // the bits that marks the direction.
+    if (is_linear())
+      opp_cv._info = (this->_info ^ IS_DIRECTED_RIGHT_MASK);
     else
-      if(this->_orient == COUNTERCLOCKWISE)
-        opp_cv._orient = CLOCKWISE;
-      else
-        opp_cv._orient = COLLINEAR;
-    opp_cv._dir_right = !(this->_dir_right);
-    opp_cv._is_vert = this->_is_vert;
-    opp_cv._index = this->_index;
+      opp_cv._info = (this->_info ^ IS_DIRECTED_RIGHT_MASK ^ ORIENTATION_MASK);
 
     return (opp_cv);
   }
@@ -1325,6 +1342,12 @@ public:
 
 protected:
 
+  /*! Get the curve index. */
+  inline unsigned int _index () const
+  {
+    return (_info >> INDEX_SHIFT_BITS);
+  }
+
   /// \name Accessors for circular arcs.
   //@{
 
@@ -1351,10 +1374,13 @@ protected:
    */
   inline bool _is_upper () const
   {
-    CGAL_precondition (_orient != COLLINEAR);
+    Orientation  orient = orientation();
+    bool         dir_right = ((_info & IS_DIRECTED_RIGHT_MASK) != 0);
 
-    return ((_orient == COUNTERCLOCKWISE && !_dir_right) ||
-            (_orient == CLOCKWISE && _dir_right));
+    CGAL_precondition (orient != COLLINEAR);
+
+    return ((orient == COUNTERCLOCKWISE && !dir_right) ||
+            (orient == CLOCKWISE && dir_right));
   }
   //@}
 
@@ -1468,7 +1494,7 @@ protected:
   Comparison_result _lines_compare_to_right (const Self& cv,
                                              const Point_2& p) const
   {
-    if (_index != 0 && _index == cv._index)
+    if (_index() != 0 && _index() == cv._index())
       return (EQUAL);
 
     // Special treatment for vertical segments: a vertical segment is larger
@@ -1545,7 +1571,7 @@ protected:
   Comparison_result _circs_compare_to_right (const Self& cv,
                                              const Point_2& p) const
   {
-    if (_index != 0 && _index == cv._index)
+    if (_index() != 0 && _index() == cv._index())
     {
       // Check the case of comparing two circular arcs that originate from the
       // same supporting circle. Their comparison result is not EQUAL only if
@@ -1705,7 +1731,7 @@ protected:
   Comparison_result _lines_compare_to_left (const Self& cv,
                                              const Point_2& p) const
   {
-    if (_index != 0 && _index == cv._index)
+    if (_index() != 0 && _index() == cv._index())
       return (EQUAL);
 
     // Special treatment for vertical segments: a vertical segment is smaller
@@ -1783,7 +1809,7 @@ protected:
   Comparison_result _circs_compare_to_left (const Self& cv, 
                                             const Point_2& p) const
   {
-    if (_index != 0 && _index == cv._index)
+    if (_index() != 0 && _index() == cv._index())
     {
       // Check the case of comparing two circular arcs that originate from the
       // same supporting circle. Their comparison result is not EQUAL only if
@@ -2267,9 +2293,9 @@ protected:
     }
     else
     {
-      if ((_orient == cv._orient &&
+      if ((orientation() == cv.orientation() &&
            _source.equals (cv._source) && _target.equals (cv._target)) ||
-          (_orient != cv._orient &&
+          (orientation() != cv.orientation() &&
            _source.equals (cv._target) && _target.equals (cv._source)))
       {
         overlap = cv;
@@ -2293,7 +2319,7 @@ protected:
         //             cv:               +=====>
         overlap = *this;
 
-        if (overlap._dir_right)
+        if (overlap.is_directed_right())
           overlap._source = cv.left();
         else
           overlap._target = cv.left();
@@ -2307,7 +2333,7 @@ protected:
       //             cv:   +=====>
       overlap = *this;
 
-      if (overlap._dir_right)
+      if (overlap.is_directed_right())
         overlap._target = cv.right();
       else
         overlap._source = cv.right();
