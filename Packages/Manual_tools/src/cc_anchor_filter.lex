@@ -33,7 +33,7 @@ namespace std {
 #endif // ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 
 template <>
-struct std::hash<std::string>
+struct hash<std::string>
 {
   size_t operator()(const std::string& str) const
   {
