@@ -75,7 +75,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     if(event->is_action())
     {
       Vertex_const_handle vh = event->get_point().get_vertex_handle();
-      *m_out = std::make_pair(event->get_point(), 
+      *m_out = std::make_pair(event->get_point().base_point(), 
                               CGAL::make_object(vh));
       ++m_out;
       return true;
@@ -88,14 +88,14 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
       {
         Subcurve* sc = *(event->right_curves_begin());
         Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
-        *m_out = std::make_pair(event->get_point(), 
+        *m_out = std::make_pair(event->get_point().base_point(), 
                                 CGAL::make_object(he->target()));
         ++m_out;
         return true;
       }
       Subcurve* sc = *(event->left_curves_begin());
       Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
-      *m_out = std::make_pair (event->get_point(),
+      *m_out = std::make_pair (event->get_point().base_point(),
                                make_object(he->source()));
       ++m_out;
       return true;
@@ -104,7 +104,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
      //UNBOUNDED_FACE
     if(above == this ->status_line_end())
     {
-      *m_out = std::make_pair (event->get_point(),
+      *m_out = std::make_pair (event->get_point().base_point(),
                                CGAL::make_object(m_arr.unbounded_face()));
       ++m_out;
       return true;
@@ -115,7 +115,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     {
       Halfedge_const_handle he = 
         (*above)->get_last_curve().get_halfedge_handle();
-      *m_out = std::make_pair (event->get_point(),
+      *m_out = std::make_pair (event->get_point().base_point(),
                                make_object(he));
       ++m_out;
       return true;
@@ -124,7 +124,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     //FACE or UNBOUNDED_FACE
     Halfedge_const_handle he = 
       (*above)->get_last_curve().get_halfedge_handle();
-    *m_out = std::make_pair (event->get_point(),
+    *m_out = std::make_pair (event->get_point().base_point(),
                              CGAL::make_object(he->face()));
     ++m_out;
     return true;
