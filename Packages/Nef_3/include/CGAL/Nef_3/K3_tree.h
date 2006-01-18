@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
+ // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -244,6 +244,55 @@ public:
         }
 #endif // CGAL_NEF3_TRIANGULATE_FACETS 
     }
+  }
+
+  std::size_t bytes() {
+    // bytes used for the Kd-tree
+    std::size_t s = sizeof(Node);
+    if(left_node != 0)
+      s += left_node->bytes();
+    if(right_node != 0)
+      s += right_node->bytes();
+    typename Object_list::iterator o;
+    for(o = object_list.begin(); o != object_list.end(); ++o)
+      s += sizeof(*o);
+    return s;
+  }
+
+  std::size_t leafs(int mask = 255, int lower_limit = 0) {
+    std::size_t s = 0;
+    Halffacet_handle f;    
+    Halfedge_handle e;
+    Vertex_handle v;
+    typename Object_list::iterator o;
+    if(mask == 0) 
+      s = 1;
+    else {
+      for(o = object_list.begin(); o != object_list.end(); ++o) {
+	if((mask & 1) && assign(v,*o))
+	  ++s;
+	else if((mask&2) && assign(e,*o))
+	  ++s;
+	else if(((mask&4) || (mask&8)) && assign(f,*o)) {
+	  if(mask&4)
+	    ++s;
+	  else {
+	    int length = 0;	
+	    typename Traits::SHalfedge_around_facet_circulator safc(f->facet_cycles_begin()), 
+	      send(safc);
+	    while(++length < lower_limit && ++safc != send);
+	    if(length >= lower_limit)
+	      ++s;	
+	  }
+	}
+      }
+    }
+    
+    if(left_node != 0)
+      s += left_node->leafs(mask, lower_limit);
+    if(right_node != 0)
+      s += right_node->leafs(mask, lower_limit);
+    return s;
   }
 
   template<typename Depth>
@@ -725,6 +774,9 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
     V.post_visit(current);
   }
 
+  size_t bytes() { return root->bytes();}
+  size_t leafs(int mask = 255, int lower_limit=0) { return root->leafs(mask, lower_limit);}
+
   void transform(const Aff_transformation_3& t) {
     // TODO: Bounding box must be updated/transformed, too
     if(root != 0)
@@ -949,14 +1001,17 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   bool splitted = classify_objects( v_end, O.end(), partition_plane, sop,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2), depth);
+
+  bool non_efective_split = false;
   if( !splitted) {
     CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
-    return new Node( parent, 0, 0, Plane_3(), O);
+    //    return new Node( parent, 0, 0, Plane_3(), O);
+    non_efective_split = true;
+  } else {
+    CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
+    //  CGAL_assertion( O1.size() + O2.size() >= O.size());
+    non_efective_split = ((O1.size() == O.size()) || (O2.size() == O.size()));
   }
-
-  CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
-  //  CGAL_assertion( O1.size() + O2.size() >= O.size());
-  bool non_efective_split = ((O1.size() == O.size()) || (O2.size() == O.size()));
   if( non_efective_split)
     non_efective_splits++;
   else
@@ -973,7 +1028,8 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
 
 template <typename Depth>
 bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth) {
-  if( depth >= max_depth)
+  //  if( depth >= max_depth)
+  if(depth >= max_depth-2)
     return false;
   if(std::distance(start,end)<2)
     return false;
@@ -990,19 +1046,20 @@ bool classify_objects(Object_iterator start, Object_iterator end,
   Point_3 point_on_plane(partition_plane.point());
 
   for( o = start; o != end; ++o) {
-    Oriented_side side = sop( partition_plane, point_on_plane, *o, depth);
 #ifdef CGAL_NEF3_FACET_WITH_BOX
-    Partial_facet pf,pfn,pfp;
-    if( side == ON_ORIENTED_BOUNDARY && CGAL::assign(pf, *o)) {
+    Partial_facet pf;
+    if(CGAL::assign(pf, *o)) {
+      Partial_facet pfn,pfp;
       if(pf.divide(partition_plane, pfn, pfp)) {
-        *o1 = Object_handle(pfn);
-        ++o1;
-        *o2 = Object_handle(pfp);
-        ++o2;
+	*o1 = Object_handle(pfn);
+	++o1;
+	*o2 = Object_handle(pfp);
+	++o2;
 	continue;
       }
     }
 #endif
+    Oriented_side side = sop( partition_plane, point_on_plane, *o, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
       ++o1;
