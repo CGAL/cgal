@@ -18,11 +18,11 @@
 
 \ccDefinition
   
-The \ccc{Pure_complex_2_in_triangulation_3<Tr>} data structure is able to store
+The \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>} data structure is able to store
 a pure two dimensional complex embedded in a triangulation.
 The concept \ccRefName\ describes the base vertex type to be
 used  in the  triangulation class \ccc{Tr}  plugged in a
-\ccc{Pure_complex_2_in_triangulation_3<Tr>} data structure.
+\ccc{Surface_mesh__complex_2_in_triangulation_3<Tr>} data structure.
 
 
 
@@ -30,9 +30,13 @@ used  in the  triangulation class \ccc{Tr}  plugged in a
 
 \ccc{TriangulationVertexBase_3}
 
-The concept \ccRefName\ adds a boolean \ccc{visited} marker 
-and a caching mechanism to store the 
-answer of an \ccc{is_regular()} query.
+The concept \ccRefName\ 
+add functions to store and retrieve the status of the vertex.
+This feature is required to allow a caching mecanism
+for the vertex status.
+%a boolean \ccc{visited} marker 
+%and a caching mechanism to store the 
+%answer of an \ccc{is_regular()} query.
 
 %\ccTypes
 
@@ -45,8 +49,9 @@ answer of an \ccc{is_regular()} query.
 
 \ccOperations
 
-\ccMethod{bool is_visited();}{returns true if the visited mark is
-set.}
+\ccMethod{bool is_regular();}{returns \ccc{TRUE} if the vertex is
+regular, \ccc{FALSE} if it is not regular and \ccc{UNKNOWN} if the status
+is not known yet.}
 \ccGlue
 \ccMethod{void  set_visited(bool b);}{sets the visited mark as b.}
 

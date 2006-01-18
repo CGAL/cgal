@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{make_surface_mesh<C2T3, Oracle,
+\begin{ccRefFunction}{make_surface_mesh<C2T3, SurfaceOracle,
 Criteria, Tag>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -22,7 +22,7 @@ Criteria, Tag>}  %% add template arg's if necessary
 The function \ccRefName\ computes a two dimensional mesh 
 approximating  a surface.
 
-The template parameter \ccc{Oracle} describes the type of the 
+The template parameter \ccc{SurfaceOracle} describes the type of the 
 surface  to be meshed. 
 The plugged in class 
 has to be a model of the concept \ccc{SurfaceOracle}.
@@ -69,11 +69,11 @@ guarantees nothing else.
 \ccInclude{CGAL/make_surface_mesh.h}
 
 \ccGlobalFunction{template <class C2T3,
-                            class Oracle,
+                            class SurfaceOracle,
                             class Criteria,
                             class Tag >
 void make_surface_mesh(C2T3& c2t3,
-                       Oracle surf,
+                       SurfaceOracle surfor,
                        Criteria criteria,
                        Tag = Non_manifold_tag());}
 

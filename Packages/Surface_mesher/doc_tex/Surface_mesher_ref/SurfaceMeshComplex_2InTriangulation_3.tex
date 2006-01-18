@@ -41,7 +41,7 @@ The concept \ccRefName\  is particularly suited to handle
 surface meshes obtained as the restriction to a surface of 
 a  three dimensional Delaunay triangulation.
 A model of this concept is to  be used as first parameter in the global
-function \ccc{make_surface_mesh<C2T3,Oracle,Criteria,Tag>}.
+function \ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}.
 
 
 The concept \ccRefName\   is a simplification of more general concepts called
@@ -77,7 +77,7 @@ the  underlying triangulation facets.}
 the  underlying triangulation edges.}
 
 
-\ccEnum{enum Face_type {NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR,
+\ccEnum{enum Face_status {NOT_IN_COMPLEX, BOUNDARY, REGULAR,
 SINGULAR};}
 {A type to describe the status of a face (facet, edge, or vertex) with respect to 
 the 2D pure complex. A \ccc{NOT_IN_COMPLEX} face does not belong to the 2D complex.
@@ -87,10 +87,10 @@ An edge in the complex is said to be
 \ccc{BOUNDARY},
 \ccc{REGULAR}, or \ccc{SINGULAR},
  if it is incident to respectively 1, 2,  or 3 or
-more facets in the complex, respectively. 
+more facets in the complex. 
 A vertex  is said to be \ccc{BOUNDARY},
 if the adjacency graph of incidents facets 
-is a simple path  and \ccc{REGULAR}, if this graph is  a cycle.
+is a simple path  and \ccc{REGULAR} if this graph is  a cycle.
 Any other vertex of the complex is \ccc{SINGULAR}.
 }
 
@@ -145,21 +145,21 @@ a function object with an operator to select facets:
 {Removes facet \ccc{(c,i)} from the 2D complex.}
 
 \ccHeading{Queries}
-Queries on the type of individual face with respect to the 2D complex.
-\ccMethod{Face_type  face_type(Facet f);}
+Queries on the status  of individual face with respect to the 2D complex.
+\ccMethod{Face_status   face_status(Facet f);}
 {Returns the type of the facet \ccc{f}  with respect to  the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Cell_handle c, int i);}
+\ccMethod{Face_status  face_status(Cell_handle c, int i);}
 {Returns the type of the facet \ccc{(c,i)} with respect to  the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Edge e);}
+\ccMethod{Face_status  face_status(Edge e);}
 {Returns the type of edge \ccc{e} in the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Cell_handle c, int
+\ccMethod{Face_status  face_status(Cell_handle c, int
 i, int j);}
 {Returns the type of edge \ccc{(c,i,j)}  in the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Vertex_handle v);}
+\ccMethod{Face_status  face_status(Vertex_handle v);}
 {Returns the type of vertex \ccc{v} in the 2D complex.}
 \ccGlue
 \ccMethod{bool is_in_complex(Facet f);}
@@ -200,45 +200,59 @@ i, int j);}
 \ccMethod{bool is_on_boundary(Vertex_handle v);}
 {returns \ccc{true}, if the vertex \ccc{v} is on the boundary.
 \ccPrecond{\ccc{v} is a vertex of the complex.} }
+\ccGlue
+\ccMethod{bool is_singular(Edge e);}
+{returns \ccc{true}, if the edge  \ccc{e} is regular.
+\ccPrecond{\ccc{e} is an edge of the complex.} }
+\ccGlue
+\ccMethod{bool is_singular(Cell_handle c, int i, int j);}
+{returns \ccc{true}, if the edge \ccc{(c,i,j)} is regular.
+\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
+\ccGlue
+\ccMethod{bool is_singular(Vertex_handle v);}
+{returns \ccc{true}, if the vertex \ccc{v} is regular.
+\ccPrecond{\ccc{v} is a vertex of the complex.} }
 
-Queries on the 2D complex. 
 
-\ccMethod{bool is_manifold();}
-{returns \ccc{true}, if the complex is manifold.}
-\ccGlue
-\ccMethod{bool is_connected_component_manifold(Facet f);}
-{Returns true, if the   
-connected component including  facet \ccc{f} is manifold.}
-\ccGlue
-\ccMethod{std::size_type number_of_connected_components();}
-{Returns the number of connected components of the
-complex.}
-\ccGlue
-\ccMethod{std::size_type 
-number_of_connected_components_of_boundary();}
-{Returns the number of connected components of the boundary
-  the complex.}
-\ccGlue
-\ccMethod{std::size_type
-number_of_connected_components_of_boundary(Facet f);}
-{Returns the number of connected components of the boundary
-of connected component of the complex including facet \ccc{f}.}
-\ccGlue
-\ccMethod{std::size_type
-number_of_connected_components_of_boundary(Cell_handle c, int i);}
-{Returns the number of connected components of the boundary
-of connected component of the complex including facet
-\ccc{(c,i)}}
-\ccGlue
-\ccMethod{std::size_type
-genus(Facet f);}
-{Returns the topological genus 
-of the connected component of the complex including facet \ccc{f}.}
-\ccGlue
-\ccMethod{std::size_type
-genus(Cell_handle c, int i);}
-{Returns the topological genus 
-of connected component of the complex including facet \ccc{(c,i)}.}
+
+%Queries on the 2D complex. 
+
+%\ccMethod{bool is_manifold();}
+%{returns \ccc{true}, if the complex is manifold.}
+%\ccGlue
+%\ccMethod{bool is_connected_component_manifold(Facet f);}
+%{Returns true, if the   
+%connected component including  facet \ccc{f} is manifold.}
+%\ccGlue
+%\ccMethod{std::size_type number_of_connected_components();}
+%{Returns the number of connected components of the
+%complex.}
+%\ccGlue
+%\ccMethod{std::size_type 
+%number_of_connected_components_of_boundary();}
+%{Returns the number of connected components of the boundary
+%  the complex.}
+%\ccGlue
+%\ccMethod{std::size_type
+%number_of_connected_components_of_boundary(Facet f);}
+%{Returns the number of connected components of the boundary
+%of connected component of the complex including facet \ccc{f}.}
+%\ccGlue
+%\ccMethod{std::size_type
+%number_of_connected_components_of_boundary(Cell_handle c, int i);}
+%{Returns the number of connected components of the boundary
+%of connected component of the complex including facet
+%\ccc{(c,i)}}
+%\ccGlue
+%\ccMethod{std::size_type
+%genus(Facet f);}
+%{Returns the topological genus 
+%of the connected component of the complex including facet \ccc{f}.}
+%\ccGlue
+%\ccMethod{std::size_type
+%genus(Cell_handle c, int i);}
+%{Returns the topological genus 
+%of connected component of the complex including facet \ccc{(c,i)}.}
 
 
 
@@ -290,45 +304,45 @@ vertices of the 2D complex that are  boundary vertices.}
 {Returns the past the end iterator for the above iterator.}
 
 
-\ccMethod{Facets_circulator
-incident_facets(Vertex_handle v);}
-{Returns a circulator to visit the facets of the complex around
-vertex \ccc{v}. Returns an empty circulator, if the vertex is 
-singular. For a boundary  vertex,  the circulator will wrap from the last
-incident facet  to the first one.}
-\ccGlue
-\ccMethod{Egdes_circulator
-incident_edges(Vertex_handle v);}
-{Returns a circulator to visit the edges of the complex around
-vertex \ccc{v}. Returns an empty circulator, if the vertex is 
-singular. For a boundary  vertex,  the circulator will wrap from the last
-incident edge  to the first one.}
-\ccGlue
-\ccMethod{Vertices_circulator
-incident_vertices(Vertex_handle v);}
-{Returns a circulator to visit the vertices of the complex around
-vertex \ccc{v}. Returns an empty circulator, if the vertex  or
-singular. For a boundary  vertex,  the circulator will wrap from the last
-incident vertex  to the first one.}
+%\ccMethod{Facets_circulator
+%incident_facets(Vertex_handle v);}
+%{Returns a circulator to visit the facets of the complex around
+%vertex \ccc{v}. Returns an empty circulator, if the vertex is 
+%singular. For a boundary  vertex,  the circulator will wrap from the last
+%incident facet  to the first one.}
+%\ccGlue
+%\ccMethod{Egdes_circulator
+%incident_edges(Vertex_handle v);}
+%{Returns a circulator to visit the edges of the complex around
+%vertex \ccc{v}. Returns an empty circulator, if the vertex is 
+%singular. For a boundary  vertex,  the circulator will wrap from the last
+%incident edge  to the first one.}
+%\ccGlue
+%\ccMethod{Vertices_circulator
+%incident_vertices(Vertex_handle v);}
+%{Returns a circulator to visit the vertices of the complex around
+%vertex \ccc{v}. Returns an empty circulator, if the vertex  or
+%singular. For a boundary  vertex,  the circulator will wrap from the last
+%incident vertex  to the first one.}
 
-The following function is the basic function to walk on the 2D
-complex
+%The following function is the basic function to walk on the 2D
+%complex
 
-\ccMethod{Facet neighbor(Facet f, int j);}
-{Returns the facet of the complex which is the neighbor of 
-the facet \ccc{f} opposite to the vertex with index \ccc{j} of
-\ccc{f}.
-The vertices of the facet \ccc{f = (cell  c, i)} are numbered
-(0,1,2) (according to the \ccc{vertex_triple_index(i,j)} member function
-of \ccc{Triangulation_3})
-in such a way that facet \ccc{f} is oriented by the
-outward normal of tetraedra \ccc{c}. 
-If there is no such neighbor, or if the edge is singular the functions returns \ccc{Facet()}.}
-\ccGlue
-\ccMethod{Facet neighbor(Cell_handle c, int i, int j);}
-{Returns the facet of the complex which is the neighbor of 
-the facet \ccc{f} opposite to the vertex with index \ccc{j} of \ccc{f}.
-See above.}
+%\ccMethod{Facet neighbor(Facet f, int j);}
+%{Returns the facet of the complex which is the neighbor of 
+%the facet \ccc{f} opposite to the vertex with index \ccc{j} of
+%\ccc{f}.
+%The vertices of the facet \ccc{f = (cell  c, i)} are numbered
+%(0,1,2) (according to the \ccc{vertex_triple_index(i,j)} member function
+%of \ccc{Triangulation_3})
+%in such a way that facet \ccc{f} is oriented by the
+%outward normal of tetraedra \ccc{c}. 
+%If there is no such neighbor, or if the edge is singular the functions returns \ccc{Facet()}.}
+%\ccGlue
+%\ccMethod{Facet neighbor(Cell_handle c, int i, int j);}
+%{Returns the facet of the complex which is the neighbor of 
+%the facet \ccc{f} opposite to the vertex with index \ccc{j} of \ccc{f}.
+%See above.}
 
 
 
