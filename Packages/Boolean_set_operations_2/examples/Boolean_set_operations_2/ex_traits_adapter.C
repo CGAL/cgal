@@ -16,53 +16,60 @@ typedef Nt_traits::Rational                             Rational;
 typedef Nt_traits::Algebraic                            Algebraic;
 typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
-                                                        Arr_traits;
-typedef CGAL::General_polygon_2<Arr_traits>             Polygon_2;
-typedef CGAL::Gps_traits_2<Arr_traits,Polygon_2>        Traits;
-typedef Traits::Polygon_with_holes_2                    Polygon_with_holes_2;
-typedef Traits::Curve_2                                 Curve_2;
-typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
-typedef Traits::Point_2                                 Point_2;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,
+                                 Alg_kernel,Nt_traits>  Conic_traits_2;
+typedef CGAL::General_polygon_2<Conic_traits_2>         Polygon_2;
+typedef CGAL::Gps_traits_2<Conic_traits_2, Polygon_2>   Traits_2;
+typedef Traits_2::Polygon_with_holes_2                  Polygon_with_holes_2;
+typedef Traits_2::Curve_2                               Curve_2;
+typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
+typedef Traits_2::Point_2                               Point_2;
 
-void conic_2_polygon(Curve_2 & conic, Polygon_2 & polygon)
+// Insert a conic arc as a polygon edge: Subdivide the arc into x-monotone
+// sub-arcs and append these sub-arcs as polygon edges.
+void append_conic_arc (Polygon_2& polygon, const Curve_2& arc)
 {
-  Traits traits;
-  std::list<CGAL::Object> objects;
-  traits.make_x_monotone_2_object()(conic, std::back_inserter(objects));
-  std::list<CGAL::Object>::iterator i;
-  for (i = objects.begin(); i != objects.end(); ++i) {
-    X_monotone_curve_2 xcurve;
-    CGAL::assign(xcurve, *i);
-    polygon.push_back(xcurve);
+  Conic_traits_2                    traits;
+  std::list<CGAL::Object>           objects;
+  std::list<CGAL::Object>::iterator it;
+  X_monotone_curve_2                xarc;
+
+  traits.make_x_monotone_2_object() (arc, std::back_inserter(objects));
+  for (it = objects.begin(); it != objects.end(); ++it)
+  {
+    if (CGAL::assign (xarc, *it))
+      polygon.push_back (arc);
   }
 }
 
-int main(int argc, char * argv[])
+int main ()
 {
-  // Construct a parabolic arc supported by a parabola: x^2 + 2y - 4 = 0),
-  // and whose endpoints are on the line y = 0
-  Curve_2 parabola1 =
-    Curve_2(1, 0, 0, 0, 2, -4, CGAL::COUNTERCLOCKWISE,
-            Point_2(2, 0), Point_2(-2, 0));
-  // Construct a parabolic arc supported by a parabola: x^2 - 2y - 4 = 0),
-  // and whose endpoints are on the line y = 0
-  Curve_2 parabola2 =
-    Curve_2(1, 0, 0, 0, -2, -4, CGAL::COUNTERCLOCKWISE,
-            Point_2(-2, 0), Point_2(2, 0));
+  // Construct a parabolic arc supported by a parabola: x^2 + 2y - 4 = 0,
+  // and whose endpoints lie on the line y = 0:
+  Curve_2 parabola1 = Curve_2 (1, 0, 0, 0, 2, -4, CGAL::COUNTERCLOCKWISE,
+                               Point_2(2, 0), Point_2(-2, 0));
+
+  // Construct a parabolic arc supported by a parabola: x^2 - 2y - 4 = 0,
+  // and whose endpoints lie on the line y = 0:
+  Curve_2 parabola2 = Curve_2 (1, 0, 0, 0, -2, -4, CGAL::COUNTERCLOCKWISE,
+                               Point_2(-2, 0), Point_2(2, 0));
   
-  Polygon_2 p1, p2;
-  conic_2_polygon(parabola1, p1);
-  conic_2_polygon(parabola2, p1);
+  // Construct a polygon from these two parabolic arcs.
+  Polygon_2 P;
+  append_conic_arc (P, parabola1);
+  append_conic_arc (P, parabola2);
 
-  Curve_2 ellipse = Curve_2(1, 9, 0, 0, 0, -9);
-  conic_2_polygon(ellipse, p2);
-  std::list<Polygon_with_holes_2> result;
-  CGAL::intersection(p1, p2, std::back_inserter(result));
+  // Construct a polygon that corresponds to the ellipse: x^2 + 9y^2 - 9 = 0:
+  Polygon_2 Q;
+  append_conic_arc (Q, Curve_2 (1, 9, 0, 0, 0, -9));
 
-  std::copy(result.begin(), result.end(),       // export to standard output
-            std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));
+  // Compute the union of the two polygons.
+  std::list<Polygon_with_holes_2> res;
+  CGAL::intersection (P, Q, std::back_inserter(res));
+
+  std::copy (res.begin(), res.end(),       // export to standard output
+             std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));
   std::cout << std::endl;
   
-  return 0;
+  return (0);
 }
