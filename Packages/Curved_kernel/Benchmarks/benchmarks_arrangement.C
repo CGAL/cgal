@@ -1,5 +1,5 @@
 #define CGAL_CAST_INT
-#inclure <CGAL/Algebraic_kernel/basic.h>
+#include <CGAL/Algebraic_kernel/basic.h>
 //#include <CGAL/basic.h>
 #include<CGAL/Handle_for.h>
 #include <CGAL/Cartesian.h>
@@ -119,16 +119,7 @@ else
 		std::cout<< "Default *.tex file is  :" << Texfilename<< std::endl;
  }
  
-// std::ifstream fin;
-// fin.open (Dxffilename[i]);
-// if (!fin.is_open())
-//   {
-//     cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
-//     fin.close();
-//     return 0;
-//     
-//   }
-// fin.close();
+
 
 
 Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
@@ -139,7 +130,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
  fin.open (Dxffilename[i]);
  if (!fin.is_open())
   {
-    cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
+    std::cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
     fin.close();
     return 0;
 
@@ -224,7 +215,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   bench.kernel("Lazy curved kernel  Variant traits");
   
  //  bench.Compute<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
-   //bench.Compute_dxf<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
+   bench.Compute_dxf<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
   /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Filtered_hexagone_Circular_kernel!!!!!!!!!!!!!!!!!!
 						

@@ -46,7 +46,7 @@ class Bench
     htmlout<<"<table border = \"3\">"<<std::endl;
     
     if(!ONLY_DXF){
-    htmlout<< "<tr bgcolor=#310063 ><td>Kernel</td><td>grid I(400 Circle_2)</td><td>grid II(800 Circle_2)</td><td>random double (100 Circle)</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td><td> rotation (125 Circle_2) </td></tr>" 
+    htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>grid I(400 Circle_2)</td><td>grid II(800 Circle_2)</td><td>random double (100 Circle)</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td><td> rotation (125 Circle_2) </td></tr>" 
     <<std::endl;
     
     texout << "\\documentclass[12pt]{article}"<<std::endl
@@ -55,7 +55,7 @@ class Bench
     <<"\\begin{tabular}{|c|c|c|c|c|c|}  \\hline $Kernel$ & grid I&grid II &random double & Dxf input. Dxf file is : "<< Dxffile <<" & rotation \\\\ \\hline"<<std::endl;
     }
     else
-    {htmlout<< "<tr bgcolor=#310063 ><td>Kernel</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td></tr>" 
+    {htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td></tr>" 
     <<std::endl;
     
     texout << "\\documentclass[12pt]{article}"<<std::endl
@@ -106,7 +106,7 @@ class Bench
   void empty_cell()
  {
    this->open_cell();
-    htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << endl
+    htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << std::endl
     << "<tr><td>"
     <<"-"<<"</td><td>"
     <<"-"<< "</td><td>"
@@ -137,11 +137,11 @@ class Bench
  void newDxfFilename(char* Dxffilename="")
  {Dxffile=Dxffilename;
      if(!ONLY_DXF){
-    	htmlout<< "<tr  bgcolor=#310063 ><td>Kernel</td><td>grid I</td><td>grid II</td><td>random double</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td><td> rotation </td></tr>" 
+    	htmlout<< "<tr  bgcolor=\"gray\"><td>Kernel</td><td>grid I</td><td>grid II</td><td>random double</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td><td> rotation </td></tr>" 
     	<<std::endl;
     }
     else{   
-    htmlout<< "<tr bgcolor=#310063 ><td>Kernel</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td> </tr>"
+    htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td> </tr>"
     <<std::endl;
     
     texout <<"\\begin{tabular}{|c|c|c|c|c|c|}  \\hline $Kernel$  & Dxf input. Dxf file is : "<< Dxffile <<" \\\\ \\hline"<<std::endl;
@@ -166,7 +166,7 @@ class Bench
    timersub(&(after.ru_utime),&(before.ru_utime),&utime);
    timersub(&(after.ru_stime),&(before.ru_stime),&stime);
 
-   htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << endl
+   htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << std::endl
    << "<tr><td>"
    <<utime.tv_sec<<"."<<utime.tv_usec <<"</td><td>"
    << numof_f_fails << "</td><td>"
@@ -188,7 +188,7 @@ class Bench
   
   void fail(void)
   {
-    htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << endl
+    htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" <<std::endl
     << "<tr><td>"
     <<"fail"<<"</td><td>"
     <<"fail"<< "</td><td>"
