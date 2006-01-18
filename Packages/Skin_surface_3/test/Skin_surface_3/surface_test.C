@@ -1,4 +1,4 @@
-// examples/Skin_surface_3/skin_surface_simple.C
+// test/Skin_surface_3/surface_test.C
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>

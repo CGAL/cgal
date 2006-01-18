@@ -22,16 +22,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class MarchingTetrahedraTraits_3>
+template <class Triangulation_3, class Polyhedron_3>
 class Marching_tetrahedra_observer_default_3 {
 public:
-  typedef MarchingTetrahedraTraits_3            Traits;
-  typedef typename Traits::Triangulation        Triangulation;
-  typedef typename Traits::Halfedge_DS          Halfedge_DS;
+  typedef Triangulation_3                     Triangulation;
+  typedef Polyhedron_3                        Polyhedron;
   
-  typedef typename Triangulation::Cell_handle   Triangulation_cell_handle;
-  typedef typename Halfedge_DS::Vertex_handle   Polyhedron_vertex_handle; 
-  typedef typename Halfedge_DS::Facet_handle    Polyhedron_facet_handle; 
+  typedef typename Triangulation::Cell_handle Triangulation_cell_handle;
+  typedef typename Polyhedron::Vertex_handle  Polyhedron_vertex_handle; 
+  typedef typename Polyhedron::Facet_handle   Polyhedron_facet_handle; 
 
   Marching_tetrahedra_observer_default_3() {
   }

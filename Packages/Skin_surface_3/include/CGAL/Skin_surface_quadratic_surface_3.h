@@ -42,7 +42,7 @@ public:
 
   Skin_surface_quadratic_surface_3() {
   }
-//   virtual ~Skin_surface_quadratic_surface_3() {};
+  virtual ~Skin_surface_quadratic_surface_3() {};
 //   // Construct the intersection point with the segment (p0,p1)
   Point to_surface(const Point &p0, const Point &p1) {
     RT sq_d = squared_distance(p0,p1);

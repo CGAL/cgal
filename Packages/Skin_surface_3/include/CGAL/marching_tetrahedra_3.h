@@ -193,7 +193,7 @@ void marching_tetrahedra_3(
   const MarchingTetrahedraTraits_3 &traits) {
   
   typedef typename Polyhedron_3::HalfedgeDS                     HDS;
-  typedef Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>
+  typedef Marching_tetrahedra_observer_default_3<Triangulation_3, Polyhedron_3>
                                                                 Observer; 
   typedef Marching_tetrahedra_builder<
     Triangulation_3, HDS, MarchingTetrahedraTraits_3, Observer> Builder;

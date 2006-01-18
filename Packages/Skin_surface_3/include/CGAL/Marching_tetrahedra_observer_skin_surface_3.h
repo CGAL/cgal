@@ -20,32 +20,37 @@
 #ifndef MARCHING_TETRAHEDRA_OBSERVER_SKIN_SURFACE_3_H
 #define MARCHING_TETRAHEDRA_OBSERVER_SKIN_SURFACE_3_H
 
+#include <CGAL/Marching_tetrahedra_observer_default_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Triangulation_3,
-	  class Polyhedron_3 >
-class Marching_tetrahedra_observer_skin_surface_3 {
+	  class Polyhedron_3>
+class Marching_tetrahedra_observer_skin_surface_3
+  : public Marching_tetrahedra_observer_default_3<Triangulation_3, Polyhedron_3>
+{
 public:
-  typedef Triangulation_3                       Triangulation;
-  typedef typename Triangulation::Cell_handle   Triangulation_cell_handle;
-  typedef typename Polyhedron_3::Vertex_handle  Polyhedron_vertex_handle; 
-  typedef typename Polyhedron_3::Facet_handle   Polyhedron_facet_handle; 
+  typedef Marching_tetrahedra_observer_default_3<Triangulation_3, Polyhedron_3>
+                                                Base;
 
-  Marching_tetrahedra_observer_skin_surface_3() {
+  typedef Triangulation_3                     Triangulation;
+  typedef Polyhedron_3                        Polyhedron;
+  
+  typedef typename Triangulation::Cell_handle Triangulation_cell_handle;
+  typedef typename Polyhedron::Vertex_handle  Polyhedron_vertex_handle; 
+  typedef typename Polyhedron::Facet_handle   Polyhedron_facet_handle; 
+
+  Marching_tetrahedra_observer_skin_surface_3() : Base() {
   }
 
   Marching_tetrahedra_observer_skin_surface_3(
-    const  Marching_tetrahedra_observer_skin_surface_3& traits2) {
-  }
+    const  Marching_tetrahedra_observer_skin_surface_3& traits2) : Base(traits2)
+  {}
 
-  void after_vertex_insertion(
-    Triangulation_cell_handle ch,  int i, int j,
-    Polyhedron_vertex_handle vh) {
-  }
-  
   void after_facet_insertion(
     Triangulation_cell_handle ch,
     Polyhedron_facet_handle fh) {
+    fh->triang_ch = ch;
   }
 
 };

@@ -1,14 +1,17 @@
 // examples/Skin_surface_3/skin_surface_sqrt3.C
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/skin_surface_3.h>
+#include <CGAL/Skin_surface_polyhedral_items_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/skin_surface_sqrt3_3.h>
+#include <CGAL/Skin_surface_refinement_traits_with_face_info_3.h>
+
+#include <CGAL/Marching_tetrahedra_observer_skin_surface_3.h>
+
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Skin_surface_sqrt3_3.h>
-#include <CGAL/Skin_surface_refinement_traits_3.h>
 
 #include <list>
 #include <fstream>
-#include <CGAL/Inverse_index.h>
 
 typedef CGAL::Skin_surface_traits_3<>                    Skin_surface_traits;
 typedef Skin_surface_traits::Regular_traits              Regular_traits;
@@ -18,7 +21,10 @@ typedef Regular_traits::Weighted_point                   Reg_weighted_point;
 typedef CGAL::Triangulated_mixed_complex_3<Skin_surface_traits>
                                                      Triangulated_mixed_complex;
 typedef Skin_surface_traits::Polyhedron_traits       Polyhedron_kernel;
-typedef CGAL::Polyhedron_3<Polyhedron_kernel>        Polyhedron;
+typedef CGAL::Skin_surface_polyhedral_items_3<
+          Triangulated_mixed_complex>                Polyhedral_items;
+
+typedef CGAL::Polyhedron_3<Polyhedron_kernel, Polyhedral_items> Polyhedron;
 
 typedef CGAL::Marching_tetrahedra_traits_skin_surface_3<
   Triangulated_mixed_complex,
@@ -27,9 +33,9 @@ typedef CGAL::Marching_tetrahedra_traits_skin_surface_3<
 typedef CGAL::Marching_tetrahedra_observer_skin_surface_3<
   Triangulated_mixed_complex, Polyhedron>     Marching_tetrahedra_observer;
 
-typedef CGAL::Skin_surface_refinement_traits_3<
+typedef CGAL::Skin_surface_refinement_traits_with_face_info_3<
           Triangulated_mixed_complex, 
-          Polyhedron_kernel, 
+          Polyhedron, 
           Skin_surface_traits::T2P_converter,
           Skin_surface_traits::P2T_converter>    Skin_surface_refinement_traits;
 
@@ -58,19 +64,15 @@ int main(int argc, char *argv[]) {
   CGAL::marching_tetrahedra_3(
     triangulated_mixed_complex, polyhedron, marching_traits, marching_observer);
 
-  { // Write coarse mesh
-    std::ofstream out("coarse.off");
-    out << polyhedron;
-  }
-
   // Subdivide mesh:
   Skin_surface_refinement_traits refinement_traits(triangulated_mixed_complex);
-  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits);
-
+  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits, 3);
+  
   { // Write subdivided mesh with normals:
-    typedef Polyhedron::Vertex_const_iterator                  VCI;
-    typedef Polyhedron::Facet_const_iterator                   FCI;
-    typedef Polyhedron::Halfedge_around_facet_const_circulator HFCC;
+    typedef Polyhedron::Vertex_iterator                        Vertex_iterator;
+    typedef Polyhedron::Facet_iterator                   Facet_iterator;
+    typedef Polyhedron::Halfedge_around_facet_circulator       HFC;
+    typedef Polyhedron::Vertex_handle                          Vertex_handle;
 
     std::ofstream out("mesh.off");
     out << "NOFF " << polyhedron.size_of_vertices ()
@@ -78,23 +80,24 @@ int main(int argc, char *argv[]) {
 	<< " " << polyhedron.size_of_halfedges()
 	<< std::endl;
 
-    for (VCI vit = polyhedron.vertices_begin();
+    for (Vertex_iterator vit = polyhedron.vertices_begin();
 	 vit != polyhedron.vertices_end(); vit ++) {
       out << vit->point() << " "
-	  << refinement_traits.normal(vit->point())
+	  << refinement_traits.normal(vit)
 	  << std::endl;
     }
-    CGAL::Inverse_index<VCI> index(
+    CGAL::Inverse_index<Vertex_handle> index(
       polyhedron.vertices_begin(),
       polyhedron.vertices_end());
-    for(FCI fi = polyhedron.facets_begin();
+    for(Facet_iterator fi = polyhedron.facets_begin();
 	fi != polyhedron.facets_end(); ++fi) {
-      HFCC hc = fi->facet_begin();
-      HFCC hc_end = hc;
+      HFC hc = fi->facet_begin();
+      HFC hc_end = hc;
       std::size_t n = circulator_size( hc);
       out << n;
       do {
-	out << " " << index[hc->vertex()];
+	Vertex_handle vh = (*hc).vertex();
+	out << " " << index[vh];
       } while (++hc != hc_end);
       out << "\n";
     }

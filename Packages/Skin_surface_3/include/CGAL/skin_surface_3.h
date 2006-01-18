@@ -25,7 +25,7 @@
 #include <CGAL/Triangulated_mixed_complex_3.h>
 #include <CGAL/triangulate_mixed_complex_3.h>
 #include <CGAL/Marching_tetrahedra_traits_skin_surface_3.h>
-#include <CGAL/Marching_tetrahedra_observer_skin_surface_3.h>
+#include <CGAL/Marching_tetrahedra_observer_default_3.h>
 #include <CGAL/marching_tetrahedra_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -95,7 +95,7 @@ void skin_surface_3(InputIterator first, InputIterator last,
     Triangulated_mixed_complex,
     Polyhedron_3,
     typename SkinSurfaceTraits_3::T2P_converter>  Marching_tetrahedra_traits;
-  typedef Marching_tetrahedra_observer_skin_surface_3<
+  typedef Marching_tetrahedra_observer_default_3<
     Triangulated_mixed_complex, Polyhedron_3>     Marching_tetrahedra_observer;
     
   // Code

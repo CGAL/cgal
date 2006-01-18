@@ -39,6 +39,7 @@ class Skin_surface_sqrt3
   typedef typename Kernel::Vector_3                           Vector;
 	
   typedef typename Polyhedron::Vertex                         Vertex;
+  typedef typename Polyhedron::Vertex_handle                  Vertex_handle;
   typedef typename Polyhedron::Vertex_iterator                Vertex_iterator;
   typedef typename Polyhedron::Edge_iterator                  Edge_iterator;
   typedef typename Polyhedron::Halfedge_handle                Halfedge_handle;
@@ -65,17 +66,12 @@ public:
     if(P.size_of_facets() == 0)
       return false;
 
-    while (iter > 0) {
-      // normalize border
-      P.normalize_border();
+    // normalize border: there is no border
+    P.normalize_border();
 
-      if (iter >1) {
-	subdivide_twice();
-	iter = iter - 2;
-      } else {
-	subdivide_once();
-	iter--;
-      }
+    while (iter > 0) {
+      subdivide();
+      iter--;
     }
     return true;
   }
@@ -85,7 +81,7 @@ private:
   //*********************************************
   // Subdivide
   //*********************************************
-  void subdivide_once()
+  void subdivide()
   {
 
     // We use that new vertices/halfedges/facets are appended at the end.
@@ -115,65 +111,19 @@ private:
 
     v = ++last_v; // First new vertex
     last_v = P.vertices_end();
-    -- last_v;  // the last of the old vertices
     do {
       to_surface(v);
-    } while (v++ != last_v);
+    } while (++v != last_v);
 
     CGAL_postcondition( P.is_valid());
   }
 
-  //*********************************************
-  // Subdivide
-  //*********************************************
-  void subdivide_twice()
-  {
-
-    // We use that new vertices/halfedges/facets are appended at the end.
-    Vertex_iterator last_v = P.vertices_end();
-    -- last_v;  // the last of the old vertices
-    Edge_iterator last_e = P.edges_end();
-    -- last_e;  // the last of the old edges
-    Facet_iterator last_f = P.facets_end();
-    -- last_f;  // the last of the old facets
-
-    // split edges
-    Edge_iterator  e = P.edges_begin ();
-    do {
-      trisect_halfedge(P, e);
-    } while ( e++ != last_e);
-
-    Vertex_iterator v = P.vertices_begin();
-    do {
-      Halfedge_handle h_cir, h_start;
-      h_cir = h_start = v->halfedge () ;
-      do {
-        P.split_facet (h_cir->prev(), h_cir->next());
-        h_cir = h_cir->next()->opposite();
-      } while (h_cir != h_start);
-    } while (v++ != last_v);
-
-    Facet_iterator f = P.facets_begin();
-    do {
-      create_center_vertex(P, f);
-    } while (f++ != last_f);
-
-    v = ++last_v; // First new vertex
-    last_v = P.vertices_end();
-    -- last_v;  // the last of the old vertices
-    do {
-      to_surface(v);
-    } while (v++ != last_v);
-
-    CGAL_postcondition( P.is_valid());
-  }
-  
   //*********************************************
   // Split halfedge
   //*********************************************
   void split_halfedge(Halfedge_handle e)
   {
-    // Create two new vertices on e.
+    // Create a new vertices on e.
     Point p_new = e->vertex()->point();
     e = e->prev();
     p_new = p_new + .5*(e->vertex()->point()-p_new);
@@ -182,46 +132,8 @@ private:
     e->next()->vertex()->point() = p_new;
   }
 
-  //*********************************************
-  // Trisect halfedge
-  //*********************************************
-  void trisect_halfedge(Polyhedron& P,
-			Halfedge_handle e)
-  {
-    // Create two new vertices on e.
-    Point p2 = e->vertex()->point();
-    e = e->prev();
-    Point p1 = e->vertex()->point();
-    Vector v = p2 - p1;
-
-    P.split_vertex( e, e->next()->opposite());
-    e->next()->vertex()->point() = p1 + .6666 * v;
-    P.split_vertex( e, e->next()->opposite());
-    e->next()->vertex()->point() = p1 + .3333 * v;
-  }
-
-
-  //*********************************************
-  // Create center vertex
-  //*********************************************
-  void create_center_vertex(Polyhedron& P,
-			    Facet_iterator f)
-  {
-    Vector vec( 0.0, 0.0, 0.0);
-    std::size_t order = 0;
-    HF_circulator h = f->facet_begin();
-    do {
-      vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
-      ++ order;
-    } while ( ++h != f->facet_begin());
-    CGAL_assertion( order >= 3); // guaranteed by definition of Polyhedron
-    Point center =  CGAL::ORIGIN + (vec / (FT)order);
-    Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
-    new_center->vertex()->point() = center;
-  }
-
-  void to_surface(Vertex_iterator v) {
-    v->point() = traits.to_surface_along_transversal_segment(v->point());
+  void to_surface(Vertex_handle v) {
+    v->point() = traits.to_surface_along_transversal_segment(v);
   }
   
   Polyhedron &P;
