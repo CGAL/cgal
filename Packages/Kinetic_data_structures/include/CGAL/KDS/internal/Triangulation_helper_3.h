@@ -199,7 +199,7 @@ class Triangulation_helper_3: public Tri
 //hi_there<Edge>(f);
 //hi_there(f);
             typedef typename Edge::first_type::value_type::Vertex_handle Q;
-            Q q;
+            //Q q;
             return vertex_of_edge(f, i);
         }
 

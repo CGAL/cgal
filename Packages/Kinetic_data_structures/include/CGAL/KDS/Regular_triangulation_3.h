@@ -382,10 +382,10 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
             for (typename Triangulation::Finite_vertices_iterator vit= triangulation().finite_vertices_begin();
             vit != triangulation().finite_vertices_end(); ++vit) {
                 if (triangulation().degree(vit) == 4) {
-                    Point_key k= vit->point();
-                                                  // it could be infinite
-		    // !! for VC
-                    CGAL_assertion(!!vit->info() || !vit->point());
+		  CGAL_assertion_code(Point_key k= vit->point());
+		  // it could be infinite
+		  // !! for VC
+		  CGAL_assertion(!!vit->info() || !k);
                 }
                 else {
                     CGAL_assertion(!vit->info());

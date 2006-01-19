@@ -31,7 +31,7 @@ class Root_container
 private:
   typedef Root_container<K> This;
   typedef typename K::Root_stack RE;
-
+  typedef typename K::Root   Root;
 public:
 
   class iterator
@@ -86,7 +86,7 @@ public:
     RE renum_;
   };
 
-  typedef typename K::Root   Root;
+ 
   Root_container(const typename K::Function &fn,
 		 const Root &lb,
 		 const Root &ub,
