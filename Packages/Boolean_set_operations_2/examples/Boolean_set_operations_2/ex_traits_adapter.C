@@ -38,7 +38,7 @@ void append_conic_arc (Polygon_2& polygon, const Curve_2& arc)
   for (it = objects.begin(); it != objects.end(); ++it)
   {
     if (CGAL::assign (xarc, *it))
-      polygon.push_back (arc);
+      polygon.push_back (xarc);
   }
 }
 
