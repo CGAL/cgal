@@ -473,6 +473,39 @@ private:
     return ON_ORIENTED_BOUNDARY ;
   }
 
+  Oriented_side oriented_side(const Polygon_2& pgn) const
+  {
+    Self other(pgn);
+    return (oriented_side(other));
+  }
+
+  Oriented_side oriented_side(const Polygon_with_holes_2& pgn) const
+  {
+    Self other(pgn);
+    return (oriented_side(other));
+  }
+
+  Oriented_side oriented_side(const Self& other) const
+  {
+     if(this->is_empty() || other.is_empty())
+      return ON_NEGATIVE_SIDE;
+
+    if(this->is_plane() || other.is_plane())
+      return ON_POSITIVE_SIDE;
+    
+    Arrangement_2 res_arr;
+
+    Bso_do_intersect_functor<Arrangement_2>  func;
+    overlay(*m_arr, *(other.m_arr), res_arr, func);
+    if (func.found_reg_intersection())
+      return ON_POSITIVE_SIDE;
+    
+    if(func.found_boundary_intersection())
+      return ON_ORIENTED_BOUNDARY;
+
+    return ON_NEGATIVE_SIDE;
+  }
+
 
   // returns the location of the query point
   bool locate(const Point_2& q, Polygon_with_holes_2& pgn) const;

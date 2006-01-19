@@ -111,7 +111,7 @@ public:
     return m_found_reg_intersection;
   }
 
-  bool found_boudary_intersection() const
+  bool found_boundary_intersection() const
   {
     return m_found_boudary_intersection;
   }
