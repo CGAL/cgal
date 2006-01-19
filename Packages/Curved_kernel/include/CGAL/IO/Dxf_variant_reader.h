@@ -105,9 +105,10 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 
         const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
 
-	Root_for_circles_2_2 rootxy = Root_for_circles_2_2(ps.x(), ps.y());
-	Circular_arc_point_2 cps = Circular_arc_point_2(rootxy);
-	Circular_arc_point_2 cpt = Circular_arc_point_2(rootxy);
+	Root_for_circles_2_2 rootps = Root_for_circles_2_2(ps.x(), ps.y());
+	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
+	Root_for_circles_2_2 rootpt = Root_for_circles_2_2(pt.x(), pt.y());
+	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
 	Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
 	//std::cerr << "arc with center: "  << to_double( x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;
 	//std::cerr << "source: " << to_double(ps.x()) << ", " << to_double(ps.y()) << " target: " << to_double(pt.x()) << ", " << to_double(pt.y()) << std::endl << std::endl;
@@ -136,9 +137,10 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       
       const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
       
-	Root_for_circles_2_2 rootxy =  Root_for_circles_2_2(ps.x(), ps.y());
-	Circular_arc_point_2 cps = Circular_arc_point_2(rootxy);
-	Circular_arc_point_2 cpt = Circular_arc_point_2(rootxy);
+	Root_for_circles_2_2 rootps =  Root_for_circles_2_2(ps.x(), ps.y());
+	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
+	Root_for_circles_2_2 rootpt =  Root_for_circles_2_2(pt.x(), pt.y());
+	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
       Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
 
       //std::cerr << "arc with center: "  << to_double(x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;	
