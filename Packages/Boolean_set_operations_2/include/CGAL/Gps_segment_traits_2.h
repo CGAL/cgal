@@ -27,6 +27,7 @@
 #include <CGAL/Boolean_set_operations_2/Polygon_2_curve_iterator.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
+#include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,14 +37,16 @@ template < class Kernel_,
 class Gps_segment_traits_2 : public Arr_seg_traits_
 {
   typedef Arr_seg_traits_                               Base;
-  typedef Gps_segment_traits_2<Kernel_>                 Self;
+  typedef Gps_segment_traits_2<Kernel_,
+                               Container_,
+                               Arr_seg_traits_>         Self;
 
 public:
 
   typedef CGAL::Polygon_2<Kernel_, Container_>          Polygon_2;
 
-  //Polygon_with_holes_2 can be non-simple polygon, with holes that are 
-  //entirely inside home , or some vertices of the polygon and its holes
+  //Polygon_with_holes_2 can be a simple polygon , with holes that are 
+  //entirely inside him , or some vertices of the polygon and its holes
   // may overlap.
   typedef CGAL::Polygon_with_holes_2<Kernel_, Container_>    
                                                         Polygon_with_holes_2;
@@ -56,14 +59,14 @@ public:
  
   typedef typename Base::Point_2                        Point_2;
 
-  typedef typename Base::Equal_2                        Equal_2;
-  typedef typename Base::Construct_min_vertex_2         Construct_min_vertex_2;
-  typedef typename Base::Construct_max_vertex_2         Construct_max_vertex_2;
-  typedef typename Base::Compare_endpoints_xy_2         Compare_endpoints_xy_2;
-
+ 
 
   class Construct_polygon_2
   {
+    typedef Gps_segment_traits_2<Kernel_,
+                               Container_,
+                               Arr_seg_traits_>         Self;
+    typedef Gps_traits_adaptor<Self>                    Traits_adaptor;
   public:
 
     template<class XCurveIterator>
@@ -71,16 +74,13 @@ public:
                     XCurveIterator end,
                     Polygon_2& pgn)
     {
-      Self self;
-      Compare_endpoints_xy_2 cmp_ends = self.compare_endpoints_xy_2_object();
-      Construct_min_vertex_2 min_v    = self.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_v    = self.construct_max_vertex_2_object();
+      Traits_adaptor tr;
+      typename Traits_adaptor::Construct_vertex_2 ctr_v =
+        tr.construct_vertex_2_object();
+
       for(XCurveIterator itr = begin; itr != end; ++itr)
       {
-        if(cmp_ends(*itr) == SMALLER)
-          pgn.push_back(max_v(*itr));
-        else
-          pgn.push_back(min_v(*itr));
+        pgn.push_back(ctr_v(*itr, 1));
       }
     }
   };
