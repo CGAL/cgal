@@ -369,18 +369,19 @@ public:
       const Point_3 &a1 = surf.vertex(0),
                      a2 = surf.vertex(1),
                      a3 = surf.vertex(2);
+      Point_2 b1 = parent->project(a1),
+              b2 = parent->project(a2),
+              b3 = parent->project(a3);
+
       if (!surf.is_vertical())
       {
-        *o++ = parent->project(Segment_3(a1, a2));
-        *o++ = parent->project(Segment_3(a2, a3));
-        *o++ = parent->project(Segment_3(a3, a1));
+        *o++ = Curve_2(b1, b2);
+        *o++ = Curve_2(b2, b3);
+        *o++ = Curve_2(b3, b1);
       }
       else
       {
         // only 2 curves in the output
-        Point_2 b1 = parent->project(a1),
-                b2 = parent->project(a2),
-                b3 = parent->project(a3);
         Kernel k;
         if (k.collinear_are_ordered_along_line_2_object()(b1, b2, b3))
         {
@@ -523,6 +524,7 @@ public:
   }
 
 
+
   /*!\brief
    * Check if the surface s1 is closer/equally distanced/farther 
    * from the envelope with respect to s2 at the xy-coordinates of p/c.
@@ -555,6 +557,7 @@ public:
       {
         parent->total_timer.start();
         parent->compare_timer.start();
+
       }
       
       #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
@@ -672,6 +675,7 @@ public:
       if (use_timer)
       {
         parent->total_timer.start();
+
         parent->compare_on_cv_timer.start();
       }
       // first try the endpoints, if cannot be sure, use the mid point
@@ -833,6 +837,7 @@ public:
         return Comparison_result(s1 * s2 * -1);      
     }  
   };
+
 
   /*! Get a Compare_distance_to_envelope_above_3 functor object. */
   Compare_distance_to_envelope_above_3
@@ -1241,6 +1246,7 @@ public:
 	    return make_object(Segment_3(plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
                                  plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
 
+
 	  }
 
 	  return Object();
@@ -1472,6 +1478,7 @@ public:
 
     const Plane_3& plane = surf.plane();
 
+
     // Construct a vertical line passing through point
     Direction_3 dir (0, 0, 1);
     Line_3      vl = k.construct_line_3_object() (point, dir);
@@ -1570,6 +1577,7 @@ public:
     return Construct_vertical_2();
   }
  
+
   Point_2 vertical_ray_shoot_2 (const Point_2& pt,
                                 const X_monotone_curve_2& cv) const
   {
@@ -1604,6 +1612,7 @@ public:
   {
     return type;
   }
+
 
   
   virtual ~Envelope_triangles_traits_3() {}
