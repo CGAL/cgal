@@ -69,23 +69,7 @@ public:
     Base (pwh)
   {}
 
-  /*! Constructor from a range of polygons. */
-  template <class PolygonIterator>
-  Polygon_set_2 (PolygonIterator pgn_begin, PolygonIterator pgn_end) :
-    Base(pgn_begin, pgn_end)
-  {} 
-
-  /*! Constructor from ranges of polygons and polygons with holes. */
-  template <class PolygonIterator, class PolygonWithHolesIterator>
-  Polygon_set_2 (PolygonIterator pgn_begin,
-                 PolygonIterator pgn_end,
-                 PolygonWithHolesIterator pgn_with_holes_begin,
-                 PolygonWithHolesIterator pgn_with_holes_end):
-    Base (pgn_begin, pgn_end, 
-          pgn_with_holes_begin, pgn_with_holes_end)
-  {}
-
-
+  
   void intersection(const Polygon_2& pgn)
   {
     Base::intersection(pgn);
