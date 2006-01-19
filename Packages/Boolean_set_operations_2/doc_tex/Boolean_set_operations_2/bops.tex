@@ -8,7 +8,7 @@
   \newlength{\widthRight}
 }
 
-\newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
+\newcommand{\reals}{\mathbb{R}}
 \newcommand{\calC}{{\cal C}}
 \newcommand{\calA}{{\cal A}}
 \newcommand{\eps}{{\varepsilon}}
@@ -108,7 +108,7 @@ simplicity hereafter.
 }
 
 Our package supports the following Boolean set-operations on two point
-sets $P$ and $Q$ that are comprized of general polygons:
+sets $P$ and $Q$ that are comprised of general polygons:
 \begin{description}
 \item[Intersection] computes the intersection $R = P \cap Q$.
 \item[Join] computes the union $R = P \cup Q$.
@@ -556,15 +556,15 @@ polygons represented by $R$, you can use the more efficient method
   R.insert (P);
 \end{alltt}
 
-As \ccc{insert()} assumes that $P \cap R = \emptyset$, it does try to
+As \ccc{insert()} assumes that $P \cap R = \emptyset$, it does not try to
 compute intersections between the boundaries of $P$ and of $R$. This
 fact significantly speeds up the insertion process in comparison with the
 insertion of a non-disjoint polygon that intersects $R$.
 
-The \ccc{join()} function is also overloaded, so it can also accept a
+The \ccc{insert()} function is also overloaded, so it can also accept a
 range of polygons. When a range of polygons are inserted into a
-polygon set $S$, all the general polygons in the range and the general
-polygons represented by $S$ must be pairwise disjoint in their interiors.
+polygon set $S$, all the polygons in the range and the polygons represented 
+by $S$ must be pairwise disjoint in their interiors.
 
 % -------------------------------------------
 \subsection{Performing Aggregated Operations}

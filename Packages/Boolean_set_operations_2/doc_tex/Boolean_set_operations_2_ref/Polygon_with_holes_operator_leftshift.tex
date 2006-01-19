@@ -7,9 +7,9 @@
 
 \ccDefinition
 
-This operator exports a general polygon or a general polygon with
-holes $P$ to the output stream \ccc{out}. The output is in ASCII
-format. Only the point coordinates of the boundary are exported.
+This operator exports a polygon with holes, a general polygon, or a general 
+polygon with holes $P$ to the output stream \ccc{out}. The output is in ASCII
+format.
 
 An ASCII and a binary format exist. The format can be selected with
 the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
@@ -18,18 +18,33 @@ can be used to allow for (a few) structuring comments in the
 output. Otherwise, the output would be free of comments.  The default
 for writing is ASCII without comments.
 
-\ccInclude{CGAL/General_polygon_2.h}
+\ccInclude{CGAL/Polygon_with_holes_2.h}
+\ccGlobalFunction{template <class Kernel, class Container>
+    ostream& operator<<(ostream& out, 
+                        const CGAL::Polygon_with_holes_2<Kernel,Container>& P);}
 
+The number of points of the outer boundary is exported followed by the 
+points themselves in counterclockwise order. Then, the holes, if exist, are
+exported. For each hole, the number of points of the outer boundary of the 
+hole is exported followed by the points themselves in clockwise order.
+
+\ccInclude{CGAL/General_polygon_2.h}
 \ccGlobalFunction{template <class ArrTraits>
     ostream& operator<<(ostream& out, 
                         const CGAL::General_polygon_2<ArrTraits>& P);}
-  
-\ccInclude{CGAL/General_polygon_with_holes_2.h}
+The number of curves of the outer boundary is exported followed by the 
+curves themselves in counterclockwise order.
 
+\ccInclude{CGAL/General_polygon_with_holes_2.h}
 \ccGlobalFunction{template <class Polygon>
   ostream& operator<<(ostream& out, 
                       const CGAL::General_polygon_with_holes_2<Polygon>& P);}
-  
+
+The number of curves of the outer boundary is exported followed by the 
+curves themselves in counterclockwise order. Then, the holes, if exist, are
+exported. For each hole, the number of curves of the outer boundary of the 
+hole is exported followed by the curves themselves in clockwise order.
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polygon_2<Kernel,Container>}\\ 

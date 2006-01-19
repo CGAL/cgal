@@ -48,16 +48,16 @@ GeneralPolygon_2(InputIterator begin, InputIterator end);}
 %=================
 
 \ccMethod{Curve_iterator curves_begin();} 
-{returns the begin const iterator of the curves.}
-\ccGlue
-\ccMethod{Curve_iterator curves_end();} 
-{returns the past-the-end const iterator of the curves.}
-
-\ccMethod{Curve_const_iterator curves_begin();} 
 {returns the begin iterator of the curves.}
 \ccGlue
-\ccMethod{Curve_const_iterator curves_end();} 
+\ccMethod{Curve_iterator curves_end();} 
 {returns the past-the-end iterator of the curves.}
+
+\ccMethod{Curve_const_iterator curves_begin();} 
+{returns the begin const iterator of the curves.}
+\ccGlue
+\ccMethod{Curve_const_iterator curves_end();} 
+{returns the past-the-end const iterator of the curves.}
 
 \ccModifiers
 % ==========

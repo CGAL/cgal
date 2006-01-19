@@ -2,7 +2,7 @@
 
 \begin{ccRefClass}{Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}
 
-\ccThree{Gps_segment_traits_2<Kernel>}{stuff()}{}
+\ccThree{Gps_segment_traits_2<Kernel,Container>}{Polygon_2}{}
 \ccThreeToTwo
 
 \ccDefinition
@@ -17,6 +17,8 @@ parameter \ccc{Container} is instantiated by
 \ccc{CGAL::Arr_segment_traits_2<Kernel>}.
 
 \ccInclude{CGAL/Gps_segment_traits_2.h}
+
+\ccTypedef{typedef CGAL::Polygon_2<Kernel,Container> Polygon_2;}{}
  
 \ccIsModel
   \ccc{GeneralPolygonSetTraits_2}

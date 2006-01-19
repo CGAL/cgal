@@ -48,7 +48,8 @@ OutputIterator complement(const Type & pgn, OutputIterator oi);}
 polygon \ccc{pgn}, inserts the resulting polygons with
 holes into an output container through a given output iterator
 \ccc{oi}, and returns the output iterator. The value type of the
-\ccc{OutputIterator} is \ccc{General_polygon_with_holes_2}.}
+\ccc{OutputIterator} is either \ccc{Polygon_with_holes_2} or 
+\ccc{General_polygon_with_holes_2}.}
 
 \begin{ccTexOnly}
 \begin{longtable}[c]{|l|}
@@ -60,6 +61,8 @@ holes into an output container through a given output iterator
 \textbf{Arg Type}\\
 \hline
 \hline
+\ccc{Polygon_with_holes_2}\\
+\hline
 \ccc{General_polygon_with_holes_2}\\
 \hline
 \end{longtable}
@@ -69,6 +72,7 @@ holes into an output container through a given output iterator
 <div align="center">
 <table cellpadding=3 border="1">
 <tr><th> Arg type</th></tr>
+<tr><td valign="center">Polygon_with_holes_2</td></tr>
 <tr><td valign="center">General_polygon_with_holes_2</td></tr>
 </table>
 </div>
@@ -82,6 +86,10 @@ void complement(const Polygon_2<Kernel, Container> & pgn,
 void complement(const General_polygon_2<Traits> & pgn,
                 General_polygon_with_holes_2<Traits> & res);}
 
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn,
+                          OutputIterator oi);}
+\ccGlue
 \ccGlobalFunction{template <class Traits, class OutputIterator>
 OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<Traits> > & pgn,
                           OutputIterator oi);}
