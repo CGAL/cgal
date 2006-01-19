@@ -204,6 +204,7 @@ cccend          "[cccend]"
 {cccend}                       { cerr << endl << "ERROR: found [cccend] withouth matching [cccbegin]" << endl; error_code = 1; }
 
 {head}                         { BEGIN(HEADERMODE); ECHO; }
+<HEADERMODE>"<I>"|"</I>"       { ; }
 <HEADERMODE>([^[]|[\n])*{endhead} { BEGIN(INITIAL); ECHO; /* Avoid substitutions in the head */ }
 
 "<A HREF="["][^"]*"Biblio_"[^"]+["]">" { ECHO; BEGIN(BIBMODE2); }
