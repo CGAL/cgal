@@ -28,7 +28,13 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_accessor.h>
+
+#ifdef CGAL_ENVELOPE_USE_IMPROVED_ZONE
+#include <CGAL/Envelope_arrangement_zone_2.h>
+#else
 #include <CGAL/Arrangement_zone_2.h>
+#endif
+
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
 #include <list>
 #include <map>
@@ -54,8 +60,13 @@ void insert_curve (Arrangement_2<Traits,Dcel>& arr,
 
   Arr_accessor<Arrangement_2>                      arr_access (arr);
 
+#ifdef CGAL_ENVELOPE_USE_IMPROVED_ZONE
+  Envelope_arrangement_zone_2<Arrangement_2, ZoneVisitor>
+                                                   arr_zone (arr, &visitor);
+#else
   Arrangement_zone_2<Arrangement_2, ZoneVisitor>   arr_zone (arr, &visitor);
-
+#endif
+                                                   
   // Break the input curve into x-monotone subcurves and isolated points.
   typedef Arr_traits_adaptor_2<Traits>                   Traits_wrapper_2;
 
@@ -168,6 +179,7 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
   // Notify the arrangement observers that the global operation has been
   // completed.
   arr_access.notify_after_global_change();
+
 
   // Return a handle for the vertex associated with p.
   return (vh_for_p);
