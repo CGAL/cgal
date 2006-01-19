@@ -79,25 +79,28 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   FT bulge;
   for(typename Polygons::iterator it = polygons.begin(); it != polygons.end(); it++){
     typename Polygon::iterator pit = it->begin();
-    first_point = pit->first;
-    ps = pit->first;
-    bulge = pit->second;
-    pit++;
-    do{
+
+    first_point = pit->first;    
+    
+
+    while(true){
+      ps = pit->first;
+      bulge = pit->second;
+      pit++;
+
+      if(pit ==it->end()){
+	break;
+      }
+      pt = pit->first;
       //std::cerr << "bulge = " << to_double(bulge) << std::endl;
       if(bulge == FT(0)){
-	Arc arc = Line_arc_2(ps, pit->first);
-
-	if(ps != pit->first){     
+	if(ps != pt){     
+	  Arc arc = Line_arc_2(ps, pt);
 	  //std::cerr << "Line_arc_2 " << std::endl;
-	  // std::cout << arc << std::endl;
+	  // std::cerr << arc << std::endl;
 	  *res++ = arc;
 	}
-	ps = pit->first;
-	bulge = pit->second;
       } else {
-	pt = pit->first;
-        bulge = (pit->second);
         const FT sqr_bulge = CGAL::square(bulge);
         const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
         const FT x_coord = ((ps.x() + pt.x())/FT(2)) + common*(ps.y() - pt.y());
@@ -117,11 +120,9 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 	//std::cerr << "source: " << ps.x() << ", " << ps.y() << " target: " << pt.x() << ", " << pt.y() << std::endl << std::endl;
 	*res++ = arc;
       }
-      ps = pt;
-      bulge = pit->second;
-      pit++;
-    }while(pit != it->end());
+    }
 
+    //std::cerr << "bulge = " << to_double(bulge) << std::endl;
     if(bulge == FT(0)){
       if(ps != first_point){
 	Arc arc = Line_arc_2(ps, first_point);      
