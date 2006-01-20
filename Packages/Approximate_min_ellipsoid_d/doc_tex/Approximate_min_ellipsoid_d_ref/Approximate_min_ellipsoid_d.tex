@@ -162,6 +162,19 @@ typedef to \ccc{double}).}
 \ccc{Traits::Point}.}  \ccNestedType{Cartesian_const_iterator}{Typedef
 to \ccc{Traits::Cartesian_const_iterator}.}
 
+\ccNestedType{Center_coordinate_iterator}{A model of STL concept
+\ccc{RandomAccessIterator} that is used to iterate over the Cartesian
+center coordinates of the computed ellipsoid, see
+\ccc{center_cartesian_begin()}.}
+\ccNestedType{Axes_lengths_iterator}{A model of STL concept
+\ccc{RandomAccessIterator} that is used to iterate over the lengths of
+the semiaxes of the computed ellipsoid, see
+\ccc{axes_lengths_begin()}.}  \ccNestedType{Axes_lengths_iterator}{A
+model of STL concept \ccc{RandomAccessIterator} that is used to
+iterate over the Cartesian coordinates of the direction of a fixed
+axis of the computed ellipsoid, see
+\ccc{axis_direction_cartesian_begin()}.}
+
 \ccPropagateThreeToTwoColumns
 
 % -----------------------------------------------------------------------------
@@ -203,9 +216,10 @@ ratio $1+\epsilon'$ and the computed ellipsoid ${\cal E} = \{ x\in\E^d
 \ccc{defining_matrix()}, \ccc{defining_vector()}, and
 \ccc{defining_scalar()} do not return $E$, $e$, and $\eta$ directly
 but yield multiples of these quantities that are exactly representable
-using the \ccc{double} type.  (The parameters $E$, $e$, and $\eta$ of
-the computed approximation ellipsoid ${\cal E}$ might not be exactly
-representable as \ccc{double} numbers.)
+using the \ccc{double} type.  (This is necessary because the
+parameters $E$, $e$, and $\eta$ of the computed approximation
+ellipsoid ${\cal E}$ might not be exactly representable as
+\ccc{double} numbers.)
 
 \ccMemberFunction{unsigned int  number_of_points( ) const;}{
         returns the number of points of \ccVar, i.e., $|P|$.}
@@ -253,6 +267,70 @@ representable as \ccc{double} numbers.)
 
 \ccMemberFunction{ const Traits&  traits( ) const;}{
         returns a const reference to the traits class object.}
+\ccGlueEnd
+
+In order to access the center and semiaxes of the computed
+approximation ellipsoid, you can use the following functions
+\ccc{center_cartesian_begin()}, \ccc{axes_lengths_begin()}, and
+\ccc{axis_direction_cartesian_begin()}. In constrast to the above
+access functions \ccc{achieved_epsilon()}, \ccc{defining_matrix()},
+\ccc{defining_vector()}, and \ccc{defining_scalar()}, which return the
+described quantities exactly, the routines below return
+\emph{numerical approximations} to the real center and real semiaxes
+of the computed ellipsoid; the comprised relative error may be larger
+than zero.
+
+\ccGlueBegin
+\ccMemberFunction{Center_coordinate_iterator center_cartesian_begin();}{
+  returns an iterator pointing to the first of the $d$ Cartesian
+	coordinates of the computed ellipsoid's center. \\
+  The returned point is a floating-point approximation to the
+     ellipsoid's exact center; no guarantee is given w.r.t.\ the involved
+     relative error. \ccPrecond
+	\ccc{\ccVar.is_full_dimensional()} is \ccc{true}.}
+
+\ccMemberFunction{Center_coordinate_iterator center_cartesian_end();}{
+     returns the past-the-end iterator corresponding to
+     \ccc{center_cartesian_begin()}.
+	\ccPrecond \ccc{\ccVar.is_full_dimensional()} is \ccc{true}.}
+
+\ccMemberFunction{Axes_lengths_iterator axes_lengths_begin();}{
+    returns an iterator pointing to the first of the $d$ descendantly
+    sorted lengths of the computed ellipsoid's axes.  The $d$ returned
+    numbers are floating-point approximations to the exact
+    axes-lengths of the computed ellipsoid; no guarantee is given
+    w.r.t.\ the involved relative error.  (See also method
+    \ccc{axes_direction_cartesian_begin()}.)  \ccPrecond
+    \ccc{\ccVar.is_full_dimensional()} is \ccc{true}, and
+    $d\in\{2,3\}$.}
+
+\ccMemberFunction{Axes_lengths_iterator axes_lengths_end();}{
+     returns the past-the-end iterator corresponding to
+     \ccc{axes_lengths_begin()}.  \ccPrecond
+    \ccc{\ccVar.is_full_dimensional()} is \ccc{true}, and
+    $d\in\{2,3\}$.}
+
+\ccMemberFunction{Axes_direction_coordinate_iterator
+   axis_direction_cartesian_begin(int i);}{ returns an iterator
+   pointing to the first of the $d$ Cartesian coordinates of the
+   computed ellipsoid's $i$th axis direction (i.e., unit vector in
+   direction of the ellipsoid's $i$th axis).  The direction described
+   by this iterator is a floating-point approximation to the exact
+   axis direction of the computed ellipsoid; no guarantee is given
+   w.r.t.\ the involved relative error.  An approximation to the
+   length of axis $i$ is given by the $i$th entry of
+   \ccc{axes_lengths_begin()}.
+   \ccPrecond
+    \ccc{\ccVar.is_full_dimensional()} is \ccc{true}, and
+    $d\in\{2,3\}$, and $0\leq i < d$.}
+
+\ccMemberFunction{Axes_direction_coordinate_iterator
+axis_direction_cartesian_end(int i);}{ returns the past-the-end
+iterator corresponding to
+\ccc{axis_direction_cartesian_begin()}.\ccPrecond
+\ccc{\ccVar.is_full_dimensional()} is \ccc{true}, and $d\in\{2,3\}$,
+and $0\leq i < d$.}
+
 \ccGlueEnd
 
 
