@@ -45,6 +45,7 @@ typedef leda_integer NT;
 typedef leda_rational FNT;
 #else
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
 typedef CGAL::Gmpz NT;
 typedef CGAL::Gmpq FNT;
 #endif
