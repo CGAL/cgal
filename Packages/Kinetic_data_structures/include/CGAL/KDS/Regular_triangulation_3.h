@@ -336,7 +336,7 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
         typedef VisitorT Visitor;
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable:C4355)
 #endif
         Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
         listener_(NULL) {
@@ -344,7 +344,7 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
 	  motl_= Moving_point_table_listener(tr.active_objects_table_pointer(), this);
         }
 #ifdef _MSC_VER
-#pragma warning(enable:4355)
+#pragma warning(enable:C4355)
 #endif
 
         const Visitor &visitor() const
