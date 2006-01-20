@@ -58,7 +58,9 @@ public:
   inline bool is_in_domain(const Point_2 & p) const;
   inline FT get_integration_step(const Point_2 &) const;
 	inline FT get_integration_step() const;
-  inline void set_field(const int & i, const int & j, const FT & x, const FT & y);};
+  inline void set_field(const int & i, const int & j, const Vector_2 & v);
+	inline std::pair<int, int> get_dimension(){return std::pair<int, int>(number_of_samples_x, number_of_samples_y);}
+	inline std::pair<FT, FT> get_size(){return std::pair<FT, FT>(domain_size_x, domain_size_y);}};
 
 template <class StreamLinesTraits_2>
 inline
@@ -81,11 +83,11 @@ Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(const int & m, const int & n
 
 template <class StreamLinesTraits_2>
 inline void
-Regular_grid_2<StreamLinesTraits_2>::set_field(const int & i, const int & j, const FT & x, const FT & y){
+Regular_grid_2<StreamLinesTraits_2>::set_field(const int & i, const int & j, const Vector_2 & v){
   CGAL_streamlines_precondition(is_in_samples(i,j));
   int index = get_index(i,j);
-  vector_field[index++] = x;
-  vector_field[index] = y;}
+  vector_field[index++] = v.x();
+  vector_field[index] = v.y();}
 
 template <class StreamLinesTraits_2>
 inline bool
