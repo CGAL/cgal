@@ -450,9 +450,9 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
                     ks.push_back(cit->vertex(i)->point());
 		  }}
                 std::vector<typename Delaunay::Vertex_handle> kvhs;
-                for (unsigned int i=0; i<4; ++i) {
+                {for (unsigned int i=0; i<4; ++i) {
                     kvhs.push_back(kdel_.vertex_handle(ks[i]));
-                }
+		  }}
                 typename Triangulation::Cell_handle h;
                 int i,j,k,l;
                 if (!triangulation().is_cell(kvhs[0], kvhs[1], kvhs[2], kvhs[3], h,i,j,k,l)) {
@@ -463,9 +463,9 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
             for (typename Triangulation::Finite_cells_iterator cit= triangulation().finite_cells_begin();
             cit != triangulation().finite_cells_end(); ++cit) {
                 std::vector<Point_key> ks;
-                for (unsigned int i=0; i<4; ++i) {
+                {for (unsigned int i=0; i<4; ++i) {
                     ks.push_back(cit->vertex(i)->point());
-                }
+		  }}
                 std::vector<typename Delaunay::Vertex_handle> kvhs;
 		// extra braces for VC
                 {for (unsigned int i=0; i<4; ++i) {
@@ -857,10 +857,10 @@ create_non_vertex_event(*it, cells[1], f[1], s[1]);
             if (!must_handle) {
                 for (i=0; i< 4; ++i) {
                     typename Triangulation::Facet f(h, i);
-                    typename Base_traits::Simulator::Function_kernel::Function cf= kdel_.orientation_object()(point(vertex_of_facet(f,0)->point()),
-                        point(vertex_of_facet(f,1)->point()),
-                        point(vertex_of_facet(f,2)->point()),
-                        point(k));
+                    typename Base_traits::Simulator::Function_kernel::Function cf= kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
+													      point(internal::vertex_of_facet(f,1)->point()),
+													      point(internal::vertex_of_facet(f,2)->point()),
+													      point(k));
                     typename Base_traits::Simulator::Function_kernel::Sign_at sar
                         = kdel_.simulator()->function_kernel_object().sign_at_object(cf);
                     CGAL::Sign sn = CGAL::sign(sar(kdel_.simulator()->current_time()));
