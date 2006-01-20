@@ -1,6 +1,6 @@
 // if QT is not installed, a message will be issued in runtime.
-#ifndef CGAL_USE_QT
 #include <iostream>
+#ifndef CGAL_USE_QT
 
 int main(int, char*)
 {
@@ -127,7 +127,7 @@ public slots :
 	}
 	void load( const QString & s )
 	{
-		std::cout << s << " laoded\n";
+// 		std::cout << s << " laoded\n";
   	runge_kutta_integrator = new Runge_kutta_integrator(integrating_);
   	std::ifstream infile(s, std::ios::in);
   	double iXSize, iYSize;
@@ -354,7 +354,7 @@ public slots :
 	QString savedepsfile(){
 	QString s = QFileDialog::getSaveFileName( ".",
 			"Encapsulated PostScript files (*.eps)", this, "save file dialog", "Save file to" );
-		std::cout << s << "\n";
+// 		std::cout << s << "\n";
 		std::ofstream fw(s,std::ios::out);
 		p.Stream_lines->print_stream_lines_eps(fw);
 		return s;
@@ -362,7 +362,7 @@ public slots :
 	QString savedstlfile(){
 	QString s = QFileDialog::getSaveFileName( ".",
 			"STreamLine files (*.stl)", this, "save file dialog", "Save file to" );
-		std::cout << s << "\n";
+// 		std::cout << s << "\n";
 		std::ofstream fw(s,std::ios::out);
 		p.Stream_lines->print_stream_lines(fw);
 		return s;
