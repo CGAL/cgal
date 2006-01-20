@@ -31,6 +31,97 @@
 
 namespace CGAL {
 
+  namespace Appel_impl {
+    
+    // Computes the inverse of the positive definite (dxd)-matrix A
+    // into Ai, by using the Cholesky decomposition of A. All three
+    // iterator template parameters must be random access iterators of
+    // value type FT. The iterator tmp must have d entries.  The
+    // routine returns true in case no errors occurred; false is
+    // returned in case of stability problems or when A is not
+    // positive definite.
+    //
+    // Note: A is destroyed in this process.
+    //
+    // Precondition: A and Ai may point to the same matrix (i.e., might alias).
+    template<typename FT,
+	     typename Tmp_iterator,
+	     typename A_iterator,
+	     typename A_inverse_iterator>
+    bool pd_matrix_inverse(const int d,
+			   A_iterator A,
+			   A_inverse_iterator Ai,
+			   Tmp_iterator tmp)
+    {
+      // I use the following version (in matlab notation) from Walter
+      // Gander's lecture "Ausgleichsrechnung" (ETH Zurich, around 2000, see
+      // http://www.inf.ethz.ch/personal/chinella/education/ausgleich/
+      // Demo2.txt):
+      //
+      //    # compute lower-triangular L s.t. A = LL^T:
+      //    for j=1:d
+      //      v = A(j:d,j) - L(j:d,1:j-1) * L(j,1:j-1)';
+      //      L(j:d,j) = v/sqrt(v(1));
+      //    end;
+      //
+      // Observe that the vector v in this pseudo-code is a
+      // (d-j+1)-vector; we use (the last d-j+1 entries of) the vector
+      // tmp to store v.  (Also, the above program uses one-based
+      // counting, the code below is of course zero-based.)  Note also
+      // that instead of computing the result into L we can as well
+      // overwrite the lower part of A.
+      for (int j=0; j<d; ++j) {
+	// compute new column (v in above pseudo-code):
+	for (int i=j; i<d; ++i) {
+	  FT ll(0);
+	  for (int k=0; k<j; ++k)
+	    ll += A[i+k*d] * A[j+k*d];
+	  tmp[i] = A[i+j*d] - ll;
+	}
+
+	// check regularity:
+	if (tmp[j] <= 0) // todo: epsilon?
+	  return false;
+
+	// overwrite column:
+	const FT scale = FT(1)/std::sqrt(tmp[j]);
+	for (int i=j; i<d; ++i)
+	  A[i+j*d] = tmp[i] * scale;
+      }
+
+      // Now that we have in the lower triangular part of A the
+      // Cholesky decomposition A = LL^T of the original A, we compute
+      // the inverse of A see "Numerical Recipes in C", end of Chapter
+      // 2.9.
+      for (int i=0; i<d; ++i) {
+	A[i+i*d] = FT(1)/A[i+i*d];
+	for (int j=i+1; j<d; ++j) {
+	  FT sum(0);
+	  for (int k=i; k<j; ++k)
+	    sum -= A[j+k*d] * A[k+i*d];
+	  A[j+i*d] = sum/A[j+j*d];
+	}
+      }
+    
+      // Finally, we calculate A^{-1} = (L^{-1})^T L^{-1} into Ai:
+      for (int i=0; i<d; ++i)
+	for (int j=0; j<=i; ++j) {
+
+	  // compute entry (i,j) of A^{-1}:
+	  FT sum(0);
+	  for (int k=i; k<d; ++k)
+	    sum += A[k+i*d] * A[k+j*d];
+	  Ai[i+j*d] = sum;
+
+	  // Since A^{-1} is symmetric, we set:
+	  Ai[j+i*d] = sum;
+	}
+
+      return true;
+    }
+
+  } // end of namespace Appel_impl
+
   template<bool Embed,class Traits>
   Khachiyan_approximation<Embed,Traits>::
   ~Khachiyan_approximation()
@@ -168,73 +259,10 @@ namespace CGAL {
     if (P.size() <= static_cast<unsigned int>(d))
       return false;
 
-    // We need to compute into mi the inverse of the matrix t.  We use
-    // Cholesky's decomposition for this, because it is known to be
-    // quite stable, numerically.
-
-    // I use the following version (in matlab notation) from Walter
-    // Gander's lecture "Ausgleichsrechnung" (ETH Zurich, around 2001):
-    //
-    //    # compute lower-triangular L s.t. A = LL^T:
-    //    for j=1:d
-    //      v = A(j:d,j) - L(j:d,1:j-1) * L(j,1:j-1)';
-    //      L(j:d,j) = v/sqrt(v(1));
-    //    end;
-    //
-    // Observe that the vector v in this pseudo-code is a
-    // (d-j+1)-vector; we use (the last d-j+1 entries of) the vector
-    // tmp to store v.  (Also, the above program uses one-based
-    // counting, the code below is of course zero-based.)  Note also
-    // that instead of computing the result into L we can as well
-    // overwrite the lower part of A.
-    for (int j=0; j<d; ++j) {
-      // compute new column (v in above pseudo-code):
-      for (int i=j; i<d; ++i) {
-	FT ll(0);
-	for (int k=0; k<j; ++k)
-	  ll += t[i+k*d] * t[j+k*d];
-	tmp[i] = t[i+j*d] - ll;
-      }
-
-      // check regularity:
-      if (tmp[j] <= 0) // todo: epsilon?
-	return false;
-
-      // overwrite column:
-      const FT scale = FT(1)/std::sqrt(tmp[j]);
-      for (int i=j; i<d; ++i)
-	t[i+j*d] = tmp[i] * scale;
-    }
-
-    // Now that we have in the lower triangular part of t the Cholesky
-    // decomposition A = LL^T of the original t, we compute the
-    // inverse of A (i.e., the inverse of the original t), see
-    // "Numerical Recipes in C", end of Chapter 2.9.
-    for (int i=0; i<d; ++i) {
-      t[i+i*d] = FT(1)/t[i+i*d];
-      for (int j=i+1; j<d; ++j) {
-	FT sum(0);
-	for (int k=i; k<j; ++k)
-	  sum -= t[j+k*d] * t[k+i*d];
-	t[j+i*d] = sum/t[j+j*d];
-      }
-    }
-    
-    // Finally, we calculate A^{-1} = (L^{-1})^T L^{-1} into mi:
-    for (int i=0; i<d; ++i)
-      for (int j=0; j<=i; ++j) {
-
-	// compute entry (i,j) of A^{-1}:
-	FT sum(0);
-	for (int k=i; k<d; ++k)
-	  sum += t[k+i*d] * t[k+j*d];
-	mi[i+j*d] = sum;
-
-	// Since A^{-1} is symmetric, we set:
-	mi[j+i*d] = sum;
-      }
-
-    return true;
+    return Appel_impl::pd_matrix_inverse<FT>(d,
+					     t.begin(),
+					     mi.begin(),
+					     tmp.begin());
   }
 
   template<bool Embed,class Traits>
@@ -402,6 +430,9 @@ namespace CGAL {
     // check if we have already reached an acceptable eps:
     if (eps <= desired_eps) // numerics say we're ready to stop...
       if (exact_epsilon() <= desired_eps) // ... and if it's o.k, we stop
+        // Note: if FT is inexact, exact_epsilon() may return a
+        // negative number here, which we will interpret as the input
+        // points being degenerate.
 	return true;
 
     // We optimize along the line
@@ -443,16 +474,25 @@ namespace CGAL {
     ET max(0);
     for (int i=0; i<n; ++i)
       max = std::max(max, excess<ET>(tco.cartesian_begin(*P[i])));
-    
-    // compute epsilon via (*):
-    std::pair<double, double> max_i = to_interval(max);
-    
-    eps_exact = (CGAL::Interval_nt<>(max_i.first,max_i.second)/d-1).sup();
-    
+
+    // compute (using exact arithmetic) epsilon via (*):
+    typedef CGAL::Quotient<ET> QET;
+    QET eps_e = QET(max,d)-1;
+    eps_exact = CGAL::to_interval(eps_e).second;
+
     // debugging output:
     CGAL_APPEL_LOG("appel",
-		   "Exact epsilon is " << eps_exact << "." << "\n");
+		   "Exact epsilon is " << eps_e << " (rounded: " <<
+		   eps_exact << ")." << "\n");
     
+    // check whether eps is negative (which under exact arithmetic is
+    // not possible, and which we will take as a sign that the input
+    // points are degenerate):
+    if (CGAL::is_negative(eps_e)) {
+      CGAL_APPEL_LOG("appel", "Negative Exact epsilon -> degenerate!" << "\n");
+      is_deg = true;
+    }
+
     is_exact_eps_uptodate = true;
     return eps_exact;
   }
@@ -483,6 +523,23 @@ namespace CGAL {
     return true;
   }
 
+  template<bool Embed,class Traits>
+  template<typename Iterator>
+  bool Khachiyan_approximation<Embed,Traits>::
+  compute_inverse_of_submatrix(Iterator inverse)
+  {
+    CGAL_APPEL_ASSERT(!is_deg);
+
+    // copy matrix to destination:
+    for (int i=0; i<d-1; ++i)
+      for (int j=0; j<d-1; ++j)
+	inverse[i+j*(d-1)] = mi[i+j*d];
+
+    // solve in place:
+    return Appel_impl::pd_matrix_inverse<FT>(d-1, inverse,
+					     inverse, tmp.begin());
+  }
+  
   template<bool Embed,class Traits>
   void Khachiyan_approximation<Embed,Traits>::print(std::ostream& o)
   {

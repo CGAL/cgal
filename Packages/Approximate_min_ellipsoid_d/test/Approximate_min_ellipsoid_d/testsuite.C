@@ -155,6 +155,13 @@ void simple_test(int n, int d, int multiplicity, double eps)
 
   // check validity
   check(mel.is_valid(true), "validity");
+
+  // find center:
+  if (mel.is_full_dimensional()) {
+    mel.center_cartesian_begin(); // (Note: forces center to be computed.)
+    if (d == 2 || d == 3)
+      mel.axes_lengths_begin();   // (Note: forces axes to be computed.)
+  }
   
   // query
   bool is_fd   = mel.is_full_dimensional();
@@ -217,6 +224,7 @@ int main()
   // multiplicity 1
   test(1,   1);
   test(2,   1);
+  test(5, 1);
   test(100, 1);
 
   // multiplicity 2

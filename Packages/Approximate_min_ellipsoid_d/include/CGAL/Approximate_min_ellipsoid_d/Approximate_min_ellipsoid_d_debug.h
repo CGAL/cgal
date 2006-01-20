@@ -32,6 +32,39 @@ namespace CGAL {
   // We hide the following debugging utilities in a "private" namespace:
   namespace Approximate_min_ellipsoid_d_impl {
 
+    // For debugging only:
+    template<typename Iterator>
+    void print_matrix(int d, const char *name, Iterator A)
+    {
+      std::cout << name << ":= Matrix([\n";
+      for (int i=0; i<d; ++i) {
+	std::cout << "  [ ";
+	for (int j=0; j<d; ++j) {
+	  std::cout << std::setprecision(30) << A[i+j*d];
+	  if (j<d-1)
+	    std::cout << ", ";
+	}
+	std::cout << " ]";
+	if (i<d-1)
+	  std::cout << ",";
+	std::cout << "\n";
+      }
+      std::cout << "]);\n";	
+    }
+
+    // For debugging only:
+    template<typename Iterator>
+    void print_vector(int d, const char *name, Iterator v)
+    {
+      std::cout << name << ":= Vector([\n";
+      for (int j=0; j<d; ++j) {
+	std::cout << std::setprecision(30) << v[j];
+	if (j<d-1)
+	  std::cout << ", ";
+      }
+      std::cout << "]);\n";	
+    }
+
     #ifdef CGAL_APPEL_LOG_MODE
     class Logger
     // A singleton class which sends debugging comments to log files.
@@ -473,6 +506,30 @@ namespace CGAL {
       void enlarge_bounding_box(bool active)
       {
 	adjust_bb = active;
+      }
+      
+      // Renders the line from (x,y) to (u,v) in the current stroke
+      // and label mode.
+      //
+      // Implementation note: stroke and label mode are not yet implemented.
+      void write_line(double x, double y, double u, double v,
+		      bool colored = false)
+      {
+	// set color:
+	if (colored)
+	  body << "gsave setcol" << std::endl;
+	
+	// output ball in appropriate mode:
+	adjust_bounding_box(x,y);
+	adjust_bounding_box(u,v);
+	body << "newpath\n"
+	     << x << ' ' << y << " moveto\n"
+	     << u << ' ' << v << " lineto\n"
+	     << "stroke\n";
+
+	// restore color:
+	if (colored)
+	  body << "grestore" << std::endl;
       }
       
       // Renders the circle with center (x,y) and radius r in

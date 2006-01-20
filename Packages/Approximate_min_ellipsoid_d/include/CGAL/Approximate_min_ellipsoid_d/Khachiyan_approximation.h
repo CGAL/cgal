@@ -414,7 +414,9 @@ namespace CGAL {
       // hold. However, we do not promise anything in the
       // specification, so we can stop after this many iterations (and
       // the user will query exact_epsilon() to see whether or not we
-      // reached the desired approximation ratio).
+      // reached the desired approximation ratio). So this
+      // implementation DOES meet the specification, but its sort of
+      // clumsy.
       const int max_iterations = static_cast<int>(2*d/desired_eps/
 					 (std::log(1.5)-1.0/3.0));
 
@@ -462,6 +464,22 @@ namespace CGAL {
       return mi[i+d*j];
     }
 
+  public: // convenience members:
+
+    // Computes the inverse of the (d-1xd-1)-matrix defined by the above
+    // member matrix(i,j),
+    //
+    //   [ matrix(i,j) ]_{0<=i,j<d-1},
+    //
+    // into the matrix given by the Iterator inverse. On exit,
+    // inverse[i+(d-1)*j] contains the (i,j)-element of the
+    // inverse. If the return value is false, stability problems
+    // prevented the computation from being successfully completed.
+    //
+    // Precondition: !is_deg
+    template<typename Iterator>
+    bool compute_inverse_of_submatrix(Iterator inverse);
+
   public: // validity:
 
     // Returns a double-precision upper bound on the exact
@@ -484,8 +502,18 @@ namespace CGAL {
     // Note: if recompute is false, the routine is allowed to use the
     // cached result from a previous invocation (if still valid).  In
     // is_valid() (see below) we will call the routine with recompute
-    // equal to true to avoid logical errors in the caching
-    // implementation.
+    // equal to true (simply because a validation routine should not
+    // rely on cached results...).
+    //
+    // Note: it turns out that under floating-point arithmetic (i.e.,
+    // when FT is double), the algorithm does not always correctly
+    // decide whether or not the instance is degenerate. For example,
+    // it may happen that the instance is "seen" to be nondegenerate
+    // (is_degenerate() returns false) but still the points are
+    // degenerate; I have seen this in 2D (embedded in 3D) with two
+    // points, each having multiplicity two (meaning n=4). In such a
+    // situation, exact_epsilon() may return a negative number (and we
+    // should then conclude that something went wrong, of course).
     //
     // Complexity: O(n d^2)
     //
