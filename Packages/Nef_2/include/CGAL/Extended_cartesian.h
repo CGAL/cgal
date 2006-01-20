@@ -28,11 +28,10 @@
 #define CGAL_NEF_DEBUG 5
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/Line_to_epoint.h>
+#include <CGAL/Is_extended_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Kernel>
-struct Is_extended_kernel;
 
 template <class T> class Extended_cartesian;
 
