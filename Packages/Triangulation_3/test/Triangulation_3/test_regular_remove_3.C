@@ -27,6 +27,7 @@
 #include <set>
 
 #include <boost/random/linear_congruential.hpp>
+#include <boost/cstdint.hpp>
 
 #include <CGAL/_test_types.h>
 //#include <CGAL/_test_cls_regular_3.C>
@@ -336,7 +337,7 @@ int main(int argc, char **argv)
     }
     
     // Hardcoded seeds so that the test-suite is deterministic.
-    int seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
+    boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
     // You can also pass seeds on the command line.
     if (argc > 1) sscanf (argv[1], "%d", &seed0);
