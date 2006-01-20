@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Surface_mesh_cell_base_3<Gt,Vb>}  %% add template arg's if necessary
+\begin{ccRefClass}{Surface_mesh_cell_base_3<Gt,Cb>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,13 +22,25 @@ The class \ccRefName\ is a model of the concept
 \ccc{SurfaceMeshCellBase_3}.
 It is designed to serve  as vertex base  class
 in a  triangulation class \ccc{Tr} 
-plugged in a  \ccc{Surface_mesh_c2t3<Tr>} class.
+plugged in a  \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}
+class.
+
+The first template parameter is the geometric traits class.
+
+The second template parameter is a base class. It
+has to be a model of the concept \ccc{TriangulationCellBase_3}
+and  
+defaults to \ccc{Triangulation_cell_base_3 <GT>}.
 
 \ccInclude{Surface_mesh_cell_base_3.h}
 
 \ccIsModel
 
 \ccc{SurfaceMeshCellBase_3}
+
+\ccInheritsFrom 
+
+Cb
 
 %\ccTypes
 
@@ -45,7 +57,9 @@ plugged in a  \ccc{Surface_mesh_c2t3<Tr>} class.
 
 \ccSeeAlso
 
-\ccc{Surface_mesh_c2t3<Tr>} 
+\ccc{SurfaceMeshComplex_2InTriangulation_3} \\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>} \\
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
 
 
 %\ccExample

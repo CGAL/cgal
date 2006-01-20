@@ -19,10 +19,10 @@
 \ccDefinition
   
 The concept \ccRefName\ describes the knowledge that is required on the
-surface to be meshed. Basically a model of this concept
-implements an oracle that is able to tell if a segment
-(ray or line) intersects the surface or not
-and to compute the intersection
+surface to be meshed. A model of this concept
+implements an oracle that is able to tell wether a segment
+(or a ray,  or a line) intersects the surface or not
+and to compute some intersection
 points if any. The concept \ccRefName\ also include methods  to provide
 a small set of initial points on the surface.
 
@@ -32,16 +32,20 @@ a small set of initial points on the surface.
 
 \ccTypes
 
-\ccNestedType{Point}{The type of points. This type is required to be
-the type of points of the triangulation pointed to by the 
-object (whose type is a model of \ccc{PureCcomplex_2InTriangulation_3}) storing the mesh.}
+\ccNestedType{Point}{The type of points. 
+When a model of this concept is plugged in the surface mesher
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
+the  type \ccc{SurfaceOrace::Point} is required to match
+the point type of the 
+three dimensional embedding triangulation 
+\ccc{C2T3::Triangulation_3}.}
 \ccNestedType{Segment}{The type of segments.}
 \ccNestedType{Ray}{The type of rays.}
 \ccNestedType{Line}{The type of lines.}
 
 
 
-\ccCreation
+%\ccCreation
 \ccCreationVariable{surfor}  %% choose variable name
 
 \ccConstructor{SurfaceOracle();}{default constructor.}
@@ -50,17 +54,17 @@ object (whose type is a model of \ccc{PureCcomplex_2InTriangulation_3}) storing 
 
 
 \ccMethod{Object intersect_segment_surface(Segment s);}
-{ Returns an \ccc{Object}  which is either a \ccc{Point} where
+{ Returns an \ccc{Object},  which is either a \ccc{Point} where
 the surface and the segment \ccc{s} intersect or
 a trivial \ccc{Object} if the intersection is empty.}
 \ccGlue
 \ccMethod{Object intersect_ray_surface(Ray r);}
-{ Returns an \ccc{Object}  which is is either a \ccc{Point} where
+{ Returns an \ccc{Object},  which is is either a \ccc{Point} where
 the surface and the ray \ccc{r} intersect or
 a trivial \ccc{Object} if the intersection is empty.}
 \ccGlue
 \ccMethod{Object intersect_line_surface(Line r);}
-{ Returns an \ccc{Object}  which is is either a \ccc{Point} where
+{ Returns an \ccc{Object},  which is is either a \ccc{Point} where
  the surface and the line \ccc{l} intersect or
 a trivial \ccc{Object} if the intersection is empty.}
 
@@ -80,7 +84,8 @@ initial_points(OutputIteratorPoints pts, int n);}
 \ccc{Implicit_surface_oracle<Func>}
 
 
-%\ccSeeAlso
+\ccSeeAlso
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
 
 %Some\_other\_concept,
 %\ccc{some_other_function}.

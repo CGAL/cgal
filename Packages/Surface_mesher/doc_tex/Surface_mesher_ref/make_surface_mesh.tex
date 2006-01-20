@@ -19,49 +19,50 @@ Criteria, Tag>}  %% add template arg's if necessary
 
 \ccDefinition
   
-The function \ccRefName\ computes a two dimensional mesh 
+The function \ccRefName\ is a surface mesher,
+that is a function to build a two dimensional mesh 
 approximating  a surface.
 
-The template parameter \ccc{SurfaceOracle} describes the type of the 
-surface  to be meshed. 
-The plugged in class 
-has to be a model of the concept \ccc{SurfaceOracle}.
-
-The output mesh satifies the requirements specified by the user
-in an object of the class \ccc{Criteria}.
-The class \ccc{Criteria} has to be
-a model of the concept \ccc{SurfaceMeshCriteria}.
-
- The class \ccc{C2T3}
+The first template parameter  \ccc{C2T3}
 is required to be a model of the concept
-\ccc{PureComplex_2InTriangulation_3}.
-The object \ccc{c2t3} of type \ccc{C2T3} which is passed by reference
-is used to maintain  the current surface mesh and stores
+\ccc{SurfaceMeshComplex_2InTriangulation_3},
+a data structure able to represent a two dimensional
+complex  embedded in a three dimensional triangulation.
+The argument \ccc{c2t3} of type \ccc{C2T3},  passed by reference
+to the surface mesher, 
+is used to maintain  the current approximating mesh and it stores
 the final mesh at the end of the procedure.
-Each object of type \ccc{C2T3} has a pointer to 
-a three dimensional  Delaunay triangulation.
-The vertex and cell base classes of this triangulation
-have  to be  models  of the concepts 
+The type \ccc{C2T3} is in particuler required to
+provide a type \ccc{C2T3::Triangulation_3}
+for the three dimensional triangulation
+embedding the surface mesh.
+The vertex and cell base classes of the triangulation
+\ccc{C2T3::Triangulation_3} are required
+to be  models  of the concepts 
 \ccc{SurfaceMeshVertexBase_3} and 
-\ccc{SurfaceMeshCellBase_3}, respectively.
+\ccc{SurfaceMeshCellBase_3} respectively.
 
-The Delaunay refinement
-process is started with an initial set of points which is the union 
-of two sets: the
-set of vertices in the initial  triangulation pointed to by 
-\ccc{c2t3} and a set of
-points output by the method \ccc{surf.initial_points()}.
-This initial set of points is required to include at least one point
-on each connected components of the surface to meshed.
 
-The fourth template parameter is a tag whose type influences the behaviour of the
+The second template parameter  has to be a model
+of the concept
+\ccc{SurfaceOracle} which describes the required knowledge
+on the surface to be meshed. 
+
+
+The third template parameter \ccc{Criteria} has to be a model
+of the concept \ccc{SurfaceMeshCriteria}.
+The argument of type  \ccc{Criteria} passed to the surface
+mesher specifies the size and shape  requirements
+on the output surface mesh.
+
+The fourth template parameter is a tag whose type affects the behaviour of the
 meshing algorithm. The function \ccRefName\  has specialized versions
 for the following  tag types~: \\
-\ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
 surface without boundary.\\
-\ccc{Manifold_with_boundary_tag}~:the output mesh is guaranteed to be
+- \ccc{Manifold_with_boundary_tag}~:the output mesh is guaranteed to be
 manifold but may have boundaries.\\
-\ccc{Non_manifold_tag} : the algorithm relies on the given criteria and
+- \ccc{Non_manifold_tag} : the algorithm relies on the given criteria and
 guarantees nothing else.
 
 
@@ -78,6 +79,18 @@ void make_surface_mesh(C2T3& c2t3,
                        Tag = Non_manifold_tag());}
 
 
+The Delaunay refinement
+process is started with an initial set of points which is the union 
+of two sets: the
+set of vertices in the initial  triangulation pointed to by the
+\ccc{c2t3} argument   and a set of
+points output by the \ccc{surfor.initial_points()} method 
+of the surface oracle.
+This initial set of points is required to include at least one point
+on each connected components of the surface to be meshed.
+
+
+
  
 
 %\ccIsModel
@@ -86,7 +99,7 @@ void make_surface_mesh(C2T3& c2t3,
 
 \ccSeeAlso
 %\ccc{Complex2InTriangulation3} \\
-\ccc{PureComplex_2InTriangulation_3} \\
+\ccc{SurfaceMeshComplex_2InTriangulation_3} \\
 \ccc{SurfaceMeshCellBase_3} \\
 \ccc{SurfaceMeshVertexBase_3} \\
 \ccc{SurfaceOracle} \\

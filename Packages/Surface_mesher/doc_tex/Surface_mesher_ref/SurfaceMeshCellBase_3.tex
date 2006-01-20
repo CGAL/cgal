@@ -18,26 +18,42 @@
 
 \ccDefinition
   
-The \ccc{Pure_complex_2_in_triangulation_3<Tr>} data structure is able to store
-a pure two dimensional complex embedded in a triangulation.
+The concept \ccc{SurfaceMeshComplex_2InTriangulation_3} 
+describes a 
+data structure is able to store
+a pure two dimensional complex 
+embedded in a three dimensional triangulation.
+The concept \ccc{SurfaceMeshComplex_2InTriangulation_3}
+provides in particular a type 
+\ccc{SurfaceMeshComplex_2InTriangulation_3::Triangulation_3}
+for the 3D embedding triangulation.
 The concept \ccRefName\ describes the cell base type
-to be used  in the  triangulation class  \ccc{Tr}  plugged in 
-the \ccc{Pure_complex_2_in_triangulation_3<Tr>} data structure.
+required in this triangulation type.
+
 
 
 \ccGeneralizes
 \ccc{TriangulationCellBase_3}
 
-The concept \ccRefName\ adds four Boolean marker to mark the facets
+The concept \ccRefName\ adds four markers to mark the facets
 of the triangulation that belong to the two dimensional complex,
-and four Boolean to mark the visited facets.
-This concept is also able to store the center of a Delaunay surface
-ball for each facet.  In the following we call \ccc{surface center}
+and four markers  that are helpers 
+used in some operations to mark for instance
+the facets that have been visited.
+
+This concept also provides storage for  the center of a Delaunay surface
+ball. 
+Given a surface, a Delaunay surface ball
+of a facet is an empty  ball,  circumscribed to the facet
+and centered on the surface. Such a ball does exist
+when the facet is part of the the restriction to the surface
+of a three dimensional triangulation.
+ In the following we call \ccc{surface center}
 of a facet, the center of its biggest Delaunay surface ball.
 
 \ccTypes
 
-\ccNestedType{Point}{The point type, required to be the point type
+\ccNestedType{Point}{The point type, required to match the point type
 of the three dimensional
 triangulation in which the surface mesh is embedded.}
 
@@ -54,28 +70,28 @@ triangulation in which the surface mesh is embedded.}
 \ccGlue
 \ccMethod
 {void set_facet_on_surface(int i, bool b );}
-{sets \ccc{facet(i)} in the complex, if \ccc{b} is \ccc{true},
+{Sets \ccc{facet(i)} as part of the 2D  complex, if \ccc{b} is \ccc{true},
 and \ccc{NOT_IN_COMPLEX}, otherwise.}
 
 
 \ccMethod
 {bool is_facet_visited (int i);}
-{returns \ccc{true}, if \ccc{facet(i)} has been visited,
+{Returns \ccc{true}, if \ccc{facet(i)} has been visited,
 \ccc{false} otherwise.}
 \ccGlue
 \ccMethod
 {void set_facet_visited (int i, bool b);} 
-{marks \ccc{facet(i)} as visited, if \ccc{b} is \ccc{true},
+{Marks \ccc{facet(i)} as visited, if \ccc{b} is \ccc{true},
  and non visited otherwise.}
 
 
 \ccMethod
 {const Point&   get_facet_surface_center(int i);}
-{returns a reference to the surface center of \ccc{facet(i).}}
+{Returns a reference to the surface center of \ccc{facet(i).}}
 \ccGlue
 \ccMethod
 {void set_facet_surface_center (int i, Point p);} 
-{sets point \ccc{p} as the surface center of \ccc{facet(i)}}.
+{Sets point \ccc{p} as the surface center of \ccc{facet(i)}}.
 
 
     
@@ -90,9 +106,9 @@ and \ccc{NOT_IN_COMPLEX}, otherwise.}
 
 \ccSeeAlso
 
-\ccc{PureComplex_2InTriangulation_3} \\
-\ccc{Pure_complex_2_in_triangulation_3<Tr>}
-
+\ccc{SurfaceMeshComplex_2InTriangulation_3} \\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}\\
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
 
 %\ccExample
 

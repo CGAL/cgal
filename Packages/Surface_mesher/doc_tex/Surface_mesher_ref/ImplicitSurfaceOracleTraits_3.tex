@@ -18,9 +18,20 @@
 
 \ccDefinition
   
-The concept \ccRefName\ provides the numerical type 
-and the point type used in the surface oracle
+The concept \ccRefName\ provides a numerical type  (\ccc{FT})
+and a point type (\ccc{Point_3})
+as  required by the surface oracle
 \ccc{Implicit_surface_oracle< Traits, Func>}.
+
+The class \ccc{Implicit_surface_oracle< Traits, Func>}
+is a model to be plugged 
+as  second template parameter of the surface mesher
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}. 
+In this context, the types \ccc{FT} and \ccc{Point_3}
+provided by the traits class are required to match with the numerical type
+and the point type of the triangulation type \ccc{C2t3::Triangulation_3}
+used to represent the three dimensional triangulation embedding
+the two dimensional meshed surface.
 
 %\ccGeneralizes
 
@@ -51,24 +62,25 @@ Any CGAL Kernel.
 
 \ccSeeAlso
 
-Some\_other\_concept,
-\ccc{some_other_function}.
+\ccc{Implicit_surface_oracle<Traits, Func>},\\
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
 
-\ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Package/ImplicitSurfaceTraits_3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+%\ccExample
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/ImplicitSurfaceTraits_3.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-%% \ccIncludeExampleCode{Package/ImplicitSurfaceTraits_3.C}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/ImplicitSurfaceTraits_3.C}
 
 \end{ccRefConcept}
 

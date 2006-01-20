@@ -18,11 +18,17 @@
 
 \ccDefinition
   
-The \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>} data structure is able to store
-a pure two dimensional complex embedded in a triangulation.
-The concept \ccRefName\ describes the base vertex type to be
-used  in the  triangulation class \ccc{Tr}  plugged in a
-\ccc{Surface_mesh__complex_2_in_triangulation_3<Tr>} data structure.
+The concept \ccc{SurfaceMeshComplex_2InTriangulation_3} 
+describes a 
+data structure able to store
+a pure two dimensional complex 
+embedded in a three dimensional triangulation.
+The concept \ccc{SurfaceMeshComplex_2InTriangulation_3}
+provides in particular a type 
+\ccc{SurfaceMeshComplex_2InTriangulation_3::Triangulation_3}
+for the 3D embedding triangulation.
+The concept \ccRefName\ describes the vertex base type
+required in this triangulation type.
 
 
 
@@ -34,9 +40,7 @@ The concept \ccRefName\
 add functions to store and retrieve the status of the vertex.
 This feature is required to allow a caching mecanism
 for the vertex status.
-%a boolean \ccc{visited} marker 
-%and a caching mechanism to store the 
-%answer of an \ccc{is_regular()} query.
+
 
 %\ccTypes
 
@@ -45,28 +49,35 @@ for the vertex status.
 \ccCreation
 \ccCreationVariable{vb}  %% choose variable name
 
-\ccConstructor{SurfaceMeshVertexBase_3();}{default constructor.}
 
 \ccOperations
 
-\ccMethod{bool is_regular();}{returns \ccc{TRUE} if the vertex is
-regular, \ccc{FALSE} if it is not regular and \ccc{UNKNOWN} if the status
-is not known yet.}
+\ccMethod{boost::logic:tribool  is_regular();}
+{Returns \ccc{true} if the vertex  has been marked as \ccc{REGULAR}
+or \ccc{BOUNDARY}, \ccc{false} if the vertex has been marked \ccc{SINGULAR} 
+and \ccc{boost::logic:indeterninate}  otherwise.} 
 \ccGlue
-\ccMethod{void  set_visited(bool b);}{sets the visited mark as b.}
+\ccMethod{void set_regular(boost::logic::tribool b);}
+{ Sets the  mark according to b.}
+
+
+%\ccMethod{bool is_visited();}{Returns true if the visited mark
+%is est.}
+%\ccGlue
+%\ccMethod{void  set_visited(bool b);}{Sets the visited mark as b.}
 
 
 
-\ccMethod{bool is_regular_cached();}{returns true if the regular mark
-is valid.}
-\ccGlue
-\ccMethod{bool is_regular();}{returns true if the regular mark is
-set.}
-\ccGlue
-\ccMethod{void set_regular_cached(bool b);}{sets the validity of
-regular mark as b.}
-\ccGlue
-\ccMethod{vois set_regular(bool b);}{sets the regular mark as \ccc{b}.}
+%\ccMethod{bool is_regular_cached();}{returns true if the regular mark
+%is valid.}
+%\ccGlue
+%\ccMethod{bool is_regular();}{returns true if the regular mark is
+%set.}
+%\ccGlue
+%\ccMethod{void set_regular_cached(bool b);}{sets the validity of
+%regular mark as b.}
+%\ccGlue
+%\ccMethod{vois set_regular(bool b);}{sets the regular mark as \ccc{b}.}
 
 
 
@@ -78,8 +89,8 @@ regular mark as b.}
 
 \ccSeeAlso
 
-\ccc{PureComplex_2InTriangulation_3} \\
-\ccc{Pure_complex_2_in_triangulation_3<Tr>}.
+\ccc{SurfaceMesherComplex_2InTriangulation_3} \\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}.
 
 %\ccExample
 
