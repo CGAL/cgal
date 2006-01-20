@@ -138,14 +138,16 @@ e_{i}
 \end{equation}
 where $e_{i}$ denotes the $i$-th column of the $m \times m$ identity matrix. If the set of inequality constraints with infeasible origin, 
 \begin{equation}
-I_{inf}:=\left\{
-  i \in I^{\leq}\left|\right. b_{i}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)}
-  \right\}
-  \cup
-  \left\{
-    i \in I^{\geq} \left|\right. b_{i}-\sum_{k \in O \setminus Z}a_{ik}
-    x_{k}^{(0)}
-  \right\}
+I_{inf}:=
+\left\{
+  i \in I^{\leq}\left|\right.
+  b_{i}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)} < 0
+\right\}
+\cup
+\left\{
+  i \in I^{\geq} \left|\right.
+  b_{i}-\sum_{k \in O \setminus Z}a_{ik}x_{k}^{(0)} > 0
+\right\}
 \end{equation}
 is nonempty, the original constraint matrix $A$ is augmented by a special artificial column $a_{i}^{s}$
 \begin{equation}
@@ -965,7 +967,7 @@ A_{S_{B}, B_{S}}^{-1}\left(b_{S_{B}}-r_{S_{B}}-A_{S_{B}, B_{O}}x_{B_{O}}\right)
 \subsection{The QP-Updates $\mathbf{U_{Z_{1}}}, \mathbf{U_{Z_{2}}},
   \mathbf{U_{Z_{3}}}, \mathbf{U_{Z_{4}}}$ and $\mathbf{U_{1}}, \mathbf{U_{2}},
   \mathbf{U_{3}}, \mathbf{U_{4}}$}
-The QP-updates occur only during phaseII for an LP-problem which implies that
+The QP-updates occur only during phaseII for a QP-problem which implies that
 we don't have to consider artificial variables in these updates.
 
 \subsubsection{$\mathbf{U_{Z_{1}}}$:$\quad j \in N_{O}$ replaces $i \in B_{O}$:}
@@ -1632,7 +1634,7 @@ r_{S_{B}} \\
 r_{B_{O} \setminus \{i\}}
 \end{array}
 \right)
--
++
 \left(
 \begin{array}{c}
 A_{C, i} \\
@@ -2152,6 +2154,10 @@ x_{i}^{\prime}
 where in the last equality for $r_{\sigma(j)}^{\prime}$ we used
 $r_{\gamma_{C}((\sigma(j))}$. Note that this update of $w$ and $r$ comes in
 phaseI in 2 varieties, depending on $i \in art$ or not.
+
+\subsection{The upper bounding - Update $\mathbf{U_{9}}$}
+
+\subsubsection{$\mathbf{U_{9}}$:$\quad j \in N_{O}$ enters and leaves basis:}
 
 \section{Pricing strategies implementation issues}
 The $\mu_{j}$, $j \in N$, for the pricing step are computed according to
