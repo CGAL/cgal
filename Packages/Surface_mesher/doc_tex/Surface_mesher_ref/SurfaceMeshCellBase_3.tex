@@ -17,20 +17,23 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
-  
-The concept \ccc{SurfaceMeshComplex_2InTriangulation_3} 
-describes a 
-data structure is able to store
+The concept \ccRefName\ describes the cell base type
+of the three dimensional triangulation used
+to embed thee surface mesh.  
+
+More precisely,
+the first template parameter \ccc{C2T3} of the surface mesher
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
+is a model of the concept 
+\ccc{SurfaceMeshComplex_2InTriangulation_3} 
+which describes a data structure to store
 a pure two dimensional complex 
 embedded in a three dimensional triangulation.
-The concept \ccc{SurfaceMeshComplex_2InTriangulation_3}
-provides in particular a type 
-\ccc{SurfaceMeshComplex_2InTriangulation_3::Triangulation_3}
-for the 3D embedding triangulation.
+In particular, the type \ccc{C2T3} is required to provide
+a three dimensional triangulation type
+\ccc{C2T3::Triangulation_3}
 The concept \ccRefName\ describes the cell base type
 required in this triangulation type.
-
-
 
 \ccGeneralizes
 \ccc{TriangulationCellBase_3}
@@ -43,10 +46,12 @@ the facets that have been visited.
 
 This concept also provides storage for  the center of a Delaunay surface
 ball. 
-Given a surface, a Delaunay surface ball
-of a facet is an empty  ball,  circumscribed to the facet
-and centered on the surface. Such a ball does exist
-when the facet is part of the the restriction to the surface
+Given a surface and a three Delaunay triangulation,
+ a Delaunay surface ball
+is a ball circumscribed to a facet of the triangulation
+and centered on the surface and empty of triangulation vertices. 
+Such a ball does exist
+when the facet is part of the restriction to the surface
 of a three dimensional triangulation.
  In the following we call \ccc{surface center}
 of a facet, the center of its biggest Delaunay surface ball.
@@ -87,11 +92,11 @@ and \ccc{NOT_IN_COMPLEX}, otherwise.}
 
 \ccMethod
 {const Point&   get_facet_surface_center(int i);}
-{Returns a reference to the surface center of \ccc{facet(i).}}
+{Returns a reference to the surface center of \ccc{facet(i)}.}
 \ccGlue
 \ccMethod
 {void set_facet_surface_center (int i, Point p);} 
-{Sets point \ccc{p} as the surface center of \ccc{facet(i)}}.
+{Sets point \ccc{p} as the surface center of \ccc{facet(i)}.}
 
 
     
@@ -106,6 +111,7 @@ and \ccc{NOT_IN_COMPLEX}, otherwise.}
 
 \ccSeeAlso
 
+\ccc{SurfaceMeshTriangulation_3} \\
 \ccc{SurfaceMeshComplex_2InTriangulation_3} \\
 \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}\\
 \ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}

@@ -21,17 +21,19 @@
 The class \ccRefName\  implements  the most commonly used combination
 of meshing criteria. It involves mainly three criteria which are
 in order~: \\
-- a lower bound on the minimum angle of a facet. \\
+- a lower bound on the minimum angle of the surface mesh facets. \\
 - an upper bound on the radius of surface Delaunay balls.
- A surface Delaunay ball is a  ball circumscribing  a mesh facet 
-and  centered on the surface. Such a ball exists for each facet
-of the current mesh.
+ A surface Delaunay ball is a  ball circumscribing  a facet,
+centered on the surface and empty of vertices.
+ Such a ball exists for each facet
+of the current surface mesh.
 Indeed  the current surface mesh
-is  the restricted Delaunay triangulation of the current sampling
-which is just the set of facets in the Delaunay triangulation of
+is  the Delaunay triangulation of the current sampling restricted to
+the surface 
+which is just the set of facets in the three dimensional  Delaunay triangulation of
 the sampling  that  have a Delaunay surface ball. \\
-- an upper bound on the center-center distances of mesh facets.
-  The center-center distance of a mesh facet 
+- an upper bound on the center-center distances of the surface mesh facets.
+  The center-center distance of a surface mesh facet 
   is the distance between the facet circumcenter and the 
   center of its  surface Delaunay ball. 
 
@@ -54,7 +56,7 @@ the sampling  that  have a Delaunay surface ball. \\
                                               FT radius_bound
                                               FT distance_bound);}
 {Returns a \ccRefName\ with \ccc{angle_bound}, \ccc{radius_bound},
-\ccc{distance_bound} as bounds for the minimum angle,
+\ccc{distance_bound} as bounds for the minimum facet angle,
 the radius of the surface Delaunay balls 
 and the center-center distances respectively.}
 

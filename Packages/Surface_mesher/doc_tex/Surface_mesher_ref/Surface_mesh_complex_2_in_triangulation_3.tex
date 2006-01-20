@@ -32,7 +32,11 @@ in the global function \ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}.
 The template parameter \ccc{Tr} has to be instantiated
 with a model of the concept \ccc{SurfaceMeshTriangulation_3}.
 (Any three dimensional   triangulation of
-\cgal\ is a model of \ccc{Triangulation_3}.)
+\cgal\ is a model of \ccc{Triangulation_3}
+provided that its vertex and cell base class be models
+of the concept \ccc{SurfaceMeshVertexBase_3} and
+\ccc{SurfaceMeshCellBase_3}
+repectively.)
 
 
 

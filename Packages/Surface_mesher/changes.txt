@@ -1,3 +1,7 @@
+20 janvier 2006 Mariette
+- changed the reference page manual according to Efi comments + various discussions.
+  still missing : the concept SurfaceMeshTriangulation_3
+
 
 17 janvier 2006 Mariette
 - changed in the doc PureComplex_2InTriangulation_3 to SurfaceMeshComplex_2InTriangulation_3

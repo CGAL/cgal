@@ -28,11 +28,11 @@ in the case
 where the surface to be meshed is described as the zero level
 set  of a function $f : \R^3 \longrightarrow \R$.
 
-The parameter \ccc{GT} is a traits class providing 
+The parameter \ccc{Traits} is a traits class providing 
 a type \ccc{Point_3} and a numerical type \ccc{FT}.
 This parameter  must be instantiated by 
 a model of the concept \ccc{ImplicitSurfaceTraits}.
-The \ccc{Point_3} type provided by the traits class  \ccc{GT}
+The \ccc{Point_3} type provided by the traits class  \ccc{Traits}
 has to match  the \ccc{Point_3} type of the
 triangulation of  type \ccc{C2t3::Triangulation_3} emmbedding
 the two dimensional complex.
@@ -40,7 +40,7 @@ the two dimensional complex.
 The template parameter \ccc{Func}  stands for a model
 of the concept \ccc{ImplicitFunction}
 The numerical type \ccc{Func::FT} has to match
-the type {GT::FT}.
+the type \ccc{Traits::FT}.
 
 
 \ccInclude{CGAL/Implicit_surface_oracle.h}
@@ -65,8 +65,8 @@ the type {GT::FT}.
 
 \ccSeeAlso
 
-\ccc{ImplicitFunction} \\
-\ccc{Implicit_surface_oracle<Traits, Func>},\\
+\ccc{ImplicitFunction}, \\
+\ccc{ImplicitSurfaceTraits},\\
 \ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
 
 

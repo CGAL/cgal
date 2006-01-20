@@ -32,21 +32,21 @@ Thus, a two dimensional pure complex is a set of facets
 together with their edges and vertices.
 A  two dimensional pure complex  embedded 
 in a three dimensional triangulation
-it is a subset of the  facets 
-of this triangulation.
+is a subset of the  facets 
+of this triangulation, together with their edges and vertices.
 
 
 
 The concept \ccRefName\  is particularly suited to handle
 surface meshes obtained as the restriction to a surface of 
 a  three dimensional Delaunay triangulation.
-A model of this concept is to a type to be plugged as first template
+A model of this concept is a type to be plugged as first template
 parameter in the global
 function \ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}.
 
 
 The concept \ccRefName\   is a simplification of more general concepts called
- respectively \ccc{PureComplex2InTriangulation3}
+ respectively \ccc{PureComplex2InTriangulation3} and
 \ccc{Complex2InTriangulation3}.
 \ccc{PureComplex2InTriangulation3} is  designed to represent  pure complex
 and \ccc{Complex2InTriangulation3} is designed to represent any
@@ -92,7 +92,7 @@ An edge in the complex is
  if it is incident to respectively 1, 2,  or 3 or
 more facets in the complex.
 The status of a vertex is determined by 
-if the adjacency graph of the facets of the 2D complex
+the adjacency graph of the facets of the 2D complex
 incident to that vertex.
 The vertex  of the 2D complex is \ccc{BOUNDARY}, if this adjacency graph
 is a simple path,  it is \ccc{REGULAR} if the adjacency graph is cyclic,
@@ -360,7 +360,7 @@ vertices of the 2D complex that are  boundary vertices.}
 
 \ccHasModels
 
-\ccc{SurfaceMesh_complex_2_in_triangulation_3<Tr>}
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}
 
 
 \ccSeeAlso

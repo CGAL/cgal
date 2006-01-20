@@ -23,7 +23,7 @@ surface to be meshed. A model of this concept
 implements an oracle that is able to tell wether a segment
 (or a ray,  or a line) intersects the surface or not
 and to compute some intersection
-points if any. The concept \ccRefName\ also include methods  to provide
+points if any. The concept \ccRefName\ also includes methods  to provide
 a small set of initial points on the surface.
 
 %\ccGeneralizes
@@ -48,7 +48,7 @@ three dimensional embedding triangulation
 %\ccCreation
 \ccCreationVariable{surfor}  %% choose variable name
 
-\ccConstructor{SurfaceOracle();}{default constructor.}
+
 
 \ccOperations
 
@@ -81,11 +81,13 @@ initial_points(OutputIteratorPoints pts, int n);}
 
 \ccHasModels
 
-\ccc{Implicit_surface_oracle<Func>}
+\ccc{Implicit_surface_oracle<Traits, Func>}
 
 
 \ccSeeAlso
-\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
+\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}\\
+\ccc{ImplicitFunction}\\
+\ccc{ImplicitSurfaceOracleTraits_3}
 
 %Some\_other\_concept,
 %\ccc{some_other_function}.

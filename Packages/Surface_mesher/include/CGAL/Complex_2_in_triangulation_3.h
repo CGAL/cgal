@@ -211,6 +211,9 @@ protected:
   }
 
 
+  // MY TODO : turn this function into an internal function and rename it
+  // because it is not conform to what the doc says. 
+  // The doc says that incident_facets should return a circulator
   template <typename OutputIterator>
   OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const 
   {
@@ -218,7 +221,6 @@ protected:
     triangulation().incident_facets(v, filter_output_iterator(it, Not_in_complex()));
     return it;
   }
-
 
   // computes and returns the list of adjacent facets of f
   // with the common Vertex_handle v
