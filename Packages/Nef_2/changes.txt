@@ -1,3 +1,6 @@
+20 January 2006 Andreas Fabri
+- Added rule for examples/polylines.C
+
 20 December Andreas Fabri
 - Replaced this-> in member initialization with Base:: in order to avoid warning for VC7
 
