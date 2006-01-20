@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
@@ -9,7 +10,8 @@
 #include <CGAL/Triangular_field_2.h>
 
 typedef double coord_type;
-typedef CGAL::Cartesian<coord_type> K;
+typedef CGAL::Cartesian<coord_type> K1;
+typedef CGAL::Filtered_kernel<K1> K;
 typedef CGAL::Regular_grid_2<K> Field;
 typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
