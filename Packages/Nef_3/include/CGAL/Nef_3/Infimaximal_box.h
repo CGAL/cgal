@@ -31,21 +31,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Kernel>
-struct Is_extended_kernel {
-       typedef Tag_false value_type;
-};
-
-template<class NT>
-struct Is_extended_kernel<Extended_homogeneous<NT> > {
-       typedef Tag_true value_type;
-};
-
-template<class NT>
-struct Is_extended_kernel<Extended_cartesian<NT> > {
-       typedef Tag_true value_type;
-};
-
 template <class T, class Kernel>
 class Infimaximal_box {
 
