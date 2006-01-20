@@ -70,7 +70,6 @@ Polyhedron
 Polyhedron_IO
 Polynomial
 Polytope_distance_d
-_QP_solver
 QP_solver
 Qt_widget
 Random_numbers
