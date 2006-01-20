@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <queue>
@@ -46,8 +47,10 @@ public:
 	typedef typename VectorField_2::Point_2                                                 Point_2;
 	typedef typename VectorField_2::Vector_2                                                Vector_2;
 protected:
-	typedef CGAL::Cartesian<FT>                                                             K1;
-	typedef struct Kernel : public K1 {};
+// 	typedef CGAL::Cartesian<FT>                                                             K1;
+// 	typedef struct Kernel : public K1 {};
+// 	typedef CGAL::Filtered_kernel<K1> Kernel;
+	typedef Geom_traits Kernel;
 	typedef CGAL::Triangulation_vertex_base_2<Kernel>                                       Vb;
 	typedef CGAL::Triangulation_face_base_2<Kernel>                                         Fb;
 	typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                                     TDS;
