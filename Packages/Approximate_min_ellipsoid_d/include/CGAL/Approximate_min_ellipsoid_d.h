@@ -59,11 +59,11 @@ namespace CGAL {
     
     // We obtain our eps-approximating ellipsoid by embedding the input
     // points P into R^{d+1} by mapping p to (p,1).  Then we compute in
-    // R^{d+1} an e_eps-approximating centrally symmetric ellipsoid E for
-    // the embedded points from which the desired eps-approximating
-    // ellipsoid of the original points can be obtained by projection.
-    // The following variable E represents the e_eps-approximating
-    // centrally symmetric ellipsoid in R^{d+1}:
+    // R^{d+1} an (1+e_eps)-approximating centrally symmetric ellipsoid E for
+    // the embedded points from which the desired (1+eps)-approximating
+    // ellipsoid of the original points can be obtained by projection.  The
+    // following variable E represents the e_eps-approximating centrally
+    // symmetric ellipsoid in R^{d+1}:
     Khachiyan_approximation<true,Traits> *E;
 
     // When the input points do not affinely span the whole space
@@ -74,21 +74,22 @@ namespace CGAL {
     // As discussed below (before (*)), the centrally symmetric ellipsoid
     // E':= sqrt{(1+a_eps)(d+1)} E contains (under exact arithmetic) the
     // embedded points. (Here, a_eps is the value obtained by
-    // achieved_epsilon().) Denoting by M the defining matrix of E; we
+    // achieved_epsilon().) Denote by M the defining matrix of E; we
     // then have
     //
-    //      p^T M p <= 1
-    // 
-    // for all p in E.  Since this is equivalent to
+    //      p^T M p <= alpha,
     //
-    //     1/sqrt{alpha} p^T alpha M 1/sqrt{alpha} p <= 1,         (***)
+    // for all p in E and alpha = (1+a_eps)(d+1).  Since this is equivalent
+    // to
     //
-    // for alpha = (1+a_eps)(d+1), we see that E' = sqrt{alpha} E has
-    // alpha M as its defining matrix. Consequently, the routines
-    // defining_matrix(), defining_vector(), and defining_scalar()
-    // will return numbers that need to be scaled (by the user) with
-    // the factor alpha. (We do not perform the scaling ourselves
-    // because we cannot do it exactly.)
+    //      p^T M/alpha p <= 1,                                 (***)
+    //
+    // we see that E' = sqrt{alpha} E has M/alpha as its defining
+    // matrix. Consequently, when we return M in the routines
+    // defining_matrix(), defining_vector(), and defining_scalar() below,
+    // these numbers need to be scaled (by the user) with the factor
+    // 1/alpha. (We do not perform the scaling ourselves because we cannot do
+    // it exactly in double arithmetic.)
 
   public: // construction & destruction:
 
@@ -106,6 +107,8 @@ namespace CGAL {
 
       // fetch ambient dimension:
       d = tco.dimension(P[0]);
+      CGAL_APPEL_ASSERT(d >= 2);
+
 
       // The ellipsoid E produced by Khachiyan's algorithm has the
       // property that E':= sqrt{(1+e_eps) (d+1)} E contains all
@@ -189,9 +192,9 @@ namespace CGAL {
     // the ellipsoid E' = sqrt{alpha} E
     //
     //  (a) encloses all embedded points (p,1), p in P,
-    //  (b) has defining matrix alpha M, i.e.,
+    //  (b) has defining matrix M/alpha, i.e.,
     // 
-    //        E' = { x | x^T alpha M x <= 1 },
+    //        E' = { x | x^T M/alpha x <= 1 },
     //
     //      where alpha = (1+a_eps)(d+1) with a_eps the return value
     //      of achieved_epsilon().
@@ -199,16 +202,16 @@ namespace CGAL {
     // The ellipsoid E* we actuallly want is the intersection of E' with
     // the hyperplane { (y,z) in R^{d+1} | y = 1}.  Writing
     //
-    //        [ M'  m ]                 [ y ]
-    //    M = [ m^T c ]      and    x = [ 1 ]
+    //       [ M'  m  ]                 [ y ]
+    //   M = [ m^T nu ]      and    x = [ 1 ]                           (*****)
     //
     // we thus obtain
     //
-    //    x^T alpha M x = y^T alpha M y + 2 alpha y^Tm + c.
+    //   x^T M/alpha x = y^T y alpha/M + 2/alpha y^Tm + nu/alpha.
     //
     // It follows
     // 
-    //    E* = { y | y^T alpha M' y + 2 alpha y^Tm + (alpha c-1) <= 0 }. (****)
+    //   E* = { y | y^T M'/alpha y + 2/alpha y^Tm + (nu/alpha-1) <= 0 }. (****)
     //
     // This is what the routines defining_matrix(), defining_vector(),
     // and defining_scalar() implement.
@@ -256,7 +259,7 @@ namespace CGAL {
     //    E* = { x | x^T M x + x^T m + mu <= 0}
     //
     // of the computed approximation. More precisely, the routine does not
-    // return mu but the number (1+achieved_epsilon())*(d+1)*mu+1.
+    // return mu but the number (1+achieved_epsilon())*(d+1)*(mu+1).
     //
     // Precondition: !is_degenerate()
     {
@@ -288,17 +291,17 @@ namespace CGAL {
       // So all we need to do is compute the smallest (let's say: a small)
       // double number larger or equal to ratio.
       //
-      // Todo: in the following implementation it would maybe be more
-      // accurate to use CGAL::Interval_nt to compute sqrt(1+k_eps) and
-      // then integer-exponentiate this with exponent d+1.
+      // Todo: make the calculation below more stable, numerically?
       const double k_eps = E->exact_epsilon();
       FPU_CW_t old = FPU_get_and_set_cw(CGAL_FE_UPWARD); // round up
-      const double eps = std::exp((d+1)*0.5*std::log(1.0+k_eps))-1.0;
+      const double sum = 1.0 + k_eps;
+      double tmp = sum;
+      for (int i=0; i<d; ++i)
+	tmp *= sum;
+      const double eps = std::sqrt(tmp)-1.0;
       FPU_set_cw(old);                                   // restore
-      
-      // Todo: following line should be uncommented as soon as
-      // the bug with eps < 0 is fixed.
-      // CGAL_APPEL_ASSERT(eps >= 0.0);
+
+      CGAL_APPEL_ASSERT(eps >= 0.0);
       return eps;
     }
 
@@ -371,7 +374,7 @@ namespace CGAL {
 
     Axes_lengths_iterator axes_lengths_end()
     // Returns the past-the-end iterator corresponding to
-    // center_cartesian_begin().
+    // axes_lengths_begin().
     //
     // Precondition: !is_degenerate() && (d==2 || d==3)
     {
@@ -423,9 +426,15 @@ namespace CGAL {
     std::vector<double>                center_;
     std::vector<double>                lengths_;
     std::vector< std::vector<double> > directions_;
+    std::vector<double>                mi; // contains M^{-1} (see (*****)
+					   // above) iff has_center is true;
+					   // mi[i+d*j] is entry (i,j) of
+					   // M^{-1}
 
     void compute_center();
     void compute_axes_2_3();
+    void compute_axes_2(const double alpha, const double factor);
+    void compute_axes_3(const double alpha, const double factor);
     
   public: // "debugging" routines:
 
