@@ -68,6 +68,7 @@ typedef long machine_long;
 #endif
 
 // automaticall link necessary static library under visual c++
+#ifdef CGAL_LINK_AUTOMATICALLY
 #ifdef _MSC_VER
   #ifdef _DEBUG
     #pragma comment(lib, "core++Debug.lib")
@@ -77,7 +78,7 @@ typedef long machine_long;
     #pragma comment(lib, "gmp.lib")
   #endif
 #endif
-
+#endif
 #ifndef CORE_NO_AUTOMATIC_NAMESPACE
 using namespace CORE;
 #endif
