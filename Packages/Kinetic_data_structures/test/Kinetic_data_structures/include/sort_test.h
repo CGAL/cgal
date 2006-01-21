@@ -8,6 +8,7 @@ bool sort_test(Traits &tr)
   std::string etag="WARNING: ";
   bool eret=false;
   CGAL_exactness_assertion_code(etag="ERROR: ");
+  CGAL_exactness_assertion_code(bool test_compiled_with_exact_checks;);
   CGAL_exactness_assertion_code(eret=true);
   
     typedef CGAL::KDS::Sort<Traits> Sort;
