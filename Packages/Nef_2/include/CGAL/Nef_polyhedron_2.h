@@ -28,6 +28,7 @@
 #include <CGAL/Nef_2/HDS_items.h>
 #include <CGAL/HalfedgeDS_default.h>
 
+#include <CGAL/Is_extended_kernel.h>
 #include <CGAL/Nef_2/PM_explorer.h>
 #include <CGAL/Nef_2/PM_decorator.h>
 #include <CGAL/Nef_2/PM_io_parser.h>
@@ -42,11 +43,6 @@
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template<class Kernel>
-struct Is_extended_kernel {
-       typedef Tag_false value_type;
-};
 
 
 template <typename T, typename I, typename M> class Nef_polyhedron_2;
