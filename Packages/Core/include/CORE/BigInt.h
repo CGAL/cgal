@@ -48,7 +48,8 @@ struct _alloc_cstr {
     str = s;
   }
   ~_alloc_cstr() {
-    __gmp_free_func(str, strlen(str)+1);
+    assert(false);
+    //__gmp_free_func(str, strlen(str)+1);
   }
 };
 
