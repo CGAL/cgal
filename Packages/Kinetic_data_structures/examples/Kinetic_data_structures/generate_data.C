@@ -4,8 +4,9 @@
 #include <algorithm>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Gmpq.h>
+#if 0
 #include <boost/program_options.hpp>
-
+#endif
 
 template <class NT>
 void generate(int n, int d, int num_coords)
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
     bool inexact=true;
     bool weighted=false;
 
-
+#if 0
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
         ("help", boost::program_options::bool_switch(&print_help), "produce help message")
@@ -56,6 +57,9 @@ int main(int argc, char *argv[])
     boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
         options(desc).run(), vm);
     boost::program_options::notify(vm);
+#endif
+
+    bool boost_program_options_disabled;
 
     if (print_help) {
         std::cout << "This program generates a set of moving points and outputs it to a file.\n";
