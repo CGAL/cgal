@@ -192,6 +192,9 @@
 				RelativePath=".\lib\dt3.h">
 			</File>
 			<File
+				RelativePath="..\..\..\..\include\Cgal\eigen.h">
+			</File>
+			<File
 				RelativePath=".\MainFrm.h">
 			</File>
 			<File

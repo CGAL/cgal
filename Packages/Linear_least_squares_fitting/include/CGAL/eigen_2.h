@@ -32,7 +32,7 @@ namespace CGALi {
   // b c 
   // Eigen values and vectors are sorted in descendent order.
   template <typename K>
-  void eigen_symmetric_2(typename K::FT *matrix, // a b c
+  void eigen_symmetric_2(const typename K::FT *matrix, // a b c
                          std::pair<typename K::Vector_2,
                                    typename K::Vector_2>& eigen_vectors,
                          std::pair<typename K::FT,

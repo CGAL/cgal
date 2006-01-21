@@ -40,7 +40,8 @@ void eigen_symmetric(const FT *mat,
       
   // copy matrix
   FT *a = new FT[nn];
-  for(int ij=0; ij<nn; ij++) 
+  int ij;
+  for(ij=0; ij<nn; ij++) 
     a[ij] = mat[ij];
   // Fortran-porting
   a--;
@@ -48,7 +49,8 @@ void eigen_symmetric(const FT *mat,
   // init diagonalization matrix as the unit matrix
   FT *v = new FT[n*n];
   ij = 0;
-  for(int i=0; i<n; i++)
+  int i;
+  for(i=0; i<n; i++)
     for(int j=0; j<n; j++) 
       if(i==j)
         v[ij++] = 1.0;
@@ -60,7 +62,7 @@ void eigen_symmetric(const FT *mat,
   // compute weight of the non diagonal terms 
   ij = 1;
   FT a_norm = 0.0;
-  for(int i=1; i<=n; i++)
+  for(i=1; i<=n; i++)
     for(int j=1; j<=i; j++) 
     {
       if( i!=j ) 
@@ -121,6 +123,7 @@ void eigen_symmetric(const FT *mat,
           int ilv = n*(l-1);
           int imv = n*(m-1);
           
+          int i;
           for( i=1; i<=n;i++ ) 
           {
             if( (i!=l) && (i!=m) ) 
@@ -179,10 +182,10 @@ void eigen_symmetric(const FT *mat,
       
   // sort eigen values and vectors 
   int *index = new int[n];
-  for(int i=0; i<n; i++)
+  for(i=0; i<n; i++)
     index[i] = i;
       
-  for(int i=0; i<(n-1); i++)
+  for(i=0; i<(n-1); i++)
   {
     FT x = eigen_values[i];
     int k = i;
