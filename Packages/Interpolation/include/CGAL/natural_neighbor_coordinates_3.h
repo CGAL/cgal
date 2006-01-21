@@ -104,7 +104,7 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
 
   if ( lt == Dt::VERTEX )
     { 
-      *nn_out++= make_pair(c->vertex(li),Coord_type(1));
+      *nn_out++= std::make_pair(c->vertex(li),Coord_type(1));
       return make_triple(nn_out,norm_coeff=Coord_type(1),true);
     }
   else if (dt.is_infinite(c))
@@ -164,7 +164,7 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
     {
       Coord_type co = coor_it->second/
 	(CGAL_NTS sqrt(compute_squared_distance<Gt>(coor_it->first->point(),Q))); 
-      *nn_out++= make_pair(coor_it->first,co);
+      *nn_out++= std::make_pair(coor_it->first,co);
       norm_coeff+=co;
     }
   return make_triple(nn_out,norm_coeff,true);
@@ -196,7 +196,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 
   if ( lt == Dt::VERTEX )
     { 
-      *nn_out++= make_pair(c->vertex(li),Coord_type(1));
+      *nn_out++= std::make_pair(c->vertex(li),Coord_type(1));
       return make_triple(nn_out,norm_coeff=Coord_type(1),true);
     }
   else if (dt.is_infinite(c))
@@ -276,7 +276,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
        coor_it != coordinate.end();
        ++coor_it)
     {
-      *nn_out++= (make_pair(coor_it->first,coor_it->second));
+      *nn_out++= std::make_pair(coor_it->first,coor_it->second);
       norm_coeff+=coor_it->second;
     }
   return make_triple(nn_out,norm_coeff,true);

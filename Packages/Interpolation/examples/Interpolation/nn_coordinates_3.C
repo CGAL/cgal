@@ -5,14 +5,13 @@
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
-
 #include <CGAL/Triangulation_data_structure_3.h> 
-
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
 #include <CGAL/natural_neighbor_coordinates_3.h>
 
+#include <fstream>
 
 typedef double NT; //Number Type 
 
@@ -46,7 +45,7 @@ int main()
 {  
   Dh triangulation;
   
-  std::ifstream iFile("data/points3", std::ios::in);
+  std::fstream iFile("data/points3", std::ios::in);
   Point3 p;
   
   while ( iFile >> p )

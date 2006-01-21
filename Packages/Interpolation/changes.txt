@@ -1,3 +1,6 @@
+21 January 2006 Andreas Fabri
+- tiny fixes  in include/CGAL/natural_neighbor_coordinates_3.h  and  examples/Interpolation/nn_coordinates_3.C
+
 18 December 2005 Andreas Fabri
 - Fixed typos
 
