@@ -1,3 +1,8 @@
+21 January 2006 Sylvain Pion
+- make test/IA/Static_filters.C work (real fix would be to make
+  Kernel_checker into a real kernel, with type equality and missing
+  ctors).
+
 16 January 2006 Sylvain Pion
 - Only declare CORE::Expr instead of #include <CGAL/CORE_Expr.h>
   in Exact_type_selecter.h, to avoid dependency.

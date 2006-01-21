@@ -14,8 +14,8 @@ typedef CGAL::Simple_cartesian<double>   K0;
 typedef CGAL::Filtered_kernel<K0>        K1;
 typedef K1         K2; // Static_filters is now included in Filtered_kernel.
 //typedef CGAL::Static_filters<K1>         K2;
-typedef CGAL::Kernel_checker<K2, K4,
-              CGAL::Cartesian_converter<K2, K4> >     K3;
+typedef CGAL::Kernel_checker<K2, K4>     K3;
+              // CGAL::Cartesian_converter<K2, K4> >     K3;
 
 typedef K3::Point_2    Point_2;
 typedef K3::Point_3    Point_3;
@@ -37,7 +37,8 @@ double my_rand()
 // Random point in unit square.
 Point_2 my_rand_p2()
 {
-  return Point_2(my_rand(), my_rand());
+  double x = my_rand(), y = my_rand();
+  return Point_2(K2::Point_2(x, y), K4::Point_2(x, y));
 }
 
 // Random point on unit circle.
@@ -46,13 +47,15 @@ Point_2 circle_rand_p2()
   double dx = my_rand();
   double dy = my_rand();
   double n = std::sqrt(dx*dx+dy*dy);
-  return Point_2(dx/n, dy/n);
+  double x = dx/n, y = dy/n;
+  return Point_2(K2::Point_2(x, y), K4::Point_2(x, y));
 }
 
 // Random point in unit cube.
 Point_3 my_rand_p3()
 {
-  return Point_3(my_rand(), my_rand(), my_rand());
+  double x = my_rand(), y = my_rand(), z = my_rand();
+  return Point_3(K2::Point_3(x, y, z), K4::Point_3(x, y, z));
 }
 
 // Random point on unit sphere.
@@ -62,22 +65,51 @@ Point_3 sphere_rand_p3()
   double dy = my_rand();
   double dz = my_rand();
   double n = std::sqrt(dx*dx + dy*dy + dz*dz);
-  return Point_3(dx/n, dy/n, dz/n);
+  double x = dx/n, y = dy/n, z = dz/n;
+  return Point_3(K2::Point_3(x, y, z), K4::Point_3(x, y, z));
 }
 
 // Perturbation with given maximum relative epsilon.
 void perturb(Point_2 &p, double rel_eps)
 {
-  p = Point_2(p.x()*(1+rand_base()*rel_eps),
-              p.y()*(1+rand_base()*rel_eps));
+  double x = p.first.x()*(1+rand_base()*rel_eps);
+  double y = p.first.y()*(1+rand_base()*rel_eps);
+  p = Point_2(K2::Point_2(x, y), K4::Point_2(x, y));
 }
 
 // Perturbation with given maximum relative epsilon.
 void perturb(Point_3 &p, double rel_eps)
 {
-  p = Point_3(p.x()*(1+rand_base()*rel_eps),
-              p.y()*(1+rand_base()*rel_eps),
-              p.z()*(1+rand_base()*rel_eps));
+  double x = p.first.x()*(1+rand_base()*rel_eps);
+  double y = p.first.y()*(1+rand_base()*rel_eps);
+  double z = p.first.z()*(1+rand_base()*rel_eps);
+  p = Point_3(K2::Point_3(x, y, z), K4::Point_3(x, y, z));
+}
+
+// Pick a random point on the segment [p, q].
+Point_2 pick_collinear(const Point_2 &p, const Point_2 &q)
+{
+  // Kernel_checker currently prevents from using the following :
+  // r = p+(p-q)*my_rand();
+  double r1 = my_rand();
+  double x = p.first.x() + (q.first.x() - p.first.x())*r1;
+  double y = p.first.y() + (q.first.y() - p.first.y())*r1;
+  return Point_2(K2::Point_2(x, y), K4::Point_2(x, y));
+}
+
+// Pick a random point on the triangle [p, q, r].
+Point_3 pick_coplanar(const Point_3 &p, const Point_3 &q, const Point_3 &r)
+{
+  // Kernel_checker currently prevents from using the following :
+  // s = p + (p-q)*my_rand() + (p-r)*my_rand();  (almost)
+  double r1 = my_rand(), r2 = my_rand();
+  double x = p.first.x() + (q.first.x() - p.first.x())*r1
+                         + (r.first.x() - p.first.x())*r2;
+  double y = p.first.y() + (q.first.y() - p.first.y())*r1
+                         + (r.first.y() - p.first.y())*r2;
+  double z = p.first.z() + (q.first.z() - p.first.z())*r1
+                         + (r.first.z() - p.first.z())*r2;
+  return Point_3(K2::Point_3(x, y, z), K4::Point_3(x, y, z));
 }
 
 void
@@ -93,7 +125,8 @@ test_orientation_2()
   CGAL::CGALi::orientation(r, q, p, K3());
 
   // Then with collinear points (up to roundoff errors).
-  r = p+(p-q)*my_rand();
+  // r = p+(p-q)*my_rand();
+  r = pick_collinear(p, q);
 
   CGAL::CGALi::orientation(p, q, r, K3());
   CGAL::CGALi::orientation(q, r, p, K3());
@@ -122,7 +155,8 @@ test_orientation_3()
   CGAL::CGALi::orientation(s, p, q, r, K3());
 
   // Then with coplanar points (up to roundoff errors).
-  s = p + (p-q)*my_rand() + (p-r)*my_rand();
+  //s = p + (p-q)*my_rand() + (p-r)*my_rand();
+  s = pick_coplanar(p, q, r);
 
   CGAL::CGALi::orientation(p, q, r, s, K3());
   CGAL::CGALi::orientation(q, r, s, p, K3());
