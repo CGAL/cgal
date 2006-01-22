@@ -114,6 +114,12 @@ public:
     m_holes.clear();
   }
 
+  bool is_plane() const
+  {
+    return (m_pgn.is_empty() && m_holes.empty());
+  }
+
+
 
 protected:
 
