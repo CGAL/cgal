@@ -16,7 +16,6 @@ int main(int, char*){
 
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_circ_polygon.h"
-#include "readdxf.h"
 #include <CGAL/Bbox_2.h> 
 
 
@@ -63,6 +62,8 @@ int main(int, char*){
 #include "icons/del_P.xpm"
 #include "icons/del_Q.xpm"
 #include "icons/refresh.xpm"
+
+#include <CGAL/IO/Dxf_bsop_reader.h>
 
 
 
@@ -516,15 +517,54 @@ public slots:
       widget->setCursor(Qt::WaitCursor);
       widget->lock();
       widget->clear_history();
+
+      CGAL::Dxf_bsop_reader<Kernel> reader;
+      std::vector<Polygon>  circ_polygons;
+      std::vector<Polygon_with_holes>  circ_polygons_with_holes;
+      reader(in_file,
+             std::back_inserter(circ_polygons),
+             std::back_inserter(circ_polygons_with_holes),
+             !are_simple);
+
       if(red_active)
       {
-        red_set.clear();
-        readdxf(in_file, &red_set, widget, box, are_simple);
+        red_set.join(circ_polygons.begin(),
+                     circ_polygons.end(),
+                     circ_polygons_with_holes.begin(),
+                     circ_polygons_with_holes.end());
       }
       else  
       {
-        blue_set.clear();
-        readdxf(in_file, &blue_set, widget, box, are_simple);
+        blue_set.join(circ_polygons.begin(),
+                      circ_polygons.end(),
+                      circ_polygons_with_holes.begin(),
+                      circ_polygons_with_holes.end());
+      }
+
+      if(!circ_polygons.empty())
+      {
+         box = circ_polygons.front().bbox();
+      }
+      else if(!circ_polygons_with_holes.empty())
+      {
+        box = circ_polygons_with_holes.front().outer_boundary().bbox();
+      }
+
+      std::vector<Polygon>::iterator itr1 = circ_polygons.begin();
+      for(itr1 = circ_polygons.begin();
+          itr1 != circ_polygons.end();
+          ++itr1)
+      {
+        box = box + itr1->bbox();
+      }
+
+
+      std::vector<Polygon_with_holes>::iterator itr2;
+       for(itr2 = circ_polygons_with_holes.begin();
+           itr2 != circ_polygons_with_holes.end();
+           ++itr2)
+      {
+        box = box + itr2->outer_boundary().bbox();
       }
        widget->set_window(box.xmin(),
                           box.xmax(),

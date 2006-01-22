@@ -12,9 +12,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 
-//typedef CGAL::Quotient<CGAL::MP_Float>                Coord_type;
-typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >  Coord_type;
-//typedef double                                        Coord_type;
+typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>  Coord_type;
 typedef CGAL::Cartesian<Coord_type>		                Kernel;
 
 typedef Kernel::Segment_2						                  Segment;
