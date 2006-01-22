@@ -31,7 +31,7 @@ int main(int, char*)
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
-#include <CGAL/Triangular_field_2.h>
+//#include <CGAL/Triangular_field_2.h>
 
 #include <CGAL/Timer.h>
 
@@ -279,7 +279,7 @@ public slots :
 	}
 	void image( const QString & s )
 	{
-		QImage::QImage bckgnd( s );
+		QImage bckgnd( s );
 		std::cout << bckgnd.width() << " " << bckgnd.height() << "\n";
 	}
 	void density()
