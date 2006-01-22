@@ -496,7 +496,7 @@ inline bool _join(const Pgn1& pgn1,
                   Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn2);
+  gps.insert(pgn1);
   gps.join(pgn2);
   if(gps.number_of_polygons_with_holes() == 1)
   {
