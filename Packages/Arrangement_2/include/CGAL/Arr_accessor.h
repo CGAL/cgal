@@ -512,10 +512,10 @@ public:
    */
   Dcel_vertex* new_vertex (const Point_2& p)
   {
-    typename Arrangement_2::Stored_point_2 *p_p = p_arr->_new_point (p);
-    Dcel_vertex                            *new_v = p_arr->dcel.new_vertex();
+    typename Arrangement_2::Stored_point_2  *p_pt = p_arr->_new_point (p);
+    Dcel_vertex                             *new_v = p_arr->dcel.new_vertex();
 
-    new_v->set_point (p_p);
+    new_v->set_point (p_pt);
     return (new_v);
   }
 
@@ -526,8 +526,8 @@ public:
    */
   Dcel_halfedge* new_edge (const X_monotone_curve_2& cv)
   {
-    typename Arrangement_2::Stored_curve_2 *p_cv = p_arr->_new_curve (cv);
-    Dcel_halfedge                          *new_he = p_arr->dcel.new_edge();
+    typename Arrangement_2::Stored_curve_2  *p_cv = p_arr->_new_curve (cv);
+    Dcel_halfedge                           *new_he = p_arr->dcel.new_edge();
 
     new_he->set_curve (p_cv);
     return (new_he);

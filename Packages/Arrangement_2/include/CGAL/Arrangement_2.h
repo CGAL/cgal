@@ -623,50 +623,11 @@ public:
 
 protected:
 
-  /*!
-   * \class Representation of a point object stored in the points' container.
-   */
-  typedef typename Traits_2::Point_2                  Base_point_2;
+  typedef Point_2                                 Stored_point_2;
+  typedef X_monotone_curve_2                      Stored_curve_2;
 
-  class Stored_point_2 : public Base_point_2,
-                         public In_place_list_base<Stored_point_2>
-  {
-  public:
-
-    /*! Default constructor. */
-    Stored_point_2 ()
-    {}
-
-    /*! Constructor from a point. */
-    Stored_point_2 (const Base_point_2& p) :
-      Base_point_2 (p)
-    {}
-  };
-
-  /*!
-   * \class Representation of an x-monotone curve object stored in the 
-   *        curves' container.
-   */  
-  class Stored_curve_2 : public X_monotone_curve_2,
-                         public In_place_list_base<Stored_curve_2>
-  {
-  public:
-
-    /*! Default constructor. */
-    Stored_curve_2 ()
-    {}
-
-    /*! Constructor from an x-monotone curve. */
-    Stored_curve_2 (const X_monotone_curve_2& cv) :
-      X_monotone_curve_2 (cv)
-    {}
-  };
-
-  typedef CGAL_ALLOCATOR(Stored_point_2)          Points_alloc;
-  typedef CGAL_ALLOCATOR(Stored_curve_2)          Curves_alloc;
-
-  typedef In_place_list<Stored_point_2, false>    Points_container;
-  typedef In_place_list<Stored_curve_2, false>    X_curves_container;
+  typedef CGAL_ALLOCATOR(Point_2)                 Points_alloc;
+  typedef CGAL_ALLOCATOR(X_monotone_curve_2)      Curves_alloc;
 
   typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
@@ -678,12 +639,7 @@ protected:
   // Data members:
   Dcel                dcel;         // The DCEL representing the arrangement.
   DFace              *un_face;      // The unbounded face of the DCEL.
-  Points_container    points;       // Container for the points that
-                                    // correspond to the vertices.
   Points_alloc        points_alloc; // Allocator for the points.
-
-  X_curves_container  curves;       // Container for the x-monotone curves
-                                    // that correspond to the edges.
   Curves_alloc        curves_alloc; // Allocator for the curves.
   Observers_container observers;    // Storing pointers to existing observers.
   Traits_adaptor_2   *traits;       // The traits adaptor.
@@ -1144,43 +1100,39 @@ protected:
   //@{
 
   /*! Allocate a new point. */
-  Stored_point_2 *_new_point (const Point_2& p)
+  Point_2 *_new_point (const Point_2& pt)
   {
-    Stored_point_2   *p_sp = points_alloc.allocate (1);
+    Point_2   *p_pt = points_alloc.allocate (1);
 
-    points_alloc.construct (p_sp, p);
-    points.push_back (*p_sp);
-    return (p_sp);
+    points_alloc.construct (p_pt, pt);
+    return (p_pt);
   }
 
   /*! De-allocate a point. */
-  void _delete_point (Point_2& p)
+  void _delete_point (Point_2& pt)
   {
-    Stored_point_2   *p_sp = static_cast<Stored_point_2*> (&p);
+    Point_2   *p_pt = &pt;
 
-    points.erase (p_sp);
-    points_alloc.destroy (p_sp);
-    points_alloc.deallocate (p_sp, 1);
+    points_alloc.destroy (p_pt);
+    points_alloc.deallocate (p_pt, 1);
   }
 
   /*! Allocate a new curve. */
-  Stored_curve_2 *_new_curve (const X_monotone_curve_2& cv)
+  X_monotone_curve_2 *_new_curve (const X_monotone_curve_2& cv)
   {
-    Stored_curve_2   *p_scv = curves_alloc.allocate (1);
+    X_monotone_curve_2   *p_cv = curves_alloc.allocate (1);
 
-    curves_alloc.construct (p_scv, cv);
-    curves.push_back (*p_scv);
-    return (p_scv);
+    curves_alloc.construct (p_cv, cv);
+    return (p_cv);
   }
 
   /*! De-allocate a curve. */
   void _delete_curve (X_monotone_curve_2& cv)
   {
-    Stored_curve_2   *p_scv = static_cast<Stored_curve_2*> (&cv);
+    X_monotone_curve_2   *p_cv = &cv;
 
-    curves.erase (p_scv);
-    curves_alloc.destroy (p_scv);
-    curves_alloc.deallocate (p_scv, 1);
+    curves_alloc.destroy (p_cv);
+    curves_alloc.deallocate (p_cv, 1);
   }
   //@}
 

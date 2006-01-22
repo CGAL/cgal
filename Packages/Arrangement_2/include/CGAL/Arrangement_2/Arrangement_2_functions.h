@@ -109,7 +109,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 
   // Go over the vertices and create duplicates of the stored points.
   typename Dcel::Vertex_iterator       vit;
-  Stored_point_2                      *dup_p;
+  Point_2                             *dup_p;
   DVertex                             *p_v;
 
   for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
@@ -124,7 +124,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 
   // Go over the edge and create duplicates of the stored curves.
   typename Dcel::Edge_iterator         eit;
-  Stored_curve_2                      *dup_cv;
+  X_monotone_curve_2                  *dup_cv;
   DHalfedge                           *p_e;
 
   for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
@@ -159,30 +159,20 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 template<class Traits, class Dcel>
 Arrangement_2<Traits,Dcel>::~Arrangement_2 ()
 {  
-  // Clear the DCEL.
-  dcel.delete_all();
-
   // Free all stored points.
-  typename Points_container::iterator    pit = points.begin(), p_curr;
+  typename Dcel::Vertex_iterator       vit;
 
-  while (pit != points.end())
-  {
-    p_curr = pit;
-    ++pit;
-    _delete_point (*p_curr);
-  }
-  points.destroy();
+  for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
+    _delete_point (vit->point());
 
   // Free all stores curves.
-  typename X_curves_container::iterator  cvit = curves.begin(), cv_curr;
+  typename Dcel::Edge_iterator         eit;
 
-  while (cvit != curves.end())
-  {
-    cv_curr = cvit;
-    ++cvit;
-    _delete_curve (*cv_curr);
-  }
-  curves.destroy();
+  for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
+    _delete_curve (eit->curve());
+
+  // Clear the DCEL.
+  dcel.delete_all();
 
   // Free the traits object, if necessary.
   if (own_traits)
@@ -197,14 +187,22 @@ void Arrangement_2<Traits,Dcel>::clear ()
   // Notify the observers that we are about to clear the arragement.
   _notify_before_clear ();
 
+  // Free all stored points.
+  typename Dcel::Vertex_iterator       vit;
+
+  for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
+    _delete_point (vit->point());
+
+  // Free all stores curves.
+  typename Dcel::Edge_iterator         eit;
+
+  for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
+    _delete_curve (eit->curve());
+
   // Clear the DCEL so it contains just an empty unbounded face.
   dcel.delete_all();
   un_face = dcel.new_face();
   un_face->set_halfedge (NULL);
-
-  // Clear the point and curve containers.
-  points.destroy();
-  curves.destroy();
 
   // Notify the observers that we have just cleared the arragement.
   _notify_after_clear (unbounded_face());
@@ -1584,7 +1582,7 @@ typename Arrangement_2<Traits,Dcel>::DVertex*
 Arrangement_2<Traits,Dcel>::_create_vertex (const Point_2& p)
 {
   // Notify the observers that we are about to create a new vertex.
-  Stored_point_2 *p_p = _new_point (p);
+  Point_2  *p_p = _new_point (p);
 
   _notify_before_create_vertex (*p_p);
 
@@ -1619,10 +1617,10 @@ Arrangement_2<Traits,Dcel>::_insert_in_face_interior
 
   // Create a pair of twin halfedges connecting the two vertices,
   // and link them together to form a new connected component, a hole in f.
-  DHalfedge       *he1 = dcel.new_edge();
-  DHalfedge       *he2 = he1->opposite();
-  DHole           *hole = dcel.new_hole();
-  Stored_curve_2  *dup_cv = _new_curve (cv);
+  DHalfedge           *he1 = dcel.new_edge();
+  DHalfedge           *he2 = he1->opposite();
+  DHole               *hole = dcel.new_hole();
+  X_monotone_curve_2  *dup_cv = _new_curve (cv);
 
   hole->set_face (f);
   he1->set_curve (dup_cv);
@@ -1690,9 +1688,9 @@ Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
 
   // Create a pair of twin halfedges connecting the two vertices,
   // and associate them with the given curve.
-  DHalfedge       *he1 = dcel.new_edge();
-  DHalfedge       *he2 = he1->opposite();
-  Stored_curve_2  *dup_cv = _new_curve (cv);
+  DHalfedge           *he1 = dcel.new_edge();
+  DHalfedge           *he2 = he1->opposite();
+  X_monotone_curve_2  *dup_cv = _new_curve (cv);
 
   he1->set_curve (dup_cv);
 
@@ -1770,9 +1768,9 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 
   // Create a pair of twin halfedges connecting v1 and v2 and associate them
   // with the given curve.
-  DHalfedge       *he1 = dcel.new_edge();
-  DHalfedge       *he2 = he1->opposite();
-  Stored_curve_2  *dup_cv = _new_curve (cv);
+  DHalfedge           *he1 = dcel.new_edge();
+  DHalfedge           *he2 = he1->opposite();
+  X_monotone_curve_2  *dup_cv = _new_curve (cv);
 
   he1->set_curve (dup_cv);
 
@@ -2202,7 +2200,7 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
 
   // Associate cv1 with he1 (and its twin). We allocate a new curve for cv2
   // and associate it with he3 (and its twin).
-  Stored_curve_2  *dup_cv2 = _new_curve (cv2);
+  X_monotone_curve_2  *dup_cv2 = _new_curve (cv2);
 
   he1->curve() = cv1;
   he3->set_curve (dup_cv2);

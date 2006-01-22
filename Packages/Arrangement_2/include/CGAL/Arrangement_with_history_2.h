@@ -99,6 +99,9 @@ public:
   typedef Data_dcel                                     Dcel;
   typedef Base_arr_2                                    Arrangement_2;
 
+  typedef typename Arrangement_2::Stored_point_2        Stored_point_2;
+  typedef Data_x_curve_2                                Stored_curve_2;
+
   // Types inherited from the base arrangement class:
   typedef typename Base_arr_2::Size                    Size;
 
