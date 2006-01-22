@@ -63,6 +63,52 @@ public:
 
 };
 
+//-----------------------------------------------------------------------//
+//                          operator<<
+//-----------------------------------------------------------------------//
+
+template <class Kernel_, class Container_>
+std::ostream& operator<<(std::ostream &os,
+                         const Polygon_with_holes_2<Kernel_, Container_>& p)
+{
+  typename Polygon_with_holes_2<Kernel_,Container_>::Hole_const_iterator i;
+
+  switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+      os << p.outer_boundary() << ' ' << p.number_of_holes()<<' ';
+      for (i = p.holes_begin(); i != p.holes_end(); ++i) {
+        os << *i << ' ';
+      }
+      return os;
+
+    case IO::BINARY :
+       os << p.outer_boundary() << p.number_of_holes();
+      for (i = p.holes_begin(); i != p.holes_end(); ++i) {
+        os << *i ;
+      }
+      return os;
+
+    default:
+      os << "Polygon_with_holes_2(" << std::endl;
+      if(p.is_unbounded())
+        os << "No outer bounary" << std::endl;
+      else
+      {
+        os << "Boundary(" << std::endl;
+        os << p.outer_boundary() << std::endl;
+      }
+
+      os << "Holes" << std::endl;
+      os << p.number_of_holes()<<std::endl;
+      for (i = p.holes_begin(); i != p.holes_end(); ++i) {
+        os <<" "<< *i << std::endl;
+      }
+
+      os << ")" << std::endl;
+      return os;
+  }
+}
+
 CGAL_END_NAMESPACE
 
 #endif

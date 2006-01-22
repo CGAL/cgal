@@ -22,6 +22,8 @@
 
 #include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
+#include <CGAL/Bbox_2.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -135,6 +137,23 @@ public:
     {
       itr->approximate(oi, n);
     }
+  }
+
+  Bbox_2 bbox() const
+  {
+    Bbox_2 result;
+    if(m_xcurves.empty())
+      return (result);
+
+    Curve_const_iterator first = m_xcurves.begin();
+    result = first->bbox();
+
+    for(++first; first != m_xcurves.end(); ++first)
+    {
+      result = result + first->bbox();
+    }
+      
+    return result;
   }
 };
 
