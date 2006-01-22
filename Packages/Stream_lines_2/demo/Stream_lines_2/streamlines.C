@@ -12,7 +12,7 @@ int main(int, char*)
 }
 
 #else
-
+#include <CGAL/basic.h>
 #include <qapplication.h>
 #include <qfont.h>
 #include <qpushbutton.h>
