@@ -1,3 +1,6 @@
+23 January 2006 Andreas Fabri
+- Uncertain is a class and not a struct (VC7 complained)
+
 14 September 2005 Sylvain Pion
 - Use K::Oriented_side instead of CGAL::Oriented_side.
 - Remove qualified_result_type from functors.
