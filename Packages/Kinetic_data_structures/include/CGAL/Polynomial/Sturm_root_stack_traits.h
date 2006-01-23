@@ -28,6 +28,7 @@
 #include <CGAL/Polynomial/internal/Rational/Reduced_Sturm_sequence.h>
 #include <CGAL/Polynomial/internal/Rational/Subresultant_Sturm_sequence.h>
 #include <CGAL/Polynomial/internal/Sturm_isolating_interval.h>
+#include <CGAL/Polynomial/internal/Rational/Sturm_root_counter.h>
 
 //#include <CGAL/Polynomial/Tools/Hybrid_isolating_interval.h>
 
@@ -42,7 +43,7 @@ class Sturm_root_stack_traits
         typedef Sturm_root_stack_traits<Polynomial>    Self;
 
     public:
-        typedef internal::Sturm_root_counter<Self> Root_count;
+  typedef internal::Sturm_root_counter<Self> Root_count;
         typedef typename Base::Function            Function;
 
 //! The the sturm sequence

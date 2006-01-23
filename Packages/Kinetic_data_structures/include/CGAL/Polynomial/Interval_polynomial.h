@@ -75,7 +75,7 @@ class Interval_polynomial: public internal::Polynomial_impl<Interval_polynomial,
 
 };
 
-std::ostream &operator<<(std::ostream &out, const Interval_polynomial& ip)
+inline std::ostream &operator<<(std::ostream &out, const Interval_polynomial& ip)
 {
     ip.write(out);
     return out;
