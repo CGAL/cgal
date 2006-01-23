@@ -34,7 +34,7 @@ struct Same_uncertainty
   typedef T1 type;
 };
 
-template < typename T > struct Uncertain;
+template < typename T > class Uncertain;
 template < typename T > struct Sgn;
 
 template < typename T1, typename T2 >
