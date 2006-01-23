@@ -66,7 +66,7 @@ class Numeric_root_stack
 	      if (roots_[i]>  roots_[i-1]){
 		std::cerr << "ERROR: roots out of order ";
 		std::copy(roots_.begin(), roots_.end(), std::ostream_iterator<double>(std::cerr, " "));
-		std::cerr << " for " << f << std::endl;
+		std::cerr << " for " << f << " from " << lb << " to " << ub << std::endl;
 	      }
 	    }
 #endif
