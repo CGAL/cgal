@@ -57,15 +57,18 @@ int main(int argc, char *argv[])
     boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
         options(desc).run(), vm);
     boost::program_options::notify(vm);
-#endif
 
-    bool boost_program_options_disabled;
 
     if (print_help) {
         std::cout << "This program generates a set of moving points and outputs it to a file.\n";
         std::cout << desc << "\n";
         return EXIT_FAILURE;
     }
+
+#endif
+
+    bool boost_program_options_disabled;
+
 
     int num_coords=2;
     if (weighted) ++num_coords;
