@@ -31,7 +31,7 @@ struct Delaunay_triangulation_event_log_visitor_2: public Delaunay_triangulation
     Delaunay_triangulation_event_log_visitor_2(){}
 
     template <class Edge>
-    void pre_flip(Edge e) {
+    void before_flip(Edge e) {
         typedef typename Edge::first_type::value_type::Vertex_handle::value_type::Point Point;
         std::ostringstream out;
         Point a= e.first->vertex((e.second+1)%3)->point();
@@ -42,7 +42,7 @@ struct Delaunay_triangulation_event_log_visitor_2: public Delaunay_triangulation
     }
 
     template <class Edge>
-    void post_flip(Edge e) {
+    void after_flip(Edge e) {
         typedef typename Edge::first_type::value_type::Vertex_handle::value_type::Point Point;
         std::ostringstream out;
         Point a= e.first->vertex((e.second+1)%3)->point();

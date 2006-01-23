@@ -27,31 +27,31 @@ struct Delaunay_triangulation_visitor_base_2
 {
     Delaunay_triangulation_visitor_base_2(){}
     template <class Ok>
-    void delete_vertex(Ok) {
+    void remove_vertex(Ok) {
     }
 
     template <class Ok>
-    void new_vertex(Ok) {
+    void create_vertex(Ok) {
     }
 
     template <class Ok>
-    void change_vertex(Ok) {
+    void modify_vertex(Ok) {
     }
 
     template <class It>
-    void new_faces(It, It) {
+    void create_faces(It, It) {
     }
 
     template <class It>
-    void delete_faces(It, It) {
+    void remove_faces(It, It) {
     }
 
     template <class E>
-    void pre_flip(E) {
+    void before_flip(E) {
 
     }
     template <class E>
-    void post_flip(E) {
+    void after_flip(E) {
 
     }
 };

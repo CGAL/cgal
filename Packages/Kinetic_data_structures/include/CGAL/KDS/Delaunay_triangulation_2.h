@@ -214,7 +214,7 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
         void erase(Point_key k) {
 // erase all incident certificates
             Vertex_handle vh= vhs_[k];
-            watcher_.delete_vertex(vh);
+            watcher_.remove_vertex(vh);
             Face_circulator fc= vh->incident_faces(), fe=fc;
             if (fc != NULL) {
                 do {
@@ -252,7 +252,7 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
 //new_edges_.insert(e);
                     }
                 }
-                watcher_.new_faces(faces.begin(), faces.end());
+                watcher_.create_faces(faces.begin(), faces.end());
             }
 
         }
@@ -268,7 +268,7 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
                 return;
             }
             Vertex_handle vh= vhs_[k];
-            watcher_.change_vertex(vh);
+            watcher_.modify_vertex(vh);
             Edge_circulator ec= vh->incident_edges(), ef=ec;
             if (ec != NULL) {
                 do {
@@ -310,11 +310,11 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
                         }
                     }
                 }
-                watcher_.delete_faces(faces.begin(), faces.end());
+                watcher_.remove_faces(faces.begin(), faces.end());
             }
 
             vhs_[k]= del_.insert(k);
-            watcher_.new_vertex(vhs_[k]);
+            watcher_.create_vertex(vhs_[k]);
 // now have to update
             if (!was_2d && del_.dimension()==2) {
 //std::cout << "Creating certificates from scratch.\n";
@@ -322,7 +322,7 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
                     TDS_helper::set_undirected_edge_label(*eit, Event_key());
                     new_certificate(*eit);
                 }
-                watcher_.new_faces(del_.all_faces_begin(), del_.all_faces_end());
+                watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
             }
             else {
                 set(k);
@@ -355,7 +355,7 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
             }
 
             TDS_helper::set_undirected_edge_label(e, Event_key());
-            watcher_.pre_flip(e);
+            watcher_.before_flip(e);
             del_.tds().flip(face,index);
 
 // we also know that CGAL preserves the edge index of the flipped edge
@@ -387,7 +387,7 @@ public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay
             CGAL_KDS_LOG(CGAL::KDS::LOG_SOME, TDS_helper::destination(flipped_edge)->point() << std::endl);
 
             CGAL_expensive_postcondition_code(audit_structure());
-            watcher_.post_flip(flipped_edge);
+            watcher_.after_flip(flipped_edge);
             return flipped_edge;
         }
 

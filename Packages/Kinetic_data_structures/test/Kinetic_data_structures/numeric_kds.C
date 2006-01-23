@@ -1,4 +1,8 @@
 #define CGAL_CHECK_EXPENSIVE
+#ifdef CGAL_CHECK_EXACT
+bool cgal_check_exact_defined_externally;
+#undef CGAL_CHECK_EXACT
+#endif
 
 #include <CGAL/KDS/Sort.h>
 #include <CGAL/KDS/Insert_event.h>

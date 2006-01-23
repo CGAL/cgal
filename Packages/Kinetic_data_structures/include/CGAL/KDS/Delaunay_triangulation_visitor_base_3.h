@@ -29,41 +29,41 @@ struct Delaunay_triangulation_visitor_base_3
     Delaunay_triangulation_visitor_base_3(){}
 
     template <class Vertex_handle>
-    void delete_vertex(Vertex_handle) {
+    void remove_vertex(Vertex_handle) {
     }
 
     template <class Vertex_handle>
-    void new_vertex(Vertex_handle) {
+    void create_vertex(Vertex_handle) {
     }
 
     template <class Vertex_handle>
-    void change_vertex(Vertex_handle) {
+    void modify_vertex(Vertex_handle) {
     }
 
     template <class It>
-    void new_cells(It, It) {
+    void create_cells(It, It) {
     }
 
     template <class It>
-    void delete_cells(It, It) {
+    void remove_cells(It, It) {
     }
 
     template <class Edge>
-    void pre_edge_flip(Edge) {
+    void before_edge_flip(Edge) {
 
     }
     template <class Edge>
-    void post_facet_flip(Edge) {
+    void after_facet_flip(Edge) {
 
     }
 
     template <class Facet>
-    void pre_facet_flip(Facet) {
+    void before_facet_flip(Facet) {
 
     }
 
     template <class Facet>
-    void post_edge_flip(Facet) {
+    void after_edge_flip(Facet) {
     }
 };
 

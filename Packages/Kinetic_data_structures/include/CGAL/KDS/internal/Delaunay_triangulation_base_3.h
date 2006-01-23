@@ -306,7 +306,7 @@ class Delaunay_triangulation_base_3
                 }
             }
             handle_delete_cell(c);
-            v_.delete_cells(&c, &c+1);
+            v_.remove_cells(&c, &c+1);
 // into max dim simplex?
             Vertex_handle vh=triangulation_.tds().insert_in_cell( c);
             vh->set_point(k);
@@ -317,7 +317,7 @@ class Delaunay_triangulation_base_3
                 Cell_handle cc= ics[j];
                 handle_new_cell(cc);
             }
-            v_.new_cells(ics.begin(), ics.end());
+            v_.create_cells(ics.begin(), ics.end());
             for (unsigned int j=0; j< ics.size(); ++j) {
                 Cell_handle cc= ics[j];
                 for (int i=0; i< 3; ++i) {
@@ -336,12 +336,12 @@ class Delaunay_triangulation_base_3
                     }
                 }
             }
-            v_.new_vertex(vh);
+            v_.create_vertex(vh);
             return vh;
         }
 
         Cell_handle pop_vertex(Vertex_handle v) {
-            v_.delete_vertex(v);
+	  v_.remove_vertex(v);
             CGAL_precondition(triangulation_.degree(v)==4);
             std::vector<Cell_handle> ics;
             triangulation_.incident_cells(v, std::back_insert_iterator<std::vector<Cell_handle> >(ics));
@@ -367,12 +367,12 @@ class Delaunay_triangulation_base_3
                 Cell_handle cc= ics[j];
                 handle_delete_cell(cc);
             }
-            v_.delete_cells(ics.begin(), ics.end());
+            v_.remove_cells(ics.begin(), ics.end());
             set_vertex_handle(v->point(), NULL);
 
             Cell_handle h= triangulation_.tds().remove_from_maximal_dimension_simplex(v);
             handle_new_cell(h);
-            v_.new_cells(&h, &h+1);
+            v_.create_cells(&h, &h+1);
             for (unsigned int i=0; i< 4; ++i) {
                 for (unsigned int j=0; j< i; ++j) {
                     Edge e(h, i, j);
@@ -459,7 +459,7 @@ class Delaunay_triangulation_base_3
                 it != incident_cells.end(); ++it) {
                     handle_new_cell(*it);
                 }
-                v_.new_cells(incident_cells.begin(), incident_cells.end());
+                v_.create_cells(incident_cells.begin(), incident_cells.end());
             }
 
             for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin(); it != incident_cells.end();
@@ -481,14 +481,14 @@ class Delaunay_triangulation_base_3
 
                 }
             }
-            v_.change_vertex(vertex_handle(k));
+            v_.modify_vertex(vertex_handle(k));
             return vertex_handle(k);
         }
 
         typename Triangulation::Vertex_handle new_vertex_regular(Point_key k, Cell_handle h=NULL) {
             CGAL_precondition(!has_certificates_);
             typename Triangulation::Vertex_handle vh= triangulation_.insert(k, h);
-            v_.new_vertex(vh);
+            v_.create_vertex(vh);
             return vh;
         }
 
@@ -668,7 +668,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
                 for (typename std::vector<Cell_handle>::iterator cit= cells.begin(); cit != cells.end(); ++cit) {
                     handle_delete_cell(*cit);
                 }
-                v_.delete_cells(cells.begin(), cells.end());
+                v_.remove_cells(cells.begin(), cells.end());
 //! \todo replace by insert_in_hole
                 CGAL_KDS_LOG(LOG_LOTS, "Inserting.\n");
                 vh=triangulation_.insert(k, h);
@@ -682,7 +682,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
             }
 
             CGAL_postcondition(audit_structure());
-            v_.new_vertex(vh);
+            v_.create_vertex(vh);
             return vh;
         }
 
@@ -703,7 +703,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
         }
 
         Facet flip(const Edge &edge) {
-            v_.pre_edge_flip(edge);
+            v_.before_edge_flip(edge);
             if (true) {
                 CGAL_KDS_LOG(LOG_LOTS,"\n\nFlipping edge ");
 //triangulation_.write_labeled_edge(edge, log_lots());
@@ -778,7 +778,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
                 Cell_circulator cc= triangulation_.incident_cells(edge), ce= cc;
                 do {
                     handle_delete_cell(cc);
-                    v_.delete_cells(&cc, &cc+1);
+                    v_.remove_cells(&cc, &cc+1);
                 } while (++cc != ce);
 
             }
@@ -811,7 +811,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
             for (int c=0; c<2; ++c) {
                 handle_new_cell(cells[c]);
             }
-            v_.new_cells(&cells[0], &cells[0]+2);
+            v_.create_cells(&cells[0], &cells[0]+2);
 
             bool id3[2][3];
 // do certifcates for d3 edges
@@ -856,12 +856,12 @@ Could use the other lists, but the easiest for the edges is to just use the cell
 //generate_geometry();
 
             CGAL_postcondition(audit_structure());
-            v_.post_edge_flip(middle_facet);
+            v_.after_edge_flip(middle_facet);
             return middle_facet;
         }
 
         Edge flip(const Facet &flip_facet) {
-            v_.pre_facet_flip(flip_facet);
+            v_.before_facet_flip(flip_facet);
             Vertex_handle poles[2];
             Facet other_flip_facet= triangulation_.opposite(flip_facet);
             poles[0]= flip_facet.first->vertex(flip_facet.second);
@@ -909,7 +909,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
             for (int c=0; c<2; ++c) {
                 handle_delete_cell(cells[c]);
             }
-            v_.delete_cells(&cells[0], &cells[0]+2);
+            v_.remove_cells(&cells[0], &cells[0]+2);
 #ifndef NDEBUG
             CGAL_KDS_LOG(LOG_LOTS, *this);
 #endif
@@ -955,7 +955,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
                 Cell_circulator cc= triangulation_.incident_cells(central_edge), ce=cc;
                 do {
                     handle_new_cell(cc);
-                    v_.new_cells(&cc, &cc+1);
+                    v_.create_cells(&cc, &cc+1);
                 } while (++cc != ce);
             }
 // fix the cross edges, must make them non facet flip if necessary
@@ -991,7 +991,7 @@ Could use the other lists, but the easiest for the edges is to just use the cell
 //generate_geometry();
 
             CGAL_postcondition(audit_structure());
-            v_.post_facet_flip(central_edge);
+            v_.after_facet_flip(central_edge);
             return central_edge;
         }
 
@@ -1104,7 +1104,7 @@ typename Simulator::Time extract_time(Event_key k) const {
             eit != triangulation_.all_cells_end(); ++eit) {
                 handle_delete_cell(eit);
             }
-            v_.delete_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
+            v_.remove_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
             has_certificates_=false;
         }
 
@@ -1114,7 +1114,7 @@ typename Simulator::Time extract_time(Event_key k) const {
             eit != triangulation_.all_cells_end(); ++eit) {
                 handle_new_cell(eit);
             }
-            v_.new_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
+            v_.create_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
             for (All_edges_iterator eit = triangulation_.all_edges_begin();
             eit != triangulation_.all_edges_end(); ++eit) {
                 if (triangulation_.has_degree_3(*eit)) {

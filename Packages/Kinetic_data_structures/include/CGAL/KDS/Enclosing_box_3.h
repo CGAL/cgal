@@ -175,8 +175,8 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
   = traits_.simulator_pointer()->function_kernel().create_function_object();*/
 
             Point pt(make_coordinate(coefs[0].begin(), coefs[0].end()),
-		     make_coordiante(coefs[1].begin(), coefs[1].end()),
-		     make_coordiante(coefs[2].begin(), coefs[2].end()));
+		     make_coordinate(coefs[1].begin(), coefs[1].end()),
+		     make_coordinate(coefs[2].begin(), coefs[2].end()));
 //std::cout << "Changing motion from " << traits_.active_objects_table_pointer()->at(k) << " to " << pt << std::endl;
             traits_.active_objects_table_pointer()->set(k, pt);
 // CGAL_assertion(traits_.active_objects_table_pointer()->at(k) == pt);

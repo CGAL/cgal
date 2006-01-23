@@ -130,7 +130,7 @@ struct Event_key: public Queue_key {
 #endif*/
 
 //! The basic number type
-        typedef typename Function_kernel::NT NT;
+  typedef typename Function_kernel::NT NT;
 
 //! Create a simulator passing the start time and the end time.
         Simulator(const Time &start_time=Time(0.0),
@@ -512,9 +512,9 @@ if (cur_time_ < audit_time_){
             ++number_of_events_;
 #ifdef CGAL_KDS_CHECK_EXPENSIVE
             if (cur_time_ != next_event_time()) {
-                typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-                audit_time_= bet(cur_time_, next_event_time());
-                CGAL_KDS_LOG(LOG_SOME, "Next audit is at time " << audit_time_ << std::endl);
+	      typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
+	      audit_time_= bet(cur_time_, next_event_time());
+	      CGAL_KDS_LOG(LOG_SOME, "Next audit is at time " << audit_time_ << std::endl);
             }
             else {
                 CGAL_KDS_LOG(LOG_SOME, "Can't audit between events.\n");

@@ -35,7 +35,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
     Delaunay_triangulation_event_log_visitor_3(){}
 
     template <class Edge>
-    void pre_edge_flip(Edge e) {
+    void before_edge_flip(Edge e) {
         typedef typename Edge::first_type::value_type::Vertex_handle::value_type::Point Point;
         std::ostringstream out;
         Point a= internal::vertex_of_edge(e, 0)->point();
@@ -45,7 +45,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
     }
     template <class Edge>
-    void post_facet_flip(Edge e) {
+    void after_facet_flip(Edge e) {
         typedef typename Edge::first_type::value_type::Vertex_handle::value_type::Point Point;
         std::ostringstream out;
         Point a= internal::vertex_of_edge(e, 0)->point();
@@ -56,7 +56,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
     }
 
     template <class Facet>
-    void pre_facet_flip(Facet e) {
+    void before_facet_flip(Facet e) {
         typedef typename Facet::first_type::value_type::Vertex_handle::value_type::Point Point;
         std::ostringstream out;
         Point pts[3];
@@ -71,7 +71,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
     }
 
     template <class Facet>
-    void post_edge_flip(Facet e) {
+    void after_edge_flip(Facet e) {
         typedef typename Facet::first_type::value_type::Vertex_handle::value_type::Point Point;
         std::ostringstream out;
         Point pts[3];
