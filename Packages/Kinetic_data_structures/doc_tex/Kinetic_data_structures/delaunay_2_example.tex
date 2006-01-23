@@ -24,7 +24,7 @@ Delaunay triangulation. The triangulation calls methods on the visitor
 class whenever things happen. In the case, the visitor,
 \ccc{CGAL::KDS::Delaunay_triangulation_event_log_visitor_2} simply makes a record of each event that occurs.
 
-Once the traits class and kinetic Delaunay have been created, we need4
+Once the traits class and kinetic Delaunay have been created, we need
 to add points to the simulation. To do this, we add them directly to
 the
 \ccc{ActiveObjectsTable} using the \ccc{insert} method. 
@@ -34,7 +34,7 @@ Now that the triangulation has been set up at points added (or
 scheduled for addition), we can run the kinetic data structure. Here
 we ask the simulation to process all events and then using the visitor
 to print out a record of all events that occur. Note that there are a
-finite number of events since eventually all the points are spead far
+finite number of events since eventually all the points are spread far
 apart and simply moving outward. If instead, we had added a
 \ccc{CGAL::KDS::Enclosing_box_2<Traits>} to the simulation, then 
 there would be an infinite number of events as the points repeatedly
