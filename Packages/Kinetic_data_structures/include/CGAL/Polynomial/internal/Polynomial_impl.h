@@ -326,7 +326,7 @@ void read(std::basic_istream<charT, Traits> &in) {
         NT coef;
 // eat
         in >> coef;
-        if (!in) return;
+        if (!in.good()) return;
         unsigned int pow;
         char p= in.peek();
         if (in.peek() =='*') {
@@ -358,17 +358,25 @@ void read(std::basic_istream<charT, Traits> &in) {
         if (coefs_.size() <=pow) {
             coefs_.resize(pow+1);
         }
+
         if (!pos) coef=-coef;
         coefs_[pow]=coef;
 
         char n= in.peek();
         if (n=='+' || n=='-') {
-            pos= (n=='-');
+            pos= (n!='-');
             char e;
             in >> e;
-        }
-        else {
-            break;
+        } else {
+	  /*bool f= in.fail();
+	  bool g= in.good();
+	  bool e= in.eof();
+	  bool b= in.bad();*/
+	  // This is necessary since peek could have failed if we hit the end of the buffer
+	  // it would better to do without peek, but that is too messy
+	  in.clear();
+	  //std::cout << f << g << e << b<<std::endl;
+	   break;
         }
     };
 }

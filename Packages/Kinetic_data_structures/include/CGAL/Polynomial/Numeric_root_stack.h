@@ -57,7 +57,10 @@ class Numeric_root_stack
         typedef typename Solver_traits::Function Function;
         typedef Solver_traits Traits;
         Numeric_root_stack(const typename Solver_traits::Function &f, Root lb, Root ub, const Solver_traits&) {
-            initialize(f, lb, ub);
+	  //std::cout << "Solving " << f << " from " << lb << " to " << ub;
+	  initialize(f, lb, ub);	 
+	  /*if (!roots_.empty()) std::cout << " got " << roots_.back() << std::endl;
+	    else std::cout << std::endl;*/
 #ifndef NDEBUG
 	    for (unsigned int i=1; i < roots_.size();  ++i) {
 	      if (roots_[i]>  roots_[i-1]){
