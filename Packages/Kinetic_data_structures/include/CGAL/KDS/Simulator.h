@@ -499,9 +499,10 @@ if (cur_time_ < audit_time_){
 #endif*/
 
             CGAL_exactness_precondition(next_event_time() >= last_event_time_);
-
-            cur_time_= next_event_time();
-            last_event_time_= cur_time_;
+	    if (next_event_time() > cur_time_) {
+	      cur_time_= next_event_time();
+	      last_event_time_= cur_time_;
+	    }
 //_last_event_time=cur_time_;
 //if (queue_.front_priority() < end_time()) {
             queue_.process_front();
