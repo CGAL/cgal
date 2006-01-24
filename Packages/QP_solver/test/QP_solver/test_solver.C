@@ -591,7 +591,7 @@ int main(const int ac,const char **av) {
     cout << "Reading arguments from command line..." << endl;
   } else 
     cout << "Reading from standard in..." << endl;
-  std::istream &in = (readFromStdIn? std::cin : args);
+  std::istream in(readFromStdIn? std::cin.rdbuf() : args.rdbuf());
 
   // process input file(s):
   std::map<std::string,int> options;
