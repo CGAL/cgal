@@ -34,7 +34,7 @@ public:
   typedef typename Pmwx::Face_handle                           Face_handle;
   typedef typename Pmwx::Face_iterator                         Face_iterator;
   typedef typename Pmwx::Ccb_halfedge_circulator               Ccb_halfedge_circulator;
-  typedef typename Pmwx::Holes_iterator                        Holes_iterator;
+  typedef typename Pmwx::Hole_iterator                        Hole_iterator;
   typedef typename Pmwx::Face_const_iterator                   Face_const_iterator;
   typedef typename Pmwx::Vertex_iterator                       Vertex_iterator;
   typedef typename Pmwx::Vertex_handle                         Vertex_handle;

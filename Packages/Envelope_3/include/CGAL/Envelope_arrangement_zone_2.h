@@ -339,7 +339,7 @@ protected:
         _intersect_with_ccb(he_first, on_boundary);
       }
 
-      typename Arrangement_2::Holes_iterator   holes_it;
+      typename Arrangement_2::Hole_iterator   holes_it;
       for (holes_it = face->holes_begin();
            holes_it != face->holes_end(); ++holes_it)
       {
@@ -348,7 +348,7 @@ protected:
         _intersect_with_ccb(he_first, on_boundary);
       }
 
-      typename Arrangement_2::Isolated_vertices_iterator   iso_verts_it;
+      typename Arrangement_2::Isolated_vertex_iterator   iso_verts_it;
       for (iso_verts_it = face->isolated_vertices_begin();
            iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
       {

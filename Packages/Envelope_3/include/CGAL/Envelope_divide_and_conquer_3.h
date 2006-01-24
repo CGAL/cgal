@@ -163,7 +163,7 @@ protected:
   typedef typename Minimization_diagram_2::Face_iterator            Face_iterator;
   typedef typename Minimization_diagram_2::Vertex_handle            Vertex_handle;
   typedef typename Minimization_diagram_2::Vertex_iterator          Vertex_iterator;
-  typedef typename Minimization_diagram_2::Holes_iterator           Holes_iterator;
+  typedef typename Minimization_diagram_2::Hole_iterator           Hole_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
 	typedef typename Minimization_diagram_2::Halfedge_around_vertex_circulator
                                                                     Halfedge_around_vertex_circulator;
@@ -462,7 +462,7 @@ protected:
     // update the holes of the unbounded face to indicate that this surface is the envelope
     // over them
     Face_handle uface = result.unbounded_face();
-    Holes_iterator hole = uface->holes_begin();
+    Hole_iterator hole = uface->holes_begin();
     for (; hole != uface->holes_end(); ++hole)
     {
       Ccb_halfedge_circulator hec = (*hole);
@@ -486,7 +486,7 @@ protected:
         ++face_hec;
       } while(face_hec != face_hec_begin);
 
-      Holes_iterator inner_iter = face->holes_begin();
+      Hole_iterator inner_iter = face->holes_begin();
       for (; inner_iter != face->holes_end(); ++inner_iter)
       {
         face_hec = face_hec_begin = (*inner_iter);
@@ -520,7 +520,7 @@ protected:
             ++face_hec;
           } while(face_hec != face_hec_begin);
         }
-        Holes_iterator inner_iter = fh->holes_begin();
+        Hole_iterator inner_iter = fh->holes_begin();
         for (; inner_iter != fh->holes_end(); ++inner_iter)
         {
           face_hec = face_hec_begin = (*inner_iter);
@@ -1986,7 +1986,7 @@ protected:
         ++face_hec;
       } while(face_hec != face_hec_begin);
 
-      Holes_iterator inner_iter = fh->holes_begin();
+      Hole_iterator inner_iter = fh->holes_begin();
       for (; inner_iter != fh->holes_end(); ++inner_iter)
       {
         #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3

@@ -80,7 +80,7 @@ protected:
   typedef typename Minimization_diagram_2::Face_const_handle         Face_const_handle;
   typedef typename Minimization_diagram_2::Face_iterator             Face_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
-  typedef typename Minimization_diagram_2::Holes_iterator            Holes_iterator;
+  typedef typename Minimization_diagram_2::Hole_iterator            Hole_iterator;
   typedef typename Minimization_diagram_2::Dcel::Face_data_iterator  Face_data_iterator;
 
   typedef std::pair<Curve_2, Intersection_type>                      Intersection_curve;
