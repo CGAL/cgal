@@ -49,6 +49,7 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 {
   typedef typename CK::FT FT;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;    
+  typedef typename CK::Root_of_2 Root_of_2;
   typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
   typedef typename CK::Line_2  Line_2;
   typedef typename CK::Point_2 Point_2;
@@ -108,10 +109,16 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 
         const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
 
-	Root_for_circles_2_2 rootps = Root_for_circles_2_2(ps.x(), ps.y());
-	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
-	Root_for_circles_2_2 rootpt = Root_for_circles_2_2(pt.x(), pt.y());
-	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
+// 	Root_of_2 rootps_x = Root_of_2(ps.x());
+// 	Root_of_2 rootps_y = Root_of_2(ps.y());
+// 	Root_for_circles_2_2 rootps = Root_for_circles_2_2(rootps_x,rootps_y);
+// 	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
+ 	Circular_arc_point_2 cps = ps;
+
+// 	Root_for_circles_2_2 rootpt = Root_for_circles_2_2(pt.x(), pt.y());
+// 	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
+ 	Circular_arc_point_2 cpt = pt;
+
 	Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
 	//std::cerr << "arc with center: "  << to_double( x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;
 	//std::cerr << "source: " << to_double(ps.x()) << ", " << to_double(ps.y()) << " target: " << to_double(pt.x()) << ", " << to_double(pt.y()) << std::endl << std::endl;
@@ -138,10 +145,14 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       
       const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
       
-	Root_for_circles_2_2 rootps =  Root_for_circles_2_2(ps.x(), ps.y());
-	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
-	Root_for_circles_2_2 rootpt =  Root_for_circles_2_2(pt.x(), pt.y());
-	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
+// 	Root_for_circles_2_2 rootps =  Root_for_circles_2_2(ps.x(), ps.y());
+// 	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
+// 	Root_for_circles_2_2 rootpt =  Root_for_circles_2_2(pt.x(), pt.y());
+// 	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
+
+      Circular_arc_point_2 cps = ps;
+      Circular_arc_point_2 cpt = pt;
+
       Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
 
       //std::cerr << "arc with center: "  << to_double(x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;	

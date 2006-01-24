@@ -661,7 +661,7 @@ template < class CK >
   template < class CK >
   class Construct_circular_arc_point_2
   {
-
+    typedef typename CK::Point_2               Point_2;
     typedef typename CK::Circular_arc_point_2               Circular_arc_point_2;
     typedef typename CK::Kernel_base::Circular_arc_point_2  RCircular_arc_point_2;
     typedef typename Circular_arc_point_2::Rep              Rep;
@@ -679,6 +679,10 @@ template < class CK >
     result_type
     operator()(const Root_for_circles_2_2 & np) const
     { return Rep(np); }
+
+    result_type
+    operator()(const Point_2 & p) const
+    { return Rep(p); }
 
   };
 

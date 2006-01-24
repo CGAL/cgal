@@ -38,6 +38,7 @@ namespace CGALi {
   {
     typedef typename CK::FT                      FT;
     typedef typename CK::Root_of_2               Root_of_2;
+    typedef typename CK::Point_2                 Point_2;
 
   public: // fixme ?
 
@@ -47,6 +48,9 @@ namespace CGALi {
 
     Circular_arc_point_2(const Root_for_circles_2_2 & np)
       :  _p(np){}
+
+    Circular_arc_point_2(const Point_2 & p)
+      :  _p(p.x(),p.y()){}
 
     const Root_of_2 & x() const { return _p.x(); }
     const Root_of_2 & y() const { return _p.y(); }

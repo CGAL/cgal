@@ -123,7 +123,6 @@ public:
   typedef FT RT;
   typedef typename Root_of_traits<RT>::RootOf_2  Root_of_2;
 
-
 //  typedef Lazy<typename AK::Algebraic_kernel::Root_of_2, typename EK::Algebraic_kernel::Root_of_2, 
 //            typename EK::FT, Al_K_converter> Root_of_2;
 
@@ -144,6 +143,7 @@ public:
   typedef Lazy<typename AK::Line_arc_2, typename EK::Line_arc_2, 
   	       typename EK::FT, E2A>                                        Line_arc_2;
 
+  //  typedef Root_for_circles_2_2<RT> Root_for_circles_2_2;
   typedef int Root_for_circles_2_2; // should AK be filtered ?
 
     // We don't touch the predicates.

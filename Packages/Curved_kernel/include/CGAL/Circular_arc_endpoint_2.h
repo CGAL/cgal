@@ -22,6 +22,7 @@ class Circular_arc_point_2
 {
   typedef typename CurvedKernel::Kernel_base::Circular_arc_point_2 
                                            RCircular_arc_point_2;
+  typedef typename CurvedKernel::Point_2                  Point_2;
   typedef typename CurvedKernel::Circle_2                  Circle_2;
 
   typedef typename CurvedKernel::Root_of_2               Root_of_2;
@@ -58,6 +59,10 @@ public:
     : RCircular_arc_point_2(p)
       {}
       
+  Circular_arc_point_2(const Point_2 & p)
+    : RCircular_arc_point_2(
+      typename R::Construct_circular_arc_point_2()(p))
+      {}
       
   typename Qualified_result_of<typename R::Compute_Circular_x_2,Circular_arc_point_2>::type
   //const Root_of_2 &
