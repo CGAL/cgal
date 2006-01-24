@@ -6,6 +6,7 @@
 #include <iomanip>
 
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Approximate_min_ellipsoid_d.h>
 #include <CGAL/Approximate_min_ellipsoid_d_traits_d.h>
