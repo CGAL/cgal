@@ -86,8 +86,10 @@ public Ref_counted<Active_objects_vector<Value_t > >
         const Data &operator[](Key key) const
         {
             CGAL_expensive_precondition(key);
-            if (static_cast<unsigned int>(key.index()) >= storage_.size()) return null_object();
-            else return storage_[key.index()];
+	    CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
+            //if (static_cast<unsigned int>(key.index()) >= storage_.size()) return null_object();
+            /*else*/
+	    return storage_[key.index()];
         }
 
 //! non operator based method to access a point.
@@ -148,10 +150,11 @@ public Ref_counted<Active_objects_vector<Value_t > >
         Key insert(const Data &ob) {
 //CGAL_precondition(editing_);
             storage_.push_back(ob);
-            new_objects_.push_back(Key(storage_.size()-1));
+	    Key ret(storage_.size()-1);
+            new_objects_.push_back(ret);
 
             if (!editing_) finish_editing();
-            return new_objects_.back();
+            return ret;
         }
 
 //! Delete an object from the table.
@@ -273,7 +276,7 @@ public Ref_counted<Active_objects_vector<Value_t > >
             }
 
             for (Erased_iterator it= erased_begin(); it != erased_end(); ++it) {
-                storage_[it->index()]=null_object();
+	      storage_[it->index()]=Data();
             }
 
             changed_objects_.clear();
@@ -291,10 +294,10 @@ public Ref_counted<Active_objects_vector<Value_t > >
         bool editing_;
         unsigned int next_key_;
 
-        static const Data &null_object() {
+  /*static const Data &null_object() {
             static Data o;
             return o;
-        }
+	    }*/
 };
 
 CGAL_KDS_END_NAMESPACE;
