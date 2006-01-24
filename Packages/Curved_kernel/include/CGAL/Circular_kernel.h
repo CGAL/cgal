@@ -34,15 +34,15 @@
 namespace CGAL {
 namespace CGALi {
 
-template < class CurvedKernel, class LinearKernelBase >
-struct Curved_kernel_base: public LinearKernelBase
+template < class CircularKernel, class LinearKernelBase >
+struct Circular_kernel_base: public LinearKernelBase
 {
-  typedef CGALi::Circular_arc_2<CurvedKernel>         Circular_arc_2;
-  typedef CGALi::Circular_arc_point_2<CurvedKernel>   Circular_arc_point_2;
-  typedef CGALi::Line_arc_2<CurvedKernel>             Line_arc_2;
+  typedef CGALi::Circular_arc_2<CircularKernel>         Circular_arc_2;
+  typedef CGALi::Circular_arc_point_2<CircularKernel>   Circular_arc_point_2;
+  typedef CGALi::Line_arc_2<CircularKernel>             Line_arc_2;
   
   #define CGAL_Curved_Kernel_pred(Y,Z) \
-    typedef CircularFunctors::Y<CurvedKernel> Y; \
+    typedef CircularFunctors::Y<CircularKernel> Y; \
     Y Z() const { return Y(); }
   #define CGAL_Curved_Kernel_cons(Y,Z) CGAL_Curved_Kernel_pred(Y,Z)
 
@@ -52,21 +52,21 @@ struct Curved_kernel_base: public LinearKernelBase
 } // namespace CGALi
 
 template < class LinearKernel, class AlgebraicKernel >
-struct Curved_kernel
+struct Circular_kernel
   : public Curved_kernel_type_equality_wrapper
   <
-  CGALi::Curved_kernel_base
-  < Curved_kernel<LinearKernel,AlgebraicKernel>,
+  CGALi::Circular_kernel_base
+  < Circular_kernel<LinearKernel,AlgebraicKernel>,
     typename LinearKernel::template 
-    Base<Curved_kernel<LinearKernel,AlgebraicKernel> >::Type 
+    Base<Circular_kernel<LinearKernel,AlgebraicKernel> >::Type 
   >,
-  Curved_kernel<LinearKernel,AlgebraicKernel> 
+  Circular_kernel<LinearKernel,AlgebraicKernel> 
   >
 {
-  typedef Curved_kernel<LinearKernel,AlgebraicKernel>      Self;
+  typedef Circular_kernel<LinearKernel,AlgebraicKernel>      Self;
 
   typedef typename LinearKernel::template 
-  Base<Curved_kernel<LinearKernel,AlgebraicKernel> >::Type Linear_kernel;
+  Base<Circular_kernel<LinearKernel,AlgebraicKernel> >::Type Linear_kernel;
   typedef AlgebraicKernel                                  Algebraic_kernel;
 
   // for Lazy hexagons/bbox kernels

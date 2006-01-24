@@ -16,23 +16,23 @@
 
 namespace CGAL {
 
-template <class CurvedKernel> 
+template <class CircularKernel> 
 class Line_arc_2 
-  : public CurvedKernel::Kernel_base::Line_arc_2
+  : public CircularKernel::Kernel_base::Line_arc_2
 {
-  typedef typename CurvedKernel::FT                        FT;
-  typedef typename CurvedKernel::RT                        RT;
-  //typedef typename CurvedKernel::Linear_kernel::Point_2    Point_2;
-  typedef typename CurvedKernel::Point_2                   Point_2;
-  typedef typename CurvedKernel::Line_2                    Line_2;
-  typedef typename CurvedKernel::Circle_2                  Circle_2;
-  typedef typename CurvedKernel::Circular_arc_point_2   Circular_arc_point_2;
-  typedef typename CurvedKernel::Segment_2                 Segment_2;
+  typedef typename CircularKernel::FT                        FT;
+  typedef typename CircularKernel::RT                        RT;
+  //typedef typename CircularKernel::Linear_kernel::Point_2    Point_2;
+  typedef typename CircularKernel::Point_2                   Point_2;
+  typedef typename CircularKernel::Line_2                    Line_2;
+  typedef typename CircularKernel::Circle_2                  Circle_2;
+  typedef typename CircularKernel::Circular_arc_point_2   Circular_arc_point_2;
+  typedef typename CircularKernel::Segment_2                 Segment_2;
 
-  typedef typename CurvedKernel::Kernel_base::Line_arc_2 RLine_arc_2;
+  typedef typename CircularKernel::Kernel_base::Line_arc_2 RLine_arc_2;
 public:
   typedef  RLine_arc_2 Rep;
-  typedef  CurvedKernel   R; 
+  typedef  CircularKernel   R; 
 
  const Rep& rep() const
   {
@@ -127,20 +127,20 @@ public:
 
  };
 
-template < typename CurvedKernel >
+template < typename CircularKernel >
 inline
 bool
-operator==(const Line_arc_2<CurvedKernel> &p,
-           const Line_arc_2<CurvedKernel> &q)
+operator==(const Line_arc_2<CircularKernel> &p,
+           const Line_arc_2<CircularKernel> &q)
 {
-  return CurvedKernel().equal_2_object()(p, q);
+  return CircularKernel().equal_2_object()(p, q);
 }
 
-template < typename CurvedKernel >
+template < typename CircularKernel >
 inline
 bool
-operator!=(const Line_arc_2<CurvedKernel> &p,
-           const Line_arc_2<CurvedKernel> &q)
+operator!=(const Line_arc_2<CircularKernel> &p,
+           const Line_arc_2<CircularKernel> &q)
 {
   return ! (p == q);
 }

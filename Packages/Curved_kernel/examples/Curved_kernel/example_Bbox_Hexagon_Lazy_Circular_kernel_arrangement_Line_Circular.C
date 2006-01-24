@@ -33,22 +33,22 @@
 typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
 typedef CGAL::Cartesian<NT1>                                 Linear_k1;
 typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-typedef CGAL::Curved_kernel<Linear_k1, Algebraic_k1>         CK1_;
+typedef CGAL::Circular_kernel<Linear_k1, Algebraic_k1>         CK1_;
 
 typedef CGAL::Interval_nt_advanced                           NT2;
 typedef CGAL::Cartesian<NT2>                                 Linear_k2;
 typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
-typedef CGAL::Curved_kernel<Linear_k2,Algebraic_k2>          CK2_;
+typedef CGAL::Circular_kernel<Linear_k2,Algebraic_k2>          CK2_;
 
 
-typedef CGAL::Lazy_curved_kernel<CK1_,CK2_>                  _Curved_k_;
-typedef CGAL::Filtered_hexagon_curved_kernel<_Curved_k_>     _Curved_k;
-typedef CGAL::Filtered_bbox_curved_kernel<_Curved_k>          Curved_k;
+typedef CGAL::Lazy_curved_kernel<CK1_,CK2_>                  _Circular_k_;
+typedef CGAL::Filtered_hexagon_curved_kernel<_Circular_k_>     _Circular_k;
+typedef CGAL::Filtered_bbox_curved_kernel<_Circular_k>          Circular_k;
 
-typedef Curved_k::Point_2                           Point_2;
-typedef Curved_k::Circle_2                          Circle_2;
-typedef Curved_k::Circular_arc_2                    Circular_arc_2;
-typedef Curved_k::Line_arc_2                        Line_arc_2;
+typedef Circular_k::Point_2                           Point_2;
+typedef Circular_k::Circle_2                          Circle_2;
+typedef Circular_k::Circular_arc_2                    Circular_arc_2;
+typedef Circular_k::Line_arc_2                        Line_arc_2;
 
 typedef CK1_::Point_2                           Point_2_2;
 typedef CK1_::Circle_2                          Circle_2_2;
@@ -56,8 +56,8 @@ typedef CK1_::Circular_arc_2                    Circular_arc_2_2;
 typedef CK1_::Line_arc_2                        Line_arc_2_2;
 
 
-//typedef Curved_k::Circular_arc_2                            Arc;
-//typedef Curved_k::Line_arc_2                                Arc;
+//typedef Circular_k::Circular_arc_2                            Arc;
+//typedef Circular_k::Line_arc_2                                Arc;
 typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
 typedef boost::variant< Circular_arc_2_2, Line_arc_2_2 >        Arc2;
 
@@ -65,14 +65,14 @@ typedef std::vector< Arc> ArcContainer;
 typedef std::vector< Arc2> ArcContainer2;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Curved_k,Curved_k::Line_arc_2, 
-                                      Curved_k::Circular_arc_2>  Traits;
+typedef CGAL::Variant_traits<Circular_k,Circular_k::Line_arc_2, 
+                                      Circular_k::Circular_arc_2>  Traits;
 
 typedef CGAL::Variant_traits<CK1_,CK1_::Line_arc_2,
                                   CK1_::Circular_arc_2>          Traits2;
 #else
-typedef CGAL::Variant_traits<Curved_k,Curved_k::Line_arc_2,
-                                      Curved_k::Circular_arc_2>  Traits0;
+typedef CGAL::Variant_traits<Circular_k,Circular_k::Line_arc_2,
+                                      Circular_k::Circular_arc_2>  Traits0;
 
 typedef CGAL::Variant_traits_tracer<Traits0>            Traits;
 
@@ -191,8 +191,8 @@ int main(){
 
   clck2.stop();
 
-  std::cout<<"Lazy Curved_k ="<<(t2-t1)<<std::endl;
-  std::cout<<"Exact Curved_k ="<<(t4-t3)<<std::endl;
+  std::cout<<"Lazy Circular_k ="<<(t2-t1)<<std::endl;
+  std::cout<<"Exact Circular_k ="<<(t4-t3)<<std::endl;
   
   return 0;
 };

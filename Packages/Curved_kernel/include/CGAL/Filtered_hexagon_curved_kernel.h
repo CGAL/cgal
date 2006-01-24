@@ -31,7 +31,7 @@ template <class CK>
     typedef Filtered_hexagon_curved_kernel<CK>       Self;
     typedef Circular_arc_with_hexagon_2<Self>        Circular_arc_2;
     typedef Line_arc_with_hexagon_2<Self>            Line_arc_2;
-    typedef CK                                       Curved_kernel;
+    typedef CK                                       Circular_kernel;
     typedef typename CK::Algebraic_kernel            Algebraic_kernel;
     typedef typename CK::RT                          RT;
     typedef typename CK::FT                          FT;

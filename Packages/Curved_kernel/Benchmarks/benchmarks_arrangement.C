@@ -177,7 +177,8 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
 						
   -------------------------------------------------------------------------------------------------------------------------*/
   
-  typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
+//  typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
+  typedef CGAL::Gmpq                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
   typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
   typedef CGAL::Curved_kernel<Linear_k2, Algebraic_k2>         CK2_;

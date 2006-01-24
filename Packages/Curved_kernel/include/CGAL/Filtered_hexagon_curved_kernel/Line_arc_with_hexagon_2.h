@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 template < class HK >
 class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
 
-    typedef typename HK::Curved_kernel                         CK;
+    typedef typename HK::Circular_kernel                         CK;
     typedef typename CK::FT                                    FT;
     typedef typename CK::RT                                    RT;
     typedef typename CK::Point_2                               Point_2;
@@ -40,8 +40,8 @@ class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Root_of_2                             Root_of_2;
     typedef CK R;
     typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> >                   FK;
-    typedef CGAL::Curved_kernel< FK,CGAL::Algebraic_kernel_2_2<FK::RT> >   CK2;
-    typedef CGAL::Curved_kernel_converter<CK,CK2>                          Conv;
+    typedef CGAL::Circular_kernel< FK,CGAL::Algebraic_kernel_2_2<FK::RT> >   CK2;
+    typedef CGAL::Circular_kernel_converter<CK,CK2>                          Conv;
 
 
 public:
@@ -193,7 +193,7 @@ public:
   std::istream &
   operator>>(std::istream & is, Line_arc_with_hexagon_2<HK> &a)
   {
-    typedef typename HK::Curved_kernel                         CK;
+    typedef typename HK::Circular_kernel                         CK;
     typename CK::Line_2 s;
     typename CK::Circular_arc_point_2 p1;
     typename CK::Circular_arc_point_2 p2;

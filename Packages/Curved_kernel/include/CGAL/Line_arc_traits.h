@@ -25,39 +25,39 @@
 
 namespace CGAL {
 
-/// Traits class for CGAL::Arrangement_2 (and similar) based on a CurvedKernel.
+/// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
 
-template < typename CurvedKernel >
+template < typename CircularKernel >
 class Line_arc_traits {
 
-  CurvedKernel ck;
+  CircularKernel ck;
 
 public:
 
-  typedef CurvedKernel Kernel;
-  typedef typename CurvedKernel::Line_arc_2  Curve_2;
-  typedef typename CurvedKernel::Line_arc_2  X_monotone_curve_2;
+  typedef CircularKernel Kernel;
+  typedef typename CircularKernel::Line_arc_2  Curve_2;
+  typedef typename CircularKernel::Line_arc_2  X_monotone_curve_2;
 
-  typedef typename CurvedKernel::Circular_arc_point_2      Point;
-  typedef typename CurvedKernel::Circular_arc_point_2      Point_2;
+  typedef typename CircularKernel::Circular_arc_point_2      Point;
+  typedef typename CircularKernel::Circular_arc_point_2      Point_2;
 
   typedef CGAL::Tag_false                        Has_left_category;
   typedef CGAL::Tag_false 			 Has_merge_category;
 
-  Line_arc_traits(const CurvedKernel &k = CurvedKernel())
+  Line_arc_traits(const CircularKernel &k = CircularKernel())
     : ck(k) {}
 
-  typedef typename CurvedKernel::Compare_x_2           Compare_x_2;
-  typedef typename CurvedKernel::Compare_xy_2          Compare_xy_2;
-  typedef typename CurvedKernel::Compare_y_at_x_2      Compare_y_at_x_2;
-  typedef typename CurvedKernel::Compare_y_to_right_2  Compare_y_at_x_right_2; 
-  typedef typename CurvedKernel::Equal_2               Equal_2;
-  typedef typename CurvedKernel::Make_x_monotone_2     Make_x_monotone_2;
-  typedef typename CurvedKernel::Split_2               Split_2;
-  typedef typename CurvedKernel::Construct_Circular_min_vertex_2  Construct_min_vertex_2; 
-  typedef typename CurvedKernel::Construct_Circular_max_vertex_2  Construct_max_vertex_2;
-  typedef typename CurvedKernel::Is_vertical_2           Is_vertical_2;
-  typedef typename CurvedKernel::Intersect_2 Intersect_2;
+  typedef typename CircularKernel::Compare_x_2           Compare_x_2;
+  typedef typename CircularKernel::Compare_xy_2          Compare_xy_2;
+  typedef typename CircularKernel::Compare_y_at_x_2      Compare_y_at_x_2;
+  typedef typename CircularKernel::Compare_y_to_right_2  Compare_y_at_x_right_2; 
+  typedef typename CircularKernel::Equal_2               Equal_2;
+  typedef typename CircularKernel::Make_x_monotone_2     Make_x_monotone_2;
+  typedef typename CircularKernel::Split_2               Split_2;
+  typedef typename CircularKernel::Construct_Circular_min_vertex_2  Construct_min_vertex_2; 
+  typedef typename CircularKernel::Construct_Circular_max_vertex_2  Construct_max_vertex_2;
+  typedef typename CircularKernel::Is_vertical_2           Is_vertical_2;
+  typedef typename CircularKernel::Intersect_2 Intersect_2;
 
 
  

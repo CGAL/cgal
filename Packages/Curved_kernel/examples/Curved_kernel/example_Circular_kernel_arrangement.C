@@ -35,16 +35,16 @@ typedef CGAL::Gmpq                                          NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
-// typedef CGAL::Curved_kernel<Linear_k>                        Curved_k;
+typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
+// typedef CGAL::Circular_kernel<Linear_k>                        Circular_k;
 
-typedef Curved_k::Circular_arc_2                            Arc;
+typedef Circular_k::Circular_arc_2                            Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Circular_arc_traits<Curved_k>                  Traits;
+typedef CGAL::Circular_arc_traits<Circular_k>                  Traits;
 #else
-typedef CGAL::Circular_arc_traits<Curved_k>                  Traits0;
+typedef CGAL::Circular_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -54,9 +54,9 @@ typedef CGAL::Arrangement_2<Traits>                 Pmwx;
 typedef CGAL::Arr_naive_point_location<Pmwx>        Point_location;
 
 typedef Traits::X_monotone_curve_2                          X_monotone_curve_2;
-typedef Curved_k::Point_2                    Point_2;
-typedef Curved_k::Circle_2                    Circle_2;
-typedef Curved_k::Circular_arc_2              Circular_arc_2;
+typedef Circular_k::Point_2                    Point_2;
+typedef Circular_k::Circle_2                    Circle_2;
+typedef Circular_k::Circular_arc_2              Circular_arc_2;
 int main(){
   
   CGAL::Random generatorOfgenerator;

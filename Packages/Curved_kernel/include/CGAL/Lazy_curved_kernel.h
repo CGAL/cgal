@@ -93,7 +93,7 @@ public:
   typedef Cartesian_converter<Ln_EK, Ln_AK,
                                 To_interval<typename Ln_EK::RT> > Ln_converter;
 				
-  // typedef Curved_kernel_converter<EK,AK,Ln_converter,Al_K_converter> E2A;
+  // typedef Circular_kernel_converter<EK,AK,Ln_converter,Al_K_converter> E2A;
 				
   //typedef Lazy_kernel<Ln_EK,Ln_AK>   Linear_kernel;
    typedef Lazy_kernel<Ln_EK,Ln_AK,E2A>   Linear_kernel0;
@@ -193,9 +193,9 @@ struct Lazy_curved_kernel_without_type_equality
 {};
 
 template <class EK, 
-  class AK = void ,//Curved_kernel<Cartesian<Interval_nt_advanced>,
+  class AK = void ,//Circular_kernel<Cartesian<Interval_nt_advanced>,
                    //        Algebraic_kernel_2_2<Interval_nt_advanced> >,
-  class E2A = Curved_kernel_converter<EK,AK,
+  class E2A = Circular_kernel_converter<EK,AK,
                  Cartesian_converter< EK, AK, To_interval<typename EK::RT> >,
                  Algebraic_kernel_converter< typename EK::Algebraic_kernel, typename AK::Algebraic_kernel,
                  To_interval<typename EK::RT>, To_interval<typename EK::Root_of_2> > > >

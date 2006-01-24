@@ -27,7 +27,7 @@ template < class C1, class C2,
   //typename C1::Linear_kernel, typename C2::Linear_kernel>,
   class AK_converter = Algebraic_kernel_converter<typename C1::Algebraic_kernel,
                                                   typename C2::Algebraic_kernel > >
-class Curved_kernel_converter
+class Circular_kernel_converter
   : public LK_converter
 {
 public:
@@ -88,7 +88,7 @@ public:
                  object_cast<typename C1::Line_arc_2>(&obj)) {
         return make_object(operator()(*ptr));
       }
-      CGAL_assertion_msg(false,"CurvedK_converter is unable to determine what is wrapped in the Object");
+      CGAL_assertion_msg(false,"CircularK_converter is unable to determine what is wrapped in the Object");
       return Object();
 	
     }

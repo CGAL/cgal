@@ -8,6 +8,7 @@
 
 #CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.1-I-104/make/makefile_i686_Linux-2.4.28-pre3_g++-3.3.3
 # penser a enlever io.h de Conic_2.h en repassant a CGAL-I
+CGAL_MAKEFILE = $(HOME)/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6.11-1.35-FC3_g++33-3.3.4
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

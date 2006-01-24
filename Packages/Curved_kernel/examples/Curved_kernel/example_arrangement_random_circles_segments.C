@@ -21,17 +21,17 @@ typedef CGAL::Gmpq                                                        NT;
 typedef CGAL::Cartesian<NT>                                          Linear_k;
 
 typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>     Curved_k;
+typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>     Circular_k;
 
-typedef Curved_k::Point_2                                                 Point_2;
-typedef Curved_k::Circle_2                                               Circle_2;
-typedef Curved_k::Circular_arc_2                                    Circular_arc_2;
-typedef Curved_k::Line_arc_2                                          Line_arc_2;
+typedef Circular_k::Point_2                                                 Point_2;
+typedef Circular_k::Circle_2                                               Circle_2;
+typedef Circular_k::Circular_arc_2                                    Circular_arc_2;
+typedef Circular_k::Line_arc_2                                          Line_arc_2;
 
 typedef boost::variant< Circular_arc_2, Line_arc_2>       Arc;
 typedef std::vector< Arc> ArcContainer;
 
-typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>  Traits;
+typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>  Traits;
 
 typedef CGAL::Arrangement_2<Traits>                            Arr;
 typedef CGAL::Arr_naive_point_location<Arr>                 Point_location;

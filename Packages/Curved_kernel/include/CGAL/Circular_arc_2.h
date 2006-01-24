@@ -17,23 +17,23 @@
 
 namespace CGAL {
 
-template <class CurvedKernel> 
+template <class CircularKernel> 
 class Circular_arc_2 
-  : public CurvedKernel::Kernel_base::Circular_arc_2
+  : public CircularKernel::Kernel_base::Circular_arc_2
 {
-  typedef typename CurvedKernel::RT             RT;
-  typedef typename CurvedKernel::FT             FT;
-  typedef typename CurvedKernel::Point_2        Point_2;
-  typedef typename CurvedKernel::Line_2         Line_2;
-  typedef typename CurvedKernel::Circle_2       Circle_2;
-  typedef typename CurvedKernel::Circular_arc_point_2
+  typedef typename CircularKernel::RT             RT;
+  typedef typename CircularKernel::FT             FT;
+  typedef typename CircularKernel::Point_2        Point_2;
+  typedef typename CircularKernel::Line_2         Line_2;
+  typedef typename CircularKernel::Circle_2       Circle_2;
+  typedef typename CircularKernel::Circular_arc_point_2
                                                 Circular_arc_point_2;
 
-  typedef typename CurvedKernel::Kernel_base::Circular_arc_2 RCircular_arc_2; 
+  typedef typename CircularKernel::Kernel_base::Circular_arc_2 RCircular_arc_2; 
   // RCircular_arc_2 to avoid clash with self 
 public:
   typedef  RCircular_arc_2 Rep;
-  typedef  CurvedKernel   R; 
+  typedef  CircularKernel   R; 
   
 
  const Rep& rep() const

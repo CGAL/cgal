@@ -27,7 +27,7 @@ namespace Bbox_functors {
 template <class BK>
 class Compare_x_2
   {
-    typedef typename BK::Curved_kernel                           CK;
+    typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
 
    public:
@@ -56,7 +56,7 @@ class Compare_x_2
 template <class BK>
 class Compare_y_2
   {
-    typedef typename BK::Curved_kernel                           CK;
+    typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
 
    public:
@@ -85,7 +85,7 @@ class Compare_y_2
 template <class BK>
 class Compare_xy_2
   {
-    typedef typename BK::Curved_kernel                           CK;
+    typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
 
    public:
@@ -113,7 +113,7 @@ class Compare_xy_2
 template <class BK>
 class In_range_2
   {
-    typedef typename BK::Curved_kernel                           CK;
+    typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
     typedef typename BK::Line_arc_2                              Line_arc_2;
@@ -158,7 +158,7 @@ class In_range_2
 template <class BK>
 class Construct_Circular_source_vertex_2
   {
-    typedef typename BK::Curved_kernel                       CK;
+    typedef typename BK::Circular_kernel                       CK;
     typedef typename BK::Circular_arc_point_2                Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                      Circular_arc_2;
 
@@ -178,7 +178,7 @@ class Construct_Circular_source_vertex_2
 template <class BK>
 class Construct_Circular_target_vertex_2
   {
-    typedef typename BK::Curved_kernel                       CK;
+    typedef typename BK::Circular_kernel                       CK;
     typedef typename BK::Circular_arc_point_2                Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                      Circular_arc_2;
 
@@ -199,7 +199,7 @@ class Construct_Circular_target_vertex_2
 template <class BK>
 class Construct_Circular_min_vertex_2
   {
-    typedef typename BK::Curved_kernel                       CK;
+    typedef typename BK::Circular_kernel                       CK;
     typedef typename BK::Circular_arc_point_2                Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                      Circular_arc_2;
 
@@ -217,7 +217,7 @@ class Construct_Circular_min_vertex_2
 template <class BK>
 class Construct_Circular_max_vertex_2
   {
-    typedef typename BK::Curved_kernel                           CK;
+    typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
 
@@ -235,7 +235,7 @@ class Construct_Circular_max_vertex_2
 template <class BK>
 class Is_vertical_2
   {
-    typedef typename BK::Curved_kernel                           CK;
+    typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
 
@@ -255,7 +255,7 @@ class Is_vertical_2
 template <class BK>
 class Compare_y_at_x_2
   {
-    typedef typename BK::Curved_kernel                                    CK;
+    typedef typename BK::Circular_kernel                                    CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
@@ -303,7 +303,7 @@ class Compare_y_at_x_2
 template <class BK>
 class Has_on_2
   {
-    typedef typename BK::Curved_kernel                                    CK;
+    typedef typename BK::Circular_kernel                                    CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
@@ -345,7 +345,7 @@ class Has_on_2
 template <class BK>
 class Equal_2
   {
-    typedef typename BK::Curved_kernel                                    CK;
+    typedef typename BK::Circular_kernel                                    CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
@@ -413,7 +413,7 @@ class Equal_2
 template <class BK>
 class Do_overlap_2
   {
-    typedef typename BK::Curved_kernel                                  CK;
+    typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                 Circular_arc_2;
     typedef typename BK::Line_arc_2                                     Line_arc_2;
 
@@ -469,7 +469,7 @@ class Do_overlap_2
  template < class BK >
   class Compare_y_to_right_2
   {
-    typedef typename BK::Curved_kernel            CK;
+    typedef typename BK::Circular_kernel            CK;
     typedef typename BK::Circular_arc_2           Circular_arc_2;
     typedef typename BK::Circular_arc_point_2  Circular_arc_point_2;
 
@@ -489,7 +489,7 @@ class Do_overlap_2
   template < class BK >
   class Make_x_monotone_2
   {
-    typedef typename BK::Curved_kernel            CK;
+    typedef typename BK::Circular_kernel            CK;
     typedef typename BK::Rcirc_arc_2              Rcirc_arc_2;
     typedef typename BK::Circular_arc_2       	  Circular_arc_2;
     typedef typename BK::Line_arc_2               Line_arc_2;
@@ -531,7 +531,7 @@ class Do_overlap_2
   {
     public:
 
-    typedef typename BK::Curved_kernel            CK;
+    typedef typename BK::Circular_kernel            CK;
     typedef typename BK::Circular_arc_2           Circular_arc_2;
     typedef typename BK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename BK::Line_arc_2               Line_arc_2;
@@ -682,7 +682,7 @@ class Do_overlap_2
   class Split_2
   {
 
-    typedef typename BK::Curved_kernel            CK;
+    typedef typename BK::Circular_kernel            CK;
     typedef typename BK::Rcirc_arc_2              Rcirc_arc_2;
     typedef typename BK::Rline_arc_2              Rline_arc_2;
     typedef typename BK::Circular_arc_2           Circular_arc_2;
