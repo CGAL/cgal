@@ -28,10 +28,11 @@ typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
 
 
 template <class K, class P> 
-void solve(K k, P p, const char *name){
+void solve(K k, P p, double lb, double ub, const char *name){
   typename CGAL::POLYNOMIAL::Polynomial_converter<P, typename K::Function> pc;
   typename K::Function f= pc(p);
-  typename K::Root_container rc= k.root_container_object(f);
+  typename K::Root rlb(lb), rub(ub);
+  typename K::Root_container rc= k.root_container_object(f, rlb, rub);
   std::cout << name <<"(" << f <<  "): ";
   for (typename K::Root_container::iterator it= rc.begin(); it != rc.end(); ++it){
     std::cout << *it << " ";
@@ -48,12 +49,20 @@ int main(int argc, char *argv[])
     typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
     K k;
     K::Function input;
-    std::cout << ">> " << std::flush;
+    std::cout << "polynomial >> " << std::flush;
     std::cin >> input;
+    if (!std::cin) break;
+    std::cout << "lb >> " << std::flush;
+    double lb;
+    std::cin >> lb;
+    if (!std::cin) break;
+    std::cout << "ub >> " << std::flush;
+    double ub;
+    std::cin >> ub;
     if (!std::cin) break;
     
     
-    solve(k, input, "Turkowski");
+    solve(k, input, lb, ub, "Turkowski");
 
 
 #ifdef CGAL_POLYNOMIAL_USE_GSL
@@ -61,7 +70,7 @@ int main(int argc, char *argv[])
       typedef CGAL_POLYNOMIAL_NS::Numeric_root_stack<Ddt, CGAL_POLYNOMIAL_NS::internal::GSL_numeric_solver> NRE;
       typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
       K k;
-      solve(k, input, "GSL");
+      solve(k, input, lb, ub, "GSL");
     }
 #endif
 #ifdef CGAL_USE_TNT
@@ -70,7 +79,7 @@ int main(int argc, char *argv[])
 	CGAL_POLYNOMIAL_NS::internal::JAMA_numeric_solver> NRE;
       typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
       K k;
-      solve(k, input, "JAMA");
+      solve(k, input, lb, ub, "JAMA");
     }
 #endif
 #ifdef CGAL_POLYNOMIAL_USE_GSL
@@ -89,7 +98,7 @@ int main(int argc, char *argv[])
             CGAL_POLYNOMIAL_NS::internal::JAMA_cleaned_numeric_solver> NRE;
         typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
         K k;
-	solve(k, input, "CleanTNT");
+	solve(k, input, lb, ub, "CleanTNT");
     }
 #endif
     {
@@ -97,7 +106,7 @@ int main(int argc, char *argv[])
 	CGAL_POLYNOMIAL_NS::internal::Turkowski_cleaned_numeric_solver> NRE;
       typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
       K k;
-      solve(k, input, "CleanTurk");
+      solve(k, input, lb, ub, "CleanTurk");
     }
     
     {
@@ -106,7 +115,7 @@ int main(int argc, char *argv[])
       typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
       
       K k;
-      solve(k, input, "Descartes");
+      solve(k, input, lb, ub, "Descartes");
     }
     {
       typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
@@ -114,7 +123,7 @@ int main(int argc, char *argv[])
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
       typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
       K k;
-      solve(k, input, "DescartesFiltered");
+      solve(k, input, lb, ub, "DescartesFiltered");
     }
     {
       typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
@@ -122,7 +131,7 @@ int main(int argc, char *argv[])
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
       typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
       K k;
-      solve(k, input, "SturmFiltered");
+      solve(k, input, lb, ub, "SturmFiltered");
     }
 
     {
@@ -130,7 +139,7 @@ int main(int argc, char *argv[])
       typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack<RET> RE;
       typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
       K k;
-      solve(k, input, "Sturm");
+      solve(k, input, lb, ub, "Sturm");
     }
 
   };
