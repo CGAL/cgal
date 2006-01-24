@@ -448,11 +448,11 @@ else return false;
             return lb()!=o.lb() || ub()!=o.ub();
         }
 
-//! Approximate the width with doubles.
+  //! Approximate the width with doubles.
         double approximate_width() const
         {
             CGAL_Polynomial_assertion(lb() <= ub());
-            return to_double(ub()) - to_double(lb());
+            return std::max(to_double(ub()) - to_double(lb()), 0.0);
         }
 
         double approximate_relative_width() const
