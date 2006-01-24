@@ -9,16 +9,28 @@
 CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+
+           #-DNDEBUG \
+           #-O2 -fprofile-arcs -ftest-coverage \
+           #-DCGAL_PROFILE \
+           #-g
+
+CGAL_MAKEFILE =/proj/geometrica/home/CGAL/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
+
 include $(CGAL_MAKEFILE)
+
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
+	   -I/home/isuslov/CGAL/Curved_kernel/include/ \
            -I../../Algebraic_kernel/include \
-           -I../../Arrangement_2/include \
+	   -DNDEBUG \
+	   -O2  \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -32,7 +44,6 @@ LIBPATH = \
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
-
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#

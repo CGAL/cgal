@@ -37,7 +37,7 @@
 
 int main(int argc, char* argv[])
 {
-    char* Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf","smallpainttrack.dxf","mask0_25.dxf","mask0_5.dxf","cad_l2.dxf","cad_l1.dxf","CIOnZDraw.dxf","che_mod1.dxf","elekonta.dxf","painttrack.dxf","netlist_signal_1.dxf","51.dxf"}; 
+    char* Dxffilename[]={"cad_l1.dxf"}; //Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf","mask1.dxf","smallpainttrack.dxf","mask0_25.dxf","mask0_5.dxf","cad_l2.dxf","cad_l1.dxf","CIOnZDraw.dxf","che_mod1.dxf","elekonta.dxf","painttrack.dxf","netlist_signal_1.dxf","51.dxf"}; 
     char* Htmlfilename;
     char* Texfilename;
     char exten[4];
@@ -109,9 +109,9 @@ if (argv[1] != NULL)
 		 
  } 
 else
- {	
- 		Dxffilename[i]="myFirst.dxf";
-		//Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf"}; 
+ {		
+		//Dxffilename[i]="myFirst.dxf";
+ 		Dxffilename[i]="cad_l1.dxf";
 		Htmlfilename="benchmarks.html";
 		Texfilename="benchmarks.tex";
 		std::cout<< "Default *.dxf file is  :" << Dxffilename[i]<< std::endl;
@@ -122,9 +122,14 @@ else
 
 
 
-Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
+// Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);            // If you want to do benchmarks only with dxf files, you supose to use this defenition
 
- for(i=0;i<15;i++){
+Bench bench(Htmlfilename,Texfilename,Dxffilename[i]);			//If you want create table with all datasets you supose to use this.
+
+ 
+
+
+for(i=0;i<15;i++){
  
  std::ifstream fin;
  fin.open (Dxffilename[i]);
@@ -144,8 +149,8 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-  typedef CGAL::Curved_kernel<Linear_k1, Algebraic_k1>         CircularKernel;
-/*
+  typedef CGAL::Circular_kernel<Linear_k1, Algebraic_k1>         CircularKernel;
+
   #ifndef CGAL_CURVED_KERNEL_DEBUG
    typedef CGAL::Circular_arc_traits<CircularKernel>                   CircularK_CA_Traits;
   #else
@@ -157,7 +162,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   typedef std::vector<CircularKArc>                                      CircularKArcContainer;
   bench.kernel("Circular kernel  Circular arc traits");
   
-  bench.Compute_no_dxf<CircularKernel,CircularK_CA_Traits,CircularKArcContainer>();*/
+  bench.Compute_no_dxf<CircularKernel,CircularK_CA_Traits,CircularKArcContainer>();
   
  
   typedef CircularKernel::Circular_arc_2                                  Circular_arc_2;
@@ -169,9 +174,10 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   
   bench.kernel("Circular kernel  Variant traits");
   
-//   bench.Compute<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
-  bench.Compute_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
- 
+  bench.Compute<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
+  
+//bench.Compute_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
+
 /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Lazy_curved_Kernel!!!!!!!!!!!!!!!!!!
 						
@@ -181,30 +187,30 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   typedef CGAL::Gmpq                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
   typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
-  typedef CGAL::Curved_kernel<Linear_k2, Algebraic_k2>         CK2_;
+  typedef CGAL::Circular_kernel <Linear_k2, Algebraic_k2>         CK2_;
   
-  //typedef CGAL::Interval_nt<>                                  NT2;
+
   typedef CGAL::Interval_nt_advanced                          NT3;
   typedef CGAL::Cartesian<NT3>                                 Linear_k3;
   typedef CGAL::Algebraic_kernel_2_2<NT3>                      Algebraic_k3;
-  typedef CGAL::Curved_kernel<Linear_k3,Algebraic_k3>          CK3_;
+  typedef CGAL::Circular_kernel <Linear_k3,Algebraic_k3>          CK3_;
   
 
   typedef CGAL::Lazy_curved_kernel<CK2_,CK3_>                  LazyCurvedK;
   
-//    #ifndef CGAL_CURVED_KERNEL_DEBUG
-//   typedef CGAL::Circular_arc_traits<LazyCurvedK>                  LazyCurvedK_CA_Traits;
-//    #else
-//    typedef  CGAL::Circular_arc_traits<LazyCurved_k>                 Traits0_2;
-//    typedef  CGAL::Circular_arc_traits_tracer<Traits0_2>         LazyCurved_kTraits;
-//    #endif
-//   
-//   typedef LazyCurvedK::Circular_arc_2                              LazyArc;
-//   typedef std::vector<LazyArc>                                  LazyArcContainer;
-//   
-//   bench.kernel("Lazy curved kernel  Circular arc traits") ;
-//   
-//   bench.Compute_no_dxf<LazyCurvedK,LazyCurvedK_CA_Traits,LazyArcContainer>();
+   #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Circular_arc_traits<LazyCurvedK>                  LazyCurvedK_CA_Traits;
+   #else
+   typedef  CGAL::Circular_arc_traits<LazyCurved_k>                 Traits0_2;
+   typedef  CGAL::Circular_arc_traits_tracer<Traits0_2>         LazyCurved_kTraits;
+   #endif
+  
+  typedef LazyCurvedK::Circular_arc_2                              LazyArc;
+  typedef std::vector<LazyArc>                                  LazyArcContainer;
+  
+  bench.kernel("Lazy curved kernel  Circular arc traits") ;
+  
+  bench.Compute_no_dxf<LazyCurvedK,LazyCurvedK_CA_Traits,LazyArcContainer>();
 
  
   typedef LazyCurvedK::Circular_arc_2  Circular_arc_3;
@@ -215,14 +221,13 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   
   bench.kernel("Lazy curved kernel  Variant traits");
   
- //  bench.Compute<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
-   bench.Compute_dxf<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
+   bench.Compute<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
+   //bench.Compute_dxf<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
   /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Filtered_hexagone_Circular_kernel!!!!!!!!!!!!!!!!!!
 						
   -------------------------------------------------------------------------------------------------------------------------*/
   /*
-
   typedef CGAL::Filtered_hexagon_curved_kernel<CircularKernel>        CircularKernelHexagon;
  
   #ifndef CGAL_CURVED_KERNEL_DEBUG
@@ -378,11 +383,23 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   {
  if (strcmp(Dxffilename[i+1],""))
  	{
- 	bench.newDxfFilename(Dxffilename[i+1]);
- 	}
+	fin.open (Dxffilename[i]);
+ 	if (!fin.is_open())
+  		{
+    		std::cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
+		std::cout << "that's all" << std::endl;
+    		fin.close();
+    		break;
+  		} 
+	else
+		{
+ 		bench.newDxfFilename(Dxffilename[i+1]);
+ 		}
+	fin.close();
+	}
  else
  	{
-	std::cout << "that's all" << Dxffilename[i+1] << std::endl;
+	std::cout << "that's all" << std::endl;
 	break;
  	}
  }
