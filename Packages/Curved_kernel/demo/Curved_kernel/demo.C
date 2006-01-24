@@ -88,16 +88,16 @@ typedef CGAL::Gmpq                                          NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
-// typedef CGAL::Curved_kernel<Linear_k>                        Curved_k;
+typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
+// typedef CGAL::Circular_kernel<Linear_k>                        Circular_k;
 
-typedef Curved_k::Circular_arc_2                            Arc;
+typedef Circular_k::Circular_arc_2                            Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Circular_arc_traits<Curved_k>                  Traits;
+typedef CGAL::Circular_arc_traits<Circular_k>                  Traits;
 #else
-typedef CGAL::Circular_arc_traits<Curved_k>                  Traits0;
+typedef CGAL::Circular_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -301,7 +301,7 @@ public:
 
     // layers
     widget->attach(&testlayer);
-    get_arc_layer = new CGAL::Qt_widget_get_arc<Curved_k>;
+    get_arc_layer = new CGAL::Qt_widget_get_arc<Circular_k>;
     widget->attach(get_arc_layer);
     connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
   }
@@ -371,7 +371,7 @@ private slots:
   {
     QMessageBox::about(this, my_title_string,
 	"This is a demo of CGAL's Planar Map of intersecting Circle Arcs\n"
-        "Using the Curved_kernel by Sylvain Pion and Monique Teillaud");
+        "Using the Circular_kernel by Sylvain Pion and Monique Teillaud");
   }
 
   void aboutQt()
@@ -475,7 +475,7 @@ private:
   bool                                 something_changed;
   Qt_layer_show_ch                     testlayer;
   Qt_layer_do_sweep                    do_sweep_layer;
-  CGAL::Qt_widget_get_arc<Curved_k>     *get_arc_layer;
+  CGAL::Qt_widget_get_arc<Circular_k>     *get_arc_layer;
 };
 
 #include "demo.moc"

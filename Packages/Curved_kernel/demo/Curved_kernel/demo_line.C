@@ -84,16 +84,16 @@ typedef CGAL::Gmpq                                          NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
+typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
 
-typedef Curved_k::Line_arc_2                                Arc;
-typedef Curved_k::Segment_2                                 Segment;
+typedef Circular_k::Line_arc_2                                Arc;
+typedef Circular_k::Segment_2                                 Segment;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Line_arc_traits<Curved_k>                  Traits;
+typedef CGAL::Line_arc_traits<Circular_k>                  Traits;
 #else
-typedef CGAL::Line_arc_traits<Curved_k>                  Traits0;
+typedef CGAL::Line_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -138,9 +138,9 @@ public:
      *widget << CGAL::GREEN;
      for (Pmwx::Halfedge_const_iterator ei = pm().halfedges_begin();
           ei != pm().halfedges_end (); ++ei)
-       *widget << Segment(Curved_k::Point_2(to_double(ei->curve().source().x()),
+       *widget << Segment(Circular_k::Point_2(to_double(ei->curve().source().x()),
 				  to_double(ei->curve().source().y())),
-			  Curved_k::Point_2(to_double(ei->curve().target().x()),
+			  Circular_k::Point_2(to_double(ei->curve().target().x()),
 				  to_double(ei->curve().target().y())))
 			  ;
 
@@ -179,9 +179,9 @@ public:
     *widget << CGAL::BLUE;
     for (ArcContainer::const_iterator cit = arc_container().begin();
          cit != arc_container().end(); ++cit)
-     *widget << Segment(Curved_k::Point_2(to_double(cit->source().x()),
+     *widget << Segment(Circular_k::Point_2(to_double(cit->source().x()),
 				  to_double(cit->source().y())),
-			  Curved_k::Point_2(to_double(cit->target().x()),
+			  Circular_k::Point_2(to_double(cit->target().x()),
 					    to_double(cit->target().y())));
   }
 };
@@ -301,7 +301,7 @@ public:
 
     // layers
     widget->attach(&testlayer);
-    get_arc_layer = new CGAL::Qt_widget_get_segment<Curved_k>;
+    get_arc_layer = new CGAL::Qt_widget_get_segment<Circular_k>;
     widget->attach(get_arc_layer);
     connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
   }
@@ -371,7 +371,7 @@ private slots:
   {
     QMessageBox::about(this, my_title_string,
 	"This is a demo of CGAL's Planar Map of intersecting Circle Arcs\n"
-        "Using the Curved_kernel by Sylvain Pion and Monique Teillaud");
+        "Using the Circular_kernel by Sylvain Pion and Monique Teillaud");
   }
 
   void aboutQt()
@@ -475,7 +475,7 @@ private:
   bool                                 something_changed;
   Qt_layer_show_ch                     testlayer;
   Qt_layer_do_sweep                    do_sweep_layer;
-  CGAL::Qt_widget_get_segment<Curved_k>     *get_arc_layer;
+  CGAL::Qt_widget_get_segment<Circular_k>     *get_arc_layer;
 };
 
 #include "demo_line.moc"

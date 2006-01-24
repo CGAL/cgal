@@ -81,18 +81,18 @@ typedef CGAL::Gmpq                                          NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
+typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
 
-typedef Curved_k::Line_arc_2                                Line_arc_2;
-typedef Curved_k::Segment_2                                 Segment;
-typedef Curved_k::Circular_arc_2                            Circular_arc_2;
+typedef Circular_k::Line_arc_2                                Line_arc_2;
+typedef Circular_k::Segment_2                                 Segment;
+typedef Circular_k::Circular_arc_2                            Circular_arc_2;
 typedef boost::variant< Circular_arc_2, Segment >        Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits;
+typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits;
 #else
-typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits0;
+typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -232,8 +232,8 @@ public:
 
     // layers
     widget->attach(&testlayer);
-    get_arc_layer = new CGAL::Qt_widget_get_arc<Curved_k>;
-    get_segment_layer =  new CGAL::Qt_widget_get_segment<Curved_k>;
+    get_arc_layer = new CGAL::Qt_widget_get_arc<Circular_k>;
+    get_segment_layer =  new CGAL::Qt_widget_get_segment<Circular_k>;
    // connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
    // connect(get_segment_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
   }
@@ -271,7 +271,7 @@ private slots:
   {
     QMessageBox::about(this, my_title_string,
 	"This is a demo of CGAL's Planar Map of intersecting Circle Arcs\n"
-        "Using the Curved_kernel by Sylvain Pion and Monique Teillaud");
+        "Using the Circular_kernel by Sylvain Pion and Monique Teillaud");
   }
 
   void aboutQt()
@@ -323,7 +323,7 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     ArcContainer arcs;
-    CGAL::variant_load<Curved_k, Circular_arc_2, Segment>(in, std::back_inserter(arcs));
+    CGAL::variant_load<Circular_k, Circular_arc_2, Segment>(in, std::back_inserter(arcs));
     arc_container().swap(arcs);
 
 
@@ -358,8 +358,8 @@ private:
   bool                                 something_changed;
   Qt_layer_show_ch                     testlayer;
 
-  CGAL::Qt_widget_get_segment<Curved_k>  *get_segment_layer;
-  CGAL::Qt_widget_get_arc<Curved_k>     *get_arc_layer;
+  CGAL::Qt_widget_get_segment<Circular_k>  *get_segment_layer;
+  CGAL::Qt_widget_get_arc<Circular_k>     *get_arc_layer;
 };
 
 #include "demo_viewer.moc"

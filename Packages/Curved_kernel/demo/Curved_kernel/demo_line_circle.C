@@ -90,18 +90,18 @@ typedef CGAL::Gmpq                                          NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
+typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
 
-typedef Curved_k::Line_arc_2                                Line_arc_2;
-typedef Curved_k::Segment_2                                 Segment;
-typedef Curved_k::Circular_arc_2                            Circular_arc_2;
+typedef Circular_k::Line_arc_2                                Line_arc_2;
+typedef Circular_k::Segment_2                                 Segment;
+typedef Circular_k::Circular_arc_2                            Circular_arc_2;
 typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits;
+typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits;
 #else
-typedef CGAL::Variant_traits<Curved_k, Circular_arc_2, Line_arc_2>                  Traits0;
+typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -147,9 +147,9 @@ public:
      for (Pmwx::Halfedge_const_iterator ei = pm().halfedges_begin();
           ei != pm().halfedges_end (); ++ei){
        if(const Line_arc_2* line = boost::get<Line_arc_2>( &(ei->curve()))){
-	 *widget << Segment(Curved_k::Point_2(to_double(line->source().x()),
+	 *widget << Segment(Circular_k::Point_2(to_double(line->source().x()),
 					      to_double(line->source().y())),
-			    Curved_k::Point_2(to_double(line->target().x()),
+			    Circular_k::Point_2(to_double(line->target().x()),
 					      to_double(line->target().y())));
        }
        else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(ei->curve()))){
@@ -196,9 +196,9 @@ public:
     for (ArcContainer::const_iterator cit = arc_container().begin();
          cit != arc_container().end(); ++cit){
       if(const Line_arc_2* line = boost::get<Line_arc_2>( &(*cit))){
-	*widget << Segment(Curved_k::Point_2(to_double(line->source().x()),
+	*widget << Segment(Circular_k::Point_2(to_double(line->source().x()),
 					     to_double(line->source().y())),
-			   Curved_k::Point_2(to_double(line->target().x()),
+			   Circular_k::Point_2(to_double(line->target().x()),
 					     to_double(line->target().y())));
       }
       else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(*cit))){
@@ -343,8 +343,8 @@ public:
 
     // layers
     widget->attach(&testlayer);
-    get_arc_layer = new CGAL::Qt_widget_get_arc<Curved_k>;
-    get_segment_layer =  new CGAL::Qt_widget_get_segment<Curved_k>;
+    get_arc_layer = new CGAL::Qt_widget_get_arc<Circular_k>;
+    get_segment_layer =  new CGAL::Qt_widget_get_segment<Circular_k>;
     widget->attach(get_arc_layer);
     connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
     connect(get_segment_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
@@ -433,7 +433,7 @@ private slots:
   {
     QMessageBox::about(this, my_title_string,
 	"This is a demo of CGAL's Planar Map of intersecting Circle Arcs\n"
-        "Using the Curved_kernel by Sylvain Pion and Monique Teillaud");
+        "Using the Circular_kernel by Sylvain Pion and Monique Teillaud");
   }
 
   void aboutQt()
@@ -485,7 +485,7 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     ArcContainer arcs;
-    CGAL::variant_load<Curved_k, Circular_arc_2, Line_arc_2>(in, std::back_inserter(arcs));
+    CGAL::variant_load<Circular_k, Circular_arc_2, Line_arc_2>(in, std::back_inserter(arcs));
     arc_container().swap(arcs);
 
 
@@ -527,8 +527,8 @@ private:
   bool                                 something_changed;
   Qt_layer_show_ch                     testlayer;
   Qt_layer_do_sweep                    do_sweep_layer;
-  CGAL::Qt_widget_get_segment<Curved_k>  *get_segment_layer;
-  CGAL::Qt_widget_get_arc<Curved_k>     *get_arc_layer;
+  CGAL::Qt_widget_get_segment<Circular_k>  *get_segment_layer;
+  CGAL::Qt_widget_get_arc<Circular_k>     *get_arc_layer;
 };
 
 #include "demo_line_circle.moc"
