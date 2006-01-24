@@ -1,0 +1,7 @@
+#include <CGAL/KDS/internal/Log.h>
+
+CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
+
+Logs kds_logs;
+
+CGAL_KDS_END_INTERNAL_NAMESPACE
