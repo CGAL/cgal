@@ -30,6 +30,7 @@
 #include "CGAL/Envelope_element_visitor_3.h"
 #include "CGAL/No_vertical_decomposition_2.h"
 #include <CGAL/Timer.h>
+#include <CGAL/set_dividors.h>
 
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -94,6 +95,7 @@
 
 // the algorithm deals with some degenerate input including:
 // 1. more than one surface on faces, edges, vertices
+
 
 //    (the minimization diagram should also support this)
 // 2. all degenerate cases in 2d (the minimization diagram model is
@@ -207,11 +209,21 @@ public:
     // Free the resolver
     delete resolver;
   }
-  
-  // compute the envelope of surfaces in 3D
+
+  // compute the envelope of surfaces in 3D, using the defaul arbitrary dividor
   template <class SurfaceIterator>
-  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, 
+  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2 &result)
+  {
+    Arbitrary_dividor dividor;
+    construct_lu_envelope(begin, end, result, dividor);
+  }
+    
+  // compute the envelope of surfaces in 3D using the given set dividor
+  template <class SurfaceIterator, class SetDividor>
+  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, 
+                             Minimization_diagram_2 &result,
+                             SetDividor& dividor)
   {
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "begin construct_lu_envelope" << std::endl;
@@ -233,7 +245,7 @@ public:
 
     // recursively construct the envelope of the xy-monotone parts
     construct_lu_envelope_xy_monotones(xy_monotones.begin(), 
-                                       xy_monotones.end(), result);
+                                       xy_monotones.end(), result, dividor);
 
     CGAL_assertion(is_envelope_valid(result));   
 
@@ -245,38 +257,6 @@ public:
     print_stats();
   }
 
-  // compute the envelope of surfaces in 3D
-  template <class SurfaceIterator>
-  void incremental_construct(SurfaceIterator begin, SurfaceIterator end, 
-                             Minimization_diagram_2 &result)
-  {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "begin incremental_construct" << std::endl;
-    #endif
-
-    if (begin == end)
-    {
-      return; // result is empty
-    }
-
-    init_stats();
-
-    envelope_timer.start();
-    // make the general surfaces xy-monotone
-    std::list<Xy_monotone_surface_3> xy_monotones;
-    for(; begin != end; ++begin)
-      traits->construct_envelope_xy_monotone_parts_3_object()
-                        (*begin, std::back_inserter(xy_monotones));
-
-    // recursively construct the envelope of the non vertical surfaces
-    incremental_construct_xy_monotones(xy_monotones.begin(), xy_monotones.end(), result);
-
-    CGAL_assertion(is_envelope_valid(result));
-
-	  envelope_timer.stop();
-    print_stats();
-  }
-  
   /*! Access the traits object (const version). */
   const Traits* get_traits () const
   {
@@ -319,10 +299,11 @@ public:
 protected:
 
   // compute the envelope of xy-monotone surfaces in 3D 
-  template <class SurfaceIterator>
+  template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope_xy_monotones(SurfaceIterator begin,
                                           SurfaceIterator end,
-                                          Minimization_diagram_2 &result)
+                                          Minimization_diagram_2 &result,
+                                          SetDividor& dividor)
   {
     if (begin == end)
     {
@@ -348,17 +329,13 @@ protected:
    
     // divide the surfaces into 2 groups (insert surface to each group alternately)
     std::list<Xy_monotone_surface_3> group1, group2;
-    bool set_first = true;
-    for(; first != end; ++first, set_first = !set_first)
-      if (set_first)
-        group1.push_back(*first);
-      else
-        group2.push_back(*first);
+    dividor(first, end,
+            std::back_inserter(group1), std::back_inserter(group2));
     
     // recursively calculate the LU_envelope of the 2 groups
     Minimization_diagram_2 result1(traits), result2(traits);
-    construct_lu_envelope_xy_monotones(group1.begin(), group1.end(), result1);
-    construct_lu_envelope_xy_monotones(group2.begin(), group2.end(), result2);
+    construct_lu_envelope_xy_monotones(group1.begin(), group1.end(), result1, dividor);
+    construct_lu_envelope_xy_monotones(group2.begin(), group2.end(), result2, dividor);
         
     // merge the results:
     merge_envelopes(result1, result2, result);
@@ -373,63 +350,6 @@ protected:
     result2.clear();
     
     CGAL_assertion(is_envelope_valid(result));   
-  }
-
-  template <class SurfaceIterator>
-  void incremental_construct_xy_monotones(SurfaceIterator begin, SurfaceIterator end,
-                                          Minimization_diagram_2 &result)
-  {
-    if (begin == end)
-    {
-      return; // result is empty
-    }
-
-    SurfaceIterator first = begin++;
-    if (begin == end)
-    {
-      // only one surface is in the collection. insert it the result
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "the case of one surface: ";
-      #endif
-
-      Xy_monotone_surface_3& surf = *first;
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << surf << std::endl;
-      #endif
-
-      deal_with_one_surface(surf, result);
-      return;
-    }
-
-    // recursively construct the envelope of all the surfaces, but the last one
-    // and then add this last surface
-    std::vector<Xy_monotone_surface_3> group1;
-    for(; first != end; ++first)
-      group1.push_back(*first);
-    typename std::vector<Xy_monotone_surface_3>::iterator last_surface,
-                                                          before_end = group1.end();
-    before_end--;
-    last_surface = before_end;
-    
-
-    Minimization_diagram_2 result1(traits), result2(traits);
-    construct_lu_envelope_xy_monotones(group1.begin(), before_end, result1);
-    construct_lu_envelope_xy_monotones(last_surface, group1.end(), result2);
-
-    // merge the results:
-    merge_envelopes(result1, result2, result);
-
-    // some statistics
-    sum_num_vertices += result.number_of_vertices();
-    sum_num_edges += result.number_of_edges();
-    sum_num_faces += result.number_of_faces();
-
-    resolver->reset_cache();
-    result1.clear();
-    result2.clear();
-
-
-    CGAL_assertion(is_envelope_valid(result));
   }
 
   // insert one surface into an empty minimization diagram
@@ -1156,6 +1076,7 @@ protected:
 	  }
   }
 
+
   // check if can remove the edge's target if we remove the edge
   // this means that the target has the same envelope information as the edge
   bool can_remove_edge_target(Halfedge_handle h)
@@ -1240,6 +1161,7 @@ protected:
     CGAL::Dac_decision decision = vh->get_decision();
     bool equal_first = (vh->get_is_equal_aux_data_in_face(0));
     bool equal_second = (vh->get_is_equal_aux_data_in_face(1));
+
 
     // we assert that the flags' values are correct using comparison of data
     // as in the old way (using set operations)
@@ -1465,6 +1387,7 @@ protected:
       he2->set_has_equal_aux_data_in_target(0, he1->twin()->get_has_equal_aux_data_in_target(0));
       he2->set_has_equal_aux_data_in_target(1, he1->twin()->get_has_equal_aux_data_in_target(1));
 
+
       // order of halfedges for merge doesn't matter
       Halfedge_handle new_edge = result.merge_edge(he1, he2 ,c);
       ++number_of_removed_features;
@@ -1480,6 +1403,7 @@ protected:
     }
 
     // remove isolated vertices
+
     typename std::list<Vertex_handle>::iterator li;
     for(li = isolated_to_remove.begin(); li != isolated_to_remove.end(); ++li)
     {
@@ -2302,6 +2226,7 @@ protected:
       CGAL_assertion_msg(all_ok, "data not set over edge");
       all_ok &= (!hh->has_no_data());
       if (!all_ok)
+
         std::cout << "edge: " << hh->curve() << std::endl;
       CGAL_assertion_msg(all_ok, "data empty over edge");
 
@@ -2481,6 +2406,7 @@ protected:
     }
 
     virtual void before_split_edge (Halfedge_handle e,
+
                                     Vertex_handle v,
                                     const X_monotone_curve_2& c1,
                                     const X_monotone_curve_2& c2)
