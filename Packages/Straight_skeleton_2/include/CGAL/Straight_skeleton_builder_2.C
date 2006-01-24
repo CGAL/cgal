@@ -1031,7 +1031,7 @@ typename Straight_skeleton_builder_2<Gt,SS>::Ssds Straight_skeleton_builder_2<Gt
   Run();
   return mSS ;
 }
-
+/*
 template<class Gt, class SS>
 template<class InputPointIterator>
 Straight_skeleton_builder_2<Gt,SS>&
@@ -1152,7 +1152,7 @@ Straight_skeleton_builder_2<Gt,SS>::enter_contour ( InputPointIterator aBegin, I
 
   return *this ;
 }
-
+*/
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_C //

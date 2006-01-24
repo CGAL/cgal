@@ -102,7 +102,124 @@ public:
   Straight_skeleton_builder_2 ( Traits const& = Traits() ) ;
 
   template<class InputPointIterator>
-  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
+  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd )
+  {
+ CGAL_SSBUILDER_TRACE("Inserting Connected Component of the Boundary....");
+
+  if ( std::distance(aBegin,aEnd) >= 3 )
+  {
+    Halfedge_handle lFirstCCWBorder ;
+    Halfedge_handle lPrevCCWBorder ;
+    Halfedge_handle lNextCWBorder ;
+    Vertex_handle   lFirstVertex ;
+    Vertex_handle   lPrevVertex ;
+    int             lFirstBorderIdx ;
+    int             lPrevBorderIdx ;
+
+    InputPointIterator lCurr = aBegin ;
+    while ( lCurr != aEnd )
+    {
+      Halfedge_handle lCCWBorder = mSS.SBase::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++)  );
+      Halfedge_handle lCWBorder = lCCWBorder->opposite();
+
+      Vertex_handle lVertex = mSS.SBase::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
+      CGAL_SSBUILDER_TRACE("Vertex: V" << lVertex->id() << " at " << lVertex->point() );
+      mWrappedVertices.push_back( VertexWrapper(lVertex) ) ;
+
+      mWrappedHalfedges.push_back( HalfedgeWrapper(lCCWBorder) ) ;
+      mWrappedHalfedges.push_back( HalfedgeWrapper(lCWBorder ) ) ;
+      Face_handle lFace = mSS.SBase::faces_push_back( Face() ) ;
+
+      int lBorderIdx = (int)mBorderHalfedges.size() ;
+      mBorderHalfedges.push_back(lCCWBorder);
+
+      lCCWBorder->HBase::set_face    (lFace);
+      lFace     ->FBase::set_halfedge(lCCWBorder);
+
+      lVertex   ->VBase::set_halfedge(lCCWBorder);
+      lCCWBorder->HBase::set_vertex  (lVertex);
+
+      if ( lCurr == aBegin )
+      {
+        lFirstVertex    = lVertex ;
+        lFirstCCWBorder = lCCWBorder ;
+        lFirstBorderIdx = lBorderIdx ;
+      }
+      else
+      {
+        SetPrevInLAV(lVertex    ,lPrevVertex);
+        SetNextInLAV(lPrevVertex,lVertex    );
+
+        lCWBorder->HBase::set_vertex(lPrevVertex);
+
+        lCCWBorder    ->HBase::set_prev(lPrevCCWBorder);
+        lPrevCCWBorder->HBase::set_next(lCCWBorder);
+
+        lNextCWBorder->HBase::set_prev(lCWBorder);
+        lCWBorder    ->HBase::set_next(lNextCWBorder);
+
+        SetPrevInCCB(lCCWBorder    ,lPrevBorderIdx);
+        SetNextInCCB(lPrevCCWBorder,lBorderIdx);
+
+        CGAL_SSBUILDER_TRACE("CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
+        CGAL_SSBUILDER_TRACE("CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
+
+        CGAL_SSBUILDER_SHOW_AUX
+        (
+          SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lVertex->point(), CGAL::RED, "Border" ) ;
+          draw_.Release();
+        )
+      }
+
+      ++ lCurr ;
+
+      lPrevVertex    = lVertex ;
+      lPrevCCWBorder = lCCWBorder ;
+      lNextCWBorder  = lCWBorder ;
+      lPrevBorderIdx = lBorderIdx ;
+    }
+
+    SetPrevInLAV(lFirstVertex,lPrevVertex );
+    SetNextInLAV(lPrevVertex ,lFirstVertex);
+
+    lFirstCCWBorder->opposite()->HBase::set_vertex(lPrevVertex);
+
+    CGAL_SSBUILDER_SHOW_AUX
+    (
+      SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
+      draw_.Release();
+    )
+
+    lFirstCCWBorder->HBase::set_prev(lPrevCCWBorder);
+    lPrevCCWBorder ->HBase::set_next(lFirstCCWBorder);
+
+    lPrevCCWBorder ->opposite()->HBase::set_prev(lFirstCCWBorder->opposite());
+    lFirstCCWBorder->opposite()->HBase::set_next(lPrevCCWBorder ->opposite());
+
+    SetPrevInCCB(lFirstCCWBorder, lPrevBorderIdx);
+    SetNextInCCB(lPrevCCWBorder , lFirstBorderIdx);
+
+    CGAL_SSBUILDER_TRACE("CCW Border: E" << lFirstCCWBorder->id()
+                        << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
+                        << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
+                        << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
+                        );
+  }
+
+  for ( Vertex_iterator v = mSS.SBase::vertices_begin(); v != mSS.SBase::vertices_end(); ++ v )
+  {
+    bool lIsReflex = !Left_turn( GetPrevInLAV(v)->point(),v->point(),GetNextInLAV(v)->point() );
+    if ( lIsReflex )
+    {
+      SetIsReflex(v);
+      CGAL_SSBUILDER_TRACE("Reflex vertex: N" << v->id() );
+      mReflexVertices.push_back(v);
+    }
+  }
+
+  return *this ;
+
+  }
 
   Ssds construct_skeleton() ;
 
