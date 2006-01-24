@@ -819,9 +819,31 @@ public:
       if (res == SMALLER)
       {
         // We have discovered an overlapping segment:
-        X_monotone_curve_2  overlap_seg (cv1.line(), p_l, p_r);
-        *oi = make_object (overlap_seg);
-        oi++;
+        if(cv1.is_directed_right() == cv2.is_directed_right())
+        {
+          // cv1 and cv2 have the same directions, maintain this direction
+          // in the overlap segment
+          if(cv1.is_directed_right())
+          {
+            X_monotone_curve_2  overlap_seg (cv1.line(), p_l, p_r);
+            *oi = make_object (overlap_seg);
+            oi++;
+          }
+          else
+          {
+            X_monotone_curve_2  overlap_seg (cv1.line(), p_r, p_l);
+            *oi = make_object (overlap_seg);
+            oi++;
+          }
+        }
+        else
+        {
+          // cv1 and cv2 have opposite directions, the overlap segment
+          // will be directed from left to right
+          X_monotone_curve_2  overlap_seg (cv1.line(), p_l, p_r);
+          *oi = make_object (overlap_seg);
+          oi++;
+        }
       }
       else if (res == EQUAL)
       {

@@ -140,6 +140,7 @@ public:
    */
   class Split_2
   {
+    typedef Arr_non_caching_segment_traits_2<T_Kernel>    Self;
   public:
     
     /*!
@@ -173,8 +174,18 @@ public:
 
       typename Base::Construct_segment_2 construct_segment =
         base.construct_segment_2_object();
-      c1 = construct_segment(left, p);
-      c2 = construct_segment(p, right);
+
+      Self self;
+      if(self.compare_endpoints_xy_2_object()(cv) == SMALLER)
+      {
+        c1 = construct_segment(left, p);
+        c2 = construct_segment(p, right);
+      }
+      else
+      {
+        c1 = construct_segment(p, left);
+        c2 = construct_segment(right, p);
+      }
     }
   };
 
@@ -189,6 +200,7 @@ public:
    */
   class Intersect_2
   {
+    typedef Arr_non_caching_segment_traits_2<T_Kernel>    Self;
   public:
     /*! Find the intersections of the two given segments and insert them into
      * the given output iterator. As two segments may itersect only once, only
@@ -226,8 +238,25 @@ public:
       }
       else
       {
-	// The intersection is a segment - return it as is.
-	CGAL_assertion (object_cast<X_monotone_curve_2>(&res) != NULL);
+        // The intersection is a segment.
+
+        const X_monotone_curve_2 *ov = object_cast<X_monotone_curve_2>(&res);  
+        CGAL_assertion (ov != NULL);
+
+        Self self;
+        Comparison_result cmp1 = self.compare_endpoints_xy_2_object()(cv1);
+        Comparison_result cmp2 = self.compare_endpoints_xy_2_object()(cv2);
+        
+        if(cmp1 == cmp2)
+        {
+          // cv1 and cv2 have the same directions, maintain this direction
+          // in the overlap segment
+          if(self.compare_endpoints_xy_2_object()(*ov) != cmp1)
+          {
+            Kernel k;
+            res = make_object(k.construct_opposite_segment_2_object()(*ov));
+          }
+        }
 
         *oi = res;
         ++oi;
