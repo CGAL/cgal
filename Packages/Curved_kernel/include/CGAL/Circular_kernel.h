@@ -36,17 +36,14 @@ namespace CGALi {
 
 template < class CurvedKernel, class LinearKernelBase >
 struct Curved_kernel_base: public LinearKernelBase
-// takes classes in internal sub-namespace
 {
-  typedef CGALi::Circular_arc_2<CurvedKernel>               Circular_arc_2;
-  typedef CGALi::Circular_arc_point_2<CurvedKernel>      Circular_arc_point_2;
-  typedef CGALi::Line_arc_2<CurvedKernel>                   Line_arc_2;
+  typedef CGALi::Circular_arc_2<CurvedKernel>         Circular_arc_2;
+  typedef CGALi::Circular_arc_point_2<CurvedKernel>   Circular_arc_point_2;
+  typedef CGALi::Line_arc_2<CurvedKernel>             Line_arc_2;
   
-  
-   
-  
-  #define CGAL_Curved_Kernel_pred(Y,Z) typedef CircularFunctors::Y<CurvedKernel> Y; \
-                              Y Z() const { return Y(); }
+  #define CGAL_Curved_Kernel_pred(Y,Z) \
+    typedef CircularFunctors::Y<CurvedKernel> Y; \
+    Y Z() const { return Y(); }
   #define CGAL_Curved_Kernel_cons(Y,Z) CGAL_Curved_Kernel_pred(Y,Z)
 
   #include <CGAL/Curved_kernel/interface_macros.h>
@@ -56,54 +53,40 @@ struct Curved_kernel_base: public LinearKernelBase
 
 template < class LinearKernel, class AlgebraicKernel >
 struct Curved_kernel
-  :  // there should be a derivation from
-    // LinearKernel::Kernel_base<Self> to have types equalities for
-    // the Linearkernel types
-//  public CGALi::Curved_kernel_base<Curved_kernel<LinearKernel,AlgebraicKernel>,LinearKernel >
-  public Curved_kernel_type_equality_wrapper<CGALi::Curved_kernel_base<Curved_kernel<LinearKernel,AlgebraicKernel>,
-    typename LinearKernel::template Base<Curved_kernel<LinearKernel,AlgebraicKernel> >::Type >,
-   Curved_kernel<LinearKernel,AlgebraicKernel> >
+  : public Curved_kernel_type_equality_wrapper
+  <
+  CGALi::Curved_kernel_base
+  < Curved_kernel<LinearKernel,AlgebraicKernel>,
+    typename LinearKernel::template 
+    Base<Curved_kernel<LinearKernel,AlgebraicKernel> >::Type 
+  >,
+  Curved_kernel<LinearKernel,AlgebraicKernel> 
+  >
 {
   typedef Curved_kernel<LinearKernel,AlgebraicKernel>      Self;
 
-  // typedef Self                                             Linear_kernel;
-  // typedef LinearKernel                                    Linear_kernel; // ?
-  typedef typename LinearKernel::template Base<Curved_kernel<LinearKernel,AlgebraicKernel> >::Type  Linear_kernel;
-  typedef AlgebraicKernel                                 Algebraic_kernel;
+  typedef typename LinearKernel::template 
+  Base<Curved_kernel<LinearKernel,AlgebraicKernel> >::Type Linear_kernel;
+  typedef AlgebraicKernel                                  Algebraic_kernel;
 
-  // typedef CGALi::Curved_kernel_base<Self,LinearKernel>     Kernel_base;
-  //  typedef CGALi::Curved_kernel_base<Self, typename LinearKernel::template Base<Self>::Type >
-  //  Kernel_base;
-
-
-  //Please remove this if you consider it to be sloppy
+  // for Lazy hexagons/bbox kernels
+  // Please remove this if you consider it to be sloppy
   struct Curved_tag{};
   typedef Curved_tag Definition_tag;
-  ////////////////////////////////////////////////////
-
+  //
 
   typedef typename LinearKernel::RT                       RT;
   typedef typename LinearKernel::FT                       FT;
 
   typedef typename Algebraic_kernel::Root_of_2            Root_of_2;
-  typedef typename Algebraic_kernel::Root_for_circles_2_2  Root_for_circles_2_2;
+  typedef typename Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
   typedef typename Algebraic_kernel::Polynomial_for_circles_2_2
-                                                           Polynomial_for_circles_2_2;
-  typedef typename Algebraic_kernel::Polynomial_1_2        Polynomial_1_2;
+                                                    Polynomial_for_circles_2_2;
+  typedef typename Algebraic_kernel::Polynomial_1_2 Polynomial_1_2;
 
-  // public classes
-  typedef CGAL::Object Object_2;
-  typedef CGAL::Object Object_3;
+//   typedef CGAL::Object Object_2;
+//   typedef CGAL::Object Object_3;
   
-  // typedef typename Linear_kernel::Line_2                  Line_2;
-  // typedef typename Linear_kernel::Circle_2                Circle_2;
-  // typedef typename Linear_kernel::Conic_2                 Conic_2;
-  // typedef typename Linear_kernel::Point_2                 Point_2;
-
-  // typedef CGAL::Circular_arc_2<Self>                      Circular_arc_2;
-  // typedef CGAL::Circular_arc_point_2<Self>                Circular_arc_point_2;
-  // typedef CGAL::Line_arc_2<Self>                          Line_arc_2;
-
 };
 
 } // namespace CGAL
