@@ -344,9 +344,9 @@ template < class CK >
       ( l.supporting_line(), c, std::back_inserter(solutions) );
     
     for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
-      const std::pair<typename CK::Circular_arc_point_2, uint> *result;
+      const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
       result = CGAL::object_cast< 
-	std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+	std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
       if ( has_on<CK>(l,result->first ))
 	*res++ = *it;
     }
@@ -386,9 +386,9 @@ template < class CK >
     }
       
     for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
-      const std::pair<typename CK::Circular_arc_point_2, uint> *result;
+      const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
       result = CGAL::object_cast< 
-	std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+	std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
       if ( has_on<CK>(l,result->first)){
 	bool is_on_arc = false;
 	for(typename std::vector<const Circular_arc_2*>::iterator it2 = arcs_x_monotone.begin();

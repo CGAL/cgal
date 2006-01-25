@@ -34,9 +34,9 @@ circle_intersect( const typename CK::Circle_2 & c1,
   CGAL_kernel_precondition( it != solutions.end() ); 
   // the circles intersect
   
-  const std::pair<typename CK::Circular_arc_point_2, uint> *result;
+  const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
   result = CGAL::object_cast< 
-    std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+    std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
   
   if ( result->second == 2 ) // double solution
     return result->first;
@@ -46,7 +46,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   
   ++it;
   result = CGAL::object_cast< 
-    std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+    std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
   return result->first;
 }
 

@@ -103,9 +103,9 @@ public:
 	    CGAL_kernel_precondition( it != solutions.end() );
 	    // the circles intersect
 
-	    const std::pair<typename CK::Circular_arc_point_2, uint> *result;
+	    const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
 	    result = CGAL::object_cast<
-	      std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+	      std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
 	    if ( result->second == 2 ){ // double solution
 	      _begin =  result->first;
 	      _end = result->first;
@@ -118,7 +118,7 @@ public:
 	      if (!(b_1 & b_2)){
 		++it;
 		result = CGAL::object_cast<
-		  std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+		  std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
 		if (!b_1)
 		  _begin = result->first;
 		if (!b_2)

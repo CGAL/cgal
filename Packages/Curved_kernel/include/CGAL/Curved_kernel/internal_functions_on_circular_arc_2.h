@@ -473,7 +473,7 @@ namespace CircularFunctors {
       if(intersection_points.size() == 0) return res;
 
       const Circular_arc_point_2 &left =
-	(CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
+	(CGAL::object_cast< std::pair<Circular_arc_point_2, unsigned> >
 	 (&(intersection_points[0])))->first;
       if (intersection_points.size() < 2){// multiplicity 2
 	if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
@@ -481,7 +481,7 @@ namespace CircularFunctors {
       }
       else {// multiplicity 1
 	const Circular_arc_point_2 &right = 
-	  (CGAL::object_cast< std::pair<Circular_arc_point_2, uint> >
+	  (CGAL::object_cast< std::pair<Circular_arc_point_2, unsigned> >
 	   (&(intersection_points[1])))->first;
 	// We also need to check that these intersection points are on the arc.
 	if (has_on<CK>(a1, left) && has_on<CK>(a2, left))

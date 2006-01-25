@@ -62,15 +62,15 @@ namespace CGALi {
       CGAL_kernel_precondition( it != solutions.end() ); 
       // the circles intersect
       
-      const std::pair<typename CK::Circular_arc_point_2, uint> *result;
+      const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
       result = CGAL::object_cast< 
-        std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+        std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
       if ( result->second == 2 ) // double solution
 	return result->first;
       if (b) return result->first;
       ++it;
       result = CGAL::object_cast< 
-        std::pair<typename CK::Circular_arc_point_2, uint> >(&(*it));
+        std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
       return result->first;
     }
 
