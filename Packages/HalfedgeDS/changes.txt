@@ -1,6 +1,13 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
-25 August 2004 Andreas Fabri
+
+25 Jan 2005 Lutz Kettner
+- Added splice functions for all items in CGAL::HalfedgeDS_list.
+
+31 Aug 2004 Lutz Kettner
+- Removed assertions in border_halfedges_begin of HalfedgeDS_[list|vector].
+
+25 Aug 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
 
 18 Feb 2004 Sylvain Pion

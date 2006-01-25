@@ -591,6 +591,21 @@ public:
         faces_clear();
     }
 
+    void vertices_splice( Vertex_iterator target, Self &source,
+                          Vertex_iterator begin, Vertex_iterator end) {
+        vertices.splice( target, source.vertices, begin, end);
+    }
+
+    void halfedges_splice( Halfedge_iterator target, Self &source,
+                           Halfedge_iterator begin, Halfedge_iterator end) {
+        halfedges.splice( target, source.halfedges, begin, end);
+    }
+
+    void faces_splice( Face_iterator target, Self &source,
+                       Face_iterator begin, Face_iterator end) {
+        faces.splice( target, source.faces, begin, end);
+    }
+
 // Operations with Border Halfedges
 
     size_type size_of_border_halfedges() const { return nb_border_halfedges;}
