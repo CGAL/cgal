@@ -1,0 +1,22 @@
+0
+0 
+0
+0 
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+0  0 
+
+1
+0  0 
+
+# P1 = empty polygon
+# P2 = empty polygon
