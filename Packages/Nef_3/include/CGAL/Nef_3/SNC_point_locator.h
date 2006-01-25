@@ -1058,7 +1058,7 @@ class SNC_point_locator_naive :
   typedef SNC_ray_shooter<SNC_decorator> Base;
   typedef SNC_point_locator_naive<SNC_decorator> Self;
   typedef SNC_point_locator<SNC_decorator> SNC_point_locator;
-  typedef SNC_intersection<SNC_structure> SNC_intersection;
+  typedef CGAL::SNC_intersection<SNC_structure> SNC_intersection;
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
   typedef typename Decorator_traits::SM_decorator SM_decorator;
 
