@@ -960,6 +960,9 @@ public:
   void print_times()
   {
 
+
+
+
     #ifdef CGAL_BENCH_ENVELOPE_DAC
 
       std::cout << "resolve face times: " << std::endl;
@@ -1206,15 +1209,22 @@ protected:
     Halfedge_handle h;
     Vertex_handle v;
   	Face_handle f;
-  	if (assign(v, o))
-  	  data = v->get_data();
+
+    // aux source of a face must be a face!
+    // aux source of a halfedge can be face or halfedge
+    // aux source of a vertex can be face, halfedge or vertex
+    // this is why we start with a check for a face, then halfedge
+    // and last vertex
+  	if (assign(f, o))
+  	  data = f->get_data();
   	else if (assign(h, o))
   	  data = h->get_data();
   	else
   	{
-  	  CGAL_assertion(assign(f, o));
-      assign(f, o);
-  	  data = f->get_data();
+      CGAL_assertion_code(bool b =)
+      assign(v, o);
+      CGAL_assertion(b);
+  	  data = v->get_data();
   	}
     return data;
   }
@@ -1224,6 +1234,7 @@ protected:
     // can copy decision from face to its incident edge if the aux
     // envelopes are continous over the face and edge
     return (h->get_has_equal_aux_data_in_face(0) &&
+
             h->get_has_equal_aux_data_in_face(1));
   }
 
@@ -1345,6 +1356,7 @@ protected:
       {
         hh->set_decision(SECOND);
         hh->twin()->set_decision(SECOND);
+
       }
       // if the second map is continous, but the first isn't, then if the
       // first map wins on the face, it wins on the edge also
@@ -1448,8 +1460,6 @@ protected:
   	Face_handle f;
 
     Object o = fh->get_aux_source(id);
-
-
     CGAL_assertion(!o.is_empty());
 
     if (assign(v, o))
@@ -1835,12 +1845,6 @@ protected:
 //              // in order to use the accessor version, we need to identify
 //              // the order in which to pass the halfedges
 //              // (we should be careful in cases like this:)
-//              //       -----
-//              //      /     \
-//              //      |/\   |
-//              //      |\/   |
-//              //      \     /
-//              //       -----
 //
 //              // we check copied_prev_v2->twin() (in the original arrangement):
 //              // -- if it is on hole, then we must close the copied face,
@@ -1996,6 +2000,7 @@ protected:
       #endif
       Ccb_halfedge_circulator he = (*hole_iter);
       copy_ccb(he, from, to_f_he->face(), to,
+
                map_copied_to_orig_halfedges,
                map_copied_to_orig_vertices,
                map_orig_to_copied_halfedges,
@@ -2127,6 +2132,8 @@ protected:
   
   // this observer is used in the process of resolving a face
   // this observer should copy the faces' indication when a face is split
+
+
   // so we can later identify all the faces that form the original given face
   // it also should remember the edges of the face, that are also projected intersections
   class Copied_face_observer : public Md_observer
@@ -2378,6 +2385,8 @@ protected:
         //Face_handle f = big_v2->face(); //big_arr.incident_face(big_v2);
         //big_arr_accessor.find_and_erase_isolated_vertex(f, big_v2);
         big_arr_accessor.remove_isolated_vertex_ex(big_v2);
+
+
         v2_is_new = true;
       }
 
@@ -2660,6 +2669,7 @@ protected:
           : copied_arr(copied),
             result_arr(result),
             result_original_face(orig_face),
+
             map_halfedges(map_h),
             map_vertices(map_v),
             map_faces(map_f),
@@ -2780,6 +2790,7 @@ protected:
     		// it is clear that the halfedge-face are all true
         result_new_he->set_is_equal_aux_data_in_face(0, true);
         result_new_he->set_is_equal_aux_data_in_face(1, true);
+
         result_new_he->twin()->set_is_equal_aux_data_in_face(0, true);
         result_new_he->twin()->set_is_equal_aux_data_in_face(1, true);
         result_new_he->set_has_equal_aux_data_in_face(0, true);
@@ -2864,6 +2875,7 @@ protected:
             // since we have in the new edge aux sources as in the face,
             // we can copy the vertex-face flags from the vertex
             result_new_he->twin()->set_is_equal_aux_data_in_target
+
     		           (0, cur_t->get_is_equal_aux_data_in_face(0));
             result_new_he->twin()->set_is_equal_aux_data_in_target
     		           (1, cur_t->get_is_equal_aux_data_in_face(1));
@@ -3139,6 +3151,7 @@ protected:
       for(; vi != copied_arr.vertices_end(); ++vi)
       {
         Vertex_handle v = vi;
+
         CGAL_assertion(map_vertices.is_defined(v));
 
         Vertex_handle result_v = map_vertices[v];
