@@ -611,20 +611,23 @@ private:
       if ((qs % 4) == 1)
       {
         // We collect the left tangency point when going from Q[1] to Q[2]:
-        if (CGAL::compare (y0, trg.y()) != EQUAL)
+        if (CGAL::compare (x0, trg.x()) != LARGER ||
+            CGAL::compare (y0, trg.y()) != EQUAL)
         {
           if (_has_radius)
             vpts[n_vpts] = Point_2 (CoordNT (x0 - _radius), y0);
           else
             vpts[n_vpts] = Point_2 (CoordNT (x0, -1, _circ.squared_radius()),
                                              y0);
+
           n_vpts++;
         }
       }
       else if ((qs % 4) == 3)
       {
         // We collect the right tangency point when going from Q[3] to Q[0]:
-        if (CGAL::compare (y0, trg.y()) != EQUAL)
+        if (CGAL::compare (x0, trg.x()) != SMALLER ||
+            CGAL::compare (y0, trg.y()) != EQUAL)
         {
           if (_has_radius)
             vpts[n_vpts] = Point_2 (CoordNT (x0 + _radius), y0);
@@ -670,7 +673,7 @@ private:
     }
 
     CGAL_assertion (sign_y != ZERO);
-    return ((sign_y == POSITIVE) ? 0 : 2);
+    return ((sign_y == POSITIVE) ? 1 : 3);
   }
 };
 
