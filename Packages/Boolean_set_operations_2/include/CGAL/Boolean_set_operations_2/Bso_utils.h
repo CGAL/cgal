@@ -29,40 +29,20 @@
 #include <queue>
 
 
+
 template <class Traits_>
  void General_polygon_set_2<Traits_>::
   construct_polygon(Ccb_halfedge_const_circulator ccb,
                     Polygon_2&              pgn,
                     Traits_*                tr)
 {
-  std::vector<X_monotone_curve_2> xcurves(circulator_size(ccb));
-  Ccb_halfedge_const_circulator ccb_circ = ccb;
-  Ccb_halfedge_const_circulator ccb_end = ccb_circ;
-  unsigned int i=0;
+  typedef CGAL::Ccb_curve_iterator<Arrangement_2>    Ccb_curve_iterator;
+  Ccb_curve_iterator begin(ccb, false);
+  Ccb_curve_iterator end(ccb, true);
 
-  if(!Halfedge_const_handle(ccb_circ)->face()->contained())
-  {
-    do
-    {
-      xcurves[i] = Halfedge_const_handle(ccb_circ)->curve();
-      ++i;
-      --ccb_circ;
-    }
-    while(ccb_circ != ccb_end);
-  }
-  else
-  {
-    do
-    {
-      xcurves[i] = Halfedge_const_handle(ccb_circ)->curve();
-      ++i;
-      ++ccb_circ;
-    }
-    while(ccb_circ != ccb_end);
-  }
-  
-  tr->construct_polygon_2_object()(xcurves.begin(), xcurves.end(), pgn);
+  tr->construct_polygon_2_object()(begin, end, pgn);
 }
+
 
 template <class Arrangement, class OutputIterator>
 class Arr_bfs_scanner

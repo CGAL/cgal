@@ -39,6 +39,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/iterator.h> 
+#include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
