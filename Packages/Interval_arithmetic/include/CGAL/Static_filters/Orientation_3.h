@@ -37,11 +37,21 @@ class SF_Orientation_3
   typedef typename K_base::Orientation_3    Base;
 
 public:
+ typedef typename Base::result_type  result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
+#else 
+  result_type
+  operator()(const Vector_2& u, const Vector_2& v, const Vector_2& w)) const
+  { 
+    return Base::operator()(u,v,w);
+  }
+#endif
 
-  Orientation operator()(const Point_3 &p, const Point_3 &q,
-                         const Point_3 &r, const Point_3 &s) const
+  result_type 
+  operator()(const Point_3 &p, const Point_3 &q,
+	     const Point_3 &r, const Point_3 &s) const
   {
       CGAL_PROFILER("Orientation_3 calls");
 
