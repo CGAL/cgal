@@ -101,12 +101,10 @@ namespace CGALi {
       //Voir pour mettre une assertion au assign
       Object obj = intersection(support, l1);
       const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
-      _begin = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(pt->x()),
-						       Root_of_2(pt->y())));
+      _begin = Circular_arc_point_2(*pt);
       obj = intersection(support, l2);
       const Point_2 *pt2 = CGAL::object_cast<Point_2>(&obj);
-      _end = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(pt2->x()),
-						     Root_of_2(pt2->y())));
+      _end = Circular_arc_point_2(*pt2);
     }
     
     Line_arc_2(const Line_2 &support,
@@ -122,10 +120,8 @@ namespace CGALi {
     Line_arc_2(const Segment_2 &s)
       :_support(s.supporting_line())
     {
-      _begin = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(s.source().x()),
-							 Root_of_2(s.source().y())));
-      _end = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(s.target().x()),
-						       Root_of_2(s.target().y())));
+      _begin = Circular_arc_point_2(s.source());
+      _end = Circular_arc_point_2(s.target());
     }
     
 
@@ -133,10 +129,8 @@ namespace CGALi {
 	       const Point_2 &p2)
     {
       _support = Line_2(p1, p2);
-      _begin = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(p1.x()),
-						       Root_of_2(p1.y())));
-      _end = Circular_arc_point_2(Root_for_circles_2_2(Root_of_2(p2.x()),
-						     Root_of_2(p2.y())));
+      _begin = Circular_arc_point_2(p1);
+      _end = Circular_arc_point_2(p2);
     }
 
   private:
