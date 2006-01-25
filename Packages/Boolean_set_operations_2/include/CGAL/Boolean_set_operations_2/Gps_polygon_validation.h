@@ -140,6 +140,8 @@ protected:
               tr.construct_curves_2_object()(pgn);
     Curve_const_iterator begin = itr_pair.first;
     Curve_const_iterator last = itr_pair.second;
+    if(begin == last)
+      return true; // empty polygon is valid
     --last;
     
     for(Curve_const_iterator itr = begin; itr != last; )
@@ -195,14 +197,23 @@ protected:
   bool is_simple(const Polygon_with_holes_2& pgn)
   {
     Traits tr;
+    std::list<X_monotone_curve_2>  curves;
     std::pair<Curve_const_iterator,
-            Curve_const_iterator> itr_pair =
-            tr.construct_curves_2_object()(pgn);
+              Curve_const_iterator> itr_pair = 
+      tr.construct_curves_2_object()(pgn.outer_boundary());
+    std::copy(itr_pair.first, itr_pair.second, std::back_inserter(curves));
+
+    typename Polygon_with_holes_2::Hole_const_iterator i = pgn.holes_begin();
+    for(; i != pgn.holes_end(); ++i)
+    {
+      itr_pair = tr.construct_curves_2_object()(*i);
+      std::copy(itr_pair.first, itr_pair.second, std::back_inserter(curves));
+    }
     // Define the sweep-line types:
     // Perform the sweep and obtain the subcurves.
     Visitor     visitor(false);
     Sweep_line  sweep_line (&tr, &visitor);
-    visitor.sweep(itr_pair.first, itr_pair.second);
+    visitor.sweep(curves.begin(), curves.end());
     return visitor.is_valid();
   }
 
