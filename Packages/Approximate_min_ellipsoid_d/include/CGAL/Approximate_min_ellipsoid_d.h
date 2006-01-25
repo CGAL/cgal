@@ -415,7 +415,7 @@ namespace CGAL {
       if (!has_axes)
 	compute_axes_2_3();
       
-      return directions_[i].begin();
+      return directions_[i].end();
     }
 
   public: // internal members for 2D/3D axis/center computation:
