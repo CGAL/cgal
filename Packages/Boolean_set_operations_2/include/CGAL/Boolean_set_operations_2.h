@@ -181,6 +181,7 @@ inline bool _do_intersect(const Pgn1& pgn1,
 //  intersection  //
 ///////////////////
 
+
 template <class Kernel, class Container, class OutputIterator>
 inline OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1, 
                                    const Polygon_2<Kernel, Container>& pgn2,
@@ -344,6 +345,21 @@ inline OutputIterator _intersection(const Pgn1& pgn1,
 //      join      //
 ///////////////////
 
+template <class Traits>
+inline bool _is_empty(const typename Traits:: Polygon_2& pgn, Traits& tr) 
+{
+  typedef typename Traits::Curve_const_iterator Curve_const_iterator;
+  const std::pair<Curve_const_iterator, Curve_const_iterator>& itr_pair =
+    tr.construct_curves_2_object()(pgn);
+  return (itr_pair.first == itr_pair.second);
+}
+
+template <class Traits>
+inline bool _is_empty(const typename Traits::Polygon_with_holes_2& pgn, Traits& tr) 
+{
+  return (false);
+}
+
 template <class Kernel, class Container>
 inline bool join(const Polygon_2<Kernel, Container>& pgn1, 
                  const Polygon_2<Kernel, Container>& pgn2,
@@ -495,6 +511,9 @@ inline bool _join(const Pgn1& pgn1,
                   typename Traits::Polygon_with_holes_2&   res,
                   Traits& tr)
 {
+  if(_is_empty(pgn1, tr) || _is_empty(pgn2, tr))
+    return false;
+
   General_polygon_set_2<Traits> gps(tr);
   gps.insert(pgn1);
   gps.join(pgn2);
