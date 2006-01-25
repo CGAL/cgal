@@ -54,7 +54,16 @@ public:
   ~Regular_grid_2(){delete [] vector_field;}
 	void fill(std::ifstream & f, const FT & x, const FT & y);
   inline typename Geom_traits::Iso_rectangle_2 bbox() const;
-  std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
+
+  std::pair<Vector_2,FT> 
+  get_field(const Point_2 & p) const
+  {
+    CGAL_streamlines_precondition(is_in_domain(p));
+    Vector_2 v = get_vector_field(p);
+    FT density = get_density_field(p);
+    return std::pair<Vector_2, FT>(v,density);
+  }
+
   inline bool is_in_domain(const Point_2 & p) const;
   inline FT get_integration_step(const Point_2 &) const;
 	inline FT get_integration_step() const;
@@ -99,13 +108,6 @@ bool
 Regular_grid_2<StreamLinesTraits_2>::is_in_samples(const int & i, const int & j) const{
   return ((i>=0) && (i<=number_of_samples_x-1) && (j>=0) && (j<=number_of_samples_y-1));}
 
-template <class StreamLinesTraits_2>
-typename std::pair<typename Regular_grid_2<StreamLinesTraits_2>::Vector_2, typename Regular_grid_2<StreamLinesTraits_2>::FT>
-Regular_grid_2<StreamLinesTraits_2>::get_field(const Point_2 & p) const{
-  CGAL_streamlines_precondition(is_in_domain(p));
-  Vector_2 v = get_vector_field(p);
-  FT density = get_density_field(p);
-  return std::pair<Vector_2, FT>(v,density);;}
 
 template <class StreamLinesTraits_2>
 typename Regular_grid_2<StreamLinesTraits_2>::Vector_2 

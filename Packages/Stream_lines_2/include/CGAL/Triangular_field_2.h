@@ -90,8 +90,17 @@ public:
 	Triangular_field_2(PointInputIterator pBegin, PointInputIterator pEnd, VectorInputIterator vBegin){
 		fill(pBegin, pEnd, vBegin);}
 	inline typename Geom_traits::Iso_rectangle_2 bbox() const;
-	std::pair<Vector_2,FT> get_field(const Point_2 & p) const;
-	bool is_in_domain(const Point_2 & p) const;
+
+        std::pair<Vector_2,FT> get_field(const Point_2 & p) const
+        {
+	  assert(is_in_domain(p));
+	  Vector_2 v = get_vector_field(p);
+	  FT density = get_density_field(p);
+	  std::pair<Vector_2, FT> field_value(v,density);
+	  return field_value;
+	}
+  
+        bool is_in_domain(const Point_2 & p) const;
 	FT get_integration_step(const Point_2 &) const;
 	FT get_integration_step() const;
 protected:
@@ -116,15 +125,6 @@ bool
 Triangular_field_2<StreamLinesTraits_2>::is_in_domain(const Point_2 & p) const{
 	Face_handle f = m_D_Ttr.locate(p);
 	return !m_D_Ttr.is_infinite(f);}
-
-template <class StreamLinesTraits_2>
-typename std::pair<typename Triangular_field_2<StreamLinesTraits_2>::Vector_2, typename Triangular_field_2<StreamLinesTraits_2>::FT>
-Triangular_field_2<StreamLinesTraits_2>::get_field(const Point_2 & p) const{
-	assert(is_in_domain(p));
-	Vector_2 v = get_vector_field(p);
-	FT density = get_density_field(p);
-	std::pair<Vector_2, FT> field_value(v,density);
-	return field_value;}
 
 template <class StreamLinesTraits_2>
 typename Triangular_field_2<StreamLinesTraits_2>::Vector_2 
