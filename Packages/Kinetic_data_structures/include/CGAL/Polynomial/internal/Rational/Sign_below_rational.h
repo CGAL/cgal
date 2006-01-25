@@ -45,7 +45,7 @@ const typename Kernel::NT &nt, const Kernel &k)
             }
         }return sn;
     } while (1);
-    return CGAL_POLYNOMIAL_NS::ZERO;
+    //return CGAL_POLYNOMIAL_NS::ZERO;
 }
 
 
