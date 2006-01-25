@@ -1,0 +1,313 @@
+
+#include <string>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Gps_segment_traits_2.h>
+#include <vector>
+#include <iostream>
+
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Gps_traits_2.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Boolean_set_operations_2.h>
+
+#include <CGAL/General_polygon_set_2.h>
+#include <CGAL/Polygon_set_2.h>
+
+
+typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+typedef CGAL::Simple_cartesian<Number_type>           Kernel;
+
+typedef CGAL::Polygon_2<Kernel>                       Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>            Polygon_with_holes_2;
+
+typedef CGAL::Gps_segment_traits_2<Kernel>            Traits;
+typedef CGAL::Polygon_set_2<Kernel>                   Ps;
+
+typedef CGAL::Arr_segment_traits_2<Kernel>            Arr_traits;
+typedef CGAL::Gps_traits_2<Arr_traits>                General_traits;
+typedef CGAL::General_polygon_set_2<General_traits>   Gps;
+
+
+void read_file(std::istream& inp,
+               bool& intresect,
+               Polygon_with_holes_2& join_res,
+               std::vector<Polygon_with_holes_2>&  intersection_res,
+               std::vector<Polygon_with_holes_2>&  diff1_res,
+               std::vector<Polygon_with_holes_2>&  diff2_res,
+               std::vector<Polygon_with_holes_2>&  symm_diff_res,
+               std::vector<Polygon_with_holes_2>&  comp1_res,
+               std::vector<Polygon_with_holes_2>&  comp2_res)
+{
+  int x;
+  inp >> x;
+  intresect = (x!=0);
+  if(intresect)
+    inp >>join_res;
+  
+  int n_pgns, i;
+
+  inp >> n_pgns;
+  intersection_res.resize(n_pgns);
+
+  for(i=0; i<n_pgns; ++i)
+  {
+    inp >> intersection_res[i];
+  }
+
+  inp >> n_pgns;
+  diff1_res.resize(n_pgns);
+  
+  for(i=0; i<n_pgns; ++i)
+  {
+    inp >> diff1_res[i];
+  }
+
+  inp >> n_pgns;
+  diff2_res.resize(n_pgns);
+
+  for(i=0; i<n_pgns; ++i)
+  {
+    inp >> diff2_res[i];
+  }
+
+  inp >> n_pgns;
+  symm_diff_res.resize(n_pgns);
+
+  for(i=0; i<n_pgns; ++i)
+  {
+    inp >> symm_diff_res[i];
+  }
+
+  inp >> n_pgns;
+  comp1_res.resize(n_pgns);
+
+  for(i=0; i<n_pgns; ++i)
+  {
+    inp >> comp1_res[i];
+  }
+
+  inp >> n_pgns;
+  comp2_res.resize(n_pgns);
+
+  for(i=0; i<n_pgns; ++i)
+  {
+    inp >> comp2_res[i];
+  }
+}
+
+template <class Container>
+bool are_equal(const Container& l1, Container& l2)
+{
+  bool eq = ((l1.size() == l2.size()) &&
+             (std::equal(l1.begin(), l1.end(), l2.begin())));
+  if(!eq)
+  {
+    std::ostream_iterator<Polygon_with_holes_2> osi(std::cout, "\n");
+    std::cout<<"infile: " << std::endl;
+    std::copy(l1.begin(), l1.end(), osi);
+    std::cout<<std::endl<<"calculated: " <<std::endl;
+    std::copy(l2.begin(), l2.end(), osi);
+
+
+  }
+  l2.clear();
+
+  return (eq);
+}
+
+template <class Traits_>
+void my_complement(const typename Traits_::Polygon_2& p,
+                   std::vector<typename Traits_::Polygon_with_holes_2>& vec,
+                   Traits_& tr)
+{
+  vec.resize(1);
+  CGAL::complement(p, vec[0]);
+}
+
+template <class Traits_>
+void my_complement(const typename Traits_::Polygon_with_holes_2& p,
+                   std::vector<typename Traits_::Polygon_with_holes_2>& vec,
+                   Traits_& tr)
+{
+  CGAL::complement(p, std::back_inserter(vec));
+}
+
+     
+template <class Polygon1, class Polygon2>
+bool test(std::istream& inp,
+          const Polygon1& p1,
+          const Polygon2& p2)
+{
+  std::vector<Polygon_with_holes_2>  intersection_res_from_file;
+  std::vector<Polygon_with_holes_2>  diff1_res_from_file;
+  std::vector<Polygon_with_holes_2>  diff2_res_from_file;
+  std::vector<Polygon_with_holes_2>  symm_diff_res_from_file;
+  std::vector<Polygon_with_holes_2>  comp1_res_from_file;
+  std::vector<Polygon_with_holes_2>  comp2_res_from_file;
+
+  Polygon_with_holes_2 join_res_from_file;
+
+  bool intersect;
+  read_file(inp,
+            intersect,
+            join_res_from_file,
+            intersection_res_from_file,
+            diff1_res_from_file,
+            diff2_res_from_file,
+            symm_diff_res_from_file,
+            comp1_res_from_file,
+            comp2_res_from_file);
+
+  std::vector<Polygon_with_holes_2>  temp_result;
+  std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp_result);
+  
+  CGAL::intersection(p1, p2, oi);
+  if(! are_equal(intersection_res_from_file, temp_result))
+  {
+    std::cout<<"intersection failed...\n";
+    return false;
+  }
+
+  CGAL::difference(p1 ,p2, oi);
+  if(! are_equal(diff1_res_from_file, temp_result))
+  {
+    std::cout<<"join failed...\n";
+    return false;
+  }
+
+  CGAL::difference(p2 ,p1, oi);
+  
+  if(! are_equal(diff2_res_from_file, temp_result))
+  {
+    std::cout<<"diff1 failed\n";
+    return false;
+  }
+
+  CGAL::symmetric_difference(p1 ,p2, oi);
+  if(! are_equal(symm_diff_res_from_file, temp_result))
+  {
+    std::cout<<"symmetric_difference failed\n";
+    return false;
+  }
+
+  Traits tr;
+  my_complement(p1, temp_result, tr);
+
+  if(! are_equal(comp1_res_from_file, temp_result))
+  {
+    std::cout<<"complement1 failed\n";
+    return false;
+  }
+
+  my_complement(p2, temp_result, tr);
+  if(! are_equal(comp2_res_from_file, temp_result))
+  {
+    std::cout<<"complement2 failed\n";
+    return false;
+  }
+
+  return true;
+}
+
+
+
+bool test_one_file(std::ifstream& inp)
+{
+  int type1;
+  Polygon_2 p1;
+  Polygon_with_holes_2 pwh1;
+
+  inp >> type1;
+  if(type1 == 0)
+  {
+    inp >> p1;
+  }
+  else
+  {
+    inp >> pwh1;
+  }
+
+  int type2;
+  Polygon_2 p2;
+  Polygon_with_holes_2 pwh2;
+
+  inp >> type2;
+  if(type2 == 0)
+  {
+    inp >> p2;
+  }
+  else
+  {
+    inp >> pwh2;
+  }
+
+  bool success;
+  if(type1 == 0 && type2 ==0)
+    success = test(inp, p1 ,p2);
+  else
+    if(type1 == 0 && type2 ==1)
+      success = test(inp, p1 ,pwh2);
+    else
+      if(type1 == 1 && type2 ==0)
+        success = test(inp, pwh1, p2);
+      else
+        if(type1 == 1 && type2 ==1)
+          success = test(inp, pwh1, pwh2);
+
+  return (success);
+}
+
+extern int errno;
+
+int main(int argc, char **argv)
+{
+  if(argc < 2)
+  {
+    std::cerr<<"Missing input file\n";
+    exit (-1);
+  }
+
+  int success = 0;
+  for(int i=1; i<argc; ++i)
+  {
+    std::string str(argv[i]);
+    if(str.empty())
+      continue;
+
+    std::string::iterator itr = str.end();
+    --itr;
+    while(itr != str.begin())
+    {
+      std::string::iterator tmp = itr;
+      --tmp;
+      if(*itr == 't')
+        break;
+      
+      str.erase(itr);
+      itr = tmp;
+      
+    }
+    if(str.size() <= 1)
+      continue;
+    std::ifstream inp(str.c_str());
+    if(!inp.is_open())
+    {
+      std::cerr<<"Failed to open " <<str<<"\n";
+      return (-1);
+    }
+    if (! test_one_file(inp))
+    {
+      inp.close();
+      std::cout<<str<<": ERROR\n";
+      success = -1;
+    }
+    else
+    {
+      std::cout<<str<<": succeeded\n";
+    }
+    inp.close();
+  }
+  
+  return success;
+}
