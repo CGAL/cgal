@@ -12,16 +12,9 @@
 \ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\footnote{quid of a constructor from a Point\_2 ?}
 \ccConstructor{Circular_arc_point_2(const CircularKernel::Point_2 &q)}{}
 
-\ccConstructor{Circular_arc_point_2(
-		const CircularKernel::Circle_2 & c1, 
-		const CircularKernel::Circle_2 & c2, 
-		const int i)}
-{Constructs an point defined as the $i^{th}$ intersection (for the 
-order given by the $x$-coordinates) of the two circles \ccc{c1} and \ccc{c2}.} 
-\footnote{more intrinsecail indexing possible...}
+\ccConstructor{Circular_arc_point_2(const CircularKernel::Root_for_circles_2_2 &r)}{}
 
 \ccAccessFunctions
 
@@ -34,17 +27,6 @@ order given by the $x$-coordinates) of the two circles \ccc{c1} and \ccc{c2}.}
 
 \ccMethod{Bbox_2 bbox() const;}
 {Returns a bounding box around the point.}
-
-\footnote{The next 2 methods should be removed. They were implemented 
-in the prototype because corresponding methods were not available in 
-the arrangements (?) to access edges from vertices. To be discussed.}
-
-\ccMethod{const CircularKernel::Circle_2 & circle(int i);}
-{\ccPrecond{\ccc{i}==0 or \ccc{i}==1}. Returns one of the two circles defining the point.}
-\ccGlue
-\ccMethod{int index();}{Returns the index (in lexicographic order)
-of the point among the intersections between the two circles
-defining it.}
 
 \ccOperations
 
@@ -75,6 +57,8 @@ defining it.}
 
 \ccHeading{I/O}
 
+\ccFunction{istream& operator>> (std::istream& is, Circular_arc_point_2 & cp);}{}
+\ccGlue
 \ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_point_2 &ce);}{}
 
 \end{ccRefClass}
