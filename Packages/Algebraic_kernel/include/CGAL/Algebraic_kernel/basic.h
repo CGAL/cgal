@@ -28,6 +28,9 @@ template < typename T > class Lazy_exact_nt;
 template < typename T >
 std::pair<double,double> to_interval(const Root_of_2<T>&);
 
+template < typename RT >
+Root_of_2<RT> square(const Root_of_2<RT> &);
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ALGEBRAIC_KERNEL_BASIC_H
