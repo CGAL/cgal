@@ -79,35 +79,40 @@ public:
      : RLine_arc_2(a)
    {}
 
-  typename Qualified_result_of<typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
+  typename Qualified_result_of
+  <typename R::Construct_Circular_source_vertex_2,Line_arc_2>::type
     //const Circular_arc_point_2 & 
     source() const
   {
         return typename R::Construct_Circular_source_vertex_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_Circular_target_vertex_2,Line_arc_2>::type
+  typename Qualified_result_of
+  <typename R::Construct_Circular_target_vertex_2,Line_arc_2>::type
   //const Circular_arc_point_2 & 
     target() const
   {
         return typename R::Construct_Circular_target_vertex_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_Circular_min_vertex_2,Line_arc_2>::type
+  typename Qualified_result_of
+  <typename R::Construct_Circular_min_vertex_2,Line_arc_2>::type
   //const Circular_arc_point_2 & left() const
   left() const
   {
         return typename R::Construct_Circular_min_vertex_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_Circular_max_vertex_2,Line_arc_2>::type
+  typename Qualified_result_of
+  <typename R::Construct_Circular_max_vertex_2,Line_arc_2>::type
   //const Circular_arc_point_2 & right() const
   right() const
   {
         return typename R::Construct_Circular_max_vertex_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_supporting_line_2,Line_arc_2>::type
+  typename Qualified_result_of
+  <typename R::Construct_supporting_line_2,Line_arc_2>::type
   //const Line_2 & 
     supporting_line() const
   {
