@@ -182,7 +182,7 @@ std::istream &operator>>(std::istream &is, General_polygon_with_holes_2<Polygon_
     for (unsigned int i=0; i<n_holes; i++) 
     {
       is >> pgn_hole;
-      p.push_back(pgn_hole);
+      p.add_hole(pgn_hole);
     }
   }
  
