@@ -1,6 +1,6 @@
-\chapter{Predicates and Constructions}
+\section{Predicates and Constructions}
 
-\section{Predicates}
+\subsection{Predicates}
 Predicates are at the heart of a geometry kernel. They are basic units
 for the composition of geometric algorithms and encapsulate
 decisisons.  Hence their correctness is crucial for the control flow
@@ -18,7 +18,7 @@ given order, especially for comparing Cartesian coordinates
 (e.g.~\ccc{lexicographically_xy_smaller}), in-sphere tests, and
 predicates to compare distances.
 
-\section{Constructions}
+\subsection{Constructions}
 Functions and function objects that generate objects that are neither
 of type \ccc{bool} nor enum types are called constructions.
 Constructions involve computation of new numerical values and may be
@@ -58,7 +58,7 @@ routine, The problem of a distance routine is that it needs the
   defined, especially integer types and rationals.
 \end{itemize}
 
-\section{Intersection and Polymorphic Return Values}
+\subsection{Intersection and Polymorphic Return Values}
 
 Intersections on kernel objects currently cover only those objects
 that are part of flats (\ccc{Segment_d<R>}, \ccc{Ray_d<R>},
@@ -96,7 +96,7 @@ possibly different return values.
 \end{cprog}
 \ccHtmlLinksOn%
 
-\section{Constructive Predicates}
+\subsection{Constructive Predicates}
 For testing where a point $p$ lies with respect to a hyperplane
 defined by an array $P$ of points $p_1$, ... , $p_d$, one may be
 tempted to construct the hyperplane \ccc{Hyperplane_d<R>(d,P,P+d)} and

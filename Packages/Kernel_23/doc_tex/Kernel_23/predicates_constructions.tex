@@ -1,6 +1,6 @@
-\chapter{Predicates and Constructions}
+\section{Predicates and Constructions}
 
-\section{Predicates}
+\subsection{Predicates}
 Predicates are at the heart of a geometry kernel. They are basic units
 for the composition of geometric algorithms and encapsulate decisisons. 
 Hence their correctness is crucial for the control flow and hence for
@@ -18,7 +18,7 @@ especially for comparing \ccHtmlNoLinksFrom{Cartesian} coordinates
 (e.g.~\ccc{lexicographically_xy_smaller}), in-circle and in-sphere tests,
 and predicates to compare distances.
 
-\section{Constructions}
+\subsection{Constructions}
 Functions and function objects that generate objects that are neither 
 of type \ccc{bool} nor enum types are called constructions.
 Constructions involve computation of new numerical values and may be
@@ -62,7 +62,7 @@ There are number types on which no \ccStyle{sqrt} operation is defined,
 especially integer types and rationals.
 \end{itemize}
 
-\section{Polymorphic Return Values}
+\subsection{Polymorphic Return Values}
 Some functions can return different types of objects. A typical
 \CC\ solution to this problem is to derive all possible return
 types from a common base class, to return a pointer to this 
@@ -168,7 +168,7 @@ Object  intersection(Segment_2<Kernel> s1, Segment_2<Kernel> s2)
 }
 \end{cprog} 
 
-\section{Constructive Predicates}
+\subsection{Constructive Predicates}
 For testing where a point $p$ lies with respect to a plane defined by three
 points $q$, $r$ and $s$, one may be tempted to construct the plane
 \ccc{Plane_3<Kernel>(q,r,s)} and use the method \ccc{oriented_side(p)}. 

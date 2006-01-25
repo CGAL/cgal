@@ -1,6 +1,6 @@
-\chapter{Kernel Geometry}
+\section{Kernel Geometry}
 
-\section{Points and Vectors}
+\subsection{Points and Vectors}
 In \cgal, we strictly distinguish between points, vectors and directions.
 A {\em point} is a point in the Euclidean space
 $\E^d$, a {\em vector} is the difference of two points $p_2$, $p_1$
@@ -39,7 +39,7 @@ the point $q$ in the middle between two points $p_1$ and $p_2$, you can write%
 Note that these constructions do not involve any performance overhead for 
 the conversion with the currently available representation classes. 
 
-\section{Kernel Objects}
+\subsection{Kernel Objects}
 Besides points (\ccc{Point_2<Kernel>}, \ccc{Point_3<Kernel>}, \ccc{Point_d<Kernel>}), 
 vectors (\ccc{Vector_2<Kernel>}, \ccc{Vector_3<Kernel>}), and 
 directions (\ccc{Direction_2<Kernel>}, \ccc{Direction_3<Kernel>}), 
@@ -78,7 +78,7 @@ so they are not part of the kernel.
 As with any Jordan curves, triangles, iso-oriented rectangles and circles
 separate the plane into two regions, one bounded and one unbounded.  
 
-\section{Orientation and Relative Position}
+\subsection{Orientation and Relative Position}
 Geometric objects in \cgal\ have member functions that test the
 position of a point relative to the object.  Full dimensional objects
 and their boundaries are represented by the same type, 

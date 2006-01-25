@@ -1,4 +1,4 @@
-\chapter{Kernel Representations}
+\section{Kernel Representations}
 Our object of study is the $d$-dimensional affine Euclidean space. 
 Here we are mainly concerned with cases $d=2$ and $d=3$.
 Objects in that space are sets of points. A common way to represent 
@@ -42,7 +42,7 @@ In \cgal, we do not compute in projective geometry. Rather, we use
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
 
-\section{Genericity through Parameterization}
+\subsection{Genericity through Parameterization}
 
 Almost all the kernel objects (and the corresponding functions) are
 templates with a parameter that allows the user to choose the
@@ -87,7 +87,7 @@ ring in a mathematical sense.
 %%a number type.  Note that a ring type is always a field type but not
 %%the other way round.
 
-\section{Cartesian Kernels}
+\subsection{Cartesian Kernels}
 With \ccc{Cartesian<FieldNumberType>} you can choose a
 \ccHtmlNoLinksFrom{Cartesian} representation of coordinates. When you
 choose \ccHtmlNoLinksFrom{Cartesian} representation you have to
@@ -116,7 +116,7 @@ less efficient than \ccc{Cartesian<FieldNumberType>}. Again, in
 \ccc{Simple_cartesian<FieldNumberType>::RT} are mapped to
 \ccc{FieldNumberType}.
 
-\section{Homogeneous Kernels}
+\subsection{Homogeneous Kernels}
 Homogeneous coordinates permit to avoid division operations in
 numerical computations, since the additional coordinate can serve as a
 common denominator.  Avoiding divisions can be useful for exact
@@ -156,7 +156,7 @@ less efficient than \ccc{Homogeneous<RingNumberType>}. Again, in
 \ccc{Simple_homogeneous<RingNumberType>::RT} is equal to
 \ccc{RingNumberType}.
 
-\section{Naming conventions}
+\subsection{Naming conventions}
 
 The use of kernel classes not only avoids problems, it also makes all
 \cgal\ classes very uniform. They {\bf always} consist of:
@@ -177,7 +177,7 @@ The use of kernel classes not only avoids problems, it also makes all
       \ccStyle{Homogeneous<leda_integer>}.
 \end{enumerate}
 
-\section{Kernel as a Traits Class}
+\subsection{Kernel as a Traits Class}
 Algorithms and data structures in the basic library of \cgal\ are
 parameterized by a traits class that subsumes the objects on which the
 algorithm or data structure operates as well as the operations to do
@@ -189,7 +189,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by the kernel concept. In these cases, a
 kernel can not be used as a traits class.
 
-\section{Choosing a Kernel and Predefined Kernels}
+\subsection{Choosing a Kernel and Predefined Kernels}
 If you start with integral \ccHtmlNoLinksFrom{Cartesian} coordinates,
 many geometric computations will involve integral numerical values
 only. Especially, this is true for geometric computations that

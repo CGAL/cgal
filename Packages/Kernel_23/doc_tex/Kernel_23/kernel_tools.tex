@@ -1,6 +1,6 @@
-\chapter{Kernel Related Tools}
+\section{Kernel Related Tools}
 
-\section{Introduction}
+\subsection{Introduction}
 
 The following manual sections describe various tools that might be useful for
 various kinds of users of the \cgal\ kernel. The kernel concept archetype
@@ -12,9 +12,9 @@ for all people developing \cgal-style code that uses the \cgal\ kernel.
 %say later something about Filter stuff 
 %what else (converters ?) 
 
-\section{Kernel Concept Archetype}
+\subsection{Kernel Concept Archetype}
 
-\subsection{Introduction}
+\subsubsection{Introduction}
 
 \cgal\ defines the concept of a geometry kernel. Such a kernel provides types,
 construction objects and generalized predicates. Most implementations of CG
@@ -61,7 +61,7 @@ The header file for the concept archetype is \ccc{CGAL/Kernel_archetype.h}.
 The package supports the two- and three-dimensional part of the \cgal\ kernel
 concept. The d-dimensional part is not supported.
 
-\subsection{Restricting the Interface}
+\subsubsection{Restricting the Interface}
 
 Normally packages of the Basic Library or Extension packages use only a small
 subset of the functionality offered by models of the \cgal\ kernel concept. In
@@ -129,7 +129,7 @@ struct My_archetype {
 
 \ccHtmlLinksOn
 
-\subsection{Example Program}
+\subsubsection{Example Program}
 
 The following example shows a program for checking the 2d convex hull algorithm
 of CGAL with the archetype. You can see the usage of the

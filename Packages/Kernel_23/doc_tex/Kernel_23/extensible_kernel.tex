@@ -1,4 +1,4 @@
-\chapter{Extensible Kernel}
+\section{Extensible Kernel}
 
 
 This manual section describe how users can plug user defined
@@ -6,7 +6,7 @@ geometric classes in existing \cgal\ kernels.  This is best
 illustrated by an example.
 
 
-\section{Introduction}
+\subsection{Introduction}
 
 \cgal\ defines the concept of a geometry kernel. Such a kernel provides types,
 construction objects and generalized predicates. Most implementations
@@ -20,7 +20,7 @@ kernel concept (but there are some exceptions).
 
 
 
-\section{An Extensive Example}
+\subsection{An Extensive Example}
 
 Assume you have the following point class, where the coordinates are
 stored in an array of \ccc{doubles}, where we have another data member
@@ -205,7 +205,7 @@ the functionality of the latter.
 \ccHtmlLinksOn
 
 
-\section{Limitations}
+\subsection{Limitations}
 
 The point class must have member functions \ccc{x()} and \ccc{y()}
 (and \ccc{z()} for the 3d point). We will probably

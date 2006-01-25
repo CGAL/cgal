@@ -1,6 +1,6 @@
-\chapter{Kernel Geometry}
+\section{Kernel Geometry}
 
-\section{Points and Vectors}
+\subsection{Points and Vectors}
 In \cgal, we strictly distinguish between points, vectors and
 directions.  A {\em point} is a point in the Euclidean space $\E^d$, a
 {\em vector} is the difference of two points $p_2$, $p_1$ and denotes
@@ -41,7 +41,7 @@ Note that these constructions do not involve any performance overhead
 for the conversion with the currently available representation
 classes.
 
-\section{Kernel Objects}
+\subsection{Kernel Objects}
 
 Besides points (\ccc{Point_d<R>}), vectors (\ccc{Vector_d<R>}), and
 directions (\ccc{Direction_d<R>}), \cgal\ provides lines, rays,
@@ -65,7 +65,7 @@ spheres) there is also a global function \ccc{weak_equality} that
 allows to test for point set equality disregarding the orientation.
 
 
-\section{Orientation and Relative Position}
+\subsection{Orientation and Relative Position}
 
 Geometric objects in \cgal\ have member functions that test the
 position of a point relative to the object.  Full dimensional objects
