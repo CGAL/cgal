@@ -6,8 +6,7 @@
 
 \ccIsModel
 
-\ccc{CircularKernel}\footnote{for Lutz: macro ``ccIsmodel'' is
-apparently assuming that there is only one possible concept...}
+\ccc{CircularKernel}
 
 \ccParameters
 
@@ -30,25 +29,15 @@ It must be a model of concept \ccc{AlgebraicKernel_2_2}.
 \ccThree{typedef Circular_arc_point_2<Circular-Kernel>}{Root_of_4xxx}{}
 \ccThreeToTwo
 
-The circular kernel inherits its basic number types from the algebraic kernel:
+The circular kernel uses basic number types of the algebraic kernel:
 \ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type.}
 \ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type.}
 In fact, the two number types \ccc{AlgebraicKernel::RT} and
 \ccc{LinearKernel::RT} must coincide, as well as
 \ccc{AlgebraicKernel::FT} and \ccc{LinearKernel::FT}.
-\footnote{how to avoid inconsistencies? a user might take an AK and a
-BGK with different RTs... this is not a problem specific to CK, it already occurs 
-in many places in CGAL...}. 
 
-The types of \ccc{LinearKernel} are inherited by the circular kernel.
-Some types are taken from the \ccc{AlgebraicKernel} parameter, and
-some types are defined by the \ccc{Circular_kernel} itself.
-
-\ccc{Circular_kernel} will be a model of \ccc{CircularKernel} if the 
-\ccc{AlgebraicKernel} parameter follows the requirements of the 
-concept \ccc{AlgebraicKernel_2_2}. The following types will then be
-usable, as well as all the functioanlity on them described in the
-\ccc{CircularKernel} concept. 
+The following types are available, as well as all the functionality on
+them described in the \ccc{CircularKernel} concept. 
 
 \ccTypedef{typedef Line_arc_2<Circular_kernel> Line_arc_2;}{}
 \ccGlue
