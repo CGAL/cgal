@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <vector>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -107,6 +108,82 @@ std::ostream& operator<<(std::ostream &os,
       os << ")" << std::endl;
       return os;
   }
+}
+
+//-----------------------------------------------------------------------//
+//                          operator>>
+//-----------------------------------------------------------------------//
+
+template <class Kernel_, class Container_>
+std::istream &operator>>(std::istream &is,
+                         Polygon_with_holes_2<Kernel_, Container_>& p)
+{
+  typedef CGAL::Polygon_2<Kernel_, Container_> Polygon_2;
+  p.clear();
+  is >> p.outer_boundary();
+
+  unsigned int n; // number of holes;
+  is >> n;
+  if(is)
+  {
+     for (unsigned int i=0; i<n; i++)
+     {
+       Polygon_2 hole;
+       is >> hole;
+       p.add_hole(hole);
+     }
+  }
+
+  return is;
+}
+
+
+//-----------------------------------------------------------------------//
+//                          operator==
+//-----------------------------------------------------------------------//
+template <class Kernel_, class Container_>
+bool operator==(const Polygon_with_holes_2<Kernel_, Container_>& p1,
+                const Polygon_with_holes_2<Kernel_, Container_>& p2)
+{
+  typedef typename 
+    Polygon_with_holes_2<Kernel_, Container_>::Hole_const_iterator HCI;
+  typedef CGAL::Polygon_2<Kernel_, Container_> Polygon_2;
+  if(&p1 == &p2)
+    return (true);
+
+  if(p1.number_of_holes() != p2.number_of_holes())
+    return (false);
+
+  if(p1.outer_boundary() != p2.outer_boundary())
+    return (false);
+
+  std::list<Polygon_2> tmp_list(p2.holes_begin(), p2.holes_end());
+
+  HCI i = p1.holes_begin();
+  for(; i!= p1.holes_end(); ++i)
+  {
+    typename std::list<Polygon_2>::iterator j =
+      (std::find(tmp_list.begin(), tmp_list.end(), *i));
+
+    if(j == tmp_list.end())
+      return (false);
+
+    tmp_list.erase(j);
+  }
+
+
+  CGAL_assertion(tmp_list.empty());
+  return (true);
+}
+
+//-----------------------------------------------------------------------//
+//                          operator!=
+//-----------------------------------------------------------------------//
+template <class Kernel_, class Container_>
+inline bool operator!=(const Polygon_with_holes_2<Kernel_, Container_>& p1,
+                       const Polygon_with_holes_2<Kernel_, Container_>& p2)
+{
+  return (! p1==p2);
 }
 
 CGAL_END_NAMESPACE
