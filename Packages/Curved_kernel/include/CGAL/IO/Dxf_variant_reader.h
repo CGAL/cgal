@@ -102,34 +102,11 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 	  *res++ = arc;
 	}
       } else {
-        const FT sqr_bulge = CGAL::square(bulge);
-        const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
-        const FT x_coord = ((ps.x() + pt.x())/FT(2)) + common*(ps.y() - pt.y());
-        const FT y_coord = ((ps.y() + pt.y())/FT(2)) + common*(pt.x() - ps.x());
-
-        const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
-
-// 	Root_of_2 rootps_x = Root_of_2(ps.x());
-// 	Root_of_2 rootps_y = Root_of_2(ps.y());
-// 	Root_for_circles_2_2 rootps = Root_for_circles_2_2(rootps_x,rootps_y);
-// 	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
- 	Circular_arc_point_2 cps = ps;
-
-// 	Root_for_circles_2_2 rootpt = Root_for_circles_2_2(pt.x(), pt.y());
-// 	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
- 	Circular_arc_point_2 cpt = pt;
-
-	Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
-	//std::cerr << "arc with center: "  << to_double( x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;
-	//std::cerr << "source: " << to_double(ps.x()) << ", " << to_double(ps.y()) << " target: " << to_double(pt.x()) << ", " << to_double(pt.y()) << std::endl << std::endl;
-
-	//std::cerr << "arc with center: "  << x_coord << "  " <<y_coord << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;
-	//std::cerr << "source: " << ps.x() << ", " << ps.y() << " target: " << pt.x() << ", " << pt.y() << std::endl << std::endl;
+	Circular_arc_2 arc = Circular_arc_2(ps, pt, bulge);
 	*res++ = arc;
       }
     }
 
-    //std::cerr << "bulge = " << to_double(bulge) << std::endl;
     if(bulge == FT(0)){
       if(ps != first_point){
 	Arc arc = Line_arc_2(ps, first_point);      
@@ -138,23 +115,8 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       }
     } else {
       pt = first_point;
-      const FT sqr_bulge = CGAL::square(bulge);
-      const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
-      const FT x_coord = ((ps.x() + pt.x())/FT(2)) + common*(ps.y() - pt.y());
-      const FT y_coord = ((ps.y() + pt.y())/FT(2)) + common*(pt.x() - ps.x());
+      Circular_arc_2 arc = Circular_arc_2(ps,pt, bulge);
       
-      const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
-      
-// 	Root_for_circles_2_2 rootps =  Root_for_circles_2_2(ps.x(), ps.y());
-// 	Circular_arc_point_2 cps = Circular_arc_point_2(rootps);
-// 	Root_for_circles_2_2 rootpt =  Root_for_circles_2_2(pt.x(), pt.y());
-// 	Circular_arc_point_2 cpt = Circular_arc_point_2(rootpt);
-
-      Circular_arc_point_2 cps = ps;
-      Circular_arc_point_2 cpt = pt;
-
-      Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
-
       //std::cerr << "arc with center: "  << to_double(x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;	
       //std::cerr << "source: " << to_double(ps.x()) << ", " << to_double(ps.y()) << " target: " << to_double(pt.x()) << ", " << to_double(pt.y()) << std::endl << std::endl;
 

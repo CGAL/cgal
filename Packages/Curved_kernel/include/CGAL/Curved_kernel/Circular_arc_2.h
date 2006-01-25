@@ -184,7 +184,21 @@ public:
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, source));
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, target));
     }
+    
+    Circular_arc_2(const Point_2 &begin,
+                   const Point_2 &end,
+		   const FT &bulge): 
+		     _begin(begin), _end(end), Cache_minmax('n')
+    {
+      const FT sqr_bulge = CGAL::square(bulge);
+      const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
+      const FT x_coord = ((begin.x() + end.x())/FT(2)) + common*(begin.y() - end.y());
+      const FT y_coord = ((begin.y() + end.y())/FT(2)) + common*(end.x() - begin.x());
+      
+      const FT sqr_rad = squared_distance(begin, end) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
 
+      _support = Circle_2(Point_2(x_coord, y_coord), sqr_rad);
+    }
   private:
 
     // The arc goes from _begin to _end in the positive order

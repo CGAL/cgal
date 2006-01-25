@@ -82,6 +82,11 @@ public:
                  const Circular_arc_point_2 &end)
     : RCircular_arc_2(typename R::Construct_circular_arc_2()(support, begin, end)) {}
  
+  Circular_arc_2(const Point_2 &start,
+                 const Point_2 &end,
+		 const FT &bulge)
+    : RCircular_arc_2(typename R::Construct_circular_arc_2()(start, end, bulge)) {}
+  
  Circular_arc_2(const RCircular_arc_2 & a)
     : RCircular_arc_2(a)
   {}

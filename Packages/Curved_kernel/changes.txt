@@ -1,2 +1,5 @@
+25 January 2005 Andreas Fabri
+- Added a constructor for Circular_arc_2(Point source, Point target, FT bulge)
+
 14 September 2005 Andreas Fabri
 - Simplified template parameters of functors in Lazy_curved_kernel.h and Lazy_curved_kernel_constructions.h

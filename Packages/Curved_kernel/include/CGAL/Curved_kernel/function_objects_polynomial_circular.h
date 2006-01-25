@@ -594,6 +594,12 @@ template < class CK >
     { return Rep(begin,middle,end); }
 
     result_type
+    operator()(const Point_2 &begin,
+               const Point_2 &end,
+	       const FT& bulge) const
+    { return Rep(begin,end,bulge); }
+
+    result_type
     operator()(const Circle_2 &support,
                const Circular_arc_point_2 &source, 
                const Circular_arc_point_2 &target) const
