@@ -66,7 +66,7 @@ curve splitting. The reverse merge operation is optionally supported.
 
 \ccNestedType{Split_2}
 {provides the operator~: \\
- \ccc{void operator() (X_monotone_curve_2 c, Point_2& p,
+ \ccc{void operator() (X_monotone_curve_2 c, Point_2 p,
                        X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
  which accepts an input curve \ccc{c} and a split point \ccc{p} in its
  interior. It splits \ccc{c} at the split point into two subcurves \ccc{c1}
@@ -79,7 +79,7 @@ The two following functor types are optional. If they are supported, the
 
 \ccNestedType{Are_mergeable_2}
 {provides the operator~: \\
- \ccc{bool operator() (X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
+ \ccc{bool operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2)} \\
  which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that share
  a common endpoint, and determines whether they can be merged to form a single
  continuous $x$-monotone curve.}
