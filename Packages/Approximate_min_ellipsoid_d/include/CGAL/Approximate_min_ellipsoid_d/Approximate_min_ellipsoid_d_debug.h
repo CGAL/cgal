@@ -24,8 +24,6 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-#include <sys/time.h>
-#include <sys/resource.h>
 
 namespace CGAL {
 
@@ -136,7 +134,16 @@ namespace CGAL {
     };
     #endif // CGAL_APPEL_LOG_MODE
 
-    #ifdef CGAL_APPEL_TIMER_MODE
+  } // end of namespace Approximate_min_ellipsoid_d_impl
+} // end of namespace CGAL
+
+#ifdef CGAL_APPEL_TIMER_MODE
+#include <sys/time.h>
+#include <sys/resource.h>
+
+namespace CGAL {
+  namespace Approximate_min_ellipsoid_d_impl {
+
     // The following routine is taken from file mptimeval.h from
     // "Matpack Library Release 1.7.1" which is copyright (C) 1991-2002
     // by Berndt M. Gammel.  It works on the timeval struct defined in
@@ -234,7 +241,12 @@ namespace CGAL {
                                   // k is the timer name and v is the
                                   // (started) timer associated with k
     };
-    #endif // CGAL_APPEL_TIMER_MODE
+  } // end of namespace Approximate_min_ellipsoid_d_impl
+} // end of namespace CGAL
+#endif // CGAL_APPEL_TIMER_MODE
+
+namespace CGAL {
+  namespace Approximate_min_ellipsoid_d_impl {
 
     template <typename T>
     std::string tostr(const T& t) {
