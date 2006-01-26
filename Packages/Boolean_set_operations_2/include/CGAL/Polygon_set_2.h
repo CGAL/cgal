@@ -70,24 +70,24 @@ public:
   {}
 
   
-  void intersection(const Polygon_2& pgn)
+  inline void intersection(const Polygon_2& pgn)
   {
     Base::intersection(pgn);
   }
 
-  void intersection(const Polygon_with_holes_2& pgn)
+  inline void intersection(const Polygon_with_holes_2& pgn)
   {
     Base::intersection(pgn);
   }
 
-  void intersection(const Self& other)
+  inline void intersection(const Self& other)
   {
     Base::intersection(other);
   }
 
-  void intersection(const Self& ps1, const Self& ps2)
+  inline void intersection(const Self& ps1, const Self& ps2)
   {
-    Base::intersection(cast_to_base(ps1), cast_to_base(ps2));
+    Base::intersection(base(ps1), base(ps2));
   }
 
   template <class InputIterator>
@@ -105,24 +105,24 @@ public:
     Base::intersection(begin1, end1, begin2, end2);
   }
 
-  void join(const Polygon_2& pgn)
+  inline void join(const Polygon_2& pgn)
   {
     Base::join(pgn);
   }
 
-  void join(const Polygon_with_holes_2& pgn)
+  inline void join(const Polygon_with_holes_2& pgn)
   {
     Base::join(pgn);
   }
 
-  void join(const Self& other)
+  inline void join(const Self& other)
   {
     Base::join(other);
   }
 
-  void join(const Self& ps1, const Self& ps2)
+  inline void join(const Self& ps1, const Self& ps2)
   {
-    Base::join(cast_to_base(ps1), cast_to_base(ps2));
+    Base::join(base(ps1), base(ps2));
   }
 
   template <class InputIterator>
@@ -140,24 +140,24 @@ public:
     Base::join(begin1, end1, begin2, end2);
   }
 
-  void difference(const Polygon_2& pgn)
+  inline void difference(const Polygon_2& pgn)
   {
     Base::difference(pgn);
   }
 
-  void difference(const Polygon_with_holes_2& pgn)
+  inline void difference(const Polygon_with_holes_2& pgn)
   {
     Base::difference(pgn);
   }
 
-  void difference(const Self& other)
+  inline void difference(const Self& other)
   {
     Base::difference(other);
   }
 
-  void difference(const Self& ps1, const Self& ps2)
+  inline void difference(const Self& ps1, const Self& ps2)
   {
-    Base::difference(cast_to_base(ps1), cast_to_base(ps2));
+    Base::difference(base(ps1), base(ps2));
   }
 
   template <class InputIterator>
@@ -175,24 +175,24 @@ public:
     Base::difference(begin1, end1, begin2, end2);
   }
 
-  void symmetric_difference(const Polygon_2& pgn)
+  inline void symmetric_difference(const Polygon_2& pgn)
   {
     Base::symmetric_difference(pgn);
   }
 
-  void symmetric_difference(const Polygon_with_holes_2& pgn)
+  inline void symmetric_difference(const Polygon_with_holes_2& pgn)
   {
     Base::symmetric_difference(pgn);
   }
 
-  void symmetric_difference(const Self& other)
+  inline void symmetric_difference(const Self& other)
   {
     Base::symmetric_difference(other);
   }
 
-  void symmetric_difference(const Self& ps1, const Self& ps2)
+  inline void symmetric_difference(const Self& ps1, const Self& ps2)
   {
-    Base::symmetric_difference(cast_to_base(ps1), cast_to_base(ps2));
+    Base::symmetric_difference(base(ps1), base(ps2));
   }
 
   template <class InputIterator>
@@ -210,17 +210,17 @@ public:
     Base::symmetric_difference(begin1, end1, begin2, end2);
   }
 
-  bool do_intersect(const Polygon_2& pgn)
+  inline bool do_intersect(const Polygon_2& pgn)
   {
     return (Base::do_intersect(pgn));
   }
 
-  bool do_intersect(const Polygon_with_holes_2& pgn)
+  inline bool do_intersect(const Polygon_with_holes_2& pgn)
   {
     return (Base::do_intersect(pgn));
   }
 
-  bool do_intersect(const Self& other)
+  inline bool do_intersect(const Self& other)
   {
     return (Base::do_intersect(other));
   }
@@ -242,7 +242,7 @@ public:
 
   private:
 
-    inline const Base& cast_to_base(const Self& other) const
+    inline const Base& base(const Self& other) const
     {
       return (static_cast<const Base&>(other));
     }
