@@ -151,9 +151,20 @@ using std::min;
 using std::max;
 #endif
 
+//-------------------------------------------------------------------//
 // Is Geomview usable ?
 #if !defined(__BORLANDC__) && !defined(_MSC_VER) && !defined(__MINGW32__)
 #  define CGAL_USE_GEOMVIEW
+#endif
+
+
+//-------------------------------------------------------------------//
+// In profiling messages we want trace in which function we are
+// Different compilers provide different macros for that
+#ifdef _MSC_VER
+#define CGAL_PRETTY_FUNCTION __FUNCSIG__
+#else 
+#define CGAL_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #endif
 
 #endif // CGAL_CONFIG_H
