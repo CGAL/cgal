@@ -4,9 +4,9 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-class Double_with_infinity {
+struct Double_with_infinity {
   Double_with_infinity(double d): d_(d){}
-  operator double() const {
+  operator const double&() const {
     return d_;
   }
 protected:
@@ -25,4 +25,13 @@ namespace std {
   };
 };
 
+
+CGAL_BEGIN_NAMESPACE
+
+double to_double(CGAL_POLYNOMIAL_NS::internal::Double_with_infinity d) {
+  return to_double(static_cast<double>(d));
+}
+
+CGAL_END_NAMESPACE
+  
 #endif

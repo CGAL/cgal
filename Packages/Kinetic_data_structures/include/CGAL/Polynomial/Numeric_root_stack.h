@@ -27,9 +27,10 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-  template <bool HINF>
+template <bool HINF=std::numeric_limits<double>::has_infinity>
   struct Numeric_pick_root {
     typedef double Root;
+    //typedef internal::Double_with_infinity Root;
   };
 
   template <>
@@ -43,23 +44,42 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 template <class Solver_traits, class Numeric_solver=internal::Turkowski_numeric_solver>
 class Numeric_root_stack
 {
+public:
+    typedef internal::Numeric_pick_root<>::Root Root;
+protected:
+
+  /* All this mess is to handle when roots are not doubles and when the coefficients are not doubles
+   */
+
+  template <class Rt>
+  void initialize_2(const double *b, const double *e, double lb, double ub, std::vector<Rt> &roots) {
+    std::vector<double> lroots;
+    ns_(b, e, lb, ub, lroots);
+    roots.insert(roots.end(), lroots.begin(), lroots.end());
+  }
+
+  void initialize_2(const double *b, const double *e, double lb, double ub, std::vector<double> &roots) {
+    ns_(b, e, lb, ub, roots);
+  }
 
   template <class Fn>
-  void initialize(const Fn &f, double lb, double ub) {
+  void initialize(const Fn &f, Root lb, Root ub) {
     std::vector<double> c(f.degree()+1);
     for (unsigned int i=0; i<= f.degree(); ++i) {
       c[i]= to_double(f[i]);
     }
-    ns_(&*c.begin(), &*c.begin()+ f.degree()+1, lb, ub, roots_);
+    initialize_2(&*c.begin(), &*c.begin()+ f.degree()+1, 
+		 static_cast<double>(lb), static_cast<double>(ub),
+		 roots_);
     /*if (CLEAN) {
       polynomial_compute_cleaned_roots(&*c.begin(), &*c.begin()+ f.degree()+1, lb, ub, roots_);
       } else {
       polynomial_compute_roots(&*c.begin(), &*c.begin()+ f.degree()+1, lb, ub, roots_);
       }*/
   }
-  void initialize(const Polynomial<double> &f, double lb, double ub) {
+  void initialize(const Polynomial<double> &f, Root lb, Root ub) {
     const double *p0= &*f.begin();
-    ns_(p0, p0+ f.degree()+1, lb, ub, roots_);
+    initialize_2(p0, p0+ f.degree()+1, static_cast<double>(lb), static_cast<double>(ub), roots_);
     /*if (CLEAN) {
       polynomial_compute_cleaned_roots(&*f.begin(), &*f.begin()+ f.degree()+1, lb, ub, roots_);
       } else {
@@ -69,7 +89,7 @@ class Numeric_root_stack
 
 
 public:
-  typedef internal::Numeric_pick_root<std::numeric_limits<double>::has_infinity>::Root Root;
+
   typedef typename Solver_traits::Function Function;
   typedef Solver_traits Traits;
   Numeric_root_stack(const typename Solver_traits::Function &f, Root lb, Root ub, const Solver_traits&) {
@@ -109,7 +129,7 @@ public:
 
 protected:
   Numeric_solver ns_;
-  std::vector<double> roots_;
+  std::vector<Root> roots_;
 };
 
 CGAL_POLYNOMIAL_END_NAMESPACE
