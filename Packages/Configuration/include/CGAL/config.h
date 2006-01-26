@@ -163,6 +163,8 @@ using std::max;
 // Different compilers provide different macros for that
 #ifdef _MSC_VER
 #define CGAL_PRETTY_FUNCTION __FUNCSIG__
+#elif defined(__sun) && defined(__SUNPRO_CC)
+#define CGAL_PRETTY_FUNCTION __func__
 #else 
 #define CGAL_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #endif
