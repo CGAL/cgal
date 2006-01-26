@@ -181,7 +181,7 @@ int main(int argc, char **argv)
       std::cout<<"warning: first input polygon is invalid!!!\n";
     }
   }
-  else
+  else 
   {
     inp1 >> pwh1;
     out  << pwh1;
@@ -223,6 +223,7 @@ int main(int argc, char **argv)
     write_result_to_file(out, p1, p2);
     write_complement_to_file(out, p1);
     write_complement_to_file(out, p2);
+    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
@@ -232,6 +233,7 @@ int main(int argc, char **argv)
     write_result_to_file(out, p1, pwh2);
     write_complement_to_file(out, p1);
     write_complement_to_file(out, pwh2);
+    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
@@ -241,6 +243,7 @@ int main(int argc, char **argv)
     write_result_to_file(out, pwh1, p2);
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, p2);
+    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
@@ -250,10 +253,12 @@ int main(int argc, char **argv)
     write_result_to_file(out, pwh1, pwh2);
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, pwh2);
+    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
 
- 
+  std::cout<<"unkown polygon type\n";
+
   return (0);
 }
