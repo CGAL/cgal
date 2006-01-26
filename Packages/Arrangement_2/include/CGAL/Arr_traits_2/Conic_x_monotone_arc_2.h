@@ -127,13 +127,14 @@ public:
    */
   _Conic_x_monotone_arc_2 (const Self& arc) :
     Base (arc),
+    alg_r (arc.alg_r),
+    alg_s (arc.alg_s),
+    alg_t (arc.alg_t),
+    alg_u (arc.alg_u),
+    alg_v (arc.alg_v),
+    alg_w (arc.alg_w),
     _id (arc._id)
-  {
-    if (_id.is_valid())
-      _set();
-    else
-      this->_info = 0;
-  }
+  {}
 
   /*!
    * Construct an x-monotone arc from a conic arc.
@@ -257,12 +258,14 @@ public:
     Base::operator= (arc);
 
     // Set the rest of the properties.
-    _id = arc._id;
+    alg_r = arc.alg_r;
+    alg_s = arc.alg_s;
+    alg_t = arc.alg_t;
+    alg_u = arc.alg_u;
+    alg_v = arc.alg_v;
+    alg_w = arc.alg_w;
 
-    if (_id.is_valid())
-      _set();
-    else
-      this->_info = 0;
+    _id = arc._id;
 
     return (*this);
   }
@@ -858,9 +861,6 @@ public:
                             Intersection_map& inter_map,
                             OutputIterator oi) const
   {
-    CGAL_precondition (! _is_special_segment() &&
-                       ! arc._is_special_segment());
-
     if (_has_same_supporting_conic (arc))
     {
       // Check for overlaps between the two arcs.
@@ -940,7 +940,7 @@ public:
       inter_list = (*map_iter).second;
     }
 
-    // Go over the list of intersection points and report those that lies on
+    // Go over the list of intersection points and report those that lie on
     // both x-monotone arcs.
     typename Intersection_list::const_iterator  iter;
 
@@ -971,8 +971,6 @@ public:
   void split (const Conic_point_2& p,
               Self& c1, Self& c2) const
   {
-    CGAL_precondition (! _is_special_segment());
-
     // Make sure that p lies on the interior of the arc.
     CGAL_precondition_code (
       Alg_kernel   ker;
@@ -1052,8 +1050,6 @@ public:
   Self trim (const Conic_point_2& ps,
              const Conic_point_2& pt) const
   {
-    CGAL_precondition (! _is_special_segment());
-
     // Make sure that both ps and pt lie on the arc.
     CGAL_precondition (this->contains_point (ps) &&
                        this->contains_point (pt));
@@ -1137,9 +1133,6 @@ public:
    */
   bool can_merge_with (const Self& arc) const
   {
-    if (_is_special_segment() || arc._is_special_segment())
-      return (false);
-
     // In order to merge the two arcs, they should have the same supporting
     // conic.
     if (! _has_same_supporting_conic (arc))
@@ -1160,8 +1153,6 @@ public:
    */
   void merge (const Self& arc)
   {
-    CGAL_precondition (! _is_special_segment() &&
-                       ! arc._is_special_segment());
     CGAL_precondition (this->can_merge_with (arc));
 
     // Check if we should extend the arc to the left or to the right.
@@ -1184,7 +1175,6 @@ public:
         this->_source = arc.left();
       else
         this->_target = arc.left();
-
     }
 
     return;
@@ -1701,9 +1691,6 @@ private:
    */
   bool _compute_overlap (const Self& arc, Self& overlap) const
   {
-    CGAL_assertion (! _is_special_segment() &&
-                    ! arc._is_special_segment());
-
     // Check if the two arcs are identical.
     if (equals (arc))
     {
@@ -1770,40 +1757,91 @@ private:
   void _intersect_supporting_conics (const Self& arc,
                                      Intersection_list& inter_list) const
   {
-    CGAL_assertion (! _is_special_segment() &&
-                    ! arc._is_special_segment());
+    if (_is_special_segment() && ! arc._is_special_segment())
+    {
+      // If one of the arcs is a special segment, make sure it is (arc).
+      arc._intersect_supporting_conics (*this, inter_list);
+      return;
+    }
 
     const int   deg1 = ((this->_info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
     const int   deg2 = ((arc._info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
     Nt_traits   nt_traits;
-
-    // Compute the x-coordinates of the intersection points.
     Algebraic   xs[4];
-    int         n_xs;
-
-    n_xs = _compute_resultant_roots (nt_traits,
-                                     this->_r, this->_s, this->_t,
-                                     this->_u, this->_v, this->_w,
-                                     deg1,
-                                     arc._r, arc._s, arc._t,
-                                     arc._u, arc._v, arc._w,
-                                     deg2,
-                                     xs);
-    CGAL_assertion (n_xs <= 4);
-
-    // Compute the y-coordinates of the intersection points.
+    int         n_xs = 0;
     Algebraic   ys[4];
-    int         n_ys;
+    int         n_ys = 0;
 
-    n_ys = _compute_resultant_roots (nt_traits,
-                                     this->_s, this->_r, this->_t,
-                                     this->_v, this->_u, this->_w,
-                                     deg1,
-                                     arc._s, arc._r, arc._t,
-                                     arc._v, arc._u, arc._w,
-                                     deg2,
-                                     ys);
-    CGAL_assertion (n_ys <= 4);
+    if (arc._is_special_segment())
+    {
+      // The second arc is a special segment (a*x + b*y + c = 0).
+      if (_is_special_segment())
+      {
+        // Both arc are sepcial segment, so they have at most one intersection
+        // point.
+        Algebraic   denom = this->_extra_data_P->a * arc._extra_data_P->b -
+                            this->_extra_data_P->b * arc._extra_data_P->a;
+
+        if (CGAL::sign (denom) != CGAL::ZERO)
+        {
+          xs[0] = (this->_extra_data_P->b * arc._extra_data_P->c -
+                   this->_extra_data_P->c * arc._extra_data_P->b) / denom;
+          n_xs = 1;
+
+          ys[0] = (this->_extra_data_P->c * arc._extra_data_P->a -
+                   this->_extra_data_P->a * arc._extra_data_P->c) / denom;
+          n_ys = 1;
+        }
+      }
+      else
+      {
+        // Compute the x-coordinates of the intersection points.
+        n_xs = _compute_resultant_roots (nt_traits,
+                                         alg_r, alg_s, alg_t,
+                                         alg_u, alg_v, alg_w,
+                                         deg1,
+                                         arc._extra_data_P->a,
+                                         arc._extra_data_P->b,
+                                         arc._extra_data_P->c,
+                                         xs);
+        CGAL_assertion (n_xs <= 2);
+      
+        // Compute the y-coordinates of the intersection points.
+        n_ys = _compute_resultant_roots (nt_traits,
+                                         alg_s, alg_r, alg_t,
+                                         alg_v, alg_u, alg_w,
+                                         deg1,
+                                         arc._extra_data_P->b,
+                                         arc._extra_data_P->a,
+                                         arc._extra_data_P->c,
+                                         ys);
+        CGAL_assertion (n_ys <= 2);
+      }
+    }
+    else
+    {
+      // Compute the x-coordinates of the intersection points.
+      n_xs = _compute_resultant_roots (nt_traits,
+                                       this->_r, this->_s, this->_t,
+                                       this->_u, this->_v, this->_w,
+                                       deg1,
+                                       arc._r, arc._s, arc._t,
+                                       arc._u, arc._v, arc._w,
+                                       deg2,
+                                       xs);
+      CGAL_assertion (n_xs <= 4);
+      
+      // Compute the y-coordinates of the intersection points.
+      n_ys = _compute_resultant_roots (nt_traits,
+                                       this->_s, this->_r, this->_t,
+                                       this->_v, this->_u, this->_w,
+                                       deg1,
+                                       arc._s, arc._r, arc._t,
+                                       arc._v, arc._u, arc._w,
+                                       deg2,
+                                       ys);
+      CGAL_assertion (n_ys <= 4);
+    }
 
     // Pair the coordinates of the intersection points. As the vectors of
     // x and y-coordinates are sorted in ascending order, we output the
@@ -1825,7 +1863,10 @@ private:
           ip.set_generating_conic (arc._id);
 
           // Compute the multiplicity of the intersection point.
-          mult = _multiplicity_of_intersection_point (arc, ip);
+          if (deg1 == 1 && deg2 == 1)
+            mult = 1;
+          else
+            mult = _multiplicity_of_intersection_point (arc, ip);
 
           // Insert the intersection point to the output list.
           inter_list.push_back (Intersection_point_2 (ip, mult));
@@ -1845,8 +1886,7 @@ private:
   unsigned int _multiplicity_of_intersection_point (const Self& arc,
                                                     const Point_2& p) const
   {
-    CGAL_assertion (! _is_special_segment() &&
-                    ! arc._is_special_segment());
+    CGAL_assertion (! _is_special_segment() || ! arc._is_special_segment());
 
     // Compare the slopes of the two arcs at p, using their first-order
     // partial derivatives.

@@ -49,8 +49,6 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
 			      const typename Nt_traits::Integer& r2,
 			      const typename Nt_traits::Integer& s2,
 			      const typename Nt_traits::Integer& t2,
-
-
 			      const typename Nt_traits::Integer& u2,
 			      const typename Nt_traits::Integer& v2,
 			      const typename Nt_traits::Integer& w2,
@@ -85,7 +83,7 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
       return (1);
     }
     
-    // We can write the first curve as: y = (u1*x + w1) / v1.
+    // We can write the first curve as: y = -(u1*x + w1) / v1.
     if (deg2 == 1)
     {
       // The second curve is also a line. We therefore get the linear
@@ -167,6 +165,67 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
 
   xs_end = nt_traits.compute_polynomial_roots (poly,
 					       xs);
+  return (xs_end - xs);
+}
+
+/*!
+ * Compute the roots of the resultants of the two bivariate polynomials:
+ *   C1:  r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
+ *   C2:  A*x + B*y + C = 0
+ * \param deg1 The degree of the first curve.
+ * \param xs Output: The real-valued roots of the polynomial, sorted in an
+ *                   ascending order.
+ * \pre xs must be a vector of size 4.
+ * \return The number of distinct roots found.
+ */
+template <class Nt_traits>
+int _compute_resultant_roots (Nt_traits& nt_traits,
+			      const typename Nt_traits::Algebraic& r,
+			      const typename Nt_traits::Algebraic& s,
+			      const typename Nt_traits::Algebraic& t,
+			      const typename Nt_traits::Algebraic& u,
+			      const typename Nt_traits::Algebraic& v,
+			      const typename Nt_traits::Algebraic& w,
+			      const int& deg1,
+			      const typename Nt_traits::Algebraic& A,
+			      const typename Nt_traits::Algebraic& B,
+			      const typename Nt_traits::Algebraic& C,
+			      typename Nt_traits::Algebraic *xs)
+{
+  if (deg1 == 1)
+  {
+    // We should actually compute the intersection of two line:
+    // (u*x + v*y + w = 0) and (A*x + B*y + C = 0):
+    const typename Nt_traits::Algebraic   denom = A*v - B*u;
+
+    if (CGAL::sign (denom) == CGAL::ZERO)
+      // The two lines are parallel and do not intersect.
+      return (0);
+
+    xs[0] = (B*w - C*v) / denom;
+    return (1);
+  }
+
+  if (CGAL::sign (B) == CGAL::ZERO)
+  {
+    // The first line is A*x + C = 0, therefore:
+    xs[0] = -C / A;
+    return (1);
+  }
+
+  // We can write the first curve as: y = -(A*x + C) / B.
+  // We substitute this expression into the equation of the conic, and get
+  // the quadratic equation c[2]*x^2 + c[1]*x + c[0] = 0:
+  const typename Nt_traits::Algebraic  _two = 2;
+  typename Nt_traits::Algebraic        c[3];
+  typename Nt_traits::Algebraic       *xs_end;
+
+  c[2] = A*A*s - A*B*t + B*B*r;
+  c[1] = _two*A*C*s - A*B*v - B*C*t + B*B*u;
+  c[0] = C*C*s - B*C*v + B*B*w;
+
+  xs_end = nt_traits.solve_quadratic_equation (c[2], c[1], c[0],
+                                               xs);
   return (xs_end - xs);
 }
 
