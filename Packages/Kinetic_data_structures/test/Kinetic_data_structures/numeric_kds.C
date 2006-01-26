@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
   bool error;
 
-  while (true) {
+  do {
     std::cout << "Using " << num_points  << " degree " << degree << " points.\n";
     //CGAL_KDS_SET_LOG_LEVEL(CGAL::KDS::LOG_SOME);
     typedef CGAL::KDS::Inexact_simulation_traits_1 Tr;
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     }
 
     error= sort_test<Tr>(tr);
-  }
+  } while (false);
   if (error) {
     return EXIT_FAILURE;
   }
