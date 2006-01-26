@@ -134,6 +134,7 @@ void my_complement(const typename Traits_::Polygon_with_holes_2& p,
 }
 
      
+
 template <class Polygon1, class Polygon2>
 bool test(std::istream& inp,
           const Polygon1& p1,
@@ -169,10 +170,50 @@ bool test(std::istream& inp,
     return false;
   }
 
+  CGAL::intersection(p2, p1, oi);
+  if(! are_equal(intersection_res_from_file, temp_result))
+  {
+    std::cout<<"intersection failed...\n";
+    return false;
+  }
+
+  Polygon_with_holes_2 join_res;
+  bool do_x;
+  
+  do_x = CGAL::join(p1, p2, join_res);
+  if(do_x != intersect)
+  {
+    std::cout<<"join failed...\n";
+    return false;
+  }
+  if(do_x)
+  {
+    if(join_res != join_res_from_file)
+    {
+      std::cout<<"join failed...\n";
+      return false;
+    }  
+  }
+
+  do_x = CGAL::join(p2, p1, join_res);
+  if(do_x != intersect)
+  {
+    std::cout<<"join failed...\n";
+    return false;
+  }
+  if(do_x)
+  {
+    if(join_res != join_res_from_file)
+    {
+      std::cout<<"join failed...\n";
+      return false;
+    }  
+  }
+
   CGAL::difference(p1 ,p2, oi);
   if(! are_equal(diff1_res_from_file, temp_result))
   {
-    std::cout<<"join failed...\n";
+    std::cout<<"diff1 failed...\n";
     return false;
   }
 
@@ -180,11 +221,18 @@ bool test(std::istream& inp,
   
   if(! are_equal(diff2_res_from_file, temp_result))
   {
-    std::cout<<"diff1 failed\n";
+    std::cout<<"diff2 failed\n";
     return false;
   }
 
   CGAL::symmetric_difference(p1 ,p2, oi);
+  if(! are_equal(symm_diff_res_from_file, temp_result))
+  {
+    std::cout<<"symmetric_difference failed\n";
+    return false;
+  }
+
+  CGAL::symmetric_difference(p2 ,p1, oi);
   if(! are_equal(symm_diff_res_from_file, temp_result))
   {
     std::cout<<"symmetric_difference failed\n";
@@ -206,6 +254,96 @@ bool test(std::istream& inp,
     std::cout<<"complement2 failed\n";
     return false;
   }
+
+  /////////////////////////////////////////
+
+  Ps ps;
+  Ps ps1(p1);
+  Ps ps2(p2);
+ 
+  ps.intersection(ps1, ps2);
+  ps.polygons_with_holes(oi);
+  if(! are_equal(intersection_res_from_file, temp_result))
+  {
+    std::cout<<"intersection failed\n";
+    return false;
+  }
+
+  ps.clear();
+  ps.join(ps1, ps2);
+  ps.polygons_with_holes(oi);
+  if(intersect)
+  {
+    if(ps.number_of_polygons_with_holes() != 1)
+    {
+      std::cout<<"join failed\n";
+      return false;
+    }
+
+    if(temp_result[0] != join_res_from_file)
+    {
+      std::cout<<"join failed\n";
+      return false;
+    }
+  }
+  else
+  {
+    if(temp_result.size() > 2)
+    {
+       std::cout<<"join failed\n";
+       return false;
+    }
+    if(temp_result.size() == 1)
+    {
+      if(! (temp_result[0] == p1 || temp_result[0]==p2))
+      {
+        std::cout<<"join failed\n";
+        return false;
+      }
+    }
+    else
+      if(temp_result.size() == 2)
+      {
+        if(! (temp_result[0]==p1 && temp_result[1]==p2) || 
+             (temp_result[0]==p2 && temp_result[1]==p1))
+        {
+          std::cout<<"join failed\n";
+          return false;
+        }
+      }
+  }
+  temp_result.clear();
+
+  ps.difference(ps1, ps2);
+  ps.polygons_with_holes(oi);
+  if(! are_equal(diff1_res_from_file, temp_result))
+  {
+    std::cout<<"diff1 failed\n";
+    return false;
+  }
+  ps.clear();
+
+  ps.difference(ps2, ps1);
+  ps.polygons_with_holes(oi);
+  if(! are_equal(diff2_res_from_file, temp_result))
+  {
+    std::cout<<"diff2 failed\n";
+    return false;
+  }
+  ps.clear();
+
+  ps.symmetric_difference(ps1, ps2);
+  ps.polygons_with_holes(oi);
+  if(! are_equal(symm_diff_res_from_file, temp_result))
+  {
+    std::cout<<"symmetric_difference failed\n";
+    return false;
+  }
+  ps.clear();
+
+
+
+
 
   return true;
 }
@@ -258,7 +396,6 @@ bool test_one_file(std::ifstream& inp)
   return (success);
 }
 
-extern int errno;
 
 int main(int argc, char **argv)
 {

@@ -222,7 +222,7 @@ void test()
 
   int main()
   {
-    //test<Gps>();
+    test<Gps>();
     test<Ps>();
 
     return (0);
