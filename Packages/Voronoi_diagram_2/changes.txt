@@ -1,3 +1,6 @@
+26 January 2006:  Menelaos Karavelas
+- fixed typos in user manual
+
 6 January 2006:  Menelaos Karavelas
 - fixed bug in point location code for the segment Delaunay graph
 - added more tests in test suite of segment Delaunay graph for the

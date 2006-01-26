@@ -138,7 +138,7 @@ the Voronoi diagram.
 
 The manner that we treat such issues in this package in a generic way
 is by defining an \emph{adaptation policy}. The adaptation policy is
-reponsible for determining which features in the degree-3 Voronoi
+responsible for determining which features in the degree-3 Voronoi
 diagram are to be rejected and which not. The policy to be used can
 vary depending on the application or the intended usage of the
 resulting Voronoi diagram. What we care about is that firstly the
@@ -159,15 +159,15 @@ such policies \emph{degeneracy removal policies}.
 Delaunay graphs can be mutable or non-mutable. By mutable we mean that
 sites can be inserted or removed at any time, in an entirely on-line
 fashion. By non-mutable we mean that once the Delaunay graph has been
-created, no changes, with respect to the sets of sites defining it,
+created, no changes, with respect to the set of sites defining it,
 are allowed. If the Delaunay graph is a non-mutable one, then the
 Voronoi diagram adaptor is a non-mutable adaptor as well.
 
 If the Delaunay graph is mutable then the question of whether the
 Voronoi diagram adaptor is also mutable is slightly more complex to
 answer. As long as the adaptation policy used does not maintain a
-state, the Voronoi diagram adaptor is a mutable one; this is the case
-for example with our identity policy or the degeneracy removal
+state, the Voronoi diagram adaptor is a mutable one; this is the case,
+for example, with our identity policy or the degeneracy removal
 policies. If, however, the adaptor mantains a state, then whether it
 is mutable or non-mutable really depends on whether its state can be
 updated after every change in the Delaunay graph. Such policies are
