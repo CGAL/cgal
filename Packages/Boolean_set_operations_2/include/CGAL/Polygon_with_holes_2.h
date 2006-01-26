@@ -183,8 +183,41 @@ template <class Kernel_, class Container_>
 inline bool operator!=(const Polygon_with_holes_2<Kernel_, Container_>& p1,
                        const Polygon_with_holes_2<Kernel_, Container_>& p2)
 {
-  return (! p1==p2);
+  return (!(p1==p2));
 }
+
+//-----------------------------------------------------------------------//
+//                          operator==
+//-----------------------------------------------------------------------//
+template <class Kernel_, class Container_>
+bool operator==(const Polygon_with_holes_2<Kernel_, Container_>& p1,
+                const Polygon_2<Kernel_, Container_>& p2)
+{
+  return (p1.outer_boundary() == p2  &&  !p1.number_of_holes());
+}
+
+template <class Kernel_, class Container_>
+inline bool operator==(const Polygon_2<Kernel_, Container_>& p1,
+                       const Polygon_with_holes_2<Kernel_, Container_>& p2)
+{
+  return (p2 == p1);
+}
+
+template <class Kernel_, class Container_>
+inline bool operator!=(const Polygon_with_holes_2<Kernel_, Container_>& p1,
+                       const Polygon_2<Kernel_, Container_>& p2)
+{
+  return (!(p1==p2));
+}
+
+template <class Kernel_, class Container_>
+inline bool operator!=(const Polygon_2<Kernel_, Container_>& p1,
+                       const Polygon_with_holes_2<Kernel_, Container_>& p2)
+{
+  return (!(p1==p2));
+}
+
+
 
 CGAL_END_NAMESPACE
 
