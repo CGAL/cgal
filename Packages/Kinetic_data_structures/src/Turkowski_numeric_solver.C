@@ -20,9 +20,9 @@
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
-#ifdef _MSC_VER
+/*#ifdef _MSC_VER
 #pragma warning(disable:1572)
-#endif
+#endif*/
 
 
 //#include "numeric_solvers_support.C"
