@@ -53,7 +53,7 @@ class Circular_arc_traits_tracer
 
 // FIXME : transform these macros into member functions ?
 #define CGAL_DEBUG(level, args) if (level <= debug_level) \
-   { std::cout << "Call #" << t->call_number++ << " " << __PRETTY_FUNCTION__ \
+   { std::cout << "Call #" << t->call_number++ << " " << CGAL_PRETTY_FUNCTION \
                << "  ( " << args << " )"; \
      if (t->nested_level != 0) \
        std::cout << "   [ nested level " << t->nested_level << " ]"; \

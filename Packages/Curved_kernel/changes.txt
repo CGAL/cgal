@@ -1,3 +1,6 @@
+26 January Andreas Fabri
+- Replaced __PRETTY_FUNCTION__ with CGAL_PRETTY_FUNCTION
+
 25 January 2005 Andreas Fabri
 - Added a constructor for Circular_arc_2(Point source, Point target, FT bulge)
 

@@ -43,7 +43,7 @@ struct Predicate_checker {
   result_type
   operator()(const A1 & a1) const
     {
-      std::cout << " call " << __PRETTY_FUNCTION__ << std::endl
+      std::cout << " call " << CGAL_PRETTY_FUNCTION << std::endl
 		<< " [_1 ] " << a1.first << std::endl
 		<< " [_2 ] " << a1.second << std::endl;
 
@@ -51,7 +51,7 @@ struct Predicate_checker {
       result_type r2 = p2(a1.second);
       
       if ( r1 != r2) {
-	std::cerr << " Error in " << __PRETTY_FUNCTION__ << std::endl;
+	std::cerr << " Error in " << CGAL_PRETTY_FUNCTION << std::endl;
 	std::cerr << " P1 returns : " << r1 << "  but P2 returns : "
 		  << r2 << std::endl;
 	std::cerr << " Arguments for P1 are : "
@@ -68,7 +68,7 @@ struct Predicate_checker {
   result_type
   operator()(const A1 & a1, const A2 & a2 ) const
     {
-      std::cout << " call " << __PRETTY_FUNCTION__ << std::endl
+      std::cout << " call " << CGAL_PRETTY_FUNCTION << std::endl
 		<< " [_1 ] " << a1.first << " et " << a2.first
 		<< std::endl
 		<< " [_2 ] " << a1.second << " et " << a2.second 
@@ -78,7 +78,7 @@ struct Predicate_checker {
       result_type r2 = p2(a1.second, a2.second);
       
       if ( r1 != r2) {
-	std::cerr << " Error in " << __PRETTY_FUNCTION__ << std::endl;
+	std::cerr << " Error in " << CGAL_PRETTY_FUNCTION << std::endl;
 	std::cerr << " P1 returns : " << r1 << "  but P2 returns : "
 		  << r2 << std::endl;
 	std::cerr << " Arguments for P1 are : "
@@ -97,7 +97,7 @@ struct Predicate_checker {
   result_type
   operator()(const A1 & a1, const A2 & a2, const A3 & a3 ) const
     {
-      std::cout << " call " << __PRETTY_FUNCTION__ << std::endl
+      std::cout << " call " << CGAL_PRETTY_FUNCTION << std::endl
 		<< " [_1 ] " << a1.first << " et " << a2.first
 		<< " et " << a3.first
 		<< std::endl
@@ -109,7 +109,7 @@ struct Predicate_checker {
       result_type r2 = p2(a1.second, a2.second, a3.second);
       
       if ( r1 != r2) {
-	std::cerr << " Error in " << __PRETTY_FUNCTION__ << std::endl;
+	std::cerr << " Error in " << CGAL_PRETTY_FUNCTION << std::endl;
 	std::cerr << " P1 returns : " << r1 << "  but P2 returns : "
 		  << r2 << std::endl;
 	std::cerr << " Arguments for P1 are : "

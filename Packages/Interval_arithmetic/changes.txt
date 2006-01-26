@@ -1,3 +1,6 @@
+26 January Andreas Fabri
+- Replaced __PRETTY_FUNCTION__ with CGAL_PRETTY_FUNCTION
+
 21 January 2006 Sylvain Pion
 - make test/IA/Static_filters.C work (real fix would be to make
   Kernel_checker into a real kernel, with type equality and missing

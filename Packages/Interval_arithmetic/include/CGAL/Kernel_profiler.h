@@ -39,7 +39,7 @@ struct Primitive_profiler
     typedef typename P::result_type  result_type;
     typedef typename P::Arity        Arity;
 
-// #define CGAL_KERNEL_PROFILER CGAL_PROFILER(__PRETTY_FUNCTION__);
+// #define CGAL_KERNEL_PROFILER CGAL_PROFILER(CGAL_PRETTY_FUNCTION);
 #define CGAL_KERNEL_PROFILER \
         CGAL_PROFILER(typeid(static_cast<const P&>(*this)).name())
 
