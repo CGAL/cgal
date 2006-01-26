@@ -43,7 +43,7 @@ public:
   using Base::operator();
 #else 
   result_type
-  operator()(const Vector_2& u, const Vector_2& v, const Vector_2& w)) const
+  operator()(const Vector_2& u, const Vector_2& v, const Vector_2& w) const
   { 
     return Base::operator()(u,v,w);
   }
