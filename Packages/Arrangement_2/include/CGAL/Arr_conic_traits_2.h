@@ -507,40 +507,37 @@ public:
         {
           CGAL_assertion (n_vtan_ps == 2);
 
-          // Split the arc into three x-monotone sub-curves: one going from the
-          // arc source to ps[0], one from ps[0] to ps[1], and the last one
-          // from ps[1] to the target.
-          // Notice that ps[0] and ps[1] might switch places.
-          X_monotone_curve_2    sub_curve1 (cv, cv.source(), vtan_ps[0], 
-                                            conic_id);
-          X_monotone_curve_2    sub_curve2 (cv, vtan_ps[0], cv.target(),
-                                            conic_id);
-          X_monotone_curve_2    sub_curve3;
-          X_monotone_curve_2    temp;
-          Point_2               vtan_p = Point_2(vtan_ps[1]);
+          // Identify the first point we encounter when going from cv's source
+          // to its target, and the second point we encounter.
+          int                   ind_first = 0;
+          int                   ind_second = 1;
 
-          if (sub_curve2.contains_point (vtan_p))
+          if ((cv.orientation() == COUNTERCLOCKWISE &&
+               CGAL::compare (vtan_ps[0].x(), vtan_ps[1].x()) == LARGER) ||
+              (cv.orientation() == CLOCKWISE &&
+               CGAL::compare (vtan_ps[0].x(), vtan_ps[1].x()) == SMALLER))
           {
-            temp = sub_curve2;
-            temp.split (vtan_p,
-                        sub_curve2, sub_curve3);
-          }
-          else
-          {
-            CGAL_assertion (sub_curve1.contains_point (vtan_p));
-
-            // Actually we switch between ps[0] and ps[1].
-            temp = sub_curve1;
-            sub_curve3 = sub_curve2;
-            temp.split (vtan_p,
-                        sub_curve1, sub_curve2);
+            ind_first = 1;
+            ind_second = 0;
           }
 
-          *oi = make_object (sub_curve1);
+          // Split the arc into three x-monotone sub-curves.
+          *oi = make_object (X_monotone_curve_2 (cv,
+                                                 cv.source(), 
+                                                 vtan_ps[ind_first], 
+                                                 conic_id));
           ++oi;
-          *oi = make_object (sub_curve2);
+          
+          *oi = make_object (X_monotone_curve_2 (cv,
+                                                 vtan_ps[ind_first], 
+                                                 vtan_ps[ind_second], 
+                                                 conic_id));
           ++oi;
-          *oi = make_object (sub_curve3);
+          
+          *oi = make_object (X_monotone_curve_2 (cv,
+                                                 vtan_ps[ind_second],
+                                                 cv.target(),
+                                                 conic_id));
           ++oi;
         }
       }
