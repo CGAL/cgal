@@ -11,3 +11,4 @@
 ./data/bop/test11.txt
 ./data/bop/test12.txt
 ./data/bop/test13.txt
+./data/bop/test14.txt
