@@ -361,7 +361,7 @@ static void Turkowski_polynomial_compute_roots_t(const double *begin,
       roots.push_back(rp[i]);
       /*std::cout << "Good was " <<  rp[i] << "+" <<std::setprecision(10) <<  cp[i] << "i "
 	<< cc[i] << "\n";*/
-    } else if (CLEAN && root_is_good(rp[i], cp[i], last, ub)) {
+    } else if (CLEAN && root_is_good(rp[i], cp[i], last, ub) && last < rp[i] && rp[i] <= lb) {
       last= rp[i];
     }
     /*else {

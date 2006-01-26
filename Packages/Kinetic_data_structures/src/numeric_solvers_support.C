@@ -149,7 +149,9 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
     if (lb-last_root > roots.back()-lb) {
       last_root= roots.back();
       roots.pop_back();
-    }
+    } /*else {
+      last_root=lb;
+      }*/
 
     INT vi;
     if (last_root== -std::numeric_limits<double>::infinity()){

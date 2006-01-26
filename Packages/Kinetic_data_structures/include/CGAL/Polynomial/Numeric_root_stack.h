@@ -103,6 +103,8 @@ public:
 	std::cerr << "ERROR: roots out of order ";
 	std::copy(roots_.begin(), roots_.end(), std::ostream_iterator<double>(std::cerr, " "));
 	std::cerr << " for " << f << " from " << lb << " to " << ub << std::endl;
+	roots_.clear();
+	initialize(f,lb, ub);
       }
     }
 #endif
