@@ -4,9 +4,12 @@
 
 \begin{itemize}
 
+\item there might be a bug in Simple_interval_root due to its use of
+  approximate_interval_width (which uses doubles and so might never
+  get small enough).
 
 \item The other trajectory modification events need to be documented
-  (Set\_moving\_point)
+  (Set\_moving\_point). Hmmm, I don't remember what this means. 
 
 \item There is no 2d regular triangulation. This is not too much work,
   but a bit (since I will need to refactor my 2d delaunay)
@@ -36,7 +39,8 @@
   ActiveObjectsTable and simulator. I don't see an obvious way to keep
   its simplicity and have it make more sense.
 
-\item the Qt stuff is broken since I am waiting for the proper person to update the makefile
+\item the Qt stuff is broken since I am waiting for the proper person
+  to update the makefile
 
 
 \end{itemize}

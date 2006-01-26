@@ -23,6 +23,7 @@
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
 #include <algorithm>
 #include <map>
+#include <set>
 #include <list>
 #include <iterator>
 #include <iostream>
@@ -71,6 +72,7 @@ public:
 		   ik_(tr.instantaneous_kernel_object()){
     sim_listener_= Sim_listener(tr.simulator_pointer(), this);
     mot_listener_=MOT_listener(tr.active_objects_table_pointer(), this);
+    wrote_objects_=false;
   }
 
   /* Insert k and update the affected certificates. std::upper_bound
@@ -130,15 +132,16 @@ public:
      properly sorted for time t. This function is called by the Sim_listener.*/
   void audit() const
   {
-    static bool wrote_objects=false;
+
     if (sorted_.size() <2) return;
 
     ik_.set_time(simulator()->rational_current_time());
     typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
+    
     for (typename std::list<Object_key>::const_iterator it
 	   = sorted_.begin(); *it != sorted_.back(); ++it) {
 #ifdef CGAL_KDS_CHECK_EXACTNESS
-      wrote_objects=true;
+      wrote_objects_=true;
       if (!less(*it, *next(it))) {
 	std::cerr << "ERROR: objects " << *it << " and "
 		  << *next(it) << " are out of order.\n";
@@ -150,21 +153,25 @@ public:
       }
 #else
       if (!less(*it, *next(it))) {
-	std::cerr << "WARNING: objects " << *it << " and "
-		  << *next(it) << " are out of order.\n";
-	std::cerr << object(*it) << " and " << object(*next(it)) << std::endl;
-	std::cerr << "Time is " <<simulator()->rational_current_time() << std::endl; 
-	std::cerr << "WARNING: order is ";
-	write(std::cerr);
-	if (!wrote_objects) {
-	  wrote_objects=true;
-	  std::cerr << "Objects are: ";
-	  for (typename Traits::Active_objects_table::Keys_iterator kit= mot_listener_.notifier()->keys_begin();
-	       kit != mot_listener_.notifier()->keys_end(); ++kit){
-	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+	if (warned_.find(*it) == warned_.end() ||
+	    warned_[*it].find(*next(it)) == warned_[*it].end()) {
+	  std::cerr << "WARNING: objects " << *it << " and "
+		    << *next(it) << " are out of order.\n";
+	  std::cerr << object(*it) << " and " << object(*next(it)) << std::endl;
+	  std::cerr << "Time is " <<simulator()->rational_current_time() << std::endl; 
+	  std::cerr << "WARNING: order is ";
+	  write(std::cerr);
+	  if (!wrote_objects_) {
+	    wrote_objects_=true;
+	    std::cerr << "Objects are: ";
+	    for (typename Traits::Active_objects_table::Keys_iterator kit= mot_listener_.notifier()->keys_begin();
+		 kit != mot_listener_.notifier()->keys_end(); ++kit){
+	      std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+	    }
 	  }
+	  warned_[*it].insert(*next(it));
+	  std::cerr << std::endl;
 	}
-	std::cerr << std::endl;
       }	
 #endif
     }
@@ -223,6 +230,10 @@ public:
   std::map<Object_key, Event_key > events_;
   typename Traits::Kinetic_kernel kk_;
   Instantaneous_kernel ik_;
+  //#ifndef NDEBUG
+  mutable bool wrote_objects_;
+  mutable std::map<Object_key, std::set<Object_key> > warned_;
+  //#endif
 };
 
 /* It needs to implement the time() and process() functions and
