@@ -27,9 +27,10 @@ CGAL_BEGIN_NAMESPACE
 
 // The class Euler_integrator_2 is a model of the concept Integrator
 template <class VectorField_2>
-class Euler_integrator_2{
+class Euler_integrator_2
+{
 public:
-	typedef Euler_integrator_2<VectorField_2> self;
+  typedef Euler_integrator_2<VectorField_2> self;
   typedef typename VectorField_2::FT FT;
   typedef typename VectorField_2::Point_2 Point_2;
   typedef typename VectorField_2::Vector_2 Vector_2;
@@ -37,17 +38,32 @@ public:
 protected:
   FT default_integration_step;
 public:
-	Euler_integrator_2();
+  Euler_integrator_2();
+
   Euler_integrator_2(const FT & integration_step);
-  inline Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const bool & index) const;
-  inline Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, const bool & index) const;
-  inline Point_2 operator()(const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, Vector_2 v, const bool & index) const;
-  inline FT get_default_integration_step(){return default_integration_step;}
-// just for debugging
-inline FT distance(const Point_2 & p, const Point_2 & q)
-{
-	return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));
-}
+
+  inline Point_2 operator()(const Point_2 & p, const Vector_field_2 &
+			    vector_field_2, const bool & index) const;
+
+  inline Point_2 operator()(const Point_2 & p, const Vector_field_2 &
+			    vector_field_2, const FT &
+			    integration_step, const bool & index)
+    const;
+
+  inline Point_2 operator()(const Point_2 & p, const Vector_field_2 &
+			    vector_field_2, const FT &
+			    integration_step, Vector_2 v, const bool &
+			    index) const;
+
+  inline FT get_default_integration_step()
+    {
+      return default_integration_step;
+    }
+  // just for debugging
+  inline FT distance(const Point_2 & p, const Point_2 & q)
+    {
+      return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y() - q.y())*(p.y() - q.y())));
+    }
 };
 
 template <class Vector_field>
