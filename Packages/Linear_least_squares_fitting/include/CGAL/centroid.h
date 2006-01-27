@@ -55,7 +55,7 @@ centroid(InputIterator begin,
 
   Vector v = NULL_VECTOR;
   unsigned int nb_pts = 0;
-  while (begin != end) 
+  while(begin != end) 
   {
     v = v + (*begin++ - ORIGIN);
     nb_pts++;
@@ -106,24 +106,22 @@ centroid(InputIterator begin,
   CGAL_precondition(begin != end);
 
   Vector v = NULL_VECTOR;
-  FT sum_area = 0;
+  FT sum_areas = 0;
   for(InputIterator it = begin;
       it != end;
       it++)
   {
     const Triangle& triangle = *it;
-    FT area = std::abs(triangle.area());
+    FT unsigned_area = std::abs(triangle.area());
     Point c = K().construct_centroid_2_object()(triangle[0],triangle[1],triangle[2]);
-    v = v + area * (c - ORIGIN);
-    sum_area += area;
+    v = v + unsigned_area * (c - ORIGIN);
+    sum_areas += unsigned_area;
   }
-  CGAL_assertion(sum_area != 0);
-  return ORIGIN + v / sum_area;
+  CGAL_assertion(sum_areas != 0.0);
+  return ORIGIN + v / sum_areas;
 } // end centroid of a 2D triangle set
 
 } // namespace CGALi
-
-
 
 // computes the centroid of a set of kernel objects
 // takes an iterator range over kernel objects
@@ -146,10 +144,9 @@ centroid(InputIterator begin,
 template < typename InputIterator >
 inline
 typename Point<Dimension<
-                 typename std::iterator_traits<InputIterator>::value_type,
-                 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::value,
-               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel
-              >::type
+               typename std::iterator_traits<InputIterator>::value_type,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::value,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type
 centroid(InputIterator begin, InputIterator end)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;

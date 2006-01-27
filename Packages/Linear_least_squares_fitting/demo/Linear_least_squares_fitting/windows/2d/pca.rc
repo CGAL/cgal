@@ -123,6 +123,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUTBOX            "&About pca..."
+    IDS_MESSAGE0            "-------------------"
 END
 
 #endif    // Anglais (États-Unis) resources
@@ -195,7 +196,7 @@ BEGIN
         MENUITEM "&Load",                       ID_SET_LOAD
         MENUITEM "&Save...",                    ID_SET_7SAVE
         MENUITEM SEPARATOR
-        MENUITEM "&Clear",                      ID_SET_CLEAR
+        MENUITEM "&Clear\tC",                   ID_SET_CLEAR
     END
     POPUP "&Edit"
     BEGIN
@@ -205,10 +206,17 @@ BEGIN
     BEGIN
         MENUITEM "&Line",                       ID_FIT_LINE
     END
-    POPUP "&Output"
-    BEGIN
-        MENUITEM "&Postscript",                 ID_OUTPUT_POSTSCRIPT
-    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS 
+BEGIN
+    "C",            ID_SET_CLEAR,           VIRTKEY, NOINVERT
 END
 
 #endif    // Français (France) resources

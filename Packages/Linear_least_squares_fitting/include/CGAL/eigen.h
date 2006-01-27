@@ -27,13 +27,12 @@ namespace CGALi {
 
 template <class FT>
 void eigen_symmetric(const FT *mat, 
-                     int n, 
+                     const int n, 
                      FT *eigen_vectors, 
                      FT *eigen_values,
                      const int MAX_ITER = 100) 
 {
-  static const FT EPS = 0.00001;
-  static const FT PPI = 3.14159265358;
+  static const FT EPSILON = 0.00001;
       
   // number of entries in mat
   int nn = (n*(n+1))/2;
@@ -75,7 +74,7 @@ void eigen_symmetric(const FT *mat,
       
   if(a_norm != 0.0) 
   {
-    FT a_normEPS = a_norm * EPS;
+    FT a_normEPS = a_norm * EPSILON;
     FT thr = a_norm;
   
     // rotations
@@ -109,7 +108,7 @@ void eigen_symmetric(const FT *mat,
           
           FT x;
           if(delta == 0.0)
-            x = - PPI/4 ; 
+            x = - PI/4 ; 
           else 
             x = - atan( (a_lm+a_lm) / delta ) / 2.0;
 

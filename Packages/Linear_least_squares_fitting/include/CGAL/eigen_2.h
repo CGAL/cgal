@@ -16,7 +16,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Pierre Alliez
+// Author(s) : Pierre Alliez
 
 #ifndef CGAL_EIGEN_2_H
 #define CGAL_EIGEN_2_H
@@ -51,18 +51,19 @@ namespace CGALi {
     // degenerate or isotropic case
     if(p == 0.0 || p == 0.0) 
     {
-      // unit eigen values
-      eigen_values.first  = eigen_values.second = (FT)1.0;
+      // unit eigen values by default
+      eigen_values.first = eigen_values.second = (FT)1.0;
 
       // any vector is eigen vector
+      // the 2D canonical frame  is set by default
       eigen_vectors.first  = Vector((FT)1.0,(FT)0.0);
       eigen_vectors.second = Vector((FT)0.0,(FT)1.0);
     }
     else // generic case
     {
-      // sort eigen values and vectors
       FT l1 = 0.5 * ( -std::sqrt(p) + c + a);
       FT l2 = 0.5 * (  std::sqrt(p) + c + a);
+      // sort eigen values and vectors in descendent order.
       if(l1 >= l2)
       {
         eigen_values.first  = l1;

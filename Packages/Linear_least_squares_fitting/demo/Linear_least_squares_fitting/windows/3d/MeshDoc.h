@@ -17,6 +17,7 @@ typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Plane_3 Plane;
 typedef Kernel::Vector_3 Vector;
+typedef Kernel::Triangle_3 Triangle;
 typedef Enriched_polyhedron<Kernel,Enriched_items> Mesh;
 
 class CMeshDoc : public CDocument
@@ -28,15 +29,18 @@ protected: // create from serialization only
 // Attributes
 public:
 
-  // data set
+  // data sets
 	std::list<Point> m_points;
+	std::list<Triangle> m_triangles;
+
+  // triangle mesh represented as a CGAL polyhedron
+  Mesh m_mesh;
+
+  // fitting primitives
+  FT m_quality;
   Point m_centroid;
   Line m_fitting_line;
   Plane m_fitting_plane;
-  FT m_quality;
-
-  // triangle mesh represented as a polyhedron
-  Mesh m_mesh;
 
   void gl_draw_fitting_primitive();
 
@@ -68,6 +72,10 @@ public:
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	afx_msg void OnEditOptions();
   afx_msg void OnFitPlane();
+  afx_msg void OnFitLine();
+  afx_msg void OnPointsetPlane();
+  afx_msg void OnPointsetLine();
+  afx_msg void OnRandomOnaplane();
 };
 
 

@@ -11,6 +11,13 @@
 #endif
 
 
+static UINT indicators[] =
+{
+	ID_SEPARATOR,
+	IDS_MESSAGE0,
+};
+
+
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialog
@@ -255,13 +262,6 @@ int CpcaDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if(CreateViewGLContext(hDC)==FALSE)
 		return 0;
 
-	/*
-	COLORREF color = ::GetSysColor(COLOR_3DFACE);
-	glClearColor((float)GetRValue(color)/255.0f,
-				       (float)GetGValue(color)/255.0f,
-				       (float)GetBValue(color)/255.0f,
-				        1.0);
-	*/
 	glClearColor(1.0f,1.0f,1.0f,1.0f);
 	glPolygonMode(GL_FRONT,GL_FILL);
 
@@ -365,7 +365,8 @@ void CpcaDlg::OnMouseMove(UINT nFlags, CPoint point)
 	if(m_LeftButtonDown)
 	{
 		m_points.push_back(convert(point));
-    OnFitLine();
+    if(m_points.size() < 1000)
+      OnFitLine();
 		InvalidateRect(NULL,FALSE);
 	}
 
@@ -404,8 +405,12 @@ bool CpcaDlg::inside(const CPoint& point)
 
 void CpcaDlg::OnFitLine()
 {
-  linear_least_squares_fitting_2(m_points.begin(),
-                                              m_points.end(),
-                                              m_fitting_line,
-                                              m_centroid);
+  FT quality = 
+    linear_least_squares_fitting_2(m_points.begin(),
+                                  m_points.end(),
+                                  m_fitting_line,
+                                  m_centroid);
+  CString str;
+  str.Format("Fitting quality: %6.3f",quality);
+  SetWindowText(str);
 }

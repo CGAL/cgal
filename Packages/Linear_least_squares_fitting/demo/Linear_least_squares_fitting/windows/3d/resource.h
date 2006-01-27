@@ -107,13 +107,17 @@
 #define ID_FIT_PLANE                    32891
 #define ID_DATASET_RANDOM               32892
 #define ID_RANDOM_ONAPLANE              32893
+#define ID_FIT_TRIANGLESET              32894
+#define ID_FIT_POINTSET                 32895
+#define ID_POINTSET_LINE                32896
+#define ID_POINTSET_PLANE               32897
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
-#define _APS_NEXT_COMMAND_VALUE         32894
+#define _APS_NEXT_COMMAND_VALUE         32898
 #define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
