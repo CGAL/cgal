@@ -161,6 +161,10 @@ An object \ccVar\ of this type must provide:
 	(const CircularKernel::Circular_arc_2 & c);}
 {Tests whether the arc is $x$-monotone.}
 
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{For a line arc, always returns \ccc{true}.}
+
 \ccHasModels
 
 \ccc{Circular_kernel::Is_x_monotone_2;}

@@ -99,6 +99,71 @@ defined by the intersections has non-zero length.}}
 
 \end{ccRefFunctionObjectConcept}
 
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularMinVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the $x$-minimal vertex of \ccc{c}.
+\ccPrecond{The arc \ccc{c} is $x$-monotone.}}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularMaxVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the $x$-maximal vertex of \ccc{c}.
+\ccPrecond{The arc \ccc{c} is $x$-monotone.}}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularSourceVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the source vertex of \ccc{c}.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularTargetVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the target vertex of \ccc{c}.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
 
 \begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXMonotone_2}
 
