@@ -4,7 +4,27 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
+ template <bool S, bool Q>
+  struct Double_with_infinity_default {
+    static double value(){return std::numeric_limits<double>::max();};
+  };
+  template<bool O>
+  struct Double_with_infinity_default<true,O> {
+    static double value(){return std::numeric_limits<double>::signaling_NaN();};
+  };
+  template<>
+  struct Double_with_infinity_default<false,true> {
+    static double value(){return std::numeric_limits<double>::quiet_NaN();};
+  };
+
 struct Double_with_infinity {
+  static double get_default() {
+    return Double_with_infinity_default<std::numeric_limits<double>::has_signaling_NaN,
+      std::numeric_limits<double>::has_quiet_NaN>::value();
+      
+  }
+  
+  Double_with_infinity(): d_(get_default()){}
   Double_with_infinity(double d): d_(d){}
   operator const double&() const {
     return d_;
