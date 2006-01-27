@@ -103,6 +103,8 @@ public:
   using Tr_Base::vertex_triple_index;
   using Tr_Base::mirror_vertex;
   using Tr_Base::mirror_index;
+  using Tr_Base::orientation;
+  using Tr_Base::coplanar_orientation;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt)
