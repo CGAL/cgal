@@ -165,6 +165,26 @@ A model \ccVar\ of this type must provide:
 
 \end{ccRefFunctionObjectConcept}
 
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructBbox_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CGAL::Bbox_2 operator()
+	(const CircularKernel::Circular_arc_point_2 & p);}
+{}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{}
+
+\end{ccRefFunctionObjectConcept}
+
 \begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXMonotone_2}
 
 \ccDefinition
