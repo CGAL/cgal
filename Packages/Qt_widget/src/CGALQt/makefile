@@ -1,4 +1,4 @@
-# This is the makefile for compiling the CGAL window library libCGALWin.a.
+# This is the makefile for compiling the CGAL Qt support library libCGALQt.a.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
@@ -8,12 +8,13 @@
 CGAL_MAKEFILE_FAKE = REMOVE_FAKE_AND_SET_YOUR_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
+-include kds.makefile
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS -DCGAL_USE_QT
+CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_QT
 
 #---------------------------------------------------------------------#
 # Object files
@@ -26,7 +27,8 @@ Qt_widget_standard_toolbar$(OBJ_EXT) \
 Qt_help_window$(OBJ_EXT) \
 Qt_widget_history$(OBJ_EXT) \
 Qt_widget_xpm_icons$(OBJ_EXT) \
-Qt_widget_OpenGL$(OBJ_EXT)
+Qt_widget_OpenGL$(OBJ_EXT) \
+$(CGAL_KDS_OBJECTS)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -44,6 +46,8 @@ lib_no_install: $(CGAL_OBJECTS)
 
 clean:
 	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) *.moc
+
+-include kds_deps.makefile
 
 #---------------------------------------------------------------------#
 #                    suffix rules
