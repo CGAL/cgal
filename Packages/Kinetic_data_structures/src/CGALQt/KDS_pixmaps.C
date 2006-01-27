@@ -37,14 +37,14 @@ namespace CGAL
 #include "KDS_faster.xpm"
 #include "KDS_slower.xpm"
             }
-            char * const * const play_xpm= pixmaps::play_xpm;
-            char * const * const faster_xpm= pixmaps::faster_xpm;
-            char * const * const play_through_xpm= pixmaps::play_through_xpm;
-            char * const * const slower_xpm= pixmaps::slower_xpm;
-            char * const * const pause_xpm= pixmaps::pause_xpm;
-            char * const * const play_to_xpm= pixmaps::play_to_xpm;
-            char * const * const reverse_xpm= pixmaps::reverse_xpm;
-            char * const * const stop_xpm= pixmaps::stop_xpm;
+            const char ** play_xpm= pixmaps::play_xpm;
+            const char ** faster_xpm= pixmaps::faster_xpm;
+            const char ** play_through_xpm= pixmaps::play_through_xpm;
+            const char ** slower_xpm= pixmaps::slower_xpm;
+            const char ** pause_xpm= pixmaps::pause_xpm;
+            const char ** play_to_xpm= pixmaps::play_to_xpm;
+            const char ** reverse_xpm= pixmaps::reverse_xpm;
+            const char ** stop_xpm= pixmaps::stop_xpm;
 
         }
     }

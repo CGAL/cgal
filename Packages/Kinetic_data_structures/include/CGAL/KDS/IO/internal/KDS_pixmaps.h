@@ -25,14 +25,14 @@ namespace CGAL
     {
         namespace internal
         {
-            extern char * const * const play_xpm;
-            extern char * const * const faster_xpm;
-            extern char * const * const play_through_xpm;
-            extern char * const * const slower_xpm;
-            extern char * const * const pause_xpm;
-            extern char * const * const play_to_xpm;
-            extern char * const * const reverse_xpm;
-            extern char * const * const stop_xpm;
+            extern const char ** play_xpm;
+            extern const char ** faster_xpm;
+            extern const char ** play_through_xpm;
+            extern const char ** slower_xpm;
+            extern const char ** pause_xpm;
+            extern const char ** play_to_xpm;
+            extern const char ** reverse_xpm;
+            extern const char ** stop_xpm;
         }
     }
 }
