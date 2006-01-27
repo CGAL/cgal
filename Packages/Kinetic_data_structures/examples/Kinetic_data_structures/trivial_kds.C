@@ -101,8 +101,8 @@ struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> >
                     *tr_.active_objects_table_pointer(),
                     this));
                 std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
-                assert(!event_
-                    || sp->template event<Event>(event_).objects_.size() == objects_.size());
+                assert((!event_)
+		       || (sp->template event<Event>(event_).objects_.size() == objects_.size()));
             }
             else {
                 if (event_) {
