@@ -1006,20 +1006,6 @@ set_compiler_flags()
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
 	    EXE_EXT=".exe"
 	    ;;
-	*Darwin*8*g++*4*0*0*)
-	    #### settings for gcc 4.0.0 on Darwin 8.x (MacOS X Tiger)
-	    # -frounding-math is required for correct enough floating
-	    # point operations necessary for interval arithmetic.
-	    #
-	    # this goes before the more generic Darwin OS case since
-	    # we have to test for Tiger
-	    ADDITIONAL_CXXFLAGS="-frounding-math -Wall -fno-common"
-	    CGAL_SHARED_LIB_CXXFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
-	    SHARED_LIB_EXT=".dylib"
-	    RUNTIME_LINKER_FLAG=''
-	    RANLIB="ranlib"
-	    ;;
 	*Darwin*g++*)
 	    #### settings for gcc on Darwin
 	    ADDITIONAL_CXXFLAGS="-Wall -fno-common"
@@ -1068,6 +1054,9 @@ set_compiler_flags()
 	*GNU*)
 	    case `compiler_version` in
 		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-50";;
+		3.*) : ;;
+		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
+		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
 	    ;;
     esac
