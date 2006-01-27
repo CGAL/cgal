@@ -80,8 +80,7 @@ class Polynomial_impl
 
 //! Get coefficients from a vector
         template <class Iterator>
-        Polynomial_impl(Iterator first, Iterator beyond) {
-            coefs_.insert(coefs_.end(), first, beyond);
+        Polynomial_impl(Iterator first, Iterator beyond): coefs_(first, beyond) {
         }
 
 //========================
