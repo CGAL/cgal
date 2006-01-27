@@ -29,6 +29,15 @@ struct Double_with_infinity {
   operator const double&() const {
     return d_;
   }
+
+  bool is_rational() const {
+    return true;
+  }
+  double to_rational() const {return d_;}
+  bool is_even_multiplicity() const {
+    return false;
+  }
+  
 protected:
   double d_;
 };

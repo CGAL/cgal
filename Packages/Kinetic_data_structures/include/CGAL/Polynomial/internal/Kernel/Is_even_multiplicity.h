@@ -24,8 +24,6 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-class Double_with_infinity;
-
 //! Compute the sign after a root.
 /*!
   This has specializations for Explicit_roots.
@@ -46,10 +44,6 @@ public:
   }
 
   bool operator()(double) const
-  {
-    return false;
-  }
-  bool operator()(const Double_with_infinity&) const
   {
     return false;
   }
