@@ -34,6 +34,7 @@ class SF_Orientation_3
   : public K_base::Orientation_3
 {
   typedef typename K_base::Point_3          Point_3;
+  typedef typename K_base::Vector_3          Vector_3;
   typedef typename K_base::Orientation_3    Base;
 
 public:
@@ -43,7 +44,7 @@ public:
   using Base::operator();
 #else 
   result_type
-  operator()(const Vector_2& u, const Vector_2& v, const Vector_2& w) const
+  operator()(const Vector_3& u, const Vector_3& v, const Vector_3& w) const
   { 
     return Base::operator()(u,v,w);
   }
