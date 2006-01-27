@@ -335,17 +335,17 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
     public:
         typedef VisitorT Visitor;
 
-#ifdef _MSC_VER
+  /*#ifdef _MSC_VER
 #pragma warning(disable:C4355)
-#endif
+#endif*/
         Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
         listener_(NULL) {
 	  siml_= Simulator_listener(tr.simulator_pointer(), this);
 	  motl_= Moving_point_table_listener(tr.active_objects_table_pointer(), this);
         }
-#ifdef _MSC_VER
+  /*#ifdef _MSC_VER
 #pragma warning(enable:C4355)
-#endif
+#endif*/
 
         const Visitor &visitor() const
         {

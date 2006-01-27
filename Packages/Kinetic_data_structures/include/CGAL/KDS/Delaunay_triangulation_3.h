@@ -134,17 +134,17 @@ class Delaunay_triangulation_3: public Ref_counted<Delaunay_triangulation_3<Trai
 
     public:
 //! Initialize it.
-#ifdef _MSC_VER
+/*#ifdef _MSC_VER
 #pragma warning(disable:4355)
-#endif
+#endif*/
         Delaunay_triangulation_3(TraitsT tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
         listener_(NULL) {
 	  siml_= Simulator_listener(tr.simulator_pointer(), this);
 	  motl_= Moving_point_table_listener(tr.active_objects_table_pointer(), this);
         }
-#ifdef _MSC_VER
+  /*#ifdef _MSC_VER
 #pragma warning(enable:4355)
-#endif
+#endif*/
 
 //! The type of the underlying triangulation
         typedef TriangulationT Triangulation;

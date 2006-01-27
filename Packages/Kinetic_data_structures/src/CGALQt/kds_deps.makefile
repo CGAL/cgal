@@ -14,10 +14,6 @@ KDS_Qt_core.moc: ../../include/CGAL/KDS/IO/internal/KDS_Qt_core.h
 	$(QT_MOC) ../../include/CGAL/KDS/IO/internal/KDS_Qt_core.h > KDS_Qt_core.moc
 
 
-KDS_Qt_examiner_viewer.moc: ../../include/CGAL/KDS/IO/internal/KDS_Qt_examiner_viewer.h
-	$(QT_MOC) ../../include/CGAL/KDS/IO/internal/KDS_Qt_examiner_viewer.h > KDS_Qt_examiner_viewer.moc
-
-
 KDS_Qt_timer.moc: ../../include/CGAL/KDS/IO/internal/KDS_Qt_timer.h
 	$(QT_MOC) ../../include/CGAL/KDS/IO/internal/KDS_Qt_timer.h > KDS_Qt_timer.moc
 

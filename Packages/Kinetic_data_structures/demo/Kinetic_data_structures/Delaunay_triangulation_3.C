@@ -3,17 +3,17 @@
 #include <algorithm>
 #include <CGAL/KDS/Delaunay_triangulation_3.h>
 
-#ifdef CGAL_USE_COIN
-#include <CGAL/KDS/IO/Qt_widget_3.h>
-#include <CGAL/KDS/IO/Qt_moving_points_3.h>
-#include <CGAL/KDS/IO/Qt_triangulation_3.h>
+#ifdef CGAL_USE_SOQT
+#include "include/SoQt_widget_3.h"
+#include "include/SoQt_moving_points_3.h"
+#include "include/SoQt_triangulation_3.h"
 #include <boost/program_options.hpp>
 #include <CGAL/KDS/Enclosing_box_3.h>
 #endif
 
 int main(int argc, char *argv[])
 {
-#ifdef CGAL_USE_COIN
+#ifdef CGAL_USE_SOQT
     int n=10;
     int d=2;
     bool print_help=false;
@@ -44,9 +44,9 @@ int main(int argc, char *argv[])
     typedef Traits::Active_objects_table::Data MP;
     typedef Traits::Kinetic_kernel::Motion_function MF;
     typedef Traits::Kinetic_kernel::Point_3 MP;
-    typedef CGAL::KDS::Qt_widget_3<Traits::Simulator> Qt_gui;
-    typedef CGAL::KDS::Qt_moving_points_3<Traits, Qt_gui> Qt_mpt;
-    typedef CGAL::KDS::Qt_triangulation_3<KDel, Qt_gui, Qt_mpt> Qt_del;
+    typedef CGAL::KDS::SoQt_widget_3<Traits::Simulator> Qt_gui;
+    typedef CGAL::KDS::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
+    typedef CGAL::KDS::SoQt_triangulation_3<KDel, Qt_gui, Qt_mpt> Qt_del;
 
     Traits tr;
     Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
@@ -108,6 +108,7 @@ int main(int argc, char *argv[])
     kdel->set_has_certificates(true);
     return qtsim->begin_event_loop();
 #else
+    bool Delaunay_triangulation_3_compiled_without_CGAL_USE_SOQT_defined;
     return EXIT_FAILURE;
 #endif
 

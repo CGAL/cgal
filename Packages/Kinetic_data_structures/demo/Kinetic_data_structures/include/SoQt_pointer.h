@@ -43,15 +43,15 @@ CGAL_BEGIN_NAMESPACE;
   have to use the existing reference count.
 */
 template <class T>
-class Coin_pointer: public boost::intrusive_ptr<T>
+class SoQt_pointer: public boost::intrusive_ptr<T>
 {
     private:
         typedef boost::intrusive_ptr<T> P;
     public:
 //! Pointer constructor
-        Coin_pointer(T* t): P(t){}
+        SoQt_pointer(T* t): P(t){}
 //! default constructor
-        Coin_pointer(): P(){}
+        SoQt_pointer(): P(){}
 };
 
 CGAL_END_NAMESPACE

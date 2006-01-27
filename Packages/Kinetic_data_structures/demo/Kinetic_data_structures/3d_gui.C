@@ -5,10 +5,10 @@
 #include <CGAL/Random.h>
 #include <vector>
 
-#ifdef CGAL_USE_COIN
-#include <CGAL/KDS/IO/Qt_widget_3.h>
-#include <CGAL/KDS/IO/Qt_moving_points_3.h>
-#include <CGAL/KDS/IO/Qt_moving_weighted_points_3.h>
+#ifdef CGAL_USE_SOQT
+#include "include/SoQt_widget_3.h"
+#include "include/SoQt_moving_points_3.h"
+#include "include/SoQt_moving_weighted_points_3.h"
 #endif
 
 #include <CGAL/KDS/Insert_event.h>
@@ -19,7 +19,7 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef CGAL_USE_COIN
+#ifdef CGAL_USE_SOQT
     int n=10;
     int d=2;
     bool print_help=false;
@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
 
     if (weighted) {
         typedef CGAL::KDS::Regular_triangulation_exact_simulation_traits_3 Traits;
-        typedef CGAL::KDS::Qt_widget_3<Traits::Simulator> Qt_gui;
-        typedef CGAL::KDS::Qt_moving_weighted_points_3<Traits, Qt_gui> Qt_mpt;
+        typedef CGAL::KDS::SoQt_widget_3<Traits::Simulator> Qt_gui;
+        typedef CGAL::KDS::SoQt_moving_weighted_points_3<Traits, Qt_gui> Qt_mpt;
 
         Traits tr;
         Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
@@ -100,8 +100,8 @@ int main(int argc, char *argv[])
     }
     else {
         typedef CGAL::KDS::Exact_simulation_traits_3 Traits;
-        typedef CGAL::KDS::Qt_widget_3<Traits::Simulator> Qt_gui;
-        typedef CGAL::KDS::Qt_moving_points_3<Traits, Qt_gui> Qt_mpt;
+        typedef CGAL::KDS::SoQt_widget_3<Traits::Simulator> Qt_gui;
+        typedef CGAL::KDS::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
 
         Traits tr;
         Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         return qtsim->begin_event_loop();
     }
 #else
-    bool warning_coin_is_not_available_therefore_no_3d_visualization;
+    bool app_3d_gui_compiled_without_CGAL_USE_SOQT_defined;
     return 0;
 #endif
 

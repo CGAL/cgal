@@ -23,7 +23,7 @@
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
 #include <CGAL/KDS/Ref_counted.h>
 #include <CGAL/KDS/Simulator_objects_listener.h>
-#include <CGAL/KDS/IO/Coin_pointer.h>
+#include "SoQt_pointer.h"
 
 #include <Inventor/events/SoButtonEvent.h>
 #include <Inventor/events/SoEvent.h>
@@ -54,10 +54,10 @@ CGAL_KDS_BEGIN_NAMESPACE;
   - P draws the points as points
 */
 template <class SimTraits, class GUI>
-class Qt_moving_points_3: public Ref_counted< Qt_moving_points_3<SimTraits, GUI> >
+class SoQt_moving_points_3: public Ref_counted< SoQt_moving_points_3<SimTraits, GUI> >
 {
     protected:
-        typedef Qt_moving_points_3<SimTraits, GUI> This;
+        typedef SoQt_moving_points_3<SimTraits, GUI> This;
         typedef typename SimTraits::Active_objects_table MPT;
         typedef typename SimTraits::Simulator Simulator;
         typedef typename GUI::Listener Gui_listener;
@@ -91,7 +91,7 @@ class Qt_moving_points_3: public Ref_counted< Qt_moving_points_3<SimTraits, GUI>
 
     private:
 //! This cannot be trivially copied with out ill effects
-        Qt_moving_points_3(const This &){CGAL_assertion(0);}
+        SoQt_moving_points_3(const This &){CGAL_assertion(0);}
         const This operator=(const This &o) const
         {
 
@@ -104,7 +104,7 @@ class Qt_moving_points_3: public Ref_counted< Qt_moving_points_3<SimTraits, GUI>
         Draw_mode;
 
 //! Defaults to outline drawing
-        Qt_moving_points_3(SimTraits tr, typename GUI::Pointer sim):  tr_(tr),
+        SoQt_moving_points_3(SimTraits tr, typename GUI::Pointer sim):  tr_(tr),
             ik_(tr.instantaneous_kernel_object()),
             listener_(tr.active_objects_table_pointer(), this),
             guil_(sim, this),
@@ -118,7 +118,7 @@ class Qt_moving_points_3: public Ref_counted< Qt_moving_points_3<SimTraits, GUI>
             set_up_scene_graph(guil_.root());
         };
 
-        virtual ~Qt_moving_points_3() {
+        virtual ~SoQt_moving_points_3() {
             if (soss_!= NULL) {
                 soss_->unschedule();
                 delete soss_;
@@ -246,11 +246,11 @@ class Qt_moving_points_3: public Ref_counted< Qt_moving_points_3<SimTraits, GUI>
         SimTraits tr_;
         IK ik_;
 //! I don't really want this mutable, but Inventor doesn't like constant nodes
-        mutable Coin_pointer<SoCoordinate3> coords_;
-        Coin_pointer<SoGroup> spheres_;
-        Coin_pointer<SoShapeKit> points_;
-        Coin_pointer<SoDrawStyle> style_;
-        Coin_pointer<SoGroup> labels_;
+  mutable SoQt_pointer<SoCoordinate3> coords_;
+        SoQt_pointer<SoGroup> spheres_;
+        SoQt_pointer<SoShapeKit> points_;
+        SoQt_pointer<SoDrawStyle> style_;
+        SoQt_pointer<SoGroup> labels_;
         CGAL::Sign direction_of_time_;
         SoOneShotSensor* soss_;
         Table_listener listener_;
@@ -260,7 +260,7 @@ class Qt_moving_points_3: public Ref_counted< Qt_moving_points_3<SimTraits, GUI>
 };
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>::update_coordinates()
+void SoQt_moving_points_3<Tr, G>::update_coordinates()
 {
 //std::cout << "updateing coordinates\n";
 //if (parent_==NULL) return;
@@ -311,7 +311,7 @@ void Qt_moving_points_3<Tr, G>::update_coordinates()
 
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>::update_tree()
+void SoQt_moving_points_3<Tr, G>::update_tree()
 {
 //if (parent_==NULL) return;
     int maxl=-1;
@@ -338,18 +338,18 @@ void Qt_moving_points_3<Tr, G>::update_tree()
     coords_->point.setNum(maxl+1);
     if (mode_==POINT ) {
         points_ = new SoShapeKit;
-        Coin_pointer<SoCoordinate3> c= new SoCoordinate3;
+        SoQt_pointer<SoCoordinate3> c= new SoCoordinate3;
         c->point.setNum(num);
-        Coin_pointer<SoMaterial> mat= new SoMaterial;
+        SoQt_pointer<SoMaterial> mat= new SoMaterial;
         mat->diffuseColor.setValue(.8, 0,0);
         mat->ambientColor.setValue(.8,0,0);
         points_->setPart("material", mat.get());
         points_->setPart("coordinate3", c.get());
-        Coin_pointer<SoPointSet> ps= new SoPointSet;
+        SoQt_pointer<SoPointSet> ps= new SoPointSet;
         ps->numPoints.setValue(num);
         points_->setPart("shape", ps.get());
 
-        Coin_pointer<SoAppearanceKit> ak= new SoAppearanceKit;
+        SoQt_pointer<SoAppearanceKit> ak= new SoAppearanceKit;
         ak->setPart("drawStyle", style_.get());
         points_->setPart("appearance", ak.get());
 
@@ -358,34 +358,34 @@ void Qt_moving_points_3<Tr, G>::update_tree()
     else {
         spheres_= new SoGroup;
         guil_.root()->addChild(spheres_.get());
-        Coin_pointer<SoMaterial> smat= new SoMaterial;
+        SoQt_pointer<SoMaterial> smat= new SoMaterial;
         smat->diffuseColor.setValue(.8, 0,0);
         for (int i=0; i< num; ++i) {
-            Coin_pointer<SoShapeKit> kit = new SoShapeKit;
+            SoQt_pointer<SoShapeKit> kit = new SoShapeKit;
             spheres_->addChild(kit.get());
-            Coin_pointer<SoSphere> s= new SoSphere;
+            SoQt_pointer<SoSphere> s= new SoSphere;
             s->radius.setValue(radius_);
             kit->setPart("shape", s.get());
-            Coin_pointer<SoTransform> tr= new SoTransform;
+            SoQt_pointer<SoTransform> tr= new SoTransform;
             kit->setPart("localTransform", tr.get());
             kit->setPart("material", smat.get());
         }
     }
 
     if (draw_labels_ != 0) {
-        Coin_pointer<SoMaterial> mat= new SoMaterial;
+        SoQt_pointer<SoMaterial> mat= new SoMaterial;
         mat->diffuseColor.setValue(1,1,1);
         mat->emissiveColor.setValue(1,1,1);
         labels_= new SoGroup;
         for (typename MPT::Keys_iterator kit = tr_.active_objects_table_pointer()->keys_begin();
         kit != tr_.active_objects_table_pointer()->keys_end(); ++kit) {
-            Coin_pointer<SoShapeKit> k = new SoShapeKit;
+            SoQt_pointer<SoShapeKit> k = new SoShapeKit;
             labels_->addChild(k.get());
-            Coin_pointer<SoText2> s= new SoText2;
+            SoQt_pointer<SoText2> s= new SoText2;
             std::string name = kit->string();
             s->string.setValue(name.c_str());
             k->setPart("shape", s.get());
-            Coin_pointer<SoTransform> tr= new SoTransform;
+            SoQt_pointer<SoTransform> tr= new SoTransform;
             k->setPart("localTransform", tr.get());
             k->setPart("material", mat.get());
         }
@@ -395,7 +395,7 @@ void Qt_moving_points_3<Tr, G>::update_tree()
 
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>::set_up_scene_graph(SoSeparator* parent)
+void SoQt_moving_points_3<Tr, G>::set_up_scene_graph(SoSeparator* parent)
 {
     std::cout << "add to scene graph\n";
     SoEventCallback *myevcb= new SoEventCallback;
@@ -414,7 +414,7 @@ void Qt_moving_points_3<Tr, G>::set_up_scene_graph(SoSeparator* parent)
 
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>::reverse_time()
+void SoQt_moving_points_3<Tr, G>::reverse_time()
 {
 //std::cout << "reversing time.\n";
     if (direction_of_time_== CGAL::POSITIVE) direction_of_time_=CGAL::NEGATIVE;
@@ -430,7 +430,7 @@ void Qt_moving_points_3<Tr, G>::reverse_time()
 
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>:: set_radius(double radius)
+void SoQt_moving_points_3<Tr, G>:: set_radius(double radius)
 {
     radius_=radius;
     if (spheres_!= NULL) {
@@ -446,7 +446,7 @@ void Qt_moving_points_3<Tr, G>:: set_radius(double radius)
 
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>::set_point_size(double ps)
+void SoQt_moving_points_3<Tr, G>::set_point_size(double ps)
 {
     point_size_=ps;
     style_->pointSize.setValue(ps);
@@ -454,7 +454,7 @@ void Qt_moving_points_3<Tr, G>::set_point_size(double ps)
 
 
 template <class Tr, class G>
-void Qt_moving_points_3<Tr, G>::write(std::ostream &out) const
+void SoQt_moving_points_3<Tr, G>::write(std::ostream &out) const
 {
     ik_.set_time(guil_.notifier()->current_time());
     for (typename MPT::Keys_iterator it= tr_.active_objects_table_pointer()->keys_begin();

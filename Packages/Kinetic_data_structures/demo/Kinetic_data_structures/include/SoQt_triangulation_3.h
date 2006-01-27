@@ -40,7 +40,7 @@
 #include <Inventor/events/SoKeyboardEvent.h>
 #include <Inventor/nodes/SoEventCallback.h>
 
-#include <CGAL/KDS/IO/Coin_pointer.h>
+#include "SoQt_pointer.h"
 
 #include <CGAL/KDS/internal/triangulation_helpers_3.h>
 #include <CGAL/KDS/Ref_counted.h>
@@ -52,11 +52,11 @@ CGAL_KDS_BEGIN_NAMESPACE
 
  */
 template <class KDel, class Qtgui, class Qtmpt>
-class Qt_triangulation_3: public Ref_counted<Qt_triangulation_3<KDel, Qtgui, Qtmpt> >
+class SoQt_triangulation_3: public Ref_counted<SoQt_triangulation_3<KDel, Qtgui, Qtmpt> >
 {
     protected:
 
-        typedef Qt_triangulation_3<KDel, Qtgui, Qtmpt> This;
+        typedef SoQt_triangulation_3<KDel, Qtgui, Qtmpt> This;
         typedef typename KDel::Triangulation::Facet Facet;
         typedef typename KDel::Triangulation::Edge Edge;
         typedef typename KDel::Triangulation::Facet_circulator Facet_circulator;
@@ -115,7 +115,7 @@ class Qt_triangulation_3: public Ref_counted<Qt_triangulation_3<KDel, Qtgui, Qtm
 /*!
   Sorry about all the arguments, but they are needed, I think.
 */
-        Qt_triangulation_3(typename KDel::Pointer kdel,
+        SoQt_triangulation_3(typename KDel::Pointer kdel,
             typename Qtgui::Pointer qtgui,
             typename Qtmpt::Pointer mps): coordinates_(mps->coordinate_node()),
             convex_hull_(SHOWN),
@@ -150,12 +150,12 @@ class Qt_triangulation_3: public Ref_counted<Qt_triangulation_3<KDel, Qtgui, Qtm
         }
 
     protected:
-        CGAL::Coin_pointer<SoSeparator> parent_;
-        CGAL::Coin_pointer<SoShapeKit> facets_kit_;
-        CGAL::Coin_pointer<SoIndexedFaceSet> facets_;
-        CGAL::Coin_pointer<SoShapeKit> edges_kit_;
-        CGAL::Coin_pointer<SoIndexedLineSet> edges_;
-        CGAL::Coin_pointer<SoCoordinate3> coordinates_;
+        CGAL::SoQt_pointer<SoSeparator> parent_;
+        CGAL::SoQt_pointer<SoShapeKit> facets_kit_;
+        CGAL::SoQt_pointer<SoIndexedFaceSet> facets_;
+        CGAL::SoQt_pointer<SoShapeKit> edges_kit_;
+        CGAL::SoQt_pointer<SoIndexedLineSet> edges_;
+        CGAL::SoQt_pointer<SoCoordinate3> coordinates_;
         Draw_style convex_hull_;
         Draw_style facets_style_;
         KDell kdell_;
@@ -243,11 +243,11 @@ class Qt_triangulation_3: public Ref_counted<Qt_triangulation_3<KDel, Qtgui, Qtm
 };
 
 template <class K, class G, class M>
-void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
+void SoQt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
 {
     parent_=sep;
 
-    CGAL::Coin_pointer<SoEventCallback> myevcb= new SoEventCallback;
+    CGAL::SoQt_pointer<SoEventCallback> myevcb= new SoEventCallback;
     myevcb->addEventCallback(SoKeyboardEvent::getClassTypeId(),keyboard_callback, this);
     parent_->addChild(myevcb.get());
 
@@ -255,9 +255,9 @@ void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
         facets_kit_ = new SoShapeKit;
         facets_kit_->setName("Delaunay_facets_kit");
         {
-            CGAL::Coin_pointer<SoAppearanceKit> ap= new SoAppearanceKit;
+            CGAL::SoQt_pointer<SoAppearanceKit> ap= new SoAppearanceKit;
             {
-                CGAL::Coin_pointer<SoMaterial> mat= new SoMaterial;
+                CGAL::SoQt_pointer<SoMaterial> mat= new SoMaterial;
                 mat->setName("Facet_material");
                 mat->ambientColor.setNum(4);
                 mat->diffuseColor.setNum(4);
@@ -282,7 +282,7 @@ void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
         }
         facets_kit_->setPart("coordinate3", coordinates_.get());
         {
-            CGAL::Coin_pointer< SoShapeHints> hint= new SoShapeHints;
+            CGAL::SoQt_pointer< SoShapeHints> hint= new SoShapeHints;
             hint->vertexOrdering.setValue(SoShapeHints::CLOCKWISE);
             hint->shapeType.setValue(SoShapeHints::UNKNOWN_SHAPE_TYPE);
             hint->faceType.setValue(SoShapeHints::CONVEX);
@@ -290,7 +290,7 @@ void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
             facets_kit_->setPart("shapeHints", hint.get());
         }
         {
-            CGAL::Coin_pointer<SoMaterialBinding> bind= new SoMaterialBinding;
+            CGAL::SoQt_pointer<SoMaterialBinding> bind= new SoMaterialBinding;
             bind->value.setValue(SoMaterialBinding::PER_FACE_INDEXED);
             facets_kit_->setPart("materialBinding", bind.get());
         }
@@ -306,9 +306,9 @@ void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
         edges_kit_= new SoShapeKit;
         edges_kit_->setName("Delaunay_edges_kit");
         {
-            CGAL::Coin_pointer<SoAppearanceKit> ap= new SoAppearanceKit;
+            CGAL::SoQt_pointer<SoAppearanceKit> ap= new SoAppearanceKit;
             {
-                CGAL::Coin_pointer<SoMaterial> mat= new SoMaterial;
+                CGAL::SoQt_pointer<SoMaterial> mat= new SoMaterial;
                 mat->setName("Edges_material");
                 mat->ambientColor.setNum(4);
                 mat->diffuseColor.setNum(4);
@@ -332,7 +332,7 @@ void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
                 ap->setPart("material", mat.get());
             }
             {
-                CGAL::Coin_pointer<SoDrawStyle> ds= new SoDrawStyle;
+                CGAL::SoQt_pointer<SoDrawStyle> ds= new SoDrawStyle;
                 ds->lineWidth.setValue(2);
                 ap->setPart("drawStyle", ds.get());
             }
@@ -352,7 +352,7 @@ void Qt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
 
 
 template <class K, class G, class M>
-void Qt_triangulation_3<K,G,M>::generate_geometry()
+void SoQt_triangulation_3<K,G,M>::generate_geometry()
 {
     if (parent_==NULL) return;
     if (triangulation().dimension() != 3) return;

@@ -7,68 +7,70 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-# CGAL_MAKEFILE = /u/drussel/other_src/CGAL-3.2-I-316/make/makefile_i686_Linux-2.6_g++32-3.2.3
-
+# CGAL_MAKEFILE =  /u/drussel/other_src/CGAL-3.2-I-316/make/makefile_i686_Linux-2.6_g++32-3.2.3
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -g \
+CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
-           -Iinclude\
+           -Iinclude \
+	   -DCGAL_USE_SOQT\
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LOCAL_LIBS= ../../src/libCGAL.a ../../src/CGALQt/libCGALQt.a
+
 LIBPATH = \
           $(CGAL_LIBPATH)
 
-LDFLAGS =  -lboost_program_options ../../src/libCGAL.a  \
-	  ../../src/CGALQt/libCGALQt.a -lgsl -lgslcblas\
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) 
+3D_LDFLAGS = SoQt_examiner_viewer$(OBJ_EXT) -lCoin -lSoQt
 
-QT_LDFLAGS =  -lboost_program_options ../../src/libCGAL.a \
-	  ../../src/CGALQt/libCGALQt.a -lgsl -lgslcblas \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) 
+3D_DEPS =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
 
-COIN_LDFLAGS = $(LDFLAGS) -lCoin -lSoQt
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(LOCAL_LIBS) $(CGAL_QT_LDFLAGS) -lboost_program_options
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                Delaunay_triangulation_2$(EXE_EXT) \
-                Delaunay_triangulation_3$(EXE_EXT) \
                 2d_gui$(EXE_EXT) \
                 3d_gui$(EXE_EXT) \
+                Delaunay_triangulation_2$(EXE_EXT) \
+                Delaunay_triangulation_3$(EXE_EXT) \
                 Delaunay_triangulation_stable_subset_2$(EXE_EXT) \
                 regular_triangulation_3$(EXE_EXT) 
 
-Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS)
-
-Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT) $(COIN_LDFLAGS)
-
-Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS) 
-
-regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_triangulation_3 regular_triangulation_3$(OBJ_EXT) $(COIN_LDFLAGS) 
-
 2d_gui$(EXE_EXT): 2d_gui$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)2d_gui 2d_gui$(OBJ_EXT) $(QT_LDFLAGS) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)2d_gui 2d_gui$(OBJ_EXT) $(LDFLAGS)
 
-3d_gui$(EXE_EXT): 3d_gui$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_gui 3d_gui$(OBJ_EXT)  $(COIN_LDFLAGS)
+3d_gui$(EXE_EXT): 3d_gui$(OBJ_EXT) $(3D_DEPS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_gui 3d_gui$(OBJ_EXT) $(3D_LDFLAGS) $(LDFLAGS)
+
+Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(LDFLAGS)
+
+Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT)  $(3D_DEPS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT)  $(3D_LDFLAGS) $(LDFLAGS)
+
+Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(LDFLAGS)
+
+regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT) $(3D_DEPS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_triangulation_3 regular_triangulation_3$(OBJ_EXT) $(3D_LDFLAGS) $(LDFLAGS)
+
+SoQt_examiner_viewer.moc: include/SoQt_examiner_viewer.h
+	$(QT_MOC) include/SoQt_examiner_viewer.h > SoQt_examiner_viewer.moc
+
 
 clean: \
                    2d_gui.clean \
@@ -76,7 +78,8 @@ clean: \
                    Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
                    Delaunay_triangulation_stable_subset_2.clean \
-                   regular_triangulation_3.clean 
+                   regular_triangulation_3.clean \
+		   rm -f SoQt_examiner_viewer.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules

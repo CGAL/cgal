@@ -36,13 +36,15 @@ int main(int argc, char *argv[])
       for (unsigned int j=0; j<= degree; ++j) {
 	coefs.push_back(static_cast<double>(std::rand())/static_cast<double>(RAND_MAX));
       }
-      tr.simulator_pointer()->new_event(Time(i/100.0), MOI(MP(Tr::Function_kernel::Function(coefs.begin(),
-											    coefs.end())),
-							   tr.active_objects_table_pointer()));
+      tr.simulator_pointer()->new_event(Time(i/100.0), 
+					MOI(MP(Tr::Function_kernel::Function(coefs.begin(),coefs.end())),
+					    tr.active_objects_table_pointer()));
     }
 
     error= sort_test<Tr>(tr);
   } while (false);
+
+
   if (error) {
     return EXIT_FAILURE;
   }
