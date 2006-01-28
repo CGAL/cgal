@@ -1,4 +1,7 @@
 28 January 2006 Sylvain Pion
+- Static_filters : add Compare_y_at_x_2, Less_[xy]_2 (contrib from Andreas M.).
+
+28 January 2006 Sylvain Pion
 - Deprecate Filtered_exact (in doc and code).
 
 26 January 2006 Andreas Fabri

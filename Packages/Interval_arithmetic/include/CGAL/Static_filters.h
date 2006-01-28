@@ -40,6 +40,7 @@
 #include <CGAL/Static_filters/tools.h>
 #include <CGAL/Static_filters/Orientation_2.h>
 #include <CGAL/Static_filters/Orientation_3.h>
+#include <CGAL/Static_filters/Compare_y_at_x_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
 
@@ -76,6 +77,11 @@ public:
   typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
   typedef CartesianKernelFunctors::Less_yx_2<Self>  Less_yx_2;
 
+  typedef CartesianKernelFunctors::Less_x_2<Self>   Less_x_2;
+  typedef CartesianKernelFunctors::Less_y_2<Self>   Less_y_2;
+
+  typedef SF_Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
+
   typedef SF_Orientation_2<K_base>                  Orientation_2;
   typedef SF_Orientation_3<K_base>                  Orientation_3;
   typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
@@ -93,6 +99,18 @@ public:
   Less_yx_2
   less_yx_2_object() const
   { return Less_yx_2(); }
+
+  Less_x_2
+  less_x_2_object() const
+  { return Less_x_2(); }
+
+  Less_y_2
+  less_y_2_object() const
+  { return Less_y_2(); }
+
+  Compare_y_at_x_2
+  compare_y_at_x_2_object() const
+  { return Compare_y_at_x_2(); }
 
   Orientation_2
   orientation_2_object() const
