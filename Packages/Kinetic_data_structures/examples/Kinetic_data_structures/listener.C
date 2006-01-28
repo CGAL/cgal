@@ -3,12 +3,9 @@
 
 struct Notifier: public CGAL::KDS::Ref_counted<Notifier>
 {
+public:
   Notifier(): data_(0), listener_(NULL){}
 
-private:
-        
-
-public:
   struct Listener_interface
   {
     typedef enum Notification_type {DATA_CHANGED}
