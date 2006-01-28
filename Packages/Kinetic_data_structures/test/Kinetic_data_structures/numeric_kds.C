@@ -12,7 +12,7 @@ bool cgal_check_exact_defined_externally;
 
 int main(int argc, char *argv[])
 {
-  unsigned int num_points=100;
+  unsigned int num_points=50;
   unsigned int degree =5;
   if (argc==3) {
     num_points= std::atoi(argv[1]);
@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
     for (unsigned int i=0; i< num_points; ++i) {
       std::vector<double> coefs;
       for (unsigned int j=0; j<= degree; ++j) {
-	coefs.push_back(static_cast<double>(std::rand())/static_cast<double>(RAND_MAX));
+	coefs.push_back(static_cast<double>(std::rand())
+			/static_cast<double>(RAND_MAX));
       }
       tr.simulator_pointer()->new_event(Time(i/100.0), 
 					MOI(MP(Tr::Function_kernel::Function(coefs.begin(),coefs.end())),
