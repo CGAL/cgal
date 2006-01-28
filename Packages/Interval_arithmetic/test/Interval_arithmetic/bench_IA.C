@@ -1,9 +1,5 @@
 // Generic bench file for the IA package.
-// Sylvain Pion, 1997-2000.
-
-// This file is included from tst[34].C, that do just a #define:
-// #define TESTED_TYPE Interval_nt_advanced // For tst3.C
-// #define TESTED_TYPE Interval_nt          // For tst4.C
+// Sylvain Pion, 1997-2005.
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
@@ -11,8 +7,6 @@
 #include <CGAL/predicates/kernel_ftC2.h>
 
 #include <cassert>
-
-typedef TESTED_TYPE IA_nt;
 
 #ifndef LOOPS
 #  define LOOPS 1000
@@ -22,6 +16,7 @@ const int loops = LOOPS;
 
 // Some simple operators benchmarks.
 
+template < typename IA_nt >
 void bench()
 {
   int i;
@@ -80,6 +75,7 @@ void bench()
 
 // OrientationC2() benchmark.
 
+template < typename IA_nt >
 void bench_orientation()
 {
   IA_nt a(0.12);
@@ -100,30 +96,29 @@ void bench_orientation()
 }
 
 
-int main()
+template < typename IA_nt >
+void bench_main()
 {
-#ifdef ADVANCED
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL_FE_UPWARD);
-  std::cout << "Benching the class Interval_nt_advanced.\n";
-#else
-  std::cout << "Benching the class Interval_nt.\n";
-#endif
+  typename IA_nt::Protector p;
+
   double d;
   if ((((long) &d) & 7) != 0)
     std::cout << "Benchmark might not be meaningful due to bad alignment\n";
 
   std::cout.precision(20);
-  bench();
-  bench_orientation();
+  bench<IA_nt>();
+  bench_orientation<IA_nt>();
 
   IA_nt a=1, b=2;
   (void) CGAL_NTS sign(a);
   (void) CGAL_NTS compare(a,b);
+}
 
-#ifdef ADVANCED
-  CGAL::FPU_set_cw(backup);
-#endif
-
+int main()
+{
+  std::cout << "Benching the class Interval_nt.\n";
+  bench_main<CGAL::Interval_nt<> >();
+  std::cout << "\nBenching the class Interval_nt_advanced.\n";
+  bench_main<CGAL::Interval_nt_advanced>();
   return 0;
 }
