@@ -84,7 +84,7 @@ struct Filtered_kernel_base
 
 #ifndef CGAL_NO_STATIC_FILTERS
 template < typename CK >
-class Static_filters_base
+struct Static_filters_base
   : public Static_filters< Filtered_kernel_base<CK> >
 {
     template < typename Kernel2 >
