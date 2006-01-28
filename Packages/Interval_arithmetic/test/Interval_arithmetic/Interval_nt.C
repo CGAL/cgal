@@ -1,16 +1,11 @@
-// Generic test file for the IA package.
-// Sylvain Pion, 1997-2000.
+// Test file for the Interval_nt<bool> class.
+// Sylvain Pion, 1997-2005.
 
-// This file is included from tst[12].C, that do just a #define:
-// #define TESTED_TYPE Interval_nt_advanced // For tst1.C
-// #define TESTED_TYPE Interval_nt          // For tst2.C
-
+#include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
 
 // #define DEBUG(a) a;
 #define DEBUG(a)
-
-typedef TESTED_TYPE IA_nt;
 
 // The following wrappers are needed, since we can't call the right min/max
 // from outside namespace CGAL directly.
@@ -28,70 +23,16 @@ inline FT my_min (const FT &a, const FT &b)
 }
 }                                                                               
 
-double my_sqrt(double d)
-{
-  return CGAL_BUG_SQRT(d);
-}
-
 void empty_handler(const char*, const char*, const char*, int, const char *)
 {
   // Do nothing.
 }
 
-double test_force_to_double(double d, double e)
-{
-  return CGAL_IA_FORCE_TO_DOUBLE(d+e);
-}
-
-IA_nt test_add(const IA_nt &a, const IA_nt &b)
-{
-  return a+b;
-}
-
-IA_nt test_mul_2_add(const IA_nt &a)
-{
-  return a+a;
-}
-
-IA_nt test_mult_2_hand_optimized (const IA_nt &a)
-{
-  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE(2.0*(-a.inf())),
-                CGAL_IA_FORCE_TO_DOUBLE(2.0*a.sup()));
-}
-
-IA_nt test_mult_2_hand_optimized_bis (const IA_nt &a)
-{
-  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE((-2.0)*a.inf()),
-                CGAL_IA_FORCE_TO_DOUBLE(2.0*a.sup()));
-}
-
-IA_nt test_mult_4_hand_optimized (const IA_nt &a)
-{
-  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE(4.0*(-a.inf())),
-                CGAL_IA_FORCE_TO_DOUBLE(4.0*a.sup()));
-}
-
-IA_nt test_mult_4_hand_optimized_bis (const IA_nt &a)
-{
-  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE((-4.0)*a.inf()),
-                CGAL_IA_FORCE_TO_DOUBLE(4.0*a.sup()));
-}
-
-#if 0
-IA_nt test_mult_2a(const IA_nt &a) { return 2.0 * a; }
-IA_nt test_mult_a2(const IA_nt &a) { return a * 2.0; }
-
-IA_nt test_mult_4a(const IA_nt &a) { return 4.0 * a; }
-IA_nt test_mult_a4(const IA_nt &a) { return a * 4.0; }
-#endif // 0
-
-IA_nt test_square(const IA_nt &a) { return CGAL_NTS square(a); }
-IA_nt test_sqr(const IA_nt &a) { return a*a; }
-
 // This test program computes the coordinates of a sequence of points drawing
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
 // axis.  With double precision, the first possible solution is 396.
 
+template < typename IA_nt >
 bool spiral_test()
 {
   int i=0;
@@ -115,6 +56,7 @@ bool spiral_test()
 // Tests for constant propagation through intervals.
 // This must not be performed otherwise rounding modes are ignored.
 // Non-inlined operators usually stop cprop (*, /, sqrt).
+template < typename IA_nt >
 bool cprop_test()
 {
   // Testing cprop through +.
@@ -154,6 +96,7 @@ bool cprop_test()
 // at the beginning.  It must converge to the fixed point [1-2^-52 ; 1+2^-52].
 // NB: Note that 1-2^-52 is not the closest to 1 (which is 1-2^-53)... Funny.
 
+template < typename IA_nt >
 bool square_root_test()
 {
   int i=0;
@@ -184,6 +127,7 @@ bool square_root_test()
 // Same thing for [-2;2]     -> [-inf;+inf].
 // Same thing for [-2.1;2.1] -> [-inf;+inf].
 
+template < typename IA_nt >
 bool overflow_test()
 {
   int i;
@@ -229,6 +173,7 @@ bool overflow_test()
 // Same thing for [0.5;0.5]      -> [0;MIN_DOUBLE].
 // Same thing for [-0.5;0.5]     -> [-MIN_DOUBLE;MIN_DOUBLE].
 
+template < typename IA_nt >
 bool underflow_test()
 {
   int i;
@@ -247,6 +192,7 @@ bool underflow_test()
 // Here we specifically test the division code.
 // We iterate the function f(x)= (1/x + x)/4 + 1/2.
 
+template < typename IA_nt >
 bool division_test()
 {
   IA_nt a (1), b(0);
@@ -274,6 +220,7 @@ bool division_test()
 
 // Here it's mainly to have a 100% coverage for the test-suite.
 
+template < typename IA_nt >
 bool multiplication_test()
 {
   const IA_nt a (-2,-1), b (-1,1);
@@ -300,6 +247,7 @@ bool multiplication_test()
 // Here we test the specialized functions for IA.
 // They are usually templated in CGAL, but I've overriden them.
 
+template < typename IA_nt >
 bool utility_test()
 {
   bool tmpflag, flag = true;
@@ -354,6 +302,7 @@ bool utility_test()
 
 double zero = 0.0; // I put it here to avoid compiler warnings.
 
+template < typename IA_nt >
 bool is_valid_test()
 {
   CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);
@@ -409,12 +358,7 @@ bool is_valid_test()
 
 // Test the is_finite() function.
 
-bool test_ieee_equality(double d)
-{
-  return CGAL::is_finite(d);
-  // return d == d;
-}
-
+template < typename IA_nt >
 bool is_finite_test()
 {
   bool tmpflag, flag = true;
@@ -467,14 +411,10 @@ void print_res (bool res)
   std::cout << (res ? "ok" : "ERROR") << std::endl;
 }
 
-int main()
+template < typename IA_nt >
+bool test ()
 {
-#ifdef ADVANCED
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  std::cout << "Stress-testing the class Interval_nt_advanced.\n";
-#else
-  std::cout << "Stress-testing the class Interval_nt.\n";
-#endif
+  typename IA_nt::Protector p;
 
   bool tmpflag, flag = true;
   std::cout.precision(20);
@@ -486,7 +426,7 @@ int main()
 
 #define TEST_MACRO(fn) \
   std::cout << #fn << "\t\t"; \
-  tmpflag = fn(); \
+  tmpflag = fn<IA_nt>(); \
   print_res(tmpflag); \
   flag = tmpflag && flag;
 
@@ -503,9 +443,15 @@ int main()
 
   print_res(IA_nt(0) < IA_nt(1));
 
-#ifdef ADVANCED
-  CGAL::FPU_set_cw(backup);
-#endif
+  return flag;
+}
 
-  return !flag;
+int main()
+{
+  std::cout << "Stress-testing the class Interval_nt<>.\n";
+  bool ok = test<CGAL::Interval_nt<> >();
+  std::cout << "\nStress-testing the class Interval_nt_advanced.\n";
+  ok = ok && test<CGAL::Interval_nt_advanced>();
+
+  return !ok;
 }
