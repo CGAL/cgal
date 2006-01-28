@@ -48,8 +48,7 @@ all:            \
                 to_interval_test$(EXE_EXT) \
                 tst0$(EXE_EXT) \
                 tst10$(EXE_EXT) \
-                tst5$(EXE_EXT) \
-                tst6$(EXE_EXT) 
+                tst5$(EXE_EXT) 
 
 bench_IA$(EXE_EXT): bench_IA$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bench_IA bench_IA$(OBJ_EXT) $(LDFLAGS)
@@ -81,9 +80,6 @@ tst10$(EXE_EXT): tst10$(OBJ_EXT)
 tst5$(EXE_EXT): tst5$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst5 tst5$(OBJ_EXT) $(LDFLAGS)
 
-tst6$(EXE_EXT): tst6$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst6 tst6$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
                    bench_IA.clean \
                    Filtered_kernel.clean \
@@ -94,8 +90,7 @@ clean: \
                    to_interval_test.clean \
                    tst0.clean \
                    tst10.clean \
-                   tst5.clean \
-                   tst6.clean 
+                   tst5.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
