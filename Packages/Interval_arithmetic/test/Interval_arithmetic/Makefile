@@ -20,7 +20,7 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) # -W
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -42,7 +42,6 @@ LDFLAGS = \
 all:            \
                 Filtered_kernel$(EXE_EXT) \
                 gcc_3.0_bug$(EXE_EXT) \
-                Kernel_checker$(EXE_EXT) \
                 Lazy_exact_nt$(EXE_EXT) \
                 Static_filters$(EXE_EXT) \
                 to_interval_test$(EXE_EXT) \
@@ -60,9 +59,6 @@ Filtered_kernel$(EXE_EXT): Filtered_kernel$(OBJ_EXT)
 
 gcc_3.0_bug$(EXE_EXT): gcc_3.0_bug$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gcc_3.0_bug gcc_3.0_bug$(OBJ_EXT) $(LDFLAGS)
-
-Kernel_checker$(EXE_EXT): Kernel_checker$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Kernel_checker Kernel_checker$(OBJ_EXT) $(LDFLAGS)
 
 Lazy_exact_nt$(EXE_EXT): Lazy_exact_nt$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Lazy_exact_nt Lazy_exact_nt$(OBJ_EXT) $(LDFLAGS)
@@ -100,7 +96,6 @@ tst6$(EXE_EXT): tst6$(OBJ_EXT)
 clean: \
                    Filtered_kernel.clean \
                    gcc_3.0_bug.clean \
-                   Kernel_checker.clean \
                    Lazy_exact_nt.clean \
                    Static_filters.clean \
                    to_interval_test.clean \
