@@ -119,9 +119,18 @@ public:
   typedef typename Number_type_traits<CT>::Has_exact_ring_operations
   Has_exact_ring_operations;
 
-  Filtered_exact () {}
+  Filtered_exact ()
+  {
+    bool FILTERED_EXACT_IS_DEPRECATED__USE_FILTERED_KERNEL_INSTEAD;
+  }
+
   Filtered_exact (const CT & ct)
-      : _value(ct)  { update_cache(); }
+      : _value(ct)
+  {
+    update_cache();
+    bool FILTERED_EXACT_IS_DEPRECATED__USE_FILTERED_KERNEL_INSTEAD;
+  }
+
   template <class NT>
   Filtered_exact (const NT & num, const NT & den) // For Quotient<>.
       : _value(num, den)   { update_cache(); }

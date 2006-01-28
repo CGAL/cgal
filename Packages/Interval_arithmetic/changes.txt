@@ -1,4 +1,7 @@
-26 January Andreas Fabri
+28 January 2006 Sylvain Pion
+- Deprecate Filtered_exact (in doc and code).
+
+26 January 2006 Andreas Fabri
 - Replaced __PRETTY_FUNCTION__ with CGAL_PRETTY_FUNCTION
 
 21 January 2006 Sylvain Pion
