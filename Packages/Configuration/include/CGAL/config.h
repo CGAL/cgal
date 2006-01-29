@@ -121,12 +121,10 @@ namespace CGAL {
 
 #ifdef _MSC_VER
 #  include <CGAL/MSVC_standard_header_fixes.h>
-#endif
-#if defined(__BORLANDC__) && __BORLANDC__ > 0x520
-#include <CGAL/Borland_fixes.h>
-#endif
-#if defined(__sun) && defined(__SUNPRO_CC)
-#include <CGAL/Sun_fixes.h>
+#elif defined(__BORLANDC__) && __BORLANDC__ > 0x520
+#  include <CGAL/Borland_fixes.h>
+#elif defined(__sun) && defined(__SUNPRO_CC)
+#  include <CGAL/Sun_fixes.h>
 #endif
 
 //--------------------------------------------------------------------//
@@ -159,14 +157,13 @@ using std::max;
 
 
 //-------------------------------------------------------------------//
-// In profiling messages we want trace in which function we are
-// Different compilers provide different macros for that
+// Compilers provide different macros to access the current function name
 #ifdef _MSC_VER
-#define CGAL_PRETTY_FUNCTION __FUNCSIG__
-#elif defined(__sun) && defined(__SUNPRO_CC)
-#define CGAL_PRETTY_FUNCTION __func__
+#  define CGAL_PRETTY_FUNCTION __FUNCSIG__
+#elif defined __GNUG__
+#  define CGAL_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else 
-#define CGAL_PRETTY_FUNCTION __PRETTY_FUNCTION__
+#  define CGAL_PRETTY_FUNCTION __func__
 #endif
 
 #endif // CGAL_CONFIG_H
