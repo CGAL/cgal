@@ -127,9 +127,7 @@ public:
 		      << typeid(p1).name() << std::endl;
             std::cerr << "functor second kernel: "
 		      << typeid(p2).name() << std::endl;
-#ifdef __GNUG__
-	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#endif
+	    std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
 	    CGAL_kernel_assertion(false);
 	}
 	return pair_maker(res1, res2);
@@ -153,9 +151,7 @@ public:
 		      << typeid(p1).name() << std::endl;
             std::cerr << "functor second kernel: "
 		      << typeid(p2).name() << std::endl;
-#ifdef __GNUG__
-	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#endif
+	    std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
 	    CGAL_kernel_assertion(false);
 	}
 	return pair_maker(res1, res2);
@@ -181,9 +177,7 @@ public:
 		      << typeid(p1).name() << std::endl;
             std::cerr << "functor second kernel: "
 		      << typeid(p2).name() << std::endl;
-#ifdef __GNUG__
-	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#endif
+	    std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
 	    CGAL_kernel_assertion(false);
 	}
 	return pair_maker(res1, res2);
@@ -213,9 +207,7 @@ public:
 		      << typeid(p1).name() << std::endl;
             std::cerr << "functor second kernel: "
 		      << typeid(p2).name() << std::endl;
-#ifdef __GNUG__
-	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#endif
+	    std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
 	    CGAL_kernel_assertion(false);
 	}
 	return pair_maker(res1, res2);
@@ -248,9 +240,7 @@ public:
 		      << typeid(p1).name() << std::endl;
             std::cerr << "functor second kernel: "
 		      << typeid(p2).name() << std::endl;
-#ifdef __GNUG__
-	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#endif
+	    std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
 	    CGAL_kernel_assertion(false);
 	}
 	return pair_maker(res1, res2);
