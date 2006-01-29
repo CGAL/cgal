@@ -38,7 +38,7 @@
 
 using std::list;
 
-list<char> lst( char* s)
+list<char> lst( const char* s)
 {
     list<char> x;
     while (*s != '\0') x.push_back( *s++);
