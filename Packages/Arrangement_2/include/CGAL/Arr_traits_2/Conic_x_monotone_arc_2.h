@@ -275,7 +275,6 @@ public:
                                                        this->_target);
 
     this->_info = (Conic_arc_2::IS_VALID | DEGREE_1);
-
     if (res == EQUAL)
     {
       // Mark that the segment is vertical.
@@ -287,8 +286,11 @@ public:
 
       CGAL_precondition (res != EQUAL);
       if (res == EQUAL)
+      {
         // Invalid arc:
+        this->_info = 0;
         return;
+      }
     }
 
     if (res == SMALLER)
@@ -1916,19 +1918,40 @@ private:
 
     if (arc._is_special_segment())
     {
+      if (n_xs == 0 || n_ys == 0)
+        return;
+
       if (n_xs == 1 && n_ys == 1)
       {
+        // Single intersection.
         Conic_point_2         ip (xs[0], ys[0]);
 
         ip.set_generating_conic (_id);
         ip.set_generating_conic (arc._id);
 
-        inter_list.push_back (Intersection_point_2 (ip, 1));
-        return;
+        // In case the other curve is of degree 2, this is a tangency point.
+        mult = (deg1 == 1) ? 1 : 2;
+        inter_list.push_back (Intersection_point_2 (ip, mult));
       }
-      else if (n_xs == 2 && n_ys == 2)
+      else if (n_xs == 1 && n_ys == 2)
       {
-        Conic_point_2         ip1 (xs[0], ys[1]);
+        Conic_point_2         ip1 (xs[0], ys[0]);
+
+        ip1.set_generating_conic (_id);
+        ip1.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip1, 1));
+
+        Conic_point_2         ip2 (xs[0], ys[1]);
+
+        ip2.set_generating_conic (_id);
+        ip2.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip2, 1));
+      }
+      else if (n_xs == 2 && n_ys == 1)
+      {
+        Conic_point_2         ip1 (xs[0], ys[0]);
 
         ip1.set_generating_conic (_id);
         ip1.set_generating_conic (arc._id);
@@ -1941,7 +1964,40 @@ private:
         ip2.set_generating_conic (arc._id);
 
         inter_list.push_back (Intersection_point_2 (ip2, 1));
+
       }
+      else
+      {
+        CGAL_assertion (n_xs == 2 && n_ys == 2);
+
+        // The x-coordinates and the y-coordinates are given in ascending
+        // order. If the slope of the segment is positive, we pair the
+        // coordinates as is - otherwise, we swap the pairs.
+        int                   ind_first_y = 0, ind_second_y = 1;
+
+        if (CGAL::sign (arc._extra_data_P->b) == 
+            CGAL::sign(arc._extra_data_P->a))
+        {
+          ind_first_y = 1;
+          ind_second_y = 0;
+        }
+
+        Conic_point_2         ip1 (xs[0], ys[ind_first_y]);
+
+        ip1.set_generating_conic (_id);
+        ip1.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip1, 1));
+
+        Conic_point_2         ip2 (xs[1], ys[ind_second_y]);
+
+        ip2.set_generating_conic (_id);
+        ip2.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip2, 1));
+      }
+      
+      return;
     }
 
     for (i = 0; i < n_xs; i++)
