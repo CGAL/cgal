@@ -310,7 +310,8 @@ template < typename T, typename U >
 inline
 Uncertain<T> enum_cast_bug(const Uncertain<U>& u, const T*)
 {
-  return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
+  return Uncertain<T>(static_cast<const T>(u.inf()),
+                      static_cast<const T>(u.sup()));
 }
 
 #else
