@@ -245,7 +245,7 @@ void CMeshDoc::OnFitLine()
 
 void CMeshDoc::OnFitPlane()
 {
-  /*
+
   linear_least_squares_fitting_3(m_triangles.begin(),
                                  m_triangles.end(),
                                  m_fitting_plane);
@@ -254,7 +254,6 @@ void CMeshDoc::OnFitPlane()
                                  m_triangles.end(),
                                  m_fitting_plane,
                                  m_centroid);
-  */
   UpdateAllViews(NULL);
 }
 
@@ -277,7 +276,7 @@ void CMeshDoc::OnPointsetLine()
 
 void CMeshDoc::OnRandomOnaplane()
 {
-  unsigned int nb_points;
-  m_points.clear();
+  // unsigned int nb_points;
+  // m_points.clear();
   //FT 
 }

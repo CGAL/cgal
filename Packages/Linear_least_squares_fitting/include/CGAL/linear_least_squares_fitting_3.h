@@ -223,12 +223,12 @@ linear_least_squares_fitting_3(InputIterator first,
   {
     const Triangle& triangle = *it;
     FT area = std::sqrt(triangle.squared_area());
-    Point c_t = centroid(triangle[0],triangle[1],triangle[2]); // local centroid
+    Point c_t = K().construct_centroid_3_object()(triangle[0],triangle[1],triangle[2]);
     sum_areas += area;
 
     // e1 = ab, e2 = ac
-    Vector e1 = triangle[1] - triangle[0];
-    Vector e2 = triangle[2] - triangle[0];
+    Vector e1 = Vector(triangle[0],triangle[1]);
+    Vector e2 = Vector(triangle[0],triangle[2]);
 
     FT c1 = 2.0 * area * 10.0 / 72.0;
     FT c2 = 2.0 * area *  7.0 / 72.0;
