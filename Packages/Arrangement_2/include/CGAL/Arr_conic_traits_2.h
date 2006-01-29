@@ -365,6 +365,7 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
+
       CGAL_precondition (ker.compare_xy_2_object() (p, 
                                                     cv1.right()) == SMALLER &&
                          ker.compare_xy_2_object() (p,
@@ -511,11 +512,20 @@ public:
           // to its target, and the second point we encounter.
           int                   ind_first = 0;
           int                   ind_second = 1;
+          Comparison_result     start_pos = CGAL::compare (cv.source().y(),
+                                                           vtan_ps[0].y());
+          Comparison_result     order_vpts =  CGAL::compare (vtan_ps[0].x(),
+                                                             vtan_ps[1].x());
+
+          CGAL_assertion (start_pos != EQUAL && 
+                          CGAL::compare (cv.target().y(),
+                                         vtan_ps[0].y()) == start_pos);
+          CGAL_assertion (order_vpts != EQUAL);
 
           if ((cv.orientation() == COUNTERCLOCKWISE &&
-               CGAL::compare (vtan_ps[0].x(), vtan_ps[1].x()) == LARGER) ||
+               start_pos == order_vpts) ||
               (cv.orientation() == CLOCKWISE &&
-               CGAL::compare (vtan_ps[0].x(), vtan_ps[1].x()) == SMALLER))
+               start_pos != order_vpts))
           {
             ind_first = 1;
             ind_second = 0;

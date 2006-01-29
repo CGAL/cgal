@@ -225,7 +225,7 @@ public:
     //
     //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2 
     //
-    // We use the extra dat field to store the equation of this line.
+    // We use the extra data field to store the equation of this line.
     this->_extra_data_P = new typename Base::Extra_data;
     this->_extra_data_P->a = y2 - y1;
     this->_extra_data_P->b = x1 - x2;
@@ -241,7 +241,71 @@ public:
 
     return;
   }
+
+  /*!
+   * Construct a special segment of a given line connecting to given
+   * endpoints.
+   * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
+   * \param source The source point.
+   * \param target The target point.
+   */
+  _Conic_x_monotone_arc_2 (const Algebraic& a,
+                           const Algebraic& b,
+                           const Algebraic& c,
+                           const Point_2& source, const Point_2& target) :
+    Base()
+  {
+    // Make sure the two endpoints lie on the supporting line.
+    CGAL_precondition (CGAL::sign (a * source.x() +
+                                   b * source.y() + c) == CGAL::ZERO);
+
+    CGAL_precondition (CGAL::sign (a * target.x() +
+                                   b * target.y() + c) == CGAL::ZERO);
+
+    // Set the basic properties and clear the _info bits.
+    this->_source = source;
+    this->_target = target;
+    this->_orient = COLLINEAR;
+    this->_info = 0;
  
+    // Check if the arc is directed right (the target is lexicographically
+    // greater than the source point), or to the left.
+    Alg_kernel         ker;
+    Comparison_result  res = ker.compare_x_2_object() (this->_source,
+                                                       this->_target);
+
+    this->_info = (Conic_arc_2::IS_VALID | DEGREE_1);
+
+    if (res == EQUAL)
+    {
+      // Mark that the segment is vertical.
+      this->_info = (this->_info | IS_VERTICAL_SEGMENT);
+
+      // Compare the endpoints lexicographically.
+      res = ker.compare_y_2_object() (this->_source,
+                                      this->_target);
+
+      CGAL_precondition (res != EQUAL);
+      if (res == EQUAL)
+        // Invalid arc:
+        return;
+    }
+
+    if (res == SMALLER)
+      this->_info = (this->_info | IS_DIRECTED_RIGHT);
+
+    // Store the coefficients of the line.
+    this->_extra_data_P = new typename Base::Extra_data;
+    this->_extra_data_P->a = a;
+    this->_extra_data_P->b = b;
+    this->_extra_data_P->c = c;
+    this->_extra_data_P->side = ZERO;
+
+    // Mark that this is a special segment.
+    this->_info = (this->_info | IS_SPECIAL_SEGMENT);
+
+    return;
+  } 
 
   /*!
    * Assignment operator.
@@ -975,6 +1039,7 @@ public:
     CGAL_precondition_code (
       Alg_kernel   ker;
     );
+
     CGAL_precondition (this->contains_point (p) &&
                        ! ker.equal_2_object() (p, this->_source) &&
                        ! ker.equal_2_object() (p, this->_target));
@@ -1848,6 +1913,36 @@ private:
     // intersection points in lexicographically ascending order.
     unsigned int  mult;
     int           i, j;
+
+    if (arc._is_special_segment())
+    {
+      if (n_xs == 1 && n_ys == 1)
+      {
+        Conic_point_2         ip (xs[0], ys[0]);
+
+        ip.set_generating_conic (_id);
+        ip.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip, 1));
+        return;
+      }
+      else if (n_xs == 2 && n_ys == 2)
+      {
+        Conic_point_2         ip1 (xs[0], ys[1]);
+
+        ip1.set_generating_conic (_id);
+        ip1.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip1, 1));
+
+        Conic_point_2         ip2 (xs[1], ys[0]);
+
+        ip2.set_generating_conic (_id);
+        ip2.set_generating_conic (arc._id);
+
+        inter_list.push_back (Intersection_point_2 (ip2, 1));
+      }
+    }
 
     for (i = 0; i < n_xs; i++)
     {
